@@ -2,93 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2689644CF1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 02:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6585744CF38
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 02:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232674AbhKKBoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 20:44:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54316 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231312AbhKKBoA (ORCPT
+        id S232915AbhKKBtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 20:49:17 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:42664 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232723AbhKKBtR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 20:44:00 -0500
-Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3724C061766
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 17:41:12 -0800 (PST)
-Received: by mail-vk1-xa34.google.com with SMTP id b125so2420106vkb.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 17:41:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U9ODKl1loCO7B0LW/VsHM9DMQhs7CgP/8R1pMI7+CYE=;
-        b=WeKBgCxA7q5n70VDdPZ6971JrfIPL+AbzsW3e+kmC85GIiOHUkw02QRzceGqj4v15d
-         /PbGvPyQkg8NZar+avLqtYan0ugTsXliIhUGS5vzaQwYEW7u9F3HtE8MROYna4Fx76Dt
-         Od3RPjdEZ6rTtNwlrMs4vHqmaZmDkefueL1Zbqq+CU8aEn4NCHA1UKvTpEa0zIKGalor
-         skN+GNhDyo8b0dX71lJSXa/E8Q/4oZNNHYZql0GoRQ8Yj7ygW+fx0lUOkb8Sw+KrAc/O
-         o9MEdfgzFzhZxyi/P8QQvrtSRb75KbGxOcLD1AiBRPjPOFBT2rgUTLNo3T+xVy7ixsDe
-         u2Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U9ODKl1loCO7B0LW/VsHM9DMQhs7CgP/8R1pMI7+CYE=;
-        b=h2c5ohM6NgsXJoRczubMe6mO3NZ5Oz2HXAeWVduyZzAGQPVfj+I5mNqal0BiVG7bdc
-         w2a/ODqmlfqT7sNymjLJ/sQfEkwgK7b7OL5Z32S1R80ZhE9LMS12y/DyzltYfSqqBxH+
-         f0yRQqi9XU/owq4mQlRXUHs7yqr+l0iuc546zE/YPuJ59s6957VPa4timNDGZDCKXwRR
-         5Ppy/AmluUQOj2lTk9dpC5AqJtwxALzZXD4NFFbIow1Slt9k5qXKj32fdgyfAtLAC3jF
-         Mkfwe8jT2xsoUAloBL7twNyiOY4C/P8s7xHhGyNT6iyoof3rGuSnJAKwLkyo8Ldctqmt
-         njOA==
-X-Gm-Message-State: AOAM531P9/yeJTCFO5cyDLLXk/w0+liSmKHWmk63GgBymc94oyCBCT7p
-        qI3t2L1vilEcqHBr42Xyeai6x0jIPdU2cPweO3I=
-X-Google-Smtp-Source: ABdhPJzXCP49h8pFfUypn5ySr4bg5bqEV9UD6leWEaArBYA+wQqfQsuhOLgKkZ2dlI67qr/oDKHhuJI+x2msWIHgmhY=
-X-Received: by 2002:a1f:5685:: with SMTP id k127mr5638502vkb.7.1636594871823;
- Wed, 10 Nov 2021 17:41:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20211103011527.42711-1-flyingpeng@tencent.com>
- <CAJfpeguWtPFG_daMNA7=T-kQmgkcTPugMj7HWhh2mu+cwRWbxw@mail.gmail.com>
- <CAPm50a+pu0hB0WwjSkaz+F=BJEhD5mEjFfe019cZ7AGdO0t2Ow@mail.gmail.com> <CAJfpegusBqc7AsJK3+bT6Mp08UB3UN-oBn5K1yuzpgAC237DXg@mail.gmail.com>
-In-Reply-To: <CAJfpegusBqc7AsJK3+bT6Mp08UB3UN-oBn5K1yuzpgAC237DXg@mail.gmail.com>
-From:   Hao Peng <flyingpenghao@gmail.com>
-Date:   Thu, 11 Nov 2021 09:40:36 +0800
-Message-ID: <CAPm50aJ8dA-08JdM_gwP9_bNz6iYfuK6aiih_KkgcbPKeXAuXg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix possible write position calculation error
+        Wed, 10 Nov 2021 20:49:17 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UvyQtrw_1636595186;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UvyQtrw_1636595186)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 11 Nov 2021 09:46:27 +0800
+Subject: Re: [PATCH v7 6/7] fuse: mark inode DONT_CACHE when per inode DAX
+ hint changes
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20211102052604.59462-1-jefflexu@linux.alibaba.com>
+ <20211102052604.59462-7-jefflexu@linux.alibaba.com>
+ <CAJfpegvfQbA32HjqWv9-Ds04W7Qs2idTOP7w5_NvKS_n=0Td7Q@mail.gmail.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <c41837f0-a183-d911-885d-cf3bcdd9b7c8@linux.alibaba.com>
+Date:   Thu, 11 Nov 2021 09:46:26 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <CAJfpegvfQbA32HjqWv9-Ds04W7Qs2idTOP7w5_NvKS_n=0Td7Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 6:40 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Fri, 5 Nov 2021 at 08:44, Hao Peng <flyingpenghao@gmail.com> wrote:
-> >
-> > On Thu, Nov 4, 2021 at 8:18 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > On Wed, 3 Nov 2021 at 02:15, Peng Hao <flyingpenghao@gmail.com> wrote:
-> > > >
-> > > > The 'written' that generic_file_direct_write return through
-> > > > filemap_write_and_wait_range is not necessarily sequential,
-> > > > and its iocb->ki_pos has not been updated.
-> > >
-> > > I don't see the bug, but maybe I'm missing something.  Can you please
-> > > explain in detail?
-> > >
-> > I think we shouldn't add "written" to variable pos.
-> > generic_file_direct_write:
-> >                 ....
-> >                 written = filemap_write_and_wait_range(mapping, pos,
-> >                                                         pos + write_len - 1);
-> >                 if (written)  //the number of writes here reflects the
-> > amount of writeback data
->
-> No.  It's actually an error code in this case.
->
-> It is confusing, though, so I guess cleaning this up (e.g. rename
-> "written" to "retval") would make sense.
->
-oh,sorry.
-I misunderstood. I should deeply analyze the function called below.
-> Thanks,
-> Miklos
+
+
+On 11/10/21 11:50 PM, Miklos Szeredi wrote:
+> On Tue, 2 Nov 2021 at 06:26, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>>
+>> When the per inode DAX hint changes while the file is still *opened*, it
+>> is quite complicated and maybe fragile to dynamically change the DAX
+>> state.
+>>
+>> Hence mark the inode and corresponding dentries as DONE_CACHE once the
+>> per inode DAX hint changes, so that the inode instance will be evicted
+>> and freed as soon as possible once the file is closed and the last
+>> reference to the inode is put. And then when the file gets reopened next
+>> time, the new instantiated inode will reflect the new DAX state.
+>>
+>> In summary, when the per inode DAX hint changes for an *opened* file, the
+>> DAX state of the file won't be updated until this file is closed and
+>> reopened later.
+> 
+> This patch does nothing, since fuse already uses .drop_inode =
+> generic_delete_inode, which is has the same effect as setting
+> I_DONTCACHE, at least in the fuse case (inode should never be dirty at
+> eviction).  
+
+Yes, it is. .drop_inode() of FUSE will always free inode. Here we only
+need to set dentry as DCACHE_DONTCACHE. Here I just call
+d_mark_dontcache() directly, though I_DONTCACHE is useless but harmless
+in the case of FUSE...
+
+
+> In fact it may be cleaner to set I_DONTCACHE
+> unconditionally and remove the .drop_inode callback setting.
+
+It works in both cases, I mean, in current case (current code retained
+untouched) and the case you described above.
+
+-- 
+Thanks,
+Jeffle
