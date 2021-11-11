@@ -2,72 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4398644D7D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 15:08:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4853B44D7EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 15:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232903AbhKKOLJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Nov 2021 09:11:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23643 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232033AbhKKOLI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Nov 2021 09:11:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636639699;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=bs6l8BRCwMtsoM2Wdbgw5at/O+nPht7nUCbKrMdH2m8=;
-        b=acGi3j/Nko/6ShcmfkJruIO1NrVNlIvKcWw6BoDmd8lou+RFfn1VTlxk7HsRHRJFJUo9Ta
-        atUJQKG6ubr4irX46W/rsx59G48drm5bP7X3h46e0AFaVbi9NKEYfT5ir09fE/aSEX/+J+
-        2NiFxuTWFFNrDXMn4k5b21RzH5CsUsE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-110-AQw5-xHqOgSogN255HGVbA-1; Thu, 11 Nov 2021 09:08:17 -0500
-X-MC-Unique: AQw5-xHqOgSogN255HGVbA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B0F391882FB3;
-        Thu, 11 Nov 2021 14:08:16 +0000 (UTC)
-Received: from max.localdomain (unknown [10.40.195.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A2815D6B1;
-        Thu, 11 Nov 2021 14:08:02 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH] iomap: Fix iomap_readahead_iter error handling
-Date:   Thu, 11 Nov 2021 15:08:02 +0100
-Message-Id: <20211111140802.577144-1-agruenba@redhat.com>
+        id S233598AbhKKORk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Nov 2021 09:17:40 -0500
+Received: from mga09.intel.com ([134.134.136.24]:49592 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230177AbhKKORk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Nov 2021 09:17:40 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10164"; a="232759547"
+X-IronPort-AV: E=Sophos;i="5.87,226,1631602800"; 
+   d="scan'208";a="232759547"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2021 06:14:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,226,1631602800"; 
+   d="scan'208";a="492555222"
+Received: from chaop.bj.intel.com ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2021 06:14:41 -0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: [RFC PATCH 0/6] KVM: mm: fd-based approach for supporting KVM guest private memory
+Date:   Thu, 11 Nov 2021 22:13:39 +0800
+Message-Id: <20211111141352.26311-1-chao.p.peng@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In iomap_readahead_iter, deal with potential iomap_readpage_iter errors.
+This RFC series try to implement the fd-based KVM guest private memory
+proposal described at [1].
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/iomap/buffered-io.c | 2 ++
- 1 file changed, 2 insertions(+)
+We had some offline discussions on this series already and that results
+a different design proposal from Paolo. This thread includes both the
+original RFC patch series for proposal [1] as well as the summary for
+the new proposal from Paolo so that we can continue the discussion.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1753c26c8e76..9f1e329e8b2c 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -370,6 +370,8 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
- 			ctx->cur_page_in_bio = false;
- 		}
- 		ret = iomap_readpage_iter(iter, ctx, done);
-+		if (ret < 0)
-+			return ret;
- 	}
+To understand the patch and the new proposal you are highly recommended
+to read the original proposal [1] firstly.
  
- 	return done;
+
+Patch Description
+=================
+The patch include a private memory implementation in memfd/shmem backing
+store and KVM support for private memory slot as well its counterpart in
+QEMU.
+
+Patch1:     kernel part shmem/memfd support
+Patch2-6:   KVM part
+Patch7-13:  QEMU part
+
+QEMU Usage:
+-machine private-memory-backend=ram1 \                                                                                                                                                                                       
+-object memory-backend-memfd,id=ram1,size=5G,guest_private=on,seal=off
+
+
+New Proposal
+============
+Below is a summary of the changes for the new proposal that was discussed
+in the offline thread.
+
+In general, this new proposal reuses the concept of fd-based guest
+memory backing store that described in [1] but uses a different way to
+coordinate the private and shared parts into one single memslot instead
+of introducing dedicated private memslot.
+
+- memslot extension
+The new proposal suggests to add the private fd and the offset to
+existing 'shared' memslot so both private/shared memory can live in one
+single memslot. A page in the memslot is either private or shared. A
+page is private only when it's allocated in the private fd, all the
+other cases it's treated as shared, this includes those already mapped
+as shared as well as those having not been mapped.
+
+- private memory map/unmap
+Userspace's map/unmap operations are done by fallocate() ioctl on
+private fd.
+  - map: default fallocate() with mode=0.
+  - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
+
+There would be two new callbacks registered by KVM and called by memory
+backing store during above map/unmap operations:
+  - map(inode, offset, size): memory backing store to tell related KVM
+    memslot to do a shared->private conversion.
+  - unmap(inode, offset, size): memory backing store to tell related KVM
+    memslot to do a private->shared conversion.
+
+Memory backing store also needs to provide a new callback for KVM to
+query if a page is already allocated in private-fd so KVM can know if
+the page is private or not.
+  - page_allocated(inode, offset): for shmem this would simply return
+    pagecache_get_page().
+
+There are two places in KVM that can exit to userspace to trigger
+private/share conversion:
+  - explicit conversion: happens when guest calls into KVM to explicitly
+    map a range(as private or shared), KVM then exits to userspace to do
+    the above map/unmap operations.
+  - implicit conversion: happens in KVM page fault handler.
+    * if fault due to a private memory access then cause a userspace exit
+      for a shared->private conversion request when page_allocate() return
+      false, otherwise map that directly without usrspace exit.
+    * If fault due to a shared memory access then cause a userspace exit
+      for a private->shared conversion request when page_allocate() return
+      true, otherwise map that directly without userspace exit.
+ 
+An example flow:
+
+  guest                     Linux                userspace
+  ------------------------- -------------------- -----------------------
+                                                 ioctl(KVM_RUN)
+  access private memoryd
+         '--- EPT violation --.
+                              v
+                            userspace exit
+                                 '------------------.
+                                                    v
+                                                 munmap shared memfd
+                                                 fallocate private memfd
+                                 .------------------'
+                                 v
+                            fallocate()
+                              call guest_ops
+                                 unmap shared PTE
+                                 map private PTE
+                              ...
+                                                 ioctl(KVM_RUN)
+
+Compared to the original proposal:
+ - no need to introduce KVM memslot hole punching API,
+ - would avoid potential memslot performance/scalability/fragment issue,
+ - may also reduce userspace complexity,
+ - but requires additional callbacks between KVM and memory backing
+   store.
+
+[1] https://lkml.kernel.org/kvm/51a6f74f-6c05-74b9-3fd7-b7cd900fb8cc@redhat.com/t/
+
+Thanks,
+Chao
+---
+Chao Peng (6):
+  mm: Add F_SEAL_GUEST to shmem/memfd
+  kvm: x86: Introduce guest private memory address space to memslot
+  kvm: x86: add private_ops to memslot
+  kvm: x86: implement private_ops for memfd backing store
+  kvm: x86: add KVM_EXIT_MEMORY_ERROR exit
+  KVM: add KVM_SPLIT_MEMORY_REGION
+
+ Documentation/virt/kvm/api.rst  |   1 +
+ arch/x86/include/asm/kvm_host.h |   5 +-
+ arch/x86/include/uapi/asm/kvm.h |   4 +
+ arch/x86/kvm/Makefile           |   2 +-
+ arch/x86/kvm/memfd.c            |  63 +++++++++++
+ arch/x86/kvm/mmu/mmu.c          |  69 ++++++++++--
+ arch/x86/kvm/mmu/paging_tmpl.h  |   3 +-
+ arch/x86/kvm/x86.c              |   3 +-
+ include/linux/kvm_host.h        |  41 ++++++-
+ include/linux/memfd.h           |  22 ++++
+ include/linux/shmem_fs.h        |   9 ++
+ include/uapi/linux/fcntl.h      |   1 +
+ include/uapi/linux/kvm.h        |  34 ++++++
+ mm/memfd.c                      |  34 +++++-
+ mm/shmem.c                      | 127 +++++++++++++++++++++-
+ virt/kvm/kvm_main.c             | 185 +++++++++++++++++++++++++++++++-
+ 16 files changed, 581 insertions(+), 22 deletions(-)
+ create mode 100644 arch/x86/kvm/memfd.c
+
 -- 
-2.31.1
+2.17.1
 
