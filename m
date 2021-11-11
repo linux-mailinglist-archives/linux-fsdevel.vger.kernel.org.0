@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B9044D7EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 15:15:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B08044D7F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 15:15:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233673AbhKKORx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Nov 2021 09:17:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:20919 "EHLO mga01.intel.com"
+        id S233703AbhKKOST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Nov 2021 09:18:19 -0500
+Received: from mga06.intel.com ([134.134.136.31]:59123 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230177AbhKKORw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Nov 2021 09:17:52 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10164"; a="256621557"
+        id S233770AbhKKOSS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Nov 2021 09:18:18 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10164"; a="293739832"
 X-IronPort-AV: E=Sophos;i="5.87,226,1631602800"; 
-   d="scan'208";a="256621557"
+   d="scan'208";a="293739832"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2021 06:15:01 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2021 06:15:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,226,1631602800"; 
-   d="scan'208";a="492555301"
+   d="scan'208";a="492555477"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2021 06:14:51 -0800
+  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2021 06:15:01 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -45,401 +45,161 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: [RFC PATCH 1/6] mm: Add F_SEAL_GUEST to shmem/memfd
-Date:   Thu, 11 Nov 2021 22:13:40 +0800
-Message-Id: <20211111141352.26311-2-chao.p.peng@linux.intel.com>
+Subject: [RFC PATCH 2/6] kvm: x86: Introduce guest private memory address space to memslot
+Date:   Thu, 11 Nov 2021 22:13:41 +0800
+Message-Id: <20211111141352.26311-3-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211111141352.26311-1-chao.p.peng@linux.intel.com>
 References: <20211111141352.26311-1-chao.p.peng@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The new seal is only allowed if there's no pre-existing pages in the fd
-and there's no existing mapping of the file. After the seal is set, no
-read/write/mmap from userspace is allowed.
+Existing memslots functions are extended to pass a bool ‘private’
+parameter to indicate whether the operation is on guest private memory
+address space or not.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- include/linux/memfd.h      |  22 +++++++
- include/linux/shmem_fs.h   |   9 +++
- include/uapi/linux/fcntl.h |   1 +
- mm/memfd.c                 |  34 +++++++++-
- mm/shmem.c                 | 127 ++++++++++++++++++++++++++++++++++++-
- 5 files changed, 189 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/kvm_host.h |  5 +++--
+ arch/x86/include/uapi/asm/kvm.h |  4 ++++
+ arch/x86/kvm/mmu/mmu.c          |  2 +-
+ include/linux/kvm_host.h        | 23 ++++++++++++++++++++---
+ virt/kvm/kvm_main.c             |  9 ++++++++-
+ 5 files changed, 36 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-index 4f1600413f91..ea213f5e3f95 100644
---- a/include/linux/memfd.h
-+++ b/include/linux/memfd.h
-@@ -4,13 +4,35 @@
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 20dfcdd20e81..048089883650 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1741,9 +1741,10 @@ enum {
+ #define HF_SMM_INSIDE_NMI_MASK	(1 << 7)
  
- #include <linux/file.h>
+ #define __KVM_VCPU_MULTIPLE_ADDRESS_SPACE
+-#define KVM_ADDRESS_SPACE_NUM 2
++#define KVM_ADDRESS_SPACE_NUM 3
  
-+struct guest_ops {
-+	void (*invalidate_page_range)(struct inode *inode, void *owner,
-+				      pgoff_t start, pgoff_t end);
-+};
+-#define kvm_arch_vcpu_memslots_id(vcpu) ((vcpu)->arch.hflags & HF_SMM_MASK ? 1 : 0)
++#define kvm_arch_vcpu_memslots_id(vcpu, private)	\
++	(((vcpu)->arch.hflags & HF_SMM_MASK) ? 1 : (!!private) << 1)
+ #define kvm_memslots_for_spte_role(kvm, role) __kvm_memslots(kvm, (role).smm)
+ 
+ asmlinkage void kvm_spurious_fault(void);
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index 47bc1a0df5ee..65189cfd3837 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -53,6 +53,10 @@
+ /* Architectural interrupt line count. */
+ #define KVM_NR_INTERRUPTS 256
+ 
++#define KVM_DEFAULT_ADDRESS_SPACE	0
++#define KVM_SMM_ADDRESS_SPACE		1
++#define KVM_PRIVATE_ADDRESS_SPACE	2
 +
-+struct guest_mem_ops {
-+	unsigned long (*get_lock_pfn)(struct inode *inode, pgoff_t offset,
-+					int *page_level);
-+	void (*put_unlock_pfn)(unsigned long pfn);
-+
-+};
-+
- #ifdef CONFIG_MEMFD_CREATE
- extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned long arg);
-+
-+extern inline int memfd_register_guest(struct inode *inode, void *owner,
-+				       const struct guest_ops *guest_ops,
-+				       const struct guest_mem_ops **guest_mem_ops);
- #else
- static inline long memfd_fcntl(struct file *f, unsigned int c, unsigned long a)
+ struct kvm_memory_alias {
+ 	__u32 slot;  /* this has a different namespace than memory slots */
+ 	__u32 flags;
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 79d4ae465a96..8483c15eac6f 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -3938,7 +3938,7 @@ static bool try_async_pf(struct kvm_vcpu *vcpu, bool prefault, gfn_t gfn,
+ 		return false;
+ 	}
+ 
+-	/* Don't expose private memslots to L2. */
++	/* Don't expose KVM's internal memslots to L2. */
+ 	if (is_guest_mode(vcpu) && !kvm_is_visible_memslot(slot)) {
+ 		*pfn = KVM_PFN_NOSLOT;
+ 		*writable = false;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 597841fe3d7a..8e5b197230ed 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -442,7 +442,7 @@ struct kvm_irq_routing_table {
+ #define KVM_USER_MEM_SLOTS (KVM_MEM_SLOTS_NUM - KVM_PRIVATE_MEM_SLOTS)
+ 
+ #ifndef __KVM_VCPU_MULTIPLE_ADDRESS_SPACE
+-static inline int kvm_arch_vcpu_memslots_id(struct kvm_vcpu *vcpu)
++static inline int kvm_arch_vcpu_memslots_id(struct kvm_vcpu *vcpu, bool private)
  {
- 	return -EINVAL;
+ 	return 0;
  }
-+static inline int memfd_register_guest(struct inode *inode, void *owner,
-+				       const struct guest_ops *guest_ops,
-+				       const struct guest_mem_ops **guest_mem_ops)
-+{
-+	return -EINVAL;
-+}
- #endif
- 
- #endif /* __LINUX_MEMFD_H */
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index d82b6f396588..1b4c032680d5 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -12,6 +12,9 @@
- 
- /* inode in-kernel data */
- 
-+struct guest_ops;
-+struct guest_mem_ops;
-+
- struct shmem_inode_info {
- 	spinlock_t		lock;
- 	unsigned int		seals;		/* shmem seals */
-@@ -24,6 +27,8 @@ struct shmem_inode_info {
- 	struct simple_xattrs	xattrs;		/* list of xattrs */
- 	atomic_t		stop_eviction;	/* hold when working on inode */
- 	struct inode		vfs_inode;
-+	void			*guest_owner;
-+	const struct guest_ops	*guest_ops;
- };
- 
- struct shmem_sb_info {
-@@ -90,6 +95,10 @@ extern unsigned long shmem_swap_usage(struct vm_area_struct *vma);
- extern unsigned long shmem_partial_swap_usage(struct address_space *mapping,
- 						pgoff_t start, pgoff_t end);
- 
-+extern int shmem_register_guest(struct inode *inode, void *owner,
-+				const struct guest_ops *guest_ops,
-+				const struct guest_mem_ops **guest_mem_ops);
-+
- /* Flag allocation requirements to shmem_getpage */
- enum sgp_type {
- 	SGP_READ,	/* don't exceed i_size, don't allocate page */
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 2f86b2ad6d7e..c79bc8572721 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -43,6 +43,7 @@
- #define F_SEAL_GROW	0x0004	/* prevent file from growing */
- #define F_SEAL_WRITE	0x0008	/* prevent writes */
- #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
-+#define F_SEAL_GUEST		0x0020
- /* (1U << 31) is reserved for signed error codes */
- 
- /*
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 2647c898990c..5a34173f55f4 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -130,11 +130,26 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
- 	return NULL;
+@@ -699,13 +699,19 @@ static inline struct kvm_memslots *kvm_memslots(struct kvm *kvm)
+ 	return __kvm_memslots(kvm, 0);
  }
  
-+int memfd_register_guest(struct inode *inode, void *owner,
-+			 const struct guest_ops *guest_ops,
-+			 const struct guest_mem_ops **guest_mem_ops)
-+{
-+	if (shmem_mapping(inode->i_mapping)) {
-+		return shmem_register_guest(inode, owner,
-+					    guest_ops, guest_mem_ops);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+EXPORT_SYMBOL_GPL(memfd_register_guest);
-+
- #define F_ALL_SEALS (F_SEAL_SEAL | \
- 		     F_SEAL_SHRINK | \
- 		     F_SEAL_GROW | \
- 		     F_SEAL_WRITE | \
--		     F_SEAL_FUTURE_WRITE)
-+		     F_SEAL_FUTURE_WRITE | \
-+		     F_SEAL_GUEST)
- 
- static int memfd_add_seals(struct file *file, unsigned int seals)
+-static inline struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu)
++static inline struct kvm_memslots *__kvm_vcpu_memslots(struct kvm_vcpu *vcpu,
++						       bool private)
  {
-@@ -203,10 +218,27 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
- 		}
- 	}
+-	int as_id = kvm_arch_vcpu_memslots_id(vcpu);
++	int as_id = kvm_arch_vcpu_memslots_id(vcpu, private);
  
-+	if (seals & F_SEAL_GUEST) {
-+		i_mmap_lock_read(inode->i_mapping);
-+
-+		if (!RB_EMPTY_ROOT(&inode->i_mapping->i_mmap.rb_root)) {
-+			error = -EBUSY;
-+			goto unlock;
-+		}
-+
-+		if (i_size_read(inode)) {
-+			error = -EBUSY;
-+			goto unlock;
-+		}
-+	}
-+
- 	*file_seals |= seals;
- 	error = 0;
- 
- unlock:
-+	if (seals & F_SEAL_GUEST)
-+		i_mmap_unlock_read(inode->i_mapping);
-+
- 	inode_unlock(inode);
- 	return error;
- }
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b2db4ed0fbc7..978c841c42c4 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -80,6 +80,7 @@ static struct vfsmount *shm_mnt;
- #include <linux/userfaultfd_k.h>
- #include <linux/rmap.h>
- #include <linux/uuid.h>
-+#include <linux/memfd.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -883,6 +884,21 @@ static bool shmem_punch_compound(struct page *page, pgoff_t start, pgoff_t end)
- 	return split_huge_page(page) >= 0;
+ 	return __kvm_memslots(vcpu->kvm, as_id);
  }
  
-+static void guest_invalidate_page(struct inode *inode,
-+				  struct page *page, pgoff_t start, pgoff_t end)
++static inline struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu)
 +{
-+	struct shmem_inode_info *info = SHMEM_I(inode);
-+
-+	if (!info->guest_ops || !info->guest_ops->invalidate_page_range)
-+		return;
-+
-+	start = max(start, page->index);
-+	end = min(end, page->index + HPAGE_PMD_NR) - 1;
-+
-+	info->guest_ops->invalidate_page_range(inode, info->guest_owner,
-+					       start, end);
++	return __kvm_vcpu_memslots(vcpu, false);
 +}
 +
- /*
-  * Remove range of pages and swap entries from page cache, and free them.
-  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
-@@ -923,6 +939,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- 			}
- 			index += thp_nr_pages(page) - 1;
- 
-+			guest_invalidate_page(inode, page, start, end);
-+
- 			if (!unfalloc || !PageUptodate(page))
- 				truncate_inode_page(mapping, page);
- 			unlock_page(page);
-@@ -999,6 +1017,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- 					index--;
- 					break;
- 				}
-+
-+				guest_invalidate_page(inode, page, start, end);
-+
- 				VM_BUG_ON_PAGE(PageWriteback(page), page);
- 				if (shmem_punch_compound(page, start, end))
- 					truncate_inode_page(mapping, page);
-@@ -1074,6 +1095,9 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
- 		    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
- 			return -EPERM;
- 
-+		if ((info->seals & F_SEAL_GUEST) && (newsize & ~PAGE_MASK))
-+			return -EINVAL;
-+
- 		if (newsize != oldsize) {
- 			error = shmem_reacct_size(SHMEM_I(inode)->flags,
- 					oldsize, newsize);
-@@ -1348,6 +1372,8 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
- 		goto redirty;
- 	if (!total_swap_pages)
- 		goto redirty;
-+	if (info->seals & F_SEAL_GUEST)
-+		goto redirty;
- 
- 	/*
- 	 * Our capabilities prevent regular writeback or sync from ever calling
-@@ -2278,6 +2304,9 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
- 			vma->vm_flags &= ~(VM_MAYWRITE);
- 	}
- 
-+	if (info->seals & F_SEAL_GUEST)
-+		return -EPERM;
-+
- 	/* arm64 - allow memory tagging on RAM-based files */
- 	vma->vm_flags |= VM_MTE_ALLOWED;
- 
-@@ -2519,12 +2548,14 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
- 	pgoff_t index = pos >> PAGE_SHIFT;
- 
- 	/* i_mutex is held by caller */
--	if (unlikely(info->seals & (F_SEAL_GROW |
--				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
-+	if (unlikely(info->seals & (F_SEAL_GROW | F_SEAL_WRITE |
-+				    F_SEAL_FUTURE_WRITE | F_SEAL_GUEST))) {
- 		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
- 			return -EPERM;
- 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
- 			return -EPERM;
-+		if (info->seals & F_SEAL_GUEST)
-+			return -EPERM;
- 	}
- 
- 	return shmem_getpage(inode, index, pagep, SGP_WRITE);
-@@ -2598,6 +2629,20 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		end_index = i_size >> PAGE_SHIFT;
- 		if (index > end_index)
- 			break;
-+
-+		/*
-+		 * inode_lock protects setting up seals as well as write to
-+		 * i_size. Setting F_SEAL_GUEST only allowed with i_size == 0.
-+		 *
-+		 * Check F_SEAL_GUEST after i_size. It effectively serialize
-+		 * read vs. setting F_SEAL_GUEST without taking inode_lock in
-+		 * read path.
-+		 */
-+		if (SHMEM_I(inode)->seals & F_SEAL_GUEST) {
-+			error = -EPERM;
-+			break;
-+		}
-+
- 		if (index == end_index) {
- 			nr = i_size & ~PAGE_MASK;
- 			if (nr <= offset)
-@@ -2723,6 +2768,12 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
- 			goto out;
- 		}
- 
-+		if ((info->seals & F_SEAL_GUEST) &&
-+		    (offset & ~PAGE_MASK || len & ~PAGE_MASK)) {
-+			error = -EINVAL;
-+			goto out;
-+		}
-+
- 		shmem_falloc.waitq = &shmem_falloc_waitq;
- 		shmem_falloc.start = (u64)unmap_start >> PAGE_SHIFT;
- 		shmem_falloc.next = (unmap_end + 1) >> PAGE_SHIFT;
-@@ -3806,6 +3857,20 @@ static void shmem_destroy_inodecache(void)
- 	kmem_cache_destroy(shmem_inode_cachep);
+ static inline
+ struct kvm_memory_slot *id_to_memslot(struct kvm_memslots *slots, int id)
+ {
+@@ -721,6 +727,15 @@ struct kvm_memory_slot *id_to_memslot(struct kvm_memslots *slots, int id)
+ 	return slot;
  }
  
-+#ifdef CONFIG_MIGRATION
-+int shmem_migrate_page(struct address_space *mapping,
-+		struct page *newpage, struct page *page,
-+		enum migrate_mode mode)
++static inline bool memslot_is_private(const struct kvm_memory_slot *slot)
 +{
-+	struct inode *inode = mapping->host;
-+	struct shmem_inode_info *info = SHMEM_I(inode);
-+
-+	if (info->seals & F_SEAL_GUEST)
-+		return -ENOTSUPP;
-+	return migrate_page(mapping, newpage, page, mode);
-+}
++#ifdef KVM_PRIVATE_ADDRESS_SPACE
++	return slot && slot->as_id == KVM_PRIVATE_ADDRESS_SPACE;
++#else
++	return false;
 +#endif
++}
 +
- const struct address_space_operations shmem_aops = {
- 	.writepage	= shmem_writepage,
- 	.set_page_dirty	= __set_page_dirty_no_writeback,
-@@ -3814,12 +3879,68 @@ const struct address_space_operations shmem_aops = {
- 	.write_end	= shmem_write_end,
- #endif
- #ifdef CONFIG_MIGRATION
--	.migratepage	= migrate_page,
-+	.migratepage	= shmem_migrate_page,
- #endif
- 	.error_remove_page = generic_error_remove_page,
- };
- EXPORT_SYMBOL(shmem_aops);
+ /*
+  * KVM_SET_USER_MEMORY_REGION ioctl allows the following operations:
+  * - create a new memory slot
+@@ -860,6 +875,8 @@ void mark_page_dirty_in_slot(struct kvm *kvm, struct kvm_memory_slot *memslot, g
+ void mark_page_dirty(struct kvm *kvm, gfn_t gfn);
  
-+static unsigned long shmem_get_lock_pfn(struct inode *inode, pgoff_t offset,
-+					int *page_level)
+ struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
++struct kvm_memory_slot *__kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu,
++						  gfn_t gfn, bool private);
+ struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 8815218630dc..fe62df334054 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1721,9 +1721,16 @@ struct kvm_memory_slot *gfn_to_memslot(struct kvm *kvm, gfn_t gfn)
+ }
+ EXPORT_SYMBOL_GPL(gfn_to_memslot);
+ 
++struct kvm_memory_slot *__kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu,
++						  gfn_t gfn, bool private)
 +{
-+	struct page *page;
-+	int ret;
-+
-+	ret = shmem_getpage(inode, offset, &page, SGP_WRITE);
-+	if (ret)
-+		return ret;
-+
-+	if (is_transparent_hugepage(page))
-+		*page_level = PG_LEVEL_2M;
-+	else
-+		*page_level = PG_LEVEL_4K;
-+
-+	return page_to_pfn(page);
++	return __gfn_to_memslot(__kvm_vcpu_memslots(vcpu, private), gfn);
 +}
++EXPORT_SYMBOL_GPL(__kvm_vcpu_gfn_to_memslot);
 +
-+static void shmem_put_unlock_pfn(unsigned long pfn)
-+{
-+	struct page *page = pfn_to_page(pfn);
-+
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+
-+	set_page_dirty(page);
-+	unlock_page(page);
-+	put_page(page);
-+}
-+
-+static const struct guest_mem_ops shmem_guest_ops = {
-+	.get_lock_pfn = shmem_get_lock_pfn,
-+	.put_unlock_pfn = shmem_put_unlock_pfn,
-+};
-+
-+int shmem_register_guest(struct inode *inode, void *owner,
-+			 const struct guest_ops *guest_ops,
-+			 const struct guest_mem_ops **guest_mem_ops)
-+{
-+	struct shmem_inode_info *info = SHMEM_I(inode);
-+
-+	if (!owner)
-+		return -EINVAL;
-+
-+	if (info->guest_owner) {
-+		if (info->guest_owner == owner)
-+			return 0;
-+		else
-+			return -EPERM;
-+	}
-+
-+	info->guest_owner = owner;
-+	info->guest_ops = guest_ops;
-+	*guest_mem_ops = &shmem_guest_ops;
-+	return 0;
-+}
-+
- static const struct file_operations shmem_file_operations = {
- 	.mmap		= shmem_mmap,
- 	.get_unmapped_area = shmem_get_unmapped_area,
+ struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn)
+ {
+-	return __gfn_to_memslot(kvm_vcpu_memslots(vcpu), gfn);
++	return __kvm_vcpu_gfn_to_memslot(vcpu, gfn, false);
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_memslot);
+ 
 -- 
 2.17.1
 
