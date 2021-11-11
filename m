@@ -2,110 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F2F44DA34
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 17:17:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB27144DA45
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 17:21:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233902AbhKKQUT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Nov 2021 11:20:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:36115 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233128AbhKKQUS (ORCPT
+        id S234010AbhKKQYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Nov 2021 11:24:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54260 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233890AbhKKQYL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Nov 2021 11:20:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636647448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=xujJ/bq+SC+rezsEo80o3fydJSWpSL4LfjFJ7txhcyk=;
-        b=UDU1Ci3BzWg0TnzXjpj5QQtvTcb3YtdFjHAW2w/udTz5GRPa/f3V5O9kTRXG8qGsrx5Br9
-        w0y2mfnJg+uSzfCQprWju6JIIxROJP2uJ/ELoH5ahQPrwwrr90bpyoH7bBPUyj4uTj3WWX
-        0qkOuSQU6FpC9OT7tRaon9oxxc0Go4o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-21-A6_XSJcFNnupHv64UvLiwQ-1; Thu, 11 Nov 2021 11:17:25 -0500
-X-MC-Unique: A6_XSJcFNnupHv64UvLiwQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4871F10151E1;
-        Thu, 11 Nov 2021 16:17:24 +0000 (UTC)
-Received: from max.localdomain (unknown [10.40.195.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D7D3960854;
-        Thu, 11 Nov 2021 16:17:15 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        stable@vger.kernel.org
-Subject: [5.15 REGRESSION v2] iomap: Fix inline extent handling in iomap_readpage
-Date:   Thu, 11 Nov 2021 17:17:14 +0100
-Message-Id: <20211111161714.584718-1-agruenba@redhat.com>
+        Thu, 11 Nov 2021 11:24:11 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 137A3C061766;
+        Thu, 11 Nov 2021 08:21:22 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id m9so7678096iop.0;
+        Thu, 11 Nov 2021 08:21:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hBm6JO/iSJ+GL1C6xVW5PCmaMsD9ZfQqODjs2YkP1sU=;
+        b=YV71s0Ev2mXVcz6tWXyGZUsZLzfLGIkp3ELcfIJgPv2VpPq/w5tgNgNrqw+LhKSK60
+         ypAN/jXd2U6uHeSo6EKYM/zbuOJjvXF2o1EfAmhIYDnO4J2yvU2nNH4jhsF/rPgVr3bb
+         PA4/javfSdpJOvTjk44LNTGCIrwi2A5vk0Uny5Zc8EjPCM3Wp8yaJaeS7h9ev/9shMri
+         Y2aFBgo5K4oI03r0IdC4eQANOTblYgjhhh3f8yAxn3sUQHc7z6YHPMh8IvmNLzhD7nQc
+         iP4dlZyUtwFS6qHzAjhd+KnNGwdCOGRRlmSuuTRYwgG6vQzI7je8tn/bPRGwHXLJDZUH
+         GabQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hBm6JO/iSJ+GL1C6xVW5PCmaMsD9ZfQqODjs2YkP1sU=;
+        b=SarYalpw53/tK9IJkrSCNpMBj11LmTgwa6wmqR5HwTI0VBRr6D0jJCzZstX/+YJYNC
+         KBi6yHloW1K0Idgaj+hXuMnR2ecVaVCwxknBompUSGJDO1jXf4vnIYVzyNZiXaOItn6/
+         Etl7EEJdcS1YweBtfyJ4XumJTmrd3mLhdrnlXEOUHaYeTuzZAsNe/RYybpFN9pBIX1HT
+         D3e2CNbl0hNfwBDDXHWqzS8qtSXPtCuO3Bq7yn5LbONwkDcT587baYVWYM9yZC+o8FMv
+         C+rZ6gYOQP1vK6iif7eWCyYGVmBlUG4w7aiTb4HhwiY6J41mb1n8yNQ6Krof6cnHrNUM
+         j9Mw==
+X-Gm-Message-State: AOAM533j7Ya6DY7pA9xPOGxOxX3pU1e1q+ANgUbg4BTPT620QE4PB0Yz
+        GbUK2h5jEzIsRlNUwsh4ivJumBrlL1MIQj+8aaE=
+X-Google-Smtp-Source: ABdhPJxkBdvyWNsHljIwNTdiGRWG08lJpu3tGVUukky9muJYg0YaC5jYHTIk/gC7oo7gaQB5/SOPVDm2YXZLXvzSMe8=
+X-Received: by 2002:a05:6602:45d:: with SMTP id e29mr5752619iov.202.1636647681387;
+ Thu, 11 Nov 2021 08:21:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20211110113842.517426-1-agruenba@redhat.com> <20211110125527.GA25465@lst.de>
+ <CAHc6FU49TnYvrL-FU5oz9th6STuQ=eYokjsD+0QpbkdHedRd9w@mail.gmail.com> <20211111072506.GB30478@lst.de>
+In-Reply-To: <20211111072506.GB30478@lst.de>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Thu, 11 Nov 2021 17:21:10 +0100
+Message-ID: <CAHpGcM+GVufLn_VZD_Kmrj=Y-XQwkqcjFxN4aFajh1Loi324ow@mail.gmail.com>
+Subject: Re: [5.15 REGRESSION] iomap: Fix inline extent handling in iomap_readpage
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Before commit 740499c78408 ("iomap: fix the iomap_readpage_actor return
-value for inline data"), when hitting an IOMAP_INLINE extent,
-iomap_readpage_actor would report having read the entire page.  Since
-then, it only reports having read the inline data (iomap->length).
+Am Do., 11. Nov. 2021 um 08:26 Uhr schrieb Christoph Hellwig <hch@lst.de>:
+> The iomap mapping sizes are read-only to iomap for a good reason.  You
+> can't just break that design.
 
-This will force iomap_readpage into another iteration, and the
-filesystem will report an unaligned hole after the IOMAP_INLINE extent.
-But iomap_readpage_actor (now iomap_readpage_iter) isn't prepared to
-deal with unaligned extents, it will get things wrong on filesystems
-with a block size smaller than the page size, and we'll eventually run
-into the following warning in iomap_iter_advance:
+Right. We can stop iomap_iter by returning 0 now though; see v2.
 
-  WARN_ON_ONCE(iter->processed > iomap_length(iter));
-
-Fix that by changing iomap_readpage_iter to return 0 when hitting an
-inline extent; this will cause iomap_iter to stop immediately.
-
-To fix readahead as well, change iomap_readahead_iter to pass on
-iomap_readpage_iter return values less than or equal to zero.
-
-Fixes: 740499c78408 ("iomap: fix the iomap_readpage_actor return value for inline data")
-Cc: stable@vger.kernel.org # v5.15+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/iomap/buffered-io.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1753c26c8e76..fe10d8a30f6b 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -256,8 +256,13 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	unsigned poff, plen;
- 	sector_t sector;
- 
--	if (iomap->type == IOMAP_INLINE)
--		return min(iomap_read_inline_data(iter, page), length);
-+	if (iomap->type == IOMAP_INLINE) {
-+		loff_t ret = iomap_read_inline_data(iter, page);
-+
-+		if (ret < 0)
-+			return ret;
-+		return 0;
-+	}
- 
- 	/* zero post-eof blocks as the page may be mapped */
- 	iop = iomap_page_create(iter->inode, page);
-@@ -370,6 +375,8 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
- 			ctx->cur_page_in_bio = false;
- 		}
- 		ret = iomap_readpage_iter(iter, ctx, done);
-+		if (ret <= 0)
-+			return ret;
- 	}
- 
- 	return done;
--- 
-2.31.1
-
+Thanks,
+Andreas
