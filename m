@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E78C544D817
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 15:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F11344D821
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 15:18:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233937AbhKKOTv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Nov 2021 09:19:51 -0500
-Received: from mga06.intel.com ([134.134.136.31]:59265 "EHLO mga06.intel.com"
+        id S231739AbhKKOUP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Nov 2021 09:20:15 -0500
+Received: from mga12.intel.com ([192.55.52.136]:9423 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232823AbhKKOTu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Nov 2021 09:19:50 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10164"; a="293740117"
+        id S234019AbhKKOUD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Nov 2021 09:20:03 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10164"; a="212952293"
 X-IronPort-AV: E=Sophos;i="5.87,226,1631602800"; 
-   d="scan'208";a="293740117"
+   d="scan'208";a="212952293"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2021 06:17:01 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2021 06:17:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,226,1631602800"; 
-   d="scan'208";a="492556270"
+   d="scan'208";a="492556372"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2021 06:16:50 -0800
+  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2021 06:17:01 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: [RFC PATCH 12/13] kvm: handle private to shared memory conversion
-Date:   Thu, 11 Nov 2021 22:13:51 +0800
-Message-Id: <20211111141352.26311-13-chao.p.peng@linux.intel.com>
+Subject: [RFC PATCH 13/13] machine: Add 'private-memory-backend' property
+Date:   Thu, 11 Nov 2021 22:13:52 +0800
+Message-Id: <20211111141352.26311-14-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211111141352.26311-1-chao.p.peng@linux.intel.com>
 References: <20211111141352.26311-1-chao.p.peng@linux.intel.com>
@@ -57,179 +57,183 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- accel/kvm/kvm-all.c    | 49 ++++++++++++++++++++++++++++++++++++++++++
- include/sysemu/kvm.h   |  1 +
- target/arm/kvm.c       |  5 +++++
- target/i386/kvm/kvm.c  | 27 +++++++++++++++++++++++
- target/mips/kvm.c      |  5 +++++
- target/ppc/kvm.c       |  5 +++++
- target/s390x/kvm/kvm.c |  5 +++++
- 7 files changed, 97 insertions(+)
+ hw/core/machine.c   | 38 ++++++++++++++++++++++++++++++++++++++
+ hw/i386/pc.c        | 22 ++++++++++++++++------
+ include/hw/boards.h |  2 ++
+ softmmu/vl.c        | 16 ++++++++++------
+ 4 files changed, 66 insertions(+), 12 deletions(-)
 
-diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
-index d336458e9e..6feda9c89b 100644
---- a/accel/kvm/kvm-all.c
-+++ b/accel/kvm/kvm-all.c
-@@ -1445,6 +1445,38 @@ out:
-     kvm_slots_unlock();
+diff --git a/hw/core/machine.c b/hw/core/machine.c
+index 067f42b528..d092bf400b 100644
+--- a/hw/core/machine.c
++++ b/hw/core/machine.c
+@@ -589,6 +589,22 @@ static void machine_set_memdev(Object *obj, const char *value, Error **errp)
+     ms->ram_memdev_id = g_strdup(value);
  }
  
-+static int kvm_map_private_memory(hwaddr start, hwaddr size)
++static char *machine_get_private_memdev(Object *obj, Error **errp)
 +{
-+    return 0;
++    MachineState *ms = MACHINE(obj);
++
++    return g_strdup(ms->private_ram_memdev_id);
 +}
 +
-+static int kvm_map_shared_memory(hwaddr start, hwaddr size)
++static void machine_set_private_memdev(Object *obj, const char *value,
++                                       Error **errp)
 +{
-+    MemoryRegionSection section;
-+    void *addr;
-+    RAMBlock *rb;
-+    ram_addr_t offset;
++    MachineState *ms = MACHINE(obj);
 +
-+    /* Punch a hole in private memory. */
-+    section = memory_region_find(get_system_private_memory(), start, size);
-+    if (section.mr) {
-+        addr = memory_region_get_ram_ptr(section.mr) +
-+               section.offset_within_region;
-+        rb = qemu_ram_block_from_host(addr, false, &offset);
-+        ram_block_discard_range(rb, offset, size);
-+        memory_region_unref(section.mr);
-+    }
-+
-+    /* Create new shared memory. */
-+    section = memory_region_find(get_system_memory(), start, size);
-+    if (section.mr) {
-+        memory_region_unref(section.mr);
-+        return -1; /*Already existed. */
-+    }
-+
-+    return kvm_arch_map_shared_memory(start, size);
++    g_free(ms->private_ram_memdev_id);
++    ms->private_ram_memdev_id = g_strdup(value);
 +}
 +
- static void *kvm_dirty_ring_reaper_thread(void *data)
+ static void machine_init_notify(Notifier *notifier, void *data)
  {
-     KVMState *s = data;
-@@ -2957,6 +2989,23 @@ int kvm_cpu_exec(CPUState *cpu)
-                 break;
-             }
-             break;
-+	case KVM_EXIT_MEMORY_ERROR:
-+            switch (run->mem.type) {
-+            case KVM_EXIT_MEM_MAP_PRIVATE:
-+                ret = kvm_map_private_memory(run->mem.u.map.gpa,
-+                                             run->mem.u.map.size);
-+                break;
-+            case KVM_EXIT_MEM_MAP_SHARE:
-+                ret = kvm_map_shared_memory(run->mem.u.map.gpa,
-+                                            run->mem.u.map.size);
-+                break;
-+            default:
-+                DPRINTF("kvm_arch_handle_exit\n");
-+                ret = kvm_arch_handle_exit(cpu, run);
-+                break;
-+            }
-+            break;
+     MachineState *machine = MACHINE(qdev_get_machine());
+@@ -962,6 +978,13 @@ static void machine_class_init(ObjectClass *oc, void *data)
+     object_class_property_set_description(oc, "memory-backend",
+                                           "Set RAM backend"
+                                           "Valid value is ID of hostmem based backend");
 +
-         default:
-             DPRINTF("kvm_arch_handle_exit\n");
-             ret = kvm_arch_handle_exit(cpu, run);
-diff --git a/include/sysemu/kvm.h b/include/sysemu/kvm.h
-index a1ab1ee12d..5f00aa0ee0 100644
---- a/include/sysemu/kvm.h
-+++ b/include/sysemu/kvm.h
-@@ -547,4 +547,5 @@ bool kvm_cpu_check_are_resettable(void);
++    object_class_property_add_str(oc, "private-memory-backend",
++                                  machine_get_private_memdev,
++                                  machine_set_private_memdev);
++    object_class_property_set_description(oc, "private-memory-backend",
++                                          "Set guest private RAM backend"
++                                          "Valid value is ID of hostmem based backend");
+ }
  
- bool kvm_arch_cpu_check_are_resettable(void);
+ static void machine_class_base_init(ObjectClass *oc, void *data)
+@@ -1208,6 +1231,21 @@ void machine_run_board_init(MachineState *machine)
+         machine->ram = machine_consume_memdev(machine, MEMORY_BACKEND(o));
+     }
  
-+int kvm_arch_map_shared_memory(hwaddr start, hwaddr size);
- #endif
-diff --git a/target/arm/kvm.c b/target/arm/kvm.c
-index 5d55de1a49..97e51b8b88 100644
---- a/target/arm/kvm.c
-+++ b/target/arm/kvm.c
-@@ -1051,3 +1051,8 @@ bool kvm_arch_cpu_check_are_resettable(void)
- {
-     return true;
- }
-+
-+int kvm_arch_map_shared_memory(hwaddr start, hwaddr size)
-+{
-+    return 0;
-+}
-diff --git a/target/i386/kvm/kvm.c b/target/i386/kvm/kvm.c
-index 500d2e0e68..b3209402bc 100644
---- a/target/i386/kvm/kvm.c
-+++ b/target/i386/kvm/kvm.c
-@@ -4925,3 +4925,30 @@ bool kvm_arch_cpu_check_are_resettable(void)
- {
-     return !sev_es_enabled();
- }
-+
-+int kvm_arch_map_shared_memory(hwaddr start, hwaddr size)
-+{
-+    MachineState *pcms = current_machine;
-+    X86MachineState *x86ms = X86_MACHINE(pcms);
-+    MemoryRegion *system_memory = get_system_memory();
-+    MemoryRegion *region;
-+    char name[134];
-+    hwaddr offset;
-+
-+    if (start + size < x86ms->below_4g_mem_size) {
-+       sprintf(name, "0x%lx@0x%lx", size, start);
-+       region = g_malloc(sizeof(*region));
-+       memory_region_init_alias(region, NULL, name, pcms->ram, start, size);
-+       memory_region_add_subregion(system_memory, start, region);
-+       return 0;
-+    } else if (start > 0x100000000ULL){
-+       sprintf(name, "0x%lx@0x%lx", size, start);
-+       offset = start - 0x100000000ULL + x86ms->below_4g_mem_size;
-+       region = g_malloc(sizeof(*region));
-+       memory_region_init_alias(region, NULL, name, pcms->ram, offset, size);
-+       memory_region_add_subregion(system_memory, start, region);
-+       return 0;
++    if (machine->private_ram_memdev_id) {
++        Object *o;
++        HostMemoryBackend *backend;
++        o = object_resolve_path_type(machine->private_ram_memdev_id,
++                                     TYPE_MEMORY_BACKEND, NULL);
++        backend = MEMORY_BACKEND(o);
++        if (backend->guest_private) {
++            machine->private_ram = machine_consume_memdev(machine, backend);
++        } else {
++            error_report("memorybaend %s is not guest private memory.",
++                         object_get_canonical_path_component(OBJECT(backend)));
++            exit(EXIT_FAILURE);
++        }
 +    }
 +
-+    return -1;
-+}
-diff --git a/target/mips/kvm.c b/target/mips/kvm.c
-index 086debd9f0..4aed54aa9f 100644
---- a/target/mips/kvm.c
-+++ b/target/mips/kvm.c
-@@ -1295,3 +1295,8 @@ bool kvm_arch_cpu_check_are_resettable(void)
- {
-     return true;
- }
+     if (machine->numa_state) {
+         numa_complete_configuration(machine);
+         if (machine->numa_state->num_nodes) {
+diff --git a/hw/i386/pc.c b/hw/i386/pc.c
+index 1276bfeee4..e6209428c1 100644
+--- a/hw/i386/pc.c
++++ b/hw/i386/pc.c
+@@ -865,30 +865,40 @@ void pc_memory_init(PCMachineState *pcms,
+     MachineClass *mc = MACHINE_GET_CLASS(machine);
+     PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
+     X86MachineState *x86ms = X86_MACHINE(pcms);
++    MemoryRegion *ram, *root_region;
+ 
+     assert(machine->ram_size == x86ms->below_4g_mem_size +
+                                 x86ms->above_4g_mem_size);
+ 
+     linux_boot = (machine->kernel_filename != NULL);
+ 
++    *ram_memory = machine->ram;
 +
-+int kvm_arch_map_shared_memory(hwaddr start, hwaddr size)
-+{
-+    return 0;
-+}
-diff --git a/target/ppc/kvm.c b/target/ppc/kvm.c
-index dc93b99189..cc31a7c38d 100644
---- a/target/ppc/kvm.c
-+++ b/target/ppc/kvm.c
-@@ -2959,3 +2959,8 @@ bool kvm_arch_cpu_check_are_resettable(void)
- {
-     return true;
- }
++    /* Map private memory if set. Shared memory will be mapped per request. */
++    if (machine->private_ram) {
++        ram = machine->private_ram;
++        root_region = get_system_private_memory();
++    } else {
++        ram = machine->ram;
++        root_region = system_memory;
++    }
 +
-+int kvm_arch_map_shared_memory(hwaddr start, hwaddr size)
-+{
-+    return 0;
-+}
-diff --git a/target/s390x/kvm/kvm.c b/target/s390x/kvm/kvm.c
-index 5b1fdb55c4..4a9161ba3a 100644
---- a/target/s390x/kvm/kvm.c
-+++ b/target/s390x/kvm/kvm.c
-@@ -2562,3 +2562,8 @@ bool kvm_arch_cpu_check_are_resettable(void)
- {
-     return true;
+     /*
+      * Split single memory region and use aliases to address portions of it,
+      * done for backwards compatibility with older qemus.
+      */
+-    *ram_memory = machine->ram;
+     ram_below_4g = g_malloc(sizeof(*ram_below_4g));
+-    memory_region_init_alias(ram_below_4g, NULL, "ram-below-4g", machine->ram,
++    memory_region_init_alias(ram_below_4g, NULL, "ram-below-4g", ram,
+                              0, x86ms->below_4g_mem_size);
+-    memory_region_add_subregion(system_memory, 0, ram_below_4g);
++    memory_region_add_subregion(root_region, 0, ram_below_4g);
+     e820_add_entry(0, x86ms->below_4g_mem_size, E820_RAM);
+     if (x86ms->above_4g_mem_size > 0) {
+         ram_above_4g = g_malloc(sizeof(*ram_above_4g));
+         memory_region_init_alias(ram_above_4g, NULL, "ram-above-4g",
+-                                 machine->ram,
++                                 ram,
+                                  x86ms->below_4g_mem_size,
+                                  x86ms->above_4g_mem_size);
+-        memory_region_add_subregion(system_memory, 0x100000000ULL,
+-                                    ram_above_4g);
++        memory_region_add_subregion(root_region, 0x100000000ULL, ram_above_4g);
+         e820_add_entry(0x100000000ULL, x86ms->above_4g_mem_size, E820_RAM);
+     }
+ 
+diff --git a/include/hw/boards.h b/include/hw/boards.h
+index 463a5514f9..dd6a3a3e03 100644
+--- a/include/hw/boards.h
++++ b/include/hw/boards.h
+@@ -313,11 +313,13 @@ struct MachineState {
+     bool enable_graphics;
+     ConfidentialGuestSupport *cgs;
+     char *ram_memdev_id;
++    char *private_ram_memdev_id;
+     /*
+      * convenience alias to ram_memdev_id backend memory region
+      * or to numa container memory region
+      */
+     MemoryRegion *ram;
++    MemoryRegion *private_ram;
+     DeviceMemoryState *device_memory;
+ 
+     ram_addr_t ram_size;
+diff --git a/softmmu/vl.c b/softmmu/vl.c
+index ea05bb39c5..9665ccdb16 100644
+--- a/softmmu/vl.c
++++ b/softmmu/vl.c
+@@ -1985,17 +1985,15 @@ static bool have_custom_ram_size(void)
+     return !!qemu_opt_get_size(opts, "size", 0);
  }
-+
-+int kvm_arch_map_shared_memory(hwaddr start, hwaddr size)
-+{
-+    return 0;
+ 
+-static void qemu_resolve_machine_memdev(void)
++static void check_memdev(char *id)
+ {
+-    if (current_machine->ram_memdev_id) {
++    if (id) {
+         Object *backend;
+         ram_addr_t backend_size;
+ 
+-        backend = object_resolve_path_type(current_machine->ram_memdev_id,
+-                                           TYPE_MEMORY_BACKEND, NULL);
++        backend = object_resolve_path_type(id, TYPE_MEMORY_BACKEND, NULL);
+         if (!backend) {
+-            error_report("Memory backend '%s' not found",
+-                         current_machine->ram_memdev_id);
++            error_report("Memory backend '%s' not found", id);
+             exit(EXIT_FAILURE);
+         }
+         backend_size = object_property_get_uint(backend, "size",  &error_abort);
+@@ -2011,6 +2009,12 @@ static void qemu_resolve_machine_memdev(void)
+         }
+         ram_size = backend_size;
+     }
 +}
++
++static void qemu_resolve_machine_memdev(void)
++{
++    check_memdev(current_machine->ram_memdev_id);
++    check_memdev(current_machine->private_ram_memdev_id);
+ 
+     if (!xen_enabled()) {
+         /* On 32-bit hosts, QEMU is limited by virtual address space */
 -- 
 2.17.1
 
