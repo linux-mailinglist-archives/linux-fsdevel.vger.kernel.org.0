@@ -2,370 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 647AE44D858
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 15:33:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A6444D8E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 16:08:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233703AbhKKOft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Nov 2021 09:35:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48419 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233075AbhKKOfs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Nov 2021 09:35:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636641179;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XDKEueG5NX5eOKTFR1aULx5OKCoFDGYW8PMUBL15la8=;
-        b=a6SNGlQVIic6UrUqAU9bsVTm1mwzYTvYui6rSUsx4azRqyrBgAZHBLrwpAhT8SeVPAC22L
-        nzBFBr+bnzszzL+UZo+V0mNBqaTyqeqo9FnjfQ208BgnfB9orary6tcacqRLFPh+mjeTAH
-        bXZpJQm0s0zVf1XBidyX60UrHCINT5Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-590-cn_nm5YRPDie_8ZFLR1Mtw-1; Thu, 11 Nov 2021 09:32:56 -0500
-X-MC-Unique: cn_nm5YRPDie_8ZFLR1Mtw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C02F11006AA2;
-        Thu, 11 Nov 2021 14:32:54 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EF565C1B4;
-        Thu, 11 Nov 2021 14:32:50 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 0954A220EED; Thu, 11 Nov 2021 09:32:50 -0500 (EST)
-Date:   Thu, 11 Nov 2021 09:32:49 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, virtio-fs@redhat.com,
-        chirantan@chromium.org, stephen.smalley.work@gmail.com,
-        dwalsh@redhat.com, casey@schaufler-ca.com, omosnace@redhat.com
-Subject: Re: [PATCH v3 1/1] fuse: Send security context of inode on file
- creation
-Message-ID: <YY0pkR3tJuxuBQzD@redhat.com>
-References: <20211110225528.48601-1-vgoyal@redhat.com>
- <20211110225528.48601-2-vgoyal@redhat.com>
+        id S233856AbhKKPLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Nov 2021 10:11:45 -0500
+Received: from mail-eopbgr00057.outbound.protection.outlook.com ([40.107.0.57]:41441
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233810AbhKKPLo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Nov 2021 10:11:44 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hGMZD/rpQMSo/uRBoLQr/f9IybLIr6CJNHO1GC4o95YlkVtfcPN3oFQQmZmdaQJ9sXoxE/K/aJPAgcN20666Yh05O27XSEcswtJlXVzDic3Uid9JRfK5QDLcL+obCwcTwqIhxPwAo6Fgvleg8KlSt9RENDoiX/7fNhUMwJBmTiBquYjl8bRIZweB+KkGKJeM+IZh0/6XPQfKa9ee0zwgQQRH+2ZGh4GasU04UAFaoDAmvP0weSEFEJA0JM3IJ+ThPyrJqZNRCfD0lkbH5qJpvJC5b1z4Vrwv5j0TeGmEF8M9vJ+lgj9/S75IFIG7UWzorodJ0oH5Xx4Ni2t5aFQKMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p2p6fw7DkmvDzLk58d6zYAtWqK2IUtndereM+K6G59E=;
+ b=IMLCK47EnyhxlLdB09S2qoUr4toL5BhtYcT37B9GIXKnLYhuEXcvrM2TXjoslyj6QfY7HnqARDlZgfnWUsffeUoF4FgHgwkk0r6/em/edOUWhdUD8Kul8f4t9S6C5jhbzmY7p4dVYfPwP4tid/vZ+5rsA5sS3YhvM+q7nEy1nX3J6rImPvVHWTWqKAOBC3dh+7cn7+q5Ghb+Jm+4r8aDviPp/qfbC4bvztwX1fsqkcDXLzpnmz9F/VM0n2V/y4wYjb4vtprBrB4BUjpgl1lAc3lDDumTZXt7toROvdUTx9IJgsyjS5++oAPkUO074OpJvjywXcCwiFbqh+efG8AnJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nextfour.com; dmarc=pass action=none header.from=nextfour.com;
+ dkim=pass header.d=nextfour.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=NextfourGroupOy.onmicrosoft.com;
+ s=selector2-NextfourGroupOy-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p2p6fw7DkmvDzLk58d6zYAtWqK2IUtndereM+K6G59E=;
+ b=Hl49hjHOiCUaA0HeuyFtbV5FQObgMmLlAwAbOYXFFY8dTZ3xDdq3ZtPPZWWkey8odMM1WClQyBnP9ENID0S3cscA/hYjnZ5/MjpWeZ4SqPJkSjphDmazjCJC9FB/S6qn5HQWN3XbSNfeVHoMUew64kDVdw6zjNHvj+8EvY+0Ovg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nextfour.com;
+Received: from DBAPR03MB6630.eurprd03.prod.outlook.com (2603:10a6:10:194::6)
+ by DB7PR03MB4555.eurprd03.prod.outlook.com (2603:10a6:10:1a::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10; Thu, 11 Nov
+ 2021 15:08:52 +0000
+Received: from DBAPR03MB6630.eurprd03.prod.outlook.com
+ ([fe80::78b9:c389:1d86:b28e]) by DBAPR03MB6630.eurprd03.prod.outlook.com
+ ([fe80::78b9:c389:1d86:b28e%8]) with mapi id 15.20.4669.016; Thu, 11 Nov 2021
+ 15:08:52 +0000
+Subject: Re: [RFC PATCH 5/6] kvm: x86: add KVM_EXIT_MEMORY_ERROR exit
+To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+References: <20211111141352.26311-1-chao.p.peng@linux.intel.com>
+ <20211111141352.26311-6-chao.p.peng@linux.intel.com>
+From:   =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>
+Message-ID: <f7155c5b-fc87-c1a6-9ee7-06f08a25bdb4@nextfour.com>
+Date:   Thu, 11 Nov 2021 17:08:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+In-Reply-To: <20211111141352.26311-6-chao.p.peng@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: HE1PR0301CA0002.eurprd03.prod.outlook.com
+ (2603:10a6:3:76::12) To DBAPR03MB6630.eurprd03.prod.outlook.com
+ (2603:10a6:10:194::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211110225528.48601-2-vgoyal@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Received: from [192.168.1.121] (91.145.109.188) by HE1PR0301CA0002.eurprd03.prod.outlook.com (2603:10a6:3:76::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.19 via Frontend Transport; Thu, 11 Nov 2021 15:08:49 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fa8fdd53-dac8-4ae7-6811-08d9a5252bee
+X-MS-TrafficTypeDiagnostic: DB7PR03MB4555:
+X-Microsoft-Antispam-PRVS: <DB7PR03MB45558F62B287310B1513CAD583949@DB7PR03MB4555.eurprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:227;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5Tw0iCr+aDloCh6+NFvOtaLYNlpBxrWczEa1Hvqkgbf499TIHyBzoSS98mK8B2FMV43Cpn1o1wOyCJQ7N8F0W7FwHefsasxaL0NvuUQ7ZlkeJh9izOxeIPZ6xXd6GjRyY2yfCp9e1bJm0+d7Yl+BrtLTMZPlf3Ojtx4X4VNfeoV9F+CYI0wnBKc9Y/It6xJz7e87PZEXl2dEf4qCN/0Mnu2a5jLf1Kf+YXNQVgTweIq9adZjZn3pRYGeaLO5KN5aKGnJw6WFK6+HuUYhW9gK/ki4VEMf+XylnCF0rI6ADoDeHtGsPbM/k4kJ9oD7AWndA2+x/7yhyaRUFiffIm3hCLpZo3nrkWBYLLSUVSvpkVA7cxeG2JFerG3brr0djEK2JuScDSZMi+1DfIizYIk2ypm2w7k/KMv39T4jXwWyCb02s44//VMNwnPvZ6BbLHxCcmETPF2kf97i0Di2LxvDPLMDXtJyfl78hsNLAUttDbNWrLrQaJC7EdxswpiFaYJdEsvv21FkA1Dj3g3FRu4yxfDDX1ppYqT9S5ofxZefx9Ww6xMt7wF3xhc1M4pImQtLQQQosZZM94VvRs39l2akeKc4B2v6EbxyOdV+M3CFG2NYSrHTYfng0HnKw/Ni2yOFENJqiyfxjDTb+oztkCEHGz+PlEx8Cc5BKzFE9eQq3T85gfjczqe6sEZ81JET1UPu0Gg2QJaq2H/51Fc4Yn3RbrCoRSamityRtO2V/EX1Y0azhE2S8ObISoxC+SfCPD7Y/BJRko+74mGBEkbhckjT7A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBAPR03MB6630.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(366004)(39830400003)(396003)(346002)(86362001)(66556008)(66946007)(316002)(956004)(66476007)(8676002)(8936002)(7416002)(508600001)(52116002)(83380400001)(36756003)(31696002)(54906003)(2616005)(38100700002)(16576012)(26005)(186003)(2906002)(38350700002)(5660300002)(6486002)(4326008)(7406005)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dWRDNFJnL29hSk10N2JNSmxJdXRPWStNRnY5TXBLTlNjbEU5TVJVcVkzUzhr?=
+ =?utf-8?B?T3ZrbE96bk1jRFNGeHJBSWlKVzFsNllvdnhBY25XcnZxNEVESnExK3BIVThu?=
+ =?utf-8?B?Y0dXQ01SWEJ5Y0xVMnBEY0djdzFjMXFFWmg3U0w0bTlZM2JRbVFFcEVBdlZu?=
+ =?utf-8?B?RHpOV3hyRktkY092WGQ1R29QeHFtZHczb2UwVVpJVDRKaHBma2RyNDZjUkhK?=
+ =?utf-8?B?ZG45eExCNjkyY3lEWTRCRmJmUlhNY0dDVmFpbHdqbVBOQlpqcmMrRS80SVJX?=
+ =?utf-8?B?cTJvMGNURU9tdzcxMW9xaGVZdVovTStUbWUwN0RBRTB4enkxMmpsZUpYVXBR?=
+ =?utf-8?B?eDdLNXo2RjNtT1crcmZtN0R5d0E3OEI4b1lhRDFoM3UwdS9NTXZKYWRiVzJt?=
+ =?utf-8?B?Uk55MHpmWkh6T0xTSVpDVEtjSWtjVEpsWm1nQmFaV0NDSkRNRCsxRGdCdVBH?=
+ =?utf-8?B?eVhjeGhtYi91c3JaTVBzN0FKRk81MGRhQlhzd0I4Slk4RHRUNzVsQ2t6MG1s?=
+ =?utf-8?B?VlJXUjYzYklnVTIvTlQ0bVZ6UFRLSUxRME5NS3dPbkpUMWlsTjFvK01QQUVN?=
+ =?utf-8?B?KzZrYnlkcmdlMHlja3dIblRXYlRIR3dHMGVydlZldXE3YjRXMWZPN1U3OEl0?=
+ =?utf-8?B?WDhoQXZndU1IbjJIeWkveitsdm5Qc3pNMStybko0MGhlMzBmOXJJUmlxSWFw?=
+ =?utf-8?B?MFFvd2hEMFFXT2ZrT2swWUpkSTNOS3NFUDRReVB5aFBlZ3RmSjhUZmlTTXN3?=
+ =?utf-8?B?dGpwNE8xMnZGS25FZlJBMWtuSTFXdEg0QUxleGNGZFVVV1FFT1RJM1hDd2lG?=
+ =?utf-8?B?QWNWSHJmblhRVzRRZjBsSkg2VUhTSzNUVlpZc0pmMmZ3aDJiZEVkNDdzbFdR?=
+ =?utf-8?B?a1lJRWJ2YW5mcENrR1VremFXejBtM1BoTFhyWnFKTjFjQ3FrTFQ2WGU1bnEy?=
+ =?utf-8?B?eWdiOC91Mm9acndrNzFNUXNkT1RsdGN0VmoxNkRZTnZBcktzekY5dyt3Rmw2?=
+ =?utf-8?B?b2pxK3JTWERLMDNLTWp0VE41cVByb29XOVc4NEpNYmVPem50RkRPekJmZW9v?=
+ =?utf-8?B?M3VKbkEydWNMbUF6M1VuN1RnVkFnZVp6ck5DWUlSUEFrQko1b1Y1VFpOTE0z?=
+ =?utf-8?B?K25Sblh4VTh5aFZ4SU82dVF1VGdHdGtyTm96aDJ5MXh5Tkw1K2N5dGVRV20w?=
+ =?utf-8?B?WFlxeElLejg5NzNETkhvbC9nYjh0YkR4TnF6VjJDbGVrd2tGZlVycTRJQ1lK?=
+ =?utf-8?B?Q3NYRTVyVmhSdVJhK3NRMHR3NnJ4Vmg0THg5dDlxQjlOQm1zUlhqM2xzV0Ix?=
+ =?utf-8?B?UERETjlsMS9QOVRBVVVaREtIRmxJYkdmajFEeUVBMWpKZzZRVkNWOVgzRG81?=
+ =?utf-8?B?WkJVMWFyVGZPVUV6QzVmdXB2dytCa2RMdE5zdDVyQ00rVUE0UW8wN3VVWEJQ?=
+ =?utf-8?B?R1lEWVg1RFd0U0wzenl1ZUJCMDZqTUJxMDJSUXNialBHVDEzYjMrR3FOSjk1?=
+ =?utf-8?B?eE9TTTFqUWxNVXJjaGgzQTUvNHhpenExbEg3dUdSRVcyUTRCNFNRVXBKL0NM?=
+ =?utf-8?B?b3NyOURjQjJyajhSeENXYVFOcEhCWnBvS0YyU0NjZzQ5RXdRVGRRWVp5d1lW?=
+ =?utf-8?B?SkZDUUwyc0MvWStiaGh6UEZLeFlQUUlWYzFHY1EyajV6Ri9PSWFOM08xckZy?=
+ =?utf-8?B?elJEbVQ5ZWkwcTNEUkE3ZnQ3VGdVUzFwd0IyQ25TZ2w4d1A5bE5ISjEvZFdk?=
+ =?utf-8?B?MUJlSmxEbGlqdkU1ejNIdFFETnFpRzRQZC90S1pJYS9Zd0oxMTlIMUV5eHFQ?=
+ =?utf-8?B?Wm1ZUzZIZ0dXcXJHdHU5ZFhlTVlZQzRXY0RiMmRHc0gwVXFxdTRNQi9iN0ht?=
+ =?utf-8?B?dnlISUxrbU1RcTBxYnJzR29vUFp6WnJ0UHFFZytIRk1rYmZVYURvdXIwZGVr?=
+ =?utf-8?B?cW80NXdBeENkc2lGWjh5cXVBQ1g5QVlsMWtBS2tWOXhzMW1lWSsrbldPdEQw?=
+ =?utf-8?B?eTQzaDNYN0JOc2RFODhmc0cwUC91aHJwVnU2K0hPN092MzRIazJrUTE1dlpP?=
+ =?utf-8?B?NSt3SHMrd2xuTE5tNjZ4eU1nSEZ6K1VZaFFmY0xleVhhRjB3ZDZ4ZzNUMWNG?=
+ =?utf-8?B?cExjdFRxNG5LdUY2cldxRGswcVNpRzBjcXhkaGVxWmNKYlNsRWwwcUJVcXkw?=
+ =?utf-8?B?VXYydFZlMVdBc1JxWnk4ZUVzUUZ5TWNMViswUTFnUklWZkNpV2JOQmxYRmJU?=
+ =?utf-8?B?bEt5Q3l0dVRWWXlvTExGY09SNUx3PT0=?=
+X-OriginatorOrg: nextfour.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa8fdd53-dac8-4ae7-6811-08d9a5252bee
+X-MS-Exchange-CrossTenant-AuthSource: DBAPR03MB6630.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2021 15:08:52.2119
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 972e95c2-9290-4a02-8705-4014700ea294
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cR7DnEkqbCvUwfVTHP9piMh7t5Mvr9tvardi2QlTkKDMWj2d9kTRu7pXTjIDO0vcU4vxfeAlISYbwwvQAdv46oq4PwZAEPMwHPoOrBnAQWM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR03MB4555
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When a new inode is created, send its security context to server along
-with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
-This gives server an opportunity to create new file and set security
-context (possibly atomically). In all the configurations it might not
-be possible to set context atomically.
 
-Like nfs and ceph, use security_dentry_init_security() to dermine security
-context of inode and send it with create, mkdir, mknod, and symlink requests.
 
-Following is the information sent to server.
+On 11.11.2021 16.13, Chao Peng wrote:
+> Currently support to exit to userspace for private/shared memory
+> conversion.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>   arch/x86/kvm/mmu/mmu.c   | 20 ++++++++++++++++++++
+>   include/uapi/linux/kvm.h | 15 +++++++++++++++
+>   2 files changed, 35 insertions(+)
+>
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index af5ecf4ef62a..780868888aa8 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -3950,6 +3950,17 @@ static bool try_async_pf(struct kvm_vcpu *vcpu, bool prefault, gfn_t gfn,
+>   
+>   	slot = __kvm_vcpu_gfn_to_memslot(vcpu, gfn, private);
+>   
+> +	/*
+> +	 * Exit to userspace to map the requested private/shared memory region
+> +	 * if there is no memslot and (a) the access is private or (b) there is
+> +	 * an existing private memslot.  Emulated MMIO must be accessed through
+> +	 * shared GPAs, thus a memslot miss on a private GPA is always handled
+> +	 * as an implicit conversion "request".
+> +	 */
+> +	if (!slot &&
+> +	    (private || __kvm_vcpu_gfn_to_memslot(vcpu, gfn, true)))
+> +		goto out_convert;
+> +
+>   	/* Don't expose aliases for no slot GFNs or private memslots */
+>   	if ((cr2_or_gpa & vcpu_gpa_stolen_mask(vcpu)) &&
+>   	    !kvm_is_visible_memslot(slot)) {
+> @@ -3994,6 +4005,15 @@ static bool try_async_pf(struct kvm_vcpu *vcpu, bool prefault, gfn_t gfn,
+>   	*pfn = __gfn_to_pfn_memslot(slot, gfn, false, NULL,
+>   				    write, writable, hva);
+>   	return false;
+> +
+> +out_convert:
+> +	vcpu->run->exit_reason = KVM_EXIT_MEMORY_ERROR;
+> +	vcpu->run->mem.type = private ? KVM_EXIT_MEM_MAP_PRIVATE
+> +				      : KVM_EXIT_MEM_MAP_SHARE;
+> +	vcpu->run->mem.u.map.gpa = cr2_or_gpa;
+> +	vcpu->run->mem.u.map.size = PAGE_SIZE;
+> +	return true;
+> +
+>   
+I think this does just retry, no exit to user space?
 
-fuse_sectx_header, fuse_secctx, xattr_name, security_context
 
-- struct fuse_secctx_header
-  This contains total number of security contexts being sent and total
-  size of all the security contexts (including size of fuse_secctx_header).
 
-- struct fuse_secctx.
-  This contains size of security context which follows this structure.
-  There is one fuse_secctx instance per security context.
 
-- xattr name string.
-  This string represents name of xattr which should be used while setting
-  security context.
-
-- security context.
-  This is the actual security context whose size is specified in fuse_secctx
-  struct.
-
-Also add the FUSE_SECURITY_CTX flag for the `flags` field of the
-fuse_init_out struct.  When this flag is set the kernel will append the
-security context for a newly created inode to the request (create,
-mkdir, mknod, and symlink).  The server is responsible for ensuring that
-the inode appears atomically (preferrably) with the requested security
-context.
-
-For example, If the server is using SELinux and backed by a "real" linux
-file system that supports extended attributes it can write the security
-context value to /proc/thread-self/attr/fscreate before making the syscall
-to create the inode.
-
-This patch is based on patch from Chirantan Ekbote <chirantan@chromium.org>.
-
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/dir.c             |  103 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/fuse_i.h          |    3 +
- fs/fuse/inode.c           |    4 +
- include/uapi/linux/fuse.h |   31 +++++++++++++
- 4 files changed, 139 insertions(+), 2 deletions(-)
-
-Index: redhat-linux/include/uapi/linux/fuse.h
-===================================================================
---- redhat-linux.orig/include/uapi/linux/fuse.h	2021-11-11 08:53:18.570236125 -0500
-+++ redhat-linux/include/uapi/linux/fuse.h	2021-11-11 08:58:38.970236125 -0500
-@@ -187,6 +187,10 @@
-  *
-  *  7.35
-  *  - add FOPEN_NOFLUSH
-+ *
-+ *  7.36
-+ *  - add FUSE_SECURITY_CTX flag for fuse_init_out
-+ *  - add security context to create, mkdir, symlink, and mknod requests
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -222,7 +226,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 35
-+#define FUSE_KERNEL_MINOR_VERSION 36
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -341,6 +345,8 @@ struct fuse_file_lock {
-  *			write/truncate sgid is killed only if file has group
-  *			execute permission. (Same as Linux VFS behavior).
-  * FUSE_SETXATTR_EXT:	Server supports extended struct fuse_setxattr_in
-+ * FUSE_SECURITY_CTX:	add security context to create, mkdir, symlink, and
-+ * 			mknod
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -372,6 +378,7 @@ struct fuse_file_lock {
- #define FUSE_SUBMOUNTS		(1 << 27)
- #define FUSE_HANDLE_KILLPRIV_V2	(1 << 28)
- #define FUSE_SETXATTR_EXT	(1 << 29)
-+#define FUSE_SECURITY_CTX	(1 << 30)
- 
- /**
-  * CUSE INIT request/reply flags
-@@ -984,4 +991,26 @@ struct fuse_syncfs_in {
- 	uint64_t	padding;
- };
- 
-+/*
-+ * For each security context, send fuse_secctx with size of security context
-+ * fuse_secctx will be followed by security context name and this in turn
-+ * will be followed by actual context label.
-+ * fuse_secctx, name, context
-+ * */
-+struct fuse_secctx {
-+	uint32_t	size;
-+	uint32_t	padding;
-+};
-+
-+/*
-+ * Contains the information about how many fuse_secctx structures are being
-+ * sent and what's the total size of all security contexts (including
-+ * size of fuse_secctx_header).
-+ *
-+ */
-+struct fuse_secctx_header {
-+	uint32_t	size;
-+	uint32_t	nr_secctx;
-+};
-+
- #endif /* _LINUX_FUSE_H */
-Index: redhat-linux/fs/fuse/dir.c
-===================================================================
---- redhat-linux.orig/fs/fuse/dir.c	2021-11-11 08:56:19.812236125 -0500
-+++ redhat-linux/fs/fuse/dir.c	2021-11-11 08:57:10.575236125 -0500
-@@ -17,6 +17,9 @@
- #include <linux/xattr.h>
- #include <linux/iversion.h>
- #include <linux/posix_acl.h>
-+#include <linux/security.h>
-+#include <linux/types.h>
-+#include <linux/kernel.h>
- 
- static void fuse_advise_use_readdirplus(struct inode *dir)
- {
-@@ -456,6 +459,69 @@ static struct dentry *fuse_lookup(struct
- 	return ERR_PTR(err);
- }
- 
-+static int get_security_context(struct dentry *entry, umode_t mode,
-+				void **security_ctx, u32 *security_ctxlen)
-+{
-+	struct fuse_secctx *fsecctx;
-+	struct fuse_secctx_header *fsecctx_header;
-+	void *ctx, *full_ctx;
-+	u32 ctxlen, full_ctxlen;
-+	int err = 0;
-+	const char *name;
-+
-+	err = security_dentry_init_security(entry, mode, &entry->d_name,
-+					    &name, &ctx, &ctxlen);
-+	if (err) {
-+		if (err != -EOPNOTSUPP)
-+			goto out_err;
-+		/* No LSM is supporting this security hook. Ignore error */
-+		err = 0;
-+		ctxlen = 0;
-+	}
-+
-+	if (ctxlen > 0) {
-+		void *ptr;
-+
-+		full_ctxlen = sizeof(*fsecctx_header) + sizeof(*fsecctx) +
-+			      strlen(name) + ctxlen + 1;
-+		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
-+		if (!full_ctx) {
-+			err = -ENOMEM;
-+			kfree(ctx);
-+			goto out_err;
-+		}
-+
-+		ptr = full_ctx;
-+		fsecctx_header = (struct fuse_secctx_header*) ptr;
-+		fsecctx_header->nr_secctx = 1;
-+		fsecctx_header->size = full_ctxlen;
-+		ptr += sizeof(*fsecctx_header);
-+
-+		fsecctx = (struct fuse_secctx*) ptr;
-+		fsecctx->size = ctxlen;
-+		ptr += sizeof(*fsecctx);
-+
-+		strcpy(ptr, name);
-+		ptr += strlen(name) + 1;
-+		memcpy(ptr, ctx, ctxlen);
-+		kfree(ctx);
-+	} else {
-+		full_ctxlen = sizeof(*fsecctx_header);
-+		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
-+		if (!full_ctx) {
-+			err = -ENOMEM;
-+			goto out_err;
-+		}
-+		fsecctx_header = full_ctx;
-+		fsecctx_header->size = full_ctxlen;
-+	}
-+
-+	*security_ctxlen = full_ctxlen;
-+	*security_ctx = full_ctx;
-+out_err:
-+	return err;
-+}
-+
- /*
-  * Atomic create+open operation
-  *
-@@ -476,6 +542,8 @@ static int fuse_create_open(struct inode
- 	struct fuse_entry_out outentry;
- 	struct fuse_inode *fi;
- 	struct fuse_file *ff;
-+	void *security_ctx = NULL;
-+	u32 security_ctxlen;
- 
- 	/* Userspace expects S_IFREG in create mode */
- 	BUG_ON((mode & S_IFMT) != S_IFREG);
-@@ -517,6 +585,18 @@ static int fuse_create_open(struct inode
- 	args.out_args[0].value = &outentry;
- 	args.out_args[1].size = sizeof(outopen);
- 	args.out_args[1].value = &outopen;
-+
-+	if (fm->fc->init_security) {
-+		err = get_security_context(entry, mode, &security_ctx,
-+					   &security_ctxlen);
-+		if (err)
-+			goto out_put_forget_req;
-+
-+		args.in_numargs = 3;
-+		args.in_args[2].size = security_ctxlen;
-+		args.in_args[2].value = security_ctx;
-+	}
-+
- 	err = fuse_simple_request(fm, &args);
- 	if (err)
- 		goto out_free_ff;
-@@ -554,6 +634,7 @@ static int fuse_create_open(struct inode
- 
- out_free_ff:
- 	fuse_file_free(ff);
-+	kfree(security_ctx);
- out_put_forget_req:
- 	kfree(forget);
- out_err:
-@@ -620,6 +701,8 @@ static int create_new_entry(struct fuse_
- 	struct dentry *d;
- 	int err;
- 	struct fuse_forget_link *forget;
-+	void *security_ctx = NULL;
-+	u32 security_ctxlen = 0;
- 
- 	if (fuse_is_bad(dir))
- 		return -EIO;
-@@ -633,7 +716,27 @@ static int create_new_entry(struct fuse_
- 	args->out_numargs = 1;
- 	args->out_args[0].size = sizeof(outarg);
- 	args->out_args[0].value = &outarg;
-+
-+	if (fm->fc->init_security && args->opcode != FUSE_LINK) {
-+		unsigned short idx = args->in_numargs;
-+
-+		if ((size_t)idx >= ARRAY_SIZE(args->in_args)) {
-+			err = -ENOMEM;
-+			goto out_put_forget_req;
-+		}
-+
-+		err = get_security_context(entry, mode, &security_ctx,
-+					   &security_ctxlen);
-+		if (err)
-+			goto out_put_forget_req;
-+
-+		args->in_args[idx].size = security_ctxlen;
-+		args->in_args[idx].value = security_ctx;
-+		args->in_numargs++;
-+	}
-+
- 	err = fuse_simple_request(fm, args);
-+	kfree(security_ctx);
- 	if (err)
- 		goto out_put_forget_req;
- 
-Index: redhat-linux/fs/fuse/fuse_i.h
-===================================================================
---- redhat-linux.orig/fs/fuse/fuse_i.h	2021-11-11 08:56:19.814236125 -0500
-+++ redhat-linux/fs/fuse/fuse_i.h	2021-11-11 08:57:10.576236125 -0500
-@@ -765,6 +765,9 @@ struct fuse_conn {
- 	/* Propagate syncfs() to server */
- 	unsigned int sync_fs:1;
- 
-+	/* Initialize security xattrs when creating a new inode */
-+	unsigned int init_security:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-Index: redhat-linux/fs/fuse/inode.c
-===================================================================
---- redhat-linux.orig/fs/fuse/inode.c	2021-11-11 08:56:19.815236125 -0500
-+++ redhat-linux/fs/fuse/inode.c	2021-11-11 08:57:10.576236125 -0500
-@@ -1176,6 +1176,8 @@ static void process_init_reply(struct fu
- 			}
- 			if (arg->flags & FUSE_SETXATTR_EXT)
- 				fc->setxattr_ext = 1;
-+			if (arg->flags & FUSE_SECURITY_CTX)
-+				fc->init_security = 1;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-@@ -1219,7 +1221,7 @@ void fuse_send_init(struct fuse_mount *f
- 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
- 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
- 		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
--		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT;
-+		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_SECURITY_CTX;
- #ifdef CONFIG_FUSE_DAX
- 	if (fm->fc->dax)
- 		ia->in.flags |= FUSE_MAP_ALIGNMENT;
+> }
+>   
+>   static int direct_page_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u32 error_code,
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 8d20caae9180..470c472a9451 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -233,6 +233,18 @@ struct kvm_xen_exit {
+>   	} u;
+>   };
+>   
+> +struct kvm_memory_exit {
+> +#define KVM_EXIT_MEM_MAP_SHARE          1
+> +#define KVM_EXIT_MEM_MAP_PRIVATE        2
+> +	__u32 type;
+> +	union {
+> +		struct {
+> +			__u64 gpa;
+> +			__u64 size;
+> +		} map;
+> +	} u;
+> +};
+> +
+>   #define KVM_S390_GET_SKEYS_NONE   1
+>   #define KVM_S390_SKEYS_MAX        1048576
+>   
+> @@ -272,6 +284,7 @@ struct kvm_xen_exit {
+>   #define KVM_EXIT_X86_BUS_LOCK     33
+>   #define KVM_EXIT_XEN              34
+>   #define KVM_EXIT_TDVMCALL         35
+> +#define KVM_EXIT_MEMORY_ERROR	  36
+>   
+>   /* For KVM_EXIT_INTERNAL_ERROR */
+>   /* Emulate instruction failed. */
+> @@ -455,6 +468,8 @@ struct kvm_run {
+>   			__u64 subfunc;
+>   			__u64 param[4];
+>   		} tdvmcall;
+> +		/* KVM_EXIT_MEMORY_ERROR */
+> +		struct kvm_memory_exit mem;
+>   		/* Fix the size of the union. */
+>   		char padding[256];
+>   	};
 
