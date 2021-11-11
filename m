@@ -2,175 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E04C744D60B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 12:47:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB2344D67F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 13:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232256AbhKKLu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Nov 2021 06:50:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32089 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232570AbhKKLu0 (ORCPT
+        id S232987AbhKKMVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Nov 2021 07:21:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54572 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233165AbhKKMVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Nov 2021 06:50:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636631257;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3FPfS7kZXFceS9Lgp1RH/lsyVsBLRGLqfS3FoOXYSuE=;
-        b=JUG0zHkr9XKE+vyp2JQ6ZOnO7o1vblP3jalWF4kINFFMYiaplaDm9Z8PxGwLW6pMoGFutK
-        wClQirNVbisXCdAvgSvn5/0BWygrFVn7hTc6h0yMsuV02eUZe+0OWYyMOyWav098hjC4q7
-        vgY/hnArrBuzrOh7X+lXS0JHzwP2DMc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-524-ZSgwm7-oNKid5VRirbY5Bw-1; Thu, 11 Nov 2021 06:47:35 -0500
-X-MC-Unique: ZSgwm7-oNKid5VRirbY5Bw-1
-Received: by mail-wm1-f71.google.com with SMTP id 144-20020a1c0496000000b003305ac0e03aso4653112wme.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 03:47:35 -0800 (PST)
+        Thu, 11 Nov 2021 07:21:31 -0500
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63BCC061767
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 04:18:42 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id u74so11201916oie.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 04:18:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=LjD4GxWdc2zr8/9EZOl5q2FS3VyqZrhxuRWYjSCst2U=;
+        b=FAcAHuisRDxu1XfnQzmstT7yhkhyxPHeK9K6IE90u6wr9ObYiguSKOf2/O/hY8wb4f
+         HCqWbr/LEyCLPOk1c9s1uRbSBdlPj4NKnE6n3lO7wNYR0IUcXiHw+uP5xDD+l+AzMsaG
+         8gtaUO/7Bcf806zv1cYjagdlZT8Nxu541yLTDhtW2oZA8fjUhK+MLE8gDpXMC6V2ko9v
+         cVJ0MV0h65gBt3mxDZhO5V3qFHGHeYOJNdV4ZAsEfaWxtZ3JR9s7GIjWdbB8g5fRuKpB
+         JmHXIsAO3FsrQPnf9zcYXTvrAT9PFZqQ+Y0lgxk196Sg7Fd70ApbT/G6SjG6LxVwPBqX
+         zf+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=3FPfS7kZXFceS9Lgp1RH/lsyVsBLRGLqfS3FoOXYSuE=;
-        b=zgSe4tsw/GkmV5+sFV/C4QFMuD3uxCYDozLEl0Hrk1oGc5BMR2WBfCe7RGsIAoVbDa
-         HhVsOVFWS1g8c372Lt6SVXFd1AkbBCYonJSiSLRsrDPkHSn7J8XlAqsCjUvxZy7sY+p6
-         gSxBfLe2cB7yHAHXIiMZxcE4OAUQpqpOABdwkGPvHG3t3rPC3az5y1LaEaQnmMiLgCte
-         tXzO0Rkvcoc18O2pu7Pyg5oH2m03nRHxjn5AQQmOZ3KcHqTut1is/JNZVCP9NRzwxjlL
-         QFFHCwcNvegHmAARhfd6AKor0sIFpIDX4Fsx5qN7Rv9sQiswHHI4SNjGIYknPKMmGG6a
-         Iayg==
-X-Gm-Message-State: AOAM531HB2CvVAJVMYX4NTBtxoyu+b6iKnIdiBLjngK3uRz4Z1M9LhEq
-        7Zoo6MZIGYxOsrszeegiYvcFoI+dn4qkJAhoHLRzDoO7e0A7emjRDnKMy7cSsdbQCJxcxSGUJBc
-        0MAKCEH6l09Re0+AKzouOJ2RoqA==
-X-Received: by 2002:a5d:45cc:: with SMTP id b12mr8082380wrs.164.1636631254684;
-        Thu, 11 Nov 2021 03:47:34 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwO566pckJvXEcwz+OG93YPsApF+toGZKExvaMFLBrnliRRTv/LgjAiYUOFAAaeaDr4bLvTMw==
-X-Received: by 2002:a5d:45cc:: with SMTP id b12mr8082352wrs.164.1636631254480;
-        Thu, 11 Nov 2021 03:47:34 -0800 (PST)
-Received: from [192.168.3.132] (p4ff23ee8.dip0.t-ipconnect.de. [79.242.62.232])
-        by smtp.gmail.com with ESMTPSA id d8sm2782565wrm.76.2021.11.11.03.47.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Nov 2021 03:47:33 -0800 (PST)
-Message-ID: <70dd5e1c-99c9-c1ca-4e3f-1a894896cf06@redhat.com>
-Date:   Thu, 11 Nov 2021 12:47:33 +0100
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=LjD4GxWdc2zr8/9EZOl5q2FS3VyqZrhxuRWYjSCst2U=;
+        b=cBEUJgFq9a71WokWK9ISz951bsKuRq4vgENTwTIs4K8JU7rY/xgnGD62BS1wLM94h+
+         3QOzCSgq+APZCxlynCPXZ6bvS4INHALJVShuX2NEvhvks/nHaYGNXIrAMm0J7hFbteUX
+         Lj+bmiUsEfN1S/goZxCquvpsmc4Aa7ehZUV7FIq255lk7TSzBGZxjzcXlEcEw5wdndWU
+         R0m+2BFg72ZRdcN9rpipJMJsm/wRTfZhzpV4sHr+9kX8tXfWElcnpSeBaB9BuuIDpUH/
+         ORm5PcH5RTFnv+igELb1qaVzuMT7K7FLO44ckAs/keEUkImrEQZn7ugg+KT3kBNlOiV7
+         B5MA==
+X-Gm-Message-State: AOAM531wB85sJmqq+H7Xh9PzloSOEQ+7s40appCLQtTMKa9JTI3Wrjpr
+        l8VRxPtwY5OCEIB9Ara43P4pPgTavYhSiWv+0vA=
+X-Google-Smtp-Source: ABdhPJxgZP5ZbLG6fgHoEtSuJgJQQqH1uRM/DdmgsytiDRlBhSQwW27n8QF8El0ZuL5tj3Rqwu3A70qeq9mmY45QQLM=
+X-Received: by 2002:aca:be54:: with SMTP id o81mr19026897oif.64.1636633121948;
+ Thu, 11 Nov 2021 04:18:41 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH 4/7] fs/binfmt_elf: use get_task_comm instead of
- open-coded string copy
-Content-Language: en-US
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        oliver.sang@intel.com, lkp@intel.com,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20211108083840.4627-1-laoar.shao@gmail.com>
- <20211108083840.4627-5-laoar.shao@gmail.com>
- <a13c0541-59a3-6561-6d42-b51fef9f7c8b@redhat.com>
- <b495d38d-5cdd-8a33-b9d3-de721095ccab@redhat.com> <YYz/4bSdSXR3Palz@alley>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <YYz/4bSdSXR3Palz@alley>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Sender: wm8888888@gmail.com
+Received: by 2002:a05:6838:9d41:0:0:0:0 with HTTP; Thu, 11 Nov 2021 04:18:41
+ -0800 (PST)
+From:   Mrs Carlsen Monika <carlsen.monika@gmail.com>
+Date:   Thu, 11 Nov 2021 13:18:41 +0100
+X-Google-Sender-Auth: G--wb6VUHTHR7VUZV9ibep0zJBk
+Message-ID: <CAE5if2Oea-H=0RA9xfwGEjFJH9jcpXH3B6hG1FSVKVv-z1TAnA@mail.gmail.com>
+Subject: Hello my dear,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11.11.21 12:34, Petr Mladek wrote:
-> On Thu 2021-11-11 11:06:04, David Hildenbrand wrote:
->> On 11.11.21 11:03, David Hildenbrand wrote:
->>> On 08.11.21 09:38, Yafang Shao wrote:
->>>> It is better to use get_task_comm() instead of the open coded string
->>>> copy as we do in other places.
->>>>
->>>> struct elf_prpsinfo is used to dump the task information in userspace
->>>> coredump or kernel vmcore. Below is the verfication of vmcore,
->>>>
->>>> crash> ps
->>>>    PID    PPID  CPU       TASK        ST  %MEM     VSZ    RSS  COMM
->>>>       0      0   0  ffffffff9d21a940  RU   0.0       0      0  [swapper/0]
->>>>>     0      0   1  ffffa09e40f85e80  RU   0.0       0      0  [swapper/1]
->>>>>     0      0   2  ffffa09e40f81f80  RU   0.0       0      0  [swapper/2]
->>>>>     0      0   3  ffffa09e40f83f00  RU   0.0       0      0  [swapper/3]
->>>>>     0      0   4  ffffa09e40f80000  RU   0.0       0      0  [swapper/4]
->>>>>     0      0   5  ffffa09e40f89f80  RU   0.0       0      0  [swapper/5]
->>>>       0      0   6  ffffa09e40f8bf00  RU   0.0       0      0  [swapper/6]
->>>>>     0      0   7  ffffa09e40f88000  RU   0.0       0      0  [swapper/7]
->>>>>     0      0   8  ffffa09e40f8de80  RU   0.0       0      0  [swapper/8]
->>>>>     0      0   9  ffffa09e40f95e80  RU   0.0       0      0  [swapper/9]
->>>>>     0      0  10  ffffa09e40f91f80  RU   0.0       0      0  [swapper/10]
->>>>>     0      0  11  ffffa09e40f93f00  RU   0.0       0      0  [swapper/11]
->>>>>     0      0  12  ffffa09e40f90000  RU   0.0       0      0  [swapper/12]
->>>>>     0      0  13  ffffa09e40f9bf00  RU   0.0       0      0  [swapper/13]
->>>>>     0      0  14  ffffa09e40f98000  RU   0.0       0      0  [swapper/14]
->>>>>     0      0  15  ffffa09e40f9de80  RU   0.0       0      0  [swapper/15]
->>>>
->>>> It works well as expected.
->>>>
->>>> Suggested-by: Kees Cook <keescook@chromium.org>
->>>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->>>> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->>>> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
->>>> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
->>>> Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
->>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>> Cc: Steven Rostedt <rostedt@goodmis.org>
->>>> Cc: Matthew Wilcox <willy@infradead.org>
->>>> Cc: David Hildenbrand <david@redhat.com>
->>>> Cc: Al Viro <viro@zeniv.linux.org.uk>
->>>> Cc: Kees Cook <keescook@chromium.org>
->>>> Cc: Petr Mladek <pmladek@suse.com>
->>>> ---
->>>>  fs/binfmt_elf.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
->>>> index a813b70f594e..138956fd4a88 100644
->>>> --- a/fs/binfmt_elf.c
->>>> +++ b/fs/binfmt_elf.c
->>>> @@ -1572,7 +1572,7 @@ static int fill_psinfo(struct elf_prpsinfo *psinfo, struct task_struct *p,
->>>>  	SET_UID(psinfo->pr_uid, from_kuid_munged(cred->user_ns, cred->uid));
->>>>  	SET_GID(psinfo->pr_gid, from_kgid_munged(cred->user_ns, cred->gid));
->>>>  	rcu_read_unlock();
->>>> -	strncpy(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
->>>> +	get_task_comm(psinfo->pr_fname, p);
->>>>  
->>>>  	return 0;
->>>>  }
->>>>
->>>
->>> We have a hard-coded "pr_fname[16]" as well, not sure if we want to
->>> adjust that to use TASK_COMM_LEN?
->>
->> But if the intention is to chance TASK_COMM_LEN later, we might want to
->> keep that unchanged.
-> 
-> It seems that len will not change in the end. Another solution is
-> going to be used for the long names, see
-> https://lore.kernel.org/r/20211108084142.4692-1-laoar.shao@gmail.com.
+ I sent this mail praying it will found you in a good condition of
+health, since I myself are in a very critical health condition in
+which I sleep every night without knowing if I may be alive to see the
+next day.I'm Mrs.Monika John Carlsen, wife of late Mr John Carlsen, a
+widow suffering from long time illness.i have some funds i inherited
+from my late husband, the sum of (elevenmilliondollars) my Doctor told
+me recently that I have serious sickness which is cancer problem. What
+disturbs me most is my stroke sickness.Having known my condition,I
+decided to donate this fund to a good person that will utilize it the
+way i am going to instruct herein.I need a very honest and God fearing
+person who can claim this money and use it for Charity works,for
+orphanages,widows and also build schools for less privileges that will
+be named after my late husband if possible and to promote the word of
+God and the effort that the house of God is maintained.
 
-Yes, that's what I recall as well. The I read the patch
-subjects+descriptions in this series "make it adopt to task comm size
-change" and was slightly confused.
+I do not want a situation where this money will be used in an ungodly
+manner.That's why I'm taking this decision. I'm not afraid of death so
+I know where I'm going.I accept this decision because I do not have
+any child who will inherit this money after I die. Please I want your
+sincerely and urgent answer to know if you will be able to execute
+this project, and I will give you more information on how the fund
+will be transferred to your bank account.I'm waiting for your reply.
 
-Maybe we should just remove any notion of "task comm size change" from
-this series and instead just call it a cleanup.
-
-
--- 
-Thanks,
-
-David / dhildenb
-
+Best Regards,
+Mrs. Monika John Carlsen
