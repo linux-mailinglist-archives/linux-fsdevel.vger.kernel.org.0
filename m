@@ -2,107 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E5A544CE51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 01:26:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E413644CF15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 02:39:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232421AbhKKA3a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 19:29:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37710 "EHLO
+        id S232734AbhKKBlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 20:41:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232067AbhKKA33 (ORCPT
+        with ESMTP id S231312AbhKKBlp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 19:29:29 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D05AC061205
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 16:26:37 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id 14so4912094ioe.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 16:26:37 -0800 (PST)
+        Wed, 10 Nov 2021 20:41:45 -0500
+Received: from mail-vk1-xa33.google.com (mail-vk1-xa33.google.com [IPv6:2607:f8b0:4864:20::a33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 690C2C061766
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 17:38:57 -0800 (PST)
+Received: by mail-vk1-xa33.google.com with SMTP id k83so1583593vke.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 17:38:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NyY8bek2WvSGjibqw1QUPQDNaQc/2Apt9v2sF1q2Sv4=;
-        b=jl8dCUt7BkCW8ACewdF5osqNI3RRnyRBlDQP+bydLnpGYyQGl6gpUQLfxoxQoh5i6V
-         MZBsAXng179VNrfxCM39UGTAJvAJ4/yuK9LxptVUGrVjXh3EuNxWp9CPHDp5/qxXAbUK
-         AudU9T1bq4PRSE2Xwcu3+vNRsTRrmfqH8pR7ojn4yKH28l7o9Ysq8/kenSprv+E4r+tD
-         hQUx6HWhvEGAk2z+k4uH1bSjsGBesfOspT7wG/rmpTeAvbpPyEVeGUSveLIw56fx3Ifo
-         saZYwZiQsc5w+jWXEoA7zR3Kg8fblBc4BMesHGNlJs+5LBQVWbMdqOH4gO1jHXW8FIoB
-         t+Vg==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oHV9y7kOp6mxZvvGYbcZCGcroNkENuUom/GnZmfXJSI=;
+        b=S6SqjEhkI3qzFIz1d7SjY2MTbtSP2oNEbjDF1qplmd4E/IE5edW4CQQ9TErpspqnGL
+         4nOqRwZbWS/IwFJ1Y2PqWXAmprcH4Bwb0AXCntiHl1SZtSMuXLUBjflj0gTd7zSnUywl
+         QOPLJBb3TOqULhbWSKB9bYvlW5reMHVAX+gfd9HLMKEguGJwTIXdEaZ4VySqmL5b7D7E
+         J/IDlbUODj22BMcQ8ZEaJzbLOXrgU9qxhUAMNCx+tE0hMyVw6uBZtsI+Qwx8BwayhBWf
+         toAOOjFJNauOiUeVGpHs78vYVn9MGx5ZgQxm5YCeJ/+sQMSaUE3BEP6Er7sfEmQ8tyXh
+         Ewvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NyY8bek2WvSGjibqw1QUPQDNaQc/2Apt9v2sF1q2Sv4=;
-        b=ggSFOCH7xWs2RH/gn4i/O5U/piwh5UD59jyJb/kRBpOavSY0oXAm5LVJgErt36XwRi
-         FAVPfeUiD+7Jx1Nc0TkrRh8TEQfHo/uHI3oLyTt1ShJXLTr3jGAnkAw/H0nEteF2delt
-         6AhkR3RA97fYwUrN2bzR7hOmFkIPf42GdtCTQgl5K4O6SGExDsuPMFMbGBOgDsxvjaF1
-         b2TTCwGgUsoTfxiYlKXhNZBIAsURGk9q1pBZDvuojbNgbnkPOUq7k/k4ciXE1eGbESWl
-         y9/FBL214fNzmS7TOsm7GFDs0JnqSLf+YoImbeHM2GcV3KwDkirkcGN6GTQ7V6r4/eDs
-         Xtsw==
-X-Gm-Message-State: AOAM530PZDiWIcnYI4yNwGyNik7WMXGb72z6N2ieWp7jBgfpjCHAWVyU
-        4/Pi4Ks92nCMHo5GCthiUSw+o+lA13mDkr8d
-X-Google-Smtp-Source: ABdhPJxopWi9rf1i9qBVVWTcqIkAhArpHV5fNVB3eoBbngZouc4tphuIfKJZ6Q5OY/IaBbXy3Iy8rw==
-X-Received: by 2002:a5d:8903:: with SMTP id b3mr2207722ion.44.1636590396221;
-        Wed, 10 Nov 2021 16:26:36 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id s15sm1139630ilu.16.2021.11.10.16.26.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Nov 2021 16:26:35 -0800 (PST)
-Subject: Re: [PATCH] f2fs: provide a way to attach HIPRI for Direct IO
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20211109021336.3796538-1-jaegeuk@kernel.org>
- <YYqkWWZZsMW49/xu@infradead.org>
- <042997ce-8382-40fe-4840-25f40a84c4bf@kernel.dk>
- <YYwYxv4s1ZzBZRtC@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a309f240-e99c-5049-fc67-007a50eb56b3@kernel.dk>
-Date:   Wed, 10 Nov 2021 17:26:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oHV9y7kOp6mxZvvGYbcZCGcroNkENuUom/GnZmfXJSI=;
+        b=K0yyUBQ0z76wWbjajSADvPLOHPhi9OxobtryiYqANvrpdUIVkbXBbGjgXCyxCxB7Xn
+         DXmrQYANcxOqqYdicYLdjjXlcgOAD/3NRIaec3drhJQ6NYMpLgCsdg1rhSgkIf5/08+F
+         c431DrIy9ZgmK07VFy9zVlrLmfvEEaRO5fzpIFqmJZgJlMZ4kVBOuya5yAdX7yz5t+Sh
+         5gTytZmxess67LwityjWlHAys2xum2uLb4THWqbuqJn88gxpS8lwyH5uQ2HyFcRBwy85
+         pE3iUxnCypWmdK2X9w5qMHLJQFj5pGnSU4rrQja88qp3SKlEuYawOYIB1OX+SQCQLcQ3
+         SVGw==
+X-Gm-Message-State: AOAM530mSs7jz6JHxd54Lk4FlzvB++ILiW7+BMW3c5bSXUAY53K3zB6D
+        2ER6Zo/o9TzoxbNOBO4D4qqY3gSjK6RqYJ6yGVxnFxxPm67luw==
+X-Google-Smtp-Source: ABdhPJxd57wFkYjwbmtVWeFeEhVG/oythhx9UAJe/C3le4Il3TknCdOn6KJlWa2iGEMq1eoguIDyMSmAY2D3Jm0f4us=
+X-Received: by 2002:a1f:a857:: with SMTP id r84mr5441080vke.0.1636594736528;
+ Wed, 10 Nov 2021 17:38:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <YYwYxv4s1ZzBZRtC@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAPm50a+j8UL9g3UwpRsye5e+a=M0Hy7Tf1FdfwOrUUBWMyosNg@mail.gmail.com>
+ <CAJfpegtbdz-wzfiKXAaFYoW-Hqw6Wm17hhMgWMqpTCtNXgAnew@mail.gmail.com>
+ <CAPm50aKJ4ckQJw=iYDOCqvm=VTYaEcfgNL52dsj+FX8pcVYNmw@mail.gmail.com>
+ <CAJfpegt9J75jAXWo=r+EOmextpSze0LFDUV1=TamxNoPchBSUQ@mail.gmail.com>
+ <CAPm50aLPuqZoP+eSAGKOo+8DjKFR5akWUhTg=WFp11vLiC=HOA@mail.gmail.com>
+ <CAPm50aLuK8Smy4NzdytUPmGM1vpzokKJdRuwxawUDA4jnJg=Fg@mail.gmail.com> <CAJfpegs1Ue3-EFYuKfqb0jagfftgHdhDts7C7k+8hUg1eWcung@mail.gmail.com>
+In-Reply-To: <CAJfpegs1Ue3-EFYuKfqb0jagfftgHdhDts7C7k+8hUg1eWcung@mail.gmail.com>
+From:   Hao Peng <flyingpenghao@gmail.com>
+Date:   Thu, 11 Nov 2021 09:38:21 +0800
+Message-ID: <CAPm50aJZ2Vr6O5fF+PfyF+Ec-uz+YOHJ3yhDEkiDmZWCfUQvJQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add a dev ioctl for recovery
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/10/21 12:08 PM, Jaegeuk Kim wrote:
-> On 11/09, Jens Axboe wrote:
->> On 11/9/21 9:39 AM, Christoph Hellwig wrote:
->>> On Mon, Nov 08, 2021 at 06:13:36PM -0800, Jaegeuk Kim wrote:
->>>> This patch adds a way to attach HIPRI by expanding the existing sysfs's
->>>> data_io_flag. User can measure IO performance by enabling it.
->>>
->>> NAK.  This flag should only be used when explicitly specified by
->>> the submitter of the I/O.
->>
->> Yes, this cannot be set in the middle for a multitude of reasons. I wonder
->> if we should add a comment to that effect near the definition of it.
-> 
-> Not surprising. I was wondering we can add this for testing purpose only.
-> Btw, is there a reasonable way that filesystem can use IO polling?
-
-Whether an IO is polled or not belongs to the issuer of the IO, as it
-comes with certain obligations like "I will actively poll for the
-completion of this request", and it incurs certain restrictions in the
-block layer in terms of whether or not you can ever sleep for requests.
-
-You could certainly use in in an fs, but only IFF you are the original
-issuer of the request, which then also means that you are the one that
-needs to poll for completion of it.
-
-It's not a drive-by "let's set this flag to speed things up" kind of
-flag, there are a lot more moving parts than that.
-
-I don't think it will be useful for you.
-
--- 
-Jens Axboe
-
+On Wed, Nov 10, 2021 at 6:14 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Wed, 10 Nov 2021 at 04:43, Hao Peng <flyingpenghao@gmail.com> wrote:
+> >
+> > On Wed, Sep 8, 2021 at 5:27 PM Hao Peng <flyingpenghao@gmail.com> wrote=
+:
+> > >
+> > > On Wed, Sep 8, 2021 at 5:08 PM Miklos Szeredi <miklos@szeredi.hu> wro=
+te:
+> > > >
+> > > > On Wed, 8 Sept 2021 at 04:25, Hao Peng <flyingpenghao@gmail.com> wr=
+ote:
+> > > > >
+> > > > > On Tue, Sep 7, 2021 at 5:34 PM Miklos Szeredi <miklos@szeredi.hu>=
+ wrote:
+> > > > > >
+> > > > > > On Mon, 6 Sept 2021 at 14:36, Hao Peng <flyingpenghao@gmail.com=
+> wrote:
+> > > > > > >
+> > > > > > > For a simple read-only file system, as long as the connection
+> > > > > > > is not broken, the recovery of the user-mode read-only file
+> > > > > > > system can be realized by putting the request of the processi=
+ng
+> > > > > > > list back into the pending list.
+> > > > > >
+> > > > > > Thanks for the patch.
+> > > > > >
+> > > > > > Do you have example userspace code for this?
+> > > > > >
+> > > > > Under development. When the fuse user-mode file system process is=
+ abnormal,
+> > > > > the process does not terminate (/dev/fuse will not be closed), en=
+ter
+> > > > > the reset procedure,
+> > > > > and will not open /dev/fuse again during the reinitialization.
+> > > > > Of course, this can only solve part of the abnormal problem.
+> > > >
+> > > > Yes, that's what I'm mainly worried about.   Replaying the few
+> > > > currently pending requests is easy, but does that really help in re=
+al
+> > > > situations?
+> > > >
+> > > > Much more information is needed about what you are trying to achiev=
+e
+> > > > and how, as well as a working userspace implementation to be able t=
+o
+> > > > judge this patch.
+> > > >
+> > > I will provide a simple example in a few days. The effect achieved is=
+ that the
+> > > user process will not perceive the abnormal restart of the read-only =
+file system
+> > > process based on fuse.
+> > >
+> > > > Thanks,
+> > > > Miklos
+> > Hi=EF=BC=8CI have implemented a small test program to illustrate this n=
+ew feature.
+> > After downloading and compiling from
+> > https://github.com/flying-122/libfuse/tree/flying
+> > #gcc -o testfile testfile.c -D_GNU_SOURCE
+> > #./example/passthrough_ll -o debug -s  /mnt3
+> > #./testfile (on another console)
+> > #ps aux | grep pass
+> > #root       34889  0.0  0.0   8848   864 pts/2    S+   13:10   0:00
+> > ./example/passthrough_ll -o debug -s /mnt3
+> > #root       34896  0.0  0.0   9880   128 pts/2    S+   13:10   0:00
+> > ./example/passthrough_ll -o debug -s /mnt3
+> > #root       34913  0.0  0.0  12112  1060 pts/1    S+   13:10   0:00
+> > grep --color=3Dauto pass
+> > // kill child process
+> > #kill 34896
+> > You will see that ./testfile continues to execute without noticing the
+> > abnormal restart of the fuse file system.
+>
+> This is a very good first example demonstrating the limits of the
+> recovery.   The only state saved is the actual device file descriptor
+> and the result of the INIT negotiation.
+>
+> It works if there are a fixed number of files, e.g. a read only
+> filesystem, where the files can be enumerated (i.e. a file or
+> directory can be found  based on a single 64bit index)
+>
+> Is this your use case?
+>
+The version used is more complicated to maintain file/directory
+information, and is used
+for the internal read-only file system. As long as the number of files
+remains the same, it
+is also possible to write files. I plan to use this recovery method for lxc=
+fs.
+Thanks.
+> Are you ever planning to extend this to read-write filesystems?
+>
+> Thanks,
+> Miklos
