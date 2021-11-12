@@ -2,60 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F0B544ED1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 20:15:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E44FD44ED24
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 20:16:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235554AbhKLTRz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 14:17:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39120 "EHLO mail.kernel.org"
+        id S235634AbhKLTSy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Nov 2021 14:18:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235265AbhKLTRy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 14:17:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 47A9D60F0F;
-        Fri, 12 Nov 2021 19:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636744503;
-        bh=he4nr5Zv1gj4KhLHrTt/kC3kiKokVah8k8LJvlxoIRI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kU7HDMriA9hhIsiB0T9A9b+mcLYld4tLHPl2C9DwU/nD5vae/RmDMSCpv66q/G12y
-         ul4lU4/LmdD7OddSFchAgI52Gdy+L5UEVLSyPkRsRJTfc10OfKuo1f0epLGQXN0R+G
-         1cNa3K/AYNOUf6lxyLOjGjffTKvVcg9jTuujT143VcQJA5lGVagdXrTD4pcol0UJRo
-         ABdgqB72Q3O0pGUykGDPmqps8j1ZTYn3yxmOlvY92/cnPrhfBZJcrpDF0ULz3tzxCH
-         mbxf7Mhw6JH7anfDf9YyYoIZD9LWVO0W0oRixyXXg2LDm7VNLtFk4wpLdl65HazcxA
-         0YmnomMJh2zow==
-Date:   Fri, 12 Nov 2021 11:15:01 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     tytso@mit.edu, corbet@lwn.net, viro@zeniv.linux.org.uk,
-        hughd@google.com, akpm@linux-foundation.org,
-        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 2/5] fsverity: Revalidate built-in signatures at
- file open
-Message-ID: <YY69NaucW+0t474Q@gmail.com>
-References: <20211112124411.1948809-1-roberto.sassu@huawei.com>
- <20211112124411.1948809-3-roberto.sassu@huawei.com>
+        id S230137AbhKLTSw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Nov 2021 14:18:52 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7138C60F0F;
+        Fri, 12 Nov 2021 19:16:00 +0000 (UTC)
+Date:   Fri, 12 Nov 2021 19:15:57 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [RFC] gfs2: Prevent endless loops in gfs2_file_buffered_write
+Message-ID: <YY69bWxs22LNlLs6@arm.com>
+References: <20211110174457.533866-1-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211112124411.1948809-3-roberto.sassu@huawei.com>
+In-Reply-To: <20211110174457.533866-1-agruenba@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 12, 2021 at 01:44:08PM +0100, Roberto Sassu wrote:
-> Fsverity signatures are validated only upon request by the user by setting
-> the requirement through procfs or sysctl.
+Hi Andreas,
+
+On Wed, Nov 10, 2021 at 06:44:57PM +0100, Andreas Gruenbacher wrote:
+> in commit 00bfe02f4796 ("gfs2: Fix mmap + page fault deadlocks for
+> buffered I/O"), I've managed to introduce a hang in gfs2 due to the
+> following check in iomap_write_iter:
 > 
-> However, signatures are validated only when the fsverity-related
-> initialization is performed on the file. If the initialization happened
-> while the signature requirement was disabled, the signature is not
-> validated again.
+>   if (unlikely(fault_in_iov_iter_readable(i, bytes))) {
+> 
+> which fails if any of the iov iterator cannot be faulted in for reading.
+> At the filesystem level, we're retrying the rest of the write if any of
+> the iov iterator can be faulted in, so we can end up in a loop without
+> ever making progress.  The fix in iomap_write_iter would be as follows:
+> 
+>   if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
 
-I'm not sure this really matters.  If someone has started using a verity file
-before the require_signatures sysctl was set, then there is already a race
-condition; this patch doesn't fix that.  Don't you need to set the
-require_signatures sysctl early enough anyway?
+My preference would be to check against the 'bytes' returned as above.
+This allows the write to progress as much as possible rather than
+stopping if any of the iovs cannot be faulted in. It would be more
+consistent for MTE as well if we keep the fault-in check at the
+beginning of the user buffers only. I mentioned it here:
 
-- Eric
+https://lore.kernel.org/all/YYQk9L0D57QHc0gE@arm.com/
+
+> The same bug exists in generic_perform_write, but I'm not aware of any
+> callers of generic_perform_write that have page faults turned off.
+
+Similar reason as above, though one may argue it's a slight ABI change.
+
+> A related post-5.16 option would be to turn the pre-faulting in
+> iomap_write_iter and generic_perform_write into post-faulting, but at
+> the very least, that still needs a bit of performance analysis:
+> 
+>   https://lore.kernel.org/linux-fsdevel/20211026094430.3669156-1-agruenba@redhat.com/
+>   https://lore.kernel.org/linux-fsdevel/20211027212138.3722977-1-agruenba@redhat.com/
+
+I don't think that's urgent. At least generic_perform_write() will make
+progress with a fault-in that checks the beginning of the buffer, even
+with sub-page faults. For fault_in_iov_writable() I'll add an arch
+callback, probe_user_writable_safe() or something (hopefully next week).
+
+There is the direct I/O case but IIUC the user buffer is accessed via
+the kernel mapping (kmap) and that cannot fault on access. I may have
+missed something though.
+
+For the search_ioctl() function in btrfs I thought of introducing
+fault_in_writable_exact() that checks each sub-page granule in the arch
+callback. This shouldn't be used on performance critical paths.
+
+-- 
+Catalin
