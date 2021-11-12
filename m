@@ -2,151 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA0244E2F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 09:28:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC3D44E356
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 09:36:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233619AbhKLIbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 03:31:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:53060 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230464AbhKLIbF (ORCPT
+        id S234569AbhKLIjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Nov 2021 03:39:37 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:36710 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233978AbhKLIjg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 03:31:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636705692;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Fri, 12 Nov 2021 03:39:36 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 9FDCA1FDC2;
+        Fri, 12 Nov 2021 08:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1636706205; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=MMC8qd8+7Ca3YzZrzMvAHcyUG/VYuDrlF+fpPBuOn/k=;
-        b=BSKYBrihtfLciAohXUI22PJW/0oD+URIL075irffkSf0uSpj2ol5pzvmIb936BQvB5BB2c
-        fkiCVIdGQc2bmfjA9U0BcZ6WCcRh86cskdDirJfMtzIPe3vlASQ3pn6Z8t6Y4kDWgCfBVI
-        Q1TYf2/a9pZF2GrdB3cTz3alOuJr3Fs=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-383-JKgx06c4OwSo_xKUBq2W5Q-1; Fri, 12 Nov 2021 03:28:11 -0500
-X-MC-Unique: JKgx06c4OwSo_xKUBq2W5Q-1
-Received: by mail-wm1-f70.google.com with SMTP id o22-20020a1c7516000000b0030d6f9c7f5fso3948127wmc.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Nov 2021 00:28:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=MMC8qd8+7Ca3YzZrzMvAHcyUG/VYuDrlF+fpPBuOn/k=;
-        b=QC7snsDs0TOhJbjhhKv0OpMerjhEps6/i0265dt/WPAhu0iL/I/t/h7VuTmNy61pE8
-         D+VShw7agFuZhYIq7vAPjZhKDJzk/rZdP+iP1uwgyYSfWJIe1Enom6J9kng4U1MiUZqT
-         lz0Ux2NZKuX98XPk5LVgK7492UyB9QIdCqTMFHeKzepnsTRjyu9VPv3oMzPhllbYOqy4
-         ZNNB2MZgqVAiRADGwlmmVpK04Pl0ONy32WvrA0xVMiEzthkE18PjkX4Cxd4l6vg2VcGz
-         qff1ZQ76aamHTEo2evCHlKO1JeSIihQe5TBUSDPmFMWTo8sr4zYNU/LTusz3mpiKTle+
-         euAw==
-X-Gm-Message-State: AOAM532RBxwq4meRfVUaE/NwD+e3hVt5Xq68KcAAJ4DRN6bBVTB36oSX
-        iC06g7GLsY0m+EfPNbDlUCuy4tL5JuQOeojuZKDksgQk3PoylXbiaplfeSLRc2Wi6BBlcMjM5Qc
-        7WIYp1J68tuKv0yTZfem1U1pTBQ==
-X-Received: by 2002:a05:600c:4fca:: with SMTP id o10mr15121525wmq.175.1636705690193;
-        Fri, 12 Nov 2021 00:28:10 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwH8UrEY9r4Zje19aA2qqBcbz8L5l097Cntjyi4QFVNg8xl1fM/LhGyVqNJE+EScdUvyPHnHw==
-X-Received: by 2002:a05:600c:4fca:: with SMTP id o10mr15121486wmq.175.1636705689955;
-        Fri, 12 Nov 2021 00:28:09 -0800 (PST)
-Received: from [192.168.3.132] (p4ff23f5f.dip0.t-ipconnect.de. [79.242.63.95])
-        by smtp.gmail.com with ESMTPSA id g5sm8146127wri.45.2021.11.12.00.28.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Nov 2021 00:28:09 -0800 (PST)
-Message-ID: <d8cd422d-54aa-8695-6563-a98b8a61c280@redhat.com>
-Date:   Fri, 12 Nov 2021 09:28:08 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Content-Language: en-US
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
+        bh=utWjZFWtK1d8B6B0EoCAYEXXutvfJ9zlQXA/BhmjEOU=;
+        b=roV1gIkupTl65lmeA+0dTiqvL2CHFYBKx+8Bfm+Azp+LNfosPF7BvXq/Nf2Jcsf/n9LhB5
+        0tjT57G1qy/6xYGK1EpK75lJOJwpa4mUq/n1KQ/PL2Bq3QQkySYtDfY08Z7sJtK9ELqw9d
+        0J5uBpWSd7h3uFOH/v010RJpfomWbIM=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 19965A3B81;
+        Fri, 12 Nov 2021 08:36:45 +0000 (UTC)
+Date:   Fri, 12 Nov 2021 09:36:43 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Greg Thelen <gthelen@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Philipp Rudo <prudo@redhat.com>, kexec@lists.infradead.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-References: <20211111192243.22002-1-david@redhat.com>
- <20211112033028.GP27625@MiWiFi-R3L-srv>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v1] proc/vmcore: don't fake reading zeroes on surprise
- vmcore_cb unregistration
-In-Reply-To: <20211112033028.GP27625@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>, riel@surriel.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] mm/oom: handle remote ooms
+Message-ID: <YY4nm9Kvkt2FJPph@dhcp22.suse.cz>
+References: <20211111234203.1824138-1-almasrymina@google.com>
+ <20211111234203.1824138-3-almasrymina@google.com>
+ <YY4dHPu/bcVdoJ4R@dhcp22.suse.cz>
+ <CAHS8izNMTcctY7NLL9+qQN8+WVztJod2TfBHp85NqOCvHsjFwQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHS8izNMTcctY7NLL9+qQN8+WVztJod2TfBHp85NqOCvHsjFwQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12.11.21 04:30, Baoquan He wrote:
-> On 11/11/21 at 08:22pm, David Hildenbrand wrote:
->> In commit cc5f2704c934 ("proc/vmcore: convert oldmem_pfn_is_ram callback
->> to more generic vmcore callbacks"), we added detection of surprise
->> vmcore_cb unregistration after the vmcore was already opened. Once
->> detected, we warn the user and simulate reading zeroes from that point on
->> when accessing the vmcore.
->>
->> The basic reason was that unexpected unregistration, for example, by
->> manually unbinding a driver from a device after opening the
->> vmcore, is not supported and could result in reading oldmem the
->> vmcore_cb would have actually prohibited while registered. However,
->> something like that can similarly be trigger by a user that's really
->> looking for trouble simply by unbinding the relevant driver before opening
->> the vmcore -- or by disallowing loading the driver in the first place.
->> So it's actually of limited help.
+On Fri 12-11-21 00:12:52, Mina Almasry wrote:
+> On Thu, Nov 11, 2021 at 11:52 PM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Thu 11-11-21 15:42:01, Mina Almasry wrote:
+> > > On remote ooms (OOMs due to remote charging), the oom-killer will attempt
+> > > to find a task to kill in the memcg under oom, if the oom-killer
+> > > is unable to find one, the oom-killer should simply return ENOMEM to the
+> > > allocating process.
+> >
+> > This really begs for some justification.
+> >
 > 
-> Yes, this is the change what I would like to see in the original patch
-> "proc/vmcore: convert oldmem_pfn_is_ram callback to more generic vmcore callbacks".
-> I am happy with this patch appended to commit cc5f2704c934.
-
-Good, thanks!
-
+> I'm thinking (and I can add to the commit message in v4) that we have
+> 2 reasonable options when the oom-killer gets invoked and finds
+> nothing to kill: (1) return ENOMEM, (2) kill the allocating task. I'm
+> thinking returning ENOMEM allows the application to gracefully handle
+> the failure to remote charge and continue operation.
 > 
->>
->> Currently, unregistration can only be triggered via virtio-mem when
->> manually unbinding the driver from the device inside the VM; there is no
->> way to trigger it from the hypervisor, as hypervisors don't allow for
->> unplugging virtio-mem devices -- ripping out system RAM from a VM without
->> coordination with the guest is usually not a good idea.
->>
->> The important part is that unbinding the driver and unregistering the
->> vmcore_cb while concurrently reading the vmcore won't crash the system,
->> and that is handled by the rwsem.
->>
->> To make the mechanism more future proof, let's remove the "read zero"
->> part, but leave the warning in place. For example, we could have a future
->> driver (like virtio-balloon) that will contact the hypervisor to figure out
->> if we already populated a page for a given PFN. Hotunplugging such a device
->> and consequently unregistering the vmcore_cb could be triggered from the
->> hypervisor without harming the system even while kdump is running. In that
+> For example, in the network service use case that I mentioned in the
+> RFC proposal, it's beneficial for the network service to get an ENOMEM
+> and continue to service network requests for other clients running on
+> the machine, rather than get oom-killed when hitting the remote memcg
+> limit. But, this is not a hard requirement, the network service could
+> fork a process that does the remote charging to guard against the
+> remote charge bringing down the entire process.
+
+This all belongs to the changelog so that we can discuss all potential
+implication and do not rely on any implicit assumptions. E.g. why does
+it even make sense to kill a task in the origin cgroup?
+
+> > > If we're in pagefault path and we're unable to return ENOMEM to the
+> > > allocating process, we instead kill the allocating process.
+> >
+> > Why do you handle those differently?
+> >
 > 
-> I am a little confused, could you tell more about "contact the hypervisor to
-> figure out if we already populated a page for a given PFN."? I think
-> vmcore dumping relies on the eflcorehdr which is created beforehand, and
-> relies on vmcore_cb registered in advance too, virtio-balloon could take
-> another way to interact with kdump to make sure the dumpable ram?
+> I'm thinking (possibly incorrectly) it's beneficial to return ENOMEM
+> to the allocating task rather than killing it. I would love to return
+> ENOMEM in both these cases, but I can't return ENOMEM in the fault
+> path. The behavior I see is that the oom-killer gets invoked over and
+> over again looking to find something to kill and continually failing
+> to find something to kill and the pagefault never gets handled.
 
-This is essentially what the XEN callback does: check if a PFN is
-actually populated in the hypervisor; if not, avoid reading it so we
-won't be faulting+populating a fresh/zero page in the hypervisor just to
-be able to dump it in the guest. But in the XEN world we usually simply
-rely on straight hypercalls, not glued to actual devices that can get
-hot(un)plugged.
+Just one remark. Until just very recently VM_FAULT_OOM (a result of
+ENOMEM) would trigger the global OOM killer. This has changed by
+60e2793d440a ("mm, oom: do not trigger out_of_memory from the #PF").
+But you are right that you might just end up looping in the page fault
+for ever. Is that bad though? The situation is fundamentaly
+unresolveable at this stage. On the other hand the task is still
+killable so the userspace can decide to terminate and break out of the
+loop.
 
-Once you have some device that performs such checks instead that could
-get hotunplugged and unregister the vmcore_cb (and virtio-balloon is
-just one example), you would be able to trigger this.
-
-As we're dealing with a moving target (hypervisor will populate pages as
-necessary once the old kernel accesses them), there isn't really a way
-to adjust this in the old kernel -- where we build the eflcorehdr. We
-could try to adjust the elfcorehdr in the new kernel, but that certainly
-opens up another can of worms.
-
-But again, this is just an example to back the "future proof" claim
-because Dave was explicitly concerned about this situation.
+What is the best approach I am not quite sure. As I've said earlier this
+is very likely going to open a can of worms and so it should be
+evaluated very carefuly. For that, please make sure to describe your
+thinking in details.
+ 
+> I could, however, kill the allocating task whether it's in the
+> pagefault path or not; it's not a hard requirement that I return
+> ENOMEM. If this is what you'd like to see in v4, please let me know,
+> but I do see some value in allowing some callers to gracefully handle
+> the ENOMEM.
+> 
+> > > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> > >
+> > > Cc: Michal Hocko <mhocko@suse.com>
+> > > Cc: Theodore Ts'o <tytso@mit.edu>
+> > > Cc: Greg Thelen <gthelen@google.com>
+> > > Cc: Shakeel Butt <shakeelb@google.com>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Hugh Dickins <hughd@google.com>
+> > > CC: Roman Gushchin <guro@fb.com>
+> > > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > > Cc: Hugh Dickins <hughd@google.com>
+> > > Cc: Tejun Heo <tj@kernel.org>
+> > > Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> > > Cc: Muchun Song <songmuchun@bytedance.com>
+> > > Cc: riel@surriel.com
+> > > Cc: linux-mm@kvack.org
+> > > Cc: linux-fsdevel@vger.kernel.org
+> > > Cc: cgroups@vger.kernel.org
+> > --
+> > Michal Hocko
+> > SUSE Labs
 
 -- 
-Thanks,
-
-David / dhildenb
-
+Michal Hocko
+SUSE Labs
