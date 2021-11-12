@@ -2,192 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7BB44E805
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 14:58:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD3E44E9E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 16:19:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235010AbhKLOBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 09:01:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234988AbhKLOBq (ORCPT
+        id S232887AbhKLPW3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Nov 2021 10:22:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42649 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232157AbhKLPW2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 09:01:46 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B113C061766
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Nov 2021 05:58:55 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id r12so38088360edt.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Nov 2021 05:58:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vanguardiasur-com-ar.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OzaSt1dTEwXnQfFV568DPDqxxZKhCtXnEKChhxAww5Y=;
-        b=vY2SX+G2C7yg9GCvZZeJgGhZuqp4sXWtXTNEdAJRAGtZC/yXBVZJthziyw+xsnJjhS
-         4WsIfaoxJDNVu83UM+OkWa5MuwRVJ+msSBLo64CGx8hJ3lpRhawo9g+Ve2NVy1c2rhrB
-         kDQMxcdpoLg6Wa46HNSfIIJxa3ZaTs9Y/8w7nSXp38H9msXovRQGZYa+973PgYddBzf8
-         4NsoNqOLfnMAZ0/at2r4BoCA3HLNGdMCxLkbAQR9xT62GNeV31yRJReKqEhdEikClY9I
-         5GwXFHf1gus6AjMSjM+USzzbQCor/2uBH77MUkdeMCSw6CNEMe23mXje2AoVeG/6jrPO
-         zn5A==
+        Fri, 12 Nov 2021 10:22:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636730376;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VFN3YfKrrN4rviirmH1lG0NY9uufAM6YHK0vPxccEaw=;
+        b=IEmTYYOVu8mnNf8dncwvv63iPXnTzw+SDFVpHEr5SCq5O1ZxbPCmPqq7Wdw97KhFccVCcs
+        PpvF0X6sLfvePo+htyPszZOVP9OPJFw+TC9+/jUt+DHqLVkcJdZ2V8c3AfrjHJX4R0Iaf/
+        vTUFGcudgKajU4OGV7+iJCc739D3CyQ=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-348-b4pib3pMOtC1ar_4gP5Vtg-1; Fri, 12 Nov 2021 10:19:35 -0500
+X-MC-Unique: b4pib3pMOtC1ar_4gP5Vtg-1
+Received: by mail-qv1-f70.google.com with SMTP id kj12-20020a056214528c00b003bde2e1df71so8611030qvb.18
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Nov 2021 07:19:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OzaSt1dTEwXnQfFV568DPDqxxZKhCtXnEKChhxAww5Y=;
-        b=r9rGBa8iEMfY3Xip7vT+tohAIJwZfwepo64qIG0/eufeHQyxpTOHWH1/IDo3huFyUE
-         95SCsLKSeQR76JWsLFSTV6PuPLqLQ2/seP7f+56SihzXeevLJobzLdRQmQqVd2OLIfVV
-         PbSUB74paWEq8cU074y1WZJOdGd5bbI8K5JXbVYpGQUUsELPqU3oTGUhkRxrXGFHbWxG
-         l6rAJYNrPvWRMUdw3pSyBNq97kvq55oq06YwxlViPRiZlahdaWZ1y2jzyzm5uJFUGvpr
-         vow99SyVO8cJlQf9GKVxBYXBs379C4Sg87IDDUm4xcts3rviqsV4u5xFBf//k38sz06p
-         jrWA==
-X-Gm-Message-State: AOAM532DU2PaWmRs2H5gKUtAHs4G1h4Wjb0hTXIZhIU2QHmULhlaYRVz
-        blP/828yWvtL8ExYdHxxT6eKDj/wvxDwKbLCeflHwA==
-X-Google-Smtp-Source: ABdhPJxuEbX4C17B+G90OqW0eXG0c/AcsR9xxm2XLE3sU96n9kkkpyD5qlmx1r7KC6ejShM/YyWGdNH2dmWmD8Z6FuY=
-X-Received: by 2002:a17:906:12db:: with SMTP id l27mr20466924ejb.244.1636725533848;
- Fri, 12 Nov 2021 05:58:53 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VFN3YfKrrN4rviirmH1lG0NY9uufAM6YHK0vPxccEaw=;
+        b=CrA898Mga0PVhmSCgX1OMe77Yo5Sz1NQFMthWS+hvol6Od7BIC3gQRAwYtcaclan/e
+         ZeaEx5QSY6C4IAsp6aBIuKQRpGnjftcGvOW3pH5lynMTQzqZ4G5N65W02H7PLHkp2WPe
+         j4PjmYrb4y2D3RxNgpf3eopkMk47YFt2MJU+Sl9QWExtllkYkGx8ujgEcthfjvOpIeNf
+         PQtqPDfrwBoK3SpqUNcTJTGVsy7gaB+vEU5Id2UJyo7Dsc7TOP1TpnGtMDcqFWWvlkdg
+         jd7fXBRks827MzXJCIe+eBf8I8DJN1pPbRPFlR6ISrmYsoNCPpu7e3yLvKQvW3wR8G8h
+         IBmg==
+X-Gm-Message-State: AOAM532KVU6rpN5Th9V8TrkUCTCJBMIsYXxcDl3kMCA+dn9Rd3NfOM41
+        YXTmNrKqlY+J7PFLYkxGk/omW4yZHGOwA7YfczW/RLVNx3OK1IBH0pyX2SMGV5fW0UzzlgdYDW1
+        JXEbjROhdhH54EhmVJCTUV5Sa
+X-Received: by 2002:a37:2f02:: with SMTP id v2mr13127487qkh.232.1636730375044;
+        Fri, 12 Nov 2021 07:19:35 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxk6sSDPzw7jrkKAxFn/K0PAx9HKUToVCIsJBG7fV34DkkAlHg0N9AMoil4JWoJAqjFdQQ15g==
+X-Received: by 2002:a37:2f02:: with SMTP id v2mr13127438qkh.232.1636730374828;
+        Fri, 12 Nov 2021 07:19:34 -0800 (PST)
+Received: from localhost (pool-68-160-176-52.bstnma.fios.verizon.net. [68.160.176.52])
+        by smtp.gmail.com with ESMTPSA id az14sm2791255qkb.125.2021.11.12.07.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Nov 2021 07:19:34 -0800 (PST)
+Date:   Fri, 12 Nov 2021 10:19:33 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "song@kernel.org" <song@kernel.org>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "kbusch@kernel.org" <kbusch@kernel.org>, "hch@lst.de" <hch@lst.de>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "javier@javigon.com" <javier@javigon.com>,
+        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "dongli.zhang@oracle.com" <dongli.zhang@oracle.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "osandov@fb.com" <osandov@fb.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
+        "jack@suse.com" <jack@suse.com>, "tytso@mit.edu" <tytso@mit.edu>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "idryomov@gmail.com" <idryomov@gmail.com>,
+        "danil.kipnis@cloud.ionos.com" <danil.kipnis@cloud.ionos.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "jinpu.wang@cloud.ionos.com" <jinpu.wang@cloud.ionos.com>
+Subject: Re: [RFC PATCH 8/8] md: add support for REQ_OP_VERIFY
+Message-ID: <YY6GBaSypKNPZnBj@redhat.com>
+References: <20211104064634.4481-1-chaitanyak@nvidia.com>
+ <20211104064634.4481-9-chaitanyak@nvidia.com>
+ <d770a769-7f2c-bb10-a3bd-0aca371a724e@nvidia.com>
 MIME-Version: 1.0
-References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
- <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com>
- <1556211076.48404.1626763215205.JavaMail.zimbra@nod.at> <CAOuPNLhti3tocN-_D7Q0QaAx5acHpb3AQyWaUKgQPNW3XWu58g@mail.gmail.com>
- <2132615832.4458.1626900868118.JavaMail.zimbra@nod.at> <CAOuPNLhCMT7QTF+QadJyGDFNshH9VjEAzWStRpe8itw7HXve=A@mail.gmail.com>
- <CAFLxGvywv29u6DJZrJxnJJmUDSQ4xpbT0u5LNKY1uGKyQom+WA@mail.gmail.com>
- <CAAEAJfCY+X-G=7Oe9NqrJ4yQZ29DBA78jOFAX44GD0g6=s7qhg@mail.gmail.com>
- <1668790824.35266.1627559144878.JavaMail.zimbra@nod.at> <CAAEAJfDDtGcUquyP7Jn0Urttt4kSfAQbJ_qPQ90ROtWLavW9EA@mail.gmail.com>
- <CAOuPNLj+DSigRY_AgHQnGKCK-Vm4ykQBR8UfnTi2UObORTcBFg@mail.gmail.com>
- <CAOuPNLgfJGzp-RJBjydFDL1ZAvOd7=-MgXhnsb2eb_xFSLC66w@mail.gmail.com>
- <CAAEAJfBuut7VSbrrz6CxOC+Cke36eGGv8VUvfdbfLwvSBxOAAA@mail.gmail.com>
- <CAOuPNLjJMCyxK8mvnBo2aZQXSNqY47YeXCxWmtPECq-=csz6bQ@mail.gmail.com>
- <CAOuPNLghc1ktLrOEf8PN+snMB3QZG-LwzPbd3kGzrhGz8mEAVg@mail.gmail.com>
- <CAAEAJfDS3FK19xMs-7LcEjDe7Fx1XW6HZJGyb6Ff=zs2ZKHpJA@mail.gmail.com> <CAOuPNLiB5UogzjHqcwEf+HbLqB9QorQ1bU4qVdMSaSsE4taszw@mail.gmail.com>
-In-Reply-To: <CAOuPNLiB5UogzjHqcwEf+HbLqB9QorQ1bU4qVdMSaSsE4taszw@mail.gmail.com>
-From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date:   Fri, 12 Nov 2021 10:58:42 -0300
-Message-ID: <CAAEAJfBsgfkqL0DXaBLRyR0VzLsof6z970J4=DawspPrbSpQ0w@mail.gmail.com>
-Subject: Re: MTD: How to get actual image size from MTD partition
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        Greg KH <greg@kroah.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Sean Nyekjaer <sean@geanix.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d770a769-7f2c-bb10-a3bd-0aca371a724e@nvidia.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 8 Nov 2021 at 10:51, Pintu Agarwal <pintu.ping@gmail.com> wrote:
->
-> Hi,
->
->
-> On Fri, 29 Oct 2021 at 22:18, Ezequiel Garcia
-> <ezequiel@vanguardiasur.com.ar> wrote:
-> >
-> > On Fri, 29 Oct 2021 at 13:13, Pintu Agarwal <pintu.ping@gmail.com> wrote:
-> > >
-> > > Hi All,
-> > >
-> > > On Mon, 30 Aug 2021 at 21:28, Pintu Agarwal <pintu.ping@gmail.com> wrote:
-> > > >
-> > > > On Sun, 22 Aug 2021 at 19:51, Ezequiel Garcia
-> > > > <ezequiel@vanguardiasur.com.ar> wrote:
-> > > >
-> > > > > In other words, IMO it's best to expose the NAND through UBI
-> > > > > for both read-only and read-write access, using a single UBI device,
-> > > > > and then creating UBI volumes as needed. This will allow UBI
-> > > > > to spread wear leveling across the whole device, which is expected
-> > > > > to increase the flash lifetime.
-> > > > >
-> > > > > For instance, just as some silly example, you could have something like this:
-> > > > >
-> > > > >                                | RootFS SquashFS  |
-> > > > >                                | UBI block        | UBIFS User R-W area
-> > > > > ------------------------------------------------------------------------
-> > > > > Kernel A | Kernel B | RootFS A | RootFS B         | User
-> > > > > ------------------------------------------------------------------------
-> > > > >                                  UBIX
-> > > > > ------------------------------------------------------------------------
-> > > > >                                  /dev/mtdX
-> > > > >
-> > > > > This setup allows safe kernel and rootfs upgrading. The RootFS is read-only
-> > > > > via SquashFS and there's a read-write user area. UBI is supporting all
-> > > > > the volumes, handling bad blocks and wear leveling.
-> > > > >
-> > > > Dear Ezequiel,
-> > > > Thank you so much for your reply.
-> > > >
-> > > > This is exactly what we are also doing :)
-> > > > In our system we have a mix of raw and ubi partitions.
-> > > > The ubi partitioning is done almost exactly the same way.
-> > > > Only for the rootfs (squashfs) I see we were using /mtd/block<id> to
-> > > > mount the rootfs.
-> > > > Now, I understood we should change it to use /dev/ubiblock<id>
-> > > > This might have several benefits, but one most important could be,
-> > > > using ubiblock can handle bad-blocks/wear-leveling automatically,
-> > > > whereas mtdblocks access the flash directly ?
-> > > > I found some references for these..
-> > > > So, this seems good for my proposal.
-> > > >
-> > > > Another thing that is still open for us is:
-> > > > How do we calculate the exact image size from a raw mtd partition ?
-> > > > For example, support for one of the raw nand partitions, the size is
-> > > > defined as 15MB but we flash the actual image of size only 2.5MB.
-> > > > So, in the runtime how to determine the image size as ~2.5MB (at least
-> > > > roughly) ?
-> > > > Is it still possible ?
-> > > >
-> > >
-> > > I am happy to inform you that using "ubiblock" for squashfs mounting
-> > > seems very helpful for us.
-> > > We have seen almost the double performance boost when using ubiblock
-> > > for rootfs as well as other read-only volume mounting.
-> > >
-> > > However, we have found few issues while defining the read only volume as STATIC.
-> > > With static volume we see that OTA update is failing during "fsync".
-> > > That is ota_fsync is failing from here:
-> > > https://gerrit.pixelexperience.org/plugins/gitiles/bootable_recovery/+/ff6df890a2a01bf3bf56d3f430b17a5ef69055cf%5E%21/otafault/ota_io.cpp
-> > > int status = fsync(fd);
-> > > if (status == -1 && errno == EIO)
-> > > *
-> > > { have_eio_error = true; }
-> > > *
-> > > return status;
-> > > }
-> > >
-> > > Is this the known issue with static volume?
-> > >
-> >
-> > I don't know exactly how you are updating your volume,
-> > the right way is using UBI_IOCVOLUP.
-> >
-> > See http://www.linux-mtd.infradead.org/doc/ubi.html#L_volupdate
-> >
-> > If you google around I'm sure you'll find some articles about this,
-> > but I'm not sure if they'll go into details and subtleties.
-> >
-> > There are probably a few different ways to do firmware upgrade
-> > when you are on top of static volumes (and you want to be on top
-> > of static volumes if it's read-only, because AFAIK they give you an
-> > extra data-integrity guarantee).
-> >
-> > One way, would be to have two static volumes A/B. The system
-> > uses normally the A volume, and then you doUBI_IOCVOLUP
-> > (or ubiupdatevol) to update the B volume. After the update is succesful
-> > you run the atomic volume rename and flip A->B, B->A.
-> >
-> > (If you don't have enough space to hold two A/B volumes....
-> >  ... you'll have to find some other solution, I have no idea about that.)
-> >
->
-> Yes, this is what we are also doing exactly.
-> But, currently we are running into this issue right now:
-> 1) The FOTA update is failing if we use static volume (building and
-> flashing the static image is fine)
+On Thu, Nov 11 2021 at  3:13P -0500,
+Chaitanya Kulkarni <chaitanyak@nvidia.com> wrote:
 
-Please add traces to find what syscall is failing, and provide more
-details about it.
+> On 11/3/2021 11:46 PM, Chaitanya Kulkarni wrote:
+> > From: Chaitanya Kulkarni <kch@nvidia.com>
+> > 
+> > Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
+> 
+> I want to make sure the new REQ_OP_VERIFY is compatible with the
+> dm side as it is a generic interface.
+> 
+> Any comments on the dm side ? It will help me to respin the series for
+> V1 of this proposal.
 
-Thanks,
-Ezequiel
+I can review, but have you tested your XFS scrub usecase ontop of
+the various DM devices you modified?
+
+Also, you seem to have missed Keith's suggestion of using io_uring to
+expose this capability.  If you happen to go that route: making sure
+DM has required io_uring capabilities would be needed (IIRC there
+were/are some lingering patches from Ming Lei to facilitate more
+efficient io_uring on DM.. I'll try to find, could be I'm wrong).
+
+Mike
+
