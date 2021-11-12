@@ -2,58 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B4D44E1A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 06:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6743344E1A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 06:44:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhKLFq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 00:46:58 -0500
-Received: from verein.lst.de ([213.95.11.211]:60108 "EHLO verein.lst.de"
+        id S231350AbhKLFr1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Nov 2021 00:47:27 -0500
+Received: from verein.lst.de ([213.95.11.211]:60111 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229910AbhKLFq5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 00:46:57 -0500
+        id S230464AbhKLFr0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Nov 2021 00:47:26 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 1C2FC68AA6; Fri, 12 Nov 2021 06:44:05 +0100 (CET)
-Date:   Fri, 12 Nov 2021 06:44:04 +0100
+        id B2FF668AA6; Fri, 12 Nov 2021 06:44:34 +0100 (CET)
+Date:   Fri, 12 Nov 2021 06:44:34 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andreas Gruenbacher <agruenba@redhat.com>
 Cc:     Christoph Hellwig <hch@lst.de>,
         "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
-        stable@vger.kernel.org
-Subject: Re: [5.15 REGRESSION v2] iomap: Fix inline extent handling in
- iomap_readpage
-Message-ID: <20211112054404.GB27605@lst.de>
-References: <20211111161714.584718-1-agruenba@redhat.com>
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [PATCH] iomap: Fix iomap_readahead_iter error handling
+Message-ID: <20211112054434.GC27605@lst.de>
+References: <20211111140802.577144-1-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211111161714.584718-1-agruenba@redhat.com>
+In-Reply-To: <20211111140802.577144-1-agruenba@redhat.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 11, 2021 at 05:17:14PM +0100, Andreas Gruenbacher wrote:
-> Before commit 740499c78408 ("iomap: fix the iomap_readpage_actor return
-> value for inline data"), when hitting an IOMAP_INLINE extent,
-> iomap_readpage_actor would report having read the entire page.  Since
-> then, it only reports having read the inline data (iomap->length).
+On Thu, Nov 11, 2021 at 03:08:02PM +0100, Andreas Gruenbacher wrote:
+> In iomap_readahead_iter, deal with potential iomap_readpage_iter errors.
 > 
-> This will force iomap_readpage into another iteration, and the
-> filesystem will report an unaligned hole after the IOMAP_INLINE extent.
-> But iomap_readpage_actor (now iomap_readpage_iter) isn't prepared to
-> deal with unaligned extents, it will get things wrong on filesystems
-> with a block size smaller than the page size, and we'll eventually run
-> into the following warning in iomap_iter_advance:
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> ---
+>  fs/iomap/buffered-io.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
->   WARN_ON_ONCE(iter->processed > iomap_length(iter));
-> 
-> Fix that by changing iomap_readpage_iter to return 0 when hitting an
-> inline extent; this will cause iomap_iter to stop immediately.
-> 
-> To fix readahead as well, change iomap_readahead_iter to pass on
-> iomap_readpage_iter return values less than or equal to zero.
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 1753c26c8e76..9f1e329e8b2c 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -370,6 +370,8 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
+>  			ctx->cur_page_in_bio = false;
+>  		}
+>  		ret = iomap_readpage_iter(iter, ctx, done);
+> +		if (ret < 0)
+> +			return ret;
 
-Looks good,
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This already is part of your previous patch.
