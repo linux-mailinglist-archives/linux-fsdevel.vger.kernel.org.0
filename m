@@ -2,113 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA1244E24D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 08:19:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F5F844E257
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 08:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233136AbhKLHV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 02:21:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56256 "EHLO
+        id S233776AbhKLH01 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Nov 2021 02:26:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231173AbhKLHV6 (ORCPT
+        with ESMTP id S230510AbhKLH00 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 02:21:58 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB4A8C061766;
-        Thu, 11 Nov 2021 23:19:07 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id w1so34096991edd.10;
-        Thu, 11 Nov 2021 23:19:07 -0800 (PST)
+        Fri, 12 Nov 2021 02:26:26 -0500
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F3AC061767
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 23:23:36 -0800 (PST)
+Received: by mail-ua1-x92d.google.com with SMTP id n6so456684uak.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 23:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=23MuWJBgLsmpo3DWwY1zc1kp+jWhxY7Ijuwd9E4NgEk=;
-        b=Vkfd+Ngmf8e5tezD37bbnSLTKfHJ1YCgXEOfo9QxnVJIx47FaMesIQllT+O2nZMOr2
-         gAvUVCbxZ8MBfAjvB4r83cGCaZGmeit88cjzDaNHcUu6pZPw0LYuW9JyqobxIA/dxQZC
-         4eMP7qYVNhdEXe1ow2gyqCBNF0azrNp8981zXIHktGMkqw21iUqvWRw/80AjHMwDrACB
-         0u7izw69vSTCT6iREHudCfWLd7Tv9y4WYCS1LzBUA/Fxm/yMntlh8RW77MekZwOP1cRP
-         Nt4Q9tYszsWb72N4DV3BNTytV9coyEbqgmvvT1+gadXKqa26AKoGnusvqJMxfdIHWVYW
-         2zHg==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=325jIQD91PfQv8e01cBKjuWX0X3uGvDDvQO81AqevsI=;
+        b=kLApZWS3ieetfzU/l392vRyp3+K0MXi+OOpXP6lQJP7T8uV53A424twDgLP6xZX/SM
+         cOUI+Bzq6P3z+V1LU4cXEfaafNq5ICcwbgz5+qs8vBUKVzypYuex8CFYpoB6UCfPy/2D
+         uQUcKsEB+DUrEMY1+pixcU3G8elLgekMz34dY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=23MuWJBgLsmpo3DWwY1zc1kp+jWhxY7Ijuwd9E4NgEk=;
-        b=N0u39MIVs+qBAJ/LQm4hqzRoZHAZJodQUC4Vbl1H+VL20Y1TYM4B7tnECRJKS7ZPra
-         34ocsJiiAtiKQu8dRq+h2gv+UifrnM2l5JRUxtJQOM2fS6QuFIZBUWdD4jcAEVoz6S6J
-         mAhSvI7JaAC3AGIGVtlgjX4hZcF0PKMCqCJnL3VIP3+fmJVkuGMvR206HaqNyXSKbv7n
-         diVxOz+IoqG+murfa0MyRge8Sji/J2Ijln+9sKLauJushxITDOxRbYn57PxAFHehfo32
-         k2GEUFmaEVOvoBBdz3KjCibqpEPhZHzQ/RREWaLekHQbrSHVyR4e0Hvwq2kYet0Un9Xf
-         hWAA==
-X-Gm-Message-State: AOAM532b26ZabWsvMUDt7EPdtWGBMBabh+Iv6ySwL7T07e8lnT9ujqi9
-        zTAoZP1jorCTFfKB8OIIJg1VuCYqb71URK/QGVtIusbyVbY=
-X-Google-Smtp-Source: ABdhPJx13NMWj+ghQdIXzWAZXD21zp7HK2PPcgzpsVoQ5oiXGPhrERb6kk1sCFUWYPnyLmUI/dMVXMZ3WHQjPvatP2I=
-X-Received: by 2002:a17:906:fca3:: with SMTP id qw3mr17312375ejb.285.1636701546085;
- Thu, 11 Nov 2021 23:19:06 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=325jIQD91PfQv8e01cBKjuWX0X3uGvDDvQO81AqevsI=;
+        b=so5Ro45c8xI4QRDOuMAzs4+iCtkufU/LCDM95bfWKBJd4FIZV+5AQIWXcm/rHarjjs
+         bg7TO0MK/S73c48JIewtsStK9EpvXhfhOpOX20pcWb46Ppyo5n5JzV33qYEsAzQSGyG/
+         O5e44dr2I3Qo9ZO8Nhz6veArZRu0ZUxvXwGrLQW1Yf4voJNkMcVjo6gsDi3ZxVLgYsiA
+         bCJhpzduegv+5AFBmhCJ5lOXdDFP8dFwlAXfLAoBx2V99dmrGhGFmHbgqu2sRFT3v3Lk
+         BXf9DCns4Xnb78q1W1Tu4wBxzjZbVBc//DhxRgpdkOcIWmP2ikhuRkck3+Cq2LFygIv0
+         Qm1Q==
+X-Gm-Message-State: AOAM530sEaIgsOaOqDGuA8Jo1IBoSYVusfaKoLnP9aUExLL2q7WrTiPl
+        dYoaJIIE5rQukUhE54CnJGj6DSJzwtsLUzy3uilw4g==
+X-Google-Smtp-Source: ABdhPJxpCAoaKGMK5xE203li37lxfdntaKgVxTBZHVG0q+YmWoM61nh7/90/b0lcwABVl4FOIQQVdBScTuVuZY3jBwU=
+X-Received: by 2002:a67:782:: with SMTP id 124mr6970271vsh.24.1636701815845;
+ Thu, 11 Nov 2021 23:23:35 -0800 (PST)
 MIME-Version: 1.0
-References: <CAOuPNLinoW5Cx=xbUcT-DB4RiQkAPpe=9hsc-Rkch0LxD0mh+Q@mail.gmail.com>
- <CAOuPNLgquwOJg85kDcf67+4kTYP9N=45FvV+VDTJr6txYi5-wg@mail.gmail.com> <CAOuPNLjFtS7ftg=+-K3S+0ndyNYmUNqXo7SHkyV4zK4G9bZ4Og@mail.gmail.com>
-In-Reply-To: <CAOuPNLjFtS7ftg=+-K3S+0ndyNYmUNqXo7SHkyV4zK4G9bZ4Og@mail.gmail.com>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Fri, 12 Nov 2021 12:48:55 +0530
-Message-ID: <CAOuPNLg_YwyhK6iPZZbRWe57Kkr1d8LjJaDniCvvOqk4t2-Sog@mail.gmail.com>
-Subject: Re: Kernel-4.14: With ubuntu-18.04 building rootfs images and booting
- gives SQUASHFS error: xz decompression failed, data probably corrupt
-To:     open list <linux-kernel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
+References: <163660195990.22525.6041281669106537689.stgit@mickey.themaw.net>
+ <163660197073.22525.11235124150551283676.stgit@mickey.themaw.net> <20211112003249.GL449541@dread.disaster.area>
+In-Reply-To: <20211112003249.GL449541@dread.disaster.area>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 12 Nov 2021 08:23:24 +0100
+Message-ID: <CAJfpegvHDM_Mtc8+ASAcmNLd6RiRM+KutjBOoycun_Oq2=+p=w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ian Kent <raven@themaw.net>, xfs <linux-xfs@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        dm-devel@redhat.com, Phillip Lougher <phillip@squashfs.org.uk>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        drosen@google.com, astrachan@google.com, speed.eom@samsung.com,
-        Sami Tolvanen <samitolvanen@google.com>, snitzer@redhat.com
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Fri, 12 Nov 2021 at 01:32, Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Thu, Nov 11, 2021 at 11:39:30AM +0800, Ian Kent wrote:
+> > When following a trailing symlink in rcu-walk mode it's possible to
+> > succeed in getting the ->get_link() method pointer but the link path
+> > string be deallocated while it's being used.
+> >
+> > Utilize the rcu mechanism to mitigate this risk.
+> >
+> > Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> >  fs/xfs/kmem.h      |    4 ++++
+> >  fs/xfs/xfs_inode.c |    4 ++--
+> >  fs/xfs/xfs_iops.c  |   10 ++++++++--
+> >  3 files changed, 14 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/xfs/kmem.h b/fs/xfs/kmem.h
+> > index 54da6d717a06..c1bd1103b340 100644
+> > --- a/fs/xfs/kmem.h
+> > +++ b/fs/xfs/kmem.h
+> > @@ -61,6 +61,10 @@ static inline void  kmem_free(const void *ptr)
+> >  {
+> >       kvfree(ptr);
+> >  }
+> > +static inline void  kmem_free_rcu(const void *ptr)
+> > +{
+> > +     kvfree_rcu(ptr);
+> > +}
+> >
+> >
+> >  static inline void *
+> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > index a4f6f034fb81..aaa1911e61ed 100644
+> > --- a/fs/xfs/xfs_inode.c
+> > +++ b/fs/xfs/xfs_inode.c
+> > @@ -2650,8 +2650,8 @@ xfs_ifree(
+> >        * already been freed by xfs_attr_inactive.
+> >        */
+> >       if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL) {
+> > -             kmem_free(ip->i_df.if_u1.if_data);
+> > -             ip->i_df.if_u1.if_data = NULL;
+> > +             kmem_free_rcu(ip->i_df.if_u1.if_data);
+> > +             RCU_INIT_POINTER(ip->i_df.if_u1.if_data, NULL);
+> >               ip->i_df.if_bytes = 0;
+> >       }
+>
+> How do we get here in a way that the VFS will walk into this inode
+> during a lookup?
+>
+> I mean, the dentry has to be validated and held during the RCU path
+> walk, so if we are running a transaction to mark the inode as free
+> here it has already been unlinked and the dentry turned
+> negative. So anything that is doing a lockless pathwalk onto that
+> dentry *should* see that it is a negative dentry at this point and
+> hence nothing should be walking any further or trying to access the
+> link that was shared from ->get_link().
+>
+> AFAICT, that's what the sequence check bug you fixed in the previous
+> patch guarantees. It makes no difference if the unlinked inode has
+> been recycled or not, the lookup race condition is the same in that
+> the inode has gone through ->destroy_inode and is now owned by the
+> filesystem and not the VFS.
 
-On Tue, 9 Nov 2021 at 21:04, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+Yes, the concern here is that without locking all the above can
+theoretically happen between the sequence number check and  if_data
+being dereferenced.
 
-> > > We only get these squashfs errors flooded in the boot logs:
-> > > {{{
-> > > ....
-> > > [    5.153479] device-mapper: init: dm-0 is ready
-> > > [    5.334282] VFS: Mounted root (squashfs filesystem) readonly on device 253:0.
-> > > ....
-> > > [    8.954120] SQUASHFS error: xz decompression failed, data probably corrupt
-> > > [    8.954153] SQUASHFS error: squashfs_read_data failed to read block 0x1106
-> > > [    8.970316] SQUASHFS error: Unable to read data cache entry [1106]
-> > > [    8.970349] SQUASHFS error: Unable to read page, block 1106, size 776c
-> > > [    8.980298] SQUASHFS error: Unable to read data cache entry [1106]
-> > > [    8.981911] SQUASHFS error: Unable to read page, block 1106, size 776c
-> > > [    8.988280] SQUASHFS error: Unable to read data cache entry [1106]
-> > > ....
-> > > }}}
-> > >
+> Otherwise, it might just be best to memset the buffer to zero here
+> rather than free it, and leave it to be freed when the inode is
+> freed from the RCU callback in xfs_inode_free_callback() as per
+> normal.
 
-One more observation:
-When I disable FEC flag in bootloader, I see the below error:
-[    8.360791] device-mapper: verity: 253:0: data block 2 is corrupted
-[    8.361134] device-mapper: verity: 253:0: data block 3 is corrupted
-[    8.366016] SQUASHFS error: squashfs_read_data failed to read block 0x1106
-[    8.379652] SQUASHFS error: Unable to read data cache entry [1106]
-[    8.379680] SQUASHFS error: Unable to read page, block 1106, size 7770
-
-Also, now I see that the decompress error is gone, but the read error
-is still there.
-
-This seems to me that dm-verity detects some corrupted blocks but with
-FEC it auto corrects itself, how when dm-verity auto corrects itself,
-the squashfs decompression algorithm somehow could not understand it.
-
-So, it seems like there is some mis-match between the way FEC
-correction and the squashfs decompression happens ?
-
-Is this issue seen by anybody else here ?
-
+My suggestion was to use .free_inode instead of .destroy_inode, the
+former always being called after an RCU grace period.
 
 Thanks,
-Pintu
+Miklos
