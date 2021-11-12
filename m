@@ -2,91 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC41344EB92
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 17:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D6844EC05
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 18:33:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235142AbhKLQvQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 11:51:16 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:40934 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233445AbhKLQvP (ORCPT
+        id S235518AbhKLRgB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Nov 2021 12:36:01 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57910 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235512AbhKLRf6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 11:51:15 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 558081FD3D;
-        Fri, 12 Nov 2021 16:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1636735704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GPwH2l6CpXukTnAcgy54K9/JUUu+3vqHTdHOFqPszM4=;
-        b=Xb85fYkWJM5N4OmpwSu1yERCIo96O7SkgtLqXabXkiw77xj7MKiPAhhTyQp3He+v2P7zq8
-        dVYTk908w4Lp+oYsKL1rSRo/PWVo2xU6IQsZE1sEVKk94SxkDlj7vxBSnb3uaKtw28cjiL
-        6qPkLjkXiat2orcoDCbe1iq7mBGDvg8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1636735704;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GPwH2l6CpXukTnAcgy54K9/JUUu+3vqHTdHOFqPszM4=;
-        b=sfkRAElCGCxd8YHAEdq7p5FBkRLdC28oAU2br7QZmq2kyaX4VwP2uIu2cGeEdGngFshvgd
-        pWI0zjRfTXfoOiBQ==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 44AC8A3B83;
-        Fri, 12 Nov 2021 16:48:24 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1661E1F2B50; Fri, 12 Nov 2021 17:48:24 +0100 (CET)
-Date:   Fri, 12 Nov 2021 17:48:24 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/7] fanotify: record new parent and name in MOVED_FROM
- event
-Message-ID: <20211112164824.GB30295@quack2.suse.cz>
-References: <20211029114028.569755-1-amir73il@gmail.com>
- <20211029114028.569755-6-amir73il@gmail.com>
+        Fri, 12 Nov 2021 12:35:58 -0500
+Date:   Fri, 12 Nov 2021 18:33:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1636738386;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=kykZdLDhnOmjL+g6B46X7BTZ6Ur1JsgzvSbqdbNHrOs=;
+        b=KVAKXpIt5B2iOlWAYuFfCy9Nlcem1ZEF1Zz5/01BXCBZUd2hZxltqBtvemBvWwWS1wpJ9M
+        FPE7tUnI2VZ18JZu01Zbi4QPbMDF+fUe+ad2EnsxY6VbPz6PqzgiS4TVgDM49UiUe0MvTH
+        MZtBDySnUuYlKQeoyXdPiolngia6PFcFyixwOIGJW6WhS03QY6PvKkQzq4roEDL5zoFzCl
+        1cCUrdGlrcbcx2kIWc44M0mkS0xNGRcdR+qRabfTFtrqYyemfZCS8dCwrmbHKvStgzwu6d
+        TriqGEeqzxgz6KRiJejX2zcLzXx5WPB+LG2Kl9GkevrxCnFkfrzRS7iGhSLfoA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1636738386;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=kykZdLDhnOmjL+g6B46X7BTZ6Ur1JsgzvSbqdbNHrOs=;
+        b=ezu7hZ0cAy3ONIHGUHbslTQ6O0QZIakZ42WGu3G/iqTV+3q0idBX5R9/9LTavK8UaE9NNU
+        fSS32BfHXUNH5mBA==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: xas_retry() based loops on PREEMPT_RT.
+Message-ID: <20211112173305.h36kodnm3awe3fn3@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211029114028.569755-6-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 29-10-21 14:40:26, Amir Goldstein wrote:
-> In the special case of MOVED_FROM event, if we are recording the child
-> fid due to FAN_REPORT_TARGET_FID init flag, we also record the new
-> parent and name.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-...
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 795bedcb6f9b..d1adcb3437c5 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -592,21 +592,30 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
->  							__kernel_fsid_t *fsid,
->  							const struct qstr *name,
->  							struct inode *child,
-> +							struct dentry *moved,
->  							unsigned int *hash,
->  							gfp_t gfp)
->  {
->  	struct fanotify_name_event *fne;
->  	struct fanotify_info *info;
->  	struct fanotify_fh *dfh, *ffh;
-> +	struct inode *dir2 = moved ? d_inode(moved->d_parent) : NULL;
+Hi,
 
-I think we need to be more careful here (like dget_parent()?). Fsnotify is
-called after everything is unlocked after rename so dentry can be changing
-under us, cannot it? Also does that mean that we could actually get a wrong
-parent here if the dentry is renamed immediately after we unlock things and
-before we report fsnotify event?
+I've been looking at the xas_retry() based loops under PREEMPT_RT
+constraints that is xarray::xa_lock owner got preempted by a task with
+higher priority and this task is performing a xas_retry() based loop.
+Since the xarray::xa_lock owner got preempted it can't make any progress
+until the task the higher priority completes its task.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Based on my understanding this the XA_RETRY_ENTRY state is transient
+while a node is removed from the tree. That is, it is first removed from
+the tree, then set to XA_RETRY_ENTRY and then kfree()ed. Any RCU reader
+that retrieved this node before it was removed, will see this flag and
+will iterate the array from beginning at which point it won't see this
+node again. 
+
+The XA_ZERO_ENTRY flag is different as it is not transient. It should be
+the responsibility of the reader not to start iterating the tree from
+the beginning because this state won't change.
+Most reader simply go to the next entry and I *assume* that for instance
+mapping_get_entry() or find_get_entry() in mm/filemap.c won't see here
+the XA_ZERO_ENTRY.
+
+Is this correct?
+
+Sebastian
