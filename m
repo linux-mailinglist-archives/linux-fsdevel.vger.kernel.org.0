@@ -2,141 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5F844E257
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 08:23:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 896B044E271
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Nov 2021 08:41:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233776AbhKLH01 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 02:26:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbhKLH00 (ORCPT
+        id S233125AbhKLHoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Nov 2021 02:44:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43542 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232586AbhKLHoP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 02:26:26 -0500
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F3AC061767
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 23:23:36 -0800 (PST)
-Received: by mail-ua1-x92d.google.com with SMTP id n6so456684uak.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 23:23:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=325jIQD91PfQv8e01cBKjuWX0X3uGvDDvQO81AqevsI=;
-        b=kLApZWS3ieetfzU/l392vRyp3+K0MXi+OOpXP6lQJP7T8uV53A424twDgLP6xZX/SM
-         cOUI+Bzq6P3z+V1LU4cXEfaafNq5ICcwbgz5+qs8vBUKVzypYuex8CFYpoB6UCfPy/2D
-         uQUcKsEB+DUrEMY1+pixcU3G8elLgekMz34dY=
+        Fri, 12 Nov 2021 02:44:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636702884;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LmIYVgQWINOS/4GPj7vitVLbYIw2tQyXzHOCJlZ5erE=;
+        b=UxZhEqJGMm6mkqEnPEhkGCOBuG2nL0w6JJGw3DMOf/FQwuXNQPIJ4fu7zXSOz2WDG/4kdE
+        QhGsCf57aH4BaXL7MEk1LnKZUAs9ojIe/thshGDttaNK7zrZmBldymL607gI1OMHuw3Nsj
+        j299/FxdfNIwcS338jSetHf/q3J+ohA=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-264-zMesmmHHP06JzpB9fUC5Cg-1; Fri, 12 Nov 2021 02:41:23 -0500
+X-MC-Unique: zMesmmHHP06JzpB9fUC5Cg-1
+Received: by mail-pj1-f70.google.com with SMTP id mn13-20020a17090b188d00b001a64f277c1eso4327274pjb.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 23:41:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=325jIQD91PfQv8e01cBKjuWX0X3uGvDDvQO81AqevsI=;
-        b=so5Ro45c8xI4QRDOuMAzs4+iCtkufU/LCDM95bfWKBJd4FIZV+5AQIWXcm/rHarjjs
-         bg7TO0MK/S73c48JIewtsStK9EpvXhfhOpOX20pcWb46Ppyo5n5JzV33qYEsAzQSGyG/
-         O5e44dr2I3Qo9ZO8Nhz6veArZRu0ZUxvXwGrLQW1Yf4voJNkMcVjo6gsDi3ZxVLgYsiA
-         bCJhpzduegv+5AFBmhCJ5lOXdDFP8dFwlAXfLAoBx2V99dmrGhGFmHbgqu2sRFT3v3Lk
-         BXf9DCns4Xnb78q1W1Tu4wBxzjZbVBc//DhxRgpdkOcIWmP2ikhuRkck3+Cq2LFygIv0
-         Qm1Q==
-X-Gm-Message-State: AOAM530sEaIgsOaOqDGuA8Jo1IBoSYVusfaKoLnP9aUExLL2q7WrTiPl
-        dYoaJIIE5rQukUhE54CnJGj6DSJzwtsLUzy3uilw4g==
-X-Google-Smtp-Source: ABdhPJxpCAoaKGMK5xE203li37lxfdntaKgVxTBZHVG0q+YmWoM61nh7/90/b0lcwABVl4FOIQQVdBScTuVuZY3jBwU=
-X-Received: by 2002:a67:782:: with SMTP id 124mr6970271vsh.24.1636701815845;
- Thu, 11 Nov 2021 23:23:35 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LmIYVgQWINOS/4GPj7vitVLbYIw2tQyXzHOCJlZ5erE=;
+        b=gn2Dy0X1rK900bxTSVOUu/382tPOUSVvTziN/1sWJzIjax14ijs82gXVczP7Ri6yk+
+         f43L9ML7G4jcIL/JXAS16P4b/fBiuCcMoZ+dTQjDPnsKqdxfkyQmpqY5tm4FFiYj5v2V
+         vatfQpgI6/LplFdNZZw7yKTKEJvsMLJXFzbdyzHckYoFbzONGKamqsXrMwwG1HCWlQEI
+         aBDt9hTy3ang6Lp8sTdxxfDK/5e8YOYkN84DpUpDGUH1jwzxDp7jw81Gtyo/24sEKVtX
+         NUFvK9n2BnKwCF12WIWq+yY/PW+z/8eCIzrQK0Uhkcfl7pxgsKYYqVX7yDs7Gd/iv5i7
+         OeVg==
+X-Gm-Message-State: AOAM532qsSqWWAK9LXXLNyaM/SupcnAOiS2YxCR8dEQZGhH7YsOZ/tMi
+        PGOpG27/6AZjGbaoEG07jc3h6l8QOX3WkvnnCfZHMO3dczGPHEZSQ2SGb2IkRILVCiAODYoR43y
+        GsvTMtUb/nerVhxL4viS7PDm8HA==
+X-Received: by 2002:a17:90a:6583:: with SMTP id k3mr34161319pjj.147.1636702882449;
+        Thu, 11 Nov 2021 23:41:22 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwYU6pU2s+wZvuogOQ3U+/jYMIOI6bwB5fRtApXzVv4JQPB8e07gFu11espB+vV+ZhMupPz8w==
+X-Received: by 2002:a17:90a:6583:: with SMTP id k3mr34161288pjj.147.1636702882161;
+        Thu, 11 Nov 2021 23:41:22 -0800 (PST)
+Received: from xz-m1.local ([94.177.118.141])
+        by smtp.gmail.com with ESMTPSA id w5sm5755612pfu.219.2021.11.11.23.41.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Nov 2021 23:41:21 -0800 (PST)
+Date:   Fri, 12 Nov 2021 15:41:14 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
+Message-ID: <YY4amnb1kcBEVw3E@xz-m1.local>
+References: <20211107235754.1395488-1-almasrymina@google.com>
+ <YYtuqsnOSxA44AUX@t490s>
+ <c5ed86d0-8af6-f54f-e352-8871395ad62e@redhat.com>
+ <YYuCaNXikls/9JhS@t490s>
+ <793685d2-be3f-9a74-c9a3-65c486e0ef1f@redhat.com>
+ <YYuJd9ZBQiY50dVs@xz-m1.local>
+ <8032a24c-3800-16e5-41b7-5565e74d3863@redhat.com>
+ <CAHS8izPKN96M2GbHBC6_-XCr1pYy7uA-vNw2FHe01XbYMVdKUQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <163660195990.22525.6041281669106537689.stgit@mickey.themaw.net>
- <163660197073.22525.11235124150551283676.stgit@mickey.themaw.net> <20211112003249.GL449541@dread.disaster.area>
-In-Reply-To: <20211112003249.GL449541@dread.disaster.area>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 12 Nov 2021 08:23:24 +0100
-Message-ID: <CAJfpegvHDM_Mtc8+ASAcmNLd6RiRM+KutjBOoycun_Oq2=+p=w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ian Kent <raven@themaw.net>, xfs <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHS8izPKN96M2GbHBC6_-XCr1pYy7uA-vNw2FHe01XbYMVdKUQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 12 Nov 2021 at 01:32, Dave Chinner <david@fromorbit.com> wrote:
->
-> On Thu, Nov 11, 2021 at 11:39:30AM +0800, Ian Kent wrote:
-> > When following a trailing symlink in rcu-walk mode it's possible to
-> > succeed in getting the ->get_link() method pointer but the link path
-> > string be deallocated while it's being used.
-> >
-> > Utilize the rcu mechanism to mitigate this risk.
-> >
-> > Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-> > Signed-off-by: Ian Kent <raven@themaw.net>
-> > ---
-> >  fs/xfs/kmem.h      |    4 ++++
-> >  fs/xfs/xfs_inode.c |    4 ++--
-> >  fs/xfs/xfs_iops.c  |   10 ++++++++--
-> >  3 files changed, 14 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/xfs/kmem.h b/fs/xfs/kmem.h
-> > index 54da6d717a06..c1bd1103b340 100644
-> > --- a/fs/xfs/kmem.h
-> > +++ b/fs/xfs/kmem.h
-> > @@ -61,6 +61,10 @@ static inline void  kmem_free(const void *ptr)
-> >  {
-> >       kvfree(ptr);
-> >  }
-> > +static inline void  kmem_free_rcu(const void *ptr)
-> > +{
-> > +     kvfree_rcu(ptr);
-> > +}
-> >
-> >
-> >  static inline void *
-> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > index a4f6f034fb81..aaa1911e61ed 100644
-> > --- a/fs/xfs/xfs_inode.c
-> > +++ b/fs/xfs/xfs_inode.c
-> > @@ -2650,8 +2650,8 @@ xfs_ifree(
-> >        * already been freed by xfs_attr_inactive.
-> >        */
-> >       if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL) {
-> > -             kmem_free(ip->i_df.if_u1.if_data);
-> > -             ip->i_df.if_u1.if_data = NULL;
-> > +             kmem_free_rcu(ip->i_df.if_u1.if_data);
-> > +             RCU_INIT_POINTER(ip->i_df.if_u1.if_data, NULL);
-> >               ip->i_df.if_bytes = 0;
-> >       }
->
-> How do we get here in a way that the VFS will walk into this inode
-> during a lookup?
->
-> I mean, the dentry has to be validated and held during the RCU path
-> walk, so if we are running a transaction to mark the inode as free
-> here it has already been unlinked and the dentry turned
-> negative. So anything that is doing a lockless pathwalk onto that
-> dentry *should* see that it is a negative dentry at this point and
-> hence nothing should be walking any further or trying to access the
-> link that was shared from ->get_link().
->
-> AFAICT, that's what the sequence check bug you fixed in the previous
-> patch guarantees. It makes no difference if the unlinked inode has
-> been recycled or not, the lookup race condition is the same in that
-> the inode has gone through ->destroy_inode and is now owned by the
-> filesystem and not the VFS.
+On Wed, Nov 10, 2021 at 09:42:25AM -0800, Mina Almasry wrote:
+> Sorry, yes I should update the commit message with this info. The
+> issues with smaps are:
+> 1. Performance: I've pinged our network service folks to obtain a
+> rough perf comparison but I haven't been able to get one. I can try to
+> get a performance measurement myself but Peter seems to be also seeing
+> this.
 
-Yes, the concern here is that without locking all the above can
-theoretically happen between the sequence number check and  if_data
-being dereferenced.
+No I was not seeing any real issues in my environment, but I remembered people
+complaining about it because smaps needs to walk the whole memory of the
+process, then if one program is only interested in some small portion of the
+whole memory, it'll be slow because smaps will still need to walk all the
+memory anyway.
 
-> Otherwise, it might just be best to memset the buffer to zero here
-> rather than free it, and leave it to be freed when the inode is
-> freed from the RCU callback in xfs_inode_free_callback() as per
-> normal.
+> 2. smaps output is human readable and a bit convoluted for userspace to parse.
 
-My suggestion was to use .free_inode instead of .destroy_inode, the
-former always being called after an RCU grace period.
+IMHO this is not a major issue.  AFAIK lots of programs will still try to parse
+human readable output like smaps to get some solid numbers.  It's just that
+it'll be indeed an perf issue if it's only a part of the memory that is of
+interest.
 
-Thanks,
-Miklos
+Could we consider exporting a new smaps interface that:
+
+  1. allows to specify a range of memory, and,
+  2. expose information as "struct mem_size_stats" in binary format
+     (we may want to replace "unsigned long" with "u64", then also have some
+      versioning or having a "size" field for the struct, though; seems doable)
+
+I'm wondering whether this could be helpful in even more scenarios.
+
+-- 
+Peter Xu
+
