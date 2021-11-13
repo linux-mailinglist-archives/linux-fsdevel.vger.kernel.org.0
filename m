@@ -2,194 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A9F44F408
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Nov 2021 16:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E53844F477
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Nov 2021 19:14:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235923AbhKMPvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Nov 2021 10:51:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbhKMPvP (ORCPT
+        id S235890AbhKMSRl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Nov 2021 13:17:41 -0500
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:33536 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233656AbhKMSRk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Nov 2021 10:51:15 -0500
-Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C153DC061766;
-        Sat, 13 Nov 2021 07:48:22 -0800 (PST)
-Received: by mail-qv1-xf2c.google.com with SMTP id bu11so8359946qvb.0;
-        Sat, 13 Nov 2021 07:48:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oXbQA6YsK/Yb8I1ufwTowmeWehU5ZLa6WqLwd/WJnR0=;
-        b=ImBzKERFqdjBGrGwyXdvLPxokVVH/YOD6syxy5Ry7EoZ7JA1ZgRpH36/Ir2IBUSx8W
-         gS0HmCEFLrPn8WeyKPwEHIKMJ8MsoQKXk07euxX0IcdQLNiTUxjGZQqX9d7aI435mJq7
-         QePMM1Q6vqImAExonnt61+8iV7HOUhqKsJvwCo+s5DSG0p8dfVub4pnX3y3g9rWeXJGP
-         s9Mi2AmGn/L6seJC8NjdI8dnnTh/v07eZIEcb9LSYEY+5wguwcQdBUGlxdKg1fR7SASX
-         PlYXoa7CPenBQheitAgVSHtWNxpkfdc6wMn6uumIY9JQJs7Eb1xfWp0PpdG4DXYQNu/x
-         ADAw==
+        Sat, 13 Nov 2021 13:17:40 -0500
+Received: by mail-wm1-f51.google.com with SMTP id r9-20020a7bc089000000b00332f4abf43fso9017764wmh.0;
+        Sat, 13 Nov 2021 10:14:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oXbQA6YsK/Yb8I1ufwTowmeWehU5ZLa6WqLwd/WJnR0=;
-        b=Gk/WIU2vM07u3Zx6rEpgVFkjLlWAMk/MWTkuCjka30m4LQZGnLWqzbzMDMv6E1UllS
-         ihwXA/9gtyQUHELXOKx+KSrvrPSxr0lxLoFMhe2gLXOvd7Xef9mSKhYvSsTk3BX4Ytpj
-         BPMxZl8PChFqowG88kF/0bxsSPNUfGZ0qMUa4GFV1MWA7B9Fiin6uWmCI5VMBCASjFWx
-         lmyCapcRQOLv8LmCN1t4zArH3HaRo7qok6UzXpm+3JC6In1gdhvCJTPblhDcONtAo9BS
-         EGfS5GlQbsjpw9kLl1vGLedPh6hlUvwetHMxU86q8a77csS0tbLISRGPp4H6U4o9+r3u
-         HOGA==
-X-Gm-Message-State: AOAM531SEEUOXfA1ss0BGonTBbQ8kl6lo5bFZc8OBCevLOyozQ4rGt+8
-        CM6W8SKzoGhAJxF/82OaX7TrB/Usws++vsuuPzs=
-X-Google-Smtp-Source: ABdhPJwHPNIdUDZB1WofY0EyhE09P++WglgHkH4uOkSjWwuZbEIP1MOmjqdsr8nWmrB6p2F41NZVSXMsSppxTlGYQ68=
-X-Received: by 2002:a05:6214:f2d:: with SMTP id iw13mr23317601qvb.13.1636818501919;
- Sat, 13 Nov 2021 07:48:21 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:reply-to
+         :subject:content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=qJpFgDmQX4NgXIPsmsa3L8Op/10DaprZpinixut55a0=;
+        b=pMcvvArxOLA28CrlEMufpftzTLA8cj3vWPvsuP3iNk9gyPdl9GXeGdDLFyCYLxDH8N
+         BJxISe0UTSE950QzsVrxVWaBnDdraDJtSDmC0StCMpPN00JhPMchvqLCJnvOFRLbawON
+         T9iOLxPwu1QlNeHpc59a9ET0CA3KMlkQYQjKbeRqwE3Fb9dluT26Ed49K+qsg3PWVyvB
+         TE8jAZrPA7wIC28y+QJ2Z7NGxeaFn5Q0KUaMPCsjgt/aZWtGed88G15bEqatfn/BI++U
+         Y2auy4rdh2YwHsoqvNOGCUivw4R1WDrege/UsO4PyfIM1pGJ995aMoBMmRlUticQZWrw
+         QHlw==
+X-Gm-Message-State: AOAM533LbW+sWr/rpbvSVWfMaVBod3dwQ94pj+GVZ3bk3hUeRiFVKeL/
+        N8tavEllbMNMkcD+pt/Q1oI=
+X-Google-Smtp-Source: ABdhPJySvDqEIK8+A9iIm0gq0uH+YP8Ng3lmMG7/q64IpdcsRxTBcPM1NXj/RYt+u7AjGEpgcD8v+w==
+X-Received: by 2002:a05:600c:4108:: with SMTP id j8mr27714558wmi.139.1636827286595;
+        Sat, 13 Nov 2021 10:14:46 -0800 (PST)
+Received: from [10.9.0.26] ([46.166.133.199])
+        by smtp.gmail.com with ESMTPSA id l18sm9308857wrt.81.2021.11.13.10.14.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Nov 2021 10:14:46 -0800 (PST)
+Message-ID: <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
+Date:   Sat, 13 Nov 2021 21:14:39 +0300
 MIME-Version: 1.0
-References: <20211108084142.4692-1-laoar.shao@gmail.com> <YY6JhZK/oiLUwHyZ@alley>
-In-Reply-To: <YY6JhZK/oiLUwHyZ@alley>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Sat, 13 Nov 2021 23:47:45 +0800
-Message-ID: <CALOAHbA5LBHyJn=EC1roHYt7ar-QqHzLE=KHQ6uC=a__3Pwxfw@mail.gmail.com>
-Subject: Re: [PATCH] kthread: dynamically allocate memory to store kthread's
- full name
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Reply-To: alex.popov@linux.com
+Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Paul McKenney <paulmck@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Joerg Roedel <jroedel@suse.de>,
+        Maciej Rozycki <macro@orcam.me.uk>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Laura Abbott <labbott@kernel.org>,
+        David S Miller <davem@davemloft.net>,
+        Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Scull <ascull@google.com>,
+        Marc Zyngier <maz@kernel.org>, Jessica Yu <jeyu@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Wang Qing <wangqing@vivo.com>, Mel Gorman <mgorman@suse.de>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Andrew Klychkov <andrew.a.klychkov@gmail.com>,
+        Mathieu Chouquet-Stringer <me@mathieu.digital>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Stephen Kitt <steve@sk2.org>, Stephen Boyd <sboyd@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Mike Rapoport <rppt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-hardening@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, notify@kernel.org,
+        main@lists.elisa.tech, safety-architecture@lists.elisa.tech,
+        devel@lists.elisa.tech, Shuah Khan <shuah@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+References: <20211027233215.306111-1-alex.popov@linux.com>
+ <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
+ <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
+From:   Alexander Popov <alex.popov@linux.com>
+In-Reply-To: <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 12, 2021 at 11:34 PM Petr Mladek <pmladek@suse.com> wrote:
->
-> On Mon 2021-11-08 08:41:42, Yafang Shao wrote:
-> > When I was implementing a new per-cpu kthread cfs_migration, I found the
-> > comm of it "cfs_migration/%u" is truncated due to the limitation of
-> > TASK_COMM_LEN. For example, the comm of the percpu thread on CPU10~19 are
-> > all with the same name "cfs_migration/1", which will confuse the user. This
-> > issue is not critical, because we can get the corresponding CPU from the
-> > task's Cpus_allowed. But for kthreads correspoinding to other hardware
-> > devices, it is not easy to get the detailed device info from task comm,
-> > for example,
-> >
-> > After this change, the full name of these truncated kthreads will be
-> > displayed via /proc/[pid]/comm:
-> >
-> > --- a/fs/proc/array.c
-> > +++ b/fs/proc/array.c
-> > @@ -102,6 +103,8 @@ void proc_task_name(struct seq_file *m, struct task_struct *p, bool escape)
-> >
-> >       if (p->flags & PF_WQ_WORKER)
-> >               wq_worker_comm(tcomm, sizeof(tcomm), p);
->
-> Just for record. I though that this patch obsoleted wq_worker_comm()
-> but it did not. wq_worker_comm() returns different values
-> depending on the last proceed work item and has to stay.
->
+On 13.11.2021 00:26, Linus Torvalds wrote:
+> On Fri, Nov 12, 2021 at 10:52 AM Alexander Popov <alex.popov@linux.com> wrote:
+>>
+>> Hello everyone!
+>> Friendly ping for your feedback.
+> 
+> I still haven't heard a compelling _reason_ for this all, and why
+> anybody should ever use this or care?
 
-Right. worker comm is changed dynamically, which is combined by
-(task_comm+worker_desc) or (task_comm-worker_desc).
-I planned to remove the whole worker->desc and set it dynamically to
-the new kthread full_name but I found it may not be a good idea.
+Ok, to sum up:
 
+Killing the process that hit a kernel warning complies with the Fail-Fast 
+principle [1]. pkill_on_warn sysctl allows the kernel to stop the process when 
+the **first signs** of wrong behavior are detected.
 
-> > +     else if (p->flags & PF_KTHREAD)
-> > +             get_kthread_comm(tcomm, sizeof(tcomm), p);
-> >       else
-> >               __get_task_comm(tcomm, sizeof(tcomm), p);
-> >
-> > --- a/kernel/kthread.c
-> > +++ b/kernel/kthread.c
-> > @@ -121,6 +135,7 @@ void free_kthread_struct(struct task_struct *k)
->
-> Hmm, there is the following comment:
->
->         /*
->          * Can be NULL if this kthread was created by kernel_thread()
->          * or if kmalloc() in kthread() failed.
->          */
->         kthread = to_kthread(k);
->
-> And indeed, set_kthread_struct() is called only by kthread()
-> and init_idle().
->
-> For example, call_usermodehelper_exec_sync() calls kernel_thread()
-> but given @fn does not call set_kthread_struct(). Also init_idle()
-> continues even when the allocation failed.
->
+By default, the Linux kernel ignores a warning and proceeds the execution from 
+the flawed state. That is opposite to the Fail-Fast principle.
+A kernel warning may be followed by memory corruption or other negative effects, 
+like in CVE-2019-18683 exploit [2] or many other cases detected by the SyzScope 
+project [3]. pkill_on_warn would prevent the system from the errors going after 
+a warning in the process context.
 
-Yes, it really can be NULL.
+At the same time, pkill_on_warn does not kill the entire system like 
+panic_on_warn. That is the middle way of handling kernel warnings.
+Linus, it's similar to your BUG_ON() policy [4]. The process hitting BUG_ON() is 
+killed, and the system proceeds to work. pkill_on_warn just brings a similar 
+policy to WARN_ON() handling.
 
->
-> >  #ifdef CONFIG_BLK_CGROUP
-> >       WARN_ON_ONCE(kthread && kthread->blkcg_css);
-> >  #endif
-> > +     kfree(kthread->full_name);
->
-> Hence, we have to make sure that it is not NULL here. I suggest
-> something like:
->
+I believe that many Linux distros (which don't hit WARN_ON() here and there) 
+will enable pkill_on_warn because it's reasonable from the safety and security 
+points of view.
 
-Agreed.  I will do it.
+And I'm sure that the ELISA project by the Linux Foundation (Enabling Linux In 
+Safety Applications [5]) would support the pkill_on_warn sysctl.
+[Adding people from this project to CC]
 
-> void free_kthread_struct(struct task_struct *k)
-> {
->         struct kthread *kthread;
->
->         /*
->          * Can be NULL if this kthread was created by kernel_thread()
->          * or if kmalloc() in kthread() failed.
->          */
->         kthread = to_kthread(k);
->         if (!kthread)
->                 return;
->
-> #ifdef CONFIG_BLK_CGROUP
->         WARN_ON_ONCE(kthread->blkcg_css);
-> #endif
->         kfree(kthread->full_name);
->         kfree(kthread);
-> }
->
->
-> Side note: The possible NULL pointer looks dangerous to
->     me. to_kthread() is dereferenced without any check on
->     several locations.
->
->     For example, kthread_create_on_cpu() looks safe. It is a kthread
->     crated by kthread(). It will exists only when the allocation
->     succeeded.
->
->     kthread_stop() is probably safe only because it used only for
->     the classic kthreads created by kthread(). But the API
->     is not safe.
->
->     kthread_use_mm() is probably used only by classic kthreads as
->     well. But it is less clear to me.
->
->     All this unsafe APIs looks like a ticking bomb to me. But
->     it is beyond this patchset.
->
+I hope that I managed to show the rationale.
 
-I will analyze it in depth and try to dismantle this ticking bomb.
+Best regards,
+Alexander
 
 
--- 
-Thanks
-Yafang
+[1]: https://en.wikipedia.org/wiki/Fail-fast
+[2]: https://a13xp0p0v.github.io/2020/02/15/CVE-2019-18683.html
+[3]: https://www.usenix.org/system/files/sec22summer_zou.pdf
+[4]: http://lkml.iu.edu/hypermail/linux/kernel/1610.0/01217.html
+[5]: https://elisa.tech/
