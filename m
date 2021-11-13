@@ -2,190 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3198244F32C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Nov 2021 14:02:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01A9F44F408
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Nov 2021 16:48:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235778AbhKMNFN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Nov 2021 08:05:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
+        id S235923AbhKMPvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Nov 2021 10:51:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235758AbhKMNFL (ORCPT
+        with ESMTP id S230001AbhKMPvP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Nov 2021 08:05:11 -0500
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE28BC061203
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Nov 2021 05:02:14 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Hrwb60SPVzMpqmc;
-        Sat, 13 Nov 2021 14:02:10 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4HrwZv5yQNzlh8T4;
-        Sat, 13 Nov 2021 14:01:59 +0100 (CET)
-Subject: Re: [PATCH v16 1/3] fs: Add trusted_for(2) syscall implementation and
- related sysctl
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yin Fengwei <fengwei.yin@intel.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20211110190626.257017-1-mic@digikod.net>
- <20211110190626.257017-2-mic@digikod.net>
- <8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <5312f022-96ea-5555-8d17-4e60a33cf8f8@digikod.net>
-Date:   Sat, 13 Nov 2021 14:02:02 +0100
-User-Agent: 
+        Sat, 13 Nov 2021 10:51:15 -0500
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C153DC061766;
+        Sat, 13 Nov 2021 07:48:22 -0800 (PST)
+Received: by mail-qv1-xf2c.google.com with SMTP id bu11so8359946qvb.0;
+        Sat, 13 Nov 2021 07:48:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oXbQA6YsK/Yb8I1ufwTowmeWehU5ZLa6WqLwd/WJnR0=;
+        b=ImBzKERFqdjBGrGwyXdvLPxokVVH/YOD6syxy5Ry7EoZ7JA1ZgRpH36/Ir2IBUSx8W
+         gS0HmCEFLrPn8WeyKPwEHIKMJ8MsoQKXk07euxX0IcdQLNiTUxjGZQqX9d7aI435mJq7
+         QePMM1Q6vqImAExonnt61+8iV7HOUhqKsJvwCo+s5DSG0p8dfVub4pnX3y3g9rWeXJGP
+         s9Mi2AmGn/L6seJC8NjdI8dnnTh/v07eZIEcb9LSYEY+5wguwcQdBUGlxdKg1fR7SASX
+         PlYXoa7CPenBQheitAgVSHtWNxpkfdc6wMn6uumIY9JQJs7Eb1xfWp0PpdG4DXYQNu/x
+         ADAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oXbQA6YsK/Yb8I1ufwTowmeWehU5ZLa6WqLwd/WJnR0=;
+        b=Gk/WIU2vM07u3Zx6rEpgVFkjLlWAMk/MWTkuCjka30m4LQZGnLWqzbzMDMv6E1UllS
+         ihwXA/9gtyQUHELXOKx+KSrvrPSxr0lxLoFMhe2gLXOvd7Xef9mSKhYvSsTk3BX4Ytpj
+         BPMxZl8PChFqowG88kF/0bxsSPNUfGZ0qMUa4GFV1MWA7B9Fiin6uWmCI5VMBCASjFWx
+         lmyCapcRQOLv8LmCN1t4zArH3HaRo7qok6UzXpm+3JC6In1gdhvCJTPblhDcONtAo9BS
+         EGfS5GlQbsjpw9kLl1vGLedPh6hlUvwetHMxU86q8a77csS0tbLISRGPp4H6U4o9+r3u
+         HOGA==
+X-Gm-Message-State: AOAM531SEEUOXfA1ss0BGonTBbQ8kl6lo5bFZc8OBCevLOyozQ4rGt+8
+        CM6W8SKzoGhAJxF/82OaX7TrB/Usws++vsuuPzs=
+X-Google-Smtp-Source: ABdhPJwHPNIdUDZB1WofY0EyhE09P++WglgHkH4uOkSjWwuZbEIP1MOmjqdsr8nWmrB6p2F41NZVSXMsSppxTlGYQ68=
+X-Received: by 2002:a05:6214:f2d:: with SMTP id iw13mr23317601qvb.13.1636818501919;
+ Sat, 13 Nov 2021 07:48:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20211108084142.4692-1-laoar.shao@gmail.com> <YY6JhZK/oiLUwHyZ@alley>
+In-Reply-To: <YY6JhZK/oiLUwHyZ@alley>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sat, 13 Nov 2021 23:47:45 +0800
+Message-ID: <CALOAHbA5LBHyJn=EC1roHYt7ar-QqHzLE=KHQ6uC=a__3Pwxfw@mail.gmail.com>
+Subject: Re: [PATCH] kthread: dynamically allocate memory to store kthread's
+ full name
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Nov 12, 2021 at 11:34 PM Petr Mladek <pmladek@suse.com> wrote:
+>
+> On Mon 2021-11-08 08:41:42, Yafang Shao wrote:
+> > When I was implementing a new per-cpu kthread cfs_migration, I found the
+> > comm of it "cfs_migration/%u" is truncated due to the limitation of
+> > TASK_COMM_LEN. For example, the comm of the percpu thread on CPU10~19 are
+> > all with the same name "cfs_migration/1", which will confuse the user. This
+> > issue is not critical, because we can get the corresponding CPU from the
+> > task's Cpus_allowed. But for kthreads correspoinding to other hardware
+> > devices, it is not easy to get the detailed device info from task comm,
+> > for example,
+> >
+> > After this change, the full name of these truncated kthreads will be
+> > displayed via /proc/[pid]/comm:
+> >
+> > --- a/fs/proc/array.c
+> > +++ b/fs/proc/array.c
+> > @@ -102,6 +103,8 @@ void proc_task_name(struct seq_file *m, struct task_struct *p, bool escape)
+> >
+> >       if (p->flags & PF_WQ_WORKER)
+> >               wq_worker_comm(tcomm, sizeof(tcomm), p);
+>
+> Just for record. I though that this patch obsoleted wq_worker_comm()
+> but it did not. wq_worker_comm() returns different values
+> depending on the last proceed work item and has to stay.
+>
 
-On 12/11/2021 20:16, Alejandro Colomar (man-pages) wrote:
-> Hi Mickaël,
+Right. worker comm is changed dynamically, which is combined by
+(task_comm+worker_desc) or (task_comm-worker_desc).
+I planned to remove the whole worker->desc and set it dynamically to
+the new kthread full_name but I found it may not be a good idea.
 
-Hi Alejandro,
 
-> 
-> On 11/10/21 20:06, Mickaël Salaün wrote:
->> diff --git a/fs/open.c b/fs/open.c
->> index f732fb94600c..96a80abec41b 100644
->> --- a/fs/open.c
->> +++ b/fs/open.c
->> @@ -480,6 +482,114 @@ SYSCALL_DEFINE2(access, const char __user *,
->> filename, int, mode)
->>       return do_faccessat(AT_FDCWD, filename, mode, 0);
->>   }
->>   +#define TRUST_POLICY_EXEC_MOUNT            BIT(0)
->> +#define TRUST_POLICY_EXEC_FILE            BIT(1)
->> +
->> +int sysctl_trusted_for_policy __read_mostly;
->> +
->> +/**
-> ...
->> + */
->> +SYSCALL_DEFINE3(trusted_for, const int, fd, const enum
->> trusted_for_usage, usage,
-> 
-> Please, don't use enums for interfaces.  They are implementation defined
-> types, and vary between compilers and within the same compiler also
-> depending on optimization flags.
-> 
-> C17::6.7.2.2.4:
-> [
-> Each enumerated type shall be compatible with char,
-> a signed integer type, or an unsigned integer type.
-> The choice of type is implementation-defined,130)
-> but shall be capable of representing the values of
-> all the members of the enumeration.
-> ]
-> 
-> See also:
-> <https://stackoverflow.com/questions/366017/what-is-the-size-of-an-enum-in-c>
-> 
-> 
-> So, please use only standard integer types for interfaces.
-> 
-> And in the case of enums, since the language specifies that enumeration
-> constants (the macro-like identifiers) are of type int, it makes sense
-> for functions to use int.
-> 
-> C17::6.7.2.2.3:
-> [
-> The identifiers in an enumerator list are declared as constants
-> that have type int and may appear wherever such are permitted.
-> ]
-> 
-> I'd use an int for the API/ABI, even if it's expected to be assigned
-> values of 'enum trusted_for_usage' (that should be specified in the
-> manual page in DESCRIPTION, but not in SYNOPSIS, which should specify int).
-> 
-> 
-> 
-> TL;DR:
-> 
-> ISO C specifies that for the following code:
-> 
->     enum foo {BAR};
-> 
->     enum foo foobar;
-> 
-> typeof(foo)    shall be int
-> typeof(foobar) is implementation-defined
+> > +     else if (p->flags & PF_KTHREAD)
+> > +             get_kthread_comm(tcomm, sizeof(tcomm), p);
+> >       else
+> >               __get_task_comm(tcomm, sizeof(tcomm), p);
+> >
+> > --- a/kernel/kthread.c
+> > +++ b/kernel/kthread.c
+> > @@ -121,6 +135,7 @@ void free_kthread_struct(struct task_struct *k)
+>
+> Hmm, there is the following comment:
+>
+>         /*
+>          * Can be NULL if this kthread was created by kernel_thread()
+>          * or if kmalloc() in kthread() failed.
+>          */
+>         kthread = to_kthread(k);
+>
+> And indeed, set_kthread_struct() is called only by kthread()
+> and init_idle().
+>
+> For example, call_usermodehelper_exec_sync() calls kernel_thread()
+> but given @fn does not call set_kthread_struct(). Also init_idle()
+> continues even when the allocation failed.
+>
 
-I tested with some version of GCC (from 4.9 to 11) and clang (10 and 11)
-with different optimizations and the related sizes are at least the same
-as for the int type.
+Yes, it really can be NULL.
 
-> 
-> Since foobar = BAR; assigns an int, the best thing to do to avoid
-> implementation-defined behavior, is to declare foobar as int too.
+>
+> >  #ifdef CONFIG_BLK_CGROUP
+> >       WARN_ON_ONCE(kthread && kthread->blkcg_css);
+> >  #endif
+> > +     kfree(kthread->full_name);
+>
+> Hence, we have to make sure that it is not NULL here. I suggest
+> something like:
+>
 
-OK, so it should be enough to change the syscall argument type from enum
-trusted_for_usage to int, but we can keep the UAPI with the enum (i.e.
-we don't need to change the value to #define TRUSTED_FOR_EXECUTION 1) right?
+Agreed.  I will do it.
 
-> 
-> 
->> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
->> index 528a478dbda8..c535e0e43cc8 100644
->> --- a/include/linux/syscalls.h
->> +++ b/include/linux/syscalls.h
->> @@ -462,6 +463,7 @@ asmlinkage long sys_fallocate(int fd, int mode,
->> loff_t offset, loff_t len);
->>   asmlinkage long sys_faccessat(int dfd, const char __user *filename,
->> int mode);
->>   asmlinkage long sys_faccessat2(int dfd, const char __user *filename,
->> int mode,
->>                      int flags);
->> +asmlinkage long sys_trusted_for(int fd, enum trusted_for_usage usage,
->> u32 flags);
-> 
-> Same here.
-> 
->>   asmlinkage long sys_chdir(const char __user *filename);
->>   asmlinkage long sys_fchdir(unsigned int fd);
->>   asmlinkage long sys_chroot(const char __user *filename);
-> 
-> Thanks,
-> Alex
-> 
-> 
+> void free_kthread_struct(struct task_struct *k)
+> {
+>         struct kthread *kthread;
+>
+>         /*
+>          * Can be NULL if this kthread was created by kernel_thread()
+>          * or if kmalloc() in kthread() failed.
+>          */
+>         kthread = to_kthread(k);
+>         if (!kthread)
+>                 return;
+>
+> #ifdef CONFIG_BLK_CGROUP
+>         WARN_ON_ONCE(kthread->blkcg_css);
+> #endif
+>         kfree(kthread->full_name);
+>         kfree(kthread);
+> }
+>
+>
+> Side note: The possible NULL pointer looks dangerous to
+>     me. to_kthread() is dereferenced without any check on
+>     several locations.
+>
+>     For example, kthread_create_on_cpu() looks safe. It is a kthread
+>     crated by kthread(). It will exists only when the allocation
+>     succeeded.
+>
+>     kthread_stop() is probably safe only because it used only for
+>     the classic kthreads created by kthread(). But the API
+>     is not safe.
+>
+>     kthread_use_mm() is probably used only by classic kthreads as
+>     well. But it is less clear to me.
+>
+>     All this unsafe APIs looks like a ticking bomb to me. But
+>     it is beyond this patchset.
+>
+
+I will analyze it in depth and try to dismantle this ticking bomb.
+
+
+-- 
+Thanks
+Yafang
