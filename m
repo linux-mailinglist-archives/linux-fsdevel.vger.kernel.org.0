@@ -2,229 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 169D544F007
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Nov 2021 00:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A289A44F15A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Nov 2021 06:17:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230300AbhKLXco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Nov 2021 18:32:44 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:43618 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229674AbhKLXco (ORCPT
+        id S231809AbhKMFUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Nov 2021 00:20:31 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:59517 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229487AbhKMFUa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Nov 2021 18:32:44 -0500
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1ACNKnYo015938;
-        Fri, 12 Nov 2021 15:29:41 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=dI7enCgI0M82oqaWCwpQmzL4ascZK1msq2C1gjL+VoE=;
- b=rUNxrv7SmzIQ3rTGfWGQUqhGEEfzdk+AkbP2IstpH57GpS0Drl7tYbS3FIcKJndDTH5N
- k30/l6HsnMp6qUWP1tK1ZE0FfVRzMZFVRU2aqyEbTroj5iuVMSk/clvCzF0Z+abpJ/EN
- PihpALI+TB9Gv4aBgae9swTAM9VMpyepUWs= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 3c98k5b0wq-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 12 Nov 2021 15:29:40 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.14; Fri, 12 Nov 2021 15:29:24 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fBr9WnF7TM9OnGH1caQ3+TMR+gFatYurWpQxQ7UIUQUOnTaREnDEGAE9bJjwssxxy8BUKnnLXgq9lN3zioDbndveiBQnmKTTEX3uPVtkSVbwhxRxaOxp1+J7jrweU4W9ieZ7dzB9TaxDkx3pq/9JZVaSRoWDvT9ApqGBaI+m/520GzNSpiR6NwFo19DjmxalA2AVHXKkH5l2H1+N4o1qq6sDZNgKdvXM8yrKwhr7x42fUF3FR/5yKxYNh9u5x14rUFYmCHR59cezDBVZPJAGxlhyvcM+T3dyMa0Wljs1txvSgBZv0baErvZy77ZCEZ4LjV9ZY2f/yZZ18jwwQ3nSLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dI7enCgI0M82oqaWCwpQmzL4ascZK1msq2C1gjL+VoE=;
- b=c3QKDHImPipQPKsgf2z2wMBHMTFdvVV2RUxYP3YXXeVP8pPGC1nPnlDSaS6VKKCdekYs9iIyh7FZ78cxuYW4bUmef03OOoyL78YYg5anGJneOOLDxEgdzjPoITmGfMH9YjkLivUAjKYXkviGxxpPdzVKfl6+h+iIdE10lePdRBaLPIC5erQAIeBqm+DPuS9N3516K+FXQ5IFKQtPVczbMRPIPBt85f3XH+FZD/2nBlPQr7Og5Js+xwGYRbGiH+k0Pwp2UmBmLc8fqRmoMyiG2Nfad6W04x4V4UVZHTO3P0P4s0HDkX/n6VuJYcfmf8INYDEys7AU+NKKcuBL2izuqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Authentication-Results: ubuntu.com; dkim=none (message not signed)
- header.d=none;ubuntu.com; dmarc=none action=none header.from=fb.com;
-Received: from DM6PR15MB4039.namprd15.prod.outlook.com (2603:10b6:5:2b2::20)
- by DM5PR15MB1708.namprd15.prod.outlook.com (2603:10b6:4:5b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.15; Fri, 12 Nov
- 2021 23:29:23 +0000
-Received: from DM6PR15MB4039.namprd15.prod.outlook.com
- ([fe80::755e:51ae:f6c:3953]) by DM6PR15MB4039.namprd15.prod.outlook.com
- ([fe80::755e:51ae:f6c:3953%6]) with mapi id 15.20.4690.026; Fri, 12 Nov 2021
- 23:29:23 +0000
-Message-ID: <0515c3c8-c9e3-25dd-4b49-bb8e19c76f0d@fb.com>
-Date:   Fri, 12 Nov 2021 18:29:20 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.0
-Subject: Re: [PATCH] fuse: allow CAP_SYS_ADMIN in root userns to access
- allow_other mount
-Content-Language: en-US
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-CC:     <linux-fsdevel@vger.kernel.org>,
+        Sat, 13 Nov 2021 00:20:30 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 0F62B5C0187;
+        Sat, 13 Nov 2021 00:17:38 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 13 Nov 2021 00:17:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        EMFXt56XgkIM+6uzmaJKNay8yGXjJ2lMsP116bCZSDs=; b=PMiWSuxjhHQfia45
+        PpKrnze6bK1eU+4vO6UdyR1ya41t/smtnZ2gQFT333oFVu7KrZ1lwIiVrG4mDsRE
+        AZe8BTaF0MwniP3hLbud/IEDKxXUxdBazutOJV2zQcmJNmC3IGFe24KD5pjREKoj
+        hna8tWBkkTQHtjbv8HWsUG0XIcf9uY/4AXi170yPVNz0bCaQgHzsK1W80A3v5jEN
+        qDR5QolQws+ISlKEsVGyPinYYvlAU39UBBjCLcJdsR7J3shKG/3oevtW+wqTtzny
+        qaq12uG5+RzkLYIJNAs998TJ7rBemoZu+awzZmmCAxxJiKTwX6XDVrYhFB2E4ovo
+        Dxvfnw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=EMFXt56XgkIM+6uzmaJKNay8yGXjJ2lMsP116bCZS
+        Ds=; b=maUcf73arKJ3GwgLT8ZELNPu/6gt7HyLNbrmYbHy6QBaWZ2pWsYrl0MyJ
+        17+uqjKs/kuciuo3o/I7SrWkD2GiRagv7HfI/pl+7vx8PcJvTHd64jZFUB2unWsc
+        wQQlWkCEvfRtoV+WzkSWzVTR3zZ6ijb5/9mdzhaB2g4pMeehPiXI2eQMFh39Rwmm
+        sFOzyEowZjtIWG3QxdA27JrWBwHG0OH6pYeKSx0fHV36jlR0lHB6LozMEXH2sR0A
+        aecvO02/ObS7s9txnipCHRfrCMIVNJ5PwUkkkgSvxlF5+j8YMMTbmCmgYf0B/bcs
+        2ee7F6+nT/PojV8gOZimkL1u2FmoA==
+X-ME-Sender: <xms:cUqPYSqGxYvC_SJPsWk8dKZ0CSNpdac7yC27fSDImuYeFJGxEXRtMg>
+    <xme:cUqPYQr4UVwWvtoeQZtJs3fRlWfrAKRVd-95LTpqN0F9zOnCI6znt6JNtutoIjCkH
+    lpmcAHZ_vtW>
+X-ME-Received: <xmr:cUqPYXPwV0DTrmmgdMKAPzTkihZ-Q2WpnA0_HQJV2s3NSWuh9iEAzX5n7YfxGlYO8ujjqck>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrvdeggdekvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtkeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepgf
+    elleekteehleegheeujeeuudfhueffgfelhefgvedthefhhffhhfdtudfgfeehnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
+    hhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:cUqPYR4fYBCG3qDghIMUco5A_zJmbYD0NvutLyBKINInmvPV7eD1BA>
+    <xmx:cUqPYR74zUTi-uImRJyB70VhwGKutMK1oNwB_KXHCxdh9CI0myb1qw>
+    <xmx:cUqPYRg1LJl6TDVPHfcfpWEItskTL2hkk4y7DAYBAEASaiT-ubvwRw>
+    <xmx:ckqPYfTF1ZOZjXv4OhnpRa7wf4AA2eh34K7pFK5iVQqThAvSK-2t9Q>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 13 Nov 2021 00:17:34 -0500 (EST)
+Message-ID: <4d05efe9917a2c7fff8294e2951e0468b5e178fe.camel@themaw.net>
+Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
+From:   Ian Kent <raven@themaw.net>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Rik van Riel <riel@surriel.com>, <kernel-team@fb.com>
-References: <20211111221142.4096653-1-davemarchevsky@fb.com>
- <20211112101307.iqf3nhxgchf2u2i3@wittgenstein>
-From:   Dave Marchevsky <davemarchevsky@fb.com>
-In-Reply-To: <20211112101307.iqf3nhxgchf2u2i3@wittgenstein>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Sat, 13 Nov 2021 13:17:29 +0800
+In-Reply-To: <YY5UYitVcs7pPklb@bfoster>
+References: <163660195990.22525.6041281669106537689.stgit@mickey.themaw.net>
+         <163660197073.22525.11235124150551283676.stgit@mickey.themaw.net>
+         <YY1AEaHRLe+P4IYr@bfoster>
+         <ed30a482ce8404de7974bc86b4c9fc98a5ae9060.camel@themaw.net>
+         <YY5UYitVcs7pPklb@bfoster>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0289.namprd13.prod.outlook.com
- (2603:10b6:208:2bc::24) To DM6PR15MB4039.namprd15.prod.outlook.com
- (2603:10b6:5:2b2::20)
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Received: from [IPV6:2620:10d:c0a8:11d1::1052] (2620:10d:c091:480::1:408c) by BL1PR13CA0289.namprd13.prod.outlook.com (2603:10b6:208:2bc::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.15 via Frontend Transport; Fri, 12 Nov 2021 23:29:22 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 047010d6-f8e3-42b7-06ad-08d9a6344229
-X-MS-TrafficTypeDiagnostic: DM5PR15MB1708:
-X-Microsoft-Antispam-PRVS: <DM5PR15MB1708C78EF4C019079E3DC45EA0959@DM5PR15MB1708.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:126;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +G3FNxbfcFiJuWPDXN5mQV4pLItioycw7sp7KBjR2/O0I5p9MhvHGeJ35OLkQXFrAK4b3QLwHOAZkyfbjaVPEN3s7T2nFMMxWWYmdAQe/qL0hC6xNJNF9fT7b7CJ/eBBarH9cB7airD2LdAO53FEQ1VuB5GgI8b9AW4TPvvpzO7yUZRV3ltLmVLqoFWQj/0z2OnTW10gbiF8YIkEwndi+yLWA+jpWPM7+qs38QpSdnyUEIGAm9D0i+c0hA4qmSNcOYi551mjiwELh/UbHqm21Jwp1nfPrBfqQyjf0OilcN1mD+26RMaum/j+6c2mJAFXe7NlPskBFoB2ItB+Zsq3kowa1RDwUCDBpyeAA/etR9tfprMFUDg49OTl44e+08GBBdfACHYTvtFEcOPm/cCH9mcJnYULwL5Sh6ERZzwqVBF+y88hP5Xy/4Nfy55ls6+2+BNpxCRyritVehzAkjoBSBy3/aME+4raeOtFUdVTkw1lJxcHfsqerj2pNZXO3WEEnIGXq4iirWSH5Qf6oXJyWp5SaU6xxMGs/hFKLXF1+qvvXFgpQXAqHehQmNOii1/cY0FBybFohWav8iqAykmyZ8ebnnWgT+3hlI+p3bBpfbe4CWHX32hyjNtVzSwUH+XTsz5XQkeMdUTLEYYDevUgbtKcIrE5UV3+aw6Dpq0MgDODwTOeEv6JjJUHRUJ32nZtqdjKoTzhdd80yt4SNF11jADv3w0GAPKESuobeyZGsyM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR15MB4039.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(38100700002)(186003)(31696002)(31686004)(54906003)(53546011)(2616005)(316002)(83380400001)(508600001)(6916009)(5660300002)(66556008)(6486002)(66476007)(36756003)(4326008)(66946007)(8676002)(2906002)(86362001)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NUNTdE5xN2VpRE1tRTdiUEVITjNxc2VCdnVHT0RBVklzOWtPcktlSFdZR0Y0?=
- =?utf-8?B?MGxuTnJKVUQzZEt3cG9DOUdTVmU2WDBvNTN5Sm55cnBCMnZlVThJejQxaWFZ?=
- =?utf-8?B?bHdvbHNIdzZySjZMMm1EdXRQNStrTzFXeVR1UzhTY2RMT2k5dWNzSFRzQy8v?=
- =?utf-8?B?U1pXZWRocllXYWo1ZlNMT1RPblJhS1N4RVNDUjN2cVpHSENrSGtDOUpmeHZR?=
- =?utf-8?B?OUtjLzJrMzlCS252blFCcGFUYVlYcjUxNzYvN2R2VzgvVUREQlh3TGhXUDMw?=
- =?utf-8?B?V0VVRExUNXA5TDh2SWpzSWRncTZsL1B4R253bDNXVlhyZWJXQmpUMXZRTXJt?=
- =?utf-8?B?cXRPZXVPSEt3ZytyWGlMc3hCQWpnU2tHL0FpRWtVSnJ5cExDdThCNU9keG81?=
- =?utf-8?B?RE4yY0pGeGZnR05FaGR6SmdmZ0FENE9jUGlEcS9FeEViRHJNdlRBQnJVWWN2?=
- =?utf-8?B?WE1LQjljVURVS1poZTFJY3N5RDUvN1RJM0QyV0oxczQrS2VicWp5dTN5SnRx?=
- =?utf-8?B?QzlKUUxyZHFRVVp5WlNuMGx5UzhIMFAvNG5DZzgxSzBseWc2Qnh0OU0vUjMw?=
- =?utf-8?B?U1VPdmtZY0pQTjJkS0FONFdQVzcwKzZnR3VXbW5zalBYRDEza3J6KzQvZnlr?=
- =?utf-8?B?Ni9NL1RIdFZpeWgrUGZCWURUcDZwZmlCanZXTjRIclVKdEdKOFk0R0ZRRWNk?=
- =?utf-8?B?WCtNR0VHcCtFSEt2d29sRTFRWmRiaHRvakFhdjMyZDdYcy92YXMyM05rZURn?=
- =?utf-8?B?TUxxT0YvcSsrenlaUXFQdFdsQ210dXhDRWY2d3lvbm5rUFZ1QTB1dDhYK2w4?=
- =?utf-8?B?UGc0dGEyU2ZwTWdPOE9PK3RZdjk4K2pVcEdKRW1tQyt4V2lWMEpLZWVhUFR0?=
- =?utf-8?B?RVZ1MUNmTlBRVVp1TEV2ZDJnYktvUXJpT0hrOG10dnpYajZab1FwNmUrcHRS?=
- =?utf-8?B?T2xUdkRSTktTVWc5N3lUTGRzaWhzSS9CWkIxTjZ6YmloemJWeDdoUnhtaDd2?=
- =?utf-8?B?anJSVlJ5T2Qxd0grWHk0R3I0b0d6VTllK1Jqa0pIbzFrV3ltUmp5aUN1Zlha?=
- =?utf-8?B?QmJLczV4aUdCQXJ3cnpxYjVuVjVobXBSc0xFWnFTazlxRThDSFIydCtyeEI5?=
- =?utf-8?B?SmJkWUdnQnFtRHdVU1QzRDdqK2ZSL0xLRU5FSSswUnpOcjdJcWxVaUcxbFdl?=
- =?utf-8?B?MGU1NEwwMHEvRGJYMkZiVmhSTlBUTmFlNGZQL1VqR3B2TS9zYVBCYVIxMnYz?=
- =?utf-8?B?VUQzbTZtRTBJNUFHM0FsK05ncHRIc0xISUtOSEFqazlGV1oxNm1pRmhKaFBC?=
- =?utf-8?B?ZEdOdzlZcGhFSkFVYStkWmtFZEFEeTZRY0lwdDlqNGR2d1RlQ3NKMlk1NUw4?=
- =?utf-8?B?VlQ1YW5aSkVoSXBSK0FhMGFRanQwTy8rNTNvWGE5dnlhY1VtVWNaWGNUcXpO?=
- =?utf-8?B?Ly85TCtQVlhzbXpsQWFXRHB4UXV1QjZZb0Q4a3Rvbmd6SGZmODluL0hhbEZW?=
- =?utf-8?B?dzNDT2NmY1RqVmgzemFmeWxmZEp1cS8vektZSGQvUG9TOW12dytaKy83UEdX?=
- =?utf-8?B?c2FrSlpQZ25FaUw2Nmlua0tmeWZOUVk2QlM0ZFF0akVpV0J0dFpac2RGYkNP?=
- =?utf-8?B?ckQ0MHJuZGgreDhsbnNsc0poaC9jVnQ3VGs1WUJ3dFpCMmdKZEpCZGVjeVBH?=
- =?utf-8?B?Mm9sUS9jRkJUYW9vclZPWXdBdHVZR3pnVXg0WE4zQy9UdmQyTGQ2RjZHdmZN?=
- =?utf-8?B?L0FxUHNIREtjekkwNDBjZE9nU1VGMTc2Q2ZDMTc0cXpZRTloU1ZpZVR5VXRZ?=
- =?utf-8?B?NjlBaUgxODQySWF3V1NYRll3VnlYNVVWcFhQMkVOTW9PSXZBQlJyS2tnWnQy?=
- =?utf-8?B?VDIva2FLZUNuTjdsbXQvUHI1STdwQWVuVUx3ZER1S0Zsek1peVZ2OGhMYS82?=
- =?utf-8?B?N1MydnpUam1ubmE3Z3VBNzVKTnRpRzVEWWRvYm00OE9DUEUvcnByR0IxTkVD?=
- =?utf-8?B?bW9yVVB2MlcyKzJRRlNHcURXclNXNEx5bmxNTkM4SUw5MmlNNGJzZHhvS0pK?=
- =?utf-8?B?ZGJSUGZWNUlLMVZKVUZEWTJCZ0ErUU1kNVF0TzhNbzhXN3J4WUpYb01aM1N4?=
- =?utf-8?B?THBiOXV5NHRYcnRBTjNEZ3FRbDdvVDJxNlNMTWJrUkk2d2FCS3VqTmVXMkRl?=
- =?utf-8?Q?rPtu5a7A4iWVIfIkJtACXhvbSasSPaFKzdXc/xbnePOY?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 047010d6-f8e3-42b7-06ad-08d9a6344229
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR15MB4039.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2021 23:29:22.9544
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L/SfCsffKqI6zxiaT0clNpbMBdOA9myQBvFyVjKTuyIYPxjzZyFRMYkEySn3gRy0E4fVczItlNyu3awpwF8cmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1708
-X-OriginatorOrg: fb.com
-X-Proofpoint-ORIG-GUID: D4-0U89R-HC9_PgABEkw-bbaEmv5e0_H
-X-Proofpoint-GUID: D4-0U89R-HC9_PgABEkw-bbaEmv5e0_H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-12_05,2021-11-12_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 suspectscore=0
- bulkscore=0 adultscore=0 mlxlogscore=999 phishscore=0 lowpriorityscore=0
- clxscore=1011 impostorscore=0 malwarescore=0 mlxscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2111120118
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/12/21 5:13 AM, Christian Brauner wrote:   
-> On Thu, Nov 11, 2021 at 02:11:42PM -0800, Dave Marchevsky wrote:
->> Since commit 73f03c2b4b52 ("fuse: Restrict allow_other to the
->> superblock's namespace or a descendant"), access to allow_other FUSE
->> filesystems has been limited to users in the mounting user namespace or
->> descendants. This prevents a process that is privileged in its userns -
->> but not its parent namespaces - from mounting a FUSE fs w/ allow_other
->> that is accessible to processes in parent namespaces.
->>
->> While this restriction makes sense overall it breaks a legitimate
->> usecase for me. I have a tracing daemon which needs to peek into
->> process' open files in order to symbolicate - similar to 'perf'. The
->> daemon is a privileged process in the root userns, but is unable to peek
->> into FUSE filesystems mounted with allow_other by processes in child
->> namespaces.
->>
->> This patch adds an escape hatch to the descendant userns logic
->> specifically for processes with CAP_SYS_ADMIN in the root userns. Such
->> processes can already do many dangerous things regardless of namespace,
->> and moreover could fork and setns into any child userns with a FUSE
->> mount, so it's reasonable to allow them to interact with all allow_other
->> FUSE filesystems.
->>
->> Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
->> Cc: Miklos Szeredi <miklos@szeredi.hu>
->> Cc: Seth Forshee <sforshee@digitalocean.com>
->> Cc: Rik van Riel <riel@surriel.com>
->> Cc: kernel-team@fb.com
->> ---
+On Fri, 2021-11-12 at 06:47 -0500, Brian Foster wrote:
+> On Fri, Nov 12, 2021 at 07:10:19AM +0800, Ian Kent wrote:
+> > On Thu, 2021-11-11 at 11:08 -0500, Brian Foster wrote:
+> > 
+> > Hi Brian,
+> > 
+> > > On Thu, Nov 11, 2021 at 11:39:30AM +0800, Ian Kent wrote:
+> > > > When following a trailing symlink in rcu-walk mode it's
+> > > > possible to
+> > > > succeed in getting the ->get_link() method pointer but the link
+> > > > path
+> > > > string be deallocated while it's being used.
+> > > > 
+> > > > Utilize the rcu mechanism to mitigate this risk.
+> > > > 
+> > > > Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+> > > > Signed-off-by: Ian Kent <raven@themaw.net>
+> > > > ---
+> > > >  fs/xfs/kmem.h      |    4 ++++
+> > > >  fs/xfs/xfs_inode.c |    4 ++--
+> > > >  fs/xfs/xfs_iops.c  |   10 ++++++++--
+> > > >  3 files changed, 14 insertions(+), 4 deletions(-)
+> > > > 
+> > > ...
+> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > > index a607d6aca5c4..2977e19da7b7 100644
+> > > > --- a/fs/xfs/xfs_iops.c
+> > > > +++ b/fs/xfs/xfs_iops.c
+> > > > @@ -524,11 +524,17 @@ xfs_vn_get_link_inline(
+> > > >  
+> > > >         /*
+> > > >          * The VFS crashes on a NULL pointer, so return -
+> > > > EFSCORRUPTED if
+> > > > -        * if_data is junk.
+> > > > +        * if_data is junk. Also, if the path walk is in rcu-
+> > > > walk
+> > > > mode
+> > > > +        * and the inode link path has gone away due inode re-
+> > > > use
+> > > > we have
+> > > > +        * no choice but to tell the VFS to redo the lookup.
+> > > >          */
+> > > > -       link = ip->i_df.if_u1.if_data;
+> > > > +       link = rcu_dereference(ip->i_df.if_u1.if_data);
+> > > > +       if (!dentry && !link)
+> > > > +               return ERR_PTR(-ECHILD);
+> > > > +
+> > > 
+> > > One thing that concerns me slightly about this approach is that
+> > > inode
+> > > reuse does not necessarily guarantee that if_data is NULL. It
+> > > seems
+> > > technically just as possible (even if exceedingly unlikely) for
+> > > link
+> > > to
+> > > point at newly allocated memory since the previous sequence count
+> > > validation check. The inode could be reused as another inline
+> > > symlink
+> > > for example, though it's not clear to me if that is really a
+> > > problem
+> > > for
+> > > the vfs (assuming a restart would just land on the new link
+> > > anyways?).
+> > > But the inode could also be reallocated as something like a
+> > > shortform
+> > > directory, which means passing directory header data or whatever
+> > > that
+> > > it
+> > > stores in if_data back to pick_link(), which is then further
+> > > processed
+> > > as a string.
+> > 
+> > This is the sort of feedback I was hoping for.
+> > 
+> > This sounds related to the life-cycle of xfs inodes and re-use.
+> > Hopefully someone here on the list can enlighten me on this.
+> > 
+> > The thing that comes to mind is that the inode re-use would
+> > need to occur between the VFS check that validates the inode
+> > is still ok and the use of link string. I think that can still
+> > go away even with the above check.
+> > 
 > 
-> If your tracing daemon runs in init_user_ns with CAP_SYS_ADMIN why can't
-> it simply use a helper process/thread to
-> setns(userns_fd/pidfd, CLONE_NEWUSER)
-> to the target userns? This way we don't need to special-case
-> init_user_ns at all.
-
-helper process + setns could work for my usecase. But the fact that there's no
-way to say "I know what I am about to do is potentially stupid and dangerous,
-but I am root so let me do it", without spawning a helper process in this case,
-feels like it'll result in special-case userspace workarounds for anyone doing
-symbolication of backtraces.
-
-e.g. perf will have to add some logic: "did I fail
-to grab this exe that some process had mapped? Is it in a FUSE mounted by some
-descendant userns? let's fork a helper process..." Not the end of the world,
-but unnecessary complexity nonetheless.
-
-That being said, I agree that this patch's special-casing of init_user_ns is
-hacky. What do you think about a more explicit and general "let me do this
-stupid and dangerous thing" mechanism - perhaps a new struct fuse_conn field
-containing a set of exception userns', populated with ioctl or similar.
-
+> Yeah... The original NULL ->get_link() problem was replicated with a
+> small delay in the lookup path (specifically in the symlink
+> processing
+> path). This essentially widens the race window and allows a separate
+> task to invalidate the dentry between the time the last dentry
+> sequence
+> validation occurred (and passed) and the attempt to call ->get_link()
+> becomes imminent. I think patch 1 largely addresses this issue
+> because
+> we'll have revalidated the previous read of the function pointer
+> before
+> we attempt to call it.
 > 
->>
->> Note: I was unsure whether CAP_SYS_ADMIN or CAP_SYS_PTRACE was the best
->> choice of capability here. Went with the former as it's checked
->> elsewhere in fs/fuse while CAP_SYS_PTRACE isn't.
->>
->>  fs/fuse/dir.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
->> index 0654bfedcbb0..2524eeb0f35d 100644
->> --- a/fs/fuse/dir.c
->> +++ b/fs/fuse/dir.c
->> @@ -1134,7 +1134,7 @@ int fuse_allow_current_process(struct fuse_conn *fc)
->>  	const struct cred *cred;
->>  
->>  	if (fc->allow_other)
->> -		return current_in_userns(fc->user_ns);
->> +		return current_in_userns(fc->user_ns) || capable(CAP_SYS_ADMIN);
->>  
->>  	cred = current_cred();
->>  	if (uid_eq(cred->euid, fc->user_id) &&
->> -- 
->> 2.30.2
->>
->>
+> That leads to this patch, which suggests that even after the
+> validation
+> fix a small race window still technically exists with the -
+> >get_link()
+> code and inode teardown. In fact, it's not that hard to show that
+> this
+> is true by modifying the original reproducer to push the delay out
+> beyond the check added by patch 1 (or into the ->get_link()
+> callback).
+> Playing around with that a bit, it's possible to induce a -
+> >get_link()
+> call to an inode that was reallocated as a shortform directory and
+> returns a non-NULL if_data fork of that dir back to the vfs (to be
+> interpreted as a symlink string). Nothing seems to explode on my
+> quick
+> test, fortunately, but I don't think that's an interaction we want to
+> maintain.
+> 
+> Of course one caveat to all of that is that after patch 1, the race
+> window for that one might be so small as to make this impossible to
+> reproduce in practice (whereas the problem fixed by patch 1 has been
+> reproduced by users)...
+> 
+> > Hopefully someone can clarify what happens here.
+> > 
+> > > 
+> > > With that, I wonder why we wouldn't just return -ECHILD here like
+> > > we
+> > > do
+> > > for the non-inline case to address the immediate problem, and
+> > > then
+> > > perhaps separately consider if we can rework bits of the
+> > > reuse/reclaim
+> > > code to allow rcu lookup of inline symlinks under certain
+> > > conditions.
+> > 
+> > Always switching to ref-walk mode would certainly resolve the
+> > problem too, yes, perhaps we have no choice ...
+> > 
+> 
+> Oh I don't think it's the only choice. I think Miklos' suggestion to
+> use
+> ->free_inode() is probably the right general approach. I just think a
+> switch to ref-walk mode might be a good incremental step to fix this
+> problem in a backportable way (s_op->free_inode() is newer relative
+> to
+> the introduction of _get_link_inline()). We can always re-enable rcu
+> symlink processing once we get our inode teardown/reuse bits fixed up
+> accordingly.. Just my .02.
+
+Yes, I've had a change of heart on this too.
+
+I think returning -ECHILD from xfs_vn_get_link_inline() is the
+best solution.
+
+There are a couple of reasons for that, the main one being the
+link string can still go away while the VFS is using it, but
+also Al has said more than once that switching to ref-walk mode
+is not a big deal and that makes the problems vanish completely.
+In any case references are taken at successful walk completion
+anyway.
+
+If it's found staying rcu-walk mode whenever possible is worth
+while in cases like this then there's probably a lot more to do
+to do this properly. The lockless stuff is tricky and error prone
+(certainly it is for me) and side effects are almost always hiding
+in unexpected places.
+
+So as you say, that's something for another day.
+I'll update the patch and post an update.
+
+Ian 
+> 
+> Brian
+> 
+> > Ian
+> > > 
+> > > FWIW, I'm also a little curious why we don't set i_link for
+> > > inline
+> > > symlinks. I don't think that addresses this validation problem,
+> > > but
+> > > perhaps might allow rcu lookups in the inline symlink common case
+> > > where
+> > > things don't change during the lookup (and maybe even eliminate
+> > > the
+> > > need
+> > > for this custom inline callback)..?
+> > > 
+> > > Brian
+> > > 
+> > > >         if (XFS_IS_CORRUPT(ip->i_mount, !link))
+> > > >                 return ERR_PTR(-EFSCORRUPTED);
+> > > > +
+> > > >         return link;
+> > > >  }
+> > > >  
+> > > > 
+> > > > 
+> > > 
+> > 
+> > 
+> 
+
 
