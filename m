@@ -2,171 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1442644F51D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Nov 2021 20:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D3B44F713
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Nov 2021 08:06:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236053AbhKMUBe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Nov 2021 15:01:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34954 "EHLO
+        id S229908AbhKNHJV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Nov 2021 02:09:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233692AbhKMUBe (ORCPT
+        with ESMTP id S229469AbhKNHJM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Nov 2021 15:01:34 -0500
+        Sun, 14 Nov 2021 02:09:12 -0500
 Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D304C061766
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Nov 2021 11:58:41 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id w1so52592249edd.10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Nov 2021 11:58:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71925C061570;
+        Sat, 13 Nov 2021 23:06:14 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id r4so8882244edy.12;
+        Sat, 13 Nov 2021 23:06:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MHD2bTlUz5x6tjTp2HBj8sSROMtXQSdxPEpMQxK64s8=;
-        b=IaaBUvEeymEULLdK7ddk8M4Yt36DhR8YRyneX1vtNJIq7VW7n4gHnonP0l16PEc1Uq
-         XVbcfx81U2qDOR4W6XWmiSZ+feL8J2gkzOub47CFE6fEJNKXoDb2R4aQlUAJL9V7K8Xk
-         SqCnRB4yAgnBzWWsirezpwNrkTD2vJAMUHCFw=
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=lTAWwzCDf/mzTJzs3+RMQBARAQp9pv2hNSSRu5s7rGk=;
+        b=NGPyaC4HyGyzJ1rKSXlYLIF3VYW8ANrzasd9imWyXZqYrXhBJ7DUUlveK95P0k2VYN
+         P6IIViIwJUInUM9i0uuZFCtD/JGcYvtDsPeEUs2htU8GOq7tLuhx4WXXbIpXVTTPXITd
+         UlxWBBACwBl4C//AQzbFtgJ2VZd22A29zTs+CrmeXKhtKOBinlr4oaFSlUvEsxYaMsE7
+         dPkLTtufvXehyY4S/ac91T0E29V/PyoQh6Yesbf1jvhsH8vEwdmTH4soage/Vbg+8BNz
+         ehINbCd8WTPOyqtHlqEIKQYYKvbJXkLNKjpc5xDruwC8WlGboho6HoMyPjadDbQ21nmx
+         63zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MHD2bTlUz5x6tjTp2HBj8sSROMtXQSdxPEpMQxK64s8=;
-        b=FqIGvo791JvV5NETY6h6eMuy4AEWDsk8THCOu1DPTFsXY3I1QEjrk6Mhmpze0/dnW5
-         AkyWt3VxEtz5iFsqNL7KUdYsJBb1Pmtbka+n1H8JBuvjIBvbBIvDQYgXjInURWKiMto0
-         1fCdiGxgN0x0vtxmdJwGGSKhXjyjG5esg9d2MPSNsQpYaDGZlECxge7f5CZdZuPI3Zzr
-         CLa+xUdBTEySACiGsrlb6/Vut/IB/uD7OjoYbZzRJXh28JFks0KhvQabw0wCyaW8mNFJ
-         hbUN0ylTDg8tPZ7penHvmbbTO4BjSNvVW9g235pkdKvsKXE9mj7mIyDW5xd1ttR7J8OV
-         AmdA==
-X-Gm-Message-State: AOAM531IoNJPhfWjJJQhiGMN+VZiJy39W7+A3n8Qz8/ZcRMrCdwSu1W9
-        r0HWtTodSEnLRMy/pz3IgkF6qGOzJ2b569gw9Zo=
-X-Google-Smtp-Source: ABdhPJwkPv8dA2O06q1ZPHy0iabu6WZAvVkyqEYCFw6LDZ7DMV7XjFJVI7bV5/ybSCcOJToQrJZ+jA==
-X-Received: by 2002:a17:906:52d8:: with SMTP id w24mr33568517ejn.296.1636833519864;
-        Sat, 13 Nov 2021 11:58:39 -0800 (PST)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id d14sm4051978edu.57.2021.11.13.11.58.39
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Nov 2021 11:58:39 -0800 (PST)
-Received: by mail-ed1-f41.google.com with SMTP id m14so52746442edd.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Nov 2021 11:58:39 -0800 (PST)
-X-Received: by 2002:adf:d1e2:: with SMTP id g2mr30419974wrd.105.1636833509376;
- Sat, 13 Nov 2021 11:58:29 -0800 (PST)
+         :message-id:subject:to;
+        bh=lTAWwzCDf/mzTJzs3+RMQBARAQp9pv2hNSSRu5s7rGk=;
+        b=6lItKKDm0TPQlw8NJx4tutF9U9TeMjWJpMveoDf7wUXRrAGNJTfs4vyOWMZa7WU33G
+         Q4zfiHw8XiJMK2jJ+Kh1jWWHt7GRRcfxwNmY+tU0l93hH0E3IMLf9Z0jnnfex5Ftpj+C
+         r/TrT0fFkMUsLhl62QtuUeRvLTRv1YnyXWK0freII7acZKIF9slw1OFCuoVnF+Zjgm1W
+         FZPoda6eaGLkuYN2a2o2spGbVgOBSSFu7FHcWHXkdJ7eqOhtEN/Ymwfe233tip1P3Vp1
+         Au8UVG0S8GupQeyGEcNYj/TpgEt8uMjGlLvpkgtNOI5xMIWUeXNrOY3E4Z+yywcbDwqu
+         jHaQ==
+X-Gm-Message-State: AOAM533Ow04PlzDppIaVgCbKQtcmvPyqAPXuBkpC0qSr47gEPKm/Xm31
+        PNzav3E1Wnuy/lcctciCNVYZ97rrALPxFFQ7Sj6FwCPx
+X-Google-Smtp-Source: ABdhPJz6F7eb7ZlPz+uZ1ryBjKV5MJY+6g8VTzYPNDQv8d/IMiyQJel1uICTBXlYxhNSBRKxb1cJsAgM4Rtiu1G511Y=
+X-Received: by 2002:a17:906:b084:: with SMTP id x4mr35926642ejy.214.1636873572801;
+ Sat, 13 Nov 2021 23:06:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20211027233215.306111-1-alex.popov@linux.com> <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
- <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com> <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
-In-Reply-To: <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 13 Nov 2021 11:58:13 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg+UMNYrR59Z31MhxMzdUEiZMQ1RF9jQvAb6HGBO5EyEA@mail.gmail.com>
-Message-ID: <CAHk-=wg+UMNYrR59Z31MhxMzdUEiZMQ1RF9jQvAb6HGBO5EyEA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
-To:     Alexander Popov <alex.popov@linux.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Paul McKenney <paulmck@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Maciej Rozycki <macro@orcam.me.uk>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Will Deacon <will@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Laura Abbott <labbott@kernel.org>,
-        David S Miller <davem@davemloft.net>,
-        Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Scull <ascull@google.com>,
-        Marc Zyngier <maz@kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Wang Qing <wangqing@vivo.com>, Mel Gorman <mgorman@suse.de>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Andrew Klychkov <andrew.a.klychkov@gmail.com>,
-        Mathieu Chouquet-Stringer <me@mathieu.digital>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Stephen Kitt <steve@sk2.org>, Stephen Boyd <sboyd@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Mike Rapoport <rppt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-hardening@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, notify@kernel.org,
-        main@lists.elisa.tech, safety-architecture@lists.elisa.tech,
-        devel@lists.elisa.tech, Shuah Khan <shuah@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+References: <CAOuPNLinoW5Cx=xbUcT-DB4RiQkAPpe=9hsc-Rkch0LxD0mh+Q@mail.gmail.com>
+ <CAOuPNLgquwOJg85kDcf67+4kTYP9N=45FvV+VDTJr6txYi5-wg@mail.gmail.com>
+ <CAOuPNLjFtS7ftg=+-K3S+0ndyNYmUNqXo7SHkyV4zK4G9bZ4Og@mail.gmail.com> <CAOuPNLg_YwyhK6iPZZbRWe57Kkr1d8LjJaDniCvvOqk4t2-Sog@mail.gmail.com>
+In-Reply-To: <CAOuPNLg_YwyhK6iPZZbRWe57Kkr1d8LjJaDniCvvOqk4t2-Sog@mail.gmail.com>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Sun, 14 Nov 2021 12:36:01 +0530
+Message-ID: <CAOuPNLgYhm=goOiABjUFsAvRW+s2NqHjHYdm5MA9PvoUAMxOpg@mail.gmail.com>
+Subject: Re: Kernel-4.14: With ubuntu-18.04 building rootfs images and booting
+ gives SQUASHFS error: xz decompression failed, data probably corrupt
+To:     open list <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        dm-devel@redhat.com, Phillip Lougher <phillip@squashfs.org.uk>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Daniel Rosenberg <drosen@google.com>, astrachan@google.com,
+        speed.eom@samsung.com, Sami Tolvanen <samitolvanen@google.com>,
+        snitzer@redhat.com, squashfs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 13, 2021 at 10:14 AM Alexander Popov <alex.popov@linux.com> wrote:
++ Adding squashfs-devel to get opinion from squashfs side.
+
+On Fri, 12 Nov 2021 at 12:48, Pintu Agarwal <pintu.ping@gmail.com> wrote:
 >
-> Killing the process that hit a kernel warning complies with the Fail-Fast
-> principle [1].
+> Hi,
+>
+> On Tue, 9 Nov 2021 at 21:04, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+>
+> > > > We only get these squashfs errors flooded in the boot logs:
+> > > > {{{
+> > > > ....
+> > > > [    5.153479] device-mapper: init: dm-0 is ready
+> > > > [    5.334282] VFS: Mounted root (squashfs filesystem) readonly on device 253:0.
+> > > > ....
+> > > > [    8.954120] SQUASHFS error: xz decompression failed, data probably corrupt
+> > > > [    8.954153] SQUASHFS error: squashfs_read_data failed to read block 0x1106
+> > > > [    8.970316] SQUASHFS error: Unable to read data cache entry [1106]
+> > > > [    8.970349] SQUASHFS error: Unable to read page, block 1106, size 776c
+> > > > [    8.980298] SQUASHFS error: Unable to read data cache entry [1106]
+> > > > [    8.981911] SQUASHFS error: Unable to read page, block 1106, size 776c
+> > > > [    8.988280] SQUASHFS error: Unable to read data cache entry [1106]
+> > > > ....
+> > > > }}}
+> > > >
+>
+> One more observation:
+> When I disable FEC flag in bootloader, I see the below error:
+> [    8.360791] device-mapper: verity: 253:0: data block 2 is corrupted
+> [    8.361134] device-mapper: verity: 253:0: data block 3 is corrupted
+> [    8.366016] SQUASHFS error: squashfs_read_data failed to read block 0x1106
+> [    8.379652] SQUASHFS error: Unable to read data cache entry [1106]
+> [    8.379680] SQUASHFS error: Unable to read page, block 1106, size 7770
+>
+> Also, now I see that the decompress error is gone, but the read error
+> is still there.
+>
+> This seems to me that dm-verity detects some corrupted blocks but with
+> FEC it auto corrects itself, how when dm-verity auto corrects itself,
+> the squashfs decompression algorithm somehow could not understand it.
+>
+> So, it seems like there is some mis-match between the way FEC
+> correction and the squashfs decompression happens ?
+>
+> Is this issue seen by anybody else here ?
+>
 
-The thing is a WARNING.
+The squashfs version used by Kernel:
+[    0.355958] squashfs: version 4.0 (2009/01/31) Phillip Lougher
 
-It's not even clear that the warning has anything to do with the
-process that triggered it. It could happen in an interrupt, or in some
-async context (kernel threads, whatever), or the warning could just be
-something that is detected by a different user than the thing that
-actually caused the warning to become an issue.
+The squashfs version available on Ubuntu:
+mksquashfs version 4.3-git (2014/06/09)
 
-If you want to reboot the machine on a kernel warning, you get that
-fail-fast thing you want. There are two situations:
+The squashfs version used by Yocto 2.6:
+squashfs-tools/0001-squashfs-tools-Allow-setting-selinux-xattrs-through-.patch:61:
+   printf("mksquashfs version 4.3-git (2014/09/12)\n");
 
- - kernel testing (pretty much universally done in a virtual machine,
-or simply just checking 'dmesg' afterwards)
+We create dm-verity squashfs image using version 4.3 whereas, the
+kernel uses 4.0 version to decompress it.
+Is there something missing here?
 
- - hyperscalers like google etc that just want to take any suspect
-machines offline asap
+When FEC (Forward Error Correction) comes into picture, then squashfs
+decompress fails.
+When we remove FEC flag from dm-verity then decompress works but read
+error still occurs.
+This seems as if something is missing either in FEC handling or either
+in squashfs decompress logic.
 
-But sending a signal to a random process is just voodoo programming,
-and as likely to cause other very odd failures as anything else.
+Just wanted to know if there are any fixes already available in the
+mainline for this ?
 
-I really don't see the point of that signal.
 
-I'm happy to be proven wrong, but that will require some major
-installation actually using it first and having a lot of strong
-arguments to counter-act the above.
-
-Seriously, WARN_ON() can happen in situations where sending a signal
-may be a REALLY BAD idea, never mind the issue that it's not even
-clear who the signal should be sent to.
-
-Yes, yes, your patches have some random "safety guards", in that it
-won't send the signal to a PF_KTHREAD or the global init process. But
-those safety guards literally make my argument for me: sending a
-signal to whoever randomly triggered a warning is simply _wrong_.
-Adding random "don't do it in this case" doesn't make it right, it
-only shows that "yes, it happens to the wrong person, and here's a
-hack to avoid generating obvious problems".
-
-Honestly, if the intent is to not have to parse the dmesg output, then
-I think it would be much better to introduce a new /proc file to read
-the kernel tainting state, and then some test manager process could be
-able to poll() that file or something. Not sending a signal to random
-targets, but have a much more explicit model.
-
-That said, I'm not convinced that "just read the kernel message log"
-is in any way wrong either.
-
-                  Linus
+Thanks,
+Pintu
