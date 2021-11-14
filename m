@@ -2,132 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A411E44F7C0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Nov 2021 13:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A44344F7C3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Nov 2021 13:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233170AbhKNMGX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Nov 2021 07:06:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44102 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbhKNMGW (ORCPT
+        id S235171AbhKNMMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Nov 2021 07:12:01 -0500
+Received: from smtp-42aa.mail.infomaniak.ch ([84.16.66.170]:40911 "EHLO
+        smtp-42aa.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230267AbhKNML7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Nov 2021 07:06:22 -0500
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F875C061746
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Nov 2021 04:03:28 -0800 (PST)
-Received: by mail-yb1-xb31.google.com with SMTP id y68so32562398ybe.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Nov 2021 04:03:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=l2AjIcA200luhAvIV6Y4Gf8Evv6mr+gMr0zSOMeBGF0=;
-        b=O5shjqR7V94u8lW5LNlqSj9OcKZvRoYjDfvIKLY3SMB0okt+/PqCAbFKwNlpcx7tEo
-         /DqjndkoPj0rxVarm4iF3EVgO/5pkJTG2vfEeLozXqvi/nrd/RTD6r6QjaLBgmrdfb9e
-         hY/9DomxiWxlsqwjCCSt/dGG+USzFlZd/lQ8vkotGaQYT1p1v7yGVhtmDjRxiOH1r/sz
-         t17iuFcI/jzcwLkYTxIg9Ky8BJ3ZOkqxHGdz9T3l+X/72wMynD8AOvAy/m98f3rIkPQC
-         GMBSDHocVTK3vaGR7pkeVfpnYB4uFpq3BgPJbOiTvqIbhH++KVVuiBmk85Ypcv8sO1qU
-         6XgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=l2AjIcA200luhAvIV6Y4Gf8Evv6mr+gMr0zSOMeBGF0=;
-        b=mva5sx/GVOEIExuJcKa8ky/vwW8b533PUsa/3eyTe58n0xhXZZPQo7+pm3vUjwZaho
-         2FbNDfZXwZsh2VB/lEg5nvNyzGwyUO364K8vVJk/A/JGwL+FRAR8ewAjV0GO/lV91Ms3
-         TiJG5SMJs7tsfgb4WuSWYnPiM6x6njCEwaAt+K76Woy9t8Q+Xt13hSq0Ntzc2p/wP9kj
-         fe0EfkgjkDmJAsXK2SuvEP9y2zv5lg6xCOiSpFjIjMpay6JYJa8xGzCZCICgRWnCe+xg
-         H1bvgFSno0BBHh5ugdz/dAn15VysL0EJlQT5NP2Kqb0zYEipL2l65Np5chC29GSgXXvF
-         Z5PA==
-X-Gm-Message-State: AOAM532rC0g8z/H40jaoLgutSWafs3tvUOdpc+nDvWaHeKJkQ98d+2ss
-        Q9HqQU/QJJ71fKox8FDzMsyryj39qPO/wk6gd6Lc68YCEjQ=
-X-Google-Smtp-Source: ABdhPJwNE60F9CXIyTOO7xllBY/M+VdWUgIbOw/LiSTM1SWQ/r3eIsv10sxzDGNBw7DIke84+WZyMvnvpHhwHaBfdNE=
-X-Received: by 2002:a25:1102:: with SMTP id 2mr32727351ybr.266.1636891407438;
- Sun, 14 Nov 2021 04:03:27 -0800 (PST)
+        Sun, 14 Nov 2021 07:11:59 -0500
+X-Greylist: delayed 83216 seconds by postgrey-1.27 at vger.kernel.org; Sun, 14 Nov 2021 07:11:59 EST
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HsWMM73kGzMpvZb;
+        Sun, 14 Nov 2021 13:09:03 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4HsWMH5cBRzlh8Tl;
+        Sun, 14 Nov 2021 13:08:59 +0100 (CET)
+Subject: Re: [PATCH v16 1/3] fs: Add trusted_for(2) syscall implementation and
+ related sysctl
+To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20211110190626.257017-1-mic@digikod.net>
+ <20211110190626.257017-2-mic@digikod.net>
+ <8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com>
+ <5312f022-96ea-5555-8d17-4e60a33cf8f8@digikod.net>
+ <34779736-e875-c3e0-75d5-0f0a55d729aa@gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <ebaba192-1f0b-eb5e-0914-a0c885afdac6@digikod.net>
+Date:   Sun, 14 Nov 2021 13:09:06 +0100
+User-Agent: 
 MIME-Version: 1.0
-From:   Turritopsis Dohrnii Teo En Ming <ceo.teo.en.ming@gmail.com>
-Date:   Sun, 14 Nov 2021 20:03:24 +0800
-Message-ID: <CAMEJMGFtEwxQzJ4jqSuCdAMgo6q-HOqPMwKk6TR=m_3x3d10rw@mail.gmail.com>
-Subject: I discovered that Aruba Instant On 1930 24G 4SFP/SFP+ JL682A Switch
- is Running an Operating System with Linux Kernel 4.4.120!
-To:     linux-fsdevel@vger.kernel.org
-Cc:     ceo@teo-en-ming-corp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <34779736-e875-c3e0-75d5-0f0a55d729aa@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Subject: I discovered that Aruba Instant On 1930 24G 4SFP/SFP+ JL682A
-Switch is Running an Operating System with Linux Kernel 4.4.120!
 
-Good day from Singapore,
+On 13/11/2021 20:56, Alejandro Colomar (man-pages) wrote:
+> Hi Mickaël,
+> 
+> On 11/13/21 14:02, Mickaël Salaün wrote:
+>>> TL;DR:
+>>>
+>>> ISO C specifies that for the following code:
+>>>
+>>>      enum foo {BAR};
+>>>
+>>>      enum foo foobar;
+>>>
+>>> typeof(foo)    shall be int
+>>> typeof(foobar) is implementation-defined
+>>
+>> I tested with some version of GCC (from 4.9 to 11) and clang (10 and 11)
+>> with different optimizations and the related sizes are at least the same
+>> as for the int type.
+> 
+> GCC has -fshort-enums to make enum types be as short as possible.  I
+> expected -Os to turn this on, since it saves space, but it doesn't.
+> 
+> Still, not relying on enum == int is better, IMO.
+> 
+>>
+>>>
+>>> Since foobar = BAR; assigns an int, the best thing to do to avoid
+>>> implementation-defined behavior, is to declare foobar as int too.
+>>
+>> OK, so it should be enough to change the syscall argument type from enum
+>> trusted_for_usage to int, but we can keep the UAPI with the enum (i.e.
+>> we don't need to change the value to #define TRUSTED_FOR_EXECUTION 1)
+>> right?
+> 
+> Correct.  The enumerations are guaranteed to be int (except in case of
+> UB, see below), so they'll be (almost) the same as a #define after the
+> preprocessor.
 
-I discovered that Aruba Instant On 1930 24G 4SFP/SFP+ JL682A Switch is
-Running an Operating System with Linux Kernel 4.4.120!
+Thanks for the detailed explanation! I'll send a new patch taking into
+account your suggestion.
 
-INTRODUCTION
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-My name is Mr. Turritopsis Dohrnii Teo En Ming, 43 years old as of 14
-Nov 2021. I live in Singapore. Presently I am an IT Consultant with a
-Systems Integrator (SI)/computer firm in Singapore. I am also a Linux
-and open source software and information technology enthusiast.
-
-You can read my autobiography on my redundant blogs. The title of my
-autobiography is:
-
-=E2=80=9CAutobiography of Singaporean Targeted Individual Mr. Turritopsis
-Dohrnii Teo En Ming (Very First Draft, Lots More to Add in Future)=E2=80=9D
-
-Links to my redundant blogs (Blogger and WordPress) can be found in my
-email signature below. These are my main blogs.
-
-I have three other redundant blogs, namely:
-
-https://teo-en-ming.tumblr.com/
-
-https://teo-en-ming.medium.com/
-
-https://teo-en-ming.livejournal.com/
-
-Future/subsequent versions of my autobiography will be published on my
-redundant blogs.
-
-My Blog Books (in PDF format) are also available for download on my
-redundant blogs.
-
-Over the years, I have published many guides, howtos, tutorials, and
-information technology articles on my redundant blogs. I hope that
-they are of use to information technology professionals.
-
-Thank you very much.
-
-
-
-
------BEGIN EMAIL SIGNATURE-----
-
-The Gospel for all Targeted Individuals (TIs):
-
-[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
-U.S. Embassy Workers
-
-Link:
-https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwave.html
-
-***************************************************************************=
-*****************
-
-Singaporean Targeted Individual Mr. Turritopsis Dohrnii Teo En Ming's
-Academic Qualifications as at 14 Feb 2019 and refugee seeking attempts
-at the United Nations Refugee Agency Bangkok (21 Mar 2017), in Taiwan
-(5 Aug 2019) and Australia (25 Dec 2019 to 9 Jan 2020):
-
-[1] https://tdtemcerts.wordpress.com/
-
-[2] https://tdtemcerts.blogspot.sg/
-
-[3] https://www.scribd.com/user/270125049/Teo-En-Ming
-
------END EMAIL SIGNATURE-----
+> 
+> 
+> If you do
+> 
+> enum foo {
+>     FOO = 1L << INT_WIDTH
+> };
+> 
+> since that doesn't fit in either int or unsigned int,
+> it is Undefined Behavior,
+> and here GCC decides to use long for FOO.
+> 
+> +++++++++ UB example ++++++++++++++
+> 
+> $ cat foo.c
+>     #include <limits.h>
+>     #include <stdio.h>
+> 
+> 
+>     enum foo {
+>         FOO = 1L << UINT_WIDTH
+>     };
+> 
+>     int main(void)
+>     {
+>         printf("\tsizeof(enum foo) = %zu\n", sizeof(enum foo));
+>         printf("\tsizeof(FOO)      = %zu\n", sizeof(FOO));
+>     }
+> 
+> $ cc foo.c -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c2x
+> foo.c:6:23: error: ISO C restricts enumerator values to range of 'int'
+> [-Wpedantic]
+>     6 |                 FOO = 1L << UINT_WIDTH
+>       |                       ^~
+> $ cc foo.c -Wall -Wextra -Werror -std=c2x
+> $ ./a.out
+>     sizeof(enum foo) = 8
+>     sizeof(FOO)      = 8
+> 
+> +++++++++++++ -fshort-enums example +++++++++++++++
+> 
+> $ cat foo.c
+>     #include <stdio.h>
+> 
+> 
+>     enum foo {
+>         FOO = 1
+>     };
+> 
+>     int main(void)
+>     {
+>         printf("\tsizeof(enum foo) = %zu\n", sizeof(enum foo));
+>         printf("\tsizeof(FOO)      = %zu\n", sizeof(FOO));
+>     }
+> 
+> $ cc foo.c -Wall -Wextra -Werror -Wpedantic -pedantic-errors -fshort-enums
+> $ ./a.out
+>     sizeof(enum foo) = 1
+>     sizeof(FOO)      = 4
+> 
+> ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> 
+> Cheers,
+> Alex
+> 
+> 
+>>
+>>>
+>>>
+>>>> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+>>>> index 528a478dbda8..c535e0e43cc8 100644
+>>>> --- a/include/linux/syscalls.h
+>>>> +++ b/include/linux/syscalls.h
+>>>> @@ -462,6 +463,7 @@ asmlinkage long sys_fallocate(int fd, int mode,
+>>>> loff_t offset, loff_t len);
+>>>>    asmlinkage long sys_faccessat(int dfd, const char __user *filename,
+>>>> int mode);
+>>>>    asmlinkage long sys_faccessat2(int dfd, const char __user *filename,
+>>>> int mode,
+>>>>                       int flags);
+>>>> +asmlinkage long sys_trusted_for(int fd, enum trusted_for_usage usage,
+>>>> u32 flags);
+>>>
+>>> Same here.
+>>>
+>>>>    asmlinkage long sys_chdir(const char __user *filename);
+>>>>    asmlinkage long sys_fchdir(unsigned int fd);
+>>>>    asmlinkage long sys_chroot(const char __user *filename);
+>>>
+>>> Thanks,
+>>> Alex
+>>>
+>>>
+> 
