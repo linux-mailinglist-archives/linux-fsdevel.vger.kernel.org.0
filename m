@@ -2,92 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99BB144F717
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Nov 2021 08:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A411E44F7C0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Nov 2021 13:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbhKNHSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Nov 2021 02:18:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
+        id S233170AbhKNMGX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Nov 2021 07:06:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbhKNHSW (ORCPT
+        with ESMTP id S230267AbhKNMGW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Nov 2021 02:18:22 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB42C061570
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Nov 2021 23:15:28 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id r12so56620060edt.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Nov 2021 23:15:28 -0800 (PST)
+        Sun, 14 Nov 2021 07:06:22 -0500
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F875C061746
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Nov 2021 04:03:28 -0800 (PST)
+Received: by mail-yb1-xb31.google.com with SMTP id y68so32562398ybe.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Nov 2021 04:03:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bDLqVMD46uiMsWehvbC08aW5fVyYhTP1JwwUyTmh/Z8=;
-        b=yLVowLrs6mCkTdQfHv7zS1ONJi082eZCq1Aari0B2GrOvsxpws3h8DvcOPkHOb3EiH
-         vSYXNoDoBnHjgy7Yy7DqqH+u/jv5zPGmaHF6NdQOiQNjOepnrHS6DlBn0rl+SfHah3RL
-         5z3IH6fZzC1MJLrPW2sWizYzIhYb3zvL+8n/UVpDmLHiPj2nb+8Fy2xpM9ZQSjUEv31r
-         Ad3lwsvy3z1x5AsZZ/qEi4ug7qebXz/Rdp73+EcEiggDfy5zELRWD4LbeWABVlFo6huQ
-         +gwyNzupKmYw6hQBfysEHiZzWKj1uQeN8URhmAKX2Zf16ASRx0xfl3uME8yUKPmb/IdO
-         GNgw==
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=l2AjIcA200luhAvIV6Y4Gf8Evv6mr+gMr0zSOMeBGF0=;
+        b=O5shjqR7V94u8lW5LNlqSj9OcKZvRoYjDfvIKLY3SMB0okt+/PqCAbFKwNlpcx7tEo
+         /DqjndkoPj0rxVarm4iF3EVgO/5pkJTG2vfEeLozXqvi/nrd/RTD6r6QjaLBgmrdfb9e
+         hY/9DomxiWxlsqwjCCSt/dGG+USzFlZd/lQ8vkotGaQYT1p1v7yGVhtmDjRxiOH1r/sz
+         t17iuFcI/jzcwLkYTxIg9Ky8BJ3ZOkqxHGdz9T3l+X/72wMynD8AOvAy/m98f3rIkPQC
+         GMBSDHocVTK3vaGR7pkeVfpnYB4uFpq3BgPJbOiTvqIbhH++KVVuiBmk85Ypcv8sO1qU
+         6XgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bDLqVMD46uiMsWehvbC08aW5fVyYhTP1JwwUyTmh/Z8=;
-        b=yLCq8motym7kLmWZc28hT0/FC7QVVh2QSKdSJt2aCu6X8GBYyUXlTobpqXbXL+5/di
-         TaRxfzI5Fpi5U+EzVel1cNwTy6Txl9Tp9X+9Sn3IBHHh2+UhKSHDKZjc1oL8ectCCIOX
-         JAgPvi6yNxgSVPqrlLJ8J/YIvlwgf+SNI+uN21Ql+xxIGdKt66LT+lE9/l7NTubKBF2X
-         0GxPXs+puW2quESS9SA+10MsnG35TcHAbysbGyl+xLZjEOdMaJStivEPVpPMJAqcrpWH
-         m454qfmuxeWmrXZtaBaw1NrEqL1y6TRkJfoXS4RY+GPx7H9JW8sQ8OGfLhW60BrBTKiu
-         Z1bA==
-X-Gm-Message-State: AOAM530HLoH9wRui0tWbRaUu+Jp7fPluiUDWyRS/sgS5akSciM3VymUu
-        rT2jnLf+dqhTfAu+jZiuUmkBrhfjnUeZxL41sYDp
-X-Google-Smtp-Source: ABdhPJwys5QCeONa+O77IsHuk8ZQoANDuLgPaz85EZaoDnCk2VJAxVAqGJNqA9Cx1ehqJo7gDi6VvDKgP5gZtUM2+SI=
-X-Received: by 2002:aa7:d80d:: with SMTP id v13mr14429309edq.7.1636874126935;
- Sat, 13 Nov 2021 23:15:26 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=l2AjIcA200luhAvIV6Y4Gf8Evv6mr+gMr0zSOMeBGF0=;
+        b=mva5sx/GVOEIExuJcKa8ky/vwW8b533PUsa/3eyTe58n0xhXZZPQo7+pm3vUjwZaho
+         2FbNDfZXwZsh2VB/lEg5nvNyzGwyUO364K8vVJk/A/JGwL+FRAR8ewAjV0GO/lV91Ms3
+         TiJG5SMJs7tsfgb4WuSWYnPiM6x6njCEwaAt+K76Woy9t8Q+Xt13hSq0Ntzc2p/wP9kj
+         fe0EfkgjkDmJAsXK2SuvEP9y2zv5lg6xCOiSpFjIjMpay6JYJa8xGzCZCICgRWnCe+xg
+         H1bvgFSno0BBHh5ugdz/dAn15VysL0EJlQT5NP2Kqb0zYEipL2l65Np5chC29GSgXXvF
+         Z5PA==
+X-Gm-Message-State: AOAM532rC0g8z/H40jaoLgutSWafs3tvUOdpc+nDvWaHeKJkQ98d+2ss
+        Q9HqQU/QJJ71fKox8FDzMsyryj39qPO/wk6gd6Lc68YCEjQ=
+X-Google-Smtp-Source: ABdhPJwNE60F9CXIyTOO7xllBY/M+VdWUgIbOw/LiSTM1SWQ/r3eIsv10sxzDGNBw7DIke84+WZyMvnvpHhwHaBfdNE=
+X-Received: by 2002:a25:1102:: with SMTP id 2mr32727351ybr.266.1636891407438;
+ Sun, 14 Nov 2021 04:03:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20210913111928.98-1-xieyongji@bytedance.com>
-In-Reply-To: <20210913111928.98-1-xieyongji@bytedance.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Sun, 14 Nov 2021 15:15:17 +0800
-Message-ID: <CACycT3ugx-wwPVb+Euzhj6hWn0fXO+jvfsUCew6v1iBaB8SZsQ@mail.gmail.com>
-Subject: Re: [PATCH] aio: Fix incorrect usage of eventfd_signal_allowed()
-To:     bcrl@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+From:   Turritopsis Dohrnii Teo En Ming <ceo.teo.en.ming@gmail.com>
+Date:   Sun, 14 Nov 2021 20:03:24 +0800
+Message-ID: <CAMEJMGFtEwxQzJ4jqSuCdAMgo6q-HOqPMwKk6TR=m_3x3d10rw@mail.gmail.com>
+Subject: I discovered that Aruba Instant On 1930 24G 4SFP/SFP+ JL682A Switch
+ is Running an Operating System with Linux Kernel 4.4.120!
+To:     linux-fsdevel@vger.kernel.org
+Cc:     ceo@teo-en-ming-corp.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ping
+Subject: I discovered that Aruba Instant On 1930 24G 4SFP/SFP+ JL682A
+Switch is Running an Operating System with Linux Kernel 4.4.120!
 
-On Mon, Sep 13, 2021 at 7:20 PM Xie Yongji <xieyongji@bytedance.com> wrote:
->
-> We should defer eventfd_signal() to the workqueue when
-> eventfd_signal_allowed() return false rather than return
-> true.
->
-> Fixes: b542e383d8c0 ("eventfd: Make signal recursion protection a task bit")
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->  fs/aio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 51b08ab01dff..8822e3ed4566 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1695,7 +1695,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->                 list_del(&iocb->ki_list);
->                 iocb->ki_res.res = mangle_poll(mask);
->                 req->done = true;
-> -               if (iocb->ki_eventfd && eventfd_signal_allowed()) {
-> +               if (iocb->ki_eventfd && !eventfd_signal_allowed()) {
->                         iocb = NULL;
->                         INIT_WORK(&req->work, aio_poll_put_work);
->                         schedule_work(&req->work);
-> --
-> 2.11.0
->
+Good day from Singapore,
+
+I discovered that Aruba Instant On 1930 24G 4SFP/SFP+ JL682A Switch is
+Running an Operating System with Linux Kernel 4.4.120!
+
+INTRODUCTION
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+My name is Mr. Turritopsis Dohrnii Teo En Ming, 43 years old as of 14
+Nov 2021. I live in Singapore. Presently I am an IT Consultant with a
+Systems Integrator (SI)/computer firm in Singapore. I am also a Linux
+and open source software and information technology enthusiast.
+
+You can read my autobiography on my redundant blogs. The title of my
+autobiography is:
+
+=E2=80=9CAutobiography of Singaporean Targeted Individual Mr. Turritopsis
+Dohrnii Teo En Ming (Very First Draft, Lots More to Add in Future)=E2=80=9D
+
+Links to my redundant blogs (Blogger and WordPress) can be found in my
+email signature below. These are my main blogs.
+
+I have three other redundant blogs, namely:
+
+https://teo-en-ming.tumblr.com/
+
+https://teo-en-ming.medium.com/
+
+https://teo-en-ming.livejournal.com/
+
+Future/subsequent versions of my autobiography will be published on my
+redundant blogs.
+
+My Blog Books (in PDF format) are also available for download on my
+redundant blogs.
+
+Over the years, I have published many guides, howtos, tutorials, and
+information technology articles on my redundant blogs. I hope that
+they are of use to information technology professionals.
+
+Thank you very much.
+
+
+
+
+-----BEGIN EMAIL SIGNATURE-----
+
+The Gospel for all Targeted Individuals (TIs):
+
+[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
+U.S. Embassy Workers
+
+Link:
+https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwave.html
+
+***************************************************************************=
+*****************
+
+Singaporean Targeted Individual Mr. Turritopsis Dohrnii Teo En Ming's
+Academic Qualifications as at 14 Feb 2019 and refugee seeking attempts
+at the United Nations Refugee Agency Bangkok (21 Mar 2017), in Taiwan
+(5 Aug 2019) and Australia (25 Dec 2019 to 9 Jan 2020):
+
+[1] https://tdtemcerts.wordpress.com/
+
+[2] https://tdtemcerts.blogspot.sg/
+
+[3] https://www.scribd.com/user/270125049/Teo-En-Ming
+
+-----END EMAIL SIGNATURE-----
