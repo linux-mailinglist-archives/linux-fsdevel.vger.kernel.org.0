@@ -2,126 +2,293 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D694450046
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 09:50:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88602450157
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 10:27:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbhKOIwy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Nov 2021 03:52:54 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4093 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbhKOIwj (ORCPT
+        id S237646AbhKOJ3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Nov 2021 04:29:55 -0500
+Received: from esa8.hc324-48.eu.iphmx.com ([207.54.65.242]:24153 "EHLO
+        esa8.hc324-48.eu.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236489AbhKOJ0T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Nov 2021 03:52:39 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Ht2pc5G6Tz67qYR;
-        Mon, 15 Nov 2021 16:46:00 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Mon, 15 Nov 2021 09:49:41 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.020;
- Mon, 15 Nov 2021 09:49:41 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     "tytso@mit.edu" <tytso@mit.edu>, "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC][PATCH 5/5] shmem: Add fsverity support
-Thread-Topic: [RFC][PATCH 5/5] shmem: Add fsverity support
-Thread-Index: AQHX18M/qVU4RXchik23Vn+neZuDEKwAMhaAgAQN/bA=
-Date:   Mon, 15 Nov 2021 08:49:41 +0000
-Message-ID: <6adb6da30b734213942f976745c456f6@huawei.com>
-References: <20211112124411.1948809-1-roberto.sassu@huawei.com>
- <20211112124411.1948809-6-roberto.sassu@huawei.com>
- <YY68iXKPWN8+rd+0@gmail.com>
-In-Reply-To: <YY68iXKPWN8+rd+0@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.204.63.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 15 Nov 2021 04:26:19 -0500
+X-Greylist: delayed 450 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Nov 2021 04:26:19 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=bmw.de; i=@bmw.de; q=dns/txt; s=mailing1;
+  t=1636968204; x=1668504204;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jtoQR8wy0LIbv3M96BIxO7zMobX3lohEgxe1SyDHY7o=;
+  b=GT4yGAeeOgkc8WbTgKffWiquGJIXdeFvl11qaHs+w90c3zmkTfyqshOA
+   FitGATqTZGhK9kUT9AAZDDr2DOnwUJ3NjkRoaglqRaREjxkPYegRvbBIc
+   cEgti3fFdxK4CT9/YqW5yUpsP9uEAVkN/xhZujgNddl090cejxlEvGMc2
+   A=;
+Received: from esagw1.bmwgroup.com (HELO esagw1.muc) ([160.46.252.34]) by
+ esa8.hc324-48.eu.iphmx.com with ESMTP/TLS; 15 Nov 2021 10:15:50 +0100
+Received: from esabb6.muc ([160.50.100.50])  by esagw1.muc with ESMTP/TLS;
+ 15 Nov 2021 10:15:50 +0100
+Received: from smucm08j.bmwgroup.net (HELO smucm08j.europe.bmw.corp) ([160.48.96.38])
+ by esabb6.muc with ESMTP/TLS; 15 Nov 2021 10:15:48 +0100
+Received: from cmucw916504.de-cci.bmwgroup.net (192.168.221.38) by
+ smucm08j.europe.bmw.corp (160.48.96.38) with Microsoft SMTP Server (TLS;
+ Mon, 15 Nov 2021 10:15:46 +0100
+From:   Vladimir Divjak <vladimir.divjak@bmw.de>
+To:     <vladimir.divjak@bmw.de>, <viro@zeniv.linux.org.uk>,
+        <mcgrof@kernel.org>, <peterz@infradead.org>,
+        <akpm@linux-foundation.org>, <will@kernel.org>,
+        <yuzhao@google.com>, <hannes@cmpxchg.org>, <fenghua.yu@intel.com>,
+        <guro@fb.com>, <jgg@ziepe.ca>, <hughd@google.com>,
+        <axboe@kernel.dk>, <ebiederm@xmission.com>, <pcc@google.com>,
+        <tglx@linutronix.de>, <elver@google.com>, <jannh@google.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] coredump-ptrace: Delayed delivery of SIGSTOP
+Date:   Mon, 15 Nov 2021 10:15:40 +0100
+Message-ID: <20211115091540.3806073-1-vladimir.divjak@bmw.de>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: smucm26l.europe.bmw.corp (160.46.167.28) To
+ smucm08j.europe.bmw.corp (160.48.96.38)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Eric Biggers [mailto:ebiggers@kernel.org]
-> Sent: Friday, November 12, 2021 8:12 PM
-> On Fri, Nov 12, 2021 at 01:44:11PM +0100, Roberto Sassu wrote:
-> > Make the necessary modifications to support fsverity in tmpfs.
-> >
-> > First, implement the fsverity operations (in a similar way of f2fs). These
-> > operations make use of shmem_read_mapping_page() instead of
-> > read_mapping_page() to handle the case where the page has been swapped
-> out.
-> > The fsverity descriptor is placed at the end of the file and its location
-> > is stored in an xattr.
-> >
-> > Second, implement the ioctl operations to enable, measure and read fsverity
-> > metadata.
-> >
-> > Lastly, add calls to fsverity functions, to ensure that fsverity-relevant
-> > operations are checked and handled by fsverity (file open, attr set, inode
-> > evict).
-> >
-> > Fsverity support can be enabled through the kernel configuration and
-> > remains enabled by default for every tmpfs filesystem instantiated (there
-> > should be no overhead, unless fsverity is enabled for a file).
-> >
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> I don't see how this makes sense at all.  The point of fs-verity is to avoid
-> having to hash the whole file when verifying it.  However, obviously the whole
-> file still has to be hashed to build the Merkle tree in the first place.  That
-> makes sense for a persistent filesystem where a file can be written once and
-> verified many times.  I don't see how it makes sense for tmpfs, where files have
-> to be re-created on every boot.  You might as well just hash the whole file.
+Allow SIGSTOP to be delivered to the dying process,
+if it is coming from coredump user mode helper (umh)
+process, but delay it until coredump is finished,
+at which point it will be re-triggered in coredump_finish().
 
-The point of adding fsverity support for tmpfs was to being able to do
-integrity enforcement with just one mechanism, given that I was
-planning to do integrity verification with reference values loaded
-to the kernel with DIGLIM [1].
+When processing this signal, set the tasks of the dying process
+directly to TASK_TRACED state during complete_signal(),
+instead of attempting signal_wake_up().
 
-With an LSM such as IPE [2], integrity verification would consist in
-querying the fsverity digest with DIGLIM and allowing the operation
-if the digest was found. With fsverity support in tmpfs, this can be
-done from the very beginning of the boot process.
+Do so to allow the umh process to ptrace(PTRACE_ATTACH,...)
+to the dying process, whose coredump it's handling.
 
-Using regular file digests would be also possible but this requires
-loading with DIGLIM both fsverity and non-fsverity reference values.
-It would also require two separate mechanisms for calculating
-the file digest depending on the filesystem. It could be done, but
-I thought it was easier to add support for fsverity in tmpfs.
+* Problem description:
+In automotive and/or embedded environments,
+the storage capacity to store, and/or
+network capabilities to upload
+a complete core file can easily be a limiting factor,
+making offline crash analysis difficult.
 
-> Also, you didn't implement actually verifying the data (by calling
-> fsverity_verify_page()), so this patch doesn't really do anything anyway.
+* Solution:
+Allow the user mode coredump helper process
+to perform ptrace on the dying process in order to obtain
+useful information such as user mode stacktrace,
+thereby improving the offline debugging possibilities
+for such environments.
 
-Yes, at the end I didn't add it. Probably the only place where
-calling fsverity_verify_page() would make sense is when a page
-is swapped in (assuming that the swap device is untrusted).
+Signed-off-by: Vladimir Divjak <vladimir.divjak@bmw.de>
+---
+ fs/coredump.c            | 18 +++++++++--
+ include/linux/mm_types.h |  2 ++
+ include/linux/umh.h      |  1 +
+ kernel/signal.c          | 64 +++++++++++++++++++++++++++++++++++++---
+ kernel/umh.c             |  7 +++--
+ 5 files changed, 84 insertions(+), 8 deletions(-)
 
-I tried to add a call in shmem_swapin_page() but fsverity complained
-due to the fact that the page was already up to date, and also
-rejected the page. I will check it better.
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 2868e3e171ae..9a51a1a2168d 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -487,6 +487,20 @@ static void coredump_finish(struct mm_struct *mm, bool core_dumped)
+ {
+ 	struct core_thread *curr, *next;
+ 	struct task_struct *task;
++	int signr;
++	struct ksignal ksig;
++
++	current->mm->core_state->core_dumped = true;
++
++	/*
++	 * Check if there is a SIGSTOP pending, and if so, re-trigger its delivery
++	 * allowing the coredump umh process to do a ptrace on this one.
++	 */
++	spin_lock_irq(&current->sighand->siglock);
++	signr = next_signal(&current->pending, &current->blocked);
++	spin_unlock_irq(&current->sighand->siglock);
++	if (signr == SIGSTOP)
++		get_signal(&ksig);
+ 
+ 	spin_lock_irq(&current->sighand->siglock);
+ 	if (core_dumped && !__fatal_signal_pending(current))
+@@ -601,7 +615,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		 */
+ 		.mm_flags = mm->flags,
+ 	};
+-
++	core_state.core_dumped = false;
+ 	audit_core_dumps(siginfo->si_signo);
+ 
+ 	binfmt = mm->binfmt;
+@@ -695,7 +709,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		if (sub_info)
+ 			retval = call_usermodehelper_exec(sub_info,
+ 							  UMH_WAIT_EXEC);
+-
++		core_state.umh_pid = sub_info->pid;
+ 		kfree(helper_argv);
+ 		if (retval) {
+ 			printk(KERN_INFO "Core dump to |%s pipe failed\n",
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 6613b26a8894..475b3d8cd399 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -381,6 +381,8 @@ struct core_state {
+ 	atomic_t nr_threads;
+ 	struct core_thread dumper;
+ 	struct completion startup;
++	bool core_dumped;
++	pid_t umh_pid;
+ };
+ 
+ struct kioctx_table;
+diff --git a/include/linux/umh.h b/include/linux/umh.h
+index 244aff638220..b2bbcafe7c98 100644
+--- a/include/linux/umh.h
++++ b/include/linux/umh.h
+@@ -24,6 +24,7 @@ struct subprocess_info {
+ 	char **envp;
+ 	int wait;
+ 	int retval;
++	pid_t pid;
+ 	int (*init)(struct subprocess_info *info, struct cred *new);
+ 	void (*cleanup)(struct subprocess_info *info);
+ 	void *data;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 66e88649cf74..5e7812644c8a 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -943,8 +943,22 @@ static bool prepare_signal(int sig, struct task_struct *p, bool force)
+ 	sigset_t flush;
+ 
+ 	if (signal->flags & (SIGNAL_GROUP_EXIT | SIGNAL_GROUP_COREDUMP)) {
+-		if (!(signal->flags & SIGNAL_GROUP_EXIT))
+-			return sig == SIGKILL;
++		if (!(signal->flags & SIGNAL_GROUP_EXIT)) {
++			/*
++			 * If the signal is for the process being core-dumped
++			 * and the signal is SIGSTOP sent by the coredump umh process
++			 * let it through (in addition to SIGKILL)
++			 * allowing the coredump umh process to ptrace the dying process.
++			 */
++			bool sig_from_umh = false;
++
++			if (unlikely(p->mm && p->mm->core_state &&
++				p->mm->core_state->umh_pid == current->tgid)) {
++				sig_from_umh = true;
++			}
++			return sig == SIGKILL || (sig == SIGSTOP && sig_from_umh);
++		}
++
+ 		/*
+ 		 * The process is in the middle of dying, nothing to do.
+ 		 */
+@@ -1014,8 +1028,18 @@ static inline bool wants_signal(int sig, struct task_struct *p)
+ 	if (sigismember(&p->blocked, sig))
+ 		return false;
+ 
+-	if (p->flags & PF_EXITING)
++	if (p->flags & PF_EXITING) {
++		/*
++		 * Ignore the fact the process is exiting,
++		 * if it's being core-dumped, and the signal is SIGSTOP
++		 * allowing the coredump umh process to ptrace the dying process.
++		 * See prepare_signal().
++		 */
++		if (unlikely(p->mm && p->mm->core_state && sig == SIGSTOP))
++			return true;
++
+ 		return false;
++	}
+ 
+ 	if (sig == SIGKILL)
+ 		return true;
+@@ -1094,6 +1118,22 @@ static void complete_signal(int sig, struct task_struct *p, enum pid_type type)
+ 		}
+ 	}
+ 
++	/*
++	 * If the signal is completed for a process being core-dumped,
++	 * and the signal is SIGSTOP, there is no point in waking up its tasks,
++	 * as they are either dumping the core, or in uninterruptible state,
++	 * so skip the wake up if core-dump is not yet completed.
++	 * Instead, if the core-dump has been completed, see coredump_finish()
++	 * set the task state directly to TASK_TRACED,
++	 * allowing the coredump umh process to ptrace the dying process.
++	 */
++	if (unlikely(t->mm && t->mm->core_state) && sig == SIGSTOP) {
++		if (t->mm->core_state->core_dumped)
++			t->state = TASK_TRACED;
++
++		return;
++	}
++
+ 	/*
+ 	 * The signal is already in the shared-pending queue.
+ 	 * Tell the chosen thread to wake up and dequeue it.
+@@ -2586,6 +2626,7 @@ bool get_signal(struct ksignal *ksig)
+ 	struct sighand_struct *sighand = current->sighand;
+ 	struct signal_struct *signal = current->signal;
+ 	int signr;
++	bool sigstop_pending = false;
+ 
+ 	if (unlikely(current->task_works))
+ 		task_work_run();
+@@ -2651,8 +2692,23 @@ bool get_signal(struct ksignal *ksig)
+ 		goto relock;
+ 	}
+ 
++
++	/*
++	 * If this task is being core-dumped,
++	 * and the next signal is SIGSTOP, allow its delivery
++	 * to enable the coredump umh process to ptrace the dying one.
++	 */
++	if (unlikely(current->mm && current->mm->core_state)) {
++		int nextsig = 0;
++
++		nextsig = next_signal(&current->pending, &current->blocked);
++		if (nextsig == SIGSTOP) {
++			sigstop_pending = true;
++		}
++	}
++
+ 	/* Has this task already been marked for death? */
+-	if (signal_group_exit(signal)) {
++	if (signal_group_exit(signal) && !sigstop_pending) {
+ 		ksig->info.si_signo = signr = SIGKILL;
+ 		sigdelset(&current->pending.signal, SIGKILL);
+ 		trace_signal_deliver(SIGKILL, SEND_SIG_NOINFO,
+diff --git a/kernel/umh.c b/kernel/umh.c
+index 36c123360ab8..8ac027c75d70 100644
+--- a/kernel/umh.c
++++ b/kernel/umh.c
+@@ -107,6 +107,7 @@ static int call_usermodehelper_exec_async(void *data)
+ 	}
+ 
+ 	commit_creds(new);
++	sub_info->pid = task_pid_nr(current);
+ 
+ 	wait_for_initramfs();
+ 	retval = kernel_execve(sub_info->path,
+@@ -133,10 +134,12 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+ 	/* If SIGCLD is ignored do_wait won't populate the status. */
+ 	kernel_sigaction(SIGCHLD, SIG_DFL);
+ 	pid = kernel_thread(call_usermodehelper_exec_async, sub_info, SIGCHLD);
+-	if (pid < 0)
++	if (pid < 0) {
+ 		sub_info->retval = pid;
+-	else
++	} else {
++		sub_info->pid = pid;
+ 		kernel_wait(pid, &sub_info->retval);
++	}
+ 
+ 	/* Restore default kernel sig handler */
+ 	kernel_sigaction(SIGCHLD, SIG_IGN);
+-- 
+2.25.1
 
-Thanks
-
-Roberto
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Zhong Ronghua
-
-[1] https://lore.kernel.org/linux-integrity/20210914163401.864635-1-roberto.sassu@huawei.com/
-[2] https://lore.kernel.org/linux-security-module/1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com/
