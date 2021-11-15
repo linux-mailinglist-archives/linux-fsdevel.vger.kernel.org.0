@@ -2,116 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D8244FFF2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 09:19:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D694450046
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 09:50:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229967AbhKOIVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Nov 2021 03:21:34 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:58592 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229948AbhKOIVb (ORCPT
+        id S229613AbhKOIwy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Nov 2021 03:52:54 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4093 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229721AbhKOIwj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Nov 2021 03:21:31 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 92168212C7;
-        Mon, 15 Nov 2021 08:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1636964315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4ccqE4c3gCLqg8d20v5wXjWVxcM3BQIYb0Eqb0qrzUs=;
-        b=C3PbvdUoekdI0t26f4z34wTHyEkH33oecYnZCMqcssmIiy/azZlw2hvBnIWqXyNSEG220I
-        6rXSCcwGz/+BZ28fTLSlKW70ugY+x0Q2Jb4545Z0iAVae00A15+K6LIEbF83TfVGaWCjrz
-        9a0yMvyI+bJVmgu3puL6VsaSTl1SAEg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1636964315;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4ccqE4c3gCLqg8d20v5wXjWVxcM3BQIYb0Eqb0qrzUs=;
-        b=MiNd8ZIyoH68GB/58lDW/g4X7Sg7yowNmn515wGOzpf15Rfx3SVEjWxBfuKdzOYf1O/4Wk
-        0macx8WIONLDH5Dg==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 7C408A3B85;
-        Mon, 15 Nov 2021 08:18:35 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3F1C21E0BEB; Mon, 15 Nov 2021 09:18:35 +0100 (CET)
-Date:   Mon, 15 Nov 2021 09:18:35 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 5/7] fanotify: record new parent and name in MOVED_FROM
- event
-Message-ID: <20211115081835.GA23412@quack2.suse.cz>
-References: <20211029114028.569755-1-amir73il@gmail.com>
- <20211029114028.569755-6-amir73il@gmail.com>
- <20211112164824.GB30295@quack2.suse.cz>
- <CAOQ4uxgHSiksnkg1TARxcpddnqD5yzreoh4NiWLk+Q+nOO+Duw@mail.gmail.com>
+        Mon, 15 Nov 2021 03:52:39 -0500
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Ht2pc5G6Tz67qYR;
+        Mon, 15 Nov 2021 16:46:00 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Mon, 15 Nov 2021 09:49:41 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.020;
+ Mon, 15 Nov 2021 09:49:41 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     "tytso@mit.edu" <tytso@mit.edu>, "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "hughd@google.com" <hughd@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC][PATCH 5/5] shmem: Add fsverity support
+Thread-Topic: [RFC][PATCH 5/5] shmem: Add fsverity support
+Thread-Index: AQHX18M/qVU4RXchik23Vn+neZuDEKwAMhaAgAQN/bA=
+Date:   Mon, 15 Nov 2021 08:49:41 +0000
+Message-ID: <6adb6da30b734213942f976745c456f6@huawei.com>
+References: <20211112124411.1948809-1-roberto.sassu@huawei.com>
+ <20211112124411.1948809-6-roberto.sassu@huawei.com>
+ <YY68iXKPWN8+rd+0@gmail.com>
+In-Reply-To: <YY68iXKPWN8+rd+0@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.204.63.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgHSiksnkg1TARxcpddnqD5yzreoh4NiWLk+Q+nOO+Duw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 13-11-21 11:40:39, Amir Goldstein wrote:
-> On Fri, Nov 12, 2021 at 6:48 PM Jan Kara <jack@suse.cz> wrote:
+> From: Eric Biggers [mailto:ebiggers@kernel.org]
+> Sent: Friday, November 12, 2021 8:12 PM
+> On Fri, Nov 12, 2021 at 01:44:11PM +0100, Roberto Sassu wrote:
+> > Make the necessary modifications to support fsverity in tmpfs.
 > >
-> > On Fri 29-10-21 14:40:26, Amir Goldstein wrote:
-> > > In the special case of MOVED_FROM event, if we are recording the child
-> > > fid due to FAN_REPORT_TARGET_FID init flag, we also record the new
-> > > parent and name.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ...
-> > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > > index 795bedcb6f9b..d1adcb3437c5 100644
-> > > --- a/fs/notify/fanotify/fanotify.c
-> > > +++ b/fs/notify/fanotify/fanotify.c
-> > > @@ -592,21 +592,30 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
-> > >                                                       __kernel_fsid_t *fsid,
-> > >                                                       const struct qstr *name,
-> > >                                                       struct inode *child,
-> > > +                                                     struct dentry *moved,
-> > >                                                       unsigned int *hash,
-> > >                                                       gfp_t gfp)
-> > >  {
-> > >       struct fanotify_name_event *fne;
-> > >       struct fanotify_info *info;
-> > >       struct fanotify_fh *dfh, *ffh;
-> > > +     struct inode *dir2 = moved ? d_inode(moved->d_parent) : NULL;
+> > First, implement the fsverity operations (in a similar way of f2fs). These
+> > operations make use of shmem_read_mapping_page() instead of
+> > read_mapping_page() to handle the case where the page has been swapped
+> out.
+> > The fsverity descriptor is placed at the end of the file and its location
+> > is stored in an xattr.
 > >
-> > I think we need to be more careful here (like dget_parent()?). Fsnotify is
-> > called after everything is unlocked after rename so dentry can be changing
-> > under us, cannot it? Also does that mean that we could actually get a wrong
-> > parent here if the dentry is renamed immediately after we unlock things and
-> > before we report fsnotify event?
+> > Second, implement the ioctl operations to enable, measure and read fsverity
+> > metadata.
+> >
+> > Lastly, add calls to fsverity functions, to ensure that fsverity-relevant
+> > operations are checked and handled by fsverity (file open, attr set, inode
+> > evict).
+> >
+> > Fsverity support can be enabled through the kernel configuration and
+> > remains enabled by default for every tmpfs filesystem instantiated (there
+> > should be no overhead, unless fsverity is enabled for a file).
+> >
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> fsnotify_move() is called inside lock_rename() (both old_dir and new_dir locks),
-> which are held by the caller of vfs_rename(), and prevent d_parent/d_name
-> changes to child dentries, so moved->d_parent is stable here.
-> You are probably confusing with inode_unlock(target), which is the
-> child inode lock.
-> 
-> d_parent/d_name are also stable for fsnotify_create/link/unlink/mkdir/rmdir
-> per the vfs locking rules for those operations. In all those cases, the parent
-> dir lock is held for vfs helper callers.
-> This is why we can use dentry->d_name (and moved->d_name) in all those
-> fsnotify hooks.
+> I don't see how this makes sense at all.  The point of fs-verity is to avoid
+> having to hash the whole file when verifying it.  However, obviously the whole
+> file still has to be hashed to build the Merkle tree in the first place.  That
+> makes sense for a persistent filesystem where a file can be written once and
+> verified many times.  I don't see how it makes sense for tmpfs, where files have
+> to be re-created on every boot.  You might as well just hash the whole file.
 
-Bah, you're right. I got confused by the locking of source and target
-inside vfs_rename() but those are not parent directories but rather "files"
-being renamed from / two. Sorry for the noise.
+The point of adding fsverity support for tmpfs was to being able to do
+integrity enforcement with just one mechanism, given that I was
+planning to do integrity verification with reference values loaded
+to the kernel with DIGLIM [1].
 
-								Honza
+With an LSM such as IPE [2], integrity verification would consist in
+querying the fsverity digest with DIGLIM and allowing the operation
+if the digest was found. With fsverity support in tmpfs, this can be
+done from the very beginning of the boot process.
 
-> 
-> Thanks,
-> Amir.
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Using regular file digests would be also possible but this requires
+loading with DIGLIM both fsverity and non-fsverity reference values.
+It would also require two separate mechanisms for calculating
+the file digest depending on the filesystem. It could be done, but
+I thought it was easier to add support for fsverity in tmpfs.
+
+> Also, you didn't implement actually verifying the data (by calling
+> fsverity_verify_page()), so this patch doesn't really do anything anyway.
+
+Yes, at the end I didn't add it. Probably the only place where
+calling fsverity_verify_page() would make sense is when a page
+is swapped in (assuming that the swap device is untrusted).
+
+I tried to add a call in shmem_swapin_page() but fsverity complained
+due to the fact that the page was already up to date, and also
+rejected the page. I will check it better.
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Zhong Ronghua
+
+[1] https://lore.kernel.org/linux-integrity/20210914163401.864635-1-roberto.sassu@huawei.com/
+[2] https://lore.kernel.org/linux-security-module/1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com/
