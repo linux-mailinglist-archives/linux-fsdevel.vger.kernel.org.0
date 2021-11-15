@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C71A451587
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 21:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F8E451583
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 21:37:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347050AbhKOUkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Nov 2021 15:40:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
+        id S1351470AbhKOUkI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Nov 2021 15:40:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345456AbhKOT2b (ORCPT
+        with ESMTP id S1345444AbhKOT22 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Nov 2021 14:28:31 -0500
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D982FC0AD65F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 10:53:17 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HtJH46HvlzMpt42;
-        Mon, 15 Nov 2021 19:53:04 +0100 (CET)
+        Mon, 15 Nov 2021 14:28:28 -0500
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F81DC0AD658
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 10:53:15 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HtJHF3m9yzMpnSf;
+        Mon, 15 Nov 2021 19:53:13 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4HtJH23jqRzlh8V4;
-        Mon, 15 Nov 2021 19:53:02 +0100 (CET)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4HtJHF0bgczlh8Tx;
+        Mon, 15 Nov 2021 19:53:13 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -59,11 +59,15 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Yin Fengwei <fengwei.yin@intel.com>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v17 0/3] Add trusted_for(2) (was O_MAYEXEC)
-Date:   Mon, 15 Nov 2021 19:53:01 +0100
-Message-Id: <20211115185304.198460-1-mic@digikod.net>
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
+Subject: [PATCH v17 2/3] arch: Wire up trusted_for(2)
+Date:   Mon, 15 Nov 2021 19:53:03 +0100
+Message-Id: <20211115185304.198460-3-mic@digikod.net>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211115185304.198460-1-mic@digikod.net>
+References: <20211115185304.198460-1-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -71,192 +75,268 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-This new patch series fix the syscall signature as suggested by
-Alejandro Colomar.  It applies on Linus's master branch (v5.16-rc1) and
-next-20211115.
+Wire up trusted_for(2) for all architectures.
 
-Andrew, can you please consider to merge this into your tree?
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Link: https://lore.kernel.org/r/20211115185304.198460-3-mic@digikod.net
+---
 
-Overview
-========
+Changes since v15:
+* Update syscall IDs to align with the new futex_waitv.
 
-The final goal of this patch series is to enable the kernel to be a
-global policy manager by entrusting processes with access control at
-their level.  To reach this goal, two complementary parts are required:
-* user space needs to be able to know if it can trust some file
-  descriptor content for a specific usage;
-* and the kernel needs to make available some part of the policy
-  configured by the system administrator.
+Changes since v13:
+* Add Reviewed-by Kees Cook.
 
-Primary goal of trusted_for(2)
-==============================
+Changes since v12:
+* Update syscall IDs to align with the new ones.
 
-This new syscall enables user space to ask the kernel: is this file
-descriptor's content trusted to be used for this purpose?  The set of
-usage currently only contains execution, but other may follow (e.g.
-configuration, sensitive data).  If the kernel identifies the file
-descriptor as trustworthy for this usage, user space should then take
-this information into account.  The "execution" usage means that the
-content of the file descriptor is trusted according to the system policy
-to be executed by user space, which means that it interprets the content
-or (try to) maps it as executable memory.
+Changes since v11:
+* Add Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+* Rebase and leave space for watch_mount(2) and epoll_pwait2(2) from
+  -next.
 
-A simple system-wide security policy can be set by the system
-administrator through a sysctl configuration consistent with the mount
-points or the file access rights.  The documentation explains the
-prerequisites.
+Changes since v9:
+* Rename introspect_access(2) to trusted_for(2).
+* Increase syscall number to leave space for memfd_secret(2) in -next.
 
-It is important to note that this can only enable to extend access
-control managed by the kernel.  Hence it enables current access control
-mechanism to be extended and become a superset of what they can
-currently control.  Indeed, the security policy could also be delegated
-to an LSM, either a MAC system or an integrity system.  For instance,
-this is required to close a major IMA measurement/appraisal interpreter
-integrity gap by bringing the ability to check the use of scripts [1].
-Other uses are expected, such as for magic-links [2], SGX integration
-[3], bpffs [4].
+Changes since v7:
+* New patch for the new syscall.
+* Increase syscall numbers by 2 to leave space for new ones (in
+  linux-next): watch_mount(2) and process_madvise(2).
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      | 2 ++
+ arch/arm/tools/syscall.tbl                  | 1 +
+ arch/arm64/include/asm/unistd.h             | 2 +-
+ arch/arm64/include/asm/unistd32.h           | 2 ++
+ arch/ia64/kernel/syscalls/syscall.tbl       | 2 ++
+ arch/m68k/kernel/syscalls/syscall.tbl       | 2 ++
+ arch/microblaze/kernel/syscalls/syscall.tbl | 2 ++
+ arch/mips/kernel/syscalls/syscall_n32.tbl   | 2 ++
+ arch/mips/kernel/syscalls/syscall_n64.tbl   | 2 ++
+ arch/mips/kernel/syscalls/syscall_o32.tbl   | 2 ++
+ arch/parisc/kernel/syscalls/syscall.tbl     | 2 ++
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 2 ++
+ arch/s390/kernel/syscalls/syscall.tbl       | 2 ++
+ arch/sh/kernel/syscalls/syscall.tbl         | 2 ++
+ arch/sparc/kernel/syscalls/syscall.tbl      | 2 ++
+ arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     | 2 ++
+ include/uapi/asm-generic/unistd.h           | 4 +++-
+ 19 files changed, 35 insertions(+), 2 deletions(-)
 
-Complementary W^X protections can be brought by SELinux, IPE [5] and
-trampfd [6].
-
-System call description
-=======================
-
-trusted_for(int fd, enum trusted_for_usage usage, u32 flags);
-
-@fd is the file descriptor to check.
-
-@usage identifies the user space usage intended for @fd: only
-TRUSTED_FOR_EXECUTION for now, but trusted_for_usage could be extended
-to identify other usages (e.g. configuration, sensitive data).
-
-@flags must be 0 for now but it could be used in the future to do
-complementary checks (e.g. signature or integrity requirements, origin
-of the file).
-
-This system call returns 0 on success, or -EACCES if the kernel policy
-denies the specified usage (which should be enforced by the caller).
-
-The first patch contains the full syscall and sysctl documentation.
-
-Prerequisite of its use
-=======================
-
-User space needs to adapt to take advantage of this new feature.  For
-example, the PEP 578 [7] (Runtime Audit Hooks) enables Python 3.8 to be
-extended with policy enforcement points related to code interpretation,
-which can be used to align with the PowerShell audit features.
-Additional Python security improvements (e.g. a limited interpreter
-without -c, stdin piping of code) are on their way [8].
-
-Examples
-========
-
-The initial idea comes from CLIP OS 4 and the original implementation
-has been used for more than 13 years:
-https://github.com/clipos-archive/clipos4_doc
-Chrome OS has a similar approach:
-https://chromium.googlesource.com/chromiumos/docs/+/master/security/noexec_shell_scripts.md
-
-Userland patches can be found here:
-https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-Actually, there is more than the O_MAYEXEC changes (which matches this search)
-e.g., to prevent Python interactive execution. There are patches for
-Bash, Wine, Java (Icedtea), Busybox's ash, Perl and Python. There are
-also some related patches which do not directly rely on O_MAYEXEC but
-which restrict the use of browser plugins and extensions, which may be
-seen as scripts too:
-https://github.com/clipos-archive/clipos4_portage-overlay/tree/master/www-client
-
-An introduction to O_MAYEXEC was given at the Linux Security Summit
-Europe 2018 - Linux Kernel Security Contributions by ANSSI:
-https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
-The "write xor execute" principle was explained at Kernel Recipes 2018 -
-CLIP OS: a defense-in-depth OS:
-https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
-See also a first LWN article about O_MAYEXEC and a new one about
-trusted_for(2) and its background:
-* https://lwn.net/Articles/820000/
-* https://lwn.net/Articles/832959/
-
-This can be tested with CONFIG_SYSCTL.  I would really appreciate
-constructive comments on this patch series.
-
-[1] https://lore.kernel.org/lkml/20211014130125.6991-1-zohar@linux.ibm.com/
-[2] https://lore.kernel.org/lkml/20190904201933.10736-6-cyphar@cyphar.com/
-[3] https://lore.kernel.org/lkml/CALCETrVovr8XNZSroey7pHF46O=kj_c5D9K8h=z2T_cNrpvMig@mail.gmail.com/
-[4] https://lore.kernel.org/lkml/CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com/
-[5] https://lore.kernel.org/lkml/20200406221439.1469862-12-deven.desai@linux.microsoft.com/
-[6] https://lore.kernel.org/lkml/20200922215326.4603-1-madvenka@linux.microsoft.com/
-[7] https://www.python.org/dev/peps/pep-0578/
-[8] https://lore.kernel.org/lkml/0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org/
-
-Previous versions:
-v16: https://lore.kernel.org/r/20211110190626.257017-1-mic@digikod.net/
-v15: https://lore.kernel.org/r/20211012192410.2356090-1-mic@digikod.net/
-v14: https://lore.kernel.org/r/20211008104840.1733385-1-mic@digikod.net/
-v13: https://lore.kernel.org/r/20211007182321.872075-1-mic@digikod.net/
-v12: https://lore.kernel.org/r/20201203173118.379271-1-mic@digikod.net/
-v11: https://lore.kernel.org/r/20201019164932.1430614-1-mic@digikod.net/
-v10: https://lore.kernel.org/r/20200924153228.387737-1-mic@digikod.net/
-v9: https://lore.kernel.org/r/20200910164612.114215-1-mic@digikod.net/
-v8: https://lore.kernel.org/r/20200908075956.1069018-1-mic@digikod.net/
-v7: https://lore.kernel.org/r/20200723171227.446711-1-mic@digikod.net/
-v6: https://lore.kernel.org/r/20200714181638.45751-1-mic@digikod.net/
-v5: https://lore.kernel.org/r/20200505153156.925111-1-mic@digikod.net/
-v4: https://lore.kernel.org/r/20200430132320.699508-1-mic@digikod.net/
-v3: https://lore.kernel.org/r/20200428175129.634352-1-mic@digikod.net/
-v2: https://lore.kernel.org/r/20190906152455.22757-1-mic@digikod.net/
-v1: https://lore.kernel.org/r/20181212081712.32347-1-mic@digikod.net/
-
-Regards,
-
-Mickaël Salaün (3):
-  fs: Add trusted_for(2) syscall implementation and related sysctl
-  arch: Wire up trusted_for(2)
-  selftest/interpreter: Add tests for trusted_for(2) policies
-
- Documentation/admin-guide/sysctl/fs.rst       |  50 +++
- arch/alpha/kernel/syscalls/syscall.tbl        |   2 +
- arch/arm/tools/syscall.tbl                    |   1 +
- arch/arm64/include/asm/unistd.h               |   2 +-
- arch/arm64/include/asm/unistd32.h             |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl         |   2 +
- arch/m68k/kernel/syscalls/syscall.tbl         |   2 +
- arch/microblaze/kernel/syscalls/syscall.tbl   |   2 +
- arch/mips/kernel/syscalls/syscall_n32.tbl     |   2 +
- arch/mips/kernel/syscalls/syscall_n64.tbl     |   2 +
- arch/mips/kernel/syscalls/syscall_o32.tbl     |   2 +
- arch/parisc/kernel/syscalls/syscall.tbl       |   2 +
- arch/powerpc/kernel/syscalls/syscall.tbl      |   2 +
- arch/s390/kernel/syscalls/syscall.tbl         |   2 +
- arch/sh/kernel/syscalls/syscall.tbl           |   2 +
- arch/sparc/kernel/syscalls/syscall.tbl        |   2 +
- arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl       |   2 +
- fs/open.c                                     | 111 ++++++
- include/linux/fs.h                            |   1 +
- include/linux/syscalls.h                      |   1 +
- include/uapi/asm-generic/unistd.h             |   4 +-
- include/uapi/linux/trusted-for.h              |  18 +
- kernel/sysctl.c                               |  12 +-
- tools/testing/selftests/Makefile              |   1 +
- .../testing/selftests/interpreter/.gitignore  |   2 +
- tools/testing/selftests/interpreter/Makefile  |  21 +
- tools/testing/selftests/interpreter/config    |   1 +
- .../selftests/interpreter/trust_policy_test.c | 362 ++++++++++++++++++
- 30 files changed, 613 insertions(+), 4 deletions(-)
- create mode 100644 include/uapi/linux/trusted-for.h
- create mode 100644 tools/testing/selftests/interpreter/.gitignore
- create mode 100644 tools/testing/selftests/interpreter/Makefile
- create mode 100644 tools/testing/selftests/interpreter/config
- create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
-
-
-base-commit: 8ab774587903771821b59471cc723bba6d893942
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index e4a041cd5715..7943ed6455a2 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -488,3 +488,5 @@
+ 556	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 557 reserved for memfd_secret
+ 558	common	process_mrelease		sys_process_mrelease
++# 559 reserved for futex_waitv
++560	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 543100151f2b..ccfd831bcb96 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -463,3 +463,4 @@
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
+ 449	common	futex_waitv			sys_futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 6bdb5f5db438..4e65da3445c7 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		450
++#define __NR_compat_syscalls		451
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 41ea1195e44b..0e69743609ff 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -905,6 +905,8 @@ __SYSCALL(__NR_landlock_restrict_self, sys_landlock_restrict_self)
+ __SYSCALL(__NR_process_mrelease, sys_process_mrelease)
+ #define __NR_futex_waitv 449
+ __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
++#define __NR_trusted_for 450
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index 6fea1844fb95..362c1e837bd6 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -369,3 +369,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 7976dff8f879..90306947817d 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -448,3 +448,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 6b0e11362bd2..8b19bbdaaf70 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -454,3 +454,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 70e32de2bcaa..1a84e8d1c776 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -387,3 +387,5 @@
+ 446	n32	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	n32	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	n32	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 1ca7bc337932..ced3db574de3 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -363,3 +363,5 @@
+ 446	n64	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	n64	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	n64	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index a61c35edaa74..94b77adc6165 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -436,3 +436,5 @@
+ 446	o32	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	o32	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	o32	trusted_for			sys_trusted_for
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index bf751e0732b7..11de0c191a0e 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -446,3 +446,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 7bef917cc84e..b7337d3843a7 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -528,3 +528,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index df5261e5cfe1..98bab648cda6 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -451,3 +451,5 @@
+ 446  common	landlock_restrict_self	sys_landlock_restrict_self	sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448  common	process_mrelease	sys_process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450  common	trusted_for		sys_trusted_for			sys_trusted_for
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index 208f131659c5..88c6cb3de23b 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -451,3 +451,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index c37764dc764d..b0db960c5897 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -494,3 +494,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 7e25543693de..2f230c04f8a7 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -454,3 +454,4 @@
+ 447	i386	memfd_secret		sys_memfd_secret
+ 448	i386	process_mrelease	sys_process_mrelease
+ 449	i386	futex_waitv		sys_futex_waitv
++450	i386	trusted_for		sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index fe8f8dd157b4..678ab13ee1c1 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -371,6 +371,7 @@
+ 447	common	memfd_secret		sys_memfd_secret
+ 448	common	process_mrelease	sys_process_mrelease
+ 449	common	futex_waitv		sys_futex_waitv
++450	common	trusted_for		sys_trusted_for
+ 
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 104b327f8ac9..9dab1dfffc95 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -419,3 +419,5 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++# 449 reserved for futex_waitv
++450	common	trusted_for			sys_trusted_for
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 4557a8b6086f..ded7a49616f2 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -882,9 +882,11 @@ __SYSCALL(__NR_process_mrelease, sys_process_mrelease)
+ 
+ #define __NR_futex_waitv 449
+ __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
++#define __NR_trusted_for 450
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 450
++#define __NR_syscalls 451
+ 
+ /*
+  * 32 bit systems traditionally used different
 -- 
 2.33.1
 
