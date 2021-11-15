@@ -2,170 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1E244FFD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 09:13:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3D8244FFF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 09:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236486AbhKOIPu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Nov 2021 03:15:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53826 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbhKOIP3 (ORCPT
+        id S229967AbhKOIVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Nov 2021 03:21:34 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:58592 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229948AbhKOIVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Nov 2021 03:15:29 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B04C061746;
-        Mon, 15 Nov 2021 00:12:31 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id 136so9257281pgc.0;
-        Mon, 15 Nov 2021 00:12:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=pjGJNnGfp7N4YPL+3tEog9B076yjtwRjSVPNfS56OSM=;
-        b=BZeXQQNf4sUHMfeWyEIc/pL9d7eDdipdr3UY8NhmZmrw8aEqL+veJz5rohewQomD/9
-         gvjGv+OH7MUauciTQWQYnOXuwsH4I0H4pV59b0eyWWSlTqdhfy8xyOmoREE2DI6snXLz
-         UeUnn60CjTcS6eCkct14/Ckb+aRNdG7wFkJgBQxwQdI39R7GK/dKhSi+sJaEuxzuW281
-         9trAJgcjSL+DDUqAWjBiEtl/ZO7ZATHqMvwQtVzovbIlK2W7HjxoWc8FGRGIOUnqFPiZ
-         PPa9wm7xDaZ2vYDkqexwCjZaxaOsmVbYK8dMC8BEKzaHCIBVkh3YWiqN+bybl/4qX446
-         DTEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=pjGJNnGfp7N4YPL+3tEog9B076yjtwRjSVPNfS56OSM=;
-        b=2mVDA/rCh9EU+hfSduWDyY2CCer/r74PtllvGe6tVw/pkKJuZnZmoRc92pvsFul7If
-         SKcplayLk3poXpTJhNpTRi26Z4viA2tTeVMEmNbh1NQTCGAGop2a4lviDdKEbiZb+zBW
-         FhKyTpAQzMkLRa6e08zqdIwXP+jbZLVG8cvWZwpu/8FOZ+DwSGZAYxD8f4GfSPwxTofX
-         FaNmN9Tekoq5Lyg+cxCnCqhQ4jz1thylhcAvxARKg3+pBGPkLo+o/f2F9OblDH/TllRm
-         SPxoZFf/x8qu2F6NaONaqqD7zlYyKgSCHzj+s9xMUYCITVzn25goEOf1PHDuuPhxqztm
-         xINg==
-X-Gm-Message-State: AOAM533ILwcZshvA87T36Fh9YtQcmqQNkmeMwboov2mS5OZUWTqQe2bE
-        y6pybnD8cWzllyifSp0tSWM=
-X-Google-Smtp-Source: ABdhPJzGituTcml7q8z/bFSirZjHN/EzKmPMByct6A039FIlbn7nWDRowe12KRH+XfpvJo86S+l4JA==
-X-Received: by 2002:a63:8042:: with SMTP id j63mr23244031pgd.225.1636963951054;
-        Mon, 15 Nov 2021 00:12:31 -0800 (PST)
-Received: from k7550 ([103.214.62.4])
-        by smtp.gmail.com with ESMTPSA id bt2sm17687876pjb.33.2021.11.15.00.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Nov 2021 00:12:30 -0800 (PST)
-Message-ID: <d4bf6e277e1fc5dbd9026a8fdd705599de87ba6b.camel@gmail.com>
-Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
-From:   Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>
-To:     Alexander Popov <alex.popov@linux.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul McKenney <paulmck@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Maciej Rozycki <macro@orcam.me.uk>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Will Deacon <will@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Laura Abbott <labbott@kernel.org>,
-        David S Miller <davem@davemloft.net>,
-        Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Scull <ascull@google.com>,
-        Marc Zyngier <maz@kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Wang Qing <wangqing@vivo.com>, Mel Gorman <mgorman@suse.de>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Andrew Klychkov <andrew.a.klychkov@gmail.com>,
-        Mathieu Chouquet-Stringer <me@mathieu.digital>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Stephen Kitt <steve@sk2.org>, Stephen Boyd <sboyd@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Mike Rapoport <rppt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     notify@kernel.org
-Date:   Mon, 15 Nov 2021 13:42:12 +0530
-In-Reply-To: <20211027233215.306111-1-alex.popov@linux.com>
-References: <20211027233215.306111-1-alex.popov@linux.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 15 Nov 2021 03:21:31 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 92168212C7;
+        Mon, 15 Nov 2021 08:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1636964315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4ccqE4c3gCLqg8d20v5wXjWVxcM3BQIYb0Eqb0qrzUs=;
+        b=C3PbvdUoekdI0t26f4z34wTHyEkH33oecYnZCMqcssmIiy/azZlw2hvBnIWqXyNSEG220I
+        6rXSCcwGz/+BZ28fTLSlKW70ugY+x0Q2Jb4545Z0iAVae00A15+K6LIEbF83TfVGaWCjrz
+        9a0yMvyI+bJVmgu3puL6VsaSTl1SAEg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1636964315;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4ccqE4c3gCLqg8d20v5wXjWVxcM3BQIYb0Eqb0qrzUs=;
+        b=MiNd8ZIyoH68GB/58lDW/g4X7Sg7yowNmn515wGOzpf15Rfx3SVEjWxBfuKdzOYf1O/4Wk
+        0macx8WIONLDH5Dg==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 7C408A3B85;
+        Mon, 15 Nov 2021 08:18:35 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3F1C21E0BEB; Mon, 15 Nov 2021 09:18:35 +0100 (CET)
+Date:   Mon, 15 Nov 2021 09:18:35 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 5/7] fanotify: record new parent and name in MOVED_FROM
+ event
+Message-ID: <20211115081835.GA23412@quack2.suse.cz>
+References: <20211029114028.569755-1-amir73il@gmail.com>
+ <20211029114028.569755-6-amir73il@gmail.com>
+ <20211112164824.GB30295@quack2.suse.cz>
+ <CAOQ4uxgHSiksnkg1TARxcpddnqD5yzreoh4NiWLk+Q+nOO+Duw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgHSiksnkg1TARxcpddnqD5yzreoh4NiWLk+Q+nOO+Duw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2021-10-28 at 02:32 +0300, Alexander Popov wrote:
-> [...]
+On Sat 13-11-21 11:40:39, Amir Goldstein wrote:
+> On Fri, Nov 12, 2021 at 6:48 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 29-10-21 14:40:26, Amir Goldstein wrote:
+> > > In the special case of MOVED_FROM event, if we are recording the child
+> > > fid due to FAN_REPORT_TARGET_FID init flag, we also record the new
+> > > parent and name.
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ...
+> > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> > > index 795bedcb6f9b..d1adcb3437c5 100644
+> > > --- a/fs/notify/fanotify/fanotify.c
+> > > +++ b/fs/notify/fanotify/fanotify.c
+> > > @@ -592,21 +592,30 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+> > >                                                       __kernel_fsid_t *fsid,
+> > >                                                       const struct qstr *name,
+> > >                                                       struct inode *child,
+> > > +                                                     struct dentry *moved,
+> > >                                                       unsigned int *hash,
+> > >                                                       gfp_t gfp)
+> > >  {
+> > >       struct fanotify_name_event *fne;
+> > >       struct fanotify_info *info;
+> > >       struct fanotify_fh *dfh, *ffh;
+> > > +     struct inode *dir2 = moved ? d_inode(moved->d_parent) : NULL;
+> >
+> > I think we need to be more careful here (like dget_parent()?). Fsnotify is
+> > called after everything is unlocked after rename so dentry can be changing
+> > under us, cannot it? Also does that mean that we could actually get a wrong
+> > parent here if the dentry is renamed immediately after we unlock things and
+> > before we report fsnotify event?
 > 
-> From a security point of view, kernel warning messages provide a lot of
-> useful information for attackers. Many GNU/Linux distributions allow
-> unprivileged users to read the kernel log, so attackers use kernel
-> warning infoleak in vulnerability exploits. 
-At the risk of being too simplistic, if the intention is to cut down infoleaks,
-why not simply have a config (and/or sysctl) to toggle it - both at kernel build
-as well as at runtime via a sysctl.
+> fsnotify_move() is called inside lock_rename() (both old_dir and new_dir locks),
+> which are held by the caller of vfs_rename(), and prevent d_parent/d_name
+> changes to child dentries, so moved->d_parent is stable here.
+> You are probably confusing with inode_unlock(target), which is the
+> child inode lock.
+> 
+> d_parent/d_name are also stable for fsnotify_create/link/unlink/mkdir/rmdir
+> per the vfs locking rules for those operations. In all those cases, the parent
+> dir lock is held for vfs helper callers.
+> This is why we can use dentry->d_name (and moved->d_name) in all those
+> fsnotify hooks.
 
-A minimal starting attempt at this, definitely incomplete (i've not actually written
-the config anywhere, sorry, I'd just like to propose this as an idea for now) could
-be something like this? (Am calling the kconfig CONFIG_TERSE_DIAGS_ONWARN):
+Bah, you're right. I got confused by the locking of source and target
+inside vfs_rename() but those are not parent directories but rather "files"
+being renamed from / two. Sorry for the noise.
 
----
- kernel/panic.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+								Honza
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index cefd7d82366f..bbf00b0a8110 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -587,10 +587,8 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
-    if (args)
-        vprintk(args->fmt, args->args);
- 
--   print_modules();
--
--   if (regs)
--       show_regs(regs);
-+   if (IS_ENABLED(CONFIG_TERSE_DIAGS_ONWARN))
-+       return;
- 
-    if (panic_on_warn) {
-        /*
-@@ -603,6 +601,11 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
-        panic("panic_on_warn set ...\n");
-    }   
- 
-+   print_modules();
-+
-+   if (regs)
-+       show_regs(regs);
-+
-    if (!regs)
-        dump_stack();
- 
+> 
+> Thanks,
+> Amir.
 -- 
-2.25.1
-
-
-Further, am unsure precisely which portions of diagnostic output would be useful
-to retain when the config's on. Of course, this "patch" is very premature. Of course,
-am open to suggestions on all of this,
-Regards
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
