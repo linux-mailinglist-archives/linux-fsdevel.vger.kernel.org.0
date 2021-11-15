@@ -2,117 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7825645093B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 17:07:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA9B4509CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Nov 2021 17:38:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236715AbhKOQKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Nov 2021 11:10:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236674AbhKOQJ4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Nov 2021 11:09:56 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8202061B95;
-        Mon, 15 Nov 2021 16:06:51 +0000 (UTC)
-Date:   Mon, 15 Nov 2021 11:06:49 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Paul McKenney <paulmck@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Maciej Rozycki <macro@orcam.me.uk>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Will Deacon <will@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Laura Abbott <labbott@kernel.org>,
-        David S Miller <davem@davemloft.net>,
-        Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Scull <ascull@google.com>,
-        Marc Zyngier <maz@kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Wang Qing <wangqing@vivo.com>, Mel Gorman <mgorman@suse.de>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Andrew Klychkov <andrew.a.klychkov@gmail.com>,
-        Mathieu Chouquet-Stringer <me@mathieu.digital>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Stephen Kitt <steve@sk2.org>, Stephen Boyd <sboyd@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Mike Rapoport <rppt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-hardening@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, notify@kernel.org,
-        main@lists.elisa.tech, safety-architecture@lists.elisa.tech,
-        devel@lists.elisa.tech, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
-Message-ID: <20211115110649.4f9cb390@gandalf.local.home>
-In-Reply-To: <CAKXUXMx5Oi-dNVKB+8E-pdrz+ooELMZf=oT_oGXKFrNWejz=fg@mail.gmail.com>
-References: <20211027233215.306111-1-alex.popov@linux.com>
-        <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
-        <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
-        <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
-        <CAKXUXMx5Oi-dNVKB+8E-pdrz+ooELMZf=oT_oGXKFrNWejz=fg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        id S231695AbhKOQlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Nov 2021 11:41:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57490 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231625AbhKOQlf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Nov 2021 11:41:35 -0500
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA565C061766
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 08:38:39 -0800 (PST)
+Received: by mail-pl1-x62f.google.com with SMTP id p18so14866372plf.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 08:38:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=bsLeGFpbN8CpN9RU3ZNnNmz55GEbtlwvn/02SxJ3yO0=;
+        b=Xw/4izBdFkl2ShsOYjlglP1hnKh94ohUtgg8bF97/cI+6H2PhbW9Bc6moSppzqcYOM
+         reTt0VVwL6Kaws24pQ5whqflI23gH66oHW5ic2n1A2nQJUepO47HhLL3ckTL+6VS1L1r
+         zBVl+skRL4UJbf7kld4UJgMTm66Ag4umvhjMGy8CAK560H2nDbr86UtTeD0rFpvJn7z4
+         9J0eTNl6l5rmHznMIo28f95zHS6XZPHOlYRaU7hQL4dMt/77bk+ziJQ7Cc6RCHwZfikM
+         p7kULy+mbvESuHcKSdCY1LMSpupdfPlUAUOsWUFLw5pWq4i/EETv7NwoipwqGtVGIOJ9
+         ZKYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=bsLeGFpbN8CpN9RU3ZNnNmz55GEbtlwvn/02SxJ3yO0=;
+        b=tSzJZLuv+Mo5n1zYEmOzKsU4GmZWlpU4vaBXS+4GE29bOooTdIJzljdoRQzdzLmXls
+         w3ytGL0Uyxk9HLRAikDZQLawGLR1CF8gF6r5R94/vaHR5/smFoudtOjvavWj3iPZzpSe
+         ROq7w7wLxN0TbmyVvm/JakTXdpXeSQk+E9l+YbQodvYQeSJNpt/nTaGKi3pICrKTOmf2
+         vEhPFdGd1QccgleT1f/P/if31rYztMaNFLBw4dloRpHFFsONDcloZ30DQ7P0yknRHL9y
+         62bUbjj3dUa+IzcD9GSbgGbarBIr0CS4jprSSOgF6+wmzoFzRtWVqvc2TgaFERFwBTsz
+         VCmA==
+X-Gm-Message-State: AOAM531UVBsZfhA6Jmq53F2bW3EptuFwmpbHfYpGepnCWUNYKsL7sPCp
+        IrBhu37GiBnlmtmxGc+A1yZiMg==
+X-Google-Smtp-Source: ABdhPJzBf7wcoCKV+XZ+8nE3LFOuitGqXpr5rZikvxP2qM33QNCA8eVQDO2cJXJ08GONxk+3/q9Chg==
+X-Received: by 2002:a17:90b:3a89:: with SMTP id om9mr48220230pjb.99.1636994319323;
+        Mon, 15 Nov 2021 08:38:39 -0800 (PST)
+Received: from [192.168.254.17] ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id b9sm5985006pfm.127.2021.11.15.08.38.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Nov 2021 08:38:38 -0800 (PST)
+Message-ID: <dd53f11a-ae6f-79af-2ea2-8091d1c4f15e@linaro.org>
+Date:   Mon, 15 Nov 2021 08:38:38 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH] io_uring: prevent io_put_identity() from freeing a static
+ identity
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org,
+        syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+References: <20211104012120.729261-1-tadeusz.struk@linaro.org>
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+In-Reply-To: <20211104012120.729261-1-tadeusz.struk@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 15 Nov 2021 14:59:57 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On 11/3/21 18:21, Tadeusz Struk wrote:
+> Note: this applies to 5.10 stable only. It doesn't trigger on anything
+> above 5.10 as the code there has been substantially reworked. This also
+> doesn't apply to any stable kernel below 5.10 afaict.
+> 
+> Syzbot found a bug: KASAN: invalid-free in io_dismantle_req
+> https://syzkaller.appspot.com/bug?id=123d9a852fc88ba573ffcb2dbcf4f9576c3b0559
+> 
+> The test submits bunch of io_uring writes and exits, which then triggers
+> uring_task_cancel() and io_put_identity(), which in some corner cases,
+> tries to free a static identity. This causes a panic as shown in the
+> trace below:
+> 
+>   BUG: KASAN: double-free or invalid-free in kfree+0xd5/0x310
+>   CPU: 0 PID: 4618 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #17
+>   Call Trace:
+>    dump_stack_lvl+0x1b2/0x21b
+>    print_address_description+0x8d/0x3b0
+>    kasan_report_invalid_free+0x58/0x130
+>    ____kasan_slab_free+0x14b/0x170
+>    __kasan_slab_free+0x11/0x20
+>    slab_free_freelist_hook+0xcc/0x1a0
+>    kfree+0xd5/0x310
+>    io_dismantle_req+0x9b0/0xd90
+>    io_do_iopoll+0x13a4/0x23e0
+>    io_iopoll_try_reap_events+0x116/0x290
+>    io_uring_cancel_task_requests+0x197d/0x1ee0
+>    io_uring_flush+0x170/0x6d0
+>    filp_close+0xb0/0x150
+>    put_files_struct+0x1d4/0x350
+>    exit_files+0x80/0xa0
+>    do_exit+0x6d9/0x2390
+>    do_group_exit+0x16a/0x2d0
+>    get_signal+0x133e/0x1f80
+>    arch_do_signal+0x7b/0x610
+>    exit_to_user_mode_prepare+0xaa/0xe0
+>    syscall_exit_to_user_mode+0x24/0x40
+>    do_syscall_64+0x3d/0x70
+>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+>   Allocated by task 4611:
+>    ____kasan_kmalloc+0xcd/0x100
+>    __kasan_kmalloc+0x9/0x10
+>    kmem_cache_alloc_trace+0x208/0x390
+>    io_uring_alloc_task_context+0x57/0x550
+>    io_uring_add_task_file+0x1f7/0x290
+>    io_uring_create+0x2195/0x3490
+>    __x64_sys_io_uring_setup+0x1bf/0x280
+>    do_syscall_64+0x31/0x70
+>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+>   The buggy address belongs to the object at ffff88810732b500
+>    which belongs to the cache kmalloc-192 of size 192
+>   The buggy address is located 88 bytes inside of
+>    192-byte region [ffff88810732b500, ffff88810732b5c0)
+>   Kernel panic - not syncing: panic_on_warn set ...
+> 
+> This issue bisected to this commit:
+> commit 186725a80c4e ("io_uring: fix skipping disabling sqo on exec")
+> 
+> Simple reverting the offending commit doesn't work as it hits some
+> other, related issues like:
+> 
+> /* sqo_dead check is for when this happens after cancellation */
+> WARN_ON_ONCE(ctx->sqo_task == current && !ctx->sqo_dead &&
+> 	     !xa_load(&tctx->xa, (unsigned long)file));
+> 
+>   ------------[ cut here ]------------
+>   WARNING: CPU: 1 PID: 5622 at fs/io_uring.c:8960 io_uring_flush+0x5bc/0x6d0
+>   Modules linked in:
+>   CPU: 1 PID: 5622 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #16
+>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-6.fc35 04/01/2014
+>   RIP: 0010:io_uring_flush+0x5bc/0x6d0
+>   Call Trace:
+>   filp_close+0xb0/0x150
+>   put_files_struct+0x1d4/0x350
+>   reset_files_struct+0x88/0xa0
+>   bprm_execve+0x7f2/0x9f0
+>   do_execveat_common+0x46f/0x5d0
+>   __x64_sys_execve+0x92/0xb0
+>   do_syscall_64+0x31/0x70
+>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> Changing __io_uring_task_cancel() to call io_disable_sqo_submit() directly,
+> as the comment suggests, only if __io_uring_files_cancel() is not executed
+> seems to fix the issue.
+> 
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: <io-uring@vger.kernel.org>
+> Cc: <linux-fsdevel@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
+> ---
+>   fs/io_uring.c | 21 +++++++++++++++++----
+>   1 file changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0736487165da..fcf9ffe9b209 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8882,20 +8882,18 @@ void __io_uring_task_cancel(void)
+>   	struct io_uring_task *tctx = current->io_uring;
+>   	DEFINE_WAIT(wait);
+>   	s64 inflight;
+> +	int canceled = 0;
+>   
+>   	/* make sure overflow events are dropped */
+>   	atomic_inc(&tctx->in_idle);
+>   
+> -	/* trigger io_disable_sqo_submit() */
+> -	if (tctx->sqpoll)
+> -		__io_uring_files_cancel(NULL);
+> -
+>   	do {
+>   		/* read completions before cancelations */
+>   		inflight = tctx_inflight(tctx);
+>   		if (!inflight)
+>   			break;
+>   		__io_uring_files_cancel(NULL);
+> +		canceled = 1;
+>   
+>   		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+>   
+> @@ -8909,6 +8907,21 @@ void __io_uring_task_cancel(void)
+>   		finish_wait(&tctx->wait, &wait);
+>   	} while (1);
+>   
+> +	/*
+> +	 * trigger io_disable_sqo_submit()
+> +	 * if not already done by __io_uring_files_cancel()
+> +	 */
+> +	if (tctx->sqpoll && !canceled) {
+> +		struct file *file;
+> +		unsigned long index;
+> +
+> +		xa_for_each(&tctx->xa, index, file) {
+> +			struct io_ring_ctx *ctx = file->private_data;
+> +
+> +			io_disable_sqo_submit(ctx);
+> +		}
+> +	}
+> +
+>   	atomic_dec(&tctx->in_idle);
+>   
+>   	io_uring_remove_task_files(tctx);
+> 
 
-> 1. Allow a reasonably configured kernel to boot and run with
-> panic_on_warn set. Warnings should only be raised when something is
-> not configured as the developers expect it or the kernel is put into a
-> state that generally is _unexpected_ and has been exposed little to
-> the critical thought of the developer, to testing efforts and use in
-> other systems in the wild. Warnings should not be used for something
-> informative, which still allows the kernel to continue running in a
-> proper way in a generally expected environment. Up to my knowledge,
-> there are some kernels in production that run with panic_on_warn; so,
-> IMHO, this requirement is generally accepted (we might of course
+Hi,
+Any comments on this one? It needs to be ACK'ed by the maintainer before
+it is applied to 5.10 stable.
 
-To me, WARN*() is the same as BUG*(). If it gets hit, it's a bug in the
-kernel and needs to be fixed. I have several WARN*() calls in my code, and
-it's all because the algorithms used is expected to prevent the condition
-in the warning from happening. If the warning triggers, it means either that
-the algorithm is wrong or my assumption about the algorithm is wrong. In
-either case, the kernel needs to be updated. All my tests fail if a WARN*()
-gets hit (anywhere in the kernel, not just my own).
-
-After reading all the replies and thinking about this more, I find the
-pkill_on_warning actually worse than not doing anything. If you are
-concerned about exploits from warnings, the only real solution is a
-panic_on_warning. Yes, it brings down the system, but really, it has to be
-brought down anyway, because it is in need of a kernel update.
-
--- Steve
+-- 
+Thanks,
+Tadeusz
