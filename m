@@ -2,210 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4304D452EDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 11:17:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B4A452F65
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 11:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233945AbhKPKUW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 05:20:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233874AbhKPKUS (ORCPT
+        id S234267AbhKPKrD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 05:47:03 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4098 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234039AbhKPKqd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 05:20:18 -0500
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0BC1C061764
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 02:17:21 -0800 (PST)
-Received: by mail-il1-x131.google.com with SMTP id m11so19842751ilh.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 02:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C1QM8AKW5rCLdWswQ1PcWE7G6amUcVQfOA2HOJnupHE=;
-        b=YO9KcfeV6oCJZxTCA38up2FrHFwJCtZss1LEpwB2Pnv8diLgW81FDXy03fz6kQHchs
-         TqXyAezTk/ymE+8iz6KwKrpxFM/3VN5OcIAHzGppszyRDgEQO2SEJ/RhXHwRaV1Uqb3e
-         eDT3+FEqURzZVV1Vy+B/emJ0tJRLqOFVdKhgE7bKZ+/3meE+NrVWdRSTVPRh8RToe4BR
-         vS44JPbhOdK4QV58tXCo0ZbTHFmtkLP2B3EoHAu8wejNlwPL7B1xwIN8iv4ZcDDomoR4
-         nI+sz4B1kTgEZ6zgsNj4FWV91LqESl+hA/LkVa6AuV2OFhAcuHuxMdJoNFhg0zdLhdhz
-         KqVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C1QM8AKW5rCLdWswQ1PcWE7G6amUcVQfOA2HOJnupHE=;
-        b=kY/i8x+te+/2Q9aEgMYW6tG96zSpA2Ert0AqWVlzF/r1vXg/fq2bMtHkNU5fxB34kj
-         xtskCA4PN//U2dhEv6GtPT597iyaDbN9cHP8aY+ZDLmH526tV4C4i3K38rgrGdqIXsB6
-         NDy/slojj2Jf5cdCoPIxtzhhChFsO6UWT5cpg2w44gEeTWDDLytbZEBvn7tGq2/UnTaG
-         EjJvU0keGXDPg1a2tMEFxh5IFAHMpfsCh0uzjDIAKXJVRoJM3Rqb7b3+t0xItf3lOX5+
-         9/LDYUeOMyCLD+TVwS6CYQ+aWzChN6eHL1+qw0ADkIxfKB9FT7Zi8L5AY7pN4dee5QsH
-         IutQ==
-X-Gm-Message-State: AOAM530jmSsGN9rCffKnLdB6d1JZ7tt4XhWelH/QrZybgnzXH4aE7CU6
-        PjEaMNnxzurtt3ZtFXC3LnLeaysxR6kgb9rinVpwJw==
-X-Google-Smtp-Source: ABdhPJy6WwO8mtKgC1cfXDxgttmwaE0wCOtrnvSZ8v2mF+zSstZy18ngGO/685EBIT1OrJ0xHIrKWIwXGD/N2m/ScJo=
-X-Received: by 2002:a05:6e02:1561:: with SMTP id k1mr3761344ilu.135.1637057840850;
- Tue, 16 Nov 2021 02:17:20 -0800 (PST)
+        Tue, 16 Nov 2021 05:46:33 -0500
+Received: from fraeml710-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HtjHN6bskz67mLl;
+        Tue, 16 Nov 2021 18:39:44 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml710-chm.china.huawei.com (10.206.15.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 16 Nov 2021 11:43:27 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.020;
+ Tue, 16 Nov 2021 11:43:27 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     "tytso@mit.edu" <tytso@mit.edu>, "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "hughd@google.com" <hughd@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC][PATCH 5/5] shmem: Add fsverity support
+Thread-Topic: [RFC][PATCH 5/5] shmem: Add fsverity support
+Thread-Index: AQHX18M/qVU4RXchik23Vn+neZuDEKwAMhaAgAQN/bCAAKcCAIABDzqA
+Date:   Tue, 16 Nov 2021 10:43:27 +0000
+Message-ID: <0974034ff3b6426abd89f3c6f45c6d23@huawei.com>
+References: <20211112124411.1948809-1-roberto.sassu@huawei.com>
+ <20211112124411.1948809-6-roberto.sassu@huawei.com>
+ <YY68iXKPWN8+rd+0@gmail.com> <6adb6da30b734213942f976745c456f6@huawei.com>
+ <YZKvXK+vX/we4GCD@gmail.com>
+In-Reply-To: <YZKvXK+vX/we4GCD@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.204.63.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20211111234203.1824138-1-almasrymina@google.com>
- <20211111234203.1824138-3-almasrymina@google.com> <YY4dHPu/bcVdoJ4R@dhcp22.suse.cz>
- <CAHS8izNMTcctY7NLL9+qQN8+WVztJod2TfBHp85NqOCvHsjFwQ@mail.gmail.com>
- <YY4nm9Kvkt2FJPph@dhcp22.suse.cz> <CAHS8izMjfwgiNEoJWGSub6iqgPKyyoMZK5ONrMV2=MeMJsM5sg@mail.gmail.com>
- <YZI9ZbRVdRtE2m70@dhcp22.suse.cz> <CAHS8izPcnwOqf8bjfrEd9VFxdA6yX3+a-TeHsxGgpAR+_bRdNA@mail.gmail.com>
- <YZN5tkhHomj6HSb2@dhcp22.suse.cz>
-In-Reply-To: <YZN5tkhHomj6HSb2@dhcp22.suse.cz>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Tue, 16 Nov 2021 02:17:09 -0800
-Message-ID: <CAHS8izNTbvhjEEb=ZrH2_4ECkVhxnCLzyd=78uWmHA_02iiA9Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] mm/oom: handle remote ooms
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, Greg Thelen <gthelen@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>, riel@surriel.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 1:28 AM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Mon 15-11-21 16:58:19, Mina Almasry wrote:
-> > On Mon, Nov 15, 2021 at 2:58 AM Michal Hocko <mhocko@suse.com> wrote:
-> > >
-> > > On Fri 12-11-21 09:59:22, Mina Almasry wrote:
-> > > > On Fri, Nov 12, 2021 at 12:36 AM Michal Hocko <mhocko@suse.com> wrote:
-> > > > >
-> > > > > On Fri 12-11-21 00:12:52, Mina Almasry wrote:
-> > > > > > On Thu, Nov 11, 2021 at 11:52 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > > > > >
-> > > > > > > On Thu 11-11-21 15:42:01, Mina Almasry wrote:
-> > > > > > > > On remote ooms (OOMs due to remote charging), the oom-killer will attempt
-> > > > > > > > to find a task to kill in the memcg under oom, if the oom-killer
-> > > > > > > > is unable to find one, the oom-killer should simply return ENOMEM to the
-> > > > > > > > allocating process.
-> > > > > > >
-> > > > > > > This really begs for some justification.
-> > > > > > >
-> > > > > >
-> > > > > > I'm thinking (and I can add to the commit message in v4) that we have
-> > > > > > 2 reasonable options when the oom-killer gets invoked and finds
-> > > > > > nothing to kill: (1) return ENOMEM, (2) kill the allocating task. I'm
-> > > > > > thinking returning ENOMEM allows the application to gracefully handle
-> > > > > > the failure to remote charge and continue operation.
-> > > > > >
-> > > > > > For example, in the network service use case that I mentioned in the
-> > > > > > RFC proposal, it's beneficial for the network service to get an ENOMEM
-> > > > > > and continue to service network requests for other clients running on
-> > > > > > the machine, rather than get oom-killed when hitting the remote memcg
-> > > > > > limit. But, this is not a hard requirement, the network service could
-> > > > > > fork a process that does the remote charging to guard against the
-> > > > > > remote charge bringing down the entire process.
-> > > > >
-> > > > > This all belongs to the changelog so that we can discuss all potential
-> > > > > implication and do not rely on any implicit assumptions.
+> From: Eric Biggers [mailto:ebiggers@kernel.org]
+> Sent: Monday, November 15, 2021 8:05 PM
+> On Mon, Nov 15, 2021 at 08:49:41AM +0000, Roberto Sassu wrote:
+> > > From: Eric Biggers [mailto:ebiggers@kernel.org]
+> > > Sent: Friday, November 12, 2021 8:12 PM
+> > > On Fri, Nov 12, 2021 at 01:44:11PM +0100, Roberto Sassu wrote:
+> > > > Make the necessary modifications to support fsverity in tmpfs.
 > > > >
-> > > > Understood. Maybe I'll wait to collect more feedback and upload v4
-> > > > with a thorough explanation of the thought process.
+> > > > First, implement the fsverity operations (in a similar way of f2fs). These
+> > > > operations make use of shmem_read_mapping_page() instead of
+> > > > read_mapping_page() to handle the case where the page has been
+> swapped
+> > > out.
+> > > > The fsverity descriptor is placed at the end of the file and its location
+> > > > is stored in an xattr.
 > > > >
-> > > > > E.g. why does
-> > > > > it even make sense to kill a task in the origin cgroup?
-> > > > >
+> > > > Second, implement the ioctl operations to enable, measure and read
+> fsverity
+> > > > metadata.
 > > > >
-> > > > The behavior I saw returning ENOMEM for this edge case was that the
-> > > > code was forever looping the pagefault, and I was (seemingly
-> > > > incorrectly) under the impression that a suggestion to forever loop
-> > > > the pagefault would be completely fundamentally unacceptable.
+> > > > Lastly, add calls to fsverity functions, to ensure that fsverity-relevant
+> > > > operations are checked and handled by fsverity (file open, attr set, inode
+> > > > evict).
+> > > >
+> > > > Fsverity support can be enabled through the kernel configuration and
+> > > > remains enabled by default for every tmpfs filesystem instantiated (there
+> > > > should be no overhead, unless fsverity is enabled for a file).
+> > > >
+> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > > >
-> > > Well, I have to say I am not entirely sure what is the best way to
-> > > handle this situation. Another option would be to treat this similar to
-> > > ENOSPACE situation. This would result into SIGBUS IIRC.
-> > >
-> > > The main problem with OOM killer is that it will not resolve the
-> > > underlying problem in most situations. Shmem files would likely stay
-> > > laying around and their charge along with them. Killing the allocating
-> > > task has problems on its own because this could be just a DoS vector by
-> > > other unrelated tasks sharing the shmem mount point without a gracefull
-> > > fallback. Retrying the page fault is hard to detect. SIGBUS might be
-> > > something that helps with the latest. The question is how to communicate
-> > > this requerement down to the memcg code to know that the memory reclaim
-> > > should happen (Should it? How hard we should try?) but do not invoke the
-> > > oom killer. The more I think about this the nastier this is.
+> > > I don't see how this makes sense at all.  The point of fs-verity is to avoid
+> > > having to hash the whole file when verifying it.  However, obviously the
+> whole
+> > > file still has to be hashed to build the Merkle tree in the first place.  That
+> > > makes sense for a persistent filesystem where a file can be written once and
+> > > verified many times.  I don't see how it makes sense for tmpfs, where files
+> have
+> > > to be re-created on every boot.  You might as well just hash the whole file.
 > >
-> > So actually I thought the ENOSPC suggestion was interesting so I took
-> > the liberty to prototype it. The changes required:
+> > The point of adding fsverity support for tmpfs was to being able to do
+> > integrity enforcement with just one mechanism, given that I was
+> > planning to do integrity verification with reference values loaded
+> > to the kernel with DIGLIM [1].
 > >
-> > 1. In out_of_memory() we return false if !oc->chosen &&
-> > is_remote_oom(). This gets bubbled up to try_charge_memcg() as
-> > mem_cgroup_oom() returning OOM_FAILED.
-> > 2. In try_charge_memcg(), if we get an OOM_FAILED we again check
-> > is_remote_oom(), if it is a remote oom, return ENOSPC.
-> > 3. The calling code would return ENOSPC to the user in the no-fault
-> > path, and SIGBUS the user in the fault path with no changes.
->
-> I think this should be implemented at the caller side rather than
-> somehow hacked into the memcg core. It is the caller to know what to do.
-> The caller can use gfp flags to control the reclaim behavior.
->
-
-Hmm I'm a bit struggling to envision this.  So would it be acceptable
-at the call sites where we doing a remote charge, such as
-shmem_add_to_page_cache(), if we get ENOMEM from the
-mem_cgroup_charge(), and we know we're doing a remote charge (because
-current's memcg != the super block memcg), then we return ENOSPC from
-shmem_add_to_page_cache()? I believe that will return ENOSPC to the
-userspace in the non-pagefault path and SIGBUS in the pagefault path.
-Or you had something else in mind?
-
-> > To be honest I think this is very workable, as is Shakeel's suggestion
-> > of MEMCG_OOM_NO_VICTIM. Since this is an opt-in feature, we can
-> > document the behavior and if the userspace doesn't want to get killed
-> > they can catch the sigbus and handle it gracefully. If not, the
-> > userspace just gets killed if we hit this edge case.
->
-> I am not sure about the MEMCG_OOM_NO_VICTIM approach. It sounds really
-> hackish to me. I will get back to Shakeel's email as time permits. The
-> primary problem I have with this, though, is that the kernel oom killer
-> cannot really do anything sensible if the limit is reached and there
-> is nothing reclaimable left in this case. The tmpfs backed memory will
-> simply stay around and there are no means to recover without userspace
-> intervention.
-> --
-> Michal Hocko
-> SUSE Labs
-
-On Tue, Nov 16, 2021 at 1:39 AM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Tue 16-11-21 10:28:25, Michal Hocko wrote:
-> > On Mon 15-11-21 16:58:19, Mina Almasry wrote:
-> [...]
-> > > To be honest I think this is very workable, as is Shakeel's suggestion
-> > > of MEMCG_OOM_NO_VICTIM. Since this is an opt-in feature, we can
-> > > document the behavior and if the userspace doesn't want to get killed
-> > > they can catch the sigbus and handle it gracefully. If not, the
-> > > userspace just gets killed if we hit this edge case.
+> > With an LSM such as IPE [2], integrity verification would consist in
+> > querying the fsverity digest with DIGLIM and allowing the operation
+> > if the digest was found. With fsverity support in tmpfs, this can be
+> > done from the very beginning of the boot process.
 > >
-> > I am not sure about the MEMCG_OOM_NO_VICTIM approach. It sounds really
-> > hackish to me. I will get back to Shakeel's email as time permits. The
-> > primary problem I have with this, though, is that the kernel oom killer
-> > cannot really do anything sensible if the limit is reached and there
-> > is nothing reclaimable left in this case. The tmpfs backed memory will
-> > simply stay around and there are no means to recover without userspace
-> > intervention.
->
-> And just a small clarification. Tmpfs is fundamentally problematic from
-> the OOM handling POV. The nuance here is that the OOM happens in a
-> different memcg and thus a different resource domain. If you kill a task
-> in the target memcg then you effectively DoS that workload. If you kill
-> the allocating task then it is DoSed by anybody allowed to write to that
-> shmem. All that without a graceful fallback.
+> > Using regular file digests would be also possible but this requires
+> > loading with DIGLIM both fsverity and non-fsverity reference values.
+> > It would also require two separate mechanisms for calculating
+> > the file digest depending on the filesystem. It could be done, but
+> > I thought it was easier to add support for fsverity in tmpfs.
+> >
+> > > Also, you didn't implement actually verifying the data (by calling
+> > > fsverity_verify_page()), so this patch doesn't really do anything anyway.
+> >
+> > Yes, at the end I didn't add it. Probably the only place where
+> > calling fsverity_verify_page() would make sense is when a page
+> > is swapped in (assuming that the swap device is untrusted).
+> >
+> > I tried to add a call in shmem_swapin_page() but fsverity complained
+> > due to the fact that the page was already up to date, and also
+> > rejected the page. I will check it better.
+> >
+> 
+> It sounds like you really only care about calculating fs-verity file digests.
+> That's just an algorithm for hashing a file, so it could just be implemented in
+> generic code that operates on any file on any filesystem, like how IMA
+> implemennts full file hashing for any file.  There isn't a need for any special
+> filesystem support to do this.
 
-I don't know if this addresses your concern, but I'm limiting the
-memcg= use to processes that can enter that memcg. Therefore they
-would be able to allocate memory in that memcg anyway by entering it.
-So if they wanted to intentionally DoS that memcg they can already do
-it without this feature.
+Initially I thought the same. Then, I realized that fsverity is much more
+than that. Fsverity could be seen as a sort of property enforcer, it provides
+a property associated to the file (the fsverity digest) and ensures that
+the property remains the same while the system is running. In addition,
+it takes advantage of the page cache to avoid remeasuring an up to date
+page.
+
+This remove some burden from LSMs. IPE would have just to compare
+the fsverity digest with that in the policy (or just query it with DIGLIM).
+Not taking into consideration the specific filesystem, not having to
+fall back to the new fsverity measurement function, and avoiding to
+preserve the fsverity property by itself, would make the LSM
+implementation very simple.
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Zhong Ronghua
