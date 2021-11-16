@@ -2,251 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E03453126
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 12:46:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB37A453188
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 12:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235393AbhKPLtC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 06:49:02 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:28392 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235642AbhKPLsg (ORCPT
+        id S235542AbhKPL7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 06:59:38 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57089 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235497AbhKPL7e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 06:48:36 -0500
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AGBDWT8013942;
-        Tue, 16 Nov 2021 11:45:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
- bh=zZF9fTjTw8q83qYLGyPxTGDkhfdBS8QEQZRfURmUfMQ=;
- b=Y7VJeuq/SXD6cEH3DKUkvMXhY4T8tj3uuYlBx/2jgh+jYrdtB/TnigyJ3++tiHwjVhCQ
- P8F3yxcjrXFQFbdIrAzTitSCExUw4o6dIA8nUmgc03taNSiIJqM/TSGr4uKJt13JSC9Z
- 6ivqUeAziaTdJyFL9QKxSXbAJCzTCDBne9ZouNQ5rKAdtgnQZbC7VoSmSLKnC482ifxw
- dqJX2yUJfwtx9mDOi2TMQCDKfraBMBb9Z0BUdq4wXtO21RxtFG3rptme+24bkBztceXp
- 5yB4o1Uq4bm/FYRSr475HHOOl4RI7g3Yd1Lp/HPb3QMx32d2tsOH+HHf9vOb0moop8+V 0w== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cbhv58xwc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Nov 2021 11:45:37 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AGBaPpx057955;
-        Tue, 16 Nov 2021 11:45:36 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-        by aserp3030.oracle.com with ESMTP id 3ca3dfudwh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Nov 2021 11:45:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GeWLu76spVsZJ6pgc09i7HnaX/7TC4c44MTGpFbSzornq5VjtP8Vdu9lvv+OwBxBUutpd3CpNjjAXYiFi845eZnbukxhsXj4NiLago19o1wr1gxDw/Q58W9AMEy1QAl6PNSkpSe8ARSs0e4MTgicPvfBTH0BJYHow/KRr7ZSA2q6bRFl5ovl4lH+gN/qaIACr9Ix3L9/XcFSSVkeh5TR4Fp/HvKtfgH/B31H4fJh0ZdysOW6nltr0NiMHfFMRCOqkqugf0F+o0YYl9MIH5do7iAAtCfb5CgZdSp78b6EJKcnW+M4dDEs8PSjJqGUO+W4tmULFYOFi4Mntk1JFGcBQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zZF9fTjTw8q83qYLGyPxTGDkhfdBS8QEQZRfURmUfMQ=;
- b=N1541nW1mq2Jujrat9lUC/izXO1Sd9p5tZl9tOdprFA1p5cVwVPwqjWcijrXPPzGS9GmWPOJKdvvt0szdjvLIU9YvsiP3RY1rfxZ9b+XsMNdKfYAVbs1RP/tf2gzQFCXGJceXR8ZEkOWMAR+uY6WDimM1Z6KdhBPwDrKxtlKv5H/eyWOy/IB7awu0w+zsEKXSKLDIm6tq+ecEAzD5YgMAqkT5Nd895yQblzEKd3dydlVO53zqzo1pJibshSRKeGMn3fBQulzbamoAxlZ3wxNpx7Y3y0jdGngKVy5C3qitOmZOS/NhagPrYXRai3+KedGvWKIoMWo8BkrFILjOjbhHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zZF9fTjTw8q83qYLGyPxTGDkhfdBS8QEQZRfURmUfMQ=;
- b=ziABCNuBJ0vQJgI4q2zkuoQlfDG+y3R+NTyAE6E9EPlNxhlQonwN8PIJnnr8zP9R32sw3r+4e0n/YqhtcJpMTfqoaMXViSCiZZpO7pZM+I8Fc1gUOGFvScIv2XY/rHN14UGlmIVXAS2gGUsYV0Ke+qg54c76d6EvbKT1EYFtFHc=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CO1PR10MB4436.namprd10.prod.outlook.com
- (2603:10b6:303:91::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Tue, 16 Nov
- 2021 11:45:34 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4690.016; Tue, 16 Nov 2021
- 11:45:34 +0000
-Date:   Tue, 16 Nov 2021 14:45:16 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     amir73il@gmail.com
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [bug report] fanotify: record name info for FAN_DIR_MODIFY event
-Message-ID: <20211116114516.GA11780@kili>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: AM6PR04CA0012.eurprd04.prod.outlook.com
- (2603:10a6:20b:92::25) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+        Tue, 16 Nov 2021 06:59:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637063797;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=39q5UvO20+ragowCuiWUsqvbWoWPCmmn1g4P+luKXQA=;
+        b=YnUzWCVF7F4FU7eOZAGAH+Pr2i+rR/OKEWPIkyX1OWLGllVc6o1jxdRQn9tw2M+2wlWa41
+        SilgHt4yIc90rGN2BLx6m1a2U24+lUGTterdlnT8ukhuMc5AM4zqD6LQscWURdqy151QcL
+        K010psL7FeXvwzf6oWSKU6WezWKFAcg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-523-EaDsUAcLMdSGxo6S_OaIMw-1; Tue, 16 Nov 2021 06:56:33 -0500
+X-MC-Unique: EaDsUAcLMdSGxo6S_OaIMw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 24850802C94;
+        Tue, 16 Nov 2021 11:56:32 +0000 (UTC)
+Received: from work (unknown [10.40.195.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 868B05DEFA;
+        Tue, 16 Nov 2021 11:56:30 +0000 (UTC)
+Date:   Tue, 16 Nov 2021 12:56:26 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Martin Wilck <mwilck@suse.com>
+Cc:     Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>, mwilck@suse.de,
+        martin.petersen@oracle.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
+Message-ID: <20211116115626.anbvho4xtb5vsoz5@work>
+References: <20211112152202.26614-1-jack@suse.cz>
+ <20211115114821.swt3nqtw2pdgahsq@work>
+ <20211115125141.GD23412@quack2.suse.cz>
+ <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
+ <20211115145312.g4ptf22rl55jf37l@work>
+ <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
 MIME-Version: 1.0
-Received: from kili (102.222.70.114) by AM6PR04CA0012.eurprd04.prod.outlook.com (2603:10a6:20b:92::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19 via Frontend Transport; Tue, 16 Nov 2021 11:45:30 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5fb9224f-a36d-4754-d4a0-08d9a8f69982
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4436:
-X-Microsoft-Antispam-PRVS: <CO1PR10MB4436A87F57EA3699FB8C93B98E999@CO1PR10MB4436.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xvYC5p10i/e5RAW3HotjRWBAapPsFmq3UFTV1AzfY4knzng9Xtw0/fsxUyYW+KNDowqAnZ/sx7DMRh3XvFKyy1YNK5nUz8do0VlqdA+g2tLrwr9Zzxogl9riqxrZk8TjwR1jChWxH0w1omG8anFjj0pys3sUzdEwyDiJqaWo3D6kQHWAbe2litTBQYKCumdcrO0ratnO8M+EmSZQOYHDSsXwmyD3WwyippV1InwhqtU1pYwCYeKMOm9En4ELBcG8XpY9s2/CXErp8/FcHsi/DqyyXjSJ85h5DCW1vCcuf/2ng9r2POWd5WqksCtKsWpQT7XQOvTHG7yxstglPhhRIXjGUcRspohC/QO55W4nKgQ5zHC4D6bTdvPqoNWxDFgmt6mN2t8P0czuSW59Q6dSUWq1AccHh8ioW+4xK4BT48ArxYtEYomDEbuqx7z29gy6rnTSsYfQyIzhp7fkvryn46ZP8Hfm6hsqolc+9kGAGhxiOxbBx3G4j3m5Jhy9Z/dKfexZt8cGfUGllH8mtMLrzVsRLR46kiKxl6amgAo0SEY/HuMxQL1+bVDvzE/Oq6R3dIcBqSOXQqixjyzeel26/bSBQFFE8Kaqa/9FC76F5IwgJ+vw21bfnK7WUVxrPnu++hgH2EeX8eHf2FL/o2qnOcPXHxi0eO8ZzjHiIgG2I4B85gVVfnn/2u6u8rm1i81HoHM4HpHlIyme9ftwmTV7Xg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(2906002)(83380400001)(26005)(9576002)(1076003)(33656002)(956004)(33716001)(9686003)(6666004)(55016002)(8936002)(316002)(8676002)(44832011)(6496006)(66476007)(38100700002)(66946007)(38350700002)(6916009)(4326008)(66556008)(186003)(508600001)(52116002)(5660300002)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hA2vpDwJOiUs7FPDQwNfp8ZmM4j86Pfn9YL/RYRe5QGotuJhw7EOVRMDCpq5?=
- =?us-ascii?Q?MTlVHkKgHjzcr58y+99Ayt4dS6fbB6TaIJdGf/D4UkSJXOnvSF8iMauUhi83?=
- =?us-ascii?Q?z1fxokkPDbAOLVJofOzziBk21wsJHidZURwhMIu20WhROvxJNGRmTDbO6P34?=
- =?us-ascii?Q?mzgf7GWzLSHHYO3cjrjzZjUenEJjOoruNHu+MyZo+tCKbDGuj0Hs2qWYG3o9?=
- =?us-ascii?Q?MJW855BDMmOjsOkg4CRzlgkBf7jitTDF/Uo2Slp5tHHU1+fCmnwb96rSXcCv?=
- =?us-ascii?Q?TyLQBE6FeLe4nDXpwAcsNoojes+V2pJhnX/Mmo/sqXlyFgGytc7xgkXUsOP0?=
- =?us-ascii?Q?JzYUGoU/Nct979oCsNtvQHv8AxLFsyCg+5sw5s6nCjUbehEwBXH6AaXyXfoi?=
- =?us-ascii?Q?m2xIIhS5sVvIkHVqVpo3lfV4N41eoOTWIU9XujfH8QsMsbjN13YBWEFkW5jA?=
- =?us-ascii?Q?m5t8lQ598+RkPz57xQNLntYXZJEyMy9IwS2lMD2BDebcXgHzV3P12suTqYKU?=
- =?us-ascii?Q?y7mqfrBCNV2CkqRmhGyzKvlKCAVSS/Kv00wQv4HfcF04j9Zf/Q6r3Spvudg8?=
- =?us-ascii?Q?B1TtOfsHVElQljw4S8G2ksrRgchG1AN89m4otw8KvIoapfVTAJ/U7P+/8ith?=
- =?us-ascii?Q?2gQUtUfYA0VhWDNV+j/jNHSCQ+BTBKu7s7bVwZGW3abcDly7nDUnOpog3Dzw?=
- =?us-ascii?Q?aqFec6307MzHxz/+JKEuWA90qrMp/LQAuWIXqf7/ypzrdvU2mzIg2aK0jgX0?=
- =?us-ascii?Q?kcMr4+/wHG0KCaCJinGsCF4Mpfx9zkoxmb646zKqvIpT5Osx9Xluk62TP9LK?=
- =?us-ascii?Q?axLBt7LIT/6qAHGstyEPXlMxDi6bsHfqkGhZ5xsl3aW9ySMLeRoEKSyb029w?=
- =?us-ascii?Q?g1Yxtv0XR0bNYmoVJ6gkvPCYarjuuQpEOrzDKaiTQUcBGQWcXf+Ndbyjrt0r?=
- =?us-ascii?Q?z21zQmxZIttD4e4Ns+f3t+xjQgWTJHZnfOuTss7W1Ixi7M9TiqIKd405iMup?=
- =?us-ascii?Q?z2B/2KYlP/0lNCBCWQgIovz8j3zK0q417v/mPnotU4g5p19OdTl4ozqzXKdy?=
- =?us-ascii?Q?1zGSrlBESXQf7HhV7qHF/qHVJtLu6hzrdxBPm+XT9hzizIkOtv7Oxl+XTtd3?=
- =?us-ascii?Q?IXnoiqNz5a67xOfx3+SNDDtu2bheOMSp6rLz78H7UpgMjFEXCRtezqAHG+ch?=
- =?us-ascii?Q?3ZnHp35X/6nZ1E5XZ+f8lQ7S4sdK1fssI47nY0TJ+eSUQskPaxo5TGWqkd71?=
- =?us-ascii?Q?ns96Cz5Iv8xUD1QmEUdkuYMjrFcI0l2AGb63LnVDWi/Fhg4+yVWdDwB+aDiE?=
- =?us-ascii?Q?K+T/VQmH9A8WGV1FcELAmosddXf8Di23fs/0aSW4Re6rIKEZwG6kS6IBwjbp?=
- =?us-ascii?Q?O61MW7DSl0sHAzazYlIZNQq+ThOF/u0eFLyxzImJf23n49ceo2m2YCteB6yR?=
- =?us-ascii?Q?ULzEM61T2qxjOf1Ffkae+N6HY0w5b3nG/Np1ZnbCdjjVcKqiraadNK+ywnXC?=
- =?us-ascii?Q?8C8d5ofns6LABKzgSXwHDtnPLJEc4RZlJ4KLaDJpwnpDtUJYeJJS6JpBKN3S?=
- =?us-ascii?Q?c+UqcfCiatNs3G/nLMNz5zsCavmLN3lFiBMymnE1aGv7FYC7vqOWtUtBXfNO?=
- =?us-ascii?Q?EH0RAHWMmJI7CuqGCHc9YTb9l2xzQ0nSziuNLB/NJySVyuU22Kk0xdGWP3VH?=
- =?us-ascii?Q?PgZgA+diM4/70PYoutbxIit7erw=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fb9224f-a36d-4754-d4a0-08d9a8f69982
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 11:45:34.1774
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qLIl0AmoAbRROEN79unc0UJlys6p64YABkNUz5VCGfTX+ym2MPvslqNTFRSmog4aQIdXYDbrg7BP+ajdQ8siXsW4O8x3TKOGju2C7+jEroI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4436
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10169 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 spamscore=0
- adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111160059
-X-Proofpoint-ORIG-GUID: cWH-eoKhtwlru41NR1-_pz1ZAhuRxgU4
-X-Proofpoint-GUID: cWH-eoKhtwlru41NR1-_pz1ZAhuRxgU4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Amir Goldstein,
+On Mon, Nov 15, 2021 at 04:10:12PM +0100, Martin Wilck wrote:
+> On Mon, 2021-11-15 at 15:53 +0100, Lukas Czerner wrote:
+> > On Mon, Nov 15, 2021 at 03:22:02PM +0100, Martin Wilck wrote:
+> > > On Mon, 2021-11-15 at 13:51 +0100, Jan Kara wrote:
+> > > > [Added Martin to CC who originally found the problem]
+> > > > 
+> > > > On Mon 15-11-21 12:48:21, Lukas Czerner wrote:
+> > > > > On Fri, Nov 12, 2021 at 04:22:02PM +0100, Jan Kara wrote:
+> > > > > > A user reported FITRIM ioctl failing for him on ext4 on some
+> > > > > > devices
+> > > > > > without apparent reason.  After some debugging we've found
+> > > > > > out
+> > > > > > that
+> > > > > > these devices (being LVM volumes) report rather large discard
+> > > > > > granularity of 42MB and the filesystem had 1k blocksize and
+> > > > > > thus
+> > > > > > group
+> > > > > > size of 8MB. Because ext4 FITRIM implementation puts discard
+> > > > > > granularity into minlen, ext4_trim_fs() declared the trim
+> > > > > > request
+> > > > > > as
+> > > > > > invalid. However just silently doing nothing seems to be a
+> > > > > > more
+> > > > > > appropriate reaction to such combination of parameters since
+> > > > > > user
+> > > > > > did
+> > > > > > not specify anything wrong.
+> > > > > 
+> > > > > Hi Jan,
+> > > > > 
+> > > > > I agree that it's better to silently do nothing rather than
+> > > > > returning
+> > > > > -ENOTSUPP in this case and the patch looks mostly fine.
+> > > > > 
+> > > > > However currently we return the adjusted minlen back to the
+> > > > > user
+> > > > > and it
+> > > > > is also stated in the fstrim man page. I think it's worth
+> > > > > keeping
+> > > > > that
+> > > > > behavior.
+> > > > 
+> > > > OK.
+> > > > 
+> > > > > When I think about it, it would probably be worth updating
+> > > > > fstrim
+> > > > > to
+> > > > > notify the user that the minlen changed, I can send a patch for
+> > > > > that.
+> > > > 
+> > > > I've added Martin to this conversation because he is of the
+> > > > opinion
+> > > > that
+> > > > the filesystem actually should not increase the minlen based on
+> > > > discard
+> > > > granularity at all. It should leave this to the lower layers or
+> > > > userspace.
+> > > > Honestly I don't have strong opinion either way so I wanted to
+> > > > throw
+> > > > Martin's opinion into the mix as a possibility. Also maybe you
+> > > > remember
+> > > > whether the motivation of the original commit 5c2ed62fd447 was
+> > > > motivated by
+> > > > some real world experience or just theoretical concerns?
+> > > > 
+> > > >                                                                 H
+> > > > onza
+> > > 
+> > > Thanks for notifying me, Jan. FTR, below's my argument, quoted from
+> > > bugzilla:
+> > > 
+> > > Whether or not the discard *can* be carried out, and whether it
+> > > makes
+> > > sense to do so on any given device, is not the file system's
+> > > business.
+> > > It's up to the block layer and the device itself. And whether or
+> > > not
+> > > blocks *should* be discarded isn't the filesystem's business,
+> > > either;
+> > > it's the decision of user space (*).
+> > > 
+> > > I find it strange that file system code starts reasoning whether
+> > > block
+> > > IO commands are "likely" to succeed or fail. IMO the only valid
+> > > reason
+> > > for the filesystem to intervene would be if the result of the
+> > > FITRIM
+> > > would be a suboptimal block allocation, causing performance
+> > > deterioration for future filesystem I/O. I don't see that that's
+> > > the
+> > > case here. 
+> > 
+> > It is not a matter of probability, or chance as you seem to imply.
+> > The
+> > discard granularity indicates the internal allocation unit and if the
+> > discard request is smaller than that it will do nothing. So from my
+> > POV
+> > it's just an optimization to avoid sending such pointless requests.
+> > 
+> > Am I wrong in thinking that such discard requests are useless ?
+> 
+> Please have a look at __blkdev_issue_discard():
+> https://elixir.bootlin.com/linux/latest/source/block/blk-lib.c#L26
+> 
+> Unless I'm misreading the code, it does very well pass REQ_OP_DISCARD
+> bios to the device which don't meet the granularity or alignment
+> requirements. It tries to align as well as possible, but the first and
+> last bio submitted don't necessarily match the granularity.
+> 
+> For SCSI at least, unmap granularity is mainly a means for
+> optimization: "An unmap request with a number of logical blocks that is
+> not a multiple of this value may result in unmap operations on fewer
+> LBAs than requested" (SBC5, §6.6.4). So, devices _may_ ignore such
+> requests, but that's not necessarily the case.
 
-The patch cacfb956d46e: "fanotify: record name info for
-FAN_DIR_MODIFY event" from Mar 19, 2020, leads to the following
-Smatch static checker warning:
+My understanding always was that the request needs to be both properly
+aligned and of a certain minimum size (discard_granularity) to take
+effect.
 
-	fs/notify/fanotify/fanotify_user.c:401 copy_fid_info_to_user()
-	error: we previously assumed 'fh' could be null (see line 362)
+If what you're saying is true then I feel like the documentation of
+discard_granularity
 
-fs/notify/fanotify/fanotify_user.c
-    354 static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
-    355                                  int info_type, const char *name,
-    356                                  size_t name_len,
-    357                                  char __user *buf, size_t count)
-    358 {
-    359         struct fanotify_event_info_fid info = { };
-    360         struct file_handle handle = { };
-    361         unsigned char bounce[FANOTIFY_INLINE_FH_LEN], *fh_buf;
-    362         size_t fh_len = fh ? fh->len : 0;
-                                ^^^^^^^^^^^^^
-The patch adds a check for in "fh" is NULL
+Documentation/ABI/testing/sysfs-block
+Documentation/block/queue-sysfs.rst
 
-    363         size_t info_len = fanotify_fid_info_len(fh_len, name_len);
-    364         size_t len = info_len;
-    365 
-    366         pr_debug("%s: fh_len=%zu name_len=%zu, info_len=%zu, count=%zu\n",
-    367                  __func__, fh_len, name_len, info_len, count);
-    368 
-    369         if (WARN_ON_ONCE(len < sizeof(info) || len > count))
-    370                 return -EFAULT;
-    371 
-    372         /*
-    373          * Copy event info fid header followed by variable sized file handle
-    374          * and optionally followed by variable sized filename.
-    375          */
-    376         switch (info_type) {
-    377         case FAN_EVENT_INFO_TYPE_FID:
-    378         case FAN_EVENT_INFO_TYPE_DFID:
-    379                 if (WARN_ON_ONCE(name_len))
-    380                         return -EFAULT;
-    381                 break;
-    382         case FAN_EVENT_INFO_TYPE_DFID_NAME:
-    383                 if (WARN_ON_ONCE(!name || !name_len))
-    384                         return -EFAULT;
-    385                 break;
-    386         default:
-    387                 return -EFAULT;
-    388         }
-    389 
-    390         info.hdr.info_type = info_type;
-    391         info.hdr.len = len;
-    392         info.fsid = *fsid;
-    393         if (copy_to_user(buf, &info, sizeof(info)))
-    394                 return -EFAULT;
-    395 
-    396         buf += sizeof(info);
-    397         len -= sizeof(info);
-    398         if (WARN_ON_ONCE(len < sizeof(handle)))
-    399                 return -EFAULT;
-    400 
---> 401         handle.handle_type = fh->type;
-                                     ^^^^^^^^
-But this code dereferences "fh" without checking.
+should change because that's not how I understand the notion of internal
+allocation unit. However the sentence you quoted is not entirely clear
+to me either so I'll leave that decision to someone who understands it
+better than me.
 
-    402         handle.handle_bytes = fh_len;
-    403 
-    404         /* Mangle handle_type for bad file_handle */
-    405         if (!fh_len)
-    406                 handle.handle_type = FILEID_INVALID;
-    407 
-    408         if (copy_to_user(buf, &handle, sizeof(handle)))
-    409                 return -EFAULT;
-    410 
-    411         buf += sizeof(handle);
-    412         len -= sizeof(handle);
-    413         if (WARN_ON_ONCE(len < fh_len))
-    414                 return -EFAULT;
-    415 
-    416         /*
-    417          * For an inline fh and inline file name, copy through stack to exclude
-    418          * the copy from usercopy hardening protections.
-    419          */
-    420         fh_buf = fanotify_fh_buf(fh);
-    421         if (fh_len <= FANOTIFY_INLINE_FH_LEN) {
-    422                 memcpy(bounce, fh_buf, fh_len);
-    423                 fh_buf = bounce;
-    424         }
-    425         if (copy_to_user(buf, fh_buf, fh_len))
-    426                 return -EFAULT;
-    427 
-    428         buf += fh_len;
-    429         len -= fh_len;
-    430 
-    431         if (name_len) {
-    432                 /* Copy the filename with terminating null */
-    433                 name_len++;
-    434                 if (WARN_ON_ONCE(len < name_len))
-    435                         return -EFAULT;
-    436 
-    437                 if (copy_to_user(buf, name, name_len))
-    438                         return -EFAULT;
-    439 
-    440                 buf += name_len;
-    441                 len -= name_len;
-    442         }
-    443 
-    444         /* Pad with 0's */
-    445         WARN_ON_ONCE(len < 0 || len >= FANOTIFY_EVENT_ALIGN);
-    446         if (len > 0 && clear_user(buf, len))
-    447                 return -EFAULT;
-    448 
-    449         return info_len;
-    450 }
+Martin could you please clarify it for us ?
 
-regards,
-dan carpenter
+Adding Martin Petersen to cc and somehow we're off the list so add
+fsdevel as well.
+
+Thanks!
+-Lukas
+
+> 
+> Another point is that only the block layer has full information about
+> the alignment, which depends on partition start sectors. I believe the
+> block layer should be the authority to decide whether or not the
+> request is valid for the device.
+> 
+> Regards,
+> Martin
+> 
+
