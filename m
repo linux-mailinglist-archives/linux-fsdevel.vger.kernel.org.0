@@ -2,283 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 766C7452DE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 10:23:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6510B452DFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 10:28:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233113AbhKPJ0Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 04:26:24 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:50013 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233061AbhKPJ0R (ORCPT
+        id S233082AbhKPJb1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 04:31:27 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:48210 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232697AbhKPJbY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 04:26:17 -0500
-Received: by mail-io1-f72.google.com with SMTP id k19-20020a5d8b13000000b005e970e1ee16so10025476ion.16
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 01:23:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=uC7AWDcvfTfXFe8xNqJbFueuOQA6vkHzPFdtRiX4guA=;
-        b=liv6XIy5HdL3h7x0Vx+pC3Tlz7aGCC+/ozJPK3J8v5SI1mSK597egbU1znu/PNvnLe
-         /SDO6ssKqvbFvMKGpGpMRkk8wEhBnR2iW2IXpiPqz2CGalLupi+P0JPP2KVG4RQ4Hsh1
-         ElZZLvQqoj5EU/lQtvzlbPQtssDCDFgY9M7As5YJZXY3Be56ErrCq4lGK7pvJIf9BdkL
-         7F8qTYO4p7X3Q50vSptSZBKrEkEyvDOtTbovSAxDcjX6uM658QBrfx3rPrpZMnmJF8Gi
-         9sNEH5Co3FjjMBKTZ7B3WfBc4A2bBqHXb6iTEYKm9cu2na1F3xy9L0KGLBKYWHlDAMsn
-         ICag==
-X-Gm-Message-State: AOAM531P/gOWNhItECK4Y25SyI9bvQ7F9H9/A2FWCWJrDFGpuIfn9dI7
-        CDSzqlCstTemoR5nQ9KoD2pZw4IRrvL//7eiYQx6yY4+HLqQ
-X-Google-Smtp-Source: ABdhPJzL++KdbZQd4ra287jGiy2IvztMUKRiLKkTrEGbLfm4F0BH1ly4zJomWzjKpnLpdAQtIJswunF7ZCTPndEwkXWLRIktZJ2z
+        Tue, 16 Nov 2021 04:31:24 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1466E1FD33;
+        Tue, 16 Nov 2021 09:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1637054905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QLWMKRNii1e5swb22eOlAFCCSYlNtQClGujwar1Ja7I=;
+        b=H21g286St67n9o4Ia8BOXQOk1/1SaYrM8bLxXdfxsA4wM7YfciQ3kDfswTYP6EHu3L1jmz
+        jG81csnF738K51mFX1jWqAfhnKBVvgzFMbIfBH0Fdg2QWbsoS22f5xKpV4t4O40BnfU0+j
+        VwzZLv1AZoyCIUc0H5n+uOlJGLSwvus=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 8692CA3B83;
+        Tue, 16 Nov 2021 09:28:23 +0000 (UTC)
+Date:   Tue, 16 Nov 2021 10:28:22 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Greg Thelen <gthelen@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>, riel@surriel.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] mm/oom: handle remote ooms
+Message-ID: <YZN5tkhHomj6HSb2@dhcp22.suse.cz>
+References: <20211111234203.1824138-1-almasrymina@google.com>
+ <20211111234203.1824138-3-almasrymina@google.com>
+ <YY4dHPu/bcVdoJ4R@dhcp22.suse.cz>
+ <CAHS8izNMTcctY7NLL9+qQN8+WVztJod2TfBHp85NqOCvHsjFwQ@mail.gmail.com>
+ <YY4nm9Kvkt2FJPph@dhcp22.suse.cz>
+ <CAHS8izMjfwgiNEoJWGSub6iqgPKyyoMZK5ONrMV2=MeMJsM5sg@mail.gmail.com>
+ <YZI9ZbRVdRtE2m70@dhcp22.suse.cz>
+ <CAHS8izPcnwOqf8bjfrEd9VFxdA6yX3+a-TeHsxGgpAR+_bRdNA@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:4b06:: with SMTP id m6mr3417501ilg.123.1637054599983;
- Tue, 16 Nov 2021 01:23:19 -0800 (PST)
-Date:   Tue, 16 Nov 2021 01:23:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e8f8f505d0e479a5@google.com>
-Subject: [syzbot] KASAN: use-after-free Read in remove_wait_queue (3)
-From:   syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHS8izPcnwOqf8bjfrEd9VFxdA6yX3+a-TeHsxGgpAR+_bRdNA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon 15-11-21 16:58:19, Mina Almasry wrote:
+> On Mon, Nov 15, 2021 at 2:58 AM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Fri 12-11-21 09:59:22, Mina Almasry wrote:
+> > > On Fri, Nov 12, 2021 at 12:36 AM Michal Hocko <mhocko@suse.com> wrote:
+> > > >
+> > > > On Fri 12-11-21 00:12:52, Mina Almasry wrote:
+> > > > > On Thu, Nov 11, 2021 at 11:52 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > > > >
+> > > > > > On Thu 11-11-21 15:42:01, Mina Almasry wrote:
+> > > > > > > On remote ooms (OOMs due to remote charging), the oom-killer will attempt
+> > > > > > > to find a task to kill in the memcg under oom, if the oom-killer
+> > > > > > > is unable to find one, the oom-killer should simply return ENOMEM to the
+> > > > > > > allocating process.
+> > > > > >
+> > > > > > This really begs for some justification.
+> > > > > >
+> > > > >
+> > > > > I'm thinking (and I can add to the commit message in v4) that we have
+> > > > > 2 reasonable options when the oom-killer gets invoked and finds
+> > > > > nothing to kill: (1) return ENOMEM, (2) kill the allocating task. I'm
+> > > > > thinking returning ENOMEM allows the application to gracefully handle
+> > > > > the failure to remote charge and continue operation.
+> > > > >
+> > > > > For example, in the network service use case that I mentioned in the
+> > > > > RFC proposal, it's beneficial for the network service to get an ENOMEM
+> > > > > and continue to service network requests for other clients running on
+> > > > > the machine, rather than get oom-killed when hitting the remote memcg
+> > > > > limit. But, this is not a hard requirement, the network service could
+> > > > > fork a process that does the remote charging to guard against the
+> > > > > remote charge bringing down the entire process.
+> > > >
+> > > > This all belongs to the changelog so that we can discuss all potential
+> > > > implication and do not rely on any implicit assumptions.
+> > >
+> > > Understood. Maybe I'll wait to collect more feedback and upload v4
+> > > with a thorough explanation of the thought process.
+> > >
+> > > > E.g. why does
+> > > > it even make sense to kill a task in the origin cgroup?
+> > > >
+> > >
+> > > The behavior I saw returning ENOMEM for this edge case was that the
+> > > code was forever looping the pagefault, and I was (seemingly
+> > > incorrectly) under the impression that a suggestion to forever loop
+> > > the pagefault would be completely fundamentally unacceptable.
+> >
+> > Well, I have to say I am not entirely sure what is the best way to
+> > handle this situation. Another option would be to treat this similar to
+> > ENOSPACE situation. This would result into SIGBUS IIRC.
+> >
+> > The main problem with OOM killer is that it will not resolve the
+> > underlying problem in most situations. Shmem files would likely stay
+> > laying around and their charge along with them. Killing the allocating
+> > task has problems on its own because this could be just a DoS vector by
+> > other unrelated tasks sharing the shmem mount point without a gracefull
+> > fallback. Retrying the page fault is hard to detect. SIGBUS might be
+> > something that helps with the latest. The question is how to communicate
+> > this requerement down to the memcg code to know that the memory reclaim
+> > should happen (Should it? How hard we should try?) but do not invoke the
+> > oom killer. The more I think about this the nastier this is.
+> 
+> So actually I thought the ENOSPC suggestion was interesting so I took
+> the liberty to prototype it. The changes required:
+> 
+> 1. In out_of_memory() we return false if !oc->chosen &&
+> is_remote_oom(). This gets bubbled up to try_charge_memcg() as
+> mem_cgroup_oom() returning OOM_FAILED.
+> 2. In try_charge_memcg(), if we get an OOM_FAILED we again check
+> is_remote_oom(), if it is a remote oom, return ENOSPC.
+> 3. The calling code would return ENOSPC to the user in the no-fault
+> path, and SIGBUS the user in the fault path with no changes.
 
-syzbot found the following issue on:
+I think this should be implemented at the caller side rather than
+somehow hacked into the memcg core. It is the caller to know what to do.
+The caller can use gfp flags to control the reclaim behavior.
 
-HEAD commit:    cc0356d6a02e Merge tag 'x86_core_for_v5.16_rc1' of git://g..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=102e7ce6b00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a5d447cdc3ae81d9
-dashboard link: https://syzkaller.appspot.com/bug?extid=cdb5dd11c97cc532efad
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> To be honest I think this is very workable, as is Shakeel's suggestion
+> of MEMCG_OOM_NO_VICTIM. Since this is an opt-in feature, we can
+> document the behavior and if the userspace doesn't want to get killed
+> they can catch the sigbus and handle it gracefully. If not, the
+> userspace just gets killed if we hit this edge case.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x3d86/0x54a0 kernel/locking/lockdep.c:4885
-Read of size 8 at addr ffff888032563540 by task syz-executor.2/8869
-
-CPU: 1 PID: 8869 Comm: syz-executor.2 Not tainted 5.15.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_address_description.constprop.0.cold+0x6c/0x309 mm/kasan/report.c:256
- __kasan_report mm/kasan/report.c:442 [inline]
- kasan_report.cold+0x83/0xdf mm/kasan/report.c:459
- __lock_acquire+0x3d86/0x54a0 kernel/locking/lockdep.c:4885
- lock_acquire kernel/locking/lockdep.c:5625 [inline]
- lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5590
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x39/0x50 kernel/locking/spinlock.c:162
- remove_wait_queue+0x1d/0x180 kernel/sched/wait.c:55
- ep_remove_wait_queue+0x88/0x1a0 fs/eventpoll.c:545
- ep_unregister_pollwait fs/eventpoll.c:561 [inline]
- ep_free+0x18a/0x390 fs/eventpoll.c:756
- ep_eventpoll_release+0x41/0x60 fs/eventpoll.c:788
- __fput+0x286/0x9f0 fs/file_table.c:280
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- exit_task_work include/linux/task_work.h:32 [inline]
- do_exit+0xbaa/0x2a20 kernel/exit.c:826
- do_group_exit+0x125/0x310 kernel/exit.c:923
- get_signal+0x47d/0x21d0 kernel/signal.c:2855
- arch_do_signal_or_restart+0x2a9/0x1c40 arch/x86/kernel/signal.c:868
- handle_signal_work kernel/entry/common.c:148 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
- exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:207
- __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f8b46801ae9
-Code: Unable to access opcode bytes at RIP 0x7f8b46801abf.
-RSP: 002b:00007f8b43d77218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: 0000000000000000 RBX: 00007f8b46914f68 RCX: 00007f8b46801ae9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f8b46914f68
-RBP: 00007f8b46914f60 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f8b46914f6c
-R13: 00007fff0432647f R14: 00007f8b43d77300 R15: 0000000000022000
- </TASK>
-
-Allocated by task 8869:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:46 [inline]
- set_alloc_info mm/kasan/common.c:434 [inline]
- ____kasan_kmalloc mm/kasan/common.c:513 [inline]
- ____kasan_kmalloc mm/kasan/common.c:472 [inline]
- __kasan_kmalloc+0xa4/0xd0 mm/kasan/common.c:522
- kmalloc include/linux/slab.h:591 [inline]
- psi_trigger_create.part.0+0x15e/0x7f0 kernel/sched/psi.c:1141
- cgroup_pressure_write+0x15d/0x6b0 kernel/cgroup/cgroup.c:3622
- cgroup_file_write+0x1ec/0x780 kernel/cgroup/cgroup.c:3829
- kernfs_fop_write_iter+0x342/0x500 fs/kernfs/file.c:296
- call_write_iter include/linux/fs.h:2161 [inline]
- new_sync_write+0x429/0x660 fs/read_write.c:503
- vfs_write+0x7cd/0xae0 fs/read_write.c:590
- ksys_write+0x12d/0x250 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Freed by task 8869:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
- kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:360
- ____kasan_slab_free mm/kasan/common.c:366 [inline]
- ____kasan_slab_free mm/kasan/common.c:328 [inline]
- __kasan_slab_free+0xff/0x130 mm/kasan/common.c:374
- kasan_slab_free include/linux/kasan.h:235 [inline]
- slab_free_hook mm/slub.c:1700 [inline]
- slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1726
- slab_free mm/slub.c:3492 [inline]
- kfree+0xf3/0x550 mm/slub.c:4552
- cgroup_pressure_write+0x18d/0x6b0 kernel/cgroup/cgroup.c:3628
- cgroup_file_write+0x1ec/0x780 kernel/cgroup/cgroup.c:3829
- kernfs_fop_write_iter+0x342/0x500 fs/kernfs/file.c:296
- call_write_iter include/linux/fs.h:2161 [inline]
- new_sync_write+0x429/0x660 fs/read_write.c:503
- vfs_write+0x7cd/0xae0 fs/read_write.c:590
- ksys_write+0x12d/0x250 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Last potentially related work creation:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_record_aux_stack+0xe9/0x110 mm/kasan/generic.c:348
- insert_work+0x48/0x370 kernel/workqueue.c:1353
- __queue_work+0x5ca/0xee0 kernel/workqueue.c:1519
- queue_work_on+0xee/0x110 kernel/workqueue.c:1546
- queue_work include/linux/workqueue.h:501 [inline]
- call_usermodehelper_exec+0x1f0/0x4c0 kernel/umh.c:435
- kobject_uevent_env+0xf8f/0x1650 lib/kobject_uevent.c:618
- rx_queue_add_kobject net/core/net-sysfs.c:1069 [inline]
- net_rx_queue_update_kobjects+0xf8/0x500 net/core/net-sysfs.c:1109
- register_queue_kobjects net/core/net-sysfs.c:1766 [inline]
- netdev_register_kobject+0x275/0x430 net/core/net-sysfs.c:2014
- register_netdevice+0xd31/0x1500 net/core/dev.c:10330
- __ip_tunnel_create+0x398/0x5c0 net/ipv4/ip_tunnel.c:267
- ip_tunnel_init_net+0x2e4/0x9d0 net/ipv4/ip_tunnel.c:1070
- ops_init+0xaf/0x470 net/core/net_namespace.c:140
- setup_net+0x40f/0xa30 net/core/net_namespace.c:326
- copy_net_ns+0x319/0x760 net/core/net_namespace.c:470
- create_new_namespaces+0x3f6/0xb20 kernel/nsproxy.c:110
- unshare_nsproxy_namespaces+0xc1/0x1f0 kernel/nsproxy.c:226
- ksys_unshare+0x445/0x920 kernel/fork.c:3076
- __do_sys_unshare kernel/fork.c:3150 [inline]
- __se_sys_unshare kernel/fork.c:3148 [inline]
- __x64_sys_unshare+0x2d/0x40 kernel/fork.c:3148
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Second to last potentially related work creation:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_record_aux_stack+0xe9/0x110 mm/kasan/generic.c:348
- insert_work+0x48/0x370 kernel/workqueue.c:1353
- __queue_work+0x5ca/0xee0 kernel/workqueue.c:1519
- queue_work_on+0xee/0x110 kernel/workqueue.c:1546
- queue_work include/linux/workqueue.h:501 [inline]
- call_usermodehelper_exec+0x1f0/0x4c0 kernel/umh.c:435
- kobject_uevent_env+0xf8f/0x1650 lib/kobject_uevent.c:618
- rx_queue_add_kobject net/core/net-sysfs.c:1069 [inline]
- net_rx_queue_update_kobjects+0xf8/0x500 net/core/net-sysfs.c:1109
- register_queue_kobjects net/core/net-sysfs.c:1766 [inline]
- netdev_register_kobject+0x275/0x430 net/core/net-sysfs.c:2014
- register_netdevice+0xd31/0x1500 net/core/dev.c:10330
- __ip_tunnel_create+0x398/0x5c0 net/ipv4/ip_tunnel.c:267
- ip_tunnel_init_net+0x2e4/0x9d0 net/ipv4/ip_tunnel.c:1070
- vti_init_net+0x2a/0x370 net/ipv4/ip_vti.c:504
- ops_init+0xaf/0x470 net/core/net_namespace.c:140
- setup_net+0x40f/0xa30 net/core/net_namespace.c:326
- copy_net_ns+0x319/0x760 net/core/net_namespace.c:470
- create_new_namespaces+0x3f6/0xb20 kernel/nsproxy.c:110
- unshare_nsproxy_namespaces+0xc1/0x1f0 kernel/nsproxy.c:226
- ksys_unshare+0x445/0x920 kernel/fork.c:3076
- __do_sys_unshare kernel/fork.c:3150 [inline]
- __se_sys_unshare kernel/fork.c:3148 [inline]
- __x64_sys_unshare+0x2d/0x40 kernel/fork.c:3148
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-The buggy address belongs to the object at ffff888032563500
- which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 64 bytes inside of
- 192-byte region [ffff888032563500, ffff8880325635c0)
-The buggy address belongs to the page:
-page:ffffea0000c958c0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x32563
-flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000200 ffffea0001ef2780 0000000600000002 ffff888010c41a00
-raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x112cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY), pid 3310, ts 611411618313, free_ts 611397869806
- prep_new_page mm/page_alloc.c:2426 [inline]
- get_page_from_freelist+0xa72/0x2f80 mm/page_alloc.c:4155
- __alloc_pages+0x1b2/0x500 mm/page_alloc.c:5381
- alloc_pages+0x1a7/0x300 mm/mempolicy.c:2191
- alloc_slab_page mm/slub.c:1770 [inline]
- allocate_slab mm/slub.c:1907 [inline]
- new_slab+0x319/0x490 mm/slub.c:1970
- ___slab_alloc+0x921/0xfe0 mm/slub.c:3001
- __slab_alloc.constprop.0+0x4d/0xa0 mm/slub.c:3088
- slab_alloc_node mm/slub.c:3179 [inline]
- slab_alloc mm/slub.c:3221 [inline]
- __kmalloc_track_caller+0x2ef/0x310 mm/slub.c:4916
- __do_krealloc mm/slab_common.c:1208 [inline]
- krealloc+0x87/0xf0 mm/slab_common.c:1241
- push_jmp_history kernel/bpf/verifier.c:2278 [inline]
- is_state_visited kernel/bpf/verifier.c:10967 [inline]
- do_check kernel/bpf/verifier.c:11107 [inline]
- do_check_common+0x3521/0xcf50 kernel/bpf/verifier.c:13374
- do_check_main kernel/bpf/verifier.c:13437 [inline]
- bpf_check+0x87ca/0xbc90 kernel/bpf/verifier.c:14004
- bpf_prog_load+0xf4c/0x21e0 kernel/bpf/syscall.c:2329
- __sys_bpf+0x67e/0x5f00 kernel/bpf/syscall.c:4618
- __do_sys_bpf kernel/bpf/syscall.c:4722 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:4720 [inline]
- __x64_sys_bpf+0x75/0xb0 kernel/bpf/syscall.c:4720
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1340 [inline]
- free_pcp_prepare+0x326/0x810 mm/page_alloc.c:1391
- free_unref_page_prepare mm/page_alloc.c:3317 [inline]
- free_unref_page+0x19/0x690 mm/page_alloc.c:3396
- __vunmap+0x781/0xb70 mm/vmalloc.c:2621
- __vfree+0x3c/0xd0 mm/vmalloc.c:2669
- vfree+0x5a/0x90 mm/vmalloc.c:2700
- bpf_jit_free+0xbb/0x1c0
- bpf_prog_free_deferred+0x5c1/0x790 kernel/bpf/core.c:2292
- process_one_work+0x9b2/0x1690 kernel/workqueue.c:2297
- worker_thread+0x658/0x11f0 kernel/workqueue.c:2444
- kthread+0x405/0x4f0 kernel/kthread.c:327
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-
-Memory state around the buggy address:
- ffff888032563400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888032563480: 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888032563500: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                           ^
- ffff888032563580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff888032563600: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I am not sure about the MEMCG_OOM_NO_VICTIM approach. It sounds really
+hackish to me. I will get back to Shakeel's email as time permits. The
+primary problem I have with this, though, is that the kernel oom killer
+cannot really do anything sensible if the limit is reached and there
+is nothing reclaimable left in this case. The tmpfs backed memory will
+simply stay around and there are no means to recover without userspace
+intervention.
+-- 
+Michal Hocko
+SUSE Labs
