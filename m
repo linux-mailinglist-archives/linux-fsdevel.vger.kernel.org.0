@@ -2,276 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBCC453BE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 22:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF738453BFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 22:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbhKPVwP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 16:52:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56652 "EHLO
+        id S231375AbhKPV7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 16:59:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbhKPVwO (ORCPT
+        with ESMTP id S229593AbhKPV7F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 16:52:14 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1A7C061570;
-        Tue, 16 Nov 2021 13:49:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=k0Jx0lZyit7GgPrACTRTUTWqBfozWFKayPWsmq2Q7SE=; b=bTbEQGuhgQlVmg8K1YPfgdWw8x
-        UU8njoCUZjUfiiKlIGUUZYtdoh2E63f7g6j438M7juZsSk9T+jP3Ge0YB3JRUDTnQzps4v/wbioqe
-        4zlNObPDfXHx0sndZ955cE6WyNC9ke4+tyj1EWkhUYU36pFpyGM6nHZ1GtdkI3XnbHOlGTAZkoZal
-        af88UWhF7xls9oUCTE1JWG3868Kh3CiinBICXKxyoATxXlUIiQDqeqvSEoxwVzDpJrQSsy4k0c4kN
-        lScTCcw6gkJdJtvRmNfr+Wu8MFn3lG22dlBlxA+lPLMOpJYyw5MmcF8VfG/ghMYmDjRoDUMuYAZPz
-        8Y6Aoaig==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mn6KH-00775n-VM; Tue, 16 Nov 2021 21:49:14 +0000
-Date:   Tue, 16 Nov 2021 21:49:13 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J . Wong " <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2 01/28] csky,sparc: Declare flush_dcache_folio()
-Message-ID: <YZQnWU9ABBlXJKa5@casper.infradead.org>
-References: <20211108040551.1942823-1-willy@infradead.org>
- <20211108040551.1942823-2-willy@infradead.org>
- <YYozKaEXemjKwEar@infradead.org>
- <YZKCx1cwBXOZcTA4@casper.infradead.org>
- <YZNQnd887/TcPH7H@infradead.org>
+        Tue, 16 Nov 2021 16:59:05 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2234C061746
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 13:56:07 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id v15so1646839ljc.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 13:56:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NGSDUZI7I1mvZPeQN3C3y+QjGBgnwjJfkAsVBmVdGZc=;
+        b=a+XkYQtPqF5RRQI3wwC+zWQDcl6Jk2H5NnW1qWcUwoRaNbjxP1LUP2iIZVf5YnfnQ/
+         bO6jsTt8flc9QzckB+29nGqqrlXfBqY13UDknpfbe/IDKUcqQx9JIzrKT2iQi0xPDnWt
+         FRusVQ3k/e5mSfUl4UizYQcDxOCK+J9bpK4US5g4MlNOJpKNoYzVr+bM1fwpJeysjg8d
+         BSslACmc0Kl1oCzQkbxv0VUJjYZJY9O0Tbr9LHc7AtWBIumaYbWSY/BAR0tzq9C9UvfD
+         JHJ3alQND91uA/bqoZyRsjp94rux3o8yr2umKE7ZmbY1+LbsWA7jE5k24wSGkSHI7evH
+         zp1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NGSDUZI7I1mvZPeQN3C3y+QjGBgnwjJfkAsVBmVdGZc=;
+        b=F0TWTVeTCzZIyXlZVl1vg7q+RWJI+GCfymKCXmuREg6ltkRfZ7/aiE0U2mrzV8Y5Gw
+         2nOjQ3NSBG5Gfk0OQLNUmgDWzl1T5AdXYi4/KmyMgvKq15YLDceEz6Q5cFbmK+1uaVQ9
+         1HKqdZp8wYfygYcW2KemliGIGZAZ4hzqEZIAWGnDp+i5E16It/jmoPmKw9g6Xbw56FrM
+         7dou8dm9P71BJ4sW0uRCQD0TPETWD9E2TQyJWkxQQTJ217Tdbow9VulMIclMYXXY7j62
+         XMc3VsoG4LaDUVAMjB3q+vYyltBiftNutiP65U+SQuFH2/t4Qg9s0lBj28Ikb+HEwxIs
+         N1kA==
+X-Gm-Message-State: AOAM532Tbswob9tyY3v4Hj3zYN2CRyQ1SdD9yhnehqYhgvo4zNB/3xqs
+        E/NKR7HP+0TLBSY8UOnL7n4LEf8QEfOM3wdF7WI/5A==
+X-Google-Smtp-Source: ABdhPJwzHP0930XAephcBcY6fRf6ULC5mJHvkVbGVHylzeqR6CYm6Qg3QjVKhQ3+Jc052J/uw9QI1JzeKIkLSqhtA2I=
+X-Received: by 2002:a05:651c:1142:: with SMTP id h2mr2513145ljo.35.1637099765832;
+ Tue, 16 Nov 2021 13:56:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YZNQnd887/TcPH7H@infradead.org>
+References: <20211111234203.1824138-1-almasrymina@google.com>
+ <20211111234203.1824138-3-almasrymina@google.com> <YY4dHPu/bcVdoJ4R@dhcp22.suse.cz>
+ <CAHS8izNMTcctY7NLL9+qQN8+WVztJod2TfBHp85NqOCvHsjFwQ@mail.gmail.com>
+ <YY4nm9Kvkt2FJPph@dhcp22.suse.cz> <CAHS8izMjfwgiNEoJWGSub6iqgPKyyoMZK5ONrMV2=MeMJsM5sg@mail.gmail.com>
+ <YZI9ZbRVdRtE2m70@dhcp22.suse.cz> <CAHS8izPcnwOqf8bjfrEd9VFxdA6yX3+a-TeHsxGgpAR+_bRdNA@mail.gmail.com>
+ <YZN5tkhHomj6HSb2@dhcp22.suse.cz> <CAHS8izNTbvhjEEb=ZrH2_4ECkVhxnCLzyd=78uWmHA_02iiA9Q@mail.gmail.com>
+ <YZOWD8hP2WpqyXvI@dhcp22.suse.cz> <CAHS8izPyCDucFBa9ZKz09g3QVqSWLmAyOmwN+vr=X2y7yZjRQA@mail.gmail.com>
+In-Reply-To: <CAHS8izPyCDucFBa9ZKz09g3QVqSWLmAyOmwN+vr=X2y7yZjRQA@mail.gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 16 Nov 2021 13:55:54 -0800
+Message-ID: <CALvZod7FHO6edK1cR+rbt6cG=+zUzEx3+rKWT5mi73Q29_Y5qA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] mm/oom: handle remote ooms
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Michal Hocko <mhocko@suse.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Greg Thelen <gthelen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>, riel@surriel.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 15, 2021 at 10:33:01PM -0800, Christoph Hellwig wrote:
-> I see how this works no, but it is pretty horrible.  Why not something
-> simple like the patch below?  If/when an architecture actually
-> wants to override flush_dcache_folio we can find out how to best do
-> it:
+On Tue, Nov 16, 2021 at 1:27 PM Mina Almasry <almasrymina@google.com> wrote:
+>
+> On Tue, Nov 16, 2021 at 3:29 AM Michal Hocko <mhocko@suse.com> wrote:
+[...]
+> > Yes, exactly. I meant that all this special casing would be done at the
+> > shmem layer as it knows how to communicate this usecase.
+> >
+>
+> Awesome. The more I think of it I think the ENOSPC handling is perfect
+> for this use case, because it gives all users of the shared memory and
+> remote chargers a chance to gracefully handle the ENOSPC or the SIGBUS
+> when we hit the nothing to kill case. The only issue is finding a
+> clean implementation, and if the implementation I just proposed sounds
+> good to you then I see no issues and I'm happy to submit this in the
+> next version. Shakeel and others I would love to know what you think
+> either now or when I post the next version.
+>
 
-I'll stick this one into -next and see if anything blows up:
-
-From 14f55de74c68a3eb058cfdbf81414148b9bdaac7 Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Sat, 6 Nov 2021 17:13:35 -0400
-Subject: [PATCH] Add linux/cacheflush.h
-
-Many architectures do not include asm-generic/cacheflush.h, so turn
-the includes on their head and add linux/cacheflush.h which includes
-asm/cacheflush.h.
-
-Move the flush_dcache_folio() declaration from asm-generic/cacheflush.h
-to linux/cacheflush.h and change linux/highmem.h to include
-linux/cacheflush.h instead of asm/cacheflush.h so that all necessary
-places will see flush_dcache_folio().
-
-More functions should have their default implementations moved in the
-future, but those are for follow-on patches.  This fixes csky, sparc and
-sparc64 which were missed in the commit which added flush_dcache_folio().
-
-Fixes: 08b0b0059bf1 ("mm: Add flush_dcache_folio()")
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- arch/arc/include/asm/cacheflush.h     |  1 -
- arch/arm/include/asm/cacheflush.h     |  1 -
- arch/m68k/include/asm/cacheflush_mm.h |  1 -
- arch/mips/include/asm/cacheflush.h    |  2 --
- arch/nds32/include/asm/cacheflush.h   |  1 -
- arch/nios2/include/asm/cacheflush.h   |  1 -
- arch/parisc/include/asm/cacheflush.h  |  1 -
- arch/sh/include/asm/cacheflush.h      |  1 -
- arch/xtensa/include/asm/cacheflush.h  |  3 ---
- include/asm-generic/cacheflush.h      |  6 ------
- include/linux/cacheflush.h            | 18 ++++++++++++++++++
- include/linux/highmem.h               |  3 +--
- 12 files changed, 19 insertions(+), 20 deletions(-)
- create mode 100644 include/linux/cacheflush.h
-
-diff --git a/arch/arc/include/asm/cacheflush.h b/arch/arc/include/asm/cacheflush.h
-index e8c2c7469e10..e201b4b1655a 100644
---- a/arch/arc/include/asm/cacheflush.h
-+++ b/arch/arc/include/asm/cacheflush.h
-@@ -36,7 +36,6 @@ void __flush_dcache_page(phys_addr_t paddr, unsigned long vaddr);
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- 
- void flush_dcache_page(struct page *page);
--void flush_dcache_folio(struct folio *folio);
- 
- void dma_cache_wback_inv(phys_addr_t start, unsigned long sz);
- void dma_cache_inv(phys_addr_t start, unsigned long sz);
-diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
-index e68fb879e4f9..5e56288e343b 100644
---- a/arch/arm/include/asm/cacheflush.h
-+++ b/arch/arm/include/asm/cacheflush.h
-@@ -290,7 +290,6 @@ extern void flush_cache_page(struct vm_area_struct *vma, unsigned long user_addr
-  */
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- extern void flush_dcache_page(struct page *);
--void flush_dcache_folio(struct folio *folio);
- 
- #define ARCH_IMPLEMENTS_FLUSH_KERNEL_VMAP_RANGE 1
- static inline void flush_kernel_vmap_range(void *addr, int size)
-diff --git a/arch/m68k/include/asm/cacheflush_mm.h b/arch/m68k/include/asm/cacheflush_mm.h
-index 8ab46625ddd3..1ac55e7b47f0 100644
---- a/arch/m68k/include/asm/cacheflush_mm.h
-+++ b/arch/m68k/include/asm/cacheflush_mm.h
-@@ -250,7 +250,6 @@ static inline void __flush_page_to_ram(void *vaddr)
- 
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- #define flush_dcache_page(page)		__flush_page_to_ram(page_address(page))
--void flush_dcache_folio(struct folio *folio);
- #define flush_dcache_mmap_lock(mapping)		do { } while (0)
- #define flush_dcache_mmap_unlock(mapping)	do { } while (0)
- #define flush_icache_page(vma, page)	__flush_page_to_ram(page_address(page))
-diff --git a/arch/mips/include/asm/cacheflush.h b/arch/mips/include/asm/cacheflush.h
-index f207388541d5..b3dc9c589442 100644
---- a/arch/mips/include/asm/cacheflush.h
-+++ b/arch/mips/include/asm/cacheflush.h
-@@ -61,8 +61,6 @@ static inline void flush_dcache_page(struct page *page)
- 		SetPageDcacheDirty(page);
- }
- 
--void flush_dcache_folio(struct folio *folio);
--
- #define flush_dcache_mmap_lock(mapping)		do { } while (0)
- #define flush_dcache_mmap_unlock(mapping)	do { } while (0)
- 
-diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
-index 3fc0bb7d6487..c2a222ebfa2a 100644
---- a/arch/nds32/include/asm/cacheflush.h
-+++ b/arch/nds32/include/asm/cacheflush.h
-@@ -27,7 +27,6 @@ void flush_cache_vunmap(unsigned long start, unsigned long end);
- 
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- void flush_dcache_page(struct page *page);
--void flush_dcache_folio(struct folio *folio);
- void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
- 		       unsigned long vaddr, void *dst, void *src, int len);
- void copy_from_user_page(struct vm_area_struct *vma, struct page *page,
-diff --git a/arch/nios2/include/asm/cacheflush.h b/arch/nios2/include/asm/cacheflush.h
-index 1999561b22aa..d0b71dd71287 100644
---- a/arch/nios2/include/asm/cacheflush.h
-+++ b/arch/nios2/include/asm/cacheflush.h
-@@ -29,7 +29,6 @@ extern void flush_cache_page(struct vm_area_struct *vma, unsigned long vmaddr,
- 	unsigned long pfn);
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- void flush_dcache_page(struct page *page);
--void flush_dcache_folio(struct folio *folio);
- 
- extern void flush_icache_range(unsigned long start, unsigned long end);
- extern void flush_icache_page(struct vm_area_struct *vma, struct page *page);
-diff --git a/arch/parisc/include/asm/cacheflush.h b/arch/parisc/include/asm/cacheflush.h
-index da0cd4b3a28f..859b8a34adcf 100644
---- a/arch/parisc/include/asm/cacheflush.h
-+++ b/arch/parisc/include/asm/cacheflush.h
-@@ -50,7 +50,6 @@ void invalidate_kernel_vmap_range(void *vaddr, int size);
- 
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- void flush_dcache_page(struct page *page);
--void flush_dcache_folio(struct folio *folio);
- 
- #define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
- #define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
-diff --git a/arch/sh/include/asm/cacheflush.h b/arch/sh/include/asm/cacheflush.h
-index c7a97f32432f..481a664287e2 100644
---- a/arch/sh/include/asm/cacheflush.h
-+++ b/arch/sh/include/asm/cacheflush.h
-@@ -43,7 +43,6 @@ extern void flush_cache_range(struct vm_area_struct *vma,
- 				 unsigned long start, unsigned long end);
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- void flush_dcache_page(struct page *page);
--void flush_dcache_folio(struct folio *folio);
- extern void flush_icache_range(unsigned long start, unsigned long end);
- #define flush_icache_user_range flush_icache_range
- extern void flush_icache_page(struct vm_area_struct *vma,
-diff --git a/arch/xtensa/include/asm/cacheflush.h b/arch/xtensa/include/asm/cacheflush.h
-index a8a041609c5d..7b4359312c25 100644
---- a/arch/xtensa/include/asm/cacheflush.h
-+++ b/arch/xtensa/include/asm/cacheflush.h
-@@ -121,7 +121,6 @@ void flush_cache_page(struct vm_area_struct*,
- 
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- void flush_dcache_page(struct page *);
--void flush_dcache_folio(struct folio *);
- 
- void local_flush_cache_range(struct vm_area_struct *vma,
- 		unsigned long start, unsigned long end);
-@@ -138,9 +137,7 @@ void local_flush_cache_page(struct vm_area_struct *vma,
- #define flush_cache_vunmap(start,end)			do { } while (0)
- 
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
--#define ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
- #define flush_dcache_page(page)				do { } while (0)
--static inline void flush_dcache_folio(struct folio *folio) { }
- 
- #define flush_icache_range local_flush_icache_range
- #define flush_cache_page(vma, addr, pfn)		do { } while (0)
-diff --git a/include/asm-generic/cacheflush.h b/include/asm-generic/cacheflush.h
-index fedc0dfa4877..4f07afacbc23 100644
---- a/include/asm-generic/cacheflush.h
-+++ b/include/asm-generic/cacheflush.h
-@@ -50,13 +50,7 @@ static inline void flush_dcache_page(struct page *page)
- {
- }
- 
--static inline void flush_dcache_folio(struct folio *folio) { }
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
--#define ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
--#endif
--
--#ifndef ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
--void flush_dcache_folio(struct folio *folio);
- #endif
- 
- #ifndef flush_dcache_mmap_lock
-diff --git a/include/linux/cacheflush.h b/include/linux/cacheflush.h
-new file mode 100644
-index 000000000000..fef8b607f97e
---- /dev/null
-+++ b/include/linux/cacheflush.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_CACHEFLUSH_H
-+#define _LINUX_CACHEFLUSH_H
-+
-+#include <asm/cacheflush.h>
-+
-+#if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE
-+#ifndef ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
-+void flush_dcache_folio(struct folio *folio);
-+#endif
-+#else
-+static inline void flush_dcache_folio(struct folio *folio)
-+{
-+}
-+#define ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO 0
-+#endif /* ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE */
-+
-+#endif /* _LINUX_CACHEFLUSH_H */
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 25aff0f2ed0b..c944b3b70ee7 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -5,12 +5,11 @@
- #include <linux/fs.h>
- #include <linux/kernel.h>
- #include <linux/bug.h>
-+#include <linux/cacheflush.h>
- #include <linux/mm.h>
- #include <linux/uaccess.h>
- #include <linux/hardirq.h>
- 
--#include <asm/cacheflush.h>
--
- #include "highmem-internal.h"
- 
- /**
--- 
-2.33.0
-
+The direction seems reasonable to me. I would have more comments on
+the actual code. At the high level I would prefer not to expose these
+cases in the filesystem code (shmem or others) and instead be done in
+a new memcg interface for filesystem users.
