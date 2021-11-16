@@ -2,91 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E664D452EC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 11:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC5A8452EC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 11:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233893AbhKPKPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 05:15:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233929AbhKPKP0 (ORCPT
+        id S233966AbhKPKQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 05:16:09 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:51298 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233905AbhKPKPf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 05:15:26 -0500
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A54C061208
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 02:12:25 -0800 (PST)
-Received: by mail-ua1-x932.google.com with SMTP id n6so24629650uak.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 02:12:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+Qo9WTf+qMiV4n2eNNwXHVAXMVEUZatbTf4RK8Hr38o=;
-        b=Yau4QzFPgdwlQz1BghwNyui0lwtXQlf4Is9n/gOlP5QjDEA3CFGt9CwSQlt/d5tmlk
-         3fJyJcCupX8CLg/ffWyLwl2BvodkjzESKoC1BNbiASfKD2EF8+vuL3F5cjsDlAtT+4P+
-         1UstLtv2uolUzCkEfjfrk7AA6Gp6IBWAhz7sw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Qo9WTf+qMiV4n2eNNwXHVAXMVEUZatbTf4RK8Hr38o=;
-        b=a9gCJZDDjSOGQX3cPxzhu4vGaJacCVt9CSNz4MmPg/KUd+Iy3aR9P+nfOxGPSl3/7y
-         H51UZiC6uRBcggsV5qvkNlMc/lOljNsHWlmOeIdgrg465YhFP9RxrwTs9pV3WSO+pYgA
-         6RNd4P6IxRIQwS5YDe14ZwPtNlhQzQu0psZsHtiOWML6HgCp0HYE2dJ7Y2Bjl9g+X6h6
-         twInPqjHDuC/jHDOiPcaRg8JQ7YS80WwDh3hNjC4Mqb6UoEXY+LFol3nO2XUoex60S7B
-         jskseBqw552DW+X/EAmSKV0LURkO38eH1yAJur1e/b5FsyEuW3MiPvNPmthhbIvpYIc6
-         w4Qw==
-X-Gm-Message-State: AOAM532++wBDsy9B/YYkMrP9L0Mi42d1qusQNYPG9Wa+lgbz/jE3AWZR
-        sbpjHOPXnOrmz3gS0h4bP2ntMoIt4cNtQalOMA1a1g==
-X-Google-Smtp-Source: ABdhPJwLkRmBrkYHCLR4uh7iDnvFVkyXtpUJ0H8oJbrZW1pAZVKF8+eZdqTdczzBh0bA/ch5Cyk/JSYY8R+n1M/eAqA=
-X-Received: by 2002:a05:6102:38d4:: with SMTP id k20mr54374911vst.42.1637057544021;
- Tue, 16 Nov 2021 02:12:24 -0800 (PST)
-MIME-Version: 1.0
-References: <163660195990.22525.6041281669106537689.stgit@mickey.themaw.net>
- <163660197073.22525.11235124150551283676.stgit@mickey.themaw.net>
- <20211112003249.GL449541@dread.disaster.area> <CAJfpegvHDM_Mtc8+ASAcmNLd6RiRM+KutjBOoycun_Oq2=+p=w@mail.gmail.com>
- <20211114231834.GM449541@dread.disaster.area> <CAJfpegu4BwJD1JKngsrzUs7h82cYDGpxv0R1om=WGhOOb6pZ2Q@mail.gmail.com>
- <20211115222417.GO449541@dread.disaster.area> <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
- <20211116030120.GQ449541@dread.disaster.area>
-In-Reply-To: <20211116030120.GQ449541@dread.disaster.area>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 16 Nov 2021 11:12:13 +0100
-Message-ID: <CAJfpegsvL6SjNZdk=J9N-gYWZK0uhg_bT579WRHyVisW1sGZ=Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ian Kent <raven@themaw.net>, xfs <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
+        Tue, 16 Nov 2021 05:15:35 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 21E8A1FD33;
+        Tue, 16 Nov 2021 10:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1637057556; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W+d6t3Y+oTzR5SDlNVMU2oyPWVUgsDG5YlzUlY8wTKU=;
+        b=WBXt1uQwBOc27PdmrjJOcX1jbtQhVmCeeq/J1wuruaj3oN1lkirzTjkbI2BTI3D4haUocS
+        8anv0OCiVb1szz43Mmr92xRrckJXS4kf6QleEmfbUetFYnsVS1xG8llgyXxJcumYd31BwT
+        Zy4Ctnmk8pcexwQYlXq4uEtwhVMPrY0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1637057556;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W+d6t3Y+oTzR5SDlNVMU2oyPWVUgsDG5YlzUlY8wTKU=;
+        b=yQ6A4iOailt8wSIh5kXRdwkrHfZMMKp46NY5x+NQjo1NOovbsQO58ky+S50pZixk2WbJAE
+        GarQP7nslzY3j0BQ==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id F2753A3B88;
+        Tue, 16 Nov 2021 10:12:35 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 862F61E0E33; Tue, 16 Nov 2021 11:12:32 +0100 (CET)
+Date:   Tue, 16 Nov 2021 11:12:32 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 0/7] Report more information in fanotify dirent events
+Message-ID: <20211116101232.GA23464@quack2.suse.cz>
+References: <20211029114028.569755-1-amir73il@gmail.com>
+ <CAOQ4uxjazEx=bL6ZfLaGCfH6pii=OatQDoeWc+74AthaaUC49g@mail.gmail.com>
+ <20211112163955.GA30295@quack2.suse.cz>
+ <CAOQ4uxgT5a7UFUrb5LCcXo77Uda4t5c+1rw+BFDfTAx8szp+HQ@mail.gmail.com>
+ <CAOQ4uxgEbjkMMF-xVTdfWcLi4y8DGNit5Eeq=evby2nWCuiDVw@mail.gmail.com>
+ <20211115102330.GC23412@quack2.suse.cz>
+ <CAOQ4uxiBFkkbKU=yimLXoYKHFWOoUYrXfg4Kw_CkF=hcSGOm3A@mail.gmail.com>
+ <20211115143750.GE23412@quack2.suse.cz>
+ <CAOQ4uxgBncZjuTo-K+vxRovd36AuaEKUfBDQwgU86B9qwWWNVw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgBncZjuTo-K+vxRovd36AuaEKUfBDQwgU86B9qwWWNVw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 16 Nov 2021 at 04:01, Dave Chinner <david@fromorbit.com> wrote:
+On Tue 16-11-21 08:59:29, Amir Goldstein wrote:
+> > > I like it. However,
+> > > If FAN_RENAME can have any combination of old,new,old+new info
+> > > we cannot get any with a single new into type
+> > > FAN_EVENT_INFO_TYPE_DFID_NAME2
+> > >
+> > > (as in this posting)
+> >
+> > We could define only DFID2 and DFID_NAME2 but I agree it would be somewhat
+> > weird to have DFID_NAME2 in an event and not DFID_NAME.
+> >
+> > > We can go with:
+> > > #define FAN_EVENT_INFO_TYPE_OLD_DFID_NAME   6
+> > > #define FAN_EVENT_INFO_TYPE_NEW_DFID_NAME  7
+> > > #define FAN_EVENT_INFO_TYPE_OLD_DFID               8
+> > > #define FAN_EVENT_INFO_TYPE_NEW_DFID              9
+> > >
+> > > Or we can go with:
+> > > /* Sub-types common to all three fid info types */
+> > > #define FAN_EVENT_INFO_FID_OF_OLD_DIR     1
+> > > #define FAN_EVENT_INFO_FID_OF_NEW_DIR    2
+> > >
+> > > struct fanotify_event_info_header {
+> > >        __u8 info_type;
+> > >        __u8 sub_type;
+> > >        __u16 len;
+> > > };
+> > >
+> > > (as in my wip branch fanotify_fid_of)
+> >
+> > When we went the way of having different types for FID and DFID, I'd
+> > continue with OLD_DFID_NAME, NEW_DFID_NAME, ... and keep the padding byte
+> > free for now (just in case there's some extension which would urgently need
+> > it).
+> >
+> > > We could also have FAN_RENAME require FAN_REPORT_NAME
+> > > that would limit the number of info types, but I cannot find a good
+> > > justification for this requirement.
+> >
+> > Yeah, I would not force that.
+> >
+> 
+> On second thought and after trying to write a mental man page
+> and realizing how ugly it gets, I feel strongly in favor of requiring
+> FAN_REPORT_NAME for the FAN_RENAME event.
+> 
+> My arguments are:
+> 1. What is the benefit of FAN_RENAME without names?
+>     Is the knowledge that *something* was moved from dir A to dir B
+>     that important that it qualifies for the extra man page noise and
+>     application developer headache?
+> 2. My declared motivation for this patch set was to close the last (?)
+>     functional gap between inotify and fanotify, that is, being able to
+>     reliably join MOVED_FROM and MOVED_TO events.
+>     Requiring FAN_REPORT_NAME still meets that goal.
+> 3. In this patch set, FAN_REPORT_NAME is required (for now) for
+>     FAN_REPORT_TARGET_FID to reduce implementation and test
+>     matrix complexity (you did not object, so I wasn't planning on
+>     changing this requirement).
+>     The same argument holds for FAN_RENAME
+> 
+> So let's say this - we can add support for OLD_DFID, NEW_DFID types
+> later if we think they may serve a purpose, but at this time, I see no
+> reason to complicate the UAPI anymore than it already is and I would
+> rather implement only:
+> 
+> /* Info types for FAN_RENAME */
+> #define FAN_EVENT_INFO_TYPE_OLD_DFID_NAME       10
+> /* Reserved for FAN_EVENT_INFO_TYPE_OLD_DFID    11 */
+> #define FAN_EVENT_INFO_TYPE_NEW_DFID_NAME       12
+> /* Reserved for FAN_EVENT_INFO_TYPE_NEW_DFID    13 */
+> 
+> Do you agree?
 
-> I *think* that just zeroing the buffer means the race condition
-> means the link resolves as either wholly intact, partially zeroed
-> with trailing zeros in the length, wholly zeroed or zero length.
-> Nothing will crash, the link string is always null terminated even
-> if the length is wrong, and so nothing bad should happen as a result
-> of zeroing the symlink buffer when it gets evicted from the VFS
-> inode cache after unlink.
+I agree the utility of FAN_RENAME without FAN_REPORT_NAME is very limited
+so I'm OK with not implementing that at least for now.
 
-That's my thinking.  However, modifying the buffer while it is being
-processed does seem pretty ugly, and I have to admit that I don't
-understand why this needs to be done in either XFS or EXT4.
-
-> The root cause is "allowing an inode to be reused without waiting
-> for an RCU grace period to expire". This might seem pedantic, but
-> "without waiting for an rcu grace period to expire" is the important
-> part of the problem (i.e. the bug), not the "allowing an inode to be
-> reused" bit.
-
-Yes.
-
-Thanks,
-Miklos
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
