@@ -2,287 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A494532F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 14:39:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 882AA45356C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 16:12:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236757AbhKPNmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 08:42:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48345 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236746AbhKPNl6 (ORCPT
+        id S238050AbhKPPPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 10:15:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237857AbhKPPOt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 08:41:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637069940;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=tm4rl/R5dwU+H1TanszH7VsVhbAKbfUwFWaN3Ubkbis=;
-        b=TAzq/spxbKpyQYXdJVkdZd4GVaKUgrlKSNmgnoLKlxagl00Fu8DNE+gs/5mBOHnb5bsaan
-        sR1pjanEtC/NcdSJB4RIVHDZBYfkbf4hzHbvaoVJHHwivMK4pAmUJ2PLCd7s6vOo6/n4TG
-        7Siwr/yEft8mRYsIQy6xEqPlmpMUG90=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-602-b9nYRlOLOT66qHzYb1bDvA-1; Tue, 16 Nov 2021 08:38:57 -0500
-X-MC-Unique: b9nYRlOLOT66qHzYb1bDvA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7A4D68799E0;
-        Tue, 16 Nov 2021 13:38:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F7A92AF6D;
-        Tue, 16 Nov 2021 13:38:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] netfs: Adjust docs after foliation
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 16 Nov 2021 13:38:45 +0000
-Message-ID: <163706992597.3179783.18360472879717076435.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Tue, 16 Nov 2021 10:14:49 -0500
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E46C061210
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 07:10:09 -0800 (PST)
+Received: by mail-ot1-x331.google.com with SMTP id h19-20020a9d3e53000000b0056547b797b2so33177058otg.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 07:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=h8Omxm4xqc6jwoRuPqU9qRmRmi/pNMQ+rX4CNoWq/EM=;
+        b=Qp840mvjSc9WNEz9L8FDt4ySM5YLVFCuwXozOQA4eZFRaO7uYHM2A51LjrZrXirrL/
+         rmuFnmthTgHbKDmT1c+MRZXrA/N666JhftascLOxjTvnsh14RTPxk6Tc/+bczvPARpn+
+         S918xdL9SO6xlH6gOr4eNePt5vPg84wjg3K4I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=h8Omxm4xqc6jwoRuPqU9qRmRmi/pNMQ+rX4CNoWq/EM=;
+        b=4gC1YlHBDNScLu1J47u5siFhipFAHry7lXZzqUBFPL/kL4aq1TUEyjgqc+em4yM1GT
+         mMXonwCekkoz7vnHmeG98MyFeol17SrwCkDFEDN3rPmBzwMdU/zB+QbH9MlT0CgBvV30
+         SUCW5Vwk+eQ9qY3LJa6kpzS7sxvXgcvumgmD6PYA1D5YjKChigVQGfSfdplGReYyjlMW
+         91+8uSiJiBkfKd/9HPJ4jtUsfYZ1ERF7VvkTGkj9h/rHeL4Y7kbYP75D/mS8Si0hU8Ii
+         tiVwwksCWM3FoEXzOZBDoc1FffQByi/7Z5KS2ivV8ix9ykVk+73nmWrt/LmsvTJ7l+jV
+         6/+A==
+X-Gm-Message-State: AOAM530eAfmvANlBnWeQ4LlMO5GhoHraIQVANxwm6gzCFD4OjgEIyLCU
+        LRQ+Yj+K+nA7Vy/9OGgEZzvFjDJvzDgXLA==
+X-Google-Smtp-Source: ABdhPJxIUiLid61k9x1Lrguy5Vo32EsPV8M/2G8+fpiur+VFrqdkUhJmNEopFpRHU7w22AtWPAVQrg==
+X-Received: by 2002:a05:6830:2681:: with SMTP id l1mr6816771otu.378.1637075408807;
+        Tue, 16 Nov 2021 07:10:08 -0800 (PST)
+Received: from localhost ([2605:a601:ac0f:820:bbdd:cf7a:d087:403])
+        by smtp.gmail.com with ESMTPSA id u28sm3720721oth.52.2021.11.16.07.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Nov 2021 07:10:08 -0800 (PST)
+Date:   Tue, 16 Nov 2021 09:10:06 -0600
+From:   Seth Forshee <sforshee@digitalocean.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Seth Forshee <seth.forshee@digitalocean.com>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 1/2] fs: handle circular mappings correctly
+Message-ID: <YZPJziiW0TcrszKJ@do-x1extreme>
+References: <20211109145713.1868404-1-brauner@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211109145713.1868404-1-brauner@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adjust the netfslib docs in light of the foliation changes.
+On Tue, Nov 09, 2021 at 03:57:12PM +0100, Christian Brauner wrote:
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+> 
+> When calling setattr_prepare() to determine the validity of the attributes the
+> ia_{g,u}id fields contain the value that will be written to inode->i_{g,u}id.
+> When the {g,u}id attribute of the file isn't altered and the caller's fs{g,u}id
+> matches the current {g,u}id attribute the attribute change is allowed.
+> 
+> The value in ia_{g,u}id does already account for idmapped mounts and will have
+> taken the relevant idmapping into account. So in order to verify that the
+> {g,u}id attribute isn't changed we simple need to compare the ia_{g,u}id value
+> against the inode's i_{g,u}id value.
+> 
+> This only has any meaning for idmapped mounts as idmapping helpers are
+> idempotent without them. And for idmapped mounts this really only has a meaning
+> when circular idmappings are used, i.e. mappings where e.g. id 1000 is mapped
+> to id 1001 and id 1001 is mapped to id 1000. Such ciruclar mappings can e.g. be
+> useful when sharing the same home directory between multiple users at the same
+> time.
+> 
+> As an example consider a directory with two files: /source/file1 owned by
+> {g,u}id 1000 and /source/file2 owned by {g,u}id 1001. Assume we create an
+> idmapped mount at /target with an idmapping that maps files owned by {g,u}id
+> 1000 to being owned by {g,u}id 1001 and files owned by {g,u}id 1001 to being
+> owned by {g,u}id 1000. In effect, the idmapped mount at /target switches the
+> ownership of /source/file1 and source/file2, i.e. /target/file1 will be owned
+> by {g,u}id 1001 and /target/file2 will be owned by {g,u}id 1000.
+> 
+> This means that a user with fs{g,u}id 1000 must be allowed to setattr
+> /target/file2 from {g,u}id 1000 to {g,u}id 1000. Similar, a user with fs{g,u}id
+> 1001 must be allowed to setattr /target/file1 from {g,u}id 1001 to {g,u}id
+> 1001. Conversely, a user with fs{g,u}id 1000 must fail to setattr /target/file1
+> from {g,u}id 1001 to {g,u}id 1000. And a user with fs{g,u}id 1001 must fail to
+> setattr /target/file2 from {g,u}id 1000 to {g,u}id 1000. Both cases must fail
+> with EPERM for non-capable callers.
+> 
+> Before this patch we could end up denying legitimate attribute changes and
+> allowing invalid attribute changes when circular mappings are used. To even get
+> into this situation the caller must've been privileged both to create that
+> mapping and to create that idmapped mount.
+> 
+> This hasn't been seen in the wild anywhere but came up when expanding the
+> testsuite during work on a series of hardening patches. All idmapped fstests
+> pass without any regressions and we add new tests to verify the behavior of
+> circular mappings.
+> 
+> Fixes: 2f221d6f7b88 ("attr: handle idmapped mounts")
+> Cc: Seth Forshee <seth.forshee@digitalocean.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: stable@vger.kernel.org
+> CC: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Also un-kdoc-mark netfs_skip_folio_read() since it's internal and isn't
-part of the API.
+This looks right to me.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: linux-cachefs@redhat.com
-cc: linux-mm@kvack.org
----
-
- Documentation/filesystems/netfs_library.rst |   95 ++++++++++++++++-----------
- fs/netfs/read_helper.c                      |    4 +
- 2 files changed, 58 insertions(+), 41 deletions(-)
-
-diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
-index bb68d39f03b7..375baca7edcd 100644
---- a/Documentation/filesystems/netfs_library.rst
-+++ b/Documentation/filesystems/netfs_library.rst
-@@ -1,7 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0
- 
- =================================
--NETWORK FILESYSTEM HELPER LIBRARY
-+Network Filesystem Helper Library
- =================================
- 
- .. Contents:
-@@ -37,22 +37,22 @@ into a common call framework.
- 
- The following services are provided:
- 
-- * Handles transparent huge pages (THPs).
-+ * Handle folios that span multiple pages.
- 
-- * Insulates the netfs from VM interface changes.
-+ * Insulate the netfs from VM interface changes.
- 
-- * Allows the netfs to arbitrarily split reads up into pieces, even ones that
--   don't match page sizes or page alignments and that may cross pages.
-+ * Allow the netfs to arbitrarily split reads up into pieces, even ones that
-+   don't match folio sizes or folio alignments and that may cross folios.
- 
-- * Allows the netfs to expand a readahead request in both directions to meet
--   its needs.
-+ * Allow the netfs to expand a readahead request in both directions to meet its
-+   needs.
- 
-- * Allows the netfs to partially fulfil a read, which will then be resubmitted.
-+ * Allow the netfs to partially fulfil a read, which will then be resubmitted.
- 
-- * Handles local caching, allowing cached data and server-read data to be
-+ * Handle local caching, allowing cached data and server-read data to be
-    interleaved for a single request.
- 
-- * Handles clearing of bufferage that aren't on the server.
-+ * Handle clearing of bufferage that aren't on the server.
- 
-  * Handle retrying of reads that failed, switching reads from the cache to the
-    server as necessary.
-@@ -70,22 +70,22 @@ Read Helper Functions
- 
- Three read helpers are provided::
- 
-- * void netfs_readahead(struct readahead_control *ractl,
--			const struct netfs_read_request_ops *ops,
--			void *netfs_priv);``
-- * int netfs_readpage(struct file *file,
--		      struct page *page,
--		      const struct netfs_read_request_ops *ops,
--		      void *netfs_priv);
-- * int netfs_write_begin(struct file *file,
--			 struct address_space *mapping,
--			 loff_t pos,
--			 unsigned int len,
--			 unsigned int flags,
--			 struct page **_page,
--			 void **_fsdata,
--			 const struct netfs_read_request_ops *ops,
--			 void *netfs_priv);
-+	void netfs_readahead(struct readahead_control *ractl,
-+			     const struct netfs_read_request_ops *ops,
-+			     void *netfs_priv);
-+	int netfs_readpage(struct file *file,
-+			   struct folio *folio,
-+			   const struct netfs_read_request_ops *ops,
-+			   void *netfs_priv);
-+	int netfs_write_begin(struct file *file,
-+			      struct address_space *mapping,
-+			      loff_t pos,
-+			      unsigned int len,
-+			      unsigned int flags,
-+			      struct folio **_folio,
-+			      void **_fsdata,
-+			      const struct netfs_read_request_ops *ops,
-+			      void *netfs_priv);
- 
- Each corresponds to a VM operation, with the addition of a couple of parameters
- for the use of the read helpers:
-@@ -103,8 +103,8 @@ Both of these values will be stored into the read request structure.
- For ->readahead() and ->readpage(), the network filesystem should just jump
- into the corresponding read helper; whereas for ->write_begin(), it may be a
- little more complicated as the network filesystem might want to flush
--conflicting writes or track dirty data and needs to put the acquired page if an
--error occurs after calling the helper.
-+conflicting writes or track dirty data and needs to put the acquired folio if
-+an error occurs after calling the helper.
- 
- The helpers manage the read request, calling back into the network filesystem
- through the suppplied table of operations.  Waits will be performed as
-@@ -253,7 +253,7 @@ through which it can issue requests and negotiate::
- 		void (*issue_op)(struct netfs_read_subrequest *subreq);
- 		bool (*is_still_valid)(struct netfs_read_request *rreq);
- 		int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
--					 struct page *page, void **_fsdata);
-+					 struct folio *folio, void **_fsdata);
- 		void (*done)(struct netfs_read_request *rreq);
- 		void (*cleanup)(struct address_space *mapping, void *netfs_priv);
- 	};
-@@ -313,13 +313,14 @@ The operations are as follows:
- 
-    There is no return value; the netfs_subreq_terminated() function should be
-    called to indicate whether or not the operation succeeded and how much data
--   it transferred.  The filesystem also should not deal with setting pages
-+   it transferred.  The filesystem also should not deal with setting folios
-    uptodate, unlocking them or dropping their refs - the helpers need to deal
-    with this as they have to coordinate with copying to the local cache.
- 
--   Note that the helpers have the pages locked, but not pinned.  It is possible
--   to use the ITER_XARRAY iov iterator to refer to the range of the inode that
--   is being operated upon without the need to allocate large bvec tables.
-+   Note that the helpers have the folios locked, but not pinned.  It is
-+   possible to use the ITER_XARRAY iov iterator to refer to the range of the
-+   inode that is being operated upon without the need to allocate large bvec
-+   tables.
- 
-  * ``is_still_valid()``
- 
-@@ -330,15 +331,15 @@ The operations are as follows:
-  * ``check_write_begin()``
- 
-    [Optional] This is called from the netfs_write_begin() helper once it has
--   allocated/grabbed the page to be modified to allow the filesystem to flush
-+   allocated/grabbed the folio to be modified to allow the filesystem to flush
-    conflicting state before allowing it to be modified.
- 
--   It should return 0 if everything is now fine, -EAGAIN if the page should be
-+   It should return 0 if everything is now fine, -EAGAIN if the folio should be
-    regrabbed and any other error code to abort the operation.
- 
-  * ``done``
- 
--   [Optional] This is called after the pages in the request have all been
-+   [Optional] This is called after the folios in the request have all been
-    unlocked (and marked uptodate if applicable).
- 
-  * ``cleanup``
-@@ -390,7 +391,7 @@ The read helpers work by the following general procedure:
-      * If NETFS_SREQ_CLEAR_TAIL was set, a short read will be cleared to the
-        end of the slice instead of reissuing.
- 
-- * Once the data is read, the pages that have been fully read/cleared:
-+ * Once the data is read, the folios that have been fully read/cleared:
- 
-    * Will be marked uptodate.
- 
-@@ -398,11 +399,11 @@ The read helpers work by the following general procedure:
- 
-    * Unlocked
- 
-- * Any pages that need writing to the cache will then have DIO writes issued.
-+ * Any folios that need writing to the cache will then have DIO writes issued.
- 
-  * Synchronous operations will wait for reading to be complete.
- 
-- * Writes to the cache will proceed asynchronously and the pages will have the
-+ * Writes to the cache will proceed asynchronously and the folios will have the
-    PG_fscache mark removed when that completes.
- 
-  * The request structures will be cleaned up when everything has completed.
-@@ -452,6 +453,9 @@ operation table looks like the following::
- 			    netfs_io_terminated_t term_func,
- 			    void *term_func_priv);
- 
-+		int (*prepare_write)(struct netfs_cache_resources *cres,
-+				     loff_t *_start, size_t *_len, loff_t i_size);
-+
- 		int (*write)(struct netfs_cache_resources *cres,
- 			     loff_t start_pos,
- 			     struct iov_iter *iter,
-@@ -509,6 +513,14 @@ The methods defined in the table are:
-    indicating whether the termination is definitely happening in the caller's
-    context.
- 
-+ * ``prepare_write()``
-+
-+   [Required] Called to adjust a write to the cache and check that there is
-+   sufficient space in the cache.  The start and length values indicate the
-+   size of the write that netfslib is proposing, and this can be adjusted by
-+   the cache to respect DIO boundaries.  The file size is passed for
-+   information.
-+
-  * ``write()``
- 
-    [Required] Called to write to the cache.  The start file offset is given
-@@ -525,4 +537,9 @@ not the read request structure as they could be used in other situations where
- there isn't a read request structure as well, such as writing dirty data to the
- cache.
- 
-+
-+API Function Reference
-+======================
-+
- .. kernel-doc:: include/linux/netfs.h
-+.. kernel-doc:: fs/netfs/read_helper.c
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 9320a42dfaf9..7046f9bdd8dc 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -1008,8 +1008,8 @@ int netfs_readpage(struct file *file,
- }
- EXPORT_SYMBOL(netfs_readpage);
- 
--/**
-- * netfs_skip_folio_read - prep a folio for writing without reading first
-+/*
-+ * Prepare a folio for writing without reading first
-  * @folio: The folio being prepared
-  * @pos: starting position for the write
-  * @len: length of write
-
-
+Acked-by: Seth Forshee <sforshee@digitalocean.com>
