@@ -2,133 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1053D452C67
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 09:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3494452CBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 09:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231819AbhKPIJY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 03:09:24 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41309 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231731AbhKPIJL (ORCPT
+        id S232054AbhKPI37 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 03:29:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40890 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232064AbhKPI3t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 03:09:11 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UwpX9kf_1637049971;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UwpX9kf_1637049971)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 16 Nov 2021 16:06:12 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH] fs: Eliminate compilation warnings for misc
-Date:   Tue, 16 Nov 2021 16:06:11 +0800
-Message-Id: <20211116080611.31199-1-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0
+        Tue, 16 Nov 2021 03:29:49 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79554C061766
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 00:26:52 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id u60so55105639ybi.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 00:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zKTpTAX3CYcAD+IfMc5iTmWOWQYhJZdkd6G9+skmKnQ=;
+        b=gMmx7dgxqaA7QTjdaKaFPvDJxy1ssDsKXV7f/rOMTRbVk7zXCTwG0IYULnNVxmhfuW
+         /Az0pi37GxMZLFvhhc/08M9TSqUupI6qbq9NLM7ppj5thNPBv5H2kJjWDnNkiF93In5H
+         RBvfO1u19+aOjUBmwGj+kbMkWgFUPHnyxlgRKI+eKN/nS84Zn5Jkg99t1M+slP9GkPAV
+         7tw0j1+J31k5zF6730r+kAdfo7CyskLxypKXKyQYRW+KNxlxL+zn4IavkIlKnvebHhex
+         p2/Pdmg1+Cl7bAc3QO4eeTg+lTMj6KIpx/GwMMVbPZ6zEQ14NYAt2sNkxUjjh9KF4yDi
+         h1nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zKTpTAX3CYcAD+IfMc5iTmWOWQYhJZdkd6G9+skmKnQ=;
+        b=ybScyG8/cfgI8aVHxKYP1bArY5KRHyKUUxs2kE7qkykOI01ZmuQJRIJvbHlt1jDey6
+         2NraxZ68PiRg4asm6T0ajSDCGTAnPpJIZRiAj9wzOWmNfIgqUfpkSNFDeS1HiykK5LJ+
+         FD8NxWLX57/5x0n4Yya1lCln/LWwZ36t4bOHm0HHiGJRV6Qhnln0ryd6EQrJOnNwpdo6
+         WyZivo8cD7HD45vOzm+Op9QWDl15XnzlMq5GYxqLPDyNo8AxlxlXirQ7k7X6Hp+9KtCU
+         onykdGBcHyv7bPuXStQlEQ6x3iNUrkHWsS4I+VmYXPwHiBQH89osz98QfetbQ5up1xdg
+         GbxA==
+X-Gm-Message-State: AOAM530CC1QLYcnpUWbz2xX/e8hm9NsCoc7c6KqfMMa8Bu9bT48o58Gb
+        Lbn7vVZ9FjHN1ZS75AJdrawVx947JWEj6s6FtHN+uA==
+X-Google-Smtp-Source: ABdhPJyuPf9385jYLaCNMzCNlglLQO7CWM0XIyiQcDFli3VOF9khrUAzVZ+ZPBI+xkwVw4LGnbWd5CowLLzCjVixjp0=
+X-Received: by 2002:a25:d15:: with SMTP id 21mr6055391ybn.141.1637051211812;
+ Tue, 16 Nov 2021 00:26:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211101093518.86845-1-songmuchun@bytedance.com> <20211115210917.96f681f0a75dfe6e1772dc6d@linux-foundation.org>
+In-Reply-To: <20211115210917.96f681f0a75dfe6e1772dc6d@linux-foundation.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 16 Nov 2021 16:26:12 +0800
+Message-ID: <CAMZfGtX+GkVf_7D8G+Ss32+wYy1bcMgDpT5FJDA=a9gdjW36-w@mail.gmail.com>
+Subject: Re: [PATCH 0/4] remove PDE_DATA()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>, gladkov.alexey@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eliminate the following clang compilation warnings by adding or
-fixing function comment:
+On Tue, Nov 16, 2021 at 1:09 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Mon,  1 Nov 2021 17:35:14 +0800 Muchun Song <songmuchun@bytedance.com> wrote:
+>
+> > I found a bug [1] some days ago, which is because we want to use
+> > inode->i_private to pass user private data. However, this is wrong
+> > on proc fs. We provide a specific function PDE_DATA() to get user
+> > private data. Actually, we can hide this detail by storing
+> > PDE()->data into inode->i_private and removing PDE_DATA() completely.
+> > The user could use inode->i_private to get user private data just
+> > like debugfs does. This series is trying to remove PDE_DATA().
+>
+> Why can't we do
+>
+> /*
+>  * comment goes here
+>  */
+> static inline void *PDE_DATA(struct inode *inode)
+> {
+>         return inode->i_private;
+> }
+>
+> to abstract things a bit and to reduce the patch size?
+>
+> otoh, that upper-case thing needs to go, so the patch size remains the
+> same anyway.
+>
+> And perhaps we should have a short-term
+>
+> #define PDE_DATA(i) pde_data(i)
 
-  fs/file.c:655: warning: Function parameter or member 'fdt' not described in 'last_fd'
-  fs/file.c:655: warning: Excess function parameter 'cur_fds' description in 'last_fd'
-  fs/file.c:703: warning: Function parameter or member 'flags' not described in '__close_range'
+Right. This way is the easiest way to reduce the patch size.
+Actually, I want to make all PDE_DATA() go away, which
+makes this patch series go big.
 
-  fs/fs_context.c:202: warning: Function parameter or member 'fc' not described in 'generic_parse_monolithic'
-  fs/fs_context.c:202: warning: Excess function parameter 'ctx' description in 'generic_parse_monolithic'
-  fs/fs_context.c:386: warning: Function parameter or member 'log' not described in 'logfc'
-  fs/fs_context.c:386: warning: Function parameter or member 'prefix' not described in 'logfc'
-  fs/fs_context.c:386: warning: Function parameter or member 'level' not described in 'logfc'
-  fs/fs_context.c:386: warning: Excess function parameter 'fc' description in 'logfc'
+>
+> because new instances are sure to turn up during the development cycle.
+>
+> But I can handle that by staging the patch series after linux-next and
+> reminding myself to grep for new PDE_DATA instances prior to
+> upstreaming.
 
-  fs/namei.c:1044: warning: Function parameter or member 'inode' not described in 'may_follow_link'
+I'd be happy if you could replace PDE_DATA() with inode->i_private.
+In this case, should I still introduce pde_data() and perform the above
+things to make this series smaller?
 
-  fs/read_write.c:88: warning: Function parameter or member 'maxsize' not described in 'generic_file_llseek_size'
-  fs/read_write.c:88: warning: Excess function parameter 'size' description in 'generic_file_llseek_size'
-
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- fs/file.c       | 3 ++-
- fs/fs_context.c | 6 ++++--
- fs/namei.c      | 1 +
- fs/read_write.c | 2 +-
- 4 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index 8627dacfc424..ab3b635b0c86 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -645,7 +645,7 @@ EXPORT_SYMBOL(close_fd); /* for ksys_close() */
- 
- /**
-  * last_fd - return last valid index into fd table
-- * @cur_fds: files struct
-+ * @fdt: fdtable struct
-  *
-  * Context: Either rcu read lock or files_lock must be held.
-  *
-@@ -695,6 +695,7 @@ static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
-  *
-  * @fd:     starting file descriptor to close
-  * @max_fd: last file descriptor to close
-+ * @flags:  close range flags
-  *
-  * This closes a range of file descriptors. All file descriptors
-  * from @fd up to and including @max_fd are closed.
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index b7e43a780a62..e94fb7f19d3f 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -189,7 +189,7 @@ EXPORT_SYMBOL(vfs_parse_fs_string);
- 
- /**
-  * generic_parse_monolithic - Parse key[=val][,key[=val]]* mount data
-- * @ctx: The superblock configuration to fill in.
-+ * @fc: filesystem context
-  * @data: The data to parse
-  *
-  * Parse a blob of data that's in key[=val][,key[=val]]* form.  This can be
-@@ -379,7 +379,9 @@ EXPORT_SYMBOL(vfs_dup_fs_context);
- 
- /**
-  * logfc - Log a message to a filesystem context
-- * @fc: The filesystem context to log to.
-+ * @log: The filesystem context to log to.
-+ * @prefix: The log prefix.
-+ * @level: The log level.
-  * @fmt: The format of the buffer.
-  */
- void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt, ...)
-diff --git a/fs/namei.c b/fs/namei.c
-index 1f9d2187c765..3bc73b4f39c9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1028,6 +1028,7 @@ int sysctl_protected_regular __read_mostly;
- /**
-  * may_follow_link - Check symlink following for unsafe situations
-  * @nd: nameidata pathwalk data
-+ * @inode: inode to check
-  *
-  * In the case of the sysctl_protected_symlinks sysctl being enabled,
-  * CAP_DAC_OVERRIDE needs to be specifically ignored if the symlink is
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 0074afa7ecb3..d7b0f8528930 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -71,7 +71,7 @@ EXPORT_SYMBOL(vfs_setpos);
-  * @file:	file structure to seek on
-  * @offset:	file offset to seek to
-  * @whence:	type of seek
-- * @size:	max size of this file in file system
-+ * @maxsize:	max size of this file in file system
-  * @eof:	offset used for SEEK_END position
-  *
-  * This is a variant of generic_file_llseek that allows passing in a custom
--- 
-2.32.0
-
+Thanks.
