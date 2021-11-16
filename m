@@ -2,98 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE4A452A44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 07:00:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EFF8452A60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 07:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240250AbhKPGCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 01:02:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35610 "EHLO
+        id S236074AbhKPGNd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 01:13:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240253AbhKPGBo (ORCPT
+        with ESMTP id S231527AbhKPGNb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 01:01:44 -0500
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8D1C04A403;
-        Mon, 15 Nov 2021 21:43:03 -0800 (PST)
-Received: by mail-pj1-x1044.google.com with SMTP id h24so14828435pjq.2;
-        Mon, 15 Nov 2021 21:43:03 -0800 (PST)
+        Tue, 16 Nov 2021 01:13:31 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E975EC061570
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 22:10:34 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id g17so54130209ybe.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 22:10:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xNMq9GJJA7CIRiH95ibik9uHs9CfsmAe2wbOXiKepoU=;
-        b=DzKnaQB+wUFswdwz06sOh6UuNIMNlcZRdYQsNZBecS2AIpjnisA6sds54G2OSNl7OW
-         0BXKzD7OAl+lmAWARnW6ZtymVwexFT9BaqU4PAfy9t5rcW8HUA97MKvP3G23I5YkxW/A
-         zD2s8N/Psyf/mj0nQNl7HbL6lCk/vQTkna3R5uecrU0AYlxilcZPsUdmisttgRuHzLE/
-         qwTdobzPkDJDmJSbxk/lMw568IqQnD2NfCjdWeo0HwLwSo+jbqDCiSXrOpT0pqpV0n39
-         z9L1wob7VRPvtHXqJsPegehHTGfEM12hgdYubcl2FgG7qKY5KPV3+UpBH0bGrzsyGuRN
-         z77Q==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cKbvFtZ+QRZeI3FNBGdfQQxAtlb2rMZX444bX3hzMG8=;
+        b=iLSyO1Wzty/HxSbjlG8/79WYkC7ybAYGe6n21M/rCnfX7DgCvNzRR8pL0wvcqd+M78
+         Fatg0iIfjQwREHvF9nC6hqGp7GpSW/H73mCOKvjYVN47BFVo3vqfIQpVw1gpCOu25k2x
+         7AtUlVKKX+hlqy+gj6NO/lXRjWaj0VWYqIVAX4k599LcgTXloavYAaaCPI4oLBPiD3So
+         nqjSDZQ8+76XYR/zkmnWp2MrTk4mBVEhWeI2L+TTwvapiHtv2NLW2hN4az2OrcABC7+n
+         uaQvDriLzyFQBjPMI+l/ANBhZEWViDhXMQqEwy2JjJDlAR5DYRkm270zUhZIlxz11DqF
+         AvsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xNMq9GJJA7CIRiH95ibik9uHs9CfsmAe2wbOXiKepoU=;
-        b=N8VNYrur8Jew/JG2Ue5FKfcFFFQDJBMa+tFgt6tgoQPkl4saJBlsul8YcGptm1dhY5
-         EQqIFqDNoJXW1pJH8hN1famPMAgWuOKf86Cv8VBcbBpl9p+fE98cx2EIgSjmi4KSgVKo
-         OPeqroHl/HbyzbTSayJC8tPZ0NOk49GzldD7FCPDcGNBRHyouABUshaxheTDGUZFQEM1
-         /EMaRD95z9QJONmLWE8dJL9z5HIL/tOU3K369q+0NdAGuHzfM/25KJq5ZMtLLIKviPNE
-         d7sorCnWmGeQSa0GXHEOSN1UhZoFPDchEuJIVQCuCqmSUdpWazB1VCtD3+KfrMjO3H16
-         P9rA==
-X-Gm-Message-State: AOAM5334azeaUAkZHP3/ThHEcdWN/eJJJr50lsi2dlo5yWIB7KFHl4sm
-        O409M22mtwVuEr8OW9vIMZ/wM6Z4gk0=
-X-Google-Smtp-Source: ABdhPJy4/Tbd2aBvDPZSWjue0LOPAsIvPxsbhzWx8MaZWaM8Q0AGneg204Vq85uE5NeNSMe0eAfTCw==
-X-Received: by 2002:a17:90a:c091:: with SMTP id o17mr5526836pjs.35.1637041383082;
-        Mon, 15 Nov 2021 21:43:03 -0800 (PST)
-Received: from localhost ([2405:201:6014:d064:3d4e:6265:800c:dc84])
-        by smtp.gmail.com with ESMTPSA id mm22sm1015953pjb.28.2021.11.15.21.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Nov 2021 21:43:02 -0800 (PST)
-From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
-To:     bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Alexander Mihalicyn <alexander@mihalicyn.com>,
-        Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next v1 8/8] selftests/bpf: Fix btf_dump test for bpf_iter_link_info
-Date:   Tue, 16 Nov 2021 11:12:37 +0530
-Message-Id: <20211116054237.100814-9-memxor@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211116054237.100814-1-memxor@gmail.com>
-References: <20211116054237.100814-1-memxor@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cKbvFtZ+QRZeI3FNBGdfQQxAtlb2rMZX444bX3hzMG8=;
+        b=2zyzaGdYNgZKibhmSnOTIbZXPMqE913/KfzA4m8D4Ys5w+51EUA7Cvv1lK3DWwyAOS
+         MHr3Y3fJ152OMKljsMTF0D4UoNZQe3zL5qU0jKfi/fnHyOJRGyMnYvoQZXrbH1eKJYFp
+         HkXpTd/GGFJN8nBfli23Rz0N1f4cLTov4aYkcPwvFolAVciRONK8yZnh87HoxLZhxmgT
+         Z3aX76KawRWeIy0Qzx1KhyjY4pXkO8+f+NhX57mSohJ2Rr7QGO9vbua/hg97ykowc3GM
+         NvqBOBOVcJY5dkjFWnJ7qZApmlWqXnEOggb0Vmejif97qg3RiPDJ57lGqdh6A4zAqx+p
+         aBcg==
+X-Gm-Message-State: AOAM531zaDlebx0lNfAv+nqLUc6bTqGpv6KPdJq8oI5vLWyzrzs1VWJJ
+        tSRjTaMdknbG4urrxfC3XargSbu1Tx47i4/LmR8hdQ==
+X-Google-Smtp-Source: ABdhPJzN3pVN1nOnOBZej16gfngM79uRdjBdoa7a33PlJmhY0MQPFgpI2ys9scPvhjJczlcxmh/zFAf822pKoifh5E4=
+X-Received: by 2002:a05:6902:110e:: with SMTP id o14mr5715852ybu.161.1637043033954;
+ Mon, 15 Nov 2021 22:10:33 -0800 (PST)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1199; h=from:subject; bh=2OeAqoVgm3UE8yo/6xItJyebkuS6bvyJvQVD3m8v6N4=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhk0S7cp9vrG4vOU0yZvr5SpV+sCHwxBvUfioYCwMq 0lXCH8qJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYZNEuwAKCRBM4MiGSL8RyksmD/ 9ykap1OxzGchcNWyb6qBJwWVb2/xIlSSGHWzo99rRvEZvoNlQdwX5ys7GV/8m7U6NLzhx0w1MrQG4O +WvaLbLSff4Gb2Q8DfmQug+XAF26EFhhd6E3VI2h8qR4CJ5uhbqvZp9q+o/lYlb2tUWY32dXcZnvYq bQXA/3FkSofOhUKPq5/CHTic8w69GAs59wugR3GlmQVTDT38STrcptrKCPXQ5OVpWKP8cU8HqGPgn+ fAw0KzQ+sdnzaNMW5eA+eD3WUC3wbKkLO78kcYFaA9/QtHq5Ulb6YtO2t/71Uh7F2qhdLX9o+RhsFz 3h0yPPR+ihC46gpovjzl2tITdUr/TK9ORgGTf0YwRrukGtqiNKk2VUuBABngKOTIZ0aOeV4MLLlfrH bWmpzZ1NKGdwra3g+fzNOKY25D77sQw+Ckhoh9XenHs/2XREDdHeNYgqmDnsGjFW8gmqm0PRG/kRNO A8/MezsfRwxNo8vwDY1XXqdm0nABIntz/w+IRpyvPxYff0jAXUKz+V+6E51EmrRJ+BdaM/FLDd0Op4 saQP5nKttNeElk2g8pjLpPKgczDO7qYB+tPZs0gohBu1PRkPHwLCFDlWFIbWuCuB2ym+jo9Do4Hwe1 WkhAUwcTS0HSDOOXxgMaTS7dnnNy05Yoy373veKRNJNhyTpJF/LjfBEuO5fA==
-X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
-Content-Transfer-Encoding: 8bit
+References: <20211019215511.3771969-1-surenb@google.com> <20211019215511.3771969-2-surenb@google.com>
+ <CAJuCfpGG-j00eDL8p3vNDh4ye2Ja4untoA20UdTkTubm3AfMEQ@mail.gmail.com> <20211115211905.faef6f9db3ce4a6fb9ed66a2@linux-foundation.org>
+In-Reply-To: <20211115211905.faef6f9db3ce4a6fb9ed66a2@linux-foundation.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 15 Nov 2021 22:10:21 -0800
+Message-ID: <CAJuCfpEqO8C7eRO1Mr+MULnuKxjjh1zq2j1yoGZhocghpr7V9w@mail.gmail.com>
+Subject: Re: [PATCH v11 2/3] mm: add a field to store names for private
+ anonymous memory
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        John Hubbard <jhubbard@nvidia.com>,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since we changed the definition while adding io_uring and epoll iterator
-support, adjust the selftest to check against the updated definition.
+On Mon, Nov 15, 2021 at 9:19 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Tue, 19 Oct 2021 14:58:36 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+>
+> > As Andrew suggested, I checked the image sizes with allnoconfig builds:
+> >
+> > unpatched Linus' ToT
+> >    text    data     bss     dec     hex filename
+> > 1324759      32   73928 1398719 1557bf vmlinux
+> >
+> > After the first patch is applied (madvise refactoring)
+> >    text    data     bss     dec     hex filename
+> > 1322346      32   73928 1396306 154e52 vmlinux
+> > >>> 2413 bytes decrease vs ToT <<<
+> >
+> > After all patches applied with CONFIG_ANON_VMA_NAME=n
+> >    text    data     bss     dec     hex filename
+> > 1322337      32   73928 1396297 154e49 vmlinux
+> > >>> 2422 bytes decrease vs ToT <<<
+> >
+> > After all patches applied with CONFIG_ANON_VMA_NAME=y
+> >    text    data     bss     dec     hex filename
+> > 1325228      32   73928 1399188 155994 vmlinux
+> > >>> 469 bytes increase vs ToT <<<
+>
+> Nice.  Presumably there are memory savings from no longer duplicating
+> the vma names?
 
-Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
----
- tools/testing/selftests/bpf/prog_tests/btf_dump.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The third patch does have this effect.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/btf_dump.c b/tools/testing/selftests/bpf/prog_tests/btf_dump.c
-index d6272013a5a3..a2fc006e074a 100644
---- a/tools/testing/selftests/bpf/prog_tests/btf_dump.c
-+++ b/tools/testing/selftests/bpf/prog_tests/btf_dump.c
-@@ -736,7 +736,9 @@ static void test_btf_dump_struct_data(struct btf *btf, struct btf_dump *d,
- 
- 	/* union with nested struct */
- 	TEST_BTF_DUMP_DATA(btf, d, "union", str, union bpf_iter_link_info, BTF_F_COMPACT,
--			   "(union bpf_iter_link_info){.map = (struct){.map_fd = (__u32)1,},}",
-+			   "(union bpf_iter_link_info){.map = (struct){.map_fd = (__u32)1,},"
-+			   ".io_uring = (struct){.io_uring_fd = (__u32)1,},"
-+			   ".epoll = (struct){.epoll_fd = (__u32)1,},}",
- 			   { .map = { .map_fd = 1 }});
- 
- 	/* struct skb with nested structs/unions; because type output is so
--- 
-2.33.1
+>
+> I fudged up a [0/n] changelog (please don't forget this) and merged it
+> all for testing.
 
+Thanks!
