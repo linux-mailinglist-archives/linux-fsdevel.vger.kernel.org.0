@@ -2,53 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8CEB452A19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 06:56:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D51EE452A2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 06:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239041AbhKPF7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 00:59:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34252 "EHLO
+        id S240314AbhKPGBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 01:01:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238889AbhKPF6Q (ORCPT
+        with ESMTP id S240160AbhKPGBm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 00:58:16 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93BC2C048F2E;
-        Mon, 15 Nov 2021 21:22:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jFwMkhAr45Koa2OCwczyqw/z6CbwDbfK4wgcBODiv6I=; b=aKX8PwvsFOJW6GP0jcRaN66vOF
-        Csg3E+pZhNxx7ljXSrmY99g2gV05mArmWxCM1GC3O6AF4tDBQCFw+UGHc8pDtkpqhVggRGeHoQjsl
-        3d2ntb7AETAXk0khGqXeymDfilXxI4RGg6TbRdfUJ+cLe32FnhXZ8Xr/7QcRhPEDz2kAhFmgZn2Q3
-        x+KVsO1rT+wbr6XtzsTlTVf3guGnjYLi+/zokSokNUNoPWYbs8aVp0zla1qRfV6fOmxPaclWyeH3x
-        fg+OfGHqqnol2B755jDbPWzDPh7lI8pIBQX1AqWza1fYQ8aFUg/YKOmzbpepSj7Ys+s0hBvEyyyOQ
-        gAAX1A2g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mmqvE-000IAC-7t; Tue, 16 Nov 2021 05:22:20 +0000
-Date:   Mon, 15 Nov 2021 21:22:20 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jubin Zhong <zhongjubin@huawei.com>
-Cc:     hch@infradead.org, kechengsong@huawei.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, wangfangpeng1@huawei.com
-Subject: Re: [PATCH] fs: Fix truncate never updates m/ctime
-Message-ID: <YZNADLcSbgKp5Znh@infradead.org>
-References: <YZKfr5ZIvNBmKDQI@infradead.org>
- <1637035090-52547-1-git-send-email-zhongjubin@huawei.com>
+        Tue, 16 Nov 2021 01:01:42 -0500
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED89C06122F;
+        Mon, 15 Nov 2021 21:42:40 -0800 (PST)
+Received: by mail-pj1-x1043.google.com with SMTP id j6-20020a17090a588600b001a78a5ce46aso1281638pji.0;
+        Mon, 15 Nov 2021 21:42:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZiJH60W16gunzDy5ORNJzHgGIx+W/lmdguHzEJZNQTc=;
+        b=O85NyUsoiW6yAvdHx9ILdEwQiPiLRH/dVfS3A6VoLliYaupHGM4tClqLJ95tJa45ZE
+         7Zj7NyFUvbae52r7+ITMxeVdy1Od1yfztC7YDCYULqbajuP/cM0I/fyU91I7uzxkPZkb
+         IpF80167wo19h1x5d8aCyIKYNMgRheqIVC/GMg/UPqe1mjxk1S/5seWWEEwoAUKXj8DX
+         /3eDmrNIEi0u+yP1Qbd8RAV7g2tbMgM8FLa71CTiEZ+fKgyAGQMuUYJHpFq48BnIyIA7
+         YEkzbkwoP8reew3Vtdl8Y50FZAnLV3oQtH1lxN7UjsMMYavYvOUzCdhcxl6lyRnrtwvh
+         CwfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZiJH60W16gunzDy5ORNJzHgGIx+W/lmdguHzEJZNQTc=;
+        b=owzKa6djrj4ZeUSnuCS0dqlOgDnZhEcOcY9quBjM8oFUiNzajVQgZ7Y9l2sEgRud2B
+         eP29UGZCDg8jRANXusMiQ2M/I/K2NHCXPgRisaetKNYj4wMc7TK+FZ8fT/ssUq4yrrdt
+         2WCvRjPR+ZKCexFhE2vEwbHpn2CvvJAPwm+ncAVR492PaqZ+hKm/GpB2krSr6yIMSX1P
+         5aGHIGu4X8dQGt/66cJHs+28N6kp044XTLqqqgQ/jSi8Qd5fpWshhGnBwwj9h2xU278d
+         vVr+MvT6Idp1Lui2c6FgvNeeeMGTc7IsuhZc0+C19LISz+xAiyYpukOlkno2TvsDOvpk
+         TbWA==
+X-Gm-Message-State: AOAM532/CEeNE3MKiUfFwHEBFbNH+qkoLp0buRtNUhKXkImFXeedcVKN
+        VTK8kTkryPvIsEnGhj7E9WPTSOl/y6E=
+X-Google-Smtp-Source: ABdhPJz3CAzWCScgu+wjIIaTr/6w+pL0qeMP/zUB+sZ54+WOpBoLekkuYi1hyqCE6LN1W5FhUR1vXw==
+X-Received: by 2002:a17:902:bc85:b0:143:954e:8548 with SMTP id bb5-20020a170902bc8500b00143954e8548mr40988891plb.82.1637041359666;
+        Mon, 15 Nov 2021 21:42:39 -0800 (PST)
+Received: from localhost ([2405:201:6014:d064:3d4e:6265:800c:dc84])
+        by smtp.gmail.com with ESMTPSA id n1sm16753963pfj.193.2021.11.15.21.42.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Nov 2021 21:42:39 -0800 (PST)
+From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
+To:     bpf@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Alexander Mihalicyn <alexander@mihalicyn.com>,
+        Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH bpf-next v1 0/8]  Introduce BPF iterators for io_uring and epoll
+Date:   Tue, 16 Nov 2021 11:12:29 +0530
+Message-Id: <20211116054237.100814-1-memxor@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1637035090-52547-1-git-send-email-zhongjubin@huawei.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3556; h=from:subject; bh=SlD5HGZzKxuIYkJkdaUqV0OTyvwRfj3yhC7ub0JOPQw=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBhk0S6c8t+Ojz65eZNTVAFmrDa1s2rNuMB8kElx5ev mbNO73GJAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCYZNEugAKCRBM4MiGSL8RyminEA C0NadbANkkUkEjQcUwGjmXCSUIzxBrkI2yWAd/PMxxJzh24HSDYrJN79DMwQT7D6Kx/haZDhrWKhnE ciYBGgj+mvOzeunr1YNqER2UQAJCdhvPle9gQj2GhKgwfA46JBrtNJq5wwJhmZ3xUC9YH44ZKpb0yp lf3nD8Jf0IctZdz84xjAmGjzRwT5ztQL4e/DqSlBGFKXLLyKwaThpACzs1GCGib2ypazD9M+N3JfQ/ eRTZhzaiiwgaq5dRIQH/WPRYMOwCzgSDEci4QxXk7oNpHbe5EVTwjtsrGK28V4uGvnlKNUgruJn/FW e34WK2Nm/jcYeaiv/k0VqDiS2TST0cntKcI0xLFilO7c9Er1PEcGi6QwRCLl+YW0C5MabPW9BAQPMs buUZzIYmgezL/uHdz3PxGVhl+RHh/twYXbHmj97TpUnlmf89Hhoi92MP48TdiI5RnDBYxBZkPKmlwG 1765ZPSMPelJEWvtASTZnYM/WISA0d9zmnTXwLMEF1oo9onifadKMEwhBWpODCDUcW1gC+/EBujB3S Lf5/z9cvfnOFTFFJdPSBTp1z4dFB7hHc3AU/pNPv/8PONA2+K7Vnp1vTD+diQRGoKUjUcpURcbnG5X VbWv1Vajnha14dBkwK8/hr62tXkAdnkmfW1ztg+OtFzDLylI0hb+fNQCaZZg==
+X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 11:58:10AM +0800, Jubin Zhong wrote:
-> I work on embedded devices so concern about jffs2/yaffs2/ubifs the most. 
-> If there are any errors in my test program please let me know.
+ The CRIU [0] project developers are exploring potential uses of the BPF
+ subsystem to do complicated tasks that are difficult to add support for in the
+ kernel using existing interfaces.  Even if they are implemented using procfs,
+ or kcmp, it is difficult to make it perform well without having some kind of
+ programmable introspection into the kernel data structures. Moreover, for
+ procfs based state inspection, the output format once agreed upon is set in
+ stone and hard to extend, and at the same time inefficient to consume from
+ programs (where it is first converted from machine readable form to human
+ readable form, only to be converted again to machine readable form).  In
+ addition to this, kcmp based file set matching algorithm performs poorly since
+ each file in one set needs to be compared to each file in another set, to
+ determine struct file equivalence.
 
-It seems like you need to fix jffs2 to implement the proper semantics
-in its ->setattr.
+ This set adds a io_uring file iterator (for registered files), a io_uring ubuf
+ iterator (for registered buffers), and a epoll iterator (for registered items
+ (files, registered using EPOLL_CTL_ADD)) to overcome these limitations.  Using
+ existing task, task_file, task_vma iterators, all of these can be combined
+ together to significantly enhance and speed up the task dumping procedure.
+
+ The two immediate use cases are io_uring checkpoint/restore support and epoll
+ checkpoint/restore support. The first is unimplemented, and the second is being
+ expedited using a new epoll iterator. In the future, more stages of the
+ checkpointing sequence can be offloaded to eBPF programs to reduce process
+ downtime, e.g. in pre-dump stage, before task is seized.
+
+ The io_uring file iterator is even more important now due to the advent of
+ descriptorless files in io_uring [1], which makes dumping a task's files a lot
+ more harder for CRIU, since there is no visibility into these hidden
+ descriptors that the task depends upon for operation. Similarly, the
+ io_uring_ubuf iterator is useful in case original VMA used in registering a
+ buffer has been destroyed.
+
+ Please see the individual patches for more details.
+
+   [0]: https://criu.org/Main_Page
+   [1]: https://lwn.net/Articles/863071
+
+Kumar Kartikeya Dwivedi (8):
+  io_uring: Implement eBPF iterator for registered buffers
+  bpf: Add bpf_page_to_pfn helper
+  io_uring: Implement eBPF iterator for registered files
+  epoll: Implement eBPF iterator for registered items
+  selftests/bpf: Add test for io_uring BPF iterators
+  selftests/bpf: Add test for epoll BPF iterator
+  selftests/bpf: Test partial reads for io_uring, epoll iterators
+  selftests/bpf: Fix btf_dump test for bpf_iter_link_info
+
+ fs/eventpoll.c                                | 196 +++++++++-
+ fs/io_uring.c                                 | 334 ++++++++++++++++
+ include/linux/bpf.h                           |   6 +
+ include/uapi/linux/bpf.h                      |  15 +
+ kernel/trace/bpf_trace.c                      |   2 +
+ scripts/bpf_doc.py                            |   2 +
+ tools/include/uapi/linux/bpf.h                |  15 +
+ .../selftests/bpf/prog_tests/bpf_iter.c       | 362 +++++++++++++++++-
+ .../selftests/bpf/prog_tests/btf_dump.c       |   4 +-
+ .../selftests/bpf/progs/bpf_iter_epoll.c      |  33 ++
+ .../selftests/bpf/progs/bpf_iter_io_uring.c   |  50 +++
+ 11 files changed, 1015 insertions(+), 4 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_epoll.c
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_io_uring.c
+
+-- 
+2.33.1
+
