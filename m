@@ -2,38 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F679452D0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 09:41:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70F18452D62
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 09:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232398AbhKPIov (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 03:44:51 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:38642 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231863AbhKPIou (ORCPT
+        id S232658AbhKPJAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 04:00:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232462AbhKPJAj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 03:44:50 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7CF68218F0;
-        Tue, 16 Nov 2021 08:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1637052112; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=C55AwTWUd1GkY83Qar7hlYhX0sMPC1zTqlrpdkKmksU=;
-        b=ujlSZx2xq2UNx6Gfwb6APaWg8C/a5u7GwUcCTjJEpL+nfxQYYq4zZrH7hSjeCyqLbIP0Qs
-        3sYoOjRqSyOSvhKR2GJ6JAzLfipwCa7iHvYMPyCrL0/snaFxOQDeTN9Dl6lzauB/SngQ89
-        obm/9puvR0ZvvQrT4Mq2Wzx5nF3C2OM=
-Received: from suse.cz (unknown [10.100.216.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 31C55A3B83;
-        Tue, 16 Nov 2021 08:41:50 +0000 (UTC)
-Date:   Tue, 16 Nov 2021 09:41:46 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Alexander Popov <alex.popov@linux.com>
-Cc:     Gabriele Paoloni <gpaoloni@redhat.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Robert Krutsch <krutsch@gmail.com>,
+        Tue, 16 Nov 2021 04:00:39 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45CB2C061570;
+        Tue, 16 Nov 2021 00:57:41 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id u60so55317143ybi.9;
+        Tue, 16 Nov 2021 00:57:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fArE1d3Ulykml4CgLbAJBmsnXKMaBKmi+cka7s12SBg=;
+        b=qZh4d7ufoMlh5QZR9cyM9/ddtzbSL2TmEVwCAX95NMlhNd5MAOhMGfSY7glHz/kM35
+         4+oNv9sFAnrtWD22RT/iCf+OVUvS7jBsLYlBcKZibDKdrc6SZhLZ6MXcpNbGMK7zwjUU
+         IeHGIEOj6VHcfcRWucDx3Ntjlk27TT+joR0/UdOhyCYqOABts9r7zWIPQo2ooCoK0X2r
+         N0niQsSYlDNFiGSxSd8XHwL3mBKujcHc/Lif6yYv9NK0Ly+Rb8+QzqGLH8pNkndNPX+o
+         WWpKDoszQqlLgt6ejGVoPUWlEkqY/q5H2qbmCwwqeeBByyWTU4pPRyibhJ88N/7LhXNM
+         fMPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fArE1d3Ulykml4CgLbAJBmsnXKMaBKmi+cka7s12SBg=;
+        b=GZSAATLYbH/6yg5770xfuSlBIongU+z+r/wzvGbiPPKpMP2JHR6ktsc+s3txdhKGTz
+         qKMjgZy7m4WOzwORjjdI4EXfaf8r0PRQA6r8OLXYkoTmeT1JVLssLp6P9wexl11cWEQC
+         TVVPOzgw4fk0k8y6lcUbzeoS+FRki9Y/okplfoEn18ch3D1+EdQII/eUGsZi+ywTasJf
+         ckWggmf9pYqE9WqBGbLTfCNNKDSTqYOf8zmNk0bgSU3qzo6df5nMykyD+0WW8XSp8N0Z
+         sa4jXeJ0XQiT+8cxjGVs3aXR6Qj46DJHRKOSP3Pv9oNsYpFovI8kANZ9aTnpiJRfguVx
+         MdCA==
+X-Gm-Message-State: AOAM531NFmvZ2TyNofh0d+g6xL0KSTdLPRdMPeK8c92ScLvseDNscko3
+        cS1wPKEpY7u9JuxMJMeCtnEkOHht2wMPrR/i13M=
+X-Google-Smtp-Source: ABdhPJxfFAVkOZNzOziDBttm9KDunA8P0GQbNKqKUE387cNuKoKqYunYpWbm15kx9wqKWRxobW74MXXVzuM4for8PxA=
+X-Received: by 2002:a25:34d5:: with SMTP id b204mr6119397yba.154.1637053060362;
+ Tue, 16 Nov 2021 00:57:40 -0800 (PST)
+MIME-Version: 1.0
+References: <20211027233215.306111-1-alex.popov@linux.com> <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
+ <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
+ <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com> <CAKXUXMx5Oi-dNVKB+8E-pdrz+ooELMZf=oT_oGXKFrNWejz=fg@mail.gmail.com>
+ <20211115110649.4f9cb390@gandalf.local.home> <380a8fd0-d7c3-2487-7cd5-e6fc6e7693d9@csgroup.eu>
+In-Reply-To: <380a8fd0-d7c3-2487-7cd5-e6fc6e7693d9@csgroup.eu>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Tue, 16 Nov 2021 09:57:28 +0100
+Message-ID: <CAKXUXMxqg3MpwBMUSrjNS222C=MptrLiE5VXTVpVwXSQjSgKrA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Popov <alex.popov@linux.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Paul McKenney <paulmck@kernel.org>,
@@ -47,18 +70,17 @@ Cc:     Gabriele Paoloni <gpaoloni@redhat.com>,
         Robin Murphy <robin.murphy@arm.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Lu Baolu <baolu.lu@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
         Kees Cook <keescook@chromium.org>,
         Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
         John Ogness <john.ogness@linutronix.de>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
         Jann Horn <jannh@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
         Will Deacon <will@kernel.org>,
         Ard Biesheuvel <ardb@kernel.org>,
         Laura Abbott <labbott@kernel.org>,
@@ -85,99 +107,100 @@ Cc:     Gabriele Paoloni <gpaoloni@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>, notify@kernel.org,
         main@lists.elisa.tech, safety-architecture@lists.elisa.tech,
         devel@lists.elisa.tech, Shuah Khan <shuah@kernel.org>
-Subject: Re: [ELISA Safety Architecture WG] [PATCH v2 0/2] Introduce the
- pkill_on_warn parameter
-Message-ID: <YZNuyssYsAB0ogUD@alley>
-References: <20211027233215.306111-1-alex.popov@linux.com>
- <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
- <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
- <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
- <CAKXUXMx5Oi-dNVKB+8E-pdrz+ooELMZf=oT_oGXKFrNWejz=fg@mail.gmail.com>
- <22828e84-b34f-7132-c9e9-bb42baf9247b@redhat.com>
- <cf57fb34-460c-3211-840f-8a5e3d88811a@linux.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf57fb34-460c-3211-840f-8a5e3d88811a@linux.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 2021-11-16 10:52:39, Alexander Popov wrote:
-> On 15.11.2021 18:51, Gabriele Paoloni wrote:
-> > On 15/11/2021 14:59, Lukas Bulwahn wrote:
-> > > On Sat, Nov 13, 2021 at 7:14 PM Alexander Popov <alex.popov@linux.com> wrote:
-> > > > On 13.11.2021 00:26, Linus Torvalds wrote:
-> > > > > On Fri, Nov 12, 2021 at 10:52 AM Alexander Popov <alex.popov@linux.com> wrote:
-> > > > Killing the process that hit a kernel warning complies with the Fail-Fast
-> > > > principle [1]. pkill_on_warn sysctl allows the kernel to stop the process when
-> > > > the **first signs** of wrong behavior are detected.
-> > > > 
-> > > In summary, I am not supporting pkill_on_warn. I would support the
-> > > other points I mentioned above, i.e., a good enforced policy for use
-> > > of warn() and any investigation to understand the complexity of
-> > > panic() and reducing its complexity if triggered by such an
-> > > investigation.
-> > 
-> > Hi Alex
-> > 
-> > I also agree with the summary that Lukas gave here. From my experience
-> > the safety system are always guarded by an external flow monitor (e.g. a
-> > watchdog) that triggers in case the safety relevant workloads slows down
-> > or block (for any reason); given this condition of use, a system that
-> > goes into the panic state is always safe, since the watchdog would
-> > trigger and drive the system automatically into safe state.
-> > So I also don't see a clear advantage of having pkill_on_warn();
-> > actually on the flip side it seems to me that such feature could
-> > introduce more risk, as it kills only the threads of the process that
-> > caused the kernel warning whereas the other processes are trusted to
-> > run on a weaker Kernel (does killing the threads of the process that
-> > caused the kernel warning always fix the Kernel condition that lead to
-> > the warning?)
-> 
-> Lukas, Gabriele, Robert,
-> Thanks for showing this from the safety point of view.
-> 
-> The part about believing in panic() functionality is amazing :)
+On Tue, Nov 16, 2021 at 7:37 AM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+>
+>
+>
+> Le 15/11/2021 =C3=A0 17:06, Steven Rostedt a =C3=A9crit :
+> > On Mon, 15 Nov 2021 14:59:57 +0100
+> > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> >> 1. Allow a reasonably configured kernel to boot and run with
+> >> panic_on_warn set. Warnings should only be raised when something is
+> >> not configured as the developers expect it or the kernel is put into a
+> >> state that generally is _unexpected_ and has been exposed little to
+> >> the critical thought of the developer, to testing efforts and use in
+> >> other systems in the wild. Warnings should not be used for something
+> >> informative, which still allows the kernel to continue running in a
+> >> proper way in a generally expected environment. Up to my knowledge,
+> >> there are some kernels in production that run with panic_on_warn; so,
+> >> IMHO, this requirement is generally accepted (we might of course
+> >
+> > To me, WARN*() is the same as BUG*(). If it gets hit, it's a bug in the
+> > kernel and needs to be fixed. I have several WARN*() calls in my code, =
+and
+> > it's all because the algorithms used is expected to prevent the conditi=
+on
+> > in the warning from happening. If the warning triggers, it means either=
+ that
+> > the algorithm is wrong or my assumption about the algorithm is wrong. I=
+n
+> > either case, the kernel needs to be updated. All my tests fail if a WAR=
+N*()
+> > gets hit (anywhere in the kernel, not just my own).
+> >
+> > After reading all the replies and thinking about this more, I find the
+> > pkill_on_warning actually worse than not doing anything. If you are
+> > concerned about exploits from warnings, the only real solution is a
+> > panic_on_warning. Yes, it brings down the system, but really, it has to=
+ be
+> > brought down anyway, because it is in need of a kernel update.
+> >
+>
+> We also have LIVEPATCH to avoid bringing down the system for a kernel
+> update, don't we ? So I wouldn't expect bringing down a vital system
+> just for a WARN.
+>
+> As far as I understand from
+> https://www.kernel.org/doc/html/latest/process/deprecated.html#bug-and-bu=
+g-on,
+> WARN() and WARN_ON() are meant to deal with those situations as
+> gracefull as possible, allowing the system to continue running the best
+> it can until a human controled action is taken.
+>
+> So I'd expect the WARN/WARN_ON to be handled and I agree that that
+> pkill_on_warning seems dangerous and unrelevant, probably more dangerous
+> than doing nothing, especially as the WARN may trigger for a reason
+> which has nothing to do with the running thread.
+>
 
-Nothing is 100% reliable.
+Christophe,
 
-With printk() maintainer hat on, the current panic() implementation
-is less reliable because it tries hard to provide some debugging
-information, for example, error message, backtrace, registry,
-flush pending messages on console, crashdump.
+I agree with a reasonable goal that WARN() should allow users "to deal
+with those situations as gracefull as possible, allowing the system to
+continue running the best it can until a human controled action is
+taken."
 
-See panic() implementation, the reboot is done by emergency_restart().
-The rest is about duping the information.
+However, that makes me wonder even more: what does the system after a
+WARN() invocation still need to provide as properly working
+functionality, so that the human can take action, and how can the
+kernel indicate to the whole user applications that a certain
+functionality is not working anymore and how adaptive can those user
+application really be here? Making that explicit for every WARN()
+invocation seems to be tricky and probably also quite error-prone. So,
+in the end, after a WARN(), you end up running a system where you have
+this uncomfortable feeling of a running system where some things work
+and some things do not and it might be insecure (the whole system
+security concept is invalidated, because security features do not
+work, security holes are opened etc.) or other surprises happen.
 
-Well, the information is important. Otherwise, it is really hard to
-fix the problem.
+The panic_on_warn implements a simple policy of that "run as graceful
+as possible": We assume stopping the kernel is _graceful_, and we just
+assume that the functionality "panic shuts down the system" still
+works properly after any WARN() invocation. Once the system is shut
+down, the human can take action and switch it into some (remote)
+diagnostic mode for further analysis and repair.
 
-From my experience, especially the access to consoles is not fully
-safe. The reliability might improve a lot when a lockless console
-is used. I guess that using non-volatile memory for the log buffer
-might be even more reliable.
+I am wondering if that policy and that assumption holds for all WARN()
+invocations in the kernel? I would hope that we can answer this
+question, which is much simpler than getting the precise answer on
+"what as graceful as possible actually means".
 
-I am not familiar with the code under emergency_restart(). I am not
-sure how reliable it is.
-
-> Yes, safety critical systems depend on the robust ability to restart.
-
-If I wanted to implement a super-reliable panic() I would
-use some external device that would cause power-reset when
-the watched device is not responding.
-
-Best Regards,
-Petr
-
-
-PS: I do not believe much into the pkill approach as well.
-
-    It is similar to OOM killer. And I always had to restart the
-    system when it was triggered.
-
-    Also kernel is not prepared for the situation that an external
-    code kills a kthread. And kthreads are used by many subsystems
-    to handle work that has to be done asynchronously and/or in
-    process context. And I guess that kthreads are non-trivial
-    source of WARN().
+Lukas
