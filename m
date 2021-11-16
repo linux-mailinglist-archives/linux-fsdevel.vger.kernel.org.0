@@ -2,116 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E297D45324B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 13:36:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF47453296
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 14:07:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236308AbhKPMj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 07:39:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42068 "EHLO
+        id S236531AbhKPNK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 08:10:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236327AbhKPMjK (ORCPT
+        with ESMTP id S234305AbhKPNKY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 07:39:10 -0500
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A446C061204
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 04:36:07 -0800 (PST)
-Received: by mail-ua1-x935.google.com with SMTP id y5so24076989ual.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 04:36:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zNmSVnxPetdA0L3V4GkasCFzJmUbdsvVFKb52Nomjig=;
-        b=g4US1ExxJigUReu0nCm6t7eenv87wdEvhvIC9IPkm5AUhqVQCYDiktBcoWD0ZZ25Xl
-         AxOl19gDUJhflVAcMIDol8Msye7P9p12QxCgqu48YcxwK4It+3cELtjGCt7B+rET5OQU
-         0QH8DhxxbMcTJUwdW5NuzCXgNoS+StGwY3EAw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zNmSVnxPetdA0L3V4GkasCFzJmUbdsvVFKb52Nomjig=;
-        b=WdnWLmr5a9HxV7cD9iTyD8vYzPDbVpo+7Xa2L7qxhpcRnvErrDrS3YDt3rd5LB2OzD
-         6zBz2Pxk0wja82N06hQUhVqr7BkyEcnVQ0SK5GdaMUe6yhRXSCzGZcqh1zVWE1yeBaUy
-         1TFEbbfIywAe559yk5YdFWOpJKU30HHLliP6aGzDj+jENtFEdfyPEFozpqMO/22UoYN4
-         56TbSE/+0cmdJhKArw39jvNHpF7smWxApbU0t57esDRmQ3nKCMJw6JwimfXwIFq9WOL3
-         vXUTNjeOiOnoXQwCSNQiX52cupIqHcRGUr1gISAobSbs6qLEegq2eQvGCTWw2MNCfxFw
-         gHrA==
-X-Gm-Message-State: AOAM530UNuzjv1truKcQE7ldZiioZ3Z5D86uV4JBDCQpVO702f7nNrMG
-        P2iAdrSCLzi2AqAxny3zWkmDRzt0v64H2vPWXA7DNA==
-X-Google-Smtp-Source: ABdhPJzHYyzPvcxM6korW49fJ4HfL4hi+nMo6aC6cPBOiY6HTGLaUERL/do/oqHiPu5HovfkCuQ7/ow/7kyvew2ELZw=
-X-Received: by 2002:ab0:25da:: with SMTP id y26mr10449936uan.72.1637066166488;
- Tue, 16 Nov 2021 04:36:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20210923130814.140814-1-cgxu519@mykernel.net> <20210923130814.140814-7-cgxu519@mykernel.net>
- <CAJfpeguqj2vst4Zj5EovSktJkXiDSCSWY=X12X0Yrz4M8gPRmQ@mail.gmail.com>
- <17c5aba1fef.c5c03d5825886.6577730832510234905@mykernel.net>
- <CAJfpegtr1NkOiY9YWd1meU1yiD-LFX-aB55UVJs94FrX0VNEJQ@mail.gmail.com>
- <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
- <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com> <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net>
-In-Reply-To: <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 16 Nov 2021 13:35:55 +0100
-Message-ID: <CAJfpegttQreuuD_jLgJmrYpsLKBBe2LmB5NSj6F5dHoTzqPArw@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode operation
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Tue, 16 Nov 2021 08:10:24 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79442C061570;
+        Tue, 16 Nov 2021 05:07:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1637068045;
+        bh=CCY8GqrApXwby1Hbt51PqfGtVh1dhg5EbR5xIN52QR8=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=d2YM51xHGowaVSrQ9jgIzzDA9OuPXxYP7vbOX2vVnaIKNWz8AvY6QzGhO+odp2wok
+         HzMzRCD6ebhjICTjNA1rRnXdZF+lwU94s0Wl87DdcSigu4h/G33LHiyJjCeI3H8/5F
+         Nbh7pc077HocCCinTmctfbhiOAwUG/sWxos2obkg=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E9B0B1280D04;
+        Tue, 16 Nov 2021 08:07:25 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id XZvdzU7voFax; Tue, 16 Nov 2021 08:07:25 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1637068045;
+        bh=CCY8GqrApXwby1Hbt51PqfGtVh1dhg5EbR5xIN52QR8=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=d2YM51xHGowaVSrQ9jgIzzDA9OuPXxYP7vbOX2vVnaIKNWz8AvY6QzGhO+odp2wok
+         HzMzRCD6ebhjICTjNA1rRnXdZF+lwU94s0Wl87DdcSigu4h/G33LHiyJjCeI3H8/5F
+         Nbh7pc077HocCCinTmctfbhiOAwUG/sWxos2obkg=
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::527])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5155F1280D01;
+        Tue, 16 Nov 2021 08:07:21 -0500 (EST)
+Message-ID: <88093da62a4b85f015423cbd1ec2f5ad6eb0c5da.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Paul McKenney <paulmck@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Maciej Rozycki <macro@orcam.me.uk>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Laura Abbott <labbott@kernel.org>,
+        David S Miller <davem@davemloft.net>,
+        Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Scull <ascull@google.com>,
+        Marc Zyngier <maz@kernel.org>, Jessica Yu <jeyu@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Wang Qing <wangqing@vivo.com>, Mel Gorman <mgorman@suse.de>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Andrew Klychkov <andrew.a.klychkov@gmail.com>,
+        Mathieu Chouquet-Stringer <me@mathieu.digital>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Stephen Kitt <steve@sk2.org>, Stephen Boyd <sboyd@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Mike Rapoport <rppt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-hardening@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, notify@kernel.org,
+        main@lists.elisa.tech, safety-architecture@lists.elisa.tech,
+        devel@lists.elisa.tech, Shuah Khan <shuah@kernel.org>
+Date:   Tue, 16 Nov 2021 08:07:19 -0500
+In-Reply-To: <202111151116.933184F716@keescook>
+References: <20211027233215.306111-1-alex.popov@linux.com>
+         <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
+         <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
+         <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
+         <CAKXUXMx5Oi-dNVKB+8E-pdrz+ooELMZf=oT_oGXKFrNWejz=fg@mail.gmail.com>
+         <20211115110649.4f9cb390@gandalf.local.home>
+         <202111151116.933184F716@keescook>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 16 Nov 2021 at 03:20, Chengguang Xu <cgxu519@mykernel.net> wrote:
->
->  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2021-10-07 21:34:19 Miklos S=
-zeredi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
->  > On Thu, 7 Oct 2021 at 15:10, Chengguang Xu <cgxu519@mykernel.net> wrot=
-e:
->  > >  > However that wasn't what I was asking about.  AFAICS ->write_inod=
-e()
->  > >  > won't start write back for dirty pages.   Maybe I'm missing somet=
-hing,
->  > >  > but there it looks as if nothing will actually trigger writeback =
-for
->  > >  > dirty pages in upper inode.
->  > >  >
->  > >
->  > > Actually, page writeback on upper inode will be triggered by overlay=
-fs ->writepages and
->  > > overlayfs' ->writepages will be called by vfs writeback function (i.=
-e writeback_sb_inodes).
->  >
->  > Right.
->  >
->  > But wouldn't it be simpler to do this from ->write_inode()?
->  >
->  > I.e. call write_inode_now() as suggested by Jan.
->  >
->  > Also could just call mark_inode_dirty() on the overlay inode
->  > regardless of the dirty flags on the upper inode since it shouldn't
->  > matter and results in simpler logic.
->  >
->
-> Hi Miklos=EF=BC=8C
->
-> Sorry for delayed response for this, I've been busy with another project.
->
-> I agree with your suggesion above and further more how about just mark ov=
-erlay inode dirty
-> when it has upper inode? This approach will make marking dirtiness simple=
- enough.
+On Mon, 2021-11-15 at 14:06 -0800, Kees Cook wrote:
+> On Mon, Nov 15, 2021 at 11:06:49AM -0500, Steven Rostedt wrote:
+> > On Mon, 15 Nov 2021 14:59:57 +0100
+> > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > 
+> > > 1. Allow a reasonably configured kernel to boot and run with
+> > > panic_on_warn set. Warnings should only be raised when something
+> > > is not configured as the developers expect it or the kernel is
+> > > put into a state that generally is _unexpected_ and has been
+> > > exposed little to the critical thought of the developer, to
+> > > testing efforts and use in other systems in the wild. Warnings
+> > > should not be used for something informative, which still allows
+> > > the kernel to continue running in a proper way in a generally
+> > > expected environment. Up to my knowledge, there are some kernels
+> > > in production that run with panic_on_warn; so, IMHO, this
+> > > requirement is generally accepted (we might of course
+> > 
+> > To me, WARN*() is the same as BUG*(). If it gets hit, it's a bug in
+> > the kernel and needs to be fixed. I have several WARN*() calls in
+> > my code, and it's all because the algorithms used is expected to
+> > prevent the condition in the warning from happening. If the warning
+> > triggers, it means either that the algorithm is wrong or my
+> > assumption about the algorithm is wrong. In either case, the kernel
+> > needs to be updated. All my tests fail if a WARN*() gets hit
+> > (anywhere in the kernel, not just my own).
+> > 
+> > After reading all the replies and thinking about this more, I find
+> > the pkill_on_warning actually worse than not doing anything. If you
+> > are concerned about exploits from warnings, the only real solution
+> > is a panic_on_warning. Yes, it brings down the system, but really,
+> > it has to be brought down anyway, because it is in need of a kernel
+> > update.
+> 
+> Hmm, yes. What it originally boiled down to, which is why Linus first
+> objected to BUG(), was that we don't know what other parts of the
+> system have been disrupted. The best example is just that of locking:
+> if we BUG() or do_exit() in the middle of holding a lock, we'll wreck
+> whatever subsystem that was attached to. Without a deterministic
+> system state unwinder, there really isn't a "safe" way to just stop a
+> kernel thread.
 
-Are you suggesting that all non-lower overlay inodes should always be dirty=
-?
+But this misses the real point: the majority of WARN conditions are in
+device drivers checking expected device state against an internal state
+model.  If this triggers it's a problem with the device not the thread,
+so killing the thread is blaming the wrong party and making the
+situation worse because it didn't do anything to address the actual
+problem.
 
-The logic would be simple, no doubt, but there's the cost to walking
-those overlay inodes which don't have a dirty upper inode, right?  Can
-you quantify this cost with a benchmark?  Can be totally synthetic,
-e.g. lookup a million upper files without modifying them, then call
-syncfs.
+> With this pkill_on_warn, we avoid the BUG problem (since the thread
+> of execution continues and stops at an 'expected' place: the signal
+> handler).
 
-Thanks,
-Miklos
+And what about the unexpected state?
+
+> However, now we have the newer objection from Linus, which is one of
+> attribution: the WARN might be hit during an "unrelated" thread of
+> execution and "current" gets blamed, etc. And beyond that, if we take
+> down a portion of userspace, what in userspace may be destabilized?
+> In theory, we get a case where any required daemons would be
+> restarted by init, but that's not "known".
+> 
+> The safest version of this I can think of is for processes to opt
+> into this mitigation. That would also cover the "special cases" we've
+> seen exposed too. i.e. init and kthreads would not opt in.
+> 
+> However, that's a lot to implement when Marco's tracing suggestion
+> might be sufficient and policy could be entirely implemented in
+> userspace. It could be as simple as this (totally untested):
+
+Really, no, this is precisely wrong thinking.  If the condition were
+recoverable it wouldn't result in a WARN.  There are some WARNs where
+we think the condition is unexpected enough not to bother adding error
+handling (we need these reporting so we know that the assumption was
+wrong), but for most if there were a way to handle it we'd have built
+it into the usual error flow.  What WARN means is that an unexpected
+condition occurred which means the kernel itself is in an unknown
+state.  You can't recover from that by killing and restarting random
+stuff, you have to reinitialize to a known state (i.e. reset the
+system).  Some of the reason we do WARN instead of BUG is that we
+believe the state contamination is limited and if you're careful the
+system can continue in a degraded state if the user wants to accept the
+risk.  Thinking the user can handle the state reset locally by some
+preset policy is pure fantasy: if we didn't know how to fix it at the
+point it occurred, why would something far away from the action when
+most of the information has been lost have a better chance?
+
+Your only policy choices when hitting WARN are
+
+   1. Accept the risk and continue degraded operation, or
+   2. reset the system to a known good state.
+
+James
+
+
+
