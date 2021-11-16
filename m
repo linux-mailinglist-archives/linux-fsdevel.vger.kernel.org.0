@@ -2,231 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9465F45282A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 04:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B99E54528FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 05:08:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237021AbhKPDEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Nov 2021 22:04:43 -0500
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:53273 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349011AbhKPDE1 (ORCPT
+        id S240767AbhKPELM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Nov 2021 23:11:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38888 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241947AbhKPEKU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Nov 2021 22:04:27 -0500
-Received: from dread.disaster.area (pa49-195-103-97.pa.nsw.optusnet.com.au [49.195.103.97])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 02BB0A4879;
-        Tue, 16 Nov 2021 14:01:22 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mmoim-009M9s-MF; Tue, 16 Nov 2021 14:01:20 +1100
-Date:   Tue, 16 Nov 2021 14:01:20 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        xfs <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
-Message-ID: <20211116030120.GQ449541@dread.disaster.area>
-References: <163660195990.22525.6041281669106537689.stgit@mickey.themaw.net>
- <163660197073.22525.11235124150551283676.stgit@mickey.themaw.net>
- <20211112003249.GL449541@dread.disaster.area>
- <CAJfpegvHDM_Mtc8+ASAcmNLd6RiRM+KutjBOoycun_Oq2=+p=w@mail.gmail.com>
- <20211114231834.GM449541@dread.disaster.area>
- <CAJfpegu4BwJD1JKngsrzUs7h82cYDGpxv0R1om=WGhOOb6pZ2Q@mail.gmail.com>
- <20211115222417.GO449541@dread.disaster.area>
- <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
+        Mon, 15 Nov 2021 23:10:20 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94B5C1F99A4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 16:58:30 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id i11so18532004ilv.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 16:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bh/uK2OAEBnWDXMyTu+rO+aF369+IR1K4BMvSsecSlI=;
+        b=AZMD85bqC+7gsP1XAnO971ULv4k2BveTBFp9oanHT79FoQxM+qPkMv9UOoYjeAVSc4
+         D4bjDHMhC/Hz7sqzqJx4vrvczTQcC6tDkpjQqYf6w2dMSZdqqm9HJqNqjOkOsjTAbLAy
+         9M2nFXZ9xV/WkZYZ+KqwlM8mKB/hQSnLV7QpEq7CE19BGOXT6Cg3bLXoEfwx8n8i6hU5
+         KcZZHw2s9eQ7TAFMm62h6GH2YTl+rWMDO82q6U4TBwQoQjNq3AqqOPndKcQyJtR2uxIZ
+         AcpRpOrsWrMu5ETmoa04yBB8Pie1Y7k3j+6CRIW9Lri6Qq0BItJnPU3wwy+Mi/dhNj06
+         cG7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bh/uK2OAEBnWDXMyTu+rO+aF369+IR1K4BMvSsecSlI=;
+        b=kIc6pJFA7Swrt2+9om9HHhYY8G+ZbURxDAAUXwGeKi5+MLE62qbutCP84QbKOBN/cg
+         34ia2iboEilDOb4/kaIqIeO1M94jmn4KKVT/d5g5NBaOdFYaax7W035Q7E6lU0gFLF+2
+         0j/66k5WDUt3ZP3dPHmEl+sfRZ6GyzN2Dy+6ggXPou4JJaY7YtA7FxABKroEfNpEQvkE
+         QlN4l5/MkD6UcChKUWnTvOUjpyDaI+dcBoHcZbVZs+alM2m58xefECOHVYrg+1cygac3
+         +rwKjecn1UnenobvFgs5c90mBosiX2frtmdiXafsr7dNABz+Em4npRunB4pd2fiG3crY
+         FlRA==
+X-Gm-Message-State: AOAM533kdbtkz4S7nDxn1wS30mkBR1zOS2gsBspsQ4m4rzSRG0/SQWuH
+        ByqJaEoYMcTqia0uZ3sBTG3uv2YRoVgnTjtMJXm6pQ==
+X-Google-Smtp-Source: ABdhPJxUE0bgYVFkJl1QSw3K0NHqN2K56WJbmLI8r7owhMKdvWxS6KwcAySTfqB8L/gumFUq5AMsqspJl8mDr2ddq/I=
+X-Received: by 2002:a05:6e02:1561:: with SMTP id k1mr1956880ilu.135.1637024310088;
+ Mon, 15 Nov 2021 16:58:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=61931f08
-        a=fP9RlOTWD4uZJjPSFnn6Ew==:117 a=fP9RlOTWD4uZJjPSFnn6Ew==:17
-        a=HsDoLlocmGUuF16g:21 a=8nJEP1OIZ-IA:10 a=vIxV3rELxO4A:10 a=7-415B0cAAAA:8
-        a=aOrxH43kqUc55-AE6OAA:9 a=wPNLvfGTeEIA:10 a=hl_xKfOxWho2XEkUDbUg:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20211111234203.1824138-1-almasrymina@google.com>
+ <20211111234203.1824138-3-almasrymina@google.com> <YY4dHPu/bcVdoJ4R@dhcp22.suse.cz>
+ <CAHS8izNMTcctY7NLL9+qQN8+WVztJod2TfBHp85NqOCvHsjFwQ@mail.gmail.com>
+ <YY4nm9Kvkt2FJPph@dhcp22.suse.cz> <CAHS8izMjfwgiNEoJWGSub6iqgPKyyoMZK5ONrMV2=MeMJsM5sg@mail.gmail.com>
+ <YZI9ZbRVdRtE2m70@dhcp22.suse.cz>
+In-Reply-To: <YZI9ZbRVdRtE2m70@dhcp22.suse.cz>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Mon, 15 Nov 2021 16:58:19 -0800
+Message-ID: <CAHS8izPcnwOqf8bjfrEd9VFxdA6yX3+a-TeHsxGgpAR+_bRdNA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] mm/oom: handle remote ooms
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, Greg Thelen <gthelen@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>, riel@surriel.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 09:03:31AM +0800, Ian Kent wrote:
-> On Tue, 2021-11-16 at 09:24 +1100, Dave Chinner wrote:
-> > On Mon, Nov 15, 2021 at 10:21:03AM +0100, Miklos Szeredi wrote:
-> > > On Mon, 15 Nov 2021 at 00:18, Dave Chinner <david@fromorbit.com>
-> > > wrote:
-> > > > I just can't see how this race condition is XFS specific and why
-> > > > fixing it requires XFS to sepcifically handle it while we ignore
-> > > > similar theoretical issues in other filesystems...
-> > > 
-> > > It is XFS specific, because all other filesystems RCU free the in-
-> > > core
-> > > inode after eviction.
-> > > 
-> > > XFS is the only one that reuses the in-core inode object and that
-> > > is
-> > > very much different from anything the other filesystems do and what
-> > > the VFS expects.
-> > 
-> > Sure, but I was refering to the xfs_ifree issue that the patch
-> > addressed, not the re-use issue that the *first patch addressed*.
-> > 
-> > > I don't see how clearing the quick link buffer in
-> > > ext4_evict_inode()
-> > > could do anything bad.  The contents are irrelevant, the lookup
-> > > will
-> > > be restarted anyway, the important thing is that the buffer is not
-> > > freed and that it's null terminated, and both hold for the ext4,
-> > > AFAICS.
-> > 
-> > You miss the point (which, admittedly, probably wasn't clear).
-> > 
-> > I suggested just zeroing the buffer in xfs_ifree instead of zeroing
-> > it, which you seemed to suggest wouldn't work and we should move the
-> > XFS functionality to .free_inode. That's what I was refering to as
-> > "not being XFS specific" - if it is safe for ext4 to zero the link
-> > buffer in .evict while lockless lookups can still be accessing the
-> > link buffer, it is safe for XFS to do the same thing in .destroy
-> > context.
-> 
-> I'll need to think about that for a while.
-> 
-> Zeroing the buffer while it's being used seems like a problem to
-> me and was what this patch was trying to avoid.
+On Mon, Nov 15, 2021 at 2:58 AM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Fri 12-11-21 09:59:22, Mina Almasry wrote:
+> > On Fri, Nov 12, 2021 at 12:36 AM Michal Hocko <mhocko@suse.com> wrote:
+> > >
+> > > On Fri 12-11-21 00:12:52, Mina Almasry wrote:
+> > > > On Thu, Nov 11, 2021 at 11:52 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > > >
+> > > > > On Thu 11-11-21 15:42:01, Mina Almasry wrote:
+> > > > > > On remote ooms (OOMs due to remote charging), the oom-killer will attempt
+> > > > > > to find a task to kill in the memcg under oom, if the oom-killer
+> > > > > > is unable to find one, the oom-killer should simply return ENOMEM to the
+> > > > > > allocating process.
+> > > > >
+> > > > > This really begs for some justification.
+> > > > >
+> > > >
+> > > > I'm thinking (and I can add to the commit message in v4) that we have
+> > > > 2 reasonable options when the oom-killer gets invoked and finds
+> > > > nothing to kill: (1) return ENOMEM, (2) kill the allocating task. I'm
+> > > > thinking returning ENOMEM allows the application to gracefully handle
+> > > > the failure to remote charge and continue operation.
+> > > >
+> > > > For example, in the network service use case that I mentioned in the
+> > > > RFC proposal, it's beneficial for the network service to get an ENOMEM
+> > > > and continue to service network requests for other clients running on
+> > > > the machine, rather than get oom-killed when hitting the remote memcg
+> > > > limit. But, this is not a hard requirement, the network service could
+> > > > fork a process that does the remote charging to guard against the
+> > > > remote charge bringing down the entire process.
+> > >
+> > > This all belongs to the changelog so that we can discuss all potential
+> > > implication and do not rely on any implicit assumptions.
+> >
+> > Understood. Maybe I'll wait to collect more feedback and upload v4
+> > with a thorough explanation of the thought process.
+> >
+> > > E.g. why does
+> > > it even make sense to kill a task in the origin cgroup?
+> > >
+> >
+> > The behavior I saw returning ENOMEM for this edge case was that the
+> > code was forever looping the pagefault, and I was (seemingly
+> > incorrectly) under the impression that a suggestion to forever loop
+> > the pagefault would be completely fundamentally unacceptable.
+>
+> Well, I have to say I am not entirely sure what is the best way to
+> handle this situation. Another option would be to treat this similar to
+> ENOSPACE situation. This would result into SIGBUS IIRC.
+>
+> The main problem with OOM killer is that it will not resolve the
+> underlying problem in most situations. Shmem files would likely stay
+> laying around and their charge along with them. Killing the allocating
+> task has problems on its own because this could be just a DoS vector by
+> other unrelated tasks sharing the shmem mount point without a gracefull
+> fallback. Retrying the page fault is hard to detect. SIGBUS might be
+> something that helps with the latest. The question is how to communicate
+> this requerement down to the memcg code to know that the memory reclaim
+> should happen (Should it? How hard we should try?) but do not invoke the
+> oom killer. The more I think about this the nastier this is.
 
-*nod*
+So actually I thought the ENOSPC suggestion was interesting so I took
+the liberty to prototype it. The changes required:
 
-That was my reading of the situation when I saw what ext4 was doing.
-But Miklos says that this is fine, and I don't know the code well
-enough to say he's wrong. So if it's ok for ext4, it's OK for XFS.
-If it's not OK for XFS, then it isn't OK for ext4 either, and we
-have more bugs to fix than just in XFS.
+1. In out_of_memory() we return false if !oc->chosen &&
+is_remote_oom(). This gets bubbled up to try_charge_memcg() as
+mem_cgroup_oom() returning OOM_FAILED.
+2. In try_charge_memcg(), if we get an OOM_FAILED we again check
+is_remote_oom(), if it is a remote oom, return ENOSPC.
+3. The calling code would return ENOSPC to the user in the no-fault
+path, and SIGBUS the user in the fault path with no changes.
 
-> I thought all that would be needed for this to happen is for a
-> dentry drop to occur while the link walk was happening after
-> ->get_link() had returned the pointer.
-> 
-> What have I got wrong in that thinking?
+To be honest I think this is very workable, as is Shakeel's suggestion
+of MEMCG_OOM_NO_VICTIM. Since this is an opt-in feature, we can
+document the behavior and if the userspace doesn't want to get killed
+they can catch the sigbus and handle it gracefully. If not, the
+userspace just gets killed if we hit this edge case.
 
-Nothing that I can see, but see my previous statement above.
+I may be missing something but AFAICT we don't have to "communicate
+this requirement down to the memcg code" with this implementation. The
+memcg code is aware the memcg is oom and will do the reclaim or
+whatever before invoking the oom-killer. It's only when the oom-killer
+can't find something to kill that we return ENOSPC or SIGBUS.
 
-I *think* that just zeroing the buffer means the race condition
-means the link resolves as either wholly intact, partially zeroed
-with trailing zeros in the length, wholly zeroed or zero length.
-Nothing will crash, the link string is always null terminated even
-if the length is wrong, and so nothing bad should happen as a result
-of zeroing the symlink buffer when it gets evicted from the VFS
-inode cache after unlink.
-
-> > If it isn't safe for ext4 to do that, then we have a general
-> > pathwalk problem, not an XFS issue. But, as you say, it is safe
-> > to do this zeroing, so the fix to xfs_ifree() is to zero the
-> > link buffer instead of freeing it, just like ext4 does.
-> > 
-> > As a side issue, we really don't want to move what XFS does in
-> > .destroy_inode to .free_inode because that then means we need to
-> > add synchronise_rcu() calls everywhere in XFS that might need to
-> > wait on inodes being inactivated and/or reclaimed. And because
-> > inode reclaim uses lockless rcu lookups, there's substantial
-> > danger of adding rcu callback related deadlocks to XFS here.
-> > That's just not a direction we should be moving in.
-> 
-> Another reason I decided to use the ECHILD return instead is that
-> I thought synchronise_rcu() might add an unexpected delay.
-
-It depends where you put the synchronise_rcu() call. :)
-
-> Since synchronise_rcu() will only wait for processes that
-> currently have the rcu read lock do you think that could actually
-> be a problem in this code path?
-
-No, I don't think it will.  The inode recycle case in XFS inode
-lookup can trigger in two cases:
-
-1. VFS cache eviction followed by immediate lookup
-2. Inode has been unlinked and evicted, then free and reallocated by
-the filesytsem.
-
-In case #1, that's a cold cache lookup and hence delays are
-acceptible (e.g. a slightly longer delay might result in having to
-fetch the inode from disk again). Calling synchronise_rcu() in this
-case is not going to be any different from having to fetch the inode
-from disk...
-
-In case #2, there's a *lot* of CPU work being done to modify
-metadata (inode btree updates, etc), and so the operations can block
-on journal space, metadata IO, etc. Delays are acceptible, and could
-be in the order of hundreds of milliseconds if the transaction
-subsystem is bottlenecked. waiting for an RCU grace period when we
-reallocate an indoe immediately after freeing it isn't a big deal.
-
-IOWs, if synchronize_rcu() turns out to be a problem, we can
-optimise that separately - we need to correct the inode reuse
-behaviour w.r.t. VFS RCU expectations, then we can optimise the
-result if there are perf problems stemming from correct behaviour.
-
-> > I'll also point out that this would require XFS inodes to pass
-> > through *two* rcu grace periods before the memory they hold could be
-> > freed because, as I mentioned, xfs inode reclaim uses rcu protected
-> > inode lookups and so relies on inodes to be freed by rcu callback...
-> > 
-> > > I tend to agree with Brian and Ian at this point: return -ECHILD
-> > > from
-> > > xfs_vn_get_link_inline() until xfs's inode resue vs. rcu walk
-> > > implications are fully dealt with.  No way to fix this from VFS
-> > > alone.
-> > 
-> > I disagree from a fundamental process POV - this is just sweeping
-> > the issue under the table and leaving it for someone else to solve
-> > because the root cause of the inode re-use issue has not been
-> > identified. But to the person who architected the lockless XFS inode
-> > cache 15 years ago, it's pretty obvious, so let's just solve it now.
-> 
-> Sorry, I don't understand what you mean by the root cause not
-> being identified?
-
-The whole approach of "we don't know how to fix the inode reuse case
-so disable it" implies that nobody has understood where in the reuse
-case the problem lies. i.e. "inode reuse" by itself is not the root
-cause of the problem.
-
-The root cause is "allowing an inode to be reused without waiting
-for an RCU grace period to expire". This might seem pedantic, but
-"without waiting for an rcu grace period to expire" is the important
-part of the problem (i.e. the bug), not the "allowing an inode to be
-reused" bit.
-
-Once the RCU part of the problem is pointed out, the solution
-becomes obvious. As nobody had seen the obvious (wait for an RCU
-grace period when recycling an inode) it stands to reason that
-nobody really understood what the root cause of the inode reuse
-problem.
-
-> > With the xfs_ifree() problem solved by zeroing rather than freeing,
-> > then the only other problem is inode reuse *within an rcu grace
-> > period*. Immediate inode reuse tends to be rare, (we can actually
-> > trace occurrences to validate this assertion), and implementation
-> > wise reuse is isolated to a single function: xfs_iget_recycle().
-> > 
-> > xfs_iget_recycle() drops the rcu_read_lock() inode lookup context
-> > that found the inode marks it as being reclaimed (preventing other
-> > lookups from finding it), then re-initialises the inode. This is
-> > what makes .get_link change in the middle of pathwalk - we're
-> > reinitialising the inode without waiting for the RCU grace period to
-> > expire.
-> 
-> Ok, good to know that, there's a lot of icache code to look
-> through, ;)
-
-My point precisely. :)
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+As always thank you very much for reviewing and providing feedback.
