@@ -2,126 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D874B4528DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 04:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81971452965
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 06:09:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237364AbhKPEBW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Nov 2021 23:01:22 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:27212 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237195AbhKPEBM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Nov 2021 23:01:12 -0500
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4HtXL76Jrcz8tvq;
-        Tue, 16 Nov 2021 11:56:31 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 16 Nov 2021 11:58:14 +0800
-Received: from use12-sp2.huawei.com (10.67.189.20) by
- dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 16 Nov 2021 11:58:14 +0800
-From:   Jubin Zhong <zhongjubin@huawei.com>
-To:     <hch@infradead.org>
-CC:     <kechengsong@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-        <wangfangpeng1@huawei.com>, <zhongjubin@huawei.com>
-Subject: Re: [PATCH] fs: Fix truncate never updates m/ctime
-Date:   Tue, 16 Nov 2021 11:58:10 +0800
-Message-ID: <1637035090-52547-1-git-send-email-zhongjubin@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
-In-Reply-To: <YZKfr5ZIvNBmKDQI@infradead.org>
-References: <YZKfr5ZIvNBmKDQI@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.20]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+        id S244513AbhKPFMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 00:12:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243280AbhKPFMS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Nov 2021 00:12:18 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F2E8461A6C;
+        Tue, 16 Nov 2021 05:09:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1637039360;
+        bh=GWgVUr1tOeQPllh9l2xS/tGKpZOm9t/Ms3FlnLUhw1c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fwL0kwVa/4GGpvh8OnAB2is8WhAyTWcfBW7W3tlP+Fci8Sj6FNrpq5yA76D0ta+sW
+         QtCEaUraWOXsxcvByS0cmG+kd0S2GnWblA4rGVCwR/OUuSm0PkRw/Q7LPOfc6/uNDO
+         dwX7nbYsPkqkAdND8NkNim1/hsFab9MI/rtHHtVI=
+Date:   Mon, 15 Nov 2021 21:09:17 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     adobriyan@gmail.com, gladkov.alexey@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/4] remove PDE_DATA()
+Message-Id: <20211115210917.96f681f0a75dfe6e1772dc6d@linux-foundation.org>
+In-Reply-To: <20211101093518.86845-1-songmuchun@bytedance.com>
+References: <20211101093518.86845-1-songmuchun@bytedance.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Mon, Nov 15, 2021 at 07:00:18PM +0800, Jubin Zhong wrote:
->> From: zhongjubin <zhongjubin@huawei.com>
->> 
->> Syscall truncate() never updates m/ctime even if the file size is
->> changed. However, this is incorrect according to man file:
->> 
->>   truncate (2):
->>   If  the  size  changed, then the st_ctime and st_mtime fields
->>   (respectively, time of last status change and time of last modification;
->>   see stat(2)) for the file are updated, and the set-user-ID and
->>   set-group-ID mode bits may be cleared.
->> 
->> Check file size before do_truncate() to fix this.
->
-> Please try to actually reproduce your alleged "bug".  And maybe also
-> look at the actual setattr implementations.  Hint: The XFS one even
-> has extensive comments.
+On Mon,  1 Nov 2021 17:35:14 +0800 Muchun Song <songmuchun@bytedance.com> wrote:
 
-Thanks for your advice. I found this problem on yaffs2 in the beginning,
-ftruncate() always works fine but truncate() does not. Now I have done 
-a few more tests and the following are the results:
+> I found a bug [1] some days ago, which is because we want to use
+> inode->i_private to pass user private data. However, this is wrong
+> on proc fs. We provide a specific function PDE_DATA() to get user
+> private data. Actually, we can hide this detail by storing
+> PDE()->data into inode->i_private and removing PDE_DATA() completely.
+> The user could use inode->i_private to get user private data just
+> like debugfs does. This series is trying to remove PDE_DATA().
 
-Test Environmont:
-	kernel: Linux Kernel v5.16
-	hardware: QEMU emulator version 3.1.0
-	arch: vexpress-v2p-ca9
+Why can't we do
 
-Teset Results:
-	filesystems     m/ctime updated by truncate?
-	jffs2           fail
-	yaffs2          fail
-	ubifs           success
-	ext2            success
-	ext4            success
-	tmpfs           success
-	xfs             success
+/*
+ * comment goes here
+ */
+static inline void *PDE_DATA(struct inode *inode)
+{
+	return inode->i_private;
+}
 
-Test Steps:
-	1. cd /path/to/mnt/point
-	2. dd if=/dev/zero of=test bs=1M count=1
-	3. stat test
-	4. /bin/my_truncate -s 1024 test
-	5. stat test
-	6. compare m/ctime of step 5 with step 3
+to abstract things a bit and to reduce the patch size?
 
-Program source:
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <unistd.h>
-	#include <sys/types.h>
-	int main(int argc, char **argv)
-	{
-		int ret;
-		char file_name[128] = {0};
-		
-		if (argc < 4 || argv == NULL || argv[1] == NULL || argv[2] == NULL || argv[3] == NULL) {
-			return -1;
-		}
-		
-		if (strcmp(argv[1], "-s")) {
-			return -1;
-		}
-		
-		if (realpath(argv[3], file_name) == NULL) {
-			printf("truncate: input file name %s err.\n", argv[3]);
-			return -1;
-		}
-		
-		off_t size = (off_t)strtol(argv[2], 0, 0);
-		ret = truncate(file_name, size);
-		if (ret) {
-			printf("truncate return err %d\n", ret);
-		}   
-		return ret;
-	}   
+otoh, that upper-case thing needs to go, so the patch size remains the
+same anyway.
 
-I work on embedded devices so concern about jffs2/yaffs2/ubifs the most. 
-If there are any errors in my test program please let me know.
+And perhaps we should have a short-term
 
-Thanks.
+#define PDE_DATA(i) pde_data(i)
+
+because new instances are sure to turn up during the development cycle.
+
+But I can handle that by staging the patch series after linux-next and
+reminding myself to grep for new PDE_DATA instances prior to
+upstreaming.
