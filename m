@@ -2,96 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC65452E26
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 10:39:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C68F452E3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 10:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233374AbhKPJmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 04:42:08 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:43250 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233162AbhKPJmH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 04:42:07 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 29D87218A4;
-        Tue, 16 Nov 2021 09:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1637055549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CyoOkrmM4Ugx2tFGn3orFJRtgDuhEZbVLB7WBpXDCRI=;
-        b=Td9R8Cpl9hprSCtmF2qOYLllhemJV/VM5LtSFcG6ch6W5tKUr6EsqYiq84CVlxTsBns0SF
-        UzTICDbq38Wt+AlB3SOsGQYf1eSgtBne1YAokwEGCUTB3eR/CHNjZSgk7nzP0XADK0C/p0
-        22pnnE5JPw3LiB85kDS6bJrX5PFy56s=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id CE818A3B83;
-        Tue, 16 Nov 2021 09:39:08 +0000 (UTC)
-Date:   Tue, 16 Nov 2021 10:39:08 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Greg Thelen <gthelen@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>, riel@surriel.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] mm/oom: handle remote ooms
-Message-ID: <YZN8PCK9kmmYUXSp@dhcp22.suse.cz>
-References: <20211111234203.1824138-1-almasrymina@google.com>
- <20211111234203.1824138-3-almasrymina@google.com>
- <YY4dHPu/bcVdoJ4R@dhcp22.suse.cz>
- <CAHS8izNMTcctY7NLL9+qQN8+WVztJod2TfBHp85NqOCvHsjFwQ@mail.gmail.com>
- <YY4nm9Kvkt2FJPph@dhcp22.suse.cz>
- <CAHS8izMjfwgiNEoJWGSub6iqgPKyyoMZK5ONrMV2=MeMJsM5sg@mail.gmail.com>
- <YZI9ZbRVdRtE2m70@dhcp22.suse.cz>
- <CAHS8izPcnwOqf8bjfrEd9VFxdA6yX3+a-TeHsxGgpAR+_bRdNA@mail.gmail.com>
- <YZN5tkhHomj6HSb2@dhcp22.suse.cz>
+        id S233175AbhKPJnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 04:43:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233149AbhKPJnv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Nov 2021 04:43:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DC57A61263;
+        Tue, 16 Nov 2021 09:40:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637055654;
+        bh=qvJ2MmqdefIgR7a3kOTYk8TVyPCF90+hq0kPO35l50Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y1ypC7GcpCmpNOnu64uHb9tEFRZhyvFqDIkpEVubYvF34VMEiwx/mf+JDjWYD1MMX
+         4ZuGRK65u6OGiC4zSet3nynYOelrs+09y46wrGFxp6VmWOT8VrvT7vMjvXtzWLAYSy
+         CafvRJjadZ2n/S2XHwRzRUU2YAZMR80eA2kzuU/KkHC6dX82lOtpGxp/c9wsdHCUxW
+         OQ1cY1gyzRAoqZ3022Xu0GTttowb8qkp3DeywgWzt6AETK+ovAwSSndR7rmmMf4OzD
+         4f2Srx1SvYynHOdnFMO8Pnk4HGUUx7leHS2yG0X8Im5eGk2OQP68OL2oGV5s/CUN1x
+         xa2brdP3nTVeA==
+Date:   Tue, 16 Nov 2021 10:40:50 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Seth Forshee <seth.forshee@digitalocean.com>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 1/2] fs: handle circular mappings correctly
+Message-ID: <20211116094050.bt3k5oaye6sm2ar7@wittgenstein>
+References: <20211109145713.1868404-1-brauner@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YZN5tkhHomj6HSb2@dhcp22.suse.cz>
+In-Reply-To: <20211109145713.1868404-1-brauner@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 16-11-21 10:28:25, Michal Hocko wrote:
-> On Mon 15-11-21 16:58:19, Mina Almasry wrote:
-[...]
-> > To be honest I think this is very workable, as is Shakeel's suggestion
-> > of MEMCG_OOM_NO_VICTIM. Since this is an opt-in feature, we can
-> > document the behavior and if the userspace doesn't want to get killed
-> > they can catch the sigbus and handle it gracefully. If not, the
-> > userspace just gets killed if we hit this edge case.
+On Tue, Nov 09, 2021 at 03:57:12PM +0100, Christian Brauner wrote:
+> From: Christian Brauner <christian.brauner@ubuntu.com>
 > 
-> I am not sure about the MEMCG_OOM_NO_VICTIM approach. It sounds really
-> hackish to me. I will get back to Shakeel's email as time permits. The
-> primary problem I have with this, though, is that the kernel oom killer
-> cannot really do anything sensible if the limit is reached and there
-> is nothing reclaimable left in this case. The tmpfs backed memory will
-> simply stay around and there are no means to recover without userspace
-> intervention.
+> When calling setattr_prepare() to determine the validity of the attributes the
+> ia_{g,u}id fields contain the value that will be written to inode->i_{g,u}id.
+> When the {g,u}id attribute of the file isn't altered and the caller's fs{g,u}id
+> matches the current {g,u}id attribute the attribute change is allowed.
+> 
+> The value in ia_{g,u}id does already account for idmapped mounts and will have
+> taken the relevant idmapping into account. So in order to verify that the
+> {g,u}id attribute isn't changed we simple need to compare the ia_{g,u}id value
+> against the inode's i_{g,u}id value.
+> 
+> This only has any meaning for idmapped mounts as idmapping helpers are
+> idempotent without them. And for idmapped mounts this really only has a meaning
+> when circular idmappings are used, i.e. mappings where e.g. id 1000 is mapped
+> to id 1001 and id 1001 is mapped to id 1000. Such ciruclar mappings can e.g. be
+> useful when sharing the same home directory between multiple users at the same
+> time.
+> 
+> As an example consider a directory with two files: /source/file1 owned by
+> {g,u}id 1000 and /source/file2 owned by {g,u}id 1001. Assume we create an
+> idmapped mount at /target with an idmapping that maps files owned by {g,u}id
+> 1000 to being owned by {g,u}id 1001 and files owned by {g,u}id 1001 to being
+> owned by {g,u}id 1000. In effect, the idmapped mount at /target switches the
+> ownership of /source/file1 and source/file2, i.e. /target/file1 will be owned
+> by {g,u}id 1001 and /target/file2 will be owned by {g,u}id 1000.
+> 
+> This means that a user with fs{g,u}id 1000 must be allowed to setattr
+> /target/file2 from {g,u}id 1000 to {g,u}id 1000. Similar, a user with fs{g,u}id
+> 1001 must be allowed to setattr /target/file1 from {g,u}id 1001 to {g,u}id
+> 1001. Conversely, a user with fs{g,u}id 1000 must fail to setattr /target/file1
+> from {g,u}id 1001 to {g,u}id 1000. And a user with fs{g,u}id 1001 must fail to
+> setattr /target/file2 from {g,u}id 1000 to {g,u}id 1000. Both cases must fail
+> with EPERM for non-capable callers.
+> 
+> Before this patch we could end up denying legitimate attribute changes and
+> allowing invalid attribute changes when circular mappings are used. To even get
+> into this situation the caller must've been privileged both to create that
+> mapping and to create that idmapped mount.
+> 
+> This hasn't been seen in the wild anywhere but came up when expanding the
+> testsuite during work on a series of hardening patches. All idmapped fstests
+> pass without any regressions and we add new tests to verify the behavior of
+> circular mappings.
+> 
+> Fixes: 2f221d6f7b88 ("attr: handle idmapped mounts")
+> Cc: Seth Forshee <seth.forshee@digitalocean.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: stable@vger.kernel.org
+> CC: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
 
-And just a small clarification. Tmpfs is fundamentally problematic from
-the OOM handling POV. The nuance here is that the OOM happens in a
-different memcg and thus a different resource domain. If you kill a task
-in the target memcg then you effectively DoS that workload. If you kill
-the allocating task then it is DoSed by anybody allowed to write to that
-shmem. All that without a graceful fallback.
+Christoph, can you take a look, by any chance? I'd like to get this to
+Linus this week.
 
-I still have very hard time seeing how that can work reasonably except
-for a very special case with a lot of other measures to ensure the
-target memcg never hits the hard limit so the OOM simply is not a
-problem.
-
-Memory controller has always been used to enforce and balance memory
-usage among resource domains and this goes against that principle.
-I would be really curious what Johannes thinks about this.
--- 
-Michal Hocko
-SUSE Labs
+>  fs/attr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 473d21b3a86d..66899b6e9bd8 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -35,7 +35,7 @@ static bool chown_ok(struct user_namespace *mnt_userns,
+>  		     kuid_t uid)
+>  {
+>  	kuid_t kuid = i_uid_into_mnt(mnt_userns, inode);
+> -	if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, kuid))
+> +	if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, inode->i_uid))
+>  		return true;
+>  	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
+>  		return true;
+> @@ -62,7 +62,7 @@ static bool chgrp_ok(struct user_namespace *mnt_userns,
+>  {
+>  	kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
+>  	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)) &&
+> -	    (in_group_p(gid) || gid_eq(gid, kgid)))
+> +	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
+>  		return true;
+>  	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
+>  		return true;
+> 
+> base-commit: 8bb7eca972ad531c9b149c0a51ab43a417385813
+> -- 
+> 2.30.2
+> 
