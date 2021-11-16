@@ -2,129 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D676A452A17
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 06:52:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D0CD45297A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Nov 2021 06:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238300AbhKPFzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 00:55:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238187AbhKPFzE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 00:55:04 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A81C0AD858
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 21:09:52 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id r130so17063771pfc.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Nov 2021 21:09:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=antUMEgQu5AN/kNJmEOtbmAwcQ7siqDvZ8GUdsP/QaE=;
-        b=oRohn4uzfqM7ljesaWe15EzZ29DQbBVWYe/kd/L9PcExIDhgg6IApC+3B6TQCDFj86
-         sYzKiyN4YHLYSTOLzdc2048h0vsCuN6KYMmddq7+u78U8vgbjAbNvPbuZzlUbwkd5JHZ
-         P+h5EVCgq831tpCY/JkjBH5INoaoNYL9W3g2gcGFbk80C5fkwIHkV1VGa1P2oy+4sdf1
-         u4dgL+rhc8DSigypuKf7b6xIsrwoN5z5oxLDHKchrgWyOqrtJKwxhXkF9KOsCyDUaMGP
-         G+AhAqecpQ08MxDmmiZorZuIFXrCCDbfQ0K2bcWRi7h+WFsInpycIiEBcOfuS5gsdTGx
-         FD4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=antUMEgQu5AN/kNJmEOtbmAwcQ7siqDvZ8GUdsP/QaE=;
-        b=WsRESdJaGvnZsMno0k04OqeCLtMrj/YAiGApiayBhT3/8zBNZZn0uiI47+sZA+Pex9
-         scjGKYqbm13/jP2aYhXB9ZcpBi0cnjZZjLdBTyiY0DCl8/pcQryJHto6hncCxWipr6cp
-         we5n+ezx+uOs8LF5OoOqMghM22dDmNkgYixVw6LP/5sbK3LlvgutGdwfv3Sjv1MlHXSG
-         gzfeWTN6x3BOd5PLSRfmJgu1K49qTHKpdyShMFYPETcR+AT6EpvhBCXYbr1C3WEc9yEU
-         Ys/ndLwIuEXVFzRF9QGrIQ80J98ABhg0G0vKJCWcxELjIDhTdNJMeDwGgFhh7h63sonv
-         TdWw==
-X-Gm-Message-State: AOAM5322okl0PPoBUo/197ej0wyesbWHSJ3TUXvU6W96oLi0HPmcC+o9
-        ysJ506u0Uw+fkU/l2Gr4APWCMKQJo8Za4RR+Rw==
-X-Google-Smtp-Source: ABdhPJws5yn6lSJc4FfQJuEe5rOckquUr+M2W424QMko7Q7VUFSo3Lz1xBTnq/QRgIjCGTGLwEOV+QTdFL9Pc/TgdF4=
-X-Received: by 2002:a63:8c5c:: with SMTP id q28mr3144050pgn.244.1637039392434;
- Mon, 15 Nov 2021 21:09:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20211027132319.GA7873@quack2.suse.cz> <YXm2tAMYwFFVR8g/@redhat.com>
- <20211102110931.GD12774@quack2.suse.cz> <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
- <20211103100900.GB20482@quack2.suse.cz> <CAOQ4uxjsULgLuOFUYkEePySx6iPXRczgCZMxx8E5ncw=oarLPg@mail.gmail.com>
- <YYMO1ip9ynXFXc8f@redhat.com> <20211104100316.GA10060@quack2.suse.cz>
- <YYU/7269JX2neLjz@redhat.com> <CAOQ4uxiM_i+6Zs+ewg8mfA5aKs-gY7yj3kdrmPLO8Zn+bz4DbA@mail.gmail.com>
- <20211111173043.GB25491@quack2.suse.cz> <CAOQ4uxiOUM6=190w4018w4nJRnqi+9gzzfQTsLh5gGwbQH_HgQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiOUM6=190w4018w4nJRnqi+9gzzfQTsLh5gGwbQH_HgQ@mail.gmail.com>
-From:   Stef Bon <stefbon@gmail.com>
-Date:   Tue, 16 Nov 2021 06:09:41 +0100
-Message-ID: <CANXojcy9JzXeLQ6bz9+UOekkpqo8NkgQbhugmGmPE+x3+_=h3Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Vivek Goyal <vgoyal@redhat.com>,
-        Ioannis Angelakopoulos <iangelak@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
+        id S233431AbhKPFWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 00:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233403AbhKPFWF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Nov 2021 00:22:05 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E471E60F6E;
+        Tue, 16 Nov 2021 05:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1637039948;
+        bh=0+h5I2fETKUh6GKu9bzTHSm7jqJYMvkVoBdFhY2URtE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jg2HkZELTf65WPyR611JRctoeh08n8+NPdKweeTf7PMvxNchHTMDvWsc/5jZuQ/5i
+         ZSHaM85TcRKSIWfX3oRQ5tTjfXwlBiVW017CXWo1I5M5IFi8nFXpWqtUBuoxXzgx65
+         HJ94E1llTJD5T6zTl3FoH9Z3y20PLI77DAK7rqnM=
+Date:   Mon, 15 Nov 2021 21:19:05 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>
-Content-Type: text/plain; charset="UTF-8"
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang (=?UTF-8?Q?=E5=BC=B5=E9=8C=A6?= =?UTF-8?Q?=E6=96=87?=) 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        John Hubbard <jhubbard@nvidia.com>,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH v11 2/3] mm: add a field to store names for private
+ anonymous memory
+Message-Id: <20211115211905.faef6f9db3ce4a6fb9ed66a2@linux-foundation.org>
+In-Reply-To: <CAJuCfpGG-j00eDL8p3vNDh4ye2Ja4untoA20UdTkTubm3AfMEQ@mail.gmail.com>
+References: <20211019215511.3771969-1-surenb@google.com>
+        <20211019215511.3771969-2-surenb@google.com>
+        <CAJuCfpGG-j00eDL8p3vNDh4ye2Ja4untoA20UdTkTubm3AfMEQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ioannis,
+On Tue, 19 Oct 2021 14:58:36 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
 
-I see that you have been working on making fsnotify work on virtiofs.
-Earlier you contacted me since I've written this:
+> As Andrew suggested, I checked the image sizes with allnoconfig builds:
+> 
+> unpatched Linus' ToT
+>    text    data     bss     dec     hex filename
+> 1324759      32   73928 1398719 1557bf vmlinux
+> 
+> After the first patch is applied (madvise refactoring)
+>    text    data     bss     dec     hex filename
+> 1322346      32   73928 1396306 154e52 vmlinux
+> >>> 2413 bytes decrease vs ToT <<<
+> 
+> After all patches applied with CONFIG_ANON_VMA_NAME=n
+>    text    data     bss     dec     hex filename
+> 1322337      32   73928 1396297 154e49 vmlinux
+> >>> 2422 bytes decrease vs ToT <<<
+> 
+> After all patches applied with CONFIG_ANON_VMA_NAME=y
+>    text    data     bss     dec     hex filename
+> 1325228      32   73928 1399188 155994 vmlinux
+> >>> 469 bytes increase vs ToT <<<
 
-https://github.com/libfuse/libfuse/wiki/Fsnotify-and-FUSE
+Nice.  Presumably there are memory savings from no longer duplicating
+the vma names?
 
-and send you my patches on 23 june.
-I want to mention first that I would have appreciated it if you would
-have reacted to me after I've sent you my patches. I did not get any
-reaction from you. Maybe these patches (which differ from what you
-propose now, but there is also a lot in common) have been an
-inspiration for you.
-
-Second, what I've written about is that with network filesystems (eg a
-backend shared with other systems) fsnotify support in FUSE has some
-drawbacks.
-In a network environment, where a network fs is part of making people
-collaborate, it's very useful to have information on who did what on
-which host, and also when. Simply a message "a file has been created
-in the folder you watch" is not enough. For example, if you are part
-of a team, and assigned to your team is a directory on a server where
-you can work on some shared documents. Now in this example there is a
-planning, and some documents have to be written. In that case you want
-to be informed that someone in your team has started a document (by
-creating it) by the system.
-
-This "extended" information will never get through fsnotify.
-
-Other info useful to you as team member:
-
--  you have become member of another team: sbon@anotherteam.example.org
--  diskspace and/or quota shortage reported by networksystem
--  new teammember, teammember left
--  your "rights" or role in the network/team have been changed (for
-example from reader to reader and writer to some documents)
-
-What I want to say is that in a network where lots of people work
-together in teams/projects, (and I want Linux to play a role there, as
-desktop/workstation) communication is very important, and all these
-messages should be supported by the system. My idea is the support of
-watching fs events with FUSE filesystems should go through userspace,
-and not via the kernel (cause fs events are part of your setup in the
-network, together with all other tools to make people collaborate like
-chat/call/text, and because mentioned above extended info about the
-who on what host etc is not supported by fsnotify).
-There should be a fs event watcher which takes care of all watches on
-behalf of applications during a session, similar to gamin and FAM once
-did (not used anymore?).
-When receiving a request from one of the applications this fsevent
-watcher will use inotify and/or fanotify for local fs's only. With a
-FUSE fs, it should contact (via a socket) this fs that a watch has
-been set on an inode with a certain mask.
-If the FUSE fs does not support this, fallback on normal inotify/fanotify.
-This way extended info is possible.
-
-Is this extended information also useful for virtiofs?
-
-Stef Bon
+I fudged up a [0/n] changelog (please don't forget this) and merged it
+all for testing.
