@@ -2,150 +2,307 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA4D454D68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 19:49:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 106D2454D83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 19:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239108AbhKQSwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Nov 2021 13:52:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233586AbhKQSwc (ORCPT
+        id S231995AbhKQS7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Nov 2021 13:59:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55026 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240281AbhKQS7X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Nov 2021 13:52:32 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11767C061570;
-        Wed, 17 Nov 2021 10:49:33 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id b40so13177404lfv.10;
-        Wed, 17 Nov 2021 10:49:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G5GJT4Hs/HI/FowLComfkTjFmzZeGxKNZxNsulf8xgM=;
-        b=jM76WaN0NLgJU5Oxm6XPMObZVCaqjwsRXyMp1tD3EHh59J1SkJDNgu3KRbYHeFt7Np
-         A8Mi1BMKnCEnGzr5ilwvJUORDK4xVagxa6zYtZUrXlIQCMp6Q0jmW68b8Q2Yr+xQn2fy
-         19ocUZ96CB58ISq0NDerpjdDzODDoKOGSUkiTGz3racqRI4YRVEn0UiJUrAJ1H3nPZUv
-         6X9M79MwTZNMkUAOEMUwUpk2l9WheQv9NzvE+K36HqmuqpdXn8VFd5U7ftTFA7fh+b7T
-         Ecr0K4qTzgQvVEnXsx4O1gv7xcdH67akhgmIrX6aUtTJ/COV5bMRYJQNFs5up15XpDv6
-         0loA==
+        Wed, 17 Nov 2021 13:59:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637175382;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Vxkdfj9JEAJ/LK1YWoTa70cHi7v/Kw2W+r/qMs1q6ps=;
+        b=WigOILrdVEbpDRqOqydmB8LZhUrhx4M0XC5EmHgfWCjhzT+oB6lbCk/RThaNie3JiOuveZ
+        dBUpPMsYW9RasbE4r8bRvbi04sBXmCdx36GsY33jMS8vkIz8GWytmFSnJiEWasablBI1HP
+        wnDuEfIAMFUZOXIFHY6D6ZiyGawMDKY=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-308-OoNXx-sqPEOrsskkfPdMgg-1; Wed, 17 Nov 2021 13:56:21 -0500
+X-MC-Unique: OoNXx-sqPEOrsskkfPdMgg-1
+Received: by mail-qk1-f197.google.com with SMTP id v14-20020a05620a0f0e00b0043355ed67d1so2688975qkl.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Nov 2021 10:56:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G5GJT4Hs/HI/FowLComfkTjFmzZeGxKNZxNsulf8xgM=;
-        b=BW3ECw6+isP7cVBFpZl3W4yMlNtvhToZlGYfMcwtxldtbmsD9G7j53HBubhPs2voJ7
-         SJZyG1oujGZpkJVOJRfzEo6UZUNIf3DNg/M8OpPpavkbQF7/4I/WRFkxJ+5CD8Lreo1q
-         f2uPUNOZcE1PDd1WIVjXUpzpe9dX3yJeTWDtVpsQ+cLb/By6rbVibEKUv4NJFjV0SGxU
-         U1UQI0U3VP7rSinjKHj6IUImaVY576p/ag/G+pgZd9On4c/ATH4StsJDGkXjRA3OeKRg
-         wSb7wwAeRdT7cYfqaJQtIJcxqOCL6B/BagIPVB/4mFCLEzHH5RiJDBZ9hXymWsnF+HlU
-         ssmg==
-X-Gm-Message-State: AOAM530I0+i/r2ejWkWzuYAxUczRuaLr1AGF9XmDPgzvvyM6+w3xZVQ4
-        zQPWUBi3kr9FN3SrzlLgkfgGuW7LwjP6WpZ604A=
-X-Google-Smtp-Source: ABdhPJw6mymHjqz0grCP5N1aNDxuQtRnoKixwZE5HkzfHSrWxGkccqjl3ZZojggRe7PfuJwEXxaMkEq0cWVi+OI3hrY=
-X-Received: by 2002:ac2:4555:: with SMTP id j21mr18097636lfm.120.1637174971163;
- Wed, 17 Nov 2021 10:49:31 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Vxkdfj9JEAJ/LK1YWoTa70cHi7v/Kw2W+r/qMs1q6ps=;
+        b=dn0fROqZiVCLisR+WlUJgxJLfulPhMS4OL8a36ZdJCU9Ndazw+tHtXXqMY4A0jSSxt
+         WdrahMeqL7b76d8gooW9FDocHBybzkP793PrA3Q9g7CrzIGNExOjfI5WnfWflmzXsDYt
+         Kt3HnLvgp+GRepGLyCDEMFxsxQpAAA4NEaqND/+0pPqutJkY24g9Q3+hOs69zS375CIW
+         8wvhzBUGLKEVdh8nJJe3z2W+BaoxA4qn9cSziWIc0rZwVdOz5SUCU17VnWgnAPtnjxo/
+         hvVRoWMy47XiLcWyBec9bVAulh/8se0RRxtwARtJCOnKwEHyCVKwjAspu1mqJAwomPGn
+         Y46Q==
+X-Gm-Message-State: AOAM532IPpz3SPE5+9Ldkfbw54HNFuEmWc39j+eSgiknJfCPnNSphM2C
+        AIqUKcbTpXAHAIUL97Ofov/Nzvo6rnzCJkg3uC0qwAUSRxWL5CgLO39zHdcUx/XpLKgQONz253M
+        4ka58pquMmrFEIDmc0IBBTLHN5A==
+X-Received: by 2002:ac8:590a:: with SMTP id 10mr19262634qty.186.1637175380484;
+        Wed, 17 Nov 2021 10:56:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxgmIgb+WOecaMJGBYjEmk1D98xPws7O0jLA83WP0lJ5dXbARz40eq0F3oz8jvsYAcBKi1PUg==
+X-Received: by 2002:ac8:590a:: with SMTP id 10mr19262593qty.186.1637175380136;
+        Wed, 17 Nov 2021 10:56:20 -0800 (PST)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id u10sm381268qkp.104.2021.11.17.10.56.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Nov 2021 10:56:19 -0800 (PST)
+Date:   Wed, 17 Nov 2021 13:56:17 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <miklos@szeredi.hu>,
+        xfs <linux-xfs@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
+Message-ID: <YZVQUSCWWgOs+cRB@bfoster>
+References: <163660197073.22525.11235124150551283676.stgit@mickey.themaw.net>
+ <20211112003249.GL449541@dread.disaster.area>
+ <CAJfpegvHDM_Mtc8+ASAcmNLd6RiRM+KutjBOoycun_Oq2=+p=w@mail.gmail.com>
+ <20211114231834.GM449541@dread.disaster.area>
+ <CAJfpegu4BwJD1JKngsrzUs7h82cYDGpxv0R1om=WGhOOb6pZ2Q@mail.gmail.com>
+ <20211115222417.GO449541@dread.disaster.area>
+ <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
+ <20211116030120.GQ449541@dread.disaster.area>
+ <YZPVSTDIWroHNvFS@bfoster>
+ <20211117002251.GR449541@dread.disaster.area>
 MIME-Version: 1.0
-References: <211110.86r1bogg27.gmgdl@evledraar.gmail.com> <20211111004724.GA839@neerajsi-x1.localdomain>
- <20211112055421.GA27823@lst.de>
-In-Reply-To: <20211112055421.GA27823@lst.de>
-From:   Neeraj Singh <nksingh85@gmail.com>
-Date:   Wed, 17 Nov 2021 10:49:20 -0800
-Message-ID: <CANQDOdedAoOvPHra0e8PuOO68xt+gOSbbV3tHzGxcyJy5nTm_A@mail.gmail.com>
-Subject: Re: RFC: A configuration design for future-proofing fsync() configuration
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>,
-        Git List <git@vger.kernel.org>, Patrick Steinhardt <ps@pks.im>,
-        Jeff King <peff@peff.net>,
-        Johannes Schindelin <Johannes.Schindelin@gmx.de>,
-        Junio C Hamano <gitster@pobox.com>,
-        "Neeraj K. Singh" <neerajsi@microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Wong <e@80x24.org>,
-        Emily Shaffer <emilyshaffer@google.com>,
-        linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211117002251.GR449541@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 11, 2021 at 9:54 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Wed, Nov 10, 2021 at 04:47:24PM -0800, Neeraj Singh wrote:
-> > It would be nice to loop in some Linux fs developers to find out what can be
-> > done on current implementations to get the durability without terrible
-> > performance. From reading the docs and mailing threads it looks like the
-> > sync_file_range + bulk fsync approach should actually work on the current XFS
-> > implementation.
->
-> If you want more than just my advice linux-fsdevel@vger.kernel.org is
-> a good place to find a wide range of opinions.
->
-> Anyway, I think syncfs is the biggest band for the buck as it will give
-> you very efficient syncing with very little overhead in git, but it does
-> have a huge noisy neighbor problem that might make it unattractive
-> for multi-tenant file systems or git hosting.
+On Wed, Nov 17, 2021 at 11:22:51AM +1100, Dave Chinner wrote:
+> On Tue, Nov 16, 2021 at 10:59:05AM -0500, Brian Foster wrote:
+> > On Tue, Nov 16, 2021 at 02:01:20PM +1100, Dave Chinner wrote:
+> > > On Tue, Nov 16, 2021 at 09:03:31AM +0800, Ian Kent wrote:
+> > > > On Tue, 2021-11-16 at 09:24 +1100, Dave Chinner wrote:
+> > > > > If it isn't safe for ext4 to do that, then we have a general
+> > > > > pathwalk problem, not an XFS issue. But, as you say, it is safe
+> > > > > to do this zeroing, so the fix to xfs_ifree() is to zero the
+> > > > > link buffer instead of freeing it, just like ext4 does.
+> > > > > 
+> > > > > As a side issue, we really don't want to move what XFS does in
+> > > > > .destroy_inode to .free_inode because that then means we need to
+> > > > > add synchronise_rcu() calls everywhere in XFS that might need to
+> > > > > wait on inodes being inactivated and/or reclaimed. And because
+> > > > > inode reclaim uses lockless rcu lookups, there's substantial
+> > > > > danger of adding rcu callback related deadlocks to XFS here.
+> > > > > That's just not a direction we should be moving in.
+> > > > 
+> > > > Another reason I decided to use the ECHILD return instead is that
+> > > > I thought synchronise_rcu() might add an unexpected delay.
+> > > 
+> > > It depends where you put the synchronise_rcu() call. :)
+> > > 
+> > > > Since synchronise_rcu() will only wait for processes that
+> > > > currently have the rcu read lock do you think that could actually
+> > > > be a problem in this code path?
+> > > 
+> > > No, I don't think it will.  The inode recycle case in XFS inode
+> > > lookup can trigger in two cases:
+> > > 
+> > > 1. VFS cache eviction followed by immediate lookup
+> > > 2. Inode has been unlinked and evicted, then free and reallocated by
+> > > the filesytsem.
+> > > 
+> > > In case #1, that's a cold cache lookup and hence delays are
+> > > acceptible (e.g. a slightly longer delay might result in having to
+> > > fetch the inode from disk again). Calling synchronise_rcu() in this
+> > > case is not going to be any different from having to fetch the inode
+> > > from disk...
+> > > 
+> > > In case #2, there's a *lot* of CPU work being done to modify
+> > > metadata (inode btree updates, etc), and so the operations can block
+> > > on journal space, metadata IO, etc. Delays are acceptible, and could
+> > > be in the order of hundreds of milliseconds if the transaction
+> > > subsystem is bottlenecked. waiting for an RCU grace period when we
+> > > reallocate an indoe immediately after freeing it isn't a big deal.
+> > > 
+> > > IOWs, if synchronize_rcu() turns out to be a problem, we can
+> > > optimise that separately - we need to correct the inode reuse
+> > > behaviour w.r.t. VFS RCU expectations, then we can optimise the
+> > > result if there are perf problems stemming from correct behaviour.
+> > > 
+> > 
+> > FWIW, with a fairly crude test on a high cpu count system, it's not that
+> > difficult to reproduce an observable degradation in inode allocation
+> > rate with a synchronous grace period in the inode reuse path, caused
+> > purely by a lookup heavy workload on a completely separate filesystem.
+> >
+> > The following is a 5m snapshot of the iget stats from a filesystem doing
+> > allocs/frees with an external/heavy lookup workload (which not included
+> > in the stats), with and without a sync grace period wait in the reuse
+> > path:
+> > 
+> > baseline:	ig 1337026 1331541 4 5485 0 5541 1337026
+> > sync_rcu_test:	ig 2955 2588 0 367 0 383 2955
+> 
+> The alloc/free part of the workload is a single threaded
+> create/unlink in a tight loop, yes?
+> 
+> This smells like a side effect of agressive reallocation of
+> just-freed XFS_IRECLAIMABLE inodes from the finobt that haven't had
+> their unlink state written back to disk yet. i.e. this is a corner
+> case in #2 above where a small set of inodes is being repeated
+> allocated and freed by userspace and hence being agressively reused
+> and never needing to wait for IO. i.e. a tempfile workload
+> optimisation...
+> 
 
-To summarize where we are at for linux-fsdevel:
-We're working on making Git preserve data added to the repo even if
-the system crashes or loses power at some point soon after a Git
-command completes. The default behavior of git-for-windows is to set
-core.fsyncobjectfiles=true, which at least ensures durability for
-loose object files.
+Yes, that was the point of the test.. to stress inode reuse against
+known rcu activity.
 
-The current implementation of core.fsyncobjectfiles inserts an fsync
-between writing each new object to a temp name and renaming it to its
-final hash-based name. This approach is slow when adding hundreds of
-files to the repo [1]. The main cost on the hardware we tested is
-actually the CACHE_FLUSH request sent down to
-the storage hardware. There is also work in-flight by Patrick
-Steinhardt to sync ref files [2].
+> > I think this is kind of the nature of RCU and why I'm not sure it's a
+> > great idea to rely on update side synchronization in a codepath that
+> > might want to scale/perform in certain workloads.
+> 
+> The problem here is not update side synchronisation. Root cause is
+> aggressive reallocation of recently freed VFS inodes via physical
+> inode allocation algorithms. Unfortunately, the RCU grace period
+> requirements of the VFS inode life cycle dictate that we can't
+> aggressively re-allocate and reuse freed inodes like this. i.e.
+> reallocation of a just-freed inode also has to wait for an RCU grace
+> period to pass before the in memory inode can be re-instantiated as
+> a newly allocated inode.
+> 
 
-In a patch series at [3], I implemented a batch mode that issues
-pagecache writeback for each object file when it's being written and
-then before any of the files are renamed to their final destination we
-do an fsync to a dummy file on the same filesystem.  On linux, this is
-using the sync_file_range(fd,0,0,  SYNC_FILE_RANGE_WRITE_AND_WAIT) to
-do the pagecache writeback.  According to Amir's thread at [4] this
-flag combo should actually trigger the desired writeback. The
-expectation is that the fsync of the dummy file should trigger a log
-writeback and one or more CACHE_FLUSH commands to harden the block
-mapping metadata and directory entries such that the data would be
-retrievable after the fsync completes.
+I'm just showing that insertion of an synchronous rcu grace period wait
+in the iget codepath is not without side effect, because that was the
+proposal.
 
-The equivalent sequence is specified to work on the common Windows
-filesystems [5]. The question I have for the Linux community is
-whether the same sequence will work on any of the common extant Linux
-filesystems such that it can provide value to Git users on Linux. My
-understanding from Christoph Hellwig's comments is that on XFS at
-least the sync_file_range, fsync, and rename sequence would allow us
-to guarantee that the complete written contents of the file would be
-visible if the new name is visible.  I also expect that additional
-fsync to a dummy file after the renames would also ensure that the log
-is forced again, which should ensure that all of the renames are
-visible before a ref file could be written that points at one of the
-object names.
+> (Hmmmm - I wonder if of the other filesystems might have similar
+> problems with physical inode reallocation inside a RCU grace period?
+> i.e. without inode instance re-use, the VFS could potentially see
+> multiple in-memory instances of the same physical inode at the same
+> time.)
+> 
+> > I'm not totally sure
+> > if this will be a problem for real users running real workloads or not,
+> > or if this can be easily mitigated, whether it's all rcu or a cascading
+> > effect, etc. This is just a quick test so that all probably requires
+> > more test and analysis to discern.
+> 
+> This looks like a similar problem to what busy extents address - we
+> can't reuse a newly freed extent until the transaction containing
+> the EFI/EFD hit stable storage (and the discard operation on the
+> range is complete). Hence while a newly freed extent is
+> marked free in the allocbt, they can't be reused until they are
+> released from the busy extent tree.
+> 
+> I can think of several ways to address this, but let me think on it
+> a bit more.  I suspect there's a trick we can use to avoid needing
+> synchronise_rcu() completely by using the spare radix tree tag and
+> rcu grace period state checks with get_state_synchronize_rcu() and
+> poll_state_synchronize_rcu() to clear the radix tree tags via a
+> periodic radix tree tag walk (i.e. allocation side polling for "can
+> we use this inode" rather than waiting for the grace period to
+> expire once an inode has been selected and allocated.)
+> 
 
-I wasn't able to find any clear semantics about the ext4 filesystem,
-and I gather from what I've read that the btrfs filesystem does not
-support the desired semantics.  Christoph mentioned that syncfs would
-efficiently provide a batched CACHE_FLUSH with the cost of picking up
-dirty cached data unrelated to Git.
+Yeah, and same. It's just a matter of how to break things down. I can
+sort of see where you're going with the above, though I'm not totally
+convinced that rcu gp polling is an advantage over explicit use of
+existing infrastructure/apis. It seems more important that we avoid
+overly crude things like sync waits in the alloc path vs. optimize away
+potentially multiple async grace periods in the free path. Of course,
+it's worth thinking about options regardless.
 
-Are there any opinions on the Linux side about what APIs we should use
-to provide durability across multiple Git files while not completely
-tanking performance by adding one CACHE_FLUSH per file modified?  What
-are the semantics of the ext4 log (when it is enabled) with regards to
-creating a temp file, populating its contents and then renaming it?
-Are they similar enough to XFS's 'log force' such that our batch mode
-would work there?
+That said, is deferred inactivation still a thing? If so, then we've
+already decided to defer/batch inactivations from the point the vfs
+calls our ->destroy_inode() based on our own hueristic (which is likely
+longer than a grace period already in most cases, making this even less
+of an issue). That includes deferral of the physical free and inobt
+updates, which means inode reuse can't occur until the inactivation
+workqueue task runs. Only a single grace period is required to cover
+(from the rcuwalk perspective) the entire set of inodes queued for
+inactivation. That leaves at least a few fairly straightforward options:
 
-Thanks,
-Neeraj
-Windows Core Filesystem Dev
+1. Use queue_rcu_work() to schedule the inactivation task. We'd probably
+have to isolate the list to process first from the queueing context
+rather than from workqueue context to ensure we don't process recently
+added inodes that haven't sat for a grace period.
 
-[1] https://docs.google.com/spreadsheets/d/1uxMBkEXFFnQ1Y3lXKqcKpw6Mq44BzhpCAcPex14T-QQ/edit#gid=1898936117
-[2] https://lore.kernel.org/git/cover.1636544377.git.ps@pks.im/
-[3] https://lore.kernel.org/git/b9d3d87443266767f00e77c967bd77357fe50484.1633366667.git.gitgitgadget@gmail.com/
-[4] https://lore.kernel.org/linux-fsdevel/20190419072938.31320-1-amir73il@gmail.com/
-[5] See FLUSH_FLAGS_NO_SYNC -
-https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntflushbuffersfileex
+2. Drop a synchronize_rcu() in the workqueue task before it starts
+processing items.
+
+3. Incorporate something like the above with an rcu grace period cookie
+to selectively process inodes (or batches thereof).
+
+Options 1 and 2 both seem rather simple and unlikely to noticeably
+impact behavior/performance. Option 3 seems a bit overkill to me, but is
+certainly an option if the previous assertion around performance doesn't
+hold true (particularly if we keep the tracking simple, such as
+recording/enforcing the most recent gp of the set). Thoughts?
+
+Brian
+
+> > > > 
+> > > > Sorry, I don't understand what you mean by the root cause not
+> > > > being identified?
+> > > 
+> > > The whole approach of "we don't know how to fix the inode reuse case
+> > > so disable it" implies that nobody has understood where in the reuse
+> > > case the problem lies. i.e. "inode reuse" by itself is not the root
+> > > cause of the problem.
+> > > 
+> > 
+> > I don't think anybody suggested to disable inode reuse.
+> 
+> Nobody did, so that's not what I was refering to. I was refering to
+> the patches for and comments advocating disabling .get_link for RCU
+> pathwalk because of the apparently unsolved problems stemming from
+> inode reuse...
+> 
+> > > The root cause is "allowing an inode to be reused without waiting
+> > > for an RCU grace period to expire". This might seem pedantic, but
+> > > "without waiting for an rcu grace period to expire" is the important
+> > > part of the problem (i.e. the bug), not the "allowing an inode to be
+> > > reused" bit.
+> > > 
+> > > Once the RCU part of the problem is pointed out, the solution
+> > > becomes obvious. As nobody had seen the obvious (wait for an RCU
+> > > grace period when recycling an inode) it stands to reason that
+> > > nobody really understood what the root cause of the inode reuse
+> > > problem.
+> > > 
+> > 
+> > The synchronize_rcu() approach was one of the first options discussed in
+> > the bug report once a reproducer was available.
+> 
+> What bug report would that be? :/
+> 
+> It's not one that I've read, and I don't recall seeing a pointer to
+> it anywhere in the path posting. IOWs, whatever discussion happened
+> in a private distro bug report can't be assumed as "general
+> knowledge" in an upstream discussion...
+> 
+> > AIUI, this is not currently a reproducible problem even before patch 1,
+> > which reduces the race window even further. Given that and the nak on
+> > the current patch (the justification for which I don't really
+> > understand), I'm starting to agree with Ian's earlier statement that
+> > perhaps it is best to separate this one so we can (hopefully) move patch
+> > 1 along on its own merit..
+> 
+> *nod*
+> 
+> The problem seems pretty rare, the pathwalk patch makes it
+> even rarer, so I think they can be separated just fine.
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
+
