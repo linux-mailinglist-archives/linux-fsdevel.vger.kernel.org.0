@@ -2,252 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE4A453F97
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 05:34:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF0A3453FA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 05:36:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233136AbhKQEhZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 23:37:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41814 "EHLO mail.kernel.org"
+        id S233136AbhKQEif (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 23:38:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233109AbhKQEhY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 23:37:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E31561155;
-        Wed, 17 Nov 2021 04:34:26 +0000 (UTC)
+        id S230113AbhKQEie (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Nov 2021 23:38:34 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6ECDC619F6;
+        Wed, 17 Nov 2021 04:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637123666;
-        bh=4p+EBOcqXS3RYGXDPXQypa+MY3H0EZ4vKVEN+SpDrPc=;
+        s=k20201202; t=1637123736;
+        bh=lLK2m/g/rYAh3Vwa+4eN/Dmc3Z5OsRkwB51PHxhEq2Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r841qG3fC+mUIAID6+LsjHVM3zX/ulKy74EojbM4HKImDNRcfbIkAwxS622vrhei9
-         zvoA5LEW0sLEKTdFU26+C/YJw2FxjLVW7fpjokp3aQbbXwuygOgPcz0VxPXHAJUHXD
-         b8/t4NrRpan6+GR7rfHsYqL0virIdedKs6v0LFAOs9bg5H8KjTIXNl7vjY2KggrzIx
-         7lwlM9ZXLosmXFTwyqKG8kQnfvTEW9L1MkNZ7BiYZ0yqir7ZV9MfPnlnaeAIVtL6ZB
-         55J6gsfnuQWV/sBLoDZLrzReVFw3hgMfkZuhQ7K8E0o3IRmfIptr2pHMhlwBCyoMGh
-         7rsv+LW7O9bGQ==
-Date:   Tue, 16 Nov 2021 20:34:26 -0800
+        b=N82HhoRa8kcepZBKLTx9GoDdDDXlla6C9aIVXQ3zMn78m4l7ubK/20Uoq7PwPKEsV
+         xnQnVUVv5rvXTe1mugpEvbw28erlgDOVcG2YQ3ZeAcK1I299R+lMh5LLVBEAnLs87L
+         x8aLB9X0AnYbPPBWEkP4JIDqlwoe2z1lYY/x05EY71G/1Iro/XB0A0qqQn5iH9SZ8N
+         8jyuOPTvH2WlBdtWFj+jBYXVWdu/D/h4KyPRQtYrb/AcqWsuU2H1u6AYwc5FQZ0qc7
+         xzXxwCcBZYpD7pzjre6eEvoio1xoutP+Xulse5fqLoKuQ0CWkNKw2RZFo8bBXYKg/d
+         VZWsgErXvGsww==
+Date:   Tue, 16 Nov 2021 20:35:36 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 25/28] iomap: Convert iomap_add_to_ioend() to take a
- folio
-Message-ID: <20211117043426.GL24307@magnolia>
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 07/28] fs/buffer: Convert __block_write_begin_int() to
+ take a folio
+Message-ID: <20211117043536.GM24307@magnolia>
 References: <20211108040551.1942823-1-willy@infradead.org>
- <20211108040551.1942823-26-willy@infradead.org>
+ <20211108040551.1942823-8-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211108040551.1942823-26-willy@infradead.org>
+In-Reply-To: <20211108040551.1942823-8-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 04:05:48AM +0000, Matthew Wilcox (Oracle) wrote:
-> We still iterate one block at a time, but now we call compound_head()
-> less often.
+On Mon, Nov 08, 2021 at 04:05:30AM +0000, Matthew Wilcox (Oracle) wrote:
+> There are no plans to convert buffer_head infrastructure to use multi-page
+> folios, but __block_write_begin_int() is called from iomap, and it's
+> more convenient and less error-prone if we pass in a folio from iomap.
+> It also has a nice saving of almost 200 bytes of code from removing
+> repeated calls to compound_head().
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Looks good!
+Pretty straightforward,
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/iomap/buffered-io.c | 70 ++++++++++++++++++++----------------------
->  1 file changed, 34 insertions(+), 36 deletions(-)
+>  fs/buffer.c            | 22 +++++++++++-----------
+>  fs/internal.h          |  2 +-
+>  fs/iomap/buffered-io.c |  7 +++++--
+>  3 files changed, 17 insertions(+), 14 deletions(-)
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index b168cc0fe8be..90f9f33ffe41 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1249,29 +1249,29 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
->   * first; otherwise finish off the current ioend and start another.
->   */
->  static void
-> -iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
-> +iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
->  		struct iomap_page *iop, struct iomap_writepage_ctx *wpc,
->  		struct writeback_control *wbc, struct list_head *iolist)
->  {
-> -	sector_t sector = iomap_sector(&wpc->iomap, offset);
-> +	sector_t sector = iomap_sector(&wpc->iomap, pos);
->  	unsigned len = i_blocksize(inode);
-> -	unsigned poff = offset & (PAGE_SIZE - 1);
-> +	size_t poff = offset_in_folio(folio, pos);
->  
-> -	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, sector)) {
-> +	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, sector)) {
->  		if (wpc->ioend)
->  			list_add(&wpc->ioend->io_list, iolist);
-> -		wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
-> +		wpc->ioend = iomap_alloc_ioend(inode, wpc, pos, sector, wbc);
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 46bc589b7a03..b1d722b26fe9 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1969,34 +1969,34 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
 >  	}
->  
-> -	if (bio_add_page(wpc->ioend->io_bio, page, len, poff) != len) {
-> +	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
->  		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
-> -		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
-> +		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
->  	}
->  
->  	if (iop)
->  		atomic_add(len, &iop->write_bytes_pending);
->  	wpc->ioend->io_size += len;
-> -	wbc_account_cgroup_owner(wbc, page, len);
-> +	wbc_account_cgroup_owner(wbc, &folio->page, len);
 >  }
 >  
->  /*
-> @@ -1293,9 +1293,8 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
->  static int
->  iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  		struct writeback_control *wbc, struct inode *inode,
-> -		struct page *page, u64 end_pos)
-> +		struct folio *folio, u64 end_pos)
+> -int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
+> +int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
+>  		get_block_t *get_block, const struct iomap *iomap)
 >  {
-> -	struct folio *folio = page_folio(page);
->  	struct iomap_page *iop = iomap_page_create(inode, folio);
->  	struct iomap_ioend *ioend, *next;
->  	unsigned len = i_blocksize(inode);
-> @@ -1322,15 +1321,15 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  			continue;
->  		if (wpc->iomap.type == IOMAP_HOLE)
->  			continue;
-> -		iomap_add_to_ioend(inode, pos, page, iop, wpc, wbc,
-> +		iomap_add_to_ioend(inode, pos, folio, iop, wpc, wbc,
->  				 &submit_list);
->  		count++;
->  	}
->  
->  	WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
-> -	WARN_ON_ONCE(!PageLocked(page));
-> -	WARN_ON_ONCE(PageWriteback(page));
-> -	WARN_ON_ONCE(PageDirty(page));
-> +	WARN_ON_ONCE(!folio_test_locked(folio));
-> +	WARN_ON_ONCE(folio_test_writeback(folio));
-> +	WARN_ON_ONCE(folio_test_dirty(folio));
->  
->  	/*
->  	 * We cannot cancel the ioend directly here on error.  We may have
-> @@ -1348,14 +1347,14 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  		if (wpc->ops->discard_folio)
->  			wpc->ops->discard_folio(folio, pos);
->  		if (!count) {
-> -			ClearPageUptodate(page);
-> -			unlock_page(page);
-> +			folio_clear_uptodate(folio);
-> +			folio_unlock(folio);
->  			goto done;
->  		}
->  	}
->  
-> -	set_page_writeback(page);
-> -	unlock_page(page);
-> +	folio_start_writeback(folio);
-> +	folio_unlock(folio);
->  
->  	/*
->  	 * Preserve the original error if there was one; catch
-> @@ -1376,9 +1375,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	 * with a partial page truncate on a sub-page block sized filesystem.
->  	 */
->  	if (!count)
-> -		end_page_writeback(page);
-> +		folio_end_writeback(folio);
->  done:
-> -	mapping_set_error(page->mapping, error);
-> +	mapping_set_error(folio->mapping, error);
->  	return error;
->  }
->  
-> @@ -1392,14 +1391,15 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  static int
->  iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  {
-> +	struct folio *folio = page_folio(page);
->  	struct iomap_writepage_ctx *wpc = data;
+>  	unsigned from = pos & (PAGE_SIZE - 1);
+>  	unsigned to = from + len;
 > -	struct inode *inode = page->mapping->host;
 > +	struct inode *inode = folio->mapping->host;
->  	u64 end_pos, isize;
+>  	unsigned block_start, block_end;
+>  	sector_t block;
+>  	int err = 0;
+>  	unsigned blocksize, bbits;
+>  	struct buffer_head *bh, *head, *wait[2], **wait_bh=wait;
 >  
-> -	trace_iomap_writepage(inode, page_offset(page), PAGE_SIZE);
-> +	trace_iomap_writepage(inode, folio_pos(folio), folio_size(folio));
+> -	BUG_ON(!PageLocked(page));
+> +	BUG_ON(!folio_test_locked(folio));
+>  	BUG_ON(from > PAGE_SIZE);
+>  	BUG_ON(to > PAGE_SIZE);
+>  	BUG_ON(from > to);
 >  
->  	/*
-> -	 * Refuse to write the page out if we're called from reclaim context.
-> +	 * Refuse to write the folio out if we're called from reclaim context.
->  	 *
->  	 * This avoids stack overflows when called from deeply used stacks in
->  	 * random callers for direct reclaim or memcg reclaim.  We explicitly
-> @@ -1413,10 +1413,10 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  		goto redirty;
+> -	head = create_page_buffers(page, inode, 0);
+> +	head = create_page_buffers(&folio->page, inode, 0);
+>  	blocksize = head->b_size;
+>  	bbits = block_size_bits(blocksize);
 >  
->  	/*
-> -	 * Is this page beyond the end of the file?
-> +	 * Is this folio beyond the end of the file?
->  	 *
-> -	 * The page index is less than the end_index, adjust the end_offset
-> -	 * to the highest offset that this page should represent.
-> +	 * The folio index is less than the end_index, adjust the end_pos
-> +	 * to the highest offset that this folio should represent.
->  	 * -----------------------------------------------------
->  	 * |			file mapping	       | <EOF> |
->  	 * -----------------------------------------------------
-> @@ -1426,7 +1426,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  	 * ---------------------------------^------------------|
->  	 */
->  	isize = i_size_read(inode);
-> -	end_pos = page_offset(page) + PAGE_SIZE;
-> +	end_pos = folio_pos(folio) + folio_size(folio);
->  	if (end_pos > isize) {
->  		/*
->  		 * Check whether the page to write out is beyond or straddles
-> @@ -1439,7 +1439,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  		 * |				    |      Straddles     |
->  		 * ---------------------------------^-----------|--------|
->  		 */
-> -		size_t poff = offset_in_page(isize);
-> +		size_t poff = offset_in_folio(folio, isize);
->  		pgoff_t end_index = isize >> PAGE_SHIFT;
+> -	block = (sector_t)page->index << (PAGE_SHIFT - bbits);
+> +	block = (sector_t)folio->index << (PAGE_SHIFT - bbits);
 >  
->  		/*
-> @@ -1459,8 +1459,8 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  		 * checking if the page is totally beyond i_size or if its
->  		 * offset is just equal to the EOF.
->  		 */
-> -		if (page->index > end_index ||
-> -		    (page->index == end_index && poff == 0))
-> +		if (folio->index > end_index ||
-> +		    (folio->index == end_index && poff == 0))
->  			goto redirty;
+>  	for(bh = head, block_start = 0; bh != head || !block_start;
+>  	    block++, block_start=block_end, bh = bh->b_this_page) {
+>  		block_end = block_start + blocksize;
+>  		if (block_end <= from || block_start >= to) {
+> -			if (PageUptodate(page)) {
+> +			if (folio_test_uptodate(folio)) {
+>  				if (!buffer_uptodate(bh))
+>  					set_buffer_uptodate(bh);
+>  			}
+> @@ -2016,20 +2016,20 @@ int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
 >  
->  		/*
-> @@ -1471,17 +1471,15 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  		 * memory is zeroed when mapped, and writes to that region are
->  		 * not written out to the file."
->  		 */
-> -		zero_user_segment(page, poff, PAGE_SIZE);
-> -
-> -		/* Adjust the end_offset to the end of file */
-> +		folio_zero_segment(folio, poff, folio_size(folio));
->  		end_pos = isize;
+>  			if (buffer_new(bh)) {
+>  				clean_bdev_bh_alias(bh);
+> -				if (PageUptodate(page)) {
+> +				if (folio_test_uptodate(folio)) {
+>  					clear_buffer_new(bh);
+>  					set_buffer_uptodate(bh);
+>  					mark_buffer_dirty(bh);
+>  					continue;
+>  				}
+>  				if (block_end > to || block_start < from)
+> -					zero_user_segments(page,
+> +					folio_zero_segments(folio,
+>  						to, block_end,
+>  						block_start, from);
+>  				continue;
+>  			}
+>  		}
+> -		if (PageUptodate(page)) {
+> +		if (folio_test_uptodate(folio)) {
+>  			if (!buffer_uptodate(bh))
+>  				set_buffer_uptodate(bh);
+>  			continue; 
+> @@ -2050,14 +2050,14 @@ int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
+>  			err = -EIO;
 >  	}
->  
-> -	return iomap_writepage_map(wpc, wbc, inode, page, end_pos);
-> +	return iomap_writepage_map(wpc, wbc, inode, folio, end_pos);
->  
->  redirty:
-> -	redirty_page_for_writepage(wbc, page);
-> -	unlock_page(page);
-> +	folio_redirty_for_writepage(wbc, folio);
-> +	folio_unlock(folio);
->  	return 0;
+>  	if (unlikely(err))
+> -		page_zero_new_buffers(page, from, to);
+> +		page_zero_new_buffers(&folio->page, from, to);
+>  	return err;
 >  }
 >  
+>  int __block_write_begin(struct page *page, loff_t pos, unsigned len,
+>  		get_block_t *get_block)
+>  {
+> -	return __block_write_begin_int(page, pos, len, get_block, NULL);
+> +	return __block_write_begin_int(page_folio(page), pos, len, get_block, NULL);
+>  }
+>  EXPORT_SYMBOL(__block_write_begin);
+>  
+> diff --git a/fs/internal.h b/fs/internal.h
+> index cdd83d4899bb..afc13443392b 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -37,7 +37,7 @@ static inline int emergency_thaw_bdev(struct super_block *sb)
+>  /*
+>   * buffer.c
+>   */
+> -int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
+> +int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
+>  		get_block_t *get_block, const struct iomap *iomap);
+>  
+>  /*
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 1753c26c8e76..4e09ea823148 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -597,6 +597,7 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
+>  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+>  	struct page *page;
+> +	struct folio *folio;
+>  	int status = 0;
+>  
+>  	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
+> @@ -618,11 +619,12 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  		status = -ENOMEM;
+>  		goto out_no_page;
+>  	}
+> +	folio = page_folio(page);
+>  
+>  	if (srcmap->type == IOMAP_INLINE)
+>  		status = iomap_write_begin_inline(iter, page);
+>  	else if (srcmap->flags & IOMAP_F_BUFFER_HEAD)
+> -		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+> +		status = __block_write_begin_int(folio, pos, len, NULL, srcmap);
+>  	else
+>  		status = __iomap_write_begin(iter, pos, len, page);
+>  
+> @@ -954,11 +956,12 @@ EXPORT_SYMBOL_GPL(iomap_truncate_page);
+>  static loff_t iomap_page_mkwrite_iter(struct iomap_iter *iter,
+>  		struct page *page)
+>  {
+> +	struct folio *folio = page_folio(page);
+>  	loff_t length = iomap_length(iter);
+>  	int ret;
+>  
+>  	if (iter->iomap.flags & IOMAP_F_BUFFER_HEAD) {
+> -		ret = __block_write_begin_int(page, iter->pos, length, NULL,
+> +		ret = __block_write_begin_int(folio, iter->pos, length, NULL,
+>  					      &iter->iomap);
+>  		if (ret)
+>  			return ret;
 > -- 
 > 2.33.0
 > 
