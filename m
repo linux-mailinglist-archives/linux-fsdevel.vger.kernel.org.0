@@ -2,110 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 198984544B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 11:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F3094544E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 11:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236108AbhKQKNR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Nov 2021 05:13:17 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:56600 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235992AbhKQKNN (ORCPT
+        id S236364AbhKQK2M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Nov 2021 05:28:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44924 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236257AbhKQK2J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Nov 2021 05:13:13 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C3E99212CC;
-        Wed, 17 Nov 2021 10:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1637143812; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Wed, 17 Nov 2021 05:28:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637144710;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=mhmJLrVhVIw+GLz9j0MpAB8YGPGJGnv5SXbaFK+Gc38=;
-        b=XYP3U/Mpbh/hBbiTpSeUdKXWaJyZFBtfvo7BZvfcR9WaGpitiiTVQ/H9AAn5GlJGoOfWcd
-        n6zIHdUIsGgweIMyeGwlmExXn9vQh2AB6wY4b12yNF1Jt7pTM6f9MJdENBq3JMa6aF/e4m
-        thPlfI270FoAN+qCE1FiCqWxyDVB7hg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1637143812;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mhmJLrVhVIw+GLz9j0MpAB8YGPGJGnv5SXbaFK+Gc38=;
-        b=JFPWMr0zJZBSRfVCV3s+phhItvmsiWmJXNjfkQnnwocGhgek68agiFfCK3HBemnqgy9iIO
-        XVCpn6miAs51VVBg==
-Received: from suse.de (unknown [10.163.43.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 90F83A3B8A;
-        Wed, 17 Nov 2021 10:10:10 +0000 (UTC)
-Date:   Wed, 17 Nov 2021 10:10:08 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     Gang Li <ligang.bdlg@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: Re: Re: Re: Re: Re: Re: [PATCH v1] sched/numa: add per-process
- numa_balancing
-Message-ID: <20211117101008.GB3301@suse.de>
-References: <20211029083751.GR3891@suse.de>
- <CAMx52ARF1fVH9=YLQMjE=8ckKJ=q3X2-ovtKuQcoTyo564mQnQ@mail.gmail.com>
- <20211109091951.GW3891@suse.de>
- <7de25e1b-e548-b8b5-dda5-6a2e001f3c1a@bytedance.com>
- <20211109121222.GX3891@suse.de>
- <117d5b88-b62b-f50b-32ff-1a9fe35b9e2e@bytedance.com>
- <20211109162647.GY3891@suse.de>
- <08e95d68-7ba9-44d0-da85-41dc244b4c99@bytedance.com>
- <20211117082952.GA3301@suse.de>
- <816cb511-446d-11eb-ae4a-583c5a7102c4@bytedance.com>
+        bh=PeLytMpeobAX/Mbka1azxJ5y2EI4oXxreVBxQFm+D34=;
+        b=eZ1ww7aDADXc2ZXT2Zzgoph/YvjI8H2NaEEjT6RGNzAQ5AAg4wYzkQHVc9E+Ic1xnEdryq
+        6LsfRo8eTeZl081QVc5otlei78RSZXcrLM2XpXa9TwOX9rDLh9YXubb7DH7xFDnN8Fl1Jk
+        3sZR9NWnQalGX/QZOByq0bOjmGDucfM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-392-1JBcZch7M1izpwEcNYNTfw-1; Wed, 17 Nov 2021 05:25:09 -0500
+X-MC-Unique: 1JBcZch7M1izpwEcNYNTfw-1
+Received: by mail-wm1-f70.google.com with SMTP id y9-20020a1c7d09000000b003316e18949bso871162wmc.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Nov 2021 02:25:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PeLytMpeobAX/Mbka1azxJ5y2EI4oXxreVBxQFm+D34=;
+        b=DqoxbO0n3cJ14xCAAq/zgxMGWERk1NgKVsvTLfFIPSUuA+GBOkBQ76EJo4sbkpLXsv
+         1/d1HOTb+hVRO1Nnxk/iJvHWJM5l32XYI69o5uO4KfLw3wS9g1ITAIE34wMPmU3d/eqX
+         XClRSn/4c+lqAi45jfOeh/fSEuQIULorzzOTJwSF/B7EiU/XJ40X9f3T3qvC3WZaZv39
+         n2y0Z2xAW9QANU+GbefJfjrNwZludO8giSuDDR3Z40Pk0tgMg32GZRDJvKg7hJH4fqXL
+         5/GHCyndxWNsg50inwdUhOQkFRKpD1XdKPsW1wvEd2ia6g+hu3a/BrLZl9zEq92tp7YA
+         NpmA==
+X-Gm-Message-State: AOAM531Ah0P0R9Q7niyDIpGFd3ok5394uxBdR7zjuUlqyY8E78VjR8VF
+        3/VTZLhLwXgxnE2FzUr0RXSoQjq15alBuxftX8dPKnZJ7q6T4iafehR8wQaOMMegWMsjS+r5dJt
+        ZI3ilpJJBixnRqJkw/57HT6ojsgAX1Ubln+EO/zsUBw==
+X-Received: by 2002:a5d:43c5:: with SMTP id v5mr19042043wrr.11.1637144708010;
+        Wed, 17 Nov 2021 02:25:08 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxV/yzimt/rDgfIdS6R4Pe333apTi73Ff+k6sK61bEAJtugKa8lazitGgtGHk5ESX82WxjntResUX5IKf1Fx4o=
+X-Received: by 2002:a5d:43c5:: with SMTP id v5mr19042003wrr.11.1637144707799;
+ Wed, 17 Nov 2021 02:25:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <816cb511-446d-11eb-ae4a-583c5a7102c4@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20211111161714.584718-1-agruenba@redhat.com> <20211117053330.GU24307@magnolia>
+In-Reply-To: <20211117053330.GU24307@magnolia>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Wed, 17 Nov 2021 11:24:56 +0100
+Message-ID: <CAHc6FU4rY=G-pdKzYPVXyQ5SEhtfgh_9CK9wNKbBQRONuP=BFA@mail.gmail.com>
+Subject: Re: [5.15 REGRESSION v2] iomap: Fix inline extent handling in iomap_readpage
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 17, 2021 at 05:38:28PM +0800, Gang Li wrote:
-> On 11/17/21 4:29 PM, Mel Gorman wrote:
-> > 
-> > It's a bit vague but if you wanted to put together the outline, I'd read
-> > over it. Note that this was all in the context of trying to introduce an
-> 
-> Sorry, maybe I shouldn't propose new feature in this context.
-> 
-> > API like
-> > 
-> > Disable/enable per-process numa balancing:
-> >          prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING, 0/1);
-> > 
-> > i.e. one that controlled both enabling and disabling. You also have
-> > the option of introducing the NUMAB equivalent of PR_SET_THP_DISABLE --
-> > an API that is explicitly about disabling *only*.
-> > 
-> 
-> If those APIs are ok with you, I will send v2 soon.
-> 
-> 1. prctl(PR_NUMA_BALANCING, PR_SET_THP_DISABLE);
+On Wed, Nov 17, 2021 at 6:33 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> On Thu, Nov 11, 2021 at 05:17:14PM +0100, Andreas Gruenbacher wrote:
+> > Before commit 740499c78408 ("iomap: fix the iomap_readpage_actor return
+> > value for inline data"), when hitting an IOMAP_INLINE extent,
+> > iomap_readpage_actor would report having read the entire page.  Since
+> > then, it only reports having read the inline data (iomap->length).
+> >
+> > This will force iomap_readpage into another iteration, and the
+> > filesystem will report an unaligned hole after the IOMAP_INLINE extent.
+> > But iomap_readpage_actor (now iomap_readpage_iter) isn't prepared to
+> > deal with unaligned extents, it will get things wrong on filesystems
+> > with a block size smaller than the page size, and we'll eventually run
+> > into the following warning in iomap_iter_advance:
+> >
+> >   WARN_ON_ONCE(iter->processed > iomap_length(iter));
+> >
+> > Fix that by changing iomap_readpage_iter to return 0 when hitting an
+> > inline extent; this will cause iomap_iter to stop immediately.
+>
+> I guess this means that we also only support having inline data that
+> ends at EOF?  IIRC this is true for the three(?) filesystems that have
+> expressed any interest in inline data: yours, ext4, and erofs?
 
-It would be (PR_SET_NUMAB_DISABLE, 1) 
+Yes.
 
-> 2. prctl(PR_NUMA_BALANCING, PR_SET_THP_ENABLE);
+> > To fix readahead as well, change iomap_readahead_iter to pass on
+> > iomap_readpage_iter return values less than or equal to zero.
+> >
+> > Fixes: 740499c78408 ("iomap: fix the iomap_readpage_actor return value for inline data")
+> > Cc: stable@vger.kernel.org # v5.15+
+> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 11 +++++++++--
+> >  1 file changed, 9 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 1753c26c8e76..fe10d8a30f6b 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -256,8 +256,13 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+> >       unsigned poff, plen;
+> >       sector_t sector;
+> >
+> > -     if (iomap->type == IOMAP_INLINE)
+> > -             return min(iomap_read_inline_data(iter, page), length);
+> > +     if (iomap->type == IOMAP_INLINE) {
+> > +             loff_t ret = iomap_read_inline_data(iter, page);
+>
+> Ew, iomap_read_inline_data returns loff_t.  I think I'll slip in a
+> change of return type to ssize_t, if you don't mind?
 
-An enable prctl will have the same problems as
-prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING, 0/1) -- it should have
-meaning if the numa_balancing sysctl is disabled.
+Really?
 
-> 3. prctl(PR_NUMA_BALANCING, PR_GET_THP);
-> 
+> > +
+> > +             if (ret < 0)
+> > +                     return ret;
+>
+> ...and a comment here explaining that we only support inline data that
+> ends at EOF?
 
-PR_GET_NUMAB_DISABLE
+I'll send a separate patch that adds a description for
+iomap_read_inline_data and cleans up its return value.
 
--- 
-Mel Gorman
-SUSE Labs
+Thanks,
+Andreas
+
+> If the answers to all /four/ questions are 'yes', then consider this:
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+>
+> --D
+>
+> > +             return 0;
+> > +     }
+> >
+> >       /* zero post-eof blocks as the page may be mapped */
+> >       iop = iomap_page_create(iter->inode, page);
+> > @@ -370,6 +375,8 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
+> >                       ctx->cur_page_in_bio = false;
+> >               }
+> >               ret = iomap_readpage_iter(iter, ctx, done);
+> > +             if (ret <= 0)
+> > +                     return ret;
+> >       }
+> >
+> >       return done;
+> > --
+> > 2.31.1
+> >
+>
+
