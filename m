@@ -2,167 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C810D454E2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 20:50:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 052B0454E51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 21:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240600AbhKQTxg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Nov 2021 14:53:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239106AbhKQTxe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Nov 2021 14:53:34 -0500
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0220DC061764
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Nov 2021 11:50:35 -0800 (PST)
-Received: by mail-io1-xd35.google.com with SMTP id e144so4825511iof.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Nov 2021 11:50:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=87/aCIYRViE4sqAqPWWehJIW8qss9o3shFfDpFVgLYk=;
-        b=fp2OhtiS0fXO2pOUqVzeeQXECteP/WGOKq2Vv2DaHOcupDqecq6vkULti9AEHtuGz2
-         3oE5AMlLykZjhKgcyXVDh99m/ylPGzuAIN7B7BPiagMntY8aN7GIds+frKyYN1GvslJM
-         Y9e0EERuBpDsvC/ULXf1jy/PImABK53n0jVxAjQr4h/s1YGqRI3qgjM0rK7OO90QBr0G
-         vnqxkGAwG7KgsvXZjNQGMmIUQuP1kad/KxyFqy1wJeMFy4/gmsLcBpAAv0pfhMNiVOL5
-         7uOiHaUFuuK6AvD3s3Dn2+FWcIqUxEc3dSseWVE1WACU9gSNEHFsoACw12ltrmju3nGx
-         uYgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=87/aCIYRViE4sqAqPWWehJIW8qss9o3shFfDpFVgLYk=;
-        b=l1H9lWIRVobwRUS4pLqwY9yxqNmGBRuTneSA3+gULFJs5ccUQLy/M/4GRWbKRtEjhp
-         pNom3doBDTMq8tuCxt5iLsdXnmi1hMA4mnn3aEfGjzNqMZomFA5VOz7FYbhKZeEay1uv
-         rEf6hMJCkaf+eV0TTm1d6LYoa8Y9N95fQ5rxxWu2xowoqKzdqfrws5fBeY165jc//1gh
-         2DZQyQD6T4BkjoDjJ6JSoi55Q03Olw7OUnfTj3HqMYswVRGO6WzPz1OGSspU8Ko7eyBd
-         8Otd1db872YnNB2VqTN1GIjtJsFMWU6FS/CFpo7Bl2EKi5HVFpC38pRLUHdhrmm6uP6K
-         Qv7A==
-X-Gm-Message-State: AOAM532kCnFwTfBgrZyg+xqrFR7MTym0ctsg+ypiYhqVBrIV65wo1Dx9
-        ldq5q8jCB4f4Fjuz+R6GmQIKAz5l6vrPF6oTZXS2IQ==
-X-Google-Smtp-Source: ABdhPJwKxkjTGO1T/S5ZPZGTSMMo0deomcO62FYkNj+OiRO2YyBIWst5MD6HCKGcbYrw5W9Rpjt5YbQ/PdpE1YSDBGs=
-X-Received: by 2002:a05:6638:160c:: with SMTP id x12mr15414855jas.60.1637178634261;
- Wed, 17 Nov 2021 11:50:34 -0800 (PST)
+        id S233099AbhKQUOc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Nov 2021 15:14:32 -0500
+Received: from dcvr.yhbt.net ([64.71.152.64]:50250 "EHLO dcvr.yhbt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231429AbhKQUOb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Nov 2021 15:14:31 -0500
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id 5FAAC1F953;
+        Wed, 17 Nov 2021 20:11:32 +0000 (UTC)
+Date:   Wed, 17 Nov 2021 20:11:32 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mike Galbraith <efault@gmx.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Ogness <john.ogness@linutronix.de>,
+        Roman Penyaev <rpenyaev@suse.de>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Jason Baron <jbaron@akamai.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [RFC] How to fix eventpoll rwlock based priority inversion on
+ PREEMPT_RT?
+Message-ID: <20211117201132.M259904@dcvr>
+References: <20211116140252.GA348770@lothringen>
 MIME-Version: 1.0
-References: <20211107235754.1395488-1-almasrymina@google.com>
- <YYtuqsnOSxA44AUX@t490s> <CAHS8izP9zJYfqmDouA1otnD-CsQtWJSta0KhOQq81qLSTOHB4Q@mail.gmail.com>
- <YY4bFPkfUhlpUqvo@xz-m1.local> <CAHS8izP7_BBH9NGz3XoL2=xVniH6REor=biqDSZ4wR=NaFS-8A@mail.gmail.com>
- <YZMQbiV9JQWd0EM+@xz-m1.local>
-In-Reply-To: <YZMQbiV9JQWd0EM+@xz-m1.local>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Wed, 17 Nov 2021 11:50:23 -0800
-Message-ID: <CAHS8izPwQidVLAEApJ4vnERwwK6iJ8phfedA0d4_NPwumzRFcw@mail.gmail.com>
-Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
-To:     Peter Xu <peterx@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211116140252.GA348770@lothringen>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 15, 2021 at 5:41 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed, 10 Nov 2021 14:11:20 -0800 Mina Almasry <almasrymina@google.com> wrote:
->
-> > Add PM_HUGE_THP MAPPING to allow userspace to detect whether a given virt
-> > address is currently mapped by a transparent huge page or not.  Example
-> > use case is a process requesting THPs from the kernel (via a huge tmpfs
-> > mount for example), for a performance critical region of memory.  The
-> > userspace may want to query whether the kernel is actually backing this
-> > memory by hugepages or not.
-> >
-> > PM_HUGE_THP_MAPPING bit is set if the virt address is mapped at the PMD
-> > level and the underlying page is a transparent huge page.
-> >
-> > A few options were considered:
-> > 1. Add /proc/pid/pageflags that exports the same info as
-> >    /proc/kpageflags.  This is not appropriate because many kpageflags are
-> >    inappropriate to expose to userspace processes.
-> > 2. Simply get this info from the existing /proc/pid/smaps interface.
-> >    There are a couple of issues with that:
-> >    1. /proc/pid/smaps output is human readable and unfriendly to
-> >       programatically parse.
-> >    2. /proc/pid/smaps is slow.  The cost of reading /proc/pid/smaps into
-> >       userspace buffers is about ~800us per call, and this doesn't
-> >       include parsing the output to get the information you need. The
-> >       cost of querying 1 virt address in /proc/pid/pagemaps however is
-> >       around 5-7us.
-> >
-> > Tested manually by adding logging into transhuge-stress, and by
-> > allocating THP and querying the PM_HUGE_THP_MAPPING flag at those
-> > virtual addresses.
-> >
-> > --- a/tools/testing/selftests/vm/transhuge-stress.c
-> > +++ b/tools/testing/selftests/vm/transhuge-stress.c
-> > @@ -16,6 +16,12 @@
-> >  #include <string.h>
-> >  #include <sys/mman.h>
-> >
-> > +/*
-> > + * We can use /proc/pid/pagemap to detect whether the kernel was able to find
-> > + * hugepages or no. This can be very noisy, so is disabled by default.
-> > + */
-> > +#define NO_DETECT_HUGEPAGES
-> > +
-> >
-> > ...
-> >
-> > +#ifndef NO_DETECT_HUGEPAGES
-> > +             if (!PAGEMAP_THP(ent[0]))
-> > +                     fprintf(stderr, "WARNING: detected non THP page\n");
-> > +#endif
->
-> This looks like a developer thing.  Is there any point in leaving it in
-> the mainline code?
+Frederic Weisbecker <frederic@kernel.org> wrote:
+> Hi,
+> 
+> I'm iterating again on this topic, this time with the author of
+> the patch Cc'ed.
+> 
+> The following commit:
+> 
+>     a218cc491420 (epoll: use rwlock in order to reduce ep_poll
+>                   callback() contention)
+> 
+> has changed the ep->lock into an rwlock. This can cause priority inversion
+> on PREEMPT_RT. Here is an example:
+> 
+> 
+> 1) High priority task A waits for events on epoll_wait(), nothing shows up so
+>    it goes to sleep for new events in the ep_poll() loop.
+> 
+> 2) Lower prio task B brings new events in ep_poll_callback(), waking up A
+>    while still holding read_lock(ep->lock)
+> 
+> 3) Task A wakes up immediately, tries to grab write_lock(ep->lock) but it has
+>    to wait for task B to release read_lock(ep->lock). Unfortunately there is
+>    no priority inheritance when write_lock() is called on an rwlock that is
+>    already read_lock'ed. So back to task B that may even be preempted by
+>    yet another task before releasing read_lock(ep->lock).
+> 
+> 
+> Now how to solve this? Several possibilities:
+> 
+> == Delay the wake up after releasing the read_lock()? ==
+> 
+> That solves part of the problem only. If another event comes up
+> concurrently we are back to the original issue.
+> 
+> == Make rwlock more fair ? ==
+> 
+> Currently read_lock() only acquires the rtmutex if the lock is already
+> write-held (or write_lock() is waiting to acquire). So if read_lock() happens
+> after write_lock(), fairness is observed but if write_lock() happens after
+> read_lock(), priority inheritance doesn't happen.
+> 
+> I think there has been attempts to solve this by the past but some issues
+> arised (don't know the exact details, comments on rwbase_rt.c bring some clues).
+> 
+> == Convert the rwlock to RCU ? ==
+> 
+> Traditionally, we try to convert rwlocks bringing issues to RCU. I'm not sure the
+> situation fits here because the rwlock is used the other way around:
+> the epoll consumer does the write_lock() and the producers do read_lock(). Then
+> concurrent producers use ad-hoc concurrent list add (see list_add_tail_lockless)
+> to handle racy modifications.
+> 
+> There are also list modifications on both side. There are added from the
+> producers and read and deleted (even re-added sometimes) on the consumer side.
+> 
+> Perhaps RCU could be used with keeping locking on the consumer side...
 
-I used this to test locally and I thought it may be useful, but on
-second thought probably not worth it. Removed in v6 I just sent.
++CC linux-fsdevel and Mathieu Desnoyers
 
-On Mon, Nov 15, 2021 at 5:59 PM Peter Xu <peterx@redhat.com> wrote:
->
-> On Mon, Nov 15, 2021 at 02:50:26PM -0800, Mina Almasry wrote:
-> > PM_THP_MAPPED sounds good to me.
-> >
-> > TBH I think I still prefer this approach because it's a very simple 2
-> > line patch which addresses the concrete use case I have well. I'm not
-> > too familiar with the smaps code to be honest but I think adding a
-> > range-based smaps API will be a sizeable patch to add a syscall,
-> > handle a stable interface, and handle cases where the memory range
-> > doesn't match a VMA boundary. I'm not sure the performance benefit
-> > would justify this patch and I'm not sure the extra info from smaps
-> > would be widely useful. However if you insist and folks believe this
-> > is the better approach I can prototype a range-based smaps and test
-> > its performance to see if it works for us as well, just let me know
-> > what kind of API you're envisioning.
->
-> Yeah indeed I haven't yet thought enough on such a new interface, it's just
-> that I think it'll be something that solves a broader range of requests
-> including the thp-aware issue, so I raised it up.
->
-> That shouldn't require a lot code change either afaiu, as smap_gather_stats()
-> already takes a "start" and I think what's missing is another end where we just
-> pass in 0 when we want the default vma->vm_end as the end of range.
->
-> I don't have a solid clue on other use case to ask for that more generic
-> interface, so please feel free to move on with it.  If you'll need a repost to
-> address the comment from Andrew on removing the debugging lines, please also
-> consider using the shorter PM_THP_MAPPED then it looks good to me too.
->
+I proposed using wfcqueue many years ago, but ran out of
+time/hardware/funding to work on it:
 
-Awesome, thanks! PM_THP_MAPPED sounds good to me and I just sent v6
-with these changes.
+  https://yhbt.net/lore/lkml/20130401183118.GA9968@dcvr.yhbt.net/
 
-> Thanks!
->
-> --
-> Peter Xu
->
+wfcqueue is used internally by Userspace-RCU, but wfcqueue
+itself doesn't rely on RCU.  I'm not sure if wfcqueue helps
+PREEMPT_RT, but Mathieu + Paul might.
+
+> == Convert to llist ? ==
+> 
+> It's a possibility but some operations like single element deletion may be
+> costly because only llist_add() and llist_del_all() are atomic on llist.
+> !CONFIG_PREEMPT_RT might not be happy about it.
+> 
+> == Consider epoll not PREEMPT_RT friendly? ==
+> 
+> A last resort is to simply consider epoll is not RT-friendly and suggest
+> using more simple alternatives like poll()....
+> 
+> Any thoughts?
