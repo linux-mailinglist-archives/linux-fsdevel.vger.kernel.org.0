@@ -2,230 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38CFD453D1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 01:23:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3A3D453DF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 02:58:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230486AbhKQAZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 19:25:55 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:59811 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229544AbhKQAZy (ORCPT
+        id S232358AbhKQCBY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Nov 2021 21:01:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232635AbhKQCBY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 19:25:54 -0500
-Received: from dread.disaster.area (pa49-195-103-97.pa.nsw.optusnet.com.au [49.195.103.97])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 586E488B6A7;
-        Wed, 17 Nov 2021 11:22:52 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mn8ix-009hoL-BG; Wed, 17 Nov 2021 11:22:51 +1100
-Date:   Wed, 17 Nov 2021 11:22:51 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <miklos@szeredi.hu>,
-        xfs <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
-Message-ID: <20211117002251.GR449541@dread.disaster.area>
-References: <163660195990.22525.6041281669106537689.stgit@mickey.themaw.net>
- <163660197073.22525.11235124150551283676.stgit@mickey.themaw.net>
- <20211112003249.GL449541@dread.disaster.area>
- <CAJfpegvHDM_Mtc8+ASAcmNLd6RiRM+KutjBOoycun_Oq2=+p=w@mail.gmail.com>
- <20211114231834.GM449541@dread.disaster.area>
- <CAJfpegu4BwJD1JKngsrzUs7h82cYDGpxv0R1om=WGhOOb6pZ2Q@mail.gmail.com>
- <20211115222417.GO449541@dread.disaster.area>
- <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
- <20211116030120.GQ449541@dread.disaster.area>
- <YZPVSTDIWroHNvFS@bfoster>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YZPVSTDIWroHNvFS@bfoster>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=61944b5f
-        a=fP9RlOTWD4uZJjPSFnn6Ew==:117 a=fP9RlOTWD4uZJjPSFnn6Ew==:17
-        a=HsDoLlocmGUuF16g:21 a=kj9zAlcOel0A:10 a=vIxV3rELxO4A:10 a=7-415B0cAAAA:8
-        a=whnCjyx-wMjf9fUidEsA:9 a=CjuIK1q_8ugA:10 a=hl_xKfOxWho2XEkUDbUg:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+        Tue, 16 Nov 2021 21:01:24 -0500
+Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 128D0C061766
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 17:58:26 -0800 (PST)
+Received: by mail-qt1-x849.google.com with SMTP id w12-20020ac80ecc000000b002a7a4cd22faso913802qti.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 17:58:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:cc;
+        bh=caymuj0MGZCptln9VP4sHWU9D/RHZZIA+lbDSv4W7ok=;
+        b=b/fh0XJxqafyv9gl1yZedFfi5zsajwqjK2zxACnx0pWf5P2vKvj9M/vt0QY8/8XiYt
+         OcjCdGB5EVbawiItfV8N5xJLb4YciC1ec1luYWBeVcAYGJsHaRO8ZjLRWm4jxJs/dCbp
+         U63DLfZiahYLTG4Rsy9J5aUJcGGbCqanUoaHlCp8GvWyTPZYTNj14YlC5R+EvOM+wHhr
+         8HEk753sk1mRjZ+z8+k2tUytJOk4u12jYh3COQOKQHlSDqK1dxj1AMtBDaXPYBAvUxfX
+         MPsV6dQrGJ0YlLa4lTcT3d2wC+p677qtHWyaVX6HfQ0ba5Sa0Nst7Q0/91CWCG4NIe32
+         2yKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
+        bh=caymuj0MGZCptln9VP4sHWU9D/RHZZIA+lbDSv4W7ok=;
+        b=vGCk7oFPlqZ/Ai0V65LhjVN90dSNDdlPhWUb60CJKfOA9OWd50oBmx7B6t/9U2lfLh
+         1GT935LTBIQUbh43RxDLJN6ImlxGv0GFcXsvdlVpEYIky+ZKlhZVmxknjnK/v/68Dx0m
+         sSlLXbwmZaUWuHC2x2ELjaGgg/x03TxTNoA1sf9l2a9idOn9JVTpoHe8Tzlr2Vib4jbq
+         R2R2gzobY/b5r/6QGs13iCb7wXhaOpQHMBhccI2hNbYvqeIkiNy3tuhbPXRyWUZPePUw
+         /ZyohdRbGUtpRbhUHaXn5gqTa7DaQckBDDOgffH32Gbz3Uo2R0lLzOOLfPIIO9ii0tlh
+         O+mA==
+X-Gm-Message-State: AOAM531gsAM79kodV7X8BLgoZes4R0+k1bEA9IX4kznFtEL1mYVA/5fb
+        tDOdODJ7e42MOJ/qWr0QSQAwUMhit4yA
+X-Google-Smtp-Source: ABdhPJxBUPweJJY1+GgjaWTueZl7r8rLT33zDT9CZEWPJcotxU7v3nj++XPJdokw9KvwTukqUAIxF/x78Zxm
+X-Received: from dvandertop.c.googlers.com ([fda3:e722:ac3:cc00:14:4d90:c0a8:2862])
+ (user=dvander job=sendgmr) by 2002:a05:622a:293:: with SMTP id
+ z19mr6613270qtw.46.1637114305033; Tue, 16 Nov 2021 17:58:25 -0800 (PST)
+Date:   Wed, 17 Nov 2021 01:58:02 +0000
+Message-Id: <20211117015806.2192263-1-dvander@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.34.0.rc1.387.gb447b232ab-goog
+Subject: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+From:   David Anderson <dvander@google.com>
+Cc:     David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@android.com,
+        selinux@vger.kernel.org, paulmoore@microsoft.com,
+        Luca.Boccassi@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 10:59:05AM -0500, Brian Foster wrote:
-> On Tue, Nov 16, 2021 at 02:01:20PM +1100, Dave Chinner wrote:
-> > On Tue, Nov 16, 2021 at 09:03:31AM +0800, Ian Kent wrote:
-> > > On Tue, 2021-11-16 at 09:24 +1100, Dave Chinner wrote:
-> > > > If it isn't safe for ext4 to do that, then we have a general
-> > > > pathwalk problem, not an XFS issue. But, as you say, it is safe
-> > > > to do this zeroing, so the fix to xfs_ifree() is to zero the
-> > > > link buffer instead of freeing it, just like ext4 does.
-> > > > 
-> > > > As a side issue, we really don't want to move what XFS does in
-> > > > .destroy_inode to .free_inode because that then means we need to
-> > > > add synchronise_rcu() calls everywhere in XFS that might need to
-> > > > wait on inodes being inactivated and/or reclaimed. And because
-> > > > inode reclaim uses lockless rcu lookups, there's substantial
-> > > > danger of adding rcu callback related deadlocks to XFS here.
-> > > > That's just not a direction we should be moving in.
-> > > 
-> > > Another reason I decided to use the ECHILD return instead is that
-> > > I thought synchronise_rcu() might add an unexpected delay.
-> > 
-> > It depends where you put the synchronise_rcu() call. :)
-> > 
-> > > Since synchronise_rcu() will only wait for processes that
-> > > currently have the rcu read lock do you think that could actually
-> > > be a problem in this code path?
-> > 
-> > No, I don't think it will.  The inode recycle case in XFS inode
-> > lookup can trigger in two cases:
-> > 
-> > 1. VFS cache eviction followed by immediate lookup
-> > 2. Inode has been unlinked and evicted, then free and reallocated by
-> > the filesytsem.
-> > 
-> > In case #1, that's a cold cache lookup and hence delays are
-> > acceptible (e.g. a slightly longer delay might result in having to
-> > fetch the inode from disk again). Calling synchronise_rcu() in this
-> > case is not going to be any different from having to fetch the inode
-> > from disk...
-> > 
-> > In case #2, there's a *lot* of CPU work being done to modify
-> > metadata (inode btree updates, etc), and so the operations can block
-> > on journal space, metadata IO, etc. Delays are acceptible, and could
-> > be in the order of hundreds of milliseconds if the transaction
-> > subsystem is bottlenecked. waiting for an RCU grace period when we
-> > reallocate an indoe immediately after freeing it isn't a big deal.
-> > 
-> > IOWs, if synchronize_rcu() turns out to be a problem, we can
-> > optimise that separately - we need to correct the inode reuse
-> > behaviour w.r.t. VFS RCU expectations, then we can optimise the
-> > result if there are perf problems stemming from correct behaviour.
-> > 
-> 
-> FWIW, with a fairly crude test on a high cpu count system, it's not that
-> difficult to reproduce an observable degradation in inode allocation
-> rate with a synchronous grace period in the inode reuse path, caused
-> purely by a lookup heavy workload on a completely separate filesystem.
->
-> The following is a 5m snapshot of the iget stats from a filesystem doing
-> allocs/frees with an external/heavy lookup workload (which not included
-> in the stats), with and without a sync grace period wait in the reuse
-> path:
-> 
-> baseline:	ig 1337026 1331541 4 5485 0 5541 1337026
-> sync_rcu_test:	ig 2955 2588 0 367 0 383 2955
+Mark Salyzyn (3):
+  Add flags option to get xattr method paired to __vfs_getxattr
+  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+  overlayfs: override_creds=off option bypass creator_cred
 
-The alloc/free part of the workload is a single threaded
-create/unlink in a tight loop, yes?
+Mark Salyzyn + John Stultz (1):
+  overlayfs: inode_owner_or_capable called during execv
 
-This smells like a side effect of agressive reallocation of
-just-freed XFS_IRECLAIMABLE inodes from the finobt that haven't had
-their unlink state written back to disk yet. i.e. this is a corner
-case in #2 above where a small set of inodes is being repeated
-allocated and freed by userspace and hence being agressively reused
-and never needing to wait for IO. i.e. a tempfile workload
-optimisation...
+The first three patches address fundamental security issues that should
+be solved regardless of the override_creds=off feature.
 
-> I think this is kind of the nature of RCU and why I'm not sure it's a
-> great idea to rely on update side synchronization in a codepath that
-> might want to scale/perform in certain workloads.
+The fourth adds the feature depends on these other fixes.
 
-The problem here is not update side synchronisation. Root cause is
-aggressive reallocation of recently freed VFS inodes via physical
-inode allocation algorithms. Unfortunately, the RCU grace period
-requirements of the VFS inode life cycle dictate that we can't
-aggressively re-allocate and reuse freed inodes like this. i.e.
-reallocation of a just-freed inode also has to wait for an RCU grace
-period to pass before the in memory inode can be re-instantiated as
-a newly allocated inode.
+By default, all access to the upper, lower and work directories is the
+recorded mounter's MAC and DAC credentials.  The incoming accesses are
+checked against the caller's credentials.
 
-(Hmmmm - I wonder if of the other filesystems might have similar
-problems with physical inode reallocation inside a RCU grace period?
-i.e. without inode instance re-use, the VFS could potentially see
-multiple in-memory instances of the same physical inode at the same
-time.)
+If the principles of least privilege are applied for sepolicy, the
+mounter's credentials might not overlap the credentials of the caller's
+when accessing the overlayfs filesystem.  For example, a file that a
+lower DAC privileged caller can execute, is MAC denied to the
+generally higher DAC privileged mounter, to prevent an attack vector.
 
-> I'm not totally sure
-> if this will be a problem for real users running real workloads or not,
-> or if this can be easily mitigated, whether it's all rcu or a cascading
-> effect, etc. This is just a quick test so that all probably requires
-> more test and analysis to discern.
+We add the option to turn off override_creds in the mount options; all
+subsequent operations after mount on the filesystem will be only the
+caller's credentials.  The module boolean parameter and mount option
+override_creds is also added as a presence check for this "feature",
+existence of /sys/module/overlay/parameters/overlay_creds
 
-This looks like a similar problem to what busy extents address - we
-can't reuse a newly freed extent until the transaction containing
-the EFI/EFD hit stable storage (and the discard operation on the
-range is complete). Hence while a newly freed extent is
-marked free in the allocbt, they can't be reused until they are
-released from the busy extent tree.
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Signed-off-by: David Anderson <dvander@google.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: selinux@vger.kernel.org
+Cc: paulmoore@microsoft.com
+Cc: Luca.Boccassi@microsoft.com
 
-I can think of several ways to address this, but let me think on it
-a bit more.  I suspect there's a trick we can use to avoid needing
-synchronise_rcu() completely by using the spare radix tree tag and
-rcu grace period state checks with get_state_synchronize_rcu() and
-poll_state_synchronize_rcu() to clear the radix tree tags via a
-periodic radix tree tag walk (i.e. allocation side polling for "can
-we use this inode" rather than waiting for the grace period to
-expire once an inode has been selected and allocated.)
+---
 
-> > > 
-> > > Sorry, I don't understand what you mean by the root cause not
-> > > being identified?
-> > 
-> > The whole approach of "we don't know how to fix the inode reuse case
-> > so disable it" implies that nobody has understood where in the reuse
-> > case the problem lies. i.e. "inode reuse" by itself is not the root
-> > cause of the problem.
-> > 
-> 
-> I don't think anybody suggested to disable inode reuse.
+v19
+- rebase.
 
-Nobody did, so that's not what I was refering to. I was refering to
-the patches for and comments advocating disabling .get_link for RCU
-pathwalk because of the apparently unsolved problems stemming from
-inode reuse...
+v18
+- rebase + fix minor cut and paste error for inode argument in __vfs_getxattr
 
-> > The root cause is "allowing an inode to be reused without waiting
-> > for an RCU grace period to expire". This might seem pedantic, but
-> > "without waiting for an rcu grace period to expire" is the important
-> > part of the problem (i.e. the bug), not the "allowing an inode to be
-> > reused" bit.
-> > 
-> > Once the RCU part of the problem is pointed out, the solution
-> > becomes obvious. As nobody had seen the obvious (wait for an RCU
-> > grace period when recycling an inode) it stands to reason that
-> > nobody really understood what the root cause of the inode reuse
-> > problem.
-> > 
-> 
-> The synchronize_rcu() approach was one of the first options discussed in
-> the bug report once a reproducer was available.
+v17
+- correct some zero-day build failures.
+- fix up documentation
 
-What bug report would that be? :/
+v16
+- rebase and merge of two patches.
+- add adjustment to deal with execv when overrides is off.
 
-It's not one that I've read, and I don't recall seeing a pointer to
-it anywhere in the path posting. IOWs, whatever discussion happened
-in a private distro bug report can't be assumed as "general
-knowledge" in an upstream discussion...
+v15
+- Revert back to v4 with fixes from on the way from v5-v14. The single
+  structure argument passing to address the complaints about too many
+  arguments was rejected by the community.
+- Drop the udner discussion fix for an additional CAP_DAC_READ_SEARCH
+  check. Can address that independently.
+- ToDo: upstream test frame for thes security fixes (currently testing
+  is all in Android).
 
-> AIUI, this is not currently a reproducible problem even before patch 1,
-> which reduces the race window even further. Given that and the nak on
-> the current patch (the justification for which I don't really
-> understand), I'm starting to agree with Ian's earlier statement that
-> perhaps it is best to separate this one so we can (hopefully) move patch
-> 1 along on its own merit..
+v14:
+- Rejoin, rebase and a few adjustments.
 
-*nod*
+v13:
+- Pull out first patch and try to get it in alone feedback, some
+  Acks, and then <crickets> because people forgot why we were doing i.
 
-The problem seems pretty rare, the pathwalk patch makes it
-even rarer, so I think they can be separated just fine.
+v12:
+- Restore squished out patch 2 and 3 in the series,
+  then change algorithm to add flags argument.
+  Per-thread flag is a large security surface.
 
-Cheers,
+v11:
+- Squish out v10 introduced patch 2 and 3 in the series,
+  then and use per-thread flag instead for nesting.
+- Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
+- Add sb argument to ovl_revert_creds to match future work.
 
-Dave.
+v10:
+- Return NULL on CAP_DAC_READ_SEARCH
+- Add __get xattr method to solve sepolicy logging issue
+- Drop unnecessary sys_admin sepolicy checking for administrative
+  driver internal xattr functions.
+
+v6:
+- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+- Do better with the documentation, drop rationalizations.
+- pr_warn message adjusted to report consequences.
+
+v5:
+- beefed up the caveats in the Documentation
+- Is dependent on
+  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+- Added prwarn when override_creds=off
+
+v4:
+- spelling and grammar errors in text
+
+v3:
+- Change name from caller_credentials / creator_credentials to the
+  boolean override_creds.
+- Changed from creator to mounter credentials.
+- Updated and fortified the documentation.
+- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+
+v2:
+- Forward port changed attr to stat, resulting in a build error.
+- altered commit message.
+
+David Anderson (4):
+  Add flags option to get xattr method paired to __vfs_getxattr
+  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+  overlayfs: override_creds=off option bypass creator_cred
+  overlayfs: inode_owner_or_capable called during execv
+
+ Documentation/filesystems/locking.rst   |  2 +-
+ Documentation/filesystems/overlayfs.rst | 26 ++++++++++++++-
+ fs/9p/acl.c                             |  3 +-
+ fs/9p/xattr.c                           |  3 +-
+ fs/afs/xattr.c                          | 10 +++---
+ fs/attr.c                               |  2 +-
+ fs/btrfs/xattr.c                        |  3 +-
+ fs/ceph/xattr.c                         |  3 +-
+ fs/cifs/xattr.c                         |  2 +-
+ fs/ecryptfs/inode.c                     |  6 ++--
+ fs/ecryptfs/mmap.c                      |  5 +--
+ fs/erofs/xattr.c                        |  3 +-
+ fs/ext2/xattr_security.c                |  2 +-
+ fs/ext2/xattr_trusted.c                 |  2 +-
+ fs/ext2/xattr_user.c                    |  2 +-
+ fs/ext4/xattr_hurd.c                    |  2 +-
+ fs/ext4/xattr_security.c                |  2 +-
+ fs/ext4/xattr_trusted.c                 |  2 +-
+ fs/ext4/xattr_user.c                    |  2 +-
+ fs/f2fs/xattr.c                         |  4 +--
+ fs/fuse/xattr.c                         |  4 +--
+ fs/gfs2/xattr.c                         |  3 +-
+ fs/hfs/attr.c                           |  2 +-
+ fs/hfsplus/xattr.c                      |  3 +-
+ fs/hfsplus/xattr_security.c             |  3 +-
+ fs/hfsplus/xattr_trusted.c              |  3 +-
+ fs/hfsplus/xattr_user.c                 |  3 +-
+ fs/inode.c                              |  7 +++--
+ fs/internal.h                           |  3 +-
+ fs/jffs2/security.c                     |  3 +-
+ fs/jffs2/xattr_trusted.c                |  3 +-
+ fs/jffs2/xattr_user.c                   |  3 +-
+ fs/jfs/xattr.c                          |  5 +--
+ fs/kernfs/inode.c                       |  3 +-
+ fs/nfs/nfs4proc.c                       |  9 ++++--
+ fs/ntfs3/xattr.c                        |  2 +-
+ fs/ocfs2/xattr.c                        |  9 ++++--
+ fs/open.c                               |  2 +-
+ fs/orangefs/xattr.c                     |  3 +-
+ fs/overlayfs/copy_up.c                  |  2 +-
+ fs/overlayfs/dir.c                      | 17 +++++-----
+ fs/overlayfs/file.c                     | 25 ++++++++-------
+ fs/overlayfs/inode.c                    | 29 ++++++++---------
+ fs/overlayfs/namei.c                    |  6 ++--
+ fs/overlayfs/overlayfs.h                |  7 +++--
+ fs/overlayfs/ovl_entry.h                |  1 +
+ fs/overlayfs/readdir.c                  |  8 ++---
+ fs/overlayfs/super.c                    | 34 ++++++++++++++++----
+ fs/overlayfs/util.c                     | 13 ++++++--
+ fs/posix_acl.c                          |  2 +-
+ fs/reiserfs/xattr_security.c            |  3 +-
+ fs/reiserfs/xattr_trusted.c             |  3 +-
+ fs/reiserfs/xattr_user.c                |  3 +-
+ fs/squashfs/xattr.c                     |  2 +-
+ fs/ubifs/xattr.c                        |  3 +-
+ fs/xattr.c                              | 42 +++++++++++++------------
+ fs/xfs/xfs_xattr.c                      |  3 +-
+ include/linux/lsm_hook_defs.h           |  3 +-
+ include/linux/security.h                |  6 ++--
+ include/linux/xattr.h                   |  6 ++--
+ include/uapi/linux/xattr.h              |  7 +++--
+ mm/shmem.c                              |  3 +-
+ net/socket.c                            |  3 +-
+ security/commoncap.c                    | 11 ++++---
+ security/integrity/evm/evm_main.c       | 13 +++++---
+ security/security.c                     |  5 +--
+ security/selinux/hooks.c                | 19 ++++++-----
+ security/smack/smack_lsm.c              | 18 ++++++-----
+ 68 files changed, 289 insertions(+), 167 deletions(-)
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.0.rc1.387.gb447b232ab-goog
+
