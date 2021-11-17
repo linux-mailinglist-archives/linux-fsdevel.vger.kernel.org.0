@@ -2,148 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 965AB453FBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 05:48:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AC18454038
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 06:33:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233219AbhKQEvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Nov 2021 23:51:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230362AbhKQEvg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Nov 2021 23:51:36 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1A640617E4;
-        Wed, 17 Nov 2021 04:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637124518;
-        bh=PaCQK9OcWvVCxVcVFvUIIp+dLbwqCFPxSiJVxDpNV18=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kwfDRIcPmvU0duRN65O39l5QjUFh0jQ9kjZLHLdynWUyubQbPDP2Ckm3D0daybUdl
-         s4Kgjw+RIcdd0jJv2EYFbDNGoHevLfYyrSHXzwJ443cbz0ibh9X53Oy0KkOHGw4upE
-         NLRDF9gLgSQIvO4LtIJ2EnaIuSmS9vNRCoLQlOL3x25SxE/uB8QRqEzbOn8y3TQTde
-         cD0rWPc4iBgHC/gB07X+OTdYf7Uk/H9ZQpNDH4hzT76LsriCLczSKgS7u8qkCPRqJx
-         FJyzP/2iIGYJBG6SikeCDdLxHhw3Fyp/qia1txuLeolGzBl9Cg6iC5HnPugl7Y8mbp
-         pc5RIW7bUaWzg==
-Date:   Tue, 16 Nov 2021 20:48:37 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 06/28] block: Add bio_for_each_folio_all()
-Message-ID: <20211117044837.GQ24307@magnolia>
-References: <20211108040551.1942823-1-willy@infradead.org>
- <20211108040551.1942823-7-willy@infradead.org>
+        id S233236AbhKQFfI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Nov 2021 00:35:08 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:35692 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232955AbhKQFfI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Nov 2021 00:35:08 -0500
+Received: by mail-io1-f72.google.com with SMTP id x11-20020a0566022c4b00b005e702603028so751330iov.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Nov 2021 21:32:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=U6kTvO9Oiv+XnDndGB5oJ6WC1Ug39q+jw5GcZf9PM5o=;
+        b=Zwb50GXBOfqaZukPD7VSdTUHpSF2dsJzFsssN8LEm/NigI2FsvM3p8ER/YihXq+HTn
+         OsqunWY0V3mLHJbNOaDSJ04dVecjefbW+luKDoSZysAyxrIkpy1EJ8ACGNbCkaoIjAXV
+         MLFSUsqdocd+YXriHBTmJyMJeODZvvI1ckVrMgDX1Rl5XvZJdwYmNa2+sm3ftITAT3e5
+         ARd2wHOVNRP6zoa6YjKL26IxEYq/zJ7L6VBoqpBi3+CBpUEur3WnM4uxUNFuIu1Yn0ip
+         R1t3rgBJHblbFFulQfJ+mPeMMDUBkJ07ukRetzTXsRwrUGfI2lvnbx2hw8qTuS0iqudk
+         iL+g==
+X-Gm-Message-State: AOAM531ALxgAZ2VhaGVweq3kCspA7ULSFqgl6lf952AbKrYtV0SDa+qO
+        5bDnrnVwLbAqhiVpe4tUxkCU3MiaqoONTUwCKBZ92ueP6DoX
+X-Google-Smtp-Source: ABdhPJzNTw5YFfZ2o6POW9r7JpKSV/vb4VbOqP26VotgSBS9PYUKclMMIt7aM0nI2J0pC7i+O6r7kqBY+dZvlXu0kzD32nLvQmVL
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211108040551.1942823-7-willy@infradead.org>
+X-Received: by 2002:a05:6e02:b2f:: with SMTP id e15mr6505013ilu.167.1637127129837;
+ Tue, 16 Nov 2021 21:32:09 -0800 (PST)
+Date:   Tue, 16 Nov 2021 21:32:09 -0800
+In-Reply-To: <000000000000c93bd505bf3646ed@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000006b5b205d0f55d49@google.com>
+Subject: Re: [syzbot] WARNING in inc_nlink (2)
+From:   syzbot <syzbot+1c8034b9f0e640f9ba45@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 04:05:29AM +0000, Matthew Wilcox (Oracle) wrote:
-> Allow callers to iterate over each folio instead of each page.  The
-> bio need not have been constructed using folios originally.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Jens Axboe <axboe@kernel.dk>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+syzbot suspects this issue was fixed by commit:
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+commit 97f044f690bac2b094bfb7fb2d177ef946c85880
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Fri Oct 22 15:03:02 2021 +0000
 
---D
+    fuse: don't increment nlink in link()
 
-> ---
->  Documentation/core-api/kernel-api.rst |  1 +
->  include/linux/bio.h                   | 53 ++++++++++++++++++++++++++-
->  2 files changed, 53 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-> index 2e7186805148..7f0cb604b6ab 100644
-> --- a/Documentation/core-api/kernel-api.rst
-> +++ b/Documentation/core-api/kernel-api.rst
-> @@ -279,6 +279,7 @@ Accounting Framework
->  Block Devices
->  =============
->  
-> +.. kernel-doc:: include/linux/bio.h
->  .. kernel-doc:: block/blk-core.c
->     :export:
->  
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index a783cac49978..e3c9e8207f12 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -166,7 +166,7 @@ static inline void bio_advance(struct bio *bio, unsigned int nbytes)
->   */
->  #define bio_for_each_bvec_all(bvl, bio, i)		\
->  	for (i = 0, bvl = bio_first_bvec_all(bio);	\
-> -	     i < (bio)->bi_vcnt; i++, bvl++)		\
-> +	     i < (bio)->bi_vcnt; i++, bvl++)
->  
->  #define bio_iter_last(bvec, iter) ((iter).bi_size == (bvec).bv_len)
->  
-> @@ -260,6 +260,57 @@ static inline struct bio_vec *bio_last_bvec_all(struct bio *bio)
->  	return &bio->bi_io_vec[bio->bi_vcnt - 1];
->  }
->  
-> +/**
-> + * struct folio_iter - State for iterating all folios in a bio.
-> + * @folio: The current folio we're iterating.  NULL after the last folio.
-> + * @offset: The byte offset within the current folio.
-> + * @length: The number of bytes in this iteration (will not cross folio
-> + *	boundary).
-> + */
-> +struct folio_iter {
-> +	struct folio *folio;
-> +	size_t offset;
-> +	size_t length;
-> +	/* private: for use by the iterator */
-> +	size_t _seg_count;
-> +	int _i;
-> +};
-> +
-> +static inline void bio_first_folio(struct folio_iter *fi, struct bio *bio,
-> +				   int i)
-> +{
-> +	struct bio_vec *bvec = bio_first_bvec_all(bio) + i;
-> +
-> +	fi->folio = page_folio(bvec->bv_page);
-> +	fi->offset = bvec->bv_offset +
-> +			PAGE_SIZE * (bvec->bv_page - &fi->folio->page);
-> +	fi->_seg_count = bvec->bv_len;
-> +	fi->length = min(folio_size(fi->folio) - fi->offset, fi->_seg_count);
-> +	fi->_i = i;
-> +}
-> +
-> +static inline void bio_next_folio(struct folio_iter *fi, struct bio *bio)
-> +{
-> +	fi->_seg_count -= fi->length;
-> +	if (fi->_seg_count) {
-> +		fi->folio = folio_next(fi->folio);
-> +		fi->offset = 0;
-> +		fi->length = min(folio_size(fi->folio), fi->_seg_count);
-> +	} else if (fi->_i + 1 < bio->bi_vcnt) {
-> +		bio_first_folio(fi, bio, fi->_i + 1);
-> +	} else {
-> +		fi->folio = NULL;
-> +	}
-> +}
-> +
-> +/**
-> + * bio_for_each_folio_all - Iterate over each folio in a bio.
-> + * @fi: struct folio_iter which is updated for each folio.
-> + * @bio: struct bio to iterate over.
-> + */
-> +#define bio_for_each_folio_all(fi, bio)				\
-> +	for (bio_first_folio(&fi, bio, 0); fi.folio; bio_next_folio(&fi, bio))
-> +
->  enum bip_flags {
->  	BIP_BLOCK_INTEGRITY	= 1 << 0, /* block layer owns integrity data */
->  	BIP_MAPPED_INTEGRITY	= 1 << 1, /* ref tag has been remapped */
-> -- 
-> 2.33.0
-> 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10563ac9b00000
+start commit:   1da38549dd64 Merge tag 'nfsd-5.15-3' of git://git.kernel.o..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e2ffb281e6323643
+dashboard link: https://syzkaller.appspot.com/bug?extid=1c8034b9f0e640f9ba45
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f16d57300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15758d57300000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fuse: don't increment nlink in link()
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
