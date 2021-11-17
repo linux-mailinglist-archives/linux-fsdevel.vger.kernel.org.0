@@ -2,245 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E6A5454F14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 22:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88607454F90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Nov 2021 22:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240780AbhKQVLK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Nov 2021 16:11:10 -0500
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:53362 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240773AbhKQVJ3 (ORCPT
+        id S240800AbhKQVtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Nov 2021 16:49:09 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:5714 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232906AbhKQVtJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Nov 2021 16:09:29 -0500
-Received: from dread.disaster.area (pa49-195-103-97.pa.nsw.optusnet.com.au [49.195.103.97])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 1A353A8815;
-        Thu, 18 Nov 2021 08:06:26 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mnS8N-00A376-KU; Thu, 18 Nov 2021 08:06:23 +1100
-Date:   Thu, 18 Nov 2021 08:06:23 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Brian Foster <bfoster@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        xfs <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
-Message-ID: <20211117210623.GT449541@dread.disaster.area>
-References: <20211112003249.GL449541@dread.disaster.area>
- <CAJfpegvHDM_Mtc8+ASAcmNLd6RiRM+KutjBOoycun_Oq2=+p=w@mail.gmail.com>
- <20211114231834.GM449541@dread.disaster.area>
- <CAJfpegu4BwJD1JKngsrzUs7h82cYDGpxv0R1om=WGhOOb6pZ2Q@mail.gmail.com>
- <20211115222417.GO449541@dread.disaster.area>
- <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
- <20211116030120.GQ449541@dread.disaster.area>
- <YZPVSTDIWroHNvFS@bfoster>
- <20211117002251.GR449541@dread.disaster.area>
- <4253c446d98f9800b43d5966636bddabb3c6b1a0.camel@themaw.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Wed, 17 Nov 2021 16:49:09 -0500
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AHKvPGV001761;
+        Wed, 17 Nov 2021 21:46:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : from : to : cc : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=plcirzHYPsZeZqgLzhUuwdgH8cP6PLocX15E2Omexec=;
+ b=Wjlw7giEDCOU0gndHTqL73T5ouXIR5ksGICxpqdwpLYi161nqp2R7VYgrj8xzWrtMF6C
+ BTMpesQ7VDpmGOCSS2serOX+FVsQvcZQYWkp68S1ECBk2xK4OxXd+a2qxFvFcwW37U3H
+ tijIepMe4XLegYxD698KIYJw6yJxAsOvoK/jUwsngyxPDhWqar1JeAmngrPb6yd0tZOv
+ fNTDBhsfAqfyEq12WPeNZdDJQsOmAFci51a5kg61SW2jju353Bvu63mAzS5TI+0HXMvs
+ 3KUbNEtKPwpzAzQPsjBaVwKcqITy/BbIxyXizflKFzbiZLGWaGXJueYPwjEerouMBItx Hg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cd1w83et9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Nov 2021 21:46:08 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AHLeiMw172830;
+        Wed, 17 Nov 2021 21:46:07 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2176.outbound.protection.outlook.com [104.47.59.176])
+        by aserp3020.oracle.com with ESMTP id 3ca567kqqk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Nov 2021 21:46:07 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m9++pSGOxaaegS4LJk0Bmxl6dvbVOqY0MBgx9iiqYcb6kpfuMK8bRRfoMXsQvK8W/YLg7B+sMbQXVHKgKQ7AhmtLGbabxY6AlE0qXt6Lm3n77R/CvSs0QmMSEJM4O+2vDh7optq5NlTkKE1hA4WjEd0MoY/OKKNq2ucfVbt9QuVj2XtsFs4h7eegGwJMXyr8GpZjIpOaoQGhQrJ+SuBFntxppJ9n2w5O71ZY44NRIVsz8rxDxaOrcHudgLIu0CCYgMw6hJqCnOOZHnMojzk6fBgNpNuvb9rLl8eQBNWSvkZ6mSp9WqBr6GUL09IkFiX/p4rooJ/dBD86XDwk1kD0EA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=plcirzHYPsZeZqgLzhUuwdgH8cP6PLocX15E2Omexec=;
+ b=Us3Q45hm+qDWlJ69epIE69QC+oNbIeFizu6clrhakP3IL/2udn6zQYWm1TTvokkJ2cjhcJpfdNyne3gAA/JtmgiCqBcKbbhpA4EtSA5f9UGxX6vvf66U/1Md+WtVHmN+pRz1zm9GHGZG6o0SmGZ7JGdqZNJNJjv1QL+grHkFyE3Lrr1k6CSc+dzKj9Gu/ZbU8mJnr9evMZi3k1V0y7qcoCazXZ/q6XVpp2B1x/Dsb/elohA2ORpePlcdjIH5HPs+/JzesGnluaqNEpKIjPkVJcpHWiA+DNkNDOjGfnngNnY7Q+A8JrB1c0ior5jjr9sq+qVyzRmuCXboOdhWzys2VQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=plcirzHYPsZeZqgLzhUuwdgH8cP6PLocX15E2Omexec=;
+ b=mTYEOiO/v659ISVJCA1Rmn5PCGppmSXq8PKx1AKDP7zigEzxdr+augOyqm18jP5/+CJFJ6zrkzP32dZSUwhb+a7uE31PxnuPtZMgGFGZFzRer6xByOIC7WFXPiXTEtv04bXLza7wVX+40cruitLfqZ6T6eVE1ikecfGwZrKVRUc=
+Received: from BY5PR10MB4257.namprd10.prod.outlook.com (2603:10b6:a03:211::21)
+ by BYAPR10MB3335.namprd10.prod.outlook.com (2603:10b6:a03:15d::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.17; Wed, 17 Nov
+ 2021 21:46:05 +0000
+Received: from BY5PR10MB4257.namprd10.prod.outlook.com
+ ([fe80::486b:6917:1bf6:c00e]) by BY5PR10MB4257.namprd10.prod.outlook.com
+ ([fe80::486b:6917:1bf6:c00e%7]) with mapi id 15.20.4690.027; Wed, 17 Nov 2021
+ 21:46:05 +0000
+Message-ID: <908ded64-6412-66d3-6ad5-429700610660@oracle.com>
+Date:   Wed, 17 Nov 2021 13:46:02 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
+ Courteous Server
+Content-Language: en-US
+From:   dai.ngo@oracle.com
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210929005641.60861-1-dai.ngo@oracle.com>
+ <20211001205327.GN959@fieldses.org>
+ <a6c9ba13-43d7-4ea9-e05d-f454c2c9f4c2@oracle.com>
+ <33c8ea5a-4187-a9fa-d507-a2dcec06416c@oracle.com>
+ <20211117141433.GB24762@fieldses.org>
+ <400143c8-c12a-6224-1b36-3e19f20a7ee4@oracle.com>
+In-Reply-To: <400143c8-c12a-6224-1b36-3e19f20a7ee4@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4253c446d98f9800b43d5966636bddabb3c6b1a0.camel@themaw.net>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=epq8cqlX c=1 sm=1 tr=0 ts=61956ed4
-        a=fP9RlOTWD4uZJjPSFnn6Ew==:117 a=fP9RlOTWD4uZJjPSFnn6Ew==:17
-        a=HsDoLlocmGUuF16g:21 a=8nJEP1OIZ-IA:10 a=vIxV3rELxO4A:10 a=7-415B0cAAAA:8
-        a=5Hh4-gWYXWfbCYL41wkA:9 a=wPNLvfGTeEIA:10 a=hl_xKfOxWho2XEkUDbUg:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+X-ClientProxiedBy: SN6PR04CA0100.namprd04.prod.outlook.com
+ (2603:10b6:805:f2::41) To BY5PR10MB4257.namprd10.prod.outlook.com
+ (2603:10b6:a03:211::21)
+MIME-Version: 1.0
+Received: from [10.159.236.70] (138.3.200.6) by SN6PR04CA0100.namprd04.prod.outlook.com (2603:10b6:805:f2::41) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.20 via Frontend Transport; Wed, 17 Nov 2021 21:46:04 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2bc5de6f-e560-45f3-27db-08d9aa13a843
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3335:
+X-Microsoft-Antispam-PRVS: <BYAPR10MB3335B486B4BEDD99E2C98D66879A9@BYAPR10MB3335.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DY4Pjc3fl3p3bDcZR8+JFTscPP0Nm+ekgMC9TeFNVBfk7fnNYI1Pa/U0TkijXtRfLUy/0fdgoiRmozqaWSLxezzy+dYqnMtUUbx4HyvSV6QqTfR0C1d8rHRo4Nf3/rX/pceNz+juTy2F1kOyWJerxbAAgTDAERM4ZZ+W0VNza0DTk5WQJhsHaKpECiAjFkyioj1VmNXegP71c4QOaBkaFXlt6KAH1PV/djwNfWK0qA7Ptkuopkdi2RnY6hImvcBWVkPULeJBzrwWxCiZgLOaCs3GRlGSiA0zjyyJ1azOJ4pKkC4fUSjgHZfbNo5H5NuI4nd4vIKo4vbSXHRHhmy4dfFiApp4ZOGgCqdqHN9PXbiC9L9tA0bQhz2LcIJnzT5iu60644BR3IdOX8Hqy4Oz9yHcdRMT4x/XbwKlwNcWzBNY3ujWVIIdkYyAr6KKEmy0Hk6EfUcwM2JYYvHzpi4acyVZZo6Ii1VW/HkYICoN6x0LlqNIAdksMKP8/FaME7XVmp9SRKdB2ySM2hoZcgKQSlJHXM1abjisUj/Fa3ObsgUhXhqbCJm4J3u4FtjoY2iD0I7KHxLN2lZoJj+gs4El40Nxrav9vdmE0HXZZI5JuGczjLgRUsxQ4gew4F9SSDTVoBP7+C1PHDeWGOmKZPVj2X6RH6yhxRwAf9IvFL+vk1vn53w1f3vlWcEHsKIekYnKw/c07v8YvEwgwS3nfxStZA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4257.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(508600001)(4326008)(38100700002)(316002)(2906002)(86362001)(9686003)(31686004)(19627235002)(8676002)(5660300002)(16576012)(53546011)(6486002)(6916009)(66476007)(2616005)(66946007)(31696002)(26005)(83380400001)(956004)(36756003)(186003)(66556008)(8936002)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eW5sanNlK1ErN3ZqMlBqNVkvb0tRY3lSTkcrVWFaTU1FVDNFbldMeFBzVEJF?=
+ =?utf-8?B?akN4OVdlRnlWTHNmbWpWMWwvYkRNbmlQbTQxWnFWUy9pc3l0Q3FkV1ZrOVg4?=
+ =?utf-8?B?SUZPU0NEa1pzNGNjeHF6eWc3dzljMzZrbGQ2dldHdndHQThHTmpPU0t6R3Ny?=
+ =?utf-8?B?NDhpcUpjMjhydTBIOEtiN21WeW8zM2h1TzJkMHZHRi9wWkY2eHg0ZTY0YlZN?=
+ =?utf-8?B?b05wRWY1QVF6bTBiR3lmeG1mR2N2aUJiRjlnRWtkNkMvY2hkMXk3dGZlUSs3?=
+ =?utf-8?B?b0YrMWNBV0JKZmRJZXNXdW9ScTg5MzhUNktiWEp0cnJhcUxEWUthNHY1M2I4?=
+ =?utf-8?B?RDZ2Smw0TlVqNW1iaGxjcS8vNTVSUmc0ckY3M0VpaGpEK1owUjVCVy8yQlNJ?=
+ =?utf-8?B?ZUdPb1l2dy9XUlZWSTdlOWRaakVxNTFWcjE5czN0L1hEWWgwQW1id0NQSTVm?=
+ =?utf-8?B?U3ZqVWRxc3hwMlZJUDdjRElvRXloNFhLV0d0N3Z3ek1uSzNSR1p0UERpQWRO?=
+ =?utf-8?B?Wi9qYythZGFBV2lzbjkva3hsMTE5OElONGpSVnFFUFpBZTZwT0ZHSDBIbTdn?=
+ =?utf-8?B?K2NWbDZISmdGOHdSUkUzemdWbWNIdkN3R29GcnhCRGV5N0VNWWZ0TkNLZUc2?=
+ =?utf-8?B?ZUxJOHFZSGdJYkpJa2JYNmNSN21pWEJiNGdRekE0eVR1ZFB6WUl2VXA5N3hP?=
+ =?utf-8?B?QlFyQk9YZTY5Sy9MRmx0ekpqS2Nnd01tQ2NxNzBPVlhiOFd5MjVuS3BEZzFH?=
+ =?utf-8?B?WjZRakVFR1BGTG9UOWtMVVJFeTRvQUlLOVZMVm5RdFQwRjZKUzdEVWZNQ2Va?=
+ =?utf-8?B?VW0yVE5xdDhiU0FsUXBmbkpwZ2lIZzFsOEhFNFI4UWVUV1dabFNPcXhGcFBs?=
+ =?utf-8?B?QloyOHFyNldaaDVpWmttRGNGS2JlKzQ5aWpmbTIwUzdLMDdoZXFzcnJJUTRN?=
+ =?utf-8?B?NTJXVGRYdDFXa0JzckhYNnJ0ZnhNZHYzR0tOUE5tVHMzMGk5eDlDcHhVUzZI?=
+ =?utf-8?B?c1lKTktSVmxtUW1IL09wb2RyUGxUb1RDSmFNQTVqd1pMOG9yYTd4dlEyY1Jt?=
+ =?utf-8?B?eGNSUnBxcGxjL1J5endMeUd3empRUXFIM3dqV2dZRUVOcnVzanE2ZE9ScUt5?=
+ =?utf-8?B?dzRCdTltZ2dMcXVXUnlJNlNGVGUxWVg2Y1I5QnFmUVpKYTFaRW9vUlM4Y2dG?=
+ =?utf-8?B?ZlZJK0ZJVVJCN1IzOHRmL3UyZWJVQUgzb3lGMVhtYzl0V1V2Vk1kSnJXaGZa?=
+ =?utf-8?B?V1pkTDdQYnBSa2NQWEE0aS9pZXFXeWhoeFlOc3RCYWdIckJrbFBmSFJBejNr?=
+ =?utf-8?B?U2lpdDdmRVBXWlRMQ1lnMzN6MXlONFpPRjZyUTRmNnk0Mkw3QmdDYU9Vakov?=
+ =?utf-8?B?LzYxWWptR2dkS1p1YW55VFhEMkgrMnYzd1dzMUxoaDBxTHA0WjhKQ2tqNktq?=
+ =?utf-8?B?VlcwNzVCYjFjcmRZTnUzNzNTWFVaR3dPZ0RVcDcwY1hRRGNkZ080bGpzdm9Y?=
+ =?utf-8?B?aHlBT25UaEl3OG1WRCs2ampMMXdNSlFvdUdLMkRrWFRGS2JyTkxjMUhnTkox?=
+ =?utf-8?B?MWJoTkpsSzg5SFkweGFQMzh3Y2JRWDBHR3dOZmFOVXFKakxNTG52aXVQK3kw?=
+ =?utf-8?B?RTRhbEo4OW5UdnczQkVNWmNSUnFLV1g4VU56UmtEZFNlaWxkZzF5QnRrZVNz?=
+ =?utf-8?B?TXRMT3BqUWNwV2phTzFjbmtUdmIwcFZESWJLSzQ3UC9FUmc2QzdoMUgvbEta?=
+ =?utf-8?B?UTRRakl1SG42Y3k0TmNzMHU0U3dKZkRvVmlTVjdVd1hDcU9KT0hHVU1kUHl2?=
+ =?utf-8?B?U3d1dUN6WlRxZTN6STZmUldYNExFYnRrcnIzWGEzY3doMHgwWjB6VDJlR1BW?=
+ =?utf-8?B?MW4vREUwL0Nsdnh1SFF5QXd6TnBwUWFLdXNWZUJEdktWSS9YSHYySTFDV0dF?=
+ =?utf-8?B?MklkbjgvS2FUMC9vZHgvdGltaUxraDYrUUxqV1JSNXdtMmI0aTlZMFJ6Qk9F?=
+ =?utf-8?B?ay84ZHd2alpDWUhDeFRKcmFOVkw0QWgyekUzMTB2aWNienlFUkdxRC9WTVRV?=
+ =?utf-8?B?ZHRKWVZ1Wm9hT09sWWFLYTRmVXRaNTNjejVuQVVWTGx1NGNtRWJ3VXdGc1lJ?=
+ =?utf-8?B?M09GR2szcFJyTWt4ODA0TlBYeXVSMWJlR2daM0gvU2FLVUxOeFJNcjM5WEU3?=
+ =?utf-8?Q?DMkqEogqMnLZSndlbRglsls=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bc5de6f-e560-45f3-27db-08d9aa13a843
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4257.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2021 21:46:05.5004
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FTdlFhjb56hwYZ3lkbIS13j1XMo3dXtmNki+rppTgWcveAIXqSuB9mba9DEpue66pJHaNWtGtUH/Xvif6+Uxjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3335
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10171 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2111170098
+X-Proofpoint-GUID: 0WERvYGxigI7wwQV72fx_SihwDyIefq2
+X-Proofpoint-ORIG-GUID: 0WERvYGxigI7wwQV72fx_SihwDyIefq2
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 17, 2021 at 10:19:46AM +0800, Ian Kent wrote:
-> On Wed, 2021-11-17 at 11:22 +1100, Dave Chinner wrote:
-> > On Tue, Nov 16, 2021 at 10:59:05AM -0500, Brian Foster wrote:
-> > > On Tue, Nov 16, 2021 at 02:01:20PM +1100, Dave Chinner wrote:
-> > > > On Tue, Nov 16, 2021 at 09:03:31AM +0800, Ian Kent wrote:
-> > > > > On Tue, 2021-11-16 at 09:24 +1100, Dave Chinner wrote:
-> > > > > > If it isn't safe for ext4 to do that, then we have a general
-> > > > > > pathwalk problem, not an XFS issue. But, as you say, it is
-> > > > > > safe
-> > > > > > to do this zeroing, so the fix to xfs_ifree() is to zero the
-> > > > > > link buffer instead of freeing it, just like ext4 does.
-> > > > > > 
-> > > > > > As a side issue, we really don't want to move what XFS does
-> > > > > > in
-> > > > > > .destroy_inode to .free_inode because that then means we need
-> > > > > > to
-> > > > > > add synchronise_rcu() calls everywhere in XFS that might need
-> > > > > > to
-> > > > > > wait on inodes being inactivated and/or reclaimed. And
-> > > > > > because
-> > > > > > inode reclaim uses lockless rcu lookups, there's substantial
-> > > > > > danger of adding rcu callback related deadlocks to XFS here.
-> > > > > > That's just not a direction we should be moving in.
-> > > > > 
-> > > > > Another reason I decided to use the ECHILD return instead is
-> > > > > that
-> > > > > I thought synchronise_rcu() might add an unexpected delay.
-> > > > 
-> > > > It depends where you put the synchronise_rcu() call. :)
-> > > > 
-> > > > > Since synchronise_rcu() will only wait for processes that
-> > > > > currently have the rcu read lock do you think that could
-> > > > > actually
-> > > > > be a problem in this code path?
-> > > > 
-> > > > No, I don't think it will.� The inode recycle case in XFS inode
-> > > > lookup can trigger in two cases:
-> > > > 
-> > > > 1. VFS cache eviction followed by immediate lookup
-> > > > 2. Inode has been unlinked and evicted, then free and reallocated
-> > > > by
-> > > > the filesytsem.
-> > > > 
-> > > > In case #1, that's a cold cache lookup and hence delays are
-> > > > acceptible (e.g. a slightly longer delay might result in having
-> > > > to
-> > > > fetch the inode from disk again). Calling synchronise_rcu() in
-> > > > this
-> > > > case is not going to be any different from having to fetch the
-> > > > inode
-> > > > from disk...
-> > > > 
-> > > > In case #2, there's a *lot* of CPU work being done to modify
-> > > > metadata (inode btree updates, etc), and so the operations can
-> > > > block
-> > > > on journal space, metadata IO, etc. Delays are acceptible, and
-> > > > could
-> > > > be in the order of hundreds of milliseconds if the transaction
-> > > > subsystem is bottlenecked. waiting for an RCU grace period when
-> > > > we
-> > > > reallocate an indoe immediately after freeing it isn't a big
-> > > > deal.
-> > > > 
-> > > > IOWs, if synchronize_rcu() turns out to be a problem, we can
-> > > > optimise that separately - we need to correct the inode reuse
-> > > > behaviour w.r.t. VFS RCU expectations, then we can optimise the
-> > > > result if there are perf problems stemming from correct
-> > > > behaviour.
-> > > > 
-> > > 
-> > > FWIW, with a fairly crude test on a high cpu count system, it's not
-> > > that
-> > > difficult to reproduce an observable degradation in inode
-> > > allocation
-> > > rate with a synchronous grace period in the inode reuse path,
-> > > caused
-> > > purely by a lookup heavy workload on a completely separate
-> > > filesystem.
-> > > 
-> > > The following is a 5m snapshot of the iget stats from a filesystem
-> > > doing
-> > > allocs/frees with an external/heavy lookup workload (which not
-> > > included
-> > > in the stats), with and without a sync grace period wait in the
-> > > reuse
-> > > path:
-> > > 
-> > > baseline:�������ig 1337026 1331541 4 5485 0 5541 1337026
-> > > sync_rcu_test:��ig 2955 2588 0 367 0 383 2955
-> > 
-> > The alloc/free part of the workload is a single threaded
-> > create/unlink in a tight loop, yes?
-> > 
-> > This smells like a side effect of agressive reallocation of
-> > just-freed XFS_IRECLAIMABLE inodes from the finobt that haven't had
-> > their unlink state written back to disk yet. i.e. this is a corner
-> > case in #2 above where a small set of inodes is being repeated
-> > allocated and freed by userspace and hence being agressively reused
-> > and never needing to wait for IO. i.e. a tempfile workload
-> > optimisation...
-> > 
-> > > I think this is kind of the nature of RCU and why I'm not sure it's
-> > > a
-> > > great idea to rely on update side synchronization in a codepath
-> > > that
-> > > might want to scale/perform in certain workloads.
-> > 
-> > The problem here is not update side synchronisation. Root cause is
-> > aggressive reallocation of recently freed VFS inodes via physical
-> > inode allocation algorithms. Unfortunately, the RCU grace period
-> > requirements of the VFS inode life cycle dictate that we can't
-> > aggressively re-allocate and reuse freed inodes like this. i.e.
-> > reallocation of a just-freed inode also has to wait for an RCU grace
-> > period to pass before the in memory inode can be re-instantiated as
-> > a newly allocated inode.
-> > 
-> > (Hmmmm - I wonder if of the other filesystems might have similar
-> > problems with physical inode reallocation inside a RCU grace period?
-> > i.e. without inode instance re-use, the VFS could potentially see
-> > multiple in-memory instances of the same physical inode at the same
-> > time.)
-> > 
-> > > I'm not totally sure
-> > > if this will be a problem for real users running real workloads or
-> > > not,
-> > > or if this can be easily mitigated, whether it's all rcu or a
-> > > cascading
-> > > effect, etc. This is just a quick test so that all probably
-> > > requires
-> > > more test and analysis to discern.
-> > 
-> > This looks like a similar problem to what busy extents address - we
-> > can't reuse a newly freed extent until the transaction containing
-> > the EFI/EFD hit stable storage (and the discard operation on the
-> > range is complete). Hence while a newly freed extent is
-> > marked free in the allocbt, they can't be reused until they are
-> > released from the busy extent tree.
-> > 
-> > I can think of several ways to address this, but let me think on it
-> > a bit more.� I suspect there's a trick we can use to avoid needing
-> > synchronise_rcu() completely by using the spare radix tree tag and
-> > rcu grace period state checks with get_state_synchronize_rcu() and
-> > poll_state_synchronize_rcu() to clear the radix tree tags via a
-> > periodic radix tree tag walk (i.e. allocation side polling for "can
-> > we use this inode" rather than waiting for the grace period to
-> > expire once an inode has been selected and allocated.)
-> 
-> The synchronise_rcu() seems like it's too broad a brush.
 
-It has always been a big hammer. But correctness comes first, speed
-second.
+On 11/17/21 9:59 AM, dai.ngo@oracle.com wrote:
+>
+> On 11/17/21 6:14 AM, J. Bruce Fields wrote:
+>> On Tue, Nov 16, 2021 at 03:06:32PM -0800, dai.ngo@oracle.com wrote:
+>>> Just a reminder that this patch is still waiting for your review.
+>> Yeah, I was procrastinating and hoping yo'ud figure out the pynfs
+>> failure for me....
+>
+> Last time I ran 4.0 OPEN18 test by itself and it passed. I will run
+> all OPEN tests together with 5.15-rc7 to see if the problem you've
+> seen still there.
 
-> It sounds like there are relatively simple ways to avoid the link
-> path race which I won't go into again but there's still a chance
-> inode re-use can cause confusion if done at the wrong time.
-> 
-> So it sounds like per-object (inode) granularity is needed for the
-> wait and that means answering the question "how do we know when it's
-> ok to re-use the inode" when we come to alloc the inode and want to
-> re-use one.
+I ran all tests in nfsv4.1 and nfsv4.0 with courteous and non-courteous
+5.15-rc7 server.
 
-When we free the inode, we simply mark it with a radix tree tag and
-record the rcu grace sequence in the inode via
-get_state_synchronize_rcu().  Then when allocation selects an inode
-for allocation, we do a radix tree tag lookup on that inode number,
-and if it is set we move to the next free inode in the finobt. Every
-so often we sweep the radix tree clearing the tags for inodes with
-expired grace periods, allowing them to be reallocated again. The
-radix tree lookups during allocation would be fairly cheap
-(lockless, read-only, just checking for a tag, not dereferencing the
-slot) - I added two lookups on this tree per unlinked inode to turn
-the list into a double linked list in memory and didn't see any
-significant increase in overhead. If allocation succeeds then we are
-going to insert/lookup the inode in that slot in the near future, so
-we are going to take the hit of bringing that radix tree node into
-CPU caches anyway...
+Nfs4.1 results are the same for both courteous and non-courteous server:
+> Of those: 0 Skipped, 0 Failed, 0 Warned, 169 Passed
 
-> There'd be a need to know when not to wait at all too ... mmm.
+Results of nfs4.0 with non-courteous server:
+>Of those: 8 Skipped, 1 Failed, 0 Warned, 577 Passed
+test failed: LOCK24
 
-Yup, that's what get_state_synchronize_rcu and
-poll_state_synchronize_rcu give us.
+Results of nfs4.0 with courteous server:
+>Of those: 8 Skipped, 3 Failed, 0 Warned, 575 Passed
+tests failed: LOCK24, OPEN18, OPEN30
 
-Cheers,
+OPEN18 and OPEN30 test pass if each is run by itself.
+I will look into this problem.
 
-Dave
--- 
-Dave Chinner
-david@fromorbit.com
+-Dai
+
+>
+> -Dai
+>
+>>   I'll see if I can get some time today.--b.
+>>
+>>> Thanks,
+>>> -Dai
+>>>
+>>> On 10/1/21 2:41 PM, dai.ngo@oracle.com wrote:
+>>>> On 10/1/21 1:53 PM, J. Bruce Fields wrote:
+>>>>> On Tue, Sep 28, 2021 at 08:56:39PM -0400, Dai Ngo wrote:
+>>>>>> Hi Bruce,
+>>>>>>
+>>>>>> This series of patches implement the NFSv4 Courteous Server.
+>>>>> Apologies, I keep meaning to get back to this and haven't yet.
+>>>>>
+>>>>> I do notice I'm seeing a timeout on pynfs 4.0 test OPEN18.
+>>>> It's weird, this test passes on my system:
+>>>>
+>>>>
+>>>> [root@nfsvmf25 nfs4.0]# ./testserver.py $server --rundeps -v OPEN18
+>>>> INIT     st_setclientid.testValid : RUNNING
+>>>> INIT     st_setclientid.testValid : PASS
+>>>> MKFILE   st_open.testOpen : RUNNING
+>>>> MKFILE   st_open.testOpen : PASS
+>>>> OPEN18   st_open.testShareConflict1 : RUNNING
+>>>> OPEN18   st_open.testShareConflict1 : PASS
+>>>> **************************************************
+>>>> INIT     st_setclientid.testValid : PASS
+>>>> OPEN18   st_open.testShareConflict1 : PASS
+>>>> MKFILE   st_open.testOpen : PASS
+>>>> **************************************************
+>>>> Command line asked for 3 of 673 tests
+>>>> Of those: 0 Skipped, 0 Failed, 0 Warned, 3 Passed
+>>>> [root@nfsvmf25 nfs4.0]#
+>>>>
+>>>> Do you have a network trace?
+>>>>
+>>>> -Dai
+>>>>
+>>>>> --b.
+>>>>>
+>>>>>> A server which does not immediately expunge the state on lease
+>>>>>> expiration
+>>>>>> is known as a Courteous Server.  A Courteous Server continues
+>>>>>> to recognize
+>>>>>> previously generated state tokens as valid until conflict
+>>>>>> arises between
+>>>>>> the expired state and the requests from another client, or the 
+>>>>>> server
+>>>>>> reboots.
+>>>>>>
+>>>>>> The v2 patch includes the following:
+>>>>>>
+>>>>>> . add new callback, lm_expire_lock, to lock_manager_operations to
+>>>>>>     allow the lock manager to take appropriate action with
+>>>>>> conflict lock.
+>>>>>>
+>>>>>> . handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
+>>>>>>
+>>>>>> . expire courtesy client after 24hr if client has not reconnected.
+>>>>>>
+>>>>>> . do not allow expired client to become courtesy client if there are
+>>>>>>     waiters for client's locks.
+>>>>>>
+>>>>>> . modify client_info_show to show courtesy client and seconds from
+>>>>>>     last renew.
+>>>>>>
+>>>>>> . fix a problem with NFSv4.1 server where the it keeps returning
+>>>>>>     SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+>>>>>>     the courtesy client re-connects, causing the client to keep 
+>>>>>> sending
+>>>>>>     BCTS requests to server.
+>>>>>>
+>>>>>> The v3 patch includes the following:
+>>>>>>
+>>>>>> . modified posix_test_lock to check and resolve conflict locks
+>>>>>>     to handle NLM TEST and NFSv4 LOCKT requests.
+>>>>>>
+>>>>>> . separate out fix for back channel stuck in 
+>>>>>> SEQ4_STATUS_CB_PATH_DOWN.
+>>>>>>
+>>>>>> The v4 patch includes:
+>>>>>>
+>>>>>> . rework nfsd_check_courtesy to avoid dead lock of fl_lock and
+>>>>>> client_lock
+>>>>>>     by asking the laudromat thread to destroy the courtesy client.
+>>>>>>
+>>>>>> . handle NFSv4 share reservation conflicts with courtesy client. 
+>>>>>> This
+>>>>>>     includes conflicts between access mode and deny mode and vice 
+>>>>>> versa.
+>>>>>>
+>>>>>> . drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+>>>>>>
+>>>>>> The v5 patch includes:
+>>>>>>
+>>>>>> . fix recursive locking of file_rwsem from posix_lock_file.
+>>>>>>
+>>>>>> . retest with LOCKDEP enabled.
+>>>>>>
+>>>>>> NOTE: I will submit pynfs tests for courteous server including tests
+>>>>>> for share reservation conflicts in a separate patch.
+>>>>>>
