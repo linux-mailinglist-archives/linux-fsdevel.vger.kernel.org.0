@@ -2,167 +2,414 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48CF5456267
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 19:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7033745626E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 19:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233144AbhKRSdo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 13:33:44 -0500
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:35093
-        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232978AbhKRSdm (ORCPT
+        id S233352AbhKRSe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 13:34:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43928 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233034AbhKRSez (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 13:33:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1637260241; bh=XafFedPH7s43+MtcyjIXwoQYQrKIPGHG2kyqdRzE+fM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=U2BXMRNBinflz+OQvA9utqPlOSrDwpQ0thgapaUmGwvZS4Td4PeqY/6H3ouTUGg3/GuMO7/ohYcAKTOyAPJHpbHziZ9YXs9RyrRMEyL5l4vlg4KQHX0jhM9jRXnexyA14BnR5B5Mi60d6ygeIoQjRrcTIVDQbxXPKHmQYaHMhBlyRUgcEmfJRwRjYC0II/KMnGM8iYSucj1YBvg0yfzMDYoXAO+n8tv0CDMUBB3awbygJsJKB3/3CFVVl7Zd4rIZZHLfPrKxJWLogbO1Z1yooY1dhhnYtJmw7FEZcTpNa1/1xAYRjDV+LC3lx+xlPOLJBis9ijNrGTUSBMfnds4Ujw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1637260241; bh=WD/iKJ8YVCq+L7cGsdVhIU7GY77lZO0y8QorIJr7UAt=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=UL64Zxn1GUtQTE2Fc7NPBQAEs+xiOXt6gJwElTOobHfMLEZ7WFgRu1M4JQ0VBCZItFrC4KgIBxl/caZO/ETLrnIFAOQBuhhyBJqGHRQT7hNir0UOLwubmEavEqWLAoY1712ZIpcawFoZIOzClmu1aVBmPXzgZoklKvVgR8Ojp755p9u9APDI2vrKT592vaPbDUBecZHeq28F+vhmSGXyKMxtLLRdwGG/wEcPYyJEpa3qM+Adszn+oWT8TofgKck0q5qNNJlM24HA6+nKpXFuLam7XzGvxN85LaKH+2UPsNrDNK5WHC6YHc6zYqZ6GmNNFLq36gTAMtIZaX0+FAkHzQ==
-X-YMail-OSG: VTULgO8VM1lMyNXM5G7EqDOwioUiaYihIBA0G7qJmHC8uK2xpplkZhesWLKtIEC
- yvoVAcyHa8_3iRybnGoJae4.T1r1ZtDuWsDUCvQIDGjqJKN19QfgMYumqdUJxYK_OVKJtsi35Uhq
- 8MjDwF2CscAE_RZJA.EcNfaLHTrlwBYach8zGymjimhmY9sEoOyf0DrMum09PjPmaYZDHIp7lUGl
- YlOohDVUYGI.xAlkotn.UgGjvLw4givru8z.WJLH9hLTlzK_aNJJffWNjhfjlLgsthpJNUXlA6P4
- xLbI6Rz9IAbIQ1R6NhowpbG_3kYtEXFeORxBYr0hXnoxEGhkcKn9.PwOj7wUnCo1VEYxnCDYNoGo
- NpgUowPRT_lCFoLGPnHIYcB1Xub7DIxtZ6deoS9Zvq9776PnYpSTecm8UN0BKbIxQ11ngk6BXkT.
- YUVyrER5yeHbRWU8JLz8eZxsBT.5zgi.tjNI9Zfb.CXLLmKBh0lBSuud6I7FdZ.zc26WC0G5UItU
- GqgNLC0kRfxlDGKBACuhvCMIpxgaOqJ2pBAbpoxE8R16yILN0vwsGL3NL7Q1p4r.2gOs6K1Si8hI
- sGd.T2DztJA8gptoVJVTpvd72GBa9g7IMClI0LJKXVxQSa0wunZPmDnpXJTxnKjT_jtjIE7IanTU
- 2M73OACHdw.2Lm3NiZ2zhRbCyPZXHZ8eBxioPSOlJllUX3Ji5dUE.UHii1GIZ4UBgkc_9qQa7iaf
- NrorRfAi9TsDEcQc8jOH_5QW2OgBxYEQzvhdjivEhO38cb6l2q4JwY7.riFu5m6alBvRFOZRUNH4
- 5e9Ki3RzkZRgFrb8VtAddDjcd6BNIwunBYRhlIrPxVnFK6c9jtLotDhvKE9ZPVYFgrwFOudTcull
- AvAZ9E28a.Y0Bi_avSyaCQTz1ATUgZhGzTk1lG10bSi7pp3JAWnUHoSeUVIIVwebTNdHxfSJYNrq
- tfg8qbaF8sI2iv1IY75tIf0jWFOaPOsinN3RW40Zn.m8Afba.0PzFHL9yU7T7xrGTETORoHoFXrU
- jYVI755uMdlFwCYh2Os.CKQTx8vIGCHVeD4FfWJcs2ysy7SqLDYLiNuouh3Z0merZdAJoiVqOchj
- 2ZNChFtHnWAKX6UU1IDP4fEt52zOfY4QwqysoeZUiU7v_l3mgo8ZJE1p1nkwzR_4vi4wPJP1mD5c
- 2aM47prDB.V_SvzSYgHWUNFSwo.ehYtr3V2YpqHJuoLK4Mz3A5TyTFGKMrV6aP9qIONwqGhlahcR
- 1elIf474odUG1kX6PyPmFUtyoZuO55_Tl4._g7WR2ICtulvSPkpt7qTWR0dUajtddQCJ8gvbQiQD
- oo5fLKKS0FczCkb3xXJszK8yS.Vk9VL3tcnz6KQq_EpQuOhK1fvNAVzlOltdi3emdSRDd4yNwXhr
- XuHMTfkrxZm0LEKjoDUUDA8C5sk.XAJikb0WYVIt8ebsU0xIVdLfSrad5nPAtktr30YiuPT9OykV
- FclwVRt6ZDLYpOHDVJIog5iYEDYrc0wSHtF22YT0mkvg.d8mmu_HXCcCYsvxRZsjbLNWfm_xL6Lk
- F4Cv4xonLujQ_uAbRKTa51KFm3d5zhyRLhmgrGB8dTNDFVASCAC1aHtSVmAsjQYDNmlIagvMTnAG
- mxyBlk0TstaQknaQbONWuiW6wFEJ6Bt3EeauGAOaPBKGYtIydXo4rL3HG5szkA3b.f2yDxJ_.4Pq
- 0clG4AGVAzzMdhglv6tNiQXKZtAN4iGHi2vHjm4RAQ3HTyp_WxpnGBy_6BLCB2c6ptRlmA35MEUb
- GfM9L1RzBTa62.aSt1rxLvburWnbTxhMdkhXmqVjVxbB3B_rwuJ1PGNKpnXMXjCrGBRerGihbbKO
- gd3vdSJFy_AmtKGcupmq78KsJIBrqrqdZBul4V8d3M4HPe6GjfWpZvxZ89KzVqetM_LhHlx.PgYt
- u87JEw9uLqrJrxGznHBXkTCJhDHVt6TqicfmaFqYh3mufJS7dK_Xgjw1BOGsz0eRNbZJHaq76OFS
- gghT8gtEVhpszJUINlokLt5O3WWw3MEvQxariE0jYsZ2SK1E_3d5s9yV4FUoHv5sFuhjXMJGLDQl
- oYV6_13wCxXRV829WQ1gme_Nkd31piHKyJlYhLNvrbGscBAFkJYiZL_n85oxaq8kQjDgmzDLaxgx
- 9kfvl6l_Pv084jFsjo2fQLhto.QHJi_CStEFSxsNqW_7lmL5HpCTUSI12_OLXpeKUM8uyewMa7rk
- 3vTWcFgZ5KxrF4Z_UyWg6lw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Thu, 18 Nov 2021 18:30:41 +0000
-Received: by kubenode503.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID e5e3fbfab78e6684116fbc0b425b72ea;
-          Thu, 18 Nov 2021 18:30:40 +0000 (UTC)
-Message-ID: <16baa1f4-972d-c781-2d57-508296a83bfb@schaufler-ca.com>
-Date:   Thu, 18 Nov 2021 10:30:32 -0800
+        Thu, 18 Nov 2021 13:34:55 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52BF8C061574;
+        Thu, 18 Nov 2021 10:31:55 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id v23so9260414iom.12;
+        Thu, 18 Nov 2021 10:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=X5kdlgxyKQjZxWgr8j3kEcDooSHoUxzoEfAhGMLjm4s=;
+        b=TZpIsx5RuDkTi7Z9aZKkTIlbrBib39VCtCLo8mua+mZdQZiWDMSKwJfEgL5yyJLP3F
+         yb4Hk9tnfVfedpmeXuN1FHDiZyGpNFCsmRK0R2zzKSI73L6KQIhp8Iv7vfmrekECxhiG
+         smudR61M67ZzjQKTG/cGG6dQxuUKMCZwWepmzkpcGJxa4awnyyLdCQliUah4/MFCJMq2
+         CWk1BEr9dXuA19eZtDOf3zQvrr6tgYyXF3P+vAL1Oh52SNq1ThISlYjxiFyEAwobX3Dp
+         013UorujSFVIjq+TD9NGQl1+Oq7zf26KCt1/YpALMsUO+yZ97NPuDWkD4/N8InnMjEWK
+         Ul/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=X5kdlgxyKQjZxWgr8j3kEcDooSHoUxzoEfAhGMLjm4s=;
+        b=jbCsjcEYu7yaNN6/4SX6n17LUMegh40QdZkbCJcy0fclYVimJtc0f8Se7MkGmPiYbT
+         r72UgdDrEDnwjxdVxVpcx6w0Ag/73yvX0YJPrGEM5FDmEipLH5ZzdEhn62M+S1ZjW+Y5
+         EERjxzXhVB/TeWYo0m4ktRZYp983VdvJ0o91jJECidZn3GCgHB6Cc7c/3Jg9ZcTOls1N
+         snVKzp6Fr14q+7Jby9elxeo8JlVtu81UNAl8l2xr3/TZNCfRq6vi89jarOJ9I0KqrH1D
+         xm2bytAwXCPxAGEry/kDRqwCfqR+4McanlB8fda/a4Ut3UvQ6sSLTANS9658JPee24f0
+         /ILw==
+X-Gm-Message-State: AOAM532bGAzZCJ8PyqeQtACqNpQygN8rXEiuLxsLWUuf29oQF84Q5Ib2
+        LHuicVYkXhvDUi7zE+5qpYsiip2zNqqUaQddp9o=
+X-Google-Smtp-Source: ABdhPJw6nr1Wyo5eWsHZYG1r1ufgD4HhjXQaK50nazGzp9PXq45/+TVF/TCBxfj5NTjSa5oNjxalh8rxF+/APEgZrn0=
+X-Received: by 2002:a05:6638:2105:: with SMTP id n5mr22623322jaj.32.1637260314578;
+ Thu, 18 Nov 2021 10:31:54 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Paul McKenney <paulmck@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Maciej Rozycki <macro@orcam.me.uk>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Will Deacon <will@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Laura Abbott <labbott@kernel.org>,
-        David S Miller <davem@davemloft.net>,
-        Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Scull <ascull@google.com>,
-        Marc Zyngier <maz@kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Wang Qing <wangqing@vivo.com>, Mel Gorman <mgorman@suse.de>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Andrew Klychkov <andrew.a.klychkov@gmail.com>,
-        Mathieu Chouquet-Stringer <me@mathieu.digital>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Stephen Kitt <steve@sk2.org>, Stephen Boyd <sboyd@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Mike Rapoport <rppt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-hardening@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, notify@kernel.org,
-        main@lists.elisa.tech, safety-architecture@lists.elisa.tech,
-        devel@lists.elisa.tech, Shuah Khan <shuah@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20211027233215.306111-1-alex.popov@linux.com>
- <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
- <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
- <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
- <CAKXUXMx5Oi-dNVKB+8E-pdrz+ooELMZf=oT_oGXKFrNWejz=fg@mail.gmail.com>
- <20211115110649.4f9cb390@gandalf.local.home>
- <202111151116.933184F716@keescook>
- <59534db5-b251-c0c8-791f-58aca5c00a2b@linux.com>
- <202111161037.7456C981@keescook>
- <fd86a05b-feca-c0a9-c6b0-b2e69c650021@schaufler-ca.com>
- <202111180930.5FA3EF0F59@keescook>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <202111180930.5FA3EF0F59@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.19306 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20210125153057.3623715-1-balsini@android.com>
+In-Reply-To: <20210125153057.3623715-1-balsini@android.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 18 Nov 2021 20:31:43 +0200
+Message-ID: <CAOQ4uxiXgzfLN704TKK4eu2=3b4RuCKBAfp3PAx=tuT31zeEsw@mail.gmail.com>
+Subject: Re: [PATCH RESEND V12 0/8] fuse: Add support for passthrough read/write
+To:     Alessio Balsini <balsini@android.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/18/2021 9:32 AM, Kees Cook wrote:
-> On Tue, Nov 16, 2021 at 11:00:23AM -0800, Casey Schaufler wrote:
->> On 11/16/2021 10:41 AM, Kees Cook wrote:
->>> On Tue, Nov 16, 2021 at 12:12:16PM +0300, Alexander Popov wrote:
->>>> What if the Linux kernel had a LSM module responsible for error handling policy?
->>>> That would require adding LSM hooks to BUG*(), WARN*(), KERN_EMERG, etc.
->>>> In such LSM policy we can decide immediately how to react on the kernel error.
->>>> We can even decide depending on the subsystem and things like that.
->>> That would solve the "atomicity" issue the WARN tracepoint solution has,
->>> and it would allow for very flexible userspace policy.
->>>
->>> I actually wonder if the existing panic_on_* sites should serve as a
->>> guide for where to put the hooks. The current sysctls could be replaced
->>> by the hooks and a simple LSM.
->> Do you really want to make error handling a "security" issue?
->> If you add security_bug(), security_warn_on() and the like
->> you're begging that they be included in SELinux (AppArmor) policy.
->> BPF, too, come to think of it. Is that what you want?
-> Yeah, that is what I was thinking. This would give the LSM a view into
-> kernel state, which seems a reasonable thing to do. If system integrity
-> is compromised, an LSM may want to stop trusting things.
+On Mon, Jan 25, 2021 at 5:31 PM Alessio Balsini <balsini@android.com> wrote=
+:
+>
+> This is the 12th version of the series, rebased on top of v5.11-rc5.
+> Please find the changelog at the bottom of this cover letter.
+>
+> Add support for file system passthrough read/write of files when enabled
+> in userspace through the option FUSE_PASSTHROUGH.
+>
+> There are file systems based on FUSE that are intended to enforce
+> special policies or trigger complicated decision makings at the file
+> operations level. Android, for example, uses FUSE to enforce
+> fine-grained access policies that also depend on the file contents.
+> Sometimes it happens that at open or create time a file is identified as
+> not requiring additional checks for consequent reads/writes, thus FUSE
+> would simply act as a passive bridge between the process accessing the
+> FUSE file system and the lower file system. Splicing and caching help
+> reduce the FUSE overhead, but there are still read/write operations
+> forwarded to the userspace FUSE daemon that could be avoided.
+>
+> This series has been inspired by the original patches from Nikhilesh
+> Reddy, the idea and code of which has been elaborated and improved
+> thanks to the community support.
+>
+> When the FUSE_PASSTHROUGH capability is enabled, the FUSE daemon may
+> decide while handling the open/create operations, if the given file can
+> be accessed in passthrough mode. This means that all the further read
+> and write operations would be forwarded by the kernel directly to the
+> lower file system using the VFS layer rather than to the FUSE daemon.
+> All the requests other than reads or writes are still handled by the
+> userspace FUSE daemon.
+> This allows for improved performance on reads and writes, especially in
+> the case of reads at random offsets, for which no (readahead) caching
+> mechanism would help.
+> Benchmarks show improved performance that is close to native file system
+> access when doing massive manipulations on a single opened file,
+> especially in the case of random reads, random writes and sequential
+> writes. Detailed benchmarking results are presented below.
+>
+> The creation of this direct connection (passthrough) between FUSE file
+> objects and file objects in the lower file system happens in a way that
+> reminds of passing file descriptors via sockets:
+> - a process requests the opening of a file handled by FUSE, so the
+>   kernel forwards the request to the FUSE daemon;
+> - the FUSE daemon opens the target file in the lower file system,
+>   getting its file descriptor;
+> - the FUSE daemon also decides according to its internal policies if
+>   passthrough can be enabled for that file, and, if so, can perform a
+>   FUSE_DEV_IOC_PASSTHROUGH_OPEN ioctl on /dev/fuse, passing the file
+>   descriptor obtained at the previous step and the fuse_req unique
+>   identifier;
+> - the kernel translates the file descriptor to the file pointer
+>   navigating through the opened files of the "current" process and
+>   temporarily stores it in the associated open/create fuse_req's
+>   passthrough_filp;
+> - when the FUSE daemon has done with the request and it's time for the
+>   kernel to close it, it checks if the passthrough_filp is available and
+> in case updates the additional field in the fuse_file owned by the
+> process accessing the FUSE file system.
+> From now on, all the read/write operations performed by that process
+> will be redirected to the corresponding lower file system file by
+> creating new VFS requests.
+> Since the read/write operation to the lower file system is executed with
+> the current process's credentials, it might happen that it does not have
+> enough privileges to succeed. For this reason, the process temporarily
+> receives the same credentials as the FUSE daemon, that are reverted as
+> soon as the read/write operation completes, emulating the behavior of
+> the request to be performed by the FUSE daemon itself. This solution has
+> been inspired by the way overlayfs handles read/write operations.
+> Asynchronous IO is supported as well, handled by creating separate AIO
+> requests for the lower file system that will be internally tracked by
+> FUSE, that intercepts and propagates their completion through an
+> internal ki_completed callback similar to the current implementation of
+> overlayfs.
+> Finally, also memory-mapped FUSE files are supported in this FUSE
+> passthrough series as it has been noticed that when a same file with
+> FUSE passthrough enabled is accessed both with standard
+> read/write(-iter) operations and memory-mapped read/write operations,
+> the file content might result corrupted due to an inconsistency between
+> the FUSE and lower file system caches.
+>
+> The ioctl has been designed taking as a reference and trying to converge
+> to the fuse2 implementation. For example, the fuse_passthrough_out data
+> structure has extra fields that will allow for further extensions of the
+> feature.
+>
+>
+>     Performance on RAM block device
+>
+> What follows has been performed using a custom passthrough_hp FUSE
+> daemon that enables pass-through for each file that is opened during
+> both "open" and "create". Benchmarks were run on an Intel Xeon W-2135,
+> 64 GiB of RAM workstation, with a RAM block device used as storage
+> target. More specifically, out of the system's 64 GiB of RAM, 40 GiB
+> were reserved for /dev/ram0, formatted as ext4. For the FUSE and FUSE
+> passthrough benchmarks, the FUSE file system was mounted on top of the
+> mounted /dev/ram0 device.
+> That file system has been completely filled and then cleaned up before
+> running the benchmarks: this to ensure that all the /dev/ram0 space was
+> reserved and not usable as page cache.
+>
+> The rationale for using a RAM block device is that SSDs may experience
+> performance fluctuations, especially when dealing with accessing data
+> random offsets.
+> Getting rid of the discrete storage device also removes a huge component
+> of slowness, highlighting the performance difference of the software
+> parts (and probably the goodness of CPU caching and its coherence
+> mechanisms).
+>
+> No special tuning has been performed, e.g., all the involved processes
+> are SCHED_OTHER, ondemand is the frequency governor with no frequency
+> restrictions, and turbo-boost, as well as p-state, are active. This is
+> because I noticed that, for such high-level benchmarks, results
+> consistency was minimally affected by these features.
+>
+> The source code of the updated libfuse library and passthrough_hp is
+> shared at the following repository:
+>
+>   https://github.com/balsini/libfuse/tree/fuse-passthrough-v12-v5.11-rc5
+>
+> Two different kinds of benchmarks were done for this change, the first
+> set of tests evaluates the bandwidth improvements when manipulating huge
+> single files, the second set of tests verify that no performance
+> regressions were introduced when handling many small files.
+>
+> All the caches were dropped before running every benchmark with:
+>
+>   echo 3 > /proc/sys/vm/drop_caches
+>
+> All the benchmarks were run 10 times, with 1 minute cool down between
+> each run.
+>
+> The first benchmarks were done by running FIO (fio-3.24) with:
+> - bs=3D4Ki;
+> - file size: 35Gi;
+> - ioengine: sync;
+> - fsync_on_close=3D1;
+> - randseed=3D0.
+> The target file has been chosen large enough to avoid it to be entirely
+> loaded into the page cache.
+>
+> Results are presented in the following table:
+>
+> +-----------+------------+-------------+-------------+
+> |   MiB/s   |    fuse    | passthrough |   native    |
+> +-----------+------------+-------------+-------------+
+> | read      | 471(=C2=B11.3%) | 1791(=C2=B11.0%) | 1839(=C2=B11.8%) |
+> | write     | 95(=C2=B1.6%)   | 1068(=C2=B1.9%)  | 1322(=C2=B1.8%)  |
+> | randread  | 25(=C2=B11.7%)  | 860(=C2=B1.8%)   | 1135(=C2=B1.5%)  |
+> | randwrite | 76(=C2=B13.0%)  | 813(=C2=B11.0%)  | 1005(=C2=B1.7%)  |
+> +-----------+------------+-------------+-------------+
+>
+> This table shows that FUSE, except for the sequential reads, is far
+> behind FUSE passthrough and native in terms of performance. The
+> extremely good FUSE performance for sequential reads is the result of a
+> great read-ahead mechanism. I was able to verify that setting
+> read_ahead_kb to 0 causes a terrible performance drop.
+> All the results are stable, as shown by the standard deviations.
+> Moreover, these numbers show the reasonable gap between passthrough and
+> native, introduced by the extra traversal through the VFS layer.
+>
+> As long as this patch has the primary objective of improving bandwidth,
+> another set of tests has been performed to see how this behaves on a
+> totally different scenario that involves accessing many small files. For
+> this purpose, measuring the build time of the Linux kernel has been
+> chosen as an appropriate, well-known, workload. The kernel has been
+> built with as many processes as the number of logical CPUs (-j
+> $(nproc)), that besides being a reasonable parallelization value, is
+> also enough to saturate the processor's utilization thanks to the
+> additional FUSE daemon's threads, making it even harder to get closer to
+> the native file system performance.
+> The following table shows the total build times in the different
+> configurations:
+>
+> +------------------+--------------+-----------+
+> |                  | AVG duration |  Standard |
+> |                  |     (sec)    | deviation |
+> +------------------+--------------+-----------+
+> | FUSE             |      144.566 |     0.697 |
+> +------------------+--------------+-----------+
+> | FUSE passthrough |      133.820 |     0.341 |
+> +------------------+--------------+-----------+
+> | Native           |      109.423 |     0.724 |
+> +------------------+--------------+-----------+
+>
+> Further testing and performance evaluations are welcome.
+>
+>
+>     Description of the series
+>
+> Patch 1 generalizes the function which converts iocb flags to rw flags
+> from overlayfs, so that can be used in this patch set.
+>
+> Patch 2 enables the 32-bit compatibility for the /dev/fuse ioctl.
+>
+> Patch 3 introduces the data structures, function signatures and ioctl
+> required both for the communication with userspace and for the internal
+> kernel use.
+>
+> Patch 4 introduces initialization and release functions for FUSE
+> passthrough.
+>
+> Patch 5 enables the synchronous read and write operations for those FUSE
+> files for which the passthrough functionality is enabled.
+>
+> Patch 6 extends the read and write operations to also support
+> asynchronous IO.
+>
+> Patch 7 allows FUSE passthrough to target files for which the requesting
+> process would not have direct access to, by temporarily performing a
+> credentials switch to the credentials of the FUSE daemon that issued the
+> FUSE passthrough ioctl.
+>
+> Patch 8 extends FUSE passthrough operations to memory-mapped FUSE files.
+>
+>
+>     Changelog
+>
+> Changes in v12:
+> * Revert FILESYSTEM_MAX_STACK_DEPTH checks as they were in v10
+>   [Requested by Amir Goldstein]
+> * Introduce passthrough support for memory-mapped FUSE files
+>   [Requested by yanwu]
+>
+> Changes in v11:
+> * Fix the FILESYSTEM_MAX_STACK_DEPTH check to allow other file systems
+>   to be stacked
+> * Moved file system stacking depth check at ioctl time
+> * Update cover letter with correct libfuse repository to test the change
+>   [Requested by Peng Tao]
+> * Fix the file reference counter leak introduced in v10
+>   [Requested by yanwu]
+>
+> Changes in v10:
+> * UAPI updated: ioctl now returns an ID that will be used at open/create
+>   response time to reference the passthrough file
+> * Synchronous read/write_iter functions does not return silly errors
+>   (fixed in aio patch)
+> * FUSE daemon credentials updated at ioctl time instead of mount time
+> * Updated benchmark results
+>   [Requested by Miklos Szeredi]
+>
+> Changes in v9:
+> * Switched to using VFS instead of direct lower FS file ops
+>   [Attempt to address a request from Jens Axboe, Jann Horn,
+>   Amir Goldstein]
+> * Removal of useless included aio.h header
+>   [Proposed by Jens Axboe]
+>
+> Changes in v8:
+> * aio requests now use kmalloc/kfree, instead of kmem_cache
+> * Switched to call_{read,write}_iter in AIO
+> * Revisited attributes copy
+> * Passthrough can only be enabled via ioctl, fixing the security issue
+>   spotted by Jann
+> * Use an extensible fuse_passthrough_out data structure
+>   [Attempt to address a request from Nikolaus Rath, Amir Goldstein and
+> Miklos Szeredi]
+>
+> Changes in v7:
+> * Full handling of aio requests as done in overlayfs (update commit
+> * message).
+> * s/fget_raw/fget.
+> * Open fails in case of passthrough errors, emitting warning messages.
+>   [Proposed by Jann Horn]
+> * Create new local kiocb, getting rid of the previously proposed ki_filp
+>   swapping.
+>   [Proposed by Jann Horn and Jens Axboe]
+> * Code polishing.
+>
+> Changes in v6:
+> * Port to kernel v5.8:
+>   * fuse_file_{read,write}_iter changed since the v5 of this patch was
+>     proposed.
+> * Simplify fuse_simple_request.
+> * Merge fuse_passthrough.h into fuse_i.h
+> * Refactor of passthrough.c:
+>   * Remove BUG_ONs.
+>   * Simplified error checking and request arguments indexing.
+>   * Use call_{read,write}_iter utility functions.
+>   * Remove get_file and fputs during read/write: handle the extra FUSE
+>     references to the lower file object when the fuse_file is
+>     created/deleted.
+>   [Proposed by Jann Horn]
+>
+> Changes in v5:
+> * Fix the check when setting the passthrough file.
+>   [Found when testing by Mike Shal]
+>
+> Changes in v3 and v4:
+> * Use the fs_stack_depth to prevent further stacking and a minor fix.
+>   [Proposed by Jann Horn]
+>
+> Changes in v2:
+> * Changed the feature name to passthrough from stacked_io.
+>   [Proposed by Linus Torvalds]
+>
+>
+> Alessio Balsini (8):
+>   fs: Generic function to convert iocb to rw flags
+>   fuse: 32-bit user space ioctl compat for fuse device
+>   fuse: Definitions and ioctl for passthrough
+>   fuse: Passthrough initialization and release
+>   fuse: Introduce synchronous read and write for passthrough
+>   fuse: Handle asynchronous read and write in passthrough
+>   fuse: Use daemon creds in passthrough mode
+>   fuse: Introduce passthrough for mmap
+>
+>  fs/fuse/Makefile          |   1 +
+>  fs/fuse/dev.c             |  41 ++++--
+>  fs/fuse/dir.c             |   2 +
+>  fs/fuse/file.c            |  15 +-
+>  fs/fuse/fuse_i.h          |  33 +++++
+>  fs/fuse/inode.c           |  22 ++-
+>  fs/fuse/passthrough.c     | 280 ++++++++++++++++++++++++++++++++++++++
+>  fs/overlayfs/file.c       |  23 +---
+>  include/linux/fs.h        |   5 +
+>  include/uapi/linux/fuse.h |  14 +-
+>  10 files changed, 401 insertions(+), 35 deletions(-)
+>  create mode 100644 fs/fuse/passthrough.c
+>
+> --
+> 2.30.0.280.ga3ce27912f-goog
+>
 
-How are you planning to communicate the security relevance of the
-warning to the LSM? I don't think that __FILE__, __LINE__ or __func__
-is great information to base security policy on. Nor is a backtrace.
+Hi Alessio,
 
-> A dedicated error-handling LSM could be added for those hooks that
-> implemented the existing default panic_on_* sysctls, and could expand on
-> that logic for other actions.
+I have been testing this patch set for a while and recently
+nfstest_posix found one issue:
+mtime/ctime are not invalidated on passthrough write.
 
-I can see having an interface like LSM for choosing a bug/warn policy.
-I worry about expanding the LSM hook list for a case where I would
-hope no existing LSM would use them, and the new LSM doesn't use any
-of the existing hooks.
+I have tested a fix on this 5.10.y backport branch:
+https://github.com/amir73il/linux/commits/linux-5.10.y-fuse-passthrough
 
+Please feel free to review and/or take the fix for your next posting
+if you have plans of posting another version...
+
+Thanks,
+Amir.
