@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A73456217
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 19:13:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB8CB45621B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 19:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232080AbhKRSQK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 13:16:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39578 "EHLO
+        id S234359AbhKRSQM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 13:16:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbhKRSQK (ORCPT
+        with ESMTP id S232139AbhKRSQL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 13:16:10 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0292AC061574;
+        Thu, 18 Nov 2021 13:16:11 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58C4C061574;
         Thu, 18 Nov 2021 10:13:10 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id w1so30906296edc.6;
-        Thu, 18 Nov 2021 10:13:09 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id g14so30909160edb.8;
+        Thu, 18 Nov 2021 10:13:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MR6HCnfEdOmSa0vPnzGfLi+AiErSezoUtjplUYba5T0=;
-        b=cuH4iWLjrrRh1KzLh8i/JeI3eRywIWW0hdf/W1EOFyQL6va1Dib4hhm/JQ9/DO15WY
-         dKP9Ps+1Cqmh41412VvGT0qJ7u3icE8JtkSGeeYtNPis6NNIFYr2EL22pelOiIMSUAUh
-         Xed4jPqYI1Wxx+lfFHvCAyjVNOT6h1FzMzlMO3KbkZIWT4UTbxt4Mwpwab23IvLdnT5A
-         yxiPl28LGfPJaxFMXLe9qJ2enHCwmxNC6uofGVqpItl21Kz40bpe8a61syr97SRJGam9
-         gjW4yHXs4u9sG16abDmYdJciap6Qdb+vqCCVDH1nJK7Q+Gqre4PxeU4h+4wzyNdg8/Ew
-         Z3DQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=u0pUmD4jWOzvAs6/gAYQctwzm0VBRN7dBAq+mxXqn/U=;
+        b=jvVZln40C6eq14lrK7HQ3/bWLLpNitLeBEmxh0vLBRnRSbHUw62TMTP2gXK4THfg5L
+         kK5jhwXL/3BtkJUA+a9Xs7X8HhPpKb9eQBtQo+33Fkty/9YktokPStzkfizxtB2j8Dtx
+         Fm+Rxjrz5EjBev7iTqN7sVM/6ysSn35FutbPdaXSin2P32vR8MEXHt7N8b4LUxQ/yELJ
+         BEa4BEqtN+GjF3qvL+JOkGI25L6sc8xO188TIWMQQOYxGFEurjSeTTtohwmL6be9zL8F
+         yvX03i8PysLjxi0V32c3viTVAdd+7nMMhGlHRof+KV3DIQta9v96bgOQipYxiaSPqydF
+         aOIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MR6HCnfEdOmSa0vPnzGfLi+AiErSezoUtjplUYba5T0=;
-        b=UTuSXlsmYJFJgFpk7dpkA1J9Rwn5H8FyhTbuhwTPp12lltUTIfneAgQQyr95YgBM2Q
-         MpYOULjK7mlKiEkI8xC0++f+LN1bW/IPlsDPObkcZwAs4T3dHGoVYTrTAoUzB9rFkTPf
-         JijVHNyceJ5ihlun4G9Ye5GXhWqbfrFKBqf6Lm98bF4On3nHWr+Z73QdxS1Zznb//9vF
-         s1pT7vIEOJY8KW7HKgno+b4TFJq0+Y0WXrLCxPg+SyIko3kLIicxCm/ZVpg3UDgXuLkv
-         ZVAzDyZKV27t77mcWubf3eEeZO/svIxQEtsa6oD8P3w3J76HbhBMlhhgc7xTDmavpbra
-         4l7Q==
-X-Gm-Message-State: AOAM530e1hBjLoVLuollpluQAteO/fePXM4nA8KYI29jzPTC1shvbnNC
-        VT+ov7bnQtwVll93U9Vx6aando2lVQs=
-X-Google-Smtp-Source: ABdhPJwfJBKGQyc19XG7oaA0PKZjf+OQoErav0ZNOQWItZ4EeiFQbBkugDFUyRXGS3Hb1BY6NshGqw==
-X-Received: by 2002:a17:906:4099:: with SMTP id u25mr1320210ejj.453.1637259187648;
-        Thu, 18 Nov 2021 10:13:07 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=u0pUmD4jWOzvAs6/gAYQctwzm0VBRN7dBAq+mxXqn/U=;
+        b=n8sEG6a/1z5aZF2L2BcYx5G6R5xmJkZ6yR+zCj4+f+sPbc9DKYIxryY44+z+rgALDU
+         HB/jzN2IaINjkB1bMPwTixVQ2AUdzGYSK5FkNXLtwm3Zg71e2AitDBNVcZPp9TG/nXG7
+         smKhyyZuV0gnN5YMet26Xl8J8Q652EmcubzlA+/yg18Nx4IZtG35PcukKB9i7+hbamkI
+         EPQ1t28qGvE8ncrM7bCr6Tjw8hnwSuIUOXpMEwNY8a5JFM2uvHzntQuGwCvWXxmaplHP
+         d5t5+Z9Oym0kBVPYmc2S+7Ylv0ZuHbVAaY6AxYbN1rB0j17RdM4fkj7qpmHIFImg50nu
+         M7DA==
+X-Gm-Message-State: AOAM530fCptuF8X986L2c68GnegHUCE3wW5/xEBHqE1Xh8HJhhg9O305
+        kVY4nYHo81eFd1OelvvSwNoDV4F7Yu0=
+X-Google-Smtp-Source: ABdhPJxTJ+523ewwapU5e2Kkc09iwwRIfyZSdzn/cSpiuT/+ru9rnvhKZC9B5cpMC2ZSAGHrgQngqQ==
+X-Received: by 2002:a17:907:b17:: with SMTP id h23mr1492188ejl.80.1637259189050;
+        Thu, 18 Nov 2021 10:13:09 -0800 (PST)
 Received: from crow.. ([95.87.219.163])
-        by smtp.gmail.com with ESMTPSA id d10sm224135eja.4.2021.11.18.10.13.06
+        by smtp.gmail.com with ESMTPSA id d10sm224135eja.4.2021.11.18.10.13.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Nov 2021 10:13:07 -0800 (PST)
+        Thu, 18 Nov 2021 10:13:08 -0800 (PST)
 From:   "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
@@ -56,125 +56,379 @@ Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
         akpm@linux-foundation.org, vvs@virtuozzo.com, shakeelb@google.com,
         christian.brauner@ubuntu.com, mkoutny@suse.com,
         "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>
-Subject: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
-Date:   Thu, 18 Nov 2021 20:12:06 +0200
-Message-Id: <20211118181210.281359-1-y.karadz@gmail.com>
+Subject: [RFC PATCH 1/4] namespacefs: Introduce 'namespacefs'
+Date:   Thu, 18 Nov 2021 20:12:07 +0200
+Message-Id: <20211118181210.281359-2-y.karadz@gmail.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211118181210.281359-1-y.karadz@gmail.com>
+References: <20211118181210.281359-1-y.karadz@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We introduce a simple read-only virtual filesystem that provides
-direct mechanism for examining the existing hierarchy of namespaces
-on the system. For the purposes of this PoC, we tried to keep the
-implementation of the pseudo filesystem as simple as possible. Only
-two namespace types (PID and UTS) are coupled to it for the moment.
-Nevertheless, we do not expect having significant problems when
-adding all other namespace types.
+Introducing a simple read-only pseudo file system that aims to provide
+direct mechanism for examining the existing hierarchy of namespaces on
+the system. When fully functional, 'namespacefs' will allow the user to
+see all namespaces that are active on the system and to easily retrieve
+the specific data, managed by each namespace. For example the PIDs of
+all tasks enclosed in each individual PID namespace.
 
-When fully functional, 'namespacefs' will allow the user to see all
-namespaces that are active on the system and to easily retrieve the
-specific data, managed by each namespace. For example the PIDs of
-all tasks enclosed in the individual PID namespaces. Any existing
-namespace on the system will be represented by its corresponding
-directory in namespacesfs. When a namespace is created a directory
-will be added. When a namespace is destroyed, its corresponding
-directory will be removed. The hierarchy of the directories will
-follow the hierarchy of the namespaces.
+Here we introduce only the basic definitions of the virtual filesystem
+that are based off of 'fs/debugfs/inide.c' and 'fs/tracefs/inod.c'.
+The actual coupling between the new filesystem and the namespaces and
+all methods for adding/removing namespace directories and files will be
+added later.
 
-One may argue that most of the information, being exposed by this
-new filesystem is already provided by 'procfs' in /proc/*/ns/. In
-fact, 'namespacefs' aims to be complementary to 'procfs', showing not
-only the individual connections between a process and its namespaces,
-but also the global hierarchy of these connections. As a usage example,
-before playing with 'namespacefs', I had no idea that the Chrome web
-browser creates a number of nested PID namespaces. I can only guess
-that each tab or each site is isolated in a nested namespace.
-
-Being able to see the structure of the namespaces can be very useful
-in the context of the containerized workloads. This will provide
-universal methods for detecting, examining and monitoring all sorts
-of containers running on the system, without relaying on any specific
-user-space software. Fore example, with the help of 'namespacefs',
-the simple Python script below can discover all containers, created
-by 'Docker' and Podman' (by all user) that are currently running on
-the system.
-
-
-import sys
-import os
-import pwd
-
-path = '/sys/fs/namespaces'
-
-def pid_ns_tasks(inum):
-    tasks_file = '{0}/pid/{1}/tasks'.format(path ,inum)
-    with open(tasks_file) as f:
-        return [int(pid) for pid in f]
-
-def uts_ns_inum(pid):
-    uts_ns_file = '/proc/{0}/ns/uts'.format(pid)
-    uts_ns = os.readlink(uts_ns_file)
-    return  uts_ns.split('[')[1].split(']')[0]
-
-def container_info(pid_inum):
-    pids = pid_ns_tasks(inum)
-    name = ''
-    uid = -1
-
-    if len(pids):
-        uts_inum = uts_ns_inum(pids[0])
-        uname_file = '{0}/uts/{1}/uname'.format(path, uts_inum)
-        if os.path.exists(uname_file):
-            stat_info = os.stat(uname_file)
-            uid = stat_info.st_uid
-            with open(uname_file) as f:
-                name = f.read().split()[1]
-
-    return name, pids, uid
-
-if __name__ == "__main__":
-    pid_ns_list = os.listdir('{0}/pid'.format(path))
-    for inum in pid_ns_list:
-        name, pids, uid = container_info(inum)
-        if (name):
-            user = pwd.getpwuid(uid).pw_name
-            print("{0} -> pids: {1} user: {2}".format(name, pids, user))
-
-
-
-The idea for 'namespacefs' is inspired by the discussion of the
-'Container tracing' topic [1] during the 'Tracing micro-conference' [2]
-at LPC 2021.
-
-1. https://www.youtube.com/watch?v=09bVK3f0MPg&t=5455s
-2. https://www.linuxplumbersconf.org/event/11/page/104-accepted-microconferences
-
-
-Yordan Karadzhov (VMware) (4):
-  namespacefs: Introduce 'namespacefs'
-  namespacefs: Add methods to create/remove PID namespace directories
-  namespacefs: Couple namespacefs to the PID namespace
-  namespacefs: Couple namespacefs to the UTS namespace
-
+Signed-off-by: Yordan Karadzhov (VMware) <y.karadz@gmail.com>
+---
  fs/Kconfig                  |   1 +
  fs/Makefile                 |   1 +
  fs/namespacefs/Kconfig      |   6 +
  fs/namespacefs/Makefile     |   4 +
- fs/namespacefs/inode.c      | 410 ++++++++++++++++++++++++++++++++++++
- include/linux/namespacefs.h |  73 +++++++
- include/linux/ns_common.h   |   4 +
+ fs/namespacefs/inode.c      | 213 ++++++++++++++++++++++++++++++++++++
+ include/linux/idr-seq.h     |   0
+ include/linux/namespacefs.h |  47 ++++++++
  include/uapi/linux/magic.h  |   2 +
- kernel/pid_namespace.c      |   9 +
- kernel/utsname.c            |   9 +
- 10 files changed, 519 insertions(+)
+ 8 files changed, 274 insertions(+)
  create mode 100644 fs/namespacefs/Kconfig
  create mode 100644 fs/namespacefs/Makefile
  create mode 100644 fs/namespacefs/inode.c
+ create mode 100644 include/linux/idr-seq.h
  create mode 100644 include/linux/namespacefs.h
 
+diff --git a/fs/Kconfig b/fs/Kconfig
+index a6313a969bc5..84c220160615 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -268,6 +268,7 @@ config ARCH_HAS_GIGANTIC_PAGE
+ 
+ source "fs/configfs/Kconfig"
+ source "fs/efivarfs/Kconfig"
++source "fs/namespacefs/Kconfig"
+ 
+ endmenu
+ 
+diff --git a/fs/Makefile b/fs/Makefile
+index 84c5e4cdfee5..5c850f6a7cb0 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -138,3 +138,4 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
+ obj-$(CONFIG_EROFS_FS)		+= erofs/
+ obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
+ obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
++obj-$(CONFIG_NAMESPACE_FS)	+= namespacefs/
+diff --git a/fs/namespacefs/Kconfig b/fs/namespacefs/Kconfig
+new file mode 100644
+index 000000000000..f26bc62376d4
+--- /dev/null
++++ b/fs/namespacefs/Kconfig
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config NAMESPACE_FS
++	bool "NameSpace Filesystem support"
++	help
++	  This option enables support for namespacefs - a pseudo filesystem
++	  that allows to examine the hierarchy of namespaces.
+diff --git a/fs/namespacefs/Makefile b/fs/namespacefs/Makefile
+new file mode 100644
+index 000000000000..23628d3207e3
+--- /dev/null
++++ b/fs/namespacefs/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++namespacefs-objs	:= inode.o
++obj-$(CONFIG_NAMESPACE_FS)	+= namespacefs.o
+diff --git a/fs/namespacefs/inode.c b/fs/namespacefs/inode.c
+new file mode 100644
+index 000000000000..0f6293b0877d
+--- /dev/null
++++ b/fs/namespacefs/inode.c
+@@ -0,0 +1,213 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * inode.c - part of namespacefs, pseudo filesystem for examining namespaces.
++ *
++ * Copyright 2021 VMware Inc, Yordan Karadzhov (VMware) <y.karadz@gmail.com>
++ */
++
++#include <linux/fs.h>
++#include <linux/sysfs.h>
++#include <linux/namei.h>
++#include <linux/fsnotify.h>
++#include <linux/magic.h>
++
++static struct vfsmount *namespacefs_mount;
++static int namespacefs_mount_count;
++
++static const struct super_operations namespacefs_super_operations = {
++	.statfs		= simple_statfs,
++};
++
++#define S_IRALL (S_IRUSR | S_IRGRP | S_IROTH)
++#define S_IXALL (S_IXUSR | S_IXGRP | S_IXOTH)
++
++static int fill_super(struct super_block *sb, void *data, int silent)
++{
++	static const struct tree_descr files[] = {{""}};
++	int err;
++
++	err = simple_fill_super(sb, NAMESPACEFS_MAGIC, files);
++	if (err)
++		return err;
++
++	sb->s_op = &namespacefs_super_operations;
++	sb->s_root->d_inode->i_mode |= S_IRALL;
++
++	return 0;
++}
++
++static struct dentry *ns_mount(struct file_system_type *fs_type,
++			    int flags, const char *dev_name,
++			    void *data)
++{
++	return mount_single(fs_type, flags, data, fill_super);
++}
++
++static struct file_system_type namespacefs_fs_type = {
++	.name		= "namespacefs",
++	.mount		= ns_mount,
++	.kill_sb	= kill_litter_super,
++	.fs_flags	= FS_USERNS_MOUNT,
++};
++
++static inline void release_namespacefs(void)
++{
++	simple_release_fs(&namespacefs_mount, &namespacefs_mount_count);
++}
++
++static inline struct inode *parent_inode(struct dentry *dentry)
++{
++	return dentry->d_parent->d_inode;
++}
++
++static struct inode *get_inode(struct super_block *sb)
++{
++	struct inode *inode = new_inode(sb);
++	if (inode) {
++		inode->i_ino = get_next_ino();
++		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
++	}
++	return inode;
++}
++
++static inline void set_file_inode(struct inode *inode,
++				   const struct file_operations *fops,
++				   void *data)
++{
++	inode->i_fop = fops;
++	inode->i_private = data;
++	inode->i_mode = S_IFREG | S_IRUSR | S_IRGRP;
++}
++
++static inline void set_dir_inode(struct inode *inode)
++{
++	inode->i_op = &simple_dir_inode_operations;
++	inode->i_fop = &simple_dir_operations;
++	inode->i_mode = S_IFDIR | S_IXALL | S_IRALL;
++}
++
++static inline int pin_fs(void)
++{
++	return simple_pin_fs(&namespacefs_fs_type,
++			     &namespacefs_mount,
++			     &namespacefs_mount_count);
++}
++
++static struct dentry *create(const char *name, struct dentry *parent,
++			     const struct user_namespace *user_ns,
++			     const struct file_operations *fops,
++			     void *data)
++{
++	struct dentry *dentry = NULL;
++	struct inode *inode;
++
++	if (pin_fs())
++		return ERR_PTR(-ESTALE);
++
++	/*
++	 * If the parent is not specified, we create it in the root.
++	 * We need the root dentry to do this, which is in the super
++	 * block. A pointer to that is in the struct vfsmount that we
++	 * have around.
++	 */
++	if (!parent)
++		parent = namespacefs_mount->mnt_root;
++
++	inode_lock(parent->d_inode);
++	if (unlikely(IS_DEADDIR(parent->d_inode)))
++		return ERR_PTR(-ESTALE);
++
++	dentry = lookup_one_len(name, parent, strlen(name));
++	if (IS_ERR(dentry) || (!IS_ERR(dentry) && dentry->d_inode))
++		goto fail;
++
++	inode = get_inode(dentry->d_sb);
++	if (unlikely(!inode))
++		goto fail;
++
++	inode->i_uid = user_ns->owner;
++	inode->i_gid = user_ns->group;
++
++	if (fops) {
++		/* Create a file. */
++		set_file_inode(inode, fops, data);
++		d_instantiate(dentry, inode);
++		fsnotify_create(parent_inode(dentry), dentry);
++	} else {
++		/* Create a directory. */
++		set_dir_inode(inode);
++		d_instantiate(dentry, inode);
++		set_nlink(inode, 2);
++		inc_nlink(parent_inode(dentry));
++		fsnotify_mkdir(parent_inode(dentry), dentry);
++	}
++
++	inode_unlock(parent_inode(dentry));
++	return dentry;
++
++ fail:
++	if(!IS_ERR_OR_NULL(dentry))
++		dput(dentry);
++
++	inode_unlock(parent->d_inode);
++	release_namespacefs();
++
++	return ERR_PTR(-ESTALE);
++}
++
++struct dentry *
++namespacefs_create_file(const char *name, struct dentry *parent,
++			const struct user_namespace *user_ns,
++			const struct file_operations *fops,
++			void *data)
++{
++	return create(name, parent, user_ns, fops, data);
++}
++
++struct dentry *
++namespacefs_create_dir(const char *name, struct dentry *parent,
++		       const struct user_namespace *user_ns)
++{
++	return create(name, parent, user_ns, NULL, NULL);
++}
++
++static void remove_one(struct dentry *d)
++{
++	release_namespacefs();
++}
++
++void namespacefs_remove_dir(struct dentry *dentry)
++{
++	if (IS_ERR_OR_NULL(dentry))
++		return;
++
++	if (pin_fs())
++		return;
++
++	simple_recursive_removal(dentry, remove_one);
++	release_namespacefs();
++}
++
++#define _NS_MOUNT_DIR	"namespaces"
++
++static int __init namespacefs_init(void)
++{
++	int err;
++
++	err = sysfs_create_mount_point(fs_kobj, _NS_MOUNT_DIR);
++	if (err)
++		goto fail;
++
++	err = register_filesystem(&namespacefs_fs_type);
++	if (err)
++		goto rm_mount;
++
++	return 0;
++
++ rm_mount:
++	sysfs_remove_mount_point(fs_kobj, _NS_MOUNT_DIR);
++ fail:
++	return err;
++}
++
++fs_initcall(namespacefs_init);
+diff --git a/include/linux/idr-seq.h b/include/linux/idr-seq.h
+new file mode 100644
+index 000000000000..e69de29bb2d1
+diff --git a/include/linux/namespacefs.h b/include/linux/namespacefs.h
+new file mode 100644
+index 000000000000..44a760080df7
+--- /dev/null
++++ b/include/linux/namespacefs.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * namespacefs.h - a pseudo file system for examining namespaces.
++ */
++
++#ifndef _NAMESPACEFS_H_
++#define _NAMESPACEFS_H_
++
++#ifdef CONFIG_NAMESPACE_FS
++
++#include <linux/fs.h>
++
++struct dentry *
++namespacefs_create_file(const char *name, struct dentry *parent,
++			const struct user_namespace *user_ns,
++			const struct file_operations *fops,
++			void *data);
++struct dentry *
++namespacefs_create_dir(const char *name, struct dentry *parent,
++		       const struct user_namespace *user_ns);
++void namespacefs_remove_dir(struct dentry *dentry);
++
++#else
++
++static inline struct dentry *
++namespacefs_create_file(const char *name, struct dentry *parent,
++			const struct user_namespace *user_ns,
++			const struct file_operations *fops,
++			void *data)
++{
++	return NULL;
++}
++
++static inline struct dentry *
++namespacefs_create_dir(const char *name, struct dentry *parent,
++		       const struct user_namespace *user_ns)
++{
++	return NULL;
++}
++
++static inline void namespacefs_remove_dir(struct dentry *dentry)
++{
++}
++
++#endif /* CONFIG_NAMESPACE_FS */
++
++#endif
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 35687dcb1a42..36b432be0d22 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -62,6 +62,8 @@
+ #define CGROUP_SUPER_MAGIC	0x27e0eb
+ #define CGROUP2_SUPER_MAGIC	0x63677270
+ 
++#define NAMESPACEFS_MAGIC	0x458728fa
++
+ #define RDTGROUP_SUPER_MAGIC	0x7655821
+ 
+ #define STACK_END_MAGIC		0x57AC6E9D
 -- 
 2.33.1
 
