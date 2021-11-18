@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6686E456378
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 20:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8290456391
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 20:36:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbhKRT1o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 14:27:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36072 "EHLO mail.kernel.org"
+        id S231215AbhKRTji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 14:39:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229554AbhKRT1o (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 14:27:44 -0500
+        id S229574AbhKRTji (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Nov 2021 14:39:38 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADB436137B;
-        Thu, 18 Nov 2021 19:24:42 +0000 (UTC)
-Date:   Thu, 18 Nov 2021 14:24:40 -0500
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C1EC61507;
+        Thu, 18 Nov 2021 19:36:36 +0000 (UTC)
+Date:   Thu, 18 Nov 2021 14:36:34 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     ebiederm@xmission.com (Eric W. Biederman)
 Cc:     "Yordan Karadzhov \(VMware\)" <y.karadz@gmail.com>,
@@ -27,10 +27,12 @@ Cc:     "Yordan Karadzhov \(VMware\)" <y.karadz@gmail.com>,
         christian.brauner@ubuntu.com, mkoutny@suse.com,
         Linux Containers <containers@lists.linux.dev>
 Subject: Re: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
-Message-ID: <20211118142440.31da20b3@gandalf.local.home>
-In-Reply-To: <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
+Message-ID: <20211118143634.3f7d43e9@gandalf.local.home>
+In-Reply-To: <87pmqxuv4n.fsf@email.froward.int.ebiederm.org>
 References: <20211118181210.281359-1-y.karadz@gmail.com>
         <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
+        <20211118140211.7d7673fb@gandalf.local.home>
+        <87pmqxuv4n.fsf@email.froward.int.ebiederm.org>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -39,66 +41,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 18 Nov 2021 12:55:07 -0600
+On Thu, 18 Nov 2021 13:22:16 -0600
 ebiederm@xmission.com (Eric W. Biederman) wrote:
 
-> It is not correct to use inode numbers as the actual names for
-> namespaces.
-> 
-> I can not see anything else you can possibly uses as names for
-> namespaces.
+> Steven Rostedt <rostedt@goodmis.org> writes:
 
-This is why we used inode numbers.
+> > 
+> I am refreshing my nack on the concept.  My nack has been in place for
+> good technical reasons since about 2006.
 
-> 
-> To allow container migration between machines and similar things
-> the you wind up needing a namespace for your names of namespaces.
-
-Is this why you say inode numbers are incorrect?
-
-There's no reason to make this into its own namespace. Ideally, this file
-system should only be for privilege containers. As the entire point of this
-file system is to monitor the other containers on the system. In other
-words, this file system is not to be used like procfs, but instead a global
-information of the containers running on the host.
-
-At first, we were not going to let this file system be part of any
-namespace but the host itself, but because we want to wrap up tooling into
-a container that we can install on other machines as a way to monitor the
-containers on each machine, we had to open that up.
+I'll admit, we are new to this, as we are now trying to add more visibility
+into the workings of things like kubernetes. And having a way of knowing
+what containers are running and how to monitor them is needed, and we need
+to do this for all container infrastructures.
 
 > 
-> Further you talk about hierarchy and you have not added support for the
-> user namespace.  Without the user namespace there is not hierarchy with
-> any namespace but the pid namespace. There is definitely no meaningful
-> hierarchy without the user namespace.
+> I see no way forward.  I do not see a compelling use case.
 
-Great, help us implement this.
-
-> 
-> As far as I can tell merging this will break CRIU and container
-> migration in general (as the namespace of namespaces problem is not
-> solved).
-
-This is not to be a file system that is to be migrated. As the point of
-this file system is to monitor the other containers, so it does not make
-sense to migrate it.
+What do you use to debug issues in a kubernetes cluster of hundreds of
+machines running thousands of containers? Currently, if something is amiss,
+a node is restarted in the hopes that the issue does not appear again. But
+we would like to add infrastructure that takes advantage of tracing and
+profiling to be able to narrow that down. But to do so, we need to
+understand what tasks belong to what containers.
 
 > 
-> Since you are not solving the problem of a namespace for namespaces,
-> yet implementing something that requires it.
+> There have been many conversations in the past attempt to implement
+> something that requires a namespace of namespaces and they have never
+> gotten anywhere.
 
-Why is it needed?
+We are not asking about a "namespace" of namespaces, but a filesystem (one,
+not a namespace of one), that holds the information at the system scale,
+not a container view.
+
+I would be happy to implement something that makes a container having this
+file system available "special" as most containers do not need this.
 
 > 
-> Since you are implementing hierarchy and ignoring the user namespace
-> which gives structure and hierarchy to the namespaces.
+> I see no attempt a due diligence or of actually understanding what
+> hierarchy already exists in namespaces.
 
-We are not ignoring it, we are RFC'ing for advice on how to implement it.
+This is not trivial. What did we miss?
 
 > 
-> Since this breaks existing use cases without giving a solution.
+> I don't mean to be nasty but I do mean to be clear.  Without a
+> compelling new idea in this space I see no hope of an implementation.
+> 
+> What they are attempting to do makes it impossible to migrate a set of
+> process that uses this feature from one machine to another.  AKA this
+> would be a breaking change and a regression if merged.
 
-You don't understand proof-of-concepts and RFCs do you?
+The point of this is not to allow that migration. I'd be happy to add that
+if a container has access to this file system, it is pinned to the system
+and can not be migrated. The whole point of this file system is to monitor
+all containers no the system, and it makes no sense in migrating it.
+
+We would duplicate it over several systems, but there's no reason to move
+it once it is running.
+
+> 
+> The breaking and regression are caused by assigning names to namespaces
+> without putting those names into a namespace of their own.   That
+> appears fundamental to the concept not to the implementation.
+
+If you think this should be migrated then yes, it is broken. But we don't
+want this to work across migrations. That defeats the purpose of this work.
+
+> 
+> Since the concept if merged would cause a regression it qualifies for
+> a nack.
+> 
+> We can explore what problems they are trying to solve with this and
+> explore other ways to solve those problems.  All I saw was a comment
+> about monitoring tools and wanting a global view.  I did not see
+> any comments about dealing with all of the reasons why a global view
+> tends to be a bad idea.
+
+If you only care about a working environment of the system that runs a set
+of containers, how is that a bad idea. Again, I'm happy with implementing
+something that makes having this file system prevent it from being
+migrated. A pinned privileged container.
+
+> 
+> I should have added that we have to some extent a way to walk through
+> namespaces using ioctls on nsfs inodes.
+
+How robust is this? And is there a library or tooling around it?
 
 -- Steve
