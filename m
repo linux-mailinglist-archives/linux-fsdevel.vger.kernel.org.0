@@ -2,153 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE7BF455CFE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 14:50:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC91F455DD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 15:19:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231720AbhKRNxa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 08:53:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231620AbhKRNxa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 08:53:30 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D4AAB61A64;
-        Thu, 18 Nov 2021 13:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637243429;
-        bh=Nh9PYUyMhBG7vuAZ1jspnIiSd+WlrA9t7fuK8YSr/F8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FYh3Onrpg/Zg2DvlOkkeikUr6aqI+9K7CtymqHHpBydAW3vOmv2+icDNg4QDjiJKF
-         dfgA1L79UPrbwdsuicA6wpFrygjZfkwcCBlZwg3OZEE/ESNnX8Od3OZ3Yzh9PcJfc+
-         knvPq5N4wbSiep28CxUt7qx7qW9okIQb5Tfde4mBezF14SKnAGmddyl9jkwnFS5Svb
-         IczFEtuYikJBml+UBA6nD7lDfvK2YyJFb0Hae/TxlaF8Gs4H6qDCPYRVb/599vl4BQ
-         M/Zjv01qHUtwRCwZmVVfhfB/uArFEVUQ9q/sd2IxS74IVhDdw6C7zk0vIyVlyHhGo4
-         xZ76s7Bhhancw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] fs mapping fixes
-Date:   Thu, 18 Nov 2021 14:50:01 +0100
-Message-Id: <20211118135001.2800727-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        id S232151AbhKROWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 09:22:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232009AbhKROWT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Nov 2021 09:22:19 -0500
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26749C061570;
+        Thu, 18 Nov 2021 06:19:19 -0800 (PST)
+Received: by mail-qv1-xf33.google.com with SMTP id i13so4665524qvm.1;
+        Thu, 18 Nov 2021 06:19:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e6eAxrQg08U61GwOYJ6FpVD9sNYF+r9lJrh7l4b1WNE=;
+        b=ceQLeWGFJlX01qZKM0k8jv8h/NV/ImHyioYkbmAt3d5LnHO1Pgd1K5ENEamypIsbeM
+         dl7Pk6S1eDhQr70u1reiTESUSjldgDV8OK6VKS1LB2Ec9tLs78+TeVoAT6l5kfRR5cWy
+         Uzn5r7Oyf7lf4C72vEcBPTUPRGaeKzd53YEVRtFlyThGBN+6ciYt3ABHGjTYVvBg6S6T
+         LuPqtSWYF2oGzPzvtf3btc+hajGp7n1Vy3Oxbq5FWO3RacQlS0qS14WaGCjAT0d+vdUm
+         uVei/f5SZJ0S5dDKWGRrRB8L1ewiBrJDvDZ6AThxrQMp3r6mfBCNDA1NdpN02tmNNoO/
+         Dn9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e6eAxrQg08U61GwOYJ6FpVD9sNYF+r9lJrh7l4b1WNE=;
+        b=tmVu+rBgKGWQK0ZVXVVERW7pc9HaQn0M0L5zI2bUZmQEMf1va2FuI6Wio14UQeIlDM
+         IXl+IeNvfGov6pI+J1RAaS/Ih3wbmbPTrYopizyRzS+0mYKkYAnnwoJ2cyCCls1SNTEs
+         O2KgDD7wXIVh8GWSfeyQHoyOAp4hl0i+9/UIUqym7Gm43vkQHcQNf2gAqLvVteDMf/1R
+         yoKzG1yi8eNLKSNFGA31GsPW7hlGVvoIgHFc57ufpVWBA20HIh3ms+/J73Uz2KkLrdyb
+         BoRYdKqakwfUWepbVPTLNNNhjOdzDudD6oJqWvoHkEs8leUQZ7N6ggt7OZi9r++uQMGf
+         DF3g==
+X-Gm-Message-State: AOAM5327L6CX8BbApQB/NWPwWEJP+HVPjvn8s8PzA2JpF8JSi/fKciIs
+        ZWvLkSfeRcaz007OE44tSM1caQweiatc4JOX9uQ=
+X-Google-Smtp-Source: ABdhPJz4dvN9TbvidJ1IREL08Pf8NNt1u3tGdxzzmc1QnHnlHcrTa+cHIEZ6g53Ci2pGTfQBeJENQHyAu6T8AQ7SC6M=
+X-Received: by 2002:ad4:5dea:: with SMTP id jn10mr64653681qvb.17.1637245158273;
+ Thu, 18 Nov 2021 06:19:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211101060419.4682-1-laoar.shao@gmail.com> <20211101060419.4682-9-laoar.shao@gmail.com>
+ <YZUSJQqDeY06nBsB@kernel.org>
+In-Reply-To: <YZUSJQqDeY06nBsB@kernel.org>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Thu, 18 Nov 2021 22:18:42 +0800
+Message-ID: <CALOAHbC1Cn7RA_X5TrKQb9nmKMxuinfh+Z9j51yMoaSBPx3DuA@mail.gmail.com>
+Subject: Re: [PATCH v7 08/11] tools/perf/test: make perf test adopt to task
+ comm size change
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Qiang Zhang <qiang.zhang@windriver.com>,
+        robdclark <robdclark@chromium.org>,
+        christian <christian@brauner.io>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
+        jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Wed, Nov 17, 2021 at 10:31 PM Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
+>
+> Em Mon, Nov 01, 2021 at 06:04:16AM +0000, Yafang Shao escreveu:
+> > kernel test robot reported a perf-test failure after I extended task comm
+> > size from 16 to 24. The failure as follows,
+> >
+> > 2021-10-13 18:00:46 sudo /usr/src/perf_selftests-x86_64-rhel-8.3-317419b91ef4eff4e2f046088201e4dc4065caa0/tools/perf/perf test 15
+> > 15: Parse sched tracepoints fields                                  : FAILED!
+> >
+> > The reason is perf-test requires a fixed-size task comm. If we extend
+> > task comm size to 24, it will not equil with the required size 16 in perf
+> > test.
+> >
+> > After some analyzation, I found perf itself can adopt to the size
+> > change, for example, below is the output of perf-sched after I extend
+> > comm size to 24 -
+> >
+> > task    614 (            kthreadd:        84), nr_events: 1
+> > task    615 (             systemd:       843), nr_events: 1
+> > task    616 (     networkd-dispat:      1026), nr_events: 1
+> > task    617 (             systemd:       846), nr_events: 1
+> >
+> > $ cat /proc/843/comm
+> > networkd-dispatcher
+> >
+> > The task comm can be displayed correctly as expected.
+> >
+> > Replace old hard-coded 16 with the new one can fix the warning, but we'd
+> > better make the test accept both old and new sizes, then it can be
+> > backward compatibility.
+> >
+> > After this patch, the perf-test succeeds no matter task comm is 16 or
+> > 24 -
+> >
+> > 15: Parse sched tracepoints fields                                  : Ok
+> >
+> > This patch is a preparation for the followup patch.
+> >
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Suggested-by: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> > Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Petr Mladek <pmladek@suse.com>
+> > ---
+> >  tools/include/linux/sched.h       | 11 +++++++++++
+> >  tools/perf/tests/evsel-tp-sched.c | 26 ++++++++++++++++++++------
+> >  2 files changed, 31 insertions(+), 6 deletions(-)
+> >  create mode 100644 tools/include/linux/sched.h
+> >
+> > diff --git a/tools/include/linux/sched.h b/tools/include/linux/sched.h
+> > new file mode 100644
+> > index 000000000000..0d575afd7f43
+> > --- /dev/null
+> > +++ b/tools/include/linux/sched.h
+> > @@ -0,0 +1,11 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _TOOLS_LINUX_SCHED_H
+> > +#define _TOOLS_LINUX_SCHED_H
+> > +
+> > +/* Keep both length for backward compatibility */
+> > +enum {
+> > +     TASK_COMM_LEN_16 = 16,
+> > +     TASK_COMM_LEN = 24,
+> > +};
+> > +
+>
+> I don't think this is a good idea, to have it in tools/include/linux/,
+> we have /usr/include/linux/sched.h, this may end up confusing the build
+> at some point as your proposal is for a trimmed down header while what
+> is in /usr/include/linux/sched.h doesn't have just this.
+>
+> But since we're using enums for this, we can't check for it with:
+>
+> #ifdef TASK_COMM_LEN_16
+> #define TASK_COMM_LEN_16 16
+> #endif
+>
+> ditto for TASK_COMM_LEN and be future proof, so I'd say just use
+> hardcoded values in tools/perf/tests/evsel-tp-sched.c?
+>
 
-/* Summary */
-This contains a simple fix for setattr. When determining the validity of the
-attributes the ia_{g,u}id fields contain the value that will be written to
-inode->i_{g,u}id. When the {g,u}id attribute of the file isn't altered and the
-caller's fs{g,u}id matches the current {g,u}id attribute the attribute change
-is allowed.
+Hi Arnaldo,
 
-The value in ia_{g,u}id does already account for idmapped mounts and will have
-taken the relevant idmapping into account. So in order to verify that the
-{g,u}id attribute isn't changed we simple need to compare the ia_{g,u}id value
-against the inode's i_{g,u}id value.
+Thanks for the review.
+This perf tests code won't be changed in the latest version as we
+don't want to extend comm size any more, see also
+https://lore.kernel.org/lkml/20211108083840.4627-1-laoar.shao@gmail.com/
+The hard-coded 16 in tools/perf/tests/evsel-tp-sched.c is kept as-is.
 
-This only has any meaning for idmapped mounts as idmapping helpers are
-idempotent without them. And for idmapped mounts this really only has a meaning
-when circular idmappings are used, i.e. mappings where e.g. id 1000 is mapped
-to id 1001 and id 1001 is mapped to id 1000. Such ciruclar mappings can e.g. be
-useful when sharing the same home directory between multiple users at the same
-time.
+>
+> > +#endif  /* _TOOLS_LINUX_SCHED_H */
+> > diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-tp-sched.c
+> > index f9e34bd26cf3..029f2a8c8e51 100644
+> > --- a/tools/perf/tests/evsel-tp-sched.c
+> > +++ b/tools/perf/tests/evsel-tp-sched.c
+> > @@ -1,11 +1,13 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  #include <linux/err.h>
+> > +#include <linux/sched.h>
+> >  #include <traceevent/event-parse.h>
+> >  #include "evsel.h"
+> >  #include "tests.h"
+> >  #include "debug.h"
+> >
+> > -static int evsel__test_field(struct evsel *evsel, const char *name, int size, bool should_be_signed)
+> > +static int evsel__test_field_alt(struct evsel *evsel, const char *name,
+> > +                              int size, int alternate_size, bool should_be_signed)
+> >  {
+> >       struct tep_format_field *field = evsel__field(evsel, name);
+> >       int is_signed;
+> > @@ -23,15 +25,24 @@ static int evsel__test_field(struct evsel *evsel, const char *name, int size, bo
+> >               ret = -1;
+> >       }
+> >
+> > -     if (field->size != size) {
+> > -             pr_debug("%s: \"%s\" size (%d) should be %d!\n",
+> > +     if (field->size != size && field->size != alternate_size) {
+> > +             pr_debug("%s: \"%s\" size (%d) should be %d",
+> >                        evsel->name, name, field->size, size);
+> > +             if (alternate_size > 0)
+> > +                     pr_debug(" or %d", alternate_size);
+> > +             pr_debug("!\n");
+> >               ret = -1;
+> >       }
+> >
+> >       return ret;
+> >  }
+> >
+> > +static int evsel__test_field(struct evsel *evsel, const char *name,
+> > +                          int size, bool should_be_signed)
+> > +{
+> > +     return evsel__test_field_alt(evsel, name, size, -1, should_be_signed);
+> > +}
+> > +
+> >  int test__perf_evsel__tp_sched_test(struct test *test __maybe_unused, int subtest __maybe_unused)
+> >  {
+> >       struct evsel *evsel = evsel__newtp("sched", "sched_switch");
+> > @@ -42,7 +53,8 @@ int test__perf_evsel__tp_sched_test(struct test *test __maybe_unused, int subtes
+> >               return -1;
+> >       }
+> >
+> > -     if (evsel__test_field(evsel, "prev_comm", 16, false))
+> > +     if (evsel__test_field_alt(evsel, "prev_comm", TASK_COMM_LEN_16,
+> > +                               TASK_COMM_LEN, false))
+> >               ret = -1;
+> >
+> >       if (evsel__test_field(evsel, "prev_pid", 4, true))
+> > @@ -54,7 +66,8 @@ int test__perf_evsel__tp_sched_test(struct test *test __maybe_unused, int subtes
+> >       if (evsel__test_field(evsel, "prev_state", sizeof(long), true))
+> >               ret = -1;
+> >
+> > -     if (evsel__test_field(evsel, "next_comm", 16, false))
+> > +     if (evsel__test_field_alt(evsel, "next_comm", TASK_COMM_LEN_16,
+> > +                               TASK_COMM_LEN, false))
+> >               ret = -1;
+> >
+> >       if (evsel__test_field(evsel, "next_pid", 4, true))
+> > @@ -72,7 +85,8 @@ int test__perf_evsel__tp_sched_test(struct test *test __maybe_unused, int subtes
+> >               return -1;
+> >       }
+> >
+> > -     if (evsel__test_field(evsel, "comm", 16, false))
+> > +     if (evsel__test_field_alt(evsel, "comm", TASK_COMM_LEN_16,
+> > +                               TASK_COMM_LEN, false))
+> >               ret = -1;
+> >
+> >       if (evsel__test_field(evsel, "pid", 4, true))
+> > --
+> > 2.17.1
+>
+> --
+>
+> - Arnaldo
 
-Before this patch we could end up denying legitimate attribute changes and
-allowing invalid attribute changes when circular mappings are used. To even get
-into this situation the caller must've been privileged both to create that
-mapping and to create that idmapped mount.
 
-This hasn't been seen in the wild anywhere but came up when expanding the
-fstest suite during work on a series of hardening patches. All idmapped fstests
-pass without any regressions and we're adding new tests to verify the behavior
-of circular mappings.
 
-The new tests can be found at
-https://lore.kernel.org/linux-fsdevel/20211109145713.1868404-2-brauner@kernel.org
-and will be included in fstests after this is merged.
-
-(I've caught a solid winter flu so not very active this week but will try to
- keep an eye on this pr.)
-
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
-
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.idmapped.v5.16-rc2
-
-for you to fetch changes up to 968219708108440b23bc292e0486e3cc1d9a1bed:
-
-  fs: handle circular mappings correctly (2021-11-17 09:26:09 +0100)
-
-/* Testing */
-All patches are based on v5.16-rc1 and have been sitting in linux-next (albeit
-briefly). No build failures or warnings were observed. All old and new tests
-and fstests are passing:
-
-ubuntu@f2-vm:~/src/git/xfstests$ sudo ./check -g idmapped
-FSTYP         -- xfs (non-debug)
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc1-idmapped-968219708108 #2 SMP PREEMPT Thu Nov 18 12:21:26 UTC 2021
-MKFS_OPTIONS  -- -f /dev/loop1
-MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
-
-generic/633 5s ...  5s
-generic/644 2s ...  1s
-generic/645 2s ...  3s
-generic/651 2s ...  1s
-xfs/152 41s ...  39s
-xfs/153 7s ...  8s
-Ran: generic/633 generic/644 generic/645 generic/651 xfs/152 xfs/153
-Passed all 6 tests
-
-ubuntu@f2-vm:~/src/git/xfstests$ sudo ./check -g idmapped
-FSTYP         -- ext4
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc1-idmapped-968219708108 #2 SMP PREEMPT Thu Nov 18 12:21:26 UTC 2021
-MKFS_OPTIONS  -- /dev/loop1
-MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop1 /mnt/scratch
-
-generic/633 5s ...  2s
-generic/644 1s ...  1s
-generic/645 3s ...  1s
-generic/651 1s ...  1s
-Ran: generic/633 generic/644 generic/645 generic/651
-Passed all 4 tests
-
-ubuntu@f2-vm:~/src/git/xfstests$ sudo ./check -g idmapped
-FSTYP         -- btrfs
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc1-idmapped-968219708108 #2 SMP PREEMPT Thu Nov 18 12:21:26 UTC 2021
-MKFS_OPTIONS  -- /dev/loop1
-MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
-
-btrfs/245 3s ...  2s
-generic/633 2s ...  3s
-generic/644 1s ...  1s
-generic/645 1s ...  2s
-generic/651 1s ...  0s
-Ran: btrfs/245 generic/633 generic/644 generic/645 generic/651
-Passed all 5 tests
-
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with current
-mainline.
-
-Please consider pulling these changes from the signed fs.idmapped.v5.16-rc2 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-fs.idmapped.v5.16-rc2
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      fs: handle circular mappings correctly
-
- fs/attr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-- 
+Thanks
+Yafang
