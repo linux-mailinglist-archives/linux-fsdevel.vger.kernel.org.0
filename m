@@ -2,238 +2,404 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EB3445621F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 19:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D7B45625A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 19:28:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234434AbhKRSQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 13:16:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39608 "EHLO
+        id S232804AbhKRSbz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 13:31:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234357AbhKRSQP (ORCPT
+        with ESMTP id S232621AbhKRSby (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 13:16:15 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B964C061574;
-        Thu, 18 Nov 2021 10:13:14 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id y12so30853120eda.12;
-        Thu, 18 Nov 2021 10:13:14 -0800 (PST)
+        Thu, 18 Nov 2021 13:31:54 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B21DC061574;
+        Thu, 18 Nov 2021 10:28:54 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id r130so6897218pfc.1;
+        Thu, 18 Nov 2021 10:28:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/6mwuE2ioP3zIf0NEAQqDxkNdeNXnzy/i4Fsz7rpYK4=;
-        b=Xt7JdXLB0T9hexi4YCte00Q3Ru73DwwHKLjglGmUr9LeS7IQb5SHQNUlpKdirYFXve
-         mwAY9mWkBeCa2ry6W4jPLmF+4AkfWbxH6XDeP5RhybPjSoKyWXWkPN/DLFmu/ORRyoq+
-         7DQVDh8BeSjLFStTgc6y+ast4/ObSw0lA0ae6xWMtHGkqUPFlHcTpoQPAhStLs1qK/qn
-         0hgbo6qzA47oBANb8TrmvkJbyCNNYC+BLQKsMW9sFPYUtX02WEs7MnbG6OW0hwXlSUzQ
-         054AdyX85+lRmCotJy2T8EwjNws9FVFcHE5N2CbzQL0ANYQ3VldMNziemMYMsRBnXDc9
-         NaPQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=K6sm93BWhmXPRdE+v8TSlW6tKH/ocsuUR/duzHuz5ms=;
+        b=V713p+o2WSGjEgK25fVDoFnZBIOrFR+G/MAY2WDHIXXRKpOTyPxxmpxu4wqal6tMec
+         46x49ZqVNlS713IP2YkARABVdx5lc1FPFw97t9YmUGtZKitQePBXlXqvakLR2W0nC8Mf
+         OGFgxKqp0Uk253LA0IZwYWKCzoLi1cV9A31olSE635NGZC8W5LgiW/QZYFAk6sko+nNn
+         KLoLSSOtdeu1dnvQFBNZb4C+EPDE3kudXCOELzvhq/KPW+xAF32ddHZp+VSuJ0OMhMLs
+         DPKwNFWWE9Y5L5oIRySrN5qdCunIFdX9dZD3k4dJTXXQNOzr2ub3WAsDSmiqzPObhndh
+         tSbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/6mwuE2ioP3zIf0NEAQqDxkNdeNXnzy/i4Fsz7rpYK4=;
-        b=OWjcXXg+qHyJ43k8AqL1NLvEEKuMi4SYMSzzv94JSmVkF/YCbrUkOLz38E6//Hibq4
-         mpm5/pFWg+zj+9QxjlfEqYUkytyPZdZKG3nIHffiqDAmV8qMnjVdcef/JSiAFEMjbxsZ
-         3Hn3/NWz83vRic+NTeX6ETkElB9ugBBcIOD/sueOknx7a+fmMB1Zn7rOOhSNfJ1qAtCH
-         lS8OQ41xqFTY6iQPs4m94eYR/WEX6Ud9TG1uo64PPNCptzNBdYOUhqYMfpDaPwjbneqb
-         2AJwmNE8kLoX1CdVKUJ6pN/EPpV7Der5nPrrXGw2nWf/FLM1HRp+0vmlYubLfYFtXV4p
-         lVwQ==
-X-Gm-Message-State: AOAM5302mLWYFIFAOjpQ3drhpiK2jcC6yPdCT2JqVDhqWIyGSsduYr1m
-        4vU9Vp76mdIzGS/uvQw8TI/VjIGPDa4=
-X-Google-Smtp-Source: ABdhPJwXTqudvE9ZFphI3X7QeIfodRKvwJBdw9UDlOWvDVFV9zF+9q2yDsW8vsnBkn5FlEeqlMPhJQ==
-X-Received: by 2002:a17:906:c14b:: with SMTP id dp11mr1462787ejc.294.1637259192969;
-        Thu, 18 Nov 2021 10:13:12 -0800 (PST)
-Received: from crow.. ([95.87.219.163])
-        by smtp.gmail.com with ESMTPSA id d10sm224135eja.4.2021.11.18.10.13.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=K6sm93BWhmXPRdE+v8TSlW6tKH/ocsuUR/duzHuz5ms=;
+        b=3E0IYA+nhVmQwrqwpwg6LczadMBLa7nPs3buaErhQB+T5XGbP2asl/BSFqaS9+xC2D
+         Z7CB3LGDuphI8rPKQJnfYAALH/fIXsDtOLemt7DuieeVcRt+lxzpS/GvAh5zFZBGIhzq
+         eBzit1e/tZIGNgVEDbN0GLfH7Q1ZhSOBNuB4Z+wpNAX+SqgP51B3+FCpa56VGcPaWubl
+         UQRmn5XKmm44TV+Hq2Ie+hMUUpYoIQeD1ByUeupPEePEKQWdDncgyZg8ckdycA5Oypxc
+         jc0qhnnn5F+ON5QqLt9dXYGZ51FfcSmvzoXaxnl62hrFOzeuCszwW+XVPCblaVcF2THp
+         KayA==
+X-Gm-Message-State: AOAM533bllsL9r6eY4ytGJKNGmLTpLrZRgL1cXtkRZ7JSm1RCVuulrbl
+        jcDUpQwOoEzvC8W/znhC4BM=
+X-Google-Smtp-Source: ABdhPJyqE7NdXqUKpQn88MRmASkg1XX6DwglOuz9y/N+WFLBkTj2qeDfSLevDNYLzs/sY+Rq1bevTg==
+X-Received: by 2002:a62:6184:0:b0:4a2:a063:fe8e with SMTP id v126-20020a626184000000b004a2a063fe8emr15771910pfb.69.1637260129010;
+        Thu, 18 Nov 2021 10:28:49 -0800 (PST)
+Received: from localhost ([2405:201:6014:d064:502e:73f4:8af1:9522])
+        by smtp.gmail.com with ESMTPSA id q13sm336096pfk.22.2021.11.18.10.28.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Nov 2021 10:13:12 -0800 (PST)
-From:   "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        rostedt@goodmis.org, mingo@redhat.com, hagen@jauu.net,
-        rppt@kernel.org, James.Bottomley@HansenPartnership.com,
-        akpm@linux-foundation.org, vvs@virtuozzo.com, shakeelb@google.com,
-        christian.brauner@ubuntu.com, mkoutny@suse.com,
-        "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>
-Subject: [RFC PATCH 4/4] namespacefs: Couple namespacefs to the UTS namespace
-Date:   Thu, 18 Nov 2021 20:12:10 +0200
-Message-Id: <20211118181210.281359-5-y.karadz@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211118181210.281359-1-y.karadz@gmail.com>
-References: <20211118181210.281359-1-y.karadz@gmail.com>
+        Thu, 18 Nov 2021 10:28:48 -0800 (PST)
+Date:   Thu, 18 Nov 2021 23:58:45 +0530
+From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
+To:     Yonghong Song <yhs@fb.com>
+Cc:     bpf@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Alexander Mihalicyn <alexander@mihalicyn.com>,
+        Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v1 1/8] io_uring: Implement eBPF iterator for
+ registered buffers
+Message-ID: <20211118182845.b4b7qaj7ip3lmkcj@apollo.localdomain>
+References: <20211116054237.100814-1-memxor@gmail.com>
+ <20211116054237.100814-2-memxor@gmail.com>
+ <8d95bd01-7f1a-9350-cede-c6abd56a7927@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d95bd01-7f1a-9350-cede-c6abd56a7927@fb.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the UTS namespace gets initialized, a directory called 'uts'
-is added to namespacesfs. This directory represents the main UTS
-namespace and also serves as a trunk (parent) of all other UTS
-namespaces. Every time when a new UTS namespace is created a
-corresponding directory is added to 'namespacefs/uts/'. The 'inum'
-of the new namespace gives the name of its directory. When a UTS
-namespace is destroyed the corresponding directory is removed. Each
-directory contains a file called 'uname' that can be used to get the
-unique data fields of the uts namespaces(sysname, nodename, ...).
+On Thu, Nov 18, 2021 at 10:51:59PM IST, Yonghong Song wrote:
+>
+>
+> On 11/15/21 9:42 PM, Kumar Kartikeya Dwivedi wrote:
+> > This change adds eBPF iterator for buffers registered in io_uring ctx.
+> > It gives access to the ctx, the index of the registered buffer, and a
+> > pointer to the io_uring_ubuf itself. This allows the iterator to save
+> > info related to buffers added to an io_uring instance, that isn't easy
+> > to export using the fdinfo interface (like exact struct page composing
+> > the registered buffer).
+> >
+> > The primary usecase this is enabling is checkpoint/restore support.
+> >
+> > Note that we need to use mutex_trylock when the file is read from, in
+> > seq_start functions, as the order of lock taken is opposite of what it
+> > would be when io_uring operation reads the same file.  We take
+> > seq_file->lock, then ctx->uring_lock, while io_uring would first take
+> > ctx->uring_lock and then seq_file->lock for the same ctx.
+> >
+> > This can lead to a deadlock scenario described below:
+> >
+> >        CPU 0				CPU 1
+> >
+> >        vfs_read
+> >        mutex_lock(&seq_file->lock)	io_read
+> > 					mutex_lock(&ctx->uring_lock)
+> >        mutex_lock(&ctx->uring_lock) # switched to mutex_trylock
+> > 					mutex_lock(&seq_file->lock)
+>
+> It is not clear which mutex_lock switched to mutex_trylock.
 
-Signed-off-by: Yordan Karadzhov (VMware) <y.karadz@gmail.com>
----
- fs/namespacefs/inode.c      | 57 +++++++++++++++++++++++++++++++++++++
- include/linux/namespacefs.h | 13 +++++++++
- kernel/utsname.c            |  9 ++++++
- 3 files changed, 79 insertions(+)
+The one in vfs_read.
 
-diff --git a/fs/namespacefs/inode.c b/fs/namespacefs/inode.c
-index 55d71733164c..4b661bdd4d9c 100644
---- a/fs/namespacefs/inode.c
-+++ b/fs/namespacefs/inode.c
-@@ -14,6 +14,7 @@
- #include <linux/proc_ns.h>
- #include <linux/seq_file.h>
- #include <linux/pid_namespace.h>
-+#include <linux/utsname.h>
- 
- static struct vfsmount *namespacefs_mount;
- static int namespacefs_mount_count;
-@@ -309,6 +310,58 @@ void namespacefs_remove_pid_ns_dir(struct pid_namespace *ns)
- 	namespacefs_remove_dir(ns->ns.dentry);
- }
- 
-+#define _UNAME_N_FIELDS		6
-+#define _UNAME_MAX_LEN		((__NEW_UTS_LEN + 1) * _UNAME_N_FIELDS)
-+
-+static ssize_t uts_ns_read(struct file *file, char __user *ubuf,
-+			   size_t count, loff_t *pos)
-+{
-+	struct new_utsname *name = file->private_data;
-+	char buff[_UNAME_MAX_LEN + 1];
-+	int n;
-+
-+	n = snprintf(buff, _UNAME_MAX_LEN + 1,
-+		     "%s %s %s %s %s %s\n",
-+		     name->sysname,
-+		     name->nodename,
-+		     name->release,
-+		     name->version,
-+		     name->machine,
-+		     name->domainname);
-+
-+	return simple_read_from_buffer(ubuf, count, pos, buff, n);
-+}
-+
-+static const struct file_operations uts_fops = {
-+	.open = simple_open,
-+	.read = uts_ns_read,
-+	.llseek = default_llseek,
-+};
-+
-+int namespacefs_create_uts_ns_dir(struct uts_namespace *ns)
-+{
-+	struct dentry *dentry;
-+	int err;
-+
-+	err = create_inode_dir(&ns->ns, init_uts_ns.ns.dentry, ns->user_ns);
-+	if (err)
-+		return err;
-+
-+	dentry = namespacefs_create_file("uname", ns->ns.dentry, ns->user_ns,
-+					 &uts_fops, &ns->name);
-+	if (IS_ERR(dentry)) {
-+		dput(ns->ns.dentry);
-+		return PTR_ERR(dentry);
-+	}
-+
-+	return 0;
-+}
-+
-+void namespacefs_remove_uts_ns_dir(struct uts_namespace *ns)
-+{
-+	namespacefs_remove_dir(ns->ns.dentry);
-+}
-+
- static int add_ns_dentry(struct ns_common *ns)
- {
- 	struct dentry *dentry =
-@@ -340,6 +393,10 @@ static int __init namespacefs_init(void)
- 	if (err)
- 		goto unreg;
- 
-+	err = add_ns_dentry(&init_uts_ns.ns);
-+	if (err)
-+		goto unreg;
-+
- 	return 0;
- 
-  unreg:
-diff --git a/include/linux/namespacefs.h b/include/linux/namespacefs.h
-index f41499a7635a..3815a7bbeb1c 100644
---- a/include/linux/namespacefs.h
-+++ b/include/linux/namespacefs.h
-@@ -21,6 +21,8 @@ namespacefs_create_dir(const char *name, struct dentry *parent,
- void namespacefs_remove_dir(struct dentry *dentry);
- int namespacefs_create_pid_ns_dir(struct pid_namespace *ns);
- void namespacefs_remove_pid_ns_dir(struct pid_namespace *ns);
-+int namespacefs_create_uts_ns_dir(struct uts_namespace *ns);
-+void namespacefs_remove_uts_ns_dir(struct uts_namespace *ns);
- 
- #else
- 
-@@ -55,6 +57,17 @@ namespacefs_remove_pid_ns_dir(struct pid_namespace *ns)
- {
- }
- 
-+static inline int
-+namespacefs_create_uts_ns_dir(struct uts_namespace *ns)
-+{
-+	return 0;
-+}
-+
-+static inline void
-+namespacefs_remove_uts_ns_dir(struct uts_namespace *ns)
-+{
-+}
-+
- #endif /* CONFIG_NAMESPACE_FS */
- 
- #endif
-diff --git a/kernel/utsname.c b/kernel/utsname.c
-index b1ac3ca870f2..d44b307cffdc 100644
---- a/kernel/utsname.c
-+++ b/kernel/utsname.c
-@@ -12,6 +12,7 @@
- #include <linux/slab.h>
- #include <linux/cred.h>
- #include <linux/user_namespace.h>
-+#include <linux/namespacefs.h>
- #include <linux/proc_ns.h>
- #include <linux/sched/task.h>
- 
-@@ -70,8 +71,15 @@ static struct uts_namespace *clone_uts_ns(struct user_namespace *user_ns,
- 	memcpy(&ns->name, &old_ns->name, sizeof(ns->name));
- 	ns->user_ns = get_user_ns(user_ns);
- 	up_read(&uts_sem);
-+
-+	err = namespacefs_create_uts_ns_dir(ns);
-+	if (err)
-+		goto fail_free_inum;
-+
- 	return ns;
- 
-+fail_free_inum:
-+	ns_free_inum(&ns->ns);
- fail_free:
- 	kmem_cache_free(uts_ns_cache, ns);
- fail_dec:
-@@ -105,6 +113,7 @@ struct uts_namespace *copy_utsname(unsigned long flags,
- 
- void free_uts_ns(struct uts_namespace *ns)
- {
-+	namespacefs_remove_uts_ns_dir(ns);
- 	dec_uts_namespaces(ns->ucounts);
- 	put_user_ns(ns->user_ns);
- 	ns_free_inum(&ns->ns);
--- 
-2.33.1
+> From below example, it looks like &ctx->uring_lock. But if this is
+> the case, we could have deadlock, right?
+>
 
+Sorry, I will make the commit message clearer in the next version.
+
+The sequence on CPU 0 is for normal read(2) on iterator.
+For CPU 1, it is an io_uring instance trying to do same on iterator attached to
+itself.
+
+So CPU 0 does
+
+sys_read
+vfs_read
+ bpf_seq_read
+ mutex_lock(&seq_file->lock)    # A
+  io_uring_buf_seq_start
+  mutex_lock(&ctx->uring_lock)  # B
+
+and CPU 1 does
+
+io_uring_enter
+mutex_lock(&ctx->uring_lock)    # B
+ io_read
+  bpf_seq_read
+  mutex_lock(&seq_file->lock)   # A
+  ...
+
+Since the order of locks is opposite, it can deadlock. So I switched the
+mutex_lock in io_uring_buf_seq_start to trylock, so it can return an error for
+this case, then it will release seq_file->lock and CPU 1 will make progress.
+
+The second problem without use of trylock is described below (for same case of
+io_uring reading from iterator attached to itself).
+
+Let me know if I missed something.
+
+> >
+> > The trylock also protects the case where io_uring tries to read from
+> > iterator attached to itself (same ctx), where the order of locks would
+> > be:
+> >   io_uring_enter
+> >    mutex_lock(&ctx->uring_lock) <-----------.
+> >    io_read				    \
+> >     seq_read				     \
+> >      mutex_lock(&seq_file->lock)		     /
+> >      mutex_lock(&ctx->uring_lock) # deadlock-`
+> >
+> > In both these cases (recursive read and contended uring_lock), -EDEADLK
+> > is returned to userspace.
+> >
+> > In the future, this iterator will be extended to directly support
+> > iteration of bvec Flexible Array Member, so that when there is no
+> > corresponding VMA that maps to the registered buffer (e.g. if VMA is
+> > destroyed after pinning pages), we are able to reconstruct the
+> > registration on restore by dumping the page contents and then replaying
+> > them into a temporary mapping used for registration later. All this is
+> > out of scope for the current series however, but builds upon this
+> > iterator.
+> >
+> > Cc: Jens Axboe <axboe@kernel.dk>
+> > Cc: Pavel Begunkov <asml.silence@gmail.com>
+> > Cc: io-uring@vger.kernel.org
+> > Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+> > ---
+> >   fs/io_uring.c                  | 179 +++++++++++++++++++++++++++++++++
+> >   include/linux/bpf.h            |   2 +
+> >   include/uapi/linux/bpf.h       |   3 +
+> >   tools/include/uapi/linux/bpf.h |   3 +
+> >   4 files changed, 187 insertions(+)
+> >
+> > diff --git a/fs/io_uring.c b/fs/io_uring.c
+> > index b07196b4511c..46a110989155 100644
+> > --- a/fs/io_uring.c
+> > +++ b/fs/io_uring.c
+> > @@ -81,6 +81,7 @@
+> >   #include <linux/tracehook.h>
+> >   #include <linux/audit.h>
+> >   #include <linux/security.h>
+> > +#include <linux/btf_ids.h>
+> >   #define CREATE_TRACE_POINTS
+> >   #include <trace/events/io_uring.h>
+> > @@ -11125,3 +11126,181 @@ static int __init io_uring_init(void)
+> >   	return 0;
+> >   };
+> >   __initcall(io_uring_init);
+> > +
+> > +#ifdef CONFIG_BPF_SYSCALL
+> > +
+> > +BTF_ID_LIST(btf_io_uring_ids)
+> > +BTF_ID(struct, io_ring_ctx)
+> > +BTF_ID(struct, io_mapped_ubuf)
+> > +
+> > +struct bpf_io_uring_seq_info {
+> > +	struct io_ring_ctx *ctx;
+> > +	unsigned long index;
+> > +};
+> > +
+> > +static int bpf_io_uring_init_seq(void *priv_data, struct bpf_iter_aux_info *aux)
+> > +{
+> > +	struct bpf_io_uring_seq_info *info = priv_data;
+> > +	struct io_ring_ctx *ctx = aux->ctx;
+> > +
+> > +	info->ctx = ctx;
+> > +	return 0;
+> > +}
+> > +
+> > +static int bpf_io_uring_iter_attach(struct bpf_prog *prog,
+> > +				    union bpf_iter_link_info *linfo,
+> > +				    struct bpf_iter_aux_info *aux)
+> > +{
+> > +	struct io_ring_ctx *ctx;
+> > +	struct fd f;
+> > +	int ret;
+> > +
+> > +	f = fdget(linfo->io_uring.io_uring_fd);
+> > +	if (unlikely(!f.file))
+> > +		return -EBADF;
+> > +
+> > +	ret = -EOPNOTSUPP;
+> > +	if (unlikely(f.file->f_op != &io_uring_fops))
+> > +		goto out_fput;
+> > +
+> > +	ret = -ENXIO;
+> > +	ctx = f.file->private_data;
+> > +	if (unlikely(!percpu_ref_tryget(&ctx->refs)))
+> > +		goto out_fput;
+> > +
+> > +	ret = 0;
+> > +	aux->ctx = ctx;
+> > +
+> > +out_fput:
+> > +	fdput(f);
+> > +	return ret;
+> > +}
+> > +
+> > +static void bpf_io_uring_iter_detach(struct bpf_iter_aux_info *aux)
+> > +{
+> > +	percpu_ref_put(&aux->ctx->refs);
+> > +}
+> > +
+> > +/* io_uring iterator for registered buffers */
+> > +
+> > +struct bpf_iter__io_uring_buf {
+> > +	__bpf_md_ptr(struct bpf_iter_meta *, meta);
+> > +	__bpf_md_ptr(struct io_ring_ctx *, ctx);
+> > +	__bpf_md_ptr(struct io_mapped_ubuf *, ubuf);
+> > +	unsigned long index;
+> > +};
+>
+> I would suggest to change "unsigned long index" to either u32 or u64.
+> This structure is also the bpf program context and in bpf program context,
+> "index" will be u64. Then on 32bit system, we potentially
+> could have issues.
+>
+
+Ack, will do.
+
+> > +
+> > +static void *__bpf_io_uring_buf_seq_get_next(struct bpf_io_uring_seq_info *info)
+> > +{
+> > +	if (info->index < info->ctx->nr_user_bufs)
+> > +		return info->ctx->user_bufs[info->index++];
+> > +	return NULL;
+> > +}
+> > +
+> > +static void *bpf_io_uring_buf_seq_start(struct seq_file *seq, loff_t *pos)
+> > +{
+> > +	struct bpf_io_uring_seq_info *info = seq->private;
+> > +	struct io_mapped_ubuf *ubuf;
+> > +
+> > +	/* Indicate to userspace that the uring lock is contended */
+> > +	if (!mutex_trylock(&info->ctx->uring_lock))
+> > +		return ERR_PTR(-EDEADLK);
+> > +
+> > +	ubuf = __bpf_io_uring_buf_seq_get_next(info);
+> > +	if (!ubuf)
+> > +		return NULL;
+> > +
+> > +	if (*pos == 0)
+> > +		++*pos;
+> > +	return ubuf;
+> > +}
+> > +
+> > +static void *bpf_io_uring_buf_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+> > +{
+> > +	struct bpf_io_uring_seq_info *info = seq->private;
+> > +
+> > +	++*pos;
+> > +	return __bpf_io_uring_buf_seq_get_next(info);
+> > +}
+> > +
+> > +DEFINE_BPF_ITER_FUNC(io_uring_buf, struct bpf_iter_meta *meta,
+> > +		     struct io_ring_ctx *ctx, struct io_mapped_ubuf *ubuf,
+> > +		     unsigned long index)
+>
+> Again, change "unsigned long" to "u32" or "u64".
+>
+
+Ack.
+
+> > [...]
+> > +static struct bpf_iter_reg io_uring_buf_reg_info = {
+> > +	.target            = "io_uring_buf",
+> > +	.feature	   = BPF_ITER_RESCHED,
+> > +	.attach_target     = bpf_io_uring_iter_attach,
+> > +	.detach_target     = bpf_io_uring_iter_detach,
+>
+> Since you have this extra `io_uring_fd` for the iterator, you may want
+> to implement show_fdinfo and fill_link_info callback functions here.
+>
+
+Ack, but some questions:
+
+What should it have? e.g. it easy to go from map_id to map fd if one wants
+access to the map attached to the iterator, but not sure how one can obtain more
+information about target fd from io_uring or epoll iterators.
+
+Should I delegate to their show_fdinfo and dump using that?
+
+The type/target is already available in link_info, not sure what other useful
+information can be added there, which allows obtaining the io_uring/epoll fd.
+
+> > +	.ctx_arg_info_size = 2,
+> > +	.ctx_arg_info = {
+> > +		{ offsetof(struct bpf_iter__io_uring_buf, ctx),
+> > +		  PTR_TO_BTF_ID },
+> > +		{ offsetof(struct bpf_iter__io_uring_buf, ubuf),
+> > +		  PTR_TO_BTF_ID_OR_NULL },
+> > +	},
+> > +	.seq_info	   = &bpf_io_uring_buf_seq_info,
+> > +};
+> > +
+> > +static int __init io_uring_iter_init(void)
+> > +{
+> > +	io_uring_buf_reg_info.ctx_arg_info[0].btf_id = btf_io_uring_ids[0];
+> > +	io_uring_buf_reg_info.ctx_arg_info[1].btf_id = btf_io_uring_ids[1];
+> > +	return bpf_iter_reg_target(&io_uring_buf_reg_info);
+> > +}
+> > +late_initcall(io_uring_iter_init);
+> > +
+> > +#endif
+> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> > index 56098c866704..ddb9d4520a3f 100644
+> > --- a/include/linux/bpf.h
+> > +++ b/include/linux/bpf.h
+> > @@ -1509,8 +1509,10 @@ int bpf_obj_get_user(const char __user *pathname, int flags);
+> >   	extern int bpf_iter_ ## target(args);			\
+> >   	int __init bpf_iter_ ## target(args) { return 0; }
+> > +struct io_ring_ctx;
+> >   struct bpf_iter_aux_info {
+> >   	struct bpf_map *map;
+> > +	struct io_ring_ctx *ctx;
+> >   };
+>
+> Can we use union here? Note that below bpf_iter_link_info in
+> uapi/linux/bpf.h, map_fd and io_uring_fd is also an union.
+>
+
+So the reason I didn't use a union was the link->aux.map check in
+bpf_iter.c::__get_seq_info. Even if we switch to union bpf_iter_aux_info, it
+needs some way to determine whether link is for map type, so maybe a string
+comparison there? Leaving it out of union felt cleaner, also I move both
+io_ring_ctx and eventpoll file into a union in later patch.
+
+> >   typedef int (*bpf_iter_attach_target_t)(struct bpf_prog *prog,
+> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > index 6297eafdc40f..3323defa99a1 100644
+> > --- a/include/uapi/linux/bpf.h
+> > +++ b/include/uapi/linux/bpf.h
+> > @@ -91,6 +91,9 @@ union bpf_iter_link_info {
+> >   	struct {
+> >   		__u32	map_fd;
+> >   	} map;
+> > +	struct {
+> > +		__u32   io_uring_fd;
+> > +	} io_uring;
+> >   };
+> >   /* BPF syscall commands, see bpf(2) man-page for more details. */
+> > diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> > index 6297eafdc40f..3323defa99a1 100644
+> > --- a/tools/include/uapi/linux/bpf.h
+> > +++ b/tools/include/uapi/linux/bpf.h
+> > @@ -91,6 +91,9 @@ union bpf_iter_link_info {
+> >   	struct {
+> >   		__u32	map_fd;
+> >   	} map;
+> > +	struct {
+> > +		__u32   io_uring_fd;
+> > +	} io_uring;
+> >   };
+> >   /* BPF syscall commands, see bpf(2) man-page for more details. */
+> >
+
+--
+Kartikeya
