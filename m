@@ -2,128 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A2F4560D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 17:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F7034560DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 17:43:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233671AbhKRQqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 11:46:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233652AbhKRQqo (ORCPT
+        id S233679AbhKRQqz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 11:46:55 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:52366 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233673AbhKRQqy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 11:46:44 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF8C1C061574;
-        Thu, 18 Nov 2021 08:43:44 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id e8so7109575ilu.9;
-        Thu, 18 Nov 2021 08:43:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nHXYrpkfWzexMQu3rjZVVnAQq/u99wN5y+Cu0SZwxoU=;
-        b=OOw0SvzNbjSwHaFUynoJ35TZjNaEDyaD6GNLs3ZFGrmHyCm5gkCo6xVabRL4osIpp6
-         /gN2TrbN3bF974KwXPkm8SoCUpMphUP7mBR9p64/ztfOoo22C302i5iLS3RbtBmvpFNf
-         jSaU5EjYmsd5xL+NTcxKwbynTg/7OAS6keXTN2OizcAXM3S5Za7Gju2eLmWFBPhpMJmU
-         KWyIFly+rGvyPAeZ5aPtb5Tcd/9KqHdZJiU0+hytYnEeboociU8ULeWZ46mSVcE+gnQA
-         NwWccjlC1xeZrwwaCxexi/TxMAbnasdYQH+aZ5yi+F8M9M3bkmUfjLvEO2zppKvpw3ak
-         W4XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nHXYrpkfWzexMQu3rjZVVnAQq/u99wN5y+Cu0SZwxoU=;
-        b=i2xMfh+iE6Bz8WdzeSQVlYADwBRJ+dwT1xCys8sWo4fBH0T6RAU+8KBsn8uPQFrl2Z
-         DCmekxv5DZQVaE6oMZY4nQRgCm60BqlzG4aUpHwiUnq7uA3ktAfDm1lF7XUMJN2XO6o/
-         yTVF9bfQQbcM8Whp9D4dmdvKK9sBLaVUNsxy3mKuwsPHumQ+qMscwQ26BGvAsIIRJ6eL
-         cTuw50HOrR30xr7auFJ8dg5QhO4Oq9rxyfBdl5ILFDDLQclczUT0B3bcfJYlPq+18MM2
-         DFscRhVdVZjg4jdObdAEqvlwg5r7axBp8wcUKxjVRD2dqntaRlucrNvbGvevwNNItVFi
-         ivBA==
-X-Gm-Message-State: AOAM530l8cJUuFXscL4ygbUzm0TyWk97p4NFepDfYpAfxsZtVAuryBA7
-        +NF6Ybqq1+4pVBu3lT3je1GKl4YEcX7RLA/H9hQ=
-X-Google-Smtp-Source: ABdhPJxjKNwJrg/M6Z5DGIQ4/UeNDAyDvU5YATU7TtjHWaslW4jqFsLnGKfpKU29Va7D3vafF1SyJhikVNhSWUrPtbY=
-X-Received: by 2002:a05:6e02:ea4:: with SMTP id u4mr283953ilj.319.1637253824165;
- Thu, 18 Nov 2021 08:43:44 -0800 (PST)
-MIME-Version: 1.0
-References: <CAOQ4uxjazEx=bL6ZfLaGCfH6pii=OatQDoeWc+74AthaaUC49g@mail.gmail.com>
- <20211112163955.GA30295@quack2.suse.cz> <CAOQ4uxgT5a7UFUrb5LCcXo77Uda4t5c+1rw+BFDfTAx8szp+HQ@mail.gmail.com>
- <CAOQ4uxgEbjkMMF-xVTdfWcLi4y8DGNit5Eeq=evby2nWCuiDVw@mail.gmail.com>
- <20211115102330.GC23412@quack2.suse.cz> <CAOQ4uxiBFkkbKU=yimLXoYKHFWOoUYrXfg4Kw_CkF=hcSGOm3A@mail.gmail.com>
- <20211115143750.GE23412@quack2.suse.cz> <CAOQ4uxgBncZjuTo-K+vxRovd36AuaEKUfBDQwgU86B9qwWWNVw@mail.gmail.com>
- <20211116101232.GA23464@quack2.suse.cz> <CAOQ4uxgfCmWCt=NNxj53+eKtVE-FMWBDNgFuQpGiFooZpne6zw@mail.gmail.com>
- <20211118162956.GA8267@quack2.suse.cz>
-In-Reply-To: <20211118162956.GA8267@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 18 Nov 2021 18:43:33 +0200
-Message-ID: <CAOQ4uxhGt4ghy4sqoWN28akOi9B=brT6rGzE9ffOaLTHWJDJ9w@mail.gmail.com>
-Subject: Re: [PATCH 0/7] Report more information in fanotify dirent events
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Thu, 18 Nov 2021 11:46:54 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 48695218B0;
+        Thu, 18 Nov 2021 16:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1637253833; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uAvLRnRmvQQtZ3go6D5e5zJVFcCKD7HB2NABcevNTLo=;
+        b=auG2BY1i8mGJfduvur7HqOxc61KzrLa9dtfPM63InvHlhhWnX7qO1cJ/5G4gyVxJ/KX28J
+        siifTEBgD0na7RHYRPqWThRSHo5NqR0yMwYBTwM3Dvmolh6085y/YNw/fVNOoHrA8xXkN6
+        p6xziFdFJN03Zs9Q0upvHOG9YF6/3Ns=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1637253833;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uAvLRnRmvQQtZ3go6D5e5zJVFcCKD7HB2NABcevNTLo=;
+        b=KkQ8xd7MJnXjLrdy2bTbFJ/yroSDOuVEC8e1dTrcN6OJYHDvRi6xj0dlaxsWpwN15UhxEE
+        +Lu02cyNjLvI9RAQ==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 0EDF2A3B97;
+        Thu, 18 Nov 2021 16:43:53 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id DC2801F2C95; Thu, 18 Nov 2021 17:43:49 +0100 (CET)
+Date:   Thu, 18 Nov 2021 17:43:49 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode
+ operation
+Message-ID: <20211118164349.GB8267@quack2.suse.cz>
+References: <17c5aba1fef.c5c03d5825886.6577730832510234905@mykernel.net>
+ <CAJfpegtr1NkOiY9YWd1meU1yiD-LFX-aB55UVJs94FrX0VNEJQ@mail.gmail.com>
+ <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
+ <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com>
+ <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net>
+ <CAJfpegttQreuuD_jLgJmrYpsLKBBe2LmB5NSj6F5dHoTzqPArw@mail.gmail.com>
+ <17d2c858d76.d8a27d876510.8802992623030721788@mykernel.net>
+ <17d31bf3d62.1119ad4be10313.6832593367889908304@mykernel.net>
+ <20211118112315.GD13047@quack2.suse.cz>
+ <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 18, 2021 at 6:29 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 18-11-21 14:47:18, Amir Goldstein wrote:
-> > > > So let's say this - we can add support for OLD_DFID, NEW_DFID types
-> > > > later if we think they may serve a purpose, but at this time, I see no
-> > > > reason to complicate the UAPI anymore than it already is and I would
-> > > > rather implement only:
-> > > >
-> > > > /* Info types for FAN_RENAME */
-> > > > #define FAN_EVENT_INFO_TYPE_OLD_DFID_NAME       10
-> > > > /* Reserved for FAN_EVENT_INFO_TYPE_OLD_DFID    11 */
-> > > > #define FAN_EVENT_INFO_TYPE_NEW_DFID_NAME       12
-> > > > /* Reserved for FAN_EVENT_INFO_TYPE_NEW_DFID    13 */
-> > > >
-> > > > Do you agree?
-> > >
-> > > I agree the utility of FAN_RENAME without FAN_REPORT_NAME is very limited
-> > > so I'm OK with not implementing that at least for now.
-> >
-> > OK. The patches are staged at [1], but I ran into one more UAPI question
-> > that I wanted to run by you before posting the patches.
-> >
-> > The question may be best described by the last commit on the tests branch [2]:
-> >
-> >     syscalls/fanotify16: Test FAN_RENAME with ignored mask
-> >
-> >     When a file is moved between two directories and only one of them is
-> >     watching for FAN_RENAME events, the FAN_RENAME event will include only
-> >     the information about the entry in the watched directory.
-> >
-> >     When one of the directories is watching FAN_RENAME, but the other is
-> >     ignoring FAN_RENAME events, the FAN_RENAME event will not be reported
-> >     at all.
-> >
-> >     This is not the same behavior as MOVED_FROM/TO events. User cannot
-> >     request to ignore MOVED_FROM events according to destination directory
-> >     nor MOVED_TO events according to source directory.
-> >
-> > I chose this behavior because I found it to be useful and consistent with
-> > other behaviors involving ignored masks. Maybe "chose" is a strong word
-> > here - I did not do anything to implement this specific behavior - it is just
-> > how the code in fanotify_group_event_mask() works for merging masks
-> > and ignored masks of different marks.
-> >
-> > Let me know if you approve of those ignored FAN_RENAME semantics
-> > and I will post the patches for review.
->
-> Yeah, I guess ignore masks with FAN_RENAME are going to be a bit
-> non-intuitive either way and what you suggest makes sense. I suppose when
-> SB has FAN_RENAME mark and either source or target have FAN_RENAME in the
-> ignore mask, nothing will get reported as well, do it? If we are consistent
-> like this, I guess fine by me.
+On Thu 18-11-21 20:02:09, Chengguang Xu wrote:
+>  ---- 在 星期四, 2021-11-18 19:23:15 Jan Kara <jack@suse.cz> 撰写 ----
+>  > On Thu 18-11-21 14:32:36, Chengguang Xu wrote:
+>  > > 
+>  > >  ---- 在 星期三, 2021-11-17 14:11:29 Chengguang Xu <cgxu519@mykernel.net> 撰写 ----
+>  > >  >  ---- 在 星期二, 2021-11-16 20:35:55 Miklos Szeredi <miklos@szeredi.hu> 撰写 ----
+>  > >  >  > On Tue, 16 Nov 2021 at 03:20, Chengguang Xu <cgxu519@mykernel.net> wrote:
+>  > >  >  > >
+>  > >  >  > >  ---- 在 星期四, 2021-10-07 21:34:19 Miklos Szeredi <miklos@szeredi.hu> 撰写 ----
+>  > >  >  > >  > On Thu, 7 Oct 2021 at 15:10, Chengguang Xu <cgxu519@mykernel.net> wrote:
+>  > >  >  > >  > >  > However that wasn't what I was asking about.  AFAICS ->write_inode()
+>  > >  >  > >  > >  > won't start write back for dirty pages.   Maybe I'm missing something,
+>  > >  >  > >  > >  > but there it looks as if nothing will actually trigger writeback for
+>  > >  >  > >  > >  > dirty pages in upper inode.
+>  > >  >  > >  > >  >
+>  > >  >  > >  > >
+>  > >  >  > >  > > Actually, page writeback on upper inode will be triggered by overlayfs ->writepages and
+>  > >  >  > >  > > overlayfs' ->writepages will be called by vfs writeback function (i.e writeback_sb_inodes).
+>  > >  >  > >  >
+>  > >  >  > >  > Right.
+>  > >  >  > >  >
+>  > >  >  > >  > But wouldn't it be simpler to do this from ->write_inode()?
+>  > >  >  > >  >
+>  > >  >  > >  > I.e. call write_inode_now() as suggested by Jan.
+>  > >  >  > >  >
+>  > >  >  > >  > Also could just call mark_inode_dirty() on the overlay inode
+>  > >  >  > >  > regardless of the dirty flags on the upper inode since it shouldn't
+>  > >  >  > >  > matter and results in simpler logic.
+>  > >  >  > >  >
+>  > >  >  > >
+>  > >  >  > > Hi Miklos，
+>  > >  >  > >
+>  > >  >  > > Sorry for delayed response for this, I've been busy with another project.
+>  > >  >  > >
+>  > >  >  > > I agree with your suggesion above and further more how about just mark overlay inode dirty
+>  > >  >  > > when it has upper inode? This approach will make marking dirtiness simple enough.
+>  > >  >  > 
+>  > >  >  > Are you suggesting that all non-lower overlay inodes should always be dirty?
+>  > >  >  > 
+>  > >  >  > The logic would be simple, no doubt, but there's the cost to walking
+>  > >  >  > those overlay inodes which don't have a dirty upper inode, right?  
+>  > >  > 
+>  > >  > That's true.
+>  > >  > 
+>  > >  >  > Can you quantify this cost with a benchmark?  Can be totally synthetic,
+>  > >  >  > e.g. lookup a million upper files without modifying them, then call
+>  > >  >  > syncfs.
+>  > >  >  > 
+>  > >  > 
+>  > >  > No problem, I'll do some tests for the performance.
+>  > >  > 
+>  > > 
+>  > > Hi Miklos,
+>  > > 
+>  > > I did some rough tests and the results like below.  In practice,  I don't
+>  > > think that 1.3s extra time of syncfs will cause significant problem.
+>  > > What do you think?
+>  > 
+>  > Well, burning 1.3s worth of CPU time for doing nothing seems like quite a
+>  > bit to me. I understand this is with 1000000 inodes but although that is
+>  > quite a few it is not unheard of. If there would be several containers
+>  > calling sync_fs(2) on the machine they could easily hog the machine... That
+>  > is why I was originally against keeping overlay inodes always dirty and
+>  > wanted their dirtiness to at least roughly track the real need to do
+>  > writeback.
+>  > 
+> 
+> Hi Jan,
+> 
+> Actually, the time on user and sys are almost same with directly excute syncfs on underlying fs.
+> IMO, it only extends syncfs(2) waiting time for perticular container but not burning cpu.
+> What am I missing?
 
-Yes, that is correct, because the join of combined masks and combined
-ignored_masks is done at the very end, if an event is in ignored mask of
-any related mark, it will cause the drop of the event.
+Ah, right, I've missed that only realtime changed, not systime. I'm sorry
+for confusion. But why did the realtime increase so much? Are we waiting
+for some IO?
 
-I will post patches soon.
+								Honza
 
-Thanks,
-Amir.
+>  > > Test bed: kvm vm 
+>  > > 2.50GHz cpu 32core
+>  > > 64GB mem
+>  > > vm kernel  5.15.0-rc1+ (with ovl syncfs patch V6)
+>  > > 
+>  > > one millon files spread to 2 level of dir hierarchy.
+>  > > test step:
+>  > > 1) create testfiles in ovl upper dir
+>  > > 2) mount overlayfs
+>  > > 3) excute ls -lR to lookup all file in overlay merge dir
+>  > > 4) excute slabtop to make sure overlay inode number
+>  > > 5) call syncfs to the file in merge dir
+>  > > 
+>  > > Tested five times and the reusults are in 1.310s ~ 1.326s
+>  > > 
+>  > > root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m1.310s
+>  > > user    0m0.000s
+>  > > sys     0m0.001s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m1.326s
+>  > > user    0m0.001s
+>  > > sys     0m0.000s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m1.321s
+>  > > user    0m0.000s
+>  > > sys     0m0.001s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m1.316s
+>  > > user    0m0.000s
+>  > > sys     0m0.001s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m1.314s
+>  > > user    0m0.001s
+>  > > sys     0m0.001s
+>  > > 
+>  > > 
+>  > > Directly run syncfs to the file in ovl-upper dir.
+>  > > Tested five times and the reusults are in 0.001s ~ 0.003s
+>  > > 
+>  > > [root@VM-144-4-centos test]# time ./syncfs a
+>  > > syncfs success
+>  > > 
+>  > > real    0m0.002s
+>  > > user    0m0.001s
+>  > > sys     0m0.000s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m0.003s
+>  > > user    0m0.001s
+>  > > sys     0m0.000s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m0.001s
+>  > > user    0m0.000s
+>  > > sys     0m0.001s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m0.001s
+>  > > user    0m0.000s
+>  > > sys     0m0.001s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m0.001s
+>  > > user    0m0.000s
+>  > > sys     0m0.001s
+>  > > [root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh 
+>  > > syncfs success
+>  > > 
+>  > > real    0m0.001s
+>  > > user    0m0.000s
+>  > > sys     0m0.001
+>  > > 
+>  > > 
+>  > > 
+>  > > 
+>  > > 
+>  > > 
+>  > -- 
+>  > Jan Kara <jack@suse.com>
+>  > SUSE Labs, CR
+>  > 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
