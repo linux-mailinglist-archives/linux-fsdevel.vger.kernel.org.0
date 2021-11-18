@@ -2,165 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD33456502
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 22:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF98D456509
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 22:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbhKRV1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 16:27:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230274AbhKRV1M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 16:27:12 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 15E6260EBD;
-        Thu, 18 Nov 2021 21:24:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637270652;
-        bh=TYswleEFlex6fJqliFbnTWm7RMblNeV+4kiIIa4Ympw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d+H5yVhKNS5UvAtPm6UEXFf0CtRPNFIhCvJCkHXzsLUjOcWE2soaOuvgzMxEH2WQW
-         pMk1GMLxEeyjacExyqZVV4aI3tcUz5kd+V1WgslDD73ozUgvb2i14c3F2imBT/5JZ4
-         wqv8FdDgm0V78yydZIsEB+EfT4veEFqmjtzbUkHycQpl1WMejLhTsto+N7D0I5Z4fm
-         ghWnwTHCwyPkHtVNt8QmzMg9kL7l6W0EZ61hDvBye4LS16OpKh547fGxMHdoLnnIJO
-         Gc5aV6flPNosvPiQFFWvh1zeIWk0bGJd3IyCKDqlZs56NUFuGXh6IZB6SYPr5kjC94
-         LjC3Ih3U/7FFg==
-Date:   Thu, 18 Nov 2021 23:24:02 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        rostedt@goodmis.org, mingo@redhat.com, hagen@jauu.net,
-        James.Bottomley@hansenpartnership.com, akpm@linux-foundation.org,
-        vvs@virtuozzo.com, shakeelb@google.com,
-        christian.brauner@ubuntu.com, mkoutny@suse.com,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>, criu@openvz.org
-Subject: Re: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
-Message-ID: <YZbEcvH+BWwSqeeC@kernel.org>
-References: <20211118181210.281359-1-y.karadz@gmail.com>
+        id S230340AbhKRVbm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 16:31:42 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:38107 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229795AbhKRVbm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Nov 2021 16:31:42 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 423D55C0118;
+        Thu, 18 Nov 2021 16:28:41 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 18 Nov 2021 16:28:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=NLwPJJpbYaPqGrKT8L4DdKi8W9
+        BT6JPK2nAzjv5Ph4w=; b=QudZmgdivCJ+HebQCSjxCT2ex0vtPccFBlYpk+9n3x
+        GGbjOrIQwqo0kY2LpovogzVdWHgUS6g1X1xFJ5a4BkHLodClQ9IixWhwtSe+NX7P
+        97BzqN07mzSRWJLD2xF8EPvFbJ/jMiUvr7bQ7YxNP0Q6EoS7OlbntnNghY3IuC7Q
+        m9iqIbdQNAMcVr0a8elS4zcXPtPfy76AhibdBWWuDMJMBFHgCNt4nDPfcm3C/C+P
+        Edo2sK/USBIlmDDC2d97hxkEWCqOStT1XIMx72AH16RpzuO79I48OspTIxei6Wba
+        EUBNY33DmhMZVoQLCW2Qz64rbhiEmEAqfOGD3DH1PByQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=NLwPJJpbYaPqGrKT8
+        L4DdKi8W9BT6JPK2nAzjv5Ph4w=; b=Z0Gdra+O31R3Gz7Inpj7iPTugzlM04WY5
+        iEQmdG2uR8qbhguCoGyhTM7upnVbcI89Q1u4sv/fJKzuNmdGWnLC30Z0+/eZOOtW
+        n8AfJloc6wcJMK8jNSPIQmRHaCSC5f9DCjsX+BV+HZ4/O6/LyLZn3osy+zkcUpno
+        YDpvTyM9McLW1J8RaxvVtgDKFa44b4TISBqJSGirkAoPZAokKA/Ha7JUukWLgcjk
+        fhnfqj4k1KglEcUXvmYxY3Uaul05urbZ4wfDsaW6MyESkoUiet8Wpbp8iDhGrDfv
+        RRiFWBXlpkYq0R3rktGw085kIULEHuIEihIlYcaI1ntpGjYqRHQYg==
+X-ME-Sender: <xms:iMWWYaXiKWaZIFum_HSycOqJ9Mw4-ZR0fiDsrzOciEjku0prgt1wqA>
+    <xme:iMWWYWnah2-mhl-CS-sD3R605uDVnCcSmqwKDZTFb_NvDWNdDT_qq6DD9B6-oapup
+    CyBPujgh_TSP5HN2A>
+X-ME-Received: <xmr:iMWWYeasPukD-GMEVw_QWVRpHu6960Jai1-0qcAuDQW1RZgTLYEe5w9U6yPd6uCyJcJpvV3eiZvgB4qhyaspkqpQCbsYEojPoLJ70m53>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrfeeigddugeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeevhhhrihhsthho
+    phhhvgcugghuqdeurhhughhivghruceotghvuhgsrhhughhivghrsehfrghsthhmrghilh
+    drfhhmqeenucggtffrrghtthgvrhhnpeekfedtffejtedvgfelgedtgfdvkeffgfffieei
+    leeuleekudfgteegteeigeekudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegtvhhusghruhhgihgvrhesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:iMWWYRWu8btbk8BekjuZKbqDUkrmodFtQ0A55lQ9H_92Nl0LN9opQA>
+    <xmx:iMWWYUnB7RUCsthRD80DF9Ibo3P3Xz3LX6w2_BnwipB0BM-wZ1No1A>
+    <xmx:iMWWYWd-FfBexd1yGykpPEZIyLF__RfVpVyy9W0f_S7-LoU0NvyIGA>
+    <xmx:icWWYZxOCoICeK7lDhJk9m2arvWE8jPDSadQ7IzcRBO_m7j5wwBcSA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 18 Nov 2021 16:28:40 -0500 (EST)
+From:   Christophe Vu-Brugier <cvubrugier@fastmail.fm>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
+Subject: [PATCH 0/1] exfat: fix i_blocks for files truncated over 4 GiB
+Date:   Thu, 18 Nov 2021 22:28:27 +0100
+Message-Id: <20211118212828.4360-1-cvubrugier@fastmail.fm>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211118181210.281359-1-y.karadz@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(added more CRIU folks)
+From: Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
 
-On Thu, Nov 18, 2021 at 08:12:06PM +0200, Yordan Karadzhov (VMware) wrote:
-> We introduce a simple read-only virtual filesystem that provides
-> direct mechanism for examining the existing hierarchy of namespaces
-> on the system. For the purposes of this PoC, we tried to keep the
-> implementation of the pseudo filesystem as simple as possible. Only
-> two namespace types (PID and UTS) are coupled to it for the moment.
-> Nevertheless, we do not expect having significant problems when
-> adding all other namespace types.
-> 
-> When fully functional, 'namespacefs' will allow the user to see all
-> namespaces that are active on the system and to easily retrieve the
-> specific data, managed by each namespace. For example the PIDs of
-> all tasks enclosed in the individual PID namespaces. Any existing
-> namespace on the system will be represented by its corresponding
-> directory in namespacesfs. When a namespace is created a directory
-> will be added. When a namespace is destroyed, its corresponding
-> directory will be removed. The hierarchy of the directories will
-> follow the hierarchy of the namespaces.
-> 
-> One may argue that most of the information, being exposed by this
-> new filesystem is already provided by 'procfs' in /proc/*/ns/. In
-> fact, 'namespacefs' aims to be complementary to 'procfs', showing not
-> only the individual connections between a process and its namespaces,
-> but also the global hierarchy of these connections. As a usage example,
-> before playing with 'namespacefs', I had no idea that the Chrome web
-> browser creates a number of nested PID namespaces. I can only guess
-> that each tab or each site is isolated in a nested namespace.
-> 
-> Being able to see the structure of the namespaces can be very useful
-> in the context of the containerized workloads. This will provide
-> universal methods for detecting, examining and monitoring all sorts
-> of containers running on the system, without relaying on any specific
-> user-space software. Fore example, with the help of 'namespacefs',
-> the simple Python script below can discover all containers, created
-> by 'Docker' and Podman' (by all user) that are currently running on
-> the system.
-> 
-> 
-> import sys
-> import os
-> import pwd
-> 
-> path = '/sys/fs/namespaces'
-> 
-> def pid_ns_tasks(inum):
->     tasks_file = '{0}/pid/{1}/tasks'.format(path ,inum)
->     with open(tasks_file) as f:
->         return [int(pid) for pid in f]
-> 
-> def uts_ns_inum(pid):
->     uts_ns_file = '/proc/{0}/ns/uts'.format(pid)
->     uts_ns = os.readlink(uts_ns_file)
->     return  uts_ns.split('[')[1].split(']')[0]
-> 
-> def container_info(pid_inum):
->     pids = pid_ns_tasks(inum)
->     name = ''
->     uid = -1
-> 
->     if len(pids):
->         uts_inum = uts_ns_inum(pids[0])
->         uname_file = '{0}/uts/{1}/uname'.format(path, uts_inum)
->         if os.path.exists(uname_file):
->             stat_info = os.stat(uname_file)
->             uid = stat_info.st_uid
->             with open(uname_file) as f:
->                 name = f.read().split()[1]
-> 
->     return name, pids, uid
-> 
-> if __name__ == "__main__":
->     pid_ns_list = os.listdir('{0}/pid'.format(path))
->     for inum in pid_ns_list:
->         name, pids, uid = container_info(inum)
->         if (name):
->             user = pwd.getpwuid(uid).pw_name
->             print("{0} -> pids: {1} user: {2}".format(name, pids, user))
-> 
-> 
-> 
-> The idea for 'namespacefs' is inspired by the discussion of the
-> 'Container tracing' topic [1] during the 'Tracing micro-conference' [2]
-> at LPC 2021.
-> 
-> 1. https://www.youtube.com/watch?v=09bVK3f0MPg&t=5455s
-> 2. https://www.linuxplumbersconf.org/event/11/page/104-accepted-microconferences
-> 
-> 
-> Yordan Karadzhov (VMware) (4):
->   namespacefs: Introduce 'namespacefs'
->   namespacefs: Add methods to create/remove PID namespace directories
->   namespacefs: Couple namespacefs to the PID namespace
->   namespacefs: Couple namespacefs to the UTS namespace
-> 
->  fs/Kconfig                  |   1 +
->  fs/Makefile                 |   1 +
->  fs/namespacefs/Kconfig      |   6 +
->  fs/namespacefs/Makefile     |   4 +
->  fs/namespacefs/inode.c      | 410 ++++++++++++++++++++++++++++++++++++
->  include/linux/namespacefs.h |  73 +++++++
->  include/linux/ns_common.h   |   4 +
->  include/uapi/linux/magic.h  |   2 +
->  kernel/pid_namespace.c      |   9 +
->  kernel/utsname.c            |   9 +
->  10 files changed, 519 insertions(+)
->  create mode 100644 fs/namespacefs/Kconfig
->  create mode 100644 fs/namespacefs/Makefile
->  create mode 100644 fs/namespacefs/inode.c
->  create mode 100644 include/linux/namespacefs.h
-> 
-> -- 
-> 2.33.1
-> 
+The following patch fixes an issue in the exFAT driver. The number of
+allocated blocks becomes wrong if a file is truncated over 4 GiB.
+
+A similar issue was fixed last month by Sungjong Seo:
+
+  commit 0c336d6e33f4 ("exfat: fix incorrect loading of i_blocks for
+                        large files")
+
+Below is a test case for the issue. A 7 GiB file is truncated to 5 GiB
+but stat() st_blocks shows only 1 GiB being used.
+
+$ dd if=/dev/urandom of=file.bin bs=1024k count=7168
+
+$ /sbin/xfs_io -c "stat" file.bin
+fd.path = "file.bin"
+fd.flags = non-sync,non-direct,read-write
+stat.ino = 11
+stat.type = regular file
+stat.size = 7516192768
+stat.blocks = 14680064
+
+$ /sbin/xfs_io -c "truncate 5368709120" file.bin
+
+$ /sbin/xfs_io -c "stat" file.bin
+fd.path = "file.bin"
+fd.flags = non-sync,non-direct,read-write
+stat.ino = 11
+stat.type = regular file
+stat.size = 5368709120
+stat.blocks =  2097152
+
+Christophe Vu-Brugier (1):
+  exfat: fix i_blocks for files truncated over 4 GiB
+
+ fs/exfat/file.c  | 2 +-
+ fs/exfat/super.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+2.33.0
+
