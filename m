@@ -2,82 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 705BC455B9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 13:37:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98FF7455BC3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 13:48:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344731AbhKRMk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 07:40:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
+        id S244120AbhKRMu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 07:50:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244311AbhKRMk4 (ORCPT
+        with ESMTP id S244069AbhKRMua (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 07:40:56 -0500
-Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61786C061570
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 04:37:56 -0800 (PST)
-Received: by mail-qv1-xf41.google.com with SMTP id i13so4448336qvm.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 04:37:56 -0800 (PST)
+        Thu, 18 Nov 2021 07:50:30 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66BDC061570;
+        Thu, 18 Nov 2021 04:47:29 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id j21so726050ila.5;
+        Thu, 18 Nov 2021 04:47:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=MPZiBVeMHca1j4Sh9MPQqbWDzkaYge/S5imT36JhPo0=;
-        b=SYi9hppxJ4ix9DA/KEdQXfavJ9uqAh1woI869x36PZEEGGlS737M3+mnRYiMmF48fO
-         2wLudny3iG6Y+hEZkSmdAXmo7c5YS7DMnr9H9L6HNutg9zVlm+DZoYWJsYSx3P0Jx0mE
-         Yvn7KH7EoRywm6onRs+6L2vJMCHvkzNF7DdQBBnqJj5qRgt6dhejYuC0ET/L44bHwUsv
-         70DAn1Z28MAatm55OYIxzwOAldghicpQJQwR/c7gXUMhXiToYNG0uWDKFpmhxsBe6JHx
-         RJZryBQSmVCQXIpfxSErm9WpyHQoOfyRQC4l/8lrxmxphSNnD+bgR70lBVfKtuc7MxiU
-         PNuQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VOSwBO35slekigbZcDgizmAC1tZ+7ySUJIY2iAfBZu4=;
+        b=YvshVZqh+D5T+Vx4mseURvI33zparPTiH9eDqnfJhlNXNa5V8nbnjFTPfWjgv+x63F
+         EYKi/TmJKj3uU4VgHSZld7BKG0D58n2TrCnVqc00C5cIuCnVaoiUCvrnx5ceQNU20BCn
+         FtOOf42Dc/4nhmBCMZDnc7UG6b8cC7LQaYIyVutdcmTrNx/1Y0YqM9pD29j/oNIcoPsk
+         boQxRUjhNqs1A8bw8FWSw+mm4aAZ9qfw8IkQiwbTcJ9eijZpbvMFiAmEINqWRCtHqzGk
+         i4dBCTzofGSnNgCxDVX5VDx4KbICk5c+IH0B2jEsd4zTD2EzRUZEU2rSRVe+znpPhevP
+         se2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=MPZiBVeMHca1j4Sh9MPQqbWDzkaYge/S5imT36JhPo0=;
-        b=1mW3Fn1jMjKO1VsGVghUJ8bGJQiGcL8PKHhCaSJwN/AeyDLuyu+Ox2F2vpo+fGl05T
-         Grs7rpyqIjmBPEdBE3/Kov8UtUDueG2gUX+N7Tr3dk/vxFJ732C797KRiclYyrf86vGy
-         /aU1Vbs6pZe3iDeIkEvXc89A/ogfNwcP3K11RauChLhVgLQ6t+Gym7or68dGkdLC8NjY
-         HNZuEphSnvHiMgaEs9ey3vmc13ECsKFscAlp+lTNtxnm3rXDJhpRx3RFP8RbQP6IeVew
-         RVrlbgWnZss5uboNJxhGxRhDygxuQ5iWxk9Pg0hcwgVwXOcl5+iRfTDK5I6KPEAFzm/S
-         6uFQ==
-X-Gm-Message-State: AOAM532gjbTB+5ceotbaE+0dT6O3WQ+VZIgFLJSXONgDN8Hf53DzHN/6
-        c9O9ywQm8+07YOd3y5mFlRv2VxOyLyVyVRxr5Q8=
-X-Google-Smtp-Source: ABdhPJybmNBANFlN10q2IiFqD/V0UbYnzqQzIZ+YHuaRpWlMzbYu2j81lEWQvb4WQkqlwn26ACy/XYkZ5Q4wWI72FaQ=
-X-Received: by 2002:a0c:ebca:: with SMTP id k10mr64698651qvq.51.1637239075630;
- Thu, 18 Nov 2021 04:37:55 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VOSwBO35slekigbZcDgizmAC1tZ+7ySUJIY2iAfBZu4=;
+        b=r9appRAP+A0xfuW7J7YikoKIVmnR6GrvVoL1tQyGUuhbtWbY3ktWeIrU8V6SLofGoG
+         FEajedxnFFDszAybKYeKJ9u+pbssTULEnVgOkQH9RT6f+rzGm53yPIai+P0Pzhqx4C94
+         nya9LMtj8odD/KwrSZURoSaYzgE7eyF+8pjO8kzXAHp8It9s2axUOOo/XoWTL3jXPUUr
+         +bUd4TBJj23O6ptPuO0RSRlejXJZ5oOk8aCzVg8tLfc+LM6BFhahprpq7hlyPhypnDgh
+         nRENZ24Q7f1ZFORi58KIGqQZWnwSN/mAGJYm9zgdkeu+cZXrY8wFPAnyL+mDtXBQ3Y5+
+         5HGw==
+X-Gm-Message-State: AOAM532LPkaAVyiFTjq49scgMZuPQi9r0/f7JocZkDsJ4AlNKYtwVKqo
+        +yzMNNU0VN8bPozTYRtpotWwrIUDdcS8Tzb7GcZAfHvbf1Y=
+X-Google-Smtp-Source: ABdhPJzVN0S5TFAgjgrwUtrnbVZABF2NSUQtuq7JC+8ckqt3swNAjcpAD5L2+Jajk9X0X8eyJBZ5rELld8yxSaYLPFk=
+X-Received: by 2002:a05:6e02:1ba6:: with SMTP id n6mr16082197ili.254.1637239649335;
+ Thu, 18 Nov 2021 04:47:29 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a0c:f68d:0:0:0:0:0 with HTTP; Thu, 18 Nov 2021 04:37:55
- -0800 (PST)
-Reply-To: UNCC-CH@outlook.com
-From:   United Nations Compensation Commission <hamisuchizo59@gmail.com>
-Date:   Thu, 18 Nov 2021 04:37:55 -0800
-Message-ID: <CA+nAkfQR9hyhpg9UvA8GyDQT7XFcoNTmfcYjQgyX36PC8vMkkA@mail.gmail.com>
-Subject: =?UTF-8?Q?Beg=C3=BCnstigter?=
-To:     undisclosed-recipients:;
+References: <20211029114028.569755-1-amir73il@gmail.com> <CAOQ4uxjazEx=bL6ZfLaGCfH6pii=OatQDoeWc+74AthaaUC49g@mail.gmail.com>
+ <20211112163955.GA30295@quack2.suse.cz> <CAOQ4uxgT5a7UFUrb5LCcXo77Uda4t5c+1rw+BFDfTAx8szp+HQ@mail.gmail.com>
+ <CAOQ4uxgEbjkMMF-xVTdfWcLi4y8DGNit5Eeq=evby2nWCuiDVw@mail.gmail.com>
+ <20211115102330.GC23412@quack2.suse.cz> <CAOQ4uxiBFkkbKU=yimLXoYKHFWOoUYrXfg4Kw_CkF=hcSGOm3A@mail.gmail.com>
+ <20211115143750.GE23412@quack2.suse.cz> <CAOQ4uxgBncZjuTo-K+vxRovd36AuaEKUfBDQwgU86B9qwWWNVw@mail.gmail.com>
+ <20211116101232.GA23464@quack2.suse.cz>
+In-Reply-To: <20211116101232.GA23464@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 18 Nov 2021 14:47:18 +0200
+Message-ID: <CAOQ4uxgfCmWCt=NNxj53+eKtVE-FMWBDNgFuQpGiFooZpne6zw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Report more information in fanotify dirent events
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-Achtung: Beg=C3=BCnstigter,
+> > So let's say this - we can add support for OLD_DFID, NEW_DFID types
+> > later if we think they may serve a purpose, but at this time, I see no
+> > reason to complicate the UAPI anymore than it already is and I would
+> > rather implement only:
+> >
+> > /* Info types for FAN_RENAME */
+> > #define FAN_EVENT_INFO_TYPE_OLD_DFID_NAME       10
+> > /* Reserved for FAN_EVENT_INFO_TYPE_OLD_DFID    11 */
+> > #define FAN_EVENT_INFO_TYPE_NEW_DFID_NAME       12
+> > /* Reserved for FAN_EVENT_INFO_TYPE_NEW_DFID    13 */
+> >
+> > Do you agree?
+>
+> I agree the utility of FAN_RENAME without FAN_REPORT_NAME is very limited
+> so I'm OK with not implementing that at least for now.
 
-Dies ist das zweite Mal, dass wir Sie =C3=BCber die Statue Ihre
-Entsch=C3=A4digungsfonds in H=C3=B6he von 5.500.000,00 =E2=82=AC (f=C3=BCnf=
- Millionen)
-f=C3=BCnfhundertttt Euro) besteht. Bitte geh=C3=B6rt Sie uns, dass
-wir von der UNCC autorisiert wurden, Ihre Entsch=C3=A4digungsgelder in H=C3=
-=B6he
-von =E2=82=AC 5.500.000,00 an Sie erfreugeben. F=C3=BCr Ihren eigenen Anspr=
-uch
-wenden Sie sich
+OK. The patches are staged at [1], but I ran into one more UAPI question
+that I wanted to run by you before posting the patches.
 
-Wir empfehlen Ihnen daher, sich an unseren Direktor der
-Auslands=C3=BCberweisungsabteilung, MR Hartmut Wenner, zu wenden und ihn zu
-bitten, Ihnen die Einzelheiten zur Beschaffung Ihres Geldes
-mitzuteilen
+The question may be best described by the last commit on the tests branch [2]:
 
-Regisseur
-MR Hartmut Wenner
-E-MAIL: UNCC-CH@outlook.com
-Entsch=C3=A4digungskommission der politischen Nationen
+    syscalls/fanotify16: Test FAN_RENAME with ignored mask
+
+    When a file is moved between two directories and only one of them is
+    watching for FAN_RENAME events, the FAN_RENAME event will include only
+    the information about the entry in the watched directory.
+
+    When one of the directories is watching FAN_RENAME, but the other is
+    ignoring FAN_RENAME events, the FAN_RENAME event will not be reported
+    at all.
+
+    This is not the same behavior as MOVED_FROM/TO events. User cannot
+    request to ignore MOVED_FROM events according to destination directory
+    nor MOVED_TO events according to source directory.
+
+I chose this behavior because I found it to be useful and consistent with
+other behaviors involving ignored masks. Maybe "chose" is a strong word
+here - I did not do anything to implement this specific behavior - it is just
+how the code in fanotify_group_event_mask() works for merging masks
+and ignored masks of different marks.
+
+Let me know if you approve of those ignored FAN_RENAME semantics
+and I will post the patches for review.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/linux/commits/fan_rename
+[2] https://github.com/amir73il/ltp/commits/fan_rename
