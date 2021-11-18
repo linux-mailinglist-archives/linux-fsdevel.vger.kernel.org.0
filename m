@@ -2,101 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C729245536D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 04:32:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D9B4554D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 07:33:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242733AbhKRDfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Nov 2021 22:35:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241185AbhKRDe6 (ORCPT
+        id S243143AbhKRGgA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 01:36:00 -0500
+Received: from sender3-pp-o92.zoho.com.cn ([124.251.121.251]:25348 "EHLO
+        sender3-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242471AbhKRGf6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Nov 2021 22:34:58 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94100C061570
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Nov 2021 19:31:59 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id nh10-20020a17090b364a00b001a69adad5ebso4391907pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Nov 2021 19:31:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8dy5ISnOF/LIcctiWr3MH3NHofWp1uRrjBKff/ka6Zc=;
-        b=aGmGGQOxst5fIKIjui3eUz3WCTqAi6HUHqYW4+Mkd7gokRKpIA7ifvUDmL4guTQidL
-         hsVTfBIcwqs+Uljcb56XrdCAH7m+FuEV2wrGwSEyaK5/ZCbf1B3WTvUYu0hskELk+PDR
-         nqlYjYHZwVfUkuRRTefU3Rh2rdHab5a0qf1lMrW6s+XbXESvCL9lqPJoeWcBxEIdkh88
-         ZVmch9jwosVyww323FuXkrRXjp+Ok3XuKabIYx/ZxrEP3R5o9b0vW9/Rp5ndGkEqxina
-         7rs9HbEBdV2+EgYOVpu0AKJUUPqxqrL0AzzGjpiCZ3m5NHfEIeB0Q+rHi3MnJI1MSYWR
-         mtgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8dy5ISnOF/LIcctiWr3MH3NHofWp1uRrjBKff/ka6Zc=;
-        b=sxnpYTq1r1Rw0jusMTqVOyaQCnKKTYH1cacOjIsKXtxA2iz8MrizVprb9ly2TIXnIJ
-         oHzJbDwqj/uJ70gbdwKEJH/Zy2qTHsqiG25c9aRNGN/tt/5EfuEL6kX0hCWBbyHIAOcY
-         VFI9g10y55WLo5DQBEvI8WOVKBQMcARZCavF+Q0/ALXNBwiGR66O4750rIJxdl/DPPe2
-         M3aXSvTz7T3ouxoBp8rDP25dpuopGcXJTUkJg+h2e0XOlGQbHJBTSdmMI7E3O8sIEy8f
-         NlbIaVQp2I1V+gyeEYqvQA/JIkten2c2msnN8o0vSubq9aGIkoVwLtVrYK/M7fJELAK0
-         I1Kw==
-X-Gm-Message-State: AOAM533TESDBoqCVDB0alrzxG0NveoGUfbafJzwallazS5PzzwYm84Dv
-        vNKcccaz1F9bZkWSZ12qOXgRFkLvcxLiNA==
-X-Google-Smtp-Source: ABdhPJwiKH6w+IyY6+8jlCqxMsMdgFeYQsuTj5BxLT5PAoExxKBv0yjMf+bkIteraaGpp7/r7Iyujw==
-X-Received: by 2002:a17:90b:3d3:: with SMTP id go19mr6343846pjb.23.1637206319192;
-        Wed, 17 Nov 2021 19:31:59 -0800 (PST)
-Received: from FLYINGPENG-MB0.tencent.com ([103.7.29.30])
-        by smtp.gmail.com with ESMTPSA id 130sm1054217pfu.170.2021.11.17.19.31.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Nov 2021 19:31:58 -0800 (PST)
-From:   Peng Hao <flyingpenghao@gmail.com>
-X-Google-Original-From: Peng Hao <flyingpeng@tencent.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH]  fuse: unnecessary fsync for read-only mounts
-Date:   Thu, 18 Nov 2021 11:31:22 +0800
-Message-Id: <20211118033122.88017-1-flyingpeng@tencent.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+        Thu, 18 Nov 2021 01:35:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637217158; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=d1IrYCNIj9SkyeIVVSglY4xMuL0Rj0Hjlamqxo/gUwJpTeqy/ujtZWB60SNLamtTv4vGLAcFU96WxA1XzRTfoBC4pW/JvoPb3gJ3EAUI0KO3A1aT7bsg1CrZmLv/+G//e2vhdAnFRFSY48Rhb/Um7sHlBxSZuDxbkr8Vz6DXiz8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637217158; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=I16gwzIv8R/3GEj8b0TWgpmaTFGaJb8h/2DbwGmHah0=; 
+        b=B6ytNwtzoYxgF0N2v6av6+SmNTozZ+VEaYSP6mlXyvrz7fgJNWAgsFW/EmRTTxRn+zyb5DXYjrfeEqPcLRK3u4KIpvYhQwG+66YqF/tMrOKPYVe3THEvMXtH+2Ykc4N570mk8lwf6nCnfMMApMRn0pSHt/K09dAazc/8+O9AR24=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637217158;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=I16gwzIv8R/3GEj8b0TWgpmaTFGaJb8h/2DbwGmHah0=;
+        b=TdCDwZG18xLg0/zzNQstud87z/WEf+LMU8gOY0Ag8vmnxWs2symU4wd3PLDl6sJo
+        0VFufr8SjkUDRvbCvv4PjlpvKGYU2s0W9LFNyqPwCkJXUGbjMQblQXe7GbhxanMY4wN
+        cg9sXnzS7JFPZDw5xmRrJq+AZex6nNSIir4PhswU=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1637217156451682.8448541267007; Thu, 18 Nov 2021 14:32:36 +0800 (CST)
+Date:   Thu, 18 Nov 2021 14:32:36 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
+Cc:     "Jan Kara" <jack@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <17d31bf3d62.1119ad4be10313.6832593367889908304@mykernel.net>
+In-Reply-To: <17d2c858d76.d8a27d876510.8802992623030721788@mykernel.net>
+References: <20210923130814.140814-1-cgxu519@mykernel.net> <20210923130814.140814-7-cgxu519@mykernel.net>
+ <CAJfpeguqj2vst4Zj5EovSktJkXiDSCSWY=X12X0Yrz4M8gPRmQ@mail.gmail.com>
+ <17c5aba1fef.c5c03d5825886.6577730832510234905@mykernel.net>
+ <CAJfpegtr1NkOiY9YWd1meU1yiD-LFX-aB55UVJs94FrX0VNEJQ@mail.gmail.com>
+ <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
+ <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com> <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net> <CAJfpegttQreuuD_jLgJmrYpsLKBBe2LmB5NSj6F5dHoTzqPArw@mail.gmail.com> <17d2c858d76.d8a27d876510.8802992623030721788@mykernel.net>
+Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode
+ operation
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-File/directory fsync is not necessary for read-only mounts.
 
-Signed-off-by: Peng Hao <flyingpeng@tencent.com>
----
- fs/fuse/dir.c  | 3 +++
- fs/fuse/file.c | 2 ++
- 2 files changed, 5 insertions(+)
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-11-17 14:11:29 Chengguang=
+ Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
+ >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=8C, 2021-11-16 20:35:55 Miklos =
+Szeredi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
+ >  > On Tue, 16 Nov 2021 at 03:20, Chengguang Xu <cgxu519@mykernel.net> wr=
+ote:
+ >  > >
+ >  > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2021-10-07 21:34:19 Mi=
+klos Szeredi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
+ >  > >  > On Thu, 7 Oct 2021 at 15:10, Chengguang Xu <cgxu519@mykernel.net=
+> wrote:
+ >  > >  > >  > However that wasn't what I was asking about.  AFAICS ->writ=
+e_inode()
+ >  > >  > >  > won't start write back for dirty pages.   Maybe I'm missing=
+ something,
+ >  > >  > >  > but there it looks as if nothing will actually trigger writ=
+eback for
+ >  > >  > >  > dirty pages in upper inode.
+ >  > >  > >  >
+ >  > >  > >
+ >  > >  > > Actually, page writeback on upper inode will be triggered by o=
+verlayfs ->writepages and
+ >  > >  > > overlayfs' ->writepages will be called by vfs writeback functi=
+on (i.e writeback_sb_inodes).
+ >  > >  >
+ >  > >  > Right.
+ >  > >  >
+ >  > >  > But wouldn't it be simpler to do this from ->write_inode()?
+ >  > >  >
+ >  > >  > I.e. call write_inode_now() as suggested by Jan.
+ >  > >  >
+ >  > >  > Also could just call mark_inode_dirty() on the overlay inode
+ >  > >  > regardless of the dirty flags on the upper inode since it should=
+n't
+ >  > >  > matter and results in simpler logic.
+ >  > >  >
+ >  > >
+ >  > > Hi Miklos=EF=BC=8C
+ >  > >
+ >  > > Sorry for delayed response for this, I've been busy with another pr=
+oject.
+ >  > >
+ >  > > I agree with your suggesion above and further more how about just m=
+ark overlay inode dirty
+ >  > > when it has upper inode? This approach will make marking dirtiness =
+simple enough.
+ >  >=20
+ >  > Are you suggesting that all non-lower overlay inodes should always be=
+ dirty?
+ >  >=20
+ >  > The logic would be simple, no doubt, but there's the cost to walking
+ >  > those overlay inodes which don't have a dirty upper inode, right? =20
+ >=20
+ > That's true.
+ >=20
+ >  > Can you quantify this cost with a benchmark?  Can be totally syntheti=
+c,
+ >  > e.g. lookup a million upper files without modifying them, then call
+ >  > syncfs.
+ >  >=20
+ >=20
+ > No problem, I'll do some tests for the performance.
+ >=20
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 656e921f3506..1d4fed556c93 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1448,6 +1448,9 @@ static int fuse_dir_fsync(struct file *file, loff_t start, loff_t end,
- 	if (fc->no_fsyncdir)
- 		return 0;
- 
-+        if (sb_rdonly(inode->i_sb))
-+                return 0;
-+
- 	inode_lock(inode);
- 	err = fuse_fsync_common(file, start, end, datasync, FUSE_FSYNCDIR);
- 	if (err == -ENOSYS) {
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 9d6c5f6361f7..18668fc00c3b 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -550,6 +550,8 @@ static int fuse_fsync(struct file *file, loff_t start, loff_t end,
- 
- 	if (fuse_is_bad(inode))
- 		return -EIO;
-+	if (sb_rdonly(inode->i_sb))
-+		return 0;
- 
- 	inode_lock(inode);
- 
--- 
-2.27.0
+Hi Miklos,
+
+I did some rough tests and the results like below.
+In practice,  I don't think that 1.3s extra time of syncfs will cause signi=
+ficant problem.
+What do you think?
+
+
+
+Test bed: kvm vm=20
+2.50GHz cpu 32core
+64GB mem
+vm kernel  5.15.0-rc1+ (with ovl syncfs patch V6)
+
+one millon files spread to 2 level of dir hierarchy.
+test step:
+1) create testfiles in ovl upper dir
+2) mount overlayfs
+3) excute ls -lR to lookup all file in overlay merge dir
+4) excute slabtop to make sure overlay inode number
+5) call syncfs to the file in merge dir
+
+Tested five times and the reusults are in 1.310s ~ 1.326s
+
+root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh=20
+syncfs success
+
+real    0m1.310s
+user    0m0.000s
+sys     0m0.001s
+[root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh=20
+syncfs success
+
+real    0m1.326s
+user    0m0.001s
+sys     0m0.000s
+[root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh=20
+syncfs success
+
+real    0m1.321s
+user    0m0.000s
+sys     0m0.001s
+[root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh=20
+syncfs success
+
+real    0m1.316s
+user    0m0.000s
+sys     0m0.001s
+[root@VM-144-4-centos test]# time ./syncfs ovl-merge/create-file.sh=20
+syncfs success
+
+real    0m1.314s
+user    0m0.001s
+sys     0m0.001s
+
+
+Directly run syncfs to the file in ovl-upper dir.
+Tested five times and the reusults are in 0.001s ~ 0.003s
+
+[root@VM-144-4-centos test]# time ./syncfs a
+syncfs success
+
+real    0m0.002s
+user    0m0.001s
+sys     0m0.000s
+[root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh=20
+syncfs success
+
+real    0m0.003s
+user    0m0.001s
+sys     0m0.000s
+[root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh=20
+syncfs success
+
+real    0m0.001s
+user    0m0.000s
+sys     0m0.001s
+[root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh=20
+syncfs success
+
+real    0m0.001s
+user    0m0.000s
+sys     0m0.001s
+[root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh=20
+syncfs success
+
+real    0m0.001s
+user    0m0.000s
+sys     0m0.001s
+[root@VM-144-4-centos test]# time ./syncfs ovl-upper/create-file.sh=20
+syncfs success
+
+real    0m0.001s
+user    0m0.000s
+sys     0m0.001
+
+
+
+
+
 
