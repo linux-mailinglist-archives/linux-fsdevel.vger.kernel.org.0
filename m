@@ -2,204 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 431FC456179
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 18:27:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C93B8456180
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Nov 2021 18:32:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234132AbhKRRap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 12:30:45 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40644 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231720AbhKRRao (ORCPT
+        id S233940AbhKRRfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 12:35:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232373AbhKRRfF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 12:30:44 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AIDNtkE027720;
-        Thu, 18 Nov 2021 09:27:26 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=H9ghsYgH2nKzxJe9v3i6H2QeUCUal+DIswGyVGiz20k=;
- b=Bnx6VYqCK2SUaxJGWMKuYc53nY7apm4FuKQvJKdqBF912BkZ9f9oRkKDEcpskWtG88tr
- HVLYdnmmib8EQyWgtT3Ow8Cu4D/W0TtuBCazUPjw2cMSuqCc5745e0LVlOl5HlzMyF4i
- uh8L46/LF1VmwoJvgiUq8dTXqz+RYQtJy1k= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 3cdqp4hwh2-10
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 18 Nov 2021 09:27:26 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.198) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.14; Thu, 18 Nov 2021 09:27:25 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O7HuPCQYrI8lHjpqrwHTnpJzKdoj3/5DEfNzOnRG0a0fKYReH6xlPdxvGVQczbDCuJ6lm3bKZul8bzMgukV8gjgOMK7b2XdAeXgVVRqlLwjiYUWUIEYn9MRR1xWYd7QQJJcJE/hS8l2q0yRViG2MrsS42blv/S1Uwu98qGFZdARrmIUL+725nq3Vzlxmgc0rt0TMOQGO/fhvlmmDwWVaJwT46nrFKyFahsVPZm699XnMV7l6ThoK5dWHc77xo1TVgBXw9SDBGDEV+u1Ct6FdK1jjmzkcu5V1buGgM3fePlCV5WpGUvqKKf5+qE5Np2RceaeR1rHJVDSo0z2x5W2/Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H9ghsYgH2nKzxJe9v3i6H2QeUCUal+DIswGyVGiz20k=;
- b=YZjIJevnQZnNmUolAiHZYfLZ4z5mASloBHP8WftcJ1waohlOf0E1xT6EVkLUY0aeoS3hOx9XwFIe3+7ka0M9Vr/wUNsFRhDcY7NTNcrlvexGIHYiW7GFaiW76PE5oEqwhjRJf3T9ceKK5DS/Gl9CPwjV3Jvfx56qusbJeuiIfkyh/hRqnWfNI8kVYfiZOiaxIc1cEbQ3ui5bGVoMxRU2+osnQqbj/z2qvkTJoHNNPZ0kJnG3Y+TOlvxFB90f/j0nYNEjJ2YbMNaFBQn54hEA5f2LDaugz/3K/XlvDNCnI+ypY9z9SLPCIK/PEY4TMfpa/xDKyj0u1ACCEd2hJgI1yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from SN6PR1501MB2064.namprd15.prod.outlook.com (2603:10b6:805:d::27)
- by SN6PR15MB2415.namprd15.prod.outlook.com (2603:10b6:805:1c::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.21; Thu, 18 Nov
- 2021 17:27:18 +0000
-Received: from SN6PR1501MB2064.namprd15.prod.outlook.com
- ([fe80::a91b:fba1:b79c:812c]) by SN6PR1501MB2064.namprd15.prod.outlook.com
- ([fe80::a91b:fba1:b79c:812c%5]) with mapi id 15.20.4690.029; Thu, 18 Nov 2021
- 17:27:18 +0000
-Message-ID: <7efcf912-46be-1ed4-7e12-88c2baeaab12@fb.com>
-Date:   Thu, 18 Nov 2021 09:27:15 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.0
-Subject: Re: [PATCH bpf-next v1 2/8] bpf: Add bpf_page_to_pfn helper
-Content-Language: en-US
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>, <bpf@vger.kernel.org>
-CC:     Alexei Starovoitov <ast@kernel.org>,
+        Thu, 18 Nov 2021 12:35:05 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16A69C06174A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 09:32:05 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id 136so6062608pgc.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 09:32:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4ZRY5BIcQHJ120UEZi/XkGexoEr3hEm901+ewWa9TxY=;
+        b=Q3we5WCD0xmIJKfl/TfgI5kD/aocwY/0SWDW+zmJNqPz5ybfO4CiNYosT1l9w0Z9zm
+         JSfluadZC7peSWt6bagPafCt/4+VUAb2oALOEQL4x1CPXNYnju45tV0Xa3SiAuq6RtfH
+         T7werkmqyBzOZjFDtT85I8mV9XupExiLUE+Tg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4ZRY5BIcQHJ120UEZi/XkGexoEr3hEm901+ewWa9TxY=;
+        b=FinmQmmNZrHuxCKO7JdSqksQYkcPg6QwWstsiahNsUe9gqwwxcC7TRF0tw2kPhA4FT
+         Gf1+eRBVAMa2UiT/r1Ujew9cSOfDG7fh33bUpfQEmLpVKpo8cO7QrBDaiR2llha/mzGp
+         OJMbUFlIfX/q9a04ZLJad5QYsKNXBWi0s49dIWpj1WYFg4iemS0I2zVesl7QA+ffTl46
+         xObsuS3d+kVuxoknU+7vWOyOq0DhRzm33wFtenzQHlqjqmYIQKelltfvJ/QU/k2S2FGv
+         UA1LXvOZiyMUl+vNHtVrYVTD83PMj0E49FJVa08+2iLeiBv52ZJO4m50OYCBhP+krZPm
+         jCeg==
+X-Gm-Message-State: AOAM5304j9s6qjSXeaSTVMadQCMBMFugbux9SSsiQWfY+G1D8xzr+8uU
+        iSRb8Eeg9t663gyKDtIowksVlw==
+X-Google-Smtp-Source: ABdhPJwT/zhrA/divF29Wy7h+2JuyxEQeJZ/M1e44k8ifJxXNxi0P2wRxx059BjsCi4gIRC5beV5Rg==
+X-Received: by 2002:a63:5f56:: with SMTP id t83mr12443174pgb.432.1637256724564;
+        Thu, 18 Nov 2021 09:32:04 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f15sm242298pfe.171.2021.11.18.09.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Nov 2021 09:32:04 -0800 (PST)
+Date:   Thu, 18 Nov 2021 09:32:03 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Alexander Popov <alex.popov@linux.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Paul McKenney <paulmck@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Maciej Rozycki <macro@orcam.me.uk>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Luis Chamberlain <mcgrof@kernel.org>, Wei Liu <wl@xen.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Laura Abbott <labbott@kernel.org>,
+        David S Miller <davem@davemloft.net>,
+        Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Scull <ascull@google.com>,
+        Marc Zyngier <maz@kernel.org>, Jessica Yu <jeyu@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Wang Qing <wangqing@vivo.com>, Mel Gorman <mgorman@suse.de>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Andrew Klychkov <andrew.a.klychkov@gmail.com>,
+        Mathieu Chouquet-Stringer <me@mathieu.digital>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Alexander Mihalicyn <alexander@mihalicyn.com>,
-        Andrei Vagin <avagin@gmail.com>, <criu@openvz.org>,
-        <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <20211116054237.100814-1-memxor@gmail.com>
- <20211116054237.100814-3-memxor@gmail.com>
-From:   Yonghong Song <yhs@fb.com>
-In-Reply-To: <20211116054237.100814-3-memxor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CO2PR04CA0092.namprd04.prod.outlook.com
- (2603:10b6:104:6::18) To SN6PR1501MB2064.namprd15.prod.outlook.com
- (2603:10b6:805:d::27)
+        Stephen Kitt <steve@sk2.org>, Stephen Boyd <sboyd@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Mike Rapoport <rppt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-hardening@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, notify@kernel.org,
+        main@lists.elisa.tech, safety-architecture@lists.elisa.tech,
+        devel@lists.elisa.tech, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v2 0/2] Introduce the pkill_on_warn parameter
+Message-ID: <202111180930.5FA3EF0F59@keescook>
+References: <20211027233215.306111-1-alex.popov@linux.com>
+ <ac989387-3359-f8da-23f9-f5f6deca4db8@linux.com>
+ <CAHk-=wgRmjkP3+32XPULMLTkv24AkA=nNLa7xxvSg-F0G1sJ9g@mail.gmail.com>
+ <77b79f0c-48f2-16dd-1d00-22f3a1b1f5a6@linux.com>
+ <CAKXUXMx5Oi-dNVKB+8E-pdrz+ooELMZf=oT_oGXKFrNWejz=fg@mail.gmail.com>
+ <20211115110649.4f9cb390@gandalf.local.home>
+ <202111151116.933184F716@keescook>
+ <59534db5-b251-c0c8-791f-58aca5c00a2b@linux.com>
+ <202111161037.7456C981@keescook>
+ <fd86a05b-feca-c0a9-c6b0-b2e69c650021@schaufler-ca.com>
 MIME-Version: 1.0
-Received: from [IPV6:2620:10d:c085:21e1::1798] (2620:10d:c090:400::5:184a) by CO2PR04CA0092.namprd04.prod.outlook.com (2603:10b6:104:6::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.21 via Frontend Transport; Thu, 18 Nov 2021 17:27:17 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8b018d24-59b0-4ee3-b3cb-08d9aab8ac02
-X-MS-TrafficTypeDiagnostic: SN6PR15MB2415:
-X-Microsoft-Antispam-PRVS: <SN6PR15MB241594415D9BE7CEE8D9AB29D39B9@SN6PR15MB2415.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rO78GFSeMmZHD49ht/XxCRVuC56JEhlhhttTw3Zrik59k/iSH3BJftbPYfRRo9JwMTdb0S/8oXloobsgL4XnTFCzyB6ilYCgTE8rH7tgRVUtskuwW9OZYB1bXiJyO4JUsA9rIKXEOf1vnIaTP8bonwnAmeESEFGKlxgHiB/kHnizHYaHKlLGXjE/s19UAtCGtafqkHp/kAGNZQwPivpYxkdqv+AMF/DuxVjxkztkNtNc59DaLymJwDAWv9Rui5E+9ypS9FLaOdMAu9Bb5p/o0b37kLUT5fELe5NUPEEZakHn1FSOkzy+Io9uWBtxzzfgxXiEo6HCzWty6NKZgnmtpc0L5jPP7njy+8vk9JJJZRpRJacbswtyV7FQ8YrHEsWxMT5DkS3u7PZBlTX/hDZv/Pm+2bI69CmMloNKw0zeAaDLl/tXuhBrrQnvVTI+9JjZkLj7MwBV2wZM5trTXigl4qlmqSDhAp6zi5LLSZAs6msKfohADxPAwuE+39ZG6aTdrTKo1INVm8dI7H4vz6V4fz+9Et/tZ0b7r7IBLusGclQKfAxxCac/M1+2GSApDhPzJ3jxxfhBF1X/nIggLP05jM/Ty1SNJNxruXqm1VP2oW9Q0aI/tz5xCYQ+ZA9k95Cb6j0NT6uqkJiMjqChqPQ5z88H7vBpnmB92SkXUX1nusD19nu6lrgL7AM6m03CgFHdI/0grQyHo5XaOrPfLimohwbFtWM0s6kOTyhXHaCcTpFRvsjrM38WMxj3cYsYb4OG
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR1501MB2064.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(186003)(4326008)(86362001)(31696002)(2616005)(38100700002)(54906003)(8936002)(6486002)(36756003)(66476007)(52116002)(66946007)(508600001)(31686004)(8676002)(7416002)(316002)(5660300002)(53546011)(2906002)(66556008)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U05ZN2dDL2xYc3ZqYnpPTFF4ejQ0Znc0UmdIaTJscGdGZUlNWVFsQWxTL2o4?=
- =?utf-8?B?eVY5WW9TQmJlK3dscDdNYk1idW8wdXhLRWNmRUV0eDdrdFlXVWVuSlNUNC81?=
- =?utf-8?B?eFUxcU9oY1J6bVZrZGNVVGZtT2I5L2dEQnVuZGJRZ0Q3T3Rra0Q1V09WWGpZ?=
- =?utf-8?B?Tk1maTVxbmtteUZoRWw3YWFqa1B2cCsySFpXbk10Y09wK1h3cmxMUjhRWEpN?=
- =?utf-8?B?K0NPVWVhL1dEemlIN1Y5ZkdrSHJzZEkvTkZCTHhGakthMWt2Q0I1RCs2YVVx?=
- =?utf-8?B?ZncyNGpFcHFJQ0pxMEZvQXo2Z3FXUDdmRnZtZGZtOTg4NXp2WCtRK0xiSE14?=
- =?utf-8?B?ZFhaV2xxSCtpSU1KLytraTdrMTVUUGxIYmpFRldGRFcvdmRTcitvMDlSTk4z?=
- =?utf-8?B?R1Z1NTBscngrMFdxdHppYTFoOElMa0szT3dUZlRmejB4ZmFHWkxhMGkrQmcx?=
- =?utf-8?B?VFNNOTVMaThuL3NZZ3FzTVdMeXpRN1lRSkFpWUwxeElwZFUzOFVzR0x2ZXlW?=
- =?utf-8?B?OXB5RFJzTWhBc0xPbXoybXlkRnVnQzFkUEtUOWJDdDhuS0ZBMzRqLzVuTFVT?=
- =?utf-8?B?U0IwaHNneEpiMWNQZ2dlNFlhQWxDSVc4V29UYjA1ejNTNXVMRGpjMzAxeEZs?=
- =?utf-8?B?S2hSMmZyVlZRcE9RcHR5eGlnMzVmd2FXZE80c2tJSGxoU0VGMjQ4QXpuNGF1?=
- =?utf-8?B?VnVDMEFZQy9sRjNJOGsxVEJjWi82VndJSVo2SEhzeDhBM1RCYTVBaUl6ZkZz?=
- =?utf-8?B?TytIM0lqN2Z2VkRqeWt0U3hIamJFVFlHNU5SbGg3VzNoWnlRcHNnNlE1bVlz?=
- =?utf-8?B?VTBCL1V1VmtrVSt4V0NGbVhlak5oZHh2V3UyY1pjeWJIYmJQVHFIYnZLNTBW?=
- =?utf-8?B?U3ArR21maTJQRFc5ZlhHUlE3ZXNKQkRXZDV0S2g5TzNrbG9FZGZNYlk0a2JV?=
- =?utf-8?B?dEkvN1JqTVVhTEM2WXN4SzV5RlZMYjlpM0Qwc2dRSXBCeXhrMUQxa0RLamZ3?=
- =?utf-8?B?TGw3OVNyS2svVTFCR2JTUkJtVW9IRjhZL0FrVWtoQ053N2Nud1FQRjVNUGZY?=
- =?utf-8?B?M2Vmd1FrZjFVaHBCSDFKSTNSM0F3aGV2VFhhYUIzc3U1bkMxZ0J1TUNabnZ5?=
- =?utf-8?B?OTBDUTUwSkxVNHlnNmJRTkF3aDBMNWFRSmZUaVIwNG1GaktkcmJNU3dNeG13?=
- =?utf-8?B?eXVnZzFDdDdDWHNVcTZxQkljTmdVOTNOa0g5WXUvSEJyQVJLb1F5NXhUNDRI?=
- =?utf-8?B?N2JvY082RGMvSDF3bWV6eVlzckM4VG1SUHRmNjV4bCtoc1ZRL2YxblpZRXdq?=
- =?utf-8?B?Y3VBcVh1VUxZQ0dGckNJVHZILy9OYU5zSTRNZ1NUbnZKTHA2Z0kzUXN4YjFB?=
- =?utf-8?B?ZWlHM2pmcUwzOGN5alhvNW1HcE1kNDhqSHJWOFZkeE5zc2VHeG1PTnBGM292?=
- =?utf-8?B?U1hOREs0Y1N4MVZpNGwrbmhxbEErcUkxOUpqWlpJbVVnRW5sc3BWWmYrN2Qz?=
- =?utf-8?B?SmE2WWZocTV2cWhhcnMvUTlIOWkrZmgyTEx2cCtDbkphNmx0RW5PU3lMb0V0?=
- =?utf-8?B?QVY4ZlpQUHpkL080N2Jka0RwSnQwSE50WHArdktQZnN3ZTlBZHl5Zk52U1k0?=
- =?utf-8?B?ajY4T2dJejIrMXl6QVEvOUF0d3lIdndZWkkxRzl3aFc1bEU2amMzS2RHMTdQ?=
- =?utf-8?B?Zk4rR29MeGdXeFRHcHZhMjN5WC9pckNhbDZHODFqK0l2aUkyZXpaNHhNbkY0?=
- =?utf-8?B?Z1RwKzl6SGl4WkZIZHZqajhhbEpiQUdRTzRvTlVOZk5BMFRXYkZVMGhxaERk?=
- =?utf-8?B?UU9rV09PaTJxODhRVWZuelMxd0QwenpUWnpKNytNRFlpelNCZlorY3dOOTRz?=
- =?utf-8?B?ejA1V3VGTWxPajFZejgwdjR0eCtCaU5mN0VIRTBPZVUrM3RMTlFoTkhVM3R3?=
- =?utf-8?B?ZU9RdGExS3lHUFd1R20vV2ppZ2hYTCtQSTBRWC9NRHg5R2JsRVZkUDBtUytu?=
- =?utf-8?B?VnBxV2ZncW10aGhvWm1TNFpXOE9USC9mdHFRZ2wxTUNHQmVYVk5qSnpDL244?=
- =?utf-8?B?bmVFRlpSTXBBOWV0MVcxYnFLL3ptdFJMcWpQVE1uMlV3RDBXaDVzZVF2TW9G?=
- =?utf-8?B?bUVtUWdDRnAxbHRhamlQM25FS0QvM3U1UmxOWHVXelpwR0Z5dXBtSmpHaksv?=
- =?utf-8?B?SlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b018d24-59b0-4ee3-b3cb-08d9aab8ac02
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR1501MB2064.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2021 17:27:18.7647
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RWa07NeMfEGfUjJn2zV6BWFmxKkKWOHzLpzaXtxBllgi2oVBndKzmFp/mp0p30rq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR15MB2415
-X-OriginatorOrg: fb.com
-X-Proofpoint-GUID: 8I7PQJBLuV3meZLxZ9Vn9CTdYhwFGlsT
-X-Proofpoint-ORIG-GUID: 8I7PQJBLuV3meZLxZ9Vn9CTdYhwFGlsT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-18_12,2021-11-17_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
- spamscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 malwarescore=0 suspectscore=0 adultscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2111180092
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd86a05b-feca-c0a9-c6b0-b2e69c650021@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 11/15/21 9:42 PM, Kumar Kartikeya Dwivedi wrote:
-> In CRIU, we need to be able to determine whether the page pinned by
-> io_uring is still present in the same range in the process VMA.
-> /proc/<pid>/pagemap gives us the PFN, hence using this helper we can
-> establish this mapping easily from the iterator side.
+On Tue, Nov 16, 2021 at 11:00:23AM -0800, Casey Schaufler wrote:
+> On 11/16/2021 10:41 AM, Kees Cook wrote:
+> > On Tue, Nov 16, 2021 at 12:12:16PM +0300, Alexander Popov wrote:
+> > > What if the Linux kernel had a LSM module responsible for error handling policy?
+> > > That would require adding LSM hooks to BUG*(), WARN*(), KERN_EMERG, etc.
+> > > In such LSM policy we can decide immediately how to react on the kernel error.
+> > > We can even decide depending on the subsystem and things like that.
+> > That would solve the "atomicity" issue the WARN tracepoint solution has,
+> > and it would allow for very flexible userspace policy.
+> > 
+> > I actually wonder if the existing panic_on_* sites should serve as a
+> > guide for where to put the hooks. The current sysctls could be replaced
+> > by the hooks and a simple LSM.
 > 
-> It is a simple wrapper over the in-kernel page_to_pfn helper, and
-> ensures the passed in pointer is a struct page PTR_TO_BTF_ID. This is
-> obtained from the bvec of io_uring_ubuf for the CRIU usecase.
-> 
-> Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-> ---
->   fs/io_uring.c                  | 17 +++++++++++++++++
->   include/linux/bpf.h            |  1 +
->   include/uapi/linux/bpf.h       |  9 +++++++++
->   kernel/trace/bpf_trace.c       |  2 ++
->   scripts/bpf_doc.py             |  2 ++
->   tools/include/uapi/linux/bpf.h |  9 +++++++++
->   6 files changed, 40 insertions(+)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 46a110989155..9e9df6767e29 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -11295,6 +11295,23 @@ static struct bpf_iter_reg io_uring_buf_reg_info = {
->   	.seq_info	   = &bpf_io_uring_buf_seq_info,
->   };
->   
-> +BPF_CALL_1(bpf_page_to_pfn, struct page *, page)
-> +{
-> +	/* PTR_TO_BTF_ID can be NULL */
-> +	if (!page)
-> +		return U64_MAX;
-> +	return page_to_pfn(page);
-> +}
-> +
-> +BTF_ID_LIST_SINGLE(btf_page_to_pfn_ids, struct, page)
-> +
-> +const struct bpf_func_proto bpf_page_to_pfn_proto = {
-> +	.func		= bpf_page_to_pfn,
-> +	.ret_type	= RET_INTEGER,
-> +	.arg1_type	= ARG_PTR_TO_BTF_ID,
-> +	.arg1_btf_id	= &btf_page_to_pfn_ids[0],
+> Do you really want to make error handling a "security" issue?
+> If you add security_bug(), security_warn_on() and the like
+> you're begging that they be included in SELinux (AppArmor) policy.
+> BPF, too, come to think of it. Is that what you want?
 
-Does this helper need to be gpl_only?
+Yeah, that is what I was thinking. This would give the LSM a view into
+kernel state, which seems a reasonable thing to do. If system integrity
+is compromised, an LSM may want to stop trusting things.
 
-> +};
-> +
->   static int __init io_uring_iter_init(void)
->   {
->   	io_uring_buf_reg_info.ctx_arg_info[0].btf_id = btf_io_uring_ids[0];
-[...]
+A dedicated error-handling LSM could be added for those hooks that
+implemented the existing default panic_on_* sysctls, and could expand on
+that logic for other actions.
+
+-- 
+Kees Cook
