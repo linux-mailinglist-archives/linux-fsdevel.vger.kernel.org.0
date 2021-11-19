@@ -2,143 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D4F34571EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 16:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E546F457247
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 17:00:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235924AbhKSPq5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Nov 2021 10:46:57 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:57638 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235876AbhKSPq5 (ORCPT
+        id S236146AbhKSQD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Nov 2021 11:03:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52214 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234835AbhKSQD3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Nov 2021 10:46:57 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7CED41FD38;
-        Fri, 19 Nov 2021 15:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1637336634; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gtZBcqbP2K4Krf2vifeo40uYgJpjivHWASvF0aVhHis=;
-        b=nBLjx514c327+iwS2WX9SYNRbX5qbgGC1Mqh9/nxL6mKYEVw985tmPTUp6q5DW1Ib04iAp
-        L5jCzoHIn2OzZGwSNHy8VdFamLkVFuZ+ZVzuAyiL0YkGMpG0X/FeXrtBmpwF15kNxtqEwU
-        waFkAm0ZawR1wSh9m1pskX5IsP7pSe8=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2657313B35;
-        Fri, 19 Nov 2021 15:43:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id m4ItBzrGl2EHJgAAMHmgww
-        (envelope-from <mwilck@suse.com>); Fri, 19 Nov 2021 15:43:54 +0000
-Message-ID: <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
-Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
-From:   Martin Wilck <mwilck@suse.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Lukas Czerner <lczerner@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>, mwilck@suse.de,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 19 Nov 2021 16:43:53 +0100
-In-Reply-To: <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
-References: <20211112152202.26614-1-jack@suse.cz>
-         <20211115114821.swt3nqtw2pdgahsq@work>
-         <20211115125141.GD23412@quack2.suse.cz>
-         <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
-         <20211115145312.g4ptf22rl55jf37l@work>
-         <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
-         <20211116115626.anbvho4xtb5vsoz5@work>
-         <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.1 
+        Fri, 19 Nov 2021 11:03:29 -0500
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3338CC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 08:00:27 -0800 (PST)
+Received: by mail-qt1-x82d.google.com with SMTP id f20so9882150qtb.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 08:00:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=VtV9HHXd4X5WRhcYz4pKiiL6eAEsTLpENVV+xmm0B1E=;
+        b=gsJUvh5WctLgXnshRJv4wGg2JAgnGdSqNb3S1bmxpaDvTOBEX8LcgLW/+JvwTzVB37
+         v5K7AG9csFvUa4d1e8VMH07tEJ/4GXeXR0y5xTNeGGDEbPPYGPgXDzn7G4nizRSxv1eO
+         ORYsNAAPbkIfEb6NsGnWQ8GCPrvVKrf/49w0ZT27g2F3XOg052ttHxyU5wmveX2QAeR0
+         /CkUMXANh4cDh+HorkLPLoxEa1f7SRa67fSFzDU/E1oWa7A8N6PtOVfUv80pyqxAxqRj
+         YJDGrR6Uf5+iNfe0u7fumnhfivIpDOd+RCAzSsT04BV51dAxqsTNgRzPecBJz4DuF5VH
+         RdEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VtV9HHXd4X5WRhcYz4pKiiL6eAEsTLpENVV+xmm0B1E=;
+        b=hW9q3XNJ+5UG5KUF7M4A9cytcS3FfZwMIxPBzrxHBlm7u/ytr3bO4G5oYNyMcUnLpJ
+         QG/87ltEO4bQGUqcQzA34mdsd11eqlXRblGROrEgnpJMi+5S9JMf3eGCBtdeA9Qb3mJi
+         KRR53S11CrGeEtsfSi7rOCgUw17nAdpwRpMx0ncwHeA6tMRfm0EF3k+IecyGG+2mb4Aq
+         xPxTZRE0BkcMe7lfdN+ELbrumlhpkkubSvse/HbxllpiCu5pDXKQAA/OaGAiQgV9GNnu
+         5i0Vu8DaBKklKQVEHa9WRQU06Ehi/eacUll6NfpjYkJIjHYRQP1Os+yoSM4QZX7D3bel
+         jpBw==
+X-Gm-Message-State: AOAM5307fdHdJJrZFcpkkCfEGszKtNTwnQNPFVjRn/bOhw2zuLmyvV0D
+        3c+9dOY3XZfdwRxgYBZ0YaLkAA==
+X-Google-Smtp-Source: ABdhPJxKednFIP8LV5fXPBeBBtPHTY7W03I8IO74iFi+Vm9ZxLiGU52DJu0TAbPkEtajZX/lLl8ZnA==
+X-Received: by 2002:a05:622a:349:: with SMTP id r9mr7258679qtw.213.1637337626383;
+        Fri, 19 Nov 2021 08:00:26 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
+        by smtp.gmail.com with ESMTPSA id j20sm54140qko.117.2021.11.19.08.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Nov 2021 08:00:25 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1mo6JL-00CHtq-W3; Fri, 19 Nov 2021 12:00:24 -0400
+Date:   Fri, 19 Nov 2021 12:00:23 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
+Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
+Message-ID: <20211119160023.GI876299@ziepe.ca>
+References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
+ <20211119134739.20218-2-chao.p.peng@linux.intel.com>
+ <20211119151943.GH876299@ziepe.ca>
+ <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Martin, Lukas,
+On Fri, Nov 19, 2021 at 04:39:15PM +0100, David Hildenbrand wrote:
 
-On Tue, 2021-11-16 at 23:35 -0500, Martin K. Petersen wrote:
+> > If qmeu can put all the guest memory in a memfd and not map it, then
+> > I'd also like to see that the IOMMU can use this interface too so we
+> > can have VFIO working in this configuration.
 > 
-> Lukas,
-> 
-> > My understanding always was that the request needs to be both
-> > properly
-> > aligned and of a certain minimum size (discard_granularity) to take
-> > effect.
-> > 
-> > If what you're saying is true then I feel like the documentation of
-> > discard_granularity
-> > 
-> > Documentation/ABI/testing/sysfs-block
-> > Documentation/block/queue-sysfs.rst
-> > 
-> > should change because that's not how I understand the notion of
-> > internal allocation unit. However the sentence you quoted is not
-> > entirely clear to me either so I'll leave that decision to someone
-> > who
-> > understands it better than me.
-> > 
-> > Martin could you please clarify it for us ?
-> 
-> The rationale behind exposing the discard granularity to userland was
-> to
-> facilitate mkfs.* picking allocation units that were friendly wrt. the
-> device's internal granularity. The nature of that granularity depends
-> on
-> the type of device (thin provisioned, resource provisioned, SSD, etc.).
-> 
-> Just like the other queue limits the discard granularity was meant as a
-> hint (some of that hintiness got lost as a result of conflating zeroing
-> and deallocating but that has since been resolved).
-> 
-> It is true that some devices get confused if you submit discards that
-> are smaller than their internal granularity. However, those devices are
-> typically the ones that don't actually support reporting that
-> granularity in the first place! Whereas SCSI devices generally don't
-> care. They'll happily ignore any parts of the request that are smaller
-> than whatever size they use internally.
-> 
-> One of the problems with "optimizing" away pieces that are smaller than
-> the reported granularity is when you combine devices. Say you have a
-> RAID1 of an SSD that reports 4096 bytes and one that reports 256MB. The
-> stacked device will then have a discard granularity of 256MB and thus
-> the SSD with the smaller granularity won't receive any of the discards
-> that might otherwise help it manage its media.
+> In QEMU we usually want to (and must) be able to access guest memory
+> from user space, with the current design we wouldn't even be able to
+> temporarily mmap it -- which makes sense for encrypted memory only. The
+> corner case really is encrypted memory. So I don't think we'll see a
+> broad use of this feature outside of encrypted VMs in QEMU. I might be
+> wrong, most probably I am :)
 
-I've checked btrfs and xfs, and they treat the minlen like Jan's patch
-would - the minlen is set to the device's granularity, and discarding
-smaller ranges is silently not even attempted.
+Interesting..
 
-So this seems to be common practice among file system implementations,
-and thus Jan's patch would make ext4 behave like the others. But I'm
-still uncertain if this behavior is ideal, and your remarks seem to
-confirm that.
+The non-encrypted case I had in mind is the horrible flow in VFIO to
+support qemu re-execing itself (VFIO_DMA_UNMAP_FLAG_VADDR).
 
-The fstrim man page text is highly misleading. "The default value is
-zero, discarding every free block" is obviously wrong, given the
-current actual behavior of the major filesystems.
+Here VFIO is connected to a VA in a mm_struct that will become invalid
+during the kexec period, but VFIO needs to continue to access it. For
+IOMMU cases this is OK because the memory is already pinned, but for
+the 'emulated iommu' used by mdevs pages are pinned dynamically. qemu
+needs to ensure that VFIO can continue to access the pages across the
+kexec, even though there is nothing to pin_user_pages() on.
 
-The way this is currently implemented, the user has no way to actually
-"discard every free block" to the extent supported by the device. I
-think that being able to do this would be desirable, at least in
-certain situations.
+This flow would work a lot better if VFIO was connected to the memfd
+that is storing the guest memory. Then it naturally doesn't get
+disrupted by exec() and we don't need the mess in the kernel..
 
-If we changed this, with the default value of 0 used by fstrim, file
-systems would attempt to free every block, which is slow and would
-likely either fail or have no effect on may devices. Maybe we should
-treat the value "0" like "automatic", i.e. adjust it the minlen to the
-device's granularity like we do now, but leave the value unchanged if
-the user explicitly sets a small non-zero value? That way "fstrim -m
-512" could be used to force discarding every block that can be
-discarded.
+I was wondering if we could get here using the direct_io APIs but this
+would do the job too.
 
-Regards
-Martin
+> Apart from the special "encrypted memory" semantics, I assume nothing
+> speaks against allowing for mmaping these memfds, for example, for any
+> other VFIO use cases.
 
+We will eventually have VFIO with "encrypted memory". There was a talk
+in LPC about the enabling work for this.
+
+So, if the plan is to put fully encrpyted memory inside a memfd, then
+we still will eventually need a way to pull the pfns it into the
+IOMMU, presumably along with the access control parameters needed to
+pass to the secure monitor to join a PCI device to the secure memory.
+
+Jason
