@@ -2,161 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFEAB4568F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 05:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CB424568FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 05:15:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233119AbhKSEQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Nov 2021 23:16:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33610 "EHLO
+        id S233565AbhKSES3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Nov 2021 23:18:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232098AbhKSEQp (ORCPT
+        with ESMTP id S233060AbhKSES2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Nov 2021 23:16:45 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF991C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 20:13:44 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id j6-20020a17090a588600b001a78a5ce46aso10099625pji.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 20:13:44 -0800 (PST)
+        Thu, 18 Nov 2021 23:18:28 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2106C061574;
+        Thu, 18 Nov 2021 20:15:27 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id n26so8246065pff.3;
+        Thu, 18 Nov 2021 20:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XkJr7D3eRBWMyEf12kTub/VW3BcE0Ew/aGYjvq0iqXI=;
-        b=fsMJ3phTZGMNX103H++zeLMniFct1AvIUTUd9mAl75C8uwURHQmPnc1mJZxbfYl1Kx
-         5StH7TD9TcghPbVMaCyd+mAkrBNTFANfR+f5rXUW54MN5C0s+gO/FFfBWshctoYVBeqp
-         9ByprV6cZPjQzUU3bXWt71sJwB4wdGrtH3iK+Ap/cFd64ZDBtoH54zO5/8wfy8qj3PPp
-         /2VLW/k44tdClUzFPMRxiMY6E/5l7eRdjksDbIAz7ixkhpe60WqgN/W+VPrwInP+yL0A
-         Ha2tdxypX5Tp0DKhrHQjj1MxgvkL5P44F4njDF7cxkV7sR8hz2/3B/UMlADFQvYLxrOP
-         gtTA==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+LyeVLReCXhOkCg9StyRIKEvqQSOt6DNYKzR7HZ5mCg=;
+        b=iCJO/iz/rDyVbJPs/seRcT6ZmQ/Tb1jbxmUqpeOCKS9csioYKAK/rBqp+0sNbQ9nMb
+         aLvyNs7lbRLBuW0x+hFOrIkMwZWLZvxbm6jQbfcXRZVGiwRhleuIP7eXTQH4zfkY6N7y
+         ictgFn6nYwvpheGTiguS8oF+xyaTIfzJjyXDd6pYtk0+Q4PNWb7rv5LOCtfGBoyVhG3s
+         U8wFP9w5Zdt3w3q0nTxcndv+HhXERbHwYv+Dbg8uEJnIRhetIQHZFTC4s8uV3XWRR8Oj
+         aZQ5XmzFB6RbJdESC2ya7wCwlfHvI6HnoU3NQpH2ILxFCJ3or9oMzZcCUwd3Z4OzM2Bc
+         i6zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XkJr7D3eRBWMyEf12kTub/VW3BcE0Ew/aGYjvq0iqXI=;
-        b=DwWMIGfcXGfyC7Lga0vqlPZhhrN1dAlkg3y+od9S3B08xx6GB9iudS6ZXYGJmdOMJh
-         rv+YADMmsWON77uwdfOtu3PVDbgNLnXdFV5rnpoIDL+JUHEX9gzrOcFi2bcDfErjPU3Q
-         uz6hX6V6UnnlAd3qQtMGZHKmtqDzaJXN0+P2uaCtP8hisJHSsiWtamEy51zxaXDiKzD1
-         Sh/7UUdX8lS/nMxzBPoSfAdbCJdoqVnOxSTgku1jErUdPzhMjdh+avZMbt+UPjQmo/IA
-         h+edfClqXoBuuPLIIv4PtRdvnO8X+caBZ6vFY3/ETeJKVM9S4Cv1Ng6aNGxFHsaoGZBv
-         WLJQ==
-X-Gm-Message-State: AOAM532Px8HKivmcP1Z8sBZCnWkruXSVi0ZlOffDvJpOvgQI/hktevm9
-        9lMxaHDY1SopAGrP5c7oBlBWGA==
-X-Google-Smtp-Source: ABdhPJyzIbFJ03TmW8I57PetAOSK9TPQAjpqRd3Lkpsg9a7dXbK46d7OYuZZqGuwJ87vZCZVYaY70w==
-X-Received: by 2002:a17:90a:ce02:: with SMTP id f2mr893046pju.77.1637295224478;
-        Thu, 18 Nov 2021 20:13:44 -0800 (PST)
-Received: from localhost.localdomain ([139.177.225.245])
-        by smtp.gmail.com with ESMTPSA id u4sm868486pgg.24.2021.11.18.20.13.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Nov 2021 20:13:44 -0800 (PST)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        gladkov.alexey@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v2] fs: proc: store PDE()->data into inode->i_private
-Date:   Fri, 19 Nov 2021 12:11:04 +0800
-Message-Id: <20211119041104.27662-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+LyeVLReCXhOkCg9StyRIKEvqQSOt6DNYKzR7HZ5mCg=;
+        b=BYEEq+IyGIiOT8MlI7pf5caei5JIxCWi6N7H2uViecl/eA36G4oirOSgBAyynY4Yuy
+         WYp8FFL95mDFkUJPsiHcAN0oToTjZvJt5MKMi5EqAq3WnxUxznpy7XqxE7USH4i8ywiN
+         YJZPqpeO67VnjIKycON/qoet8stXwnvLHnkV+fC/wBk59AWolE9nk1LYzqVHv0lk06+V
+         HX+DSIJJaaDBFsUV/ADl6mGISQ4RUyqcJYQbDl9Bkgp4TMIdYWA61fIGJgKpkBX32IZe
+         RtunrXTPm4VBJ9QzYafQMoNc7JNna55lTXfmBNh57OmD9CLBcqeL09aXB6+pxTMsxqIk
+         mCug==
+X-Gm-Message-State: AOAM533XmdyZqTLgPqFzjM9Gn/THt0qmmAw40FLbMi8xgyaBZhaI9b+w
+        xVUqm3osfl65FhBGBobxVfk=
+X-Google-Smtp-Source: ABdhPJzhurUP8Eg2zT+C/ZkePeYGNkk15ElzCLiHH124JYg1DvJU7WfZwpPFwxh5/LycdQIJiyJwiQ==
+X-Received: by 2002:a63:2317:: with SMTP id j23mr14906844pgj.41.1637295327027;
+        Thu, 18 Nov 2021 20:15:27 -0800 (PST)
+Received: from localhost ([2405:201:6014:d064:502e:73f4:8af1:9522])
+        by smtp.gmail.com with ESMTPSA id h128sm1058174pfg.212.2021.11.18.20.15.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Nov 2021 20:15:26 -0800 (PST)
+Date:   Fri, 19 Nov 2021 09:45:23 +0530
+From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     bpf@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Alexander Mihalicyn <alexander@mihalicyn.com>,
+        Andrei Vagin <avagin@gmail.com>, criu@openvz.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v1 1/8] io_uring: Implement eBPF iterator for
+ registered buffers
+Message-ID: <20211119041523.cf427s3hzj75f7jr@apollo.localdomain>
+References: <20211116054237.100814-1-memxor@gmail.com>
+ <20211116054237.100814-2-memxor@gmail.com>
+ <20211118220226.ritjbjeh5s4yw7hl@ast-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211118220226.ritjbjeh5s4yw7hl@ast-mbp.dhcp.thefacebook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PDE_DATA(inode) is introduced to get user private data and hide the
-layout of struct proc_dir_entry. The inode->i_private is used to do
-the same thing as well. Save a copy of user private data to inode->
-i_private when proc inode is allocated. This means the user also can
-get their private data by inode->i_private.
+On Fri, Nov 19, 2021 at 03:32:26AM IST, Alexei Starovoitov wrote:
+> On Tue, Nov 16, 2021 at 11:12:30AM +0530, Kumar Kartikeya Dwivedi wrote:
+> > This change adds eBPF iterator for buffers registered in io_uring ctx.
+> > It gives access to the ctx, the index of the registered buffer, and a
+> > pointer to the io_uring_ubuf itself. This allows the iterator to save
+> > info related to buffers added to an io_uring instance, that isn't easy
+> > to export using the fdinfo interface (like exact struct page composing
+> > the registered buffer).
+> >
+> > The primary usecase this is enabling is checkpoint/restore support.
+> >
+> > Note that we need to use mutex_trylock when the file is read from, in
+> > seq_start functions, as the order of lock taken is opposite of what it
+> > would be when io_uring operation reads the same file.  We take
+> > seq_file->lock, then ctx->uring_lock, while io_uring would first take
+> > ctx->uring_lock and then seq_file->lock for the same ctx.
+> >
+> > This can lead to a deadlock scenario described below:
+> >
+> >       CPU 0				CPU 1
+> >
+> >       vfs_read
+> >       mutex_lock(&seq_file->lock)	io_read
+> > 					mutex_lock(&ctx->uring_lock)
+> >       mutex_lock(&ctx->uring_lock) # switched to mutex_trylock
+> > 					mutex_lock(&seq_file->lock)
+> >
+> > The trylock also protects the case where io_uring tries to read from
+> > iterator attached to itself (same ctx), where the order of locks would
+> > be:
+> >  io_uring_enter
+> >   mutex_lock(&ctx->uring_lock) <-----------.
+> >   io_read				    \
+> >    seq_read				     \
+> >     mutex_lock(&seq_file->lock)		     /
+> >     mutex_lock(&ctx->uring_lock) # deadlock-`
+> >
+> > In both these cases (recursive read and contended uring_lock), -EDEADLK
+> > is returned to userspace.
+> >
+> > In the future, this iterator will be extended to directly support
+> > iteration of bvec Flexible Array Member, so that when there is no
+> > corresponding VMA that maps to the registered buffer (e.g. if VMA is
+> > destroyed after pinning pages), we are able to reconstruct the
+> > registration on restore by dumping the page contents and then replaying
+> > them into a temporary mapping used for registration later. All this is
+> > out of scope for the current series however, but builds upon this
+> > iterator.
+>
+> From BPF infra perspective these new iterators fit very well and
+> I don't see any issues maintaining this interface while kernel keeps
+> changing, but this commit log and shallowness of the selftests
+> makes me question feasibility of this approach in particular with io_uring.
+> Is it even possible to scan all internal bits of io_uring and reconstruct
+> it later? The bpf iter is only the read part. Don't you need the write part
+> for CRIU ? Even for reads only... io_uring has complex inner state.
 
-Introduce pde_data() to wrap inode->i_private so that we can remove
-PDE_DATA() from fs/proc/generic.c and make PTE_DATE() as a wrapper
-of pde_data(). It will be easier if we decide to remove PDE_DATE()
-in the future.
+Yes, the inner state is complex and often entangled with other task attributes,
+like credentials, mm, file descriptors, other io_uring fds (wq_fd, etc.) but for
+now these iterators are a good starting point to implement the majority of the
+missing features in CRIU userspace. These iterators (including task* ones), and
+procfs allow us to collect enough state to correlate various resources and form
+relationships (e.g. which fd or buffer of which task(s) is registered, which
+io_uring was used for wq_fd registration, or which eventfd was registered,
+etc.). Thanks to access to io_ring_ctx, and iter being a tracing prog, we can
+do usual pointer access to read some of that data.
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
-Changes in v2:
- - Drop all drivers related changes (do not remove PDE_DATA() completely).
- - Introduce pde_data() suggested by Andrew.
+> Like bpf itself which cannot be realistically CRIU-ed.
+> I don't think we can merge this in pieces. We need to wait until there is
+> full working CRIU framework that uses these new iterators.
 
- v1: https://lkml.org/lkml/2021/11/1/575
+I don't intend to add a 'write' framework. The usual process with CRIU is to
+gather enough state to reconstruct the kernel resource by repeating steps
+similar to what it might have performed during it's lifetime, e.g. approximating
+a trace of execution leading to the same task state and then repeating that on
+restore.
 
- fs/proc/generic.c       |  6 ------
- fs/proc/inode.c         |  1 +
- fs/proc/internal.h      |  5 -----
- include/linux/proc_fs.h | 13 ++++++++++++-
- 4 files changed, 13 insertions(+), 12 deletions(-)
+While a 'write' framework with first class kernel support for checkpoint/restore
+would actually make CRIU's life a lot more simpler, there usually has been a lot
+of pushback against interfaces like that, hence the approach has been to add
+features that can extract the relevant information out of the kernel, and do the
+rest of the work in userspace.
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 5b78739e60e4..f2132407e133 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -791,12 +791,6 @@ void proc_remove(struct proc_dir_entry *de)
- }
- EXPORT_SYMBOL(proc_remove);
- 
--void *PDE_DATA(const struct inode *inode)
--{
--	return __PDE_DATA(inode);
--}
--EXPORT_SYMBOL(PDE_DATA);
--
- /*
-  * Pull a user buffer into memory and pass it to the file's write handler if
-  * one is supplied.  The ->write() method is permitted to modify the
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 599eb724ff2d..f84355c5a36d 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -650,6 +650,7 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
- 		return NULL;
- 	}
- 
-+	inode->i_private = de->data;
- 	inode->i_ino = de->low_ino;
- 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
- 	PROC_I(inode)->pde = de;
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 03415f3fb3a8..06a80f78433d 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -115,11 +115,6 @@ static inline struct proc_dir_entry *PDE(const struct inode *inode)
- 	return PROC_I(inode)->pde;
- }
- 
--static inline void *__PDE_DATA(const struct inode *inode)
--{
--	return PDE(inode)->data;
--}
--
- static inline struct pid *proc_pid(const struct inode *inode)
- {
- 	return PROC_I(inode)->pid;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 069c7fd95396..b32fb0ef3308 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -110,7 +110,18 @@ extern struct proc_dir_entry *proc_create_data(const char *, umode_t,
- struct proc_dir_entry *proc_create(const char *name, umode_t mode, struct proc_dir_entry *parent, const struct proc_ops *proc_ops);
- extern void proc_set_size(struct proc_dir_entry *, loff_t);
- extern void proc_set_user(struct proc_dir_entry *, kuid_t, kgid_t);
--extern void *PDE_DATA(const struct inode *);
-+
-+/*
-+ * Obtain the private data passed by user through proc_create_data() or
-+ * related.
-+ */
-+static inline void *pde_data(const struct inode *inode)
-+{
-+	return inode->i_private;
-+}
-+
-+#define PDE_DATA(i)	pde_data(i)
-+
- extern void *proc_get_parent_data(const struct inode *);
- extern void proc_remove(struct proc_dir_entry *);
- extern void remove_proc_entry(const char *, struct proc_dir_entry *);
--- 
-2.11.0
+E.g. if we find that fd 1 and 2 are registered in the io_uring, and buffer at
+0xabcd with len 128, then we first restore fd 1 and 2 (which can be anything)
+at restore time, then after this restore is complete, continue restoration of
+io_uring by executing file registration step for both [0], and depending on if
+the mapping existed for 0xabcd in task mm, restore buffer once the mm of the
+task has been restored, or otherwise map a temporary buffer, replay data, and
+register it and destroy mappings. This would be similar to what might have
+happened in the task itself. The correct order of events to do the restore
+will be managed by CRIU itself.
 
+It doesn't have to be exactly the same stpes, just enough for the task to not
+notice a difference and not break its assumptions, and lead to the same end
+result of task and resource state.
+
+Even the task of determining whether fd 1 and 2 belong to which fdtable is
+non-trivial and ineffecient rn. You can look at [0] for a similar case that was
+solved for epoll, which works but we can do better (BPF didn't exist at that
+time so it was the best we could do back then).
+
+Also, this work is part of GSoC. There is already code that is waiting for this
+to fill in the missing pieces [0]. If you want me to add a sample/selftest that
+demonstrates/tests how this can be used to reconstruct a task's io_uring, I can
+certainly do that. We've already spent a few months contemplating on a few
+approaches and this turned out to be the best/most powerful. At one point I had
+to scrap some my earlier patches completely because they couldn't work with
+descriptorless io_uring. Iterator seem like the best solution so far that can
+adapt gracefully to feature additions in something seeing as heavy development
+as io_uring.
+
+  [0]: https://github.com/checkpoint-restore/criu/commit/cfa3f405d522334076fc4d687bd077bee3186ccf#diff-d2cfa5a05213c854d539de003a23a286311ae81431026d3d50b0068c0cb5a852
+  [1]: https://github.com/checkpoint-restore/criu/pull/1597
+
+--
+Kartikeya
