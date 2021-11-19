@@ -2,155 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A954457013
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 14:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9E245707A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 15:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235680AbhKSNyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Nov 2021 08:54:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21243 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235581AbhKSNyS (ORCPT
+        id S234705AbhKSOWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Nov 2021 09:22:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57208 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234153AbhKSOWe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Nov 2021 08:54:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637329876;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0MQ6EmX5xeBMO7143sm+kmalOXvvH8veZYgNdztafAY=;
-        b=Du9s4mAvHjp3HTcNatjhyJ3KkDckrh1zfwF+jr9J7tVTUY1CrL3DfvyXUTHnLQHOe9Rno0
-        suBtY3F0jMozvjK2dV6+9taJfE+cvwqxmE/+wdEDYJ80TACvb3c4u2WGCrA7hu6Ypu+1H8
-        V3z1nmVNSaNiEo+61RmAq44xQqOo/lo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-198-SzAMbj-7P02KiQLPyWpr5Q-1; Fri, 19 Nov 2021 08:51:15 -0500
-X-MC-Unique: SzAMbj-7P02KiQLPyWpr5Q-1
-Received: by mail-wm1-f71.google.com with SMTP id g11-20020a1c200b000000b003320d092d08so4090113wmg.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 05:51:15 -0800 (PST)
+        Fri, 19 Nov 2021 09:22:34 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D2FC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 06:19:32 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id w29so18397860wra.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 06:19:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:reply-to:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=CcexMjZBNLCEwb0isvMRBl9q6LjY9wKO6CSmQ4SxqKs=;
+        b=GSsT3LJ+VfwVLEkUAJ3qQq4FADKWRSDFklZAp0yWg2NNMGyGvPr1C9+40upDU7iUXB
+         72UbR7LMKFxCNerQVP8K8NMSsBEJI9h7GsO4zj3+WSafi7hEr0IrQZdIiw5cmSfFJZu1
+         7g7vX94n43eG47tY+0VykjPWLFzvy1oqNp9w+0D/d//nVhOnZfw0rDYjKQb3XqmsFoNV
+         du3hQo63b+kAFBWG4KDuEPvy7uFentDQT/6D1up5Tc923gJSeomNmM+BxCLiXTc2S6DA
+         ydb0VIEn2oliCcTSzySpBpL7E+YVS8TqJ5OwnAYlPuR+DSZF9W3uc1uVXhhhKgJGYaaB
+         YClw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:reply-to
+         :subject:content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=0MQ6EmX5xeBMO7143sm+kmalOXvvH8veZYgNdztafAY=;
-        b=uSuSXSfFq+6nbRwXvY6qEkA8RWp1+jgQAYb2R3hSWZqlC5d4Sy8eh6cJS3yHcxEB0D
-         SBCbGDsV1Bi4G8Vtm9ynRFuTPwCrLjWUWIpLGsLc7oskQlnex3CYFLcuZfbzPFDEtBt+
-         LV970rIePN/lQTYUOZDfS+L3gDpGO0EqsOTNPjg4qjbVYCw3psIN941NIV+DfuCq+C9e
-         nVJ7J5pCr3FUAG+rvVlKTHdHyq1jiu9C/TMuhR5xxeNL9be2NzrS8aIYcyMkK5LQ+mhO
-         gkNmpJ3BjZYXeCTcZk64LXduRfRDY98n7Lt+j9eMAKfEndTRue1HGsdtKfuxHx48HJEa
-         pDFg==
-X-Gm-Message-State: AOAM531Rq1Lnur3f82uAJ+Kc4GO7E7w1BNYZc/14M7cOBswbjvuWW5rW
-        5LNomJBGvAC7mt0wYXgPglvFiaijelandl3+zAHDaeMPoucLlOj/ykEZ9pYZJpu/kNDKFh3Hc4M
-        oemNCRbdGye9jMb1sEA/rXsOi6w==
-X-Received: by 2002:a05:6000:1a45:: with SMTP id t5mr7549028wry.306.1637329874054;
-        Fri, 19 Nov 2021 05:51:14 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyguzOIQ4dtj/UgUT64libXTpwo03IBVeH470Oj9eTA/dOIJOsebKLkqM9WONqcZosshV46JQ==
-X-Received: by 2002:a05:6000:1a45:: with SMTP id t5mr7548995wry.306.1637329873829;
-        Fri, 19 Nov 2021 05:51:13 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c6271.dip0.t-ipconnect.de. [91.12.98.113])
-        by smtp.gmail.com with ESMTPSA id f15sm3823943wmg.30.2021.11.19.05.51.12
+        bh=CcexMjZBNLCEwb0isvMRBl9q6LjY9wKO6CSmQ4SxqKs=;
+        b=SHfqldMG6dm/vuvIms97peyYnrs4OK43a4JAtOOAai5XRa9lG86AsiaoNbIzA89bCw
+         eBkeDyNzGz1rmf8B05w4rdlJB2Ri4SaJhFPiIHzsgNe95rQLEP8VVRe/UVk3hOc1mb6l
+         dc5vnWqgIN5/PV058RlkjgAeJHs4sSSp3Q7RCNNEalzJdlJgh7kf89aDwNuxwq+R8jNv
+         fXXeboSfZPjjr/gsUeTqiCmBARkDl0Xm9AoXN9E0nm7IR40BpoE7GOILt+M3w+3VLcUl
+         bGnYXbyWSxTmtPfInSkSE/NJrbDlvcWrTbyY6mR/a9WraczBJKeCYC4Xqv5jJVI4HYzw
+         DiLQ==
+X-Gm-Message-State: AOAM532d/Nma+uq+xZwAlFD+kLJGiFcGT6t7txQo/fj3rGGQT2oGxJpP
+        oWpfWNvvoFAiPtbhXI23wDo=
+X-Google-Smtp-Source: ABdhPJzpuUEXW+pjwKeq+mxHngWCA4ASsBXWhd0rHOfoPKCoXSFm37D7Ea0GCxP1u6e4nMn8XOvFaA==
+X-Received: by 2002:a05:6000:1a45:: with SMTP id t5mr7773017wry.306.1637331571339;
+        Fri, 19 Nov 2021 06:19:31 -0800 (PST)
+Received: from ?IPV6:2a02:8070:a2a8:1a00:815a:3ed0:1912:b9b7? ([2a02:8070:a2a8:1a00:815a:3ed0:1912:b9b7])
+        by smtp.googlemail.com with ESMTPSA id f15sm3918494wmg.30.2021.11.19.06.19.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Nov 2021 05:51:13 -0800 (PST)
-Message-ID: <942e0dd6-e426-06f6-7b6c-0e80d23c27e6@redhat.com>
-Date:   Fri, 19 Nov 2021 14:51:11 +0100
+        Fri, 19 Nov 2021 06:19:30 -0800 (PST)
+Message-ID: <b708eff4-4e2f-42a9-c2b2-22522f72ebe0@gmail.com>
+Date:   Fri, 19 Nov 2021 15:19:29 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
-Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-2-chao.p.peng@linux.intel.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20211119134739.20218-2-chao.p.peng@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+ Thunderbird/91.3.1
+Reply-To: uwe.sauter.de@gmail.com
+Subject: Re: Bug using new ntfs3 file system driver (5.15.2 on Arch Linux)
+Content-Language: de-DE
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+References: <aea2a926-8ce6-fcb0-cd60-03202c30cca1@gmail.com>
+ <YZei4gn1zgIc32Ii@casper.infradead.org>
+From:   Uwe Sauter <uwe.sauter.de@gmail.com>
+In-Reply-To: <YZei4gn1zgIc32Ii@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19.11.21 14:47, Chao Peng wrote:
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+
+
+Am 19.11.21 um 14:13 schrieb Matthew Wilcox:
+> On Fri, Nov 19, 2021 at 08:48:11AM +0100, Uwe Sauter wrote:
+>> [ 1132.645038] BUG: unable to handle page fault for address: 0000000000400000
+>> [ 1132.645045] #PF: supervisor instruction fetch in kernel mode
+>> [ 1132.645047] #PF: error_code(0x0010) - not-present page
+>> [ 1132.645050] PGD 0 P4D 0
+>> [ 1132.645053] Oops: 0010 [#1] PREEMPT SMP PTI
+>> [ 1132.645057] CPU: 7 PID: 429941 Comm: rsync Tainted: P           OE
+>> 5.15.2-arch1-1 #1 e3bfbeb633edc604ba956e06f24d5659e31c294f
+>> [ 1132.645061] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./C226 WS, BIOS P3.40 06/25/2018
+>> [ 1132.645063] RIP: 0010:0x400000
 > 
-> The new seal type provides semantics required for KVM guest private
-> memory support. A file descriptor with the seal set is going to be used
-> as source of guest memory in confidential computing environments such as
-> Intel TDX and AMD SEV.
+> Your computer was trying to execute instructions at 0x400000.  This
+> smells very much like a single bit flip; ie there was a function
+> pointer which should have been NULL, but actually had one bit flip
+> and so the CPU jumped to somewhere that doesn't have any memory
+> backing it.
 > 
-> F_SEAL_GUEST can only be set on empty memfd. After the seal is set
-> userspace cannot read, write or mmap the memfd.
-> 
-> Userspace is in charge of guest memory lifecycle: it can allocate the
-> memory with falloc or punch hole to free memory from the guest.
-> 
-> The file descriptor passed down to KVM as guest memory backend. KVM
-> register itself as the owner of the memfd via memfd_register_guest().
-> 
-> KVM provides callback that needed to be called on fallocate and punch
-> hole.
-> 
-> memfd_register_guest() returns callbacks that need be used for
-> requesting a new page from memfd.
+> Can you run memtest86, or whatever the current flavour of memory testing
+> software is?
 > 
 
-Repeating the feedback I already shared in a private mail thread:
+As I mentioned in the description the host is equipped with ECC memory. dmesg didn't show any sign of memory error that 
+I would expect from a bit flip inside RAM.
 
+The hardware is
+* ASRock Rack C226 WS mainboard
+* Intel Xeon E3-1245 v3
+* 4x Kingston 9965525-055.A00LF 8GB ECC memory.
 
-As long as page migration / swapping is not supported, these pages
-behave like any longterm pinned pages (e.g., VFIO) or secretmem pages.
-
-1. These pages are not MOVABLE. They must not end up on ZONE_MOVABLE or
-MIGRATE_CMA.
-
-That should be easy to handle, you have to adjust the gfp_mask to
-	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-just as mm/secretmem.c:secretmem_file_create() does.
-
-2. These pages behave like mlocked pages and should be accounted as such.
-
-This is probably where the accounting "fun" starts, but maybe it's
-easier than I think to handle.
-
-See mm/secretmem.c:secretmem_mmap(), where we account the pages as
-VM_LOCKED and will consequently check per-process mlock limits. As we
-don't mmap(), the same approach cannot be reused.
-
-See drivers/vfio/vfio_iommu_type1.c:vfio_pin_map_dma() and
-vfio_pin_pages_remote() on how to manually account via mm->locked_vm .
-
-But it's a bit hairy because these pages are not actually mapped into
-the page tables of the MM, so it might need some thought. Similarly,
-these pages actually behave like "pinned" (as in mm->pinned_vm), but we
-just don't increase the refcount AFAIR. Again, accounting really is a
-bit hairy ...
-
-
-
--- 
-Thanks,
-
-David / dhildenb
-
+Also the host has been running fine after the bug triggered for 1.5h and today again for 7h.
