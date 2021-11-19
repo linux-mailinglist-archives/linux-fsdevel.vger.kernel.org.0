@@ -2,134 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F19456AD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 08:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CBF3456ADA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 08:23:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233852AbhKSHVC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Nov 2021 02:21:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
+        id S233406AbhKSH0m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Nov 2021 02:26:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233803AbhKSHU7 (ORCPT
+        with ESMTP id S230296AbhKSH0l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Nov 2021 02:20:59 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BCFDC06173E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 23:17:58 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id b12so16413835wrh.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Nov 2021 23:17:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nFGb18pBC9MBpjQaAVm5hqQdk6D4Ir2REv4FVUlaigw=;
-        b=CJ7bKrQNzHwFOLCxyr6Eqedny+jYVFlV7e59I/83ia+MFeAx3GbonEE7TENZXok+c/
-         pRqYPYl0QEWuMVAL6oHmF7Khqlz+U/U5yZjI8LTXfZKg8gzRy/SV5MyFzmxDsgZxde4+
-         y3ey9UdRXqUVio6sOOFof1ehJTF1jXEiir+eh7xdg0Nj/2LooSVhRgQpI5HLTRtrGLuk
-         4yagv2rGL850wvQ83ZOdNWV9kN2E+lgw6Pfu+9XM8hNHt2LncZLbiBU3ic6FcE/egzxK
-         2NvGgCCBnvNQdFXQwXTBpVr/Rj62jvJLltzbm6LfFZORSA8LREIBaZmGdYkg/aQeWv92
-         qTBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nFGb18pBC9MBpjQaAVm5hqQdk6D4Ir2REv4FVUlaigw=;
-        b=flXEaJ6l8Oj0YAI8xz4+0fSjl24jarR6/p7GpgFKQhdXGEji4LSp193qjFJwqELfSO
-         15Qq171thlCnk03M5l//Zd062egaCPTnwErbUFUZvqB/S97lWFFRvvSpvvSY2wGTEGyV
-         IVAge8sYMluM2wnDKtApWtRfYBIItb8zisnAd4y6OKsOljKFTMapDKw9OV4ta/WS232d
-         kjqwQxIXNSmi3dalH4Iy8NNI5lvCknn/QldKPX9nvhqIg9O8MXY2YFKgPBRCsTsDcMOT
-         hKyBzSvnIfneuJpdApuYIS3S7AmY0Qw2sQ3lyIDAwSdarQNM7QGLdqw75vrinidQj2a6
-         LPHQ==
-X-Gm-Message-State: AOAM532FWEq6P1RieIacLjdPzFPZApjmsqVPWEGONLmX6CB8v7Z58Ge1
-        4zstBtLk6dHZ334MaV/M7KI=
-X-Google-Smtp-Source: ABdhPJzCDdWDi9I29AcfAP5Stctg0fjCL0rpB2As/qrT2SB5t60xKU+CxmhDuR7XNQPsudJFBDjLzA==
-X-Received: by 2002:a5d:548f:: with SMTP id h15mr4606923wrv.99.1637306276651;
-        Thu, 18 Nov 2021 23:17:56 -0800 (PST)
-Received: from localhost.localdomain ([82.114.45.86])
-        by smtp.gmail.com with ESMTPSA id l22sm1905913wmp.34.2021.11.18.23.17.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Nov 2021 23:17:56 -0800 (PST)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Fri, 19 Nov 2021 02:26:41 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77C9C061574;
+        Thu, 18 Nov 2021 23:23:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=etzROkgLDJ3fAqXUvqW6n0mH56UVGwueuFcutPzI3cA=; b=omrNRinBCsBJskc2fu2gSv6Fiw
+        9FcBhvWBr+dgLFPdYsAwrQdcXHrCekxsq9Swkx4uI/dQKlYfOqZJkpqrNLMaxkgJG+8hd4/Rvi+rH
+        U5S2CIb1Pk06MsU77vXZco0pRrZ7OlPoTsToNILcssA9IGKeZouVkhb496LOX1vbKFj6S7kAPP19b
+        ivoJj+OVhUitUiH038ftxPpuZgwAK43CEVr/EnVYrS9QVwLShW1/TCHKc1m0JVc8CuEj163cRIU/w
+        Rf9rV0aE4VqyOJb7tO+aNnUATnQeSpsN9sWVYkNtvr5n+CDTWX/Hp92xEzWzc22zbmki7EfSlpPMO
+        1Pso58xg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mnyFH-009aN9-0u; Fri, 19 Nov 2021 07:23:39 +0000
+Date:   Thu, 18 Nov 2021 23:23:39 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     akpm@linux-foundation.org, adobriyan@gmail.com,
+        gladkov.alexey@gmail.com, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 9/9] fanotify: wire up FAN_RENAME event
-Date:   Fri, 19 Nov 2021 09:17:38 +0200
-Message-Id: <20211119071738.1348957-10-amir73il@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211119071738.1348957-1-amir73il@gmail.com>
-References: <20211119071738.1348957-1-amir73il@gmail.com>
+Subject: Re: [PATCH v2] fs: proc: store PDE()->data into inode->i_private
+Message-ID: <YZdQ+0D7n5xCnw5A@infradead.org>
+References: <20211119041104.27662-1-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211119041104.27662-1-songmuchun@bytedance.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FAN_RENAME is the successor of FAN_MOVED_FROM and FAN_MOVED_TO
-and can be used to get the old and new parent+name information in
-a single event.
+On Fri, Nov 19, 2021 at 12:11:04PM +0800, Muchun Song wrote:
+> +
+> +/*
+> + * Obtain the private data passed by user through proc_create_data() or
+> + * related.
+> + */
+> +static inline void *pde_data(const struct inode *inode)
+> +{
+> +	return inode->i_private;
+> +}
+> +
+> +#define PDE_DATA(i)	pde_data(i)
 
-FAN_MOVED_FROM and FAN_MOVED_TO are still supported for backward
-compatibility, but it makes little sense to use them together with
-FAN_RENAME in the same group.
-
-FAN_RENAME uses special info type records to report the old and
-new parent+name, so reporting only old and new parent id is less
-useful and was not implemented.
-Therefore, FAN_REANAME requires a group with flag FAN_REPORT_NAME.
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify.c      | 2 +-
- fs/notify/fanotify/fanotify_user.c | 8 ++++++++
- include/linux/fanotify.h           | 3 ++-
- 3 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 4f06b17e209d..072fb0f0c941 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -947,7 +947,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
- 	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
- 	BUILD_BUG_ON(FAN_RENAME != FS_RENAME);
- 
--	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 20);
-+	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 21);
- 
- 	mask = fanotify_group_event_mask(group, iter_info, mask, data,
- 					 data_type, dir);
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 5ec60db3cfbb..02b5b63c6582 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1587,6 +1587,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	    (!fid_mode || mark_type == FAN_MARK_MOUNT))
- 		goto fput_and_out;
- 
-+	/*
-+	 * FAN_RENAME uses special info type records to report the old and
-+	 * new parent+name.  Reporting only old and new parent id is less
-+	 * useful and was not implemented.
-+	 */
-+	if (mask & FAN_RENAME && !(fid_mode & FAN_REPORT_NAME))
-+		goto fput_and_out;
-+
- 	if (flags & FAN_MARK_FLUSH) {
- 		ret = 0;
- 		if (mark_type == FAN_MARK_MOUNT)
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 376e050e6f38..3afdf339d53c 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -82,7 +82,8 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
-  * Directory entry modification events - reported only to directory
-  * where entry is modified and not to a watching parent.
-  */
--#define FANOTIFY_DIRENT_EVENTS	(FAN_MOVE | FAN_CREATE | FAN_DELETE)
-+#define FANOTIFY_DIRENT_EVENTS	(FAN_MOVE | FAN_CREATE | FAN_DELETE | \
-+				 FAN_RENAME)
- 
- /* Events that can be reported with event->fd */
- #define FANOTIFY_FD_EVENTS (FANOTIFY_PATH_EVENTS | FANOTIFY_PERM_EVENTS)
--- 
-2.33.1
-
+What is the point of pde_data?  If we really think changing to lower
+case is worth it (I don't think so, using upper case for getting at
+private data is a common idiom in file systems), we can just do that
+scripted in one go.
