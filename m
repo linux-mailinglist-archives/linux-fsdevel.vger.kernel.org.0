@@ -2,143 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7593E457593
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 18:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA6C4576F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 20:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236741AbhKSRks (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Nov 2021 12:40:48 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:38475 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236575AbhKSRkr (ORCPT
+        id S234375AbhKSTVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Nov 2021 14:21:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232932AbhKSTVH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Nov 2021 12:40:47 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 3BABF3201D82;
-        Fri, 19 Nov 2021 12:37:45 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 19 Nov 2021 12:37:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=h03ECZ894lLyR
-        orXSJYYjkS8jeFWg5nLRJr7bns6ZSo=; b=gfeJfhhk2VwqSJbJ5b4QZoDvR9HjS
-        /zVMuM1q0KqwkDgdhTjxrA4W7b584TpwaxrYDmv43++epc6NO8rjJ8yfH2GoJEIJ
-        05YZFgR9A0n4Tfa2hqjOiAGnvHr+F51hwZjkG5yssZpcpkV+mUllIQ/o7/MTRhQO
-        uSczMb+RwmdDgrSGnx4EvZBy6tfbJYZ99o59toEWxMy6HQXM8Eqdw+lmHFDi76IQ
-        2BR2NEqmnfqqc5AEurdmrM8PQ9T3BEh7DWh149Z4/67iMmFcx4sudhsO0mYxgHpz
-        fRXvdhYObgBmdxgkofpVOdF+VGETF68vzmPXtkBwnoZYwWrGC5os9VKZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=h03ECZ894lLyRorXSJYYjkS8jeFWg5nLRJr7bns6ZSo=; b=O+O+Iet0
-        jgBZAED7D/OZZbLuWLNBtwYr4KXnr4js60Ht6HLFb0Zs+OjMhvfyX5UCG43i/gND
-        91BiEcmyBSMx8Q4gH6Zpaapboj8Kd7v9xbHaDaZNEt0ywoOGkWwkrh9dxJKtGFEQ
-        PBuk6mXtluYYQxZtzz+nAa398Cd58iwOLYe3pKn/DxvvY+Ty4xdZsKpZL5mFWo1u
-        bYs5xdeSgIoJKjD5/TKPQkKQj62hS70phwMvXKYh7fYV6kM8Ga7hcP3odo1cqF1S
-        2zWzc4r5Qr/51TnNDJNvhRH4MIVMp9uqu5oMDHz8A7GWgR5hgkgq4vQm/I346IIS
-        Su4UYDlTrTPPcw==
-X-ME-Sender: <xms:6OCXYdAdeT9Sl2YLg4NXWjwf_764hYYe1iniEWyInIsrKcYNreAs4g>
-    <xme:6OCXYbitEPtjXuIlqM1Nf_pLBKbQaARVT_sKpk7qskUEMCl4VDND0WDYK-ukW1jHo
-    bBb5DK0VNmWtN0jXw>
-X-ME-Received: <xmr:6OCXYYmfLY89D9qR1VdrsUaCT8dI1vauXmtUGkacb_GG5b2QIYZ2dDZyeewH6ovaCj_cllrVRKAan7dsLVFX224it3ZtVFWM_46TGwPi>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrfeekgddutdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeevhhhrihhs
-    thhophhhvgcugghuqdeurhhughhivghruceotghvuhgsrhhughhivghrsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeekjeettefgieetvdekudevudduvddvueet
-    lefhieevffehudfhveeutdevgfekffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegtvhhusghruhhgihgvrhesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:6OCXYXxv8RhAsaE0FVOxTKCXVWaEUEWTeFlMo9eWmseaQG4SaavkUg>
-    <xmx:6OCXYSSkiRPIRxsFqnVW0V8jX_Zf8TBHMFIU-klu0kSss4zXvb9Wug>
-    <xmx:6OCXYabXKQVR8YJ2QLvAnW0AGbPq9KsevSlWucZskvCG6h7pd0NzlQ>
-    <xmx:6OCXYQdM-9HjhzRK0yEycIiJTRipjtQtzQIbp8K5V9WHjFdUtKkSiA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Nov 2021 12:37:43 -0500 (EST)
-From:   Christophe Vu-Brugier <cvubrugier@fastmail.fm>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
-Subject: [PATCH v2] exfat: fix i_blocks for files truncated over 4 GiB
-Date:   Fri, 19 Nov 2021 18:37:34 +0100
-Message-Id: <20211119173734.2545-1-cvubrugier@fastmail.fm>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <YZbKobiUUt6eG6zQ@casper.infradead.org>
-References: <YZbKobiUUt6eG6zQ@casper.infradead.org>
+        Fri, 19 Nov 2021 14:21:07 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23B6CC061748
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 11:18:05 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id gb13-20020a17090b060d00b001a674e2c4a8so9599631pjb.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 11:18:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=g/YNskCC8H0pIrRty3bOxTWWIwZezM/dF8uipgTGVfY=;
+        b=CNOzkM2IBiGjqfRhSRYpA8+aOR9+w9kYa1mO17Fub/lEhXiodlJQQbYvAU23XPSB80
+         zEPvGqgAhRJ6Ac9fwqtRfF+TRjsCcSQq5iPvk/1Ntl7JnciUfiF+ZDILvu0CHa2qGnpl
+         ujk4JKugJX/qAenq8IEMYsdgtnjBtqpUR91i9SBdt8L7pGQrEmbiL4/gffr02rrMSJmz
+         6yzyBXWa8jt0zBA9CA494YG0zM4LbpueA4wdoIYm5oesyznYRillp/PJwv9KFNX7usVm
+         7PTxEHROAZHj6Qj+AaUATSaSV1EpFTybV/lhNnk/ZpIoUTNLB6A6TpiLrhOQ7Y6XFsOL
+         ut9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=g/YNskCC8H0pIrRty3bOxTWWIwZezM/dF8uipgTGVfY=;
+        b=l3cG5pIC30TaRtgl6Tg96kxeC8GgNv6NzEIUzZ87IK9Tb5RbzxSdmxuFq5edJdW1eC
+         Z/PbTncl5wb0yeO5DelSws6GX5NfFBHVzZhLOX6HFu7cmCFMSuZdecMqRle7p5avTqJF
+         WyepziI+hVC58JgVhQO4pAYjR/UfoxEszhxHNyHK1Xv0H3+B6NMAC3ZtMsJfUeB9fQ/0
+         X2fybS5/DPp4lv0i4XY6snjInQMGyslf8XVm+ntPbSXLZNCUSRar2/zk21Yjw4TCz/YV
+         ktBprPusib6s/urwmkCONhvGtxApB2gqrKcK24KKC43G89X4/mAWSG1hAV0sx4ToYz8L
+         XoYw==
+X-Gm-Message-State: AOAM532DNNNid/UXxeoDzekoijyygSLsXUd4E3f/Kvk2RfQ11+zdcEpb
+        rX8pnV/1kRjpu6K9CdtGgDzAUg==
+X-Google-Smtp-Source: ABdhPJxLPt6CntmozfnHLwXqny0KwCU2vgLZSjJXfMA4iRfgP9luxNnbV0AtIM87S/ieQOg/r1KAAQ==
+X-Received: by 2002:a17:902:b28a:b0:142:3e17:38d8 with SMTP id u10-20020a170902b28a00b001423e1738d8mr80638372plr.56.1637349484440;
+        Fri, 19 Nov 2021 11:18:04 -0800 (PST)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id f15sm426180pfe.171.2021.11.19.11.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Nov 2021 11:18:03 -0800 (PST)
+Date:   Fri, 19 Nov 2021 19:18:00 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
+Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
+Message-ID: <YZf4aAlbyeWw8wUk@google.com>
+References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
+ <20211119134739.20218-2-chao.p.peng@linux.intel.com>
+ <20211119151943.GH876299@ziepe.ca>
+ <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
+On Fri, Nov 19, 2021, David Hildenbrand wrote:
+> On 19.11.21 16:19, Jason Gunthorpe wrote:
+> > As designed the above looks useful to import a memfd to a VFIO
+> > container but could you consider some more generic naming than calling
+> > this 'guest' ?
+> 
+> +1 the guest terminology is somewhat sob-optimal.
 
-In exfat_truncate(), the computation of inode->i_blocks is wrong if
-the file is larger than 4 GiB because a 32-bit variable is used as a
-mask. This is fixed and simplified by using round_up().
+For the F_SEAL part, maybe F_SEAL_UNMAPPABLE?
 
-Also fix the same buggy computation in exfat_read_root() and another
-(correct) one in exfat_fill_inode(). The latter was fixed another way
-last month but can be simplified by using round_up() as well. See:
-
-  commit 0c336d6e33f4 ("exfat: fix incorrect loading of i_blocks for
-                        large files")
-
-Signed-off-by: Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
-Suggested-by: Matthew Wilcox <willy@infradead.org>
----
- fs/exfat/file.c  | 4 ++--
- fs/exfat/inode.c | 4 ++--
- fs/exfat/super.c | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 6af0191b648f..3dafd3c013d7 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -251,8 +251,8 @@ void exfat_truncate(struct inode *inode, loff_t size)
- 	else
- 		mark_inode_dirty(inode);
- 
--	inode->i_blocks = ((i_size_read(inode) + (sbi->cluster_size - 1)) &
--			~(sbi->cluster_size - 1)) >> inode->i_blkbits;
-+	inode->i_blocks = round_up(i_size_read(inode), sbi->cluster_size) >>
-+				inode->i_blkbits;
- write_size:
- 	aligned_size = i_size_read(inode);
- 	if (aligned_size & (blocksize - 1)) {
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index 1c7aa1ea4724..464282376483 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -603,8 +603,8 @@ static int exfat_fill_inode(struct inode *inode, struct exfat_dir_entry *info)
- 
- 	exfat_save_attr(inode, info->attr);
- 
--	inode->i_blocks = ((i_size_read(inode) + (sbi->cluster_size - 1)) &
--		~((loff_t)sbi->cluster_size - 1)) >> inode->i_blkbits;
-+	inode->i_blocks = round_up(i_size_read(inode), sbi->cluster_size) >>
-+				inode->i_blkbits;
- 	inode->i_mtime = info->mtime;
- 	inode->i_ctime = info->mtime;
- 	ei->i_crtime = info->crtime;
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 5539ffc20d16..bd04c8b25b59 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -364,8 +364,8 @@ static int exfat_read_root(struct inode *inode)
- 	inode->i_op = &exfat_dir_inode_operations;
- 	inode->i_fop = &exfat_dir_operations;
- 
--	inode->i_blocks = ((i_size_read(inode) + (sbi->cluster_size - 1))
--			& ~(sbi->cluster_size - 1)) >> inode->i_blkbits;
-+	inode->i_blocks = round_up(i_size_read(inode), sbi->cluster_size) >>
-+				inode->i_blkbits;
- 	EXFAT_I(inode)->i_pos = ((loff_t)sbi->root_dir << 32) | 0xffffffff;
- 	EXFAT_I(inode)->i_size_aligned = i_size_read(inode);
- 	EXFAT_I(inode)->i_size_ondisk = i_size_read(inode);
--- 
-2.33.0
-
+No ideas for the kernel API, but that's also less concerning since it's not set
+in stone.  I'm also not sure that dedicated APIs for each high-ish level use case
+would be a bad thing, as the semantics are unlikely to be different to some extent.
+E.g. for the KVM use case, there can be at most one guest associated with the fd,
+but there can be any number of VFIO devices attached to the fd.
