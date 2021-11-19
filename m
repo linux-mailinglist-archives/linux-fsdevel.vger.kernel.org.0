@@ -2,135 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E546F457247
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 17:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD39C45734B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 17:42:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236146AbhKSQD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Nov 2021 11:03:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52214 "EHLO
+        id S236615AbhKSQpX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Nov 2021 11:45:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234835AbhKSQD3 (ORCPT
+        with ESMTP id S236612AbhKSQpX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Nov 2021 11:03:29 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3338CC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 08:00:27 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id f20so9882150qtb.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 08:00:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VtV9HHXd4X5WRhcYz4pKiiL6eAEsTLpENVV+xmm0B1E=;
-        b=gsJUvh5WctLgXnshRJv4wGg2JAgnGdSqNb3S1bmxpaDvTOBEX8LcgLW/+JvwTzVB37
-         v5K7AG9csFvUa4d1e8VMH07tEJ/4GXeXR0y5xTNeGGDEbPPYGPgXDzn7G4nizRSxv1eO
-         ORYsNAAPbkIfEb6NsGnWQ8GCPrvVKrf/49w0ZT27g2F3XOg052ttHxyU5wmveX2QAeR0
-         /CkUMXANh4cDh+HorkLPLoxEa1f7SRa67fSFzDU/E1oWa7A8N6PtOVfUv80pyqxAxqRj
-         YJDGrR6Uf5+iNfe0u7fumnhfivIpDOd+RCAzSsT04BV51dAxqsTNgRzPecBJz4DuF5VH
-         RdEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VtV9HHXd4X5WRhcYz4pKiiL6eAEsTLpENVV+xmm0B1E=;
-        b=hW9q3XNJ+5UG5KUF7M4A9cytcS3FfZwMIxPBzrxHBlm7u/ytr3bO4G5oYNyMcUnLpJ
-         QG/87ltEO4bQGUqcQzA34mdsd11eqlXRblGROrEgnpJMi+5S9JMf3eGCBtdeA9Qb3mJi
-         KRR53S11CrGeEtsfSi7rOCgUw17nAdpwRpMx0ncwHeA6tMRfm0EF3k+IecyGG+2mb4Aq
-         xPxTZRE0BkcMe7lfdN+ELbrumlhpkkubSvse/HbxllpiCu5pDXKQAA/OaGAiQgV9GNnu
-         5i0Vu8DaBKklKQVEHa9WRQU06Ehi/eacUll6NfpjYkJIjHYRQP1Os+yoSM4QZX7D3bel
-         jpBw==
-X-Gm-Message-State: AOAM5307fdHdJJrZFcpkkCfEGszKtNTwnQNPFVjRn/bOhw2zuLmyvV0D
-        3c+9dOY3XZfdwRxgYBZ0YaLkAA==
-X-Google-Smtp-Source: ABdhPJxKednFIP8LV5fXPBeBBtPHTY7W03I8IO74iFi+Vm9ZxLiGU52DJu0TAbPkEtajZX/lLl8ZnA==
-X-Received: by 2002:a05:622a:349:: with SMTP id r9mr7258679qtw.213.1637337626383;
-        Fri, 19 Nov 2021 08:00:26 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
-        by smtp.gmail.com with ESMTPSA id j20sm54140qko.117.2021.11.19.08.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Nov 2021 08:00:25 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1mo6JL-00CHtq-W3; Fri, 19 Nov 2021 12:00:24 -0400
-Date:   Fri, 19 Nov 2021 12:00:23 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
-Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
-Message-ID: <20211119160023.GI876299@ziepe.ca>
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-2-chao.p.peng@linux.intel.com>
- <20211119151943.GH876299@ziepe.ca>
- <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
+        Fri, 19 Nov 2021 11:45:23 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E837C061574;
+        Fri, 19 Nov 2021 08:42:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1637340141;
+        bh=S3tqbZO5Rlul7onRk41NRHP4ESMa/qmMnn6fYAI4Orw=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=MUVho1oUpRMMPU0y7O3yAPiEAN+G3Df6TrpgXE5vwPDG/9beEkS9qbqL6K+NSzUeB
+         qHP3ClUqpiEnvJTxzj6UmiNH+dJYCm55Zeo2Tld8yepId4WbuCXiftDPBSJK02W7fA
+         Dr6lR9Xwcs+/vweMrgi40uX+I4Imniu8MTsb5WMc=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 08F84128035A;
+        Fri, 19 Nov 2021 11:42:21 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NGLNnwndHCFH; Fri, 19 Nov 2021 11:42:20 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1637340140;
+        bh=S3tqbZO5Rlul7onRk41NRHP4ESMa/qmMnn6fYAI4Orw=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=rmEb5c7WPA3N9rCKPsQ8UFb/udB1jF3EZ1DCDIUP+5xD09kPL5tIU376LCm0ifFMd
+         GMlCvqvV9ooD281wWpP/Cgf+ImqHG/2xaSD1KRN919c9JTRLDAII9cTmd+BDZE6MAI
+         qGtcio/0M7LDnlOoYmbpi7Sp1+1O6skpA0v06IHI=
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::c447])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 645C712800E8;
+        Fri, 19 Nov 2021 11:42:19 -0500 (EST)
+Message-ID: <47bf8da26b5ec71f98b9bc736dbca2d8277417f2.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, mingo@redhat.com, hagen@jauu.net,
+        rppt@kernel.org, akpm@linux-foundation.org, vvs@virtuozzo.com,
+        shakeelb@google.com, christian.brauner@ubuntu.com,
+        mkoutny@suse.com, Linux Containers <containers@lists.linux.dev>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Fri, 19 Nov 2021 11:42:18 -0500
+In-Reply-To: <20211119092758.1012073e@gandalf.local.home>
+References: <20211118181210.281359-1-y.karadz@gmail.com>
+         <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
+         <20211118142440.31da20b3@gandalf.local.home>
+         <1349346e1d5daca991724603d1495ec311cac058.camel@HansenPartnership.com>
+         <20211119092758.1012073e@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 04:39:15PM +0100, David Hildenbrand wrote:
-
-> > If qmeu can put all the guest memory in a memfd and not map it, then
-> > I'd also like to see that the IOMMU can use this interface too so we
-> > can have VFIO working in this configuration.
+[resend due to header mangling causing loss on the lists]
+On Fri, 2021-11-19 at 09:27 -0500, Steven Rostedt wrote:
+> On Fri, 19 Nov 2021 07:45:01 -0500
+> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 > 
-> In QEMU we usually want to (and must) be able to access guest memory
-> from user space, with the current design we wouldn't even be able to
-> temporarily mmap it -- which makes sense for encrypted memory only. The
-> corner case really is encrypted memory. So I don't think we'll see a
-> broad use of this feature outside of encrypted VMs in QEMU. I might be
-> wrong, most probably I am :)
+> > On Thu, 2021-11-18 at 14:24 -0500, Steven Rostedt wrote:
+> > > On Thu, 18 Nov 2021 12:55:07 -0600
+> > > ebiederm@xmission.com (Eric W. Biederman) wrote:
+> > >   
+> > > > It is not correct to use inode numbers as the actual names for
+> > > > namespaces.
+> > > > 
+> > > > I can not see anything else you can possibly uses as names for
+> > > > namespaces.  
+> > > 
+> > > This is why we used inode numbers.
+> > >   
+> > > > To allow container migration between machines and similar
+> > > > things the you wind up needing a namespace for your names of
+> > > > namespaces.  
+> > > 
+> > > Is this why you say inode numbers are incorrect?  
+> > 
+> > The problem is you seem to have picked on one orchestration system
+> > without considering all the uses of namespaces and how this would
+> > impact them.  So let me explain why inode numbers are incorrect and
+> > it will possibly illuminate some of the cans of worms you're
+> > opening.
+> > 
+> > We have a container checkpoint/restore system called CRIU that can
+> > be used to snapshot the state of a pid subtree and restore it.  It
+> > can be used for the entire system or piece of it.  It is also used
+> > by some orchestration systems to live migrate containers.  Any
+> > property of a container system that has meaning must be saved and
+> > restored by CRIU.
+> > 
+> > The inode number is simply a semi random number assigned to the
+> > namespace.  it shows up in /proc/<pid>/ns but nowhere else and
+> > isn't used by anything.  When CRIU migrates or restores containers,
+> > all the namespaces that compose them get different inode values on
+> > the restore.  If you want to make the inode number equivalent to
+> > the container name, they'd have to restore to the previous number
+> > because you've made it a property of the namespace.  The way
+> > everything is set up now, that's just not possible and never will
+> > be.  Inode numbers are a 32 bit space and can't be globally
+> > unique.  If you want a container name, it will have to be something
+> > like a new UUID and that's the first problem you should tackle.
+> 
+> So everyone seems to be all upset about using inode number. We could
+> do what Kirill suggested and just create some random UUID and use
+> that. We could have a file in the directory called inode that has the
+> inode number (as that's what both docker and podman use to identify
+> their containers, and it's nice to have something to map back to
+> them).
+> 
+> On checkpoint restore, only the directories that represent the
+> container that migrated matter, so as Kirill said, make sure they get
+> the old UUID name, and expose that as the directory.
+> 
+> If a container is looking at directories of other containers on the
+> system, then it gets migrated to another system, it should be treated
+> as though those directories were deleted under them.
+> 
+> I still do not see what the issue is here.
 
-Interesting..
+The issue is you're introducing a new core property for namespaces they
+didn't have before.  Everyone has different use cases for containers
+and we need to make sure the new property works with all of them.
 
-The non-encrypted case I had in mind is the horrible flow in VFIO to
-support qemu re-execing itself (VFIO_DMA_UNMAP_FLAG_VADDR).
+Having a "name" for a namespace has been discussed before which is the
+landmine you stepped on when you advocated using the inode number as
+the name, because that's already known to be unworkable.
 
-Here VFIO is connected to a VA in a mm_struct that will become invalid
-during the kexec period, but VFIO needs to continue to access it. For
-IOMMU cases this is OK because the memory is already pinned, but for
-the 'emulated iommu' used by mdevs pages are pinned dynamically. qemu
-needs to ensure that VFIO can continue to access the pages across the
-kexec, even though there is nothing to pin_user_pages() on.
+Can we back up and ask what problem you're trying to solve before we
+start introducing new objects like namespace name?  The problem
+statement just seems to be "Being able to see the structure of the
+namespaces can be very useful in the context of the containerized
+workloads."  which you later expanded on as "trying to add more
+visibility into the working of things like kubernetes".  If you just
+want to see the namespace "tree" you can script that (as root) by
+matching the process tree and the /proc/<pid>/ns changes without
+actually needing to construct it in the kernel.  This can also be done
+without introducing the concept of a namespace name.  However, there is
+a subtlety of doing this matching in the way I described in that you
+don't get proper parenting to the user namespace ownership ... but that
+seems to be something you don't want anyway?
 
-This flow would work a lot better if VFIO was connected to the memfd
-that is storing the guest memory. Then it naturally doesn't get
-disrupted by exec() and we don't need the mess in the kernel..
+James
 
-I was wondering if we could get here using the direct_io APIs but this
-would do the job too.
 
-> Apart from the special "encrypted memory" semantics, I assume nothing
-> speaks against allowing for mmaping these memfds, for example, for any
-> other VFIO use cases.
 
-We will eventually have VFIO with "encrypted memory". There was a talk
-in LPC about the enabling work for this.
-
-So, if the plan is to put fully encrpyted memory inside a memfd, then
-we still will eventually need a way to pull the pfns it into the
-IOMMU, presumably along with the access control parameters needed to
-pass to the secure monitor to join a PCI device to the secure memory.
-
-Jason
