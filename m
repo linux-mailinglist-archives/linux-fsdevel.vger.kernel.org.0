@@ -2,166 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 31B2C45709C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 15:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 238D74570BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Nov 2021 15:35:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235843AbhKSO3V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Nov 2021 09:29:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58716 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232080AbhKSO3S (ORCPT
+        id S235930AbhKSOiU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Nov 2021 09:38:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:27955 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235991AbhKSOiR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Nov 2021 09:29:18 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BC48C061574;
-        Fri, 19 Nov 2021 06:26:16 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id v1so10054054edx.2;
-        Fri, 19 Nov 2021 06:26:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=NFE0LMqy6rnH3GGdUb3C1I3IPgyszFGdbTI0C5bvQow=;
-        b=FhmoHDnEbtFKj0inh7p/00rj06peGT9vcTvet0Im+BoGJ4VBo4WOG7By84D/8JRTia
-         /bcTjMHYIV37fOV5wBwVcYrX6T2aXgZOWh8gBXF59mfghmMG0mX/TnQUDHzI0QRiS+hP
-         WTVMP0dTUdUpAPJsTSXRmpJsFQsLu7Ckyub2srWnTodcs3qcvrxope+Gj/q8urfRSIRX
-         ECT7mXHFCjHxXY6C30Ys315PuHUWuc1o+i1FXKUw3Z7A/jo/iq1bmJIdwOMG1NyUNnmR
-         AOIm39C+psx9W8CacyQKZkC4kfpe+tB4xxsO4xW5RKoRzftb+IBaHjBE+qFRbsS02zLt
-         S1IA==
+        Fri, 19 Nov 2021 09:38:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637332515;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mm/1sr0bdKvIDzeoCiebWBOdcipYTxhxLdJgjjMHe5k=;
+        b=Nx+rCjQVmxr46dMtnBuQdbgOk/w171GV25pDcl/b8VNhCNAMpP8+HPT8+BBU+RSonR6qWN
+        ZhfDZzkn4RrqyFJWOZswCV5pIgihPW2oMpFKtNpS2N7+Pke3Gz6MQciBTazLbdOVfCdesR
+        2XM+Oa1Ly5IFDgUVxKozdKPehutTOwg=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-255-4UnMWAKTOOmf6glvyf_nKg-1; Fri, 19 Nov 2021 09:35:13 -0500
+X-MC-Unique: 4UnMWAKTOOmf6glvyf_nKg-1
+Received: by mail-ed1-f69.google.com with SMTP id c1-20020aa7c741000000b003e7bf1da4bcso8519827eds.21
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 06:35:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=NFE0LMqy6rnH3GGdUb3C1I3IPgyszFGdbTI0C5bvQow=;
-        b=NURADy2endGL3IrAd/CzQVZecUeDViw0a6RDK0F4j5/9TyALdKYF/jG9ScOwC1bjbk
-         yM1b3Ib/oVZY9N2COOgdBBFL5Bv5KfSecDJThuFv2fFpzLq+3mOpa3I0KK9X4BnNg2ec
-         HyYiZ9mc6SxLOPYLkJZtDVHPkihKdReNxK2+TsJuNchNDMytEdLME5UxqJVOnbg+7ls1
-         VrihmRf8oYpUClkjDLvGHkHIelZGPcZl0pb9C4X8VqHbZXPM4QgWgEJeRDXXcxa+R2vk
-         foGvMljrBY9/48SdtLnQ1ynqPvEs4tJurbJXZIwQG3GMr4ejtp0lLd63KiL8HNICFwhR
-         XvNw==
-X-Gm-Message-State: AOAM531EABquYuWR5I7ErUDPncNP8aDD2zBfyF1MOeYkDWomEvwAZuai
-        NGN23AYYzQvbE2VCOYEiL0w=
-X-Google-Smtp-Source: ABdhPJy6xhIdXVP5Uwc7Ce5MRoo5VgJmKhMjOyCqhARaKRLQ2a+Lql9DOUq+rFaarH9zIrxu/4viQA==
-X-Received: by 2002:a17:906:3ec6:: with SMTP id d6mr8285031ejj.300.1637331974780;
-        Fri, 19 Nov 2021 06:26:14 -0800 (PST)
-Received: from [192.168.1.6] ([95.87.219.163])
-        by smtp.gmail.com with ESMTPSA id b11sm1675832ede.62.2021.11.19.06.26.13
+        bh=mm/1sr0bdKvIDzeoCiebWBOdcipYTxhxLdJgjjMHe5k=;
+        b=O3GI0wb0GnRdzk9ZTBspjZy7jvwAblRtTMJfq5saEUWqTU0+sIkomVR5wvdSkfg9S7
+         pS+b5To7RKF4VP1mmv+iHaMwPhPcY+yPaRx6SJqCDPxJRLKhygsfT0OjBTFShszSZGYS
+         2FsAz0SwnAtLS6YK3JYBtcwE0/ZhTFrmg1Fr7rZS2DTxos5GY4NiSSGuR8SiOczKhWm5
+         EzME+0ZUpSGNutQwM3eJVsAi2RO6ChPaCL4xAT1BApUQFEw27roOkMtc9pOOXQS8lJGH
+         4Uoush2j1kgVBatoaewFvynDCmnHYWjsZrN0HlGVvgDbVM96cBreEbLhChGkqU6+scPp
+         92QA==
+X-Gm-Message-State: AOAM532NC9/sbKyUqyGYzehjxHh6p1njZHlJlIKSz+ihqy7U3lGcPcjC
+        pWDUbDa//ulIuLnnNa0IbZwnYv8UXSc2x3OIfrZ5NoJTIRt9uEDVa3f4Q3FUL5iLzNYb9BDu+Xn
+        3yy812IHL7sRjQ1JLb6hs9D9VSQ==
+X-Received: by 2002:a50:99c6:: with SMTP id n6mr24060024edb.171.1637332511821;
+        Fri, 19 Nov 2021 06:35:11 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzj0Mme0k2YDoI7RMSrOdEJplOkKjDKmkbta34QlWBd7ALtl44GQCW8oR56pMnuu3cngOECUA==
+X-Received: by 2002:a50:99c6:: with SMTP id n6mr24059999edb.171.1637332511663;
+        Fri, 19 Nov 2021 06:35:11 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1054:9d19:e0f0:8214? (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id y17sm1749368edd.31.2021.11.19.06.35.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Nov 2021 06:26:14 -0800 (PST)
-Message-ID: <1613eb28-f5d2-6ede-b0a1-f48c5ce240fc@gmail.com>
-Date:   Fri, 19 Nov 2021 16:26:12 +0200
+        Fri, 19 Nov 2021 06:35:11 -0800 (PST)
+Message-ID: <99cafdbc-e4fa-9fc5-2dea-1a071919338e@redhat.com>
+Date:   Fri, 19 Nov 2021 15:35:10 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-Subject: Re: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
+ Thunderbird/91.2.0
+Subject: Re: mmotm 2021-11-18-15-47 uploaded (<linux/proc_fs.h>)
 Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, rostedt@goodmis.org, mingo@redhat.com,
-        hagen@jauu.net, rppt@kernel.org,
-        James.Bottomley@HansenPartnership.com, akpm@linux-foundation.org,
-        vvs@virtuozzo.com, shakeelb@google.com,
-        christian.brauner@ubuntu.com, mkoutny@suse.com,
-        Linux Containers <containers@lists.linux.dev>
-References: <20211118181210.281359-1-y.karadz@gmail.com>
- <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
-From:   Yordan Karadzhov <y.karadz@gmail.com>
-In-Reply-To: <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+References: <20211118234743.-bgoWMQfK%akpm@linux-foundation.org>
+ <db0b9313-fef6-2977-9b1c-4c830edea5c5@infradead.org>
+ <20211118170426.bfcd00c159aba815ffc282d3@linux-foundation.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20211118170426.bfcd00c159aba815ffc282d3@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Eric,
+Hi,
 
-Thank you very much for pointing out all the weaknesses of this Proof-of-Concept!
-
-I tried to make it clear in the Cover letter that this is nothing more than a PoC. It is OK that you are giving it a 
-'Nacked-by'. We never had an expectation that this particular version of the code can be merged. Nevertheless, we hope 
-to receive constructive guidance on how to improve. I will try to comment on your arguments below.
-
-On 18.11.21 г. 20:55 ч., Eric W. Biederman wrote:
+On 11/19/21 02:04, Andrew Morton wrote:
+> On Thu, 18 Nov 2021 16:53:30 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
 > 
-> Adding the containers mailing list which is for discussions like this.
-> 
-> "Yordan Karadzhov (VMware)" <y.karadz@gmail.com> writes:
-> 
->> We introduce a simple read-only virtual filesystem that provides
->> direct mechanism for examining the existing hierarchy of namespaces
->> on the system. For the purposes of this PoC, we tried to keep the
->> implementation of the pseudo filesystem as simple as possible. Only
->> two namespace types (PID and UTS) are coupled to it for the moment.
->> Nevertheless, we do not expect having significant problems when
->> adding all other namespace types.
+>> On 11/18/21 3:47 PM, akpm@linux-foundation.org wrote:
+>>> The mm-of-the-moment snapshot 2021-11-18-15-47 has been uploaded to
+>>>
+>>>     https://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> mmotm-readme.txt says
+>>>
+>>> README for mm-of-the-moment:
+>>>
+>>> https://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>> more than once a week.
+>>>
+>>> You will need quilt to apply these patches to the latest Linus release (5.x
+>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>>> https://ozlabs.org/~akpm/mmotm/series
+>>>
+>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>>> followed by the base kernel version against which this patch series is to
+>>> be applied.
 >>
->> When fully functional, 'namespacefs' will allow the user to see all
->> namespaces that are active on the system and to easily retrieve the
->> specific data, managed by each namespace. For example the PIDs of
->> all tasks enclosed in the individual PID namespaces. Any existing
->> namespace on the system will be represented by its corresponding
->> directory in namespacesfs. When a namespace is created a directory
->> will be added. When a namespace is destroyed, its corresponding
->> directory will be removed. The hierarchy of the directories will
->> follow the hierarchy of the namespaces.
+>> Hi,
+>>
+>> I get hundreds of warnings from <linux/proc_fs.h>:
+>>
+>> from proc-make-the-proc_create-stubs-static-inlines.patch:
+>>
+>> ../include/linux/proc_fs.h:186:2: error: parameter name omitted
+>> ../include/linux/proc_fs.h:186:32: error: parameter name omitted
+>> ../include/linux/proc_fs.h:186:63: error: parameter name omitted
 > 
-> It is not correct to use inode numbers as the actual names for
-> namespaces.
+> Nobody uses PROC_FS=n ;)
 
-It is unclear for me why exposing the inode number of a namespace is such a fundamental problem. This information is 
-already available in /proc/PID/ns. If you are worried by the fact that the inode number gives the name of the 
-corresponding directory in the filesystem and that someone can interpret this as a name of the namespace itself, then we 
-can make the inum available inside the directory (and make it identical with /proc/PID/ns/) and to think for some other 
-naming convention for the directories.
+Weird I thought I did a deliberate test compile with PROC_FS=n to test this
+(but without W=1 ...).
+
+Andrew, thank you for fixing this.
+
+Regards,
+
+Hans
 
 
 > 
-> I can not see anything else you can possibly uses as names for
-> namespaces.
-> 
-> To allow container migration between machines and similar things
-> the you wind up needing a namespace for your names of namespaces.
-> 
-
-This filesystem aims to provide a snapshot of the current structure of the namespaces on the entire host, so migrating 
-it to another machine where this structure will be anyway different seems to be meaningless by definition, unless you 
-really migrate the entire machine.
-
-This may be a stupid question, but are you currently migrating 'debugfs' or 'tracefs' together with a container?
-
-> Further you talk about hierarchy and you have not added support for the
-> user namespace.  Without the user namespace there is not hierarchy with
-> any namespace but the pid namespace. There is definitely no meaningful
-> hierarchy without the user namespace.
-> 
-
-I do agree that the user namespace plays a central role in the global hierarchy of namespaces.
-
-> As far as I can tell merging this will break CRIU and container
-> migration in general (as the namespace of namespaces problem is not
-> solved).
-> 
-> Since you are not solving the problem of a namespace for namespaces,
-> yet implementing something that requires it.
-> 
-> Since you are implementing hierarchy and ignoring the user namespace
-> which gives structure and hierarchy to the namespaces.
+> --- a/include/linux/proc_fs.h~proc-make-the-proc_create-stubs-static-inlines-fix
+> +++ a/include/linux/proc_fs.h
+> @@ -179,12 +179,14 @@ static inline struct proc_dir_entry *pro
+>  #define proc_create_single(name, mode, parent, show) ({NULL;})
+>  #define proc_create_single_data(name, mode, parent, show, data) ({NULL;})
+>  
+> -static inline struct proc_dir_entry *proc_create(
+> -	const char *, umode_t, struct proc_dir_entry *, const struct proc_ops *)
+> +static inline struct proc_dir_entry *
+> +proc_create(const char *name, umode_t mode, struct proc_dir_entry *parent,
+> +	    const struct proc_ops *proc_ops)
+>  { return NULL; }
+>  
+> -static inline struct proc_dir_entry *proc_create_data(
+> -	const char *, umode_t, struct proc_dir_entry *, const struct proc_ops *, void *)
+> +static inline struct proc_dir_entry *
+> +proc_create_data(const char *name, umode_t mode, struct proc_dir_entry *parent,
+> +		 const struct proc_ops *proc_ops, void *data)
+>  { return NULL; }
+>  
+>  static inline void proc_set_size(struct proc_dir_entry *de, loff_t size) {}
+> _
 > 
 
-If we provide a second version of the PoC that includes the use namespace, is this going make you do a second 
-consideration of the idea?
-It is OK if you give us a second "Nacked-by" after this ;-)
-
-Once again, thank you very much for your comments!
-
-Best,
-Yordan
-
-
-> Since this breaks existing use cases without giving a solution.
-> 
-> Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> Eric
-> 
