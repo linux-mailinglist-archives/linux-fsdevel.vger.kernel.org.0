@@ -2,106 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DAD457C62
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Nov 2021 08:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8BA457D44
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Nov 2021 12:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233041AbhKTIBi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Nov 2021 03:01:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39202 "EHLO
+        id S237372AbhKTLbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Nov 2021 06:31:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231248AbhKTIBi (ORCPT
+        with ESMTP id S230324AbhKTLbC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Nov 2021 03:01:38 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E83BC061748
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 23:58:35 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id c32so54331281lfv.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 23:58:35 -0800 (PST)
+        Sat, 20 Nov 2021 06:31:02 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F467C061574;
+        Sat, 20 Nov 2021 03:27:59 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id p18-20020a17090ad31200b001a78bb52876so12921130pju.3;
+        Sat, 20 Nov 2021 03:27:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QDPBsHcfNzrPZpXm7j+tJ6FtAT1aH1QKACsXUwu2lsU=;
-        b=PDIEkVRE4lRmmix6/kxfmiSW4LoI0BO2oI5eeIooXPPBVyf65uczSyS7/ryrSS30TB
-         yxTiLtqZPEhw/QJsG03QilaLw0yxveHy4FdQKSADKfOQeZ+PzgAjKkAAMZ9fTG2X7PHy
-         q3PcsDO1p59bhbLyWub0/L3p8OfhhttrwOAZUm4+ltQQgUTSY9rOrbMNacNSIAxYb07s
-         Pt9fk8i0hGIcYGImn6ufTyobVPEffh3xY4MdR7gl7Eu8nyqzLZKq+TnidX1MqXLynmwH
-         iiRf2LJpIO+G67HLqgqO+zKYKIscIpBouV5K55umtQPZenddR0fPFdAUpe1yoLJuk4WU
-         nAVw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mgmaoQ7WVjX7ocxIMV0FACmVlj4LoHfwU5mj0OexKdM=;
+        b=S4y3JwNRrMAGuMJwsosIe3PcJ6XbMkUHIl9d954eAGt+u+QBFQcKtabuwG91d5g0jl
+         IrZqpSurc/H8YMbS9n/LDTla/KFUN9aX9mVT75HQ5Qa06BJQ5Fb2wAE544GL63b123Ey
+         6/PEmk/PWD18fAIWvNaXduPSG8WPUa+D0QY+rlqnXhr8EGUwJ5oUXPs/9QlGXcv+aXSS
+         3emz8G442htfK6TmiJ1jgPNS68AEnqsD2UnWYg2sgq/H/MeZ1E/A3PR7otTqF9lEa13J
+         wV8AnvYPh99RbLsZTetAkg9ad+hQcTJzbdMcM+QtNSPJXYP6sNdWzlcUqrgjWKk5Wn59
+         XqlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QDPBsHcfNzrPZpXm7j+tJ6FtAT1aH1QKACsXUwu2lsU=;
-        b=tGcPFuLK/KCVOnC0mWa3oXUQNqGALXDbaf5Koywv4a81NxIakMBBdRvQ3AzS9P1ye/
-         fCsphgXsfhvxhmPmKzHGYA/U91x17Cq6hNf1f3WfJwkMrlSCOOcTIO+tOvNyhtIxG5/J
-         dsxpcEdNQUlBDoPJrPdjhzczPC/RkNcBtcLasrLZAXWNzM2f1F2O0AWmfBoHyP3tW82g
-         3iZMD/nBg0gZ8Wy6HFGOXBeW7djOyCxoLIMvMpe55pjrEi8OlZTtn46MRlLamMnGdATf
-         EsKhnyxB6AgzXYrwBruI4cRefw2jC1Y70pRaDGptIDBztDfzwrr3AFkdFq+zqLFK3Fud
-         kOWA==
-X-Gm-Message-State: AOAM532rPBWIBAvqDVbVzBGjdidU+amr0PRjYrsAn/QdF4Q0KDJ/YfJY
-        Ga3oDwX6U0bnhYqTd0guiBjGT/PA0wipQh0uP3799Q==
-X-Google-Smtp-Source: ABdhPJw+OYVb4seahyrAiDFYKQkciHblBbjBsl9XGIXlNspD805fH4RQ2gSTe1cRC2JQc8l1JxWEgxNl8G9bQKbPpYo=
-X-Received: by 2002:a2e:a314:: with SMTP id l20mr34005249lje.86.1637395113126;
- Fri, 19 Nov 2021 23:58:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20211120045011.3074840-1-almasrymina@google.com> <20211120045011.3074840-3-almasrymina@google.com>
-In-Reply-To: <20211120045011.3074840-3-almasrymina@google.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 19 Nov 2021 23:58:21 -0800
-Message-ID: <CALvZod680y1o3WKFKEXmXf3Cd4j-POpc-zrAQ1+ykLoWK9-21A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] mm/oom: handle remote ooms
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Hugh Dickins <hughd@google.com>, Shuah Khan <shuah@kernel.org>,
-        Greg Thelen <gthelen@google.com>,
-        Dave Chinner <david@fromorbit.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mgmaoQ7WVjX7ocxIMV0FACmVlj4LoHfwU5mj0OexKdM=;
+        b=NPr1042hhLFAixHTEeWCF2b5u1kGwbc+Vtj7PddkZ4pl6pyVHYBBKX/uoWbiE77TNR
+         kcpP5257lXmV6Dato2qOu0Ied9dMtA2fRxmHlrUDF7kb/Y2hDx/oF1jNU4GS+i6D/6bd
+         uxEh516RF/FK8tbNZRb7mJkjYzMiIxq7fcDsdwO3ORXEO1+wgbzr+VXWm4q237qM7wZt
+         ToKoEASkg5rENMiHQzz7wfnSa094XFFth0Kxa+4KbkORJ6fi5N7cs7XTNrz8naF1ZuQT
+         V2UDLf/G/hQatgscYec99NPhJw5fxVzFxPuSXaRLdn80+c4tAnc6LdmGukp9QcDTxTf5
+         g+wA==
+X-Gm-Message-State: AOAM5314fpfPPRmMEJolaeGubtrpUTuAQtVWBN2FKcl86cONpgqv1QNS
+        VvSLiDLzkyyyaMIzDlqNgHU=
+X-Google-Smtp-Source: ABdhPJyxGUG4Lf6ezqV5ps6fISVl14knM2EzOSeswUoGLe+KRCige/jJED6Ic8dKukjHNTV2PFTiKA==
+X-Received: by 2002:a17:90a:c398:: with SMTP id h24mr9332156pjt.73.1637407679121;
+        Sat, 20 Nov 2021 03:27:59 -0800 (PST)
+Received: from vultr.guest ([66.42.104.82])
+        by smtp.gmail.com with ESMTPSA id q17sm2835490pfu.117.2021.11.20.03.27.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Nov 2021 03:27:58 -0800 (PST)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        oliver.sang@intel.com, lkp@intel.com,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Roman Gushchin <guro@fb.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        David Hildenbrand <david@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v2 0/7] task comm cleanups 
+Date:   Sat, 20 Nov 2021 11:27:31 +0000
+Message-Id: <20211120112738.45980-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 8:50 PM Mina Almasry <almasrymina@google.com> wrote:
->
-[...]
-> +/*
-> + * Returns true if current's mm is a descendant of the memcg_under_oom (or
-> + * equal to it). False otherwise. This is used by the oom-killer to detect
-> + * ooms due to remote charging.
-> + */
-> +bool is_remote_oom(struct mem_cgroup *memcg_under_oom)
-> +{
-> +       struct mem_cgroup *current_memcg;
-> +       bool is_remote_oom;
-> +
-> +       if (!memcg_under_oom)
-> +               return false;
-> +
-> +       rcu_read_lock();
-> +       current_memcg = mem_cgroup_from_task(current);
-> +       if (current_memcg && !css_tryget_online(&current_memcg->css))
+This patchset is part of the patchset "extend task comm from 16 to 24"[1].
+Now we have different opinion that dynamically allocates memory to store
+kthread's long name into a separate pointer, so I decide to take the useful
+cleanups apart from the original patchset and send it separately[2].
 
-No need to grab a reference. You can call mem_cgroup_is_descendant() within rcu.
+These useful cleanups can make the usage around task comm less
+error-prone. Furthermore, it will be useful if we want to extend task
+comm in the future.
 
-> +               current_memcg = NULL;
-> +       rcu_read_unlock();
-> +
-> +       if (!current_memcg)
-> +               return false;
-> +
-> +       is_remote_oom =
-> +               !mem_cgroup_is_descendant(current_memcg, memcg_under_oom);
-> +       css_put(&current_memcg->css);
-> +
-> +       return is_remote_oom;
-> +}
-> +
+[1]. https://lore.kernel.org/lkml/20211101060419.4682-1-laoar.shao@gmail.com/
+[2]. https://lore.kernel.org/lkml/CALOAHbAx55AUo3bm8ZepZSZnw7A08cvKPdPyNTf=E_tPqmw5hw@mail.gmail.com/
+
+Changes since v1:
+- improve the subject and description
+- add comment to explain the hard-coded 16 in patch #4
+
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Petr Mladek <pmladek@suse.com>
+
+Yafang Shao (7):
+  fs/exec: replace strlcpy with strscpy_pad in __set_task_comm
+  fs/exec: replace strncpy with strscpy_pad in __get_task_comm
+  drivers/infiniband: replace open-coded string copy with get_task_comm
+  fs/binfmt_elf: replace open-coded string copy with get_task_comm
+  samples/bpf/test_overhead_kprobe_kern: replace bpf_probe_read_kernel
+    with bpf_probe_read_kernel_str to get task comm
+  tools/bpf/bpftool/skeleton: replace bpf_probe_read_kernel with
+    bpf_probe_read_kernel_str to get task comm
+  tools/testing/selftests/bpf: replace open-coded 16 with TASK_COMM_LEN
+
+ drivers/infiniband/hw/qib/qib.h                       |  2 +-
+ drivers/infiniband/hw/qib/qib_file_ops.c              |  2 +-
+ fs/binfmt_elf.c                                       |  2 +-
+ fs/exec.c                                             |  5 +++--
+ include/linux/elfcore-compat.h                        |  5 +++++
+ include/linux/elfcore.h                               |  5 +++++
+ include/linux/sched.h                                 |  9 +++++++--
+ samples/bpf/offwaketime_kern.c                        |  4 ++--
+ samples/bpf/test_overhead_kprobe_kern.c               | 11 ++++++-----
+ samples/bpf/test_overhead_tp_kern.c                   |  5 +++--
+ tools/bpf/bpftool/skeleton/pid_iter.bpf.c             |  4 ++--
+ .../testing/selftests/bpf/progs/test_stacktrace_map.c |  6 +++---
+ tools/testing/selftests/bpf/progs/test_tracepoint.c   |  6 +++---
+ 13 files changed, 42 insertions(+), 24 deletions(-)
+
+-- 
+2.17.1
+
