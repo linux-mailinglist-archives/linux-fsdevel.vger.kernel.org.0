@@ -2,67 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3AE3457BE4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Nov 2021 06:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ADE1457C59
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Nov 2021 08:54:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232401AbhKTFet (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Nov 2021 00:34:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35760 "EHLO
+        id S230319AbhKTH5D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Nov 2021 02:57:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231586AbhKTFet (ORCPT
+        with ESMTP id S229799AbhKTH5C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Nov 2021 00:34:49 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D4BC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 21:31:46 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id m9so15615140iop.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 21:31:46 -0800 (PST)
+        Sat, 20 Nov 2021 02:57:02 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1703BC06173E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 23:53:57 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id k37so54413020lfv.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 23:53:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vnmw4S1Oo24l/mBbjqvIPUjrCN4SWt+nkM7iPySscsw=;
-        b=Is6GD84hBb9QY3j8VzxArUzIWg27YUxT7W2u8JsLG3BXkUJFEhtGH+/3LaqHJ5lj/u
-         JzOdhu6c+qD1Xp46nfqUBMqM5YcXolH3Cm0gWBAhTvrL0U9Sok39SsnwM/M2fwM+giyC
-         b2mttp9GnYCE5IXirYkv7ApZasb6lnRTh/4SvBkwmuuRhjox12DYv/wiXsJzFyxaUtGk
-         uFkheaWF/Y6auNhbt4lN5qsa4bH56/C5qdfXXV9rqxo89VHFtgoxWLBWBqz2HwwYGX43
-         ZM+LFt1omvXDOHm9TfIFtQhEIiZpdGzRiDJ/sbcSz0UqKLsNZpP+biDAuPXg8bW6HMzh
-         5O2w==
+        bh=ZwaFrItd0GqJ8n5YLBu2RWS98JzEweGxq8C32OjIx+k=;
+        b=lD9/QU0GRm+RNNP8QcUlmNyYRKGkI1r73n2q+6beNMwspKDXBurqPeeyoBpteUnebW
+         u4MoNlnn2blmhzoMsZyklRTODkARr92mhox55I1fReVD1QRBbfeaTN+rvnDZ/DZOQnsu
+         VdkkW8ZB6ZkFcFwQiwB1fgJ0t7ySykCQqqgj9FekHsJ+Md2smWEL2dlqfZxyDfgZjMjz
+         RXZTCblf/ETYedXvV39ZEcW9ySGUuUjTH+b8/cLC6ceFfx1kMaERA+ydo55ED9hD4j0W
+         5EMx561TGUalhlBre7dZyI/hau8D4wHurPvE9SipfurJEP0rGpL/2GOFKuHteC3SQAVY
+         V0SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vnmw4S1Oo24l/mBbjqvIPUjrCN4SWt+nkM7iPySscsw=;
-        b=zm+JB6ooWLjpP0xPG3s7MhI2gEqz4uIMSqJ9WBVbIot5ViN/QHaK3hEbRelGNKAmPK
-         xZIubJ4dehaG512oPbi4TZFEs9xefxKF8Qdh5aVtHK3M/P1jw8JcxDDasl1kX36bSPdN
-         o/vQh8ka9CCPMmuI3TW7BuUVLkjmSfeejstG+T5CMlCyDegdaQoXRhF6y3oGsDSfNFcV
-         vQNVNuyqHp3hNGPjAQOm4v6/EFXGYuPSTwLTW7MKjL3yuULQ0JeCX71U19mpNlFYB0vd
-         W9MxaSCCxsEBhHVqkDR8K50K4Jjo34ScLEmA91fZW6MRj6nSWmmnk4ugG8wjeK7/srLN
-         9Zzw==
-X-Gm-Message-State: AOAM531rmIKZ03AV3ccy47eADBh6rYMY8Dvse1WgDqxiB7y3vxLo18IX
-        r4J2Tl7r0zSlP9ppdZGT0w56kkC4M6ZKl/BM2BU5Eg==
-X-Google-Smtp-Source: ABdhPJxBhvbOju0exRZ4gxIwv3a9pAvTn8srl8n5iLbXQAIxlrh8tvJvvtpWyzDjocNGmv1/aE1w6IUOj7TJiV6KpFE=
-X-Received: by 2002:a05:6638:4183:: with SMTP id az3mr33251237jab.56.1637386305661;
- Fri, 19 Nov 2021 21:31:45 -0800 (PST)
+        bh=ZwaFrItd0GqJ8n5YLBu2RWS98JzEweGxq8C32OjIx+k=;
+        b=a7f4onShZRj+XMBa7X6rn2NJnA31qYI8XTy5KVcuJzF7xK2c7XG2Y0D0C1eHJ5PTD7
+         sskvGP65CVgP3YNJ2ORARTxORvCrnN4HxOU6C/9Q7CZOspDzVasRAZP62UPdiWD+xV5a
+         18mGwOAC0PKxWCS2N6Dj4UQ64Tm6O9Bpoa6yvu32Ww+8M5s6DIP4D3becJ/LXOpC10R/
+         Fp5ZQrK9yCNsvePzbN77MHhCp9dbiMvhwrNlzLfVALm+xYQfIBipMOr++2xQLnTu8h5Z
+         A65d1vQ6CaaQv2P9FaNmBd//YzB29BJ+1y4y0ae8mYqL1zdpLD8rJH2cAzL0/w36Snbl
+         bIYA==
+X-Gm-Message-State: AOAM530+LwHHcLDGwdebA9jdghpyo4LAQ1aK1POEVngnoOHMr0rTH21v
+        hms3NzqXCVBe1UrFNtP1uSI5S61Uz91Gs7CDUSoZkQ==
+X-Google-Smtp-Source: ABdhPJwG8Y4LMabzkjP+uuwBNoerM5nlNrQdh6yQLOQ7+iGBwWpYMz7tUNyef4sT0fe3je9Llv/MLkzghbAt/MueFgk=
+X-Received: by 2002:a2e:bc1b:: with SMTP id b27mr33705963ljf.91.1637394835107;
+ Fri, 19 Nov 2021 23:53:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20211120045011.3074840-1-almasrymina@google.com>
- <20211120045011.3074840-3-almasrymina@google.com> <YZiCgrTzcl/QQC+N@casper.infradead.org>
-In-Reply-To: <YZiCgrTzcl/QQC+N@casper.infradead.org>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Fri, 19 Nov 2021 21:31:34 -0800
-Message-ID: <CAHS8izNJ7-7EKsfFancHw3iNJzBWdHT_GwcJUaMU1_2LQMwX9g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] mm/oom: handle remote ooms
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+References: <20211120045011.3074840-1-almasrymina@google.com> <20211120045011.3074840-2-almasrymina@google.com>
+In-Reply-To: <20211120045011.3074840-2-almasrymina@google.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Fri, 19 Nov 2021 23:53:43 -0800
+Message-ID: <CALvZod7dFi=yL3nPLJ4XkFR+2qXaOVd9RSX_fpmacUiQdSvo4Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] mm: support deterministic memory charging of filesystems
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
         Michal Hocko <mhocko@kernel.org>,
         Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Hugh Dickins <hughd@google.com>, Shuah Khan <shuah@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
         Greg Thelen <gthelen@google.com>,
         Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Roman Gushchin <guro@fb.com>, "Theodore Ts'o" <tytso@mit.edu>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, cgroups@vger.kernel.org
@@ -71,31 +71,196 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 9:07 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, Nov 19, 2021 at 8:50 PM Mina Almasry <almasrymina@google.com> wrote:
 >
-> On Fri, Nov 19, 2021 at 08:50:08PM -0800, Mina Almasry wrote:
-> > On remote ooms (OOMs due to remote charging), the oom-killer will attempt
-> > to find a task to kill in the memcg under oom. The oom-killer may be
-> > unable to find a process to kill if there are no killable processes in
-> > the remote memcg. In this case, the oom-killer (out_of_memory()) will return
-> > false, and depending on the gfp, that will generally get bubbled up to
-> > mem_cgroup_charge_mapping() as an ENOMEM.
->
-> Why doesn't it try to run the shrinkers to get back some page cache /
-> slab cache memory from this memcg?  I understand it might not be able
-> to (eg if the memory is mlocked), but surely that's rare.
->
+> Users can specify a memcg= mount option option at mount time and all
 
-Please correct me if I'm wrong, but AFAICT I haven't disabled any
-shrinkers from running or disabled any reclaim mechanism on remote
-charges. What I see in the code is that when the remote memcg runs out
-of memory is that try_to_free_mem_cgroup_pages() gets called as normal
-and we do the MAX_RECLAIM_RETRIES as normal.
+*option
 
-It's only in the (rare as you point out) case where the kernel is
-completely unable to find memory in the remote memcg that we need to
-do the special handling that's described in this patch. Although this
-situation is probably quite rare in real-world scenarios, it's easily
-reproducible (and the attached test in the series does so), so my
-feeling is that it needs some sane handling, which I'm attempting to
-do in this patch.
+> data page charges will be charged to the memcg supplied.  This is useful
+> to deterministicly charge the memory of the file system or memory shared
+
+*deterministically
+
+> via tmpfs for example.
+>
+> Implementation notes:
+> - Add memcg= option parsing to fs common code.
+> - We attach the memcg to charge for this filesystem data pages to the
+>   struct super_block. The memcg can be changed via a remount operation,
+>   and all future memcg charges in this filesystem will be charged to
+>   the new memcg.
+> - We create a new interface mem_cgroup_charge_mapping(), which will
+>   check if the super_block in the mapping has a memcg to charge. It
+>   charges that, and falls back to the mm passed if there is no
+>   super_block memcg.
+> - On filesystem data memory allocation paths, we call the new interface
+>   mem_cgroup_charge_mapping().
+>
+> Caveats:
+> - Processes are only allowed to direct filesystem charges to a cgroup that
+
+I don't think 'Processes' is the right terminology here. The
+admin/user doing the mount operation with memcg option should have
+access to move processes into the target memcg.
+
+>   they themselves can enter and allocate memory in. This so that we do not
+>   introduce an attack vector where processes can DoS any cgroup in the
+>   system that they are not normally allowed to enter and allocate memory in.
+> - In mem_cgroup_charge_mapping() we pay the cost of checking whether the
+>   super_block has a memcg to charge, regardless of whether the mount
+>   point was mounted with memcg=. This can be alleviated by putting the
+>   memcg to charge in the struct address_space, but, this increases the
+>   size of that struct and makes it difficult to support remounting the
+>   memcg= option, although remounting is of dubious value.
+
+We can start simple with no remount option or maybe follow the memcg
+v2 semantics of process migrating from one memcg to another. The older
+memory of the process will remain charged to the older memcg and after
+migration, the new memory will be charged to the newer memcg.
+
+Similarly the older inode/mappings will still be linked to the older
+memcg and after remount the newer mappings will be linked with newer
+memcg. You would need to find out if each mapping should hold a memcg
+reference.
+
+[...]
+>
+> +static int parse_param_memcg(struct fs_context *fc, struct fs_parameter *param)
+> +{
+> +       struct mem_cgroup *memcg;
+> +
+> +       if (strcmp(param->key, "memcg") != 0)
+> +               return -ENOPARAM;
+> +
+> +       if (param->type != fs_value_is_string)
+> +               return invalf(fc, "Non-string source");
+> +
+> +       if (fc->memcg)
+> +               return invalf(fc, "Multiple memcgs specified");
+> +
+> +       memcg = mem_cgroup_get_from_path(param->string);
+
+You need to drop this reference in put_fs_context() and give the
+super_block its own memcg reference.
+
+> +       if (IS_ERR(memcg))
+> +               return invalf(fc, "Bad value for memcg");
+> +
+> +       fc->memcg = memcg;
+> +       param->string = NULL;
+> +       return 0;
+> +}
+> +
+>  /**
+>   * vfs_parse_fs_param - Add a single parameter to a superblock config
+>   * @fc: The filesystem context to modify
+> @@ -148,6 +171,10 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+>                         return ret;
+>         }
+>
+> +       ret = parse_param_memcg(fc, param);
+
+You might need to call this before fs specific handling (i.e.
+fc->ops->parse_param).
+
+> +       if (ret != -ENOPARAM)
+> +               return ret;
+> +
+>         /* If the filesystem doesn't take any arguments, give it the
+>          * default handling of source.
+>          */
+
+[...]
+
+> +
+> +void mem_cgroup_put_name_in_seq(struct seq_file *m, struct super_block *sb)
+> +{
+> +       struct mem_cgroup *memcg;
+> +       int ret = 0;
+> +       char *buf = __getname();
+> +       int len = PATH_MAX;
+> +
+> +       if (!buf)
+> +               return;
+> +
+> +       buf[0] = '\0';
+> +
+> +       rcu_read_lock();
+> +       memcg = rcu_dereference(sb->s_memcg_to_charge);
+> +       if (memcg && !css_tryget_online(&memcg->css))
+
+No need to get an explicit reference. You can call cgroup_path within rcu.
+
+> +               memcg = NULL;
+> +       rcu_read_unlock();
+> +
+> +       if (!memcg)
+> +               return;
+> +
+> +       ret = cgroup_path(memcg->css.cgroup, buf + len / 2, len / 2);
+> +       if (ret >= len / 2)
+> +               strcpy(buf, "?");
+> +       else {
+> +               char *p = mangle_path(buf, buf + len / 2, " \t\n\\");
+> +
+> +               if (p)
+> +                       *p = '\0';
+> +               else
+> +                       strcpy(buf, "?");
+> +       }
+> +
+> +       css_put(&memcg->css);
+> +       if (buf[0] != '\0')
+> +               seq_printf(m, ",memcg=%s", buf);
+> +
+> +       __putname(buf);
+> +}
+> +
+> +/*
+> + * Set or clear (if @memcg is NULL) charge association from file system to
+> + * memcg.  If @memcg != NULL, then a css reference must be held by the caller to
+> + * ensure that the cgroup is not deleted during this operation, this reference
+> + * is dropped after this operation.
+
+The given reference is not really dropped after this operation but
+rather the reference is being stolen here.
+
+> + */
+> +void mem_cgroup_set_charge_target(struct super_block *sb,
+> +                                 struct mem_cgroup *memcg)
+> +{
+> +       memcg = xchg(&sb->s_memcg_to_charge, memcg);
+
+Don't borrow the reference, get a new one for sb.
+
+> +       if (memcg)
+> +               css_put(&memcg->css);
+> +}
+> +
+> +/*
+> + * Returns the memcg to charge for inode pages.  If non-NULL is returned, caller
+> + * must drop reference with css_put().  NULL indicates that the inode does not
+> + * have a memcg to charge,
+
+* or the attached memcg is offline.
+
+> so the default process based policy should be used.
+> + */
+> +static struct mem_cgroup *
+> +mem_cgroup_mapping_get_charge_target(struct address_space *mapping)
+> +{
+> +       struct mem_cgroup *memcg;
+> +
+> +       if (!mapping)
+> +               return NULL;
+> +
+> +       rcu_read_lock();
+> +       memcg = rcu_dereference(mapping->host->i_sb->s_memcg_to_charge);
+> +       if (memcg && !css_tryget_online(&memcg->css))
+> +               memcg = NULL;
+> +       rcu_read_unlock();
+> +
+> +       return memcg;
+> +}
+> +
