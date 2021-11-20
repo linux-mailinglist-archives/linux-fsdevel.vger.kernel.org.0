@@ -2,221 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4E2457A82
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Nov 2021 02:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D3BA457B5B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Nov 2021 05:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236172AbhKTB6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Nov 2021 20:58:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44880 "EHLO
+        id S236841AbhKTExh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Nov 2021 23:53:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235856AbhKTB6f (ORCPT
+        with ESMTP id S235688AbhKTExQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Nov 2021 20:58:35 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F925C061574;
-        Fri, 19 Nov 2021 17:55:33 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id 200so10090969pga.1;
-        Fri, 19 Nov 2021 17:55:33 -0800 (PST)
+        Fri, 19 Nov 2021 23:53:16 -0500
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F1BC061756
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 20:50:14 -0800 (PST)
+Received: by mail-pl1-x649.google.com with SMTP id p24-20020a170902a41800b001438d6c7d71so5719440plq.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Nov 2021 20:50:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=17p5myYhxd1DhZxcAj8FE6tGw2XX7477rU/2jCULHIY=;
-        b=ZaSY/6WDh36yTnPO3funThb8FwveZMT1wex7pJVnn+fZUBC1p9v0eYH/dLMcaB9HXN
-         MF3+NE6ZVSK5hvPAoxzMspYsPJ2/t7RaoPXTPsvrWt1VPXyg5Ydz2GjI4oBEy7/Yqy7v
-         HYQy9OCN4y2ylWkNEWFbXnJk5rad8Lbi2qLJVDzMlyowodFGSanwfsdvKMwc58d8p8ti
-         lBcnLahb0sluOe9H0N/Y2EvQCJY/znuguPHpkNygQujYswQ8EwCxe3PZfzmen+S0jRQj
-         p1KmZszVCG8Z+8Pi76caVM4IZW79xuweOrGg1QQ+HMA4uk2m9TY4cdOQr/zSFw1EvS6+
-         09zQ==
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:cc
+         :content-transfer-encoding;
+        bh=GBPQGTJqAilqh8R2ionmFa146IW13gdDGdP75NfAh5o=;
+        b=AI76jn8x9yBui/uf8c/CHqDoXt1YKDeQ3ejTzNhwVx3AYVrNJuNAhhKytb8tZenR1n
+         kUouCLsIlq7x5otTGqJnCHWF+Bw9Wnlc9CKS1HE7EUVcypMvli7CFtv1SEGENs8iWbx1
+         GYgkP8NgeT/ki8yAgKEqpdvlyUHUpAWFNsr51QSQc0EV+rtO/p+tb6SVFEMBpqwM9RqS
+         hPOvveOj4yYZa6bKsotdfFz5nej3riOk6ORe20UjZEPf+7WRmHCmH0i4pmdnMUc1YcW0
+         MHwiT5YAKb8IK5q8XZBxW7Rc5omvgZ9ArCrtvNm4eyxZ5lydv+aw/A+beKp73P5RVTo0
+         VvNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=17p5myYhxd1DhZxcAj8FE6tGw2XX7477rU/2jCULHIY=;
-        b=Q1ZWfaON2++xBlmmHgYfcgQ6ZvKN5lGtjc0IFfxCMCFTVmbML9nt6nWHkAV+6NpRcS
-         p4iHYbh4xhTaiyT9k1t2MqTq3IF/WUve0NX7XQTTksjNQJCpAuVZssRhKfOVICjI4Efo
-         q9l3EnbyDgMxi1Sz+i0VOJnUJWO37ouMppKYTt8F8hPVvCwQKm9C7B7Z+qiqR4zVipn2
-         LmLQVxGrDAjO7zSAhYcEx5TssAmZoA57azNZOVP436R66x9y3N0PTVJYaObyAz+TyTln
-         InEYZarup/+AS7KTWTz16Khfp+h/mWaBKR7zx2KMk3ysXtpbiIW+D+j2p0056znPLoGH
-         7vmg==
-X-Gm-Message-State: AOAM532iOjovnnxBI4MuRqEpYYWjoM8oSb361hAMobkkzvlLFMswFA91
-        5T+6qyaYbqnpxuJ5W1Oq5XA=
-X-Google-Smtp-Source: ABdhPJxqfGSAOl+n1hw3lcxU/J2v5Bgk2T0qOLxz/60dcuVIoDGE4CcngM8bedIUT1nnDOyJlWJAjw==
-X-Received: by 2002:a62:2503:0:b0:4a2:b772:25ac with SMTP id l3-20020a622503000000b004a2b77225acmr43341008pfl.53.1637373332481;
-        Fri, 19 Nov 2021 17:55:32 -0800 (PST)
-Received: from localhost (176.222.229.35.bc.googleusercontent.com. [35.229.222.176])
-        by smtp.gmail.com with ESMTPSA id x64sm845844pfd.151.2021.11.19.17.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Nov 2021 17:55:31 -0800 (PST)
-Date:   Sat, 20 Nov 2021 09:55:29 +0800
-From:   Yao Yuan <yaoyuan0329os@gmail.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc
+         :content-transfer-encoding;
+        bh=GBPQGTJqAilqh8R2ionmFa146IW13gdDGdP75NfAh5o=;
+        b=wdBMI91dCJjWGjcNhWUyDuSrk7ODoSkaTcjPL4oyToLt0HhePovChjAJ3i7JxF6RGM
+         Ho7uBaJ7aeMEKG4v0m3G/UspdAbi9XxDYGpjYJFLBK5Eatv5635xIfXySgOdGPcEnrhZ
+         S266VmMkD9Y+t0/rpcJJcFK13ebshQgISnhsH/Fvw92lseLNGerelP/bYAgl28UyMKgy
+         4KJjv2muhoRA7KeXx999V+Ycx+Z4Ivvv5W5obMiqgFWu7LIepDLbpIJWIl7kwUGte4QK
+         oycRBFiLMUDa+yFLlepviH7LGS+LGNNTWEQVTaq/MPA8d7AEq/2KVDuF3J3OZ6cFzTvS
+         iMUQ==
+X-Gm-Message-State: AOAM532d8vKkw2goSartLqcO5PxBVD1ECp9Ysi60y/deppRd+/RCVvta
+        LRK6uzkWtEHKLi8wtjBvxcVQvy1pIwTLPzZgHw==
+X-Google-Smtp-Source: ABdhPJwrO0XgJB6QQxq1EPt6/q2hs1MEyfssdTw0iP25RRfThEqdaTu1q3184prBGMof/2GyU5urMyNqZ+9MO3zZVw==
+X-Received: from almasrymina.svl.corp.google.com ([2620:15c:2cd:202:fa91:560a:d7b4:93])
+ (user=almasrymina job=sendgmr) by 2002:a17:90b:1c86:: with SMTP id
+ oo6mr6684834pjb.165.1637383813809; Fri, 19 Nov 2021 20:50:13 -0800 (PST)
+Date:   Fri, 19 Nov 2021 20:50:06 -0800
+Message-Id: <20211120045011.3074840-1-almasrymina@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.34.0.rc2.393.gf8c9666880-goog
+Subject: [PATCH v4 0/4] Deterministic charging of shared memory
+From:   Mina Almasry <almasrymina@google.com>
+Cc:     Mina Almasry <almasrymina@google.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [RFC v2 PATCH 07/13] KVM: Handle page fault for fd based memslot
-Message-ID: <20211120015529.w23fg2df3fqs4ov5@sapienza>
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-8-chao.p.peng@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211119134739.20218-8-chao.p.peng@linux.intel.com>
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Hugh Dickins <hughd@google.com>, Shuah Khan <shuah@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Roman Gushchin <guro@fb.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 09:47:33PM +0800, Chao Peng wrote:
-> Current code assume the private memory is persistent and KVM can check
-> with backing store to see if private memory exists at the same address
-> by calling get_pfn(alloc=false).
->
-> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 75 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 73 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 40377901598b..cd5d1f923694 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -3277,6 +3277,9 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
->  	if (max_level == PG_LEVEL_4K)
->  		return PG_LEVEL_4K;
->
-> +	if (memslot_is_memfd(slot))
-> +		return max_level;
-> +
->  	host_level = host_pfn_mapping_level(kvm, gfn, pfn, slot);
->  	return min(host_level, max_level);
->  }
-> @@ -4555,6 +4558,65 @@ static bool kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->  				  kvm_vcpu_gfn_to_hva(vcpu, gfn), &arch);
->  }
->
-> +static bool kvm_faultin_pfn_memfd(struct kvm_vcpu *vcpu,
-> +				  struct kvm_page_fault *fault, int *r)
-> +{	int order;
-> +	kvm_pfn_t pfn;
-> +	struct kvm_memory_slot *slot = fault->slot;
-> +	bool priv_gfn = kvm_vcpu_is_private_gfn(vcpu, fault->addr >> PAGE_SHIFT);
-> +	bool priv_slot_exists = memslot_has_private(slot);
-> +	bool priv_gfn_exists = false;
-> +	int mem_convert_type;
-> +
-> +	if (priv_gfn && !priv_slot_exists) {
-> +		*r = RET_PF_INVALID;
-> +		return true;
-> +	}
-> +
-> +	if (priv_slot_exists) {
-> +		pfn = slot->memfd_ops->get_pfn(slot, slot->priv_file,
-> +					       fault->gfn, false, &order);
-> +		if (pfn >= 0)
-> +			priv_gfn_exists = true;
+Problem:
+Currently shared memory is charged to the memcg of the allocating
+process. This makes memory usage of processes accessing shared memory
+a bit unpredictable since whichever process accesses the memory first
+will get charged. We have a number of use cases where our userspace
+would like deterministic charging of shared memory:
 
-Need "fault->pfn = pfn" here if actual pfn is returned in
-get_pfn(alloc=false) case for private page case.
+1. System services allocating memory for client jobs:
+We have services (namely a network access service[1]) that provide
+functionality for clients running on the machine and allocate memory
+to carry out these services. The memory usage of these services
+depends on the number of jobs running on the machine and the nature of
+the requests made to the service, which makes the memory usage of
+these services hard to predict and thus hard to limit via memory.max.
+These system services would like a way to allocate memory and instruct
+the kernel to charge this memory to the client=E2=80=99s memcg.
 
-> +	}
-> +
-> +	if (priv_gfn && !priv_gfn_exists) {
-> +		mem_convert_type = KVM_EXIT_MEM_MAP_PRIVATE;
-> +		goto out_convert;
-> +	}
-> +
-> +	if (!priv_gfn && priv_gfn_exists) {
-> +		slot->memfd_ops->put_pfn(pfn);
-> +		mem_convert_type = KVM_EXIT_MEM_MAP_SHARED;
-> +		goto out_convert;
-> +	}
-> +
-> +	if (!priv_gfn) {
-> +		pfn = slot->memfd_ops->get_pfn(slot, slot->file,
-> +					       fault->gfn, true, &order);
+2. Shared filesystem between subtasks of a large job
+Our infrastructure has large meta jobs such as kubernetes which spawn
+multiple subtasks which share a tmpfs mount. These jobs and its
+subtasks use that tmpfs mount for various purposes such as data
+sharing or persistent data between the subtask restarts. In kubernetes
+terminology, the meta job is similar to pods and subtasks are
+containers under pods. We want the shared memory to be
+deterministically charged to the kubernetes's pod and independent to
+the lifetime of containers under the pod.
 
-Need "fault->pfn = pfn" here, because he pfn for
-share page is getted here only.
+3. Shared libraries and language runtimes shared between independent jobs.
+We=E2=80=99d like to optimize memory usage on the machine by sharing librar=
+ies
+and language runtimes of many of the processes running on our machines
+in separate memcgs. This produces a side effect that one job may be
+unlucky to be the first to access many of the libraries and may get
+oom killed as all the cached files get charged to it.
 
-> +		if (fault->pfn < 0) {
-> +			*r = RET_PF_INVALID;
-> +			return true;
-> +		}
-> +	}
-> +
-> +	if (slot->flags & KVM_MEM_READONLY)
-> +		fault->map_writable = false;
-> +	if (order == 0)
-> +		fault->max_level = PG_LEVEL_4K;
-> +
-> +	return false;
-> +
-> +out_convert:
-> +	vcpu->run->exit_reason = KVM_EXIT_MEMORY_ERROR;
-> +	vcpu->run->mem.type = mem_convert_type;
-> +	vcpu->run->mem.u.map.gpa = fault->gfn << PAGE_SHIFT;
-> +	vcpu->run->mem.u.map.size = PAGE_SIZE;
-> +	fault->pfn = -1;
-> +	*r = -1;
-> +	return true;
-> +}
-> +
->  static bool kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault, int *r)
->  {
->  	struct kvm_memory_slot *slot = fault->slot;
-> @@ -4596,6 +4658,9 @@ static bool kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
->  		}
->  	}
->
-> +	if (memslot_is_memfd(slot))
-> +		return kvm_faultin_pfn_memfd(vcpu, fault, r);
-> +
->  	async = false;
->  	fault->pfn = __gfn_to_pfn_memslot(slot, fault->gfn, false, &async,
->  					  fault->write, &fault->map_writable,
-> @@ -4660,7 +4725,8 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
->  	else
->  		write_lock(&vcpu->kvm->mmu_lock);
->
-> -	if (fault->slot && mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva))
-> +	if (fault->slot && !memslot_is_memfd(fault->slot) &&
-> +			mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva))
->  		goto out_unlock;
->  	r = make_mmu_pages_available(vcpu);
->  	if (r)
-> @@ -4676,7 +4742,12 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
->  		read_unlock(&vcpu->kvm->mmu_lock);
->  	else
->  		write_unlock(&vcpu->kvm->mmu_lock);
-> -	kvm_release_pfn_clean(fault->pfn);
-> +
-> +	if (memslot_is_memfd(fault->slot))
-> +		fault->slot->memfd_ops->put_pfn(fault->pfn);
-> +	else
-> +		kvm_release_pfn_clean(fault->pfn);
-> +
->  	return r;
->  }
->
-> --
-> 2.17.1
->
+Design:
+My rough proposal to solve this problem is to simply add a
+=E2=80=98memcg=3D/path/to/memcg=E2=80=99 mount option for filesystems:
+directing all the memory of the file system to be =E2=80=98remote charged=
+=E2=80=99 to
+cgroup provided by that memcg=3D option.
+
+Caveats:
+
+1. One complication to address is the behavior when the target memcg
+hits its memory.max limit because of remote charging. In this case the
+oom-killer will be invoked, but the oom-killer may not find anything
+to kill in the target memcg being charged. Thera are a number of considerat=
+ions
+in this case:
+
+1. It's not great to kill the allocating process since the allocating proce=
+ss
+   is not running in the memcg under oom, and killing it will not free memo=
+ry
+   in the memcg under oom.
+2. Pagefaults may hit the memcg limit, and we need to handle the pagefault
+   somehow. If not, the process will forever loop the pagefault in the upst=
+ream
+   kernel.
+
+In this case, I propose simply failing the remote charge and returning an E=
+NOSPC
+to the caller. This will cause will cause the process executing the remote
+charge to get an ENOSPC in non-pagefault paths, and get a SIGBUS on the pag=
+efault
+path.  This will be documented behavior of remote charging, and this featur=
+e is
+opt-in. Users can:
+- Not opt-into the feature if they want.
+- Opt-into the feature and accept the risk of received ENOSPC or SIGBUS and
+  abort if they desire.
+- Gracefully handle any resulting ENOSPC or SIGBUS errors and continue thei=
+r
+  operation without executing the remote charge if possible.
+
+2. Only processes allowed the enter cgroup at mount time can mount a
+tmpfs with memcg=3D<cgroup>. This is to prevent intential DoS of random cgr=
+oups
+on the machine. However, once a filesysetem is mounted with memcg=3D<cgroup=
+>, any
+process with write access to this mount point will be able to charge memory=
+ to
+<cgroup>. This is largely a non-issue because in configurations where there=
+ is
+untrusted code running on the machine, mount point access needs to be
+restricted to the intended users only regardless of whether the mount point
+memory is deterministly charged or not.
+
+[1] https://research.google/pubs/pub48630
+
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Greg Thelen <gthelen@google.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+
+Mina Almasry (4):
+  mm: support deterministic memory charging of filesystems
+  mm/oom: handle remote ooms
+  mm, shmem: add filesystem memcg=3D option documentation
+  mm, shmem, selftests: add tmpfs memcg=3D mount option tests
+
+ Documentation/filesystems/tmpfs.rst       |  28 ++++
+ fs/fs_context.c                           |  27 ++++
+ fs/proc_namespace.c                       |   4 +
+ fs/super.c                                |   9 ++
+ include/linux/fs.h                        |   5 +
+ include/linux/fs_context.h                |   2 +
+ include/linux/memcontrol.h                |  38 +++++
+ mm/filemap.c                              |   2 +-
+ mm/khugepaged.c                           |   3 +-
+ mm/memcontrol.c                           | 171 ++++++++++++++++++++++
+ mm/oom_kill.c                             |   9 ++
+ mm/shmem.c                                |   3 +-
+ tools/testing/selftests/vm/.gitignore     |   1 +
+ tools/testing/selftests/vm/mmap_write.c   | 103 +++++++++++++
+ tools/testing/selftests/vm/tmpfs-memcg.sh | 116 +++++++++++++++
+ 15 files changed, 518 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/vm/mmap_write.c
+ create mode 100755 tools/testing/selftests/vm/tmpfs-memcg.sh
+
+--
+2.34.0.rc2.393.gf8c9666880-goog
