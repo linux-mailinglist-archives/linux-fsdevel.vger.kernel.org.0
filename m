@@ -2,194 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B3F645833A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Nov 2021 13:12:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D2845856B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Nov 2021 18:25:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237957AbhKUMPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Nov 2021 07:15:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37168 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235783AbhKUMPn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Nov 2021 07:15:43 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13226C061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 04:12:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=ouYiQ9fnPFu7NekPPdm7DFBi+ugK3ZRRR9rHUiq0t4k=; b=fXIE7e4hsOcVU/pG1gGnX7PW3F
-        yANf8yBK3y9rtbu5JLWuhg/w+i1F3OjkJOhb29AVb6ov7JDNsfhkIYFRude51+jjkCyzQEqOzNIbN
-        UlyXL+4BVqtLztNs1ZhLMTY6IXXT8LLWLyVuV/IQN0PifaSe6zcVtB1AQfMOe2wun7E0xhCU4YIu4
-        HhGGfc0z39yaWyQFOfIIYcUx1iVyfPpEoBLahfyfN3nLdKLEpjmU7g9nV08QLDlnRhtKNyJForz+W
-        CNpTg/k+YzuQ40spr1nzPB2+T3g7r3uryOH8QaoUeEzgrVyXL4P2fPT7xLgGDr+ZAdhbVbrce45sv
-        AogJ6fWw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1molhx-00C2fn-Em; Sun, 21 Nov 2021 12:12:33 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] mm,fs: Split dump_mapping() out from dump_page()
-Date:   Sun, 21 Nov 2021 12:10:56 +0000
-Message-Id: <20211121121056.2870061-1-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
+        id S238494AbhKUR2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Nov 2021 12:28:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238338AbhKUR2I (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 21 Nov 2021 12:28:08 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 29EEC60230;
+        Sun, 21 Nov 2021 17:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637515503;
+        bh=aiJq05jytq7//TsGyG6sMDwMz+aZHqTBKT1ARxUR17k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=f8epykOM4dDb/QXcWqNNwT0zBZ6ONCkdWq2YHJkdSS4OOJbMBuwkSLa2AIss3K3vV
+         /Kpv3/NsCm4SFmzDIptCB2GWr9/DF/yA37CxjRer2Q7LCuVAKbeQ9DkCh/iChanF1F
+         upLLCljJrPbVh582PkB6eHuBYjC+E5FvrVk4ZlYg4z+dadUBA4pdgEHIAlpNHC0cES
+         CGb1GSMeAuQ3ErLZTUNLcL8NHIijSK74Gj+ERqdNkS/nFqe0wrajX/bJ2oJjQfOdEJ
+         NCEZ3Vz4BPutnqXe7lF3ftl8+RJ5ZKbjnCo3YDFG3C6PIocFjDd1ryu4b0gTsQIv8p
+         lAkARzibKDYYQ==
+Date:   Mon, 22 Nov 2021 01:24:56 +0800
+From:   Gao Xiang <xiang@kernel.org>
+To:     linux-erofs@lists.ozlabs.org
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: [ANNOUNCE] erofs-utils: release 1.4
+Message-ID: <20211121172455.GA8626@hsiangkao-HP-ZHAN-66-Pro-G1>
+Mail-Followup-To: linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-dump_mapping() is a big chunk of dump_page(), and it'd be handy to be
-able to call it when we don't have a struct page.  Split it out and move
-it to fs/inode.c.  Take the opportunity to simplify some of the debug
-messages a little.
+Hi folks,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/inode.c         | 49 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- mm/debug.c         | 52 ++--------------------------------------------
- 3 files changed, 52 insertions(+), 50 deletions(-)
+A new version erofs-utils 1.4 is available at:
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git tags/v1.4
 
-diff --git a/fs/inode.c b/fs/inode.c
-index bdfbd5962f2b..67758b2b702f 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -522,6 +522,55 @@ void __remove_inode_hash(struct inode *inode)
- }
- EXPORT_SYMBOL(__remove_inode_hash);
- 
-+void dump_mapping(const struct address_space *mapping)
-+{
-+	struct inode *host;
-+	const struct address_space_operations *a_ops;
-+	struct hlist_node *dentry_first;
-+	struct dentry *dentry_ptr;
-+	struct dentry dentry;
-+	unsigned long ino;
-+
-+	/*
-+	 * If mapping is an invalid pointer, we don't want to crash
-+	 * accessing it, so probe everything depending on it carefully.
-+	 */
-+	if (get_kernel_nofault(host, &mapping->host) ||
-+	    get_kernel_nofault(a_ops, &mapping->a_ops)) {
-+		pr_warn("invalid mapping:%px\n", mapping);
-+		return;
-+	}
-+
-+	if (!host) {
-+		pr_warn("aops:%ps\n", a_ops);
-+		return;
-+	}
-+
-+	if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
-+	    get_kernel_nofault(ino, &host->i_ino)) {
-+		pr_warn("aops:%ps invalid inode:%px\n", a_ops, host);
-+		return;
-+	}
-+
-+	if (!dentry_first) {
-+		pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
-+		return;
-+	}
-+
-+	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
-+	if (get_kernel_nofault(dentry, dentry_ptr)) {
-+		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
-+				a_ops, ino, dentry_ptr);
-+		return;
-+	}
-+
-+	/*
-+	 * if dentry is corrupted, the %pd handler may still crash,
-+	 * but it's unlikely that we reach here with a corrupt mapping
-+	 */
-+	pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n", a_ops, ino, &dentry);
-+}
-+
- void clear_inode(struct inode *inode)
- {
- 	/*
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d6a4eb6cf825..acaad2b0d5b9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3149,6 +3149,7 @@ extern void unlock_new_inode(struct inode *);
- extern void discard_new_inode(struct inode *);
- extern unsigned int get_next_ino(void);
- extern void evict_inodes(struct super_block *sb);
-+void dump_mapping(const struct address_space *);
- 
- /*
-  * Userspace may rely on the the inode number being non-zero. For example, glibc
-diff --git a/mm/debug.c b/mm/debug.c
-index fae0f81ad831..b3ebfab21cb3 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -110,56 +110,8 @@ static void __dump_page(struct page *page)
- 		type = "ksm ";
- 	else if (PageAnon(page))
- 		type = "anon ";
--	else if (mapping) {
--		struct inode *host;
--		const struct address_space_operations *a_ops;
--		struct hlist_node *dentry_first;
--		struct dentry *dentry_ptr;
--		struct dentry dentry;
--		unsigned long ino;
--
--		/*
--		 * mapping can be invalid pointer and we don't want to crash
--		 * accessing it, so probe everything depending on it carefully
--		 */
--		if (get_kernel_nofault(host, &mapping->host) ||
--		    get_kernel_nofault(a_ops, &mapping->a_ops)) {
--			pr_warn("failed to read mapping contents, not a valid kernel address?\n");
--			goto out_mapping;
--		}
--
--		if (!host) {
--			pr_warn("aops:%ps\n", a_ops);
--			goto out_mapping;
--		}
--
--		if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
--		    get_kernel_nofault(ino, &host->i_ino)) {
--			pr_warn("aops:%ps with invalid host inode %px\n",
--					a_ops, host);
--			goto out_mapping;
--		}
--
--		if (!dentry_first) {
--			pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
--			goto out_mapping;
--		}
--
--		dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
--		if (get_kernel_nofault(dentry, dentry_ptr)) {
--			pr_warn("aops:%ps ino:%lx with invalid dentry %px\n",
--					a_ops, ino, dentry_ptr);
--		} else {
--			/*
--			 * if dentry is corrupted, the %pd handler may still
--			 * crash, but it's unlikely that we reach here with a
--			 * corrupted struct page
--			 */
--			pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n",
--					a_ops, ino, &dentry);
--		}
--	}
--out_mapping:
-+	else if (mapping)
-+		dump_mapping(mapping);
- 	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) != __NR_PAGEFLAGS + 1);
- 
- 	pr_warn("%sflags: %#lx(%pGp)%s\n", type, head->flags, &head->flags,
--- 
-2.33.0
+It mainly includes the following changes:
+   - (experimental) introduce preliminary dump.erofs (Wang Qi, Guo Xuenan);
+   - (experimental) introduce preliminary fsck.erofs (Daeho Jeong);
+   - introduce MicroLZMA compression support (thanks to Lasse Collin);
+   - support chunk-based uncompressed files for deduplication;
+   - support multiple devices for multi-blob CAS container images;
+   - (mkfs.erofs, AOSP) add block list support (Yue Hu, David Anderson);
+   - (mkfs.erofs) support per-inode compress pcluster hints (Huang Jianan);
+   - (mkfs.erofs) add "noinline_data" extended option for DAX;
+   - (mkfs.erofs) introduce --quiet option (suggested by nl6720);
+   - complete MacOS build & functionality;
+   - various bugfixes and cleanups;
 
+Many noticeable updates here. First, new preliminary fsck.erofs and
+dump.erofs are now added to analyse and check EROFS images by Daeho
+Jeong, Wang Qi and Guo Xuenan. More improvements about those features
+will be shown in the future versions.
+
+Thanks to Lasse Collin, LZMA (specifically MicroLZMA) compression
+support is also finalized in this version. (btw, tail-packing inline
+for compressed data is now ongoing by Yue Hu [1] which will be
+addressed in the next version.)
+
+Also, in order to support chunk deduplication and some container use
+cases, chunk-based files and multiple devices are supported in this
+version. As usual, add a word here, our team will announce the new
+opensource Nydus container image service [2] implemented in the Rust
+language at Open Source Summit 2021 China which aims to use a minimal
+metadata (EROFS-compatible RAFS v6) + a few content-addressed
+chunk-based de-duplicated blobs for effective distribution as well as
+storage (such as minimizing underlay fs metadata overhead). It's still
+under some internal release processes so please stay tuned..
+
+In addition, users can now write their own per-file pcluster hints
+to adjust compression unit size for each file, which was contributed
+by Huang Jianan. There are also some AOSP-specific features to make
+Android scenarios work better as always.
+
+In the end, we are actively working on more useful scenarios [3] and
+quite happy to hear, implement and enhance any useful feature requests
+from communities. Feel free to feedback any comments, questions, bugs,
+suggestions, etc. to us for better improvements and welcome to join us
+as well :-)
+
+Thanks,
+Gao Xiang
+
+[1] https://lore.kernel.org/r/b1b3b72371dd4a6b46137dce2fab04899e111df9.1637140430.git.huyue2@yulong.com 
+[2] https://github.com/dragonflyoss/image-service
+[3] https://lore.kernel.org/r/20211009061150.GA7479@hsiangkao-HP-ZHAN-66-Pro-G1
