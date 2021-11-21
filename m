@@ -2,144 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B7D458147
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Nov 2021 01:05:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3F645833A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Nov 2021 13:12:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231325AbhKUAI3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Nov 2021 19:08:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51326 "EHLO
+        id S237957AbhKUMPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Nov 2021 07:15:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbhKUAI2 (ORCPT
+        with ESMTP id S235783AbhKUMPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Nov 2021 19:08:28 -0500
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D260C06174A
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Nov 2021 16:05:25 -0800 (PST)
-Received: by mail-qk1-x72d.google.com with SMTP id d2so14094815qki.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Nov 2021 16:05:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6kf0/w3Hs1LmxnVhawaFCuKI3Bol3tZdSQQzWs8byfA=;
-        b=Eu9tUAhvgTI39XRCgxe+Jp08cFeT8T3hFyVYcEyCfpJZ/9//e91DHQodhxUFFVeKX3
-         EAh2D7HiMmk/XJO8/23Bwbc2IMWKufpGX3TuMxYxmYEBo3fxYPh4XbxA3/yi35ppr7UR
-         MeW0iep4uj/s+PfeXw4Oi6o9pzpyPILyXGe9p3fMK7gVYs3IQsE07bDSYmKDvRU31xsH
-         I9AszubKwbiVvIidR65oTOi4Jwh4aBuq0HiZv70UZ/E+uUKx+HexzvVkG7BbnnMUW75G
-         kisyixitbh8q4pERKXhJRTrw/dKmm5p2xbgLCDLTGzMursE/1dxcHdo5PSugqhx71NsJ
-         U6Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6kf0/w3Hs1LmxnVhawaFCuKI3Bol3tZdSQQzWs8byfA=;
-        b=BvU9TyuUChdn3mVw3IXPTiP7H5y5wnIsWsrbjOyDHjj3LGdPVRL8s29YXggDo15e+f
-         QzUArjZrP+yGKxytKN8pvv228Y/0Xl7c5L+LsuGrcEZOLonxyP9e4BFZRpSWFkvnY0iJ
-         v/MSWxec5F1ocCRUy8ZqaDgQAb5Gs8izsi4Cg3wONDDbGtWZOSeMiExkxlv9iP9XrbSJ
-         0XsEwMbeaQhRWlqcqlJwc01SLhD3CaDaUua6PzaxvTX5tHsLeyTj9B+e8876YFlugoSA
-         I4h3HjcFJZjj0fmBAjf+a8ZVpLWORRxNXbziOwHHAIYLselIYqqxTSGwmKjn+s+w/ns8
-         hsiA==
-X-Gm-Message-State: AOAM533UeGRP3SjvbhYZ4gTWQUxyZ/S7O7SO3ig4LaybDjPhUrPakXcj
-        76zdL8gZf13YYWr2MabsE062AQ==
-X-Google-Smtp-Source: ABdhPJzZj9ReBVUwh/WgmkPvKfwGr6/EBPjNWPCz36F6uolqc0T3L8/Tzkwwaj4TEzJoCDzGgJ3vxw==
-X-Received: by 2002:a05:620a:1029:: with SMTP id a9mr37789932qkk.186.1637453124120;
-        Sat, 20 Nov 2021 16:05:24 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
-        by smtp.gmail.com with ESMTPSA id a16sm2114487qta.94.2021.11.20.16.05.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Nov 2021 16:05:23 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1moaME-00DLbk-EV; Sat, 20 Nov 2021 20:05:22 -0400
-Date:   Sat, 20 Nov 2021 20:05:22 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
-Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
-Message-ID: <20211121000522.GP876299@ziepe.ca>
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-2-chao.p.peng@linux.intel.com>
- <20211119151943.GH876299@ziepe.ca>
- <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
- <YZf4aAlbyeWw8wUk@google.com>
- <20211119194746.GM876299@ziepe.ca>
- <YZgjc5x6FeBxOqbD@google.com>
- <20211119233312.GO876299@ziepe.ca>
- <YZhOBD6vlkBEyq8t@google.com>
+        Sun, 21 Nov 2021 07:15:43 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13226C061574
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 04:12:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=ouYiQ9fnPFu7NekPPdm7DFBi+ugK3ZRRR9rHUiq0t4k=; b=fXIE7e4hsOcVU/pG1gGnX7PW3F
+        yANf8yBK3y9rtbu5JLWuhg/w+i1F3OjkJOhb29AVb6ov7JDNsfhkIYFRude51+jjkCyzQEqOzNIbN
+        UlyXL+4BVqtLztNs1ZhLMTY6IXXT8LLWLyVuV/IQN0PifaSe6zcVtB1AQfMOe2wun7E0xhCU4YIu4
+        HhGGfc0z39yaWyQFOfIIYcUx1iVyfPpEoBLahfyfN3nLdKLEpjmU7g9nV08QLDlnRhtKNyJForz+W
+        CNpTg/k+YzuQ40spr1nzPB2+T3g7r3uryOH8QaoUeEzgrVyXL4P2fPT7xLgGDr+ZAdhbVbrce45sv
+        AogJ6fWw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1molhx-00C2fn-Em; Sun, 21 Nov 2021 12:12:33 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [PATCH] mm,fs: Split dump_mapping() out from dump_page()
+Date:   Sun, 21 Nov 2021 12:10:56 +0000
+Message-Id: <20211121121056.2870061-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YZhOBD6vlkBEyq8t@google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 20, 2021 at 01:23:16AM +0000, Sean Christopherson wrote:
-> On Fri, Nov 19, 2021, Jason Gunthorpe wrote:
-> > On Fri, Nov 19, 2021 at 10:21:39PM +0000, Sean Christopherson wrote:
-> > > On Fri, Nov 19, 2021, Jason Gunthorpe wrote:
-> > > > On Fri, Nov 19, 2021 at 07:18:00PM +0000, Sean Christopherson wrote:
-> > > > > No ideas for the kernel API, but that's also less concerning since
-> > > > > it's not set in stone.  I'm also not sure that dedicated APIs for
-> > > > > each high-ish level use case would be a bad thing, as the semantics
-> > > > > are unlikely to be different to some extent.  E.g. for the KVM use
-> > > > > case, there can be at most one guest associated with the fd, but
-> > > > > there can be any number of VFIO devices attached to the fd.
-> > > > 
-> > > > Even the kvm thing is not a hard restriction when you take away
-> > > > confidential compute.
-> > > > 
-> > > > Why can't we have multiple KVMs linked to the same FD if the memory
-> > > > isn't encrypted? Sure it isn't actually useful but it should work
-> > > > fine.
-> > > 
-> > > Hmm, true, but I want the KVM semantics to be 1:1 even if memory
-> > > isn't encrypted.
-> > 
-> > That is policy and it doesn't belong hardwired into the kernel.
-> 
-> Agreed.  I had a blurb typed up about that policy just being an "exclusive" flag
-> in the kernel API that KVM would set when creating a confidential
-> VM,
+dump_mapping() is a big chunk of dump_page(), and it'd be handy to be
+able to call it when we don't have a struct page.  Split it out and move
+it to fs/inode.c.  Take the opportunity to simplify some of the debug
+messages a little.
 
-I still think that is policy in the kernel, what is wrong with
-userspace doing it?
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/inode.c         | 49 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  1 +
+ mm/debug.c         | 52 ++--------------------------------------------
+ 3 files changed, 52 insertions(+), 50 deletions(-)
 
-> > Your explanation makes me think that the F_SEAL_XX isn't defined
-> > properly. It should be a userspace trap door to prevent any new
-> > external accesses, including establishing new kvms, iommu's, rdmas,
-> > mmaps, read/write, etc.
-> 
-> Hmm, the way I was thinking of it is that it the F_SEAL_XX itself would prevent
-> mapping/accessing it from userspace, and that any policy beyond that would be
-> done via kernel APIs and thus handled by whatever in-kernel agent can access the
-> memory.  E.g. in the confidential VM case, without support for trusted devices,
-> KVM would require that it be the sole owner of the file.
+diff --git a/fs/inode.c b/fs/inode.c
+index bdfbd5962f2b..67758b2b702f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -522,6 +522,55 @@ void __remove_inode_hash(struct inode *inode)
+ }
+ EXPORT_SYMBOL(__remove_inode_hash);
+ 
++void dump_mapping(const struct address_space *mapping)
++{
++	struct inode *host;
++	const struct address_space_operations *a_ops;
++	struct hlist_node *dentry_first;
++	struct dentry *dentry_ptr;
++	struct dentry dentry;
++	unsigned long ino;
++
++	/*
++	 * If mapping is an invalid pointer, we don't want to crash
++	 * accessing it, so probe everything depending on it carefully.
++	 */
++	if (get_kernel_nofault(host, &mapping->host) ||
++	    get_kernel_nofault(a_ops, &mapping->a_ops)) {
++		pr_warn("invalid mapping:%px\n", mapping);
++		return;
++	}
++
++	if (!host) {
++		pr_warn("aops:%ps\n", a_ops);
++		return;
++	}
++
++	if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
++	    get_kernel_nofault(ino, &host->i_ino)) {
++		pr_warn("aops:%ps invalid inode:%px\n", a_ops, host);
++		return;
++	}
++
++	if (!dentry_first) {
++		pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
++		return;
++	}
++
++	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
++	if (get_kernel_nofault(dentry, dentry_ptr)) {
++		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
++				a_ops, ino, dentry_ptr);
++		return;
++	}
++
++	/*
++	 * if dentry is corrupted, the %pd handler may still crash,
++	 * but it's unlikely that we reach here with a corrupt mapping
++	 */
++	pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n", a_ops, ino, &dentry);
++}
++
+ void clear_inode(struct inode *inode)
+ {
+ 	/*
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d6a4eb6cf825..acaad2b0d5b9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3149,6 +3149,7 @@ extern void unlock_new_inode(struct inode *);
+ extern void discard_new_inode(struct inode *);
+ extern unsigned int get_next_ino(void);
+ extern void evict_inodes(struct super_block *sb);
++void dump_mapping(const struct address_space *);
+ 
+ /*
+  * Userspace may rely on the the inode number being non-zero. For example, glibc
+diff --git a/mm/debug.c b/mm/debug.c
+index fae0f81ad831..b3ebfab21cb3 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -110,56 +110,8 @@ static void __dump_page(struct page *page)
+ 		type = "ksm ";
+ 	else if (PageAnon(page))
+ 		type = "anon ";
+-	else if (mapping) {
+-		struct inode *host;
+-		const struct address_space_operations *a_ops;
+-		struct hlist_node *dentry_first;
+-		struct dentry *dentry_ptr;
+-		struct dentry dentry;
+-		unsigned long ino;
+-
+-		/*
+-		 * mapping can be invalid pointer and we don't want to crash
+-		 * accessing it, so probe everything depending on it carefully
+-		 */
+-		if (get_kernel_nofault(host, &mapping->host) ||
+-		    get_kernel_nofault(a_ops, &mapping->a_ops)) {
+-			pr_warn("failed to read mapping contents, not a valid kernel address?\n");
+-			goto out_mapping;
+-		}
+-
+-		if (!host) {
+-			pr_warn("aops:%ps\n", a_ops);
+-			goto out_mapping;
+-		}
+-
+-		if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
+-		    get_kernel_nofault(ino, &host->i_ino)) {
+-			pr_warn("aops:%ps with invalid host inode %px\n",
+-					a_ops, host);
+-			goto out_mapping;
+-		}
+-
+-		if (!dentry_first) {
+-			pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
+-			goto out_mapping;
+-		}
+-
+-		dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
+-		if (get_kernel_nofault(dentry, dentry_ptr)) {
+-			pr_warn("aops:%ps ino:%lx with invalid dentry %px\n",
+-					a_ops, ino, dentry_ptr);
+-		} else {
+-			/*
+-			 * if dentry is corrupted, the %pd handler may still
+-			 * crash, but it's unlikely that we reach here with a
+-			 * corrupted struct page
+-			 */
+-			pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n",
+-					a_ops, ino, &dentry);
+-		}
+-	}
+-out_mapping:
++	else if (mapping)
++		dump_mapping(mapping);
+ 	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) != __NR_PAGEFLAGS + 1);
+ 
+ 	pr_warn("%sflags: %#lx(%pGp)%s\n", type, head->flags, &head->flags,
+-- 
+2.33.0
 
-And how would kvm know if there is support for trusted devices?
-Again seems like policy choices that should be left in userspace.
-
-Especially for what could be a general in-kernel mechanism with many
-users and not tightly linked to KVM as imagined here.
-
-Jason
