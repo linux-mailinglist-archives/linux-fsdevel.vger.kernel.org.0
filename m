@@ -2,161 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C23458FCB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 14:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C80E3458FD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 14:59:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239211AbhKVN40 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 08:56:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45222 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229984AbhKVN4W (ORCPT
+        id S239610AbhKVOCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 09:02:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39320 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239253AbhKVOCh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 08:56:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637589195;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0246PD2XICo/e77HHQAu9cCnKYKbDQAO6t4HPdbCG7k=;
-        b=KcOQPWiNb7mCsrDISiqQ72tbWYH8zuj252MRe2fEw2wIHGBWrs/rTLrlJ1rSELz1ClXEHS
-        4q6FIjPcqb3N9z2+G237tRffxb7DYIkhESNJM6dJoKhRhjzbjcxpi/Khc0JlKmMWPgQy0C
-        qQv382tF1vVigoVcqn0mH7cvWX7kFtw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-302-gRvtolrSOLOgasz1TEIGqg-1; Mon, 22 Nov 2021 08:53:12 -0500
-X-MC-Unique: gRvtolrSOLOgasz1TEIGqg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2BD4E8066F5;
-        Mon, 22 Nov 2021 13:53:11 +0000 (UTC)
-Received: from work (unknown [10.40.194.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 79D4060843;
-        Mon, 22 Nov 2021 13:53:09 +0000 (UTC)
-Date:   Mon, 22 Nov 2021 14:53:04 +0100
-From:   Lukas Czerner <lczerner@redhat.com>
-To:     Martin Wilck <mwilck@suse.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>,
-        mwilck@suse.de, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
-Message-ID: <20211122135304.uwyqtm7cqc2fhjii@work>
-References: <20211112152202.26614-1-jack@suse.cz>
- <20211115114821.swt3nqtw2pdgahsq@work>
- <20211115125141.GD23412@quack2.suse.cz>
- <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
- <20211115145312.g4ptf22rl55jf37l@work>
- <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
- <20211116115626.anbvho4xtb5vsoz5@work>
- <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
- <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
+        Mon, 22 Nov 2021 09:02:37 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F08FC06173E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 05:59:30 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id m27so80881104lfj.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 05:59:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Q7OhoPungBQlpmy/07g8Fe+342nGWhdV6y8JU2nGv18=;
+        b=vT0USDJF2fCKLhM7AtmhHZ6TqmNhALxV9Bh1G9113KXxZPkG5aIQh+e3yJp+NMyEgB
+         yyjush06rRDAKf6xyUA+EMVlTfQFUDAid0CUtMtmeUtHix0pvnF7sbVcje0OV7nvBw9a
+         g/8GZ6NHc48vcDLcr1f3fW01yrRMGBsBbjITwRurbUP5g1aabFr4PnvcR9GVkDnhTJOZ
+         I3gDHccbJ7qYXpaRZGgxrspIfnGqi2qJLDQzshng4iQv3se7ahPPk7IgwWM5bY1jozMl
+         SfrrFIYhsGdWwbB4Wq4Hi54Cs40biyzXYNHrpN0Wwyms/lv0ik/a9vUpy/9oPybPTkwE
+         XN5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q7OhoPungBQlpmy/07g8Fe+342nGWhdV6y8JU2nGv18=;
+        b=AQxWvvRnYyXHtKasg+jJlwtuPV6rXn/RGostmc6GjkgoxEwj0BWBMlh9GlIBkZuZSR
+         CH5axeSbOrZgFJ0Dz7EKHKQoqwQoBl4xI+uWrmynh81x9dPMfqzsF8QIpirg3uw5b85h
+         1c6xuoBBKsmHWqAuf4gsyyZhelXVcAo+NqzIw1r1vu2kCrNgan8v50jEoWHc94RIhgz6
+         wgnbNr3ZH/5dkhJxixlRcPqHQcVODPNVDPSRZa7cT+9EwXM190JGzYfYUiar2wyGwnYa
+         WzJZsLps+pnHVBjxeWIUjnj8w8cbze2/HKGhOZTjoasmb9LVHy37j4jMj/i1HnjyIXXJ
+         O1dg==
+X-Gm-Message-State: AOAM533VLR2sshwtFx2pp+pkV+EkZpB9fvDytznHjv5Bo7OmNmyA8gGS
+        PShxfpSkpX3CEYWIEH47t9WADw==
+X-Google-Smtp-Source: ABdhPJwOSduIL/T2HcuHSSI/wDp1Ip4IJTwBbrmlaHHjfVN4PCNHDjahR2ZbiKbNVp+QmDNNUEuLww==
+X-Received: by 2002:a2e:9545:: with SMTP id t5mr51763112ljh.225.1637589567919;
+        Mon, 22 Nov 2021 05:59:27 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id i17sm967582lfe.281.2021.11.22.05.59.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Nov 2021 05:59:27 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id AD905103610; Mon, 22 Nov 2021 16:59:33 +0300 (+03)
+Date:   Mon, 22 Nov 2021 16:59:33 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
+        Wanpeng Li <wanpengli@tencent.com>, luto@kernel.org,
+        "J . Bruce Fields" <bfields@fieldses.org>, dave.hansen@intel.com,
+        "H . Peter Anvin" <hpa@zytor.com>, ak@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        jun.nakajima@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Sean Christopherson <seanjc@google.com>, susie.li@intel.com,
+        Jeff Layton <jlayton@kernel.org>, john.ji@intel.com,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
+Message-ID: <20211122135933.arjxpl7wyskkwvwv@box.shutemov.name>
+References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
+ <20211119134739.20218-2-chao.p.peng@linux.intel.com>
+ <942e0dd6-e426-06f6-7b6c-0e80d23c27e6@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <942e0dd6-e426-06f6-7b6c-0e80d23c27e6@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 04:43:53PM +0100, Martin Wilck wrote:
-> Hi Martin, Lukas,
-> 
-> On Tue, 2021-11-16 at 23:35 -0500, Martin K. Petersen wrote:
+On Fri, Nov 19, 2021 at 02:51:11PM +0100, David Hildenbrand wrote:
+> On 19.11.21 14:47, Chao Peng wrote:
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 > > 
-> > Lukas,
+> > The new seal type provides semantics required for KVM guest private
+> > memory support. A file descriptor with the seal set is going to be used
+> > as source of guest memory in confidential computing environments such as
+> > Intel TDX and AMD SEV.
 > > 
-> > > My understanding always was that the request needs to be both
-> > > properly
-> > > aligned and of a certain minimum size (discard_granularity) to take
-> > > effect.
-> > > 
-> > > If what you're saying is true then I feel like the documentation of
-> > > discard_granularity
-> > > 
-> > > Documentation/ABI/testing/sysfs-block
-> > > Documentation/block/queue-sysfs.rst
-> > > 
-> > > should change because that's not how I understand the notion of
-> > > internal allocation unit. However the sentence you quoted is not
-> > > entirely clear to me either so I'll leave that decision to someone
-> > > who
-> > > understands it better than me.
-> > > 
-> > > Martin could you please clarify it for us ?
+> > F_SEAL_GUEST can only be set on empty memfd. After the seal is set
+> > userspace cannot read, write or mmap the memfd.
 > > 
-> > The rationale behind exposing the discard granularity to userland was
-> > to
-> > facilitate mkfs.* picking allocation units that were friendly wrt. the
-> > device's internal granularity. The nature of that granularity depends
-> > on
-> > the type of device (thin provisioned, resource provisioned, SSD, etc.).
+> > Userspace is in charge of guest memory lifecycle: it can allocate the
+> > memory with falloc or punch hole to free memory from the guest.
 > > 
-> > Just like the other queue limits the discard granularity was meant as a
-> > hint (some of that hintiness got lost as a result of conflating zeroing
-> > and deallocating but that has since been resolved).
+> > The file descriptor passed down to KVM as guest memory backend. KVM
+> > register itself as the owner of the memfd via memfd_register_guest().
 > > 
-> > It is true that some devices get confused if you submit discards that
-> > are smaller than their internal granularity. However, those devices are
-> > typically the ones that don't actually support reporting that
-> > granularity in the first place! Whereas SCSI devices generally don't
-> > care. They'll happily ignore any parts of the request that are smaller
-> > than whatever size they use internally.
+> > KVM provides callback that needed to be called on fallocate and punch
+> > hole.
 > > 
-> > One of the problems with "optimizing" away pieces that are smaller than
-> > the reported granularity is when you combine devices. Say you have a
-> > RAID1 of an SSD that reports 4096 bytes and one that reports 256MB. The
-> > stacked device will then have a discard granularity of 256MB and thus
-> > the SSD with the smaller granularity won't receive any of the discards
-> > that might otherwise help it manage its media.
-
-Thanks you Martin P. for clarifying.
-
+> > memfd_register_guest() returns callbacks that need be used for
+> > requesting a new page from memfd.
+> > 
 > 
-> I've checked btrfs and xfs, and they treat the minlen like Jan's patch
-> would - the minlen is set to the device's granularity, and discarding
-> smaller ranges is silently not even attempted.
+> Repeating the feedback I already shared in a private mail thread:
 > 
-> So this seems to be common practice among file system implementations,
-> and thus Jan's patch would make ext4 behave like the others. But I'm
-> still uncertain if this behavior is ideal, and your remarks seem to
-> confirm that.
-
-Yeah I modeled my change for ext4 on the work in xfs done by Christoph
-and so it kind of spread organically to other file systems.
-
 > 
-> The fstrim man page text is highly misleading. "The default value is
-> zero, discarding every free block" is obviously wrong, given the
-> current actual behavior of the major filesystems.
-
-Originally there was no discard granularity optimization so it is what
-it meant. And it also says "fstrim will adjust the minimum if it's
-smaller than the device's minimum". So I am not sure if it's necessarily
-misleading.
-
-Still I think it should be best effort from the fs, not guarantee.
-
+> As long as page migration / swapping is not supported, these pages
+> behave like any longterm pinned pages (e.g., VFIO) or secretmem pages.
 > 
-> The way this is currently implemented, the user has no way to actually
-> "discard every free block" to the extent supported by the device. I
-> think that being able to do this would be desirable, at least in
-> certain situations.
+> 1. These pages are not MOVABLE. They must not end up on ZONE_MOVABLE or
+> MIGRATE_CMA.
 > 
-> If we changed this, with the default value of 0 used by fstrim, file
-> systems would attempt to free every block, which is slow and would
-> likely either fail or have no effect on may devices. Maybe we should
-> treat the value "0" like "automatic", i.e. adjust it the minlen to the
-> device's granularity like we do now, but leave the value unchanged if
-> the user explicitly sets a small non-zero value? That way "fstrim -m
-> 512" could be used to force discarding every block that can be
-> discarded.
+> That should be easy to handle, you have to adjust the gfp_mask to
+> 	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+> just as mm/secretmem.c:secretmem_file_create() does.
 
-Perhaps, this sounds like a reasonable solution to me.
+Okay, fair enough. mapping_set_unevictable() also makes sesne.
 
+> 2. These pages behave like mlocked pages and should be accounted as such.
 > 
-> Regards
-> Martin
+> This is probably where the accounting "fun" starts, but maybe it's
+> easier than I think to handle.
 > 
+> See mm/secretmem.c:secretmem_mmap(), where we account the pages as
+> VM_LOCKED and will consequently check per-process mlock limits. As we
+> don't mmap(), the same approach cannot be reused.
+> 
+> See drivers/vfio/vfio_iommu_type1.c:vfio_pin_map_dma() and
+> vfio_pin_pages_remote() on how to manually account via mm->locked_vm .
+> 
+> But it's a bit hairy because these pages are not actually mapped into
+> the page tables of the MM, so it might need some thought. Similarly,
+> these pages actually behave like "pinned" (as in mm->pinned_vm), but we
+> just don't increase the refcount AFAIR. Again, accounting really is a
+> bit hairy ...
 
+Accounting is fun indeed. Non-mapped mlocked memory is going to be
+confusing. Hm...
+
+I will look closer.
+
+-- 
+ Kirill A. Shutemov
