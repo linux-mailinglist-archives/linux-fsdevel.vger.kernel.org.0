@@ -2,235 +2,397 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 798AF459545
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 20:04:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E57B45957E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 20:23:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238528AbhKVTHP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 14:07:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53014 "EHLO
+        id S239809AbhKVT0r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 14:26:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237126AbhKVTHO (ORCPT
+        with ESMTP id S235437AbhKVT0q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 14:07:14 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE453C061714
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 11:04:06 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id t83so19232700qke.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 11:04:06 -0800 (PST)
+        Mon, 22 Nov 2021 14:26:46 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08C7AC061574;
+        Mon, 22 Nov 2021 11:23:39 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id z5so81812710edd.3;
+        Mon, 22 Nov 2021 11:23:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=9nYbwee9dwTTMA5Npe3OVsEJCXk4RA71Ql0QtnWfjU0=;
-        b=JtHUo6A8zLkK/EpyOJKz5ZT20MGUUz0mZp1LI9C5ZnspXeCN9IBcawDymrkBCLDcwP
-         7GQgF/V3Xod3sS1OGKANSKUslAY1mCVrIEacf0GEDq61py7vOSeUJcv/95Rqy62HoXpB
-         JEoFlpN+KQ/Vxgw1b1AEGUKgORx+Y9KZJqCYHfyRvC8zMurFmgaCnX64KcWPj4gmIwYU
-         YViqW2vGFAhe9nd3DcS0drL3NVuh0wTI7/E0cHtKS0aanSEPsWHbDdbUacrYPcRy9D8N
-         B55Yu/A4Au7aejvADkDGZ+5w8IuQDGCjGG2iqWoBme66j/m2v3XsTu/MoO/GPE5o/xD5
-         BPuQ==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=Kj/6fY0CyBIrnzweBfbfkn9p9O+tR2P8eBMSn39xNqA=;
+        b=UnYwEqJDf/Ofpp+pNzhvOI9/5MYNZRQCC98I7Hw4fm4nPvWcnG44g0VTlCZ3Tjp6C/
+         JmvDbvaXXy2+mKfYl4IAFpeTWFZaVdTGUuElPNVwFsGuejxt5shyRyiIa3Gks0pBpaa9
+         9M57FsAuMj7EFSJf3qQFQmRY5UOMm3Jdf7vhdCjzR5FPFJWXOwPXLCd4V6eQNiCYZrV4
+         XMvCo502qoA9M/RViRDjZp5XUq4Eyrg/HNTubNyzGimNb1d99pCscvCJRfJP4k9SqJyt
+         wZgdeMdCIsuaeQ5DsV5r7Dajfi6ElbsUN7MDWp8X3KJFgaFj9Pl1rN/zbFbu2y7DVf4v
+         22lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=9nYbwee9dwTTMA5Npe3OVsEJCXk4RA71Ql0QtnWfjU0=;
-        b=v+VDq2aMdkDAvRHMiHFAdFTuXc8DawTq9CGJ+C3ZpXYPwVta0AEcUUim+h3Tyu1+Oi
-         6pMbYxsE8n2iSjGO51VurZyk/M9pbXLC6Kp6US1mXogg9vL2K8yddnjHehT9KtSY8DtD
-         ljRxKwmUcr57U+BffVplCbDwxq1CpQlxqIPSIH/VIKYioXLDYihd9RaXbwJd5PF+gQoe
-         NCEP4MHPodtIzlSP8dxKVkh9T7JxgMgWAS++P4oZAyjUTJTw335E5yFU1i2/9DmL1Voz
-         IL57JjITg1fOH9i+yzrq3gomT6zTvfgYnERw5II32quuDOWaghbcm26JhC/uN7LdX28U
-         QLdw==
-X-Gm-Message-State: AOAM5304Erz8TWgtMG5QfuMxOeq97EIe/0VQZYDlWgPw3NB2J7ES0HKh
-        BQDSGsdQv5z86a/DfigqYsVMqQ==
-X-Google-Smtp-Source: ABdhPJy8w/1BGtWyFliVVZQGLy3CiRBXUPhP0AMM9nOZznVLVuNxI3M3+zeQqTveob9SqROfgHjdUA==
-X-Received: by 2002:a05:620a:4722:: with SMTP id bs34mr12518875qkb.181.1637607846007;
-        Mon, 22 Nov 2021 11:04:06 -0800 (PST)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id 2sm2829781qkr.126.2021.11.22.11.04.05
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Kj/6fY0CyBIrnzweBfbfkn9p9O+tR2P8eBMSn39xNqA=;
+        b=l3dgclgNewirSM/rjxus69tTLxK9Vd8N5GSEJmx5NpS82TeIT6/6knuMoz0FDiiGX1
+         nH8W/tSTKZes753wJtyzkVjZ59Yj6RR/kyvOj3WlpPXhtFO3T6k+8rTzWthsiS0SaBar
+         OZk3ftuygZ+YxxlRFENeMyOJkpVLEp3d4HKIl55c13Uq/twjuCo8YymB3khQrpjKTg7L
+         2CW20aJA+E8E2nvFpA1hrM5UcvCd5f274M2XJuzgnowU0zqQg8xEvHfzdVmD8o7s4pB/
+         +daUEvuGy2Ss6IIZMx3fw7m707WiBGFgbPs+yI5TKw73x0WW6KNh164GI09ly/AU+zWJ
+         z5ZA==
+X-Gm-Message-State: AOAM531zOgXNqIi98I4Zgew2B44iN8WTWRh7fBE/k3Y61SGW8iRwJdHK
+        zX2qcwL8MJSWUCqYds2uBA==
+X-Google-Smtp-Source: ABdhPJwINrWfS7dj2wG4I2x/1Ur9LlVqco1L3gdI7l4+I2HtB3LftXUDxp5cEXV4hKJlDyQCOcShTw==
+X-Received: by 2002:a50:c31c:: with SMTP id a28mr67919677edb.4.1637609017535;
+        Mon, 22 Nov 2021 11:23:37 -0800 (PST)
+Received: from localhost.localdomain ([46.53.249.234])
+        by smtp.gmail.com with ESMTPSA id t20sm4471756edv.81.2021.11.22.11.23.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 11:04:05 -0800 (PST)
-Date:   Mon, 22 Nov 2021 14:04:04 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Hugh Dickins <hughd@google.com>, Shuah Khan <shuah@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Roman Gushchin <guro@fb.com>, Theodore Ts'o <tytso@mit.edu>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v4 0/4] Deterministic charging of shared memory
-Message-ID: <YZvppKvUPTIytM/c@cmpxchg.org>
-References: <20211120045011.3074840-1-almasrymina@google.com>
+        Mon, 22 Nov 2021 11:23:37 -0800 (PST)
+Date:   Mon, 22 Nov 2021 22:23:35 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     viro@zeniv.linux.org.uk, ebiederm@xmission.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: "mount -o lookup=..." support
+Message-ID: <YZvuN0Wqmn7XB4dX@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211120045011.3074840-1-almasrymina@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 08:50:06PM -0800, Mina Almasry wrote:
-> Problem:
-> Currently shared memory is charged to the memcg of the allocating
-> process. This makes memory usage of processes accessing shared memory
-> a bit unpredictable since whichever process accesses the memory first
-> will get charged. We have a number of use cases where our userspace
-> would like deterministic charging of shared memory:
-> 
-> 1. System services allocating memory for client jobs:
-> We have services (namely a network access service[1]) that provide
-> functionality for clients running on the machine and allocate memory
-> to carry out these services. The memory usage of these services
-> depends on the number of jobs running on the machine and the nature of
-> the requests made to the service, which makes the memory usage of
-> these services hard to predict and thus hard to limit via memory.max.
-> These system services would like a way to allocate memory and instruct
-> the kernel to charge this memory to the client’s memcg.
-> 
-> 2. Shared filesystem between subtasks of a large job
-> Our infrastructure has large meta jobs such as kubernetes which spawn
-> multiple subtasks which share a tmpfs mount. These jobs and its
-> subtasks use that tmpfs mount for various purposes such as data
-> sharing or persistent data between the subtask restarts. In kubernetes
-> terminology, the meta job is similar to pods and subtasks are
-> containers under pods. We want the shared memory to be
-> deterministically charged to the kubernetes's pod and independent to
-> the lifetime of containers under the pod.
-> 
-> 3. Shared libraries and language runtimes shared between independent jobs.
-> We’d like to optimize memory usage on the machine by sharing libraries
-> and language runtimes of many of the processes running on our machines
-> in separate memcgs. This produces a side effect that one job may be
-> unlucky to be the first to access many of the libraries and may get
-> oom killed as all the cached files get charged to it.
-> 
-> Design:
-> My rough proposal to solve this problem is to simply add a
-> ‘memcg=/path/to/memcg’ mount option for filesystems:
-> directing all the memory of the file system to be ‘remote charged’ to
-> cgroup provided by that memcg= option.
-> 
-> Caveats:
-> 
-> 1. One complication to address is the behavior when the target memcg
-> hits its memory.max limit because of remote charging. In this case the
-> oom-killer will be invoked, but the oom-killer may not find anything
-> to kill in the target memcg being charged. Thera are a number of considerations
-> in this case:
-> 
-> 1. It's not great to kill the allocating process since the allocating process
->    is not running in the memcg under oom, and killing it will not free memory
->    in the memcg under oom.
-> 2. Pagefaults may hit the memcg limit, and we need to handle the pagefault
->    somehow. If not, the process will forever loop the pagefault in the upstream
->    kernel.
-> 
-> In this case, I propose simply failing the remote charge and returning an ENOSPC
-> to the caller. This will cause will cause the process executing the remote
-> charge to get an ENOSPC in non-pagefault paths, and get a SIGBUS on the pagefault
-> path.  This will be documented behavior of remote charging, and this feature is
-> opt-in. Users can:
-> - Not opt-into the feature if they want.
-> - Opt-into the feature and accept the risk of received ENOSPC or SIGBUS and
->   abort if they desire.
-> - Gracefully handle any resulting ENOSPC or SIGBUS errors and continue their
->   operation without executing the remote charge if possible.
-> 
-> 2. Only processes allowed the enter cgroup at mount time can mount a
-> tmpfs with memcg=<cgroup>. This is to prevent intential DoS of random cgroups
-> on the machine. However, once a filesysetem is mounted with memcg=<cgroup>, any
-> process with write access to this mount point will be able to charge memory to
-> <cgroup>. This is largely a non-issue because in configurations where there is
-> untrusted code running on the machine, mount point access needs to be
-> restricted to the intended users only regardless of whether the mount point
-> memory is deterministly charged or not.
+Docker implements MaskedPaths configuration option
 
-I'm not a fan of this. It uses filesystem mounts to create shareable
-resource domains outside of the cgroup hierarchy, which has all the
-downsides you listed, and more:
+	https://github.com/estesp/docker/blob/9c15e82f19b0ad3c5fe8617a8ec2dddc6639f40a/oci/defaults.go#L97
 
-1. You need a filesystem interface in the first place, and a new
-   ad-hoc channel and permission model to coordinate with the cgroup
-   tree, which isn't great. All filesystems you want to share data on
-   need to be converted.
+to disable certain /proc files. It does overmount with /dev/null per
+masked file.
 
-2. It doesn't extend to non-filesystem sources of shared data, such as
-   memfds, ipc shm etc.
+Give them proper mount option which selectively disables lookup/readdir
+so that MaskedPaths doesn't need to be updated as time goes on.
 
-3. It requires unintuitive configuration for what should be basic
-   shared accounting semantics. Per default you still get the old
-   'first touch' semantics, but to get sharing you need to reconfigure
-   the filesystems?
+Syntax is
 
-4. If a task needs to work with a hierarchy of data sharing domains -
-   system-wide, group of jobs, job - it must interact with a hierarchy
-   of filesystem mounts. This is a pain to setup and may require task
-   awareness. Moving data around, working with different mount points.
-   Also, no shared and private data accounting within the same file.
+	mount -t proc proc -o lookup=cpuinfo/uptime /proc
 
-5. It reintroduces cgroup1 semantics of tasks and resouces, which are
-   entangled, sitting in disjunct domains. OOM killing is one quirk of
-   that, but there are others you haven't touched on. Who is charged
-   for the CPU cycles of reclaim in the out-of-band domain?  Who is
-   charged for the paging IO? How is resource pressure accounted and
-   attributed? Soon you need cpu= and io= as well.
+	# ls /proc
+				...
+	dr-xr-xr-x   8 root       root          0 Nov 22 21:12 995
+	-r--r--r--   1 root       root          0 Nov 22 21:12 cpuinfo
+	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 self -> 1163
+	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 thread-self -> 1163/task/1163
+	-r--r--r--   1 root       root          0 Nov 22 21:12 uptime
 
-My take on this is that it might work for your rather specific
-usecase, but it doesn't strike me as a general-purpose feature
-suitable for upstream.
+Works at top level only (1 lookup list per superblock)
+Trailing slash is optional but saves 1 allocation.
 
+TODO:
+	think what to do with dcache entries across "mount -o remount,lookup=".
 
-If we want sharing semantics for memory, I think we need a more
-generic implementation with a cleaner interface.
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-Here is one idea:
+ fs/proc/generic.c       |   19 +++++--
+ fs/proc/internal.h      |   23 +++++++++
+ fs/proc/proc_net.c      |    2 
+ fs/proc/root.c          |  115 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/proc_fs.h |    2 
+ 5 files changed, 152 insertions(+), 9 deletions(-)
 
-Have you considered reparenting pages that are accessed by multiple
-cgroups to the first common ancestor of those groups?
-
-Essentially, whenever there is a memory access (minor fault, buffered
-IO) to a page that doesn't belong to the accessing task's cgroup, you
-find the common ancestor between that task and the owning cgroup, and
-move the page there.
-
-With a tree like this:
-
-	root - job group - job
-                        `- job
-            `- job group - job
-                        `- job
-
-all pages accessed inside that tree will propagate to the highest
-level at which they are shared - which is the same level where you'd
-also set shared policies, like a job group memory limit or io weight.
-
-E.g. libc pages would (likely) bubble to the root, persistent tmpfs
-pages would bubble to the respective job group, private data would
-stay within each job.
-
-No further user configuration necessary. Although you still *can* use
-mount namespacing etc. to prohibit undesired sharing between cgroups.
-
-The actual user-visible accounting change would be quite small, and
-arguably much more intuitive. Remember that accounting is recursive,
-meaning that a job page today also shows up in the counters of job
-group and root. This would not change. The only thing that IS weird
-today is that when two jobs share a page, it will arbitrarily show up
-in one job's counter but not in the other's. That would change: it
-would no longer show up as either, since it's not private to either;
-it would just be a job group (and up) page.
-
-This would be a generic implementation of resource sharing semantics:
-independent of data source and filesystems, contained inside the
-cgroup interface, and reusing the existing hierarchies of accounting
-and control domains to also represent levels of common property.
-
-Thoughts?
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -282,7 +282,7 @@ struct dentry *proc_lookup(struct inode *dir, struct dentry *dentry,
+  * for success..
+  */
+ int proc_readdir_de(struct file *file, struct dir_context *ctx,
+-		    struct proc_dir_entry *de)
++		    struct proc_dir_entry *de, const struct proc_lookup_list *ll)
+ {
+ 	int i;
+ 
+@@ -305,14 +305,18 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
+ 
+ 	do {
+ 		struct proc_dir_entry *next;
++
+ 		pde_get(de);
+ 		read_unlock(&proc_subdir_lock);
+-		if (!dir_emit(ctx, de->name, de->namelen,
+-			    de->low_ino, de->mode >> 12)) {
+-			pde_put(de);
+-			return 0;
++
++		if (ll ? in_lookup_list(ll, de->name, de->namelen) : true) {
++			if (!dir_emit(ctx, de->name, de->namelen, de->low_ino, de->mode >> 12)) {
++				pde_put(de);
++				return 0;
++			}
++			ctx->pos++;
+ 		}
+-		ctx->pos++;
++
+ 		read_lock(&proc_subdir_lock);
+ 		next = pde_subdir_next(de);
+ 		pde_put(de);
+@@ -330,7 +334,8 @@ int proc_readdir(struct file *file, struct dir_context *ctx)
+ 	if (fs_info->pidonly == PROC_PIDONLY_ON)
+ 		return 1;
+ 
+-	return proc_readdir_de(file, ctx, PDE(inode));
++	return proc_readdir_de(file, ctx, PDE(inode),
++				PDE(inode) == &proc_root ? fs_info->lookup_list : NULL);
+ }
+ 
+ /*
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -190,7 +190,7 @@ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
+ extern struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int);
+ struct dentry *proc_lookup_de(struct inode *, struct dentry *, struct proc_dir_entry *);
+ extern int proc_readdir(struct file *, struct dir_context *);
+-int proc_readdir_de(struct file *, struct dir_context *, struct proc_dir_entry *);
++int proc_readdir_de(struct file *, struct dir_context *, struct proc_dir_entry *, const struct proc_lookup_list *);
+ 
+ static inline void pde_get(struct proc_dir_entry *pde)
+ {
+@@ -318,3 +318,24 @@ static inline void pde_force_lookup(struct proc_dir_entry *pde)
+ 	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
+ 	pde->proc_dops = &proc_net_dentry_ops;
+ }
++
++/*
++ * "cpuinfo", "uptime" is represented as
++ *
++ *	(u8[]){
++ *		7, 'c', 'p', 'u', 'i', 'n', 'f', 'o',
++ *		6, 'u', 'p', 't', 'i', 'm', 'e',
++ *		0
++ *	}
++ */
++struct proc_lookup_list {
++	u8 len;
++	char str[];
++};
++
++static inline struct proc_lookup_list *lookup_list_next(const struct proc_lookup_list *ll)
++{
++	return (struct proc_lookup_list *)((void *)ll + 1 + ll->len);
++}
++
++bool in_lookup_list(const struct proc_lookup_list *ll, const char *str, unsigned int len);
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -321,7 +321,7 @@ static int proc_tgid_net_readdir(struct file *file, struct dir_context *ctx)
+ 	ret = -EINVAL;
+ 	net = get_proc_task_net(file_inode(file));
+ 	if (net != NULL) {
+-		ret = proc_readdir_de(file, ctx, net->proc_net);
++		ret = proc_readdir_de(file, ctx, net->proc_net, NULL);
+ 		put_net(net);
+ 	}
+ 	return ret;
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -35,18 +35,22 @@ struct proc_fs_context {
+ 	enum proc_hidepid	hidepid;
+ 	int			gid;
+ 	enum proc_pidonly	pidonly;
++	struct proc_lookup_list	*lookup_list;
++	unsigned int		lookup_list_len;
+ };
+ 
+ enum proc_param {
+ 	Opt_gid,
+ 	Opt_hidepid,
+ 	Opt_subset,
++	Opt_lookup,
+ };
+ 
+ static const struct fs_parameter_spec proc_fs_parameters[] = {
+ 	fsparam_u32("gid",	Opt_gid),
+ 	fsparam_string("hidepid",	Opt_hidepid),
+ 	fsparam_string("subset",	Opt_subset),
++	fsparam_string("lookup",	Opt_lookup),
+ 	{}
+ };
+ 
+@@ -112,6 +116,65 @@ static int proc_parse_subset_param(struct fs_context *fc, char *value)
+ 	return 0;
+ }
+ 
++static int proc_parse_lookup_param(struct fs_context *fc, char *str0)
++{
++	struct proc_fs_context *ctx = fc->fs_private;
++	struct proc_lookup_list *ll;
++	char *str;
++	const char *slash;
++	const char *src;
++	unsigned int len;
++	int rv;
++
++	/* Force trailing slash, simplify loops below. */
++	len = strlen(str0);
++	if (len > 0 && str0[len - 1] == '/') {
++		str = str0;
++	} else {
++		str = kmalloc(len + 2, GFP_KERNEL);
++		if (!str) {
++			rv = -ENOMEM;
++			goto out;
++		}
++		memcpy(str, str0, len);
++		str[len] = '/';
++		str[len + 1] = '\0';
++	}
++
++	len = 0;
++	for (src = str; (slash = strchr(src, '/')); src = slash + 1) {
++		if (slash - src >= 256) {
++			rv = -EINVAL;
++			goto out_free_str;
++		}
++		len += 1 + (slash - src);
++	}
++	len += 1;
++
++	ctx->lookup_list = ll = kmalloc(len, GFP_KERNEL);
++	ctx->lookup_list_len = len;
++	if (!ll) {
++		rv = -ENOMEM;
++		goto out_free_str;
++	}
++
++	for (src = str; (slash = strchr(src, '/')); src = slash + 1) {
++		ll->len = slash - src;
++		memcpy(ll->str, src, ll->len);
++		ll = lookup_list_next(ll);
++	}
++	ll->len = 0;
++
++	rv = 0;
++
++out_free_str:
++	if (str != str0) {
++		kfree(str);
++	}
++out:
++	return rv;
++}
++
+ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	struct proc_fs_context *ctx = fc->fs_private;
+@@ -137,6 +200,11 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 			return -EINVAL;
+ 		break;
+ 
++	case Opt_lookup:
++		if (proc_parse_lookup_param(fc, param->string) < 0)
++			return -EINVAL;
++		break;
++
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -157,6 +225,10 @@ static void proc_apply_options(struct proc_fs_info *fs_info,
+ 		fs_info->hide_pid = ctx->hidepid;
+ 	if (ctx->mask & (1 << Opt_subset))
+ 		fs_info->pidonly = ctx->pidonly;
++	if (ctx->mask & (1 << Opt_lookup)) {
++		fs_info->lookup_list = ctx->lookup_list;
++		ctx->lookup_list = NULL;
++	}
+ }
+ 
+ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+@@ -234,11 +306,34 @@ static void proc_fs_context_free(struct fs_context *fc)
+ 	struct proc_fs_context *ctx = fc->fs_private;
+ 
+ 	put_pid_ns(ctx->pid_ns);
++	kfree(ctx->lookup_list);
+ 	kfree(ctx);
+ }
+ 
++static int proc_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
++{
++	struct proc_fs_context *src = fc->fs_private;
++	struct proc_fs_context *dst;
++
++	dst = kmemdup(src, sizeof(struct proc_fs_context), GFP_KERNEL);
++	if (!dst) {
++		return -ENOMEM;
++	}
++
++	get_pid_ns(dst->pid_ns);
++	dst->lookup_list = kmemdup(dst->lookup_list, dst->lookup_list_len, GFP_KERNEL);
++	if (!dst->lookup_list) {
++		kfree(dst);
++		return -ENOMEM;
++	}
++
++	fc->fs_private = dst;
++	return 0;
++}
++
+ static const struct fs_context_operations proc_fs_context_ops = {
+ 	.free		= proc_fs_context_free,
++	.dup		= proc_fs_context_dup,
+ 	.parse_param	= proc_parse_param,
+ 	.get_tree	= proc_get_tree,
+ 	.reconfigure	= proc_reconfigure,
+@@ -274,6 +369,7 @@ static void proc_kill_sb(struct super_block *sb)
+ 
+ 	kill_anon_super(sb);
+ 	put_pid_ns(fs_info->pid_ns);
++	kfree(fs_info->lookup_list);
+ 	kfree(fs_info);
+ }
+ 
+@@ -317,11 +413,30 @@ static int proc_root_getattr(struct user_namespace *mnt_userns,
+ 	return 0;
+ }
+ 
++bool in_lookup_list(const struct proc_lookup_list *ll, const char *str, unsigned int len)
++{
++	while (ll->len > 0) {
++		if (ll->len == len && strncmp(ll->str, str, len) == 0) {
++			return true;
++		}
++		ll = lookup_list_next(ll);
++	}
++	return false;
++}
++
+ static struct dentry *proc_root_lookup(struct inode * dir, struct dentry * dentry, unsigned int flags)
+ {
++	struct proc_fs_info *proc_sb = proc_sb_info(dir->i_sb);
++
+ 	if (!proc_pid_lookup(dentry, flags))
+ 		return NULL;
+ 
++	/* Top level only for now */
++	if (proc_sb->lookup_list &&
++	    !in_lookup_list(proc_sb->lookup_list, dentry->d_name.name, dentry->d_name.len)) {
++		    return NULL;
++	}
++
+ 	return proc_lookup(dir, dentry, flags);
+ }
+ 
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -10,6 +10,7 @@
+ #include <linux/fs.h>
+ 
+ struct proc_dir_entry;
++struct proc_lookup_list;
+ struct seq_file;
+ struct seq_operations;
+ 
+@@ -65,6 +66,7 @@ struct proc_fs_info {
+ 	kgid_t pid_gid;
+ 	enum proc_hidepid hide_pid;
+ 	enum proc_pidonly pidonly;
++	const struct proc_lookup_list *lookup_list;
+ };
+ 
+ static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
