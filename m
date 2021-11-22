@@ -2,106 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A190C458883
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 04:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B7945888E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 05:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233997AbhKVEC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Nov 2021 23:02:29 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:31895 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230492AbhKVEC2 (ORCPT
+        id S230147AbhKVERQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Nov 2021 23:17:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229696AbhKVERP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Nov 2021 23:02:28 -0500
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4HyD0t6jRrzcZxf;
-        Mon, 22 Nov 2021 11:54:22 +0800 (CST)
-Received: from kwepemm600019.china.huawei.com (7.193.23.64) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Mon, 22 Nov 2021 11:59:21 +0800
-Received: from localhost.localdomain (10.175.127.227) by
- kwepemm600019.china.huawei.com (7.193.23.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Mon, 22 Nov 2021 11:59:21 +0800
-From:   yangerkun <yangerkun@huawei.com>
-To:     <dhowells@redhat.com>, <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH] pipe: remove needless spin_lock in pipe_read/pipe_write
-Date:   Mon, 22 Nov 2021 12:11:35 +0800
-Message-ID: <20211122041135.2450220-1-yangerkun@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Sun, 21 Nov 2021 23:17:15 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21FFC061574
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 20:14:09 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id v203so10029668ybe.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 20:14:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ufl+2uObLITemAu7uloYFsoe/3xNUfHY/I0EtFNIV8Y=;
+        b=5aecOjRkc9aLOLkzu2uDthsl37YvSVjvTyMWLPECyRTFNifHUei2xI+c6kJSnkBbXA
+         dL6NCp9o/kTrwsLDBOXgNmJAzPkSzHZx2fy0zC/Vzs4ZehwydwyZzXIa1CUe15+gDHOo
+         CWP/bEvLLQADhSE3EC0/Fot+hgUFPn79xZtCFbbOZ1SECjdtA7rWVeooExU8Lv4cyOgs
+         rK4adpXz4mUFyhb+x8qXpUt5mgMCg6E/S7jWk0cn7wdu7VW6A63J2g/K+xYIG6DM9Wya
+         2GQvPfznECSNNgZOXK0/OhvPq3LE79eRHwmkUs4CCzXaBUkZqoq7PtwX/cBFGeDXOM+G
+         IAsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ufl+2uObLITemAu7uloYFsoe/3xNUfHY/I0EtFNIV8Y=;
+        b=7rE2Bm4vIVpSvFoaZHImAKV47p0mi9EDlkRdeAzhJwNDXQYmYRsoiRyZGl8VJEElWZ
+         nk9K4jjnDo/ns39mrasn6Vha+JPDxkCRznbe3XlYbDs+DTnG0bXtx0iWwuP3VBjHlV2q
+         wwVYq4pvdODBtkuSVN95blRyIn+Ut2V9jPW9XxF6F8rhbn9Cd7ooPiAttThdL6nh1Pdt
+         LDIFrEF3LTF5H6SCMMh1UfdsymR7m6qpGL6UvNdBIsyxsBBxHd6TrNwW9xV/jJdEDOzw
+         PMBZ729Kh+G7B94ZqMoImPpSwuozXp76lo1+pBKg4ftfe+2Pa9YRNkz0a9eArTFoNofs
+         M3pA==
+X-Gm-Message-State: AOAM531RhcJidTv548Kujo3DJsEXFJtgyImBZ5pZ2R7Tor2imd6wCAZF
+        c/6eHz/nbrrQOQmmPJ09qlQlIjGMRhALNhfLrXurnQ==
+X-Google-Smtp-Source: ABdhPJxewORqZoBMGaaxO4om0D8FAxIpf6byiMm6K3qnsT6twjozIDqCQveLRQqVrpnPUKnBAObQHoXwFPuAkibE3o0=
+X-Received: by 2002:a25:b0a8:: with SMTP id f40mr56470993ybj.125.1637554448962;
+ Sun, 21 Nov 2021 20:14:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600019.china.huawei.com (7.193.23.64)
-X-CFilter-Loop: Reflected
+References: <20211119041104.27662-1-songmuchun@bytedance.com>
+ <YZdQ+0D7n5xCnw5A@infradead.org> <20211119145643.21bbd5ee8e2830dd72d983e3@linux-foundation.org>
+In-Reply-To: <20211119145643.21bbd5ee8e2830dd72d983e3@linux-foundation.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 22 Nov 2021 12:13:33 +0800
+Message-ID: <CAMZfGtV7pNaVNtzPCmXnGgeojPzyVxXSeawnp5znJxkjFweAgA@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: proc: store PDE()->data into inode->i_private
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        gladkov.alexey@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Once enable CONFIG_WATCH_QUEUE, we should protect pipe with
-pipe->rd_wait.lock since post_one_notification may write pipe from
-contexts where pipe->mutex cannot be token. But nowdays we will try
-take it for anycase, it seems needless. Besides, pipe_write will break
-once it's pipe with O_NOTIFICATION_PIPE, pipe->rd_wait.lock seems no
-need at all. We make some change base on that, and it can help improve
-performance for some case like pipe_pst1 in libMicro.
+On Sat, Nov 20, 2021 at 6:56 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Thu, 18 Nov 2021 23:23:39 -0800 Christoph Hellwig <hch@infradead.org> wrote:
+>
+> > On Fri, Nov 19, 2021 at 12:11:04PM +0800, Muchun Song wrote:
+> > > +
+> > > +/*
+> > > + * Obtain the private data passed by user through proc_create_data() or
+> > > + * related.
+> > > + */
+> > > +static inline void *pde_data(const struct inode *inode)
+> > > +{
+> > > +   return inode->i_private;
+> > > +}
+> > > +
+> > > +#define PDE_DATA(i)        pde_data(i)
+> >
+> > What is the point of pde_data?
+>
+> It's a regular old C function, hence should be in lower case.
+>
+> I assume the upper case thing is a holdover from when it was
+> implemented as a macro.
+>
+> >  If we really think changing to lower
+> > case is worth it (I don't think so, using upper case for getting at
+> > private data is a common idiom in file systems),
+>
+> It is?  How odd.
+>
+> I find the upper-case thing to be actively misleading.  It's mildly
+> surprising to discover that it's actually a plain old C function.
+>
+> > we can just do that
+> > scripted in one go.
+>
+> Yes, I'd like to see a followup patch which converts the current
+> PDE_DATA() callsites.
+>
 
-ARMv7 for our scene, before this patch:
-  5483 nsecs/call
-After this patch:
-  4854 nsecs/call
+You mean replace all PDE_DATA with pde_data in another patch?
 
-Signed-off-by: yangerkun <yangerkun@huawei.com>
----
- fs/pipe.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 6d4342bad9f1..e8ced0c50824 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -320,14 +320,18 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 			if (!buf->len) {
- 				pipe_buf_release(pipe, buf);
--				spin_lock_irq(&pipe->rd_wait.lock);
- #ifdef CONFIG_WATCH_QUEUE
-+				if (pipe->watch_queue)
-+					spin_lock_irq(&pipe->rd_wait.lock);
- 				if (buf->flags & PIPE_BUF_FLAG_LOSS)
- 					pipe->note_loss = true;
- #endif
- 				tail++;
- 				pipe->tail = tail;
--				spin_unlock_irq(&pipe->rd_wait.lock);
-+#ifdef CONFIG_WATCH_QUEUE
-+				if (pipe->watch_queue)
-+					spin_unlock_irq(&pipe->rd_wait.lock);
-+#endif
- 			}
- 			total_len -= chars;
- 			if (!total_len)
-@@ -504,16 +508,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			 * it, either the reader will consume it or it'll still
- 			 * be there for the next write.
- 			 */
--			spin_lock_irq(&pipe->rd_wait.lock);
--
- 			head = pipe->head;
--			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
--				spin_unlock_irq(&pipe->rd_wait.lock);
-+			if (pipe_full(head, pipe->tail, pipe->max_usage))
- 				continue;
--			}
- 
- 			pipe->head = head + 1;
--			spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
--- 
-2.31.1
-
+Thanks.
