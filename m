@@ -2,106 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B7945888E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 05:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D914589AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 08:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbhKVERQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Nov 2021 23:17:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbhKVERP (ORCPT
+        id S230058AbhKVHOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 02:14:41 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:55592 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229806AbhKVHOk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Nov 2021 23:17:15 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21FFC061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 20:14:09 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id v203so10029668ybe.6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 20:14:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ufl+2uObLITemAu7uloYFsoe/3xNUfHY/I0EtFNIV8Y=;
-        b=5aecOjRkc9aLOLkzu2uDthsl37YvSVjvTyMWLPECyRTFNifHUei2xI+c6kJSnkBbXA
-         dL6NCp9o/kTrwsLDBOXgNmJAzPkSzHZx2fy0zC/Vzs4ZehwydwyZzXIa1CUe15+gDHOo
-         CWP/bEvLLQADhSE3EC0/Fot+hgUFPn79xZtCFbbOZ1SECjdtA7rWVeooExU8Lv4cyOgs
-         rK4adpXz4mUFyhb+x8qXpUt5mgMCg6E/S7jWk0cn7wdu7VW6A63J2g/K+xYIG6DM9Wya
-         2GQvPfznECSNNgZOXK0/OhvPq3LE79eRHwmkUs4CCzXaBUkZqoq7PtwX/cBFGeDXOM+G
-         IAsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ufl+2uObLITemAu7uloYFsoe/3xNUfHY/I0EtFNIV8Y=;
-        b=7rE2Bm4vIVpSvFoaZHImAKV47p0mi9EDlkRdeAzhJwNDXQYmYRsoiRyZGl8VJEElWZ
-         nk9K4jjnDo/ns39mrasn6Vha+JPDxkCRznbe3XlYbDs+DTnG0bXtx0iWwuP3VBjHlV2q
-         wwVYq4pvdODBtkuSVN95blRyIn+Ut2V9jPW9XxF6F8rhbn9Cd7ooPiAttThdL6nh1Pdt
-         LDIFrEF3LTF5H6SCMMh1UfdsymR7m6qpGL6UvNdBIsyxsBBxHd6TrNwW9xV/jJdEDOzw
-         PMBZ729Kh+G7B94ZqMoImPpSwuozXp76lo1+pBKg4ftfe+2Pa9YRNkz0a9eArTFoNofs
-         M3pA==
-X-Gm-Message-State: AOAM531RhcJidTv548Kujo3DJsEXFJtgyImBZ5pZ2R7Tor2imd6wCAZF
-        c/6eHz/nbrrQOQmmPJ09qlQlIjGMRhALNhfLrXurnQ==
-X-Google-Smtp-Source: ABdhPJxewORqZoBMGaaxO4om0D8FAxIpf6byiMm6K3qnsT6twjozIDqCQveLRQqVrpnPUKnBAObQHoXwFPuAkibE3o0=
-X-Received: by 2002:a25:b0a8:: with SMTP id f40mr56470993ybj.125.1637554448962;
- Sun, 21 Nov 2021 20:14:08 -0800 (PST)
+        Mon, 22 Nov 2021 02:14:40 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 585221FD26;
+        Mon, 22 Nov 2021 07:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1637565093; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rLXt6amhrvHnna7k2TRUoTyg1Kt2r+zwqjjZ9be/TiE=;
+        b=RJa8cxNm15iC6NaZJ//oEwGJu6GK6tfwSlegzlvSb+jjBpresQzZKuJCmxDs8YGKyEheuW
+        eQ+phdRSsR5mJ8q0It2TrLQ4RCAN+2eC86oNS0yfnAEcDYiRCzq7/Fxy5/+H2b7/L2d2cK
+        F/dWGdFXAnehUyS71q9XWXKRnDLj5l4=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 2BDFCA3B83;
+        Mon, 22 Nov 2021 07:11:33 +0000 (UTC)
+Date:   Mon, 22 Nov 2021 08:11:32 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm,fs: Split dump_mapping() out from dump_page()
+Message-ID: <YZtCpK2ZsV0qLm6+@dhcp22.suse.cz>
+References: <20211121121056.2870061-1-willy@infradead.org>
 MIME-Version: 1.0
-References: <20211119041104.27662-1-songmuchun@bytedance.com>
- <YZdQ+0D7n5xCnw5A@infradead.org> <20211119145643.21bbd5ee8e2830dd72d983e3@linux-foundation.org>
-In-Reply-To: <20211119145643.21bbd5ee8e2830dd72d983e3@linux-foundation.org>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 22 Nov 2021 12:13:33 +0800
-Message-ID: <CAMZfGtV7pNaVNtzPCmXnGgeojPzyVxXSeawnp5znJxkjFweAgA@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: proc: store PDE()->data into inode->i_private
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        gladkov.alexey@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211121121056.2870061-1-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 20, 2021 at 6:56 AM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Thu, 18 Nov 2021 23:23:39 -0800 Christoph Hellwig <hch@infradead.org> wrote:
->
-> > On Fri, Nov 19, 2021 at 12:11:04PM +0800, Muchun Song wrote:
-> > > +
-> > > +/*
-> > > + * Obtain the private data passed by user through proc_create_data() or
-> > > + * related.
-> > > + */
-> > > +static inline void *pde_data(const struct inode *inode)
-> > > +{
-> > > +   return inode->i_private;
-> > > +}
-> > > +
-> > > +#define PDE_DATA(i)        pde_data(i)
-> >
-> > What is the point of pde_data?
->
-> It's a regular old C function, hence should be in lower case.
->
-> I assume the upper case thing is a holdover from when it was
-> implemented as a macro.
->
-> >  If we really think changing to lower
-> > case is worth it (I don't think so, using upper case for getting at
-> > private data is a common idiom in file systems),
->
-> It is?  How odd.
->
-> I find the upper-case thing to be actively misleading.  It's mildly
-> surprising to discover that it's actually a plain old C function.
->
-> > we can just do that
-> > scripted in one go.
->
-> Yes, I'd like to see a followup patch which converts the current
-> PDE_DATA() callsites.
->
+On Sun 21-11-21 12:10:56, Matthew Wilcox wrote:
+> dump_mapping() is a big chunk of dump_page(), and it'd be handy to be
+> able to call it when we don't have a struct page.  Split it out and move
+> it to fs/inode.c.  Take the opportunity to simplify some of the debug
+> messages a little.
 
-You mean replace all PDE_DATA with pde_data in another patch?
+Makes sense. I haven't checked the head files inclusion side of this but
+I suspect mm heads do include uaccess.h. Not sure inode.c does as well.
 
-Thanks.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  fs/inode.c         | 49 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h |  1 +
+>  mm/debug.c         | 52 ++--------------------------------------------
+>  3 files changed, 52 insertions(+), 50 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index bdfbd5962f2b..67758b2b702f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -522,6 +522,55 @@ void __remove_inode_hash(struct inode *inode)
+>  }
+>  EXPORT_SYMBOL(__remove_inode_hash);
+>  
+> +void dump_mapping(const struct address_space *mapping)
+> +{
+> +	struct inode *host;
+> +	const struct address_space_operations *a_ops;
+> +	struct hlist_node *dentry_first;
+> +	struct dentry *dentry_ptr;
+> +	struct dentry dentry;
+> +	unsigned long ino;
+> +
+> +	/*
+> +	 * If mapping is an invalid pointer, we don't want to crash
+> +	 * accessing it, so probe everything depending on it carefully.
+> +	 */
+> +	if (get_kernel_nofault(host, &mapping->host) ||
+> +	    get_kernel_nofault(a_ops, &mapping->a_ops)) {
+> +		pr_warn("invalid mapping:%px\n", mapping);
+> +		return;
+> +	}
+> +
+> +	if (!host) {
+> +		pr_warn("aops:%ps\n", a_ops);
+> +		return;
+> +	}
+> +
+> +	if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
+> +	    get_kernel_nofault(ino, &host->i_ino)) {
+> +		pr_warn("aops:%ps invalid inode:%px\n", a_ops, host);
+> +		return;
+> +	}
+> +
+> +	if (!dentry_first) {
+> +		pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
+> +		return;
+> +	}
+> +
+> +	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
+> +	if (get_kernel_nofault(dentry, dentry_ptr)) {
+> +		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
+> +				a_ops, ino, dentry_ptr);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * if dentry is corrupted, the %pd handler may still crash,
+> +	 * but it's unlikely that we reach here with a corrupt mapping
+> +	 */
+> +	pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n", a_ops, ino, &dentry);
+> +}
+> +
+>  void clear_inode(struct inode *inode)
+>  {
+>  	/*
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index d6a4eb6cf825..acaad2b0d5b9 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3149,6 +3149,7 @@ extern void unlock_new_inode(struct inode *);
+>  extern void discard_new_inode(struct inode *);
+>  extern unsigned int get_next_ino(void);
+>  extern void evict_inodes(struct super_block *sb);
+> +void dump_mapping(const struct address_space *);
+>  
+>  /*
+>   * Userspace may rely on the the inode number being non-zero. For example, glibc
+> diff --git a/mm/debug.c b/mm/debug.c
+> index fae0f81ad831..b3ebfab21cb3 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -110,56 +110,8 @@ static void __dump_page(struct page *page)
+>  		type = "ksm ";
+>  	else if (PageAnon(page))
+>  		type = "anon ";
+> -	else if (mapping) {
+> -		struct inode *host;
+> -		const struct address_space_operations *a_ops;
+> -		struct hlist_node *dentry_first;
+> -		struct dentry *dentry_ptr;
+> -		struct dentry dentry;
+> -		unsigned long ino;
+> -
+> -		/*
+> -		 * mapping can be invalid pointer and we don't want to crash
+> -		 * accessing it, so probe everything depending on it carefully
+> -		 */
+> -		if (get_kernel_nofault(host, &mapping->host) ||
+> -		    get_kernel_nofault(a_ops, &mapping->a_ops)) {
+> -			pr_warn("failed to read mapping contents, not a valid kernel address?\n");
+> -			goto out_mapping;
+> -		}
+> -
+> -		if (!host) {
+> -			pr_warn("aops:%ps\n", a_ops);
+> -			goto out_mapping;
+> -		}
+> -
+> -		if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
+> -		    get_kernel_nofault(ino, &host->i_ino)) {
+> -			pr_warn("aops:%ps with invalid host inode %px\n",
+> -					a_ops, host);
+> -			goto out_mapping;
+> -		}
+> -
+> -		if (!dentry_first) {
+> -			pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
+> -			goto out_mapping;
+> -		}
+> -
+> -		dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
+> -		if (get_kernel_nofault(dentry, dentry_ptr)) {
+> -			pr_warn("aops:%ps ino:%lx with invalid dentry %px\n",
+> -					a_ops, ino, dentry_ptr);
+> -		} else {
+> -			/*
+> -			 * if dentry is corrupted, the %pd handler may still
+> -			 * crash, but it's unlikely that we reach here with a
+> -			 * corrupted struct page
+> -			 */
+> -			pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n",
+> -					a_ops, ino, &dentry);
+> -		}
+> -	}
+> -out_mapping:
+> +	else if (mapping)
+> +		dump_mapping(mapping);
+>  	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) != __NR_PAGEFLAGS + 1);
+>  
+>  	pr_warn("%sflags: %#lx(%pGp)%s\n", type, head->flags, &head->flags,
+> -- 
+> 2.33.0
+
+-- 
+Michal Hocko
+SUSE Labs
