@@ -2,91 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BB09458B0B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 10:07:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 977FB458B37
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 10:19:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238956AbhKVJKX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 04:10:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57080 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238871AbhKVJKX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 04:10:23 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C59C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 01:07:17 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id gx15-20020a17090b124f00b001a695f3734aso14788090pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 01:07:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kHzk4hkj4PeRgDHzcs4O/TMu1fu4teuasWWYIuJwtxs=;
-        b=u2stvX/mOb5xLAWkH6XPOyCJu0P++JrHLUoaCs9ceIZcXeC0dIPgiTvWgute+ztGyl
-         Lpc+MSyL10zAhsnftUu7CF5rwS1twzLgQBJ+vfK0Ms4S/3xOaV0BsxhR9YABVaz4seBX
-         3wbXXXGj4cGlkjaUTDPgAv+yTg8sqBP2B/F5v0W9RPcV6dJnUf/UjURI89E45wfq73au
-         OtWl4CbHpKsxMOfiya3NvUEUAosLX29aAh5bVBuIK2dI/7ZqpVI5suikGdIs/bTDIWcl
-         KLk74WTjKLe2UmEJd15iGdpO9KuNS2RWLmenM4GUU6x8wUVr4cvo7yeHMXwiLJB+NOfg
-         qyCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kHzk4hkj4PeRgDHzcs4O/TMu1fu4teuasWWYIuJwtxs=;
-        b=BRZInFCX9HQPUDJ8MKL3FHiSodZ2LCHyCa3u6K0azZPsEzBIQdajd5paBnKM/Cph/C
-         ZN6y+07baAI0rBbt4bsj0nwOFwTAVpwg4LyMYE+Ac82wbXjjxdmILj/2XyKTQYYwJz/M
-         ocqvw46FinRVhOONNuGKmYdCi/mNPSRIHOiVYFl/u54aNpoCJLusEmZgQD9rizRNVVhr
-         DWe9VqikTPtVhs+I/Ou1mwhHB13xEysJGrscqgPVmdvshjsK30O3QhntfSj4YZGHxEWB
-         ngBQxPyHCPOAgDG7Z3cF92kZ3mnHwINFewR6MMX704vFRC/XvHGhs9c7fLS9lfD4gvVy
-         zilA==
-X-Gm-Message-State: AOAM531UJeRPrZynLjOph43wFvI/vDehBV9aPrh8099b+lRsrOMB9A/T
-        ynCG604ilxtI9IPbt0gGWZarxIgtu+8+
-X-Google-Smtp-Source: ABdhPJzA1WGI+fvicf8ocAD7yrMYlT5+v+JY4JaYHJYi0wYA/3aMIFg7HHXpsFFCjSg2X/8q8hE1QA==
-X-Received: by 2002:a17:902:b94b:b0:143:d3bc:9d83 with SMTP id h11-20020a170902b94b00b00143d3bc9d83mr62573803pls.6.1637572036521;
-        Mon, 22 Nov 2021 01:07:16 -0800 (PST)
-Received: from localhost ([139.177.225.237])
-        by smtp.gmail.com with ESMTPSA id d12sm5663031pgf.19.2021.11.22.01.07.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 01:07:16 -0800 (PST)
-From:   Xie Yongji <xieyongji@bytedance.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fuse: Pass correct lend value to filemap_write_and_wait_range()
-Date:   Mon, 22 Nov 2021 17:05:31 +0800
-Message-Id: <20211122090531.91-1-xieyongji@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+        id S239021AbhKVJWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 04:22:54 -0500
+Received: from mga12.intel.com ([192.55.52.136]:19907 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229906AbhKVJWw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Nov 2021 04:22:52 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10175"; a="214781457"
+X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
+   d="scan'208";a="214781457"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 01:19:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
+   d="scan'208";a="496790995"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 22 Nov 2021 01:19:09 -0800
+Date:   Mon, 22 Nov 2021 17:18:23 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Yao Yuan <yaoyuan0329os@gmail.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [RFC v2 PATCH 07/13] KVM: Handle page fault for fd based memslot
+Message-ID: <20211122091823.GB28749@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
+ <20211119134739.20218-8-chao.p.peng@linux.intel.com>
+ <20211120015529.w23fg2df3fqs4ov5@sapienza>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211120015529.w23fg2df3fqs4ov5@sapienza>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The acceptable maximum value of lend parameter in
-filemap_write_and_wait_range() is LLONG_MAX rather
-than -1. And there is also some logic depending on
-LLONG_MAX check in write_cache_pages(). So let's
-pass LLONG_MAX to filemap_write_and_wait_range()
-in fuse_writeback_range() instead.
+On Sat, Nov 20, 2021 at 09:55:29AM +0800, Yao Yuan wrote:
+> On Fri, Nov 19, 2021 at 09:47:33PM +0800, Chao Peng wrote:
+> > Current code assume the private memory is persistent and KVM can check
+> > with backing store to see if private memory exists at the same address
+> > by calling get_pfn(alloc=false).
+> >
+> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> >  arch/x86/kvm/mmu/mmu.c | 75 ++++++++++++++++++++++++++++++++++++++++--
+> >  1 file changed, 73 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 40377901598b..cd5d1f923694 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -3277,6 +3277,9 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
+> >  	if (max_level == PG_LEVEL_4K)
+> >  		return PG_LEVEL_4K;
+> >
+> > +	if (memslot_is_memfd(slot))
+> > +		return max_level;
+> > +
+> >  	host_level = host_pfn_mapping_level(kvm, gfn, pfn, slot);
+> >  	return min(host_level, max_level);
+> >  }
+> > @@ -4555,6 +4558,65 @@ static bool kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> >  				  kvm_vcpu_gfn_to_hva(vcpu, gfn), &arch);
+> >  }
+> >
+> > +static bool kvm_faultin_pfn_memfd(struct kvm_vcpu *vcpu,
+> > +				  struct kvm_page_fault *fault, int *r)
+> > +{	int order;
+> > +	kvm_pfn_t pfn;
+> > +	struct kvm_memory_slot *slot = fault->slot;
+> > +	bool priv_gfn = kvm_vcpu_is_private_gfn(vcpu, fault->addr >> PAGE_SHIFT);
+> > +	bool priv_slot_exists = memslot_has_private(slot);
+> > +	bool priv_gfn_exists = false;
+> > +	int mem_convert_type;
+> > +
+> > +	if (priv_gfn && !priv_slot_exists) {
+> > +		*r = RET_PF_INVALID;
+> > +		return true;
+> > +	}
+> > +
+> > +	if (priv_slot_exists) {
+> > +		pfn = slot->memfd_ops->get_pfn(slot, slot->priv_file,
+> > +					       fault->gfn, false, &order);
+> > +		if (pfn >= 0)
+> > +			priv_gfn_exists = true;
+> 
+> Need "fault->pfn = pfn" here if actual pfn is returned in
+> get_pfn(alloc=false) case for private page case.
+> 
+> > +	}
+> > +
+> > +	if (priv_gfn && !priv_gfn_exists) {
+> > +		mem_convert_type = KVM_EXIT_MEM_MAP_PRIVATE;
+> > +		goto out_convert;
+> > +	}
+> > +
+> > +	if (!priv_gfn && priv_gfn_exists) {
+> > +		slot->memfd_ops->put_pfn(pfn);
+> > +		mem_convert_type = KVM_EXIT_MEM_MAP_SHARED;
+> > +		goto out_convert;
+> > +	}
+> > +
+> > +	if (!priv_gfn) {
+> > +		pfn = slot->memfd_ops->get_pfn(slot, slot->file,
+> > +					       fault->gfn, true, &order);
+> 
+> Need "fault->pfn = pfn" here, because he pfn for
+> share page is getted here only.
+> 
+> > +		if (fault->pfn < 0) {
+> > +			*r = RET_PF_INVALID;
+> > +			return true;
+> > +		}
+> > +	}
 
-Fixes: 59bda8ecee2f ("fuse: flush extending writes")
-Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
----
- fs/fuse/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, I actually have "fault->pfn = pfn" here but accidentally deleted
+in a code factoring.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 9d6c5f6361f7..df81768c81a7 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2910,7 +2910,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 
- static int fuse_writeback_range(struct inode *inode, loff_t start, loff_t end)
- {
--	int err = filemap_write_and_wait_range(inode->i_mapping, start, -1);
-+	int err = filemap_write_and_wait_range(inode->i_mapping, start, LLONG_MAX);
- 
- 	if (!err)
- 		fuse_sync_writes(inode);
--- 
-2.11.0
-
+Chao
+> > +
+> > +	if (slot->flags & KVM_MEM_READONLY)
+> > +		fault->map_writable = false;
+> > +	if (order == 0)
+> > +		fault->max_level = PG_LEVEL_4K;
+> > +
+> > +	return false;
+> > +
+> > +out_convert:
+> > +	vcpu->run->exit_reason = KVM_EXIT_MEMORY_ERROR;
+> > +	vcpu->run->mem.type = mem_convert_type;
+> > +	vcpu->run->mem.u.map.gpa = fault->gfn << PAGE_SHIFT;
+> > +	vcpu->run->mem.u.map.size = PAGE_SIZE;
+> > +	fault->pfn = -1;
+> > +	*r = -1;
+> > +	return true;
+> > +}
+> > +
+> >  static bool kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault, int *r)
+> >  {
+> >  	struct kvm_memory_slot *slot = fault->slot;
+> > @@ -4596,6 +4658,9 @@ static bool kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
+> >  		}
+> >  	}
+> >
+> > +	if (memslot_is_memfd(slot))
+> > +		return kvm_faultin_pfn_memfd(vcpu, fault, r);
+> > +
+> >  	async = false;
+> >  	fault->pfn = __gfn_to_pfn_memslot(slot, fault->gfn, false, &async,
+> >  					  fault->write, &fault->map_writable,
+> > @@ -4660,7 +4725,8 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+> >  	else
+> >  		write_lock(&vcpu->kvm->mmu_lock);
+> >
+> > -	if (fault->slot && mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva))
+> > +	if (fault->slot && !memslot_is_memfd(fault->slot) &&
+> > +			mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva))
+> >  		goto out_unlock;
+> >  	r = make_mmu_pages_available(vcpu);
+> >  	if (r)
+> > @@ -4676,7 +4742,12 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+> >  		read_unlock(&vcpu->kvm->mmu_lock);
+> >  	else
+> >  		write_unlock(&vcpu->kvm->mmu_lock);
+> > -	kvm_release_pfn_clean(fault->pfn);
+> > +
+> > +	if (memslot_is_memfd(fault->slot))
+> > +		fault->slot->memfd_ops->put_pfn(fault->pfn);
+> > +	else
+> > +		kvm_release_pfn_clean(fault->pfn);
+> > +
+> >  	return r;
+> >  }
+> >
+> > --
+> > 2.17.1
+> >
