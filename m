@@ -2,110 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28FA04589F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 08:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB09458B0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 10:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235975AbhKVHoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 02:44:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37866 "EHLO
+        id S238956AbhKVJKX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 04:10:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232870AbhKVHoQ (ORCPT
+        with ESMTP id S238871AbhKVJKX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 02:44:16 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9041C061574;
-        Sun, 21 Nov 2021 23:41:10 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id f9so21917956ioo.11;
-        Sun, 21 Nov 2021 23:41:10 -0800 (PST)
+        Mon, 22 Nov 2021 04:10:23 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C59C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 01:07:17 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id gx15-20020a17090b124f00b001a695f3734aso14788090pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 01:07:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EgK3Fxmt2Ep/12cKLL6aWGBCcDYN8BbadOm8B5KUg8E=;
-        b=Oklkv7AgYAiXeDSbCLqFfwB1huhraxdAJZfZ5WjKYwXiTSqAK9bWfVy/HLCAJUQswM
-         F6JvDDh51VfwJpvOgEN333Wqcli0rVQDggh5FcCrdBC49J7PswDOZQa14QEuRG2Adjj+
-         U78QVmNrh1lm/9s8PZakdnenBtmNERGsTjt4eMfd2tZeAb5cPI/heuYDrbwj7wZjm9YY
-         A9bZCGffPphun2+TbuUoBGJa37IGJ1NgVNCFowOIjPSPePkrAGGqL/7C2oUyY5AcUUbI
-         Adc5pHvGG70GlB7Ouo7ZE0R4UF8ZcNOtEd/H8jvOwMz7p4Yy2J82Uu931gxrSW3gtHwL
-         GKdA==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kHzk4hkj4PeRgDHzcs4O/TMu1fu4teuasWWYIuJwtxs=;
+        b=u2stvX/mOb5xLAWkH6XPOyCJu0P++JrHLUoaCs9ceIZcXeC0dIPgiTvWgute+ztGyl
+         Lpc+MSyL10zAhsnftUu7CF5rwS1twzLgQBJ+vfK0Ms4S/3xOaV0BsxhR9YABVaz4seBX
+         3wbXXXGj4cGlkjaUTDPgAv+yTg8sqBP2B/F5v0W9RPcV6dJnUf/UjURI89E45wfq73au
+         OtWl4CbHpKsxMOfiya3NvUEUAosLX29aAh5bVBuIK2dI/7ZqpVI5suikGdIs/bTDIWcl
+         KLk74WTjKLe2UmEJd15iGdpO9KuNS2RWLmenM4GUU6x8wUVr4cvo7yeHMXwiLJB+NOfg
+         qyCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EgK3Fxmt2Ep/12cKLL6aWGBCcDYN8BbadOm8B5KUg8E=;
-        b=nw94UApv5LGdnoRZ2ZD7P5bREv4iEZ5D64L3HHt3zijH1W/wu8mWta7eqEf1RcZYmH
-         DcaigWKV1lUXdxIyl59vtcEFM+XvHL2bgygRPQgmIPH5/PMM/Fm5FbfAKDn2f1JWbpsH
-         s6tq2OnWY1tlClvZbLJ1DBEmRjBbmElfIp2o5M9KZSvGRUGJJXs1NidxqrBWXVBRFNjE
-         KfVduuhscY/bUS94941ZyJTIKjxyt5VpZyP/RebehADU0tmJGJZjvg+R5Kf5U/JvxNVo
-         2MwaDQjPHB0Fz5PZiNgzGPBQFa0POUOwrN5D9uYoz2I5dJPVYhpvnky3vs0hsUcds+76
-         PIaw==
-X-Gm-Message-State: AOAM532ypr8J+Q8Rc67waNF4C4jR3wusYeAswdOwcPC1OWWTAJl9BydQ
-        JNRxoUFvkMGyxOi+M/AwSHdKhj2uy7Kp6puyyNFJRTKhW6k=
-X-Google-Smtp-Source: ABdhPJzzsjZNvfLzBRWCOI9wZkvYKWyX2dOOoZsNa7F089FqnSUQcaYN0/9aN2OVkz/DGXsQgjyVqsOAUowqlpCVPOw=
-X-Received: by 2002:a05:6602:26d0:: with SMTP id g16mr1885952ioo.70.1637566870216;
- Sun, 21 Nov 2021 23:41:10 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kHzk4hkj4PeRgDHzcs4O/TMu1fu4teuasWWYIuJwtxs=;
+        b=BRZInFCX9HQPUDJ8MKL3FHiSodZ2LCHyCa3u6K0azZPsEzBIQdajd5paBnKM/Cph/C
+         ZN6y+07baAI0rBbt4bsj0nwOFwTAVpwg4LyMYE+Ac82wbXjjxdmILj/2XyKTQYYwJz/M
+         ocqvw46FinRVhOONNuGKmYdCi/mNPSRIHOiVYFl/u54aNpoCJLusEmZgQD9rizRNVVhr
+         DWe9VqikTPtVhs+I/Ou1mwhHB13xEysJGrscqgPVmdvshjsK30O3QhntfSj4YZGHxEWB
+         ngBQxPyHCPOAgDG7Z3cF92kZ3mnHwINFewR6MMX704vFRC/XvHGhs9c7fLS9lfD4gvVy
+         zilA==
+X-Gm-Message-State: AOAM531UJeRPrZynLjOph43wFvI/vDehBV9aPrh8099b+lRsrOMB9A/T
+        ynCG604ilxtI9IPbt0gGWZarxIgtu+8+
+X-Google-Smtp-Source: ABdhPJzA1WGI+fvicf8ocAD7yrMYlT5+v+JY4JaYHJYi0wYA/3aMIFg7HHXpsFFCjSg2X/8q8hE1QA==
+X-Received: by 2002:a17:902:b94b:b0:143:d3bc:9d83 with SMTP id h11-20020a170902b94b00b00143d3bc9d83mr62573803pls.6.1637572036521;
+        Mon, 22 Nov 2021 01:07:16 -0800 (PST)
+Received: from localhost ([139.177.225.237])
+        by smtp.gmail.com with ESMTPSA id d12sm5663031pgf.19.2021.11.22.01.07.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Nov 2021 01:07:16 -0800 (PST)
+From:   Xie Yongji <xieyongji@bytedance.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fuse: Pass correct lend value to filemap_write_and_wait_range()
+Date:   Mon, 22 Nov 2021 17:05:31 +0800
+Message-Id: <20211122090531.91-1-xieyongji@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net>
-In-Reply-To: <20211122030038.1938875-8-cgxu519@mykernel.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 22 Nov 2021 09:40:59 +0200
-Message-ID: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
-Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for overlayfs
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Chengguang Xu <charliecgxu@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wrote:
->
-> From: Chengguang Xu <charliecgxu@tencent.com>
->
-> Now overlayfs can only sync own dirty inodes during syncfs,
-> so remove unnecessary sync_filesystem() on upper file system.
->
-> Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
-> ---
->  fs/overlayfs/super.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index ccffcd96491d..213b795a6a86 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
->         /*
->          * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
->          * All the super blocks will be iterated, including upper_sb.
-> -        *
-> -        * If this is a syncfs(2) call, then we do need to call
-> -        * sync_filesystem() on upper_sb, but enough if we do it when being
-> -        * called with wait == 1.
->          */
-> -       if (!wait)
-> -               return 0;
-> -
->         upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> -
->         down_read(&upper_sb->s_umount);
-> -       ret = sync_filesystem(upper_sb);
-> +       if (wait)
-> +               wait_sb_inodes(upper_sb);
-> +       if (upper_sb->s_op->sync_fs)
-> +               upper_sb->s_op->sync_fs(upper_sb, wait);
-> +       ret = ovl_sync_upper_blockdev(upper_sb, wait);
+The acceptable maximum value of lend parameter in
+filemap_write_and_wait_range() is LLONG_MAX rather
+than -1. And there is also some logic depending on
+LLONG_MAX check in write_cache_pages(). So let's
+pass LLONG_MAX to filemap_write_and_wait_range()
+in fuse_writeback_range() instead.
 
-I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
-with everything from  upper_sb = ... and a comment to explain that
-this is a variant of __sync_filesystem() where all the dirty inodes write
-have already been started.
+Fixes: 59bda8ecee2f ("fuse: flush extending writes")
+Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+---
+ fs/fuse/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Amir.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 9d6c5f6361f7..df81768c81a7 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2910,7 +2910,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 
+ static int fuse_writeback_range(struct inode *inode, loff_t start, loff_t end)
+ {
+-	int err = filemap_write_and_wait_range(inode->i_mapping, start, -1);
++	int err = filemap_write_and_wait_range(inode->i_mapping, start, LLONG_MAX);
+ 
+ 	if (!err)
+ 		fuse_sync_writes(inode);
+-- 
+2.11.0
 
-P.S. I like this "stoopid proof" v6 because I can understand it ;-)
