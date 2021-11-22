@@ -2,125 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DD5459009
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 15:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 569E04590A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 15:57:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232494AbhKVOTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 09:19:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43110 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231756AbhKVOTu (ORCPT
+        id S239577AbhKVPAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 10:00:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:57617 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232494AbhKVPAa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 09:19:50 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3C8EC061714
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 06:16:43 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id c32so81555395lfv.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 06:16:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=P+4zN2N2GD5InVPRag20OPT/f7vJcEHsDBTk4URQjTY=;
-        b=i660LRu/4c8k5hZyBAeiN7vx0DBSwtD8jpUkhNkSzxlWCRi0bijMvkNpekOr7ODcqf
-         UC0FELTodvWUnOuZjym86GSTh/2Zk2G58nuT2v5lRYn46uzum5yI7DHmlQ4HhO1Nm7T/
-         aQH9kqwRvEP2U9SXB4mugfIDYeVG8Q83mR0ziru1aeYKVDvndcWcO2dGj6xLJFbVDXKn
-         nChK1SZIjg7CvjRVK6vC6dXSOLsBwzmizr4u7jHyKx6OVdI3BWNtfNkiZu97/IcU80/r
-         He6oR52eZ+2bEqk/XkG670vHL3LQAnjJvaBUqzPuTmX2lMgEKeEbNFXL0x2jxrgBfVWC
-         MnwA==
+        Mon, 22 Nov 2021 10:00:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637593043;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a6sxP8BbpsAMN/5roSu3j/ZWT90syA5vCmiIsqjbMtk=;
+        b=CTZzBYOj9NMS5ihn+fb5DQ0CxKjOREYArVSwooh1gGYa7KVAOl/GRdo+Lm3TQbPQ0N5RMX
+        trHokDDWh6MqpRVL150h4rHCDPS8CKctvHJXt7xOcml7yfI84XG/1CzOa+lx8Ku+yVMg34
+        1mEDWYR0JMwosIttyQ5pqFLcz9/tpK8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-123-GN8Ubqx1NTefQC_Iw42nkw-1; Mon, 22 Nov 2021 09:57:22 -0500
+X-MC-Unique: GN8Ubqx1NTefQC_Iw42nkw-1
+Received: by mail-wr1-f72.google.com with SMTP id f3-20020a5d50c3000000b00183ce1379feso3159582wrt.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 06:57:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=P+4zN2N2GD5InVPRag20OPT/f7vJcEHsDBTk4URQjTY=;
-        b=idvMCpQ4MBaFjh+W1LaoborFDzk7xB1+zTsywR7HrXk9oDp2a6m2xrVMQ7bn0D38BW
-         geSB3GTt9NOlk8DA904X6cPLUd6xfuoqYAv6GGmMtP+UFkxKlLWUjsnLqEDm2GvAeUQs
-         kJ+TqNEB+VT+vrkl1Q5bff7BZ7exaaMtNlUVN0Ju1JCrNRlhL5L9mGG6k69PTgoSWhGF
-         zQyDxvvhqxvKTtHLzJtgy8j1SqTTl54UtlAYphvav94y6XF0w3DvDKcswkJ5QYNn3s0d
-         5spg3zRv88r0y22hKeGAdDoEWRAlEDW6jA8YVKTGnZw371ncfj3UCwlNxMKjU+WL0RrC
-         PLeQ==
-X-Gm-Message-State: AOAM530izc+XAigt3zAP+aFiNDHR8E71ScicGdl1LIJ4tk6kcZ4Uo9Gq
-        Vv7LzeXNf/OugAksX2dVpfU0Pw==
-X-Google-Smtp-Source: ABdhPJwA2Y8gfA+st0HYZ/WwMV2AWc6rzJCATTeuU95BmoAecu1lVYYz4BBqsxxXP2KWDyyXt38ykg==
-X-Received: by 2002:a2e:8189:: with SMTP id e9mr52166761ljg.333.1637590602046;
-        Mon, 22 Nov 2021 06:16:42 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id q24sm979041lfp.103.2021.11.22.06.16.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 06:16:41 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 83FF5103610; Mon, 22 Nov 2021 17:16:47 +0300 (+03)
-Date:   Mon, 22 Nov 2021 17:16:47 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Wanpeng Li <wanpengli@tencent.com>,
-        jun.nakajima@intel.com, david@redhat.com,
-        "J . Bruce Fields" <bfields@fieldses.org>, dave.hansen@intel.com,
-        "H . Peter Anvin" <hpa@zytor.com>, ak@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        luto@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <seanjc@google.com>, susie.li@intel.com,
-        Jeff Layton <jlayton@kernel.org>, john.ji@intel.com,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC v2 PATCH 13/13] KVM: Enable memfd based page
- invalidation/fallocate
-Message-ID: <20211122141647.3pcsywilrzcoqvbf@box.shutemov.name>
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-14-chao.p.peng@linux.intel.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=a6sxP8BbpsAMN/5roSu3j/ZWT90syA5vCmiIsqjbMtk=;
+        b=z0MEQ5NqpNANTlm5UmgIk9U8R34DjU1/xUMdBZoX7IGbxQBRN9doHMtSDyjYV6znmx
+         LNKj6D1qwcwVdzbjDtl03v/RQkrxeSRj454AKZvwFT/RN6o9LP78LJbPjVycY+AFJQao
+         jnCKbL2VcdOxF3l5WKfw1w7Zip6amVTmt7jF9dFzxXe/eAzcU7S32rzRQGFbT++COQMm
+         SrduGcGAYFu8gatbBLo44QshRwIDfY5vZLDJNgjZuK1uxtaocmwWa2FdZyM8CqvkIXUz
+         S5X5V0Cecd//N4vz7AhRdQDeAUHa5AzS9x1uc/Mma8AVgRZ0NagUpOobAE6zENA2Ue8A
+         rE3g==
+X-Gm-Message-State: AOAM532F2h+qA+qkkVJ6QwHFmPzyA6S1eG9FZyIDbkrYQHp4HNn9UMTE
+        Ap94E1Y1xp2/NrnE+jOyKCkw25kViWmqB9lS/1Bgc8Wq9wy/mNhzn7OJ3l5mKPyVBupJHPvrw0B
+        a5DGRS+B+nOvY3CeYsWB6nu5LJA==
+X-Received: by 2002:a7b:ce8c:: with SMTP id q12mr29900023wmj.91.1637593040912;
+        Mon, 22 Nov 2021 06:57:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzb1fVkmOhpRnzBJsEnrS5eq+nBwa2MfaKvZWrzzGVY0sVj4OHkUiEBZAugOc7zSp386W7pog==
+X-Received: by 2002:a7b:ce8c:: with SMTP id q12mr29899978wmj.91.1637593040715;
+        Mon, 22 Nov 2021 06:57:20 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c667b.dip0.t-ipconnect.de. [91.12.102.123])
+        by smtp.gmail.com with ESMTPSA id s63sm10249585wme.22.2021.11.22.06.57.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Nov 2021 06:57:20 -0800 (PST)
+Message-ID: <d2b46b84-8930-4304-2946-4d4a16698b24@redhat.com>
+Date:   Mon, 22 Nov 2021 15:57:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211119134739.20218-14-chao.p.peng@linux.intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
+Content-Language: en-US
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
+References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
+ <20211119134739.20218-2-chao.p.peng@linux.intel.com>
+ <20211119151943.GH876299@ziepe.ca>
+ <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
+ <20211119160023.GI876299@ziepe.ca>
+ <4efdccac-245f-eb1f-5b7f-c1044ff0103d@redhat.com>
+ <20211122133145.GQ876299@ziepe.ca>
+ <56c0dffc-5fc4-c337-3e85-a5c9ce619140@redhat.com>
+ <20211122140148.GR876299@ziepe.ca>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20211122140148.GR876299@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 19, 2021 at 09:47:39PM +0800, Chao Peng wrote:
-> Since the memory backing store does not get notified when VM is
-> destroyed so need check if VM is still live in these callbacks.
+On 22.11.21 15:01, Jason Gunthorpe wrote:
+> On Mon, Nov 22, 2021 at 02:35:49PM +0100, David Hildenbrand wrote:
+>> On 22.11.21 14:31, Jason Gunthorpe wrote:
+>>> On Mon, Nov 22, 2021 at 10:26:12AM +0100, David Hildenbrand wrote:
+>>>
+>>>> I do wonder if we want to support sharing such memfds between processes
+>>>> in all cases ... we most certainly don't want to be able to share
+>>>> encrypted memory between VMs (I heard that the kernel has to forbid
+>>>> that). It would make sense in the use case you describe, though.
+>>>
+>>> If there is a F_SEAL_XX that blocks every kind of new access, who
+>>> cares if userspace passes the FD around or not?
+>> I was imagining that you actually would want to do some kind of "change
+>> ownership". But yeah, the intended semantics and all use cases we have
+>> in mind are not fully clear to me yet. If it's really "no new access"
+>> (side note: is "access" the right word?) then sure, we can pass the fd
+>> around.
 > 
-> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
->  virt/kvm/memfd.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/virt/kvm/memfd.c b/virt/kvm/memfd.c
-> index bd930dcb455f..bcfdc685ce22 100644
-> --- a/virt/kvm/memfd.c
-> +++ b/virt/kvm/memfd.c
-> @@ -12,16 +12,38 @@
->  #include <linux/memfd.h>
->  const static struct guest_mem_ops *memfd_ops;
->  
-> +static bool vm_is_dead(struct kvm *vm)
-> +{
-> +	struct kvm *kvm;
-> +
-> +	list_for_each_entry(kvm, &vm_list, vm_list) {
-> +		if (kvm == vm)
-> +			return false;
-> +	}
+> What is "ownership" in a world with kvm and iommu are reading pages
+> out of the same fd?
 
-I don't think this is enough. The struct kvm can be freed and re-allocated
-from the slab and this function will give false-negetive.
-
-Maybe the kvm has to be tagged with a sequential id that incremented every
-allocation. This id can be checked here.
-
-> +
-> +	return true;
-> +}
+In the world of encrypted memory / TDX, KVM somewhat "owns" that memory
+IMHO (for example, only it can migrate or swap out these pages; it's
+might be debatable if the TDX module or KVM actually "own" these pages ).
 
 -- 
- Kirill A. Shutemov
+Thanks,
+
+David / dhildenb
+
