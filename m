@@ -2,283 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 613D045917A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 16:33:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 606A2459197
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 16:47:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239943AbhKVPgG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 10:36:06 -0500
-Received: from mail-ed1-f48.google.com ([209.85.208.48]:38665 "EHLO
-        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239955AbhKVPgC (ORCPT
+        id S239885AbhKVPuK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 10:50:10 -0500
+Received: from bedivere.hansenpartnership.com ([96.44.175.130]:43144 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234636AbhKVPuJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 10:36:02 -0500
-Received: by mail-ed1-f48.google.com with SMTP id x6so66753998edr.5;
-        Mon, 22 Nov 2021 07:32:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Zo6rdv8VWy1CbkCH3mCDWH3/iz/FJl3/IoCVBK7j9hk=;
-        b=A7rpTfcdeHqa1wg9ZiGYr9jT3b/oIxX9vWe/2I6gzzYQ2/UZKwgTww6buTqBX+QQfm
-         YHUM/frWn+tjObtvWLWsJWVm1lZKoOb79VhUm7fUhAp/7rTk+dmcJuH+t98+BiuqAo/g
-         rV+wUltjy5lwH+NyPAeGmo6gl+BPI7Sa5oVfGqrw+GQu4ganNsWmq68wjHUFAfbu24zh
-         GX9oGHZAqR4f80KKOi2CmMRMtOjO3oq5hfKBxoe4hFQJTvT5+F7dMZ/0qvSKOMUVJ8K/
-         pdMT6I14/EYtottR/GKCcJgvhHNIe+OkHPGNwRakP6dcnsL8AgOHPwVJ0hIzDAwZQ47I
-         PepQ==
-X-Gm-Message-State: AOAM533k3N19sV7Mak5wPPVF12NhrEndRmzeeXALUwaWo3jIeS7WpqR4
-        TByJjlYfnE0u8/08/L1zZb4=
-X-Google-Smtp-Source: ABdhPJwWaL8NNNJbUa6B7XJSuvfszHDZN1AlX5ClompjS+pcHwuTwksG4y4Lz+8Js376OffflN9Pnw==
-X-Received: by 2002:a05:6402:908:: with SMTP id g8mr61682534edz.59.1637595171483;
-        Mon, 22 Nov 2021 07:32:51 -0800 (PST)
-Received: from localhost.localdomain (ip-85-160-4-65.eurotel.cz. [85.160.4.65])
-        by smtp.gmail.com with ESMTPSA id q7sm4247757edr.9.2021.11.22.07.32.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 07:32:50 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v2 4/4] mm: allow !GFP_KERNEL allocations for kvmalloc
-Date:   Mon, 22 Nov 2021 16:32:33 +0100
-Message-Id: <20211122153233.9924-5-mhocko@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211122153233.9924-1-mhocko@kernel.org>
-References: <20211122153233.9924-1-mhocko@kernel.org>
+        Mon, 22 Nov 2021 10:50:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1637596023;
+        bh=1uDlFLrgaSL10WCfqyQ8IfoWuiwun2pKDp1EhWUNXLk=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=JgYHC0cnyxAcgzX+cc7Hzz1D+obsixUBRsh+JUOQH/rvaOvG9OjxLULw2Zv7T3ucn
+         paRnI2Lv8uuLD174oxGfbO07yPUCLXBO0fdhEoAmc+jCxbYW4IBu/RLA2F0YRyKUbu
+         KF74GQmFZFlHeghtZoAPqaxcIo5rKG8egrNGDI4c=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 17BAE128028D;
+        Mon, 22 Nov 2021 10:47:03 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YwC9t3ajzgS8; Mon, 22 Nov 2021 10:47:03 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1637596022;
+        bh=1uDlFLrgaSL10WCfqyQ8IfoWuiwun2pKDp1EhWUNXLk=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=WtVIe+aHaqolJaW6i2Zjhkm0T3A7UTs7pjzuxPcJCivbcYccQKCVfMTrhnrwNScFV
+         2mLSqs8ZGCZ/+jExpMOtkXiTc4v7uDbUrXVUoXWjtNL0OrHaaxbumWv8j/TBZ2pXrz
+         tUflAC73YoXKFxxn8yHDvlmNd1sABXJcot8OzyYg=
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::527])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id AF00A12800EF;
+        Mon, 22 Nov 2021 10:47:01 -0500 (EST)
+Message-ID: <63f54c213253b80fcf3f8653766d5c6f5761034a.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Yordan Karadzhov <y.karadz@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, mingo@redhat.com, hagen@jauu.net,
+        rppt@kernel.org, akpm@linux-foundation.org, vvs@virtuozzo.com,
+        shakeelb@google.com, christian.brauner@ubuntu.com,
+        mkoutny@suse.com, Linux Containers <containers@lists.linux.dev>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Mon, 22 Nov 2021 10:47:00 -0500
+In-Reply-To: <e94c2ba9-226b-8275-bef7-28e854be3ffa@gmail.com>
+References: <20211118181210.281359-1-y.karadz@gmail.com>
+         <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
+         <20211118142440.31da20b3@gandalf.local.home>
+         <1349346e1d5daca991724603d1495ec311cac058.camel@HansenPartnership.com>
+         <20211119092758.1012073e@gandalf.local.home>
+         <f6ca1f5bdb3b516688f291d9685a6a59f49f1393.camel@HansenPartnership.com>
+         <20211119114736.5d9dcf6c@gandalf.local.home>
+         <20211119114910.177c80d6@gandalf.local.home>
+         <cc6783315193be5acb0e2e478e2827d1ad76ba2a.camel@HansenPartnership.com>
+         <ba0f624c-fc24-a3f4-749a-00e419960de2@gmail.com>
+         <4d2b08aa854fcccd51247105edb18fe466a2a3f1.camel@HansenPartnership.com>
+         <e94c2ba9-226b-8275-bef7-28e854be3ffa@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Mon, 2021-11-22 at 17:00 +0200, Yordan Karadzhov wrote:
+> 
+> On 22.11.21 г. 15:44 ч., James Bottomley wrote:
+> > Well, no, the information may not all exist.  However, the point is
+> > we can add it without adding additional namespace objects.
+> > 
+> > > Let's look the following case (oversimplified just to get the
+> > > idea):
+> > > 1. The process X is a parent of the process Y and both are in
+> > > namespace 'A'.
+> > > 3. "unshare" is used to place process Y (and all its child
+> > > processes) in a new namespace B (A is a parent namespace of B).
+> > > 4. "setns" is s used to move process X in namespace C.
+> > > 
+> > > How would you find the parent namespace of B?
+> > Actually this one's quite easy: the parent of X in your setup still
+> > has it.
+> 
+> Hmm, Isn't that true only if somehow we know that (3) happened before
+> (4).
 
-A support for GFP_NO{FS,IO} and __GFP_NOFAIL has been implemented
-by previous patches so we can allow the support for kvmalloc. This
-will allow some external users to simplify or completely remove
-their helpers.
+This depends.  There are only two parented namespaces: pid and user. 
+You said you were only interested in pid for now.  setns on the process
+only affects pid_for_children because you have to fork to enter the pid
+namespace, so in your scenario X has a new ns/pid_for_children but its
+own ns/pid never changed.  It's the ns/pid not the ns/pid_for_children
+which is the parent.  This makes me suspect that the specific thing
+you're trying to do: trace the pid parentage, can actually be done with
+the information we have now.
 
-GFP_NOWAIT semantic hasn't been supported so far but it hasn't been
-explicitly documented so let's add a note about that.
+If you do this with the user_ns, then you have a problem because it's
+not fork on entry.  But, as I listed in the examples, there are a load
+of other problems with tracing the user_ns tree.
 
-ceph_kvmalloc is the first helper to be dropped and changed to
-kvmalloc.
+James
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- include/linux/ceph/libceph.h |  1 -
- mm/util.c                    | 15 ++++-----------
- net/ceph/buffer.c            |  4 ++--
- net/ceph/ceph_common.c       | 27 ---------------------------
- net/ceph/crypto.c            |  2 +-
- net/ceph/messenger.c         |  2 +-
- net/ceph/messenger_v2.c      |  2 +-
- net/ceph/osdmap.c            | 12 ++++++------
- 8 files changed, 15 insertions(+), 50 deletions(-)
-
-diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
-index 409d8c29bc4f..309acbcb5a8a 100644
---- a/include/linux/ceph/libceph.h
-+++ b/include/linux/ceph/libceph.h
-@@ -295,7 +295,6 @@ extern bool libceph_compatible(void *data);
- 
- extern const char *ceph_msg_type_name(int type);
- extern int ceph_check_fsid(struct ceph_client *client, struct ceph_fsid *fsid);
--extern void *ceph_kvmalloc(size_t size, gfp_t flags);
- 
- struct fs_parameter;
- struct fc_log;
-diff --git a/mm/util.c b/mm/util.c
-index e58151a61255..7275f2829e3f 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -549,13 +549,10 @@ EXPORT_SYMBOL(vm_mmap);
-  * Uses kmalloc to get the memory but if the allocation fails then falls back
-  * to the vmalloc allocator. Use kvfree for freeing the memory.
-  *
-- * Reclaim modifiers - __GFP_NORETRY and __GFP_NOFAIL are not supported.
-+ * GFP_NOWAIT and GFP_ATOMIC are not supported, neither is the __GFP_NORETRY modifier.
-  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
-  * preferable to the vmalloc fallback, due to visible performance drawbacks.
-  *
-- * Please note that any use of gfp flags outside of GFP_KERNEL is careful to not
-- * fall back to vmalloc.
-- *
-  * Return: pointer to the allocated memory of %NULL in case of failure
-  */
- void *kvmalloc_node(size_t size, gfp_t flags, int node)
-@@ -563,13 +560,6 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
- 	gfp_t kmalloc_flags = flags;
- 	void *ret;
- 
--	/*
--	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
--	 * so the given set of flags has to be compatible.
--	 */
--	if ((flags & GFP_KERNEL) != GFP_KERNEL)
--		return kmalloc_node(size, flags, node);
--
- 	/*
- 	 * We want to attempt a large physically contiguous block first because
- 	 * it is less likely to fragment multiple larger blocks and therefore
-@@ -582,6 +572,9 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
- 
- 		if (!(kmalloc_flags & __GFP_RETRY_MAYFAIL))
- 			kmalloc_flags |= __GFP_NORETRY;
-+
-+		/* nofail semantic is implemented by the vmalloc fallback */
-+		kmalloc_flags &= ~__GFP_NOFAIL;
- 	}
- 
- 	ret = kmalloc_node(size, kmalloc_flags, node);
-diff --git a/net/ceph/buffer.c b/net/ceph/buffer.c
-index 5622763ad402..7e51f128045d 100644
---- a/net/ceph/buffer.c
-+++ b/net/ceph/buffer.c
-@@ -7,7 +7,7 @@
- 
- #include <linux/ceph/buffer.h>
- #include <linux/ceph/decode.h>
--#include <linux/ceph/libceph.h> /* for ceph_kvmalloc */
-+#include <linux/ceph/libceph.h> /* for kvmalloc */
- 
- struct ceph_buffer *ceph_buffer_new(size_t len, gfp_t gfp)
- {
-@@ -17,7 +17,7 @@ struct ceph_buffer *ceph_buffer_new(size_t len, gfp_t gfp)
- 	if (!b)
- 		return NULL;
- 
--	b->vec.iov_base = ceph_kvmalloc(len, gfp);
-+	b->vec.iov_base = kvmalloc(len, gfp);
- 	if (!b->vec.iov_base) {
- 		kfree(b);
- 		return NULL;
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index 97d6ea763e32..9441b4a4912b 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -190,33 +190,6 @@ int ceph_compare_options(struct ceph_options *new_opt,
- }
- EXPORT_SYMBOL(ceph_compare_options);
- 
--/*
-- * kvmalloc() doesn't fall back to the vmalloc allocator unless flags are
-- * compatible with (a superset of) GFP_KERNEL.  This is because while the
-- * actual pages are allocated with the specified flags, the page table pages
-- * are always allocated with GFP_KERNEL.
-- *
-- * ceph_kvmalloc() may be called with GFP_KERNEL, GFP_NOFS or GFP_NOIO.
-- */
--void *ceph_kvmalloc(size_t size, gfp_t flags)
--{
--	void *p;
--
--	if ((flags & (__GFP_IO | __GFP_FS)) == (__GFP_IO | __GFP_FS)) {
--		p = kvmalloc(size, flags);
--	} else if ((flags & (__GFP_IO | __GFP_FS)) == __GFP_IO) {
--		unsigned int nofs_flag = memalloc_nofs_save();
--		p = kvmalloc(size, GFP_KERNEL);
--		memalloc_nofs_restore(nofs_flag);
--	} else {
--		unsigned int noio_flag = memalloc_noio_save();
--		p = kvmalloc(size, GFP_KERNEL);
--		memalloc_noio_restore(noio_flag);
--	}
--
--	return p;
--}
--
- static int parse_fsid(const char *str, struct ceph_fsid *fsid)
- {
- 	int i = 0;
-diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-index 92d89b331645..051d22c0e4ad 100644
---- a/net/ceph/crypto.c
-+++ b/net/ceph/crypto.c
-@@ -147,7 +147,7 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
- static const u8 *aes_iv = (u8 *)CEPH_AES_IV;
- 
- /*
-- * Should be used for buffers allocated with ceph_kvmalloc().
-+ * Should be used for buffers allocated with kvmalloc().
-  * Currently these are encrypt out-buffer (ceph_buffer) and decrypt
-  * in-buffer (msg front).
-  *
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 57d043b382ed..7b891be799d2 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -1920,7 +1920,7 @@ struct ceph_msg *ceph_msg_new2(int type, int front_len, int max_data_items,
- 
- 	/* front */
- 	if (front_len) {
--		m->front.iov_base = ceph_kvmalloc(front_len, flags);
-+		m->front.iov_base = kvmalloc(front_len, flags);
- 		if (m->front.iov_base == NULL) {
- 			dout("ceph_msg_new can't allocate %d bytes\n",
- 			     front_len);
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index cc40ce4e02fb..c4099b641b38 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -308,7 +308,7 @@ static void *alloc_conn_buf(struct ceph_connection *con, int len)
- 	if (WARN_ON(con->v2.conn_buf_cnt >= ARRAY_SIZE(con->v2.conn_bufs)))
- 		return NULL;
- 
--	buf = ceph_kvmalloc(len, GFP_NOIO);
-+	buf = kvmalloc(len, GFP_NOIO);
- 	if (!buf)
- 		return NULL;
- 
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index 75b738083523..2823bb3cff55 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -980,7 +980,7 @@ static struct crush_work *alloc_workspace(const struct crush_map *c)
- 	work_size = crush_work_size(c, CEPH_PG_MAX_SIZE);
- 	dout("%s work_size %zu bytes\n", __func__, work_size);
- 
--	work = ceph_kvmalloc(work_size, GFP_NOIO);
-+	work = kvmalloc(work_size, GFP_NOIO);
- 	if (!work)
- 		return NULL;
- 
-@@ -1190,9 +1190,9 @@ static int osdmap_set_max_osd(struct ceph_osdmap *map, u32 max)
- 	if (max == map->max_osd)
- 		return 0;
- 
--	state = ceph_kvmalloc(array_size(max, sizeof(*state)), GFP_NOFS);
--	weight = ceph_kvmalloc(array_size(max, sizeof(*weight)), GFP_NOFS);
--	addr = ceph_kvmalloc(array_size(max, sizeof(*addr)), GFP_NOFS);
-+	state = kvmalloc(array_size(max, sizeof(*state)), GFP_NOFS);
-+	weight = kvmalloc(array_size(max, sizeof(*weight)), GFP_NOFS);
-+	addr = kvmalloc(array_size(max, sizeof(*addr)), GFP_NOFS);
- 	if (!state || !weight || !addr) {
- 		kvfree(state);
- 		kvfree(weight);
-@@ -1222,7 +1222,7 @@ static int osdmap_set_max_osd(struct ceph_osdmap *map, u32 max)
- 	if (map->osd_primary_affinity) {
- 		u32 *affinity;
- 
--		affinity = ceph_kvmalloc(array_size(max, sizeof(*affinity)),
-+		affinity = kvmalloc(array_size(max, sizeof(*affinity)),
- 					 GFP_NOFS);
- 		if (!affinity)
- 			return -ENOMEM;
-@@ -1503,7 +1503,7 @@ static int set_primary_affinity(struct ceph_osdmap *map, int osd, u32 aff)
- 	if (!map->osd_primary_affinity) {
- 		int i;
- 
--		map->osd_primary_affinity = ceph_kvmalloc(
-+		map->osd_primary_affinity = kvmalloc(
- 		    array_size(map->max_osd, sizeof(*map->osd_primary_affinity)),
- 		    GFP_NOFS);
- 		if (!map->osd_primary_affinity)
--- 
-2.30.2
 
