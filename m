@@ -2,120 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C18DE458F82
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 14:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 955DF458F85
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 14:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239584AbhKVNjD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 08:39:03 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41565 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239341AbhKVNjB (ORCPT
+        id S239275AbhKVNjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 08:39:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34066 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239591AbhKVNjR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 08:39:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637588154;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=602lNvVOZar2m+HSFbxBYiyDNXrGO+dVi/Ze/KZAj6g=;
-        b=ZNDVdueQ4xrwWe5pXhJgvmseao91pgGi4k943MKsjUnPjFhJBevrarVBZ/Y/Ght0GUGvXk
-        FmHMfDzufOBWB+sPHo6bKBVpkZ+lMUvw/XAK8svFtTb9U9RdnRxN1+r6M/Y5LPG17FVzoR
-        9xfdcuB2bWSuUu1Z0DjXDXXh6biDfrs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-552-LR8kMv0kOniFkxSrrS5Xuw-1; Mon, 22 Nov 2021 08:35:53 -0500
-X-MC-Unique: LR8kMv0kOniFkxSrrS5Xuw-1
-Received: by mail-wm1-f71.google.com with SMTP id 187-20020a1c02c4000000b003335872db8dso6324560wmc.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 05:35:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=602lNvVOZar2m+HSFbxBYiyDNXrGO+dVi/Ze/KZAj6g=;
-        b=dqsSrk+X4kdrvypSbIUg6Ie7BxGJAhcjpEx6qCxdYPrFotzpRlAobeSZXva7phRI9v
-         9SlkCoEx1Wf7YaBSPWqnbjj6efYYvmKMlV41z9MJPOYOxglv/peaahDY/I9UIwQgd0SC
-         tzv0/S0rCtQbTPBJSmsLd8yhnnnHtATlfZOyuPYt2fF844jeFivFSQFUPeDrWel9ccei
-         e4b4Qg7W8n8Fb0r6OkT229H9AwhYWTrKG8kdSd6vRN/bqAg5rhhnlpma7weknBbe7j+B
-         zYhaLAtjASrSc+j5h/cI+s6i8V5ePDxWF50u1IoFbNvK0D+tQPjY9UOFaYx4qFnHtpZu
-         G7sA==
-X-Gm-Message-State: AOAM5318HVfShr2xB++gjHmWtKBWQW9RYBU5cZBFWpAXW54zH+7B7+Zh
-        y2hoGa5f6M5oDanfRPr0hkrYO6EC3o2K8iajx/Cmf4MgtDUqqed9FfxBoIJV0KOf1ZcOWxkFbGF
-        uR1dUlRuUp7Oh/gQaUMElu7iVPQ==
-X-Received: by 2002:adf:f042:: with SMTP id t2mr39515190wro.180.1637588151973;
-        Mon, 22 Nov 2021 05:35:51 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw1uMKJXFglAoRaU5wdp0h6HMWbMcVgb35JuanaPUNLoA7JZ4ctjynARZIlt7KcqMq8Cl1Yqg==
-X-Received: by 2002:adf:f042:: with SMTP id t2mr39515155wro.180.1637588151703;
-        Mon, 22 Nov 2021 05:35:51 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c667b.dip0.t-ipconnect.de. [91.12.102.123])
-        by smtp.gmail.com with ESMTPSA id m34sm24540329wms.25.2021.11.22.05.35.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Nov 2021 05:35:51 -0800 (PST)
-Message-ID: <56c0dffc-5fc4-c337-3e85-a5c9ce619140@redhat.com>
-Date:   Mon, 22 Nov 2021 14:35:49 +0100
+        Mon, 22 Nov 2021 08:39:17 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E11BC061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 05:36:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1cwiZQfpD3SkmGX7XB5Pk6HTisIqRWs63/tTDjYhSDo=; b=k+o80sT5+79Qm730/XvaAGDG5A
+        BpHwobOQQ94NSgZ3vciiiRXYky2AjvmAcJaqZi7Q1UAiJCwMCwIfEH6AtT5xac7z7diFc4xPtdQ18
+        ymOlkTZocGN+S7TuwPAF3NZH4fYPb9vI3XB0i7p910z2XASjieWlt4gmza50L68t3XDFe3AgMpNmu
+        sKx4cclIHi6x/lA2k7xcPkPskQEcTTS6gwDMua7100Dlf/GrzytZo5P+S+iGWlFmmmHgDpwe53VbA
+        fAe1Bc0KiwbAMibfuCANziYCaBez6ebb/+R0KWj1AwP4GGFWAVTxfIGutZBPOUAhyU891IeK5iGld
+        NfQpNAZQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mp9UM-00CszC-Gr; Mon, 22 Nov 2021 13:36:06 +0000
+Date:   Mon, 22 Nov 2021 13:36:06 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm,fs: Split dump_mapping() out from dump_page()
+Message-ID: <YZucxp+6g7fRhcgS@casper.infradead.org>
+References: <20211121121056.2870061-1-willy@infradead.org>
+ <YZtCpK2ZsV0qLm6+@dhcp22.suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-2-chao.p.peng@linux.intel.com>
- <20211119151943.GH876299@ziepe.ca>
- <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
- <20211119160023.GI876299@ziepe.ca>
- <4efdccac-245f-eb1f-5b7f-c1044ff0103d@redhat.com>
- <20211122133145.GQ876299@ziepe.ca>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20211122133145.GQ876299@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YZtCpK2ZsV0qLm6+@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.11.21 14:31, Jason Gunthorpe wrote:
-> On Mon, Nov 22, 2021 at 10:26:12AM +0100, David Hildenbrand wrote:
+On Mon, Nov 22, 2021 at 08:11:32AM +0100, Michal Hocko wrote:
+> On Sun 21-11-21 12:10:56, Matthew Wilcox wrote:
+> > dump_mapping() is a big chunk of dump_page(), and it'd be handy to be
+> > able to call it when we don't have a struct page.  Split it out and move
+> > it to fs/inode.c.  Take the opportunity to simplify some of the debug
+> > messages a little.
 > 
->> I do wonder if we want to support sharing such memfds between processes
->> in all cases ... we most certainly don't want to be able to share
->> encrypted memory between VMs (I heard that the kernel has to forbid
->> that). It would make sense in the use case you describe, though.
+> Makes sense. I haven't checked the head files inclusion side of this but
+> I suspect mm heads do include uaccess.h. Not sure inode.c does as well.
+
+It does ... convolutedly:
+
+linux/fs.h
+linux/percpu-rwsem.h
+linux/rcuwait.h
+linux/sched/signal.h
+linux/sched/task.h
+linux/uaccess.h
+
+There may be shorter paths to including that file, but that's the
+one that's actually used according to cpp.  fs/inode.c includes linux/mm.h,
+so it also gets it through
+
+linux/pgtable.h
+x86/include/asm/pgtable.h
+x86/include/asm/pkru.h
+x86/include/asm/fpu/xstate.h
+
+which is probably not how you think the mm files get uaccess.h, but
+again, that's the first way that cpp tells me it gets pulled in.  Our
+header files remain a mess.
+
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> If there is a F_SEAL_XX that blocks every kind of new access, who
-> cares if userspace passes the FD around or not?
-I was imagining that you actually would want to do some kind of "change
-ownership". But yeah, the intended semantics and all use cases we have
-in mind are not fully clear to me yet. If it's really "no new access"
-(side note: is "access" the right word?) then sure, we can pass the fd
-around.
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
--- 
-Thanks,
-
-David / dhildenb
+Thanks!
 
