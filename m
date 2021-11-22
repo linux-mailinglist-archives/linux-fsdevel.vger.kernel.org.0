@@ -2,170 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D443458FA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 14:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62C23458FCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 14:53:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239571AbhKVNrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 08:47:18 -0500
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:43142 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239591AbhKVNrR (ORCPT
+        id S239211AbhKVN40 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 08:56:26 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45222 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229984AbhKVN4W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 08:47:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1637588650;
-        bh=/6FwUIopWGEZF2iH1TImnWQkKZ/1gFqOd7wHAdmKlBQ=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=HzmqkquWAZhr0kVjs8geFPZDLWzJW2gieSY7v2k+PkOjYL/Bga7Xz8xa4bfvaZCyb
-         tElGS9eJNC9EBwW35gQ2vH+7JtsHQnYDob43/m6Zyvw4Wi/9uSyelPZK9HBPA1yUGf
-         3Tahc9eZ/jrOKSWPeP6NxhWxojfAIckcFGwCKOBA=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E4866128028D;
-        Mon, 22 Nov 2021 08:44:10 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id E3eGFrCm2n21; Mon, 22 Nov 2021 08:44:10 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1637588650;
-        bh=/6FwUIopWGEZF2iH1TImnWQkKZ/1gFqOd7wHAdmKlBQ=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=HzmqkquWAZhr0kVjs8geFPZDLWzJW2gieSY7v2k+PkOjYL/Bga7Xz8xa4bfvaZCyb
-         tElGS9eJNC9EBwW35gQ2vH+7JtsHQnYDob43/m6Zyvw4Wi/9uSyelPZK9HBPA1yUGf
-         3Tahc9eZ/jrOKSWPeP6NxhWxojfAIckcFGwCKOBA=
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::527])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 22 Nov 2021 08:56:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637589195;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0246PD2XICo/e77HHQAu9cCnKYKbDQAO6t4HPdbCG7k=;
+        b=KcOQPWiNb7mCsrDISiqQ72tbWYH8zuj252MRe2fEw2wIHGBWrs/rTLrlJ1rSELz1ClXEHS
+        4q6FIjPcqb3N9z2+G237tRffxb7DYIkhESNJM6dJoKhRhjzbjcxpi/Khc0JlKmMWPgQy0C
+        qQv382tF1vVigoVcqn0mH7cvWX7kFtw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-302-gRvtolrSOLOgasz1TEIGqg-1; Mon, 22 Nov 2021 08:53:12 -0500
+X-MC-Unique: gRvtolrSOLOgasz1TEIGqg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 81F7712800CE;
-        Mon, 22 Nov 2021 08:44:09 -0500 (EST)
-Message-ID: <4d2b08aa854fcccd51247105edb18fe466a2a3f1.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Yordan Karadzhov <y.karadz@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, mingo@redhat.com, hagen@jauu.net,
-        rppt@kernel.org, akpm@linux-foundation.org, vvs@virtuozzo.com,
-        shakeelb@google.com, christian.brauner@ubuntu.com,
-        mkoutny@suse.com, Linux Containers <containers@lists.linux.dev>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon, 22 Nov 2021 08:44:07 -0500
-In-Reply-To: <ba0f624c-fc24-a3f4-749a-00e419960de2@gmail.com>
-References: <20211118181210.281359-1-y.karadz@gmail.com>
-         <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
-         <20211118142440.31da20b3@gandalf.local.home>
-         <1349346e1d5daca991724603d1495ec311cac058.camel@HansenPartnership.com>
-         <20211119092758.1012073e@gandalf.local.home>
-         <f6ca1f5bdb3b516688f291d9685a6a59f49f1393.camel@HansenPartnership.com>
-         <20211119114736.5d9dcf6c@gandalf.local.home>
-         <20211119114910.177c80d6@gandalf.local.home>
-         <cc6783315193be5acb0e2e478e2827d1ad76ba2a.camel@HansenPartnership.com>
-         <ba0f624c-fc24-a3f4-749a-00e419960de2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2BD4E8066F5;
+        Mon, 22 Nov 2021 13:53:11 +0000 (UTC)
+Received: from work (unknown [10.40.194.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 79D4060843;
+        Mon, 22 Nov 2021 13:53:09 +0000 (UTC)
+Date:   Mon, 22 Nov 2021 14:53:04 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Martin Wilck <mwilck@suse.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>,
+        mwilck@suse.de, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
+Message-ID: <20211122135304.uwyqtm7cqc2fhjii@work>
+References: <20211112152202.26614-1-jack@suse.cz>
+ <20211115114821.swt3nqtw2pdgahsq@work>
+ <20211115125141.GD23412@quack2.suse.cz>
+ <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
+ <20211115145312.g4ptf22rl55jf37l@work>
+ <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
+ <20211116115626.anbvho4xtb5vsoz5@work>
+ <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
+ <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-11-22 at 15:02 +0200, Yordan Karadzhov wrote:
+On Fri, Nov 19, 2021 at 04:43:53PM +0100, Martin Wilck wrote:
+> Hi Martin, Lukas,
 > 
-> On 20.11.21 г. 1:08 ч., James Bottomley wrote:
-> > [trying to reconstruct cc list, since the cc: field is bust again]
-> > > On Fri, 19 Nov 2021 11:47:36 -0500
-> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Tue, 2021-11-16 at 23:35 -0500, Martin K. Petersen wrote:
+> > 
+> > Lukas,
+> > 
+> > > My understanding always was that the request needs to be both
+> > > properly
+> > > aligned and of a certain minimum size (discard_granularity) to take
+> > > effect.
 > > > 
-> > > > > Can we back up and ask what problem you're trying to solve
-> > > > > before we start introducing new objects like namespace name?
+> > > If what you're saying is true then I feel like the documentation of
+> > > discard_granularity
 > > > 
-> > > TL;DR; verison:
+> > > Documentation/ABI/testing/sysfs-block
+> > > Documentation/block/queue-sysfs.rst
 > > > 
-> > > We want to be able to install a container on a machine that will
-> > > let us view all namespaces currently defined on that machine and
-> > > which tasks are associated with them.
+> > > should change because that's not how I understand the notion of
+> > > internal allocation unit. However the sentence you quoted is not
+> > > entirely clear to me either so I'll leave that decision to someone
+> > > who
+> > > understands it better than me.
 > > > 
-> > > That's basically it.
+> > > Martin could you please clarify it for us ?
 > > 
-> > So you mentioned kubernetes.  Have you tried
+> > The rationale behind exposing the discard granularity to userland was
+> > to
+> > facilitate mkfs.* picking allocation units that were friendly wrt. the
+> > device's internal granularity. The nature of that granularity depends
+> > on
+> > the type of device (thin provisioned, resource provisioned, SSD, etc.).
 > > 
-> > kubectl get pods --all-namespaces
+> > Just like the other queue limits the discard granularity was meant as a
+> > hint (some of that hintiness got lost as a result of conflating zeroing
+> > and deallocating but that has since been resolved).
 > > 
-> > ?
+> > It is true that some devices get confused if you submit discards that
+> > are smaller than their internal granularity. However, those devices are
+> > typically the ones that don't actually support reporting that
+> > granularity in the first place! Whereas SCSI devices generally don't
+> > care. They'll happily ignore any parts of the request that are smaller
+> > than whatever size they use internally.
 > > 
-> > The point is that orchestration systems usually have interfaces to
-> > get this information, even if the kernel doesn't.  In fact,
-> > userspace is almost certainly the best place to construct this
-> > from.
-> > 
-> > To look at this another way, what if you were simply proposing the
-> > exact same thing but for the process tree.  The push back would be
-> > that we can get that all in userspace and there's even a nice tool
-> > (pstree) to do it which simply walks the /proc interface.  Why,
-> > then, do we have to do nstree in the kernel when we can get all the
-> > information in exactly the same way (walking the process tree)?
-> > 
+> > One of the problems with "optimizing" away pieces that are smaller than
+> > the reported granularity is when you combine devices. Say you have a
+> > RAID1 of an SSD that reports 4096 bytes and one that reports 256MB. The
+> > stacked device will then have a discard granularity of 256MB and thus
+> > the SSD with the smaller granularity won't receive any of the discards
+> > that might otherwise help it manage its media.
+
+Thanks you Martin P. for clarifying.
+
 > 
-> I see on important difference between the problem we have and the
-> problem in your example. /proc contains all the 
-> information needed to unambiguously reconstruct the process tree.
+> I've checked btrfs and xfs, and they treat the minlen like Jan's patch
+> would - the minlen is set to the device's granularity, and discarding
+> smaller ranges is silently not even attempted.
 > 
-> On the other hand, I do not see how one can reconstruct the namespace
-> tree using only the information in proc/ (maybe this is because of my
-> ignorance).
+> So this seems to be common practice among file system implementations,
+> and thus Jan's patch would make ext4 behave like the others. But I'm
+> still uncertain if this behavior is ideal, and your remarks seem to
+> confirm that.
 
-Well, no, the information may not all exist.  However, the point is we
-can add it without adding additional namespace objects.
+Yeah I modeled my change for ext4 on the work in xfs done by Christoph
+and so it kind of spread organically to other file systems.
 
-> Let's look the following case (oversimplified just to get the idea):
-> 1. The process X is a parent of the process Y and both are in
-> namespace 'A'.
-> 3. "unshare" is used to place process Y (and all its child processes)
-> in a new namespace B (A is a parent namespace of B).
-> 4. "setns" is s used to move process X in namespace C.
 > 
-> How would you find the parent namespace of B?
+> The fstrim man page text is highly misleading. "The default value is
+> zero, discarding every free block" is obviously wrong, given the
+> current actual behavior of the major filesystems.
 
-Actually this one's quite easy: the parent of X in your setup still has
-it.
+Originally there was no discard granularity optimization so it is what
+it meant. And it also says "fstrim will adjust the minimum if it's
+smaller than the device's minimum". So I am not sure if it's necessarily
+misleading.
 
-However, I think you're looking to set up a scenario where the
-namespace information isn't carried by live processes and that's
-certainly possible if we unshare the namespace, bind it to a mount
-point and exit the process that unshared it.  If will exist as a bound
-namespace with no processes until it gets entered via the binding and
-when that happens the parent information can't be deduced from the
-process tree.
+Still I think it should be best effort from the fs, not guarantee.
 
-There's another problem, that I think you don't care about but someone
-will at some point: the owning user_ns can't be deduced from the
-current tree either because it depends on the order of entry.  We fixed
-unshare so that if you enter multiple namespaces, it enters the user_ns
-first so the latter is always the owning namespace, but if you enter
-the rest of the namespaces first via one unshare then unshare the
-user_ns second, that won't be true.
+> 
+> The way this is currently implemented, the user has no way to actually
+> "discard every free block" to the extent supported by the device. I
+> think that being able to do this would be desirable, at least in
+> certain situations.
+> 
+> If we changed this, with the default value of 0 used by fstrim, file
+> systems would attempt to free every block, which is slow and would
+> likely either fail or have no effect on may devices. Maybe we should
+> treat the value "0" like "automatic", i.e. adjust it the minlen to the
+> device's granularity like we do now, but leave the value unchanged if
+> the user explicitly sets a small non-zero value? That way "fstrim -m
+> 512" could be used to force discarding every block that can be
+> discarded.
 
-Neither of the above actually matter for docker like containers because
-that's not the way the orchestration system works (it doesn't use mount
-bindings or the user_ns) but one day, hopefully, it might.
+Perhaps, this sounds like a reasonable solution to me.
 
-> Again, using your arguments, I can reformulate the problem statement
-> this way: a userspace program is well instrumented 
-> to create an arbitrary complex tree of namespaces. In the same time,
-> the only place where the information about the 
-> created structure can be retrieved is in the userspace program
-> itself. And when we have multiple userspace programs 
-> adding to the namespaces tree, the global picture gets impossible to
-> recover.
-
-So figure out what's missing in the /proc tree and propose adding it. 
-The interface isn't immutable it's just that what exists today is an
-ABI and can't be altered.  I think this is the last time we realised we
-needed to add missing information in /proc/<pid>/ns:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=eaa0d190bfe1ed891b814a52712dcd852554cb08
-
-So you can use that as the pattern.
-
-James
-
+> 
+> Regards
+> Martin
+> 
 
