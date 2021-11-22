@@ -2,120 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2C1B45864E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Nov 2021 21:29:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB9BD458759
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 01:09:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232661AbhKUUcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Nov 2021 15:32:25 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:43671 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232520AbhKUUcZ (ORCPT
+        id S232143AbhKVAMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Nov 2021 19:12:09 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:45392 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232057AbhKVAMI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Nov 2021 15:32:25 -0500
-Received: by mail-io1-f69.google.com with SMTP id j13-20020a0566022ccd00b005e9684c80c6so9497604iow.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 12:29:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=HPyoETOCBjBL9zwWlrxZDkqaoPWkh2w9rg5ZP4PDyfo=;
-        b=zXP53UPkUrEa1iZcerBL43BdzC+G7eaELzsZ7N/wGtIw6vdkrKUYWljC9rHr9GOMWI
-         5Efauvy2xLGzLM375ikmwIY4Gqdzl7Z5aCcx8FBNmNQQvXfnav606JVELAH6BnY6CZaa
-         zYEQ7uUQfb4tHNwhifCWEO0Y8gd5CrtFxIU+pCCbYX7rQ10XydF8PyY3eJTuNjz5nQg3
-         /UAHI0qacAURyWqx9Lw3tndRStG8NUKOCWDUw+qeA64kfaXDIeMQTM5hp+y++CuzFpwL
-         80TaUTQ3JuiV/XogApaMwwzFhOLKIoDcgtr0b3uk1KTM9mwCoBUi06vN92KaaNbYrrto
-         oKVw==
-X-Gm-Message-State: AOAM533/4pJZaTv+RxpFPIpuQnO0fk0Id5xstbxiykpDxx9m8R0nmCOt
-        hp9z7p5JSZWxstbYqHJdWeeGL/mxqqZFX/bupJAVU9Zt55no
-X-Google-Smtp-Source: ABdhPJzVKT0RtmbehmQ6s+MNul/pvqkYTltNtUp06L4qTLWEgrB1JpFxVNh3t0HWKU3eO4Mn8bBi+9/YRvyS2mU0m6rVd6DDJLc5
+        Sun, 21 Nov 2021 19:12:08 -0500
+Received: from dread.disaster.area (pa49-195-103-97.pa.nsw.optusnet.com.au [49.195.103.97])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 984F98A111D;
+        Mon, 22 Nov 2021 11:08:57 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mowt9-00BfsY-Fr; Mon, 22 Nov 2021 11:08:51 +1100
+Date:   Mon, 22 Nov 2021 11:08:51 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <miklos@szeredi.hu>,
+        xfs <linux-xfs@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
+Message-ID: <20211122000851.GE449541@dread.disaster.area>
+References: <20211114231834.GM449541@dread.disaster.area>
+ <CAJfpegu4BwJD1JKngsrzUs7h82cYDGpxv0R1om=WGhOOb6pZ2Q@mail.gmail.com>
+ <20211115222417.GO449541@dread.disaster.area>
+ <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
+ <20211116030120.GQ449541@dread.disaster.area>
+ <YZPVSTDIWroHNvFS@bfoster>
+ <20211117002251.GR449541@dread.disaster.area>
+ <YZVQUSCWWgOs+cRB@bfoster>
+ <20211117214852.GU449541@dread.disaster.area>
+ <YZf+lRsb0lBWdYgN@bfoster>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20e5:: with SMTP id q5mr10071635ilv.63.1637526559818;
- Sun, 21 Nov 2021 12:29:19 -0800 (PST)
-Date:   Sun, 21 Nov 2021 12:29:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e88cad05d1525c27@google.com>
-Subject: [syzbot] WARNING in fuse_writepage_locked
-From:   syzbot <syzbot+d0dd8d6b123d46c4dcf2@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YZf+lRsb0lBWdYgN@bfoster>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=619adf9d
+        a=fP9RlOTWD4uZJjPSFnn6Ew==:117 a=fP9RlOTWD4uZJjPSFnn6Ew==:17
+        a=HsDoLlocmGUuF16g:21 a=kj9zAlcOel0A:10 a=vIxV3rELxO4A:10 a=7-415B0cAAAA:8
+        a=D-SAqdW0K9F_pD15-20A:9 a=CjuIK1q_8ugA:10 a=hl_xKfOxWho2XEkUDbUg:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Nov 19, 2021 at 02:44:21PM -0500, Brian Foster wrote:
+> On Thu, Nov 18, 2021 at 08:48:52AM +1100, Dave Chinner wrote:
+> > On Wed, Nov 17, 2021 at 01:56:17PM -0500, Brian Foster wrote:
+> > > On Wed, Nov 17, 2021 at 11:22:51AM +1100, Dave Chinner wrote:
+> > > Only a single grace period is required to cover
+> > > (from the rcuwalk perspective) the entire set of inodes queued for
+> > > inactivation. That leaves at least a few fairly straightforward options:
+> > > 
+> > > 1. Use queue_rcu_work() to schedule the inactivation task. We'd probably
+> > > have to isolate the list to process first from the queueing context
+> > > rather than from workqueue context to ensure we don't process recently
+> > > added inodes that haven't sat for a grace period.
+> > 
+> > No, that takes too long. Long queues simply mean deferred
+> > inactivation is working on cold CPU caches and that means we take a
+> > 30-50% performance hit on inode eviction overhead for inodes that
+> > need inactivation (e.g. unlinked inodes) just by having to load all
+> > the inode state into CPU caches again.
+> > 
+> > Numbers I recorded at the time indicate that inactivation that
+> > doesn't block on IO or the log typically takes between 200-500us
+> > of CPU time, so the deferred batch sizes are sized to run about
+> > 10-15ms worth of deferred processing at a time. Filling a batch
+> > takes memory reclaim about 200uS to fill when running
+> > dispose_list() to evict inodes.
+> > 
+> > The problem with using RCU grace periods is that they delay the
+> > start of the work for at least 10ms, sometimes hundreds of ms.
+> > Using queue_rcu_work() means we will need to go back to unbound
+> > depth queues to avoid blocking waiting for grace period expiry to
+> > maintain perfomrance. THis means having tens of thousands of inodes
+> > queued for inactivation before the workqueue starts running. These
+> > are the sorts of numbers that caused all the problems Darrick was
+> > having with performance, and that was all cold cache loading
+> > overhead which is unavoidable with such large queue depths....
+> > 
+> 
+> Hm, Ok. I recall the large queue depth issues on the earlier versions
+> but had not caught up with the subsequent changes that limit (percpu)
+> batch size, etc. The cond sync rcu approach is easy enough to hack in
+> (i.e., sample gp on destroy, cond_sync_rcu() on inactivate) that I ran a
+> few experiments on opposing ends of the spectrum wrt to concurrency.
+> 
+> The short of it is that I do see about a 30% hit in the single threaded
+> sustained removal case with current batch sizes. If the workload scales
+> out to many (64) cpus, the impact dissipates, I suspect because we've
+> already distributed the workload across percpu wq tasks and thus drive
+> the rcu subsystem with context switches and other quiescent states that
+> progress grace periods. The single threaded perf hit mitigates at about
+> 4x the current throttling threshold.
 
-syzbot found the following issue on:
+I doubt that thread count increases are actually mitigating the perf
+hit. Performance hits hard limits on concurrent rm -rf threads due
+to CIL lock contention at 7-800,000 transactions/s
+(hence the scalability patchset) regardless of the concurrency of
+the workload. With that bottleneck removed, the system then hits
+contention limits on VFS locks during
+inode instantiation/reclaim. This typically happens at 1.1-1.2
+million transactions/s during unlink.
 
-HEAD commit:    42eb8fdac2fc Merge tag 'gfs2-v5.16-rc2-fixes' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=137ec159b00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d3b8fd1977c1e73
-dashboard link: https://syzkaller.appspot.com/bug?extid=d0dd8d6b123d46c4dcf2
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+Essentially, if you have a slower per-thread fs modification
+workload, you can can increase the concurrency to more threads and
+CPUs but the system will eventually still hit the same throughput
+limits. Hence a per-thread performance degradataion will still reach
+the same peak throughput levels, it will just take a few more
+threads to reach that limit. IOWs, scale doesn't make the
+per-thread degradation go away, it just allows more threads to run
+at full (but degraded) performance before the scalabilty limit
+threshold is hit.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> > We could, potentially, use a separate lockless queue for unlinked
+> > inodes and defer that to after a grace period, but then rm -rf
+> > workloads will go much, much slower.
+> > 
+> 
+> I don't quite follow what you mean by a separate lockless queue..?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d0dd8d6b123d46c4dcf2@syzkaller.appspotmail.com
+I was thinking separating unlinked symlinks into their own queue
+that can be processed after a grace period....
 
-WARNING: CPU: 1 PID: 17813 at fs/fuse/file.c:1833 fuse_write_file_get fs/fuse/file.c:1833 [inline]
-WARNING: CPU: 1 PID: 17813 at fs/fuse/file.c:1833 fuse_write_file_get fs/fuse/file.c:1830 [inline]
-WARNING: CPU: 1 PID: 17813 at fs/fuse/file.c:1833 fuse_writepage_locked+0xa84/0xd40 fs/fuse/file.c:1918
-Modules linked in:
-CPU: 1 PID: 17813 Comm: syz-executor.2 Not tainted 5.16.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1833 [inline]
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1830 [inline]
-RIP: 0010:fuse_writepage_locked+0xa84/0xd40 fs/fuse/file.c:1918
-Code: 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 41 bc f4 ff ff ff e9 2d ff ff ff e8 8a dd c6 fe 48 8b 3c 24 e8 b1 fe a3 06 e8 7c dd c6 fe <0f> 0b 49 8d be c8 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa
-RSP: 0018:ffffc90018f3f5f0 EFLAGS: 00010212
-RAX: 000000000000a311 RBX: ffff8880834ba688 RCX: ffffc9000d9e9000
-RDX: 0000000000040000 RSI: ffffffff82b10a64 RDI: 0000000000000001
-RBP: ffffea0000263e40 R08: 0000000000000000 R09: ffff8880834ba7a3
-R10: ffffed10106974f4 R11: 000000000000001f R12: ffff8880834ba1c0
-R13: ffffea000258d080 R14: ffff888018b83c00 R15: ffff88814a7ac800
-FS:  00007f75e4cad700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc15c0ef7c CR3: 0000000073f74000 CR4: 0000000000350ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-Call Trace:
- <TASK>
- fuse_writepage+0x104/0x160 fs/fuse/file.c:1976
- writeout mm/migrate.c:826 [inline]
- fallback_migrate_page mm/migrate.c:850 [inline]
- move_to_new_page+0x7ea/0xf00 mm/migrate.c:901
- __unmap_and_move mm/migrate.c:1063 [inline]
- unmap_and_move mm/migrate.c:1204 [inline]
- migrate_pages+0x27f5/0x3810 mm/migrate.c:1481
- compact_zone+0x1abb/0x3860 mm/compaction.c:2399
- compact_node+0x129/0x1f0 mm/compaction.c:2683
- compact_nodes mm/compaction.c:2699 [inline]
- sysctl_compaction_handler+0x10e/0x160 mm/compaction.c:2741
- proc_sys_call_handler+0x437/0x620 fs/proc/proc_sysctl.c:586
- call_write_iter include/linux/fs.h:2162 [inline]
- new_sync_write+0x429/0x660 fs/read_write.c:503
- vfs_write+0x7cd/0xae0 fs/read_write.c:590
- ksys_write+0x12d/0x250 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f75e7737ae9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f75e4cad188 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f75e784af60 RCX: 00007f75e7737ae9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 00007f75e7791f6d R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffee68ffeff R14: 00007f75e4cad300 R15: 0000000000022000
- </TASK>
+> In
+> any event, another experiment I ran in light of the above results that
+> might be similar was to put the inode queueing component of
+> destroy_inode() behind an rcu callback. This reduces the single threaded
+> perf hit from the previous approach by about 50%. So not entirely
+> baseline performance, but it's back closer to baseline if I double the
+> throttle threshold (and actually faster at 4x). Perhaps my crude
+> prototype logic could be optimized further to not rely on percpu
+> threshold changes to match the baseline.
+> 
+> My overall takeaway from these couple hacky experiments is that the
+> unconditional synchronous rcu wait is indeed probably too heavy weight,
+> as you point out. The polling or callback (or perhaps your separate
+> queue) approach seems to be in the ballpark of viability, however,
+> particularly when we consider the behavior of scaled or mixed workloads
+> (since inactive queue processing seems to be size driven vs. latency
+> driven).
+> 
+> So I dunno.. if you consider the various severity and complexity
+> tradeoffs, this certainly seems worth more consideration to me. I can
+> think of other potentially interesting ways to experiment with
+> optimizing the above or perhaps tweak queueing to better facilitate
+> taking advantage of grace periods, but it's not worth going too far down
+> that road if you're wedded to the "busy inodes" approach.
 
+I'm not wedded to "busy inodes" but, as your experiments are
+indicating, trying to handle rcu grace periods into the deferred
+inactivation path isn't completely mitigating the impact of having
+to wait for a grace period for recycling of inodes.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I suspect a rethink on the inode recycling mechanism is needed. THe
+way it is currently implemented was a brute force solution - it is
+simple and effective. However, we need more nuance in the recycling
+logic now.  That is, if we are recycling an inode that is clean, has
+nlink >=1 and has not been unlinked, it means the VFS evicted it too
+soon and we are going to re-instantiate it as the identical inode
+that was evicted from cache.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+So how much re-initialisation do we actually need for that inode?
+Almost everything in the inode is still valid; the problems come
+from inode_init_always() resetting the entire internal inode state
+and XFS then having to set them up again.  The internal state is
+already largely correct when we start recycling, and the identity of
+the recycled inode does not change when nlink >= 1. Hence eliding
+inode_init_always() would also go a long way to avoiding the need
+for a RCU grace period to pass before we can make the inode visible
+to the VFS again.
+
+If we can do that, then the only indoes that need a grace period
+before they can be recycled are unlinked inodes as they change
+identity when being recycled. That identity change absolutely
+requires a grace period to expire before the new instantiation can
+be made visible.  Given the arbitrary delay that this can introduce
+for an inode allocation operation, it seems much better suited to
+detecting busy inodes than waiting for a global OS state change to
+occur...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
