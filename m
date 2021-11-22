@@ -2,90 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDFE4589E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 08:34:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28FA04589F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 08:41:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238822AbhKVHhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 02:37:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36424 "EHLO
+        id S235975AbhKVHoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 02:44:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231552AbhKVHhv (ORCPT
+        with ESMTP id S232870AbhKVHoQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 02:37:51 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAFDC061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 23:34:45 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id l190so4036472pge.7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 23:34:45 -0800 (PST)
+        Mon, 22 Nov 2021 02:44:16 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9041C061574;
+        Sun, 21 Nov 2021 23:41:10 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id f9so21917956ioo.11;
+        Sun, 21 Nov 2021 23:41:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=LdaWIVV66AnYvZDioQXEttBzNC/hd0WDtpDAz2dRNNE=;
-        b=KG2WHzvKQGUkR1Z9aHB2oFXjn8rJ3UJnZjjK2dV1198tlorfoosTqH5lGGvH4dyXDw
-         QwdN/cniW2C9UyrDW8RStkY7M3MDNmHUODgdV7JvUz9kE7l8fUUzAIrM7k87eSXRG25S
-         r4MIgKsA7VZ6lpOXq5+pvgV9oLdOCSz9dpV3HibUvmzYLNVOKapBafe3ES0eY9x198nL
-         FGnLPkGyFbJTWP5wgxdZIn0XbFf7FV8XnCKGe/+2iPP448IllivFRfyBhgibE4Ci+H9N
-         4IFS5wkli/gWzgEq+gA8BNxNUEqB3V60tphTmFWvUilpV9ayVm5n1i+Oj6aRrk6N2omx
-         rsQA==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EgK3Fxmt2Ep/12cKLL6aWGBCcDYN8BbadOm8B5KUg8E=;
+        b=Oklkv7AgYAiXeDSbCLqFfwB1huhraxdAJZfZ5WjKYwXiTSqAK9bWfVy/HLCAJUQswM
+         F6JvDDh51VfwJpvOgEN333Wqcli0rVQDggh5FcCrdBC49J7PswDOZQa14QEuRG2Adjj+
+         U78QVmNrh1lm/9s8PZakdnenBtmNERGsTjt4eMfd2tZeAb5cPI/heuYDrbwj7wZjm9YY
+         A9bZCGffPphun2+TbuUoBGJa37IGJ1NgVNCFowOIjPSPePkrAGGqL/7C2oUyY5AcUUbI
+         Adc5pHvGG70GlB7Ouo7ZE0R4UF8ZcNOtEd/H8jvOwMz7p4Yy2J82Uu931gxrSW3gtHwL
+         GKdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=LdaWIVV66AnYvZDioQXEttBzNC/hd0WDtpDAz2dRNNE=;
-        b=C6XMrAhvBJPW9LXNZL5EvMOt/W5EFY5y/QyAN5DN5c4W/VmFojwfO/FXHsohyOPEW2
-         mhR27b+FmlCmHFlXc/AG3MeKwZV3apXmRbl23F9uWWd8H1rDGfk/DIadApLsA2wsxvfO
-         blzgc7yG14U5J0l/ZSDy+mjiPPlg1zHujiUkVMMGMlLYFDCDUHAh5K33eSyTnZrmwhqn
-         +6YuAi+J0SlXFkaeEGJBblyApJY5HnvMgRF5IEgVAgWhespdWofafSckyMDHpGzX3vMR
-         NcQ3aeXPVUT5lqGAMazo4ctvWspxS1oHrZihPz+qPAz0FenDGscOHYP1AtDIGmFPBQ2o
-         V+4A==
-X-Gm-Message-State: AOAM532G5YBad1WAmFomUx23vxgeJc6spoI2ZdJzdjlk0OeF63yKsKnb
-        sUcDaXXJA1RRYkebpiGcPsaQAA==
-X-Google-Smtp-Source: ABdhPJzG4d8nuiw8MpOKbGi5ynV93hARNi2HDnMotlUY6Rx6JOlMvw2fL9I2deYlAjhanP8kYPM4ZA==
-X-Received: by 2002:a63:f749:: with SMTP id f9mr31900558pgk.330.1637566484783;
-        Sun, 21 Nov 2021 23:34:44 -0800 (PST)
-Received: from [10.76.43.192] ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id on6sm20781535pjb.47.2021.11.21.23.34.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Nov 2021 23:34:44 -0800 (PST)
-Message-ID: <25626b34-9dd2-2e89-0c35-be40e62b6e09@bytedance.com>
-Date:   Mon, 22 Nov 2021 15:34:36 +0800
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EgK3Fxmt2Ep/12cKLL6aWGBCcDYN8BbadOm8B5KUg8E=;
+        b=nw94UApv5LGdnoRZ2ZD7P5bREv4iEZ5D64L3HHt3zijH1W/wu8mWta7eqEf1RcZYmH
+         DcaigWKV1lUXdxIyl59vtcEFM+XvHL2bgygRPQgmIPH5/PMM/Fm5FbfAKDn2f1JWbpsH
+         s6tq2OnWY1tlClvZbLJ1DBEmRjBbmElfIp2o5M9KZSvGRUGJJXs1NidxqrBWXVBRFNjE
+         KfVduuhscY/bUS94941ZyJTIKjxyt5VpZyP/RebehADU0tmJGJZjvg+R5Kf5U/JvxNVo
+         2MwaDQjPHB0Fz5PZiNgzGPBQFa0POUOwrN5D9uYoz2I5dJPVYhpvnky3vs0hsUcds+76
+         PIaw==
+X-Gm-Message-State: AOAM532ypr8J+Q8Rc67waNF4C4jR3wusYeAswdOwcPC1OWWTAJl9BydQ
+        JNRxoUFvkMGyxOi+M/AwSHdKhj2uy7Kp6puyyNFJRTKhW6k=
+X-Google-Smtp-Source: ABdhPJzzsjZNvfLzBRWCOI9wZkvYKWyX2dOOoZsNa7F089FqnSUQcaYN0/9aN2OVkz/DGXsQgjyVqsOAUowqlpCVPOw=
+X-Received: by 2002:a05:6602:26d0:: with SMTP id g16mr1885952ioo.70.1637566870216;
+ Sun, 21 Nov 2021 23:41:10 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.2
-Subject: Re: Re: [PATCH v1] sched/numa: add per-process numa_balancing
-Content-Language: en-US
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
- <20211028153028.GP3891@suse.de>
-From:   Gang Li <ligang.bdlg@bytedance.com>
-In-Reply-To: <20211028153028.GP3891@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net>
+In-Reply-To: <20211122030038.1938875-8-cgxu519@mykernel.net>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 22 Nov 2021 09:40:59 +0200
+Message-ID: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for overlayfs
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chengguang Xu <charliecgxu@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/10/28 23:30, Mel Gorman wrote:
-> 
-> This would also need a prctl(2) patch.
-> 
+On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wrote:
+>
+> From: Chengguang Xu <charliecgxu@tencent.com>
+>
+> Now overlayfs can only sync own dirty inodes during syncfs,
+> so remove unnecessary sync_filesystem() on upper file system.
+>
+> Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+> ---
+>  fs/overlayfs/super.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index ccffcd96491d..213b795a6a86 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
+>         /*
+>          * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
+>          * All the super blocks will be iterated, including upper_sb.
+> -        *
+> -        * If this is a syncfs(2) call, then we do need to call
+> -        * sync_filesystem() on upper_sb, but enough if we do it when being
+> -        * called with wait == 1.
+>          */
+> -       if (!wait)
+> -               return 0;
+> -
+>         upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
+> -
+>         down_read(&upper_sb->s_umount);
+> -       ret = sync_filesystem(upper_sb);
+> +       if (wait)
+> +               wait_sb_inodes(upper_sb);
+> +       if (upper_sb->s_op->sync_fs)
+> +               upper_sb->s_op->sync_fs(upper_sb, wait);
+> +       ret = ovl_sync_upper_blockdev(upper_sb, wait);
 
-Hi!
+I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+with everything from  upper_sb = ... and a comment to explain that
+this is a variant of __sync_filesystem() where all the dirty inodes write
+have already been started.
 
-Should prctl(2) and this patch be combined into one series?
--- 
-Thanks
-Gang Li
+Thanks,
+Amir.
 
+P.S. I like this "stoopid proof" v6 because I can understand it ;-)
