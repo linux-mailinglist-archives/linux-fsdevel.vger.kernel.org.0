@@ -2,397 +2,364 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E57B45957E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 20:23:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7457459597
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 20:28:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239809AbhKVT0r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 14:26:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235437AbhKVT0q (ORCPT
+        id S239952AbhKVTbR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 14:31:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50116 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239940AbhKVTbO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 14:26:46 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08C7AC061574;
-        Mon, 22 Nov 2021 11:23:39 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id z5so81812710edd.3;
-        Mon, 22 Nov 2021 11:23:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=Kj/6fY0CyBIrnzweBfbfkn9p9O+tR2P8eBMSn39xNqA=;
-        b=UnYwEqJDf/Ofpp+pNzhvOI9/5MYNZRQCC98I7Hw4fm4nPvWcnG44g0VTlCZ3Tjp6C/
-         JmvDbvaXXy2+mKfYl4IAFpeTWFZaVdTGUuElPNVwFsGuejxt5shyRyiIa3Gks0pBpaa9
-         9M57FsAuMj7EFSJf3qQFQmRY5UOMm3Jdf7vhdCjzR5FPFJWXOwPXLCd4V6eQNiCYZrV4
-         XMvCo502qoA9M/RViRDjZp5XUq4Eyrg/HNTubNyzGimNb1d99pCscvCJRfJP4k9SqJyt
-         wZgdeMdCIsuaeQ5DsV5r7Dajfi6ElbsUN7MDWp8X3KJFgaFj9Pl1rN/zbFbu2y7DVf4v
-         22lQ==
+        Mon, 22 Nov 2021 14:31:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637609285;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pNcYibNmBUcfZkggdoK8hnFuKZchVdYBDp3qTV9U7K0=;
+        b=O7jNw/GiJJI4jgktjao7yvtiezaP8Udrwx3gykMAIp/S3D23ziKgx3vLJ4//r5SSdB7Vwq
+        eKyJYzvNo0oTCnXpQUW29CyxFhMpqyPXOq7asCquQnQ1zyQ1y1rBa+p6TKD9vFNlYGNiFN
+        gBQ3YH6KvSlqTVINud7GUlwai/USMu8=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-100-jiKC8G3ROBGRUblBTigwyQ-1; Mon, 22 Nov 2021 14:28:04 -0500
+X-MC-Unique: jiKC8G3ROBGRUblBTigwyQ-1
+Received: by mail-qt1-f200.google.com with SMTP id u14-20020a05622a198e00b002b2f35a6dcfso11370883qtc.21
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 11:28:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=Kj/6fY0CyBIrnzweBfbfkn9p9O+tR2P8eBMSn39xNqA=;
-        b=l3dgclgNewirSM/rjxus69tTLxK9Vd8N5GSEJmx5NpS82TeIT6/6knuMoz0FDiiGX1
-         nH8W/tSTKZes753wJtyzkVjZ59Yj6RR/kyvOj3WlpPXhtFO3T6k+8rTzWthsiS0SaBar
-         OZk3ftuygZ+YxxlRFENeMyOJkpVLEp3d4HKIl55c13Uq/twjuCo8YymB3khQrpjKTg7L
-         2CW20aJA+E8E2nvFpA1hrM5UcvCd5f274M2XJuzgnowU0zqQg8xEvHfzdVmD8o7s4pB/
-         +daUEvuGy2Ss6IIZMx3fw7m707WiBGFgbPs+yI5TKw73x0WW6KNh164GI09ly/AU+zWJ
-         z5ZA==
-X-Gm-Message-State: AOAM531zOgXNqIi98I4Zgew2B44iN8WTWRh7fBE/k3Y61SGW8iRwJdHK
-        zX2qcwL8MJSWUCqYds2uBA==
-X-Google-Smtp-Source: ABdhPJwINrWfS7dj2wG4I2x/1Ur9LlVqco1L3gdI7l4+I2HtB3LftXUDxp5cEXV4hKJlDyQCOcShTw==
-X-Received: by 2002:a50:c31c:: with SMTP id a28mr67919677edb.4.1637609017535;
-        Mon, 22 Nov 2021 11:23:37 -0800 (PST)
-Received: from localhost.localdomain ([46.53.249.234])
-        by smtp.gmail.com with ESMTPSA id t20sm4471756edv.81.2021.11.22.11.23.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pNcYibNmBUcfZkggdoK8hnFuKZchVdYBDp3qTV9U7K0=;
+        b=56YXoCIeVSmN78pgs9t80akVk39dVDNPyu86jbXQhAyiyMw0qG4HVhrJJZFRvFw6kp
+         Kn0Fu3KJrh/5QP1g3wGbQmVteTqu7i6K5FKbx3YBw9CtFZX8liiA4G6QzNVfVWS4soWb
+         k1WDaZbZ5QktCnp/jjcDiPcvZa7xv6PfOobzJUxX+7M/j+9X62ZsHgGPIOGz++pZPvPH
+         81MLPtkr5bcsVJXKr0IfbOyNXCgzRqO5TvHrM7dgVq0YfpBW+ncuPNs7VZG56w9IhrQ6
+         DfPyhpZM2JOqOxVY3noyLiEBZH+7YDVlFG/EVukVCVSJtICw/o7GsKmJ2XYGZkASEWNk
+         6J2w==
+X-Gm-Message-State: AOAM533zIBBHNE21Bivmev4BFpyE+nhXL8uVZis5tyf7dfdwoNbbjaoF
+        YFGxpwm8DTtcPeQS4KbVfHMCjUr6siDd7RenbYh55iOenStuuCMfffBcOOFFg/OFmcjlLjeseSS
+        cDYbgkQL2rMAQwId601HxxNNidQ==
+X-Received: by 2002:a05:622a:130f:: with SMTP id v15mr34079080qtk.122.1637609283660;
+        Mon, 22 Nov 2021 11:28:03 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJziFww9Z3qQSNr4r5lr8dZ4A2+nkum+t0KJu1XKbcQZWKoOE1wI52lFK5wjNGEbEp9T41tQ3w==
+X-Received: by 2002:a05:622a:130f:: with SMTP id v15mr34079039qtk.122.1637609283261;
+        Mon, 22 Nov 2021 11:28:03 -0800 (PST)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id x21sm4846491qkf.77.2021.11.22.11.28.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 11:23:37 -0800 (PST)
-Date:   Mon, 22 Nov 2021 22:23:35 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     viro@zeniv.linux.org.uk, ebiederm@xmission.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc: "mount -o lookup=..." support
-Message-ID: <YZvuN0Wqmn7XB4dX@localhost.localdomain>
+        Mon, 22 Nov 2021 11:28:02 -0800 (PST)
+Date:   Mon, 22 Nov 2021 14:27:59 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <miklos@szeredi.hu>,
+        xfs <linux-xfs@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
+Message-ID: <YZvvP9RFXi3/jX0q@bfoster>
+References: <CAJfpegu4BwJD1JKngsrzUs7h82cYDGpxv0R1om=WGhOOb6pZ2Q@mail.gmail.com>
+ <20211115222417.GO449541@dread.disaster.area>
+ <f8425d1270fe011897e7e14eaa6ba8a77c1ed077.camel@themaw.net>
+ <20211116030120.GQ449541@dread.disaster.area>
+ <YZPVSTDIWroHNvFS@bfoster>
+ <20211117002251.GR449541@dread.disaster.area>
+ <YZVQUSCWWgOs+cRB@bfoster>
+ <20211117214852.GU449541@dread.disaster.area>
+ <YZf+lRsb0lBWdYgN@bfoster>
+ <20211122000851.GE449541@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20211122000851.GE449541@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Docker implements MaskedPaths configuration option
+On Mon, Nov 22, 2021 at 11:08:51AM +1100, Dave Chinner wrote:
+> On Fri, Nov 19, 2021 at 02:44:21PM -0500, Brian Foster wrote:
+> > On Thu, Nov 18, 2021 at 08:48:52AM +1100, Dave Chinner wrote:
+> > > On Wed, Nov 17, 2021 at 01:56:17PM -0500, Brian Foster wrote:
+> > > > On Wed, Nov 17, 2021 at 11:22:51AM +1100, Dave Chinner wrote:
+> > > > Only a single grace period is required to cover
+> > > > (from the rcuwalk perspective) the entire set of inodes queued for
+> > > > inactivation. That leaves at least a few fairly straightforward options:
+> > > > 
+> > > > 1. Use queue_rcu_work() to schedule the inactivation task. We'd probably
+> > > > have to isolate the list to process first from the queueing context
+> > > > rather than from workqueue context to ensure we don't process recently
+> > > > added inodes that haven't sat for a grace period.
+> > > 
+> > > No, that takes too long. Long queues simply mean deferred
+> > > inactivation is working on cold CPU caches and that means we take a
+> > > 30-50% performance hit on inode eviction overhead for inodes that
+> > > need inactivation (e.g. unlinked inodes) just by having to load all
+> > > the inode state into CPU caches again.
+> > > 
+> > > Numbers I recorded at the time indicate that inactivation that
+> > > doesn't block on IO or the log typically takes between 200-500us
+> > > of CPU time, so the deferred batch sizes are sized to run about
+> > > 10-15ms worth of deferred processing at a time. Filling a batch
+> > > takes memory reclaim about 200uS to fill when running
+> > > dispose_list() to evict inodes.
+> > > 
+> > > The problem with using RCU grace periods is that they delay the
+> > > start of the work for at least 10ms, sometimes hundreds of ms.
+> > > Using queue_rcu_work() means we will need to go back to unbound
+> > > depth queues to avoid blocking waiting for grace period expiry to
+> > > maintain perfomrance. THis means having tens of thousands of inodes
+> > > queued for inactivation before the workqueue starts running. These
+> > > are the sorts of numbers that caused all the problems Darrick was
+> > > having with performance, and that was all cold cache loading
+> > > overhead which is unavoidable with such large queue depths....
+> > > 
+> > 
+> > Hm, Ok. I recall the large queue depth issues on the earlier versions
+> > but had not caught up with the subsequent changes that limit (percpu)
+> > batch size, etc. The cond sync rcu approach is easy enough to hack in
+> > (i.e., sample gp on destroy, cond_sync_rcu() on inactivate) that I ran a
+> > few experiments on opposing ends of the spectrum wrt to concurrency.
+> > 
+> > The short of it is that I do see about a 30% hit in the single threaded
+> > sustained removal case with current batch sizes. If the workload scales
+> > out to many (64) cpus, the impact dissipates, I suspect because we've
+> > already distributed the workload across percpu wq tasks and thus drive
+> > the rcu subsystem with context switches and other quiescent states that
+> > progress grace periods. The single threaded perf hit mitigates at about
+> > 4x the current throttling threshold.
+> 
+> I doubt that thread count increases are actually mitigating the perf
+> hit. Performance hits hard limits on concurrent rm -rf threads due
+> to CIL lock contention at 7-800,000 transactions/s
+> (hence the scalability patchset) regardless of the concurrency of
+> the workload. With that bottleneck removed, the system then hits
+> contention limits on VFS locks during
+> inode instantiation/reclaim. This typically happens at 1.1-1.2
+> million transactions/s during unlink.
+> 
+> Essentially, if you have a slower per-thread fs modification
+> workload, you can can increase the concurrency to more threads and
+> CPUs but the system will eventually still hit the same throughput
+> limits. Hence a per-thread performance degradataion will still reach
+> the same peak throughput levels, it will just take a few more
+> threads to reach that limit. IOWs, scale doesn't make the
+> per-thread degradation go away, it just allows more threads to run
+> at full (but degraded) performance before the scalabilty limit
+> threshold is hit.
+> 
 
-	https://github.com/estesp/docker/blob/9c15e82f19b0ad3c5fe8617a8ec2dddc6639f40a/oci/defaults.go#L97
+All I'm testing for here is how the prospective rcu tweak behaves at
+scale. It introduces a noticeable hit with a single thread and no real
+noticeable change at scale. FWIW, I see a similar result with a quick
+test on top of the log scalability changes. I.e., I see a noticeable
+improvement in concurrent rm -rf from a baseline kernel to baseline +
+log scalability, and that improvement persists with the rcu hack added
+on top.
 
-to disable certain /proc files. It does overmount with /dev/null per
-masked file.
+> > > We could, potentially, use a separate lockless queue for unlinked
+> > > inodes and defer that to after a grace period, but then rm -rf
+> > > workloads will go much, much slower.
+> > > 
+> > 
+> > I don't quite follow what you mean by a separate lockless queue..?
+> 
+> I was thinking separating unlinked symlinks into their own queue
+> that can be processed after a grace period....
+> 
 
-Give them proper mount option which selectively disables lookup/readdir
-so that MaskedPaths doesn't need to be updated as time goes on.
+Ok. I had a similar idea in mind, but rather than handle inode types
+specially just split the single queue into multiple queues that can
+pipeline and potentially mitigate rcu delays. This essentially takes the
+previous optimization (that mitigated the hit by about 50%) a bit
+further, but I'm not totally sure it's a win without testing it.
 
-Syntax is
+> > In
+> > any event, another experiment I ran in light of the above results that
+> > might be similar was to put the inode queueing component of
+> > destroy_inode() behind an rcu callback. This reduces the single threaded
+> > perf hit from the previous approach by about 50%. So not entirely
+> > baseline performance, but it's back closer to baseline if I double the
+> > throttle threshold (and actually faster at 4x). Perhaps my crude
+> > prototype logic could be optimized further to not rely on percpu
+> > threshold changes to match the baseline.
+> > 
+> > My overall takeaway from these couple hacky experiments is that the
+> > unconditional synchronous rcu wait is indeed probably too heavy weight,
+> > as you point out. The polling or callback (or perhaps your separate
+> > queue) approach seems to be in the ballpark of viability, however,
+> > particularly when we consider the behavior of scaled or mixed workloads
+> > (since inactive queue processing seems to be size driven vs. latency
+> > driven).
+> > 
+> > So I dunno.. if you consider the various severity and complexity
+> > tradeoffs, this certainly seems worth more consideration to me. I can
+> > think of other potentially interesting ways to experiment with
+> > optimizing the above or perhaps tweak queueing to better facilitate
+> > taking advantage of grace periods, but it's not worth going too far down
+> > that road if you're wedded to the "busy inodes" approach.
+> 
+> I'm not wedded to "busy inodes" but, as your experiments are
+> indicating, trying to handle rcu grace periods into the deferred
+> inactivation path isn't completely mitigating the impact of having
+> to wait for a grace period for recycling of inodes.
+> 
 
-	mount -t proc proc -o lookup=cpuinfo/uptime /proc
+What I'm seeing so far is that the impact seems to be limited to the
+single threaded workload and largely mitigated by an increase in the
+percpu throttle limit. IOW, it's not completely free right out of the
+gate, but the impact seems isolated and potentially mitigated by
+adjustment of the pipeline.
 
-	# ls /proc
-				...
-	dr-xr-xr-x   8 root       root          0 Nov 22 21:12 995
-	-r--r--r--   1 root       root          0 Nov 22 21:12 cpuinfo
-	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 self -> 1163
-	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 thread-self -> 1163/task/1163
-	-r--r--r--   1 root       root          0 Nov 22 21:12 uptime
+I realize the throttle is a percpu value, so that is what has me
+wondering about some potential for gains in efficiency to try and get
+more of that single-threaded performance back in other ways, or perhaps
+enhancements that might be more broadly beneficial to deferred
+inactivations in general (i.e. some form of adaptive throttling
+thresholds to balance percpu thresholds against a global threshold).
 
-Works at top level only (1 lookup list per superblock)
-Trailing slash is optional but saves 1 allocation.
+> I suspect a rethink on the inode recycling mechanism is needed. THe
+> way it is currently implemented was a brute force solution - it is
+> simple and effective. However, we need more nuance in the recycling
+> logic now.  That is, if we are recycling an inode that is clean, has
+> nlink >=1 and has not been unlinked, it means the VFS evicted it too
+> soon and we are going to re-instantiate it as the identical inode
+> that was evicted from cache.
+> 
 
-TODO:
-	think what to do with dcache entries across "mount -o remount,lookup=".
+Probably. How advantageous is inode memory reuse supposed to be in the
+first place? I've more considered it a necessary side effect of broader
+architecture (i.e. deferred reclaim, etc.) as opposed to a primary
+optimization. I still see reuse occur with deferred inactivation, we
+just end up cycling through the same set of inodes as they fall through
+the queue rather than recycling the same one over and over. I'm sort of
+wondering what the impact would be if we didn't do this at all (for the
+new allocation case at least).
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+> So how much re-initialisation do we actually need for that inode?
+> Almost everything in the inode is still valid; the problems come
+> from inode_init_always() resetting the entire internal inode state
+> and XFS then having to set them up again.  The internal state is
+> already largely correct when we start recycling, and the identity of
+> the recycled inode does not change when nlink >= 1. Hence eliding
+> inode_init_always() would also go a long way to avoiding the need
+> for a RCU grace period to pass before we can make the inode visible
+> to the VFS again.
+> 
+> If we can do that, then the only indoes that need a grace period
+> before they can be recycled are unlinked inodes as they change
+> identity when being recycled. That identity change absolutely
+> requires a grace period to expire before the new instantiation can
+> be made visible.  Given the arbitrary delay that this can introduce
+> for an inode allocation operation, it seems much better suited to
+> detecting busy inodes than waiting for a global OS state change to
+> occur...
+> 
 
- fs/proc/generic.c       |   19 +++++--
- fs/proc/internal.h      |   23 +++++++++
- fs/proc/proc_net.c      |    2 
- fs/proc/root.c          |  115 ++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/proc_fs.h |    2 
- 5 files changed, 152 insertions(+), 9 deletions(-)
+Maybe..? The experiments I've been doing are aimed at simplicity and
+reducing the scope of the changes. Part of the reason for this is tbh
+I'm not totally convinced we really need to do anything more complex
+than preserve the inline symlink buffer one way or another (for example,
+see the rfc patch below for an alternative to the inline symlink rcuwalk
+disable patch). Maybe we should consider something like this anyways.
 
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -282,7 +282,7 @@ struct dentry *proc_lookup(struct inode *dir, struct dentry *dentry,
-  * for success..
-  */
- int proc_readdir_de(struct file *file, struct dir_context *ctx,
--		    struct proc_dir_entry *de)
-+		    struct proc_dir_entry *de, const struct proc_lookup_list *ll)
- {
- 	int i;
- 
-@@ -305,14 +305,18 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
- 
- 	do {
- 		struct proc_dir_entry *next;
-+
- 		pde_get(de);
- 		read_unlock(&proc_subdir_lock);
--		if (!dir_emit(ctx, de->name, de->namelen,
--			    de->low_ino, de->mode >> 12)) {
--			pde_put(de);
--			return 0;
-+
-+		if (ll ? in_lookup_list(ll, de->name, de->namelen) : true) {
-+			if (!dir_emit(ctx, de->name, de->namelen, de->low_ino, de->mode >> 12)) {
-+				pde_put(de);
-+				return 0;
-+			}
-+			ctx->pos++;
- 		}
--		ctx->pos++;
-+
- 		read_lock(&proc_subdir_lock);
- 		next = pde_subdir_next(de);
- 		pde_put(de);
-@@ -330,7 +334,8 @@ int proc_readdir(struct file *file, struct dir_context *ctx)
- 	if (fs_info->pidonly == PROC_PIDONLY_ON)
- 		return 1;
- 
--	return proc_readdir_de(file, ctx, PDE(inode));
-+	return proc_readdir_de(file, ctx, PDE(inode),
-+				PDE(inode) == &proc_root ? fs_info->lookup_list : NULL);
- }
- 
- /*
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -190,7 +190,7 @@ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
- extern struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int);
- struct dentry *proc_lookup_de(struct inode *, struct dentry *, struct proc_dir_entry *);
- extern int proc_readdir(struct file *, struct dir_context *);
--int proc_readdir_de(struct file *, struct dir_context *, struct proc_dir_entry *);
-+int proc_readdir_de(struct file *, struct dir_context *, struct proc_dir_entry *, const struct proc_lookup_list *);
- 
- static inline void pde_get(struct proc_dir_entry *pde)
- {
-@@ -318,3 +318,24 @@ static inline void pde_force_lookup(struct proc_dir_entry *pde)
- 	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
- 	pde->proc_dops = &proc_net_dentry_ops;
- }
-+
-+/*
-+ * "cpuinfo", "uptime" is represented as
-+ *
-+ *	(u8[]){
-+ *		7, 'c', 'p', 'u', 'i', 'n', 'f', 'o',
-+ *		6, 'u', 'p', 't', 'i', 'm', 'e',
-+ *		0
-+ *	}
-+ */
-+struct proc_lookup_list {
-+	u8 len;
-+	char str[];
-+};
-+
-+static inline struct proc_lookup_list *lookup_list_next(const struct proc_lookup_list *ll)
-+{
-+	return (struct proc_lookup_list *)((void *)ll + 1 + ll->len);
-+}
-+
-+bool in_lookup_list(const struct proc_lookup_list *ll, const char *str, unsigned int len);
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -321,7 +321,7 @@ static int proc_tgid_net_readdir(struct file *file, struct dir_context *ctx)
- 	ret = -EINVAL;
- 	net = get_proc_task_net(file_inode(file));
- 	if (net != NULL) {
--		ret = proc_readdir_de(file, ctx, net->proc_net);
-+		ret = proc_readdir_de(file, ctx, net->proc_net, NULL);
- 		put_net(net);
+With busy inodes, we need to alter inode allocation to some degree to
+accommodate. We can have (tens of?) thousands of inodes under the grace
+period at any time based on current batching behavior, so it's not
+totally evident to me that we won't end up with some of the same
+fundamental issues to deal with here, just needing to be accommodated in
+the inode allocation algorithm rather than the teardown sequence.
+
+Brian
+
+--- 8< ---
+
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 64b9bf334806..058e3fc69ff7 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -2644,7 +2644,7 @@ xfs_ifree(
+ 	 * already been freed by xfs_attr_inactive.
+ 	 */
+ 	if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL) {
+-		kmem_free(ip->i_df.if_u1.if_data);
++		kfree_rcu(ip->i_df.if_u1.if_data);
+ 		ip->i_df.if_u1.if_data = NULL;
+ 		ip->i_df.if_bytes = 0;
  	}
- 	return ret;
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -35,18 +35,22 @@ struct proc_fs_context {
- 	enum proc_hidepid	hidepid;
- 	int			gid;
- 	enum proc_pidonly	pidonly;
-+	struct proc_lookup_list	*lookup_list;
-+	unsigned int		lookup_list_len;
- };
- 
- enum proc_param {
- 	Opt_gid,
- 	Opt_hidepid,
- 	Opt_subset,
-+	Opt_lookup,
- };
- 
- static const struct fs_parameter_spec proc_fs_parameters[] = {
- 	fsparam_u32("gid",	Opt_gid),
- 	fsparam_string("hidepid",	Opt_hidepid),
- 	fsparam_string("subset",	Opt_subset),
-+	fsparam_string("lookup",	Opt_lookup),
- 	{}
- };
- 
-@@ -112,6 +116,65 @@ static int proc_parse_subset_param(struct fs_context *fc, char *value)
- 	return 0;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index a607d6aca5c4..e98d7f10ba7d 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -511,27 +511,6 @@ xfs_vn_get_link(
+ 	return ERR_PTR(error);
  }
  
-+static int proc_parse_lookup_param(struct fs_context *fc, char *str0)
-+{
-+	struct proc_fs_context *ctx = fc->fs_private;
-+	struct proc_lookup_list *ll;
-+	char *str;
-+	const char *slash;
-+	const char *src;
-+	unsigned int len;
-+	int rv;
-+
-+	/* Force trailing slash, simplify loops below. */
-+	len = strlen(str0);
-+	if (len > 0 && str0[len - 1] == '/') {
-+		str = str0;
-+	} else {
-+		str = kmalloc(len + 2, GFP_KERNEL);
-+		if (!str) {
-+			rv = -ENOMEM;
-+			goto out;
-+		}
-+		memcpy(str, str0, len);
-+		str[len] = '/';
-+		str[len + 1] = '\0';
-+	}
-+
-+	len = 0;
-+	for (src = str; (slash = strchr(src, '/')); src = slash + 1) {
-+		if (slash - src >= 256) {
-+			rv = -EINVAL;
-+			goto out_free_str;
-+		}
-+		len += 1 + (slash - src);
-+	}
-+	len += 1;
-+
-+	ctx->lookup_list = ll = kmalloc(len, GFP_KERNEL);
-+	ctx->lookup_list_len = len;
-+	if (!ll) {
-+		rv = -ENOMEM;
-+		goto out_free_str;
-+	}
-+
-+	for (src = str; (slash = strchr(src, '/')); src = slash + 1) {
-+		ll->len = slash - src;
-+		memcpy(ll->str, src, ll->len);
-+		ll = lookup_list_next(ll);
-+	}
-+	ll->len = 0;
-+
-+	rv = 0;
-+
-+out_free_str:
-+	if (str != str0) {
-+		kfree(str);
-+	}
-+out:
-+	return rv;
-+}
-+
- static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct proc_fs_context *ctx = fc->fs_private;
-@@ -137,6 +200,11 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 			return -EINVAL;
+-STATIC const char *
+-xfs_vn_get_link_inline(
+-	struct dentry		*dentry,
+-	struct inode		*inode,
+-	struct delayed_call	*done)
+-{
+-	struct xfs_inode	*ip = XFS_I(inode);
+-	char			*link;
+-
+-	ASSERT(ip->i_df.if_format == XFS_DINODE_FMT_LOCAL);
+-
+-	/*
+-	 * The VFS crashes on a NULL pointer, so return -EFSCORRUPTED if
+-	 * if_data is junk.
+-	 */
+-	link = ip->i_df.if_u1.if_data;
+-	if (XFS_IS_CORRUPT(ip->i_mount, !link))
+-		return ERR_PTR(-EFSCORRUPTED);
+-	return link;
+-}
+-
+ static uint32_t
+ xfs_stat_blksize(
+ 	struct xfs_inode	*ip)
+@@ -1250,14 +1229,6 @@ static const struct inode_operations xfs_symlink_inode_operations = {
+ 	.update_time		= xfs_vn_update_time,
+ };
+ 
+-static const struct inode_operations xfs_inline_symlink_inode_operations = {
+-	.get_link		= xfs_vn_get_link_inline,
+-	.getattr		= xfs_vn_getattr,
+-	.setattr		= xfs_vn_setattr,
+-	.listxattr		= xfs_vn_listxattr,
+-	.update_time		= xfs_vn_update_time,
+-};
+-
+ /* Figure out if this file actually supports DAX. */
+ static bool
+ xfs_inode_supports_dax(
+@@ -1409,9 +1380,8 @@ xfs_setup_iops(
  		break;
- 
-+	case Opt_lookup:
-+		if (proc_parse_lookup_param(fc, param->string) < 0)
-+			return -EINVAL;
-+		break;
-+
+ 	case S_IFLNK:
+ 		if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL)
+-			inode->i_op = &xfs_inline_symlink_inode_operations;
+-		else
+-			inode->i_op = &xfs_symlink_inode_operations;
++			inode->i_link = ip->i_df.if_u1.if_data;
++		inode->i_op = &xfs_symlink_inode_operations;
+ 		break;
  	default:
- 		return -EINVAL;
+ 		inode->i_op = &xfs_inode_operations;
+diff --git a/fs/xfs/xfs_symlink.c b/fs/xfs/xfs_symlink.c
+index fc2c6a404647..20ec2f450c56 100644
+--- a/fs/xfs/xfs_symlink.c
++++ b/fs/xfs/xfs_symlink.c
+@@ -497,6 +497,7 @@ xfs_inactive_symlink(
+ 	 * do here in that case.
+ 	 */
+ 	if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL) {
++		WRITE_ONCE(VFS_I(ip)->i_link, NULL);
+ 		xfs_iunlock(ip, XFS_ILOCK_EXCL);
+ 		return 0;
  	}
-@@ -157,6 +225,10 @@ static void proc_apply_options(struct proc_fs_info *fs_info,
- 		fs_info->hide_pid = ctx->hidepid;
- 	if (ctx->mask & (1 << Opt_subset))
- 		fs_info->pidonly = ctx->pidonly;
-+	if (ctx->mask & (1 << Opt_lookup)) {
-+		fs_info->lookup_list = ctx->lookup_list;
-+		ctx->lookup_list = NULL;
-+	}
- }
- 
- static int proc_fill_super(struct super_block *s, struct fs_context *fc)
-@@ -234,11 +306,34 @@ static void proc_fs_context_free(struct fs_context *fc)
- 	struct proc_fs_context *ctx = fc->fs_private;
- 
- 	put_pid_ns(ctx->pid_ns);
-+	kfree(ctx->lookup_list);
- 	kfree(ctx);
- }
- 
-+static int proc_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
-+{
-+	struct proc_fs_context *src = fc->fs_private;
-+	struct proc_fs_context *dst;
-+
-+	dst = kmemdup(src, sizeof(struct proc_fs_context), GFP_KERNEL);
-+	if (!dst) {
-+		return -ENOMEM;
-+	}
-+
-+	get_pid_ns(dst->pid_ns);
-+	dst->lookup_list = kmemdup(dst->lookup_list, dst->lookup_list_len, GFP_KERNEL);
-+	if (!dst->lookup_list) {
-+		kfree(dst);
-+		return -ENOMEM;
-+	}
-+
-+	fc->fs_private = dst;
-+	return 0;
-+}
-+
- static const struct fs_context_operations proc_fs_context_ops = {
- 	.free		= proc_fs_context_free,
-+	.dup		= proc_fs_context_dup,
- 	.parse_param	= proc_parse_param,
- 	.get_tree	= proc_get_tree,
- 	.reconfigure	= proc_reconfigure,
-@@ -274,6 +369,7 @@ static void proc_kill_sb(struct super_block *sb)
- 
- 	kill_anon_super(sb);
- 	put_pid_ns(fs_info->pid_ns);
-+	kfree(fs_info->lookup_list);
- 	kfree(fs_info);
- }
- 
-@@ -317,11 +413,30 @@ static int proc_root_getattr(struct user_namespace *mnt_userns,
- 	return 0;
- }
- 
-+bool in_lookup_list(const struct proc_lookup_list *ll, const char *str, unsigned int len)
-+{
-+	while (ll->len > 0) {
-+		if (ll->len == len && strncmp(ll->str, str, len) == 0) {
-+			return true;
-+		}
-+		ll = lookup_list_next(ll);
-+	}
-+	return false;
-+}
-+
- static struct dentry *proc_root_lookup(struct inode * dir, struct dentry * dentry, unsigned int flags)
- {
-+	struct proc_fs_info *proc_sb = proc_sb_info(dir->i_sb);
-+
- 	if (!proc_pid_lookup(dentry, flags))
- 		return NULL;
- 
-+	/* Top level only for now */
-+	if (proc_sb->lookup_list &&
-+	    !in_lookup_list(proc_sb->lookup_list, dentry->d_name.name, dentry->d_name.len)) {
-+		    return NULL;
-+	}
-+
- 	return proc_lookup(dir, dentry, flags);
- }
- 
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -10,6 +10,7 @@
- #include <linux/fs.h>
- 
- struct proc_dir_entry;
-+struct proc_lookup_list;
- struct seq_file;
- struct seq_operations;
- 
-@@ -65,6 +66,7 @@ struct proc_fs_info {
- 	kgid_t pid_gid;
- 	enum proc_hidepid hide_pid;
- 	enum proc_pidonly pidonly;
-+	const struct proc_lookup_list *lookup_list;
- };
- 
- static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
+
