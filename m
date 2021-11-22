@@ -2,131 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 569E04590A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 15:57:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2D684590C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 16:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239577AbhKVPAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 10:00:31 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:57617 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232494AbhKVPAa (ORCPT
+        id S239883AbhKVPDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 10:03:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239903AbhKVPDj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 10:00:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637593043;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=a6sxP8BbpsAMN/5roSu3j/ZWT90syA5vCmiIsqjbMtk=;
-        b=CTZzBYOj9NMS5ihn+fb5DQ0CxKjOREYArVSwooh1gGYa7KVAOl/GRdo+Lm3TQbPQ0N5RMX
-        trHokDDWh6MqpRVL150h4rHCDPS8CKctvHJXt7xOcml7yfI84XG/1CzOa+lx8Ku+yVMg34
-        1mEDWYR0JMwosIttyQ5pqFLcz9/tpK8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-123-GN8Ubqx1NTefQC_Iw42nkw-1; Mon, 22 Nov 2021 09:57:22 -0500
-X-MC-Unique: GN8Ubqx1NTefQC_Iw42nkw-1
-Received: by mail-wr1-f72.google.com with SMTP id f3-20020a5d50c3000000b00183ce1379feso3159582wrt.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 06:57:22 -0800 (PST)
+        Mon, 22 Nov 2021 10:03:39 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E8B0C06175A;
+        Mon, 22 Nov 2021 07:00:31 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id w1so78299424edc.6;
+        Mon, 22 Nov 2021 07:00:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=dd2xl/UAkYn51WmVZ2VSCh8BeesXpSLDPTwNcY7Z73o=;
+        b=gkbgbtTE+CezDs8TOZ+JQjqb1dVmpeks6KubnBKiSXOqGxn7KOTsX8t5+242eVev2Q
+         jugeKfyhk1jJTll9KPXA2LMq/exNtR5n6p1HjzwnlkWxbnlW5wbUy1zIxKyF7y4SNxeB
+         XC/gIZun0oFX4Ej/dGHWngs4g/eTHgIav5ZruuiHXvl3hWfe85LIRNvOojfbwzYuGHqz
+         bd6bl7YlgzpV5J2Kz9X1S4zcbyyNANVbJKTZr46sktN2Pq4Dds0Cz8+VZ9lcbcbEXFDl
+         7oJWG8t8D2BZY6zzwB/2zfayZeNdZgk4mc0ewg+YKPCBdRv6Ip5ri6Os0B2c2uotS6FS
+         lbtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=a6sxP8BbpsAMN/5roSu3j/ZWT90syA5vCmiIsqjbMtk=;
-        b=z0MEQ5NqpNANTlm5UmgIk9U8R34DjU1/xUMdBZoX7IGbxQBRN9doHMtSDyjYV6znmx
-         LNKj6D1qwcwVdzbjDtl03v/RQkrxeSRj454AKZvwFT/RN6o9LP78LJbPjVycY+AFJQao
-         jnCKbL2VcdOxF3l5WKfw1w7Zip6amVTmt7jF9dFzxXe/eAzcU7S32rzRQGFbT++COQMm
-         SrduGcGAYFu8gatbBLo44QshRwIDfY5vZLDJNgjZuK1uxtaocmwWa2FdZyM8CqvkIXUz
-         S5X5V0Cecd//N4vz7AhRdQDeAUHa5AzS9x1uc/Mma8AVgRZ0NagUpOobAE6zENA2Ue8A
-         rE3g==
-X-Gm-Message-State: AOAM532F2h+qA+qkkVJ6QwHFmPzyA6S1eG9FZyIDbkrYQHp4HNn9UMTE
-        Ap94E1Y1xp2/NrnE+jOyKCkw25kViWmqB9lS/1Bgc8Wq9wy/mNhzn7OJ3l5mKPyVBupJHPvrw0B
-        a5DGRS+B+nOvY3CeYsWB6nu5LJA==
-X-Received: by 2002:a7b:ce8c:: with SMTP id q12mr29900023wmj.91.1637593040912;
-        Mon, 22 Nov 2021 06:57:20 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzb1fVkmOhpRnzBJsEnrS5eq+nBwa2MfaKvZWrzzGVY0sVj4OHkUiEBZAugOc7zSp386W7pog==
-X-Received: by 2002:a7b:ce8c:: with SMTP id q12mr29899978wmj.91.1637593040715;
-        Mon, 22 Nov 2021 06:57:20 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c667b.dip0.t-ipconnect.de. [91.12.102.123])
-        by smtp.gmail.com with ESMTPSA id s63sm10249585wme.22.2021.11.22.06.57.18
+        bh=dd2xl/UAkYn51WmVZ2VSCh8BeesXpSLDPTwNcY7Z73o=;
+        b=7WfFvDillw9K1UGQ4psodAlt0Gy7Y+6ZE1WUwyc2kIzePvTC1dreTE3vnS98ZE0Tgv
+         FnkQpA1DKgHuY22JdHUsxZE+cPkuIewyOYvEgbtgPPAC+5839eZkUWjr2o9bS+2e8jID
+         uhvKrU92qteMQ1myR37EB/czMBPUsCFhNHgh859hDERpkHYOzlFYu7xa/7uBKAQRsE7o
+         54VANEXbOagzXc9WlEMjpFL4Km8t2usQ6tBONqrdexJXhEOISH4c4Zue2sv6iTWX0YSH
+         GmFYPqIBlWBbSTsJr44qxE/VLyCjCqAGYNfgAgae6J71TqiJr8W6Nnlh19zSUtkptig8
+         kZRA==
+X-Gm-Message-State: AOAM532ReO9GWQbeWqXPy2HicUuascMq4/r9LpZiMhuno+geOYwWtku5
+        E+ueF9q1cJHU8djWdWJmm1c=
+X-Google-Smtp-Source: ABdhPJwjGQ/ioew2oywVvtOA+TOt9CLYfuLAtK78l/ffxgr8D34KnzE4Qv373SSMjd8Xu97X4CfiHQ==
+X-Received: by 2002:a05:6402:254f:: with SMTP id l15mr66720388edb.12.1637593229048;
+        Mon, 22 Nov 2021 07:00:29 -0800 (PST)
+Received: from [192.168.1.6] ([95.87.219.163])
+        by smtp.gmail.com with ESMTPSA id hq37sm3978859ejc.116.2021.11.22.07.00.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Nov 2021 06:57:20 -0800 (PST)
-Message-ID: <d2b46b84-8930-4304-2946-4d4a16698b24@redhat.com>
-Date:   Mon, 22 Nov 2021 15:57:17 +0100
+        Mon, 22 Nov 2021 07:00:28 -0800 (PST)
+Message-ID: <e94c2ba9-226b-8275-bef7-28e854be3ffa@gmail.com>
+Date:   Mon, 22 Nov 2021 17:00:25 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
+ Thunderbird/91.2.1
+Subject: Re: [RFC PATCH 0/4] namespacefs: Proof-of-Concept
 Content-Language: en-US
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-2-chao.p.peng@linux.intel.com>
- <20211119151943.GH876299@ziepe.ca>
- <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
- <20211119160023.GI876299@ziepe.ca>
- <4efdccac-245f-eb1f-5b7f-c1044ff0103d@redhat.com>
- <20211122133145.GQ876299@ziepe.ca>
- <56c0dffc-5fc4-c337-3e85-a5c9ce619140@redhat.com>
- <20211122140148.GR876299@ziepe.ca>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20211122140148.GR876299@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, mingo@redhat.com, hagen@jauu.net,
+        rppt@kernel.org, akpm@linux-foundation.org, vvs@virtuozzo.com,
+        shakeelb@google.com, christian.brauner@ubuntu.com,
+        mkoutny@suse.com, Linux Containers <containers@lists.linux.dev>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <20211118181210.281359-1-y.karadz@gmail.com>
+ <87a6i1xpis.fsf@email.froward.int.ebiederm.org>
+ <20211118142440.31da20b3@gandalf.local.home>
+ <1349346e1d5daca991724603d1495ec311cac058.camel@HansenPartnership.com>
+ <20211119092758.1012073e@gandalf.local.home>
+ <f6ca1f5bdb3b516688f291d9685a6a59f49f1393.camel@HansenPartnership.com>
+ <20211119114736.5d9dcf6c@gandalf.local.home>
+ <20211119114910.177c80d6@gandalf.local.home>
+ <cc6783315193be5acb0e2e478e2827d1ad76ba2a.camel@HansenPartnership.com>
+ <ba0f624c-fc24-a3f4-749a-00e419960de2@gmail.com>
+ <4d2b08aa854fcccd51247105edb18fe466a2a3f1.camel@HansenPartnership.com>
+From:   Yordan Karadzhov <y.karadz@gmail.com>
+In-Reply-To: <4d2b08aa854fcccd51247105edb18fe466a2a3f1.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.11.21 15:01, Jason Gunthorpe wrote:
-> On Mon, Nov 22, 2021 at 02:35:49PM +0100, David Hildenbrand wrote:
->> On 22.11.21 14:31, Jason Gunthorpe wrote:
->>> On Mon, Nov 22, 2021 at 10:26:12AM +0100, David Hildenbrand wrote:
->>>
->>>> I do wonder if we want to support sharing such memfds between processes
->>>> in all cases ... we most certainly don't want to be able to share
->>>> encrypted memory between VMs (I heard that the kernel has to forbid
->>>> that). It would make sense in the use case you describe, though.
->>>
->>> If there is a F_SEAL_XX that blocks every kind of new access, who
->>> cares if userspace passes the FD around or not?
->> I was imagining that you actually would want to do some kind of "change
->> ownership". But yeah, the intended semantics and all use cases we have
->> in mind are not fully clear to me yet. If it's really "no new access"
->> (side note: is "access" the right word?) then sure, we can pass the fd
->> around.
+
+
+On 22.11.21 г. 15:44 ч., James Bottomley wrote:
+> Well, no, the information may not all exist.  However, the point is we
+> can add it without adding additional namespace objects.
 > 
-> What is "ownership" in a world with kvm and iommu are reading pages
-> out of the same fd?
+>> Let's look the following case (oversimplified just to get the idea):
+>> 1. The process X is a parent of the process Y and both are in
+>> namespace 'A'.
+>> 3. "unshare" is used to place process Y (and all its child processes)
+>> in a new namespace B (A is a parent namespace of B).
+>> 4. "setns" is s used to move process X in namespace C.
+>>
+>> How would you find the parent namespace of B?
+> Actually this one's quite easy: the parent of X in your setup still has
+> it.
 
-In the world of encrypted memory / TDX, KVM somewhat "owns" that memory
-IMHO (for example, only it can migrate or swap out these pages; it's
-might be debatable if the TDX module or KVM actually "own" these pages ).
+Hmm, Isn't that true only if somehow we know that (3) happened before (4).
 
--- 
-Thanks,
+> However, I think you're looking to set up a scenario where the
+> namespace information isn't carried by live processes and that's
+> certainly possible if we unshare the namespace, bind it to a mount
+> point and exit the process that unshared it.  If will exist as a bound
+> namespace with no processes until it gets entered via the binding and
+> when that happens the parent information can't be deduced from the
+> process tree.
+> 
+> There's another problem, that I think you don't care about but someone
+> will at some point: the owning user_ns can't be deduced from the
+> current tree either because it depends on the order of entry.  We fixed
+> unshare so that if you enter multiple namespaces, it enters the user_ns
+> first so the latter is always the owning namespace, but if you enter
+> the rest of the namespaces first via one unshare then unshare the
+> user_ns second, that won't be true.
+> 
+> Neither of the above actually matter for docker like containers because
+> that's not the way the orchestration system works (it doesn't use mount
+> bindings or the user_ns) but one day, hopefully, it might.
+> 
+>> Again, using your arguments, I can reformulate the problem statement
+>> this way: a userspace program is well instrumented
+>> to create an arbitrary complex tree of namespaces. In the same time,
+>> the only place where the information about the
+>> created structure can be retrieved is in the userspace program
+>> itself. And when we have multiple userspace programs
+>> adding to the namespaces tree, the global picture gets impossible to
+>> recover.
+> So figure out what's missing in the /proc tree and propose adding it.
+> The interface isn't immutable it's just that what exists today is an
+> ABI and can't be altered.  I think this is the last time we realised we
+> needed to add missing information in/proc/<pid>/ns:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=eaa0d190bfe1ed891b814a52712dcd852554cb08
+> 
+> So you can use that as the pattern.
+> 
 
-David / dhildenb
+OK, if everybody agrees that adding extra information to /proc is the right way to go, we will be happy to try 
+developing another PoC that implements this approach.
 
+Thank you very much for all your help!
+Yordan
+
+> James
+> 
+> 
