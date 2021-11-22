@@ -2,205 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37D914589AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 08:11:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDFE4589E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 08:34:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230058AbhKVHOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 02:14:41 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:55592 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbhKVHOk (ORCPT
+        id S238822AbhKVHhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 02:37:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231552AbhKVHhv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 02:14:40 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 585221FD26;
-        Mon, 22 Nov 2021 07:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1637565093; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rLXt6amhrvHnna7k2TRUoTyg1Kt2r+zwqjjZ9be/TiE=;
-        b=RJa8cxNm15iC6NaZJ//oEwGJu6GK6tfwSlegzlvSb+jjBpresQzZKuJCmxDs8YGKyEheuW
-        eQ+phdRSsR5mJ8q0It2TrLQ4RCAN+2eC86oNS0yfnAEcDYiRCzq7/Fxy5/+H2b7/L2d2cK
-        F/dWGdFXAnehUyS71q9XWXKRnDLj5l4=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 2BDFCA3B83;
-        Mon, 22 Nov 2021 07:11:33 +0000 (UTC)
-Date:   Mon, 22 Nov 2021 08:11:32 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] mm,fs: Split dump_mapping() out from dump_page()
-Message-ID: <YZtCpK2ZsV0qLm6+@dhcp22.suse.cz>
-References: <20211121121056.2870061-1-willy@infradead.org>
+        Mon, 22 Nov 2021 02:37:51 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAFDC061574
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 23:34:45 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id l190so4036472pge.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 23:34:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=LdaWIVV66AnYvZDioQXEttBzNC/hd0WDtpDAz2dRNNE=;
+        b=KG2WHzvKQGUkR1Z9aHB2oFXjn8rJ3UJnZjjK2dV1198tlorfoosTqH5lGGvH4dyXDw
+         QwdN/cniW2C9UyrDW8RStkY7M3MDNmHUODgdV7JvUz9kE7l8fUUzAIrM7k87eSXRG25S
+         r4MIgKsA7VZ6lpOXq5+pvgV9oLdOCSz9dpV3HibUvmzYLNVOKapBafe3ES0eY9x198nL
+         FGnLPkGyFbJTWP5wgxdZIn0XbFf7FV8XnCKGe/+2iPP448IllivFRfyBhgibE4Ci+H9N
+         4IFS5wkli/gWzgEq+gA8BNxNUEqB3V60tphTmFWvUilpV9ayVm5n1i+Oj6aRrk6N2omx
+         rsQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=LdaWIVV66AnYvZDioQXEttBzNC/hd0WDtpDAz2dRNNE=;
+        b=C6XMrAhvBJPW9LXNZL5EvMOt/W5EFY5y/QyAN5DN5c4W/VmFojwfO/FXHsohyOPEW2
+         mhR27b+FmlCmHFlXc/AG3MeKwZV3apXmRbl23F9uWWd8H1rDGfk/DIadApLsA2wsxvfO
+         blzgc7yG14U5J0l/ZSDy+mjiPPlg1zHujiUkVMMGMlLYFDCDUHAh5K33eSyTnZrmwhqn
+         +6YuAi+J0SlXFkaeEGJBblyApJY5HnvMgRF5IEgVAgWhespdWofafSckyMDHpGzX3vMR
+         NcQ3aeXPVUT5lqGAMazo4ctvWspxS1oHrZihPz+qPAz0FenDGscOHYP1AtDIGmFPBQ2o
+         V+4A==
+X-Gm-Message-State: AOAM532G5YBad1WAmFomUx23vxgeJc6spoI2ZdJzdjlk0OeF63yKsKnb
+        sUcDaXXJA1RRYkebpiGcPsaQAA==
+X-Google-Smtp-Source: ABdhPJzG4d8nuiw8MpOKbGi5ynV93hARNi2HDnMotlUY6Rx6JOlMvw2fL9I2deYlAjhanP8kYPM4ZA==
+X-Received: by 2002:a63:f749:: with SMTP id f9mr31900558pgk.330.1637566484783;
+        Sun, 21 Nov 2021 23:34:44 -0800 (PST)
+Received: from [10.76.43.192] ([61.120.150.76])
+        by smtp.gmail.com with ESMTPSA id on6sm20781535pjb.47.2021.11.21.23.34.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Nov 2021 23:34:44 -0800 (PST)
+Message-ID: <25626b34-9dd2-2e89-0c35-be40e62b6e09@bytedance.com>
+Date:   Mon, 22 Nov 2021 15:34:36 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211121121056.2870061-1-willy@infradead.org>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.2
+Subject: Re: Re: [PATCH v1] sched/numa: add per-process numa_balancing
+Content-Language: en-US
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
+ <20211028153028.GP3891@suse.de>
+From:   Gang Li <ligang.bdlg@bytedance.com>
+In-Reply-To: <20211028153028.GP3891@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 21-11-21 12:10:56, Matthew Wilcox wrote:
-> dump_mapping() is a big chunk of dump_page(), and it'd be handy to be
-> able to call it when we don't have a struct page.  Split it out and move
-> it to fs/inode.c.  Take the opportunity to simplify some of the debug
-> messages a little.
-
-Makes sense. I haven't checked the head files inclusion side of this but
-I suspect mm heads do include uaccess.h. Not sure inode.c does as well.
-
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  fs/inode.c         | 49 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  1 +
->  mm/debug.c         | 52 ++--------------------------------------------
->  3 files changed, 52 insertions(+), 50 deletions(-)
+On 2021/10/28 23:30, Mel Gorman wrote:
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index bdfbd5962f2b..67758b2b702f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -522,6 +522,55 @@ void __remove_inode_hash(struct inode *inode)
->  }
->  EXPORT_SYMBOL(__remove_inode_hash);
->  
-> +void dump_mapping(const struct address_space *mapping)
-> +{
-> +	struct inode *host;
-> +	const struct address_space_operations *a_ops;
-> +	struct hlist_node *dentry_first;
-> +	struct dentry *dentry_ptr;
-> +	struct dentry dentry;
-> +	unsigned long ino;
-> +
-> +	/*
-> +	 * If mapping is an invalid pointer, we don't want to crash
-> +	 * accessing it, so probe everything depending on it carefully.
-> +	 */
-> +	if (get_kernel_nofault(host, &mapping->host) ||
-> +	    get_kernel_nofault(a_ops, &mapping->a_ops)) {
-> +		pr_warn("invalid mapping:%px\n", mapping);
-> +		return;
-> +	}
-> +
-> +	if (!host) {
-> +		pr_warn("aops:%ps\n", a_ops);
-> +		return;
-> +	}
-> +
-> +	if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
-> +	    get_kernel_nofault(ino, &host->i_ino)) {
-> +		pr_warn("aops:%ps invalid inode:%px\n", a_ops, host);
-> +		return;
-> +	}
-> +
-> +	if (!dentry_first) {
-> +		pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
-> +		return;
-> +	}
-> +
-> +	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
-> +	if (get_kernel_nofault(dentry, dentry_ptr)) {
-> +		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
-> +				a_ops, ino, dentry_ptr);
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * if dentry is corrupted, the %pd handler may still crash,
-> +	 * but it's unlikely that we reach here with a corrupt mapping
-> +	 */
-> +	pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n", a_ops, ino, &dentry);
-> +}
-> +
->  void clear_inode(struct inode *inode)
->  {
->  	/*
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d6a4eb6cf825..acaad2b0d5b9 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3149,6 +3149,7 @@ extern void unlock_new_inode(struct inode *);
->  extern void discard_new_inode(struct inode *);
->  extern unsigned int get_next_ino(void);
->  extern void evict_inodes(struct super_block *sb);
-> +void dump_mapping(const struct address_space *);
->  
->  /*
->   * Userspace may rely on the the inode number being non-zero. For example, glibc
-> diff --git a/mm/debug.c b/mm/debug.c
-> index fae0f81ad831..b3ebfab21cb3 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -110,56 +110,8 @@ static void __dump_page(struct page *page)
->  		type = "ksm ";
->  	else if (PageAnon(page))
->  		type = "anon ";
-> -	else if (mapping) {
-> -		struct inode *host;
-> -		const struct address_space_operations *a_ops;
-> -		struct hlist_node *dentry_first;
-> -		struct dentry *dentry_ptr;
-> -		struct dentry dentry;
-> -		unsigned long ino;
-> -
-> -		/*
-> -		 * mapping can be invalid pointer and we don't want to crash
-> -		 * accessing it, so probe everything depending on it carefully
-> -		 */
-> -		if (get_kernel_nofault(host, &mapping->host) ||
-> -		    get_kernel_nofault(a_ops, &mapping->a_ops)) {
-> -			pr_warn("failed to read mapping contents, not a valid kernel address?\n");
-> -			goto out_mapping;
-> -		}
-> -
-> -		if (!host) {
-> -			pr_warn("aops:%ps\n", a_ops);
-> -			goto out_mapping;
-> -		}
-> -
-> -		if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
-> -		    get_kernel_nofault(ino, &host->i_ino)) {
-> -			pr_warn("aops:%ps with invalid host inode %px\n",
-> -					a_ops, host);
-> -			goto out_mapping;
-> -		}
-> -
-> -		if (!dentry_first) {
-> -			pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
-> -			goto out_mapping;
-> -		}
-> -
-> -		dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
-> -		if (get_kernel_nofault(dentry, dentry_ptr)) {
-> -			pr_warn("aops:%ps ino:%lx with invalid dentry %px\n",
-> -					a_ops, ino, dentry_ptr);
-> -		} else {
-> -			/*
-> -			 * if dentry is corrupted, the %pd handler may still
-> -			 * crash, but it's unlikely that we reach here with a
-> -			 * corrupted struct page
-> -			 */
-> -			pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n",
-> -					a_ops, ino, &dentry);
-> -		}
-> -	}
-> -out_mapping:
-> +	else if (mapping)
-> +		dump_mapping(mapping);
->  	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) != __NR_PAGEFLAGS + 1);
->  
->  	pr_warn("%sflags: %#lx(%pGp)%s\n", type, head->flags, &head->flags,
-> -- 
-> 2.33.0
+> This would also need a prctl(2) patch.
+> 
 
+Hi!
+
+Should prctl(2) and this patch be combined into one series?
 -- 
-Michal Hocko
-SUSE Labs
+Thanks
+Gang Li
+
