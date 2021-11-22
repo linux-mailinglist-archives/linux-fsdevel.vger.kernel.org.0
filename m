@@ -2,31 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 977FB458B37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 10:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32DD2458B49
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 10:26:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239021AbhKVJWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 04:22:54 -0500
-Received: from mga12.intel.com ([192.55.52.136]:19907 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229906AbhKVJWw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 04:22:52 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10175"; a="214781457"
-X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
-   d="scan'208";a="214781457"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 01:19:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
-   d="scan'208";a="496790995"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 22 Nov 2021 01:19:09 -0800
-Date:   Mon, 22 Nov 2021 17:18:23 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Yao Yuan <yaoyuan0329os@gmail.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        id S239065AbhKVJ3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 04:29:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41631 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239046AbhKVJ3Y (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Nov 2021 04:29:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637573177;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=W24LOqoXm5rO4QnnE3nnOA9qNOGul+S9uy89jqjOA+M=;
+        b=JsDWvvyOwg7B1qEHfHgUTlJBgb/rH5nZAqr/wCm59mY0ufqqLWqbW4U4+aI8z2vK5M0GKT
+        zp2npE0kwCrqCIxizdonnROTfIbcboRxa0SJjuOW25g00FtoejRVTh9I8MDjSz7byMvTz6
+        A80LXZLhh1uOdZlPCwBhfvvy1yTVFmA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-336-jsGF0w8UPza8XfBzQFezQQ-1; Mon, 22 Nov 2021 04:26:15 -0500
+X-MC-Unique: jsGF0w8UPza8XfBzQFezQQ-1
+Received: by mail-wr1-f70.google.com with SMTP id q17-20020adff791000000b00183e734ba48so2941083wrp.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 01:26:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=W24LOqoXm5rO4QnnE3nnOA9qNOGul+S9uy89jqjOA+M=;
+        b=raY0CADlBWoaDC1X09rrrIQJOyDCPksK5e5TQmqlCLseTztererMajhcGKBNKpYibb
+         kjYdXOJyfbDFsZMKNQbDjcYUFB9uhtzhp2Y7yQXboLd9UZbiMO/TpU9SvEMFnqgPPsnD
+         aJsH2ldpFfEg7YTOEM0vuM/kjHjU1BK8p4Ep2r8thoHVfMkuuT0Twz1qrE9aV7JB37tH
+         QUBnLlH5o2VXJOtE5vgqJhqCaikqnQQmouV3UyGWfoGK1TqMeZNKdzEX2ckIhgmcWxtk
+         v/DsM/kvUOZUtUHmhTo2BvkmBO+2aN1OmjCGCn+VA5J3xAd1Yb9p2FDlHVESSG8hz45t
+         cAHQ==
+X-Gm-Message-State: AOAM530GIkTvz2tE7k3/ugjPnfZjz6mjbefjNdqqjylySNdHfXq5YPso
+        AcDNXP5h4C2tV+ZbOI70bIzA3y6Q3h1+roJ+Tvk8v7jwbIFny7Ah2Vp3gXh2UJun/DA5CiOFv9Z
+        DpJ0+6xYxk6UV9j2g0U/HuLWy2g==
+X-Received: by 2002:a05:600c:104b:: with SMTP id 11mr28668552wmx.54.1637573174580;
+        Mon, 22 Nov 2021 01:26:14 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyLFJu5j4VPLLnAmpU8CA4IejbWxqy8Vo0yv4T3cYINYpxhqk/tZpLIoYKCers6pf22TsjTpQ==
+X-Received: by 2002:a05:600c:104b:: with SMTP id 11mr28668518wmx.54.1637573174383;
+        Mon, 22 Nov 2021 01:26:14 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c667b.dip0.t-ipconnect.de. [91.12.102.123])
+        by smtp.gmail.com with ESMTPSA id t8sm8351680wrv.30.2021.11.22.01.26.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Nov 2021 01:26:13 -0800 (PST)
+Message-ID: <4efdccac-245f-eb1f-5b7f-c1044ff0103d@redhat.com>
+Date:   Mon, 22 Nov 2021 10:26:12 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
+Content-Language: en-US
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Sean Christopherson <seanjc@google.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
@@ -43,162 +81,83 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [RFC v2 PATCH 07/13] KVM: Handle page fault for fd based memslot
-Message-ID: <20211122091823.GB28749@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
 References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-8-chao.p.peng@linux.intel.com>
- <20211120015529.w23fg2df3fqs4ov5@sapienza>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211120015529.w23fg2df3fqs4ov5@sapienza>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+ <20211119134739.20218-2-chao.p.peng@linux.intel.com>
+ <20211119151943.GH876299@ziepe.ca>
+ <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
+ <20211119160023.GI876299@ziepe.ca>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20211119160023.GI876299@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 20, 2021 at 09:55:29AM +0800, Yao Yuan wrote:
-> On Fri, Nov 19, 2021 at 09:47:33PM +0800, Chao Peng wrote:
-> > Current code assume the private memory is persistent and KVM can check
-> > with backing store to see if private memory exists at the same address
-> > by calling get_pfn(alloc=false).
-> >
-> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > ---
-> >  arch/x86/kvm/mmu/mmu.c | 75 ++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 73 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 40377901598b..cd5d1f923694 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -3277,6 +3277,9 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
-> >  	if (max_level == PG_LEVEL_4K)
-> >  		return PG_LEVEL_4K;
-> >
-> > +	if (memslot_is_memfd(slot))
-> > +		return max_level;
-> > +
-> >  	host_level = host_pfn_mapping_level(kvm, gfn, pfn, slot);
-> >  	return min(host_level, max_level);
-> >  }
-> > @@ -4555,6 +4558,65 @@ static bool kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-> >  				  kvm_vcpu_gfn_to_hva(vcpu, gfn), &arch);
-> >  }
-> >
-> > +static bool kvm_faultin_pfn_memfd(struct kvm_vcpu *vcpu,
-> > +				  struct kvm_page_fault *fault, int *r)
-> > +{	int order;
-> > +	kvm_pfn_t pfn;
-> > +	struct kvm_memory_slot *slot = fault->slot;
-> > +	bool priv_gfn = kvm_vcpu_is_private_gfn(vcpu, fault->addr >> PAGE_SHIFT);
-> > +	bool priv_slot_exists = memslot_has_private(slot);
-> > +	bool priv_gfn_exists = false;
-> > +	int mem_convert_type;
-> > +
-> > +	if (priv_gfn && !priv_slot_exists) {
-> > +		*r = RET_PF_INVALID;
-> > +		return true;
-> > +	}
-> > +
-> > +	if (priv_slot_exists) {
-> > +		pfn = slot->memfd_ops->get_pfn(slot, slot->priv_file,
-> > +					       fault->gfn, false, &order);
-> > +		if (pfn >= 0)
-> > +			priv_gfn_exists = true;
+On 19.11.21 17:00, Jason Gunthorpe wrote:
+> On Fri, Nov 19, 2021 at 04:39:15PM +0100, David Hildenbrand wrote:
 > 
-> Need "fault->pfn = pfn" here if actual pfn is returned in
-> get_pfn(alloc=false) case for private page case.
+>>> If qmeu can put all the guest memory in a memfd and not map it, then
+>>> I'd also like to see that the IOMMU can use this interface too so we
+>>> can have VFIO working in this configuration.
+>>
+>> In QEMU we usually want to (and must) be able to access guest memory
+>> from user space, with the current design we wouldn't even be able to
+>> temporarily mmap it -- which makes sense for encrypted memory only. The
+>> corner case really is encrypted memory. So I don't think we'll see a
+>> broad use of this feature outside of encrypted VMs in QEMU. I might be
+>> wrong, most probably I am :)
 > 
-> > +	}
-> > +
-> > +	if (priv_gfn && !priv_gfn_exists) {
-> > +		mem_convert_type = KVM_EXIT_MEM_MAP_PRIVATE;
-> > +		goto out_convert;
-> > +	}
-> > +
-> > +	if (!priv_gfn && priv_gfn_exists) {
-> > +		slot->memfd_ops->put_pfn(pfn);
-> > +		mem_convert_type = KVM_EXIT_MEM_MAP_SHARED;
-> > +		goto out_convert;
-> > +	}
-> > +
-> > +	if (!priv_gfn) {
-> > +		pfn = slot->memfd_ops->get_pfn(slot, slot->file,
-> > +					       fault->gfn, true, &order);
+> Interesting..
 > 
-> Need "fault->pfn = pfn" here, because he pfn for
-> share page is getted here only.
-> 
-> > +		if (fault->pfn < 0) {
-> > +			*r = RET_PF_INVALID;
-> > +			return true;
-> > +		}
-> > +	}
+> The non-encrypted case I had in mind is the horrible flow in VFIO to
+> support qemu re-execing itself (VFIO_DMA_UNMAP_FLAG_VADDR).
 
-Right, I actually have "fault->pfn = pfn" here but accidentally deleted
-in a code factoring.
+Thanks for sharing!
 
-Chao
-> > +
-> > +	if (slot->flags & KVM_MEM_READONLY)
-> > +		fault->map_writable = false;
-> > +	if (order == 0)
-> > +		fault->max_level = PG_LEVEL_4K;
-> > +
-> > +	return false;
-> > +
-> > +out_convert:
-> > +	vcpu->run->exit_reason = KVM_EXIT_MEMORY_ERROR;
-> > +	vcpu->run->mem.type = mem_convert_type;
-> > +	vcpu->run->mem.u.map.gpa = fault->gfn << PAGE_SHIFT;
-> > +	vcpu->run->mem.u.map.size = PAGE_SIZE;
-> > +	fault->pfn = -1;
-> > +	*r = -1;
-> > +	return true;
-> > +}
-> > +
-> >  static bool kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault, int *r)
-> >  {
-> >  	struct kvm_memory_slot *slot = fault->slot;
-> > @@ -4596,6 +4658,9 @@ static bool kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
-> >  		}
-> >  	}
-> >
-> > +	if (memslot_is_memfd(slot))
-> > +		return kvm_faultin_pfn_memfd(vcpu, fault, r);
-> > +
-> >  	async = false;
-> >  	fault->pfn = __gfn_to_pfn_memslot(slot, fault->gfn, false, &async,
-> >  					  fault->write, &fault->map_writable,
-> > @@ -4660,7 +4725,8 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
-> >  	else
-> >  		write_lock(&vcpu->kvm->mmu_lock);
-> >
-> > -	if (fault->slot && mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva))
-> > +	if (fault->slot && !memslot_is_memfd(fault->slot) &&
-> > +			mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva))
-> >  		goto out_unlock;
-> >  	r = make_mmu_pages_available(vcpu);
-> >  	if (r)
-> > @@ -4676,7 +4742,12 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
-> >  		read_unlock(&vcpu->kvm->mmu_lock);
-> >  	else
-> >  		write_unlock(&vcpu->kvm->mmu_lock);
-> > -	kvm_release_pfn_clean(fault->pfn);
-> > +
-> > +	if (memslot_is_memfd(fault->slot))
-> > +		fault->slot->memfd_ops->put_pfn(fault->pfn);
-> > +	else
-> > +		kvm_release_pfn_clean(fault->pfn);
-> > +
-> >  	return r;
-> >  }
-> >
-> > --
-> > 2.17.1
-> >
+> 
+> Here VFIO is connected to a VA in a mm_struct that will become invalid
+> during the kexec period, but VFIO needs to continue to access it. For
+> IOMMU cases this is OK because the memory is already pinned, but for
+> the 'emulated iommu' used by mdevs pages are pinned dynamically. qemu
+> needs to ensure that VFIO can continue to access the pages across the
+> kexec, even though there is nothing to pin_user_pages() on.
+> 
+> This flow would work a lot better if VFIO was connected to the memfd
+> that is storing the guest memory. Then it naturally doesn't get
+> disrupted by exec() and we don't need the mess in the kernel..
+
+I do wonder if we want to support sharing such memfds between processes
+in all cases ... we most certainly don't want to be able to share
+encrypted memory between VMs (I heard that the kernel has to forbid
+that). It would make sense in the use case you describe, though.
+
+> 
+> I was wondering if we could get here using the direct_io APIs but this
+> would do the job too.
+> 
+>> Apart from the special "encrypted memory" semantics, I assume nothing
+>> speaks against allowing for mmaping these memfds, for example, for any
+>> other VFIO use cases.
+> 
+> We will eventually have VFIO with "encrypted memory". There was a talk
+> in LPC about the enabling work for this.
+
+Yes, I heard about that as well. In the foreseeable future, we'll have
+shared memory only visible for VFIO devices.
+
+> 
+> So, if the plan is to put fully encrpyted memory inside a memfd, then
+> we still will eventually need a way to pull the pfns it into the
+> IOMMU, presumably along with the access control parameters needed to
+> pass to the secure monitor to join a PCI device to the secure memory.
+
+Long-term, agreed.
+
+-- 
+Thanks,
+
+David / dhildenb
+
