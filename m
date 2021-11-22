@@ -2,84 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34B45458802
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 03:33:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED2645884F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Nov 2021 04:18:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229906AbhKVCgJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Nov 2021 21:36:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229686AbhKVCgJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Nov 2021 21:36:09 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BAD8960E9C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Nov 2021 02:33:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637548383;
-        bh=/EUcTRn86pfASgiIIYS6FnMzBcjQiO61t8fF6H/p9BY=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=iaSlgHMa1vvY/mug1ZZEzAV8Gwr0hW3PkpGBK4AVEC1VnTK9GYOd3ADdq5LAiBLP5
-         +a9Nn3+DDH/r/6Bsp/xccU6ZMD+fNbBCvGZEGO7iKrfgescRWfg5+xOS6LRJkE95s+
-         PYo6B2tgu5rKJNOe6uyWH9uf4NQEXAncYyujXS6eFcDrjbRTyOHrLE9IhPxeXc8j2b
-         +NON2eR/fyTulMD9vl8mJD9r1lsI7hU0cOMNEzK2ozMZ8U0Qt2kmE48aBWx18Zg+nr
-         ZerggNhXT+tugb7cuh2pwwj/vALoGBjawfp7y+kEPnJ73oxo2hsKfZX0N5VRnNxgmv
-         4h13ZptyCyVRA==
-Received: by mail-oi1-f175.google.com with SMTP id m6so34978521oim.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Nov 2021 18:33:03 -0800 (PST)
-X-Gm-Message-State: AOAM530BVUBAxHg0gYW+nAIGjess630qmaAQV5zkdlNHHsDzFHWDilyt
-        vdajttvFAzv06gKY5YyANBHjpNAuz+hRo5q1K6o=
-X-Google-Smtp-Source: ABdhPJyMqdxg4pTLyDeaJt4bLHR/AM6YyXzIke9BQ+8hADuNJ44GFEXklGfl2MReK3nMIYvA1zX8ptpwWHOiYyKZT0k=
-X-Received: by 2002:a05:6808:1202:: with SMTP id a2mr15818496oil.8.1637548382993;
- Sun, 21 Nov 2021 18:33:02 -0800 (PST)
+        id S238722AbhKVDTo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Nov 2021 22:19:44 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17262 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238641AbhKVDTh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 21 Nov 2021 22:19:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637550055; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=SQ4HznWkzxNzbiGpThM6yk0xH2hNm1Zw6oMu1lXCI9i7aUb6zB5/dst5s4WZhQ+4hitgVMosItNKXtDALUm/64VKTAspOk665Pskm9UfD08FwoppMx8sYGQOOGdcw2lqgcoV3u0E47CSgPyMWedC2nDvVwBVPfvM5tMXwGlka7w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637550055; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=BgufH6WwCixRjbj4dwf1Rqs1qZmdzDxvnYVfr7T13V0=; 
+        b=kwPWe05wABZhXZ6rYo27kz5GuLZLDCiZcD4XNdQveWj5HzsqDCoCRK4AGhFK8S4uZvIsuv7sdLc2gHhTseadFQAQ9dge+g4mctmQfkhUEcEqMBaLDCjq6+EBjghri0qdtICwoj9ao8bO9ScCyTfX8ZkDhUbVNgQ4bgyF9H1YOr4=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637550055;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        bh=BgufH6WwCixRjbj4dwf1Rqs1qZmdzDxvnYVfr7T13V0=;
+        b=GHgDgbScnnz8kcon/45tZcZ2Tr5rw5Ews4IW+5JtHkj5oTKl8PhVVQcH8x7aYsTe
+        oMXxkwcF16GXUSWg4vVirBWVcZ/K8NKNxXNNHctUM9hrfZi+421ZS7WemvEZbkntr7N
+        fyG4ALxonuenwmrLKDQYb/ukaFwM/6Wgs7LgcbZQ=
+Received: from localhost.localdomain (81.71.33.115 [81.71.33.115]) by mx.zoho.com.cn
+        with SMTPS id 1637550053957227.19268519972252; Mon, 22 Nov 2021 11:00:53 +0800 (CST)
+From:   Chengguang Xu <cgxu519@mykernel.net>
+To:     miklos@szeredi.hu, jack@suse.cz, amir73il@gmail.com
+Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chengguang Xu <charliecgxu@tencent.com>
+Message-ID: <20211122030038.1938875-1-cgxu519@mykernel.net>
+Subject: [RFC PATCH V6 0/7] implement containerized syncfs for overlayfs
+Date:   Mon, 22 Nov 2021 11:00:31 +0800
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Received: by 2002:ac9:4448:0:0:0:0:0 with HTTP; Sun, 21 Nov 2021 18:33:02
- -0800 (PST)
-In-Reply-To: <e9d301d7df46$1441f290$3cc5d7b0$@samsung.com>
-References: <YZbKobiUUt6eG6zQ@casper.infradead.org> <CGME20211119173750epcas1p4bb84dea1dae163e67caaa306be2c1dcf@epcas1p4.samsung.com>
- <20211119173734.2545-1-cvubrugier@fastmail.fm> <e9d301d7df46$1441f290$3cc5d7b0$@samsung.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Mon, 22 Nov 2021 11:33:02 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-YaS1o+jAyyUU_65qnnPqeYVsxszvOyRX1Py8+hEFNJg@mail.gmail.com>
-Message-ID: <CAKYAXd-YaS1o+jAyyUU_65qnnPqeYVsxszvOyRX1Py8+hEFNJg@mail.gmail.com>
-Subject: Re: [PATCH v2] exfat: fix i_blocks for files truncated over 4 GiB
-To:     Christophe Vu-Brugier <cvubrugier@fastmail.fm>
-Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2021-11-22 11:10 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
->> From: Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
->>
->> In exfat_truncate(), the computation of inode->i_blocks is wrong if the
->> file is larger than 4 GiB because a 32-bit variable is used as a mask.
->> This is fixed and simplified by using round_up().
->>
->> Also fix the same buggy computation in exfat_read_root() and another
->> (correct) one in exfat_fill_inode(). The latter was fixed another way
->> last
->> month but can be simplified by using round_up() as well. See:
->>
->>   commit 0c336d6e33f4 ("exfat: fix incorrect loading of i_blocks for
->>                         large files")
->>
->> Signed-off-by: Christophe Vu-Brugier <christophe.vu-brugier@seagate.com>
->> Suggested-by: Matthew Wilcox <willy@infradead.org>
->
-> Thanks for your patch!
-> Please update your patch again with below tags.
-There is no need to send a patch again.
-I will directly update and apply it.
+From: Chengguang Xu <charliecgxu@tencent.com>
 
-Thanks!
->
-> Fixes: 719c1e1829166 ("exfat: add super block operations")
-> Fixes: 98d917047e8b7 ("exfat: add file operations")
-> Cc: stable@vger.kernel.org # v5.7+
->
-> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
->
->
+Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
+on upper_sb to synchronize whole dirty inodes in upper filesystem
+regardless of the overlay ownership of the inode. In the use case of
+container, when multiple containers using the same underlying upper
+filesystem, it has some shortcomings as below.
+
+(1) Performance
+Synchronization is probably heavy because it actually syncs unnecessary
+inodes for target overlayfs.
+
+(2) Interference
+Unplanned synchronization will probably impact IO performance of
+unrelated container processes on the other overlayfs.
+
+This series try to implement containerized syncfs for overlayfs so that
+only sync target dirty upper inodes which are belong to specific overlayfs
+instance. By doing this, it is able to reduce cost of synchronization and=
+=20
+will not seriously impact IO performance of unrelated processes.
+
+v1->v2:
+- Mark overlayfs' inode dirty itself instead of adding notification
+mechanism to vfs inode.
+
+v2->v3:
+- Introduce overlayfs' extra syncfs wait list to wait target upper inodes
+in ->sync_fs.
+
+v3->v4:
+- Using wait_sb_inodes() to wait syncing upper inodes.
+- Mark overlay inode dirty only when having upper inode and VM_SHARED
+flag in ovl_mmap().
+- Check upper i_state after checking upper mmap state
+in ovl_write_inode.
+
+v4->v5:
+- Add underlying inode dirtiness check after mnt_drop_write().
+- Handle both wait/no-wait mode of syncfs(2) in overlayfs' ->sync_fs().
+
+v5->v6:
+- Rebase to latest overlayfs-next tree.
+- Mark oerlay inode dirty when it has upper instead of marking dirty on
+  modification.
+- Trigger dirty page writeback in overlayfs' ->write_inode().
+- Mark overlay inode 'DONTCACHE' flag.
+- Delete overlayfs' ->writepages() and ->evict_inode() operations.
+
+Chengguang Xu (7):
+  ovl: setup overlayfs' private bdi
+  ovl: mark overlayfs inode dirty when it has upper
+  ovl: implement overlayfs' own ->write_inode operation
+  ovl: set 'DONTCACHE' flag for overlayfs inode
+  fs: export wait_sb_inodes()
+  ovl: introduce ovl_sync_upper_blockdev()
+  ovl: implement containerized syncfs for overlayfs
+
+ fs/fs-writeback.c         |  3 ++-
+ fs/overlayfs/inode.c      |  5 +++-
+ fs/overlayfs/super.c      | 49 ++++++++++++++++++++++++++++++++-------
+ fs/overlayfs/util.c       |  1 +
+ include/linux/writeback.h |  1 +
+ 5 files changed, 48 insertions(+), 11 deletions(-)
+
+--=20
+2.27.0
+
+
