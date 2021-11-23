@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6672045AD37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 21:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD5E045AD3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 21:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbhKWU13 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 15:27:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33744 "EHLO
+        id S231588AbhKWU1b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 15:27:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbhKWU11 (ORCPT
+        with ESMTP id S230022AbhKWU11 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 23 Nov 2021 15:27:27 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4575C06173E;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9777C061746;
         Tue, 23 Nov 2021 12:24:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=0uiVVfCrmrnA3HyskcCNM7wqu1ahLKV+lp229wsLino=; b=WhbMjlS7eKgsfwy6XNC60TzaMi
-        dEp5WwXp+u44cMCV3ojUjj5OZquL8ZahocP+N1O0hu+JrRRh8DTprbWdO+PrsPCamtZ1w35eIsMRy
-        nAwKKmpYcB61+IPkoFdZFB9hk/wkyfHgfLeBGZIacsIPUHioiBgVlGTg57wtRKkBFrSWgxeB9EkNM
-        Xo73iKnh3M1x2N6UEAvVhQzneOCn+MX3DDnwIxuwbS8669IR8N7zW/8rg8L8ZgrFGyA+Rvb77bL4w
-        McgSYBkTZ5JvS4wo029cZ9onCptO9Cg1Kgssz2fEw2/c8zuKHHAiKizjjGKaHa9si3UxPT843lY/G
-        DLMNDmMQ==;
+        bh=fvJ1zNviSpEWvNzghsQMTjAajeym6K/XNsF9qk9FX3s=; b=r+bJv+AybA6J9+KN5G2Fdx7c/o
+        DN5G/GVrPl+gVzXjyDe10QrKuuQwSzm0Qz5EwvWwJL4P4FtcPgGEMNbtsQVdSC+5C22Tmch5uoQvF
+        du039YaFmBsbPYqvWchB4z8Iv3X7cgLAtLFTeF6SEjoXCa6KJTjYxv6SgWZ0qdfaVM7mBmrz1nRHl
+        zdVxZqwx7mB0Pvya4l5qSitdXjBFJ66OS8Ity0BDyekAatyBSD+VOuFW5Y7c1J5CdASfBuexNIfCn
+        0eQQpA0zqmWJwKrhlaFi6Zyob+8StEXBO2LziGFXmli5LKR12rs8JhMzQvTu39uKCJdxYLP8YH5Oo
+        fcDdJVJg==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mpcKS-003Qr6-CL; Tue, 23 Nov 2021 20:23:48 +0000
+        id 1mpcKS-003Qr8-DW; Tue, 23 Nov 2021 20:23:48 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     akpm@linux-foundation.org, keescook@chromium.org,
         yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
@@ -38,9 +38,9 @@ To:     akpm@linux-foundation.org, keescook@chromium.org,
         amir73il@gmail.com
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v2 8/9] aio: move aio sysctl to aio.c
-Date:   Tue, 23 Nov 2021 12:23:46 -0800
-Message-Id: <20211123202347.818157-9-mcgrof@kernel.org>
+Subject: [PATCH v2 9/9] dnotify: move dnotify sysctl to dnotify.c
+Date:   Tue, 23 Nov 2021 12:23:47 -0800
+Message-Id: <20211123202347.818157-10-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211123202347.818157-1-mcgrof@kernel.org>
 References: <20211123202347.818157-1-mcgrof@kernel.org>
@@ -61,116 +61,97 @@ places where they actually belong. The proc sysctl maintainers
 do not want to know what sysctl knobs you wish to add for your own
 piece of code, we just care about the core logic.
 
-Move aio sysctl to aio.c and use the new register_sysctl_init() to
-register the sysctl interface for aio.
+So move dnotify sysctls to dnotify.c and use the new
+register_sysctl_init() to register the sysctl interface.
 
 Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-[mcgrof: adjust commit log to justify the move]
+[mcgrof: adjust the commit log to justify the move]
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/aio.c            | 31 +++++++++++++++++++++++++++++--
- include/linux/aio.h |  4 ----
- kernel/sysctl.c     | 17 -----------------
- 3 files changed, 29 insertions(+), 23 deletions(-)
+ fs/notify/dnotify/dnotify.c | 21 ++++++++++++++++++++-
+ include/linux/dnotify.h     |  1 -
+ kernel/sysctl.c             | 10 ----------
+ 3 files changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 9c81cf611d65..83ef2341e73f 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -219,9 +219,35 @@ struct aio_kiocb {
+diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+index e85e13c50d6d..2b04e2296fb6 100644
+--- a/fs/notify/dnotify/dnotify.c
++++ b/fs/notify/dnotify/dnotify.c
+@@ -19,7 +19,25 @@
+ #include <linux/fdtable.h>
+ #include <linux/fsnotify_backend.h>
  
- /*------ sysctl variables----*/
- static DEFINE_SPINLOCK(aio_nr_lock);
--unsigned long aio_nr;		/* current system wide number of aio requests */
--unsigned long aio_max_nr = 0x10000; /* system wide maximum number of aio requests */
-+static unsigned long aio_nr;		/* current system wide number of aio requests */
-+static unsigned long aio_max_nr = 0x10000; /* system wide maximum number of aio requests */
- /*----end sysctl variables---*/
+-int dir_notify_enable __read_mostly = 1;
++static int dir_notify_enable __read_mostly = 1;
 +#ifdef CONFIG_SYSCTL
-+static struct ctl_table aio_sysctls[] = {
++static struct ctl_table dnotify_sysctls[] = {
 +	{
-+		.procname	= "aio-nr",
-+		.data		= &aio_nr,
-+		.maxlen		= sizeof(aio_nr),
-+		.mode		= 0444,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{
-+		.procname	= "aio-max-nr",
-+		.data		= &aio_max_nr,
-+		.maxlen		= sizeof(aio_max_nr),
++		.procname	= "dir-notify-enable",
++		.data		= &dir_notify_enable,
++		.maxlen		= sizeof(int),
 +		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
++		.proc_handler	= proc_dointvec,
 +	},
 +	{}
 +};
-+
-+static void __init aio_sysctl_init(void)
++static void __init dnotify_sysctl_init(void)
 +{
-+	register_sysctl_init("fs", aio_sysctls);
++	register_sysctl_init("fs", dnotify_sysctls);
 +}
 +#else
-+#define aio_sysctl_init() do { } while (0)
++#define dnotify_sysctl_init() do { } while (0)
 +#endif
  
- static struct kmem_cache	*kiocb_cachep;
- static struct kmem_cache	*kioctx_cachep;
-@@ -274,6 +300,7 @@ static int __init aio_setup(void)
- 
- 	kiocb_cachep = KMEM_CACHE(aio_kiocb, SLAB_HWCACHE_ALIGN|SLAB_PANIC);
- 	kioctx_cachep = KMEM_CACHE(kioctx,SLAB_HWCACHE_ALIGN|SLAB_PANIC);
-+	aio_sysctl_init();
+ static struct kmem_cache *dnotify_struct_cache __read_mostly;
+ static struct kmem_cache *dnotify_mark_cache __read_mostly;
+@@ -386,6 +404,7 @@ static int __init dnotify_init(void)
+ 	dnotify_group = fsnotify_alloc_group(&dnotify_fsnotify_ops);
+ 	if (IS_ERR(dnotify_group))
+ 		panic("unable to allocate fsnotify group for dnotify\n");
++	dnotify_sysctl_init();
  	return 0;
  }
- __initcall(aio_setup);
-diff --git a/include/linux/aio.h b/include/linux/aio.h
-index b83e68dd006f..86892a4fe7c8 100644
---- a/include/linux/aio.h
-+++ b/include/linux/aio.h
-@@ -20,8 +20,4 @@ static inline void kiocb_set_cancel_fn(struct kiocb *req,
- 				       kiocb_cancel_fn *cancel) { }
- #endif /* CONFIG_AIO */
  
--/* for sysctl: */
--extern unsigned long aio_nr;
--extern unsigned long aio_max_nr;
--
- #endif /* __LINUX__AIO_H */
+diff --git a/include/linux/dnotify.h b/include/linux/dnotify.h
+index 0aad774beaec..4f3b25d47436 100644
+--- a/include/linux/dnotify.h
++++ b/include/linux/dnotify.h
+@@ -29,7 +29,6 @@ struct dnotify_struct {
+ 			    FS_CREATE | FS_DN_RENAME |\
+ 			    FS_MOVED_FROM | FS_MOVED_TO)
+ 
+-extern int dir_notify_enable;
+ extern void dnotify_flush(struct file *, fl_owner_t);
+ extern int fcntl_dirnotify(int, struct file *, unsigned long);
+ 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 597ab5ad4879..20326d67b814 100644
+index 20326d67b814..7a90a12b9ea4 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -20,7 +20,6 @@
-  */
- 
- #include <linux/module.h>
--#include <linux/aio.h>
- #include <linux/mm.h>
- #include <linux/swap.h>
- #include <linux/slab.h>
-@@ -3110,22 +3109,6 @@ static struct ctl_table fs_table[] = {
+@@ -48,7 +48,6 @@
+ #include <linux/times.h>
+ #include <linux/limits.h>
+ #include <linux/dcache.h>
+-#include <linux/dnotify.h>
+ #include <linux/syscalls.h>
+ #include <linux/vmstat.h>
+ #include <linux/nfs_fs.h>
+@@ -3090,15 +3089,6 @@ static struct ctl_table fs_table[] = {
  		.proc_handler	= proc_dointvec,
  	},
  #endif
--#ifdef CONFIG_AIO
+-#ifdef CONFIG_DNOTIFY
 -	{
--		.procname	= "aio-nr",
--		.data		= &aio_nr,
--		.maxlen		= sizeof(aio_nr),
--		.mode		= 0444,
--		.proc_handler	= proc_doulongvec_minmax,
--	},
--	{
--		.procname	= "aio-max-nr",
--		.data		= &aio_max_nr,
--		.maxlen		= sizeof(aio_max_nr),
+-		.procname	= "dir-notify-enable",
+-		.data		= &dir_notify_enable,
+-		.maxlen		= sizeof(int),
 -		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
+-		.proc_handler	= proc_dointvec,
 -	},
--#endif /* CONFIG_AIO */
- #ifdef CONFIG_INOTIFY_USER
+-#endif
+ #ifdef CONFIG_MMU
+ #ifdef CONFIG_FILE_LOCKING
  	{
- 		.procname	= "inotify",
 -- 
 2.33.0
 
