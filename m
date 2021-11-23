@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32593459EB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 09:55:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 694FE459ED9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 10:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233970AbhKWI6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 03:58:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41922 "EHLO
+        id S233987AbhKWJJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 04:09:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235119AbhKWI6M (ORCPT
+        with ESMTP id S231623AbhKWJJT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 03:58:12 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1354FC061574;
-        Tue, 23 Nov 2021 00:55:05 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id a9so37601503wrr.8;
-        Tue, 23 Nov 2021 00:55:04 -0800 (PST)
+        Tue, 23 Nov 2021 04:09:19 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94749C061574;
+        Tue, 23 Nov 2021 01:06:11 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id x15so88608126edv.1;
+        Tue, 23 Nov 2021 01:06:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=BqjTDota6qXyAvZTc5GkJOlaJlVWffG7A+eb5cGOB4I=;
-        b=hFdqHn9RNEZSqmlr5iDLMvf0Vh/+AoriBzrucJDGFvvIJzpz2aAWz7zCwMcTOr+R34
-         6j7hJ9fO5kHUgK7EB0/daaP7kC1zOgykiLKdxfc87gJDPQoyALSWcczHDm9U0BSYJokp
-         AYs2XlP5glYCiNr0o9z00QBu/ifYKPDURHskwgpc+6Gn6RND+kHujM/yXBMtesmOY/qw
-         xD+0iG3/gZa85Jdlli0QkI8k/btW15XtTW9xX1W3cJOR27cMXzr4GgO0atHXR5uypfHq
-         HS1mH2y+lrz1qzuP7LB1a47LCmEbc+GawVY+0evta3MLP0+p9x32ab6JPgNFuPo2gcKI
-         7omA==
+        h=sender:message-id:date:mime-version:user-agent:content-language:to
+         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
+        bh=F1MNEC3Zm1/pIEcv2UTnLR98/iLdaUYqO7rHMG7hrdo=;
+        b=Jm9x7hgSTNjPI95TZAUBpStM6prfp4omw3ghFep8880iRmSAlHCDncfrvx0ZulBI0k
+         uRF5cVosy0ZAOkN7k7DHR8RMikef0GsMjGQBfRTJwdkQbBMHTKC+8dQN1jtIFPu/LodB
+         90BcipA2sMj4E5xYeVoMPvPdNt35Ov3ieONi6ofL5eaMrC06b5r69wta703vt/dp6HKl
+         mOKyc1FX3+WeBazndttgraQfRx7Eyezb5K7ZBECIUI7je7n+CMTvD9S4yOGS7EgohGY2
+         O5wumNy0wpF7upaxJWi4BEBUaXuKcq7lsh8+oCARlwW6EDQwTmq4rNCfdtxR2Wi17h0r
+         PFYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
+         :content-language:to:cc:references:from:subject:in-reply-to
          :content-transfer-encoding;
-        bh=BqjTDota6qXyAvZTc5GkJOlaJlVWffG7A+eb5cGOB4I=;
-        b=6+djZ1F2uHQABLBHdPWOzINHxaf17aOX674rMs2BxDwUWiX8L36yQ04cEUJAINTbGv
-         9vYOI/umsMsvsBq2ZiV6fOlvTSpptZ2IQIg+YHLwsbgiNinkSgUbP5SKB92dkFw7SNRU
-         EmiR3z2fDkLFUSFF1zVQCrWY9jNSzk6D+22D5QPTy6ObdcK6qvQQIqF3qkiC8HiMg9n3
-         /kXDH6hPwWaC4AfUBcsS+eripWLhgIw3hN6Rbtvd+DnVsYIkTUncnclA6r7vCVtgKLBD
-         dEzmvHtcTTm+dX7xwGlKYOsyCK0Px3sxQMF0ejRQeew7SBXOlN4pKddFoEOu2sjc7NRm
-         kr7w==
-X-Gm-Message-State: AOAM533Qj13KmNfDEAG7cwyZrme864b9BYB33j0V7WIiOqcKgDAe43+E
-        X+iB8xz5cMP1NkQ5/1bvvNQ=
-X-Google-Smtp-Source: ABdhPJywg45Zdyiao5yHIoV/TWl9Lu4GeLuq7tkwSYZ5N0X3GzMOpvzt3xNpQ/xwFgF2+cvecBOasQ==
-X-Received: by 2002:adf:d84c:: with SMTP id k12mr5341362wrl.24.1637657703555;
-        Tue, 23 Nov 2021 00:55:03 -0800 (PST)
+        bh=F1MNEC3Zm1/pIEcv2UTnLR98/iLdaUYqO7rHMG7hrdo=;
+        b=MGIR+4t+XHauazvp012J4faYkdty2b4DLUni458oB858zOIOgUkI8whiCtTQZmbZfG
+         P1tK4Keh8eErZkOcxOhfIENxgAnu/KO6lvbTCQ95aTMedFdU3suPiXIfzbymOA5yekoH
+         7hAYXtxzHaO2Dbh1bN8Vn8ZUbQoYpCGxUBleBvGkNWR28q4NuHWstzRNHu4Zb9AXYcSG
+         BG26k8a+94fYZVmhbxkAAq68xzjHhyuurfwEpb4Ufp2nNAyv9ZdBHrCXUCRqu67tPLUk
+         48TGISt5tQnQMYRkTRIQzvfcqnCRU6q1VIPgBZpu5JqbpleV8i1DWsQZqxeeJQPT9mUT
+         tbhA==
+X-Gm-Message-State: AOAM530JLg1Ovpb4ZTJzNSpQh6F4785NaIUxIJEEuwz+Wai5GquG4MaJ
+        G/7VDof2zsKQmNNt0Bni5mc=
+X-Google-Smtp-Source: ABdhPJzIThjxkju4L1CcQt8+JnyuJ4ximXnhRtdaj22BULFxN4ENlWBQUkSzm8vAQr99AxeWyw2Nkw==
+X-Received: by 2002:a17:907:1b06:: with SMTP id mp6mr5448342ejc.275.1637658369748;
+        Tue, 23 Nov 2021 01:06:09 -0800 (PST)
 Received: from ?IPV6:2001:b07:add:ec09:c399:bc87:7b6c:fb2a? ([2001:b07:add:ec09:c399:bc87:7b6c:fb2a])
-        by smtp.googlemail.com with ESMTPSA id n1sm502199wmq.6.2021.11.23.00.54.54
+        by smtp.googlemail.com with ESMTPSA id mc3sm4956388ejb.24.2021.11.23.01.06.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Nov 2021 00:55:03 -0800 (PST)
+        Tue, 23 Nov 2021 01:06:09 -0800 (PST)
 Sender: Paolo Bonzini <paolo.bonzini@gmail.com>
-Message-ID: <5f6f43a1-bb4c-f498-2aba-4c93ab57fc98@gnu.org>
-Date:   Tue, 23 Nov 2021 09:54:52 +0100
+Message-ID: <6de78894-8269-ea3a-b4ee-a5cc4dad827e@redhat.com>
+Date:   Tue, 23 Nov 2021 10:06:02 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.0
-Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
 Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org
-Cc:     Jonathan Corbet <corbet@lwn.net>,
+To:     David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Jonathan Corbet <corbet@lwn.net>,
         Sean Christopherson <seanjc@google.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
@@ -77,67 +77,49 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
 References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
  <20211119134739.20218-2-chao.p.peng@linux.intel.com>
-From:   Paolo Bonzini <bonzini@gnu.org>
-In-Reply-To: <20211119134739.20218-2-chao.p.peng@linux.intel.com>
+ <20211119151943.GH876299@ziepe.ca>
+ <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC v2 PATCH 01/13] mm/shmem: Introduce F_SEAL_GUEST
+In-Reply-To: <df11d753-6242-8f7c-cb04-c095f68b41fa@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/19/21 14:47, Chao Peng wrote:
-> +static void guest_invalidate_page(struct inode *inode,
-> +				  struct page *page, pgoff_t start, pgoff_t end)
-> +{
-> +	struct shmem_inode_info *info = SHMEM_I(inode);
-> +
-> +	if (!info->guest_ops || !info->guest_ops->invalidate_page_range)
-> +		return;
-> +
-> +	start = max(start, page->index);
-> +	end = min(end, page->index + thp_nr_pages(page)) - 1;
-> +
-> +	info->guest_ops->invalidate_page_range(inode, info->guest_owner,
-> +					       start, end);
-> +}
+On 11/19/21 16:39, David Hildenbrand wrote:
+>> If qmeu can put all the guest memory in a memfd and not map it, then
+>> I'd also like to see that the IOMMU can use this interface too so we
+>> can have VFIO working in this configuration.
+> 
+> In QEMU we usually want to (and must) be able to access guest memory
+> from user space, with the current design we wouldn't even be able to
+> temporarily mmap it -- which makes sense for encrypted memory only. The
+> corner case really is encrypted memory. So I don't think we'll see a
+> broad use of this feature outside of encrypted VMs in QEMU. I might be
+> wrong, most probably I am:)
 
-The lack of protection makes the API quite awkward to use;
-the usual way to do this is with refcount_inc_not_zero (aka 
-kvm_get_kvm_safe).
+It's not _that_ crazy an idea, but it's going to be some work to teach 
+KVM that it has to kmap/kunmap around all memory accesses.
 
-Can you use the shmem_inode_info spinlock to protect against this?  If 
-register/unregister take the spinlock, the invalidate and fallocate can 
-take a reference under the same spinlock, like this:
+I think it's great that memfd hooks are usable by more than one 
+subsystem, OTOH it's fair that whoever needs it does the work---and VFIO 
+does not need it for confidential VMs, yet, so it should be fine for now 
+to have a single user.
 
-	if (!info->guest_ops)
-		return;
+On the other hand, as I commented already, the lack of locking in the 
+register/unregister functions has to be fixed even with a single user. 
+Another thing we can do already is change the guest_ops/guest_mem_ops to 
+something like memfd_falloc_notifier_ops/memfd_pfn_ops, and the 
+register/unregister functions to memfd_register/unregister_falloc_notifier.
 
-	spin_lock(&info->lock);
-	ops = info->guest_ops;
-	if (!ops) {
-		spin_unlock(&info->lock);
-		return;
-	}
+Chao, can you also put this under a new CONFIG such as "bool MEMFD_OPS", 
+and select it from KVM?
 
-	/* Calls kvm_get_kvm_safe.  */
-	r = ops->get_guest_owner(info->guest_owner);
-	spin_unlock(&info->lock);
-	if (r < 0)
-		return;
-
-	start = max(start, page->index);
-	end = min(end, page->index + thp_nr_pages(page)) - 1;
-
-	ops->invalidate_page_range(inode, info->guest_owner,
-					       start, end);
-	ops->put_guest_owner(info->guest_owner);
-
-Considering that you have to take a mutex anyway in patch 13, and that 
-the critical section here is very small, the extra indirect calls are 
-cheaper than walking the vm_list; and it makes the API clearer.
+Thanks,
 
 Paolo
