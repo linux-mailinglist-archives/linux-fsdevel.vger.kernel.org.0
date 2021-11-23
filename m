@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C349C45AFDF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 00:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6B6E45AFE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 00:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234965AbhKWXQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 18:16:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33098 "EHLO mail.kernel.org"
+        id S235168AbhKWXQy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 18:16:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233989AbhKWXQf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 18:16:35 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EE20260FC3;
-        Tue, 23 Nov 2021 23:13:25 +0000 (UTC)
+        id S235038AbhKWXQv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 18:16:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0598E60FC1;
+        Tue, 23 Nov 2021 23:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637709206;
-        bh=S/IswOJvRGBagLJRqzKcshhJ4v7k/vBIf4Vs4dGT10g=;
+        s=k20201202; t=1637709223;
+        bh=0lx8GFaumCvYFKCqIo5atmiVFp/pn2IMyOP4olSlTJg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xkg5cXpSDqabGeFWq7rmygKLTwImdF/9Sn8heQe42R/Yl8XGgY+AtzzmXPkUQcdes
-         4zRZL+6+IKzGfg8DyRHpUlMflgVYZ/a0qcsQEyYMUOQSt8H1PN4K/4ljnF008ROVTO
-         Wg2Yd6TaoIuT1rAuP4MQ5LHhkZR3MdspZQIYDo/j0RNRprZ6410ZDfRsvNNn/3BD0+
-         BoXvZo3OFj7dm6LvkaiMpI52H2gbmIFDE7KYsgtFIOJtVx6wi7KK5ENEEMdlQFU1kG
-         B8pfwvl1QCAx3g0SlZH2FEStKzn7XwOOnWr83DmLf696ZJnUywGpWhj7Qom2caz144
-         ti5mzeKHYeHAw==
-Date:   Tue, 23 Nov 2021 15:13:25 -0800
+        b=YmrMJlCXXOUq098AjY55dEGQriwsEd/zsWv3kkKPJgdshScXkfBUmLoy/XMwhVsc9
+         O/mlmEayflyVLaWvLIyFQcOF0OFYTa4CSjHFlZ/YU8LirvRyA12SC/tupkmtai7wmG
+         xh9+tR6CqjsTkxNXjN2maqJxgIgDZRZ+JjVRIYiFZA8Ub74VLy5HtaTClmtPWXFeQM
+         mtsNdJ0bO5jpxRPNMzE1EEd7DT2lltp3eu8XNwz66KKDFZFvJaM7mm4bD3I9uIrHad
+         XpEKdq/bOnmFUZBItfTvQx/+CiGS1lCeim+CdWb86PECfthdvijctiMnO8k/Jrk9d+
+         gKMaIHNoxpuiQ==
+Date:   Tue, 23 Nov 2021 15:13:42 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,68 +33,55 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 28/29] iomap: build the block based code conditionally
-Message-ID: <20211123231325.GV266024@magnolia>
+Subject: Re: [PATCH 29/29] fsdax: don't require CONFIG_BLOCK
+Message-ID: <20211123231342.GW266024@magnolia>
 References: <20211109083309.584081-1-hch@lst.de>
- <20211109083309.584081-29-hch@lst.de>
+ <20211109083309.584081-30-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211109083309.584081-29-hch@lst.de>
+In-Reply-To: <20211109083309.584081-30-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 09:33:08AM +0100, Christoph Hellwig wrote:
-> Only build the block based iomap code if CONFIG_BLOCK is set.  Currently
-> that is always the case, but it will change soon.
+On Tue, Nov 09, 2021 at 09:33:09AM +0100, Christoph Hellwig wrote:
+> The file system DAX code now does not require the block code.  So allow
+> building a kernel with fuse DAX but not block layer.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Looks ok,
+Looks good,
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/Kconfig        | 4 ++--
->  fs/iomap/Makefile | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
+>  fs/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/fs/Kconfig b/fs/Kconfig
-> index a6313a969bc5f..6d608330a096e 100644
+> index 6d608330a096e..7a2b11c0b8036 100644
 > --- a/fs/Kconfig
 > +++ b/fs/Kconfig
-> @@ -15,11 +15,11 @@ config VALIDATE_FS_PARSER
->  	  Enable this to perform validation of the parameter description for a
->  	  filesystem when it is registered.
+> @@ -42,6 +42,8 @@ source "fs/nilfs2/Kconfig"
+>  source "fs/f2fs/Kconfig"
+>  source "fs/zonefs/Kconfig"
 >  
-> -if BLOCK
-> -
->  config FS_IOMAP
+> +endif # BLOCK
+> +
+>  config FS_DAX
+>  	bool "File system based Direct Access (DAX) support"
+>  	depends on MMU
+> @@ -89,8 +91,6 @@ config FS_DAX_PMD
+>  config FS_DAX_LIMITED
 >  	bool
 >  
-> +if BLOCK
-> +
->  source "fs/ext2/Kconfig"
->  source "fs/ext4/Kconfig"
->  source "fs/jbd2/Kconfig"
-> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
-> index 4143a3ff89dbc..fc070184b7faa 100644
-> --- a/fs/iomap/Makefile
-> +++ b/fs/iomap/Makefile
-> @@ -9,9 +9,9 @@ ccflags-y += -I $(srctree)/$(src)		# needed for trace events
->  obj-$(CONFIG_FS_IOMAP)		+= iomap.o
->  
->  iomap-y				+= trace.o \
-> -				   buffered-io.o \
-> +				   iter.o
-> +iomap-$(CONFIG_BLOCK)		+= buffered-io.o \
->  				   direct-io.o \
->  				   fiemap.o \
-> -				   iter.o \
->  				   seek.o
->  iomap-$(CONFIG_SWAP)		+= swapfile.o
+> -endif # BLOCK
+> -
+>  # Posix ACL utility routines
+>  #
+>  # Note: Posix ACLs can be implemented without these helpers.  Never use
 > -- 
 > 2.30.2
 > 
