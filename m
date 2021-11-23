@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B29345AF05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 23:26:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5A8045AF1C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 23:31:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236887AbhKWW3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 17:29:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39454 "EHLO mail.kernel.org"
+        id S232421AbhKWWeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 17:34:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233344AbhKWW3F (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 17:29:05 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 63B2260F5B;
-        Tue, 23 Nov 2021 22:25:56 +0000 (UTC)
+        id S229835AbhKWWec (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 17:34:32 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9413360F5B;
+        Tue, 23 Nov 2021 22:31:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637706356;
-        bh=QAV7Co9x+kq7cw9CnYx72vJEWiPcLd0IRsChlJ7iD78=;
+        s=k20201202; t=1637706683;
+        bh=r20JVTKBJHoc53zIslwbeilRv4uu178TPIBVv5o01us=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qw8qbxKV0Ln59bnZ2iYvOCv17wc7NmZh2MVxAZoTUcjsGNcBZmG3/y8Q/y5EgIU5z
-         /Ud6BAVnfCGhCYrp8HEHI2+/oPKUxgQfi7IwyDfXcYG8HqhS9fH0BBdDHARe1h/v2R
-         7TUyTl1cxhl1w+Cm157k5ff4tt95TM11J5zZXaFkyV2QIcdSubiuEdFX8woRCQsoJi
-         ye9Pa33GtkO04j+eaol/2zzbKQr0Ulfns+oBJwkqlGf2W9emGi7Irt2r6IIEzkds8z
-         JuJGU8+xc+QmNI7kLV/+mvxjz4Ku5J0WJTELrf3/2LsR9G90q2v/zZ2lDrTO802RUz
-         NlSo0Mf2Bi+iQ==
-Date:   Tue, 23 Nov 2021 14:25:55 -0800
+        b=ald8zVq4C5OTAFArV+qBTzxz5zm0Hg31v6uU/nFzj4Zx1IYXgmHwUd1cQkz3Z3iuV
+         cmF+LRNEKRTHvNXKL2mg5s562uocNqQQNGviHtuupuuKlFq0h5C8xRWG4n0522X7EX
+         4NTGSyMJo/GjVxj6FmNo0LWMNpM8S+ANiF9EKQM2tFVfb3dCoTuebKVYaFnrdq1vCU
+         i4ZN+SF1bfxxWHxJnBa4bJRM2fo153Ub22A4to7uDEGxnXcVmZPT+8zMLHJNcHoSPU
+         ZJYmaGGoL3TvAuwGtG2r4ZPmWUnQu85GEXgt/aKEYH7WtGIoGUbsyn7gigGJFcwlsV
+         1YfWzZ9dQ7SRQ==
+Date:   Tue, 23 Nov 2021 14:31:23 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,86 +33,179 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 06/29] dax: move the partition alignment check into
- fs_dax_get_by_bdev
-Message-ID: <20211123222555.GE266024@magnolia>
+Subject: Re: [PATCH 08/29] dax: remove dax_capable
+Message-ID: <20211123223123.GF266024@magnolia>
 References: <20211109083309.584081-1-hch@lst.de>
- <20211109083309.584081-7-hch@lst.de>
+ <20211109083309.584081-9-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211109083309.584081-7-hch@lst.de>
+In-Reply-To: <20211109083309.584081-9-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 09:32:46AM +0100, Christoph Hellwig wrote:
-> fs_dax_get_by_bdev is the primary interface to find a dax device for a
-> block device, so move the partition alignment check there instead of
-> wiring it up through ->dax_supported.
+On Tue, Nov 09, 2021 at 09:32:48AM +0100, Christoph Hellwig wrote:
+> Just open code the block size and dax_dev == NULL checks in the callers.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Mike Snitzer <snitzer@redhat.com>
 > ---
->  drivers/dax/super.c | 23 ++++++-----------------
->  1 file changed, 6 insertions(+), 17 deletions(-)
+>  drivers/dax/super.c          | 36 ------------------------------------
+>  drivers/md/dm-table.c        | 22 +++++++++++-----------
+>  drivers/md/dm.c              | 21 ---------------------
+>  drivers/md/dm.h              |  4 ----
+>  drivers/nvdimm/pmem.c        |  1 -
+>  drivers/s390/block/dcssblk.c |  1 -
+>  fs/erofs/super.c             | 11 +++++++----
+>  fs/ext2/super.c              |  6 ++++--
+>  fs/ext4/super.c              |  9 ++++++---
+>  fs/xfs/xfs_super.c           | 21 ++++++++-------------
+>  include/linux/dax.h          | 14 --------------
+>  11 files changed, 36 insertions(+), 110 deletions(-)
 > 
 > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 04fc680542e8d..482fe775324a4 100644
+> index 482fe775324a4..803942586d1b6 100644
 > --- a/drivers/dax/super.c
 > +++ b/drivers/dax/super.c
-> @@ -93,6 +93,12 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
->  	if (!blk_queue_dax(bdev->bd_disk->queue))
->  		return NULL;
+> @@ -108,42 +108,6 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+>  	return dax_dev;
+>  }
+>  EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+> -
+> -bool generic_fsdax_supported(struct dax_device *dax_dev,
+> -		struct block_device *bdev, int blocksize, sector_t start,
+> -		sector_t sectors)
+> -{
+> -	if (blocksize != PAGE_SIZE) {
+> -		pr_info("%pg: error: unsupported blocksize for dax\n", bdev);
+> -		return false;
+> -	}
+> -
+> -	if (!dax_dev) {
+> -		pr_debug("%pg: error: dax unsupported by block device\n", bdev);
+> -		return false;
+> -	}
+> -
+> -	return true;
+> -}
+> -EXPORT_SYMBOL_GPL(generic_fsdax_supported);
+> -
+> -bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
+> -		int blocksize, sector_t start, sector_t len)
+> -{
+> -	bool ret = false;
+> -	int id;
+> -
+> -	if (!dax_dev)
+> -		return false;
+> -
+> -	id = dax_read_lock();
+> -	if (dax_alive(dax_dev) && dax_dev->ops->dax_supported)
+> -		ret = dax_dev->ops->dax_supported(dax_dev, bdev, blocksize,
+> -						  start, len);
+> -	dax_read_unlock(id);
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL_GPL(dax_supported);
+
+Hooray, more dax helpers goaway!
+
+>  #endif /* CONFIG_BLOCK && CONFIG_FS_DAX */
 >  
-> +	if ((get_start_sect(bdev) * SECTOR_SIZE) % PAGE_SIZE ||
-> +	    (bdev_nr_sectors(bdev) * SECTOR_SIZE) % PAGE_SIZE) {
+>  enum dax_device_flags {
 
-Do we have to be careful about 64-bit division here, or do we not
-support DAX on 32-bit?
+<skipping to xfs part>
 
-> +		pr_info("%pg: error: unaligned partition for dax\n", bdev);
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 875fd3151d6c9..3a45d5caa28d5 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -331,28 +331,23 @@ xfs_set_inode_alloc(
+>  	return xfs_is_inode32(mp) ? maxagi : agcount;
+>  }
+>  
+> -static bool
+> -xfs_buftarg_is_dax(
+> -	struct super_block	*sb,
+> -	struct xfs_buftarg	*bt)
+> -{
+> -	return dax_supported(bt->bt_daxdev, bt->bt_bdev, sb->s_blocksize, 0,
+> -			bdev_nr_sectors(bt->bt_bdev));
+> -}
+> -
+>  static int
+>  xfs_setup_dax_always(
+>  	struct xfs_mount	*mp)
+>  {
+> -	struct super_block	*sb = mp->m_super;
+> -
+> -	if (!xfs_buftarg_is_dax(sb, mp->m_ddev_targp) &&
+> -	   (!mp->m_rtdev_targp || !xfs_buftarg_is_dax(sb, mp->m_rtdev_targp))) {
+> +	if (!mp->m_ddev_targp->bt_daxdev &&
+> +	   (!mp->m_rtdev_targp || !mp->m_rtdev_targp->bt_daxdev)) {
 
-I also wonder if this should be ratelimited...?
+Nit: This  ^ paren should be indented one more column because it's a
+sub-clause of the if() test.
+
+>  		xfs_alert(mp,
+>  			"DAX unsupported by block device. Turning off DAX.");
+>  		goto disable_dax;
+>  	}
+>  
+> +	if (mp->m_super->s_blocksize != PAGE_SIZE) {
+> +		xfs_alert(mp,
+> +			"DAX not supported for blocksize. Turning off DAX.\n");
+
+Nit: xfs_alert() already adds a newline to the end of the format string.
+
+With those two things fixed up, for the XFS parts and everything XFS
+depends on:
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+(I don't feel confident saying that I've looked at dcssblk or dm-table,
+though I didn't see anything obviously wrong there...)
 
 --D
 
-> +		return NULL;
+> +		goto disable_dax;
 > +	}
 > +
->  	id = dax_read_lock();
->  	dax_dev = xa_load(&dax_hosts, (unsigned long)bdev->bd_disk);
->  	if (!dax_dev || !dax_alive(dax_dev) || !igrab(&dax_dev->inode))
-> @@ -107,10 +113,6 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
->  		struct block_device *bdev, int blocksize, sector_t start,
->  		sector_t sectors)
->  {
-> -	pgoff_t pgoff, pgoff_end;
-> -	sector_t last_page;
-> -	int err;
+>  	if (xfs_has_reflink(mp)) {
+>  		xfs_alert(mp, "DAX and reflink cannot be used together!");
+>  		return -EINVAL;
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index e2e9a67004cbd..439c3c70e347b 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -111,12 +111,6 @@ int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
+>  #if IS_ENABLED(CONFIG_FS_DAX)
+>  int dax_add_host(struct dax_device *dax_dev, struct gendisk *disk);
+>  void dax_remove_host(struct gendisk *disk);
+> -bool generic_fsdax_supported(struct dax_device *dax_dev,
+> -		struct block_device *bdev, int blocksize, sector_t start,
+> -		sector_t sectors);
 > -
->  	if (blocksize != PAGE_SIZE) {
->  		pr_info("%pg: error: unsupported blocksize for dax\n", bdev);
->  		return false;
-> @@ -121,19 +123,6 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
->  		return false;
->  	}
+> -bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
+> -		int blocksize, sector_t start, sector_t len);
 >  
-> -	err = bdev_dax_pgoff(bdev, start, PAGE_SIZE, &pgoff);
-> -	if (err) {
-> -		pr_info("%pg: error: unaligned partition for dax\n", bdev);
-> -		return false;
-> -	}
-> -
-> -	last_page = PFN_DOWN((start + sectors - 1) * 512) * PAGE_SIZE / 512;
-> -	err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
-> -	if (err) {
-> -		pr_info("%pg: error: unaligned partition for dax\n", bdev);
-> -		return false;
-> -	}
-> -
->  	return true;
+>  static inline void fs_put_dax(struct dax_device *dax_dev)
+>  {
+> @@ -139,14 +133,6 @@ static inline int dax_add_host(struct dax_device *dax_dev, struct gendisk *disk)
+>  static inline void dax_remove_host(struct gendisk *disk)
+>  {
 >  }
->  EXPORT_SYMBOL_GPL(generic_fsdax_supported);
+> -#define generic_fsdax_supported		NULL
+> -
+> -static inline bool dax_supported(struct dax_device *dax_dev,
+> -		struct block_device *bdev, int blocksize, sector_t start,
+> -		sector_t len)
+> -{
+> -	return false;
+> -}
+>  
+>  static inline void fs_put_dax(struct dax_device *dax_dev)
+>  {
 > -- 
 > 2.30.2
 > 
