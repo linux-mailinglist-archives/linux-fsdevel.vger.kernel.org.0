@@ -2,66 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FF3045AA18
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 18:29:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D2145AAF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 19:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237463AbhKWRcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 12:32:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45184 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233491AbhKWRcc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 12:32:32 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F54460551;
-        Tue, 23 Nov 2021 17:29:22 +0000 (UTC)
-Date:   Tue, 23 Nov 2021 17:29:18 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/iomap: Fix write path page prefaulting
-Message-ID: <YZ0k7ivc6slfSB7F@arm.com>
-References: <20211123151812.361624-1-agruenba@redhat.com>
+        id S239697AbhKWSN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 13:13:26 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:6982 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239700AbhKWSNY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 13:13:24 -0500
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1ANA15gt028842
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 10:10:16 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=bx8F/NvHVq9m1Onr84v+F4R/4aNnH6gDS03meklp2NY=;
+ b=IXXhnzwwUgFcT8GCxAyKjrN8XWJAXXOSK6PT1xs9LXqZpzPp2zt6AKSkpAh7cnLAsI04
+ qDqt/Jwc21EiLJvXF8bL9xZWYUI8ki+6efuZMU76ZVdUZ0Xl5XDVpF0BMHR5K3V08l96
+ mzPzoKMrFfbafdeoQFI8c2EPl4rzJfSvU80= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 3cgx62u9tj-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 10:10:16 -0800
+Received: from intmgw001.06.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.14; Tue, 23 Nov 2021 10:10:15 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 08DFE6CCDB3F; Tue, 23 Nov 2021 10:10:13 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>
+Subject: [PATCH v1 0/3] io_uring: add getdents64 support
+Date:   Tue, 23 Nov 2021 10:10:07 -0800
+Message-ID: <20211123181010.1607630-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211123151812.361624-1-agruenba@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-FB-Source: Intern
+X-Proofpoint-GUID: nQcP59WVRQ4djxiaFMIwwzzIQts2isKn
+X-Proofpoint-ORIG-GUID: nQcP59WVRQ4djxiaFMIwwzzIQts2isKn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-23_06,2021-11-23_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=620
+ suspectscore=0 bulkscore=0 adultscore=0 spamscore=0 clxscore=1015
+ mlxscore=0 priorityscore=1501 malwarescore=0 phishscore=0
+ lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2111230089
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 04:18:12PM +0100, Andreas Gruenbacher wrote:
-> When part of the user buffer passed to generic_perform_write() or
-> iomap_file_buffered_write() cannot be faulted in for reading, the entire
-> write currently fails.
-> 
-> The correct behavior would be to write all the data that can be written,
-> up to the point of failure.  Since commit a6294593e8a1 ("iov_iter: Turn
-> iov_iter_fault_in_readable into fault_in_iov_iter_readable"), we have
-> enough information to implement that, so change the code to do that.
-> 
-> We already take into account that pages faulted in may no longer be
-> resident by the time they are accessed, so the code will also behave
-> correctly when part of the buffer isn't faulted in in the first place.
-> 
-> This leads to an intentional user-visible change when the buffer passed
-> to write calls contains unmapped or poisoned pages.
-> 
-> (This change obsoletes commit 554c577cee95 ("gfs2: Prevent endless loops
-> in gfs2_file_buffered_write").)
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+This series adds support for getdents64 in liburing. The intent is to
+provide a more complete I/O interface for io_uring..=20
 
-FWIW:
+Patch 1: fs: add parameter use_fpos to iterate_dir()
+  This adds a new parameter to the function iterate_dir() so the
+  caller can specify if the position is the file position or the
+  position stored in the buffer context.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Patch 2: fs: split off vfs_getdents function from getdents64 system call
+  This splits of the iterate_dir part of the syscall in its own
+  dedicated function. This allows to call the function directly from
+  liburing.
 
-This would be more consistent as in my tests on a vanilla kernel ext4
-and btrfs fail with EFAULT while gfs2 copies as much as it can before
-hitting the fault.
+Patch 3: io_uring: add support for getdents64
+  Adds the functions to io_uring to support getdents64.
 
--- 
-Catalin
+There is also a patch series for the changes to liburing. This includes
+a new test. The patch series is called "liburing: add getdents support."
+
+The following tests have been performed:
+- new liburing getdents test program has been run
+- xfstests have been run
+- both tests have been repeated with the kernel memory leak checker
+  and no leaks have been reported.
+
+
+Stefan Roesch (3):
+  fs: add parameter use_fpos to iterate_dir function
+  fs: split off vfs_getdents function of getdents64 syscall
+  io_uring: add support for getdents64
+
+ fs/exportfs/expfs.c           |  2 +-
+ fs/internal.h                 |  8 +++++
+ fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++
+ fs/nfsd/nfs4recover.c         |  2 +-
+ fs/nfsd/vfs.c                 |  2 +-
+ fs/overlayfs/readdir.c        |  6 ++--
+ fs/readdir.c                  | 64 ++++++++++++++++++++++++++---------
+ include/linux/fs.h            |  2 +-
+ include/uapi/linux/io_uring.h |  1 +
+ 9 files changed, 116 insertions(+), 23 deletions(-)
+
+Signed-off-by: Stefan Roesch <shr@fb.com>
+--=20
+2.30.2
+
