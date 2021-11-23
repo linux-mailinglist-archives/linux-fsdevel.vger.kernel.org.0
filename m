@@ -2,167 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC7345AFF1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 00:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 214E345AFFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 00:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235188AbhKWXTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 18:19:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234269AbhKWXTs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 18:19:48 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA452C061714
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 15:16:39 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id z26so736492iod.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 15:16:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kM7gnTny43QDnYFYBUsykzKb/YIDf6V4JPjjkny8Fbs=;
-        b=HUEdP7dL6RvpMRAWRK31o46crI1NcKJ5Kj1jT0kaYbbM9c5dVCR7RZ9Qgd9jcm43AY
-         HtwBwSJZkEsD3opdhNfK1f9FQ4g1wiPy+nYo8j6yN3AV/p4hXM81mVH1h6+wyk5eznRl
-         LqR78t6Si+RsE5nVyfu6wlDIenfPqTXThBMeNxBFuhTr7S4cHkTH6idM9eFTtsWiDTCs
-         QDdeXV5+pIJJeAd2By0mmZTB0veqRUuezOAkZ6AzzRmh+s3pLdsv++E9lyLiw6INnbXx
-         q1HcKxZ0hCXgZ76NmHn5tYCEoXUixiOziEFw44+sHXy6Q4cwBbj+JeuKyiaOegwwKhmp
-         VvJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kM7gnTny43QDnYFYBUsykzKb/YIDf6V4JPjjkny8Fbs=;
-        b=WV//Ad6PFDzI2fxOcjDBX/v3jXM0zdEQo03dnZSz709GR7+IkTo4PtfYp2e5QQcdu6
-         ARSRjSq7K++yMK6L3iB6XCmvbFbOf5sQgD7ikmwObOVRuNv9CcNYV93HljkipE2u2JgG
-         zTwv6WPj10QDA/3mJk8Jj/KEjJgFdr2Lix9dOiGx6OBveRZzNmpCUH07ODFaawZ5WK1B
-         ilBcSCgCXSsQ6kKd2yvie40II40/AEp/Q/Omro38aK4f4JvJs6sVAUvZsqqA+bxi31qi
-         7t/7zo6yC3fpXXA+eNkGOrs402DgjToXxC/7fnxTrvCEhV6QM5yr6vV6QhmiVeun+zpc
-         EBFQ==
-X-Gm-Message-State: AOAM531H/lIKRDXE/WWyP76hkay26qnWP7Wdqc2dK8DKshys34kc40b3
-        qJNftGK7FW8+0s4U402XzxK0VaZPnGyt7akHBVkMEQ==
-X-Google-Smtp-Source: ABdhPJy0JvkGEkbgZd3LhBD7aoiqSzR1lSBUaqfr5jk23IXyeyriLpIRI4TsLxjKV6oOvM0nh9GgzPPSX5zCwMWICAQ=
-X-Received: by 2002:a05:6602:2c85:: with SMTP id i5mr9498544iow.89.1637709398903;
- Tue, 23 Nov 2021 15:16:38 -0800 (PST)
+        id S236391AbhKWX06 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 18:26:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236364AbhKWX0x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 18:26:53 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9ACBA60F9F;
+        Tue, 23 Nov 2021 23:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637709824;
+        bh=5mD5Ft2248hZ6MnliW2gzW5inXXajMFC3BXdha2gcpo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bKZH4SCjryMMRU7IGwflwTKcsyuyvsZVfJOi8HdqqujH1O9AcN1qXZpFvgQuZUE5Q
+         nSi/zrN/RAoEkZ60usvpedD6E/Pqb56+1Iwk4CvJIuQzp+JNBLRp+QyL3+JhxDsTv1
+         A84wCGsSqD103O0AuF8LslJ0YvTkbkkxZ2N8kIXC9kz1tX10sSvIgvF59U3kVU0QK2
+         kaFFsrviqC5bTJILo2zz9cvl26ySj1r9aM1M8bqs6nZCSo8PHMBWCXP2QPb3mvgwzc
+         9jJyjEs68EytXeCScmiqSIijjJenBX79hVp6uGb18hRfnqPOfpn2kp0uk59GbwE8tg
+         xnXrNAwkQTcZQ==
+Date:   Tue, 23 Nov 2021 15:23:43 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Ramji Jiyani <ramjiyani@google.com>, arnd@arndb.de,
+        kernel-team@android.com, linux-aio@kvack.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, oleg@redhat.com,
+        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v5] aio: Add support for the POLLFREE
+Message-ID: <YZ13/8WOXY7cxYsV@sol.localdomain>
+References: <20211027011834.2497484-1-ramjiyani@google.com>
+ <YZ1F4qmBJ42VpZp3@gmail.com>
 MIME-Version: 1.0
-References: <20211123000102.4052105-1-almasrymina@google.com>
- <YZ1USY+zB1PP24Z1@casper.infradead.org> <CAHS8izOhi45RqCACGGXYyB8UAmMo-85TyuNX8Myzdh81xOkBTA@mail.gmail.com>
- <YZ1ddl3FA43NijmX@casper.infradead.org> <CAHS8izMmcbXQ0xCDVYx8JW54sbbLXwNnK6pHgf9Ztn=XPFEsWA@mail.gmail.com>
- <YZ1lOgjv6r+ZOSRX@casper.infradead.org> <CAHS8izO0EMRgH8_qt58_O9-MBSwFXLgr1g79gJGrY1N0dTKutg@mail.gmail.com>
- <YZ1yapOMZOXdFHG9@casper.infradead.org>
-In-Reply-To: <YZ1yapOMZOXdFHG9@casper.infradead.org>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Tue, 23 Nov 2021 15:16:27 -0800
-Message-ID: <CAHS8izMcxQeC_r+EbFOxXLiz7CctEg=Nckz+k=y8vAojJtva7A@mail.gmail.com>
-Subject: Re: [PATCH v7] mm: Add PM_THP_MAPPED to /proc/pid/pagemap
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        David Hildenbrand <david@redhat.com>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Yu Zhao <yuzhao@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YZ1F4qmBJ42VpZp3@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 2:59 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Tue, Nov 23, 2021 at 02:23:23PM -0800, Mina Almasry wrote:
-> > On Tue, Nov 23, 2021 at 2:03 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Tue, Nov 23, 2021 at 01:47:33PM -0800, Mina Almasry wrote:
-> > > > On Tue, Nov 23, 2021 at 1:30 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > > What I've been trying to communicate over the N reviews of this
-> > > > > patch series is that *the same thing is about to happen to THPs*.
-> > > > > Only more so.  THPs are going to be of arbitrary power-of-two size, not
-> > > > > necessarily sizes supported by the hardware.  That means that we need to
-> > > > > be extremely precise about what we mean by "is this a THP?"  Do we just
-> > > > > mean "This is a compound page?"  Do we mean "this is mapped by a PMD?"
-> > > > > Or do we mean something else?  And I feel like I haven't been able to
-> > > > > get that information out of you.
-> > > >
-> > > > Yes, I'm very sorry for the trouble, but I'm also confused what the
-> > > > disconnect is. To allocate hugepages I can do like so:
-> > > >
-> > > > mount -t tmpfs -o huge=always tmpfs /mnt/mytmpfs
-> > > >
-> > > > or
-> > > >
-> > > > madvise(..., MADV_HUGEPAGE)
-> > > >
-> > > > Note I don't ask the kernel for a specific size, or a specific mapping
-> > > > mechanism (PMD/contig PTE/contig PMD/PUD), I just ask the kernel for
-> > > > 'huge' pages. I would like to know whether the kernel was successful
-> > > > in allocating a hugepage or not. Today a THP hugepage AFAICT is PMD
-> > > > mapped + is_transparent_hugepage(), which is the check I have here. In
-> > > > the future, THP may become an arbitrary power of two size, and I think
-> > > > I'll need to update this querying interface once/if that gets merged
-> > > > to the kernel. I.e, if in the future I allocate pages by using:
-> > > >
-> > > > mount -t tmpfs -o huge=2MB tmpfs /mnt/mytmpfs
-> > > >
-> > > > I need the kernel to tell me whether the mapping is 2MB size or not.
-> > > >
-> > > > If I allocate pages by using:
-> > > >
-> > > > mount -t tmpfs -o huge=pmd tmpfs /mnt/mytmps,
-> > > >
-> > > > Then I need the kernel to tell me whether the pages are PMD mapped or
-> > > > not, as I'm doing here.
-> > > >
-> > > > The current implementation is based on what the current THP
-> > > > implementation is in the kernel, and depending on future changes to
-> > > > THP I may need to update it in the future. Does that make sense?
-> > >
-> > > Well, no.  You're adding (or changing, if you like) a userspace API.
-> > > We need to be precise about what that userspace API *means*, so that we
-> > > don't break it in the future when the implementation changes.  You're
-> > > still being fuzzy above.
-> > >
-> > > I have no intention of adding an API like the ones you suggest above to
-> > > allow the user to specify what size pages to use.  That seems very strange
-> > > to me; how should the user (or sysadmin, or application) know what size is
-> > > best for the kernel to use to cache files?  Instead, the kernel observes
-> > > the usage pattern of the file (through the readahead mechanism) and grows
-> > > the allocation size to fit what the kernel thinks will be most effective.
-> > >
-> > > I do honour some of the existing hints that userspace can provide; eg
-> > > VM_HUGEPAGE makes the pagefault path allocate PMD sized pages (if it can).
-> >
-> > Right, so since VM_HUGEPAGE makes the kernel allocate PMD mapped THP
-> > if it can, then I want to know if the page is actually a PMD mapped
-> > THP or not. The implementation and documentation that I'm adding seem
-> > consistent with that AFAICT, but sorry if I missed something.
->
-> So what userspace cares about is that the kernel is mapping the
-> memory with a PMD entry; it doesn't care whether the file is
-> being cached in 2MB (or larger) chunks.  So we can drop the 'THP'
-> from all of this, and just call the bit the PMD mapping bit?
+On Tue, Nov 23, 2021 at 11:49:54AM -0800, Eric Biggers wrote:
+> On Wed, Oct 27, 2021 at 01:18:34AM +0000, Ramji Jiyani wrote:
+> > Add support for the POLLFREE flag to force complete iocb inline in
+> > aio_poll_wake(). A thread may use it to signal it's exit and/or request
+> > to cleanup while pending poll request. In this case, aio_poll_wake()
+> > needs to make sure it doesn't keep any reference to the queue entry
+> > before returning from wake to avoid possible use after free via
+> > poll_cancel() path.
+> > 
+> > UAF issue was found during binder and aio interactions in certain
+> > sequence of events [1].
+> > 
+> > The POLLFREE flag is no more exclusive to the epoll and is being
+> > shared with the aio. Remove comment from poll.h to avoid confusion.
+> > 
+> > [1] https://lore.kernel.org/r/CAKUd0B_TCXRY4h1hTztfwWbNSFQqsudDLn2S_28csgWZmZAG3Q@mail.gmail.com/
+> > 
+> > Fixes: af5c72b1fc7a ("Fix aio_poll() races")
+> > Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
+> > Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Cc: stable@vger.kernel.org # 4.19+
+> > ---
+> 
+> Looks good, feel free to add:
+> 
+> 	Reviewed-by: Eric Biggers <ebiggers@google.com>
+> 
+> I'm still not 100% happy with the commit message, but it's good enough.
+> The actual code looks correct.
+> 
+> Who is going to take this patch?  This is an important fix; it shouldn't be
+> sitting ignored for months.  get_maintainer.pl shows:
+> 
+> $ ./scripts/get_maintainer.pl fs/aio.c
+> Benjamin LaHaise <bcrl@kvack.org> (supporter:AIO)
+> Alexander Viro <viro@zeniv.linux.org.uk> (maintainer:FILESYSTEMS (VFS and infrastructure))
+> linux-aio@kvack.org (open list:AIO)
+> linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure))
+> linux-kernel@vger.kernel.org (open list)
 
-I've thought about this a bit, but I have a couple of problems:
+Actually, there is a bug in this patch -- it creates a lock inversion between
+ctx->ctx_lock (kioctx::ctx_lock) and req->head->lock (wait_queue_head::lock).
 
-1. It's a bit difficult to implement this for hugetlb pages, or at
-least I haven't found a reasonably simple way to implement this for
-hugetlb pages. hugetlb ranges are handled by
-pagemap_hugetlb_range(ptep, hmask, ...). I can't find a way to uncover
-whether ptep points to a pmd_t or pud_t or even pte_t with contig PTE
-bit set. I can also easily surmise the size of the page from the
-hmask, but I need to know what's the native page size and what arch
-I'm running on to convert a page size to "is PMD mapped or not''
-information. Very sorry if I missed an easy way to do this.
+Task 1:
+	signalfd_cleanup()
+	  -> wake_up_poll() [takes wait_queue_head::lock]
+	    -> aio_poll_wake() [takes kioctx::ctx_lock]
 
-2. Semantically I'm not sure it makes sense to tell the user if a page
-is PMD hugetlb or not. For THP I think it makes somewhat sense because
-the userspace asks for hugepages via MADV_HUGEPAGE or huge=always, and
-'huge' roughly here means 'PMD mapped', per your statement that for
-VM_HUGEPAGE makes the kernel try to allocate PMD size pages. For
-hugetlb, the userspace never asks for 'huge' pages or PMD mappings per
-say, they ask for a specific size, and it's considered an
-implementation detail how the mapping is achieved, and may not even be
-backwards compatible.
+Task 2:
+	sys_io_cancel() [takes kioctx::ctx_lock]
+	  -> aio_poll_cancel [takes wait_queue_head::lock]
+
+Previously this was okay because the lock operation in aio_poll_wake() was only
+a trylock.  This patch changes it to a regular lock, which causes a deadlock.
+
+I am able to reproduce this deadlock.  It also generates a lockdep report, shown
+below.  Unfortunately, I don't know how to fix it.  Anyone have any ideas?
+Al and Christoph, it looks like you wrote most of the aio poll code?
+
+Note, the use-after-free this patch is fixing also affects signalfd, not just
+binder, since both rely on POLLFREE.  (I was testing it with signalfd.)  So we
+really need to fix it one way or another...
+
+======================================================
+WARNING: possible circular locking dependency detected
+5.16.0-rc2-00001-gf97efc5c03bf #22 Not tainted
+------------------------------------------------------
+aio/137 is trying to acquire lock:
+ffff888006170158 (&ctx->ctx_lock){..-.}-{2:2}, at: aio_poll_wake+0x1ac/0x390 fs/aio.c:1693
+
+but task is already holding lock:
+ffff8880053a91e0 (&sighand->signalfd_wqh){....}-{2:2}, at: __wake_up_common_lock+0x5b/0xb0 kernel/sched/wait.c:137
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sighand->signalfd_wqh){....}-{2:2}:
+       __lock_acquire+0x4b4/0x960 kernel/locking/lockdep.c:5027
+       lock_acquire kernel/locking/lockdep.c:5637 [inline]
+       lock_acquire+0xc9/0x2e0 kernel/locking/lockdep.c:5602
+       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+       _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:154
+       spin_lock include/linux/spinlock.h:349 [inline]
+       aio_poll.constprop.0+0x15d/0x440 fs/aio.c:1773
+       __io_submit_one.constprop.0+0x139/0x1b0 fs/aio.c:1847
+       io_submit_one+0x134/0x640 fs/aio.c:1884
+       __do_sys_io_submit fs/aio.c:1943 [inline]
+       __se_sys_io_submit fs/aio.c:1913 [inline]
+       __x64_sys_io_submit+0x89/0x260 fs/aio.c:1913
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #0 (&ctx->ctx_lock){..-.}-{2:2}:
+       check_prev_add+0x93/0xbf0 kernel/locking/lockdep.c:3063
+       check_prevs_add kernel/locking/lockdep.c:3186 [inline]
+       validate_chain+0x585/0x8c0 kernel/locking/lockdep.c:3801
+       __lock_acquire+0x4b4/0x960 kernel/locking/lockdep.c:5027
+       lock_acquire kernel/locking/lockdep.c:5637 [inline]
+       lock_acquire+0xc9/0x2e0 kernel/locking/lockdep.c:5602
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0x3e/0x60 kernel/locking/spinlock.c:162
+       aio_poll_wake+0x1ac/0x390 fs/aio.c:1693
+       __wake_up_common+0x8c/0x1a0 kernel/sched/wait.c:108
+       __wake_up_common_lock+0x77/0xb0 kernel/sched/wait.c:138
+       __wake_up+0xe/0x10 kernel/sched/wait.c:157
+       signalfd_cleanup+0x33/0x40 fs/signalfd.c:48
+       __cleanup_sighand kernel/fork.c:1613 [inline]
+       __cleanup_sighand+0x27/0x50 kernel/fork.c:1610
+       __exit_signal+0x236/0x380 kernel/exit.c:159
+       release_task+0x180/0x3d0 kernel/exit.c:200
+       wait_task_zombie+0x28a/0x600 kernel/exit.c:1114
+       wait_consider_task+0x121/0x160 kernel/exit.c:1341
+       do_wait_thread kernel/exit.c:1404 [inline]
+       do_wait+0x21b/0x380 kernel/exit.c:1521
+       kernel_wait4+0xaa/0x150 kernel/exit.c:1684
+       __do_sys_wait4+0x85/0x90 kernel/exit.c:1712
+       __se_sys_wait4 kernel/exit.c:1708 [inline]
+       __x64_sys_wait4+0x17/0x20 kernel/exit.c:1708
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sighand->signalfd_wqh);
+                               lock(&ctx->ctx_lock);
+                               lock(&sighand->signalfd_wqh);
+  lock(&ctx->ctx_lock);
+
+ *** DEADLOCK ***
+
+2 locks held by aio/137:
+ #0: ffffffff81e06098 (tasklist_lock){.+.+}-{2:2}, at: release_task+0x110/0x3d0 kernel/exit.c:197
+ #1: ffff8880053a91e0 (&sighand->signalfd_wqh){....}-{2:2}, at: __wake_up_common_lock+0x5b/0xb0 kernel/sched/wait.c:137
+
+stack backtrace:
+CPU: 3 PID: 137 Comm: aio Not tainted 5.16.0-rc2-00001-gf97efc5c03bf #22
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ArchLinux 1.14.0-1 04/01/2014
+Call Trace:
+ <TASK>
+ show_stack+0x3d/0x3f arch/x86/kernel/dumpstack.c:318
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x49/0x5e lib/dump_stack.c:106
+ dump_stack+0x10/0x12 lib/dump_stack.c:113
+ print_circular_bug.cold+0x13e/0x143 kernel/locking/lockdep.c:2021
+ check_noncircular+0xfe/0x110 kernel/locking/lockdep.c:2143
+ check_prev_add+0x93/0xbf0 kernel/locking/lockdep.c:3063
+ check_prevs_add kernel/locking/lockdep.c:3186 [inline]
+ validate_chain+0x585/0x8c0 kernel/locking/lockdep.c:3801
+ __lock_acquire+0x4b4/0x960 kernel/locking/lockdep.c:5027
+ lock_acquire kernel/locking/lockdep.c:5637 [inline]
+ lock_acquire+0xc9/0x2e0 kernel/locking/lockdep.c:5602
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x3e/0x60 kernel/locking/spinlock.c:162
+ aio_poll_wake+0x1ac/0x390 fs/aio.c:1693
+ __wake_up_common+0x8c/0x1a0 kernel/sched/wait.c:108
+ __wake_up_common_lock+0x77/0xb0 kernel/sched/wait.c:138
+ __wake_up+0xe/0x10 kernel/sched/wait.c:157
+ signalfd_cleanup+0x33/0x40 fs/signalfd.c:48
+ __cleanup_sighand kernel/fork.c:1613 [inline]
+ __cleanup_sighand+0x27/0x50 kernel/fork.c:1610
+ __exit_signal+0x236/0x380 kernel/exit.c:159
+ release_task+0x180/0x3d0 kernel/exit.c:200
+ wait_task_zombie+0x28a/0x600 kernel/exit.c:1114
+ wait_consider_task+0x121/0x160 kernel/exit.c:1341
+ do_wait_thread kernel/exit.c:1404 [inline]
+ do_wait+0x21b/0x380 kernel/exit.c:1521
+ kernel_wait4+0xaa/0x150 kernel/exit.c:1684
+ __do_sys_wait4+0x85/0x90 kernel/exit.c:1712
+ __se_sys_wait4 kernel/exit.c:1708 [inline]
+ __x64_sys_wait4+0x17/0x20 kernel/exit.c:1708
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f23a3b0e9ea
+Code: ff e9 0a 00 00 00 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 49 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 15 b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5e c3 0f 1f 44 00 00 48 83 ec 28 89 54 24 14
+RSP: 002b:00007ffcd0926098 EFLAGS: 00000246 ORIG_RAX: 000000000000003d
+RAX: ffffffffffffffda RBX: 000000000000000a RCX: 00007f23a3b0e9ea
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000ffffffff
+RBP: 000055944067b000 R08: fffffffe7fffffff R09: fffffffe7fffffff
+R10: 0000000000000000 R11: 0000000000000246 R12: 00005594406761c0
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
