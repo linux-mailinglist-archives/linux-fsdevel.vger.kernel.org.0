@@ -2,69 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4164F45A5A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 15:28:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED26645A5B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 15:31:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237962AbhKWObi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 09:31:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235246AbhKWObi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 09:31:38 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97AF7C061574;
-        Tue, 23 Nov 2021 06:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=VdR8LLvBLWrqnrpdlyTKI+gDqZJrqlfeRGOFFJ7KOAo=; b=a9v27IUTrPvnQGKKXhGGsgPctQ
-        4Z8wtGf8VWe8KjefD3bLO12QKeqz/ULQebrjab7+Cqz3DCAZ9X3K1dajOU/cJjqCrZSyElVWUBqBj
-        Y6h33zMlARkXpf3FyiQKZakYB4b2ellOYLOJ2e5SLUHS7hnoJfAr0QXLpbrbYgrNn0D/qzyvoakp4
-        ZnKYMD5+NF/sckuR+gIQ8F8oV/jBbNrElnxsHNeqxK/k14iMGzRfCSmiVxXn18G99Sl82O0KLjO7t
-        uOkq8+nGSW3evlqr7JSZRncdXIOzLV1IK/1pWmNWJl60/bxT5r0tg2xCm1FzLtm+LCKBUtz5Nb5Nb
-        XBAjLNfQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mpWma-002cKJ-SG; Tue, 23 Nov 2021 14:28:28 +0000
-Date:   Tue, 23 Nov 2021 06:28:28 -0800
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: Any bio_clone_slow() implementation which doesn't share
- bi_io_vec?
-Message-ID: <YZz6jAVXun8yC/6k@infradead.org>
-References: <5d8351f1-1b09-bff0-02f2-a417c1669607@gmx.com>
- <YZybvlheyLGAadFF@infradead.org>
- <79d38fc2-cd2f-2980-2c4e-408078ce6079@gmx.com>
- <YZyiuFxAeKE/WMrR@infradead.org>
- <cca20bcb-1674-f99d-d504-b7fc928e227a@gmx.com>
- <PH0PR04MB74169757F9CF740289B790C49B609@PH0PR04MB7416.namprd04.prod.outlook.com>
+        id S238191AbhKWOee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 09:34:34 -0500
+Received: from mga01.intel.com ([192.55.52.88]:5996 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234867AbhKWOee (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 09:34:34 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10176"; a="258899965"
+X-IronPort-AV: E=Sophos;i="5.87,257,1631602800"; 
+   d="scan'208";a="258899965"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 06:31:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,257,1631602800"; 
+   d="scan'208";a="509429128"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga008.jf.intel.com with ESMTP; 23 Nov 2021 06:31:17 -0800
+Date:   Tue, 23 Nov 2021 22:30:31 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [RFC v2 PATCH 04/13] KVM: Add fd-based memslot data structure
+ and utils
+Message-ID: <20211123143031.GC32088@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
+ <20211119134739.20218-5-chao.p.peng@linux.intel.com>
+ <d54d58a4-3cd0-5fa3-3a81-b4bb27a7f511@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PH0PR04MB74169757F9CF740289B790C49B609@PH0PR04MB7416.namprd04.prod.outlook.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <d54d58a4-3cd0-5fa3-3a81-b4bb27a7f511@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 11:39:11AM +0000, Johannes Thumshirn wrote:
-> I think we have to differentiate two cases here:
-> A "regular" REQ_OP_ZONE_APPEND bio and a RAID stripe REQ_OP_ZONE_APPEND
-> bio. The 1st one (i.e. the regular REQ_OP_ZONE_APPEND bio) can't be split
-> because we cannot guarantee the order the device writes the data to disk. 
-> For the RAID stripe bio we can split it into the two (or more) parts that
-> will end up on _different_ devices. All we need to do is a) ensure it 
-> doesn't cross the device's zone append limit and b) clamp all 
-> bi_iter.bi_sector down to the start of the target zone, a.k.a sticking to
-> the rules of REQ_OP_ZONE_APPEND.
+On Tue, Nov 23, 2021 at 09:41:34AM +0100, Paolo Bonzini wrote:
+> On 11/19/21 14:47, Chao Peng wrote:
+> > For fd-based memslot store the file references for shared fd and the
+> > private fd (if any) in the memslot structure. Since there is no 'hva'
+> > concept we cannot call hva_to_pfn() to get a pfn, instead kvm_memfd_ops
+> > is added to get_pfn/put_pfn from the memory backing stores that provide
+> > these fds.
+> > 
+> > Signed-off-by: Yu Zhang<yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Chao Peng<chao.p.peng@linux.intel.com>
+> > ---
+> 
+> What about kvm_read/write_guest? 
 
-Exactly.  A stacking driver must never split a REQ_OP_ZONE_APPEND bio.
-But the file system itself can of course split it as long as each split
-off bio has it's own bi_end_io handler to record where it has been
-written to.
+Hmm, that would be another area KVM needs to change. Not totally
+undoable.
+
+> Maybe the proposal which kept
+> userspace_addr for the shared fd is more doable (it would be great to
+> ultimately remove the mandatory userspace mapping for the shared fd, but I
+> think KVM is not quite ready for that).
+
+Agree for short term keeping shared part unchanged would be making work
+easy:) Let me try that to see if any blocker.
+
+> 
+> Paolo
