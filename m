@@ -2,90 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 355FD45A595
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 15:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9937145A5A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 15:28:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237523AbhKWO2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 09:28:25 -0500
-Received: from mga05.intel.com ([192.55.52.43]:64722 "EHLO mga05.intel.com"
+        id S238082AbhKWObK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 09:31:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237624AbhKWO2X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 09:28:23 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10176"; a="321261534"
-X-IronPort-AV: E=Sophos;i="5.87,257,1631602800"; 
-   d="scan'208";a="321261534"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 06:25:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,257,1631602800"; 
-   d="scan'208";a="509427091"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga008.jf.intel.com with ESMTP; 23 Nov 2021 06:25:06 -0800
-Date:   Tue, 23 Nov 2021 22:24:20 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
+        id S235177AbhKWObK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 09:31:10 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 54B1D60E54;
+        Tue, 23 Nov 2021 14:28:00 +0000 (UTC)
+Date:   Tue, 23 Nov 2021 15:27:57 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Zhen Lei <thunder.leizhen@huawei.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [RFC v2 PATCH 09/13] KVM: Introduce kvm_memfd_invalidate_range
-Message-ID: <20211123142420.GB32088@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-10-chao.p.peng@linux.intel.com>
- <4041d98a-23df-e9ed-b245-5edd7151fec5@redhat.com>
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] hfsplus: Use struct_group_attr() for memcpy() region
+Message-ID: <20211123142757.khjhbeqdo5byqae7@wittgenstein>
+References: <20211119192851.1046717-1-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4041d98a-23df-e9ed-b245-5edd7151fec5@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20211119192851.1046717-1-keescook@chromium.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 09:46:34AM +0100, Paolo Bonzini wrote:
-> On 11/19/21 14:47, Chao Peng wrote:
-> > +
-> > +	/* Prevent memslot modification */
-> > +	spin_lock(&kvm->mn_invalidate_lock);
-> > +	kvm->mn_active_invalidate_count++;
-> > +	spin_unlock(&kvm->mn_invalidate_lock);
-> > +
-> > +	ret = __kvm_handle_useraddr_range(kvm, &useraddr_range);
-> > +
-> > +	spin_lock(&kvm->mn_invalidate_lock);
-> > +	kvm->mn_active_invalidate_count--;
-> > +	spin_unlock(&kvm->mn_invalidate_lock);
-> > +
+On Fri, Nov 19, 2021 at 11:28:51AM -0800, Kees Cook wrote:
+> In preparation for FORTIFY_SOURCE performing compile-time and run-time
+> field bounds checking for memset(), avoid intentionally writing across
+> neighboring fields.
 > 
+> Add struct_group() to mark the "info" region (containing struct DInfo
+> and struct DXInfo structs) in struct hfsplus_cat_folder and struct
+> hfsplus_cat_file that are written into directly, so the compiler can
+> correctly reason about the expected size of the writes.
 > 
-> You need to follow this with a rcuwait_wake_up as in
-> kvm_mmu_notifier_invalidate_range_end.
-
-Oh right.
-
+> "pahole" shows no size nor member offset changes to struct
+> hfsplus_cat_folder nor struct hfsplus_cat_file.  "objdump -d" shows no
+> object code changes.
 > 
-> It's probably best if you move the manipulations of
-> mn_active_invalidate_count from kvm_mmu_notifier_invalidate_range_* to two
-> separate functions.
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
 
-Will do.
-
-> 
-> Paolo
+Looks good.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
