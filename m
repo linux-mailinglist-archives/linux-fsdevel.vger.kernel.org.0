@@ -2,390 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 526AB45A1CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 12:43:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E96E645A22D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 13:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236439AbhKWLqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 06:46:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236453AbhKWLqN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 06:46:13 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C98561039;
-        Tue, 23 Nov 2021 11:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637667786;
-        bh=/kcNzYvf44u9u6nKC5M438Tq1IDdQhIplftJQ+xej3M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dJDJgy8ObbS13Doh1oBl4B9DkK6HPIkk6U+IO1noQuMqQoMcEmeSDvezASd/J0DdI
-         Ok5x5QO7TSGVwKlDuAYHg++5mEEUDvvOjPf3gWRSwm1RTRYaNKRRzgo/LGfP7LiWOp
-         A+ravUtbuRv67mXlmpImV8Z/xER46+D53lf/8AhTLFmLk364L+mP92HoCsXgsEyMGs
-         p8ZnSRXYlXyS/5Em0qAEjd6jUhiTcpeJpC7LOr2j5d4pbdCsanH+SGaU5Qb5A6RXmO
-         YLcbAyzbZmKCyUjT6ouwI8kRrzsFTbgXHAL+oq/GFG7YtcC2Xi9vGK0TT0cNhUgAp8
-         Y7kPeh9R/8tMA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Seth Forshee <sforshee@digitalocean.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 10/10] fs: support mapped mounts of mapped filesystems
-Date:   Tue, 23 Nov 2021 12:42:27 +0100
-Message-Id: <20211123114227.3124056-11-brauner@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211123114227.3124056-1-brauner@kernel.org>
-References: <20211123114227.3124056-1-brauner@kernel.org>
+        id S236861AbhKWMIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 07:08:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:39934 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234506AbhKWMIO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 07:08:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1637669105;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=10C2btypfwcrFtuMmhHmEu5fFbIpPIsZeEBRh/iSG+U=;
+        b=csA8xBpolb+OXjWSjjTdT9+sApuTUSyliTLs1eFGlg4BcHYX2t9jPKAGV00nO7qA+KFBkl
+        PV+OhdOk2moESX0OUFYPYjUY3wz92y6u0us3NVnl/NSk7AE5Ql8Qs+RVeqWbcpBOodmow4
+        A8IhRouikT3rWq0LKRevqXCAUEITb08=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-597-F7JsnxWFMrW9TBNrhQhnpg-1; Tue, 23 Nov 2021 07:05:04 -0500
+X-MC-Unique: F7JsnxWFMrW9TBNrhQhnpg-1
+Received: by mail-wm1-f70.google.com with SMTP id y141-20020a1c7d93000000b0033c2ae3583fso955392wmc.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 04:05:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=10C2btypfwcrFtuMmhHmEu5fFbIpPIsZeEBRh/iSG+U=;
+        b=a/eqFlY7WY1C2sopbRAjtkjRcVR/vkb2SoitW0dNYCOaUZdOpvmjH70Z4ylVu8oTRm
+         t/TfcS0BLG6bgH/5RByMMSOKeCCf5prO5rrfl3tlfISJLrG/rT4+besSHjyU4iy0/SID
+         1T85dZ3QkzY2msv0X97N9L4YadVA6dSnlYbpWZUS6iwRBDYcAHEcRE4nNomGC5uHxDX9
+         2RtXs8pa3fE/ENCEP/A8yYwQEnGfanAGcOHYbX/nIzcy7sGEQXbARgOZH8BUA5zvZLoK
+         Y+YaEbQuH39mbg7wOZO7fwKpRqLSV3r/ry+NsWzh8nEb9qjAqeA991fq+fXEqouead6K
+         +a3A==
+X-Gm-Message-State: AOAM533co55k52EpX2zobJJFMlQMeWHPv84BA4dw22rWa+LlXK9pxb3T
+        86GiiGjj+FyyOi2a27pg3lZJAlRG+C2S8mbAdoIyXJ/5dIGz/S+7t0btihjG6IjW6bDmPkdDuwW
+        VODaSn0lqeqdP3iRTpced852Muw==
+X-Received: by 2002:a1c:1c8:: with SMTP id 191mr2389666wmb.90.1637669103364;
+        Tue, 23 Nov 2021 04:05:03 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyLoxWe0qE+FnDLpNv40B8GIz11hsE9XFI/Y9fkJD69fhqkCoyVX155VmOBmNmz+cOprFl9Vg==
+X-Received: by 2002:a1c:1c8:: with SMTP id 191mr2389644wmb.90.1637669103184;
+        Tue, 23 Nov 2021 04:05:03 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c6765.dip0.t-ipconnect.de. [91.12.103.101])
+        by smtp.gmail.com with ESMTPSA id o12sm16660715wrc.85.2021.11.23.04.05.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Nov 2021 04:05:02 -0800 (PST)
+Message-ID: <476868f6-8d32-b8d2-855e-4b19e8a54cc2@redhat.com>
+Date:   Tue, 23 Nov 2021 13:05:01 +0100
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13433; h=from:subject; bh=oGtcaWBZHTIgpD3YrR7T+bB0JU2/pqPsg5oP0ktEGEs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTOuVym2P5yzuPgZ7sfcXHvY53KVXWhL711ve57xcc2N2NP Loh73FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR0oWMDGdtbh3SeN5jtLiAXbp0Ps cKo1+1ZtOfpsv3VrEo+Nq/O8LwP3n3Ms1XyfefGsUpfQg6q1n0cn6+tevhFXuVHNMfN26q5AIA
-X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v7] mm: Add PM_THP_MAPPED to /proc/pid/pagemap
+Content-Language: en-US
+To:     Mina Almasry <almasrymina@google.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Xu <peterx@redhat.com>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+References: <20211123000102.4052105-1-almasrymina@google.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20211123000102.4052105-1-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On 23.11.21 01:01, Mina Almasry wrote:
+> Add PM_THP_MAPPED MAPPING to allow userspace to detect whether a given virt
+> address is currently mapped by a transparent huge page or not.  Example
+> use case is a process requesting THPs from the kernel (via a huge tmpfs
+> mount for example), for a performance critical region of memory.  The
+> userspace may want to query whether the kernel is actually backing this
+> memory by hugepages or not.
+> 
+> PM_THP_MAPPED bit is set if the virt address is mapped at the PMD
+> level and the underlying page is a transparent huge page.
+> 
+> A few options were considered:
+> 1. Add /proc/pid/pageflags that exports the same info as
+>    /proc/kpageflags.  This is not appropriate because many kpageflags are
+>    inappropriate to expose to userspace processes.
+> 2. Simply get this info from the existing /proc/pid/smaps interface.
+>    There are a couple of issues with that:
+>    1. /proc/pid/smaps output is human readable and unfriendly to
+>       programatically parse.
+>    2. /proc/pid/smaps is slow because it must read the whole memory range
+>       rather than a small range we care about.  The cost of reading
+>       /proc/pid/smaps into userspace buffers is about ~800us per call,
+>       and this doesn't include parsing the output to get the information
+>       you need. The cost of querying 1 virt address in /proc/pid/pagemaps
+>       however is around 5-7us.
+> 
+> Tested manually by adding logging into transhuge-stress, and by
+> allocating THP and querying the PM_THP_MAPPED flag at those
+> virtual addresses.
+> 
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: David Rientjes rientjes@google.com
+> Cc: Paul E. McKenney <paulmckrcu@fb.com>
+> Cc: Yu Zhao <yuzhao@google.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Ivan Teterevkov <ivan.teterevkov@nutanix.com>
+> Cc: Florian Schmidt <florian.schmidt@nutanix.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> 
+> 
+> ---
+> 
+> Changes in v7:
+> - Added clarification that smaps is only slow because it looks at the
+>   whole address space.
+> 
+> Changes in v6:
+> - Renamed to PM_THP_MAPPED
+> - Removed changes to transhuge-stress
+> 
+> Changes in v5:
+> - Added justification for this interface in the commit message!
+> 
+> Changes in v4:
+> - Removed unnecessary moving of flags variable declaration
+> 
+> Changes in v3:
+> - Renamed PM_THP to PM_HUGE_THP_MAPPING
+> - Fixed checks to set PM_HUGE_THP_MAPPING
+> - Added PM_HUGE_THP_MAPPING docs
+> ---
+>  Documentation/admin-guide/mm/pagemap.rst | 3 ++-
+>  fs/proc/task_mmu.c                       | 3 +++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+> index fdc19fbc10839..8a0f0064ff336 100644
+> --- a/Documentation/admin-guide/mm/pagemap.rst
+> +++ b/Documentation/admin-guide/mm/pagemap.rst
+> @@ -23,7 +23,8 @@ There are four components to pagemap:
+>      * Bit  56    page exclusively mapped (since 4.2)
+>      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
+>        :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
+> -    * Bits 57-60 zero
+> +    * Bit  58    page is a huge (PMD size) THP mapping
+> +    * Bits 59-60 zero
+>      * Bit  61    page is file-page or shared-anon (since 3.5)
+>      * Bit  62    page swapped
+>      * Bit  63    page present
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index ad667dbc96f5c..d784a97aa209a 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1302,6 +1302,7 @@ struct pagemapread {
+>  #define PM_SOFT_DIRTY		BIT_ULL(55)
+>  #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
+>  #define PM_UFFD_WP		BIT_ULL(57)
+> +#define PM_THP_MAPPED		BIT_ULL(58)
+>  #define PM_FILE			BIT_ULL(61)
+>  #define PM_SWAP			BIT_ULL(62)
+>  #define PM_PRESENT		BIT_ULL(63)
+> @@ -1456,6 +1457,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  
+>  		if (page && page_mapcount(page) == 1)
+>  			flags |= PM_MMAP_EXCLUSIVE;
+> +		if (page && is_transparent_hugepage(page))
+> +			flags |= PM_THP_MAPPED;
+>  
+>  		for (; addr != end; addr += PAGE_SIZE) {
+>  			pagemap_entry_t pme = make_pme(frame, flags);
+> 
 
-In previous patches we added new and modified existing helpers to handle
-idmapped mounts of filesystems mounted with an idmapping. In this final
-patch we convert all relevant places in the vfs to actually pass the
-filesystem's idmapping into these helpers.
+Thanks!
 
-With this the vfs is in shape to handle idmapped mounts of filesystems
-mounted with an idmapping. Note that this is just the generic
-infrastructure. Actually adding support for idmapped mounts to a
-filesystem mountable with an idmapping is follow-up work.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-In this patch we extend the definition of an idmapped mount from a mount
-that that has the initial idmapping attached to it to a mount that has
-an idmapping attached to it which is not the same as the idmapping the
-filesystem was mounted with.
-
-As before we do not allow the initial idmapping to be attached to a
-mount. In addition this patch prevents that the idmapping the filesystem
-was mounted with can be attached to a mount created based on this
-filesystem.
-
-This has multiple reasons and advantages. First, attaching the initial
-idmapping or the filesystem's idmapping doesn't make much sense as in
-both cases the values of the i_{g,u}id and other places where k{g,u}ids
-are used do not change. Second, a user that really wants to do this for
-whatever reason can just create a separate dedicated identical idmapping
-to attach to the mount. Third, we can continue to use the initial
-idmapping as an indicator that a mount is not idmapped allowing us to
-continue to keep passing the initial idmapping into the mapping helpers
-to tell them that something isn't an idmapped mount even if the
-filesystem is mounted with an idmapping.
-
-Apart from the generic places in the vfs the only other place we need to
-change is xfs since it makes use of mapped_fs{g,u}id() directly.
-Technically, this isn't even required since xfs doesn't support being
-mounted with an idmapping but it is cleaner to convert it properly.
-
-Cc: Seth Forshee <sforshee@digitalocean.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-CC: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/namespace.c       | 36 ++++++++++++++++++++++++------------
- fs/open.c            |  7 ++++---
- fs/posix_acl.c       |  8 ++++----
- fs/xfs/xfs_inode.c   |  4 ++--
- fs/xfs/xfs_symlink.c |  2 +-
- include/linux/fs.h   | 17 +++++++++--------
- security/commoncap.c |  9 ++++-----
- 7 files changed, 48 insertions(+), 35 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 7d7b80b375a4..92f551b0469c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -561,7 +561,7 @@ static void free_vfsmnt(struct mount *mnt)
- 	struct user_namespace *mnt_userns;
- 
- 	mnt_userns = mnt_user_ns(&mnt->mnt);
--	if (mnt_userns != &init_user_ns)
-+	if (!initial_mapping(mnt_userns))
- 		put_user_ns(mnt_userns);
- 	kfree_const(mnt->mnt_devname);
- #ifdef CONFIG_SMP
-@@ -965,6 +965,7 @@ static struct mount *skip_mnt_tree(struct mount *p)
- struct vfsmount *vfs_create_mount(struct fs_context *fc)
- {
- 	struct mount *mnt;
-+	struct user_namespace *fs_userns;
- 
- 	if (!fc->root)
- 		return ERR_PTR(-EINVAL);
-@@ -982,6 +983,10 @@ struct vfsmount *vfs_create_mount(struct fs_context *fc)
- 	mnt->mnt_mountpoint	= mnt->mnt.mnt_root;
- 	mnt->mnt_parent		= mnt;
- 
-+	fs_userns = mnt->mnt.mnt_sb->s_user_ns;
-+	if (!initial_mapping(fs_userns))
-+		mnt->mnt.mnt_userns = get_user_ns(fs_userns);
-+
- 	lock_mount_hash();
- 	list_add_tail(&mnt->mnt_instance, &mnt->mnt.mnt_sb->s_mounts);
- 	unlock_mount_hash();
-@@ -1072,7 +1077,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 
- 	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_userns = mnt_user_ns(&old->mnt);
--	if (mnt->mnt.mnt_userns != &init_user_ns)
-+	if (!initial_mapping(mnt->mnt.mnt_userns))
- 		mnt->mnt.mnt_userns = get_user_ns(mnt->mnt.mnt_userns);
- 	mnt->mnt.mnt_sb = sb;
- 	mnt->mnt.mnt_root = dget(root);
-@@ -3927,10 +3932,18 @@ static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
- static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
- {
- 	struct vfsmount *m = &mnt->mnt;
-+	struct user_namespace *fs_userns = m->mnt_sb->s_user_ns;
- 
- 	if (!kattr->mnt_userns)
- 		return 0;
- 
-+	/*
-+	 * Creating an idmapped mount with the filesystem wide idmapping
-+	 * doesn't make sense so block that. We don't allow mushy semantics.
-+	 */
-+	if (kattr->mnt_userns == fs_userns)
-+		return -EINVAL;
-+
- 	/*
- 	 * Once a mount has been idmapped we don't allow it to change its
- 	 * mapping. It makes things simpler and callers can just create
-@@ -3943,12 +3956,8 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
- 	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
- 		return -EINVAL;
- 
--	/* Don't yet support filesystem mountable in user namespaces. */
--	if (m->mnt_sb->s_user_ns != &init_user_ns)
--		return -EINVAL;
--
- 	/* We're not controlling the superblock. */
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!ns_capable(fs_userns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* Mount has already been visible in the filesystem hierarchy. */
-@@ -4133,13 +4142,16 @@ static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
- 	}
- 
- 	/*
--	 * The init_user_ns is used to indicate that a vfsmount is not idmapped.
--	 * This is simpler than just having to treat NULL as unmapped. Users
--	 * wanting to idmap a mount to init_user_ns can just use a namespace
--	 * with an identity mapping.
-+	 * The initial idmapping cannot be used to create an idmapped
-+	 * mount. Attaching the initial idmapping doesn't make much sense
-+	 * as it is an identity mapping. A user can just create a dedicated
-+	 * identity mapping to achieve the same result. We also use the
-+	 * initial idmapping as an indicator of a mount that is not
-+	 * idmapped. It can simply be passed into helpers that are aware of
-+	 * idmapped mounts as a convenient shortcut.
- 	 */
- 	mnt_userns = container_of(ns, struct user_namespace, ns);
--	if (mnt_userns == &init_user_ns) {
-+	if (initial_mapping(mnt_userns)) {
- 		err = -EPERM;
- 		goto out_fput;
- 	}
-diff --git a/fs/open.c b/fs/open.c
-index 64f799d96356..fb17d58db89c 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -640,7 +640,7 @@ SYSCALL_DEFINE2(chmod, const char __user *, filename, umode_t, mode)
- 
- int chown_common(const struct path *path, uid_t user, gid_t group)
- {
--	struct user_namespace *mnt_userns;
-+	struct user_namespace *mnt_userns, *fs_userns;
- 	struct inode *inode = path->dentry->d_inode;
- 	struct inode *delegated_inode = NULL;
- 	int error;
-@@ -652,8 +652,9 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	gid = make_kgid(current_user_ns(), group);
- 
- 	mnt_userns = mnt_user_ns(path->mnt);
--	uid = mapped_kuid_user(mnt_userns, &init_user_ns, uid);
--	gid = mapped_kgid_user(mnt_userns, &init_user_ns, gid);
-+	fs_userns = i_user_ns(inode);
-+	uid = mapped_kuid_user(mnt_userns, fs_userns, uid);
-+	gid = mapped_kgid_user(mnt_userns, fs_userns, gid);
- 
- retry_deleg:
- 	newattrs.ia_valid =  ATTR_CTIME;
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index e45b3ffb6de1..edae00c5fb6d 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -375,8 +375,8 @@ posix_acl_permission(struct user_namespace *mnt_userns, struct inode *inode,
-                                 break;
-                         case ACL_USER:
- 				uid = mapped_kuid_fs(mnt_userns,
--						      &init_user_ns,
--						      pa->e_uid);
-+						     i_user_ns(inode),
-+						     pa->e_uid);
- 				if (uid_eq(uid, current_fsuid()))
-                                         goto mask;
- 				break;
-@@ -390,8 +390,8 @@ posix_acl_permission(struct user_namespace *mnt_userns, struct inode *inode,
- 				break;
-                         case ACL_GROUP:
- 				gid = mapped_kgid_fs(mnt_userns,
--						      &init_user_ns,
--						      pa->e_gid);
-+						     i_user_ns(inode),
-+						     pa->e_gid);
- 				if (in_group_p(gid)) {
- 					found = 1;
- 					if ((pa->e_perm & want) == want)
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 7ac8247b5498..bafa3e1b3a79 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -977,7 +977,7 @@ xfs_create(
- 	struct xfs_trans_res	*tres;
- 	uint			resblks;
- 	xfs_ino_t		ino;
--	struct user_namespace	*fs_userns = &init_user_ns;
-+	struct user_namespace	*fs_userns = i_user_ns(VFS_I(dp));
- 
- 	trace_xfs_create(dp, name);
- 
-@@ -1134,7 +1134,7 @@ xfs_create_tmpfile(
- 	struct xfs_trans_res	*tres;
- 	uint			resblks;
- 	xfs_ino_t		ino;
--	struct user_namespace	*fs_userns = &init_user_ns;
-+	struct user_namespace	*fs_userns = i_user_ns(VFS_I(dp));
- 
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
-diff --git a/fs/xfs/xfs_symlink.c b/fs/xfs/xfs_symlink.c
-index bf19c111771c..612a5c86cccb 100644
---- a/fs/xfs/xfs_symlink.c
-+++ b/fs/xfs/xfs_symlink.c
-@@ -163,7 +163,7 @@ xfs_symlink(
- 	struct xfs_dquot	*pdqp = NULL;
- 	uint			resblks;
- 	xfs_ino_t		ino;
--	struct user_namespace	*fs_userns = &init_user_ns;
-+	struct user_namespace	*fs_userns = i_user_ns(VFS_I(dp));
- 
- 	*ipp = NULL;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c1780be923fa..87a71bf2c6b5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1641,7 +1641,7 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
- static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
- 				    const struct inode *inode)
- {
--	return mapped_kuid_fs(mnt_userns, &init_user_ns, inode->i_uid);
-+	return mapped_kuid_fs(mnt_userns, i_user_ns(inode), inode->i_uid);
- }
- 
- /**
-@@ -1655,7 +1655,7 @@ static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
- static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
- 				    const struct inode *inode)
- {
--	return mapped_kgid_fs(mnt_userns, &init_user_ns, inode->i_gid);
-+	return mapped_kgid_fs(mnt_userns, i_user_ns(inode), inode->i_gid);
- }
- 
- /**
-@@ -1669,7 +1669,7 @@ static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
- static inline void inode_fsuid_set(struct inode *inode,
- 				   struct user_namespace *mnt_userns)
- {
--	inode->i_uid = mapped_fsuid(mnt_userns, &init_user_ns);
-+	inode->i_uid = mapped_fsuid(mnt_userns, i_user_ns(inode));
- }
- 
- /**
-@@ -1683,7 +1683,7 @@ static inline void inode_fsuid_set(struct inode *inode,
- static inline void inode_fsgid_set(struct inode *inode,
- 				   struct user_namespace *mnt_userns)
- {
--	inode->i_gid = mapped_fsgid(mnt_userns, &init_user_ns);
-+	inode->i_gid = mapped_fsgid(mnt_userns, i_user_ns(inode));
- }
- 
- /**
-@@ -1704,10 +1704,10 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
- 	kuid_t kuid;
- 	kgid_t kgid;
- 
--	kuid = mapped_fsuid(mnt_userns, &init_user_ns);
-+	kuid = mapped_fsuid(mnt_userns, fs_userns);
- 	if (!uid_valid(kuid))
- 		return false;
--	kgid = mapped_fsgid(mnt_userns, &init_user_ns);
-+	kgid = mapped_fsgid(mnt_userns, fs_userns);
- 	if (!gid_valid(kgid))
- 		return false;
- 	return kuid_has_mapping(fs_userns, kuid) &&
-@@ -2654,13 +2654,14 @@ static inline struct user_namespace *file_mnt_user_ns(struct file *file)
-  * is_mapped_mnt - check whether a mount is mapped
-  * @mnt: the mount to check
-  *
-- * If @mnt has an idmapping attached to it @mnt is mapped.
-+ * If @mnt has an idmapping attached different from the
-+ * filesystem's idmapping then @mnt is mapped.
-  *
-  * Return: true if mount is mapped, false if not.
-  */
- static inline bool is_mapped_mnt(const struct vfsmount *mnt)
- {
--	return mnt_user_ns(mnt) != &init_user_ns;
-+	return mnt_user_ns(mnt) != mnt->mnt_sb->s_user_ns;
- }
- 
- extern long vfs_truncate(const struct path *, loff_t);
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 77d319f62710..e9b71eefe97b 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -418,7 +418,7 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
- 	kroot = make_kuid(fs_ns, root);
- 
- 	/* If this is an idmapped mount shift the kuid. */
--	kroot = mapped_kuid_fs(mnt_userns, &init_user_ns, kroot);
-+	kroot = mapped_kuid_fs(mnt_userns, fs_ns, kroot);
- 
- 	/* If the root kuid maps to a valid uid in current ns, then return
- 	 * this as a nscap. */
-@@ -555,13 +555,12 @@ int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		return -EINVAL;
- 	if (!capable_wrt_inode_uidgid(mnt_userns, inode, CAP_SETFCAP))
- 		return -EPERM;
--	if (size == XATTR_CAPS_SZ_2 && (mnt_userns == &init_user_ns))
-+	if (size == XATTR_CAPS_SZ_2 && (mnt_userns == fs_ns))
- 		if (ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP))
- 			/* user is privileged, just write the v2 */
- 			return size;
- 
--	rootid = rootid_from_xattr(*ivalue, size, task_ns, mnt_userns,
--				   &init_user_ns);
-+	rootid = rootid_from_xattr(*ivalue, size, task_ns, mnt_userns, fs_ns);
- 	if (!uid_valid(rootid))
- 		return -EINVAL;
- 
-@@ -702,7 +701,7 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
- 	/* Limit the caps to the mounter of the filesystem
- 	 * or the more limited uid specified in the xattr.
- 	 */
--	rootkuid = mapped_kuid_fs(mnt_userns, &init_user_ns, rootkuid);
-+	rootkuid = mapped_kuid_fs(mnt_userns, fs_ns, rootkuid);
- 	if (!rootid_owns_currentns(rootkuid))
- 		return -ENODATA;
- 
 -- 
-2.30.2
+Thanks,
+
+David / dhildenb
 
