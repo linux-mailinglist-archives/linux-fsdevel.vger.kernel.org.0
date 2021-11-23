@@ -2,105 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F7445997F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 02:07:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABFB0459983
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 02:09:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231470AbhKWBKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Nov 2021 20:10:41 -0500
-Received: from mga12.intel.com ([192.55.52.136]:54361 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231174AbhKWBKl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Nov 2021 20:10:41 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10176"; a="214950573"
-X-IronPort-AV: E=Sophos;i="5.87,256,1631602800"; 
-   d="scan'208";a="214950573"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 17:07:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,256,1631602800"; 
-   d="scan'208";a="649751921"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Nov 2021 17:07:25 -0800
-Date:   Tue, 23 Nov 2021 09:06:39 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Wanpeng Li <wanpengli@tencent.com>, jun.nakajima@intel.com,
-        kvm@vger.kernel.org, david@redhat.com, qemu-devel@nongnu.org,
-        "J . Bruce Fields" <bfields@fieldses.org>, dave.hansen@intel.com,
-        "H . Peter Anvin" <hpa@zytor.com>, ak@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        luto@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jim Mattson <jmattson@google.com>, linux-mm@kvack.org,
-        Sean Christopherson <seanjc@google.com>, susie.li@intel.com,
-        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
-        john.ji@intel.com, Yu Zhang <yu.c.zhang@linux.intel.com>,
-        linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC v2 PATCH 13/13] KVM: Enable memfd based page
- invalidation/fallocate
-Message-ID: <20211123010639.GA32088@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-14-chao.p.peng@linux.intel.com>
- <20211122141647.3pcsywilrzcoqvbf@box.shutemov.name>
+        id S231601AbhKWBMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Nov 2021 20:12:53 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:28165 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230201AbhKWBMw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Nov 2021 20:12:52 -0500
+Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4HymGL11QCz8vZ2;
+        Tue, 23 Nov 2021 09:07:54 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 23 Nov 2021 09:09:43 +0800
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemm500006.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 23 Nov 2021 09:09:43 +0800
+Subject: Re: [PATCH 1/2] pipe: fix potential use-after-free in pipe_read()
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20211115035721.1909-1-thunder.leizhen@huawei.com>
+ <20211115035721.1909-2-thunder.leizhen@huawei.com>
+ <YZHhQ5uUJ06BOnJh@casper.infradead.org>
+ <d604e5f8-128a-d25c-848d-7380a5bde609@huawei.com>
+ <YZJbBNs/63pnXngK@casper.infradead.org>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <3d1da34f-7b47-3d19-40ce-98b62d6e6f6d@huawei.com>
+Date:   Tue, 23 Nov 2021 09:09:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211122141647.3pcsywilrzcoqvbf@box.shutemov.name>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <YZJbBNs/63pnXngK@casper.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.178.55]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 22, 2021 at 05:16:47PM +0300, Kirill A. Shutemov wrote:
-> On Fri, Nov 19, 2021 at 09:47:39PM +0800, Chao Peng wrote:
-> > Since the memory backing store does not get notified when VM is
-> > destroyed so need check if VM is still live in these callbacks.
-> > 
-> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > ---
-> >  virt/kvm/memfd.c | 22 ++++++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> > 
-> > diff --git a/virt/kvm/memfd.c b/virt/kvm/memfd.c
-> > index bd930dcb455f..bcfdc685ce22 100644
-> > --- a/virt/kvm/memfd.c
-> > +++ b/virt/kvm/memfd.c
-> > @@ -12,16 +12,38 @@
-> >  #include <linux/memfd.h>
-> >  const static struct guest_mem_ops *memfd_ops;
-> >  
-> > +static bool vm_is_dead(struct kvm *vm)
-> > +{
-> > +	struct kvm *kvm;
-> > +
-> > +	list_for_each_entry(kvm, &vm_list, vm_list) {
-> > +		if (kvm == vm)
-> > +			return false;
-> > +	}
-> 
-> I don't think this is enough. The struct kvm can be freed and re-allocated
-> from the slab and this function will give false-negetive.
 
-Right.
 
+On 2021/11/15 21:05, Matthew Wilcox wrote:
+> On Mon, Nov 15, 2021 at 02:13:44PM +0800, Leizhen (ThunderTown) wrote:
+>>
+>>
+>> On 2021/11/15 12:25, Matthew Wilcox wrote:
+>>> On Mon, Nov 15, 2021 at 11:57:20AM +0800, Zhen Lei wrote:
+>>>>  			if (!buf->len) {
+>>>> +				unsigned int __maybe_unused flags = buf->flags;
+>>>
+>>> Why __maybe_unused?
+>>
+>> It's used only if "#ifdef CONFIG_WATCH_QUEUE". Otherwise, a warning will be reported.
 > 
-> Maybe the kvm has to be tagged with a sequential id that incremented every
-> allocation. This id can be checked here.
+> Better to turn the #ifdef into if (IS_ENABLED())
 
-Sounds like a sequential id will be needed, no existing fields in struct
-kvm can work for this.
+Hi, Matthew:
+  Thank you for your advice. IS_ENABLED() is a good idea, but when I tried it, I found that
+the macro 'PIPE_BUF_FLAG_LOSS' and the structure member 'note_loss' were also separated by
+"ifdef CONFIG_WATCH_QUEUE", so this method is not suitable here.
 
+#ifdef CONFIG_WATCH_QUEUE
+#define PIPE_BUF_FLAG_LOSS     0x40    /* Message loss happened after this buffer */
+#endif
+
+@@ -62,9 +60,7 @@ struct pipe_inode_info {
+        unsigned int tail;
+        unsigned int max_usage;
+        unsigned int ring_size;
+#ifdef CONFIG_WATCH_QUEUE
+        bool note_loss;
+#endif
+
+
+
+> .
 > 
-> > +
-> > +	return true;
-> > +}
-> 
-> -- 
->  Kirill A. Shutemov
