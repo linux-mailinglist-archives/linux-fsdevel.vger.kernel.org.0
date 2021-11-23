@@ -2,150 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B770F45AE64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 22:22:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D870545AE7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 22:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240495AbhKWVZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 16:25:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
+        id S234300AbhKWVdy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 16:33:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240508AbhKWVZd (ORCPT
+        with ESMTP id S229586AbhKWVdw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 16:25:33 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB22C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 13:22:24 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id m15so215498pgu.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 13:22:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bLSToY/Rn4QaplrUteOdrUS7Uug3uZWr/TlOz9Y1nF0=;
-        b=b/hUI3hQLxDR2Xk9r7lQxFzBrg/2/5tGZW+JSVwNYrq8dmNWS3P9ynBIU8RZmfFHUI
-         Xgm0552sZFP2+qPF3soghwDd7XxX6FGNBFe395T6bvF+N1dr29Lop15wmWK8lt8m87yV
-         9vAVuWAMC6kkIO1VclhYl3oilFONamQuNci0i1jGGdKo0v4NlKYSPdpcWln2MSBf1py8
-         eotcm4rw3pNPGNJSmy6HW2en9pvx0GUA8KH3ho166JTJ5FG5ph7IQpvk6v1nkInbqZW5
-         YGsf77VgzBkZO6x5IA8KcT5QTl5SnWc54c+GTeaTywwpW3otwTRaZbbIpfY5ylF9vOkP
-         iFPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bLSToY/Rn4QaplrUteOdrUS7Uug3uZWr/TlOz9Y1nF0=;
-        b=J1Ks1zmQAH3w8qnjOGxn+M6oMjrjoSbEQ2B0UvmjfpFaKhIs8tVUUHxqYGJEFLBwCm
-         CI7IL7BFWEbb1JSJm2CCOk+ShLna7K6/XW/zdeLiIZPVTQVZII66onGzYKVrZtML4wd/
-         jiHgMaymaewHtdpH19ZCxtkYL8Si7kY7jXBLJ/h8Aii7SXq3uq2rViE5ZM3xuIMbP7oB
-         zqfwRzV+NAobvRY12O6ONWflGd4pNDWjPzTSc3sxMK/FRs/r7IQttvTfFL0+NReiOpqD
-         JR+GyR85LcQGP22DDOZVMVJKUQ6BSic87XsJ8GqGNoKAayXYHVAM6OrE8J9/+l3clj8w
-         fVlw==
-X-Gm-Message-State: AOAM531dhfqPyH5ceFmxMpeXNE/4f1zz+gR1iu391ts/HEKNUrmWuW6c
-        V2dLMWQDza52HuUzDWj12qMFsN+3Rn6lE8nszSPTKw==
-X-Google-Smtp-Source: ABdhPJynvi8g71RwjaWWgFjo9LaoTAJgYi1+7huNhjnlJVCNZL4JsPbOJLOogDISiszVaR5xm5B316tq/pqSlm2ohsA=
-X-Received: by 2002:a05:6a00:140e:b0:444:b077:51ef with SMTP id
- l14-20020a056a00140e00b00444b07751efmr476612pfu.61.1637702544283; Tue, 23 Nov
- 2021 13:22:24 -0800 (PST)
+        Tue, 23 Nov 2021 16:33:52 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0427C061574;
+        Tue, 23 Nov 2021 13:30:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=iO3HnBWsJ/NLxaA52RztLHbEXc3qbezCQwSQjG1Zx/M=; b=qsGcdrrxcb86GaRuvr7c46R+V0
+        Hc5/2hIoSps0xhhYrfmKeFMhNzRqW7Ge8YfRF5IukxnfV44DLP0fHjKE+CeOV3q2OvGJ2vnpAUKYY
+        kHH4rL8+6ecd9BzzhNnmu5pr3P9lOsXeu/1JufgGtIVGK+AYtu82BYq5I1s4kXB6LRmwSN14SGChX
+        InHnHV4Nm/vBl6Yca6+UGx1xM8K2hmYlCRopgX9PKQah0rZbDg5WlmVue67SJEu9qNaDlAZQHw9Xg
+        uJmRkr8vb7Qtu3szPc48E3Gbz0KFwcdLQSj/LrxgwA5ZuOj6etsXlwkJEMhZ7yETeZSMN7XTkChOY
+        tY+cwS5g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mpdN0-00GUOj-7Q; Tue, 23 Nov 2021 21:30:30 +0000
+Date:   Tue, 23 Nov 2021 21:30:30 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        David Hildenbrand <david@redhat.com>,
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Xu <peterx@redhat.com>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7] mm: Add PM_THP_MAPPED to /proc/pid/pagemap
+Message-ID: <YZ1ddl3FA43NijmX@casper.infradead.org>
+References: <20211123000102.4052105-1-almasrymina@google.com>
+ <YZ1USY+zB1PP24Z1@casper.infradead.org>
+ <CAHS8izOhi45RqCACGGXYyB8UAmMo-85TyuNX8Myzdh81xOkBTA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-18-hch@lst.de>
-In-Reply-To: <20211109083309.584081-18-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 23 Nov 2021 13:22:13 -0800
-Message-ID: <CAPcyv4imPgBEbhDCQpDwCQUTxOQy=RT9ZkAueBQdPKXOLNmrAQ@mail.gmail.com>
-Subject: Re: [PATCH 17/29] fsdax: factor out a dax_memzero helper
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHS8izOhi45RqCACGGXYyB8UAmMo-85TyuNX8Myzdh81xOkBTA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Factor out a helper for the "manual" zeroing of a DAX range to clean
-> up dax_iomap_zero a lot.
->
+On Tue, Nov 23, 2021 at 01:10:37PM -0800, Mina Almasry wrote:
+> On Tue, Nov 23, 2021 at 12:51 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Mon, Nov 22, 2021 at 04:01:02PM -0800, Mina Almasry wrote:
+> > > Add PM_THP_MAPPED MAPPING to allow userspace to detect whether a given virt
+> > > address is currently mapped by a transparent huge page or not.  Example
+> > > use case is a process requesting THPs from the kernel (via a huge tmpfs
+> > > mount for example), for a performance critical region of memory.  The
+> > > userspace may want to query whether the kernel is actually backing this
+> > > memory by hugepages or not.
+> >
+> > So you want this bit to be clear if the memory is backed by a hugetlb
+> > page?
+> >
+> 
+> Yes I believe so. I do not see value in telling the userspace that the
+> virt address is backed by a hugetlb page, since if the memory is
+> mapped by MAP_HUGETLB or is backed by a hugetlb file then the memory
+> is backed by hugetlb pages and there is no vagueness from the kernel
+> here.
+> 
+> Additionally hugetlb interfaces are more size based rather than PMD or
+> not. arm64 for example supports 64K, 2MB, 32MB and 1G 'huge' pages and
+> it's an implementation detail that those sizes are mapped CONTIG PTE,
+> PMD, CONITG PMD, and PUD respectively, and the specific mapping
+> mechanism is typically not exposed to the userspace and might not be
+> stable. Assuming pagemap_hugetlb_range() == PMD_MAPPED would not
+> technically be correct.
 
-Small / optional fixup below:
+What I've been trying to communicate over the N reviews of this
+patch series is that *the same thing is about to happen to THPs*.
+Only more so.  THPs are going to be of arbitrary power-of-two size, not
+necessarily sizes supported by the hardware.  That means that we need to
+be extremely precise about what we mean by "is this a THP?"  Do we just
+mean "This is a compound page?"  Do we mean "this is mapped by a PMD?"
+Or do we mean something else?  And I feel like I haven't been able to
+get that information out of you.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/dax.c | 36 +++++++++++++++++++-----------------
->  1 file changed, 19 insertions(+), 17 deletions(-)
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index d7a923d152240..dc9ebeff850ab 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1121,34 +1121,36 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
->  }
->  #endif /* CONFIG_FS_DAX_PMD */
->
-> +static int dax_memzero(struct dax_device *dax_dev, pgoff_t pgoff,
-> +               unsigned int offset, size_t size)
-> +{
-> +       void *kaddr;
-> +       long rc;
-> +
-> +       rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
-> +       if (rc >= 0) {
-
-Technically this should be "> 0" because dax_direct_access() returns
-nr_available_pages @pgoff, but this isn't broken because
-dax_direct_access() converts the "zero pages available" case into
--ERANGE.
-
-> +               memset(kaddr + offset, 0, size);
-> +               dax_flush(dax_dev, kaddr + offset, size);
-> +       }
-> +       return rc;
-> +}
-> +
->  s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
->  {
->         pgoff_t pgoff = dax_iomap_pgoff(iomap, pos);
->         long rc, id;
-> -       void *kaddr;
-> -       bool page_aligned = false;
->         unsigned offset = offset_in_page(pos);
->         unsigned size = min_t(u64, PAGE_SIZE - offset, length);
->
-> -       if (IS_ALIGNED(pos, PAGE_SIZE) && size == PAGE_SIZE)
-> -               page_aligned = true;
-> -
->         id = dax_read_lock();
-> -
-> -       if (page_aligned)
-> +       if (IS_ALIGNED(pos, PAGE_SIZE) && size == PAGE_SIZE)
->                 rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
->         else
-> -               rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
-> -       if (rc < 0) {
-> -               dax_read_unlock(id);
-> -               return rc;
-> -       }
-> -
-> -       if (!page_aligned) {
-> -               memset(kaddr + offset, 0, size);
-> -               dax_flush(iomap->dax_dev, kaddr + offset, size);
-> -       }
-> +               rc = dax_memzero(iomap->dax_dev, pgoff, offset, size);
->         dax_read_unlock(id);
-> +
-> +       if (rc < 0)
-> +               return rc;
->         return size;
->  }
->
-> --
-> 2.30.2
->
