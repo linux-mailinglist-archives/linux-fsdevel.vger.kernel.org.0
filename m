@@ -2,211 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C217445AF8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 23:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5AF345AF9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 00:00:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbhKWW65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 17:58:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229574AbhKWW65 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 17:58:57 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4550060F5D;
-        Tue, 23 Nov 2021 22:55:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637708148;
-        bh=XmDdcxvSraD+z9MecQbr8ySGBgUbDWDWR7VXjTKw2lA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LktQf3iFlh4ZK+EdJzgerBaJJ38tsjASFxBd+rWZ0pkw45n80+kYHakBGevYMVC5r
-         OlNereV6xuQJRYlzU1K1seWdLhegspgCiiE39wAcXU3XlPhoKbmCeoHH9SZ8LW7iN7
-         qffPxsP0Dt90OeybGC1TsANXv+vVe/DUi3AER/sPAPaxDUJsjHMZUi+orZ+xLltd1w
-         EFU9aonPlu49LF0+AHMgQ+vcqqKAOKugdd7ndup8AKsWoqQtOCeajiJyouIvjgBSjm
-         swKW/aFrCvx+8n3ibt30Sb8LnQ9JMzJZOq/fuUsfBvn93qfB1b9hsojXKtR3aKcxwL
-         rpZ4U8yKOcsnQ==
-Date:   Tue, 23 Nov 2021 14:55:48 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>, dm-devel@redhat.com,
-        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 21/29] xfs: move dax device handling into
- xfs_{alloc,free}_buftarg
-Message-ID: <20211123225548.GP266024@magnolia>
-References: <20211109083309.584081-1-hch@lst.de>
- <20211109083309.584081-22-hch@lst.de>
+        id S230121AbhKWXDN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 18:03:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40274 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229642AbhKWXDN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 18:03:13 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC37C061574;
+        Tue, 23 Nov 2021 15:00:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5vRcWxXxzd4WGPKdHz9LVWODQ5YzAkwMwaTDRt2JBCg=; b=qwI0SbySX8Oas1lAMTbPkY6Wr9
+        qu3DVtQjPQ9uTgc5mZKdJoC3BqXo4eSwDZsNKk+WS6s7ywjV4YJAo4gkdkqQz3Jr2cT+TyJv1pMoR
+        3YXg+nvS7s0J9agapBeb+HJVWEa5NYqCgxepwjlK9SZJazlLXa+ZvBuulUmE6rHZcvL4XrFR9c3Qq
+        fvI0h2K3s+2077dCM9Y0kH3nn2w5kzjd1fuVwsP2M1Gd4IiggTr4Pt6NA84EXOick9n7FdO0B82Db
+        pijG/FftTQimqE3dV7Jzpojv4S007nPLpt8W3gK49AGT+L0rjmqbpBEvTBYSKRvLjVN7BE5ZYZxvA
+        8a2DKAXw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mpelW-00GlV8-4G; Tue, 23 Nov 2021 22:59:54 +0000
+Date:   Tue, 23 Nov 2021 22:59:54 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        David Hildenbrand <david@redhat.com>,
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Xu <peterx@redhat.com>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7] mm: Add PM_THP_MAPPED to /proc/pid/pagemap
+Message-ID: <YZ1yapOMZOXdFHG9@casper.infradead.org>
+References: <20211123000102.4052105-1-almasrymina@google.com>
+ <YZ1USY+zB1PP24Z1@casper.infradead.org>
+ <CAHS8izOhi45RqCACGGXYyB8UAmMo-85TyuNX8Myzdh81xOkBTA@mail.gmail.com>
+ <YZ1ddl3FA43NijmX@casper.infradead.org>
+ <CAHS8izMmcbXQ0xCDVYx8JW54sbbLXwNnK6pHgf9Ztn=XPFEsWA@mail.gmail.com>
+ <YZ1lOgjv6r+ZOSRX@casper.infradead.org>
+ <CAHS8izO0EMRgH8_qt58_O9-MBSwFXLgr1g79gJGrY1N0dTKutg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211109083309.584081-22-hch@lst.de>
+In-Reply-To: <CAHS8izO0EMRgH8_qt58_O9-MBSwFXLgr1g79gJGrY1N0dTKutg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 09:33:01AM +0100, Christoph Hellwig wrote:
-> Hide the DAX device lookup from the xfs_super.c code.
+On Tue, Nov 23, 2021 at 02:23:23PM -0800, Mina Almasry wrote:
+> On Tue, Nov 23, 2021 at 2:03 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Tue, Nov 23, 2021 at 01:47:33PM -0800, Mina Almasry wrote:
+> > > On Tue, Nov 23, 2021 at 1:30 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > What I've been trying to communicate over the N reviews of this
+> > > > patch series is that *the same thing is about to happen to THPs*.
+> > > > Only more so.  THPs are going to be of arbitrary power-of-two size, not
+> > > > necessarily sizes supported by the hardware.  That means that we need to
+> > > > be extremely precise about what we mean by "is this a THP?"  Do we just
+> > > > mean "This is a compound page?"  Do we mean "this is mapped by a PMD?"
+> > > > Or do we mean something else?  And I feel like I haven't been able to
+> > > > get that information out of you.
+> > >
+> > > Yes, I'm very sorry for the trouble, but I'm also confused what the
+> > > disconnect is. To allocate hugepages I can do like so:
+> > >
+> > > mount -t tmpfs -o huge=always tmpfs /mnt/mytmpfs
+> > >
+> > > or
+> > >
+> > > madvise(..., MADV_HUGEPAGE)
+> > >
+> > > Note I don't ask the kernel for a specific size, or a specific mapping
+> > > mechanism (PMD/contig PTE/contig PMD/PUD), I just ask the kernel for
+> > > 'huge' pages. I would like to know whether the kernel was successful
+> > > in allocating a hugepage or not. Today a THP hugepage AFAICT is PMD
+> > > mapped + is_transparent_hugepage(), which is the check I have here. In
+> > > the future, THP may become an arbitrary power of two size, and I think
+> > > I'll need to update this querying interface once/if that gets merged
+> > > to the kernel. I.e, if in the future I allocate pages by using:
+> > >
+> > > mount -t tmpfs -o huge=2MB tmpfs /mnt/mytmpfs
+> > >
+> > > I need the kernel to tell me whether the mapping is 2MB size or not.
+> > >
+> > > If I allocate pages by using:
+> > >
+> > > mount -t tmpfs -o huge=pmd tmpfs /mnt/mytmps,
+> > >
+> > > Then I need the kernel to tell me whether the pages are PMD mapped or
+> > > not, as I'm doing here.
+> > >
+> > > The current implementation is based on what the current THP
+> > > implementation is in the kernel, and depending on future changes to
+> > > THP I may need to update it in the future. Does that make sense?
+> >
+> > Well, no.  You're adding (or changing, if you like) a userspace API.
+> > We need to be precise about what that userspace API *means*, so that we
+> > don't break it in the future when the implementation changes.  You're
+> > still being fuzzy above.
+> >
+> > I have no intention of adding an API like the ones you suggest above to
+> > allow the user to specify what size pages to use.  That seems very strange
+> > to me; how should the user (or sysadmin, or application) know what size is
+> > best for the kernel to use to cache files?  Instead, the kernel observes
+> > the usage pattern of the file (through the readahead mechanism) and grows
+> > the allocation size to fit what the kernel thinks will be most effective.
+> >
+> > I do honour some of the existing hints that userspace can provide; eg
+> > VM_HUGEPAGE makes the pagefault path allocate PMD sized pages (if it can).
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Right, so since VM_HUGEPAGE makes the kernel allocate PMD mapped THP
+> if it can, then I want to know if the page is actually a PMD mapped
+> THP or not. The implementation and documentation that I'm adding seem
+> consistent with that AFAICT, but sorry if I missed something.
 
-This looks to be a straightforward conversion.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> ---
->  fs/xfs/xfs_buf.c   |  8 ++++----
->  fs/xfs/xfs_buf.h   |  4 ++--
->  fs/xfs/xfs_super.c | 26 +++++---------------------
->  3 files changed, 11 insertions(+), 27 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index 631c5a61d89b7..4d4553ffa7050 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -1892,6 +1892,7 @@ xfs_free_buftarg(
->  	list_lru_destroy(&btp->bt_lru);
->  
->  	blkdev_issue_flush(btp->bt_bdev);
-> +	fs_put_dax(btp->bt_daxdev);
->  
->  	kmem_free(btp);
->  }
-> @@ -1932,11 +1933,10 @@ xfs_setsize_buftarg_early(
->  	return xfs_setsize_buftarg(btp, bdev_logical_block_size(bdev));
->  }
->  
-> -xfs_buftarg_t *
-> +struct xfs_buftarg *
->  xfs_alloc_buftarg(
->  	struct xfs_mount	*mp,
-> -	struct block_device	*bdev,
-> -	struct dax_device	*dax_dev)
-> +	struct block_device	*bdev)
->  {
->  	xfs_buftarg_t		*btp;
->  
-> @@ -1945,7 +1945,7 @@ xfs_alloc_buftarg(
->  	btp->bt_mount = mp;
->  	btp->bt_dev =  bdev->bd_dev;
->  	btp->bt_bdev = bdev;
-> -	btp->bt_daxdev = dax_dev;
-> +	btp->bt_daxdev = fs_dax_get_by_bdev(bdev);
->  
->  	/*
->  	 * Buffer IO error rate limiting. Limit it to no more than 10 messages
-> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-> index 6b0200b8007d1..bd7f709f0d232 100644
-> --- a/fs/xfs/xfs_buf.h
-> +++ b/fs/xfs/xfs_buf.h
-> @@ -338,8 +338,8 @@ xfs_buf_update_cksum(struct xfs_buf *bp, unsigned long cksum_offset)
->  /*
->   *	Handling of buftargs.
->   */
-> -extern struct xfs_buftarg *xfs_alloc_buftarg(struct xfs_mount *,
-> -		struct block_device *, struct dax_device *);
-> +struct xfs_buftarg *xfs_alloc_buftarg(struct xfs_mount *mp,
-> +		struct block_device *bdev);
->  extern void xfs_free_buftarg(struct xfs_buftarg *);
->  extern void xfs_buftarg_wait(struct xfs_buftarg *);
->  extern void xfs_buftarg_drain(struct xfs_buftarg *);
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 3a45d5caa28d5..7262716afb215 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -391,26 +391,19 @@ STATIC void
->  xfs_close_devices(
->  	struct xfs_mount	*mp)
->  {
-> -	struct dax_device *dax_ddev = mp->m_ddev_targp->bt_daxdev;
-> -
->  	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp) {
->  		struct block_device *logdev = mp->m_logdev_targp->bt_bdev;
-> -		struct dax_device *dax_logdev = mp->m_logdev_targp->bt_daxdev;
->  
->  		xfs_free_buftarg(mp->m_logdev_targp);
->  		xfs_blkdev_put(logdev);
-> -		fs_put_dax(dax_logdev);
->  	}
->  	if (mp->m_rtdev_targp) {
->  		struct block_device *rtdev = mp->m_rtdev_targp->bt_bdev;
-> -		struct dax_device *dax_rtdev = mp->m_rtdev_targp->bt_daxdev;
->  
->  		xfs_free_buftarg(mp->m_rtdev_targp);
->  		xfs_blkdev_put(rtdev);
-> -		fs_put_dax(dax_rtdev);
->  	}
->  	xfs_free_buftarg(mp->m_ddev_targp);
-> -	fs_put_dax(dax_ddev);
->  }
->  
->  /*
-> @@ -428,8 +421,6 @@ xfs_open_devices(
->  	struct xfs_mount	*mp)
->  {
->  	struct block_device	*ddev = mp->m_super->s_bdev;
-> -	struct dax_device	*dax_ddev = fs_dax_get_by_bdev(ddev);
-> -	struct dax_device	*dax_logdev = NULL, *dax_rtdev = NULL;
->  	struct block_device	*logdev = NULL, *rtdev = NULL;
->  	int			error;
->  
-> @@ -439,8 +430,7 @@ xfs_open_devices(
->  	if (mp->m_logname) {
->  		error = xfs_blkdev_get(mp, mp->m_logname, &logdev);
->  		if (error)
-> -			goto out;
-> -		dax_logdev = fs_dax_get_by_bdev(logdev);
-> +			return error;
->  	}
->  
->  	if (mp->m_rtname) {
-> @@ -454,25 +444,24 @@ xfs_open_devices(
->  			error = -EINVAL;
->  			goto out_close_rtdev;
->  		}
-> -		dax_rtdev = fs_dax_get_by_bdev(rtdev);
->  	}
->  
->  	/*
->  	 * Setup xfs_mount buffer target pointers
->  	 */
->  	error = -ENOMEM;
-> -	mp->m_ddev_targp = xfs_alloc_buftarg(mp, ddev, dax_ddev);
-> +	mp->m_ddev_targp = xfs_alloc_buftarg(mp, ddev);
->  	if (!mp->m_ddev_targp)
->  		goto out_close_rtdev;
->  
->  	if (rtdev) {
-> -		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, rtdev, dax_rtdev);
-> +		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, rtdev);
->  		if (!mp->m_rtdev_targp)
->  			goto out_free_ddev_targ;
->  	}
->  
->  	if (logdev && logdev != ddev) {
-> -		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev, dax_logdev);
-> +		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev);
->  		if (!mp->m_logdev_targp)
->  			goto out_free_rtdev_targ;
->  	} else {
-> @@ -488,14 +477,9 @@ xfs_open_devices(
->  	xfs_free_buftarg(mp->m_ddev_targp);
->   out_close_rtdev:
->  	xfs_blkdev_put(rtdev);
-> -	fs_put_dax(dax_rtdev);
->   out_close_logdev:
-> -	if (logdev && logdev != ddev) {
-> +	if (logdev && logdev != ddev)
->  		xfs_blkdev_put(logdev);
-> -		fs_put_dax(dax_logdev);
-> -	}
-> - out:
-> -	fs_put_dax(dax_ddev);
->  	return error;
->  }
->  
-> -- 
-> 2.30.2
-> 
+So what userspace cares about is that the kernel is mapping the
+memory with a PMD entry; it doesn't care whether the file is
+being cached in 2MB (or larger) chunks.  So we can drop the 'THP'
+from all of this, and just call the bit the PMD mapping bit?
