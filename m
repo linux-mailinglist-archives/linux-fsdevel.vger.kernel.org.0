@@ -2,100 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 328CB459EE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 10:09:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F8C45A102
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 12:09:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235141AbhKWJMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 04:12:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45298 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232166AbhKWJMv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 04:12:51 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E2A2C061574;
-        Tue, 23 Nov 2021 01:09:43 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id b12so37684731wrh.4;
-        Tue, 23 Nov 2021 01:09:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:content-language:to
-         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
-        bh=EXjLq27uLPPwTfA6AVps4YfQwfYtoD5QB3WDXMP9avc=;
-        b=VQpajBwcKuhcQjhlfCRYaCEPr3KvnCcA5Ih+sgVXncsJXlKSw74iRRii+5fS6bli2l
-         KtFWmUca+J/l9XwEvj7CkfYgyJs/PbK/88dBzW5Sr4vYLhsZ/P6dRWsSV0dA4LjrNZNR
-         AQIuw4Y3+tsAsszXSUvHAxpHcOYNKQ0kNly3sRhn9vI7re6S+hXr2Qf/O1X5o2b+lcT8
-         i7mNaroeCwT3gqv//CO6AYxwGlqY2w1f7EHxgi+skJRyuy22XRWLdvPuULUgRIxg1H4D
-         V0Bw9p2jST4AMgrnxUOgMvXrRE5FcT7pUEuY9kQ1AfBLuz8mSasigRr6uPlCUcvE4jCk
-         RVdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:subject:in-reply-to
-         :content-transfer-encoding;
-        bh=EXjLq27uLPPwTfA6AVps4YfQwfYtoD5QB3WDXMP9avc=;
-        b=COdWYmX51hy3OdM4Vb82aZKUQzqXDvrp84wWBBlLxM0yXKITCHI3lScz5gj+XCJkn3
-         ZW8Dfc5ndZdeORWnFSsYszpIW8RfiLbZF43voM+HsFfUMbWSc8IMEs3JG3ULdA4CcASV
-         yQ9ddG+AtAkKyggQruFG0ybiEZ1OM+9TmEa/yH+fL/fJPVzn0QR71OG7ySrjzTEibWRY
-         Eoh+L8H4/IQd92wI/ViunFto5hoWwOvsn0lHtDeTuRmaG9Wsp7sDMc8Jx+XKaaFFw9pg
-         t6npGU8GGm6U520Q9mtHg8Wwi8jzrkho5JkM0TQXp7EytBU+l0RTMcu6Mfr4Zu3cchuM
-         Bw8g==
-X-Gm-Message-State: AOAM532gQykkusLFfRLTZ2oynC1GqKORh54a1s6LRxFmHANc2mPZEpAp
-        YXSqSOv4S5f559ALaOOLLRA=
-X-Google-Smtp-Source: ABdhPJwy1AzQRo/b3ioO4YgKfTSHULKRa4G3QiCYJTl72yZ7edFn0WP/0Q5lVgW3dJZi8IC+A1P4hA==
-X-Received: by 2002:a5d:6da2:: with SMTP id u2mr4870376wrs.273.1637658581691;
-        Tue, 23 Nov 2021 01:09:41 -0800 (PST)
-Received: from ?IPV6:2001:b07:add:ec09:c399:bc87:7b6c:fb2a? ([2001:b07:add:ec09:c399:bc87:7b6c:fb2a])
-        by smtp.googlemail.com with ESMTPSA id m36sm522420wms.25.2021.11.23.01.09.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Nov 2021 01:09:41 -0800 (PST)
-Sender: Paolo Bonzini <paolo.bonzini@gmail.com>
-Message-ID: <2f3e9d7e-ce15-e47b-54c6-3ca3d7195d70@redhat.com>
-Date:   Tue, 23 Nov 2021 10:09:28 +0100
+        id S235142AbhKWLM4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 06:12:56 -0500
+Received: from mout.gmx.net ([212.227.15.18]:41185 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233112AbhKWLMx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 06:12:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1637665776;
+        bh=GFsasHE3doMoUcgAgAVueOwc5xBHUN1uYTfYU61MMYM=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=Sx6mi2T6qPgdz0E3RWjkWlj6kxl08lP9bp9w0NnRq2C+Lh37LARvwTbFdnpaBaPO+
+         V9ELJrZ1eTJAzt3gkSLhbRZT38ftZ4yh2A6fVYsrqFtmAvz2aDxgZIofLCoWEWj3hE
+         6WzeemVtwp9wOdSoLF4oaOhMxS0g4tS8hOm/dHm8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MnJlW-1mNscN3N9o-00jJ6Q; Tue, 23
+ Nov 2021 12:09:36 +0100
+Message-ID: <cca20bcb-1674-f99d-d504-b7fc928e227a@gmx.com>
+Date:   Tue, 23 Nov 2021 19:09:32 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
+ Thunderbird/91.3.1
+Subject: Re: Any bio_clone_slow() implementation which doesn't share
+ bi_io_vec?
 Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Wanpeng Li <wanpengli@tencent.com>, jun.nakajima@intel.com,
-        kvm@vger.kernel.org, david@redhat.com, qemu-devel@nongnu.org,
-        "J . Bruce Fields" <bfields@fieldses.org>, dave.hansen@intel.com,
-        "H . Peter Anvin" <hpa@zytor.com>, ak@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        luto@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jim Mattson <jmattson@google.com>, linux-mm@kvack.org,
-        Sean Christopherson <seanjc@google.com>, susie.li@intel.com,
-        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
-        john.ji@intel.com, Yu Zhang <yu.c.zhang@linux.intel.com>,
-        linux-fsdevel@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-14-chao.p.peng@linux.intel.com>
- <20211122141647.3pcsywilrzcoqvbf@box.shutemov.name>
- <20211123010639.GA32088@chaop.bj.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC v2 PATCH 13/13] KVM: Enable memfd based page
- invalidation/fallocate
-In-Reply-To: <20211123010639.GA32088@chaop.bj.intel.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        dm-devel@redhat.com,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+References: <5d8351f1-1b09-bff0-02f2-a417c1669607@gmx.com>
+ <YZybvlheyLGAadFF@infradead.org>
+ <79d38fc2-cd2f-2980-2c4e-408078ce6079@gmx.com>
+ <YZyiuFxAeKE/WMrR@infradead.org>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+In-Reply-To: <YZyiuFxAeKE/WMrR@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HN//ZkQPKk205NHjFSinz9cJfVRdC850H1mx05Acxk53rparwCi
+ THWLh7ECQl09R8O3i2SHZfue9ctPG7sMtzbjQdU1NXvOwem1mCixxmIY4h/368gE88m1g6i
+ xa0qPj2B9c76RgCnDjDrwbKdW+yA3ROIVDFMVUVehUnWWmGVptPGVcgS0vE/60msg661avu
+ DwVXVrnGCMRCpuZ4beLlA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9uqijgn8QXY=:smpjZLHq/cyEW3Ror2zHlo
+ CHI2OaQcspc0mNJiqVe6T5sqqzWrf0j43BEzk5OyjXDKotnZWT/bvxYuGbjNbtUjW7eOnwdCg
+ zSILJ3rHytgmxxjYOjfEAfbnyZ+2wvP5GtexpGxxHrspTkp/hIHlpr2JCvwHhPftUhBrMQtj7
+ WwewyxJ0z+q9fQqkH9O4Q6Uy/N8jbGT2cffrV+90Stat2QTChOFdThnhcOQ4Bb+eWUtzwb6bF
+ kE+Rfsp7Igde9SGTcCJf/0HfL6eqHApgbadneQUysbB+m/+xitvLN8S8atNsz/1PwvLz0DnCA
+ TXEtzJpS6tnTx7X0TsH2gu4TpodpYy5tUoXqAZlTTtL0FQP+YUhb4nOATiAxNLJlPDEIvEeel
+ da5qYse1xKhk9ru8vEn4EV40YOY1G1rnzS8RIwi/HYL8b3G9pY6FHhBtMXzpwE+RmKwu5bjRw
+ C1bSCQ05qi6FAeT84lPnlTFGtotOXtBCk0vNtLIg219eFARg4xQiPkefU/buCyyXvDBi3yNsG
+ M0VxXK6a7BVeX8zLUjKA3/NkJhfvEVLKSOQwWURRLZMUuL/IekgKGBhrOQd8iGwQKq5EpCil8
+ RxIyFNfCfTAppS8C5iUoSvAo9PotD4lrjWVCawleBDw7hMvHUFdbmLvRF5ru3W/cHovmUeClQ
+ rdkM5PDL3BsRij3Bl4aXmMKh2G6yfBAMpAKB8t2yTDa9Q+dPKCTn+9/1JiEw4Bm3TcbHObzYd
+ k2wZeVqzcwFMrLNs9GINSMurbMsNirjUMsrswLuPdWVO0NqAkHLIgIiud1AlVWI98Li5VI+MW
+ N0Nb5pMUPTMfgMtA+ZKX6Q7+eb6Y7fbR8PZmbuEGMdQIAGVB82taJx7uY7Ms0lu3nk1B8mwFW
+ R436fY59baX0pWDrTo+UKbvdflCIadXBPuNValyGz1QssiPoyZWjO+pekypHXwYjhq2X5Nrq4
+ ITb+ylQ2ZpoieGyRmgMEWp/ekEq7+gb/5tesvA3DRo+GMp9kZ65QvXCGpCJfPXmXzPoa0SSpD
+ w4k3MS21d6bAvSHlUfSL/Vxuj4m915VDLGqN1bL+RMsFh1ufZblH21llnLaRSFjrzmf8jKJpT
+ Hk1SIa8cE1MjBs=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/23/21 02:06, Chao Peng wrote:
->> Maybe the kvm has to be tagged with a sequential id that incremented every
->> allocation. This id can be checked here.
-> Sounds like a sequential id will be needed, no existing fields in struct
-> kvm can work for this.
 
-There's no need to new concepts when there's a perfectly usable 
-reference count. :)
 
-Paolo
+On 2021/11/23 16:13, Christoph Hellwig wrote:
+> On Tue, Nov 23, 2021 at 04:10:35PM +0800, Qu Wenruo wrote:
+>> Without bio_chain() sounds pretty good, as we can still utilize
+>> bi_end_io and bi_private.
+>>
+>> But this also means, we're now responsible not to release the source bi=
+o
+>> since it has the real bi_io_vec.
+>
+> Just call bio_inc_remaining before submitting the cloned bio, and then
+> call bio_endio on the root bio every time a clone completes.
+>
+Yeah, that sounds pretty good for regular usage.
+
+But there is another very tricky case involved.
+
+For btrfs, it supports zoned device, thus we have special calls sites to
+switch between bio_add_page() and bio_add_zoned_append_page().
+
+But zoned write can't not be split, nor there is an easy way to directly
+convert a regular bio into a bio with zoned append pages.
+
+Currently if we go the slow path, by allocating a new bio, then add
+pages from original bio, and advance the original bio, we're able to do
+the conversion from regular bio to zoned append bio.
+
+Any idea on this corner case?
+
+Thanks,
+Qu
