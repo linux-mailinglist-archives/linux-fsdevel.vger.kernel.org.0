@@ -2,108 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DB345AE15
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 22:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC3145AE24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 22:16:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239849AbhKWVN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 16:13:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
+        id S240385AbhKWVTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 16:19:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233389AbhKWVN5 (ORCPT
+        with ESMTP id S231215AbhKWVTM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 16:13:57 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51D23C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 13:10:49 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id e8so399887ilu.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 13:10:49 -0800 (PST)
+        Tue, 23 Nov 2021 16:19:12 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF7CC061714
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 13:16:03 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id v23so534024pjr.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 13:16:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FLDl0AcNYTJVo90T0ikRPoOCcN+nFjw2fk9E2jlxHm0=;
-        b=ee1y/8pWQqFIlU2moAaj0G8MwXibMQ6JD/r9AjXTqXwO5LlMnDM0X7pPgZnoO/NACK
-         uJwc0NegcEpLzeX22d5NEqty/klXVqmtw3K677vBycR6tJYbmVqa1awY5lO/tKfDeXDk
-         ULZpu714imlEZzPTgFvqTqbN7DgTpjN4y6IpL6fWdBLkuxFpMzXCLZjQyl/BVcFoVssf
-         iukmWDVuuEok+5zDV68mEKEAHOgUC6psjAcpfgKAlUubzhXP7tAGi2l81DnkhgZxcwda
-         ri6YPKXUPY+nUVhuHFmLk2QR5heWl3QGGKVRWLF+7d0DMCin3WHQ64sHiWBrSu/QEeRy
-         +4MA==
+        bh=l+zpQrvL4Qxe/qyBBz6nO1x+ZudVJHE22cDmvcF/TOE=;
+        b=3UTjzt/B58bzUMuj7IqqMnaCu5WYQAV5rK+fs5kaCfP78gUwTgy5Zlf3Be+wmIjr56
+         TnFB+KlAOrzucg0BEhVOP/JXfiAUD2ftEQJXj4AikeXTgWe03Spusb/0TUld0hhFX8v6
+         hoRoYhcMIe1fJGrizIl0u8fu7pfvZl0yQ6G/HZ/XblMR0kOZLIsIbaNzfqww2OtwK0QY
+         M2kpeuFwFxk8ZGruQVPxMGdqTXvMTUs/jjMoa2NVuNjPrbZJxiRI6LrTQ3lIM/koJIif
+         rP8I79qIKGLZ1fswpluH9sZNHRVBAzv8KTrCcmchw/ruDBCNrZVPKtgfRhQ9/KytnoiJ
+         mPYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FLDl0AcNYTJVo90T0ikRPoOCcN+nFjw2fk9E2jlxHm0=;
-        b=otIJkxpRiu6vo7mjfJSoJfeRQS6n9am29f7ASB89l891wpYJyfbwsIHHwQQfTmnE60
-         1zdEePNa1jP20E/OhGLyNJas+UUPx28hzLvz3iFB80Jk7VooCiTEH4l91SQH8p5m6Bqc
-         SSpL8S09Sg3qDOB85rU7HWVshhdOFUjTCrSPS/AotZ7iEeAIt4dxnkM6RI1kj8OLlSrI
-         9iJk2JgZD9PPEfwJWVjzj4VehXYaMlVNQv0vwmDcI9Aj9/STHRThuKwkG2z567iX8OZy
-         qYc+J0cSKlLarwdjHsBukOn4TcQd3oj1qd2//Ewq9TMl3O/BbL0dwGGtFXJdwI56UTJu
-         lIPQ==
-X-Gm-Message-State: AOAM530Howc9r576af9mkBEQlOSRDelAmgOHrc01HOC9WO595OmCBIC1
-        hiytxh0rg3sNYeb/bsgdAraxj4ySpR5CC3AqRjOztw==
-X-Google-Smtp-Source: ABdhPJwflQAlAlhXlis1geqZoQrYzfqnD13b3VHES42zh8wYx0T2LaXbrlPZHRtoI3mfBEAYceSNyc2pQNjfZr85F6E=
-X-Received: by 2002:a05:6e02:1bc3:: with SMTP id x3mr7808639ilv.39.1637701848501;
- Tue, 23 Nov 2021 13:10:48 -0800 (PST)
+        bh=l+zpQrvL4Qxe/qyBBz6nO1x+ZudVJHE22cDmvcF/TOE=;
+        b=T1pDdF6N1qJsYNYWcav2VIF8xCryA4y16yBHpsrfDGdnRARyA0FKLROChnOiE06Y/g
+         i9I2jGlsiXZJaLl0q9HJdUC/ADbquPTN+7Z0VvRuZ+26RLyS9UEFQMsBkxRMVyZj4S3V
+         n9tjh7y3kLl56BtFpLWj5tcbt8G+BrTJI6bSf2WuqY5G/C2qYg2VXexDjg3khNlWmY1T
+         jeF9CVBVenXywwdWjm0M+2pxzCsGf03iRI1bHAIzp7qGppGAv4p77Ti1Vfxl/MBx81Cw
+         zzLr05BHbLNE97yGYgsun83aDQtXkewuV/mMTTMdl9kcELVd3GHPMFVpRu47bMinweka
+         cAfw==
+X-Gm-Message-State: AOAM5311v/dRkmjAgiXgO6dPRItWC2Zor3TJ3itxtC37yc5quSgGbWiK
+        WR2OnhvS8hhWqAug1XCGxh3zeSowNpyV3srj0hk2xg==
+X-Google-Smtp-Source: ABdhPJxRRlv0NZQorv0M5t2wTRvBAaxVZY2wmbRu89506wlORAkd8KhXvCTyC5EAm4rzXSOWToX/mEdJ14fdPpKfw3k=
+X-Received: by 2002:a17:90b:1e07:: with SMTP id pg7mr494044pjb.93.1637702163126;
+ Tue, 23 Nov 2021 13:16:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20211123000102.4052105-1-almasrymina@google.com> <YZ1USY+zB1PP24Z1@casper.infradead.org>
-In-Reply-To: <YZ1USY+zB1PP24Z1@casper.infradead.org>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Tue, 23 Nov 2021 13:10:37 -0800
-Message-ID: <CAHS8izOhi45RqCACGGXYyB8UAmMo-85TyuNX8Myzdh81xOkBTA@mail.gmail.com>
-Subject: Re: [PATCH v7] mm: Add PM_THP_MAPPED to /proc/pid/pagemap
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        David Hildenbrand <david@redhat.com>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Yu Zhao <yuzhao@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
+References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-16-hch@lst.de>
+In-Reply-To: <20211109083309.584081-16-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 23 Nov 2021 13:15:52 -0800
+Message-ID: <CAPcyv4jDqfNj4iAYoewj53QEZjXR41UuE0LN49CtC_2qjrbazg@mail.gmail.com>
+Subject: Re: [PATCH 15/29] xfs: add xfs_zero_range and xfs_truncate_page helpers
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 12:51 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Mon, Nov 22, 2021 at 04:01:02PM -0800, Mina Almasry wrote:
-> > Add PM_THP_MAPPED MAPPING to allow userspace to detect whether a given virt
-> > address is currently mapped by a transparent huge page or not.  Example
-> > use case is a process requesting THPs from the kernel (via a huge tmpfs
-> > mount for example), for a performance critical region of memory.  The
-> > userspace may want to query whether the kernel is actually backing this
-> > memory by hugepages or not.
+> From: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 >
-> So you want this bit to be clear if the memory is backed by a hugetlb
-> page?
+> Add helpers to prepare for using different DAX operations.
 >
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> [hch: split from a larger patch + slight cleanups]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Yes I believe so. I do not see value in telling the userspace that the
-virt address is backed by a hugetlb page, since if the memory is
-mapped by MAP_HUGETLB or is backed by a hugetlb file then the memory
-is backed by hugetlb pages and there is no vagueness from the kernel
-here.
+Looks good to me.
 
-Additionally hugetlb interfaces are more size based rather than PMD or
-not. arm64 for example supports 64K, 2MB, 32MB and 1G 'huge' pages and
-it's an implementation detail that those sizes are mapped CONTIG PTE,
-PMD, CONITG PMD, and PUD respectively, and the specific mapping
-mechanism is typically not exposed to the userspace and might not be
-stable. Assuming pagemap_hugetlb_range() == PMD_MAPPED would not
-technically be correct.
-
-> >               if (page && page_mapcount(page) == 1)
-> >                       flags |= PM_MMAP_EXCLUSIVE;
-> > +             if (page && is_transparent_hugepage(page))
-> > +                     flags |= PM_THP_MAPPED;
->
-> because honestly i'd expect it to be more useful to mean "This memory
-> is mapped by a PMD entry" and then the code would look like:
->
->                 if (page)
->                         flags |= PM_PMD_MAPPED;
->
-> (and put a corresponding change in pagemap_hugetlb_range)
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
