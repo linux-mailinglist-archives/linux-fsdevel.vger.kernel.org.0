@@ -2,85 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9386045ACD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 20:50:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA0DE45AD0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 21:09:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239811AbhKWTxF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 14:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232735AbhKWTxE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 14:53:04 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E2A3C60F45;
-        Tue, 23 Nov 2021 19:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637696996;
-        bh=ssffmWy9JtYFUpADiyNa7TiRUR5UVxOfPmHgUAdzls4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aCT77HuqUzfHVld/Yd0cAYpR2SD36MlJx4N3z1uMi0wkPk4yzfwtdRos7SImlfk1/
-         sGol0jpKWMYvw+wtyC4a2Y89it7BkAKs1L+zYV82wQQ46olqUsArNgL1sDLHqgk3rJ
-         gAPdBOLrl6w2bAd9IE3wK56drx/GlXXt7ZUFu9XBzNuRiSBrcgmj8OX1jKAGkm07CR
-         nYp1atrG2K8paaDz5T+ApUWS1LiKePBECViLT0VivGZJ21ecMozFQ1rF7ExgMDcu8j
-         Xi/yDnDOBeEdoC4Mdc+JnTzbzA9L3wiNEtfQdLkbgJF5jhcc+qBkXWon9qRaLjvMW0
-         PQAhbIHk82HOQ==
-Date:   Tue, 23 Nov 2021 11:49:54 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Benjamin LaHaise <bcrl@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Ramji Jiyani <ramjiyani@google.com>, arnd@arndb.de, hch@lst.de,
-        kernel-team@android.com, linux-aio@kvack.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oleg@redhat.com,
-        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v5] aio: Add support for the POLLFREE
-Message-ID: <YZ1F4qmBJ42VpZp3@gmail.com>
-References: <20211027011834.2497484-1-ramjiyani@google.com>
+        id S240259AbhKWUMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 15:12:48 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:33786 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240271AbhKWUMZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 15:12:25 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id AEC251FD5A;
+        Tue, 23 Nov 2021 20:09:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1637698152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=to1JiEtdgAtTYZuUmNGxh55YpOijfzoRjl9rgnGo0kU=;
+        b=rwsoiFBlvBOCmcthSMKTyiXhvbpaatiGRe7XJFXSLF11qVvGpjJErOyVE7J3vW/EXuOp25
+        Fyu+b6KnNEnn94da7+wIyLCE/3Dgn3WKFCvmkH3v3epiJWa44NdW43rR/nD7RwubwJeFZh
+        gUeXZaoG6uroXUUV+6hX3NSTX8i0zMI=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 85519A3B85;
+        Tue, 23 Nov 2021 20:09:12 +0000 (UTC)
+Date:   Tue, 23 Nov 2021 21:09:08 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
+Message-ID: <YZ1KZKkHSHcSBnBV@dhcp22.suse.cz>
+References: <20211122153233.9924-1-mhocko@kernel.org>
+ <20211122153233.9924-3-mhocko@kernel.org>
+ <YZ06nna7RirAI+vJ@pc638.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211027011834.2497484-1-ramjiyani@google.com>
+In-Reply-To: <YZ06nna7RirAI+vJ@pc638.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 27, 2021 at 01:18:34AM +0000, Ramji Jiyani wrote:
-> Add support for the POLLFREE flag to force complete iocb inline in
-> aio_poll_wake(). A thread may use it to signal it's exit and/or request
-> to cleanup while pending poll request. In this case, aio_poll_wake()
-> needs to make sure it doesn't keep any reference to the queue entry
-> before returning from wake to avoid possible use after free via
-> poll_cancel() path.
-> 
-> UAF issue was found during binder and aio interactions in certain
-> sequence of events [1].
-> 
-> The POLLFREE flag is no more exclusive to the epoll and is being
-> shared with the aio. Remove comment from poll.h to avoid confusion.
-> 
-> [1] https://lore.kernel.org/r/CAKUd0B_TCXRY4h1hTztfwWbNSFQqsudDLn2S_28csgWZmZAG3Q@mail.gmail.com/
-> 
-> Fixes: af5c72b1fc7a ("Fix aio_poll() races")
-> Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
-> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Cc: stable@vger.kernel.org # 4.19+
-> ---
+On Tue 23-11-21 20:01:50, Uladzislau Rezki wrote:
+[...]
+> I have raised two concerns in our previous discussion about this change,
+> well that is sad...
 
-Looks good, feel free to add:
-
-	Reviewed-by: Eric Biggers <ebiggers@google.com>
-
-I'm still not 100% happy with the commit message, but it's good enough.
-The actual code looks correct.
-
-Who is going to take this patch?  This is an important fix; it shouldn't be
-sitting ignored for months.  get_maintainer.pl shows:
-
-$ ./scripts/get_maintainer.pl fs/aio.c
-Benjamin LaHaise <bcrl@kvack.org> (supporter:AIO)
-Alexander Viro <viro@zeniv.linux.org.uk> (maintainer:FILESYSTEMS (VFS and infrastructure))
-linux-aio@kvack.org (open list:AIO)
-linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure))
-linux-kernel@vger.kernel.org (open list)
-
-- Eric
+I definitely didn't mean to ignore any of the feedback. IIRC we were in
+a disagreement in the failure mode for retry loop - i.e. free all the
+allocated pages in case page table pages cannot be allocated. I still
+maintain my position and until there is a wider consensus on that I will
+keep my current implementation. The other concern was about failures
+warning but that shouldn't be a problem when basing on the current Linus
+tree. Am I missing something?
+-- 
+Michal Hocko
+SUSE Labs
