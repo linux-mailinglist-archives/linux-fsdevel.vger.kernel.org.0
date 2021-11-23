@@ -2,151 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 835F1459CCA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 08:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7422459CF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Nov 2021 08:44:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234082AbhKWHhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 02:37:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51230 "EHLO
+        id S234170AbhKWHrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 02:47:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233737AbhKWHhb (ORCPT
+        with ESMTP id S234082AbhKWHrG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 02:37:31 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8A1C061574;
-        Mon, 22 Nov 2021 23:34:24 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id m24so16301334pls.10;
-        Mon, 22 Nov 2021 23:34:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+mNOFlAZbq9k+Mu/JTHbCIh5dzjFIh42+nN9c/Feohs=;
-        b=l0JBdqgCRB1aHsIneMfPrpWXDEhQ4wIH3TEB86TGCpfTxpM/WJ2LUeWmGM8ZC3/mw5
-         nl1zVETIxotOP4EQsjM+XWJC+520/1SVXPCddeICLzT373fVkL/7Lofg6QV+TP8Xv3k2
-         9zII7uO7WZJMD5P89jL9FxHV/g0iLmBBfbMVfBmhuuXnaAQqQn+5XSZ6AnR7kjs6tfI2
-         aY74XaRl1oDjHZE9tNFrbZm/SYPhYH7rXF+fEVECRStNw1s+OdLpfh+jg1Ln5mykFEVO
-         DuZlf6K1BtF/XgdCHyOED6GM+3SnMl9Lei8OWIaKhJyz44jncGXP138U2hXRNb4Mr/cu
-         WNYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+mNOFlAZbq9k+Mu/JTHbCIh5dzjFIh42+nN9c/Feohs=;
-        b=xfAclm147ku3c9b/1ewKodXw1FC8iP19Map7Tr4z9pPzKCnyhi4FtQ6tw6l65gpzI/
-         mz1RPhAF9agXX8WZPM52B1soEAg8LSriU11tJPT79E7F/7qCIyK7jXhLWjfIIg4a4PG5
-         Bw5/4KAV1bYPXyre+QHfUD9zqIX3e+Pep54ZNkANkya18H2wnU13aFBWOCvZIPrS2aaI
-         k1kg76zCI1lD/xA3PGwwSOLd2RgP5W2Xoj28avvjQFIZlGkd+KE46NY3QcbvivQkS0mK
-         FKdXfFRMGs+F9HSIp+/GcIqDxiDMD1ZbI/7MWCH1Li9vr8OXW+JA0YoChVhkkz8xJWJv
-         LAfg==
-X-Gm-Message-State: AOAM531TQ+J3P966hEwFVOnOaSF8Jsksi+3MF1a/Ic3mxyQCBl8pY1Jx
-        xfG4/C/UaQ2M8LfXr1bcVK8=
-X-Google-Smtp-Source: ABdhPJw5z4WJquUdWT1YiAZ4TL3ixYctETOA9h8mQB/W8qMyd0B3QBMfNjz9HLZi1D4oazMvtapCdg==
-X-Received: by 2002:a17:90b:3144:: with SMTP id ip4mr418708pjb.153.1637652864053;
-        Mon, 22 Nov 2021 23:34:24 -0800 (PST)
-Received: from nikka.usen.ad.jp (113x33x71x97.ap113.ftth.ucom.ne.jp. [113.33.71.97])
-        by smtp.googlemail.com with ESMTPSA id q10sm957627pjd.0.2021.11.22.23.34.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 23:34:23 -0800 (PST)
-From:   Akira Kawata <akirakawata1@gmail.com>
-To:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        viro@zeniv.linux.org.uk, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     akirakawata1@gmail.com, Eric Biederman <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-Date:   Tue, 23 Nov 2021 16:31:59 +0900
-Message-Id: <20211123073157.198689-1-akirakawata1@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 23 Nov 2021 02:47:06 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA5EC061574;
+        Mon, 22 Nov 2021 23:43:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1zVuUCM6cd7uBkqMzegAmZTAxD2eFcHwR1T5FyIhwTQ=; b=ncTida/krSHTBqUJ2nrBzn0MN+
+        GItFwmBkgdjSw2J6R6ys5DrkecE2bG3GyHN2hdFxBl77RtFIjEua5CcaZ0Zd3+Nvt//dqY1uIy5ww
+        Af9AWH+ryUqa/AeaNZK8LhAsZtt2qMja0zgMxjbSNpNIYtfbeVRftiQhPXJUXfTvOOS4Tm+MMCj6V
+        r57pd2V+V9owpESAntKfQ3uaP/qg9Qok0vKBvDCAYXc3L+cd6u+zhTseEkKxGEOQJ0GOP/TQ4zYTy
+        tnJ6Z+xzCts1RhnPN2AgG2EzkRRGWWW1we/eDq+pIHOfLKpTL2qrnlVqyEm/gCB0Ijs70nKN8NyCW
+        SfqTmYbQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mpQT8-0015cU-Fv; Tue, 23 Nov 2021 07:43:58 +0000
+Date:   Mon, 22 Nov 2021 23:43:58 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        dm-devel@redhat.com,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: Any bio_clone_slow() implementation which doesn't share
+ bi_io_vec?
+Message-ID: <YZybvlheyLGAadFF@infradead.org>
+References: <5d8351f1-1b09-bff0-02f2-a417c1669607@gmx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d8351f1-1b09-bff0-02f2-a417c1669607@gmx.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=197921
+On Tue, Nov 23, 2021 at 02:44:32PM +0800, Qu Wenruo wrote:
+> Hi,
+> 
+> Although there are some out-of-date comments mentions other
+> bio_clone_*() variants, but there isn't really any other bio clone
+> variants other than __bio_clone_fast(), which shares bi_io_vec with the
+> source bio.
+> 
+> This limits means we can't free the source bio before the cloned one.
+> 
+> Is there any bio_clone variant which do a deep clone, including bi_io_vec?
 
-As pointed out in the discussion of buglink, we cannot calculate AT_PHDR
-as the sum of load_addr and exec->e_phoff. This is because exec->e_phoff
-is the offset of PHDRs in the file and the address of PHDRs in the
-memory may differ from it. This patch fixes the bug by calculating the
-address of program headers from PT_LOADs directly.
+There is no use case for that, unless the actual data changes like in
+the bounce buffering code.
 
-Signed-off-by: Akira Kawata <akirakawata1@gmail.com>
----
-Changes in v2:
-- Remove unused load_addr from create_elf_tables.
-- Improve the commit message.
+> That's why the bio_clone thing is involved, there is still some corner
+> cases that we don't want to fail the whole large bio if there is only
+> one stripe failed (mostly for read bio, that we want to salvage as much
+> data as possible)
+> 
+> Thus regular bio_split() + bio_chain() solution is not that good here.
+> 
+> Any idea why no such bio_clone_slow() or bio_split_slow() provided in
+> block layer?
+> 
+> Or really bio_split() + bio_chain() is the only recommended solution?
 
- fs/binfmt_elf.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index f8c7f26f1fbb..af8313e36665 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -170,8 +170,8 @@ static int padzero(unsigned long elf_bss)
- 
- static int
- create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
--		unsigned long load_addr, unsigned long interp_load_addr,
--		unsigned long e_entry)
-+		unsigned long interp_load_addr,
-+		unsigned long e_entry, unsigned long phdr_addr)
- {
- 	struct mm_struct *mm = current->mm;
- 	unsigned long p = bprm->p;
-@@ -257,7 +257,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
- 	NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
- 	NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
--	NEW_AUX_ENT(AT_PHDR, load_addr + exec->e_phoff);
-+	NEW_AUX_ENT(AT_PHDR, phdr_addr);
- 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
- 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
-@@ -823,7 +823,7 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
- static int load_elf_binary(struct linux_binprm *bprm)
- {
- 	struct file *interpreter = NULL; /* to shut gcc up */
-- 	unsigned long load_addr = 0, load_bias = 0;
-+	unsigned long load_addr = 0, load_bias = 0, phdr_addr = 0;
- 	int load_addr_set = 0;
- 	unsigned long error;
- 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
-@@ -1169,6 +1169,13 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 				reloc_func_desc = load_bias;
- 			}
- 		}
-+
-+		if (elf_ppnt->p_offset <= elf_ex->e_phoff &&
-+		    elf_ex->e_phoff < elf_ppnt->p_offset + elf_ppnt->p_filesz) {
-+			phdr_addr = elf_ex->e_phoff - elf_ppnt->p_offset +
-+				    elf_ppnt->p_vaddr;
-+		}
-+
- 		k = elf_ppnt->p_vaddr;
- 		if ((elf_ppnt->p_flags & PF_X) && k < start_code)
- 			start_code = k;
-@@ -1204,6 +1211,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	}
- 
- 	e_entry = elf_ex->e_entry + load_bias;
-+	phdr_addr += load_bias;
- 	elf_bss += load_bias;
- 	elf_brk += load_bias;
- 	start_code += load_bias;
-@@ -1267,8 +1275,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		goto out;
- #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
- 
--	retval = create_elf_tables(bprm, elf_ex,
--			  load_addr, interp_load_addr, e_entry);
-+	retval = create_elf_tables(bprm, elf_ex, interp_load_addr,
-+				   e_entry, phdr_addr);
- 	if (retval < 0)
- 		goto out;
- 
--- 
-2.25.1
-
+You can use bio_split witout bio_chain.  You just need your own
+bi_end_io handler that first performs the action you want and then
+contains code equivalent to __bio_chain_endio.  As a bonus you can
+pint bi_private to whatever you want, it does not have to be the parent
+bio, just something that allows you to find it.
