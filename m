@@ -2,228 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F8445B7C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 10:49:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23D8645B864
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 11:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239118AbhKXJwR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 04:52:17 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:60860 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231715AbhKXJwR (ORCPT
+        id S241504AbhKXKfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 05:35:34 -0500
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:56659 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241501AbhKXKfd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 04:52:17 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id D12AA21961;
-        Wed, 24 Nov 2021 09:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1637747346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=twMSLJi3dl6PV+ZvrQLD6fxiNCqI+8+IiOyNzLqomls=;
-        b=AsSjhq5UWoJxHloKmYuZMvWa9oGBfue4hStjTj62gtxvDfOAPjPRfciIvzyhYYT/brTJj8
-        ij8R2kAZIUFvqMD6QnOcHfmigo/jvWBIYGMwcHmpM2xFKF08a1tSD7at/XI9gi09iiD1G0
-        fNjGCCcV8c01TxYpYRSJOBqjuIubvsU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1637747346;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=twMSLJi3dl6PV+ZvrQLD6fxiNCqI+8+IiOyNzLqomls=;
-        b=zCpp+oSvqqEv+CCnvQnyAl+aiBQHmm2JBPCnsf3bwPtwcrPXovFbQnJN14LhTM2NOvpTLr
-        3+hSl9JsXeV7JADw==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id B87A0A3B83;
-        Wed, 24 Nov 2021 09:49:06 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A4FC61E14AC; Wed, 24 Nov 2021 10:49:06 +0100 (CET)
-Date:   Wed, 24 Nov 2021 10:49:06 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     akpm@linux-foundation.org, keescook@chromium.org,
-        yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
-        clemens@ladisch.de, arnd@arndb.de, gregkh@linuxfoundation.org,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, tvrtko.ursulin@linux.intel.com,
-        airlied@linux.ie, benh@kernel.crashing.org, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com, jack@suse.cz,
-        amir73il@gmail.com, phil@philpotter.co.uk, viro@zeniv.linux.org.uk,
-        julia.lawall@inria.fr, ocfs2-devel@oss.oracle.com,
-        linuxppc-dev@lists.ozlabs.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] ocfs2: simplify subdirectory registration with
- register_sysctl()
-Message-ID: <20211124094906.GG8583@quack2.suse.cz>
-References: <20211123202422.819032-1-mcgrof@kernel.org>
- <20211123202422.819032-5-mcgrof@kernel.org>
+        Wed, 24 Nov 2021 05:35:33 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 007E41C4678
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 10:32:22 +0000 (GMT)
+Received: (qmail 23747 invoked from network); 24 Nov 2021 10:32:22 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 24 Nov 2021 10:32:22 -0000
+Date:   Wed, 24 Nov 2021 10:32:21 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/8] mm/vmscan: Throttle reclaim when no progress is
+ being made
+Message-ID: <20211124103221.GD3366@techsingularity.net>
+References: <20211022144651.19914-1-mgorman@techsingularity.net>
+ <20211022144651.19914-4-mgorman@techsingularity.net>
+ <20211124011912.GA265983@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20211123202422.819032-5-mcgrof@kernel.org>
+In-Reply-To: <20211124011912.GA265983@magnolia>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 23-11-21 12:24:18, Luis Chamberlain wrote:
-> There is no need to user boiler plate code to specify a set of base
-> directories we're going to stuff sysctls under. Simplify this by using
-> register_sysctl() and specifying the directory path directly.
+On Tue, Nov 23, 2021 at 05:19:12PM -0800, Darrick J. Wong wrote:
+> On Fri, Oct 22, 2021 at 03:46:46PM +0100, Mel Gorman wrote:
+> > Memcg reclaim throttles on congestion if no reclaim progress is made.
+> > This makes little sense, it might be due to writeback or a host of
+> > other factors.
+> > 
+> > For !memcg reclaim, it's messy. Direct reclaim primarily is throttled
+> > in the page allocator if it is failing to make progress. Kswapd
+> > throttles if too many pages are under writeback and marked for
+> > immediate reclaim.
+> > 
+> > This patch explicitly throttles if reclaim is failing to make progress.
 > 
-> // pycocci sysctl-subdir-register-sysctl-simplify.cocci PATH
+> Hi Mel,
+> 
+> Ever since Christoph broke swapfiles, I've been carrying around a little
+> fstest in my dev tree[1] that tries to exercise paging things in and out
+> of a swapfile.  Sadly I've been trapped in about three dozen customer
+> escalations for over a month, which means I haven't been able to do much
+> upstream in weeks.  Like submit this test upstream. :(
+> 
+> Now that I've finally gotten around to trying out a 5.16-rc2 build, I
+> notice that the runtime of this test has gone from ~5s to 2 hours.
+> Among other things that it does, the test sets up a cgroup with a memory
+> controller limiting the memory usage to 25MB, then runs a program that
+> tries to dirty 50MB of memory.  There's 2GB of memory in the VM, so
+> we're not running reclaim globally, but the cgroup gets throttled very
+> severely.
+> 
 
-Heh, nice example of using Coccinelle. The result looks good. Feel free to
-add:
+Ok, so this test cannot make progress until some of the cgroup pages get
+cleaned. What is the expectation for the test? Should it OOM or do you
+expect it to have spin-like behaviour until some writeback completes?
+I'm guessing you'd prefer it to spin and right now it's sleeping far
+too much.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> AFAICT the system is mostly idle, but it's difficult to tell because ps
+> and top also get stuck waiting for this cgroup for whatever reason. 
 
-								Honza
+But this is surprising because I expect that ps and top are not running
+within the cgroup. Was /proc/PID/stack readable? 
 
+> My
+> uninformed spculation is that usemem_and_swapoff takes a page fault
+> while dirtying the 50MB memory buffer, prepares to pull a page in from
+> swap, tries to evict another page to stay under the memcg limit, but
+> that decides that it's making no progress and calls
+> reclaim_throttle(..., VMSCAN_THROTTLE_NOPROGRESS).
+> 
+> The sleep is uninterruptible, so I can't even kill -9 fstests to shut it
+> down.  Eventually we either finish the test or (for the mlock part) the
+> OOM killer actually kills the process, but this takes a very long time.
+> 
 
+The sleep can be interruptible.
+
+> Any thoughts?  For now I can just hack around this by skipping
+> reclaim_throttle if cgroup_reclaim() == true, but that's probably not
+> the correct fix. :)
 > 
-> @c1@
-> expression E1;
-> identifier subdir, sysctls;
-> @@
-> 
-> static struct ctl_table subdir[] = {
-> 	{
-> 		.procname = E1,
-> 		.maxlen = 0,
-> 		.mode = 0555,
-> 		.child = sysctls,
-> 	},
-> 	{ }
-> };
-> 
-> @c2@
-> identifier c1.subdir;
-> 
-> expression E2;
-> identifier base;
-> @@
-> 
-> static struct ctl_table base[] = {
-> 	{
-> 		.procname = E2,
-> 		.maxlen = 0,
-> 		.mode = 0555,
-> 		.child = subdir,
-> 	},
-> 	{ }
-> };
-> 
-> @c3@
-> identifier c2.base;
-> identifier header;
-> @@
-> 
-> header = register_sysctl_table(base);
-> 
-> @r1 depends on c1 && c2 && c3@
-> expression c1.E1;
-> identifier c1.subdir, c1.sysctls;
-> @@
-> 
-> -static struct ctl_table subdir[] = {
-> -	{
-> -		.procname = E1,
-> -		.maxlen = 0,
-> -		.mode = 0555,
-> -		.child = sysctls,
-> -	},
-> -	{ }
-> -};
-> 
-> @r2 depends on c1 && c2 && c3@
-> identifier c1.subdir;
-> 
-> expression c2.E2;
-> identifier c2.base;
-> @@
-> -static struct ctl_table base[] = {
-> -	{
-> -		.procname = E2,
-> -		.maxlen = 0,
-> -		.mode = 0555,
-> -		.child = subdir,
-> -	},
-> -	{ }
-> -};
-> 
-> @initialize:python@
-> @@
-> 
-> def make_my_fresh_expression(s1, s2):
->   return '"' + s1.strip('"') + "/" + s2.strip('"') + '"'
-> 
-> @r3 depends on c1 && c2 && c3@
-> expression c1.E1;
-> identifier c1.sysctls;
-> expression c2.E2;
-> identifier c2.base;
-> identifier c3.header;
-> fresh identifier E3 = script:python(E2, E1) { make_my_fresh_expression(E2, E1) };
-> @@
-> 
-> header =
-> -register_sysctl_table(base);
-> +register_sysctl(E3, sysctls);
-> 
-> Generated-by: Coccinelle SmPL
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  fs/ocfs2/stackglue.c | 25 +------------------------
->  1 file changed, 1 insertion(+), 24 deletions(-)
-> 
-> diff --git a/fs/ocfs2/stackglue.c b/fs/ocfs2/stackglue.c
-> index 16f1bfc407f2..731558a6f27d 100644
-> --- a/fs/ocfs2/stackglue.c
-> +++ b/fs/ocfs2/stackglue.c
-> @@ -672,31 +672,8 @@ static struct ctl_table ocfs2_mod_table[] = {
->  	{ }
->  };
->  
-> -static struct ctl_table ocfs2_kern_table[] = {
-> -	{
-> -		.procname	= "ocfs2",
-> -		.data		= NULL,
-> -		.maxlen		= 0,
-> -		.mode		= 0555,
-> -		.child		= ocfs2_mod_table
-> -	},
-> -	{ }
-> -};
-> -
-> -static struct ctl_table ocfs2_root_table[] = {
-> -	{
-> -		.procname	= "fs",
-> -		.data		= NULL,
-> -		.maxlen		= 0,
-> -		.mode		= 0555,
-> -		.child		= ocfs2_kern_table
-> -	},
-> -	{ }
-> -};
-> -
->  static struct ctl_table_header *ocfs2_table_header;
->  
-> -
->  /*
->   * Initialization
->   */
-> @@ -705,7 +682,7 @@ static int __init ocfs2_stack_glue_init(void)
->  {
->  	strcpy(cluster_stack_name, OCFS2_STACK_PLUGIN_O2CB);
->  
-> -	ocfs2_table_header = register_sysctl_table(ocfs2_root_table);
-> +	ocfs2_table_header = register_sysctl("fs/ocfs2", ocfs2_mod_table);
->  	if (!ocfs2_table_header) {
->  		printk(KERN_ERR
->  		       "ocfs2 stack glue: unable to register sysctl\n");
-> -- 
-> 2.33.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+No, it wouldn't be but a possibility is throttling for only 1 jiffy if
+reclaiming within a memcg and the zone is balanced overall.
+
+The interruptible part should just be the patch below. I need to poke at
+the cgroup limit part a bit
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index fb9584641ac7..07db03883062 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1068,7 +1068,7 @@ void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason)
+ 		break;
+ 	}
+ 
+-	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
++	prepare_to_wait(wqh, &wait, TASK_INTERRUPTIBLE);
+ 	ret = schedule_timeout(timeout);
+ 	finish_wait(wqh, &wait);
+ 
