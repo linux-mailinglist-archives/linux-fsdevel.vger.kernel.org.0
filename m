@@ -2,74 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 303FD45B2EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE1545B316
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 05:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233418AbhKXD72 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 22:59:28 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:31901 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232269AbhKXD72 (ORCPT
+        id S229677AbhKXE1p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 23:27:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229622AbhKXE1o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 22:59:28 -0500
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4HzRy83VzbzcZxP;
-        Wed, 24 Nov 2021 11:56:16 +0800 (CST)
-Received: from kwepemm600019.china.huawei.com (7.193.23.64) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 24 Nov 2021 11:56:17 +0800
-Received: from localhost.localdomain (10.175.127.227) by
- kwepemm600019.china.huawei.com (7.193.23.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 24 Nov 2021 11:56:08 +0800
-From:   yangerkun <yangerkun@huawei.com>
-To:     <mike.kravetz@oracle.com>, <willy@infradead.org>
-CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <yukuai3@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH] hugetlbfs: avoid overflow in hugetlbfs_fallocate
-Date:   Wed, 24 Nov 2021 12:08:18 +0800
-Message-ID: <20211124040818.2219374-1-yangerkun@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 23 Nov 2021 23:27:44 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC426C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 20:24:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=rb3Kpyd2YBsGfOg22Yvh86fEzaEHWDKx9UmYRlAHfSA=; b=oiOnpw1mu00N/PZX60L/kuEChu
+        0ScvhPoQ+eKgj8sahtj4kPl3xHG2ddfLsMloX7Mh7QElZehjpxc6ICVlkUokzMkK6KZjwKzdORL/w
+        CxX716pOw7Uqrqa21cvyVzDSL6TJU1XvpDjFiGiXL5P2lcWdA3PAiHpB1ifinoRSaQYNU1W69cy4E
+        BlJtUFrXc518d3EVz2eL5HuVTQVVRvZ9YXvrJahurpt2QxUVrESEQAdL2XLyBewfnULoWTDySnxlT
+        FZ/iAIL80pUeThi4ULfji83hTccFoTlnzuV2Va05A3WXxjw0BWw6jBpnnOBpOoKigCAOeTRHMjLkZ
+        nS4V9/ng==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mpjpZ-0009tK-AD; Wed, 24 Nov 2021 04:24:25 +0000
+Date:   Wed, 24 Nov 2021 04:24:25 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     yangerkun <yangerkun@huawei.com>
+Cc:     mike.kravetz@oracle.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, yukuai3@huawei.com
+Subject: Re: [PATCH] hugetlbfs: avoid overflow in hugetlbfs_fallocate
+Message-ID: <YZ2+ecB1dDOdY+gp@casper.infradead.org>
+References: <20211124040818.2219374-1-yangerkun@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600019.china.huawei.com (7.193.23.64)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211124040818.2219374-1-yangerkun@huawei.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-luojiajun report a problem[1] two years ago which seems still exists in
-mainline. vfs_fallocate can avoid 'offset + len' trigger overflow, but
-'offset + len + hpage_size - 1' may overflow too and will lead to a
-wrong 'end'. luojiajun give a solution which can fix the wrong 'end'
-but leave the overflow still happened. We should fix it by transfer
-'offset' to unsigned long long.
+On Wed, Nov 24, 2021 at 12:08:18PM +0800, yangerkun wrote:
+>  	start = offset >> hpage_shift;
+> -	end = (offset + len + hpage_size - 1) >> hpage_shift;
+> +	end = ((unsigned long long)offset + len + hpage_size - 1)
+> +		>> hpage_shift;
 
-[1] https://patchwork.kernel.org/project/linux-mm/patch/1554775226-67213-1-git-send-email-luojiajun3@huawei.com/
-
-Signed-off-by: yangerkun <yangerkun@huawei.com>
----
- fs/hugetlbfs/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 49d2e686be74..8012a14901de 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -651,7 +651,8 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 	 * as well as being converted to page offsets.
- 	 */
- 	start = offset >> hpage_shift;
--	end = (offset + len + hpage_size - 1) >> hpage_shift;
-+	end = ((unsigned long long)offset + len + hpage_size - 1)
-+		>> hpage_shift;
- 
- 	inode_lock(inode);
- 
--- 
-2.31.1
-
++	end = DIV_ROUND_UP_ULL(offset + len, hpage_size);
