@@ -2,113 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64B6A45CE29
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 21:37:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3B6245CE2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 21:38:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237496AbhKXUkZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 15:40:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231846AbhKXUkY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 15:40:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD72460E05;
-        Wed, 24 Nov 2021 20:37:12 +0000 (UTC)
-Date:   Wed, 24 Nov 2021 20:37:09 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
- with sub-page faults
-Message-ID: <YZ6idVy3zqQC4atv@arm.com>
-References: <20211124192024.2408218-1-catalin.marinas@arm.com>
- <20211124192024.2408218-4-catalin.marinas@arm.com>
- <YZ6arlsi2L3LVbFO@casper.infradead.org>
+        id S237855AbhKXUlJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 15:41:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48638 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237679AbhKXUlI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Nov 2021 15:41:08 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76AC5C061574;
+        Wed, 24 Nov 2021 12:37:58 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id b40so10407521lfv.10;
+        Wed, 24 Nov 2021 12:37:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EwupdbY0PB4JvA93A03z8JMfsTzehEG1TRHp4ST91mU=;
+        b=aHPtsF5pdrfDnRfEapR+kwM43+oueoevP6OkEWkjP0RfxBESUAk5JcJEfGeBEeJeLh
+         ekTkoQ3OEuegX4bpBrCqc/uMEex8fr4yAZP9GKT3VoNM096P+lY2c/dekOKFc+z9lbzF
+         Wz8pE7D7R+rHKIg72fmRngd31tNjfrRSBAmmI4DjbS6jz7wSvbTiOhxuO78xn6E4LKqA
+         9wxH47xDueCiPzGZ5wqc2aymPUCPXQkppgmOuC7r0IrS/pnxa0Pi0HorTKBGjkL9ains
+         XIBPx5u0fId6dQncch1PWIxOunIjTO8UX7z+7DXhGBLxqqWogBjG097fvmN3Q4DNtWPp
+         h2bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EwupdbY0PB4JvA93A03z8JMfsTzehEG1TRHp4ST91mU=;
+        b=z7L0+ODVc4rf8tsclzcQOUYVcQlgYJCMpxgTDMmYOzhLZi/NSmXaqSufvOTd/3IBn1
+         PRrYdNFIRCt8d1GSH6VobQF8fZ9Lq6+c77bx3Zgx1EdDe/VupdRqyoIUWsZb13fgHcTc
+         dFsKhHBuNekhWbyhQSFAsBQhXBKh+MYLiifsJDH5q6GeGkrT+qNN8Y5ilSnnHhw7XHQ4
+         tnje7risGZn7YWpmadD/YcE1Rykx3VoLra///8dOJbIQBu3kF0L//9Lch+lPirhPWa/W
+         yjil7bEIrOwG8hOhiFEU4wpTUfafLDXWBI+yRXhmgDEgZ32g7PRyR4xTb+1OeUDT5rUa
+         NpJA==
+X-Gm-Message-State: AOAM5324z6tQnXEfLO+/P1QWb9Iw/OrN34RzI1BUBNTFnULXkfn68351
+        TS1Bd5TeIBlo+T9aIx+Pd7o=
+X-Google-Smtp-Source: ABdhPJxpSQOKWZdYJXswWChcSrw3zy7D35ooyxk4IDHZQ43EVaoDf0Nyi/C8b32BuGRDs8NxFIxblQ==
+X-Received: by 2002:a19:c3d6:: with SMTP id t205mr18211274lff.441.1637786276789;
+        Wed, 24 Nov 2021 12:37:56 -0800 (PST)
+Received: from pc638.lan (h5ef52e3d.seluork.dyn.perspektivbredband.net. [94.245.46.61])
+        by smtp.gmail.com with ESMTPSA id t20sm76010lji.44.2021.11.24.12.37.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Nov 2021 12:37:56 -0800 (PST)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
+Date:   Wed, 24 Nov 2021 21:37:54 +0100
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
+Message-ID: <YZ6iojllRBAAk8LW@pc638.lan>
+References: <20211122153233.9924-1-mhocko@kernel.org>
+ <20211122153233.9924-3-mhocko@kernel.org>
+ <YZ06nna7RirAI+vJ@pc638.lan>
+ <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
+ <YZ37IJq3+DrVhAcD@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YZ6arlsi2L3LVbFO@casper.infradead.org>
+In-Reply-To: <YZ37IJq3+DrVhAcD@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 24, 2021 at 08:03:58PM +0000, Matthew Wilcox wrote:
-> On Wed, Nov 24, 2021 at 07:20:24PM +0000, Catalin Marinas wrote:
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -2223,7 +2223,8 @@ static noinline int search_ioctl(struct inode *inode,
-> >  
-> >  	while (1) {
-> >  		ret = -EFAULT;
-> > -		if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
-> > +		if (fault_in_exact_writeable(ubuf + sk_offset,
-> > +					     *buf_size - sk_offset))
-> >  			break;
-> >  
-> >  		ret = btrfs_search_forward(root, &key, path, sk->min_transid);
+On Wed, Nov 24, 2021 at 09:43:12AM +0100, Michal Hocko wrote:
+> On Tue 23-11-21 17:02:38, Andrew Morton wrote:
+> > On Tue, 23 Nov 2021 20:01:50 +0100 Uladzislau Rezki <urezki@gmail.com> wrote:
+> > 
+> > > On Mon, Nov 22, 2021 at 04:32:31PM +0100, Michal Hocko wrote:
+> > > > From: Michal Hocko <mhocko@suse.com>
+> > > > 
+> > > > Dave Chinner has mentioned that some of the xfs code would benefit from
+> > > > kvmalloc support for __GFP_NOFAIL because they have allocations that
+> > > > cannot fail and they do not fit into a single page.
+> > 
+> > Perhaps we should tell xfs "no, do it internally".  Because this is a
+> > rather nasty-looking thing - do we want to encourage other callsites to
+> > start using it?
 > 
-> Couldn't we avoid all of this nastiness by doing ...
-
-I had a similar attempt initially but I concluded that it doesn't work:
-
-https://lore.kernel.org/r/YS40qqmXL7CMFLGq@arm.com
-
-> @@ -2121,10 +2121,9 @@ static noinline int copy_to_sk(struct btrfs_path *path,
->                  * problem. Otherwise we'll fault and then copy the buffer in
->                  * properly this next time through
->                  */
-> -               if (copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh))) {
-> -                       ret = 0;
-> +               ret = __copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh));
-> +               if (ret)
-
-There is no requirement for the arch implementation to be exact and copy
-the maximum number of bytes possible. It can fail early while there are
-still some bytes left that would not fault. The only requirement is that
-if it is restarted from where it faulted, it makes some progress (on
-arm64 there is one extra byte).
-
->                         goto out;
-> -               }
+> This is what xfs is likely going to do if we do not provide the
+> functionality. I just do not see why that would be a better outcome
+> though. My longterm experience tells me that whenever we ignore
+> requirements by other subsystems then those requirements materialize in
+> some form in the end. In many cases done either suboptimaly or outright
+> wrong. This might be not the case for xfs as the quality of
+> implementation is high there but this is not the case in general.
+> 
+> Even if people start using vmalloc(GFP_NOFAIL) out of lazyness or for
+> any other stupid reason then what? Is that something we should worry
+> about? Retrying within the allocator doesn't make the things worse. In
+> fact it is just easier to find such abusers by grep which would be more
+> elaborate with custom retry loops.
 >  
->                 *sk_offset += sizeof(sh);
-> @@ -2196,6 +2195,7 @@ static noinline int search_ioctl(struct inode *inode,
->         int ret;
->         int num_found = 0;
->         unsigned long sk_offset = 0;
-> +       unsigned long next_offset = 0;
->  
->         if (*buf_size < sizeof(struct btrfs_ioctl_search_header)) {
->                 *buf_size = sizeof(struct btrfs_ioctl_search_header);
-> @@ -2223,7 +2223,8 @@ static noinline int search_ioctl(struct inode *inode,
->  
->         while (1) {
->                 ret = -EFAULT;
-> -               if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
-> +               if (fault_in_writeable(ubuf + sk_offset + next_offset,
-> +                                       *buf_size - sk_offset - next_offset))
->                         break;
->  
->                 ret = btrfs_search_forward(root, &key, path, sk->min_transid);
-> @@ -2235,11 +2236,12 @@ static noinline int search_ioctl(struct inode *inode,
->                 ret = copy_to_sk(path, &key, sk, buf_size, ubuf,
->                                  &sk_offset, &num_found);
->                 btrfs_release_path(path);
-> -               if (ret)
-> +               if (ret > 0)
-> +                       next_offset = ret;
+> [...]
+> > > > +		if (nofail) {
+> > > > +			schedule_timeout_uninterruptible(1);
+> > > > +			goto again;
+> > > > +		}
+> > 
+> > The idea behind congestion_wait() is to prevent us from having to
+> > hard-wire delays like this.  congestion_wait(1) would sleep for up to
+> > one millisecond, but will return earlier if reclaim events happened
+> > which make it likely that the caller can now proceed with the
+> > allocation event, successfully.
+> > 
+> > However it turns out that congestion_wait() was quietly broken at the
+> > block level some time ago.  We could perhaps resurrect the concept at
+> > another level - say by releasing congestion_wait() callers if an amount
+> > of memory newly becomes allocatable.  This obviously asks for inclusion
+> > of zone/node/etc info from the congestion_wait() caller.  But that's
+> > just an optimization - if the newly-available memory isn't useful to
+> > the congestion_wait() caller, they just fail the allocation attempts
+> > and wait again.
+> 
+> vmalloc has two potential failure modes. Depleted memory and vmalloc
+> space. So there are two different events to wait for. I do agree that
+> schedule_timeout_uninterruptible is both ugly and very simple but do we
+> really need a much more sophisticated solution at this stage?
+>
+I would say there is at least one more. It is about when users set their
+own range(start:end) where to allocate. In that scenario we might never
+return to a user, because there might not be any free vmap space on
+specified range.
 
-So after this point, ubuf+sk_offset+next_offset is writeable by
-fault_in_writable(). If copy_to_user() was attempted on
-ubuf+sk_offset+next_offset, all would be fine, but copy_to_sk() restarts
-the copy from ubuf+sk_offset, so it returns exacting the same ret as in
-the previous iteration.
+To address this, we can allow __GFP_NOFAIL only for entire vmalloc
+address space, i.e. within VMALLOC_START:VMALLOC_END. By doing so
+we will guarantee that we will not run out of vmap space, at least
+for 64 bit systems, for smaller 32 bit ones we can not guarantee it
+but it is populated back when the "lazily free logic" is kicked.
 
--- 
-Catalin
+--
+Vlad Rezki
