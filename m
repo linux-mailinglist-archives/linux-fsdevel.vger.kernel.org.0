@@ -2,237 +2,536 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 214E345AFFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 00:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0276B45B09A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 01:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236391AbhKWX06 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 18:26:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35316 "EHLO mail.kernel.org"
+        id S240634AbhKXART (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 19:17:19 -0500
+Received: from mga07.intel.com ([134.134.136.100]:34248 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236364AbhKWX0x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 18:26:53 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9ACBA60F9F;
-        Tue, 23 Nov 2021 23:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637709824;
-        bh=5mD5Ft2248hZ6MnliW2gzW5inXXajMFC3BXdha2gcpo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bKZH4SCjryMMRU7IGwflwTKcsyuyvsZVfJOi8HdqqujH1O9AcN1qXZpFvgQuZUE5Q
-         nSi/zrN/RAoEkZ60usvpedD6E/Pqb56+1Iwk4CvJIuQzp+JNBLRp+QyL3+JhxDsTv1
-         A84wCGsSqD103O0AuF8LslJ0YvTkbkkxZ2N8kIXC9kz1tX10sSvIgvF59U3kVU0QK2
-         kaFFsrviqC5bTJILo2zz9cvl26ySj1r9aM1M8bqs6nZCSo8PHMBWCXP2QPb3mvgwzc
-         9jJyjEs68EytXeCScmiqSIijjJenBX79hVp6uGb18hRfnqPOfpn2kp0uk59GbwE8tg
-         xnXrNAwkQTcZQ==
-Date:   Tue, 23 Nov 2021 15:23:43 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Benjamin LaHaise <bcrl@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Ramji Jiyani <ramjiyani@google.com>, arnd@arndb.de,
-        kernel-team@android.com, linux-aio@kvack.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oleg@redhat.com,
-        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v5] aio: Add support for the POLLFREE
-Message-ID: <YZ13/8WOXY7cxYsV@sol.localdomain>
-References: <20211027011834.2497484-1-ramjiyani@google.com>
- <YZ1F4qmBJ42VpZp3@gmail.com>
+        id S229588AbhKXARP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 19:17:15 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10177"; a="298574126"
+X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
+   d="scan'208";a="298574126"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 16:14:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
+   d="scan'208";a="597292446"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Nov 2021 16:14:02 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mpfvG-0002mS-2i; Wed, 24 Nov 2021 00:14:02 +0000
+Date:   Wed, 24 Nov 2021 08:13:00 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Akira Kawata <akirakawata1@gmail.com>, akpm@linux-foundation.org,
+        adobriyan@gmail.com, viro@zeniv.linux.org.uk,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        akirakawata1@gmail.com, Eric Biederman <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
+Message-ID: <202111240802.Wxm5q6aP-lkp@intel.com>
+References: <20211123073157.198689-1-akirakawata1@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YZ1F4qmBJ42VpZp3@gmail.com>
+In-Reply-To: <20211123073157.198689-1-akirakawata1@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 11:49:54AM -0800, Eric Biggers wrote:
-> On Wed, Oct 27, 2021 at 01:18:34AM +0000, Ramji Jiyani wrote:
-> > Add support for the POLLFREE flag to force complete iocb inline in
-> > aio_poll_wake(). A thread may use it to signal it's exit and/or request
-> > to cleanup while pending poll request. In this case, aio_poll_wake()
-> > needs to make sure it doesn't keep any reference to the queue entry
-> > before returning from wake to avoid possible use after free via
-> > poll_cancel() path.
-> > 
-> > UAF issue was found during binder and aio interactions in certain
-> > sequence of events [1].
-> > 
-> > The POLLFREE flag is no more exclusive to the epoll and is being
-> > shared with the aio. Remove comment from poll.h to avoid confusion.
-> > 
-> > [1] https://lore.kernel.org/r/CAKUd0B_TCXRY4h1hTztfwWbNSFQqsudDLn2S_28csgWZmZAG3Q@mail.gmail.com/
-> > 
-> > Fixes: af5c72b1fc7a ("Fix aio_poll() races")
-> > Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
-> > Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Cc: stable@vger.kernel.org # 4.19+
-> > ---
-> 
-> Looks good, feel free to add:
-> 
-> 	Reviewed-by: Eric Biggers <ebiggers@google.com>
-> 
-> I'm still not 100% happy with the commit message, but it's good enough.
-> The actual code looks correct.
-> 
-> Who is going to take this patch?  This is an important fix; it shouldn't be
-> sitting ignored for months.  get_maintainer.pl shows:
-> 
-> $ ./scripts/get_maintainer.pl fs/aio.c
-> Benjamin LaHaise <bcrl@kvack.org> (supporter:AIO)
-> Alexander Viro <viro@zeniv.linux.org.uk> (maintainer:FILESYSTEMS (VFS and infrastructure))
-> linux-aio@kvack.org (open list:AIO)
-> linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure))
-> linux-kernel@vger.kernel.org (open list)
+Hi Akira,
 
-Actually, there is a bug in this patch -- it creates a lock inversion between
-ctx->ctx_lock (kioctx::ctx_lock) and req->head->lock (wait_queue_head::lock).
+Thank you for the patch! Perhaps something to improve:
 
-Task 1:
-	signalfd_cleanup()
-	  -> wake_up_poll() [takes wait_queue_head::lock]
-	    -> aio_poll_wake() [takes kioctx::ctx_lock]
+[auto build test WARNING on hnaz-mm/master]
+[also build test WARNING on kees/for-next/pstore linus/master v5.16-rc2 next-20211123]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Task 2:
-	sys_io_cancel() [takes kioctx::ctx_lock]
-	  -> aio_poll_cancel [takes wait_queue_head::lock]
+url:    https://github.com/0day-ci/linux/commits/Akira-Kawata/fs-binfmt_elf-Fix-AT_PHDR-for-unusual-ELF-files/20211123-153459
+base:   https://github.com/hnaz/linux-mm master
+config: i386-randconfig-a012-20211123 (https://download.01.org/0day-ci/archive/20211124/202111240802.Wxm5q6aP-lkp@intel.com/config.gz)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 49e3838145dff1ec91c2e67a2cb562775c8d2a08)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/8e8533fa0fdbe61a557de9268ea7091a75aebe81
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Akira-Kawata/fs-binfmt_elf-Fix-AT_PHDR-for-unusual-ELF-files/20211123-153459
+        git checkout 8e8533fa0fdbe61a557de9268ea7091a75aebe81
+        # save the config file to linux build tree
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 ARCH=i386 
 
-Previously this was okay because the lock operation in aio_poll_wake() was only
-a trylock.  This patch changes it to a regular lock, which causes a deadlock.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-I am able to reproduce this deadlock.  It also generates a lockdep report, shown
-below.  Unfortunately, I don't know how to fix it.  Anyone have any ideas?
-Al and Christoph, it looks like you wrote most of the aio poll code?
+All warnings (new ones prefixed by >>):
 
-Note, the use-after-free this patch is fixing also affects signalfd, not just
-binder, since both rely on POLLFREE.  (I was testing it with signalfd.)  So we
-really need to fix it one way or another...
-
-======================================================
-WARNING: possible circular locking dependency detected
-5.16.0-rc2-00001-gf97efc5c03bf #22 Not tainted
-------------------------------------------------------
-aio/137 is trying to acquire lock:
-ffff888006170158 (&ctx->ctx_lock){..-.}-{2:2}, at: aio_poll_wake+0x1ac/0x390 fs/aio.c:1693
-
-but task is already holding lock:
-ffff8880053a91e0 (&sighand->signalfd_wqh){....}-{2:2}, at: __wake_up_common_lock+0x5b/0xb0 kernel/sched/wait.c:137
-
-which lock already depends on the new lock.
+>> fs/binfmt_elf.c:825:16: warning: variable 'load_addr' set but not used [-Wunused-but-set-variable]
+           unsigned long load_addr = 0, load_bias = 0, phdr_addr = 0;
+                         ^
+   1 warning generated.
 
 
-the existing dependency chain (in reverse order) is:
+vim +/load_addr +825 fs/binfmt_elf.c
 
--> #1 (&sighand->signalfd_wqh){....}-{2:2}:
-       __lock_acquire+0x4b4/0x960 kernel/locking/lockdep.c:5027
-       lock_acquire kernel/locking/lockdep.c:5637 [inline]
-       lock_acquire+0xc9/0x2e0 kernel/locking/lockdep.c:5602
-       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-       _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:154
-       spin_lock include/linux/spinlock.h:349 [inline]
-       aio_poll.constprop.0+0x15d/0x440 fs/aio.c:1773
-       __io_submit_one.constprop.0+0x139/0x1b0 fs/aio.c:1847
-       io_submit_one+0x134/0x640 fs/aio.c:1884
-       __do_sys_io_submit fs/aio.c:1943 [inline]
-       __se_sys_io_submit fs/aio.c:1913 [inline]
-       __x64_sys_io_submit+0x89/0x260 fs/aio.c:1913
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
+   821	
+   822	static int load_elf_binary(struct linux_binprm *bprm)
+   823	{
+   824		struct file *interpreter = NULL; /* to shut gcc up */
+ > 825		unsigned long load_addr = 0, load_bias = 0, phdr_addr = 0;
+   826		int load_addr_set = 0;
+   827		unsigned long error;
+   828		struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+   829		struct elf_phdr *elf_property_phdata = NULL;
+   830		unsigned long elf_bss, elf_brk;
+   831		int bss_prot = 0;
+   832		int retval, i;
+   833		unsigned long elf_entry;
+   834		unsigned long e_entry;
+   835		unsigned long interp_load_addr = 0;
+   836		unsigned long start_code, end_code, start_data, end_data;
+   837		unsigned long reloc_func_desc __maybe_unused = 0;
+   838		int executable_stack = EXSTACK_DEFAULT;
+   839		struct elfhdr *elf_ex = (struct elfhdr *)bprm->buf;
+   840		struct elfhdr *interp_elf_ex = NULL;
+   841		struct arch_elf_state arch_state = INIT_ARCH_ELF_STATE;
+   842		struct mm_struct *mm;
+   843		struct pt_regs *regs;
+   844	
+   845		retval = -ENOEXEC;
+   846		/* First of all, some simple consistency checks */
+   847		if (memcmp(elf_ex->e_ident, ELFMAG, SELFMAG) != 0)
+   848			goto out;
+   849	
+   850		if (elf_ex->e_type != ET_EXEC && elf_ex->e_type != ET_DYN)
+   851			goto out;
+   852		if (!elf_check_arch(elf_ex))
+   853			goto out;
+   854		if (elf_check_fdpic(elf_ex))
+   855			goto out;
+   856		if (!bprm->file->f_op->mmap)
+   857			goto out;
+   858	
+   859		elf_phdata = load_elf_phdrs(elf_ex, bprm->file);
+   860		if (!elf_phdata)
+   861			goto out;
+   862	
+   863		elf_ppnt = elf_phdata;
+   864		for (i = 0; i < elf_ex->e_phnum; i++, elf_ppnt++) {
+   865			char *elf_interpreter;
+   866	
+   867			if (elf_ppnt->p_type == PT_GNU_PROPERTY) {
+   868				elf_property_phdata = elf_ppnt;
+   869				continue;
+   870			}
+   871	
+   872			if (elf_ppnt->p_type != PT_INTERP)
+   873				continue;
+   874	
+   875			/*
+   876			 * This is the program interpreter used for shared libraries -
+   877			 * for now assume that this is an a.out format binary.
+   878			 */
+   879			retval = -ENOEXEC;
+   880			if (elf_ppnt->p_filesz > PATH_MAX || elf_ppnt->p_filesz < 2)
+   881				goto out_free_ph;
+   882	
+   883			retval = -ENOMEM;
+   884			elf_interpreter = kmalloc(elf_ppnt->p_filesz, GFP_KERNEL);
+   885			if (!elf_interpreter)
+   886				goto out_free_ph;
+   887	
+   888			retval = elf_read(bprm->file, elf_interpreter, elf_ppnt->p_filesz,
+   889					  elf_ppnt->p_offset);
+   890			if (retval < 0)
+   891				goto out_free_interp;
+   892			/* make sure path is NULL terminated */
+   893			retval = -ENOEXEC;
+   894			if (elf_interpreter[elf_ppnt->p_filesz - 1] != '\0')
+   895				goto out_free_interp;
+   896	
+   897			interpreter = open_exec(elf_interpreter);
+   898			kfree(elf_interpreter);
+   899			retval = PTR_ERR(interpreter);
+   900			if (IS_ERR(interpreter))
+   901				goto out_free_ph;
+   902	
+   903			/*
+   904			 * If the binary is not readable then enforce mm->dumpable = 0
+   905			 * regardless of the interpreter's permissions.
+   906			 */
+   907			would_dump(bprm, interpreter);
+   908	
+   909			interp_elf_ex = kmalloc(sizeof(*interp_elf_ex), GFP_KERNEL);
+   910			if (!interp_elf_ex) {
+   911				retval = -ENOMEM;
+   912				goto out_free_ph;
+   913			}
+   914	
+   915			/* Get the exec headers */
+   916			retval = elf_read(interpreter, interp_elf_ex,
+   917					  sizeof(*interp_elf_ex), 0);
+   918			if (retval < 0)
+   919				goto out_free_dentry;
+   920	
+   921			break;
+   922	
+   923	out_free_interp:
+   924			kfree(elf_interpreter);
+   925			goto out_free_ph;
+   926		}
+   927	
+   928		elf_ppnt = elf_phdata;
+   929		for (i = 0; i < elf_ex->e_phnum; i++, elf_ppnt++)
+   930			switch (elf_ppnt->p_type) {
+   931			case PT_GNU_STACK:
+   932				if (elf_ppnt->p_flags & PF_X)
+   933					executable_stack = EXSTACK_ENABLE_X;
+   934				else
+   935					executable_stack = EXSTACK_DISABLE_X;
+   936				break;
+   937	
+   938			case PT_LOPROC ... PT_HIPROC:
+   939				retval = arch_elf_pt_proc(elf_ex, elf_ppnt,
+   940							  bprm->file, false,
+   941							  &arch_state);
+   942				if (retval)
+   943					goto out_free_dentry;
+   944				break;
+   945			}
+   946	
+   947		/* Some simple consistency checks for the interpreter */
+   948		if (interpreter) {
+   949			retval = -ELIBBAD;
+   950			/* Not an ELF interpreter */
+   951			if (memcmp(interp_elf_ex->e_ident, ELFMAG, SELFMAG) != 0)
+   952				goto out_free_dentry;
+   953			/* Verify the interpreter has a valid arch */
+   954			if (!elf_check_arch(interp_elf_ex) ||
+   955			    elf_check_fdpic(interp_elf_ex))
+   956				goto out_free_dentry;
+   957	
+   958			/* Load the interpreter program headers */
+   959			interp_elf_phdata = load_elf_phdrs(interp_elf_ex,
+   960							   interpreter);
+   961			if (!interp_elf_phdata)
+   962				goto out_free_dentry;
+   963	
+   964			/* Pass PT_LOPROC..PT_HIPROC headers to arch code */
+   965			elf_property_phdata = NULL;
+   966			elf_ppnt = interp_elf_phdata;
+   967			for (i = 0; i < interp_elf_ex->e_phnum; i++, elf_ppnt++)
+   968				switch (elf_ppnt->p_type) {
+   969				case PT_GNU_PROPERTY:
+   970					elf_property_phdata = elf_ppnt;
+   971					break;
+   972	
+   973				case PT_LOPROC ... PT_HIPROC:
+   974					retval = arch_elf_pt_proc(interp_elf_ex,
+   975								  elf_ppnt, interpreter,
+   976								  true, &arch_state);
+   977					if (retval)
+   978						goto out_free_dentry;
+   979					break;
+   980				}
+   981		}
+   982	
+   983		retval = parse_elf_properties(interpreter ?: bprm->file,
+   984					      elf_property_phdata, &arch_state);
+   985		if (retval)
+   986			goto out_free_dentry;
+   987	
+   988		/*
+   989		 * Allow arch code to reject the ELF at this point, whilst it's
+   990		 * still possible to return an error to the code that invoked
+   991		 * the exec syscall.
+   992		 */
+   993		retval = arch_check_elf(elf_ex,
+   994					!!interpreter, interp_elf_ex,
+   995					&arch_state);
+   996		if (retval)
+   997			goto out_free_dentry;
+   998	
+   999		/* Flush all traces of the currently running executable */
+  1000		retval = begin_new_exec(bprm);
+  1001		if (retval)
+  1002			goto out_free_dentry;
+  1003	
+  1004		/* Do this immediately, since STACK_TOP as used in setup_arg_pages
+  1005		   may depend on the personality.  */
+  1006		SET_PERSONALITY2(*elf_ex, &arch_state);
+  1007		if (elf_read_implies_exec(*elf_ex, executable_stack))
+  1008			current->personality |= READ_IMPLIES_EXEC;
+  1009	
+  1010		if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_va_space)
+  1011			current->flags |= PF_RANDOMIZE;
+  1012	
+  1013		setup_new_exec(bprm);
+  1014	
+  1015		/* Do this so that we can load the interpreter, if need be.  We will
+  1016		   change some of these later */
+  1017		retval = setup_arg_pages(bprm, randomize_stack_top(STACK_TOP),
+  1018					 executable_stack);
+  1019		if (retval < 0)
+  1020			goto out_free_dentry;
+  1021		
+  1022		elf_bss = 0;
+  1023		elf_brk = 0;
+  1024	
+  1025		start_code = ~0UL;
+  1026		end_code = 0;
+  1027		start_data = 0;
+  1028		end_data = 0;
+  1029	
+  1030		/* Now we do a little grungy work by mmapping the ELF image into
+  1031		   the correct location in memory. */
+  1032		for(i = 0, elf_ppnt = elf_phdata;
+  1033		    i < elf_ex->e_phnum; i++, elf_ppnt++) {
+  1034			int elf_prot, elf_flags;
+  1035			unsigned long k, vaddr;
+  1036			unsigned long total_size = 0;
+  1037			unsigned long alignment;
+  1038	
+  1039			if (elf_ppnt->p_type != PT_LOAD)
+  1040				continue;
+  1041	
+  1042			if (unlikely (elf_brk > elf_bss)) {
+  1043				unsigned long nbyte;
+  1044		            
+  1045				/* There was a PT_LOAD segment with p_memsz > p_filesz
+  1046				   before this one. Map anonymous pages, if needed,
+  1047				   and clear the area.  */
+  1048				retval = set_brk(elf_bss + load_bias,
+  1049						 elf_brk + load_bias,
+  1050						 bss_prot);
+  1051				if (retval)
+  1052					goto out_free_dentry;
+  1053				nbyte = ELF_PAGEOFFSET(elf_bss);
+  1054				if (nbyte) {
+  1055					nbyte = ELF_MIN_ALIGN - nbyte;
+  1056					if (nbyte > elf_brk - elf_bss)
+  1057						nbyte = elf_brk - elf_bss;
+  1058					if (clear_user((void __user *)elf_bss +
+  1059								load_bias, nbyte)) {
+  1060						/*
+  1061						 * This bss-zeroing can fail if the ELF
+  1062						 * file specifies odd protections. So
+  1063						 * we don't check the return value
+  1064						 */
+  1065					}
+  1066				}
+  1067			}
+  1068	
+  1069			elf_prot = make_prot(elf_ppnt->p_flags, &arch_state,
+  1070					     !!interpreter, false);
+  1071	
+  1072			elf_flags = MAP_PRIVATE;
+  1073	
+  1074			vaddr = elf_ppnt->p_vaddr;
+  1075			/*
+  1076			 * The first time through the loop, load_addr_set is false:
+  1077			 * layout will be calculated. Once set, use MAP_FIXED since
+  1078			 * we know we've already safely mapped the entire region with
+  1079			 * MAP_FIXED_NOREPLACE in the once-per-binary logic following.
+  1080			 */
+  1081			if (load_addr_set) {
+  1082				elf_flags |= MAP_FIXED;
+  1083			} else if (elf_ex->e_type == ET_EXEC) {
+  1084				/*
+  1085				 * This logic is run once for the first LOAD Program
+  1086				 * Header for ET_EXEC binaries. No special handling
+  1087				 * is needed.
+  1088				 */
+  1089				elf_flags |= MAP_FIXED_NOREPLACE;
+  1090			} else if (elf_ex->e_type == ET_DYN) {
+  1091				/*
+  1092				 * This logic is run once for the first LOAD Program
+  1093				 * Header for ET_DYN binaries to calculate the
+  1094				 * randomization (load_bias) for all the LOAD
+  1095				 * Program Headers.
+  1096				 *
+  1097				 * There are effectively two types of ET_DYN
+  1098				 * binaries: programs (i.e. PIE: ET_DYN with INTERP)
+  1099				 * and loaders (ET_DYN without INTERP, since they
+  1100				 * _are_ the ELF interpreter). The loaders must
+  1101				 * be loaded away from programs since the program
+  1102				 * may otherwise collide with the loader (especially
+  1103				 * for ET_EXEC which does not have a randomized
+  1104				 * position). For example to handle invocations of
+  1105				 * "./ld.so someprog" to test out a new version of
+  1106				 * the loader, the subsequent program that the
+  1107				 * loader loads must avoid the loader itself, so
+  1108				 * they cannot share the same load range. Sufficient
+  1109				 * room for the brk must be allocated with the
+  1110				 * loader as well, since brk must be available with
+  1111				 * the loader.
+  1112				 *
+  1113				 * Therefore, programs are loaded offset from
+  1114				 * ELF_ET_DYN_BASE and loaders are loaded into the
+  1115				 * independently randomized mmap region (0 load_bias
+  1116				 * without MAP_FIXED nor MAP_FIXED_NOREPLACE).
+  1117				 */
+  1118				if (interpreter) {
+  1119					load_bias = ELF_ET_DYN_BASE;
+  1120					if (current->flags & PF_RANDOMIZE)
+  1121						load_bias += arch_mmap_rnd();
+  1122					alignment = maximum_alignment(elf_phdata, elf_ex->e_phnum);
+  1123					if (alignment)
+  1124						load_bias &= ~(alignment - 1);
+  1125					elf_flags |= MAP_FIXED_NOREPLACE;
+  1126				} else
+  1127					load_bias = 0;
+  1128	
+  1129				/*
+  1130				 * Since load_bias is used for all subsequent loading
+  1131				 * calculations, we must lower it by the first vaddr
+  1132				 * so that the remaining calculations based on the
+  1133				 * ELF vaddrs will be correctly offset. The result
+  1134				 * is then page aligned.
+  1135				 */
+  1136				load_bias = ELF_PAGESTART(load_bias - vaddr);
+  1137			}
+  1138	
+  1139			/*
+  1140			 * Calculate the entire size of the ELF mapping (total_size).
+  1141			 * (Note that load_addr_set is set to true later once the
+  1142			 * initial mapping is performed.)
+  1143			 */
+  1144			if (!load_addr_set) {
+  1145				total_size = total_mapping_size(elf_phdata,
+  1146								elf_ex->e_phnum);
+  1147				if (!total_size) {
+  1148					retval = -EINVAL;
+  1149					goto out_free_dentry;
+  1150				}
+  1151			}
+  1152	
+  1153			error = elf_map(bprm->file, load_bias + vaddr, elf_ppnt,
+  1154					elf_prot, elf_flags, total_size);
+  1155			if (BAD_ADDR(error)) {
+  1156				retval = IS_ERR((void *)error) ?
+  1157					PTR_ERR((void*)error) : -EINVAL;
+  1158				goto out_free_dentry;
+  1159			}
+  1160	
+  1161			if (!load_addr_set) {
+  1162				load_addr_set = 1;
+  1163				load_addr = (elf_ppnt->p_vaddr - elf_ppnt->p_offset);
+  1164				if (elf_ex->e_type == ET_DYN) {
+  1165					load_bias += error -
+  1166					             ELF_PAGESTART(load_bias + vaddr);
+  1167					load_addr += load_bias;
+  1168					reloc_func_desc = load_bias;
+  1169				}
+  1170			}
+  1171	
+  1172			if (elf_ppnt->p_offset <= elf_ex->e_phoff &&
+  1173			    elf_ex->e_phoff < elf_ppnt->p_offset + elf_ppnt->p_filesz) {
+  1174				phdr_addr = elf_ex->e_phoff - elf_ppnt->p_offset +
+  1175					    elf_ppnt->p_vaddr;
+  1176			}
+  1177	
+  1178			k = elf_ppnt->p_vaddr;
+  1179			if ((elf_ppnt->p_flags & PF_X) && k < start_code)
+  1180				start_code = k;
+  1181			if (start_data < k)
+  1182				start_data = k;
+  1183	
+  1184			/*
+  1185			 * Check to see if the section's size will overflow the
+  1186			 * allowed task size. Note that p_filesz must always be
+  1187			 * <= p_memsz so it is only necessary to check p_memsz.
+  1188			 */
+  1189			if (BAD_ADDR(k) || elf_ppnt->p_filesz > elf_ppnt->p_memsz ||
+  1190			    elf_ppnt->p_memsz > TASK_SIZE ||
+  1191			    TASK_SIZE - elf_ppnt->p_memsz < k) {
+  1192				/* set_brk can never work. Avoid overflows. */
+  1193				retval = -EINVAL;
+  1194				goto out_free_dentry;
+  1195			}
+  1196	
+  1197			k = elf_ppnt->p_vaddr + elf_ppnt->p_filesz;
+  1198	
+  1199			if (k > elf_bss)
+  1200				elf_bss = k;
+  1201			if ((elf_ppnt->p_flags & PF_X) && end_code < k)
+  1202				end_code = k;
+  1203			if (end_data < k)
+  1204				end_data = k;
+  1205			k = elf_ppnt->p_vaddr + elf_ppnt->p_memsz;
+  1206			if (k > elf_brk) {
+  1207				bss_prot = elf_prot;
+  1208				elf_brk = k;
+  1209			}
+  1210		}
+  1211	
+  1212		e_entry = elf_ex->e_entry + load_bias;
+  1213		phdr_addr += load_bias;
+  1214		elf_bss += load_bias;
+  1215		elf_brk += load_bias;
+  1216		start_code += load_bias;
+  1217		end_code += load_bias;
+  1218		start_data += load_bias;
+  1219		end_data += load_bias;
+  1220	
+  1221		/* Calling set_brk effectively mmaps the pages that we need
+  1222		 * for the bss and break sections.  We must do this before
+  1223		 * mapping in the interpreter, to make sure it doesn't wind
+  1224		 * up getting placed where the bss needs to go.
+  1225		 */
+  1226		retval = set_brk(elf_bss, elf_brk, bss_prot);
+  1227		if (retval)
+  1228			goto out_free_dentry;
+  1229		if (likely(elf_bss != elf_brk) && unlikely(padzero(elf_bss))) {
+  1230			retval = -EFAULT; /* Nobody gets to see this, but.. */
+  1231			goto out_free_dentry;
+  1232		}
+  1233	
+  1234		if (interpreter) {
+  1235			elf_entry = load_elf_interp(interp_elf_ex,
+  1236						    interpreter,
+  1237						    load_bias, interp_elf_phdata,
+  1238						    &arch_state);
+  1239			if (!IS_ERR((void *)elf_entry)) {
+  1240				/*
+  1241				 * load_elf_interp() returns relocation
+  1242				 * adjustment
+  1243				 */
+  1244				interp_load_addr = elf_entry;
+  1245				elf_entry += interp_elf_ex->e_entry;
+  1246			}
+  1247			if (BAD_ADDR(elf_entry)) {
+  1248				retval = IS_ERR((void *)elf_entry) ?
+  1249						(int)elf_entry : -EINVAL;
+  1250				goto out_free_dentry;
+  1251			}
+  1252			reloc_func_desc = interp_load_addr;
+  1253	
+  1254			allow_write_access(interpreter);
+  1255			fput(interpreter);
+  1256	
+  1257			kfree(interp_elf_ex);
+  1258			kfree(interp_elf_phdata);
+  1259		} else {
+  1260			elf_entry = e_entry;
+  1261			if (BAD_ADDR(elf_entry)) {
+  1262				retval = -EINVAL;
+  1263				goto out_free_dentry;
+  1264			}
+  1265		}
+  1266	
+  1267		kfree(elf_phdata);
+  1268	
+  1269		set_binfmt(&elf_format);
+  1270	
 
--> #0 (&ctx->ctx_lock){..-.}-{2:2}:
-       check_prev_add+0x93/0xbf0 kernel/locking/lockdep.c:3063
-       check_prevs_add kernel/locking/lockdep.c:3186 [inline]
-       validate_chain+0x585/0x8c0 kernel/locking/lockdep.c:3801
-       __lock_acquire+0x4b4/0x960 kernel/locking/lockdep.c:5027
-       lock_acquire kernel/locking/lockdep.c:5637 [inline]
-       lock_acquire+0xc9/0x2e0 kernel/locking/lockdep.c:5602
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0x3e/0x60 kernel/locking/spinlock.c:162
-       aio_poll_wake+0x1ac/0x390 fs/aio.c:1693
-       __wake_up_common+0x8c/0x1a0 kernel/sched/wait.c:108
-       __wake_up_common_lock+0x77/0xb0 kernel/sched/wait.c:138
-       __wake_up+0xe/0x10 kernel/sched/wait.c:157
-       signalfd_cleanup+0x33/0x40 fs/signalfd.c:48
-       __cleanup_sighand kernel/fork.c:1613 [inline]
-       __cleanup_sighand+0x27/0x50 kernel/fork.c:1610
-       __exit_signal+0x236/0x380 kernel/exit.c:159
-       release_task+0x180/0x3d0 kernel/exit.c:200
-       wait_task_zombie+0x28a/0x600 kernel/exit.c:1114
-       wait_consider_task+0x121/0x160 kernel/exit.c:1341
-       do_wait_thread kernel/exit.c:1404 [inline]
-       do_wait+0x21b/0x380 kernel/exit.c:1521
-       kernel_wait4+0xaa/0x150 kernel/exit.c:1684
-       __do_sys_wait4+0x85/0x90 kernel/exit.c:1712
-       __se_sys_wait4 kernel/exit.c:1708 [inline]
-       __x64_sys_wait4+0x17/0x20 kernel/exit.c:1708
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&sighand->signalfd_wqh);
-                               lock(&ctx->ctx_lock);
-                               lock(&sighand->signalfd_wqh);
-  lock(&ctx->ctx_lock);
-
- *** DEADLOCK ***
-
-2 locks held by aio/137:
- #0: ffffffff81e06098 (tasklist_lock){.+.+}-{2:2}, at: release_task+0x110/0x3d0 kernel/exit.c:197
- #1: ffff8880053a91e0 (&sighand->signalfd_wqh){....}-{2:2}, at: __wake_up_common_lock+0x5b/0xb0 kernel/sched/wait.c:137
-
-stack backtrace:
-CPU: 3 PID: 137 Comm: aio Not tainted 5.16.0-rc2-00001-gf97efc5c03bf #22
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ArchLinux 1.14.0-1 04/01/2014
-Call Trace:
- <TASK>
- show_stack+0x3d/0x3f arch/x86/kernel/dumpstack.c:318
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x49/0x5e lib/dump_stack.c:106
- dump_stack+0x10/0x12 lib/dump_stack.c:113
- print_circular_bug.cold+0x13e/0x143 kernel/locking/lockdep.c:2021
- check_noncircular+0xfe/0x110 kernel/locking/lockdep.c:2143
- check_prev_add+0x93/0xbf0 kernel/locking/lockdep.c:3063
- check_prevs_add kernel/locking/lockdep.c:3186 [inline]
- validate_chain+0x585/0x8c0 kernel/locking/lockdep.c:3801
- __lock_acquire+0x4b4/0x960 kernel/locking/lockdep.c:5027
- lock_acquire kernel/locking/lockdep.c:5637 [inline]
- lock_acquire+0xc9/0x2e0 kernel/locking/lockdep.c:5602
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x3e/0x60 kernel/locking/spinlock.c:162
- aio_poll_wake+0x1ac/0x390 fs/aio.c:1693
- __wake_up_common+0x8c/0x1a0 kernel/sched/wait.c:108
- __wake_up_common_lock+0x77/0xb0 kernel/sched/wait.c:138
- __wake_up+0xe/0x10 kernel/sched/wait.c:157
- signalfd_cleanup+0x33/0x40 fs/signalfd.c:48
- __cleanup_sighand kernel/fork.c:1613 [inline]
- __cleanup_sighand+0x27/0x50 kernel/fork.c:1610
- __exit_signal+0x236/0x380 kernel/exit.c:159
- release_task+0x180/0x3d0 kernel/exit.c:200
- wait_task_zombie+0x28a/0x600 kernel/exit.c:1114
- wait_consider_task+0x121/0x160 kernel/exit.c:1341
- do_wait_thread kernel/exit.c:1404 [inline]
- do_wait+0x21b/0x380 kernel/exit.c:1521
- kernel_wait4+0xaa/0x150 kernel/exit.c:1684
- __do_sys_wait4+0x85/0x90 kernel/exit.c:1712
- __se_sys_wait4 kernel/exit.c:1708 [inline]
- __x64_sys_wait4+0x17/0x20 kernel/exit.c:1708
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f23a3b0e9ea
-Code: ff e9 0a 00 00 00 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 49 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 15 b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5e c3 0f 1f 44 00 00 48 83 ec 28 89 54 24 14
-RSP: 002b:00007ffcd0926098 EFLAGS: 00000246 ORIG_RAX: 000000000000003d
-RAX: ffffffffffffffda RBX: 000000000000000a RCX: 00007f23a3b0e9ea
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000ffffffff
-RBP: 000055944067b000 R08: fffffffe7fffffff R09: fffffffe7fffffff
-R10: 0000000000000000 R11: 0000000000000246 R12: 00005594406761c0
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
