@@ -2,93 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2496045D09C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 23:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDC345D0AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245593AbhKXW6m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 17:58:42 -0500
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:42553 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242823AbhKXW6l (ORCPT
+        id S1346246AbhKXXDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 18:03:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53068 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343912AbhKXXDa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 17:58:41 -0500
-Received: from dread.disaster.area (pa49-195-103-97.pa.nsw.optusnet.com.au [49.195.103.97])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 9C8C8A6B49;
-        Thu, 25 Nov 2021 09:55:28 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mq1Ak-00CqMK-G6; Thu, 25 Nov 2021 09:55:26 +1100
-Date:   Thu, 25 Nov 2021 09:55:26 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Neil Brown <neilb@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v2 0/4] extend vmalloc support for constrained allocations
-Message-ID: <20211124225526.GM418105@dread.disaster.area>
-References: <20211122153233.9924-1-mhocko@kernel.org>
+        Wed, 24 Nov 2021 18:03:30 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61E72C06173E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 15:00:20 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id x15so17178682edv.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 15:00:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3I9PlA7fC8HgB2vr5zydxZ4zg5kA0COA3RvDIbE8i6k=;
+        b=akPSCYrD6EASyAHbxHctwYr0LW3XzQryE1WnwGL61n9RnWw1NkFmVSX0i9BtWuGZYh
+         3HsX+j15WJiusBmje+0ffkwgWfbwZl3OZuwQ+FeVw4qqieUoMRy3mrm7/NfOdIx1DyJ8
+         WJvl/rGNRCqOZGiGzEuCEgFc6r1TDjmx7J7Ok=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3I9PlA7fC8HgB2vr5zydxZ4zg5kA0COA3RvDIbE8i6k=;
+        b=8CO2hNCz3UNzgHvSOuMTRBnSTWDKWqwMDzzuZlkRtXQB0e2cQWjkwfyQ+jdMBHoJYT
+         5fA8V3g8saF+KVBrPEIrKiAUbIR01K3LK46XJSYv4xlL7zLYySde5kX6EXSfcavAJ2ao
+         aqA5Eqv4GIGugbGYioe0axaOqiml7w5m2HzLyuBXuw262dcUdCOHxoAjd9x0OETjPn21
+         0mDVubA0mU/UfG+HXBq395AkXOzqPwslHD4+CUvE5jzvJCdd791piE/dAb1PZYrC7Z8o
+         E2X6ZNJvf4Kz1UHhoNangbBTYmg+QPsRSyVyvjPQmYS0nXILNnKySPk0pHUH0Ji1wJNd
+         mZgA==
+X-Gm-Message-State: AOAM533AANC0CWX+KQrH6uuN9JPcBowLSls2ZmT7ZR7koorRz8rBSfbN
+        9XzGGiJtQh4VaxveVIPRcKKxbP9xuVaFhElh
+X-Google-Smtp-Source: ABdhPJzC6EsLUHzUThuTEooHZQzAwba8CEbIwNf2yL4FXdUeNzps8E6gLnm0rkFTYuDd/W4H9wJaYw==
+X-Received: by 2002:a05:6402:4302:: with SMTP id m2mr32918756edc.349.1637794818298;
+        Wed, 24 Nov 2021 15:00:18 -0800 (PST)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
+        by smtp.gmail.com with ESMTPSA id n16sm741570edt.67.2021.11.24.15.00.16
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Nov 2021 15:00:16 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id i12so3885780wmq.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 15:00:16 -0800 (PST)
+X-Received: by 2002:a05:600c:4e07:: with SMTP id b7mr1159359wmq.8.1637794816000;
+ Wed, 24 Nov 2021 15:00:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211122153233.9924-1-mhocko@kernel.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=619ec2e1
-        a=fP9RlOTWD4uZJjPSFnn6Ew==:117 a=fP9RlOTWD4uZJjPSFnn6Ew==:17
-        a=kj9zAlcOel0A:10 a=vIxV3rELxO4A:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=DsItmR9x4NrZRhuf3zYA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20211124192024.2408218-1-catalin.marinas@arm.com>
+ <20211124192024.2408218-4-catalin.marinas@arm.com> <YZ6arlsi2L3LVbFO@casper.infradead.org>
+In-Reply-To: <YZ6arlsi2L3LVbFO@casper.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 24 Nov 2021 15:00:00 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgHqjX3kenSk5_bCRM+ZC-tgndBMfbVVsbp0CwJf2DU-w@mail.gmail.com>
+Message-ID: <CAHk-=wgHqjX3kenSk5_bCRM+ZC-tgndBMfbVVsbp0CwJf2DU-w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
+ with sub-page faults
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 22, 2021 at 04:32:29PM +0100, Michal Hocko wrote:
-> Hi,
-> The previous version has been posted here [1] 
-> 
-> I hope I have addressed all the feedback. There were some suggestions
-> for further improvements but I would rather make this smaller as I
-> cannot really invest more time and I believe further changes can be done
-> on top.
-> 
-> This version is a rebase on top of the current Linus tree. Except for
-> the review feedback and conflicting changes in the area there is only
-> one change to filter out __GFP_NOFAIL from the bulk allocator. This is
-> not necessary strictly speaking AFAICS but I found it less confusing
-> because vmalloc has its fallback strategy and the bulk allocator is
-> meant only for the fast path.
-> 
-> Original cover:
-> Based on a recent discussion with Dave and Neil [2] I have tried to
-> implement NOFS, NOIO, NOFAIL support for the vmalloc to make
-> life of kvmalloc users easier.
-> 
-> A requirement for NOFAIL support for kvmalloc was new to me but this
-> seems to be really needed by the xfs code.
-> 
-> NOFS/NOIO was a known and a long term problem which was hoped to be
-> handled by the scope API. Those scope should have been used at the
-> reclaim recursion boundaries both to document them and also to remove
-> the necessity of NOFS/NOIO constrains for all allocations within that
-> scope. Instead workarounds were developed to wrap a single allocation
-> instead (like ceph_kvmalloc).
-> 
-> First patch implements NOFS/NOIO support for vmalloc. The second one
-> adds NOFAIL support and the third one bundles all together into kvmalloc
-> and drops ceph_kvmalloc which can use kvmalloc directly now.
-> 
-> I hope I haven't missed anything in the vmalloc allocator.
+Catalin talked about the other change, but this part:
 
-Correct __GFP_NOLOCKDEP support is also needed. See:
+On Wed, Nov 24, 2021 at 12:04 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> (where __copy_to_user_nofault() is a new function that does exactly what
+> copy_to_user_nofault() does, but returns the number of bytes copied)
 
-https://lore.kernel.org/linux-mm/20211119225435.GZ449541@dread.disaster.area/
+If we want the "how many bytes" part, then we should just make
+copy_to_user_nofault() have the same semantics as a plain
+copy_to_user().
 
-Cheers,
+IOW, change it to return "number of bytes not copied".
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Lookin gat the current uses, such a change would be trivial. The only
+case that wants a 0/-EFAULT error is the bpf_probe_write_user(),
+everybody else already just wants "zero for success", so changing
+copy_to_user_nofault() would be trivial.
+
+And it really is odd and very non-intuitive that
+copy_to_user_nofault() has a completely different return value from
+copy_to_user().
+
+So if _anybody_ wants a byte-count, that should just be fixed.
+
+                    Linus
