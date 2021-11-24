@@ -2,116 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A00545CDE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 21:20:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64B6A45CE29
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 21:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235923AbhKXUX5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 15:23:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234451AbhKXUX4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 15:23:56 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63804C061574;
-        Wed, 24 Nov 2021 12:20:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=Dxu8rmSj5L6/mmz45KruXo7nmpwWJ/sOE5r4T8rfCAo=; b=vKiwxHVhDBbH9WgvIEHzDg4gBn
-        tIZBoymYM8gOJJlXuvkgfthzXQe5erlk8fd70Ib9ZUqOT/d7fTgBliixRA1VyiE4ZFF9Z9eWgxZyj
-        mWInKt2kfiVRMDWQf7QJAPA/lsm3YTK8dM7BaFfigw0oG5iGUzWGr2TXQ4aKqHDwlWaXnO5Mj/gZJ
-        okE8RFgfmUC5r1jpsgIupV286bqsXoBI+D9gGJg/5npk9VAeWc6AfvDgBJY4sLxCIBmLTh8Z900GC
-        u3nEaLBDxvV58lnWE0xQ1+ImPVCbZEHI+HVaV0XT57bE49FDUqjgGl6CFIZYrZc5UpM+I9dGhYx5Y
-        3YhbpOjQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mpyl2-003F4b-J2; Wed, 24 Nov 2021 20:20:44 +0000
-Date:   Wed, 24 Nov 2021 20:20:44 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Folio fixes for 5.16
-Message-ID: <YZ6enA9aRgJLL55w@casper.infradead.org>
+        id S237496AbhKXUkZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 15:40:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231846AbhKXUkY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Nov 2021 15:40:24 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AD72460E05;
+        Wed, 24 Nov 2021 20:37:12 +0000 (UTC)
+Date:   Wed, 24 Nov 2021 20:37:09 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
+ with sub-page faults
+Message-ID: <YZ6idVy3zqQC4atv@arm.com>
+References: <20211124192024.2408218-1-catalin.marinas@arm.com>
+ <20211124192024.2408218-4-catalin.marinas@arm.com>
+ <YZ6arlsi2L3LVbFO@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <YZ6arlsi2L3LVbFO@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Wed, Nov 24, 2021 at 08:03:58PM +0000, Matthew Wilcox wrote:
+> On Wed, Nov 24, 2021 at 07:20:24PM +0000, Catalin Marinas wrote:
+> > +++ b/fs/btrfs/ioctl.c
+> > @@ -2223,7 +2223,8 @@ static noinline int search_ioctl(struct inode *inode,
+> >  
+> >  	while (1) {
+> >  		ret = -EFAULT;
+> > -		if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
+> > +		if (fault_in_exact_writeable(ubuf + sk_offset,
+> > +					     *buf_size - sk_offset))
+> >  			break;
+> >  
+> >  		ret = btrfs_search_forward(root, &key, path, sk->min_transid);
+> 
+> Couldn't we avoid all of this nastiness by doing ...
 
-In the course of preparing the folio changes for iomap for next merge
-window, we discovered some problems that would be nice to address now:
+I had a similar attempt initially but I concluded that it doesn't work:
 
- - Renaming multi-page folios to large folios.
-   mapping_multi_page_folio_support() is just a little too long, so
-   we settled on mapping_large_folio_support().  That meant renaming,
-   eg folio_test_multi() to folio_test_large().
- - I hadn't included folio wrappers for zero_user_segments(), etc.
-   Also, multi-page^W^W large folio support is now independent of
-   CONFIG_TRANSPARENT_HUGEPAGE, so machines with HIGHMEM always need to
-   fall back to the out-of-line zero_user_segments().
- - The build bots finally got round to telling me that I missed a
-   couple of architectures when adding flush_dcache_folio().  Christoph
-   suggested that we just add linux/cacheflush.h and not rely on
-   asm-generic/cacheflush.h.
+https://lore.kernel.org/r/YS40qqmXL7CMFLGq@arm.com
 
-These changes have been in linux-next for the last week with no new
-squawks.
+> @@ -2121,10 +2121,9 @@ static noinline int copy_to_sk(struct btrfs_path *path,
+>                  * problem. Otherwise we'll fault and then copy the buffer in
+>                  * properly this next time through
+>                  */
+> -               if (copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh))) {
+> -                       ret = 0;
+> +               ret = __copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh));
+> +               if (ret)
 
-The following changes since commit 8ab774587903771821b59471cc723bba6d893942:
+There is no requirement for the arch implementation to be exact and copy
+the maximum number of bytes possible. It can fail early while there are
+still some bytes left that would not fault. The only requirement is that
+if it is restarted from where it faulted, it makes some progress (on
+arm64 there is one extra byte).
 
-  Merge tag 'trace-v5.16-5' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace (2021-11-14 19:07:19 -0800)
+>                         goto out;
+> -               }
+>  
+>                 *sk_offset += sizeof(sh);
+> @@ -2196,6 +2195,7 @@ static noinline int search_ioctl(struct inode *inode,
+>         int ret;
+>         int num_found = 0;
+>         unsigned long sk_offset = 0;
+> +       unsigned long next_offset = 0;
+>  
+>         if (*buf_size < sizeof(struct btrfs_ioctl_search_header)) {
+>                 *buf_size = sizeof(struct btrfs_ioctl_search_header);
+> @@ -2223,7 +2223,8 @@ static noinline int search_ioctl(struct inode *inode,
+>  
+>         while (1) {
+>                 ret = -EFAULT;
+> -               if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
+> +               if (fault_in_writeable(ubuf + sk_offset + next_offset,
+> +                                       *buf_size - sk_offset - next_offset))
+>                         break;
+>  
+>                 ret = btrfs_search_forward(root, &key, path, sk->min_transid);
+> @@ -2235,11 +2236,12 @@ static noinline int search_ioctl(struct inode *inode,
+>                 ret = copy_to_sk(path, &key, sk, buf_size, ubuf,
+>                                  &sk_offset, &num_found);
+>                 btrfs_release_path(path);
+> -               if (ret)
+> +               if (ret > 0)
+> +                       next_offset = ret;
 
-are available in the Git repository at:
+So after this point, ubuf+sk_offset+next_offset is writeable by
+fault_in_writable(). If copy_to_user() was attempted on
+ubuf+sk_offset+next_offset, all would be fine, but copy_to_sk() restarts
+the copy from ubuf+sk_offset, so it returns exacting the same ret as in
+the previous iteration.
 
-  git://git.infradead.org/users/willy/pagecache.git tags/folio-5.16b
-
-for you to fetch changes up to c035713998700e8843c7d087f55bce3c54c0e3ec:
-
-  mm: Add functions to zero portions of a folio (2021-11-18 15:05:56 -0500)
-
-----------------------------------------------------------------
-Fixes for 5.16 folios:
-
- - Fix compilation warnings on csky and sparc
- - Rename multipage folios to large folios
- - Rename AS_THP_SUPPORT and FS_THP_SUPPORT
- - Add functions to zero portions of a folio
-
-----------------------------------------------------------------
-Matthew Wilcox (Oracle) (6):
-      Add linux/cacheflush.h
-      mm: Rename folio_test_multi to folio_test_large
-      mm: Remove folio_test_single
-      fs: Remove FS_THP_SUPPORT
-      fs: Rename AS_THP_SUPPORT and mapping_thp_support
-      mm: Add functions to zero portions of a folio
-
- arch/arc/include/asm/cacheflush.h     |  1 -
- arch/arm/include/asm/cacheflush.h     |  1 -
- arch/m68k/include/asm/cacheflush_mm.h |  1 -
- arch/mips/include/asm/cacheflush.h    |  2 --
- arch/nds32/include/asm/cacheflush.h   |  1 -
- arch/nios2/include/asm/cacheflush.h   |  1 -
- arch/parisc/include/asm/cacheflush.h  |  1 -
- arch/sh/include/asm/cacheflush.h      |  1 -
- arch/xtensa/include/asm/cacheflush.h  |  3 ---
- fs/inode.c                            |  2 --
- include/asm-generic/cacheflush.h      |  6 -----
- include/linux/cacheflush.h            | 18 ++++++++++++++
- include/linux/fs.h                    |  1 -
- include/linux/highmem.h               | 47 +++++++++++++++++++++++++++++++----
- include/linux/page-flags.h            | 14 +++++------
- include/linux/pagemap.h               | 26 +++++++++++++++----
- mm/highmem.c                          |  2 --
- mm/memcontrol.c                       |  2 +-
- mm/shmem.c                            |  3 ++-
- mm/util.c                             |  2 +-
- 20 files changed, 92 insertions(+), 43 deletions(-)
- create mode 100644 include/linux/cacheflush.h
-
-
+-- 
+Catalin
