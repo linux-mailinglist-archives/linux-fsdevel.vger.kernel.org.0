@@ -2,227 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB29C45B14F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 02:49:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F0945B220
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 03:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235541AbhKXBwY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 20:52:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231310AbhKXBwX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 20:52:23 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AFB6D608FB;
-        Wed, 24 Nov 2021 01:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637718554;
-        bh=U8DJg4yZaKIYgJGHE+dHQseuegRN58Y6WDSNO1Y30Do=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cf2llT+ExAVMXWCXyQnlOSFKNeETjUZIgz1krKR4uwgI+HMsvTWogR5oUXJ90hS1h
-         u6SFDuXihdOzsTxVmVzgFf5fZrP+swIgINoZD7Oon8399eZ9VXouJOxDz06bO3nVG4
-         2tgkUmY96QJroNrAm6a+7w5+/L37kNpWjJuZ3eh00YGkIwIvcyx4qqazwGlGAm4MbS
-         VZbRyxfqjQBnHYze7B9UbYgSEo3M0/MGZ6thVRCI3+KMltvZoTnjjcCphmx2UwQFIK
-         bCFP6JYHkuRzn3JA3TrZeWwb+ESxytMQe86392yOAtKaKmWORT6VCh1ylp4vGyEq4C
-         wI0pWiL7LbTwg==
-Date:   Tue, 23 Nov 2021 17:49:14 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/8] mm/vmscan: Throttle reclaim when no progress is
- being made
-Message-ID: <20211124014914.GB265983@magnolia>
-References: <20211022144651.19914-1-mgorman@techsingularity.net>
- <20211022144651.19914-4-mgorman@techsingularity.net>
- <20211124011912.GA265983@magnolia>
+        id S237272AbhKXCoJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 21:44:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229835AbhKXCoJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 21:44:09 -0500
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D038CC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 18:40:58 -0800 (PST)
+Received: by mail-pf1-x433.google.com with SMTP id u80so1171350pfc.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 18:40:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XY5RlfJ4wk969SAhdu0eeba/cRDcEGFX6BIC3EnLQt8=;
+        b=u4emMr/x1DnGrylyXG/XED1B0JAzKJIqIDcJvC7Dltb93SI0bgLALNc/xx3fE/eqZ+
+         JLZdSBXcBeUsE3gYFy2qkeo6t2y2XuFS7FedCduv1RHpO8vyWXlQcx11qWzGXljZ4Nta
+         5OYO1lIxqTIseUFqkypGfAJj577OlmYBnt7dfkNQv9WXesT9Vr2pO7qsjUMO6hVcoGvW
+         LWz11ROd5H62YcZRNEwDlvUMRryoYOk1DV1Dg4YBgp+MSllvRl7B5PMc3nehblVandHp
+         KDygLbglHM1zSoblBzsW1nhsjCF5iPULo9A3DjLMb5w2hx0fDJrK0R8dTmPxHRAXcCgM
+         L96w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XY5RlfJ4wk969SAhdu0eeba/cRDcEGFX6BIC3EnLQt8=;
+        b=g6RtYTNgHdZ1kEzASpy8ESZq3ZSlQD/zNvFzpJFhy25onS3tfige8nrzwYKvj3vo8f
+         BXnu/Gyb1MALvpdaim8trSdHRksR0z8j7LFQHYhX0gzrxfyli7ooPWYuS3+awT9STc+K
+         Vthi48NwQ3QC45/gp6arRnnzocZBxz3aEeh6UE/Wvvm8dRYOOA09kaF0uQOck3pn7c1u
+         9OzZe74kqoxIUI8E/mwE9zxShF87OD8wQweqPYf2DWX9L3KiaCgQCyp3Rzvy8ptnRELC
+         Q/i6MGh/e2M9hfBTuLo8JT1YCNyj55cImNURwBakn80bmmbLFT6CI4zHMXn72cATar61
+         t4rg==
+X-Gm-Message-State: AOAM531S7gEttQGkxBzT5N8fS9IhsJtrqeke11ZrM6i2Wg4xBmXWkUGv
+        uwgLmPCZuGhhy124qC0qleWck1HgKDOIhVY1z1N84Q==
+X-Google-Smtp-Source: ABdhPJzf7x9CNNO+bnTL7ccWPdJMGj5rcrJdH+gi4z67GahFamuGnCABtN5RCIhrCvjUMVb9BfOrAHDXXr0x3X1l1Pc=
+X-Received: by 2002:a63:88c3:: with SMTP id l186mr1768633pgd.377.1637721658407;
+ Tue, 23 Nov 2021 18:40:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211124011912.GA265983@magnolia>
+References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-22-hch@lst.de>
+In-Reply-To: <20211109083309.584081-22-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 23 Nov 2021 18:40:47 -0800
+Message-ID: <CAPcyv4hY4g82PrjMPO=1kiM5sL=3=yR66r6LeG8RS3Ha2k1eUw@mail.gmail.com>
+Subject: Re: [PATCH 21/29] xfs: move dax device handling into xfs_{alloc,free}_buftarg
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 05:19:12PM -0800, Darrick J. Wong wrote:
-> On Fri, Oct 22, 2021 at 03:46:46PM +0100, Mel Gorman wrote:
-> > Memcg reclaim throttles on congestion if no reclaim progress is made.
-> > This makes little sense, it might be due to writeback or a host of
-> > other factors.
-> > 
-> > For !memcg reclaim, it's messy. Direct reclaim primarily is throttled
-> > in the page allocator if it is failing to make progress. Kswapd
-> > throttles if too many pages are under writeback and marked for
-> > immediate reclaim.
-> > 
-> > This patch explicitly throttles if reclaim is failing to make progress.
-> 
-> Hi Mel,
-> 
-> Ever since Christoph broke swapfiles, I've been carrying around a little
-> fstest in my dev tree[1] that tries to exercise paging things in and out
-> of a swapfile.  Sadly I've been trapped in about three dozen customer
-> escalations for over a month, which means I haven't been able to do much
-> upstream in weeks.  Like submit this test upstream. :(
-> 
-> Now that I've finally gotten around to trying out a 5.16-rc2 build, I
-> notice that the runtime of this test has gone from ~5s to 2 hours.
-> Among other things that it does, the test sets up a cgroup with a memory
-> controller limiting the memory usage to 25MB, then runs a program that
-> tries to dirty 50MB of memory.  There's 2GB of memory in the VM, so
-> we're not running reclaim globally, but the cgroup gets throttled very
-> severely.
-> 
-> AFAICT the system is mostly idle, but it's difficult to tell because ps
-> and top also get stuck waiting for this cgroup for whatever reason.  My
-> uninformed spculation is that usemem_and_swapoff takes a page fault
-> while dirtying the 50MB memory buffer, prepares to pull a page in from
-> swap, tries to evict another page to stay under the memcg limit, but
-> that decides that it's making no progress and calls
-> reclaim_throttle(..., VMSCAN_THROTTLE_NOPROGRESS).
-> 
-> The sleep is uninterruptible, so I can't even kill -9 fstests to shut it
-> down.  Eventually we either finish the test or (for the mlock part) the
-> OOM killer actually kills the process, but this takes a very long time.
-> 
-> Any thoughts?  For now I can just hack around this by skipping
-> reclaim_throttle if cgroup_reclaim() == true, but that's probably not
-> the correct fix. :)
+On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Hide the DAX device lookup from the xfs_super.c code.
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Update: after adding timing information to usemem_and_swapoff, it looks
-like dirtying the 50MB buffer takes ~22s (up from 0.06s on 5.15).  The
-mlock call stalls for ~280s until the OOM killer kills it (up from
-nearly instantaneous on 5.15), and the swapon/swapoff variant takes
-20 minutes to hours depending on the run.
+That's an interesting spelling of "Signed-off-by", but patch looks
+good to me too. I would have expected a robot to complain about
+missing sign-off?
 
---D
-
-> --D
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/commit/?h=test-swapfile-io&id=0d0ad843cea366d0ab0a7d8d984e5cd1deba5b43
-> 
-> > 
-> > [vbabka@suse.cz: Remove redundant code]
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> > ---
-> >  include/linux/mmzone.h        |  1 +
-> >  include/trace/events/vmscan.h |  4 +++-
-> >  mm/memcontrol.c               | 10 +---------
-> >  mm/vmscan.c                   | 28 ++++++++++++++++++++++++++++
-> >  4 files changed, 33 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> > index 9ccd8d95291b..00e305cfb3ec 100644
-> > --- a/include/linux/mmzone.h
-> > +++ b/include/linux/mmzone.h
-> > @@ -276,6 +276,7 @@ enum lru_list {
-> >  enum vmscan_throttle_state {
-> >  	VMSCAN_THROTTLE_WRITEBACK,
-> >  	VMSCAN_THROTTLE_ISOLATED,
-> > +	VMSCAN_THROTTLE_NOPROGRESS,
-> >  	NR_VMSCAN_THROTTLE,
-> >  };
-> >  
-> > diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-> > index d4905bd9e9c4..f25a6149d3ba 100644
-> > --- a/include/trace/events/vmscan.h
-> > +++ b/include/trace/events/vmscan.h
-> > @@ -29,11 +29,13 @@
-> >  
-> >  #define _VMSCAN_THROTTLE_WRITEBACK	(1 << VMSCAN_THROTTLE_WRITEBACK)
-> >  #define _VMSCAN_THROTTLE_ISOLATED	(1 << VMSCAN_THROTTLE_ISOLATED)
-> > +#define _VMSCAN_THROTTLE_NOPROGRESS	(1 << VMSCAN_THROTTLE_NOPROGRESS)
-> >  
-> >  #define show_throttle_flags(flags)						\
-> >  	(flags) ? __print_flags(flags, "|",					\
-> >  		{_VMSCAN_THROTTLE_WRITEBACK,	"VMSCAN_THROTTLE_WRITEBACK"},	\
-> > -		{_VMSCAN_THROTTLE_ISOLATED,	"VMSCAN_THROTTLE_ISOLATED"}	\
-> > +		{_VMSCAN_THROTTLE_ISOLATED,	"VMSCAN_THROTTLE_ISOLATED"},	\
-> > +		{_VMSCAN_THROTTLE_NOPROGRESS,	"VMSCAN_THROTTLE_NOPROGRESS"}	\
-> >  		) : "VMSCAN_THROTTLE_NONE"
-> >  
-> >  
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 6da5020a8656..8b33152c9b85 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -3465,19 +3465,11 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
-> >  
-> >  	/* try to free all pages in this cgroup */
-> >  	while (nr_retries && page_counter_read(&memcg->memory)) {
-> > -		int progress;
-> > -
-> >  		if (signal_pending(current))
-> >  			return -EINTR;
-> >  
-> > -		progress = try_to_free_mem_cgroup_pages(memcg, 1,
-> > -							GFP_KERNEL, true);
-> > -		if (!progress) {
-> > +		if (!try_to_free_mem_cgroup_pages(memcg, 1, GFP_KERNEL, true))
-> >  			nr_retries--;
-> > -			/* maybe some writeback is necessary */
-> > -			congestion_wait(BLK_RW_ASYNC, HZ/10);
-> > -		}
-> > -
-> >  	}
-> >  
-> >  	return 0;
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 1e54e636b927..0450f6867d61 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -3323,6 +3323,33 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
-> >  	return zone_watermark_ok_safe(zone, 0, watermark, sc->reclaim_idx);
-> >  }
-> >  
-> > +static void consider_reclaim_throttle(pg_data_t *pgdat, struct scan_control *sc)
-> > +{
-> > +	/* If reclaim is making progress, wake any throttled tasks. */
-> > +	if (sc->nr_reclaimed) {
-> > +		wait_queue_head_t *wqh;
-> > +
-> > +		wqh = &pgdat->reclaim_wait[VMSCAN_THROTTLE_NOPROGRESS];
-> > +		if (waitqueue_active(wqh))
-> > +			wake_up(wqh);
-> > +
-> > +		return;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Do not throttle kswapd on NOPROGRESS as it will throttle on
-> > +	 * VMSCAN_THROTTLE_WRITEBACK if there are too many pages under
-> > +	 * writeback and marked for immediate reclaim at the tail of
-> > +	 * the LRU.
-> > +	 */
-> > +	if (current_is_kswapd())
-> > +		return;
-> > +
-> > +	/* Throttle if making no progress at high prioities. */
-> > +	if (sc->priority < DEF_PRIORITY - 2)
-> > +		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
-> > +}
-> > +
-> >  /*
-> >   * This is the direct reclaim path, for page-allocating processes.  We only
-> >   * try to reclaim pages from zones which will satisfy the caller's allocation
-> > @@ -3407,6 +3434,7 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
-> >  			continue;
-> >  		last_pgdat = zone->zone_pgdat;
-> >  		shrink_node(zone->zone_pgdat, sc);
-> > +		consider_reclaim_throttle(zone->zone_pgdat, sc);
-> >  	}
-> >  
-> >  	/*
-> > -- 
-> > 2.31.1
-> > 
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
