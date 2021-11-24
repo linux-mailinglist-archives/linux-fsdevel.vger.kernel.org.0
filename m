@@ -2,115 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C5445CD5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 20:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088A345CD96
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 20:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238116AbhKXTjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 14:39:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34712 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243532AbhKXTjR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 14:39:17 -0500
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FF93C061746
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 11:36:08 -0800 (PST)
-Received: by mail-pg1-x54a.google.com with SMTP id z4-20020a656104000000b00321790921fbso1214416pgu.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 11:36:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=l9t6ClhMMo4edSjmJdir8QUj58OMyUYJRTb0MJXDOKU=;
-        b=i0/Ngz3cNacHmR60ZQrdeEnU5wK465ot7VF/quxdpABPcQ5rReQE4P1dvpSxwpUQ3m
-         WJ7qE/WsmjAnexVyI5rsHFc8xD8POs/0ISZbs4ZJkhR+CYum1Q3AFocYRIxWrBtGPYyd
-         kpGigPgr0Gy6viXOgyakF3EJmTn3zFz9OVVwTg9lIs9gTEHhaESQjUH4FFP+hPxZ3q3D
-         aPs6s2Nsd5VhVbRR2vRo55J4x+AdhEx7XRnb2UkZLKv2t2yG6O4cp3R60tecsUAshY60
-         boOQrsQpXPVxDlp5sBkCJxX+Cl7biSAKJg+KC20HTZUp3GnjLr+bKkhdo0e7k5hun9DX
-         hd2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=l9t6ClhMMo4edSjmJdir8QUj58OMyUYJRTb0MJXDOKU=;
-        b=AhT+JooOBCBnJBzenW4CapWusCPE97AwR0OL9KTfgZW2f6aT21c3bqbFRBj+9IpfY0
-         MXXVWUD/BpS3Fa85EI74UCX4pBHV3Pxg1ImYtzsRwTBJrJ/tTVRA4voJzVeG/8dV1wqc
-         dmHdjmh6uQpPAMaVaW5c7EUlQ9O3MVXeMDiks3I3dbEY34ZQOZemG84FaJVT46ZR9LzW
-         EarVGaaFt9PmySVNpcpovPyznKDWMmyM49P/iUfQ32wFff1R+1G1KzvFguqBezgFu6s8
-         SVuGSCJ3LNDO26caR0V3MhjTm/O+zs1EASGS0biM5DV6S+LsRersgMhIVF6MlgZMWFSH
-         1Dcg==
-X-Gm-Message-State: AOAM533iokplY+JgbOVIBVWPVl5JZ0vMOa0cEuLgJcC/ZbBM7t4D3mTG
-        rHHeSCCvQoF7ivcA2roqYauOtWA3vy0=
-X-Google-Smtp-Source: ABdhPJzIBX9oxqVPB6dAYbBGP63Ursk9otTuOWoAVdTYt8LpHs+DLkFQWjiFWGnpyjXSRzphENtqYSJ9moM=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:200:ecf7:86c0:3b4d:493])
- (user=surenb job=sendgmr) by 2002:a63:914c:: with SMTP id l73mr12197689pge.184.1637782567590;
- Wed, 24 Nov 2021 11:36:07 -0800 (PST)
-Date:   Wed, 24 Nov 2021 11:36:04 -0800
-Message-Id: <20211124193604.2758863-1-surenb@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.34.0.rc2.393.gf8c9666880-goog
-Subject: [PATCH 1/1] sysctl: change watermark_scale_factor max limit to 30%
-From:   Suren Baghdasaryan <surenb@google.com>
-To:     akpm@linux-foundation.org
-Cc:     mhocko@suse.com, hannes@cmpxchg.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com,
-        dave.hansen@linux.intel.com, vbabka@suse.cz,
-        mgorman@techsingularity.net, corbet@lwn.net, yi.zhang@huawei.com,
-        xi.fengfei@h3c.com, rppt@kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+        id S237036AbhKXUCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 15:02:13 -0500
+Received: from mga04.intel.com ([192.55.52.120]:28074 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234835AbhKXUCN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Nov 2021 15:02:13 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10178"; a="234090618"
+X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
+   d="scan'208";a="234090618"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 11:59:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
+   d="scan'208";a="607317869"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 24 Nov 2021 11:59:00 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mpyPz-0005GS-TA; Wed, 24 Nov 2021 19:58:59 +0000
+Date:   Thu, 25 Nov 2021 03:58:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
+Subject: Re: [PATCH v1 1/3] fs: add parameter use_fpos to iterate_dir function
+Message-ID: <202111250356.yBAHK4KL-lkp@intel.com>
+References: <20211123181010.1607630-2-shr@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211123181010.1607630-2-shr@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For embedded systems with low total memory, having to run applications
-with relatively large memory requirements, 10% max limitation for
-watermark_scale_factor poses an issue of triggering direct reclaim
-every time such application is started. This results in slow application
-startup times and bad end-user experience.
-By increasing watermark_scale_factor max limit we allow vendors more
-flexibility to choose the right level of kswapd aggressiveness for
-their device and workload requirements.
+Hi Stefan,
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v5.16-rc2 next-20211124]
+[cannot apply to mszeredi-vfs/overlayfs-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 136057256686de39cc3a07c2e39ef6bc43003ff6
+config: x86_64-randconfig-r006-20211124 (https://download.01.org/0day-ci/archive/20211125/202111250356.yBAHK4KL-lkp@intel.com/config)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 67a1c45def8a75061203461ab0060c75c864df1c)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/94fab53b56d471270b8b7b9afe6d73a8098448be
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
+        git checkout 94fab53b56d471270b8b7b9afe6d73a8098448be
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> fs/ksmbd/vfs.c:1139:47: error: too few arguments to function call, expected 3, have 2
+           err = iterate_dir(fp->filp, &readdir_data.ctx);
+                 ~~~~~~~~~~~                            ^
+   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
+   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
+              ^
+   fs/ksmbd/vfs.c:1189:44: error: too few arguments to function call, expected 3, have 2
+           ret = iterate_dir(dfilp, &readdir_data.ctx);
+                 ~~~~~~~~~~~                         ^
+   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
+   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
+              ^
+   2 errors generated.
+--
+>> fs/ksmbd/smb2pdu.c:3926:58: error: too few arguments to function call, expected 3, have 2
+           rc = iterate_dir(dir_fp->filp, &dir_fp->readdir_data.ctx);
+                ~~~~~~~~~~~                                        ^
+   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
+   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
+              ^
+   1 error generated.
+
+
+vim +1139 fs/ksmbd/vfs.c
+
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1122  
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1123  /**
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1124   * ksmbd_vfs_empty_dir() - check for empty directory
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1125   * @fp:	ksmbd file pointer
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1126   *
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1127   * Return:	true if directory empty, otherwise false
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1128   */
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1129  int ksmbd_vfs_empty_dir(struct ksmbd_file *fp)
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1130  {
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1131  	int err;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1132  	struct ksmbd_readdir_data readdir_data;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1133  
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1134  	memset(&readdir_data, 0, sizeof(struct ksmbd_readdir_data));
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1135  
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1136  	set_ctx_actor(&readdir_data.ctx, __dir_empty);
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1137  	readdir_data.dirent_count = 0;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1138  
+e8c061917133dd fs/cifsd/vfs.c Namjae Jeon 2021-06-22 @1139  	err = iterate_dir(fp->filp, &readdir_data.ctx);
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1140  	if (readdir_data.dirent_count > 2)
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1141  		err = -ENOTEMPTY;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1142  	else
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1143  		err = 0;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1144  	return err;
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1145  }
+f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1146  
+
 ---
- Documentation/admin-guide/sysctl/vm.rst | 2 +-
- kernel/sysctl.c                         | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index 5e795202111f..f4804ce37c58 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -948,7 +948,7 @@ how much memory needs to be free before kswapd goes back to sleep.
- 
- The unit is in fractions of 10,000. The default value of 10 means the
- distances between watermarks are 0.1% of the available memory in the
--node/system. The maximum value is 1000, or 10% of memory.
-+node/system. The maximum value is 3000, or 30% of memory.
- 
- A high rate of threads entering direct reclaim (allocstall) or kswapd
- going to sleep prematurely (kswapd_low_wmark_hit_quickly) can indicate
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 083be6af29d7..2ab4edb6e450 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -122,6 +122,7 @@ static unsigned long long_max = LONG_MAX;
- static int one_hundred = 100;
- static int two_hundred = 200;
- static int one_thousand = 1000;
-+static int three_thousand = 3000;
- #ifdef CONFIG_PRINTK
- static int ten_thousand = 10000;
- #endif
-@@ -2959,7 +2960,7 @@ static struct ctl_table vm_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= watermark_scale_factor_sysctl_handler,
- 		.extra1		= SYSCTL_ONE,
--		.extra2		= &one_thousand,
-+		.extra2		= &three_thousand,
- 	},
- 	{
- 		.procname	= "percpu_pagelist_high_fraction",
--- 
-2.34.0.rc2.393.gf8c9666880-goog
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
