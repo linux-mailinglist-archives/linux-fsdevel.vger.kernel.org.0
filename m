@@ -2,80 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1FF45B2C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:48:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B0F45B2C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:48:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240876AbhKXDvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 22:51:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47780 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240878AbhKXDvM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 22:51:12 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6557BC061746
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 19:48:03 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id o6-20020a17090a0a0600b001a64b9a11aeso1328202pjo.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 19:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BQpMJpPq/OIJ1A+jReESOD3pvkOjXmQh8KJADyXTrz8=;
-        b=jKMXPC6R380cNIQ/lk6QhOIiLqsp4XKj1eRLbWdIfXDMXjf2sFtM/A4DNKzZle92lO
-         3U1GnSeEGBEEzHeeSOTcj6e6Hlhrl2Cgom3C+oy6m84LroLIm83mhibtNhOC9a7kpuLa
-         ouXLOQwDClItscEUt0Jtcfsiacpxarhj3trqquFBkBV1VRiZIUVoCcdmCugOwJ+8mJs6
-         RFqDPmjgXZyOm3EQaprR9sZoOXJ0YQXXHWkXXD+DsFaSM6qnnUL3vYnF49/xzscWLZfD
-         M7pqOQ9uH/J1/XHGYxb48lxo0PQegLqWhqBsHyRYBVi7oUWjdYWmqFepS80LAFQdqtcA
-         s5yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BQpMJpPq/OIJ1A+jReESOD3pvkOjXmQh8KJADyXTrz8=;
-        b=OGPQk9D9zhg7xWK6FsrfP9x27KRozypljPofKL7oVw3hQTphWipuuSHZhYcV9oaFO9
-         2hTVHVa7VDRrvUH+79tisYDkyH80K7ZgFGzcYR2sSJSc8yySJVprDt/pHyRz1flvx/gs
-         IpUm428Hr/A2NytM9XnH41G63uL28owBioEvxrEQyAZwtZ4qBABfaTfwyI22QJG2oYxA
-         uNuFJtPg7Tjmj+oF5n3ufrrpofGwGrQd8ScYEmd5jUbjnviqjAHWE8obR27WB6BgDd79
-         4BUnSE2NPnkKht+S2onY9aoXRsHeh9cLWjg382c55OYLURQYL/hCyk9qDUfZ+zU07F/p
-         KP2Q==
-X-Gm-Message-State: AOAM531zxbNhp4s8E7hHAVz56NtpEkWnW9hAUB5Bw6ujRcsgIBzFJVo/
-        ePfzLTbrxnAyTO1kVnySCMLAOI+/OFZKi7ku5s979Q==
-X-Google-Smtp-Source: ABdhPJwXdBqxRTwwq0bi38HdemI3/UrUSQvkef2geUCQrgUs13GwLl6CkzHERiNWivJH+HCOX6YcKKMcXBwB2wDg59I=
-X-Received: by 2002:a17:902:6acb:b0:142:76c3:d35f with SMTP id
- i11-20020a1709026acb00b0014276c3d35fmr13991510plt.89.1637725682824; Tue, 23
- Nov 2021 19:48:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-28-hch@lst.de>
-In-Reply-To: <20211109083309.584081-28-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 23 Nov 2021 19:47:52 -0800
-Message-ID: <CAPcyv4jrUAJ28J6Q75jmfQRz2nj4a3v6bZVjFpROd98efuafsQ@mail.gmail.com>
-Subject: Re: [PATCH 27/29] dax: fix up some of the block device related ifdefs
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+        id S240883AbhKXDvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 22:51:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240877AbhKXDvo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 22:51:44 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1605360F58;
+        Wed, 24 Nov 2021 03:48:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1637725715;
+        bh=eNm19UYlyEnaAc3du4K/HQR+rTR/djVUDLeSLSIhcts=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JdF/fCodrkt5hEwxfSHE1X76M7lQ3pfdJTBw3VeryrpK9UqmZLcfJY7svGM6i1Kjs
+         E2o/AR4AWth4IxC/jmFLdolOq5nhUXue0F+Y2oXajjMa9hf34HJUc8r+LyAiFi4xtG
+         FJvTvAMs5pojCHIU4EaEovqh2qEzW1yxiZglEUxc=
+Date:   Tue, 23 Nov 2021 19:48:33 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     "NeilBrown" <neilb@suse.de>
+Cc:     "Uladzislau Rezki" <urezki@gmail.com>,
+        "Michal Hocko" <mhocko@kernel.org>,
+        "Dave Chinner" <david@fromorbit.com>,
+        "Christoph Hellwig" <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, "LKML" <linux-kernel@vger.kernel.org>,
+        "Ilya Dryomov" <idryomov@gmail.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Michal Hocko" <mhocko@suse.com>
+Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
+Message-Id: <20211123194833.4711add38351d561f8a1ae3e@linux-foundation.org>
+In-Reply-To: <163772381628.1891.9102201563412921921@noble.neil.brown.name>
+References: <20211122153233.9924-1-mhocko@kernel.org>
+        <20211122153233.9924-3-mhocko@kernel.org>
+        <YZ06nna7RirAI+vJ@pc638.lan>
+        <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
+        <163772381628.1891.9102201563412921921@noble.neil.brown.name>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> The DAX device <-> block device association is only enabled if
-> CONFIG_BLOCK is enabled.  Update dax.h to account for that and use
-> the right conditions for the fs_put_dax stub as well.
+On Wed, 24 Nov 2021 14:16:56 +1100 "NeilBrown" <neilb@suse.de> wrote:
 
-Looks good to me.
+> On Wed, 24 Nov 2021, Andrew Morton wrote:
+> > 
+> > I added GFP_NOFAIL back in the mesozoic era because quite a lot of
+> > sites were doing open-coded try-forever loops.  I thought "hey, they
+> > shouldn't be doing that in the first place, but let's at least
+> > centralize the concept to reduce code size, code duplication and so
+> > it's something we can now grep for".  But longer term, all GFP_NOFAIL
+> > sites should be reworked to no longer need to do the retry-forever
+> > thing.  In retrospect, this bright idea of mine seems to have added
+> > license for more sites to use retry-forever.  Sigh.
+> 
+> One of the costs of not having GFP_NOFAIL (or similar) is lots of
+> untested failure-path code.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Well that's bad of the relevant developers and testers!  It isn't that
+hard to fake up allocation failures.  Either with the formal fault
+injection framework or with ad-hackery.
 
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> When does an allocation that is allowed to retry and reclaim ever fail
+> anyway? I think the answer is "only when it has been killed by the oom
+> killer".  That of course cannot happen to kernel threads, so maybe
+> kernel threads should never need GFP_NOFAIL??
+
+> I'm not sure the above is 100%, but I do think that is the sort of
+> semantic that we want.  We want to know what kmalloc failure *means*.
+> We also need well defined and documented strategies to handle it.
+> mempools are one such strategy, but not always suitable.
+
+Well, mempools aren't "handling" it.  They're just another layer to
+make memory allocation attempts appear to be magical.  The preferred
+answer is "just handle the damned error and return ENOMEM".
+
+Obviously this gets very painful at times (arguably because of
+high-level design shortcomings).  The old radix_tree_preload approach
+was bulletproof, but was quite a lot of fuss.
+
+> preallocating can also be useful but can be clumsy to implement.  Maybe
+> we should support a process preallocating a bunch of pages which can
+> only be used by the process - and are auto-freed when the process
+> returns to user-space.  That might allow the "error paths" to be simple
+> and early, and subsequent allocations that were GFP_USEPREALLOC would be
+> safe.
+
+Yes, I think something like that would be quite feasible.  Need to
+prevent interrupt code from stealing the task's page store.
+
+It can be a drag calculating (by hand) what the max possible amount of
+allocation will be and one can end up allocating and then not using a
+lot of memory.
+
+I forget why radix_tree_preload used a cpu-local store rather than a
+per-task one.
+
+Plus "what order pages would you like" and "on which node" and "in
+which zone", etc...
