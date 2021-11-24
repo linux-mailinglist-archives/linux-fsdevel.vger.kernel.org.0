@@ -2,131 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37AC045D0FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:15:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2847F45D10F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352620AbhKXXSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 18:18:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346272AbhKXXSW (ORCPT
+        id S244197AbhKXXUa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 18:20:30 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41946 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244706AbhKXXU0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 18:18:22 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630A5C061574;
-        Wed, 24 Nov 2021 15:15:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=/BehJWA378MuzCcNzYeiaptr9YB2kX6SkWqVtJnXf90=; b=M5Qs3grdB16pLj3aU+oKgVtrYf
-        +9X53Hc9TEpgvqrxdEacMBLIfLUpIRcdx0pspIrtG0DxItwaTy3rk1K/2OFZDGx0R7+fenta8bzwt
-        TREipnX6auLhQV3MwazJgA0BMRl5ForyeKLzFMhhge2Bs/DjIi9Q7yGUjTmP6eIlGrd9aDrgtvuFS
-        JW6sS7fevhy+T4aIZTlGhxX3rgLwIsgckJKUGWECBA5vOH+3+uFupDb1zxgzwEBpeYxtogUhDwO3G
-        qAPJJftYL3FpkKPNCkBom6O2Mhu1fPFHi6L+oIwyfval9Y3BZZAiM2A7WVL4ZVEnITt4opq1g+XSM
-        xlDxcIdA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mq1TI-0063zK-TI; Wed, 24 Nov 2021 23:14:36 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     akpm@linux-foundation.org, keescook@chromium.org,
-        yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
-        steve@sk2.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        tytso@mit.edu, viro@zeniv.linux.org.uk, pmladek@suse.com,
-        senozhatsky@chromium.org, rostedt@goodmis.org,
-        john.ogness@linutronix.de, dgilbert@interlog.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        mcgrof@bombadil.infradead.org, mcgrof@kernel.org,
-        linux-scsi@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] sysctl: share unsigned long const values
-Date:   Wed, 24 Nov 2021 15:14:35 -0800
-Message-Id: <20211124231435.1445213-9-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211124231435.1445213-1-mcgrof@kernel.org>
-References: <20211124231435.1445213-1-mcgrof@kernel.org>
+        Wed, 24 Nov 2021 18:20:26 -0500
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AOKFBOu006437
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 15:17:15 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=NgS2KZzbA1W+gv5+zMwv/8mC21+P6aOYVkg7arqXcuY=;
+ b=lNmFL73fz0R/aflPaJq3uid167EpS1vZhdEBydHBBi1cvzBEv5mtmiXWbbEpzyq2XO5n
+ bZKAKCbr+ggOWLH5DvFkAa2pXwq0eytDq56dwwWZqJS3MyV36mbMgi5p6ai5s0lgGZ7g
+ ihg/clqyjOOGQfukMkVFd7Kpjqboqap4nhk= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 3chje5vwxb-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 15:17:15 -0800
+Received: from intmgw006.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Wed, 24 Nov 2021 15:17:14 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 9B2A66DDBB76; Wed, 24 Nov 2021 15:17:10 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>
+Subject: [PATCH v2 0/3] io_uring: add getdents64 support
+Date:   Wed, 24 Nov 2021 15:16:57 -0800
+Message-ID: <20211124231700.1158521-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-FB-Source: Intern
+X-Proofpoint-ORIG-GUID: xldb5ooQasvO9szp8V5nRH_ZaeN194nV
+X-Proofpoint-GUID: xldb5ooQasvO9szp8V5nRH_ZaeN194nV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-24_06,2021-11-24_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=650 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111240114
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a way to share unsigned long values.
-This will allow others to not have to re-invent
-these values.
+This series adds support for getdents64 in liburing. The intent is to
+provide a more complete I/O interface for io_uring.
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Patch 1: fs: add parameter use_fpos to iterate_dir()
+  This adds a new parameter to the function iterate_dir() so the
+  caller can specify if the position is the file position or the
+  position stored in the buffer context.
+
+Patch 2: fs: split off vfs_getdents function from getdents64 system call
+  This splits of the iterate_dir part of the syscall in its own
+  dedicated function. This allows to call the function directly from
+  liburing.
+
+Patch 3: io_uring: add support for getdents64
+  Adds the functions to io_uring to support getdents64.
+
+There is also a patch series for the changes to liburing. This includes
+a new test. The patch series is called "liburing: add getdents support."
+
+The following tests have been performed:
+- new liburing getdents test program has been run
+- xfstests have been run
+- both tests have been repeated with the kernel memory leak checker
+  and no leaks have been reported.
+
+Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/proc/proc_sysctl.c  | 3 +++
- include/linux/sysctl.h | 6 ++++++
- kernel/sysctl.c        | 9 +++------
- 3 files changed, 12 insertions(+), 6 deletions(-)
+V2: Updated the iterate_dir calls in fs/ksmbd, fs/ecryptfs and arch/alpha=
+ with
+    the additional parameter.
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index aa743bbb8400..2b73648a19a5 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -29,6 +29,9 @@ static const struct inode_operations proc_sys_dir_operations;
- const int sysctl_vals[] = { -1, 0, 1, 2, 4, 100, 200, 1000, INT_MAX };
- EXPORT_SYMBOL(sysctl_vals);
- 
-+const unsigned long sysctl_long_vals[] = { 0, 1, LONG_MAX };
-+EXPORT_SYMBOL_GPL(sysctl_long_vals);
-+
- /* Support for permanently empty directories */
- 
- struct ctl_table sysctl_mount_point[] = {
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 7946b532e964..162aaee92daf 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -50,6 +50,12 @@ struct ctl_dir;
- 
- extern const int sysctl_vals[];
- 
-+#define SYSCTL_LONG_ZERO	((void *)&sysctl_long_vals[0])
-+#define SYSCTL_LONG_ONE		((void *)&sysctl_long_vals[1])
-+#define SYSCTL_LONG_MAX		((void *)&sysctl_long_vals[2])
-+
-+extern const unsigned long sysctl_long_vals[];
-+
- typedef int proc_handler(struct ctl_table *ctl, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos);
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5812d76ecee1..b8a3dcf7b925 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -99,9 +99,6 @@
- 
- /* Constants used for minimum and  maximum */
- 
--static const unsigned long zero_ul;
--static const unsigned long one_ul = 1;
--static const unsigned long long_max = LONG_MAX;
- #ifdef CONFIG_PRINTK
- static const int ten_thousand = 10000;
- #endif
-@@ -2512,7 +2509,7 @@ static struct ctl_table vm_table[] = {
- 		.maxlen		= sizeof(dirty_background_bytes),
- 		.mode		= 0644,
- 		.proc_handler	= dirty_background_bytes_handler,
--		.extra1		= (void *)&one_ul,
-+		.extra1		= SYSCTL_LONG_ONE,
- 	},
- 	{
- 		.procname	= "dirty_ratio",
-@@ -2930,8 +2927,8 @@ static struct ctl_table fs_table[] = {
- 		.maxlen		= sizeof(files_stat.max_files),
- 		.mode		= 0644,
- 		.proc_handler	= proc_doulongvec_minmax,
--		.extra1		= (void *)&zero_ul,
--		.extra2		= (void *)&long_max,
-+		.extra1		= SYSCTL_LONG_ZERO,
-+		.extra2		= SYSCTL_LONG_MAX,
- 	},
- 	{
- 		.procname	= "nr_open",
--- 
-2.33.0
+Stefan Roesch (3):
+  fs: add parameter use_fpos to iterate_dir function
+  fs: split off vfs_getdents function of getdents64 syscall
+  io_uring: add support for getdents64
+
+ arch/alpha/kernel/osf_sys.c   |  2 +-
+ fs/ecryptfs/file.c            |  2 +-
+ fs/exportfs/expfs.c           |  2 +-
+ fs/internal.h                 |  8 +++++
+ fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++
+ fs/ksmbd/smb2pdu.c            |  2 +-
+ fs/ksmbd/vfs.c                |  4 +--
+ fs/nfsd/nfs4recover.c         |  2 +-
+ fs/nfsd/vfs.c                 |  2 +-
+ fs/overlayfs/readdir.c        |  6 ++--
+ fs/readdir.c                  | 64 ++++++++++++++++++++++++++---------
+ include/linux/fs.h            |  2 +-
+ include/uapi/linux/io_uring.h |  1 +
+ 13 files changed, 121 insertions(+), 28 deletions(-)
+
+
+base-commit: f0afafc21027c39544a2c1d889b0cff75b346932
+--=20
+2.30.2
 
