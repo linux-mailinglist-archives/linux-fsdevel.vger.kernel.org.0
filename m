@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96E0545D0FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:15:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C57A45D0F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:15:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352601AbhKXXSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 18:18:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56486 "EHLO
+        id S1352521AbhKXXSX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 18:18:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346233AbhKXXSW (ORCPT
+        with ESMTP id S245001AbhKXXSV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 18:18:22 -0500
+        Wed, 24 Nov 2021 18:18:21 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD9CBC06174A;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74F0EC061574;
         Wed, 24 Nov 2021 15:15:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=6mHHcyDVvmaaWAZWfzLVXCeFxFqvaI0dcZ+/wo61JNE=; b=PcrUj+Oyhwva3894+5ogE5C8Eq
-        gjWAPPu11SjDee+tj8pmC9JTSV8okNKSNwQgHY6mH6hONupNAbzEY9rPIo1QVoPo65upx32ayD/6O
-        wDGpOMVfikzVGemkeOFJUIHff3HBoArnQlYL5KNOoiyC+GkxEgVjrBF8cxcx4Mbbyfwh1RfFwa3eU
-        tuU89jBld0XUv7WuEmdOoMNZo8HKG8aAnSPzSzykulv5XY96ev9B8I4fyf8k1vPo8J9Do6rpexgz+
-        fRen0SyRopWNqpCHsCDrlGnmVJhsAwmSSOMMUxLN9by6cjmjGkxba06Y2K5RnYFZQ72QIThvo2ekt
-        8neUjt5Q==;
+        bh=EmbnGF5E3X7PPKzRoMxBObQ25iaJW1VVEtk3YOxE710=; b=X0Ddn93Ab27SsMBYonlR3fLKSq
+        akkQsm9qTnY6+XntvFQHnMgMvkPS7JOq0ixdxuijuSgYIZ2/AirEdectYv8xW8aUrHLqeCRGqo3fl
+        o6qquwVdwE/fBU07WdqPC6a7vhKArlQAbMtxCuMW7O1eHZPwQne1eY25CImLk2S3VCGi529/gYO4Y
+        ycidYCNtvojzf7lWWE5j9v1V2POFEyk3R9dkZNoTNT1iyG0ltSOZCI+kE5uuXa45FgHt8QNSqR1m7
+        YQ0E6IqKJsw2XudW3Kte/KhcfvNOwHi6QMQbwYLyVwzzX+6xgAlnM6xlwQqpwwv2aD8XZddc5SZh5
+        rs/F2szg==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mq1TI-0063zE-Qa; Wed, 24 Nov 2021 23:14:36 +0000
+        id 1mq1TI-0063zH-Rl; Wed, 24 Nov 2021 23:14:36 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     akpm@linux-foundation.org, keescook@chromium.org,
         yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
@@ -38,9 +38,9 @@ To:     akpm@linux-foundation.org, keescook@chromium.org,
         mcgrof@bombadil.infradead.org, mcgrof@kernel.org,
         linux-scsi@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/8] scsi/sg: move sg-big-buff sysctl to scsi/sg.c
-Date:   Wed, 24 Nov 2021 15:14:33 -0800
-Message-Id: <20211124231435.1445213-7-mcgrof@kernel.org>
+Subject: [PATCH v2 7/8] stackleak: move stack_erasing sysctl to stackleak.c
+Date:   Wed, 24 Nov 2021 15:14:34 -0800
+Message-Id: <20211124231435.1445213-8-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211124231435.1445213-1-mcgrof@kernel.org>
 References: <20211124231435.1445213-1-mcgrof@kernel.org>
@@ -61,131 +61,114 @@ places where they actually belong. The proc sysctl maintainers
 do not want to know what sysctl knobs you wish to add for your own
 piece of code, we just care about the core logic.
 
-So move the sg-big-buff sysctl from kernel/sysctl.c to
-drivers/scsi/sg.c and use register_sysctl() to register the
+So move the stack_erasing sysctl from kernel/sysctl.c to
+kernel/stackleak.c and use register_sysctl() to register the
 sysctl interface.
 
 Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
 [mcgrof: commit log update]
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/scsi/sg.c | 35 ++++++++++++++++++++++++++++++++++-
- include/scsi/sg.h |  4 ----
- kernel/sysctl.c   | 12 ------------
- 3 files changed, 34 insertions(+), 17 deletions(-)
+ include/linux/stackleak.h |  5 -----
+ kernel/stackleak.c        | 26 ++++++++++++++++++++++++--
+ kernel/sysctl.c           | 14 --------------
+ 3 files changed, 24 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 141099ab9092..32129bb16521 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -77,7 +77,7 @@ static int sg_proc_init(void);
+diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
+index a59db2f08e76..ccaab2043fcd 100644
+--- a/include/linux/stackleak.h
++++ b/include/linux/stackleak.h
+@@ -23,11 +23,6 @@ static inline void stackleak_task_init(struct task_struct *t)
+ # endif
+ }
  
- #define SG_DEFAULT_TIMEOUT mult_frac(SG_DEFAULT_TIMEOUT_USER, HZ, USER_HZ)
+-#ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
+-int stack_erasing_sysctl(struct ctl_table *table, int write,
+-			void *buffer, size_t *lenp, loff_t *ppos);
+-#endif
+-
+ #else /* !CONFIG_GCC_PLUGIN_STACKLEAK */
+ static inline void stackleak_task_init(struct task_struct *t) { }
+ #endif
+diff --git a/kernel/stackleak.c b/kernel/stackleak.c
+index ce161a8e8d97..66b8af394e58 100644
+--- a/kernel/stackleak.c
++++ b/kernel/stackleak.c
+@@ -16,11 +16,13 @@
+ #ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
+ #include <linux/jump_label.h>
+ #include <linux/sysctl.h>
++#include <linux/init.h>
  
--int sg_big_buff = SG_DEF_RESERVED_SIZE;
-+static int sg_big_buff = SG_DEF_RESERVED_SIZE;
- /* N.B. This variable is readable and writeable via
-    /proc/scsi/sg/def_reserved_size . Each time sg_open() is called a buffer
-    of this size (or less if there is not enough memory) will be reserved
-@@ -1634,6 +1634,37 @@ MODULE_PARM_DESC(scatter_elem_sz, "scatter gather element "
- MODULE_PARM_DESC(def_reserved_size, "size of buffer reserved for each fd");
- MODULE_PARM_DESC(allow_dio, "allow direct I/O (default: 0 (disallow))");
+ static DEFINE_STATIC_KEY_FALSE(stack_erasing_bypass);
  
+-int stack_erasing_sysctl(struct ctl_table *table, int write,
+-			void *buffer, size_t *lenp, loff_t *ppos)
 +#ifdef CONFIG_SYSCTL
-+#include <linux/sysctl.h>
-+
-+static struct ctl_table sg_sysctls[] = {
++static int stack_erasing_sysctl(struct ctl_table *table, int write,
++			void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int ret = 0;
+ 	int state = !static_branch_unlikely(&stack_erasing_bypass);
+@@ -42,6 +44,26 @@ int stack_erasing_sysctl(struct ctl_table *table, int write,
+ 					state ? "enabled" : "disabled");
+ 	return ret;
+ }
++static struct ctl_table stackleak_sysctls[] = {
 +	{
-+		.procname	= "sg-big-buff",
-+		.data		= &sg_big_buff,
++		.procname	= "stack_erasing",
++		.data		= NULL,
 +		.maxlen		= sizeof(int),
-+		.mode		= 0444,
-+		.proc_handler	= proc_dointvec,
++		.mode		= 0600,
++		.proc_handler	= stack_erasing_sysctl,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
 +	},
 +	{}
 +};
 +
-+static struct ctl_table_header *hdr;
-+static void register_sg_sysctls(void)
++static int __init stackleak_sysctls_init(void)
 +{
-+	if (!hdr)
-+		hdr = register_sysctl("kernel", sg_sysctls);
++	register_sysctl_init("kernel", stackleak_sysctls);
++	return 0;
 +}
-+
-+static void unregister_sg_sysctls(void)
-+{
-+	if (hdr)
-+		unregister_sysctl_table(hdr);
-+}
-+#else
-+#define register_sg_sysctls() do { } while (0)
-+#define unregister_sg_sysctls() do { } while (0)
++late_initcall(stackleak_sysctls_init);
 +#endif /* CONFIG_SYSCTL */
-+
- static int __init
- init_sg(void)
- {
-@@ -1666,6 +1697,7 @@ init_sg(void)
- 		return 0;
- 	}
- 	class_destroy(sg_sysfs_class);
-+	register_sg_sysctls();
- err_out:
- 	unregister_chrdev_region(MKDEV(SCSI_GENERIC_MAJOR, 0), SG_MAX_DEVS);
- 	return rc;
-@@ -1674,6 +1706,7 @@ init_sg(void)
- static void __exit
- exit_sg(void)
- {
-+	unregister_sg_sysctls();
- #ifdef CONFIG_SCSI_PROC_FS
- 	remove_proc_subtree("scsi/sg", NULL);
- #endif				/* CONFIG_SCSI_PROC_FS */
-diff --git a/include/scsi/sg.h b/include/scsi/sg.h
-index 843cefb8efce..068e35d36557 100644
---- a/include/scsi/sg.h
-+++ b/include/scsi/sg.h
-@@ -29,10 +29,6 @@
-  * For utility and test programs see: http://sg.danny.cz/sg/sg3_utils.html
-  */
  
--#ifdef __KERNEL__
--extern int sg_big_buff; /* for sysctl */
--#endif
--
- 
- typedef struct sg_iovec /* same structure as used by readv() Linux system */
- {                       /* call. It defines one scatter-gather element. */
+ #define skip_erasing()	static_branch_unlikely(&stack_erasing_bypass)
+ #else
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 02ef27804601..a4bda4a11ea8 100644
+index a4bda4a11ea8..5812d76ecee1 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
 @@ -94,9 +94,6 @@
  #if defined(CONFIG_PROVE_LOCKING) || defined(CONFIG_LOCK_STAT)
  #include <linux/lockdep.h>
  #endif
--#ifdef CONFIG_CHR_DEV_SG
--#include <scsi/sg.h>
+-#ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
+-#include <linux/stackleak.h>
 -#endif
- #ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
- #include <linux/stackleak.h>
- #endif
-@@ -2089,15 +2086,6 @@ static struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dostring,
+ 
+ #if defined(CONFIG_SYSCTL)
+ 
+@@ -2441,17 +2438,6 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ONE,
+ 		.extra2		= SYSCTL_INT_MAX,
  	},
- #endif
--#ifdef CONFIG_CHR_DEV_SG
--	{
--		.procname	= "sg-big-buff",
--		.data		= &sg_big_buff,
--		.maxlen		= sizeof (int),
--		.mode		= 0444,
--		.proc_handler	= proc_dointvec,
--	},
 -#endif
- #ifdef CONFIG_BSD_PROCESS_ACCT
- 	{
- 		.procname	= "acct",
+-#ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
+-	{
+-		.procname	= "stack_erasing",
+-		.data		= NULL,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0600,
+-		.proc_handler	= stack_erasing_sysctl,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+ #endif
+ 	{ }
+ };
 -- 
 2.33.0
 
