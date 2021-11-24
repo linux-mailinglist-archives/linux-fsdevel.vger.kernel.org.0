@@ -2,57 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA2345B309
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 05:15:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D1045B26A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:05:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbhKXETC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 23:19:02 -0500
-Received: from vector.std.tu-plovdiv.bg ([194.141.38.20]:54580 "HELO
-        vector.tu-plovdiv.bg" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S240935AbhKXETB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 23:19:01 -0500
-X-Greylist: delayed 19843 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Nov 2021 23:18:51 EST
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by vector.tu-plovdiv.bg (Postfix) with ESMTP id 46D3520F10D9E;
-        Wed, 24 Nov 2021 00:25:15 +0200 (EET)
-Received: from vector.tu-plovdiv.bg ([127.0.0.1])
-        by localhost (vector.tu-plovdiv.bg [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id zSBicfhO-6pv; Wed, 24 Nov 2021 00:25:15 +0200 (EET)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by vector.tu-plovdiv.bg (Postfix) with ESMTP id DB19B20F10DBF;
-        Tue, 23 Nov 2021 23:57:35 +0200 (EET)
-X-Virus-Scanned: amavisd-new at tu-plovdiv.bg
-Received: from vector.tu-plovdiv.bg ([127.0.0.1])
-        by localhost (vector.tu-plovdiv.bg [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id lOGalIM-37nT; Tue, 23 Nov 2021 23:57:35 +0200 (EET)
-Received: from [10.7.240.6] (unknown [216.38.7.240])
-        by vector.tu-plovdiv.bg (Postfix) with ESMTPSA id 87AC820EB4C89;
-        Tue, 23 Nov 2021 23:42:20 +0200 (EET)
-Content-Type: text/plain; charset="utf-8"
+        id S232043AbhKXDI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 22:08:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229745AbhKXDIZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 22:08:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3682660F55;
+        Wed, 24 Nov 2021 03:05:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637723116;
+        bh=8E5AHzN+aCpIUyy/IKItQsgBCFz9QjxdNsnf6Wc8sLI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NRaLXp2DQNpRDi5NBlLIrHYp1YQ84fyWovscy9PbvHAt/ymlk5DiV6yDdEv5cQWZr
+         jLpg2wIKqTZyI1ywqwak+JmUmQSdDiGbC/0EDBVNmzr8LgDHb5y1ocPXF2R6jYxhnN
+         GN5ZvGVK69U1jII2tRqWVd7zBvVEF9NGxPhMG0So+jx7Z6OnHCYoRXokbFrI/Qp6wI
+         kbYSpUTNH7LbVZaurhYL8mcXBu98rgITDU24/fEvl1Doo9kGD/X0YwHhmZrb9tueYZ
+         d/7VoK/rTTLlDbMhSGJNN93DH71+f/oSLnH2gBKrosvzkrffMmGkKX9KhJ/nEPm2kt
+         Y0OPUm6XnKtFg==
+Date:   Tue, 23 Nov 2021 19:05:15 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 21/29] xfs: move dax device handling into
+ xfs_{alloc,free}_buftarg
+Message-ID: <20211124030515.GC266024@magnolia>
+References: <20211109083309.584081-1-hch@lst.de>
+ <20211109083309.584081-22-hch@lst.de>
+ <CAPcyv4hY4g82PrjMPO=1kiM5sL=3=yR66r6LeG8RS3Ha2k1eUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?SPENDE_F=C3=9CR_WOHLT=C3=84TIGKEIT?=
-To:     Recipients <andybechtolsheima@gmail.com>
-From:   andybechtolsheima@gmail.com
-Date:   Tue, 23 Nov 2021 13:42:12 -0800
-Reply-To: pendmat551@gmail.com
-Message-Id: <20211123214220.87AC820EB4C89@vector.tu-plovdiv.bg>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hY4g82PrjMPO=1kiM5sL=3=yR66r6LeG8RS3Ha2k1eUw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Nov 23, 2021 at 06:40:47PM -0800, Dan Williams wrote:
+> On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > Hide the DAX device lookup from the xfs_super.c code.
+> >
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> That's an interesting spelling of "Signed-off-by", but patch looks
+> good to me too. I would have expected a robot to complain about
+> missing sign-off?
 
-Hallo
-Mein Name ist Andy Bechtolsheim, ich bin ursprünglich Deutscher, lebe aber derzeit hier in den USA.
-Ich bin Elektroingenieur und Unternehmer, Google-Investor, Mitbegründer von Sun Microsystems, Selfmade-Milliardär und Philanthrop.
+Nah, they only like to do that /after/ you've pushed a branch to
+kernel.org and emailed the lists about it. ;)
 
-Normalerweise verschenke ich 25 % meines persönlichen Vermögens für wohltätige Zwecke.
-Als Philanthrop möchte ich einen Betrag von 1000.000 € an eine Person aus Deutschland spenden, um meine Wohltätigkeitsmission in Deutschland zu erfüllen.
-Wenn Sie daran interessiert sind, meine Spende anzunehmen und gemäß meiner Anweisung zu verwenden, kontaktieren Sie mich bitte für weitere Details.
+--D
 
-Geben Sie meinen Namen (Andy Bechtolsheim) bei Google ein, um mehr über mich und meine philanthropischen Arbeiten zu erfahren.
-Gott segne dich und beschütze dich
-Andy Bechtolsheim
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
