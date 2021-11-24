@@ -2,105 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1B0F45B2C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F0945B2DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:51:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240883AbhKXDvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 22:51:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240877AbhKXDvo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 22:51:44 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1605360F58;
-        Wed, 24 Nov 2021 03:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1637725715;
-        bh=eNm19UYlyEnaAc3du4K/HQR+rTR/djVUDLeSLSIhcts=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JdF/fCodrkt5hEwxfSHE1X76M7lQ3pfdJTBw3VeryrpK9UqmZLcfJY7svGM6i1Kjs
-         E2o/AR4AWth4IxC/jmFLdolOq5nhUXue0F+Y2oXajjMa9hf34HJUc8r+LyAiFi4xtG
-         FJvTvAMs5pojCHIU4EaEovqh2qEzW1yxiZglEUxc=
-Date:   Tue, 23 Nov 2021 19:48:33 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "NeilBrown" <neilb@suse.de>
-Cc:     "Uladzislau Rezki" <urezki@gmail.com>,
-        "Michal Hocko" <mhocko@kernel.org>,
-        "Dave Chinner" <david@fromorbit.com>,
-        "Christoph Hellwig" <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, "LKML" <linux-kernel@vger.kernel.org>,
-        "Ilya Dryomov" <idryomov@gmail.com>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Michal Hocko" <mhocko@suse.com>
-Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-Message-Id: <20211123194833.4711add38351d561f8a1ae3e@linux-foundation.org>
-In-Reply-To: <163772381628.1891.9102201563412921921@noble.neil.brown.name>
-References: <20211122153233.9924-1-mhocko@kernel.org>
-        <20211122153233.9924-3-mhocko@kernel.org>
-        <YZ06nna7RirAI+vJ@pc638.lan>
-        <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
-        <163772381628.1891.9102201563412921921@noble.neil.brown.name>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S240893AbhKXDye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 22:54:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48562 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240907AbhKXDyd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 22:54:33 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1459FC061746
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 19:51:25 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id p18-20020a17090ad31200b001a78bb52876so3890955pju.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 19:51:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uJJrE2V7YDKia68Ncdl0fsAelSVdGw1v9JUEXR7xY5Y=;
+        b=vNWAOXzyAyZLL55qsyuCit1K8cMla9Q+I7a8HbLHArMfgpXCYh1wtjdFnUFWSDzn1/
+         T1Hm88FkQaWO7xTh0mJLeCLeygQ9XisaZ/XdmwUyLak3fa4OobGb1BWM5ZwyXtbfybYZ
+         AImH8X7vgDZd94f4gGyAHjFhglD+WoYohpNRn3ZnIE+uI745TpScjyc77ErLiPREiHK9
+         9zQlfvf5/9sPOSgOLuvsV+WpFV/QM4YFfAdVMzyOtae7ikCAA2NGiOEOPGZF9XEqRun2
+         JjRU5WwiL+LDDdZvrMhOHyatQOMmuQaQU9bgUORS8BfRoMg++/EVDk/zAuYjdunbyyUb
+         o34Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uJJrE2V7YDKia68Ncdl0fsAelSVdGw1v9JUEXR7xY5Y=;
+        b=BMGp/CgaT0jls9th8DkwN3DuV6CcSMEedAYu87WlpTBCmeD7JkHs1d070z7T33bljx
+         FXuoFNK1TgF1xhUWuk/JrYm9j1nTUkoiHcr56S4/PKmeajbXqjk5TH49ScQ7JUvpittq
+         DmuMfhblyEbUyszcHH9H6YM1rwC08y4IPIz5jYCHL1Hl73EuHnfcVJeQbWN8IPDI7AzJ
+         glthmSMdCiSDQOb6S55pjizz8F5YQVhkFMtXeAkTvwyHR6PZarq7VvDw8dthUzXv1W4Z
+         5sHqkBNcDGsXdh1p4pUKBwLLCx+ksLqRPYQQyFb0V4DW6K4ccEJjTMyV6LRVTteMiXeZ
+         DTiw==
+X-Gm-Message-State: AOAM532JmsKIP80Nzkt6Ltbo8JYOqV+AxCb2hJ0IOx2GxDLwmbjEw8l+
+        80qMYS/QVR2zcGxRXWwW+T4XiW6yMTLjtcK0LZ/Qag==
+X-Google-Smtp-Source: ABdhPJzAHmbz7abbV3IfUPlG+M3Adum2An1EImXm+0nyzeG+6b50syE8SI9jQ3gftFqA5yglDnQ0v4N9/X3Fjpc01Ms=
+X-Received: by 2002:a17:90b:1e07:: with SMTP id pg7mr4029053pjb.93.1637725884625;
+ Tue, 23 Nov 2021 19:51:24 -0800 (PST)
+MIME-Version: 1.0
+References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-29-hch@lst.de>
+In-Reply-To: <20211109083309.584081-29-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 23 Nov 2021 19:51:14 -0800
+Message-ID: <CAPcyv4iV+PTdvV+Tq5j3nR6UWFQPTeuzQrZGdS24HdVehY_OaA@mail.gmail.com>
+Subject: Re: [PATCH 28/29] iomap: build the block based code conditionally
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 24 Nov 2021 14:16:56 +1100 "NeilBrown" <neilb@suse.de> wrote:
+On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Only build the block based iomap code if CONFIG_BLOCK is set.  Currently
+> that is always the case, but it will change soon.
 
-> On Wed, 24 Nov 2021, Andrew Morton wrote:
-> > 
-> > I added GFP_NOFAIL back in the mesozoic era because quite a lot of
-> > sites were doing open-coded try-forever loops.  I thought "hey, they
-> > shouldn't be doing that in the first place, but let's at least
-> > centralize the concept to reduce code size, code duplication and so
-> > it's something we can now grep for".  But longer term, all GFP_NOFAIL
-> > sites should be reworked to no longer need to do the retry-forever
-> > thing.  In retrospect, this bright idea of mine seems to have added
-> > license for more sites to use retry-forever.  Sigh.
-> 
-> One of the costs of not having GFP_NOFAIL (or similar) is lots of
-> untested failure-path code.
+Looks good.
 
-Well that's bad of the relevant developers and testers!  It isn't that
-hard to fake up allocation failures.  Either with the formal fault
-injection framework or with ad-hackery.
-
-> When does an allocation that is allowed to retry and reclaim ever fail
-> anyway? I think the answer is "only when it has been killed by the oom
-> killer".  That of course cannot happen to kernel threads, so maybe
-> kernel threads should never need GFP_NOFAIL??
-
-> I'm not sure the above is 100%, but I do think that is the sort of
-> semantic that we want.  We want to know what kmalloc failure *means*.
-> We also need well defined and documented strategies to handle it.
-> mempools are one such strategy, but not always suitable.
-
-Well, mempools aren't "handling" it.  They're just another layer to
-make memory allocation attempts appear to be magical.  The preferred
-answer is "just handle the damned error and return ENOMEM".
-
-Obviously this gets very painful at times (arguably because of
-high-level design shortcomings).  The old radix_tree_preload approach
-was bulletproof, but was quite a lot of fuss.
-
-> preallocating can also be useful but can be clumsy to implement.  Maybe
-> we should support a process preallocating a bunch of pages which can
-> only be used by the process - and are auto-freed when the process
-> returns to user-space.  That might allow the "error paths" to be simple
-> and early, and subsequent allocations that were GFP_USEPREALLOC would be
-> safe.
-
-Yes, I think something like that would be quite feasible.  Need to
-prevent interrupt code from stealing the task's page store.
-
-It can be a drag calculating (by hand) what the max possible amount of
-allocation will be and one can end up allocating and then not using a
-lot of memory.
-
-I forget why radix_tree_preload used a cpu-local store rather than a
-per-task one.
-
-Plus "what order pages would you like" and "on which node" and "in
-which zone", etc...
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
