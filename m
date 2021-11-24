@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAB645D101
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4C4A45D108
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352644AbhKXXSe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 18:18:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56500 "EHLO
+        id S1352650AbhKXXSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 18:18:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352559AbhKXXSY (ORCPT
+        with ESMTP id S1352596AbhKXXSa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 18:18:24 -0500
+        Wed, 24 Nov 2021 18:18:30 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C1DC061574;
-        Wed, 24 Nov 2021 15:15:14 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5063AC06173E;
+        Wed, 24 Nov 2021 15:15:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=ZIp+i0z2hHQkQDFt8Oy6NqiFYaMGrNHUuHYsXiXH/UY=; b=qcMHtHvUvCgQ1TRNbIdQiQ0PBm
-        zQeEXSdqS/4m6nQBRzyhA8+mAeryp6pEkrGa6t7BPLR6F5vLATVcMVxFgBntidKPi8UWUu4AjtkeW
-        +n9lg3B9z4aTmzZnKRnbwhSuQMQI/XIcirVx0GSeLDw5JpRXB3zC8fX/3xrR+h8/gHFzFSgqXrkvq
-        ZXzT4eJuT1UHzpET99gWuVYooveLSfTdOJYmSQR+cA7sZZgCgSLKUy5GpwyiHn/8bKwnTvRWqh3Bd
-        RftFyBEaXgSfRNEGPHfUJ6MWhBrWFLcYiAtHD0jj3lKHV+XzFakV1EMyEpK/pu7WvID18xpMvK7Lv
-        wCZFkdBA==;
+        bh=YOCaAhMw9YLDCgTfpG+2eW9rcYLXz1DpCoqTIRrFUVE=; b=LWf6ociu10XekpBoiJtTXgR+Ts
+        k5laF2zyD13Ve6dZ9qbUgTDexIOFieCo3KTvtsiY3REYapU3xOL43vf2y5LkrgPU3gwtlC5AyFyli
+        Wwc0YC1BhDVFOTDpI2A4ZQiLc209k6KO7kS9BSm4dhILpCqY8fj9nmnzo9vBETjtZKCZiVMCIMgBE
+        KNGWbWnaiIkCdZGRDv1V9Q3cloMXcXAEvCoa9S/TZUK18YPhDwIe5EPIt5K0NCfL0Z4Gt30jVMy3C
+        hExc6dk1dI277VuNDyb2hbI0QRa/sITDyx297GzytmfyEjcAtulwDNz75d2L3OWHfIjntat2a9Usz
+        Sh76Kvnw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mq1TI-0063z3-MM; Wed, 24 Nov 2021 23:14:36 +0000
+        id 1mq1TI-0063z6-NX; Wed, 24 Nov 2021 23:14:36 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     akpm@linux-foundation.org, keescook@chromium.org,
         yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
@@ -38,9 +38,9 @@ To:     akpm@linux-foundation.org, keescook@chromium.org,
         mcgrof@bombadil.infradead.org, mcgrof@kernel.org,
         linux-scsi@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/8] sysctl: add helper to register a sysctl mount point
-Date:   Wed, 24 Nov 2021 15:14:30 -0800
-Message-Id: <20211124231435.1445213-4-mcgrof@kernel.org>
+Subject: [PATCH v2 4/8] fs: move binfmt_misc sysctl to its own file
+Date:   Wed, 24 Nov 2021 15:14:31 -0800
+Message-Id: <20211124231435.1445213-5-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211124231435.1445213-1-mcgrof@kernel.org>
 References: <20211124231435.1445213-1-mcgrof@kernel.org>
@@ -51,66 +51,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The way to create a subdirectory on top of sysctl_mount_point is
-a bit obscure, and *why* we do that even so more. Provide a helper
-which makes it clear why we do this.
+The kernel/sysctl.c is a kitchen sink where everyone leaves
+their dirty dishes, this makes it very difficult to maintain.
 
-Suggested-by: "Eric W. Biederman" <ebiederm@xmission.com>
+To help with this maintenance let's start by moving sysctls to
+places where they actually belong. The proc sysctl maintainers
+do not want to know what sysctl knobs you wish to add for your own
+piece of code, we just care about the core logic.
+
+This moves the binfmt_misc sysctl to its own file to help remove
+clutter from kernel/sysctl.c.
+
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/proc/proc_sysctl.c  | 13 +++++++++++++
- include/linux/sysctl.h |  7 +++++++
- 2 files changed, 20 insertions(+)
+ fs/binfmt_misc.c | 6 +++++-
+ kernel/sysctl.c  | 7 -------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 6d462644bb00..aa743bbb8400 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -35,6 +35,19 @@ struct ctl_table sysctl_mount_point[] = {
- 	{ }
- };
- 
-+/**
-+ * register_sysctl_mount_point() - registers a sysctl mount point
-+ * @path: path for the mount point
-+ *
-+ * Used to create a permanently empty directory to serve as mount point.
-+ * There are some subtle but important permission checks this allows in the
-+ * case of unprivileged mounts.
-+ */
-+struct ctl_table_header *register_sysctl_mount_point(const char *path)
-+{
-+	return register_sysctl(path, sysctl_mount_point);
-+}
-+
- static bool is_empty_dir(struct ctl_table_header *head)
- {
- 	return head->ctl_table[0].child == sysctl_mount_point;
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index e4da44567f18..7946b532e964 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -208,6 +208,8 @@ extern int sysctl_init(void);
- extern void __register_sysctl_init(const char *path, struct ctl_table *table,
- 				 const char *table_name);
- #define register_sysctl_init(path, table) __register_sysctl_init(path, table, #table)
-+extern struct ctl_table_header *register_sysctl_mount_point(const char *path);
-+
- void do_sysctl_args(void);
- 
- extern int pwrsw_enabled;
-@@ -223,6 +225,11 @@ static inline struct ctl_table_header *register_sysctl_table(struct ctl_table *
- 	return NULL;
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index e1eae7ea823a..ddea6acbddde 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -822,7 +822,11 @@ static int __init init_misc_binfmt(void)
+ 	int err = register_filesystem(&bm_fs_type);
+ 	if (!err)
+ 		insert_binfmt(&misc_format);
+-	return err;
++	if (!register_sysctl_mount_point("fs/binfmt_misc")) {
++		pr_warn("Failed to create fs/binfmt_misc sysctl mount point");
++		return -ENOMEM;
++	}
++	return 0;
  }
  
-+static inline struct sysctl_header *register_sysctl_mount_point(const char *path)
-+{
-+	return NULL;
-+}
-+
- static inline struct ctl_table_header *register_sysctl_paths(
- 			const struct ctl_path *path, struct ctl_table *table)
- {
+ static void __exit exit_misc_binfmt(void)
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 1682714605e6..7745c9b72bda 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -3126,13 +3126,6 @@ static struct ctl_table fs_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_TWO,
+ 	},
+-#if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
+-	{
+-		.procname	= "binfmt_misc",
+-		.mode		= 0555,
+-		.child		= sysctl_mount_point,
+-	},
+-#endif
+ 	{
+ 		.procname	= "pipe-max-size",
+ 		.data		= &pipe_max_size,
 -- 
 2.33.0
 
