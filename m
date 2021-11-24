@@ -2,189 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77CB745D110
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:17:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1776F45D158
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244755AbhKXXUa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 18:20:30 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:31714 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245001AbhKXXU0 (ORCPT
+        id S236080AbhKXXs2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 18:48:28 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:57709 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235851AbhKXXs1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 18:20:26 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AOErLFJ010217
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 15:17:15 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=/lEdDpzwmGU0btUNeJXsWot0VLH6GjWMAozmDGI3EAU=;
- b=AzsS6/Jkm4FmDo5vGM7eRhyx8JZCKzZqy6uLYX36GJ7UaNifnHAkX+itrCblzjzvKTJD
- gUrhWC2Y2dhwaT7zkeKeGpgyHpwpXRkZOhSWBZB2kvQP3AHhXFVlLSz59Mk+gSXFk8CM
- b/8B0zlwSHpu20EbFxvVzIeDTpnvN7namQ4= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 3chqj1jwq4-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Nov 2021 15:17:15 -0800
-Received: from intmgw001.25.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 24 Nov 2021 15:17:14 -0800
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id A79F06DDBB7C; Wed, 24 Nov 2021 15:17:10 -0800 (PST)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <shr@fb.com>
-Subject: [PATCH v2 3/3] io_uring: add support for getdents64
-Date:   Wed, 24 Nov 2021 15:17:00 -0800
-Message-ID: <20211124231700.1158521-4-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211124231700.1158521-1-shr@fb.com>
-References: <20211124231700.1158521-1-shr@fb.com>
+        Wed, 24 Nov 2021 18:48:27 -0500
+Received: from dread.disaster.area (pa49-195-103-97.pa.nsw.optusnet.com.au [49.195.103.97])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 17DD610A06BD;
+        Thu, 25 Nov 2021 10:45:12 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mq1wt-00Cr8N-OQ; Thu, 25 Nov 2021 10:45:11 +1100
+Date:   Thu, 25 Nov 2021 10:45:11 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
+Message-ID: <20211124234511.GN418105@dread.disaster.area>
+References: <20211122153233.9924-1-mhocko@kernel.org>
+ <20211122153233.9924-3-mhocko@kernel.org>
+ <YZ06nna7RirAI+vJ@pc638.lan>
+ <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
+ <163772381628.1891.9102201563412921921@noble.neil.brown.name>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-FB-Source: Intern
-X-Proofpoint-ORIG-GUID: 7IqgPZIp1xKoqN5CvKUATiD8Bo6PaEXQ
-X-Proofpoint-GUID: 7IqgPZIp1xKoqN5CvKUATiD8Bo6PaEXQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-24_06,2021-11-24_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015
- phishscore=0 spamscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
- suspectscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2110150000 definitions=main-2111240114
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163772381628.1891.9102201563412921921@noble.neil.brown.name>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=619ece8a
+        a=fP9RlOTWD4uZJjPSFnn6Ew==:117 a=fP9RlOTWD4uZJjPSFnn6Ew==:17
+        a=kj9zAlcOel0A:10 a=vIxV3rELxO4A:10 a=7-415B0cAAAA:8
+        a=laKZI6_TNyetWoYyCsAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds support for getdents64 to io_uring.
+On Wed, Nov 24, 2021 at 02:16:56PM +1100, NeilBrown wrote:
+> On Wed, 24 Nov 2021, Andrew Morton wrote:
+> > 
+> > I added GFP_NOFAIL back in the mesozoic era because quite a lot of
+> > sites were doing open-coded try-forever loops.  I thought "hey, they
+> > shouldn't be doing that in the first place, but let's at least
+> > centralize the concept to reduce code size, code duplication and so
+> > it's something we can now grep for".  But longer term, all GFP_NOFAIL
+> > sites should be reworked to no longer need to do the retry-forever
+> > thing.  In retrospect, this bright idea of mine seems to have added
+> > license for more sites to use retry-forever.  Sigh.
+> 
+> One of the costs of not having GFP_NOFAIL (or similar) is lots of
+> untested failure-path code.
+> 
+> When does an allocation that is allowed to retry and reclaim ever fail
+> anyway? I think the answer is "only when it has been killed by the oom
+> killer".  That of course cannot happen to kernel threads, so maybe
+> kernel threads should never need GFP_NOFAIL??
+> 
+> I'm not sure the above is 100%, but I do think that is the sort of
+> semantic that we want.  We want to know what kmalloc failure *means*.
+> We also need well defined and documented strategies to handle it.
+> mempools are one such strategy, but not always suitable.
 
-Signed-off-by: Stefan Roesch <shr@fb.com>
----
- fs/io_uring.c                 | 52 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 53 insertions(+)
+mempools are not suitable for anything that uses demand paging to
+hold an unbounded data set in memory before it can free anything.
+This is basically the definition of memory demand in an XFS
+transaction, and most transaction based filesystems have similar
+behaviour.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f666a0e7f5e8..d423050276e8 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -691,6 +691,13 @@ struct io_hardlink {
- 	int				flags;
- };
-=20
-+struct io_getdents {
-+	struct file			*file;
-+	struct linux_dirent64 __user	*dirent;
-+	unsigned int			count;
-+	loff_t				pos;
-+};
-+
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -856,6 +863,7 @@ struct io_kiocb {
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
- 		struct io_hardlink	hardlink;
-+		struct io_getdents	getdents;
- 	};
-=20
- 	u8				opcode;
-@@ -1105,6 +1113,9 @@ static const struct io_op_def io_op_defs[] =3D {
- 	[IORING_OP_MKDIRAT] =3D {},
- 	[IORING_OP_SYMLINKAT] =3D {},
- 	[IORING_OP_LINKAT] =3D {},
-+	[IORING_OP_GETDENTS] =3D {
-+		.needs_file		=3D 1,
-+	},
- };
-=20
- /* requests with any of those set should undergo io_disarm_next() */
-@@ -3971,6 +3982,42 @@ static int io_linkat(struct io_kiocb *req, unsigne=
-d int issue_flags)
- 	return 0;
- }
-=20
-+static int io_getdents_prep(struct io_kiocb *req, const struct io_uring_=
-sqe *sqe)
-+{
-+	struct io_getdents *getdents =3D &req->getdents;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+
-+	getdents->pos =3D READ_ONCE(sqe->off);
-+	getdents->dirent =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	getdents->count =3D READ_ONCE(sqe->len);
-+
-+	return 0;
-+}
-+
-+static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_getdents *getdents =3D &req->getdents;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret =3D vfs_getdents(req->file, getdents->dirent, getdents->count, getd=
-ents->pos);
-+	if (ret < 0) {
-+		if (ret =3D=3D -ERESTARTSYS)
-+			ret =3D -EINTR;
-+
-+		req_set_fail(req);
-+	}
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -6486,6 +6533,8 @@ static int io_req_prep(struct io_kiocb *req, const =
-struct io_uring_sqe *sqe)
- 		return io_symlinkat_prep(req, sqe);
- 	case IORING_OP_LINKAT:
- 		return io_linkat_prep(req, sqe);
-+	case IORING_OP_GETDENTS:
-+		return io_getdents_prep(req, sqe);
- 	}
-=20
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6768,6 +6817,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsig=
-ned int issue_flags)
- 	case IORING_OP_LINKAT:
- 		ret =3D io_linkat(req, issue_flags);
- 		break;
-+	case IORING_OP_GETDENTS:
-+		ret =3D io_getdents(req, issue_flags);
-+		break;
- 	default:
- 		ret =3D -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index 787f491f0d2a..57dc88db5793 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -143,6 +143,7 @@ enum {
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
- 	IORING_OP_LINKAT,
-+	IORING_OP_GETDENTS,
-=20
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
---=20
-2.30.2
+> preallocating can also be useful but can be clumsy to implement.  Maybe
+> we should support a process preallocating a bunch of pages which can
+> only be used by the process - and are auto-freed when the process
+> returns to user-space.  That might allow the "error paths" to be simple
+> and early, and subsequent allocations that were GFP_USEPREALLOC would be
+> safe.
 
+We talked about this years ago at LSFMM (2013 or 2014, IIRC). The
+problem is "how much do you preallocate when the worst case
+requirement to guarantee forwards progress is at least tens of
+megabytes". Considering that there might be thousands of these
+contexts running concurrent at any given time and we might be
+running through several million preallocation contexts a second,
+suddenly preallocation is a great big CPU and memory pit.
+
+Hence preallocation simply doesn't work when the scope to guarantee
+forwards progress is in the order of megabytes (even tens of
+megabytes) per "no fail" context scope.  In situations like this we
+need -memory reservations-, not preallocation.
+
+Have the mm guarantee that there is a certain amount of memory
+available (even if it requires reclaim to make available) before we
+start the operation that cannot tolerate memory allocation failure,
+track the memory usage as it goes, warn if it overruns, and release
+the unused part of the reservation when context completes.
+
+[ This is what we already do in XFS for guaranteeing forwards
+progress for writing modifications into the strictly bound journal
+space. We reserve space up front and use tracking tickets to account
+for space used across each transaction context. This avoids
+overcommit and all the deadlock and corruption problems that come
+from running out of physical log space to write all the changes
+we've made into the log. We could simply add memory reservations and
+tracking structures to the transaction context and we've pretty much
+got everything we need on the XFS side covered... ]
+
+> i.e. we need a plan for how to rework all those no-fail call-sites.
+
+Even if we do make them all the filesystems handle ENOMEM errors
+gracefully and pass that back up to userspace, how are applications
+going to react to random ENOMEM errors when doing data writes or
+file creation or any other operation that accesses filesystems?
+
+Given the way applications handle transient errors (i.e. they
+don't!) propagating ENOMEM back up to userspace will result in
+applications randomly failing under memory pressure.  That's a much
+worse situation than having to manage the _extremely rare_ issues
+that occur because of __GFP_NOFAIL usage in the kernel.
+
+Let's keep that in mind here - __GFP_NOFAIL usage is not causing
+system failures in the real world, whilst propagating ENOMEM back
+out to userspace is potentially very harmful to users....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
