@@ -2,155 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2EF645CDAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 21:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A00545CDE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 21:20:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245614AbhKXUO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 15:14:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42598 "EHLO
+        id S235923AbhKXUX5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 15:23:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245315AbhKXUO5 (ORCPT
+        with ESMTP id S234451AbhKXUX4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 15:14:57 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DA4C061574;
-        Wed, 24 Nov 2021 12:11:47 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id t11so7868190ljh.6;
-        Wed, 24 Nov 2021 12:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Qo7LDGhCLw1C/RJQYl0tsOOlrBM+qKnIMUTYLFn/vQQ=;
-        b=Ni20t8kujf1xCNBvR2ocQhRylwmF7uC76Mvyh2gPUvifqSaIsGREt/f5hIqSG2wiTr
-         dQn3LVBT8cHVAJuVkMgFmh6gyr7erO0A06TE9ESc4A6eXZ1Z0meGe+5YVbaJaED8ir5m
-         NAih7dCQX5Fj1KRbouiuK8sU0D1u0lr7EKQRbFpxmNvMZ7hp+dD8deN/erEu8uilWZ/D
-         oC8XRNSeqfv4E4oZ/oM+OoZrQASYORbihsP98KJeL+MFf59FF1Xij+dPHsgNnXV3ofMU
-         InX63UB1ldeQYYH7W60vvf2oU7Ia3Hqa5+DS2fcdmpPvbsRr/qk2FBKwSr026AQQvJiI
-         ZAwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Qo7LDGhCLw1C/RJQYl0tsOOlrBM+qKnIMUTYLFn/vQQ=;
-        b=v2dz4FT/7lRDt+kA7zqKJ1V2+mA3R7nxx0kBiAbzakIA8Nvc2pwOMyEV9TCBp0JmUZ
-         s7/yP8in1djYpc5tl10djG5VIOcNGMrppMs7nbtbu+rAo1Nkv8Z1PWBmXogRRQ2eCL2d
-         9Taxp0jwTi6bBb3PjOUsjp9gSIfF3MvHmkhIwOWZaBwzomivuYvclkDQS30MTOh2Z85U
-         70XPa6M382PVGmu7Vf2m2sCJH0WosKOahDk8knUeRF1CGnp2tI5+BjA+q0lFzIxeXiRw
-         HtDsZBn67zglL4A2e5pVytP8/ngN7H6MYjOPJVN6Xej3ogFLhrZEly0+P+K0lahC5KAD
-         kEQA==
-X-Gm-Message-State: AOAM533Rb7j01ndrDvhbu1jDL0/ilq482HCI+HUpaFpHKCNMymfSEQAb
-        EjEJ6vCb+htJOwiyVeI0Nec=
-X-Google-Smtp-Source: ABdhPJzObzGBkOGhdbTxdRc7AS1CzlPcgd/68XPHDPyMtGRhoDIWH76itaokZ7li1Dq39AFb/lTryQ==
-X-Received: by 2002:a2e:2a43:: with SMTP id q64mr19178322ljq.102.1637784705684;
-        Wed, 24 Nov 2021 12:11:45 -0800 (PST)
-Received: from pc638.lan (h5ef52e3d.seluork.dyn.perspektivbredband.net. [94.245.46.61])
-        by smtp.gmail.com with ESMTPSA id r25sm74076lfi.166.2021.11.24.12.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Nov 2021 12:11:44 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date:   Wed, 24 Nov 2021 21:11:42 +0100
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <YZ6cfoQah8Wo1eSZ@pc638.lan>
-References: <20211122153233.9924-1-mhocko@kernel.org>
- <20211122153233.9924-3-mhocko@kernel.org>
- <YZ06nna7RirAI+vJ@pc638.lan>
- <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
+        Wed, 24 Nov 2021 15:23:56 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63804C061574;
+        Wed, 24 Nov 2021 12:20:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Dxu8rmSj5L6/mmz45KruXo7nmpwWJ/sOE5r4T8rfCAo=; b=vKiwxHVhDBbH9WgvIEHzDg4gBn
+        tIZBoymYM8gOJJlXuvkgfthzXQe5erlk8fd70Ib9ZUqOT/d7fTgBliixRA1VyiE4ZFF9Z9eWgxZyj
+        mWInKt2kfiVRMDWQf7QJAPA/lsm3YTK8dM7BaFfigw0oG5iGUzWGr2TXQ4aKqHDwlWaXnO5Mj/gZJ
+        okE8RFgfmUC5r1jpsgIupV286bqsXoBI+D9gGJg/5npk9VAeWc6AfvDgBJY4sLxCIBmLTh8Z900GC
+        u3nEaLBDxvV58lnWE0xQ1+ImPVCbZEHI+HVaV0XT57bE49FDUqjgGl6CFIZYrZc5UpM+I9dGhYx5Y
+        3YhbpOjQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mpyl2-003F4b-J2; Wed, 24 Nov 2021 20:20:44 +0000
+Date:   Wed, 24 Nov 2021 20:20:44 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Folio fixes for 5.16
+Message-ID: <YZ6enA9aRgJLL55w@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 05:02:38PM -0800, Andrew Morton wrote:
-> On Tue, 23 Nov 2021 20:01:50 +0100 Uladzislau Rezki <urezki@gmail.com> wrote:
-> 
-> > On Mon, Nov 22, 2021 at 04:32:31PM +0100, Michal Hocko wrote:
-> > > From: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > Dave Chinner has mentioned that some of the xfs code would benefit from
-> > > kvmalloc support for __GFP_NOFAIL because they have allocations that
-> > > cannot fail and they do not fit into a single page.
-> 
-> Perhaps we should tell xfs "no, do it internally".  Because this is a
-> rather nasty-looking thing - do we want to encourage other callsites to
-> start using it?
-> 
-> > > The large part of the vmalloc implementation already complies with the
-> > > given gfp flags so there is no work for those to be done. The area
-> > > and page table allocations are an exception to that. Implement a retry
-> > > loop for those.
-> > > 
-> > > Add a short sleep before retrying. 1 jiffy is a completely random
-> > > timeout. Ideally the retry would wait for an explicit event - e.g.
-> > > a change to the vmalloc space change if the failure was caused by
-> > > the space fragmentation or depletion. But there are multiple different
-> > > reasons to retry and this could become much more complex. Keep the retry
-> > > simple for now and just sleep to prevent from hogging CPUs.
-> > > 
-> 
-> Yes, the horse has already bolted.  But we didn't want that horse anyway ;)
-> 
-> I added GFP_NOFAIL back in the mesozoic era because quite a lot of
-> sites were doing open-coded try-forever loops.  I thought "hey, they
-> shouldn't be doing that in the first place, but let's at least
-> centralize the concept to reduce code size, code duplication and so
-> it's something we can now grep for".  But longer term, all GFP_NOFAIL
-> sites should be reworked to no longer need to do the retry-forever
-> thing.  In retrospect, this bright idea of mine seems to have added
-> license for more sites to use retry-forever.  Sigh.
-> 
-> > > +		if (nofail) {
-> > > +			schedule_timeout_uninterruptible(1);
-> > > +			goto again;
-> > > +		}
-> 
-> The idea behind congestion_wait() is to prevent us from having to
-> hard-wire delays like this.  congestion_wait(1) would sleep for up to
-> one millisecond, but will return earlier if reclaim events happened
-> which make it likely that the caller can now proceed with the
-> allocation event, successfully.
-> 
-> However it turns out that congestion_wait() was quietly broken at the
-> block level some time ago.  We could perhaps resurrect the concept at
-> another level - say by releasing congestion_wait() callers if an amount
-> of memory newly becomes allocatable.  This obviously asks for inclusion
-> of zone/node/etc info from the congestion_wait() caller.  But that's
-> just an optimization - if the newly-available memory isn't useful to
-> the congestion_wait() caller, they just fail the allocation attempts
-> and wait again.
-> 
-> > well that is sad...
-> > I have raised two concerns in our previous discussion about this change,
-> 
-> Can you please reiterate those concerns here?
->
-1. I proposed to repeat(if fails) in one solid place, i.e. get rid of
-duplication and spreading the logic across several places. This is about
-simplification.
+Hi Linus,
 
-2. Second one is about to do an unwinding and release everything what we
-have just accumulated in terms of memory consumption. The failure might
-occur, if so a condition we are in is a low memory one or high memory
-pressure. In this case, since we are about to sleep some milliseconds
-in order to repeat later, IMHO it makes sense to release memory:
+In the course of preparing the folio changes for iomap for next merge
+window, we discovered some problems that would be nice to address now:
 
-- to prevent killing apps or possible OOM;
-- we can end up looping quite a lot of time or even forever if users do
-  nasty things with vmalloc API and __GFP_NOFAIL flag.
+ - Renaming multi-page folios to large folios.
+   mapping_multi_page_folio_support() is just a little too long, so
+   we settled on mapping_large_folio_support().  That meant renaming,
+   eg folio_test_multi() to folio_test_large().
+ - I hadn't included folio wrappers for zero_user_segments(), etc.
+   Also, multi-page^W^W large folio support is now independent of
+   CONFIG_TRANSPARENT_HUGEPAGE, so machines with HIGHMEM always need to
+   fall back to the out-of-line zero_user_segments().
+ - The build bots finally got round to telling me that I missed a
+   couple of architectures when adding flush_dcache_folio().  Christoph
+   suggested that we just add linux/cacheflush.h and not rely on
+   asm-generic/cacheflush.h.
 
---
-Vlad Rezki
+These changes have been in linux-next for the last week with no new
+squawks.
+
+The following changes since commit 8ab774587903771821b59471cc723bba6d893942:
+
+  Merge tag 'trace-v5.16-5' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace (2021-11-14 19:07:19 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/willy/pagecache.git tags/folio-5.16b
+
+for you to fetch changes up to c035713998700e8843c7d087f55bce3c54c0e3ec:
+
+  mm: Add functions to zero portions of a folio (2021-11-18 15:05:56 -0500)
+
+----------------------------------------------------------------
+Fixes for 5.16 folios:
+
+ - Fix compilation warnings on csky and sparc
+ - Rename multipage folios to large folios
+ - Rename AS_THP_SUPPORT and FS_THP_SUPPORT
+ - Add functions to zero portions of a folio
+
+----------------------------------------------------------------
+Matthew Wilcox (Oracle) (6):
+      Add linux/cacheflush.h
+      mm: Rename folio_test_multi to folio_test_large
+      mm: Remove folio_test_single
+      fs: Remove FS_THP_SUPPORT
+      fs: Rename AS_THP_SUPPORT and mapping_thp_support
+      mm: Add functions to zero portions of a folio
+
+ arch/arc/include/asm/cacheflush.h     |  1 -
+ arch/arm/include/asm/cacheflush.h     |  1 -
+ arch/m68k/include/asm/cacheflush_mm.h |  1 -
+ arch/mips/include/asm/cacheflush.h    |  2 --
+ arch/nds32/include/asm/cacheflush.h   |  1 -
+ arch/nios2/include/asm/cacheflush.h   |  1 -
+ arch/parisc/include/asm/cacheflush.h  |  1 -
+ arch/sh/include/asm/cacheflush.h      |  1 -
+ arch/xtensa/include/asm/cacheflush.h  |  3 ---
+ fs/inode.c                            |  2 --
+ include/asm-generic/cacheflush.h      |  6 -----
+ include/linux/cacheflush.h            | 18 ++++++++++++++
+ include/linux/fs.h                    |  1 -
+ include/linux/highmem.h               | 47 +++++++++++++++++++++++++++++++----
+ include/linux/page-flags.h            | 14 +++++------
+ include/linux/pagemap.h               | 26 +++++++++++++++----
+ mm/highmem.c                          |  2 --
+ mm/memcontrol.c                       |  2 +-
+ mm/shmem.c                            |  3 ++-
+ mm/util.c                             |  2 +-
+ 20 files changed, 92 insertions(+), 43 deletions(-)
+ create mode 100644 include/linux/cacheflush.h
+
+
