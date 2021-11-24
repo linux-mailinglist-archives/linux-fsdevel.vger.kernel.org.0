@@ -2,67 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D49B45CC41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 19:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9835245CD18
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 20:20:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243042AbhKXSmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 13:42:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42226 "EHLO mail.kernel.org"
+        id S244133AbhKXTXo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 14:23:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243530AbhKXSmQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 13:42:16 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3AE6B60C3F;
-        Wed, 24 Nov 2021 18:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637779146;
-        bh=6vyNYL/M+dMyt65D1qDQo5alJ6oQJeQ9FbdiheTxjIU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=H8DYBu2NgIaUXJQGibrAyel4C8YUNU3R5ElvMlsP7kLF6cqmkkso4+2es54Gqmxne
-         kZUumhstyONSlqMfSjXMkSTpWD28Crp9pwgXH2XI4pbBImt6fx45zjvbB0wTk+9obK
-         y1MF0ysr6XFLa/UnqkOc43H69NXy4+FCIv0vtnAiNMJ8XQYSEA1jKnTb5OSbAgT6Vw
-         UgWWATqw7diaeR1aBT00fva1YfBhWHZ48UJiVwcdeCFW3/cMkwi90vxMkhdmNwjsuY
-         fh2F/nuqIGjbeNylGWJnY5z8LAOOn1j23vqN5u5w5lVs6pCTV8XN7Oxh0gj4hjlsCf
-         J7LYeJnhneDaQ==
-Date:   Wed, 24 Nov 2021 10:39:05 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        agruenba@redhat.com
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to 5ad448ce2976
-Message-ID: <20211124183905.GE266024@magnolia>
+        id S243268AbhKXTXm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Nov 2021 14:23:42 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E8AB0604DA;
+        Wed, 24 Nov 2021 19:20:26 +0000 (UTC)
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+Subject: [PATCH 0/3] Avoid live-lock in fault-in+uaccess loops with sub-page faults
+Date:   Wed, 24 Nov 2021 19:20:21 +0000
+Message-Id: <20211124192024.2408218-1-catalin.marinas@arm.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+Hi,
 
-The iomap-for-next branch of the xfs-linux repository at:
+There are a few places in the filesystem layer where a uaccess is
+performed in a loop with page faults disabled, together with a
+fault_in_*() call to pre-fault the pages. On architectures like arm64
+with MTE (memory tagging extensions) or SPARC ADI, even if the
+fault_in_*() succeeded, the uaccess can still fault indefinitely.
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+In general this is not an issue since such code restarts the
+fault_in_*() from where the uaccess failed, therefore guaranteeing
+forward progress. The btrfs search_ioctl(), however, rewinds the
+fault_in_*() position and it can live-lock. This was reported by Al
+here:
 
-has just been updated.
+https://lore.kernel.org/r/YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
+There's also an analysis by Al of other fault-in places:
 
-The new head of the iomap-for-next branch is commit:
+https://lore.kernel.org/r/YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk
 
-5ad448ce2976 iomap: iomap_read_inline_data cleanup
+and another sub-thread on the same topic:
 
-New Commits:
+https://lore.kernel.org/r/YXBFqD9WVuU8awIv@arm.com
 
-Andreas Gruenbacher (2):
-      [d8af404ffce7] iomap: Fix inline extent handling in iomap_readpage
-      [5ad448ce2976] iomap: iomap_read_inline_data cleanup
+So far only btrfs search_ioctl() seems to be affected and that's what
+this series addresses. The existing loops like generic_perform_write()
+already guarantee forward progress.
 
+Andreas raised a concern about O_DIRECT accesses since on fault the user
+address is rewound to a block size boundary. I tried ext4, btrfs and
+gfs2 and I could not get any of them to live-lock. Depending on the
+alignment of the user buffer (page or not), I found two behaviours:
 
-Code Diffstat:
+- the copy to or from the user buffer succeeds entirely if it goes
+  through the kernel mapping (GUP, kmap'ed page; user MTE tags are not
+  checked) or
 
- fs/iomap/buffered-io.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+- the copy partially succeeds after a few attempts at uaccess on the
+  faulting same address (the highest number of attempts in my tests was
+  11 with btrfs).
+
+Given the high cost of such sub-page probing (which is done prior to the
+uaccess) my proposal is to only change the btrfs search_ioctl() (as per
+the last patch). We can extend the API and call places in the future if
+needed but I hope filesystems already deal with this in other ways.
+
+Thanks.
+
+Catalin Marinas (3):
+  mm: Introduce fault_in_exact_writeable() to probe for sub-page faults
+  arm64: Add support for sub-page faults user probing
+  btrfs: Avoid live-lock in search_ioctl() on hardware with sub-page
+    faults
+
+ arch/Kconfig                     |  7 +++++++
+ arch/arm64/Kconfig               |  1 +
+ arch/arm64/include/asm/uaccess.h | 33 ++++++++++++++++++++++++++++++++
+ fs/btrfs/ioctl.c                 |  3 ++-
+ include/linux/pagemap.h          |  1 +
+ include/linux/uaccess.h          | 21 ++++++++++++++++++++
+ mm/gup.c                         | 19 ++++++++++++++++++
+ 7 files changed, 84 insertions(+), 1 deletion(-)
+
