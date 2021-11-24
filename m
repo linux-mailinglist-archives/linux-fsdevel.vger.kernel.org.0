@@ -2,68 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D1045B26A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:05:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 000D745B276
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 04:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232043AbhKXDI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 22:08:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48866 "EHLO mail.kernel.org"
+        id S230517AbhKXDOA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 22:14:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229745AbhKXDIZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 22:08:25 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3682660F55;
-        Wed, 24 Nov 2021 03:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637723116;
-        bh=8E5AHzN+aCpIUyy/IKItQsgBCFz9QjxdNsnf6Wc8sLI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NRaLXp2DQNpRDi5NBlLIrHYp1YQ84fyWovscy9PbvHAt/ymlk5DiV6yDdEv5cQWZr
-         jLpg2wIKqTZyI1ywqwak+JmUmQSdDiGbC/0EDBVNmzr8LgDHb5y1ocPXF2R6jYxhnN
-         GN5ZvGVK69U1jII2tRqWVd7zBvVEF9NGxPhMG0So+jx7Z6OnHCYoRXokbFrI/Qp6wI
-         kbYSpUTNH7LbVZaurhYL8mcXBu98rgITDU24/fEvl1Doo9kGD/X0YwHhmZrb9tueYZ
-         d/7VoK/rTTLlDbMhSGJNN93DH71+f/oSLnH2gBKrosvzkrffMmGkKX9KhJ/nEPm2kt
-         Y0OPUm6XnKtFg==
-Date:   Tue, 23 Nov 2021 19:05:15 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 21/29] xfs: move dax device handling into
- xfs_{alloc,free}_buftarg
-Message-ID: <20211124030515.GC266024@magnolia>
-References: <20211109083309.584081-1-hch@lst.de>
- <20211109083309.584081-22-hch@lst.de>
- <CAPcyv4hY4g82PrjMPO=1kiM5sL=3=yR66r6LeG8RS3Ha2k1eUw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hY4g82PrjMPO=1kiM5sL=3=yR66r6LeG8RS3Ha2k1eUw@mail.gmail.com>
+        id S229795AbhKXDOA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Nov 2021 22:14:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D9DF260EB5;
+        Wed, 24 Nov 2021 03:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1637723451;
+        bh=rQ6AWf7uy9nsILunXnpVUg3RXJwc/VG1QpA06daW0yU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AcJn3kDB3DWTclIRd+lHM2MGk+DJVAV5niJUSu+QxI4sZ9nGvmi1/KwU5htKzwSQh
+         8+uInGOvjLjS8mcndyNJKtAKesA2Cv8DzrOaOa0quO+tTn358xI8FRd5LbMaaYtT+6
+         8V1oHsx84Ly+IG/7GCsJWVC5vTImvGoR/GESZfDE=
+Date:   Tue, 23 Nov 2021 19:10:48 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        gladkov.alexey@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2] fs: proc: store PDE()->data into inode->i_private
+Message-Id: <20211123191048.56b25c5d2459f78631a61bfb@linux-foundation.org>
+In-Reply-To: <CAMZfGtV7pNaVNtzPCmXnGgeojPzyVxXSeawnp5znJxkjFweAgA@mail.gmail.com>
+References: <20211119041104.27662-1-songmuchun@bytedance.com>
+        <YZdQ+0D7n5xCnw5A@infradead.org>
+        <20211119145643.21bbd5ee8e2830dd72d983e3@linux-foundation.org>
+        <CAMZfGtV7pNaVNtzPCmXnGgeojPzyVxXSeawnp5znJxkjFweAgA@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 06:40:47PM -0800, Dan Williams wrote:
-> On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
+On Mon, 22 Nov 2021 12:13:33 +0800 Muchun Song <songmuchun@bytedance.com> wrote:
+
+> On Sat, Nov 20, 2021 at 6:56 AM Andrew Morton <akpm@linux-foundation.org> wrote:
 > >
-> > Hide the DAX device lookup from the xfs_super.c code.
+> > On Thu, 18 Nov 2021 23:23:39 -0800 Christoph Hellwig <hch@infradead.org> wrote:
 > >
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > On Fri, Nov 19, 2021 at 12:11:04PM +0800, Muchun Song wrote:
+> > > > +
+> > > > +/*
+> > > > + * Obtain the private data passed by user through proc_create_data() or
+> > > > + * related.
+> > > > + */
+> > > > +static inline void *pde_data(const struct inode *inode)
+> > > > +{
+> > > > +   return inode->i_private;
+> > > > +}
+> > > > +
+> > > > +#define PDE_DATA(i)        pde_data(i)
+> > >
+> > > What is the point of pde_data?
+> >
+> > It's a regular old C function, hence should be in lower case.
+> >
+> > I assume the upper case thing is a holdover from when it was
+> > implemented as a macro.
+> >
+> > >  If we really think changing to lower
+> > > case is worth it (I don't think so, using upper case for getting at
+> > > private data is a common idiom in file systems),
+> >
+> > It is?  How odd.
+> >
+> > I find the upper-case thing to be actively misleading.  It's mildly
+> > surprising to discover that it's actually a plain old C function.
+> >
+> > > we can just do that
+> > > scripted in one go.
+> >
+> > Yes, I'd like to see a followup patch which converts the current
+> > PDE_DATA() callsites.
+> >
 > 
-> That's an interesting spelling of "Signed-off-by", but patch looks
-> good to me too. I would have expected a robot to complain about
-> missing sign-off?
+> You mean replace all PDE_DATA with pde_data in another patch?
 
-Nah, they only like to do that /after/ you've pushed a branch to
-kernel.org and emailed the lists about it. ;)
-
---D
-
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+That is indeed what I meant.
