@@ -2,72 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B5E445B43C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 07:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2827745B454
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 07:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232689AbhKXGPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 01:15:52 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:15860 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233994AbhKXGPv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 01:15:51 -0500
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HzVz11r5xz91Ht;
-        Wed, 24 Nov 2021 14:12:13 +0800 (CST)
-Received: from kwepemm600019.china.huawei.com (7.193.23.64) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 24 Nov 2021 14:12:39 +0800
-Received: from localhost.localdomain (10.175.127.227) by
- kwepemm600019.china.huawei.com (7.193.23.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Wed, 24 Nov 2021 14:12:39 +0800
-From:   yangerkun <yangerkun@huawei.com>
-To:     <mike.kravetz@oracle.com>, <willy@infradead.org>
-CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <yukuai3@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH v2] hugetlbfs: avoid overflow in hugetlbfs_fallocate
-Date:   Wed, 24 Nov 2021 14:24:52 +0800
-Message-ID: <20211124062452.2343575-1-yangerkun@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        id S236330AbhKXGjT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 01:39:19 -0500
+Received: from verein.lst.de ([213.95.11.211]:35804 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229479AbhKXGjS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Nov 2021 01:39:18 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C659668AFE; Wed, 24 Nov 2021 07:36:05 +0100 (CET)
+Date:   Wed, 24 Nov 2021 07:36:05 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>, dm-devel@redhat.com,
+        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 06/29] dax: move the partition alignment check into
+ fs_dax_get_by_bdev
+Message-ID: <20211124063605.GA6889@lst.de>
+References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-7-hch@lst.de> <20211123222555.GE266024@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600019.china.huawei.com (7.193.23.64)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211123222555.GE266024@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-luojiajun report a problem[1] two years ago which seems still exists in
-mainline. vfs_fallocate can avoid 'offset + len' trigger overflow, but
-'offset + len + hpage_size - 1' may overflow too and will lead to a
-wrong 'end'. luojiajun give a solution which can fix the wrong 'end'
-but leave the overflow still happened. Fix it with DIV_ROUND_UP_ULL.
+On Tue, Nov 23, 2021 at 02:25:55PM -0800, Darrick J. Wong wrote:
+> > +	if ((get_start_sect(bdev) * SECTOR_SIZE) % PAGE_SIZE ||
+> > +	    (bdev_nr_sectors(bdev) * SECTOR_SIZE) % PAGE_SIZE) {
+> 
+> Do we have to be careful about 64-bit division here, or do we not
+> support DAX on 32-bit?
 
-[1] https://patchwork.kernel.org/project/linux-mm/patch/1554775226-67213-1-git-send-email-luojiajun3@huawei.com/
+I can't find anything in the Kconfig limiting DAX to 32-bit.  But
+then again the existing code has divisions like this, so the compiler
+is probably smart enough to turn them into shifts.
 
-Signed-off-by: yangerkun <yangerkun@huawei.com>
----
- fs/hugetlbfs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > +		pr_info("%pg: error: unaligned partition for dax\n", bdev);
+> 
+> I also wonder if this should be ratelimited...?
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 49d2e686be74..92ac056e8011 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -651,7 +651,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 	 * as well as being converted to page offsets.
- 	 */
- 	start = offset >> hpage_shift;
--	end = (offset + len + hpage_size - 1) >> hpage_shift;
-+	end = DIV_ROUND_UP_ULL(offset + len, hpage_size);
- 
- 	inode_lock(inode);
- 
--- 
-2.31.1
-
+This happens once (or maybe three times for XFS with rt and log devices)
+at mount time, so I see no need for a ratelimit.
