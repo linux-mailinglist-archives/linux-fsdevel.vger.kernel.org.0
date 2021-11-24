@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82F5F45B242
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 03:52:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1543E45B24A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 03:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236615AbhKXCzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Nov 2021 21:55:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35606 "EHLO
+        id S237422AbhKXC7t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Nov 2021 21:59:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231624AbhKXCzd (ORCPT
+        with ESMTP id S232959AbhKXC7t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Nov 2021 21:55:33 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9EAC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 18:52:24 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id p18so630529plf.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 18:52:24 -0800 (PST)
+        Tue, 23 Nov 2021 21:59:49 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2FB8C061714
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 18:56:40 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id j5-20020a17090a318500b001a6c749e697so3293564pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Nov 2021 18:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HOfci/mx3akOO+4HmSZ2UPdC5Rli9mLX/eg9lyyjZ30=;
-        b=Y7XkrixbrNlS8hQi6+YjpK4PZmxcaZt8IqYEL0x+AbApMNhFV77CzxIm1fpzZJvqGy
-         z6D/gHDQ4xlWEfbCz9zV/Nr2rYvjyAJ/qcfvABnWEzU5q3sPzeWrzFiGiQQVw5TF5P/Q
-         vGI8iomC/tTJLNOXXKE+qcAeV4HDU/nIHSo9sub+NaaMXbz5ALE5SX90GBKyPNNwTUeM
-         U8Wl8gNSrdkT3Uzd5sOv409e3dENQvzi+2J3G8FjskgqDuk0PglVJ0u6ajEy8rV/j0R2
-         Kp+xFLo9F8v5ClK8M1g/uaLLpJP0HiqMIi5yPKOPokQDDyomwLUF2ZncL/aMKydNlkDc
-         qMaQ==
+        bh=K6aLDxpU5yyseOlKo6rNtA4cugi0ipNPCjlDJmHcgIw=;
+        b=ZodTRA+l0cWcfcrO3HjZ5G1YiDvMh60G3gnO10/HB5K3wACoMILqWpq5tyghP5PaAd
+         /HwKbMOp519uQpkZTsiaKbJxiO4I4LMxvhZKQ98u2R62HbNgGSXOiBZGNXqPhLpDseTa
+         7vzzMoZl4/zH+br0ANjvCl5c9fXM78IWjkNvHtHR5BTyrgEmRWUa/QYkAkFWIBqAi3vh
+         b+zNb07awMu9xLTaQ0QBdRnjc+S/g9oqwKglYR/Xxt8j7ck6Lkr6xNcD5O/IUvzABpY5
+         Eu59hL+MFPuc5JaG7/+/vAaPPJWsBP2y6puOgx7hXkD43mLwWUFY6ZCNi+QL3gXyrcQM
+         vLMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HOfci/mx3akOO+4HmSZ2UPdC5Rli9mLX/eg9lyyjZ30=;
-        b=eVyDhkfSjXkZHHTZRFq+8FgMki30/jsHRF0GeCE0bc0YpMP5pxQdzeYbxGbrzC4Up9
-         LDAWrd4dNLQkD7hu6D+d0GrQek375+p8INPBN+dY/5hz4dO81mrFXZGj6MFYiVjRGOKf
-         XPLaC+FWRq2eG/c38wx5UvnFGDT68hY3/SZKLlU5DS5/fHlu1opDQuxU07WTGv9irKnJ
-         yvVOx0V1valDRpJj56OMMQgcAB0EQegIj0cF0bcuyju8sq29S8oi65Vz+7d/GCJZuk1O
-         jp+x8coQy3H83CdYFFOiZm3zETDJKCI/bxxoST6TP8GGeEhUnZpOWRDfdFWjHligf552
-         +8wg==
-X-Gm-Message-State: AOAM532KYT6/VU72iaXXsPax0P3RldWnM9WzbC7julqZapbbYauAFKxw
-        ozal7DZZ+4iJgVdaNFNgdmIIJnaesyMQ1OOwbRDC1Q==
-X-Google-Smtp-Source: ABdhPJwYJBk3MOCLfOjDzIFwcn3St8lk3aeiUUUrOONNeXpKHHsZfcNKcAaGYukH/G67vklAJOZt7FEQ2h9y1bfGO+A=
-X-Received: by 2002:a17:90a:e7ca:: with SMTP id kb10mr10191254pjb.8.1637722343903;
- Tue, 23 Nov 2021 18:52:23 -0800 (PST)
+        bh=K6aLDxpU5yyseOlKo6rNtA4cugi0ipNPCjlDJmHcgIw=;
+        b=dBk9OOdpboyM7bexFtzZbJvJDq37YUaV6rQWWX9YxrJ3ia8Pj3d9uSGBdAgIPJ04Bg
+         eXzCduyLWqHBFedQUAikWl1sWa+M/IjNkaeZaaJG7NFh06zgXNVyhS4Q+mJr2OqslgJc
+         Khpu8NjkutbyQTpFvGPph+WFaz+AT5dr7laigpuUtEKf1JlH4YG1AwqvCOlDs9jdxT9D
+         hZRhGhqiE++YIrBRJSPSsOv76bKesNMerd+CZ71vH5boYVPto6IC/gNbBSDUHuDYoLTy
+         9YJS3lrT+8XZGFI6NyWKwN058Jenn/PDeWQXrHFzbBOdyKodVPwMNIHXQ1ShgPlomFyp
+         5lWQ==
+X-Gm-Message-State: AOAM533vCl4hA+GHv7GLrGs+PC4HrLT7ezo2V0rw4OwBnR3iPMq0fp+m
+        GcncZWHegrjhunyGBRgq8eLuokbPa/9ozYgNxZNvAvpExQk=
+X-Google-Smtp-Source: ABdhPJzo6eTnlpQwuRFEtmMj42wpPoH8sJWzIsynA2XekOCtzKT4A4dij0QV0bz7WFLT+916AMzKYpVsKpziQJRycmQ=
+X-Received: by 2002:a17:90b:1e07:: with SMTP id pg7mr3567015pjb.93.1637722600133;
+ Tue, 23 Nov 2021 18:56:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-25-hch@lst.de>
-In-Reply-To: <20211109083309.584081-25-hch@lst.de>
+References: <20211109083309.584081-1-hch@lst.de> <20211109083309.584081-26-hch@lst.de>
+In-Reply-To: <20211109083309.584081-26-hch@lst.de>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 23 Nov 2021 18:52:13 -0800
-Message-ID: <CAPcyv4iRUDaT4rrLYhGrJB-zt9B-bGGoVW3wYoUnePRxx58Fdw@mail.gmail.com>
-Subject: Re: [PATCH 24/29] xfs: use xfs_direct_write_iomap_ops for DAX zeroing
+Date:   Tue, 23 Nov 2021 18:56:29 -0800
+Message-ID: <CAPcyv4jtWzd3c_S1_4fYA1SXTJZfBzP_1xk_OwYkeNp0UhxwSg@mail.gmail.com>
+Subject: Re: [PATCH 25/29] dax: return the partition offset from fs_dax_get_by_bdev
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
         device-mapper development <dm-devel@redhat.com>,
@@ -68,42 +68,80 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Tue, Nov 9, 2021 at 12:34 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> While the buffered write iomap ops do work due to the fact that zeroing
-> never allocates blocks, the DAX zeroing should use the direct ops just
-> like actual DAX I/O.
+> Prepare from removing the block_device from the DAX I/O path by returning
+
+s/from removing/for the removal of/
+
+> the partition offset from fs_dax_get_by_bdev so that the file systems
+> have it at hand for use during I/O.
 >
-
-I always wondered about this, change looks good to me.
-
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/xfs/xfs_iomap.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/dax/super.c | 9 ++++++---
+>  drivers/md/dm.c     | 4 ++--
+>  fs/erofs/internal.h | 2 ++
+>  fs/erofs/super.c    | 4 ++--
+>  fs/ext2/ext2.h      | 1 +
+>  fs/ext2/super.c     | 2 +-
+>  fs/ext4/ext4.h      | 1 +
+>  fs/ext4/super.c     | 2 +-
+>  fs/xfs/xfs_buf.c    | 2 +-
+>  fs/xfs/xfs_buf.h    | 1 +
+>  include/linux/dax.h | 6 ++++--
+>  11 files changed, 22 insertions(+), 12 deletions(-)
 >
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 8cef3b68cba78..704292c6ce0c7 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1324,7 +1324,7 @@ xfs_zero_range(
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index c0910687fbcb2..cc32dcf71c116 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -70,17 +70,20 @@ EXPORT_SYMBOL_GPL(dax_remove_host);
+>  /**
+>   * dax_get_by_host() - temporary lookup mechanism for filesystem-dax
+>   * @bdev: block device to find a dax_device for
+> + * @start_off: returns the byte offset into the dax_device that @bdev starts
+>   */
+> -struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+> +struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev, u64 *start_off)
+>  {
+>         struct dax_device *dax_dev;
+> +       u64 part_size;
+>         int id;
 >
->         if (IS_DAX(inode))
->                 return dax_zero_range(inode, pos, len, did_zero,
-> -                                     &xfs_buffered_write_iomap_ops);
-> +                                     &xfs_direct_write_iomap_ops);
->         return iomap_zero_range(inode, pos, len, did_zero,
->                                 &xfs_buffered_write_iomap_ops);
->  }
-> @@ -1339,7 +1339,7 @@ xfs_truncate_page(
+>         if (!blk_queue_dax(bdev->bd_disk->queue))
+>                 return NULL;
 >
->         if (IS_DAX(inode))
->                 return dax_truncate_page(inode, pos, did_zero,
-> -                                       &xfs_buffered_write_iomap_ops);
-> +                                       &xfs_direct_write_iomap_ops);
->         return iomap_truncate_page(inode, pos, did_zero,
->                                    &xfs_buffered_write_iomap_ops);
->  }
-> --
-> 2.30.2
+> -       if ((get_start_sect(bdev) * SECTOR_SIZE) % PAGE_SIZE ||
+> -           (bdev_nr_sectors(bdev) * SECTOR_SIZE) % PAGE_SIZE) {
+> +       *start_off = get_start_sect(bdev) * SECTOR_SIZE;
+> +       part_size = bdev_nr_sectors(bdev) * SECTOR_SIZE;
+> +       if (*start_off % PAGE_SIZE || part_size % PAGE_SIZE) {
+>                 pr_info("%pg: error: unaligned partition for dax\n", bdev);
+>                 return NULL;
+>         }
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 282008afc465f..5ea6115d19bdc 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -637,7 +637,7 @@ static int open_table_device(struct table_device *td, dev_t dev,
+>                              struct mapped_device *md)
+>  {
+>         struct block_device *bdev;
+> -
+> +       u64 part_off;
+>         int r;
 >
+>         BUG_ON(td->dm_dev.bdev);
+> @@ -653,7 +653,7 @@ static int open_table_device(struct table_device *td, dev_t dev,
+>         }
+>
+>         td->dm_dev.bdev = bdev;
+> -       td->dm_dev.dax_dev = fs_dax_get_by_bdev(bdev);
+> +       td->dm_dev.dax_dev = fs_dax_get_by_bdev(bdev, &part_off);
+
+Perhaps allow NULL as an argument for callers that do not care about
+the start offset?
+
+
+Otherwise, looks good / clever.
+
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
