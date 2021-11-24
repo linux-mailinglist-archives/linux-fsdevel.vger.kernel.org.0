@@ -2,127 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 088A345CD96
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 20:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C0945CD9A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Nov 2021 21:04:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237036AbhKXUCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 15:02:13 -0500
-Received: from mga04.intel.com ([192.55.52.120]:28074 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234835AbhKXUCN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 15:02:13 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10178"; a="234090618"
-X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
-   d="scan'208";a="234090618"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 11:59:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,261,1631602800"; 
-   d="scan'208";a="607317869"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 24 Nov 2021 11:59:00 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mpyPz-0005GS-TA; Wed, 24 Nov 2021 19:58:59 +0000
-Date:   Thu, 25 Nov 2021 03:58:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
-Subject: Re: [PATCH v1 1/3] fs: add parameter use_fpos to iterate_dir function
-Message-ID: <202111250356.yBAHK4KL-lkp@intel.com>
-References: <20211123181010.1607630-2-shr@fb.com>
+        id S237240AbhKXUH0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 15:07:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236387AbhKXUHY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Nov 2021 15:07:24 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F59C061574;
+        Wed, 24 Nov 2021 12:04:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=OAtizbSoXoPNAyMg215cuoX14RfVf7vO6HnqYrV3Dvk=; b=pxzUkXYfltPbHw3FE40BsyvVC7
+        q4ztiAKAh9byHa+doug0X32e1mx36FUzfwLCiduYtt8QsQkbTSbkx8rBjcJuIEIoHDU20SEPslrtv
+        aii6BxwmJAhz2jwsFlCGq9xm5OajI8ekPEy4Mqu0PWeXNpXx4DqN2dO+jhaBLFPxibEOqbbPap9kz
+        8hJIYZoj+Zo4YwJWjUUXqgOiIkexnMHh1II250x7Gy2c6CToeqOJJvXycORVmnogatzbWhQ9v5WVB
+        5Azf0IIf4TYYwihfL8WBzt1yNge3rFW3tQIm07tHkpz8QXVV3OMm2hQWnGTYXtG6Kw4Kd8+/dnFER
+        KDp5jGhA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mpyUo-003BgI-Pa; Wed, 24 Nov 2021 20:03:58 +0000
+Date:   Wed, 24 Nov 2021 20:03:58 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
+ with sub-page faults
+Message-ID: <YZ6arlsi2L3LVbFO@casper.infradead.org>
+References: <20211124192024.2408218-1-catalin.marinas@arm.com>
+ <20211124192024.2408218-4-catalin.marinas@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211123181010.1607630-2-shr@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211124192024.2408218-4-catalin.marinas@arm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stefan,
+On Wed, Nov 24, 2021 at 07:20:24PM +0000, Catalin Marinas wrote:
+> +++ b/fs/btrfs/ioctl.c
+> @@ -2223,7 +2223,8 @@ static noinline int search_ioctl(struct inode *inode,
+>  
+>  	while (1) {
+>  		ret = -EFAULT;
+> -		if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
+> +		if (fault_in_exact_writeable(ubuf + sk_offset,
+> +					     *buf_size - sk_offset))
+>  			break;
+>  
+>  		ret = btrfs_search_forward(root, &key, path, sk->min_transid);
 
-Thank you for the patch! Yet something to improve:
+Couldn't we avoid all of this nastiness by doing ...
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v5.16-rc2 next-20211124]
-[cannot apply to mszeredi-vfs/overlayfs-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+@@ -2121,10 +2121,9 @@ static noinline int copy_to_sk(struct btrfs_path *path,
+                 * problem. Otherwise we'll fault and then copy the buffer in
+                 * properly this next time through
+                 */
+-               if (copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh))) {
+-                       ret = 0;
++               ret = __copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh));
++               if (ret)
+                        goto out;
+-               }
+ 
+                *sk_offset += sizeof(sh);
+@@ -2196,6 +2195,7 @@ static noinline int search_ioctl(struct inode *inode,
+        int ret;
+        int num_found = 0;
+        unsigned long sk_offset = 0;
++       unsigned long next_offset = 0;
+ 
+        if (*buf_size < sizeof(struct btrfs_ioctl_search_header)) {
+                *buf_size = sizeof(struct btrfs_ioctl_search_header);
+@@ -2223,7 +2223,8 @@ static noinline int search_ioctl(struct inode *inode,
+ 
+        while (1) {
+                ret = -EFAULT;
+-               if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
++               if (fault_in_writeable(ubuf + sk_offset + next_offset,
++                                       *buf_size - sk_offset - next_offset))
+                        break;
+ 
+                ret = btrfs_search_forward(root, &key, path, sk->min_transid);
+@@ -2235,11 +2236,12 @@ static noinline int search_ioctl(struct inode *inode,
+                ret = copy_to_sk(path, &key, sk, buf_size, ubuf,
+                                 &sk_offset, &num_found);
+                btrfs_release_path(path);
+-               if (ret)
++               if (ret > 0)
++                       next_offset = ret;
++               else if (ret < 0)
+                        break;
+-
+        }
+-       if (ret > 0)
++       if (ret == -ENOSPC || ret > 0)
+                ret = 0;
+ err:
+        sk->nr_items = num_found;
 
-url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 136057256686de39cc3a07c2e39ef6bc43003ff6
-config: x86_64-randconfig-r006-20211124 (https://download.01.org/0day-ci/archive/20211125/202111250356.yBAHK4KL-lkp@intel.com/config)
-compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 67a1c45def8a75061203461ab0060c75c864df1c)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/94fab53b56d471270b8b7b9afe6d73a8098448be
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Stefan-Roesch/io_uring-add-getdents64-support/20211124-022809
-        git checkout 94fab53b56d471270b8b7b9afe6d73a8098448be
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/
+(not shown: the tedious bits where the existing 'ret = 1' are converted
+to 'ret = -ENOSPC' in copy_to_sk())
+ 
+(where __copy_to_user_nofault() is a new function that does exactly what
+copy_to_user_nofault() does, but returns the number of bytes copied)
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> fs/ksmbd/vfs.c:1139:47: error: too few arguments to function call, expected 3, have 2
-           err = iterate_dir(fp->filp, &readdir_data.ctx);
-                 ~~~~~~~~~~~                            ^
-   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
-   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
-              ^
-   fs/ksmbd/vfs.c:1189:44: error: too few arguments to function call, expected 3, have 2
-           ret = iterate_dir(dfilp, &readdir_data.ctx);
-                 ~~~~~~~~~~~                         ^
-   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
-   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
-              ^
-   2 errors generated.
---
->> fs/ksmbd/smb2pdu.c:3926:58: error: too few arguments to function call, expected 3, have 2
-           rc = iterate_dir(dir_fp->filp, &dir_fp->readdir_data.ctx);
-                ~~~~~~~~~~~                                        ^
-   include/linux/fs.h:3346:12: note: 'iterate_dir' declared here
-   extern int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos);
-              ^
-   1 error generated.
-
-
-vim +1139 fs/ksmbd/vfs.c
-
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1122  
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1123  /**
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1124   * ksmbd_vfs_empty_dir() - check for empty directory
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1125   * @fp:	ksmbd file pointer
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1126   *
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1127   * Return:	true if directory empty, otherwise false
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1128   */
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1129  int ksmbd_vfs_empty_dir(struct ksmbd_file *fp)
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1130  {
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1131  	int err;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1132  	struct ksmbd_readdir_data readdir_data;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1133  
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1134  	memset(&readdir_data, 0, sizeof(struct ksmbd_readdir_data));
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1135  
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1136  	set_ctx_actor(&readdir_data.ctx, __dir_empty);
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1137  	readdir_data.dirent_count = 0;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1138  
-e8c061917133dd fs/cifsd/vfs.c Namjae Jeon 2021-06-22 @1139  	err = iterate_dir(fp->filp, &readdir_data.ctx);
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1140  	if (readdir_data.dirent_count > 2)
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1141  		err = -ENOTEMPTY;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1142  	else
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1143  		err = 0;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1144  	return err;
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1145  }
-f44158485826c0 fs/cifsd/vfs.c Namjae Jeon 2021-03-16  1146  
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+That way, the existing fault_in_writable() will get the fault, and we
+don't need to probe every 16 bytes.
