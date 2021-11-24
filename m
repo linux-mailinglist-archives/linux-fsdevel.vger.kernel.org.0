@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C57A45D0F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AC045D0FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 00:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352521AbhKXXSX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 18:18:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56474 "EHLO
+        id S1352620AbhKXXSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 18:18:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245001AbhKXXSV (ORCPT
+        with ESMTP id S1346272AbhKXXSW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 18:18:21 -0500
+        Wed, 24 Nov 2021 18:18:22 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74F0EC061574;
-        Wed, 24 Nov 2021 15:15:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630A5C061574;
+        Wed, 24 Nov 2021 15:15:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=EmbnGF5E3X7PPKzRoMxBObQ25iaJW1VVEtk3YOxE710=; b=X0Ddn93Ab27SsMBYonlR3fLKSq
-        akkQsm9qTnY6+XntvFQHnMgMvkPS7JOq0ixdxuijuSgYIZ2/AirEdectYv8xW8aUrHLqeCRGqo3fl
-        o6qquwVdwE/fBU07WdqPC6a7vhKArlQAbMtxCuMW7O1eHZPwQne1eY25CImLk2S3VCGi529/gYO4Y
-        ycidYCNtvojzf7lWWE5j9v1V2POFEyk3R9dkZNoTNT1iyG0ltSOZCI+kE5uuXa45FgHt8QNSqR1m7
-        YQ0E6IqKJsw2XudW3Kte/KhcfvNOwHi6QMQbwYLyVwzzX+6xgAlnM6xlwQqpwwv2aD8XZddc5SZh5
-        rs/F2szg==;
+        bh=/BehJWA378MuzCcNzYeiaptr9YB2kX6SkWqVtJnXf90=; b=M5Qs3grdB16pLj3aU+oKgVtrYf
+        +9X53Hc9TEpgvqrxdEacMBLIfLUpIRcdx0pspIrtG0DxItwaTy3rk1K/2OFZDGx0R7+fenta8bzwt
+        TREipnX6auLhQV3MwazJgA0BMRl5ForyeKLzFMhhge2Bs/DjIi9Q7yGUjTmP6eIlGrd9aDrgtvuFS
+        JW6sS7fevhy+T4aIZTlGhxX3rgLwIsgckJKUGWECBA5vOH+3+uFupDb1zxgzwEBpeYxtogUhDwO3G
+        qAPJJftYL3FpkKPNCkBom6O2Mhu1fPFHi6L+oIwyfval9Y3BZZAiM2A7WVL4ZVEnITt4opq1g+XSM
+        xlDxcIdA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mq1TI-0063zH-Rl; Wed, 24 Nov 2021 23:14:36 +0000
+        id 1mq1TI-0063zK-TI; Wed, 24 Nov 2021 23:14:36 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     akpm@linux-foundation.org, keescook@chromium.org,
         yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
@@ -38,9 +38,9 @@ To:     akpm@linux-foundation.org, keescook@chromium.org,
         mcgrof@bombadil.infradead.org, mcgrof@kernel.org,
         linux-scsi@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/8] stackleak: move stack_erasing sysctl to stackleak.c
-Date:   Wed, 24 Nov 2021 15:14:34 -0800
-Message-Id: <20211124231435.1445213-8-mcgrof@kernel.org>
+Subject: [PATCH v2 8/8] sysctl: share unsigned long const values
+Date:   Wed, 24 Nov 2021 15:14:35 -0800
+Message-Id: <20211124231435.1445213-9-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211124231435.1445213-1-mcgrof@kernel.org>
 References: <20211124231435.1445213-1-mcgrof@kernel.org>
@@ -51,124 +51,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Xiaoming Ni <nixiaoming@huawei.com>
+Provide a way to share unsigned long values.
+This will allow others to not have to re-invent
+these values.
 
-The kernel/sysctl.c is a kitchen sink where everyone leaves
-their dirty dishes, this makes it very difficult to maintain.
-
-To help with this maintenance let's start by moving sysctls to
-places where they actually belong. The proc sysctl maintainers
-do not want to know what sysctl knobs you wish to add for your own
-piece of code, we just care about the core logic.
-
-So move the stack_erasing sysctl from kernel/sysctl.c to
-kernel/stackleak.c and use register_sysctl() to register the
-sysctl interface.
-
-Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-[mcgrof: commit log update]
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- include/linux/stackleak.h |  5 -----
- kernel/stackleak.c        | 26 ++++++++++++++++++++++++--
- kernel/sysctl.c           | 14 --------------
- 3 files changed, 24 insertions(+), 21 deletions(-)
+ fs/proc/proc_sysctl.c  | 3 +++
+ include/linux/sysctl.h | 6 ++++++
+ kernel/sysctl.c        | 9 +++------
+ 3 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
-index a59db2f08e76..ccaab2043fcd 100644
---- a/include/linux/stackleak.h
-+++ b/include/linux/stackleak.h
-@@ -23,11 +23,6 @@ static inline void stackleak_task_init(struct task_struct *t)
- # endif
- }
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index aa743bbb8400..2b73648a19a5 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -29,6 +29,9 @@ static const struct inode_operations proc_sys_dir_operations;
+ const int sysctl_vals[] = { -1, 0, 1, 2, 4, 100, 200, 1000, INT_MAX };
+ EXPORT_SYMBOL(sysctl_vals);
  
--#ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
--int stack_erasing_sysctl(struct ctl_table *table, int write,
--			void *buffer, size_t *lenp, loff_t *ppos);
--#endif
--
- #else /* !CONFIG_GCC_PLUGIN_STACKLEAK */
- static inline void stackleak_task_init(struct task_struct *t) { }
- #endif
-diff --git a/kernel/stackleak.c b/kernel/stackleak.c
-index ce161a8e8d97..66b8af394e58 100644
---- a/kernel/stackleak.c
-+++ b/kernel/stackleak.c
-@@ -16,11 +16,13 @@
- #ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
- #include <linux/jump_label.h>
- #include <linux/sysctl.h>
-+#include <linux/init.h>
- 
- static DEFINE_STATIC_KEY_FALSE(stack_erasing_bypass);
- 
--int stack_erasing_sysctl(struct ctl_table *table, int write,
--			void *buffer, size_t *lenp, loff_t *ppos)
-+#ifdef CONFIG_SYSCTL
-+static int stack_erasing_sysctl(struct ctl_table *table, int write,
-+			void __user *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret = 0;
- 	int state = !static_branch_unlikely(&stack_erasing_bypass);
-@@ -42,6 +44,26 @@ int stack_erasing_sysctl(struct ctl_table *table, int write,
- 					state ? "enabled" : "disabled");
- 	return ret;
- }
-+static struct ctl_table stackleak_sysctls[] = {
-+	{
-+		.procname	= "stack_erasing",
-+		.data		= NULL,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0600,
-+		.proc_handler	= stack_erasing_sysctl,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{}
-+};
++const unsigned long sysctl_long_vals[] = { 0, 1, LONG_MAX };
++EXPORT_SYMBOL_GPL(sysctl_long_vals);
 +
-+static int __init stackleak_sysctls_init(void)
-+{
-+	register_sysctl_init("kernel", stackleak_sysctls);
-+	return 0;
-+}
-+late_initcall(stackleak_sysctls_init);
-+#endif /* CONFIG_SYSCTL */
+ /* Support for permanently empty directories */
  
- #define skip_erasing()	static_branch_unlikely(&stack_erasing_bypass)
- #else
+ struct ctl_table sysctl_mount_point[] = {
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 7946b532e964..162aaee92daf 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -50,6 +50,12 @@ struct ctl_dir;
+ 
+ extern const int sysctl_vals[];
+ 
++#define SYSCTL_LONG_ZERO	((void *)&sysctl_long_vals[0])
++#define SYSCTL_LONG_ONE		((void *)&sysctl_long_vals[1])
++#define SYSCTL_LONG_MAX		((void *)&sysctl_long_vals[2])
++
++extern const unsigned long sysctl_long_vals[];
++
+ typedef int proc_handler(struct ctl_table *ctl, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos);
+ 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index a4bda4a11ea8..5812d76ecee1 100644
+index 5812d76ecee1..b8a3dcf7b925 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -94,9 +94,6 @@
- #if defined(CONFIG_PROVE_LOCKING) || defined(CONFIG_LOCK_STAT)
- #include <linux/lockdep.h>
+@@ -99,9 +99,6 @@
+ 
+ /* Constants used for minimum and  maximum */
+ 
+-static const unsigned long zero_ul;
+-static const unsigned long one_ul = 1;
+-static const unsigned long long_max = LONG_MAX;
+ #ifdef CONFIG_PRINTK
+ static const int ten_thousand = 10000;
  #endif
--#ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
--#include <linux/stackleak.h>
--#endif
- 
- #if defined(CONFIG_SYSCTL)
- 
-@@ -2441,17 +2438,6 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= SYSCTL_INT_MAX,
+@@ -2512,7 +2509,7 @@ static struct ctl_table vm_table[] = {
+ 		.maxlen		= sizeof(dirty_background_bytes),
+ 		.mode		= 0644,
+ 		.proc_handler	= dirty_background_bytes_handler,
+-		.extra1		= (void *)&one_ul,
++		.extra1		= SYSCTL_LONG_ONE,
  	},
--#endif
--#ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
--	{
--		.procname	= "stack_erasing",
--		.data		= NULL,
--		.maxlen		= sizeof(int),
--		.mode		= 0600,
--		.proc_handler	= stack_erasing_sysctl,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
- #endif
- 	{ }
- };
+ 	{
+ 		.procname	= "dirty_ratio",
+@@ -2930,8 +2927,8 @@ static struct ctl_table fs_table[] = {
+ 		.maxlen		= sizeof(files_stat.max_files),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_doulongvec_minmax,
+-		.extra1		= (void *)&zero_ul,
+-		.extra2		= (void *)&long_max,
++		.extra1		= SYSCTL_LONG_ZERO,
++		.extra2		= SYSCTL_LONG_MAX,
+ 	},
+ 	{
+ 		.procname	= "nr_open",
 -- 
 2.33.0
 
