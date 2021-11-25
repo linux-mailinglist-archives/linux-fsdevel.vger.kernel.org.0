@@ -2,137 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A2045DF3D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 17:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 707F845E06D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 19:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357034AbhKYRBK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Nov 2021 12:01:10 -0500
-Received: from foss.arm.com ([217.140.110.172]:53222 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356652AbhKYQ7J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Nov 2021 11:59:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 065761042;
-        Thu, 25 Nov 2021 08:55:58 -0800 (PST)
-Received: from [10.57.29.213] (unknown [10.57.29.213])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C75C3F73B;
-        Thu, 25 Nov 2021 08:55:53 -0800 (PST)
-Subject: Re: [RFC v2 PATCH 06/13] KVM: Register/unregister memfd backed
- memslot
-To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-References: <20211119134739.20218-1-chao.p.peng@linux.intel.com>
- <20211119134739.20218-7-chao.p.peng@linux.intel.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <aff496f2-da53-87ec-0b86-199445bb5159@arm.com>
-Date:   Thu, 25 Nov 2021 16:55:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S237938AbhKYSOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Nov 2021 13:14:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233600AbhKYSMk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Nov 2021 13:12:40 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D5DAC06137D;
+        Thu, 25 Nov 2021 10:02:22 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id x15so28739659edv.1;
+        Thu, 25 Nov 2021 10:02:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZJ+SaV/eDM4q53VkttaI0dp2MED2ax+NU0/r940A7o4=;
+        b=Qu8819WrY12xyyyyok1zR9A+YMBN8poogIQOKBPMIa/UTfYyJq4TAA6lpI0Z/W2Us5
+         xy0zcqi2ewUo9XrOBFoyk+zFVjZ+9/olz7NE9ULXIvn1qdSuKbwRtTjDI4tfmpxutwwA
+         ZcY/uZzK8kk870L6/J4NPVFtlZgLQqcxHb+8XORolmSOVKJIJ5/4m9E8eQfjuAYz2fj9
+         YtzCwUZRI4w9LlgNVW+4YF0XKYT6y9uIsefi9wKJH7FfHNnc7UOqzjGr236lkwrnTAQf
+         UoK2SIdONgUoCQsfQAgwgku9wGcCqE5oST8Q8AyZXHiLyQWzNCYgUPj7wHeFbIGetYIf
+         N1iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZJ+SaV/eDM4q53VkttaI0dp2MED2ax+NU0/r940A7o4=;
+        b=a7bAkexy2yKxSl27Gagnp9kFCGHF+Q0wB9wXGYJ/LpCPg31onuy4RV2S6aEtWO9q9Y
+         0EolfGCYl6OR4SaHaJ81YBGOBCwL+aZ+17KLQ0oOyI5oEmdhmxZpmJguc4lZelCrSPDZ
+         MlEPv5TFgoGk71dvDZGDkx9PKxC7UPwYxr7Miols0FpOgT7HmQ0oKOX/LaYLZvoscdwo
+         MaQ7pi3gEvwjjjxS22lgrVTyTw2A6BLQEddMP6OV4WoWVBBVhpr8brTiAQ+DekmHkAtk
+         9tq9YHVnp9awRrb2vGKgc5f/KO7YFtm7zgWG3YkUDdg2mPXp4/hS1MeXoAZ1dUj02iEE
+         JnIw==
+X-Gm-Message-State: AOAM530Sb4XLpL9OpGJ8IlxcQ/Xy802tm3VONZkXO2MS9aeucXHMzIt8
+        OCR75QiZu1YWYNuQSofuEGdB1udYhsCkoLGfRcQ=
+X-Google-Smtp-Source: ABdhPJzdU3cWnsA12BQIupjc5eX0+2HubATbsuDvAdmDgOFkpDSZnb5YKJBtAXnUxTV2x/1FiK/ontL5OC8P89AvEp0=
+X-Received: by 2002:a50:d883:: with SMTP id p3mr40853791edj.94.1637863340496;
+ Thu, 25 Nov 2021 10:02:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20211119134739.20218-7-chao.p.peng@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20211122153233.9924-1-mhocko@kernel.org> <20211122153233.9924-3-mhocko@kernel.org>
+ <YZ06nna7RirAI+vJ@pc638.lan> <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
+ <YZ6cfoQah8Wo1eSZ@pc638.lan> <YZ9Nb2XA/OGWL1zz@dhcp22.suse.cz>
+In-Reply-To: <YZ9Nb2XA/OGWL1zz@dhcp22.suse.cz>
+From:   Uladzislau Rezki <urezki@gmail.com>
+Date:   Thu, 25 Nov 2021 19:02:09 +0100
+Message-ID: <CA+KHdyUFjqdhkZdTH=4k=ZQdKWs8MauN1NjXXwDH6J=YDuFOPA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19/11/2021 13:47, Chao Peng wrote:
-> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
->  virt/kvm/kvm_main.c | 23 +++++++++++++++++++----
->  1 file changed, 19 insertions(+), 4 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 271cef8d1cd0..b8673490d301 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1426,7 +1426,7 @@ static void update_memslots(struct kvm_memslots *slots,
->  static int check_memory_region_flags(struct kvm *kvm,
->  			     const struct kvm_userspace_memory_region_ext *mem)
->  {
-> -	u32 valid_flags = 0;
-> +	u32 valid_flags = KVM_MEM_FD;
->  
->  	if (!kvm->dirty_log_unsupported)
->  		valid_flags |= KVM_MEM_LOG_DIRTY_PAGES;
-> @@ -1604,10 +1604,20 @@ static int kvm_set_memslot(struct kvm *kvm,
->  		kvm_copy_memslots(slots, __kvm_memslots(kvm, as_id));
->  	}
->  
-> +	if (mem->flags & KVM_MEM_FD && change == KVM_MR_CREATE) {
-> +		r = kvm_memfd_register(kvm, mem, new);
-> +		if (r)
-> +			goto out_slots;
-> +	}
-> +
->  	r = kvm_arch_prepare_memory_region(kvm, new, mem, change);
->  	if (r)
->  		goto out_slots;
->  
-> +	if (mem->flags & KVM_MEM_FD && (r || change == KVM_MR_DELETE)) {
-                                        ^
-r will never be non-zero as the 'if' above will catch that case and jump
-to out_slots.
+On Thu, Nov 25, 2021 at 9:46 AM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Wed 24-11-21 21:11:42, Uladzislau Rezki wrote:
+> > On Tue, Nov 23, 2021 at 05:02:38PM -0800, Andrew Morton wrote:
+> > > On Tue, 23 Nov 2021 20:01:50 +0100 Uladzislau Rezki <urezki@gmail.com> wrote:
+> > >
+> > > > On Mon, Nov 22, 2021 at 04:32:31PM +0100, Michal Hocko wrote:
+> > > > > From: Michal Hocko <mhocko@suse.com>
+> > > > >
+> > > > > Dave Chinner has mentioned that some of the xfs code would benefit from
+> > > > > kvmalloc support for __GFP_NOFAIL because they have allocations that
+> > > > > cannot fail and they do not fit into a single page.
+> > >
+> > > Perhaps we should tell xfs "no, do it internally".  Because this is a
+> > > rather nasty-looking thing - do we want to encourage other callsites to
+> > > start using it?
+> > >
+> > > > > The large part of the vmalloc implementation already complies with the
+> > > > > given gfp flags so there is no work for those to be done. The area
+> > > > > and page table allocations are an exception to that. Implement a retry
+> > > > > loop for those.
+> > > > >
+> > > > > Add a short sleep before retrying. 1 jiffy is a completely random
+> > > > > timeout. Ideally the retry would wait for an explicit event - e.g.
+> > > > > a change to the vmalloc space change if the failure was caused by
+> > > > > the space fragmentation or depletion. But there are multiple different
+> > > > > reasons to retry and this could become much more complex. Keep the retry
+> > > > > simple for now and just sleep to prevent from hogging CPUs.
+> > > > >
+> > >
+> > > Yes, the horse has already bolted.  But we didn't want that horse anyway ;)
+> > >
+> > > I added GFP_NOFAIL back in the mesozoic era because quite a lot of
+> > > sites were doing open-coded try-forever loops.  I thought "hey, they
+> > > shouldn't be doing that in the first place, but let's at least
+> > > centralize the concept to reduce code size, code duplication and so
+> > > it's something we can now grep for".  But longer term, all GFP_NOFAIL
+> > > sites should be reworked to no longer need to do the retry-forever
+> > > thing.  In retrospect, this bright idea of mine seems to have added
+> > > license for more sites to use retry-forever.  Sigh.
+> > >
+> > > > > +               if (nofail) {
+> > > > > +                       schedule_timeout_uninterruptible(1);
+> > > > > +                       goto again;
+> > > > > +               }
+> > >
+> > > The idea behind congestion_wait() is to prevent us from having to
+> > > hard-wire delays like this.  congestion_wait(1) would sleep for up to
+> > > one millisecond, but will return earlier if reclaim events happened
+> > > which make it likely that the caller can now proceed with the
+> > > allocation event, successfully.
+> > >
+> > > However it turns out that congestion_wait() was quietly broken at the
+> > > block level some time ago.  We could perhaps resurrect the concept at
+> > > another level - say by releasing congestion_wait() callers if an amount
+> > > of memory newly becomes allocatable.  This obviously asks for inclusion
+> > > of zone/node/etc info from the congestion_wait() caller.  But that's
+> > > just an optimization - if the newly-available memory isn't useful to
+> > > the congestion_wait() caller, they just fail the allocation attempts
+> > > and wait again.
+> > >
+> > > > well that is sad...
+> > > > I have raised two concerns in our previous discussion about this change,
+> > >
+> > > Can you please reiterate those concerns here?
+> > >
+> > 1. I proposed to repeat(if fails) in one solid place, i.e. get rid of
+> > duplication and spreading the logic across several places. This is about
+> > simplification.
+>
+> I am all for simplifications. But the presented simplification lead to 2) and ...
+>
+> > 2. Second one is about to do an unwinding and release everything what we
+> > have just accumulated in terms of memory consumption. The failure might
+> > occur, if so a condition we are in is a low memory one or high memory
+> > pressure. In this case, since we are about to sleep some milliseconds
+> > in order to repeat later, IMHO it makes sense to release memory:
+> >
+> > - to prevent killing apps or possible OOM;
+> > - we can end up looping quite a lot of time or even forever if users do
+> >   nasty things with vmalloc API and __GFP_NOFAIL flag.
+>
+> ... this is where we disagree and I have tried to explain why. The primary
+> memory to allocate are pages to back the vmalloc area. Failing to
+> allocate few page tables - which btw. do not fail as they are order-0 -
+> and result into the whole and much more expensive work to allocate the
+> former is really wasteful. You've had a concern about OOM killer
+> invocation while retrying the page table allocation but you should
+> realize that page table allocations might already invoke OOM killer so that
+> is absolutely nothing new.
+>
+We are in a slow path and this is a corner case, it means we will
+timeout for many
+milliseconds, for example for CONFIG_HZ_100 it is 10 milliseconds. I would agree
+with you if it was requesting some memory and repeating in a tight loop because
+of any time constraint and workloads sensitive to latency.
 
-I *think* the intention was that the "if (r)" code should be after this
-check to clean up in the case of error from
-kvm_arch_prepare_memory_region() (as well as an explicit MR_DELETE).
+Is it sensitive to any workload? If so, we definitely can not go with
+any delay there.
 
-Steve
+As for OOM, right you are. But it also can be that we are the source
+who triggers it,
+directly or indirectly. Unwinding and cleaning is a maximum what we
+actually can do
+here staying fair to OOM.
 
-> +		kvm_memfd_unregister(kvm, new);
-> +	}
-> +
->  	update_memslots(slots, new, change);
->  	slots = install_new_memslots(kvm, as_id, slots);
->  
-> @@ -1683,10 +1693,12 @@ int __kvm_set_memory_region(struct kvm *kvm,
->  		return -EINVAL;
->  	if (mem->guest_phys_addr & (PAGE_SIZE - 1))
->  		return -EINVAL;
-> -	/* We can read the guest memory with __xxx_user() later on. */
->  	if ((mem->userspace_addr & (PAGE_SIZE - 1)) ||
-> -	    (mem->userspace_addr != untagged_addr(mem->userspace_addr)) ||
-> -	     !access_ok((void __user *)(unsigned long)mem->userspace_addr,
-> +	    (mem->userspace_addr != untagged_addr(mem->userspace_addr)))
-> +		return -EINVAL;
-> +	/* We can read the guest memory with __xxx_user() later on. */
-> +	if (!(mem->flags & KVM_MEM_FD) &&
-> +	    !access_ok((void __user *)(unsigned long)mem->userspace_addr,
->  			mem->memory_size))
->  		return -EINVAL;
->  	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
-> @@ -1727,6 +1739,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
->  		new.dirty_bitmap = NULL;
->  		memset(&new.arch, 0, sizeof(new.arch));
->  	} else { /* Modify an existing slot. */
-> +		/* Private memslots are immutable, they can only be deleted. */
-> +		if (mem->flags & KVM_MEM_FD && mem->private_fd >= 0)
-> +			return -EINVAL;
->  		if ((new.userspace_addr != old.userspace_addr) ||
->  		    (new.npages != old.npages) ||
->  		    ((new.flags ^ old.flags) & KVM_MEM_READONLY))
-> 
+Therefore i root for simplification and OOM related concerns :) But
+maybe there will
+be other opinions.
 
+Thanks!
+
+--
+Uladzislau Rezki
