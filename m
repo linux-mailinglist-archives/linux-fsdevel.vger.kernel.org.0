@@ -2,165 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B24045DCAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 15:49:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 347C845DD34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 16:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351085AbhKYOwU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Nov 2021 09:52:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21789 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1355923AbhKYOuU (ORCPT
+        id S232972AbhKYPYS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Nov 2021 10:24:18 -0500
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:36855 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1355930AbhKYPWS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Nov 2021 09:50:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637851628;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=r0YfT7b8wVOeig/3+IUDAZI2A/DKcXL2UWIWBuICztQ=;
-        b=ej9W3Fbf/IUcF9HbEuPoaqklwj3tyoT4a5DQQfJ+2UwZUs/c+3qa4sklIhVj5s+gA/Nvrf
-        fhN0bk1hIe0S8/Z5Z2AkqAdOiPPUTo2EWJFC/yl/IOFf60vMMKRjUZw6MOxjrpSQZ0CGW6
-        BwXdiuk7fA6WQGi7h++Sb9A/2d1dKZg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-408-XyPBL78gObmB8Ch-FftrfA-1; Thu, 25 Nov 2021 09:47:07 -0500
-X-MC-Unique: XyPBL78gObmB8Ch-FftrfA-1
-Received: by mail-wm1-f72.google.com with SMTP id 205-20020a1c00d6000000b003335d1384f1so5101948wma.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Nov 2021 06:47:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=r0YfT7b8wVOeig/3+IUDAZI2A/DKcXL2UWIWBuICztQ=;
-        b=FjVCFn5ppVoVzCCrGv9428zNyEz6ZDDXCKsXny1tFdHMQ+wsAkfFtP4dNe2sf7b54Q
-         KzrLB/+Ty3bIExMIe/kcsFI3nQLPXOl31R913ZcvzwGNaj7NOP6sEISQ7+uGUHOF4oSl
-         j3LwR/mJYwpw7jiu0xYRhWNRHvsGKav0uuewc+u5cvfQQmVwPRzFhU4peITobA70t2f+
-         0k0EniEwKpnIUE3GXpmDcSC/x2g686B9KW3atBwxbtBewOe2n3s1H3H0lnHZKUpLSUCq
-         zRRhl02gweRiHfQNGxuHqFEH/gcMjBCTZa50Z/J53lpk05Xm8PRZ1Dw+oN+ysJ4qTscY
-         mbOQ==
-X-Gm-Message-State: AOAM53182gR2hUTbNlHp77Osgj6CNGhtJSNy/SUGvDsxMxgmsfJmM68I
-        oddm/MzbgCq1Z1joC+/ypEBZU1CASEur9bEhAqsEqFxleXwDwiWR/p7Z45kpNRpmg4sKe6J2zRQ
-        tSJWaFJ3BRjxwg2PsvwrL6TGdpg==
-X-Received: by 2002:a7b:c763:: with SMTP id x3mr7962970wmk.31.1637851626023;
-        Thu, 25 Nov 2021 06:47:06 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwWw5wfsPq7LRSM9hRLSA4XFFZZK0hqXGaWJlTIAPX0085VuaF1bzZGOZEdl44rHrNuL6HnNg==
-X-Received: by 2002:a7b:c763:: with SMTP id x3mr7962942wmk.31.1637851625817;
-        Thu, 25 Nov 2021 06:47:05 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c679e.dip0.t-ipconnect.de. [91.12.103.158])
-        by smtp.gmail.com with ESMTPSA id be3sm9930088wmb.1.2021.11.25.06.47.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Nov 2021 06:47:05 -0800 (PST)
-Message-ID: <68615778-08cc-6216-1def-764dff112a72@redhat.com>
-Date:   Thu, 25 Nov 2021 15:47:04 +0100
+        Thu, 25 Nov 2021 10:22:18 -0500
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id E52581C4FEC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Nov 2021 15:19:04 +0000 (GMT)
+Received: (qmail 917 invoked from network); 25 Nov 2021 15:19:04 -0000
+Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPA; 25 Nov 2021 15:19:04 -0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Avramov <hakavlad@inbox.lv>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to make progress
+Date:   Thu, 25 Nov 2021 15:18:53 +0000
+Message-Id: <20211125151853.8540-1-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2] kthread: dynamically allocate memory to store
- kthread's full name
-Content-Language: en-US
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        oliver.sang@intel.com, lkp@intel.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>
-References: <20211120112850.46047-1-laoar.shao@gmail.com>
- <435fab0b-d345-3698-79af-ff858181666a@redhat.com> <YZ+hsx52TyDuHvE1@alley>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <YZ+hsx52TyDuHvE1@alley>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25.11.21 15:46, Petr Mladek wrote:
-> On Thu 2021-11-25 10:36:49, David Hildenbrand wrote:
->> On 20.11.21 12:28, Yafang Shao wrote:
->>> When I was implementing a new per-cpu kthread cfs_migration, I found the
->>> comm of it "cfs_migration/%u" is truncated due to the limitation of
->>> TASK_COMM_LEN. For example, the comm of the percpu thread on CPU10~19 are
->>> all with the same name "cfs_migration/1", which will confuse the user. This
->>> issue is not critical, because we can get the corresponding CPU from the
->>> task's Cpus_allowed. But for kthreads correspoinding to other hardware
->>> devices, it is not easy to get the detailed device info from task comm,
->>> for example,
->>>
->>>     jbd2/nvme0n1p2-
->>>     xfs-reclaim/sdf
->>>
->>> Currently there are so many truncated kthreads:
->>>
->>>     rcu_tasks_kthre
->>>     rcu_tasks_rude_
->>>     rcu_tasks_trace
->>>     poll_mpt3sas0_s
->>>     ext4-rsv-conver
->>>     xfs-reclaim/sd{a, b, c, ...}
->>>     xfs-blockgc/sd{a, b, c, ...}
->>>     xfs-inodegc/sd{a, b, c, ...}
->>>     audit_send_repl
->>>     ecryptfs-kthrea
->>>     vfio-irqfd-clea
->>>     jbd2/nvme0n1p2-
->>>     ...
->>>
->>> We can shorten these names to work around this problem, but it may be
->>> not applied to all of the truncated kthreads. Take 'jbd2/nvme0n1p2-' for
->>> example, it is a nice name, and it is not a good idea to shorten it.
->>>
->>> One possible way to fix this issue is extending the task comm size, but
->>> as task->comm is used in lots of places, that may cause some potential
->>> buffer overflows. Another more conservative approach is introducing a new
->>> pointer to store kthread's full name if it is truncated, which won't
->>> introduce too much overhead as it is in the non-critical path. Finally we
->>> make a dicision to use the second approach. See also the discussions in
->>> this thread:
->>> https://lore.kernel.org/lkml/20211101060419.4682-1-laoar.shao@gmail.com/
->>>
->>> After this change, the full name of these truncated kthreads will be
->>> displayed via /proc/[pid]/comm:
->>>
->>>     rcu_tasks_kthread
->>>     rcu_tasks_rude_kthread
->>>     rcu_tasks_trace_kthread
->>>     poll_mpt3sas0_statu
->>>     ext4-rsv-conversion
->>>     xfs-reclaim/sdf1
->>>     xfs-blockgc/sdf1
->>>     xfs-inodegc/sdf1
->>>     audit_send_reply
->>>     ecryptfs-kthread
->>>     vfio-irqfd-cleanup
->>>     jbd2/nvme0n1p2-8
->>
->> I do wonder if that could break some user space that assumes these names
->> have maximum length ..
-> 
-> There is high chance that we will be on the safe side. Workqueue
-> kthreads already provided longer names. They are even dynamic
-> because the currently handled workqueue name is part of the name,
-> see wq_worker_comm().
+Mike Galbraith, Alexey Avramov and Darrick Wong all reported similar
+problems due to reclaim throttling for excessive lengths of time.
+In Alexey's case, a memory hog that should go OOM quickly stalls for
+several minutes before stalling. In Mike and Darrick's cases, a small
+memcg environment stalled excessively even though the system had enough
+memory overall.
 
-Great, thanks!
+Commit 69392a403f49 ("mm/vmscan: throttle reclaim when no progress is being
+made") introduced the problem although commit a19594ca4a8b ("mm/vmscan:
+increase the timeout if page reclaim is not making progress") made it
+worse. Systems at or near an OOM state that cannot be recovered must
+reach OOM quickly and memcg should kill tasks if a memcg is near OOM.
 
+To address this, only stall for the first zone in the zonelist, reduce
+the timeout to 1 tick for VMSCAN_THROTTLE_NOPROGRESS and only stall if
+the scan control nr_reclaimed is 0 and kswapd is still active.  If kswapd
+has stopped reclaiming due to excessive failures, do not stall at all so
+that OOM triggers relatively quickly.
 
+Alexey's test case was the most straight forward
+
+	for i in {1..3}; do tail /dev/zero; done
+
+On vanilla 5.16-rc1, this test stalled and was reset after 10 minutes.
+After the patch, the test gets killed after roughly 15 seconds which is
+the same length of time taken in 5.15.
+
+Link: https://lore.kernel.org/r/99e779783d6c7fce96448a3402061b9dc1b3b602.camel@gmx.de
+Link: https://lore.kernel.org/r/20211124011954.7cab9bb4@mail.inbox.lv
+Link: https://lore.kernel.org/r/20211022144651.19914-1-mgorman@techsingularity.net
+
+Fixes: 69392a403f49 ("mm/vmscan: throttle reclaim when no progress is being made")
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Tested-by: Darrick J. Wong <djwong@kernel.org>
+---
+ mm/vmscan.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index fb9584641ac7..176ddd28df21 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1057,7 +1057,17 @@ void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason)
+ 
+ 		break;
+ 	case VMSCAN_THROTTLE_NOPROGRESS:
+-		timeout = HZ/2;
++		timeout = 1;
++
++		/*
++		 * If kswapd is disabled, reschedule if necessary but do not
++		 * throttle as the system is likely near OOM.
++		 */
++		if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES) {
++			cond_resched();
++			return;
++		}
++
+ 		break;
+ 	case VMSCAN_THROTTLE_ISOLATED:
+ 		timeout = HZ/50;
+@@ -3395,7 +3405,7 @@ static void consider_reclaim_throttle(pg_data_t *pgdat, struct scan_control *sc)
+ 		return;
+ 
+ 	/* Throttle if making no progress at high prioities. */
+-	if (sc->priority < DEF_PRIORITY - 2)
++	if (sc->priority < DEF_PRIORITY - 2 && !sc->nr_reclaimed)
+ 		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS);
+ }
+ 
+@@ -3415,6 +3425,7 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
+ 	unsigned long nr_soft_scanned;
+ 	gfp_t orig_mask;
+ 	pg_data_t *last_pgdat = NULL;
++	pg_data_t *first_pgdat = NULL;
+ 
+ 	/*
+ 	 * If the number of buffer_heads in the machine exceeds the maximum
+@@ -3478,14 +3489,18 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
+ 			/* need some check for avoid more shrink_zone() */
+ 		}
+ 
++		if (!first_pgdat)
++			first_pgdat = zone->zone_pgdat;
++
+ 		/* See comment about same check for global reclaim above */
+ 		if (zone->zone_pgdat == last_pgdat)
+ 			continue;
+ 		last_pgdat = zone->zone_pgdat;
+ 		shrink_node(zone->zone_pgdat, sc);
+-		consider_reclaim_throttle(zone->zone_pgdat, sc);
+ 	}
+ 
++	consider_reclaim_throttle(first_pgdat, sc);
++
+ 	/*
+ 	 * Restore to original mask to avoid the impact on the caller if we
+ 	 * promoted it to __GFP_HIGHMEM.
 -- 
-Thanks,
-
-David / dhildenb
+2.31.1
 
