@@ -2,88 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B4D45D303
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 03:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB8545D3FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 05:44:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235095AbhKYCPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 21:15:32 -0500
-Received: from foescog.com ([5.56.56.207]:55458 "EHLO foescog.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232797AbhKYCN0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 21:13:26 -0500
-Received: from 42.91-116-32.dynamic.clientes.euskaltel.es (unknown [91.116.32.42])
-        by foescog.com (Postfix) with ESMTPSA id EC1972EF517
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Nov 2021 02:57:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foescog.com;
-        s=default; t=1637805459;
-        bh=/QdtepFZqmFRCVwpW5G9FzSpQ0uyk/GzjsYilKQXuj8=; l=2224;
-        h=From:To:Subject;
-        b=Iqo62xzFHB0+XBZ4mwOFJ1AYBXb84YG6AE4xeeMHJOqrDQc3dAQTaWYxMAPOg70/v
-         CxwBuG32qeV/ntj/fs2JAxbN00I8Cgsup62gV8FsJby9+WFq+IiLg3YULNVIE5wO2S
-         a5dH0Mg8Ig9edX37n7vCsvzfge1QXczs3+obb53c=
+        id S239517AbhKYEsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 23:48:01 -0500
+Received: from beige.elm.relay.mailchannels.net ([23.83.212.16]:29454 "EHLO
+        beige.elm.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236673AbhKYEqA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Nov 2021 23:46:00 -0500
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 3069946142A;
+        Thu, 25 Nov 2021 04:42:49 +0000 (UTC)
+Received: from pdx1-sub0-mail-a278.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id BB65D4611BB;
+        Thu, 25 Nov 2021 04:42:48 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from pdx1-sub0-mail-a278.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.100.11.72 (trex/6.4.3);
+        Thu, 25 Nov 2021 04:42:49 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Thoughtful-Thoughtful: 609f5ee056e614d8_1637815369041_1164783980
+X-MC-Loop-Signature: 1637815369041:2682771033
+X-MC-Ingress-Time: 1637815369041
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a278.dreamhost.com (Postfix) with ESMTPSA id 4J04xN43p0z29;
+        Wed, 24 Nov 2021 20:42:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
+        s=claycon.org; t=1637815368; bh=2eQXOCQLBjTZEE4Yunh+/bMkWHc=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=YdTPpEqMgsGSBZ9tT1OvsAeYvs9aeypsSCfoF4fwpDTHiGiKmdP3xklF2tYQJviCL
+         FeiEjKfvbTfYKV6mgVLPnA86DsGZk1b9jHQjcfzgcx0RjcNbuhOmqqu7LpVUMzV6ef
+         1xXF36wII07c1rHojBScIsru4FbM8xTJHt6nn3L8=
+Date:   Wed, 24 Nov 2021 22:42:47 -0600
+From:   Clay Harris <bugs@claycon.org>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] io_uring: add getdents64 support
+Message-ID: <20211125044246.ve2433klyjua3a6d@ps29521.dreamhostps.com>
+References: <20211124231700.1158521-1-shr@fb.com>
 MIME-Version: 1.0
-From:   "FOESCO" <info6@foescog.com>
-Reply-To: info6@foescog.com
-To:     linux-fsdevel@vger.kernel.org
-Subject: Consulta muy urgente
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Smart_Send_4_3_3
-Date:   Thu, 25 Nov 2021 02:57:41 +0100
-Message-ID: <3880466410296225921472@DESKTOP-3O58G60>
-X-Priority: 1
-X-MSMail-Priority: High
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211124231700.1158521-1-shr@fb.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Buenos d=EDas
 
+I seem to recall making a few comments the last time a getdents64
+for io_uring was proposed; in particular I wanted to bring up one
+here.  This applies only to altering the internal interface, which
+io_uring would use, although wiring up a new syscall would be a nice
+addition.
 
-Soy Alex Pons, director de FOESCO (Formaci=F3n Estatal Continua).
+The current interface has 2 issues:
 
-Nos ponemos en contacto con vosotros para informamos acerca de la =FAltima =
-convocatoria de Cursos 100% Bonificables disponibles para empleados.
+1)
+getdents64 requires at least two calls to read a directory.
+One or more to get the dents and a final call to see the EOF.
+With small directories, this means literally 50% of the calls
+are wasted.
 
-El plazo l=EDmite para poder solicitarlos finaliza el pr=F3ximo VIERNES 25,=
- pasada esta fecha no podr=E1n tramitarse formaciones con cargo al Cr=E9dit=
-o de Formaci=F3n 2021.
+2)
+The fpos cannot be changed atomically with a read, so it is not
+possible to to safely perform concurrent reads on the same fd.
 
+But, the kernel knows (most, if not all of the time) that it is at
+EOF at the time it returns the last buffer.  So, it would be very
+useful to get an EOF indicator back with the final buffer.  This
+could just a flag, or for instance make an fpos parameter which is
+both input and output, returning the (post read) fpos or zero at
+EOF.
 
-Precis=E1is recibir el listado de cursos disponibles=3F
+Futhermore, for input, one could supply:
+	0:	Start from directory beginning
+	-1:	Read from current position
+	other:	(output from previous call) Read from here
 
+On Wed, Nov 24 2021 at 15:16:57 -0800, Stefan Roesch quoth thus:
 
-Quedamos a la espera de vuestra respuesta.
-
-
-Saludos cordiales.
-
-
-Alex Pons
-Director FOESCO
-
-Equipo FOESCO (Formaci=F3n Estatal Continua).
-Entidad Organizadora: B200592AA
-Tel:     910 323 794
-(Horario de 9h a 15h y de 17h a 20h de Lunes a Viernes)
-
-FOESCO ofrece formaci=F3n a empresas y trabajadores en activo a trav=E9s de=
- cursos bonificados por la Fundaci=F3n Estatal para la Formaci=F3n en el Em=
-pleo (antiguo FORCEM) que gestiona las acciones formativas de FORMACI=D3N C=
-ONTINUA para trabajadores y se rige por la ley 30/2015 de 9 de Septiembre.
-
-Antes de imprimir este e-mail piense bien si es necesario hacerlo. La infor=
-maci=F3n transmitida en este mensaje est=E1 dirigida solamente a las person=
-as o entidades que figuran en el encabezamiento y contiene informaci=F3n co=
-nfidencial, por lo que, si usted lo recibiera por error, por favor destr=FA=
-yalo sin copiarlo, usarlo ni distribuirlo, comunic=E1ndolo inmediatamente a=
-l emisor del mensaje. De conformidad con lo dispuesto en el Reglamento Euro=
-peo del 2016/679, del 27 de Abril de 2016, FOESCO le informa que los datos =
-por usted suministrados ser=E1n tratados con las medidas de seguridad confo=
-rmes a la normativa vigente que se requiere. Dichos datos ser=E1n empleados=
- con fines de gesti=F3n. Para el ejercicio de sus derechos de transparencia=
-, informaci=F3n, acceso, rectificaci=F3n, supresi=F3n o derecho al olvido, =
-limitaci=F3n del tratamiento , portabilidad de datos y oposici=F3n de sus d=
-atos de car=E1cter personal deber=E1 dirigirse a la direcci=F3n del Respons=
-able del tratamiento a C/ LAGUNA DEL MARQUESADO N=BA10, 28021, MADRID, "PUL=
-SANDO AQUI" <mailto:bajas@foesco.com=3FSubject=3DBAJA%20CORREOS> y "ENVIAR".
+> This series adds support for getdents64 in liburing. The intent is to
+> provide a more complete I/O interface for io_uring.
+> 
+> Patch 1: fs: add parameter use_fpos to iterate_dir()
+>   This adds a new parameter to the function iterate_dir() so the
+>   caller can specify if the position is the file position or the
+>   position stored in the buffer context.
+> 
+> Patch 2: fs: split off vfs_getdents function from getdents64 system call
+>   This splits of the iterate_dir part of the syscall in its own
+>   dedicated function. This allows to call the function directly from
+>   liburing.
+> 
+> Patch 3: io_uring: add support for getdents64
+>   Adds the functions to io_uring to support getdents64.
+> 
+> There is also a patch series for the changes to liburing. This includes
+> a new test. The patch series is called "liburing: add getdents support."
+> 
+> The following tests have been performed:
+> - new liburing getdents test program has been run
+> - xfstests have been run
+> - both tests have been repeated with the kernel memory leak checker
+>   and no leaks have been reported.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
+> V2: Updated the iterate_dir calls in fs/ksmbd, fs/ecryptfs and arch/alpha with
+>     the additional parameter.
+> 
+> Stefan Roesch (3):
+>   fs: add parameter use_fpos to iterate_dir function
+>   fs: split off vfs_getdents function of getdents64 syscall
+>   io_uring: add support for getdents64
+> 
+>  arch/alpha/kernel/osf_sys.c   |  2 +-
+>  fs/ecryptfs/file.c            |  2 +-
+>  fs/exportfs/expfs.c           |  2 +-
+>  fs/internal.h                 |  8 +++++
+>  fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++
+>  fs/ksmbd/smb2pdu.c            |  2 +-
+>  fs/ksmbd/vfs.c                |  4 +--
+>  fs/nfsd/nfs4recover.c         |  2 +-
+>  fs/nfsd/vfs.c                 |  2 +-
+>  fs/overlayfs/readdir.c        |  6 ++--
+>  fs/readdir.c                  | 64 ++++++++++++++++++++++++++---------
+>  include/linux/fs.h            |  2 +-
+>  include/uapi/linux/io_uring.h |  1 +
+>  13 files changed, 121 insertions(+), 28 deletions(-)
+> 
+> 
+> base-commit: f0afafc21027c39544a2c1d889b0cff75b346932
+> -- 
+> 2.30.2
