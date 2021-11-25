@@ -2,93 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7115F45D223
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 01:34:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E8145D2DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 03:04:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346503AbhKYAiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Nov 2021 19:38:00 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:40506 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1346686AbhKYAgA (ORCPT
+        id S232102AbhKYCHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Nov 2021 21:07:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235157AbhKYCFK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Nov 2021 19:36:00 -0500
-Received: from callcc.thunk.org ([64.129.1.15])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1AP0WWkq015823
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Nov 2021 19:32:34 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4C07E4200F8; Wed, 24 Nov 2021 19:32:31 -0500 (EST)
-Date:   Wed, 24 Nov 2021 19:32:31 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <YZ7Zn8pEp9D/oqS1@mit.edu>
-References: <20211122153233.9924-1-mhocko@kernel.org>
- <20211122153233.9924-3-mhocko@kernel.org>
- <YZ06nna7RirAI+vJ@pc638.lan>
- <20211123170238.f0f780ddb800f1316397f97c@linux-foundation.org>
- <163772381628.1891.9102201563412921921@noble.neil.brown.name>
- <20211123194833.4711add38351d561f8a1ae3e@linux-foundation.org>
- <163773141164.1891.1440920123016055540@noble.neil.brown.name>
+        Wed, 24 Nov 2021 21:05:10 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0C0C061A1A;
+        Wed, 24 Nov 2021 17:39:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
+        bh=qYw5RIZBYu+7TC3KjriRLSrZwn1E3iMtbuXhHAISxsY=; b=yGbXk3L+x2f8HhRmR6X1X25pSa
+        wGsZIl/Rbsf/xlDcxMSq8Wf94/PcPWJ+9mlpAoJj/EmWa1YSoGFbVKUz+wyn41B583pr36qTKlmEs
+        VO7Kom827tHmWzwmS9yw+mmeSwxmfIoWVmXLK2r5mLDJeKX2NYNT/4i8YKqVF54zBr2PkMz+Pt7qr
+        gSANvH66vibc9Bplw3++VO0sA3X0O2YvhtkyNmrNiM6+g1tgNGK5GCET5YQzLqLCJ5WRf/4n6qGsE
+        uI0L4sp/KfdfmuT4pKXL7WDs/FrcAucukzFICpMEqDDUtXc95SpzeCwZPuzuafV0wd/YLXB4wkXHE
+        m8JMl8Kg==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mq3j9-006El5-N1; Thu, 25 Nov 2021 01:39:07 +0000
+Subject: Re: mmotm 2021-11-24-15-49 uploaded (drivers/usb/host/xhci-hub.c)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        linux-usb@vger.kernel.org
+References: <20211124234931.iDJQctzrQ%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <2b4fcff8-d7a0-b235-c94d-147e19738d72@infradead.org>
+Date:   Wed, 24 Nov 2021 17:39:06 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163773141164.1891.1440920123016055540@noble.neil.brown.name>
+In-Reply-To: <20211124234931.iDJQctzrQ%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 24, 2021 at 04:23:31PM +1100, NeilBrown wrote:
+On 11/24/21 3:49 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2021-11-24-15-49 has been uploaded to
 > 
-> It would get particularly painful if some system call started returned
-> -ENOMEM, which had never returned that before.  I note that ext4 uses
-> __GFP_NOFAIL when handling truncate.  I don't think user-space would be
-> happy with ENOMEM from truncate (or fallocate(PUNHC_HOLE)), though a
-> recent commit which adds it focuses more on wanting to avoid the need
-> for fsck.
+>     https://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> https://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> https://ozlabs.org/~akpm/mmotm/series
+> 
 
-If the inode is in use (via an open file descriptor) when it is
-unlocked, we can't actually do the truncate until the inode is
-evicted, and at that point, there is no user space to return to.  For
-that reason, the evict_inode() method is not *allowed* to fail.  So
-this is why we need to use GFP_NOFAIL or an open-coded retry loop.
-The alternative would be to mark the file system corrupt, and then
-either remount the file system, panic the system and reboot, or leave
-the file system corrupted ("don't worry, be happy").  I considered
-GFP_NOFAIL to be the lesser of the evils.  :-)
 
-If the VFS allowed evict_inode() to fail, all it could do is to put
-the inode back on the list of inodes to be later evicted --- which is
-to say, we would have to add a lot of complexity to effectively add a
-gigantic retry loop.  
+on i386:
 
-Granted, we wouldn't need to be holding any locks in between retries,
-so perhaps it'a better than adding a retry loop deep in the guts of
-the ext4 truncate codepath.  But then we would need to worry about
-userspace getting ENOMEM for system calls which historically, users
-have traditionally never failing.  I suppose we could also solve this
-problem by adding retry logic in the top-level VFS truncate codepath,
-so instead of returning ENOMEM, we just retry the truncate(2) system
-call and hope that we have enough memory to succeed this time.
+../drivers/usb/host/xhci-hub.c: In function ‘xhci_create_usb3x_bos_desc’:
+./../include/linux/compiler_types.h:335:38: error: call to ‘__compiletime_assert_608’ declared with attribute error: FIELD_PREP: value too large for the field
+   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+                                       ^
+./../include/linux/compiler_types.h:316:4: note: in definition of macro ‘__compiletime_assert’
+     prefix ## suffix();    \
+     ^~~~~~
+./../include/linux/compiler_types.h:335:2: note: in expansion of macro ‘_compiletime_assert’
+   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+   ^~~~~~~~~~~~~~~~~~~
+../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                      ^~~~~~~~~~~~~~~~~~
+../include/linux/bitfield.h:49:3: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+    BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?  \
+    ^~~~~~~~~~~~~~~~
+../include/linux/bitfield.h:94:3: note: in expansion of macro ‘__BF_FIELD_CHECK’
+    __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: "); \
+    ^~~~~~~~~~~~~~~~
+../drivers/usb/host/xhci-hub.c:220:4: note: in expansion of macro ‘FIELD_PREP’
+     FIELD_PREP(USB_SSP_SUBLINK_SPEED_LSM, lane_mantissa));
+     ^~~~~~~~~~
 
-After all, can the userspace do if truncate() fails with ENOMEM?  It
-can fail the userspace program, which in the case of a long-running
-daemon such as mysqld, is basically the userspace equivalent of "panic
-and reboot", or it can retry truncate(2) syste call at the userspace
-level.
 
-Are we detecting a pattern here?  There will always be cases where the
-choice is "panic" or "retry".
+$ gcc --version
+gcc (SUSE Linux) 7.5.0
 
-							- Ted
+
+-- 
+~Randy
