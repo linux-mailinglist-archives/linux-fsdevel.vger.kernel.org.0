@@ -2,147 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F0A145DE53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 17:09:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56BF545DE7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 17:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356380AbhKYQMq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Nov 2021 11:12:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53444 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356376AbhKYQKq (ORCPT
+        id S1349922AbhKYQTi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Nov 2021 11:19:38 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:49562 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352719AbhKYQRh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Nov 2021 11:10:46 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D79A5C0617A5;
-        Thu, 25 Nov 2021 07:55:54 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id i5so12640062wrb.2;
-        Thu, 25 Nov 2021 07:55:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=W5cqCxZab5R3GKtO7D+pDtXsizA0EzP36NiILRNFYgk=;
-        b=EvJYqyQ04f9Vtpz3rYR4TqhxLVuD4aAQRHAMiomlwF0G3uOu97QSFuhus03d/VWh66
-         s0Js3Lu+4ojsGvhATUmExSncCil/eNIQiSH/wYmEyYfuaZ2aPsb+PlPfqIUiK3TMraq+
-         hWvl41s6A2dFLZiTwSyVcgFlOtpBoqBkcXeyg1VQ8G43RsZHAMEL6pq/2Gafb1G8lA1V
-         Xr2206bGFXAdQM4nUtgZuFvKX7Ks+/qaFBCz/nxwRbgaKcu4vdW9k90jiuGePrVyTMGB
-         LxIg+rpeo7ReqvPbD2U4byAhQADVIOudlo3uGe5j6HJtAbMjzHB0mj398nrCmOEq6uKd
-         lCIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=W5cqCxZab5R3GKtO7D+pDtXsizA0EzP36NiILRNFYgk=;
-        b=6sWxsNKCatnwaQvWTfw8sB+znQUGocZ9prLKelVPn7JiGmMFzi9T20OecMx9lVfjD9
-         AMS0iGBg6vJ+sLdG2HeSpH5vA76TnAzHim5hZ9Gu//HQTvex1RTNaK6K1JgCDQyRG6aU
-         QnddbP0C9IE7FaPbgS07OgFb2WwOsexY8jshfJiGmzoU0zK41/FsBy/bY8452Qos9lBO
-         OmVRcru1B2oo9Vocth3B9xRvl5Ptnh+QLumES8aFWTllpLu7NxYqeWt6fFvhfVL9ThlZ
-         0Ca3mQUTnuVD1u2ANk6CMB/Ftn1DKBSyuE3c7St4wGeXKYjAzoBRWrHvVgyxuNvw3eIN
-         lGOg==
-X-Gm-Message-State: AOAM530koh7XC9nL3pCrWxvxoMHH7BKIYVZj/Zzdd0NrJdMn/MB5Ftln
-        CAuLlk9rq6aJSyeize/JAqRc8boEedY=
-X-Google-Smtp-Source: ABdhPJyMVjZHnqO5A6MbJW6x0zK66ggN72w150ozV/TQ9NUirbpDfrCOHzoy9O1jWZf3qqSpTtt1sA==
-X-Received: by 2002:adf:edc6:: with SMTP id v6mr7784365wro.461.1637855753494;
-        Thu, 25 Nov 2021 07:55:53 -0800 (PST)
-Received: from [192.168.43.77] (82-132-229-54.dab.02.net. [82.132.229.54])
-        by smtp.gmail.com with ESMTPSA id c1sm3112138wrt.14.2021.11.25.07.55.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Nov 2021 07:55:53 -0800 (PST)
-Message-ID: <a2fd9431-d61c-d222-03cb-dbc481fa1996@gmail.com>
-Date:   Thu, 25 Nov 2021 15:55:33 +0000
+        Thu, 25 Nov 2021 11:17:37 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 67ACB1FD34;
+        Thu, 25 Nov 2021 16:14:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1637856865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bo77CZqSqXbmZ4wuoRaS02pkfz7n85YeAngSJyyojCA=;
+        b=l/E6S9bpxNLKTqHtgu3FoItI7WRvrAyEHAXqPvYzWKmAWGv+CzgzLfSyRBGRUjrOKGO/52
+        u9RpggNvpjjRsNYdIAf3m/pTweOKiA+cF9swssR15h9RtmZteS15cauWN7xk3t08sQ56yo
+        rKPd1cjc1Eq+TNj23NjwgVriy6QJ6JI=
+Received: from suse.cz (unknown [10.100.216.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 939A2A3B83;
+        Thu, 25 Nov 2021 16:14:23 +0000 (UTC)
+Date:   Thu, 25 Nov 2021 17:14:23 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
+        peterz@infradead.org, gregkh@linuxfoundation.org, pjt@google.com,
+        liu.hailong6@zte.com.cn, andriy.shevchenko@linux.intel.com,
+        sre@kernel.org, penguin-kernel@i-love.sakura.ne.jp,
+        senozhatsky@chromium.org, wangqing@vivo.com, bcrl@kvack.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] sysctl: add a new register_sysctl_init() interface
+Message-ID: <YZ+2XwgQn8UpVcpb@alley>
+References: <20211123202347.818157-1-mcgrof@kernel.org>
+ <20211123202347.818157-2-mcgrof@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v1 1/3] fs: add parameter use_fpos to iterate_dir function
-Content-Language: en-US
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20211123181010.1607630-1-shr@fb.com>
- <20211123181010.1607630-2-shr@fb.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211123181010.1607630-2-shr@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211123202347.818157-2-mcgrof@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/23/21 18:10, Stefan Roesch wrote:
-> This adds the use_fpos parameter to the iterate_dir function.
-> If use_fpos is true it uses the file position in the file
-> structure (existing behavior). If use_fpos is false, it uses
-> the pos in the context structure.
+On Tue 2021-11-23 12:23:39, Luis Chamberlain wrote:
+> From: Xiaoming Ni <nixiaoming@huawei.com>
 > 
-> This change is required to support getdents in io_uring.
+> The kernel/sysctl.c is a kitchen sink where everyone leaves
+> their dirty dishes, this makes it very difficult to maintain.
 > 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
-> ---
->   fs/exportfs/expfs.c    |  2 +-
->   fs/nfsd/nfs4recover.c  |  2 +-
->   fs/nfsd/vfs.c          |  2 +-
->   fs/overlayfs/readdir.c |  6 +++---
->   fs/readdir.c           | 28 ++++++++++++++++++++--------
->   include/linux/fs.h     |  2 +-
->   6 files changed, 27 insertions(+), 15 deletions(-)
+> To help with this maintenance let's start by moving sysctls to
+> places where they actually belong. The proc sysctl maintainers
+> do not want to know what sysctl knobs you wish to add for your own
+> piece of code, we just care about the core logic.
 > 
-[...]
-> diff --git a/fs/readdir.c b/fs/readdir.c
-> index 09e8ed7d4161..8ea5b5f45a78 100644
-> --- a/fs/readdir.c
-> +++ b/fs/readdir.c
-> @@ -21,6 +21,7 @@
->   #include <linux/unistd.h>
->   #include <linux/compat.h>
->   #include <linux/uaccess.h>
-> +#include "internal.h"
->   
->   #include <asm/unaligned.h>
->   
-> @@ -36,8 +37,14 @@
->   	unsafe_copy_to_user(dst, src, len, label);		\
->   } while (0)
->   
-> -
-> -int iterate_dir(struct file *file, struct dir_context *ctx)
-> +/**
-> + * iterate_dir - iterate over directory
-> + * @file    : pointer to file struct of directory
-> + * @ctx     : pointer to directory ctx structure
-> + * @use_fpos: true : use file offset
-> + *            false: use pos in ctx structure
-> + */
-> +int iterate_dir(struct file *file, struct dir_context *ctx, bool use_fpos)
->   {
->   	struct inode *inode = file_inode(file);
->   	bool shared = false;
-> @@ -60,12 +67,17 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
->   
->   	res = -ENOENT;
->   	if (!IS_DEADDIR(inode)) {
-> -		ctx->pos = file->f_pos;
-> +		if (use_fpos)
-> +			ctx->pos = file->f_pos;
+> Today though folks heavily rely on tables on kernel/sysctl.c so
+> they can easily just extend this table with their needed sysctls.
+> In order to help users move their sysctls out we need to provide a
+> helper which can be used during code initialization.
+> 
+> We special-case the initialization use of register_sysctl() since
+> it *is* safe to fail, given all that sysctls do is provide a dynamic
+> interface to query or modify at runtime an existing variable. So the
+> use case of register_sysctl() on init should *not* stop if the sysctls
+> don't end up getting registered. It would be counter productive to
+> stop boot if a simple sysctl registration failed.
+>
+> Provide a helper for init then, and document the recommended init
+> levels to use for callers of this routine. We will later use this
+> in subsequent patches to start slimming down kernel/sysctl.c tables
+> and moving sysctl registration to the code which actually needs
+> these sysctls.
 
-One more thing I haven't noticed before, should pos be sanitised
-somehow if passed from the userspace? Do filesystems handle it
-well?
+Do we really need a new helper for this?
+Is the failure acceptable only during system initialization?
 
+The warning would be useful even for the original register_sysctl().
 
-> +
->   		if (shared)
->   			res = file->f_op->iterate_shared(file, ctx);
->   		else
->   			res = file->f_op->iterate(file, ctx);
-> -		file->f_pos = ctx->pos;
-> +
-> +		if (use_fpos)
-> +			file->f_pos = ctx->pos;
-> +
->   		fsnotify_access(file);
->   		file_accessed(file);
->   	}
+It should be up-to-the caller to decide if the failure is fatal
+or not. It might be enough to document the reasoning why a warning
+is enough in most cases.
 
-
--- 
-Pavel Begunkov
+Best Regards,
+Petr
