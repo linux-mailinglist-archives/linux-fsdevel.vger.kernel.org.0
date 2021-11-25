@@ -2,53 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B018D45DB2B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 14:34:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC07745DCA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Nov 2021 15:47:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345435AbhKYNh6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Nov 2021 08:37:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48146 "EHLO
+        id S1355938AbhKYOvG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Nov 2021 09:51:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354973AbhKYNfz (ORCPT
+        with ESMTP id S1348038AbhKYOtG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Nov 2021 08:35:55 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C21FC0613FA;
-        Thu, 25 Nov 2021 05:24:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=yhVxFenIgPub/w/35qpJsH+EleYVEBaF1uzR5/OHDEM=; b=nMuZ5q02ftuZdEXrib8QaEHK/K
-        NnfP+itfJuQyqIjVI7AmefG1L1r52syNdNFoYXB4lEfnc1oKrUxPfIRJpxOPELHp14ksnn5rl4noV
-        W59zMB/A77wXgelkO2dg0jPl7mJFbCqfrd13V8PZPV9kzdAa8w1H3CIWxlqLm2cbVlNxx3Itd4c4F
-        ej8SlPj8Pi21rg1DVmfsAgvTqHfs/OVjnTYGPdbuwNyI6M/BNbaSGYBlORxhVrGGvaVbX96ZuQHl1
-        22OEyr8FoeLeziUyjm+IoaYBpcLVaOq1061+B7oob/smkZvW15j4j9mfEhz5KkaBImatEApExMqYo
-        VX90oSYw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mqEjG-007e8A-Ih; Thu, 25 Nov 2021 13:23:58 +0000
-Date:   Thu, 25 Nov 2021 05:23:58 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/iomap: Fix write path page prefaulting
-Message-ID: <YZ+Obqig1hwB0HPB@infradead.org>
-References: <20211123151812.361624-1-agruenba@redhat.com>
+        Thu, 25 Nov 2021 09:49:06 -0500
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35525C06173E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Nov 2021 06:45:55 -0800 (PST)
+Received: by mail-ua1-x935.google.com with SMTP id w23so12786401uao.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Nov 2021 06:45:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mtbCZM95cRfzM9aIhXBEhEk5A8jIBT2rwACHIginNKY=;
+        b=EVvcs3MITFAwnudiT6UELc0/nNTrSpSghYDRSz7bPTNkJmfVvEysWN205k1mT8ZATV
+         9dfqTYPGwVoq+jPXUK8p7lrMjKDNJrB7EPGceWnReRmTugzp1NrbZ04bQMyCSoCxOJzL
+         9wMSDoX8Vu2OVgDTERvxtxz1/5jQJEJYX5cLE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mtbCZM95cRfzM9aIhXBEhEk5A8jIBT2rwACHIginNKY=;
+        b=UjUCuO32hDyuKjjL2KxsF8vA3XgQZ/8Vr6lxJ7oNW2jm37l3gC5Bi6RD6V9CR43yRe
+         s/XQZ31B46t3RUVU2Z1tsk+9ncbsctcEQRBzrQakkZ13cegJqsjwiyEUc2+dfFtn8ufJ
+         SEBVi7QZ6CrpFZSAwT4Nor/Qksql7/uf4Dhi8/99m0bVq1G8hcgNbgl0JkTeptjNmZPx
+         uvEdlGo3YNKKLAOnAZR196vwSyjTgod4Fzp5yqwCii2y6m1bKLoI8BMm2LyXYWfPloEq
+         RlYHbAZJO4rgbEUx7finMyGUIahJ0RJdN6bxh2IUGuS4FTkwLHFi/C7rMHbRf38onDfo
+         xaYg==
+X-Gm-Message-State: AOAM531QBNdooEhNbd4BqvRZaF6nJ2veqFh8eUslUZAPHbk7Rvsleb9s
+        1SAI8kgv6t842e9hc0PY7Ui4bWA8FLzlqTGc3RG4Jg==
+X-Google-Smtp-Source: ABdhPJzsKp26qJGleQ9bj5NtBPIH4TdxPWgzVihb78G4ztFNLkCa0S2G/7avPfnXaOOnRjdaLws3v0hcEtwm4dSsT1Q=
+X-Received: by 2002:a05:6102:945:: with SMTP id a5mr9771107vsi.87.1637851554336;
+ Thu, 25 Nov 2021 06:45:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211123151812.361624-1-agruenba@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20211123181010.1607630-1-shr@fb.com> <20211123181010.1607630-2-shr@fb.com>
+In-Reply-To: <20211123181010.1607630-2-shr@fb.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 25 Nov 2021 15:45:43 +0100
+Message-ID: <CAJfpegsusDTYwRm5ig-EnvG0c5vqCRozuj34YcbTAD1kqi02Cg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] fs: add parameter use_fpos to iterate_dir function
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks fine,
+On Tue, 23 Nov 2021 at 19:10, Stefan Roesch <shr@fb.com> wrote:
+>
+> This adds the use_fpos parameter to the iterate_dir function.
+> If use_fpos is true it uses the file position in the file
+> structure (existing behavior). If use_fpos is false, it uses
+> the pos in the context structure.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Is there a reason not to introduce a iterate_dir_no_fpos() variant and
+call this from iterate_dir() with the necessary fpos update?
+
+Thanks,
+Miklos
