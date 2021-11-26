@@ -2,123 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3407A45EE54
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 13:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7970345EF1F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 14:28:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377556AbhKZM46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 07:56:58 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:37544 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbhKZMy5 (ORCPT
+        id S1349732AbhKZNcF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 08:32:05 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17236 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235849AbhKZNaF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 07:54:57 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 1CD4421923;
-        Fri, 26 Nov 2021 12:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1637931103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e25euTcFjXcEnjJeL5rhhdL+BDQb5ApvRRC+aPdAJRw=;
-        b=hCoYmnA6nuV2mGUSWZdF49YoW6tNytYJstJU4nlq+YszBncKxf10/vAOJHnjkcwCHrBu+H
-        Y3JjM89Y3oz0vR/8oB3Be4gr3CZuVDkLrtrGMdUjqLGnRoukWCYL2AvkEpUM4F6/3xJbAB
-        wujPHo/56y11dlN1di+YDVdvZ4bcpXM=
-Received: from suse.cz (unknown [10.100.216.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id EBEDBA3B83;
-        Fri, 26 Nov 2021 12:51:41 +0000 (UTC)
-Date:   Fri, 26 Nov 2021 13:51:38 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     akpm@linux-foundation.org, keescook@chromium.org,
-        yzaikin@google.com, nixiaoming@huawei.com, ebiederm@xmission.com,
-        steve@sk2.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        tytso@mit.edu, viro@zeniv.linux.org.uk, senozhatsky@chromium.org,
-        rostedt@goodmis.org, john.ogness@linutronix.de,
-        dgilbert@interlog.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, mcgrof@bombadil.infradead.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] printk: move printk sysctl to printk/sysctl.c
-Message-ID: <YaDYWhq8V8BHZbwm@alley>
-References: <20211124231435.1445213-1-mcgrof@kernel.org>
- <20211124231435.1445213-6-mcgrof@kernel.org>
+        Fri, 26 Nov 2021 08:30:05 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637931974; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=Nof1v9BjaZLa7U9Yw6BND9HDJOH3W5sxq6+upyF6vQOwB4Fc7Q2Yals6F5Ev+BOs/3i0PxfG0xvE+O0hk6npLibCux886M6+C9CiVPEXU4Mw4T8H49sjONWiVTKUygo8+QhbRrP5qB3Wp7oe/0jz2Sww3Y6ZONEE1r3UuHuq9+U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637931974; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=A0WNNhMG+hvp6w62fCn0B0olJUzJi3Z1eLpxpY+eTuc=; 
+        b=Q5hyVYzY/rmWRH0Exs1Otf9lIdMDa7AnCS9Ts/aK9iWdPuq+sS3zY+2PHm3c6NjQAuZJ0kW8DkOFe8wPYrglJEOpfjLQ2bA5qqBTeQP6Sq3RDTn/Z6IUAH0BlY3lqNAC+nwrSGfofx+Nht0gUlmTcA2xRqAGHLfA+f6jVdcmy5M=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637931974;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=A0WNNhMG+hvp6w62fCn0B0olJUzJi3Z1eLpxpY+eTuc=;
+        b=QLPGL/NGXGIHUbDmJRtqm1rYDzwsYVYhL6xb/SqFrPS+okFeG85Tofcxx/DygeMG
+        hQdbHWL4KO/uP/Zd7nwdoPwQJxfotEHuiW7KBoXafa5rptxgAeUsC5MOPHP7tRtUJx6
+        grp2ryMBW3GYlXfNtjtp/AhO3kFuhaTCsAbyerXI=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1637931970561213.4333284052757; Fri, 26 Nov 2021 21:06:10 +0800 (CST)
+Date:   Fri, 26 Nov 2021 21:06:10 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Jan Kara" <jack@suse.cz>
+Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
+        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>,
+        "ronyjin" <ronyjin@tencent.com>
+Message-ID: <17d5c5a6fed.f090bcae10973.4735687401243313694@mykernel.net>
+In-Reply-To: <20211126091007.GB13004@quack2.suse.cz>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net>
+ <20211122030038.1938875-3-cgxu519@mykernel.net> <20211126091007.GB13004@quack2.suse.cz>
+Subject: Re: [RFC PATCH V6 2/7] ovl: mark overlayfs inode dirty when it has
+ upper
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211124231435.1445213-6-mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 2021-11-24 15:14:32, Luis Chamberlain wrote:
-> From: Xiaoming Ni <nixiaoming@huawei.com>
-> 
-> The kernel/sysctl.c is a kitchen sink where everyone leaves
-> their dirty dishes, this makes it very difficult to maintain.
-> 
-> To help with this maintenance let's start by moving sysctls to
-> places where they actually belong. The proc sysctl maintainers
-> do not want to know what sysctl knobs you wish to add for your own
-> piece of code, we just care about the core logic.
-> 
-> So move printk sysctl from kernel/sysctl.c to kernel/printk/sysctl.c.
-> Use register_sysctl() to register the sysctl interface.
-> 
-> diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
-> index d118739874c0..f5b388e810b9 100644
-> --- a/kernel/printk/Makefile
-> +++ b/kernel/printk/Makefile
-> @@ -2,5 +2,8 @@
->  obj-y	= printk.o
->  obj-$(CONFIG_PRINTK)	+= printk_safe.o
->  obj-$(CONFIG_A11Y_BRAILLE_CONSOLE)	+= braille.o
-> -obj-$(CONFIG_PRINTK)	+= printk_ringbuffer.o
->  obj-$(CONFIG_PRINTK_INDEX)	+= index.o
-> +
-> +obj-$(CONFIG_PRINTK)                 += printk_support.o
-> +printk_support-y	             := printk_ringbuffer.o
-> +printk_support-$(CONFIG_SYSCTL)	     += sysctl.o
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-11-26 17:10:07 Jan Kara <=
+jack@suse.cz> =E6=92=B0=E5=86=99 ----
+ > On Mon 22-11-21 11:00:33, Chengguang Xu wrote:
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >=20
+ > > We simply mark overlayfs inode dirty when it has upper,
+ > > it's much simpler than mark dirtiness on modification.
+ > >=20
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/inode.c | 4 +++-
+ > >  fs/overlayfs/util.c  | 1 +
+ > >  2 files changed, 4 insertions(+), 1 deletion(-)
+ > >=20
+ > > diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+ > > index 1f36158c7dbe..027ffc0a2539 100644
+ > > --- a/fs/overlayfs/inode.c
+ > > +++ b/fs/overlayfs/inode.c
+ > > @@ -778,8 +778,10 @@ void ovl_inode_init(struct inode *inode, struct o=
+vl_inode_params *oip,
+ > >  {
+ > >      struct inode *realinode;
+ > > =20
+ > > -    if (oip->upperdentry)
+ > > +    if (oip->upperdentry) {
+ > >          OVL_I(inode)->__upperdentry =3D oip->upperdentry;
+ > > +        mark_inode_dirty(inode);
+ > > +    }
+ > >      if (oip->lowerpath && oip->lowerpath->dentry)
+ > >          OVL_I(inode)->lower =3D igrab(d_inode(oip->lowerpath->dentry)=
+);
+ > >      if (oip->lowerdata)
+ >=20
+ > Hum, does this get called only for inodes with upper inode existing? I
+ > suppose we do not need to track inodes that were not copied up because t=
+hey
+ > cannot be dirty? I'm sorry, my knowledge of overlayfs is rather limited =
+so
+ > I may be missing something basic.
+ >=20
 
-I have never seen this trick. It looks like a dirty hack ;-)
-Anyway, I do not see it described in the documentation. I wonder
-if it works only by chance.
+Well, as long as overly inode has upper it can be modified without copy-up,
+so we need to track all overlay inodes which have upper inode.
 
-IMHO, a cleaner solution would be to add the following
-into init/Kconfig:
-
-config BUILD_PRINTK_SYSCTL
-	bool
-	default (PRINTK && SYSCTL)
-
-and then use:
-
-obj-$(CONFIG_BUILD_PRINTK_SYSCTL)    += sysctl.o
+Thanks,
+Chengguang
 
 
-> diff --git a/kernel/printk/sysctl.c b/kernel/printk/sysctl.c
-> new file mode 100644
-> index 000000000000..653ae04aab7f
-> --- /dev/null
-> +++ b/kernel/printk/sysctl.c
-> @@ -0,0 +1,85 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * sysctl.c: General linux system control interface
-> + */
-> +
-> +#include <linux/sysctl.h>
-> +#include <linux/printk.h>
-> +#include <linux/capability.h>
-> +#include <linux/ratelimit.h>
-> +#include "internal.h"
-> +
-> +static const int ten_thousand = 10000;
-
-The patch should also remove the variable in kernel/sysctl.c.
-
-Otherwise, it looks like a really nice clean up.
-
-Best Regards,
-Petr
