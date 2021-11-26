@@ -2,101 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3430460CC1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 03:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB32460F1A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 07:57:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244701AbhK2CoX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Nov 2021 21:44:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53932 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233050AbhK2CmW (ORCPT
+        id S232893AbhK2HAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 02:00:31 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17216 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233525AbhK2G6a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Nov 2021 21:42:22 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F6EC061748
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Nov 2021 18:39:05 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id r130so15272882pfc.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Nov 2021 18:39:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8dy5ISnOF/LIcctiWr3MH3NHofWp1uRrjBKff/ka6Zc=;
-        b=fa4/ZvhIj31gY07iA+3gaWKU5ttQmbix1nWvC5EXbm7pnt33D4VpgWI3oTEZRJrotM
-         2WaihnXXe5FZKb8ErwlDBFrSVKFgfpIZ0uDLUIqQFPMIE+NnwKluj0cipkg4xeBnKQ8x
-         gF9Mo5VfsgJBvR02T9MByrWU3Oq+JFVZOIRFiq3Hir2QaOTnVtTA1SEuaU3HHX8VZbVV
-         H2C5RPhptzpggkDJCaXRnXQD+9aPqRqNqr2A55q2ddRUQNF95XGgp27lBrQZYqDM4caT
-         xUk3V3Tq6FltlDlYDNLC3/7CwFmfv7EAhvOQx2ndDMzXifTBIk3DXhV7hXdgSvDbEpN9
-         W+ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8dy5ISnOF/LIcctiWr3MH3NHofWp1uRrjBKff/ka6Zc=;
-        b=HIheGc/SIMcmpZr1B6xxzaDjA0wMdx3uG0LZuN0iQL30yHBLPVw1iL5KgIP+Bqn7De
-         ForBAqcqxqS13UOz5Axkn4JuFdF9GfI2IPBFKgOxq5+ek1/tNjhMttg9LGLSZ+4lPym4
-         bdmcDYrzcV40suqFoUCGWrZfaeESYkrAUahz24brCElX8DPBewRSntMKmO8ime5GWpCm
-         QMBcuZDRdqwPRq/JU2CdZoCRynIuki/e4eU9EaWSvPR9VOOYdJ8ucYyImtEHKo67ptks
-         4rNL8XytpTN4RGowCoGL0JQSkLZQ0rQ0h8ppNzhvZiRDq6so1Z+Vg9jUCKpeOUYTJnIp
-         JYaA==
-X-Gm-Message-State: AOAM533Ayv2SvE74kPzCqm2rCCDwiwkv7fee7Kyv0ZqINVdcof27AO/s
-        PpyFL6JWWrGoBMVIJem+H64=
-X-Google-Smtp-Source: ABdhPJzwSqWZrYVh4+0vMgPwGWSlph9rdobdsTGeMAHmepDpUCrMZHt+cuoKrh1mgqUY6HnZEjWDFg==
-X-Received: by 2002:a62:dd54:0:b0:4a2:93f7:c20a with SMTP id w81-20020a62dd54000000b004a293f7c20amr36177794pff.46.1638153545006;
-        Sun, 28 Nov 2021 18:39:05 -0800 (PST)
-Received: from FLYINGPENG-MB0.tencent.com ([103.7.29.30])
-        by smtp.gmail.com with ESMTPSA id j7sm15531449pfc.74.2021.11.28.18.39.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Nov 2021 18:39:04 -0800 (PST)
-From:   Peng Hao <flyingpenghao@gmail.com>
-X-Google-Original-From: Peng Hao <flyingpeng@tencent.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH]  fuse: unnecessary fsync for read-only mounts
-Date:   Mon, 29 Nov 2021 10:38:25 +0800
-Message-Id: <20211129023825.45891-1-flyingpeng@tencent.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+        Mon, 29 Nov 2021 01:58:30 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
+        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
+        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
+        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
+        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
+Date:   Fri, 26 Nov 2021 13:03:26 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>
+Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
+In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-File/directory fsync is not necessary for read-only mounts.
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >
+ > > Now overlayfs can only sync own dirty inodes during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file system.
+ > >
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/super.c | 14 +++++---------
+ > >  1 file changed, 5 insertions(+), 9 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index ccffcd96491d..213b795a6a86 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
+nt wait)
+ > >         /*
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > > -        *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > -        * called with wait =3D=3D 1.
+ > >          */
+ > > -       if (!wait)
+ > > -               return 0;
+ > > -
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > > -
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       if (wait)
+ > > +               wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
+ >=20
+ > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+ > with everything from  upper_sb =3D ... and a comment to explain that
+ > this is a variant of __sync_filesystem() where all the dirty inodes writ=
+e
+ > have already been started.
+ >=20
+=20
+I agree with you.=20
 
-Signed-off-by: Peng Hao <flyingpeng@tencent.com>
----
- fs/fuse/dir.c  | 3 +++
- fs/fuse/file.c | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 656e921f3506..1d4fed556c93 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1448,6 +1448,9 @@ static int fuse_dir_fsync(struct file *file, loff_t start, loff_t end,
- 	if (fc->no_fsyncdir)
- 		return 0;
- 
-+        if (sb_rdonly(inode->i_sb))
-+                return 0;
-+
- 	inode_lock(inode);
- 	err = fuse_fsync_common(file, start, end, datasync, FUSE_FSYNCDIR);
- 	if (err == -ENOSYS) {
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 9d6c5f6361f7..18668fc00c3b 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -550,6 +550,8 @@ static int fuse_fsync(struct file *file, loff_t start, loff_t end,
- 
- 	if (fuse_is_bad(inode))
- 		return -EIO;
-+	if (sb_rdonly(inode->i_sb))
-+		return 0;
- 
- 	inode_lock(inode);
- 
--- 
-2.27.0
-
+Thanks,
+Chengguang
