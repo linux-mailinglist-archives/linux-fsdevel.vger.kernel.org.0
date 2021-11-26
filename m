@@ -2,150 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 716DE45F074
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 16:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6739145F077
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 16:16:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354128AbhKZPSr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 10:18:47 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:54416 "EHLO
+        id S1350779AbhKZPTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 10:19:48 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:54464 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349756AbhKZPQr (ORCPT
+        with ESMTP id S1349962AbhKZPRs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 10:16:47 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 29E2C1FD37;
-        Fri, 26 Nov 2021 15:13:33 +0000 (UTC)
+        Fri, 26 Nov 2021 10:17:48 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 0113B1FC9E;
+        Fri, 26 Nov 2021 15:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1637939613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1637939675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aJOhYnFu/ijkoWQOT2VWDCkLUQNOUwrPYFHaaC4YjWY=;
-        b=HHSU1HT7X9C90Xzb9P7/jxGsY6mIMnZdke3/iAFWp9kJ/P1aFgIBivMe8iyYRWBPfenirK
-        uCnXuzO34JjfKWGnlv3sD09Ghmybbp1tULxKDHWJYfgW+ExxK5JDJ+/tGgDh0fv+VZQd2t
-        YroNbfonwGMJd6bVnxv7OWtz9MKliKk=
+        bh=NssqB285mgLo1X+znBnXILORZfvQv1QAgYQuoeuKZFI=;
+        b=qPp4n32/PfrzZFtlpZ8zaPnXFRQV0EpHkkwpJzRH9yZ2C08oqnfQYwuD2vtji4JRmzPpa6
+        jqGfrTz9UJC8JuDFhLPTy8RT0b8xddC70fwk6O0c8NjT2vdY/fjfcdTm29RpjCfuJ1X8Ol
+        7ldF9J62K61QPRAURtYT1MmYH4LTjWU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1637939613;
+        s=susede2_ed25519; t=1637939675;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aJOhYnFu/ijkoWQOT2VWDCkLUQNOUwrPYFHaaC4YjWY=;
-        b=voHB17S1KLtEg5ZcmQgYw0WnKhqNNqFK2iR+mKLUAxny+ghvcE1ainaSnrdtYiMElMnM8a
-        sbp+1g4znMEADnCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E839313C5C;
-        Fri, 26 Nov 2021 15:13:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Fiz4N5z5oGFGZwAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Fri, 26 Nov 2021 15:13:32 +0000
-Message-ID: <78775967-03dc-8d0a-a994-e07ce673b765@suse.cz>
-Date:   Fri, 26 Nov 2021 16:13:32 +0100
+        bh=NssqB285mgLo1X+znBnXILORZfvQv1QAgYQuoeuKZFI=;
+        b=cxmFZhWYeTcbsJVWB0oeohKyeoJF+JNa+hTTODWaNaglpF/eeVhY2jigMPQm6qIMj306XN
+        rUsg+bhcBZHFYTCg==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id E39A7A3B83;
+        Fri, 26 Nov 2021 15:14:34 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C1FA51E11F3; Fri, 26 Nov 2021 16:14:34 +0100 (CET)
+Date:   Fri, 26 Nov 2021 16:14:34 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 7/9] fanotify: record either old name new name or both
+ for FAN_RENAME
+Message-ID: <20211126151434.GJ13004@quack2.suse.cz>
+References: <20211119071738.1348957-1-amir73il@gmail.com>
+ <20211119071738.1348957-8-amir73il@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v2 1/4] mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc
-Content-Language: en-US
-To:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-References: <20211122153233.9924-1-mhocko@kernel.org>
- <20211122153233.9924-2-mhocko@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20211122153233.9924-2-mhocko@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211119071738.1348957-8-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/22/21 16:32, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On Fri 19-11-21 09:17:36, Amir Goldstein wrote:
+> We do not want to report the dirfid+name of a directory whose
+> inode/sb are not watched, because watcher may not have permissions
+> to see the directory content.
 > 
-> vmalloc historically hasn't supported GFP_NO{FS,IO} requests because
-> page table allocations do not support externally provided gfp mask
-> and performed GFP_KERNEL like allocations.
+> The FAN_MOVED_FROM/TO flags are used internally to indicate to
+> fanotify_alloc_event() if we need to record only the old parent+name,
+> only the new parent+name or both.
 > 
-> Since few years we have scope (memalloc_no{fs,io}_{save,restore}) APIs
-> to enforce NOFS and NOIO constrains implicitly to all allocators within
-> the scope. There was a hope that those scopes would be defined on a
-> higher level when the reclaim recursion boundary starts/stops (e.g. when
-> a lock required during the memory reclaim is required etc.). It seems
-> that not all NOFS/NOIO users have adopted this approach and instead
-> they have taken a workaround approach to wrap a single [k]vmalloc
-> allocation by a scope API.
-> 
-> These workarounds do not serve the purpose of a better reclaim recursion
-> documentation and reduction of explicit GFP_NO{FS,IO} usege so let's
-> just provide them with the semantic they are asking for without a need
-> for workarounds.
-> 
-> Add support for GFP_NOFS and GFP_NOIO to vmalloc directly. All internal
-> allocations already comply with the given gfp_mask. The only current
-> exception is vmap_pages_range which maps kernel page tables. Infer the
-> proper scope API based on the given gfp mask.
-> 
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  mm/vmalloc.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
+>  fs/notify/fanotify/fanotify.c | 57 ++++++++++++++++++++++++++++++-----
+>  1 file changed, 50 insertions(+), 7 deletions(-)
 > 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index d2a00ad4e1dd..17ca7001de1f 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2926,6 +2926,8 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->  	unsigned long array_size;
->  	unsigned int nr_small_pages = size >> PAGE_SHIFT;
->  	unsigned int page_order;
-> +	unsigned int flags;
-> +	int ret;
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 018b32a57702..c0a3fb1dd066 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -290,6 +290,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>  	__u32 marks_mask = 0, marks_ignored_mask = 0;
+>  	__u32 test_mask, user_mask = FANOTIFY_OUTGOING_EVENTS |
+>  				     FANOTIFY_EVENT_FLAGS;
+> +	__u32 moved_mask = 0;
+>  	const struct path *path = fsnotify_data_path(data, data_type);
+>  	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+>  	struct fsnotify_mark *mark;
+> @@ -327,17 +328,44 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>  			continue;
 >  
->  	array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
->  	gfp_mask |= __GFP_NOWARN;
-> @@ -2967,8 +2969,24 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->  		goto fail;
->  	}
->  
-> -	if (vmap_pages_range(addr, addr + size, prot, area->pages,
-> -			page_shift) < 0) {
-> +	/*
-> +	 * page tables allocations ignore external gfp mask, enforce it
-> +	 * by the scope API
-> +	 */
-> +	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
-> +		flags = memalloc_nofs_save();
-> +	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
-> +		flags = memalloc_noio_save();
-> +
-> +	ret = vmap_pages_range(addr, addr + size, prot, area->pages,
-> +			page_shift);
-> +
-> +	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
-> +		memalloc_nofs_restore(flags);
-> +	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
-> +		memalloc_noio_restore(flags);
-> +
-> +	if (ret < 0) {
->  		warn_alloc(orig_gfp_mask, NULL,
->  			"vmalloc error: size %lu, failed to map pages",
->  			area->nr_pages * PAGE_SIZE);
-> 
+>  		/*
+> -		 * If the event is on a child and this mark is on a parent not
+> -		 * watching children, don't send it!
+> +		 * In the special case of FAN_RENAME event, inode mark is the
+> +		 * mark on the old dir and parent mark is the mark on the new
+> +		 * dir.  We do not want to report the dirfid+name of a directory
+> +		 * whose inode/sb are not watched.  The FAN_MOVE flags
+> +		 * are used internally to indicate if we need to report only
+> +		 * the old parent+name, only the new parent+name or both.
+>  		 */
+> -		if (type == FSNOTIFY_OBJ_TYPE_PARENT &&
+> -		    !(mark->mask & FS_EVENT_ON_CHILD))
+> +		if (event_mask & FAN_RENAME) {
+> +			/* Old dir sb are watched - report old info */
+> +			if (type != FSNOTIFY_OBJ_TYPE_PARENT &&
+> +			    (mark->mask & FAN_RENAME))
+> +				moved_mask |= FAN_MOVED_FROM;
+> +			/* New dir sb are watched - report new info */
+> +			if (type != FSNOTIFY_OBJ_TYPE_INODE &&
+> +			    (mark->mask & FAN_RENAME))
+> +				moved_mask |= FAN_MOVED_TO;
+> +		} else if (type == FSNOTIFY_OBJ_TYPE_PARENT &&
+> +			   !(mark->mask & FS_EVENT_ON_CHILD)) {
+> +			/*
+> +			 * If the event is on a child and this mark is on
+> +			 * a parent not watching children, don't send it!
+> +			 */
+>  			continue;
+> +		}
 
+It feels a bit hacky to mix the "what info to report" into the mask
+especially as otherwise perfectly valid flags. Can we perhaps have a
+separate function to find this out (like fanotify_rename_info_report_mask()
+or something like that) and use it in fanotify_alloc_event() or directly in
+fanotify_handle_event() and pass the result to fanotify_alloc_event()?
+That would seem a bit cleaner to me.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
