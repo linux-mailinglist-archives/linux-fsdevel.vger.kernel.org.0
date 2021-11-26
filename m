@@ -2,51 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD3724606C7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 15:19:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA77460904
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 19:38:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357837AbhK1OWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Nov 2021 09:22:20 -0500
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17286 "EHLO
+        id S236219AbhK1SmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Nov 2021 13:42:08 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17281 "EHLO
         sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236611AbhK1OUT (ORCPT
+        by vger.kernel.org with ESMTP id S232227AbhK1SkH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Nov 2021 09:20:19 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1638005196; cv=none; 
+        Sun, 28 Nov 2021 13:40:07 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
         d=zoho.com.cn; s=zohoarc; 
-        b=n3tN4S2pUQeHcaidBskaxPvMtDHKVAxGlzpV4gGhKRw0ZRPexTpe+9491ASfmg0HTmlzpcGklxp+HMRiNT0nz7WB3yRDEgMXIVlbk6nppF5tsd9+xwYvYa+sqjKuO3IG1VFKI2d/3UUUTEAStZqRuO2G7fPvidPxfb9wuISL+GM=
+        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1638005196; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=Gx78nwaiX6IcgNHFjD7iZoX/9w5JdvaOCjUYq7EIGF8=; 
-        b=L+x/I3014bH31MUiJjwlMUIA0OFhsckS6h6hv6axN+6zUKZ3hEWIrtJxc9FBqQ6Qibg6YP4JsjtX6NX4JOTcEAN2havNabHJChd8GNBZB0Un8LvTEUsJdciVm1vdlMiA5HCTyeHhT3WETZ5Uv7oleWAWjCIqSZgTHB0xWTty7g8=
+        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
+        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
 ARC-Authentication-Results: i=1; mx.zoho.com.cn;
         dkim=pass  header.i=mykernel.net;
         spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
         dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1638005196;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
         s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
         h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=Gx78nwaiX6IcgNHFjD7iZoX/9w5JdvaOCjUYq7EIGF8=;
-        b=AOUteeEka8coVmSi4zQzORqE5JY1MaV08/LAMtbTc27DCvaprB+pMimMaBupCWxB
-        O+FA0+jbAUUvYwibbnxdThAmY5Ue8tUKtJFxMKJfWYfyRApCoywzOrqMRC2+ZkgXx95
-        aD4148NrPXGMaIDIGuyGKpO95c4vIFvh8io47D5E=
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
+        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
+        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
+        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
 Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1638005193699274.15327156530714; Sat, 27 Nov 2021 17:26:33 +0800 (CST)
-Date:   Sat, 27 Nov 2021 17:26:33 +0800
+        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
+Date:   Fri, 26 Nov 2021 13:03:26 +0800
 From:   Chengguang Xu <cgxu519@mykernel.net>
 Reply-To: cgxu519@mykernel.net
-To:     "miklos" <miklos@szeredi.hu>
-Cc:     "linux-unionfs" <linux-unionfs@vger.kernel.org>,
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
         "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Chengguang Xu" <charliecgxu@tencent.com>,
-        "ronyjin" <ronyjin@tencent.com>, "amir73il" <amir73il@gmail.com>,
-        "jack" <jack@suse.cz>
-Message-ID: <17d60b7bbc2.caee608a13298.8366222634423039066@mykernel.net>
-In-Reply-To: <20211122030038.1938875-1-cgxu519@mykernel.net>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net>
-Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[RFC_PATCH_V6_0/7]_implement_c?=
- =?UTF-8?Q?ontainerized_syncfs_for_overlayfs?=
+        "Chengguang Xu" <charliecgxu@tencent.com>
+Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
+In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -57,101 +56,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 11:00:31 Chengguang=
- Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
- > From: Chengguang Xu <charliecgxu@tencent.com>
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >
+ > > Now overlayfs can only sync own dirty inodes during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file system.
+ > >
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/super.c | 14 +++++---------
+ > >  1 file changed, 5 insertions(+), 9 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index ccffcd96491d..213b795a6a86 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
+nt wait)
+ > >         /*
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > > -        *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > -        * called with wait =3D=3D 1.
+ > >          */
+ > > -       if (!wait)
+ > > -               return 0;
+ > > -
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > > -
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       if (wait)
+ > > +               wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
  >=20
- > Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
- > on upper_sb to synchronize whole dirty inodes in upper filesystem
- > regardless of the overlay ownership of the inode. In the use case of
- > container, when multiple containers using the same underlying upper
- > filesystem, it has some shortcomings as below.
+ > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+ > with everything from  upper_sb =3D ... and a comment to explain that
+ > this is a variant of __sync_filesystem() where all the dirty inodes writ=
+e
+ > have already been started.
  >=20
- > (1) Performance
- > Synchronization is probably heavy because it actually syncs unnecessary
- > inodes for target overlayfs.
- >=20
- > (2) Interference
- > Unplanned synchronization will probably impact IO performance of
- > unrelated container processes on the other overlayfs.
- >=20
- > This series try to implement containerized syncfs for overlayfs so that
- > only sync target dirty upper inodes which are belong to specific overlay=
-fs
- > instance. By doing this, it is able to reduce cost of synchronization an=
-d=20
- > will not seriously impact IO performance of unrelated processes.
- >=20
- > v1->v2:
- > - Mark overlayfs' inode dirty itself instead of adding notification
- > mechanism to vfs inode.
- >=20
- > v2->v3:
- > - Introduce overlayfs' extra syncfs wait list to wait target upper inode=
-s
- > in ->sync_fs.
- >=20
- > v3->v4:
- > - Using wait_sb_inodes() to wait syncing upper inodes.
- > - Mark overlay inode dirty only when having upper inode and VM_SHARED
- > flag in ovl_mmap().
- > - Check upper i_state after checking upper mmap state
- > in ovl_write_inode.
- >=20
- > v4->v5:
- > - Add underlying inode dirtiness check after mnt_drop_write().
- > - Handle both wait/no-wait mode of syncfs(2) in overlayfs' ->sync_fs().
- >=20
- > v5->v6:
- > - Rebase to latest overlayfs-next tree.
- > - Mark oerlay inode dirty when it has upper instead of marking dirty on
- >   modification.
- > - Trigger dirty page writeback in overlayfs' ->write_inode().
- > - Mark overlay inode 'DONTCACHE' flag.
- > - Delete overlayfs' ->writepages() and ->evict_inode() operations.
-
-
-Hi Miklos,
-
-Have you got time to have a look at this V6 series? I think this version ha=
-s already fixed
-the issues in previous feedbacks of you guys and passed fstests (generic/ov=
-erlay cases).
-
-I did some stress long time tests (tar & syncfs & diff on w/wo copy-up) and=
- found no obvious problem.
-For syncfs time with 1M clean upper inodes, there was extra 1.3s wasted on =
-waiting scheduling.
-I guess this 1.3s will not bring significant impact to container instance i=
-n most cases, I also
-agree with Jack that we can start with this approach and do some improvemen=
-ts afterwards if there is
-complain from any real users.
-
-
+=20
+I agree with you.=20
 
 Thanks,
 Chengguang
-
-
- >=20
- > Chengguang Xu (7):
- >   ovl: setup overlayfs' private bdi
- >   ovl: mark overlayfs inode dirty when it has upper
- >   ovl: implement overlayfs' own ->write_inode operation
- >   ovl: set 'DONTCACHE' flag for overlayfs inode
- >   fs: export wait_sb_inodes()
- >   ovl: introduce ovl_sync_upper_blockdev()
- >   ovl: implement containerized syncfs for overlayfs
- >=20
- >  fs/fs-writeback.c         |  3 ++-
- >  fs/overlayfs/inode.c      |  5 +++-
- >  fs/overlayfs/super.c      | 49 ++++++++++++++++++++++++++++++++-------
- >  fs/overlayfs/util.c       |  1 +
- >  include/linux/writeback.h |  1 +
- >  5 files changed, 48 insertions(+), 11 deletions(-)
- >=20
- > --=20
- > 2.27.0
- >=20
- >=20
