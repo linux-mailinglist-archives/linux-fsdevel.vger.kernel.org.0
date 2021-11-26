@@ -2,143 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D42D45ED9B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 13:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC5145EDD5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 13:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232466AbhKZMN3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 07:13:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377237AbhKZML2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 07:11:28 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C308BC061D79;
-        Fri, 26 Nov 2021 03:36:19 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id k2so18198139lji.4;
-        Fri, 26 Nov 2021 03:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YwchqcLp4vuWkP53NqIQryr+Cx6rF4LvbCWU6gG8vgs=;
-        b=Wx4C6KctFZg7aqSyKW+5+/sbQhhBjaUfjiH74wowUy/K6HSWCuCDM7VOY9VqbnmvKA
-         UM4eGn95CuRCRfYKXzdLqbHNiNvlWX+kM3hoLmDwsJlpoE5OWoOdY5rApuDlp5HbetZy
-         +25hea9st2iqjThXTwqUrO7lXT9SyYVYMPfHBecz7hSsskk04t/+RlaY5R1Xk3kRnWiM
-         d00+D8VKXzttb3URv6kH2eAKfN1oHCdv2L8DxGQJfWlOohi9IEGWfVOUxl/oJWv9FaZM
-         /uoMbZQBu3QNp0le87EDcovGewCvWN44pvCby93xViSPs2a4SgY30hSjneBeBMCWemFz
-         jLIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YwchqcLp4vuWkP53NqIQryr+Cx6rF4LvbCWU6gG8vgs=;
-        b=ZFawKg8LNvazXRaEf2G/D/2voGGt3WEcAQMvzjdHCMAE5PE2+U6RwKUk8t/h/Bfmiv
-         gbnGkJJLyIhLtBZK3ucGNkAF8W3hot6ND5D/Ri1iIS94AHRfSeBX71SsOeLBrxhi1zJd
-         xK1YWa5e69viBLBXyJvf9HWD0VblIFFipCnIchPy3Mqp5bpNmXXn9Hk9S1DWJeToAEhg
-         nW/R+hAxAnGT1fxjRbgd6s6jl9ptnlwNLA07t3cGiJ6pfbPx+C8OQ8vKfn1fabUE6sF6
-         abHmaF7XYvrajvjiNceXuC04xfuxDAvWI69LeyapB1G6eKp2TOrAszl/darevB/3tWza
-         0DHA==
-X-Gm-Message-State: AOAM530NsV9qFQwM/IGBoS3JH4uSZPpw0syomlpT67VhVlVjwG3wLSgB
-        aifMZu6GfvLdFux2kAZhrccjbdX3QEk=
-X-Google-Smtp-Source: ABdhPJytBhhNePIUfAl1MAlNnjKZMQsdxRpfRZWlULulpz+FR6PPbXkhKwOOp3vvUBd3DN2P3l00gA==
-X-Received: by 2002:a2e:9450:: with SMTP id o16mr29615658ljh.444.1637926577785;
-        Fri, 26 Nov 2021 03:36:17 -0800 (PST)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id f14sm552842lfv.180.2021.11.26.03.36.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 03:36:17 -0800 (PST)
-Date:   Fri, 26 Nov 2021 13:36:15 +0200
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     yangerkun <yangerkun@huawei.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        kernel test robot <lkp@intel.com>, ntfs3@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [ramfs] 0858d7da8a: canonical_address#:#[##]
-Message-ID: <20211126113615.nmegssvcrmjlodku@kari-VirtualBox>
-References: <20211125140816.GC3109@xsang-OptiPlex-9020>
- <CAHk-=widXZyzRiEzmYuG-bLVtNsptxt4TqAhy75Tbio-V_9oNQ@mail.gmail.com>
- <68587446-fb74-b411-ba19-dd52395567c9@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68587446-fb74-b411-ba19-dd52395567c9@huawei.com>
+        id S1377269AbhKZM2y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 07:28:54 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:38780 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238353AbhKZM0x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Nov 2021 07:26:53 -0500
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Ax2sjF0aBhFi8AAA--.152S2;
+        Fri, 26 Nov 2021 20:23:34 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH] fuse: Rename virtio_fs.c to virtiofs.c and clean up Makefile
+Date:   Fri, 26 Nov 2021 20:23:33 +0800
+Message-Id: <1637929413-22687-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9Ax2sjF0aBhFi8AAA--.152S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1xXry5tw4UXFyfWFWkXrb_yoW8Ww4xpw
+        18Cr1rGry7XrW7GayfGF1Uu3yjkrn7Gr17Gr4kXwnIgrn8XayUAr1jyFyjkws7Zry5XF40
+        qr1Fqr429r4vvF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkab7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8Jr0_Cr
+        1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY02Avz4vE14v_Xr1l42xK
+        82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGw
+        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48J
+        MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMI
+        IF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
+        x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jYsjUUUUUU=
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 26, 2021 at 09:54:56AM +0800, yangerkun wrote:
-> Cc ntfs3:
-> 
-> Maybe it's a problem like this:
-> 
-> do_new_mount
->   fs_context_for_mount
->     alloc_fs_context
->       ntfs_init_fs_context
->         sbi = kzalloc(sizeof(struct ntfs_sb_info), GFP_NOFS);
->         fc->s_fs_info = sbi;
->   vfs_get_tree
->     ntfs_fs_get_tree
->       get_tree_bdev
->         blkdev_get_by_path  // return error and sbi->sb will be NULL
->   put_fs_context
->     ntfs_fs_free
->       put_ntfs
->         ntfs_update_mftmirr
->           struct super_block *sb = sbi->sb; // NULL
->           u32 blocksize = sb->s_blocksize; // BOOM
-> 
-> It's actually a ntfs3 bug which may be introduced by:
-> 
-> 610f8f5a7baf fs/ntfs3: Use new api for mounting
+No need to generate virtio_fs.o first and then link to virtiofs.o, just
+rename virtio_fs.c to virtiofs.c and remove "virtiofs-y := virtio_fs.o"
+in Makefile. Additionally, update MAINTAINERS.
 
-Yeap. Thank you very much. Will send patch for this in within 24h.
+Without this patch:
 
-> On 2021/11/26 2:03, Linus Torvalds wrote:
-> > On Thu, Nov 25, 2021 at 6:08 AM kernel test robot <oliver.sang@intel.com> wrote:
-> > > FYI, we noticed the following commit (built with clang-14):
-> > > 
-> > > commit: 0858d7da8a09e440fb192a0239d20249a2d16af8 ("ramfs: fix mount source show for ramfs")
-> > 
-> > Funky. That commit seems to have nothing to do with the oops:
-> > 
-> > > [  806.257788][  T204] /dev/root: Can't open blockdev
-> > > [  806.259101][  T204] general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASAN
-> > > [  806.263082][  T204] KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-> > 
-> > Not a very helpful error message,a nd the KASAN comment makes little sense, but
-> > 
-> > > [ 806.267540][ T204] RIP: 0010:ntfs_update_mftmirr (kbuild/src/consumer/fs/ntfs3/fsntfs.c:834)
-> > 
-> > That's
-> > 
-> >          u32 blocksize = sb->s_blocksize;
-> > 
-> > and presumably with KASAN you end up getting hat odd 0xdffffc0000000003 thing.
-> > 
-> > Anyway, looks like sb is NULL, and the code is
-> > 
-> >    int ntfs_update_mftmirr(struct ntfs_sb_info *sbi, int wait)
-> >    {
-> >          int err;
-> >          struct super_block *sb = sbi->sb;
-> >          u32 blocksize = sb->s_blocksize;
-> >          sector_t block1, block2;
-> > 
-> > although I have no idea how sbi->sb could be NULL.
-> > 
-> > Konstantin? See
-> > 
-> >      https://lore.kernel.org/lkml/20211125140816.GC3109@xsang-OptiPlex-9020/
-> > 
-> > for the full thing.
-> > 
-> >               Linus
-> > .
-> > 
+  CC [M]  fs/fuse/virtio_fs.o
+  LD [M]  fs/fuse/virtiofs.o
+  MODPOST modules-only.symvers
+  GEN     Module.symvers
+  CC [M]  fs/fuse/virtiofs.mod.o
+  LD [M]  fs/fuse/virtiofs.ko
+
+With this patch:
+
+  CC [M]  fs/fuse/virtiofs.o
+  MODPOST modules-only.symvers
+  GEN     Module.symvers
+  CC [M]  fs/fuse/virtiofs.mod.o
+  LD [M]  fs/fuse/virtiofs.ko
+
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ MAINTAINERS                         | 2 +-
+ fs/fuse/Makefile                    | 2 --
+ fs/fuse/{virtio_fs.c => virtiofs.c} | 0
+ 3 files changed, 1 insertion(+), 3 deletions(-)
+ rename fs/fuse/{virtio_fs.c => virtiofs.c} (100%)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7a2345c..8c2ad7b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20152,7 +20152,7 @@ L:	linux-fsdevel@vger.kernel.org
+ S:	Supported
+ W:	https://virtio-fs.gitlab.io/
+ F:	Documentation/filesystems/virtiofs.rst
+-F:	fs/fuse/virtio_fs.c
++F:	fs/fuse/virtiofs.c
+ F:	include/uapi/linux/virtio_fs.h
+ 
+ VIRTIO GPIO DRIVER
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 0c48b35..5f10fe6 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -9,5 +9,3 @@ obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
+ 
+ fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
+ fuse-$(CONFIG_FUSE_DAX) += dax.o
+-
+-virtiofs-y := virtio_fs.o
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtiofs.c
+similarity index 100%
+rename from fs/fuse/virtio_fs.c
+rename to fs/fuse/virtiofs.c
+-- 
+2.1.0
+
