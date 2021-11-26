@@ -2,82 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C31B545F282
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 17:54:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E53A45F2E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 18:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234730AbhKZQ52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 11:57:28 -0500
-Received: from outbound-smtp44.blacknight.com ([46.22.136.52]:50091 "EHLO
-        outbound-smtp44.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235645AbhKZQz2 (ORCPT
+        id S233027AbhKZRcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 12:32:54 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17284 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234949AbhKZRax (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 11:55:28 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp44.blacknight.com (Postfix) with ESMTPS id 81966F898D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 16:52:13 +0000 (GMT)
-Received: (qmail 10917 invoked from network); 26 Nov 2021 16:52:13 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 26 Nov 2021 16:52:13 -0000
-Date:   Fri, 26 Nov 2021 16:52:11 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Alexey Avramov <hakavlad@inbox.lv>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211126165211.GL3366@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
- <20211127011246.7a8ac7b8@mail.inbox.lv>
+        Fri, 26 Nov 2021 12:30:53 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
+        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
+        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
+        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
+        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
+Date:   Fri, 26 Nov 2021 13:03:26 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>
+Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
+In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20211127011246.7a8ac7b8@mail.inbox.lv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 27, 2021 at 01:12:46AM +0900, Alexey Avramov wrote:
-> >After the patch, the test gets killed after roughly 15 seconds which is
-> >the same length of time taken in 5.15.
-> 
-> In my tests, the 5.15 still performs much better.
-> 
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >
+ > > Now overlayfs can only sync own dirty inodes during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file system.
+ > >
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/super.c | 14 +++++---------
+ > >  1 file changed, 5 insertions(+), 9 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index ccffcd96491d..213b795a6a86 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
+nt wait)
+ > >         /*
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > > -        *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > -        * called with wait =3D=3D 1.
+ > >          */
+ > > -       if (!wait)
+ > > -               return 0;
+ > > -
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > > -
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       if (wait)
+ > > +               wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
+ >=20
+ > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+ > with everything from  upper_sb =3D ... and a comment to explain that
+ > this is a variant of __sync_filesystem() where all the dirty inodes writ=
+e
+ > have already been started.
+ >=20
+=20
+I agree with you.=20
 
-How much better?
-
-> New question: is timeout=1 has sense? Will it save CPU?
-
-It's the minimum stall time available -- it's 1 tick so the exact stall
-time depends on HZ and yes, it's to stall to wait for something to
-happen. It'll get woken early if another reclaimer makes forward progress.
-
-This patch on top will stall less. I sent it already but it may not be
-clear that I meant it to be applied on top of this patch.
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 176ddd28df21..167ea4f324a8 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3404,8 +3404,8 @@ static void consider_reclaim_throttle(pg_data_t *pgdat, struct scan_control *sc)
- 	if (current_is_kswapd())
- 		return;
- 
--	/* Throttle if making no progress at high prioities. */
--	if (sc->priority < DEF_PRIORITY - 2 && !sc->nr_reclaimed)
-+	/* Throttle if making no progress at high priority. */
-+	if (sc->priority == 1 && !sc->nr_reclaimed)
- 		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS);
- }
- 
-
--- 
-Mel Gorman
-SUSE Labs
+Thanks,
+Chengguang
