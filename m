@@ -2,64 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE1E45F1D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 17:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3DF845F255
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 17:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378398AbhKZQaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 11:30:01 -0500
-Received: from shark3.inbox.lv ([194.152.32.83]:56260 "EHLO shark3.inbox.lv"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236458AbhKZQ2A (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 11:28:00 -0500
-X-Greylist: delayed 708 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Nov 2021 11:28:00 EST
-Received: from shark3.inbox.lv (localhost [127.0.0.1])
-        by shark3-out.inbox.lv (Postfix) with ESMTP id 5B0352801A7;
-        Fri, 26 Nov 2021 18:12:57 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.lv; s=30062014;
-        t=1637943177; bh=TwIFssNIvXJ6jzXj4xg2DtQzCcD9xeNHMIWR/MW2OK4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=Cspyo0iS/t9692vdkNaHGPbrUbUV8yXtyFzjzz+1RPd8v6LXhpAjITj/zKKqsMQ+X
-         eM34kH5hvytdnsF0GpoDcwrOiOamLK4G046QjPXfROeSDmHP8LtPrhgSfsfaq2Y5QD
-         9jZCuEOZ9spLRYCO7sC3lFRoOCQjtCUb+umbJmqQ=
-Received: from localhost (localhost [127.0.0.1])
-        by shark3-in.inbox.lv (Postfix) with ESMTP id 538FA2801A1;
-        Fri, 26 Nov 2021 18:12:57 +0200 (EET)
-Received: from shark3.inbox.lv ([127.0.0.1])
-        by localhost (shark3.inbox.lv [127.0.0.1]) (spamfilter, port 35)
-        with ESMTP id 2YM-lk9sV_IA; Fri, 26 Nov 2021 18:12:57 +0200 (EET)
-Received: from mail.inbox.lv (pop1 [127.0.0.1])
-        by shark3-in.inbox.lv (Postfix) with ESMTP id 1D86D280116;
-        Fri, 26 Nov 2021 18:12:57 +0200 (EET)
-Date:   Sat, 27 Nov 2021 01:12:46 +0900
-From:   Alexey Avramov <hakavlad@inbox.lv>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211127011246.7a8ac7b8@mail.inbox.lv>
-In-Reply-To: <20211125151853.8540-1-mgorman@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1345428AbhKZQsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 11:48:22 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:48962 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1378460AbhKZQqR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Nov 2021 11:46:17 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 35BF2212BD;
+        Fri, 26 Nov 2021 16:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1637944982;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fmBvewAO8mTwkpsCQPRg1igFqC3ChA+p22fO+6l0PPE=;
+        b=duP48ZS+TCtwDH5L3z96anN30Oj70SYnxUhMPpbW0T+VPm2AK9ka0IinIUYu4ChfXpdKbC
+        f8IZsiB/L6/FeYO6+PYfTkSHYauXm9UeZ38hJdrXNeh6Ytwwj+9m3vgjITH9z3+KnQjhfZ
+        mcVJZSYeP1JTGBXhWoCDf1bK7AXg9Fo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1637944982;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fmBvewAO8mTwkpsCQPRg1igFqC3ChA+p22fO+6l0PPE=;
+        b=5s4aCH6YWzWhJOA2vKNRBndbY/L0bi8pskC/m8XiVaQCVBtnxm4NkcJIiKwt62/cSHm1PZ
+        4WKq5pkxWBb7fjDw==
+Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
+        by relay2.suse.de (Postfix) with ESMTP id 15FC4A3B81;
+        Fri, 26 Nov 2021 16:43:01 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id F01A3DA735; Fri, 26 Nov 2021 17:42:52 +0100 (CET)
+Date:   Fri, 26 Nov 2021 17:42:52 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
+ with sub-page faults
+Message-ID: <20211126164252.GB28560@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+References: <20211124192024.2408218-1-catalin.marinas@arm.com>
+ <20211124192024.2408218-4-catalin.marinas@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: OK
-X-ESPOL: AJ2EQ38cmnBBsMa9LpgOlO7lx8rAKFdj4mfmvc49ixdFz9PMtNdrcW+QBYXuHxy7cWTD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211124192024.2408218-4-catalin.marinas@arm.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->After the patch, the test gets killed after roughly 15 seconds which is
->the same length of time taken in 5.15.
+On Wed, Nov 24, 2021 at 07:20:24PM +0000, Catalin Marinas wrote:
+> Commit a48b73eca4ce ("btrfs: fix potential deadlock in the search
+> ioctl") addressed a lockdep warning by pre-faulting the user pages and
+> attempting the copy_to_user_nofault() in an infinite loop. On
+> architectures like arm64 with MTE, an access may fault within a page at
+> a location different from what fault_in_writeable() probed. Since the
+> sk_offset is rewound to the previous struct btrfs_ioctl_search_header
+> boundary, there is no guaranteed forward progress and search_ioctl() may
+> live-lock.
+> 
+> Use fault_in_exact_writeable() instead which probes the entire user
+> buffer for faults at sub-page granularity.
+> 
+> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
 
-In my tests, the 5.15 still performs much better.
-
-New question: is timeout=1 has sense? Will it save CPU?
+Acked-by: David Sterba <dsterba@suse.com>
