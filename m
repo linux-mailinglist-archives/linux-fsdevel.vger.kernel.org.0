@@ -2,153 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A1F245F2C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 18:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A999B45F59E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 21:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234805AbhKZRXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 12:23:06 -0500
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17234 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238695AbhKZRVF (ORCPT
+        id S239723AbhKZUEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 15:04:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229793AbhKZUCG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 12:21:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1637932178; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=YCD9Qy/t2w3SG/dzfftvb30u8EtAqWFB0/v7Gz5mdsDG1lqyu9jplrgieI983y96ACu3TkHCX8b01GKHM55T/OU6FAQ8dcNYRTmnarjSbxT9g2a5aVINpvv7DC7wRJoXwqz59IREFqMDrvFpKNhVagDKOIiykKK/0ZcWsa3ukFE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1637932178; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=DKINIDnMGkMKeLcTBYO3BxCbPU2T+QmP00nUmcd3ZJM=; 
-        b=Er6e0/lkmSRSDyV226mD5NFNTE/ZyV1j6Sg4apZ8oYShb5o7o/EuMxFx6NPd3wIaEr3a34zyjqlEa5amf7z0Elcsdj/6FjwkhpNuytXuHv6z29aHOZgioU8SOVfHCs4LkJrbOdseCedcLEQLiSxbsKHOHOML12KgAWoPIAlxFoU=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637932178;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=DKINIDnMGkMKeLcTBYO3BxCbPU2T+QmP00nUmcd3ZJM=;
-        b=TSAddY81PkFDLj1aC2Geq5A7DpzYXqjiqX2cd1JiU6+p8vo+ip6IQL0AJwqYzL8q
-        SL/EUFY7eXLVgpH6U+sChP4Mp9AvTMG1SmkiGP7ZB/e4e59TCqEV3ypRXpjFSaUYX4Q
-        jlj9W1EHKYPABmA1E5luDrb6We20clxMVRqlY6V0=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 163793217656496.81082384691524; Fri, 26 Nov 2021 21:09:36 +0800 (CST)
-Date:   Fri, 26 Nov 2021 21:09:36 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Jan Kara" <jack@suse.cz>
-Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
-        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Chengguang Xu" <charliecgxu@tencent.com>,
-        "ronyjin" <ronyjin@tencent.com>
-Message-ID: <17d5c5d9498.134e725b210976.7805957202314611987@mykernel.net>
-In-Reply-To: <20211126091430.GC13004@quack2.suse.cz>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net>
- <20211122030038.1938875-4-cgxu519@mykernel.net> <20211126091430.GC13004@quack2.suse.cz>
-Subject: Re: [RFC PATCH V6 3/7] ovl: implement overlayfs' own ->write_inode
- operation
+        Fri, 26 Nov 2021 15:02:06 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64583C0619EB
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 11:44:57 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id w1so43065105edc.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 11:44:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=T2WjcJMogJUqwl7auwMJR6uAomfwfWvBoMmZ62DhD5s=;
+        b=HtcaQXsaNEzfzLJkKGbxnOEKWSL8ViT8fA+EwlSZ1jyD9lC9dTU93MeZ6Pd1AU75SK
+         WvNIqyR7rZZP1OtjQsKwMMKs0oW3rQjvTu4ugkFC+6R1IQtOdywvS4ARx6rPrt94Yann
+         /lcJfzzagrRSqQ+La502zhgxPLDI6A1PBhrZ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=T2WjcJMogJUqwl7auwMJR6uAomfwfWvBoMmZ62DhD5s=;
+        b=CutlvbW/KO0U68lyyure3VKHiczicEpmSMUMRaOuLecdzR7LPtCeQDrq3D4mrOt0c0
+         NsbTJky1wKEPCfoEbhQ64nqw258M4j2qhAC9FeuoOCbYmUWJ7bkNCaB6auUSMe1Uqccb
+         rxqpj7FMzKenkfuhf2G5dzJvWaNoss70LqFmiwkL8N1mrDAA7OAFVtYpykARswTFydeo
+         gMstHc+EfuFbA7rsuE2Uo9mSIUB0dxIUJKPnh9++E+mB51D/RDv9lu9Drn5WhYF5m/UZ
+         ApB/SKuNDMVjysEdTjQJZNd8rjnke29wBuNZaDUrEeeWqP778+L98/X57TWmwNb0nOmI
+         KEbw==
+X-Gm-Message-State: AOAM533WvIK6EFeVyzK/5MbCGjhXj3yPtdUhgj8gcJ9l6pcQoLQlxoxF
+        UzU+fTeKmqObrC6ZR2qVJqM+0bbSClSBpQ==
+X-Google-Smtp-Source: ABdhPJyRGOCQd4lVfadvwALi/7ZG7nxnUMUhAM3e1UTEwNd/2IVfVaQp1SQh3AOJ9cVnVUAt9Hcghw==
+X-Received: by 2002:a05:6402:1a42:: with SMTP id bf2mr50827763edb.64.1637955895925;
+        Fri, 26 Nov 2021 11:44:55 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.broadband.hu. [178.48.189.3])
+        by smtp.gmail.com with ESMTPSA id nb4sm3674514ejc.21.2021.11.26.11.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Nov 2021 11:44:55 -0800 (PST)
+Date:   Fri, 26 Nov 2021 20:44:53 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse fixes for 5.16-rc3
+Message-ID: <YaE5NdAaxf0vuEew@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-11-26 17:14:30 Jan Kara <=
-jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > On Mon 22-11-21 11:00:34, Chengguang Xu wrote:
- > > From: Chengguang Xu <charliecgxu@tencent.com>
- > >=20
- > > Sync dirty data and meta of upper inode in overlayfs' ->write_inode()
- > > and redirty overlayfs' inode.
- > >=20
- > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
- >=20
- > Looks good. I'm still not 100% convinced keeping inodes dirty all the ti=
-me
- > will not fire back in excessive writeback activity (e.g. flush worker wi=
-ll
- > traverse the list of all dirty inodes every 30 seconds and try to write
- > them) but I guess we can start with this and if people complain, dirtine=
-ss
- > handling can be improved.=20
+Hi Linus,
 
-Hi Jan,
+Please pull from:
 
-Thanks for the review and suggestion.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.16-rc3
 
+Fix a regression caused by a bugfix in the previous release.  The symptom
+is a VM_BUG_ON triggered from splice to the fuse device.  Unfortunately the
+original bugfix was already backported to a number of stable releases, so
+this fix-fix will need to be backported as well.
 
 Thanks,
-Chengguang
+Miklos
 
+----------------------------------------------------------------
+Miklos Szeredi (1):
+      fuse: release pipe buf after last use
 
-
- > So feel free to add:
- >=20
- > Reviewed-by: Jan Kara <jack@suse.cz>
- >=20
- >                                 Honza
- >=20
- > > ---
- > >  fs/overlayfs/super.c | 21 +++++++++++++++++++++
- > >  1 file changed, 21 insertions(+)
- > >=20
- > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
- > > index 18a12088a37b..12acf0ec7395 100644
- > > --- a/fs/overlayfs/super.c
- > > +++ b/fs/overlayfs/super.c
- > > @@ -15,6 +15,7 @@
- > >  #include <linux/seq_file.h>
- > >  #include <linux/posix_acl_xattr.h>
- > >  #include <linux/exportfs.h>
- > > +#include <linux/writeback.h>
- > >  #include "overlayfs.h"
- > > =20
- > >  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
- > > @@ -406,12 +407,32 @@ static int ovl_remount(struct super_block *sb, i=
-nt *flags, char *data)
- > >      return ret;
- > >  }
- > > =20
- > > +static int ovl_write_inode(struct inode *inode,
- > > +               struct writeback_control *wbc)
- > > +{
- > > +    struct ovl_fs *ofs =3D inode->i_sb->s_fs_info;
- > > +    struct inode *upper_inode =3D ovl_inode_upper(inode);
- > > +    int ret =3D 0;
- > > +
- > > +    if (!upper_inode)
- > > +        return 0;
- > > +
- > > +    if (!ovl_should_sync(ofs))
- > > +        return 0;
- > > +
- > > +    ret =3D write_inode_now(upper_inode, wbc->sync_mode =3D=3D WB_SYN=
-C_ALL);
- > > +    mark_inode_dirty(inode);
- > > +
- > > +    return ret;
- > > +}
- > > +
- > >  static const struct super_operations ovl_super_operations =3D {
- > >      .alloc_inode    =3D ovl_alloc_inode,
- > >      .free_inode    =3D ovl_free_inode,
- > >      .destroy_inode    =3D ovl_destroy_inode,
- > >      .drop_inode    =3D generic_delete_inode,
- > >      .put_super    =3D ovl_put_super,
- > > +    .write_inode    =3D ovl_write_inode,
- > >      .sync_fs    =3D ovl_sync_fs,
- > >      .statfs        =3D ovl_statfs,
- > >      .show_options    =3D ovl_show_options,
- > > --=20
- > > 2.27.0
- > >=20
- > >=20
- > --=20
- > Jan Kara <jack@suse.com>
- > SUSE Labs, CR
- >=20
+---
+ fs/fuse/dev.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
