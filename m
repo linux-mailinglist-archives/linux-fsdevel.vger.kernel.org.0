@@ -2,114 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C89845E992
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 09:46:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B735745E9AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 09:54:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353569AbhKZItf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 03:49:35 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62441 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345082AbhKZIrf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 03:47:35 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10179"; a="235454625"
-X-IronPort-AV: E=Sophos;i="5.87,265,1631602800"; 
-   d="scan'208";a="235454625"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 00:44:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,265,1631602800"; 
-   d="scan'208";a="675487932"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 26 Nov 2021 00:44:21 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mqWqC-0007qp-IZ; Fri, 26 Nov 2021 08:44:20 +0000
-Date:   Fri, 26 Nov 2021 16:43:54 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, shr@fb.com
-Subject: Re: [PATCH v3 2/3] fs: split off vfs_getdents function of getdents64
- syscall
-Message-ID: <202111261631.wvcMUeXO-lkp@intel.com>
-References: <20211125232549.3333746-3-shr@fb.com>
+        id S1359726AbhKZI5O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 03:57:14 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:36026 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344599AbhKZIzL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Nov 2021 03:55:11 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id CDB5B1FDFC;
+        Fri, 26 Nov 2021 08:51:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1637916717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GO/CEFsKscptchxk94rFkxTwkn3ZTcCkh+pO7jjo1Es=;
+        b=kSRqac9d9tMPzRCBw4x9ALwwMpGbHjlXjAGfMe5mW+WlqJ97igIdgpLIEeR0PRfqUdPVdb
+        wAkM9Q5W20L0ZeduQWiov0Zlnn2DF+MDqP/UpBRozpOoVs9Rklya8nIIMrVO0pX1YiMGcY
+        DLBDjFpgbupXwieKpxBvA4jklBYJcTA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1637916717;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GO/CEFsKscptchxk94rFkxTwkn3ZTcCkh+pO7jjo1Es=;
+        b=cKo39gTtmrK28q8KZrUwHcA4hSA6wcUHTimQZsFM5/B4jbsQcybhQ1n7AbbtgP3asLCPx0
+        zMFrHu7XbFwpSyAQ==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 49F6FA3B81;
+        Fri, 26 Nov 2021 08:51:57 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 38F7B1E11F3; Fri, 26 Nov 2021 09:51:54 +0100 (CET)
+Date:   Fri, 26 Nov 2021 09:51:54 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     miklos@szeredi.hu, jack@suse.cz, amir73il@gmail.com,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chengguang Xu <charliecgxu@tencent.com>
+Subject: Re: [RFC PATCH V6 1/7] ovl: setup overlayfs' private bdi
+Message-ID: <20211126085154.GA13004@quack2.suse.cz>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net>
+ <20211122030038.1938875-2-cgxu519@mykernel.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211125232549.3333746-3-shr@fb.com>
+In-Reply-To: <20211122030038.1938875-2-cgxu519@mykernel.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stefan,
+On Mon 22-11-21 11:00:32, Chengguang Xu wrote:
+> From: Chengguang Xu <charliecgxu@tencent.com>
+> 
+> Setup overlayfs' private bdi so that we can collect
+> overlayfs' own dirty inodes.
+> 
+> Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
 
-Thank you for the patch! Perhaps something to improve:
+Looks good. Feel free to add:
 
-[auto build test WARNING on de5de0813b7dbbb71fb5d677ed823505a0e685c5]
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/io_uring-add-getdents64-support/20211126-072952
-base:   de5de0813b7dbbb71fb5d677ed823505a0e685c5
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20211126/202111261631.wvcMUeXO-lkp@intel.com/config)
-compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/0day-ci/linux/commit/018019be0b26997402fe7ba8367e5260ec2aa8c8
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Stefan-Roesch/io_uring-add-getdents64-support/20211126-072952
-        git checkout 018019be0b26997402fe7ba8367e5260ec2aa8c8
-        # save the config file to linux build tree
-        make W=1 ARCH=um SUBARCH=i386
+								Honza
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
->> fs/readdir.c:379:5: warning: no previous prototype for 'vfs_getdents' [-Wmissing-prototypes]
-     379 | int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-         |     ^~~~~~~~~~~~
-
-
-vim +/vfs_getdents +379 fs/readdir.c
-
-   370	
-   371	/**
-   372	 * vfs_getdents - getdents without fdget
-   373	 * @file    : pointer to file struct of directory
-   374	 * @dirent  : pointer to user directory structure
-   375	 * @count   : size of buffer
-   376	 * @ctx_pos : if file pos is used, pass -1,
-   377	 *            if ctx pos is used, pass ctx pos
-   378	 */
- > 379	int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-   380			 unsigned int count, s64 ctx_pos)
-   381	{
-   382		struct getdents_callback64 buf = {
-   383			.ctx.actor = filldir64,
-   384			.ctx.pos = ctx_pos,
-   385			.count = count,
-   386			.current_dir = dirent
-   387		};
-   388		int error;
-   389	
-   390		error = do_iterate_dir(file, &buf.ctx, ctx_pos < 0);
-   391		if (error >= 0)
-   392			error = buf.error;
-   393		if (buf.prev_reclen) {
-   394			struct linux_dirent64 __user * lastdirent;
-   395			typeof(lastdirent->d_off) d_off = buf.ctx.pos;
-   396	
-   397			lastdirent = (void __user *) buf.current_dir - buf.prev_reclen;
-   398			if (put_user(d_off, &lastdirent->d_off))
-   399				error = -EFAULT;
-   400			else
-   401				error = count - buf.count;
-   402		}
-   403	
-   404		return error;
-   405	}
-   406	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> ---
+>  fs/overlayfs/super.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 265181c110ae..18a12088a37b 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -1984,6 +1984,10 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+>  	if (!ofs)
+>  		goto out;
+>  
+> +	err = super_setup_bdi(sb);
+> +	if (err)
+> +		goto out_err;
+> +
+>  	err = -ENOMEM;
+>  	ofs->creator_cred = cred = prepare_creds();
+>  	if (!cred)
+> -- 
+> 2.27.0
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
