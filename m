@@ -2,287 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D627946241D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:13:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1809462821
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 00:17:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231255AbhK2WQ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 17:16:29 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:28928 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231215AbhK2WQ0 (ORCPT
+        id S229681AbhK2XU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 18:20:56 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17205 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229594AbhK2XU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 17:16:26 -0500
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.1.2/8.16.1.2) with SMTP id 1ATIlEas032312
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 14:13:07 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=MU9kvJnfQ1hfm+fa97pHqAe6I4k6kxvYAS94gGN7+7E=;
- b=VZ8qzWWprnsKapNjyo7xoAdqa49Vvnc/5WsUfh5+cHUpLRJqNYO4oW++n+2Mwg4YMWm2
- JBvLYbaee6pMxb1t635k5EMXk0Ym6CTFDIQuAaojMVmPkFFNzzxdFQpFLH7o8SUKRoIx
- q32G+nKxQgdX65FhXTAju/U+SekVQ3lTnBg= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0089730.ppops.net with ESMTP id 3cmna6728w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 14:13:07 -0800
-Received: from intmgw006.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Mon, 29 Nov 2021 14:13:07 -0800
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id A7289710160E; Mon, 29 Nov 2021 14:12:59 -0800 (PST)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <shr@fb.com>
-Subject: [PATCH v1 5/5] io_uring: add fgetxattr and getxattr support
-Date:   Mon, 29 Nov 2021 14:12:57 -0800
-Message-ID: <20211129221257.2536146-6-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211129221257.2536146-1-shr@fb.com>
-References: <20211129221257.2536146-1-shr@fb.com>
+        Mon, 29 Nov 2021 18:20:56 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
+        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
+        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
+        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
+        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
+Date:   Fri, 26 Nov 2021 13:03:26 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>
+Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
+In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-FB-Source: Intern
-X-Proofpoint-GUID: UIKzKyaaa732QNMPMtvJJlTwUoVy8VAE
-X-Proofpoint-ORIG-GUID: UIKzKyaaa732QNMPMtvJJlTwUoVy8VAE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-29_11,2021-11-28_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0
- impostorscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=786
- spamscore=0 bulkscore=0 malwarescore=0 clxscore=1015 phishscore=0
- mlxscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2110150000 definitions=main-2111290105
-X-FB-Internal: deliver
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Summary:
-
-This adds support to io_uring for the following API's:
-- fgetxattr
-- getxattr
-
-Signed-off-by: Stefan Roesch <shr@fb.com>
----
- fs/io_uring.c                 | 152 ++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |   2 +
- 2 files changed, 154 insertions(+)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4a18431e13a3..265024204a59 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1114,6 +1114,10 @@ static const struct io_op_def io_op_defs[] =3D {
- 	[IORING_OP_MKDIRAT] =3D {},
- 	[IORING_OP_SYMLINKAT] =3D {},
- 	[IORING_OP_LINKAT] =3D {},
-+	[IORING_OP_FGETXATTR] =3D {
-+		.needs_file =3D 1
-+	},
-+	[IORING_OP_GETXATTR] =3D {},
- 	[IORING_OP_FSETXATTR] =3D {
- 		.needs_file =3D 1
- 	},
-@@ -3831,6 +3835,135 @@ static int io_renameat(struct io_kiocb *req, unsi=
-gned int issue_flags)
- 	return 0;
- }
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >
+ > > Now overlayfs can only sync own dirty inodes during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file system.
+ > >
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/super.c | 14 +++++---------
+ > >  1 file changed, 5 insertions(+), 9 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index ccffcd96491d..213b795a6a86 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
+nt wait)
+ > >         /*
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > > -        *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > -        * called with wait =3D=3D 1.
+ > >          */
+ > > -       if (!wait)
+ > > -               return 0;
+ > > -
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > > -
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       if (wait)
+ > > +               wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
+ >=20
+ > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+ > with everything from  upper_sb =3D ... and a comment to explain that
+ > this is a variant of __sync_filesystem() where all the dirty inodes writ=
+e
+ > have already been started.
+ >=20
 =20
-+static int __io_getxattr_prep(struct io_kiocb *req,
-+			      const struct io_uring_sqe *sqe)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	const char __user *name;
-+	int ret;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (unlikely(sqe->ioprio))
-+		return -EINVAL;
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	ix->filename =3D NULL;
-+	ix->value =3D NULL;
-+	name =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	ix->ctx.value =3D u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+	ix->ctx.size =3D READ_ONCE(sqe->len);
-+	ix->ctx.flags =3D READ_ONCE(sqe->xattr_flags);
-+
-+	if (ix->ctx.flags)
-+		return -EINVAL;
-+
-+	ix->ctx.name =3D kmalloc(XATTR_NAME_MAX + 1, GFP_KERNEL);
-+	if (!ix->ctx.name)
-+		return -ENOMEM;
-+
-+	ret =3D strncpy_from_user(ix->ctx.name, name, XATTR_NAME_MAX + 1);
-+	if (!ret || ret =3D=3D XATTR_NAME_MAX + 1)
-+		ret =3D -ERANGE;
-+	if (ret < 0) {
-+		kfree(ix->ctx.name);
-+		return ret;
-+	}
-+
-+	req->flags |=3D REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_fgetxattr_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+	if (!req->file)
-+		return -EBADF;
-+
-+	return __io_getxattr_prep(req, sqe);
-+}
-+
-+static int io_getxattr_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	const char __user *path;
-+	int ret;
-+
-+	ret =3D __io_getxattr_prep(req, sqe);
-+	if (ret)
-+		return ret;
-+
-+	path =3D u64_to_user_ptr(READ_ONCE(sqe->addr3));
-+
-+	ix->filename =3D getname_flags(path, LOOKUP_FOLLOW, NULL);
-+	if (IS_ERR(ix->filename)) {
-+		ret =3D PTR_ERR(ix->filename);
-+		ix->filename =3D NULL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret =3D do_getxattr(mnt_user_ns(req->file->f_path.mnt),
-+			req->file->f_path.dentry,
-+			ix->ctx.name,
-+			(void __user *)ix->ctx.value,
-+			ix->ctx.size);
-+
-+	req->flags &=3D ~REQ_F_NEED_CLEANUP;
-+	kfree(ix->ctx.name);
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
-+static int io_getxattr(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_xattr *ix =3D &req->xattr;
-+	unsigned int lookup_flags =3D LOOKUP_FOLLOW;
-+	struct path path;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+retry:
-+	ret =3D user_path_at_empty(AT_FDCWD, ix->filename, lookup_flags, &path)=
-;
-+	if (!ret) {
-+		ret =3D do_getxattr(mnt_user_ns(path.mnt),
-+				  path.dentry,
-+				  ix->ctx.name,
-+				  (void __user *)ix->ctx.value,
-+				  ix->ctx.size);
-+
-+		path_put(&path);
-+		if (retry_estale(ret, lookup_flags)) {
-+			lookup_flags |=3D LOOKUP_REVAL;
-+			goto retry;
-+		}
-+	}
-+
-+	req->flags &=3D ~REQ_F_NEED_CLEANUP;
-+	kfree(ix->ctx.name);
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int __io_setxattr_prep(struct io_kiocb *req,
- 			const struct io_uring_sqe *sqe,
- 			struct user_namespace *user_ns)
-@@ -6684,6 +6817,10 @@ static int io_req_prep(struct io_kiocb *req, const=
- struct io_uring_sqe *sqe)
- 		return io_symlinkat_prep(req, sqe);
- 	case IORING_OP_LINKAT:
- 		return io_linkat_prep(req, sqe);
-+	case IORING_OP_FGETXATTR:
-+		return io_fgetxattr_prep(req, sqe);
-+	case IORING_OP_GETXATTR:
-+		return io_getxattr_prep(req, sqe);
- 	case IORING_OP_FSETXATTR:
- 		return io_fsetxattr_prep(req, sqe);
- 	case IORING_OP_SETXATTR:
-@@ -6831,6 +6968,15 @@ static void io_clean_op(struct io_kiocb *req)
- 			putname(req->hardlink.oldpath);
- 			putname(req->hardlink.newpath);
- 			break;
-+
-+		case IORING_OP_GETXATTR:
-+			if (req->xattr.filename)
-+				putname(req->xattr.filename);
-+			fallthrough;
-+		case IORING_OP_FGETXATTR:
-+			kfree(req->xattr.ctx.name);
-+			break;
-+
- 		case IORING_OP_SETXATTR:
- 			if (req->xattr.filename)
- 				putname(req->xattr.filename);
-@@ -6982,6 +7128,12 @@ static int io_issue_sqe(struct io_kiocb *req, unsi=
-gned int issue_flags)
- 	case IORING_OP_LINKAT:
- 		ret =3D io_linkat(req, issue_flags);
- 		break;
-+	case IORING_OP_FGETXATTR:
-+		ret =3D io_fgetxattr(req, issue_flags);
-+		break;
-+	case IORING_OP_GETXATTR:
-+		ret =3D io_getxattr(req, issue_flags);
-+		break;
- 	case IORING_OP_FSETXATTR:
- 		ret =3D io_fsetxattr(req, issue_flags);
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index dbf473900da2..cd9160272308 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -145,7 +145,9 @@ enum {
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
- 	IORING_OP_LINKAT,
-+	IORING_OP_FGETXATTR,
- 	IORING_OP_FSETXATTR,
-+	IORING_OP_GETXATTR,
- 	IORING_OP_SETXATTR,
-=20
- 	/* this goes last, obviously */
---=20
-2.30.2
+I agree with you.=20
 
+Thanks,
+Chengguang
