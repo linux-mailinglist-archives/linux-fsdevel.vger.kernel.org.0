@@ -2,253 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF354614CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 13:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C2B1461A76
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 15:57:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238431AbhK2MPG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 07:15:06 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:56624 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbhK2MNF (ORCPT
+        id S238587AbhK2PAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 10:00:19 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17273 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237127AbhK2O6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 07:13:05 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 458856131C;
-        Mon, 29 Nov 2021 12:09:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B35C004E1;
-        Mon, 29 Nov 2021 12:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638187787;
-        bh=v6zMLoUPAMkvGSVCoE+y+jIpp7dLFnKY8cJpXFvXlO0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ZWf3xV2U8l1CVKYPoTAF5AIMs7OwsilcT4qAbU0/0TJhEemylaErEW7xS2LEv4VUB
-         cedzYbjhcXrGqzL+elQdOj5qull6Xn64g4oSShHg2/7u6YKvZOFzumA5UGkvH5WxgB
-         N6j4TUfq1tzDQKbyU5h5zHnENGsrT74F0+8symnjGnPQ76r0r43kxkDdcGRzL9sGwg
-         ZvBy9pyuNwfcs3v726N+rGgfpIuEdDqkGLhLeCqcyjFq+2J1z0OMsl3W9iPc6YUfbs
-         sT1fb56e3hnAHVZioTgvUCrWtLqk5iZBvevWst42MGHXTUxr2Nw2vEhRXM+r7i51tc
-         TbVINusGA2kdQ==
-Message-ID: <cc7fe167e997b001084c84141a9e03db8abe1211.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: fix up non-directory creation in SGID
- directories
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Date:   Mon, 29 Nov 2021 07:09:45 -0500
-In-Reply-To: <20211129111639.3633764-1-brauner@kernel.org>
-References: <20211129111639.3633764-1-brauner@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+        Mon, 29 Nov 2021 09:58:18 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637931974; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=Nof1v9BjaZLa7U9Yw6BND9HDJOH3W5sxq6+upyF6vQOwB4Fc7Q2Yals6F5Ev+BOs/3i0PxfG0xvE+O0hk6npLibCux886M6+C9CiVPEXU4Mw4T8H49sjONWiVTKUygo8+QhbRrP5qB3Wp7oe/0jz2Sww3Y6ZONEE1r3UuHuq9+U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637931974; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=A0WNNhMG+hvp6w62fCn0B0olJUzJi3Z1eLpxpY+eTuc=; 
+        b=Q5hyVYzY/rmWRH0Exs1Otf9lIdMDa7AnCS9Ts/aK9iWdPuq+sS3zY+2PHm3c6NjQAuZJ0kW8DkOFe8wPYrglJEOpfjLQ2bA5qqBTeQP6Sq3RDTn/Z6IUAH0BlY3lqNAC+nwrSGfofx+Nht0gUlmTcA2xRqAGHLfA+f6jVdcmy5M=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637931974;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=A0WNNhMG+hvp6w62fCn0B0olJUzJi3Z1eLpxpY+eTuc=;
+        b=QLPGL/NGXGIHUbDmJRtqm1rYDzwsYVYhL6xb/SqFrPS+okFeG85Tofcxx/DygeMG
+        hQdbHWL4KO/uP/Zd7nwdoPwQJxfotEHuiW7KBoXafa5rptxgAeUsC5MOPHP7tRtUJx6
+        grp2ryMBW3GYlXfNtjtp/AhO3kFuhaTCsAbyerXI=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1637931970561213.4333284052757; Fri, 26 Nov 2021 21:06:10 +0800 (CST)
+Date:   Fri, 26 Nov 2021 21:06:10 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Jan Kara" <jack@suse.cz>
+Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
+        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>,
+        "ronyjin" <ronyjin@tencent.com>
+Message-ID: <17d5c5a6fed.f090bcae10973.4735687401243313694@mykernel.net>
+In-Reply-To: <20211126091007.GB13004@quack2.suse.cz>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net>
+ <20211122030038.1938875-3-cgxu519@mykernel.net> <20211126091007.GB13004@quack2.suse.cz>
+Subject: Re: [RFC PATCH V6 2/7] ovl: mark overlayfs inode dirty when it has
+ upper
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-11-29 at 12:16 +0100, Christian Brauner wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> Ceph always inherits the SGID bit if it is set on the parent inode,
-> while the generic inode_init_owner does not do this in a few cases where
-> it can create a possible security problem (cf. [1]).
-> 
-> Update ceph to strip the SGID bit just as inode_init_owner would.
-> 
-> This bug was detected by the mapped mount testsuite in [3]. The
-> testsuite tests all core VFS functionality and semantics with and
-> without mapped mounts. That is to say it functions as a generic VFS
-> testsuite in addition to a mapped mount testsuite. While working on
-> mapped mount support for ceph, SIGD inheritance was the only failing
-> test for ceph after the port.
-> 
-> The same bug was detected by the mapped mount testsuite in XFS in
-> January 2021 (cf. [2]).
-> 
-> [1]: commit 0fa3ecd87848 ("Fix up non-directory creation in SGID directories")
-> [2]: commit 01ea173e103e ("xfs: fix up non-directory creation in SGID directories")
-> [3]: https://git.kernel.org/fs/xfs/xfstests-dev.git
-> Cc: Ilya Dryomov <idryomov@gmail.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: ceph-devel@vger.kernel.org
-> CC: linux-fsdevel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
-> /* v2 */
-> - Christian Brauner <christian.brauner@ubuntu.com>:
->   - Add missing cpu_to_le32() when assigning to in.gid to prevent sparse
->     warnings.
-> 
-> The test used for this is [3]:
-> 
-> /* The following tests are concerned with setgid inheritance. These can be
->  * filesystem type specific. For xfs, if a new file or directory is created
->  * within a setgid directory and irix_sgid_inhiert is set then inherit the
->  * setgid bit if the caller is in the group of the directory.
->  */
-> static int setgid_create(void)
-> {
-> 	int fret = -1;
-> 	int file1_fd = -EBADF;
-> 	pid_t pid;
-> 
-> 	if (!caps_supported())
-> 		return 0;
-> 
-> 	if (fchmod(t_dir1_fd, S_IRUSR |
-> 			      S_IWUSR |
-> 			      S_IRGRP |
-> 			      S_IWGRP |
-> 			      S_IROTH |
-> 			      S_IWOTH |
-> 			      S_IXUSR |
-> 			      S_IXGRP |
-> 			      S_IXOTH |
-> 			      S_ISGID), 0) {
-> 		log_stderr("failure: fchmod");
-> 		goto out;
-> 	}
-> 
-> 	/* Verify that the setgid bit got raised. */
-> 	if (!is_setgid(t_dir1_fd, "", AT_EMPTY_PATH)) {
-> 		log_stderr("failure: is_setgid");
-> 		goto out;
-> 	}
-> 
-> 	pid = fork();
-> 	if (pid < 0) {
-> 		log_stderr("failure: fork");
-> 		goto out;
-> 	}
-> 	if (pid == 0) {
-> 		/* create regular file via open() */
-> 		file1_fd = openat(t_dir1_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
-> 		if (file1_fd < 0)
-> 			die("failure: create");
-> 
-> 		/* We're capable_wrt_inode_uidgid() and also our fsgid matches
-> 		 * the directories gid.
-> 		 */
-> 		if (!is_setgid(t_dir1_fd, FILE1, 0))
-> 			die("failure: is_setgid");
-> 
-> 		/* create directory */
-> 		if (mkdirat(t_dir1_fd, DIR1, 0000))
-> 			die("failure: create");
-> 
-> 		/* Directories always inherit the setgid bit. */
-> 		if (!is_setgid(t_dir1_fd, DIR1, 0))
-> 			die("failure: is_setgid");
-> 
-> 		if (unlinkat(t_dir1_fd, FILE1, 0))
-> 			die("failure: delete");
-> 
-> 		if (unlinkat(t_dir1_fd, DIR1, AT_REMOVEDIR))
-> 			die("failure: delete");
-> 
-> 		exit(EXIT_SUCCESS);
-> 	}
-> 	if (wait_for_pid(pid))
-> 		goto out;
-> 
-> 	pid = fork();
-> 	if (pid < 0) {
-> 		log_stderr("failure: fork");
-> 		goto out;
-> 	}
-> 	if (pid == 0) {
-> 		if (!switch_ids(0, 10000))
-> 			die("failure: switch_ids");
-> 
-> 		if (!caps_down())
-> 			die("failure: caps_down");
-> 
-> 		/* create regular file via open() */
-> 		file1_fd = openat(t_dir1_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
-> 		if (file1_fd < 0)
-> 			die("failure: create");
-> 
-> 		/* Neither in_group_p() nor capable_wrt_inode_uidgid() so setgid
-> 		 * bit needs to be stripped.
-> 		 */
-> 		if (is_setgid(t_dir1_fd, FILE1, 0))
-> 			die("failure: is_setgid");
-> 
-> 		/* create directory */
-> 		if (mkdirat(t_dir1_fd, DIR1, 0000))
-> 			die("failure: create");
-> 
-> 		if (xfs_irix_sgid_inherit_enabled()) {
-> 			/* We're not in_group_p(). */
-> 			if (is_setgid(t_dir1_fd, DIR1, 0))
-> 				die("failure: is_setgid");
-> 		} else {
-> 			/* Directories always inherit the setgid bit. */
-> 			if (!is_setgid(t_dir1_fd, DIR1, 0))
-> 				die("failure: is_setgid");
-> 		}
-> 
-> 		exit(EXIT_SUCCESS);
-> 	}
-> 	if (wait_for_pid(pid))
-> 		goto out;
-> 
-> 	fret = 0;
-> 	log_debug("Ran test");
-> out:
-> 	safe_close(file1_fd);
-> 
-> 	return fret;
-> }
-> ---
->  fs/ceph/file.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 02a0a0fd9ccd..65d65c51d91d 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -605,13 +605,25 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
->  	in.cap.realm = cpu_to_le64(ci->i_snap_realm->ino);
->  	in.cap.flags = CEPH_CAP_FLAG_AUTH;
->  	in.ctime = in.mtime = in.atime = iinfo.btime;
-> -	in.mode = cpu_to_le32((u32)mode);
->  	in.truncate_seq = cpu_to_le32(1);
->  	in.truncate_size = cpu_to_le64(-1ULL);
->  	in.xattr_version = cpu_to_le64(1);
->  	in.uid = cpu_to_le32(from_kuid(&init_user_ns, current_fsuid()));
-> -	in.gid = cpu_to_le32(from_kgid(&init_user_ns, dir->i_mode & S_ISGID ?
-> -				dir->i_gid : current_fsgid()));
-> +	if (dir->i_mode & S_ISGID) {
-> +		in.gid = cpu_to_le32(from_kgid(&init_user_ns, dir->i_gid));
-> +
-> +		/* Directories always inherit the setgid bit. */
-> +		if (S_ISDIR(mode))
-> +			mode |= S_ISGID;
-> +		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
-> +			 !in_group_p(dir->i_gid) &&
-> +			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
-> +			mode &= ~S_ISGID;
-> +	} else {
-> +		in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
-> +	}
-> +	in.mode = cpu_to_le32((u32)mode);
-> +
->  	in.nlink = cpu_to_le32(1);
->  	in.max_size = cpu_to_le64(lo->stripe_unit);
->  
-> 
-> base-commit: d58071a8a76d779eedab38033ae4c821c30295a5
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-11-26 17:10:07 Jan Kara <=
+jack@suse.cz> =E6=92=B0=E5=86=99 ----
+ > On Mon 22-11-21 11:00:33, Chengguang Xu wrote:
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >=20
+ > > We simply mark overlayfs inode dirty when it has upper,
+ > > it's much simpler than mark dirtiness on modification.
+ > >=20
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/inode.c | 4 +++-
+ > >  fs/overlayfs/util.c  | 1 +
+ > >  2 files changed, 4 insertions(+), 1 deletion(-)
+ > >=20
+ > > diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+ > > index 1f36158c7dbe..027ffc0a2539 100644
+ > > --- a/fs/overlayfs/inode.c
+ > > +++ b/fs/overlayfs/inode.c
+ > > @@ -778,8 +778,10 @@ void ovl_inode_init(struct inode *inode, struct o=
+vl_inode_params *oip,
+ > >  {
+ > >      struct inode *realinode;
+ > > =20
+ > > -    if (oip->upperdentry)
+ > > +    if (oip->upperdentry) {
+ > >          OVL_I(inode)->__upperdentry =3D oip->upperdentry;
+ > > +        mark_inode_dirty(inode);
+ > > +    }
+ > >      if (oip->lowerpath && oip->lowerpath->dentry)
+ > >          OVL_I(inode)->lower =3D igrab(d_inode(oip->lowerpath->dentry)=
+);
+ > >      if (oip->lowerdata)
+ >=20
+ > Hum, does this get called only for inodes with upper inode existing? I
+ > suppose we do not need to track inodes that were not copied up because t=
+hey
+ > cannot be dirty? I'm sorry, my knowledge of overlayfs is rather limited =
+so
+ > I may be missing something basic.
+ >=20
 
-Thanks Christian,
+Well, as long as overly inode has upper it can be modified without copy-up,
+so we need to track all overlay inodes which have upper inode.
 
-Merged into our "testing" branch. We'll plan to get this up to Linus
-fairly soon since it's marked for stable.
+Thanks,
+Chengguang
 
-Cheers,
--- 
-Jeff Layton <jlayton@kernel.org>
+
