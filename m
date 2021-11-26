@@ -2,98 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4784F46061C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 13:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFE684606F2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 15:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244112AbhK1Mkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Nov 2021 07:40:49 -0500
-Received: from mout.gmx.net ([212.227.17.20]:51029 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244320AbhK1Mit (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Nov 2021 07:38:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1638102910;
-        bh=qS3i/rmMbmZIqxEQOq+Uhf3eD8d6x4qLjMlJQdVTjok=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:Date:In-Reply-To:References;
-        b=jobuBjlyDUTeWTSOQTms5tBnVlDNssV/y86VNdJqAyF9hrOUo7Bb47e6LbHG6SwSW
-         UFc7ypX2V/VXVUwJDOkUR+gBD+U0T1QyHE9cM/kX2pzmMtdK5K037yI8IbonZVo10W
-         /0hgTDHn4EBreYDoV7hA0nawXOpHqQjVaTUJ3g9k=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from homer.fritz.box ([185.221.150.210]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MYeMt-1n3YuT2bzf-00VgKd; Sun, 28
- Nov 2021 13:35:10 +0100
-Message-ID: <dd39029d93bb4de5ed485b5d4181fc19d4c0c4f0.camel@gmx.de>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-From:   Mike Galbraith <efault@gmx.de>
-To:     Alexey Avramov <hakavlad@inbox.lv>,
-        Mel Gorman <mgorman@techsingularity.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Sun, 28 Nov 2021 13:35:06 +0100
-In-Reply-To: <941f378e1ea2b32cac0adee1e81637ab6d001f1e.camel@gmx.de>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
-         <20211127011246.7a8ac7b8@mail.inbox.lv>
-         <20211126165211.GL3366@techsingularity.net>
-         <20211128042635.543a2d04@mail.inbox.lv>
-         <252cd5acd9bf6588ec87ce02884925c737b6a8b7.camel@gmx.de>
-         <941f378e1ea2b32cac0adee1e81637ab6d001f1e.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.1 
+        id S1357919AbhK1OgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Nov 2021 09:36:02 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17266 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1357928AbhK1OeB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Nov 2021 09:34:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
+        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
+        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
+        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
+        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
+Date:   Fri, 26 Nov 2021 13:03:26 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>
+Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
+In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ftyD1dPtgkdxN1oeTVaM72JrpXXYonEd9lMbhlz0n+y0/x/h2da
- FKTIoC63vPtKSGTaPHrLsEsjJ74XtUe1bM4xmFarlvq2//VuQ5bKT1gk8xzveuGQVUo5jCx
- xX9AHqN9p01JH2TOqlkjVDVHasnPYJvfYUjuWBdS1CBcCxJ1zvld1FpaVzGjyEv3uHWxF5n
- 4fjoWvGbddPdmSgCNXWCA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NX2Dj5WoFAs=:fMBZqLc0mvQFd6vvJEvazb
- 4eat/6myHtPsrifWT5pkGTnJoeWKkYxrDCUeOhmh5SBGNJoQFqrmokrHiybEOgOER0XQ/gL92
- WBLfP+5bvp/0N8RgZNoJjfD0Yvy7ExHbZ8SRKcRn/YUuxq0VJtuXTT4NiVL3mw7M3tfMloZuJ
- LZNBdYTz3M3wRtl+/lPVD2Aql1a0GXf9er81DYUbJm56Gp8HYdplfsTU42s6kMrJ1BoKCsAS2
- ZcPjyyQ2p9ttteTl48Yd7To3A+PSHKoTiTZcvMLxQzUMlFJz2bLkDYrA8kuFSW6QCEfzfGhw+
- N6hBoKCaW2lwZYE59Sq5ZTUE4mSV6l6PLTFaB7lCilaS37104me4CcNDtkfJhZa2VUhD3sBcV
- bMtXSCXgNZ1OTS1K9gqx3qsw9E2+5dUCA+CQDELgzJw7TfStVh248ahboZjNQMG6SoNEMm+p5
- b2OqVTKSSW4vi103pfCn6vLQ/hmIVuy4DpcdtJuPmmvBCEUfSrY8bQdTY8dfrL89DbBzfhXkq
- 6itzzDml5dm7hprMmdDMt5kJyDaanOcA894hSLeZHY5NXXDr6Mb5UsEGyvAUUnVKIdaRNiUBx
- zGHGy1QsYJHnv28NjGFhWs/Aik3T8YpoRlDMbd0WKv0tU0sx0cNQUCC5sAIG1ccJNFTcuK/JZ
- FaGSHceOKf0UFospyQrm1NKp7pefyRRWryP/XSykCnJhA1tn4EE6/02I7lzBSJrXcgW6gBcsJ
- SvNhd5ZnUSoVA0OubR1AuaRWr9xrfBsMktxDo1Vp1un4IRpAcZDhkCsaQ3yXh6Uogu4Kipv9H
- 64rtALk6PgiJM3uImpPr6pWpb6G/xuGNn5A9n/uy+OrHqDQeL8usfLyGyURpaaPd/AXO2Uunf
- LxBPnOHxKtCXqebItUrVllDi9c95DbuyDpSEBQdKKTDURucZB9QkVVhAw+UTL5j90bf1zqr5z
- KWYQ6dmOlG+KXIshDL2Y9nNniqgaRTM85DS7pZh4jHGyQt5G8HUGUy/yd5fuoJY1KzO74C0Ws
- Gmc45sPwGrka5G9TYzDzCNmUtdN46t8ENCDvK4uTvzTseKt7DdFFS8pitKMEhCfEpANSG4kce
- KZ1A58I965pCI0=
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2021-11-28 at 12:39 +0100, Mike Galbraith wrote:
-> On Sun, 2021-11-28 at 11:00 +0100, Mike Galbraith wrote:
-> > On Sun, 2021-11-28 at 04:26 +0900, Alexey Avramov wrote:
-> > > I will present the results of the new tests here.
-> > >
-> > > TLDR;
-> > > =3D=3D=3D=3D=3D
-> > > No one Mel's patch doesn't prevent stalls in my tests.
-> >
-> > Seems there may be a problem with the THROTTLE_WRITEBACK bits..
->
-> Disregard.=C2=A0 I backed hacklet out again, and one-liner that had grou=
-nd
-> my box to fine powder was harmless.=C2=A0 Hmm.
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >
+ > > Now overlayfs can only sync own dirty inodes during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file system.
+ > >
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/super.c | 14 +++++---------
+ > >  1 file changed, 5 insertions(+), 9 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index ccffcd96491d..213b795a6a86 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
+nt wait)
+ > >         /*
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > > -        *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > -        * called with wait =3D=3D 1.
+ > >          */
+ > > -       if (!wait)
+ > > -               return 0;
+ > > -
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > > -
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       if (wait)
+ > > +               wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
+ >=20
+ > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+ > with everything from  upper_sb =3D ... and a comment to explain that
+ > this is a variant of __sync_filesystem() where all the dirty inodes writ=
+e
+ > have already been started.
+ >=20
+=20
+I agree with you.=20
 
-Grr, no, disregard the disregard, it's just annoyingly variable, may
-perform akin to 5.15 but most likely won't.  With bandaid, it _seems_
-to be consistently on par with 5.15.
-
-Bandaid likely just break the writeback bits all to pieces, but that's
-ok, if breakage makes things work better, they need more breaking :)
-
-	-Mike
+Thanks,
+Chengguang
