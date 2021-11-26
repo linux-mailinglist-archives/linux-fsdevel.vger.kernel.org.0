@@ -2,93 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EE574611FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 11:22:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3856461307
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 12:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236662AbhK2KZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 05:25:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:52040 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236775AbhK2KXV (ORCPT
+        id S1343669AbhK2LGg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 06:06:36 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17248 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237771AbhK2LEf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 05:23:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638181203;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e6SaX+NTgiaFDnrzD5rOQdn6fQZIVXiBx5LgIgNJIdg=;
-        b=Vbr5Vf2BhuLvUZVqzUr6aJYtFc8i/CZ528WhkFO5V+U1jpU0lelSxwRmjej6kK+sFwvmld
-        /TDWyKCPHsjU1B3u+iXUcadFSoOPSGv5TvcJXZwObXTJolGxoSfhK3lgQv+C+kqF6FS0aW
-        AkpR8GJIomzVS3khj1LGIKzeRnjwz7Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-175-Lc5EhORMMfagTkSimab4og-1; Mon, 29 Nov 2021 05:19:59 -0500
-X-MC-Unique: Lc5EhORMMfagTkSimab4og-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9340E343CB;
-        Mon, 29 Nov 2021 10:19:58 +0000 (UTC)
-Received: from localhost (unknown [10.39.195.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 69EF960C13;
-        Mon, 29 Nov 2021 10:19:52 +0000 (UTC)
-Date:   Mon, 29 Nov 2021 10:19:51 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2] fuse: rename some files and clean up Makefile
-Message-ID: <YaSpRwMlMvcIIMZo@stefanha-x1.localdomain>
-References: <1638008002-3037-1-git-send-email-yangtiezhu@loongson.cn>
+        Mon, 29 Nov 2021 06:04:35 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
+        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
+        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
+        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
+        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
+Date:   Fri, 26 Nov 2021 13:03:26 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>
+Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
+In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Z2Ce6dDVMZ60RS5B"
-Content-Disposition: inline
-In-Reply-To: <1638008002-3037-1-git-send-email-yangtiezhu@loongson.cn>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >
+ > > Now overlayfs can only sync own dirty inodes during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file system.
+ > >
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/super.c | 14 +++++---------
+ > >  1 file changed, 5 insertions(+), 9 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index ccffcd96491d..213b795a6a86 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
+nt wait)
+ > >         /*
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > > -        *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > -        * called with wait =3D=3D 1.
+ > >          */
+ > > -       if (!wait)
+ > > -               return 0;
+ > > -
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > > -
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       if (wait)
+ > > +               wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
+ >=20
+ > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+ > with everything from  upper_sb =3D ... and a comment to explain that
+ > this is a variant of __sync_filesystem() where all the dirty inodes writ=
+e
+ > have already been started.
+ >=20
+=20
+I agree with you.=20
 
---Z2Ce6dDVMZ60RS5B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sat, Nov 27, 2021 at 06:13:22PM +0800, Tiezhu Yang wrote:
-> No need to generate virtio_fs.o first and then link to virtiofs.o, just
-> rename virtio_fs.c to virtiofs.c and remove "virtiofs-y := virtio_fs.o"
-> in Makefile, also update MAINTAINERS. Additionally, rename the private
-> header file fuse_i.h to fuse.h, like ext4.h in fs/ext4, xfs.h in fs/xfs
-> and f2fs.h in fs/f2fs.
-
-There are two separate changes in this patch (virtio_fs.c -> virtiofs.c
-and fuse_i.h -> fuse.h). A patch series with two patches would be easier
-to review and cleaner to backport.
-
-I'm happy with renaming virtio_fs.c to virtiofs.c:
-
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---Z2Ce6dDVMZ60RS5B
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmGkqUcACgkQnKSrs4Gr
-c8hcDwf9GKHQ6ydDAUWUl6kfFQdbJcYRM28PABP2g94fv4RMNpFyPVMxz6gMQ0pv
-eplzXRrlAfIeHUMmw/6LAG6VMygzxo5dApigaKd94inPQbGvdQziO3axf3vKyshe
-nk0GSOvwk0adN9LUvJOP4v/zaia6SrH/mTTNLCHRXyq/mnN5wPEImGHR1l4Sr+NM
-spQp+XoBrjQEuikwBL9wEg7ZP+Oyy64tC0kzXzQnq4XY+UdVNIyLZ+BvAxJGJxtR
-Fup9FzJNPiVRC7Y0Np12bQBa/wv+KAHH/g/GYOKpkHiCbczTCeDZUe+TcQNaJE0t
-f+3+ZCQAbio2j/rvXWtoy+WK33we5A==
-=GXwS
------END PGP SIGNATURE-----
-
---Z2Ce6dDVMZ60RS5B--
-
+Thanks,
+Chengguang
