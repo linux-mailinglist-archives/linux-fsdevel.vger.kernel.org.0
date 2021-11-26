@@ -2,97 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B735745E9AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 09:54:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B9A45EA34
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Nov 2021 10:19:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359726AbhKZI5O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Nov 2021 03:57:14 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:36026 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344599AbhKZIzL (ORCPT
+        id S236498AbhKZJWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Nov 2021 04:22:37 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17284 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229845AbhKZJUh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Nov 2021 03:55:11 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id CDB5B1FDFC;
-        Fri, 26 Nov 2021 08:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1637916717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GO/CEFsKscptchxk94rFkxTwkn3ZTcCkh+pO7jjo1Es=;
-        b=kSRqac9d9tMPzRCBw4x9ALwwMpGbHjlXjAGfMe5mW+WlqJ97igIdgpLIEeR0PRfqUdPVdb
-        wAkM9Q5W20L0ZeduQWiov0Zlnn2DF+MDqP/UpBRozpOoVs9Rklya8nIIMrVO0pX1YiMGcY
-        DLBDjFpgbupXwieKpxBvA4jklBYJcTA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1637916717;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GO/CEFsKscptchxk94rFkxTwkn3ZTcCkh+pO7jjo1Es=;
-        b=cKo39gTtmrK28q8KZrUwHcA4hSA6wcUHTimQZsFM5/B4jbsQcybhQ1n7AbbtgP3asLCPx0
-        zMFrHu7XbFwpSyAQ==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 49F6FA3B81;
-        Fri, 26 Nov 2021 08:51:57 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 38F7B1E11F3; Fri, 26 Nov 2021 09:51:54 +0100 (CET)
-Date:   Fri, 26 Nov 2021 09:51:54 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     miklos@szeredi.hu, jack@suse.cz, amir73il@gmail.com,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chengguang Xu <charliecgxu@tencent.com>
-Subject: Re: [RFC PATCH V6 1/7] ovl: setup overlayfs' private bdi
-Message-ID: <20211126085154.GA13004@quack2.suse.cz>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net>
- <20211122030038.1938875-2-cgxu519@mykernel.net>
+        Fri, 26 Nov 2021 04:20:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
+        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
+        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
+        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
+        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
+Date:   Fri, 26 Nov 2021 13:03:26 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Chengguang Xu" <charliecgxu@tencent.com>
+Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
+In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211122030038.1938875-2-cgxu519@mykernel.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 22-11-21 11:00:32, Chengguang Xu wrote:
-> From: Chengguang Xu <charliecgxu@tencent.com>
-> 
-> Setup overlayfs' private bdi so that we can collect
-> overlayfs' own dirty inodes.
-> 
-> Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > From: Chengguang Xu <charliecgxu@tencent.com>
+ > >
+ > > Now overlayfs can only sync own dirty inodes during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file system.
+ > >
+ > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
+ > > ---
+ > >  fs/overlayfs/super.c | 14 +++++---------
+ > >  1 file changed, 5 insertions(+), 9 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index ccffcd96491d..213b795a6a86 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
+nt wait)
+ > >         /*
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > > -        *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > -        * called with wait =3D=3D 1.
+ > >          */
+ > > -       if (!wait)
+ > > -               return 0;
+ > > -
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > > -
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       if (wait)
+ > > +               wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
+ >=20
+ > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
+ > with everything from  upper_sb =3D ... and a comment to explain that
+ > this is a variant of __sync_filesystem() where all the dirty inodes writ=
+e
+ > have already been started.
+ >=20
+=20
+I agree with you.=20
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/overlayfs/super.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 265181c110ae..18a12088a37b 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -1984,6 +1984,10 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  	if (!ofs)
->  		goto out;
->  
-> +	err = super_setup_bdi(sb);
-> +	if (err)
-> +		goto out_err;
-> +
->  	err = -ENOMEM;
->  	ofs->creator_cred = cred = prepare_creds();
->  	if (!cred)
-> -- 
-> 2.27.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Chengguang
