@@ -2,343 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1D11460131
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 20:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4926446015C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 21:06:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233980AbhK0TcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Nov 2021 14:32:08 -0500
-Received: from shark1.inbox.lv ([194.152.32.81]:54712 "EHLO shark1.inbox.lv"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235769AbhK0TaH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Nov 2021 14:30:07 -0500
-Received: from shark1.inbox.lv (localhost [127.0.0.1])
-        by shark1-out.inbox.lv (Postfix) with ESMTP id 8646E11180CA;
-        Sat, 27 Nov 2021 21:26:50 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.lv; s=30062014;
-        t=1638041210; bh=Aq1DfLEo2GD2s+hq/l0K0Ujr2gMIU22859FK5lGTsww=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=JZL4gQPW85w0kTge7K/kaLT/Iv1At7O2WSsUB25n786LcjxOni9RyrJYOVqAs/jPx
-         Suqe8ADrwh2GBqDP3g2IuapMIHLa4OqqUmx6Epfd9BVYFQV37xGtcPrL8NHmE/Ec03
-         Ul0soPxq9mH4rlVKox/BibQeyru1hKUfg5RxQ5xg=
-Received: from localhost (localhost [127.0.0.1])
-        by shark1-in.inbox.lv (Postfix) with ESMTP id 7D6FF11180AC;
-        Sat, 27 Nov 2021 21:26:50 +0200 (EET)
-Received: from shark1.inbox.lv ([127.0.0.1])
-        by localhost (shark1.inbox.lv [127.0.0.1]) (spamfilter, port 35)
-        with ESMTP id DWnWFzWPJ5xz; Sat, 27 Nov 2021 21:26:49 +0200 (EET)
-Received: from mail.inbox.lv (pop1 [127.0.0.1])
-        by shark1-in.inbox.lv (Postfix) with ESMTP id 8303F111808B;
-        Sat, 27 Nov 2021 21:26:49 +0200 (EET)
-Date:   Sun, 28 Nov 2021 04:26:35 +0900
-From:   Alexey Avramov <hakavlad@inbox.lv>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211128042635.543a2d04@mail.inbox.lv>
-In-Reply-To: <20211126165211.GL3366@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
-        <20211127011246.7a8ac7b8@mail.inbox.lv>
-        <20211126165211.GL3366@techsingularity.net>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S241765AbhK0UJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Nov 2021 15:09:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53250 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240308AbhK0UHp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Nov 2021 15:07:45 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C72C061574;
+        Sat, 27 Nov 2021 12:04:30 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9F1EAB80936;
+        Sat, 27 Nov 2021 20:04:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19505C53FBF;
+        Sat, 27 Nov 2021 20:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638043467;
+        bh=N9RYJ/wwzRw1gzQcyVy5cJKJbj9O4itGR0DWGBQCXKA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HV8m2tSEHnvsP6Krp+IXT7oIqUCUXe5/oR6NZwFrYwWD9AX1A6SDxCXe9+y7lqUN4
+         +DxIwd+dhbJSiUoz2A3j9BEZpK/q6c4oDw4n2JFev/8EQ08oEFpdqCKVVmAsXmcQbh
+         eAcWXxXKULZZJbWEEpqA+H+VeUEWDcsLz16b+fEIbJTEST7RJjdX++jZg8ALEVeWLY
+         tbqpG1sYnQ3BVt+3GSsgwRArICqnMbPFLkffoAm4iULS/FNI0kuXaHZ70OEHpVz6VU
+         CfjJAqP9q9ByQHfCISeu2/oZ8k4W8cry+3C1RlVFDjp+K+I3LmIxQvhNjw1AjFz51o
+         thIk7xgPOfLaA==
+Date:   Sat, 27 Nov 2021 12:04:26 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de, agruenba@redhat.com
+Subject: [GIT PULL] iomap: bug fixes and doc improvements for 5.16-rc2
+Message-ID: <20211127200426.GA8467@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: OK
-X-ESPOL: EZeEAiZdhQo1taLbN/0M6uTt2NezU0QivCHkzL439RAqu7LAr7wBfW6TGofmHgq/cWbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I will present the results of the new tests here.=20
+Hi Linus,
 
-TLDR;
-=3D=3D=3D=3D=3D
-No one Mel's patch doesn't prevent stalls in my tests.
+Please pull this branch containing a single iomap bug fix and a cleanup
+for 5.16-rc2.  The bug fix changes how iomap deals with reading from an
+inline data region -- whereas the current code (incorrectly) lets the
+iomap read iter try for more bytes after reading the inline region
+(which zeroes the rest of the page!) and hopes the next iteration
+terminates, we surveyed the inlinedata implementations and realized that
+all inlinedata implementations also require that the inlinedata region
+end at EOF, so we can simply terminate the read.
 
-Test case:
-Running firefox with youtube tab (basic desktop workload) and starting
-$ for i in {1..10}; do tail /dev/zero; done
--- 1. with noswap and 2. with SwapTotal > MemTotal and swappiness=3D0.
+The second patch documents these assumptions in the code so that they're
+not subtle implications anymore, and cleans up some of the grosser parts
+of that function.
 
-I will log PSI metrics using latest psi2log (it's part of nohang [1]
-package, src: [2]) and log some meminfo metrics using mem2log [3].
+The branch merges cleanly against upstream as of a few minutes ago.
+Please let me know if anything else strange happens during the merge
+process.
 
-psi2log cmd:
-$ psi2log -m 2 -i 1 -l /tmpfs/psi
+--D
 
-mem2log cmd:
-$ mem2log -i 1 -l /tmpfs/mem
+The following changes since commit 136057256686de39cc3a07c2e39ef6bc43003ff6:
 
-The OS is Debian 9 x86_64 on HDD with ext4+LUKS, MemTotal: 11.5 GiB.
+  Linux 5.16-rc2 (2021-11-21 13:47:39 -0800)
 
-Repo with logs:
-https://github.com/hakavlad/cache-tests/tree/main/516-reclaim-throttle
+are available in the Git repository at:
 
-5.15
-=3D=3D=3D=3D
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.16-fixes-1
 
-- With noswap, psi2log summary:
+for you to fetch changes up to 5ad448ce2976f829d95dcae5e6e91f6686b0e4de:
 
-2021-11-27 20:51:14,018: Stall times for the last 141.6s:
-2021-11-27 20:51:14,018: -----------
-2021-11-27 20:51:14,018: some cpu     1.3s, avg 0.9%
-2021-11-27 20:51:14,018: -----------
-2021-11-27 20:51:14,018: some io      99.1s, avg 70.0%
-2021-11-27 20:51:14,018: full io      93.4s, avg 66.0%
-2021-11-27 20:51:14,018: -----------
-2021-11-27 20:51:14,019: some memory  4.3s, avg 3.1%
-2021-11-27 20:51:14,019: full memory  4.2s, avg 3.0%
+  iomap: iomap_read_inline_data cleanup (2021-11-24 10:15:47 -0800)
 
--- average full memory stall is 0.4s per one `tail /dev/zero`.
+----------------------------------------------------------------
+Fixes for 5.16-rc2:
+ - Fix an accounting problem where unaligned inline data reads can run
+   off the end of the read iomap iterator.  iomap has historically
+   required that inline data mappings only exist at the end of a file,
+   though this wasn't documented anywhere.
+ - Document iomap_read_inline_data and change its return type to be
+   appropriate for the information that it's actually returning.
 
-full psi2log log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/515/noswap/psi
+----------------------------------------------------------------
+Andreas Gruenbacher (2):
+      iomap: Fix inline extent handling in iomap_readpage
+      iomap: iomap_read_inline_data cleanup
 
-full mem2log log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/515/noswap/mem
-
-- With swappiness=3D0 and SwapTotal > 0:
-
-2021-11-27 20:57:30,217: Stall times for the last 141.6s:
-2021-11-27 20:57:30,217: -----------
-2021-11-27 20:57:30,217: some cpu     1.2s, avg 0.8%
-2021-11-27 20:57:30,217: -----------
-2021-11-27 20:57:30,217: some io      100.7s, avg 71.1%
-2021-11-27 20:57:30,218: full io      94.8s, avg 67.0%
-2021-11-27 20:57:30,218: -----------
-2021-11-27 20:57:30,218: some memory  3.9s, avg 2.8%
-2021-11-27 20:57:30,218: full memory  3.9s, avg 2.7%
-
--- 0.4s memory stall per one `tail /dev/zero`.
-
-full psi2log log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/515/swappiness0/psi
-
-full mem2log log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/515/swappiness0/mem
-
-
-5.16-rc2 vanilla
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-- with noswap
-
-psi2log summary:
-
-2021-11-27 21:45:09,307: Stall times for the last 1086.5s:
-2021-11-27 21:45:09,307: -----------
-2021-11-27 21:45:09,307: some cpu     4.2s, avg 0.4%
-2021-11-27 21:45:09,307: -----------
-2021-11-27 21:45:09,307: some io      337.6s, avg 31.1%
-2021-11-27 21:45:09,307: full io      325.2s, avg 29.9%
-2021-11-27 21:45:09,307: -----------
-2021-11-27 21:45:09,307: some memory  888.7s, avg 81.8%
-2021-11-27 21:45:09,307: full memory  886.2s, avg 81.6%
-
-average full memory stall is 87s per one `tail /dev/zero`.
-
-full psi2log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/vanilla/noswap/psi
-
-full mem2log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/vanilla/noswap/mem
-
-- And even worst with swappiness=3D0:
-
-2021-11-27 22:33:19,207: Stall times for the last 2677.7s:
-2021-11-27 22:33:19,208: -----------
-2021-11-27 22:33:19,208: some cpu     14.0s, avg 0.5%
-2021-11-27 22:33:19,208: -----------
-2021-11-27 22:33:19,208: some io      306.7s, avg 11.5%
-2021-11-27 22:33:19,208: full io      292.4s, avg 10.9%
-2021-11-27 22:33:19,208: -----------
-2021-11-27 22:33:19,208: some memory  2504.8s, avg 93.5%
-2021-11-27 22:33:19,209: full memory  2498.2s, avg 93.3%
-
-What a horror!
-
-In dmesg: a lot of
-[] Purging GPU memory, 0 pages freed, 0 pages still pinned, 2112 pages left=
- available.
-(and dying journald)
-
-psi2log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/vanilla/swappiness0/psi
-
-mem2log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/vanilla/swappiness0/mem
-
-dmesg:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/vanilla/dmesg
-
-5.16-rc2 and 1st Mel's patch [4]
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-
-- with noswap
-
-Summary:
-
-2021-11-27 23:28:23,707: Stall times for the last 1035.1s:
-2021-11-27 23:28:23,707: -----------
-2021-11-27 23:28:23,707: some cpu     5.6s, avg 0.5%
-2021-11-27 23:28:23,708: -----------
-2021-11-27 23:28:23,708: some io      336.5s, avg 32.5%
-2021-11-27 23:28:23,708: full io      322.9s, avg 31.2%
-2021-11-27 23:28:23,708: -----------
-2021-11-27 23:28:23,708: some memory  851.1s, avg 82.2%
-2021-11-27 23:28:23,708: full memory  848.3s, avg 82.0%
-
-full psi2log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch1/noswap/psi
-
-mem2log log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch1/noswap/mem
-
-- with swappiness=3D0
-
-Summary:
-
-2021-11-27 23:50:25,722: Stall times for the last 1076.9s:
-2021-11-27 23:50:25,722: -----------
-2021-11-27 23:50:25,722: some cpu     12.2s, avg 1.1%
-2021-11-27 23:50:25,722: -----------
-2021-11-27 23:50:25,723: some io      232.1s, avg 21.6%
-2021-11-27 23:50:25,723: full io      218.5s, avg 20.3%
-2021-11-27 23:50:25,723: -----------
-2021-11-27 23:50:25,723: some memory  957.5s, avg 88.9%
-2021-11-27 23:50:25,723: full memory  951.2s, avg 88.3%
-
-It's better than vanilla.
-
-5.16-rc2 and 2nd Mel's patch [5]
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-
-- with noswap
-
-Summary:
-
-2021-11-28 00:29:38,558: Stall times for the last 598.7s:
-2021-11-28 00:29:38,558: -----------
-2021-11-28 00:29:38,558: some cpu     5.2s, avg 0.9%
-2021-11-28 00:29:38,558: -----------
-2021-11-28 00:29:38,559: some io      235.0s, avg 39.3%
-2021-11-28 00:29:38,559: full io      220.2s, avg 36.8%
-2021-11-28 00:29:38,559: -----------
-2021-11-28 00:29:38,559: some memory  439.0s, avg 73.3%
-2021-11-28 00:29:38,559: full memory  437.5s, avg 73.1%
-
-It's significant improvement, but far from the expected result.
-
-mem:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch2/noswap/mem
-
-psi:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch2/noswap/psi
-
-In some cases the stall was quite short.
-
-- with swappiness=3D0
-
-Summary:
-
-2021-11-28 00:53:41,659: Stall times for the last 1239.0s:
-2021-11-28 00:53:41,659: -----------
-2021-11-28 00:53:41,660: some cpu     9.4s, avg 0.8%
-2021-11-28 00:53:41,660: -----------
-2021-11-28 00:53:41,660: some io      206.5s, avg 16.7%
-2021-11-28 00:53:41,660: full io      195.0s, avg 15.7%
-2021-11-28 00:53:41,660: -----------
-2021-11-28 00:53:41,660: some memory  1113.0s, avg 89.8%
-2021-11-28 00:53:41,661: full memory  1107.1s, avg 89.3%
-
-mem:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch2/swappiness0/mem
-
-psi:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch2/swappiness0/psi
-
-
-5.16-rc2 and 3rd Mel's patch [6] on top of 2nd
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-- with noswap
-
-Summary:
-
-2021-11-28 01:35:26,077: Stall times for the last 949.4s:
-2021-11-28 01:35:26,077: -----------
-2021-11-28 01:35:26,078: some cpu     5.4s, avg 0.6%
-2021-11-28 01:35:26,078: -----------
-2021-11-28 01:35:26,078: some io      269.0s, avg 28.3%
-2021-11-28 01:35:26,078: full io      259.4s, avg 27.3%
-2021-11-28 01:35:26,078: -----------
-2021-11-28 01:35:26,079: some memory  759.9s, avg 80.0%
-2021-11-28 01:35:26,079: full memory  757.5s, avg 79.8%
-
-mem:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch3/noswap/mem
-
-psi:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch3/noswap/psi
-
-- with swappiness=3D0
-
-Summary:
-
-2021-11-28 01:59:40,253: Stall times for the last 1127.8s:
-2021-11-28 01:59:40,253: -----------
-2021-11-28 01:59:40,253: some cpu     6.8s, avg 0.6%
-2021-11-28 01:59:40,253: -----------
-2021-11-28 01:59:40,253: some io      228.3s, avg 20.2%
-2021-11-28 01:59:40,253: full io      218.7s, avg 19.4%
-2021-11-28 01:59:40,253: -----------
-2021-11-28 01:59:40,253: some memory  987.4s, avg 87.6%
-2021-11-28 01:59:40,253: full memory  982.3s, avg 87.1%
-
-mem log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch3/swappiness0/mem
-
-psi log:
-https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
-ottle/516-rc2/patch3/swappiness0/psi
-
-=C2=AF\_(=E3=83=84)_/=C2=AF
-
-Should I test anything else?
-
-[1] https://github.com/hakavlad/nohang
-[2] https://raw.githubusercontent.com/hakavlad/nohang/master/src/psi2log
-[3] https://github.com/hakavlad/mem2log
-[4] https://lore.kernel.org/lkml/20211124115007.GG3366@techsingularity.net/
-[5] https://lore.kernel.org/lkml/20211124143303.GH3366@techsingularity.net/
-[6] https://lore.kernel.org/lkml/20211126162416.GK3366@techsingularity.net/
+ fs/iomap/buffered-io.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
