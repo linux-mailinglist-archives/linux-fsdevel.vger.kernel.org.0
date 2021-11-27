@@ -2,153 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B9FD645FCE7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 06:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA7AD45FCFA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 06:58:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235963AbhK0FlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Nov 2021 00:41:22 -0500
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17229 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230347AbhK0FjW (ORCPT
+        id S1349543AbhK0GBK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Nov 2021 01:01:10 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:35134 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S242400AbhK0F7G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Nov 2021 00:39:22 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1637932178; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=YCD9Qy/t2w3SG/dzfftvb30u8EtAqWFB0/v7Gz5mdsDG1lqyu9jplrgieI983y96ACu3TkHCX8b01GKHM55T/OU6FAQ8dcNYRTmnarjSbxT9g2a5aVINpvv7DC7wRJoXwqz59IREFqMDrvFpKNhVagDKOIiykKK/0ZcWsa3ukFE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1637932178; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=DKINIDnMGkMKeLcTBYO3BxCbPU2T+QmP00nUmcd3ZJM=; 
-        b=Er6e0/lkmSRSDyV226mD5NFNTE/ZyV1j6Sg4apZ8oYShb5o7o/EuMxFx6NPd3wIaEr3a34zyjqlEa5amf7z0Elcsdj/6FjwkhpNuytXuHv6z29aHOZgioU8SOVfHCs4LkJrbOdseCedcLEQLiSxbsKHOHOML12KgAWoPIAlxFoU=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637932178;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=DKINIDnMGkMKeLcTBYO3BxCbPU2T+QmP00nUmcd3ZJM=;
-        b=TSAddY81PkFDLj1aC2Geq5A7DpzYXqjiqX2cd1JiU6+p8vo+ip6IQL0AJwqYzL8q
-        SL/EUFY7eXLVgpH6U+sChP4Mp9AvTMG1SmkiGP7ZB/e4e59TCqEV3ypRXpjFSaUYX4Q
-        jlj9W1EHKYPABmA1E5luDrb6We20clxMVRqlY6V0=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 163793217656496.81082384691524; Fri, 26 Nov 2021 21:09:36 +0800 (CST)
-Date:   Fri, 26 Nov 2021 21:09:36 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Jan Kara" <jack@suse.cz>
-Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
-        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Chengguang Xu" <charliecgxu@tencent.com>,
-        "ronyjin" <ronyjin@tencent.com>
-Message-ID: <17d5c5d9498.134e725b210976.7805957202314611987@mykernel.net>
-In-Reply-To: <20211126091430.GC13004@quack2.suse.cz>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net>
- <20211122030038.1938875-4-cgxu519@mykernel.net> <20211126091430.GC13004@quack2.suse.cz>
-Subject: Re: [RFC PATCH V6 3/7] ovl: implement overlayfs' own ->write_inode
- operation
+        Sat, 27 Nov 2021 00:59:06 -0500
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.1.2/8.16.1.2) with SMTP id 1AR2wlSZ014384
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 21:55:52 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=7exrXabu7jtcFanhxzMKj7zSvkKgzhhYqPs5zQY0yak=;
+ b=ShZsDlMFwnlpso2fRM9AbKyd0UnjScMqOMB/VsJLmNrwSmXe6PhppaPpynOIUaPRGQS1
+ mnrVjs4X6PVk956s0U9vKDMPNhYbl3SYpuPyTLif9jDbG9z30FzCps3hUHUiablreeW0
+ NiS3kxzpM5hPGme3bE7T26uYKNDqMVfkXtY= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net with ESMTP id 3ckcc48frs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 21:55:52 -0800
+Received: from intmgw001.37.frc1.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Fri, 26 Nov 2021 21:55:51 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 4A9F16F661A2; Fri, 26 Nov 2021 21:55:41 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>
+Subject: [PATCH v4 0/3] io_uring: add getdents64 support
+Date:   Fri, 26 Nov 2021 21:55:31 -0800
+Message-ID: <20211127055535.2976876-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-FB-Source: Intern
+X-Proofpoint-GUID: jH683Q9TYBGI4HhkhouDbgcguVJ__H73
+X-Proofpoint-ORIG-GUID: jH683Q9TYBGI4HhkhouDbgcguVJ__H73
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-27_02,2021-11-25_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015 mlxscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=661
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111270031
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-11-26 17:14:30 Jan Kara <=
-jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > On Mon 22-11-21 11:00:34, Chengguang Xu wrote:
- > > From: Chengguang Xu <charliecgxu@tencent.com>
- > >=20
- > > Sync dirty data and meta of upper inode in overlayfs' ->write_inode()
- > > and redirty overlayfs' inode.
- > >=20
- > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
- >=20
- > Looks good. I'm still not 100% convinced keeping inodes dirty all the ti=
-me
- > will not fire back in excessive writeback activity (e.g. flush worker wi=
-ll
- > traverse the list of all dirty inodes every 30 seconds and try to write
- > them) but I guess we can start with this and if people complain, dirtine=
-ss
- > handling can be improved.=20
+This series adds support for getdents64 in liburing. The intent is to
+provide a more complete I/O interface for io_uring.
 
-Hi Jan,
+Patch 1: fs: split off do_iterate_dir from iterate_dir function
+  This splits of the function do_iterate_dir() from the iterate_dir()
+  function and adds a new parameter. The new parameter allows the
+  caller to specify if the position is the file position or the
+  position stored in the buffer context.
 
-Thanks for the review and suggestion.
+  The function iterate_dir() calls do_iterate_dir().
+
+Patch 2: fs: split off vfs_getdents function from getdents64 system call
+  This splits of the iterate_dir part of the syscall in its own
+  dedicated function. This allows to call the function directly from
+  liburing.
+
+Patch 3: io_uring: add support for getdents64
+  Adds the functions to io_uring to support getdents64.
+
+There is also a patch series for the changes to liburing. This includes
+a new test. The patch series is called "liburing: add getdents support."
+
+The following tests have been performed:
+- new liburing getdents test program has been run
+- xfstests have been run
+- both tests have been repeated with the kernel memory leak checker
+  and no leaks have been reported.
+
+Signed-off-by: Stefan Roesch <shr@fb.com>
+---
+V4: - silence compiler warnings
+
+V3: - add do_iterate_dir() function to Patch 1
+    - make iterate_dir() function call do_iterate_dir()
+      This has the advantage that the function signature of iterate_dir
+      does not change
+
+V2: Updated the iterate_dir calls in fs/ksmbd, fs/ecryptfs and arch/alpha=
+ with
+    the additional parameter.
 
 
-Thanks,
-Chengguang
+Stefan Roesch (3):
+  fs: split off do_iterate_dir from iterate_dir function
+  fs: split off vfs_getdents function of getdents64 syscall
+  io_uring: add support for getdents64
+
+ fs/internal.h                 |  8 +++++
+ fs/io_uring.c                 | 52 +++++++++++++++++++++++++++++
+ fs/readdir.c                  | 62 ++++++++++++++++++++++++++++-------
+ include/uapi/linux/io_uring.h |  1 +
+ 4 files changed, 111 insertions(+), 12 deletions(-)
 
 
+base-commit: 4d162e24e9979dcb3d7825229982c172ca4bde54
+--=20
+2.30.2
 
- > So feel free to add:
- >=20
- > Reviewed-by: Jan Kara <jack@suse.cz>
- >=20
- >                                 Honza
- >=20
- > > ---
- > >  fs/overlayfs/super.c | 21 +++++++++++++++++++++
- > >  1 file changed, 21 insertions(+)
- > >=20
- > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
- > > index 18a12088a37b..12acf0ec7395 100644
- > > --- a/fs/overlayfs/super.c
- > > +++ b/fs/overlayfs/super.c
- > > @@ -15,6 +15,7 @@
- > >  #include <linux/seq_file.h>
- > >  #include <linux/posix_acl_xattr.h>
- > >  #include <linux/exportfs.h>
- > > +#include <linux/writeback.h>
- > >  #include "overlayfs.h"
- > > =20
- > >  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
- > > @@ -406,12 +407,32 @@ static int ovl_remount(struct super_block *sb, i=
-nt *flags, char *data)
- > >      return ret;
- > >  }
- > > =20
- > > +static int ovl_write_inode(struct inode *inode,
- > > +               struct writeback_control *wbc)
- > > +{
- > > +    struct ovl_fs *ofs =3D inode->i_sb->s_fs_info;
- > > +    struct inode *upper_inode =3D ovl_inode_upper(inode);
- > > +    int ret =3D 0;
- > > +
- > > +    if (!upper_inode)
- > > +        return 0;
- > > +
- > > +    if (!ovl_should_sync(ofs))
- > > +        return 0;
- > > +
- > > +    ret =3D write_inode_now(upper_inode, wbc->sync_mode =3D=3D WB_SYN=
-C_ALL);
- > > +    mark_inode_dirty(inode);
- > > +
- > > +    return ret;
- > > +}
- > > +
- > >  static const struct super_operations ovl_super_operations =3D {
- > >      .alloc_inode    =3D ovl_alloc_inode,
- > >      .free_inode    =3D ovl_free_inode,
- > >      .destroy_inode    =3D ovl_destroy_inode,
- > >      .drop_inode    =3D generic_delete_inode,
- > >      .put_super    =3D ovl_put_super,
- > > +    .write_inode    =3D ovl_write_inode,
- > >      .sync_fs    =3D ovl_sync_fs,
- > >      .statfs        =3D ovl_statfs,
- > >      .show_options    =3D ovl_show_options,
- > > --=20
- > > 2.27.0
- > >=20
- > >=20
- > --=20
- > Jan Kara <jack@suse.com>
- > SUSE Labs, CR
- >=20
