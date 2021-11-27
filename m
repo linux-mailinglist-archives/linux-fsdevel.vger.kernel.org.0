@@ -2,242 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32CD94600D8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 19:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D11460131
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 20:28:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355997AbhK0SLO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Nov 2021 13:11:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56713 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239935AbhK0SJK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Nov 2021 13:09:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638036355;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+BwIW85KhvXySZsPUP6FJMZbiOq5atqcsMhwNjrDCOQ=;
-        b=LuD6O5tq9NSwZrAYJPeJnOcKle1toVB8LMBTGbYIWyLSLCCs18Ly9yfDIyeBuSfMKDO28+
-        ODGbIWymv6zHDe5XWLK0N8AET1D8ygCzumG8WwuXibz6Rtx0VNHKxJasJNY9Ytg+GEM83f
-        PaxMebsj/qpMFhYQ197HUYgnmi2R36E=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-500-1ZquPiviMGCt_TrYHm1NjQ-1; Sat, 27 Nov 2021 13:05:54 -0500
-X-MC-Unique: 1ZquPiviMGCt_TrYHm1NjQ-1
-Received: by mail-wm1-f72.google.com with SMTP id l6-20020a05600c4f0600b0033321934a39so7346175wmq.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Nov 2021 10:05:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+BwIW85KhvXySZsPUP6FJMZbiOq5atqcsMhwNjrDCOQ=;
-        b=c2nQqZBrP6kFqvrYJ0s/x5q2jCB+NY4/9AWBokzrUMDKREahgUyNoewXsZzIexhjwg
-         smSdogDjvv2GHz9HH2T7liQMdLQLJyGMZ1GVb0oNlawrTVN0F8ztz2n6AQBHoUiQ2j6T
-         cxBZPuqflA5St7M/3GyrOnKpIKveNTdeqiq3s23ZeE7zgDWCq8frYJWtaa0QD2iYBleg
-         YhzRFcoN3fbpkLlkz0kZfijsRg+uz7G5NLJsLe8tBPgmN/N4PbM0AhJ0hn2rWtrcncZt
-         Tg21Ddfrz6774/c3eMR2jwtogSI4JkmtVAAZE9uw9ckK/eKRBZ4JuEtI/EB7sdjBiJOn
-         kPYQ==
-X-Gm-Message-State: AOAM532jkXLoG/jxZCYmu29dbbemBbgkLPU0f++CinJ1DAw3tszWYSFb
-        EuEheQi+7BDTWa9ARr6X+IJDdZHhu2vtXLYX/OMXltw+QY5NfPR7zbvUjjC4r8i+tC/i6Ks7iKj
-        qMQKp+HsMt9HCGWpDWTskOl/SrgAM82SiT32DtRktOQ==
-X-Received: by 2002:a1c:f005:: with SMTP id a5mr25342574wmb.19.1638036352651;
-        Sat, 27 Nov 2021 10:05:52 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwb4kGFI4QmQ7+Cdh6OUi7N8oAx3K/VJeig9Qm7BzUKFdOwNTlZ64ftwSlmxskh3nck5MM6jmuV5H04VfdiGME=
-X-Received: by 2002:a1c:f005:: with SMTP id a5mr25342540wmb.19.1638036352374;
- Sat, 27 Nov 2021 10:05:52 -0800 (PST)
+        id S233980AbhK0TcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Nov 2021 14:32:08 -0500
+Received: from shark1.inbox.lv ([194.152.32.81]:54712 "EHLO shark1.inbox.lv"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235769AbhK0TaH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Nov 2021 14:30:07 -0500
+Received: from shark1.inbox.lv (localhost [127.0.0.1])
+        by shark1-out.inbox.lv (Postfix) with ESMTP id 8646E11180CA;
+        Sat, 27 Nov 2021 21:26:50 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.lv; s=30062014;
+        t=1638041210; bh=Aq1DfLEo2GD2s+hq/l0K0Ujr2gMIU22859FK5lGTsww=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=JZL4gQPW85w0kTge7K/kaLT/Iv1At7O2WSsUB25n786LcjxOni9RyrJYOVqAs/jPx
+         Suqe8ADrwh2GBqDP3g2IuapMIHLa4OqqUmx6Epfd9BVYFQV37xGtcPrL8NHmE/Ec03
+         Ul0soPxq9mH4rlVKox/BibQeyru1hKUfg5RxQ5xg=
+Received: from localhost (localhost [127.0.0.1])
+        by shark1-in.inbox.lv (Postfix) with ESMTP id 7D6FF11180AC;
+        Sat, 27 Nov 2021 21:26:50 +0200 (EET)
+Received: from shark1.inbox.lv ([127.0.0.1])
+        by localhost (shark1.inbox.lv [127.0.0.1]) (spamfilter, port 35)
+        with ESMTP id DWnWFzWPJ5xz; Sat, 27 Nov 2021 21:26:49 +0200 (EET)
+Received: from mail.inbox.lv (pop1 [127.0.0.1])
+        by shark1-in.inbox.lv (Postfix) with ESMTP id 8303F111808B;
+        Sat, 27 Nov 2021 21:26:49 +0200 (EET)
+Date:   Sun, 28 Nov 2021 04:26:35 +0900
+From:   Alexey Avramov <hakavlad@inbox.lv>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+Message-ID: <20211128042635.543a2d04@mail.inbox.lv>
+In-Reply-To: <20211126165211.GL3366@techsingularity.net>
+References: <20211125151853.8540-1-mgorman@techsingularity.net>
+        <20211127011246.7a8ac7b8@mail.inbox.lv>
+        <20211126165211.GL3366@techsingularity.net>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <CAHc6FU53gdXR4VjSQJUtUigVkgDY6yfRkNBYuBj4sv3eT=MBSQ@mail.gmail.com>
- <YaAROdPCqNzSKCjh@arm.com> <20211124192024.2408218-1-catalin.marinas@arm.com>
- <20211124192024.2408218-4-catalin.marinas@arm.com> <YZ6arlsi2L3LVbFO@casper.infradead.org>
- <YZ6idVy3zqQC4atv@arm.com> <CAHc6FU4-P9sVexcNt5CDQxROtMAo=kH8hEu==AAhZ_+Zv53=Ag@mail.gmail.com>
- <20211127123958.588350-1-agruenba@redhat.com> <YaJM4n31gDeVzUGA@arm.com>
-In-Reply-To: <YaJM4n31gDeVzUGA@arm.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Sat, 27 Nov 2021 19:05:39 +0100
-Message-ID: <CAHc6FU7BSL58GVkOh=nsNQczRKG3P+Ty044zs7PjKPik4vzz=Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
- with sub-page faults
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: OK
+X-ESPOL: EZeEAiZdhQo1taLbN/0M6uTt2NezU0QivCHkzL439RAqu7LAr7wBfW6TGofmHgq/cWbD
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 27, 2021 at 4:21 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> On Sat, Nov 27, 2021 at 01:39:58PM +0100, Andreas Gruenbacher wrote:
-> > On Sat, Nov 27, 2021 at 4:52 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
-> > > On Sat, Nov 27, 2021 at 12:06 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > > > If we know that the arch copy_to_user() has an error of say maximum 16
-> > > > bytes (or 15 rather on arm64), we can instead get fault_in_writeable()
-> > > > to probe the first 16 bytes rather than 1.
-> > >
-> > > That isn't going to help one bit: [raw_]copy_to_user() is allowed to
-> > > copy as little or as much as it wants as long as it follows the rules
-> > > documented in include/linux/uaccess.h:
-> > >
-> > > [] If copying succeeds, the return value must be 0.  If some data cannot be
-> > > [] fetched, it is permitted to copy less than had been fetched; the only
-> > > [] hard requirement is that not storing anything at all (i.e. returning size)
-> > > [] should happen only when nothing could be copied.  In other words, you don't
-> > > [] have to squeeze as much as possible - it is allowed, but not necessary.
-> > >
-> > > When fault_in_writeable() tells us that an address range is accessible
-> > > in principle, that doesn't mean that copy_to_user() will allow us to
-> > > access it in arbitrary chunks. It's also not the case that
-> > > fault_in_writeable(addr, size) is always followed by
-> > > copy_to_user(addr, ..., size) for the exact same address range, not
-> > > even in this case.
-> > >
-> > > These alignment restrictions have nothing to do with page or sub-page faults.
-> > >
-> > > I'm also fairly sure that passing in an unaligned buffer will send
-> > > search_ioctl into an endless loop on architectures with copy_to_user()
-> > > alignment restrictions; there don't seem to be any buffer alignment
-> > > checks.
-> >
-> > Let me retract that ...
-> >
-> > The description in include/linux/uaccess.h leaves out permissible
-> > reasons for fetching/storing less than requested. Thinking about it, if
-> > the address range passed to one of the copy functions includes an
-> > address that faults, it kind of makes sense to allow the copy function
-> > to stop short instead of copying every last byte right up to the address
-> > that fails.
-> >
-> > If that's the only reason, then it would be great to have that included
-> > in the description.  And then we can indeed deal with the alignment
-> > effects in fault_in_writeable().
->
-> Ah, I started replying last night, sent it today without seeing your
-> follow-up.
->
-> > > > I attempted the above here and works ok:
-> > > >
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=devel/btrfs-live-lock-fix
-> > > >
-> > > > but too late to post it this evening, I'll do it in the next day or so
-> > > > as an alternative to this series.
-> >
-> > I've taken a quick look.  Under the assumption that alignment effects
-> > are tied to page / sub-page faults, I think we can really solve this
-> > generically as Willy has proposed.
->
-> I think Willy's proposal stopped at the page boundary, it should go
-> beyond.
->
-> > Maybe as shown below; no need for arch-specific code.
-> >
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index 2c51e9748a6a..a9b3d916b625 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -1658,6 +1658,8 @@ static long __get_user_pages_locked(struct mm_struct *mm, unsigned long start,
-> >  }
-> >  #endif /* !CONFIG_MMU */
-> >
-> > +#define SUBPAGE_FAULT_SIZE 16
-> > +
-> >  /**
-> >   * fault_in_writeable - fault in userspace address range for writing
-> >   * @uaddr: start of address range
-> > @@ -1673,8 +1675,19 @@ size_t fault_in_writeable(char __user *uaddr, size_t size)
-> >       if (unlikely(size == 0))
-> >               return 0;
-> >       if (!PAGE_ALIGNED(uaddr)) {
-> > +             if (SUBPAGE_FAULT_SIZE &&
-> > +                 !IS_ALIGNED((unsigned long)uaddr, SUBPAGE_FAULT_SIZE)) {
-> > +                     end = PTR_ALIGN(uaddr, SUBPAGE_FAULT_SIZE);
-> > +                     if (end - uaddr < size) {
-> > +                             if (unlikely(__put_user(0, uaddr) != 0))
-> > +                                     return size;
-> > +                             uaddr = end;
-> > +                             if (unlikely(!end))
-> > +                                     goto out;
-> > +                     }
-> > +             }
-> >               if (unlikely(__put_user(0, uaddr) != 0))
-> > -                     return size;
-> > +                     goto out;
-> >               uaddr = (char __user *)PAGE_ALIGN((unsigned long)uaddr);
-> >       }
-> >       end = (char __user *)PAGE_ALIGN((unsigned long)start + size);
->
-> That's similar, somehow, to the arch-specific probing in one of my
-> patches: [1]. We could do the above if we can guarantee that the maximum
-> error margin in copy_to_user() is smaller than SUBPAGE_FAULT_SIZE. For
-> arm64 copy_to_user(), it is fine, but for copy_from_user(), if we ever
-> need to handle fault_in_readable(), it isn't (on arm64 up to 64 bytes
-> even if aligned: reads of large blocks are done in 4 * 16 loads, and if
-> one of them fails e.g. because of the 16-byte sub-page fault, no write
-> is done, hence such larger than 16 delta).
->
-> If you want something in the generic fault_in_writeable(), we probably
-> need a loop over UACCESS_MAX_WRITE_ERROR in SUBPAGE_FAULT_SIZE
-> increments. But I thought I'd rather keep this in the arch-specific code.
+I will present the results of the new tests here.=20
 
-I see, that's even crazier than I'd thought. The looping / probing is
-still pretty generic, so I'd still consider putting it in the generic
-code.
+TLDR;
+=3D=3D=3D=3D=3D
+No one Mel's patch doesn't prevent stalls in my tests.
 
-We also still have fault_in_safe_writeable which is more difficult to
-fix, and fault_in_readable which we don't want to leave behind broken,
-either.
+Test case:
+Running firefox with youtube tab (basic desktop workload) and starting
+$ for i in {1..10}; do tail /dev/zero; done
+-- 1. with noswap and 2. with SwapTotal > MemTotal and swappiness=3D0.
 
-> Of course, the above fault_in_writeable() still needs the btrfs
-> search_ioctl() counterpart to change the probing on the actual fault
-> address or offset.
+I will log PSI metrics using latest psi2log (it's part of nohang [1]
+package, src: [2]) and log some meminfo metrics using mem2log [3].
 
-Yes, but that change is relatively simple and it eliminates the need
-for probing the entire buffer, so it's a good thing. Maybe you want to
-add this though:
+psi2log cmd:
+$ psi2log -m 2 -i 1 -l /tmpfs/psi
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2202,3 +2202,3 @@ static noinline int search_ioctl(struct inode *inode,
-        unsigned long sk_offset = 0;
--       char __user *fault_in_addr;
-+       char __user *fault_in_addr, *end;
+mem2log cmd:
+$ mem2log -i 1 -l /tmpfs/mem
 
-@@ -2230,6 +2230,6 @@ static noinline int search_ioctl(struct inode *inode,
-        fault_in_addr = ubuf;
-+       end = ubuf + *buf_size;
-        while (1) {
-                ret = -EFAULT;
--               if (fault_in_writeable(fault_in_addr,
--                                      *buf_size - (fault_in_addr - ubuf)))
-+               if (fault_in_writeable(fault_in_addr, end - fault_in_addr))
-                        break;
+The OS is Debian 9 x86_64 on HDD with ext4+LUKS, MemTotal: 11.5 GiB.
 
-> In the general case (uaccess error margin larger), I'm not entirely
-> convinced we can skip the check if PAGE_ALIGNED(uaddr).
+Repo with logs:
+https://github.com/hakavlad/cache-tests/tree/main/516-reclaim-throttle
 
-Yes, the loop can span multiple sub-page error domains, at least in
-the read case, so it needs to happen even for page-aligned addresses.
+5.15
+=3D=3D=3D=3D
 
-> I should probably get this logic through CBMC (or TLA+), I can't think it
-> through.
->
-> Thanks.
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/commit/?h=devel/btrfs-live-lock-fix&id=af7e96d9e9537d9f9cc014f388b7b2bb4a5bc343
->
-> --
-> Catalin
->
+- With noswap, psi2log summary:
 
-Thanks,
-Andreas
+2021-11-27 20:51:14,018: Stall times for the last 141.6s:
+2021-11-27 20:51:14,018: -----------
+2021-11-27 20:51:14,018: some cpu     1.3s, avg 0.9%
+2021-11-27 20:51:14,018: -----------
+2021-11-27 20:51:14,018: some io      99.1s, avg 70.0%
+2021-11-27 20:51:14,018: full io      93.4s, avg 66.0%
+2021-11-27 20:51:14,018: -----------
+2021-11-27 20:51:14,019: some memory  4.3s, avg 3.1%
+2021-11-27 20:51:14,019: full memory  4.2s, avg 3.0%
 
+-- average full memory stall is 0.4s per one `tail /dev/zero`.
+
+full psi2log log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/515/noswap/psi
+
+full mem2log log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/515/noswap/mem
+
+- With swappiness=3D0 and SwapTotal > 0:
+
+2021-11-27 20:57:30,217: Stall times for the last 141.6s:
+2021-11-27 20:57:30,217: -----------
+2021-11-27 20:57:30,217: some cpu     1.2s, avg 0.8%
+2021-11-27 20:57:30,217: -----------
+2021-11-27 20:57:30,217: some io      100.7s, avg 71.1%
+2021-11-27 20:57:30,218: full io      94.8s, avg 67.0%
+2021-11-27 20:57:30,218: -----------
+2021-11-27 20:57:30,218: some memory  3.9s, avg 2.8%
+2021-11-27 20:57:30,218: full memory  3.9s, avg 2.7%
+
+-- 0.4s memory stall per one `tail /dev/zero`.
+
+full psi2log log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/515/swappiness0/psi
+
+full mem2log log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/515/swappiness0/mem
+
+
+5.16-rc2 vanilla
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+- with noswap
+
+psi2log summary:
+
+2021-11-27 21:45:09,307: Stall times for the last 1086.5s:
+2021-11-27 21:45:09,307: -----------
+2021-11-27 21:45:09,307: some cpu     4.2s, avg 0.4%
+2021-11-27 21:45:09,307: -----------
+2021-11-27 21:45:09,307: some io      337.6s, avg 31.1%
+2021-11-27 21:45:09,307: full io      325.2s, avg 29.9%
+2021-11-27 21:45:09,307: -----------
+2021-11-27 21:45:09,307: some memory  888.7s, avg 81.8%
+2021-11-27 21:45:09,307: full memory  886.2s, avg 81.6%
+
+average full memory stall is 87s per one `tail /dev/zero`.
+
+full psi2log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/vanilla/noswap/psi
+
+full mem2log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/vanilla/noswap/mem
+
+- And even worst with swappiness=3D0:
+
+2021-11-27 22:33:19,207: Stall times for the last 2677.7s:
+2021-11-27 22:33:19,208: -----------
+2021-11-27 22:33:19,208: some cpu     14.0s, avg 0.5%
+2021-11-27 22:33:19,208: -----------
+2021-11-27 22:33:19,208: some io      306.7s, avg 11.5%
+2021-11-27 22:33:19,208: full io      292.4s, avg 10.9%
+2021-11-27 22:33:19,208: -----------
+2021-11-27 22:33:19,208: some memory  2504.8s, avg 93.5%
+2021-11-27 22:33:19,209: full memory  2498.2s, avg 93.3%
+
+What a horror!
+
+In dmesg: a lot of
+[] Purging GPU memory, 0 pages freed, 0 pages still pinned, 2112 pages left=
+ available.
+(and dying journald)
+
+psi2log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/vanilla/swappiness0/psi
+
+mem2log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/vanilla/swappiness0/mem
+
+dmesg:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/vanilla/dmesg
+
+5.16-rc2 and 1st Mel's patch [4]
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+
+- with noswap
+
+Summary:
+
+2021-11-27 23:28:23,707: Stall times for the last 1035.1s:
+2021-11-27 23:28:23,707: -----------
+2021-11-27 23:28:23,707: some cpu     5.6s, avg 0.5%
+2021-11-27 23:28:23,708: -----------
+2021-11-27 23:28:23,708: some io      336.5s, avg 32.5%
+2021-11-27 23:28:23,708: full io      322.9s, avg 31.2%
+2021-11-27 23:28:23,708: -----------
+2021-11-27 23:28:23,708: some memory  851.1s, avg 82.2%
+2021-11-27 23:28:23,708: full memory  848.3s, avg 82.0%
+
+full psi2log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch1/noswap/psi
+
+mem2log log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch1/noswap/mem
+
+- with swappiness=3D0
+
+Summary:
+
+2021-11-27 23:50:25,722: Stall times for the last 1076.9s:
+2021-11-27 23:50:25,722: -----------
+2021-11-27 23:50:25,722: some cpu     12.2s, avg 1.1%
+2021-11-27 23:50:25,722: -----------
+2021-11-27 23:50:25,723: some io      232.1s, avg 21.6%
+2021-11-27 23:50:25,723: full io      218.5s, avg 20.3%
+2021-11-27 23:50:25,723: -----------
+2021-11-27 23:50:25,723: some memory  957.5s, avg 88.9%
+2021-11-27 23:50:25,723: full memory  951.2s, avg 88.3%
+
+It's better than vanilla.
+
+5.16-rc2 and 2nd Mel's patch [5]
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+
+- with noswap
+
+Summary:
+
+2021-11-28 00:29:38,558: Stall times for the last 598.7s:
+2021-11-28 00:29:38,558: -----------
+2021-11-28 00:29:38,558: some cpu     5.2s, avg 0.9%
+2021-11-28 00:29:38,558: -----------
+2021-11-28 00:29:38,559: some io      235.0s, avg 39.3%
+2021-11-28 00:29:38,559: full io      220.2s, avg 36.8%
+2021-11-28 00:29:38,559: -----------
+2021-11-28 00:29:38,559: some memory  439.0s, avg 73.3%
+2021-11-28 00:29:38,559: full memory  437.5s, avg 73.1%
+
+It's significant improvement, but far from the expected result.
+
+mem:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch2/noswap/mem
+
+psi:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch2/noswap/psi
+
+In some cases the stall was quite short.
+
+- with swappiness=3D0
+
+Summary:
+
+2021-11-28 00:53:41,659: Stall times for the last 1239.0s:
+2021-11-28 00:53:41,659: -----------
+2021-11-28 00:53:41,660: some cpu     9.4s, avg 0.8%
+2021-11-28 00:53:41,660: -----------
+2021-11-28 00:53:41,660: some io      206.5s, avg 16.7%
+2021-11-28 00:53:41,660: full io      195.0s, avg 15.7%
+2021-11-28 00:53:41,660: -----------
+2021-11-28 00:53:41,660: some memory  1113.0s, avg 89.8%
+2021-11-28 00:53:41,661: full memory  1107.1s, avg 89.3%
+
+mem:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch2/swappiness0/mem
+
+psi:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch2/swappiness0/psi
+
+
+5.16-rc2 and 3rd Mel's patch [6] on top of 2nd
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+- with noswap
+
+Summary:
+
+2021-11-28 01:35:26,077: Stall times for the last 949.4s:
+2021-11-28 01:35:26,077: -----------
+2021-11-28 01:35:26,078: some cpu     5.4s, avg 0.6%
+2021-11-28 01:35:26,078: -----------
+2021-11-28 01:35:26,078: some io      269.0s, avg 28.3%
+2021-11-28 01:35:26,078: full io      259.4s, avg 27.3%
+2021-11-28 01:35:26,078: -----------
+2021-11-28 01:35:26,079: some memory  759.9s, avg 80.0%
+2021-11-28 01:35:26,079: full memory  757.5s, avg 79.8%
+
+mem:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch3/noswap/mem
+
+psi:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch3/noswap/psi
+
+- with swappiness=3D0
+
+Summary:
+
+2021-11-28 01:59:40,253: Stall times for the last 1127.8s:
+2021-11-28 01:59:40,253: -----------
+2021-11-28 01:59:40,253: some cpu     6.8s, avg 0.6%
+2021-11-28 01:59:40,253: -----------
+2021-11-28 01:59:40,253: some io      228.3s, avg 20.2%
+2021-11-28 01:59:40,253: full io      218.7s, avg 19.4%
+2021-11-28 01:59:40,253: -----------
+2021-11-28 01:59:40,253: some memory  987.4s, avg 87.6%
+2021-11-28 01:59:40,253: full memory  982.3s, avg 87.1%
+
+mem log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch3/swappiness0/mem
+
+psi log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-thr=
+ottle/516-rc2/patch3/swappiness0/psi
+
+=C2=AF\_(=E3=83=84)_/=C2=AF
+
+Should I test anything else?
+
+[1] https://github.com/hakavlad/nohang
+[2] https://raw.githubusercontent.com/hakavlad/nohang/master/src/psi2log
+[3] https://github.com/hakavlad/mem2log
+[4] https://lore.kernel.org/lkml/20211124115007.GG3366@techsingularity.net/
+[5] https://lore.kernel.org/lkml/20211124143303.GH3366@techsingularity.net/
+[6] https://lore.kernel.org/lkml/20211126162416.GK3366@techsingularity.net/
