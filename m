@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C075545FCFD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 06:58:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A8B545FCF5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Nov 2021 06:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349865AbhK0GBK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Nov 2021 01:01:10 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34974 "EHLO
+        id S1348492AbhK0GBF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Nov 2021 01:01:05 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:7676 "EHLO
         mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238036AbhK0F7G (ORCPT
+        by vger.kernel.org with ESMTP id S237031AbhK0F7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Nov 2021 00:59:06 -0500
+        Sat, 27 Nov 2021 00:59:03 -0500
 Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AR2xkka018917
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 21:55:52 -0800
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AR2xFLw018392
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 21:55:49 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=/u31pn93VuoRNh18SkC9coZW1dmaq15iiIMXz3oSgm0=;
- b=bGhCohzzLOor5q5ODjJzO46kXOi7d5wuu0DuHI8HA9EzjAAuZlydGncct4Lt0B3u0BTM
- luH3wIo6vY2X4hlfX2My9Q5MDdA9dUwAWwFseETaSpEjE6RBeKf3vYp9z5EPH+vkOlUy
- 43EJxoMPe7v6lN5APD5jkB3caF1DC57O/MY= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 3ckcc3rg0n-1
+ bh=ksBHQidfEShKnwe7+1AkUOhHNpo3hluOCDtYZipjTtQ=;
+ b=UXEEOtXZa0Mw42tQPu2iU0F7BNfHohIiRK9aDBiL6ALrGixvJW2aHkTLbI9Gn7g/YByr
+ VeqG6ht3v5PUAPITZOPJBJx5yzBeM8WpDVU41qu0PzSQ+tFoCfFgVg1twj5S1RXc2oCQ
+ LMWMPemtDQpw7jTHSvigNAuroahLPM5xCo8= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 3ckcc3rg0h-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 21:55:52 -0800
-Received: from intmgw001.37.frc1.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Nov 2021 21:55:48 -0800
+Received: from intmgw001.05.ash7.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Fri, 26 Nov 2021 21:55:51 -0800
+ 15.1.2308.20; Fri, 26 Nov 2021 21:55:46 -0800
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 4D8DA6F661A4; Fri, 26 Nov 2021 21:55:41 -0800 (PST)
+        id 51E896F661A6; Fri, 26 Nov 2021 21:55:41 -0800 (PST)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>
-Subject: [PATCH v4 1/3] fs: add parameter use_fpos to iterate_dir function
-Date:   Fri, 26 Nov 2021 21:55:32 -0800
-Message-ID: <20211127055535.2976876-2-shr@fb.com>
+Subject: [PATCH v4 1/3] fs: split off do_iterate_dir from iterate_dir function
+Date:   Fri, 26 Nov 2021 21:55:33 -0800
+Message-ID: <20211127055535.2976876-3-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211127055535.2976876-1-shr@fb.com>
 References: <20211127055535.2976876-1-shr@fb.com>
@@ -46,8 +46,8 @@ Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
 X-FB-Source: Intern
-X-Proofpoint-GUID: 8ALQ7D1C5N344vdjEEc07WvSJ-_kARQ_
-X-Proofpoint-ORIG-GUID: 8ALQ7D1C5N344vdjEEc07WvSJ-_kARQ_
+X-Proofpoint-GUID: jwltp1Ck6ZQwQH1QoL2Awev2o7jB1dCt
+X-Proofpoint-ORIG-GUID: jwltp1Ck6ZQwQH1QoL2Awev2o7jB1dCt
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
  definitions=2021-11-27_02,2021-11-25_02,2020-04-07_01
@@ -61,10 +61,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the use_fpos parameter to the iterate_dir function.
-If use_fpos is true it uses the file position in the file
-structure (existing behavior). If use_fpos is false, it uses
-the pos in the context structure.
+This splits of the function do_iterate_dir() from the iterate_dir()
+function and adds a new parameter. The new parameter allows the
+caller to specify if the position is the file position or the
+position stored in the buffer context.
+
+The function iterate_dir is calling the new function do_iterate_dir().
 
 This change is required to support getdents in io_uring.
 
