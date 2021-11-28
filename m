@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44684460597
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 11:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5A94605EB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 12:42:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237547AbhK1KGl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Nov 2021 05:06:41 -0500
-Received: from mout.gmx.net ([212.227.15.15]:58949 "EHLO mout.gmx.net"
+        id S245389AbhK1Lpf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Nov 2021 06:45:35 -0500
+Received: from mout.gmx.net ([212.227.15.18]:41949 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232449AbhK1KEl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Nov 2021 05:04:41 -0500
+        id S232090AbhK1Lnc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Nov 2021 06:43:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1638093661;
-        bh=W4OA5B8RsL5jolbKnXkXQOQbT/WRhFUAJHyD/Mmh6+Y=;
+        s=badeba3b8450; t=1638099593;
+        bh=U5vBJPo7borxDUYLvOOfeoJJZMpeXlH9wqwpUhA12Sg=;
         h=X-UI-Sender-Class:Subject:From:To:Cc:Date:In-Reply-To:References;
-        b=gRWs3SKCQYQSythd0Bxfs+HTWsC/yRadm+0U954++NJ/FIClT1/h+03L4OzyuTk6R
-         492cEd77vNcmzEA9tNF/gdF635CC8DyFEpP7SuzDxHZh4pFgsJPl0oPvDBpjaTbCiW
-         IOXAc0j88NcQXU9rCsD0UXzI1FNe9azjo8OL0obo=
+        b=HLyTw5WxYbk+fkhC8eui+sYzC9JSQ//YRgOVhCdiLQTG9H1hVtaEuLoDEQXuH+KJ1
+         zqgXOf1+KXD/DgT0jvic5OBPkLRZhWnEj0Nmdq1RXuYCpZyha2v7pg/5fAYPfXWAOt
+         b0/daOiIJX5C7oKttG75wsIuIZjtuqbukb5Y3zMU=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from homer.fritz.box ([185.221.150.210]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MMGN2-1n9M4Z2cuk-00JJ5X; Sun, 28
- Nov 2021 11:01:01 +0100
-Message-ID: <252cd5acd9bf6588ec87ce02884925c737b6a8b7.camel@gmx.de>
+Received: from homer.fritz.box ([185.221.150.210]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MVN6j-1n0Gys2EHX-00SNIL; Sun, 28
+ Nov 2021 12:39:53 +0100
+Message-ID: <941f378e1ea2b32cac0adee1e81637ab6d001f1e.camel@gmx.de>
 Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
  make progress
 From:   Mike Galbraith <efault@gmx.de>
@@ -36,103 +36,55 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux-MM <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>
-Date:   Sun, 28 Nov 2021 11:00:59 +0100
-In-Reply-To: <20211128042635.543a2d04@mail.inbox.lv>
+Date:   Sun, 28 Nov 2021 12:39:51 +0100
+In-Reply-To: <252cd5acd9bf6588ec87ce02884925c737b6a8b7.camel@gmx.de>
 References: <20211125151853.8540-1-mgorman@techsingularity.net>
          <20211127011246.7a8ac7b8@mail.inbox.lv>
          <20211126165211.GL3366@techsingularity.net>
          <20211128042635.543a2d04@mail.inbox.lv>
+         <252cd5acd9bf6588ec87ce02884925c737b6a8b7.camel@gmx.de>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.42.1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:79XMNOX2dcJkpKsjLkjp8P5yZeNxbCGiV8Yeqj4OBuyjhuFwfli
- 4pFpswaoJ8X9Twe7Y3bLBbDf0LozDMfPjWF0oqNGiO0BDQ7pvtE5aann4tUiZ6xilrLe7BX
- 4fmpsCrNtoX4c5PbuFxzItIkvEhP7Dz1B3jMqi1l3XmzMBbdLinh/x62HcobNMweegJSRJG
- AShfLkDfOUL1hdxpKv3xw==
+X-Provags-ID: V03:K1:gkJ6likBbom3JbAxnrzHJYF3PmTbT8ovSN1QHsR8IdkC+Eep2Sp
+ f34hU1l06wx3zlgxBefHCOMZHgZjBMdQFscuTcLF+bFls2DmcskTnECyYIUE3ZtrumTi6wJ
+ p/7upRKJjPhywLYQmsBZViGJei3fplcha8zCt27xHabG+NGs5LJHsHXPRYRFeILoYpRZq6p
+ OcsiMoIetx4dkzra0hBMQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0qdtCiJknZA=:C0TWX5EyVht6rFRoUlC0pV
- 4Y4n2ArxTop4Tq8C0GhzY+LPFH4kSAyQhH6Ol4ZEaDuHxg/UmWNDTu3zUh2EYwVoguitfPZIr
- vtdj01ESYckMYmvs8S9L/39zj7qxam48egIJfHPLsdN2+i+/iK0h9cjpdLHfMLMaS49F7Ckts
- jR4TcYGIci+QebhbXEFVLbdwDwQavD4R34DaUtTQToDp3IzwISLI6rmUUkHSOfZOFTcuavZaW
- prfSh5agChhA9eBwXKLGWKxmJP4x2jigkdlBTk8SE5gslDlwa54xlj6AMheR2m/ZLp6PeZTix
- NjaQKR0MFZzu513We2u4qg0iup2asTRxGdxRVWVkj5R0X8wHeb/7gDtcWr9qPOy2j5WUkSIXu
- 6GIIdt7hHVc+igBTS8gZT/7JK+mpy0zLmmbtObldTnYdnD9N3xjyMttKA+MRuuuwgBgdUtvGQ
- OW6B4jN9llsIIEiyT69IRp8aK02FaYuk1sPHfCKKgfUExVICv5wYp9kDZmMii0XLrFdi/dW+B
- vUaE2DAwVrIB1Iyx3jZDBxz1uF5wCVrqGb6egaYcvGk3BwTHac3RaRszgCoq0tml/Isq8Ko/5
- hb5pd6+X65+tbV88plCwL/IT9U133cCymwEzBkpYe71fqa5lvy8CmUOFuFK3P0Qnq85MFAN8Q
- /4vIzXJZCrK5klZdLX1iDXV7HzL9EhuG2i40XDvG4EkeP7fcCkjZV22RR4p2gMjlFoqr8P/EQ
- CgGh4DD2P9WN4FOfgP95L2wHivu9ekwDCmLxAh2VZcs1wI+Hy1VKa3zgwjgpnshdwX4R7wpzm
- Hi97YpkcRON9ed2JXGkVc01kL93KiW4vy+qlogcivz6eTZf0DSPWi+OSaWnfd4SVFZyZI3Sl4
- Ezd2hP9IPHK9THlJB2ZDo+rBKthlHRWGbCZAgdD6Monrz/Hg5nM0zxBRyEsMgNC4PYkApnqkz
- CxCNQP5TNABhNMhtOYqWCM/wYH2HYFSCZW+L6oKzT6SgP5U0zBnFf8Fx5SgQTlGiB5qQ1Z3O7
- PBX12jnFMfL6cX0GGwTVEAbqXjenhSUFyqwAZvc8F9l97Eq1kZGhFJqS6+h5bAbvIpbXe3+5A
- Uwjq0+2ClTX/gU=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:glpZMHVX8vs=:YCYA40Ri/MIKsfJCRM512B
+ uTmAyYlSt46EvWJyLYgYRb7IjIw3+FejpNDOacc4zrwHTwAYeBprK+rqSquy8krS88o7ZJqsE
+ xQdJyB+L/4tGhejK9c7ApiCxmxk8k/WO/suNOLKrPhfZDOWKjffrTlRodbmpGYjBbichhAx1f
+ dqfLVNYSAypRp/JXsRMQUv2ciU7TLaI2+POXXoGXHqfs5jGsFS3MtOvQX9D9fhwRqHAHOtvEo
+ FgX0H+ZqGt07IK5nYlPr+yp257SJqhQbhYVjhoDVsNQNMyN3plu9OZJaotLN0obzAgI8ceb/K
+ dla3XPR+Tyl2G+CDubJejYoBF0gWB/K9d8ikFQBAr9nRa/zPFyQouwAHpmESY4CkTk+KzBoeR
+ NEJCBv1jknXv8EbKjgxLQTOX3PpPMLRm2tyKT7RPdxwHpj71DkzcC1dQF2KuAqlItkvr6JQ6T
+ YJuNg0PC7pKmK+QptlB5vGnRjoMkGcaUA5lhKNLNrJH/5D5ZcJJMi0R1p7ATVzCmcr7rtS7BO
+ 228f4puhmk+pdvwT2/yeLS9wnRHRTV7ReSE/Peu9Fk9zqQDltQax2hpbI6Nde7LKW0WaCpYKQ
+ GYyBviUPj0+mgswd4/XHn3LUjFpGyjl5iPbfl0WH9MeVjNOWsaT/ajQhrzxTL24THZ2f4L9p1
+ G7QUuxAZDs8Jn16+l4ipnHgkypsyBb2/JIHutZsZ0D4T69pCYGx6hFDRqs5glX5cog7oq1YFH
+ 6FtF7FzfOXZSapKPNENnHWdf161+JHhbsNi24q3w/I0FS8aLGwSFTXTfHvL6az8iak7grvm/3
+ RrYQxuCt2yV402IGqVDahEhZNlChhi8QQmij9J9Xyi0Sq3aqHbTqXSE63PhKx+hYn+fN7C6ZL
+ /L8JVAgrLmV4OiVMlIWgoQc/soQvwrhDmDJpK9m5r31/V4IXclKg1shDgblJ2I9B8JslgCqB/
+ znfLGjCjdltQ7rxHQL6kzdi3vhoUuEZa+UdoxT4DRLeLiQt6TGM8EnwkzmAm9bIbChHaLpLXD
+ /b/xPt89be+E2iBGEJG+inmZmU2brz2jlW5V/0AZtcH8nEyHRRdByU5pU8X3BMcPgjeLaAK0h
+ 74bmdPonySht7A=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2021-11-28 at 04:26 +0900, Alexey Avramov wrote:
-> I will present the results of the new tests here.
+On Sun, 2021-11-28 at 11:00 +0100, Mike Galbraith wrote:
+> On Sun, 2021-11-28 at 04:26 +0900, Alexey Avramov wrote:
+> > I will present the results of the new tests here.
+> >
+> > TLDR;
+> > =3D=3D=3D=3D=3D
+> > No one Mel's patch doesn't prevent stalls in my tests.
 >
-> TLDR;
-> =3D=3D=3D=3D=3D
-> No one Mel's patch doesn't prevent stalls in my tests.
+> Seems there may be a problem with the THROTTLE_WRITEBACK bits..
 
-Seems there may be a problem with the THROTTLE_WRITEBACK bits..
+Disregard.  I backed hacklet out again, and one-liner that had ground
+my box to fine powder was harmless.  Hmm.
 
-> $ for i in {1..10}; do tail /dev/zero; done
-> -- 1. with noswap
-
-..because the bandaid below (made of 8cd7c588 shards) on top of Mel's
-last pulled that one-liner's very pointy fangs.
-
-=2D--
- mm/backing-dev.c |    5 +++++
- mm/vmscan.c      |    8 +++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
-=2D-- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -1055,3 +1055,8 @@ long congestion_wait(int sync, long time
- 	return ret;
- }
- EXPORT_SYMBOL(congestion_wait);
-+
-+int async_bdi_congested(void)
-+{
-+	return atomic_read(&nr_wb_congested[BLK_RW_ASYNC]) !=3D 0;
-+}
-=2D-- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1021,6 +1021,8 @@ static void handle_write_error(struct ad
- 	unlock_page(page);
- }
-
-+extern int async_bdi_congested(void);
-+
- void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason=
-)
- {
- 	wait_queue_head_t *wqh =3D &pgdat->reclaim_wait[reason];
-@@ -1048,6 +1050,10 @@ void reclaim_throttle(pg_data_t *pgdat,
- 	 */
- 	switch(reason) {
- 	case VMSCAN_THROTTLE_WRITEBACK:
-+		if (!async_bdi_congested()) {
-+			cond_resched();
-+			return;
-+		}
- 		timeout =3D HZ/10;
-
- 		if (atomic_inc_return(&pgdat->nr_writeback_throttled) =3D=3D 1) {
-@@ -1079,7 +1085,7 @@ void reclaim_throttle(pg_data_t *pgdat,
- 	}
-
- 	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
--	ret =3D schedule_timeout(timeout);
-+	ret =3D io_schedule_timeout(timeout);
- 	finish_wait(wqh, &wait);
-
- 	if (reason =3D=3D VMSCAN_THROTTLE_WRITEBACK)
-
+	-Mike
+>
