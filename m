@@ -2,156 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 154784608F1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 19:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94756460908
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Nov 2021 19:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236541AbhK1S2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Nov 2021 13:28:25 -0500
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17296 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1359320AbhK1S0Z (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Nov 2021 13:26:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1638005196; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=n3tN4S2pUQeHcaidBskaxPvMtDHKVAxGlzpV4gGhKRw0ZRPexTpe+9491ASfmg0HTmlzpcGklxp+HMRiNT0nz7WB3yRDEgMXIVlbk6nppF5tsd9+xwYvYa+sqjKuO3IG1VFKI2d/3UUUTEAStZqRuO2G7fPvidPxfb9wuISL+GM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1638005196; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=Gx78nwaiX6IcgNHFjD7iZoX/9w5JdvaOCjUYq7EIGF8=; 
-        b=L+x/I3014bH31MUiJjwlMUIA0OFhsckS6h6hv6axN+6zUKZ3hEWIrtJxc9FBqQ6Qibg6YP4JsjtX6NX4JOTcEAN2havNabHJChd8GNBZB0Un8LvTEUsJdciVm1vdlMiA5HCTyeHhT3WETZ5Uv7oleWAWjCIqSZgTHB0xWTty7g8=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1638005196;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=Gx78nwaiX6IcgNHFjD7iZoX/9w5JdvaOCjUYq7EIGF8=;
-        b=AOUteeEka8coVmSi4zQzORqE5JY1MaV08/LAMtbTc27DCvaprB+pMimMaBupCWxB
-        O+FA0+jbAUUvYwibbnxdThAmY5Ue8tUKtJFxMKJfWYfyRApCoywzOrqMRC2+ZkgXx95
-        aD4148NrPXGMaIDIGuyGKpO95c4vIFvh8io47D5E=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1638005193699274.15327156530714; Sat, 27 Nov 2021 17:26:33 +0800 (CST)
-Date:   Sat, 27 Nov 2021 17:26:33 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "miklos" <miklos@szeredi.hu>
-Cc:     "linux-unionfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Chengguang Xu" <charliecgxu@tencent.com>,
-        "ronyjin" <ronyjin@tencent.com>, "amir73il" <amir73il@gmail.com>,
-        "jack" <jack@suse.cz>
-Message-ID: <17d60b7bbc2.caee608a13298.8366222634423039066@mykernel.net>
-In-Reply-To: <20211122030038.1938875-1-cgxu519@mykernel.net>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net>
-Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[RFC_PATCH_V6_0/7]_implement_c?=
- =?UTF-8?Q?ontainerized_syncfs_for_overlayfs?=
-MIME-Version: 1.0
+        id S1345761AbhK1SoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Nov 2021 13:44:20 -0500
+Received: from mout.gmx.net ([212.227.15.18]:41975 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232558AbhK1SmT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Nov 2021 13:42:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1638124723;
+        bh=rKAHtJtT/7cat6vBkBPLTPsYhFpRT2TD5/4AQ8wISI4=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=ScBuLgU2/5CvMymm+qb72tgAOi5S/qa7EB/4A7DOmDTtr2zFMnGe59WNdMHrOhQtx
+         Sao8vXvfWZ6FSyzJZj9tG/r6shsGGoHIhd6Ux+VLnOlkxZtPgw+toFUzreDsuP31wL
+         gRmCvpYm2LY0oErDIePNbEsuW5FIS6GxuITKZqjs=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from homer.fritz.box ([185.221.150.210]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MwfWa-1mfesS457q-00y8UY; Sun, 28
+ Nov 2021 19:38:43 +0100
+Message-ID: <1c1835271e0ea093dd169d19038b477cf8563c32.camel@gmx.de>
+Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+From:   Mike Galbraith <efault@gmx.de>
+To:     Alexey Avramov <hakavlad@inbox.lv>,
+        Mel Gorman <mgorman@techsingularity.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Sun, 28 Nov 2021 19:38:37 +0100
+In-Reply-To: <dd39029d93bb4de5ed485b5d4181fc19d4c0c4f0.camel@gmx.de>
+References: <20211125151853.8540-1-mgorman@techsingularity.net>
+         <20211127011246.7a8ac7b8@mail.inbox.lv>
+         <20211126165211.GL3366@techsingularity.net>
+         <20211128042635.543a2d04@mail.inbox.lv>
+         <252cd5acd9bf6588ec87ce02884925c737b6a8b7.camel@gmx.de>
+         <941f378e1ea2b32cac0adee1e81637ab6d001f1e.camel@gmx.de>
+         <dd39029d93bb4de5ed485b5d4181fc19d4c0c4f0.camel@gmx.de>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.1 
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+X-Provags-ID: V03:K1:PIpqMRP8LvoWi9ghl2L5TJcmjnh4OeK7+d9fYHakEFhoqsjKICx
+ DGGEPb/LoF8lS2/v+mfJTarrfldby9gS/SC+oigwLdPDStD2y9Ol7l5Mj0gWa822s3mtlZ8
+ qE0U9WuBsMBUtufJ9GVSdcUKM3impPGS6ItlhVMxHWFAq8PXFA3L9gt+Xb+VwBxL0pzeqh6
+ 6LAGfOvZv+qB7sY3bgNnA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Auhalq6g+To=:ldnXkgH9wZk2YuKSYFqh7K
+ 0IG4xJB7GWR2z5B8eoUPLASRRnCgD0HQj9ZjASTYKofRnZ19PRktYXGacA19ITgVn1blTvxel
+ lOszevT7F57i3yE8nYBc2ohW96SMhieKgq04X+9saTKLffPD0aWJd9JCiSPD0DI5JAzJv0n9W
+ pyFVRoH8d+L0hcivPnsYvNqddAwQXZG0OSloqClSkYk/Rd4B22w/uO+y5FnwjleFudOSnvDju
+ iCS0edvp9mj/NmYGV2hsPDyF9HstXkM29NyJQTICnpsSV8o8OPXgsG379/QYPanpnaYcZxpYq
+ HhOLMLVXWe8S7SvFB8SI+G4fGb9//iJg1FW1rBIQghYxa/qI4fSer5qoyBp+Xp1wZh8oU1IjM
+ JrnEbjGdInMG1b//Yy+DAc6BIrJtKSFPx4CkE89AXH27G/Wsp48M9ASMbf4DBTTyMKB+6+n6z
+ O70ArBMgejRy7YjJClzYdbUVVmKCMvV1oMKSXrMkGiI0DNw0AXn3HjKJs/1UcxBrSrbQgN9Cu
+ KbmzM/C5lUK6gygY+7F30JPmch3BSjHa512/TZwRXGV41XnPGZQKguFgyQFpmKUjqEAxIFBHL
+ 8rBw5xvtjlRp/IFXVzDLSLg+s5RkYdDQVc2ve48nz8zpu7cWDO0eLoCNgYFnIaORXNM6EbJio
+ PzxR5Yai02KpeonCbVcybKbyH8aIbLwiLmf83mWUBWcVLbOj/oltcVa9+StxUjxMs9ZHTlN6I
+ cIRUFFLf8cmo8CQB2dgOm20q3/H7yRDc0ARjYfSy36+/MlrzhvLYAiTW9OC2ubqHGguNUxrCM
+ Ko5NDsNt7ZXjH8DcT5g1AWDtG3PB9NSpMe+cUgCu9ZQwcOEu4m+3BmphVabcuHOQgYdZf4yas
+ liVyrAnP8w1xbHVJuJvCc3f7mK0iRjte7d0Zmbd28NmOR8Ico0KMP4ospoW4pbbdOG7a4eKRY
+ MVCM9mn4Lo4VsnggWI04BJ6uB+tjQosXBnJFHIec9IT1+q2x69AwJpqVPiuF3sggxxnBkwhnd
+ GG6c6IO4H9yTHlVvHYVj+kwWMWIUw+ZSMqsGhKFtJ8dOkSkOocr5X+ZKqFUK2/Y+o2X5fmY+N
+ YE+UuiHSAcyDuk=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 11:00:31 Chengguang=
- Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
- > From: Chengguang Xu <charliecgxu@tencent.com>
- >=20
- > Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
- > on upper_sb to synchronize whole dirty inodes in upper filesystem
- > regardless of the overlay ownership of the inode. In the use case of
- > container, when multiple containers using the same underlying upper
- > filesystem, it has some shortcomings as below.
- >=20
- > (1) Performance
- > Synchronization is probably heavy because it actually syncs unnecessary
- > inodes for target overlayfs.
- >=20
- > (2) Interference
- > Unplanned synchronization will probably impact IO performance of
- > unrelated container processes on the other overlayfs.
- >=20
- > This series try to implement containerized syncfs for overlayfs so that
- > only sync target dirty upper inodes which are belong to specific overlay=
-fs
- > instance. By doing this, it is able to reduce cost of synchronization an=
-d=20
- > will not seriously impact IO performance of unrelated processes.
- >=20
- > v1->v2:
- > - Mark overlayfs' inode dirty itself instead of adding notification
- > mechanism to vfs inode.
- >=20
- > v2->v3:
- > - Introduce overlayfs' extra syncfs wait list to wait target upper inode=
-s
- > in ->sync_fs.
- >=20
- > v3->v4:
- > - Using wait_sb_inodes() to wait syncing upper inodes.
- > - Mark overlay inode dirty only when having upper inode and VM_SHARED
- > flag in ovl_mmap().
- > - Check upper i_state after checking upper mmap state
- > in ovl_write_inode.
- >=20
- > v4->v5:
- > - Add underlying inode dirtiness check after mnt_drop_write().
- > - Handle both wait/no-wait mode of syncfs(2) in overlayfs' ->sync_fs().
- >=20
- > v5->v6:
- > - Rebase to latest overlayfs-next tree.
- > - Mark oerlay inode dirty when it has upper instead of marking dirty on
- >   modification.
- > - Trigger dirty page writeback in overlayfs' ->write_inode().
- > - Mark overlay inode 'DONTCACHE' flag.
- > - Delete overlayfs' ->writepages() and ->evict_inode() operations.
+On Sun, 2021-11-28 at 13:35 +0100, Mike Galbraith wrote:
+>
+> Bandaid likely just break the writeback bits all to pieces, but that's
+> ok, if breakage makes things work better, they need more breaking :)
 
+@@ -1048,6 +1050,10 @@ void reclaim_throttle(pg_data_t *pgdat,
+ 	 */
+ 	switch(reason) {
+ 	case VMSCAN_THROTTLE_WRITEBACK:
++		if (!async_bdi_congested()) {
++			cond_resched();
++			return;
++		}
 
-Hi Miklos,
+And indeed, that's the only THROTTLE_WRITEBACK path I've seen taken.
+Not pulling the plug made no difference to the tail /dev/zero test,
+leaving only the bits I swiped from defunct wait_iff_congested() as
+behavior delta cause.  Actually sleeping there apparently stings.
 
-Have you got time to have a look at this V6 series? I think this version ha=
-s already fixed
-the issues in previous feedbacks of you guys and passed fstests (generic/ov=
-erlay cases).
-
-I did some stress long time tests (tar & syncfs & diff on w/wo copy-up) and=
- found no obvious problem.
-For syncfs time with 1M clean upper inodes, there was extra 1.3s wasted on =
-waiting scheduling.
-I guess this 1.3s will not bring significant impact to container instance i=
-n most cases, I also
-agree with Jack that we can start with this approach and do some improvemen=
-ts afterwards if there is
-complain from any real users.
-
-
-
-Thanks,
-Chengguang
-
-
- >=20
- > Chengguang Xu (7):
- >   ovl: setup overlayfs' private bdi
- >   ovl: mark overlayfs inode dirty when it has upper
- >   ovl: implement overlayfs' own ->write_inode operation
- >   ovl: set 'DONTCACHE' flag for overlayfs inode
- >   fs: export wait_sb_inodes()
- >   ovl: introduce ovl_sync_upper_blockdev()
- >   ovl: implement containerized syncfs for overlayfs
- >=20
- >  fs/fs-writeback.c         |  3 ++-
- >  fs/overlayfs/inode.c      |  5 +++-
- >  fs/overlayfs/super.c      | 49 ++++++++++++++++++++++++++++++++-------
- >  fs/overlayfs/util.c       |  1 +
- >  include/linux/writeback.h |  1 +
- >  5 files changed, 48 insertions(+), 11 deletions(-)
- >=20
- > --=20
- > 2.27.0
- >=20
- >=20
+	-Mike
