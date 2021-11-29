@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E4DA46278D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 00:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E1A46278C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 00:05:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236594AbhK2XHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S236470AbhK2XHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 29 Nov 2021 18:07:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40478 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235942AbhK2XGw (ORCPT
+        with ESMTP id S236203AbhK2XGw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 29 Nov 2021 18:06:52 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEEE7C06FD48
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 12:15:46 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id v11so39415594wrw.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 12:15:46 -0800 (PST)
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AE3C06FD4B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 12:15:49 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id m25-20020a7bcb99000000b0033aa12cdd33so6548236wmi.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 12:15:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=w5j6uLXIFKi7tFoTkIEDlfxA5jV/W2nL78YQ1LQvmQ4=;
-        b=Hto8bhByYltJPdOx0shiYOwKYHXwM2qzRwkazepZCAv4lmrd6tF1MHCzALX4dfeXnj
-         0dJpaocevDVoVibuodM76nUa5KQj++S8icSJ8pcsSfcflEyJwbvxXcr2eruEfsaAG/Cq
-         T1mfTtmN8ZC0UeICYI/fD1bgB95sfBQgJF1+t18aAk/wIUS/cZxE9xuMezwfqqyy4huu
-         TpOhhXtpAnaMSd2/zttikJCZ8oXUyfHsy31kVZh+CiY1b5Afk1vKuB45vkFgGICmQpJR
-         4uXrrauIQqTQ+0r2+4HTZS5jNvekaMJk+pkQ9BFYDhXsJrbrvCi+MWQnRUkdiDE9qoyx
-         Bodg==
+        bh=88p9beDU5mO1PsJfrdeZxaO0VeCXtBNZ4j040qWhIe8=;
+        b=NHROqc1reSWIMdX9I50QaYYUqxKQe2c977wSvTgiqgMCmg9BLQ/UST8FxrVKihg76X
+         fPHR78U/IO/mTFrxWlWlzg/Pr8XyH7Z7U6ya7TZbl1YdhcnAdTQyt2fRO4FmKEoYTG7G
+         1lkot2yTq/Z9Og+n02aS7WxXFRcra/EhtQ/hx3Wuj9I04QKb+vc2iUvwe7VKEfnz0eJE
+         tUt7bUXenwXa8qVNhMtwPcsTVMbWGnoyMJWC9rqPuHIyxGq7eI/4BlQ9Sazyva04BNd4
+         cyMI3mPAtUBUgqEGNU+hKuZUDEOYpO4aOQZB3q0i3nfjVFJpPaffqfB52i1mCMU9zmHI
+         zsvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=w5j6uLXIFKi7tFoTkIEDlfxA5jV/W2nL78YQ1LQvmQ4=;
-        b=isk08RTHZu2IFX4/cBnAxZw2fOz1DTI8BpkHS+j0JSgqF4Srk/lwRCXGvvIJMuEsvT
-         XjQNdEceDw2lczTNZT9varvHQ1SN03rsOu2OC3CI2/DX1JYU5UkTzV0qCEOeydOhcL+e
-         K8DoZzqOqHEqGWC9xRkC++9jRee6qJ11Kc882XT30YcmDKnx6SrEBHfFRX9izTMTh92w
-         oQPICrr7clIpPfKH+n87dUHI8LOrvelo/TMDOyFgPmFfu72yAemaLXsXunJDCxQazl34
-         A3x+2tfr6+OkwVM+PgWIPKNfzNFKCad6QYquHxDz0iwpXZ125gu4V5q3tqnCtHvEqHkb
-         8iEQ==
-X-Gm-Message-State: AOAM530lUBLX2cMn5ilRXg2gws3MT/clRzajU/fXA9USLBmrubvc5JWt
-        ZR1B0o/vtjELl5w7C7QdCwY=
-X-Google-Smtp-Source: ABdhPJy8VVTnRvwcSMCB/WA4rWNbXJBWWLeMcJYRLd/GqE97TBeXaOjR5QMbxfXr4xu24UaT1t3A+w==
-X-Received: by 2002:adf:dc47:: with SMTP id m7mr36615770wrj.576.1638216944927;
-        Mon, 29 Nov 2021 12:15:44 -0800 (PST)
+        bh=88p9beDU5mO1PsJfrdeZxaO0VeCXtBNZ4j040qWhIe8=;
+        b=GdrRjiUjD3FIR5eRUS7UoncJPBnmJ01wWUwWPxadgitwEnsVfKm0f/xREkwm13iiie
+         fyvZPos/dLqGcKDlGVVx3p8Kk3C7+lYIt+Ku5Ifc2boQV8NlNo+HLFUc+tmG/OvMDLZR
+         TMsAwW16deSxkh6BGdGEd7U9AWiSyG98XuFk5AS7nzvSHKvYNAMtXNdwqor7kFgP2Yry
+         o7J8h5kPq59NweXQntPg5TN3QUJrTCHha0iqAmke4l7Ih5ZcFyZzeIX1z4+6dbXwoF+6
+         Z8sJpwkyAOHEXlPa3iT3P/2XB/9VyB8hch07GzSYgQldVMpuUMKr741aWjI9zi7PEk70
+         B01Q==
+X-Gm-Message-State: AOAM533VRXdeV+yPyi2IMzJ9nrzn6smjnWD/ZpDjAGuGlUimcH7bIUQZ
+        r9zqS8HSXsD+/EFLVffop3dAISLkPso=
+X-Google-Smtp-Source: ABdhPJyk1no7zLv57V2liHlvG/3iScgYcB1i4r3dHfdqC2mjW4WJ0CF6+My7zRhB7yKiMCvPcofMcA==
+X-Received: by 2002:a05:600c:1c07:: with SMTP id j7mr280657wms.12.1638216948301;
+        Mon, 29 Nov 2021 12:15:48 -0800 (PST)
 Received: from localhost.localdomain ([82.114.45.86])
-        by smtp.gmail.com with ESMTPSA id m14sm19791830wrp.28.2021.11.29.12.15.44
+        by smtp.gmail.com with ESMTPSA id m14sm19791830wrp.28.2021.11.29.12.15.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Nov 2021 12:15:44 -0800 (PST)
+        Mon, 29 Nov 2021 12:15:47 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 04/11] fsnotify: generate FS_RENAME event with rich information
-Date:   Mon, 29 Nov 2021 22:15:30 +0200
-Message-Id: <20211129201537.1932819-5-amir73il@gmail.com>
+Subject: [PATCH v3 07/11] fanotify: support secondary dir fh and name in fanotify_info
+Date:   Mon, 29 Nov 2021 22:15:33 +0200
+Message-Id: <20211129201537.1932819-8-amir73il@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211129201537.1932819-1-amir73il@gmail.com>
 References: <20211129201537.1932819-1-amir73il@gmail.com>
@@ -64,216 +64,238 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The dnotify FS_DN_RENAME event is used to request notification about
-a move within the same parent directory and was always coupled with
-the FS_MOVED_FROM event.
-
-Rename the FS_DN_RENAME event flag to FS_RENAME, decouple it from
-FS_MOVED_FROM and report it with the moved dentry instead of the moved
-inode, so it has the information about both old and new parent and name.
-
-Generate the FS_RENAME event regardless of same parent dir and apply
-the "same parent" rule in the generic fsnotify_handle_event() helper
-that is used to call backends with ->handle_inode_event() method
-(i.e. dnotify).  The ->handle_inode_event() method is not rich enough to
-report both old and new parent and name anyway.
-
-The enriched event is reported to fanotify over the ->handle_event()
-method with the old and new dir inode marks in marks array slots for
-ITER_TYPE_INODE and a new iter type slot ITER_TYPE_INODE2.
-
-The enriched event will be used for reporting old and new parent+name to
-fanotify groups with FAN_RENAME events.
+Allow storing a secondary dir fh and name tupple in fanotify_info.
+This will be used to store the new parent and name information in
+FAN_RENAME event.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/dnotify/dnotify.c      |  2 +-
- fs/notify/fsnotify.c             | 37 +++++++++++++++++++++++++-------
- include/linux/dnotify.h          |  2 +-
- include/linux/fsnotify.h         |  9 +++++---
- include/linux/fsnotify_backend.h |  7 +++---
- 5 files changed, 41 insertions(+), 16 deletions(-)
+ fs/notify/fanotify/fanotify.c      | 20 ++++++--
+ fs/notify/fanotify/fanotify.h      | 79 +++++++++++++++++++++++++++---
+ fs/notify/fanotify/fanotify_user.c |  3 +-
+ 3 files changed, 88 insertions(+), 14 deletions(-)
 
-diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-index e85e13c50d6d..d5ebebb034ff 100644
---- a/fs/notify/dnotify/dnotify.c
-+++ b/fs/notify/dnotify/dnotify.c
-@@ -196,7 +196,7 @@ static __u32 convert_arg(unsigned long arg)
- 	if (arg & DN_ATTRIB)
- 		new_mask |= FS_ATTRIB;
- 	if (arg & DN_RENAME)
--		new_mask |= FS_DN_RENAME;
-+		new_mask |= FS_RENAME;
- 	if (arg & DN_CREATE)
- 		new_mask |= (FS_CREATE | FS_MOVED_TO);
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 2b13c79cebc6..5f184b2d6ea7 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -76,8 +76,10 @@ static bool fanotify_info_equal(struct fanotify_info *info1,
+ 				struct fanotify_info *info2)
+ {
+ 	if (info1->dir_fh_totlen != info2->dir_fh_totlen ||
++	    info1->dir2_fh_totlen != info2->dir2_fh_totlen ||
+ 	    info1->file_fh_totlen != info2->file_fh_totlen ||
+-	    info1->name_len != info2->name_len)
++	    info1->name_len != info2->name_len ||
++	    info1->name2_len != info2->name2_len)
+ 		return false;
  
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 0c94457c625e..ab81a0776ece 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -279,6 +279,18 @@ static int fsnotify_handle_event(struct fsnotify_group *group, __u32 mask,
- 	    WARN_ON_ONCE(fsnotify_iter_vfsmount_mark(iter_info)))
- 		return 0;
+ 	if (info1->dir_fh_totlen &&
+@@ -85,14 +87,24 @@ static bool fanotify_info_equal(struct fanotify_info *info1,
+ 			       fanotify_info_dir_fh(info2)))
+ 		return false;
  
-+	/*
-+	 * For FS_RENAME, 'dir' is old dir and 'data' is new dentry.
-+	 * The only ->handle_inode_event() backend that supports FS_RENAME is
-+	 * dnotify, where it means file was renamed within same parent.
-+	 */
-+	if (mask & FS_RENAME) {
-+		struct dentry *moved = fsnotify_data_dentry(data, data_type);
++	if (info1->dir2_fh_totlen &&
++	    !fanotify_fh_equal(fanotify_info_dir2_fh(info1),
++			       fanotify_info_dir2_fh(info2)))
++		return false;
 +
-+		if (dir != moved->d_parent->d_inode)
-+			return 0;
-+	}
+ 	if (info1->file_fh_totlen &&
+ 	    !fanotify_fh_equal(fanotify_info_file_fh(info1),
+ 			       fanotify_info_file_fh(info2)))
+ 		return false;
+ 
+-	return !info1->name_len ||
+-		!memcmp(fanotify_info_name(info1), fanotify_info_name(info2),
+-			info1->name_len);
++	if (info1->name_len &&
++	    memcmp(fanotify_info_name(info1), fanotify_info_name(info2),
++		   info1->name_len))
++		return false;
 +
- 	if (parent_mark) {
- 		/*
- 		 * parent_mark indicates that the parent inode is watching
-@@ -469,7 +481,9 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
- 	struct super_block *sb = fsnotify_data_sb(data, data_type);
- 	struct fsnotify_iter_info iter_info = {};
- 	struct mount *mnt = NULL;
--	struct inode *parent = NULL;
-+	struct inode *inode2 = NULL;
-+	struct dentry *moved;
-+	int inode2_type;
- 	int ret = 0;
- 	__u32 test_mask, marks_mask;
++	return !info1->name2_len ||
++		!memcmp(fanotify_info_name2(info1), fanotify_info_name2(info2),
++			info1->name2_len);
+ }
  
-@@ -479,12 +493,19 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
- 	if (!inode) {
- 		/* Dirent event - report on TYPE_INODE to dir */
- 		inode = dir;
-+		/* For FS_RENAME, inode is old_dir and inode2 is new_dir */
-+		if (mask & FS_RENAME) {
-+			moved = fsnotify_data_dentry(data, data_type);
-+			inode2 = moved->d_parent->d_inode;
-+			inode2_type = FSNOTIFY_ITER_TYPE_INODE2;
-+		}
- 	} else if (mask & FS_EVENT_ON_CHILD) {
- 		/*
- 		 * Event on child - report on TYPE_PARENT to dir if it is
- 		 * watching children and on TYPE_INODE to child.
- 		 */
--		parent = dir;
-+		inode2 = dir;
-+		inode2_type = FSNOTIFY_ITER_TYPE_PARENT;
- 	}
- 
+ static bool fanotify_name_event_equal(struct fanotify_name_event *fne1,
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index 7ac6f9f1e414..8fa3bc0effd4 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -40,31 +40,45 @@ struct fanotify_fh {
+ struct fanotify_info {
+ 	/* size of dir_fh/file_fh including fanotify_fh hdr size */
+ 	u8 dir_fh_totlen;
++	u8 dir2_fh_totlen;
+ 	u8 file_fh_totlen;
+ 	u8 name_len;
+-	u8 pad;
++	u8 name2_len;
++	u8 pad[3];
+ 	unsigned char buf[];
  	/*
-@@ -497,7 +518,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
- 	if (!sb->s_fsnotify_marks &&
- 	    (!mnt || !mnt->mnt_fsnotify_marks) &&
- 	    (!inode || !inode->i_fsnotify_marks) &&
--	    (!parent || !parent->i_fsnotify_marks))
-+	    (!inode2 || !inode2->i_fsnotify_marks))
- 		return 0;
+ 	 * (struct fanotify_fh) dir_fh starts at buf[0]
+-	 * (optional) file_fh starts at buf[dir_fh_totlen]
+-	 * name starts at buf[dir_fh_totlen + file_fh_totlen]
++	 * (optional) dir2_fh starts at buf[dir_fh_totlen]
++	 * (optional) file_fh starts at buf[dir_fh_totlen + dir2_fh_totlen]
++	 * name starts at buf[dir_fh_totlen + dir2_fh_totlen + file_fh_totlen]
++	 * ...
+ 	 */
+ #define FANOTIFY_DIR_FH_SIZE(info)	((info)->dir_fh_totlen)
++#define FANOTIFY_DIR2_FH_SIZE(info)	((info)->dir2_fh_totlen)
+ #define FANOTIFY_FILE_FH_SIZE(info)	((info)->file_fh_totlen)
+ #define FANOTIFY_NAME_SIZE(info)	((info)->name_len + 1)
++#define FANOTIFY_NAME2_SIZE(info)	((info)->name2_len + 1)
  
- 	marks_mask = sb->s_fsnotify_mask;
-@@ -505,8 +526,8 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
- 		marks_mask |= mnt->mnt_fsnotify_mask;
- 	if (inode)
- 		marks_mask |= inode->i_fsnotify_mask;
--	if (parent)
--		marks_mask |= parent->i_fsnotify_mask;
-+	if (inode2)
-+		marks_mask |= inode2->i_fsnotify_mask;
+ #define FANOTIFY_DIR_FH_OFFSET(info)	0
+-#define FANOTIFY_FILE_FH_OFFSET(info) \
++#define FANOTIFY_DIR2_FH_OFFSET(info) \
+ 	(FANOTIFY_DIR_FH_OFFSET(info) + FANOTIFY_DIR_FH_SIZE(info))
++#define FANOTIFY_FILE_FH_OFFSET(info) \
++	(FANOTIFY_DIR2_FH_OFFSET(info) + FANOTIFY_DIR2_FH_SIZE(info))
+ #define FANOTIFY_NAME_OFFSET(info) \
+ 	(FANOTIFY_FILE_FH_OFFSET(info) + FANOTIFY_FILE_FH_SIZE(info))
++#define FANOTIFY_NAME2_OFFSET(info) \
++	(FANOTIFY_NAME_OFFSET(info) + FANOTIFY_NAME_SIZE(info))
  
+ #define FANOTIFY_DIR_FH_BUF(info) \
+ 	((info)->buf + FANOTIFY_DIR_FH_OFFSET(info))
++#define FANOTIFY_DIR2_FH_BUF(info) \
++	((info)->buf + FANOTIFY_DIR2_FH_OFFSET(info))
+ #define FANOTIFY_FILE_FH_BUF(info) \
+ 	((info)->buf + FANOTIFY_FILE_FH_OFFSET(info))
+ #define FANOTIFY_NAME_BUF(info) \
+ 	((info)->buf + FANOTIFY_NAME_OFFSET(info))
++#define FANOTIFY_NAME2_BUF(info) \
++	((info)->buf + FANOTIFY_NAME2_OFFSET(info))
+ } __aligned(4);
  
- 	/*
-@@ -529,9 +550,9 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
- 		iter_info.marks[FSNOTIFY_ITER_TYPE_INODE] =
- 			fsnotify_first_mark(&inode->i_fsnotify_marks);
- 	}
--	if (parent) {
--		iter_info.marks[FSNOTIFY_ITER_TYPE_PARENT] =
--			fsnotify_first_mark(&parent->i_fsnotify_marks);
-+	if (inode2) {
-+		iter_info.marks[inode2_type] =
-+			fsnotify_first_mark(&inode2->i_fsnotify_marks);
- 	}
+ static inline bool fanotify_fh_has_ext_buf(struct fanotify_fh *fh)
+@@ -106,6 +120,20 @@ static inline struct fanotify_fh *fanotify_info_dir_fh(struct fanotify_info *inf
+ 	return (struct fanotify_fh *)FANOTIFY_DIR_FH_BUF(info);
+ }
  
- 	/*
-diff --git a/include/linux/dnotify.h b/include/linux/dnotify.h
-index 0aad774beaec..b87c3b85a166 100644
---- a/include/linux/dnotify.h
-+++ b/include/linux/dnotify.h
-@@ -26,7 +26,7 @@ struct dnotify_struct {
- 			    FS_MODIFY | FS_MODIFY_CHILD |\
- 			    FS_ACCESS | FS_ACCESS_CHILD |\
- 			    FS_ATTRIB | FS_ATTRIB_CHILD |\
--			    FS_CREATE | FS_DN_RENAME |\
-+			    FS_CREATE | FS_RENAME |\
- 			    FS_MOVED_FROM | FS_MOVED_TO)
- 
- extern int dir_notify_enable;
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 787545e87eeb..3a2d7dc3c607 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -144,16 +144,19 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
- 	u32 fs_cookie = fsnotify_get_cookie();
- 	__u32 old_dir_mask = FS_MOVED_FROM;
- 	__u32 new_dir_mask = FS_MOVED_TO;
-+	__u32 rename_mask = FS_RENAME;
- 	const struct qstr *new_name = &moved->d_name;
- 
--	if (old_dir == new_dir)
--		old_dir_mask |= FS_DN_RENAME;
--
- 	if (isdir) {
- 		old_dir_mask |= FS_ISDIR;
- 		new_dir_mask |= FS_ISDIR;
-+		rename_mask |= FS_ISDIR;
- 	}
- 
-+	/* Event with information about both old and new parent+name */
-+	fsnotify_name(rename_mask, moved, FSNOTIFY_EVENT_DENTRY,
-+		      old_dir, old_name, 0);
++static inline int fanotify_info_dir2_fh_len(struct fanotify_info *info)
++{
++	if (!info->dir2_fh_totlen ||
++	    WARN_ON_ONCE(info->dir2_fh_totlen < FANOTIFY_FH_HDR_LEN))
++		return 0;
 +
- 	fsnotify_name(old_dir_mask, source, FSNOTIFY_EVENT_INODE,
- 		      old_dir, old_name, fs_cookie);
- 	fsnotify_name(new_dir_mask, source, FSNOTIFY_EVENT_INODE,
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 73739fee1710..790c31844db5 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -63,7 +63,7 @@
-  */
- #define FS_EVENT_ON_CHILD	0x08000000
++	return info->dir2_fh_totlen - FANOTIFY_FH_HDR_LEN;
++}
++
++static inline struct fanotify_fh *fanotify_info_dir2_fh(struct fanotify_info *info)
++{
++	return (struct fanotify_fh *)FANOTIFY_DIR2_FH_BUF(info);
++}
++
+ static inline int fanotify_info_file_fh_len(struct fanotify_info *info)
+ {
+ 	if (!info->file_fh_totlen ||
+@@ -128,31 +156,55 @@ static inline char *fanotify_info_name(struct fanotify_info *info)
+ 	return FANOTIFY_NAME_BUF(info);
+ }
  
--#define FS_DN_RENAME		0x10000000	/* file renamed */
-+#define FS_RENAME		0x10000000	/* File was renamed */
- #define FS_DN_MULTISHOT		0x20000000	/* dnotify multishot */
- #define FS_ISDIR		0x40000000	/* event occurred against dir */
- #define FS_IN_ONESHOT		0x80000000	/* only send event once */
-@@ -76,7 +76,7 @@
-  * The watching parent may get an FS_ATTRIB|FS_EVENT_ON_CHILD event
-  * when a directory entry inside a child subdir changes.
-  */
--#define ALL_FSNOTIFY_DIRENT_EVENTS	(FS_CREATE | FS_DELETE | FS_MOVE)
-+#define ALL_FSNOTIFY_DIRENT_EVENTS (FS_CREATE | FS_DELETE | FS_MOVE | FS_RENAME)
++static inline char *fanotify_info_name2(struct fanotify_info *info)
++{
++	if (!info->name2_len)
++		return NULL;
++
++	return FANOTIFY_NAME2_BUF(info);
++}
++
+ static inline void fanotify_info_init(struct fanotify_info *info)
+ {
+ 	BUILD_BUG_ON(FANOTIFY_FH_HDR_LEN + MAX_HANDLE_SZ > U8_MAX);
+ 	BUILD_BUG_ON(NAME_MAX > U8_MAX);
  
- #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM | \
- 				  FS_OPEN_EXEC_PERM)
-@@ -101,7 +101,7 @@
- /* Events that can be reported to backends */
- #define ALL_FSNOTIFY_EVENTS (ALL_FSNOTIFY_DIRENT_EVENTS | \
- 			     FS_EVENTS_POSS_ON_CHILD | \
--			     FS_DELETE_SELF | FS_MOVE_SELF | FS_DN_RENAME | \
-+			     FS_DELETE_SELF | FS_MOVE_SELF | \
- 			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
- 			     FS_ERROR)
+ 	info->dir_fh_totlen = 0;
++	info->dir2_fh_totlen = 0;
+ 	info->file_fh_totlen = 0;
+ 	info->name_len = 0;
++	info->name2_len = 0;
+ }
  
-@@ -349,6 +349,7 @@ enum fsnotify_iter_type {
- 	FSNOTIFY_ITER_TYPE_VFSMOUNT,
- 	FSNOTIFY_ITER_TYPE_SB,
- 	FSNOTIFY_ITER_TYPE_PARENT,
-+	FSNOTIFY_ITER_TYPE_INODE2,
- 	FSNOTIFY_ITER_TYPE_COUNT
- };
+ /* These set/copy helpers MUST be called by order */
+ static inline void fanotify_info_set_dir_fh(struct fanotify_info *info,
+ 					    unsigned int totlen)
+ {
+-	if (WARN_ON_ONCE(info->file_fh_totlen > 0) ||
+-	    WARN_ON_ONCE(info->name_len > 0))
++	if (WARN_ON_ONCE(info->dir2_fh_totlen > 0) ||
++	    WARN_ON_ONCE(info->file_fh_totlen > 0) ||
++	    WARN_ON_ONCE(info->name_len > 0) ||
++	    WARN_ON_ONCE(info->name2_len > 0))
+ 		return;
  
+ 	info->dir_fh_totlen = totlen;
+ }
+ 
++static inline void fanotify_info_set_dir2_fh(struct fanotify_info *info,
++					     unsigned int totlen)
++{
++	if (WARN_ON_ONCE(info->file_fh_totlen > 0) ||
++	    WARN_ON_ONCE(info->name_len > 0) ||
++	    WARN_ON_ONCE(info->name2_len > 0))
++		return;
++
++	info->dir2_fh_totlen = totlen;
++}
++
+ static inline void fanotify_info_set_file_fh(struct fanotify_info *info,
+ 					     unsigned int totlen)
+ {
+-	if (WARN_ON_ONCE(info->name_len > 0))
++	if (WARN_ON_ONCE(info->name_len > 0) ||
++	    WARN_ON_ONCE(info->name2_len > 0))
+ 		return;
+ 
+ 	info->file_fh_totlen = totlen;
+@@ -161,13 +213,24 @@ static inline void fanotify_info_set_file_fh(struct fanotify_info *info,
+ static inline void fanotify_info_copy_name(struct fanotify_info *info,
+ 					   const struct qstr *name)
+ {
+-	if (WARN_ON_ONCE(name->len > NAME_MAX))
++	if (WARN_ON_ONCE(name->len > NAME_MAX) ||
++	    WARN_ON_ONCE(info->name2_len > 0))
+ 		return;
+ 
+ 	info->name_len = name->len;
+ 	strcpy(fanotify_info_name(info), name->name);
+ }
+ 
++static inline void fanotify_info_copy_name2(struct fanotify_info *info,
++					    const struct qstr *name)
++{
++	if (WARN_ON_ONCE(name->len > NAME_MAX))
++		return;
++
++	info->name2_len = name->len;
++	strcpy(fanotify_info_name2(info), name->name);
++}
++
+ /*
+  * Common structure for fanotify events. Concrete structs are allocated in
+  * fanotify_handle_event() and freed when the information is retrieved by
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 00bbc29712bb..e4a11f56782d 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -332,11 +332,10 @@ static int process_access_response(struct fsnotify_group *group,
+ static size_t copy_error_info_to_user(struct fanotify_event *event,
+ 				      char __user *buf, int count)
+ {
+-	struct fanotify_event_info_error info;
++	struct fanotify_event_info_error info = { };
+ 	struct fanotify_error_event *fee = FANOTIFY_EE(event);
+ 
+ 	info.hdr.info_type = FAN_EVENT_INFO_TYPE_ERROR;
+-	info.hdr.pad = 0;
+ 	info.hdr.len = FANOTIFY_ERROR_INFO_LEN;
+ 
+ 	if (WARN_ON(count < info.hdr.len))
 -- 
 2.33.1
 
