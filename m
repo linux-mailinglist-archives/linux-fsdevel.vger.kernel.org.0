@@ -2,167 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CFB461AE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:29:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD6D0461B43
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349362AbhK2Pcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 10:32:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51168 "EHLO
+        id S240051AbhK2PtW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 10:49:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343859AbhK2Pap (ORCPT
+        with ESMTP id S245276AbhK2PrV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 10:30:45 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53E1C05291B;
-        Mon, 29 Nov 2021 05:41:48 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id t11so16552401qtw.3;
-        Mon, 29 Nov 2021 05:41:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fhEsQAK98bM5StiE4nhRYixbgK7BmdEmPc2JUmkzNuE=;
-        b=OPD4a0BbOCx/FwKr9ugrv/ROrF8AV8trJRIupc+DGvBkpArkblK6Vf7ThfjN45aaQx
-         +4tY0VYjZJxl8P1vbJ++e/HVMPYxXgxG7oPThz/y4Eyks1pROtqYrnlq27waj1Jvwhxn
-         O1n97pTLMFzxnBa4efTROYFYfSml95/Ip3O7RBzVZvGZYo6+ChdPL8s0o2JFx2gDz7oQ
-         RSQp/sslhuaFaXPYGRHaRVNKgR3xBYeXrI+SvAsiJXQkWnzqqQL3yFqzQ3ebLgRwmLo6
-         ZJKNwzLsde6LoPB7PutSs3sH0wX6epaXkVO3m1jHVMV1yfypRsT1W5T5hQAJIvfPTIvN
-         dN9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fhEsQAK98bM5StiE4nhRYixbgK7BmdEmPc2JUmkzNuE=;
-        b=CVUc3leK/qoKvDvp75+mQYFbCf2ly4Uvy8HkuswUcObMyMq7hbhs9V7ugSNvW4WOI6
-         THBGpj6DCfMXAkOyv8TKzNuYOfa3Wc6dvblNO3pE8ezId/2jeccnvCBfTpIctMIlSsjt
-         jitCxVhVF8ybHe9M1j166KUVzlN7jHuHNUmE+uzDjIo2Q90jGyDO/v1yvh6f5Qe8Ao7m
-         t4O91X3iJYSHK8lkkeKVXZNQmlDp16zECW4/X/TcWE8yE0HFKV6ksyR9yAYA27VGr1fI
-         1KcUcyoR2VrSZbXVRJ6pjH62CKj7faBUCd0cfbs24mbJjRXcYs2TMO97CpTJP9wKR7nU
-         AFPQ==
-X-Gm-Message-State: AOAM531CyfUhUWgtdoJaLXx4Ezyempvbgoqa0SvJrhDBLPhPR788v3u6
-        SXJzimjCjiAhf/JMCak/X7jKy2fSOqxx1wX5jTkpt7LblJTTJryBAJQ=
-X-Google-Smtp-Source: ABdhPJwtYuAs3Eyp35qBUS3u4YeJbSdbd0Fj/uaKBQS5Zkwii/UENBRf3c8ern+XfOlGXgg+DCkb17rNDqYBaO6+dq4=
-X-Received: by 2002:ac8:5894:: with SMTP id t20mr34675354qta.450.1638193308018;
- Mon, 29 Nov 2021 05:41:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
- <yt9d35nf1d84.fsf@linux.ibm.com>
-In-Reply-To: <yt9d35nf1d84.fsf@linux.ibm.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Mon, 29 Nov 2021 21:41:11 +0800
-Message-ID: <CALOAHbDtqpkN4D0vHvGxTSpQkksMWtFm3faMy0n+pazxN_RPPg@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
- with TASK_COMM_LEN
-To:     Sven Schnelle <svens@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        Mon, 29 Nov 2021 10:47:21 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0D99C061A13;
+        Mon, 29 Nov 2021 05:52:19 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 27A676152F;
+        Mon, 29 Nov 2021 13:52:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BD1C004E1;
+        Mon, 29 Nov 2021 13:52:16 +0000 (UTC)
+Date:   Mon, 29 Nov 2021 13:52:12 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
+ with sub-page faults
+Message-ID: <YaTbDJS5MtvIm9aS@arm.com>
+References: <CAHc6FU53gdXR4VjSQJUtUigVkgDY6yfRkNBYuBj4sv3eT=MBSQ@mail.gmail.com>
+ <YaAROdPCqNzSKCjh@arm.com>
+ <20211124192024.2408218-1-catalin.marinas@arm.com>
+ <20211124192024.2408218-4-catalin.marinas@arm.com>
+ <YZ6arlsi2L3LVbFO@casper.infradead.org>
+ <YZ6idVy3zqQC4atv@arm.com>
+ <CAHc6FU4-P9sVexcNt5CDQxROtMAo=kH8hEu==AAhZ_+Zv53=Ag@mail.gmail.com>
+ <20211127123958.588350-1-agruenba@redhat.com>
+ <YaJM4n31gDeVzUGA@arm.com>
+ <CAHc6FU7BSL58GVkOh=nsNQczRKG3P+Ty044zs7PjKPik4vzz=Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHc6FU7BSL58GVkOh=nsNQczRKG3P+Ty044zs7PjKPik4vzz=Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 29, 2021 at 6:13 PM Sven Schnelle <svens@linux.ibm.com> wrote:
->
-> Hi,
->
-> Yafang Shao <laoar.shao@gmail.com> writes:
->
-> > As the sched:sched_switch tracepoint args are derived from the kernel,
-> > we'd better make it same with the kernel. So the macro TASK_COMM_LEN is
-> > converted to type enum, then all the BPF programs can get it through BTF.
-> >
-> > The BPF program which wants to use TASK_COMM_LEN should include the header
-> > vmlinux.h. Regarding the test_stacktrace_map and test_tracepoint, as the
-> > type defined in linux/bpf.h are also defined in vmlinux.h, so we don't
-> > need to include linux/bpf.h again.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > Acked-by: David Hildenbrand <david@redhat.com>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Petr Mladek <pmladek@suse.com>
-> > ---
-> >  include/linux/sched.h                                   | 9 +++++++--
-> >  tools/testing/selftests/bpf/progs/test_stacktrace_map.c | 6 +++---
-> >  tools/testing/selftests/bpf/progs/test_tracepoint.c     | 6 +++---
-> >  3 files changed, 13 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index 78c351e35fec..cecd4806edc6 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -274,8 +274,13 @@ struct task_group;
-> >
-> >  #define get_current_state()  READ_ONCE(current->__state)
-> >
-> > -/* Task command name length: */
-> > -#define TASK_COMM_LEN                        16
-> > +/*
-> > + * Define the task command name length as enum, then it can be visible to
-> > + * BPF programs.
-> > + */
-> > +enum {
-> > +     TASK_COMM_LEN = 16,
-> > +};
->
-> This breaks the trigger-field-variable-support.tc from the ftrace test
-> suite at least on s390:
->
-> echo 'hist:keys=next_comm:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).wakeup_latency($wakeup_lat,next_pid,sched.sched_waking.prio,next_comm) if next_comm=="ping"'
-> linux/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc: line 15: echo: write error: Invalid argument
->
-> I added a debugging line into check_synth_field():
->
-> [   44.091037] field->size 16, hist_field->size 16, field->is_signed 1, hist_field->is_signed 0
->
-> Note the difference in the signed field.
->
+On Sat, Nov 27, 2021 at 07:05:39PM +0100, Andreas Gruenbacher wrote:
+> Maybe you want to add this though:
+> 
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -2202,3 +2202,3 @@ static noinline int search_ioctl(struct inode *inode,
+>         unsigned long sk_offset = 0;
+> -       char __user *fault_in_addr;
+> +       char __user *fault_in_addr, *end;
+> 
+> @@ -2230,6 +2230,6 @@ static noinline int search_ioctl(struct inode *inode,
+>         fault_in_addr = ubuf;
+> +       end = ubuf + *buf_size;
+>         while (1) {
+>                 ret = -EFAULT;
+> -               if (fault_in_writeable(fault_in_addr,
+> -                                      *buf_size - (fault_in_addr - ubuf)))
+> +               if (fault_in_writeable(fault_in_addr, end - fault_in_addr))
+>                         break;
 
-Hi Sven,
-
-Thanks for the report and debugging!
-Seems we should explicitly define it as signed ?
-Could you pls. help verify it?
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index cecd4806edc6..44d36c6af3e1 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -278,7 +278,7 @@ struct task_group;
-  * Define the task command name length as enum, then it can be visible to
-  * BPF programs.
-  */
--enum {
-+enum SignedEnum {
-        TASK_COMM_LEN = 16,
- };
+It looks like *buf_size is updated inside copy_to_sk(), so I'll move the
+end update inside the loop.
 
 -- 
-Thanks
-Yafang
+Catalin
