@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AA394627C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 00:07:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB06C4627C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 00:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236768AbhK2XJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 18:09:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40306 "EHLO
+        id S236763AbhK2XKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 18:10:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236971AbhK2XJP (ORCPT
+        with ESMTP id S236983AbhK2XJQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 18:09:15 -0500
+        Mon, 29 Nov 2021 18:09:16 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6039C09B195;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09E5C08EA3B;
         Mon, 29 Nov 2021 13:19:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=h6IrSH0GHepcGUE39G/28OhFGK4xmoJIeiHG2f6yFoA=; b=csu+Z9MfPBMUauTR3wEM6gjQdZ
-        XfsMyywT7EiNYpSgAAMNmpbPyyoh43d02teetdoDGEnml3b03UC+f6R7l8++yVpOhtZoAcQ6qB0gP
-        tPSJ7rzPuUly+XW13NnTeF3nOydkWQp2cLwfiSOiYcj44Iu06Q2bRekEpZ1Us2c+0hYIeeW+9kRhM
-        +6j+AxuBudfHGrifkMQjRCISyCISvHpwBcjj/FYFLsd9y2VEfQuHh4Ch1QPX7+rqfOWQ2plMYGfqa
-        l/L40eZFz/N0obp/NNSE2naK6HoQKVONBATEYpV8fQp0pES3bmaRJIYRAy1BJFxQ3Z2dMGvzZyRL8
-        QqpCLiqw==;
+        bh=Fzwqvl+8bOJJ9b6ETdWIWLuhRqMFob2LTNWwL3xgXnI=; b=ztcEnADoh7xfJ2ArYQlCYdNWYy
+        nOZQT0weEPBSowUEYpBE4HqlAllH+ruNUXnLxCrami5s73ZTGIHNXv6F7nXjM1K4LKf2W5xZjIjiK
+        BrgsnYUOJwjm1KY7JGJin0d79Tk3YrLzfIqzPeYnIQow01gevO77lA247+Hs7mbpJoH0hzs8ax2dJ
+        cpojSiOYaWHFr8/ZlMbr70oUgXWG9fUOom9y/aU5x4+nNgQqYphl20hgLOurePP2ajb+N1gvnPKtO
+        cFYynEc0tS92acPeXOucsWrMNq5j0PE5VTRTw6t2LcLvyMkv3zhodNRLeLsUg4OAqL3QiNv+XKcQD
+        XlGkADuQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mro3s-002gZz-Ms; Mon, 29 Nov 2021 21:19:44 +0000
+        id 1mro3s-002ga5-RZ; Mon, 29 Nov 2021 21:19:44 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         keescook@chromium.org, yzaikin@google.com, nixiaoming@huawei.com,
@@ -36,9 +36,9 @@ To:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         naveen.n.rao@linux.ibm.com, davem@davemloft.net,
         mhiramat@kernel.org, anil.s.keshavamurthy@intel.com
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] fs: move namespace sysctls and declare fs base directory
-Date:   Mon, 29 Nov 2021 13:19:39 -0800
-Message-Id: <20211129211943.640266-3-mcgrof@kernel.org>
+Subject: [PATCH 4/6] printk: fix build warning when CONFIG_PRINTK=n
+Date:   Mon, 29 Nov 2021 13:19:41 -0800
+Message-Id: <20211129211943.640266-5-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211129211943.640266-1-mcgrof@kernel.org>
 References: <20211129211943.640266-1-mcgrof@kernel.org>
@@ -49,168 +49,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This moves the namespace sysctls to its own file as part of the
-kernel/sysctl.c spring cleaning
+From: Xiaoming Ni <nixiaoming@huawei.com>
 
-Since we have now removed all sysctls for "fs", we now have to
-declare it on the filesystem code, we do that using the new helper,
-which reduces boiler plate code.
+build warning when CONFIG_PRINTK=n
+	kernel/printk/printk.c:175:5: warning: no previous prototype for
+	 'devkmsg_sysctl_set_loglvl' [-Wmissing-prototypes]
 
-We rename init_fs_shared_sysctls() to init_fs_sysctls() to reflect
-that now fs/sysctls.c is taking on the burden of being the first
-to register the base directory as well.
+devkmsg_sysctl_set_loglvl() is only used in sysctl.c when CONFIG_PRINTK=y,
+but it participates in the build when CONFIG_PRINTK=n. So add compile
+dependency CONFIG_PRINTK=y && CONFIG_SYSCTL=y to fix the build warning.
 
-Lastly, since init code will load in the order in which we link it
-we have to move the sysctl code to be linked in early, so that its
-early init routine runs prior to other fs code. This way, other
-filesystem code can register their own sysctls using the helpers
-after this:
-
-  * register_sysctl_init()
-  * register_sysctl()
-
+Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/Makefile           |  3 ++-
- fs/namespace.c        | 24 +++++++++++++++++++++++-
- fs/sysctls.c          |  9 +++++----
- include/linux/mount.h |  3 ---
- kernel/sysctl.c       | 14 --------------
- 5 files changed, 30 insertions(+), 23 deletions(-)
+ include/linux/printk.h   | 4 ----
+ kernel/printk/internal.h | 2 ++
+ kernel/printk/printk.c   | 3 ++-
+ 3 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/fs/Makefile b/fs/Makefile
-index ea8770d124da..dab324aea08f 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 9497f6b98339..1522df223c0f 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -183,10 +183,6 @@ extern bool printk_timed_ratelimit(unsigned long *caller_jiffies,
+ extern int printk_delay_msec;
+ extern int dmesg_restrict;
+ 
+-extern int
+-devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write, void *buf,
+-			  size_t *lenp, loff_t *ppos);
+-
+ extern void wake_up_klogd(void);
+ 
+ char *log_buf_addr_get(void);
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+index 6b1c4b399845..d947ca6c84f9 100644
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
 @@ -6,6 +6,8 @@
- # Rewritten to use lists instead of if-statements.
- # 
  
-+obj-$(CONFIG_SYSCTL)		+= sysctls.o
-+
- obj-y :=	open.o read_write.o file_table.o super.o \
- 		char_dev.o stat.o exec.o pipe.o namei.o fcntl.o \
- 		ioctl.o readdir.o select.o dcache.o inode.o \
-@@ -28,7 +30,6 @@ obj-y				+= notify/
- obj-$(CONFIG_EPOLL)		+= eventpoll.o
- obj-y				+= anon_inodes.o
- obj-$(CONFIG_SIGNALFD)		+= signalfd.o
--obj-$(CONFIG_SYSCTL)		+= sysctls.o
- obj-$(CONFIG_TIMERFD)		+= timerfd.o
- obj-$(CONFIG_EVENTFD)		+= eventfd.o
- obj-$(CONFIG_USERFAULTFD)	+= userfaultfd.o
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 3ab45b47b286..647af66f313d 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -36,7 +36,7 @@
- #include "internal.h"
+ #if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
+ void __init printk_sysctl_init(void);
++int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
++			      void *buffer, size_t *lenp, loff_t *ppos);
+ #else
+ #define printk_sysctl_init() do { } while (0)
+ #endif
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index dbb44086ba65..55722b94909b 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -171,7 +171,7 @@ static int __init control_devkmsg(char *str)
+ __setup("printk.devkmsg=", control_devkmsg);
  
- /* Maximum number of mounts in a mount namespace */
--unsigned int sysctl_mount_max __read_mostly = 100000;
-+static unsigned int sysctl_mount_max __read_mostly = 100000;
- 
- static unsigned int m_hash_mask __read_mostly;
- static unsigned int m_hash_shift __read_mostly;
-@@ -4612,3 +4612,25 @@ const struct proc_ns_operations mntns_operations = {
- 	.install	= mntns_install,
- 	.owner		= mntns_owner,
- };
-+
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table fs_namespace_sysctls[] = {
-+	{
-+		.procname	= "mount-max",
-+		.data		= &sysctl_mount_max,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ONE,
-+	},
-+	{ }
-+};
-+
-+static int __init init_fs_namespace_sysctls(void)
-+{
-+	register_sysctl_init("fs", fs_namespace_sysctls);
-+	return 0;
-+}
-+fs_initcall(init_fs_namespace_sysctls);
-+
-+#endif /* CONFIG_SYSCTL */
-diff --git a/fs/sysctls.c b/fs/sysctls.c
-index 54216cd1ecd7..c701273c9432 100644
---- a/fs/sysctls.c
-+++ b/fs/sysctls.c
-@@ -29,10 +29,11 @@ static struct ctl_table fs_shared_sysctls[] = {
- 	{ }
- };
- 
--static int __init init_fs_shared_sysctls(void)
-+DECLARE_SYSCTL_BASE(fs, fs_shared_sysctls);
-+
-+static int __init init_fs_sysctls(void)
+ char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE] = "ratelimit";
+-
++#if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
+ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
+ 			      void *buffer, size_t *lenp, loff_t *ppos)
  {
--	register_sysctl_init("fs", fs_shared_sysctls);
--	return 0;
-+	return register_sysctl_base(fs);
+@@ -210,6 +210,7 @@ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
+ 
+ 	return 0;
  }
++#endif /* CONFIG_PRINTK && CONFIG_SYSCTL */
  
--early_initcall(init_fs_shared_sysctls);
-+early_initcall(init_fs_sysctls);
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index 5d92a7e1a742..7f18a7555dff 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -113,9 +113,6 @@ extern void mnt_set_expiry(struct vfsmount *mnt, struct list_head *expiry_list);
- extern void mark_mounts_for_expiry(struct list_head *mounts);
- 
- extern dev_t name_to_dev_t(const char *name);
--
--extern unsigned int sysctl_mount_max;
--
- extern bool path_is_mountpoint(const struct path *path);
- 
- extern void kern_unmount_array(struct vfsmount *mnt[], unsigned int num);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index bbbafe545723..8d4cab1fbe9f 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2810,18 +2810,6 @@ static struct ctl_table vm_table[] = {
- 	{ }
- };
- 
--static struct ctl_table fs_table[] = {
--	{
--		.procname	= "mount-max",
--		.data		= &sysctl_mount_max,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ONE,
--	},
--	{ }
--};
--
- static struct ctl_table debug_table[] = {
- #ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
- 	{
-@@ -2852,7 +2840,6 @@ static struct ctl_table dev_table[] = {
- 
- DECLARE_SYSCTL_BASE(kernel, kern_table);
- DECLARE_SYSCTL_BASE(vm, vm_table);
--DECLARE_SYSCTL_BASE(fs, fs_table);
- DECLARE_SYSCTL_BASE(debug, debug_table);
- DECLARE_SYSCTL_BASE(dev, dev_table);
- 
-@@ -2860,7 +2847,6 @@ int __init sysctl_init(void)
- {
- 	register_sysctl_base(kernel);
- 	register_sysctl_base(vm);
--	register_sysctl_base(fs);
- 	register_sysctl_base(debug);
- 	register_sysctl_base(dev);
- 
+ /* Number of registered extended console drivers. */
+ static int nr_ext_console_drivers;
 -- 
 2.33.0
 
