@@ -2,69 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46C49462715
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB8B846241A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:13:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236234AbhK2XBC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 18:01:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236669AbhK2XAa (ORCPT
+        id S231148AbhK2WQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 17:16:28 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:56524 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231135AbhK2WQY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 18:00:30 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A377AC0617A0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 14:04:40 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id t5so78397088edd.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 14:04:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=9QABpclmDsiBw3O50MnuiVrQu5ZlXjbuKEZDiFrlX+M=;
-        b=oiFlsiTC7wUIWSjwnxxqqPl0wwMT0zJBSGJhjHzWKa2BSxxCx9R74nlBUSKBHbRnfR
-         km7OcxwLVQljTJlHu97B6XoY0Cd5+S8z1/kr+fQ5LQvx0SbJ+ugd+Q8zVws6G7AdvFVO
-         rHVYRJLIjGcTOSi6jw5G1YCuZu6KP1ERvTeBBHIZ8/zLstCoWImtRkJrkPGIHtKkE3/R
-         +Atssxal6LZJBs635ht2vCk46tdtT/id5Da1BaaVFTowW9Ph8MwrvaGtO/rJ2x+YAP6s
-         82C2er7DMqjR4xbypS88sAfhhl16vLxEmVtVEPajBQrQrIP8gTvWAAnxE1I87iGLNphC
-         xKJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=9QABpclmDsiBw3O50MnuiVrQu5ZlXjbuKEZDiFrlX+M=;
-        b=FKa2SlZkpeoMu+jijwsMcrRw6YwwqVE9OPXvnBUwckl+Ycg2CoyPkGzMBDpJkVqCJg
-         8Izo7HQ5sXR5UiJZur122B+FGBv2Raukm20AJV9Bl3TpA5cLcudbBMY8lsbUEjajiCLv
-         wG0Zihac70k0b4oTc3maVrzF3riQno19kMfIKC42VBYobFTkPsWY3SnW58oaXnFA6baX
-         Vq2JFroAh1R5Du3EF8/JXZs3uH1SdtwpZ6kA2OIPUy49CEzhRwwM+HSgR8sMROuJGZ19
-         thHMp0VS579Hln5saHENoXDcoDbuzRbZ2PC3KdbCwQT1CFTYadF9PuNjD2/2To2nR8AG
-         mCiA==
-X-Gm-Message-State: AOAM532abtbfW2Xrhqi6iozYpaCQZPCC3o3ZyxMgTncU1JvHYAFQ+7mB
-        wzO4srBTi3Sxf3A5EIJjU9Pqw97gqPZf3dZIOdA=
-X-Google-Smtp-Source: ABdhPJxNs3OKAYyjAIucm4FxnVk9eoCrSIaStTsFNTybc11OAK5vB9AZqMObbGbaShCyBqStXH+rWKiWWBvBP3lmvRE=
-X-Received: by 2002:a17:907:3e8a:: with SMTP id hs10mr62878225ejc.404.1638223479275;
- Mon, 29 Nov 2021 14:04:39 -0800 (PST)
+        Mon, 29 Nov 2021 17:16:24 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1ATIlAHC028209
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 14:13:06 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=pVviU5mxg2/Smsx8Rzj+SaCUpgPyEzC+zB0KIO4GyRQ=;
+ b=Y5qA+lW7Ss11N2tOxTmq0bDwtLqg1dtXjSPDLzL3LNs7ucNJ5ysyUi8k6WXGJLkKe+NZ
+ r0QfwikYV9eHDry1lDpgIsm939K5MpzmxI3/iSQD+0Wv/Sd9gYAk6Gw7lw14tTcT5IcR
+ 1bObXSwU6fjQRoms6KsPW60vJ1n0zgR0Gbc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 3cn1as32gg-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 14:13:06 -0800
+Received: from intmgw001.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Mon, 29 Nov 2021 14:13:04 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 8DB7D7101604; Mon, 29 Nov 2021 14:12:59 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>
+Subject: [PATCH v1 0/5] io_uring: add xattr support
+Date:   Mon, 29 Nov 2021 14:12:52 -0800
+Message-ID: <20211129221257.2536146-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Received: by 2002:a54:2ecf:0:0:0:0:0 with HTTP; Mon, 29 Nov 2021 14:04:39
- -0800 (PST)
-Reply-To: lisshuuu1@gmail.com
-From:   MS LISA HUGH <olivier.folly0@gmail.com>
-Date:   Mon, 29 Nov 2021 23:04:39 +0100
-Message-ID: <CAG_GOAtqOQyDm+Aj1KqD6to_uVgTiw+r=AnY6nXHRFCpswU5AA@mail.gmail.com>
-Subject: YOU HAVE THE DETAILS AS SOON I HEAR FROM YOU(Ms Lisa Hugh)
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-FB-Source: Intern
+X-Proofpoint-GUID: HFXJPno4QNSfgDSHAfy9uTiQs1DeKft-
+X-Proofpoint-ORIG-GUID: HFXJPno4QNSfgDSHAfy9uTiQs1DeKft-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-29_11,2021-11-28_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ spamscore=0 phishscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111290105
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Friend,
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-I am Ms Lisa Hugh accountant and files keeping by profession here with the bank.
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
 
-I need Your help for this transfer($4,500,000,00 ,U.S.DOLLARS)to your
-bank account with your co-operation for both of us benefit.
+Patch 1: fs: make user_path_at_empty() take a struct filename
+  The user_path_at_empty filename parameter has been changed
+  from a const char user pointer to a filename struct. io_uring
+  operates on filenames.
+  In addition also the functions that call user_path_at_empty
+  in namei.c and stat.c have been modified for this change.
 
-Please send the follow below,
-1)AGE....2)TELEPHONE NUMBER,,,,,...,3)COUNTRY.....4)OCCUPATION......
-Thanks.
-Ms Lisa Hugh
+Patch 2: fs: split off setxattr_setup function from setxattr
+  Split off the setup part of the setxattr function
+
+Patch 3: fs: split off the vfs_getxattr from getxattr
+  Split of the vfs_getxattr part from getxattr. This will
+  allow to invoke it from io_uring.
+
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+
+Stefan Roesch (5):
+  fs: make user_path_at_empty() take a struct filename
+  fs: split off setxattr_setup function from setxattr
+  fs: split off the vfs_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  23 +++
+ fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |   5 +-
+ fs/stat.c                     |   7 +-
+ fs/xattr.c                    | 114 +++++++-----
+ include/linux/namei.h         |   4 +-
+ include/uapi/linux/io_uring.h |   8 +-
+ 7 files changed, 439 insertions(+), 47 deletions(-)
+
+
+Signed-off-by: Stefan Roesch <shr@fb.com>
+base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
+--=20
+2.30.2
+
