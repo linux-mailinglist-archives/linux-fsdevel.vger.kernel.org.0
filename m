@@ -2,137 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D844625C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE30462486
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234770AbhK2WnS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 17:43:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35146 "EHLO
+        id S229815AbhK2WUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 17:20:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234516AbhK2Wmm (ORCPT
+        with ESMTP id S234200AbhK2WSI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 17:42:42 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C0CC048F71
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 10:40:58 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id r25so10647052edq.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 10:40:57 -0800 (PST)
+        Mon, 29 Nov 2021 17:18:08 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2AAFC052933;
+        Mon, 29 Nov 2021 11:12:29 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id m5so18516666ilh.11;
+        Mon, 29 Nov 2021 11:12:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7TgPSN7BGol1Tl+v3cbObp6eM3owptNkUS6MUKapLgk=;
-        b=dDhGyayvTiVZ54M7kQkeYpixbZJ21FDA4H+XgW5qfma9xVodQ+ykL0UVDfVCnj3oGS
-         XCxC3zzyDIbY203VjKnyF4PRo5sWL2wGeRMysXQpu6w6X3f1ZKzEOJPs+7uJC0mulw3W
-         kWegC2qcRszmcWmuLJGCfK9FiXD9y5MpmqsEo=
+        bh=4a7oBUxp83d4F7/GXAe9SjMLAHoJcQKmu6hyXTlCwds=;
+        b=a4LrfTUVENBGyIlKt1CrHgX8udUHuoaGeZsZu5z3AdXh8gWn1zJwoemtgQ6731Z86V
+         n1xxEz4rDEqXvojdf2Tsv7JnDexj9WQYvKXX+xsckI8xY0HAdT94/GM0xoqCz1CNiX6C
+         zihDbv3VtjSVX3EqXRTfDaccWhZujitGZz4BeapUMje9yLqHITthqJPbfx4TF0pdSBum
+         ZOGm+7V7Q1GK45ijP33f7klQyO8TtN16hYZPAQuc9K0EPqP2sSsiUXVh1si2jHIIYoWx
+         15ltGlZ9XRhOA0Mu0JvI3WXGAuctF+dnSzFNKg2GJ59miUnXTn1DlIvK7TvsNf8SI1+U
+         LS3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7TgPSN7BGol1Tl+v3cbObp6eM3owptNkUS6MUKapLgk=;
-        b=i6MS00nJKPc9VJ4SQ6owNN0FQgjlIE8y4Xougjrzigw7CK25brIB00LhmlmJm6+GTv
-         JrGuneDg/zvDdGM5jGYZMN1OlFP/+1KiTYedver/fhctodrQ+kuA3pnbru4Lp7IkZWx2
-         gahSVGtm9QOtnFLoHWcQvXVPJcdkbgMGW/RmJlH22b/2cCFsSJROfKIDzt5VkvyMKNay
-         gmocPRi5HM7J/4ICxRhzPifbiingtQTdkSDrAOXvtCKphMsIWzb8b6xZ8QBuOr4COHRx
-         CZzCXMxdiLDiggOWi+G65Vkt/eFiNwWZ9XDZPdNvHX0viSkpwJyTbv6FYR4erHm+vL7S
-         kXAw==
-X-Gm-Message-State: AOAM531+jsJgXPNWh7Wo9EymcV7JessIznjJ2YCF/JtzJ4KoPaP+gLw4
-        13a1FjYEw4M10egO6iGMHU+u7NeGWZEXaXkBjCI=
-X-Google-Smtp-Source: ABdhPJz4wwdL95rCmWcf/hLe021fsWIUld5LwxeElM52nJXhbkAoJbW8TP6PdmQD1gxeM9XV9Tcs/w==
-X-Received: by 2002:a17:906:780a:: with SMTP id u10mr63483296ejm.235.1638211256124;
-        Mon, 29 Nov 2021 10:40:56 -0800 (PST)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
-        by smtp.gmail.com with ESMTPSA id m16sm10820554edd.61.2021.11.29.10.40.54
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Nov 2021 10:40:55 -0800 (PST)
-Received: by mail-wr1-f54.google.com with SMTP id i5so38927507wrb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 10:40:54 -0800 (PST)
-X-Received: by 2002:adf:f8c3:: with SMTP id f3mr35865238wrq.495.1638211254717;
- Mon, 29 Nov 2021 10:40:54 -0800 (PST)
+        bh=4a7oBUxp83d4F7/GXAe9SjMLAHoJcQKmu6hyXTlCwds=;
+        b=0Yi72pUu+y3WTNljyCo3+v3ho5pRf2X9JmQuYC3IrwixlQOAKBUpHlAhdg6jg8n+od
+         PZuziD/ZE756GT4Fqqh/mXKONvuuouXl2uvLm84EmShok2d4PoSToMtG2HQAC0zu9Q3j
+         i70U2WMOGzU78ShLYVCiPXJnwVEP6uSRvcCJxIcwm0oeIejtJtVkPF6Hmqo9w4x3KIoX
+         1kbKaHsiavM6fNJCuLBz9PJf3NndoNyhfldKwW30TSizO2FNElE2XX2yOd14q6mMpdfg
+         N+9OlWA6UcdQzqjfuoJE0J5/lAsQcm+Jq6yhtoyWraq5MP1YZmdpBTNfJTIJklirZKxA
+         U1cw==
+X-Gm-Message-State: AOAM5319VvF9IuepcJoZ4Odh8KnwSbuAbbUnVPsLESK3u+bnHgwRqK9w
+        wEh5367/7sL7WFkjUKdyrW8htoXD9vSlVhsrB//+LD0u
+X-Google-Smtp-Source: ABdhPJwGjkUK27Bmivk+PeedOlQhOHceK/+iW2ainthRulbC4BrWnAb5YItstXAk0fKNuwyJD0npw2/QgN/xcYYm/sw=
+X-Received: by 2002:a05:6e02:1ba8:: with SMTP id n8mr48485335ili.254.1638213149275;
+ Mon, 29 Nov 2021 11:12:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20211124192024.2408218-1-catalin.marinas@arm.com>
- <20211124192024.2408218-4-catalin.marinas@arm.com> <YZ6arlsi2L3LVbFO@casper.infradead.org>
- <YZ6idVy3zqQC4atv@arm.com> <CAHc6FU4-P9sVexcNt5CDQxROtMAo=kH8hEu==AAhZ_+Zv53=Ag@mail.gmail.com>
- <20211127123958.588350-1-agruenba@redhat.com> <YaJM4n31gDeVzUGA@arm.com>
- <CAHc6FU7BSL58GVkOh=nsNQczRKG3P+Ty044zs7PjKPik4vzz=Q@mail.gmail.com>
- <YaTEkAahkCwuQdPN@arm.com> <CAHc6FU6zVi9A2D3V3T5zE71YAdkBiJTs0ao1Q6ysSuEp=bz8fQ@mail.gmail.com>
- <YaTziROgnFwB6Ddj@arm.com>
-In-Reply-To: <YaTziROgnFwB6Ddj@arm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 29 Nov 2021 10:40:38 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiZgAgcynfLsop+D1xBUAZ-Z+NUBxe9mb-AedecFRNm+w@mail.gmail.com>
-Message-ID: <CAHk-=wiZgAgcynfLsop+D1xBUAZ-Z+NUBxe9mb-AedecFRNm+w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
- with sub-page faults
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
+References: <20211119071738.1348957-1-amir73il@gmail.com> <20211126152841.GK13004@quack2.suse.cz>
+In-Reply-To: <20211126152841.GK13004@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 29 Nov 2021 21:12:17 +0200
+Message-ID: <CAOQ4uxhRv=2q3K89QG3T=Xne4PLUpN_sh8R=+PZETUa9GEJt-A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] Extend fanotify dirent events
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 29, 2021 at 7:36 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+On Fri, Nov 26, 2021 at 5:28 PM Jan Kara <jack@suse.cz> wrote:
 >
-> That's what this series does when it probes the whole range in
-> fault_in_writeable(). The main reason was that it's more efficient to do
-> a read than a write on a large range (the latter dirtying the cache
-> lines).
+> Hi Amir!
+>
+> On Fri 19-11-21 09:17:29, Amir Goldstein wrote:
+> > This is the 2nd version of FAN_REPORT_TARGET_FID patches [1].
+> >
+> > In the first version, extra info records about new and old parent+name
+> > were added to FAN_MOVED_FROM event.  This version uses a new event
+> > FAN_RENAME instead, to report those extra info records.
+> > The new FAN_RENAME event was designed as a replacement for the
+> > "inotify way" of joining the MOVED_FROM/MOVED_TO events using a cookie.
+> >
+> > FAN_RENAME event differs from MOVED_FROM/MOVED_TO events in several ways:
+> > 1) The information about old/new names is provided in a single event
+> > 2) When added to the ignored mask of a directory, FAN_RENAME is not
+> >    reported for renames to and from that directory
+> >
+> > The group flag FAN_REPORT_TARGET_FID adds an extra info record of
+> > the child fid to all the dirent events, including FAN_REANME.
+> > It is independent of the FAN_RENAME changes and implemented in the
+> > first patch, so it can be picked regardless of the FAN_RENAME patches.
+> >
+> > Patches [2] and LTP test [3] are available on my github.
+> > A man page draft will be provided later on.
+>
+> I've read through the series and I had just two small comments. I was also
+> slightly wondering whether instead of feeding the two directories for
+> FS_RENAME into OBJ_TYPE_PARENT and OBJ_TYPE_INODE we should not create
+> another iter_info type OBJ_TYPE_INODE2 as using OBJ_TYPE_PARENT is somewhat
+> error prone (you have to get the ordering of conditions right so that you
+> catch FS_RENAME e.g. before some code decides event should be discarded
+> because it is parent event without child watching). But I have not fully
+> decided whether the result is going to be worth it so I'm just mentioning
+> it as a possible future cleanup.
 
-The more this thread goes on, the more I'm starting to think that we
-should just make "fault_in_writable()" (and readable, of course) only
-really work on the beginning of the area.
+I managed to use ITER_TYPE_INODE2 pretty easily after a cleanup that
+splits OBJ_TYPE enum from ITER_TYPE enum.
 
-Not just for the finer-granularity pointer color probing, but for the
-page probing too.
-
-I'm looking at our current fault_in_writeable(), and I'm going
-
- (a) it uses __put_user() without range checks, which is really not great
-
- (b) it looks like a disaster from another standpoint: essentially
-user-controlled loop size with no limit checking, no preemption, and
-no check for fatal signals.
-
-Now, (a) should be fixed with a access_ok() or similar.
-
-And (b) can easily be fixed multiple ways, with one option simply just
-being adding a can_resched() call and checking for fatal signals.
-
-But faulting in the whole region is actually fundamentally wrong in
-low-memory situations - the beginning of the region might be swapped
-out by the time we get to the end. That's unlikely to be a problem in
-real life, but it's an example of how it's simply not conceptually
-sensible.
-
-So I do wonder why we don't just say "fault_in_writable will fault in
-_at_most_ X bytes", and simply limit the actual fault-in size to
-something reasonable.
-
-That solves _all_ the problems. It solves the lack of preemption and
-fatal signals (by virtue of just limiting the amount of work we do).
-It solves the low memory situation. And it solves the "excessive dirty
-cachelines" case too.
-
-Of course, we want to have some minimum bytes we fault in too, but
-that minimum range might well be "we guarantee at least a full page
-worth of data" (and in practice make it a couple of pages).
-
-It's not like fault_in_writeable() avoids page faults or anything like
-that - it just moves them around. So there's really very little reason
-to fault in a large range, and there are multiple reasons _not_ to do
-it.
-
-Hmm?
-
-               Linus
+Thanks,
+Amir.
