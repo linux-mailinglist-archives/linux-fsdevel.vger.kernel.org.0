@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5AF462572
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D000A462698
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233704AbhK2Wj3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 17:39:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33550 "EHLO
+        id S235495AbhK2Wyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 17:54:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232211AbhK2Wiu (ORCPT
+        with ESMTP id S235205AbhK2Wx4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 17:38:50 -0500
+        Mon, 29 Nov 2021 17:53:56 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A18EC0F4B2E;
-        Mon, 29 Nov 2021 12:56:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC0AC0F4B27;
+        Mon, 29 Nov 2021 12:56:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=4nCYh3UJ6b4mlExY45MFDyS7x7Wxh5kgRKAdxXTG6uA=; b=1SZLjL7ctrU9IaSLYbmJgpRmm/
-        VxNnk3I40Qd8JIxpaPjNtp5uIQ5jE9Nn8t76GLJPpIcSDQxqMqFDh4ZuSdIhHAJtOny/lDtC7PYlq
-        zALIYIwEgoN+YKthAvc8TI8eFy71jJgwZhQI61+U2pn2kaG2rhSZtfZghhMKYC1aaR1ffvD/bqjOq
-        IOLUIdOWFdy5Lw/kvG+Av2sSLqRncW/i9aM/x67FiFHC/GAm0rWL8/MztA0CeLyEBkf3rEf9ekocd
-        tpdFUy7SL0RQGJ7mKijt+hZgCcrl0PuIdCwN3KKLMJG3s/IV96zC4pitSZ6D27SiiDzmYcHTqPcMJ
-        p1gTuG5g==;
+        bh=MBeUlxms4g1e2v6WCThbye8I3Ed9/fUTVuymP55TEVs=; b=vjq2oI9QYW9HtUPN6vfED1rBfX
+        H4vHmbL83VmVTA0bHREu9f0ILOSDgP+0QhXag6dLQduCSskRcHzscAA7FXHRwr94x6gPg5aa/daKO
+        fAzA6dhd13eMQMvR9cKDf65JLpL81tcCqfCNX4eJEo0C/FAbRrnXRrg2ymH6YKQGYZl8LxLaMGsgJ
+        aidwT1dR7rDD7Af6fCoRXRN07Y4IPuo1i+uzUpUWpN4wre5k4ImPPMD9bZ4tbcIU05MnOHcWSW6cC
+        GdD8EPmSCqHwOWeRKYtqCPhy5NZ+hOP+SBQZ4OQ6zmLIK3ItCq1T8smw4VOril8jE7MeGQp/0H/Ir
+        oZk+36fQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mrngl-002XZf-58; Mon, 29 Nov 2021 20:55:51 +0000
+        id 1mrngl-002XZk-8m; Mon, 29 Nov 2021 20:55:51 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         keescook@chromium.org, yzaikin@google.com, nixiaoming@huawei.com,
@@ -35,9 +35,9 @@ To:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         andriy.shevchenko@linux.intel.com, jlayton@kernel.org,
         bfields@fieldses.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/9] sysctl: move maxolduid as a sysctl specific const
-Date:   Mon, 29 Nov 2021 12:55:43 -0800
-Message-Id: <20211129205548.605569-5-mcgrof@kernel.org>
+Subject: [PATCH 6/9] fs: move locking sysctls where they are used
+Date:   Mon, 29 Nov 2021 12:55:45 -0800
+Message-Id: <20211129205548.605569-7-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211129205548.605569-1-mcgrof@kernel.org>
 References: <20211129205548.605569-1-mcgrof@kernel.org>
@@ -48,95 +48,120 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The maxolduid value is only shared for sysctl purposes for
-use on a max range. Just stuff this into our shared const
-array.
+The kernel/sysctl.c is a kitchen sink where everyone leaves
+their dirty dishes, this makes it very difficult to maintain.
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+To help with this maintenance let's start by moving sysctls to
+places where they actually belong. The proc sysctl maintainers
+do not want to know what sysctl knobs you wish to add for your own
+piece of code, we just care about the core logic.
+
+The locking fs sysctls are only used on fs/locks.c, so move
+them there.
 ---
- fs/proc/proc_sysctl.c  |  2 +-
- include/linux/sysctl.h |  3 +++
- kernel/sysctl.c        | 12 ++++--------
- 3 files changed, 8 insertions(+), 9 deletions(-)
+ fs/locks.c         | 34 ++++++++++++++++++++++++++++++++--
+ include/linux/fs.h |  4 ----
+ kernel/sysctl.c    | 20 --------------------
+ 3 files changed, 32 insertions(+), 26 deletions(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 7dec3d5a9ed4..675b625fa898 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -26,7 +26,7 @@ static const struct file_operations proc_sys_dir_file_operations;
- static const struct inode_operations proc_sys_dir_operations;
+diff --git a/fs/locks.c b/fs/locks.c
+index 0fca9d680978..8c6df10cd9ed 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -62,6 +62,7 @@
+ #include <linux/pid_namespace.h>
+ #include <linux/hashtable.h>
+ #include <linux/percpu.h>
++#include <linux/sysctl.h>
  
- /* shared constants to be used in various sysctls */
--const int sysctl_vals[] = { -1, 0, 1, 2, 4, 100, 200, 1000, 3000, INT_MAX };
-+const int sysctl_vals[] = { -1, 0, 1, 2, 4, 100, 200, 1000, 65535, INT_MAX };
- EXPORT_SYMBOL(sysctl_vals);
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/filelock.h>
+@@ -88,8 +89,37 @@ static int target_leasetype(struct file_lock *fl)
+ 	return fl->fl_type;
+ }
  
- const unsigned long sysctl_long_vals[] = { 0, 1, LONG_MAX };
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 2de6d20d191b..bb921eb8a02d 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -49,6 +49,9 @@ struct ctl_dir;
- #define SYSCTL_THREE_THOUSAND		((void *)&sysctl_vals[8])
- #define SYSCTL_INT_MAX			((void *)&sysctl_vals[9])
- 
-+/* this is needed for the proc_dointvec_minmax for [fs_]overflow UID and GID */
-+#define SYSCTL_MAXOLDUID		((void *)&sysctl_vals[10])
+-int leases_enable = 1;
+-int lease_break_time = 45;
++static int leases_enable = 1;
++static int lease_break_time = 45;
 +
- extern const int sysctl_vals[];
++#ifdef CONFIG_SYSCTL
++static struct ctl_table locks_sysctls[] = {
++	{
++		.procname	= "leases-enable",
++		.data		= &leases_enable,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++#ifdef CONFIG_MMU
++	{
++		.procname	= "lease-break-time",
++		.data		= &lease_break_time,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++#endif /* CONFIG_MMU */
++	{}
++};
++
++static int __init init_fs_locks_sysctls(void)
++{
++	register_sysctl_init("fs", locks_sysctls);
++	return 0;
++}
++early_initcall(init_fs_locks_sysctls);
++#endif /* CONFIG_SYSCTL */
  
- #define SYSCTL_LONG_ZERO	((void *)&sysctl_long_vals[0])
+ /*
+  * The global file_lock_list is only used for displaying /proc/locks, so we
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index edec0692f943..9ff634184f58 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -81,10 +81,6 @@ extern void __init files_maxfiles_init(void);
+ extern unsigned long get_max_files(void);
+ extern unsigned int sysctl_nr_open;
+ extern int leases_enable, lease_break_time;
+-extern int sysctl_protected_symlinks;
+-extern int sysctl_protected_hardlinks;
+-extern int sysctl_protected_fifos;
+-extern int sysctl_protected_regular;
+ 
+ typedef __kernel_rwf_t rwf_t;
+ 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index dbd267d0f014..05d9dd85e17f 100644
+index 865173cefcef..52a86746ac9d 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -109,10 +109,6 @@ static const int six_hundred_forty_kb = 640 * 1024;
- /* this is needed for the proc_doulongvec_minmax of vm_dirty_bytes */
- static const unsigned long dirty_bytes_min = 2 * PAGE_SIZE;
+@@ -2896,26 +2896,6 @@ static struct ctl_table vm_table[] = {
+ };
  
--/* this is needed for the proc_dointvec_minmax for [fs_]overflow UID and GID */
--static const int maxolduid = 65535;
--/* minolduid is SYSCTL_ZERO */
--
- static const int ngroups_max = NGROUPS_MAX;
- static const int cap_last_cap = CAP_LAST_CAP;
- 
-@@ -2126,7 +2122,7 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
--		.extra2		= (void *)&maxolduid,
-+		.extra2		= SYSCTL_MAXOLDUID,
- 	},
+ static struct ctl_table fs_table[] = {
+-#ifdef CONFIG_FILE_LOCKING
+-	{
+-		.procname	= "leases-enable",
+-		.data		= &leases_enable,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+-#endif
+-#ifdef CONFIG_MMU
+-#ifdef CONFIG_FILE_LOCKING
+-	{
+-		.procname	= "lease-break-time",
+-		.data		= &lease_break_time,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+-#endif
+-#endif
  	{
- 		.procname	= "overflowgid",
-@@ -2135,7 +2131,7 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
--		.extra2		= (void *)&maxolduid,
-+		.extra2		= SYSCTL_MAXOLDUID,
- 	},
- #ifdef CONFIG_S390
- 	{
-@@ -2907,7 +2903,7 @@ static struct ctl_table fs_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
--		.extra2		= (void *)&maxolduid,
-+		.extra2		= SYSCTL_MAXOLDUID,
- 	},
- 	{
- 		.procname	= "overflowgid",
-@@ -2916,7 +2912,7 @@ static struct ctl_table fs_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
--		.extra2		= (void *)&maxolduid,
-+		.extra2		= SYSCTL_MAXOLDUID,
- 	},
- #ifdef CONFIG_FILE_LOCKING
- 	{
+ 		.procname	= "protected_symlinks",
+ 		.data		= &sysctl_protected_symlinks,
 -- 
 2.33.0
 
