@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25C2446196A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 15:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9BE461975
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 15:36:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346671AbhK2Oir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 09:38:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49195 "EHLO
+        id S1378615AbhK2Oiz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 09:38:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:57726 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1378912AbhK2Ogl (ORCPT
+        by vger.kernel.org with ESMTP id S1378684AbhK2Ogw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 09:36:41 -0500
+        Mon, 29 Nov 2021 09:36:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638196404;
+        s=mimecast20190719; t=1638196414;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=9bQJUDJbbd+z5cxuZs3azddOKxmMStCOP2O9rpK8cik=;
-        b=XD62wAgFEJrq0M3aQY3Cdkgp9HhgMzeyJyReEJNALPKwDik57PEUO9wLFfjOWqXcKYajVc
-        lrhH37xGxdBbpIjB8UvN/GHOuPPLGSMv+UgqRu4PlHbhvyCu1I/m6H7lzqBaamjKEVuHR+
-        oYkC5iNc6cAJB2v3gs3mnzL9EmCegsQ=
+        bh=MIAV+8rnq+qPV7ERf+LP2jUhm8jvp16atdVPY3tHurU=;
+        b=V1J3VyrUlfCFLW62xIIC4MgS38g5RwcS5RQC3ZPJCkwcw8o9mRyHLEU+ePQ+EWDyZkbJQo
+        aNDXOExTF5+bY4WX4VDpi/CABLa2UjEXuDRs+zA/Gjqq8tgujep7cZae4QQPpfhLHUYLdT
+        2LyoiQqaPJr3O1KGlfuF02zz3UKL5wQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-14-Q9KMrr6_P9yZ_njqpNUMRw-1; Mon, 29 Nov 2021 09:33:20 -0500
-X-MC-Unique: Q9KMrr6_P9yZ_njqpNUMRw-1
+ us-mta-531-3mXwWVxeNeGbmS30EOu3Pw-1; Mon, 29 Nov 2021 09:33:31 -0500
+X-MC-Unique: 3mXwWVxeNeGbmS30EOu3Pw-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AE4E5101AFC3;
-        Mon, 29 Nov 2021 14:33:18 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0161101AFAC;
+        Mon, 29 Nov 2021 14:33:27 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 625CF60854;
-        Mon, 29 Nov 2021 14:33:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B7FCF608BA;
+        Mon, 29 Nov 2021 14:33:24 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 43/64] cachefiles: Implement object lifecycle funcs
+Subject: [PATCH 44/64] cachefiles: Implement key to filename encoding
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
@@ -55,8 +55,8 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Nov 2021 14:33:14 +0000
-Message-ID: <163819639457.215744.4600093239395728232.stgit@warthog.procyon.org.uk>
+Date:   Mon, 29 Nov 2021 14:33:23 +0000
+Message-ID: <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
 References: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
@@ -68,350 +68,212 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement allocate, get, see and put functions for the cachefiles_object
-struct.  The members of the struct we're going to need are also added.
+Implement a function to encode a binary cookie key as something that can be
+used as a filename.  Four options are considered:
 
-Additionally, implement a lifecycle tracepoint.
+ (1) All printable chars with no '/' characters.  Prepend a 'D' to indicate
+     the encoding but otherwise use as-is.
+
+ (2) Appears to be an array of __be32.  Encode as 'S' plus a list of
+     hex-encoded 32-bit ints separated by commas.  If a number is 0, it is
+     rendered as "" instead of "0".
+
+ (3) Appears to be an array of __le32.  Encoded as (2) but with a 'T'
+     encoding prefix.
+
+ (4) Encoded as base64 with an 'E' prefix plus a second char indicating how
+     much padding is involved.  A non-standard base64 encoding is used
+     because '/' cannot be used in the encoded form.
+
+If (1) is not possible, whichever of (2), (3) or (4) produces the shortest
+string is selected (hex-encoding a number may be less dense than base64
+encoding it).
+
+Note that the prefix characters have to be selected from the set [DEIJST@]
+lest cachefilesd remove the files because it recognise the name.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-cachefs@redhat.com
 ---
 
- fs/cachefiles/interface.c         |   86 +++++++++++++++++++++++++++++++++++++
- fs/cachefiles/internal.h          |   35 ++++++++++++++-
- fs/cachefiles/main.c              |   16 +++++++
- include/trace/events/cachefiles.h |   58 +++++++++++++++++++++++++
- include/trace/events/fscache.h    |    4 ++
- 5 files changed, 197 insertions(+), 2 deletions(-)
+ fs/cachefiles/Makefile   |    1 
+ fs/cachefiles/internal.h |    5 ++
+ fs/cachefiles/key.c      |  139 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 145 insertions(+)
+ create mode 100644 fs/cachefiles/key.c
 
-diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index 1793e46bd3e7..68bb7b6c4945 100644
---- a/fs/cachefiles/interface.c
-+++ b/fs/cachefiles/interface.c
-@@ -13,6 +13,92 @@
- #include <trace/events/fscache.h>
- #include "internal.h"
- 
-+static atomic_t cachefiles_object_debug_id;
-+
-+/*
-+ * Allocate a cache object record.
-+ */
-+static
-+struct cachefiles_object *cachefiles_alloc_object(struct fscache_cookie *cookie)
-+{
-+	struct fscache_volume *vcookie = cookie->volume;
-+	struct cachefiles_volume *volume = vcookie->cache_priv;
-+	struct cachefiles_object *object;
-+
-+	_enter("{%s},%x,", vcookie->key, cookie->debug_id);
-+
-+	object = kmem_cache_zalloc(cachefiles_object_jar, GFP_KERNEL);
-+	if (!object)
-+		return NULL;
-+
-+	refcount_set(&object->ref, 1);
-+
-+	spin_lock_init(&object->lock);
-+	INIT_LIST_HEAD(&object->cache_link);
-+	object->volume = volume;
-+	object->debug_id = atomic_inc_return(&cachefiles_object_debug_id);
-+	object->cookie = fscache_get_cookie(cookie, fscache_cookie_get_attach_object);
-+
-+	fscache_count_object(vcookie->cache);
-+	trace_cachefiles_ref(object->debug_id, cookie->debug_id, 1,
-+			     cachefiles_obj_new);
-+	return object;
-+}
-+
-+/*
-+ * Note that an object has been seen.
-+ */
-+void cachefiles_see_object(struct cachefiles_object *object,
-+			   enum cachefiles_obj_ref_trace why)
-+{
-+	trace_cachefiles_ref(object->debug_id, object->cookie->debug_id,
-+			     refcount_read(&object->ref), why);
-+}
-+
-+/*
-+ * Increment the usage count on an object;
-+ */
-+struct cachefiles_object *cachefiles_grab_object(struct cachefiles_object *object,
-+						 enum cachefiles_obj_ref_trace why)
-+{
-+	int r;
-+
-+	__refcount_inc(&object->ref, &r);
-+	trace_cachefiles_ref(object->debug_id, object->cookie->debug_id, r, why);
-+	return object;
-+}
-+
-+/*
-+ * dispose of a reference to an object
-+ */
-+void cachefiles_put_object(struct cachefiles_object *object,
-+			   enum cachefiles_obj_ref_trace why)
-+{
-+	unsigned int object_debug_id = object->debug_id;
-+	unsigned int cookie_debug_id = object->cookie->debug_id;
-+	struct fscache_cache *cache;
-+	bool done;
-+	int r;
-+
-+	done = __refcount_dec_and_test(&object->ref, &r);
-+	trace_cachefiles_ref(object_debug_id, cookie_debug_id, r, why);
-+	if (done) {
-+		_debug("- kill object OBJ%x", object_debug_id);
-+
-+		ASSERTCMP(object->file, ==, NULL);
-+
-+		kfree(object->d_name);
-+
-+		cache = object->volume->cache->cache;
-+		fscache_put_cookie(object->cookie, fscache_cookie_put_object);
-+		object->cookie = NULL;
-+		kmem_cache_free(cachefiles_object_jar, object);
-+		fscache_uncount_object(cache);
-+	}
-+
-+	_leave("");
-+}
-+
- const struct fscache_cache_ops cachefiles_cache_ops = {
- 	.name			= "cachefiles",
- 	.acquire_volume		= cachefiles_acquire_volume,
+diff --git a/fs/cachefiles/Makefile b/fs/cachefiles/Makefile
+index d67210ece9cd..6f025940a65c 100644
+--- a/fs/cachefiles/Makefile
++++ b/fs/cachefiles/Makefile
+@@ -7,6 +7,7 @@ cachefiles-y := \
+ 	cache.o \
+ 	daemon.o \
+ 	interface.o \
++	key.o \
+ 	main.o \
+ 	namei.o \
+ 	security.o \
 diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 3b1a6d67cf96..ff378171c71d 100644
+index ff378171c71d..28e386b5b1f3 100644
 --- a/fs/cachefiles/internal.h
 +++ b/fs/cachefiles/internal.h
-@@ -19,6 +19,16 @@
- struct cachefiles_cache;
- struct cachefiles_object;
+@@ -173,6 +173,11 @@ extern struct cachefiles_object *cachefiles_grab_object(struct cachefiles_object
+ extern void cachefiles_put_object(struct cachefiles_object *object,
+ 				  enum cachefiles_obj_ref_trace why);
  
-+enum cachefiles_content {
-+	/* These values are saved on disk */
-+	CACHEFILES_CONTENT_NO_DATA	= 0, /* No content stored */
-+	CACHEFILES_CONTENT_SINGLE	= 1, /* Content is monolithic, all is present */
-+	CACHEFILES_CONTENT_ALL		= 2, /* Content is all present, no map */
-+	CACHEFILES_CONTENT_BACKFS_MAP	= 3, /* Content is piecemeal, mapped through backing fs */
-+	CACHEFILES_CONTENT_DIRTY	= 4, /* Content is dirty (only seen on disk) */
-+	nr__cachefiles_content
-+};
++/*
++ * key.c
++ */
++extern bool cachefiles_cook_key(struct cachefiles_object *object);
 +
  /*
-  * Cached volume representation.
+  * main.c
   */
-@@ -31,10 +41,20 @@ struct cachefiles_volume {
- };
- 
- /*
-- * Data file records.
-+ * Backing file state.
-  */
- struct cachefiles_object {
--	int				debug_id;	/* debugging ID */
-+	struct fscache_cookie		*cookie;	/* Netfs data storage object cookie */
-+	struct cachefiles_volume	*volume;	/* Cache volume that holds this object */
-+	struct list_head		cache_link;	/* Link in cache->*_list */
-+	struct file			*file;		/* The file representing this object */
-+	char				*d_name;	/* Backing file name */
-+	int				debug_id;
-+	spinlock_t			lock;
-+	refcount_t			ref;
-+	u8				d_name_len;	/* Length of filename */
-+	enum cachefiles_content		content_info:8;	/* Info about content presence */
-+	unsigned long			flags;
- };
- 
- /*
-@@ -146,6 +166,17 @@ static inline int cachefiles_inject_remove_error(void)
-  * interface.c
-  */
- extern const struct fscache_cache_ops cachefiles_cache_ops;
-+extern void cachefiles_see_object(struct cachefiles_object *object,
-+				  enum cachefiles_obj_ref_trace why);
-+extern struct cachefiles_object *cachefiles_grab_object(struct cachefiles_object *object,
-+							enum cachefiles_obj_ref_trace why);
-+extern void cachefiles_put_object(struct cachefiles_object *object,
-+				  enum cachefiles_obj_ref_trace why);
+diff --git a/fs/cachefiles/key.c b/fs/cachefiles/key.c
+new file mode 100644
+index 000000000000..3b1bdc81fc0a
+--- /dev/null
++++ b/fs/cachefiles/key.c
+@@ -0,0 +1,139 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Key to pathname encoder
++ *
++ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#include <linux/slab.h>
++#include "internal.h"
++
++static const char cachefiles_charmap[64] =
++	"0123456789"			/* 0 - 9 */
++	"abcdefghijklmnopqrstuvwxyz"	/* 10 - 35 */
++	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"	/* 36 - 61 */
++	"_-"				/* 62 - 63 */
++	;
++
++static const char cachefiles_filecharmap[256] = {
++	/* we skip space and tab and control chars */
++	[33 ... 46] = 1,		/* '!' -> '.' */
++	/* we skip '/' as it's significant to pathwalk */
++	[48 ... 127] = 1,		/* '0' -> '~' */
++};
++
++static inline unsigned int how_many_hex_digits(unsigned int x)
++{
++	return x ? round_up(ilog2(x) + 1, 4) / 4 : 0;
++}
 +
 +/*
-+ * main.c
++ * turn the raw key into something cooked
++ * - the key may be up to NAME_MAX in length (including the length word)
++ *   - "base64" encode the strange keys, mapping 3 bytes of raw to four of
++ *     cooked
++ *   - need to cut the cooked key into 252 char lengths (189 raw bytes)
 + */
-+extern struct kmem_cache *cachefiles_object_jar;
- 
- /*
-  * namei.c
-diff --git a/fs/cachefiles/main.c b/fs/cachefiles/main.c
-index 533e3067d80f..3f369c6f816d 100644
---- a/fs/cachefiles/main.c
-+++ b/fs/cachefiles/main.c
-@@ -31,6 +31,8 @@ MODULE_DESCRIPTION("Mounted-filesystem based cache");
- MODULE_AUTHOR("Red Hat, Inc.");
- MODULE_LICENSE("GPL");
- 
-+struct kmem_cache *cachefiles_object_jar;
++bool cachefiles_cook_key(struct cachefiles_object *object)
++{
++	const u8 *key = fscache_get_key(object->cookie), *kend;
++	unsigned char ch;
++	unsigned int acc, i, n, nle, nbe, keylen = object->cookie->key_len;
++	unsigned int b64len, len, print, pad;
++	char *name, sep;
 +
- static struct miscdevice cachefiles_dev = {
- 	.minor	= MISC_DYNAMIC_MINOR,
- 	.name	= "cachefiles",
-@@ -51,9 +53,22 @@ static int __init cachefiles_init(void)
- 	if (ret < 0)
- 		goto error_dev;
- 
-+	/* create an object jar */
-+	ret = -ENOMEM;
-+	cachefiles_object_jar =
-+		kmem_cache_create("cachefiles_object_jar",
-+				  sizeof(struct cachefiles_object),
-+				  0, SLAB_HWCACHE_ALIGN, NULL);
-+	if (!cachefiles_object_jar) {
-+		pr_notice("Failed to allocate an object jar\n");
-+		goto error_object_jar;
++	_enter(",%u,%*phN", keylen, keylen, key);
++
++	BUG_ON(keylen > NAME_MAX - 3);
++
++	print = 1;
++	for (i = 0; i < keylen; i++) {
++		ch = key[i];
++		print &= cachefiles_filecharmap[ch];
 +	}
 +
- 	pr_info("Loaded\n");
- 	return 0;
- 
-+error_object_jar:
-+	misc_deregister(&cachefiles_dev);
- error_dev:
- 	cachefiles_unregister_error_injection();
- error_einj:
-@@ -70,6 +85,7 @@ static void __exit cachefiles_exit(void)
- {
- 	pr_info("Unloading\n");
- 
-+	kmem_cache_destroy(cachefiles_object_jar);
- 	misc_deregister(&cachefiles_dev);
- 	cachefiles_unregister_error_injection();
- }
-diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-index b548dbaf85bb..493afa7fbfec 100644
---- a/include/trace/events/cachefiles.h
-+++ b/include/trace/events/cachefiles.h
-@@ -18,6 +18,21 @@
- #ifndef __CACHEFILES_DECLARE_TRACE_ENUMS_ONCE_ONLY
- #define __CACHEFILES_DECLARE_TRACE_ENUMS_ONCE_ONLY
- 
-+enum cachefiles_obj_ref_trace {
-+	cachefiles_obj_get_ioreq,
-+	cachefiles_obj_new,
-+	cachefiles_obj_put_alloc_fail,
-+	cachefiles_obj_put_detach,
-+	cachefiles_obj_put_ioreq,
-+	cachefiles_obj_see_clean_commit,
-+	cachefiles_obj_see_clean_delete,
-+	cachefiles_obj_see_clean_drop_tmp,
-+	cachefiles_obj_see_lookup_cookie,
-+	cachefiles_obj_see_lookup_failed,
-+	cachefiles_obj_see_withdraw_cookie,
-+	cachefiles_obj_see_withdrawal,
-+};
++	/* If the path is usable ASCII, then we render it directly */
++	if (print) {
++		len = 1 + keylen + 1;
++		name = kmalloc(len, GFP_KERNEL);
++		if (!name)
++			return false;
 +
- enum fscache_why_object_killed {
- 	FSCACHE_OBJECT_IS_STALE,
- 	FSCACHE_OBJECT_IS_WEIRD,
-@@ -66,6 +81,20 @@ enum cachefiles_error_trace {
- 	EM(FSCACHE_OBJECT_WAS_RETIRED,	"was_retired")		\
- 	E_(FSCACHE_OBJECT_WAS_CULLED,	"was_culled")
- 
-+#define cachefiles_obj_ref_traces					\
-+	EM(cachefiles_obj_get_ioreq,		"GET ioreq")		\
-+	EM(cachefiles_obj_new,			"NEW obj")		\
-+	EM(cachefiles_obj_put_alloc_fail,	"PUT alloc_fail")	\
-+	EM(cachefiles_obj_put_detach,		"PUT detach")		\
-+	EM(cachefiles_obj_put_ioreq,		"PUT ioreq")		\
-+	EM(cachefiles_obj_see_clean_commit,	"SEE clean_commit")	\
-+	EM(cachefiles_obj_see_clean_delete,	"SEE clean_delete")	\
-+	EM(cachefiles_obj_see_clean_drop_tmp,	"SEE clean_drop_tmp")	\
-+	EM(cachefiles_obj_see_lookup_cookie,	"SEE lookup_cookie")	\
-+	EM(cachefiles_obj_see_lookup_failed,	"SEE lookup_failed")	\
-+	EM(cachefiles_obj_see_withdraw_cookie,	"SEE withdraw_cookie")	\
-+	E_(cachefiles_obj_see_withdrawal,	"SEE withdrawal")
++		name[0] = 'D'; /* Data object type, string encoding */
++		name[1 + keylen] = 0;
++		memcpy(name + 1, key, keylen);
++		goto success;
++	}
 +
- #define cachefiles_trunc_traces						\
- 	EM(cachefiles_trunc_dio_adjust,		"DIOADJ")		\
- 	EM(cachefiles_trunc_expand_tmpfile,	"EXPTMP")		\
-@@ -100,6 +129,7 @@ enum cachefiles_error_trace {
- #define E_(a, b) TRACE_DEFINE_ENUM(a);
- 
- cachefiles_obj_kill_traces;
-+cachefiles_obj_ref_traces;
- cachefiles_trunc_traces;
- cachefiles_error_traces;
- 
-@@ -113,6 +143,34 @@ cachefiles_error_traces;
- #define E_(a, b)	{ a, b }
- 
- 
-+TRACE_EVENT(cachefiles_ref,
-+	    TP_PROTO(unsigned int object_debug_id,
-+		     unsigned int cookie_debug_id,
-+		     int usage,
-+		     enum cachefiles_obj_ref_trace why),
++	/* See if it makes sense to encode it as "hex,hex,hex" for each 32-bit
++	 * chunk.  We rely on the key having been padded out to a whole number
++	 * of 32-bit words.
++	 */
++	n = round_up(keylen, 4);
++	nbe = nle = 0;
++	for (i = 0; i < n; i += 4) {
++		u32 be = be32_to_cpu(*(__be32 *)(key + i));
++		u32 le = le32_to_cpu(*(__le32 *)(key + i));
 +
-+	    TP_ARGS(object_debug_id, cookie_debug_id, usage, why),
++		nbe += 1 + how_many_hex_digits(be);
++		nle += 1 + how_many_hex_digits(le);
++	}
 +
-+	    /* Note that obj may be NULL */
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,			obj		)
-+		    __field(unsigned int,			cookie		)
-+		    __field(enum cachefiles_obj_ref_trace,	why		)
-+		    __field(int,				usage		)
-+			     ),
++	b64len = DIV_ROUND_UP(keylen, 3);
++	pad = b64len * 3 - keylen;
++	b64len = 2 + b64len * 4; /* Length if we base64-encode it */
++	_debug("len=%u nbe=%u nle=%u b64=%u", keylen, nbe, nle, b64len);
++	if (nbe < b64len || nle < b64len) {
++		unsigned int nlen = min(nbe, nle) + 1;
++		name = kmalloc(nlen, GFP_KERNEL);
++		if (!name)
++			return false;
++		sep = (nbe <= nle) ? 'S' : 'T'; /* Encoding indicator */
++		len = 0;
++		for (i = 0; i < n; i += 4) {
++			u32 x;
++			if (nbe <= nle)
++				x = be32_to_cpu(*(__be32 *)(key + i));
++			else
++				x = le32_to_cpu(*(__le32 *)(key + i));
++			name[len++] = sep;
++			if (x != 0)
++				len += snprintf(name + len, nlen - len, "%x", x);
++			sep = ',';
++		}
++		goto success;
++	}
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= object_debug_id;
-+		    __entry->cookie	= cookie_debug_id;
-+		    __entry->usage	= usage;
-+		    __entry->why	= why;
-+			   ),
++	/* We need to base64-encode it */
++	name = kmalloc(b64len + 1, GFP_KERNEL);
++	if (!name)
++		return false;
 +
-+	    TP_printk("c=%08x o=%08x u=%d %s",
-+		      __entry->cookie, __entry->obj, __entry->usage,
-+		      __print_symbolic(__entry->why, cachefiles_obj_ref_traces))
-+	    );
++	name[0] = 'E';
++	name[1] = '0' + pad;
++	len = 2;
++	kend = key + keylen;
++	do {
++		acc  = *key++;
++		if (key < kend) {
++			acc |= *key++ << 8;
++			if (key < kend)
++				acc |= *key++ << 16;
++		}
 +
- TRACE_EVENT(cachefiles_lookup,
- 	    TP_PROTO(struct cachefiles_object *obj,
- 		     struct dentry *de),
-diff --git a/include/trace/events/fscache.h b/include/trace/events/fscache.h
-index 6bdff5bcbf6c..7d26388ef9d8 100644
---- a/include/trace/events/fscache.h
-+++ b/include/trace/events/fscache.h
-@@ -49,6 +49,7 @@ enum fscache_volume_trace {
- enum fscache_cookie_trace {
- 	fscache_cookie_collision,
- 	fscache_cookie_discard,
-+	fscache_cookie_get_attach_object,
- 	fscache_cookie_get_end_access,
- 	fscache_cookie_get_hash_collision,
- 	fscache_cookie_get_inval_work,
-@@ -57,6 +58,7 @@ enum fscache_cookie_trace {
- 	fscache_cookie_new_acquire,
- 	fscache_cookie_put_hash_collision,
- 	fscache_cookie_put_lru,
-+	fscache_cookie_put_object,
- 	fscache_cookie_put_over_queued,
- 	fscache_cookie_put_relinquish,
- 	fscache_cookie_put_withdrawn,
-@@ -122,6 +124,7 @@ enum fscache_access_trace {
- #define fscache_cookie_traces						\
- 	EM(fscache_cookie_collision,		"*COLLIDE*")		\
- 	EM(fscache_cookie_discard,		"DISCARD  ")		\
-+	EM(fscache_cookie_get_attach_object,	"GET attch")		\
- 	EM(fscache_cookie_get_hash_collision,	"GET hcoll")		\
- 	EM(fscache_cookie_get_end_access,	"GQ  endac")		\
- 	EM(fscache_cookie_get_inval_work,	"GQ  inval")		\
-@@ -130,6 +133,7 @@ enum fscache_access_trace {
- 	EM(fscache_cookie_new_acquire,		"NEW acq  ")		\
- 	EM(fscache_cookie_put_hash_collision,	"PUT hcoll")		\
- 	EM(fscache_cookie_put_lru,		"PUT lru  ")		\
-+	EM(fscache_cookie_put_object,		"PUT obj  ")		\
- 	EM(fscache_cookie_put_over_queued,	"PQ  overq")		\
- 	EM(fscache_cookie_put_relinquish,	"PUT relnq")		\
- 	EM(fscache_cookie_put_withdrawn,	"PUT wthdn")		\
++		name[len++] = cachefiles_charmap[acc & 63];
++		acc >>= 6;
++		name[len++] = cachefiles_charmap[acc & 63];
++		acc >>= 6;
++		name[len++] = cachefiles_charmap[acc & 63];
++		acc >>= 6;
++		name[len++] = cachefiles_charmap[acc & 63];
++	} while (key < kend);
++
++success:
++	name[len] = 0;
++	object->d_name = name;
++	object->d_name_len = len;
++	_leave(" = %s", object->d_name);
++	return true;
++}
 
 
