@@ -2,112 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55F25461AA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:09:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66CFB461AE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236638AbhK2PMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 10:12:44 -0500
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17277 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234046AbhK2PKm (ORCPT
+        id S1349362AbhK2Pcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 10:32:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51168 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343859AbhK2Pap (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 10:10:42 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1637903008; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=kTT6Em4JDS6/n2VGliGLaE9S+PknFWxGAUiJO4w9UcrhWM6NIlMzAx+PtzMv9HHDSNv2cP27qumLZNCOYVAznwtp8lXf6M/LqY/Gq/p/xzSUwgrV46aHdZiKMf+5JRO3Rs62wyy89VzmskC+loYa07G1bKLiqEwExGzYIzOszds=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1637903008; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=; 
-        b=D+d85SWg0ltZ94GnKtm7vV4/uUrRM6weqrb89FGTFtj4m89M2NfrXFUGJ9ojdiV/cZ7+gXsL/DBAa5KTV0Lqxv9KvyfNtzn2BrUtCvKpdzg8Gea5yYl3qHhHkcIcA/HcrdwmahOTG4+DUxHVrliJfPOrrOC6vMZtZRPBfJibA2Q=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637903008;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=e1fy8d/F7bO0bxbGs9DFbseWsVknlDYWORiYHfsGIf8=;
-        b=Nl3r5ejY1FHl1ts5hqefnDJ9sJvZpsLJORZ3A4KioqoF7ibhdDL7ysWhdndMlvgk
-        bhsk/ZFNRmLwXCekMD84/SnA7kYzSfipuQe6dfXL/7ye+fUekX6MpcNkMD/JsBtfPKT
-        eXfIDlXUdRRy6lvszTi851IoRCvWRkSeoVID5kQk=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 163790300607680.6143952720198; Fri, 26 Nov 2021 13:03:26 +0800 (CST)
-Date:   Fri, 26 Nov 2021 13:03:26 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Amir Goldstein" <amir73il@gmail.com>
-Cc:     "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>,
-        "overlayfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Chengguang Xu" <charliecgxu@tencent.com>
-Message-ID: <17d5aa0795d.fdfda4a49855.5158536783597235118@mykernel.net>
-In-Reply-To: <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net> <20211122030038.1938875-8-cgxu519@mykernel.net> <CAOQ4uxhrg=MAL7sArmP47oyF_QmhG-1b=srs30VNdiT-9s-P0w@mail.gmail.com>
-Subject: Re: [RFC PATCH V6 7/7] ovl: implement containerized syncfs for
- overlayfs
+        Mon, 29 Nov 2021 10:30:45 -0500
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53E1C05291B;
+        Mon, 29 Nov 2021 05:41:48 -0800 (PST)
+Received: by mail-qt1-x82d.google.com with SMTP id t11so16552401qtw.3;
+        Mon, 29 Nov 2021 05:41:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fhEsQAK98bM5StiE4nhRYixbgK7BmdEmPc2JUmkzNuE=;
+        b=OPD4a0BbOCx/FwKr9ugrv/ROrF8AV8trJRIupc+DGvBkpArkblK6Vf7ThfjN45aaQx
+         +4tY0VYjZJxl8P1vbJ++e/HVMPYxXgxG7oPThz/y4Eyks1pROtqYrnlq27waj1Jvwhxn
+         O1n97pTLMFzxnBa4efTROYFYfSml95/Ip3O7RBzVZvGZYo6+ChdPL8s0o2JFx2gDz7oQ
+         RSQp/sslhuaFaXPYGRHaRVNKgR3xBYeXrI+SvAsiJXQkWnzqqQL3yFqzQ3ebLgRwmLo6
+         ZJKNwzLsde6LoPB7PutSs3sH0wX6epaXkVO3m1jHVMV1yfypRsT1W5T5hQAJIvfPTIvN
+         dN9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fhEsQAK98bM5StiE4nhRYixbgK7BmdEmPc2JUmkzNuE=;
+        b=CVUc3leK/qoKvDvp75+mQYFbCf2ly4Uvy8HkuswUcObMyMq7hbhs9V7ugSNvW4WOI6
+         THBGpj6DCfMXAkOyv8TKzNuYOfa3Wc6dvblNO3pE8ezId/2jeccnvCBfTpIctMIlSsjt
+         jitCxVhVF8ybHe9M1j166KUVzlN7jHuHNUmE+uzDjIo2Q90jGyDO/v1yvh6f5Qe8Ao7m
+         t4O91X3iJYSHK8lkkeKVXZNQmlDp16zECW4/X/TcWE8yE0HFKV6ksyR9yAYA27VGr1fI
+         1KcUcyoR2VrSZbXVRJ6pjH62CKj7faBUCd0cfbs24mbJjRXcYs2TMO97CpTJP9wKR7nU
+         AFPQ==
+X-Gm-Message-State: AOAM531CyfUhUWgtdoJaLXx4Ezyempvbgoqa0SvJrhDBLPhPR788v3u6
+        SXJzimjCjiAhf/JMCak/X7jKy2fSOqxx1wX5jTkpt7LblJTTJryBAJQ=
+X-Google-Smtp-Source: ABdhPJwtYuAs3Eyp35qBUS3u4YeJbSdbd0Fj/uaKBQS5Zkwii/UENBRf3c8ern+XfOlGXgg+DCkb17rNDqYBaO6+dq4=
+X-Received: by 2002:ac8:5894:: with SMTP id t20mr34675354qta.450.1638193308018;
+ Mon, 29 Nov 2021 05:41:48 -0800 (PST)
 MIME-Version: 1.0
+References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
+ <yt9d35nf1d84.fsf@linux.ibm.com>
+In-Reply-To: <yt9d35nf1d84.fsf@linux.ibm.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 29 Nov 2021 21:41:11 +0800
+Message-ID: <CALOAHbDtqpkN4D0vHvGxTSpQkksMWtFm3faMy0n+pazxN_RPPg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
+ with TASK_COMM_LEN
+To:     Sven Schnelle <svens@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 15:40:59 Amir Golds=
-tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
- > On Mon, Nov 22, 2021 at 5:01 AM Chengguang Xu <cgxu519@mykernel.net> wro=
-te:
- > >
- > > From: Chengguang Xu <charliecgxu@tencent.com>
- > >
- > > Now overlayfs can only sync own dirty inodes during syncfs,
- > > so remove unnecessary sync_filesystem() on upper file system.
- > >
- > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
- > > ---
- > >  fs/overlayfs/super.c | 14 +++++---------
- > >  1 file changed, 5 insertions(+), 9 deletions(-)
- > >
- > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
- > > index ccffcd96491d..213b795a6a86 100644
- > > --- a/fs/overlayfs/super.c
- > > +++ b/fs/overlayfs/super.c
- > > @@ -292,18 +292,14 @@ static int ovl_sync_fs(struct super_block *sb, i=
-nt wait)
- > >         /*
- > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
-_SYNC).
- > >          * All the super blocks will be iterated, including upper_sb.
- > > -        *
- > > -        * If this is a syncfs(2) call, then we do need to call
- > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
-being
- > > -        * called with wait =3D=3D 1.
- > >          */
- > > -       if (!wait)
- > > -               return 0;
- > > -
- > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
- > > -
- > >         down_read(&upper_sb->s_umount);
- > > -       ret =3D sync_filesystem(upper_sb);
- > > +       if (wait)
- > > +               wait_sb_inodes(upper_sb);
- > > +       if (upper_sb->s_op->sync_fs)
- > > +               upper_sb->s_op->sync_fs(upper_sb, wait);
- > > +       ret =3D ovl_sync_upper_blockdev(upper_sb, wait);
- >=20
- > I think it will be cleaner to use a helper ovl_sync_upper_filesystem()
- > with everything from  upper_sb =3D ... and a comment to explain that
- > this is a variant of __sync_filesystem() where all the dirty inodes writ=
-e
- > have already been started.
- >=20
-=20
-I agree with you.=20
+On Mon, Nov 29, 2021 at 6:13 PM Sven Schnelle <svens@linux.ibm.com> wrote:
+>
+> Hi,
+>
+> Yafang Shao <laoar.shao@gmail.com> writes:
+>
+> > As the sched:sched_switch tracepoint args are derived from the kernel,
+> > we'd better make it same with the kernel. So the macro TASK_COMM_LEN is
+> > converted to type enum, then all the BPF programs can get it through BTF.
+> >
+> > The BPF program which wants to use TASK_COMM_LEN should include the header
+> > vmlinux.h. Regarding the test_stacktrace_map and test_tracepoint, as the
+> > type defined in linux/bpf.h are also defined in vmlinux.h, so we don't
+> > need to include linux/bpf.h again.
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Petr Mladek <pmladek@suse.com>
+> > ---
+> >  include/linux/sched.h                                   | 9 +++++++--
+> >  tools/testing/selftests/bpf/progs/test_stacktrace_map.c | 6 +++---
+> >  tools/testing/selftests/bpf/progs/test_tracepoint.c     | 6 +++---
+> >  3 files changed, 13 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 78c351e35fec..cecd4806edc6 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -274,8 +274,13 @@ struct task_group;
+> >
+> >  #define get_current_state()  READ_ONCE(current->__state)
+> >
+> > -/* Task command name length: */
+> > -#define TASK_COMM_LEN                        16
+> > +/*
+> > + * Define the task command name length as enum, then it can be visible to
+> > + * BPF programs.
+> > + */
+> > +enum {
+> > +     TASK_COMM_LEN = 16,
+> > +};
+>
+> This breaks the trigger-field-variable-support.tc from the ftrace test
+> suite at least on s390:
+>
+> echo 'hist:keys=next_comm:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).wakeup_latency($wakeup_lat,next_pid,sched.sched_waking.prio,next_comm) if next_comm=="ping"'
+> linux/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc: line 15: echo: write error: Invalid argument
+>
+> I added a debugging line into check_synth_field():
+>
+> [   44.091037] field->size 16, hist_field->size 16, field->is_signed 1, hist_field->is_signed 0
+>
+> Note the difference in the signed field.
+>
 
-Thanks,
-Chengguang
+Hi Sven,
+
+Thanks for the report and debugging!
+Seems we should explicitly define it as signed ?
+Could you pls. help verify it?
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index cecd4806edc6..44d36c6af3e1 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -278,7 +278,7 @@ struct task_group;
+  * Define the task command name length as enum, then it can be visible to
+  * BPF programs.
+  */
+-enum {
++enum SignedEnum {
+        TASK_COMM_LEN = 16,
+ };
+
+-- 
+Thanks
+Yafang
