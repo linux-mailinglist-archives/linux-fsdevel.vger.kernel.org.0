@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D000A462698
+	by mail.lfdr.de (Postfix) with ESMTP id 86E88462697
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235495AbhK2Wyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 17:54:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
+        id S235420AbhK2Wyu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 17:54:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235205AbhK2Wx4 (ORCPT
+        with ESMTP id S235186AbhK2Wx4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 29 Nov 2021 17:53:56 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC0AC0F4B27;
-        Mon, 29 Nov 2021 12:56:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A695C0F4B2D;
+        Mon, 29 Nov 2021 12:56:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=MBeUlxms4g1e2v6WCThbye8I3Ed9/fUTVuymP55TEVs=; b=vjq2oI9QYW9HtUPN6vfED1rBfX
-        H4vHmbL83VmVTA0bHREu9f0ILOSDgP+0QhXag6dLQduCSskRcHzscAA7FXHRwr94x6gPg5aa/daKO
-        fAzA6dhd13eMQMvR9cKDf65JLpL81tcCqfCNX4eJEo0C/FAbRrnXRrg2ymH6YKQGYZl8LxLaMGsgJ
-        aidwT1dR7rDD7Af6fCoRXRN07Y4IPuo1i+uzUpUWpN4wre5k4ImPPMD9bZ4tbcIU05MnOHcWSW6cC
-        GdD8EPmSCqHwOWeRKYtqCPhy5NZ+hOP+SBQZ4OQ6zmLIK3ItCq1T8smw4VOril8jE7MeGQp/0H/Ir
-        oZk+36fQ==;
+        bh=YUiFYp6egga9CIc/4TwuNv2icY9cBUMAxRYkAit29I0=; b=BEdnDMhMHXlvjHZbZGIZUpc6ZG
+        CZ8+WswVe7qmyDifTA92raDbDO5Adn7lRn4wUsuqlzigIQz8UdF1hTQoO5+VxDfAfjgCcW8Xh18/n
+        jlhSdnyp3HHRiyRwbMGVUn0QnLpYMeD6hsrOz3e7iMfyfHJpycus4eIW7VdAfovZ03VBwlsO5YmKS
+        PsPVG1njC8j5+HTGaAE32AMTy6BM4RFb9eV78cL3QW85vj43EeSqbPiTxjsfifljyLX+bNqK0JscU
+        RuOPzufcv3z35hNNwPLBq0L3K3sd9mEHkBRH4aBaDPFPZB0Q5Y1/ujuG8qbl5ePZukqiO9s7ncP9/
+        Vczbjr0w==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mrngl-002XZk-8m; Mon, 29 Nov 2021 20:55:51 +0000
+        id 1mrngl-002XZt-Af; Mon, 29 Nov 2021 20:55:51 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         keescook@chromium.org, yzaikin@google.com, nixiaoming@huawei.com,
@@ -35,9 +35,9 @@ To:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         andriy.shevchenko@linux.intel.com, jlayton@kernel.org,
         bfields@fieldses.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] fs: move locking sysctls where they are used
-Date:   Mon, 29 Nov 2021 12:55:45 -0800
-Message-Id: <20211129205548.605569-7-mcgrof@kernel.org>
+Subject: [PATCH 7/9] fs: move namei sysctls to its own file
+Date:   Mon, 29 Nov 2021 12:55:46 -0800
+Message-Id: <20211129205548.605569-8-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211129205548.605569-1-mcgrof@kernel.org>
 References: <20211129205548.605569-1-mcgrof@kernel.org>
@@ -56,112 +56,149 @@ places where they actually belong. The proc sysctl maintainers
 do not want to know what sysctl knobs you wish to add for your own
 piece of code, we just care about the core logic.
 
-The locking fs sysctls are only used on fs/locks.c, so move
-them there.
----
- fs/locks.c         | 34 ++++++++++++++++++++++++++++++++--
- include/linux/fs.h |  4 ----
- kernel/sysctl.c    | 20 --------------------
- 3 files changed, 32 insertions(+), 26 deletions(-)
+So move namei's own sysctl knobs to its own file.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 0fca9d680978..8c6df10cd9ed 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -62,6 +62,7 @@
- #include <linux/pid_namespace.h>
- #include <linux/hashtable.h>
- #include <linux/percpu.h>
-+#include <linux/sysctl.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/filelock.h>
-@@ -88,8 +89,37 @@ static int target_leasetype(struct file_lock *fl)
- 	return fl->fl_type;
+Other than the move we also avoid initializing two static
+variables to 0 as this is not needed:
+
+  * sysctl_protected_symlinks
+  * sysctl_protected_hardlinks
+
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ fs/namei.c         | 58 ++++++++++++++++++++++++++++++++++++++++++----
+ include/linux/fs.h |  1 -
+ kernel/sysctl.c    | 36 ----------------------------
+ 3 files changed, 54 insertions(+), 41 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 1f9d2187c765..8d4f832f94aa 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1020,10 +1020,60 @@ static inline void put_link(struct nameidata *nd)
+ 		path_put(&last->link);
  }
  
--int leases_enable = 1;
--int lease_break_time = 45;
-+static int leases_enable = 1;
-+static int lease_break_time = 45;
+-int sysctl_protected_symlinks __read_mostly = 0;
+-int sysctl_protected_hardlinks __read_mostly = 0;
+-int sysctl_protected_fifos __read_mostly;
+-int sysctl_protected_regular __read_mostly;
++static int sysctl_protected_symlinks __read_mostly;
++static int sysctl_protected_hardlinks __read_mostly;
++static int sysctl_protected_fifos __read_mostly;
++static int sysctl_protected_regular __read_mostly;
 +
 +#ifdef CONFIG_SYSCTL
-+static struct ctl_table locks_sysctls[] = {
++static struct ctl_table namei_sysctls[] = {
 +	{
-+		.procname	= "leases-enable",
-+		.data		= &leases_enable,
++		.procname	= "protected_symlinks",
++		.data		= &sysctl_protected_symlinks,
 +		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
 +	},
-+#ifdef CONFIG_MMU
 +	{
-+		.procname	= "lease-break-time",
-+		.data		= &lease_break_time,
++		.procname	= "protected_hardlinks",
++		.data		= &sysctl_protected_hardlinks,
 +		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
 +	},
-+#endif /* CONFIG_MMU */
-+	{}
++	{
++		.procname	= "protected_fifos",
++		.data		= &sysctl_protected_fifos,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_TWO,
++	},
++	{
++		.procname	= "protected_regular",
++		.data		= &sysctl_protected_regular,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_TWO,
++	},
++	{ }
 +};
 +
-+static int __init init_fs_locks_sysctls(void)
++static int __init init_fs_namei_sysctls(void)
 +{
-+	register_sysctl_init("fs", locks_sysctls);
++	register_sysctl_init("fs", namei_sysctls);
 +	return 0;
 +}
-+early_initcall(init_fs_locks_sysctls);
++fs_initcall(init_fs_namei_sysctls);
++
 +#endif /* CONFIG_SYSCTL */
  
- /*
-  * The global file_lock_list is only used for displaying /proc/locks, so we
+ /**
+  * may_follow_link - Check symlink following for unsafe situations
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index edec0692f943..9ff634184f58 100644
+index 9ff634184f58..233b5ab38fe0 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -81,10 +81,6 @@ extern void __init files_maxfiles_init(void);
+@@ -80,7 +80,6 @@ extern void __init files_maxfiles_init(void);
+ 
  extern unsigned long get_max_files(void);
  extern unsigned int sysctl_nr_open;
- extern int leases_enable, lease_break_time;
--extern int sysctl_protected_symlinks;
--extern int sysctl_protected_hardlinks;
--extern int sysctl_protected_fifos;
--extern int sysctl_protected_regular;
+-extern int leases_enable, lease_break_time;
  
  typedef __kernel_rwf_t rwf_t;
  
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 865173cefcef..52a86746ac9d 100644
+index 52a86746ac9d..39ba8e09ce31 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2896,26 +2896,6 @@ static struct ctl_table vm_table[] = {
+@@ -2896,42 +2896,6 @@ static struct ctl_table vm_table[] = {
  };
  
  static struct ctl_table fs_table[] = {
--#ifdef CONFIG_FILE_LOCKING
 -	{
--		.procname	= "leases-enable",
--		.data		= &leases_enable,
+-		.procname	= "protected_symlinks",
+-		.data		= &sysctl_protected_symlinks,
 -		.maxlen		= sizeof(int),
 -		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
 -	},
--#endif
--#ifdef CONFIG_MMU
--#ifdef CONFIG_FILE_LOCKING
 -	{
--		.procname	= "lease-break-time",
--		.data		= &lease_break_time,
+-		.procname	= "protected_hardlinks",
+-		.data		= &sysctl_protected_hardlinks,
 -		.maxlen		= sizeof(int),
 -		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
 -	},
--#endif
--#endif
+-	{
+-		.procname	= "protected_fifos",
+-		.data		= &sysctl_protected_fifos,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_TWO,
+-	},
+-	{
+-		.procname	= "protected_regular",
+-		.data		= &sysctl_protected_regular,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_TWO,
+-	},
  	{
- 		.procname	= "protected_symlinks",
- 		.data		= &sysctl_protected_symlinks,
+ 		.procname	= "suid_dumpable",
+ 		.data		= &suid_dumpable,
 -- 
 2.33.0
 
