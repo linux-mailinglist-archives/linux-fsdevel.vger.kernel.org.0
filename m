@@ -2,295 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD56C4625E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D67A462763
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 00:01:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234856AbhK2WoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 17:44:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
+        id S236829AbhK2XDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 18:03:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234305AbhK2Wnp (ORCPT
+        with ESMTP id S237101AbhK2XBo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 17:43:45 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0434FC0F4B2A;
-        Mon, 29 Nov 2021 12:56:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=tm9qm3VeHN10PG+90IU5R5ZYzfv43W620K/ViCKSnyc=; b=ZgDnot7Iohh/VxHI7PwerufIqO
-        UieetiYUn7kxqyS6zdUAgMC1x1yKNuD0ZQiWUq/X3yPz8bmsGu8p6O3PZn/c1WP6EstF0m+89CxX8
-        NlK/4skNAyygCwf0TG+mRSPORxp08usvdF/ohAUCL01BEQmO6Vp6UZDFfsvWpzQQ5peCtqCH/LyM2
-        3Qwt6n2tyr92g28pllKQUIRIaF0roOAdSX6sjagslz9aojIy3UbN+OvC53bA3js+bd4gxk4oT+Ugy
-        K3ibDz1Ph7LOz/Tlxjn/CV5WxjktTS3PfQYO8F6PJdIzKd/MkEMzSgxF+p3KGhMWmWczEV12rm4bZ
-        cXACFQWw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mrngl-002XaR-FN; Mon, 29 Nov 2021 20:55:51 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        keescook@chromium.org, yzaikin@google.com, nixiaoming@huawei.com,
-        ebiederm@xmission.com, steve@sk2.org,
-        mcgrof@bombadil.infradead.org, mcgrof@kernel.org,
-        andriy.shevchenko@linux.intel.com, jlayton@kernel.org,
-        bfields@fieldses.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] fs: move pipe sysctls to is own file
-Date:   Mon, 29 Nov 2021 12:55:48 -0800
-Message-Id: <20211129205548.605569-10-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211129205548.605569-1-mcgrof@kernel.org>
-References: <20211129205548.605569-1-mcgrof@kernel.org>
+        Mon, 29 Nov 2021 18:01:44 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E9EC0F4B30;
+        Mon, 29 Nov 2021 12:56:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2298BB81643;
+        Mon, 29 Nov 2021 20:56:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26FAC53FAD;
+        Mon, 29 Nov 2021 20:56:11 +0000 (UTC)
+Date:   Mon, 29 Nov 2021 20:56:08 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
+ with sub-page faults
+Message-ID: <YaU+aDG5pCAba57r@arm.com>
+References: <YZ6arlsi2L3LVbFO@casper.infradead.org>
+ <YZ6idVy3zqQC4atv@arm.com>
+ <CAHc6FU4-P9sVexcNt5CDQxROtMAo=kH8hEu==AAhZ_+Zv53=Ag@mail.gmail.com>
+ <20211127123958.588350-1-agruenba@redhat.com>
+ <YaJM4n31gDeVzUGA@arm.com>
+ <CAHc6FU7BSL58GVkOh=nsNQczRKG3P+Ty044zs7PjKPik4vzz=Q@mail.gmail.com>
+ <YaTEkAahkCwuQdPN@arm.com>
+ <CAHc6FU6zVi9A2D3V3T5zE71YAdkBiJTs0ao1Q6ysSuEp=bz8fQ@mail.gmail.com>
+ <YaTziROgnFwB6Ddj@arm.com>
+ <CAHk-=wiZgAgcynfLsop+D1xBUAZ-Z+NUBxe9mb-AedecFRNm+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiZgAgcynfLsop+D1xBUAZ-Z+NUBxe9mb-AedecFRNm+w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The kernel/sysctl.c is a kitchen sink where everyone leaves
-their dirty dishes, this makes it very difficult to maintain.
+On Mon, Nov 29, 2021 at 10:40:38AM -0800, Linus Torvalds wrote:
+> On Mon, Nov 29, 2021 at 7:36 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > That's what this series does when it probes the whole range in
+> > fault_in_writeable(). The main reason was that it's more efficient to do
+> > a read than a write on a large range (the latter dirtying the cache
+> > lines).
+> 
+> The more this thread goes on, the more I'm starting to think that we
+> should just make "fault_in_writable()" (and readable, of course) only
+> really work on the beginning of the area.
+> 
+> Not just for the finer-granularity pointer color probing, but for the
+> page probing too.
 
-To help with this maintenance let's start by moving sysctls to
-places where they actually belong. The proc sysctl maintainers
-do not want to know what sysctl knobs you wish to add for your own
-piece of code, we just care about the core logic.
+I have patches for the finer-granularity checking of the beginning of
+the buffer. They need a bit of testing, so probably posting them
+tomorrow.
 
-So move the pipe sysctls to its own file.
+> I'm looking at our current fault_in_writeable(), and I'm going
+> 
+>  (a) it uses __put_user() without range checks, which is really not great
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- fs/pipe.c                 | 64 +++++++++++++++++++++++++++++++++++++--
- include/linux/pipe_fs_i.h |  4 ---
- include/linux/sysctl.h    |  6 ++++
- kernel/sysctl.c           | 61 ++++---------------------------------
- 4 files changed, 73 insertions(+), 62 deletions(-)
+For arm64 at least __put_user() does the access_ok() check. I thought
+only unsafe_put_user() should skip the checks. If __put_user() can write
+arbitrary memory, we may have a bigger problem.
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 6d4342bad9f1..cc28623a67b6 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -25,6 +25,7 @@
- #include <linux/fcntl.h>
- #include <linux/memcontrol.h>
- #include <linux/watch_queue.h>
-+#include <linux/sysctl.h>
- 
- #include <linux/uaccess.h>
- #include <asm/ioctls.h>
-@@ -50,13 +51,13 @@
-  * The max size that a non-root user is allowed to grow the pipe. Can
-  * be set by root in /proc/sys/fs/pipe-max-size
-  */
--unsigned int pipe_max_size = 1048576;
-+static unsigned int pipe_max_size = 1048576;
- 
- /* Maximum allocatable pages per user. Hard limit is unset by default, soft
-  * matches default values.
-  */
--unsigned long pipe_user_pages_hard;
--unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
-+static unsigned long pipe_user_pages_hard;
-+static unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
- 
- /*
-  * We use head and tail indices that aren't masked off, except at the point of
-@@ -1428,6 +1429,60 @@ static struct file_system_type pipe_fs_type = {
- 	.kill_sb	= kill_anon_super,
- };
- 
-+#ifdef CONFIG_SYSCTL
-+static int do_proc_dopipe_max_size_conv(unsigned long *lvalp,
-+					unsigned int *valp,
-+					int write, void *data)
-+{
-+	if (write) {
-+		unsigned int val;
-+
-+		val = round_pipe_size(*lvalp);
-+		if (val == 0)
-+			return -EINVAL;
-+
-+		*valp = val;
-+	} else {
-+		unsigned int val = *valp;
-+		*lvalp = (unsigned long) val;
-+	}
-+
-+	return 0;
-+}
-+
-+static int proc_dopipe_max_size(struct ctl_table *table, int write,
-+				void *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	return do_proc_douintvec(table, write, buffer, lenp, ppos,
-+				 do_proc_dopipe_max_size_conv, NULL);
-+}
-+
-+static struct ctl_table fs_pipe_sysctls[] = {
-+	{
-+		.procname	= "pipe-max-size",
-+		.data		= &pipe_max_size,
-+		.maxlen		= sizeof(pipe_max_size),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dopipe_max_size,
-+	},
-+	{
-+		.procname	= "pipe-user-pages-hard",
-+		.data		= &pipe_user_pages_hard,
-+		.maxlen		= sizeof(pipe_user_pages_hard),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{
-+		.procname	= "pipe-user-pages-soft",
-+		.data		= &pipe_user_pages_soft,
-+		.maxlen		= sizeof(pipe_user_pages_soft),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{ }
-+};
-+#endif
-+
- static int __init init_pipe_fs(void)
- {
- 	int err = register_filesystem(&pipe_fs_type);
-@@ -1439,6 +1494,9 @@ static int __init init_pipe_fs(void)
- 			unregister_filesystem(&pipe_fs_type);
- 		}
- 	}
-+#ifdef CONFIG_SYSCTL
-+	register_sysctl_init("fs", fs_pipe_sysctls);
-+#endif
- 	return err;
- }
- 
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index fc5642431b92..c00c618ef290 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -238,10 +238,6 @@ void pipe_lock(struct pipe_inode_info *);
- void pipe_unlock(struct pipe_inode_info *);
- void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
- 
--extern unsigned int pipe_max_size;
--extern unsigned long pipe_user_pages_hard;
--extern unsigned long pipe_user_pages_soft;
--
- /* Wait for a pipe to be readable/writable while dropping the pipe lock */
- void pipe_wait_readable(struct pipe_inode_info *);
- void pipe_wait_writable(struct pipe_inode_info *);
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index bb921eb8a02d..4294e9668bd5 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -221,6 +221,12 @@ extern void __register_sysctl_init(const char *path, struct ctl_table *table,
- extern struct ctl_table_header *register_sysctl_mount_point(const char *path);
- 
- void do_sysctl_args(void);
-+int do_proc_douintvec(struct ctl_table *table, int write,
-+		      void *buffer, size_t *lenp, loff_t *ppos,
-+		      int (*conv)(unsigned long *lvalp,
-+				  unsigned int *valp,
-+				  int write, void *data),
-+		      void *data);
- 
- extern int pwrsw_enabled;
- extern int unaligned_enabled;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 0146fc549978..a4cde441635d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -56,7 +56,6 @@
- #include <linux/ftrace.h>
- #include <linux/perf_event.h>
- #include <linux/kprobes.h>
--#include <linux/pipe_fs_i.h>
- #include <linux/oom.h>
- #include <linux/kmod.h>
- #include <linux/capability.h>
-@@ -760,12 +759,12 @@ static int __do_proc_douintvec(void *tbl_data, struct ctl_table *table,
- 	return do_proc_douintvec_r(i, buffer, lenp, ppos, conv, data);
- }
- 
--static int do_proc_douintvec(struct ctl_table *table, int write,
--			     void *buffer, size_t *lenp, loff_t *ppos,
--			     int (*conv)(unsigned long *lvalp,
--					 unsigned int *valp,
--					 int write, void *data),
--			     void *data)
-+int do_proc_douintvec(struct ctl_table *table, int write,
-+		      void *buffer, size_t *lenp, loff_t *ppos,
-+		      int (*conv)(unsigned long *lvalp,
-+				  unsigned int *valp,
-+				  int write, void *data),
-+		      void *data)
- {
- 	return __do_proc_douintvec(table->data, table, write,
- 				   buffer, lenp, ppos, conv, data);
-@@ -1089,33 +1088,6 @@ int proc_dou8vec_minmax(struct ctl_table *table, int write,
- }
- EXPORT_SYMBOL_GPL(proc_dou8vec_minmax);
- 
--static int do_proc_dopipe_max_size_conv(unsigned long *lvalp,
--					unsigned int *valp,
--					int write, void *data)
--{
--	if (write) {
--		unsigned int val;
--
--		val = round_pipe_size(*lvalp);
--		if (val == 0)
--			return -EINVAL;
--
--		*valp = val;
--	} else {
--		unsigned int val = *valp;
--		*lvalp = (unsigned long) val;
--	}
--
--	return 0;
--}
--
--static int proc_dopipe_max_size(struct ctl_table *table, int write,
--				void *buffer, size_t *lenp, loff_t *ppos)
--{
--	return do_proc_douintvec(table, write, buffer, lenp, ppos,
--				 do_proc_dopipe_max_size_conv, NULL);
--}
--
- #ifdef CONFIG_MAGIC_SYSRQ
- static int sysrq_sysctl_handler(struct ctl_table *table, int write,
- 				void *buffer, size_t *lenp, loff_t *ppos)
-@@ -2839,27 +2811,6 @@ static struct ctl_table vm_table[] = {
- };
- 
- static struct ctl_table fs_table[] = {
--	{
--		.procname	= "pipe-max-size",
--		.data		= &pipe_max_size,
--		.maxlen		= sizeof(pipe_max_size),
--		.mode		= 0644,
--		.proc_handler	= proc_dopipe_max_size,
--	},
--	{
--		.procname	= "pipe-user-pages-hard",
--		.data		= &pipe_user_pages_hard,
--		.maxlen		= sizeof(pipe_user_pages_hard),
--		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
--	},
--	{
--		.procname	= "pipe-user-pages-soft",
--		.data		= &pipe_user_pages_soft,
--		.maxlen		= sizeof(pipe_user_pages_soft),
--		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
--	},
- 	{
- 		.procname	= "mount-max",
- 		.data		= &sysctl_mount_max,
+>  (b) it looks like a disaster from another standpoint: essentially
+> user-controlled loop size with no limit checking, no preemption, and
+> no check for fatal signals.
+
+Indeed, the fault_in_*() loop can get pretty long, bounded by how much
+memory can be faulted in the user process. My patches for now only
+address the outer loop doing the copy_to_user() as that can be
+unbounded.
+
+> Now, (a) should be fixed with a access_ok() or similar.
+> 
+> And (b) can easily be fixed multiple ways, with one option simply just
+> being adding a can_resched() call and checking for fatal signals.
+> 
+> But faulting in the whole region is actually fundamentally wrong in
+> low-memory situations - the beginning of the region might be swapped
+> out by the time we get to the end. That's unlikely to be a problem in
+> real life, but it's an example of how it's simply not conceptually
+> sensible.
+> 
+> So I do wonder why we don't just say "fault_in_writable will fault in
+> _at_most_ X bytes", and simply limit the actual fault-in size to
+> something reasonable.
+> 
+> That solves _all_ the problems. It solves the lack of preemption and
+> fatal signals (by virtue of just limiting the amount of work we do).
+> It solves the low memory situation. And it solves the "excessive dirty
+> cachelines" case too.
+
+I think that would be useful, though it doesn't solve the potential
+livelock with sub-page faults. We still need the outer loop to
+handle the copy_to_user() for the whole user buffer and the sub-page
+probing of the beginning of such buffer (or whenever copy_to_user()
+failed). IOW, you still fault in the whole buffer eventually.
+
+Anyway, I think the sub-page probing and limiting the fault-in are
+complementary improvements.
+
 -- 
-2.33.0
-
+Catalin
