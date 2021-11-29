@@ -2,169 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D2D461A97
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:03:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D2B6461ACB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:26:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238205AbhK2PGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 10:06:43 -0500
-Received: from outbound-smtp17.blacknight.com ([46.22.139.234]:58047 "EHLO
-        outbound-smtp17.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245630AbhK2PEi (ORCPT
+        id S1345432AbhK2P3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 10:29:10 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:51362 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242801AbhK2P1J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 10:04:38 -0500
-Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
-        by outbound-smtp17.blacknight.com (Postfix) with ESMTPS id E89D11C3E07
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 15:01:19 +0000 (GMT)
-Received: (qmail 18935 invoked from network); 29 Nov 2021 15:01:19 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 29 Nov 2021 15:01:19 -0000
-Date:   Mon, 29 Nov 2021 15:01:17 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Alexey Avramov <hakavlad@inbox.lv>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211129150117.GO3366@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
- <20211127011246.7a8ac7b8@mail.inbox.lv>
+        Mon, 29 Nov 2021 10:27:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638199431;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aBlKyuUGApLu3DvwZ3/RfkSAkyCOYsE2fsPKSfHk0dM=;
+        b=aH/mZDbcUXbkYXpnM0ysyMso6ek2ri40zNv1zCc65sNIdKlgF4ByoMbwpN060PQy536dHE
+        692cshl+PeszXamJG1BoIUBOPkzI2yS7p+Ur00kOK4E4Pn1Pai1P6D/a53F0f7s6bouoB/
+        YQyoI1VS/eBIj1GYO+ouikrU8Bq7DVg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-491-kKLxsffzNIK16ZGtem_2dw-1; Mon, 29 Nov 2021 10:23:48 -0500
+X-MC-Unique: kKLxsffzNIK16ZGtem_2dw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CFAAA83DD22;
+        Mon, 29 Nov 2021 15:23:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B3185DF4F;
+        Mon, 29 Nov 2021 15:23:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <2cfdbfd834bb6ff1f7f5cf47e3ea72449fe683b6.camel@redhat.com>
+References: <2cfdbfd834bb6ff1f7f5cf47e3ea72449fe683b6.camel@redhat.com> <163706992597.3179783.18360472879717076435.stgit@warthog.procyon.org.uk>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [Linux-cachefs] [PATCH] netfs: Adjust docs after foliation
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20211127011246.7a8ac7b8@mail.inbox.lv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <223019.1638199414.1@warthog.procyon.org.uk>
+Date:   Mon, 29 Nov 2021 15:23:34 +0000
+Message-ID: <223020.1638199414@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 27, 2021 at 01:12:46AM +0900, Alexey Avramov wrote:
-> >After the patch, the test gets killed after roughly 15 seconds which is
-> >the same length of time taken in 5.15.
-> 
-> In my tests, the 5.15 still performs much better.
-> 
-> New question: is timeout=1 has sense? Will it save CPU?
+Jeff Layton <jlayton@redhat.com> wrote:
 
-Ok, the following on top of 5.16-rc1 survived 8 minutes of watching youtube
-on a laptop while "tail /dev/zero" was running within the background. While
-there were some very short glitches, they were no worse than 5.15. I've
-not reproduced your exact test case yet or the memcg ones yet but sending
-now in case I don't complete them before the end of the day.
+> > -/**
+> > - * netfs_skip_folio_read - prep a folio for writing without reading first
+> > +/*
+> ...
+> Not sure why you decided to change the last one not to be a kerneldoc
+> comment, but OK. The rest of the changes look straightforward.
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index fb9584641ac7..1af12072f40e 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1021,6 +1021,39 @@ static void handle_write_error(struct address_space *mapping,
- 	unlock_page(page);
- }
- 
-+bool skip_throttle_noprogress(pg_data_t *pgdat)
-+{
-+	int reclaimable = 0, write_pending = 0;
-+	int i;
-+
-+	/*
-+	 * If kswapd is disabled, reschedule if necessary but do not
-+	 * throttle as the system is likely near OOM.
-+	 */
-+	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
-+		return true;
-+
-+	/*
-+	 * If there are a lot of dirty/writeback pages then do not
-+	 * throttle as throttling will occur when the pages cycle
-+	 * towards the end of the LRU if still under writeback.
-+	 */
-+	for (i = 0; i < MAX_NR_ZONES; i++) {
-+		struct zone *zone = pgdat->node_zones + i;
-+
-+		if (!populated_zone(zone))
-+			continue;
-+
-+		reclaimable += zone_reclaimable_pages(zone);
-+		write_pending += zone_page_state_snapshot(zone,
-+						  NR_ZONE_WRITE_PENDING);
-+	}
-+	if (2 * write_pending <= reclaimable)
-+		return true;
-+
-+	return false;
-+}
-+
- void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason)
- {
- 	wait_queue_head_t *wqh = &pgdat->reclaim_wait[reason];
-@@ -1057,7 +1090,13 @@ void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason)
- 
- 		break;
- 	case VMSCAN_THROTTLE_NOPROGRESS:
--		timeout = HZ/2;
-+		if (skip_throttle_noprogress(pgdat)) {
-+			cond_resched();
-+			return;
-+		}
-+
-+		timeout = 1;
-+
- 		break;
- 	case VMSCAN_THROTTLE_ISOLATED:
- 		timeout = HZ/50;
-@@ -3386,16 +3425,16 @@ static void consider_reclaim_throttle(pg_data_t *pgdat, struct scan_control *sc)
- 	}
- 
- 	/*
--	 * Do not throttle kswapd on NOPROGRESS as it will throttle on
--	 * VMSCAN_THROTTLE_WRITEBACK if there are too many pages under
--	 * writeback and marked for immediate reclaim at the tail of
--	 * the LRU.
-+	 * Do not throttle kswapd or cgroup reclaim on NOPROGRESS as it will
-+	 * throttle on VMSCAN_THROTTLE_WRITEBACK if there are too many pages
-+	 * under writeback and marked for immediate reclaim at the tail of the
-+	 * LRU.
- 	 */
--	if (current_is_kswapd())
-+	if (current_is_kswapd() || cgroup_reclaim(sc))
- 		return;
- 
- 	/* Throttle if making no progress at high prioities. */
--	if (sc->priority < DEF_PRIORITY - 2)
-+	if (sc->priority == 1 && !sc->nr_reclaimed)
- 		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS);
- }
- 
-@@ -3415,6 +3454,7 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
- 	unsigned long nr_soft_scanned;
- 	gfp_t orig_mask;
- 	pg_data_t *last_pgdat = NULL;
-+	pg_data_t *first_pgdat = NULL;
- 
- 	/*
- 	 * If the number of buffer_heads in the machine exceeds the maximum
-@@ -3478,14 +3518,18 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
- 			/* need some check for avoid more shrink_zone() */
- 		}
- 
-+		if (!first_pgdat)
-+			first_pgdat = zone->zone_pgdat;
-+
- 		/* See comment about same check for global reclaim above */
- 		if (zone->zone_pgdat == last_pgdat)
- 			continue;
- 		last_pgdat = zone->zone_pgdat;
- 		shrink_node(zone->zone_pgdat, sc);
--		consider_reclaim_throttle(zone->zone_pgdat, sc);
- 	}
- 
-+	consider_reclaim_throttle(first_pgdat, sc);
-+
- 	/*
- 	 * Restore to original mask to avoid the impact on the caller if we
- 	 * promoted it to __GFP_HIGHMEM.
+It's not part of the API.  It's only internal.  None of the other internal
+functions are listed in the API reference.
+
+David
+
