@@ -2,180 +2,345 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F49F461959
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 15:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0605B461964
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 15:35:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379097AbhK2Oh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 09:37:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:24408 "EHLO
+        id S234274AbhK2Oio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 09:38:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55088 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1378731AbhK2Oft (ORCPT
+        by vger.kernel.org with ESMTP id S1345741AbhK2OgX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 09:35:49 -0500
+        Mon, 29 Nov 2021 09:36:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638196350;
+        s=mimecast20190719; t=1638196385;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=dJBe9OPhF+PV6aWNoM1mTqTJe8Q2yU80n+V/5mpDDnU=;
-        b=esvDb6ohWl78ETcyTeSR5bYc85pwmFQANFgNEQx3lum3ThhKu9cuOVpVb/CGBV7prXEuMk
-        V7n2apwuDvDJCG29zS4e6Ye4YU3yjqvUkF6gA+Mc/zRYns2mDrmwMlHh7gLrutpVrosJa8
-        NYbCBgNdWqdNTEZsbICJz/cJth5k6/M=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=9De042WLsElwjPxKHUOaJ/q0inJ/NX3F0RwHUAnY+hs=;
+        b=FAXU8ksWbCeFGshKBAENzkIYyiqlg7Ev3nQh+/i8UgIyn2tvebo+1mZo6zzD7dIxrbsWG3
+        nPmDhYC6F9l3swvFWpR9IkM+8AOW49YwiO7y1DrLsdtL+YDkbSO9pfCAlgoW5dq3s2+9+O
+        LPNfVaQ/5UQj4lu+SvpK0KeCe9gF6MI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-65-VC-tKBGFOvKlnyxQL_91WQ-1; Mon, 29 Nov 2021 09:32:29 -0500
-X-MC-Unique: VC-tKBGFOvKlnyxQL_91WQ-1
-Received: by mail-wm1-f70.google.com with SMTP id j193-20020a1c23ca000000b003306ae8bfb7so8669224wmj.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 06:32:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=dJBe9OPhF+PV6aWNoM1mTqTJe8Q2yU80n+V/5mpDDnU=;
-        b=gr7u2uOJwSq2SbGiuhqEg12kGFq8t1CSma2HL/Ta19mjmxvVLiJKRB165dU1tzLCO4
-         YX38wmhtLqVs10r/1Eao6PdCJr/wIJGEwSIkHskmNfBhO7TgprC3dl01GXKqb8OLoBmW
-         I/p6TpAE4gYrhpjDx4vvsJ9rNCAhtV9uDE7AebdxAcK8t6t4pEZ9Wk1lQrvrs66WghHX
-         CvBHjKEodJyzVcJv8umXNf0tUt6JBQMPR/1NUVf49BL+h6x9E7XCcCWlEGGZ87Fkoxll
-         9KOKPuC7JBGByu0Iulg/yqeGmkKw75AOi95B61K3n0qZDoD5lOf3apTb8KXcCxtGSzsU
-         FPlA==
-X-Gm-Message-State: AOAM533mF88mYgQLjb4p9Hu5fCLYitthZ0pve4uIQlXeklUEnlsXyM0u
-        sQXWmmL6SOnCkeE3Sd+Uo50egr+EV/LlfVuml0Ka9CSeAVx3aQr0tBbc8zQj7wcYzGc2bFfoO1W
-        IM/DHol3p877/TiDaNWcPtRugTQ==
-X-Received: by 2002:adf:d18f:: with SMTP id v15mr33386202wrc.447.1638196348158;
-        Mon, 29 Nov 2021 06:32:28 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyA3jxLgz2qFbocjn5aqKjjz597XHuns2HayZngv2iHRT5zC+cXCqeSgXjkuMRuWEvUCgQECw==
-X-Received: by 2002:adf:d18f:: with SMTP id v15mr33386167wrc.447.1638196347945;
-        Mon, 29 Nov 2021 06:32:27 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c6664.dip0.t-ipconnect.de. [91.12.102.100])
-        by smtp.gmail.com with ESMTPSA id l8sm21215902wmc.40.2021.11.29.06.32.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Nov 2021 06:32:27 -0800 (PST)
-Message-ID: <54e1b56c-e424-a4b3-4d61-3018aa095f36@redhat.com>
-Date:   Mon, 29 Nov 2021 15:32:26 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Content-Language: en-US
-To:     Sven Schnelle <svens@linux.ibm.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+ us-mta-596-xvxNg-1-OfKFk4NQLqbiYQ-1; Mon, 29 Nov 2021 09:33:02 -0500
+X-MC-Unique: xvxNg-1-OfKFk4NQLqbiYQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9CF4104FC0F;
+        Mon, 29 Nov 2021 14:32:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDACC5D6BA;
+        Mon, 29 Nov 2021 14:32:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 41/64] cachefiles: Implement volume support
+From:   David Howells <dhowells@redhat.com>
+To:     linux-cachefs@redhat.com
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>
-References: <20211120112738.45980-1-laoar.shao@gmail.com>
- <20211120112738.45980-8-laoar.shao@gmail.com>
- <yt9d35nf1d84.fsf@linux.ibm.com>
- <CALOAHbDtqpkN4D0vHvGxTSpQkksMWtFm3faMy0n+pazxN_RPPg@mail.gmail.com>
- <yt9d35nfvy8s.fsf@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
- with TASK_COMM_LEN
-In-Reply-To: <yt9d35nfvy8s.fsf@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Nov 2021 14:32:33 +0000
+Message-ID: <163819635314.215744.13081522301564537723.stgit@warthog.procyon.org.uk>
+In-Reply-To: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
+References: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29.11.21 15:21, Sven Schnelle wrote:
-> Hi,
-> 
-> Yafang Shao <laoar.shao@gmail.com> writes:
-> 
->> On Mon, Nov 29, 2021 at 6:13 PM Sven Schnelle <svens@linux.ibm.com> wrote:
->>>> diff --git a/include/linux/sched.h b/include/linux/sched.h
->>>> index 78c351e35fec..cecd4806edc6 100644
->>>> --- a/include/linux/sched.h
->>>> +++ b/include/linux/sched.h
->>>> @@ -274,8 +274,13 @@ struct task_group;
->>>>
->>>>  #define get_current_state()  READ_ONCE(current->__state)
->>>>
->>>> -/* Task command name length: */
->>>> -#define TASK_COMM_LEN                        16
->>>> +/*
->>>> + * Define the task command name length as enum, then it can be visible to
->>>> + * BPF programs.
->>>> + */
->>>> +enum {
->>>> +     TASK_COMM_LEN = 16,
->>>> +};
->>>
->>> This breaks the trigger-field-variable-support.tc from the ftrace test
->>> suite at least on s390:
->>>
->>> echo
->>> 'hist:keys=next_comm:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).wakeup_latency($wakeup_lat,next_pid,sched.sched_waking.prio,next_comm)
->>> if next_comm=="ping"'
->>> linux/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc: line 15: echo: write error: Invalid argument
->>>
->>> I added a debugging line into check_synth_field():
->>>
->>> [   44.091037] field->size 16, hist_field->size 16, field->is_signed 1, hist_field->is_signed 0
->>>
->>> Note the difference in the signed field.
->>>
->>
->> Hi Sven,
->>
->> Thanks for the report and debugging!
->> Seems we should explicitly define it as signed ?
->> Could you pls. help verify it?
->>
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index cecd4806edc6..44d36c6af3e1 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -278,7 +278,7 @@ struct task_group;
->>   * Define the task command name length as enum, then it can be visible to
->>   * BPF programs.
->>   */
->> -enum {
->> +enum SignedEnum {
->>         TASK_COMM_LEN = 16,
->>  };
-> 
-> Umm no. What you're doing here is to define the name of the enum as
-> 'SignedEnum'. This doesn't change the type. I think before C++0x you
-> couldn't force an enum type.
+Implement support for creating the directory layout for a volume on disk
+and setting up and withdrawing volume caching.
 
-I think there are only some "hacks" to modify the type with GCC. For
-example, with "__attribute__((packed))" we can instruct GCC to use the
-smallest type possible for the defined enum values.
+Each volume has a directory named for the volume key under the root of the
+cache (prefixed with an 'I' to indicate to cachefilesd that it's an index)
+and then creates a bunch of hash bucket subdirectories under that (named as
+'@' plus a hex number) in which cookie files will be created.
 
-I think with some fake entries one can eventually instruct GCC to use an
-unsigned type in some cases:
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-cachefs@redhat.com
+---
 
-https://stackoverflow.com/questions/14635833/is-there-a-way-to-make-an-enum-unsigned-in-the-c90-standard-misra-c-2004-compl
+ fs/cachefiles/Makefile    |    3 +
+ fs/cachefiles/cache.c     |   28 ++++++++++-
+ fs/cachefiles/daemon.c    |    2 +
+ fs/cachefiles/interface.c |    2 +
+ fs/cachefiles/internal.h  |   20 ++++++++
+ fs/cachefiles/volume.c    |  118 +++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 171 insertions(+), 2 deletions(-)
+ create mode 100644 fs/cachefiles/volume.c
 
-enum {
-	TASK_COMM_LEN = 16,
-	TASK_FORCE_UNSIGNED = 0x80000000,
-};
+diff --git a/fs/cachefiles/Makefile b/fs/cachefiles/Makefile
+index 92af5daee8ce..d67210ece9cd 100644
+--- a/fs/cachefiles/Makefile
++++ b/fs/cachefiles/Makefile
+@@ -9,7 +9,8 @@ cachefiles-y := \
+ 	interface.o \
+ 	main.o \
+ 	namei.o \
+-	security.o
++	security.o \
++	volume.o
+ 
+ cachefiles-$(CONFIG_CACHEFILES_ERROR_INJECTION) += error_inject.o
+ 
+diff --git a/fs/cachefiles/cache.c b/fs/cachefiles/cache.c
+index 4c4121105750..d87db9b6e4c8 100644
+--- a/fs/cachefiles/cache.c
++++ b/fs/cachefiles/cache.c
+@@ -262,6 +262,32 @@ int cachefiles_has_space(struct cachefiles_cache *cache,
+ 	return ret;
+ }
+ 
++/*
++ * Withdraw volumes.
++ */
++static void cachefiles_withdraw_volumes(struct cachefiles_cache *cache)
++{
++	_enter("");
++
++	for (;;) {
++		struct cachefiles_volume *volume = NULL;
++
++		spin_lock(&cache->object_list_lock);
++		if (!list_empty(&cache->volumes)) {
++			volume = list_first_entry(&cache->volumes,
++						  struct cachefiles_volume, cache_link);
++			list_del_init(&volume->cache_link);
++		}
++		spin_unlock(&cache->object_list_lock);
++		if (!volume)
++			break;
++
++		cachefiles_withdraw_volume(volume);
++	}
++
++	_leave("");
++}
++
+ /*
+  * Sync a cache to backing disk.
+  */
+@@ -303,7 +329,7 @@ void cachefiles_withdraw_cache(struct cachefiles_cache *cache)
+ 	// PLACEHOLDER: Withdraw objects
+ 	fscache_wait_for_objects(fscache);
+ 
+-	// PLACEHOLDER: Withdraw volume
++	cachefiles_withdraw_volumes(cache);
+ 	cachefiles_sync_cache(cache);
+ 	cache->cache = NULL;
+ 	fscache_relinquish_cache(fscache);
+diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
+index a449ee661987..337597a4e30c 100644
+--- a/fs/cachefiles/daemon.c
++++ b/fs/cachefiles/daemon.c
+@@ -105,6 +105,8 @@ static int cachefiles_daemon_open(struct inode *inode, struct file *file)
+ 
+ 	mutex_init(&cache->daemon_mutex);
+ 	init_waitqueue_head(&cache->daemon_pollwq);
++	INIT_LIST_HEAD(&cache->volumes);
++	spin_lock_init(&cache->object_list_lock);
+ 
+ 	/* set default caching limits
+ 	 * - limit at 1% free space and/or free files
+diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
+index 564ea8fa6641..1793e46bd3e7 100644
+--- a/fs/cachefiles/interface.c
++++ b/fs/cachefiles/interface.c
+@@ -15,4 +15,6 @@
+ 
+ const struct fscache_cache_ops cachefiles_cache_ops = {
+ 	.name			= "cachefiles",
++	.acquire_volume		= cachefiles_acquire_volume,
++	.free_volume		= cachefiles_free_volume,
+ };
+diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+index 0ccea2373b40..3b1a6d67cf96 100644
+--- a/fs/cachefiles/internal.h
++++ b/fs/cachefiles/internal.h
+@@ -19,6 +19,17 @@
+ struct cachefiles_cache;
+ struct cachefiles_object;
+ 
++/*
++ * Cached volume representation.
++ */
++struct cachefiles_volume {
++	struct cachefiles_cache		*cache;
++	struct list_head		cache_link;	/* Link in cache->volumes */
++	struct fscache_volume		*vcookie;	/* The netfs's representation */
++	struct dentry			*dentry;	/* The volume dentry */
++	struct dentry			*fanout[256];	/* Fanout subdirs */
++};
++
+ /*
+  * Data file records.
+  */
+@@ -35,6 +46,8 @@ struct cachefiles_cache {
+ 	struct dentry			*store;		/* Directory into which live objects go */
+ 	struct dentry			*graveyard;	/* directory into which dead objects go */
+ 	struct file			*cachefilesd;	/* manager daemon handle */
++	struct list_head		volumes;	/* List of volume objects */
++	spinlock_t			object_list_lock; /* Lock for volumes and object_list */
+ 	const struct cred		*cache_cred;	/* security override for accessing cache */
+ 	struct mutex			daemon_mutex;	/* command serialisation mutex */
+ 	wait_queue_head_t		daemon_pollwq;	/* poll waitqueue for daemon */
+@@ -162,6 +175,13 @@ static inline void cachefiles_end_secure(struct cachefiles_cache *cache,
+ 	revert_creds(saved_cred);
+ }
+ 
++/*
++ * volume.c
++ */
++void cachefiles_acquire_volume(struct fscache_volume *volume);
++void cachefiles_free_volume(struct fscache_volume *volume);
++void cachefiles_withdraw_volume(struct cachefiles_volume *volume);
++
+ /*
+  * Error handling
+  */
+diff --git a/fs/cachefiles/volume.c b/fs/cachefiles/volume.c
+new file mode 100644
+index 000000000000..2d3635f1aea1
+--- /dev/null
++++ b/fs/cachefiles/volume.c
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Volume handling.
++ *
++ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#include <linux/fs.h>
++#include <linux/slab.h>
++#include "internal.h"
++#include <trace/events/fscache.h>
++
++/*
++ * Allocate and set up a volume representation.  We make sure all the fanout
++ * directories are created and pinned.
++ */
++void cachefiles_acquire_volume(struct fscache_volume *vcookie)
++{
++	struct cachefiles_volume *volume;
++	struct cachefiles_cache *cache = vcookie->cache->cache_priv;
++	const struct cred *saved_cred;
++	struct dentry *vdentry, *fan;
++	size_t len;
++	char *name;
++	int n_accesses, i;
++
++	_enter("");
++
++	volume = kzalloc(sizeof(struct cachefiles_volume), GFP_KERNEL);
++	if (!volume)
++		return;
++	volume->vcookie = vcookie;
++	volume->cache = cache;
++	INIT_LIST_HEAD(&volume->cache_link);
++
++	cachefiles_begin_secure(cache, &saved_cred);
++
++	len = vcookie->key[0];
++	name = kmalloc(len + 3, GFP_NOFS);
++	if (!name)
++		goto error_vol;
++	name[0] = 'I';
++	memcpy(name + 1, vcookie->key + 1, len);
++	name[len + 1] = 0;
++
++	vdentry = cachefiles_get_directory(cache, cache->store, name);
++	if (IS_ERR(vdentry))
++		goto error_name;
++	volume->dentry = vdentry;
++
++	for (i = 0; i < 256; i++) {
++		sprintf(name, "@%02x", i);
++		fan = cachefiles_get_directory(cache, vdentry, name);
++		if (IS_ERR(fan))
++			goto error_fan;
++		volume->fanout[i] = fan;
++	}
++
++	cachefiles_end_secure(cache, saved_cred);
++
++	vcookie->cache_priv = volume;
++	n_accesses = atomic_inc_return(&vcookie->n_accesses); /* Stop wakeups on dec-to-0 */
++	trace_fscache_access_volume(vcookie->debug_id, 0,
++				    refcount_read(&vcookie->ref),
++				    n_accesses, fscache_access_cache_pin);
++
++	spin_lock(&cache->object_list_lock);
++	list_add(&volume->cache_link, &volume->cache->volumes);
++	spin_unlock(&cache->object_list_lock);
++
++	kfree(name);
++	return;
++
++error_fan:
++	for (i = 0; i < 256; i++)
++		cachefiles_put_directory(volume->fanout[i]);
++	cachefiles_put_directory(volume->dentry);
++error_name:
++	kfree(name);
++error_vol:
++	kfree(volume);
++	cachefiles_end_secure(cache, saved_cred);
++}
++
++/*
++ * Release a volume representation.
++ */
++static void __cachefiles_free_volume(struct cachefiles_volume *volume)
++{
++	int i;
++
++	_enter("");
++
++	volume->vcookie->cache_priv = NULL;
++
++	for (i = 0; i < 256; i++)
++		cachefiles_put_directory(volume->fanout[i]);
++	cachefiles_put_directory(volume->dentry);
++	kfree(volume);
++}
++
++void cachefiles_free_volume(struct fscache_volume *vcookie)
++{
++	struct cachefiles_volume *volume = vcookie->cache_priv;
++
++	if (volume) {
++		spin_lock(&volume->cache->object_list_lock);
++		list_del_init(&volume->cache_link);
++		spin_unlock(&volume->cache->object_list_lock);
++		__cachefiles_free_volume(volume);
++	}
++}
++
++void cachefiles_withdraw_volume(struct cachefiles_volume *volume)
++{
++	fscache_withdraw_volume(volume->vcookie);
++	__cachefiles_free_volume(volume);
++}
 
-Haven't tested it, though, and I'm not sure if we should really do that
-... :)
-
--- 
-Thanks,
-
-David / dhildenb
 
