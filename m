@@ -2,156 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2558C460EDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 07:43:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 167F4460EA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 07:04:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348992AbhK2Gqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 01:46:44 -0500
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17285 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350418AbhK2Gon (ORCPT
+        id S239677AbhK2GFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 01:05:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233923AbhK2GDo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 01:44:43 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1638005196; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=n3tN4S2pUQeHcaidBskaxPvMtDHKVAxGlzpV4gGhKRw0ZRPexTpe+9491ASfmg0HTmlzpcGklxp+HMRiNT0nz7WB3yRDEgMXIVlbk6nppF5tsd9+xwYvYa+sqjKuO3IG1VFKI2d/3UUUTEAStZqRuO2G7fPvidPxfb9wuISL+GM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1638005196; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=Gx78nwaiX6IcgNHFjD7iZoX/9w5JdvaOCjUYq7EIGF8=; 
-        b=L+x/I3014bH31MUiJjwlMUIA0OFhsckS6h6hv6axN+6zUKZ3hEWIrtJxc9FBqQ6Qibg6YP4JsjtX6NX4JOTcEAN2havNabHJChd8GNBZB0Un8LvTEUsJdciVm1vdlMiA5HCTyeHhT3WETZ5Uv7oleWAWjCIqSZgTHB0xWTty7g8=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1638005196;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=Gx78nwaiX6IcgNHFjD7iZoX/9w5JdvaOCjUYq7EIGF8=;
-        b=AOUteeEka8coVmSi4zQzORqE5JY1MaV08/LAMtbTc27DCvaprB+pMimMaBupCWxB
-        O+FA0+jbAUUvYwibbnxdThAmY5Ue8tUKtJFxMKJfWYfyRApCoywzOrqMRC2+ZkgXx95
-        aD4148NrPXGMaIDIGuyGKpO95c4vIFvh8io47D5E=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1638005193699274.15327156530714; Sat, 27 Nov 2021 17:26:33 +0800 (CST)
-Date:   Sat, 27 Nov 2021 17:26:33 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "miklos" <miklos@szeredi.hu>
-Cc:     "linux-unionfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Chengguang Xu" <charliecgxu@tencent.com>,
-        "ronyjin" <ronyjin@tencent.com>, "amir73il" <amir73il@gmail.com>,
-        "jack" <jack@suse.cz>
-Message-ID: <17d60b7bbc2.caee608a13298.8366222634423039066@mykernel.net>
-In-Reply-To: <20211122030038.1938875-1-cgxu519@mykernel.net>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net>
-Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[RFC_PATCH_V6_0/7]_implement_c?=
- =?UTF-8?Q?ontainerized_syncfs_for_overlayfs?=
+        Mon, 29 Nov 2021 01:03:44 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779B4C061746
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Nov 2021 22:00:27 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id b40so41562356lfv.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Nov 2021 22:00:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3XIPX0Sy/WFxQqRpwpMOc12u3lcYQgxcaCeM2KbawEo=;
+        b=ST1yI7L6iFAjlkWb07dnLWner7Yky+AozeeHOwIeWQalCBDcPu94pXJDwyYTaG8HM4
+         X6AquTaSZA2diyzOQ+KSCIN4ihojb5gfGERc9/enQXP+4i9WLUOqtvfhA2N5MxWD6tqU
+         r5wNGLBfdaz73HIRF+l/8UsySGPc64Y3K1KtqCfImlNbkWQ79uQWWN6y9cA1H/Hg1uSc
+         bbyu45FfYwQ2lqoFuqKbBHGkqdFR5ya0Tjs4vxDBs0tO22YFDdaN/z2jVYpLUo1wTynj
+         1RVAxLVtQNg0obqbQdKvwLcnUodaf/o2JUX55Om47Td0s3n4McEnHT+NxWcSUdxTP5b6
+         AW+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3XIPX0Sy/WFxQqRpwpMOc12u3lcYQgxcaCeM2KbawEo=;
+        b=jW1+va2RsMV/sKRGjpBv4gVXt/4nc0YqLnArbCKs9um9mTTROl9HxqqF/Kpvroycw8
+         DSeFlq6UpGeQLgdsOHhzjoWX42Y13bR/ZlP+ORjR5iF2AOgKwxMTyoj7qEjSja2uJiUa
+         bDIyvBgyQLm3b0fCIaCbZFfapDPSLHimigw7FmKBB+3rzk7Dqul/YRoLSUwH6BmUuzdP
+         NNJcLQGeUds7RHsJ/A8z1LgKamsR9+vwAKYD+z2i6d81ANbcvakfN9CylEUrVnUfGxZ7
+         pmDNta1OgNXIYSNDAvTUbk2vOYhg1uh2NadHAKMf0+GL5233EqR9zPaIlcAugZeeYKx3
+         i9Fw==
+X-Gm-Message-State: AOAM532hCK5GSAHKLy6pSxzkt/pI6HaLY0w2gSZdH5xMnp1Q1cdDQV+B
+        ih0NwXkHwelGarg3eAppZwCngc8woHAjwOSJPT5kPg==
+X-Google-Smtp-Source: ABdhPJw4bqBcC/IR3yxpfJoI2ZERdlrMlXZc5FAJjoyN5VcOIZOzbqFX27L11JUytmx/SFYwI/2soaSqJ5bTIe0P3sc=
+X-Received: by 2002:a05:6512:32c6:: with SMTP id f6mr45680089lfg.40.1638165624879;
+ Sun, 28 Nov 2021 22:00:24 -0800 (PST)
 MIME-Version: 1.0
+References: <20211120045011.3074840-1-almasrymina@google.com> <YZvppKvUPTIytM/c@cmpxchg.org>
+In-Reply-To: <YZvppKvUPTIytM/c@cmpxchg.org>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Sun, 28 Nov 2021 22:00:13 -0800
+Message-ID: <CALvZod6ZEU8upWWdYwZ3KVbEK0eM7o0CM2GXy8Sn4SYcGo8jHQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] Deterministic charging of shared memory
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Mina Almasry <almasrymina@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Hugh Dickins <hughd@google.com>, Shuah Khan <shuah@kernel.org>,
+        Greg Thelen <gthelen@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Roman Gushchin <guro@fb.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2021-11-22 11:00:31 Chengguang=
- Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
- > From: Chengguang Xu <charliecgxu@tencent.com>
- >=20
- > Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
- > on upper_sb to synchronize whole dirty inodes in upper filesystem
- > regardless of the overlay ownership of the inode. In the use case of
- > container, when multiple containers using the same underlying upper
- > filesystem, it has some shortcomings as below.
- >=20
- > (1) Performance
- > Synchronization is probably heavy because it actually syncs unnecessary
- > inodes for target overlayfs.
- >=20
- > (2) Interference
- > Unplanned synchronization will probably impact IO performance of
- > unrelated container processes on the other overlayfs.
- >=20
- > This series try to implement containerized syncfs for overlayfs so that
- > only sync target dirty upper inodes which are belong to specific overlay=
-fs
- > instance. By doing this, it is able to reduce cost of synchronization an=
-d=20
- > will not seriously impact IO performance of unrelated processes.
- >=20
- > v1->v2:
- > - Mark overlayfs' inode dirty itself instead of adding notification
- > mechanism to vfs inode.
- >=20
- > v2->v3:
- > - Introduce overlayfs' extra syncfs wait list to wait target upper inode=
-s
- > in ->sync_fs.
- >=20
- > v3->v4:
- > - Using wait_sb_inodes() to wait syncing upper inodes.
- > - Mark overlay inode dirty only when having upper inode and VM_SHARED
- > flag in ovl_mmap().
- > - Check upper i_state after checking upper mmap state
- > in ovl_write_inode.
- >=20
- > v4->v5:
- > - Add underlying inode dirtiness check after mnt_drop_write().
- > - Handle both wait/no-wait mode of syncfs(2) in overlayfs' ->sync_fs().
- >=20
- > v5->v6:
- > - Rebase to latest overlayfs-next tree.
- > - Mark oerlay inode dirty when it has upper instead of marking dirty on
- >   modification.
- > - Trigger dirty page writeback in overlayfs' ->write_inode().
- > - Mark overlay inode 'DONTCACHE' flag.
- > - Delete overlayfs' ->writepages() and ->evict_inode() operations.
+Hi Johannes,
 
+On Mon, Nov 22, 2021 at 11:04 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+[...]
+> Here is one idea:
+>
+> Have you considered reparenting pages that are accessed by multiple
+> cgroups to the first common ancestor of those groups?
+>
+> Essentially, whenever there is a memory access (minor fault, buffered
+> IO) to a page that doesn't belong to the accessing task's cgroup, you
+> find the common ancestor between that task and the owning cgroup, and
+> move the page there.
+>
+> With a tree like this:
+>
+>         root - job group - job
+>                         `- job
+>             `- job group - job
+>                         `- job
+>
+> all pages accessed inside that tree will propagate to the highest
+> level at which they are shared - which is the same level where you'd
+> also set shared policies, like a job group memory limit or io weight.
+>
+> E.g. libc pages would (likely) bubble to the root, persistent tmpfs
+> pages would bubble to the respective job group, private data would
+> stay within each job.
+>
+> No further user configuration necessary. Although you still *can* use
+> mount namespacing etc. to prohibit undesired sharing between cgroups.
+>
+> The actual user-visible accounting change would be quite small, and
+> arguably much more intuitive. Remember that accounting is recursive,
+> meaning that a job page today also shows up in the counters of job
+> group and root. This would not change. The only thing that IS weird
+> today is that when two jobs share a page, it will arbitrarily show up
+> in one job's counter but not in the other's. That would change: it
+> would no longer show up as either, since it's not private to either;
+> it would just be a job group (and up) page.
+>
+> This would be a generic implementation of resource sharing semantics:
+> independent of data source and filesystems, contained inside the
+> cgroup interface, and reusing the existing hierarchies of accounting
+> and control domains to also represent levels of common property.
+>
+> Thoughts?
 
-Hi Miklos,
+Before commenting on your proposal, I would like to clarify that the
+use-cases given are not specific to us but are more general. Though I
+think you are arguing that the implementation is not general purpose
+which I kind of agree with.
 
-Have you got time to have a look at this V6 series? I think this version ha=
-s already fixed
-the issues in previous feedbacks of you guys and passed fstests (generic/ov=
-erlay cases).
+Let me take a stab again at describing these use-cases which I think
+can be partitioned based on the relationship of the entities
+sharing/accessing the memory among them. (Sorry for repeating these
+because I think we should keep these in mind while discussing the
+possible solutions).
 
-I did some stress long time tests (tar & syncfs & diff on w/wo copy-up) and=
- found no obvious problem.
-For syncfs time with 1M clean upper inodes, there was extra 1.3s wasted on =
-waiting scheduling.
-I guess this 1.3s will not bring significant impact to container instance i=
-n most cases, I also
-agree with Jack that we can start with this approach and do some improvemen=
-ts afterwards if there is
-complain from any real users.
+1) Mutually trusted entities sharing memory for collaborative work.
+One example is a file-system shared between sub-tasks of a meta-job.
+(Mina's second use-case).
 
+2) Independent entities sharing memory to reduce cost. Examples
+include shared libraries, packages or tool chains. (Mina's third
+use-case).
 
+3) One entity observing or monitoring another entity. Examples include
+gdb, ptrace, uprobes, VM or process migration and checkpointing.
 
-Thanks,
-Chengguang
+4) Server-Client relationship. (Mina's first use-case.
 
+Let me put (3) out of the way first as these operations have special
+interfaces and the target entity is a process (not a cgroup). Remote
+charging works for these and no new oom corner cases are introduced.
 
- >=20
- > Chengguang Xu (7):
- >   ovl: setup overlayfs' private bdi
- >   ovl: mark overlayfs inode dirty when it has upper
- >   ovl: implement overlayfs' own ->write_inode operation
- >   ovl: set 'DONTCACHE' flag for overlayfs inode
- >   fs: export wait_sb_inodes()
- >   ovl: introduce ovl_sync_upper_blockdev()
- >   ovl: implement containerized syncfs for overlayfs
- >=20
- >  fs/fs-writeback.c         |  3 ++-
- >  fs/overlayfs/inode.c      |  5 +++-
- >  fs/overlayfs/super.c      | 49 ++++++++++++++++++++++++++++++++-------
- >  fs/overlayfs/util.c       |  1 +
- >  include/linux/writeback.h |  1 +
- >  5 files changed, 48 insertions(+), 11 deletions(-)
- >=20
- > --=20
- > 2.27.0
- >=20
- >=20
+For (1) and (2), I think your proposal aligns pretty well with them
+but one important property is still missing which we are very adamant
+about i.e. 'deterministic charge'. To explain with an example, suppose
+two instances of the same job are running on two different systems. On
+one system, it is sharing a shared library with an unrelated job and
+the second instance is using that library alone. The owner will see
+different memory usage for both instances which can mess with their
+resource planning.
+
+However I think this can be solved very easily with an opt-in add-on.
+The node controller knows upfront the libraries/packages which can be
+shared between the jobs and is responsible for creating the cgroup
+hierarchy (at least the top level) for the jobs. It can create a
+common ancestor for all such jobs and let the kernel know that if any
+descendant accesses these libraries, charge to this specific ancestor.
+If someone out of this sub-hierarchy accesses the memory, follow the
+proposal i.e. common ancestor. With this specific opt-in add-on, all
+job owners will see their job usage more consistent.
+
+[I am putting this as a brainstorming discussion] Regarding (4), for
+our use-case, the server wants the cost of the memory needed to serve
+a client to be paid by the corresponding client. Please note that the
+memory is not necessarily accessed by the client.
+
+Now we can argue that this use-case can be served similar to (3) i.e.
+through a special interface/syscall. I think that would be challenging
+particularly when the lifetime of a client 'process' is independent of
+the memory needed to serve that client.
+
+Another way is to disable the accounting of that specific memory
+needed to serve the clients (I think Roman suggested a similar notion
+as disabling accounting of a tmpfs). Any other ideas?
+
+thanks,
+Shakeel
