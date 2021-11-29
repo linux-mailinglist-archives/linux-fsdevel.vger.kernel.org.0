@@ -2,153 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DCF461FDC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 20:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 643D2461FE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 20:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238838AbhK2TJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 14:09:03 -0500
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17285 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1378207AbhK2THD (ORCPT
+        id S1351859AbhK2TLv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 14:11:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43476 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234077AbhK2TJv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 14:07:03 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1637932178; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=YCD9Qy/t2w3SG/dzfftvb30u8EtAqWFB0/v7Gz5mdsDG1lqyu9jplrgieI983y96ACu3TkHCX8b01GKHM55T/OU6FAQ8dcNYRTmnarjSbxT9g2a5aVINpvv7DC7wRJoXwqz59IREFqMDrvFpKNhVagDKOIiykKK/0ZcWsa3ukFE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1637932178; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=DKINIDnMGkMKeLcTBYO3BxCbPU2T+QmP00nUmcd3ZJM=; 
-        b=Er6e0/lkmSRSDyV226mD5NFNTE/ZyV1j6Sg4apZ8oYShb5o7o/EuMxFx6NPd3wIaEr3a34zyjqlEa5amf7z0Elcsdj/6FjwkhpNuytXuHv6z29aHOZgioU8SOVfHCs4LkJrbOdseCedcLEQLiSxbsKHOHOML12KgAWoPIAlxFoU=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1637932178;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=DKINIDnMGkMKeLcTBYO3BxCbPU2T+QmP00nUmcd3ZJM=;
-        b=TSAddY81PkFDLj1aC2Geq5A7DpzYXqjiqX2cd1JiU6+p8vo+ip6IQL0AJwqYzL8q
-        SL/EUFY7eXLVgpH6U+sChP4Mp9AvTMG1SmkiGP7ZB/e4e59TCqEV3ypRXpjFSaUYX4Q
-        jlj9W1EHKYPABmA1E5luDrb6We20clxMVRqlY6V0=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 163793217656496.81082384691524; Fri, 26 Nov 2021 21:09:36 +0800 (CST)
-Date:   Fri, 26 Nov 2021 21:09:36 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Jan Kara" <jack@suse.cz>
-Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
-        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Chengguang Xu" <charliecgxu@tencent.com>,
-        "ronyjin" <ronyjin@tencent.com>
-Message-ID: <17d5c5d9498.134e725b210976.7805957202314611987@mykernel.net>
-In-Reply-To: <20211126091430.GC13004@quack2.suse.cz>
-References: <20211122030038.1938875-1-cgxu519@mykernel.net>
- <20211122030038.1938875-4-cgxu519@mykernel.net> <20211126091430.GC13004@quack2.suse.cz>
-Subject: Re: [RFC PATCH V6 3/7] ovl: implement overlayfs' own ->write_inode
- operation
+        Mon, 29 Nov 2021 14:09:51 -0500
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227A5C05291D;
+        Mon, 29 Nov 2021 07:29:33 -0800 (PST)
+Received: by mail-qt1-x833.google.com with SMTP id j17so16933171qtx.2;
+        Mon, 29 Nov 2021 07:29:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m35Uj2krYxANxP9t+ed7LtTcj7TW2cw/dyEjVSPqQT0=;
+        b=cLxEFDVZ3ieInC8MJrsJ5iFSKK9uDzj3PngLBEurfcrviDABbKTIBY6sTQBjtHJOv3
+         Ni8rIxlC5DijGOg8Wnn0akJyo1johm1HAE/5/FFQQiwVJUeffYQBu1pwT3x+DnmTon1l
+         vFM9/PRzXA6MHHZs0WrVPWn8eSasotEsV4txjD6kLTJ4NVvB4fd3n8K62k3tPpuQIfJd
+         8x2NSloB+uGcQ+3biCQLBCjqa45fT2l6yAYOiQm/Lu4mszLhDR2gttec7GUHtNfy3cC1
+         WHqbC+vWCfoYglwsbF76sr4YYKYmvd79v1Gb2VGXNQ+qN18PLDQsIgt5jTuKo5NUXoi9
+         AqFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m35Uj2krYxANxP9t+ed7LtTcj7TW2cw/dyEjVSPqQT0=;
+        b=rpcOW8jFW3NqWOjdchojf68z+puKDXDbALSuJXJn3K4tk9MgsHETvMDPxQuhrtjX4Y
+         BZbCI8nYRimjWX0ceB8NrgaCTUzI0KdWJatFsH6zU9eHFjjq3I3DTKx9VxIvJR/TjsdB
+         uoNCLDxk0JkV8zY02ThYZzWuMqTfAQpljbHGzhtEbNnPa/+q4kSP4fOa6JdDTWfxi+5l
+         n5Q7i47yMyyKh4VSNNbA9yMDk9WfChlJehDBUCLnLp8RfBBlNwlVVmPV1HGk2TEEsaoU
+         2xpT5YXUkJslOsr69OxnCH8ObLUNAAnOq3RtslfEMsS+5Am+nbWpeEMuBBqOGGMkRHed
+         CsMA==
+X-Gm-Message-State: AOAM532s5N2/7wjtuem72EM/9t8bSlE5p1rVCDpVXUc7GV4L4Z/mMrWr
+        UQ6BO6k1Tu9WuemLPofLfeyTeUgT3j6ptWLmt5A=
+X-Google-Smtp-Source: ABdhPJx61ZVmuKVGRhNCeSofdileIyrk+FUExv2FizSt9Nt5h8WQbouFLRUsTYW6uEQteyHw9o/8rapqVl00ixIucm8=
+X-Received: by 2002:ac8:7e83:: with SMTP id w3mr45058346qtj.160.1638199772122;
+ Mon, 29 Nov 2021 07:29:32 -0800 (PST)
 MIME-Version: 1.0
+References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
+ <yt9d35nf1d84.fsf@linux.ibm.com> <CALOAHbDtqpkN4D0vHvGxTSpQkksMWtFm3faMy0n+pazxN_RPPg@mail.gmail.com>
+ <yt9d35nfvy8s.fsf@linux.ibm.com>
+In-Reply-To: <yt9d35nfvy8s.fsf@linux.ibm.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 29 Nov 2021 23:28:55 +0800
+Message-ID: <CALOAHbCeRXO7xMWC3Zpjbk4Dh3nGvQdEYBx_aUaQJOUE0z4H3A@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
+ with TASK_COMM_LEN
+To:     Sven Schnelle <svens@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-11-26 17:14:30 Jan Kara <=
-jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > On Mon 22-11-21 11:00:34, Chengguang Xu wrote:
- > > From: Chengguang Xu <charliecgxu@tencent.com>
- > >=20
- > > Sync dirty data and meta of upper inode in overlayfs' ->write_inode()
- > > and redirty overlayfs' inode.
- > >=20
- > > Signed-off-by: Chengguang Xu <charliecgxu@tencent.com>
- >=20
- > Looks good. I'm still not 100% convinced keeping inodes dirty all the ti=
-me
- > will not fire back in excessive writeback activity (e.g. flush worker wi=
-ll
- > traverse the list of all dirty inodes every 30 seconds and try to write
- > them) but I guess we can start with this and if people complain, dirtine=
-ss
- > handling can be improved.=20
+On Mon, Nov 29, 2021 at 10:21 PM Sven Schnelle <svens@linux.ibm.com> wrote:
+>
+> Hi,
+>
+> Yafang Shao <laoar.shao@gmail.com> writes:
+>
+> > On Mon, Nov 29, 2021 at 6:13 PM Sven Schnelle <svens@linux.ibm.com> wrote:
+> >> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> >> > index 78c351e35fec..cecd4806edc6 100644
+> >> > --- a/include/linux/sched.h
+> >> > +++ b/include/linux/sched.h
+> >> > @@ -274,8 +274,13 @@ struct task_group;
+> >> >
+> >> >  #define get_current_state()  READ_ONCE(current->__state)
+> >> >
+> >> > -/* Task command name length: */
+> >> > -#define TASK_COMM_LEN                        16
+> >> > +/*
+> >> > + * Define the task command name length as enum, then it can be visible to
+> >> > + * BPF programs.
+> >> > + */
+> >> > +enum {
+> >> > +     TASK_COMM_LEN = 16,
+> >> > +};
+> >>
+> >> This breaks the trigger-field-variable-support.tc from the ftrace test
+> >> suite at least on s390:
+> >>
+> >> echo
+> >> 'hist:keys=next_comm:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).wakeup_latency($wakeup_lat,next_pid,sched.sched_waking.prio,next_comm)
+> >> if next_comm=="ping"'
+> >> linux/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc: line 15: echo: write error: Invalid argument
+> >>
+> >> I added a debugging line into check_synth_field():
+> >>
+> >> [   44.091037] field->size 16, hist_field->size 16, field->is_signed 1, hist_field->is_signed 0
+> >>
+> >> Note the difference in the signed field.
+> >>
+> >
+> > Hi Sven,
+> >
+> > Thanks for the report and debugging!
+> > Seems we should explicitly define it as signed ?
+> > Could you pls. help verify it?
+> >
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index cecd4806edc6..44d36c6af3e1 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -278,7 +278,7 @@ struct task_group;
+> >   * Define the task command name length as enum, then it can be visible to
+> >   * BPF programs.
+> >   */
+> > -enum {
+> > +enum SignedEnum {
+> >         TASK_COMM_LEN = 16,
+> >  };
+>
+> Umm no. What you're doing here is to define the name of the enum as
+> 'SignedEnum'. This doesn't change the type. I think before C++0x you
+> couldn't force an enum type.
+>
 
-Hi Jan,
-
-Thanks for the review and suggestion.
+Ah, I made a stupid mistake....
 
 
-Thanks,
-Chengguang
-
-
-
- > So feel free to add:
- >=20
- > Reviewed-by: Jan Kara <jack@suse.cz>
- >=20
- >                                 Honza
- >=20
- > > ---
- > >  fs/overlayfs/super.c | 21 +++++++++++++++++++++
- > >  1 file changed, 21 insertions(+)
- > >=20
- > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
- > > index 18a12088a37b..12acf0ec7395 100644
- > > --- a/fs/overlayfs/super.c
- > > +++ b/fs/overlayfs/super.c
- > > @@ -15,6 +15,7 @@
- > >  #include <linux/seq_file.h>
- > >  #include <linux/posix_acl_xattr.h>
- > >  #include <linux/exportfs.h>
- > > +#include <linux/writeback.h>
- > >  #include "overlayfs.h"
- > > =20
- > >  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
- > > @@ -406,12 +407,32 @@ static int ovl_remount(struct super_block *sb, i=
-nt *flags, char *data)
- > >      return ret;
- > >  }
- > > =20
- > > +static int ovl_write_inode(struct inode *inode,
- > > +               struct writeback_control *wbc)
- > > +{
- > > +    struct ovl_fs *ofs =3D inode->i_sb->s_fs_info;
- > > +    struct inode *upper_inode =3D ovl_inode_upper(inode);
- > > +    int ret =3D 0;
- > > +
- > > +    if (!upper_inode)
- > > +        return 0;
- > > +
- > > +    if (!ovl_should_sync(ofs))
- > > +        return 0;
- > > +
- > > +    ret =3D write_inode_now(upper_inode, wbc->sync_mode =3D=3D WB_SYN=
-C_ALL);
- > > +    mark_inode_dirty(inode);
- > > +
- > > +    return ret;
- > > +}
- > > +
- > >  static const struct super_operations ovl_super_operations =3D {
- > >      .alloc_inode    =3D ovl_alloc_inode,
- > >      .free_inode    =3D ovl_free_inode,
- > >      .destroy_inode    =3D ovl_destroy_inode,
- > >      .drop_inode    =3D generic_delete_inode,
- > >      .put_super    =3D ovl_put_super,
- > > +    .write_inode    =3D ovl_write_inode,
- > >      .sync_fs    =3D ovl_sync_fs,
- > >      .statfs        =3D ovl_statfs,
- > >      .show_options    =3D ovl_show_options,
- > > --=20
- > > 2.27.0
- > >=20
- > >=20
- > --=20
- > Jan Kara <jack@suse.com>
- > SUSE Labs, CR
- >=20
+-- 
+Thanks
+Yafang
