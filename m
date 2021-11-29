@@ -2,291 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2554461AE0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:29:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BD94461B2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 16:39:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245157AbhK2PcQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 10:32:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:21872 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349450AbhK2PaQ (ORCPT
+        id S1346839AbhK2PmK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 10:42:10 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:59916 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244412AbhK2PkH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 10:30:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638199618;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=muscdDC11I9Z6sf+k2MqAac1cA7yGzRS+DsuStEiQFE=;
-        b=IjRn7yZsU5ctxk4oaeInWhbjLgSW+DVArM4jqo/WRJfCZ64rSbUGQVfStTNR3vGGQ+7KMI
-        veJZomPGvWlRnnKOTloLB8xzvWelp69WnRTtX92sRtPduXuzQXitbYO1YwUcignZmhCDtE
-        /rysG13Rrrxxf+UkD5LC480fyMe8DpM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-17-x7lx4dllPY2R-fyn6yn92Q-1; Mon, 29 Nov 2021 10:26:54 -0500
-X-MC-Unique: x7lx4dllPY2R-fyn6yn92Q-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 29 Nov 2021 10:40:07 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5DB19102C7EC;
-        Mon, 29 Nov 2021 15:26:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 32ECF60BF4;
-        Mon, 29 Nov 2021 15:26:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] netfs: Adjust docs after foliation
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-cachefs@redhat.com,
-        linux-mm@kvack.org, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Nov 2021 15:26:43 +0000
-Message-ID: <163819960325.224342.9892463787829639241.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        by sin.source.kernel.org (Postfix) with ESMTPS id 50954CE131F;
+        Mon, 29 Nov 2021 15:36:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BEA2C53FCE;
+        Mon, 29 Nov 2021 15:36:44 +0000 (UTC)
+Date:   Mon, 29 Nov 2021 15:36:41 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware
+ with sub-page faults
+Message-ID: <YaTziROgnFwB6Ddj@arm.com>
+References: <20211124192024.2408218-1-catalin.marinas@arm.com>
+ <20211124192024.2408218-4-catalin.marinas@arm.com>
+ <YZ6arlsi2L3LVbFO@casper.infradead.org>
+ <YZ6idVy3zqQC4atv@arm.com>
+ <CAHc6FU4-P9sVexcNt5CDQxROtMAo=kH8hEu==AAhZ_+Zv53=Ag@mail.gmail.com>
+ <20211127123958.588350-1-agruenba@redhat.com>
+ <YaJM4n31gDeVzUGA@arm.com>
+ <CAHc6FU7BSL58GVkOh=nsNQczRKG3P+Ty044zs7PjKPik4vzz=Q@mail.gmail.com>
+ <YaTEkAahkCwuQdPN@arm.com>
+ <CAHc6FU6zVi9A2D3V3T5zE71YAdkBiJTs0ao1Q6ysSuEp=bz8fQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHc6FU6zVi9A2D3V3T5zE71YAdkBiJTs0ao1Q6ysSuEp=bz8fQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adjust the netfslib docs in light of the foliation changes.
+On Mon, Nov 29, 2021 at 02:33:42PM +0100, Andreas Gruenbacher wrote:
+> On Mon, Nov 29, 2021 at 1:22 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > On Sat, Nov 27, 2021 at 07:05:39PM +0100, Andreas Gruenbacher wrote:
+> > > We also still have fault_in_safe_writeable which is more difficult to
+> > > fix, and fault_in_readable which we don't want to leave behind broken,
+> > > either.
+> >
+> > fault_in_safe_writeable() can be done by using get_user() instead of
+> > put_user() for arm64 MTE and probably SPARC ADI (an alternative is to
+> > read the in-memory tags and compare them with the pointer).
+> 
+> So we'd keep the existing fault_in_safe_writeable() logic for the
+> actual fault-in and use get_user() to check for sub-page faults? If
+> so, then that should probably also be hidden in arch code.
 
-Also un-kdoc-mark netfs_skip_folio_read() since it's internal and isn't
-part of the API.
+That's what this series does when it probes the whole range in
+fault_in_writeable(). The main reason was that it's more efficient to do
+a read than a write on a large range (the latter dirtying the cache
+lines).
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: linux-cachefs@redhat.com
-cc: linux-mm@kvack.org
-Link: https://lore.kernel.org/r/163706992597.3179783.18360472879717076435.stgit@warthog.procyon.org.uk/
----
+> > For CHERI, that's different again since the fault_in_safe_writeable capability
+> > encodes the read/write permissions independently.
+> >
+> > However, do we actually want to change the fault_in_safe_writeable() and
+> > fault_in_readable() functions at this stage? I could not get any of them
+> > to live-lock, though I only tried btrfs, ext4 and gfs2. As per the
+> > earlier discussion, normal files accesses are guaranteed to make
+> > progress. The only problematic one was O_DIRECT which seems to be
+> > alright for the above filesystems (the fs either bails out after several
+> > attempts or uses GUP to read which skips the uaccess altogether).
+> 
+> Only gfs2 uses fault_in_safe_writeable(). For buffered reads, progress
+> is guaranteed because failures are at a byte granularity.
+> 
+> O_DIRECT reads and writes happen in device block size granularity, but
+> the pages are grabbed with get_user_pages() before the copying
+> happens. So by the time the copying happens, the pages are guaranteed
+> to be resident, and we don't need to loop around fault_in_*().
 
- Documentation/filesystems/netfs_library.rst |   95 ++++++++++++++++-----------
- fs/netfs/read_helper.c                      |    4 +
- 2 files changed, 58 insertions(+), 41 deletions(-)
+For file reads, I couldn't triggered any mismatched tag faults with gfs2
+and O_DIRECT, so it matches your description above. For file writes it
+does trigger such faults, so I suspect it doesn't always use
+get_user_pages() for writes. No live-lock though with the vanilla
+kernel. My test uses a page with some mismatched tags in the middle.
 
-diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
-index bb68d39f03b7..375baca7edcd 100644
---- a/Documentation/filesystems/netfs_library.rst
-+++ b/Documentation/filesystems/netfs_library.rst
-@@ -1,7 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0
- 
- =================================
--NETWORK FILESYSTEM HELPER LIBRARY
-+Network Filesystem Helper Library
- =================================
- 
- .. Contents:
-@@ -37,22 +37,22 @@ into a common call framework.
- 
- The following services are provided:
- 
-- * Handles transparent huge pages (THPs).
-+ * Handle folios that span multiple pages.
- 
-- * Insulates the netfs from VM interface changes.
-+ * Insulate the netfs from VM interface changes.
- 
-- * Allows the netfs to arbitrarily split reads up into pieces, even ones that
--   don't match page sizes or page alignments and that may cross pages.
-+ * Allow the netfs to arbitrarily split reads up into pieces, even ones that
-+   don't match folio sizes or folio alignments and that may cross folios.
- 
-- * Allows the netfs to expand a readahead request in both directions to meet
--   its needs.
-+ * Allow the netfs to expand a readahead request in both directions to meet its
-+   needs.
- 
-- * Allows the netfs to partially fulfil a read, which will then be resubmitted.
-+ * Allow the netfs to partially fulfil a read, which will then be resubmitted.
- 
-- * Handles local caching, allowing cached data and server-read data to be
-+ * Handle local caching, allowing cached data and server-read data to be
-    interleaved for a single request.
- 
-- * Handles clearing of bufferage that aren't on the server.
-+ * Handle clearing of bufferage that aren't on the server.
- 
-  * Handle retrying of reads that failed, switching reads from the cache to the
-    server as necessary.
-@@ -70,22 +70,22 @@ Read Helper Functions
- 
- Three read helpers are provided::
- 
-- * void netfs_readahead(struct readahead_control *ractl,
--			const struct netfs_read_request_ops *ops,
--			void *netfs_priv);``
-- * int netfs_readpage(struct file *file,
--		      struct page *page,
--		      const struct netfs_read_request_ops *ops,
--		      void *netfs_priv);
-- * int netfs_write_begin(struct file *file,
--			 struct address_space *mapping,
--			 loff_t pos,
--			 unsigned int len,
--			 unsigned int flags,
--			 struct page **_page,
--			 void **_fsdata,
--			 const struct netfs_read_request_ops *ops,
--			 void *netfs_priv);
-+	void netfs_readahead(struct readahead_control *ractl,
-+			     const struct netfs_read_request_ops *ops,
-+			     void *netfs_priv);
-+	int netfs_readpage(struct file *file,
-+			   struct folio *folio,
-+			   const struct netfs_read_request_ops *ops,
-+			   void *netfs_priv);
-+	int netfs_write_begin(struct file *file,
-+			      struct address_space *mapping,
-+			      loff_t pos,
-+			      unsigned int len,
-+			      unsigned int flags,
-+			      struct folio **_folio,
-+			      void **_fsdata,
-+			      const struct netfs_read_request_ops *ops,
-+			      void *netfs_priv);
- 
- Each corresponds to a VM operation, with the addition of a couple of parameters
- for the use of the read helpers:
-@@ -103,8 +103,8 @@ Both of these values will be stored into the read request structure.
- For ->readahead() and ->readpage(), the network filesystem should just jump
- into the corresponding read helper; whereas for ->write_begin(), it may be a
- little more complicated as the network filesystem might want to flush
--conflicting writes or track dirty data and needs to put the acquired page if an
--error occurs after calling the helper.
-+conflicting writes or track dirty data and needs to put the acquired folio if
-+an error occurs after calling the helper.
- 
- The helpers manage the read request, calling back into the network filesystem
- through the suppplied table of operations.  Waits will be performed as
-@@ -253,7 +253,7 @@ through which it can issue requests and negotiate::
- 		void (*issue_op)(struct netfs_read_subrequest *subreq);
- 		bool (*is_still_valid)(struct netfs_read_request *rreq);
- 		int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
--					 struct page *page, void **_fsdata);
-+					 struct folio *folio, void **_fsdata);
- 		void (*done)(struct netfs_read_request *rreq);
- 		void (*cleanup)(struct address_space *mapping, void *netfs_priv);
- 	};
-@@ -313,13 +313,14 @@ The operations are as follows:
- 
-    There is no return value; the netfs_subreq_terminated() function should be
-    called to indicate whether or not the operation succeeded and how much data
--   it transferred.  The filesystem also should not deal with setting pages
-+   it transferred.  The filesystem also should not deal with setting folios
-    uptodate, unlocking them or dropping their refs - the helpers need to deal
-    with this as they have to coordinate with copying to the local cache.
- 
--   Note that the helpers have the pages locked, but not pinned.  It is possible
--   to use the ITER_XARRAY iov iterator to refer to the range of the inode that
--   is being operated upon without the need to allocate large bvec tables.
-+   Note that the helpers have the folios locked, but not pinned.  It is
-+   possible to use the ITER_XARRAY iov iterator to refer to the range of the
-+   inode that is being operated upon without the need to allocate large bvec
-+   tables.
- 
-  * ``is_still_valid()``
- 
-@@ -330,15 +331,15 @@ The operations are as follows:
-  * ``check_write_begin()``
- 
-    [Optional] This is called from the netfs_write_begin() helper once it has
--   allocated/grabbed the page to be modified to allow the filesystem to flush
-+   allocated/grabbed the folio to be modified to allow the filesystem to flush
-    conflicting state before allowing it to be modified.
- 
--   It should return 0 if everything is now fine, -EAGAIN if the page should be
-+   It should return 0 if everything is now fine, -EAGAIN if the folio should be
-    regrabbed and any other error code to abort the operation.
- 
-  * ``done``
- 
--   [Optional] This is called after the pages in the request have all been
-+   [Optional] This is called after the folios in the request have all been
-    unlocked (and marked uptodate if applicable).
- 
-  * ``cleanup``
-@@ -390,7 +391,7 @@ The read helpers work by the following general procedure:
-      * If NETFS_SREQ_CLEAR_TAIL was set, a short read will be cleared to the
-        end of the slice instead of reissuing.
- 
-- * Once the data is read, the pages that have been fully read/cleared:
-+ * Once the data is read, the folios that have been fully read/cleared:
- 
-    * Will be marked uptodate.
- 
-@@ -398,11 +399,11 @@ The read helpers work by the following general procedure:
- 
-    * Unlocked
- 
-- * Any pages that need writing to the cache will then have DIO writes issued.
-+ * Any folios that need writing to the cache will then have DIO writes issued.
- 
-  * Synchronous operations will wait for reading to be complete.
- 
-- * Writes to the cache will proceed asynchronously and the pages will have the
-+ * Writes to the cache will proceed asynchronously and the folios will have the
-    PG_fscache mark removed when that completes.
- 
-  * The request structures will be cleaned up when everything has completed.
-@@ -452,6 +453,9 @@ operation table looks like the following::
- 			    netfs_io_terminated_t term_func,
- 			    void *term_func_priv);
- 
-+		int (*prepare_write)(struct netfs_cache_resources *cres,
-+				     loff_t *_start, size_t *_len, loff_t i_size);
-+
- 		int (*write)(struct netfs_cache_resources *cres,
- 			     loff_t start_pos,
- 			     struct iov_iter *iter,
-@@ -509,6 +513,14 @@ The methods defined in the table are:
-    indicating whether the termination is definitely happening in the caller's
-    context.
- 
-+ * ``prepare_write()``
-+
-+   [Required] Called to adjust a write to the cache and check that there is
-+   sufficient space in the cache.  The start and length values indicate the
-+   size of the write that netfslib is proposing, and this can be adjusted by
-+   the cache to respect DIO boundaries.  The file size is passed for
-+   information.
-+
-  * ``write()``
- 
-    [Required] Called to write to the cache.  The start file offset is given
-@@ -525,4 +537,9 @@ not the read request structure as they could be used in other situations where
- there isn't a read request structure as well, such as writing dirty data to the
- cache.
- 
-+
-+API Function Reference
-+======================
-+
- .. kernel-doc:: include/linux/netfs.h
-+.. kernel-doc:: fs/netfs/read_helper.c
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 9320a42dfaf9..7046f9bdd8dc 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -1008,8 +1008,8 @@ int netfs_readpage(struct file *file,
- }
- EXPORT_SYMBOL(netfs_readpage);
- 
--/**
-- * netfs_skip_folio_read - prep a folio for writing without reading first
-+/*
-+ * Prepare a folio for writing without reading first
-  * @folio: The folio being prepared
-  * @pos: starting position for the write
-  * @len: length of write
+ext4: no tag faults with O_DIRECT read/write irrespective of whether the
+user buffer is page aligned or not.
 
+btrfs: O_DIRECT file writes - no faults on page-aligned buffers, faults
+on unaligned; file reads - tag faults on both aligned/unaligned buffers.
+No live-lock.
 
+So, some tag faults still happen even with O_DIRECT|O_SYNC but the
+filesystems too care of continuous faulting.
+
+> You've mentioned before that copying to/from struct page bypasses
+> sub-page fault checking. If that is the case, then the checking
+> probably needs to happen in iomap_dio_bio_iter and dio_refill_pages
+> instead.
+
+It's too expensive and not really worth it. With a buffered access, the
+uaccess takes care of checking at the time of load/store (the hardware
+does this for us). With a GUP, the access is done via the kernel mapping
+with a match-all tag to avoid faults (kernel panic). We set the ABI
+expectation some time ago that kernel accesses to user memory may not
+always be tag-checked if the access is done via a GUP'ed page.
+
+> > Happy to address them if there is a real concern, I just couldn't trigger it.
+> 
+> Hopefully it should now be clear why you couldn't. One way of
+> reproducing with fault_in_safe_writeable() would be to use that in
+> btrfs instead of fault_in_writeable(), of course.
+
+Yes, that would trigger it again. I guess if we want to make this API
+safer in general, we can add the checks to the other functions. Only
+probing a few bytes at the start shouldn't cause a performance issue.
+
+Thanks.
+
+-- 
+Catalin
