@@ -2,136 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 652E5462583
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:37:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 570624624E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Nov 2021 23:29:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234234AbhK2Wkc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 17:40:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33738 "EHLO
+        id S231522AbhK2Wc7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 17:32:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234693AbhK2WkT (ORCPT
+        with ESMTP id S231562AbhK2Wcu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 17:40:19 -0500
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F2CC201F90
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 11:15:31 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id m9so23046195iop.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 11:15:31 -0800 (PST)
+        Mon, 29 Nov 2021 17:32:50 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A1AC06FD44;
+        Mon, 29 Nov 2021 12:15:41 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id c4so39386255wrd.9;
+        Mon, 29 Nov 2021 12:15:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5fV8wZakd4l8oOKM3/Zmm43SWH/XkVAi9BWWx6yZhMk=;
-        b=UtP/oDsPIPxhpgcSGNTUTNtovdWbLgFQeM9ohhlileCAyuOYtJv0NQlZG4U0MWCKrw
-         GC5//FnL/cokRNdB3PXB2tjLiVI5SStJ0+f8ebBVXxLXgOax1EpHJRXgyRL5czNDie28
-         9+23OYnVG+2h21wwQaGBHxGJBU4ZATfp+OHI1Z5J1mRnN7YQKJ5Cero600tH8830BXIQ
-         O6aIqCLEY2nqooDi/v5I6BG8gqVC1FR93dsfJnWldJumFW6wdu/Sp7CYlVUb4x6a/8L/
-         kUBQVQofcuDuUOt8eecBkWI4z5Np09ccXBEAxiNoenlD66IRI6hwgGLrfddLZtYxG6p9
-         JUmQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AUyW9/bu808KughF8jMY+xgu/5CCJPBOxJx/5UdnFQU=;
+        b=K2z+8261JxjPHqFAkOmRN0j0FdyCPUSiJCUVsRsymL2kYzmr9Yask0TMrCIFWnfgUi
+         58CqxJED0ch+/kVyn1vxCtUSL3CAYhYucVLTSS/CXhmdZZlSX2NB8ZPM85ErG86GAr/3
+         wPdA00828OqtqsiTy0We4U2gxxhmlNDmY6TFDXRLsJmWIZXp8i9pcJNLV4zAGHeC/S18
+         fLTn31mvE5fE+4yV6T/QfZZ/1/QwOSjReGa/xHMwyAjkor+u9VEJYMnMwM1e3nK444Gz
+         hPKiST+v22nEYGm3hNQP1TGH0sOpL57Yasp9dnCXymOM7OsoP1d/oX+xlRYfAIKCy5Je
+         M/Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5fV8wZakd4l8oOKM3/Zmm43SWH/XkVAi9BWWx6yZhMk=;
-        b=heP2akG+r99rJEdcBZ73AqwsWxLH0B1EoVqykr/BIsgzvYFm4ObBh8LmPCNBup6BLW
-         yAwxgQml/6jZOfqKyywH5w7Y8MeH4Fz49CTr4mOEjivVDS9P7GqT0q15/xYv9RA83YPV
-         HnZeMWHG1j/SgroK3gL310PzEZ+SLbaqrmzHhUZnBcl52KAWZATl86NxR2rGF57LENfD
-         q+oV6vUXaGDAMISvAj5+AusMnS/1AGtjgiJdER0INJUVRIMmUQUxTK71rDMhdfSkVm1y
-         HK/LSNW46ywNjq4l3EsYLtiAxPUA8ZmawNuju2R+XnU8H2cHEzzi6ZbnPVozz0qqcDfJ
-         2a1Q==
-X-Gm-Message-State: AOAM5311EbMkoUhltiOhzkqGAGVemg2SAqYCitGMeC5QecswWqLe/PC+
-        Spbud8KyT5IyZqBKDCkApFfuf2KK5BT1S4jA3tLnQv+pnIw=
-X-Google-Smtp-Source: ABdhPJzZA+rNELiBzhrVhGgAT5E1WrWlcz3896h+6KyqfSdzPw45qhkaib2+oANLRvJhR0RfhZPFgnFfXsXvricQON0=
-X-Received: by 2002:a02:a489:: with SMTP id d9mr67071286jam.47.1638213330479;
- Mon, 29 Nov 2021 11:15:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20211119071738.1348957-1-amir73il@gmail.com> <20211119071738.1348957-8-amir73il@gmail.com>
- <20211126151434.GJ13004@quack2.suse.cz>
-In-Reply-To: <20211126151434.GJ13004@quack2.suse.cz>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AUyW9/bu808KughF8jMY+xgu/5CCJPBOxJx/5UdnFQU=;
+        b=q6uWfy36SdolaxtMVQpFwdtA3kgw9SeWn1yKXMlbjIqjdanWqGle+YkoNeW1oYJW8L
+         vLrUS07OOAIsNE7CR0t4p1iduoqMiHZESDDwya4GliOT5cGXthgEYdhiRNe2KBcORtx2
+         maMn1r6fF16MFGarS5TVLK5GoYY3SPSNZEZaEQ1ZvWNEHdxU7rapzs10s2X7WskbRebU
+         NEnV8XWCKQsgftjeMbsdywNrx+0dQuCcziYBmXcgZA08iC1baeLuQp6rZE8IhMA6aLAj
+         1s+W5Cb5VmaGrgK7l57Is9d6iAGXkICcKDjCzhbQx4oL5r3lAAaadJPraoHAuIN84QaG
+         U42A==
+X-Gm-Message-State: AOAM532noFB+zI9EuaZ6LEsHuvlSx3TIp33mzjCS2xQAB+ZZsV5iXzI9
+        jFolS13v2jyv4sSeDDtVUVc=
+X-Google-Smtp-Source: ABdhPJxZ2XN8R27xeLEJD+fBlb83DwJg2jEoZGuojOJWyPaArj18t0RXp5sEmO5wsbEPJtH0sBCovg==
+X-Received: by 2002:a5d:54cf:: with SMTP id x15mr37985959wrv.30.1638216940391;
+        Mon, 29 Nov 2021 12:15:40 -0800 (PST)
+Received: from localhost.localdomain ([82.114.45.86])
+        by smtp.gmail.com with ESMTPSA id m14sm19791830wrp.28.2021.11.29.12.15.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Nov 2021 12:15:39 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 29 Nov 2021 21:15:19 +0200
-Message-ID: <CAOQ4uxj1pP2QPy=7MPeuB2mbEGSbQ4fhXR7_rkkB14Xp7yiERQ@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] fanotify: record either old name new name or both
- for FAN_RENAME
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: [PATCH v3 00/11] Extend fanotify dirent events
+Date:   Mon, 29 Nov 2021 22:15:26 +0200
+Message-Id: <20211129201537.1932819-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 26, 2021 at 5:14 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Fri 19-11-21 09:17:36, Amir Goldstein wrote:
-> > We do not want to report the dirfid+name of a directory whose
-> > inode/sb are not watched, because watcher may not have permissions
-> > to see the directory content.
-> >
-> > The FAN_MOVED_FROM/TO flags are used internally to indicate to
-> > fanotify_alloc_event() if we need to record only the old parent+name,
-> > only the new parent+name or both.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/notify/fanotify/fanotify.c | 57 ++++++++++++++++++++++++++++++-----
-> >  1 file changed, 50 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > index 018b32a57702..c0a3fb1dd066 100644
-> > --- a/fs/notify/fanotify/fanotify.c
-> > +++ b/fs/notify/fanotify/fanotify.c
-> > @@ -290,6 +290,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
-> >       __u32 marks_mask = 0, marks_ignored_mask = 0;
-> >       __u32 test_mask, user_mask = FANOTIFY_OUTGOING_EVENTS |
-> >                                    FANOTIFY_EVENT_FLAGS;
-> > +     __u32 moved_mask = 0;
-> >       const struct path *path = fsnotify_data_path(data, data_type);
-> >       unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-> >       struct fsnotify_mark *mark;
-> > @@ -327,17 +328,44 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
-> >                       continue;
-> >
-> >               /*
-> > -              * If the event is on a child and this mark is on a parent not
-> > -              * watching children, don't send it!
-> > +              * In the special case of FAN_RENAME event, inode mark is the
-> > +              * mark on the old dir and parent mark is the mark on the new
-> > +              * dir.  We do not want to report the dirfid+name of a directory
-> > +              * whose inode/sb are not watched.  The FAN_MOVE flags
-> > +              * are used internally to indicate if we need to report only
-> > +              * the old parent+name, only the new parent+name or both.
-> >                */
-> > -             if (type == FSNOTIFY_OBJ_TYPE_PARENT &&
-> > -                 !(mark->mask & FS_EVENT_ON_CHILD))
-> > +             if (event_mask & FAN_RENAME) {
-> > +                     /* Old dir sb are watched - report old info */
-> > +                     if (type != FSNOTIFY_OBJ_TYPE_PARENT &&
-> > +                         (mark->mask & FAN_RENAME))
-> > +                             moved_mask |= FAN_MOVED_FROM;
-> > +                     /* New dir sb are watched - report new info */
-> > +                     if (type != FSNOTIFY_OBJ_TYPE_INODE &&
-> > +                         (mark->mask & FAN_RENAME))
-> > +                             moved_mask |= FAN_MOVED_TO;
-> > +             } else if (type == FSNOTIFY_OBJ_TYPE_PARENT &&
-> > +                        !(mark->mask & FS_EVENT_ON_CHILD)) {
-> > +                     /*
-> > +                      * If the event is on a child and this mark is on
-> > +                      * a parent not watching children, don't send it!
-> > +                      */
-> >                       continue;
-> > +             }
->
-> It feels a bit hacky to mix the "what info to report" into the mask
-> especially as otherwise perfectly valid flags. Can we perhaps have a
-> separate function to find this out (like fanotify_rename_info_report_mask()
-> or something like that) and use it in fanotify_alloc_event() or directly in
-> fanotify_handle_event() and pass the result to fanotify_alloc_event()?
-> That would seem a bit cleaner to me.
+Jan,
 
-I used fsnotify_iter_info *match_info arg to fanotify_group_event_mask()
-to indicate the marks of this group that matched the event and passed
-it into fanotify_alloc_event().
+This is the 3rd version of patches to add FAN_REPORT_TARGET_FID group
+flag and FAN_RENAME event.
+
+Patches [1] LTP test [2] and man page draft [3] are available on my
+github.
 
 Thanks,
 Amir.
+
+[1] https://github.com/amir73il/linux/commits/fan_rename-v3
+[2] https://github.com/amir73il/ltp/commits/fan_rename
+[2] https://github.com/amir73il/man-pages/commits/fan_rename
+
+Changes since v2:
+- Rebase on v5.16-rc3
+- Separate mark iterator type from object type enum
+- Use dedicated iter type for 2nd dir
+- Use iter type report mask to indicate if old and/or new
+  dir are watching FAN_RENAME
+
+Amir Goldstein (11):
+  fsnotify: clarify object type argument
+  fsnotify: separate mark iterator type from object type enum
+  fanotify: introduce group flag FAN_REPORT_TARGET_FID
+  fsnotify: generate FS_RENAME event with rich information
+  fanotify: use macros to get the offset to fanotify_info buffer
+  fanotify: use helpers to parcel fanotify_info buffer
+  fanotify: support secondary dir fh and name in fanotify_info
+  fanotify: record old and new parent and name in FAN_RENAME event
+  fanotify: record either old name new name or both for FAN_RENAME
+  fanotify: report old and/or new parent+name in FAN_RENAME event
+  fanotify: wire up FAN_RENAME event
+
+ fs/notify/dnotify/dnotify.c        |   2 +-
+ fs/notify/fanotify/fanotify.c      | 213 ++++++++++++++++++++++-------
+ fs/notify/fanotify/fanotify.h      | 142 +++++++++++++++++--
+ fs/notify/fanotify/fanotify_user.c |  82 +++++++++--
+ fs/notify/fsnotify.c               |  53 ++++---
+ fs/notify/group.c                  |   2 +-
+ fs/notify/mark.c                   |  31 +++--
+ include/linux/dnotify.h            |   2 +-
+ include/linux/fanotify.h           |   5 +-
+ include/linux/fsnotify.h           |   9 +-
+ include/linux/fsnotify_backend.h   |  74 +++++-----
+ include/uapi/linux/fanotify.h      |  12 ++
+ 12 files changed, 485 insertions(+), 142 deletions(-)
+
+-- 
+2.33.1
+
