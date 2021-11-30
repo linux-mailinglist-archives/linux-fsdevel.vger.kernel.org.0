@@ -2,96 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE4C04633BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 13:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9989E4633E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 13:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232939AbhK3MEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 07:04:00 -0500
-Received: from mout.gmx.net ([212.227.17.20]:48289 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229538AbhK3MD7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 07:03:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1638273622;
-        bh=86mLRP7RxLciX6WFesgCpFI0qfy9gXogt8D2ha7z4+A=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:Date:In-Reply-To:References;
-        b=AXivPj5XQ42x2j05j7S7RsluKY6J0DKySHx2IYzGEZWs3E1q5T7RSqLrp3G9GLwNk
-         0akdRYeC/XPTuKnQAVQCaV/ngA4FM097mYbxzBdeisObq2J6LHWVqy4sejvkBbFZOV
-         dPwdwR6mGr4aLnBritwZEcB/Z5qCoxnO/Q/75U80=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from homer.fritz.box ([185.146.50.175]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N1OXT-1mTnrh0aQF-012nJz; Tue, 30
- Nov 2021 13:00:22 +0100
-Message-ID: <b8f607c771a4f698fcb651379ca30d3bb6a83ccd.camel@gmx.de>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-From:   Mike Galbraith <efault@gmx.de>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Alexey Avramov <hakavlad@inbox.lv>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 30 Nov 2021 13:00:18 +0100
-In-Reply-To: <20211130112244.GQ3366@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
-         <20211127011246.7a8ac7b8@mail.inbox.lv>
-         <20211129150117.GO3366@techsingularity.net>
-         <a20f17c4b1b5fdfade3f48375d148e97bd162dd6.camel@gmx.de>
-         <20211130112244.GQ3366@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.1 
+        id S241426AbhK3MOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 07:14:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241424AbhK3MOK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Nov 2021 07:14:10 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4009AC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Nov 2021 04:10:51 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D63CDB81863
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Nov 2021 12:10:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95C13C53FC7;
+        Tue, 30 Nov 2021 12:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638274248;
+        bh=W0/UyY6Y9+HermpiiAnqDZULlG+phV0r2VGXymbQYRw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BN1+AJygiPIacMat5WyXk/sBH37u0JmW9IUbrQ6+puYS5EVpz5/6nYge8/8usnF02
+         +a1QAzq84x1BkIr2Ptmj7LNZuo3I/71KkrtcygCZsIGbld5dkWI8kzYXL9Sm1/nX14
+         ZHDzRXvOdGmYcxkJdttpgUE5D/VINpNabCA76ObkNRXcKFI6fvtuUKo9XfGmfn7aic
+         mBOX0mxtaHlinwvS1pXIXXfZGDyHRo5Ev9zdkjS2gRxfq03yRanT+lwHirPycv8yf+
+         S0uCZZ0nkzO/an2KpR869vS9uud7YCUeUSEEPECCsUCuS7WNdz4QtyjXHlax7Wm20O
+         eLw/mdZ0Ds2XA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Seth Forshee <sforshee@digitalocean.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v2 00/10] Extend and tweak mapping support
+Date:   Tue, 30 Nov 2021 13:10:22 +0100
+Message-Id: <20211130121032.3753852-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Q8Rcm+TDsMGclzpLvPpIUOG460Khlbhybxb+OmjHoQ7eWlSZjwe
- iInZPJV5ei36SlSySfzp57ZCs3OM51mS7uS/FRFL1ovBCSwF4GcSRjYfvB7Q+GCdpxR2D4m
- hnr5S95PsvQKQWjyQuTejCqngOfcVJ6Xck3dqr7ySjF+TRZAV6ZlB8yiDsxB0PN9R/O3Lrw
- dYGqpUqgAVY6735G5zwQw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4FgWfCmXmJQ=:QpOMsYUbzenGVGbOqzhwNZ
- 6zL4AIN0w6dOK7sxB0IFmJyv9C0MlwGzHcOgoyoBEcsYUXF1QLYv+6l6+HtcVhdTaDlHQi8rG
- FmAVvq4RLvC4cD2ndlS4Or4dvJI+7w1edc5vRgEGoZajS76Kka0UfMBuJEP64QfaIctGFLi1e
- ivjCCcE7w7K5m9l6gtdnfp+6TNkuQCrlJRATdOEscgSTB6qdEep+USC/PgMaEIppktbXifWRP
- Yse6KCWFtOCdsBG+p/ICWTqwbWFu2o0ELpkv0X1qCAevwEQ0WEGchfqfQvKSeM8J7nO9VZzgz
- YOJAO17bwfXFhN3PneNTivUuksJQRTJNPtKrKYdgjN4yiv4VPsY8yGZu+G1Q9keXC8HF2EpD/
- di7q4Jj4gi8FA/kBto8U7SM5seeyqVLLPvgrwOPuHQ0mimAM36V2WUYfvxKN8y8DrWi7oubpw
- KAms+0Ts7QjiyQ1hOs+wrSGPdXL5tlrNdtnyiRZtoYGF5eWG+FoKoYOVbJUrXJe6xKmtqk6fH
- MhCJKhUN1Ti/fy9bBwfSpSFc8mIRLjbjOOXb5dJGX4IPpYnPa9MmjKkYbAJKn95g91tXM4l85
- eOa35a6GtNrAWslosEccnoorhlhXkei+fs1w0BgOnChc4mmHWA0SVKvjMnudHP2E5rCM5qn8N
- s3NZBH8LtLVm6w72tZGtmXxuGEAj8Qa/AqwX809uMeJ8rpdz9JrZHkCsjDAB5OHrs7BLwkHnY
- mE61LUKvf8zdxWvFUssoTY87crGGn1Tb25LrL6YAsDWWy61rhRq6B6EQaQDHm8KHCwcQoon1K
- FodR4TDCsBKGhyZRadedT+SmZ7eojQnOAt62dcOUNWbhK4E35TaeReq5RpSTHfZMFUNLUNQBv
- bAZ7a1yJ95X1OfdF0Rt0EeOefVGLJ5ayfr866ugH1cOzb3bp7UoU980+hrLd+pAt5oj8Z3fOh
- WOEJc2k/qu8aRWSCoDkJfa3yPvqOaotVPfttvBEyIK2Rr1UCy+m4AATm0Yh6XyTuoiYlSDpix
- di9Qm9fHeZcJ/5il7uoFcI6soPBbPS7QYZSC0LXwmszfOB+5k1BE//erw+AU9ZQvn2eJpJ+l/
- qUl/XvzRC87XzU=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12010; h=from:subject; bh=6FJYCIQ3QwcJ2oqkkIPDWF1rNWfBOmmmT85GmrdN1Yk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQuE1neZMdb1ziz3Wb5S46m42+uXfCMiTtYYWXfavAnO/CR hTJ/RwkLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETOZzP8+O16WCoz6sdk8cSNjInzfi 9fO2fPhJyfp3kZvtonWXfxM/zhdlhZxjZ57oyJn7XC6yzPl91gdPY/Gsx/ZZYNs2rGAk52AA==
+X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-11-30 at 11:22 +0000, Mel Gorman wrote:
-> On Tue, Nov 30, 2021 at 11:14:32AM +0100, Mike Galbraith wrote:
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (2 * write_pending <=
-=3D reclaimable)
-> >
-> > That is always true here...
-> >
->
-> Always true for you or always true in general?
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-"Here" as in the boxen located at my GPS coordinates :)
+Hey,
 
-> The intent of the check is "are a majority of reclaimable pages
-> marked WRITE_PENDING?". It's similar to the check that existed prior
-> to 132b0d21d21f ("mm/page_alloc: remove the throttling logic from the
-> page allocator").
+This is v2 with mainly with changes requested by Amir.
+All fstests pass. For the sake brevity only the idmapping and generic
+vfs tests are shown but all other tests pass as well:
 
-I'll put my trace_printk() back and see if I can't bend-adjust it.
+SECTION       -- ext4
+RECREATING    -- ext4 on /dev/loop0
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc2-fs-idmapped-fs-9ec8db951371 #221 SMP PREEMPT Tue Nov 30 10:45:03 UTC 2021
+MKFS_OPTIONS  -- -F /dev/loop1
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop1 /mnt/scratch
 
-	-Mike
+generic/633 2s ...  3s
+generic/644 1s ...  1s
+generic/645 2s ...  1s
+generic/656 1s ...  2s
+Ran: generic/633 generic/644 generic/645 generic/656
+Passed all 4 tests
+
+SECTION       -- xfs
+RECREATING    -- xfs on /dev/loop0
+FSTYP         -- xfs (non-debug)
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc2-fs-idmapped-fs-9ec8db951371 #221 SMP PREEMPT Tue Nov 30 10:45:03 UTC 2021
+MKFS_OPTIONS  -- -f -f /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+generic/633 3s ...  4s
+generic/644 1s ...  2s
+generic/645 1s ...  4s
+generic/656 2s ...  2s
+xfs/152 50s ...  29s
+xfs/153 9s ...  10s
+Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
+Passed all 6 tests
+
+SECTION       -- btrfs
+RECREATING    -- btrfs on /dev/loop0
+FSTYP         -- btrfs
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc2-fs-idmapped-fs-9ec8db951371 #221 SMP PREEMPT Tue Nov 30 10:45:03 UTC 2021
+MKFS_OPTIONS  -- -f /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+btrfs/245 3s ...  3s
+generic/633 4s ...  2s
+generic/644 2s ...  1s
+generic/645 4s ...  2s
+generic/656 2s ...  1s
+Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
+Passed all 5 tests
+
+SECTION       -- ext4
+=========================
+Ran: generic/633 generic/644 generic/645 generic/656
+Passed all 4 tests
+
+SECTION       -- xfs
+=========================
+Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
+Passed all 6 tests
+
+SECTION       -- btrfs
+=========================
+Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
+Passed all 5 tests
+
+This series extend the mapping infrastructure in order to support mapped
+mounts of mapped filesystems in the future.
+
+Currently we only support mapped mounts of filesystems mounted without an
+idmapping. This was a consicous decision mentioned in multiple places. For
+example, see [1].
+
+In our mapping documentation in [3] we explained in detail that it is
+perfectly fine to extend support for mapped mounts to filesystem's mounted
+with an idmapping should the need arise. The need has been there for some
+time now (cf. [2]).
+
+Before we can port any such filesystem we need to first extend the mapping
+helpers to account for the filesystem's idmapping in the remapping helpers.
+This again, is explained at length in our documentation at [3].
+
+Currently, the low-level mapping helpers implement the remapping algorithms
+described in [3] in a simplified manner. Because we could rely on the fact
+that all filesystems supporting mapped mounts are mounted without an
+idmapping the translation step from or into the filesystem idmapping could
+be skipped.
+
+In order to support mapped mounts of filesystem's mountable with an
+idmapping the translation step we were able to skip before cannot be
+skipped anymore. A filesystem mounted with an idmapping is very likely to
+not use an identity mapping and will instead use a non-identity mapping. So
+the translation step from or into the filesystem's idmapping in the
+remapping algorithm cannot be skipped for such filesystems. More details
+with examples can be found in [3].
+
+This series adds a few new as well as prepares and tweaks some already
+existing low-level mapping helpers to perform the full translation
+algorithm explained in [3]. The low-level helpers can be written in a way
+that they only perform the additional translation step when the filesystem
+is indeed mounted with an idmapping.
+
+Since we don't yet support such a filesystem yet a kernel was compiled
+carrying a trivial patch making ext4 mountable with an idmapping:
+
+# We're located on the host with the initial idmapping.
+ubuntu@f2-vm:~$ cat /proc/self/uid_map
+         0          0 4294967295
+
+# Mount an ext4 filesystem with the initial idmapping.
+ubuntu@f2-vm:~$ sudo mount -t ext4 /dev/loop0 /mnt
+
+# The filesystem contains two files. One owned by id 0 and another one owned by
+# id 1000 in the initial idmapping.
+ubuntu@f2-vm:~$ ls -al /mnt/
+total 8
+drwxrwxrwx  2 root   root   4096 Nov 22 17:04 .
+drwxr-xr-x 24 root   root   4096 Nov 20 11:24 ..
+-rw-r--r--  1 root   root      0 Nov 22 17:04 file_init_mapping_0
+-rw-r--r--  1 ubuntu ubuntu    0 Nov 22 17:04 file_init_mapping_1000
+
+# Umount it again so we we can mount it in another namespace later.
+ubuntu@f2-vm:~$ sudo umount  /mnt
+
+# Use the lxc-usernsexec binary to run a shell in a user and mount namespace
+# with an idmapping of 0:10000:100000000.
+#
+# This idmapping will have the effect that files which are owned by i_{g,u}id
+# 10000 and files that are owned by i_{g,u}id 11000 will be owned by {g,u}id
+# 0 and {g,u}id 1000 with that namespace respectively.
+ubuntu@f2-vm:~$ sudo lxc-usernsexec -m b:0:10000:100000000 -- bash
+
+# Verify that we're really running with the expected idmapping.
+root@f2-vm:/home/ubuntu# cat /proc/self/uid_map
+         0      10000  100000000
+
+# Mount the ext4 filesystem in the user and mountns with the idmapping
+# 0:10000:100000000.
+# 
+# Note, that this requires a test kernel that makes ext4 mountable in a
+# non-initial userns. The patch is simply:
+#
+# diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+# index 4e33b5eca694..0221e8211e5b 100644
+# --- a/fs/ext4/super.c
+# +++ b/fs/ext4/super.c
+# @@ -6584,7 +6584,7 @@ static struct file_system_type ext4_fs_type = {
+#         .name           = "ext4",
+#         .mount          = ext4_mount,
+#         .kill_sb        = kill_block_super,
+# -       .fs_flags       = FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+# +       .fs_flags       = FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_USERNS_MOUNT,
+#  };
+#  MODULE_ALIAS_FS("ext4");
+root@f2-vm:/home/ubuntu# mount -t ext4 /dev/loop0 /mnt
+
+# We verify that we can still interact with the files and that they are
+# correctly owned from witin the namespace.
+# 
+# As mentioned before, a file owned by {g,u}id 0 within the userns is mapped to
+# {g,u}id 10000 in the initial userns. So inode->i_{g,u}id will contain
+# 10000. Similarly a file owned by {g,u}id 1000 within the userns means that
+# inode->i_{g,u}id will contain 11000.
+the inode->i_{g,u}id 
+root@f2-vm:/home/ubuntu# ls -al /mnt/
+total 8
+drwxrwxrwx  2 root   root    4096 Nov 22 17:04 .
+drwxr-xr-x 24 nobody nogroup 4096 Nov 20 11:24 ..
+-rw-r--r--  1 root   root       0 Nov 22 17:04 file_init_mapping_0
+-rw-r--r--  1 ubuntu ubuntu     0 Nov 22 17:04 file_init_mapping_1000
+
+# Since we own the superblock we can also create idmapped mounts of the
+# filesystem.
+# First, we create an idmapped mount that maps {g,u}id 1000 to {g,u}id 0.
+# Note that the idmapping 1000:0:1 as written from userspace is different from
+# the idmapping the kernel actually stores. The idmapping is always translated
+# into the initial userns. So the kernel actually stores the idmapping
+# 1000:10000:1.
+root@f2-vm:/home/ubuntu# /mount-idmapped --map-mount b:1000:0:1 /mnt /opt
+
+# Verify that files owned by {g,u}id 1000 are now owned by {g,u}id 0 and all
+# others are owned by the overflow{g,u}id.
+root@f2-vm:/home/ubuntu# ls -al /opt
+total 8
+drwxrwxrwx  2 nobody nogroup 4096 Nov 22 17:04 .
+drwxr-xr-x 24 nobody nogroup 4096 Nov 20 11:24 ..
+-rw-r--r--  1 nobody nogroup    0 Nov 22 17:04 file_init_mapping_0
+-rw-r--r--  1 root   root       0 Nov 22 17:04 file_init_mapping_1000
+
+# Umount the idmapped mount.
+root@f2-vm:/mnt# umount /opt
+
+# Now create another idmapped mount with a mapping of 0:20000:1000000.
+#
+# Similar to what we said above the kernel doesn't store 0:20000:1000000 but
+# 0:30000:1000000.
+root@f2-vm:/mnt# /mount-idmapped --map-mount b:0:20000:1000000 /mnt /opt
+
+# Verify that files owned by {g,u}id 0 in the filesystem's idmapping are owned
+# by {g,u}id 20000 in the mount's idmapping and that files owned by {g,u}id
+# 10000 in the filesystem's idmapping are owned by {g,u}id 21000 in the
+# mount's idmapping.
+root@f2-vm:/mnt# ls -al /opt
+total 8
+drwxrwxrwx  2  20000   20000 4096 Nov 22 17:04 .
+drwxr-xr-x 24 nobody nogroup 4096 Nov 20 11:24 ..
+-rw-r--r--  1  20000   20000    0 Nov 22 17:04 file_init_mapping_0
+-rw-r--r--  1  21000   21000    0 Nov 22 17:04 file_init_mapping_1000
+
+# Use the lxc-usernsexec binary to run a shell in a user and mount namespace
+# with an idmapping of 0:20000:1000000.
+#
+# Similar to what we said above the kernel doesn't store 0:20000:1000000 but
+# 0:30000:1000000.
+root@f2-vm:/mnt# lxc-usernsexec -m b:0:20000:1000000 -- bash
+
+# Verify that we managed to use the correct nested mapping.
+root@f2-vm:/mnt# cat /proc/self/uid_map
+         0      20000    1000000
+
+# Verify that files owned by {g,u}id 20000 in the idmapped mount when accessed
+# from the ancestor userns are now owned by {g,u}id 0 in the idmapped mount
+# when accessed from the new namespace. Similarly, verify that files owned by
+# {g,u}id 21000 in the idmapped mount when accessed from the ancestor userns
+# are now owned by {g,u}id 1000 in the idmapped mount when accesed from the new
+# namespace.
+root@f2-vm:/mnt# ls -al /opt/
+total 8
+drwxrwxrwx  2 root   root    4096 Nov 22 17:04 .
+drwxr-xr-x 24 nobody nogroup 4096 Nov 20 11:24 ..
+-rw-r--r--  1 root   root       0 Nov 22 17:04 file_init_mapping_0
+-rw-r--r--  1 ubuntu ubuntu     0 Nov 22 17:04 file_init_mapping_1000
+
+# Create a file as id 0 in the current namespace through the idmapped mount.
+root@f2-vm:/mnt# touch /opt/file_from_nested_ns
+
+# Verify that the newly created file is owned by {g,u}id 0.
+root@f2-vm:/mnt# ls -al /opt
+total 8
+drwxrwxrwx  2 root   root    4096 Nov 22 17:32 .
+drwxr-xr-x 24 nobody nogroup 4096 Nov 20 11:24 ..
+-rw-r--r--  1 root   root       0 Nov 22 17:32 file_from_nested_ns
+-rw-r--r--  1 root   root       0 Nov 22 17:04 file_init_mapping_0
+-rw-r--r--  1 ubuntu ubuntu     0 Nov 22 17:04 file_init_mapping_1000
+
+[1]: commit 2ca4dcc4909d ("fs/mount_setattr: tighten permission checks")
+[2]: https://github.com/containers/podman/issues/10374
+[3]: Documentations/filesystems/idmappings.rst
+
+Thanks!
+Christian
+
+Christian Brauner (10):
+  fs: add is_idmapped_mnt() helper
+  fs: move mapping helpers
+  fs: tweak fsuidgid_has_mapping()
+  fs: account for filesystem mappings
+  docs: update mapping documentation
+  fs: use low-level mapping helpers
+  fs: remove unused low-level mapping helpers
+  fs: port higher-level mapping helpers
+  fs: add i_user_ns() helper
+  fs: support mapped mounts of mapped filesystems
+
+ Documentation/filesystems/idmappings.rst |  72 -------
+ fs/cachefiles/bind.c                     |   2 +-
+ fs/ecryptfs/main.c                       |   2 +-
+ fs/ksmbd/smbacl.c                        |  19 +-
+ fs/ksmbd/smbacl.h                        |   5 +-
+ fs/namespace.c                           |  39 ++--
+ fs/nfsd/export.c                         |   2 +-
+ fs/open.c                                |   8 +-
+ fs/overlayfs/super.c                     |   2 +-
+ fs/posix_acl.c                           |  17 +-
+ fs/proc_namespace.c                      |   2 +-
+ fs/xfs/xfs_inode.c                       |   8 +-
+ fs/xfs/xfs_linux.h                       |   1 +
+ fs/xfs/xfs_symlink.c                     |   4 +-
+ include/linux/fs.h                       | 141 ++++----------
+ include/linux/mnt_idmapping.h            | 234 +++++++++++++++++++++++
+ security/commoncap.c                     |  15 +-
+ 17 files changed, 343 insertions(+), 230 deletions(-)
+ create mode 100644 include/linux/mnt_idmapping.h
+
+
+base-commit: 136057256686de39cc3a07c2e39ef6bc43003ff6
+-- 
+2.30.2
 
