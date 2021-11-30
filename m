@@ -2,74 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DCE0463B92
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 17:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D459463C0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 17:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242889AbhK3QWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 11:22:31 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:41979 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238932AbhK3QWa (ORCPT
+        id S244220AbhK3Qo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 11:44:59 -0500
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:39096 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232901AbhK3Qo4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 11:22:30 -0500
-Received: by mail-io1-f69.google.com with SMTP id k6-20020a0566022d8600b005e6ff1b6bbaso24120965iow.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Nov 2021 08:19:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=82PcJsGJmWA9J7EfSsaBo8R7BvPCcHNRldX54MbqtUk=;
-        b=aRY+gbFDPEpTFaLqyau3TOaaW+JXDh4Cwqa74DDVtPEUlONh7Y7B7uF2NZA4VRyAZI
-         YY7wwLpC9pL5U6vFUyWAZZw9V9Eht+pCUeuTZYuAvw0OskQWmqHuf6prPpf0QLXHV96L
-         Y8Qi+2lZuGrh5AlSDLSQKH/YBqrE9X0pAUdpl0wlAXTLK7hLrsSiHBwCQKTI9uFtFQpE
-         VcvnOZEedTfolioK6IXDI2pY7ul+NVelEFLRAH0e1Z7vopEoMuYsXS2ZQ0Gm0pSyGOBH
-         LwS+K94+YcTqadG/VeKWG+hv8K2h0SvVqqik/knbm+0NR9fn3u6djm1C2nCQZFhYjikQ
-         Yb6Q==
-X-Gm-Message-State: AOAM532Si5yQ22MKQpnTg6MSn3XKMnQOh/PEFtVsSrFjMd4UAtLOJo9/
-        Ghe595+qdY/jepIhDM8fz5sbq5ycEUsT6aGLLmk+OFJI+Vbz
-X-Google-Smtp-Source: ABdhPJyxuzWxbXXQxXt/uLUyAQu5gmBfd3on9w/gXZzhkfqblOPzJkm/nRXJfXP2GwX0YVZSMLpgNz44tT0MMcAsVMq1dotg6xoH
+        Tue, 30 Nov 2021 11:44:56 -0500
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id B95AA40D;
+        Tue, 30 Nov 2021 19:41:30 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1638290490;
+        bh=/gt5meQDcE4KHTZT7C03i/3WGT8X/p7mNPvhNZSWk2k=;
+        h=Date:To:CC:From:Subject;
+        b=mhupN5segY8sg3kmtxwKzBw3B/YaGurptL96TSoz/W6x3KwzD4GQDZRz0mARc3gFq
+         onTMwULXEvLqHPCkVp0/KPYkbnXiQIYIAlfvW3LvIan6EZL3M62NfaLZpU8NDExxnn
+         qtIZovJLSithA3MS79Lt1MBoTk4dWS2L2vPuVwq8=
+Received: from [192.168.211.41] (192.168.211.41) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Tue, 30 Nov 2021 19:41:30 +0300
+Message-ID: <8b4de37d-1073-ca87-1df8-ccd8d09444af@paragon-software.com>
+Date:   Tue, 30 Nov 2021 19:41:29 +0300
 MIME-Version: 1.0
-X-Received: by 2002:a92:d8cf:: with SMTP id l15mr1635ilo.59.1638289150573;
- Tue, 30 Nov 2021 08:19:10 -0800 (PST)
-Date:   Tue, 30 Nov 2021 08:19:10 -0800
-In-Reply-To: <000000000000f5964705b7d47d8c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dc091705d203eac6@google.com>
-Subject: Re: [syzbot] INFO: trying to register non-static key in l2cap_sock_teardown_cb
-From:   syzbot <syzbot+a41dfef1d2e04910eb2e@syzkaller.appspotmail.com>
-To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        bobo.shaobowang@huawei.com, davem@davemloft.net, hdanton@sina.com,
-        johan.hedberg@gmail.com, kuba@kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luiz.dentz@gmail.com,
-        luiz.von.dentz@intel.com, marcel@holtmann.org,
-        mareklindner@neomailbox.ch, miklos@szeredi.hu, mszeredi@redhat.com,
-        netdev@vger.kernel.org, sw@simonwunderlich.de,
-        syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Content-Language: en-US
+To:     <ntfs3@lists.linux.dev>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH] fs/ntfs3: Fix NULL dereference in ntfs_update_mftmirr
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.211.41]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+We can get NULL pointer to struct super_block.
+This commit adds check for such situation.
+Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+Thread: https://lore.kernel.org/lkml/20211125140816.GC3109@xsang-OptiPlex-9020/
 
-commit 1bff51ea59a9afb67d2dd78518ab0582a54a472c
-Author: Wang ShaoBo <bobo.shaobowang@huawei.com>
-Date:   Wed Sep 1 00:35:37 2021 +0000
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/fsntfs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-    Bluetooth: fix use-after-free error in lock_sock_nested()
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 4de9acb16968..38de8cb53183 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -831,14 +831,17 @@ int ntfs_update_mftmirr(struct ntfs_sb_info *sbi, int wait)
+ {
+ 	int err;
+ 	struct super_block *sb = sbi->sb;
+-	u32 blocksize = sb->s_blocksize;
++	u32 blocksize, bytes;
+ 	sector_t block1, block2;
+-	u32 bytes;
+ 
+-	if (!(sbi->flags & NTFS_FLAGS_MFTMIRR))
++	/*
++	 * sb can be NULL here. In this case sbi->flags should be 0 too.
++	 */
++	if (!sb || !(sbi->flags & NTFS_FLAGS_MFTMIRR))
+ 		return 0;
+ 
+ 	err = 0;
++	blocksize = sb->s_blocksize;
+ 	bytes = sbi->mft.recs_mirr << sbi->record_bits;
+ 	block1 = sbi->mft.lbo >> sb->s_blocksize_bits;
+ 	block2 = sbi->mft.lbo2 >> sb->s_blocksize_bits;
+-- 
+2.33.1
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=134c881eb00000
-start commit:   73b7a6047971 net: dsa: bcm_sf2: support BCM4908's integrat..
-git tree:       net-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ce34124da4c882b
-dashboard link: https://syzkaller.appspot.com/bug?extid=a41dfef1d2e04910eb2e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166ee4cf500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1337172f500000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: Bluetooth: fix use-after-free error in lock_sock_nested()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
