@@ -2,489 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 546CC463E41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 19:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 221AC463E4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 19:59:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236004AbhK3TAc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 14:00:32 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:52024 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343502AbhK3TAX (ORCPT
+        id S237231AbhK3TCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 14:02:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34374 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236004AbhK3TCk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 14:00:23 -0500
-Received: from spock.localnet (unknown [83.148.33.151])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Tue, 30 Nov 2021 14:02:40 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F41BDC061574;
+        Tue, 30 Nov 2021 10:59:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id 9AC93CCF940;
-        Tue, 30 Nov 2021 19:56:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1638298615;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GYAEZyLHa4hWJbnoCwhKKvkrVXbIuBmfKgbfkG9/nJU=;
-        b=N0lnt7/BruDdBrc0WdgdpLSMvNtYDHLLih7g/lCCcYyRgk67/MgfvcyHvT+kSbPljA3vTm
-        Djc27Vtve3zSIhCnb5Ear6LvkuFSO4mWhxcUVdEI8Ie7GKOQf60i82n4VKWjf66/sC1HkI
-        bxxoNX3sCaOP5efUSWzGUsqu6QTw9fc=
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     linux-mm@kvack.org, Alexey Avramov <hakavlad@inbox.lv>
-Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        akpm@linux-foundation.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, kernel@xanmod.org,
-        aros@gmx.com, iam@valdikss.org.ru, hakavlad@inbox.lv,
-        hakavlad@gmail.com
-Subject: Re: [PATCH] mm/vmscan: add sysctl knobs for protecting the working set
-Date:   Tue, 30 Nov 2021 19:56:53 +0100
-Message-ID: <11873851.O9o76ZdvQC@natalenko.name>
-In-Reply-To: <20211130201652.2218636d@mail.inbox.lv>
-References: <20211130201652.2218636d@mail.inbox.lv>
+        by ams.source.kernel.org (Postfix) with ESMTPS id BF271B81B84;
+        Tue, 30 Nov 2021 18:59:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F1EC53FCC;
+        Tue, 30 Nov 2021 18:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638298756;
+        bh=YTyjQd0qKH5tKqs3Gxvfjc3Mnr119M7/QiR/La6m1h4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s11mdZMR9fER8L+vicMfTNf+cjoa1BsK9ORjhrhwgvjkzuDUV4N2DmjQm8JQSr3CE
+         eIzOgEtZw5uqBmuZB9kDTRF55hgnXVjeYMnXs/zVeDUhtUcMg2v1LRTJHfpIEb4KVg
+         zYVcSag8fyGusN9cZ0qv2cmEyo1IF/ijCwAcXBL+ie5tamtcr8P1oumaUYDIK5s+K+
+         twaHuolo/NaPoHzcaOsAZ77MD+VQoVZKJapBODWFgRIR3qN6vYiQoKiLafLFmeYMGX
+         9ruW0q4Olf/KmvE01UkW/16kmWCkYbNhwbfqCu1rGc55g4GWP+AEiT39tBNyRWrspk
+         4OVWT+RCAtbqQ==
+Date:   Tue, 30 Nov 2021 10:59:16 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>, dm-devel@redhat.com,
+        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 23/29] xfs: pass the mapping flags to xfs_bmbt_to_iomap
+Message-ID: <20211130185916.GG8467@magnolia>
+References: <20211129102203.2243509-1-hch@lst.de>
+ <20211129102203.2243509-24-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211129102203.2243509-24-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello.
+On Mon, Nov 29, 2021 at 11:21:57AM +0100, Christoph Hellwig wrote:
+> To prepare for looking at the IOMAP_DAX flag in xfs_bmbt_to_iomap pass in
+> the input mapping flags to xfs_bmbt_to_iomap.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-On =FAter=FD 30. listopadu 2021 12:16:52 CET Alexey Avramov wrote:
-> The kernel does not provide a way to protect the working set under memory
-> pressure. A certain amount of anonymous and clean file pages is required =
-by
-> the userspace for normal operation. First of all, the userspace needs a
-> cache of shared libraries and executable binaries. If the amount of the
-> clean file pages falls below a certain level, then thrashing and even
-> livelock can take place.
->=20
-> The patch provides sysctl knobs for protecting the working set (anonymous
-> and clean file pages) under memory pressure.
->=20
-> The vm.anon_min_kbytes sysctl knob provides *hard* protection of anonymous
-> pages. The anonymous pages on the current node won't be reclaimed under a=
-ny
-> conditions when their amount is below vm.anon_min_kbytes. This knob may be
-> used to prevent excessive swap thrashing when anonymous memory is low (for
-> example, when memory is going to be overfilled by compressed data of zram
-> module). The default value is defined by CONFIG_ANON_MIN_KBYTES (suggested
-> 0 in Kconfig).
->=20
-> The vm.clean_low_kbytes sysctl knob provides *best-effort* protection of
-> clean file pages. The file pages on the current node won't be reclaimed
-> under memory pressure when the amount of clean file pages is below
-> vm.clean_low_kbytes *unless* we threaten to OOM. Protection of clean file
-> pages using this knob may be used when swapping is still possible to
->   - prevent disk I/O thrashing under memory pressure;
->   - improve performance in disk cache-bound tasks under memory pressure.
-> The default value is defined by CONFIG_CLEAN_LOW_KBYTES (suggested 0 in
-> Kconfig).
->=20
-> The vm.clean_min_kbytes sysctl knob provides *hard* protection of clean
-> file pages. The file pages on the current node won't be reclaimed under
-> memory pressure when the amount of clean file pages is below
-> vm.clean_min_kbytes. Hard protection of clean file pages using this knob
-> may be used to
->   - prevent disk I/O thrashing under memory pressure even with no free sw=
-ap
->     space;
->   - improve performance in disk cache-bound tasks under memory pressure;
->   - avoid high latency and prevent livelock in near-OOM conditions.
-> The default value is defined by CONFIG_CLEAN_MIN_KBYTES (suggested 0 in
-> Kconfig).
+Thanks for changing the argument names to be less confusing,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Although this is a definitely system-wide knob, wouldn't it make sense to=20
-implement this also on a per-cgroup basis?
+--D
 
-Thanks.
-
->=20
-> Signed-off-by: Alexey Avramov <hakavlad@inbox.lv>
-> Reported-by: Artem S. Tashkinov <aros@gmx.com>
 > ---
->  Repo:
->  https://github.com/hakavlad/le9-patch
->=20
->  Documentation/admin-guide/sysctl/vm.rst | 66 ++++++++++++++++++++++++
->  include/linux/mm.h                      |  4 ++
->  kernel/sysctl.c                         | 21 ++++++++
->  mm/Kconfig                              | 63 +++++++++++++++++++++++
->  mm/vmscan.c                             | 91
-> +++++++++++++++++++++++++++++++++ 5 files changed, 245 insertions(+)
->=20
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst
-> b/Documentation/admin-guide/sysctl/vm.rst index 5e7952021..2f606e23b 1006=
-44
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -25,6 +25,9 @@ files can be found in mm/swap.c.
->  Currently, these files are in /proc/sys/vm:
->=20
->  - admin_reserve_kbytes
-> +- anon_min_kbytes
-> +- clean_low_kbytes
-> +- clean_min_kbytes
->  - compact_memory
->  - compaction_proactiveness
->  - compact_unevictable_allowed
-> @@ -105,6 +108,61 @@ On x86_64 this is about 128MB.
->  Changing this takes effect whenever an application requests memory.
->=20
->=20
-> +anon_min_kbytes
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +This knob provides *hard* protection of anonymous pages. The anonymous
-> pages +on the current node won't be reclaimed under any conditions when
-> their amount +is below vm.anon_min_kbytes.
-> +
-> +This knob may be used to prevent excessive swap thrashing when anonymous
-> +memory is low (for example, when memory is going to be overfilled by
-> +compressed data of zram module).
-> +
-> +Setting this value too high (close to MemTotal) can result in inability =
-to
-> +swap and can lead to early OOM under memory pressure.
-> +
-> +The default value is defined by CONFIG_ANON_MIN_KBYTES.
-> +
-> +
-> +clean_low_kbytes
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +This knob provides *best-effort* protection of clean file pages. The file
-> pages +on the current node won't be reclaimed under memory pressure when
-> the amount of +clean file pages is below vm.clean_low_kbytes *unless* we
-> threaten to OOM. +
-> +Protection of clean file pages using this knob may be used when swapping=
- is
-> +still possible to
-> +  - prevent disk I/O thrashing under memory pressure;
-> +  - improve performance in disk cache-bound tasks under memory pressure.
-> +
-> +Setting it to a high value may result in a early eviction of anonymous
-> pages +into the swap space by attempting to hold the protected amount of
-> clean file +pages in memory.
-> +
-> +The default value is defined by CONFIG_CLEAN_LOW_KBYTES.
-> +
-> +
-> +clean_min_kbytes
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +This knob provides *hard* protection of clean file pages. The file pages=
- on
-> the +current node won't be reclaimed under memory pressure when the amount
-> of clean +file pages is below vm.clean_min_kbytes.
-> +
-> +Hard protection of clean file pages using this knob may be used to
-> +  - prevent disk I/O thrashing under memory pressure even with no free s=
-wap
-> space; +  - improve performance in disk cache-bound tasks under memory
-> pressure; +  - avoid high latency and prevent livelock in near-OOM
-> conditions. +
-> +Setting it to a high value may result in a early out-of-memory condition
-> due to +the inability to reclaim the protected amount of clean file pages
-> when other +types of pages cannot be reclaimed.
-> +
-> +The default value is defined by CONFIG_CLEAN_MIN_KBYTES.
-> +
-> +
->  compact_memory
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> @@ -864,6 +922,14 @@ be 133 (x + 2x =3D 200, 2x =3D 133.33).
->  At 0, the kernel will not initiate swap until the amount of free and
->  file-backed pages is less than the high watermark in a zone.
->=20
-> +This knob has no effect if the amount of clean file pages on the current
-> +node is below vm.clean_low_kbytes or vm.clean_min_kbytes. In this case,
-> +only anonymous pages can be reclaimed.
-> +
-> +If the number of anonymous pages on the current node is below
-> +vm.anon_min_kbytes, then only file pages can be reclaimed with
-> +any vm.swappiness value.
-> +
->=20
->  unprivileged_userfaultfd
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a7e4a9e7d..bee9807d5 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -200,6 +200,10 @@ static inline void __mm_zero_struct_page(struct page
-> *page)
->=20
->  extern int sysctl_max_map_count;
->=20
-> +extern unsigned long sysctl_anon_min_kbytes;
-> +extern unsigned long sysctl_clean_low_kbytes;
-> +extern unsigned long sysctl_clean_min_kbytes;
-> +
->  extern unsigned long sysctl_user_reserve_kbytes;
->  extern unsigned long sysctl_admin_reserve_kbytes;
->=20
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 083be6af2..65fc38756 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -3132,6 +3132,27 @@ static struct ctl_table vm_table[] =3D {
->  	},
->  #endif
->  	{
-> +		.procname	=3D "anon_min_kbytes",
-> +		.data		=3D &sysctl_anon_min_kbytes,
-> +		.maxlen		=3D sizeof(unsigned long),
-> +		.mode		=3D 0644,
-> +		.proc_handler	=3D proc_doulongvec_minmax,
-> +	},
-> +	{
-> +		.procname	=3D "clean_low_kbytes",
-> +		.data		=3D &sysctl_clean_low_kbytes,
-> +		.maxlen		=3D sizeof(unsigned long),
-> +		.mode		=3D 0644,
-> +		.proc_handler	=3D proc_doulongvec_minmax,
-> +	},
-> +	{
-> +		.procname	=3D "clean_min_kbytes",
-> +		.data		=3D &sysctl_clean_min_kbytes,
-> +		.maxlen		=3D sizeof(unsigned long),
-> +		.mode		=3D 0644,
-> +		.proc_handler	=3D proc_doulongvec_minmax,
-> +	},
-> +	{
->  		.procname	=3D "user_reserve_kbytes",
->  		.data		=3D &sysctl_user_reserve_kbytes,
->  		.maxlen		=3D sizeof(sysctl_user_reserve_kbytes),
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 28edafc82..dea0806d7 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -89,6 +89,69 @@ config SPARSEMEM_VMEMMAP
->  	  pfn_to_page and page_to_pfn operations.  This is the most
->  	  efficient option when sufficient kernel resources are available.
->=20
-> +config ANON_MIN_KBYTES
-> +	int "Default value for vm.anon_min_kbytes"
-> +	depends on SYSCTL
-> +	range 0 4294967295
-> +	default 0
-> +	help
-> +	  This option sets the default value for vm.anon_min_kbytes sysctl=20
-knob.
-> +
-> +	  The vm.anon_min_kbytes sysctl knob provides *hard* protection of
-> +	  anonymous pages. The anonymous pages on the current node won't be
-> +	  reclaimed under any conditions when their amount is below
-> +	  vm.anon_min_kbytes. This knob may be used to prevent excessive swap
-> +	  thrashing when anonymous memory is low (for example, when memory is
-> +	  going to be overfilled by compressed data of zram module).
-> +
-> +	  Setting this value too high (close to MemTotal) can result in
-> +	  inability to swap and can lead to early OOM under memory pressure.
-> +
-> +config CLEAN_LOW_KBYTES
-> +	int "Default value for vm.clean_low_kbytes"
-> +	depends on SYSCTL
-> +	range 0 4294967295
-> +	default 0
-> +	help
-> +	  This option sets the default value for vm.clean_low_kbytes sysctl=20
-knob.
-> +
-> +	  The vm.clean_low_kbytes sysctl knob provides *best-effort*
-> +	  protection of clean file pages. The file pages on the current node
-> +	  won't be reclaimed under memory pressure when the amount of clean file
-> +	  pages is below vm.clean_low_kbytes *unless* we threaten to OOM.
-> +	  Protection of clean file pages using this knob may be used when
-> +	  swapping is still possible to
-> +	    - prevent disk I/O thrashing under memory pressure;
-> +	    - improve performance in disk cache-bound tasks under memory
-> +	      pressure.
-> +
-> +	  Setting it to a high value may result in a early eviction of=20
-anonymous
-> +	  pages into the swap space by attempting to hold the protected amount
-> +	  of clean file pages in memory.
-> +
-> +config CLEAN_MIN_KBYTES
-> +	int "Default value for vm.clean_min_kbytes"
-> +	depends on SYSCTL
-> +	range 0 4294967295
-> +	default 0
-> +	help
-> +	  This option sets the default value for vm.clean_min_kbytes sysctl=20
-knob.
-> +
-> +	  The vm.clean_min_kbytes sysctl knob provides *hard* protection of
-> +	  clean file pages. The file pages on the current node won't be
-> +	  reclaimed under memory pressure when the amount of clean file pages is
-> +	  below vm.clean_min_kbytes. Hard protection of clean file pages using
-> +	  this knob may be used to
-> +	    - prevent disk I/O thrashing under memory pressure even with no=20
-free
-> +	      swap space;
-> +	    - improve performance in disk cache-bound tasks under memory
-> +	      pressure;
-> +	    - avoid high latency and prevent livelock in near-OOM conditions.
-> +
-> +	  Setting it to a high value may result in a early out-of-memory=20
-condition
-> +	  due to the inability to reclaim the protected amount of clean file
-> pages +	  when other types of pages cannot be reclaimed.
-> +
->  config HAVE_MEMBLOCK_PHYS_MAP
->  	bool
->=20
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index fb9584641..928f3371d 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -122,6 +122,15 @@ struct scan_control {
->  	/* The file pages on the current node are dangerously low */
->  	unsigned int file_is_tiny:1;
->=20
-> +	/* The anonymous pages on the current node are below vm.anon_min_kbytes=
-=20
-*/
-> +	unsigned int anon_below_min:1;
-> +
-> +	/* The clean file pages on the current node are below=20
-vm.clean_low_kbytes
-> */ +	unsigned int clean_below_low:1;
-> +
-> +	/* The clean file pages on the current node are below=20
-vm.clean_min_kbytes
-> */ +	unsigned int clean_below_min:1;
-> +
->  	/* Always discard instead of demoting to lower tier memory */
->  	unsigned int no_demotion:1;
->=20
-> @@ -171,6 +180,10 @@ struct scan_control {
->  #define prefetchw_prev_lru_page(_page, _base, _field) do { } while (0)
->  #endif
->=20
-> +unsigned long sysctl_anon_min_kbytes __read_mostly =3D
-> CONFIG_ANON_MIN_KBYTES; +unsigned long sysctl_clean_low_kbytes
-> __read_mostly =3D CONFIG_CLEAN_LOW_KBYTES; +unsigned long
-> sysctl_clean_min_kbytes __read_mostly =3D CONFIG_CLEAN_MIN_KBYTES; +
->  /*
->   * From 0 .. 200.  Higher means more swappy.
->   */
-> @@ -2734,6 +2747,15 @@ static void get_scan_count(struct lruvec *lruvec,
-> struct scan_control *sc, }
->=20
->  	/*
-> +	 * Force-scan anon if clean file pages is under vm.clean_low_kbytes
-> +	 * or vm.clean_min_kbytes.
-> +	 */
-> +	if (sc->clean_below_low || sc->clean_below_min) {
-> +		scan_balance =3D SCAN_ANON;
-> +		goto out;
-> +	}
-> +
-> +	/*
->  	 * If there is enough inactive page cache, we do not reclaim
->  	 * anything from the anonymous working right now.
+>  fs/xfs/libxfs/xfs_bmap.c |  4 ++--
+>  fs/xfs/xfs_aops.c        |  2 +-
+>  fs/xfs/xfs_iomap.c       | 35 ++++++++++++++++++++---------------
+>  fs/xfs/xfs_iomap.h       |  5 +++--
+>  fs/xfs/xfs_pnfs.c        |  2 +-
+>  5 files changed, 27 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> index 4dccd4d90622d..74198dd82b035 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.c
+> +++ b/fs/xfs/libxfs/xfs_bmap.c
+> @@ -4551,7 +4551,7 @@ xfs_bmapi_convert_delalloc(
+>  	 * the extent.  Just return the real extent at this offset.
 >  	 */
-> @@ -2877,6 +2899,25 @@ static void get_scan_count(struct lruvec *lruvec,
-> struct scan_control *sc, BUG();
->  		}
->=20
-> +		/*
-> +		 * Hard protection of the working set.
-> +		 */
-> +		if (file) {
-> +			/*
-> +			 * Don't reclaim file pages when the amount of
-> +			 * clean file pages is below vm.clean_min_kbytes.
-> +			 */
-> +			if (sc->clean_below_min)
-> +				scan =3D 0;
-> +		} else {
-> +			/*
-> +			 * Don't reclaim anonymous pages when their
-> +			 * amount is below vm.anon_min_kbytes.
-> +			 */
-> +			if (sc->anon_below_min)
-> +				scan =3D 0;
-> +		}
-> +
->  		nr[lru] =3D scan;
+>  	if (!isnullstartblock(bma.got.br_startblock)) {
+> -		xfs_bmbt_to_iomap(ip, iomap, &bma.got, flags);
+> +		xfs_bmbt_to_iomap(ip, iomap, &bma.got, 0, flags);
+>  		*seq = READ_ONCE(ifp->if_seq);
+>  		goto out_trans_cancel;
 >  	}
->  }
-> @@ -3082,6 +3123,54 @@ static inline bool should_continue_reclaim(struct
-> pglist_data *pgdat, return inactive_lru_pages > pages_for_compaction;
->  }
->=20
-> +static void prepare_workingset_protection(pg_data_t *pgdat, struct
-> scan_control *sc) +{
-> +	/*
-> +	 * Check the number of anonymous pages to protect them from
-> +	 * reclaiming if their amount is below the specified.
-> +	 */
-> +	if (sysctl_anon_min_kbytes) {
-> +		unsigned long reclaimable_anon;
-> +
-> +		reclaimable_anon =3D
-> +			node_page_state(pgdat, NR_ACTIVE_ANON) +
-> +			node_page_state(pgdat, NR_INACTIVE_ANON) +
-> +			node_page_state(pgdat, NR_ISOLATED_ANON);
-> +		reclaimable_anon <<=3D (PAGE_SHIFT - 10);
-> +
-> +		sc->anon_below_min =3D reclaimable_anon < sysctl_anon_min_kbytes;
-> +	} else
-> +		sc->anon_below_min =3D 0;
-> +
-> +	/*
-> +	 * Check the number of clean file pages to protect them from
-> +	 * reclaiming if their amount is below the specified.
-> +	 */
-> +	if (sysctl_clean_low_kbytes || sysctl_clean_min_kbytes) {
-> +		unsigned long reclaimable_file, dirty, clean;
-> +
-> +		reclaimable_file =3D
-> +			node_page_state(pgdat, NR_ACTIVE_FILE) +
-> +			node_page_state(pgdat, NR_INACTIVE_FILE) +
-> +			node_page_state(pgdat, NR_ISOLATED_FILE);
-> +		dirty =3D node_page_state(pgdat, NR_FILE_DIRTY);
-> +		/*
-> +		 * node_page_state() sum can go out of sync since
-> +		 * all the values are not read at once.
-> +		 */
-> +		if (likely(reclaimable_file > dirty))
-> +			clean =3D (reclaimable_file - dirty) << (PAGE_SHIFT - 10);
-> +		else
-> +			clean =3D 0;
-> +
-> +		sc->clean_below_low =3D clean < sysctl_clean_low_kbytes;
-> +		sc->clean_below_min =3D clean < sysctl_clean_min_kbytes;
-> +	} else {
-> +		sc->clean_below_low =3D 0;
-> +		sc->clean_below_min =3D 0;
-> +	}
-> +}
-> +
->  static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+> @@ -4598,7 +4598,7 @@ xfs_bmapi_convert_delalloc(
+>  	XFS_STATS_INC(mp, xs_xstrat_quick);
+>  
+>  	ASSERT(!isnullstartblock(bma.got.br_startblock));
+> -	xfs_bmbt_to_iomap(ip, iomap, &bma.got, flags);
+> +	xfs_bmbt_to_iomap(ip, iomap, &bma.got, 0, flags);
+>  	*seq = READ_ONCE(ifp->if_seq);
+>  
+>  	if (whichfork == XFS_COW_FORK)
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index c8c15c3c31471..6ac3449a68ba0 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -359,7 +359,7 @@ xfs_map_blocks(
+>  	    isnullstartblock(imap.br_startblock))
+>  		goto allocate_blocks;
+>  
+> -	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0);
+> +	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0, 0);
+>  	trace_xfs_map_blocks_found(ip, offset, count, whichfork, &imap);
+>  	return 0;
+>  allocate_blocks:
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 9b7f92c6aef33..d6beb1502f8bc 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -53,7 +53,8 @@ xfs_bmbt_to_iomap(
+>  	struct xfs_inode	*ip,
+>  	struct iomap		*iomap,
+>  	struct xfs_bmbt_irec	*imap,
+> -	u16			flags)
+> +	unsigned int		mapping_flags,
+> +	u16			iomap_flags)
 >  {
->  	struct mem_cgroup *target_memcg =3D sc->target_mem_cgroup;
-> @@ -3249,6 +3338,8 @@ static void shrink_node(pg_data_t *pgdat, struct
-> scan_control *sc) anon >> sc->priority;
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> @@ -79,7 +80,7 @@ xfs_bmbt_to_iomap(
+>  	iomap->length = XFS_FSB_TO_B(mp, imap->br_blockcount);
+>  	iomap->bdev = target->bt_bdev;
+>  	iomap->dax_dev = target->bt_daxdev;
+> -	iomap->flags = flags;
+> +	iomap->flags = iomap_flags;
+>  
+>  	if (xfs_ipincount(ip) &&
+>  	    (ip->i_itemp->ili_fsync_fields & ~XFS_ILOG_TIMESTAMP))
+> @@ -799,7 +800,7 @@ xfs_direct_write_iomap_begin(
+>  
+>  	xfs_iunlock(ip, lockmode);
+>  	trace_xfs_iomap_found(ip, offset, length, XFS_DATA_FORK, &imap);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, iomap_flags);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, iomap_flags);
+>  
+>  allocate_blocks:
+>  	error = -EAGAIN;
+> @@ -830,18 +831,19 @@ xfs_direct_write_iomap_begin(
+>  		return error;
+>  
+>  	trace_xfs_iomap_alloc(ip, offset, length, XFS_DATA_FORK, &imap);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, iomap_flags | IOMAP_F_NEW);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags,
+> +				 iomap_flags | IOMAP_F_NEW);
+>  
+>  out_found_cow:
+>  	xfs_iunlock(ip, lockmode);
+>  	length = XFS_FSB_TO_B(mp, cmap.br_startoff + cmap.br_blockcount);
+>  	trace_xfs_iomap_found(ip, offset, length - offset, XFS_COW_FORK, &cmap);
+>  	if (imap.br_startblock != HOLESTARTBLOCK) {
+> -		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, 0);
+> +		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0);
+>  		if (error)
+>  			return error;
 >  	}
->=20
-> +	prepare_workingset_protection(pgdat, sc);
-> +
->  	shrink_node_memcgs(pgdat, sc);
->=20
->  	if (reclaim_state) {
->=20
-> base-commit: d58071a8a76d779eedab38033ae4c821c30295a5
-> --
-> 2.11.0
-
-
-=2D-=20
-Oleksandr Natalenko (post-factum)
-
-
+> -	return xfs_bmbt_to_iomap(ip, iomap, &cmap, IOMAP_F_SHARED);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, IOMAP_F_SHARED);
+>  
+>  out_unlock:
+>  	if (lockmode)
+> @@ -1051,23 +1053,24 @@ xfs_buffered_write_iomap_begin(
+>  	 */
+>  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>  	trace_xfs_iomap_alloc(ip, offset, count, allocfork, &imap);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, IOMAP_F_NEW);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, IOMAP_F_NEW);
+>  
+>  found_imap:
+>  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0);
+>  
+>  found_cow:
+>  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>  	if (imap.br_startoff <= offset_fsb) {
+> -		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, 0);
+> +		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0);
+>  		if (error)
+>  			return error;
+> -		return xfs_bmbt_to_iomap(ip, iomap, &cmap, IOMAP_F_SHARED);
+> +		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags,
+> +					 IOMAP_F_SHARED);
+>  	}
+>  
+>  	xfs_trim_extent(&cmap, offset_fsb, imap.br_startoff - offset_fsb);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &cmap, 0);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, 0);
+>  
+>  out_unlock:
+>  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> @@ -1176,7 +1179,8 @@ xfs_read_iomap_begin(
+>  	if (error)
+>  		return error;
+>  	trace_xfs_iomap_found(ip, offset, length, XFS_DATA_FORK, &imap);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, shared ? IOMAP_F_SHARED : 0);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags,
+> +				 shared ? IOMAP_F_SHARED : 0);
+>  }
+>  
+>  const struct iomap_ops xfs_read_iomap_ops = {
+> @@ -1235,7 +1239,8 @@ xfs_seek_iomap_begin(
+>  		if (data_fsb < cow_fsb + cmap.br_blockcount)
+>  			end_fsb = min(end_fsb, data_fsb);
+>  		xfs_trim_extent(&cmap, offset_fsb, end_fsb);
+> -		error = xfs_bmbt_to_iomap(ip, iomap, &cmap, IOMAP_F_SHARED);
+> +		error = xfs_bmbt_to_iomap(ip, iomap, &cmap, flags,
+> +					  IOMAP_F_SHARED);
+>  		/*
+>  		 * This is a COW extent, so we must probe the page cache
+>  		 * because there could be dirty page cache being backed
+> @@ -1257,7 +1262,7 @@ xfs_seek_iomap_begin(
+>  	imap.br_state = XFS_EXT_NORM;
+>  done:
+>  	xfs_trim_extent(&imap, offset_fsb, end_fsb);
+> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
+> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0);
+>  out_unlock:
+>  	xfs_iunlock(ip, lockmode);
+>  	return error;
+> @@ -1304,7 +1309,7 @@ xfs_xattr_iomap_begin(
+>  	if (error)
+>  		return error;
+>  	ASSERT(nimaps);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, 0);
+>  }
+>  
+>  const struct iomap_ops xfs_xattr_iomap_ops = {
+> diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
+> index f1a281ab9328c..657cc02290f22 100644
+> --- a/fs/xfs/xfs_iomap.h
+> +++ b/fs/xfs/xfs_iomap.h
+> @@ -17,8 +17,9 @@ int xfs_iomap_write_unwritten(struct xfs_inode *, xfs_off_t, xfs_off_t, bool);
+>  xfs_fileoff_t xfs_iomap_eof_align_last_fsb(struct xfs_inode *ip,
+>  		xfs_fileoff_t end_fsb);
+>  
+> -int xfs_bmbt_to_iomap(struct xfs_inode *, struct iomap *,
+> -		struct xfs_bmbt_irec *, u16);
+> +int xfs_bmbt_to_iomap(struct xfs_inode *ip, struct iomap *iomap,
+> +		struct xfs_bmbt_irec *imap, unsigned int mapping_flags,
+> +		u16 iomap_flags);
+>  
+>  int xfs_zero_range(struct xfs_inode *ip, loff_t pos, loff_t len,
+>  		bool *did_zero);
+> diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
+> index 5e1d29d8b2e73..7ce1ea11fc3f3 100644
+> --- a/fs/xfs/xfs_pnfs.c
+> +++ b/fs/xfs/xfs_pnfs.c
+> @@ -173,7 +173,7 @@ xfs_fs_map_blocks(
+>  	}
+>  	xfs_iunlock(ip, XFS_IOLOCK_EXCL);
+>  
+> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
+> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, 0, 0);
+>  	*device_generation = mp->m_generation;
+>  	return error;
+>  out_unlock:
+> -- 
+> 2.30.2
+> 
