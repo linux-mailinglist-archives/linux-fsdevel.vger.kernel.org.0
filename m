@@ -2,111 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5ED463AA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 16:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CF56463AEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 17:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242243AbhK3P50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 10:57:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47832 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237730AbhK3P5Z (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 10:57:25 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B32FC061574;
-        Tue, 30 Nov 2021 07:54:06 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id d2so27208110qki.12;
-        Tue, 30 Nov 2021 07:54:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5jfG9Qw6wgd9sRjYfyHDytET8Ac/XcqwnteljgGuckk=;
-        b=BntxTnwecg6BJSWIvVKExBquBtQ30s/lQ1YU/vtHIPa1Rx8ar/0r4fbnZzkVxmuMAb
-         OzAbN7axchp00LTYFaxf1R9+06zsQfibPFDthdJkWHwessPgB59jSkf2hhJC9Jya5qyy
-         HlASVFBQYACqEYVUo0srq3QkMFzJGpti1VVHtgcnXPBDChfHu3LanOSzPF2UPdSdM8Gk
-         ouRdu2IXl6S/VnlWEksWw3jwf6CY3mhCilbCsObeM91dghSXL7b0a41ke+NdWEQkEgzh
-         Won2HU6OUxb+j1fd9BYxScLJplAHx9QZ5JOlu9jWIR1hHSvIoz2zJCWmVGE6ELg+suCU
-         X1ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5jfG9Qw6wgd9sRjYfyHDytET8Ac/XcqwnteljgGuckk=;
-        b=QYu8T1KZNItC3Ow00Hp4fcFAx9qIKgKa93R0Bdf7diNfT1y2kfSr7LZF8bTFEA9rzJ
-         vQDUq+LeP5zkG0V1d+YUQFMnwqif4tsZg8GN4iLgL6CWODCtibYyc4Lcv/w6EyZB+IeJ
-         1T+dI+X9sQ8vcwwlHGnSKrwIbQWs4nraED1OKHNCRTZzRrwKzfXxozYIINl4XjahE4PJ
-         tPALFOyxes7JSa4jsvCLDh8u9S20GEQuH2nhQZsgvcnJH+q1JWFYrGWws/J/sUxDtgWn
-         VZ5L7kAZNJjgsNbMrYJrKCVPLldMEDmX4pGt4HultIKI/VWBdqYQPDbrZM+E52wK1qtq
-         p5sw==
-X-Gm-Message-State: AOAM530gmFMeBNgWhlcwRZ9s7kMo0HSPkAh81OcsG7lC/JMw8kfwwWkS
-        DH7lH3JN3ZWjtouwppGoSY22fH9pnZ02BFk/juY=
-X-Google-Smtp-Source: ABdhPJyonKn3G8UIi6BT3phblLDnrVQm6qLkdWviQusM/bKsEz//a+DZxT6MhXu5EzeyFmfNCV15y1QUuJs0ifkzE2Y=
-X-Received: by 2002:a05:620a:2e3:: with SMTP id a3mr7577qko.451.1638287645274;
- Tue, 30 Nov 2021 07:54:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-5-laoar.shao@gmail.com>
- <20211129110140.733475f3@gandalf.local.home> <CALOAHbB-2ESG0QgESN_b=bXzESbq+UBP-dqttirKnt1c9TZHZA@mail.gmail.com>
- <20211130092240.312f68a4@gandalf.local.home>
-In-Reply-To: <20211130092240.312f68a4@gandalf.local.home>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Tue, 30 Nov 2021 23:53:30 +0800
-Message-ID: <CALOAHbB6oTNpRUHvgMaH+kxJn7Fr7zE2bkvkniPFsPzH-SuHjA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] fs/binfmt_elf: replace open-coded string copy with get_task_comm
-To:     Steven Rostedt <rostedt@goodmis.org>
+        id S243331AbhK3QHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 11:07:20 -0500
+Received: from shark4.inbox.lv ([194.152.32.84]:40650 "EHLO shark4.inbox.lv"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237958AbhK3QHU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Nov 2021 11:07:20 -0500
+Received: from shark4.inbox.lv (localhost [127.0.0.1])
+        by shark4-out.inbox.lv (Postfix) with ESMTP id 0B852C01B9;
+        Tue, 30 Nov 2021 18:04:00 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.lv; s=30062014;
+        t=1638288240; bh=MaBmrbP8dDC347/MJhlAP6RXqkK7vpRItGnOjqKVKMc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=NHNGWgWsZJ0U++0xL+tMHjxROjFFZ/sdn4qopEIzHxDtyrUFP4nkbPUkdk0PGvmPU
+         bbAtMtPxn6lE1RTAMHf7rcZHmk13R+Aw042Wb5lv5NJS6683c6bFAjfWHKYiaCpqau
+         +C6ATRtiK7Z8iF+gG+/sd2Jqghb6wZPHk6t3bfd8=
+Received: from localhost (localhost [127.0.0.1])
+        by shark4-in.inbox.lv (Postfix) with ESMTP id F33CCC01A8;
+        Tue, 30 Nov 2021 18:03:59 +0200 (EET)
+Received: from shark4.inbox.lv ([127.0.0.1])
+        by localhost (shark4.inbox.lv [127.0.0.1]) (spamfilter, port 35)
+        with ESMTP id wR-tlqMNy4Vw; Tue, 30 Nov 2021 18:03:59 +0200 (EET)
+Received: from mail.inbox.lv (pop1 [127.0.0.1])
+        by shark4-in.inbox.lv (Postfix) with ESMTP id 76F78C018F;
+        Tue, 30 Nov 2021 18:03:59 +0200 (EET)
+Date:   Wed, 1 Dec 2021 01:03:48 +0900
+From:   Alexey Avramov <hakavlad@inbox.lv>
+To:     Mel Gorman <mgorman@techsingularity.net>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+Message-ID: <20211201010348.31e99637@mail.inbox.lv>
+In-Reply-To: <20211129150117.GO3366@techsingularity.net>
+References: <20211125151853.8540-1-mgorman@techsingularity.net>
+        <20211127011246.7a8ac7b8@mail.inbox.lv>
+        <20211129150117.GO3366@techsingularity.net>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: OK
+X-ESPOL: G4mERXADmHlDpsG9Ippu5OH4tai+FgVjoUWJw7wx9RAtu7LHst18d2eTGIHzanG0EAbD
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 10:22 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Tue, 30 Nov 2021 11:01:27 +0800
-> Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> > There are three options,
-> > - option 1
-> >   comment on all the hard-coded 16 to explain why it is hard-coded
-> > - option 2
-> >   replace the hard-coded 16 that can be replaced and comment on the
-> > others which can't be replaced.
-> > - option 3
-> >    replace the hard-coded 16 that can be replaced and specifically
-> > define TASK_COMM_LEN_16 in other files which can't include
-> > linux/sched.h.
-> >
-> > Which one do you prefer ?
-> >
->
-> Option 3. Since TASK_COMM_LEN_16 is, by it's name, already hard coded to
-> 16, it doesn't really matter if you define it in more than one location.
->
-> Or we could define it in another header that include/sched.h can include.
->
-> The idea of having TASK_COMM_LEN_16 is to easily grep for it, and also know
-> exactly what it is used for when people see it being used.
->
+I tested this [1] patch on top of 5.16-rc2. It's the same test with 10 tails.
 
-I will send a separate patch (or patchset) to replace all the old
-hard-coded 16 with TASK_COMM_LEN_16 based on the -mm tree.
+- with noswap
 
---
-Thanks
-Yafang
+Summary:
+
+2021-11-30 23:32:36,890: Stall times for the last 548.6s:
+2021-11-30 23:32:36,890: -----------
+2021-11-30 23:32:36,891: some cpu     3.7s, avg 0.7%
+2021-11-30 23:32:36,891: -----------
+2021-11-30 23:32:36,891: some io      187.6s, avg 34.2%
+2021-11-30 23:32:36,891: full io      178.3s, avg 32.5%
+2021-11-30 23:32:36,891: -----------
+2021-11-30 23:32:36,892: some memory  392.2s, avg 71.5%
+2021-11-30 23:32:36,892: full memory  390.7s, avg 71.2%
+
+full psi:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-throttle/516-rc2/patch5/noswap/psi
+
+mem:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-throttle/516-rc2/patch5/noswap/mem
+
+- with swappiness=0
+
+Summary:
+
+2021-11-30 23:51:48,969: Stall times for the last 919.4s:
+2021-11-30 23:51:48,969: -----------
+2021-11-30 23:51:48,969: some cpu     5.5s, avg 0.6%
+2021-11-30 23:51:48,970: -----------
+2021-11-30 23:51:48,970: some io      240.4s, avg 26.2%
+2021-11-30 23:51:48,970: full io      230.6s, avg 25.1%
+2021-11-30 23:51:48,970: -----------
+2021-11-30 23:51:48,970: some memory  806.1s, avg 87.7%
+2021-11-30 23:51:48,971: full memory  800.5s, avg 87.1%
+
+psi log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-throttle/516-rc2/patch5/swappiness0/psi
+
+mem log:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-throttle/516-rc2/patch5/swappiness0/mem
+
+In some cases stalls was very short, but in many cases stalls was long. 
+The result is still not good enough.
+
+
+offtop
+======
+
+The same test with the patch [1] on top of 5.16-rc2 + le9 patch [2] 
+with vm.clean_min_kbytes=99000.
+
+- with noswap
+
+Summary:
+
+2021-11-30 23:59:32,209: Stall times for the last 73.1s:
+2021-11-30 23:59:32,209: -----------
+2021-11-30 23:59:32,209: some cpu     0.4s, avg 0.5%
+2021-11-30 23:59:32,209: -----------
+2021-11-30 23:59:32,210: some io      5.8s, avg 8.0%
+2021-11-30 23:59:32,210: full io      5.3s, avg 7.3%
+2021-11-30 23:59:32,210: -----------
+2021-11-30 23:59:32,210: some memory  3.3s, avg 4.5%
+2021-11-30 23:59:32,210: full memory  3.1s, avg 4.2%
+
+This is just an example of what a result close to the expected 
+result might be (especially note io pressure values).
+
+full psi:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-throttle/516-rc2/patch5/noswap_le9_min99k/psi
+
+mem:
+https://raw.githubusercontent.com/hakavlad/cache-tests/main/516-reclaim-throttle/516-rc2/patch5/noswap_le9_min99k/mem
+
+[1] https://lore.kernel.org/lkml/20211129150117.GO3366@techsingularity.net/
+[2] https://lore.kernel.org/all/20211130201652.2218636d@mail.inbox.lv/
