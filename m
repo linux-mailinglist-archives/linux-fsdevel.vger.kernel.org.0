@@ -2,158 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01CFB4633B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4C04633BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 13:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237346AbhK3MDO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 07:03:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232939AbhK3MDO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 07:03:14 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F977C061574;
-        Tue, 30 Nov 2021 03:59:55 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id v23so15148960pjr.5;
-        Tue, 30 Nov 2021 03:59:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xj8+VoAa5ErdyHBdKdAIopD6fGg/e7bwG6LigikTmEk=;
-        b=HjpTUJGQV2CWydG+K8sGVwBWAVgaWqVJF4IsrStsHUr0reZu3Au/oTASZi83B61vu3
-         kxAHdsPBcwQnHH75SnWzx0u7CSDI6ojfjr3EoqCtEFu1SAlyJEJTkKSNtMWEYN/1daiE
-         fMwxeo609A9pe+OYPk7MdOLJ2iKYphy1KynKVOkp7kHFJ1CDVBYduXwl1SSTddXh1aa2
-         98cPVzPtKzLSa+Enailsvx8UkXIMKmVG5l/iqbcEPND45v6NOdzhxzTlvBMzoCm0pxvd
-         Wy1qxowe0DUM69hOCiyG2Uh8GGazCcaZhsEPKw/zJuEQSqI29kvH+RQi1FEv9gysxAgA
-         UX6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xj8+VoAa5ErdyHBdKdAIopD6fGg/e7bwG6LigikTmEk=;
-        b=CZNK381FHgTbYyUkqC0TcCamSAmT7YqCY7W3lxDnTXs05YhHEmfDL5rClanN4Fg+gU
-         YqounnLcad9hHNEP/etrUOiYIP9T6cmfncbxjQSAgEGB/U2fEADioH1ged0OzuRYXTRI
-         jL86XULU4AJ4Wp+EQ4cYxfNQUKQE3foJMoH/7q+nmmoMTgI9XxrlRgpwLuDe2K+CGZKK
-         SKOspEjJ0A+94fj1YPwHrpkfSIkcMq5encrM14VS9OBV+CK48IXHPVm4CNSX2yNdqJHt
-         YvrsvOzrOkIMAuxUItFa/D4cr1+RBCt8v+pEtUHrFWO+SjbiaBMZm3ZsiOSENFz0m3Vi
-         ltKg==
-X-Gm-Message-State: AOAM533N7CARwVR4x++IOiRp7uYs51h9txogAKUoar3Qf9LEjA4OPE4W
-        4fQKXM3u6B7DcYhjAG9GiJY=
-X-Google-Smtp-Source: ABdhPJyqcdXCN+mZ0u1qep/O+jSTSw23lNluUedkVylDa+MsoxKzNigQMJYC++/iAzt5n7+w9C137Q==
-X-Received: by 2002:a17:902:b70b:b0:143:74b1:7e3b with SMTP id d11-20020a170902b70b00b0014374b17e3bmr68124338pls.26.1638273594698;
-        Tue, 30 Nov 2021 03:59:54 -0800 (PST)
-Received: from goshun.usen.ad.jp (113x33x71x97.ap113.ftth.ucom.ne.jp. [113.33.71.97])
-        by smtp.gmail.com with ESMTPSA id f4sm22226555pfj.61.2021.11.30.03.59.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 03:59:54 -0800 (PST)
-From:   Akira Kawata <akirakawata1@gmail.com>
-To:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        viro@zeniv.linux.org.uk, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     akirakawata1@gmail.com, kernel test robot <lkp@intel.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-Date:   Tue, 30 Nov 2021 20:59:07 +0900
-Message-Id: <20211130115906.414176-1-akirakawata1@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S232939AbhK3MEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 07:04:00 -0500
+Received: from mout.gmx.net ([212.227.17.20]:48289 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229538AbhK3MD7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Nov 2021 07:03:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1638273622;
+        bh=86mLRP7RxLciX6WFesgCpFI0qfy9gXogt8D2ha7z4+A=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=AXivPj5XQ42x2j05j7S7RsluKY6J0DKySHx2IYzGEZWs3E1q5T7RSqLrp3G9GLwNk
+         0akdRYeC/XPTuKnQAVQCaV/ngA4FM097mYbxzBdeisObq2J6LHWVqy4sejvkBbFZOV
+         dPwdwR6mGr4aLnBritwZEcB/Z5qCoxnO/Q/75U80=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from homer.fritz.box ([185.146.50.175]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N1OXT-1mTnrh0aQF-012nJz; Tue, 30
+ Nov 2021 13:00:22 +0100
+Message-ID: <b8f607c771a4f698fcb651379ca30d3bb6a83ccd.camel@gmx.de>
+Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+From:   Mike Galbraith <efault@gmx.de>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Alexey Avramov <hakavlad@inbox.lv>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Tue, 30 Nov 2021 13:00:18 +0100
+In-Reply-To: <20211130112244.GQ3366@techsingularity.net>
+References: <20211125151853.8540-1-mgorman@techsingularity.net>
+         <20211127011246.7a8ac7b8@mail.inbox.lv>
+         <20211129150117.GO3366@techsingularity.net>
+         <a20f17c4b1b5fdfade3f48375d148e97bd162dd6.camel@gmx.de>
+         <20211130112244.GQ3366@techsingularity.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Q8Rcm+TDsMGclzpLvPpIUOG460Khlbhybxb+OmjHoQ7eWlSZjwe
+ iInZPJV5ei36SlSySfzp57ZCs3OM51mS7uS/FRFL1ovBCSwF4GcSRjYfvB7Q+GCdpxR2D4m
+ hnr5S95PsvQKQWjyQuTejCqngOfcVJ6Xck3dqr7ySjF+TRZAV6ZlB8yiDsxB0PN9R/O3Lrw
+ dYGqpUqgAVY6735G5zwQw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4FgWfCmXmJQ=:QpOMsYUbzenGVGbOqzhwNZ
+ 6zL4AIN0w6dOK7sxB0IFmJyv9C0MlwGzHcOgoyoBEcsYUXF1QLYv+6l6+HtcVhdTaDlHQi8rG
+ FmAVvq4RLvC4cD2ndlS4Or4dvJI+7w1edc5vRgEGoZajS76Kka0UfMBuJEP64QfaIctGFLi1e
+ ivjCCcE7w7K5m9l6gtdnfp+6TNkuQCrlJRATdOEscgSTB6qdEep+USC/PgMaEIppktbXifWRP
+ Yse6KCWFtOCdsBG+p/ICWTqwbWFu2o0ELpkv0X1qCAevwEQ0WEGchfqfQvKSeM8J7nO9VZzgz
+ YOJAO17bwfXFhN3PneNTivUuksJQRTJNPtKrKYdgjN4yiv4VPsY8yGZu+G1Q9keXC8HF2EpD/
+ di7q4Jj4gi8FA/kBto8U7SM5seeyqVLLPvgrwOPuHQ0mimAM36V2WUYfvxKN8y8DrWi7oubpw
+ KAms+0Ts7QjiyQ1hOs+wrSGPdXL5tlrNdtnyiRZtoYGF5eWG+FoKoYOVbJUrXJe6xKmtqk6fH
+ MhCJKhUN1Ti/fy9bBwfSpSFc8mIRLjbjOOXb5dJGX4IPpYnPa9MmjKkYbAJKn95g91tXM4l85
+ eOa35a6GtNrAWslosEccnoorhlhXkei+fs1w0BgOnChc4mmHWA0SVKvjMnudHP2E5rCM5qn8N
+ s3NZBH8LtLVm6w72tZGtmXxuGEAj8Qa/AqwX809uMeJ8rpdz9JrZHkCsjDAB5OHrs7BLwkHnY
+ mE61LUKvf8zdxWvFUssoTY87crGGn1Tb25LrL6YAsDWWy61rhRq6B6EQaQDHm8KHCwcQoon1K
+ FodR4TDCsBKGhyZRadedT+SmZ7eojQnOAt62dcOUNWbhK4E35TaeReq5RpSTHfZMFUNLUNQBv
+ bAZ7a1yJ95X1OfdF0Rt0EeOefVGLJ5ayfr866ugH1cOzb3bp7UoU980+hrLd+pAt5oj8Z3fOh
+ WOEJc2k/qu8aRWSCoDkJfa3yPvqOaotVPfttvBEyIK2Rr1UCy+m4AATm0Yh6XyTuoiYlSDpix
+ di9Qm9fHeZcJ/5il7uoFcI6soPBbPS7QYZSC0LXwmszfOB+5k1BE//erw+AU9ZQvn2eJpJ+l/
+ qUl/XvzRC87XzU=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=197921
+On Tue, 2021-11-30 at 11:22 +0000, Mel Gorman wrote:
+> On Tue, Nov 30, 2021 at 11:14:32AM +0100, Mike Galbraith wrote:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (2 * write_pending <=
+=3D reclaimable)
+> >
+> > That is always true here...
+> >
+>
+> Always true for you or always true in general?
 
-As pointed out in the discussion of buglink, we cannot calculate AT_PHDR
-as the sum of load_addr and exec->e_phoff. This is because exec->e_phoff
-is the offset of PHDRs in the file and the address of PHDRs in the
-memory may differ from it. This patch fixes the bug by calculating the
-address of program headers from PT_LOADs directly.
+"Here" as in the boxen located at my GPS coordinates :)
 
-Signed-off-by: Akira Kawata <akirakawata1@gmail.com>
-Reported-by: kernel test robot <lkp@intel.com>
----
-Changes in v3:
-- Fix a reported bug from kernel test robot.
+> The intent of the check is "are a majority of reclaimable pages
+> marked WRITE_PENDING?". It's similar to the check that existed prior
+> to 132b0d21d21f ("mm/page_alloc: remove the throttling logic from the
+> page allocator").
 
-Changes in v2:
-- Remove unused load_addr from create_elf_tables.
-- Improve the commit message.
+I'll put my trace_printk() back and see if I can't bend-adjust it.
 
- fs/binfmt_elf.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index beeb1247b5c4..828e88841cb4 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -170,8 +170,8 @@ static int padzero(unsigned long elf_bss)
- 
- static int
- create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
--		unsigned long load_addr, unsigned long interp_load_addr,
--		unsigned long e_entry)
-+		unsigned long interp_load_addr,
-+		unsigned long e_entry, unsigned long phdr_addr)
- {
- 	struct mm_struct *mm = current->mm;
- 	unsigned long p = bprm->p;
-@@ -257,7 +257,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
- 	NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
- 	NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
--	NEW_AUX_ENT(AT_PHDR, load_addr + exec->e_phoff);
-+	NEW_AUX_ENT(AT_PHDR, phdr_addr);
- 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
- 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
-@@ -822,7 +822,7 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
- static int load_elf_binary(struct linux_binprm *bprm)
- {
- 	struct file *interpreter = NULL; /* to shut gcc up */
-- 	unsigned long load_addr = 0, load_bias = 0;
-+	unsigned long load_addr, load_bias = 0, phdr_addr = 0;
- 	int load_addr_set = 0;
- 	unsigned long error;
- 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
-@@ -1168,6 +1168,13 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 				reloc_func_desc = load_bias;
- 			}
- 		}
-+
-+		if (elf_ppnt->p_offset <= elf_ex->e_phoff &&
-+		    elf_ex->e_phoff < elf_ppnt->p_offset + elf_ppnt->p_filesz) {
-+			phdr_addr = elf_ex->e_phoff - elf_ppnt->p_offset +
-+				    elf_ppnt->p_vaddr;
-+		}
-+
- 		k = elf_ppnt->p_vaddr;
- 		if ((elf_ppnt->p_flags & PF_X) && k < start_code)
- 			start_code = k;
-@@ -1203,6 +1210,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	}
- 
- 	e_entry = elf_ex->e_entry + load_bias;
-+	phdr_addr += load_bias;
- 	elf_bss += load_bias;
- 	elf_brk += load_bias;
- 	start_code += load_bias;
-@@ -1266,8 +1274,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		goto out;
- #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
- 
--	retval = create_elf_tables(bprm, elf_ex,
--			  load_addr, interp_load_addr, e_entry);
-+	retval = create_elf_tables(bprm, elf_ex, interp_load_addr,
-+				   e_entry, phdr_addr);
- 	if (retval < 0)
- 		goto out;
- 
-
-base-commit: 34f255a1e91ab44ff8926cf8294ff9144e62e861
--- 
-2.25.1
+	-Mike
 
