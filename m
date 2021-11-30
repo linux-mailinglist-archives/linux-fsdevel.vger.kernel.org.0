@@ -2,125 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 878DB462ADC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 04:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7CDE462AF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 04:16:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237758AbhK3DHo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Nov 2021 22:07:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39712 "EHLO
+        id S229721AbhK3DT1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Nov 2021 22:19:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbhK3DHo (ORCPT
+        with ESMTP id S229873AbhK3DT0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Nov 2021 22:07:44 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B36C061574;
-        Mon, 29 Nov 2021 19:04:25 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id i13so16582253qvm.1;
-        Mon, 29 Nov 2021 19:04:25 -0800 (PST)
+        Mon, 29 Nov 2021 22:19:26 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E600DC061714
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 19:16:07 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id u11so13801957plf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 19:16:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qn3rCiMydHKwJRSqvEKBqOJQ42ze7JPZml2l4kAkwYE=;
-        b=UWpY48Db8SSSvrI1MpFmmka3FNt2E40Ilz07diUL+rlM7Ybkp3oZER0vU6RA8FBNLB
-         AjNAgOFvOuqN8bSUqDNbutYPGM/ubZZF3gbJqlTw8+BFVplkPcMsxAyYKWI2CltHW5SD
-         01UCvWTIXS3pPbhomp3NFBzawnac/+QAeZEQ1mvQqjXjSRPlUgw2fIILZ18F34j4cp3R
-         LWP98ME54aLX2n4dbxs7gBaohVBXQVo9hRXbuWK/YGs1zp7PnnJZZ8DDo0wtwOVz7tmj
-         6HEWNE1MWGThUyb7WyNQb/I2txyAFbPnQRXXX3J8Prr8HaltOetdUg1M1wl6HD3hMBWz
-         lovw==
+        d=dilger-ca.20210112.gappssmtp.com; s=20210112;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=Ep//I6X9EwMOGytIk2LJyc0T6Seun3W9bS4GLy6K+q8=;
+        b=6Ubv2vwWNyYvHVzGJKIRt3A/47QW7sjw5tA2fZiehQIJet0lDwox0ToKSRIuZ46QPG
+         KUgP5XJ+XkDpeLrEnRl+P3TQuj7VJ8eOSeqMqinVuh4JW4N0rF4rmCjk6mbWxy8gSAVl
+         XT9SGQLQp1StbBtT0go3vxE+POHfAUI5The5hMG2e110PrjSrfvWoCiTKfPAQM+DA6/u
+         +3cHdHX4qVwXm+8oaoaoHD+XsbBtOE68SWjaJFmtWsuONyhpvr7gtS05X8vs/6snnpIn
+         IqYjqpwJ4oATCzl3AFcNgL5VPZxIf5YC5OcToSfrp65SrKhA3m/51p1S64S/qBCPfSbY
+         6Vzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qn3rCiMydHKwJRSqvEKBqOJQ42ze7JPZml2l4kAkwYE=;
-        b=lrNKHVhXjrKHx5BrPnmkV/h7FEaQjkP3bneevuUwiYGYslEG44iuG0lCD1uWtXW6Ut
-         Lw+WZZxx1FM8ff1wyKjviIKFnsM5PzQV5+M+uOpZjxfF4K2De0RJlsDSJRpRHk1NK3M5
-         6z/opn520Ss8Mt649GHPZnfXsTrqSYwk4cNjvqkhCWrm+lSpDPxvNiCchO6NB4JJwm/6
-         RpTwx0e9AWijklMi9IdOe3LCP5iSAhQ6dt27uOeye8bsj9qVdIYnV+pXp7ptUKBAacDL
-         /Ftrg4wyoujSpXV4yMOpGk4jOZYaFD/ME0yB/GXZAUD6EVSsQSoalPfLFvAMzQCl10Cn
-         +1pQ==
-X-Gm-Message-State: AOAM531tWWLBczEY7D3chaUPhKydkBRn95DbEofl0aEi0jjyoBgnVH8I
-        nyG7tPS3Pe7cxOrx+yN0oWLXqSVxpqPv6giA16UWcA3EuJyGofpI
-X-Google-Smtp-Source: ABdhPJzye7Mau6MSRuZs3vTVhbPaBitlduhkL5wMdjAF8yiGEWsIUxxfoSh994+EmmAGwTuyk858XFoZnyNCCbpCA2A=
-X-Received: by 2002:a05:6214:2303:: with SMTP id gc3mr34265426qvb.90.1638241464734;
- Mon, 29 Nov 2021 19:04:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
- <yt9d35nf1d84.fsf@linux.ibm.com> <20211129123043.5cfd687a@gandalf.local.home>
-In-Reply-To: <20211129123043.5cfd687a@gandalf.local.home>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Tue, 30 Nov 2021 11:03:48 +0800
-Message-ID: <CALOAHbCVJcPdYq2j_VvhHBE-xLBnizRRx2oBu-KNgOr5jMf6RQ@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
- with TASK_COMM_LEN
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sven Schnelle <svens@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Tom Zanussi <zanussi@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=Ep//I6X9EwMOGytIk2LJyc0T6Seun3W9bS4GLy6K+q8=;
+        b=Ko6HKdUeUNx/XKSvpZKI+axMwF89l9GFeIdteXPIHVwTUEV/tpgn71bg/Mh2z2fc86
+         Yp9AFwdok+N2hVKYPBzGDxV+e8WIGFw8bxsuSVd2O43fSTmQq09sijjBu7Di7GsRhlhy
+         M+VbzVSf3DFORDi06HHgo03x/QjuMcV46O/Bf8CCDJ7MSrsT/SlW5ExQOuNUUwlFXIND
+         rZy42+o7H7m/BsDo0IJOpujPPamSIM5sU64RTvpz0DzYlC2jOJD/RX9DZmUt3OeyI/nm
+         pB7Wijk54LTIM4DUtFI3oqwyY7QRGBQdMxQjp6hNNBvjiapiqVXwh/0IYVKHjwZkdn3P
+         RNBg==
+X-Gm-Message-State: AOAM532nHCvV/DqPnYDb00QHQtS8yNw2vVWGSahWEEXokQj7/TZZw/wH
+        bHDKqbUelQg64FdRDx5iR6wrlr5gxzpdX5l6
+X-Google-Smtp-Source: ABdhPJyxCMUbz0YcvI0ge2tGOajb1hrg8/M4heanJtM+148OnbWFl8Zsz0uIzflJX5tCqPFt7peZkA==
+X-Received: by 2002:a17:902:b70b:b0:143:74b1:7e3b with SMTP id d11-20020a170902b70b00b0014374b17e3bmr65563621pls.26.1638242167227;
+        Mon, 29 Nov 2021 19:16:07 -0800 (PST)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id z16sm13564864pgl.29.2021.11.29.19.16.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Nov 2021 19:16:06 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <6A6C8E58-BCFD-46E8-9AF7-B6635D959CB6@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_890933BE-DA95-4DA1-975D-89DFA1B995F3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
+Date:   Mon, 29 Nov 2021 20:16:02 -0700
+In-Reply-To: <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+To:     Clay Harris <bugs@claycon.org>
+References: <20211129221257.2536146-1-shr@fb.com>
+ <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
+X-Mailer: Apple Mail (2.3273)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 1:30 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Mon, 29 Nov 2021 11:13:31 +0100
-> Sven Schnelle <svens@linux.ibm.com> wrote:
->
->
-> > This breaks the trigger-field-variable-support.tc from the ftrace test
-> > suite at least on s390:
-> >
-> > echo 'hist:keys=next_comm:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).wakeup_latency($wakeup_lat,next_pid,sched.sched_waking.prio,next_comm) if next_comm=="ping"'
-> > linux/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc: line 15: echo: write error: Invalid argument
-> >
-> > I added a debugging line into check_synth_field():
-> >
-> > [   44.091037] field->size 16, hist_field->size 16, field->is_signed 1, hist_field->is_signed 0
-> >
-> > Note the difference in the signed field.
->
-> That should not break on strings.
->
-> Does this fix it (if you keep the patch)?
->
-> -- Steve
->
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index 9555b8e1d1e3..319f9c8ca7e7 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -3757,7 +3757,7 @@ static int check_synth_field(struct synth_event *event,
->
->         if (strcmp(field->type, hist_field->type) != 0) {
->                 if (field->size != hist_field->size ||
-> -                   field->is_signed != hist_field->is_signed)
-> +                   (!field->is_string && field->is_signed != hist_field->is_signed))
->                         return -EINVAL;
->         }
->
 
-Many thanks for the quick fix!
-It seems this fix should be ahead of patch #7.
-I will send v3 which contains your fix.
+--Apple-Mail=_890933BE-DA95-4DA1-975D-89DFA1B995F3
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
--- 
-Thanks
-Yafang
+
+> On Nov 29, 2021, at 6:08 PM, Clay Harris <bugs@claycon.org> wrote:
+> 
+> On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
+> 
+>> This adds the xattr support to io_uring. The intent is to have a more
+>> complete support for file operations in io_uring.
+>> 
+>> This change adds support for the following functions to io_uring:
+>> - fgetxattr
+>> - fsetxattr
+>> - getxattr
+>> - setxattr
+> 
+> You may wish to consider the following.
+> 
+> Patching for these functions makes for an excellent opportunity
+> to provide a better interface.  Rather than implement fXetattr
+> at all, you could enable io_uring to use functions like:
+> 
+> int Xetxattr(int dfd, const char *path, const char *name,
+> 	[const] void *value, size_t size, int flags);
+
+This would naturally be named "...xattrat()"?
+
+> Not only does this simplify the io_uring interface down to two
+> functions, but modernizes and fixes a deficit in usability.
+> In terms of io_uring, this is just changing internal interfaces.
+
+Even better would be the ability to get/set an array of xattrs in
+one call, to avoid repeated path lookups in the common case of
+handling multiple xattrs on a single file.
+
+> Although unnecessary for io_uring, it would be nice to at least
+> consider what parts of this code could be leveraged for future
+> Xetxattr2 syscalls.
+
+> 
+>> Patch 1: fs: make user_path_at_empty() take a struct filename
+>>  The user_path_at_empty filename parameter has been changed
+>>  from a const char user pointer to a filename struct. io_uring
+>>  operates on filenames.
+>>  In addition also the functions that call user_path_at_empty
+>>  in namei.c and stat.c have been modified for this change.
+>> 
+>> Patch 2: fs: split off setxattr_setup function from setxattr
+>>  Split off the setup part of the setxattr function
+>> 
+>> Patch 3: fs: split off the vfs_getxattr from getxattr
+>>  Split of the vfs_getxattr part from getxattr. This will
+>>  allow to invoke it from io_uring.
+>> 
+>> Patch 4: io_uring: add fsetxattr and setxattr support
+>>  This adds new functions to support the fsetxattr and setxattr
+>>  functions.
+>> 
+>> Patch 5: io_uring: add fgetxattr and getxattr support
+>>  This adds new functions to support the fgetxattr and getxattr
+>>  functions.
+>> 
+>> 
+>> There are two additional patches:
+>>  liburing: Add support for xattr api's.
+>>            This also includes the tests for the new code.
+>>  xfstests: Add support for io_uring xattr support.
+>> 
+>> 
+>> Stefan Roesch (5):
+>>  fs: make user_path_at_empty() take a struct filename
+>>  fs: split off setxattr_setup function from setxattr
+>>  fs: split off the vfs_getxattr from getxattr
+>>  io_uring: add fsetxattr and setxattr support
+>>  io_uring: add fgetxattr and getxattr support
+>> 
+>> fs/internal.h                 |  23 +++
+>> fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
+>> fs/namei.c                    |   5 +-
+>> fs/stat.c                     |   7 +-
+>> fs/xattr.c                    | 114 +++++++-----
+>> include/linux/namei.h         |   4 +-
+>> include/uapi/linux/io_uring.h |   8 +-
+>> 7 files changed, 439 insertions(+), 47 deletions(-)
+>> 
+>> 
+>> Signed-off-by: Stefan Roesch <shr@fb.com>
+>> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
+>> --
+>> 2.30.2
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_890933BE-DA95-4DA1-975D-89DFA1B995F3
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmGll3IACgkQcqXauRfM
+H+Dzuw/9F6bra0aF+gZWjaOYzE6aARhHzHEHQGSzX5dYMS1YoWxQuB5OEhRaKCQq
+zXPAtgkLbLA5RoBclJ8hZQNiusAtztTJfPJmfjOesU+4Zn0ryFoEeYHdxulHt+wI
+Je73cs3RRjErAdk1LaN8bUJ5aDM2KJOYVSewYwOaBGQ/W5QAPXHU9ZL+K3Zk7MCn
+gecCOjTOmXOLZAlX3hskYI7vfCB+Xb5NKchvXzcc0LvZ+Skf2xBwVdOXaXisGSpi
+uGI3H9sHh3uIHI1X6JOrdUbtnLzflyqIX7ljvR/YfrInpnA4ao85gBMi4YL3FwuS
+A9wYw0hZ+3dOhsOkalAz8cZmiAjAP7tos3rQLKX2t2cnqXwRv0vM/xA/XNpCbAmi
+GQFtW6vsuYt0uEWhInNHueni8j2khVivGv6tzl7h2h9/ZLbGmXL/hMQdIG3YzZkF
+j0HwjDm9Yj+eIh1Lhn+83xcBUXSLeQp1IP6AKm+rZWBKGQKP9PWnCZt/C0gjYwc8
+z6Mwuiai3LaJD1lCpEXi1+cOnxEn1ewyI2KXcz1Fl94UYISgTcm4C/qZxWrY7rff
+VZED9UyTLFa9y6sEWL5j4god6DWvy913PJ54pDmQdqoTQAJT/NOMPPbNLgUiCf2f
+l/ww3CjAxHUNt6aVGZ6DkzQ9j3S1E5UELaxUjbKkw17U03X54X4=
+=GM8G
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_890933BE-DA95-4DA1-975D-89DFA1B995F3--
