@@ -2,99 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B98463242
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6598446329D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238912AbhK3L0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 06:26:10 -0500
-Received: from outbound-smtp55.blacknight.com ([46.22.136.239]:49257 "EHLO
-        outbound-smtp55.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238891AbhK3L0K (ORCPT
+        id S237112AbhK3LoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 06:44:14 -0500
+Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:18181 "EHLO
+        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234242AbhK3LoM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 06:26:10 -0500
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp55.blacknight.com (Postfix) with ESMTPS id 56A67FAFC4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Nov 2021 11:22:47 +0000 (GMT)
-Received: (qmail 5292 invoked from network); 30 Nov 2021 11:22:47 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 30 Nov 2021 11:22:46 -0000
-Date:   Tue, 30 Nov 2021 11:22:44 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Alexey Avramov <hakavlad@inbox.lv>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211130112244.GQ3366@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
- <20211127011246.7a8ac7b8@mail.inbox.lv>
- <20211129150117.GO3366@techsingularity.net>
- <a20f17c4b1b5fdfade3f48375d148e97bd162dd6.camel@gmx.de>
+        Tue, 30 Nov 2021 06:44:12 -0500
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 5C49F8C15BA;
+        Tue, 30 Nov 2021 11:40:51 +0000 (UTC)
+Received: from pdx1-sub0-mail-a280.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id B93118C184B;
+        Tue, 30 Nov 2021 11:40:50 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from pdx1-sub0-mail-a280.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.105.57.78 (trex/6.4.3);
+        Tue, 30 Nov 2021 11:40:51 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Stop-Minister: 2cca0285655215e2_1638272451062_3850990790
+X-MC-Loop-Signature: 1638272451062:4154972842
+X-MC-Ingress-Time: 1638272451062
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a280.dreamhost.com (Postfix) with ESMTPSA id 4J3KzQ3NRQz1Pr;
+        Tue, 30 Nov 2021 03:40:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
+        s=claycon.org; t=1638272450; bh=O2WXhrHkH1XggUiIONMYJjGc2ao=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=bgxD8Czk8LHxyvV+YB0zE4rRTRGKMWDQH6U8UKEdrGm4Ersv4jtF7hnLC88K3A3Aj
+         df7R3HRkdhm9OaT9hNo4/+lrdVEOEJeL0jUo/ll5QoV+00Sn6FKmv0tcYI7xo3kGoo
+         KY82SYZEfMGo9fuqUP3dzjb7WK7PTo4Q0VyznAO4=
+Date:   Tue, 30 Nov 2021 05:40:48 -0600
+From:   Clay Harris <bugs@claycon.org>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
+Message-ID: <20211130114048.bzimtybhqj6ztq2u@ps29521.dreamhostps.com>
+References: <20211129221257.2536146-1-shr@fb.com>
+ <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
+ <6A6C8E58-BCFD-46E8-9AF7-B6635D959CB6@dilger.ca>
+ <20211130063703.hszzs3tg5qb37fyj@ps29521.dreamhostps.com>
+ <20211130065345.actf2vrfpvtk6fcz@ps29521.dreamhostps.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a20f17c4b1b5fdfade3f48375d148e97bd162dd6.camel@gmx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211130065345.actf2vrfpvtk6fcz@ps29521.dreamhostps.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 11:14:32AM +0100, Mike Galbraith wrote:
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index fb9584641ac7..1af12072f40e 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -1021,6 +1021,39 @@ static void handle_write_error(struct address_space *mapping,
-> >         unlock_page(page);
-> >  }
-> >  
-> > +bool skip_throttle_noprogress(pg_data_t *pgdat)
-> > +{
-> > +       int reclaimable = 0, write_pending = 0;
-> > +       int i;
-> > +
-> > +       /*
-> > +        * If kswapd is disabled, reschedule if necessary but do not
-> > +        * throttle as the system is likely near OOM.
-> > +        */
-> > +       if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
-> > +               return true;
-> > +
-> > +       /*
-> > +        * If there are a lot of dirty/writeback pages then do not
-> > +        * throttle as throttling will occur when the pages cycle
-> > +        * towards the end of the LRU if still under writeback.
-> > +        */
-> > +       for (i = 0; i < MAX_NR_ZONES; i++) {
-> > +               struct zone *zone = pgdat->node_zones + i;
-> > +
-> > +               if (!populated_zone(zone))
-> > +                       continue;
-> > +
-> > +               reclaimable += zone_reclaimable_pages(zone);
-> > +               write_pending += zone_page_state_snapshot(zone,
-> > +                                                 NR_ZONE_WRITE_PENDING);
-> > +       }
-> > +       if (2 * write_pending <= reclaimable)
+On Tue, Nov 30 2021 at 00:53:45 -0600, Clay Harris quoth thus:
+
+> On Tue, Nov 30 2021 at 00:37:03 -0600, Clay Harris quoth thus:
 > 
-> That is always true here...
+> > On Mon, Nov 29 2021 at 20:16:02 -0700, Andreas Dilger quoth thus:
+> > 
+> > > 
+> > > > On Nov 29, 2021, at 6:08 PM, Clay Harris <bugs@claycon.org> wrote:
+> > > > 
+> > > > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
+> > > > 
+> > > >> This adds the xattr support to io_uring. The intent is to have a more
+> > > >> complete support for file operations in io_uring.
+> > > >> 
+> > > >> This change adds support for the following functions to io_uring:
+> > > >> - fgetxattr
+> > > >> - fsetxattr
+> > > >> - getxattr
+> > > >> - setxattr
+> > > > 
+> > > > You may wish to consider the following.
+> > > > 
+> > > > Patching for these functions makes for an excellent opportunity
+> > > > to provide a better interface.  Rather than implement fXetattr
+> > > > at all, you could enable io_uring to use functions like:
+> > > > 
+> > > > int Xetxattr(int dfd, const char *path, const char *name,
+> > > > 	[const] void *value, size_t size, int flags);
+> > > 
+> > > This would naturally be named "...xattrat()"?
+> > 
+> > Indeed!
+> > 
+> > > > Not only does this simplify the io_uring interface down to two
+> > > > functions, but modernizes and fixes a deficit in usability.
+> > > > In terms of io_uring, this is just changing internal interfaces.
+
+One more reason, it would be very desirable if io_uring called a
+*etxattrat-like interface, is that the old f*etxattr calls require an fd
+open for reading (fget*) or writing (fset*).  So, you're out of luck if
+you have an execute-only file or just an O_PATH descriptor!  In those
+cases, you're forced to use a pathname for every call.  Not very efficient
+for people who choose to use the highly optimized io_uring interface.
+
+> > > Even better would be the ability to get/set an array of xattrs in
+> > > one call, to avoid repeated path lookups in the common case of
+> > > handling multiple xattrs on a single file.
+> > 
+> > True.
+> > 
+> > > > Although unnecessary for io_uring, it would be nice to at least
+> > > > consider what parts of this code could be leveraged for future
+> > > > Xetxattr2 syscalls.
+> > s/Xetxattr2/Xetxattrat/
 > 
-
-Always true for you or always true in general?
-
-The intent of the check is "are a majority of reclaimable pages
-marked WRITE_PENDING?". It's similar to the check that existed prior
-to 132b0d21d21f ("mm/page_alloc: remove the throttling logic from the
-page allocator").
-
--- 
-Mel Gorman
-SUSE Labs
+> I forgot to mention a final thought about the interface.
+> Unless there is a really good reason (security auditing??), there
+> is no reason to have a removexattr() function.  That seems much
+> better handled by passing NULL for value and specifying a remove
+> flag in flags to setxattrat().
+> 
+> > > > 
+> > > >> Patch 1: fs: make user_path_at_empty() take a struct filename
+> > > >>  The user_path_at_empty filename parameter has been changed
+> > > >>  from a const char user pointer to a filename struct. io_uring
+> > > >>  operates on filenames.
+> > > >>  In addition also the functions that call user_path_at_empty
+> > > >>  in namei.c and stat.c have been modified for this change.
+> > > >> 
+> > > >> Patch 2: fs: split off setxattr_setup function from setxattr
+> > > >>  Split off the setup part of the setxattr function
+> > > >> 
+> > > >> Patch 3: fs: split off the vfs_getxattr from getxattr
+> > > >>  Split of the vfs_getxattr part from getxattr. This will
+> > > >>  allow to invoke it from io_uring.
+> > > >> 
+> > > >> Patch 4: io_uring: add fsetxattr and setxattr support
+> > > >>  This adds new functions to support the fsetxattr and setxattr
+> > > >>  functions.
+> > > >> 
+> > > >> Patch 5: io_uring: add fgetxattr and getxattr support
+> > > >>  This adds new functions to support the fgetxattr and getxattr
+> > > >>  functions.
+> > > >> 
+> > > >> 
+> > > >> There are two additional patches:
+> > > >>  liburing: Add support for xattr api's.
+> > > >>            This also includes the tests for the new code.
+> > > >>  xfstests: Add support for io_uring xattr support.
+> > > >> 
+> > > >> 
+> > > >> Stefan Roesch (5):
+> > > >>  fs: make user_path_at_empty() take a struct filename
+> > > >>  fs: split off setxattr_setup function from setxattr
+> > > >>  fs: split off the vfs_getxattr from getxattr
+> > > >>  io_uring: add fsetxattr and setxattr support
+> > > >>  io_uring: add fgetxattr and getxattr support
+> > > >> 
+> > > >> fs/internal.h                 |  23 +++
+> > > >> fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
+> > > >> fs/namei.c                    |   5 +-
+> > > >> fs/stat.c                     |   7 +-
+> > > >> fs/xattr.c                    | 114 +++++++-----
+> > > >> include/linux/namei.h         |   4 +-
+> > > >> include/uapi/linux/io_uring.h |   8 +-
+> > > >> 7 files changed, 439 insertions(+), 47 deletions(-)
+> > > >> 
+> > > >> 
+> > > >> Signed-off-by: Stefan Roesch <shr@fb.com>
+> > > >> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
+> > > >> --
+> > > >> 2.30.2
+> > > 
+> > > 
+> > > Cheers, Andreas
+> > > 
+> > > 
+> > > 
+> > > 
+> > > 
+> > 
