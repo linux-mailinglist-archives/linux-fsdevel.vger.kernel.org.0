@@ -2,273 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4375463E66
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 20:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB34463E6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 20:05:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241880AbhK3TIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 14:08:01 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:51318 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239650AbhK3TH7 (ORCPT
+        id S245625AbhK3TIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 14:08:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35664 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239650AbhK3TIa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 14:07:59 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 4610FCE1AF9;
-        Tue, 30 Nov 2021 19:04:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F987C53FCC;
-        Tue, 30 Nov 2021 19:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638299076;
-        bh=mQg/Xy3banuO+Rk+JPTNee2e65LywjYy6rs1vF6txoc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L5JZsAvE5JXRi6i0ytDaiv8XEIiGmSUHffxXM2lVjE3cZl6vH3y9jXNBuuEgb/EBL
-         5+o+FTmz4QbXrBx0biR8u71+VJQySnsli75C2MCm+gggq95Xv8av1CWzP0PdvQsrrh
-         OGUebXf/i+s2rF6vnp6ZbvtWYeQhRRQLw+k0WFb6H661tkagirCnj3h1WvMJmK/gK8
-         vAxfEf57+wxndxXVB/gzynn30JNix53lAAx56QL6NSVBBdrvBH35bIon6zF3Fd2A6O
-         xCSn21p158TknyuDd+2O6eyvWpiGmX8tNHo7n6gp1lWtXK9SR11kwFUFg/T5qAW7Wd
-         RLMCxUdBZSR0Q==
-Date:   Tue, 30 Nov 2021 11:04:36 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>, dm-devel@redhat.com,
-        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 25/29] dax: return the partition offset from
- fs_dax_get_by_bdev
-Message-ID: <20211130190436.GI8467@magnolia>
-References: <20211129102203.2243509-1-hch@lst.de>
- <20211129102203.2243509-26-hch@lst.de>
+        Tue, 30 Nov 2021 14:08:30 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB89C061574;
+        Tue, 30 Nov 2021 11:05:11 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id 14so27384890ioe.2;
+        Tue, 30 Nov 2021 11:05:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tA8rNLmEmTIGMleqHR6JTe/h5SWKaBwqglrHS55I9XA=;
+        b=HhIYf9GuGhLuVNkOq1UPoco6ZyvWOcH19Io95SXOMEMFD4XCs02yNCaJKtuHkZc338
+         b249IUBZiTkjDooHxoQZkFTAsnACfBCgqkvXKYfis0uOl4t9i+m9sMJP/D9qK57T3SMW
+         uKYTyAeKGpzNP83pSQ4Q6AshTLeLN2QTXV7P4LNjTxrXLzzyXaY9EadUPfpvSvA+vJ/p
+         +54+y8CIHlkgQv6GqqACFN8VT6MzuobWeN+hJQewuGkAJXi/h/zNHBs8XKXAUgY/Rp8u
+         sO2dtRvJog51ka7uJpajHPm/SeXfzFPZXKsPx1JtAj26k+FUwGqkPBche8Ub964mNNMV
+         BsiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tA8rNLmEmTIGMleqHR6JTe/h5SWKaBwqglrHS55I9XA=;
+        b=kuIIZ5xtoieiD0LfAmUJFAzzhbxVMRuU6E60WiCS7705VwxjfG2eeeC/APqP/1x/+6
+         TpPfjSU3zbdLIGI/u96/FPED3l+Ge2oWDrqr1rfZ5+g8c9qH60y4ouEYhDWwgD58DjVP
+         XLDlO+kh7vWHmx7h+cmmXRpRs91G2z62y7K83USyb8oBAv59MflgipnpZy1ric0kiTOm
+         O+2IrhGFrFZvCj2CfJfrS5Ox+9HMfYEBkHlnlQEBn7JFXwinG++qkUIAZarlgJ+tqOEg
+         g6qMb8mKbIcDJQ5Q95evwRj90rNg9Hce+Ea/9H8t2lB2qffO/0tG4kqtmSvw+Pceu2lZ
+         sM/A==
+X-Gm-Message-State: AOAM530CmoAXxXf7lCXxL/NmOP8++x655yqe9g9Q9fuRu31ECuZoF6H0
+        iWIcZdSqqTNONN4shO4Na1QLJfniCsXjmeQK7qV5fOor
+X-Google-Smtp-Source: ABdhPJzynjLoYw9pgrZO/Ro6nsOBbraw4PkA3fySltZ5MiGIQS28ii6pG+kVrY0l/zn3KDCk2rmKYuebyTe3bkndFM0=
+X-Received: by 2002:a02:a489:: with SMTP id d9mr1691020jam.47.1638299110774;
+ Tue, 30 Nov 2021 11:05:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211129102203.2243509-26-hch@lst.de>
+References: <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
+ <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com>
+ <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net>
+ <CAJfpegttQreuuD_jLgJmrYpsLKBBe2LmB5NSj6F5dHoTzqPArw@mail.gmail.com>
+ <17d2c858d76.d8a27d876510.8802992623030721788@mykernel.net>
+ <17d31bf3d62.1119ad4be10313.6832593367889908304@mykernel.net>
+ <20211118112315.GD13047@quack2.suse.cz> <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
+ <20211118164349.GB8267@quack2.suse.cz> <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
+ <20211130112206.GE7174@quack2.suse.cz> <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
+In-Reply-To: <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 30 Nov 2021 21:04:59 +0200
+Message-ID: <CAOQ4uxidK-yDMZoZtoRwTZLgSTr1o2Mu2L55vJRNJDLV0-Sb1w@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode operation
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        ronyjin <ronyjin@tencent.com>,
+        charliecgxu <charliecgxu@tencent.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 29, 2021 at 11:21:59AM +0100, Christoph Hellwig wrote:
-> Prepare for the removal of the block_device from the DAX I/O path by
-> returning the partition offset from fs_dax_get_by_bdev so that the file
-> systems have it at hand for use during I/O.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+>  > I was thinking about this a bit more and I don't think I buy this
+>  > explanation. What I rather think is happening is that real work for syncfs
+>  > (writeback_inodes_sb() and sync_inodes_sb() calls) gets offloaded to a flush
+>  > worker. E.g. writeback_inodes_sb() ends up calling
+>  > __writeback_inodes_sb_nr() which does:
+>  >
+>  > bdi_split_work_to_wbs()
+>  > wb_wait_for_completion()
+>  >
+>  > So you don't see the work done in the times accounted to your test
+>  > program. But in practice the flush worker is indeed burning 1.3s worth of
+>  > CPU to scan the 1 million inode list and do nothing.
+>  >
+>
+> That makes sense. However, in real container use case,  the upper dir is always empty,
+> so I don't think there is meaningful difference compare to accurately marking overlay
+> inode dirty.
+>
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+It's true the that is a very common case, but...
 
---D
+> I'm not very familiar with other use cases of overlayfs except container, should we consider
+> other use cases? Maybe we can also ignore the cpu burden because those use cases don't
+> have density deployment like container.
+>
 
-> ---
->  drivers/dax/super.c | 9 ++++++---
->  drivers/md/dm.c     | 4 ++--
->  fs/erofs/internal.h | 2 ++
->  fs/erofs/super.c    | 4 ++--
->  fs/ext2/ext2.h      | 1 +
->  fs/ext2/super.c     | 2 +-
->  fs/ext4/ext4.h      | 1 +
->  fs/ext4/super.c     | 2 +-
->  fs/xfs/xfs_buf.c    | 2 +-
->  fs/xfs/xfs_buf.h    | 1 +
->  include/linux/dax.h | 6 ++++--
->  11 files changed, 22 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 45d931aefd063..e7152a6c4cc40 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -69,17 +69,20 @@ EXPORT_SYMBOL_GPL(dax_remove_host);
->  /**
->   * fs_dax_get_by_bdev() - temporary lookup mechanism for filesystem-dax
->   * @bdev: block device to find a dax_device for
-> + * @start_off: returns the byte offset into the dax_device that @bdev starts
->   */
-> -struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
-> +struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev, u64 *start_off)
->  {
->  	struct dax_device *dax_dev;
-> +	u64 part_size;
->  	int id;
->  
->  	if (!blk_queue_dax(bdev->bd_disk->queue))
->  		return NULL;
->  
-> -	if ((get_start_sect(bdev) * SECTOR_SIZE) % PAGE_SIZE ||
-> -	    (bdev_nr_sectors(bdev) * SECTOR_SIZE) % PAGE_SIZE) {
-> +	*start_off = get_start_sect(bdev) * SECTOR_SIZE;
-> +	part_size = bdev_nr_sectors(bdev) * SECTOR_SIZE;
-> +	if (*start_off % PAGE_SIZE || part_size % PAGE_SIZE) {
->  		pr_info("%pg: error: unaligned partition for dax\n", bdev);
->  		return NULL;
->  	}
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 4eba27e75c230..4e997c02bb0a0 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -637,7 +637,7 @@ static int open_table_device(struct table_device *td, dev_t dev,
->  			     struct mapped_device *md)
->  {
->  	struct block_device *bdev;
-> -
-> +	u64 part_off;
->  	int r;
->  
->  	BUG_ON(td->dm_dev.bdev);
-> @@ -653,7 +653,7 @@ static int open_table_device(struct table_device *td, dev_t dev,
->  	}
->  
->  	td->dm_dev.bdev = bdev;
-> -	td->dm_dev.dax_dev = fs_dax_get_by_bdev(bdev);
-> +	td->dm_dev.dax_dev = fs_dax_get_by_bdev(bdev, &part_off);
->  	return 0;
->  }
->  
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 3265688af7f9f..c1e65346e9f15 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -51,6 +51,7 @@ struct erofs_device_info {
->  	char *path;
->  	struct block_device *bdev;
->  	struct dax_device *dax_dev;
-> +	u64 dax_part_off;
->  
->  	u32 blocks;
->  	u32 mapped_blkaddr;
-> @@ -109,6 +110,7 @@ struct erofs_sb_info {
->  #endif	/* CONFIG_EROFS_FS_ZIP */
->  	struct erofs_dev_context *devs;
->  	struct dax_device *dax_dev;
-> +	u64 dax_part_off;
->  	u64 total_blocks;
->  	u32 primarydevice_blocks;
->  
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 0aed886473c8d..71efce16024d9 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -312,7 +312,7 @@ static int erofs_init_devices(struct super_block *sb,
->  			goto err_out;
->  		}
->  		dif->bdev = bdev;
-> -		dif->dax_dev = fs_dax_get_by_bdev(bdev);
-> +		dif->dax_dev = fs_dax_get_by_bdev(bdev, &dif->dax_part_off);
->  		dif->blocks = le32_to_cpu(dis->blocks);
->  		dif->mapped_blkaddr = le32_to_cpu(dis->mapped_blkaddr);
->  		sbi->total_blocks += dif->blocks;
-> @@ -644,7 +644,7 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->  
->  	sb->s_fs_info = sbi;
->  	sbi->opt = ctx->opt;
-> -	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
-> +	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->dax_part_off);
->  	sbi->devs = ctx->devs;
->  	ctx->devs = NULL;
->  
-> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-> index 3be9dd6412b78..d4f306aa5aceb 100644
-> --- a/fs/ext2/ext2.h
-> +++ b/fs/ext2/ext2.h
-> @@ -118,6 +118,7 @@ struct ext2_sb_info {
->  	spinlock_t s_lock;
->  	struct mb_cache *s_ea_block_cache;
->  	struct dax_device *s_daxdev;
-> +	u64 s_dax_part_off;
->  };
->  
->  static inline spinlock_t *
-> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-> index 7e23482862e69..94f1fbd7d3ac2 100644
-> --- a/fs/ext2/super.c
-> +++ b/fs/ext2/super.c
-> @@ -831,7 +831,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->  	}
->  	sb->s_fs_info = sbi;
->  	sbi->s_sb_block = sb_block;
-> -	sbi->s_daxdev = fs_dax_get_by_bdev(sb->s_bdev);
-> +	sbi->s_daxdev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->s_dax_part_off);
->  
->  	spin_lock_init(&sbi->s_lock);
->  	ret = -EINVAL;
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 404dd50856e5d..9cc55bcda6ba4 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1697,6 +1697,7 @@ struct ext4_sb_info {
->  	 */
->  	struct percpu_rw_semaphore s_writepages_rwsem;
->  	struct dax_device *s_daxdev;
-> +	u64 s_dax_part_off;
->  #ifdef CONFIG_EXT4_DEBUG
->  	unsigned long s_simulate_fail;
->  #endif
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 8d7e3449c6472..56228e33e52a2 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -3913,7 +3913,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
->  	if (!sbi->s_blockgroup_lock)
->  		goto out_free_base;
->  
-> -	sbi->s_daxdev = fs_dax_get_by_bdev(sb->s_bdev);
-> +	sbi->s_daxdev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->s_dax_part_off);
->  	sb->s_fs_info = sbi;
->  	sbi->s_sb = sb;
->  	sbi->s_inode_readahead_blks = EXT4_DEF_INODE_READAHEAD_BLKS;
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index 4d4553ffa7050..bbb0fbd34e649 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -1945,7 +1945,7 @@ xfs_alloc_buftarg(
->  	btp->bt_mount = mp;
->  	btp->bt_dev =  bdev->bd_dev;
->  	btp->bt_bdev = bdev;
-> -	btp->bt_daxdev = fs_dax_get_by_bdev(bdev);
-> +	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off);
->  
->  	/*
->  	 * Buffer IO error rate limiting. Limit it to no more than 10 messages
-> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-> index bd7f709f0d232..edcb6254fa6a8 100644
-> --- a/fs/xfs/xfs_buf.h
-> +++ b/fs/xfs/xfs_buf.h
-> @@ -89,6 +89,7 @@ typedef struct xfs_buftarg {
->  	dev_t			bt_dev;
->  	struct block_device	*bt_bdev;
->  	struct dax_device	*bt_daxdev;
-> +	u64			bt_dax_part_off;
->  	struct xfs_mount	*bt_mount;
->  	unsigned int		bt_meta_sectorsize;
->  	size_t			bt_meta_sectormask;
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index b79036743e7fa..f6f353382cc90 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -117,7 +117,8 @@ static inline void fs_put_dax(struct dax_device *dax_dev)
->  	put_dax(dax_dev);
->  }
->  
-> -struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
-> +struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev,
-> +		u64 *start_off);
->  int dax_writeback_mapping_range(struct address_space *mapping,
->  		struct dax_device *dax_dev, struct writeback_control *wbc);
->  
-> @@ -138,7 +139,8 @@ static inline void fs_put_dax(struct dax_device *dax_dev)
->  {
->  }
->  
-> -static inline struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
-> +static inline struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev,
-> +		u64 *start_off)
->  {
->  	return NULL;
->  }
-> -- 
-> 2.30.2
-> 
+metacopy feature was developed for the use case of a container
+that chowns all the files in the lower image.
+
+In that case, which is now also quite common, all the overlay inodes are
+upper inodes.
+
+What about only re-mark overlay inode dirty if upper inode is dirty or is
+writeably mmapped.
+For other cases, it is easy to know when overlay inode becomes dirty?
+Didn't you already try this?
+
+Thanks,
+Amir.
