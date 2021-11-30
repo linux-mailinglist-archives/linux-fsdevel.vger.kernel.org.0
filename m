@@ -2,68 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A06D463A8A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 16:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A5ED463AA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 16:54:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239738AbhK3Pu7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 10:50:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46372 "EHLO
+        id S242243AbhK3P50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 10:57:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237639AbhK3Puy (ORCPT
+        with ESMTP id S237730AbhK3P5Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 10:50:54 -0500
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD748C061574;
-        Tue, 30 Nov 2021 07:47:30 -0800 (PST)
-Received: by mail-qk1-x732.google.com with SMTP id 193so27223356qkh.10;
-        Tue, 30 Nov 2021 07:47:30 -0800 (PST)
+        Tue, 30 Nov 2021 10:57:25 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B32FC061574;
+        Tue, 30 Nov 2021 07:54:06 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id d2so27208110qki.12;
+        Tue, 30 Nov 2021 07:54:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0E8rI2pldC/kJRYfFj5pOe4f4oCd/4elC+07mJ7cezg=;
-        b=M3TECrBfeRNcmU2wzwJW8xakJwOsl96F7/wzhKVZtGVC4XSClhkZtPmX4O/ArG22Sh
-         jjA+g1x4pyJ/4pviilYQPG+KhhSz3F4DZuFRxnjDPTFhjqCEG4DtQvvJ8KQb64m6allX
-         yyKpYEUobSoiHyXxASAEYQUGG6RRUph0Z3VWpZpdz7lmDRWto1u3+zXWvSbLxkDosk3G
-         7B4KO4BxCe1+OrGLaCgzq2a913mzBdZ+eBV/20lQAFekOCsIcFyVxoB2ZV2YfjeK8rzK
-         SXg7rom0+dWxy0uNUSNNlxxK6f6+bXyctj/awauwEt7A4J/lXSd6tDQSaieEQdgMmo+8
-         LQbg==
+        bh=5jfG9Qw6wgd9sRjYfyHDytET8Ac/XcqwnteljgGuckk=;
+        b=BntxTnwecg6BJSWIvVKExBquBtQ30s/lQ1YU/vtHIPa1Rx8ar/0r4fbnZzkVxmuMAb
+         OzAbN7axchp00LTYFaxf1R9+06zsQfibPFDthdJkWHwessPgB59jSkf2hhJC9Jya5qyy
+         HlASVFBQYACqEYVUo0srq3QkMFzJGpti1VVHtgcnXPBDChfHu3LanOSzPF2UPdSdM8Gk
+         ouRdu2IXl6S/VnlWEksWw3jwf6CY3mhCilbCsObeM91dghSXL7b0a41ke+NdWEQkEgzh
+         Won2HU6OUxb+j1fd9BYxScLJplAHx9QZ5JOlu9jWIR1hHSvIoz2zJCWmVGE6ELg+suCU
+         X1ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0E8rI2pldC/kJRYfFj5pOe4f4oCd/4elC+07mJ7cezg=;
-        b=aEDwJF6lOKVALR1v3UyQRQHeogd81xev40Ew9jIUQetifgumoPkmSjjzUdbBwJT8gh
-         Aox3c91O/AsZOkas/dnjUVoMHEKtOpCjn/UUfA6phKawDM/kKaQ1B9Jr5QkDaIf6nDCH
-         PfW8pzA2oVoG51jWAqeerte6/2x2L78t2d5Ru4qh5G3cUhWIae1/IOJNKhGXebFubQZ/
-         r7H/QT/CWsGNkIbnt2nj1GG+HkiVc2hpTBie2sgjFp2N7MrxiHQZ2+CLyrYRvWHXwDZ0
-         hkBJf7DXD5f00W1s4GzRDqMTV6Zdg1unpDcr5IvLN92/hkPlP0uQwsGrZWki6uEYxrjz
-         89cQ==
-X-Gm-Message-State: AOAM533lBt32BQn2kBPAMjB0bGD6Ra/DUZEVGI4su675A82UvO8XfFFU
-        D13u9KzrvtZDYnMof721w+pUpy489osVr2bX3rA=
-X-Google-Smtp-Source: ABdhPJztrZJR8wzz1uvKDh9tgCXsCwcvYHaAV5LAj9Tyfjkwz7VlVZjHRc1l9DQlQzaVs/JoaW2gQFPu+qw5proo6JA=
-X-Received: by 2002:a05:620a:134a:: with SMTP id c10mr46334061qkl.207.1638287249916;
- Tue, 30 Nov 2021 07:47:29 -0800 (PST)
+        bh=5jfG9Qw6wgd9sRjYfyHDytET8Ac/XcqwnteljgGuckk=;
+        b=QYu8T1KZNItC3Ow00Hp4fcFAx9qIKgKa93R0Bdf7diNfT1y2kfSr7LZF8bTFEA9rzJ
+         vQDUq+LeP5zkG0V1d+YUQFMnwqif4tsZg8GN4iLgL6CWODCtibYyc4Lcv/w6EyZB+IeJ
+         1T+dI+X9sQ8vcwwlHGnSKrwIbQWs4nraED1OKHNCRTZzRrwKzfXxozYIINl4XjahE4PJ
+         tPALFOyxes7JSa4jsvCLDh8u9S20GEQuH2nhQZsgvcnJH+q1JWFYrGWws/J/sUxDtgWn
+         VZ5L7kAZNJjgsNbMrYJrKCVPLldMEDmX4pGt4HultIKI/VWBdqYQPDbrZM+E52wK1qtq
+         p5sw==
+X-Gm-Message-State: AOAM530gmFMeBNgWhlcwRZ9s7kMo0HSPkAh81OcsG7lC/JMw8kfwwWkS
+        DH7lH3JN3ZWjtouwppGoSY22fH9pnZ02BFk/juY=
+X-Google-Smtp-Source: ABdhPJyonKn3G8UIi6BT3phblLDnrVQm6qLkdWviQusM/bKsEz//a+DZxT6MhXu5EzeyFmfNCV15y1QUuJs0ifkzE2Y=
+X-Received: by 2002:a05:620a:2e3:: with SMTP id a3mr7577qko.451.1638287645274;
+ Tue, 30 Nov 2021 07:54:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
- <yt9d35nf1d84.fsf@linux.ibm.com> <20211129123043.5cfd687a@gandalf.local.home>
- <CALOAHbCVJcPdYq2j_VvhHBE-xLBnizRRx2oBu-KNgOr5jMf6RQ@mail.gmail.com> <20211130092333.77408a81@gandalf.local.home>
-In-Reply-To: <20211130092333.77408a81@gandalf.local.home>
+References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-5-laoar.shao@gmail.com>
+ <20211129110140.733475f3@gandalf.local.home> <CALOAHbB-2ESG0QgESN_b=bXzESbq+UBP-dqttirKnt1c9TZHZA@mail.gmail.com>
+ <20211130092240.312f68a4@gandalf.local.home>
+In-Reply-To: <20211130092240.312f68a4@gandalf.local.home>
 From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Tue, 30 Nov 2021 23:46:54 +0800
-Message-ID: <CALOAHbDvxpjW9eD2_FeKMJzXdbEkWJykbdcjtk1Et_+=ybvgVw@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
- with TASK_COMM_LEN
+Date:   Tue, 30 Nov 2021 23:53:30 +0800
+Message-ID: <CALOAHbB6oTNpRUHvgMaH+kxJn7Fr7zE2bkvkniPFsPzH-SuHjA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] fs/binfmt_elf: replace open-coded string copy with get_task_comm
 To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sven Schnelle <svens@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
         "linux-perf-use." <linux-perf-users@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
         kernel test robot <oliver.sang@intel.com>,
         kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         David Hildenbrand <david@redhat.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
@@ -72,28 +70,43 @@ Cc:     Sven Schnelle <svens@linux.ibm.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Tom Zanussi <zanussi@kernel.org>
+        Petr Mladek <pmladek@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 10:23 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Nov 30, 2021 at 10:22 PM Steven Rostedt <rostedt@goodmis.org> wrote:
 >
-> On Tue, 30 Nov 2021 11:03:48 +0800
+> On Tue, 30 Nov 2021 11:01:27 +0800
 > Yafang Shao <laoar.shao@gmail.com> wrote:
 >
-> > Many thanks for the quick fix!
-> > It seems this fix should be ahead of patch #7.
-> > I will send v3 which contains your fix.
+> > There are three options,
+> > - option 1
+> >   comment on all the hard-coded 16 to explain why it is hard-coded
+> > - option 2
+> >   replace the hard-coded 16 that can be replaced and comment on the
+> > others which can't be replaced.
+> > - option 3
+> >    replace the hard-coded 16 that can be replaced and specifically
+> > define TASK_COMM_LEN_16 in other files which can't include
+> > linux/sched.h.
+> >
+> > Which one do you prefer ?
+> >
 >
-> Don't bother. I'm actually going to send this to Linus as a bug fix.
+> Option 3. Since TASK_COMM_LEN_16 is, by it's name, already hard coded to
+> 16, it doesn't really matter if you define it in more than one location.
+>
+> Or we could define it in another header that include/sched.h can include.
+>
+> The idea of having TASK_COMM_LEN_16 is to easily grep for it, and also know
+> exactly what it is used for when people see it being used.
 >
 
-Great!  Thanks for the work.
+I will send a separate patch (or patchset) to replace all the old
+hard-coded 16 with TASK_COMM_LEN_16 based on the -mm tree.
 
--- 
+--
 Thanks
 Yafang
