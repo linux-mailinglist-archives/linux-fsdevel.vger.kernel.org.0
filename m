@@ -2,225 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2BE7463B4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 17:10:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7570D463B6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 17:14:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243716AbhK3QON (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 11:14:13 -0500
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25301 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244293AbhK3QN2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 11:13:28 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1638288556; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=SBY1/pLmOX7pw9gnrP64yI13o3y3rwmACsQT6miGYjao3G43Pib5aSAtBCpUoYfQWpEoVmb39qccy3O7M6YGX4tIcBWFpfpf9M9orCLS08KxaI6DPSHW6KCoNiJgmFQbfYlS1+1anaGIkwSMHvaBYdR5FG1c65mM88r6r3U61io=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1638288556; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=le2jP4zZr2Oj/4+xBXN47Nj05pQ6pMRytJX82KSxAyM=; 
-        b=aR802JcHFkC1xkEUtgF7cxnZFIZLOQLItak+uJEY9BOalqEpCY70pCz6P2rh/SO8ItnFeosxsOw/do1aQfaphIWHc3k9EdUec/Mg8RWPjKSsEUxvE7hEUgDI3RIRn4gIrnV86QrdDgmHys+k80Yj6rgoo+px3TWtnH0cK1/m5gs=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1638288556;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=le2jP4zZr2Oj/4+xBXN47Nj05pQ6pMRytJX82KSxAyM=;
-        b=EA/2d5A0lj8e2QXiC2ibVVjLV0cCtPbMbbT+HwtBbmlv+Z6cPt/gb2qFi7q/2vAT
-        xLfowkislQHJVFiE3L5fJnZN4kvVAhM0163TjHZywYfSmr3e+FNjq3/dRMy64XAsLpw
-        8sOP89rVeSEgqCe5dDPd0plG/OdW3rO6RQA0ofnY=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1638288554514727.797018234731; Wed, 1 Dec 2021 00:09:14 +0800 (CST)
-Date:   Wed, 01 Dec 2021 00:09:14 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Jan Kara" <jack@suse.cz>
-Cc:     "Miklos Szeredi" <miklos@szeredi.hu>,
-        "Amir Goldstein" <amir73il@gmail.com>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "overlayfs" <linux-unionfs@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "ronyjin" <ronyjin@tencent.com>,
-        "charliecgxu" <charliecgxu@tencent.com>
-Message-ID: <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
-In-Reply-To: <20211130112206.GE7174@quack2.suse.cz>
-References: <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
- <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com>
- <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net>
- <CAJfpegttQreuuD_jLgJmrYpsLKBBe2LmB5NSj6F5dHoTzqPArw@mail.gmail.com>
- <17d2c858d76.d8a27d876510.8802992623030721788@mykernel.net>
- <17d31bf3d62.1119ad4be10313.6832593367889908304@mykernel.net>
- <20211118112315.GD13047@quack2.suse.cz>
- <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
- <20211118164349.GB8267@quack2.suse.cz>
- <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net> <20211130112206.GE7174@quack2.suse.cz>
-Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode
- operation
+        id S233768AbhK3QRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 11:17:32 -0500
+Received: from mail-co1nam11on2119.outbound.protection.outlook.com ([40.107.220.119]:63329
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231614AbhK3QRc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Nov 2021 11:17:32 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZUY09XZsC02Ps0JBCT5+T+Wok+XFXJ4c6HbsPOV2SrbbILJNZY/RT+BUZqzH6V2kcyNJTBYdyL+zByyVQztwAeor9KsQc3GHrhHks/JM+Z3OMSw9BvKoMXldxOv8GPeLKMEYadlraV68LB02U2f1+O33pjZ6llip/oOSYnEToMBZPD1GbtY9DVOk3HY8q/UH9kQa4JFYUYEAffGKek9LK3vS+y48dh5POxLCjmNKsCbshenj9vnQIz1lk+mfOzqcGVdnDBVb+eNQnF9nVvZK9jFEChQBpPELkalRwlBMs1YxGGkf2W0vuIBqUOTVQKw8Etwfsr2HYNuKx4+r9uPg3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ON0zV/LsEUtHLmoIc1gBb5FRr3ZfVAYiNuohDPXBzjQ=;
+ b=lhQcUjoNCY3beLLFrnqTzGExfCMTY3Jka3OkNhsNB8wNLAFKUXno1uXrZSLsFQ5ayF3vOAAO70/CjMJzbaMCUZ1ALniC4Qnycg5yyeFG8kK9USl1XgxWLNvSgZzsQktpw+SPBzYI2zmciwwZ9u8KsdCjMhu6wCOgqksAUsSTybe15eSx4/jurXRkLAAjj1/6H9ZsPlzaZmE/tn5ez2+/ZJlGv2+u2HKdA1sPjz5O7f2ybP2zvcnxB4OxVczDn4jYgt6Kc3j/DBlHqTFMw0BtfM0nZEqTUgepSo2qGlZruNhSZzzKMCWwGd849IsZj3GfmhO2zEOoGMWMXwXnDRpbFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ON0zV/LsEUtHLmoIc1gBb5FRr3ZfVAYiNuohDPXBzjQ=;
+ b=ZPs/wsqS8cewfQMprMJPgqKTKK/6NzddPTIi5/b4qu9CplgsldEihfqyjojkNcK703b2eNjRtAh5qXaNBboI8m9FgfQAg2loA/XEMYZDtKtylGhVmeY8TpkubufBy+zZkrJiP+EPohKUFNBjmOdhKoaMwn1o8e5kkzVpqr0mmzs=
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com (2603:10b6:610:111::7)
+ by CH2PR13MB3815.namprd13.prod.outlook.com (2603:10b6:610:91::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.6; Tue, 30 Nov
+ 2021 16:14:11 +0000
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::288c:e4f1:334a:a08]) by CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::288c:e4f1:334a:a08%3]) with mapi id 15.20.4755.012; Tue, 30 Nov 2021
+ 16:14:11 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "bfields@fieldses.org" <bfields@fieldses.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>
+CC:     "dai.ngo@oracle.com" <dai.ngo@oracle.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
+ Courteous Server
+Thread-Topic: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
+ Courteous Server
+Thread-Index: AQHXtMzkc4v6dd1KNEyHoBK8G4XROqu+oymAgAANi4CASGLiAIAA/bOAgAA+8oCAAD8yAIAALy8AgAZzIQCAC+10AIAAFrcQgAAIAACAAAk2AIAAGm6AgAAyloCAABlkgIAAKLsAgAAK4QCAAAK5gIAAKI4AgACKI4CAAAf3gIAAAn+A
+Date:   Tue, 30 Nov 2021 16:14:10 +0000
+Message-ID: <978a322ad63bfdd8752b6ff9fbfce129c4c99193.camel@hammerspace.com>
+References: <1285F7E2-5D5F-4971-9195-BA664CAFF65F@oracle.com>
+         <e1093e42-2871-8810-de76-58d1ea357898@oracle.com>
+         <C9C6AEC1-641C-4614-B149-5275EFF81C3D@oracle.com>
+         <22000fe0-9b17-3d88-1730-c8704417cb92@oracle.com>
+         <B42B0F9C-57E2-4F58-8DBD-277636B92607@oracle.com>
+         <c8eef4ab9cb7acdf506d35b7910266daa9ded18c.camel@hammerspace.com>
+         <0B58F7BC-A946-4FE6-8AC2-4C694A2120A3@oracle.com>
+         <3afa1db55ccdf52eff7afb7b684eb961f878b68a.camel@hammerspace.com>
+         <7548c291-cc0a-ed7a-ca37-63afe1d88c27@oracle.com>
+         <FC3CB37C-8E5C-4DB0-B31F-0AA2B6D8B57F@oracle.com>
+         <20211130160513.GC8837@fieldses.org>
+In-Reply-To: <20211130160513.GC8837@fieldses.org>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bbada163-1b04-4af4-ecb7-08d9b41c71c1
+x-ms-traffictypediagnostic: CH2PR13MB3815:
+x-microsoft-antispam-prvs: <CH2PR13MB3815855AFF4B7AAD7E567EC2B8679@CH2PR13MB3815.namprd13.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: PTYGnp/61PvPWvw8vZY8DnMl4/GXTxDeJj8vzYch4YwGy6s9FkBThs7zdqfCrVhfMxHzJI/qgqpQC1ub4XtOcsXxEgJCUnVnxRzM3GvZzj/pzf1vCPjL5yWzKrBm/n9nJw0A1nLKkb/FZWpBEO/uenX+GYKpbFfYUpAZx9V7XGqmZogstOwyx/OwGJ33vTfe3uDYbBkHBd3KhO0J0ufeHNQ3yTyRxfs5HpurUJWYCmIrJyvqFRJa3p2nWKFj+d6hgl67a1RZzBT+jITdt/0aCFpl/EzAtQT2xkqNpNWrZrnXeKcco3UFBVxO5u2V1vKwK7hKxTN5J0cOGu847eeSc2XgzpglPG7jVjMjocWN/LLRDaUyVxNjHkDzQdtPK1UQClF/hLg08uN4soWxZQkln/qa7t1JEHCFVqcXMQDPyKg0KS+OdjdqsVMOpE4ZKA6M7s6CEMwKv2rvX5cFxieIKufY5BduWxgTwDoZtc6IBoJLQ2RQPhzp4laoTbu3iuOrLIYsnC0vGuDjS1fIUk/H9a1sV2p++plUJdU3bT0BF3QRX+iyIH3Xuyl1tUQ4lyz1FES5vIh36YHkkk98fTyk392nYWKCuNUt4Cbj/55i+Gs9eQtR6diT6qsTHjA3myBTM3LcSkrZZYbj/ANV72SF91m+46Haqhq6VDjp0lzWpS2FuaAZzzbN7xDR4NN2o8TR/yLKE/3hvYhgP6XWlXbPdPt12Uw7c5XckhfaTmj203OZwMjAq4ZE91M1yuxgRzPG
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR13MB5084.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(376002)(346002)(366004)(396003)(39840400004)(26005)(5660300002)(6506007)(186003)(8676002)(4326008)(508600001)(4744005)(66946007)(2616005)(86362001)(66446008)(64756008)(66556008)(66476007)(8936002)(76116006)(38100700002)(6486002)(6512007)(2906002)(83380400001)(4001150100001)(122000001)(316002)(54906003)(110136005)(38070700005)(71200400001)(36756003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RmhKOVFWUUpYWFd6RVV3aUNTWG5udEpmY1FkY3huOGtzVmc4Ky84UThrSFRG?=
+ =?utf-8?B?cWFtWHdVdGhPOGNueE1KdVdJNUJCQzhTblJQZHhBUEdKTEFzRUkyTTdvMFhv?=
+ =?utf-8?B?NmRMK1ZOamNjeHhSeTl2eU1aU0NVVGNtQjhKOVZpVTE3ZDRwcmVmc3N0TzhI?=
+ =?utf-8?B?Wm84WTVTVWFUSmVHNFE3NHBBWDBIZzFrSC9jOFA0RWlMUVpXQURlQkFWdzhY?=
+ =?utf-8?B?dU0xUHlOM2J5YjNKVE1DdnJaZ1pYRE9aU3F5L1JUZWE1UG94RFkxMlV3RmFz?=
+ =?utf-8?B?RlhvQmIraWtRUXBwd2UrVnFJNU0xeGZKVUhqWnVqSTVrMUorb2lJdHJ5RW5z?=
+ =?utf-8?B?Ung3QUZlSksyVHZGR3FnamtMZC9sWTZlOXhVTk16eXFSK2pRL2w2UkRwR1M2?=
+ =?utf-8?B?bHBsSHNGVFJENzZpbXZkSnRKMUNJSHlrQ3R0UUh0ZGEzN1F3dEhZS210VCtr?=
+ =?utf-8?B?VCsvWUhMSjY4VnV5QWV5YUZpVEpiWXlUWFRuazBJb3BNYjBuak0wY2VYcytK?=
+ =?utf-8?B?blAyMnIzN09FU3pSdm04UkR3ZnU3RHYvTkpxbHd6Q3ZOZjVTV04vSkRJZGx2?=
+ =?utf-8?B?ZFlNd3h0QnRFalM2bjBoZ0twUU9QZjNCNm45VWRsMTRMMTZUZWE5eFNLbXJK?=
+ =?utf-8?B?Njd5NVdRK01YZ09qM1JNbnZJalk4S2wrSC9mTnZNYnd2UFlZWHVYSDhCM3Jm?=
+ =?utf-8?B?WFNRNStrVjVBVnVBOUwyQzcyZXR6dWI2NlNUcVBoQ2dDR2pWaHBleDBIcUJ2?=
+ =?utf-8?B?TTdmeUkvN2ZZcmlqdkQ1K2NpRkdVSG1BaUxITjNIY0l2MUY1K1F1a25saW5P?=
+ =?utf-8?B?aDZsK2I3U2hyYm01TjBvQnhkYWFCYzJ0VkRtN3YwRzM4Zk5iUUJXN1hNa2F6?=
+ =?utf-8?B?NU1XOXdyQytMek9wK3luTTFFbk8vcFNtQWs2UEJiekFtYkdmSmZUSVJJTXR3?=
+ =?utf-8?B?b21yWi9oeXVKbUY0dFJBWG85REs0UjgzdmhlckRwTk1kc0RyQ2dIcy9KUGE3?=
+ =?utf-8?B?cHYwa0o1R0J3K2hwQmZ3MkZIMngvdHZvZHBvWEFJOFpPSzlTelU0d2pXc2x1?=
+ =?utf-8?B?OUpDUGlLYTVrQXBpamsyTzdJK0NMZU45Y0xvUVdtYS9MZmhGMVN2bVRJcVZx?=
+ =?utf-8?B?dm83RWYvb3Jycm5jeTk2S1VMRnJPMkd0K0RCN2hnVUo3UlN3eU1JbzFCZUlj?=
+ =?utf-8?B?T0YyL3FPRjY4a1ZyRGpMN3QxdWg1UUtnTitSSWtwbEFCUUI5MGc1N2d0Mkc3?=
+ =?utf-8?B?bWRZRU9xNXNVN25aLzI1RDRZVmI2VE9OcTJqYmZPcTNPUFo5a041QWZBQjE0?=
+ =?utf-8?B?bWx3ZERMb3VRWGRPWEVYRlZUTFNLWUdDNGxtblBvYlRuVklyS0JQSitUMnJH?=
+ =?utf-8?B?ZkU4UXFSc0JnM0ZXZXY0cHlxbm9FOWJCR3YyY2pEYVFqWUx4eXZqa2J5WmlH?=
+ =?utf-8?B?M1lvSS9mNzZjbFNTT1VPUy9xbnR3QkhxSUFGb0ttaUxjTG1LUGRic1dHZE9U?=
+ =?utf-8?B?UzlKeVFsZ2ZtVXZuVTBPKzlhWnFVenZsZUF1dHgwVkV6WXJwTWRHK3Z2b3dI?=
+ =?utf-8?B?UW1tZHVPd04veThwOTNnZ1l4aEdvaDBGYzlCM3ZEck5uQzlUdnUybExyZnBE?=
+ =?utf-8?B?ZUdjWTZMYzNxcWoyQUp5RkQxVlRUSFNTU0d6WXRybFFwV08xVkN3UU56b3Yw?=
+ =?utf-8?B?ZHNOSEo0MnhQUW42VUNIYzN5dmZXVzVrdmpwVFk5UEN6cGUrVktnZERvVXJi?=
+ =?utf-8?B?eWtLY3lLamxYL1lPeHNNUWY3cmpJZVp2eFVjNXBjdXJYS3R0c0F5K2YrZDh4?=
+ =?utf-8?B?UmpVeVhObnNiWWZZS3NCS0VKQ29EaFNBNkVvd0Ztc2pzYTJuUnZhblR6R1Jm?=
+ =?utf-8?B?M1Jzait2SHp2cmNub3d5bXZSanhlRUZKY3VCZGVoTHpZbGtLSXBGMXE0WTFU?=
+ =?utf-8?B?eDNBTmpXM0lrbFV1RjJGSlFBTEtRM2FoYk14cU5KNEM5aTdkUm5tQTFVdXl2?=
+ =?utf-8?B?ZVRNbVlQcWo1MUkxQWJ6MTFHb2tsb09la0tqQm1wdHVvdHpiMXNlSVZjaVhR?=
+ =?utf-8?B?TFJ1NjVsK2t2VkZNVkVHQzZuME5mM3c1RXdxeVYrZDJYZ0hUbVVoTE5kZjI4?=
+ =?utf-8?B?cXhUVUlBWlJqMlJDekFmZkN4dUtMdFI4MFV1N1lVZWV1QTJLN01XMVc5a2xQ?=
+ =?utf-8?Q?GIhLaOa+bmuN63tWWauctYs=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AEB1CA25D2ECFF4C87A418BD9FAD053D@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR13MB5084.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbada163-1b04-4af4-ecb7-08d9b41c71c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2021 16:14:10.9477
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3k/x/YKDy3rA43RCdalkQlRc/z7OG4B2AAFvXES+ErM5q5Grer5bYJwihe1TauvCWbD7WJO1SmEVkoBvlqmiZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR13MB3815
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=8C, 2021-11-30 19:22:06 Jan Kara <=
-jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > On Fri 19-11-21 14:12:46, Chengguang Xu wrote:
- > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-11-19 00:43:49 Jan K=
-ara <jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > >  > On Thu 18-11-21 20:02:09, Chengguang Xu wrote:
- > >  > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2021-11-18 19:23:15 =
-Jan Kara <jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > >  > >  > On Thu 18-11-21 14:32:36, Chengguang Xu wrote:
- > >  > >  > >=20
- > >  > >  > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-11-17 14:1=
-1:29 Chengguang Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
- > >  > >  > >  >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=8C, 2021-11-16 2=
-0:35:55 Miklos Szeredi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
- > >  > >  > >  >  > On Tue, 16 Nov 2021 at 03:20, Chengguang Xu <cgxu519@m=
-ykernel.net> wrote:
- > >  > >  > >  >  > >
- > >  > >  > >  >  > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2021-10=
--07 21:34:19 Miklos Szeredi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
- > >  > >  > >  >  > >  > On Thu, 7 Oct 2021 at 15:10, Chengguang Xu <cgxu5=
-19@mykernel.net> wrote:
- > >  > >  > >  >  > >  > >  > However that wasn't what I was asking about.=
-  AFAICS ->write_inode()
- > >  > >  > >  >  > >  > >  > won't start write back for dirty pages.   Ma=
-ybe I'm missing something,
- > >  > >  > >  >  > >  > >  > but there it looks as if nothing will actual=
-ly trigger writeback for
- > >  > >  > >  >  > >  > >  > dirty pages in upper inode.
- > >  > >  > >  >  > >  > >  >
- > >  > >  > >  >  > >  > >
- > >  > >  > >  >  > >  > > Actually, page writeback on upper inode will be=
- triggered by overlayfs ->writepages and
- > >  > >  > >  >  > >  > > overlayfs' ->writepages will be called by vfs w=
-riteback function (i.e writeback_sb_inodes).
- > >  > >  > >  >  > >  >
- > >  > >  > >  >  > >  > Right.
- > >  > >  > >  >  > >  >
- > >  > >  > >  >  > >  > But wouldn't it be simpler to do this from ->writ=
-e_inode()?
- > >  > >  > >  >  > >  >
- > >  > >  > >  >  > >  > I.e. call write_inode_now() as suggested by Jan.
- > >  > >  > >  >  > >  >
- > >  > >  > >  >  > >  > Also could just call mark_inode_dirty() on the ov=
-erlay inode
- > >  > >  > >  >  > >  > regardless of the dirty flags on the upper inode =
-since it shouldn't
- > >  > >  > >  >  > >  > matter and results in simpler logic.
- > >  > >  > >  >  > >  >
- > >  > >  > >  >  > >
- > >  > >  > >  >  > > Hi Miklos=EF=BC=8C
- > >  > >  > >  >  > >
- > >  > >  > >  >  > > Sorry for delayed response for this, I've been busy =
-with another project.
- > >  > >  > >  >  > >
- > >  > >  > >  >  > > I agree with your suggesion above and further more h=
-ow about just mark overlay inode dirty
- > >  > >  > >  >  > > when it has upper inode? This approach will make mar=
-king dirtiness simple enough.
- > >  > >  > >  >  >=20
- > >  > >  > >  >  > Are you suggesting that all non-lower overlay inodes s=
-hould always be dirty?
- > >  > >  > >  >  >=20
- > >  > >  > >  >  > The logic would be simple, no doubt, but there's the c=
-ost to walking
- > >  > >  > >  >  > those overlay inodes which don't have a dirty upper in=
-ode, right? =20
- > >  > >  > >  >=20
- > >  > >  > >  > That's true.
- > >  > >  > >  >=20
- > >  > >  > >  >  > Can you quantify this cost with a benchmark?  Can be t=
-otally synthetic,
- > >  > >  > >  >  > e.g. lookup a million upper files without modifying th=
-em, then call
- > >  > >  > >  >  > syncfs.
- > >  > >  > >  >  >=20
- > >  > >  > >  >=20
- > >  > >  > >  > No problem, I'll do some tests for the performance.
- > >  > >  > >  >=20
- > >  > >  > >=20
- > >  > >  > > Hi Miklos,
- > >  > >  > >=20
- > >  > >  > > I did some rough tests and the results like below.  In pract=
-ice,  I don't
- > >  > >  > > think that 1.3s extra time of syncfs will cause significant =
-problem.
- > >  > >  > > What do you think?
- > >  > >  >=20
- > >  > >  > Well, burning 1.3s worth of CPU time for doing nothing seems l=
-ike quite a
- > >  > >  > bit to me. I understand this is with 1000000 inodes but althou=
-gh that is
- > >  > >  > quite a few it is not unheard of. If there would be several co=
-ntainers
- > >  > >  > calling sync_fs(2) on the machine they could easily hog the ma=
-chine... That
- > >  > >  > is why I was originally against keeping overlay inodes always =
-dirty and
- > >  > >  > wanted their dirtiness to at least roughly track the real need=
- to do
- > >  > >  > writeback.
- > >  > >  >=20
- > >  > >=20
- > >  > > Hi Jan,
- > >  > >=20
- > >  > > Actually, the time on user and sys are almost same with directly =
-excute syncfs on underlying fs.
- > >  > > IMO, it only extends syncfs(2) waiting time for perticular contai=
-ner but not burning cpu.
- > >  > > What am I missing?
- > >  >=20
- > >  > Ah, right, I've missed that only realtime changed, not systime. I'm=
- sorry
- > >  > for confusion. But why did the realtime increase so much? Are we wa=
-iting
- > >  > for some IO?
- > >  >=20
- > >=20
- > > There are many places to call cond_resched() in writeback process,
- > > so sycnfs process was scheduled several times.
- >=20
- > I was thinking about this a bit more and I don't think I buy this
- > explanation. What I rather think is happening is that real work for sync=
-fs
- > (writeback_inodes_sb() and sync_inodes_sb() calls) gets offloaded to a f=
-lush
- > worker. E.g. writeback_inodes_sb() ends up calling
- > __writeback_inodes_sb_nr() which does:
- >=20
- > bdi_split_work_to_wbs()
- > wb_wait_for_completion()
- >=20
- > So you don't see the work done in the times accounted to your test
- > program. But in practice the flush worker is indeed burning 1.3s worth o=
-f
- > CPU to scan the 1 million inode list and do nothing.
- >=20
-
-That makes sense. However, in real container use case,  the upper dir is al=
-ways empty,
-so I don't think there is meaningful difference compare to accurately marki=
-ng overlay
-inode dirty. =20
-
-I'm not very familiar with other use cases of overlayfs except container, s=
-hould we consider
-other use cases? Maybe we can also ignore the cpu burden because those use =
-cases don't
-have density deployment like container.
-
-
-
-Thanks,
-Chengguang
-
-
-
+T24gVHVlLCAyMDIxLTExLTMwIGF0IDExOjA1IC0wNTAwLCBCcnVjZSBGaWVsZHMgd3JvdGU6DQo+
+IE9uIFR1ZSwgTm92IDMwLCAyMDIxIGF0IDAzOjM2OjQzUE0gKzAwMDAsIENodWNrIExldmVyIElJ
+SSB3cm90ZToNCj4gPiBJIGFtIGEgbGl0dGxlIGNvbmNlcm5lZCB0aGF0IHdlIGFyZSB0cnlpbmcg
+dG8gb3B0aW1pemUgYSBjYXNlDQo+ID4gdGhhdCB3b24ndCBoYXBwZW4gZHVyaW5nIHByYWN0aWNl
+LiBweW5mcyBkb2VzIG5vdCByZWZsZWN0IGFueQ0KPiA+IGtpbmQgb2YgcmVhbGlzdGljIG9yIHJl
+YXNvbmFibGUgY2xpZW50IGJlaGF2aW9yIC0tIGl0J3MgZGVzaWduZWQNCj4gPiB0byB0ZXN0IHZl
+cnkgc3BlY2lmaWMgc2VydmVyIG9wZXJhdGlvbnMuDQo+IA0KPiBJIHdvbmRlciBob3cgaGFyZCB0
+aGlzIHByb2JsZW0gd291bGQgYmUgdG8gaGl0IGluIG5vcm1hbCB1c2UuwqAgSQ0KPiBtZWFuLCBh
+DQo+IGZldyBodW5kcmVkIG9yIGEgdGhvdXNhbmQgY2xpZW50cyBkb2Vzbid0IHNvdW5kIHRoYXQg
+Y3JhenkuwqAgVGhpcw0KPiBjYXNlDQo+IGRlcGVuZHMgb24gYW4gb3BlbiBkZW55LCBidXQgeW91
+IGNvdWxkIGhpdCB0aGUgc2FtZSBwcm9ibGVtIHdpdGggZmlsZQ0KPiBsb2Nrcy7CoCBXb3VsZCBp
+dCBiZSB0aGF0IHdlaXJkIHRvIGhhdmUgYSBjbGllbnQgdHJ5aW5nIHRvIGdldCBhIHdyaXRlDQo+
+IGxvY2sgb24gYSBmaWxlIHJlYWQtbG9ja2VkIGJ5IGEgYnVuY2ggb2Ygb3RoZXIgY2xpZW50cz8N
+Cj4gDQoNClRoYXQncyBhIHNjZW5hcmlvIHRoYXQgaXMgc3ViamVjdCB0byBzdGFydmF0aW9uIHBy
+b2JsZW1zIGFueXdheS4NClBhcnRpY3VsYXJseSBzbyBvbiBORlN2NC4wLCB3aGljaCBsYWNrcyBD
+Ql9OT1RJRllfTE9DSy4NCg0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQg
+bWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25kLm15a2xlYnVzdEBoYW1tZXJzcGFjZS5jb20N
+Cg0KDQo=
