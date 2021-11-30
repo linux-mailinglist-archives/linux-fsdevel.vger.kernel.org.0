@@ -2,457 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92EAE46321F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCB9146323B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238137AbhK3LU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 06:20:28 -0500
-Received: from shark4.inbox.lv ([194.152.32.84]:52850 "EHLO shark4.inbox.lv"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235674AbhK3LU1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 06:20:27 -0500
-Received: from shark4.inbox.lv (localhost [127.0.0.1])
-        by shark4-out.inbox.lv (Postfix) with ESMTP id DCD63C01AF;
-        Tue, 30 Nov 2021 13:17:03 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.lv; s=30062014;
-        t=1638271023; bh=ox0oF6RresLUTP2rT28UzFMENVQVHDTEF9p61VuoVho=;
-        h=Date:From:To:Cc:Subject;
-        b=rdOl6dbKZfQqhC5m8RL+3o57aURnBfQENq0Q3YwsW0iEJx9zfmoslvs9QA0hG4RU8
-         Uh6chFIIRr8rvrWVQPT3GxXSshg3hiOlxMWbV2Pj2RfpI3yu1+e71eNTNHbR99538n
-         df3s9hHNJtGYq1Qlx9XkKxWHOIEwW/MMDiNgX934=
-Received: from localhost (localhost [127.0.0.1])
-        by shark4-in.inbox.lv (Postfix) with ESMTP id BE5A5C01AA;
-        Tue, 30 Nov 2021 13:17:03 +0200 (EET)
-Received: from shark4.inbox.lv ([127.0.0.1])
-        by localhost (shark4.inbox.lv [127.0.0.1]) (spamfilter, port 35)
-        with ESMTP id Qmfkse0NcGJL; Tue, 30 Nov 2021 13:17:02 +0200 (EET)
-Received: from mail.inbox.lv (pop1 [127.0.0.1])
-        by shark4-in.inbox.lv (Postfix) with ESMTP id BB828C019B;
-        Tue, 30 Nov 2021 13:17:02 +0200 (EET)
-Date:   Tue, 30 Nov 2021 20:16:52 +0900
-From:   Alexey Avramov <hakavlad@inbox.lv>
-To:     linux-mm@kvack.org
-Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        akpm@linux-foundation.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com,
-        oleksandr@natalenko.name, kernel@xanmod.org, aros@gmx.com,
-        iam@valdikss.org.ru, hakavlad@inbox.lv, hakavlad@gmail.com
-Subject: [PATCH] mm/vmscan: add sysctl knobs for protecting the working set
-Message-ID: <20211130201652.2218636d@mail.inbox.lv>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S238799AbhK3LZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 06:25:29 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:59606 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236283AbhK3LZ2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Nov 2021 06:25:28 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 9EB7F1FD54;
+        Tue, 30 Nov 2021 11:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1638271328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eXbGNKNuwXGO6c7EKOduDaSAJNoK2kWEB4dyQyW5+Mc=;
+        b=tFwXyBCGyFOkqZQ8+4+b02/DKke9S3CEVx3EVEPisfBa6xvIuefRRLtycWqxI22Ja5VQov
+        6PxeAPqqnigAJ7EPND2I4uHc8o4GkvL8Vw7hLRPqee+XhCq3LjZclfq3F1rUVlyCVqiEda
+        VEUskr6HC+ohUevzOb2WXZ68ihrKWYE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1638271328;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eXbGNKNuwXGO6c7EKOduDaSAJNoK2kWEB4dyQyW5+Mc=;
+        b=8bphTj8o8uRtczjzUyUW7q+zUBy+sljEhm5ioFZnegWR5Upafra8EjVSqNwMk/Ej6tZW1d
+        ei4eTWkI3mJaRKAQ==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id DBBE2A3B85;
+        Tue, 30 Nov 2021 11:22:07 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5534F1F2CAE; Tue, 30 Nov 2021 12:22:06 +0100 (CET)
+Date:   Tue, 30 Nov 2021 12:22:06 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode
+ operation
+Message-ID: <20211130112206.GE7174@quack2.suse.cz>
+References: <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
+ <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com>
+ <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net>
+ <CAJfpegttQreuuD_jLgJmrYpsLKBBe2LmB5NSj6F5dHoTzqPArw@mail.gmail.com>
+ <17d2c858d76.d8a27d876510.8802992623030721788@mykernel.net>
+ <17d31bf3d62.1119ad4be10313.6832593367889908304@mykernel.net>
+ <20211118112315.GD13047@quack2.suse.cz>
+ <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
+ <20211118164349.GB8267@quack2.suse.cz>
+ <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: OK
-X-ESPOL: G4mERXADmHlDpsG9Ippu5OH4pKK+V1wivi79xrsz7G4qyL6B7J5pAxyYeeHze3G0c2bD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The kernel does not provide a way to protect the working set under memory
-pressure. A certain amount of anonymous and clean file pages is required by
-the userspace for normal operation. First of all, the userspace needs a
-cache of shared libraries and executable binaries. If the amount of the
-clean file pages falls below a certain level, then thrashing and even
-livelock can take place.
+On Fri 19-11-21 14:12:46, Chengguang Xu wrote:
+>  ---- 在 星期五, 2021-11-19 00:43:49 Jan Kara <jack@suse.cz> 撰写 ----
+>  > On Thu 18-11-21 20:02:09, Chengguang Xu wrote:
+>  > >  ---- 在 星期四, 2021-11-18 19:23:15 Jan Kara <jack@suse.cz> 撰写 ----
+>  > >  > On Thu 18-11-21 14:32:36, Chengguang Xu wrote:
+>  > >  > > 
+>  > >  > >  ---- 在 星期三, 2021-11-17 14:11:29 Chengguang Xu <cgxu519@mykernel.net> 撰写 ----
+>  > >  > >  >  ---- 在 星期二, 2021-11-16 20:35:55 Miklos Szeredi <miklos@szeredi.hu> 撰写 ----
+>  > >  > >  >  > On Tue, 16 Nov 2021 at 03:20, Chengguang Xu <cgxu519@mykernel.net> wrote:
+>  > >  > >  >  > >
+>  > >  > >  >  > >  ---- 在 星期四, 2021-10-07 21:34:19 Miklos Szeredi <miklos@szeredi.hu> 撰写 ----
+>  > >  > >  >  > >  > On Thu, 7 Oct 2021 at 15:10, Chengguang Xu <cgxu519@mykernel.net> wrote:
+>  > >  > >  >  > >  > >  > However that wasn't what I was asking about.  AFAICS ->write_inode()
+>  > >  > >  >  > >  > >  > won't start write back for dirty pages.   Maybe I'm missing something,
+>  > >  > >  >  > >  > >  > but there it looks as if nothing will actually trigger writeback for
+>  > >  > >  >  > >  > >  > dirty pages in upper inode.
+>  > >  > >  >  > >  > >  >
+>  > >  > >  >  > >  > >
+>  > >  > >  >  > >  > > Actually, page writeback on upper inode will be triggered by overlayfs ->writepages and
+>  > >  > >  >  > >  > > overlayfs' ->writepages will be called by vfs writeback function (i.e writeback_sb_inodes).
+>  > >  > >  >  > >  >
+>  > >  > >  >  > >  > Right.
+>  > >  > >  >  > >  >
+>  > >  > >  >  > >  > But wouldn't it be simpler to do this from ->write_inode()?
+>  > >  > >  >  > >  >
+>  > >  > >  >  > >  > I.e. call write_inode_now() as suggested by Jan.
+>  > >  > >  >  > >  >
+>  > >  > >  >  > >  > Also could just call mark_inode_dirty() on the overlay inode
+>  > >  > >  >  > >  > regardless of the dirty flags on the upper inode since it shouldn't
+>  > >  > >  >  > >  > matter and results in simpler logic.
+>  > >  > >  >  > >  >
+>  > >  > >  >  > >
+>  > >  > >  >  > > Hi Miklos，
+>  > >  > >  >  > >
+>  > >  > >  >  > > Sorry for delayed response for this, I've been busy with another project.
+>  > >  > >  >  > >
+>  > >  > >  >  > > I agree with your suggesion above and further more how about just mark overlay inode dirty
+>  > >  > >  >  > > when it has upper inode? This approach will make marking dirtiness simple enough.
+>  > >  > >  >  > 
+>  > >  > >  >  > Are you suggesting that all non-lower overlay inodes should always be dirty?
+>  > >  > >  >  > 
+>  > >  > >  >  > The logic would be simple, no doubt, but there's the cost to walking
+>  > >  > >  >  > those overlay inodes which don't have a dirty upper inode, right?  
+>  > >  > >  > 
+>  > >  > >  > That's true.
+>  > >  > >  > 
+>  > >  > >  >  > Can you quantify this cost with a benchmark?  Can be totally synthetic,
+>  > >  > >  >  > e.g. lookup a million upper files without modifying them, then call
+>  > >  > >  >  > syncfs.
+>  > >  > >  >  > 
+>  > >  > >  > 
+>  > >  > >  > No problem, I'll do some tests for the performance.
+>  > >  > >  > 
+>  > >  > > 
+>  > >  > > Hi Miklos,
+>  > >  > > 
+>  > >  > > I did some rough tests and the results like below.  In practice,  I don't
+>  > >  > > think that 1.3s extra time of syncfs will cause significant problem.
+>  > >  > > What do you think?
+>  > >  > 
+>  > >  > Well, burning 1.3s worth of CPU time for doing nothing seems like quite a
+>  > >  > bit to me. I understand this is with 1000000 inodes but although that is
+>  > >  > quite a few it is not unheard of. If there would be several containers
+>  > >  > calling sync_fs(2) on the machine they could easily hog the machine... That
+>  > >  > is why I was originally against keeping overlay inodes always dirty and
+>  > >  > wanted their dirtiness to at least roughly track the real need to do
+>  > >  > writeback.
+>  > >  > 
+>  > > 
+>  > > Hi Jan,
+>  > > 
+>  > > Actually, the time on user and sys are almost same with directly excute syncfs on underlying fs.
+>  > > IMO, it only extends syncfs(2) waiting time for perticular container but not burning cpu.
+>  > > What am I missing?
+>  > 
+>  > Ah, right, I've missed that only realtime changed, not systime. I'm sorry
+>  > for confusion. But why did the realtime increase so much? Are we waiting
+>  > for some IO?
+>  > 
+> 
+> There are many places to call cond_resched() in writeback process,
+> so sycnfs process was scheduled several times.
 
-The patch provides sysctl knobs for protecting the working set (anonymous
-and clean file pages) under memory pressure.
+I was thinking about this a bit more and I don't think I buy this
+explanation. What I rather think is happening is that real work for syncfs
+(writeback_inodes_sb() and sync_inodes_sb() calls) gets offloaded to a flush
+worker. E.g. writeback_inodes_sb() ends up calling
+__writeback_inodes_sb_nr() which does:
 
-The vm.anon_min_kbytes sysctl knob provides *hard* protection of anonymous
-pages. The anonymous pages on the current node won't be reclaimed under any
-conditions when their amount is below vm.anon_min_kbytes. This knob may be
-used to prevent excessive swap thrashing when anonymous memory is low (for
-example, when memory is going to be overfilled by compressed data of zram
-module). The default value is defined by CONFIG_ANON_MIN_KBYTES (suggested
-0 in Kconfig).
+bdi_split_work_to_wbs()
+wb_wait_for_completion()
 
-The vm.clean_low_kbytes sysctl knob provides *best-effort* protection of
-clean file pages. The file pages on the current node won't be reclaimed
-under memory pressure when the amount of clean file pages is below
-vm.clean_low_kbytes *unless* we threaten to OOM. Protection of clean file
-pages using this knob may be used when swapping is still possible to
-  - prevent disk I/O thrashing under memory pressure;
-  - improve performance in disk cache-bound tasks under memory pressure.
-The default value is defined by CONFIG_CLEAN_LOW_KBYTES (suggested 0 in
-Kconfig).
+So you don't see the work done in the times accounted to your test
+program. But in practice the flush worker is indeed burning 1.3s worth of
+CPU to scan the 1 million inode list and do nothing.
 
-The vm.clean_min_kbytes sysctl knob provides *hard* protection of clean
-file pages. The file pages on the current node won't be reclaimed under
-memory pressure when the amount of clean file pages is below
-vm.clean_min_kbytes. Hard protection of clean file pages using this knob
-may be used to
-  - prevent disk I/O thrashing under memory pressure even with no free swap
-    space;
-  - improve performance in disk cache-bound tasks under memory pressure;
-  - avoid high latency and prevent livelock in near-OOM conditions.
-The default value is defined by CONFIG_CLEAN_MIN_KBYTES (suggested 0 in
-Kconfig).
-
-Signed-off-by: Alexey Avramov <hakavlad@inbox.lv>
-Reported-by: Artem S. Tashkinov <aros@gmx.com>
----
- Repo:
- https://github.com/hakavlad/le9-patch
-
- Documentation/admin-guide/sysctl/vm.rst | 66 ++++++++++++++++++++++++
- include/linux/mm.h                      |  4 ++
- kernel/sysctl.c                         | 21 ++++++++
- mm/Kconfig                              | 63 +++++++++++++++++++++++
- mm/vmscan.c                             | 91 +++++++++++++++++++++++++++++++++
- 5 files changed, 245 insertions(+)
-
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index 5e7952021..2f606e23b 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -25,6 +25,9 @@ files can be found in mm/swap.c.
- Currently, these files are in /proc/sys/vm:
-
- - admin_reserve_kbytes
-+- anon_min_kbytes
-+- clean_low_kbytes
-+- clean_min_kbytes
- - compact_memory
- - compaction_proactiveness
- - compact_unevictable_allowed
-@@ -105,6 +108,61 @@ On x86_64 this is about 128MB.
- Changing this takes effect whenever an application requests memory.
-
-
-+anon_min_kbytes
-+===============
-+
-+This knob provides *hard* protection of anonymous pages. The anonymous pages
-+on the current node won't be reclaimed under any conditions when their amount
-+is below vm.anon_min_kbytes.
-+
-+This knob may be used to prevent excessive swap thrashing when anonymous
-+memory is low (for example, when memory is going to be overfilled by
-+compressed data of zram module).
-+
-+Setting this value too high (close to MemTotal) can result in inability to
-+swap and can lead to early OOM under memory pressure.
-+
-+The default value is defined by CONFIG_ANON_MIN_KBYTES.
-+
-+
-+clean_low_kbytes
-+================
-+
-+This knob provides *best-effort* protection of clean file pages. The file pages
-+on the current node won't be reclaimed under memory pressure when the amount of
-+clean file pages is below vm.clean_low_kbytes *unless* we threaten to OOM.
-+
-+Protection of clean file pages using this knob may be used when swapping is
-+still possible to
-+  - prevent disk I/O thrashing under memory pressure;
-+  - improve performance in disk cache-bound tasks under memory pressure.
-+
-+Setting it to a high value may result in a early eviction of anonymous pages
-+into the swap space by attempting to hold the protected amount of clean file
-+pages in memory.
-+
-+The default value is defined by CONFIG_CLEAN_LOW_KBYTES.
-+
-+
-+clean_min_kbytes
-+================
-+
-+This knob provides *hard* protection of clean file pages. The file pages on the
-+current node won't be reclaimed under memory pressure when the amount of clean
-+file pages is below vm.clean_min_kbytes.
-+
-+Hard protection of clean file pages using this knob may be used to
-+  - prevent disk I/O thrashing under memory pressure even with no free swap space;
-+  - improve performance in disk cache-bound tasks under memory pressure;
-+  - avoid high latency and prevent livelock in near-OOM conditions.
-+
-+Setting it to a high value may result in a early out-of-memory condition due to
-+the inability to reclaim the protected amount of clean file pages when other
-+types of pages cannot be reclaimed.
-+
-+The default value is defined by CONFIG_CLEAN_MIN_KBYTES.
-+
-+
- compact_memory
- ==============
-
-@@ -864,6 +922,14 @@ be 133 (x + 2x = 200, 2x = 133.33).
- At 0, the kernel will not initiate swap until the amount of free and
- file-backed pages is less than the high watermark in a zone.
-
-+This knob has no effect if the amount of clean file pages on the current
-+node is below vm.clean_low_kbytes or vm.clean_min_kbytes. In this case,
-+only anonymous pages can be reclaimed.
-+
-+If the number of anonymous pages on the current node is below
-+vm.anon_min_kbytes, then only file pages can be reclaimed with
-+any vm.swappiness value.
-+
-
- unprivileged_userfaultfd
- ========================
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index a7e4a9e7d..bee9807d5 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -200,6 +200,10 @@ static inline void __mm_zero_struct_page(struct page *page)
-
- extern int sysctl_max_map_count;
-
-+extern unsigned long sysctl_anon_min_kbytes;
-+extern unsigned long sysctl_clean_low_kbytes;
-+extern unsigned long sysctl_clean_min_kbytes;
-+
- extern unsigned long sysctl_user_reserve_kbytes;
- extern unsigned long sysctl_admin_reserve_kbytes;
-
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 083be6af2..65fc38756 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -3132,6 +3132,27 @@ static struct ctl_table vm_table[] = {
- 	},
- #endif
- 	{
-+		.procname	= "anon_min_kbytes",
-+		.data		= &sysctl_anon_min_kbytes,
-+		.maxlen		= sizeof(unsigned long),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{
-+		.procname	= "clean_low_kbytes",
-+		.data		= &sysctl_clean_low_kbytes,
-+		.maxlen		= sizeof(unsigned long),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{
-+		.procname	= "clean_min_kbytes",
-+		.data		= &sysctl_clean_min_kbytes,
-+		.maxlen		= sizeof(unsigned long),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{
- 		.procname	= "user_reserve_kbytes",
- 		.data		= &sysctl_user_reserve_kbytes,
- 		.maxlen		= sizeof(sysctl_user_reserve_kbytes),
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 28edafc82..dea0806d7 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -89,6 +89,69 @@ config SPARSEMEM_VMEMMAP
- 	  pfn_to_page and page_to_pfn operations.  This is the most
- 	  efficient option when sufficient kernel resources are available.
-
-+config ANON_MIN_KBYTES
-+	int "Default value for vm.anon_min_kbytes"
-+	depends on SYSCTL
-+	range 0 4294967295
-+	default 0
-+	help
-+	  This option sets the default value for vm.anon_min_kbytes sysctl knob.
-+
-+	  The vm.anon_min_kbytes sysctl knob provides *hard* protection of
-+	  anonymous pages. The anonymous pages on the current node won't be
-+	  reclaimed under any conditions when their amount is below
-+	  vm.anon_min_kbytes. This knob may be used to prevent excessive swap
-+	  thrashing when anonymous memory is low (for example, when memory is
-+	  going to be overfilled by compressed data of zram module).
-+
-+	  Setting this value too high (close to MemTotal) can result in
-+	  inability to swap and can lead to early OOM under memory pressure.
-+
-+config CLEAN_LOW_KBYTES
-+	int "Default value for vm.clean_low_kbytes"
-+	depends on SYSCTL
-+	range 0 4294967295
-+	default 0
-+	help
-+	  This option sets the default value for vm.clean_low_kbytes sysctl knob.
-+
-+	  The vm.clean_low_kbytes sysctl knob provides *best-effort*
-+	  protection of clean file pages. The file pages on the current node
-+	  won't be reclaimed under memory pressure when the amount of clean file
-+	  pages is below vm.clean_low_kbytes *unless* we threaten to OOM.
-+	  Protection of clean file pages using this knob may be used when
-+	  swapping is still possible to
-+	    - prevent disk I/O thrashing under memory pressure;
-+	    - improve performance in disk cache-bound tasks under memory
-+	      pressure.
-+
-+	  Setting it to a high value may result in a early eviction of anonymous
-+	  pages into the swap space by attempting to hold the protected amount
-+	  of clean file pages in memory.
-+
-+config CLEAN_MIN_KBYTES
-+	int "Default value for vm.clean_min_kbytes"
-+	depends on SYSCTL
-+	range 0 4294967295
-+	default 0
-+	help
-+	  This option sets the default value for vm.clean_min_kbytes sysctl knob.
-+
-+	  The vm.clean_min_kbytes sysctl knob provides *hard* protection of
-+	  clean file pages. The file pages on the current node won't be
-+	  reclaimed under memory pressure when the amount of clean file pages is
-+	  below vm.clean_min_kbytes. Hard protection of clean file pages using
-+	  this knob may be used to
-+	    - prevent disk I/O thrashing under memory pressure even with no free
-+	      swap space;
-+	    - improve performance in disk cache-bound tasks under memory
-+	      pressure;
-+	    - avoid high latency and prevent livelock in near-OOM conditions.
-+
-+	  Setting it to a high value may result in a early out-of-memory condition
-+	  due to the inability to reclaim the protected amount of clean file pages
-+	  when other types of pages cannot be reclaimed.
-+
- config HAVE_MEMBLOCK_PHYS_MAP
- 	bool
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index fb9584641..928f3371d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -122,6 +122,15 @@ struct scan_control {
- 	/* The file pages on the current node are dangerously low */
- 	unsigned int file_is_tiny:1;
-
-+	/* The anonymous pages on the current node are below vm.anon_min_kbytes */
-+	unsigned int anon_below_min:1;
-+
-+	/* The clean file pages on the current node are below vm.clean_low_kbytes */
-+	unsigned int clean_below_low:1;
-+
-+	/* The clean file pages on the current node are below vm.clean_min_kbytes */
-+	unsigned int clean_below_min:1;
-+
- 	/* Always discard instead of demoting to lower tier memory */
- 	unsigned int no_demotion:1;
-
-@@ -171,6 +180,10 @@ struct scan_control {
- #define prefetchw_prev_lru_page(_page, _base, _field) do { } while (0)
- #endif
-
-+unsigned long sysctl_anon_min_kbytes __read_mostly = CONFIG_ANON_MIN_KBYTES;
-+unsigned long sysctl_clean_low_kbytes __read_mostly = CONFIG_CLEAN_LOW_KBYTES;
-+unsigned long sysctl_clean_min_kbytes __read_mostly = CONFIG_CLEAN_MIN_KBYTES;
-+
- /*
-  * From 0 .. 200.  Higher means more swappy.
-  */
-@@ -2734,6 +2747,15 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
- 	}
-
- 	/*
-+	 * Force-scan anon if clean file pages is under vm.clean_low_kbytes
-+	 * or vm.clean_min_kbytes.
-+	 */
-+	if (sc->clean_below_low || sc->clean_below_min) {
-+		scan_balance = SCAN_ANON;
-+		goto out;
-+	}
-+
-+	/*
- 	 * If there is enough inactive page cache, we do not reclaim
- 	 * anything from the anonymous working right now.
- 	 */
-@@ -2877,6 +2899,25 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
- 			BUG();
- 		}
-
-+		/*
-+		 * Hard protection of the working set.
-+		 */
-+		if (file) {
-+			/*
-+			 * Don't reclaim file pages when the amount of
-+			 * clean file pages is below vm.clean_min_kbytes.
-+			 */
-+			if (sc->clean_below_min)
-+				scan = 0;
-+		} else {
-+			/*
-+			 * Don't reclaim anonymous pages when their
-+			 * amount is below vm.anon_min_kbytes.
-+			 */
-+			if (sc->anon_below_min)
-+				scan = 0;
-+		}
-+
- 		nr[lru] = scan;
- 	}
- }
-@@ -3082,6 +3123,54 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 	return inactive_lru_pages > pages_for_compaction;
- }
-
-+static void prepare_workingset_protection(pg_data_t *pgdat, struct scan_control *sc)
-+{
-+	/*
-+	 * Check the number of anonymous pages to protect them from
-+	 * reclaiming if their amount is below the specified.
-+	 */
-+	if (sysctl_anon_min_kbytes) {
-+		unsigned long reclaimable_anon;
-+
-+		reclaimable_anon =
-+			node_page_state(pgdat, NR_ACTIVE_ANON) +
-+			node_page_state(pgdat, NR_INACTIVE_ANON) +
-+			node_page_state(pgdat, NR_ISOLATED_ANON);
-+		reclaimable_anon <<= (PAGE_SHIFT - 10);
-+
-+		sc->anon_below_min = reclaimable_anon < sysctl_anon_min_kbytes;
-+	} else
-+		sc->anon_below_min = 0;
-+
-+	/*
-+	 * Check the number of clean file pages to protect them from
-+	 * reclaiming if their amount is below the specified.
-+	 */
-+	if (sysctl_clean_low_kbytes || sysctl_clean_min_kbytes) {
-+		unsigned long reclaimable_file, dirty, clean;
-+
-+		reclaimable_file =
-+			node_page_state(pgdat, NR_ACTIVE_FILE) +
-+			node_page_state(pgdat, NR_INACTIVE_FILE) +
-+			node_page_state(pgdat, NR_ISOLATED_FILE);
-+		dirty = node_page_state(pgdat, NR_FILE_DIRTY);
-+		/*
-+		 * node_page_state() sum can go out of sync since
-+		 * all the values are not read at once.
-+		 */
-+		if (likely(reclaimable_file > dirty))
-+			clean = (reclaimable_file - dirty) << (PAGE_SHIFT - 10);
-+		else
-+			clean = 0;
-+
-+		sc->clean_below_low = clean < sysctl_clean_low_kbytes;
-+		sc->clean_below_min = clean < sysctl_clean_min_kbytes;
-+	} else {
-+		sc->clean_below_low = 0;
-+		sc->clean_below_min = 0;
-+	}
-+}
-+
- static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
- {
- 	struct mem_cgroup *target_memcg = sc->target_mem_cgroup;
-@@ -3249,6 +3338,8 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 			anon >> sc->priority;
- 	}
-
-+	prepare_workingset_protection(pgdat, sc);
-+
- 	shrink_node_memcgs(pgdat, sc);
-
- 	if (reclaim_state) {
-
-base-commit: d58071a8a76d779eedab38033ae4c821c30295a5
---
-2.11.0
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
