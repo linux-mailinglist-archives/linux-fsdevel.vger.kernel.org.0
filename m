@@ -2,269 +2,457 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA28946310C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 11:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92EAE46321F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:17:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233141AbhK3KhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 05:37:06 -0500
-Received: from smtp-8fac.mail.infomaniak.ch ([83.166.143.172]:37735 "EHLO
-        smtp-8fac.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232938AbhK3KhB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 05:37:01 -0500
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4J3JTx0DbszMq2FX;
-        Tue, 30 Nov 2021 11:33:41 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4J3JTr6kV7zlhNx2;
-        Tue, 30 Nov 2021 11:33:35 +0100 (CET)
-Message-ID: <86c3fdf8-bc00-8868-1ff1-96e6e1ca9203@digikod.net>
-Date:   Tue, 30 Nov 2021 11:35:00 +0100
+        id S238137AbhK3LU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 06:20:28 -0500
+Received: from shark4.inbox.lv ([194.152.32.84]:52850 "EHLO shark4.inbox.lv"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235674AbhK3LU1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Nov 2021 06:20:27 -0500
+Received: from shark4.inbox.lv (localhost [127.0.0.1])
+        by shark4-out.inbox.lv (Postfix) with ESMTP id DCD63C01AF;
+        Tue, 30 Nov 2021 13:17:03 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.lv; s=30062014;
+        t=1638271023; bh=ox0oF6RresLUTP2rT28UzFMENVQVHDTEF9p61VuoVho=;
+        h=Date:From:To:Cc:Subject;
+        b=rdOl6dbKZfQqhC5m8RL+3o57aURnBfQENq0Q3YwsW0iEJx9zfmoslvs9QA0hG4RU8
+         Uh6chFIIRr8rvrWVQPT3GxXSshg3hiOlxMWbV2Pj2RfpI3yu1+e71eNTNHbR99538n
+         df3s9hHNJtGYq1Qlx9XkKxWHOIEwW/MMDiNgX934=
+Received: from localhost (localhost [127.0.0.1])
+        by shark4-in.inbox.lv (Postfix) with ESMTP id BE5A5C01AA;
+        Tue, 30 Nov 2021 13:17:03 +0200 (EET)
+Received: from shark4.inbox.lv ([127.0.0.1])
+        by localhost (shark4.inbox.lv [127.0.0.1]) (spamfilter, port 35)
+        with ESMTP id Qmfkse0NcGJL; Tue, 30 Nov 2021 13:17:02 +0200 (EET)
+Received: from mail.inbox.lv (pop1 [127.0.0.1])
+        by shark4-in.inbox.lv (Postfix) with ESMTP id BB828C019B;
+        Tue, 30 Nov 2021 13:17:02 +0200 (EET)
+Date:   Tue, 30 Nov 2021 20:16:52 +0900
+From:   Alexey Avramov <hakavlad@inbox.lv>
+To:     linux-mm@kvack.org
+Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        akpm@linux-foundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        oleksandr@natalenko.name, kernel@xanmod.org, aros@gmx.com,
+        iam@valdikss.org.ru, hakavlad@inbox.lv, hakavlad@gmail.com
+Subject: [PATCH] mm/vmscan: add sysctl knobs for protecting the working set
+Message-ID: <20211130201652.2218636d@mail.inbox.lv>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alejandro Colomar <alx.manpages@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yin Fengwei <fengwei.yin@intel.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20211115185304.198460-1-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v17 0/3] Add trusted_for(2) (was O_MAYEXEC)
-In-Reply-To: <20211115185304.198460-1-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: OK
+X-ESPOL: G4mERXADmHlDpsG9Ippu5OH4pKK+V1wivi79xrsz7G4qyL6B7J5pAxyYeeHze3G0c2bD
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Al,
+The kernel does not provide a way to protect the working set under memory
+pressure. A certain amount of anonymous and clean file pages is required by
+the userspace for normal operation. First of all, the userspace needs a
+cache of shared libraries and executable binaries. If the amount of the
+clean file pages falls below a certain level, then thrashing and even
+livelock can take place.
 
-I think there is no more comment on this series, everything has been 
-addressed. Could you please consider to merge this into your tree or 
-push it to linux-next?
+The patch provides sysctl knobs for protecting the working set (anonymous
+and clean file pages) under memory pressure.
 
-Regards,
-  Mickaël
+The vm.anon_min_kbytes sysctl knob provides *hard* protection of anonymous
+pages. The anonymous pages on the current node won't be reclaimed under any
+conditions when their amount is below vm.anon_min_kbytes. This knob may be
+used to prevent excessive swap thrashing when anonymous memory is low (for
+example, when memory is going to be overfilled by compressed data of zram
+module). The default value is defined by CONFIG_ANON_MIN_KBYTES (suggested
+0 in Kconfig).
+
+The vm.clean_low_kbytes sysctl knob provides *best-effort* protection of
+clean file pages. The file pages on the current node won't be reclaimed
+under memory pressure when the amount of clean file pages is below
+vm.clean_low_kbytes *unless* we threaten to OOM. Protection of clean file
+pages using this knob may be used when swapping is still possible to
+  - prevent disk I/O thrashing under memory pressure;
+  - improve performance in disk cache-bound tasks under memory pressure.
+The default value is defined by CONFIG_CLEAN_LOW_KBYTES (suggested 0 in
+Kconfig).
+
+The vm.clean_min_kbytes sysctl knob provides *hard* protection of clean
+file pages. The file pages on the current node won't be reclaimed under
+memory pressure when the amount of clean file pages is below
+vm.clean_min_kbytes. Hard protection of clean file pages using this knob
+may be used to
+  - prevent disk I/O thrashing under memory pressure even with no free swap
+    space;
+  - improve performance in disk cache-bound tasks under memory pressure;
+  - avoid high latency and prevent livelock in near-OOM conditions.
+The default value is defined by CONFIG_CLEAN_MIN_KBYTES (suggested 0 in
+Kconfig).
+
+Signed-off-by: Alexey Avramov <hakavlad@inbox.lv>
+Reported-by: Artem S. Tashkinov <aros@gmx.com>
+---
+ Repo:
+ https://github.com/hakavlad/le9-patch
+
+ Documentation/admin-guide/sysctl/vm.rst | 66 ++++++++++++++++++++++++
+ include/linux/mm.h                      |  4 ++
+ kernel/sysctl.c                         | 21 ++++++++
+ mm/Kconfig                              | 63 +++++++++++++++++++++++
+ mm/vmscan.c                             | 91 +++++++++++++++++++++++++++++++++
+ 5 files changed, 245 insertions(+)
+
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 5e7952021..2f606e23b 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -25,6 +25,9 @@ files can be found in mm/swap.c.
+ Currently, these files are in /proc/sys/vm:
+
+ - admin_reserve_kbytes
++- anon_min_kbytes
++- clean_low_kbytes
++- clean_min_kbytes
+ - compact_memory
+ - compaction_proactiveness
+ - compact_unevictable_allowed
+@@ -105,6 +108,61 @@ On x86_64 this is about 128MB.
+ Changing this takes effect whenever an application requests memory.
 
 
-On 15/11/2021 19:53, Mickaël Salaün wrote:
-> Hi,
-> 
-> This new patch series fix the syscall signature as suggested by
-> Alejandro Colomar.  It applies on Linus's master branch (v5.16-rc1) and
-> next-20211115.
-> 
-> Andrew, can you please consider to merge this into your tree?
-> 
-> Overview
-> ========
-> 
-> The final goal of this patch series is to enable the kernel to be a
-> global policy manager by entrusting processes with access control at
-> their level.  To reach this goal, two complementary parts are required:
-> * user space needs to be able to know if it can trust some file
->    descriptor content for a specific usage;
-> * and the kernel needs to make available some part of the policy
->    configured by the system administrator.
-> 
-> Primary goal of trusted_for(2)
-> ==============================
-> 
-> This new syscall enables user space to ask the kernel: is this file
-> descriptor's content trusted to be used for this purpose?  The set of
-> usage currently only contains execution, but other may follow (e.g.
-> configuration, sensitive data).  If the kernel identifies the file
-> descriptor as trustworthy for this usage, user space should then take
-> this information into account.  The "execution" usage means that the
-> content of the file descriptor is trusted according to the system policy
-> to be executed by user space, which means that it interprets the content
-> or (try to) maps it as executable memory.
-> 
-> A simple system-wide security policy can be set by the system
-> administrator through a sysctl configuration consistent with the mount
-> points or the file access rights.  The documentation explains the
-> prerequisites.
-> 
-> It is important to note that this can only enable to extend access
-> control managed by the kernel.  Hence it enables current access control
-> mechanism to be extended and become a superset of what they can
-> currently control.  Indeed, the security policy could also be delegated
-> to an LSM, either a MAC system or an integrity system.  For instance,
-> this is required to close a major IMA measurement/appraisal interpreter
-> integrity gap by bringing the ability to check the use of scripts [1].
-> Other uses are expected, such as for magic-links [2], SGX integration
-> [3], bpffs [4].
-> 
-> Complementary W^X protections can be brought by SELinux, IPE [5] and
-> trampfd [6].
-> 
-> System call description
-> =======================
-> 
-> trusted_for(int fd, enum trusted_for_usage usage, u32 flags);
-> 
-> @fd is the file descriptor to check.
-> 
-> @usage identifies the user space usage intended for @fd: only
-> TRUSTED_FOR_EXECUTION for now, but trusted_for_usage could be extended
-> to identify other usages (e.g. configuration, sensitive data).
-> 
-> @flags must be 0 for now but it could be used in the future to do
-> complementary checks (e.g. signature or integrity requirements, origin
-> of the file).
-> 
-> This system call returns 0 on success, or -EACCES if the kernel policy
-> denies the specified usage (which should be enforced by the caller).
-> 
-> The first patch contains the full syscall and sysctl documentation.
-> 
-> Prerequisite of its use
-> =======================
-> 
-> User space needs to adapt to take advantage of this new feature.  For
-> example, the PEP 578 [7] (Runtime Audit Hooks) enables Python 3.8 to be
-> extended with policy enforcement points related to code interpretation,
-> which can be used to align with the PowerShell audit features.
-> Additional Python security improvements (e.g. a limited interpreter
-> without -c, stdin piping of code) are on their way [8].
-> 
-> Examples
-> ========
-> 
-> The initial idea comes from CLIP OS 4 and the original implementation
-> has been used for more than 13 years:
-> https://github.com/clipos-archive/clipos4_doc
-> Chrome OS has a similar approach:
-> https://chromium.googlesource.com/chromiumos/docs/+/master/security/noexec_shell_scripts.md
-> 
-> Userland patches can be found here:
-> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-> Actually, there is more than the O_MAYEXEC changes (which matches this search)
-> e.g., to prevent Python interactive execution. There are patches for
-> Bash, Wine, Java (Icedtea), Busybox's ash, Perl and Python. There are
-> also some related patches which do not directly rely on O_MAYEXEC but
-> which restrict the use of browser plugins and extensions, which may be
-> seen as scripts too:
-> https://github.com/clipos-archive/clipos4_portage-overlay/tree/master/www-client
-> 
-> An introduction to O_MAYEXEC was given at the Linux Security Summit
-> Europe 2018 - Linux Kernel Security Contributions by ANSSI:
-> https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
-> The "write xor execute" principle was explained at Kernel Recipes 2018 -
-> CLIP OS: a defense-in-depth OS:
-> https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
-> See also a first LWN article about O_MAYEXEC and a new one about
-> trusted_for(2) and its background:
-> * https://lwn.net/Articles/820000/
-> * https://lwn.net/Articles/832959/
-> 
-> This can be tested with CONFIG_SYSCTL.  I would really appreciate
-> constructive comments on this patch series.
-> 
-> [1] https://lore.kernel.org/lkml/20211014130125.6991-1-zohar@linux.ibm.com/
-> [2] https://lore.kernel.org/lkml/20190904201933.10736-6-cyphar@cyphar.com/
-> [3] https://lore.kernel.org/lkml/CALCETrVovr8XNZSroey7pHF46O=kj_c5D9K8h=z2T_cNrpvMig@mail.gmail.com/
-> [4] https://lore.kernel.org/lkml/CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com/
-> [5] https://lore.kernel.org/lkml/20200406221439.1469862-12-deven.desai@linux.microsoft.com/
-> [6] https://lore.kernel.org/lkml/20200922215326.4603-1-madvenka@linux.microsoft.com/
-> [7] https://www.python.org/dev/peps/pep-0578/
-> [8] https://lore.kernel.org/lkml/0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org/
-> 
-> Previous versions:
-> v16: https://lore.kernel.org/r/20211110190626.257017-1-mic@digikod.net/
-> v15: https://lore.kernel.org/r/20211012192410.2356090-1-mic@digikod.net/
-> v14: https://lore.kernel.org/r/20211008104840.1733385-1-mic@digikod.net/
-> v13: https://lore.kernel.org/r/20211007182321.872075-1-mic@digikod.net/
-> v12: https://lore.kernel.org/r/20201203173118.379271-1-mic@digikod.net/
-> v11: https://lore.kernel.org/r/20201019164932.1430614-1-mic@digikod.net/
-> v10: https://lore.kernel.org/r/20200924153228.387737-1-mic@digikod.net/
-> v9: https://lore.kernel.org/r/20200910164612.114215-1-mic@digikod.net/
-> v8: https://lore.kernel.org/r/20200908075956.1069018-1-mic@digikod.net/
-> v7: https://lore.kernel.org/r/20200723171227.446711-1-mic@digikod.net/
-> v6: https://lore.kernel.org/r/20200714181638.45751-1-mic@digikod.net/
-> v5: https://lore.kernel.org/r/20200505153156.925111-1-mic@digikod.net/
-> v4: https://lore.kernel.org/r/20200430132320.699508-1-mic@digikod.net/
-> v3: https://lore.kernel.org/r/20200428175129.634352-1-mic@digikod.net/
-> v2: https://lore.kernel.org/r/20190906152455.22757-1-mic@digikod.net/
-> v1: https://lore.kernel.org/r/20181212081712.32347-1-mic@digikod.net/
-> 
-> Regards,
-> 
-> Mickaël Salaün (3):
->    fs: Add trusted_for(2) syscall implementation and related sysctl
->    arch: Wire up trusted_for(2)
->    selftest/interpreter: Add tests for trusted_for(2) policies
-> 
->   Documentation/admin-guide/sysctl/fs.rst       |  50 +++
->   arch/alpha/kernel/syscalls/syscall.tbl        |   2 +
->   arch/arm/tools/syscall.tbl                    |   1 +
->   arch/arm64/include/asm/unistd.h               |   2 +-
->   arch/arm64/include/asm/unistd32.h             |   2 +
->   arch/ia64/kernel/syscalls/syscall.tbl         |   2 +
->   arch/m68k/kernel/syscalls/syscall.tbl         |   2 +
->   arch/microblaze/kernel/syscalls/syscall.tbl   |   2 +
->   arch/mips/kernel/syscalls/syscall_n32.tbl     |   2 +
->   arch/mips/kernel/syscalls/syscall_n64.tbl     |   2 +
->   arch/mips/kernel/syscalls/syscall_o32.tbl     |   2 +
->   arch/parisc/kernel/syscalls/syscall.tbl       |   2 +
->   arch/powerpc/kernel/syscalls/syscall.tbl      |   2 +
->   arch/s390/kernel/syscalls/syscall.tbl         |   2 +
->   arch/sh/kernel/syscalls/syscall.tbl           |   2 +
->   arch/sparc/kernel/syscalls/syscall.tbl        |   2 +
->   arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
->   arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
->   arch/xtensa/kernel/syscalls/syscall.tbl       |   2 +
->   fs/open.c                                     | 111 ++++++
->   include/linux/fs.h                            |   1 +
->   include/linux/syscalls.h                      |   1 +
->   include/uapi/asm-generic/unistd.h             |   4 +-
->   include/uapi/linux/trusted-for.h              |  18 +
->   kernel/sysctl.c                               |  12 +-
->   tools/testing/selftests/Makefile              |   1 +
->   .../testing/selftests/interpreter/.gitignore  |   2 +
->   tools/testing/selftests/interpreter/Makefile  |  21 +
->   tools/testing/selftests/interpreter/config    |   1 +
->   .../selftests/interpreter/trust_policy_test.c | 362 ++++++++++++++++++
->   30 files changed, 613 insertions(+), 4 deletions(-)
->   create mode 100644 include/uapi/linux/trusted-for.h
->   create mode 100644 tools/testing/selftests/interpreter/.gitignore
->   create mode 100644 tools/testing/selftests/interpreter/Makefile
->   create mode 100644 tools/testing/selftests/interpreter/config
->   create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
-> 
-> 
-> base-commit: 8ab774587903771821b59471cc723bba6d893942
-> 
++anon_min_kbytes
++===============
++
++This knob provides *hard* protection of anonymous pages. The anonymous pages
++on the current node won't be reclaimed under any conditions when their amount
++is below vm.anon_min_kbytes.
++
++This knob may be used to prevent excessive swap thrashing when anonymous
++memory is low (for example, when memory is going to be overfilled by
++compressed data of zram module).
++
++Setting this value too high (close to MemTotal) can result in inability to
++swap and can lead to early OOM under memory pressure.
++
++The default value is defined by CONFIG_ANON_MIN_KBYTES.
++
++
++clean_low_kbytes
++================
++
++This knob provides *best-effort* protection of clean file pages. The file pages
++on the current node won't be reclaimed under memory pressure when the amount of
++clean file pages is below vm.clean_low_kbytes *unless* we threaten to OOM.
++
++Protection of clean file pages using this knob may be used when swapping is
++still possible to
++  - prevent disk I/O thrashing under memory pressure;
++  - improve performance in disk cache-bound tasks under memory pressure.
++
++Setting it to a high value may result in a early eviction of anonymous pages
++into the swap space by attempting to hold the protected amount of clean file
++pages in memory.
++
++The default value is defined by CONFIG_CLEAN_LOW_KBYTES.
++
++
++clean_min_kbytes
++================
++
++This knob provides *hard* protection of clean file pages. The file pages on the
++current node won't be reclaimed under memory pressure when the amount of clean
++file pages is below vm.clean_min_kbytes.
++
++Hard protection of clean file pages using this knob may be used to
++  - prevent disk I/O thrashing under memory pressure even with no free swap space;
++  - improve performance in disk cache-bound tasks under memory pressure;
++  - avoid high latency and prevent livelock in near-OOM conditions.
++
++Setting it to a high value may result in a early out-of-memory condition due to
++the inability to reclaim the protected amount of clean file pages when other
++types of pages cannot be reclaimed.
++
++The default value is defined by CONFIG_CLEAN_MIN_KBYTES.
++
++
+ compact_memory
+ ==============
+
+@@ -864,6 +922,14 @@ be 133 (x + 2x = 200, 2x = 133.33).
+ At 0, the kernel will not initiate swap until the amount of free and
+ file-backed pages is less than the high watermark in a zone.
+
++This knob has no effect if the amount of clean file pages on the current
++node is below vm.clean_low_kbytes or vm.clean_min_kbytes. In this case,
++only anonymous pages can be reclaimed.
++
++If the number of anonymous pages on the current node is below
++vm.anon_min_kbytes, then only file pages can be reclaimed with
++any vm.swappiness value.
++
+
+ unprivileged_userfaultfd
+ ========================
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a7e4a9e7d..bee9807d5 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -200,6 +200,10 @@ static inline void __mm_zero_struct_page(struct page *page)
+
+ extern int sysctl_max_map_count;
+
++extern unsigned long sysctl_anon_min_kbytes;
++extern unsigned long sysctl_clean_low_kbytes;
++extern unsigned long sysctl_clean_min_kbytes;
++
+ extern unsigned long sysctl_user_reserve_kbytes;
+ extern unsigned long sysctl_admin_reserve_kbytes;
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 083be6af2..65fc38756 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -3132,6 +3132,27 @@ static struct ctl_table vm_table[] = {
+ 	},
+ #endif
+ 	{
++		.procname	= "anon_min_kbytes",
++		.data		= &sysctl_anon_min_kbytes,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= proc_doulongvec_minmax,
++	},
++	{
++		.procname	= "clean_low_kbytes",
++		.data		= &sysctl_clean_low_kbytes,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= proc_doulongvec_minmax,
++	},
++	{
++		.procname	= "clean_min_kbytes",
++		.data		= &sysctl_clean_min_kbytes,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= proc_doulongvec_minmax,
++	},
++	{
+ 		.procname	= "user_reserve_kbytes",
+ 		.data		= &sysctl_user_reserve_kbytes,
+ 		.maxlen		= sizeof(sysctl_user_reserve_kbytes),
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 28edafc82..dea0806d7 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -89,6 +89,69 @@ config SPARSEMEM_VMEMMAP
+ 	  pfn_to_page and page_to_pfn operations.  This is the most
+ 	  efficient option when sufficient kernel resources are available.
+
++config ANON_MIN_KBYTES
++	int "Default value for vm.anon_min_kbytes"
++	depends on SYSCTL
++	range 0 4294967295
++	default 0
++	help
++	  This option sets the default value for vm.anon_min_kbytes sysctl knob.
++
++	  The vm.anon_min_kbytes sysctl knob provides *hard* protection of
++	  anonymous pages. The anonymous pages on the current node won't be
++	  reclaimed under any conditions when their amount is below
++	  vm.anon_min_kbytes. This knob may be used to prevent excessive swap
++	  thrashing when anonymous memory is low (for example, when memory is
++	  going to be overfilled by compressed data of zram module).
++
++	  Setting this value too high (close to MemTotal) can result in
++	  inability to swap and can lead to early OOM under memory pressure.
++
++config CLEAN_LOW_KBYTES
++	int "Default value for vm.clean_low_kbytes"
++	depends on SYSCTL
++	range 0 4294967295
++	default 0
++	help
++	  This option sets the default value for vm.clean_low_kbytes sysctl knob.
++
++	  The vm.clean_low_kbytes sysctl knob provides *best-effort*
++	  protection of clean file pages. The file pages on the current node
++	  won't be reclaimed under memory pressure when the amount of clean file
++	  pages is below vm.clean_low_kbytes *unless* we threaten to OOM.
++	  Protection of clean file pages using this knob may be used when
++	  swapping is still possible to
++	    - prevent disk I/O thrashing under memory pressure;
++	    - improve performance in disk cache-bound tasks under memory
++	      pressure.
++
++	  Setting it to a high value may result in a early eviction of anonymous
++	  pages into the swap space by attempting to hold the protected amount
++	  of clean file pages in memory.
++
++config CLEAN_MIN_KBYTES
++	int "Default value for vm.clean_min_kbytes"
++	depends on SYSCTL
++	range 0 4294967295
++	default 0
++	help
++	  This option sets the default value for vm.clean_min_kbytes sysctl knob.
++
++	  The vm.clean_min_kbytes sysctl knob provides *hard* protection of
++	  clean file pages. The file pages on the current node won't be
++	  reclaimed under memory pressure when the amount of clean file pages is
++	  below vm.clean_min_kbytes. Hard protection of clean file pages using
++	  this knob may be used to
++	    - prevent disk I/O thrashing under memory pressure even with no free
++	      swap space;
++	    - improve performance in disk cache-bound tasks under memory
++	      pressure;
++	    - avoid high latency and prevent livelock in near-OOM conditions.
++
++	  Setting it to a high value may result in a early out-of-memory condition
++	  due to the inability to reclaim the protected amount of clean file pages
++	  when other types of pages cannot be reclaimed.
++
+ config HAVE_MEMBLOCK_PHYS_MAP
+ 	bool
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index fb9584641..928f3371d 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -122,6 +122,15 @@ struct scan_control {
+ 	/* The file pages on the current node are dangerously low */
+ 	unsigned int file_is_tiny:1;
+
++	/* The anonymous pages on the current node are below vm.anon_min_kbytes */
++	unsigned int anon_below_min:1;
++
++	/* The clean file pages on the current node are below vm.clean_low_kbytes */
++	unsigned int clean_below_low:1;
++
++	/* The clean file pages on the current node are below vm.clean_min_kbytes */
++	unsigned int clean_below_min:1;
++
+ 	/* Always discard instead of demoting to lower tier memory */
+ 	unsigned int no_demotion:1;
+
+@@ -171,6 +180,10 @@ struct scan_control {
+ #define prefetchw_prev_lru_page(_page, _base, _field) do { } while (0)
+ #endif
+
++unsigned long sysctl_anon_min_kbytes __read_mostly = CONFIG_ANON_MIN_KBYTES;
++unsigned long sysctl_clean_low_kbytes __read_mostly = CONFIG_CLEAN_LOW_KBYTES;
++unsigned long sysctl_clean_min_kbytes __read_mostly = CONFIG_CLEAN_MIN_KBYTES;
++
+ /*
+  * From 0 .. 200.  Higher means more swappy.
+  */
+@@ -2734,6 +2747,15 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
+ 	}
+
+ 	/*
++	 * Force-scan anon if clean file pages is under vm.clean_low_kbytes
++	 * or vm.clean_min_kbytes.
++	 */
++	if (sc->clean_below_low || sc->clean_below_min) {
++		scan_balance = SCAN_ANON;
++		goto out;
++	}
++
++	/*
+ 	 * If there is enough inactive page cache, we do not reclaim
+ 	 * anything from the anonymous working right now.
+ 	 */
+@@ -2877,6 +2899,25 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
+ 			BUG();
+ 		}
+
++		/*
++		 * Hard protection of the working set.
++		 */
++		if (file) {
++			/*
++			 * Don't reclaim file pages when the amount of
++			 * clean file pages is below vm.clean_min_kbytes.
++			 */
++			if (sc->clean_below_min)
++				scan = 0;
++		} else {
++			/*
++			 * Don't reclaim anonymous pages when their
++			 * amount is below vm.anon_min_kbytes.
++			 */
++			if (sc->anon_below_min)
++				scan = 0;
++		}
++
+ 		nr[lru] = scan;
+ 	}
+ }
+@@ -3082,6 +3123,54 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+ 	return inactive_lru_pages > pages_for_compaction;
+ }
+
++static void prepare_workingset_protection(pg_data_t *pgdat, struct scan_control *sc)
++{
++	/*
++	 * Check the number of anonymous pages to protect them from
++	 * reclaiming if their amount is below the specified.
++	 */
++	if (sysctl_anon_min_kbytes) {
++		unsigned long reclaimable_anon;
++
++		reclaimable_anon =
++			node_page_state(pgdat, NR_ACTIVE_ANON) +
++			node_page_state(pgdat, NR_INACTIVE_ANON) +
++			node_page_state(pgdat, NR_ISOLATED_ANON);
++		reclaimable_anon <<= (PAGE_SHIFT - 10);
++
++		sc->anon_below_min = reclaimable_anon < sysctl_anon_min_kbytes;
++	} else
++		sc->anon_below_min = 0;
++
++	/*
++	 * Check the number of clean file pages to protect them from
++	 * reclaiming if their amount is below the specified.
++	 */
++	if (sysctl_clean_low_kbytes || sysctl_clean_min_kbytes) {
++		unsigned long reclaimable_file, dirty, clean;
++
++		reclaimable_file =
++			node_page_state(pgdat, NR_ACTIVE_FILE) +
++			node_page_state(pgdat, NR_INACTIVE_FILE) +
++			node_page_state(pgdat, NR_ISOLATED_FILE);
++		dirty = node_page_state(pgdat, NR_FILE_DIRTY);
++		/*
++		 * node_page_state() sum can go out of sync since
++		 * all the values are not read at once.
++		 */
++		if (likely(reclaimable_file > dirty))
++			clean = (reclaimable_file - dirty) << (PAGE_SHIFT - 10);
++		else
++			clean = 0;
++
++		sc->clean_below_low = clean < sysctl_clean_low_kbytes;
++		sc->clean_below_min = clean < sysctl_clean_min_kbytes;
++	} else {
++		sc->clean_below_low = 0;
++		sc->clean_below_min = 0;
++	}
++}
++
+ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+ {
+ 	struct mem_cgroup *target_memcg = sc->target_mem_cgroup;
+@@ -3249,6 +3338,8 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 			anon >> sc->priority;
+ 	}
+
++	prepare_workingset_protection(pgdat, sc);
++
+ 	shrink_node_memcgs(pgdat, sc);
+
+ 	if (reclaim_state) {
+
+base-commit: d58071a8a76d779eedab38033ae4c821c30295a5
+--
+2.11.0
