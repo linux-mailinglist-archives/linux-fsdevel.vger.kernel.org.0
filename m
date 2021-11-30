@@ -2,187 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6598446329D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01CFB4633B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 12:59:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237112AbhK3LoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 06:44:14 -0500
-Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:18181 "EHLO
-        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234242AbhK3LoM (ORCPT
+        id S237346AbhK3MDO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 07:03:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232939AbhK3MDO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 06:44:12 -0500
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 5C49F8C15BA;
-        Tue, 30 Nov 2021 11:40:51 +0000 (UTC)
-Received: from pdx1-sub0-mail-a280.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id B93118C184B;
-        Tue, 30 Nov 2021 11:40:50 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a280.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.105.57.78 (trex/6.4.3);
-        Tue, 30 Nov 2021 11:40:51 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Stop-Minister: 2cca0285655215e2_1638272451062_3850990790
-X-MC-Loop-Signature: 1638272451062:4154972842
-X-MC-Ingress-Time: 1638272451062
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a280.dreamhost.com (Postfix) with ESMTPSA id 4J3KzQ3NRQz1Pr;
-        Tue, 30 Nov 2021 03:40:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
-        s=claycon.org; t=1638272450; bh=O2WXhrHkH1XggUiIONMYJjGc2ao=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=bgxD8Czk8LHxyvV+YB0zE4rRTRGKMWDQH6U8UKEdrGm4Ersv4jtF7hnLC88K3A3Aj
-         df7R3HRkdhm9OaT9hNo4/+lrdVEOEJeL0jUo/ll5QoV+00Sn6FKmv0tcYI7xo3kGoo
-         KY82SYZEfMGo9fuqUP3dzjb7WK7PTo4Q0VyznAO4=
-Date:   Tue, 30 Nov 2021 05:40:48 -0600
-From:   Clay Harris <bugs@claycon.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
-Message-ID: <20211130114048.bzimtybhqj6ztq2u@ps29521.dreamhostps.com>
-References: <20211129221257.2536146-1-shr@fb.com>
- <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
- <6A6C8E58-BCFD-46E8-9AF7-B6635D959CB6@dilger.ca>
- <20211130063703.hszzs3tg5qb37fyj@ps29521.dreamhostps.com>
- <20211130065345.actf2vrfpvtk6fcz@ps29521.dreamhostps.com>
+        Tue, 30 Nov 2021 07:03:14 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F977C061574;
+        Tue, 30 Nov 2021 03:59:55 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id v23so15148960pjr.5;
+        Tue, 30 Nov 2021 03:59:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xj8+VoAa5ErdyHBdKdAIopD6fGg/e7bwG6LigikTmEk=;
+        b=HjpTUJGQV2CWydG+K8sGVwBWAVgaWqVJF4IsrStsHUr0reZu3Au/oTASZi83B61vu3
+         kxAHdsPBcwQnHH75SnWzx0u7CSDI6ojfjr3EoqCtEFu1SAlyJEJTkKSNtMWEYN/1daiE
+         fMwxeo609A9pe+OYPk7MdOLJ2iKYphy1KynKVOkp7kHFJ1CDVBYduXwl1SSTddXh1aa2
+         98cPVzPtKzLSa+Enailsvx8UkXIMKmVG5l/iqbcEPND45v6NOdzhxzTlvBMzoCm0pxvd
+         Wy1qxowe0DUM69hOCiyG2Uh8GGazCcaZhsEPKw/zJuEQSqI29kvH+RQi1FEv9gysxAgA
+         UX6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xj8+VoAa5ErdyHBdKdAIopD6fGg/e7bwG6LigikTmEk=;
+        b=CZNK381FHgTbYyUkqC0TcCamSAmT7YqCY7W3lxDnTXs05YhHEmfDL5rClanN4Fg+gU
+         YqounnLcad9hHNEP/etrUOiYIP9T6cmfncbxjQSAgEGB/U2fEADioH1ged0OzuRYXTRI
+         jL86XULU4AJ4Wp+EQ4cYxfNQUKQE3foJMoH/7q+nmmoMTgI9XxrlRgpwLuDe2K+CGZKK
+         SKOspEjJ0A+94fj1YPwHrpkfSIkcMq5encrM14VS9OBV+CK48IXHPVm4CNSX2yNdqJHt
+         YvrsvOzrOkIMAuxUItFa/D4cr1+RBCt8v+pEtUHrFWO+SjbiaBMZm3ZsiOSENFz0m3Vi
+         ltKg==
+X-Gm-Message-State: AOAM533N7CARwVR4x++IOiRp7uYs51h9txogAKUoar3Qf9LEjA4OPE4W
+        4fQKXM3u6B7DcYhjAG9GiJY=
+X-Google-Smtp-Source: ABdhPJyqcdXCN+mZ0u1qep/O+jSTSw23lNluUedkVylDa+MsoxKzNigQMJYC++/iAzt5n7+w9C137Q==
+X-Received: by 2002:a17:902:b70b:b0:143:74b1:7e3b with SMTP id d11-20020a170902b70b00b0014374b17e3bmr68124338pls.26.1638273594698;
+        Tue, 30 Nov 2021 03:59:54 -0800 (PST)
+Received: from goshun.usen.ad.jp (113x33x71x97.ap113.ftth.ucom.ne.jp. [113.33.71.97])
+        by smtp.gmail.com with ESMTPSA id f4sm22226555pfj.61.2021.11.30.03.59.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Nov 2021 03:59:54 -0800 (PST)
+From:   Akira Kawata <akirakawata1@gmail.com>
+To:     akpm@linux-foundation.org, adobriyan@gmail.com,
+        viro@zeniv.linux.org.uk, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     akirakawata1@gmail.com, kernel test robot <lkp@intel.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
+Date:   Tue, 30 Nov 2021 20:59:07 +0900
+Message-Id: <20211130115906.414176-1-akirakawata1@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211130065345.actf2vrfpvtk6fcz@ps29521.dreamhostps.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30 2021 at 00:53:45 -0600, Clay Harris quoth thus:
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=197921
 
-> On Tue, Nov 30 2021 at 00:37:03 -0600, Clay Harris quoth thus:
-> 
-> > On Mon, Nov 29 2021 at 20:16:02 -0700, Andreas Dilger quoth thus:
-> > 
-> > > 
-> > > > On Nov 29, 2021, at 6:08 PM, Clay Harris <bugs@claycon.org> wrote:
-> > > > 
-> > > > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
-> > > > 
-> > > >> This adds the xattr support to io_uring. The intent is to have a more
-> > > >> complete support for file operations in io_uring.
-> > > >> 
-> > > >> This change adds support for the following functions to io_uring:
-> > > >> - fgetxattr
-> > > >> - fsetxattr
-> > > >> - getxattr
-> > > >> - setxattr
-> > > > 
-> > > > You may wish to consider the following.
-> > > > 
-> > > > Patching for these functions makes for an excellent opportunity
-> > > > to provide a better interface.  Rather than implement fXetattr
-> > > > at all, you could enable io_uring to use functions like:
-> > > > 
-> > > > int Xetxattr(int dfd, const char *path, const char *name,
-> > > > 	[const] void *value, size_t size, int flags);
-> > > 
-> > > This would naturally be named "...xattrat()"?
-> > 
-> > Indeed!
-> > 
-> > > > Not only does this simplify the io_uring interface down to two
-> > > > functions, but modernizes and fixes a deficit in usability.
-> > > > In terms of io_uring, this is just changing internal interfaces.
+As pointed out in the discussion of buglink, we cannot calculate AT_PHDR
+as the sum of load_addr and exec->e_phoff. This is because exec->e_phoff
+is the offset of PHDRs in the file and the address of PHDRs in the
+memory may differ from it. This patch fixes the bug by calculating the
+address of program headers from PT_LOADs directly.
 
-One more reason, it would be very desirable if io_uring called a
-*etxattrat-like interface, is that the old f*etxattr calls require an fd
-open for reading (fget*) or writing (fset*).  So, you're out of luck if
-you have an execute-only file or just an O_PATH descriptor!  In those
-cases, you're forced to use a pathname for every call.  Not very efficient
-for people who choose to use the highly optimized io_uring interface.
+Signed-off-by: Akira Kawata <akirakawata1@gmail.com>
+Reported-by: kernel test robot <lkp@intel.com>
+---
+Changes in v3:
+- Fix a reported bug from kernel test robot.
 
-> > > Even better would be the ability to get/set an array of xattrs in
-> > > one call, to avoid repeated path lookups in the common case of
-> > > handling multiple xattrs on a single file.
-> > 
-> > True.
-> > 
-> > > > Although unnecessary for io_uring, it would be nice to at least
-> > > > consider what parts of this code could be leveraged for future
-> > > > Xetxattr2 syscalls.
-> > s/Xetxattr2/Xetxattrat/
-> 
-> I forgot to mention a final thought about the interface.
-> Unless there is a really good reason (security auditing??), there
-> is no reason to have a removexattr() function.  That seems much
-> better handled by passing NULL for value and specifying a remove
-> flag in flags to setxattrat().
-> 
-> > > > 
-> > > >> Patch 1: fs: make user_path_at_empty() take a struct filename
-> > > >>  The user_path_at_empty filename parameter has been changed
-> > > >>  from a const char user pointer to a filename struct. io_uring
-> > > >>  operates on filenames.
-> > > >>  In addition also the functions that call user_path_at_empty
-> > > >>  in namei.c and stat.c have been modified for this change.
-> > > >> 
-> > > >> Patch 2: fs: split off setxattr_setup function from setxattr
-> > > >>  Split off the setup part of the setxattr function
-> > > >> 
-> > > >> Patch 3: fs: split off the vfs_getxattr from getxattr
-> > > >>  Split of the vfs_getxattr part from getxattr. This will
-> > > >>  allow to invoke it from io_uring.
-> > > >> 
-> > > >> Patch 4: io_uring: add fsetxattr and setxattr support
-> > > >>  This adds new functions to support the fsetxattr and setxattr
-> > > >>  functions.
-> > > >> 
-> > > >> Patch 5: io_uring: add fgetxattr and getxattr support
-> > > >>  This adds new functions to support the fgetxattr and getxattr
-> > > >>  functions.
-> > > >> 
-> > > >> 
-> > > >> There are two additional patches:
-> > > >>  liburing: Add support for xattr api's.
-> > > >>            This also includes the tests for the new code.
-> > > >>  xfstests: Add support for io_uring xattr support.
-> > > >> 
-> > > >> 
-> > > >> Stefan Roesch (5):
-> > > >>  fs: make user_path_at_empty() take a struct filename
-> > > >>  fs: split off setxattr_setup function from setxattr
-> > > >>  fs: split off the vfs_getxattr from getxattr
-> > > >>  io_uring: add fsetxattr and setxattr support
-> > > >>  io_uring: add fgetxattr and getxattr support
-> > > >> 
-> > > >> fs/internal.h                 |  23 +++
-> > > >> fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
-> > > >> fs/namei.c                    |   5 +-
-> > > >> fs/stat.c                     |   7 +-
-> > > >> fs/xattr.c                    | 114 +++++++-----
-> > > >> include/linux/namei.h         |   4 +-
-> > > >> include/uapi/linux/io_uring.h |   8 +-
-> > > >> 7 files changed, 439 insertions(+), 47 deletions(-)
-> > > >> 
-> > > >> 
-> > > >> Signed-off-by: Stefan Roesch <shr@fb.com>
-> > > >> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
-> > > >> --
-> > > >> 2.30.2
-> > > 
-> > > 
-> > > Cheers, Andreas
-> > > 
-> > > 
-> > > 
-> > > 
-> > > 
-> > 
+Changes in v2:
+- Remove unused load_addr from create_elf_tables.
+- Improve the commit message.
+
+ fs/binfmt_elf.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index beeb1247b5c4..828e88841cb4 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -170,8 +170,8 @@ static int padzero(unsigned long elf_bss)
+ 
+ static int
+ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+-		unsigned long load_addr, unsigned long interp_load_addr,
+-		unsigned long e_entry)
++		unsigned long interp_load_addr,
++		unsigned long e_entry, unsigned long phdr_addr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	unsigned long p = bprm->p;
+@@ -257,7 +257,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+ 	NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
+ 	NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
+ 	NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
+-	NEW_AUX_ENT(AT_PHDR, load_addr + exec->e_phoff);
++	NEW_AUX_ENT(AT_PHDR, phdr_addr);
+ 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+ 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+ 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
+@@ -822,7 +822,7 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
+ static int load_elf_binary(struct linux_binprm *bprm)
+ {
+ 	struct file *interpreter = NULL; /* to shut gcc up */
+- 	unsigned long load_addr = 0, load_bias = 0;
++	unsigned long load_addr, load_bias = 0, phdr_addr = 0;
+ 	int load_addr_set = 0;
+ 	unsigned long error;
+ 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+@@ -1168,6 +1168,13 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 				reloc_func_desc = load_bias;
+ 			}
+ 		}
++
++		if (elf_ppnt->p_offset <= elf_ex->e_phoff &&
++		    elf_ex->e_phoff < elf_ppnt->p_offset + elf_ppnt->p_filesz) {
++			phdr_addr = elf_ex->e_phoff - elf_ppnt->p_offset +
++				    elf_ppnt->p_vaddr;
++		}
++
+ 		k = elf_ppnt->p_vaddr;
+ 		if ((elf_ppnt->p_flags & PF_X) && k < start_code)
+ 			start_code = k;
+@@ -1203,6 +1210,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	}
+ 
+ 	e_entry = elf_ex->e_entry + load_bias;
++	phdr_addr += load_bias;
+ 	elf_bss += load_bias;
+ 	elf_brk += load_bias;
+ 	start_code += load_bias;
+@@ -1266,8 +1274,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		goto out;
+ #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
+ 
+-	retval = create_elf_tables(bprm, elf_ex,
+-			  load_addr, interp_load_addr, e_entry);
++	retval = create_elf_tables(bprm, elf_ex, interp_load_addr,
++				   e_entry, phdr_addr);
+ 	if (retval < 0)
+ 		goto out;
+ 
+
+base-commit: 34f255a1e91ab44ff8926cf8294ff9144e62e861
+-- 
+2.25.1
+
