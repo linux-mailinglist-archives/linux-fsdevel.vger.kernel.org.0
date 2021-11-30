@@ -2,177 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E3D9462D24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 07:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 677B6462D25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 07:54:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238834AbhK3G5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 01:57:11 -0500
-Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:52303 "EHLO
-        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238850AbhK3G5J (ORCPT
+        id S233653AbhK3G50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 01:57:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33964 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232051AbhK3G50 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 01:57:09 -0500
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 9F6D72C1901;
-        Tue, 30 Nov 2021 06:53:47 +0000 (UTC)
-Received: from pdx1-sub0-mail-a246.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 35E4C2C1773;
-        Tue, 30 Nov 2021 06:53:47 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a246.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.99.149.17 (trex/6.4.3);
-        Tue, 30 Nov 2021 06:53:47 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Army-Trail: 688e86d760c62cf2_1638255227490_2494220409
-X-MC-Loop-Signature: 1638255227490:3663444303
-X-MC-Ingress-Time: 1638255227490
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a246.dreamhost.com (Postfix) with ESMTPSA id 4J3CcB6qyvz2r;
-        Mon, 29 Nov 2021 22:53:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
-        s=claycon.org; t=1638255227; bh=8fO7XeNbmjqjSpatY5V8NXTZR9c=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=S+G9cTbYS9tXYFpaHcB4t/y7BkMtERLGQKzjiQQyuGQJPA4cZMDortBHXNjILxxHz
-         Loblc3XGXP4VVT4kzcat9cfGXu12mJXLe6uE4s+p4QUBnuziZ6PzTBxUpEoqyVlaoC
-         kSBI8kv+VsA1fHrM9CXrCQq+CrXn6YkoDSt31ELY=
-Date:   Tue, 30 Nov 2021 00:53:45 -0600
-From:   Clay Harris <bugs@claycon.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
-Message-ID: <20211130065345.actf2vrfpvtk6fcz@ps29521.dreamhostps.com>
-References: <20211129221257.2536146-1-shr@fb.com>
- <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
- <6A6C8E58-BCFD-46E8-9AF7-B6635D959CB6@dilger.ca>
- <20211130063703.hszzs3tg5qb37fyj@ps29521.dreamhostps.com>
+        Tue, 30 Nov 2021 01:57:26 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B240C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 22:54:06 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id i6so20186822ila.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Nov 2021 22:54:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wlbnCpLDPpR3jmnVL3xuLsL27+TP3NBtwhAiCm3SnnQ=;
+        b=S+UUyl50Fhj/dKoCyVE3Yz5y521y9419ezj7VMHuZpXQQiEDn5eqcNYMD+z7Tln63Q
+         cjzzBzoX0WIIkXlm24EE0rYlQ5Z9R89QFuqaBRJ/5WZQdda84YQUqLUy9oh3iahbHx2l
+         M3Jhf81SkVfmpZxBkGwuaQo9gjHT86PSThQlXEx/L7PU7BK6X1bk6YO5wUs0LQgVpBzp
+         Edu7b6xuRN6kpLYrKT725x4I00SLtSKd5NYH5c6qqpm4XVn1Jx9gZbUCHr6PKAiWQvB8
+         6LGHFOn16LvozkC+DoMR0P6pjTToPeczbqulEituOozvbEDZ8ILfYw8nyQ1jb/474cV2
+         s9Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wlbnCpLDPpR3jmnVL3xuLsL27+TP3NBtwhAiCm3SnnQ=;
+        b=YwLw4fUISBPxD/JluXFrDdNyUtfCiSK/dgRN7hDd2jNDz4/jrgfBjLHAZerQe0UCwC
+         i3EFHVzBhiCMx2pBgOMTMIzHj7ileigUO/3yF+tj4johe0xfQxoVaQj60SmUOBpTRFye
+         qn4okdOsr2cTI6YuMC7ZOY6GKniT73XCSsyJ/RQgfJqCt43GkxmYAE6xbP94VfH+n0Pk
+         TsyhUuOC5gt+TWJ0wZwkkt6GoB+H/bUphBhYbTwZJPnzbzVNFXna6KYNZ71aHIScQevG
+         m/NoKRDHqbQNqTOTCWW/kFhOgDbByXawoIeadsjSKzg2mkluuqW95JXPbanL5XgBM4P/
+         yD6w==
+X-Gm-Message-State: AOAM530TuZ8/A1dZ03y+kMjTvvy/Ow4f3dhEmSQCj2zhsxHiYCRIxf2M
+        yQrfnXZXV7fUTPy9D6NBCt52oUm/6YbL0Cz0cRA=
+X-Google-Smtp-Source: ABdhPJwNZBxBTs/zMzcLWD4G6LL9Ugcf11W2p+IVUSUGrypFPNZTenyN+/cnygYYRSz1pVBih0y4SWr+4fwL2a1vueU=
+X-Received: by 2002:a05:6e02:c87:: with SMTP id b7mr58787200ile.198.1638255245605;
+ Mon, 29 Nov 2021 22:54:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211130063703.hszzs3tg5qb37fyj@ps29521.dreamhostps.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20211123114227.3124056-1-brauner@kernel.org> <20211123114227.3124056-8-brauner@kernel.org>
+In-Reply-To: <20211123114227.3124056-8-brauner@kernel.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 30 Nov 2021 08:53:53 +0200
+Message-ID: <CAOQ4uxjgdh=D4_vPRBoVXs1wkJC8zyyf+T3DdmxwxcqjfF43Xg@mail.gmail.com>
+Subject: Re: [PATCH 07/10] fs: remove unused low-level mapping helpers
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30 2021 at 00:37:03 -0600, Clay Harris quoth thus:
+On Tue, Nov 23, 2021 at 2:19 PM Christian Brauner <brauner@kernel.org> wrote:
+>
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+>
+> Now that we ported all places to use the new low-level mapping helpers
+> that are able to support filesystems mounted with an idmapping we can
+> remove the old low-level mapping helpers. With the removal of these old
+> helpers we also conclude the renaming of the mapping helpers we started
+> in [1].
+>
+> [1]: commit a65e58e791a1 ("fs: document and rename fsid helpers")
+> Cc: Seth Forshee <sforshee@digitalocean.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> CC: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> On Mon, Nov 29 2021 at 20:16:02 -0700, Andreas Dilger quoth thus:
-> 
-> > 
-> > > On Nov 29, 2021, at 6:08 PM, Clay Harris <bugs@claycon.org> wrote:
-> > > 
-> > > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
-> > > 
-> > >> This adds the xattr support to io_uring. The intent is to have a more
-> > >> complete support for file operations in io_uring.
-> > >> 
-> > >> This change adds support for the following functions to io_uring:
-> > >> - fgetxattr
-> > >> - fsetxattr
-> > >> - getxattr
-> > >> - setxattr
-> > > 
-> > > You may wish to consider the following.
-> > > 
-> > > Patching for these functions makes for an excellent opportunity
-> > > to provide a better interface.  Rather than implement fXetattr
-> > > at all, you could enable io_uring to use functions like:
-> > > 
-> > > int Xetxattr(int dfd, const char *path, const char *name,
-> > > 	[const] void *value, size_t size, int flags);
-> > 
-> > This would naturally be named "...xattrat()"?
-> 
-> Indeed!
-> 
-> > > Not only does this simplify the io_uring interface down to two
-> > > functions, but modernizes and fixes a deficit in usability.
-> > > In terms of io_uring, this is just changing internal interfaces.
-> > 
-> > Even better would be the ability to get/set an array of xattrs in
-> > one call, to avoid repeated path lookups in the common case of
-> > handling multiple xattrs on a single file.
-> 
-> True.
-> 
-> > > Although unnecessary for io_uring, it would be nice to at least
-> > > consider what parts of this code could be leveraged for future
-> > > Xetxattr2 syscalls.
-> s/Xetxattr2/Xetxattrat/
-
-I forgot to mention a final thought about the interface.
-Unless there is a really good reason (security auditing??), there
-is no reason to have a removexattr() function.  That seems much
-better handled by passing NULL for value and specifying a remove
-flag in flags to setxattrat().
-
-> > > 
-> > >> Patch 1: fs: make user_path_at_empty() take a struct filename
-> > >>  The user_path_at_empty filename parameter has been changed
-> > >>  from a const char user pointer to a filename struct. io_uring
-> > >>  operates on filenames.
-> > >>  In addition also the functions that call user_path_at_empty
-> > >>  in namei.c and stat.c have been modified for this change.
-> > >> 
-> > >> Patch 2: fs: split off setxattr_setup function from setxattr
-> > >>  Split off the setup part of the setxattr function
-> > >> 
-> > >> Patch 3: fs: split off the vfs_getxattr from getxattr
-> > >>  Split of the vfs_getxattr part from getxattr. This will
-> > >>  allow to invoke it from io_uring.
-> > >> 
-> > >> Patch 4: io_uring: add fsetxattr and setxattr support
-> > >>  This adds new functions to support the fsetxattr and setxattr
-> > >>  functions.
-> > >> 
-> > >> Patch 5: io_uring: add fgetxattr and getxattr support
-> > >>  This adds new functions to support the fgetxattr and getxattr
-> > >>  functions.
-> > >> 
-> > >> 
-> > >> There are two additional patches:
-> > >>  liburing: Add support for xattr api's.
-> > >>            This also includes the tests for the new code.
-> > >>  xfstests: Add support for io_uring xattr support.
-> > >> 
-> > >> 
-> > >> Stefan Roesch (5):
-> > >>  fs: make user_path_at_empty() take a struct filename
-> > >>  fs: split off setxattr_setup function from setxattr
-> > >>  fs: split off the vfs_getxattr from getxattr
-> > >>  io_uring: add fsetxattr and setxattr support
-> > >>  io_uring: add fgetxattr and getxattr support
-> > >> 
-> > >> fs/internal.h                 |  23 +++
-> > >> fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
-> > >> fs/namei.c                    |   5 +-
-> > >> fs/stat.c                     |   7 +-
-> > >> fs/xattr.c                    | 114 +++++++-----
-> > >> include/linux/namei.h         |   4 +-
-> > >> include/uapi/linux/io_uring.h |   8 +-
-> > >> 7 files changed, 439 insertions(+), 47 deletions(-)
-> > >> 
-> > >> 
-> > >> Signed-off-by: Stefan Roesch <shr@fb.com>
-> > >> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
-> > >> --
-> > >> 2.30.2
-> > 
-> > 
-> > Cheers, Andreas
-> > 
-> > 
-> > 
-> > 
-> > 
-> 
+>  include/linux/mnt_mapping.h | 56 -------------------------------------
+>  1 file changed, 56 deletions(-)
+>
+> diff --git a/include/linux/mnt_mapping.h b/include/linux/mnt_mapping.h
+> index c555b9836d35..f55b62fd27ae 100644
+> --- a/include/linux/mnt_mapping.h
+> +++ b/include/linux/mnt_mapping.h
+> @@ -13,62 +13,6 @@ struct user_namespace;
+>   */
+>  extern struct user_namespace init_user_ns;
+>
+> -/**
+> - * kuid_into_mnt - map a kuid down into a mnt_userns
+> - * @mnt_userns: user namespace of the relevant mount
+> - * @kuid: kuid to be mapped
+> - *
+> - * Return: @kuid mapped according to @mnt_userns.
+> - * If @kuid has no mapping INVALID_UID is returned.
+> - */
+> -static inline kuid_t kuid_into_mnt(struct user_namespace *mnt_userns,
+> -                                  kuid_t kuid)
+> -{
+> -       return make_kuid(mnt_userns, __kuid_val(kuid));
+> -}
+> -
+> -/**
+> - * kgid_into_mnt - map a kgid down into a mnt_userns
+> - * @mnt_userns: user namespace of the relevant mount
+> - * @kgid: kgid to be mapped
+> - *
+> - * Return: @kgid mapped according to @mnt_userns.
+> - * If @kgid has no mapping INVALID_GID is returned.
+> - */
+> -static inline kgid_t kgid_into_mnt(struct user_namespace *mnt_userns,
+> -                                  kgid_t kgid)
+> -{
+> -       return make_kgid(mnt_userns, __kgid_val(kgid));
+> -}
+> -
+> -/**
+> - * kuid_from_mnt - map a kuid up into a mnt_userns
+> - * @mnt_userns: user namespace of the relevant mount
+> - * @kuid: kuid to be mapped
+> - *
+> - * Return: @kuid mapped up according to @mnt_userns.
+> - * If @kuid has no mapping INVALID_UID is returned.
+> - */
+> -static inline kuid_t kuid_from_mnt(struct user_namespace *mnt_userns,
+> -                                  kuid_t kuid)
+> -{
+> -       return KUIDT_INIT(from_kuid(mnt_userns, kuid));
+> -}
+> -
+> -/**
+> - * kgid_from_mnt - map a kgid up into a mnt_userns
+> - * @mnt_userns: user namespace of the relevant mount
+> - * @kgid: kgid to be mapped
+> - *
+> - * Return: @kgid mapped up according to @mnt_userns.
+> - * If @kgid has no mapping INVALID_GID is returned.
+> - */
+> -static inline kgid_t kgid_from_mnt(struct user_namespace *mnt_userns,
+> -                                  kgid_t kgid)
+> -{
+> -       return KGIDT_INIT(from_kgid(mnt_userns, kgid));
+> -}
+> -
+>  /**
+>   * initial_idmapping - check whether this is the initial mapping
+>   * @ns: idmapping to check
+> --
+> 2.30.2
+>
