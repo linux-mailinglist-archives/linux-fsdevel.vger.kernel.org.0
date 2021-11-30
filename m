@@ -2,113 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B23463B78
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 17:15:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DCE0463B92
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Nov 2021 17:19:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238316AbhK3QSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 11:18:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238219AbhK3QSg (ORCPT
+        id S242889AbhK3QWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Nov 2021 11:22:31 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:41979 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238932AbhK3QWa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 11:18:36 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91B5CC061746;
-        Tue, 30 Nov 2021 08:15:16 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3E095B81A55;
-        Tue, 30 Nov 2021 16:15:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB047C53FC1;
-        Tue, 30 Nov 2021 16:15:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638288913;
-        bh=P8o3xJoZ9GulqCm3by9ySAYZOhiX00eAxdialhufxvY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OetwOYtBIbikZ7LhnB77SBsvM18Jm92Lg+sWp1Bvq5NVYWIn707PetzCzKVQF1gBH
-         hNp2rvzS0GtDyA/Bx2OpdVp0YnKbr+LEQ2zKIXjGaHGVfTHD1CNhgpEYU5J9PMG+00
-         IhCpzigsWUjK+JLVGt8LYCrs8x0B/a3b9CCnAQG4P6L7x38XQJ+PGJ+UkP6cuKfFtQ
-         +w7m1GQzxL2JB1Iyi/KFgpyMccj7+60rXdqdDGz77eXCn910146xaAcM4AoJcraRc7
-         1HbdNXcgXI29uQxAK6lwOENIPqHsaiCEzKVtpoMFZ7seIi08nc1OU1mWsQlaTVmu5o
-         8Enk0P0netdMA==
-Date:   Tue, 30 Nov 2021 09:15:06 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: Re: [PATCH 51/64] cachefiles: Implement the I/O routines
-Message-ID: <YaZOCk9zxApPattb@archlinux-ax161>
-References: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
- <163819647945.215744.17827962047487125939.stgit@warthog.procyon.org.uk>
+        Tue, 30 Nov 2021 11:22:30 -0500
+Received: by mail-io1-f69.google.com with SMTP id k6-20020a0566022d8600b005e6ff1b6bbaso24120965iow.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Nov 2021 08:19:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=82PcJsGJmWA9J7EfSsaBo8R7BvPCcHNRldX54MbqtUk=;
+        b=aRY+gbFDPEpTFaLqyau3TOaaW+JXDh4Cwqa74DDVtPEUlONh7Y7B7uF2NZA4VRyAZI
+         YY7wwLpC9pL5U6vFUyWAZZw9V9Eht+pCUeuTZYuAvw0OskQWmqHuf6prPpf0QLXHV96L
+         Y8Qi+2lZuGrh5AlSDLSQKH/YBqrE9X0pAUdpl0wlAXTLK7hLrsSiHBwCQKTI9uFtFQpE
+         VcvnOZEedTfolioK6IXDI2pY7ul+NVelEFLRAH0e1Z7vopEoMuYsXS2ZQ0Gm0pSyGOBH
+         LwS+K94+YcTqadG/VeKWG+hv8K2h0SvVqqik/knbm+0NR9fn3u6djm1C2nCQZFhYjikQ
+         Yb6Q==
+X-Gm-Message-State: AOAM532Si5yQ22MKQpnTg6MSn3XKMnQOh/PEFtVsSrFjMd4UAtLOJo9/
+        Ghe595+qdY/jepIhDM8fz5sbq5ycEUsT6aGLLmk+OFJI+Vbz
+X-Google-Smtp-Source: ABdhPJyxuzWxbXXQxXt/uLUyAQu5gmBfd3on9w/gXZzhkfqblOPzJkm/nRXJfXP2GwX0YVZSMLpgNz44tT0MMcAsVMq1dotg6xoH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163819647945.215744.17827962047487125939.stgit@warthog.procyon.org.uk>
+X-Received: by 2002:a92:d8cf:: with SMTP id l15mr1635ilo.59.1638289150573;
+ Tue, 30 Nov 2021 08:19:10 -0800 (PST)
+Date:   Tue, 30 Nov 2021 08:19:10 -0800
+In-Reply-To: <000000000000f5964705b7d47d8c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dc091705d203eac6@google.com>
+Subject: Re: [syzbot] INFO: trying to register non-static key in l2cap_sock_teardown_cb
+From:   syzbot <syzbot+a41dfef1d2e04910eb2e@syzkaller.appspotmail.com>
+To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
+        bobo.shaobowang@huawei.com, davem@davemloft.net, hdanton@sina.com,
+        johan.hedberg@gmail.com, kuba@kernel.org,
+        linux-bluetooth@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luiz.dentz@gmail.com,
+        luiz.von.dentz@intel.com, marcel@holtmann.org,
+        mareklindner@neomailbox.ch, miklos@szeredi.hu, mszeredi@redhat.com,
+        netdev@vger.kernel.org, sw@simonwunderlich.de,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 29, 2021 at 02:34:39PM +0000, David Howells wrote:
-> Implement the I/O routines for cachefiles.  There are two sets of routines
-> here: preparation and actual I/O.
-> 
-> Preparation for read involves looking to see whether there is data present,
-> and how much.  Netfslib tells us what it wants us to do and we have the
-> option of adjusting shrinking and telling it whether to read from the
-> cache, download from the server or simply clear a region.
-> 
-> Preparation for write involves checking for space and defending against
-> possibly running short of space, if necessary punching out a hole in the
-> file so that we don't leave old data in the cache if we update the
-> coherency information.
-> 
-> Then there's a read routine and a write routine.  They wait for the cookie
-> state to move to something appropriate and then start a potentially
-> asynchronous direct I/O operation upon it.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-cachefs@redhat.com
+syzbot suspects this issue was fixed by commit:
 
-This patch as commit 0443b01eccbb ("cachefiles: Implement the I/O
-routines") in -next causes the following clang warning/error:
+commit 1bff51ea59a9afb67d2dd78518ab0582a54a472c
+Author: Wang ShaoBo <bobo.shaobowang@huawei.com>
+Date:   Wed Sep 1 00:35:37 2021 +0000
 
-fs/cachefiles/io.c:489:6: error: variable 'ret' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
-        if (pos == 0)
-            ^~~~~~~~
-fs/cachefiles/io.c:492:6: note: uninitialized use occurs here
-        if (ret < 0) {
-            ^~~
-fs/cachefiles/io.c:489:2: note: remove the 'if' if its condition is always true
-        if (pos == 0)
-        ^~~~~~~~~~~~~
-fs/cachefiles/io.c:440:9: note: initialize the variable 'ret' to silence this warning
-        int ret;
-               ^
-                = 0
-1 error generated.
+    Bluetooth: fix use-after-free error in lock_sock_nested()
 
-It is the same one that has been reported two other times over the past
-two months:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=134c881eb00000
+start commit:   73b7a6047971 net: dsa: bcm_sf2: support BCM4908's integrat..
+git tree:       net-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9ce34124da4c882b
+dashboard link: https://syzkaller.appspot.com/bug?extid=a41dfef1d2e04910eb2e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166ee4cf500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1337172f500000
 
-https://lore.kernel.org/r/202110150048.HPNa2Mn7-lkp@intel.com/
-https://lore.kernel.org/r/202111070451.bsfAyznx-lkp@intel.com/
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Should ret just be initialized to zero or does it need to be set to
-something else if pos is not equal to zero at the end?
+#syz fix: Bluetooth: fix use-after-free error in lock_sock_nested()
 
-Cheers,
-Nathan
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
