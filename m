@@ -2,122 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 519644645FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 05:33:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 475DD4646D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 06:46:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346549AbhLAEgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Nov 2021 23:36:17 -0500
-Received: from mout.gmx.net ([212.227.17.20]:57965 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230301AbhLAEgQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Nov 2021 23:36:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1638333153;
-        bh=AKqwOapI/P1+DWQeKxnW+oEXUCmtI8Mg9I4HQaXQU7Y=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:Date:In-Reply-To:References;
-        b=UqkvJd2ahQIAuyl9j1YzgMG50sqR/5OpomlZmypMwqGiTP85NDvoqaNiUiBXWvMcP
-         oOxyFJEodjklEnh1Tgmq10Z9aT9tc1LZty2e/w+RPyobq6RF6StEhz1pJuxeSE8RpQ
-         43zKm1jPIRLT7y3elFCvFlUel/o2H98g3R4Zv1H4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from homer.fritz.box ([185.221.151.67]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MzQgC-1mer331C6q-00vNDD; Wed, 01
- Dec 2021 05:32:33 +0100
-Message-ID: <b76e36115d202d5cb30dc29496bf5ecddc185fe8.camel@gmx.de>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-From:   Mike Galbraith <efault@gmx.de>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Alexey Avramov <hakavlad@inbox.lv>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Wed, 01 Dec 2021 05:32:31 +0100
-In-Reply-To: <20211130130935.GR3366@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
-         <20211127011246.7a8ac7b8@mail.inbox.lv>
-         <20211129150117.GO3366@techsingularity.net>
-         <a20f17c4b1b5fdfade3f48375d148e97bd162dd6.camel@gmx.de>
-         <20211130112244.GQ3366@techsingularity.net>
-         <b8f607c771a4f698fcb651379ca30d3bb6a83ccd.camel@gmx.de>
-         <b966ccc578ac60d3684cff0c88c1b9046b408ea3.camel@gmx.de>
-         <20211130130935.GR3366@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.1 
+        id S1346764AbhLAFt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 00:49:29 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:37247 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230497AbhLAFt2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Dec 2021 00:49:28 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0UywY0em_1638337562;
+Received: from 30.225.24.24(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UywY0em_1638337562)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 01 Dec 2021 13:46:04 +0800
+Message-ID: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com>
+Date:   Wed, 1 Dec 2021 13:46:02 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:P3WByZj5IDN7qpCbMRUdgA/WTK8GizMAVsIN61yMDHaJW9Aq2Vz
- VhFrMz9er39O0JZqazAdxSygFPMsoyMR3PTvUx9VypiXulAqCVgzb9J7H7Htx8D1Etg3sLa
- bK3XbFZHps/IPIfH7yrllKNJF60EYe1nKInrlk3smXjFEiVCJ7yTDaoHjFHEEOBxIOkJoUn
- a1Eaa8x/hEaL9TpLNKabQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:chVfPrHgdZ4=:MJ0T8ADoYCth8LEO+meIi+
- ZN8JysXyiMCqpzeOVqZYC6dfK0v4Y891gd6DUwgcTwx0olADHGZALa8eEmEi95fON0vt+yjQ3
- LSq6PhdpcMCKIvhunYKWk4e7Fy1KmPGXrQ40FlqoiAHXT+udHMTRjSqciLG5mwcONHRJ4VKO7
- EIZfB63BSWr2LK8YpEWQ8VHRenUBhmMGg+nuVUsrys4qBBqFZGnCofltdmacE869mX6QSElnn
- 7XalJKsfY7MK0f+ySzPfiJ04PFDQT3IRnIS2qsauYYOo2Hf7YemUQFrRc9sfHtKsX/cWrQvZh
- Y3U+iHBl05NThO93Ey2JeNJNkYnH/pNv/7K0ADDPr0eG1+2bmliwKEvda6eUL/uDj1HNcwm8W
- CbwVE4j/DBEX0bpfcVAS10TDpL6g3BN2Mn5trwne16XRjL81fPp7M67mp+SdZ/9NcuKJU7wMA
- +O1jKm8X+Tjb21uz9Jgp/586nnYQrCmLpy6Dckuqruda/j1oEWYOUysRs1pGxR5YX09SL38Q8
- vprLFMCvlpHcIpd1MdTCgC6/8oDwzFEokbzgubfphTKq2/QjPMD1i4C6IqVk3QqD6zme7eCLu
- JVOZEv8aIopvtBnpB9EiaWqFE/Pgof6HmuN7To/jowyL9gNBk0nwa/iOL0POhqTmEFb3L6oBO
- 6qcX4UHLYjrzK/W7/WNJaDbeXn6YLUlDrzmQzEENH0nFNlP1H3c35TWGvCL2rxVYZ5mXY0Juf
- Su7p9LUtlZAxB9Hmh/tVzY+7cxbAWDGcaAaUd8XVRVY6FkxBM8FFp1OrKTo4c3EWcrh+FZBQx
- dOOtdj64MLAlrTMngMCyTQlNWqiHWEKk734q98lZdpsxQccVh+w+demR2enRbBEpUEWGqZXeS
- 9jGfp7zV+zNPi6KFhFjGIdgBuYTi9EEXTizId2XOd7CMYYifcyC+4vlwligURhfl+hbGSnm2/
- RZ/f44sIas5T+dR9SItkN3hexqvATpuHAlWffhBVuBRAA+WDJacPekOCgDsnAkiNPKWLEpnKd
- XgX9mBD++xoOneEVMfrBlog7ijKOVRWPUyCh74MHvkYogPLM4jLKZjaekxsXFDpFY8HoGGokU
- aupIRr3fRJdugk=
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: [PATCH 44/64] cachefiles: Implement key to filename encoding
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
+ <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-11-30 at 13:09 +0000, Mel Gorman wrote:
-> On Tue, Nov 30, 2021 at 01:51:10PM +0100, Mike Galbraith wrote:
-> > On Tue, 2021-11-30 at 13:00 +0100, Mike Galbraith wrote:
-> > > On Tue, 2021-11-30 at 11:22 +0000, Mel Gorman wrote:
-> > > > On Tue, Nov 30, 2021 at 11:14:32AM +0100, Mike Galbraith wrote:
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (2 * write_pendi=
-ng <=3D reclaimable)
-> > > > >
-> > > > > That is always true here...
-> > > > >
-> > > >
-> > > > Always true for you or always true in general?
-> > >
-> > > "Here" as in the boxen located at my GPS coordinates :)
-> > >
-> > > > The intent of the check is "are a majority of reclaimable pages
-> > > > marked WRITE_PENDING?". It's similar to the check that existed pri=
-or
-> > > > to 132b0d21d21f ("mm/page_alloc: remove the throttling logic from =
-the
-> > > > page allocator").
-> > >
-> > > I'll put my trace_printk() back and see if I can't bend-adjust it.
-> >
-> > As it sits, write_pending is always 0 with tail /dev/zero.
-> >
->
-> That is not a surprise for the test in question as it doesn't trigger
-> a case where there are lots of page cache being marked dirty and write
-> pending.
 
-I found a way to make it go false, around 80% of the time on the way to
-the first oom-kill in fact. Starting 2 memcg stress instances and a
-memory sized bonnie did the trick.  'course getting those started was
-the last thing my desktop did before taking up residence on spinning
-rust and staying there for the 10 minute test duration, mouse pointer
-didn't even manage to twitch :)
 
-That's way worse than having box try to swallow /dev/zero, that gets
-killed pretty quickly with your latest patch.  The grim reaper tried to
-help with nutty overcommit, but two kills in 10 minutes wasn't enough.
+On 11/29/21 10:33 PM, David Howells wrote:
 
-	-Mike
+> +/*
+> + * turn the raw key into something cooked
+> + * - the key may be up to NAME_MAX in length (including the length word)
+> + *   - "base64" encode the strange keys, mapping 3 bytes of raw to four of
+> + *     cooked
+> + *   - need to cut the cooked key into 252 char lengths (189 raw bytes)
+> + */
+> +bool cachefiles_cook_key(struct cachefiles_object *object)
+> +{
+> +	const u8 *key = fscache_get_key(object->cookie), *kend;
+> +	unsigned char ch;
+> +	unsigned int acc, i, n, nle, nbe, keylen = object->cookie->key_len;
+> +	unsigned int b64len, len, print, pad;
+> +	char *name, sep;
+> +
+> +	_enter(",%u,%*phN", keylen, keylen, key);
+> +
+> +	BUG_ON(keylen > NAME_MAX - 3);
+> +
+> +	print = 1;
+> +	for (i = 0; i < keylen; i++) {
+> +		ch = key[i];
+> +		print &= cachefiles_filecharmap[ch];
+> +	}
+> +
+> +	/* If the path is usable ASCII, then we render it directly */
+> +	if (print) {
+> +		len = 1 + keylen + 1;
+> +		name = kmalloc(len, GFP_KERNEL);
+> +		if (!name)
+> +			return false;
+> +
+> +		name[0] = 'D'; /* Data object type, string encoding */
+> +		name[1 + keylen] = 0;
+> +		memcpy(name + 1, key, keylen);
+> +		goto success;
+			^
+If we goto success from here,
 
+> +	}
+> +
+> +	/* See if it makes sense to encode it as "hex,hex,hex" for each 32-bit
+> +	 * chunk.  We rely on the key having been padded out to a whole number
+> +	 * of 32-bit words.
+> +	 */
+> +	n = round_up(keylen, 4);
+> +	nbe = nle = 0;
+> +	for (i = 0; i < n; i += 4) {
+> +		u32 be = be32_to_cpu(*(__be32 *)(key + i));
+> +		u32 le = le32_to_cpu(*(__le32 *)(key + i));
+> +
+> +		nbe += 1 + how_many_hex_digits(be);
+> +		nle += 1 + how_many_hex_digits(le);
+> +	}
+> +
+> +	b64len = DIV_ROUND_UP(keylen, 3);
+> +	pad = b64len * 3 - keylen;
+> +	b64len = 2 + b64len * 4; /* Length if we base64-encode it */
+> +	_debug("len=%u nbe=%u nle=%u b64=%u", keylen, nbe, nle, b64len);
+> +	if (nbe < b64len || nle < b64len) {
+> +		unsigned int nlen = min(nbe, nle) + 1;
+> +		name = kmalloc(nlen, GFP_KERNEL);
+> +		if (!name)
+> +			return false;
+> +		sep = (nbe <= nle) ? 'S' : 'T'; /* Encoding indicator */
+> +		len = 0;
+> +		for (i = 0; i < n; i += 4) {
+> +			u32 x;
+> +			if (nbe <= nle)
+> +				x = be32_to_cpu(*(__be32 *)(key + i));
+> +			else
+> +				x = le32_to_cpu(*(__le32 *)(key + i));
+> +			name[len++] = sep;
+> +			if (x != 0)
+> +				len += snprintf(name + len, nlen - len, "%x", x);
+> +			sep = ',';
+> +		}
+> +		goto success;
+> +	}
+> +
+> +	/* We need to base64-encode it */
+> +	name = kmalloc(b64len + 1, GFP_KERNEL);
+> +	if (!name)
+> +		return false;
+> +
+> +	name[0] = 'E';
+> +	name[1] = '0' + pad;
+> +	len = 2;
+> +	kend = key + keylen;
+> +	do {
+> +		acc  = *key++;
+> +		if (key < kend) {
+> +			acc |= *key++ << 8;
+> +			if (key < kend)
+> +				acc |= *key++ << 16;
+> +		}
+> +
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +		acc >>= 6;
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +		acc >>= 6;
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +		acc >>= 6;
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +	} while (key < kend);
+> +
+> +success:
+> +	name[len] = 0;
+	     ^
+then it seems that this will cause an out-of-boundary access.
+
+
+> +	object->d_name = name;
+> +	object->d_name_len = len;
+> +	_leave(" = %s", object->d_name);
+> +	return true;
+> +}
+> 
+
+-- 
+Thanks,
+Jeffle
