@@ -2,115 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3A4464B85
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 11:23:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99DB1464C9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 12:32:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348623AbhLAK1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 05:27:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58186 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232177AbhLAK1R (ORCPT
+        id S1348944AbhLALfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 06:35:14 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:43030 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241452AbhLALed (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 05:27:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638354236;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=k0DFN0o7BK0vC4lSvVBvOKD7kQ9DIA3svi19e9Yt8yE=;
-        b=DXrFvIfKm4/HdTNQkOGnRIOpCfCGLOnYgHd6GHDBAxBXkDIJgcN9j7LYmsOiyM29d8Vmrb
-        N+DAJbSNFycP2G4ZIo4MYnsT/f9PET+693VQ/K9FTUw+GcxgQifhZDqN0Jog3CmseXAWAi
-        Jq/YyBaNWaBxaCgVIKlN2WC88PkEnyY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-328-m7gWlmizPt6BFyeOjzMlww-1; Wed, 01 Dec 2021 05:23:53 -0500
-X-MC-Unique: m7gWlmizPt6BFyeOjzMlww-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 1 Dec 2021 06:34:33 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9F55310144E1;
-        Wed,  1 Dec 2021 10:23:51 +0000 (UTC)
-Received: from localhost (unknown [10.39.195.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7796960C05;
-        Wed,  1 Dec 2021 10:23:45 +0000 (UTC)
-Date:   Wed, 1 Dec 2021 10:23:44 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2] fuse: rename some files and clean up Makefile
-Message-ID: <YadNMH15rjrOHzUt@stefanha-x1.localdomain>
-References: <1638008002-3037-1-git-send-email-yangtiezhu@loongson.cn>
- <YaSpRwMlMvcIIMZo@stefanha-x1.localdomain>
- <7277c1ee-6f7b-611d-180d-866db37b2bd7@loongson.cn>
+        by sin.source.kernel.org (Postfix) with ESMTPS id 38CB7CE1DCD;
+        Wed,  1 Dec 2021 11:31:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C9DC53FAD;
+        Wed,  1 Dec 2021 11:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638358262;
+        bh=SFJv5JYjSLjoGYc7k8E7Eesrid3Zjiv3lcuqMttziv0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=PXj7WXvPyaF0snbP/z9+WG3XAn5AcWXfVNXu/busVobCyJqG3MKzKnroF2q53e0Lq
+         rjcm6TtAD97jNoVaYUUnR5LkjuseHfenVIALYu817q76ZOqaTFNm7FKUukw9Don7x4
+         XgVF0Y07i+laSmAnmSptjdG4/YsdvNuq38arpHGBYQEL338D3FGufXO6lSYEbm3B+O
+         LMOJw8oEGh57iFL/JqwPjm9621d65iDmOiPADJswS8hECqnsK8gJjxf9mmWwbmI7bw
+         d4NO3ZxJNb8XnT84SWjnDbCgRc9b5C+ClS8aJs+HJTrLF0jX1iKx8zI2G/tGvSfcfs
+         y+CUzUOPdipOQ==
+Message-ID: <06e4f9955ee9e964724ecc2047fef6e4c9606b14.camel@kernel.org>
+Subject: Re: [PATCH 1/2] ceph: conversion to new fscache API
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 01 Dec 2021 06:31:00 -0500
+In-Reply-To: <278917.1638204396@warthog.procyon.org.uk>
+References: <20211129162907.149445-2-jlayton@kernel.org>
+         <20211129162907.149445-1-jlayton@kernel.org>
+         <278917.1638204396@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cnKZjUtuNVB1GrhC"
-Content-Disposition: inline
-In-Reply-To: <7277c1ee-6f7b-611d-180d-866db37b2bd7@loongson.cn>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, 2021-11-29 at 16:46 +0000, David Howells wrote:
+> Jeff Layton <jlayton@kernel.org> wrote:
+> 
+> > +void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
+> >  {
+> > -	return fscache_register_netfs(&ceph_cache_netfs);
+> > +	struct fscache_cookie* cookie = xchg(&ci->fscache, NULL);
+> > +
+> > +	fscache_relinquish_cookie(cookie, false);
+> >  }
+> 
+> xchg() should be excessive there.  This is only called from
+> ceph_evict_inode().  Also, if you're going to reset the pointer, it might be
+> worth poisoning it rather than nulling it.
+> 
 
---cnKZjUtuNVB1GrhC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Nov 29, 2021 at 09:27:17PM +0800, Tiezhu Yang wrote:
-> On 11/29/2021 06:19 PM, Stefan Hajnoczi wrote:
-> > On Sat, Nov 27, 2021 at 06:13:22PM +0800, Tiezhu Yang wrote:
-> > > No need to generate virtio_fs.o first and then link to virtiofs.o, ju=
-st
-> > > rename virtio_fs.c to virtiofs.c and remove "virtiofs-y :=3D virtio_f=
-s.o"
-> > > in Makefile, also update MAINTAINERS. Additionally, rename the private
-> > > header file fuse_i.h to fuse.h, like ext4.h in fs/ext4, xfs.h in fs/x=
-fs
-> > > and f2fs.h in fs/f2fs.
-> >=20
-> > There are two separate changes in this patch (virtio_fs.c -> virtiofs.c
-> > and fuse_i.h -> fuse.h). A patch series with two patches would be easier
-> > to review and cleaner to backport.
-> >=20
-> > I'm happy with renaming virtio_fs.c to virtiofs.c:
-> >=20
-> > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> >=20
->=20
-> Hi Stefan and Miklos,
->=20
-> Thanks for your reply, what should I do now?
->=20
-> (1) split this patch into two separate patches to send v3;
-> (2) just ignore this patch because
-> "This will make backport of bugfixes harder for no good reason."
-> said by Miklos.
-
-Miklos' point makes sense to me and he is the FUSE maintainer.
-
-Stefan
-
---cnKZjUtuNVB1GrhC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmGnTTAACgkQnKSrs4Gr
-c8gonQf+OzY/cnbKn1ZoDeOvkjZe6Iu2Zwc31jjntY6hvhXceq7whiSMHsKPV9Ft
-Vwx8avw6yQ6wWb7eVa4p0roX03f71/XRMNbET0n/wUslF6EPBKQ5F0XbuY8WTGoa
-TKv+3X8BeFib3wqgdShIjy8wyYbo52XDPuq7OSZ6QYjvxbfe0NsxCbV+ZPrLNCKg
-fx0gD1Nj/DSeWN7hZeJRM+odczWfLgPTDz0/jaRzZTH4VcmEETskjQ636/goCWxC
-nu09wNjMrt+6SsyB9s98z7bYPqgWvvfFcJFsitutODbOIkLh00HOaj0hO7L0kKOR
-uqCo91debqQ03ELHcqpK5QJtvYwb1Q==
-=PTPH
------END PGP SIGNATURE-----
-
---cnKZjUtuNVB1GrhC--
-
+Ok, makes sense. I'll make that change soon.
+-- 
+Jeff Layton <jlayton@kernel.org>
