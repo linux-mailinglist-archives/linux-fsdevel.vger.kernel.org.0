@@ -2,69 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99DB1464C9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 12:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B10C464CF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 12:34:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348944AbhLALfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 06:35:14 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:43030 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241452AbhLALed (ORCPT
+        id S1349016AbhLALhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 06:37:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349034AbhLALhl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 06:34:33 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 38CB7CE1DCD;
-        Wed,  1 Dec 2021 11:31:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C9DC53FAD;
-        Wed,  1 Dec 2021 11:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638358262;
-        bh=SFJv5JYjSLjoGYc7k8E7Eesrid3Zjiv3lcuqMttziv0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PXj7WXvPyaF0snbP/z9+WG3XAn5AcWXfVNXu/busVobCyJqG3MKzKnroF2q53e0Lq
-         rjcm6TtAD97jNoVaYUUnR5LkjuseHfenVIALYu817q76ZOqaTFNm7FKUukw9Don7x4
-         XgVF0Y07i+laSmAnmSptjdG4/YsdvNuq38arpHGBYQEL338D3FGufXO6lSYEbm3B+O
-         LMOJw8oEGh57iFL/JqwPjm9621d65iDmOiPADJswS8hECqnsK8gJjxf9mmWwbmI7bw
-         d4NO3ZxJNb8XnT84SWjnDbCgRc9b5C+ClS8aJs+HJTrLF0jX1iKx8zI2G/tGvSfcfs
-         y+CUzUOPdipOQ==
-Message-ID: <06e4f9955ee9e964724ecc2047fef6e4c9606b14.camel@kernel.org>
-Subject: Re: [PATCH 1/2] ceph: conversion to new fscache API
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 01 Dec 2021 06:31:00 -0500
-In-Reply-To: <278917.1638204396@warthog.procyon.org.uk>
-References: <20211129162907.149445-2-jlayton@kernel.org>
-         <20211129162907.149445-1-jlayton@kernel.org>
-         <278917.1638204396@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+        Wed, 1 Dec 2021 06:37:41 -0500
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF958C0613B5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Dec 2021 03:34:11 -0800 (PST)
+Received: by mail-qv1-xf2a.google.com with SMTP id b11so21255024qvm.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Dec 2021 03:34:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=l4J9Z+m4hmgZbWtQHlC70w1zjUmiI7wjClCwm6dHAnY=;
+        b=nKE9e+4jEQRb21OhoYPSbxPLfJ2IuSmNXU0U6wmcP4ykCacrWpdbtE0jjuz/hSLLGi
+         3CHjeG+lFmWzoULwCsmlhVFgDEk5dLFaYb51pw7bXGjZ9H8t0j91dP9aL17MRQYkMPZK
+         Snvty/Yp8/ZrWZr2EuFXHqBxUdbU8X39ik45viERJ1Dn7qW8BPCFp2vlafV2okU0kn5j
+         QPTIDY8QJSy8zAVbK10d6+AY0lky+mrQRAAg0uS1DacQStzD/dQtt/uBz/RlGIdZCai/
+         BHep24kmiLdl1nvBvHYMFonu8NoJvJlErv7lbZlg2+2c277BpkzmDA4WwPZoxzlIf0Mh
+         Af5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=l4J9Z+m4hmgZbWtQHlC70w1zjUmiI7wjClCwm6dHAnY=;
+        b=bQTzn/WaHGlxrBZoBsaaRuu+QMnoKolFSwWyjurhif4VbyJ0c/WE3Ho2Kku6HmPKhi
+         FlZU0VRbVuEIqn+lx+gsSNpBESa2IjrGNBfBdyMQwY7DKYGWKwVE7g5XhZlAk2FplnLk
+         2ecMoUhCU7lCU3QGN6XxWsZwAF1a63TuftPbP7/pU1OmBjgDYVX0vC+X/F/Vuf/mNde7
+         WLApooFpa31JlWUzlJZgkWoEAv1igSksJOEqALucAq2rDnSNvpm0VSlmg9aiv1Xau7M8
+         nfPFOqCstd9Wge1yzOiOfUCAR8E8voSFzuhVigVEibTaXmaHaKV+MBpd3EtGsxh0GJgv
+         zXcA==
+X-Gm-Message-State: AOAM5339pLvmBdFTmsC6s/UQ2hHB/UR/IgIbmgLRWIfHl7Q+sE+/isnF
+        KdiP+7uWBaqc/+o5pUAsnQNtTXTXpxC82ljI1U4SZWYRvRs=
+X-Google-Smtp-Source: ABdhPJwK+H50pzFgfv5CJPfAwBzUdMqIKHh+Ckkuju2lG2knVlJrzqINPiiwPjc/Uz6xuSJez7Fkn5YZPcfa5CPpvro=
+X-Received: by 2002:a67:ef4d:: with SMTP id k13mr6266305vsr.4.1638358439020;
+ Wed, 01 Dec 2021 03:33:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Sender: unitednationawardwinner@gmail.com
+Received: by 2002:ab0:6c55:0:0:0:0:0 with HTTP; Wed, 1 Dec 2021 03:33:58 -0800 (PST)
+From:   "Mrs. Orgil Baatar" <mrs.orgilbaatar21@gmail.com>
+Date:   Wed, 1 Dec 2021 03:33:58 -0800
+X-Google-Sender-Auth: uTQ_nfkzXaWGWaTWp1BSFqK3Ucs
+Message-ID: <CAJ4dHaSrD-X=xpfKNZV-hXSiMV6mNYrgy5vWCNkKm6iu5RQStg@mail.gmail.com>
+Subject: Your long awaited part payment of $2.5.000.00Usd
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-11-29 at 16:46 +0000, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
-> 
-> > +void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
-> >  {
-> > -	return fscache_register_netfs(&ceph_cache_netfs);
-> > +	struct fscache_cookie* cookie = xchg(&ci->fscache, NULL);
-> > +
-> > +	fscache_relinquish_cookie(cookie, false);
-> >  }
-> 
-> xchg() should be excessive there.  This is only called from
-> ceph_evict_inode().  Also, if you're going to reset the pointer, it might be
-> worth poisoning it rather than nulling it.
-> 
+Attention: Beneficiary, Your long awaited part payment of
+$2.5.000.00Usd (TWO MILLION FIVE Hundred Thousand United State
+Dollars) is ready for immediate release to you, and it was
+electronically credited into an ATM Visa Card for easy delivery.
 
-Ok, makes sense. I'll make that change soon.
--- 
-Jeff Layton <jlayton@kernel.org>
+Your new Payment Reference No.- 6363836,
+Pin Code No: 1787
+Your Certificate of Merit Payment No: 05872,
+
+Your Names: |
+Address: |
+
+Person to Contact:MR KELLY HALL the Director of the International
+Audit unit ATM Payment Center,
+
+Email: uba-bf@e-ubabf.com
+TELEPHONE: +226 64865611 You can whatsApp the bank
+
+Regards.
+Mrs ORGIL BAATAR
