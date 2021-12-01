@@ -2,122 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D8E4652BA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 17:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E66E4652F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 17:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350378AbhLAQao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 11:30:44 -0500
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25359 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239044AbhLAQan (ORCPT
+        id S1351462AbhLAQnl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 11:43:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243525AbhLAQnk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 11:30:43 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1638375842; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=bsu7LQ2PoeLY0foZtF4JFW0yFeQvxbFUluNQXk3az6/4qMWdVyL7zq5fqzSRty2/3rjbqKl/iZNyBCNhJr7X9O+jJuzOC/W/dSR0YSjTiM5xf681ScJA/gx3VYEGp6HvKXDqAYnTOw15b+S5bHVBrb2P4S4QL9CJyz7oYI2imTY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1638375842; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=rcScbATqE6loxaDgQyPaD/4ZwjFVIqn67jJGI+uVyDw=; 
-        b=kLVzGKVujfAPYvMR/1Aln8qXgt7I7DeIGLwEeDNcRIPuHOAKPPegdQDEvwjo/FdUnFxer/7EmAywcz/7eTABMuoNaA0a/hQln6vpLGIspCdm7ghgiS6Bh0wsBBANrAJKrzMCQ79xVb6bNNc5lZIFlRSB+jK9trn2YjiXaWuBSzQ=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1638375842;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=rcScbATqE6loxaDgQyPaD/4ZwjFVIqn67jJGI+uVyDw=;
-        b=dpjnOQbInxwEwa4T0nZRewxMfGWJLRZ28x+r7O48ol1Cf0DHFYU4LOvHSWV0fljR
-        pX1G/6KwExjNjQeBgIUmeJgEz68+nayqn5npFifiTYswd6bxaezzNc+QUZ9xY4Lzida
-        SUg7W/+5nn/FSPbsys3d/+Al3GXaDOU1HSR9Fx3M=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1638375840259479.9473699389241; Thu, 2 Dec 2021 00:24:00 +0800 (CST)
-Date:   Thu, 02 Dec 2021 00:24:00 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Jan Kara" <jack@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>,
-        "Miklos Szeredi" <miklos@szeredi.hu>
-Cc:     "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "overlayfs" <linux-unionfs@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "ronyjin" <ronyjin@tencent.com>,
-        "charliecgxu" <charliecgxu@tencent.com>,
-        "Vivek Goyal" <vgoyal@redhat.com>
-Message-ID: <17d76cf59ee.12f4517f122167.2687299278423224602@mykernel.net>
-In-Reply-To: <20211201134610.GA1815@quack2.suse.cz>
-References: <20211118112315.GD13047@quack2.suse.cz>
- <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
- <20211118164349.GB8267@quack2.suse.cz>
- <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
- <20211130112206.GE7174@quack2.suse.cz>
- <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
- <CAOQ4uxidK-yDMZoZtoRwTZLgSTr1o2Mu2L55vJRNJDLV0-Sb1w@mail.gmail.com>
- <17d73da701b.e571c37220081.6904057835107693340@mykernel.net>
- <17d74b08dcd.c0e94e6320632.9167792887632811518@mykernel.net>
- <CAOQ4uxiCYFeeH8oUUNG+rDCru_1XcwB6fR2keS1C6=d_yD9XzA@mail.gmail.com> <20211201134610.GA1815@quack2.suse.cz>
-Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode
- operation
+        Wed, 1 Dec 2021 11:43:40 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE67C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Dec 2021 08:40:19 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id gt5so18431244pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Dec 2021 08:40:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=y8cmWY4Zar66oxROb9aCaWg+WHCdO5TorclDxazoih0=;
+        b=KMrgAdmxIQ8K3dFwdZP0KgMke/VWmOiwmkpwK8XtO5jg0bv+IwT6kwy5QeCS8cVmkG
+         iXva0YNAfh0jDs3F2vVeVDeeSEVNtLaDMU2jGFO9dRGbP5aXdL3iPH4S0TdEOsAPotsb
+         vAd3VHhwy3mFo4QwZrOfawXcT16vzNk/wWXh0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=y8cmWY4Zar66oxROb9aCaWg+WHCdO5TorclDxazoih0=;
+        b=COoez9g3GQtBCa2FTA4zJtje+93eyHib6GeHE9WzvgoLJh+6visQMokZTZ6cCM0XZd
+         yIWt3UlfQ8mLiVYD2o4Jd171gQw2hzfRJJmTfMlVj7kEN7L/lFlV5GtHCsZJyPWfehrl
+         Xv1Ad4zYz+Vw4q3dXsrFcCl5BLMktTBu/A1vCUZUqDcd3WsHJqY3xdqyVQBzekzYdWFk
+         knYOvcH6h0jXW7v1PzpTUaYDqenRWuRY1JgMT96F9m16uon4SQyfLY2cN2FuzufA5Sv+
+         1TCxqXiU6+yv/krRYyARwmwVLShSZkPap92s74DjFotVeOOke4dj2mBqO4tqobRLq1ap
+         QNIw==
+X-Gm-Message-State: AOAM532MLwLj3eGBRss76cA1oaJ9+uBKASyfLP5iI2CAMYMiQR8s5wEL
+        snNU6WLAUmEUAxasQHUlHzPfew==
+X-Google-Smtp-Source: ABdhPJwJfw+rygwnhuiEpbRB+v+vZNeROz8C/SXUcdZBzJqV6OaozK2TnS2SEtEqIW0r9VUrX4HDWg==
+X-Received: by 2002:a17:90b:3ec2:: with SMTP id rm2mr9031549pjb.1.1638376818926;
+        Wed, 01 Dec 2021 08:40:18 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t13sm322535pfl.98.2021.12.01.08.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Dec 2021 08:40:18 -0800 (PST)
+Date:   Wed, 1 Dec 2021 08:40:17 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v17 0/3] Add trusted_for(2) (was O_MAYEXEC)
+Message-ID: <202112010839.4362C7A70@keescook>
+References: <20211115185304.198460-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211115185304.198460-1-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-12-01 21:46:10 Jan Kara <=
-jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > On Wed 01-12-21 09:19:17, Amir Goldstein wrote:
- > > On Wed, Dec 1, 2021 at 8:31 AM Chengguang Xu <cgxu519@mykernel.net> wr=
-ote:
- > > > So the final solution to handle all the concerns looks like accurate=
-ly
- > > > mark overlay inode diry on modification and re-mark dirty only for
- > > > mmaped file in ->write_inode().
- > > >
- > > > Hi Miklos, Jan
- > > >
- > > > Will you agree with new proposal above?
- > > >
- > >=20
- > > Maybe you can still pull off a simpler version by remarking dirty only
- > > writably mmapped upper AND inode_is_open_for_write(upper)?
- >=20
- > Well, if inode is writeably mapped, it must be also open for write, does=
-n't
- > it? The VMA of the mapping will hold file open. So remarking overlay ino=
-de
- > dirty during writeback while inode_is_open_for_write(upper) looks like
- > reasonably easy and presumably there won't be that many inodes open for
- > writing for this to become big overhead?
- >=20
- > > If I am not mistaken, if you always mark overlay inode dirty on ovl_fl=
-ush()
- > > of FMODE_WRITE file, there is nothing that can make upper inode dirty
- > > after last close (if upper is not mmaped), so one more inode sync shou=
-ld
- > > be enough. No?
- >=20
- > But we still need to catch other dirtying events like timestamp updates,
- > truncate(2) etc. to mark overlay inode dirty. Not sure how reliably that
- > can be done...
- >=20
+On Mon, Nov 15, 2021 at 07:53:01PM +0100, Mickaël Salaün wrote:
+> Andrew, can you please consider to merge this into your tree?
 
-To be honest I even don't fully understand what's the ->flush() logic in ov=
-erlayfs.
-Why should we open new underlying file when calling ->flush()?
-Is it still correct in the case of opening lower layer first then copy-uped=
- case?=20
+Friendly ping to akpm. :)
 
+Can this start living in -mm, or would a different tree be better?
 
-Thanks,
-Chengguang
+Thanks!
 
+-Kees
 
-
-
-
-
- =20
+-- 
+Kees Cook
