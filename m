@@ -2,174 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4334647CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 08:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D196A464914
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 08:46:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347193AbhLAHWu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 02:22:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232535AbhLAHWu (ORCPT
+        id S234656AbhLAHtr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 02:49:47 -0500
+Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:11667 "EHLO
+        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230144AbhLAHtq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 02:22:50 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B306FC061574;
-        Tue, 30 Nov 2021 23:19:29 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id c3so29523509iob.6;
-        Tue, 30 Nov 2021 23:19:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=W42RCJlEds63KYEFS5bNvHOTueCgejloTTAeKuH4dpI=;
-        b=XLi1t09ZX6lCYG1AT8qmEVfx0I+gy6ApvyyAj2wq6PKp1tY8NJ6+tJt2TvjoXfYpNJ
-         RIHnrIGKQaBJvSUROMIMlc/keLqMgrsXeRhWlFuPv3/DaSEVQmxSpzTdBKLgKQ7I7DGV
-         Ud6Varjw6l0mGxrs0KURFpkVaGj91koU1QVo/G0q/jz7yYmUZbmvGz4C6MZr8+D3Ws1o
-         q5O0H/1lEzIIZWn2nhBHmOhc62LSeJ4+XFvbujYNW6QZLUxwO1fv1KTiQV6H3LYeiDPz
-         AINJil2aea1e2Ec0LzuUaV3BTQFX8pQSe4wWwZXVKnB97P5UWXNjuhdPdR2lYZx/rOFM
-         Qe5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=W42RCJlEds63KYEFS5bNvHOTueCgejloTTAeKuH4dpI=;
-        b=nZlSQEnc5pdz/ryuXaPsEycjrI+Bh8YvN8W2B79k+QSzj8eVxTG/1p/y/r1yS+T+BK
-         9zjj5xrMkV7GFzZ43Mx/Ea1VFd97WAxIUcrCVsVyEfSlHtXd8pEzQ04N8lp/p11Xs1o4
-         EA9VXxNE3ctotT4BFU2eXQwiEubCGfYv/QdH9jbV7GuPK/z1Oia3IV8DMg4bDTbYTeYg
-         NAuTCKj4prbnL1gt7VkLY+AbjPTwU4zydTk1KKtZ5Qsef0bMxPOTzveDmMrtr/iCE6CT
-         kKG4jHaXnnq+2l5KyWOCH6j7IqltYLZGn6dFBf5Bv5lzU3Bnv4Qr0hloYcAc70i7xaDf
-         xdpA==
-X-Gm-Message-State: AOAM533c0TIncI5TlivgseFxcg90yqy1qcg9SP3sVW+6fv2rwSC+E+fa
-        dfPh/g348ues++Nikfk+ZKQsJrfc9Rgrk53DHXY=
-X-Google-Smtp-Source: ABdhPJzsk71aQ4hKPDW7OZPUk51D41MeTE8kUWEi0IC/aW28L8En/Gc6tkoZ+Rb5NrCuOifUXmpLuPcMyaIq2OvLiUw=
-X-Received: by 2002:a6b:d904:: with SMTP id r4mr6169415ioc.52.1638343169091;
- Tue, 30 Nov 2021 23:19:29 -0800 (PST)
+        Wed, 1 Dec 2021 02:49:46 -0500
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 8D7206209D9;
+        Wed,  1 Dec 2021 07:46:23 +0000 (UTC)
+Received: from pdx1-sub0-mail-a239.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id C2A11620894;
+        Wed,  1 Dec 2021 07:46:22 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from pdx1-sub0-mail-a239.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.109.250.6 (trex/6.4.3);
+        Wed, 01 Dec 2021 07:46:23 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Harbor-Suffer: 4982dbea23ba7336_1638344783231_287088708
+X-MC-Loop-Signature: 1638344783231:4208909484
+X-MC-Ingress-Time: 1638344783231
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a239.dreamhost.com (Postfix) with ESMTPSA id 4J3rkQ4FV6z1Jd;
+        Tue, 30 Nov 2021 23:46:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
+        s=claycon.org; t=1638344782; bh=jzLWxBpLhm1LQux+SiiHrLGTxuA=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=QayqVyXxG8djF+aeyhs2Yph1g1K0GVFDrpWMJ8z5CfLGaQOT6A5mrM8nmc0rfT67p
+         ROy976nGJ5mS3nTJGRrzzyPsZUNRTusYoWvtgwk3AOnK1nLPXZ9COw49AtV/Ry27xP
+         +Qs9rLFNVDaFbjjSU5cwSmCu9hZWn3qi8ol6uyLQ=
+Date:   Wed, 1 Dec 2021 01:46:21 -0600
+From:   Clay Harris <bugs@claycon.org>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
+Message-ID: <20211201074621.qzebnsb7f3t27dvo@ps29521.dreamhostps.com>
+References: <20211129221257.2536146-1-shr@fb.com>
+ <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
+ <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
 MIME-Version: 1.0
-References: <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
- <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com>
- <17d268ba3ce.1199800543649.1713755891767595962@mykernel.net>
- <CAJfpegttQreuuD_jLgJmrYpsLKBBe2LmB5NSj6F5dHoTzqPArw@mail.gmail.com>
- <17d2c858d76.d8a27d876510.8802992623030721788@mykernel.net>
- <17d31bf3d62.1119ad4be10313.6832593367889908304@mykernel.net>
- <20211118112315.GD13047@quack2.suse.cz> <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
- <20211118164349.GB8267@quack2.suse.cz> <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
- <20211130112206.GE7174@quack2.suse.cz> <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
- <CAOQ4uxidK-yDMZoZtoRwTZLgSTr1o2Mu2L55vJRNJDLV0-Sb1w@mail.gmail.com>
- <17d73da701b.e571c37220081.6904057835107693340@mykernel.net> <17d74b08dcd.c0e94e6320632.9167792887632811518@mykernel.net>
-In-Reply-To: <17d74b08dcd.c0e94e6320632.9167792887632811518@mykernel.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 1 Dec 2021 09:19:17 +0200
-Message-ID: <CAOQ4uxiCYFeeH8oUUNG+rDCru_1XcwB6fR2keS1C6=d_yD9XzA@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode operation
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ronyjin <ronyjin@tencent.com>,
-        charliecgxu <charliecgxu@tencent.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 1, 2021 at 8:31 AM Chengguang Xu <cgxu519@mykernel.net> wrote:
->
->
->  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-12-01 10:37:15 Chenggua=
-ng Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
->  >
->  >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-12-01 03:04:59 Amir =
-Goldstein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
->  >  > >  > I was thinking about this a bit more and I don't think I buy t=
-his
->  >  > >  > explanation. What I rather think is happening is that real wor=
-k for syncfs
->  >  > >  > (writeback_inodes_sb() and sync_inodes_sb() calls) gets offloa=
-ded to a flush
->  >  > >  > worker. E.g. writeback_inodes_sb() ends up calling
->  >  > >  > __writeback_inodes_sb_nr() which does:
->  >  > >  >
->  >  > >  > bdi_split_work_to_wbs()
->  >  > >  > wb_wait_for_completion()
->  >  > >  >
->  >  > >  > So you don't see the work done in the times accounted to your =
-test
->  >  > >  > program. But in practice the flush worker is indeed burning 1.=
-3s worth of
->  >  > >  > CPU to scan the 1 million inode list and do nothing.
->  >  > >  >
->  >  > >
->  >  > > That makes sense. However, in real container use case,  the upper=
- dir is always empty,
->  >  > > so I don't think there is meaningful difference compare to accura=
-tely marking overlay
->  >  > > inode dirty.
->  >  > >
->  >  >
->  >  > It's true the that is a very common case, but...
->  >  >
->  >  > > I'm not very familiar with other use cases of overlayfs except co=
-ntainer, should we consider
->  >  > > other use cases? Maybe we can also ignore the cpu burden because =
-those use cases don't
->  >  > > have density deployment like container.
->  >  > >
->  >  >
->  >  > metacopy feature was developed for the use case of a container
->  >  > that chowns all the files in the lower image.
->  >  >
->  >  > In that case, which is now also quite common, all the overlay inode=
-s are
->  >  > upper inodes.
->  >  >
->  >
->  > Regardless of metacopy or datacopy, that copy-up has already modified =
-overlay inode
->  > so initialy marking dirty to all overlay inodes which have upper inode=
- will not be a serious
->  > problem in this case too, right?
->  >
->  > I guess maybe you more concern about the re-mark dirtiness on above us=
-e case.
->  >
->  >
->  >
->  >  > What about only re-mark overlay inode dirty if upper inode is dirty=
- or is
->  >  > writeably mmapped.
->  >  > For other cases, it is easy to know when overlay inode becomes dirt=
-y?
->  >  > Didn't you already try this?
->  >  >
->  >
->  > Yes, I've tried that approach in previous version but as Miklos pointe=
-d out in the
->  > feedback there are a few of racy conditions.
->  >
+On Tue, Nov 30 2021 at 22:07:47 -0800, Stefan Roesch quoth thus:
 
-Right..
+> 
+> 
+> On 11/29/21 5:08 PM, Clay Harris wrote:
+> > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
+> > 
+> >> This adds the xattr support to io_uring. The intent is to have a more
+> >> complete support for file operations in io_uring.
+> >>
+> >> This change adds support for the following functions to io_uring:
+> >> - fgetxattr
+> >> - fsetxattr
+> >> - getxattr
+> >> - setxattr
+> > 
+> > You may wish to consider the following.
+> > 
+> > Patching for these functions makes for an excellent opportunity
+> > to provide a better interface.  Rather than implement fXetattr
+> > at all, you could enable io_uring to use functions like:
+> > 
+> > int Xetxattr(int dfd, const char *path, const char *name,
+> > 	[const] void *value, size_t size, int flags);
+> > 
+> > Not only does this simplify the io_uring interface down to two
+> > functions, but modernizes and fixes a deficit in usability.
+> > In terms of io_uring, this is just changing internal interfaces.
+> > 
+> > Although unnecessary for io_uring, it would be nice to at least
+> > consider what parts of this code could be leveraged for future
+> > Xetxattr2 syscalls.
+> 
 
->
-> So the final solution to handle all the concerns looks like accurately ma=
-rk overlay inode
-> diry on modification and re-mark dirty only for mmaped file in ->write_in=
-ode().
->
-> Hi Miklos, Jan
->
-> Will you agree with new proposal above?
->
+I may have become a little over-excited when I saw someone was thinking
+about new code associated with these interfaces.  It's just that, to be
+very kind, the existing interfaces have so much room for improvement.
+I'm aware that changes in this area can be a non-trivial amount of
+work, due to specific xattr keys being handled by different security
+module hooks.
 
-Maybe you can still pull off a simpler version by remarking dirty only
-writably mmapped upper AND inode_is_open_for_write(upper)?
+> Clay, 
+> 
+> while we can reduce the number of calls to 2, providing 4 calls will
+> ease the adoption of the interface. 
 
-If I am not mistaken, if you always mark overlay inode dirty on ovl_flush()
-of FMODE_WRITE file, there is nothing that can make upper inode dirty
-after last close (if upper is not mmaped), so one more inode sync should
-be enough. No?
+Well, there's removexattr(), but who's counting?
+I believe people use the other *at() interfaces without ever looking
+back at the old calls and that there is little point in io_uring reproducing
+all of the old baggage.
 
-Thanks,
-Amir.
+> If you look at the userspace interface in liburing, you can see the
+> following function signature:
+> 
+> static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
+> 		                           int         fd,
+> 					   const char *name,
+> 					   const char *value,
+> 					   size_t      len)
+> 
+> This is very similar to what you proposed.
+
+Even though these functions desperately need updating, and as super nice
+as it would be, I don't expect you to implement getxattrat() and setxattrat().
+If I were to name a single thing that would most increase the usability of
+these functions, it would be:
+	Make the fXetxattr() functions (at least the io_uring versions)
+	work with an O_PATH descriptor.
+That one thing would at least provide most of the desired functionality at
+the cost of an extra openat() call.
+
+> 
+> > 
+> >> Patch 1: fs: make user_path_at_empty() take a struct filename
+> >>   The user_path_at_empty filename parameter has been changed
+> >>   from a const char user pointer to a filename struct. io_uring
+> >>   operates on filenames.
+> >>   In addition also the functions that call user_path_at_empty
+> >>   in namei.c and stat.c have been modified for this change.
+> >>
+> >> Patch 2: fs: split off setxattr_setup function from setxattr
+> >>   Split off the setup part of the setxattr function
+> >>
+> >> Patch 3: fs: split off the vfs_getxattr from getxattr
+> >>   Split of the vfs_getxattr part from getxattr. This will
+> >>   allow to invoke it from io_uring.
+> >>
+> >> Patch 4: io_uring: add fsetxattr and setxattr support
+> >>   This adds new functions to support the fsetxattr and setxattr
+> >>   functions.
+> >>
+> >> Patch 5: io_uring: add fgetxattr and getxattr support
+> >>   This adds new functions to support the fgetxattr and getxattr
+> >>   functions.
+> >>
+> >>
+> >> There are two additional patches:
+> >>   liburing: Add support for xattr api's.
+> >>             This also includes the tests for the new code.
+> >>   xfstests: Add support for io_uring xattr support.
+> >>
+> >>
+> >> Stefan Roesch (5):
+> >>   fs: make user_path_at_empty() take a struct filename
+> >>   fs: split off setxattr_setup function from setxattr
+> >>   fs: split off the vfs_getxattr from getxattr
+> >>   io_uring: add fsetxattr and setxattr support
+> >>   io_uring: add fgetxattr and getxattr support
+> >>
+> >>  fs/internal.h                 |  23 +++
+> >>  fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
+> >>  fs/namei.c                    |   5 +-
+> >>  fs/stat.c                     |   7 +-
+> >>  fs/xattr.c                    | 114 +++++++-----
+> >>  include/linux/namei.h         |   4 +-
+> >>  include/uapi/linux/io_uring.h |   8 +-
+> >>  7 files changed, 439 insertions(+), 47 deletions(-)
+> >>
+> >>
+> >> Signed-off-by: Stefan Roesch <shr@fb.com>
+> >> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
+> >> -- 
+> >> 2.30.2
