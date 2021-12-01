@@ -2,105 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35AE8464DC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 13:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA909464E64
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 14:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349300AbhLAMWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 07:22:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43946 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348986AbhLAMWb (ORCPT
+        id S245293AbhLANFU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 08:05:20 -0500
+Received: from outbound-smtp19.blacknight.com ([46.22.139.246]:45207 "EHLO
+        outbound-smtp19.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236755AbhLANFT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 07:22:31 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC682C061574;
-        Wed,  1 Dec 2021 04:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=Date:Message-ID:From:Cc:To;
-        bh=6KU43wZ9J36UVJct2tFBaP0J686zHinASTKlN4p548s=; b=QxAVDNnXBEaRVfZfvrivAsRCMZ
-        GMfMUoJ58Lb7NbNkiqfC00SnwSoNRGEPUwTjgOdq7IC/5TdG/lXY/3UfgsYMhvI2/Cwj8B6kEtKpl
-        EN9MQz9CxVU7/M3psyUZIHz/ozta1vzFHD0AcT5Mye2d12kQ2qiAkKP0jv1A3QhezIEEv0uc92za8
-        Sq+BsuuFfOc1GwaGALgoOs9j/6O0Jc7ZS17T4rh/fXq7tNP4EfkK7HN7gynYWys3JTRTodhrbVVmU
-        N4B45HTuLim/CUq7HS0bVpaEOgOMakK1yZR5VEN00ekiFLYPs6b+LvShys2tpa6vs8GfMdDIij7Ti
-        rhJguhyld08HKnpMmINp0zimsZepA619VDWRpqo4dB+tYMo07xzPbVyyUIcNTby4ql6V0Z9pr+ftY
-        ZEJXMAubIZxNTa6IawT12yaW615LQ6kaVje0BmpN+CR7jr7HNUdB69pJdMNmoL5Tf55Kd0DGhHQ/D
-        KFdAdJ3ALt6K3EBs3OwUr6+z;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1msOZk-000cI6-3e; Wed, 01 Dec 2021 12:19:04 +0000
-To:     Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20211129221257.2536146-1-shr@fb.com>
- <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
- <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
-Message-ID: <56e1aa77-c4c1-2c37-9fc0-96cf0dc0f289@samba.org>
-Date:   Wed, 1 Dec 2021 13:19:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Wed, 1 Dec 2021 08:05:19 -0500
+Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
+        by outbound-smtp19.blacknight.com (Postfix) with ESMTPS id A3FF21C46D6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Dec 2021 13:01:57 +0000 (GMT)
+Received: (qmail 12057 invoked from network); 1 Dec 2021 13:01:57 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 1 Dec 2021 13:01:57 -0000
+Date:   Wed, 1 Dec 2021 13:01:55 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Alexey Avramov <hakavlad@inbox.lv>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+Message-ID: <20211201130155.GT3366@techsingularity.net>
+References: <20211125151853.8540-1-mgorman@techsingularity.net>
+ <20211127011246.7a8ac7b8@mail.inbox.lv>
+ <20211129150117.GO3366@techsingularity.net>
+ <20211201010348.31e99637@mail.inbox.lv>
+ <20211130172754.GS3366@techsingularity.net>
+ <c2aee7e6b9096556aab9b47156e91082c9345a90.camel@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <c2aee7e6b9096556aab9b47156e91082c9345a90.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stefan,
-
-> On 11/29/21 5:08 PM, Clay Harris wrote:
->> On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
->>
->>> This adds the xattr support to io_uring. The intent is to have a more
->>> complete support for file operations in io_uring.
->>>
->>> This change adds support for the following functions to io_uring:
->>> - fgetxattr
->>> - fsetxattr
->>> - getxattr
->>> - setxattr
->>
->> You may wish to consider the following.
->>
->> Patching for these functions makes for an excellent opportunity
->> to provide a better interface.  Rather than implement fXetattr
->> at all, you could enable io_uring to use functions like:
->>
->> int Xetxattr(int dfd, const char *path, const char *name,
->> 	[const] void *value, size_t size, int flags);
->>
->> Not only does this simplify the io_uring interface down to two
->> functions, but modernizes and fixes a deficit in usability.
->> In terms of io_uring, this is just changing internal interfaces.
->>
->> Although unnecessary for io_uring, it would be nice to at least
->> consider what parts of this code could be leveraged for future
->> Xetxattr2 syscalls.
+On Tue, Nov 30, 2021 at 06:59:58PM +0100, Mike Galbraith wrote:
+> On Tue, 2021-11-30 at 17:27 +0000, Mel Gorman wrote:
+> >
+> > Obviously a fairly different experience and most likely due to the
+> > underlying storage.
 > 
-> Clay, 
+> I bet a virtual nickle this is the sore spot.
 > 
-> while we can reduce the number of calls to 2, providing 4 calls will
-> ease the adoption of the interface. 
-> 
-> If you look at the userspace interface in liburing, you can see the
-> following function signature:
-> 
-> static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
-> 		                           int         fd,
-> 					   const char *name,
-> 					   const char *value,
-> 					   size_t      len)
-> 
-> This is very similar to what you proposed.
 
-What's with lsetxattr and lgetxattr, why are they missing.
+You win a virtual nickle!
 
-I'd assume that even 6 helper functions in liburing would be able
-to use just 2 low level iouring opcodes.
+Using an older laptop with slower storage and less memory a frequency
+analysis of the stall reasons and source showed the top triggering event
+was
 
-*listxattr is also missing, are there plans for them?
+Event count:                6210
+ mm_vmscan_throttled: nid=0 usec_timeout=100000 usect_delayed=xxx reason=VMSCAN_THROTTLE_WRITEBACK
 
-metze
+ => trace_event_raw_event_mm_vmscan_throttled <ffffffff9987224a>
+ => reclaim_throttle <ffffffff99873df2>
+ => shrink_node <ffffffff99875bd5>
+ => do_try_to_free_pages <ffffffff99875cf8>
+ => try_to_free_pages <ffffffff998772e3>
+ => __alloc_pages_slowpath.constprop.114 <ffffffff998c2ad9>
+ => __alloc_pages <ffffffff998c366b>
+ => folio_alloc <ffffffff998e4107>
+ => page_cache_ra_unbounded <ffffffff99868fab>
+ => filemap_fault <ffffffff9985cb13>
+ => __do_fault <ffffffff99899361>
+ => __handle_mm_fault <ffffffff998a1470>
+ => handle_mm_fault <ffffffff998a19ba>
+ => do_user_addr_fault <ffffffff99688734>
+ => exc_page_fault <ffffffff9a07bcd7>
+ => asm_exc_page_fault <ffffffff9a200ace>
+
+-- 
+Mel Gorman
+SUSE Labs
