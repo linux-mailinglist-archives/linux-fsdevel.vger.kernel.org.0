@@ -2,98 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 794514656C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 20:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 189314656C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 20:53:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245433AbhLATyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 14:54:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245428AbhLATyM (ORCPT
+        id S245428AbhLAT4R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 14:56:17 -0500
+Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:12207 "EHLO
+        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352727AbhLAT4M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 14:54:12 -0500
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 867AAC061574;
-        Wed,  1 Dec 2021 11:50:51 -0800 (PST)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id C78C06EEE; Wed,  1 Dec 2021 14:50:50 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org C78C06EEE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1638388250;
-        bh=TYOPkEpCN1935j9eNcnnAvlmWIOyOzqnOXPdZZSgRFo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gLUZBKEhzC+5+x/eud9eKWd5JNbFsDZX5AcotSLMzJWptv1h8z1yPJx1P6Taau9eH
-         VUik3eYLm4vzOUtoSbRuLxXSPgfGz1QPqp6FeRGkVA6xmKuocu5xxuuxJuT6055kQn
-         /X6zPD2E7AWbNIPhSjyhqYnFj1fNbbfJBRq+EkIE=
-Date:   Wed, 1 Dec 2021 14:50:50 -0500
-From:   Bruce Fields <bfields@fieldses.org>
-To:     dai.ngo@oracle.com
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
- Courteous Server
-Message-ID: <20211201195050.GE26415@fieldses.org>
-References: <e1093e42-2871-8810-de76-58d1ea357898@oracle.com>
- <C9C6AEC1-641C-4614-B149-5275EFF81C3D@oracle.com>
- <22000fe0-9b17-3d88-1730-c8704417cb92@oracle.com>
- <B42B0F9C-57E2-4F58-8DBD-277636B92607@oracle.com>
- <6f5a060d-17f6-ee46-6546-1217ac5dfa9c@oracle.com>
- <20211130153211.GB8837@fieldses.org>
- <f6a948a7-32d6-da9a-6808-9f2f77d5f792@oracle.com>
- <20211201143630.GB24991@fieldses.org>
- <20211201174205.GB26415@fieldses.org>
- <20211201180339.GC26415@fieldses.org>
+        Wed, 1 Dec 2021 14:56:12 -0500
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id D95218C1E0C;
+        Wed,  1 Dec 2021 19:52:41 +0000 (UTC)
+Received: from pdx1-sub0-mail-a238.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 60BAC8C1DEC;
+        Wed,  1 Dec 2021 19:52:41 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from pdx1-sub0-mail-a238.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.114.196.229 (trex/6.4.3);
+        Wed, 01 Dec 2021 19:52:41 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Callous-Keen: 60690afb720acca1_1638388361739_2254961659
+X-MC-Loop-Signature: 1638388361739:3640251298
+X-MC-Ingress-Time: 1638388361739
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a238.dreamhost.com (Postfix) with ESMTPSA id 4J48rS66q3z2K;
+        Wed,  1 Dec 2021 11:52:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
+        s=claycon.org; t=1638388361; bh=06EKC+aL0nYBr8NNM3/0TaMmdG0=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=Cjyc9wKctz/d2tTx8tQ3Py0oHEhngo8erzhnfIbH0HkmXQCg0IejkJg0/yDfyzj2N
+         9Yfj2QBGhd/NjqjzGHBuDEMEXgYPcHBiXB1/s78/jRUVxb2o284JL8CmsHSk3nSgya
+         Ga3dYxumWt5MuSSk22ECCKhTwqvpYa1vxnA7WrP4=
+Date:   Wed, 1 Dec 2021 13:52:39 -0600
+From:   Clay Harris <bugs@claycon.org>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
+Message-ID: <20211201195239.mlgb4qwj2hk2d3tv@ps29521.dreamhostps.com>
+References: <20211129221257.2536146-1-shr@fb.com>
+ <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
+ <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
+ <56e1aa77-c4c1-2c37-9fc0-96cf0dc0f289@samba.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211201180339.GC26415@fieldses.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <56e1aa77-c4c1-2c37-9fc0-96cf0dc0f289@samba.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 01, 2021 at 01:03:39PM -0500, Bruce Fields wrote:
-> On Wed, Dec 01, 2021 at 12:42:05PM -0500, Bruce Fields wrote:
-> > On Wed, Dec 01, 2021 at 09:36:30AM -0500, Bruce Fields wrote:
-> > > OK, good to know.  It'd be interesting to dig into where nfsdcltrack is
-> > > spending its time, which we could do by replacing it with a wrapper that
-> > > runs the real nfsdcltrack under strace.
-> > > 
-> > > Though maybe it'd be better to do this on a system using nfsdcld, since
-> > > that's what we're transitioning to.
-> > 
-> > Trying that on a test VM here, I see each upcall doing 3 fdatasyncs() of
-> > an sqlite-journal file.  On my setup, each of those is taking a few
-> > milliseconds.  I wonder if it an do better.
+On Wed, Dec 01 2021 at 13:19:03 +0100, Stefan Metzmacher quoth thus:
+
+> Hi Stefan,
 > 
-> If I understand the sqlite documentation correctly, I *think* that if we
-> use journal_mode WAL with synchronous FULL, we should get the assurances
-> nfsd needs with one sync per transaction.
+> > On 11/29/21 5:08 PM, Clay Harris wrote:
+> >> On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
+> >>
+> >>> This adds the xattr support to io_uring. The intent is to have a more
+> >>> complete support for file operations in io_uring.
+> >>>
+> >>> This change adds support for the following functions to io_uring:
+> >>> - fgetxattr
+> >>> - fsetxattr
+> >>> - getxattr
+> >>> - setxattr
+> >>
+> >> You may wish to consider the following.
+> >>
+> >> Patching for these functions makes for an excellent opportunity
+> >> to provide a better interface.  Rather than implement fXetattr
+> >> at all, you could enable io_uring to use functions like:
+> >>
+> >> int Xetxattr(int dfd, const char *path, const char *name,
+> >> 	[const] void *value, size_t size, int flags);
+> >>
+> >> Not only does this simplify the io_uring interface down to two
+> >> functions, but modernizes and fixes a deficit in usability.
+> >> In terms of io_uring, this is just changing internal interfaces.
+> >>
+> >> Although unnecessary for io_uring, it would be nice to at least
+> >> consider what parts of this code could be leveraged for future
+> >> Xetxattr2 syscalls.
+> > 
+> > Clay, 
+> > 
+> > while we can reduce the number of calls to 2, providing 4 calls will
+> > ease the adoption of the interface. 
+> > 
+> > If you look at the userspace interface in liburing, you can see the
+> > following function signature:
+> > 
+> > static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
+> > 		                           int         fd,
+> > 					   const char *name,
+> > 					   const char *value,
+> > 					   size_t      len)
+> > 
+> > This is very similar to what you proposed.
+> 
+> What's with lsetxattr and lgetxattr, why are they missing.
+Do any filesystems even support xattrs on symbolic links?
 
-So I *think* that would mean just doing something like (untested, don't have
-much idea what I'm doing):
-
-diff --git a/utils/nfsdcld/sqlite.c b/utils/nfsdcld/sqlite.c
-index 03016fb95823..b30f2614497b 100644
---- a/utils/nfsdcld/sqlite.c
-+++ b/utils/nfsdcld/sqlite.c
-@@ -826,6 +826,13 @@ sqlite_prepare_dbh(const char *topdir)
-                goto out_close;
-        }
- 
-+       ret = sqlite3_exec(dbh, "PRAGMA journal_mode = WAL;", NULL, NULL, NULL);
-+       if (ret)
-+               goto out_close;
-+       ret = sqlite3_exec(dbh, "PRAGMA synchronous = FULL;", NULL, NULL, NULL);
-+       if (ret)
-+               goto out_close;
-+
-        ret = sqlite_query_schema_version();
-        switch (ret) {
-        case CLD_SQLITE_LATEST_SCHEMA_VERSION:
-
-I also wonder how expensive may be the extra overhead of starting up
-nfsdcltrack each time.
-
---b.
+> I'd assume that even 6 helper functions in liburing would be able
+> to use just 2 low level iouring opcodes.
+> 
+> *listxattr is also missing, are there plans for them?
+> 
+> metze
