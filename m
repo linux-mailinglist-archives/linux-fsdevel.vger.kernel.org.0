@@ -2,186 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D196A464914
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 08:46:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 971C24649A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 09:29:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234656AbhLAHtr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 02:49:47 -0500
-Received: from bee.birch.relay.mailchannels.net ([23.83.209.14]:11667 "EHLO
-        bee.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230144AbhLAHtq (ORCPT
+        id S1347976AbhLAIc6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 03:32:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:31543 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1347970AbhLAIc6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 02:49:46 -0500
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 8D7206209D9;
-        Wed,  1 Dec 2021 07:46:23 +0000 (UTC)
-Received: from pdx1-sub0-mail-a239.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id C2A11620894;
-        Wed,  1 Dec 2021 07:46:22 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a239.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.109.250.6 (trex/6.4.3);
-        Wed, 01 Dec 2021 07:46:23 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Harbor-Suffer: 4982dbea23ba7336_1638344783231_287088708
-X-MC-Loop-Signature: 1638344783231:4208909484
-X-MC-Ingress-Time: 1638344783231
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 1 Dec 2021 03:32:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638347377;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4tUl7G8alL78nfbRo0WLNZl+gkt+X3mS2JKYOztBaCw=;
+        b=Q9HTm2UK5n3YyPaocpbkGIT5GvvKs130tSBFOthRPS0We8O5q0q0Gtc4w75CTKqDgE3WFO
+        XuiW0kuCl7iVjNlOLHIFV88qNNb/vS9d4TEqc7XK5Qct8yo1YZZqEMGiBh0QBVcXI8iuwp
+        //esibe6Ljr4T6St26rp7mdaj0s+muY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-521-AnOULJD2MFCLO_7J_kL0gQ-1; Wed, 01 Dec 2021 03:29:34 -0500
+X-MC-Unique: AnOULJD2MFCLO_7J_kL0gQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a239.dreamhost.com (Postfix) with ESMTPSA id 4J3rkQ4FV6z1Jd;
-        Tue, 30 Nov 2021 23:46:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=claycon.org;
-        s=claycon.org; t=1638344782; bh=jzLWxBpLhm1LQux+SiiHrLGTxuA=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=QayqVyXxG8djF+aeyhs2Yph1g1K0GVFDrpWMJ8z5CfLGaQOT6A5mrM8nmc0rfT67p
-         ROy976nGJ5mS3nTJGRrzzyPsZUNRTusYoWvtgwk3AOnK1nLPXZ9COw49AtV/Ry27xP
-         +Qs9rLFNVDaFbjjSU5cwSmCu9hZWn3qi8ol6uyLQ=
-Date:   Wed, 1 Dec 2021 01:46:21 -0600
-From:   Clay Harris <bugs@claycon.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] io_uring: add xattr support
-Message-ID: <20211201074621.qzebnsb7f3t27dvo@ps29521.dreamhostps.com>
-References: <20211129221257.2536146-1-shr@fb.com>
- <20211130010836.jqp5nuemrse43aca@ps29521.dreamhostps.com>
- <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B2A42190B2A1;
+        Wed,  1 Dec 2021 08:29:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A14EB4D73A;
+        Wed,  1 Dec 2021 08:29:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com>
+References: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com> <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk> <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 44/64] cachefiles: Implement key to filename encoding
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2ba45a80-ce7a-a105-49e5-5507b4453e05@fb.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <571667.1638347365.1@warthog.procyon.org.uk>
+Date:   Wed, 01 Dec 2021 08:29:25 +0000
+Message-ID: <571668.1638347365@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30 2021 at 22:07:47 -0800, Stefan Roesch quoth thus:
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
 
-> 
-> 
-> On 11/29/21 5:08 PM, Clay Harris wrote:
-> > On Mon, Nov 29 2021 at 14:12:52 -0800, Stefan Roesch quoth thus:
-> > 
-> >> This adds the xattr support to io_uring. The intent is to have a more
-> >> complete support for file operations in io_uring.
-> >>
-> >> This change adds support for the following functions to io_uring:
-> >> - fgetxattr
-> >> - fsetxattr
-> >> - getxattr
-> >> - setxattr
-> > 
-> > You may wish to consider the following.
-> > 
-> > Patching for these functions makes for an excellent opportunity
-> > to provide a better interface.  Rather than implement fXetattr
-> > at all, you could enable io_uring to use functions like:
-> > 
-> > int Xetxattr(int dfd, const char *path, const char *name,
-> > 	[const] void *value, size_t size, int flags);
-> > 
-> > Not only does this simplify the io_uring interface down to two
-> > functions, but modernizes and fixes a deficit in usability.
-> > In terms of io_uring, this is just changing internal interfaces.
-> > 
-> > Although unnecessary for io_uring, it would be nice to at least
-> > consider what parts of this code could be leveraged for future
-> > Xetxattr2 syscalls.
-> 
+> > +	/* If the path is usable ASCII, then we render it directly */
+> > +	if (print) {
+> > +		len = 1 + keylen + 1;
+> > +		name = kmalloc(len, GFP_KERNEL);
+> > +		if (!name)
+> > +			return false;
+> > +
+> > +		name[0] = 'D'; /* Data object type, string encoding */
+> > +		name[1 + keylen] = 0;
+> > +		memcpy(name + 1, key, keylen);
+> > +		goto success;
+> 			^
+> If we goto success from here,
+> ...
+> > +
+> > +success:
+> > +	name[len] = 0;
+> 	     ^
+> then it seems that this will cause an out-of-boundary access.
 
-I may have become a little over-excited when I saw someone was thinking
-about new code associated with these interfaces.  It's just that, to be
-very kind, the existing interfaces have so much room for improvement.
-I'm aware that changes in this area can be a non-trivial amount of
-work, due to specific xattr keys being handled by different security
-module hooks.
+You're right.  I'll change that to:
 
-> Clay, 
-> 
-> while we can reduce the number of calls to 2, providing 4 calls will
-> ease the adoption of the interface. 
+		len = 1 + keylen;
+		name = kmalloc(len + 1, GFP_KERNEL);
 
-Well, there's removexattr(), but who's counting?
-I believe people use the other *at() interfaces without ever looking
-back at the old calls and that there is little point in io_uring reproducing
-all of the old baggage.
+and I shouldn't need:
 
-> If you look at the userspace interface in liburing, you can see the
-> following function signature:
-> 
-> static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
-> 		                           int         fd,
-> 					   const char *name,
-> 					   const char *value,
-> 					   size_t      len)
-> 
-> This is very similar to what you proposed.
+		name[1 + keylen] = 0;
 
-Even though these functions desperately need updating, and as super nice
-as it would be, I don't expect you to implement getxattrat() and setxattrat().
-If I were to name a single thing that would most increase the usability of
-these functions, it would be:
-	Make the fXetxattr() functions (at least the io_uring versions)
-	work with an O_PATH descriptor.
-That one thing would at least provide most of the desired functionality at
-the cost of an extra openat() call.
+as that's also done after the success label.
 
-> 
-> > 
-> >> Patch 1: fs: make user_path_at_empty() take a struct filename
-> >>   The user_path_at_empty filename parameter has been changed
-> >>   from a const char user pointer to a filename struct. io_uring
-> >>   operates on filenames.
-> >>   In addition also the functions that call user_path_at_empty
-> >>   in namei.c and stat.c have been modified for this change.
-> >>
-> >> Patch 2: fs: split off setxattr_setup function from setxattr
-> >>   Split off the setup part of the setxattr function
-> >>
-> >> Patch 3: fs: split off the vfs_getxattr from getxattr
-> >>   Split of the vfs_getxattr part from getxattr. This will
-> >>   allow to invoke it from io_uring.
-> >>
-> >> Patch 4: io_uring: add fsetxattr and setxattr support
-> >>   This adds new functions to support the fsetxattr and setxattr
-> >>   functions.
-> >>
-> >> Patch 5: io_uring: add fgetxattr and getxattr support
-> >>   This adds new functions to support the fgetxattr and getxattr
-> >>   functions.
-> >>
-> >>
-> >> There are two additional patches:
-> >>   liburing: Add support for xattr api's.
-> >>             This also includes the tests for the new code.
-> >>   xfstests: Add support for io_uring xattr support.
-> >>
-> >>
-> >> Stefan Roesch (5):
-> >>   fs: make user_path_at_empty() take a struct filename
-> >>   fs: split off setxattr_setup function from setxattr
-> >>   fs: split off the vfs_getxattr from getxattr
-> >>   io_uring: add fsetxattr and setxattr support
-> >>   io_uring: add fgetxattr and getxattr support
-> >>
-> >>  fs/internal.h                 |  23 +++
-> >>  fs/io_uring.c                 | 325 ++++++++++++++++++++++++++++++++++
-> >>  fs/namei.c                    |   5 +-
-> >>  fs/stat.c                     |   7 +-
-> >>  fs/xattr.c                    | 114 +++++++-----
-> >>  include/linux/namei.h         |   4 +-
-> >>  include/uapi/linux/io_uring.h |   8 +-
-> >>  7 files changed, 439 insertions(+), 47 deletions(-)
-> >>
-> >>
-> >> Signed-off-by: Stefan Roesch <shr@fb.com>
-> >> base-commit: c2626d30f312afc341158e07bf088f5a23b4eeeb
-> >> -- 
-> >> 2.30.2
+David
+
