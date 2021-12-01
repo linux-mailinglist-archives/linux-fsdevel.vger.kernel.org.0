@@ -2,103 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 971C24649A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 09:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 156D0464A7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 10:22:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347976AbhLAIc6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 03:32:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:31543 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1347970AbhLAIc6 (ORCPT
+        id S1348151AbhLAJZq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 04:25:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233437AbhLAJZo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 03:32:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638347377;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4tUl7G8alL78nfbRo0WLNZl+gkt+X3mS2JKYOztBaCw=;
-        b=Q9HTm2UK5n3YyPaocpbkGIT5GvvKs130tSBFOthRPS0We8O5q0q0Gtc4w75CTKqDgE3WFO
-        XuiW0kuCl7iVjNlOLHIFV88qNNb/vS9d4TEqc7XK5Qct8yo1YZZqEMGiBh0QBVcXI8iuwp
-        //esibe6Ljr4T6St26rp7mdaj0s+muY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-521-AnOULJD2MFCLO_7J_kL0gQ-1; Wed, 01 Dec 2021 03:29:34 -0500
-X-MC-Unique: AnOULJD2MFCLO_7J_kL0gQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B2A42190B2A1;
-        Wed,  1 Dec 2021 08:29:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A14EB4D73A;
-        Wed,  1 Dec 2021 08:29:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com>
-References: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com> <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk> <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 44/64] cachefiles: Implement key to filename encoding
+        Wed, 1 Dec 2021 04:25:44 -0500
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9174C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Dec 2021 01:22:23 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4J3ts80dGnzMqdLy;
+        Wed,  1 Dec 2021 10:22:20 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4J3ts25XFnzlhKSV;
+        Wed,  1 Dec 2021 10:22:14 +0100 (CET)
+Message-ID: <4a88f95b-d54d-ad70-fb49-e3c3f1d097f2@digikod.net>
+Date:   Wed, 1 Dec 2021 10:23:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <571667.1638347365.1@warthog.procyon.org.uk>
-Date:   Wed, 01 Dec 2021 08:29:25 +0000
-Message-ID: <571668.1638347365@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+User-Agent: 
+Content-Language: en-US
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20211115185304.198460-1-mic@digikod.net>
+ <87sfvd8k4c.fsf@oldenburg.str.redhat.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v17 0/3] Add trusted_for(2) (was O_MAYEXEC)
+In-Reply-To: <87sfvd8k4c.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-JeffleXu <jefflexu@linux.alibaba.com> wrote:
 
-> > +	/* If the path is usable ASCII, then we render it directly */
-> > +	if (print) {
-> > +		len = 1 + keylen + 1;
-> > +		name = kmalloc(len, GFP_KERNEL);
-> > +		if (!name)
-> > +			return false;
-> > +
-> > +		name[0] = 'D'; /* Data object type, string encoding */
-> > +		name[1 + keylen] = 0;
-> > +		memcpy(name + 1, key, keylen);
-> > +		goto success;
-> 			^
-> If we goto success from here,
-> ...
-> > +
-> > +success:
-> > +	name[len] = 0;
-> 	     ^
-> then it seems that this will cause an out-of-boundary access.
+On 30/11/2021 21:27, Florian Weimer wrote:
+> * Mickaël Salaün:
+> 
+>> Primary goal of trusted_for(2)
+>> ==============================
+>>
+>> This new syscall enables user space to ask the kernel: is this file
+>> descriptor's content trusted to be used for this purpose?  The set of
+>> usage currently only contains execution, but other may follow (e.g.
+>> configuration, sensitive data).  If the kernel identifies the file
+>> descriptor as trustworthy for this usage, user space should then take
+>> this information into account.  The "execution" usage means that the
+>> content of the file descriptor is trusted according to the system policy
+>> to be executed by user space, which means that it interprets the content
+>> or (try to) maps it as executable memory.
+> 
+> I sketched my ideas about “IMA gadgets” here:
+> 
+>    IMA gadgets
+>    <https://www.openwall.com/lists/oss-security/2021/11/30/1>
+> 
+> I still don't think the proposed trusted_for interface is sufficient.
+> The example I gave is a Perl module that does nothing (on its own) when
+> loaded as a Perl module (although you probably don't want to sign it
+> anyway, given what it implements), but triggers an unwanted action when
+> sourced (using .) as a shell script.
 
-You're right.  I'll change that to:
+The fact that IMA doesn't cover all metadata, file names nor the file 
+hierarchies is well known and the solution can be implemented with 
+dm-verity (which has its own drawbacks).
 
-		len = 1 + keylen;
-		name = kmalloc(len + 1, GFP_KERNEL);
+trusted_for is a tool for interpreters to enforce a security policy 
+centralized by the kernel. The kind of file confusion attacks you are 
+talking about should be addressed by a system policy. If the mount point 
+options are not enough to express such policy, then we need to rely on 
+IMA, SELinux or IPE to reduce the scope of legitimate mapping between 
+scripts and interpreters.
 
-and I shouldn't need:
+> 
+>> @usage identifies the user space usage intended for @fd: only
+>> TRUSTED_FOR_EXECUTION for now, but trusted_for_usage could be extended
+>> to identify other usages (e.g. configuration, sensitive data).
+> 
+> We would need TRUSTED_FOR_EXECUTION_BY_BASH,
+> TRUSTED_FOR_EXECUTION_BY_PERL, etc.  I'm not sure that actually works.
 
-		name[1 + keylen] = 0;
+Well, this doesn't scale and that is the reason trusted_for usage is 
+more generic. The kernel already has all the information required to 
+identify scripts and interpreters types. We don't need to make the user 
+space interface more complex by listing all types. The kernel only miss 
+the semantic of how the intrepreter wants to interpret files, and that 
+is the purpose of trusted_for. LSMs are designed to define complex 
+policies and trusted_for enables them to extend such policies.
 
-as that's also done after the success label.
+> 
+> Caller process context does not work because we have this confusion
+> internally between glibc's own use (for the dynamic linker
+> configuration), and for loading programs/shared objects (there seems to
+> be a corner case where you can execute arbitrary code even without
+> executable mappings in the ELF object), and the script interpreter
+> itself (the primary target for trusted_for).
 
-David
+The current use case for trusted_for is script interpreters, but we can 
+extend the trusted_for_usage enum with new usages like TRUSTED_FOR_LINK 
+and others. I'm not convinced glibc should be treated differently than 
+other executable code that want to load a shared library, but it is a 
+discussion we can have when trusted_for will be in mainline and someone 
+will propose a new usage. ;)
 
+> 
+> But for generating auditing events, trusted_for seems is probably quite
+> helpful.
+
+Indeed, it enables to add semantic to audit events.
