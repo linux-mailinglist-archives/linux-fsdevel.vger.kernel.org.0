@@ -2,128 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 608D64650B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 16:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 118B24650E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 16:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350182AbhLAPEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 10:04:00 -0500
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25346 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350140AbhLAPD5 (ORCPT
+        id S230118AbhLAPJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 10:09:40 -0500
+Received: from outbound-smtp37.blacknight.com ([46.22.139.220]:35285 "EHLO
+        outbound-smtp37.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234785AbhLAPJh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 10:03:57 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1638370778; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=byxPawvpsz9PY88EUKl47Fet4j2i0n9QeBqTTKnIlgahrNSfKqsvdRzHcnhYGhc+X1xT/7kbuIcnuQriKI6W0Wgckt5QPmyJ8+W7sNsMsgTqZjEfZwxsGpDLnhkOO8/HaMjK45w6YMxl6sDq3qF0kY8U8bpdhMy3Q7Z66ZsPcDo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1638370778; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=yJlbHNFyL+xacHgeF/Vdj133+UCdaX/2f7IuSx0T0m8=; 
-        b=qdJqaAisZMhShZC+aKJranFs/1YN2ZYd4oclGnnylpL2TFuzbbB5wxJ3niyXmLfvdKAaxfLjmQfHykPvGrPS7mvXtoQ4jnnGHKfROVTUpyGvP/R8Lyn+8c1HPHevDF7LWaeoGL3dAEA+8U+Te4YiN6/DxGISwvSfkN8oGJRT15Y=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1638370778;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=yJlbHNFyL+xacHgeF/Vdj133+UCdaX/2f7IuSx0T0m8=;
-        b=M4jDjnP13Mlls9qVw3F/Rjn5r6uPbDMI3i4Ca15Ba8tF5FMhVXkIMBON5FNxaiG/
-        4lIoKNJ6HKXDkzyZ5Ho0wtVgk4obUNWqZBXox4WvQUU+zMHtgKpn+YUh3A8rZKBGPd/
-        CdcMDAJLSVlQtlc3YSZOOknDldarQxzvEQDXHC/U=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1638370776754126.6507127138733; Wed, 1 Dec 2021 22:59:36 +0800 (CST)
-Date:   Wed, 01 Dec 2021 22:59:36 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Jan Kara" <jack@suse.cz>
-Cc:     "Amir Goldstein" <amir73il@gmail.com>,
-        "Miklos Szeredi" <miklos@szeredi.hu>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "overlayfs" <linux-unionfs@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "ronyjin" <ronyjin@tencent.com>,
-        "charliecgxu" <charliecgxu@tencent.com>,
-        "Vivek Goyal" <vgoyal@redhat.com>
-Message-ID: <17d76821691.c8e249b322113.2136207110726046721@mykernel.net>
-In-Reply-To: <20211201134610.GA1815@quack2.suse.cz>
-References: <20211118112315.GD13047@quack2.suse.cz>
- <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
- <20211118164349.GB8267@quack2.suse.cz>
- <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
- <20211130112206.GE7174@quack2.suse.cz>
- <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
- <CAOQ4uxidK-yDMZoZtoRwTZLgSTr1o2Mu2L55vJRNJDLV0-Sb1w@mail.gmail.com>
- <17d73da701b.e571c37220081.6904057835107693340@mykernel.net>
- <17d74b08dcd.c0e94e6320632.9167792887632811518@mykernel.net>
- <CAOQ4uxiCYFeeH8oUUNG+rDCru_1XcwB6fR2keS1C6=d_yD9XzA@mail.gmail.com> <20211201134610.GA1815@quack2.suse.cz>
-Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode
- operation
+        Wed, 1 Dec 2021 10:09:37 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp37.blacknight.com (Postfix) with ESMTPS id 87A7E214F
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Dec 2021 15:06:15 +0000 (GMT)
+Received: (qmail 6766 invoked from network); 1 Dec 2021 15:06:15 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 1 Dec 2021 15:06:15 -0000
+Date:   Wed, 1 Dec 2021 15:06:13 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Alexey Avramov <hakavlad@inbox.lv>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+Message-ID: <20211201150613.GV3366@techsingularity.net>
+References: <20211125151853.8540-1-mgorman@techsingularity.net>
+ <20211127011246.7a8ac7b8@mail.inbox.lv>
+ <20211129150117.GO3366@techsingularity.net>
+ <20211201010348.31e99637@mail.inbox.lv>
+ <20211130172754.GS3366@techsingularity.net>
+ <c2aee7e6b9096556aab9b47156e91082c9345a90.camel@gmx.de>
+ <20211201130155.GT3366@techsingularity.net>
+ <2899c7841c8afc23b329230bd940692ffd586f63.camel@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <2899c7841c8afc23b329230bd940692ffd586f63.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-12-01 21:46:10 Jan Kara <=
-jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > On Wed 01-12-21 09:19:17, Amir Goldstein wrote:
- > > On Wed, Dec 1, 2021 at 8:31 AM Chengguang Xu <cgxu519@mykernel.net> wr=
-ote:
- > > > So the final solution to handle all the concerns looks like accurate=
-ly
- > > > mark overlay inode diry on modification and re-mark dirty only for
- > > > mmaped file in ->write_inode().
- > > >
- > > > Hi Miklos, Jan
- > > >
- > > > Will you agree with new proposal above?
- > > >
- > >=20
- > > Maybe you can still pull off a simpler version by remarking dirty only
- > > writably mmapped upper AND inode_is_open_for_write(upper)?
- >=20
- > Well, if inode is writeably mapped, it must be also open for write, does=
-n't
- > it?=20
+On Wed, Dec 01, 2021 at 02:52:01PM +0100, Mike Galbraith wrote:
+> On Wed, 2021-12-01 at 13:01 +0000, Mel Gorman wrote:
+> > On Tue, Nov 30, 2021 at 06:59:58PM +0100, Mike Galbraith wrote:
+> > > On Tue, 2021-11-30 at 17:27 +0000, Mel Gorman wrote:
+> > > >
+> > > > Obviously a fairly different experience and most likely due to
+> > > > the
+> > > > underlying storage.
+> > >
+> > > I bet a virtual nickle this is the sore spot.
+> > >
+> >
+> > You win a virtual nickle!
+> 
+> I'm rich I'm rich... oh dang, virtual.
+> 
+> I went back to 5.15, and confirmed that wait_iff_congested() did not
+> ever sleep with the try to eat /dev/zero load.  Nor did it with insane
+> overcommit swap storm from hell with as much IO going on as my little
+> box is capable of generating, making the surrounding congestion bits
+> look.. down right expendable.
+> 
 
-That's right.
+wait_iff_congested was broken once the block layer stopped tracking
+congestion and became a glorified cond_resched() in most cases. This is
+why the series aimed to remove the reliance on
+congestion_wait/wait_iff_congested.
 
-
- > The VMA of the mapping will hold file open.=20
-
-It's a bit tricky but currently ovl_mmap() will replace file to realfile in=
- upper layer
-and release overlayfs file. So overlayfs file itself will not have any rela=
-tionship with
-the VMA anymore after mmap().
-
-
-Thanks,
-Chengguang
-
-
- > So remarking overlay inode
- > dirty during writeback while inode_is_open_for_write(upper) looks like
- > reasonably easy and presumably there won't be that many inodes open for
- > writing for this to become big overhead?
- >=20
- > > If I am not mistaken, if you always mark overlay inode dirty on ovl_fl=
-ush()
- > > of FMODE_WRITE file, there is nothing that can make upper inode dirty
- > > after last close (if upper is not mmaped), so one more inode sync shou=
-ld
- > > be enough. No?
- >=20
- > But we still need to catch other dirtying events like timestamp updates,
- > truncate(2) etc. to mark overlay inode dirty. Not sure how reliably that
- > can be done...
- >=20
- >                                 Honza
- > --=20
- > Jan Kara <jack@suse.com>
- > SUSE Labs, CR
- >=20
+-- 
+Mel Gorman
+SUSE Labs
