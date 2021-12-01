@@ -2,26 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A6C4656A0
+	by mail.lfdr.de (Postfix) with ESMTP id 94A2A4656A1
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 20:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352760AbhLATlm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 14:41:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352758AbhLATlZ (ORCPT
+        id S1352800AbhLATlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 14:41:44 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:34528 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352753AbhLATl0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 14:41:25 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 929FAC061748;
-        Wed,  1 Dec 2021 11:38:03 -0800 (PST)
+        Wed, 1 Dec 2021 14:41:26 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E0035CE20D7;
-        Wed,  1 Dec 2021 19:38:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35D4C53FAD;
-        Wed,  1 Dec 2021 19:37:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CA059B8211F;
+        Wed,  1 Dec 2021 19:38:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F10CC53FCC;
+        Wed,  1 Dec 2021 19:38:00 +0000 (UTC)
 From:   Catalin Marinas <catalin.marinas@arm.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andreas Gruenbacher <agruenba@redhat.com>
@@ -33,9 +30,9 @@ Cc:     Josef Bacik <josef@toxicpanda.com>,
         Matthew Wilcox <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-btrfs@vger.kernel.org
-Subject: [PATCH v2 2/4] mm: Probe for sub-page faults in fault_in_*()
-Date:   Wed,  1 Dec 2021 19:37:48 +0000
-Message-Id: <20211201193750.2097885-3-catalin.marinas@arm.com>
+Subject: [PATCH v2 3/4] arm64: Add support for user sub-page fault probing
+Date:   Wed,  1 Dec 2021 19:37:49 +0000
+Message-Id: <20211201193750.2097885-4-catalin.marinas@arm.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211201193750.2097885-1-catalin.marinas@arm.com>
 References: <20211201193750.2097885-1-catalin.marinas@arm.com>
@@ -45,153 +42,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On hardware with features like arm64 MTE or SPARC ADI, an access fault
-can be triggered at sub-page granularity. Depending on how the
-fault_in_*() functions are used, the caller can get into a live-lock by
-continuously retrying the fault-in on an address different from the one
-where the uaccess failed.
-
-In the majority of cases progress is ensured by the following
-conditions:
-
-1. copy_{to,from}_user_nofault() guarantees at least one byte access if
-   the user address is not faulting.
-
-2. The fault_in_*() loop is resumed from the next address that could not
-   be accessed by copy_{to,from}_user_nofault().
-
-If the loop iteration is restarted from an earlier point, the loop is
-repeated with the same conditions and it would live-lock. The same
-problem exists if the fault_in_*() is attempted on the fault address
-reported by copy_*_user_nofault() since the latter does not guarantee
-the maximum possible bytes are written and fault_in_*() will succeed in
-probing a single byte.
-
-Introduce probe_subpage_*() and call them from the corresponding
-fault_in_*() functions on the requested 'min_size' range. The arch code
-with sub-page faults will have to implement the specific probing
-functionality.
+With MTE, even if the pte allows an access, a mismatched tag somewhere
+within a page can still cause a fault. Select ARCH_HAS_SUBPAGE_FAULTS if
+MTE is enabled and implement the probe_subpage_*() functions. Note that
+get_user() is sufficient for the writeable checks since the same tag
+mismatch fault would be triggered by a read.
 
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 ---
- arch/Kconfig            |  7 ++++++
- include/linux/uaccess.h | 53 +++++++++++++++++++++++++++++++++++++++++
- mm/gup.c                |  9 ++++---
- 3 files changed, 66 insertions(+), 3 deletions(-)
+ arch/arm64/Kconfig               |  1 +
+ arch/arm64/include/asm/uaccess.h | 59 ++++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 26b8ed11639d..02502b3362aa 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -27,6 +27,13 @@ config HAVE_IMA_KEXEC
- config SET_FS
- 	bool
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index c4207cf9bb17..dff89fd0d817 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1777,6 +1777,7 @@ config ARM64_MTE
+ 	depends on AS_HAS_LSE_ATOMICS
+ 	# Required for tag checking in the uaccess routines
+ 	depends on ARM64_PAN
++	select ARCH_HAS_SUBPAGE_FAULTS
+ 	select ARCH_USES_HIGH_VMA_FLAGS
+ 	help
+ 	  Memory Tagging (part of the ARMv8.5 Extensions) provides
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index 6e2e0b7031ab..bcbd24b97917 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -445,4 +445,63 @@ static inline int __copy_from_user_flushcache(void *dst, const void __user *src,
+ }
+ #endif
  
-+config ARCH_HAS_SUBPAGE_FAULTS
-+	bool
-+	help
-+	  Select if the architecture can check permissions at sub-page
-+	  granularity (e.g. arm64 MTE). The probe_user_*() functions
-+	  must be implemented.
++#ifdef CONFIG_ARCH_HAS_SUBPAGE_FAULTS
 +
- config HOTPLUG_SMT
- 	bool
- 
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index ac0394087f7d..04ad214c98cd 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -271,6 +271,59 @@ static inline bool pagefault_disabled(void)
-  */
- #define faulthandler_disabled() (pagefault_disabled() || in_atomic())
- 
-+#ifndef CONFIG_ARCH_HAS_SUBPAGE_FAULTS
-+
-+/**
-+ * probe_subpage_writeable: probe the user range for write faults at sub-page
-+ *			    granularity (e.g. arm64 MTE)
-+ * @uaddr: start of address range
-+ * @size: size of address range
-+ *
-+ * Returns 0 on success, the number of bytes not probed on fault.
-+ *
-+ * It is expected that the caller checked for the write permission of each
-+ * page in the range either by put_user() or GUP. The architecture port can
-+ * implement a more efficient get_user() probing if the same sub-page faults
-+ * are triggered by either a read or a write.
++/*
++ * Return 0 on success, the number of bytes not accessed otherwise.
 + */
-+static inline size_t probe_subpage_writeable(void __user *uaddr, size_t size)
++static inline size_t __mte_probe_user_range(const char __user *uaddr,
++					    size_t size, bool skip_first)
 +{
++	const char __user *end = uaddr + size;
++	int err = 0;
++	char val;
++
++	uaddr = PTR_ALIGN_DOWN(uaddr, MTE_GRANULE_SIZE);
++	if (skip_first)
++		uaddr += MTE_GRANULE_SIZE;
++	while (uaddr < end) {
++		/*
++		 * A read is sufficient for MTE, the caller should have probed
++		 * for the pte write permission if required.
++		 */
++		__raw_get_user(val, uaddr, err);
++		if (err)
++			return end - uaddr;
++		uaddr += MTE_GRANULE_SIZE;
++	}
++	(void)val;
++
 +	return 0;
 +}
 +
-+/**
-+ * probe_subpage_safe_writeable: probe the user range for write faults at
-+ *				 sub-page granularity without corrupting the
-+ *				 existing data
-+ * @uaddr: start of address range
-+ * @size: size of address range
-+ *
-+ * Returns 0 on success, the number of bytes not probed on fault.
-+ *
-+ * It is expected that the caller checked for the write permission of each
-+ * page in the range either by put_user() or GUP.
-+ */
-+static inline size_t probe_subpage_safe_writeable(void __user *uaddr,
++static inline size_t probe_subpage_writeable(const void __user *uaddr,
++					     size_t size)
++{
++	if (!system_supports_mte())
++		return 0;
++	/* first put_user() done in the caller */
++	return __mte_probe_user_range(uaddr, size, true);
++}
++
++static inline size_t probe_subpage_safe_writeable(const void __user *uaddr,
 +						  size_t size)
 +{
-+	return 0;
++	if (!system_supports_mte())
++		return 0;
++	/* the caller used GUP, don't skip the first granule */
++	return __mte_probe_user_range(uaddr, size, false);
 +}
 +
-+/**
-+ * probe_subpage_readable: probe the user range for read faults at sub-page
-+ *			   granularity
-+ * @uaddr: start of address range
-+ * @size: size of address range
-+ *
-+ * Returns 0 on success, the number of bytes not probed on fault.
-+ */
-+static inline size_t probe_subpage_readable(void __user *uaddr, size_t size)
++static inline size_t probe_subpage_readable(const void __user *uaddr,
++					    size_t size)
 +{
-+	return 0;
++	if (!system_supports_mte())
++		return 0;
++	/* first get_user() done in the caller */
++	return __mte_probe_user_range(uaddr, size, true);
 +}
 +
-+#endif
++#endif /* CONFIG_ARCH_HAS_SUBPAGE_FAULTS */
 +
- #ifndef ARCH_HAS_NOCACHE_UACCESS
- 
- static inline __must_check unsigned long
-diff --git a/mm/gup.c b/mm/gup.c
-index baa8240615a4..7fa69b0fb859 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1691,7 +1691,8 @@ size_t fault_in_writeable(char __user *uaddr, size_t size, size_t min_size)
- out:
- 	if (size > uaddr - start)
- 		faulted_in = uaddr - start;
--	if (faulted_in < min_size)
-+	if (faulted_in < min_size ||
-+	    (min_size && probe_subpage_writeable(start, min_size)))
- 		return size;
- 	return size - faulted_in;
- }
-@@ -1759,7 +1760,8 @@ size_t fault_in_safe_writeable(const char __user *uaddr, size_t size,
- 		mmap_read_unlock(mm);
- 	if (nstart != end)
- 		faulted_in = min_t(size_t, nstart - start, size);
--	if (faulted_in < min_size)
-+	if (faulted_in < min_size ||
-+	    (min_size && probe_subpage_safe_writeable(uaddr, min_size)))
- 		return size;
- 	return size - faulted_in;
- }
-@@ -1801,7 +1803,8 @@ size_t fault_in_readable(const char __user *uaddr, size_t size,
- 	(void)c;
- 	if (size > uaddr - start)
- 		faulted_in = uaddr - start;
--	if (faulted_in < min_size)
-+	if (faulted_in < min_size ||
-+	    (min_size && probe_subpage_readable(start, min_size)))
- 		return size;
- 	return size - faulted_in;
- }
+ #endif /* __ASM_UACCESS_H */
