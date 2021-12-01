@@ -2,82 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 118B24650E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 16:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76FD2465219
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Dec 2021 16:52:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbhLAPJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 10:09:40 -0500
-Received: from outbound-smtp37.blacknight.com ([46.22.139.220]:35285 "EHLO
-        outbound-smtp37.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234785AbhLAPJh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 10:09:37 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp37.blacknight.com (Postfix) with ESMTPS id 87A7E214F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Dec 2021 15:06:15 +0000 (GMT)
-Received: (qmail 6766 invoked from network); 1 Dec 2021 15:06:15 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 1 Dec 2021 15:06:15 -0000
-Date:   Wed, 1 Dec 2021 15:06:13 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Alexey Avramov <hakavlad@inbox.lv>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211201150613.GV3366@techsingularity.net>
-References: <20211125151853.8540-1-mgorman@techsingularity.net>
- <20211127011246.7a8ac7b8@mail.inbox.lv>
- <20211129150117.GO3366@techsingularity.net>
- <20211201010348.31e99637@mail.inbox.lv>
- <20211130172754.GS3366@techsingularity.net>
- <c2aee7e6b9096556aab9b47156e91082c9345a90.camel@gmx.de>
- <20211201130155.GT3366@techsingularity.net>
- <2899c7841c8afc23b329230bd940692ffd586f63.camel@gmx.de>
+        id S245058AbhLAPzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 10:55:21 -0500
+Received: from shark1.inbox.lv ([194.152.32.81]:43022 "EHLO shark1.inbox.lv"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239899AbhLAPzU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Dec 2021 10:55:20 -0500
+Received: from shark1.inbox.lv (localhost [127.0.0.1])
+        by shark1-out.inbox.lv (Postfix) with ESMTP id 09C7E1118103;
+        Wed,  1 Dec 2021 17:51:57 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.lv; s=30062014;
+        t=1638373917; bh=DBfB7y8pPY3KAltewDz2cj6cinq0sN7Zdb2vGSCE1T0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=TxSnwzclMOzIUsHdCvZDhm/tj6BBdjHlUvUBIQnmlCPLPgc5maRCAfm54W9MqL+Tx
+         7rovCadWp8iR0OmLRQ1HKAgyAjSlwtCMLsxG7POx9fdPg84GrZ/CPZhQ2D4opLso7J
+         DaX3paZC3WfW/eOEBAP7rJpPk3QHkiob1tpLrXH4=
+Received: from localhost (localhost [127.0.0.1])
+        by shark1-in.inbox.lv (Postfix) with ESMTP id 028F51118102;
+        Wed,  1 Dec 2021 17:51:57 +0200 (EET)
+Received: from shark1.inbox.lv ([127.0.0.1])
+        by localhost (shark1.inbox.lv [127.0.0.1]) (spamfilter, port 35)
+        with ESMTP id cCml6AnNr4Wy; Wed,  1 Dec 2021 17:51:56 +0200 (EET)
+Received: from mail.inbox.lv (pop1 [127.0.0.1])
+        by shark1-in.inbox.lv (Postfix) with ESMTP id BE9491118100;
+        Wed,  1 Dec 2021 17:51:56 +0200 (EET)
+Date:   Thu, 2 Dec 2021 00:51:46 +0900
+From:   Alexey Avramov <hakavlad@inbox.lv>
+To:     Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, akpm@linux-foundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, kernel@xanmod.org,
+        aros@gmx.com, iam@valdikss.org.ru, hakavlad@gmail.com
+Subject: Re: [PATCH] mm/vmscan: add sysctl knobs for protecting the working
+ set
+Message-ID: <20211202005146.6ecdfeba@mail.inbox.lv>
+In-Reply-To: <11873851.O9o76ZdvQC@natalenko.name>
+References: <20211130201652.2218636d@mail.inbox.lv>
+        <11873851.O9o76ZdvQC@natalenko.name>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <2899c7841c8afc23b329230bd940692ffd586f63.camel@gmx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: OK
+X-ESPOL: EZeEAiZdhQo1taLbN+Yf6uLg2rTHW1slvCTzybU26ndFz9PMtNdrcW+QBYXsEBy7cWHD
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 01, 2021 at 02:52:01PM +0100, Mike Galbraith wrote:
-> On Wed, 2021-12-01 at 13:01 +0000, Mel Gorman wrote:
-> > On Tue, Nov 30, 2021 at 06:59:58PM +0100, Mike Galbraith wrote:
-> > > On Tue, 2021-11-30 at 17:27 +0000, Mel Gorman wrote:
-> > > >
-> > > > Obviously a fairly different experience and most likely due to
-> > > > the
-> > > > underlying storage.
-> > >
-> > > I bet a virtual nickle this is the sore spot.
-> > >
-> >
-> > You win a virtual nickle!
-> 
-> I'm rich I'm rich... oh dang, virtual.
-> 
-> I went back to 5.15, and confirmed that wait_iff_congested() did not
-> ever sleep with the try to eat /dev/zero load.  Nor did it with insane
-> overcommit swap storm from hell with as much IO going on as my little
-> box is capable of generating, making the surrounding congestion bits
-> look.. down right expendable.
-> 
+>Although this is a definitely system-wide knob, wouldn't it make sense to 
+>implement this also on a per-cgroup basis?
 
-wait_iff_congested was broken once the block layer stopped tracking
-congestion and became a glorified cond_resched() in most cases. This is
-why the series aimed to remove the reliance on
-congestion_wait/wait_iff_congested.
+memory.min and memory.low are alreary exist.
 
--- 
-Mel Gorman
-SUSE Labs
+Regarding the protection of file pages, we are primarily interested in
+shared libraries. I don't see the point of creating such tunables
+for cgroups.
