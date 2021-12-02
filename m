@@ -2,105 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8364659C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 00:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD731465BD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 02:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236111AbhLAX0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Dec 2021 18:26:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56802 "EHLO
+        id S1348672AbhLBBxZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Dec 2021 20:53:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbhLAX0u (ORCPT
+        with ESMTP id S1348448AbhLBBxI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Dec 2021 18:26:50 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB842C061574;
-        Wed,  1 Dec 2021 15:23:28 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id s11so19965880ilv.3;
-        Wed, 01 Dec 2021 15:23:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Af3RlAsLkBfp1bcElgEIL/uV/0nmFtZn2QzPrICGZJc=;
-        b=KTF5cCZkcyKB8kh4XpQbQwXfGXimMLisrHNjl73Lc21ru4fUBu8Zy8O6dZQD6GT1Zj
-         +G9Hqk7mmNnS8jKGSbdiN0H9dIZa7u3cQuTsePDq9TbgQ64uUn75+NZqIGA6bkDhckdk
-         g9rHEfkp9H1Go0/hhVRryCZt+fVVmSHCgj74H5DGpQpM+oStsgMWIPMWu+Abti0pAxPK
-         62ocDpeb8rZvFhpIxhgsyqkxQjFnQyfx7w4qxf/ZZoXy2ZetH1n12RbnB3p1ZcmHtnQ3
-         +Q92UdUomWOK8TMs5b6VhuYV643jMH4E3XQrvXENqlK0pEWRLe8chFZWu9GkHd4kV4OP
-         zWsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Af3RlAsLkBfp1bcElgEIL/uV/0nmFtZn2QzPrICGZJc=;
-        b=BINApKAA63FTVqPBPWLMulN/X3nuO98O7N58uznFYGRN1HQ/ozeZuIX8D8KZJnrTFY
-         pibUcxL6oR2U7eR3Q0HrbS3yP5BTOmBjrWx2Y8va1ckHR5cfiR9091+E0eljqfGiqtfY
-         RrJllWPXNE86lA+oMi0bQ5n7EAyrgaxo7tobuiaEonuP1mkRTF38qqTu+7PdIOJr2a8D
-         C87U5J0fv3ccaxA0XJHxTY3ZjPH7JmHZgsb31H/eHr2BUYPGiuy1serGSOUqhhr1bJmL
-         UEkHK//csxI2f5m6DHfdmWVAGTxLwTASa/in4k4DLZfzOIhoMSL9VN3Jmz166mZ1nLLC
-         kz+g==
-X-Gm-Message-State: AOAM530PcS4rfZj8JynS4kjsPzK+fyQl+/uIuYUyriHIlDu0XFKH1v4Y
-        NKJs6TdTrMbMDSYP3DCfHGaDGO4PfylxhMiE3MQ=
-X-Google-Smtp-Source: ABdhPJzXU3YvqHPX90w9ejT7eu7mqKFglskeupNE5LeOcrNMt3JV9VU9GfMbF9oO3F+ly0PBAiW/fQZfXXCC1vfjpw4=
-X-Received: by 2002:a05:6e02:f81:: with SMTP id v1mr14402482ilo.107.1638401008111;
- Wed, 01 Dec 2021 15:23:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20211118112315.GD13047@quack2.suse.cz> <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
- <20211118164349.GB8267@quack2.suse.cz> <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
- <20211130112206.GE7174@quack2.suse.cz> <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
- <CAOQ4uxidK-yDMZoZtoRwTZLgSTr1o2Mu2L55vJRNJDLV0-Sb1w@mail.gmail.com>
- <17d73da701b.e571c37220081.6904057835107693340@mykernel.net>
- <17d74b08dcd.c0e94e6320632.9167792887632811518@mykernel.net>
- <CAOQ4uxiCYFeeH8oUUNG+rDCru_1XcwB6fR2keS1C6=d_yD9XzA@mail.gmail.com>
- <20211201134610.GA1815@quack2.suse.cz> <17d76cf59ee.12f4517f122167.2687299278423224602@mykernel.net>
- <CAOQ4uxiEjGms-sKhrVDtDHSEk97Wku5oPxnmy4vVB=6yRE_Hdg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiEjGms-sKhrVDtDHSEk97Wku5oPxnmy4vVB=6yRE_Hdg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 2 Dec 2021 01:23:17 +0200
-Message-ID: <CAOQ4uxg6FATciQhzRifOft4gMZj15G=UA6MUiPX2n9-NR5+1Pg@mail.gmail.com>
-Subject: Re: ovl_flush() behavior
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        Wed, 1 Dec 2021 20:53:08 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B78CEC061574;
+        Wed,  1 Dec 2021 17:49:45 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5BF6FB82192;
+        Thu,  2 Dec 2021 01:49:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13494C00446;
+        Thu,  2 Dec 2021 01:49:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638409783;
+        bh=/nOyWz9FD57Yc7ekcAIzmjiWYNDVCKOsggfbBTVN6EA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CUmf+GZlPXI21yYAs0MDsPMgA59CtWzchsX09RJ/ZRMeLy4fTzpKWz6wfMGlvQ3mI
+         VSCE+wgYSg1gAX81ligONH8m8F8fGtrzV2dks8+XRF4RPf8CGDz/R51FxNkBaAGCMc
+         zv0QZnO64QbzUT1590dNrFZchE1aZ/uhctFu9qDF1MQ0KMDR0nOkn4rxixf6VorqiH
+         QhXKocj56WxBPsdZnnthBEHrwpVSQ4IfPAAuNeuNW2IENYWfbmBWDq71BeRcsOovs1
+         y5cotxAI7U4wBeHn7hnd41VcnhBwrNShUf3rk++0RYe4JQpd/L+8Trr8bqkc2Bw+PT
+         vST6HrzyiMfpg==
+Date:   Wed, 1 Dec 2021 17:49:42 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ronyjin <ronyjin@tencent.com>,
-        charliecgxu <charliecgxu@tencent.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: iomap folio conversion for 5.17
+Message-ID: <20211202014942.GB8492@magnolia>
+References: <20211124183905.GE266024@magnolia>
+ <YZ/7O9Zb3PSsCbk9@casper.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YZ/7O9Zb3PSsCbk9@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> >
-> > To be honest I even don't fully understand what's the ->flush() logic in overlayfs.
-> > Why should we open new underlying file when calling ->flush()?
-> > Is it still correct in the case of opening lower layer first then copy-uped case?
-> >
->
-> The semantics of flush() are far from being uniform across filesystems.
-> most local filesystems do nothing on close.
-> most network fs only flush dirty data when a writer closes a file
-> but not when a reader closes a file.
-> It is hard to imagine that applications rely on flush-on-close of
-> rdonly fd behavior and I agree that flushing only if original fd was upper
-> makes more sense, so I am not sure if it is really essential for
-> overlayfs to open an upper rdonly fd just to do whatever the upper fs
-> would have done on close of rdonly fd, but maybe there is no good
-> reason to change this behavior either.
->
+On Thu, Nov 25, 2021 at 09:08:11PM +0000, Matthew Wilcox wrote:
+> On Wed, Nov 24, 2021 at 10:39:05AM -0800, Darrick J. Wong wrote:
+> > Hi folks,
+> > 
+> > The iomap-for-next branch of the xfs-linux repository at:
+> > 
+> > 	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+> > 
+> > has just been updated.
+> 
+> Hi Darrick,
+> 
+> Would you like to pull the folio changes from my git tree?
+> They are generally as posted previously, with minor tweaks to match
+> upstream changes.  They do not introduce any new xfstests problems
+> in my testing.
 
-On second thought, I think there may be a good reason to change
-ovl_flush() otherwise I wouldn't have submitted commit
-a390ccb316be ("fuse: add FOPEN_NOFLUSH") - I did observe
-applications that frequently open short lived rdonly fds and suffered
-undesired latencies on close().
+Since you've rebased against 5.16-rc3, would you mind sending a fresh
+pull request (in a new thread), please?  Particularly since the tag
+commit id isn't the same anymore...
 
-As for "changing existing behavior", I think that most fs used as
-upper do not implement flush at all.
-Using fuse/virtiofs as overlayfs upper is quite new, so maybe that
-is not a problem and maybe the new behavior would be preferred
-for those users?
+--D
 
-Thanks,
-Amir.
+> The following changes since commit b501b85957deb17f1fe0a861fee820255519d526:
+> 
+>   Merge tag 'asm-generic-5.16-2' of git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic (2021-11-25 10:41:28 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.infradead.org/users/willy/linux.git tags/iomap-folio-5.17
+> 
+> for you to fetch changes up to 979fe192e8a935968fd739983217128b431f6268:
+> 
+>   xfs: Support large folios (2021-11-25 14:03:56 -0500)
+> 
+> ----------------------------------------------------------------
+> Convert fs/iomap to use folios
+> 
+> These patches prepare XFS to use large folios to cache files.
+> There are some preliminary patches to add folio interfaces to the
+> block layer & buffer layer, then all the iomap functions are
+> converted to use folios instead of pages.
+> 
+> ----------------------------------------------------------------
+> Matthew Wilcox (Oracle) (24):
+>       block: Add bio_add_folio()
+>       block: Add bio_for_each_folio_all()
+>       fs/buffer: Convert __block_write_begin_int() to take a folio
+>       iomap: Convert to_iomap_page to take a folio
+>       iomap: Convert iomap_page_create to take a folio
+>       iomap: Convert iomap_page_release to take a folio
+>       iomap: Convert iomap_releasepage to use a folio
+>       iomap: Add iomap_invalidate_folio
+>       iomap: Pass the iomap_page into iomap_set_range_uptodate
+>       iomap: Convert bio completions to use folios
+>       iomap: Use folio offsets instead of page offsets
+>       iomap: Convert iomap_read_inline_data to take a folio
+>       iomap: Convert readahead and readpage to use a folio
+>       iomap: Convert iomap_page_mkwrite to use a folio
+>       iomap: Convert __iomap_zero_iter to use a folio
+>       iomap: Convert iomap_write_begin() and iomap_write_end() to folios
+>       iomap: Convert iomap_write_end_inline to take a folio
+>       iomap,xfs: Convert ->discard_page to ->discard_folio
+>       iomap: Simplify iomap_writepage_map()
+>       iomap: Simplify iomap_do_writepage()
+>       iomap: Convert iomap_add_to_ioend() to take a folio
+>       iomap: Convert iomap_migrate_page() to use folios
+>       iomap: Support large folios in invalidatepage
+>       xfs: Support large folios
+> 
+>  Documentation/core-api/kernel-api.rst |   1 +
+>  block/bio.c                           |  22 ++
+>  fs/buffer.c                           |  23 +-
+>  fs/internal.h                         |   2 +-
+>  fs/iomap/buffered-io.c                | 506 +++++++++++++++++-----------------
+>  fs/xfs/xfs_aops.c                     |  24 +-
+>  fs/xfs/xfs_icache.c                   |   2 +
+>  include/linux/bio.h                   |  56 +++-
+>  include/linux/iomap.h                 |   3 +-
+>  9 files changed, 363 insertions(+), 276 deletions(-)
+> 
