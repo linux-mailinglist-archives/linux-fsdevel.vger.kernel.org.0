@@ -2,397 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2EA466966
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 18:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDEF9466971
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 18:53:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376451AbhLBRyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Dec 2021 12:54:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348064AbhLBRyH (ORCPT
+        id S1376476AbhLBR4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Dec 2021 12:56:41 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:47164 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1376467AbhLBR4k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Dec 2021 12:54:07 -0500
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D3EC06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Dec 2021 09:50:45 -0800 (PST)
-Received: by mail-oi1-x235.google.com with SMTP id r26so685523oiw.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Dec 2021 09:50:45 -0800 (PST)
+        Thu, 2 Dec 2021 12:56:40 -0500
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B2HWrYl029851;
+        Thu, 2 Dec 2021 17:53:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=9h9qoq0+5Z1DfSw+DOfFfPwVbbJMS7VhADby13ONuAg=;
+ b=gmfRQguMhFuV4uY1imzP+i8lBUZwZQejTtoGLjt816yUctQrJ3tZFWdoi1rQFOJdbqwz
+ O7WDjXFXZ3nfWskQeYLTkaaMQIeCqhh358WHKwsje0rVkXrYwmJt4d09u0BcG/U8AXKD
+ llXCgm6RxCeJ7l1G6FQOL47toahPMqr25q2xQdgl82OV9u2B8mFI5ffBcmydutx0LgvQ
+ 9NBd22hPH6U6QppPYAqzKfoR9YmzsECUAgnG4StYttv5InogDgW8L0DFZDR0N4Y9rKxm
+ fIMD5NKP6NMhuQra7LqEYvO1V58im4qwV2H73wGhathK/+0+tWFQ+0Dah4TtR3QcUHM7 Jg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cp7wesxdh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Dec 2021 17:53:15 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1B2Ha7SP053946;
+        Thu, 2 Dec 2021 17:53:14 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2177.outbound.protection.outlook.com [104.47.56.177])
+        by aserp3020.oracle.com with ESMTP id 3cnhvh30dt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Dec 2021 17:53:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l8dQzcAKip7T3Pl0MMsFoRtH5sU7635xJ6quq9mRaTWuJnyHWlo+Ld2CaVtP2JD3L1IWVRFUhrfnh61ebY5bYbH6e9jE6a5lcSnIyzLuSmmWKEwuzeNQx5I0rsORPCJQ3X9pM7TlLGyGTzh4DnruQAng7pVT4FB3GJstmrqtRBdpkClYB5BhB7Gt6Tg3fvBqqUUn7R1wKsJHXRvVeCQmXdSkrgd6M9VMWjznsDPEcsxCIl+VoeNOdisYYMUmTZ3f9+RPKnpNqwhvlZBHuRW6riDdHPub+3QH9nhkcvlYKg/P+hMWjXcKOJ9scRV2BVKZApNCl3XcT1PIpbHyj2LStA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9h9qoq0+5Z1DfSw+DOfFfPwVbbJMS7VhADby13ONuAg=;
+ b=GlrVVq+ZjHb3Yzf+KokSy3Z2BogyDA0lABqVXQKckQAjWkssS8GzFYsQ6N9DfQ+Abyd20P1kqFzTyOEZgz3VN81AT19PtAciMTFdbYbSTeljFzvomWxoX72uCQAkDMdmkMzSMt6i/rUSlWcFcKml7H1yCtty/2ScWb2ZJcHk9XSjBxBrr3fJzgQlofuR62w5BFoG/ln+MUOoJMsMZlqivS5MOOe8+o4tpgCeI3fhSRzVwlYTl3Izz7vSlmvFwaMYYNLjSUQJ0jQPpNC8lc6NjMBi79ljOro0edJsMF+LBKiwzXwnsORr5h8rsivD4stWEHGqxnyb67j3UCzwCEByRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WIg699jFXT9LwluowJouEh3f/e4AFdY1ffecKeKpD1g=;
-        b=D1ad8quXSbRJmKy/gxRCbG3UbwVaRA/nImdXu6Ws43q2Jx/EI32HWvH4QvDrFqYOZb
-         sku23p65/J+MZnfyaZWXCMyO2DMPrOoc7NUgPruiZSp8f7q+SOzzQ+VEPFAaw4km5Frv
-         je3hUititjnlolAp0swNKvODxKSRpF7UyiWYo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WIg699jFXT9LwluowJouEh3f/e4AFdY1ffecKeKpD1g=;
-        b=Llyo+KtvmsLT9RuLcqhRMGkFNqpwd7pdi733u9OxbhIz7vklzPJiWDqW5LROYxDiwO
-         VesoeQq32NhigjZPzsDIUZG2a+XAC62FHR/8p/3m5wTAkMC1CE/C8fLIeOLsxGkmPtPS
-         +LtAa90AGsSjNWgHbBKCEuts7q2gKyU9dJA4tZOKFHH3tSkvCBEFNs88g/phcvHmXzzC
-         adHO+N2p/sltYntdg+nJoJ7e5I6baUVzpRERqLRJeB3CbawjE3avM8e0onQOOfB6eq28
-         AkP8xVIpbZeVAEcDNYXQ2ogc9qBtDUpIqX0T96Nx3ECn3Ls6mWz+S6oaJai9aMP3YTi7
-         6ZrQ==
-X-Gm-Message-State: AOAM530EKvSpfrhE+SyTsBe9NlMSLur0IIic0za4umVJt37lsMyrGTE9
-        GEzQ7Hxe3dWWWMr/EW6HabWxJ5stzMer4A==
-X-Google-Smtp-Source: ABdhPJw1W1F1vpRxISvPPm8tmmyhQfh+D2DlXxlDO+9Gh+wDUh8qMbdoZS/EqdPU3epoRGM879PaSw==
-X-Received: by 2002:a05:6808:e8d:: with SMTP id k13mr5505174oil.84.1638467444587;
-        Thu, 02 Dec 2021 09:50:44 -0800 (PST)
-Received: from localhost ([2605:a601:ac0f:820:49aa:e3a:9f96:cf34])
-        by smtp.gmail.com with ESMTPSA id k4sm151126oij.54.2021.12.02.09.50.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 09:50:44 -0800 (PST)
-Date:   Thu, 2 Dec 2021 11:50:43 -0600
-From:   Seth Forshee <sforshee@digitalocean.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH v2 10/10] fs: support mapped mounts of mapped filesystems
-Message-ID: <YakHc4tx1or8n7uj@do-x1extreme>
-References: <20211130121032.3753852-1-brauner@kernel.org>
- <20211130121032.3753852-11-brauner@kernel.org>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9h9qoq0+5Z1DfSw+DOfFfPwVbbJMS7VhADby13ONuAg=;
+ b=M6UacFI2P1vaeAuI7kdq1BUHld9HEyi55yqoCfwkhqBB3BWlwJVvwNDbssNKspyUK8rjT19sCBaXm8HhG9iKwjtCKJd+Dzgcao70mIXYU4pT8BnK6u3bICFDKS38x/58KYlr4yGL0DlXsgqCVgGIyrQKyrlqFoepBVDXtvTdidg=
+Received: from SJ0PR10MB4688.namprd10.prod.outlook.com (2603:10b6:a03:2db::24)
+ by SJ0PR10MB5661.namprd10.prod.outlook.com (2603:10b6:a03:3da::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.23; Thu, 2 Dec
+ 2021 17:53:12 +0000
+Received: from SJ0PR10MB4688.namprd10.prod.outlook.com
+ ([fe80::48f2:bb64:cb4b:372f]) by SJ0PR10MB4688.namprd10.prod.outlook.com
+ ([fe80::48f2:bb64:cb4b:372f%9]) with mapi id 15.20.4755.016; Thu, 2 Dec 2021
+ 17:53:12 +0000
+From:   Chuck Lever III <chuck.lever@oracle.com>
+To:     Bruce Fields <bfields@fieldses.org>
+CC:     Dai Ngo <dai.ngo@oracle.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
+ Courteous Server
+Thread-Topic: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
+ Courteous Server
+Thread-Index: AQHXtMzhlpWZW1OG5ESdBSdOgoHETqu+oymAgAANi4CASGLiAIAA/bOAgAA+8oCAAD8yAIAALy8AgAZzIgCAC+1zAIAABPIAgAARGgCAAAipAIAACTgAgAAabACAADKYgIAAGWS/gABccgCAAItQgIAAzjSAgAC0kgCAAAQjAIABxScA
+Date:   Thu, 2 Dec 2021 17:53:12 +0000
+Message-ID: <E51988BE-DBDC-42B8-9047-14DC1EDD4BD8@oracle.com>
+References: <da7394e0-26f6-b243-ce9a-d669e51c1a5e@oracle.com>
+ <1285F7E2-5D5F-4971-9195-BA664CAFF65F@oracle.com>
+ <e1093e42-2871-8810-de76-58d1ea357898@oracle.com>
+ <C9C6AEC1-641C-4614-B149-5275EFF81C3D@oracle.com>
+ <22000fe0-9b17-3d88-1730-c8704417cb92@oracle.com>
+ <B42B0F9C-57E2-4F58-8DBD-277636B92607@oracle.com>
+ <6f5a060d-17f6-ee46-6546-1217ac5dfa9c@oracle.com>
+ <20211130153211.GB8837@fieldses.org>
+ <f6a948a7-32d6-da9a-6808-9f2f77d5f792@oracle.com>
+ <20211201143630.GB24991@fieldses.org> <20211201145118.GA26415@fieldses.org>
+In-Reply-To: <20211201145118.GA26415@fieldses.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3654.120.0.1.13)
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6116a74a-b33e-4a19-4a59-08d9b5bc9c42
+x-ms-traffictypediagnostic: SJ0PR10MB5661:
+x-microsoft-antispam-prvs: <SJ0PR10MB566130890056D08DC770691593699@SJ0PR10MB5661.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2657;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: TqmVaWETKKs64oCIBRF8kfztARa5f/lB4UAmyrGa0dsgMm0bN8VJBJQlXkGk8w2d16lQZBVvdj0j5CQILjMHrebM4QuLF0DhLAxBA0wKaOIrceCMOkL33B0njohfCyfag1cg72Hc/WelDi8YIj1dx+gdsMTswt7EzEJ93bDe4zR9I+NubCnmOOm3p4ijsu2dusm2qDdmKZtlEXDm4//wbgzgB1cg/ABzRZXo/SXkpe6X0aySYo/Ms/4nO/e/7TLdwCwV5/ZJz+BEaCF60oiyfW9ZIgFGvc2U6Ys36cbPE6dkW+eS127hdZ+jzU3TZijVUAjUFbLYZcw5dsbj8xubp4xywJpnAHKG8L+6O4RZ6ZvSQ/VXkwTbrpJTNRrrJa4DaTlwxBprtdTyNrphOtNtFu00ozew0p8/1PPPbxHtn3p1rPCg9xRUNzVDuA8SA0KA5B+RxX442S2o351HpqY8G6J0EKyw4j6bmZfpVEYJmTAfhwzKb24Nq/nImMno1avJXHb6r/KrdNKGhbZiiISuljOzKn9ttvj5lqIlnuGAj+ynMpTcW2ibcZ0gZsT0mUiTBSxJM5mU0YL8WYuPHWhIhOdSeKTnlICcTQizHrZNpnRZyKcKUamWgCBRnlZZAb96cJ77fwlx6Er4mmEC8cc8j1hffNL2ALpsSl0WC6zfXCScyz17hWHMlzq/Yc8Bcq+9Y7oJYFpUSMWDhy0YZtmeP3ef8ftvi+MUXUKB56y7v0GnYRMHOXrAOvkHrla7P088
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4688.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(38070700005)(316002)(2906002)(54906003)(26005)(76116006)(36756003)(186003)(4326008)(6486002)(8936002)(8676002)(91956017)(6916009)(53546011)(66556008)(4744005)(38100700002)(5660300002)(64756008)(71200400001)(122000001)(66446008)(2616005)(66946007)(6512007)(86362001)(66476007)(508600001)(83380400001)(6506007)(33656002)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?x73jIsxaEyr16t/g51b8cjo55SGUGorA8CJfJlZPXX9qFwariI4e50+lCJAo?=
+ =?us-ascii?Q?MSMKtQiUrmcaHUw4MrhraIw/shWchLNZymbBQ9HGniZvCD/VXx+YWRRFwfUI?=
+ =?us-ascii?Q?ZzsHKPVySIv0HHBmWvajxGIS9iTmprcxHT0I9ltUBtCjX76iiE0Ku7em847M?=
+ =?us-ascii?Q?fxWbidYL+HHuojNTxbAsBzjM2jEL5J7c57cAf8ZM2FU5luvgCbcxxVuCpJZT?=
+ =?us-ascii?Q?uCsvGogLnoX7NDqqSDnUfpsYvxeT4VU0wynoRQDWwvic1aoFbyG2jA5Psdmp?=
+ =?us-ascii?Q?gV/bcPP5xKstjSXbLYfaPMl4PyLXBwZdD0YtBVkWeTGqFWyRHdGcCPa5+qTY?=
+ =?us-ascii?Q?r+fM1DTyLiR2J2PsDqrKtT+dh6UdnLAxEhX6LLsmjlL6RcGE0jvRuXJy/nkF?=
+ =?us-ascii?Q?y/EvtrFrcJ7pzBSdXRBzxe2ubs6J9ueXS7v5wPKko5u1L9GYFHcwdvVOnwb3?=
+ =?us-ascii?Q?ON+fejYqaEN26rf00F2vPiHjoXuORYsod9y6AOG0nY3f1j4aOti3QKHHLchy?=
+ =?us-ascii?Q?VvCgqBt/rnPIWRVMH+CTnyQlWi43X0PiGk1+ZJ7NCUsAymY/8IQmvp8Pkhw/?=
+ =?us-ascii?Q?owx4bqvww9IZRiHMwQgkUYvAwlyKGKk2d8HXj5BwcuLgDFj+9PONg9T5rUGi?=
+ =?us-ascii?Q?7rP+jRdjsGs7PH3S4DsovtGImIzj8VKBKsE9XjyQkDPShxocACcz/8EhXTJO?=
+ =?us-ascii?Q?eZkG9Ngkxv4SIwwcCqrin+ojjnnmFhg4LXCGhW2+v48DLU7zWOhuoLIoA0GU?=
+ =?us-ascii?Q?CMGaz/7b6MHemdZ2rPnpgi1qDUQ56pPD8OyuitjeeBr2E0QjGJ/ygItfnMXg?=
+ =?us-ascii?Q?wZu9tMG8MDBWiOGTwVY3mAtgoXSG/PR+Qpi7l/Ix7qLIKXdMPmQ4e6jf3YAc?=
+ =?us-ascii?Q?zJCyDliT9GJL6Xl+N5MOVWlLqERA3gTKQnVyohvbYFL8KeCnW1uo57zdH5LQ?=
+ =?us-ascii?Q?A9xRjYVnW+cy3AgDMfMWpC9pktTzvV8CXbA22O60zFjRVyZoe+xT+Pqjptt0?=
+ =?us-ascii?Q?igzQ+VJf6GI3c1Wf0eS6P0pRbpDdwGL6kqimCKfAUcUJ/MwKXTIB7/Py9NJI?=
+ =?us-ascii?Q?xRiSKqGbs1JxG9sfgsc/zWqCNewu3gBnH/KqjpY6zIsQ43XiaQ/EJ+UtIVZm?=
+ =?us-ascii?Q?a4Qk2OVHuYqxNDEe8Dsulie3SMzKqDdelurSDjG1cEXK4M9wu75xamxQ9SWe?=
+ =?us-ascii?Q?I6BuqUq89ZGTG4Hg3uM6ZffeodBQIuqWt/cZtX4E8Pe8Mla+43UYTfImdGjD?=
+ =?us-ascii?Q?6xk0K+rfjPNzVvarcY4ByqPgC+RlU9lLQHI3D1CoSanZRdw0jw7Lp63YORnX?=
+ =?us-ascii?Q?enlYR/TQ/kQbzwn1EZbpY7F9tFmvjJMJe1LGoZunsQGMZxCfpvMGUvcWqVQm?=
+ =?us-ascii?Q?4RQKaJ9CV4NN3r9apsscK94bwD2qVgSm6O6/O/39nsln8m3Sw+Dn0CG+9VFj?=
+ =?us-ascii?Q?/7m5QmgabW+Y0ScFWWfpUeokRG3S/jXYbAk6ZZs9Wx8yxg6dBUffLTnE1Ive?=
+ =?us-ascii?Q?yr3wZbNHclbSx8ZmQ2iY1fmS44xlXFsnGaF9XesQ7gvD2plEVIfFcRb7dyAF?=
+ =?us-ascii?Q?oYdKzRV5H5GyKM1ffCxjtl4NDFeyV4yW17Ei4FDcpIEYvpXar+Qjf8uCiqY6?=
+ =?us-ascii?Q?y0XKg51JFw42o/fm+IWGaQg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A10FD1E3A158FD468D14191449E9030F@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211130121032.3753852-11-brauner@kernel.org>
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4688.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6116a74a-b33e-4a19-4a59-08d9b5bc9c42
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2021 17:53:12.9356
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bPk4BgOfIIBQe5yR1hej/hJ6CjluutwQXlGWHPB2DAMfehnVw/Yn1RvWXHKYyKLET8nZbS4hooOvxNfom3BR7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5661
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10185 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 adultscore=0
+ bulkscore=0 malwarescore=0 mlxlogscore=689 mlxscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112020114
+X-Proofpoint-ORIG-GUID: p9VWCZguILjdfj0dz8UozRipjhu0htCz
+X-Proofpoint-GUID: p9VWCZguILjdfj0dz8UozRipjhu0htCz
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 01:10:32PM +0100, Christian Brauner wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> In previous patches we added new and modified existing helpers to handle
-> idmapped mounts of filesystems mounted with an idmapping. In this final
-> patch we convert all relevant places in the vfs to actually pass the
-> filesystem's idmapping into these helpers.
-> 
-> With this the vfs is in shape to handle idmapped mounts of filesystems
-> mounted with an idmapping. Note that this is just the generic
-> infrastructure. Actually adding support for idmapped mounts to a
-> filesystem mountable with an idmapping is follow-up work.
-> 
-> In this patch we extend the definition of an idmapped mount from a mount
-> that that has the initial idmapping attached to it to a mount that has
-> an idmapping attached to it which is not the same as the idmapping the
-> filesystem was mounted with.
-> 
-> As before we do not allow the initial idmapping to be attached to a
-> mount. In addition this patch prevents that the idmapping the filesystem
-> was mounted with can be attached to a mount created based on this
-> filesystem.
-> 
-> This has multiple reasons and advantages. First, attaching the initial
-> idmapping or the filesystem's idmapping doesn't make much sense as in
-> both cases the values of the i_{g,u}id and other places where k{g,u}ids
-> are used do not change. Second, a user that really wants to do this for
-> whatever reason can just create a separate dedicated identical idmapping
-> to attach to the mount. Third, we can continue to use the initial
-> idmapping as an indicator that a mount is not idmapped allowing us to
-> continue to keep passing the initial idmapping into the mapping helpers
-> to tell them that something isn't an idmapped mount even if the
-> filesystem is mounted with an idmapping.
-> 
-> Link: https://lore.kernel.org/r/20211123114227.3124056-11-brauner@kernel.org (v1)
-> Cc: Seth Forshee <sforshee@digitalocean.com>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> CC: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
-> /* v2 */
-> - Amir Goldstein <amir73il@gmail.com>:
->   - Continue passing down the initial idmapping to xfs. Since xfs cannot
->     and is not planned to support idmapped superblocks don't mislead
->     readers in the code by passing down the filesystem idmapping. It
->     will be the initial idmapping always anyway.
->   - Include mnt_idmapping.h header into fs/namespace.c
-> ---
->  fs/namespace.c       | 37 +++++++++++++++++++++++++------------
->  fs/open.c            |  7 ++++---
->  fs/posix_acl.c       |  8 ++++----
->  include/linux/fs.h   | 17 +++++++++--------
->  security/commoncap.c |  9 ++++-----
->  5 files changed, 46 insertions(+), 32 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 4994b816a74c..ccefede4ba1b 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -31,6 +31,7 @@
->  #include <uapi/linux/mount.h>
->  #include <linux/fs_context.h>
->  #include <linux/shmem_fs.h>
-> +#include <linux/mnt_idmapping.h>
->  
->  #include "pnode.h"
->  #include "internal.h"
-> @@ -561,7 +562,7 @@ static void free_vfsmnt(struct mount *mnt)
->  	struct user_namespace *mnt_userns;
->  
->  	mnt_userns = mnt_user_ns(&mnt->mnt);
-> -	if (mnt_userns != &init_user_ns)
-> +	if (!initial_mapping(mnt_userns))
->  		put_user_ns(mnt_userns);
->  	kfree_const(mnt->mnt_devname);
->  #ifdef CONFIG_SMP
-> @@ -965,6 +966,7 @@ static struct mount *skip_mnt_tree(struct mount *p)
->  struct vfsmount *vfs_create_mount(struct fs_context *fc)
->  {
->  	struct mount *mnt;
-> +	struct user_namespace *fs_userns;
->  
->  	if (!fc->root)
->  		return ERR_PTR(-EINVAL);
-> @@ -982,6 +984,10 @@ struct vfsmount *vfs_create_mount(struct fs_context *fc)
->  	mnt->mnt_mountpoint	= mnt->mnt.mnt_root;
->  	mnt->mnt_parent		= mnt;
->  
-> +	fs_userns = mnt->mnt.mnt_sb->s_user_ns;
-> +	if (!initial_mapping(fs_userns))
-> +		mnt->mnt.mnt_userns = get_user_ns(fs_userns);
-> +
 
-Won't this get be leaked if mnt_userns is overwritten by
-do_idmap_mount()?
 
->  	lock_mount_hash();
->  	list_add_tail(&mnt->mnt_instance, &mnt->mnt.mnt_sb->s_mounts);
->  	unlock_mount_hash();
-> @@ -1072,7 +1078,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
->  
->  	atomic_inc(&sb->s_active);
->  	mnt->mnt.mnt_userns = mnt_user_ns(&old->mnt);
-> -	if (mnt->mnt.mnt_userns != &init_user_ns)
-> +	if (!initial_mapping(mnt->mnt.mnt_userns))
->  		mnt->mnt.mnt_userns = get_user_ns(mnt->mnt.mnt_userns);
->  	mnt->mnt.mnt_sb = sb;
->  	mnt->mnt.mnt_root = dget(root);
-> @@ -3927,10 +3933,18 @@ static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
->  static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
->  {
->  	struct vfsmount *m = &mnt->mnt;
-> +	struct user_namespace *fs_userns = m->mnt_sb->s_user_ns;
->  
->  	if (!kattr->mnt_userns)
->  		return 0;
->  
-> +	/*
-> +	 * Creating an idmapped mount with the filesystem wide idmapping
-> +	 * doesn't make sense so block that. We don't allow mushy semantics.
-> +	 */
-> +	if (kattr->mnt_userns == fs_userns)
-> +		return -EINVAL;
-> +
->  	/*
->  	 * Once a mount has been idmapped we don't allow it to change its
->  	 * mapping. It makes things simpler and callers can just create
-> @@ -3943,12 +3957,8 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
->  	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
->  		return -EINVAL;
->  
-> -	/* Don't yet support filesystem mountable in user namespaces. */
-> -	if (m->mnt_sb->s_user_ns != &init_user_ns)
-> -		return -EINVAL;
-> -
->  	/* We're not controlling the superblock. */
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!ns_capable(fs_userns, CAP_SYS_ADMIN))
->  		return -EPERM;
->  
->  	/* Mount has already been visible in the filesystem hierarchy. */
-> @@ -4133,13 +4143,16 @@ static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
->  	}
->  
->  	/*
-> -	 * The init_user_ns is used to indicate that a vfsmount is not idmapped.
-> -	 * This is simpler than just having to treat NULL as unmapped. Users
-> -	 * wanting to idmap a mount to init_user_ns can just use a namespace
-> -	 * with an identity mapping.
-> +	 * The initial idmapping cannot be used to create an idmapped
-> +	 * mount. Attaching the initial idmapping doesn't make much sense
-> +	 * as it is an identity mapping. A user can just create a dedicated
-> +	 * identity mapping to achieve the same result. We also use the
-> +	 * initial idmapping as an indicator of a mount that is not
-> +	 * idmapped. It can simply be passed into helpers that are aware of
-> +	 * idmapped mounts as a convenient shortcut.
->  	 */
+> On Dec 1, 2021, at 9:51 AM, Bruce Fields <bfields@fieldses.org> wrote:
+>=20
+> Do you have a public git tree with your latest patches?
+>=20
+> --b.
 
-This isn't completely accurate, is it? If sb->s_user_ns != init_user_ns,
-an idmap to init_user_ns isn't an idendity mapping.
+Dai's patches have been pushed to the nfsd-courteous-server topic branch at
 
->  	mnt_userns = container_of(ns, struct user_namespace, ns);
-> -	if (mnt_userns == &init_user_ns) {
-> +	if (initial_mapping(mnt_userns)) {
->  		err = -EPERM;
->  		goto out_fput;
->  	}
-> diff --git a/fs/open.c b/fs/open.c
-> index 40a00e71865b..9ff2f621b760 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -641,7 +641,7 @@ SYSCALL_DEFINE2(chmod, const char __user *, filename, umode_t, mode)
->  
->  int chown_common(const struct path *path, uid_t user, gid_t group)
->  {
-> -	struct user_namespace *mnt_userns;
-> +	struct user_namespace *mnt_userns, *fs_userns;
->  	struct inode *inode = path->dentry->d_inode;
->  	struct inode *delegated_inode = NULL;
->  	int error;
-> @@ -653,8 +653,9 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
->  	gid = make_kgid(current_user_ns(), group);
->  
->  	mnt_userns = mnt_user_ns(path->mnt);
-> -	uid = mapped_kuid_user(mnt_userns, &init_user_ns, uid);
-> -	gid = mapped_kgid_user(mnt_userns, &init_user_ns, gid);
-> +	fs_userns = i_user_ns(inode);
-> +	uid = mapped_kuid_user(mnt_userns, fs_userns, uid);
-> +	gid = mapped_kgid_user(mnt_userns, fs_userns, gid);
->  
->  retry_deleg:
->  	newattrs.ia_valid =  ATTR_CTIME;
-> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-> index 4b5fb9a9b90f..80acb6885cf9 100644
-> --- a/fs/posix_acl.c
-> +++ b/fs/posix_acl.c
-> @@ -376,8 +376,8 @@ posix_acl_permission(struct user_namespace *mnt_userns, struct inode *inode,
->                                  break;
->                          case ACL_USER:
->  				uid = mapped_kuid_fs(mnt_userns,
-> -						      &init_user_ns,
-> -						      pa->e_uid);
-> +						     i_user_ns(inode),
-> +						     pa->e_uid);
->  				if (uid_eq(uid, current_fsuid()))
->                                          goto mask;
->  				break;
-> @@ -391,8 +391,8 @@ posix_acl_permission(struct user_namespace *mnt_userns, struct inode *inode,
->  				break;
->                          case ACL_GROUP:
->  				gid = mapped_kgid_fs(mnt_userns,
-> -						      &init_user_ns,
-> -						      pa->e_gid);
-> +						     i_user_ns(inode),
-> +						     pa->e_gid);
->  				if (in_group_p(gid)) {
->  					found = 1;
->  					if ((pa->e_perm & want) == want)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c7f72b78ab7e..9df6903634e8 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1641,7 +1641,7 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
->  static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
->  				    const struct inode *inode)
->  {
-> -	return mapped_kuid_fs(mnt_userns, &init_user_ns, inode->i_uid);
-> +	return mapped_kuid_fs(mnt_userns, i_user_ns(inode), inode->i_uid);
->  }
->  
->  /**
-> @@ -1655,7 +1655,7 @@ static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
->  static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
->  				    const struct inode *inode)
->  {
-> -	return mapped_kgid_fs(mnt_userns, &init_user_ns, inode->i_gid);
-> +	return mapped_kgid_fs(mnt_userns, i_user_ns(inode), inode->i_gid);
->  }
->  
->  /**
-> @@ -1669,7 +1669,7 @@ static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
->  static inline void inode_fsuid_set(struct inode *inode,
->  				   struct user_namespace *mnt_userns)
->  {
-> -	inode->i_uid = mapped_fsuid(mnt_userns, &init_user_ns);
-> +	inode->i_uid = mapped_fsuid(mnt_userns, i_user_ns(inode));
->  }
->  
->  /**
-> @@ -1683,7 +1683,7 @@ static inline void inode_fsuid_set(struct inode *inode,
->  static inline void inode_fsgid_set(struct inode *inode,
->  				   struct user_namespace *mnt_userns)
->  {
-> -	inode->i_gid = mapped_fsgid(mnt_userns, &init_user_ns);
-> +	inode->i_gid = mapped_fsgid(mnt_userns, i_user_ns(inode));
->  }
->  
->  /**
-> @@ -1704,10 +1704,10 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
->  	kuid_t kuid;
->  	kgid_t kgid;
->  
-> -	kuid = mapped_fsuid(mnt_userns, &init_user_ns);
-> +	kuid = mapped_fsuid(mnt_userns, fs_userns);
->  	if (!uid_valid(kuid))
->  		return false;
-> -	kgid = mapped_fsgid(mnt_userns, &init_user_ns);
-> +	kgid = mapped_fsgid(mnt_userns, fs_userns);
->  	if (!gid_valid(kgid))
->  		return false;
->  	return kuid_has_mapping(fs_userns, kuid) &&
-> @@ -2654,13 +2654,14 @@ static inline struct user_namespace *file_mnt_user_ns(struct file *file)
->   * is_idmapped_mnt - check whether a mount is mapped
->   * @mnt: the mount to check
->   *
-> - * If @mnt has an idmapping attached to it @mnt is mapped.
-> + * If @mnt has an idmapping attached different from the
-> + * filesystem's idmapping then @mnt is mapped.
->   *
->   * Return: true if mount is mapped, false if not.
->   */
->  static inline bool is_idmapped_mnt(const struct vfsmount *mnt)
->  {
-> -	return mnt_user_ns(mnt) != &init_user_ns;
-> +	return mnt_user_ns(mnt) != mnt->mnt_sb->s_user_ns;
->  }
->  
->  extern long vfs_truncate(const struct path *, loff_t);
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index d288a62e2999..5fc8986c3c77 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -419,7 +419,7 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
->  	kroot = make_kuid(fs_ns, root);
->  
->  	/* If this is an idmapped mount shift the kuid. */
-> -	kroot = mapped_kuid_fs(mnt_userns, &init_user_ns, kroot);
-> +	kroot = mapped_kuid_fs(mnt_userns, fs_ns, kroot);
->  
->  	/* If the root kuid maps to a valid uid in current ns, then return
->  	 * this as a nscap. */
-> @@ -556,13 +556,12 @@ int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
->  		return -EINVAL;
->  	if (!capable_wrt_inode_uidgid(mnt_userns, inode, CAP_SETFCAP))
->  		return -EPERM;
-> -	if (size == XATTR_CAPS_SZ_2 && (mnt_userns == &init_user_ns))
-> +	if (size == XATTR_CAPS_SZ_2 && (mnt_userns == fs_ns))
->  		if (ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP))
->  			/* user is privileged, just write the v2 */
->  			return size;
->  
-> -	rootid = rootid_from_xattr(*ivalue, size, task_ns, mnt_userns,
-> -				   &init_user_ns);
-> +	rootid = rootid_from_xattr(*ivalue, size, task_ns, mnt_userns, fs_ns);
->  	if (!uid_valid(rootid))
->  		return -EINVAL;
->  
-> @@ -703,7 +702,7 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
->  	/* Limit the caps to the mounter of the filesystem
->  	 * or the more limited uid specified in the xattr.
->  	 */
-> -	rootkuid = mapped_kuid_fs(mnt_userns, &init_user_ns, rootkuid);
-> +	rootkuid = mapped_kuid_fs(mnt_userns, fs_ns, rootkuid);
->  	if (!rootid_owns_currentns(rootkuid))
->  		return -ENODATA;
->  
-> -- 
-> 2.30.2
-> 
+git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
+
+I can fold them into my for-next branch if we agree they are ready for
+broader test exposure.
+
+
+--
+Chuck Lever
+
+
+
