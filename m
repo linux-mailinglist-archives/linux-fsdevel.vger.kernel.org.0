@@ -2,136 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE7F46694B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 18:40:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4CE46694D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 18:41:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376421AbhLBRoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Dec 2021 12:44:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52932 "EHLO
+        id S1376436AbhLBRok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Dec 2021 12:44:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376415AbhLBRoP (ORCPT
+        with ESMTP id S1376423AbhLBRok (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Dec 2021 12:44:15 -0500
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F1FC06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Dec 2021 09:40:52 -0800 (PST)
-Received: by mail-oi1-x22a.google.com with SMTP id n66so586251oia.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Dec 2021 09:40:52 -0800 (PST)
+        Thu, 2 Dec 2021 12:44:40 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 367C6C06174A
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Dec 2021 09:41:17 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id 207so1116087ljf.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Dec 2021 09:41:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Lj8hbYvXYjFOWZTXIMLA3YN1MiMhgj1UM9C/K1aqIo4=;
-        b=HTmGj60R6L67Zx/2PkW1lYVVD11ldGD14oCvasa748Er/cuIWxE1KSodVBAr/eQ4tj
-         HzgYQv9o7BoCCqDLravqWj709rqKenRYoQrq0ZtYdvrZwNOs8E1JJQJ45xXTntMgA9Cz
-         EnZCInwvBz/I6lRtlgxNQznwLA7Hxx0CgZxNk=
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sel9QLaZVY4N+mTLlgeCKeQqHTygfT86F1uxh//ubJk=;
+        b=HBLmPCV+9oCwHZNYcNxG43IdBP8nmESwXT5WI7ZvozEylY0SxYxbx3yvK8hRsnW9oX
+         WCoHepnTCI6wZD6uClG5zlGVdL7PxfteS4avkFUtE47j4XEgz3TYQFKsSSBSVcW+sLe8
+         TmPjrny5x9F6q2IbjeZXHzOnzz9jkjPuJkxA82whsbyBV4KhQW8cqDzgXVHqwhzz9iCE
+         +/kGoTXMYMk/O/awyc60UzDdOMAeDrs6VEVaJyM7+JFUDco7xMUBt+7c7A51doDv2Irj
+         sJQdPmtP7ubIW3L4+bSqS39T+DSuoGJvo3b4ZV4ZdbdScOj+bycogtO4gFABWdDW9rky
+         xO/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Lj8hbYvXYjFOWZTXIMLA3YN1MiMhgj1UM9C/K1aqIo4=;
-        b=GrP1L+01onCB1jpV4P3d3u9eVABfeFT+D3216Dov83W4D0gEXDtc88NWqblJULy8oG
-         6MAsFsFpF1VStTR0iYwFYqXLkR6qEtsPtK067vupnLhSq/veQzcogkAMI1InSkngFCVC
-         /x2ZR2M4pUX/cC8LKT4qoFkheDr5ZpPa1rmBa9eYa1avKrCaTrcUukjZ6UWN/9lPHLej
-         iMmhn/mIHYEwB+J0pFANSId9+Pc1gus8xC3NCfugvplvLAyvBCbR5RW0PJLbmWHY+5dm
-         B5AffeVabT1KFYDpY9wzQEip0jK/PlA9beRRSShKf4RjCkluCeEc1HaFh03mqDbnHlBV
-         BrrQ==
-X-Gm-Message-State: AOAM532XXJsQ0pADCOegPxeCx8aIhMJ38kV71L8Tb7Yp9HMbcFBqlxmS
-        mrsYYf8FFnIlSebtywUa88C5Mw==
-X-Google-Smtp-Source: ABdhPJw5cCQP4vjqtymKqf2ZQoeggGICgsLLmm5/duUqOqg80e6oUQd4uM4cj6S4wlC730sfw7JCvQ==
-X-Received: by 2002:a05:6808:ecf:: with SMTP id q15mr5575230oiv.57.1638466852115;
-        Thu, 02 Dec 2021 09:40:52 -0800 (PST)
-Received: from localhost ([2605:a601:ac0f:820:49aa:e3a:9f96:cf34])
-        by smtp.gmail.com with ESMTPSA id k1sm151214otj.61.2021.12.02.09.40.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 09:40:51 -0800 (PST)
-Date:   Thu, 2 Dec 2021 11:40:51 -0600
-From:   Seth Forshee <sforshee@digitalocean.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH v2 09/10] fs: add i_user_ns() helper
-Message-ID: <YakFI/xMoZBHP1/x@do-x1extreme>
-References: <20211130121032.3753852-1-brauner@kernel.org>
- <20211130121032.3753852-10-brauner@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sel9QLaZVY4N+mTLlgeCKeQqHTygfT86F1uxh//ubJk=;
+        b=qWXxQo9xHceUECYXxPv31+Zq3FA8IMTf+7Hmu/hmBp5jMofUoLvUhaJ6BkcL2AmB5w
+         2CLJdJCdgMW9LGL8ss/bP1fwr1TgwINkfEyRrOhe/Yg722bw7IrZHtKPePzHQxwo+nPt
+         tQ1mqKMRc3gzPcZxS0eFADDzNDKhN3NhWLhBeSIaVip6Jb6SDsGvnQM2RRO9x0d5U4fY
+         V+k/VyybJs7W+YxajvdD/dv+eY0bDhbBWP56fu8sSMEJVrtwCd6cvc8BTx1qoAVJttW4
+         T/yWSf+zR7uLJvBsKry2xTRiCzGY9GA1ydY5qbylWNJYMVeky+bTZ7uzAJBGqUy00Gfm
+         koSw==
+X-Gm-Message-State: AOAM5300lh9hw4N9l88yLtOQUaEJyg3gChY2dTtvcinzBhSeGlSUguYr
+        Ai20jqCmoB/SyIWSIkFa0YSSqkVT1x4soWeUK1mN8g==
+X-Google-Smtp-Source: ABdhPJxwsHniTL8HtWjxo0S47SHXwpQxqVedZCKIvQGSboEzg0cQOFPO30fWETeZK9KDiV3DDDoW9A9k9CWWDfdOAVQ=
+X-Received: by 2002:a05:651c:545:: with SMTP id q5mr12693560ljp.202.1638466875265;
+ Thu, 02 Dec 2021 09:41:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211130121032.3753852-10-brauner@kernel.org>
+References: <20211202150614.22440-1-mgorman@techsingularity.net>
+ <CALvZod6am_QrZCSf_de6eyzbOtKnWuL1CQZVn+srQVt20cnpFg@mail.gmail.com> <20211202165220.GZ3366@techsingularity.net>
+In-Reply-To: <20211202165220.GZ3366@techsingularity.net>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Thu, 2 Dec 2021 09:41:04 -0800
+Message-ID: <CALvZod5tiDgEz4JwxMHQvkzLxYeV0OtNGGsX5ZdT5mTQdUdUUA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Avramov <hakavlad@inbox.lv>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 01:10:31PM +0100, Christian Brauner wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> Since we'll be passing the filesystem's idmapping in even more places in
-> the following patches and we do already dereference struct inode to get
-> to the filesystem's idmapping multiple times add a tiny helper.
-> 
-> Link: https://lore.kernel.org/r/20211123114227.3124056-10-brauner@kernel.org (v1)
-> Cc: Seth Forshee <sforshee@digitalocean.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> CC: linux-fsdevel@vger.kernel.org
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
+On Thu, Dec 2, 2021 at 8:52 AM Mel Gorman <mgorman@techsingularity.net> wrote:
+>
+> On Thu, Dec 02, 2021 at 08:30:51AM -0800, Shakeel Butt wrote:
+> > Hi Mel,
+> >
+> > On Thu, Dec 2, 2021 at 7:07 AM Mel Gorman <mgorman@techsingularity.net> wrote:
+> > >
+> > > Mike Galbraith, Alexey Avramov and Darrick Wong all reported similar
+> > > problems due to reclaim throttling for excessive lengths of time.
+> > > In Alexey's case, a memory hog that should go OOM quickly stalls for
+> > > several minutes before stalling. In Mike and Darrick's cases, a small
+> > > memcg environment stalled excessively even though the system had enough
+> > > memory overall.
+> > >
+> > > Commit 69392a403f49 ("mm/vmscan: throttle reclaim when no progress is being
+> > > made") introduced the problem although commit a19594ca4a8b ("mm/vmscan:
+> > > increase the timeout if page reclaim is not making progress") made it
+> > > worse. Systems at or near an OOM state that cannot be recovered must
+> > > reach OOM quickly and memcg should kill tasks if a memcg is near OOM.
+> > >
+> >
+> > Is there a reason we can't simply revert 69392a403f49 instead of adding
+> > more code/heuristics? Looking more into 69392a403f49, I don't think the
+> > code and commit message are in sync.
+> >
+> > For the memcg reclaim, instead of just removing congestion_wait or
+> > replacing it with schedule_timeout in mem_cgroup_force_empty(), why
+> > change the behavior of all memcg reclaim. Also this patch effectively
+> > reverts that behavior of 69392a403f49.
+> >
+>
+> It doesn't fully revert it but I did consider reverting it. The reason
+> why I preserved it because the intent originally was to throttle somewhat
+> when progress is not being made to avoid a premature OOM and I wanted to
+> preserve that charactersistic. Right now, this is the least harmful way
+> of doing it.
 
-Reviewed-by: Seth Forshee <sforshee@digitalocean.com>
+If I understand correctly, the original intent of 69392a403f49 which
+you want to preserve is "avoid premature OOMs when reclaim is not
+making progress". Were there any complaints or bug reports on these
+premature OOMs?
 
-> /* v2 */
-> unchanged
-> ---
->  include/linux/fs.h | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7c0499b63a02..c7f72b78ab7e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1600,6 +1600,11 @@ struct super_block {
->  	struct list_head	s_inodes_wb;	/* writeback inodes */
->  } __randomize_layout;
->  
-> +static inline struct user_namespace *i_user_ns(const struct inode *inode)
-> +{
-> +	return inode->i_sb->s_user_ns;
-> +}
-> +
->  /* Helper functions so that in most cases filesystems will
->   * not need to deal directly with kuid_t and kgid_t and can
->   * instead deal with the raw numeric values that are stored
-> @@ -1607,22 +1612,22 @@ struct super_block {
->   */
->  static inline uid_t i_uid_read(const struct inode *inode)
->  {
-> -	return from_kuid(inode->i_sb->s_user_ns, inode->i_uid);
-> +	return from_kuid(i_user_ns(inode), inode->i_uid);
->  }
->  
->  static inline gid_t i_gid_read(const struct inode *inode)
->  {
-> -	return from_kgid(inode->i_sb->s_user_ns, inode->i_gid);
-> +	return from_kgid(i_user_ns(inode), inode->i_gid);
->  }
->  
->  static inline void i_uid_write(struct inode *inode, uid_t uid)
->  {
-> -	inode->i_uid = make_kuid(inode->i_sb->s_user_ns, uid);
-> +	inode->i_uid = make_kuid(i_user_ns(inode), uid);
->  }
->  
->  static inline void i_gid_write(struct inode *inode, gid_t gid)
->  {
-> -	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
-> +	inode->i_gid = make_kgid(i_user_ns(inode), gid);
->  }
->  
->  /**
-> -- 
-> 2.30.2
-> 
+>
+> As more memcg, I removed the NOTHROTTLE because the primary reason why a
+> memcg might fail to make progress is excessive writeback and that should
+> still throttle. Completely failing to make progress in a memcg is most
+> likely due to a memcg-OOM.
+>
+> > For direct reclaimers under global pressure, why is page allocator a bad
+> > place for stalling on no progress reclaim? IMHO the callers of the
+> > reclaim should decide what to do if reclaim is not making progress.
+>
+> Because it's a layering violation and the caller has little direct control
+> over the reclaim retry logic. The page allocator has no visibility on
+> why reclaim failed only that it did fail.
+>
+
+Isn't it better that the reclaim returns why it is failing instead of
+littering the reclaim code with 'is this global reclaim', 'is this
+memcg reclaim', 'am I kswapd' which is also a layering violation. IMO
+this is the direction we should be going towards though not asking to
+do this now.
+
+Regarding this patch and 69392a403f49, I am still confused on the main
+motivation behind 69392a403f49 to change the behavior of 'direct
+reclaimers from page allocator'.
+
+thanks,
+Shakeel
