@@ -2,157 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1201E46679F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 17:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E254667A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 17:09:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359331AbhLBQMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Dec 2021 11:12:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:37170 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234859AbhLBQMe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Dec 2021 11:12:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EEBC142F;
-        Thu,  2 Dec 2021 08:09:12 -0800 (PST)
-Received: from arm.com (arrakis.cambridge.arm.com [10.1.196.175])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E0F73F73B;
-        Thu,  2 Dec 2021 08:09:10 -0800 (PST)
-Date:   Thu, 2 Dec 2021 16:09:08 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        id S1359347AbhLBQM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Dec 2021 11:12:57 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:53846 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1359345AbhLBQMy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 Dec 2021 11:12:54 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5FEEB6268F;
+        Thu,  2 Dec 2021 16:09:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B86FEC00446;
+        Thu,  2 Dec 2021 16:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638461370;
+        bh=pIo5eiwP+Dtx+LxnVanei0w9hk4uYILZ609rHZrcAdc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iFPrk4rtYAf+Rx4IKVph3SNlRQDmzxLr4kBwk3DdYPsd7+4WyvpLfVw3gY0J8tqFE
+         gAIM3Gt9UlRs0yDRiSDml+wTdofUpjN26Hj43gBmJCISV2UVsGWG46sxVXtMkqEIOd
+         40JbY005yCQiB8BH9Rjm1psgDLlpzyZS1eOgSwyiLb1tN91LZcHBZluM5A3w7OOlzE
+         /Q+2yooCOST9j28KNJ/8Fl5Bq6Bw287Laa9U68lSIhU2iHUBnz226tMqqLTV5X0G6o
+         zNuGukctfv6FFtDT+CTxTYAxSMLFSwq9r5CVFa40/+7FGFxcLiBGI2Z89hPASenblC
+         1S7V3HvJMyPkA==
+Date:   Thu, 2 Dec 2021 08:09:30 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Alexey Avramov <hakavlad@inbox.lv>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] arm64: Add support for user sub-page fault probing
-Message-ID: <YajoDcF3AYJBZ63x@arm.com>
-References: <20211201193750.2097885-1-catalin.marinas@arm.com>
- <20211201193750.2097885-4-catalin.marinas@arm.com>
- <YafbEpoiFB4emaPW@FVFF77S0Q05N>
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+Message-ID: <20211202160930.GC8492@magnolia>
+References: <20211125151853.8540-1-mgorman@techsingularity.net>
+ <20211127011246.7a8ac7b8@mail.inbox.lv>
+ <20211129150117.GO3366@techsingularity.net>
+ <20211201010348.31e99637@mail.inbox.lv>
+ <20211130172754.GS3366@techsingularity.net>
+ <20211201033836.4382a474@mail.inbox.lv>
+ <20211201140005.GU3366@techsingularity.net>
+ <20211201172920.GA8492@magnolia>
+ <20211202094332.GW3366@techsingularity.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YafbEpoiFB4emaPW@FVFF77S0Q05N>
+In-Reply-To: <20211202094332.GW3366@techsingularity.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Mark,
-
-On Wed, Dec 01, 2021 at 08:29:06PM +0000, Mark Rutland wrote:
-> On Wed, Dec 01, 2021 at 07:37:49PM +0000, Catalin Marinas wrote:
-> > +/*
-> > + * Return 0 on success, the number of bytes not accessed otherwise.
-> > + */
-> > +static inline size_t __mte_probe_user_range(const char __user *uaddr,
-> > +					    size_t size, bool skip_first)
-> > +{
-> > +	const char __user *end = uaddr + size;
-> > +	int err = 0;
-> > +	char val;
-> > +
-> > +	uaddr = PTR_ALIGN_DOWN(uaddr, MTE_GRANULE_SIZE);
-> > +	if (skip_first)
-> > +		uaddr += MTE_GRANULE_SIZE;
+On Thu, Dec 02, 2021 at 09:43:32AM +0000, Mel Gorman wrote:
+> On Wed, Dec 01, 2021 at 09:29:20AM -0800, Darrick J. Wong wrote:
+> > > Again 5.16-rc1 stuttered badly but the new patch was comparable to 5.15.
+> > > 
+> > > As my baseline figures are very different to yours due to differences in
+> > > storage, can you test the following please?
+> > 
+> > I don't know if this was directed at me, but I reran my swapfile
+> > testcase on 5.16-rc3 and found that it had nearly the same runtime as it
+> > did in 5.15.
+> > 
 > 
-> Do we need the skipping for a functional reason, or is that an optimization?
-
-An optimisation and very likely not noticeable. Given that we'd do a read
-following a put_user() or get_user() earlier, the cacheline was
-allocated and another load may be nearly as fast as the uaddr increment.
-
-> From the comments in probe_subpage_writeable() and
-> probe_subpage_safe_writeable() I wasn't sure if the skipping was because we
-> *don't need to* check the first granule, or because we *must not* check the
-> first granule.
-
-The "don't need to" part. But thinking about this, I'll just drop it as
-it's confusing.
-
-> > +	while (uaddr < end) {
-> > +		/*
-> > +		 * A read is sufficient for MTE, the caller should have probed
-> > +		 * for the pte write permission if required.
-> > +		 */
-> > +		__raw_get_user(val, uaddr, err);
-> > +		if (err)
-> > +			return end - uaddr;
-> > +		uaddr += MTE_GRANULE_SIZE;
-> > +	}
+> Thanks Darrick. Can I add the following?
 > 
-> I think we may need to account for the residue from PTR_ALIGN_DOWN(), or we can
-> report more bytes not copied than was passed in `size` in the first place,
-> which I think might confused some callers.
-> 
-> Consider MTE_GRANULE_SIZE is 16, uaddr is 31, and size is 1 (so end is 32). We
-> align uaddr down to 16, and if we fail the first access we return (32 - 16),
-> i.e. 16.
+> Tested-by: Darrick J. Wong <djwong@kernel.org>
 
-Good point. This is fine if we skip the first byte but not otherwise.
-Planning to fold in this diff:
+Yes, please! :)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index bcbd24b97917..213b30841beb 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -451,15 +451,17 @@ static inline int __copy_from_user_flushcache(void *dst, const void __user *src,
-  * Return 0 on success, the number of bytes not accessed otherwise.
-  */
- static inline size_t __mte_probe_user_range(const char __user *uaddr,
--					    size_t size, bool skip_first)
-+					    size_t size)
- {
- 	const char __user *end = uaddr + size;
- 	int err = 0;
- 	char val;
- 
--	uaddr = PTR_ALIGN_DOWN(uaddr, MTE_GRANULE_SIZE);
--	if (skip_first)
--		uaddr += MTE_GRANULE_SIZE;
-+	__raw_get_user(val, uaddr, err);
-+	if (err)
-+		return size;
-+
-+	uaddr = PTR_ALIGN(uaddr, MTE_GRANULE_SIZE);
- 	while (uaddr < end) {
- 		/*
- 		 * A read is sufficient for MTE, the caller should have probed
-@@ -480,8 +482,7 @@ static inline size_t probe_subpage_writeable(const void __user *uaddr,
- {
- 	if (!system_supports_mte())
- 		return 0;
--	/* first put_user() done in the caller */
--	return __mte_probe_user_range(uaddr, size, true);
-+	return __mte_probe_user_range(uaddr, size);
- }
- 
- static inline size_t probe_subpage_safe_writeable(const void __user *uaddr,
-@@ -489,8 +490,7 @@ static inline size_t probe_subpage_safe_writeable(const void __user *uaddr,
- {
- 	if (!system_supports_mte())
- 		return 0;
--	/* the caller used GUP, don't skip the first granule */
--	return __mte_probe_user_range(uaddr, size, false);
-+	return __mte_probe_user_range(uaddr, size);
- }
- 
- static inline size_t probe_subpage_readable(const void __user *uaddr,
-@@ -498,8 +498,7 @@ static inline size_t probe_subpage_readable(const void __user *uaddr,
- {
- 	if (!system_supports_mte())
- 		return 0;
--	/* first get_user() done in the caller */
--	return __mte_probe_user_range(uaddr, size, true);
-+	return __mte_probe_user_range(uaddr, size);
- }
- 
- #endif /* CONFIG_ARCH_HAS_SUBPAGE_FAULTS */
+--D
 
--- 
-Catalin
+> -- 
+> Mel Gorman
+> SUSE Labs
