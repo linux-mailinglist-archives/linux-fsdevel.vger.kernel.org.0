@@ -2,88 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A3B466A8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 20:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BF1466BE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Dec 2021 22:58:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbhLBTlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Dec 2021 14:41:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51124 "EHLO
+        id S1349141AbhLBWBx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Dec 2021 17:01:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbhLBTlF (ORCPT
+        with ESMTP id S242771AbhLBWBw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Dec 2021 14:41:05 -0500
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A879C06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Dec 2021 11:37:43 -0800 (PST)
-Received: by mail-ua1-x931.google.com with SMTP id y5so1143445ual.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Dec 2021 11:37:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+wNplOXKowJpyWzLgxX3W2ldQtfsv2Liwori4v7n79M=;
-        b=f38hPcGreY9eI9znOytsipFtYrCbkQusmbEU8r5/sHUxB5wwCxqJEU/RGKFnjpG4zn
-         9sNGPozsXye03zmA47mAVeWXgV29k6rS8YfKJZ+zLd4xtjDr7wdrpkBQfFuHrNXUfpxA
-         lFhA6+qxQtIH1z3oJV2X2OYHVdGSkXgAlcW44=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+wNplOXKowJpyWzLgxX3W2ldQtfsv2Liwori4v7n79M=;
-        b=jdS/SAInOIUWEATCPWPs1aARJBJfXuNvQ7AfTqZR3EJjx5NPlovw5g1wrdaj597W8m
-         WHkQ+9wA2MqoxNx9uLAeHX0T9dz1qmk2dV+P0IiC1LjRUBJ1PHDH1Iiq9NILdALyEusz
-         x314rxRoB5qweCqK7dxlhMstyGzsbP9t53Zo5gLerR+8koKAYzGFKh3mnjokn63xFPoK
-         1VWh2EthG/wGyDz4PWli+pEWdSML26o0XXybYO2CoLH98ev8AdAU0HCC6GGJxuSHptn8
-         0apNKGhQmUJ4nCIFI9EVlS4QeyIUiPz6LK56WWNbofRfyba+Aw5dZVEXDgH+fHnc2ft5
-         eAgw==
-X-Gm-Message-State: AOAM530crZLqkOtlip52i0Ww0bBXHroXiNUYsmxQAJk64DVej7DVIpkd
-        5pTgMzjGNh8XDtVYaL3ty+8WDB1e6622elI85NVhj+OJ46rvjA==
-X-Google-Smtp-Source: ABdhPJx6EySbpUKs02C/KU7YjjUAQYtCsSwYMkPq9IRxM9DouCVYzbThm8cXgqlmqwq4Wjew2JU3YsgvQaatRBPa7Ao=
-X-Received: by 2002:a05:6102:c4e:: with SMTP id y14mr18326470vss.61.1638473862037;
- Thu, 02 Dec 2021 11:37:42 -0800 (PST)
-MIME-Version: 1.0
-References: <CAMBWrQnfGuMjF6pQfoj9U5abKBQpaYtSH11QFo4+jZrL32XUEg@mail.gmail.com>
-In-Reply-To: <CAMBWrQnfGuMjF6pQfoj9U5abKBQpaYtSH11QFo4+jZrL32XUEg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 2 Dec 2021 20:37:31 +0100
-Message-ID: <CAJfpegvsiW-UsnhSrbQ2X0JpLAppUy3+WaNnzFrPwrKCmg82Fg@mail.gmail.com>
-Subject: Re: overlay2: backporting a copy_file_range bug fix in Linux 5.6 to 5.10?
-To:     Stan Hu <stanhu@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 2 Dec 2021 17:01:52 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1244DC06174A;
+        Thu,  2 Dec 2021 13:58:30 -0800 (PST)
+Received: from mail.kernel.org (unknown [198.145.29.99])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A6338B823B7;
+        Thu,  2 Dec 2021 21:58:28 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F1B760E0B;
+        Thu,  2 Dec 2021 21:58:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1638482307;
+        bh=u54M8TvqFCoqyWizAXfj0p458N8cswh37sQPhuz+PE8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gRmuD2cdMj0JpWJeCh8p6a6Bco8m3d04KtZ8Kd+lRiv0KNpbc5QDnURexbd5oeFqK
+         hjvtOIAthwV4+RummH/wrQf59WNK6NBbdnu+FVNXQ+164xA8DRwsskjqDPshxg9uKX
+         zMEACX/Rr8Fh+5Fwymwac7m8oa/bN1rwC0xjXqbU=
+Date:   Thu, 2 Dec 2021 13:58:24 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     ValdikSS <iam@valdikss.org.ru>
+Cc:     Alexey Avramov <hakavlad@inbox.lv>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        oleksandr@natalenko.name, kernel@xanmod.org, aros@gmx.com,
+        hakavlad@gmail.com, Yu Zhao <yuzhao@google.com>
+Subject: Re: [PATCH] mm/vmscan: add sysctl knobs for protecting the working
+ set
+Message-Id: <20211202135824.33d2421bf5116801cfa2040d@linux-foundation.org>
+In-Reply-To: <2dc51fc8-f14e-17ed-a8c6-0ec70423bf54@valdikss.org.ru>
+References: <20211130201652.2218636d@mail.inbox.lv>
+        <2dc51fc8-f14e-17ed-a8c6-0ec70423bf54@valdikss.org.ru>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 1 Dec 2021 at 22:31, Stan Hu <stanhu@gmail.com> wrote:
->
-> A number of users have reported that under certain conditions using
-> Docker and overlay2, copy_file_range() can unexpectedly create a
-> 0-byte file: In https://github.com/docker/for-linux/issues/1015.
->
-> We started seeing mysterious failures in our CI tests as a result of
-> files not properly being copied.
->
-> https://github.com/docker/for-linux/issues/1015#issuecomment-841915668
-> has a sample reproduction test.
->
-> I analyzed the diff between 5.10 and 5.11 and found that if I applied
-> the following kernel patch, the reproduction test passes:
->
-> https://lore.kernel.org/linux-fsdevel/20201207163255.564116-6-mszeredi@redhat.com/#t
->
-> This landed in this merge commit and this commit:
->
-> 1. https://github.com/torvalds/linux/commit/92dbc9dedccb9759c7f9f2f0ae6242396376988f
-> 2. https://github.com/torvalds/linux/commit/82a763e61e2b601309d696d4fa514c77d64ee1be
->
-> Could this patch be backported for kernels 5.6 to 5.10?
+On Thu, 2 Dec 2021 21:05:01 +0300 ValdikSS <iam@valdikss.org.ru> wrote:
 
-Yes, looks like the patch can be backported.
+> This patchset is surprisingly effective and very useful for low-end PC 
+> with slow HDD, single-board ARM boards with slow storage, cheap Android 
+> smartphones with limited amount of memory. It almost completely prevents 
+> thrashing condition and aids in fast OOM killer invocation.
+> 
+> The similar file-locking patch is used in ChromeOS for nearly 10 years 
+> but not on stock Linux or Android. It would be very beneficial for 
+> lower-performance Android phones, SBCs, old PCs and other devices.
+> 
+> With this patch, combined with zram, I'm able to run the following 
+> software on an old office PC from 2007 with __only 2GB of RAM__ 
+> simultaneously:
+> 
+>   * Firefox with 37 active tabs (all data in RAM, no tab unloading)
+>   * Discord
+>   * Skype
+>   * LibreOffice with the document opened
+>   * Two PDF files (14 and 47 megabytes in size)
+> 
+> And the PC doesn't crawl like a snail, even with 2+ GB in zram!
+> Without the patch, this PC is barely usable.
+> Please watch the video:
+> https://notes.valdikss.org.ru/linux-for-old-pc-from-2007/en/
+> 
 
-Note:  you also need to backport this commit which is a fix for the first one:
+This is quite a condemnation of the current VM.  It shouldn't crawl
+like a snail.
 
-9b91b6b019fd ("ovl: fix deadlock in splice write")
+The patch simply sets hard limits on page reclaim's malfunctioning. 
+I'd prefer that reclaim not malfunction :(
 
-Thanks,
-Miklos
+That being said, I can see that a blunt instrument like this would be
+useful.
+
+I don't think that the limits should be "N bytes on the current node". 
+Nodes can have different amounts of memory so I expect it should scale
+the hard limits on a per-node basis.  And of course, the various zones
+have different size as well.
+
+We do already have a lot of sysctls for controlling these sort of
+things.  Was much work put into attempting to utilize the existing
+sysctls to overcome these issues?
+
