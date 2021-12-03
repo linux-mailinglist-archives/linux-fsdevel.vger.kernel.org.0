@@ -2,110 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFC34678FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 15:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EDA467A0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 16:09:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381317AbhLCOEp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Dec 2021 09:04:45 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:52038 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352843AbhLCOEm (ORCPT
+        id S245140AbhLCPNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Dec 2021 10:13:00 -0500
+Received: from fanzine2.igalia.com ([213.97.179.56]:35092 "EHLO
+        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233227AbhLCPNA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Dec 2021 09:04:42 -0500
-Received: from spock.localnet (unknown [83.148.33.151])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id 64524CD725E;
-        Fri,  3 Dec 2021 15:01:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1638540070;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2nhD4zra9xotXQb3VuD0lCqOmyZLq0VjR4YeA+r1z2U=;
-        b=p7usrMbkAXabAriuPUDQkjnERX7qsoPkVejZuXN+DdzWEpWdfyHLcO6qkUqkFMhnj5fWMK
-        g66TAHWHFLc18LHnjInRbw7WyLAuSo/fnTveYakx8m58uVKZmWFIpcOnW8JY9Mr3uKhP+O
-        Zs/RPt/7vIiOPfz0lzdddNeDYdZJLZA=
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     ValdikSS <iam@valdikss.org.ru>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexey Avramov <hakavlad@inbox.lv>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, kernel@xanmod.org,
-        aros@gmx.com, hakavlad@gmail.com, Yu Zhao <yuzhao@google.com>
-Subject: Re: [PATCH] mm/vmscan: add sysctl knobs for protecting the working set
-Date:   Fri, 03 Dec 2021 15:01:08 +0100
-Message-ID: <4776971.31r3eYUQgx@natalenko.name>
-In-Reply-To: <20211202135824.33d2421bf5116801cfa2040d@linux-foundation.org>
-References: <20211130201652.2218636d@mail.inbox.lv> <2dc51fc8-f14e-17ed-a8c6-0ec70423bf54@valdikss.org.ru> <20211202135824.33d2421bf5116801cfa2040d@linux-foundation.org>
+        Fri, 3 Dec 2021 10:13:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
+        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=sAqY2ItcPTL4yq67aRjsMBtRjWD9oCqTbjsTTeG8NSg=; b=Eo0VdgPeVBJkg1XCd5vYx7924t
+        I74eCBpnx57SieS1E/5Rf3rCu9ujov069lhj8U+RQjg+svn7sqmlpG9/o0g/yeiLvtMIJO6CGrAH/
+        VsBhwCnTpZjxa0X0Us8se+gpKidYEgdohoazAVGbZgvs1A71bvscFNForutDsYvu85kOdbZDNDq5b
+        bLcoOhN/bABNyR5GuJQJrEDmkJ9pVbhk64dT1KPaMXD6dk9y1W1kDrQJb7OCD5phNWmdipKTfKfzI
+        T6VJxyj+1uYXtbQAbYhV9tALBJlyu4RZdCn0RuxnK/yiv72PCeSWsymIGAbAVB85ydQISm0UCvdxT
+        G5p07huQ==;
+Received: from [152.254.228.176] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1mtABf-0006Rs-Ej; Fri, 03 Dec 2021 16:09:23 +0100
+Subject: Re: [PATCH 2/3] panic: Add option to dump all CPUs backtraces in
+ panic_print
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, siglesias@igalia.com,
+        kernel@gpiccoli.net
+References: <20211109202848.610874-1-gpiccoli@igalia.com>
+ <20211109202848.610874-3-gpiccoli@igalia.com>
+ <20211130051206.GB89318@shbuild999.sh.intel.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Message-ID: <6f269857-2cbe-b4dd-714a-82372dc3adfc@igalia.com>
+Date:   Fri, 3 Dec 2021 12:09:06 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211130051206.GB89318@shbuild999.sh.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello.
+On 30/11/2021 02:12, Feng Tang wrote:
+> On Tue, Nov 09, 2021 at 05:28:47PM -0300, Guilherme G. Piccoli wrote:
+>> [...]
+> This looks to be helpful for debugging panic.
+> 
+> Reviewed-by: Feng Tang <feng.tang@intel.com>
+> 
+> Thanks,
+> Feng
 
-On =C4=8Dtvrtek 2. prosince 2021 22:58:24 CET Andrew Morton wrote:
-> On Thu, 2 Dec 2021 21:05:01 +0300 ValdikSS <iam@valdikss.org.ru> wrote:
-> > This patchset is surprisingly effective and very useful for low-end PC
-> > with slow HDD, single-board ARM boards with slow storage, cheap Android
-> > smartphones with limited amount of memory. It almost completely prevents
-> > thrashing condition and aids in fast OOM killer invocation.
-> >=20
-> > The similar file-locking patch is used in ChromeOS for nearly 10 years
-> > but not on stock Linux or Android. It would be very beneficial for
-> > lower-performance Android phones, SBCs, old PCs and other devices.
-> >=20
-> > With this patch, combined with zram, I'm able to run the following
-> > software on an old office PC from 2007 with __only 2GB of RAM__
-> >=20
-> > simultaneously:
-> >   * Firefox with 37 active tabs (all data in RAM, no tab unloading)
-> >   * Discord
-> >   * Skype
-> >   * LibreOffice with the document opened
-> >   * Two PDF files (14 and 47 megabytes in size)
-> >=20
-> > And the PC doesn't crawl like a snail, even with 2+ GB in zram!
-> > Without the patch, this PC is barely usable.
-> > Please watch the video:
-> > https://notes.valdikss.org.ru/linux-for-old-pc-from-2007/en/
->=20
-> This is quite a condemnation of the current VM.  It shouldn't crawl
-> like a snail.
->=20
-> The patch simply sets hard limits on page reclaim's malfunctioning.
-> I'd prefer that reclaim not malfunction :(
->=20
-> That being said, I can see that a blunt instrument like this would be
-> useful.
->=20
-> I don't think that the limits should be "N bytes on the current node".
-> Nodes can have different amounts of memory so I expect it should scale
-> the hard limits on a per-node basis.  And of course, the various zones
-> have different size as well.
+Thanks a lot Feng, for both your reviews! Do you have any opinions about
+patch 3?
 
-Probably not. To my understanding, the limits should roughly correspond to=
-=20
-what you see after executing this:
-
-```
-$ echo 1 | sudo tee /proc/sys/vm/drop_caches; grep -F 'Active(file)' /proc/
-meminfo
-```
-
-IMO, this has nothing to do with the size of the node.
-
-> We do already have a lot of sysctls for controlling these sort of
-> things.  Was much work put into attempting to utilize the existing
-> sysctls to overcome these issues?
-
-=2D-=20
-Oleksandr Natalenko (post-factum)
+Also, as a generic question to all CCed, what is the way forward with
+this thread?
+Cheers,
 
 
+Guilherme
