@@ -2,1105 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1082B467A3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 16:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA595467A43
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 16:29:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381746AbhLCPcc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Dec 2021 10:32:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38938 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245140AbhLCPcc (ORCPT
+        id S1381768AbhLCPc6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Dec 2021 10:32:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:28185 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352686AbhLCPc5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Dec 2021 10:32:32 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38774C061751;
-        Fri,  3 Dec 2021 07:29:08 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3FB54B8268D;
-        Fri,  3 Dec 2021 15:29:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A97AC53FCD;
-        Fri,  3 Dec 2021 15:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1638545344;
-        bh=mLFTikH/Z3Nv66wcPcXKQPL0BhIIZQ0bnyHXZXlZSmQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LHToFSp5YeS+mMVUSZnE4QQlDCLSV3lxBtpCSnKzP5vadhtizusmPmjFhbCtTT6ce
-         u71wFWp7s6OEylcYA8vGgeOwNnNiUT6irDLveFG9hDuC6ut+dLkHzxgJkBkjuk+QE8
-         87evnCAcHe40GYHuagecEZErjkanD8/vPUHEspdY=
-Date:   Fri, 3 Dec 2021 16:29:02 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     tj@kernel.org, akpm@linux-foundation.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
-        rostedt@goodmis.org, minchan@kernel.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/6] selftests: add tests_sysfs module
-Message-ID: <Yao3vtSKBKLyQY1E@kroah.com>
-References: <20211029184500.2821444-1-mcgrof@kernel.org>
- <20211029184500.2821444-4-mcgrof@kernel.org>
+        Fri, 3 Dec 2021 10:32:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638545373;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kZK0syLLqjpq6njv36WRrKUspASDFOkpbYPR5Q5+s6I=;
+        b=VaOY6ZdnrJUghBjn2kKDQZDgFxUv70WwWU5F/iA5Oiac8/28gik6Jtp+Df2U63TtAl5h7c
+        gSOIxD+T4m1l2J8kDJZrOYYNQjxkPQF+/al66SEubIwN252k51s6Lsnv7al0dJteHjY0/h
+        dS7JxVEqVRqGd/RtgbOjv4aXtPDhejg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-363-mbuvDNz3NYykGUUd8N-f1g-1; Fri, 03 Dec 2021 10:29:31 -0500
+X-MC-Unique: mbuvDNz3NYykGUUd8N-f1g-1
+Received: by mail-wr1-f72.google.com with SMTP id k8-20020a5d5248000000b001763e7c9ce5so717535wrc.22
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Dec 2021 07:29:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kZK0syLLqjpq6njv36WRrKUspASDFOkpbYPR5Q5+s6I=;
+        b=mc5qJQXWIBUwbrU8WU4Q3+dRp9FjpVgIQM8yUo5Y3ZZ3euZ7TK+LaaP1fHlARsni/E
+         L01NrP+6kU64CjIRlhcy67RfLsqndzDroLkCGbcYB/fJqkLdajEpptLyQZHgcugJ4OCl
+         Pd/AxhYyFb97dbtW/A35YXxhNFcMTqiTJGPcI4H8qBMWdcTdoW0LuMCGWYjo78x8uh17
+         AwuBrnhNKr7YiMGW7CN3Mz5Id/6ZCqcRFwR565EiVFfjYhvlVxIwxUoQpo8nVa3Gm4bR
+         WezRDqr8EFH+2xIoqDZEPZ9lVcPEqEkU8gt6gPcT9lN6hofxNDZpqNvx/F37ZAMAknuq
+         19AA==
+X-Gm-Message-State: AOAM530VUuz0xU2n9GyCONPARxBimRylqzOzEdc3VAblEP4QVJ2dWgW9
+        PCPhJC3Pyggp1fdGaVPwiFATBfXi6xXpH8TiikalmPgWkgAntEU121YZkuXL1bp4LzviUQtmLV0
+        2kBL7OVnjK5uc+ZnYv4Yo56XOfd9Ot/a40JXP/cGtow==
+X-Received: by 2002:a05:6000:1aca:: with SMTP id i10mr22761256wry.407.1638545370705;
+        Fri, 03 Dec 2021 07:29:30 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzf+rd8AQbcRoQ9qoprsu7E4RnUUhZf2ON01ZcT6SMxdUoaQyB9fbO1vLlf46sthspy91qP8csNPtRCEW2vbF8=
+X-Received: by 2002:a05:6000:1aca:: with SMTP id i10mr22761212wry.407.1638545370404;
+ Fri, 03 Dec 2021 07:29:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211029184500.2821444-4-mcgrof@kernel.org>
+References: <20211201193750.2097885-1-catalin.marinas@arm.com>
+In-Reply-To: <20211201193750.2097885-1-catalin.marinas@arm.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Fri, 3 Dec 2021 16:29:18 +0100
+Message-ID: <CAHc6FU7gXfZk7=Xj+RjxCqkmsrcAhenfbeoqa4AmHd5+vgja7g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Avoid live-lock in fault-in+uaccess loops with
+ sub-page faults
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 11:44:57AM -0700, Luis Chamberlain wrote:
-> This adds a new selftest module which can be used to test sysfs, which
-> would otherwise require using an existing driver. This lets us muck
-> with a template driver to test breaking things without affecting
-> system behaviour or requiring the dependencies of a real device
-> driver.
+Catalin,
 
-Test sysfs "how"?  What exactly are you wanting to test?
+On Wed, Dec 1, 2021 at 8:38 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> Hi,
+>
+> Following the discussions on the first series,
+>
+> https://lore.kernel.org/r/20211124192024.2408218-1-catalin.marinas@arm.com
+>
+> this new patchset aims to generalise the sub-page probing and introduce
+> a minimum size to the fault_in_*() functions. I called this 'v2' but I
+> can rebase it on top of v1 and keep v1 as a btrfs live-lock
+> back-portable fix.
 
-I see lots of things in this code as examples of how to NOT use sysfs,
-so are you testing my review cycles?  :)
+that's what I was actually expecting, an updated patch series that
+changes the btrfs code to keep track of the user-copy fault address,
+the corresponding changes to the fault_in functions to call the
+appropriate arch functions, and the arch functions that probe far
+enough from the fault address to prevent deadlocks. In this step, how
+far the arch functions need to probe depends on the fault windows of
+the user-copy functions.
 
-> A series of 28 tests are added. Support for using two device types are
-> supported:
-> 
->   * misc
->   * block
+A next step (as a patch series on top) would be to make sure direct
+I/O also takes sub-page faults into account. That seems to require
+probing the entire address range before the actual copying. A concern
+I have about this is time-of-check versus time-of-use: what if
+sub-page faults are added after the probing but before the copying?
+Other than that, an approach like adding min_size parameters might
+work except that maybe we can find a better name. Also, in order not
+to make things even more messy, the fault_in functions should probably
+continue to report how much of the address range they've failed to
+fault in. Callers can then check for themselves whether the function
+could fault in min_size bytes or not.
 
-So you are testing the misc and block sysfs apis from within the kernel?
+> The fault_in_*() API improvements would be a new
+> series. Anyway, I'd first like to know whether this is heading in the
+> right direction and whether it's worth adding min_size to all
+> fault_in_*() (more below).
+>
+> v2 adds a 'min_size' argument to all fault_in_*() functions with current
+> callers passing 0 (or we could make it 1). A probe_subpage_*() call is
+> made for the min_size range, though with all 0 this wouldn't have any
+> effect. The only difference is btrfs search_ioctl() in the last patch
+> which passes a non-zero min_size to avoid the live-lock (functionally
+> that's the same as the v1 series).
 
-> Contrary to sysctls, sysfs requires a full write to happen at once, and
-> so we reduce the digit tests to single writes. Two main sysfs knobs are
-> provided for testing reading/storing, one which doesn't incur any
-> delays and another which can incur programmed delays. What locks are
-> held, if any, are configurable, at module load time, or through dynamic
-> configuration at run time.
+In the btrfs case, the copying will already trigger sub-page faults;
+we only need to make sure that the next fault-in attempt happens at
+the fault address. (And that the fault_in functions take the user-copy
+fuzz into account, which we also need for byte granularity copying
+anyway.) Otherwise, we're creating the same time-of-check versus
+time-of-use disparity as for direct-IO here, unnecessarily.
 
-I do not understand this paragraph at all.  What are you trying to say?
+> In terms of sub-page probing, I don't think with the current kernel
+> anything other than search_ioctl() matters. The buffered file I/O can
+> already cope with current fault_in_*() + copy_*_user() loops (the
+> uaccess makes progress). Direct I/O either goes via GUP + kernel mapping
+> access (and memcpy() can't fault) or, if the user buffer is not PAGE
+> aligned, it may fall back to buffered I/O. So we really only care about
+> fault_in_writeable(), as in v1.
 
-sysfs is a read/write api, yes.  That's all, nothing fancy.  What does
-delays have to do with anything?
+Yes from a regression point of view, but note that direct I/O still
+circumvents the sub-page fault checking, which seems to defeat the
+whole point.
 
-> Since sysfs is a technically filesystem, but a pseudo one, which
-> requires a kernel user, our test_sysfs module and respective test script
-> embraces fstests format for tests in the kernel ring bufffer. Likewise,
-> a scraper for kernel crashes is provided which matches what fstests does
-> as well.
+> Linus suggested that we could use the min_size to request a minimum
+> guaranteed probed size (in most cases this would be 1) and put a cap on
+> the faulted-in size, say two pages. All the fault_in_iov_iter_*()
+> callers will need to check the actual quantity returned by fault_in_*()
+> rather than bail out on non-zero but Andreas has a patch already (though
+> I think there are a few cases in btrfs etc.):
+>
+> https://lore.kernel.org/r/20211123151812.361624-1-agruenba@redhat.com
+>
+> With these callers fixed, we could add something like the diff below.
+> But, again, min_size doesn't actually have any current use in the kernel
+> other than fault_in_writeable() and search_ioctl().
 
-What is crashing?
+We're trying pretty hard to handle large I/O requests efficiently at
+the filesystem level. A small, static upper limit in the fault-in
+functions has the potential to ruin those efforts. So I'm not a fan of
+that.
 
-> Two tests are kept disabled as they are a demonstration of what not to
-> do as it can cause a deadlock with sysfs. These tests provides a mechanism
-> to easily show proof and demo how the deadlock can happen:
+> Thanks for having a look. Suggestions welcomed.
+>
+> ------------------8<-------------------------------
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 7fa69b0fb859..3aa88aa8ce9d 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1658,6 +1658,8 @@ static long __get_user_pages_locked(struct mm_struct *mm, unsigned long start,
+>  }
+>  #endif /* !CONFIG_MMU */
+>
+> +#define MAX_FAULT_IN_SIZE      (2 * PAGE_SIZE)
+> +
+>  /**
+>   * fault_in_writeable - fault in userspace address range for writing
+>   * @uaddr: start of address range
+> @@ -1671,6 +1673,7 @@ size_t fault_in_writeable(char __user *uaddr, size_t size, size_t min_size)
+>  {
+>         char __user *start = uaddr, *end;
+>         size_t faulted_in = size;
+> +       size_t max_size = max_t(size_t, MAX_FAULT_IN_SIZE, min_size);
+>
+>         if (unlikely(size == 0))
+>                 return 0;
+> @@ -1679,7 +1682,7 @@ size_t fault_in_writeable(char __user *uaddr, size_t size, size_t min_size)
+>                         return size;
+>                 uaddr = (char __user *)PAGE_ALIGN((unsigned long)uaddr);
+>         }
+> -       end = (char __user *)PAGE_ALIGN((unsigned long)start + size);
+> +       end = (char __user *)PAGE_ALIGN((unsigned long)start + max_size);
+>         if (unlikely(end < start))
+>                 end = NULL;
+>         while (uaddr != end) {
+> @@ -1726,9 +1729,10 @@ size_t fault_in_safe_writeable(const char __user *uaddr, size_t size,
+>         struct vm_area_struct *vma = NULL;
+>         int locked = 0;
+>         size_t faulted_in = size;
+> +       size_t max_size = max_t(size_t, MAX_FAULT_IN_SIZE, min_size);
+>
+>         nstart = start & PAGE_MASK;
+> -       end = PAGE_ALIGN(start + size);
+> +       end = PAGE_ALIGN(start + max_size);
+>         if (end < nstart)
+>                 end = 0;
+>         for (; nstart != end; nstart = nend) {
+> @@ -1759,7 +1763,7 @@ size_t fault_in_safe_writeable(const char __user *uaddr, size_t size,
+>         if (locked)
+>                 mmap_read_unlock(mm);
+>         if (nstart != end)
+> -               faulted_in = min_t(size_t, nstart - start, size);
+> +               faulted_in = min_t(size_t, nstart - start, max_size);
+>         if (faulted_in < min_size ||
+>             (min_size && probe_subpage_safe_writeable(uaddr, min_size)))
+>                 return size;
+> @@ -1782,6 +1786,7 @@ size_t fault_in_readable(const char __user *uaddr, size_t size,
+>         const char __user *start = uaddr, *end;
+>         volatile char c;
+>         size_t faulted_in = size;
+> +       size_t max_size = max_t(size_t, MAX_FAULT_IN_SIZE, min_size);
+>
+>         if (unlikely(size == 0))
+>                 return 0;
+> @@ -1790,7 +1795,7 @@ size_t fault_in_readable(const char __user *uaddr, size_t size,
+>                         return size;
+>                 uaddr = (const char __user *)PAGE_ALIGN((unsigned long)uaddr);
+>         }
+> -       end = (const char __user *)PAGE_ALIGN((unsigned long)start + size);
+> +       end = (const char __user *)PAGE_ALIGN((unsigned long)start + max_size);
+>         if (unlikely(end < start))
+>                 end = NULL;
+>         while (uaddr != end) {
+> ------------------8<-------------------------------
+>
+> Catalin Marinas (4):
+>   mm: Introduce a 'min_size' argument to fault_in_*()
+>   mm: Probe for sub-page faults in fault_in_*()
+>   arm64: Add support for user sub-page fault probing
+>   btrfs: Avoid live-lock in search_ioctl() on hardware with sub-page
+>     faults
+>
+>  arch/Kconfig                        |  7 ++++
+>  arch/arm64/Kconfig                  |  1 +
+>  arch/arm64/include/asm/uaccess.h    | 59 +++++++++++++++++++++++++++++
+>  arch/powerpc/kernel/kvm.c           |  2 +-
+>  arch/powerpc/kernel/signal_32.c     |  4 +-
+>  arch/powerpc/kernel/signal_64.c     |  2 +-
+>  arch/x86/kernel/fpu/signal.c        |  2 +-
+>  drivers/gpu/drm/armada/armada_gem.c |  2 +-
+>  fs/btrfs/file.c                     |  6 +--
+>  fs/btrfs/ioctl.c                    |  7 +++-
+>  fs/f2fs/file.c                      |  2 +-
+>  fs/fuse/file.c                      |  2 +-
+>  fs/gfs2/file.c                      |  8 ++--
+>  fs/iomap/buffered-io.c              |  2 +-
+>  fs/ntfs/file.c                      |  2 +-
+>  fs/ntfs3/file.c                     |  2 +-
+>  include/linux/pagemap.h             |  8 ++--
+>  include/linux/uaccess.h             | 53 ++++++++++++++++++++++++++
+>  include/linux/uio.h                 |  6 ++-
+>  lib/iov_iter.c                      | 28 +++++++++++---
+>  mm/filemap.c                        |  2 +-
+>  mm/gup.c                            | 37 +++++++++++++-----
+>  22 files changed, 203 insertions(+), 41 deletions(-)
+>
 
-Yes you can do foolish things in sysfs, but why are you limiting
-yourself to just 2 ways to shoot yourself in the foot?
-
-Again, I do not understand the goal here at all.  What is this file for?
-
-> Demos the deadlock with a device specific lock
-> ./tools/testing/selftests/sysfs/sysfs.sh -t 0027
-> 
-> Demos the deadlock with rtnl_lock()
-> ./tools/testing/selftests/sysfs/sysfs.sh -t 0028
-> 
-> Drivers should *avoid* sharing a lock on rmmod and on sysfs ops.
-> 
-> This selftests will shortly be expanded upon with more tests which
-> require further kernel changes in order to provide better test
-> coverage.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  MAINTAINERS                            |    7 +
->  lib/Kconfig.debug                      |   12 +
->  lib/Makefile                           |    1 +
->  lib/test_sysfs.c                       |  894 ++++++++++++++++++
->  tools/testing/selftests/sysfs/Makefile |   12 +
->  tools/testing/selftests/sysfs/config   |    2 +
->  tools/testing/selftests/sysfs/settings |    1 +
->  tools/testing/selftests/sysfs/sysfs.sh | 1197 ++++++++++++++++++++++++
->  8 files changed, 2126 insertions(+)
->  create mode 100644 lib/test_sysfs.c
->  create mode 100644 tools/testing/selftests/sysfs/Makefile
->  create mode 100644 tools/testing/selftests/sysfs/config
->  create mode 100644 tools/testing/selftests/sysfs/settings
->  create mode 100755 tools/testing/selftests/sysfs/sysfs.sh
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5f87f622ac18..8b458c4dd577 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18393,6 +18393,13 @@ L:	linux-mmc@vger.kernel.org
->  S:	Maintained
->  F:	drivers/mmc/host/sdhci-pci-dwc-mshc.c
->  
-> +SYSFS TEST DRIVER
-> +M:	Luis Chamberlain <mcgrof@kernel.org>
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Maintained
-> +F:	lib/test_sysfs.c
-> +F:	tools/testing/selftests/sysfs/
-> +
->  SYSTEM CONFIGURATION (SYSCON)
->  M:	Lee Jones <lee.jones@linaro.org>
->  M:	Arnd Bergmann <arnd@arndb.de>
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 44a6df361016..ec531b423c0e 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2344,6 +2344,18 @@ config TEST_SYSCTL
->  
->  	  If unsure, say N.
->  
-> +config TEST_SYSFS
-> +	tristate "sysfs test driver"
-> +	depends on SYSFS
-> +	depends on NET
-> +	depends on BLOCK
-> +	help
-> +	  This builds the "test_sysfs" module. This driver enables to test the
-> +	  sysfs file system safely without affecting production knobs which
-> +	  might alter system functionality.
-> +
-> +	  If unsure, say N.
-> +
->  config BITFIELD_KUNIT
->  	tristate "KUnit test bitfield functions at runtime"
->  	depends on KUNIT
-> diff --git a/lib/Makefile b/lib/Makefile
-> index 364c23f15578..741c1be29781 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -61,6 +61,7 @@ obj-$(CONFIG_TEST_FIRMWARE) += test_firmware.o
->  obj-$(CONFIG_TEST_BITOPS) += test_bitops.o
->  CFLAGS_test_bitops.o += -Werror
->  obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
-> +obj-$(CONFIG_TEST_SYSFS) += test_sysfs.o
->  obj-$(CONFIG_TEST_HASH) += test_hash.o test_siphash.o
->  obj-$(CONFIG_TEST_IDA) += test_ida.o
->  obj-$(CONFIG_KASAN_KUNIT_TEST) += test_kasan.o
-> diff --git a/lib/test_sysfs.c b/lib/test_sysfs.c
-> new file mode 100644
-> index 000000000000..2a6ec072da60
-> --- /dev/null
-> +++ b/lib/test_sysfs.c
-> @@ -0,0 +1,894 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR copyleft-next-0.3.1
-
-Again, sorry, but no, I am going to object to this license as you are
-only accessing a GPL-v2-only api.  Any other license on a file that
-interacts with that, especially for core stuff like testing the
-functionality of this code, needs to have that same license.  Sorry.
-
-> +/*
-> + * Copyright (C) 2021 Luis Chamberlain <mcgrof@kernel.org>
-> + *
-> + * sysfs test driver
-> + *
-> + * This module allows us to add race conditions which we can test for
-> + * against the sysfs filesystem.
-> + */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/init.h>
-> +#include <linux/list.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/fs.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/slab.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/async.h>
-> +#include <linux/delay.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/rtnetlink.h>
-> +#include <linux/genhd.h>
-> +#include <linux/blkdev.h>
-> +
-> +static bool enable_lock;
-> +module_param(enable_lock, bool_enable_only, 0644);
-> +MODULE_PARM_DESC(enable_lock,
-> +		 "enable locking on reads / stores from the start");
-
-This isn't the 1990's why have module parameters when you are dealing
-with sysfs?  :)
-
-
-> +
-> +static bool enable_lock_on_rmmod;
-> +module_param(enable_lock_on_rmmod, bool_enable_only, 0644);
-> +MODULE_PARM_DESC(enable_lock_on_rmmod,
-> +		 "enable locking on rmmod");
-> +
-> +static bool use_rtnl_lock;
-> +module_param(use_rtnl_lock, bool_enable_only, 0644);
-> +MODULE_PARM_DESC(use_rtnl_lock,
-> +		 "use an rtnl_lock instead of the device mutex_lock");
-> +
-> +static unsigned int write_delay_msec_y = 500;
-> +module_param_named(write_delay_msec_y, write_delay_msec_y, uint, 0644);
-> +MODULE_PARM_DESC(write_delay_msec_y, "msec write delay for writes to y");
-> +
-> +static unsigned int test_devtype;
-> +module_param_named(devtype, test_devtype, uint, 0644);
-> +MODULE_PARM_DESC(devtype, "device type to register");
-> +
-> +static bool enable_busy_alloc;
-> +module_param(enable_busy_alloc, bool_enable_only, 0644);
-> +MODULE_PARM_DESC(enable_busy_alloc, "do a fake allocation during writes");
-> +
-> +static bool enable_debugfs;
-> +module_param(enable_debugfs, bool_enable_only, 0644);
-> +MODULE_PARM_DESC(enable_debugfs, "enable a few debugfs files");
-> +
-> +static bool enable_verbose_writes;
-> +module_param(enable_verbose_writes, bool_enable_only, 0644);
-> +MODULE_PARM_DESC(enable_debugfs, "enable stores to print verbose information");
-> +
-> +static unsigned int delay_rmmod_ms;
-> +module_param_named(delay_rmmod_ms, delay_rmmod_ms, uint, 0644);
-> +MODULE_PARM_DESC(delay_rmmod_ms, "if set how many ms to delay rmmod before device deletion");
-> +
-> +static bool enable_verbose_rmmod;
-> +module_param(enable_verbose_rmmod, bool_enable_only, 0644);
-> +MODULE_PARM_DESC(enable_verbose_rmmod, "enable verbose print messages on rmmod");
-> +
-> +static int sysfs_test_major;
-> +
-> +/**
-> + * test_config - used for configuring how the sysfs test device will behave
-> + *
-> + * @enable_lock: if enabled a lock will be used when reading/storing variables
-> + * @enable_lock_on_rmmod: if enabled a lock will be used when reading/storing
-> + *	sysfs attributes, but it will also be used to lock on rmmod. This is
-> + *	useful to test for a deadlock and should serve as an example of what
-> + *	drivers should *not* do.
-> + * @use_rtnl_lock: if enabled instead of configuration specific mutex, we'll
-> + *	use the rtnl_lock. If your test case is modifying this on the fly
-> + *	while doing other stores / reads, things will break as a lock can be
-> + *	left contending. Best is that tests use this knob serially, without
-> + *	allowing userspace to modify other knobs while this one changes.
-
-Why are any of these locks needed at all?  What are you trying to test?
-How badly this code abuses locks and sysfs?
-
-I do not understand how locking models matter to how the sysfs api works
-at all.
-
-Again, what exactly are you trying to test?  What portions of the sysfs
-api?  I see misc and block device interactions here, those have
-different apis and have nothing to do with sysfs other than they too
-have sysfs interactions.
-
-If you want to test the sysfs api, that's great, but that is not what
-you are doing here, it's a mis/match of block/misc bad things.
-
-> + * @write_delay_msec_y: the amount of delay to use when writing to y
-> + * @enable_busy_alloc: if enabled we'll do a large allocation between
-> + *	writes. We immediately free right away. We also schedule to give the
-> + *	kernel some time to re-use any memory we don't need. This is intened
-> + *	to mimic typical driver behaviour.
-> + */
-> +struct test_config {
-> +	bool enable_lock;
-> +	bool enable_lock_on_rmmod;
-> +	bool use_rtnl_lock;
-> +	unsigned int write_delay_msec_y;
-> +	bool enable_busy_alloc;
-> +};
-> +
-> +/**
-> + * enum sysfs_test_devtype - sysfs device type
-> + * @TESTDEV_TYPE_MISC: misc device type
-> + * @TESTDEV_TYPE_BLOCK: use a block device for the sysfs test device.
-> + */
-> +enum sysfs_test_devtype {
-> +	TESTDEV_TYPE_MISC = 0,
-> +	TESTDEV_TYPE_BLOCK,
-> +};
-> +
-> +/**
-> + * sysfs_test_device - test device to help test sysfs
-> + *
-> + * @devtype: the type of device to use
-> + * @config: configuration for the test
-> + * @config_mutex: protects configuration of test
-> + * @misc_dev: we use a misc device under the hood
-> + * @disk: represents a disk when used as a block device
-> + * @dev: pointer to misc_dev's own struct device
-> + * @dev_idx: unique ID for test device
-> + * @x: variable we can use to test read / store
-> + * @y: slow variable we can use to test read / store
-> + */
-> +struct sysfs_test_device {
-> +	enum sysfs_test_devtype devtype;
-> +	struct test_config config;
-> +	struct mutex config_mutex;
-> +	struct miscdevice misc_dev;
-> +	struct gendisk *disk;
-> +	struct device *dev;
-
-So you have one device that controls the lifecycle (misc_dev) and then
-pointers to 2 others with different lifecycles?  That's odd.
-
-And dev is not needed at all, please drop.
-
-
-> +	int dev_idx;
-> +	int x;
-> +	int y;
-> +};
-> +
-> +static struct sysfs_test_device *first_test_dev;
-> +
-> +static struct miscdevice *dev_to_misc_dev(struct device *dev)
-> +{
-> +	return dev_get_drvdata(dev);
-> +}
-> +
-> +static struct sysfs_test_device *misc_dev_to_test_dev(struct miscdevice *misc_dev)
-> +{
-> +	return container_of(misc_dev, struct sysfs_test_device, misc_dev);
-> +}
-> +
-> +static struct sysfs_test_device *devblock_to_test_dev(struct device *dev)
-> +{
-> +	return (struct sysfs_test_device *)dev_to_disk(dev)->private_data;
-> +}
-> +
-> +static struct sysfs_test_device *devmisc_to_testdev(struct device *dev)
-> +{
-> +	struct miscdevice *misc_dev;
-> +
-> +	misc_dev = dev_to_misc_dev(dev);
-> +	return misc_dev_to_test_dev(misc_dev);
-> +}
-> +
-> +static struct sysfs_test_device *dev_to_test_dev(struct device *dev)
-> +{
-> +	if (test_devtype == TESTDEV_TYPE_MISC)
-> +		return devmisc_to_testdev(dev);
-> +	else if (test_devtype == TESTDEV_TYPE_BLOCK)
-> +		return devblock_to_test_dev(dev);
-> +	return NULL;
-> +}
-> +
-> +static void test_dev_config_lock(struct sysfs_test_device *test_dev)
-> +{
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	if (config->enable_lock) {
-> +		if (config->use_rtnl_lock)
-> +			rtnl_lock();
-> +		else
-> +			mutex_lock(&test_dev->config_mutex);
-> +	}
-> +}
-> +
-> +static void test_dev_config_unlock(struct sysfs_test_device *test_dev)
-> +{
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	if (config->enable_lock) {
-> +		if (config->use_rtnl_lock)
-> +			rtnl_unlock();
-> +		else
-> +			mutex_unlock(&test_dev->config_mutex);
-> +	}
-> +}
-> +
-> +static void test_dev_config_lock_rmmod(struct sysfs_test_device *test_dev)
-> +{
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	if (config->enable_lock_on_rmmod)
-> +		test_dev_config_lock(test_dev);
-> +}
-> +
-> +static void test_dev_config_unlock_rmmod(struct sysfs_test_device *test_dev)
-> +{
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	if (config->enable_lock_on_rmmod)
-> +		test_dev_config_unlock(test_dev);
-> +}
-> +
-> +static void free_test_dev_sysfs(struct sysfs_test_device *test_dev)
-> +{
-> +	if (test_dev) {
-> +		kfree_const(test_dev->misc_dev.name);
-> +		test_dev->misc_dev.name = NULL;
-> +		kfree(test_dev);
-> +		test_dev = NULL;
-> +	}
-> +}
-> +
-> +static void test_sysfs_reset_vals(struct sysfs_test_device *test_dev)
-> +{
-> +	test_dev->x = 3;
-> +	test_dev->y = 4;
-> +}
-> +
-> +static ssize_t config_show(struct device *dev,
-> +			   struct device_attribute *attr,
-> +			   char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	int len = 0;
-> +
-> +	test_dev_config_lock(test_dev);
-> +
-> +	len += sysfs_emit_at(buf, len, "Configuration for: %s\n",
-> +			     dev_name(dev));
-> +	len += sysfs_emit_at(buf, len, "x:\t%d\n", test_dev->x);
-> +	len += sysfs_emit_at(buf, len, "y:\t%d\n", test_dev->y);
-> +	len += sysfs_emit_at(buf, len, "enable_lock:\t%s\n",
-> +			     config->enable_lock ? "true" : "false");
-> +	len += sysfs_emit_at(buf, len, "enable_lock_on_rmmmod:\t%s\n",
-> +			     config->enable_lock_on_rmmod ? "true" : "false");
-> +	len += sysfs_emit_at(buf, len, "use_rtnl_lock:\t%s\n",
-> +			     config->use_rtnl_lock ? "true" : "false");
-> +	len += sysfs_emit_at(buf, len, "write_delay_msec_y:\t%d\n",
-> +			     config->write_delay_msec_y);
-> +	len += sysfs_emit_at(buf, len, "enable_busy_alloc:\t%s\n",
-> +			     config->enable_busy_alloc ? "true" : "false");
-> +	len += sysfs_emit_at(buf, len, "enable_debugfs:\t%s\n",
-> +			     enable_debugfs ? "true" : "false");
-> +	len += sysfs_emit_at(buf, len, "enable_verbose_writes:\t%s\n",
-> +			     enable_verbose_writes ? "true" : "false");
-
-sysfs is one-value-per-file.  This is a huge violation of it and is not
-allowed at all.  This function alone would cause me to reject it :(
-
-Also, you are creating sysfs files, where are the Documentation/ABI/
-entries?
-
-
-> +
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return len;
-> +}
-> +static DEVICE_ATTR_RO(config);
-> +
-> +static ssize_t reset_store(struct device *dev,
-> +			   struct device_attribute *attr,
-> +			   const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	/*
-> +	 * We compromise and simplify this condition and do not use a lock
-> +	 * here as the lock type can change.
-> +	 */
-> +	config->enable_lock = false;
-> +	config->enable_lock_on_rmmod = false;
-> +	config->use_rtnl_lock = false;
-> +	config->enable_busy_alloc = false;
-> +	test_sysfs_reset_vals(test_dev);
-
-I do not understand how a lock matters here.
-
-And you can accept any data at all?  That's not a valid test :(
-
-> +
-> +	dev_info(dev, "reset\n");
-> +
-> +	return count;
-> +}
-> +static DEVICE_ATTR_WO(reset);
-> +
-> +static void test_dev_busy_alloc(struct sysfs_test_device *test_dev)
-> +{
-> +	struct test_config *config = &test_dev->config;
-> +	char *ignore;
-> +
-> +	if (!config->enable_busy_alloc)
-> +		return;
-> +
-> +	ignore = kzalloc(sizeof(struct sysfs_test_device) * 10, GFP_KERNEL);
-> +	kfree(ignore);
-> +
-> +	schedule();
-> +}
-> +
-> +static ssize_t test_dev_x_store(struct device *dev,
-> +				struct device_attribute *attr,
-> +				const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	int ret;
-> +
-> +	test_dev_busy_alloc(test_dev);
-> +	test_dev_config_lock(test_dev);
-> +
-> +	ret = kstrtoint(buf, 10, &test_dev->x);
-> +	if (ret)
-> +		count = ret;
-> +
-> +	if (enable_verbose_writes)
-> +		dev_info(test_dev->dev, "wrote x = %d\n", test_dev->x);
-> +
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t test_dev_x_show(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	int ret;
-> +
-> +	test_dev_config_lock(test_dev);
-> +	ret = sysfs_emit(buf, "%d\n", test_dev->x);
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return ret;
-> +}
-> +static DEVICE_ATTR_RW(test_dev_x);
-> +
-> +static ssize_t test_dev_y_store(struct device *dev,
-> +				struct device_attribute *attr,
-> +				const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config;
-> +	int y;
-> +	int ret;
-> +
-> +	test_dev_busy_alloc(test_dev);
-> +	test_dev_config_lock(test_dev);
-> +
-> +	config = &test_dev->config;
-> +
-> +	ret = kstrtoint(buf, 10, &y);
-> +	if (ret)
-> +		count = ret;
-> +
-> +	msleep(config->write_delay_msec_y);
-> +	test_dev->y = test_dev->x + y + 7;
-
-What is "7" for?
-
-
-> +
-> +	if (enable_verbose_writes)
-> +		dev_info(test_dev->dev, "wrote y = %d\n", test_dev->y);
-> +
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t test_dev_y_show(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	int ret;
-> +
-> +	test_dev_config_lock(test_dev);
-> +	ret = sysfs_emit(buf, "%d\n", test_dev->y);
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return ret;
-> +}
-> +static DEVICE_ATTR_RW(test_dev_y);
-> +
-> +static ssize_t config_enable_lock_store(struct device *dev,
-> +					struct device_attribute *attr,
-> +					const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	int ret;
-> +	int val;
-> +
-> +	ret = kstrtoint(buf, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * We compromise for simplicty and do not lock when changing
-> +	 * locking configuration, with the assumption userspace tests
-> +	 * will know this.
-> +	 */
-> +	if (val)
-> +		config->enable_lock = true;
-> +	else
-> +		config->enable_lock = false;
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t config_enable_lock_show(struct device *dev,
-> +				       struct device_attribute *attr,
-> +				       char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	ssize_t ret;
-> +
-> +	test_dev_config_lock(test_dev);
-> +	ret = sysfs_emit(buf, "%d\n", config->enable_lock);
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return ret;
-> +}
-> +static DEVICE_ATTR_RW(config_enable_lock);
-> +
-> +static ssize_t config_enable_lock_on_rmmod_store(struct device *dev,
-> +						 struct device_attribute *attr,
-> +						 const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	int ret;
-> +	int val;
-> +
-> +	ret = kstrtoint(buf, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	test_dev_config_lock(test_dev);
-> +	if (val)
-> +		config->enable_lock_on_rmmod = true;
-> +	else
-> +		config->enable_lock_on_rmmod = false;
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t config_enable_lock_on_rmmod_show(struct device *dev,
-> +						struct device_attribute *attr,
-> +						char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	ssize_t ret;
-> +
-> +	test_dev_config_lock(test_dev);
-> +	ret = sysfs_emit(buf, "%d\n", config->enable_lock_on_rmmod);
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return ret;
-> +}
-> +static DEVICE_ATTR_RW(config_enable_lock_on_rmmod);
-> +
-> +static ssize_t config_use_rtnl_lock_store(struct device *dev,
-> +					  struct device_attribute *attr,
-> +					  const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	int ret;
-> +	int val;
-> +
-> +	ret = kstrtoint(buf, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * We compromise and simplify this condition and do not use a lock
-> +	 * here as the lock type can change.
-> +	 */
-> +	if (val)
-> +		config->use_rtnl_lock = true;
-> +	else
-> +		config->use_rtnl_lock = false;
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t config_use_rtnl_lock_show(struct device *dev,
-> +					 struct device_attribute *attr,
-> +					 char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	return sysfs_emit(buf, "%d\n", config->use_rtnl_lock);
-> +}
-> +static DEVICE_ATTR_RW(config_use_rtnl_lock);
-> +
-> +static ssize_t config_write_delay_msec_y_store(struct device *dev,
-> +					       struct device_attribute *attr,
-> +					       const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	int ret;
-> +	int val;
-> +
-> +	ret = kstrtoint(buf, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	test_dev_config_lock(test_dev);
-> +	config->write_delay_msec_y = val;
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t config_write_delay_msec_y_show(struct device *dev,
-> +					      struct device_attribute *attr,
-> +					      char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	return sysfs_emit(buf, "%d\n", config->write_delay_msec_y);
-> +}
-> +static DEVICE_ATTR_RW(config_write_delay_msec_y);
-> +
-> +static ssize_t config_enable_busy_alloc_store(struct device *dev,
-> +					      struct device_attribute *attr,
-> +					      const char *buf, size_t count)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +	int ret;
-> +	int val;
-> +
-> +	ret = kstrtoint(buf, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	test_dev_config_lock(test_dev);
-> +	config->enable_busy_alloc = val;
-> +	test_dev_config_unlock(test_dev);
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t config_enable_busy_alloc_show(struct device *dev,
-> +					     struct device_attribute *attr,
-> +					     char *buf)
-> +{
-> +	struct sysfs_test_device *test_dev = dev_to_test_dev(dev);
-> +	struct test_config *config = &test_dev->config;
-> +
-> +	return sysfs_emit(buf, "%d\n", config->enable_busy_alloc);
-> +}
-> +static DEVICE_ATTR_RW(config_enable_busy_alloc);
-> +
-> +#define TEST_SYSFS_DEV_ATTR(name)		(&dev_attr_##name.attr)
-
-Just spell it out please, no need for a macro.
-
-> +
-> +static struct attribute *test_dev_attrs[] = {
-> +	/* Generic driver knobs go here */
-> +	TEST_SYSFS_DEV_ATTR(config),
-> +	TEST_SYSFS_DEV_ATTR(reset),
-> +
-> +	/* These are used to test sysfs */
-> +	TEST_SYSFS_DEV_ATTR(test_dev_x),
-> +	TEST_SYSFS_DEV_ATTR(test_dev_y),
-> +
-> +	/*
-> +	 * These are configuration knobs to modify how we test sysfs when
-> +	 * doing reads / stores.
-> +	 */
-> +	TEST_SYSFS_DEV_ATTR(config_enable_lock),
-> +	TEST_SYSFS_DEV_ATTR(config_enable_lock_on_rmmod),
-> +	TEST_SYSFS_DEV_ATTR(config_use_rtnl_lock),
-> +	TEST_SYSFS_DEV_ATTR(config_write_delay_msec_y),
-> +	TEST_SYSFS_DEV_ATTR(config_enable_busy_alloc),
-> +
-> +	NULL,
-> +};
-> +
-> +ATTRIBUTE_GROUPS(test_dev);
-
-That's a weak "test" of how attribute groups work and how they can work.
-It's pretty much the simplest way.  why?
-
-> +static int sysfs_test_dev_alloc_miscdev(struct sysfs_test_device *test_dev)
-> +{
-> +	struct miscdevice *misc_dev;
-> +
-> +	misc_dev = &test_dev->misc_dev;
-> +	misc_dev->minor = MISC_DYNAMIC_MINOR;
-> +	misc_dev->name = kasprintf(GFP_KERNEL, "test_sysfs%d", test_dev->dev_idx);
-> +	if (!misc_dev->name) {
-> +		pr_err("Cannot alloc misc_dev->name\n");
-> +		return -ENOMEM;
-> +	}
-> +	misc_dev->groups = test_dev_groups;
-> +
-> +	return 0;
-> +}
-> +
-> +static int testdev_open(struct block_device *bdev, fmode_t mode)
-> +{
-> +	return -EINVAL;
-
-Why?
-
-> +}
-> +
-> +static void testdev_submit_bio(struct bio *bio)
-> +{
-> +}
-
-Huh?
-
-> +
-> +static void testdev_slot_free_notify(struct block_device *bdev,
-> +				     unsigned long index)
-> +{
-> +}
-
-Why nothing?
-
-> +
-> +static int testdev_rw_page(struct block_device *bdev, sector_t sector,
-> +			   struct page *page, unsigned int op)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-
-What is this doing?
-
-> +
-> +static const struct block_device_operations sysfs_testdev_ops = {
-> +	.open = testdev_open,
-> +	.submit_bio = testdev_submit_bio,
-> +	.swap_slot_free_notify = testdev_slot_free_notify,
-> +	.rw_page = testdev_rw_page,
-> +	.owner = THIS_MODULE
-> +};
-> +
-> +static int sysfs_test_dev_alloc_blockdev(struct sysfs_test_device *test_dev)
-> +{
-> +	int ret = -ENOMEM;
-> +
-> +	test_dev->disk = blk_alloc_disk(NUMA_NO_NODE);
-> +	if (!test_dev->disk) {
-> +		pr_err("Error allocating disk structure for device %d\n",
-> +		       test_dev->dev_idx);
-> +		goto out;
-> +	}
-> +
-> +	test_dev->disk->major = sysfs_test_major;
-> +	test_dev->disk->first_minor = test_dev->dev_idx + 1;
-> +	test_dev->disk->fops = &sysfs_testdev_ops;
-> +	test_dev->disk->private_data = test_dev;
-> +	snprintf(test_dev->disk->disk_name, sizeof(test_dev->disk->disk_name),
-> +		 "test_sysfs%d", test_dev->dev_idx);
-> +	set_capacity(test_dev->disk, 0);
-> +	blk_queue_flag_set(QUEUE_FLAG_NONROT, test_dev->disk->queue);
-> +	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, test_dev->disk->queue);
-> +	blk_queue_physical_block_size(test_dev->disk->queue, PAGE_SIZE);
-> +	blk_queue_max_discard_sectors(test_dev->disk->queue, UINT_MAX);
-> +	blk_queue_flag_set(QUEUE_FLAG_DISCARD, test_dev->disk->queue);
-> +
-> +	return 0;
-> +out:
-> +	return ret;
-> +}
-
-What does this block device do?
-
-> +
-> +static struct sysfs_test_device *alloc_test_dev_sysfs(int idx)
-> +{
-> +	struct sysfs_test_device *test_dev;
-> +	int ret;
-> +
-> +	switch (test_devtype) {
-> +	case TESTDEV_TYPE_MISC:
-> +	       fallthrough;
-> +	case TESTDEV_TYPE_BLOCK:
-> +		break;
-
-That's the only 2 types you have, why test?
-
-> +	default:
-> +		return NULL;
-> +	}
-> +
-> +	test_dev = kzalloc(sizeof(struct sysfs_test_device), GFP_KERNEL);
-> +	if (!test_dev)
-> +		goto err_out;
-> +
-> +	mutex_init(&test_dev->config_mutex);
-> +	test_dev->dev_idx = idx;
-> +	test_dev->devtype = test_devtype;
-> +
-> +	if (test_dev->devtype == TESTDEV_TYPE_MISC) {
-> +		ret = sysfs_test_dev_alloc_miscdev(test_dev);
-> +		if (ret)
-> +			goto err_out_free;
-> +	} else if (test_dev->devtype == TESTDEV_TYPE_BLOCK) {
-> +		ret = sysfs_test_dev_alloc_blockdev(test_dev);
-> +		if (ret)
-> +			goto err_out_free;
-> +	}
-> +	return test_dev;
-> +
-> +err_out_free:
-> +	kfree(test_dev);
-> +	test_dev = NULL;
-> +err_out:
-> +	return NULL;
-> +}
-> +
-> +static int register_test_dev_sysfs_misc(struct sysfs_test_device *test_dev)
-> +{
-> +	int ret;
-> +
-> +	ret = misc_register(&test_dev->misc_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	test_dev->dev = test_dev->misc_dev.this_device;
-
-Why are you messing with the internals of a misc device's struct device?
-That's not for anyone to play with.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int register_test_dev_sysfs_block(struct sysfs_test_device *test_dev)
-> +{
-> +	int ret;
-> +
-> +	ret = device_add_disk(NULL, test_dev->disk, test_dev_groups);
-> +	if (ret) {
-> +		blk_cleanup_disk(test_dev->disk);
-> +		return ret;
-> +	}
-> +
-> +	test_dev->dev = disk_to_dev(test_dev->disk);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct sysfs_test_device *register_test_dev_sysfs(void)
-> +{
-> +	struct sysfs_test_device *test_dev = NULL;
-> +	int ret;
-> +
-> +	test_dev = alloc_test_dev_sysfs(0);
-> +	if (!test_dev)
-> +		goto out;
-> +
-> +	if (test_dev->devtype == TESTDEV_TYPE_MISC) {
-> +		ret = register_test_dev_sysfs_misc(test_dev);
-> +		if (ret) {
-> +			pr_err("could not register misc device: %d\n", ret);
-> +			goto out_free_dev;
-> +		}
-> +	} else if (test_dev->devtype == TESTDEV_TYPE_BLOCK) {
-> +		ret = register_test_dev_sysfs_block(test_dev);
-> +		if (ret) {
-> +			pr_err("could not register block device: %d\n", ret);
-> +			goto out_free_dev;
-> +		}
-> +	}
-> +
-> +	dev_info(test_dev->dev, "interface ready\n");
-> +
-> +out:
-> +	return test_dev;
-> +out_free_dev:
-> +	free_test_dev_sysfs(test_dev);
-> +	return NULL;
-> +}
-> +
-> +static struct sysfs_test_device *register_test_dev_set_config(void)
-> +{
-> +	struct sysfs_test_device *test_dev;
-> +	struct test_config *config;
-> +
-> +	test_dev = register_test_dev_sysfs();
-> +	if (!test_dev)
-> +		return NULL;
-> +
-> +	config = &test_dev->config;
-> +
-> +	if (enable_lock)
-> +		config->enable_lock = true;
-> +	if (enable_lock_on_rmmod)
-> +		config->enable_lock_on_rmmod = true;
-> +	if (use_rtnl_lock)
-> +		config->use_rtnl_lock = true;
-> +	if (enable_busy_alloc)
-> +		config->enable_busy_alloc = true;
-> +
-> +	config->write_delay_msec_y = write_delay_msec_y;
-> +	test_sysfs_reset_vals(test_dev);
-> +
-> +	return test_dev;
-> +}
-> +
-> +static void unregister_test_dev_sysfs_misc(struct sysfs_test_device *test_dev)
-> +{
-> +	misc_deregister(&test_dev->misc_dev);
-> +}
-> +
-> +static void unregister_test_dev_sysfs_block(struct sysfs_test_device *test_dev)
-> +{
-> +	del_gendisk(test_dev->disk);
-> +	blk_cleanup_disk(test_dev->disk);
-> +}
-> +
-> +static void unregister_test_dev_sysfs(struct sysfs_test_device *test_dev)
-> +{
-> +	test_dev_config_lock_rmmod(test_dev);
-> +
-> +	dev_info(test_dev->dev, "removing interface\n");
-> +
-> +	if (test_dev->devtype == TESTDEV_TYPE_MISC)
-> +		unregister_test_dev_sysfs_misc(test_dev);
-> +	else if (test_dev->devtype == TESTDEV_TYPE_BLOCK)
-> +		unregister_test_dev_sysfs_block(test_dev);
-> +
-> +	test_dev_config_unlock_rmmod(test_dev);
-> +
-> +	free_test_dev_sysfs(test_dev);
-> +}
-> +
-> +static struct dentry *debugfs_dir;
-
-Why get debugfs involved?
-
-
-> +
-> +/* When read represents how many times we have reset the first_test_dev */
-> +static u8 reset_first_test_dev;
-> +
-> +static ssize_t read_reset_first_test_dev(struct file *file,
-> +					 char __user *user_buf,
-> +					 size_t count, loff_t *ppos)
-> +{
-> +	ssize_t len;
-> +	char buf[32];
-> +
-> +	reset_first_test_dev++;
-> +	len = sprintf(buf, "%d\n", reset_first_test_dev);
-> +	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
-> +}
-> +
-> +static ssize_t write_reset_first_test_dev(struct file *file,
-> +					  const char __user *user_buf,
-> +					  size_t count, loff_t *ppos)
-> +{
-> +	if (!try_module_get(THIS_MODULE))
-
-Totally racy, broken, and not allowed, sorry.
+Thanks,
+Andreas
 
