@@ -2,61 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A39E4467D02
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 19:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A466B467D3F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 19:25:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382349AbhLCSPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Dec 2021 13:15:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:53337 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234979AbhLCSPg (ORCPT
+        id S1382684AbhLCS3D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Dec 2021 13:29:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51732 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1382681AbhLCS3C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Dec 2021 13:15:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638555131;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OVm0OT3iBmxonhyx3ujuxwBXaBB+Vd0lpl9c1C741QI=;
-        b=SDGIAOVsTgpouyQCGSUEeUTY3TLazJ+oIUCvgwXu4TJrrGXaFyQRzA5bKyDu5x0J+Tf9Jx
-        U+t1lIhN6LwPO7/e6VqBShTXdYXe253O6fAP2/DxQBwpCcn14xTJsqosUpkIIktknP6vgD
-        YyE8y8FsVKnlU9hj9doEgMm07rSqVjo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-587-fqbI0wj_OtGHtQqW3JBHug-1; Fri, 03 Dec 2021 13:12:10 -0500
-X-MC-Unique: fqbI0wj_OtGHtQqW3JBHug-1
-Received: by mail-wm1-f70.google.com with SMTP id 201-20020a1c04d2000000b003335bf8075fso1920153wme.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Dec 2021 10:12:10 -0800 (PST)
+        Fri, 3 Dec 2021 13:29:02 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F8EC061751
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Dec 2021 10:25:37 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id e3so15173868edu.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Dec 2021 10:25:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Or/JmgPTS79GqZIutDkpHnEjHVYD0LU+lzufkfg0YQw=;
+        b=WTkKNkRE6R418ysyxmvF8zDurfo/zAOdLc0UOp7eCzeFJefSW8HET1IAYuo+Taimiy
+         p4iweJpk9xplCCWJEpzAorhhQJWPSFavF78h6ld1rIUuOva5uei/OUOvEgUzYiVZm1wt
+         QpKnqVIUdp4omi7wXkYSNGbpjyco2jCVtE1Lw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OVm0OT3iBmxonhyx3ujuxwBXaBB+Vd0lpl9c1C741QI=;
-        b=dxuiz33SFsP86tnB7V5OIlrlW2tdl52H9OTU+dZAUvMdL96G7wRxVkX/NfrvoGLDHm
-         M0ATPHeGkn2mpoicjGbY2/OSQEhp/JX4LxsFLk9lwzzU583F+6eaHdnMdZy8oCKfgtfb
-         pWWDJZupM+q22QCSz1cThC8iUqKhLFUt/tHR2lcp1H42Hq1RC5OPnAuHuqJp9KmcBpTe
-         6kXHimrcCE/TSWWIHdxXMXYa93+uXURadH/2vOoc37DypFjSxQLtGv9yvCOpYPMNf0rW
-         EeoPjfONl2bjtHiyso17wB5WVeDO2YP5YYTmaQOTxjb5Kl69+uZwuPqo35TUXDdoFsxi
-         pb6w==
-X-Gm-Message-State: AOAM533s0rv7L5nN2pyMkYUHDlUQlax1XssmRj5hDuViHHQ8HGUaI767
-        jbozI5E3hy9BjRqTOwspEYc1qVyvsmeYGA/C/6rPA0n5ck5DP5M/06QQERq/DEtR50w72b7Pekn
-        KVR+iRpD5B+NqAFAwsTBjUl2bOVtSl4UzZo1Lcj2F0g==
-X-Received: by 2002:a1c:f005:: with SMTP id a5mr17543373wmb.19.1638555129468;
-        Fri, 03 Dec 2021 10:12:09 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxQR6sbSMWp+wr1XbwmFPvbhovhVed+t90DxqkiD9Bo9uH//esaslD4B3M/FOP3e48MFHRzNCb7WdlY5ZTcAIE=
-X-Received: by 2002:a1c:f005:: with SMTP id a5mr17543328wmb.19.1638555129216;
- Fri, 03 Dec 2021 10:12:09 -0800 (PST)
+        bh=Or/JmgPTS79GqZIutDkpHnEjHVYD0LU+lzufkfg0YQw=;
+        b=ywB7lLHC0WTBlUe1Td0jYNzjEoZ0+2ylHtzAggFkYD/4YBJ3eFVOvzjx1RnALxqg/c
+         I/mIDfBMFmoTpFvXeWTQ2p4F5AMqmLFGbUcU0C6jMPIuf75+spITgwmTeU4QMyURMlzy
+         KdiXAm83FE54ruAT9DzrHfQajCk0+fLzLndUYwr2PlngzgLuHfE9aRfn3C40pb5W0nGp
+         lLfkkpXE9qJm6qPnp3z1Ri3jfWTvSpDX2tPUsBlFtTLeVhdkg5oE654dbFTjfhzP1MkI
+         XSoc4n+K0vrLfliZ1Blimx2J6delOZ2a7G3uKCTtMyXb5zYe40zckdPgPDDZ4uNGu2Yo
+         /z7A==
+X-Gm-Message-State: AOAM532R3KjlybLBb8vkUJwdbvh1DJlmDWBQfwSfNdjBJcnqNFqOZsut
+        rRQyBCprz7zodYJlKpaBlfv1SazKMKAuE32A
+X-Google-Smtp-Source: ABdhPJxDViv459+2ti6DqDSG7M2HB5eEC0sEvgXAYU6ldZOag7RUAj8zhPaOvgcE3C1RIBfdyTZI+g==
+X-Received: by 2002:a17:906:229b:: with SMTP id p27mr25722308eja.264.1638555936005;
+        Fri, 03 Dec 2021 10:25:36 -0800 (PST)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id t7sm2472755edi.90.2021.12.03.10.25.33
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Dec 2021 10:25:34 -0800 (PST)
+Received: by mail-wr1-f43.google.com with SMTP id v11so7422875wrw.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Dec 2021 10:25:33 -0800 (PST)
+X-Received: by 2002:adf:f8c3:: with SMTP id f3mr23456435wrq.495.1638555933321;
+ Fri, 03 Dec 2021 10:25:33 -0800 (PST)
 MIME-Version: 1.0
 References: <20211201193750.2097885-1-catalin.marinas@arm.com>
- <CAHc6FU7gXfZk7=Xj+RjxCqkmsrcAhenfbeoqa4AmHd5+vgja7g@mail.gmail.com> <CAHk-=wiQAQTGdMNLCKwgnt4EiAXf7Bm6p7NQx5-31S9-qPD8jg@mail.gmail.com>
-In-Reply-To: <CAHk-=wiQAQTGdMNLCKwgnt4EiAXf7Bm6p7NQx5-31S9-qPD8jg@mail.gmail.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Fri, 3 Dec 2021 19:11:58 +0100
-Message-ID: <CAHc6FU6r-CsMHkWzxEm237mV2vZ2O9g_D7BbCPeaA2qX0dpi0g@mail.gmail.com>
+ <CAHc6FU7gXfZk7=Xj+RjxCqkmsrcAhenfbeoqa4AmHd5+vgja7g@mail.gmail.com>
+ <CAHk-=wiQAQTGdMNLCKwgnt4EiAXf7Bm6p7NQx5-31S9-qPD8jg@mail.gmail.com> <CAHc6FU6r-CsMHkWzxEm237mV2vZ2O9g_D7BbCPeaA2qX0dpi0g@mail.gmail.com>
+In-Reply-To: <CAHc6FU6r-CsMHkWzxEm237mV2vZ2O9g_D7BbCPeaA2qX0dpi0g@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Dec 2021 10:25:17 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi12AStfPrXLjki_SLc5qqDwYX21bJLp10mynNQj7u8FA@mail.gmail.com>
+Message-ID: <CAHk-=wi12AStfPrXLjki_SLc5qqDwYX21bJLp10mynNQj7u8FA@mail.gmail.com>
 Subject: Re: [PATCH v2 0/4] Avoid live-lock in fault-in+uaccess loops with
  sub-page faults
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
 Cc:     Catalin Marinas <catalin.marinas@arm.com>,
         Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>,
@@ -73,32 +78,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 3, 2021 at 6:58 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, Dec 3, 2021 at 7:29 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
-> > We're trying pretty hard to handle large I/O requests efficiently at
-> > the filesystem level. A small, static upper limit in the fault-in
-> > functions has the potential to ruin those efforts. So I'm not a fan of
-> > that.
+On Fri, Dec 3, 2021 at 10:12 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
 >
-> I don't think fault-in should happen under any sane normal circumstances.
->
-> Except for low-memory situations, and then you don't want to fault in
-> large areas.
->
-> Do you really expect to write big areas that the user has never even
-> touched? That would be literally insane.
->
-> And if the user _has_ touched them, then they'll in in-core. Except
-> for the "swapped out" case.
->
-> End result: this is purely a correctness issue, not a performance issue.
+> It happens when you mmap a file and write the mmapped region to
+> another file, for example.
 
-It happens when you mmap a file and write the mmapped region to
-another file, for example. I don't think we want to make filesystems
-go bonkers in such scenarios. Scaling down in response to memory
-pressure sounds perfectly fine though.
+Do you actually have such loads? Nobody should use mmap() for
+single-access file copy purposes. It's slower than just doing the copy
+exactly due to page fault overhead.
 
-Thanks,
-Andreas
+In other words, you seem to be worrying about the performance of a
+load that is _explicitly_ badly written. You should be fixing the
+application, not making the kernel do stupid things.
 
+Also, it's worth noting that that situation should be caught by the
+page-in code, which will map multiple pages in one go
+(do_fault_around() - for when the pages are cached), and do the
+readahead logic (filemap_fault() - for when the pages aren't in the
+page cache).
+
+Both of which are a lot more important than the "synchronously fault
+in pages one at a time".
+
+                Linus
