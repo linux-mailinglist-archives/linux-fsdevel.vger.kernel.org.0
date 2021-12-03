@@ -2,155 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5A946739E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 10:01:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBAB646754C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 11:42:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351182AbhLCJFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Dec 2021 04:05:05 -0500
-Received: from outbound-smtp29.blacknight.com ([81.17.249.32]:42831 "EHLO
-        outbound-smtp29.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1379334AbhLCJFE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Dec 2021 04:05:04 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp29.blacknight.com (Postfix) with ESMTPS id A162DBED84
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Dec 2021 09:01:39 +0000 (GMT)
-Received: (qmail 7408 invoked from network); 3 Dec 2021 09:01:39 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 3 Dec 2021 09:01:39 -0000
-Date:   Fri, 3 Dec 2021 09:01:37 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Avramov <hakavlad@inbox.lv>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211203090137.GA3366@techsingularity.net>
-References: <20211202150614.22440-1-mgorman@techsingularity.net>
- <CALvZod6am_QrZCSf_de6eyzbOtKnWuL1CQZVn+srQVt20cnpFg@mail.gmail.com>
- <20211202165220.GZ3366@techsingularity.net>
- <CALvZod5tiDgEz4JwxMHQvkzLxYeV0OtNGGsX5ZdT5mTQdUdUUA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CALvZod5tiDgEz4JwxMHQvkzLxYeV0OtNGGsX5ZdT5mTQdUdUUA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1351735AbhLCKqL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Dec 2021 05:46:11 -0500
+Received: from foss.arm.com ([217.140.110.172]:46902 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351699AbhLCKqK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Dec 2021 05:46:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F20D1435;
+        Fri,  3 Dec 2021 02:42:46 -0800 (PST)
+Received: from a077416.arm.com (unknown [10.163.33.180])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9934B3F5A1;
+        Fri,  3 Dec 2021 02:42:43 -0800 (PST)
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kexec <kexec@lists.infradead.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>
+Subject: [RFC PATCH 00/14] fs/proc/vmcore: Remove unnecessary user pointer conversions 
+Date:   Fri,  3 Dec 2021 16:12:17 +0530
+Message-Id: <20211203104231.17597-1-amit.kachhap@arm.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 02, 2021 at 09:41:04AM -0800, Shakeel Butt wrote:
-> On Thu, Dec 2, 2021 at 8:52 AM Mel Gorman <mgorman@techsingularity.net> wrote:
-> >
-> > On Thu, Dec 02, 2021 at 08:30:51AM -0800, Shakeel Butt wrote:
-> > > Hi Mel,
-> > >
-> > > On Thu, Dec 2, 2021 at 7:07 AM Mel Gorman <mgorman@techsingularity.net> wrote:
-> > > >
-> > > > Mike Galbraith, Alexey Avramov and Darrick Wong all reported similar
-> > > > problems due to reclaim throttling for excessive lengths of time.
-> > > > In Alexey's case, a memory hog that should go OOM quickly stalls for
-> > > > several minutes before stalling. In Mike and Darrick's cases, a small
-> > > > memcg environment stalled excessively even though the system had enough
-> > > > memory overall.
-> > > >
-> > > > Commit 69392a403f49 ("mm/vmscan: throttle reclaim when no progress is being
-> > > > made") introduced the problem although commit a19594ca4a8b ("mm/vmscan:
-> > > > increase the timeout if page reclaim is not making progress") made it
-> > > > worse. Systems at or near an OOM state that cannot be recovered must
-> > > > reach OOM quickly and memcg should kill tasks if a memcg is near OOM.
-> > > >
-> > >
-> > > Is there a reason we can't simply revert 69392a403f49 instead of adding
-> > > more code/heuristics? Looking more into 69392a403f49, I don't think the
-> > > code and commit message are in sync.
-> > >
-> > > For the memcg reclaim, instead of just removing congestion_wait or
-> > > replacing it with schedule_timeout in mem_cgroup_force_empty(), why
-> > > change the behavior of all memcg reclaim. Also this patch effectively
-> > > reverts that behavior of 69392a403f49.
-> > >
-> >
-> > It doesn't fully revert it but I did consider reverting it. The reason
-> > why I preserved it because the intent originally was to throttle somewhat
-> > when progress is not being made to avoid a premature OOM and I wanted to
-> > preserve that charactersistic. Right now, this is the least harmful way
-> > of doing it.
-> 
-> If I understand correctly, the original intent of 69392a403f49 which
-> you want to preserve is "avoid premature OOMs when reclaim is not
-> making progress". Were there any complaints or bug reports on these
-> premature OOMs?
-> 
+Hi,
 
-Not recently that I'm aware of but historically reclaim has been plagued by
-at least two classes of problems -- premature OOM and excessive CPU usage
-churning through the LRU. Going back, the solution was basically to sleep
-something like "disable kswapd if it fails to make progress for too long".
-Commit 69392a403f49 addressed a case where calling congestion_wait might as
-well have been schedule_timeout_uninterruptible(HZ/10) because congestion
-is no longer tracked by the block layer.
+This series aims to restructure the external interfaces as well internal
+code used in fs/proc/vmcore.c by removing the interchangeable use of user
+and kernel pointers. This unnecessary conversion may obstruct the tools
+such as sparse in generating meaningful results. This also simplifies
+the things by keeping the user and kernel pointers separate during
+propagation.
 
-Hence 69392a403f49 allows reclaim to throttle on NOPROGRESS but if
-another task makes progress, the throttled tasks can be woken before the
-timeout. The flaw was throttling too easily or for too long delaying OOM
-being properly detected.
+The external interfaces such as copy_oldmem_page, copy_oldmem_page_encrypted
+and read_from_oldmem are used across different architectures. The goal
+here is to update one architecture at a time and hence there is an extra
+cleanup done in the end to remove the intermediaries.
 
-> >
-> > As more memcg, I removed the NOTHROTTLE because the primary reason why a
-> > memcg might fail to make progress is excessive writeback and that should
-> > still throttle. Completely failing to make progress in a memcg is most
-> > likely due to a memcg-OOM.
-> >
-> > > For direct reclaimers under global pressure, why is page allocator a bad
-> > > place for stalling on no progress reclaim? IMHO the callers of the
-> > > reclaim should decide what to do if reclaim is not making progress.
-> >
-> > Because it's a layering violation and the caller has little direct control
-> > over the reclaim retry logic. The page allocator has no visibility on
-> > why reclaim failed only that it did fail.
-> >
-> 
-> Isn't it better that the reclaim returns why it is failing instead of
-> littering the reclaim code with 'is this global reclaim', 'is this
-> memcg reclaim', 'am I kswapd' which is also a layering violation. IMO
-> this is the direction we should be going towards though not asking to
-> do this now.
-> 
+In this series, an extra user pointer is added as a parameter to all the
+above functions instead of an union as there were disagreement in earlier ideas
+of using universal pointer [1,2]. This series is posted as RFC so as to
+find out an acceptable way of handling this use case.
 
-It's not clear why you think the page allocator can make better decisions
-about reclaim than reclaim can. It might make sense if callers were
-returned enough information to make a decision but even if they could,
-it would not be popular as the API would be difficult to use properly.
+This series is based on v5.16-rc3 and is compile tested for modified
+architectures and boot tested in qemu for all architectures except ia64.
 
-Is your primary objection the cgroup_reclaim(sc) check? If so, I can
-remove it. While there is a mild risk that OOM would be delayed, it's very
-unlikely because a memcg failing to make progress in the local case will
-probably call cond_resched() if there are not lots of of pages pending
-writes globally.
+Note: This patch series breaks the crash dump functionality after patch
+3 and is restored after each arch implements its own
+copy_oldmem_page_buf() interface.
 
-> Regarding this patch and 69392a403f49, I am still confused on the main
-> motivation behind 69392a403f49 to change the behavior of 'direct
-> reclaimers from page allocator'.
-> 
+Thanks,
+Amit Daniel
 
-The main motivation of the series overall was to remove the reliance on
-congestion_wait and wait_iff_congested because both are fundamentally
-broken when congestion is not tracked by the block layer. Replacing with
-schedule_timeout_uninterruptible() would be silly because where possible
-decisions on whether to pause or throttle should be based on events,
-not time. For example, if there are too many pages waiting on writeback
-then throttle but if writeback completes, wake the throttled tasks
-instead of "sleep some time and hope for the best".
+[1]: https://lore.kernel.org/lkml/20200624162901.1814136-2-hch@lst.de/
+[2]: https://lore.kernel.org/lkml/CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com/
+
+Amit Daniel Kachhap (14):
+  fs/proc/vmcore: Update read_from_oldmem() for user pointer
+  fs/proc/vmcore: Update copy_oldmem_page_encrypted() for user buffer
+  fs/proc/vmcore: Update copy_oldmem_page() for user buffer
+  x86/crash_dump_64: Use the new interface copy_oldmem_page_buf
+  x86/crash_dump_32: Use the new interface copy_oldmem_page_buf
+  arm64/crash_dump: Use the new interface copy_oldmem_page_buf
+  arm/crash_dump: Use the new interface copy_oldmem_page_buf
+  mips/crash_dump: Use the new interface copy_oldmem_page_buf
+  sh/crash_dump: Use the new interface copy_oldmem_page_buf
+  riscv/crash_dump: Use the new interface copy_oldmem_page_buf
+  powerpc/crash_dump: Use the new interface copy_oldmem_page_buf
+  ia64/crash_dump: Use the new interface copy_oldmem_page_buf
+  s390/crash_dump: Use the new interface copy_oldmem_page_buf
+  fs/proc/vmcore: Remove the unused old interface copy_oldmem_page
+
+ arch/arm/kernel/crash_dump.c     | 21 ++++----
+ arch/arm64/kernel/crash_dump.c   | 21 ++++----
+ arch/ia64/kernel/crash_dump.c    | 25 +++++-----
+ arch/mips/kernel/crash_dump.c    | 24 ++++-----
+ arch/powerpc/kernel/crash_dump.c | 33 +++++++------
+ arch/riscv/kernel/crash_dump.c   | 25 +++++-----
+ arch/s390/kernel/crash_dump.c    | 12 ++---
+ arch/sh/kernel/crash_dump.c      | 25 +++++-----
+ arch/x86/kernel/crash_dump_32.c  | 24 ++++-----
+ arch/x86/kernel/crash_dump_64.c  | 48 +++++++++---------
+ fs/proc/vmcore.c                 | 85 +++++++++++++++++---------------
+ include/linux/crash_dump.h       | 23 +++++----
+ 12 files changed, 189 insertions(+), 177 deletions(-)
 
 -- 
-Mel Gorman
-SUSE Labs
+2.17.1
+
