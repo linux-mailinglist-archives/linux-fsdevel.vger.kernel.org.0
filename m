@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36FB4467552
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 11:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9808467555
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 11:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351889AbhLCKq1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Dec 2021 05:46:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:46954 "EHLO foss.arm.com"
+        id S1379965AbhLCKqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Dec 2021 05:46:32 -0500
+Received: from foss.arm.com ([217.140.110.172]:46968 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351903AbhLCKqZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Dec 2021 05:46:25 -0500
+        id S1380014AbhLCKqa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Dec 2021 05:46:30 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4BB714BF;
-        Fri,  3 Dec 2021 02:43:01 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0233152B;
+        Fri,  3 Dec 2021 02:43:06 -0800 (PST)
 Received: from a077416.arm.com (unknown [10.163.33.180])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 292733F5A1;
-        Fri,  3 Dec 2021 02:42:57 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6DF903F5A1;
+        Fri,  3 Dec 2021 02:43:02 -0800 (PST)
 From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Christoph Hellwig <hch@lst.de>,
@@ -25,11 +25,12 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         kexec <kexec@lists.infradead.org>,
         Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: [RFC PATCH 03/14] fs/proc/vmcore: Update copy_oldmem_page() for user buffer
-Date:   Fri,  3 Dec 2021 16:12:20 +0530
-Message-Id: <20211203104231.17597-4-amit.kachhap@arm.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86 <x86@kernel.org>
+Subject: [RFC PATCH 04/14] x86/crash_dump_64: Use the new interface copy_oldmem_page_buf
+Date:   Fri,  3 Dec 2021 16:12:21 +0530
+Message-Id: <20211203104231.17597-5-amit.kachhap@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211203104231.17597-1-amit.kachhap@arm.com>
 References: <20211203104231.17597-1-amit.kachhap@arm.com>
@@ -37,93 +38,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The exported interface copy_oldmem_page passes user pointer without
-__user annotation and does unnecessary user/kernel pointer
-conversions during the pointer propagation.
+The current interface copy_oldmem_page() passes user pointer without
+__user annotation and hence does unnecessary user/kernel pointer
+conversions during its implementation.
 
-Hence it is modified to have a new parameter for user pointer. However
-instead of updating it directly a new interface copy_oldmem_page_buf()
-is added as copy_oldmem_page() is used across different archs. This old
-interface copy_oldmem_page() will be deleted after all the archs are
-modified to use the new interface.
+Implement the interface copy_oldmem_page_buf() to avoid this issue.
 
-The weak implementation of both copy_oldmem_page() and
-copy_oldmem_page_buf() are added temporarily to keep the kernel building
-for the subsequent patches. As a consequence, crash dump is temporarily
-broken for the archs till the patch where it implements its own
-copy_oldmem_page_buf().
-
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: kexec <kexec@lists.infradead.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86 <x86@kernel.org>
 Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
 ---
- fs/proc/vmcore.c           | 27 +++++++++++++++++----------
- include/linux/crash_dump.h |  3 +++
- 2 files changed, 20 insertions(+), 10 deletions(-)
+ arch/x86/kernel/crash_dump_64.c | 44 +++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 24 deletions(-)
 
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index fa4492ef6124..d01b85c043dd 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -172,12 +172,9 @@ ssize_t read_from_oldmem(char __user *ubuf, char *kbuf, size_t count,
- 				tmp = copy_oldmem_page_encrypted(pfn, ubuf,
- 								 kbuf, nr_bytes,
- 								 offset);
--			else if (ubuf)
--				tmp = copy_oldmem_page(pfn, (__force char *)ubuf,
--						       nr_bytes, offset, 1);
- 			else
--				tmp = copy_oldmem_page(pfn, kbuf, nr_bytes,
--						       offset, 0);
-+				tmp = copy_oldmem_page_buf(pfn, ubuf, kbuf,
-+							   nr_bytes, offset);
- 		}
- 		if (tmp < 0) {
- 			up_read(&vmcore_cb_rwsem);
-@@ -244,11 +241,21 @@ ssize_t __weak
- copy_oldmem_page_encrypted(unsigned long pfn, char __user *ubuf, char *kbuf,
- 			   size_t csize, unsigned long offset)
+diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
+index 99cd505628fa..7a6fa797260f 100644
+--- a/arch/x86/kernel/crash_dump_64.c
++++ b/arch/x86/kernel/crash_dump_64.c
+@@ -12,9 +12,9 @@
+ #include <linux/io.h>
+ #include <linux/cc_platform.h>
+ 
+-static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
+-				  unsigned long offset, int userbuf,
+-				  bool encrypted)
++static ssize_t __copy_oldmem_page(unsigned long pfn, char __user *ubuf,
++				  char *kbuf, size_t csize,
++				  unsigned long offset, bool encrypted)
  {
--	if (ubuf)
--		return copy_oldmem_page(pfn, (__force char *)ubuf, csize,
--					offset, 1);
--	else
--		return copy_oldmem_page(pfn, kbuf, csize, offset, 0);
-+	return copy_oldmem_page_buf(pfn, ubuf, kbuf, csize, offset);
-+}
-+
-+ssize_t __weak
-+copy_oldmem_page_buf(unsigned long pfn, char __user *ubuf, char *kbuf,
-+		     size_t csize, unsigned long offset)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+ssize_t __weak
-+copy_oldmem_page(unsigned long pfn, char *ubuf, size_t csize,
-+		 unsigned long offset, int userbuf)
-+{
-+	return -EOPNOTSUPP;
+ 	void  *vaddr;
+ 
+@@ -29,13 +29,13 @@ static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
+ 	if (!vaddr)
+ 		return -ENOMEM;
+ 
+-	if (userbuf) {
+-		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
++	if (ubuf) {
++		if (copy_to_user(ubuf, vaddr + offset, csize)) {
+ 			iounmap((void __iomem *)vaddr);
+ 			return -EFAULT;
+ 		}
+ 	} else
+-		memcpy(buf, vaddr + offset, csize);
++		memcpy(kbuf, vaddr + offset, csize);
+ 
+ 	set_iounmap_nonlazy();
+ 	iounmap((void __iomem *)vaddr);
+@@ -43,39 +43,35 @@ static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
  }
  
- /*
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index 36a7f08f4ad2..725c4e053ecf 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -26,6 +26,9 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
+ /**
+- * copy_oldmem_page - copy one page of memory
++ * copy_oldmem_page_buf - copy one page of memory
+  * @pfn: page frame number to be copied
+- * @buf: target memory address for the copy; this can be in kernel address
+- *	space or user address space (see @userbuf)
++ * @ubuf: target user memory pointer for the copy; use copy_to_user() if this
++ * pointer is not NULL
++ * @kbuf: target kernel memory pointer for the copy; use memcpy() if this
++ * pointer is not NULL
+  * @csize: number of bytes to copy
+  * @offset: offset in bytes into the page (based on pfn) to begin the copy
+- * @userbuf: if set, @buf is in user address space, use copy_to_user(),
+- *	otherwise @buf is in kernel address space, use memcpy().
+  *
+- * Copy a page from the old kernel's memory. For this page, there is no pte
+- * mapped in the current kernel. We stitch up a pte, similar to kmap_atomic.
++ * Copy a page from the old kernel's memory into the buffer pointed either by
++ * @ubuf or @kbuf. For this page, there is no pte mapped in the current kernel.
++ * We stitch up a pte, similar to kmap_atomic.
+  */
+-ssize_t copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
+-			 unsigned long offset, int userbuf)
++ssize_t copy_oldmem_page_buf(unsigned long pfn, char __user *ubuf, char *kbuf,
++			     size_t csize, unsigned long offset)
+ {
+-	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, false);
++	return __copy_oldmem_page(pfn, ubuf, kbuf, csize, offset, false);
+ }
  
- extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
- 						unsigned long, int);
-+extern ssize_t copy_oldmem_page_buf(unsigned long pfn, char __user *ubuf,
-+				    char *kbuf, size_t csize,
-+				    unsigned long offset);
- extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn,
- 					  char __user *ubuf, char *kbuf,
- 					  size_t csize, unsigned long offset);
+ /**
+- * copy_oldmem_page_encrypted - same as copy_oldmem_page() above but ioremap the
+- * memory with the encryption mask set to accommodate kdump on SME-enabled
++ * copy_oldmem_page_encrypted - same as copy_oldmem_page_buf() above but ioremap
++ * the memory with the encryption mask set to accommodate kdump on SME-enabled
+  * machines.
+  */
+ ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char __user *ubuf,
+ 				   char *kbuf, size_t csize,
+ 				   unsigned long offset)
+ {
+-	if (ubuf)
+-		return __copy_oldmem_page(pfn, (__force char *)ubuf, csize,
+-					  offset, 1, true);
+-	else
+-		return __copy_oldmem_page(pfn, kbuf, csize,
+-					  offset, 0, true);
++	return __copy_oldmem_page(pfn, ubuf, kbuf, csize, offset, true);
+ }
+ 
+ ssize_t elfcorehdr_read(char *buf, size_t count, u64 *ppos)
 -- 
 2.17.1
 
