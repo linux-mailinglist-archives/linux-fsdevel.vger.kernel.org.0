@@ -2,178 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F228467DC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 20:08:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D6E1467DE7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 20:15:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353109AbhLCTLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Dec 2021 14:11:36 -0500
-Received: from outbound-smtp57.blacknight.com ([46.22.136.241]:47843 "EHLO
-        outbound-smtp57.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238521AbhLCTLf (ORCPT
+        id S1343748AbhLCTSx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Dec 2021 14:18:53 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:4430 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239754AbhLCTSw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Dec 2021 14:11:35 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp57.blacknight.com (Postfix) with ESMTPS id B062DFB118
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Dec 2021 19:08:09 +0000 (GMT)
-Received: (qmail 22072 invoked from network); 3 Dec 2021 19:08:09 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 3 Dec 2021 19:08:09 -0000
-Date:   Fri, 3 Dec 2021 19:08:07 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Avramov <hakavlad@inbox.lv>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-Message-ID: <20211203190807.GE3366@techsingularity.net>
-References: <20211202150614.22440-1-mgorman@techsingularity.net>
- <CALvZod6am_QrZCSf_de6eyzbOtKnWuL1CQZVn+srQVt20cnpFg@mail.gmail.com>
- <20211202165220.GZ3366@techsingularity.net>
- <CALvZod5tiDgEz4JwxMHQvkzLxYeV0OtNGGsX5ZdT5mTQdUdUUA@mail.gmail.com>
- <20211203090137.GA3366@techsingularity.net>
- <CALvZod46SFiNvUSLCJWEVccsXKx=NwT4=gk9wS6Nt8cZd0WOgg@mail.gmail.com>
+        Fri, 3 Dec 2021 14:18:52 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B3HkrIQ020309
+        for <linux-fsdevel@vger.kernel.org>; Fri, 3 Dec 2021 11:15:28 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=v6kb7DAZzgeubvN2++geDgDOsnq+ZZiMUpOYxhExVWk=;
+ b=dCUiWUdxGvLOf+RJsvJXdN/Y84W7xwmxzj6B3A/BOg3Dh1zoqrA7kdmlupI+t0xpvBMS
+ nwBC/wynjLy2X4j+CzMABnIhr02VmRgxPWG5VagAo/sGOS16xnC9f1V4nDfrx7zuR3e7
+ m8axBiNP27+9vdNYhB1AsxAwq6xuNToD5aE= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 3cqnf01t5b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Dec 2021 11:15:28 -0800
+Received: from intmgw001.06.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Fri, 3 Dec 2021 11:15:27 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 38EAB767FE9C; Fri,  3 Dec 2021 11:15:26 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <shr@fb.com>
+Subject: [PATCH v3 0/5] io_uring: add xattr support
+Date:   Fri, 3 Dec 2021 11:15:11 -0800
+Message-ID: <20211203191516.1327214-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CALvZod46SFiNvUSLCJWEVccsXKx=NwT4=gk9wS6Nt8cZd0WOgg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-FB-Source: Intern
+X-Proofpoint-GUID: YXEzR9_K-KWZ7U7Nk6hXzeBGzvPksX4U
+X-Proofpoint-ORIG-GUID: YXEzR9_K-KWZ7U7Nk6hXzeBGzvPksX4U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-03_07,2021-12-02_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 spamscore=0
+ malwarescore=0 phishscore=0 priorityscore=1501 suspectscore=0 mlxscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 mlxlogscore=953 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112030124
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 03, 2021 at 09:50:51AM -0800, Shakeel Butt wrote:
-> On Fri, Dec 3, 2021 at 1:01 AM Mel Gorman <mgorman@techsingularity.net> wrote:
-> >
-> [...]
-> >
-> > Not recently that I'm aware of but historically reclaim has been plagued by
-> > at least two classes of problems -- premature OOM and excessive CPU usage
-> > churning through the LRU. Going back, the solution was basically to sleep
-> > something like "disable kswapd if it fails to make progress for too long".
-> > Commit 69392a403f49 addressed a case where calling congestion_wait might as
-> > well have been schedule_timeout_uninterruptible(HZ/10) because congestion
-> > is no longer tracked by the block layer.
-> >
-> > Hence 69392a403f49 allows reclaim to throttle on NOPROGRESS but if
-> > another task makes progress, the throttled tasks can be woken before the
-> > timeout. The flaw was throttling too easily or for too long delaying OOM
-> > being properly detected.
-> >
-> 
-> To remove congestion_wait of mem_cgroup_force_empty_write(), the
-> commit 69392a403f49 has changed the behavior of all memcg reclaim
-> codepaths as well as direct global reclaimers.
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-Well, yes, it moved it to stalling on writeback if it's in progress
-and waking up if writeback makes forward progress instead of a
-schedule_timeout_interruptible().
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
 
-> Were there other
-> congestion_wait() instances which commit 69392a403f49 was targeting
-> but those congestion_wait() were replaced/removed by different
-> commits?
-> 
+Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+  This splits off a new function do_user_path_at_empty from
+  user_path_at_empty that is based on filename and not on a
+  user-specified string.
 
-Yes, the series removed congestion_wait from other places because the
-interface is broken and has been for a long time.
+Patch 2: fs: split off setxattr_setup function from setxattr
+  Split off the setup part of the setxattr function.
 
-> [...]
-> 
-> > >
-> > > Isn't it better that the reclaim returns why it is failing instead of
-> > > littering the reclaim code with 'is this global reclaim', 'is this
-> > > memcg reclaim', 'am I kswapd' which is also a layering violation. IMO
-> > > this is the direction we should be going towards though not asking to
-> > > do this now.
-> > >
-> >
-> > It's not clear why you think the page allocator can make better decisions
-> > about reclaim than reclaim can. It might make sense if callers were
-> > returned enough information to make a decision but even if they could,
-> > it would not be popular as the API would be difficult to use properly.
-> >
-> 
-> The above is a separate discussion for later.
-> 
-> > Is your primary objection the cgroup_reclaim(sc) check?
-> 
-> No, I am of the opinion that we should revert 69392a403f49 and we
-> should have just replaced congestion_wait in
-> mem_cgroup_force_empty_write with a simple
-> schedule_timeout_interruptible.
+Patch 3: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
 
-That is a bit weak. Depending on the type of storage, writeback may
-completes in microseconds or seconds. The event used to be "sleep until
-congestion clears" which is no longer an event that can be waited upon
-in the vast majority of cases (NFS being an obvious exception). Now,
-it may throttle writeback on a waitqueue and if enough writeback
-completes, the task will be woken before the timeout to minimise the
-stall. schedule_timeout_interruptible() always waits for a fixed duration
-regardless of what else happens in the meantime.
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
 
-> The memory.force_empty is a cgroup v1
-> interface (to be deprecated) and it is very normal to expect that the
-> user will trigger that interface multiple times. We should not change
-> the behavior of all the memcg reclaimers and direct global reclaimers
-> so that we can remove congestion_wait from
-> mem_cgroup_force_empty_write.
-> 
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
 
-The mem_cgroup_force_empty_write() path will throttle on writeback in
-the same way that global reclaim does at this point
 
-                /*
-                 * If kswapd scans pages marked for immediate
-                 * reclaim and under writeback (nr_immediate), it
-                 * implies that pages are cycling through the LRU
-                 * faster than they are written so forcibly stall
-                 * until some pages complete writeback.
-                 */
-                if (sc->nr.immediate)
-                        reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK);
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
 
-With this patch, memcg does not stall on NOPROGRESS.
+---
+V3: - remove req->file checks in prep functions
+    - change size parameter in do_xattr
+V2: - split off function do_user_path_empty instead of changing
+      the function signature of user_path_at
+    - Fix datatype size problem in do_getxattr
 
-> > If so, I can
-> > remove it. While there is a mild risk that OOM would be delayed, it's very
-> > unlikely because a memcg failing to make progress in the local case will
-> > probably call cond_resched() if there are not lots of of pages pending
-> > writes globally.
-> >
-> > > Regarding this patch and 69392a403f49, I am still confused on the main
-> > > motivation behind 69392a403f49 to change the behavior of 'direct
-> > > reclaimers from page allocator'.
-> > >
-> >
-> > The main motivation of the series overall was to remove the reliance on
-> > congestion_wait and wait_iff_congested because both are fundamentally
-> > broken when congestion is not tracked by the block layer. Replacing with
-> > schedule_timeout_uninterruptible() would be silly because where possible
-> > decisions on whether to pause or throttle should be based on events,
-> > not time. For example, if there are too many pages waiting on writeback
-> > then throttle but if writeback completes, wake the throttled tasks
-> > instead of "sleep some time and hope for the best".
-> >
-> 
-> I am in agreement with the motivation of the whole series. I am just
-> making sure that the motivation of VMSCAN_THROTTLE_NOPROGRESS based
-> throttle is more than just the congestion_wait of
-> mem_cgroup_force_empty_write.
-> 
 
-The commit that primarily targets congestion_wait is 8cd7c588decf
-("mm/vmscan: throttle reclaim until some writeback completes if
-congested"). The series recognises that there are other reasons why
-reclaim can fail to make progress that is not directly writeback related.
+Stefan Roesch (5):
+  fs: split off do_user_path_at_empty from user_path_at_empty()
+  fs: split off setxattr_setup function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
 
--- 
-Mel Gorman
-SUSE Labs
+ fs/internal.h                 |  23 +++
+ fs/io_uring.c                 | 321 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |  10 +-
+ fs/xattr.c                    | 106 +++++++----
+ include/linux/namei.h         |   2 +
+ include/uapi/linux/io_uring.h |   8 +-
+ 6 files changed, 431 insertions(+), 39 deletions(-)
+
+
+Signed-off-by: Stefan Roesch <shr@fb.com>
+base-commit: c2b8fe96d041238d18228b8384e094cc959497ed
+--=20
+2.30.2
+
