@@ -2,214 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B16467B6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 17:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8907A467BAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Dec 2021 17:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358326AbhLCQei (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Dec 2021 11:34:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53328 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352984AbhLCQeh (ORCPT
+        id S1382159AbhLCQok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Dec 2021 11:44:40 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:60516 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1382161AbhLCQoj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Dec 2021 11:34:37 -0500
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A10B9C061751;
-        Fri,  3 Dec 2021 08:31:13 -0800 (PST)
-Received: by mail-il1-x136.google.com with SMTP id a11so3253566ilj.6;
-        Fri, 03 Dec 2021 08:31:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VkuP0/IYglzLHQH3LqznH+bbxsL03I8CCKw6nfJS4uQ=;
-        b=NyHs3cD/45x7BO3po9KtdoYOrrfO2R1lTXX/Li2KQpeDZ74TaLj3r9UuY+by31nl9c
-         BXwdwa6FhVq30Xm0mhyAB9Gfw80Xtv7QZkx8PxeX+4gjfcJRlVEHr+kaTUbzWgURL67D
-         C9x1jnubMaB+XkB2YUgtDyBc8JA53sFwOAOxTuKQdtFkZgd3Gj7/tmqwAz3tBBn/O2c9
-         2UpBiXgUTpC2WwWAgH0q1hNq4x2DMhcHghIXfe6Jx4LbdYbQVfU9MkKctIRnQ/2W9kpe
-         ngTIhcsi3TitBU1JcyIyDNyziMq5I2p8aUFXYR4fZb8IUXJ7SLrEz1LJOYiC0DLMzORY
-         AiCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VkuP0/IYglzLHQH3LqznH+bbxsL03I8CCKw6nfJS4uQ=;
-        b=Y15DlkIVEVP2bH0jwE1zOcW4+y198je8B7CVaTcRrvAZopHX7uAUcHtOFQTlzJugVQ
-         R0thW824goDPzvLys4PAo1iAT906NkCSvCFLwbUngh29we8ytqqS6waU2Qk8QY5GDd1I
-         xxyLSH9ipGC30C9cFawKbhzeSz17L4K3/3HQA/OD/Sp+TNI9sNoCP1dGjVRqcTKubii6
-         dI/mPrZV1c0S+fBi3a0pWixu2PU0s05V5R2+XyPPsO9SILAW4xwt8jwPfO1HXyKeXIRx
-         mtbRt3aEapeektyfzHJM2/HjXNDBOUArrpdr3WsacoGCnVjlE66QLhD9T9ngIQ+ZyZys
-         G6fg==
-X-Gm-Message-State: AOAM530HT1GiDlhz5s4MKGZ0hLLt8c9/LpT7684ARh1g7nTtnQGnMSO2
-        7+j+yTdnRZ/4QpNsHB0uJVWATuJ9y8dyPqrh3lE=
-X-Google-Smtp-Source: ABdhPJxkKaaqmP1yD5KkT1WDGPhrs4U093UJFle+O8eEAxczRSvS3cNUQHrli4Wg3ThB1a7h6iPIJY6gFYSC+ira9KQ=
-X-Received: by 2002:a05:6e02:1ba8:: with SMTP id n8mr21448557ili.254.1638549072984;
- Fri, 03 Dec 2021 08:31:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
- <Yao51m9EXszPsxNN@redhat.com>
-In-Reply-To: <Yao51m9EXszPsxNN@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 3 Dec 2021 18:31:01 +0200
-Message-ID: <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
-Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     David Anderson <dvander@google.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
-        paulmoore@microsoft.com, Luca.Boccassi@microsoft.com
+        Fri, 3 Dec 2021 11:44:39 -0500
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B3A98Tc006301;
+        Fri, 3 Dec 2021 08:41:13 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
+ subject : to : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=cHN1Fk410IVGzEAu/UP5SliHLZAmhXp58W/dV4+vaIs=;
+ b=a6AuqnLvTcuYZMoWK40s9My+L+MdKeI8Q+Iec1QxVEaXS1hrRSw5tmwpcXaKlOHDpfSG
+ DboZK0ygaXNlj0yQAoVspaD94UHIS7qYk9lNuZc30ZUBhvCEMHr4nN3BZeB+CXXs7jx4
+ v034whynZJW96Ha2qzELxQZkhTcw7LGVkIc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 3cqh7ptktf-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 03 Dec 2021 08:41:13 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Fri, 3 Dec 2021 08:41:12 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cY2brwjCe0+zLacIfBmUfdzocByo9sosMImVySXqZnVAIJ53BzZLg4pLsQMUo1qeAPHSoEkQG6HtWJ1hyYGilHfYlOMqEncnF3u9nXGxsJcftURZRPjbJC+z6BkzJh2n048tNoacryPLcphNeLCrln/3XsZHx+JYzQbZlFxkwJawDVY+b6fPZCsI9+unUpulzH6tZzx3rZzrVzrdVFp9zU1gy1DCb1ubhzy+BYNbg87XNrwqSc7d8QRTgDywMMv+LyvB96mDw/yj/ZTmAh7WfIAgQlR1uLdj9T161EsfHZMlkwFr8MwU0TIO/oWbrD7fuONfscatjxqPZx3fxogBxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cHN1Fk410IVGzEAu/UP5SliHLZAmhXp58W/dV4+vaIs=;
+ b=jejatdHA0bFz5pCKMLqL2CLigOHK31OUH4vn0EwluRsvTJloyZqh+NBJZuU/JOH4Q77qDf5nTRRzslVO7qro2KnlwD2j44a3b4dum15FIyqMOpc4WOVqkXxv+bxg+6NL6ppjSHGC4oPVuDN6zc7dAr20MSCr5vFUT6jTkhWXqS+zGKl+JOL2v9AY/WYTSp6oXa+6DjK8v+33C+nFJtc3BtEpQTNfSynZunx9cF0WmWeZaycNFYLBPaFXjbLb9UgGff5Ii71LZJJIGMgATmclJIXk7HImNAF3DNaApazwD+UY4g9Rzl3pDb+wRohNEI65k6KAOElBOIs7g9DTUX5zWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+Received: from MW4PR15MB4410.namprd15.prod.outlook.com (2603:10b6:303:bf::10)
+ by MW4PR15MB4777.namprd15.prod.outlook.com (2603:10b6:303:10b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.16; Fri, 3 Dec
+ 2021 16:41:11 +0000
+Received: from MW4PR15MB4410.namprd15.prod.outlook.com
+ ([fe80::f8de:1089:be1d:7bf]) by MW4PR15MB4410.namprd15.prod.outlook.com
+ ([fe80::f8de:1089:be1d:7bf%8]) with mapi id 15.20.4713.031; Fri, 3 Dec 2021
+ 16:41:11 +0000
+Message-ID: <5ac261e2-f2fc-c98e-10c3-e94b822c4acf@fb.com>
+Date:   Fri, 3 Dec 2021 08:41:09 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: [PATCH v2 4/5] io_uring: add fsetxattr and setxattr support
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+References: <20211201055144.3141001-1-shr@fb.com>
+ <20211201055144.3141001-5-shr@fb.com>
+ <ed683410-92bd-fecf-c52a-32c865b13ae4@gmail.com>
+From:   Stefan Roesch <shr@fb.com>
+In-Reply-To: <ed683410-92bd-fecf-c52a-32c865b13ae4@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR03CA0264.namprd03.prod.outlook.com
+ (2603:10b6:303:b4::29) To MW4PR15MB4410.namprd15.prod.outlook.com
+ (2603:10b6:303:bf::10)
+MIME-Version: 1.0
+Received: from [IPV6:2620:10d:c085:21d6::1400] (2620:10d:c090:400::5:8022) by MW4PR03CA0264.namprd03.prod.outlook.com (2603:10b6:303:b4::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.16 via Frontend Transport; Fri, 3 Dec 2021 16:41:10 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 21fa35d0-ec55-4c6f-596a-08d9b67bb697
+X-MS-TrafficTypeDiagnostic: MW4PR15MB4777:
+X-Microsoft-Antispam-PRVS: <MW4PR15MB477745082C4C5C17214FF55FD86A9@MW4PR15MB4777.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pksj7/04Z6MNJCPOERxlxWpHnVFBK65q2WXlNv7TcWIRxYFut0Ee0oJKjXqlmCznRSDJVnLI0hc8p2Z77rUMAoEV0NSQIYZsl91iqU1E24BnoPRH/gTIUMLE2VnyirZURpWWp9LNO5fTA97UypeELvXSd+yRw3QJ4Gyz3heXaVzVDwHQCK6wwVmHx4Gz/7jzqFVCXjgdGkd/Q6mrCKZa1nQ3KRvT8/cpxUDbrmNEQy9e9yylifcpTUh/UaxQ9vQW2yKbV67AX2ueEO3o2alUuvs4qPTmgXb7uDo5qBY4KyXgH8WhosIKDM2YwYKDIeJDG1wY7bu0KpTFY/3sSlFRF9XL99wZQ5+jzdFG6fJmb7Bh0umAM/JObpEQmKbY5HWPeUd5Y9wVJJH4grYndWFuJhdOwJbDEIOfQPRQ0mxPE0iKMuJThqo8hsxCORWsGCjG+x5MBOnHgt/a3W7F/4yomY5MqrUnwNBFeoGm+qNvZ4Bi79bWFpY4mzgnW5QvceEii8rpTd0b7eBh5OcKfF/JKd+kFRvJMwIlD42V8ZWF7d2Yr5FLg4mZW+LNASEKcRGfx9fZL29XsL6bgqjiv2bNwEnVC1eoVWTb1kcOvi9omDJ/CEnAEiYCgw3XSAa7uygHaPUuuk3WXKvEPH+ZcjcQBREZ0M6Y9g0amSIu9opeObOKsZi+/F3OoHkDP4XO7S2r7N8Rd7+XRVDFIHiEafCN+Uxssi+Nopl3KyESQz/h9ow=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR15MB4410.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(508600001)(31696002)(4744005)(6486002)(6636002)(86362001)(53546011)(83380400001)(38100700002)(2906002)(8936002)(66556008)(2616005)(66946007)(31686004)(36756003)(8676002)(316002)(66476007)(186003)(5660300002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y2laTTUyRmlxTE1GOHEyUXpxZFl1UHpqVlI4MjQ5UjVUV2UybDJValUxZ29m?=
+ =?utf-8?B?NmptTWlIUjNQQlovTzJJalgzTDFhaG9XdVFET3NiZnJyN2ZIcnA2eW5sMWJG?=
+ =?utf-8?B?eGxYaXp2YWtCTWhzSjBDcnM3bStTWnRwcVM5RTU5TFc0ZGs0WDdTZlo5eXNE?=
+ =?utf-8?B?RDFEZVZldTlZZDN0RWhWd2ovK1BRUk5tdHJ0Qk1JMXFuSVljbFdTV0U1ak9x?=
+ =?utf-8?B?R2RLQTdzdm81bFFxbGpDMUduUjJBU3VyR3NqWEpLOXNINkxBZ1lTdy9RdWtZ?=
+ =?utf-8?B?S0tCUnIwYW8vZzZEOXlFZ1pUSzljc3hCWGVzQ0JYZFd5OVR0R1l5ZEFvclVQ?=
+ =?utf-8?B?bHQ2dkZ1VTVOaW1WQTRZdWVtdEkyc3ZqTlRFRUZsaUNmWlJBWCtrMWErRWdn?=
+ =?utf-8?B?QWNwa1plUS90eHZoWVZRL2o0aHpobnk3eEV6T2FNS25EN2JPQWZLOFVJYzhi?=
+ =?utf-8?B?U0ozS3hiRWNpa1phSURYaGdaeWFEZng1M1M4Y0N0aFNmbmhvSGc2ZW5GWjRT?=
+ =?utf-8?B?SFcyNTc0WnNmWVlWa0tTYXpJMnhxallJWFB3dVdDK1VZMElGZGlnd1V6K295?=
+ =?utf-8?B?UytwcWo3Tmw4KzBOdmZNQUhLQS9vY1ZlaGszNml2OFR1ZStmTDNyWWVpS2pI?=
+ =?utf-8?B?NFYvd2pmTWtyaHlYTWpDYjgzcDduemovMEVROXV5d3ZWRHcvYUtraWRWWUVT?=
+ =?utf-8?B?amczSFV0UUw3RytZSU5EbjA5VHBySy94YTdKVE4rV0ZFL0dwSjcyVy9QdlB3?=
+ =?utf-8?B?UWsrVGRUMjlmWTYwRFRnS0NUZ0NuekZZcmQ0MVNhbUw3TU9NRTIxZ3ZkRlE4?=
+ =?utf-8?B?SUpJZlU2K0hLQWVobDFIKzhuWFZhcDZTT2RjNWwydVVPQkIzVzV3TlNrMDU3?=
+ =?utf-8?B?RUs2Y1IxSy9NY01pVFFPWm5hU3NvVmQ5WGJXYi9HWW9XMkdYSk9XMWlhNVQ4?=
+ =?utf-8?B?NnNWT1FoRnRCN3NsK3RudSsxL3MrR0VDRVJPbVlGMlZPak52SWtpcmZxUEF1?=
+ =?utf-8?B?d0FvVHpMai9BdHBHNFhnZDYrQThHRUtrVG5tMHBFOXdsZ004ZFA5SEVaMU9J?=
+ =?utf-8?B?MHhIT04zeVNMMkE0SDNjamlYR3JNK0ppVzVZNkYvRFVHa1BGT1F5b0Z1VmhI?=
+ =?utf-8?B?dW9jRTM2VVM1blc2UCtLSmwwU1pwY3QrU0ZNcXNyeWRRL2RHd1gxOHBWT1dw?=
+ =?utf-8?B?RWx2ak1uNlFmMmIxNzBFRHpSam9Ubk94VTVtc0QrZmZhY0h3amNQUnkzQ3R2?=
+ =?utf-8?B?REhKa09tTDdBVjJSU3pqKzMzcnpJQ01ZT0lWL2haZ2VuTFM4ZjYwNFZ0Y1F2?=
+ =?utf-8?B?d0ZLNFJoWWErTnZkTXBlWnUydTJyNnNWRzQvMUM1MDVRaGw5RE1xc2F1cEl5?=
+ =?utf-8?B?T1VQMVA3UlVEUzU0bGtmQnpndVZ6emJ5bHQ2Y1VKY2R6ejBqRXJ2Qm5LVVll?=
+ =?utf-8?B?eVFBV2FiMVZHY0lqUnFHTklkdm5mbm8xYXFab29jZnluMFNBZXJmd3IwV25k?=
+ =?utf-8?B?RkdZbEZHL0s4Mk91NTYvRG1UUkp2aW1LSFJBNE5lR0V3QVA2dFRUTEFDQk8r?=
+ =?utf-8?B?MDZCZ3J2eFp3c25WRGZ3N0FJdFp5K0JnbDBoeW53SkVZdXJEVk5rc2pYenpZ?=
+ =?utf-8?B?KzVvZEt6WFdCRFRadEFkQzRMV3JESUdPb0VBajhrK1V5bTBnbGR5QWkrKzVR?=
+ =?utf-8?B?VUhNNGFGOUhnWXNKMzh0L2dUVnR3M2ExZXczMksrbFlEMms2eW1ydWtKeHEv?=
+ =?utf-8?B?R3ZUWGFtdFRCWUcwenJlRkJ5WHo2cU52K2JtUXg2VXdUb2dHWFNwYjlZeXY1?=
+ =?utf-8?B?MmJ0UVdOUHV2UTFabkdmL3dJUG1VOHhuckdja09hVldjd1JrdGVGMk1wb0Z5?=
+ =?utf-8?B?U3ZCYUFIcmdKUFJlMlcvNmdRNDk0ZXVDU0RXVkl2TzJBKzV6Y3JHdmR1NWpw?=
+ =?utf-8?B?eGxwM3ZGOUJEYzh2emt3VlBLSlI4djYvcHl1UUNzbEpONFlOVFpQWlVBVitr?=
+ =?utf-8?B?NjZhMXlyT2Rsc0JyaVkwM1lWUG5uZUY1K28zNElER2lrM2Z1TFpOcVBXRUpS?=
+ =?utf-8?B?djlGQ1l0elM5MDFDQVR0c1hpalM0Ulp4ejNVNmI2NkhUR2pHK09mNlpKQXhv?=
+ =?utf-8?Q?pupbY561xUI8CgjszBi1stmO4?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21fa35d0-ec55-4c6f-596a-08d9b67bb697
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR15MB4410.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2021 16:41:11.3327
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dji+cbiB5DglXtgiYEfMshN2q66rSJ/9vSdHQ6SMfkZlA9VRGY9/eUTqnaJHkCY9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR15MB4777
+X-OriginatorOrg: fb.com
+X-Proofpoint-GUID: A2Chsgjtz8c1Q7-di4tN7BixPvtf9Bhy
+X-Proofpoint-ORIG-GUID: A2Chsgjtz8c1Q7-di4tN7BixPvtf9Bhy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-03_07,2021-12-02_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 spamscore=0 adultscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112030106
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 3, 2021 at 5:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Wed, Nov 17, 2021 at 09:36:42AM +0200, Amir Goldstein wrote:
-> > On Wed, Nov 17, 2021 at 3:58 AM David Anderson <dvander@google.com> wrote:
-> > >
-> > > Mark Salyzyn (3):
-> > >   Add flags option to get xattr method paired to __vfs_getxattr
-> > >   overlayfs: handle XATTR_NOSECURITY flag for get xattr method
-> > >   overlayfs: override_creds=off option bypass creator_cred
-> > >
-> > > Mark Salyzyn + John Stultz (1):
-> > >   overlayfs: inode_owner_or_capable called during execv
-> > >
-> > > The first three patches address fundamental security issues that should
-> > > be solved regardless of the override_creds=off feature.
-> > >
-> > > The fourth adds the feature depends on these other fixes.
-> > >
-> > > By default, all access to the upper, lower and work directories is the
-> > > recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> > > checked against the caller's credentials.
-> > >
-> > > If the principles of least privilege are applied for sepolicy, the
-> > > mounter's credentials might not overlap the credentials of the caller's
-> > > when accessing the overlayfs filesystem.  For example, a file that a
-> > > lower DAC privileged caller can execute, is MAC denied to the
-> > > generally higher DAC privileged mounter, to prevent an attack vector.
-> > >
-> > > We add the option to turn off override_creds in the mount options; all
-> > > subsequent operations after mount on the filesystem will be only the
-> > > caller's credentials.  The module boolean parameter and mount option
-> > > override_creds is also added as a presence check for this "feature",
-> > > existence of /sys/module/overlay/parameters/overlay_creds
-> > >
-> > > Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> > > Signed-off-by: David Anderson <dvander@google.com>
-> > > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > Cc: Eric W. Biederman <ebiederm@xmission.com>
-> > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > > Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> > > Cc: John Stultz <john.stultz@linaro.org>
-> > > Cc: linux-doc@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > Cc: linux-unionfs@vger.kernel.org
-> > > Cc: linux-security-module@vger.kernel.org
-> > > Cc: kernel-team@android.com
-> > > Cc: selinux@vger.kernel.org
-> > > Cc: paulmoore@microsoft.com
-> > > Cc: Luca.Boccassi@microsoft.com
-> > >
-> > > ---
-> > >
-> > > v19
-> > > - rebase.
-> > >
-> >
-> > Hi David,
-> >
-> > I see that the patch set has changed hands (presumably to Android upstreaming
-> > team), but you just rebased v18 without addressing the maintainers concerns [1].
-> >
->
-> BTW, where is patch 1 of the series. I can't seem to find it.
->
-> I think I was running into issues with getxattr() on underlying filesystem
-> as well (if mounter did not have sufficient privileges) and tried to fix
-> it. But did not find a good solution at that point of time.
->
-> https://lore.kernel.org/linux-unionfs/1467733854-6314-6-git-send-email-vgoyal@redhat.com/
->
-> So basically when overlay inode is being initialized, code will try to
-> query "security.selinux" xattr on underlying file to initialize selinux
-> label on the overlay inode. For regular filesystems, they bypass the
-> security check by calling __vfs_getxattr() when trying to initialize
-> this selinux security label. But with layered filesystem, it still
-> ends up calling vfs_getxattr() on underlying filesyste. Which means
-> it checks for caller's creds and if caller is not priviliged enough,
-> access will be denied.
->
-> To solve this problem, looks like this patch set is passing a flag
-> XATTR_NOSECUROTY so that permission checks are skipped in getxattr()
-> path in underlying filesystem. As long as this information is
-> not leaked to user space (and remains in overlayfs), it probably is
-> fine? And if information is not going to user space, then it probably
-> is fine for unprivileged overlayfs mounts as well?
->
-> I see a comment from Miklos as well as you that it is not safe to
-> do for unprivileged mounts. Can you help me understand why that's
-> the case.
->
->
-> > Specifically, the patch 2/4 is very wrong for unprivileged mount and
->
-> Can you help me understand why it is wrong. (/me should spend more
-> time reading the patch. But I am taking easy route of asking you. :-)).
->
 
-I should have spent more time reading the patch too :-)
-I was not referring to the selinux part. That looks fine I guess.
 
-I was referring to the part of:
-"Check impure, opaque, origin & meta xattr with no sepolicy audit
-(using __vfs_getxattr) since these operations are internal to
-overlayfs operations and do not disclose any data."
-I don't know how safe that really is to ignore the security checks
-for reading trusted xattr and allow non-privileged mounts to do that.
-Certainly since non privileged mounts are likely to use userxattr
-anyway, so what's the reason to bypass security?
+On 12/2/21 7:55 PM, Pavel Begunkov wrote:
+> On 12/1/21 05:51, Stefan Roesch wrote:
+>> This adds support to io_uring for the fsetxattr and setxattr API.
+> 
+> io_uring part (4/5 and 5/5) look sane, just one comments below
+> 
+>  
+>> Signed-off-by: Stefan Roesch <shr@fb.com>
+>> ---
+>>   fs/io_uring.c                 | 174 ++++++++++++++++++++++++++++++++++
+>>   include/uapi/linux/io_uring.h |   6 +-
+>>   2 files changed, 179 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 568729677e25..9d977bf243fd 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+> [...]
+>> +static int io_fsetxattr_prep(struct io_kiocb *req,
+>> +            const struct io_uring_sqe *sqe)
+>> +{
+>> +    if (!req->file)
+>> +        return -EBADF;
+> 
+> No need, io_init_req() will fail the request if it can't get a file.
+> Same for fgetxattr.
 
-> > I think that the very noisy patch 1/4 could be completely avoided:
->
-> How can it completely avoided. If mounter is not privileged then
-> vfs_getxattr() on underlying filesystem will fail. Or if
-> override_creds=off, then caller might not be privileged enough to
-> do getxattr() but we still should be able to initialize overlay
-> inode security label.
->
+Thanks for the review Pavel, I'll make the change.
 
-My bad. I didn't read the description of the selinux problem
-with the re-post and forgot about it.
-
-> > Can't you use -o userxattr mount option
->
-> user xattrs done't work for device nodes and symlinks.
->
-> BTW, how will userxattr solve the problem completely. It can be used
-> to store overlay specific xattrs but accessing security xattrs on
-> underlying filesystem will still be a problem?
-
-It cannot.
-As long as the patch sticks with passing through the
-getxattr flags, it looks fine to me.
-passing security for trusted.overlay seems dodgy.
-
-Thanks,
-Amir.
+> 
+> 
+>> +
+>> +    return __io_setxattr_prep(req, sqe, file_mnt_user_ns(req->file));
+>> +}
+>> +
+> 
