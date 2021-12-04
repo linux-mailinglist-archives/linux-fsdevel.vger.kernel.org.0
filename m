@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 823DE4683D1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Dec 2021 10:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 148214683D5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Dec 2021 10:53:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384601AbhLDJ4p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Dec 2021 04:56:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57862 "EHLO
+        id S1384577AbhLDJ4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Dec 2021 04:56:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384558AbhLDJ4h (ORCPT
+        with ESMTP id S1384564AbhLDJ4j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Dec 2021 04:56:37 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1BDC061751;
-        Sat,  4 Dec 2021 01:53:12 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id g19so5295915pfb.8;
-        Sat, 04 Dec 2021 01:53:12 -0800 (PST)
+        Sat, 4 Dec 2021 04:56:39 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B02C061A83;
+        Sat,  4 Dec 2021 01:53:14 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id f125so5605749pgc.0;
+        Sat, 04 Dec 2021 01:53:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jc/1UqX6dBziNJTgW2IO/F7rtsTi2nR5UyyzWa0yaTY=;
-        b=OPS6Tq0grzniAtkhVxBUnYGlNHe2LHenEl9GBTJUtoQpFmZ4NpGLdXZjKUgC7IZqdL
-         ZKWU9aSUkUqHoSXlb9199RCCbprlEwAz/eREA8MLQnnkIgsEEY3qPvF/NMesCapvpCTL
-         CDJI0dUFjTdXdtPWz0FFQdAtRz26RuQoiQvkBRzKFySMAH48+WOoxFj1q+RcM1mq8PJA
-         4HpF89d8G613VAWp+7lBQWZzOShQCn6ZJ9mRR7ESbX0eCDt7rNkgILW7w1PQEFJhi3gT
-         yF3ugmTHCdttEto30CCqoAPVMIpMK7h+XNAJYJWgzLuqIe2i7V6I3L23Amzdh+sY9Pc8
-         tOmw==
+        bh=czJoVryBJuRcT/ehuX/TDIeW+lRJT86wq9/OvXnh70g=;
+        b=E6qLZya8+ifZxNJOIPiTCTofzYjJThBlfeuM51/2mqfsnjW5NtrNTz/6a0nEh7jmKU
+         VGTTs3/RbA7s8syhuDBh+k70qRK3hetMq9n8itSkvFJ+mtTIN0Uc+WJOANDPdKHwH8vs
+         k8udbqT/eL9Tzpjtsu+6e9o/SLIkzrLwPCDSvquIL+N5FwmpTXeP1wqnmE7nQK/1dJZO
+         ksP728T5KeU42m8NPGDNz1UCB83nn0OrhifZgrDL+dypJQ5KxuroJ3f30wEMYdTajgp1
+         tA72KBktvSwUiATQBi7Hc+gb1PlQJIXCz0eUPuwixg5JmBdOEYIRfpkwowmfkmIn30dq
+         VNVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jc/1UqX6dBziNJTgW2IO/F7rtsTi2nR5UyyzWa0yaTY=;
-        b=3hUN/Fb0jkawNHT+khD9Rs1Fef00KawgSg9os2tNzpqWK+LqKdmHgljzBAl1vD2+AM
-         XOpcdmhiy3nl336PnDoNJP7D5xffW2aDYc/q3ab05gKNfeQ1JEHe4/huTsbq7Ot5JoVV
-         NWHNwLvmdhbmok4O0CWIH1ly9/mMRwgfABC5XUTSViuLipLZM/HLd4qiwcQqQw09bPt2
-         nARBLI/Moz7y5JP3JnTy2QM28yHjzhKFu5AakTBDIMHdKaact3uy+PYlgbtdPkDuljw/
-         Bwl8BIPr251cUgOJ3qSAJyVO3By3+wACjDh5wmTJ2pxWb2CnCDF4RXJMG+iwe28mUt3w
-         Pniw==
-X-Gm-Message-State: AOAM532sUXFWgSVuuxHP5iWoyEDf7WBaQaFpdFFXyr5aacfWMTs9dJII
-        COJr/TyUNdInrxtlq4U2nRk=
-X-Google-Smtp-Source: ABdhPJxOtpMKrYAZBUYRY5WFF9PUZ3+zcvLt12isc0/o9+IZvyummoBi6CX2Z881q/Ptmt968HlHTw==
-X-Received: by 2002:a63:1107:: with SMTP id g7mr8918770pgl.108.1638611592149;
-        Sat, 04 Dec 2021 01:53:12 -0800 (PST)
+        bh=czJoVryBJuRcT/ehuX/TDIeW+lRJT86wq9/OvXnh70g=;
+        b=KN0cAaCvFMtL9uhNfN9W6wPZotL0glCFfEQGFDqthn+N2v6LMTUqTUOvbwyKhw3fEs
+         QRgOew7yEGuOASD+t6Hi3W5F14xm+KUlTrvGjo/6lHx/WlFz+ysEYWRjfxIa+BfkeO8i
+         aESEtAXF4Rf1cSji95NHolZY/TI4RZzImrN5uRLEBmVt4kyFwqy0vmeSH2VNjk48qHdB
+         1Nx+P0QHcl6ohImJgTgEHbezpW8yscCsng1mhIVQrbefXQieKdSFndzx0U6KKbXJl/7Y
+         BNRDQrSzbg+6FccbHulfv/NMEn+MdfCuHJ9MRpDFJGJDtRdJwtXLOH8bvkJaRrZUiLTA
+         LjLg==
+X-Gm-Message-State: AOAM53300BVZIi/DEJ3OY307FecX0/xCLirwSu4SJSHwPpZIsAwrT2rx
+        nxle5PBYVMs5T73r2yuK9S8=
+X-Google-Smtp-Source: ABdhPJxzLifxgl4vQbzEDYn+z7ENKxXxDFCDs3LmIROFaOViZ6d6BbSiRJPdAV7fU9k00bDw17QoEA==
+X-Received: by 2002:a65:6790:: with SMTP id e16mr8839078pgr.112.1638611593497;
+        Sat, 04 Dec 2021 01:53:13 -0800 (PST)
 Received: from vultr.guest ([45.76.74.237])
-        by smtp.gmail.com with ESMTPSA id ms15sm4343198pjb.26.2021.12.04.01.53.10
+        by smtp.gmail.com with ESMTPSA id ms15sm4343198pjb.26.2021.12.04.01.53.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 01:53:11 -0800 (PST)
+        Sat, 04 Dec 2021 01:53:13 -0800 (PST)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     akpm@linux-foundation.org, rostedt@goodmis.org,
         keescook@chromium.org, pmladek@suse.com, david@redhat.com,
@@ -61,9 +61,9 @@ Cc:     linux-mm@kvack.org, bpf@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH -mm 4/5] tools/perf: replace hard-coded 16 with TASK_COMM_LEN
-Date:   Sat,  4 Dec 2021 09:52:55 +0000
-Message-Id: <20211204095256.78042-5-laoar.shao@gmail.com>
+Subject: [PATCH -mm 5/5] bpf/progs: replace hard-coded 16 with TASK_COMM_LEN
+Date:   Sat,  4 Dec 2021 09:52:56 +0000
+Message-Id: <20211204095256.78042-6-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20211204095256.78042-1-laoar.shao@gmail.com>
 References: <20211204095256.78042-1-laoar.shao@gmail.com>
@@ -73,10 +73,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-evsel-tp-sched will verify the task comm len in sched:sched_switch
-and sched:sched_wakeup tracepoints. The len must be same with TASK_COMM_LEN
-defined in linux/sched.h. In order to make it grepable, we'd better replace
-the hard-coded 16 with TASK_COMM_LEN.
+The comm used in these bpf progs should have the same size with the comm
+field in struct task_struct defined in linux/sched.h. We'd better define
+the size as TASK_COMM_LEN to make it more grepable.
+
+The bpf progs kernel code can inlcude vmlinux.h generated by BTF CO-RE
+to use TASK_COMM_LEN, while the userspace code can't include it so
+TASK_COMM_LEN is specifically defined in the userspace code.
+
+In order to fix redefinitions caused by the new included vmlinux.h, some
+headers are removed and some structs are renamed.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -92,49 +98,272 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Petr Mladek <pmladek@suse.com>
 ---
- tools/perf/tests/evsel-tp-sched.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/ringbuf.c      |  9 +++++----
+ .../testing/selftests/bpf/prog_tests/ringbuf_multi.c  |  8 +++++---
+ .../selftests/bpf/prog_tests/sk_storage_tracing.c     |  3 ++-
+ .../testing/selftests/bpf/prog_tests/test_overhead.c  |  3 ++-
+ .../selftests/bpf/prog_tests/trampoline_count.c       |  3 ++-
+ .../selftests/bpf/progs/test_core_reloc_kernel.c      | 11 +++++------
+ tools/testing/selftests/bpf/progs/test_ringbuf.c      |  8 ++++----
+ .../testing/selftests/bpf/progs/test_ringbuf_multi.c  |  8 ++++----
+ .../selftests/bpf/progs/test_sk_storage_tracing.c     |  4 ++--
+ 9 files changed, 31 insertions(+), 26 deletions(-)
 
-diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-tp-sched.c
-index cf4da3d748c2..83e0ce2e676f 100644
---- a/tools/perf/tests/evsel-tp-sched.c
-+++ b/tools/perf/tests/evsel-tp-sched.c
-@@ -5,6 +5,8 @@
- #include "tests.h"
- #include "debug.h"
+diff --git a/tools/testing/selftests/bpf/prog_tests/ringbuf.c b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
+index 9a80fe8a6427..39e43245db0a 100644
+--- a/tools/testing/selftests/bpf/prog_tests/ringbuf.c
++++ b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
+@@ -15,14 +15,15 @@
+ #include "test_ringbuf.lskel.h"
+ 
+ #define EDONE 7777
++#define TASK_COMM_LEN 16
+ 
+ static int duration = 0;
+ 
+-struct sample {
++struct sample_ringbuf {
+ 	int pid;
+ 	int seq;
+ 	long value;
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ };
+ 
+ static int sample_cnt;
+@@ -39,7 +40,7 @@ static int atomic_xchg(int *cnt, int val)
+ 
+ static int process_sample(void *ctx, void *data, size_t len)
+ {
+-	struct sample *s = data;
++	struct sample_ringbuf *s = data;
+ 
+ 	atomic_inc(&sample_cnt);
+ 
+@@ -83,7 +84,7 @@ static void *poll_thread(void *input)
+ 
+ void test_ringbuf(void)
+ {
+-	const size_t rec_sz = BPF_RINGBUF_HDR_SZ + sizeof(struct sample);
++	const size_t rec_sz = BPF_RINGBUF_HDR_SZ + sizeof(struct sample_ringbuf);
+ 	pthread_t thread;
+ 	long bg_ret = -1;
+ 	int err, cnt, rb_fd;
+diff --git a/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c b/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c
+index e945195b24c9..cb592555513f 100644
+--- a/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c
++++ b/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c
+@@ -4,19 +4,21 @@
+ #include <sys/epoll.h>
+ #include "test_ringbuf_multi.skel.h"
  
 +#define TASK_COMM_LEN 16
 +
- static int evsel__test_field(struct evsel *evsel, const char *name, int size, bool should_be_signed)
+ static int duration = 0;
+ 
+-struct sample {
++struct sample_ringbuf {
+ 	int pid;
+ 	int seq;
+ 	long value;
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ };
+ 
+ static int process_sample(void *ctx, void *data, size_t len)
  {
- 	struct tep_format_field *field = evsel__field(evsel, name);
-@@ -43,7 +45,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
- 		return -1;
- 	}
+ 	int ring = (unsigned long)ctx;
+-	struct sample *s = data;
++	struct sample_ringbuf *s = data;
  
--	if (evsel__test_field(evsel, "prev_comm", 16, false))
-+	if (evsel__test_field(evsel, "prev_comm", TASK_COMM_LEN, false))
- 		ret = -1;
+ 	switch (s->seq) {
+ 	case 0:
+diff --git a/tools/testing/selftests/bpf/prog_tests/sk_storage_tracing.c b/tools/testing/selftests/bpf/prog_tests/sk_storage_tracing.c
+index 547ae53cde74..dbbdbf4400d7 100644
+--- a/tools/testing/selftests/bpf/prog_tests/sk_storage_tracing.c
++++ b/tools/testing/selftests/bpf/prog_tests/sk_storage_tracing.c
+@@ -11,11 +11,12 @@
  
- 	if (evsel__test_field(evsel, "prev_pid", 4, true))
-@@ -55,7 +57,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
- 	if (evsel__test_field(evsel, "prev_state", sizeof(long), true))
- 		ret = -1;
+ #define LO_ADDR6 "::1"
+ #define TEST_COMM "test_progs"
++#define TASK_COMM_LEN 16
  
--	if (evsel__test_field(evsel, "next_comm", 16, false))
-+	if (evsel__test_field(evsel, "next_comm", TASK_COMM_LEN, false))
- 		ret = -1;
+ struct sk_stg {
+ 	__u32 pid;
+ 	__u32 last_notclose_state;
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ };
  
- 	if (evsel__test_field(evsel, "next_pid", 4, true))
-@@ -73,7 +75,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
- 		return -1;
- 	}
+ static struct test_sk_storage_tracing *skel;
+diff --git a/tools/testing/selftests/bpf/prog_tests/test_overhead.c b/tools/testing/selftests/bpf/prog_tests/test_overhead.c
+index 123c68c1917d..7fe60ec12fc4 100644
+--- a/tools/testing/selftests/bpf/prog_tests/test_overhead.c
++++ b/tools/testing/selftests/bpf/prog_tests/test_overhead.c
+@@ -6,6 +6,7 @@
+ #include <test_progs.h>
  
--	if (evsel__test_field(evsel, "comm", 16, false))
-+	if (evsel__test_field(evsel, "comm", TASK_COMM_LEN, false))
- 		ret = -1;
+ #define MAX_CNT 100000
++#define TASK_COMM_LEN 16
  
- 	if (evsel__test_field(evsel, "pid", 4, true))
+ static __u64 time_get_ns(void)
+ {
+@@ -67,7 +68,7 @@ void test_test_overhead(void)
+ 	struct bpf_object *obj;
+ 	struct bpf_link *link;
+ 	int err, duration = 0;
+-	char comm[16] = {};
++	char comm[TASK_COMM_LEN] = {};
+ 
+ 	if (CHECK_FAIL(prctl(PR_GET_NAME, comm, 0L, 0L, 0L)))
+ 		return;
+diff --git a/tools/testing/selftests/bpf/prog_tests/trampoline_count.c b/tools/testing/selftests/bpf/prog_tests/trampoline_count.c
+index fc146671b20a..da83f7408aa8 100644
+--- a/tools/testing/selftests/bpf/prog_tests/trampoline_count.c
++++ b/tools/testing/selftests/bpf/prog_tests/trampoline_count.c
+@@ -5,6 +5,7 @@
+ #include <test_progs.h>
+ 
+ #define MAX_TRAMP_PROGS 38
++#define TASK_COMM_LEN 16
+ 
+ struct inst {
+ 	struct bpf_object *obj;
+@@ -51,7 +52,7 @@ void serial_test_trampoline_count(void)
+ 	int err, i = 0, duration = 0;
+ 	struct bpf_object *obj;
+ 	struct bpf_link *link;
+-	char comm[16] = {};
++	char comm[TASK_COMM_LEN] = {};
+ 
+ 	/* attach 'allowed' trampoline programs */
+ 	for (i = 0; i < MAX_TRAMP_PROGS; i++) {
+diff --git a/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c b/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c
+index 145028b52ad8..7b1bb73c3501 100644
+--- a/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c
++++ b/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c
+@@ -1,8 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2019 Facebook
+ 
+-#include <linux/bpf.h>
+-#include <stdint.h>
++#include <vmlinux.h>
+ #include <stdbool.h>
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_core_read.h>
+@@ -23,11 +22,11 @@ struct core_reloc_kernel_output {
+ 	int comm_len;
+ };
+ 
+-struct task_struct {
++struct task_struct_reloc {
+ 	int pid;
+ 	int tgid;
+-	char comm[16];
+-	struct task_struct *group_leader;
++	char comm[TASK_COMM_LEN];
++	struct task_struct_reloc *group_leader;
+ };
+ 
+ #define CORE_READ(dst, src) bpf_core_read(dst, sizeof(*(dst)), src)
+@@ -35,7 +34,7 @@ struct task_struct {
+ SEC("raw_tracepoint/sys_enter")
+ int test_core_kernel(void *ctx)
+ {
+-	struct task_struct *task = (void *)bpf_get_current_task();
++	struct task_struct_reloc *task = (void *)bpf_get_current_task();
+ 	struct core_reloc_kernel_output *out = (void *)&data.out;
+ 	uint64_t pid_tgid = bpf_get_current_pid_tgid();
+ 	uint32_t real_tgid = (uint32_t)pid_tgid;
+diff --git a/tools/testing/selftests/bpf/progs/test_ringbuf.c b/tools/testing/selftests/bpf/progs/test_ringbuf.c
+index eaa7d9dba0be..45b28965f3a5 100644
+--- a/tools/testing/selftests/bpf/progs/test_ringbuf.c
++++ b/tools/testing/selftests/bpf/progs/test_ringbuf.c
+@@ -1,16 +1,16 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2020 Facebook
+ 
+-#include <linux/bpf.h>
++#include <vmlinux.h>
+ #include <bpf/bpf_helpers.h>
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+-struct sample {
++struct sample_ringbuf {
+ 	int pid;
+ 	int seq;
+ 	long value;
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ };
+ 
+ struct {
+@@ -39,7 +39,7 @@ SEC("fentry/__x64_sys_getpgid")
+ int test_ringbuf(void *ctx)
+ {
+ 	int cur_pid = bpf_get_current_pid_tgid() >> 32;
+-	struct sample *sample;
++	struct sample_ringbuf *sample;
+ 	int zero = 0;
+ 
+ 	if (cur_pid != pid)
+diff --git a/tools/testing/selftests/bpf/progs/test_ringbuf_multi.c b/tools/testing/selftests/bpf/progs/test_ringbuf_multi.c
+index 197b86546dca..7c9db148f168 100644
+--- a/tools/testing/selftests/bpf/progs/test_ringbuf_multi.c
++++ b/tools/testing/selftests/bpf/progs/test_ringbuf_multi.c
+@@ -1,16 +1,16 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2020 Facebook
+ 
+-#include <linux/bpf.h>
++#include <vmlinux.h>
+ #include <bpf/bpf_helpers.h>
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+-struct sample {
++struct sample_ringbuf {
+ 	int pid;
+ 	int seq;
+ 	long value;
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ };
+ 
+ struct ringbuf_map {
+@@ -55,7 +55,7 @@ SEC("tp/syscalls/sys_enter_getpgid")
+ int test_ringbuf(void *ctx)
+ {
+ 	int cur_pid = bpf_get_current_pid_tgid() >> 32;
+-	struct sample *sample;
++	struct sample_ringbuf *sample;
+ 	void *rb;
+ 	int zero = 0;
+ 
+diff --git a/tools/testing/selftests/bpf/progs/test_sk_storage_tracing.c b/tools/testing/selftests/bpf/progs/test_sk_storage_tracing.c
+index 6dc1f28fc4b6..cc41a09e3130 100644
+--- a/tools/testing/selftests/bpf/progs/test_sk_storage_tracing.c
++++ b/tools/testing/selftests/bpf/progs/test_sk_storage_tracing.c
+@@ -9,7 +9,7 @@
+ struct sk_stg {
+ 	__u32 pid;
+ 	__u32 last_notclose_state;
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ };
+ 
+ struct {
+@@ -27,7 +27,7 @@ struct {
+ 	__type(value, int);
+ } del_sk_stg_map SEC(".maps");
+ 
+-char task_comm[16] = "";
++char task_comm[TASK_COMM_LEN] = "";
+ 
+ SEC("tp_btf/inet_sock_set_state")
+ int BPF_PROG(trace_inet_sock_set_state, struct sock *sk, int oldstate,
 -- 
 2.17.1
 
