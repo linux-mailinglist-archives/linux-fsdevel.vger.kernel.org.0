@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C357B4683CC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Dec 2021 10:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5734683D3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Dec 2021 10:53:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384562AbhLDJ4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Dec 2021 04:56:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57850 "EHLO
+        id S1384571AbhLDJ4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Dec 2021 04:56:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384546AbhLDJ4f (ORCPT
+        with ESMTP id S1384552AbhLDJ4g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Dec 2021 04:56:35 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F85C061751;
-        Sat,  4 Dec 2021 01:53:09 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id w33-20020a17090a6ba400b001a722a06212so6643676pjj.0;
-        Sat, 04 Dec 2021 01:53:09 -0800 (PST)
+        Sat, 4 Dec 2021 04:56:36 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A2CC061354;
+        Sat,  4 Dec 2021 01:53:11 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id q17so3760108plr.11;
+        Sat, 04 Dec 2021 01:53:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=y/3OH0dv1UtiAFVROi6oJBNv875tsxlRHeEufUcGAE8=;
-        b=SarWfOANlxY+W1wqzZLUdID9Fc3MKFpV03tydsm+v0n8XUl+dcwUDrvIiMoajZcN/8
-         VygHDL+xUCD/1rvmo4SnyP2WVPTJltzUxeDFRhWIJHSlIvbTENzg7A49yvMRspqt5kk8
-         GWVUqC9U/qbUiBA4LeT7O45VG2yDScE5EQzmMgDgJMB5jqBMFmaal7UuUJ8u5dmPdTGJ
-         83XteKkH/SE6b6jtPaiEtlYD5dVEae4/oo0qaR3E0V++A3XlLVER+QRX6/53iexk+IaZ
-         enzhxKb+F6Nw1Uik2BMvUPFslykGrZv3WzczdX1dvZ252t/S6+BIi0RphSKjA3DDhb8S
-         sXlw==
+        bh=7KNky9vHErqn9OL9wm+gliP7fCGte3KeREk90aKC+mg=;
+        b=qsHK5Wp3DDnxrHGKr78oHp3IvG22FXMQ6WLWibND/E4BbWM4VRjvkAOOeDurq/WY2z
+         fOAeQgN/6YWcrKHrMoT2GS3f/Mc7fS1YBcI7oD9q/GKw3m0e4Gr7c3s5n9lB2VkrNMed
+         UtdMn06egm/MpTXviwqTxAIO6ehe3o5MT9YHEmmQK93GlVRGSN/qnBnuwpCcK3S2inJR
+         sNVFHTPd4HdI4Szm8nxVoxpw6iVU0r3IcOYsT4R/5ZyjNtEvX64EtfZ9S8u1M/a9WdG0
+         7yz9zKW0X0SDPHB1FlCbkCy7K4rbSCIL3m6c7UPYgDAJtWjwtq1TMgbS7AcjwwbYPHSl
+         mbpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=y/3OH0dv1UtiAFVROi6oJBNv875tsxlRHeEufUcGAE8=;
-        b=bCinzKASWFp4yi3giURS1s6tv4PQvvnOYlAq+bkMap6jbQLVFzPMa+LYaEs1RTS6n3
-         MJGH0vqw9aVudU1FCKOXjDgSiSwqXYZbVErpEJJ6kW29knobpe+vwlE/qy4xmOKkV/7G
-         jl8qwOJp4w4gwxGTUVXR/dFJ69pixxwvnbop66ujQ6KrcjFLBRBwyVHiUOfduyl/pV2N
-         KFP7kenr5qNb+UWJJbGKirFMfcIpPxUpo887dePNOyjWsxwKmgOkh8vRFLi89EYJ+XcW
-         BhTAqSruA1ai07MBv0EVzEs2R8HOP6rsJMRHOO9xAuKgUlIbbUMpmHzimcQdXs5CStJj
-         S7hw==
-X-Gm-Message-State: AOAM532ZR+4IQCwGfOnwJmsKd6ByOcgMDv4ampJG6E6Zy7AN2vx4sc4O
-        RAF/Gx/O527chihgW+ZZECo=
-X-Google-Smtp-Source: ABdhPJyWUyZ8FNI0GA/R20IXskf5Z9SPmJGG1ragdsZ42JEvCLKUvt/9eoB/AkMYg6APTu6I88aWLA==
-X-Received: by 2002:a17:902:e806:b0:142:830:eaa4 with SMTP id u6-20020a170902e80600b001420830eaa4mr28670068plg.16.1638611589538;
-        Sat, 04 Dec 2021 01:53:09 -0800 (PST)
+        bh=7KNky9vHErqn9OL9wm+gliP7fCGte3KeREk90aKC+mg=;
+        b=zSEZHAhQHQpZKUaHANXO/F9I8zQi+amMr6JWTrJIdO6XvpdUSYkosnXXmxYKCL3bLB
+         Sruont0ReO2xUeXdTjFsReJ18D82xjh88kxxEs93hQbesTQJ6N4oJfFTLHnRjp5eFqyp
+         4EyufUQjfytPKcHMmz0cAN54483gJgl45AyBe1adzzRcqY2r1kRnNOhubi5C4NNo8wfC
+         9437Z/agu5q3ghymwruuX3ckumBzYzJ1Nd/U/SUtMk7HeeYbo50hfavFm5WfZZoD08tF
+         paL+CMcFdUwSXpHUurYVOjUkAIFSvceMUeznOpguUKpJuW/v9Zgbl7BZDuAxCZAdxiLu
+         9LSg==
+X-Gm-Message-State: AOAM530Bh3+bKkpusFCGI0fMaabMRn5g3ikBdk0iC4sGOQIjrwiQz2Vi
+        GK+GoqohntpqdY4vzotyOx0=
+X-Google-Smtp-Source: ABdhPJwqg6pKyGYMoMdlo2j7xJDfBIjTYhK1gMRW2j6TUtLmctuFv3TisafzMoi0MWS2K97dkPcYqQ==
+X-Received: by 2002:a17:902:bcc4:b0:141:bfc4:ada with SMTP id o4-20020a170902bcc400b00141bfc40adamr28918047pls.20.1638611590852;
+        Sat, 04 Dec 2021 01:53:10 -0800 (PST)
 Received: from vultr.guest ([45.76.74.237])
-        by smtp.gmail.com with ESMTPSA id ms15sm4343198pjb.26.2021.12.04.01.53.08
+        by smtp.gmail.com with ESMTPSA id ms15sm4343198pjb.26.2021.12.04.01.53.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 01:53:09 -0800 (PST)
+        Sat, 04 Dec 2021 01:53:10 -0800 (PST)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     akpm@linux-foundation.org, rostedt@goodmis.org,
         keescook@chromium.org, pmladek@suse.com, david@redhat.com,
@@ -61,9 +61,9 @@ Cc:     linux-mm@kvack.org, bpf@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH -mm 2/5] cn_proc: replaced old hard-coded 16 with TASK_COMM_LEN_16
-Date:   Sat,  4 Dec 2021 09:52:53 +0000
-Message-Id: <20211204095256.78042-3-laoar.shao@gmail.com>
+Subject: [PATCH -mm 3/5] samples/bpf/tracex2: replace hard-coded 16 with TASK_COMM_LEN
+Date:   Sat,  4 Dec 2021 09:52:54 +0000
+Message-Id: <20211204095256.78042-4-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20211204095256.78042-1-laoar.shao@gmail.com>
 References: <20211204095256.78042-1-laoar.shao@gmail.com>
@@ -73,9 +73,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This TASK_COMM_LEN_16 has the same meaning with the macro defined in
-linux/sched.h, but we can't include linux/sched.h in a UAPI header, so
-we should specifically define it in the cn_proc.h.
+The comm used in tracex2 should have the same size with the comm in
+task_struct, we'd better define the size of it as TASK_COMM_LEN to make it
+more grepable.
+
+linux/sched.h can be included in tracex2 kernel code, but it can't be
+included in tracex2 userspace code. So a new marco TASK_COMM_LEN is
+defined in tracex2 userspace code.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -91,31 +95,52 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Petr Mladek <pmladek@suse.com>
 ---
- include/uapi/linux/cn_proc.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ samples/bpf/tracex2_kern.c | 3 ++-
+ samples/bpf/tracex2_user.c | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/cn_proc.h b/include/uapi/linux/cn_proc.h
-index db210625cee8..6dcccaed383f 100644
---- a/include/uapi/linux/cn_proc.h
-+++ b/include/uapi/linux/cn_proc.h
-@@ -21,6 +21,8 @@
+diff --git a/samples/bpf/tracex2_kern.c b/samples/bpf/tracex2_kern.c
+index 5bc696bac27d..51dbaf765cd5 100644
+--- a/samples/bpf/tracex2_kern.c
++++ b/samples/bpf/tracex2_kern.c
+@@ -7,6 +7,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/netdevice.h>
+ #include <linux/version.h>
++#include <linux/sched.h>
+ #include <uapi/linux/bpf.h>
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
+@@ -65,7 +66,7 @@ static unsigned int log2l(unsigned long v)
+ }
  
- #include <linux/types.h>
+ struct hist_key {
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ 	u64 pid_tgid;
+ 	u64 uid_gid;
+ 	u64 index;
+diff --git a/samples/bpf/tracex2_user.c b/samples/bpf/tracex2_user.c
+index 1626d51dfffd..b728a946d83d 100644
+--- a/samples/bpf/tracex2_user.c
++++ b/samples/bpf/tracex2_user.c
+@@ -12,6 +12,7 @@
  
-+#define TASK_COMM_LEN_16 16
-+
- /*
-  * Userspace sends this enum to register with the kernel that it is listening
-  * for events on the connector.
-@@ -110,7 +112,7 @@ struct proc_event {
- 		struct comm_proc_event {
- 			__kernel_pid_t process_pid;
- 			__kernel_pid_t process_tgid;
--			char           comm[16];
-+			char           comm[TASK_COMM_LEN_16];
- 		} comm;
+ #define MAX_INDEX	64
+ #define MAX_STARS	38
++#define TASK_COMM_LEN	16
  
- 		struct coredump_proc_event {
+ /* my_map, my_hist_map */
+ static int map_fd[2];
+@@ -28,7 +29,7 @@ static void stars(char *str, long val, long max, int width)
+ }
+ 
+ struct task {
+-	char comm[16];
++	char comm[TASK_COMM_LEN];
+ 	__u64 pid_tgid;
+ 	__u64 uid_gid;
+ };
 -- 
 2.17.1
 
