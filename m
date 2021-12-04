@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0E64683C8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Dec 2021 10:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 256084683CA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Dec 2021 10:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384543AbhLDJ4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Dec 2021 04:56:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57838 "EHLO
+        id S1384554AbhLDJ4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Dec 2021 04:56:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231345AbhLDJ4c (ORCPT
+        with ESMTP id S244915AbhLDJ4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Dec 2021 04:56:32 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33710C061751;
-        Sat,  4 Dec 2021 01:53:07 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id gx15-20020a17090b124f00b001a695f3734aso4565926pjb.0;
-        Sat, 04 Dec 2021 01:53:07 -0800 (PST)
+        Sat, 4 Dec 2021 04:56:34 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A49AC061751;
+        Sat,  4 Dec 2021 01:53:08 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id j5-20020a17090a318500b001a6c749e697so6617200pjb.1;
+        Sat, 04 Dec 2021 01:53:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+JuXsVUnS+mGqaHxKyE0o/YKYrOHZGXxsAcg+PajcAw=;
-        b=iAXXWVOx9HNr6e7AStRCe78OXfyen74stssIx+IspwcnYxedIjo/XrtfOv1040hRjR
-         ImfCvgBr+l0CoPZ+nlbDKQui2IoZZE3KbqgpzcdOD9X0Y6O9Oc2W017XddVHTI/SY45S
-         i3iySAFhXUek0YFLJI9/O4UsrX64RNWBtLux+vCU7IsezQJ1H9Vto5cxfPwnEPNuVsuf
-         8ApKoHaJFIv/y5H4LXqVe9cSW/By8ffUGcnMi8XWIT6LAfrN1o7JSFeUf3Ov0J06WKKw
-         TYsxSBz/hNkNNdrbVBfuaf82Fj2rHB90VTgcEdkh/7QtHZoOgV6+mUAv2ApSssKR4Hfc
-         GA6g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GW6b3sF6GwXHhqR55kptdOe2KtH0uXmQ535WwxRDhsU=;
+        b=eX8Wa48ra4eTAbUzCOJnNU1tZ8LQ+5YwkjMF4cC9JNp6JnMctLCfNTRZ7InZ0I+Qgw
+         FVfECKW4F52lrzjt3vh137DZkIUoY7hB47gSfr/K9H2QoqO7465U7lEdZiIizj/JYnFk
+         bRoRZO41cYRH7VnyoUgkvvtsKAQWU5ZI23WV9EZiRrldtZERlW98OTwXF+tHGZgWjmMX
+         VZ8ZbEgTX590IeapTCgsueZoPBhgDl+0oMTt7QfPhE5JvJ06Zi4kfRFyaSkQQ/Ajklu3
+         uz1hArULEkefVEcgnMPS3o8gHsHiWGlBc4of8r6zd0yOpf6s9sWt4D2fMJk6/PdQTdMu
+         e0yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+JuXsVUnS+mGqaHxKyE0o/YKYrOHZGXxsAcg+PajcAw=;
-        b=XAHw1Yvrw5KgOQme+P6ndDemqLKxeiAicq9rO3MULhDp8jm9qAdC/pISXwNQwLGoll
-         MkG7pQYd7j46sFzALY3+jMWJXt6TE7sFf/+oQfvOVdaZ9vD29d8vXWu3qcWxAGLoMc8q
-         QrTkvNoJfUC/mETyp4WikkFXkwfDAMBSUmOIlNzAOynhUa2UuWnQmTGqkv8QtW8fhMVF
-         sAVaE5Jnb+irhn0LILzFodF5i6zk+d+JwMKPD/AkIVXlwHpxzjfWFoZiK1tVr9Bnwxtv
-         N1Q2DgakBpDp1sbp37OceBlQAGqrSdLcOJmqLc6Vl1KcMfX+rnQk7w3ThpDvR804b3oc
-         L2Dg==
-X-Gm-Message-State: AOAM533mGdpv+l8ZrPFhhcTM41tpeoTi8t0klsoDvxtCmoEnhUsOMo6a
-        ge8h9x4aBEihG8u8qGmitKA=
-X-Google-Smtp-Source: ABdhPJzaXGdpxyp5qIfx9US29iDUhZtFjsXlPg+SLpc8UsVegALcv/ZDWvLIdf1ITkI+JLfT1DRSEw==
-X-Received: by 2002:a17:90b:38c1:: with SMTP id nn1mr21160422pjb.91.1638611586767;
-        Sat, 04 Dec 2021 01:53:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GW6b3sF6GwXHhqR55kptdOe2KtH0uXmQ535WwxRDhsU=;
+        b=IHSusJ8GRLwrwVxCP2Xd+eBdkshxcH5YbO12hNGUURRhiMOwocHRsDjebRmfBSCLHW
+         dRsTSQGZ/BE/l7PSWQJcZ0M4ge60ijyLnTL/HVy/SAS/2Xq0BSBNzd5Q1q0E4ii+Yijv
+         +lTSQ8wX9BAcYsyLBIIMAMzB+ZVBcPk4+dOUXyrYkEwTETbfeGkppHVtyCAG+uAMl5dF
+         zuf+1eR+M2+RtK8jdFgoz55IG14S6NvqIq6XMiAPI/S7UH517qilQJ60MVAMRraLcP4p
+         x6oMv+oRFoCtmAKoGzG51/OKlUxE8GLPSMBJd6hQiI47aFxSgtpCzLgRlfeyHoPNhyOX
+         f8kA==
+X-Gm-Message-State: AOAM532+pYFK6n+NCJ+qxDRi/Aq+zHqDGUu6wL3ttu/ze3WjqipIoKv1
+        rTsK0j7YcH+hRjj9mErWz0I=
+X-Google-Smtp-Source: ABdhPJw12fabYSRxUnXmqlFx9H8BClcqkjFEXyD2Xgc+LCeTuaPuNjEU+nngQzdL92YKIn8kJzo0XA==
+X-Received: by 2002:a17:903:18d:b0:142:8ab:d11f with SMTP id z13-20020a170903018d00b0014208abd11fmr29233302plg.47.1638611588164;
+        Sat, 04 Dec 2021 01:53:08 -0800 (PST)
 Received: from vultr.guest ([45.76.74.237])
-        by smtp.gmail.com with ESMTPSA id ms15sm4343198pjb.26.2021.12.04.01.53.05
+        by smtp.gmail.com with ESMTPSA id ms15sm4343198pjb.26.2021.12.04.01.53.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 01:53:06 -0800 (PST)
+        Sat, 04 Dec 2021 01:53:07 -0800 (PST)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     akpm@linux-foundation.org, rostedt@goodmis.org,
         keescook@chromium.org, pmladek@suse.com, david@redhat.com,
@@ -61,35 +61,24 @@ Cc:     linux-mm@kvack.org, bpf@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH -mm 0/5] Phase 2 of task comm cleanups
-Date:   Sat,  4 Dec 2021 09:52:51 +0000
-Message-Id: <20211204095256.78042-1-laoar.shao@gmail.com>
+Subject: [PATCH -mm 1/5] elfcore: replace old hard-code 16 with TASK_COMM_LEN_16
+Date:   Sat,  4 Dec 2021 09:52:52 +0000
+Message-Id: <20211204095256.78042-2-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20211204095256.78042-1-laoar.shao@gmail.com>
+References: <20211204095256.78042-1-laoar.shao@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the followup work of task comm cleanups[1].
+A new macro TASK_COMM_LEN_16 is introduced for the old hard-coded 16 to
+make it more grepable. As explained above this marco, the difference
+between TASK_COMM_LEN and TASK_COMM_LEN_16 is that TASK_COMM_LEN_16 must
+be a fixed size 16 and can't be changed.
 
-In this phase, the hard-coded 16 is replaced by either TASK_COMM_LEN or
-TASK_COMM_LEN_16, to make it grepable. The difference between this two 
-marcos is: 
-- TASK_COMM_LEN
-  The size should be same with the TASK_COMM_LEN defined in linux/sched.h.
-  For the src file which can't include linux/sched.h, a macro with the 
-  the same name is defined in this file specifically. 
-- TASK_COMM_LEN_16
-  The size must be a fixed-size 16. It may be exposed to userspace so we
-  can't change it. 
-
-In order to include vmlinux.h in bpf progs under sample/bpf or
-tools/testing/selftests/bpf, some structs are renamed and some included
-headers are removed.
-
-1. https://lore.kernel.org/lkml/20211120112738.45980-1-laoar.shao@gmail.com/
-
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
 Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
@@ -102,32 +91,74 @@ Cc: David Hildenbrand <david@redhat.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Petr Mladek <pmladek@suse.com>
+---
+ include/linux/elfcore-compat.h | 8 ++------
+ include/linux/elfcore.h        | 9 ++-------
+ include/linux/sched.h          | 5 +++++
+ 3 files changed, 9 insertions(+), 13 deletions(-)
 
-Yafang Shao (5):
-  elfcore: replace old hard-code 16 with TASK_COMM_LEN_16
-  cn_proc: replaced old hard-coded 16 with TASK_COMM_LEN_16
-  samples/bpf/tracex2: replace hard-coded 16 with TASK_COMM_LEN
-  tools/perf: replace hard-coded 16 with TASK_COMM_LEN
-  bpf/progs: replace hard-coded 16 with TASK_COMM_LEN
-
- include/linux/elfcore-compat.h                        |  8 ++------
- include/linux/elfcore.h                               |  9 ++-------
- include/linux/sched.h                                 |  5 +++++
- include/uapi/linux/cn_proc.h                          |  4 +++-
- samples/bpf/tracex2_kern.c                            |  3 ++-
- samples/bpf/tracex2_user.c                            |  3 ++-
- tools/perf/tests/evsel-tp-sched.c                     |  8 +++++---
- tools/testing/selftests/bpf/prog_tests/ringbuf.c      |  9 +++++----
- .../testing/selftests/bpf/prog_tests/ringbuf_multi.c  |  8 +++++---
- .../selftests/bpf/prog_tests/sk_storage_tracing.c     |  3 ++-
- .../testing/selftests/bpf/prog_tests/test_overhead.c  |  3 ++-
- .../selftests/bpf/prog_tests/trampoline_count.c       |  3 ++-
- .../selftests/bpf/progs/test_core_reloc_kernel.c      | 11 +++++------
- tools/testing/selftests/bpf/progs/test_ringbuf.c      |  8 ++++----
- .../testing/selftests/bpf/progs/test_ringbuf_multi.c  |  8 ++++----
- .../selftests/bpf/progs/test_sk_storage_tracing.c     |  4 ++--
- 16 files changed, 52 insertions(+), 45 deletions(-)
-
+diff --git a/include/linux/elfcore-compat.h b/include/linux/elfcore-compat.h
+index 54feb64e9b5d..69fa1a728964 100644
+--- a/include/linux/elfcore-compat.h
++++ b/include/linux/elfcore-compat.h
+@@ -5,6 +5,7 @@
+ #include <linux/elf.h>
+ #include <linux/elfcore.h>
+ #include <linux/compat.h>
++#include <linux/sched.h>
+ 
+ /*
+  * Make sure these layouts match the linux/elfcore.h native definitions.
+@@ -43,12 +44,7 @@ struct compat_elf_prpsinfo
+ 	__compat_uid_t			pr_uid;
+ 	__compat_gid_t			pr_gid;
+ 	compat_pid_t			pr_pid, pr_ppid, pr_pgrp, pr_sid;
+-	/*
+-	 * The hard-coded 16 is derived from TASK_COMM_LEN, but it can't be
+-	 * changed as it is exposed to userspace. We'd better make it hard-coded
+-	 * here.
+-	 */
+-	char				pr_fname[16];
++	char				pr_fname[TASK_COMM_LEN_16];
+ 	char				pr_psargs[ELF_PRARGSZ];
+ };
+ 
+diff --git a/include/linux/elfcore.h b/include/linux/elfcore.h
+index 746e081879a5..d3bb4bd3c985 100644
+--- a/include/linux/elfcore.h
++++ b/include/linux/elfcore.h
+@@ -65,13 +65,8 @@ struct elf_prpsinfo
+ 	__kernel_gid_t	pr_gid;
+ 	pid_t	pr_pid, pr_ppid, pr_pgrp, pr_sid;
+ 	/* Lots missing */
+-	/*
+-	 * The hard-coded 16 is derived from TASK_COMM_LEN, but it can't be
+-	 * changed as it is exposed to userspace. We'd better make it hard-coded
+-	 * here.
+-	 */
+-	char	pr_fname[16];	/* filename of executable */
+-	char	pr_psargs[ELF_PRARGSZ];	/* initial part of arg list */
++	char	pr_fname[TASK_COMM_LEN_16];	/* filename of executable */
++	char	pr_psargs[ELF_PRARGSZ];		/* initial part of arg list */
+ };
+ 
+ static inline void elf_core_copy_regs(elf_gregset_t *elfregs, struct pt_regs *regs)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index c79bd7ee6029..8d963a50a2a8 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -279,6 +279,11 @@ struct task_group;
+  * BPF programs.
+  */
+ enum {
++	/*
++	 * For the old hard-coded 16, which is exposed to userspace and can't
++	 * be changed.
++	 */
++	TASK_COMM_LEN_16 = 16,
+ 	TASK_COMM_LEN = 16,
+ };
+ 
 -- 
 2.17.1
 
