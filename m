@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC2534688F8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Dec 2021 04:13:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A8E4689D7
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Dec 2021 08:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231299AbhLEDRC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Dec 2021 22:17:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59252 "EHLO
+        id S232081AbhLEH3a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Dec 2021 02:29:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229682AbhLEDRC (ORCPT
+        with ESMTP id S232010AbhLEH3a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Dec 2021 22:17:02 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF10C061751;
-        Sat,  4 Dec 2021 19:13:35 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id np6-20020a17090b4c4600b001a90b011e06so5630252pjb.5;
-        Sat, 04 Dec 2021 19:13:35 -0800 (PST)
+        Sun, 5 Dec 2021 02:29:30 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0065AC061751;
+        Sat,  4 Dec 2021 23:26:02 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id m186so8129175qkb.4;
+        Sat, 04 Dec 2021 23:26:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=K0undT0YJyHWH56ofdmr45Mkquy1Ol6IKr8TfIm45MQ=;
-        b=alh+KS7FZNqGSxV+8P/PVttRyAnFMPPkSjin/9bJMU8hS7JmzzhS8j8eLur35oi55H
-         A75i8/kfuqCKHqAVU5laxdL6wLaUq9RFf+1HxT2OK0u5WU1oI4adsc9mtBfKTcNG/ocq
-         o86QB2wduzEsB9KSp8j8RhqWqzE6wRFttV7EPX6vbHqstHWUwotYmaBfBPjgjH4J601X
-         KvQYgjXLDxu8TTDp1PHm4vvx0INBpZQBzIRvDsB4Ld4NXwSa3xEr1Pl36oQwhIqFDIIl
-         UGUExDQQz18m2wdtcxNUzCWWm3cEn7ulnLmMTfruOlqsHWItjbH6f4xujPhKH0hCP2ym
-         2aBg==
+        bh=zowSszGCjMgYZHdPz1ZCQ1VnEOEblLnUPR7Gj0ga0Vs=;
+        b=H8L2+8nVJ1TzoM56VfiynvmoGFyaKEcyjMd1peEexDpDjB9ClTekh46kJx5dHglpsN
+         LEnfx63YLMZOjFknCW+9ZNJocppmoS3NwNLzYuv7CvaeJvq0RXniwrT+olAZ9h/3aOD/
+         8VL6fGXO3kxlVOTdYGfWjhHcWlb/AN0MEBYJ1H+8lrYCxV1yN63EAYVLHaDO1k4OrLQ4
+         vVQppnxQ5JynrTKFam9ElX1hiZGq1BA6v4jh9D/Al6M140wUyxGa2TtFyVM9On32QaXP
+         rhe+1LJWKyiL9g6Ddc8BJQNrENHUyco6Kyd2O+6yZ7lo0TWWojZGsKlKtFsUy97h2MbY
+         VjAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=K0undT0YJyHWH56ofdmr45Mkquy1Ol6IKr8TfIm45MQ=;
-        b=XKdCXuTuxG03g0/dbAKuKOLJbawNKw9nc4kYJQSiICLdL0hk0Gzoq49XL03Lz+qBop
-         oy65S4eigvvbTqF1IlEGQ1RJ3WeGJxsBIlWpilT31TglWvjzD7wg6KQSzocBCFh//ZEk
-         kPIavNa/zxCL6th2dInWpzbe/m3Ankko54mMmDnMCPMINC43LRhiAxuzEDSrmbIHb0+m
-         3VwixK+JQbF3guGzjmk66EUlAoJpOKarBcOfj1Y1kOM49IyoiPonaJMzWdrGXBw7BYny
-         SUqI3RtBXw0JJKiqRPILYMZyEGzVFXwafrbHY3cAhvQwYIxkbJHNk3nEFv5UwzV5GJIH
-         7aaA==
-X-Gm-Message-State: AOAM533fnWdYHAW3aErT6juWS9hyqIH/0qmz8qAYkwiGjo++UUVsNCwh
-        JwRql8HkJzxseVbcdDFm16xFJkSl4eOdlpS/tseP96e2
-X-Google-Smtp-Source: ABdhPJzEGDaefqbNDy2qcJS5gL32CblBVcy3B0f9LoefTt56iGEQdx3xk6vDHLa2iGvTaoQIEcoFiVGvqdiAb5BmAfg=
-X-Received: by 2002:a17:90b:4c03:: with SMTP id na3mr26426374pjb.62.1638674015106;
- Sat, 04 Dec 2021 19:13:35 -0800 (PST)
+        bh=zowSszGCjMgYZHdPz1ZCQ1VnEOEblLnUPR7Gj0ga0Vs=;
+        b=XK+sOOWQoZ2OgnQeNcEJX6b1jNKf9Rv7K/Bx3CsgFzac85gbyNv6e479Uc1PsfawJp
+         kuFf6hNCWQdRcmfCBvCAVJZ33I0pY8bFUejfEm5lamQLlXuGg+1rvBUvxv0MMOKxadMN
+         8ZRBCJBakwr0YTwb49dvwgkvEAso/qifN1jaYk/DFmHFtanTQ8vl9kHHFto6njqC+8ZJ
+         s4bgttFNsHyw8Wz03sFAN/WJWwLcWvfzTxqULOtwxN+4NA9VUTShAMDBzIwSGfPeby+9
+         KGrJFjUlB28nBRak6xg5mptFtH4ABhzWhUiXPaPB1bmTHoJTjaAGtNK+jHq2v8/H2DQV
+         mlng==
+X-Gm-Message-State: AOAM533maehMG5PBkGcqcz66WpuRv4zoRGIic4ZAYWHCrGIdlex2YCxi
+        t2E5euImzsyOml2EdrFA03ncQ0E86Fh+7vkirkA=
+X-Google-Smtp-Source: ABdhPJxJLKvaTSR4/NERlECHBcz96OgqGrG1jCo7M7WsfQN7m2yL5KJ1ECd+GDH+HUX2k6HIT1BhZZN0LElX5ftUrQ4=
+X-Received: by 2002:a05:620a:2148:: with SMTP id m8mr26529583qkm.435.1638689161996;
+ Sat, 04 Dec 2021 23:26:01 -0800 (PST)
 MIME-Version: 1.0
 References: <20211204095256.78042-1-laoar.shao@gmail.com> <20211204095256.78042-6-laoar.shao@gmail.com>
- <CAADnVQLS4Ev7xChqCMbbJiFZ_kYSB+rbiVT6AJotheFJb1f5=w@mail.gmail.com> <CALOAHbCud62ivvoRuz1SV-d3sL9Y9knEga0N-jiXnM3SYzWxNA@mail.gmail.com>
-In-Reply-To: <CALOAHbCud62ivvoRuz1SV-d3sL9Y9knEga0N-jiXnM3SYzWxNA@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Sat, 4 Dec 2021 19:13:24 -0800
-Message-ID: <CAADnVQLu+RWSeMfOe5eBuTsp9gxPsFC_bRTXoWmvWP+Lv_rZzQ@mail.gmail.com>
+ <CAADnVQLS4Ev7xChqCMbbJiFZ_kYSB+rbiVT6AJotheFJb1f5=w@mail.gmail.com>
+ <CALOAHbCud62ivvoRuz1SV-d3sL9Y9knEga0N-jiXnM3SYzWxNA@mail.gmail.com> <CAADnVQLu+RWSeMfOe5eBuTsp9gxPsFC_bRTXoWmvWP+Lv_rZzQ@mail.gmail.com>
+In-Reply-To: <CAADnVQLu+RWSeMfOe5eBuTsp9gxPsFC_bRTXoWmvWP+Lv_rZzQ@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sun, 5 Dec 2021 15:25:27 +0800
+Message-ID: <CALOAHbBv-_5uF=T4MyC_6J08PRX6KTGora4FArdYKLC0dOy8HQ@mail.gmail.com>
 Subject: Re: [PATCH -mm 5/5] bpf/progs: replace hard-coded 16 with TASK_COMM_LEN
-To:     Yafang Shao <laoar.shao@gmail.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Kees Cook <keescook@chromium.org>,
@@ -74,52 +75,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 4, 2021 at 6:45 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+On Sun, Dec 5, 2021 at 11:13 AM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> On Sun, Dec 5, 2021 at 12:44 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
+> On Sat, Dec 4, 2021 at 6:45 PM Yafang Shao <laoar.shao@gmail.com> wrote:
 > >
-> > On Sat, Dec 4, 2021 at 1:53 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+> > On Sun, Dec 5, 2021 at 12:44 AM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
 > > >
-> > >  static int process_sample(void *ctx, void *data, size_t len)
-> > >  {
-> > > -       struct sample *s = data;
-> > > +       struct sample_ringbuf *s = data;
-> >
-> > This is becoming pointless churn.
-> > Nack.
-> >
-> > > index 145028b52ad8..7b1bb73c3501 100644
-> > > --- a/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c
-> > > +++ b/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c
-> > > @@ -1,8 +1,7 @@
-> > >  // SPDX-License-Identifier: GPL-2.0
-> > >  // Copyright (c) 2019 Facebook
+> > > On Sat, Dec 4, 2021 at 1:53 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+> > > >
+> > > >  static int process_sample(void *ctx, void *data, size_t len)
+> > > >  {
+> > > > -       struct sample *s = data;
+> > > > +       struct sample_ringbuf *s = data;
 > > >
-> > > -#include <linux/bpf.h>
-> > > -#include <stdint.h>
-> > > +#include <vmlinux.h>
-> > >  #include <stdbool.h>
-> > >  #include <bpf/bpf_helpers.h>
-> > >  #include <bpf/bpf_core_read.h>
-> > > @@ -23,11 +22,11 @@ struct core_reloc_kernel_output {
-> > >         int comm_len;
-> > >  };
+> > > This is becoming pointless churn.
+> > > Nack.
 > > >
-> > > -struct task_struct {
-> > > +struct task_struct_reloc {
+> > > > index 145028b52ad8..7b1bb73c3501 100644
+> > > > --- a/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c
+> > > > +++ b/tools/testing/selftests/bpf/progs/test_core_reloc_kernel.c
+> > > > @@ -1,8 +1,7 @@
+> > > >  // SPDX-License-Identifier: GPL-2.0
+> > > >  // Copyright (c) 2019 Facebook
+> > > >
+> > > > -#include <linux/bpf.h>
+> > > > -#include <stdint.h>
+> > > > +#include <vmlinux.h>
+> > > >  #include <stdbool.h>
+> > > >  #include <bpf/bpf_helpers.h>
+> > > >  #include <bpf/bpf_core_read.h>
+> > > > @@ -23,11 +22,11 @@ struct core_reloc_kernel_output {
+> > > >         int comm_len;
+> > > >  };
+> > > >
+> > > > -struct task_struct {
+> > > > +struct task_struct_reloc {
+> > >
+> > > Churn that is not even compile tested.
 > >
-> > Churn that is not even compile tested.
+> > It is strange that I have successfully compiled it....
+> > Below is the compile log,
+> >
+> > $ cat make.log | grep test_core_reloc_kernel
+> >   CLNG-BPF [test_maps] test_core_reloc_kernel.o
+> >   GEN-SKEL [test_progs] test_core_reloc_kernel.skel.h
+> >   CLNG-BPF [test_maps] test_core_reloc_kernel.o
+> >   GEN-SKEL [test_progs-no_alu32] test_core_reloc_kernel.skel.h
+> >
+> > Also there's no error in the compile log.
 >
-> It is strange that I have successfully compiled it....
-> Below is the compile log,
->
-> $ cat make.log | grep test_core_reloc_kernel
->   CLNG-BPF [test_maps] test_core_reloc_kernel.o
->   GEN-SKEL [test_progs] test_core_reloc_kernel.skel.h
->   CLNG-BPF [test_maps] test_core_reloc_kernel.o
->   GEN-SKEL [test_progs-no_alu32] test_core_reloc_kernel.skel.h
->
-> Also there's no error in the compile log.
+> and ran the tests too?
 
-and ran the tests too?
+My bad. I thought it was just a name change, which will work well if
+it can be compiled successfully.
+But it seems the task_struct in this file is a dummy struct, which
+will be relocated to the real task_struct defined in the kernel.
+We can't include vmlinux.h in this file, as it is for the relocation test.
+
+-- 
+Thanks
+Yafang
