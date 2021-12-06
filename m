@@ -2,101 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 703DF46949E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 12:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A814694CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 12:13:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242061AbhLFLDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 06:03:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242037AbhLFLDa (ORCPT
+        id S242246AbhLFLQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 06:16:41 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52982 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242241AbhLFLQf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 06:03:30 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2D8C061746;
-        Mon,  6 Dec 2021 03:00:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 6 Dec 2021 06:16:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638789186;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8s5rbDd6q7mBa+Fmra38DlYZzESfhQe+iIf1iuu9d3c=;
+        b=PDdVCjVsttq9Cfdc95kIWzcFwV9Bfw/+lB/vligz/M/cfo7Vd1gv/QtPwMX4goxnLReZsV
+        NMvl4vHDcbnPmIErxHjbvtWX5SvGZ+AJPA2zqnZ8qF60j/Gun5SAOslDbW4s1PacM2ZrqN
+        opSkc0X4kaL19Rm0ohBgJDYqqvh7cIE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-274-8rX0lnSLP0WotG-6qpzbcw-1; Mon, 06 Dec 2021 06:13:05 -0500
+X-MC-Unique: 8rX0lnSLP0WotG-6qpzbcw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 59D41B8104F;
-        Mon,  6 Dec 2021 11:00:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F48BC341C1;
-        Mon,  6 Dec 2021 10:59:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638788399;
-        bh=7WT84C+j1gBM6+y9UakjmiSGzVufWXb4tuAOex1ntIw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sje3SygmpqOjYMA+yuSBTywrAUOgYAPjyEaVw3iGNLujt2sEfXw1XFDWRiV4cvY0b
-         YPpPTk5Ste5kKO9AnkuNgvf4cbOhr+kCo4+YYQuKB89nLQ82YgdaKkChpRBNMCLimI
-         H+giKC/KxSI/rhqCyfpgneKaGz5FouPv3PGOvqNOqtZL3XgpSOO9pY17R4Mk243gN5
-         AVHuZkfSAoQ1SpV1Kb/tKNOXsbezafRtWOWxD4tmICS14oVknNxT7pjFzESqMjzqw5
-         yy7HA36wU+dHToa6j2a3sYSTLiJyicPwpKBjnHtpIxtBWFvoink8o0lT8o080bxNGD
-         KJU40SDXhkegA==
-Message-ID: <dfd01818f8de7e47b3f8bc56550f6db0e977be76.camel@kernel.org>
-Subject: Re: [PATCH 1/2] ceph: conversion to new fscache API
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 06 Dec 2021 05:59:57 -0500
-In-Reply-To: <1219681.1638784646@warthog.procyon.org.uk>
-References: <20211129162907.149445-2-jlayton@kernel.org>
-         <20211129162907.149445-1-jlayton@kernel.org>
-         <1219681.1638784646@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55FC781EE62;
+        Mon,  6 Dec 2021 11:13:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E12804ABA6;
+        Mon,  6 Dec 2021 11:12:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20211129162907.149445-3-jlayton@kernel.org>
+References: <20211129162907.149445-3-jlayton@kernel.org> <20211129162907.149445-1-jlayton@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, ceph-devel@vger.kernel.org,
+        idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ceph: add fscache writeback support
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1223233.1638789167.1@warthog.procyon.org.uk>
+Date:   Mon, 06 Dec 2021 11:12:47 +0000
+Message-ID: <1223234.1638789167@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-12-06 at 09:57 +0000, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
-> 
-> >  		if (!(gfp & __GFP_DIRECT_RECLAIM) || !(gfp & __GFP_FS))
-> 
-> There's a function for the first part of this:
-> 
-> 		if (!gfpflags_allow_blocking(gfp) || !(gfp & __GFP_FS))
-> 
-> > +	fsc->fscache = fscache_acquire_volume(name, NULL, 0);
-> >  
-> >  	if (fsc->fscache) {
-> >  		ent->fscache = fsc->fscache;
-> >  		list_add_tail(&ent->list, &ceph_fscache_list);
-> 
-> It shouldn't really be necessary to have ceph_fscache_list since
-> fscache_acquire_volume() will do it's own duplicate check.  I wonder if I
-> should make fscache_acquire_volume() return -EEXIST or -EBUSY rather than NULL
-> in such a case and not print an error, but rather leave that to the filesystem
-> to display.
-> 
-> That would allow you to get rid of the ceph_fscache_entry struct also, I
-> think.
-> 
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Returning an error there sounds like a better thing to do.
+> +	if (caching)
+> +		ceph_set_page_fscache(page);
 
-I'll make the other changes you suggested now. Let me know if you change
-the fscache_acquire_volume return.
+I suggest moving this test into ceph_set_page_fscache().
 
-> > +#define FSCACHE_USE_NEW_IO_API
-> 
-> That doesn't exist anymore.
-> 
-> > +		/*
-> > +		 * If we're truncating up, then we should be able to just update
-> > +		 * the existing cookie.
-> > +		 */
-> > +		if (size > isize)
-> > +			ceph_fscache_update(inode);
-> 
-> Might look better to say "expanding" rather than "truncating up".
-> 
-> David
-> 
+David
 
--- 
-Jeff Layton <jlayton@kernel.org>
