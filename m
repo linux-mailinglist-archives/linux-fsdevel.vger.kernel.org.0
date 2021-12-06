@@ -2,93 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3D24690EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 08:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDFD24691BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 09:47:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238578AbhLFHvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 02:51:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237150AbhLFHvb (ORCPT
+        id S239624AbhLFIvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 03:51:09 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:33786 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239616AbhLFIvJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 02:51:31 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5AAC0613F8;
-        Sun,  5 Dec 2021 23:48:03 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id o14so6522113plg.5;
-        Sun, 05 Dec 2021 23:48:03 -0800 (PST)
+        Mon, 6 Dec 2021 03:51:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vIsldLhCmZH7wKYOXMosoXmaGOAAlbldleWN7ENAInA=;
-        b=bAVZy+n2NWzFrRWUPTBkg4SvcY7CRtt/abHIsPeRPa5LOddWdWJO7/57Mvseg9APlk
-         9Q+TebS7S7KW8Lu7P4RO47ow1QBwSB+EsxlUpXmWSiM3UgaJztTwtTpa8+2/obP6wTBL
-         RVfyxAS4wFsWIOgzAOFg93tVU3Z46yv26gCEvBIUMPYMvGgRSaTBYkueBy4X/mggcjL3
-         TRX7xoqMhtjdeSAQEylSKmM+deWTOgv/M7MXwZJDUSz2KjC7kN/NFZacxdKhl0C9O8sn
-         ghjfaWfe6LzBkwmTSz9Vo+z7zimhvbpLBBEYruf00Dl1L51NUMt8G3ixXWtD2TxnPc03
-         uOmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vIsldLhCmZH7wKYOXMosoXmaGOAAlbldleWN7ENAInA=;
-        b=c0BpBcXPVBvP4C+Zd+NdWY1VcV+Q/oL3hOQIA9bxRYQc9quOTXnlTUXVhDbsftiFyN
-         b+7OZEHgVlKb2+UVwyQhNcFcgLlwQLS9aZW+OfgKZMSjUzHGujWI+bYd+iei97QrlEDI
-         CSge1ABOC4TRibYcPT96EB/TeqUSrx+/v5ufnsvTMlSz9R4/fGiq49yVNUEzegPeIFWM
-         QGiVHeRqRs62eL9vUmkUGJBObgLCx+NkB9QFCYwYir3pwGvJ5R52FyWAwXvr8R67tNqK
-         OTHuo56ka4r4EeTFdkylsOIwQ7UyPuHTnGaU+j4ol16rQtecvxZemKf7WezoEn1SoASP
-         fRUw==
-X-Gm-Message-State: AOAM530wPfKrNa+84SwyY18092uQw+0w1aWJDMXzv9G9tDloewg7PaGA
-        ivCPtbbZDtXfVRT+pF8k4GM=
-X-Google-Smtp-Source: ABdhPJx9xsWWL4RWc/B/RSlpEWpCZDCrTafViiPUVdW0LXQpt6P0A72nQxwqnB2doM4/JR6vsz/3JA==
-X-Received: by 2002:a17:90b:4c89:: with SMTP id my9mr35154223pjb.229.1638776882984;
-        Sun, 05 Dec 2021 23:48:02 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id u13sm9004627pgp.27.2021.12.05.23.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Dec 2021 23:48:02 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chiminghao <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cm>
-Subject: [PATCH] fs:remove redundant variable
-Date:   Mon,  6 Dec 2021 07:47:54 +0000
-Message-Id: <20211206074754.398117-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1638780461; x=1670316461;
+  h=from:to:cc:subject:date:message-id;
+  bh=fIK00iL2CMcq5agFccrsssgX3o8eNDJnqOT0OhIAeWo=;
+  b=TMuCEKVMqL64HM1vpSWWX1mI42z5miK+BKJo6RG5vVsJV0JlsM+0KlNZ
+   1R1j3ZsJnlEO1Ww59hgws7PjR0qHs/n784ZK4kJP77d+1uQZvkpnd1NCF
+   VIzG9k9Qvc6fyWw9hAIeCiJRQH7yEcdNcT4D9tPjRQxCJx8zf0bogglsm
+   w=;
+Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 06 Dec 2021 00:47:41 -0800
+X-QCInternal: smtphost
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Dec 2021 00:47:25 -0800
+X-QCInternal: smtphost
+Received: from hydcbspbld03.qualcomm.com ([10.242.221.48])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 06 Dec 2021 14:17:08 +0530
+Received: by hydcbspbld03.qualcomm.com (Postfix, from userid 2304101)
+        id D0E7021E56; Mon,  6 Dec 2021 14:17:06 +0530 (IST)
+From:   Pradeep P V K <quic_pragalla@quicinc.com>
+To:     miklos@szeredi.hu
+Cc:     quic_stummala@quicinc.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, quic_pkondeti@quicinc.com,
+        quic_sayalil@quicinc.com, quic_aiquny@quicinc.com,
+        quic_zljing@quicinc.com, quic_blong@quicinc.com,
+        quic_richardp@quicinc.com, quic_cdevired@quicinc.com,
+        Pradeep P V K <quic_pragalla@quicinc.com>
+Subject: [PATCH V1] fuse: give wakeup hints to the scheduler
+Date:   Mon,  6 Dec 2021 14:16:45 +0530
+Message-Id: <1638780405-38026-1-git-send-email-quic_pragalla@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: chiminghao <chi.minghao@zte.com.cn>
+The synchronous wakeup interface is available only for the
+interruptible wakeup. Add it for normal wakeup and use this
+synchronous wakeup interface to wakeup the userspace daemon.
+Scheduler can make use of this hint to find a better CPU for
+the waker task.
 
-return value form directly instead of
-taking this in another redundant variable.
+With this change the performance numbers for compress, decompress
+and copy use-cases on /sdcard path has improved by ~30%.
 
-Reported-by: Zeal Robot <zealci@zte.com.cm>
-Signed-off-by: chiminghao <chi.minghao@zte.com.cn>
+Use-case details:
+1. copy 10000 files of each 4k size into /sdcard path
+2. use any File explorer application that has compress/decompress
+support
+3. start compress/decompress and capture the time.
+
+-------------------------------------------------
+| Default   | wakeup support | Improvement/Diff |
+-------------------------------------------------
+| 13.8 sec  | 9.9 sec        | 3.9 sec (28.26%) |
+-------------------------------------------------
+
+Co-developed-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
+Signed-off-by: Pradeep P V K <quic_pragalla@quicinc.com>
 ---
- fs/file.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/fuse/dev.c        | 22 +++++++++++++---------
+ fs/fuse/fuse_i.h     |  6 +++---
+ fs/fuse/virtio_fs.c  |  8 +++++---
+ include/linux/wait.h |  1 +
+ 4 files changed, 22 insertions(+), 15 deletions(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 8627dacfc424..97605ef3c390 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -265,8 +265,7 @@ static unsigned int count_open_files(struct fdtable *fdt)
- 		if (fdt->open_fds[--i])
- 			break;
- 	}
--	i = (i + 1) * BITS_PER_LONG;
--	return i;
-+	return (i + 1) * BITS_PER_LONG;
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index cd54a52..fef2e23 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -207,10 +207,13 @@ static unsigned int fuse_req_hash(u64 unique)
+ /**
+  * A new request is available, wake fiq->waitq
+  */
+-static void fuse_dev_wake_and_unlock(struct fuse_iqueue *fiq)
++static void fuse_dev_wake_and_unlock(struct fuse_iqueue *fiq, bool sync)
+ __releases(fiq->lock)
+ {
+-	wake_up(&fiq->waitq);
++	if (sync)
++		wake_up_sync(&fiq->waitq);
++	else
++		wake_up(&fiq->waitq);
+ 	kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
+ 	spin_unlock(&fiq->lock);
+ }
+@@ -223,14 +226,15 @@ const struct fuse_iqueue_ops fuse_dev_fiq_ops = {
+ EXPORT_SYMBOL_GPL(fuse_dev_fiq_ops);
+ 
+ static void queue_request_and_unlock(struct fuse_iqueue *fiq,
+-				     struct fuse_req *req)
++				     struct fuse_req *req,
++				     bool sync)
+ __releases(fiq->lock)
+ {
+ 	req->in.h.len = sizeof(struct fuse_in_header) +
+ 		fuse_len_args(req->args->in_numargs,
+ 			      (struct fuse_arg *) req->args->in_args);
+ 	list_add_tail(&req->list, &fiq->pending);
+-	fiq->ops->wake_pending_and_unlock(fiq);
++	fiq->ops->wake_pending_and_unlock(fiq, sync);
  }
  
- static unsigned int sane_fdtable_size(struct fdtable *fdt, unsigned int max_fds)
+ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
+@@ -245,7 +249,7 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
+ 	if (fiq->connected) {
+ 		fiq->forget_list_tail->next = forget;
+ 		fiq->forget_list_tail = forget;
+-		fiq->ops->wake_forget_and_unlock(fiq);
++		fiq->ops->wake_forget_and_unlock(fiq, 0);
+ 	} else {
+ 		kfree(forget);
+ 		spin_unlock(&fiq->lock);
+@@ -265,7 +269,7 @@ static void flush_bg_queue(struct fuse_conn *fc)
+ 		fc->active_background++;
+ 		spin_lock(&fiq->lock);
+ 		req->in.h.unique = fuse_get_unique(fiq);
+-		queue_request_and_unlock(fiq, req);
++		queue_request_and_unlock(fiq, req, 0);
+ 	}
+ }
+ 
+@@ -358,7 +362,7 @@ static int queue_interrupt(struct fuse_req *req)
+ 			spin_unlock(&fiq->lock);
+ 			return 0;
+ 		}
+-		fiq->ops->wake_interrupt_and_unlock(fiq);
++		fiq->ops->wake_interrupt_and_unlock(fiq, 0);
+ 	} else {
+ 		spin_unlock(&fiq->lock);
+ 	}
+@@ -425,7 +429,7 @@ static void __fuse_request_send(struct fuse_req *req)
+ 		/* acquire extra reference, since request is still needed
+ 		   after fuse_request_end() */
+ 		__fuse_get_request(req);
+-		queue_request_and_unlock(fiq, req);
++		queue_request_and_unlock(fiq, req, 1);
+ 
+ 		request_wait_answer(req);
+ 		/* Pairs with smp_wmb() in fuse_request_end() */
+@@ -600,7 +604,7 @@ static int fuse_simple_notify_reply(struct fuse_mount *fm,
+ 
+ 	spin_lock(&fiq->lock);
+ 	if (fiq->connected) {
+-		queue_request_and_unlock(fiq, req);
++		queue_request_and_unlock(fiq, req, 0);
+ 	} else {
+ 		err = -ENODEV;
+ 		spin_unlock(&fiq->lock);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index c1a8b31..363e0ba 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -389,19 +389,19 @@ struct fuse_iqueue_ops {
+ 	/**
+ 	 * Signal that a forget has been queued
+ 	 */
+-	void (*wake_forget_and_unlock)(struct fuse_iqueue *fiq)
++	void (*wake_forget_and_unlock)(struct fuse_iqueue *fiq, bool sync)
+ 		__releases(fiq->lock);
+ 
+ 	/**
+ 	 * Signal that an INTERRUPT request has been queued
+ 	 */
+-	void (*wake_interrupt_and_unlock)(struct fuse_iqueue *fiq)
++	void (*wake_interrupt_and_unlock)(struct fuse_iqueue *fiq, bool sync)
+ 		__releases(fiq->lock);
+ 
+ 	/**
+ 	 * Signal that a request has been queued
+ 	 */
+-	void (*wake_pending_and_unlock)(struct fuse_iqueue *fiq)
++	void (*wake_pending_and_unlock)(struct fuse_iqueue *fiq, bool sync)
+ 		__releases(fiq->lock);
+ 
+ 	/**
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 4cfa4bc..bdc3dcc 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -972,7 +972,7 @@ static struct virtio_driver virtio_fs_driver = {
+ #endif
+ };
+ 
+-static void virtio_fs_wake_forget_and_unlock(struct fuse_iqueue *fiq)
++static void virtio_fs_wake_forget_and_unlock(struct fuse_iqueue *fiq, bool sync)
+ __releases(fiq->lock)
+ {
+ 	struct fuse_forget_link *link;
+@@ -1007,7 +1007,8 @@ __releases(fiq->lock)
+ 	kfree(link);
+ }
+ 
+-static void virtio_fs_wake_interrupt_and_unlock(struct fuse_iqueue *fiq)
++static void virtio_fs_wake_interrupt_and_unlock(struct fuse_iqueue *fiq,
++						bool sync)
+ __releases(fiq->lock)
+ {
+ 	/*
+@@ -1222,7 +1223,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 	return ret;
+ }
+ 
+-static void virtio_fs_wake_pending_and_unlock(struct fuse_iqueue *fiq)
++static void virtio_fs_wake_pending_and_unlock(struct fuse_iqueue *fiq,
++					bool sync)
+ __releases(fiq->lock)
+ {
+ 	unsigned int queue_id = VQ_REQUEST; /* TODO multiqueue */
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 2d0df57..690572ee 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -228,6 +228,7 @@ void __wake_up_sync(struct wait_queue_head *wq_head, unsigned int mode);
+ #define wake_up_interruptible_nr(x, nr)	__wake_up(x, TASK_INTERRUPTIBLE, nr, NULL)
+ #define wake_up_interruptible_all(x)	__wake_up(x, TASK_INTERRUPTIBLE, 0, NULL)
+ #define wake_up_interruptible_sync(x)	__wake_up_sync((x), TASK_INTERRUPTIBLE)
++#define wake_up_sync(x)			__wake_up_sync(x, TASK_NORMAL)
+ 
+ /*
+  * Wakeup macros to be used to report events to the targets.
 -- 
-2.25.1
+2.7.4
 
