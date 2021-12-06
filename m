@@ -2,93 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2003469053
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 07:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D3D24690EC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 08:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237648AbhLFGKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 01:10:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42778 "EHLO
+        id S238578AbhLFHvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 02:51:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237612AbhLFGKJ (ORCPT
+        with ESMTP id S237150AbhLFHvb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 01:10:09 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5851C061354
-        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Dec 2021 22:06:40 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id d10so2718509lfg.6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Dec 2021 22:06:40 -0800 (PST)
+        Mon, 6 Dec 2021 02:51:31 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5AAC0613F8;
+        Sun,  5 Dec 2021 23:48:03 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id o14so6522113plg.5;
+        Sun, 05 Dec 2021 23:48:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vv0znKZkXJZMzsECckGi47A2Z/lLUzawdx8IEXbnGWk=;
-        b=YsEjqepZeQvUbFx/aqXDHvbDkAi16fxHMOFnyDNfNhyWoBQvVeaAjLcoFIxE4ZFE6r
-         e0yQfiOvKFKism80QUNMHwZJ/aTzVLwEFwZDAcQPSazF2BXWGCty9K4kE/czm/gV7K2b
-         EDOROzNqqQ8qBhibAUtJLEvyY41oVBjI+P1L2+9UXkZ2DCdoXFZKq1ZOfD4Kf8h/dVZM
-         qrCUT+zK0Tv6UuPUZOdNPB6trOKeGiPcBuTHEiSqIX6vKVgROLoDvg0UYEzkiE60Gb8g
-         sHVTe99J9n1ZhiZsQ2Zy53UpR3egvHVWiTHfjNrcDWwqID3ak8hZG3fO/BVdjAuQWo/5
-         8x6Q==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vIsldLhCmZH7wKYOXMosoXmaGOAAlbldleWN7ENAInA=;
+        b=bAVZy+n2NWzFrRWUPTBkg4SvcY7CRtt/abHIsPeRPa5LOddWdWJO7/57Mvseg9APlk
+         9Q+TebS7S7KW8Lu7P4RO47ow1QBwSB+EsxlUpXmWSiM3UgaJztTwtTpa8+2/obP6wTBL
+         RVfyxAS4wFsWIOgzAOFg93tVU3Z46yv26gCEvBIUMPYMvGgRSaTBYkueBy4X/mggcjL3
+         TRX7xoqMhtjdeSAQEylSKmM+deWTOgv/M7MXwZJDUSz2KjC7kN/NFZacxdKhl0C9O8sn
+         ghjfaWfe6LzBkwmTSz9Vo+z7zimhvbpLBBEYruf00Dl1L51NUMt8G3ixXWtD2TxnPc03
+         uOmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vv0znKZkXJZMzsECckGi47A2Z/lLUzawdx8IEXbnGWk=;
-        b=cqZ936WUNGSPs/5Tgq7FOeGD4VFj0eL0q8hPbJVtgDXoGFS3le9/cZgGZYksX5WY1H
-         ytuBPK07/hAKR3dCRivVmDxs6LSRl178JC2E7XEEWpe8pR6CdeBdHbpEC+qr7u2cGQUQ
-         53wQh0u7XHJKwG95dtan/wb3jt/Bz2O6w3aWTrnYpQs5jZQaSi4iUmASiPIHwJgq4PCC
-         ZM1vIBnveTA4Qfq3mEiMrV+BwdCOn3sKqztZR9cISm6At7yMBjCXBiUYcYHOzwsQbYJK
-         fZMNs1bP3ofLzzFR3BmtXsT7lMPNA+iEnuwBCF966CN71o82IYIX6esBkpAFDawOWjiT
-         Ifig==
-X-Gm-Message-State: AOAM532iip2mXkOdEcQyUW1uIgLzcJ2y1IO4bPL0sfqaVZyzgzI6uuy2
-        hxmxz36QWGo2l1ZG3eDvaMETRu12gZJU6BnrcyUTug==
-X-Google-Smtp-Source: ABdhPJzDUE/FOglwH1X1yflrVsaHq5ki2OSiI7rH+J6rd9KuybYkMfGkVUfJ+ZsNJDQKf6M+bs18NYyHI8A9InkI0es=
-X-Received: by 2002:a05:6512:1113:: with SMTP id l19mr33552043lfg.184.1638770798873;
- Sun, 05 Dec 2021 22:06:38 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vIsldLhCmZH7wKYOXMosoXmaGOAAlbldleWN7ENAInA=;
+        b=c0BpBcXPVBvP4C+Zd+NdWY1VcV+Q/oL3hOQIA9bxRYQc9quOTXnlTUXVhDbsftiFyN
+         b+7OZEHgVlKb2+UVwyQhNcFcgLlwQLS9aZW+OfgKZMSjUzHGujWI+bYd+iei97QrlEDI
+         CSge1ABOC4TRibYcPT96EB/TeqUSrx+/v5ufnsvTMlSz9R4/fGiq49yVNUEzegPeIFWM
+         QGiVHeRqRs62eL9vUmkUGJBObgLCx+NkB9QFCYwYir3pwGvJ5R52FyWAwXvr8R67tNqK
+         OTHuo56ka4r4EeTFdkylsOIwQ7UyPuHTnGaU+j4ol16rQtecvxZemKf7WezoEn1SoASP
+         fRUw==
+X-Gm-Message-State: AOAM530wPfKrNa+84SwyY18092uQw+0w1aWJDMXzv9G9tDloewg7PaGA
+        ivCPtbbZDtXfVRT+pF8k4GM=
+X-Google-Smtp-Source: ABdhPJx9xsWWL4RWc/B/RSlpEWpCZDCrTafViiPUVdW0LXQpt6P0A72nQxwqnB2doM4/JR6vsz/3JA==
+X-Received: by 2002:a17:90b:4c89:: with SMTP id my9mr35154223pjb.229.1638776882984;
+        Sun, 05 Dec 2021 23:48:02 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id u13sm9004627pgp.27.2021.12.05.23.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Dec 2021 23:48:02 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: chi.minghao@zte.com.cn
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chiminghao <chi.minghao@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cm>
+Subject: [PATCH] fs:remove redundant variable
+Date:   Mon,  6 Dec 2021 07:47:54 +0000
+Message-Id: <20211206074754.398117-1-chi.minghao@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20211202150614.22440-1-mgorman@techsingularity.net>
- <CALvZod6am_QrZCSf_de6eyzbOtKnWuL1CQZVn+srQVt20cnpFg@mail.gmail.com>
- <20211202165220.GZ3366@techsingularity.net> <CALvZod5tiDgEz4JwxMHQvkzLxYeV0OtNGGsX5ZdT5mTQdUdUUA@mail.gmail.com>
- <20211203090137.GA3366@techsingularity.net> <CALvZod46SFiNvUSLCJWEVccsXKx=NwT4=gk9wS6Nt8cZd0WOgg@mail.gmail.com>
- <20211203190807.GE3366@techsingularity.net>
-In-Reply-To: <20211203190807.GE3366@techsingularity.net>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Sun, 5 Dec 2021 22:06:27 -0800
-Message-ID: <CALvZod5BmFVdosG=e2NcEzeuzv0W9WifSBmeD48xnn1k+SNRKg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Avramov <hakavlad@inbox.lv>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 3, 2021 at 11:08 AM Mel Gorman <mgorman@techsingularity.net> wrote:
->
-[...]
-> > I am in agreement with the motivation of the whole series. I am just
-> > making sure that the motivation of VMSCAN_THROTTLE_NOPROGRESS based
-> > throttle is more than just the congestion_wait of
-> > mem_cgroup_force_empty_write.
-> >
->
-> The commit that primarily targets congestion_wait is 8cd7c588decf
-> ("mm/vmscan: throttle reclaim until some writeback completes if
-> congested"). The series recognises that there are other reasons why
-> reclaim can fail to make progress that is not directly writeback related.
->
+From: chiminghao <chi.minghao@zte.com.cn>
 
-I agree with throttling for VMSCAN_THROTTLE_[WRITEBACK|ISOLATED]
-reasons. Please explain why we should throttle for
-VMSCAN_THROTTLE_NOPROGRESS? Also 69392a403f49 claims "Direct reclaim
-primarily is throttled in the page allocator if it is failing to make
-progress.", can you please explain how?
+return value form directly instead of
+taking this in another redundant variable.
+
+Reported-by: Zeal Robot <zealci@zte.com.cm>
+Signed-off-by: chiminghao <chi.minghao@zte.com.cn>
+---
+ fs/file.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index 8627dacfc424..97605ef3c390 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -265,8 +265,7 @@ static unsigned int count_open_files(struct fdtable *fdt)
+ 		if (fdt->open_fds[--i])
+ 			break;
+ 	}
+-	i = (i + 1) * BITS_PER_LONG;
+-	return i;
++	return (i + 1) * BITS_PER_LONG;
+ }
+ 
+ static unsigned int sane_fdtable_size(struct fdtable *fdt, unsigned int max_fds)
+-- 
+2.25.1
+
