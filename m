@@ -2,90 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 658F346A0AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 17:06:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38C7846A389
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 18:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1389452AbhLFQJw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 11:09:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358775AbhLFQHw (ORCPT
+        id S245484AbhLFSDW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 13:03:22 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:35140 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229714AbhLFSDV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 11:07:52 -0500
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C964C0412B3;
-        Mon,  6 Dec 2021 07:46:13 -0800 (PST)
-Received: by mail-yb1-xb2e.google.com with SMTP id d10so32547284ybe.3;
-        Mon, 06 Dec 2021 07:46:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=e8VnTAo8sedImm7G/oZjQu3Dt8xy1R0MoEv9ZFn+tRY=;
-        b=BiEORb0u6SefPleMWVNRNKin5r+NQDOp2Jj1YJIrfMehWNAVB4n93yfjZ2VFanivz/
-         Zt7595IBBcOJPWgWvhqroa10oPjtMBXdWG0q/iTvxc37B1UJvTbCUcizk/7KvP4VC+LU
-         2jId1860Bwf9WLPIYNHHRIjLIPcKlL65uxIF12CQpqXtD/KTz/Y1Dqz9Jmd2eWFanMpz
-         3S/3VJOKC08btygpIfiuyl/c+ScEMTzyn3CgLAfTEqaFxKwn0qB/B6oaxeJ8IgBYEBp5
-         qhBxHJasuqgSBFbUkG9yvMafxW/ZVHa5N0pXLt5j8xTzELHSAYVrk+rTid04yWSWzg7W
-         7OSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=e8VnTAo8sedImm7G/oZjQu3Dt8xy1R0MoEv9ZFn+tRY=;
-        b=SGONwnulRRetyollIeWlOtcLNMB6LARREQdJZt3NgtFR3J7b99ErwzX1sSCgUpOfjE
-         oeFal2uukJSEZo8/vPcazF7V5siUT/tsaIAj80brNUP9xKvtgwe+wCEf1W8ZF5SAnonz
-         Mwxll4ouMDNWv+JuML2JBfNdodKTw3n8s20AiEMXxxmeICbTAmbMqrBbfo5uXa7ESqtP
-         a1e2iYC9hXxhLm6Z7u0SF2lbhrh8IUYjqLPwal4CS3G5m+d2C9ISor8iETRAxMDpKCTd
-         8lBoS2lMFqWcrdpkIeZcCt3iSaJMB44pC/SRWHKIjmhVyVOoSpAIF21uaO8IHq4Xmb0U
-         ocGA==
-X-Gm-Message-State: AOAM531j9vw8UpKbcu19k5ogHIft2ZCTtAUyF12sXOLSSmLUqnrSmZO7
-        tU6/6ty4ClwdRgFu49f4VzIJjY3bSc+/TTx7mNzT/+/dmvI=
-X-Google-Smtp-Source: ABdhPJwQN/3dc9TySPRoFSxcye+mzkRwb1a3ngc3AmV6qb8qiRLgsYlDsInR0hkKGhpnztNNJLDv5lokhXo25FZuiu4=
-X-Received: by 2002:a25:fc5:: with SMTP id 188mr43696974ybp.608.1638805572204;
- Mon, 06 Dec 2021 07:46:12 -0800 (PST)
+        Mon, 6 Dec 2021 13:03:21 -0500
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B6GnPi4010265;
+        Mon, 6 Dec 2021 17:59:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2021-07-09; bh=a0KSR+wVkurtga4VDW4wDXXrE272i86i+m5FrFY45yY=;
+ b=Yl96starGg5fsucHgItPP7j4MkeqUpTLHkG1hoQJMC3KJb2FV9HLcsCyayKolhjt89Ln
+ Y6mLeeVX4XDgBQRNqOloe3uNsvigV+Y7wDYl9qtkB+UuOS9JwuxrkfE8wtLQlxy4vuuJ
+ kD+UxNjYYsFKOuETKSmJiuUA+RWRsQdiRs4dVN+4tVQT71VAzb/PphdJWNat5NcpqDLQ
+ LIvbjjgeR3XKMrvPmJFbIU9R9zMRWDc6RRhLaGkxPBVnldWjny+svLAhZ8PP5UInglNs
+ AFDHrGJkx0LSJdBwhVWueAH5/cnlXzE5Iweuu+GWHoBlV8GU7+KecV1O9Ae/lxboQgYM fA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3csbbqkbtf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Dec 2021 17:59:51 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1B6HucWR072283;
+        Mon, 6 Dec 2021 17:59:50 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 3cr1smf1sa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Dec 2021 17:59:50 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1B6HxnaX081234;
+        Mon, 6 Dec 2021 17:59:49 GMT
+Received: from aserp3020.oracle.com (ksplice-shell2.us.oracle.com [10.152.118.36])
+        by userp3020.oracle.com with ESMTP id 3cr1smf1rt-1;
+        Mon, 06 Dec 2021 17:59:49 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     bfields@fieldses.org
+Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC v6 0/2] nfsd: Initial implementation of NFSv4 Courteous Server
+Date:   Mon,  6 Dec 2021 12:59:40 -0500
+Message-Id: <20211206175942.47326-1-dai.ngo@oracle.com>
+X-Mailer: git-send-email 2.20.1.1226.g1595ea5.dirty
 MIME-Version: 1.0
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 6 Dec 2021 16:46:01 +0100
-Message-ID: <CAKXUXMz1P8xCW+fjaiu0rvgJYmwHocMmtp+19u-+CQkLi=X2cw@mail.gmail.com>
-Subject: Unused local variable load_addr in load_elf_binary()
-To:     Akira Kawata <akirakawata1@gmail.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: e16T1UdhVV2bYeDkgEgJNg8ufG1bbp8h
+X-Proofpoint-ORIG-GUID: e16T1UdhVV2bYeDkgEgJNg8ufG1bbp8h
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Akira-san,
 
-With commit 0c9333606e30 ("fs/binfmt_elf: Fix AT_PHDR for unusual ELF
-files"), you have changed load_elf_binary() in ./fs/binfmt_elf.c in a
-way such that the local variable load_addr in load_elf_binary() is not
-used anymore.
+Hi Bruce,
 
-I had a quick look at the code and I think the following refactoring
-would be good:
+This series of patches implement the NFSv4 Courteous Server.
 
-1. Remove the definition of load_addr and its unneeded computation of load_addr
+A server which does not immediately expunge the state on lease expiration
+is known as a Courteous Server.  A Courteous Server continues to recognize
+previously generated state tokens as valid until conflict arises between
+the expired state and the requests from another client, or the server
+reboots.
 
-2. Rename load_addr_set to first (or a similar name) to represent that
-this variable is not linked to the non-existing load_addr, but states
-that it captures the first iteration of the loop. Note that first has
-the inverse meaning of load_addr_set.
+The v2 patch includes the following:
 
-The issue was reported by make clang-analyzer:
+. add new callback, lm_expire_lock, to lock_manager_operations to
+  allow the lock manager to take appropriate action with conflict lock.
 
-./fs/binfmt_elf.c:1167:5: warning: Value stored to 'load_addr' is
-never read [clang-analyzer-deadcode.DeadStores]
-                                load_addr += load_bias;
-                                ^            ~~~~~~~~~
+. handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
 
+. expire courtesy client after 24hr if client has not reconnected.
 
-Best regards,
+. do not allow expired client to become courtesy client if there are
+  waiters for client's locks.
 
-Lukas
+. modify client_info_show to show courtesy client and seconds from
+  last renew.
+
+. fix a problem with NFSv4.1 server where the it keeps returning
+  SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+  the courtesy client re-connects, causing the client to keep sending
+  BCTS requests to server.
+
+The v3 patch includes the following:
+
+. modified posix_test_lock to check and resolve conflict locks
+  to handle NLM TEST and NFSv4 LOCKT requests.
+
+. separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v4 patch includes:
+
+. rework nfsd_check_courtesy to avoid dead lock of fl_lock and client_lock
+  by asking the laudromat thread to destroy the courtesy client.
+
+. handle NFSv4 share reservation conflicts with courtesy client. This
+  includes conflicts between access mode and deny mode and vice versa.
+
+. drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v5 patch includes:
+
+. fix recursive locking of file_rwsem from posix_lock_file. 
+
+. retest with LOCKDEP enabled.
+
+The v6 patch includes:
+
+. merge witn 5.15-rc7
+
+. fix a bug in nfs4_check_deny_bmap that did not check for matched
+  nfs4_file before checking for access/deny conflict. This bug causes
+  pynfs OPEN18 to fail since the server taking too long to release
+  lots of un-conflict clients' state.
+
+. enhance share reservation conflict handler to handle case where
+  a large number of conflict courtesy clients need to be expired.
+  The 1st 100 clients are expired synchronously and the rest are
+  expired in the background by the laundromat and NFS4ERR_DELAY
+  is returned to the NFS client. This is needed to prevent the
+  NFS client from timing out waiting got the reply.
+
+. no regression wirh pynfs 4.0 and 4.1 tests.
+
