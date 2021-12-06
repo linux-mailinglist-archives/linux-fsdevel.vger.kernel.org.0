@@ -2,159 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 438FC46A4AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 19:32:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F1546A4CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 19:39:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237245AbhLFSgN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 13:36:13 -0500
-Received: from mail-mw2nam08hn2232.outbound.protection.outlook.com ([52.100.162.232]:63617
-        "EHLO NAM04-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233544AbhLFSgN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 13:36:13 -0500
+        id S1346257AbhLFSn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 13:43:26 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:30952 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233656AbhLFSnZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Dec 2021 13:43:25 -0500
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B6GnLrK027649;
+        Mon, 6 Dec 2021 18:39:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=P0QD1TuEhAtXKJrdOtfGT1XNqn77ADHHXGeNn6RUF8Y=;
+ b=z6uCiJqbc2QvtEXxXd/mjARFD+xKqdBo0lGkCPLHJbzyv3mfdvfBwVfZ7wr/5WQ3ts77
+ A1+XOtT9KG5oIrc0Txn/4Vp3ZdFf7hspK8B3BUE/WVDBpcGntB+aNI349sjQSFj9I9hm
+ cL0WiLkvo1ryFU6wieXnbWFvrnbVY2ui7DZ2Q55W5cldSMDp2Latg2tUB1Vz1Bok29yv
+ 4x3ChnJNMrI/qfjacTLuhHEWUxTizWyOarzjg0Dp3RapBvELSie1LRiRIsme0Acx6oVW
+ lJukwddGcNF290yzMVjfPq4RDu5mIuGGmcg081Ir7SHgN6MGCbxfjMhRH61lScUMJeWB Mg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3csc72b4cs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Dec 2021 18:39:54 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1B6Ia4fc193539;
+        Mon, 6 Dec 2021 18:39:53 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2108.outbound.protection.outlook.com [104.47.58.108])
+        by aserp3020.oracle.com with ESMTP id 3cr053tce3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Dec 2021 18:39:53 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CDHiRhxKX1cLUvQP3acWeg1A9Hp8dXRNZ5ikGQADswiJOE2YSjrVu0h71mDUalPkUWselG6ppydX5b4NO8I5jNdP5pjptg0q5HVYVOza3FtJstEivFdc6cRx2W/DCb1NTXB95AeK0GyPwKXZ5Vjro3RWG2/fLQyqv/MC0sSVPGOMOvhkRwqjXLzL7jmsFhxdIC6BMDdX0d3nRSaTSqjI22Yff01AinOVzdaMjvstmr5zuVpilzYJjRJog+v2nwoRxDke5gGSBj9s73MFsy1EBVElOVJWoiDvwZklqKdQ8f45uvSnGPQPPqz4xFWH6u24CW3vMknHlYgMfNNXY3AKbA==
+ b=MUEUDjLe9wR9w/jhhAlCvictyURriceWfT1pImga7fbfl13QtGbovBzSSHOELUYuVE60jQo3hLiLqYKImMfI3L0k9w8fQY9a70ssw7seVyfO6fTZfZvHcMYKxKPyn5ZTH3qVLafobTzlN0cM5eMe2Cm4k6aRmi5b9nvZxYxAjNOjYxomKcTK9Am7yMIvkKe/+UENKekq0PZarTMT23BMSWBuvOfYwPyv5cwivDGCoGCzjqK2PSKXx/FzZQoTlQQ/Wlo6zo8ardipt6RDjgLPU648hxzlt6knLLvPzQ68FFvdOrKB/mS/4ZJAZm3fln/a75K0t0lVKuSO92zi6KwYfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NTkULZ5UHExQp4+lt+mjKcEqTWLs4cv4821EJcQtSYE=;
- b=eB6G23410ay7Zud9HIkGVZPPr4zlQpcCHXBzCrOQIHgSvbqM+ZI00ygIODLX2fNAaAaDwYiHbYjMFJwlKnGo3CpOeNBOhx8rljJz/rbQ4ONz6IXcNl3NUFFAJUwV2dOj/jlbXpmKztL10X/lNyzjskUjIOh+jfm2H3qLJ3IhSrI1nNhMpms9aOJfKcUy6ThdnocEitvPvH+19KAuljznvb/VGVpeMwLQjhZ+qzyCgAzUfNxP2rYRZTq58HGgyZKxsy16aR/VUBd8OGixXBrdJJcssJWRiwEdK7z1p+Yl4kXiqcu7y0X7dXRlIHrL2sRqhHnWoDWfa1v1W3mdNqO6Tw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 146.201.107.145) smtp.rcpttodomain=sbcglobal.net smtp.mailfrom=msn.com;
- dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=msn.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fsu.onmicrosoft.com;
- s=selector2-fsu-onmicrosoft-com;
+ bh=P0QD1TuEhAtXKJrdOtfGT1XNqn77ADHHXGeNn6RUF8Y=;
+ b=Zx2f/ciUnScn6PuyUWbiIfqqaMzDdZJryFrL2/W1vemn69oqfN4BafJbfVjPavZLktd5Z4NGLRCnlvErC71aRYPxH2cfDtc2GFgt3DjQWLZ0TLCdEw3sDxOvcoDaisAygBEYH16bTmAnfLW1KCdTTE7B+R9ut7MztucKMHAgQ4jn4QRuLKwZUGgGHeo7y1P/HtjInNYAJgf/hLxXC6kBCXRbEPkxxKtTmMnRI6iYyfebiIKWhOlSUci+G97oQt99IOXAjdDN5dq2EfCmCn+FEfORUUvyBeDckFNXScQIN4qB5JBz7pw/z+d2ONeBLB2XAeOctsQ/27wz4uxJkA+exg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NTkULZ5UHExQp4+lt+mjKcEqTWLs4cv4821EJcQtSYE=;
- b=HvOcZ5BLddEQcs/KdGSqcvoFqph+Gljqa3uvNRewW2jElJfvdMuaAmoC8B0j1VovlWcBkU2luPwhyjVkwFQr/zi+tH/wcQzOjNqX5FcGPXefIQiWSoq1UsPrTutSjo/izu6dEkvMWQQ22JqNhmLjMKdB/DjOQS/k5U6VMDvgZYg=
-Received: from MW4PR04CA0122.namprd04.prod.outlook.com (2603:10b6:303:84::7)
- by PH0P220MB0620.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:ea::19) with
+ bh=P0QD1TuEhAtXKJrdOtfGT1XNqn77ADHHXGeNn6RUF8Y=;
+ b=BDFMwnbNWivQyo96dx5RzxQw8q0q8+9Ok98XzOZZ3RHuwRgxvNUJySvvZsFAx3gA+2H98mGH9Y0bQENDhdewOerIcxIrg57kzPBi66KAX8U3IWh+zIeVLvVDfIYkTTI3vugRvbjBRoSFh0z99QmynmpQHet7yy551umy45+wUXQ=
+Received: from CH0PR10MB4858.namprd10.prod.outlook.com (2603:10b6:610:cb::17)
+ by CH0PR10MB5340.namprd10.prod.outlook.com (2603:10b6:610:c1::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.16; Mon, 6 Dec
- 2021 18:32:35 +0000
-Received: from MW2NAM04FT067.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:303:84:cafe::47) by MW4PR04CA0122.outlook.office365.com
- (2603:10b6:303:84::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.14 via Frontend
- Transport; Mon, 6 Dec 2021 18:32:34 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
- 146.201.107.145) smtp.mailfrom=msn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=msn.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- msn.com discourages use of 146.201.107.145 as permitted sender)
-Received: from mailrelay03.its.fsu.edu (146.201.107.145) by
- MW2NAM04FT067.mail.protection.outlook.com (10.13.31.174) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4755.13 via Frontend Transport; Mon, 6 Dec 2021 18:32:34 +0000
-Received: from [10.0.0.200] (ani.stat.fsu.edu [128.186.4.119])
-        by mailrelay03.its.fsu.edu (Postfix) with ESMTP id 29F67951AC;
-        Mon,  6 Dec 2021 13:31:58 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.20; Mon, 6 Dec
+ 2021 18:39:51 +0000
+Received: from CH0PR10MB4858.namprd10.prod.outlook.com
+ ([fe80::a4f2:aef4:d02b:9bde]) by CH0PR10MB4858.namprd10.prod.outlook.com
+ ([fe80::a4f2:aef4:d02b:9bde%9]) with mapi id 15.20.4755.021; Mon, 6 Dec 2021
+ 18:39:51 +0000
+From:   Chuck Lever III <chuck.lever@oracle.com>
+To:     Jeff Layton <jlayton@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+CC:     Bruce Fields <bfields@fieldses.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dai Ngo <dai.ngo@oracle.com>
+Subject: Re: [PATCH RFC v6 1/2] fs/lock: add new callback, lm_expire_lock, to
+ lock_manager_operations
+Thread-Topic: [PATCH RFC v6 1/2] fs/lock: add new callback, lm_expire_lock, to
+ lock_manager_operations
+Thread-Index: AQHX6ssSX8kmzDHzL0ydpUvZWW9YQKwly7cA
+Date:   Mon, 6 Dec 2021 18:39:51 +0000
+Message-ID: <133AE467-0990-469D-A8A9-497C1C1BD09A@oracle.com>
+References: <20211206175942.47326-1-dai.ngo@oracle.com>
+ <20211206175942.47326-2-dai.ngo@oracle.com>
+In-Reply-To: <20211206175942.47326-2-dai.ngo@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3654.120.0.1.13)
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: afd2b830-678f-4600-0e12-08d9b8e7ca36
+x-ms-traffictypediagnostic: CH0PR10MB5340:EE_
+x-microsoft-antispam-prvs: <CH0PR10MB5340190423C49C18886FD505936D9@CH0PR10MB5340.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 8vGnQ5eTQdFL9XWUdWnVU/lB7jTonC39o8ngu3J5MDYa/VWa0VoLUHyUN3CZF94KDxXhSyL+jvsTR9Rhbt9tq90phCMphxt7emBc/gqPj2FcfzwHUrMwawDAAi+WZEcbYNbnUa3F9BYP7BndZ3cewZfBw7kPQtK69bOIJ5RYKzRxvbeGvfG6db68cExBvbkzt9+kpIwex+2pkA90MQjltVJKH8zY/uWBJGgtQc9tf+rXKcZGVtfPSr60W44ds51VwbElGMDtA/JaGU2rzOo1xbX+yw8OLtp51dssj5UJnImvGKTHbIs2h4d6dJyybtiXnMO8DIq0R0F/S6XDe4brc+VaoWIyxeN93XqAjG2MZ8c0xRYsl56Dhgf0f6Cf9xVi4hMq9H0YRPiRhKWhJkEK5U/815dEaEZ/s61OMM8V09nyfGPDJBQFoFCFBDh61xII6tSSPUe5r6y+2tp+F8yjnIkInNUhO29+zDn3OcSyIZTHIxJVHqCxptRKz+hRbHK8NFbGjJFiGI4Ow05wamQrKBliZs6tiFS6/ZfYHHoF19jCwxUIGhOp+PXbgqyvJlCyFYfQUgFG9iy3Le5t7gaF1zJx4XLzDi8weyHI5iFgb/Gf/MsWquBRXo/JuPW4O8UkRL9YxThxu6FF2USasXPhqO1O2iLuE2/7c+ofATN1ZAHfxzwNTbRnMa4GGbwetj2jGDCZjWV+NgZfNxgs+Gjmq/KFOd6hzMtGzD7Q2wfual+4uYBNb7FUMOAG7gaYNQUh
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB4858.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(5660300002)(110136005)(71200400001)(122000001)(8676002)(107886003)(54906003)(6506007)(4326008)(2906002)(508600001)(33656002)(53546011)(6486002)(6512007)(66946007)(86362001)(38070700005)(2616005)(316002)(64756008)(26005)(66446008)(38100700002)(66556008)(66476007)(76116006)(186003)(36756003)(83380400001)(8936002)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?EZt8A1mTjNJv48pV1TAvQvCEE5tBif7x+BYqRPiLusYafsEOzjxPOOc4PcTR?=
+ =?us-ascii?Q?tIU9Jhli2Ol4mA5ws2SLFOwRPGiYIiUVWSuG++xQptLKqx0aLounmjidBI3M?=
+ =?us-ascii?Q?g+gLxLF1rftSvFLsYcV4QwZL2LicBECC/LA1QzlIQkTlw1wt0G2HJVxYyhD/?=
+ =?us-ascii?Q?j5N9V5REmlTJ2jFRbGPbcFOGumZ46CHt+aWdEA7RIDI7TO9a0XQYVFCrc2hy?=
+ =?us-ascii?Q?/3Oe0fBzJgyYtNbOjN8ZYXspwSjQ1KZRExN15REIReFfT0kV+qgy+ocR8Z8n?=
+ =?us-ascii?Q?C2sOtOUH3PIkWzWmIrmuAp6V7JPahupvmpxciOzNoIRtKslkB8aYuE8kn31j?=
+ =?us-ascii?Q?R4CVM033/JCwh8DxXQ5w3zBP7BaqqHNAUYRzktCr9KPgVqkYRBJXFXav5Uh4?=
+ =?us-ascii?Q?WyHg+YO+uCQn3BTI2L3H4Xo7oFxHyuEYyW420bYX3iQcfLnJoSK93t6G/8Zq?=
+ =?us-ascii?Q?4zIkL/snNCYrKxFP2N3tFqjwM85URt0gFRXiP9HVBGYIl4UCSr65fBIyphua?=
+ =?us-ascii?Q?x9T/ejHOnU6uj8j77gNTMrcfshRvJS2HfNxi9e0v87/g0KFrfkoJZgbtldUT?=
+ =?us-ascii?Q?+BiObyss2vVNrTrkh5WEB5LjYcM4G+hilLMj/PNU7/kc42g87a/pt6UZ/7Jr?=
+ =?us-ascii?Q?NAqEr2xkIwgKCxbKIo60Wvf8ywjqwQZKKWPnwnBB4Braz3BJPdZ8ZRR/f5by?=
+ =?us-ascii?Q?zaSjC5aPtXO8ff/+Fwe4TKxkvh6JUdrAEhTx93Xb/EpBvvSndarDWt/Z6fyk?=
+ =?us-ascii?Q?5LyS3X443/VBqOh3FWXeao7eOkb/aOd1fYkRDtKt1UHgztwx4SXF5RevJjA8?=
+ =?us-ascii?Q?Qko2+L4nau1qXsnQxGEGynyh6Cl6nuTZGZGw9LikOeUJc/53fbKQKvxTZ1JB?=
+ =?us-ascii?Q?QTB3nSUHzSSGfgjjkwIwQNqb/gJQcVKRR4bc98FEx7xp52le339/I2svGi0Q?=
+ =?us-ascii?Q?kCSR4SvlDTS3ZCTQ3iBidQDe1L0LKz/SaGZ5hUJCu99bfzajw98ZMkN4AcIc?=
+ =?us-ascii?Q?dMBqtWFgFlC+6+YC8p3XTF9fCkUSbLEJAXCWZHuDXRwVBJysdHZphtxV4rnl?=
+ =?us-ascii?Q?6aWz/0IxDcHOnyyUfRWyIoOI2M+UR2YBpy0Z1Shkd5bUa1S1sT/AzgiIEgdX?=
+ =?us-ascii?Q?1L8ZLu8bJM9XkLIT8C3SCNrqhSnZRNnC00rVZxm5fZx3XOI709/aT8Hrgx7q?=
+ =?us-ascii?Q?ePp2dYjR8bBg4brh9Kyl+DJ43F7txGpZuP1yFk4yG7VdqpiOJgk8jopDNSXv?=
+ =?us-ascii?Q?ngc8kVW3KyYEnC/Y/wseB6Gut4znOuh9fdPcipBU2sBmcQuR7Kn2ZsBeGpiU?=
+ =?us-ascii?Q?P4ZXPlN4NX5/FQn+FBgzleCxYfqjH5dH5tFiwEEmrHQ5mz20elvryFd5Q3Wz?=
+ =?us-ascii?Q?vscy1RTm22ZyPMYldI36WI4x6gZGlPE46r7m8eOsUI8r0ChpWH77H/SSRu/F?=
+ =?us-ascii?Q?g+cpzEE3TXvnkQy6eWP3Qvcy2+pCp4dpszYuA+HN+OItGsE0KnNGUJwlSdQN?=
+ =?us-ascii?Q?wJjeP5Nk+nY7IHEYRe7END2DNGU84RsdHsS5HXj55nFfTxCW4RMQd9gxNyMt?=
+ =?us-ascii?Q?D/8TVNSkz5BRJDaJAAqI2wHDqRLt1/YirdN9aPjgwjrq2Eu5gfedcgNxiA9g?=
+ =?us-ascii?Q?QMqlFV7Q6zWiduvEUSwPCrY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <914631708601C44688B5265C29B5E8B3@namprd10.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Re: From Fred!
-To:     Recipients <fred128@msn.com>
-From:   "Fred Gamba." <fred128@msn.com>
-Date:   Mon, 06 Dec 2021 19:31:17 +0100
-Reply-To: fred_gamba@yahoo.co.jp
-Message-ID: <422f2388-cac7-4582-9d4c-49bcb70e5b84@MW2NAM04FT067.eop-NAM04.prod.protection.outlook.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f669e5e7-f60b-4b96-3070-08d9b8e6c5ae
-X-MS-TrafficTypeDiagnostic: PH0P220MB0620:EE_
-X-Microsoft-Antispam-PRVS: <PH0P220MB06209C02C86985684A07EB44EB6D9@PH0P220MB0620.NAMP220.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 2
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Forefront-Antispam-Report: CIP:146.201.107.145;CTRY:US;LANG:en;SCL:5;SRV:;IPV:CAL;SFV:SPM;H:mailrelay03.its.fsu.edu;PTR:mailrelay03.its.fsu.edu;CAT:OSPM;SFS:(4636009)(84050400002)(46966006)(40470700001)(86362001)(47076005)(9686003)(31696002)(70586007)(2860700004)(786003)(70206006)(316002)(356005)(6266002)(7596003)(5660300002)(6862004)(3480700007)(82202003)(31686004)(6666004)(83380400001)(40460700001)(508600001)(2906002)(8936002)(82310400004)(8676002)(35950700001)(6200100001)(7416002)(7406005)(956004)(26005)(336012)(7366002)(7116003)(480584002);DIR:OUT;SFP:1501;
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?OVBBZjdWZ21pY1cxU09TRDFsMGRkNFh4bHpZVEc3S3dXcGhPbGdmNVBYL2k4?=
- =?utf-8?B?TUFwOVhqb2lGNDRNOXNnTzlWT1M2UDVtQkhpTkVpTHZJVUczSXNQbld1Rkls?=
- =?utf-8?B?cERkUmpwR2FWMXlZcW9UeFg2Z05udXZxa2ozSG9RZEV3UTh0eG5mME5Hd3h5?=
- =?utf-8?B?ZmszdTRMekJyMnVsTGFiN0lmMDJZc01keGQ1QURjajg5U0djSzg0T0dYczcz?=
- =?utf-8?B?c2NIOFhOZXJHc1VzS3B5U0s4SjhSMDNHOTE1TXBRU3lhcy9wcWhBNDVTaTJT?=
- =?utf-8?B?b28zTlh4MkNvOXlLVUZUd0hleVRIbkwvMXpTeGhUYTNMSGJBSmlydWQrTWUz?=
- =?utf-8?B?MDdGbGo5c0kwMlVxckFYZGszSnBlbndXbzBiaFJtWkNrWnp2a0w4WEl0WUNy?=
- =?utf-8?B?TTliYnhYeTJhSXBhUXpaSTMvZ1FYYW9UQWdaeFZOYVRzYXNBSE0vYXZSVzc3?=
- =?utf-8?B?ZXBkaWlnNENYcW1ROFZwRHBQaXUrVlZ4a1didnZlaWc5OGJHK0RDTXNuK3VT?=
- =?utf-8?B?SWJJb3JycHlLYmRPVERNc0FQM1VudEc5dnNZVVhNTncreXNQbjRQTWVvajZm?=
- =?utf-8?B?bllzSmhvSFdzNjliZ2tJVGRNTHBRNUppRld1bWlkTDB4VTdmcThFcThYckhp?=
- =?utf-8?B?MW9tYWtmRjZXcnlacUp1bkx4N3M5b0xlcVZ1RFoxZXVTbjExemhrbGdXNG9R?=
- =?utf-8?B?Z1lmTnZDWS9NZFE5a0lIZ2FwSnBuRDJ3dWt4UFlZYU5zR0syMURDWlhDZ29J?=
- =?utf-8?B?ZmExanNra0ZNZ29yakh2UHRuTVVoU0FZOS90R24zeWFaRDNoeW8zU09rR1FG?=
- =?utf-8?B?SXJGUnBtbHgzV3BZSzNvWEhqdmJQSmxhdHR3V0VzYk1keHJyRGtsSHRLaDYw?=
- =?utf-8?B?WlN1ZjFqMXdoZlVyRVN4Z2tnaTZyMzI4cDdtSFhxTWxuZlN2UkRPcnRrYnRM?=
- =?utf-8?B?eHpwcC9TZEZnL01YeWFGOGtCTTlrK0xHNUp0QkE3RHZmL1l6QVVCZkNSRzYw?=
- =?utf-8?B?Z3VsaFFGVnpjVkdjQUFQSC8wd0k5WDF1OExWTzUyMmo0YzFoMkVaY3VQdThy?=
- =?utf-8?B?UnB6b3FvNld1Z04wYkZZZEg2OWZMamdPSjJjMXhjQ1FRdEZRSVhPK1FjcWZ5?=
- =?utf-8?B?cTIzNk93aVRvcE5iQ0ozeVZVMTRSREhKS1RBMVB1bU9aNUJJOGw1WjRPZEhC?=
- =?utf-8?B?NGxUSnR4eFVNd2sxTVZsdDhrN2c3MTZ0b1o1blpBZVo2T1N0K2lhdzM3clk4?=
- =?utf-8?B?K3hwTWYwd24xdGt1QjRRU1NlQWllSHY2RW5MZk96K3ZDR1AwL25ScWE0eENW?=
- =?utf-8?B?Y2VjVzdvSm9yYkdic3ZxWkF5NW54RkxxdHJGL2xhcnlFbXNoekNWM01Wbmxv?=
- =?utf-8?B?SVZ6UHgwMkFWN2VjS0VvTFg0UDVLWWJzS2hqQU9ib3JLT1BjdVptZk45UGdL?=
- =?utf-8?Q?1j1FzjDO?=
-X-OriginatorOrg: fsu.edu
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 18:32:34.6277
+MIME-Version: 1.0
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB4858.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: afd2b830-678f-4600-0e12-08d9b8e7ca36
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2021 18:39:51.8684
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f669e5e7-f60b-4b96-3070-08d9b8e6c5ae
-X-MS-Exchange-CrossTenant-Id: a36450eb-db06-42a7-8d1b-026719f701e3
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a36450eb-db06-42a7-8d1b-026719f701e3;Ip=[146.201.107.145];Helo=[mailrelay03.its.fsu.edu]
-X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT067.eop-NAM04.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0P220MB0620
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9PKZVqOewDQ2Jchc/ABl7MUb7N6oZtFZr5lE4oZG8BfE4VDCwMPndSO22z0LouGTsPE51qsFxv4HrPmyCk5UPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5340
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10190 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112060111
+X-Proofpoint-ORIG-GUID: HHiUM23jVUgNWxlHcGse3dr0iOB5I4gL
+X-Proofpoint-GUID: HHiUM23jVUgNWxlHcGse3dr0iOB5I4gL
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
 
-I decided to write you this proposal in good faith, believing that you will=
- not betray me. I have been in search of someone with the same last name of=
- our late customer and close friend of mine (Mr. Richard), heence I contact=
-ed you Because both of you bear the same surname and coincidentally from th=
-e same country, and I was pushed to contact you and see how best we can ass=
-ist each other. Meanwhile I am Mr. Fred Gamba, a reputable banker here in A=
-ccra Ghana.
 
-On the 15 January 2009, the young millionaire (Mr. Richard) a citizen of yo=
-ur country and Crude Oil dealer made a fixed deposit with my bank for 60 ca=
-lendar months, valued at US $ 6,500,000.00 (Six Million, Five Hundred Thous=
-and US Dollars) and The mature date for this deposit contract was on 15th o=
-f January, 2015. But sadly he was among the death victims in the 03 March 2=
-011, Earthquake disaster in Japan that killed over 20,000 people including =
-him. Because he was in Japan on a business trip and that was how he met his=
- end.
+> On Dec 6, 2021, at 12:59 PM, Dai Ngo <dai.ngo@oracle.com> wrote:
+>=20
+> Add new callback, lm_expire_lock, to lock_manager_operations to allow
+> the lock manager to take appropriate action to resolve the lock conflict
+> if possible. The callback takes 2 arguments, file_lock of the blocker
+> and a testonly flag:
+>=20
+> testonly =3D 1  check and return true if lock conflict can be resolved
+>              else return false.
+> testonly =3D 0  resolve the conflict if possible, return true if conflict
+>              was resolved esle return false.
+>=20
+> Lock manager, such as NFSv4 courteous server, uses this callback to
+> resolve conflict by destroying lock owner, or the NFSv4 courtesy client
+> (client that has expired but allowed to maintains its states) that owns
+> the lock.
+>=20
+> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
 
-My bank management is yet to know about his death, but I knew about it beca=
-use he was my friend and I am his Account Relationship Officer, and he did =
-not mention any Next of Kin / Heir when the account was opened, because he =
-was not married and no children. Last week my Bank Management reminded me a=
-gain requested that Mr. Richard should give instructions on what to do abou=
-t his funds, if to renew the contract or not.
+Al, Jeff, as co-maintainers of record for fs/locks.c, can you give
+an Ack or Reviewed-by? I'd like to take this patch through the nfsd
+tree for v5.17. Thanks for your time!
 
-I know this will happen and that is why I have been looking for a means to =
-handle the situation, because if my Bank Directors happens to know that he =
-is dead and do not have any Heir, they will take the funds for their person=
-al use, That is why I am seeking your co-operation to present you as the Ne=
-xt of Kin / Heir to the account, since you bear same last name with the dec=
-eased customer.
 
-There is no risk involved; the transaction will be executed under a legitim=
-ate arrangement that will protect you from any breach of law okay. So It's =
-better that we claim the money, than allowing the Bank Directors to take it=
-, they are rich already. I am not a greedy person, so I am suggesting we sh=
-are the funds in this ratio, 50% 50, ie equal.
+> ---
+> fs/locks.c         | 28 +++++++++++++++++++++++++---
+> include/linux/fs.h |  1 +
+> 2 files changed, 26 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 3d6fb4ae847b..0fef0a6322c7 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -954,6 +954,7 @@ posix_test_lock(struct file *filp, struct file_lock *=
+fl)
+> 	struct file_lock *cfl;
+> 	struct file_lock_context *ctx;
+> 	struct inode *inode =3D locks_inode(filp);
+> +	bool ret;
+>=20
+> 	ctx =3D smp_load_acquire(&inode->i_flctx);
+> 	if (!ctx || list_empty_careful(&ctx->flc_posix)) {
+> @@ -962,11 +963,20 @@ posix_test_lock(struct file *filp, struct file_lock=
+ *fl)
+> 	}
+>=20
+> 	spin_lock(&ctx->flc_lock);
+> +retry:
+> 	list_for_each_entry(cfl, &ctx->flc_posix, fl_list) {
+> -		if (posix_locks_conflict(fl, cfl)) {
+> -			locks_copy_conflock(fl, cfl);
+> -			goto out;
+> +		if (!posix_locks_conflict(fl, cfl))
+> +			continue;
+> +		if (cfl->fl_lmops && cfl->fl_lmops->lm_expire_lock &&
+> +				cfl->fl_lmops->lm_expire_lock(cfl, 1)) {
+> +			spin_unlock(&ctx->flc_lock);
+> +			ret =3D cfl->fl_lmops->lm_expire_lock(cfl, 0);
+> +			spin_lock(&ctx->flc_lock);
+> +			if (ret)
+> +				goto retry;
+> 		}
+> +		locks_copy_conflock(fl, cfl);
+> +		goto out;
+> 	}
+> 	fl->fl_type =3D F_UNLCK;
+> out:
+> @@ -1140,6 +1150,7 @@ static int posix_lock_inode(struct inode *inode, st=
+ruct file_lock *request,
+> 	int error;
+> 	bool added =3D false;
+> 	LIST_HEAD(dispose);
+> +	bool ret;
+>=20
+> 	ctx =3D locks_get_lock_context(inode, request->fl_type);
+> 	if (!ctx)
+> @@ -1166,9 +1177,20 @@ static int posix_lock_inode(struct inode *inode, s=
+truct file_lock *request,
+> 	 * blocker's list of waiters and the global blocked_hash.
+> 	 */
+> 	if (request->fl_type !=3D F_UNLCK) {
+> +retry:
+> 		list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
+> 			if (!posix_locks_conflict(request, fl))
+> 				continue;
+> +			if (fl->fl_lmops && fl->fl_lmops->lm_expire_lock &&
+> +					fl->fl_lmops->lm_expire_lock(fl, 1)) {
+> +				spin_unlock(&ctx->flc_lock);
+> +				percpu_up_read(&file_rwsem);
+> +				ret =3D fl->fl_lmops->lm_expire_lock(fl, 0);
+> +				percpu_down_read(&file_rwsem);
+> +				spin_lock(&ctx->flc_lock);
+> +				if (ret)
+> +					goto retry;
+> +			}
+> 			if (conflock)
+> 				locks_copy_conflock(conflock, fl);
+> 			error =3D -EAGAIN;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e7a633353fd2..1a76b6451398 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1071,6 +1071,7 @@ struct lock_manager_operations {
+> 	int (*lm_change)(struct file_lock *, int, struct list_head *);
+> 	void (*lm_setup)(struct file_lock *, void **);
+> 	bool (*lm_breaker_owns_lease)(struct file_lock *);
+> +	bool (*lm_expire_lock)(struct file_lock *fl, bool testonly);
+> };
+>=20
+> struct lock_manager {
+> --=20
+> 2.9.5
+>=20
 
-Let me know your mind on this and please do treat this information highly c=
-onfidential.
+--
+Chuck Lever
 
-I will review further information to you as soon as I receive your
-positive response.
 
-Have a nice day and I anticipating your communication.
 
-With Regards,
-Fred Gamba.
