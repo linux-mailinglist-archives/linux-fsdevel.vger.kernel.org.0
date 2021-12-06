@@ -2,97 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECF9D46A53E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 19:56:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F40C746A595
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 20:22:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348080AbhLFS7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 13:59:42 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:39300 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235369AbhLFS7l (ORCPT
+        id S1348162AbhLFT0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 14:26:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60576 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348426AbhLFT0U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 13:59:41 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5EC6CCE17A9;
-        Mon,  6 Dec 2021 18:56:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D600C341C2;
-        Mon,  6 Dec 2021 18:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638816969;
-        bh=N7zrzVL9603bCZxw3WUkqNCEttXiBcbQdkgUWW59B3w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t7TpaNVaCplJo0xoyl0mpFw1eVr/98HGOJYNnW9qhAqiRV7xNYqdiSkwpGZ4jjlMn
-         1AuUfkIxaqsrwmRE8SAKel0YifubmnaH6RVnlhqtc/bMtXuj2xoZiTImRaQrNiOjam
-         M7c8TL0H5GaltRn/A3U8j36Wyvm7CFlruszSI6g75u06/5EmIcqUxR9cy/exdAZv1q
-         xPdSXJ9IzNvp5eB37PgI12bA9LALWmRVjXQnj3BxjPCfALpZI6LDyaRoWrL1RtpuMI
-         MW91TdP/TLS4hNN2Ly6I1FSJN2iwb6U245uDMgfFmo36fiiPUom1zRt5MhZQ9k/aek
-         gXdlMJsH/lx5g==
-Date:   Mon, 6 Dec 2021 10:56:07 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>
-Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ramji Jiyani <ramjiyani@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] aio: keep poll requests on waitqueue until completed
-Message-ID: <Ya5cx3EcU5SgV9dP@gmail.com>
-References: <20211204002301.116139-1-ebiggers@kernel.org>
- <20211204002301.116139-2-ebiggers@kernel.org>
+        Mon, 6 Dec 2021 14:26:20 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 520E0C061359
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Dec 2021 11:22:51 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id t9so24567284wrx.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Dec 2021 11:22:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=PA5Eb3SKatYFaqsO/40bx9AAytaL07oA6ydkj8EAbzQ=;
+        b=BY8rn4XXb+mdgRHh87bT17W2bhfX41IcHRifLOsHTK5Ry3OOwz3opyPsb3FU+OZALV
+         VgZyoWsskd6t+tE4mmhTRpvPH75vw0PfSvLFqOadgFo8Wy7BolwQPJUT6WRS43lDDOLn
+         ukYKlEDFD0jp/ZQpMJlznwgUH1/7VLSnHi2CyWGWIwFwZvqla/FcMc7ngMbjfAY/SDS/
+         mBkmZ02ja1Zia4H13rVIrRlQ9fVgeiPViv4bEWuMSE7io7MXQcAJnn0WPbY0+XCCQ23I
+         eztfapuZ+0FgdWbJI1s69aL+COKb9PX4wWA0gDl+bjtzW8Qt2za8W7w79ybn4xYeWUhR
+         tV1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=PA5Eb3SKatYFaqsO/40bx9AAytaL07oA6ydkj8EAbzQ=;
+        b=HCIMuXqmjb+AjxEgTv9xC9UVfB0fo8XgH0ewtVXvnO50gl2q21W8Sy/HTy+KzxdCKt
+         b4pki59v6bbiK6GhPM2V8/+ALtwIjJJQdyRbYCEFShRF6/1r6T9k67Ktbf6wc+gGixxx
+         OdUkrODaClihXw79ObV7bmnf2UOYt/8s8umNHSlHScw2qcwYTNdp4uozas/IyXZJl/No
+         AmJTg3sYC6a1VzpUdIoJJY6K4EapA4zKxGnMDglPxCxys7dOkOKk7OYe3C0EPszbQssX
+         ApJx3GQTk2zwca5jxMYFRv4hRPUl6WpqZRzcxMwKB88bwi0z2EglLddvwdjIMUd9QJkP
+         HiiA==
+X-Gm-Message-State: AOAM531TnuahRw2Xru3ARxDXyuqJ4+pcRZ+7lwSvoGHT74KMuku0konA
+        DIacNZnF2aS/u1HfQzsp80zG2pxuQ/fc7dymfVs=
+X-Google-Smtp-Source: ABdhPJwSw2eazIRoKyHnBlOjsEJaNxStVRqeXM3VWdb/9IYI4cyZofqppHAfKZyQ2sTCeymxrRnX5WzB2h/oz9ZOG3k=
+X-Received: by 2002:a05:6000:1788:: with SMTP id e8mr48130934wrg.45.1638818569361;
+ Mon, 06 Dec 2021 11:22:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211204002301.116139-2-ebiggers@kernel.org>
+Received: by 2002:a1c:a301:0:0:0:0:0 with HTTP; Mon, 6 Dec 2021 11:22:48 -0800 (PST)
+Reply-To: revfrpaulwilliams2@gmail.com
+From:   "Rev. Fr. Paul Williams" <pw21653@gmail.com>
+Date:   Tue, 7 Dec 2021 00:52:48 +0530
+Message-ID: <CABXx9csRZWW3tG9Wb5+HYiiHmQ9LvVrK+Qem+mzHXj6kLf6wqA@mail.gmail.com>
+Subject: Donation From Williams Foundation.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 03, 2021 at 04:23:00PM -0800, Eric Biggers wrote:
-> @@ -1680,20 +1690,24 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->  	if (mask && !(mask & req->events))
->  		return 0;
->  
-> -	list_del_init(&req->wait.entry);
-> -
-> +	/*
-> +	 * Complete the iocb inline if possible.  This requires that two
-> +	 * conditions be met:
-> +	 *   1. The event mask must have been passed.  If a regular wakeup was
-> +	 *	done instead, then mask == 0 and we have to call vfs_poll() to
-> +	 *	get the events, so inline completion isn't possible.
-> +	 *   2. ctx_lock must not be busy.  We have to use trylock because we
-> +	 *      already hold the waitqueue lock, so this inverts the normal
-> +	 *      locking order.  Use irqsave/irqrestore because not all
-> +	 *      filesystems (e.g. fuse) call this function with IRQs disabled,
-> +	 *      yet IRQs have to be disabled before ctx_lock is obtained.
-> +	 */
->  	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
->  		struct kioctx *ctx = iocb->ki_ctx;
->  
-> -		/*
-> -		 * Try to complete the iocb inline if we can. Use
-> -		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
-> -		 * call this function with IRQs disabled and because IRQs
-> -		 * have to be disabled before ctx_lock is obtained.
-> -		 */
-> +		list_del_init(&req->wait.entry);
->  		list_del(&iocb->ki_list);
->  		iocb->ki_res.res = mangle_poll(mask);
-> -		req->done = true;
->  		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
->  			iocb = NULL;
->  			INIT_WORK(&req->work, aio_poll_put_work);
-> @@ -1703,7 +1717,16 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->  		if (iocb)
->  			iocb_put(iocb);
->  	} else {
-
-I think I missed something here.  Now that the request is left on the waitqueue,
-there needs to be a third condition for completing the iocb inline: the
-completion work must not have already been scheduled.
-
-- Eric
+Contact Rev. Fr. Paul Williams Immediately For A Charity Donation Of
+$6,200,000.00 United States Dollars At E-Mail:
+revfrpaulwilliams2@gmail.com
