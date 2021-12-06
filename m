@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3AE546A9E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 22:17:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F336B46A9F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 22:19:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243269AbhLFVVG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 16:21:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59352 "EHLO
+        id S1348428AbhLFVWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 16:22:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351352AbhLFVUM (ORCPT
+        with ESMTP id S230162AbhLFVWL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 16:20:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C530C061746;
-        Mon,  6 Dec 2021 13:16:43 -0800 (PST)
+        Mon, 6 Dec 2021 16:22:11 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8ECC061746;
+        Mon,  6 Dec 2021 13:18:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 64E6EB81235;
-        Mon,  6 Dec 2021 21:16:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5697C341C6;
-        Mon,  6 Dec 2021 21:16:39 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 0B4DDCE1413;
+        Mon,  6 Dec 2021 21:18:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F06C341C6;
+        Mon,  6 Dec 2021 21:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638825401;
-        bh=hZ5XpxQv44gj76Ca1/N1kBlnrk5LvYhDfct2h9hfBMk=;
+        s=k20201202; t=1638825518;
+        bh=/XhddiCg/wet9s+60SpDoxdJ+z6damAYn299MNsL6FI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WjUExC3iGGcwYVZtHwt3z9K2CEuHFIMbmRhqyaUPjF8PE5CengHZkHoacYisixK86
-         1q+YBnjMc5qCHN+VLwK267an/oIW3qUMP4twnidshXbxYQwE7shZU9cg6dBOwAUn4T
-         ESvfcAx4bFEVAHMLBCkvjgWWiRtZVgvdij1auipRnnl8ZzhA4svF2h3aRBcQVBvsEa
-         nJ5sQmQ+mIPrDLTIppKg1MGsjzWExU4zGaMyLn6sfQgGxVCXfIwFLw3E5vTBVgz7F3
-         drhj5vX0PE11FvjA8ekkmFpnKXUQyknwY1Z47He1xYmeaztE94T9okSS4YFOuaysVI
-         jO7/7lJUlPrRA==
+        b=A/ouPLIWL/83WriTs4viTr+X+GLFxVdnbD5C/vtlqEzDAGyC/7LZ7FEayyITOpx0o
+         FL8O47Cke+o3k7Bojw80Rbj25uuGwyx7aoKSEkPc0bovAiIHM2B7/NodxFSksW+CLT
+         lRAjuJ6suXCfO908N9BnUQRH1nPs6XLqEC2o5PrLIBevmBPyYZR8rj71YR/qKq6Dcr
+         ejz5rMVvU0I6kVSaJk1Dif7eK0S4akzLmsJHiiLkxhyracxyWeUCY1zR+7bJiqTlkj
+         BZCk73+53a0mdrPOPqhKiMLJzmpmCPsRVeRJ5+mxdiwFyi9nTGReDg1Ta5FElr8cAX
+         MnpMnW/z+SpMg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 09/15] tools: Fix math.h breakage
-Date:   Mon,  6 Dec 2021 16:15:09 -0500
-Message-Id: <20211206211520.1660478-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 04/10] tools: Fix math.h breakage
+Date:   Mon,  6 Dec 2021 16:17:23 -0500
+Message-Id: <20211206211738.1661003-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211206211520.1660478-1-sashal@kernel.org>
-References: <20211206211520.1660478-1-sashal@kernel.org>
+In-Reply-To: <20211206211738.1661003-1-sashal@kernel.org>
+References: <20211206211738.1661003-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,18 +75,18 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  create mode 100644 tools/include/linux/math.h
 
 diff --git a/tools/include/linux/kernel.h b/tools/include/linux/kernel.h
-index a7e54a08fb54c..3e8df500cfbd4 100644
+index cba226948a0ce..c48bfcb03d57d 100644
 --- a/tools/include/linux/kernel.h
 +++ b/tools/include/linux/kernel.h
-@@ -7,6 +7,7 @@
+@@ -6,6 +6,7 @@
+ #include <stddef.h>
  #include <assert.h>
- #include <linux/build_bug.h>
  #include <linux/compiler.h>
 +#include <linux/math.h>
  #include <endian.h>
  #include <byteswap.h>
  
-@@ -14,8 +15,6 @@
+@@ -13,8 +14,6 @@
  #define UINT_MAX	(~0U)
  #endif
  
@@ -95,7 +95,7 @@ index a7e54a08fb54c..3e8df500cfbd4 100644
  #define PERF_ALIGN(x, a)	__PERF_ALIGN_MASK(x, (typeof(x))(a)-1)
  #define __PERF_ALIGN_MASK(x, mask)	(((x)+(mask))&~(mask))
  
-@@ -52,15 +51,6 @@
+@@ -54,15 +53,6 @@
  	_min1 < _min2 ? _min1 : _min2; })
  #endif
  
@@ -111,7 +111,7 @@ index a7e54a08fb54c..3e8df500cfbd4 100644
  #ifndef BUG_ON
  #ifdef NDEBUG
  #define BUG_ON(cond) do { if (cond) {} } while (0)
-@@ -104,16 +94,6 @@ int scnprintf_pad(char * buf, size_t size, const char * fmt, ...);
+@@ -106,16 +96,6 @@ int scnprintf_pad(char * buf, size_t size, const char * fmt, ...);
  
  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
  
