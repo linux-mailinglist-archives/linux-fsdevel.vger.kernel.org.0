@@ -2,66 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80A814694CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 12:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9B554694F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Dec 2021 12:25:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242246AbhLFLQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Dec 2021 06:16:41 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52982 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242241AbhLFLQf (ORCPT
+        id S242397AbhLFL3S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Dec 2021 06:29:18 -0500
+Received: from outbound-smtp03.blacknight.com ([81.17.249.16]:35933 "EHLO
+        outbound-smtp03.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241793AbhLFL3R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Dec 2021 06:16:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638789186;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8s5rbDd6q7mBa+Fmra38DlYZzESfhQe+iIf1iuu9d3c=;
-        b=PDdVCjVsttq9Cfdc95kIWzcFwV9Bfw/+lB/vligz/M/cfo7Vd1gv/QtPwMX4goxnLReZsV
-        NMvl4vHDcbnPmIErxHjbvtWX5SvGZ+AJPA2zqnZ8qF60j/Gun5SAOslDbW4s1PacM2ZrqN
-        opSkc0X4kaL19Rm0ohBgJDYqqvh7cIE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-274-8rX0lnSLP0WotG-6qpzbcw-1; Mon, 06 Dec 2021 06:13:05 -0500
-X-MC-Unique: 8rX0lnSLP0WotG-6qpzbcw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55FC781EE62;
-        Mon,  6 Dec 2021 11:13:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E12804ABA6;
-        Mon,  6 Dec 2021 11:12:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20211129162907.149445-3-jlayton@kernel.org>
-References: <20211129162907.149445-3-jlayton@kernel.org> <20211129162907.149445-1-jlayton@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, ceph-devel@vger.kernel.org,
-        idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ceph: add fscache writeback support
+        Mon, 6 Dec 2021 06:29:17 -0500
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp03.blacknight.com (Postfix) with ESMTPS id DAA13C0F5A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Dec 2021 11:25:47 +0000 (GMT)
+Received: (qmail 7725 invoked from network); 6 Dec 2021 11:25:47 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 6 Dec 2021 11:25:47 -0000
+Date:   Mon, 6 Dec 2021 11:25:45 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Avramov <hakavlad@inbox.lv>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Darrick Wong <djwong@kernel.org>, regressions@lists.linux.dev,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/1] mm: vmscan: Reduce throttling due to a failure to
+ make progress
+Message-ID: <20211206112545.GF3366@techsingularity.net>
+References: <20211202150614.22440-1-mgorman@techsingularity.net>
+ <CALvZod6am_QrZCSf_de6eyzbOtKnWuL1CQZVn+srQVt20cnpFg@mail.gmail.com>
+ <20211202165220.GZ3366@techsingularity.net>
+ <CALvZod5tiDgEz4JwxMHQvkzLxYeV0OtNGGsX5ZdT5mTQdUdUUA@mail.gmail.com>
+ <20211203090137.GA3366@techsingularity.net>
+ <CALvZod46SFiNvUSLCJWEVccsXKx=NwT4=gk9wS6Nt8cZd0WOgg@mail.gmail.com>
+ <20211203190807.GE3366@techsingularity.net>
+ <CALvZod5BmFVdosG=e2NcEzeuzv0W9WifSBmeD48xnn1k+SNRKg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1223233.1638789167.1@warthog.procyon.org.uk>
-Date:   Mon, 06 Dec 2021 11:12:47 +0000
-Message-ID: <1223234.1638789167@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <CALvZod5BmFVdosG=e2NcEzeuzv0W9WifSBmeD48xnn1k+SNRKg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
+On Sun, Dec 05, 2021 at 10:06:27PM -0800, Shakeel Butt wrote:
+> On Fri, Dec 3, 2021 at 11:08 AM Mel Gorman <mgorman@techsingularity.net> wrote:
+> >
+> [...]
+> > > I am in agreement with the motivation of the whole series. I am just
+> > > making sure that the motivation of VMSCAN_THROTTLE_NOPROGRESS based
+> > > throttle is more than just the congestion_wait of
+> > > mem_cgroup_force_empty_write.
+> > >
+> >
+> > The commit that primarily targets congestion_wait is 8cd7c588decf
+> > ("mm/vmscan: throttle reclaim until some writeback completes if
+> > congested"). The series recognises that there are other reasons why
+> > reclaim can fail to make progress that is not directly writeback related.
+> >
+> 
+> I agree with throttling for VMSCAN_THROTTLE_[WRITEBACK|ISOLATED]
+> reasons. Please explain why we should throttle for
+> VMSCAN_THROTTLE_NOPROGRESS? Also 69392a403f49 claims "Direct reclaim
+> primarily is throttled in the page allocator if it is failing to make
+> progress.", can you please explain how?
 
-> +	if (caching)
-> +		ceph_set_page_fscache(page);
+It could happen if the pages on the LRU are being reactivated continually
+or holding an elevated reference count for some reason (e.g. gup,
+page migration etc). The event is probably transient, hence the short
+throttling.
 
-I suggest moving this test into ceph_set_page_fscache().
-
-David
-
+-- 
+Mel Gorman
+SUSE Labs
