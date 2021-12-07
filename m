@@ -2,98 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC51546C325
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 19:51:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8E046C35C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 20:10:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240763AbhLGSyq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 13:54:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240787AbhLGSyZ (ORCPT
+        id S240866AbhLGTNx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 14:13:53 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:48786 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240862AbhLGTNv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 13:54:25 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26802C061756
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 10:50:54 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id k2so29182023lji.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 10:50:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gmb+Apudh+c3b4tBgmQNZgnlcpZS4tKe6ho/6WlprlI=;
-        b=QDFc9P5aML7+YtJ4kv8ohPRs/NxD8Xl31/KC9meyRbjsUWaCD8+eUYuX6yVUlGqPHd
-         KK5IUmkhYJUj3NsARjU1eko53272JkmdRrJUgX+l9Aw8osNMVvggDJ3o5a2SoDGLt8Xb
-         QZuDre4bR/z4KskwYlkuCw9lTYA7xJJPi1fr8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gmb+Apudh+c3b4tBgmQNZgnlcpZS4tKe6ho/6WlprlI=;
-        b=K5HLE0CMoZcoY1AHWw5c530hZH5orwSwaN2wLaAlUJi6v2Af+VGUbZSjHc1r0FXgON
-         nADLbGlnMY1jdygpD4uGbmsuZHpc6I2AakAqjAZyAfOcU4Wf39wGJ0dqTxs9BKzGCcNc
-         SJYtvZVlRpEAGjq7U9AShL0COFAHdxC9Z6GKo6B+jdN90a0Gy3W2vx6tHNcAgkKOLtPC
-         z6UOIpfcufiTmRr89QX3zXcsm58jY7HK/57h0ClcWmHQ9xI0jyLkzKeR+4BUhd1qsiAj
-         oehkLrJOg3RAflP9XNDWgDJL+wiCSlqfqCr3iX3T8UJqyWxUzUZX3IoVxXiU53Tz6K+7
-         AyyQ==
-X-Gm-Message-State: AOAM530HEinHu00kF+KJUzyR1+YDepzPI/ZfwDzsyXPj1mOrpSo3c8sm
-        TfqkdlP4rO1enEdE3epik2H9KFd3o/2mqbeMUmU=
-X-Google-Smtp-Source: ABdhPJyjr/HDMh/J20zgtYOm3gke+VkhrX9aOMdD76SDdWB0xJYPBavYosm0s+JgI2jKVXPw3w2NKw==
-X-Received: by 2002:a2e:a376:: with SMTP id i22mr44105241ljn.201.1638903051303;
-        Tue, 07 Dec 2021 10:50:51 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id a23sm32156ljh.140.2021.12.07.10.50.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Dec 2021 10:50:51 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id p8so29175948ljo.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 10:50:51 -0800 (PST)
-X-Received: by 2002:adf:e5c7:: with SMTP id a7mr54258440wrn.318.1638903040805;
- Tue, 07 Dec 2021 10:50:40 -0800 (PST)
+        Tue, 7 Dec 2021 14:13:51 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E5ED2B81E00;
+        Tue,  7 Dec 2021 19:10:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B971EC341C1;
+        Tue,  7 Dec 2021 19:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638904218;
+        bh=kG+68qcYpyw0i1u2WkR+wTvgvAlREuCP1u2cIoKf1eo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n9/DVyls8w4C36d/6ZrKl6jXi4wavdH1hb77QCLoLmlRBsJI2tXHCKaRtUcZJjJYW
+         OijctMwu4s9PN9veie7/szEZnE1D0Bkn7QOP7Ouqcd1pLwZLkuQyDfhM9uD7ArpQ5S
+         LjpMLS69TiyBoEgTBkc3rafGkzxQIABQ9GgzJ9yStI6wS+Suh+K3WIzin0/fZ5InD2
+         QfWNrh5hUMyDAfGJFdUHx4a39IoUG8bM1GioL1VJe6Z2WjbrKNWmxWE1bIrdsLhJso
+         b5JmLjL4znPw0DJJZrJ238BngQuAmAve8gxr8roErzWeSYNHWrDFnA+m1If1D+nnJT
+         rKaMpVZyeVwew==
+Date:   Tue, 7 Dec 2021 11:10:15 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ramji Jiyani <ramjiyani@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] aio: fix use-after-free and missing wakeups
+Message-ID: <Ya+xl9peAAMiMCqa@sol.localdomain>
+References: <20211207095726.169766-1-ebiggers@kernel.org>
+ <20211207111758.GB18554@lst.de>
 MIME-Version: 1.0
-References: <20211207150927.3042197-1-arnd@kernel.org> <20211207150927.3042197-3-arnd@kernel.org>
- <CAHk-=wgwQg=5gZZ6ewusLHEAw-DQm7wWm7aoQt6TYO_xb0cBog@mail.gmail.com>
-In-Reply-To: <CAHk-=wgwQg=5gZZ6ewusLHEAw-DQm7wWm7aoQt6TYO_xb0cBog@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 7 Dec 2021 10:50:24 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjsdmyN3qYjA-Z4bqhin2ZFkssRaaTRm_LdJBqexTxWfQ@mail.gmail.com>
-Message-ID: <CAHk-=wjsdmyN3qYjA-Z4bqhin2ZFkssRaaTRm_LdJBqexTxWfQ@mail.gmail.com>
-Subject: Re: [RFC 2/3] headers: introduce linux/struct_types.h
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kernel test robot <lkp@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, kernelci@groups.io,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211207111758.GB18554@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 7, 2021 at 10:17 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Ugh. I liked your 1/3 patch, but I absolutely detest this one.
+On Tue, Dec 07, 2021 at 12:17:58PM +0100, Christoph Hellwig wrote:
+> On Tue, Dec 07, 2021 at 01:57:21AM -0800, Eric Biggers wrote:
+> > This series fixes two bugs in aio poll, and one issue with POLLFREE more
+> > broadly.  This is intended to replace
+> > "[PATCH v5] aio: Add support for the POLLFREE"
+> > (https://lore.kernel.org/r/20211027011834.2497484-1-ramjiyani@google.com)
+> > which has some bugs.
+> > 
+> > Careful review is appreciated; the aio poll code is very hard to work
+> > with, and I don't know of an easy way to test it.  Suggestions of any
+> > aio poll tests to run would be greatly appreciated.
+> 
+> libaio has a test for aio poll (test 22).
 
-Actually, it was 3/3 I liked and that made sense to me.
+Great, it doesn't look very comprehensive but at least it is something.  I ran
+the whole libaio test suite (including that test), and all the tests pass both
+before and after this patch series.
 
-1/3 isn't pretty, but I can live with it.
-
-          Linus
+- Eric
