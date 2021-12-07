@@ -2,85 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1AE46BCAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 14:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83EF446BCC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 14:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237184AbhLGNfy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 08:35:54 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:34414 "EHLO
+        id S237132AbhLGNpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 08:45:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28935 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237180AbhLGNfw (ORCPT
+        by vger.kernel.org with ESMTP id S232838AbhLGNpu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 08:35:52 -0500
+        Tue, 7 Dec 2021 08:45:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638883942;
+        s=mimecast20190719; t=1638884539;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NKYPfQIjnZc9GgFyi3oXFUCuNFUgD0ub6Q8m1fQmeU4=;
-        b=RHqGSa/hUXpZFkbkJHihmBlXYrSnlWY+I6ylfvtYw+N6KRPYw/bnkYAHaseRJDf1D81wEc
-        zvJWIGTq907hZ494gNrPdky6iuvtP2TwAbQEsSxXmUBaJupUKMtmJkG6Ly+aMF+w7FGW+x
-        TcV7E406sKmLtzwpfvNm5Igu1jhpWHI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=QFkOJkYB1Uxe2T0a8h6jEusxi+X2OG7bH/Bp7qucg9w=;
+        b=AGCt5f2+9EohQDnedLsAmN1Ic7XSiJTXekALJ4tSoccfGK13VLRl33c/+2dO5RhWXScxU6
+        GJlD6yauC9iFkSEhevtYigSrledqbpOtGInQtJ3wQRg2thP3RoB7eng5PkrCWJ8ric29z9
+        YTKIBl7A7yqyeWEsFsuNk2aBooqxFtc=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-39-I5v9qoEqNRKlR7yAVqqH4g-1; Tue, 07 Dec 2021 08:32:17 -0500
-X-MC-Unique: I5v9qoEqNRKlR7yAVqqH4g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1DA461006AA2;
-        Tue,  7 Dec 2021 13:32:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ACC5B60843;
-        Tue,  7 Dec 2021 13:32:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Ya9eDiFCE2fO7K/S@casper.infradead.org>
-References: <Ya9eDiFCE2fO7K/S@casper.infradead.org> <163887597541.1596626.2668163316598972956.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, jack@suse.cz, jlayton@kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix lockdep warning from taking sb_writers whilst holding mmap_lock
+ us-mta-536-0hFTUnDdO7yQorfs7XMONQ-1; Tue, 07 Dec 2021 08:42:18 -0500
+X-MC-Unique: 0hFTUnDdO7yQorfs7XMONQ-1
+Received: by mail-qv1-f72.google.com with SMTP id r13-20020a0562140c8d00b003bde7a2b8e2so17605719qvr.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 05:42:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=QFkOJkYB1Uxe2T0a8h6jEusxi+X2OG7bH/Bp7qucg9w=;
+        b=6AAhQhmZfZLJV19Uy9pgz61oDqgJlk6ZBokg4iXldddhA73MubezN/G1q34A+B0dms
+         5/IAjN2cOb3y0mTmcrApztSBcl+BcW8nWZ5d4A0TsUFVPwRaYGUyFb2suPGVuINJfPSu
+         xau7DLjdVVQQUaZOJpub98zCze2MCbavsO+eBgYZxmF7niYf2lQenmHrJjz8r83kTkW5
+         fWvYPZ+fPw/rRDnAWwjM8L+zR6b2Ch2isCI6XS+Rvc6zTkJnO6fXXd12tKC9HvoNcnCm
+         r0htBfl/AZ4VXdt9QzIoSUdpuXMBWUm5jiSh32yWvvQM6V9yH5pV51st+gdKLeGqGRx/
+         C5Vg==
+X-Gm-Message-State: AOAM530w7zA1aO47Oqx7zB6aMFucU/0HMKe6gl4O7HHMDyDPmPcLTQPf
+        jpnX3WQPb1CECYlcG1LfR02bpjUTZdk+nnAAC4IDwuz5b+yPJN2pVaSG2gVvNJCEVl0akGatTVo
+        rexFvQaJBpBso+XNQlHo1m/0DaQ==
+X-Received: by 2002:a05:620a:4689:: with SMTP id bq9mr40849758qkb.242.1638884537796;
+        Tue, 07 Dec 2021 05:42:17 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyg8p/0Hq9h4Lug7LbFKUqGROwqTbJaprG7N7+V6Z7GYNVsAydFBlBJ2531rBELEjHrIdbfwQ==
+X-Received: by 2002:a05:620a:4689:: with SMTP id bq9mr40849722qkb.242.1638884537554;
+        Tue, 07 Dec 2021 05:42:17 -0800 (PST)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id s12sm9442778qtk.61.2021.12.07.05.42.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 05:42:17 -0800 (PST)
+Message-ID: <d621c5522bdee8113946e7d1e5e9822820e0ef5a.camel@redhat.com>
+Subject: Re: [Linux-cachefs] [PATCH] netfs: fix parameter of cleanup()
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>, dhowells@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com
+Date:   Tue, 07 Dec 2021 08:42:16 -0500
+In-Reply-To: <20211207031449.100510-1-jefflexu@linux.alibaba.com>
+References: <20211207031449.100510-1-jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1602526.1638883933.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 07 Dec 2021 13:32:13 +0000
-Message-ID: <1602527.1638883933@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, 2021-12-07 at 11:14 +0800, Jeffle Xu wrote:
+> The order of these two parameters is just reversed. gcc didn't warn on
+> that, probably because 'void *' can be converted from or to other
+> pointer types without warning.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 3d3c95046742 ("netfs: Provide readahead and readpage netfs helpers")
+> Fixes: e1b1240c1ff5 ("netfs: Add write_begin helper")
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  fs/netfs/read_helper.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+> index 7046f9bdd8dc..4adcb0336ecf 100644
+> --- a/fs/netfs/read_helper.c
+> +++ b/fs/netfs/read_helper.c
+> @@ -960,7 +960,7 @@ int netfs_readpage(struct file *file,
+>  	rreq = netfs_alloc_read_request(ops, netfs_priv, file);
+>  	if (!rreq) {
+>  		if (netfs_priv)
+> -			ops->cleanup(netfs_priv, folio_file_mapping(folio));
+> +			ops->cleanup(folio_file_mapping(folio), netfs_priv);
+>  		folio_unlock(folio);
+>  		return -ENOMEM;
+>  	}
+> @@ -1191,7 +1191,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+>  		goto error;
+>  have_folio_no_wait:
+>  	if (netfs_priv)
+> -		ops->cleanup(netfs_priv, mapping);
+> +		ops->cleanup(mapping, netfs_priv);
+>  	*_folio = folio;
+>  	_leave(" = 0");
+>  	return 0;
+> @@ -1202,7 +1202,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+>  	folio_unlock(folio);
+>  	folio_put(folio);
+>  	if (netfs_priv)
+> -		ops->cleanup(netfs_priv, mapping);
+> +		ops->cleanup(mapping, netfs_priv);
+>  	_leave(" = %d", ret);
+>  	return ret;
+>  }
 
-> On Tue, Dec 07, 2021 at 11:19:35AM +0000, David Howells wrote:
-> > Taking sb_writers whilst holding mmap_lock isn't allowed and will resu=
-lt in
-> > a lockdep warning like that below.  The problem comes from cachefiles
-> > needing to take the sb_writers lock in order to do a write to the cach=
-e,
-> > but being asked to do this by netfslib called from readpage, readahead=
- or
-> > write_begin[1].
-> =
+Ouch, good catch.
 
-> Isn't it taking sb_writers _on a different filesystem_?  So there's not
-> a real deadlock here, just a need to tell lockdep that this is a
-> different subclass of lock?
-
-Jann thinks it can be turned into a real deadlock.  See the link I put in =
-the
-patch description:
-
-> > Link: https://lore.kernel.org/r/20210922110420.GA21576@quack2.suse.cz/=
- [1]
-
-David
+Reviewed-by: Jeff Layton <jlayton@redhat.com>
 
