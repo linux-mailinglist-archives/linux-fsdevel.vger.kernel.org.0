@@ -2,186 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA3846C683
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 22:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2589746C6AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 22:25:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237346AbhLGVSz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 16:18:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58640 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232699AbhLGVSy (ORCPT
+        id S241885AbhLGV2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 16:28:53 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:39322 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236202AbhLGV2x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 16:18:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8585C061574;
-        Tue,  7 Dec 2021 13:15:23 -0800 (PST)
+        Tue, 7 Dec 2021 16:28:53 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8DFACB81E7F;
-        Tue,  7 Dec 2021 21:15:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 228D3C341C1;
-        Tue,  7 Dec 2021 21:15:20 +0000 (UTC)
-Date:   Tue, 7 Dec 2021 16:15:18 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Yabin Cui <yabinc@google.com>
-Subject: [PATCH] tracefs: Set all files to the same group ownership as the
- mount option
-Message-ID: <20211207161518.3a00be3c@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 60761B81E83;
+        Tue,  7 Dec 2021 21:25:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FB1C341C1;
+        Tue,  7 Dec 2021 21:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638912320;
+        bh=9u8b771+gociR8Vobc7BF18nD9jpBOsReNVrS5XDPZE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=csU9W7xFlFDm8p39xEn7B9Q5MtgYCssE0yYhbHz8yDCgl5YKGWdm4au8xVw9CwRxQ
+         7Ul/M0DpczivcS/Dx7mNwW/ZTanh86rO2zdUlQLQzEOCoZa1y9hyYD9w8d9MfFaGKz
+         Qd2XOCWKrHc+Tn97svqsXNEN8FxJWGmBe2S+5DeqfEi6IFylN2bYF9YE4CmohCAkv1
+         +z8czScsbyfFXToTWb9/enrRIGaV1oJY7q4ITt+IYdfPdVyBe9bCXV4iwFP/g2WPlv
+         RhjacA/svJGLetnofedJwXQxTaWUFasMBxSO3STVrmuR1lLt/R2sFz1pHrKWN5iT44
+         UQ9kHfuxm4bzg==
+Date:   Tue, 7 Dec 2021 13:25:18 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     cgel.zte@gmail.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lv Ruyi <lv.ruyi@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>
+Subject: Re: [PATCH] fs/dcache: prevent repeated locking
+Message-ID: <Ya/RPpR3AdGAFtqX@sol.localdomain>
+References: <20211207101646.401982-1-lv.ruyi@zte.com.cn>
+ <Ya9e9XlMPUyQUvxp@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ya9e9XlMPUyQUvxp@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Tue, Dec 07, 2021 at 01:17:41PM +0000, Matthew Wilcox wrote:
+> On Tue, Dec 07, 2021 at 10:16:46AM +0000, cgel.zte@gmail.com wrote:
+> > From: Lv Ruyi <lv.ruyi@zte.com.cn>
+> > 
+> > Move the spin_lock above the restart to prevent to lock twice 
+> > when the code goto restart.
+> 
+> This is madness.
+> 
+> void d_prune_aliases(struct inode *inode)
+>         spin_lock(&inode->i_lock);
+>                         if (likely(!dentry->d_lockref.count)) {
+>                                 __dentry_kill(dentry);
+>                                 goto restart;
+> ...
+> static void __dentry_kill(struct dentry *dentry)
+>         if (dentry->d_inode)
+>                 dentry_unlink_inode(dentry);
+> ...
+> static void dentry_unlink_inode(struct dentry * dentry)
+>         spin_unlock(&inode->i_lock);
+> 
+> Did you even test this patch?
 
-As people have been asking to allow non-root processes to have access to
-the tracefs directory, it was considered best to only allow groups to have
-access to the directory, where it is easier to just set the tracefs file
-system to a specific group (as other would be too dangerous), and that way
-the admins could pick which processes would have access to tracefs.
+This same wrong patch has been sent several times before.  I think it's fair to
+say that this code could use a comment, e.g.:
 
-Unfortunately, this broke tooling on Android that expected the other bit
-to be set. For some special cases, for non-root tools to trace the system,
-tracefs would be mounted and change the permissions of the top level
-directory which gave access to all running tasks permission to the
-tracing directory. Even though this would be dangerous to do in a
-production environment, for testing environments this can be useful.
+	/* i_lock was dropped */
+	goto restart;
 
-Now with the new changes to not allow other (which is still the proper
-thing to do), it breaks the testing tooling. Now more code needs to be
-loaded on the system to change ownership of the tracing directory.
-
-The real solution is to have tracefs honor the gid=xxx option when
-mounting. That is,
-
-(tracing group tracing has value 1003)
-
- mount -t tracefs -o gid=1003 tracefs /sys/kernel/tracing
-
-should have it that all files in the tracing directory should be of the
-given group.
-
-Copy the logic from d_walk() from dcache.c and simplify it for the mount
-case of tracefs if gid is set. All the files in tracefs will be walked and
-their group will be set to the value passed in.
-
-Reported-by: Kalesh Singh <kaleshsingh@google.com>
-Reported-by: Yabin Cui <yabinc@google.com>
-Fixes: 49d67e445742 ("tracefs: Have tracefs directories not set OTH permission bits by default")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-  Resending without the RFC, and also somehow I deleted the below
-  "--- a/fs/tracefs/inode.c" part of the patch, and it prevented
-  my scripts from processing it. I'm going to start running this through
-  all my testes, and if it passes then I'll push it. Unless someone
-  has issues with it.
-
- fs/tracefs/inode.c | 74 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
-
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index 925a621b432e..f20f575cdaef 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -161,6 +161,79 @@ struct tracefs_fs_info {
- 	struct tracefs_mount_opts mount_opts;
- };
- 
-+static void change_gid(struct dentry *dentry, kgid_t gid)
-+{
-+	if (!dentry->d_inode)
-+		return;
-+	dentry->d_inode->i_gid = gid;
-+}
-+
-+/*
-+ * Taken from d_walk, but without he need for handling renames.
-+ * Nothing can be renamed while walking the list, as tracefs
-+ * does not support renames. This is only called when mounting
-+ * or remounting the file system, to set all the files to
-+ * the given gid.
-+ */
-+static void set_gid(struct dentry *parent, kgid_t gid)
-+{
-+	struct dentry *this_parent;
-+	struct list_head *next;
-+
-+	this_parent = parent;
-+	spin_lock(&this_parent->d_lock);
-+
-+	change_gid(this_parent, gid);
-+repeat:
-+	next = this_parent->d_subdirs.next;
-+resume:
-+	while (next != &this_parent->d_subdirs) {
-+		struct list_head *tmp = next;
-+		struct dentry *dentry = list_entry(tmp, struct dentry, d_child);
-+		next = tmp->next;
-+
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+
-+		change_gid(dentry, gid);
-+
-+		if (!list_empty(&dentry->d_subdirs)) {
-+			spin_unlock(&this_parent->d_lock);
-+			spin_release(&dentry->d_lock.dep_map, _RET_IP_);
-+			this_parent = dentry;
-+			spin_acquire(&this_parent->d_lock.dep_map, 0, 1, _RET_IP_);
-+			goto repeat;
-+		}
-+		spin_unlock(&dentry->d_lock);
-+	}
-+	/*
-+	 * All done at this level ... ascend and resume the search.
-+	 */
-+	rcu_read_lock();
-+ascend:
-+	if (this_parent != parent) {
-+		struct dentry *child = this_parent;
-+		this_parent = child->d_parent;
-+
-+		spin_unlock(&child->d_lock);
-+		spin_lock(&this_parent->d_lock);
-+
-+		/* go into the first sibling still alive */
-+		do {
-+			next = child->d_child.next;
-+			if (next == &this_parent->d_subdirs)
-+				goto ascend;
-+			child = list_entry(next, struct dentry, d_child);
-+		} while (unlikely(child->d_flags & DCACHE_DENTRY_KILLED));
-+		rcu_read_unlock();
-+		goto resume;
-+	}
-+	rcu_read_unlock();
-+
-+out_unlock:
-+	spin_unlock(&this_parent->d_lock);
-+	return;
-+}
-+
- static int tracefs_parse_options(char *data, struct tracefs_mount_opts *opts)
- {
- 	substring_t args[MAX_OPT_ARGS];
-@@ -193,6 +266,7 @@ static int tracefs_parse_options(char *data, struct tracefs_mount_opts *opts)
- 			if (!gid_valid(gid))
- 				return -EINVAL;
- 			opts->gid = gid;
-+			set_gid(tracefs_mount->mnt_root, gid);
- 			break;
- 		case Opt_mode:
- 			if (match_octal(&args[0], &option))
--- 
-2.31.1
-
+- Eric
