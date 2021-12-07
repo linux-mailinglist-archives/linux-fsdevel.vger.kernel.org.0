@@ -2,102 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DC2046BCE6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 14:48:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB2946BCF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 14:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237248AbhLGNvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 08:51:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32695 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237179AbhLGNvo (ORCPT
+        id S237346AbhLGNyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 08:54:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35458 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232089AbhLGNyu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 08:51:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638884893;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WyBeZZ1ZcILJZUI8pies6VTu9FLLmBjrF9ykx/ImufE=;
-        b=dLjNvG6d32jOsk+gPGEZ1yFkRsSvvzH+dBhWH4SwdgZU9dUoEifZzNMJGM1ltuFj9ZnV55
-        4GUvX6oiObTrUDU9hIoL+wj5QOlOy9GZf+esdEYZNesRh0NzaO24Dr2weWt8kmRyT04q3C
-        LCAFHGdj3rdhUgG0EufEoQH/omZsnd4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-48-MUjMWYODP1mEUoYwu3fQyA-1; Tue, 07 Dec 2021 08:48:12 -0500
-X-MC-Unique: MUjMWYODP1mEUoYwu3fQyA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D97C1014B7F;
-        Tue,  7 Dec 2021 13:48:08 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 68A2D1002390;
-        Tue,  7 Dec 2021 13:48:08 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id F0F3E225F1A; Tue,  7 Dec 2021 08:48:07 -0500 (EST)
-Date:   Tue, 7 Dec 2021 08:48:07 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
+        Tue, 7 Dec 2021 08:54:50 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6675FC061574;
+        Tue,  7 Dec 2021 05:51:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=aFv8En/ZUuUzwcf8yZWk1KkdnnIDox4k6wRcsscE4CA=; b=caIUwf1+oqIuwD7WX8dHhC9UTo
+        Y4yoywzSlSBcgtevqtNslcnAAKNAKrB3XEENVhXwsT6H4jzZsKi3EACKIDNhADJgm6Ea/4edVX4gi
+        gitKf1XwVR6/1nPPS6XOWTdZQimhmZPVpewL8a38thcuEiH6UG58SYqpUZqB9l4CvDrlVGNf2bBGL
+        nFa5ckxibtS6fYZmoX2Q4OSEitPQaqxl2jGHDgbiINmcJuLLNhmKfkQDXeueBTJAhrLByfovzu1Pg
+        ztDh97cXtlzPOZgkbhVA8JgrWO1jjmNGE2mLKQyJMDHjkI+7Qt4BRiaIBdevwASn2WAKOXSFvsTlb
+        Mx/owSRA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1muasC-007Ofb-3U; Tue, 07 Dec 2021 13:51:13 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 71DE5300237;
+        Tue,  7 Dec 2021 14:51:12 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5C17F20239D92; Tue,  7 Dec 2021 14:51:12 +0100 (CET)
+Date:   Tue, 7 Dec 2021 14:51:12 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Eric Wong <normalperson@yhbt.net>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: per-inode locks in FUSE (kernel vs userspace)
-Message-ID: <Ya9mF98V3hlOkHxK@redhat.com>
-References: <20211203000534.M766663@dcvr>
- <Ya6OkznJxzAFe8fT@redhat.com>
- <CAJfpegs2o+TSxOSB2GFOzrMcrSvBcz0RDwWkJ-TyPyYM1hf5nQ@mail.gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, quic_stummala@quicinc.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        quic_pkondeti@quicinc.com, quic_sayalil@quicinc.com,
+        quic_aiquny@quicinc.com, quic_zljing@quicinc.com,
+        quic_blong@quicinc.com, quic_richardp@quicinc.com,
+        quic_cdevired@quicinc.com,
+        Pradeep P V K <quic_pragalla@quicinc.com>
+Subject: Re: [PATCH V1] fuse: give wakeup hints to the scheduler
+Message-ID: <Ya9m0ME1pom49b+D@hirez.programming.kicks-ass.net>
+References: <1638780405-38026-1-git-send-email-quic_pragalla@quicinc.com>
+ <CAJfpegvDfc9JUo6VASRyYXzj1=j3t6oU9W3QGWO08vhfWHf-UA@mail.gmail.com>
+ <Ya8ycLODlcvLx4xB@hirez.programming.kicks-ass.net>
+ <CAJfpegsVg2K0CvrPvXGSu=Jz_R3VZZOy49Jw51rThQUJ1_9e6g@mail.gmail.com>
+ <Ya86coKm4RuQDmVS@hirez.programming.kicks-ass.net>
+ <CAJfpegumZ1RQLBCtbrOiOAT9ygDtDThpySwb8yCpWGBu1fRQmw@mail.gmail.com>
+ <Ya9ljdrOkhBhhnJX@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegs2o+TSxOSB2GFOzrMcrSvBcz0RDwWkJ-TyPyYM1hf5nQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <Ya9ljdrOkhBhhnJX@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 07, 2021 at 09:38:10AM +0100, Miklos Szeredi wrote:
-> On Mon, 6 Dec 2021 at 23:29, Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Fri, Dec 03, 2021 at 12:05:34AM +0000, Eric Wong wrote:
-> > > Hi all, I'm working on a new multi-threaded FS using the
-> > > libfuse3 fuse_lowlevel.h API.  It looks to me like the kernel
-> > > already performs the necessary locking on a per-inode basis to
-> > > save me some work in userspace.
-> > >
-> > > In particular, I originally thought I'd need pthreads mutexes on
-> > > a per-inode (fuse_ino_t) basis to protect userspace data
-> > > structures between the .setattr (truncate), .fsync, and
-> > > .write_buf userspace callbacks.
-> > >
-> > > However upon reading the kernel, I can see fuse_fsync,
-> > > fuse_{cache,direct}_write_iter in fs/fuse/file.c all use
-> > > inode_lock.  do_truncate also uses inode_lock in fs/open.c.
-> > >
-> > > So it's look like implementing extra locking in userspace would
-> > > do nothing useful in my case, right?
-> >
-> > I guess it probably is a good idea to implement proper locking
-> > in multi-threaded fs and not rely on what kind of locking
-> > kernel is doing. If kernel locking changes down the line, your
-> > implementation will be broken.
+On Tue, Dec 07, 2021 at 02:45:49PM +0100, Peter Zijlstra wrote:
+
+> > What would be much nicer, is to look at all the threads on the waitq
+> > and pick one that previously ran on the current CPU if there's one.
+> > Could this be implemented?
 > 
-> Thing is, some fuse filesystem implementations already do rely on
-> kernel locking.   So while it shouldn't hurt to have an extra layer of
-> locking (except complexity and performance) it's not necessary.
+> It would violate the FIFO semantics of _exclusive.
 
-I am wondering if same applies to virtiofs. In that case guest kernel
-is untrusted entity. So we don't want to run into a situation where
-guest kernel can somehow corrupt shared data structures of virtiofsd
-and that somehow opens the door for some other bad outcome. May be in
-that case it is safer to not rely on guest kernel locking.
-> 
-> See for example FUSE_PARALLEL_DIROPS which was added due to kernel
-> locking changes to avoid breaking backward compatibility.
-
-Good to know about this option. I checked that fuse_lowlevel.c enables
-it by default. So I should be fine from virtiofsd point of view.
-
-Thanks
-Vivek
-
+That said, look at
+kernel/locking/percpu-rwsem.c:percpu_rwsem_wake_function() for how to do
+really terrible things with waitqueues, possibly including what you
+suggest.
