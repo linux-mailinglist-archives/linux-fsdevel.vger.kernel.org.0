@@ -2,40 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB94646C3F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 20:48:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA3846C683
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 22:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236627AbhLGTwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 14:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37078 "EHLO
+        id S237346AbhLGVSz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 16:18:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231562AbhLGTwG (ORCPT
+        with ESMTP id S232699AbhLGVSy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 14:52:06 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84906C061574;
-        Tue,  7 Dec 2021 11:48:35 -0800 (PST)
+        Tue, 7 Dec 2021 16:18:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8585C061574;
+        Tue,  7 Dec 2021 13:15:23 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id D6CF8CE1DEF;
-        Tue,  7 Dec 2021 19:48:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9939C341C1;
-        Tue,  7 Dec 2021 19:48:29 +0000 (UTC)
-Date:   Tue, 7 Dec 2021 14:48:28 -0500
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8DFACB81E7F;
+        Tue,  7 Dec 2021 21:15:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 228D3C341C1;
+        Tue,  7 Dec 2021 21:15:20 +0000 (UTC)
+Date:   Tue, 7 Dec 2021 16:15:18 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Kalesh Singh <kaleshsingh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
+Cc:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
         Yabin Cui <yabinc@google.com>
-Subject: [PATCH] tracefs: Have new files inherit the ownership of their
- parent
-Message-ID: <20211207144828.3d356e26@gandalf.local.home>
+Subject: [PATCH] tracefs: Set all files to the same group ownership as the
+ mount option
+Message-ID: <20211207161518.3a00be3c@gandalf.local.home>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -46,41 +45,143 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-If the tracefs system is set to a specific owner and group, then the files
-and directories that are created under them should inherit the owner and
-group of the parent.
+As people have been asking to allow non-root processes to have access to
+the tracefs directory, it was considered best to only allow groups to have
+access to the directory, where it is easier to just set the tracefs file
+system to a specific group (as other would be too dangerous), and that way
+the admins could pick which processes would have access to tracefs.
 
-Cc: stable@vger.kernel.org
-Fixes: 4282d60689d4f ("tracefs: Add new tracefs file system")
+Unfortunately, this broke tooling on Android that expected the other bit
+to be set. For some special cases, for non-root tools to trace the system,
+tracefs would be mounted and change the permissions of the top level
+directory which gave access to all running tasks permission to the
+tracing directory. Even though this would be dangerous to do in a
+production environment, for testing environments this can be useful.
+
+Now with the new changes to not allow other (which is still the proper
+thing to do), it breaks the testing tooling. Now more code needs to be
+loaded on the system to change ownership of the tracing directory.
+
+The real solution is to have tracefs honor the gid=xxx option when
+mounting. That is,
+
+(tracing group tracing has value 1003)
+
+ mount -t tracefs -o gid=1003 tracefs /sys/kernel/tracing
+
+should have it that all files in the tracing directory should be of the
+given group.
+
+Copy the logic from d_walk() from dcache.c and simplify it for the mount
+case of tracefs if gid is set. All the files in tracefs will be walked and
+their group will be set to the value passed in.
+
 Reported-by: Kalesh Singh <kaleshsingh@google.com>
-Reported: https://lore.kernel.org/all/CAC_TJve8MMAv+H_NdLSJXZUSoxOEq2zB_pVaJ9p=7H6Bu3X76g@mail.gmail.com/
+Reported-by: Yabin Cui <yabinc@google.com>
+Fixes: 49d67e445742 ("tracefs: Have tracefs directories not set OTH permission bits by default")
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- fs/tracefs/inode.c | 4 ++++
- 1 file changed, 4 insertions(+)
+  Resending without the RFC, and also somehow I deleted the below
+  "--- a/fs/tracefs/inode.c" part of the patch, and it prevented
+  my scripts from processing it. I'm going to start running this through
+  all my testes, and if it passes then I'll push it. Unless someone
+  has issues with it.
+
+ fs/tracefs/inode.c | 74 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
 diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index f20f575cdaef..6b16d89cf187 100644
+index 925a621b432e..f20f575cdaef 100644
 --- a/fs/tracefs/inode.c
 +++ b/fs/tracefs/inode.c
-@@ -488,6 +488,8 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
- 	inode->i_mode = mode;
- 	inode->i_fop = fops ? fops : &tracefs_file_operations;
- 	inode->i_private = data;
-+	inode->i_uid = dentry->d_parent->d_inode->i_uid;
-+	inode->i_gid = dentry->d_parent->d_inode->i_gid;
- 	d_instantiate(dentry, inode);
- 	fsnotify_create(dentry->d_parent->d_inode, dentry);
- 	return end_creating(dentry);
-@@ -510,6 +512,8 @@ static struct dentry *__create_dir(const char *name, struct dentry *parent,
- 	inode->i_mode = S_IFDIR | S_IRWXU | S_IRUSR| S_IRGRP | S_IXUSR | S_IXGRP;
- 	inode->i_op = ops;
- 	inode->i_fop = &simple_dir_operations;
-+	inode->i_uid = dentry->d_parent->d_inode->i_uid;
-+	inode->i_gid = dentry->d_parent->d_inode->i_gid;
+@@ -161,6 +161,79 @@ struct tracefs_fs_info {
+ 	struct tracefs_mount_opts mount_opts;
+ };
  
- 	/* directory inodes start off with i_nlink == 2 (for "." entry) */
- 	inc_nlink(inode);
++static void change_gid(struct dentry *dentry, kgid_t gid)
++{
++	if (!dentry->d_inode)
++		return;
++	dentry->d_inode->i_gid = gid;
++}
++
++/*
++ * Taken from d_walk, but without he need for handling renames.
++ * Nothing can be renamed while walking the list, as tracefs
++ * does not support renames. This is only called when mounting
++ * or remounting the file system, to set all the files to
++ * the given gid.
++ */
++static void set_gid(struct dentry *parent, kgid_t gid)
++{
++	struct dentry *this_parent;
++	struct list_head *next;
++
++	this_parent = parent;
++	spin_lock(&this_parent->d_lock);
++
++	change_gid(this_parent, gid);
++repeat:
++	next = this_parent->d_subdirs.next;
++resume:
++	while (next != &this_parent->d_subdirs) {
++		struct list_head *tmp = next;
++		struct dentry *dentry = list_entry(tmp, struct dentry, d_child);
++		next = tmp->next;
++
++		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
++
++		change_gid(dentry, gid);
++
++		if (!list_empty(&dentry->d_subdirs)) {
++			spin_unlock(&this_parent->d_lock);
++			spin_release(&dentry->d_lock.dep_map, _RET_IP_);
++			this_parent = dentry;
++			spin_acquire(&this_parent->d_lock.dep_map, 0, 1, _RET_IP_);
++			goto repeat;
++		}
++		spin_unlock(&dentry->d_lock);
++	}
++	/*
++	 * All done at this level ... ascend and resume the search.
++	 */
++	rcu_read_lock();
++ascend:
++	if (this_parent != parent) {
++		struct dentry *child = this_parent;
++		this_parent = child->d_parent;
++
++		spin_unlock(&child->d_lock);
++		spin_lock(&this_parent->d_lock);
++
++		/* go into the first sibling still alive */
++		do {
++			next = child->d_child.next;
++			if (next == &this_parent->d_subdirs)
++				goto ascend;
++			child = list_entry(next, struct dentry, d_child);
++		} while (unlikely(child->d_flags & DCACHE_DENTRY_KILLED));
++		rcu_read_unlock();
++		goto resume;
++	}
++	rcu_read_unlock();
++
++out_unlock:
++	spin_unlock(&this_parent->d_lock);
++	return;
++}
++
+ static int tracefs_parse_options(char *data, struct tracefs_mount_opts *opts)
+ {
+ 	substring_t args[MAX_OPT_ARGS];
+@@ -193,6 +266,7 @@ static int tracefs_parse_options(char *data, struct tracefs_mount_opts *opts)
+ 			if (!gid_valid(gid))
+ 				return -EINVAL;
+ 			opts->gid = gid;
++			set_gid(tracefs_mount->mnt_root, gid);
+ 			break;
+ 		case Opt_mode:
+ 			if (match_octal(&args[0], &option))
 -- 
 2.31.1
 
