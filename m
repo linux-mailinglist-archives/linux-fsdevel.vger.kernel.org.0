@@ -2,102 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ABF546BD43
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 15:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C35D446BD7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 15:22:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237586AbhLGOLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 09:11:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39434 "EHLO
+        id S237728AbhLGOZt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 09:25:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232979AbhLGOLl (ORCPT
+        with ESMTP id S237743AbhLGOZq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 09:11:41 -0500
-Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB500C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 06:08:11 -0800 (PST)
-Received: by mail-vk1-xa2e.google.com with SMTP id 70so9347198vkx.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 06:08:11 -0800 (PST)
+        Tue, 7 Dec 2021 09:25:46 -0500
+Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91DE0C061354
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 06:22:16 -0800 (PST)
+Received: by mail-ua1-x930.google.com with SMTP id t13so26809622uad.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 06:22:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4zqsHzBWYzM84hSQlH8UJWwpGB/b5bWE+JndADUkKDI=;
-        b=RC6tT0DIuknbtSHbEIxK6l3PbvVKPszTX/qmZNewHDPGjZYGlvzhPlf6hKeR2yWBCf
-         NC1I8oJMc/KN2CsZzF7oufNJ9FbP2DLCfHdfDN8Ve0DiqgYz1bVVdgUeZLDVk4B2xqi0
-         Uol1TTov2uyL40aX9LhIUbUt54ztyCnqAFFM4=
+        bh=NQDlZzI4YqfVWHIX5QaOd6zM0lzVL2dM+3VnuSJR0mA=;
+        b=NSnWVkdDCBtXAk7+eeopHZNK+S0TVba9JEn4wSb2+CM2PDLuvE/odxCjZo7Paj7o3b
+         oIYxcmfp6t3DW28++ABkUyJx65cdgHuxzzH1IB8osep2OI+zpqylv3TwdyWQS1l902YW
+         +2NwM7DhKARADWEwOFjYg3BQ+9wrEM55dil00=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4zqsHzBWYzM84hSQlH8UJWwpGB/b5bWE+JndADUkKDI=;
-        b=0jZjPa0kJWEwoNqLjMDjlFyjGppQE4SykOOynT8hCiM0WCXMUl6c3Jfbb89K1WSvbp
-         fM0sNnIeU8eRdAuWcsNFjgGUTsu3uLU7edB3HmBDZs+gvJjLOmm8rp5teiBteE1u0FjS
-         +LUPZnlAA1t4Jp9z0q398FV2vj6nkkhmwYdt6ORR3NryEmDujI16v03MOYBbsNyncBKX
-         0YroNo1xOsanJekk6gmgd5Nvp4/0yOCFDPWuTs7KwIPcDWwpbbNZaZyFQguxfPDLlXJ+
-         NjJ3jqqDY+sOaIQXVFQkAZEzpnt/OCggLSK+wE0CeH5TtPzKgpikMyUCWd7CGS10STli
-         CPvA==
-X-Gm-Message-State: AOAM530rhp9Ve0S8ewX+tFPRHAvPwx1TOTwC8LhMPPuVJwlm+tfFFic8
-        ONXNu2+RX3bXv7yujt5YNzApzXuXCGgQyCUV+XVcOg==
-X-Google-Smtp-Source: ABdhPJwIvpWjNBWWKwphN3PHxLdPWshS3rLXyf3OeoNTFoBBcmq/ST1fu1FAG5TtP95pncHQlEOWJQ9hDy4UoQp+u20=
-X-Received: by 2002:a05:6122:a02:: with SMTP id 2mr53588837vkn.6.1638886090813;
- Tue, 07 Dec 2021 06:08:10 -0800 (PST)
+        bh=NQDlZzI4YqfVWHIX5QaOd6zM0lzVL2dM+3VnuSJR0mA=;
+        b=1hDSaFJf+SQNal12mc12SzAI24WupSbdBIiFckXpRElDLav/8s4MJm99DtEFcICncK
+         fdnrA5gY91IXXuwSRtwBW257GDdxpSExLu77hJZbMYD1Q6XTIwUnX6Ve565vw3ZFaNA2
+         +ggpyhUEZj1hG4xgnlbhZZYQm4ED00vMv4jfndjy213LqKiQ18CD/ylaTuHarwod77Qx
+         Y9HeUD2z/Bl7icyn9fi7TclF29OWv82kvo5lBQHmJQCVeNa10WOjghTObWZrw4v6lrlw
+         fnXTnJ1xm/LZj/C7GjDRnlNtIIbJqyjCY438pogRvhT8aBWBtZH8iOWAWE9afH1AJ67U
+         J16A==
+X-Gm-Message-State: AOAM533jR2d+GLnobQW6bBhXzA40AmtzxIQfV25njj2eVmDfb4PFOGQR
+        /zklc07nriuW/jJexLrYqM0wZ/sHg/13VIqmqVfW6g==
+X-Google-Smtp-Source: ABdhPJxydYk9zxnXvjH5UqlJ9uhVqOyq4iaYSPDZFhiXSY1qD1M8aFu4dMRPSNRow3A9MkTnXpod9djgCG23n5S1gNc=
+X-Received: by 2002:ab0:36c4:: with SMTP id v4mr50753238uau.8.1638886935724;
+ Tue, 07 Dec 2021 06:22:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20211203000534.M766663@dcvr> <Ya6OkznJxzAFe8fT@redhat.com>
- <CAJfpegs2o+TSxOSB2GFOzrMcrSvBcz0RDwWkJ-TyPyYM1hf5nQ@mail.gmail.com> <Ya9mF98V3hlOkHxK@redhat.com>
-In-Reply-To: <Ya9mF98V3hlOkHxK@redhat.com>
+References: <20211122090531.91-1-xieyongji@bytedance.com> <CACycT3vHBUpSsDEseovmJHJm3o=pcKcOEee7J-1eumUomJO00w@mail.gmail.com>
+In-Reply-To: <CACycT3vHBUpSsDEseovmJHJm3o=pcKcOEee7J-1eumUomJO00w@mail.gmail.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 7 Dec 2021 15:07:59 +0100
-Message-ID: <CAJfpegv1eDv062nnfXragUcMvb7ksonWwAB6J14-9_kxLtsa9g@mail.gmail.com>
-Subject: Re: per-inode locks in FUSE (kernel vs userspace)
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Eric Wong <normalperson@yhbt.net>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org
+Date:   Tue, 7 Dec 2021 15:22:05 +0100
+Message-ID: <CAJfpegsc1TP0LpqpHgPdj4QyJNR0wxFbHuOLXTt8hksFeR++sQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Pass correct lend value to filemap_write_and_wait_range()
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 7 Dec 2021 at 14:48, Vivek Goyal <vgoyal@redhat.com> wrote:
+On Tue, 7 Dec 2021 at 12:30, Yongji Xie <xieyongji@bytedance.com> wrote:
 >
-> On Tue, Dec 07, 2021 at 09:38:10AM +0100, Miklos Szeredi wrote:
-> > On Mon, 6 Dec 2021 at 23:29, Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Fri, Dec 03, 2021 at 12:05:34AM +0000, Eric Wong wrote:
-> > > > Hi all, I'm working on a new multi-threaded FS using the
-> > > > libfuse3 fuse_lowlevel.h API.  It looks to me like the kernel
-> > > > already performs the necessary locking on a per-inode basis to
-> > > > save me some work in userspace.
-> > > >
-> > > > In particular, I originally thought I'd need pthreads mutexes on
-> > > > a per-inode (fuse_ino_t) basis to protect userspace data
-> > > > structures between the .setattr (truncate), .fsync, and
-> > > > .write_buf userspace callbacks.
-> > > >
-> > > > However upon reading the kernel, I can see fuse_fsync,
-> > > > fuse_{cache,direct}_write_iter in fs/fuse/file.c all use
-> > > > inode_lock.  do_truncate also uses inode_lock in fs/open.c.
-> > > >
-> > > > So it's look like implementing extra locking in userspace would
-> > > > do nothing useful in my case, right?
-> > >
-> > > I guess it probably is a good idea to implement proper locking
-> > > in multi-threaded fs and not rely on what kind of locking
-> > > kernel is doing. If kernel locking changes down the line, your
-> > > implementation will be broken.
+> Ping.
+>
+> On Mon, Nov 22, 2021 at 5:07 PM Xie Yongji <xieyongji@bytedance.com> wrote:
 > >
-> > Thing is, some fuse filesystem implementations already do rely on
-> > kernel locking.   So while it shouldn't hurt to have an extra layer of
-> > locking (except complexity and performance) it's not necessary.
->
-> I am wondering if same applies to virtiofs. In that case guest kernel
-> is untrusted entity. So we don't want to run into a situation where
-> guest kernel can somehow corrupt shared data structures of virtiofsd
-> and that somehow opens the door for some other bad outcome. May be in
-> that case it is safer to not rely on guest kernel locking.
+> > The acceptable maximum value of lend parameter in
+> > filemap_write_and_wait_range() is LLONG_MAX rather
+> > than -1. And there is also some logic depending on
+> > LLONG_MAX check in write_cache_pages(). So let's
+> > pass LLONG_MAX to filemap_write_and_wait_range()
+> > in fuse_writeback_range() instead.
 
-That's true, virtiofs has inverted trust model, so the server must not
-assume anything from the client.
+Looks good; applied.
 
 Thanks,
 Miklos
