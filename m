@@ -2,92 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A8E46BD2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 15:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ABF546BD43
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 15:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237506AbhLGOGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 09:06:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38250 "EHLO
+        id S237586AbhLGOLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 09:11:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232994AbhLGOGn (ORCPT
+        with ESMTP id S232979AbhLGOLl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 09:06:43 -0500
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3A5C061746
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 06:03:13 -0800 (PST)
-Received: by mail-ua1-x932.google.com with SMTP id ay21so26682457uab.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 06:03:13 -0800 (PST)
+        Tue, 7 Dec 2021 09:11:41 -0500
+Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB500C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 06:08:11 -0800 (PST)
+Received: by mail-vk1-xa2e.google.com with SMTP id 70so9347198vkx.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 06:08:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=iv4MZHpg9+XiA+tVT8cP5y6XOJdTeoCNwCFRc76ApJA=;
-        b=RvdI66/PlmYiW3OYZ4zWhMExkYLm/bPVKAd5DnJ4M6MujtrN2QDr4Jx/PmbKzgBmXS
-         xNDJnQ0igFy8HS1lh+Rqcw+usDz+njpuY2iE6JPb0fLAAfryL9Lx84RFFrmdGtBgvPvM
-         xS4BrwCv2sMVFTLf2OvByd5+YQvKUUlzIDOgw=
+        bh=4zqsHzBWYzM84hSQlH8UJWwpGB/b5bWE+JndADUkKDI=;
+        b=RC6tT0DIuknbtSHbEIxK6l3PbvVKPszTX/qmZNewHDPGjZYGlvzhPlf6hKeR2yWBCf
+         NC1I8oJMc/KN2CsZzF7oufNJ9FbP2DLCfHdfDN8Ve0DiqgYz1bVVdgUeZLDVk4B2xqi0
+         Uol1TTov2uyL40aX9LhIUbUt54ztyCnqAFFM4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iv4MZHpg9+XiA+tVT8cP5y6XOJdTeoCNwCFRc76ApJA=;
-        b=E9B1mR5P3EWSr09RaKOyt9PSjr3EULqpoW299rQ8cjmN4GekRPZLGADVqowcyVjFWb
-         2/EkDspU1xzTOCGuWda2/EtueI1oQG2HJq/xlyyK5eB4yiz3iHDwY9NjnwKxIgCrKshe
-         Ojz9+hHNSKvhSLek/jlnyBCjZeN2OKLwngWvbG//dnqvkA+tYqv4KMauanek073f9jpX
-         v+aYeRf5pN6mUwEwWeq0o7vnL7i0+mVwuhVa8xuCWX91++R2dSCmfoCBefHp4KHeLwqS
-         q5bPaes4Hkl0g/qDkWK6G93vd8MGu09i0cn2AJXU1UTkxANIVLZIJM/cr2/Mtpn617fL
-         kuMg==
-X-Gm-Message-State: AOAM530WW90clh03gfhwPAzCMuhBbCMjGCuNAMT4IEfouBrZ3dyixL6D
-        drIph7oPpbgD9sXCeB4Puw28x7Em+wGZFIZOPpwRNPEBjGk=
-X-Google-Smtp-Source: ABdhPJyPF+G2PUMHKn04AcAEdLaHfZHTeFcCVEZ7VRllfqBvl9kNcGrASgqyIE4cXjsBVALJhAsHoZmB3Bl1SX9iTs4=
-X-Received: by 2002:a05:6102:c4e:: with SMTP id y14mr47053652vss.61.1638885792380;
- Tue, 07 Dec 2021 06:03:12 -0800 (PST)
+        bh=4zqsHzBWYzM84hSQlH8UJWwpGB/b5bWE+JndADUkKDI=;
+        b=0jZjPa0kJWEwoNqLjMDjlFyjGppQE4SykOOynT8hCiM0WCXMUl6c3Jfbb89K1WSvbp
+         fM0sNnIeU8eRdAuWcsNFjgGUTsu3uLU7edB3HmBDZs+gvJjLOmm8rp5teiBteE1u0FjS
+         +LUPZnlAA1t4Jp9z0q398FV2vj6nkkhmwYdt6ORR3NryEmDujI16v03MOYBbsNyncBKX
+         0YroNo1xOsanJekk6gmgd5Nvp4/0yOCFDPWuTs7KwIPcDWwpbbNZaZyFQguxfPDLlXJ+
+         NjJ3jqqDY+sOaIQXVFQkAZEzpnt/OCggLSK+wE0CeH5TtPzKgpikMyUCWd7CGS10STli
+         CPvA==
+X-Gm-Message-State: AOAM530rhp9Ve0S8ewX+tFPRHAvPwx1TOTwC8LhMPPuVJwlm+tfFFic8
+        ONXNu2+RX3bXv7yujt5YNzApzXuXCGgQyCUV+XVcOg==
+X-Google-Smtp-Source: ABdhPJwIvpWjNBWWKwphN3PHxLdPWshS3rLXyf3OeoNTFoBBcmq/ST1fu1FAG5TtP95pncHQlEOWJQ9hDy4UoQp+u20=
+X-Received: by 2002:a05:6122:a02:: with SMTP id 2mr53588837vkn.6.1638886090813;
+ Tue, 07 Dec 2021 06:08:10 -0800 (PST)
 MIME-Version: 1.0
-References: <1638780405-38026-1-git-send-email-quic_pragalla@quicinc.com>
- <CAJfpegvDfc9JUo6VASRyYXzj1=j3t6oU9W3QGWO08vhfWHf-UA@mail.gmail.com>
- <Ya8ycLODlcvLx4xB@hirez.programming.kicks-ass.net> <CAJfpegsVg2K0CvrPvXGSu=Jz_R3VZZOy49Jw51rThQUJ1_9e6g@mail.gmail.com>
- <Ya86coKm4RuQDmVS@hirez.programming.kicks-ass.net> <CAJfpegumZ1RQLBCtbrOiOAT9ygDtDThpySwb8yCpWGBu1fRQmw@mail.gmail.com>
- <Ya9ljdrOkhBhhnJX@hirez.programming.kicks-ass.net> <Ya9m0ME1pom49b+D@hirez.programming.kicks-ass.net>
-In-Reply-To: <Ya9m0ME1pom49b+D@hirez.programming.kicks-ass.net>
+References: <20211203000534.M766663@dcvr> <Ya6OkznJxzAFe8fT@redhat.com>
+ <CAJfpegs2o+TSxOSB2GFOzrMcrSvBcz0RDwWkJ-TyPyYM1hf5nQ@mail.gmail.com> <Ya9mF98V3hlOkHxK@redhat.com>
+In-Reply-To: <Ya9mF98V3hlOkHxK@redhat.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 7 Dec 2021 15:03:01 +0100
-Message-ID: <CAJfpegt2x1ztuzh0niY7fgx1UKxDGsAkJbS0wVPp5awxwyhRpA@mail.gmail.com>
-Subject: Re: [PATCH V1] fuse: give wakeup hints to the scheduler
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, quic_stummala@quicinc.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        quic_pkondeti@quicinc.com, quic_sayalil@quicinc.com,
-        quic_aiquny@quicinc.com, quic_zljing@quicinc.com,
-        quic_blong@quicinc.com, quic_richardp@quicinc.com,
-        quic_cdevired@quicinc.com,
-        Pradeep P V K <quic_pragalla@quicinc.com>
+Date:   Tue, 7 Dec 2021 15:07:59 +0100
+Message-ID: <CAJfpegv1eDv062nnfXragUcMvb7ksonWwAB6J14-9_kxLtsa9g@mail.gmail.com>
+Subject: Re: per-inode locks in FUSE (kernel vs userspace)
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Eric Wong <normalperson@yhbt.net>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 7 Dec 2021 at 14:51, Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, 7 Dec 2021 at 14:48, Vivek Goyal <vgoyal@redhat.com> wrote:
 >
-> On Tue, Dec 07, 2021 at 02:45:49PM +0100, Peter Zijlstra wrote:
->
-> > > What would be much nicer, is to look at all the threads on the waitq
-> > > and pick one that previously ran on the current CPU if there's one.
-> > > Could this be implemented?
+> On Tue, Dec 07, 2021 at 09:38:10AM +0100, Miklos Szeredi wrote:
+> > On Mon, 6 Dec 2021 at 23:29, Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > On Fri, Dec 03, 2021 at 12:05:34AM +0000, Eric Wong wrote:
+> > > > Hi all, I'm working on a new multi-threaded FS using the
+> > > > libfuse3 fuse_lowlevel.h API.  It looks to me like the kernel
+> > > > already performs the necessary locking on a per-inode basis to
+> > > > save me some work in userspace.
+> > > >
+> > > > In particular, I originally thought I'd need pthreads mutexes on
+> > > > a per-inode (fuse_ino_t) basis to protect userspace data
+> > > > structures between the .setattr (truncate), .fsync, and
+> > > > .write_buf userspace callbacks.
+> > > >
+> > > > However upon reading the kernel, I can see fuse_fsync,
+> > > > fuse_{cache,direct}_write_iter in fs/fuse/file.c all use
+> > > > inode_lock.  do_truncate also uses inode_lock in fs/open.c.
+> > > >
+> > > > So it's look like implementing extra locking in userspace would
+> > > > do nothing useful in my case, right?
+> > >
+> > > I guess it probably is a good idea to implement proper locking
+> > > in multi-threaded fs and not rely on what kind of locking
+> > > kernel is doing. If kernel locking changes down the line, your
+> > > implementation will be broken.
 > >
-> > It would violate the FIFO semantics of _exclusive.
+> > Thing is, some fuse filesystem implementations already do rely on
+> > kernel locking.   So while it shouldn't hurt to have an extra layer of
+> > locking (except complexity and performance) it's not necessary.
 >
-> That said, look at
-> kernel/locking/percpu-rwsem.c:percpu_rwsem_wake_function() for how to do
-> really terrible things with waitqueues, possibly including what you
-> suggest.
+> I am wondering if same applies to virtiofs. In that case guest kernel
+> is untrusted entity. So we don't want to run into a situation where
+> guest kernel can somehow corrupt shared data structures of virtiofsd
+> and that somehow opens the door for some other bad outcome. May be in
+> that case it is safer to not rely on guest kernel locking.
 
-Okay, so it looks doable, but rather more involved than just sticking
-that _sync onto the wake helper.
-
-FIFO is used so that we always wake the most recently used thread, right?
-
-That makes sense if it doesn't involve migration, but if the hot
-thread is going to be moved to another CPU then we'd lost most of the
-advantages.  Am I missing something?
+That's true, virtiofs has inverted trust model, so the server must not
+assume anything from the client.
 
 Thanks,
 Miklos
