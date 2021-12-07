@@ -2,96 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD25B46BA2E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 12:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D051C46BB8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Dec 2021 13:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235760AbhLGLls (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 06:41:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60758 "EHLO
+        id S236585AbhLGMsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 07:48:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbhLGLlr (ORCPT
+        with ESMTP id S236577AbhLGMsb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Dec 2021 06:41:47 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E74C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 03:38:17 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id x6so55610011edr.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 03:38:17 -0800 (PST)
+        Tue, 7 Dec 2021 07:48:31 -0500
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCAB1C061746
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 04:45:00 -0800 (PST)
+Received: by mail-ua1-x932.google.com with SMTP id p37so26211438uae.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Dec 2021 04:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vcONFbkMq0aQgDFOGecCASi4QK2A5FCN577AfWqoSrE=;
-        b=XCLAQQ3aQV+2wHAdAiWLreYKr5+A7XhBsEd26d12iCqPN/W8eys1YPh4mB5EQM5kUf
-         atInw1bc2IWIWoio+X+M3YS6GqYjMBwiDz2G0nJTAUYu9rCO0jbzKkg9G1bfIcXYZr9e
-         bYJAehFSR8pXSWbEdBX+9txdBevAPM9QNG+iNEV5/H9ftZ8Zl5stvtsyssevhcmQ4aw2
-         em9zZ66Zc9yJX+pRVPdQW2lcIROo45a0CUvOTrmcKvD/cNHsEhBzrykh76aTswkOmEQ9
-         OlMI/L6hOSmFw++nWW5g2979vYwX0it89hMwv0pmZx/CunSQtAf5hEd6FqhWxKNMD0ni
-         0mdQ==
+        bh=3ChVHxxOxhIGs4rdOWG75rsbNvdLDYwE9pw3zOgGr8M=;
+        b=cagc1Fsf3e3/RtlMkfBVVOFkZIH9p/PFEuLPjNipBOP0t1oa1QC8YVzGB+j92EPAwe
+         6DTlD2JOtMKDSlPhKnOM/oxgdUt/VXmnnMYFugCOVpgB0FnYTJy1E6vbsmqTHC0EmMFK
+         nWgrrOt3CxGahgD0XTFo6KthaMQ6T+bGXHxJg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vcONFbkMq0aQgDFOGecCASi4QK2A5FCN577AfWqoSrE=;
-        b=CMk7uQ+K6nzOAwjdfAoNWOSPFU115iQ+5c2qh1IwSuxQk55xlaUehKclyzWle7bIU3
-         gq/MlShyPYYjW3v9x70CWeRdUoOuZPycNB/YwRiZhCohug/8EfxCTAGNAALkBMfedpbf
-         qsEsxpCqZ3b2ISo66HWvJ3IL7gZXkI1VUXuJIqoAmlwkmGBVlzlpXugLh+9cHu4VGSAr
-         FN9Pz4EmE4XPXPs3FspJJqcQrqO4cTSezPsmYzbTLNnD3bf6jjx2+c6Z7bbuqTF7wFqm
-         TRe+W6pq3wb0JZVoDYSuDNZkfI/1CoS2XgWgl2FxRejRe34D8KWaThajW3wKKai3cHXb
-         ZFTw==
-X-Gm-Message-State: AOAM531JvggWs6FiuHO5I31WfohXWLbbkw3OEWXWd+ruCeWD0L8RTRKS
-        70XdipbdiIOw50aTfcwCTTUa524nOfx7nSncVGJm0Y5+4g==
-X-Google-Smtp-Source: ABdhPJzOung/etClm624N3JnBTWt3GkIiRGSofg6IC61AfMN7BR7UOHAD1XTt+ag+M14IN8e3IJcUawX1wQNgmHXLrM=
-X-Received: by 2002:a17:907:72c7:: with SMTP id du7mr53191810ejc.424.1638877095740;
- Tue, 07 Dec 2021 03:38:15 -0800 (PST)
+        bh=3ChVHxxOxhIGs4rdOWG75rsbNvdLDYwE9pw3zOgGr8M=;
+        b=QlpbdEeLH18buTP2Et3EZnLup+jKoIMdyub0qSFDozVJYxWwxyvs9gDojGaJb9bHl7
+         1+zmyBjCPFwxxCzWAYWV25/PZxtnJ2oX41w0ROcwngFYipv8x+tJnQJTUHCe1nwEhWNa
+         zamBAJg7zpZg00r8TcfhJZTB2ydn99M4UtSvQMVn063nWJ3s3lWcO6GtW4j71mmZbqyT
+         4XZsuMWvyk/es6HdJlqVOsdu1iW5QsQC4Pb7LV6nDQcRKHdM+6tJu7PkijBtaTUf3yDX
+         oyZYWIV3lhdiFvdplkYn33GWxiHD5/53szz018+jwjt7qop3MKZvPtd/Hm18y4A4p3YQ
+         b8Xw==
+X-Gm-Message-State: AOAM531GG7eOG2xFWg3Xz3sjXOflShoPv7nxifwryJb50GohIFSIUIaE
+        rOJOs4mQIeUGf4yJUcf+OX+KGkb/f/heV8zjTn+M8g==
+X-Google-Smtp-Source: ABdhPJy6rksSBimk0QbT52WvsQczQrLRNltJbKL+leXstLsmKjLOHPKljfGjuHPqEwiWodirXVF16UvBFmqK2b8HX34=
+X-Received: by 2002:a05:6102:945:: with SMTP id a5mr44302178vsi.87.1638881099983;
+ Tue, 07 Dec 2021 04:44:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20210913111928.98-1-xieyongji@bytedance.com> <CACycT3ugx-wwPVb+Euzhj6hWn0fXO+jvfsUCew6v1iBaB8SZsQ@mail.gmail.com>
-In-Reply-To: <CACycT3ugx-wwPVb+Euzhj6hWn0fXO+jvfsUCew6v1iBaB8SZsQ@mail.gmail.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 7 Dec 2021 19:38:04 +0800
-Message-ID: <CACycT3vaPcjYbORMN9mkFmZEgspPQ46y=ONQbiAEi-MYCu-0Mw@mail.gmail.com>
-Subject: Re: [PATCH] aio: Fix incorrect usage of eventfd_signal_allowed()
-To:     bcrl@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1638780405-38026-1-git-send-email-quic_pragalla@quicinc.com>
+ <CAJfpegvDfc9JUo6VASRyYXzj1=j3t6oU9W3QGWO08vhfWHf-UA@mail.gmail.com>
+ <Ya8ycLODlcvLx4xB@hirez.programming.kicks-ass.net> <CAJfpegsVg2K0CvrPvXGSu=Jz_R3VZZOy49Jw51rThQUJ1_9e6g@mail.gmail.com>
+ <Ya86coKm4RuQDmVS@hirez.programming.kicks-ass.net>
+In-Reply-To: <Ya86coKm4RuQDmVS@hirez.programming.kicks-ass.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 7 Dec 2021 13:44:49 +0100
+Message-ID: <CAJfpegumZ1RQLBCtbrOiOAT9ygDtDThpySwb8yCpWGBu1fRQmw@mail.gmail.com>
+Subject: Re: [PATCH V1] fuse: give wakeup hints to the scheduler
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, quic_stummala@quicinc.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        quic_pkondeti@quicinc.com, quic_sayalil@quicinc.com,
+        quic_aiquny@quicinc.com, quic_zljing@quicinc.com,
+        quic_blong@quicinc.com, quic_richardp@quicinc.com,
+        quic_cdevired@quicinc.com,
+        Pradeep P V K <quic_pragalla@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ping again.
+On Tue, 7 Dec 2021 at 11:42, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Dec 07, 2021 at 11:20:59AM +0100, Miklos Szeredi wrote:
 
-On Sun, Nov 14, 2021 at 3:15 PM Yongji Xie <xieyongji@bytedance.com> wrote:
+> > That may be good for fuse as the data is indeed shared.  It would be
+> > even better if the woken task had already a known affinity to this
+> > CPU, since that would mean thread local data wouldn't have to be
+> > migrated each time...   So I'm not sure sync wakeup alone is worth it,
+> > needs real life benchmarking.
 >
-> Ping
->
-> On Mon, Sep 13, 2021 at 7:20 PM Xie Yongji <xieyongji@bytedance.com> wrote:
-> >
-> > We should defer eventfd_signal() to the workqueue when
-> > eventfd_signal_allowed() return false rather than return
-> > true.
-> >
-> > Fixes: b542e383d8c0 ("eventfd: Make signal recursion protection a task bit")
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >  fs/aio.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/aio.c b/fs/aio.c
-> > index 51b08ab01dff..8822e3ed4566 100644
-> > --- a/fs/aio.c
-> > +++ b/fs/aio.c
-> > @@ -1695,7 +1695,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
-> >                 list_del(&iocb->ki_list);
-> >                 iocb->ki_res.res = mangle_poll(mask);
-> >                 req->done = true;
-> > -               if (iocb->ki_eventfd && eventfd_signal_allowed()) {
-> > +               if (iocb->ki_eventfd && !eventfd_signal_allowed()) {
-> >                         iocb = NULL;
-> >                         INIT_WORK(&req->work, aio_poll_put_work);
-> >                         schedule_work(&req->work);
-> > --
-> > 2.11.0
-> >
+> Hard affinities have other down-sides.. occasional migrations shouldn't
+> be a problem, constant migrations are bad.
+
+Currently fuse readers are sleeping in
+wait_event_interruptible_exclusive().  wake_up_interruptible_sync()
+will pick the first thread in the queue and wake that up.  That will
+likely result in migration, right?
+
+What would be much nicer, is to look at all the threads on the waitq
+and pick one that previously ran on the current CPU if there's one.
+Could this be implemented?
+
+Thanks,
+Miklos
