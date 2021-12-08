@@ -2,71 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2DE146CFCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 10:12:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7AF46D085
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 11:05:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229841AbhLHJPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Dec 2021 04:15:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51962 "EHLO
+        id S230165AbhLHKJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Dec 2021 05:09:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbhLHJPn (ORCPT
+        with ESMTP id S230096AbhLHKJF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Dec 2021 04:15:43 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAFF8C061746;
-        Wed,  8 Dec 2021 01:12:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=PnxYJD3WDG7A6/Qbtohv5ldkeqBnLPDokzFd0VlbXDM=; b=hXtDnEinie60aCy4kEJDppRTtm
-        HpXJbdtROe93AVQnkA+uddN18Pl+NElsl85lzED9zBmOOkjXHUJRLlVym4j+AsrAOqgm0VAzTB1+G
-        W06cTyy9tQExMI2Nx3wzkRhnDEkIKZDQf8cWY6JYL9lfFPyBN/s5+jC3l0hsNdXT5NdyLIh4joYYi
-        M09z3uVx7N4rxdRbcIePTcZg6uw+CPKCx3Bpz++e58wAiIVIRWp4jc4hdu6iIWFV662paPTwcfO5U
-        38nP4Pa4a8QgdC4ZTLbxGBe7uHp+vy5ITa58prN3iNjo1TQN9CCzxh4XCuAwL02fO+0M3QXQBzniW
-        u5mmO98Q==;
-Received: from [2001:4bb8:180:a1c8:2bed:fe3e:6e0:11ff] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1muszb-008Gth-5a; Wed, 08 Dec 2021 09:12:04 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     dan.j.williams@intel.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] iomap: turn the byte variable in iomap_zero_iter into a ssize_t
-Date:   Wed,  8 Dec 2021 10:12:03 +0100
-Message-Id: <20211208091203.2927754-1-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
+        Wed, 8 Dec 2021 05:09:05 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF29EC061746;
+        Wed,  8 Dec 2021 02:05:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5E72ACE20CC;
+        Wed,  8 Dec 2021 10:05:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D05B1C00446;
+        Wed,  8 Dec 2021 10:05:18 +0000 (UTC)
+Date:   Wed, 8 Dec 2021 11:05:14 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        kernel test robot <lkp@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, kernelci@groups.io,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: Re: [RFC 3/3] headers: repurpose linux/fs_types.h
+Message-ID: <20211208100514.7egjy5hraziu4pme@wittgenstein>
+References: <20211207150927.3042197-1-arnd@kernel.org>
+ <20211207150927.3042197-4-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211207150927.3042197-4-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-bytes also hold the return value from iomap_write_end, which can contain
-a negative error value.  As bytes is always less than the page size even
-the signed type can hold the entire possible range.
+On Tue, Dec 07, 2021 at 04:09:27PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> linux/fs_types.h traditionally describes the types of file systems we
+> deal with, but the file name could also be interpreted to refer to
+> data types used for interacting with file systems, similar to
+> linux/spinlock_types.h or linux/mm_types.h.
+> 
+> Splitting out the data type definitions from the generic header helps
+> avoid excessive indirect include hierarchies, so steal this file
+> name and repurpose it to contain the definitions for file, inode,
+> address_space, super_block, file_lock, quota and filename, along with
+> their respective callback operations, moving them out of linux/fs.h.
+> 
+> The preprocessed linux/fs_types.h is now about 50KB, compared to
+> over 1MB for the traditional linux/fs.h, and can be included from
+> most other headers that currently rely on type definitions from
+> linux/fs.h.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Fixes: c6f40468657d ("fsdax: decouple zeroing from the iomap buffered I/O code")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index b1511255b4df8..ac040d607f4fe 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -883,7 +883,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 
- 	do {
- 		unsigned offset = offset_in_page(pos);
--		size_t bytes = min_t(u64, PAGE_SIZE - offset, length);
-+		ssize_t bytes = min_t(u64, PAGE_SIZE - offset, length);
- 		struct page *page;
- 		int status;
- 
--- 
-2.30.2
-
+I tried to apply the series to take a closer look but it fails to apply
+cleanup down to v5.15 and any release after that. What's the base I
+should use for this?
