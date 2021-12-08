@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F1A546CC5F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 05:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73CE946CC67
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 05:24:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240063AbhLHE11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Dec 2021 23:27:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43774 "EHLO
+        id S244241AbhLHE1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Dec 2021 23:27:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240074AbhLHE0s (ORCPT
+        with ESMTP id S240068AbhLHE0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 7 Dec 2021 23:26:48 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A24C061D5F
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D82FC061D60
         for <linux-fsdevel@vger.kernel.org>; Tue,  7 Dec 2021 20:23:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Ffq/cQVPcFt5LoElUBw8aA2bmdFv10SCY9OdwQ5yJQA=; b=ZoCCrfBFGomvt8SJ8oYXyTew2p
-        pDTXUDYEZDZQGTw0CSnLSGvksOSX4S9AYEAh/nNrd7DnRZ+FLb0kWO1KxyChPrtabjtzCd9ZCAcbR
-        wNG90x7cVYy000WVHvgV1SdORhzBmPT3bpVy/BnPRuYJCkqnE3cuOdb98lpKcOQANraMI34RVVoH6
-        o4y5qvFFLPRKi8n3PwaI0XkqqW4zsLOv4NXx/lAvkeeIUkwx1duj/83q+e/bRFLMwSeVkD9PRLZ+8
-        iO4yBbRfol1nHLB037r7RlXrN1ddM0xm8/IEy3Jq/MpY6ta65Q88Nsnne18F4SseSNEdyZPf4kpmV
-        ZD3gyquQ==;
+        bh=0HiMfEBapSaJ76Nsadm/Hl6t4X5OTaxDIeW3md1qPS8=; b=F9HU2Jd0g8x9PI6I8QPzUDhc6q
+        MFdRSl5wmj+dWbRQX83gKwBUJcqLj0+JbSjfqOyvaQYwso082bAt9wYOObgr6fUk7E7XDcg8rSLrP
+        /qGpTchwgqAl2ozG4ogVUAApd8Sochh7JYtfh/F/eh/cWWa4uAZeGfmDJgUAwlbQTDbvsme77Th6y
+        fRUKi/nsWA0FoqAljbhP63J/F5jz3mm5WAJAMa40UCRQhdMzxqPjGZGfkSds7em4kQjWjOFaR4fW0
+        jSO9YNOcc5HFxf5vdt4toY1onIICo1bNUNe5GxaAknlAs65hYEp8x3891te/f2RTSG4J9Z8eifbDS
+        tQC1gR9w==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1muoU3-0084YC-KU; Wed, 08 Dec 2021 04:23:11 +0000
+        id 1muoU3-0084YJ-O1; Wed, 08 Dec 2021 04:23:11 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 18/48] filemap: Convert filemap_read_page to take a folio
-Date:   Wed,  8 Dec 2021 04:22:26 +0000
-Message-Id: <20211208042256.1923824-19-willy@infradead.org>
+Subject: [PATCH 19/48] filemap: Convert filemap_create_page to folio
+Date:   Wed,  8 Dec 2021 04:22:27 +0000
+Message-Id: <20211208042256.1923824-20-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211208042256.1923824-1-willy@infradead.org>
 References: <20211208042256.1923824-1-willy@infradead.org>
@@ -42,78 +42,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-One of the callers already had a folio; the other two grow by a few
-bytes, but filemap_read_page() shrinks by 50 bytes for a net reduction
-of 27 bytes.
+This is all internal to filemap and saves 100 bytes of text.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/filemap.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ mm/filemap.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 33e638f1ca34..581f9fdb3406 100644
+index 581f9fdb3406..b044afef78ef 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2369,8 +2369,8 @@ static void filemap_get_read_batch(struct address_space *mapping,
- 	rcu_read_unlock();
+@@ -2475,47 +2475,48 @@ static int filemap_update_page(struct kiocb *iocb,
+ 	return error;
  }
  
--static int filemap_read_page(struct file *file, struct address_space *mapping,
--		struct page *page)
-+static int filemap_read_folio(struct file *file, struct address_space *mapping,
-+		struct folio *folio)
+-static int filemap_create_page(struct file *file,
++static int filemap_create_folio(struct file *file,
+ 		struct address_space *mapping, pgoff_t index,
+ 		struct pagevec *pvec)
  {
+-	struct page *page;
++	struct folio *folio;
  	int error;
  
-@@ -2379,16 +2379,16 @@ static int filemap_read_page(struct file *file, struct address_space *mapping,
- 	 * eg. multipath errors.  PG_error will be set again if readpage
- 	 * fails.
+-	page = page_cache_alloc(mapping);
+-	if (!page)
++	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
++	if (!folio)
+ 		return -ENOMEM;
+ 
+ 	/*
+-	 * Protect against truncate / hole punch. Grabbing invalidate_lock here
+-	 * assures we cannot instantiate and bring uptodate new pagecache pages
+-	 * after evicting page cache during truncate and before actually
+-	 * freeing blocks.  Note that we could release invalidate_lock after
+-	 * inserting the page into page cache as the locked page would then be
+-	 * enough to synchronize with hole punching. But there are code paths
+-	 * such as filemap_update_page() filling in partially uptodate pages or
+-	 * ->readpages() that need to hold invalidate_lock while mapping blocks
+-	 * for IO so let's hold the lock here as well to keep locking rules
+-	 * simple.
++	 * Protect against truncate / hole punch. Grabbing invalidate_lock
++	 * here assures we cannot instantiate and bring uptodate new
++	 * pagecache folios after evicting page cache during truncate
++	 * and before actually freeing blocks.	Note that we could
++	 * release invalidate_lock after inserting the folio into
++	 * the page cache as the locked folio would then be enough to
++	 * synchronize with hole punching. But there are code paths
++	 * such as filemap_update_page() filling in partially uptodate
++	 * pages or ->readpages() that need to hold invalidate_lock
++	 * while mapping blocks for IO so let's hold the lock here as
++	 * well to keep locking rules simple.
  	 */
--	ClearPageError(page);
-+	folio_clear_error(folio);
- 	/* Start the actual read. The read will unlock the page. */
--	error = mapping->a_ops->readpage(file, page);
-+	error = mapping->a_ops->readpage(file, &folio->page);
- 	if (error)
- 		return error;
- 
--	error = wait_on_page_locked_killable(page);
-+	error = folio_wait_locked_killable(folio);
- 	if (error)
- 		return error;
--	if (PageUptodate(page))
-+	if (folio_test_uptodate(folio))
- 		return 0;
- 	shrink_readahead_size_eio(&file->f_ra);
- 	return -EIO;
-@@ -2464,7 +2464,7 @@ static int filemap_update_page(struct kiocb *iocb,
- 	if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT | IOCB_WAITQ))
- 		goto unlock;
- 
--	error = filemap_read_page(iocb->ki_filp, mapping, &folio->page);
-+	error = filemap_read_folio(iocb->ki_filp, mapping, folio);
- 	goto unlock_mapping;
- unlock:
- 	folio_unlock(folio);
-@@ -2506,7 +2506,7 @@ static int filemap_create_page(struct file *file,
+ 	filemap_invalidate_lock_shared(mapping);
+-	error = add_to_page_cache_lru(page, mapping, index,
++	error = filemap_add_folio(mapping, folio, index,
+ 			mapping_gfp_constraint(mapping, GFP_KERNEL));
+ 	if (error == -EEXIST)
+ 		error = AOP_TRUNCATED_PAGE;
  	if (error)
  		goto error;
  
--	error = filemap_read_page(file, mapping, page);
-+	error = filemap_read_folio(file, mapping, page_folio(page));
+-	error = filemap_read_folio(file, mapping, page_folio(page));
++	error = filemap_read_folio(file, mapping, folio);
  	if (error)
  		goto error;
  
-@@ -3168,7 +3168,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	 * and we need to check for errors.
- 	 */
- 	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
--	error = filemap_read_page(file, mapping, page);
-+	error = filemap_read_folio(file, mapping, page_folio(page));
- 	if (fpin)
- 		goto out_retry;
- 	put_page(page);
+ 	filemap_invalidate_unlock_shared(mapping);
+-	pagevec_add(pvec, page);
++	pagevec_add(pvec, &folio->page);
+ 	return 0;
+ error:
+ 	filemap_invalidate_unlock_shared(mapping);
+-	put_page(page);
++	folio_put(folio);
+ 	return error;
+ }
+ 
+@@ -2557,7 +2558,7 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 	if (!pagevec_count(pvec)) {
+ 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
+ 			return -EAGAIN;
+-		err = filemap_create_page(filp, mapping,
++		err = filemap_create_folio(filp, mapping,
+ 				iocb->ki_pos >> PAGE_SHIFT, pvec);
+ 		if (err == AOP_TRUNCATED_PAGE)
+ 			goto retry;
 -- 
 2.33.0
 
