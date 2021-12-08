@@ -2,119 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E238446CF89
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 09:56:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2DE146CFCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 10:12:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbhLHI7k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Dec 2021 03:59:40 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:56742 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhLHI7k (ORCPT
+        id S229841AbhLHJPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Dec 2021 04:15:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229515AbhLHJPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Dec 2021 03:59:40 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 71F89CE2047;
-        Wed,  8 Dec 2021 08:56:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3ECDC341CA;
-        Wed,  8 Dec 2021 08:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638953765;
-        bh=Eko2Wx5nQFmKXKDz/fQjLDLX7s8lD39IKs1xuw9o9eE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GL61B9bP8nKh/AVPPXDP2hg7HRYePKblkrrjbrt7WwjOM2gbdH5PHi2hRN/QguBIx
-         afexMjiieoRW26lRI7JW/i4FAp9++wgrI1WAYZhDxQLNWqTpNkF8NH3aFTM+TB1WiT
-         grPkvEhrzjPdUFSDRYT+DppzUIfY+c/WOft99xgESJ3yyx2lBtpkA5sOpwiikVkqCe
-         b7B/YQrRUzbNmxLMiSyczlvHUGEsndguKWzUY+HStexYYY3LDY4WYFFwaa6jMMxcSQ
-         LSJP8KNlAiQL3VbAAcilxHMt7TCiMwjd+f/ErOcnxZYMp7CIq/VJNTvqepEKTVMOwT
-         3ed1+lTCa62ag==
-Received: by mail-wm1-f45.google.com with SMTP id p18so1219825wmq.5;
-        Wed, 08 Dec 2021 00:56:05 -0800 (PST)
-X-Gm-Message-State: AOAM531o8bROVimOt9AfGfPUiHuTWfI1xXEeSFr2iRtHHpsEOJTWV2YS
-        oQimL8XTh8y7lAwj6aMK4ZYXKvmQjtWMVYcV6mg=
-X-Google-Smtp-Source: ABdhPJy+2il4LRg7kk5tsC0x987FYl7fnjjaweB7d96yKIBcRmeTEesTtuvHseEiSldzBXHu11OvpGO2ElHDQrl+ht8=
-X-Received: by 2002:a1c:1c1:: with SMTP id 184mr14374486wmb.1.1638953763912;
- Wed, 08 Dec 2021 00:56:03 -0800 (PST)
+        Wed, 8 Dec 2021 04:15:43 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAFF8C061746;
+        Wed,  8 Dec 2021 01:12:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=PnxYJD3WDG7A6/Qbtohv5ldkeqBnLPDokzFd0VlbXDM=; b=hXtDnEinie60aCy4kEJDppRTtm
+        HpXJbdtROe93AVQnkA+uddN18Pl+NElsl85lzED9zBmOOkjXHUJRLlVym4j+AsrAOqgm0VAzTB1+G
+        W06cTyy9tQExMI2Nx3wzkRhnDEkIKZDQf8cWY6JYL9lfFPyBN/s5+jC3l0hsNdXT5NdyLIh4joYYi
+        M09z3uVx7N4rxdRbcIePTcZg6uw+CPKCx3Bpz++e58wAiIVIRWp4jc4hdu6iIWFV662paPTwcfO5U
+        38nP4Pa4a8QgdC4ZTLbxGBe7uHp+vy5ITa58prN3iNjo1TQN9CCzxh4XCuAwL02fO+0M3QXQBzniW
+        u5mmO98Q==;
+Received: from [2001:4bb8:180:a1c8:2bed:fe3e:6e0:11ff] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1muszb-008Gth-5a; Wed, 08 Dec 2021 09:12:04 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     dan.j.williams@intel.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] iomap: turn the byte variable in iomap_zero_iter into a ssize_t
+Date:   Wed,  8 Dec 2021 10:12:03 +0100
+Message-Id: <20211208091203.2927754-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20211207150927.3042197-1-arnd@kernel.org> <20211207150927.3042197-3-arnd@kernel.org>
- <CAHk-=wgwQg=5gZZ6ewusLHEAw-DQm7wWm7aoQt6TYO_xb0cBog@mail.gmail.com>
-In-Reply-To: <CAHk-=wgwQg=5gZZ6ewusLHEAw-DQm7wWm7aoQt6TYO_xb0cBog@mail.gmail.com>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Wed, 8 Dec 2021 09:55:47 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3Uy0k+SnWYqz7FMsQsu14VzivMJcjGDRBLv17adFYywA@mail.gmail.com>
-Message-ID: <CAK8P3a3Uy0k+SnWYqz7FMsQsu14VzivMJcjGDRBLv17adFYywA@mail.gmail.com>
-Subject: Re: [RFC 2/3] headers: introduce linux/struct_types.h
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kernel test robot <lkp@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, kernelci@groups.io,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 7, 2021 at 7:17 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, Dec 7, 2021 at 7:10 AM Arnd Bergmann <arnd@kernel.org> wrote:
-> >
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > Working towards a cleaner header structure, start by moving the most
-> > commonly embedded structures into a single header file that itself
-> > has only a minimum set of indirect includes. At this moment, this
-> > include structures for
->
-> Ugh. I liked your 1/3 patch, but I absolutely detest this one.
->
-> It makes no sense to me, and just makes that header file a completely
-> random collection of some random structure types.
->
-> And I absolutely hate how it splits out the definition of the struct
-> from basic core infrastructure (initializers etc random inline
-> functions) for said structures.
->
-> So no. NAK on this one. I think it's a disaster.
+bytes also hold the return value from iomap_write_end, which can contain
+a negative error value.  As bytes is always less than the page size even
+the signed type can hold the entire possible range.
 
-Ok, thank you for taking a look!
+Fixes: c6f40468657d ("fsdax: decouple zeroing from the iomap buffered I/O code")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/iomap/buffered-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is what I'd try next based on the feedback:
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index b1511255b4df8..ac040d607f4fe 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -883,7 +883,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 
+ 	do {
+ 		unsigned offset = offset_in_page(pos);
+-		size_t bytes = min_t(u64, PAGE_SIZE - offset, length);
++		ssize_t bytes = min_t(u64, PAGE_SIZE - offset, length);
+ 		struct page *page;
+ 		int status;
+ 
+-- 
+2.30.2
 
-- reduce patch 1 somewhat to only include the types that have a strong reason
-  to get moved to linux/types.h, describing them individually but leaving them
-  it as a single combined patch
-
-- keep patch 3, but leave 'struct super_block' in linux/fs.h for the moment
-  because  of 'struct list_lru'.
-
-- drop patch 2, but instead find a new home for each structure (along with
-  its initializers) if needed for defining the types in the new linux/fs_types.h
-  without too many indirect includes. I'll skip the structs that would be needed
-  later for mm.h/sched.h/device.h/.... for the moment.
-
-For the added headers, do you have a preference for whether to try grouping
-them logically or not? I could either split them out individually into many new
-headers (xarray_types.h, idr_types.h, percpu_rwsem_types.h, rwsem_types.h,
-...), or combine some of them when they define related types.
-
-        Arnd
