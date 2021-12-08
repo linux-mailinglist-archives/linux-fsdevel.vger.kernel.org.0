@@ -2,109 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E9E46D0AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 11:13:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9278F46D13C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Dec 2021 11:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231305AbhLHKQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Dec 2021 05:16:35 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:50718 "EHLO
+        id S231898AbhLHKsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Dec 2021 05:48:36 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:39690 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbhLHKQf (ORCPT
+        with ESMTP id S229481AbhLHKsf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Dec 2021 05:16:35 -0500
+        Wed, 8 Dec 2021 05:48:35 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5277DB82058;
-        Wed,  8 Dec 2021 10:13:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E39A2C00446;
-        Wed,  8 Dec 2021 10:12:53 +0000 (UTC)
-Date:   Wed, 8 Dec 2021 11:12:50 +0100
+        by ams.source.kernel.org (Postfix) with ESMTPS id E08DAB8208C;
+        Wed,  8 Dec 2021 10:45:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DCCEC00446;
+        Wed,  8 Dec 2021 10:44:57 +0000 (UTC)
+Date:   Wed, 8 Dec 2021 11:44:54 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
         Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kernel test robot <lkp@intel.com>,
         Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, kernelci@groups.io,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        llvm@lists.linux.dev
-Subject: Re: [RFC 3/3] headers: repurpose linux/fs_types.h
-Message-ID: <20211208101250.ndtt53bybrwgklad@wittgenstein>
-References: <20211207150927.3042197-1-arnd@kernel.org>
- <20211207150927.3042197-4-arnd@kernel.org>
- <20211208100514.7egjy5hraziu4pme@wittgenstein>
- <CAK8P3a1zD=FY39vqWAjZH2yYYtvQMzFOCRayXuDae4H6sCWs1w@mail.gmail.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yabin Cui <yabinc@google.com>
+Subject: Re: [PATCH] tracefs: Have new files inherit the ownership of their
+ parent
+Message-ID: <20211208104454.nhxyvmmn6d2qhpwl@wittgenstein>
+References: <20211207144828.3d356e26@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a1zD=FY39vqWAjZH2yYYtvQMzFOCRayXuDae4H6sCWs1w@mail.gmail.com>
+In-Reply-To: <20211207144828.3d356e26@gandalf.local.home>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 08, 2021 at 11:10:26AM +0100, Arnd Bergmann wrote:
-> On Wed, Dec 8, 2021 at 11:05 AM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> >
-> > On Tue, Dec 07, 2021 at 04:09:27PM +0100, Arnd Bergmann wrote:
-> > > From: Arnd Bergmann <arnd@arndb.de>
-> > >
-> > > linux/fs_types.h traditionally describes the types of file systems we
-> > > deal with, but the file name could also be interpreted to refer to
-> > > data types used for interacting with file systems, similar to
-> > > linux/spinlock_types.h or linux/mm_types.h.
-> > >
-> > > Splitting out the data type definitions from the generic header helps
-> > > avoid excessive indirect include hierarchies, so steal this file
-> > > name and repurpose it to contain the definitions for file, inode,
-> > > address_space, super_block, file_lock, quota and filename, along with
-> > > their respective callback operations, moving them out of linux/fs.h.
-> > >
-> > > The preprocessed linux/fs_types.h is now about 50KB, compared to
-> > > over 1MB for the traditional linux/fs.h, and can be included from
-> > > most other headers that currently rely on type definitions from
-> > > linux/fs.h.
-> > >
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> >
-> > I tried to apply the series to take a closer look but it fails to apply
-> > cleanup down to v5.15 and any release after that. What's the base I
-> > should use for this?
+On Tue, Dec 07, 2021 at 02:48:28PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> It is based on yesterday's linux-next plus additional patches I used
-> for testing. Sorry about the extra troubles, but this was the most
+> If the tracefs system is set to a specific owner and group, then the files
+> and directories that are created under them should inherit the owner and
+> group of the parent.
 
-No no, that's perfectly fine!
+The description reads like the owner of new directories and files is to
+be always taken from the {g,u}id mount options. It doesn't look like
+tracefs currently supports .setattr but if it ever wants to e.g. to
+allow the system administrator to delegate specific directories or
+files, the patch below will cause inheritance based on directory
+ownership not on the {g,u}id mount option. So if I were to write this
+I'd rather initialize based on mount option directly.
 
-> convenient way for me, as it lets me find build regressions in random
-> configs more easily when I have a base tree that builds randconfig
-> warning-free.
+So sm along the - completely untested, non-prettified - lines of:
+
+	static inline struct tracefs_fs_info *TRACEFS_SB(const struct super_block *sb)
+	{
+		return sb->s_fs_info;
+	}
+
+	struct tracefs_info *info;
+	[...]
+
+	inode = tracefs_get_inode(dentry->d_sb);
+	if (unlikely(!inode))
+		return failed_creating(dentry);
+
+	[...]
+	
+	struct tracefs_info *info = TRACEFS_SB(inode->i_sb);
+
+	[...]
+	
+	inode->i_uid = info.mount_opts.uid;
+	inode->i_gid = info.mount_opts.gid;
+
+this clearly gets the semantics across, the caller doens't need to know
+that parent can be NULL and why it is retrieved via dentry->d_parent,
+and is robust even if you allow changes in ownership in different ways
+later on.
+
 > 
-> The patches are at the top of my randconfig tree [1] at the moment,
-> so you can try out that tree, or rebase the patches from there.
+> Cc: stable@vger.kernel.org
+> Fixes: 4282d60689d4f ("tracefs: Add new tracefs file system")
+> Reported-by: Kalesh Singh <kaleshsingh@google.com>
+> Reported: https://lore.kernel.org/all/CAC_TJve8MMAv+H_NdLSJXZUSoxOEq2zB_pVaJ9p=7H6Bu3X76g@mail.gmail.com/
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  fs/tracefs/inode.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
->         Arnd
+> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+> index f20f575cdaef..6b16d89cf187 100644
+> --- a/fs/tracefs/inode.c
+> +++ b/fs/tracefs/inode.c
+> @@ -488,6 +488,8 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
+>  	inode->i_mode = mode;
+>  	inode->i_fop = fops ? fops : &tracefs_file_operations;
+>  	inode->i_private = data;
+> +	inode->i_uid = dentry->d_parent->d_inode->i_uid;
+> +	inode->i_gid = dentry->d_parent->d_inode->i_gid;
+
+I you stick with this I'd use the d_inode() accessor we have.
+
+inode->i_uid = d_inode(dentry->d_parent)->i_uid;
+inode->i_gid = d_inode(dentry->d_parent)->i_gid;
+
+>  	d_instantiate(dentry, inode);
+>  	fsnotify_create(dentry->d_parent->d_inode, dentry);
+>  	return end_creating(dentry);
+> @@ -510,6 +512,8 @@ static struct dentry *__create_dir(const char *name, struct dentry *parent,
+>  	inode->i_mode = S_IFDIR | S_IRWXU | S_IRUSR| S_IRGRP | S_IXUSR | S_IXGRP;
+>  	inode->i_op = ops;
+>  	inode->i_fop = &simple_dir_operations;
+> +	inode->i_uid = dentry->d_parent->d_inode->i_uid;
+> +	inode->i_gid = dentry->d_parent->d_inode->i_gid;
+>  
+>  	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+>  	inc_nlink(inode);
+> -- 
+> 2.31.1
 > 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=randconfig-5.17-next
-
-Thanks for pointing me in the right direction.
-
-Christian
