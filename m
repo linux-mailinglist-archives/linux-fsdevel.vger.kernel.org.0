@@ -2,81 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E86346F341
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 19:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA7B46F35B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 19:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbhLISlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 13:41:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38508 "EHLO
+        id S229662AbhLISxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 13:53:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbhLISlG (ORCPT
+        with ESMTP id S229644AbhLISxH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 13:41:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780CCC061746;
-        Thu,  9 Dec 2021 10:37:32 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3C233B82607;
-        Thu,  9 Dec 2021 18:37:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A19FEC004DD;
-        Thu,  9 Dec 2021 18:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639075050;
-        bh=2UNkZfOZO/hps+lR5b+uLNIBRoxpEFlXNCYdJtGiOuk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P5DtsLtPtfF8V/gONbTf4QcOIHPkA2msw7KfYTRQ+d0EObGrZmh9dp1F7brcT+nR2
-         3xc7ioHgkwErS8T4poiEAduDKrEjvfSdkNFBVbdyQjwKgzVJTWeHMv/ypqzc7VBGyQ
-         VbZGZw/KQlmaNNbGOz7I/ufp5GjL+LEuF4VjbUKeyM7oyAQqAvQB1wRivOeCIEHV4F
-         XC/rAAjv0K2Cqvh9CDHdqpQtADBZLcZy9Cur9Vtu0MuVUSn3PZxEhu1UGqxxkCi0Io
-         GAazQLIxVDUWF9xr/Ajdeh5hd7+a5Q/CuMa9pp7rkRyh64TZI3NQgypaPbfdy6c+PB
-         uyJ+8eBqTC7cg==
-Date:   Thu, 9 Dec 2021 10:37:28 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ramji Jiyani <ramjiyani@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
-Message-ID: <YbJM6H2wOisBY6gU@sol.localdomain>
-References: <20211209010455.42744-1-ebiggers@kernel.org>
- <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
+        Thu, 9 Dec 2021 13:53:07 -0500
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96626C061746
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Dec 2021 10:49:33 -0800 (PST)
+Received: by mail-qt1-x833.google.com with SMTP id o17so6240065qtk.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 10:49:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZmTnqLpZG3L87y+u6kWGuNLhyVdE+MXKVwUo2tZ+WXw=;
+        b=R8VBVyJcZnXnjU93pDTV82pZASm9LKLHmvwRuK71fHickgEiI9S/IBkXHvwB7h5Dpg
+         /RvAOJMHeGp/V+JnQ+pMiKmg7cyzu33useqAng0PzS3h2CbGaGQIapWA1Q4L5XlPos4o
+         5Yv3d3vTlAdW6WyhUPMm+LYvGqeXky9hzQkS8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZmTnqLpZG3L87y+u6kWGuNLhyVdE+MXKVwUo2tZ+WXw=;
+        b=XohDlCkkWYcMaVgDMxc7mSJ66AmzH8SfvPI5p5aPbWkW3RYJ8XOWP5lkdYZmHqTgjx
+         Y7IahCwIhF5BiJF6To9pnlsBsx0ntFyeNQ1YK9A4mo9GG8XrNsFNP3H91nqacWwxiVvx
+         +iUylugws7gwMiOKz0imcwARFJ8Ep8GBjiFW/n54Q/GZxaTTbN8S/raCXv3WVwbH156c
+         wq341p0O3IGVArS9A1RQ3j9r1gXPJtnQHkTTBjKpZeFH7UoHIZiBrEfYVnLUkRW/7c1f
+         LRPCLqn9pGDav+QvCAm1g+56xFS8SWbhvk0uUTH47T2QA+pkdfQh2C8ec0DFQxWIZSoq
+         2zfw==
+X-Gm-Message-State: AOAM530tormnn1eH41B51wTDdck6P2blHRum8MeoLS/Tz0d68BxYOdFn
+        6Mwok6kKpsqZYQFTcBT/aHgDgTN4dig0Ot08qa4=
+X-Google-Smtp-Source: ABdhPJwjVHaZ+/t1jybYuRv4WWGBHCj27nD4T/xdi1zelqPl2P/d9dItB/2dVl/YXRx6VXR5AHxCmQ==
+X-Received: by 2002:ac8:57d0:: with SMTP id w16mr19816685qta.398.1639075772612;
+        Thu, 09 Dec 2021 10:49:32 -0800 (PST)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
+        by smtp.gmail.com with ESMTPSA id m20sm218181qkp.112.2021.12.09.10.49.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Dec 2021 10:49:31 -0800 (PST)
+Received: by mail-wr1-f42.google.com with SMTP id o13so11261056wrs.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 10:49:27 -0800 (PST)
+X-Received: by 2002:adf:9d88:: with SMTP id p8mr8799289wre.140.1639075766991;
+ Thu, 09 Dec 2021 10:49:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
+References: <20211207142405.179428-1-brauner@kernel.org>
+In-Reply-To: <20211207142405.179428-1-brauner@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 9 Dec 2021 10:49:11 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjjxBRNkav+RjpdHjDZHRPAJgjdM4wTFi_oEnk0_dc67g@mail.gmail.com>
+Message-ID: <CAHk-=wjjxBRNkav+RjpdHjDZHRPAJgjdM4wTFi_oEnk0_dc67g@mail.gmail.com>
+Subject: Re: Pull trivial helper to preempt fscache merge conflict?
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 09, 2021 at 10:00:50AM -0800, Linus Torvalds wrote:
-> On Wed, Dec 8, 2021 at 5:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > Careful review is appreciated; the aio poll code is very hard to work
-> > with, and it doesn't appear to have many tests.  I've verified that it
-> > passes the libaio test suite, which provides some coverage of poll.
-> >
-> > Note, it looks like io_uring has the same bugs as aio poll.  I haven't
-> > tried to fix io_uring.
-> 
-> I'm hoping Jens is looking at the io_ring case, but I'm also assuming
-> that I'll just get a pull request for this at some point.
-> 
-> It looks sane to me - my only internal cursing has been about epoll
-> and aio in general, not about these patches in particular.
+On Tue, Dec 7, 2021 at 6:25 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> Since the patch has extremely low regression potential I did agree to at
+> least ask you. But no problem if you'd rather fix it yourself during the
+> next merge window should you decide to pull.
 
-I was hoping that Al would review and apply these, given that he's listed as the
-maintainer for this file, and he's worked on this code before.  I was also
-hoping for review from Christoph, since he added IOCB_CMD_POLL originally.  But
-yes, if I don't hear anything I'll just send you a pull request.  I might
-include https://lore.kernel.org/r/20210913111928.98-1-xieyongji@bytedance.com
-too, since it's an obviously correct aio fix which has been ignored for months.
+Honestly, looking at that pull, any conflict would seem to be so
+trivial that I won't worry about it, and I'd rather deal with it
+normally than taking the odd extra pull early.
 
-- Eric
+                 Linus
