@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4152246EDFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 17:54:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD5346EE0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 17:55:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241517AbhLIQ6H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 11:58:07 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48703 "EHLO
+        id S241518AbhLIQ6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 11:58:36 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:46393 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241393AbhLIQ6C (ORCPT
+        by vger.kernel.org with ESMTP id S241451AbhLIQ6L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 11:58:02 -0500
+        Thu, 9 Dec 2021 11:58:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639068868;
+        s=mimecast20190719; t=1639068877;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=cpzPqhOkb6bNWztmaWC2bqWrQcw/ICLeyzWLupw/QnQ=;
-        b=HKJ6Z9lrAKLctucTlQfwqDctevntuWGZ39QFAFBiZEhVlWAWOSPTTV9bmhvhTeilDHT1NW
-        LdgAXpK3JIXvQ2rS9XZjChcQ3afpf1z3MbHto9WkfUOd4uxYtFE7i2jtTk/lV/S1bcEQzq
-        X6FWhhHsyxL602uThNwJnkt6UK6cRnA=
+        bh=ezoWr3tVtar+wXJ/cR1XC2ysCmNkeIazhJVVPmoOdgU=;
+        b=JPLtlW7zBwiQxbV/WJLbgDYANBoF1nTaA0ALZtAoWj3LpIcqAM/C3CU+RRvngvoZvMQp+f
+        G+p1S9JVXoxnRU/hDydfayw9glMOg6607vYJctKLCjfdK8wYaC0MHXOpzpqkrYjl74TePB
+        06AcOy4OidEAHLm1g54D3S3Elhv2QfU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-580-I4_FQcCIOdmbsL0XbhIYdQ-1; Thu, 09 Dec 2021 11:54:25 -0500
-X-MC-Unique: I4_FQcCIOdmbsL0XbhIYdQ-1
+ us-mta-515-D6nY3AieNliTCjFt9beM4w-1; Thu, 09 Dec 2021 11:54:34 -0500
+X-MC-Unique: D6nY3AieNliTCjFt9beM4w-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 210F210247A7;
-        Thu,  9 Dec 2021 16:54:23 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76CEF10247AE;
+        Thu,  9 Dec 2021 16:54:32 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D92075BE07;
-        Thu,  9 Dec 2021 16:54:19 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 33A015D6D5;
+        Thu,  9 Dec 2021 16:54:29 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v2 04/67] netfs: Display the netfs inode number in the
- netfs_read tracepoint
+Subject: [PATCH v2 05/67] netfs: Pass a flag to ->prepare_write() to say if
+ there's no alloc'd space
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
@@ -57,8 +57,8 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 09 Dec 2021 16:54:19 +0000
-Message-ID: <163906885903.143852.12229407815154182247.stgit@warthog.procyon.org.uk>
+Date:   Thu, 09 Dec 2021 16:54:28 +0000
+Message-ID: <163906886835.143852.6689886781122679769.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk>
 References: <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
@@ -70,44 +70,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Display the netfs inode number in the netfs_read tracepoint so that this
-can be used to correlate with the cachefiles_prep_read tracepoint.
+Pass a flag to ->prepare_write() to indicate if there's definitely no
+space allocated in the cache yet (for instance if we've already checked as
+we were asked to do a read).
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-cachefs@redhat.com
-Link: https://lore.kernel.org/r/163819581097.215744.17476611915583897051.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/163819583123.215744.12783808230464471417.stgit@warthog.procyon.org.uk/ # v1
 ---
 
- include/trace/events/netfs.h |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/netfs/read_helper.c |    2 +-
+ include/linux/netfs.h  |    3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 4d470bffd9f1..e6f4ebbb4c69 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -135,6 +135,7 @@ TRACE_EVENT(netfs_read,
- 		    __field(loff_t,			start		)
- 		    __field(size_t,			len		)
- 		    __field(enum netfs_read_trace,	what		)
-+		    __field(unsigned int,		netfs_inode	)
- 			     ),
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 75c76cbb27cc..9dd76b8914f2 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -323,7 +323,7 @@ static void netfs_rreq_do_write_to_cache(struct netfs_read_request *rreq)
+ 		}
  
- 	    TP_fast_assign(
-@@ -143,12 +144,14 @@ TRACE_EVENT(netfs_read,
- 		    __entry->start	= start;
- 		    __entry->len	= len;
- 		    __entry->what	= what;
-+		    __entry->netfs_inode = rreq->inode->i_ino;
- 			   ),
+ 		ret = cres->ops->prepare_write(cres, &subreq->start, &subreq->len,
+-					       rreq->i_size);
++					       rreq->i_size, true);
+ 		if (ret < 0) {
+ 			trace_netfs_failure(rreq, subreq, ret, netfs_fail_prepare_write);
+ 			trace_netfs_sreq(subreq, netfs_sreq_trace_write_skip);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index ca0683b9e3d1..1ea22fc48818 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -232,7 +232,8 @@ struct netfs_cache_ops {
+ 	 * actually do.
+ 	 */
+ 	int (*prepare_write)(struct netfs_cache_resources *cres,
+-			     loff_t *_start, size_t *_len, loff_t i_size);
++			     loff_t *_start, size_t *_len, loff_t i_size,
++			     bool no_space_allocated_yet);
+ };
  
--	    TP_printk("R=%08x %s c=%08x s=%llx %zx",
-+	    TP_printk("R=%08x %s c=%08x ni=%x s=%llx %zx",
- 		      __entry->rreq,
- 		      __print_symbolic(__entry->what, netfs_read_traces),
- 		      __entry->cookie,
-+		      __entry->netfs_inode,
- 		      __entry->start, __entry->len)
- 	    );
- 
+ struct readahead_control;
 
 
