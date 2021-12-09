@@ -2,132 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2FD246E2A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 07:38:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D2BF46E30E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 08:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233217AbhLIGmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 01:42:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37222 "EHLO
+        id S233625AbhLIHW4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 02:22:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233208AbhLIGmU (ORCPT
+        with ESMTP id S233617AbhLIHWz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 01:42:20 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571FCC061746;
-        Wed,  8 Dec 2021 22:38:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=ouNiv2rrKa9k8QRwbohahE8DrswboT5nHLE2typSANU=; b=N7Rsz6p6yt49RTrhwjWPSlhceD
-        CALFi9S5eAp1bh236cOyKU8rTo3i9jM0Ve/65KnR7XyWCSozmquN1bNVDtfmGmbwJP2yH6h0GCbS7
-        yQDwr9YDSUqRlAuXlee/lzt5Rki0HjojpUSkLQVkrFwVgj/B7pr6Ul1Ju7cdbWRe25k/i9bCL71kc
-        CrSPLQwg91Sok6ItP+daavYVhqBKZ+cqG3qs2Xi5SfzJgfcuPbNIzXp0hJKw4bz1ndQM7ykVSg47z
-        1Fh133uaXd+HQEyu6Xe83YWZwtNGAdulTN089HddpxlBD1XQzIk2ner0wPishkUQppK8mKpuTxdUg
-        TWY3Sgag==;
-Received: from [2001:4bb8:180:a1c8:2d0e:135:af53:41f8] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mvD4d-0096hv-8z; Thu, 09 Dec 2021 06:38:36 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>, dm-devel@redhat.com,
-        nvdimm@lists.linux.dev, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH 5/5] dax: always use _copy_mc_to_iter in dax_copy_to_iter
-Date:   Thu,  9 Dec 2021 07:38:28 +0100
-Message-Id: <20211209063828.18944-6-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211209063828.18944-1-hch@lst.de>
-References: <20211209063828.18944-1-hch@lst.de>
+        Thu, 9 Dec 2021 02:22:55 -0500
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C972C0617A1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Dec 2021 23:19:22 -0800 (PST)
+Received: by mail-qt1-x833.google.com with SMTP id f20so4513484qtb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Dec 2021 23:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version;
+        bh=wp7bsIiEGq1v0UzZDarToFJILpj4ru1SGwyQaMb3p4E=;
+        b=n+ugZQ1C7dMkoFU9ez645n+AJqXmFaYJgGVuTfIepCmJyDDnCohuhijGr9jGafo/wy
+         ke5ok+6E3zz7kA5TnbpKDDfzpnH1mUlESdrcsPQX3rQ/5EWkuzqbXbOcU7kKOUckIgth
+         O3HHcGIovw7KB4FOWO0jiUkVl5qccjHYAntQnRbxWffMfENTLHdEbWcJPbTowO9D36lh
+         64hdvosY2W7EEQR7dNWhu7EJiIi92GFTNn8C83HMjh4dkXwoXA66KkTp40tVE3kupDAq
+         JMqxYPzhj9IyRHZAsGhQpuTwy2HT4CE1oPWh6CbJnqiZk+a9EqxqpKmrpdtx6oHOyez0
+         QR3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version;
+        bh=wp7bsIiEGq1v0UzZDarToFJILpj4ru1SGwyQaMb3p4E=;
+        b=FrXbztVCKxqjY+4nVfxcWFJFeb+AK/zIvffgW8xDy3JILPDDfWrKa7kS/RiPr1QGYC
+         rZrb0800WvF2JV+eUJGGJZl3CvWpJM8g2f4FAclD3KqsWcDE09wun/2WgqzGRWwZ6vU7
+         BjodtyzX3K/6I40Z8rWxR0idcA9w89JrTn+q0MxauMYI/XOQwwC95cQXhgQ8k/9Nhbr2
+         pF4sVN836hJrPQurwEUc3STC4fDH7ZcEsa6l4uHx3C0GET9a/nKBEyhQyCQ/eX7tS034
+         9fvUes5JCH2WvLX72SY3pT8O6HzrA1713wM/I4sSCfDChSIDCZCiRZtpbsPb6JzIlc5q
+         LQTw==
+X-Gm-Message-State: AOAM532+jAJNNXspXBSE8SHuNWCIyBwhQ9/gL9zFTfXkODPu8JtouQVd
+        y1eb1BYJUS96XhPqXU/MHRH5aA==
+X-Google-Smtp-Source: ABdhPJyDk5gwcYkseNoR8GrR8PAhZjoMS9Xyrz93qdo0YVs5eDJPx98/mF7EChyYF/5No6CJchsA8g==
+X-Received: by 2002:ac8:580b:: with SMTP id g11mr14831442qtg.268.1639034361429;
+        Wed, 08 Dec 2021 23:19:21 -0800 (PST)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id z4sm3382336qtj.42.2021.12.08.23.19.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Dec 2021 23:19:20 -0800 (PST)
+Date:   Wed, 8 Dec 2021 23:19:18 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH] mm: delete unsafe BUG from page_cache_add_speculative()
+Message-ID: <8b98fc6f-3439-8614-c3f3-945c659a1aba@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While using the MC-safe copy routines is rather pointless on a virtual device
-like virtiofs, it also isn't harmful at all.  So just use _copy_mc_to_iter
-unconditionally to simplify the code.
+It is not easily reproducible, but on 5.16-rc I have several times hit
+the VM_BUG_ON_PAGE(PageTail(page), page) in page_cache_add_speculative():
+usually from filemap_get_read_batch() for an ext4 read, yesterday from
+next_uptodate_page() from filemap_map_pages() for a shmem fault.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+That BUG used to be placed where page_ref_add_unless() had succeeded,
+but now it is placed before folio_ref_add_unless() is attempted: that
+is not safe, since it is only the acquired reference which makes the
+page safe from racing THP collapse or split.
+
+We could keep the BUG, checking PageTail only when folio_ref_try_add_rcu()
+has succeeded; but I don't think it adds much value - just delete it.
+
+Fixes: 020853b6f5ea ("mm: Add folio_try_get_rcu()")
+Signed-off-by: Hugh Dickins <hughd@google.com>
 ---
- drivers/dax/super.c | 10 ----------
- fs/fuse/virtio_fs.c |  1 -
- include/linux/dax.h |  1 -
- 3 files changed, 12 deletions(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index ff676a07480c8..fe783234ca669 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -107,8 +107,6 @@ enum dax_device_flags {
- 	DAXDEV_SYNC,
- 	/* do not use uncached operations to write data */
- 	DAXDEV_CACHED,
--	/* do not use mcsafe operations to read data */
--	DAXDEV_NOMCSAFE,
- };
+ include/linux/pagemap.h |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- 5.16-rc4/include/linux/pagemap.h
++++ linux/include/linux/pagemap.h
+@@ -285,7 +285,6 @@ static inline struct inode *folio_inode(
  
- /**
-@@ -171,8 +169,6 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
- 	 * via access_ok() in vfs_red, so use the 'no check' version to bypass
- 	 * the HARDENED_USERCOPY overhead.
- 	 */
--	if (test_bit(DAXDEV_NOMCSAFE, &dax_dev->flags))
--		return _copy_to_iter(addr, bytes, i);
- 	return _copy_mc_to_iter(addr, bytes, i);
- }
- 
-@@ -242,12 +238,6 @@ void set_dax_cached(struct dax_device *dax_dev)
- }
- EXPORT_SYMBOL_GPL(set_dax_cached);
- 
--void set_dax_nomcsafe(struct dax_device *dax_dev)
--{
--	set_bit(DAXDEV_NOMCSAFE, &dax_dev->flags);
--}
--EXPORT_SYMBOL_GPL(set_dax_nomcsafe);
--
- bool dax_alive(struct dax_device *dax_dev)
+ static inline bool page_cache_add_speculative(struct page *page, int count)
  {
- 	lockdep_assert_held(&dax_srcu);
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 754319ce2a29b..d9c20b148ac19 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -838,7 +838,6 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
- 	if (IS_ERR(fs->dax_dev))
- 		return PTR_ERR(fs->dax_dev);
- 	set_dax_cached(fs->dax_dev);
--	set_dax_nomcsafe(fs->dax_dev);
- 	return devm_add_action_or_reset(&vdev->dev, virtio_fs_cleanup_dax,
- 					fs->dax_dev);
+-	VM_BUG_ON_PAGE(PageTail(page), page);
+ 	return folio_ref_try_add_rcu((struct folio *)page, count);
  }
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index d22cbf03d37d2..d267331bc37e7 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -90,7 +90,6 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
- #endif
  
- void set_dax_cached(struct dax_device *dax_dev);
--void set_dax_nomcsafe(struct dax_device *dax_dev);
- 
- struct writeback_control;
- #if defined(CONFIG_BLOCK) && defined(CONFIG_FS_DAX)
--- 
-2.30.2
-
