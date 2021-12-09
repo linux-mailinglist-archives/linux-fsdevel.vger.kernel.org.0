@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78F0746EB82
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02ED546EB89
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240042AbhLIPka (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 10:40:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49906 "EHLO
+        id S240079AbhLIPkd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 10:40:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240021AbhLIPk3 (ORCPT
+        with ESMTP id S240024AbhLIPka (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 10:40:29 -0500
+        Thu, 9 Dec 2021 10:40:30 -0500
 Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA26C061746;
-        Thu,  9 Dec 2021 07:36:55 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A6A2C0617A1;
+        Thu,  9 Dec 2021 07:36:56 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id D9CD3CE263D;
-        Thu,  9 Dec 2021 15:36:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2633C004DD;
-        Thu,  9 Dec 2021 15:36:51 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 92AAECE2689;
+        Thu,  9 Dec 2021 15:36:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F4CC341C7;
+        Thu,  9 Dec 2021 15:36:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1639064212;
-        bh=CS9Hf7MI0jqMr8+EjpftWstEf6eYGLMlCvukqizCF0I=;
+        bh=NG1st52YEYAGAm8qyNZ6r+/8xroElHqCS5fIfjXfDnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GEY0Ir42jUQUrCruHQ4fezWSv2YCjV1m1hg9WlQtaChWO6nQyPsCHCkwAzw2JbkkC
-         HfoKaq5EQuw0yzHJJunwgCo4CndVtQwma+VX/x1GN3NKAmE7Ni17GRnX+jqzys0JH4
-         JLptAOvVoSvo7hl9+KCZRKHzYUpMmh/Qqlp92kzhBXB18uU9bZaNHmUhqFsULq4Oif
-         SPNoP04K6NQi1GiZzXhr13bDNtrGA6F92z87+9PHqrA5jKJnu2hiwmdqeJ1NMqBvWg
-         hfSwkZye8O74Bfruz2rXWl2Poaveeh0H2LS8pQscpL78+CJ/euSXUWwebjK8HA4pjq
-         +3wOEjGN/nSLA==
+        b=TLgUjxST8J58NnGwPqPeeej7XKQobZeDGCaauRamdi8tqwqChOHFapktfRby0yiGr
+         JWJQHuaKOrddabCMUaWdFCHUZzOV6+IYcFfzma3hCojMKYXOdLa2WsECf0YLjZJcPK
+         b30dTyXggGbRakTOZkAmLK1ivMN6CwQOjslJto4y1T2aMwa9DzasZ3La1abvZbtW9Y
+         YgbkkbYeR/M/wvzuE1CrL6gxg2KWCcKrWHqbHTUvAlOa15q5jvQkYofDN6Eoo7n7+R
+         aANaoRpUBH7UYofWsFhQ4l+VGRCzI8HPi2mjzOaYYLahHYwOS/h+b9KFDOzhLILNJj
+         9BLMBQ68Zlvfw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 04/36] fscrypt: add fscrypt_context_for_new_inode
-Date:   Thu,  9 Dec 2021 10:36:15 -0500
-Message-Id: <20211209153647.58953-5-jlayton@kernel.org>
+Subject: [PATCH 05/36] fscrypt: uninline and export fscrypt_require_key
+Date:   Thu,  9 Dec 2021 10:36:16 -0500
+Message-Id: <20211209153647.58953-6-jlayton@kernel.org>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211209153647.58953-1-jlayton@kernel.org>
 References: <20211209153647.58953-1-jlayton@kernel.org>
@@ -47,89 +47,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Most filesystems just call fscrypt_set_context on new inodes, which
-usually causes a setxattr. That's a bit late for ceph, which can send
-along a full set of attributes with the create request.
-
-Doing so allows it to avoid race windows that where the new inode could
-be seen by other clients without the crypto context attached. It also
-avoids the separate round trip to the server.
-
-Refactor the fscrypt code a bit to allow us to create a new crypto
-context, attach it to the inode, and write it to the buffer, but without
-calling set_context on it. ceph can later use this to marshal the
-context into the attributes we send along with the create request.
+ceph_atomic_open needs to be able to call this.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/crypto/policy.c      | 34 ++++++++++++++++++++++++++++------
- include/linux/fscrypt.h |  1 +
- 2 files changed, 29 insertions(+), 6 deletions(-)
+ fs/crypto/fscrypt_private.h | 26 --------------------------
+ fs/crypto/keysetup.c        | 27 +++++++++++++++++++++++++++
+ include/linux/fscrypt.h     |  5 +++++
+ 3 files changed, 32 insertions(+), 26 deletions(-)
 
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index ed3d623724cd..fdcdbde5d57b 100644
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -664,6 +664,31 @@ const union fscrypt_policy *fscrypt_policy_to_inherit(struct inode *dir)
- 	return fscrypt_get_dummy_policy(dir->i_sb);
- }
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 51e42767dbd6..89d5d85afdd5 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -579,32 +579,6 @@ void fscrypt_hash_inode_number(struct fscrypt_info *ci,
  
-+/**
-+ * fscrypt_context_for_new_inode() - create an encryption context for a new inode
-+ * @ctx: where context should be written
-+ * @inode: inode from which to fetch policy and nonce
-+ *
-+ * Given an in-core "prepared" (via fscrypt_prepare_new_inode) inode,
-+ * generate a new context and write it to ctx. ctx _must_ be at least
-+ * FSCRYPT_SET_CONTEXT_MAX_SIZE bytes.
-+ *
-+ * Return: size of the resulting context or a negative error code.
-+ */
-+int fscrypt_context_for_new_inode(void *ctx, struct inode *inode)
-+{
-+	struct fscrypt_info *ci = inode->i_crypt_info;
-+
-+	BUILD_BUG_ON(sizeof(union fscrypt_context) != FSCRYPT_SET_CONTEXT_MAX_SIZE);
-+
-+	/* fscrypt_prepare_new_inode() should have set up the key already. */
-+	if (WARN_ON_ONCE(!ci))
-+		return -ENOKEY;
-+
-+	return fscrypt_new_context(ctx, &ci->ci_policy, ci->ci_nonce);
-+}
-+EXPORT_SYMBOL_GPL(fscrypt_context_for_new_inode);
-+
- /**
-  * fscrypt_set_context() - Set the fscrypt context of a new inode
-  * @inode: a new inode
-@@ -680,12 +705,9 @@ int fscrypt_set_context(struct inode *inode, void *fs_data)
- 	union fscrypt_context ctx;
- 	int ctxsize;
+ int fscrypt_get_encryption_info(struct inode *inode, bool allow_unsupported);
  
--	/* fscrypt_prepare_new_inode() should have set up the key already. */
--	if (WARN_ON_ONCE(!ci))
--		return -ENOKEY;
+-/**
+- * fscrypt_require_key() - require an inode's encryption key
+- * @inode: the inode we need the key for
+- *
+- * If the inode is encrypted, set up its encryption key if not already done.
+- * Then require that the key be present and return -ENOKEY otherwise.
+- *
+- * No locks are needed, and the key will live as long as the struct inode --- so
+- * it won't go away from under you.
+- *
+- * Return: 0 on success, -ENOKEY if the key is missing, or another -errno code
+- * if a problem occurred while setting up the encryption key.
+- */
+-static inline int fscrypt_require_key(struct inode *inode)
+-{
+-	if (IS_ENCRYPTED(inode)) {
+-		int err = fscrypt_get_encryption_info(inode, false);
 -
--	BUILD_BUG_ON(sizeof(ctx) != FSCRYPT_SET_CONTEXT_MAX_SIZE);
--	ctxsize = fscrypt_new_context(&ctx, &ci->ci_policy, ci->ci_nonce);
-+	ctxsize = fscrypt_context_for_new_inode(&ctx, inode);
-+	if (ctxsize < 0)
-+		return ctxsize;
+-		if (err)
+-			return err;
+-		if (!fscrypt_has_encryption_key(inode))
+-			return -ENOKEY;
+-	}
+-	return 0;
+-}
+-
+ /* keysetup_v1.c */
  
- 	/*
- 	 * This may be the first time the inode number is available, so do any
+ void fscrypt_put_direct_key(struct fscrypt_direct_key *dk);
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index eede186b04ce..7aeb0047d03d 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -792,3 +792,30 @@ int fscrypt_drop_inode(struct inode *inode)
+ 	return !is_master_key_secret_present(&mk->mk_secret);
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_drop_inode);
++
++/**
++ * fscrypt_require_key() - require an inode's encryption key
++ * @inode: the inode we need the key for
++ *
++ * If the inode is encrypted, set up its encryption key if not already done.
++ * Then require that the key be present and return -ENOKEY otherwise.
++ *
++ * No locks are needed, and the key will live as long as the struct inode --- so
++ * it won't go away from under you.
++ *
++ * Return: 0 on success, -ENOKEY if the key is missing, or another -errno code
++ * if a problem occurred while setting up the encryption key.
++ */
++int fscrypt_require_key(struct inode *inode)
++{
++	if (IS_ENCRYPTED(inode)) {
++		int err = fscrypt_get_encryption_info(inode, false);
++
++		if (err)
++			return err;
++		if (!fscrypt_has_encryption_key(inode))
++			return -ENOKEY;
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(fscrypt_require_key);
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index c90e176b5843..530433098f82 100644
+index 530433098f82..7d3c670d0c6d 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
-@@ -276,6 +276,7 @@ int fscrypt_ioctl_get_policy(struct file *filp, void __user *arg);
- int fscrypt_ioctl_get_policy_ex(struct file *filp, void __user *arg);
- int fscrypt_ioctl_get_nonce(struct file *filp, void __user *arg);
- int fscrypt_has_permitted_context(struct inode *parent, struct inode *child);
-+int fscrypt_context_for_new_inode(void *ctx, struct inode *inode);
- int fscrypt_set_context(struct inode *inode, void *fs_data);
+@@ -334,6 +334,7 @@ bool fscrypt_match_name(const struct fscrypt_name *fname,
+ 			const u8 *de_name, u32 de_name_len);
+ u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
+ int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
++int fscrypt_require_key(struct inode *inode);
  
- struct fscrypt_dummy_policy {
+ /* bio.c */
+ void fscrypt_decrypt_bio(struct bio *bio);
+@@ -601,6 +602,10 @@ static inline int fscrypt_d_revalidate(struct dentry *dentry,
+ 	return 1;
+ }
+ 
++static inline int fscrypt_require_key(struct inode *inode)
++{
++	return 0;
++}
+ /* bio.c */
+ static inline void fscrypt_decrypt_bio(struct bio *bio)
+ {
 -- 
 2.33.1
 
