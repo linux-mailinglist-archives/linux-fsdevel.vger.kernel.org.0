@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2908746E29D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 07:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A2246E2A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 07:38:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233197AbhLIGmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 01:42:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37210 "EHLO
+        id S233222AbhLIGmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 01:42:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbhLIGmT (ORCPT
+        with ESMTP id S232078AbhLIGmV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 01:42:19 -0500
+        Thu, 9 Dec 2021 01:42:21 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17ACFC061746;
-        Wed,  8 Dec 2021 22:38:46 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FBBCC061746;
+        Wed,  8 Dec 2021 22:38:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=e/I3Z/fVcm8ka4/7bniQ5z4YGZD4AAd7c/qW0XirAZ0=; b=i2hlpPdNZAF/hm4qW1s8FKFDEF
-        6t7Mpr8ZkJc3YEVm6S/h5xB7Wst5GfUBeGFc+s8+1Uqfls+HOzKeRqeMd1SumX+4QYxwl5N0xpHrB
-        nRSX4gsuF2aEn++FK4s7wqTgBswNC5OcT97Ip3IetmDgJgFwGOMUx8akFcn93DPeZ5z/PBikxKIZu
-        7Ai7Y6Qf51aB7twOPUE4CWL+s85DVLBRc+gjMbPpmza3WWUlzft52RhVFQYWRG9aXS1BgivWqvYeT
-        W8vJ1lEmo6iVbu2v034XT44vZ7eGoqwicAfgdn0c2ORzD1pawsY0Sd+2w9nTJxnwMQgXmB9srFy0L
-        /SA4MbRw==;
+        bh=IgvnOih1gMlWCY6BF1WLxB2wb5B+yqIEfDJ3z6xpqAQ=; b=IcQae1wcrMFGxRsfSGtTYz6rvV
+        Ny75w42kGMsYxX2K5exx//GNzWyMF10e+8C/+5s9ihR1GYfZkBIJZVvEITfGeCt4yECQU4l80Clin
+        dkXvg2ZIKX9HLhIlSbVKPiIthADyWgX8JgvqPA1EcLuym+tfk1L9T1sPJIkFcBF7bM1lHoz7TAe3J
+        Br9ZiMQe5q7u4wW7ubIH1eDQil/zmDfcXfDGZPpeVbVElFLYMG1py8JzXweXaqMfeamBUHJW8H548
+        UVtRkPTKKLO94jaBVvT146T+sXIkcrQN3BHnAdyU5ISi70hmvtrOANVvWtUAmm/J5PW9zqRenlHTp
+        0GEBXXdA==;
 Received: from [2001:4bb8:180:a1c8:2d0e:135:af53:41f8] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mvD4Y-0096hS-Sr; Thu, 09 Dec 2021 06:38:31 +0000
+        id 1mvD4a-0096hg-92; Thu, 09 Dec 2021 06:38:33 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Dan Williams <dan.j.williams@intel.com>,
         Vishal Verma <vishal.l.verma@intel.com>,
@@ -45,9 +45,9 @@ Cc:     Alasdair Kergon <agk@redhat.com>,
         nvdimm@lists.linux.dev, linux-s390@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: [PATCH 2/5] dax: simplify dax_synchronous and set_dax_synchronous
-Date:   Thu,  9 Dec 2021 07:38:25 +0100
-Message-Id: <20211209063828.18944-3-hch@lst.de>
+Subject: [PATCH 3/5] dax: remove the DAXDEV_F_SYNC flag
+Date:   Thu,  9 Dec 2021 07:38:26 +0100
+Message-Id: <20211209063828.18944-4-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211209063828.18944-1-hch@lst.de>
 References: <20211209063828.18944-1-hch@lst.de>
@@ -58,63 +58,170 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove the pointless wrappers.
+Remove the DAXDEV_F_SYNC flag and thus the flags argument to alloc_dax and
+just let the drivers call set_dax_synchronous directly.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/dax/super.c |  8 ++++----
- include/linux/dax.h | 12 ++----------
- 2 files changed, 6 insertions(+), 14 deletions(-)
+ drivers/dax/bus.c            | 3 ++-
+ drivers/dax/super.c          | 6 +-----
+ drivers/md/dm.c              | 2 +-
+ drivers/nvdimm/pmem.c        | 7 +++----
+ drivers/s390/block/dcssblk.c | 4 ++--
+ fs/fuse/virtio_fs.c          | 2 +-
+ include/linux/dax.h          | 8 ++------
+ 7 files changed, 12 insertions(+), 20 deletions(-)
 
+diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+index 6683d42c32c56..da2a14d096d29 100644
+--- a/drivers/dax/bus.c
++++ b/drivers/dax/bus.c
+@@ -1324,11 +1324,12 @@ struct dev_dax *devm_create_dev_dax(struct dev_dax_data *data)
+ 	 * No dax_operations since there is no access to this device outside of
+ 	 * mmap of the resulting character device.
+ 	 */
+-	dax_dev = alloc_dax(dev_dax, NULL, DAXDEV_F_SYNC);
++	dax_dev = alloc_dax(dev_dax, NULL);
+ 	if (IS_ERR(dax_dev)) {
+ 		rc = PTR_ERR(dax_dev);
+ 		goto err_alloc_dax;
+ 	}
++	set_dax_synchronous(dax_dev);
+ 
+ 	/* a device_dax instance is dead while the driver is not attached */
+ 	kill_dax(dax_dev);
 diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index e7152a6c4cc40..e18155f43a635 100644
+index e18155f43a635..e81d5ee57390f 100644
 --- a/drivers/dax/super.c
 +++ b/drivers/dax/super.c
-@@ -208,17 +208,17 @@ bool dax_write_cache_enabled(struct dax_device *dax_dev)
+@@ -345,8 +345,7 @@ static struct dax_device *dax_dev_get(dev_t devt)
+ 	return dax_dev;
  }
- EXPORT_SYMBOL_GPL(dax_write_cache_enabled);
  
--bool __dax_synchronous(struct dax_device *dax_dev)
-+bool dax_synchronous(struct dax_device *dax_dev)
+-struct dax_device *alloc_dax(void *private, const struct dax_operations *ops,
+-		unsigned long flags)
++struct dax_device *alloc_dax(void *private, const struct dax_operations *ops)
  {
- 	return test_bit(DAXDEV_SYNC, &dax_dev->flags);
- }
--EXPORT_SYMBOL_GPL(__dax_synchronous);
-+EXPORT_SYMBOL_GPL(dax_synchronous);
+ 	struct dax_device *dax_dev;
+ 	dev_t devt;
+@@ -366,9 +365,6 @@ struct dax_device *alloc_dax(void *private, const struct dax_operations *ops,
  
--void __set_dax_synchronous(struct dax_device *dax_dev)
-+void set_dax_synchronous(struct dax_device *dax_dev)
- {
- 	set_bit(DAXDEV_SYNC, &dax_dev->flags);
- }
--EXPORT_SYMBOL_GPL(__set_dax_synchronous);
-+EXPORT_SYMBOL_GPL(set_dax_synchronous);
+ 	dax_dev->ops = ops;
+ 	dax_dev->private = private;
+-	if (flags & DAXDEV_F_SYNC)
+-		set_dax_synchronous(dax_dev);
+-
+ 	return dax_dev;
  
- bool dax_alive(struct dax_device *dax_dev)
- {
+  err_dev:
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 4e997c02bb0a0..f4b972af10928 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1765,7 +1765,7 @@ static struct mapped_device *alloc_dev(int minor)
+ 	sprintf(md->disk->disk_name, "dm-%d", minor);
+ 
+ 	if (IS_ENABLED(CONFIG_FS_DAX)) {
+-		md->dax_dev = alloc_dax(md, &dm_dax_ops, 0);
++		md->dax_dev = alloc_dax(md, &dm_dax_ops);
+ 		if (IS_ERR(md->dax_dev)) {
+ 			md->dax_dev = NULL;
+ 			goto bad;
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 8294f1c701baa..85b3339286bd8 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -402,7 +402,6 @@ static int pmem_attach_disk(struct device *dev,
+ 	struct gendisk *disk;
+ 	void *addr;
+ 	int rc;
+-	unsigned long flags = 0UL;
+ 
+ 	pmem = devm_kzalloc(dev, sizeof(*pmem), GFP_KERNEL);
+ 	if (!pmem)
+@@ -495,13 +494,13 @@ static int pmem_attach_disk(struct device *dev,
+ 	nvdimm_badblocks_populate(nd_region, &pmem->bb, &bb_range);
+ 	disk->bb = &pmem->bb;
+ 
+-	if (is_nvdimm_sync(nd_region))
+-		flags = DAXDEV_F_SYNC;
+-	dax_dev = alloc_dax(pmem, &pmem_dax_ops, flags);
++	dax_dev = alloc_dax(pmem, &pmem_dax_ops);
+ 	if (IS_ERR(dax_dev)) {
+ 		rc = PTR_ERR(dax_dev);
+ 		goto out;
+ 	}
++	if (is_nvdimm_sync(nd_region))
++		set_dax_synchronous(dax_dev);
+ 	rc = dax_add_host(dax_dev, disk);
+ 	if (rc)
+ 		goto out_cleanup_dax;
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index e65e83764d1ce..10823debc09bd 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -686,13 +686,13 @@ dcssblk_add_store(struct device *dev, struct device_attribute *attr, const char
+ 	if (rc)
+ 		goto put_dev;
+ 
+-	dev_info->dax_dev = alloc_dax(dev_info, &dcssblk_dax_ops,
+-			DAXDEV_F_SYNC);
++	dev_info->dax_dev = alloc_dax(dev_info, &dcssblk_dax_ops);
+ 	if (IS_ERR(dev_info->dax_dev)) {
+ 		rc = PTR_ERR(dev_info->dax_dev);
+ 		dev_info->dax_dev = NULL;
+ 		goto put_dev;
+ 	}
++	set_dax_synchronous(dev_info->dax_dev);
+ 	rc = dax_add_host(dev_info->dax_dev, dev_info->gd);
+ 	if (rc)
+ 		goto out_dax;
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 242cc1c0d7ed7..5c03a0364a9bb 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -850,7 +850,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+ 	dev_dbg(&vdev->dev, "%s: window kaddr 0x%px phys_addr 0x%llx len 0x%llx\n",
+ 		__func__, fs->window_kaddr, cache_reg.addr, cache_reg.len);
+ 
+-	fs->dax_dev = alloc_dax(fs, &virtio_fs_dax_ops, 0);
++	fs->dax_dev = alloc_dax(fs, &virtio_fs_dax_ops);
+ 	if (IS_ERR(fs->dax_dev))
+ 		return PTR_ERR(fs->dax_dev);
+ 
 diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 87ae4c9b1d65b..3bd1fdb5d5f4b 100644
+index 3bd1fdb5d5f4b..c04f46478e3b5 100644
 --- a/include/linux/dax.h
 +++ b/include/linux/dax.h
-@@ -48,16 +48,8 @@ void put_dax(struct dax_device *dax_dev);
+@@ -6,9 +6,6 @@
+ #include <linux/mm.h>
+ #include <linux/radix-tree.h>
+ 
+-/* Flag for synchronous flush */
+-#define DAXDEV_F_SYNC (1UL << 0)
+-
+ typedef unsigned long dax_entry_t;
+ 
+ struct dax_device;
+@@ -42,8 +39,7 @@ struct dax_operations {
+ };
+ 
+ #if IS_ENABLED(CONFIG_DAX)
+-struct dax_device *alloc_dax(void *private, const struct dax_operations *ops,
+-		unsigned long flags);
++struct dax_device *alloc_dax(void *private, const struct dax_operations *ops);
+ void put_dax(struct dax_device *dax_dev);
  void kill_dax(struct dax_device *dax_dev);
  void dax_write_cache(struct dax_device *dax_dev, bool wc);
- bool dax_write_cache_enabled(struct dax_device *dax_dev);
--bool __dax_synchronous(struct dax_device *dax_dev);
--static inline bool dax_synchronous(struct dax_device *dax_dev)
--{
--	return  __dax_synchronous(dax_dev);
--}
--void __set_dax_synchronous(struct dax_device *dax_dev);
--static inline void set_dax_synchronous(struct dax_device *dax_dev)
--{
--	__set_dax_synchronous(dax_dev);
--}
-+bool dax_synchronous(struct dax_device *dax_dev);
-+void set_dax_synchronous(struct dax_device *dax_dev);
- /*
-  * Check if given mapping is supported by the file / underlying device.
-  */
+@@ -64,7 +60,7 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
+ }
+ #else
+ static inline struct dax_device *alloc_dax(void *private,
+-		const struct dax_operations *ops, unsigned long flags)
++		const struct dax_operations *ops)
+ {
+ 	/*
+ 	 * Callers should check IS_ENABLED(CONFIG_DAX) to know if this
 -- 
 2.30.2
 
