@@ -2,98 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 958D246E093
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 02:58:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D66146E0FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 03:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229631AbhLICC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Dec 2021 21:02:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59342 "EHLO
+        id S230401AbhLICqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Dec 2021 21:46:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbhLICC2 (ORCPT
+        with ESMTP id S229455AbhLICqY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Dec 2021 21:02:28 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D20C0617A1
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Dec 2021 17:58:55 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id n26so4057674pff.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Dec 2021 17:58:55 -0800 (PST)
+        Wed, 8 Dec 2021 21:46:24 -0500
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F35B1C061746;
+        Wed,  8 Dec 2021 18:42:51 -0800 (PST)
+Received: by mail-qk1-x72f.google.com with SMTP id w14so3847850qkf.5;
+        Wed, 08 Dec 2021 18:42:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=L1T5kw0pZcNts8FOP/PfwU4eyj9hIko4e2Jf8qhaR54=;
-        b=Am1lWsGbBD8k6Gs6ODuIUg2RL/OgQkiCvVyy+TGCnSjjaya/C4UIEKYczYZJInND5q
-         NEzMQSYXefk8ofo6cX1eYWFf2M2u+mDOgvBGYc3A6CY5UsLMIfWle8rnVwAT/EMp+XMg
-         ifeiXM1HzJSNTrIpPCZCNL4yKEhvyICcW2qRrW0Lm7Mv9lRiMb9GjV7EfoQri/pY4miw
-         BX6KoiLnmZel7/Tf1dRQguVFSpFyshdj4rnQrdiNlmyR8RTeMPZtRbV39xo3Uw5kv6Kn
-         rycicUNV+7xlGGVNkkM0OfwBaIMyB6/tQG+z5NoPSHzta5JiglKPceqAoC+2B9Qd6s/L
-         NjHg==
+        bh=Ni8ukBhnwq4xfJn2KEfRGFk9CvW/EaamTsKpCF9U5jw=;
+        b=FledoWYccQAWv6FRpva8r4lIbEIfgQM+BjswBkDz+Ede5Wkeo8QjIZfKPDzFnpjhRl
+         QxEn1AjrahGgFvRzd0cqSJ2eUckDV58c4ITNjL0+zpwShqj3e3GzQEJJrRPRDFoVUbqy
+         o30GCFnGk5euP4CXUr97UvPvq8KYjwaf3iQZUJP4LvlcPSpLmp29dzjB+vLPQnYPOImv
+         5/62MrA1RYw6hgl+MJlK/vZBz7MfRRWvJC7nVMIx/grd+5AnrUm6g22228Or3MWIOGMV
+         FijRDzb8IFS4aOCXYGiqC2nBprxecfD8vuc9vHLcuwXLUJiobdQUv/tz+wefcirK74rv
+         ty3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=L1T5kw0pZcNts8FOP/PfwU4eyj9hIko4e2Jf8qhaR54=;
-        b=kYMepgXHOSzKzH2zRlbI0Aii7uAiW6IOLdzuqv9nVXaKiAZ9zO/BcWicDFUmQ6qOGQ
-         3mIB6/hiyuHNOQteD8U35mAycXwrmiVzqy50llw6mvyigKYlJEmsI7dPB5KKQCLVqKWq
-         aRy18aaKbvb4TmkmLMpCtKrUnp9+3k9wkKfGNQtj5DkKhBDvbxz5lmZ/G2ALRLuvksw7
-         Pxmom/F4apI3WAb8P9bcCJD3IKAPrCeXj2dG/GXxkT+bfhGL5fQF7GdBBDfyJpWl0oCo
-         IWYwK6gDE8bmbttaalg214xN61+fEHVxczByYoB5GofEJe7qtMwo4WY6Vy/orCbvCTWs
-         ofDQ==
-X-Gm-Message-State: AOAM533MNP7i43vrdxuGMUyaEwB5FYGukbvz3O1dM811tgW4LySJf32z
-        79gLK3d2ggUpNxdpKNfl8Y8z0p79Vxcn6qi7aBHgrw==
-X-Google-Smtp-Source: ABdhPJzAnoM9tgR/eh2HsITyJR3hItduz1eHZo9++I+GO7sFsnQRiKr7UiulUnv9YeK06rwF3wnyl2FTdM1vcsOiXQ8=
-X-Received: by 2002:a63:c052:: with SMTP id z18mr29045322pgi.74.1639015135135;
- Wed, 08 Dec 2021 17:58:55 -0800 (PST)
+        bh=Ni8ukBhnwq4xfJn2KEfRGFk9CvW/EaamTsKpCF9U5jw=;
+        b=Lbw3tgFt8InLmhEHNUnCPaswAlqsyLIcnHNOoEYcVAPpIrUtC+2fS3qCcd7uxpjPmM
+         dYz761rGR4uPT8emYvNmblNu/0OpIXG70VqySy2StgN1heKXvddKH5HxuSrzvHRYWrQ0
+         5dLuj0Q3Fz9M08MQf+cJDuFZ49zEOKz7w304Tmf4zSc9wROj9aX4FMykV8i+Yvwm20Tb
+         WafM2yublUuKiQxVoGYMz0yZCz95bknV3vE4iRxhclwTsTvaM7uYGP7I5mkLeznbuxtu
+         eX2FIx9p9EoMg7Yz3F0Lg2DTAhm3J+IchyZN37K7nEyWP7V2z2tif8ZT3wokQlFT3usj
+         F9zw==
+X-Gm-Message-State: AOAM5327uNf5nweCk1Vg1hCBxxYnazr1eyLOvIlr2K3mlNITc7G3mI2x
+        mMPsSZm8SUEV6XYliycKF5tAUfY1EmDskdC7cUli2et6n5diekSU
+X-Google-Smtp-Source: ABdhPJzPyV2mTICg4ujehOAo8kaXJvx2de02S+39TMWQ8+kUht18v3fGS9QAWvbiXI0QEc1UOZ9N36zfY4aRtfuIbw0=
+X-Received: by 2002:a05:620a:2e3:: with SMTP id a3mr10866422qko.451.1639017771202;
+ Wed, 08 Dec 2021 18:42:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20211208091203.2927754-1-hch@lst.de> <20211209004846.GA69193@magnolia>
- <20211209005559.GB69193@magnolia>
-In-Reply-To: <20211209005559.GB69193@magnolia>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 8 Dec 2021 17:58:43 -0800
-Message-ID: <CAPcyv4g3OG3cSpOEm9J1HLZjzRBhSWotSyV5RZxt5FYV_0=Knw@mail.gmail.com>
-Subject: Re: [PATCH] iomap: turn the byte variable in iomap_zero_iter into a ssize_t
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20211204095256.78042-1-laoar.shao@gmail.com> <20211204095256.78042-5-laoar.shao@gmail.com>
+ <20211208134304.615abbbf@gandalf.local.home>
+In-Reply-To: <20211208134304.615abbbf@gandalf.local.home>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Thu, 9 Dec 2021 10:42:15 +0800
+Message-ID: <CALOAHbAP7w95r_soihp+i1NjWxz4KVHGizARpX80wuL3ZLO7Uw@mail.gmail.com>
+Subject: Re: [PATCH -mm 4/5] tools/perf: replace hard-coded 16 with TASK_COMM_LEN
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Linux MM <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 8, 2021 at 4:56 PM Darrick J. Wong <djwong@kernel.org> wrote:
+On Thu, Dec 9, 2021 at 2:43 AM Steven Rostedt <rostedt@goodmis.org> wrote:
 >
-> On Wed, Dec 08, 2021 at 04:48:46PM -0800, Darrick J. Wong wrote:
-> > On Wed, Dec 08, 2021 at 10:12:03AM +0100, Christoph Hellwig wrote:
-> > > bytes also hold the return value from iomap_write_end, which can contain
-> > > a negative error value.  As bytes is always less than the page size even
-> > > the signed type can hold the entire possible range.
-> > >
-> > > Fixes: c6f40468657d ("fsdax: decouple zeroing from the iomap buffered I/O code")
+> On Sat,  4 Dec 2021 09:52:55 +0000
+> Yafang Shao <laoar.shao@gmail.com> wrote:
 >
-> ...waitaminute, ^^^^^^ in what tree is this commit?  Did Linus merge
-> the dax decoupling series into upstream without telling me?
+> > @@ -43,7 +45,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
+> >               return -1;
+> >       }
+> >
+> > -     if (evsel__test_field(evsel, "prev_comm", 16, false))
+> > +     if (evsel__test_field(evsel, "prev_comm", TASK_COMM_LEN, false))
+> >               ret = -1;
+> >
+> >       if (evsel__test_field(evsel, "prev_pid", 4, true))
+> > @@ -55,7 +57,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
+> >       if (evsel__test_field(evsel, "prev_state", sizeof(long), true))
+> >               ret = -1;
+> >
+> > -     if (evsel__test_field(evsel, "next_comm", 16, false))
+> > +     if (evsel__test_field(evsel, "next_comm", TASK_COMM_LEN, false))
+> >               ret = -1;
+> >
+> >       if (evsel__test_field(evsel, "next_pid", 4, true))
+> > @@ -73,7 +75,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
+> >               return -1;
+> >       }
+> >
+> > -     if (evsel__test_field(evsel, "comm", 16, false))
+> > +     if (evsel__test_field(evsel, "comm", TASK_COMM_LEN, false))
 >
-> /me checks... no?
+> Shouldn't all these be TASK_COMM_LEN_16?
 >
-> Though I searched for it on gitweb and came up with this bizarre plot
-> twist:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c6f40468657d16e4010ef84bf32a761feb3469ea
->
-> (Is this the same as that github thing a few months ago where
-> everybody's commits get deduplicated into the same realm and hence
-> anyone can make trick the frontend into sort of making it look like
-> their rando commits end up in Linus' tree?  Or did it get merged and
-> push -f reverted?)
->
-> Ok, so ... I don't know what I'm supposed to apply this to?  Is this
-> something that should go in Christoph's development branch?
->
-> <confused, going to run away now>
->
-> On the plus side, that means I /can/ go test-merge willy's iomap folios
-> for 5.17 stuff tonight.
 
-This commit is in the nvdimm.git tree and is merged in linux-next.
+The value here must be the same with TASK_COMM_LEN, so I use TASK_COMM_LEN here.
+But we may also change the code as
+https://lore.kernel.org/lkml/20211101060419.4682-9-laoar.shao@gmail.com/
+if TASK_COMM_LEN is changed, so TASK_COMM_LEN_16 is also okay here.
+I will change it to TASK_COMM_LEN_16 in the next version.
+
+>
+> >               ret = -1;
+> >
+> >       if (evsel__test_field(evsel, "pid", 4, true))
+>
+
+
+-- 
+Thanks
+Yafang
