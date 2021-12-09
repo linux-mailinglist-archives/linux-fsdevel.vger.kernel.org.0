@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C4C346EBD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D66E46EBDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240762AbhLIPl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 10:41:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49918 "EHLO
+        id S240808AbhLIPl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 10:41:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240329AbhLIPky (ORCPT
+        with ESMTP id S236210AbhLIPky (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 9 Dec 2021 10:40:54 -0500
 Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB2DC0698D9;
-        Thu,  9 Dec 2021 07:37:14 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7AF3C0698DB;
+        Thu,  9 Dec 2021 07:37:15 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 66708CE263D;
-        Thu,  9 Dec 2021 15:37:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DF2C004DD;
+        by sin.source.kernel.org (Postfix) with ESMTPS id 332F8CE267B;
+        Thu,  9 Dec 2021 15:37:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00807C341C7;
         Thu,  9 Dec 2021 15:37:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639064232;
-        bh=pFmBCVoOH6JkcYU7gCUQP7vvdG1eLZKZ8kImb7a/5OM=;
+        s=k20201202; t=1639064233;
+        bh=KYiVOHODD02NoARZI6yHrS0ORmVdb44LHKiVnsFKIcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=my5cFt4baS6znIfsovW0azl2xiDNd7h0AS3shWlMUUZnjMURFYhl8JTcyMbOEI+pb
-         SL4SM7vtjplU6wZPeArLOoJmusIlBLz/DY+rkV3x8SvTWCsKvNuGiSKl0tuR86a69h
-         CLLAmXBa/SBdF6hcqzXWb1kxL+VHLM7fbvH+Yu9e9OfLJpzrcLfJbnvKdJNNeIz/B3
-         aomG11XXpaEBEtvIOvuUJGe0kJk4O/bOtJnrPFHEfUIbMgENXfzvQRhou2kTTwXcae
-         Euibm0U17J3crSY+qLsgLfmc+DDtrM5NuatunwgCj4VFBlcCZqpQdbfJwS1yPPb27w
-         bCbf8Iv+NpZHA==
+        b=f7kYaE0zArUs/mfBHqNbxxzo87GJmEB8cFt8GH6iyztrUd8bqHdI2LGjFxhSAptX/
+         uzkb2SNIvH/PT2SSC2rTkUP40MkNScxbLR3mfGO1meqVBhZ2l7m6qjQ8+6lS2x+jJQ
+         BWZ/dGYlpMuVyb0/i3didHlOtInVB88lqeQBHtkUX1W1k9wfoJEpD967glmT66iDgG
+         cbrICv4qdQDLEgTlBdplix9g+nFQ+xKFr4If7hA/I3HmTqwbzyPGHi2sIcJCrbV1P8
+         pMvkNmVGHMkdV58kIy+WdMrzrB0wESxae435/VvagBuIYP6vpSqnv7G22rxLAHfKdf
+         q02/hPusBvhrg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH 33/36] ceph: add __ceph_get_caps helper support
-Date:   Thu,  9 Dec 2021 10:36:44 -0500
-Message-Id: <20211209153647.58953-34-jlayton@kernel.org>
+Subject: [PATCH 34/36] ceph: add __ceph_sync_read helper support
+Date:   Thu,  9 Dec 2021 10:36:45 -0500
+Message-Id: <20211209153647.58953-35-jlayton@kernel.org>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211209153647.58953-1-jlayton@kernel.org>
 References: <20211209153647.58953-1-jlayton@kernel.org>
@@ -53,82 +53,93 @@ From: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c  | 19 +++++++++++++------
+ fs/ceph/file.c  | 34 ++++++++++++++++++++++------------
  fs/ceph/super.h |  2 ++
- 2 files changed, 15 insertions(+), 6 deletions(-)
+ 2 files changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 14e32f1d1e2b..1f1a1c6987ce 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2912,10 +2912,9 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
-  * due to a small max_size, make sure we check_max_size (and possibly
-  * ask the mds) so we don't get hung up indefinitely.
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 9030df3becdb..b42158c9aa16 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -882,21 +882,18 @@ enum {
+  * If we get a short result from the OSD, check against i_size; we need to
+  * only return a short read to the caller if we hit EOF.
   */
--int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
-+int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
-+		    int want, loff_t endoff, int *got)
+-static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+-			      int *retry_op)
++ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
++			 struct iov_iter *to, int *retry_op)
  {
--	struct ceph_file_info *fi = filp->private_data;
--	struct inode *inode = file_inode(filp);
+-	struct file *file = iocb->ki_filp;
+-	struct inode *inode = file_inode(file);
  	struct ceph_inode_info *ci = ceph_inode(inode);
  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
- 	int ret, _got, flags;
-@@ -2924,7 +2923,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
- 	if (ret < 0)
- 		return ret;
+ 	struct ceph_osd_client *osdc = &fsc->client->osdc;
+ 	ssize_t ret;
+-	u64 off = iocb->ki_pos;
++	u64 off = *ki_pos;
+ 	u64 len = iov_iter_count(to);
+ 	u64 i_size = i_size_read(inode);
  
--	if ((fi->fmode & CEPH_FILE_MODE_WR) &&
-+	if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
- 	    fi->filp_gen != READ_ONCE(fsc->filp_gen))
- 		return -EBADF;
+-	dout("sync_read on file %p %llu~%u %s\n", file, off, (unsigned)len,
+-	     (file->f_flags & O_DIRECT) ? "O_DIRECT" : "");
++	dout("sync_read on inode %p %llu~%u\n", inode, *ki_pos, (unsigned)len);
  
-@@ -2932,7 +2931,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 	if (!len)
+ 		return 0;
+@@ -998,14 +995,14 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+ 			break;
+ 	}
  
- 	while (true) {
- 		flags &= CEPH_FILE_MODE_MASK;
--		if (atomic_read(&fi->num_locks))
-+		if (fi && atomic_read(&fi->num_locks))
- 			flags |= CHECK_FILELOCK;
- 		_got = 0;
- 		ret = try_get_cap_refs(inode, need, want, endoff,
-@@ -2977,7 +2976,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
- 				continue;
+-	if (off > iocb->ki_pos) {
++	if (off > *ki_pos) {
+ 		if (off >= i_size) {
+ 			*retry_op = CHECK_EOF;
+-			ret = i_size - iocb->ki_pos;
+-			iocb->ki_pos = i_size;
++			ret = i_size - *ki_pos;
++			*ki_pos = i_size;
+ 		} else {
+-			ret = off - iocb->ki_pos;
+-			iocb->ki_pos = off;
++			ret = off - *ki_pos;
++			*ki_pos = off;
  		}
+ 	}
  
--		if ((fi->fmode & CEPH_FILE_MODE_WR) &&
-+		if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
- 		    fi->filp_gen != READ_ONCE(fsc->filp_gen)) {
- 			if (ret >= 0 && _got)
- 				ceph_put_cap_refs(ci, _got);
-@@ -3040,6 +3039,14 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
- 	return 0;
+@@ -1013,6 +1010,19 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+ 	return ret;
  }
  
-+int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
++static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
++			      int *retry_op)
 +{
-+	struct ceph_file_info *fi = filp->private_data;
-+	struct inode *inode = file_inode(filp);
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file_inode(file);
 +
-+	return __ceph_get_caps(inode, fi, need, want, endoff, got);
++	dout("sync_read on file %p %llu~%u %s\n", file, iocb->ki_pos,
++	     (unsigned)iov_iter_count(to),
++	     (file->f_flags & O_DIRECT) ? "O_DIRECT" : "");
++
++	return __ceph_sync_read(inode, &iocb->ki_pos, to, retry_op);
 +}
 +
- /*
-  * Take cap refs.  Caller must already know we hold at least one ref
-  * on the caps in question or we don't know this is safe.
+ struct ceph_aio_request {
+ 	struct kiocb *iocb;
+ 	size_t total_len;
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index f641a1a771e2..c373f3ba7d55 100644
+index c373f3ba7d55..d8f768495a17 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -1230,6 +1230,8 @@ extern int ceph_encode_dentry_release(void **p, struct dentry *dn,
- 				      struct inode *dir,
- 				      int mds, int drop, int unless);
- 
-+extern int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi,
-+			   int need, int want, loff_t endoff, int *got);
- extern int ceph_get_caps(struct file *filp, int need, int want,
- 			 loff_t endoff, int *got);
- extern int ceph_try_get_caps(struct inode *inode,
+@@ -1258,6 +1258,8 @@ extern int ceph_renew_caps(struct inode *inode, int fmode);
+ extern int ceph_open(struct inode *inode, struct file *file);
+ extern int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+ 			    struct file *file, unsigned flags, umode_t mode);
++extern ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
++				struct iov_iter *to, int *retry_op);
+ extern int ceph_release(struct inode *inode, struct file *filp);
+ extern void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
+ 				  char *data, size_t len);
 -- 
 2.33.1
 
