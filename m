@@ -2,59 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 847A846E438
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 09:30:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C896546E47E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 09:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234509AbhLIIe2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 03:34:28 -0500
-Received: from mail.globalbizbuy.pl ([217.61.121.138]:45002 "EHLO
-        mail.globalbizbuy.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234495AbhLIIe1 (ORCPT
+        id S235111AbhLIIsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 03:48:16 -0500
+Received: from szxga01-in.huawei.com ([45.249.212.187]:15712 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231782AbhLIIsP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 03:34:27 -0500
-Received: by mail.globalbizbuy.pl (Postfix, from userid 1001)
-        id 65AC5A2E9A; Thu,  9 Dec 2021 08:30:40 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=globalbizbuy.pl;
-        s=mail; t=1639038665;
-        bh=keciCK/Bg4sJmGUq5pgzLAbvC1lwGkAxKqnASfuHvcc=;
-        h=Date:From:To:Subject:From;
-        b=AMv+bXYIGQoaRBiDtVhTIkOV3XmU9ul92rLet1AHQV79qccNcpnj5NMf1P+/ES3Rc
-         D6Ayp9a2t2l0+geNf7RunHUDCdKukvwmxVCWjN8rrUjU/U96DnEiuzQATmezyKQ1T2
-         6rMZHVE34MwAEhUCpNAbJXz1Cy6UZjcLoSKDWtEfUDMycmiIHJQGiJAV3pe9N9WlDB
-         8IELiG1+i0tg2nQuXtmAIUEoZwPeO6Ok+FIvwGmiuzRsWfOPdIKVKDotqxVuvDrg7h
-         hTxsX1/Ej3PEgOgNPTR10Zq4uf1wjQlQQDp/uk4XtYLjs+Wm7HfkIRSh4JzSD04CiY
-         DuFXLiTWNaAbw==
-Received: by mail.globalbizbuy.pl for <linux-fsdevel@vger.kernel.org>; Thu,  9 Dec 2021 08:30:24 GMT
-Message-ID: <20211209074500-0.1.5c.fnqn.0.655e943lhb@globalbizbuy.pl>
-Date:   Thu,  9 Dec 2021 08:30:24 GMT
-From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
-        <arkadiusz.sokolowski@globalbizbuy.pl>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: Koszty instalacji fotowoltaicznej
-X-Mailer: mail.globalbizbuy.pl
+        Thu, 9 Dec 2021 03:48:15 -0500
+Received: from dggpeml500020.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4J8nZj21D8zZdZM;
+        Thu,  9 Dec 2021 16:41:49 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
+ (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.20; Thu, 9 Dec
+ 2021 16:44:40 +0800
+From:   Baokun Li <libaokun1@huawei.com>
+To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <libaokun1@huawei.com>, <yukuai3@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] sysctl: returns -EINVAL when a negative value is passed to proc_doulongvec_minmax
+Date:   Thu, 9 Dec 2021 16:56:35 +0800
+Message-ID: <20211209085635.1288737-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500020.china.huawei.com (7.185.36.88)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+When we pass a negative value to the proc_doulongvec_minmax() function,
+the function returns 0, but the corresponding interface value does not
+change.
 
-stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
- obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
+we can easily reproduce this problem with the following commands:
+    `cd /proc/sys/fs/epoll`
+    `echo -1 > max_user_watches; echo $?; cat max_user_watches`
 
-Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
-acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
-ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
+This function requires a non-negative number to be passed in, so when
+a negative number is passed in, -EINVAL is returned.
 
-Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
-=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
-=2E
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ kernel/sysctl.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
-temacie?
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 7f07b058b180..537d2f75faa0 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1149,10 +1149,9 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table,
+ 					     sizeof(proc_wspace_sep), NULL);
+ 			if (err)
+ 				break;
+-			if (neg)
+-				continue;
++
+ 			val = convmul * val / convdiv;
+-			if ((min && val < *min) || (max && val > *max)) {
++			if (neg || (min && val < *min) || (max && val > *max)) {
+ 				err = -EINVAL;
+ 				break;
+ 			}
+-- 
+2.31.1
 
-
-Pozdrawiam,
-Arkadiusz Soko=C5=82owski
