@@ -2,192 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 193EE46F614
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 22:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D36AF46F622
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 22:46:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231620AbhLIVlp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 16:41:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52368 "EHLO
+        id S231624AbhLIVuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 16:50:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhLIVlm (ORCPT
+        with ESMTP id S229522AbhLIVuX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 16:41:42 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE84C061746;
-        Thu,  9 Dec 2021 13:38:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=P2aQ91d+0Nay119c7Hm3YaZibGVAqClk58OZHKt3Xl4=; b=cnU75D1qm7eep+zg67cBjnjU5u
-        lEicByKXRIZocx5wZq6zz69Ru+PEst/T/YMAfJlX9bjLZTJ8RFLbUZKTb7yq0FGSeTxuxDF318g3Y
-        8bDeqcD4guFJ52AXIO0Ol8Ursu1fyiEL9Fp/krOOOBTH3HOk2GMcRtjxSB5RzR8ZNL9nkRwlqzYVQ
-        J45nCMz4FrZPTnutzDjny73jdO6DYA3AS5OPoFC1bjbRmniOLrddvCkhqnTDaOBBoaMPlby6StiVt
-        aI9kKhleNDxAgoxqQbGxfIEGg2Hmgi85JF43BUH+QueHj7/+g31cgvjKM0v661QxPAY3HpdxM6Xws
-        eNT/Cpag==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mvR75-009kVO-PD; Thu, 09 Dec 2021 21:38:04 +0000
-Date:   Thu, 9 Dec 2021 21:38:03 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J . Wong " <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 19/28] iomap: Convert __iomap_zero_iter to use a folio
-Message-ID: <YbJ3O1qf+9p/HWka@casper.infradead.org>
-References: <20211108040551.1942823-1-willy@infradead.org>
- <20211108040551.1942823-20-willy@infradead.org>
+        Thu, 9 Dec 2021 16:50:23 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13D6DC061746
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Dec 2021 13:46:50 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id q17so4885744plr.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 13:46:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vf4TIwD+NYGLfUvsVBzvm6KTrX/kuwp6DG0JCw/tbN4=;
+        b=LJQiHrQfWFbYXRJtjNk9fFYI8I34vblEonCdAFxlecTtI+VVQqat2507DLVawWV9Xn
+         85uF/A5v31X+7Fqo3RPkkJCdhvULIYvwqGRikkTMqKRKT/pp7M4WYeXu68PY8NoccBBh
+         XyPnT1yQj+X4yZZbaxvCy+T4XliTQzhVVr46nOgTumvxQwPBtVffvll6F0K6A4JB2+r6
+         1xW+Y0sxbjLwpir4qu69l5OnA1JqgpouTKF8knAvMIPHTFvVdMK3FZ6xCC3/yY66OVOV
+         xEWWzZeWGmbkXuAtZTSlotaQcmL1CK7j3pYizodYL/OUDKB7deoR8HghDrptNOABl1w/
+         I8aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vf4TIwD+NYGLfUvsVBzvm6KTrX/kuwp6DG0JCw/tbN4=;
+        b=bWQ+NoDUz1n0idqLaR/TEzjPJM3q0DIV6Is3lvGF/ux5i/oBm7wysxFFCkCusyl7qf
+         DGJuFE6ODMXBjt0Nc2S8pMkEfU6WtFHmEji/tBY6ev606+3okuDaUiD6iU7by0px1kzo
+         FysAt19WiKkQw1VGO75ZS2SW2athrssdGJOAwdo1a0YNHy4m6i+cn5FQbYUGiJM0Qqij
+         Jc16+7ZnovYaxjVqItKDoaHfUrrSz6Et8xBhTQqZs9pYAJsAdEwCw9RLk4GzjJL5+gZm
+         g8kWbRTErXPF1FosuzdZBT9gqUzRAtLlKLs5MmkfGr7SAckfNTd/chY0ADUpyyk3l2wD
+         J0/A==
+X-Gm-Message-State: AOAM530N53WPmUDofjZ+ZIds0/z/1Z+zbCCGu2WtbW5qBttRpfCCboVJ
+        CA/mKZv6ZBbvjwWWRIxFZ1Mxfw==
+X-Google-Smtp-Source: ABdhPJwFfq4AiojDvIZ/q+AQ4fwI8wKrkR8oEUmtKTC1fgL914aZj29dxWODGPFmhQDvz438H89biA==
+X-Received: by 2002:a17:902:b682:b0:143:7eb8:222 with SMTP id c2-20020a170902b68200b001437eb80222mr71023268pls.31.1639086409458;
+        Thu, 09 Dec 2021 13:46:49 -0800 (PST)
+Received: from [172.20.4.26] ([66.185.175.30])
+        by smtp.gmail.com with ESMTPSA id f5sm558267pju.15.2021.12.09.13.46.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Dec 2021 13:46:48 -0800 (PST)
+Subject: Re: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ramji Jiyani <ramjiyani@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Martijn Coenen <maco@android.com>,
+        stable <stable@vger.kernel.org>
+References: <20211209010455.42744-1-ebiggers@kernel.org>
+ <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4a472e72-d527-db79-d46e-efa9d4cad5bb@kernel.dk>
+Date:   Thu, 9 Dec 2021 14:46:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211108040551.1942823-20-willy@infradead.org>
+In-Reply-To: <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 04:05:42AM +0000, Matthew Wilcox (Oracle) wrote:
-> +++ b/fs/iomap/buffered-io.c
-> @@ -881,17 +881,20 @@ EXPORT_SYMBOL_GPL(iomap_file_unshare);
->  
->  static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
->  {
-> +	struct folio *folio;
->  	struct page *page;
->  	int status;
-> -	unsigned offset = offset_in_page(pos);
-> -	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
-> +	size_t offset, bytes;
->  
-> -	status = iomap_write_begin(iter, pos, bytes, &page);
-> +	status = iomap_write_begin(iter, pos, length, &page);
+On 12/9/21 11:00 AM, Linus Torvalds wrote:
+> On Wed, Dec 8, 2021 at 5:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>>
+>> Careful review is appreciated; the aio poll code is very hard to work
+>> with, and it doesn't appear to have many tests.  I've verified that it
+>> passes the libaio test suite, which provides some coverage of poll.
+>>
+>> Note, it looks like io_uring has the same bugs as aio poll.  I haven't
+>> tried to fix io_uring.
+> 
+> I'm hoping Jens is looking at the io_ring case, but I'm also assuming
+> that I'll just get a pull request for this at some point.
 
-This turned out to be buggy.  Darrick and I figured out why his tests
-were failing and mine weren't; this only shows up with a 4kB block
-size filesystem and I was only testing with 1kB block size filesystems.
-(at least on x86; I haven't figured out why it passes with 1kB block size
-filesystems, so I'm not sure what would be true on other filesystems).
-iomap_write_begin() is not prepared to deal with a length that spans a
-page boundary.  So I'm replacing this patch with the following patches
-(whitespace damaged; pick them up from
-https://git.infradead.org/users/willy/linux.git/tag/refs/tags/iomap-folio-5.17c
-if you want to compile them):
+Yes, when I saw this original posting I did discuss it with Pavel as
+well, and we agree that the same issue exists there. Which isn't too
+surprising, as that's where the io_uring poll code from originally.
 
-commit 412212960b72
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Thu Dec 9 15:47:44 2021 -0500
+Eric, do you have a test case for this? aio is fine, we can convert it
+to io_uring as well. Would be nice for both verifying the fix, but also
+to carry in the io_uring regression tests for the future.
 
-    iomap: Allow iomap_write_begin() to be called with the full length
+-- 
+Jens Axboe
 
-    In the future, we want write_begin to know the entire length of the
-    write so that it can choose to allocate large folios.  Pass the full
-    length in from __iomap_zero_iter() and limit it where necessary.
-
-    Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index d67108489148..9270db17c435 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -968,6 +968,9 @@ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
-        struct gfs2_sbd *sdp = GFS2_SB(inode);
-        unsigned int blocks;
-
-+       /* gfs2 does not support large folios yet */
-+       if (len > PAGE_SIZE)
-+               len = PAGE_SIZE;
-        blocks = ((pos & blockmask) + len + blockmask) >> inode->i_blkbits;
-        return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
- }
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8d7a67655b60..67fcd3b9928d 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -632,6 +632,8 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
-                goto out_no_page;
-        }
-        folio = page_folio(page);
-+       if (pos + len > folio_pos(folio) + folio_size(folio))
-+               len = folio_pos(folio) + folio_size(folio) - pos;
-
-        if (srcmap->type == IOMAP_INLINE)
-                status = iomap_write_begin_inline(iter, page);
-@@ -891,16 +893,19 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff
-_t pos, u64 length)
-        struct page *page;
-        int status;
-        unsigned offset = offset_in_page(pos);
--       unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
-
--       status = iomap_write_begin(iter, pos, bytes, &page);
-+       if (length > UINT_MAX)
-+               length = UINT_MAX;
-+       status = iomap_write_begin(iter, pos, length, &page);
-        if (status)
-                return status;
-+       if (length > PAGE_SIZE - offset)
-+               length = PAGE_SIZE - offset;
-
--       zero_user(page, offset, bytes);
-+       zero_user(page, offset, length);
-        mark_page_accessed(page);
-
--       return iomap_write_end(iter, pos, bytes, bytes, page);
-+       return iomap_write_end(iter, pos, length, length, page);
- }
-
- static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
-
-
-commit 78c747a1b3a1
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Fri Nov 5 14:24:09 2021 -0400
-
-    iomap: Convert __iomap_zero_iter to use a folio
-    
-    The zero iterator can work in folio-sized chunks instead of page-sized
-    chunks.  This will save a lot of page cache lookups if the file is cached
-    in large folios.
-    
-    Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-    Reviewed-by: Christoph Hellwig <hch@lst.de>
-    Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 67fcd3b9928d..bbde6d4f27cd 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -890,20 +890,23 @@ EXPORT_SYMBOL_GPL(iomap_file_unshare);
- 
- static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
- {
-+       struct folio *folio;
-        struct page *page;
-        int status;
--       unsigned offset = offset_in_page(pos);
-+       size_t offset;
- 
-        if (length > UINT_MAX)
-                length = UINT_MAX;
-        status = iomap_write_begin(iter, pos, length, &page);
-        if (status)
-                return status;
--       if (length > PAGE_SIZE - offset)
--               length = PAGE_SIZE - offset;
-+       folio = page_folio(page);
- 
--       zero_user(page, offset, length);
--       mark_page_accessed(page);
-+       offset = offset_in_folio(folio, pos);
-+       if (length > folio_size(folio) - offset)
-+               length = folio_size(folio) - offset;
-+       folio_zero_range(folio, offset, length);
-+       folio_mark_accessed(folio);
- 
-        return iomap_write_end(iter, pos, length, length, page);
- }
-
-
-The xfstests that Darrick identified as failing all passed.  Running a
-full sweep now; then I'll re-run with a 1kB filesystem to be sure that
-still passes.  Then I'll send another pull request.
