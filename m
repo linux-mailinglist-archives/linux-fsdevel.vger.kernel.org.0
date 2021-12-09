@@ -2,188 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C11346EB4A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:32:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2DE46EB77
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239733AbhLIPgD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 10:36:03 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:39972 "EHLO
+        id S239983AbhLIPk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 10:40:26 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:42314 "EHLO
         sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239685AbhLIPgB (ORCPT
+        with ESMTP id S239981AbhLIPk0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 10:36:01 -0500
+        Thu, 9 Dec 2021 10:40:26 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 7B4C6CE268A;
-        Thu,  9 Dec 2021 15:32:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 443ECC341CD;
-        Thu,  9 Dec 2021 15:32:24 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.95)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1mvLPD-000Swc-EH;
-        Thu, 09 Dec 2021 10:32:23 -0500
-Message-ID: <20211209153223.277267556@goodmis.org>
-User-Agent: quilt/0.66
-Date:   Thu, 09 Dec 2021 10:29:10 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Yabin Cui <yabinc@google.com>
-Subject: [for-linus][PATCH 2/5] tracefs: Set all files to the same group ownership as the mount
- option
-References: <20211209152908.459494269@goodmis.org>
+        by sin.source.kernel.org (Postfix) with ESMTPS id EED62CE263D;
+        Thu,  9 Dec 2021 15:36:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7447C004DD;
+        Thu,  9 Dec 2021 15:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639064209;
+        bh=CjgPHIzdY9OrTgVzvwCJt5X3hd5T077uC9M+g37Rh2E=;
+        h=From:To:Cc:Subject:Date:From;
+        b=grwXIG4KuMSksRwzGolUrsqFaSOqkCNGd5oWjj1LbCnIMkGLcP3HHZUcRvsdk/Kqt
+         PYjCR8Hmm2sDLDtFSY26xmKPCIvd2PuNykv0lbyv3UMdo/D3JL9PeHcE5aOU/w3Noc
+         U8b5Ip6Xq6a5GzfSImnG9eX26TAvASNw8ZyifjYoxe9hajDaxa1gq7QJ4LegWA+emD
+         H6kcVLrm0qMhqiclL6D/X7/b17eg2xerKFc3aHfFrPewvQGbOoVIiF9EFNuBNSCs/i
+         F+RO6YT68YZCP4S2STaUYYfAR4HXk1E7j4/9FmqSFl+FUpTzQui6m96M2eQWL0i+gQ
+         bMIPkbb4NT69w==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 00/36] ceph+fscrypt: context, filename, symlink and size handling support
+Date:   Thu,  9 Dec 2021 10:36:11 -0500
+Message-Id: <20211209153647.58953-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+I've not posted this in a while, so I figured it was a good time to do
+so. This patchset is a pile of the mostly settled parts of the fscrypt
+integration series. With this, pretty much everything but the actual
+content encryption in files now works.
 
-As people have been asking to allow non-root processes to have access to
-the tracefs directory, it was considered best to only allow groups to have
-access to the directory, where it is easier to just set the tracefs file
-system to a specific group (as other would be too dangerous), and that way
-the admins could pick which processes would have access to tracefs.
+This series is also in the wip-fscrypt-size branch of the ceph-client
+tree:
 
-Unfortunately, this broke tooling on Android that expected the other bit
-to be set. For some special cases, for non-root tools to trace the system,
-tracefs would be mounted and change the permissions of the top level
-directory which gave access to all running tasks permission to the
-tracing directory. Even though this would be dangerous to do in a
-production environment, for testing environments this can be useful.
+    https://github.com/ceph/ceph-client/tree/wip-fscrypt-size
 
-Now with the new changes to not allow other (which is still the proper
-thing to do), it breaks the testing tooling. Now more code needs to be
-loaded on the system to change ownership of the tracing directory.
+It would also be nice to have an ack from Al Viro on patch #1, and from
+Eric Biggers on #2-5. Those touch code outside of the ceph parts. If
+they aren't acceptable for some reason, I'll need to find other ways to
+handle them.
 
-The real solution is to have tracefs honor the gid=xxx option when
-mounting. That is,
+Jeff Layton (31):
+  vfs: export new_inode_pseudo
+  fscrypt: export fscrypt_base64url_encode and fscrypt_base64url_decode
+  fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
+  fscrypt: add fscrypt_context_for_new_inode
+  fscrypt: uninline and export fscrypt_require_key
+  ceph: preallocate inode for ops that may create one
+  ceph: crypto context handling for ceph
+  ceph: parse new fscrypt_auth and fscrypt_file fields in inode traces
+  ceph: add fscrypt_* handling to caps.c
+  ceph: add ability to set fscrypt_auth via setattr
+  ceph: implement -o test_dummy_encryption mount option
+  ceph: decode alternate_name in lease info
+  ceph: add fscrypt ioctls
+  ceph: make ceph_msdc_build_path use ref-walk
+  ceph: add encrypted fname handling to ceph_mdsc_build_path
+  ceph: send altname in MClientRequest
+  ceph: encode encrypted name in dentry release
+  ceph: properly set DCACHE_NOKEY_NAME flag in lookup
+  ceph: make d_revalidate call fscrypt revalidator for encrypted
+    dentries
+  ceph: add helpers for converting names for userland presentation
+  ceph: add fscrypt support to ceph_fill_trace
+  ceph: add support to readdir for encrypted filenames
+  ceph: create symlinks with encrypted and base64-encoded targets
+  ceph: make ceph_get_name decrypt filenames
+  ceph: add a new ceph.fscrypt.auth vxattr
+  ceph: add some fscrypt guardrails
+  libceph: add CEPH_OSD_OP_ASSERT_VER support
+  ceph: size handling for encrypted inodes in cap updates
+  ceph: fscrypt_file field handling in MClientRequest messages
+  ceph: get file size from fscrypt_file when present in inode traces
+  ceph: handle fscrypt fields in cap messages from MDS
 
-(tracing group tracing has value 1003)
+Luis Henriques (1):
+  ceph: don't allow changing layout on encrypted files/directories
 
- mount -t tracefs -o gid=1003 tracefs /sys/kernel/tracing
+Xiubo Li (4):
+  ceph: add __ceph_get_caps helper support
+  ceph: add __ceph_sync_read helper support
+  ceph: add object version support for sync read
+  ceph: add truncate size handling support for fscrypt
 
-should have it that all files in the tracing directory should be of the
-given group.
+ fs/ceph/Makefile                |   1 +
+ fs/ceph/acl.c                   |   4 +-
+ fs/ceph/caps.c                  | 211 ++++++++++--
+ fs/ceph/crypto.c                | 253 ++++++++++++++
+ fs/ceph/crypto.h                | 154 +++++++++
+ fs/ceph/dir.c                   | 209 +++++++++---
+ fs/ceph/export.c                |  44 ++-
+ fs/ceph/file.c                  | 125 ++++---
+ fs/ceph/inode.c                 | 566 +++++++++++++++++++++++++++++---
+ fs/ceph/ioctl.c                 |  87 +++++
+ fs/ceph/mds_client.c            | 349 +++++++++++++++++---
+ fs/ceph/mds_client.h            |  24 +-
+ fs/ceph/super.c                 |  82 ++++-
+ fs/ceph/super.h                 |  42 ++-
+ fs/ceph/xattr.c                 |  29 ++
+ fs/crypto/fname.c               |  40 ++-
+ fs/crypto/fscrypt_private.h     |  35 +-
+ fs/crypto/hooks.c               |   6 +-
+ fs/crypto/keysetup.c            |  27 ++
+ fs/crypto/policy.c              |  34 +-
+ fs/inode.c                      |   1 +
+ include/linux/ceph/ceph_fs.h    |  21 +-
+ include/linux/ceph/osd_client.h |   6 +-
+ include/linux/ceph/rados.h      |   4 +
+ include/linux/fscrypt.h         |  15 +
+ net/ceph/osd_client.c           |   5 +
+ 26 files changed, 2087 insertions(+), 287 deletions(-)
+ create mode 100644 fs/ceph/crypto.c
+ create mode 100644 fs/ceph/crypto.h
 
-Copy the logic from d_walk() from dcache.c and simplify it for the mount
-case of tracefs if gid is set. All the files in tracefs will be walked and
-their group will be set to the value passed in.
-
-Link: https://lkml.kernel.org/r/20211207171729.2a54e1b3@gandalf.local.home
-
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reported-by: Kalesh Singh <kaleshsingh@google.com>
-Reported-by: Yabin Cui <yabinc@google.com>
-Fixes: 49d67e445742 ("tracefs: Have tracefs directories not set OTH permission bits by default")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- fs/tracefs/inode.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
-
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index 06cf0534cc60..3616839c5c4b 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -161,6 +161,77 @@ struct tracefs_fs_info {
- 	struct tracefs_mount_opts mount_opts;
- };
- 
-+static void change_gid(struct dentry *dentry, kgid_t gid)
-+{
-+	if (!dentry->d_inode)
-+		return;
-+	dentry->d_inode->i_gid = gid;
-+}
-+
-+/*
-+ * Taken from d_walk, but without he need for handling renames.
-+ * Nothing can be renamed while walking the list, as tracefs
-+ * does not support renames. This is only called when mounting
-+ * or remounting the file system, to set all the files to
-+ * the given gid.
-+ */
-+static void set_gid(struct dentry *parent, kgid_t gid)
-+{
-+	struct dentry *this_parent;
-+	struct list_head *next;
-+
-+	this_parent = parent;
-+	spin_lock(&this_parent->d_lock);
-+
-+	change_gid(this_parent, gid);
-+repeat:
-+	next = this_parent->d_subdirs.next;
-+resume:
-+	while (next != &this_parent->d_subdirs) {
-+		struct list_head *tmp = next;
-+		struct dentry *dentry = list_entry(tmp, struct dentry, d_child);
-+		next = tmp->next;
-+
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+
-+		change_gid(dentry, gid);
-+
-+		if (!list_empty(&dentry->d_subdirs)) {
-+			spin_unlock(&this_parent->d_lock);
-+			spin_release(&dentry->d_lock.dep_map, _RET_IP_);
-+			this_parent = dentry;
-+			spin_acquire(&this_parent->d_lock.dep_map, 0, 1, _RET_IP_);
-+			goto repeat;
-+		}
-+		spin_unlock(&dentry->d_lock);
-+	}
-+	/*
-+	 * All done at this level ... ascend and resume the search.
-+	 */
-+	rcu_read_lock();
-+ascend:
-+	if (this_parent != parent) {
-+		struct dentry *child = this_parent;
-+		this_parent = child->d_parent;
-+
-+		spin_unlock(&child->d_lock);
-+		spin_lock(&this_parent->d_lock);
-+
-+		/* go into the first sibling still alive */
-+		do {
-+			next = child->d_child.next;
-+			if (next == &this_parent->d_subdirs)
-+				goto ascend;
-+			child = list_entry(next, struct dentry, d_child);
-+		} while (unlikely(child->d_flags & DCACHE_DENTRY_KILLED));
-+		rcu_read_unlock();
-+		goto resume;
-+	}
-+	rcu_read_unlock();
-+	spin_unlock(&this_parent->d_lock);
-+	return;
-+}
-+
- static int tracefs_parse_options(char *data, struct tracefs_mount_opts *opts)
- {
- 	substring_t args[MAX_OPT_ARGS];
-@@ -193,6 +264,7 @@ static int tracefs_parse_options(char *data, struct tracefs_mount_opts *opts)
- 			if (!gid_valid(gid))
- 				return -EINVAL;
- 			opts->gid = gid;
-+			set_gid(tracefs_mount->mnt_root, gid);
- 			break;
- 		case Opt_mode:
- 			if (match_octal(&args[0], &option))
 -- 
-2.33.0
+2.33.1
+
