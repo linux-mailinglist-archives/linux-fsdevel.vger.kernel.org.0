@@ -2,42 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1C0E46EBB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F9346EBBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240436AbhLIPk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 10:40:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240116AbhLIPkk (ORCPT
+        id S240513AbhLIPlE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 10:41:04 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:42484 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240137AbhLIPkn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 10:40:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671BAC061A32;
-        Thu,  9 Dec 2021 07:37:05 -0800 (PST)
+        Thu, 9 Dec 2021 10:40:43 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 12124B82504;
-        Thu,  9 Dec 2021 15:37:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56115C341C3;
+        by sin.source.kernel.org (Postfix) with ESMTPS id 4494ACE268A;
+        Thu,  9 Dec 2021 15:37:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7F8C341CB;
         Thu,  9 Dec 2021 15:37:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639064224;
-        bh=dRP1FoTA7cxftbLAZzCxu5fxWo+DYeYwl6YPcqCnY9A=;
+        s=k20201202; t=1639064225;
+        bh=OHnK7Xf23zWTO5vwYRn30p9gD7lNkWvQSne8osfiMIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FtiSOKQPiwb0q0dElGDrtFZ9YA4ok+H4psKR/WenAw3OTQ3KjtA2Gtki69YB/h8Hx
-         aegSu9chiaTsBbTOOEpChBgaHm4shmrD/vhtwM+xVL6oqohSFS6fIcia0MmROwoWsu
-         6iU8XhvIS6J9/K2CPUF+Sk+SoWbhzYqYEHAfhLpOEpE4S2rk07rw9OAojiUeCdiRXD
-         DO+3jBOfuW8orhNaM0BofBnarc0Ci3/6frSBJvPmGi5UZn4rk96fHFZ1poUmZldLrL
-         FTN1h+IPglkR5EYIYlivLuOsBoWbSe+BklIYI0wLTYrtnJeiKBsa6cL/28u3PHQCD2
-         YkXcetm0Utfug==
+        b=dSBhjssJ4gB6ryq4Obywg2qERU2uqALaaNqDqn6Z3wAHGxNeX2zivz34MMaPTXLLK
+         TmKBeJxuYG7kO1ZU/JZBx328cd5B5b/inSWie7hmkP3mGob2yeSnk6ec1fzAHUCd5y
+         WPq0NfUu/MOpClt2JpLSfZUCejfknzjcsCPjfVNPMNnjG0q0ZKsa5MouvwxKJxtJ3h
+         srC7FkH2jQhHqSocUhEwQIRh0baQ7R+Los9mI5xEH6D6Drh8xevPNZh3pkGYMfJdJb
+         M9/Q3og/DJcuH/lYr21c4jy8Jes0OCqb5IcHABwXblpGmuwtoSnG3v8TE0rj+kchuL
+         GmCT2/lC1Q1KA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 22/36] ceph: add support to readdir for encrypted filenames
-Date:   Thu,  9 Dec 2021 10:36:33 -0500
-Message-Id: <20211209153647.58953-23-jlayton@kernel.org>
+Subject: [PATCH 23/36] ceph: create symlinks with encrypted and base64-encoded targets
+Date:   Thu,  9 Dec 2021 10:36:34 -0500
+Message-Id: <20211209153647.58953-24-jlayton@kernel.org>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211209153647.58953-1-jlayton@kernel.org>
 References: <20211209153647.58953-1-jlayton@kernel.org>
@@ -47,258 +44,260 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add helper functions for buffer management and for decrypting filenames
-returned by the MDS. Wire those into the readdir codepaths.
+When creating symlinks in encrypted directories, encrypt and
+base64-encode the target with the new inode's key before sending to the
+MDS.
+
+When filling a symlinked inode, base64-decode it into a buffer that
+we'll keep in ci->i_symlink. When get_link is called, decrypt the buffer
+into a new one that will hang off i_link.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/dir.c   | 62 +++++++++++++++++++++++++++++++++++++++----------
- fs/ceph/inode.c | 38 +++++++++++++++++++++++++++---
- 2 files changed, 85 insertions(+), 15 deletions(-)
+ fs/ceph/dir.c   |  51 ++++++++++++++++++++---
+ fs/ceph/inode.c | 106 ++++++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 140 insertions(+), 17 deletions(-)
 
 diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 7977484d0317..f8812c976ba0 100644
+index f8812c976ba0..bf686e4af27a 100644
 --- a/fs/ceph/dir.c
 +++ b/fs/ceph/dir.c
-@@ -9,6 +9,7 @@
+@@ -948,6 +948,40 @@ static int ceph_create(struct user_namespace *mnt_userns, struct inode *dir,
+ 	return ceph_mknod(mnt_userns, dir, dentry, mode, 0);
+ }
  
- #include "super.h"
- #include "mds_client.h"
-+#include "crypto.h"
- 
- /*
-  * Directory operations: readdir, lookup, create, link, unlink,
-@@ -241,7 +242,9 @@ static int __dcache_readdir(struct file *file,  struct dir_context *ctx,
- 		di = ceph_dentry(dentry);
- 		if (d_unhashed(dentry) ||
- 		    d_really_is_negative(dentry) ||
--		    di->lease_shared_gen != shared_gen) {
-+		    di->lease_shared_gen != shared_gen ||
-+		    ((dentry->d_flags & DCACHE_NOKEY_NAME) &&
-+		     fscrypt_has_encryption_key(dir))) {
- 			spin_unlock(&dentry->d_lock);
- 			dput(dentry);
- 			err = -EAGAIN;
-@@ -313,6 +316,8 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 	int err;
- 	unsigned frag = -1;
- 	struct ceph_mds_reply_info_parsed *rinfo;
-+	struct fscrypt_str tname = FSTR_INIT(NULL, 0);
-+	struct fscrypt_str oname = FSTR_INIT(NULL, 0);
- 
- 	dout("readdir %p file %p pos %llx\n", inode, file, ctx->pos);
- 	if (dfi->file_info.flags & CEPH_F_ATEND)
-@@ -340,6 +345,10 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 		ctx->pos = 2;
- 	}
- 
-+	err = fscrypt_prepare_readdir(inode);
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++static int prep_encrypted_symlink_target(struct ceph_mds_request *req, const char *dest)
++{
++	int err;
++	int len = strlen(dest);
++	struct fscrypt_str osd_link = FSTR_INIT(NULL, 0);
++
++	err = fscrypt_prepare_symlink(req->r_parent, dest, len, PATH_MAX, &osd_link);
 +	if (err)
 +		goto out;
 +
- 	spin_lock(&ci->i_ceph_lock);
- 	/* request Fx cap. if have Fx, we don't need to release Fs cap
- 	 * for later create/unlink. */
-@@ -360,6 +369,14 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 		spin_unlock(&ci->i_ceph_lock);
- 	}
- 
-+	err = ceph_fname_alloc_buffer(inode, &tname);
-+	if (err < 0)
++	err = fscrypt_encrypt_symlink(req->r_new_inode, dest, len, &osd_link);
++	if (err)
 +		goto out;
 +
-+	err = ceph_fname_alloc_buffer(inode, &oname);
-+	if (err < 0)
++	req->r_path2 = kmalloc(FSCRYPT_BASE64URL_CHARS(osd_link.len) + 1, GFP_KERNEL);
++	if (!req->r_path2) {
++		err = -ENOMEM;
 +		goto out;
++	}
 +
- 	/* proceed with a normal readdir */
- more:
- 	/* do we have the correct frag content buffered? */
-@@ -387,12 +404,14 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 		dout("readdir fetching %llx.%llx frag %x offset '%s'\n",
- 		     ceph_vinop(inode), frag, dfi->last_name);
- 		req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
--		if (IS_ERR(req))
--			return PTR_ERR(req);
-+		if (IS_ERR(req)) {
-+			err = PTR_ERR(req);
-+			goto out;
-+		}
- 		err = ceph_alloc_readdir_reply_buffer(req, inode);
- 		if (err) {
- 			ceph_mdsc_put_request(req);
--			return err;
-+			goto out;
- 		}
- 		/* hints to request -> mds selection code */
- 		req->r_direct_mode = USE_AUTH_MDS;
-@@ -405,7 +424,8 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 			req->r_path2 = kstrdup(dfi->last_name, GFP_KERNEL);
- 			if (!req->r_path2) {
- 				ceph_mdsc_put_request(req);
--				return -ENOMEM;
-+				err = -ENOMEM;
-+				goto out;
- 			}
- 		} else if (is_hash_order(ctx->pos)) {
- 			req->r_args.readdir.offset_hash =
-@@ -426,7 +446,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 		err = ceph_mdsc_do_request(mdsc, NULL, req);
- 		if (err < 0) {
- 			ceph_mdsc_put_request(req);
--			return err;
-+			goto out;
- 		}
- 		dout("readdir got and parsed readdir result=%d on "
- 		     "frag %x, end=%d, complete=%d, hash_order=%d\n",
-@@ -479,7 +499,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 			err = note_last_dentry(dfi, rde->name, rde->name_len,
- 					       next_offset);
- 			if (err)
--				return err;
-+				goto out;
- 		} else if (req->r_reply_info.dir_end) {
- 			dfi->next_offset = 2;
- 			/* keep last name */
-@@ -507,22 +527,37 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 	}
- 	for (; i < rinfo->dir_nr; i++) {
- 		struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
-+		struct ceph_fname fname = { .dir	= inode,
-+					    .name	= rde->name,
-+					    .name_len	= rde->name_len,
-+					    .ctext	= rde->altname,
-+					    .ctext_len	= rde->altname_len };
-+		u32 olen = oname.len;
- 
- 		BUG_ON(rde->offset < ctx->pos);
-+		BUG_ON(!rde->inode.in);
- 
- 		ctx->pos = rde->offset;
- 		dout("readdir (%d/%d) -> %llx '%.*s' %p\n",
- 		     i, rinfo->dir_nr, ctx->pos,
- 		     rde->name_len, rde->name, &rde->inode.in);
- 
--		BUG_ON(!rde->inode.in);
-+		err = ceph_fname_to_usr(&fname, &tname, &oname, NULL);
-+		if (err) {
-+			dout("Unable to decode %.*s. Skipping it.\n", rde->name_len, rde->name);
-+			continue;
-+		}
- 
--		if (!dir_emit(ctx, rde->name, rde->name_len,
-+		if (!dir_emit(ctx, oname.name, oname.len,
- 			      ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
- 			      le32_to_cpu(rde->inode.in->mode) >> 12)) {
- 			dout("filldir stopping us...\n");
--			return 0;
-+			err = 0;
-+			goto out;
- 		}
-+
-+		/* Reset the lengths to their original allocated vals */
-+		oname.len = olen;
- 		ctx->pos++;
- 	}
- 
-@@ -577,9 +612,12 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 					dfi->dir_ordered_count);
- 		spin_unlock(&ci->i_ceph_lock);
- 	}
--
-+	err = 0;
- 	dout("readdir %p file %p done.\n", inode, file);
--	return 0;
++	len = fscrypt_base64url_encode(osd_link.name, osd_link.len, req->r_path2);
++	req->r_path2[len] = '\0';
 +out:
-+	ceph_fname_free_buffer(inode, &tname);
-+	ceph_fname_free_buffer(inode, &oname);
++	fscrypt_fname_free_buffer(&osd_link);
 +	return err;
- }
++}
++#else
++static int prep_encrypted_symlink_target(struct ceph_mds_request *req, const char *dest)
++{
++	return -EOPNOTSUPP;
++}
++#endif
++
+ static int ceph_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 			struct dentry *dentry, const char *dest)
+ {
+@@ -979,14 +1013,21 @@ static int ceph_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 		goto out_req;
+ 	}
  
- static void reset_readdir(struct ceph_dir_file_info *dfi)
+-	req->r_path2 = kstrdup(dest, GFP_KERNEL);
+-	if (!req->r_path2) {
+-		err = -ENOMEM;
+-		goto out_req;
+-	}
+ 	req->r_parent = dir;
+ 	ihold(dir);
+ 
++	if (IS_ENCRYPTED(req->r_new_inode)) {
++		err = prep_encrypted_symlink_target(req, dest);
++		if (err)
++			goto out_req;
++	} else {
++		req->r_path2 = kstrdup(dest, GFP_KERNEL);
++		if (!req->r_path2) {
++			err = -ENOMEM;
++			goto out_req;
++		}
++	}
++
+ 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+ 	req->r_dentry = dget(dentry);
+ 	req->r_num_caps = 2;
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 6b2e639827ef..37cb0d334cf2 100644
+index 37cb0d334cf2..da242ff1756e 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
-@@ -1735,7 +1735,8 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 			     struct ceph_mds_session *session)
- {
- 	struct dentry *parent = req->r_dentry;
--	struct ceph_inode_info *ci = ceph_inode(d_inode(parent));
-+	struct inode *inode = d_inode(parent);
-+	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
- 	struct qstr dname;
- 	struct dentry *dn;
-@@ -1745,6 +1746,8 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 	u32 last_hash = 0;
- 	u32 fpos_offset;
- 	struct ceph_readdir_cache_control cache_ctl = {};
-+	struct fscrypt_str tname = FSTR_INIT(NULL, 0);
-+	struct fscrypt_str oname = FSTR_INIT(NULL, 0);
+@@ -35,6 +35,7 @@
+  */
  
- 	if (test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags))
- 		return readdir_prepopulate_inodes_only(req, session);
-@@ -1796,14 +1799,36 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 	cache_ctl.index = req->r_readdir_cache_idx;
- 	fpos_offset = req->r_readdir_offset;
+ static const struct inode_operations ceph_symlink_iops;
++static const struct inode_operations ceph_encrypted_symlink_iops;
  
-+	err = ceph_fname_alloc_buffer(inode, &tname);
-+	if (err < 0)
-+		goto out;
-+
-+	err = ceph_fname_alloc_buffer(inode, &oname);
-+	if (err < 0)
-+		goto out;
-+
- 	/* FIXME: release caps/leases if error occurs */
- 	for (i = 0; i < rinfo->dir_nr; i++) {
-+		bool is_nokey = false;
- 		struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
- 		struct ceph_vino tvino;
-+		u32 olen = oname.len;
-+		struct ceph_fname fname = { .dir	= inode,
-+					    .name	= rde->name,
-+					    .name_len	= rde->name_len,
-+					    .ctext	= rde->altname,
-+					    .ctext_len	= rde->altname_len };
-+
-+		err = ceph_fname_to_usr(&fname, &tname, &oname, &is_nokey);
-+		if (err) {
-+			dout("Unable to decode %.*s. Skipping it.", rde->name_len, rde->name);
-+			continue;
-+		}
+ static void ceph_inode_work(struct work_struct *work);
  
--		dname.name = rde->name;
--		dname.len = rde->name_len;
-+		dname.name = oname.name;
-+		dname.len = oname.len;
- 		dname.hash = full_name_hash(parent, dname.name, dname.len);
-+		oname.len = olen;
- 
- 		tvino.ino = le64_to_cpu(rde->inode.in->ino);
- 		tvino.snap = le64_to_cpu(rde->inode.in->snapid);
-@@ -1834,6 +1859,11 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 				err = -ENOMEM;
- 				goto out;
- 			}
-+			if (is_nokey) {
-+				spin_lock(&dn->d_lock);
-+				dn->d_flags |= DCACHE_NOKEY_NAME;
-+				spin_unlock(&dn->d_lock);
-+			}
- 		} else if (d_really_is_positive(dn) &&
- 			   (ceph_ino(d_inode(dn)) != tvino.ino ||
- 			    ceph_snap(d_inode(dn)) != tvino.snap)) {
-@@ -1922,6 +1952,8 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 		req->r_readdir_cache_idx = cache_ctl.index;
- 	}
- 	ceph_readdir_cache_release(&cache_ctl);
-+	ceph_fname_free_buffer(inode, &tname);
-+	ceph_fname_free_buffer(inode, &oname);
- 	dout("readdir_prepopulate done\n");
- 	return err;
+@@ -632,6 +633,7 @@ void ceph_free_inode(struct inode *inode)
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	kfree(ci->fscrypt_auth);
+ #endif
++	fscrypt_free_inode(inode);
+ 	kmem_cache_free(ceph_inode_cachep, ci);
  }
+ 
+@@ -825,6 +827,33 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+ 		     inode, time_warp_seq, ci->i_time_warp_seq);
+ }
+ 
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++static int decode_encrypted_symlink(const char *encsym, int enclen, u8 **decsym)
++{
++	int declen;
++	u8 *sym;
++
++	sym = kmalloc(enclen + 1, GFP_NOFS);
++	if (!sym)
++		return -ENOMEM;
++
++	declen = fscrypt_base64url_decode(encsym, enclen, sym);
++	if (declen < 0) {
++		pr_err("%s: can't decode symlink (%d). Content: %.*s\n", __func__, declen, enclen, encsym);
++		kfree(sym);
++		return -EIO;
++	}
++	sym[declen + 1] = '\0';
++	*decsym = sym;
++	return declen;
++}
++#else
++static int decode_encrypted_symlink(const char *encsym, int symlen, u8 **decsym)
++{
++	return -EOPNOTSUPP;
++}
++#endif
++
+ /*
+  * Populate an inode based on info from mds.  May be called on new or
+  * existing inodes.
+@@ -1058,26 +1087,39 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 		inode->i_fop = &ceph_file_fops;
+ 		break;
+ 	case S_IFLNK:
+-		inode->i_op = &ceph_symlink_iops;
+ 		if (!ci->i_symlink) {
+ 			u32 symlen = iinfo->symlink_len;
+ 			char *sym;
+ 
+ 			spin_unlock(&ci->i_ceph_lock);
+ 
+-			if (symlen != i_size_read(inode)) {
+-				pr_err("%s %llx.%llx BAD symlink "
+-					"size %lld\n", __func__,
+-					ceph_vinop(inode),
+-					i_size_read(inode));
++			if (IS_ENCRYPTED(inode)) {
++				if (symlen != i_size_read(inode))
++					pr_err("%s %llx.%llx BAD symlink size %lld\n",
++						__func__, ceph_vinop(inode), i_size_read(inode));
++
++				err = decode_encrypted_symlink(iinfo->symlink, symlen, (u8 **)&sym);
++				if (err < 0) {
++					pr_err("%s decoding encrypted symlink failed: %d\n",
++						__func__, err);
++					goto out;
++				}
++				symlen = err;
+ 				i_size_write(inode, symlen);
+ 				inode->i_blocks = calc_inode_blocks(symlen);
+-			}
++			} else {
++				if (symlen != i_size_read(inode)) {
++					pr_err("%s %llx.%llx BAD symlink size %lld\n",
++						__func__, ceph_vinop(inode), i_size_read(inode));
++					i_size_write(inode, symlen);
++					inode->i_blocks = calc_inode_blocks(symlen);
++				}
+ 
+-			err = -ENOMEM;
+-			sym = kstrndup(iinfo->symlink, symlen, GFP_NOFS);
+-			if (!sym)
+-				goto out;
++				err = -ENOMEM;
++				sym = kstrndup(iinfo->symlink, symlen, GFP_NOFS);
++				if (!sym)
++					goto out;
++			}
+ 
+ 			spin_lock(&ci->i_ceph_lock);
+ 			if (!ci->i_symlink)
+@@ -1085,7 +1127,17 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 			else
+ 				kfree(sym); /* lost a race */
+ 		}
+-		inode->i_link = ci->i_symlink;
++
++		if (IS_ENCRYPTED(inode)) {
++			/*
++			 * Encrypted symlinks need to be decrypted before we can
++			 * cache their targets in i_link. Don't touch it here.
++			 */
++			inode->i_op = &ceph_encrypted_symlink_iops;
++		} else {
++			inode->i_link = ci->i_symlink;
++			inode->i_op = &ceph_symlink_iops;
++		}
+ 		break;
+ 	case S_IFDIR:
+ 		inode->i_op = &ceph_dir_iops;
+@@ -2133,6 +2185,29 @@ static void ceph_inode_work(struct work_struct *work)
+ 	iput(inode);
+ }
+ 
++static const char *ceph_encrypted_get_link(struct dentry *dentry, struct inode *inode,
++					   struct delayed_call *done)
++{
++	struct ceph_inode_info *ci = ceph_inode(inode);
++
++	if (!dentry)
++		return ERR_PTR(-ECHILD);
++
++	return fscrypt_get_symlink(inode, ci->i_symlink, i_size_read(inode), done);
++}
++
++static int ceph_encrypted_symlink_getattr(struct user_namespace *mnt_userns,
++					  const struct path *path, struct kstat *stat,
++					  u32 request_mask, unsigned int query_flags)
++{
++	int ret;
++
++	ret = ceph_getattr(mnt_userns, path, stat, request_mask, query_flags);
++	if (ret)
++		return ret;
++	return fscrypt_symlink_getattr(path, stat);
++}
++
+ /*
+  * symlinks
+  */
+@@ -2143,6 +2218,13 @@ static const struct inode_operations ceph_symlink_iops = {
+ 	.listxattr = ceph_listxattr,
+ };
+ 
++static const struct inode_operations ceph_encrypted_symlink_iops = {
++	.get_link = ceph_encrypted_get_link,
++	.setattr = ceph_setattr,
++	.getattr = ceph_encrypted_symlink_getattr,
++	.listxattr = ceph_listxattr,
++};
++
+ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
 -- 
 2.33.1
 
