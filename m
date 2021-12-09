@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAE7946EB94
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 611F546EB96
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 16:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240025AbhLIPki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 10:40:38 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:44892 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240060AbhLIPkd (ORCPT
+        id S240188AbhLIPkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 10:40:39 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:42398 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240085AbhLIPkf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 10:40:33 -0500
+        Thu, 9 Dec 2021 10:40:35 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1237BB82504;
-        Thu,  9 Dec 2021 15:36:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A883C341C3;
+        by sin.source.kernel.org (Postfix) with ESMTPS id 37976CE267B;
+        Thu,  9 Dec 2021 15:37:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02759C341CC;
         Thu,  9 Dec 2021 15:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639064217;
-        bh=vuOecgTtKvgYva2zzb88a0ulMDuai6zN625JxaUdur8=;
+        s=k20201202; t=1639064218;
+        bh=7WbEVpodbsXNma0QLCpIATMsKDfRrYX2Hz87oXE5Dx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OrpyPpz0Ei3uEh9XAf1glleBUhSJiDXM1K4DBAoawMaxVbXF7tGb9ll3cr5FeSXt7
-         Gaq/oANRSR9Z6rMqeRoEBlpa3CJsQx7v+0K/EFVKud6cBXZ7+VNJk01elL1mGbdNKJ
-         ASve0nbUyGEnG5drqgpIxmbeqarMA/iOzguMU7Oe4tmYypddo0JTjTL0f+L4JO9IyF
-         MXu8oOK7KGAJbWD/cTBXEwALYd/c/SF6pP5KQfaJFYMym2X50PqIrgc3g2iLqHVFRN
-         oeq+rpQxGJ+ddfOvTfyAasEf6VGq+aY+2qmhICjjf5zLbYzO3resgzO8IkhWCnpPNj
-         FOR9gKXPWkHDQ==
+        b=aB2nYFlaxk+8c1n9ZQAQvVztz5eh+lLa7b7agf1K/qsJpAY9B2+12ugHYkBxDKoja
+         5Gef9w/j4dSDmAncwVHRcO8Yla7Pho5+AO7//OaEbTPYJF/DTY65v0NaWALsSFeIOO
+         PT+b7y7P6C7HNtnCTbmjv2GdwTqZ4ASArUZ1Axn1Xp3hlsaNJCH/5NZOIaq78JciVs
+         5DuN1TBb3sAXEFwI8BOH3mrVt/t8Hrj66iVL1cYCJw9LOYe/wbrzguyE4xYKMbPA4t
+         B7XM0cjXKkfbirRpwAckeCA6iO4mhiJZL495fKic2ar4wFBK6VrBJlJlyzk6Yw547S
+         +hugENzUE989Q==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 12/36] ceph: decode alternate_name in lease info
-Date:   Thu,  9 Dec 2021 10:36:23 -0500
-Message-Id: <20211209153647.58953-13-jlayton@kernel.org>
+Subject: [PATCH 13/36] ceph: add fscrypt ioctls
+Date:   Thu,  9 Dec 2021 10:36:24 -0500
+Message-Id: <20211209153647.58953-14-jlayton@kernel.org>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211209153647.58953-1-jlayton@kernel.org>
 References: <20211209153647.58953-1-jlayton@kernel.org>
@@ -44,152 +44,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ceph is a bit different from local filesystems, in that we don't want
-to store filenames as raw binary data, since we may also be dealing
-with clients that don't support fscrypt.
+We gate most of the ioctls on MDS feature support. The exception is the
+key removal and status functions that we still want to work if the MDS's
+were to (inexplicably) lose the feature.
 
-We could just base64-encode the encrypted filenames, but that could
-leave us with filenames longer than NAME_MAX. It turns out that the
-MDS doesn't care much about filename length, but the clients do.
-
-To manage this, we've added a new "alternate name" field that can be
-optionally added to any dentry that we'll use to store the binary
-crypttext of the filename if its base64-encoded value will be longer
-than NAME_MAX. When a dentry has one of these names attached, the MDS
-will send it along in the lease info, which we can then store for
-later usage.
+For the set_policy ioctl, we take Fcx caps to ensure that nothing can
+create files in the directory while the ioctl is running. That should
+be enough to ensure that the "empty_dir" check is reliable.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/mds_client.c | 40 ++++++++++++++++++++++++++++++----------
- fs/ceph/mds_client.h | 11 +++++++----
- 2 files changed, 37 insertions(+), 14 deletions(-)
+ fs/ceph/ioctl.c | 83 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 34a4f6dbac9d..709f3f654555 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -306,27 +306,44 @@ static int parse_reply_info_dir(void **p, void *end,
- 
- static int parse_reply_info_lease(void **p, void *end,
- 				  struct ceph_mds_reply_lease **lease,
--				  u64 features)
-+				  u64 features, u32 *altname_len, u8 **altname)
- {
-+	u8 struct_v;
-+	u32 struct_len;
-+
- 	if (features == (u64)-1) {
--		u8 struct_v, struct_compat;
--		u32 struct_len;
-+		u8 struct_compat;
-+
- 		ceph_decode_8_safe(p, end, struct_v, bad);
- 		ceph_decode_8_safe(p, end, struct_compat, bad);
-+
- 		/* struct_v is expected to be >= 1. we only understand
- 		 * encoding whose struct_compat == 1. */
- 		if (!struct_v || struct_compat != 1)
- 			goto bad;
-+
- 		ceph_decode_32_safe(p, end, struct_len, bad);
--		ceph_decode_need(p, end, struct_len, bad);
--		end = *p + struct_len;
-+	} else {
-+		struct_len = sizeof(**lease);
-+		*altname_len = 0;
-+		*altname = NULL;
- 	}
- 
--	ceph_decode_need(p, end, sizeof(**lease), bad);
-+	ceph_decode_need(p, end, struct_len, bad);
- 	*lease = *p;
- 	*p += sizeof(**lease);
--	if (features == (u64)-1)
--		*p = end;
-+
-+	if (features == (u64)-1) {
-+		if (struct_v >= 2) {
-+			ceph_decode_32_safe(p, end, *altname_len, bad);
-+			ceph_decode_need(p, end, *altname_len, bad);
-+			*altname = *p;
-+			*p += *altname_len;
-+		} else {
-+			*altname = NULL;
-+			*altname_len = 0;
-+		}
-+	}
- 	return 0;
- bad:
- 	return -EIO;
-@@ -356,7 +373,8 @@ static int parse_reply_info_trace(void **p, void *end,
- 		info->dname = *p;
- 		*p += info->dname_len;
- 
--		err = parse_reply_info_lease(p, end, &info->dlease, features);
-+		err = parse_reply_info_lease(p, end, &info->dlease, features,
-+					     &info->altname_len, &info->altname);
- 		if (err < 0)
- 			goto out_bad;
- 	}
-@@ -423,9 +441,11 @@ static int parse_reply_info_readdir(void **p, void *end,
- 		dout("parsed dir dname '%.*s'\n", rde->name_len, rde->name);
- 
- 		/* dentry lease */
--		err = parse_reply_info_lease(p, end, &rde->lease, features);
-+		err = parse_reply_info_lease(p, end, &rde->lease, features,
-+					     &rde->altname_len, &rde->altname);
- 		if (err)
- 			goto out_bad;
-+
- 		/* inode */
- 		err = parse_reply_info_in(p, end, &rde->inode, features);
- 		if (err < 0)
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index e7d2c8a1b9c1..128901a847af 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -29,8 +29,8 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_MULTI_RECONNECT,
- 	CEPHFS_FEATURE_DELEG_INO,
- 	CEPHFS_FEATURE_METRIC_COLLECT,
--
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
-+	CEPHFS_FEATURE_ALTERNATE_NAME,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_ALTERNATE_NAME,
- };
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index 6e061bf62ad4..477ecc667aee 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -6,6 +6,7 @@
+ #include "mds_client.h"
+ #include "ioctl.h"
+ #include <linux/ceph/striper.h>
++#include <linux/fscrypt.h>
  
  /*
-@@ -45,8 +45,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_MULTI_RECONNECT,		\
- 	CEPHFS_FEATURE_DELEG_INO,		\
- 	CEPHFS_FEATURE_METRIC_COLLECT,		\
--						\
--	CEPHFS_FEATURE_MAX,			\
-+	CEPHFS_FEATURE_ALTERNATE_NAME,		\
+  * ioctls
+@@ -268,8 +269,54 @@ static long ceph_ioctl_syncio(struct file *file)
+ 	return 0;
  }
- #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
  
-@@ -98,7 +97,9 @@ struct ceph_mds_reply_info_in {
++static int vet_mds_for_fscrypt(struct file *file)
++{
++	int i, ret = -EOPNOTSUPP;
++	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
++
++	mutex_lock(&mdsc->mutex);
++	for (i = 0; i < mdsc->max_sessions; i++) {
++		struct ceph_mds_session *s = mdsc->sessions[i];
++
++		if (!s)
++			continue;
++		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
++			ret = 0;
++		break;
++	}
++	mutex_unlock(&mdsc->mutex);
++	return ret;
++}
++
++static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
++{
++	int ret, got = 0;
++	struct inode *inode = file_inode(file);
++	struct ceph_inode_info *ci = ceph_inode(inode);
++
++	ret = vet_mds_for_fscrypt(file);
++	if (ret)
++		return ret;
++
++	/*
++	 * Ensure we hold these caps so that we _know_ that the rstats check
++	 * in the empty_dir check is reliable.
++	 */
++	ret = ceph_get_caps(file, CEPH_CAP_FILE_SHARED, 0, -1, &got);
++	if (ret)
++		return ret;
++
++	ret = fscrypt_ioctl_set_policy(file, (const void __user *)arg);
++	if (got)
++		ceph_put_cap_refs(ci, got);
++
++	return ret;
++}
++
+ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
++	int ret;
++
+ 	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+ 	switch (cmd) {
+ 	case CEPH_IOC_GET_LAYOUT:
+@@ -289,6 +336,42 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  
- struct ceph_mds_reply_dir_entry {
- 	char                          *name;
-+	u8			      *altname;
- 	u32                           name_len;
-+	u32			      altname_len;
- 	struct ceph_mds_reply_lease   *lease;
- 	struct ceph_mds_reply_info_in inode;
- 	loff_t			      offset;
-@@ -117,7 +118,9 @@ struct ceph_mds_reply_info_parsed {
- 	struct ceph_mds_reply_info_in diri, targeti;
- 	struct ceph_mds_reply_dirfrag *dirfrag;
- 	char                          *dname;
-+	u8			      *altname;
- 	u32                           dname_len;
-+	u32                           altname_len;
- 	struct ceph_mds_reply_lease   *dlease;
+ 	case CEPH_IOC_SYNCIO:
+ 		return ceph_ioctl_syncio(file);
++
++	case FS_IOC_SET_ENCRYPTION_POLICY:
++		return ceph_set_encryption_policy(file, arg);
++
++	case FS_IOC_GET_ENCRYPTION_POLICY:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
++
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_add_key(file, (void __user *)arg);
++
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
++
++	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
++		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
++		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_NONCE:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
+ 	}
  
- 	/* extra */
+ 	return -ENOTTY;
 -- 
 2.33.1
 
