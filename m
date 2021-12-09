@@ -2,136 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F28046F224
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 18:35:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AF2F46F2B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 19:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237485AbhLIRjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 12:39:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52048 "EHLO
+        id S243175AbhLISGE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 13:06:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237428AbhLIRjD (ORCPT
+        with ESMTP id S243176AbhLISGC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 12:39:03 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D8DEC061746
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Dec 2021 09:35:29 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id l25so22061607eda.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 09:35:29 -0800 (PST)
+        Thu, 9 Dec 2021 13:06:02 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 608A2C061746
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Dec 2021 10:02:28 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id o20so22445073eds.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 10:02:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0Ief/4lrcrFC9yHQblzF1a8RET0HNi3QQm3divo4aI0=;
-        b=AdnCyXT6TPlVVq0JLA/VEVV0O33H285eATNlyLPRaIFmtxnqr6S23nXl2J32guXc1O
-         plkuA6YLaLfLkkkWTPqQOSOG7bZY0JEwSmKNFIrfpMXr3oq7FfmHctvECgg0O0gJcn+c
-         hrPmI2kNvz5VH+5qzZSG7wTmayKDH0Ub3btDA=
+        bh=pqdZ3M76IB1SSykmh04Y3Lo84YOdOWQzNWkBQHhiwL0=;
+        b=ZavXgalMvPws6B7jvVOJr9iYXFSQ+Ve+xzB/xQ0PKvdxMfmxrHbi4mOAwmtVap5HzF
+         i7Nkk2JG3YWK49A5ao1c9B+9rNDuriLhMaU7X6p9gXoihI9+MzBmoDXPoCAxG7AMsjTc
+         uY8XYPep0J+jvwo4NJwVAzrXtoSQ3VliSEvk4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0Ief/4lrcrFC9yHQblzF1a8RET0HNi3QQm3divo4aI0=;
-        b=BDrbHHKZf8yXtG91xeQDSDbAsjOjiW6wGqZM0mMxJBwT4/ji/hK9g8wa04mpTv6kSh
-         zTX5XHYXn/kc7PkSuItFTPzJX0+9eFAQkrBmtFsWtszSqxJoLiGvI3aoy3rCt2V3SD12
-         9BzaBa418c9QCWWadcYycqhK0iWn4cOL8Ozz84GmyPii76c60x0vYqKwew5DhWpAbrZa
-         8AmLXKFRjZs3upbOVrvpGQfUTRfyve1OV1sO8ta9Va8a83+tvcfTTpwGh/ytLFtM10Kz
-         OOTSqQzt04szATwT7xCjkKPqYBsqxByWpx1eqqGMnH7sBDV+Jvs8fkR7bC3E9EEw6PN4
-         VZ9Q==
-X-Gm-Message-State: AOAM530inIpUYipAL2Fk2qERXh+GdGrEsXjutmqeKpLFMV/gnmA2+jjG
-        ITGEhlbBMaw8coMebeYT1bOMNAP0Njg629Zt
-X-Google-Smtp-Source: ABdhPJzN8LEqZnt0Ifth9YpaUh+5ytJB1jRO9hqltv5JgpKhrWEluzxPPFO4FiBtrumVsH0mwRURpA==
-X-Received: by 2002:a17:906:b2c7:: with SMTP id cf7mr17586463ejb.303.1639071172579;
-        Thu, 09 Dec 2021 09:32:52 -0800 (PST)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id kx3sm226778ejc.112.2021.12.09.09.32.51
+        bh=pqdZ3M76IB1SSykmh04Y3Lo84YOdOWQzNWkBQHhiwL0=;
+        b=RSM3/ae7aa1EeBSk8MDmt6poL7IWa5FcdvE8KbrD7HD/bsOKJzhpuoAa3sB1eRLTdu
+         ienT1ExtHzalgQiRJfocwGlNBwC4aP3LOqoPdZVZmRq7Yjbbpws+r7hUvabrnVKbaMdV
+         nTXonolImiBr63jpZAXhKbbs4bZGcZ+CRTmZyu2EoPM5O4WJenarxIV1AEmjViGiUQAl
+         VZWSBjzuqdXDSt1hpVJipLYYgK9q6d08zNStcaS8HjQPtVVSu6qo2EXZeAFXSQ1Iuvei
+         uG6gQ6BsBn0/+5aUmFaig2pvC5yDuivlAD25CXl6GtFl2lpAy5CkaHZhMM5gDSa2cvrZ
+         Eymg==
+X-Gm-Message-State: AOAM531oD2Okrysh/mtvLPCRCVLilHgDE/BlWoQGvxzyYK2kdyxKj7+C
+        yv6yHxiddCyU7nrnp8t5Gj6ym42fuBc2cokWWuY=
+X-Google-Smtp-Source: ABdhPJy9bOqRGGbRqIobCKOUs0abIYkq6vi3SsL3q/gcWyrPxeZL8jg/CsT0mshf50iiCvW9QvjuPw==
+X-Received: by 2002:a50:eb85:: with SMTP id y5mr31678455edr.173.1639072868384;
+        Thu, 09 Dec 2021 10:01:08 -0800 (PST)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
+        by smtp.gmail.com with ESMTPSA id y15sm247199edr.35.2021.12.09.10.01.06
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 09:32:51 -0800 (PST)
-Received: by mail-wr1-f53.google.com with SMTP id q3so10972096wru.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 09:32:51 -0800 (PST)
-X-Received: by 2002:a05:6000:1c2:: with SMTP id t2mr7703596wrx.378.1639071170949;
- Thu, 09 Dec 2021 09:32:50 -0800 (PST)
+        Thu, 09 Dec 2021 10:01:07 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id i12so4874521wmq.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 10:01:06 -0800 (PST)
+X-Received: by 2002:a1c:800e:: with SMTP id b14mr9304451wmd.155.1639072866516;
+ Thu, 09 Dec 2021 10:01:06 -0800 (PST)
 MIME-Version: 1.0
-References: <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk>
- <163906890630.143852.13972180614535611154.stgit@warthog.procyon.org.uk>
-In-Reply-To: <163906890630.143852.13972180614535611154.stgit@warthog.procyon.org.uk>
+References: <20211209010455.42744-1-ebiggers@kernel.org>
+In-Reply-To: <20211209010455.42744-1-ebiggers@kernel.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 9 Dec 2021 09:32:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg35xyf-HgOLcKdWVxm11vNomLVe44b1FsxvV6jDqw2CA@mail.gmail.com>
-Message-ID: <CAHk-=wg35xyf-HgOLcKdWVxm11vNomLVe44b1FsxvV6jDqw2CA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/67] fscache: Implement volume registration
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        linux-afs@lists.infradead.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
+Date:   Thu, 9 Dec 2021 10:00:50 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
+Message-ID: <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ramji Jiyani <ramjiyani@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 9, 2021 at 8:55 AM David Howells <dhowells@redhat.com> wrote:
+On Wed, Dec 8, 2021 at 5:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> +static long fscache_compare_volume(const struct fscache_volume *a,
-> +                                  const struct fscache_volume *b)
-> +{
-> +       size_t klen;
-> +
-> +       if (a->key_hash != b->key_hash)
-> +               return (long)a->key_hash - (long)b->key_hash;
-> +       if (a->cache != b->cache)
-> +               return (long)a->cache    - (long)b->cache;
-> +       if (a->key[0] != b->key[0])
-> +               return (long)a->key[0]   - (long)b->key[0];
-> +
-> +       klen = round_up(a->key[0] + 1, sizeof(unsigned int));
-> +       return memcmp(a->key, b->key, klen);
+> Careful review is appreciated; the aio poll code is very hard to work
+> with, and it doesn't appear to have many tests.  I've verified that it
+> passes the libaio test suite, which provides some coverage of poll.
+>
+> Note, it looks like io_uring has the same bugs as aio poll.  I haven't
+> tried to fix io_uring.
 
-None of this is endianness-independent except for the final memcmp()
-(and that one assumes the data is just a "stream of bytes")
+I'm hoping Jens is looking at the io_ring case, but I'm also assuming
+that I'll just get a pull request for this at some point.
 
-In fact, even if everybody is little-endian, the above gives different
-results on 32-bit and 64-bit architectures, since you're doing math in
-(possibly) 64 bits but using a 32-bit "key_hash". So sign bits will
-differ, afaik.
+It looks sane to me - my only internal cursing has been about epoll
+and aio in general, not about these patches in particular.
 
-And once again, that key_hash isn't actually endianness-independent anyway:
-
-> +       volume->key_hash = fscache_hash(0, (unsigned int *)key,
-> +                                       hlen / sizeof(unsigned int));
-
-Yeah, for the same key data, this will give entirely different results
-on LE vs BE, unless you've made sure to always convert whatever keys
-from soem on-disk fixed-32-bit-endianness format to a in-memory host
-endianness.
-
-Which is a fundamental design mistake in itself. That kind of "one
-endianness on disk, another in memory" is garbage.
-
-I'm not sure any of these matter - maybe all these hashes are entirely
-for in-memory stuff and never haev any longer lifetimes, so the fact
-that they get calculated and compared differently depending on
-endianness and depending on word size may not matter at all. You may
-only care about "stable on the native architecture".
-
-But then you shouldn't have your own hash function that you claim is
-somehow endianness-safe.
-
-If you really want to be endianness safe, *ALL* the data you work on
-needs to be a proper fixed endianness format. All throught the code.
-Make all key pointers always be "__le32 *", and never randomly cast
-the pointer from some other data like I see in every use I actually
-looked at.
-
-                  Linus
+              Linus
