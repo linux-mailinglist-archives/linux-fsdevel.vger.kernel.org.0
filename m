@@ -2,110 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D9146DFD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 01:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 959C046DFFE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Dec 2021 02:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241650AbhLIA7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Dec 2021 19:59:35 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:38074 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240543AbhLIA7f (ORCPT
+        id S241767AbhLIBKE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Dec 2021 20:10:04 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:54860 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233885AbhLIBKD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Dec 2021 19:59:35 -0500
+        Wed, 8 Dec 2021 20:10:03 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8B27FB82346;
-        Thu,  9 Dec 2021 00:56:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF94C00446;
-        Thu,  9 Dec 2021 00:56:00 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id B017BCE2328;
+        Thu,  9 Dec 2021 01:06:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82EC7C341C6;
+        Thu,  9 Dec 2021 01:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639011360;
-        bh=0Qbd6pnoKep9PNXa8MnEXlrP1XPI1fzykn2+If23HC4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cwH5kjdT+ZrSgp1QJ5JzDwZteTzSABNYgvXh5fvoT7maj1keKRq7OKSwn5wHlNReK
-         DlZ+utWnr1WP72lUzs1D9KPMBeTLE6pnyFX6bjfITB76PxwwzVaQLQ/5LqkyhI+vLC
-         6/Py7x04YTa2iH/57ZRqkYdizrk9/+vKPCd3BrYnn8SGaNtYjCSMN8w+MVahKr7t+Z
-         QYq8X5skWZl22WiSXofTzLDft88WB4oroc5jX/PJPLYOMkguxlBaXZq94HXE4BykOL
-         3AOO9MexN/6OwwaVjUPHjviGgOolhDjtLzJQRCivpRUnHKn2mh1ZXMMHfP2CFCC5cH
-         KEIWMJw6UtwNA==
-Date:   Wed, 8 Dec 2021 16:55:59 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] iomap: turn the byte variable in iomap_zero_iter into a
- ssize_t
-Message-ID: <20211209005559.GB69193@magnolia>
-References: <20211208091203.2927754-1-hch@lst.de>
- <20211209004846.GA69193@magnolia>
+        s=k20201202; t=1639011987;
+        bh=LRtnTEDYfrH3rK4h5Xti2Q/SJ/ia/P40Z5mMsuaLecc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tAyn6VMi9zUQnetySyJzmo/KHh8F/880ResUCN7DV067TWer+mTRXZwHly6c7MNRK
+         pYYr743kEfwjG8uz88lr+PVR9iyf4AbASRSzGXhi+RqhfAZ/bnTYRT+EtuVQlJmUWa
+         vVt1iK1kOiuVU3us2fM3nJOOKPdRQSRiio3UzIyHyVTttKGuRcCpbSMYZJRh83XQDA
+         f8aXOtdl6xQN02CuRRSwBCapVmcTAcra70NawOJZpN+94PlrBOMdzSH/ftYRvALflV
+         WgxIHAsGZ6UtoROEPPFS8HN2SXD5Rof0VVpWCgDtBhaGisSAkZRqYq9Ea/K6+A31kF
+         CWRUX4DKaQbmQ==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>
+Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ramji Jiyani <ramjiyani@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>, stable@vger.kernel.org
+Subject: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
+Date:   Wed,  8 Dec 2021 17:04:50 -0800
+Message-Id: <20211209010455.42744-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211209004846.GA69193@magnolia>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 08, 2021 at 04:48:46PM -0800, Darrick J. Wong wrote:
-> On Wed, Dec 08, 2021 at 10:12:03AM +0100, Christoph Hellwig wrote:
-> > bytes also hold the return value from iomap_write_end, which can contain
-> > a negative error value.  As bytes is always less than the page size even
-> > the signed type can hold the entire possible range.
-> > 
-> > Fixes: c6f40468657d ("fsdax: decouple zeroing from the iomap buffered I/O code")
+This series fixes two bugs in aio poll, and one issue with POLLFREE more
+broadly.  This is intended to replace
+"[PATCH v5] aio: Add support for the POLLFREE"
+(https://lore.kernel.org/r/20211027011834.2497484-1-ramjiyani@google.com)
+which has some bugs.
 
-...waitaminute, ^^^^^^ in what tree is this commit?  Did Linus merge
-the dax decoupling series into upstream without telling me?
+Careful review is appreciated; the aio poll code is very hard to work
+with, and it doesn't appear to have many tests.  I've verified that it
+passes the libaio test suite, which provides some coverage of poll.
 
-/me checks... no?
+Note, it looks like io_uring has the same bugs as aio poll.  I haven't
+tried to fix io_uring.
 
-Though I searched for it on gitweb and came up with this bizarre plot
-twist:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c6f40468657d16e4010ef84bf32a761feb3469ea
+This series applies to v5.16-rc4.
 
-(Is this the same as that github thing a few months ago where
-everybody's commits get deduplicated into the same realm and hence
-anyone can make trick the frontend into sort of making it look like
-their rando commits end up in Linus' tree?  Or did it get merged and
-push -f reverted?)
+Changed v2 => v3:
+  - Fixed a few commit messages and comments.
+  - Mention that libaio test suite still passes.
 
-Ok, so ... I don't know what I'm supposed to apply this to?  Is this
-something that should go in Christoph's development branch?
+Changed v1 => v2:
+  - Added wake_up_pollfree().
+  - Various fixes to the aio poll fixes.
+  - Improved some comments in aio poll.
 
-<confused, going to run away now>
+Eric Biggers (5):
+  wait: add wake_up_pollfree()
+  binder: use wake_up_pollfree()
+  signalfd: use wake_up_pollfree()
+  aio: keep poll requests on waitqueue until completed
+  aio: fix use-after-free due to missing POLLFREE handling
 
-On the plus side, that means I /can/ go test-merge willy's iomap folios
-for 5.17 stuff tonight.
+ drivers/android/binder.c        |  21 ++--
+ fs/aio.c                        | 184 ++++++++++++++++++++++++++------
+ fs/signalfd.c                   |  12 +--
+ include/linux/wait.h            |  26 +++++
+ include/uapi/asm-generic/poll.h |   2 +-
+ kernel/sched/wait.c             |   7 ++
+ 6 files changed, 195 insertions(+), 57 deletions(-)
 
---D
+-- 
+2.34.1
 
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> Looks good,
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> 
-> --D
-> 
-> > ---
-> >  fs/iomap/buffered-io.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index b1511255b4df8..ac040d607f4fe 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -883,7 +883,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
-> >  
-> >  	do {
-> >  		unsigned offset = offset_in_page(pos);
-> > -		size_t bytes = min_t(u64, PAGE_SIZE - offset, length);
-> > +		ssize_t bytes = min_t(u64, PAGE_SIZE - offset, length);
-> >  		struct page *page;
-> >  		int status;
-> >  
-> > -- 
-> > 2.30.2
-> > 
