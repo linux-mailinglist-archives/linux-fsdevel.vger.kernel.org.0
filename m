@@ -2,175 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3132B46F955
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 03:47:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ACFA46F9BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 05:03:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236133AbhLJCuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 21:50:51 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:25695 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236136AbhLJCuv (ORCPT
+        id S233007AbhLJEHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Dec 2021 23:07:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54180 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229993AbhLJEHH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 21:50:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639104436;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RDm182yzFAowpD6q2G/7EZAzbuAuDW5mdyX19r8/gMM=;
-        b=h77LQSK4NyUuQv+B75x/OGdHpTSG5cY7/qmTdglSzgfeOunghDoDMtv43rIK4wC+sjonEz
-        NKfrgLuCkwpB4Nlf/rS2+9PMEq9kCAIxNOEWZQQPbePMqeJAYdsZ1qR8bT0kW2jDwQNCzb
-        rgSZDPKMirSVw7eNMsOhjXkYxgjBIDg=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-301-w_OIEzIqNeC8XbX7okIcGw-1; Thu, 09 Dec 2021 21:47:15 -0500
-X-MC-Unique: w_OIEzIqNeC8XbX7okIcGw-1
-Received: by mail-pj1-f69.google.com with SMTP id b8-20020a17090a10c800b001a61dff6c9dso4798860pje.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Dec 2021 18:47:15 -0800 (PST)
+        Thu, 9 Dec 2021 23:07:07 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F46C061746;
+        Thu,  9 Dec 2021 20:03:32 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id d9so12938771wrw.4;
+        Thu, 09 Dec 2021 20:03:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=CX8RPFqWxmhuiVbKNQ4FRnbHGl327frRd5MQyfbYU5o=;
+        b=gF15qU7H86VsfHkH5dvEwXaU6pwrAQRoAM9ACkVgTztIk+3Oe5hgQezjI9qPSCBoq5
+         mv0Mto9epFcD2qmvVeN6sf7Ll0r7BPct95e1WYHjQZJO7bsym6lV1hDMEKHMNa3OUK8y
+         SybSqJpT59V707aaxpOdyF9bGosVVdyNokx6JmorOkiS1pkpzk1BaRjKD7d6E7j5+RIO
+         Tk9x69xmOlFi0VKbmewJ4t/2Map/AzA72kGXvuVRVh2EulwhYO7+MFV7Og/HhBa8u7Mm
+         1pC8vgPDeO3NBbl/ri1/0Lf5LR8frp4nf3fluKl27ALp3SPrgP8Y8uCmjr6rLmbv6HpK
+         AWMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=RDm182yzFAowpD6q2G/7EZAzbuAuDW5mdyX19r8/gMM=;
-        b=HiAGM3nbVwoaO1KS/Z0v8S3Aru3vMMFNJoZcTziNXN2MMwM7rXpeI37u0/Hoj5rVTN
-         KfDkGCGbCbP8PNBdAVyl/ZoceUYgYOfa/kZj3ZVWwdKc3iCHxQVXBwemIYVy72kq+IzW
-         msXpxLYjsYpLXeFdCxEjwTlM6zRBFVZCH22pTf/orWZ2/i4vRcI2ZmLTH4V8ZjUSyTQK
-         r8fIoU2gWT+TRYqpIVzMqoUOFLbBRx5mWZkGZumE8TnjqnvAaSCCKTkVT/93oMOTJT6E
-         ZTjnI82Ud0U96L8+BrPYhHGdthcps2Xu5pWHs7bODTARz9te1KnYI4iEnwI3Q3R1DNdu
-         7Xlw==
-X-Gm-Message-State: AOAM531DklExAdvrAZUXoOqddeFXzJSmaNW5j9MYwc/PeXGtPI4KYUtM
-        nwg/ZMteUXdVOvDmhnUNTZURRZrgOrGagPrLHOzXMguiwRyMbU1TN2rEZUgEy25udWi10G2k/ob
-        +nMdxb/E8720ULd0XUEKPrJ+9IXWfH8JJkzMIvqp0W7Bm5VuCejxzNQqUiHrHt62ZhZxb7hV4tN
-        s=
-X-Received: by 2002:a05:6a00:198c:b0:4a4:e75f:75cb with SMTP id d12-20020a056a00198c00b004a4e75f75cbmr15618775pfl.38.1639104434046;
-        Thu, 09 Dec 2021 18:47:14 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwpnkhqww19Tpc25FVHBxUWJf656rgeAQdK4L58xNriGevdZKOt+HYqZaRBDAUpzaz55t0Dyg==
-X-Received: by 2002:a05:6a00:198c:b0:4a4:e75f:75cb with SMTP id d12-20020a056a00198c00b004a4e75f75cbmr15618757pfl.38.1639104433686;
-        Thu, 09 Dec 2021 18:47:13 -0800 (PST)
-Received: from [10.72.12.129] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id t186sm1029523pfc.122.2021.12.09.18.47.10
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=CX8RPFqWxmhuiVbKNQ4FRnbHGl327frRd5MQyfbYU5o=;
+        b=QQBFOLHFHwQKFMZHQlV1JWsxXm9wlUCVHjrajQaMrsEDRJdTKlP2XQN4sJhUNkGHaZ
+         MUkS9UgMCHEw8Ns5tB0YuDnlLoe6pEywGJewphQJHJoWkUJEJVgyvdO1ZU8cWfLreNbZ
+         jlnuvvcvIOX2OyOGyCTDRf52xa/LQ80Aeqmm7d6vf1YeZm13EcKCa5ZQKuIs4X4G6asN
+         KbPSV5ltzmli7HKcIXvqA8VnTW8P7eHagVxkW1PVPg8pl5zxeBJ5OAceFM9Jottgj3gj
+         SBaK/ngxVKRzaQStP3iPSBbKF7Mnr/fA2i3DHOBjO7/UDrb9jSG9+oaVHwT6KyabxdR0
+         RPvg==
+X-Gm-Message-State: AOAM532lePwXegwWPAiYm3NRydypeuCyseEDLcFh+JIROHAbZrqd2z50
+        NQA5KI9yRPr6chnfZS9gw4DAyqbZMd0=
+X-Google-Smtp-Source: ABdhPJzNWBRz8n5l9oVvAMN8CaCdXKNp96mYCPWqVksi4l0aMDnqVZBSY6WLQj1QAyepGPFSj8X/tw==
+X-Received: by 2002:adf:dbcb:: with SMTP id e11mr10649331wrj.575.1639109011215;
+        Thu, 09 Dec 2021 20:03:31 -0800 (PST)
+Received: from [10.184.0.6] ([85.203.46.180])
+        by smtp.gmail.com with ESMTPSA id f3sm1302374wrm.96.2021.12.09.20.03.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 18:47:12 -0800 (PST)
-Subject: Re: [PATCH 00/36] ceph+fscrypt: context, filename, symlink and size
- handling support
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20211209153647.58953-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <c5947b29-e209-e98e-ec21-875ff8592bfb@redhat.com>
-Date:   Fri, 10 Dec 2021 10:47:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Thu, 09 Dec 2021 20:03:30 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] fs: possible ABBA deadlocks in do_thaw_all_callback() and
+ freeze_bdev()
+To:     viro@zeniv.linux.org.uk, andrea@suse.de, axboe@kernel.dk,
+        hch@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Message-ID: <bcc39dfd-3734-bb82-b327-8445aedef605@gmail.com>
+Date:   Fri, 10 Dec 2021 12:03:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20211209153647.58953-1-jlayton@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
-On 12/9/21 11:36 PM, Jeff Layton wrote:
-> I've not posted this in a while, so I figured it was a good time to do
-> so. This patchset is a pile of the mostly settled parts of the fscrypt
-> integration series. With this, pretty much everything but the actual
-> content encryption in files now works.
->
-> This series is also in the wip-fscrypt-size branch of the ceph-client
-> tree:
->
->      https://github.com/ceph/ceph-client/tree/wip-fscrypt-size
->
-> It would also be nice to have an ack from Al Viro on patch #1, and from
-> Eric Biggers on #2-5. Those touch code outside of the ceph parts. If
-> they aren't acceptable for some reason, I'll need to find other ways to
-> handle them.
->
-> Jeff Layton (31):
->    vfs: export new_inode_pseudo
->    fscrypt: export fscrypt_base64url_encode and fscrypt_base64url_decode
->    fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
->    fscrypt: add fscrypt_context_for_new_inode
->    fscrypt: uninline and export fscrypt_require_key
->    ceph: preallocate inode for ops that may create one
->    ceph: crypto context handling for ceph
->    ceph: parse new fscrypt_auth and fscrypt_file fields in inode traces
->    ceph: add fscrypt_* handling to caps.c
->    ceph: add ability to set fscrypt_auth via setattr
->    ceph: implement -o test_dummy_encryption mount option
->    ceph: decode alternate_name in lease info
->    ceph: add fscrypt ioctls
->    ceph: make ceph_msdc_build_path use ref-walk
->    ceph: add encrypted fname handling to ceph_mdsc_build_path
->    ceph: send altname in MClientRequest
->    ceph: encode encrypted name in dentry release
->    ceph: properly set DCACHE_NOKEY_NAME flag in lookup
->    ceph: make d_revalidate call fscrypt revalidator for encrypted
->      dentries
->    ceph: add helpers for converting names for userland presentation
->    ceph: add fscrypt support to ceph_fill_trace
->    ceph: add support to readdir for encrypted filenames
->    ceph: create symlinks with encrypted and base64-encoded targets
->    ceph: make ceph_get_name decrypt filenames
->    ceph: add a new ceph.fscrypt.auth vxattr
->    ceph: add some fscrypt guardrails
->    libceph: add CEPH_OSD_OP_ASSERT_VER support
->    ceph: size handling for encrypted inodes in cap updates
->    ceph: fscrypt_file field handling in MClientRequest messages
->    ceph: get file size from fscrypt_file when present in inode traces
->    ceph: handle fscrypt fields in cap messages from MDS
->
-> Luis Henriques (1):
->    ceph: don't allow changing layout on encrypted files/directories
->
-> Xiubo Li (4):
->    ceph: add __ceph_get_caps helper support
->    ceph: add __ceph_sync_read helper support
->    ceph: add object version support for sync read
->    ceph: add truncate size handling support for fscrypt
->
->   fs/ceph/Makefile                |   1 +
->   fs/ceph/acl.c                   |   4 +-
->   fs/ceph/caps.c                  | 211 ++++++++++--
->   fs/ceph/crypto.c                | 253 ++++++++++++++
->   fs/ceph/crypto.h                | 154 +++++++++
->   fs/ceph/dir.c                   | 209 +++++++++---
->   fs/ceph/export.c                |  44 ++-
->   fs/ceph/file.c                  | 125 ++++---
->   fs/ceph/inode.c                 | 566 +++++++++++++++++++++++++++++---
->   fs/ceph/ioctl.c                 |  87 +++++
->   fs/ceph/mds_client.c            | 349 +++++++++++++++++---
->   fs/ceph/mds_client.h            |  24 +-
->   fs/ceph/super.c                 |  82 ++++-
->   fs/ceph/super.h                 |  42 ++-
->   fs/ceph/xattr.c                 |  29 ++
->   fs/crypto/fname.c               |  40 ++-
->   fs/crypto/fscrypt_private.h     |  35 +-
->   fs/crypto/hooks.c               |   6 +-
->   fs/crypto/keysetup.c            |  27 ++
->   fs/crypto/policy.c              |  34 +-
->   fs/inode.c                      |   1 +
->   include/linux/ceph/ceph_fs.h    |  21 +-
->   include/linux/ceph/osd_client.h |   6 +-
->   include/linux/ceph/rados.h      |   4 +
->   include/linux/fscrypt.h         |  15 +
->   net/ceph/osd_client.c           |   5 +
->   26 files changed, 2087 insertions(+), 287 deletions(-)
->   create mode 100644 fs/ceph/crypto.c
->   create mode 100644 fs/ceph/crypto.h
->
-I have test this series together with ceph side PR#1 and worked well for 
-me. LGTM.
+My static analysis tool reports several possible ABBA deadlocks in Linux 
+5.10:
 
-1), https://github.com/ceph/ceph/pull/43588
+do_thaw_all_callback()
+   down_write(&sb->s_umount); --> Line 1028 (Lock A)
+   emergency_thaw_bdev()
+     thaw_bdev()
+       mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 602 (Lock B)
+
+freeze_bdev()
+   mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 556 (Lock B)
+   freeze_super()
+     down_write(&sb->s_umount); --> Line 1716 (Lock A)
+     down_write(&sb->s_umount); --> Line 1738 (Lock A)
+   deactivate_super()
+     down_write(&s->s_umount); --> Line 365 (Lock A)
+
+When do_thaw_all_callback() and freeze_bdev() are concurrently executed, 
+the deadlocks can occur.
+
+I am not quite sure whether these possible deadlocks are real and how to 
+fix them if them are real.
+Any feedback would be appreciated, thanks :)
+
+Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
 
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-
-BRs
-
+Best wishes,
+Jia-Ju Bai
 
