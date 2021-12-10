@@ -2,100 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA3B470A39
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 20:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40EDC470A60
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 20:32:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343597AbhLJTWt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Dec 2021 14:22:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41258 "EHLO
+        id S245542AbhLJTg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 14:36:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343559AbhLJTWs (ORCPT
+        with ESMTP id S234441AbhLJTgZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Dec 2021 14:22:48 -0500
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63BB2C061746
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Dec 2021 11:19:13 -0800 (PST)
-Received: by mail-qt1-x835.google.com with SMTP id z9so9317247qtj.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Dec 2021 11:19:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=uPGW5ROteU5Fpf16TNGTuiysra125ZlvW3Q6FYu12Ms=;
-        b=iPHEafCooGeQCkTPhS32asxz8gKfEZ0aooITZcjULaTirjc5u5YarrPCgxX2TWK4EX
-         HwNQKwY1aJDPxGP4hobw0YUsiA49xEoFilYIRWMzGAcCS85ZW0sqUTmMPfNufaqRXFSQ
-         imHOMwznVuvRk7MWOiawkN+cv+Sz/Z+VOR+HNcpTKecM9sCgC5rduMrlMsVkJgHtj6pa
-         9cYkn9Gj/WUHxRreDsaKKTWqWxQW5orCBGWGOpFt0bXseu5wnkKi/J6Ue24jn3e0I2ku
-         G2U4Y5sh0YK+xM8wuFcDIFeyGlq1OmV38D6bkJQDNFXVSFqNt/en743D8/zzcZiEmsvu
-         UuEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=uPGW5ROteU5Fpf16TNGTuiysra125ZlvW3Q6FYu12Ms=;
-        b=ALXxcGePgjJjb4aeP42X8ApDw2HYBS0gCcfVgL7ADvaQ3jNP0MOtj1CgbJ+g82U+zC
-         dvZVV0bqEqwAY1sj5h8Dm5sSnJ2HH2uYSys7Q5S9H7KCvquP2WQozUOENFmGUY5f8vev
-         tCRYuUhPUAKgEP4MBorY16FOZZ21BtvtKm4B3499bmefIc+PuUIDVHKFEzo4E+r+7UM9
-         oXDMZxc+DZp0Jzr+wQt17t67uSY4tlnT0QCgjZKQkfIgXQAvoBkntneDCUJlQhl0RqLt
-         /hoSnvlGIoZBnGycEcSquiWKeb3450EqYKIO9BOKINRwuVie38Gs3QqvWP1eM3cZflHP
-         B2Mg==
-X-Gm-Message-State: AOAM530g7gN9AxdVgRz7JGbETbOMI9/9rQdaQ0ARN9KB8UtiGJwSjSJR
-        RsEOEEVS5at4OlGiuJXml5Dqxg==
-X-Google-Smtp-Source: ABdhPJzoGmsQ9RX8SkvmJQMMv/lm4Mg8AzKdjOAay9UJKgN2FM00BrE2R0eQ/+j/lW2UZ5ub0gliOQ==
-X-Received: by 2002:a05:622a:1d4:: with SMTP id t20mr29279044qtw.84.1639163952383;
-        Fri, 10 Dec 2021 11:19:12 -0800 (PST)
-Received: from [192.168.1.227] (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id f18sm1787318qko.34.2021.12.10.11.19.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 11:19:12 -0800 (PST)
-Date:   Fri, 10 Dec 2021 11:18:59 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm: delete unsafe BUG from
- page_cache_add_speculative()
-In-Reply-To: <20211210092003.cf84354b406a47253afc868c@linux-foundation.org>
-Message-ID: <7e783f99-148f-c7aa-08a-4c4c45c5506a@google.com>
-References: <8b98fc6f-3439-8614-c3f3-945c659a1aba@google.com> <20211210092003.cf84354b406a47253afc868c@linux-foundation.org>
+        Fri, 10 Dec 2021 14:36:25 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A2BC061746;
+        Fri, 10 Dec 2021 11:32:49 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 4956FCE2D06;
+        Fri, 10 Dec 2021 19:32:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47EA4C00446;
+        Fri, 10 Dec 2021 19:32:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639164766;
+        bh=UdeUDbJrW+pvd7iJQh9qGMEk4aY4ucJONMujeSt5H7Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dKj+kNGhHzuybagcVjehDQDROQDo6jWTJb/tIwD6O566bEq01kGZreG8OxnF0lxLI
+         O8NBQCLSStWF1lLf1bh/LvbgLvlGaj+OUjgsWhJjXTDLq3ATSmc2cHIynJSCEp19Fy
+         C8l0iKLgy8l3NWrQogZoRS9lHQKweUCi8SQww1Un9GPhnghFtK0rUHK55qmcG15wt7
+         miIyt4oKkrzMl1EZNJYR+tYH8FxEesHoO316MljYO3DgOFVPlknq89Bf0jNcEVdUgy
+         E6WboNah+BxvZTb/rODFE0kebt9GVN5tYrcBkYXfb99SLSQq3hVoa/VU9YLL1AUOMc
+         xY3TkNkGhxRPw==
+Date:   Fri, 10 Dec 2021 11:32:44 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 03/36] fscrypt: export fscrypt_fname_encrypt and
+ fscrypt_fname_encrypted_size
+Message-ID: <YbOrXLbg8/tpzhsV@sol.localdomain>
+References: <20211209153647.58953-1-jlayton@kernel.org>
+ <20211209153647.58953-4-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211209153647.58953-4-jlayton@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 10 Dec 2021, Andrew Morton wrote:
-> On Wed, 8 Dec 2021 23:19:18 -0800 (PST) Hugh Dickins <hughd@google.com> wrote:
-> 
-> > It is not easily reproducible, but on 5.16-rc I have several times hit
-> > the VM_BUG_ON_PAGE(PageTail(page), page) in page_cache_add_speculative():
-> > usually from filemap_get_read_batch() for an ext4 read, yesterday from
-> > next_uptodate_page() from filemap_map_pages() for a shmem fault.
-> > 
-> > That BUG used to be placed where page_ref_add_unless() had succeeded,
-> > but now it is placed before folio_ref_add_unless() is attempted: that
-> > is not safe, since it is only the acquired reference which makes the
-> > page safe from racing THP collapse or split.
-> > 
-> > We could keep the BUG, checking PageTail only when folio_ref_try_add_rcu()
-> > has succeeded; but I don't think it adds much value - just delete it.
-> > 
-> > Fixes: 020853b6f5ea ("mm: Add folio_try_get_rcu()")
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
-> 
-> I added cc:stable to this.
+On Thu, Dec 09, 2021 at 10:36:14AM -0500, Jeff Layton wrote:
+> For ceph, we want to use our own scheme for handling filenames that are
+> are longer than NAME_MAX after encryption and base64 encoding. This
 
-Thanks, but no, cc:stable not needed: the fixed commit went into 5.16-rc1,
-and did not go to stable itself. There was an identical VM_BUG_ON_PAGE in
-the old __page_cache_add_speculative(), but that one was correctly placed,
-so there's no need for the old one to be removed.
+base64 => Base64.  (base64 and base64url are types of Base64.)
 
-Hugh
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 8fa23d525b5c..3be04b5aa570 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -130,6 +130,7 @@ int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(fscrypt_fname_encrypt);
+
+The documentation for the @inode parameter could use a mention that the inode's
+key must have already been set up.  External callers could get that wrong.
+
+Also, I'd prefer EXPORT_SYMBOL_GPL for anything that isn't generic functionality
+like Base64 encoding/decoding.
+
+> +/**
+> + * fscrypt_fname_encrypted_size() - calculate length of encrypted filename
+> + * @inode: 		parent inode of dentry name being encrypted
+
+Likewise, this should mention that the inode's key must have already been set
+up.
+
+> + * Filenames must be padded out to at least the end of an fscrypt block before
+> + * encrypting them.
+
+That's not really correct.  The padding amount depends on the padding flags, as
+well as whether the filename gets truncated at max_len or not.  Also there's not
+really any such thing as an "fscrypt block".  (FS_CRYPTO_BLOCK_SIZE, which is 16
+bytes, is misnamed.  It really should be two separate things like
+FSCRYPT_MIN_FNAME_CTEXT_SIZE and FSCRYPT_CONTENTS_CTEXT_ALIGNMENT.)
+
+How about just writing something like:
+
+    Filenames that are shorter than the maximum length may have their lengths
+    increased slightly by encryption, due to padding that is applied.
+
+> + *
+> + * Return: false if the orig_len is shorter than max_len. Otherwise, true and
+> + * 	   fill out encrypted_len_ret with the length (up to max_len).
+
+false if orig_len is *greater* than max_len.
+
+> diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+> index 5b0a9e6478b5..51e42767dbd6 100644
+> --- a/fs/crypto/fscrypt_private.h
+> +++ b/fs/crypto/fscrypt_private.h
+> @@ -297,14 +297,11 @@ void fscrypt_generate_iv(union fscrypt_iv *iv, u64 lblk_num,
+>  			 const struct fscrypt_info *ci);
+>  
+>  /* fname.c */
+> -int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
+> -			  u8 *out, unsigned int olen);
+> -bool fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
+> -				  u32 orig_len, u32 max_len,
+> -				  u32 *encrypted_len_ret);
+> +bool __fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
+> +				    u32 orig_len, u32 max_len,
+> +                                    u32 *encrypted_len_ret);
+
+This is indented with spaces, not tabs.
+
+- Eric
