@@ -2,100 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ACFA46F9BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 05:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F65346FA0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 06:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233007AbhLJEHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Dec 2021 23:07:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54180 "EHLO
+        id S229736AbhLJFNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 00:13:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbhLJEHH (ORCPT
+        with ESMTP id S229650AbhLJFNt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Dec 2021 23:07:07 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F46C061746;
-        Thu,  9 Dec 2021 20:03:32 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id d9so12938771wrw.4;
-        Thu, 09 Dec 2021 20:03:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=CX8RPFqWxmhuiVbKNQ4FRnbHGl327frRd5MQyfbYU5o=;
-        b=gF15qU7H86VsfHkH5dvEwXaU6pwrAQRoAM9ACkVgTztIk+3Oe5hgQezjI9qPSCBoq5
-         mv0Mto9epFcD2qmvVeN6sf7Ll0r7BPct95e1WYHjQZJO7bsym6lV1hDMEKHMNa3OUK8y
-         SybSqJpT59V707aaxpOdyF9bGosVVdyNokx6JmorOkiS1pkpzk1BaRjKD7d6E7j5+RIO
-         Tk9x69xmOlFi0VKbmewJ4t/2Map/AzA72kGXvuVRVh2EulwhYO7+MFV7Og/HhBa8u7Mm
-         1pC8vgPDeO3NBbl/ri1/0Lf5LR8frp4nf3fluKl27ALp3SPrgP8Y8uCmjr6rLmbv6HpK
-         AWMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=CX8RPFqWxmhuiVbKNQ4FRnbHGl327frRd5MQyfbYU5o=;
-        b=QQBFOLHFHwQKFMZHQlV1JWsxXm9wlUCVHjrajQaMrsEDRJdTKlP2XQN4sJhUNkGHaZ
-         MUkS9UgMCHEw8Ns5tB0YuDnlLoe6pEywGJewphQJHJoWkUJEJVgyvdO1ZU8cWfLreNbZ
-         jlnuvvcvIOX2OyOGyCTDRf52xa/LQ80Aeqmm7d6vf1YeZm13EcKCa5ZQKuIs4X4G6asN
-         KbPSV5ltzmli7HKcIXvqA8VnTW8P7eHagVxkW1PVPg8pl5zxeBJ5OAceFM9Jottgj3gj
-         SBaK/ngxVKRzaQStP3iPSBbKF7Mnr/fA2i3DHOBjO7/UDrb9jSG9+oaVHwT6KyabxdR0
-         RPvg==
-X-Gm-Message-State: AOAM532lePwXegwWPAiYm3NRydypeuCyseEDLcFh+JIROHAbZrqd2z50
-        NQA5KI9yRPr6chnfZS9gw4DAyqbZMd0=
-X-Google-Smtp-Source: ABdhPJzNWBRz8n5l9oVvAMN8CaCdXKNp96mYCPWqVksi4l0aMDnqVZBSY6WLQj1QAyepGPFSj8X/tw==
-X-Received: by 2002:adf:dbcb:: with SMTP id e11mr10649331wrj.575.1639109011215;
-        Thu, 09 Dec 2021 20:03:31 -0800 (PST)
-Received: from [10.184.0.6] ([85.203.46.180])
-        by smtp.gmail.com with ESMTPSA id f3sm1302374wrm.96.2021.12.09.20.03.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 20:03:30 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] fs: possible ABBA deadlocks in do_thaw_all_callback() and
- freeze_bdev()
-To:     viro@zeniv.linux.org.uk, andrea@suse.de, axboe@kernel.dk,
-        hch@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Message-ID: <bcc39dfd-3734-bb82-b327-8445aedef605@gmail.com>
-Date:   Fri, 10 Dec 2021 12:03:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 10 Dec 2021 00:13:49 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A73BC061746;
+        Thu,  9 Dec 2021 21:10:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id C9CDDCE286A;
+        Fri, 10 Dec 2021 05:10:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE98C00446;
+        Fri, 10 Dec 2021 05:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639113009;
+        bh=IgjHdU+h7nd8/berFuQhpL+cs2oDMn2YcL/bPfyzWok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=B2TG9kmab4DZlJ2MF5L2WKYdVF6RM8bfEBOCg4YxOB+r7JrxOFLz7G7vAZ0pI70SN
+         hptxu+I94Vh3XAYd08epfaMm/Ejbhc+2kKaIBVQi4VMjTfc2o7hP15rVk71TWuFY30
+         XLjVWnWbmlHUn5PKy8TdevkO3dQYdZYBGIKp9F4CTRZtAJ09RD7OQWqbto0yKmW3uy
+         2orNoe83QdM/VEcf1mgvQpSkFobI6OdXJQ3oqKx9ViHthY5pjMIANAxmsOfb+6drgz
+         OqkF85itWlEy8hRgr7O2hZek94RC3ymseFyzBSGrG603Zw9bCCQ3Ef2HLuLqGGXeD5
+         H6xKPdc8M3Fjw==
+Date:   Thu, 9 Dec 2021 21:10:07 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ramji Jiyani <ramjiyani@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Martijn Coenen <maco@android.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
+Message-ID: <YbLhL8y/TR5H0MLe@sol.localdomain>
+References: <20211209010455.42744-1-ebiggers@kernel.org>
+ <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
+ <4a472e72-d527-db79-d46e-efa9d4cad5bb@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a472e72-d527-db79-d46e-efa9d4cad5bb@kernel.dk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Dec 09, 2021 at 02:46:45PM -0700, Jens Axboe wrote:
+> On 12/9/21 11:00 AM, Linus Torvalds wrote:
+> > On Wed, Dec 8, 2021 at 5:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> >>
+> >> Careful review is appreciated; the aio poll code is very hard to work
+> >> with, and it doesn't appear to have many tests.  I've verified that it
+> >> passes the libaio test suite, which provides some coverage of poll.
+> >>
+> >> Note, it looks like io_uring has the same bugs as aio poll.  I haven't
+> >> tried to fix io_uring.
+> > 
+> > I'm hoping Jens is looking at the io_ring case, but I'm also assuming
+> > that I'll just get a pull request for this at some point.
+> 
+> Yes, when I saw this original posting I did discuss it with Pavel as
+> well, and we agree that the same issue exists there. Which isn't too
+> surprising, as that's where the io_uring poll code from originally.
+> 
+> Eric, do you have a test case for this? aio is fine, we can convert it
+> to io_uring as well. Would be nice for both verifying the fix, but also
+> to carry in the io_uring regression tests for the future.
 
-My static analysis tool reports several possible ABBA deadlocks in Linux 
-5.10:
+Well, the use-after-free bug is pretty hard to test for.  It only affects
+polling a binder fd or signalfd, so one of those has to be used.  Also, I
+haven't found a way to detect it other than the use-after-free itself, so
+effectively a kernel with KASAN enabled is needed.  But KASAN doesn't work with
+signalfd because the signalfd waitqueues are in an SLAB_TYPESAFE_BY_RCU slab, so
+binder is the only way to detect it without working around SLAB_TYPESAFE_BY_RCU,
+or patching the kernel to add log messages.  Also, aio supports inline
+completion which avoids the bug, so that needs to be worked around.
 
-do_thaw_all_callback()
-   down_write(&sb->s_umount); --> Line 1028 (Lock A)
-   emergency_thaw_bdev()
-     thaw_bdev()
-       mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 602 (Lock B)
+So the best I can do is provide a program that's pretty specific to aio, which
+causes KASAN to report a use-after-free if the kernel has CONFIG_KASAN and
+CONFIG_ANDROID_BINDER_IPC enabled.  Note, "normal" Linux distros don't have
+either option enabled.  I'm not sure that would be useful for you.
 
-freeze_bdev()
-   mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 556 (Lock B)
-   freeze_super()
-     down_write(&sb->s_umount); --> Line 1716 (Lock A)
-     down_write(&sb->s_umount); --> Line 1738 (Lock A)
-   deactivate_super()
-     down_write(&s->s_umount); --> Line 365 (Lock A)
+If you're also asking about the other bug (missed wakeups), i.e. the one that
+patch 4 in this series fixes, in theory that would be detectable without those
+dependencies.  It's still a race condition that depends on kernel implementation
+details, so it will be hard to test for too.  But I might have a go at writing a
+test for it anyway.
 
-When do_thaw_all_callback() and freeze_bdev() are concurrently executed, 
-the deadlocks can occur.
-
-I am not quite sure whether these possible deadlocks are real and how to 
-fix them if them are real.
-Any feedback would be appreciated, thanks :)
-
-Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
-
-
-Best wishes,
-Jia-Ju Bai
-
+- Eric
