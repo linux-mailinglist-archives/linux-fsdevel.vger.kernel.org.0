@@ -2,72 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD28470E31
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 23:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E91470E49
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 00:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344847AbhLJWuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Dec 2021 17:50:32 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:43686 "EHLO
+        id S243632AbhLJXER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 18:04:17 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:48782 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344774AbhLJWu3 (ORCPT
+        with ESMTP id S239946AbhLJXEQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Dec 2021 17:50:29 -0500
+        Fri, 10 Dec 2021 18:04:16 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D7BCCB828A7;
-        Fri, 10 Dec 2021 22:46:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 81DFEC341C8;
-        Fri, 10 Dec 2021 22:46:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 66864B82A0E;
+        Fri, 10 Dec 2021 23:00:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5501C00446;
+        Fri, 10 Dec 2021 23:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639176411;
-        bh=pxF0/2zMlOEQAX4ET+9rM3THnd4Zsq9VxSG2uxlgnFU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=FkO8DCrxtuvF+rE1QLAcGq/2nIfI7WHs6mkbxWUvnMECDm9OpNsOEQN89LkYkEZt0
-         OqpE6N9eBAuu5t9KVSaAu9RgEtbuiyTCXgjfun3hA8tRVp746sWZgSdXacJAHFALi1
-         SYPaz66KJQWXD5DgVWhTXZQxnWMN+y1BHHFlMzeRhZ3EwP/Brra2ZIY6No6GXSFtp5
-         MIQfA0NV9+mGzR7vmzbByN9MLOeE5OotHuu/hzAEMuftR1Wk7AVuGGGJFaR4mMudXS
-         K8yps6uOpxu/TEmBteZsmw0M39tGrjn7wyFr2KZkc3yalwp4G52EEN5dxBEK8bMrUZ
-         R6rmFfpvGRGHA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 6F3C1609EB;
-        Fri, 10 Dec 2021 22:46:51 +0000 (UTC)
-Subject: Re: [GIT PULL] aio poll fixes for 5.16-rc5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <YbOdV8CPbyPAF234@sol.localdomain>
-References: <YbOdV8CPbyPAF234@sol.localdomain>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <YbOdV8CPbyPAF234@sol.localdomain>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/aio-poll-for-linus
-X-PR-Tracked-Commit-Id: 4b3749865374899e115aa8c48681709b086fe6d3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0d21e6684779493d90f3dee90d4457d5b4aed8ad
-Message-Id: <163917641144.4787.12367310718709441357.pr-tracker-bot@kernel.org>
-Date:   Fri, 10 Dec 2021 22:46:51 +0000
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        s=k20201202; t=1639177238;
+        bh=Xf3wfuPLYn/SESXVwB3nh4TuzPlgFih4NYbO3gmcg18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PqmEu0kVkT+hrHBkWwXw69EzEtYbWKYEMBbLX9z/lY5lK0gUztiNcJSbeRhtGHmJt
+         vuyopJNHT0DXXA0GPDRKONnHjScc+xvb9mqzaa3/KMvH9pm8xnqdvlhv4EQBAEnIdT
+         TYgG2u+Kk43a8VbIB+bTxRg3YcT2MEapslbychbtPs2F72BnyKX1Rc4ZfdmeggvIuo
+         WBEeQl7h6mziPSx0TGidWC4ClwJNVHOjH4JNpc4nceKYIy6PzXcw04cEgSDrDbS9ya
+         s9Gl5gplIAtOxth+h+dVp0qrMCEmzduYdv2kgkMkFbU75r7YBw/ubk6klANRb9ukXA
+         rWVsX4vFjeATQ==
+Date:   Fri, 10 Dec 2021 15:00:36 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ramji Jiyani <ramjiyani@google.com>,
         Christoph Hellwig <hch@lst.de>,
         Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Martijn Coenen <maco@android.com>,
         Xie Yongji <xieyongji@bytedance.com>
+Subject: Re: [GIT PULL] aio poll fixes for 5.16-rc5
+Message-ID: <YbPcFIUFYmEueuXX@sol.localdomain>
+References: <YbOdV8CPbyPAF234@sol.localdomain>
+ <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 10 Dec 2021 10:32:55 -0800:
+On Fri, Dec 10, 2021 at 02:18:12PM -0800, Linus Torvalds wrote:
+> On Fri, Dec 10, 2021 at 10:33 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > This has been tested with the libaio test suite, as well as with test
+> > programs I wrote that reproduce the first two bugs.  I am sending this
+> > pull request myself as no one seems to be maintaining this code.
+> 
+> Pulled.
+> 
+> The "nobody really maintains or cares about epoll/aio" makes me wonder
+> if we should just remove the "if EXPERT" from the config options we
+> have on them, and start encouraging people to perhaps not even build
+> that code any more?
+> 
+> Because I'm sure we have users of it, but maybe they are few enough
+> that saying "don't enable this feature unless you need it" is the
+> right thing to do...
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/aio-poll-for-linus
+Isn't epoll more commonly used than aio?  Either way, removing 'if EXPERT' from
+both would make sense, so that they aren't forced on just because someone didn't
+set CONFIG_EXPERT.  I think that a lot of people have these options enabled but
+don't need them.  Android used to be in that boat for CONFIG_AIO (i.e. it wasn't
+needed but was sometimes enabled anyway, maybe due to !CONFIG_EXPERT).
+Unfortunately Android has started depending on CONFIG_AIO, so it seems Android
+will need to keep it set, but I think most other Linux systems don't need it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0d21e6684779493d90f3dee90d4457d5b4aed8ad
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+- Eric
