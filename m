@@ -2,81 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E91470E49
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 00:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C663D470EF3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 00:50:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243632AbhLJXER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Dec 2021 18:04:17 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:48782 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239946AbhLJXEQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Dec 2021 18:04:16 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 66864B82A0E;
-        Fri, 10 Dec 2021 23:00:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5501C00446;
-        Fri, 10 Dec 2021 23:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639177238;
-        bh=Xf3wfuPLYn/SESXVwB3nh4TuzPlgFih4NYbO3gmcg18=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PqmEu0kVkT+hrHBkWwXw69EzEtYbWKYEMBbLX9z/lY5lK0gUztiNcJSbeRhtGHmJt
-         vuyopJNHT0DXXA0GPDRKONnHjScc+xvb9mqzaa3/KMvH9pm8xnqdvlhv4EQBAEnIdT
-         TYgG2u+Kk43a8VbIB+bTxRg3YcT2MEapslbychbtPs2F72BnyKX1Rc4ZfdmeggvIuo
-         WBEeQl7h6mziPSx0TGidWC4ClwJNVHOjH4JNpc4nceKYIy6PzXcw04cEgSDrDbS9ya
-         s9Gl5gplIAtOxth+h+dVp0qrMCEmzduYdv2kgkMkFbU75r7YBw/ubk6klANRb9ukXA
-         rWVsX4vFjeATQ==
-Date:   Fri, 10 Dec 2021 15:00:36 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ramji Jiyani <ramjiyani@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Xie Yongji <xieyongji@bytedance.com>
-Subject: Re: [GIT PULL] aio poll fixes for 5.16-rc5
-Message-ID: <YbPcFIUFYmEueuXX@sol.localdomain>
-References: <YbOdV8CPbyPAF234@sol.localdomain>
- <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com>
+        id S240235AbhLJXyX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 18:54:23 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:33572 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233117AbhLJXyU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Dec 2021 18:54:20 -0500
+Received: from [10.130.0.135] (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9AxKsjC57NhGAMGAA--.13314S3;
+        Sat, 11 Dec 2021 07:50:27 +0800 (CST)
+Subject: Re: [PATCH 1/2] kdump: vmcore: move copy_to() from vmcore.c to
+ uaccess.h
+To:     Andrew Morton <akpm@linux-foundation.org>
+References: <1639143361-17773-1-git-send-email-yangtiezhu@loongson.cn>
+ <1639143361-17773-2-git-send-email-yangtiezhu@loongson.cn>
+ <20211210085903.e7820815e738d7dc6da06050@linux-foundation.org>
+Cc:     Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        x86@kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <249b17ea-171a-49f7-b438-488c03fa1f9b@loongson.cn>
+Date:   Sat, 11 Dec 2021 07:50:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com>
+In-Reply-To: <20211210085903.e7820815e738d7dc6da06050@linux-foundation.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf9AxKsjC57NhGAMGAA--.13314S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw4fuF47Zr17JryxKry5CFg_yoW8Kryxpr
+        1UJrZIkr4IgFWUJFyqywn3X34rXw43CF1UJ393KF18A3WDXrn2vFnYvFyYgay8J3sIkF10
+        ya4kXryfCr4qyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
+        WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+        2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+        W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+        0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY02Avz4vE14v_uwCF04k20xvY0x0EwIxGrw
+        CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+        14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+        IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
+        x2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+        AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUUubyJUUUUU==
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 10, 2021 at 02:18:12PM -0800, Linus Torvalds wrote:
-> On Fri, Dec 10, 2021 at 10:33 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > This has been tested with the libaio test suite, as well as with test
-> > programs I wrote that reproduce the first two bugs.  I am sending this
-> > pull request myself as no one seems to be maintaining this code.
-> 
-> Pulled.
-> 
-> The "nobody really maintains or cares about epoll/aio" makes me wonder
-> if we should just remove the "if EXPERT" from the config options we
-> have on them, and start encouraging people to perhaps not even build
-> that code any more?
-> 
-> Because I'm sure we have users of it, but maybe they are few enough
-> that saying "don't enable this feature unless you need it" is the
-> right thing to do...
+On 12/11/2021 12:59 AM, Andrew Morton wrote:
+> On Fri, 10 Dec 2021 21:36:00 +0800 Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+>
+>> In arch/*/kernel/crash_dump*.c, there exist similar code about
+>> copy_oldmem_page(), move copy_to() from vmcore.c to uaccess.h,
+>> and then we can use copy_to() to simplify the related code.
+>>
+>> ...
+>>
+>> --- a/fs/proc/vmcore.c
+>> +++ b/fs/proc/vmcore.c
+>> @@ -238,20 +238,6 @@ copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
+>>  	return copy_oldmem_page(pfn, buf, csize, offset, userbuf);
+>>  }
+>>
+>> -/*
+>> - * Copy to either kernel or user space
+>> - */
+>> -static int copy_to(void *target, void *src, size_t size, int userbuf)
+>> -{
+>> -	if (userbuf) {
+>> -		if (copy_to_user((char __user *) target, src, size))
+>> -			return -EFAULT;
+>> -	} else {
+>> -		memcpy(target, src, size);
+>> -	}
+>> -	return 0;
+>> -}
+>> -
+>>  #ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
+>>  static int vmcoredd_copy_dumps(void *dst, u64 start, size_t size, int userbuf)
+>>  {
+>> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+>> index ac03940..4a6c3e4 100644
+>> --- a/include/linux/uaccess.h
+>> +++ b/include/linux/uaccess.h
+>> @@ -201,6 +201,20 @@ copy_to_user(void __user *to, const void *from, unsigned long n)
+>>  	return n;
+>>  }
+>>
+>> +/*
+>> + * Copy to either kernel or user space
+>> + */
+>> +static inline int copy_to(void *target, void *src, size_t size, int userbuf)
+>> +{
+>> +	if (userbuf) {
+>> +		if (copy_to_user((char __user *) target, src, size))
+>> +			return -EFAULT;
+>> +	} else {
+>> +		memcpy(target, src, size);
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>
+> Ordinarily I'd say "this is too large to be inlined".  But the function
+> has only a single callsite per architecture so inlining it won't cause
+> bloat at present.
+>
+> But hopefully copy_to() will get additional callers in the future, in
+> which case it shouldn't be inlined.  So I'm thinking it would be best
+> to start out with this as a regular non-inlined function, in
+> lib/usercopy.c.
+>
+> Also, copy_to() is a very poor name for a globally-visible helper
+> function.  Better would be copy_to_user_or_kernel(), although that's
+> perhaps a bit long.
+>
+> And the `userbuf' arg should have type bool, yes?
+>
 
-Isn't epoll more commonly used than aio?  Either way, removing 'if EXPERT' from
-both would make sense, so that they aren't forced on just because someone didn't
-set CONFIG_EXPERT.  I think that a lot of people have these options enabled but
-don't need them.  Android used to be in that boat for CONFIG_AIO (i.e. it wasn't
-needed but was sometimes enabled anyway, maybe due to !CONFIG_EXPERT).
-Unfortunately Android has started depending on CONFIG_AIO, so it seems Android
-will need to keep it set, but I think most other Linux systems don't need it.
+Hi Andrew,
 
-- Eric
+Thank you very much for your reply and suggestion, I agree with you,
+I will send v2 later.
+
+Thanks,
+Tiezhu
+
