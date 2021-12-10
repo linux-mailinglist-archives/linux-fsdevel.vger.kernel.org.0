@@ -2,81 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27667470CB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 22:39:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A70E8470CFE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 23:18:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344515AbhLJVnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Dec 2021 16:43:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45622 "EHLO
+        id S1344665AbhLJWWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 17:22:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344479AbhLJVnR (ORCPT
+        with ESMTP id S231806AbhLJWWH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Dec 2021 16:43:17 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E89A9C061746;
-        Fri, 10 Dec 2021 13:39:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=IImUyHw0fYTRLw6PD6GbmYZPbFq6ycRb3COIrcJBmNM=; b=cshpw5exgnpCxe3IJDUVDMQl4O
-        TuzN7v7xORQE5wFkhFbzXOc5tUECKd6uR8Mn/vONWx1Y/FhS+H8vjQD7tf8YeE67qc6WcuanrEVnt
-        c+TcEHZiawu/bbhJ3LWJvDvNEGm3bt9Xg2q/kwmrBhNCQH/R9+ksN4Du0EoOXBMOjFMszV4LviCJz
-        6G2zk0XM7xNkiV96DADT5SPlOvTBUWmdc3u4MEAfUw5/Q7Tc5TAC+z1b4788628eLv0hyJUzMzL7j
-        Lg/7VjzZz4chhCBybmdCL4lTLJuDyrPU6uV0CV1OaoKNy+/RhR+fgs/GBiIhRckkVBtBLxqZhB2rO
-        QcepcvtQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mvnc3-003tf7-KO; Fri, 10 Dec 2021 21:39:31 +0000
-Date:   Fri, 10 Dec 2021 13:39:31 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     tj@kernel.org, akpm@linux-foundation.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
-        rostedt@goodmis.org, minchan@kernel.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        copyleft-next@lists.fedorahosted.org
-Subject: Re: [PATCH v9 3/6] selftests: add tests_sysfs module
-Message-ID: <YbPJEznncIVSKQvH@bombadil.infradead.org>
-References: <20211029184500.2821444-1-mcgrof@kernel.org>
- <20211029184500.2821444-4-mcgrof@kernel.org>
- <Yao3vtSKBKLyQY1E@kroah.com>
- <YbFgaSPPw4Y3pJoB@bombadil.infradead.org>
+        Fri, 10 Dec 2021 17:22:07 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E765C061746
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Dec 2021 14:18:31 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id g14so33401145edb.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Dec 2021 14:18:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cg9eQLIFJh+c6PyNxKtwuoKrLTzGB9EH7kdUWu2F1Zk=;
+        b=fjIKNDYtImPkvWhc4Gzi5Y6kMJ6cnfwQ/RiqfRI3cJHc25v1vy7IG2bDsPj2nuZIGT
+         51kR6CzBU9d3pc//4CNDX/22b5STyxSY/wCTyZFr3DIT4TWnZdcmUvdF0IU0AIQesRdy
+         hdx1nxWmkamQyMD1PEbF6tpMVytL5ULQW17oA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cg9eQLIFJh+c6PyNxKtwuoKrLTzGB9EH7kdUWu2F1Zk=;
+        b=Ef/ir5FeOmdbpSIweMqlpX66Ljs265WgBgTuGwFj/rWR9wqmw6L3gm6rtPzyMdbp3i
+         31fiLpgdCfHtYefbyBPef/e1lmVCSD7qvYHh/cFxwkeYj5/Gj1HQaSxkxQVJvXbIyV8R
+         PZXJNj79Fg4jz0PM4eqMNbyr8VwQKEiqIGshZi2LpJWgjgj0ztiIMu9KrBrohpzYUQV8
+         qVb3jRMgXN7l+2YKADMgilLm6NyCpqGnX+CqZQcR64V5Qd3esp2mq0N76TblLVq6MNmY
+         +Z2jwYwOLGdMPaSN8DKyYE4lzJTLTIE/Vgf9m6V9zmMs5jpLDP+WtxpNzSy77mWf0MgH
+         ZJyA==
+X-Gm-Message-State: AOAM530xSzn2SPa3GWONA2yjljXIkbl0dgxhIF8O28Porm/cH5n2771y
+        0EVXsbQ1e2CoPKXdC4KeSLMwVaBb6szJuQFqfBM=
+X-Google-Smtp-Source: ABdhPJzHUjHNa574Won6cJU80ehUz64WkuqHMdoeHbvAFlfyVLaT8BJ15kvI473StWKfVBwbYIQYEA==
+X-Received: by 2002:a17:906:31c2:: with SMTP id f2mr27677091ejf.341.1639174709830;
+        Fri, 10 Dec 2021 14:18:29 -0800 (PST)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id sb19sm2129432ejc.120.2021.12.10.14.18.28
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Dec 2021 14:18:29 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id c4so17248008wrd.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Dec 2021 14:18:28 -0800 (PST)
+X-Received: by 2002:adf:8b0e:: with SMTP id n14mr15756314wra.281.1639174708611;
+ Fri, 10 Dec 2021 14:18:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YbFgaSPPw4Y3pJoB@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <YbOdV8CPbyPAF234@sol.localdomain>
+In-Reply-To: <YbOdV8CPbyPAF234@sol.localdomain>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 10 Dec 2021 14:18:12 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com>
+Message-ID: <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com>
+Subject: Re: [GIT PULL] aio poll fixes for 5.16-rc5
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ramji Jiyani <ramjiyani@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Xie Yongji <xieyongji@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 08, 2021 at 05:48:25PM -0800, Luis Chamberlain wrote:
-> On Fri, Dec 03, 2021 at 04:29:02PM +0100, Greg KH wrote:
-> > On Fri, Oct 29, 2021 at 11:44:57AM -0700, Luis Chamberlain wrote:
-> > > This adds a new selftest module which can be used to test sysfs, which
-> > > would otherwise require using an existing driver. This lets us muck
-> > > with a template driver to test breaking things without affecting
-> > > system behaviour or requiring the dependencies of a real device
-> > > driver.
-> > 
-> > Test sysfs "how"?  What exactly are you wanting to test?
-> 
-> You can look at the 32 tests added after all patches applied.
-> 
-> > I see lots of things in this code as examples of how to NOT use sysfs,
-> > so are you testing my review cycles?  :)
-> 
-> You are exagerating, there are 32 tests there and only 2 tests deal
-> with a deadlock which we are not yet sure how widespread it could be.
+On Fri, Dec 10, 2021 at 10:33 AM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> This has been tested with the libaio test suite, as well as with test
+> programs I wrote that reproduce the first two bugs.  I am sending this
+> pull request myself as no one seems to be maintaining this code.
 
-Also very important is how one test uses failure injection support to proove
-how getting the kernfs active reference suffices to avoid crashes with
-module removal and uses of sysfs ops in a driver, something which *you*
-did not believe to be true but the code speaks for itself. This is also
-why uses of try_module_get() is *safe* if used on sysfs ops.
+Pulled.
 
-  Luis
+The "nobody really maintains or cares about epoll/aio" makes me wonder
+if we should just remove the "if EXPERT" from the config options we
+have on them, and start encouraging people to perhaps not even build
+that code any more?
+
+Because I'm sure we have users of it, but maybe they are few enough
+that saying "don't enable this feature unless you need it" is the
+right thing to do...
+
+               Linus
