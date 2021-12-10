@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C6146FBBC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 08:36:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A824546FBAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 08:36:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238001AbhLJHkb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Dec 2021 02:40:31 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:27308 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237801AbhLJHkP (ORCPT
+        id S237748AbhLJHkL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 02:40:11 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:36090 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237639AbhLJHkF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Dec 2021 02:40:15 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0V-8E0Pg_1639121786;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V-8E0Pg_1639121786)
+        Fri, 10 Dec 2021 02:40:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0V-8E0Pr_1639121788;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V-8E0Pr_1639121788)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 10 Dec 2021 15:36:27 +0800
+          Fri, 10 Dec 2021 15:36:28 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         chao@kernel.org, linux-erofs@lists.ozlabs.org
@@ -23,9 +23,9 @@ Cc:     linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
         bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
         gerry@linux.alibaba.com, eguan@linux.alibaba.com,
         linux-kernel@vger.kernel.org
-Subject: [RFC 06/19] netfs: add type field to struct netfs_read_request
-Date:   Fri, 10 Dec 2021 15:36:06 +0800
-Message-Id: <20211210073619.21667-7-jefflexu@linux.alibaba.com>
+Subject: [RFC 07/19] netfs: add netfs_readpage_demand()
+Date:   Fri, 10 Dec 2021 15:36:07 +0800
+Message-Id: <20211210073619.21667-8-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20211210073619.21667-1-jefflexu@linux.alibaba.com>
 References: <20211210073619.21667-1-jefflexu@linux.alibaba.com>
@@ -35,57 +35,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fscache/cachefiles used to serve as a local cache for remote fs.
-This patch set introduces a new use case, in which local read-only
-fs could implement demand read with fscache.
+netfs_readpage_demand() is the demand-read version of
+netfs_readpage().
 
-Thus 'type' field is used to distinguish which mode netfs API works in.
-
-Besides, in demand-read case, local fs using fscache for demand-read
-can't offer and also doesn't need the file handle of the netfs file. The
-input folio of netfs_readpage() is may not a page cache inside the
-address space of the netfs file, and may be just a temporary page
-containing the data. What netfs API needs to do is just move data from
-backing file the the input folio. Thus buffer the folio in 'struct
-netfs_read_request'.
+When netfs API works in demand-read mode, fs using fscache shall call
+netfs_readpage_demand() instead.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- include/linux/netfs.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/netfs/read_helper.c | 63 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/netfs.h  |  3 ++
+ 2 files changed, 66 insertions(+)
 
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index b46c39d98bbd..638ea5d63869 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -148,6 +148,11 @@ struct netfs_read_subrequest {
- #define NETFS_SREQ_NO_PROGRESS		4	/* Set if we didn't manage to read any data */
- };
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 9240b85548e4..26fa688f6300 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -1022,6 +1022,69 @@ int netfs_readpage(struct file *file,
+ }
+ EXPORT_SYMBOL(netfs_readpage);
  
-+enum netfs_read_request_type {
-+	NETFS_TYPE_CACHE,
-+	NETFS_TYPE_DEMAND,
-+};
++int netfs_readpage_demand(struct folio *folio,
++			  const struct netfs_read_request_ops *ops,
++			  void *netfs_priv)
++{
++	struct netfs_read_request *rreq;
++	unsigned int debug_index = 0;
++	int ret;
++
++	_enter("%lx", folio_index(folio));
++
++	rreq = __netfs_alloc_read_request(ops, netfs_priv, NULL);
++	if (!rreq) {
++		if (netfs_priv)
++			ops->cleanup(netfs_priv, folio_file_mapping(folio));
++		folio_unlock(folio);
++		return -ENOMEM;
++	}
++	rreq->type	= NETFS_TYPE_DEMAND;
++	rreq->folio	= folio;
++	rreq->start	= folio_file_pos(folio);
++	rreq->len	= folio_size(folio);
++	__set_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags);
++
++	if (ops->begin_cache_operation) {
++		ret = ops->begin_cache_operation(rreq);
++		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS) {
++			folio_unlock(folio);
++			goto out;
++		}
++	}
++
++	netfs_stat(&netfs_n_rh_readpage);
++	trace_netfs_read(rreq, rreq->start, rreq->len, netfs_read_trace_readpage);
++
++	netfs_get_read_request(rreq);
++
++	atomic_set(&rreq->nr_rd_ops, 1);
++	do {
++		if (!netfs_rreq_submit_slice(rreq, &debug_index))
++			break;
++
++	} while (rreq->submitted < rreq->len);
++
++	/* Keep nr_rd_ops incremented so that the ref always belongs to us, and
++	 * the service code isn't punted off to a random thread pool to
++	 * process.
++	 */
++	do {
++		wait_var_event(&rreq->nr_rd_ops, atomic_read(&rreq->nr_rd_ops) == 1);
++		netfs_rreq_assess(rreq, false);
++	} while (test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags));
++
++	ret = rreq->error;
++	if (ret == 0 && rreq->submitted < rreq->len) {
++		trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_readpage);
++		ret = -EIO;
++	}
++out:
++	netfs_put_read_request(rreq, false);
++	return ret;
++}
++EXPORT_SYMBOL(netfs_readpage_demand);
 +
  /*
-  * Descriptor for a read helper request.  This is used to make multiple I/O
-  * requests on a variety of sources and then stitch the result together.
-@@ -156,6 +161,7 @@ struct netfs_read_request {
- 	struct work_struct	work;
- 	struct inode		*inode;		/* The file being accessed */
- 	struct address_space	*mapping;	/* The mapping being accessed */
-+	struct folio		*folio;
- 	struct netfs_cache_resources cache_resources;
- 	struct list_head	subrequests;	/* Requests to fetch I/O from disk or net */
- 	void			*netfs_priv;	/* Private data for the netfs */
-@@ -177,6 +183,7 @@ struct netfs_read_request {
- #define NETFS_RREQ_FAILED		4	/* The request failed */
- #define NETFS_RREQ_IN_PROGRESS		5	/* Unlocked when the request completes */
- 	const struct netfs_read_request_ops *netfs_ops;
-+	enum netfs_read_request_type type;
- };
- 
- /*
+  * Prepare a folio for writing without reading first
+  * @folio: The folio being prepared
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 638ea5d63869..de6948bcc80a 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -261,6 +261,9 @@ extern int netfs_readpage(struct file *,
+ 			  struct folio *,
+ 			  const struct netfs_read_request_ops *,
+ 			  void *);
++extern int netfs_readpage_demand(struct folio *,
++				 const struct netfs_read_request_ops *,
++				 void *);
+ extern int netfs_write_begin(struct file *, struct address_space *,
+ 			     loff_t, unsigned int, unsigned int, struct folio **,
+ 			     void **,
 -- 
 2.27.0
 
