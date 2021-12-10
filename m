@@ -2,254 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 094284701D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 14:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECA03470269
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Dec 2021 15:05:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242341AbhLJNkZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Dec 2021 08:40:25 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:59978 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242123AbhLJNjw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Dec 2021 08:39:52 -0500
-Received: from linux.localdomain (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9AxusjBV7Nh3OEFAA--.12281S4;
-        Fri, 10 Dec 2021 21:36:03 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        x86@kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] kdump: crashdump: use copy_to() to simplify the related code
-Date:   Fri, 10 Dec 2021 21:36:01 +0800
-Message-Id: <1639143361-17773-3-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1639143361-17773-1-git-send-email-yangtiezhu@loongson.cn>
-References: <1639143361-17773-1-git-send-email-yangtiezhu@loongson.cn>
-X-CM-TRANSID: AQAAf9AxusjBV7Nh3OEFAA--.12281S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3XrW5CF1rtr1fXr4fJF17Awb_yoW7KF13pr
-        1vk39ayr4Ig3Z8GasrtrnrWFW0qwn7G3W7J3yDC3WrZwnaqwnFvw1kJas2g3yjqr15KryF
-        yF95Kr4Yy3y8W3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPab7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-        8067AKxVWUXwA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF
-        64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcV
-        CY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE
-        c7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I
-        8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCF
-        s4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY02
-        Avz4vE14v_Xr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-        x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-        43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-        7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-        WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
-        yuWlDUUUU
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S235847AbhLJOJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 09:09:11 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:49471 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235766AbhLJOJL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Dec 2021 09:09:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639145135;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1IPYd/U/Ts1tZJpb5JWXIO6VaK+NnfSEAcLoJXiiX6k=;
+        b=FVZhbPJhHfpurZSWNWaSGKtgnHapmzVFS/pAtqNGkxF8gswnkom/yZHMy1L7jI4BRBPpJF
+        AamAOsBnJP//SBVeDZz3cDLN+jGAGAXEVypVwwXreQMgmyyL1I5KC0sayV6qTlpaG1O1xU
+        lWrUImrdPO35ZS/+qRXHVQ3NzKZdIsQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-507-AXVHfjlYNN-rOCr5ug7-OA-1; Fri, 10 Dec 2021 09:05:32 -0500
+X-MC-Unique: AXVHfjlYNN-rOCr5ug7-OA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECA031017965;
+        Fri, 10 Dec 2021 14:05:29 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.17.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C13919C59;
+        Fri, 10 Dec 2021 14:05:02 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id AC32F2209DD; Fri, 10 Dec 2021 09:05:01 -0500 (EST)
+Date:   Fri, 10 Dec 2021 09:05:01 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>, dm-devel@redhat.com,
+        nvdimm@lists.linux.dev, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 5/5] dax: always use _copy_mc_to_iter in dax_copy_to_iter
+Message-ID: <YbNejVRF5NQB0r83@redhat.com>
+References: <20211209063828.18944-1-hch@lst.de>
+ <20211209063828.18944-6-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211209063828.18944-6-hch@lst.de>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use copy_to() to simplify the related code about copy_oldmem_page()
-in arch/*/kernel/crash_dump*.c files.
+On Thu, Dec 09, 2021 at 07:38:28AM +0100, Christoph Hellwig wrote:
+> While using the MC-safe copy routines is rather pointless on a virtual device
+> like virtiofs,
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/arm/kernel/crash_dump.c     | 10 ++--------
- arch/arm64/kernel/crash_dump.c   | 10 ++--------
- arch/ia64/kernel/crash_dump.c    | 10 ++++------
- arch/mips/kernel/crash_dump.c    |  9 ++-------
- arch/powerpc/kernel/crash_dump.c |  7 ++-----
- arch/riscv/kernel/crash_dump.c   |  9 ++-------
- arch/sh/kernel/crash_dump.c      |  9 ++-------
- arch/x86/kernel/crash_dump_32.c  |  9 ++-------
- arch/x86/kernel/crash_dump_64.c  |  9 ++-------
- 9 files changed, 20 insertions(+), 62 deletions(-)
+I was wondering about that. Is it completely pointless.
 
-diff --git a/arch/arm/kernel/crash_dump.c b/arch/arm/kernel/crash_dump.c
-index 53cb924..6491f1d 100644
---- a/arch/arm/kernel/crash_dump.c
-+++ b/arch/arm/kernel/crash_dump.c
-@@ -40,14 +40,8 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
- 	if (!vaddr)
- 		return -ENOMEM;
- 
--	if (userbuf) {
--		if (copy_to_user(buf, vaddr + offset, csize)) {
--			iounmap(vaddr);
--			return -EFAULT;
--		}
--	} else {
--		memcpy(buf, vaddr + offset, csize);
--	}
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		csize = -EFAULT;
- 
- 	iounmap(vaddr);
- 	return csize;
-diff --git a/arch/arm64/kernel/crash_dump.c b/arch/arm64/kernel/crash_dump.c
-index 58303a9..496e6a5 100644
---- a/arch/arm64/kernel/crash_dump.c
-+++ b/arch/arm64/kernel/crash_dump.c
-@@ -38,14 +38,8 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
- 	if (!vaddr)
- 		return -ENOMEM;
- 
--	if (userbuf) {
--		if (copy_to_user((char __user *)buf, vaddr + offset, csize)) {
--			memunmap(vaddr);
--			return -EFAULT;
--		}
--	} else {
--		memcpy(buf, vaddr + offset, csize);
--	}
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		csize = -EFAULT;
- 
- 	memunmap(vaddr);
- 
-diff --git a/arch/ia64/kernel/crash_dump.c b/arch/ia64/kernel/crash_dump.c
-index 0ed3c3d..20f4c4e 100644
---- a/arch/ia64/kernel/crash_dump.c
-+++ b/arch/ia64/kernel/crash_dump.c
-@@ -39,13 +39,11 @@ copy_oldmem_page(unsigned long pfn, char *buf,
- 
- 	if (!csize)
- 		return 0;
-+
- 	vaddr = __va(pfn<<PAGE_SHIFT);
--	if (userbuf) {
--		if (copy_to_user(buf, (vaddr + offset), csize)) {
--			return -EFAULT;
--		}
--	} else
--		memcpy(buf, (vaddr + offset), csize);
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		return -EFAULT;
-+
- 	return csize;
- }
- 
-diff --git a/arch/mips/kernel/crash_dump.c b/arch/mips/kernel/crash_dump.c
-index 2e50f551..80704dc 100644
---- a/arch/mips/kernel/crash_dump.c
-+++ b/arch/mips/kernel/crash_dump.c
-@@ -24,13 +24,8 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
- 		return 0;
- 
- 	vaddr = kmap_local_pfn(pfn);
--
--	if (!userbuf) {
--		memcpy(buf, vaddr + offset, csize);
--	} else {
--		if (copy_to_user(buf, vaddr + offset, csize))
--			csize = -EFAULT;
--	}
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		csize = -EFAULT;
- 
- 	kunmap_local(vaddr);
- 
-diff --git a/arch/powerpc/kernel/crash_dump.c b/arch/powerpc/kernel/crash_dump.c
-index 5693e1c67..43b2658 100644
---- a/arch/powerpc/kernel/crash_dump.c
-+++ b/arch/powerpc/kernel/crash_dump.c
-@@ -71,11 +71,8 @@ void __init setup_kdump_trampoline(void)
- static size_t copy_oldmem_vaddr(void *vaddr, char *buf, size_t csize,
-                                unsigned long offset, int userbuf)
- {
--	if (userbuf) {
--		if (copy_to_user((char __user *)buf, (vaddr + offset), csize))
--			return -EFAULT;
--	} else
--		memcpy(buf, (vaddr + offset), csize);
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		return -EFAULT;
- 
- 	return csize;
- }
-diff --git a/arch/riscv/kernel/crash_dump.c b/arch/riscv/kernel/crash_dump.c
-index 86cc0ad..707fbc1 100644
---- a/arch/riscv/kernel/crash_dump.c
-+++ b/arch/riscv/kernel/crash_dump.c
-@@ -33,13 +33,8 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
- 	if (!vaddr)
- 		return -ENOMEM;
- 
--	if (userbuf) {
--		if (copy_to_user((char __user *)buf, vaddr + offset, csize)) {
--			memunmap(vaddr);
--			return -EFAULT;
--		}
--	} else
--		memcpy(buf, vaddr + offset, csize);
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		csize = -EFAULT;
- 
- 	memunmap(vaddr);
- 	return csize;
-diff --git a/arch/sh/kernel/crash_dump.c b/arch/sh/kernel/crash_dump.c
-index 5b41b59..2af9286 100644
---- a/arch/sh/kernel/crash_dump.c
-+++ b/arch/sh/kernel/crash_dump.c
-@@ -33,13 +33,8 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
- 
- 	vaddr = ioremap(pfn << PAGE_SHIFT, PAGE_SIZE);
- 
--	if (userbuf) {
--		if (copy_to_user((void __user *)buf, (vaddr + offset), csize)) {
--			iounmap(vaddr);
--			return -EFAULT;
--		}
--	} else
--	memcpy(buf, (vaddr + offset), csize);
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		csize = -EFAULT;
- 
- 	iounmap(vaddr);
- 	return csize;
-diff --git a/arch/x86/kernel/crash_dump_32.c b/arch/x86/kernel/crash_dump_32.c
-index 5fcac46..731658b 100644
---- a/arch/x86/kernel/crash_dump_32.c
-+++ b/arch/x86/kernel/crash_dump_32.c
-@@ -54,13 +54,8 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
- 		return -EFAULT;
- 
- 	vaddr = kmap_local_pfn(pfn);
--
--	if (!userbuf) {
--		memcpy(buf, vaddr + offset, csize);
--	} else {
--		if (copy_to_user(buf, vaddr + offset, csize))
--			csize = -EFAULT;
--	}
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		csize = -EFAULT;
- 
- 	kunmap_local(vaddr);
- 
-diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
-index a7f617a..8e7c192 100644
---- a/arch/x86/kernel/crash_dump_64.c
-+++ b/arch/x86/kernel/crash_dump_64.c
-@@ -29,13 +29,8 @@ static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
- 	if (!vaddr)
- 		return -ENOMEM;
- 
--	if (userbuf) {
--		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
--			iounmap((void __iomem *)vaddr);
--			return -EFAULT;
--		}
--	} else
--		memcpy(buf, vaddr + offset, csize);
-+	if (copy_to(buf, vaddr + offset, csize, userbuf))
-+		csize = -EFAULT;
- 
- 	set_iounmap_nonlazy();
- 	iounmap((void __iomem *)vaddr);
--- 
-2.1.0
+Typically we are just mapping host page cache into qemu address space.
+That shows as virtiofs device pfn in guest and that pfn is mapped into
+guest application address space in mmap() call.
+
+Given on host its DRAM, so I would not expect machine check on load side
+so there was no need to use machine check safe variant. But what if host
+filesystem is on persistent memory and using DAX. In that case load in
+guest can trigger a machine check. Not sure if that machine check will
+actually travel into the guest and unblock read() operation or not.
+
+But this sounds like a good change from virtiofs point of view, anyway.
+
+Thanks
+Vivek
+
+
+> it also isn't harmful at all.  So just use _copy_mc_to_iter
+> unconditionally to simplify the code.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/dax/super.c | 10 ----------
+>  fs/fuse/virtio_fs.c |  1 -
+>  include/linux/dax.h |  1 -
+>  3 files changed, 12 deletions(-)
+> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index ff676a07480c8..fe783234ca669 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -107,8 +107,6 @@ enum dax_device_flags {
+>  	DAXDEV_SYNC,
+>  	/* do not use uncached operations to write data */
+>  	DAXDEV_CACHED,
+> -	/* do not use mcsafe operations to read data */
+> -	DAXDEV_NOMCSAFE,
+>  };
+>  
+>  /**
+> @@ -171,8 +169,6 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+>  	 * via access_ok() in vfs_red, so use the 'no check' version to bypass
+>  	 * the HARDENED_USERCOPY overhead.
+>  	 */
+> -	if (test_bit(DAXDEV_NOMCSAFE, &dax_dev->flags))
+> -		return _copy_to_iter(addr, bytes, i);
+>  	return _copy_mc_to_iter(addr, bytes, i);
+>  }
+>  
+> @@ -242,12 +238,6 @@ void set_dax_cached(struct dax_device *dax_dev)
+>  }
+>  EXPORT_SYMBOL_GPL(set_dax_cached);
+>  
+> -void set_dax_nomcsafe(struct dax_device *dax_dev)
+> -{
+> -	set_bit(DAXDEV_NOMCSAFE, &dax_dev->flags);
+> -}
+> -EXPORT_SYMBOL_GPL(set_dax_nomcsafe);
+> -
+>  bool dax_alive(struct dax_device *dax_dev)
+>  {
+>  	lockdep_assert_held(&dax_srcu);
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 754319ce2a29b..d9c20b148ac19 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -838,7 +838,6 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+>  	if (IS_ERR(fs->dax_dev))
+>  		return PTR_ERR(fs->dax_dev);
+>  	set_dax_cached(fs->dax_dev);
+> -	set_dax_nomcsafe(fs->dax_dev);
+>  	return devm_add_action_or_reset(&vdev->dev, virtio_fs_cleanup_dax,
+>  					fs->dax_dev);
+>  }
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index d22cbf03d37d2..d267331bc37e7 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -90,7 +90,6 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
+>  #endif
+>  
+>  void set_dax_cached(struct dax_device *dax_dev);
+> -void set_dax_nomcsafe(struct dax_device *dax_dev);
+>  
+>  struct writeback_control;
+>  #if defined(CONFIG_BLOCK) && defined(CONFIG_FS_DAX)
+> -- 
+> 2.30.2
+> 
 
