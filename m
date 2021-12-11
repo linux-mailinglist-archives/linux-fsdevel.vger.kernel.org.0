@@ -2,68 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D4F471514
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 18:51:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C70347151B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 18:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbhLKRvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Dec 2021 12:51:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbhLKRvA (ORCPT
+        id S230389AbhLKRxv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Dec 2021 12:53:51 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:48496 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230023AbhLKRxu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Dec 2021 12:51:00 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B2FC061714;
-        Sat, 11 Dec 2021 09:51:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=NeLcXd3rCUW11H5q6lj3WBajFaZ0nROX1lQbEfPAe50=; b=AUem481ZozwyJeZxF1t/0jRGCP
-        LSpDUjvS0AYcGLu0C05bPH5cbhuQxpUU38yTaKgOC2dldabdYRFWdO7fy0mK6Lo/46uzWBWN/O6z2
-        b8csLu9awk6SQ6zpySsCQ/CwsUToDSnsLTktVs0l0ufrIvQWqcZHzwoInj7ns4LlS9n76bwwPfgkW
-        c5R02ti75YTvfMl4zTq9Y5wjzpYSwl01qdgDW4S1YlkvfP/3RERtCkj9CNnFeafBCOj5g2y2yqy9M
-        qYoqODoRYjrCTgyDOnGElyDVVOO3YV9Ted7scILgznTOQFvYuxcqWBwsNwPpVthn3/384gGtTUYTA
-        PkXRKKeQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mw6WJ-00BMwC-B4; Sat, 11 Dec 2021 17:50:51 +0000
-Date:   Sat, 11 Dec 2021 17:50:51 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] iomap: turn the byte variable in iomap_zero_iter into a
- ssize_t
-Message-ID: <YbTk+1I4VFQpgjM/@casper.infradead.org>
-References: <20211208091203.2927754-1-hch@lst.de>
+        Sat, 11 Dec 2021 12:53:50 -0500
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-14-gpculCQTMuGutzfqbGQ0WA-1; Sat, 11 Dec 2021 17:53:47 +0000
+X-MC-Unique: gpculCQTMuGutzfqbGQ0WA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.26; Sat, 11 Dec 2021 17:53:46 +0000
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.026; Sat, 11 Dec 2021 17:53:46 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Tiezhu Yang' <yangtiezhu@loongson.cn>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Xuefeng Li <lixuefeng@loongson.cn>
+Subject: RE: [PATCH v2 0/2] kdump: simplify code
+Thread-Topic: [PATCH v2 0/2] kdump: simplify code
+Thread-Index: AQHX7j/jzYqw5kMpA0qY43nH0kUm2Kwtku5w
+Date:   Sat, 11 Dec 2021 17:53:46 +0000
+Message-ID: <0c5cb37139af4f3e85cc2c5115d7d006@AcuMS.aculab.com>
+References: <1639193588-7027-1-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <1639193588-7027-1-git-send-email-yangtiezhu@loongson.cn>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211208091203.2927754-1-hch@lst.de>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 08, 2021 at 10:12:03AM +0100, Christoph Hellwig wrote:
-> bytes also hold the return value from iomap_write_end, which can contain
-> a negative error value.  As bytes is always less than the page size even
-> the signed type can hold the entire possible range.
+From: Tiezhu Yang
+> Sent: 11 December 2021 03:33
+> 
+> v2:
+>   -- add copy_to_user_or_kernel() in lib/usercopy.c
+>   -- define userbuf as bool type
 
-iomap_write_end() can't return an errno.  I went through and checked as
-part of the folio conversion.  It actually has two return values -- 0
-on error and 'len' on success.  And it can't have an error because
-that only occurs if 'copied' is less than 'length'.
+Instead of having a flag to indicate whether the buffer is user or kernel,
+would it be better to have two separate buffer pointers.
+One for a user space buffer, the other for a kernel space buffer.
+Exactly one of the buffers should always be NULL.
 
-So I think this should actually be:
+That way the flag is never incorrectly set.
 
--               bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
--               if (bytes < 0)
--                       return bytes;
-+               status = iomap_write_end(iter, pos, bytes, bytes, folio);
-+               if (WARN_ON_ONCE(status == 0))
-+                       return -EIO;
+	David
 
-just like its counterpart loop in iomap_unshare_iter()
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-(ok this won't apply to Dan's tree, but YKWIM)
