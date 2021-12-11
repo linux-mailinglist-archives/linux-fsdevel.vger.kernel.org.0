@@ -2,38 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 964C94711F2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 06:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC19B471201
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 06:44:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbhLKFg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Dec 2021 00:36:27 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:54496 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229630AbhLKFg0 (ORCPT
+        id S229693AbhLKFs1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Dec 2021 00:48:27 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:39478 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229502AbhLKFs0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Dec 2021 00:36:26 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0V-DjWG1_1639200767;
-Received: from 192.168.31.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V-DjWG1_1639200767)
+        Sat, 11 Dec 2021 00:48:26 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0V-DNfxn_1639201487;
+Received: from 192.168.31.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V-DNfxn_1639201487)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 11 Dec 2021 13:32:48 +0800
-Message-ID: <aff937a0-b8fb-b9fc-22ef-d0099b392461@linux.alibaba.com>
-Date:   Sat, 11 Dec 2021 13:32:47 +0800
+          Sat, 11 Dec 2021 13:44:48 +0800
+Message-ID: <a95618c5-723d-bfaa-bf7a-48950be8d31d@linux.alibaba.com>
+Date:   Sat, 11 Dec 2021 13:44:47 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.3.2
-Subject: Re: [RFC 02/19] cachefiles: implement key scheme for demand-read mode
+Subject: Re: [Linux-cachefs] [RFC 09/19] netfs: refactor netfs_rreq_unlock()
 Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, xiang@kernel.org, chao@kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
-        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org
-References: <20211210073619.21667-3-jefflexu@linux.alibaba.com>
- <20211210073619.21667-1-jefflexu@linux.alibaba.com>
- <269788.1639134293@warthog.procyon.org.uk>
 From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <269788.1639134293@warthog.procyon.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     chao@kernel.org, tao.peng@linux.alibaba.com,
+        linux-kernel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        linux-cachefs@redhat.com, bo.liu@linux.alibaba.com,
+        linux-fsdevel@vger.kernel.org, xiang@kernel.org,
+        gerry@linux.alibaba.com, linux-erofs@lists.ozlabs.org,
+        eguan@linux.alibaba.com
+References: <20211210073619.21667-10-jefflexu@linux.alibaba.com>
+ <20211210073619.21667-1-jefflexu@linux.alibaba.com>
+ <292572.1639150908@warthog.procyon.org.uk>
+ <fba8a28b-14c1-bf58-0578-32415c95f55d@linux.alibaba.com>
+In-Reply-To: <fba8a28b-14c1-bf58-0578-32415c95f55d@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -42,33 +44,30 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 12/10/21 7:04 PM, David Howells wrote:
-> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+On 12/11/21 1:23 PM, JeffleXu wrote:
 > 
->> Thus simplify the logic of placing backing files, in which backing files
->> are under "cache/<volume>/" directory directly.
 > 
-> You then have a scalability issue on the directory inode lock - and there may
-> also be limits on the capacity of a directory.  The hash function is meant to
-> work the same, no matter the cpu arch, so you should be able to copy that to
-> userspace and derive the hash yourself.
-
-Yes, as described in the cover letter, I plan to make the hashing
-algorithm used by cachefiles built-in into our user daemon, so that the
-user daemon could place the blob file on the right place. Then the core
-logic of cachefiles won't be touched as much as possible.
-
+> On 12/10/21 11:41 PM, David Howells wrote:
+>> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>>
+>>> In demand-read case, the input folio of netfs API is may not the page
+>>
+>> "is may not the page"?  I think you're missing a verb (and you have too many
+>> auxiliary verbs;-)
+>>
 > 
->> Also skip coherency checking currently to ease the development and debug.
+> Sorry for my poor English... What I want to express is that
 > 
-> Better if you can do that in erofs rather than cachefiles.  Just set your
-> coherency data to all zeros or something.
+> "In demand-read case, the input folio of netfs API may not be the page
+> cache inside the address space of the netfs file."
 > 
 
-Yes it is preferred to keep the general part of cachefiles untouched.
-Later we can set "CacheFiles.cache" xattr on blob files in advance to
-pass this check.
-
+By the way, can we change the current address_space based netfs API to
+folio-based, which shall be more general? That is, the current
+implementation of netfs API uses (address_space, page_offset, len) tuple
+to describe the destination where the read data shall be store into.
+While in the demand-read case, the input folio may not be the page
+cache, and thus there's no address_space attached with it.
 
 -- 
 Thanks,
