@@ -2,138 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E37D347122E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 07:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35A92471245
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 07:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbhLKGkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Dec 2021 01:40:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbhLKGkG (ORCPT
+        id S229759AbhLKG5f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Dec 2021 01:57:35 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:34240 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229685AbhLKG5f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Dec 2021 01:40:06 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CF7C061714;
-        Fri, 10 Dec 2021 22:40:05 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id fv9-20020a17090b0e8900b001a6a5ab1392so9287726pjb.1;
-        Fri, 10 Dec 2021 22:40:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YOmWgj2DxdohruN6t1jhLzVebqIDyQ6/9OEYQxNzBg0=;
-        b=avF8g6XTx8SXtkscJO5GafrYodx7aduWYE3dYkSVMyLazEekKe1vVFk1AcFgyRBi6D
-         KLtMP+qE/Amw1XwaQT/yoZ7FOpLwpBIsjgKmZHipCkgkLFNTE6AqlpV1aH5qy7E7MmSl
-         Qm6JgY75X1B3qkf/H2k7QvWLl8G9yHb61vg4+ii+LxdBRZLuOVbmTGjafvriHmt9NNf2
-         C2Gdtyfny7jByIehwd+AyV30ha9OKEIw3yPh05v5AvFtaFqno5FojQ8vmgGFIAbxiGEE
-         h9szKpnk6ljwBnYCjFwml3+o+AVuPYrMIgmExUuBfP4zdOzo4zP83bUHVEc1hawnKN1j
-         56yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YOmWgj2DxdohruN6t1jhLzVebqIDyQ6/9OEYQxNzBg0=;
-        b=TMVBGicERsFuIKKy+F9Yu02a1zdhH5P1TCU8I0jOAhavTMQpYxO/EDws4oM+iv+Hwk
-         AJaLAsBmWYOkhR8jIxAWffEXa7UkDb+paYGSrLck2KHwC3Rykn2r8zOJODe6IvW/WK84
-         d9QE5Di+e4J/XsUnDKch9ZGiG6CRCerfFe/OPmXYuEWTRTMoiZ8PUh0zKn8Nq785AtjF
-         XsMwzG6NR1yC236ab1znuusAA5T6GG4H+nWYE9abRtuiqfZmZz599+HIRk+OcBXglhbC
-         yzTTldzORhwZsBviYDWOEVpOU/8jhlLFnv60AmHsrgasDxFyk+9C/ioKTSIr+Reh7AMs
-         Ov7Q==
-X-Gm-Message-State: AOAM533LrE/gW5/FbmOOKEAvn9Um+xwfN1ZuZebJ6tKN+dw99tkqcoM8
-        caw9zWviJuO74igYWgeKSSI=
-X-Google-Smtp-Source: ABdhPJyBEqkEghuO8KOI7906KYxsqu3siKTh85eWa5YxoDkG4ZEkClWkFiRCnC3BaaN4x8agFkpY0w==
-X-Received: by 2002:a17:90b:1b45:: with SMTP id nv5mr29250796pjb.120.1639204805586;
-        Fri, 10 Dec 2021 22:40:05 -0800 (PST)
-Received: from vultr.guest ([45.76.74.237])
-        by smtp.gmail.com with ESMTPSA id mr2sm869638pjb.25.2021.12.10.22.40.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 22:40:05 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     akpm@linux-foundation.org, rostedt@goodmis.org,
-        keescook@chromium.org, pmladek@suse.com, david@redhat.com,
-        arnaldo.melo@gmail.com, andrii.nakryiko@gmail.com,
-        alexei.starovoitov@gmail.com
-Cc:     linux-mm@kvack.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH -mm v2 3/3] tools/perf: replace old hard-coded 16 with TASK_COMM_LEN_16
-Date:   Sat, 11 Dec 2021 06:39:49 +0000
-Message-Id: <20211211063949.49533-4-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211211063949.49533-1-laoar.shao@gmail.com>
-References: <20211211063949.49533-1-laoar.shao@gmail.com>
+        Sat, 11 Dec 2021 01:57:35 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V-DZw3U_1639205850;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V-DZw3U_1639205850)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 11 Dec 2021 14:57:33 +0800
+Date:   Sat, 11 Dec 2021 14:57:30 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     David Howells <dhowells@redhat.com>, chao@kernel.org,
+        tao.peng@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, linux-cachefs@redhat.com,
+        bo.liu@linux.alibaba.com, linux-fsdevel@vger.kernel.org,
+        xiang@kernel.org, gerry@linux.alibaba.com,
+        linux-erofs@lists.ozlabs.org, eguan@linux.alibaba.com
+Subject: Re: [Linux-cachefs] [RFC 09/19] netfs: refactor netfs_rreq_unlock()
+Message-ID: <YbRL2glGzjfZkVbH@B-P7TQMD6M-0146.local>
+Mail-Followup-To: JeffleXu <jefflexu@linux.alibaba.com>,
+        David Howells <dhowells@redhat.com>, chao@kernel.org,
+        tao.peng@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, linux-cachefs@redhat.com,
+        bo.liu@linux.alibaba.com, linux-fsdevel@vger.kernel.org,
+        xiang@kernel.org, gerry@linux.alibaba.com,
+        linux-erofs@lists.ozlabs.org, eguan@linux.alibaba.com
+References: <20211210073619.21667-10-jefflexu@linux.alibaba.com>
+ <20211210073619.21667-1-jefflexu@linux.alibaba.com>
+ <292572.1639150908@warthog.procyon.org.uk>
+ <fba8a28b-14c1-bf58-0578-32415c95f55d@linux.alibaba.com>
+ <a95618c5-723d-bfaa-bf7a-48950be8d31d@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a95618c5-723d-bfaa-bf7a-48950be8d31d@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-evsel-tp-sched will verify the task comm len in sched:sched_switch
-and sched:sched_wakeup tracepoints. In order to make it grepable, we'd
-better replace the hard-coded 16 with TASK_COMM_LEN_16.
+Hi Jeffle,
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Petr Mladek <pmladek@suse.com>
----
- tools/perf/tests/evsel-tp-sched.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+On Sat, Dec 11, 2021 at 01:44:47PM +0800, JeffleXu wrote:
+> 
+> 
+> On 12/11/21 1:23 PM, JeffleXu wrote:
+> > 
+> > 
+> > On 12/10/21 11:41 PM, David Howells wrote:
+> >> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+> >>
+> >>> In demand-read case, the input folio of netfs API is may not the page
+> >>
+> >> "is may not the page"?  I think you're missing a verb (and you have too many
+> >> auxiliary verbs;-)
+> >>
+> > 
+> > Sorry for my poor English... What I want to express is that
+> > 
+> > "In demand-read case, the input folio of netfs API may not be the page
+> > cache inside the address space of the netfs file."
+> > 
+> 
+> By the way, can we change the current address_space based netfs API to
+> folio-based, which shall be more general? That is, the current
+> implementation of netfs API uses (address_space, page_offset, len) tuple
+> to describe the destination where the read data shall be store into.
+> While in the demand-read case, the input folio may not be the page
+> cache, and thus there's no address_space attached with it.
 
-diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-tp-sched.c
-index cf4da3d748c2..8be44b8e2b9c 100644
---- a/tools/perf/tests/evsel-tp-sched.c
-+++ b/tools/perf/tests/evsel-tp-sched.c
-@@ -5,6 +5,8 @@
- #include "tests.h"
- #include "debug.h"
- 
-+#define TASK_COMM_LEN_16 16
-+
- static int evsel__test_field(struct evsel *evsel, const char *name, int size, bool should_be_signed)
- {
- 	struct tep_format_field *field = evsel__field(evsel, name);
-@@ -43,7 +45,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
- 		return -1;
- 	}
- 
--	if (evsel__test_field(evsel, "prev_comm", 16, false))
-+	if (evsel__test_field(evsel, "prev_comm", TASK_COMM_LEN_16, false))
- 		ret = -1;
- 
- 	if (evsel__test_field(evsel, "prev_pid", 4, true))
-@@ -55,7 +57,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
- 	if (evsel__test_field(evsel, "prev_state", sizeof(long), true))
- 		ret = -1;
- 
--	if (evsel__test_field(evsel, "next_comm", 16, false))
-+	if (evsel__test_field(evsel, "next_comm", TASK_COMM_LEN_16, false))
- 		ret = -1;
- 
- 	if (evsel__test_field(evsel, "next_pid", 4, true))
-@@ -73,7 +75,7 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
- 		return -1;
- 	}
- 
--	if (evsel__test_field(evsel, "comm", 16, false))
-+	if (evsel__test_field(evsel, "comm", TASK_COMM_LEN_16, false))
- 		ret = -1;
- 
- 	if (evsel__test_field(evsel, "pid", 4, true))
--- 
-2.17.1
+Thanks for your hard effort on this!
 
+Just a rough look. Could we use a pseudo inode (actually the current
+managed_inode can be used as this) to retain metadata for fscache
+scenarios? (since it's better to cache all metadata rather than drop
+directly, also the alloc_page() - free_page() cycle takes more time).
+
+Also if my own limited understanding is correct, you could directly
+use file inode pages with netfs_readpage_demand() rather than
+get_meta_page and then memcpy to the file inode pages.
+
+Thanks,
+Gao Xiang
+
+> 
+> -- 
+> Thanks,
+> Jeffle
