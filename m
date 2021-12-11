@@ -2,82 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF47E470F93
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 01:46:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36D99470FB7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 02:03:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345516AbhLKAtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Dec 2021 19:49:43 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52131 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1345515AbhLKAtm (ORCPT
+        id S1345515AbhLKBGg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Dec 2021 20:06:36 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:27734 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234568AbhLKBGf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Dec 2021 19:49:42 -0500
-Received: from callcc.thunk.org (guestnat-104-133-8-106.corp.google.com [104.133.8.106] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1BB0jeK9013733
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Dec 2021 19:45:41 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 9C31E4205DB; Fri, 10 Dec 2021 19:45:39 -0500 (EST)
-Date:   Fri, 10 Dec 2021 19:45:39 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ramji Jiyani <ramjiyani@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Xie Yongji <xieyongji@bytedance.com>
-Subject: Re: [GIT PULL] aio poll fixes for 5.16-rc5
-Message-ID: <YbP0s7E1a5s+6q9B@mit.edu>
-References: <YbOdV8CPbyPAF234@sol.localdomain>
- <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com>
- <YbPcFIUFYmEueuXX@sol.localdomain>
+        Fri, 10 Dec 2021 20:06:35 -0500
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BANhkRV021853;
+        Sat, 11 Dec 2021 01:02:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2021-07-09; bh=8fAWasTCPnJSxekMKOm74e92kXZQz3YEz4utQmiVLOQ=;
+ b=eS6tlH2pGYyyPDI1tO4HReQK/USxy0+Qr6LMN+QSIKUW7kcDa8bY5qEPyDJ70dlFeINh
+ J/KyfoXW6dBUeW/dITmgAlGuB24lVRfBvRZvdJxmUnJs0XlhnWvGpYgE8wlhy2ciDyrm
+ SPl+zrx9eRTyAyEQHgzJZVo1io3faoa4htYoLJJ6i2Ijplwjb0c0YyLAITZeftp2AYAS
+ kRJeizI32Yro9RM/psR5e5C6dFcDRGoGqBulgid9CQqa9aN9pEL8cx0XeNDxw2MksKYG
+ +CG70X/omLblzIwfH1XXXMS12Rt1WhvBrOU6H4NfjMivF4xTRlW5nvNztAgNiOYMBWPN ig== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cve1v8atu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 11 Dec 2021 01:02:57 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1BB11Lif152886;
+        Sat, 11 Dec 2021 01:02:56 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 3cvh3saduy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 11 Dec 2021 01:02:56 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1BB12tDV159105;
+        Sat, 11 Dec 2021 01:02:55 GMT
+Received: from userp3020.oracle.com (ksplice-shell2.us.oracle.com [10.152.118.36])
+        by userp3030.oracle.com with ESMTP id 3cvh3sadtr-1;
+        Sat, 11 Dec 2021 01:02:55 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     bfields@fieldses.org
+Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC v7 0/2] nfsd: Initial implementation of NFSv4 Courteous Server
+Date:   Fri, 10 Dec 2021 20:02:42 -0500
+Message-Id: <20211211010244.44599-1-dai.ngo@oracle.com>
+X-Mailer: git-send-email 2.20.1.1226.g1595ea5.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YbPcFIUFYmEueuXX@sol.localdomain>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: w7bzi_OxjEswzBt5OeG22tUiea1aS2aD
+X-Proofpoint-GUID: w7bzi_OxjEswzBt5OeG22tUiea1aS2aD
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 10, 2021 at 03:00:36PM -0800, Eric Biggers wrote:
-> 
-> Isn't epoll more commonly used than aio?  Either way, removing 'if EXPERT' from
-> both would make sense, so that they aren't forced on just because someone didn't
-> set CONFIG_EXPERT.  I think that a lot of people have these options enabled but
-> don't need them.  Android used to be in that boat for CONFIG_AIO (i.e. it wasn't
-> needed but was sometimes enabled anyway, maybe due to !CONFIG_EXPERT).
-> Unfortunately Android has started depending on CONFIG_AIO, so it seems Android
-> will need to keep it set, but I think most other Linux systems don't need it.
+Hi Bruce,
 
-Mysql and Postgress both can use libaio, and I suspect many
-distributions are compiling them with AIO enabled, since you can get
-better performance with AIO.  Fio also uses AIO, and many fio recipes
-that are trying to benchmark file systems or block devices use
-AIO/DIO.
+This series of patches implement the NFSv4 Courteous Server.
 
-It's fair to say that the libaio programming interface is pretty
-horrendo, and so very few application programmers will happy choosing
-to use it.  But if you really care about storage performance, whether
-you're implementing a database, or a cluster file system, it's likely
-that you will find yourself deciding to try to use it.
+A server which does not immediately expunge the state on lease expiration
+is known as a Courteous Server.  A Courteous Server continues to recognize
+previously generated state tokens as valid until conflict arises between
+the expired state and the requests from another client, or the server
+reboots.
 
-The fact that so many storage-centric userspace programs use it
-*desite* libaio's developer-hostile interface is a proof point of how
-much AIO can help with performance.  Maybe over time we can get folks
-to switch to io_uring, and we will eventually be able to get us to the
-happy place where most Linux systems won't need CONFIG_AIO.  But that
-day is not today.  :-/
+The v2 patch includes the following:
 
-So removing the dependency on CONFIG_EXPERT is probably a good idea,
-at least for now.
+. add new callback, lm_expire_lock, to lock_manager_operations to
+  allow the lock manager to take appropriate action with conflict lock.
 
-Cheers,
+. handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
 
-						- Ted
+. expire courtesy client after 24hr if client has not reconnected.
+
+. do not allow expired client to become courtesy client if there are
+  waiters for client's locks.
+
+. modify client_info_show to show courtesy client and seconds from
+  last renew.
+
+. fix a problem with NFSv4.1 server where the it keeps returning
+  SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+  the courtesy client re-connects, causing the client to keep sending
+  BCTS requests to server.
+
+The v3 patch includes the following:
+
+. modified posix_test_lock to check and resolve conflict locks
+  to handle NLM TEST and NFSv4 LOCKT requests.
+
+. separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v4 patch includes:
+
+. rework nfsd_check_courtesy to avoid dead lock of fl_lock and client_lock
+  by asking the laudromat thread to destroy the courtesy client.
+
+. handle NFSv4 share reservation conflicts with courtesy client. This
+  includes conflicts between access mode and deny mode and vice versa.
+
+. drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v5 patch includes:
+
+. fix recursive locking of file_rwsem from posix_lock_file. 
+
+. retest with LOCKDEP enabled.
+
+The v6 patch includes:
+
+. merge witn 5.15-rc7
+
+. fix a bug in nfs4_check_deny_bmap that did not check for matched
+  nfs4_file before checking for access/deny conflict. This bug causes
+  pynfs OPEN18 to fail since the server taking too long to release
+  lots of un-conflict clients' state.
+
+. enhance share reservation conflict handler to handle case where
+  a large number of conflict courtesy clients need to be expired.
+  The 1st 100 clients are expired synchronously and the rest are
+  expired in the background by the laundromat and NFS4ERR_DELAY
+  is returned to the NFS client. This is needed to prevent the
+  NFS client from timing out waiting got the reply.
+
+The v7 patch includes:
+
+. Fix race condition in posix_test_lock and posix_lock_inode after
+  dropping spinlock.
+
+. Enhance nfsd4_fl_expire_lock to work with with new lm_expire_lock
+  callback
+
+. Always resolve share reservation conflicts asynchrously.
+
+. Fix bug in nfs4_laundromat where spinlock is not used when
+  scanning cl_ownerstr_hashtbl.
+
+. Fix bug in nfs4_laundromat where idr_get_next was called
+  with incorrect 'id'. 
+
+. Merge nfs4_destroy_courtesy_client into nfsd4_fl_expire_lock.
+
+
