@@ -2,110 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D47D471407
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 14:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E6B4714CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 17:51:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbhLKNiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Dec 2021 08:38:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:36875 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231135AbhLKNh7 (ORCPT
+        id S231482AbhLKQvm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Dec 2021 11:51:42 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:28311 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230329AbhLKQvl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Dec 2021 08:37:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639229878;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/Z8c8lX7Q347Z+4ORdcMYBofXUvb1OCWCHdF//k2AV4=;
-        b=DNli0noFqJ8lUPi7jbfZT67rQaCSs+19MVIEc5UYfulLowkQdCev5HwDr6eJIFkRHy9hYF
-        ZpWFKUtDA6F+7Kzi9kJN5D0FtLeZa0oTeqopJBiU8l0IGOAvAWzX3rQQKZKcy+A58EgHov
-        IC2SZCBaLsn21IEsrGTdpr5Q+J6+oLY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-557-qp91NnnxO2W56AfTygDTXQ-1; Sat, 11 Dec 2021 08:37:55 -0500
-X-MC-Unique: qp91NnnxO2W56AfTygDTXQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1F5FF801AAB;
-        Sat, 11 Dec 2021 13:37:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BBF188F7;
-        Sat, 11 Dec 2021 13:37:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CALF+zOknSu_qkb9N0i4LY8tUtXmXirSsU7gGZsUOtLu8c88ieg@mail.gmail.com>
-References: <CALF+zOknSu_qkb9N0i4LY8tUtXmXirSsU7gGZsUOtLu8c88ieg@mail.gmail.com> <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk> <163906979003.143852.2601189243864854724.stgit@warthog.procyon.org.uk>
-To:     David Wysochanski <dwysocha@redhat.com>
-Cc:     dhowells@redhat.com, linux-cachefs <linux-cachefs@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 62/67] nfs: Convert to new fscache volume/cookie API
-MIME-Version: 1.0
+        Sat, 11 Dec 2021 11:51:41 -0500
+Received: from canpemm500004.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JBDLh3l7XzcpMj;
+        Sun, 12 Dec 2021 00:51:24 +0800 (CST)
+Received: from dggpemm500003.china.huawei.com (7.185.36.56) by
+ canpemm500004.china.huawei.com (7.192.104.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Sun, 12 Dec 2021 00:51:39 +0800
+Received: from dggpemm500003.china.huawei.com ([7.185.36.56]) by
+ dggpemm500003.china.huawei.com ([7.185.36.56]) with mapi id 15.01.2308.020;
+ Sun, 12 Dec 2021 00:51:39 +0800
+From:   "miaoxie (A)" <miaoxie@huawei.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] pipe: Fix endless sleep problem due to the out-of-order
+Thread-Topic: [PATCH] pipe: Fix endless sleep problem due to the out-of-order
+Thread-Index: AdfurjGw4gOQnK4ySKaGWPpzRyQ7Eg==
+Date:   Sat, 11 Dec 2021 16:51:39 +0000
+Message-ID: <31566e37493540ada2dda862fe8fb32b@huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.174.178.227]
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <353627.1639229864.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Sat, 11 Dec 2021 13:37:44 +0000
-Message-ID: <353628.1639229864@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Wysochanski <dwysocha@redhat.com> wrote:
+Thers is a out-of-order access problem which would cause endless sleep
+when we use pipe with epoll.
 
-> >  (4) fscache_enable/disable_cookie() have been removed.
-> >
-> >      Call fscache_use_cookie() and fscache_unuse_cookie() when a file =
-is
-> >      opened or closed to prevent a cache file from being culled and to=
- keep
-> >      resources to hand that are needed to do I/O.
-> >
-> >      Unuse the cookie when a file is opened for writing.  This is gate=
-d by
-> >      the NFS_INO_FSCACHE flag on the nfs_inode.
-> >
-> >      A better way might be to invalidate it with FSCACHE_INVAL_DIO_WRI=
-TE
-> >      which will keep it unused until all open files are closed.
-> >
-> =
+The story is following, we assume the ring size is 2, the ring head
+is 1, the ring tail is 0, task0 is write task, task1 is read task,
+task2 is write task.
+Task0					Task1		Task2
+epoll_ctl(fd, EPOLL_CTL_ADD, ...)
+  pipe_poll()
+    poll_wait()
+    tail = READ_ONCE(pipe->tail);
+    	// Re-order and get tail=0
+				  	pipe_read
+					tail++ //tail=1
+							pipe_write
+							head++ //head=2
+    head = READ_ONCE(pipe->head);
+    	// head = 2
+    check ring is full by head - tail
+Task0 get head = 2 and tail = 0, so it mistake that the pipe ring is
+full, then task0 is not add into ready list. If the ring is not full
+anymore, task0 would not be woken up forever
 
-> It looks like the comment doesn't match what was actually done inside
-> nfs_fscache_open_file().  Is the code right and the comment just out of =
-date?
+The reason of this problem is that we got inconsistent head/tail value
+of the pipe ring, so we fix the problem by getting them by atomic.
 
-The comment is out of date.  NFS_INO_FSCACHE isn't used now.
+It seems that pipe_readable and pipe_writable is safe, so we don't
+change them.
 
-> I'm getting that kasan UAF firing periodically in this code path, and so=
- it
-> looks related to this change,though I don't have great info on it so far=
- and
-> it's hard to reproduce.
+Signed-off-by: Miao Xie <miaoxie@huawei.com>
+---
+ fs/pipe.c                 |  6 ++++--
+ include/linux/pipe_fs_i.h | 32 ++++++++++++++++++++++++++++++--
+ 2 files changed, 34 insertions(+), 4 deletions(-)
 
-Can you copy the kasan UAF text into a reply?
-
-David
-
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 6d4342bad9f1..454056b1eaad 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -649,6 +649,7 @@ pipe_poll(struct file *filp, poll_table *wait)
+ 	__poll_t mask;
+ 	struct pipe_inode_info *pipe = filp->private_data;
+ 	unsigned int head, tail;
++	u64 ring_idxs;
+ 
+ 	/* Epoll has some historical nasty semantics, this enables them */
+ 	pipe->poll_usage = 1;
+@@ -669,8 +670,9 @@ pipe_poll(struct file *filp, poll_table *wait)
+ 	 * if something changes and you got it wrong, the poll
+ 	 * table entry will wake you up and fix it.
+ 	 */
+-	head = READ_ONCE(pipe->head);
+-	tail = READ_ONCE(pipe->tail);
++	ring_idxs = (u64)atomic64_read(&pipe->ring_idxs);
++	head = pipe_get_ring_head(ring_idxs);
++	tail = pipe_get_ring_tail(ring_idxs);
+ 
+ 	mask = 0;
+ 	if (filp->f_mode & FMODE_READ) {
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index fc5642431b92..9a7cb8077dc8 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -58,8 +58,18 @@ struct pipe_buffer {
+ struct pipe_inode_info {
+ 	struct mutex mutex;
+ 	wait_queue_head_t rd_wait, wr_wait;
+-	unsigned int head;
+-	unsigned int tail;
++	union {
++		/*
++		 * If someone want to change this structure, you should also
++		 * change the macro *PIPE_GET_DOORBELL* that is used to
++		 * generate the ring head/tail access function.
++		 */
++		struct {
++			unsigned int head;
++			unsigned int tail;
++		};
++		atomic64_t ring_idxs;
++	};
+ 	unsigned int max_usage;
+ 	unsigned int ring_size;
+ #ifdef CONFIG_WATCH_QUEUE
+@@ -82,6 +92,24 @@ struct pipe_inode_info {
+ #endif
+ };
+ 
++#define PIPE_GET_DOORBELL(bellname)					\
++static inline unsigned int pipe_get_ring_##bellname(u64 ring_idxs)	\
++{									\
++	unsigned int doorbell;						\
++	unsigned char *ptr = ((char *)&ring_idxs);			\
++	int offset;							\
++									\
++	offset = (int)offsetof(struct pipe_inode_info, bellname);	\
++	offset -= (int)offsetof(struct pipe_inode_info, ring_idxs);	\
++	ptr += offset;							\
++	doorbell = *((unsigned int *)ptr);				\
++									\
++	return doorbell;						\
++}
++
++PIPE_GET_DOORBELL(head)
++PIPE_GET_DOORBELL(tail)
++
+ /*
+  * Note on the nesting of these functions:
+  *
+-- 
+2.31.1
