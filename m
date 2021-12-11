@@ -2,85 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0CA24714E7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 18:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5D4F471514
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 18:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231549AbhLKRWp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Dec 2021 12:22:45 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:59644 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbhLKRWp (ORCPT
+        id S230011AbhLKRvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Dec 2021 12:51:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56434 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229952AbhLKRvA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Dec 2021 12:22:45 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 300BCB807E7;
-        Sat, 11 Dec 2021 17:22:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC295C004DD;
-        Sat, 11 Dec 2021 17:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639243363;
-        bh=El6ouO7d2qFEnbF2ztCBnEVpl9HgaAVXZ8f7fX/HH84=;
-        h=Date:From:To:Cc:Subject:From;
-        b=daXfTlTI/6JF1AFFjVl66cGwweFx3XW3o5ScqTwPfuAtWRwQ3hCZ9f+zPuWcDpkMU
-         GIEzoF2k6xK0uO+3NHJ6FHBS+BwId1qQ6o7BozKkXM08KNKKxXbv/8WawxLrHHm7+k
-         0BnAcOkt0wmPmROwx468stzs1PLu2CyQ6qRpHMqC1sAObzDuXZiAqpIKkjvG0AIO7m
-         JmK9oJnSDP/eeNIAwaSlfHLgjAYMMP8VnZ/flNnGve5ZsKk+PmA+0zrAKJmZv+9KaQ
-         BQh4z3hLVzh5wS8UHYGLnm+eO7zE9CY2Pd52Qi0a93A+kxgmoiSOL5EgulZN0vMRzd
-         KQ4iFfmSaKhFQ==
-Date:   Sat, 11 Dec 2021 09:22:42 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: bug fixes for 5.16-rc4
-Message-ID: <20211211172242.GH1218082@magnolia>
+        Sat, 11 Dec 2021 12:51:00 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B2FC061714;
+        Sat, 11 Dec 2021 09:51:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NeLcXd3rCUW11H5q6lj3WBajFaZ0nROX1lQbEfPAe50=; b=AUem481ZozwyJeZxF1t/0jRGCP
+        LSpDUjvS0AYcGLu0C05bPH5cbhuQxpUU38yTaKgOC2dldabdYRFWdO7fy0mK6Lo/46uzWBWN/O6z2
+        b8csLu9awk6SQ6zpySsCQ/CwsUToDSnsLTktVs0l0ufrIvQWqcZHzwoInj7ns4LlS9n76bwwPfgkW
+        c5R02ti75YTvfMl4zTq9Y5wjzpYSwl01qdgDW4S1YlkvfP/3RERtCkj9CNnFeafBCOj5g2y2yqy9M
+        qYoqODoRYjrCTgyDOnGElyDVVOO3YV9Ted7scILgznTOQFvYuxcqWBwsNwPpVthn3/384gGtTUYTA
+        PkXRKKeQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mw6WJ-00BMwC-B4; Sat, 11 Dec 2021 17:50:51 +0000
+Date:   Sat, 11 Dec 2021 17:50:51 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] iomap: turn the byte variable in iomap_zero_iter into a
+ ssize_t
+Message-ID: <YbTk+1I4VFQpgjM/@casper.infradead.org>
+References: <20211208091203.2927754-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20211208091203.2927754-1-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Wed, Dec 08, 2021 at 10:12:03AM +0100, Christoph Hellwig wrote:
+> bytes also hold the return value from iomap_write_end, which can contain
+> a negative error value.  As bytes is always less than the page size even
+> the signed type can hold the entire possible range.
 
-Please pull this branch for 5.16-rc4 that fixes a race between a
-readonly remount process and other processes that hold a file IOLOCK on
-files that previously experienced copy on write, that could result in
-severe filesystem corruption if the filesystem is then remounted rw.  I
-think this is fairly rare (since the only reliable reproducer I have
-that fits the second criteria is the experimental xfs_scrub program),
-but the race is clear, so we still need to fix this.
+iomap_write_end() can't return an errno.  I went through and checked as
+part of the folio conversion.  It actually has two return values -- 0
+on error and 'len' on success.  And it can't have an error because
+that only occurs if 'copied' is less than 'length'.
 
-The branch merges cleanly against upstream as of a few minutes ago.
-Please let me know if anything else strange happens during the merge
-process.
+So I think this should actually be:
 
---D
+-               bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
+-               if (bytes < 0)
+-                       return bytes;
++               status = iomap_write_end(iter, pos, bytes, bytes, folio);
++               if (WARN_ON_ONCE(status == 0))
++                       return -EIO;
 
-The following changes since commit e445976537ad139162980bee015b7364e5b64fff:
+just like its counterpart loop in iomap_unshare_iter()
 
-  xfs: remove incorrect ASSERT in xfs_rename (2021-12-01 17:27:48 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.16-fixes-3
-
-for you to fetch changes up to 089558bc7ba785c03815a49c89e28ad9b8de51f9:
-
-  xfs: remove all COW fork extents when remounting readonly (2021-12-07 10:17:29 -0800)
-
-----------------------------------------------------------------
-Fixes for 5.16-rc4:
- - Fix a data corruption vector that can result from the ro remount
-   process failing to clear all speculative preallocations from files
-   and the rw remount process not noticing the incomplete cleanup.
-
-----------------------------------------------------------------
-Darrick J. Wong (1):
-      xfs: remove all COW fork extents when remounting readonly
-
- fs/xfs/xfs_super.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+(ok this won't apply to Dan's tree, but YKWIM)
