@@ -2,138 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37701471EC0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 00:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7642C471ECE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 00:35:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbhLLX0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Dec 2021 18:26:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60484 "EHLO
+        id S229938AbhLLXfc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Dec 2021 18:35:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbhLLX0T (ORCPT
+        with ESMTP id S229505AbhLLXfc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Dec 2021 18:26:19 -0500
+        Sun, 12 Dec 2021 18:35:32 -0500
 Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A31C0617A2;
-        Sun, 12 Dec 2021 15:26:18 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id o4so13372370pfp.13;
-        Sun, 12 Dec 2021 15:26:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3A2C06173F;
+        Sun, 12 Dec 2021 15:35:32 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id p13so13447979pfw.2;
+        Sun, 12 Dec 2021 15:35:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VPgJ1ZBLaK/SiagUA6D9HAxFkvBdjZ231S8nVD4HBTw=;
-        b=PPY+LuTPIttKeYqqMu/nAZRlxt9KYXpDlXfNdXcYf9qtmR2Y/VkEp2fKKXairqAewy
-         w5bdat3R75NY/7PZUIru+dje5bTCJ1//npNOW3EQQkQhxcboKOGkVS7FJTmdDL+BMgSl
-         aZEDXjKr0+OFBYpDGIXl65nwp66ferqDYaRVoWT9r3mQA2vVDAVrC1IxXAQtvP0dj/+t
-         rOdiu/LAd1Y3nhiw2Bxg5rvvUXOuOq+22Fdk+C/1uQs9uHfU0Wmls+wwmv1KXCEiocGl
-         3xVI2mCYCJxlwLTFwVUxGNkk1W0joD4z4Xz0wnpTJB9w8/lA9pUBxjscQCFBNZ2gXcD+
-         in+Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Vul1OGbjqBROCNkeOAsbkteBYUXUUsTZZv/sSf95TQs=;
+        b=IY9xXNmoIlQPgefKKfU89Vk+s3rwK4ZnNF20PSf4TKmA3jgzBJKVbuRSeWhQQ7WdmT
+         bf2ti/O5Lyw6rItRLYcCuDznUhGE3WQ2uElZhMF0rZEEkN/HT9e7vKaElV10OKrBVnyX
+         FuBQkXBfXTU+qigolDluuxN55LuTm5W1rG2PCPyzy6MumpFeDXPoouMOeKd+6ggxOZsY
+         YtWAnmZBaIprJ6sI5e5+WcxnsmErfePq2xCEzkqMmYD6dfxiTBT62RR2YqiPCJngryes
+         70qVY+SVZ/ByWZzA/SLQszX6r9qkUVvqfjF8JOQFTrLC8vq93kIiZrqRvplFH1KxfvVA
+         safQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VPgJ1ZBLaK/SiagUA6D9HAxFkvBdjZ231S8nVD4HBTw=;
-        b=EaMgKByVvSfEnnqTykEZT488c7q2mvjmM+GpganM7WPqKmsuPPavd0i9i+i6UyM601
-         oN2856AXMZpL744F8kLhf+OjX8HxI6rHAAwwHQzPFAe1RtrSyAC0oevOkqM2vN0ZffJT
-         X4Tdq/atoa+joNeutxJP+kc/v9CblyygJCoyhaKWw87Ij9XOVTvgcUkHDnWTKcMimLrU
-         buyrrEltWXmYjUTxYYMRUHP6jMlVT5lbGSdtn6dWWvdiur1bqBHx9rPZGfzdkusqnQP9
-         9kLhJbcQ3zP1h69nWsx5X7eZN+E/PWqvo6sZ7F1bxo20NOJG4ZvhYCREYok0DfJReCud
-         VsYQ==
-X-Gm-Message-State: AOAM533OFolPM8HDHZuUWitAAn+umwZUkkcAqW5aIWWL4QPTp1lPA4i7
-        Omwmb3tp5xj+P/j5dI9fZEE=
-X-Google-Smtp-Source: ABdhPJzk1TkU5Qrgns6vRAxMWEo8IsSe3YmEtj+tQ5+WSxjBixDWtFNt+0QOkVEmhgo/GPrq9Kk/pA==
-X-Received: by 2002:a63:7e42:: with SMTP id o2mr51087458pgn.296.1639351578273;
-        Sun, 12 Dec 2021 15:26:18 -0800 (PST)
-Received: from hibiki.localdomain ([2400:2410:93a3:bc00:c35d:e29e:99a3:5fd9])
-        by smtp.googlemail.com with ESMTPSA id j7sm5281813pjf.41.2021.12.12.15.26.15
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Vul1OGbjqBROCNkeOAsbkteBYUXUUsTZZv/sSf95TQs=;
+        b=lKQEbvZN69gng6IpshhSw93e47yayLKDPaF/UQvr7uDMxWJAuDckiNdVvIy4GRAgPO
+         xGu146A3K0w4BAe77RR6CtDufpBGNXu9Zl7kVeZF7zxExEGupOWlQNvhWfFQryz/jmkc
+         is0QR9iDlNtVtaBIJcD2WKkCfHPfXdKbIPVfqzrT0cmnqcY3LesSOgtDBBCzHKaq4Cpp
+         JMQaSFtjfBUsjwo8nnAkPCTWSYdmXEYMNjOWUbtmYG8n5NW+RVH49/WPRYFZHRGCgZ8O
+         t2lUv+tf5Mi0m7zaefXU09EPfHKHGjSFSImvMfSNryPBJ/lx9tU11Xp6f7NMwj9fuMuE
+         /5OQ==
+X-Gm-Message-State: AOAM531ysgKuWUd9nWFrE0NZkuDbWuqMLvU81mxFyQcEJW0fkk5LjwAk
+        vFSLsJIbelxPpMAcay+zc/s=
+X-Google-Smtp-Source: ABdhPJxC3x7xtLN5DOMm6sXuyN+uKuUo+yEF+4+E+Tn+FT3R8GCQP3mi1y9CgGbN5YCUEItH16/zBA==
+X-Received: by 2002:a63:42c4:: with SMTP id p187mr49825420pga.585.1639352131821;
+        Sun, 12 Dec 2021 15:35:31 -0800 (PST)
+Received: from gmail.com ([2400:2410:93a3:bc00:c35d:e29e:99a3:5fd9])
+        by smtp.gmail.com with ESMTPSA id w19sm8443122pga.80.2021.12.12.15.35.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Dec 2021 15:26:17 -0800 (PST)
+        Sun, 12 Dec 2021 15:35:31 -0800 (PST)
+Date:   Mon, 13 Dec 2021 08:35:26 +0900
 From:   Akira Kawata <akirakawata1@gmail.com>
 To:     akpm@linux-foundation.org, adobriyan@gmail.com,
         viro@zeniv.linux.org.uk, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, lukas.bulwahn@gmail.com
-Cc:     akirakawata1@gmail.com, Eric Biederman <ebiederm@xmission.com>,
+Cc:     Eric Biederman <ebiederm@xmission.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] fs/binfmt_elf: Refactor load_elf_binary function
-Date:   Mon, 13 Dec 2021 08:24:15 +0900
-Message-Id: <20211212232414.1402199-6-akirakawata1@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211212232414.1402199-1-akirakawata1@gmail.com>
+Subject: Re: [PATCH v4 0/2] [PATCH v4 0/2] fs/binfmt_elf: Fix AT_PHDR for
+ unusual ELF files
+Message-ID: <20211212233526.ikyszt7jy4gzmita@gmail.com>
 References: <20211212232414.1402199-1-akirakawata1@gmail.com>
+ <20211212232414.1402199-4-akirakawata1@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211212232414.1402199-4-akirakawata1@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I delete load_addr because it is not used anymore. And I rename
-load_addr_set to first_pt_load because it is used only to capture the
-first iteration of the loop.
+On Mon, Dec 13, 2021 at 08:24:13AM +0900, Akira Kawata wrote:
+>  These patches fix a bug in AT_PHDR calculation. 
+>  
+>  We cannot calculate AT_PHDR as the sum of load_addr and exec->e_phoff.
+>  This is because exec->e_phoff is the offset of PHDRs in the file and the
+>  address of PHDRs in the memory may differ from it. These patches fix the
+>  bug by calculating the address of program headers from PT_LOADs
+>  directly.
+>  
+>  Sorry for my latency.
+>  
+>  Changes in v4
+>  - Reflecting comments from Lukas, add a refactoring commit.
+>  
+>  Changes in v3:
+>  - Fix a reported bug from kernel test robot.
+>  
+>  Changes in v2:
+>  - Remove unused load_addr from create_elf_tables.
+>  - Improve the commit message.
+> 
+> Akira Kawata (2):
+>   fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
+>   fs/binfmt_elf: Refactor load_elf_binary function
+> 
+>  fs/binfmt_elf.c | 36 +++++++++++++++++++++---------------
+>  1 file changed, 21 insertions(+), 15 deletions(-)
+> 
+> 
+> base-commit: 4eee8d0b64ecc3231040fa68ba750317ffca5c52
+> -- 
+> 2.34.1
+> 
 
-Signed-off-by: Akira Kawata <akirakawata1@gmail.com>
----
- fs/binfmt_elf.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+I am sorry for sending duplicated emails by mistake.
+Please ignore the later ones.
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 828e88841cb4..48206fd1a20e 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -822,8 +822,8 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
- static int load_elf_binary(struct linux_binprm *bprm)
- {
- 	struct file *interpreter = NULL; /* to shut gcc up */
--	unsigned long load_addr, load_bias = 0, phdr_addr = 0;
--	int load_addr_set = 0;
-+	unsigned long load_bias = 0, phdr_addr = 0;
-+	int first_pt_load = 1;
- 	unsigned long error;
- 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
- 	struct elf_phdr *elf_property_phdata = NULL;
-@@ -1073,12 +1073,12 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 
- 		vaddr = elf_ppnt->p_vaddr;
- 		/*
--		 * The first time through the loop, load_addr_set is false:
-+		 * The first time through the loop, first_pt_load is true:
- 		 * layout will be calculated. Once set, use MAP_FIXED since
- 		 * we know we've already safely mapped the entire region with
- 		 * MAP_FIXED_NOREPLACE in the once-per-binary logic following.
- 		 */
--		if (load_addr_set) {
-+		if (!first_pt_load) {
- 			elf_flags |= MAP_FIXED;
- 		} else if (elf_ex->e_type == ET_EXEC) {
- 			/*
-@@ -1138,10 +1138,10 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 
- 		/*
- 		 * Calculate the entire size of the ELF mapping (total_size).
--		 * (Note that load_addr_set is set to true later once the
-+		 * (Note that first_pt_load is set to false later once the
- 		 * initial mapping is performed.)
- 		 */
--		if (!load_addr_set) {
-+		if (first_pt_load) {
- 			total_size = total_mapping_size(elf_phdata,
- 							elf_ex->e_phnum);
- 			if (!total_size) {
-@@ -1158,13 +1158,11 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 			goto out_free_dentry;
- 		}
- 
--		if (!load_addr_set) {
--			load_addr_set = 1;
--			load_addr = (elf_ppnt->p_vaddr - elf_ppnt->p_offset);
-+		if (first_pt_load) {
-+			first_pt_load = 0;
- 			if (elf_ex->e_type == ET_DYN) {
- 				load_bias += error -
- 				             ELF_PAGESTART(load_bias + vaddr);
--				load_addr += load_bias;
- 				reloc_func_desc = load_bias;
- 			}
- 		}
--- 
-2.34.1
-
+Akira
