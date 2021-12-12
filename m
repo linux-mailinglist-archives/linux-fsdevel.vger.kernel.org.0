@@ -2,79 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF134716FF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Dec 2021 22:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E21E47176A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Dec 2021 01:34:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231641AbhLKV6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Dec 2021 16:58:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54072 "EHLO
+        id S232297AbhLLAev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Dec 2021 19:34:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231615AbhLKV6U (ORCPT
+        with ESMTP id S231836AbhLLAet (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Dec 2021 16:58:20 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2116C0698C4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Dec 2021 13:58:19 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id l25so40943795eda.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Dec 2021 13:58:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=hD0jfu1MWy/UXBkBYsVvOAZPApZLyir6gKavdc4BceI=;
-        b=SOBkDHN1upt351fJGA10IENq8Lskn6OtfiA/mtFXWwbxNo6rK0VqMIikUbNdR10QL9
-         NEz57nH7+DwD4ui2QjR5G0PDUg/x30DeYlpAViKmfLpj6c8owgTXHIRe2HlXrWJIYspc
-         p1qexb7VgQzyxOs2U317jKWC2PVt5FsJQNP/qzuU8HlodfKZxoIrg2Y5u0+UlgiuF7n+
-         KF6xHlFhNhhV0WZH+n1XpQNFkro1//sIniT/eC7+Qq7omDixZHJ42uWefxucVRQsgqoP
-         MP9jAyQEdDJw2KiXunMshfyB4wcDGfWvxehuLHSr6op0i/Er4qRI4zT2OKxsbV2QjSnP
-         PYpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=hD0jfu1MWy/UXBkBYsVvOAZPApZLyir6gKavdc4BceI=;
-        b=lIjfnKO0hM9/t1gfXKW/rZkHFfJz/C+s2VPf9nyIuEvNEt2VBr3eWX9TqtYsWvXwzb
-         qazyOlnGxAy0BenMDp75x+wlnb8cODHrgdEKqWBsCzfAh42XdnAcwQgKD0j7h0rrBWov
-         PCogH7/Ew6+kAhogbd2+PtoKvFiFvzB//HyvhEgLwcO5iorPoPHpqZbz8pEGxbmQo65W
-         QCyBvEiseW9HOFFwS+XXvHk4qx+JFO18RlupXm9+5xFTdv5MZKwYCnPXKVylbrJb9Ecs
-         0jNJLNn0zqYB/a+89/ixBlAyFbId95n1VHimgg0N9g4nX4bQCrQn8WsCDjSxSraOkefE
-         i1Ng==
-X-Gm-Message-State: AOAM530A54O+1ArqqKaET+jldyeKZEkYuhntZbbcb3lCfW/qtlY+5Rt0
-        kOirKf/ET85uFD1fDPHkgsDMhJvLc9mbJ80LpUc=
-X-Google-Smtp-Source: ABdhPJxTVLquc00JfCv8xmVg6F+Df36Ax6F8m8eI1vWHtjjPBaUzu2dvtxl/29t2QJINStCFpJhLct20UqzajIEroTA=
-X-Received: by 2002:a17:907:6da2:: with SMTP id sb34mr33325880ejc.509.1639259897490;
- Sat, 11 Dec 2021 13:58:17 -0800 (PST)
-MIME-Version: 1.0
-Reply-To: martinafrancis022@gmail.com
-Sender: rebeccaalhajidangombe@gmail.com
-Received: by 2002:a17:907:94d3:0:0:0:0 with HTTP; Sat, 11 Dec 2021 13:58:16
- -0800 (PST)
-From:   Martina Francis <martinafrancis61@gmail.com>
-Date:   Sat, 11 Dec 2021 13:58:16 -0800
-X-Google-Sender-Auth: QI6h_ccu4Os7HpLN5lf7FmNkMqQ
-Message-ID: <CANadOMYJBdKak2aObykULF4gdU88=OTR03g+XDqpCofMfFracg@mail.gmail.com>
-Subject: Bom Dia meu querido
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 11 Dec 2021 19:34:49 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105D4C061714;
+        Sat, 11 Dec 2021 16:34:49 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DEA3FB80B81;
+        Sun, 12 Dec 2021 00:34:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B0CFC004DD;
+        Sun, 12 Dec 2021 00:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639269285;
+        bh=WWyIsTZJSHNdano2d10Xl2eOTOGo/zid2rQWi4FFiZQ=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Y8yqPDGExPDwRwawD9I+hPtV1q1ddHj7OtnC08zotb/rnmNFm2BBQ6sMAF/4BctbM
+         av+29zkZ+wAqZIMO68oQ9MsIks0RLZ0eleTIMYE7cFuUgzvCuCU9RimSS6oJdrmxxX
+         TSUsvIY72Boystgiyu1mcHxZXNO8xcr7rspxT/wRX6/Bl2uf6+Wpx2l6NAbPYYc3LG
+         8aSfOq1bwTick7w5OUa7GRHkGN58FdgeaEVItIMjNNiCqUfGDz/2cQwSgXq5SY1XdS
+         1D4IqIWvyu6URnofG2RHzfmbVBZN1Zt94+DawpvjzLKUEwDReGrKE2lcYs74cUupIQ
+         E4uWWmXDkjl8A==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 7424960A4D;
+        Sun, 12 Dec 2021 00:34:45 +0000 (UTC)
+Subject: Re: [GIT PULL] xfs: bug fixes for 5.16-rc4
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20211211172242.GH1218082@magnolia>
+References: <20211211172242.GH1218082@magnolia>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20211211172242.GH1218082@magnolia>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.16-fixes-3
+X-PR-Tracked-Commit-Id: 089558bc7ba785c03815a49c89e28ad9b8de51f9
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e034d9cbf9f17613c954541f65390be5c35807fc
+Message-Id: <163926928546.10000.18339109912268195117.pr-tracker-bot@kernel.org>
+Date:   Sun, 12 Dec 2021 00:34:45 +0000
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-Bom Dia meu querido,
-Como vai voc=C3=AA hoje, meu nome =C3=A9 Dona Martina Francis, uma vi=C3=BA=
-va doente.
-Eu tenho um fundo de doa=C3=A7=C3=A3o de ($ 2.700.000,00 USD) MILH=C3=95ES =
-que quero
-doar atrav=C3=A9s de voc=C3=AA para ajudar os =C3=B3rf=C3=A3os, vi=C3=BAvas=
-, deficientes
-f=C3=ADsicos e casas de caridade.
+The pull request you sent on Sat, 11 Dec 2021 09:22:42 -0800:
 
-Por favor, volte para mim imediatamente ap=C3=B3s ler esta mensagem para
-obter mais detalhes sobre esta agenda humanit=C3=A1ria.
+> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.16-fixes-3
 
-Deus te aben=C3=A7oe enquanto espero sua resposta.
-Sua irm=C3=A3.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e034d9cbf9f17613c954541f65390be5c35807fc
 
-Sra. Martina Francis.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
