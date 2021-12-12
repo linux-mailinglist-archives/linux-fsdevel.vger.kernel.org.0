@@ -2,75 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C866A4719DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Dec 2021 12:47:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D93BA471AA6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Dec 2021 15:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbhLLLru (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Dec 2021 06:47:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34720 "EHLO
+        id S231396AbhLLOWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Dec 2021 09:22:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbhLLLrt (ORCPT
+        with ESMTP id S231393AbhLLOWb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Dec 2021 06:47:49 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84685C061714;
-        Sun, 12 Dec 2021 03:47:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=cdIWjpexE795gzuTbGkhPUpnRr/U2TeKiWDOHNiXINU=; b=DBuAHgfzGOIMRSDJohGgbB9HgK
-        ghrV2KCPdFwOYiKPJbGZmSBlu830exEyDU1H933xIMmToosr9grTCGE55WJZij6cZJgiJ1q30Hz6n
-        hZ10t4g0j/sD0EiJhnKSD6jRzu1/6oOpBcVGGwdhdZP63WKKmTkX5QTrHpV8qjjFHIi/X5QMWkaoG
-        kknEssmq/uipXQiDMvDkVUnKo+GmhJFGjhExQwE0EWBz9jMfQIQFxVuyBDOWKu8J+hXb6Owf3uTdh
-        8Fl4Is3Mc1bjDe5u/B8VTKoy9i1C2ETLTUE3K71/BU8t21Bssus2/nA1qsleo4QX3UFxfJvaTfFhq
-        xMZgWXeA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mwNKJ-00Bt8s-Ff; Sun, 12 Dec 2021 11:47:35 +0000
-Date:   Sun, 12 Dec 2021 11:47:35 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'Tiezhu Yang' <yangtiezhu@loongson.cn>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Xuefeng Li <lixuefeng@loongson.cn>
-Subject: Re: [PATCH v2 0/2] kdump: simplify code
-Message-ID: <YbXhVxRJfjvKw++W@casper.infradead.org>
-References: <1639193588-7027-1-git-send-email-yangtiezhu@loongson.cn>
- <0c5cb37139af4f3e85cc2c5115d7d006@AcuMS.aculab.com>
+        Sun, 12 Dec 2021 09:22:31 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6D8C061751
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Dec 2021 06:22:31 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id r130so12793831pfc.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Dec 2021 06:22:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DZjYIL5Meh9WPTLeEH+cczxaNrQ4dGhT95FlbuKwOdM=;
+        b=InloMfMHit9I2BP2ZAxscR4m8S0WqeQXb/3EdrF9Humvvh2KWl+DC597jSlAGabELB
+         DKTerSvnwB6GzWYotS0B9i033X/RFINibj/zOD0xrbstT+NhnIidusj/k7Ta2k1KwAr+
+         EG4TvrpQJgRKRNS+j8HgfWmKEn0+BAHbJ+kjXAkWBw/H2S7Ll4HSeVLamvPnZ0Gv8yyl
+         TLlpEyqP9KcyM139lWFcqovUaohDL62uyQPIquf1zd1gLEhLHxB1hln6xdDrM6LbhG63
+         WHJWWDnlHRBcfJYMi86Gvpdgy5byWgeSLzaPT/b6VuOcGwSqgKTbI7648s4ZDB3zrsX3
+         7FTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DZjYIL5Meh9WPTLeEH+cczxaNrQ4dGhT95FlbuKwOdM=;
+        b=iYnw2kTv9CXyWdPYjp++12nqZ/fjBbN9ILjSMuLwVEp4lCWGsGfxMPIxdAFhUqX5Q5
+         4cYQQz4q9SdkXtdyQWqobwaiP3shV1t2JIndSXf6w6i0GBZgmCAX7bkFxr8oY1slU00T
+         oaqqIRgsEC07Uc0btQP1mSsqG1AxA6mp84t/0YtilLv9opK8noqkKnsXmnOCSkIHYrbz
+         cabJgaosG5zH7t62MXcfZdG3Ppa9uXFM1GcuH46SpOL73/OdeYE00czIePP+t8nNa+G6
+         j9PgAMirfFXTv0MXkPaS3QB38IHo8xHdkQFJvgS/eBWJLOWRkkaX474tTWYhLCiVo49u
+         Nzdg==
+X-Gm-Message-State: AOAM533+FRrtrd9eIeRi7fEk2LZsnZd03OGtqdI428zWbqL52fNT4RJF
+        mlCmNG7G/Ai+9twRwRw6Xxcj6VZkK6NzTDab+8uLbw==
+X-Google-Smtp-Source: ABdhPJyxbhOi5AL5eM6jiu7484TwbdU5pKz4nFxYJvBebbsi3mSjMdfP5DTSAeCbzo51p2wcGaag8JGjamOTAXCXkd0=
+X-Received: by 2002:a62:7ec4:0:b0:4a3:219b:7008 with SMTP id
+ z187-20020a627ec4000000b004a3219b7008mr28747585pfc.3.1639318950463; Sun, 12
+ Dec 2021 06:22:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c5cb37139af4f3e85cc2c5115d7d006@AcuMS.aculab.com>
+References: <20211209063828.18944-1-hch@lst.de> <20211209063828.18944-2-hch@lst.de>
+In-Reply-To: <20211209063828.18944-2-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sun, 12 Dec 2021 06:22:20 -0800
+Message-ID: <CAPcyv4gwfVi389e+cES=E6O13+y36OffZPCe+iZguCT_gpjmZA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] uio: remove copy_from_iter_flushcache() and copy_mc_to_iter()
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 11, 2021 at 05:53:46PM +0000, David Laight wrote:
-> From: Tiezhu Yang
-> > Sent: 11 December 2021 03:33
-> > 
-> > v2:
-> >   -- add copy_to_user_or_kernel() in lib/usercopy.c
-> >   -- define userbuf as bool type
-> 
-> Instead of having a flag to indicate whether the buffer is user or kernel,
-> would it be better to have two separate buffer pointers.
-> One for a user space buffer, the other for a kernel space buffer.
-> Exactly one of the buffers should always be NULL.
+On Wed, Dec 8, 2021 at 10:38 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> These two wrappers are never used.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/nvdimm/pmem.c |  4 ++--
+>  include/linux/uio.h   | 20 +-------------------
+>  2 files changed, 3 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 4190c8c46ca88..8294f1c701baa 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -302,8 +302,8 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
+>  }
+>
+>  /*
+> - * Use the 'no check' versions of copy_from_iter_flushcache() and
+> - * copy_mc_to_iter() to bypass HARDENED_USERCOPY overhead. Bounds
+> + * Use the 'no check' versions of _copy_from_iter_flushcache() and
+> + * _copy_mc_to_iter() to bypass HARDENED_USERCOPY overhead. Bounds
+>   * checking, both file offset and device offset, is handled by
+>   * dax_iomap_actor()
+>   */
 
-No.  You should be using an iov_iter instead.  See
-https://lore.kernel.org/all/Ya4bdB0UBJCZhUSo@casper.infradead.org/
-for a start on this.
+This comment change does not make sense since it is saying why pmem is
+using the "_" versions. However, I assume this whole comment goes away
+in a later patch.
+
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 6350354f97e90..494d552c1d663 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -196,7 +196,7 @@ bool copy_from_iter_full_nocache(void *addr, size_t bytes, struct iov_iter *i)
+>  #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
+>  /*
+>   * Note, users like pmem that depend on the stricter semantics of
+> - * copy_from_iter_flushcache() than copy_from_iter_nocache() must check for
+> + * _copy_from_iter_flushcache() than _copy_from_iter_nocache() must check for
+>   * IS_ENABLED(CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE) before assuming that the
+>   * destination is flushed from the cache on return.
+>   */
+
+Same here.
+
+> @@ -211,24 +211,6 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
+>  #define _copy_mc_to_iter _copy_to_iter
+>  #endif
+>
+> -static __always_inline __must_check
+> -size_t copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
+> -{
+> -       if (unlikely(!check_copy_size(addr, bytes, false)))
+> -               return 0;
+> -       else
+> -               return _copy_from_iter_flushcache(addr, bytes, i);
+> -}
+> -
+> -static __always_inline __must_check
+> -size_t copy_mc_to_iter(void *addr, size_t bytes, struct iov_iter *i)
+> -{
+> -       if (unlikely(!check_copy_size(addr, bytes, true)))
+> -               return 0;
+> -       else
+> -               return _copy_mc_to_iter(addr, bytes, i);
+> -}
+> -
+>  size_t iov_iter_zero(size_t bytes, struct iov_iter *);
+>  unsigned long iov_iter_alignment(const struct iov_iter *i);
+>  unsigned long iov_iter_gap_alignment(const struct iov_iter *i);
+> --
+> 2.30.2
+>
