@@ -2,70 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E21E47176A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Dec 2021 01:34:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D532D4718D8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Dec 2021 07:24:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232297AbhLLAev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Dec 2021 19:34:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59258 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231836AbhLLAet (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Dec 2021 19:34:49 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105D4C061714;
-        Sat, 11 Dec 2021 16:34:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DEA3FB80B81;
-        Sun, 12 Dec 2021 00:34:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B0CFC004DD;
-        Sun, 12 Dec 2021 00:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639269285;
-        bh=WWyIsTZJSHNdano2d10Xl2eOTOGo/zid2rQWi4FFiZQ=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Y8yqPDGExPDwRwawD9I+hPtV1q1ddHj7OtnC08zotb/rnmNFm2BBQ6sMAF/4BctbM
-         av+29zkZ+wAqZIMO68oQ9MsIks0RLZ0eleTIMYE7cFuUgzvCuCU9RimSS6oJdrmxxX
-         TSUsvIY72Boystgiyu1mcHxZXNO8xcr7rspxT/wRX6/Bl2uf6+Wpx2l6NAbPYYc3LG
-         8aSfOq1bwTick7w5OUa7GRHkGN58FdgeaEVItIMjNNiCqUfGDz/2cQwSgXq5SY1XdS
-         1D4IqIWvyu6URnofG2RHzfmbVBZN1Zt94+DawpvjzLKUEwDReGrKE2lcYs74cUupIQ
-         E4uWWmXDkjl8A==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 7424960A4D;
-        Sun, 12 Dec 2021 00:34:45 +0000 (UTC)
-Subject: Re: [GIT PULL] xfs: bug fixes for 5.16-rc4
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20211211172242.GH1218082@magnolia>
-References: <20211211172242.GH1218082@magnolia>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20211211172242.GH1218082@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.16-fixes-3
-X-PR-Tracked-Commit-Id: 089558bc7ba785c03815a49c89e28ad9b8de51f9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e034d9cbf9f17613c954541f65390be5c35807fc
-Message-Id: <163926928546.10000.18339109912268195117.pr-tracker-bot@kernel.org>
-Date:   Sun, 12 Dec 2021 00:34:45 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+        id S232769AbhLLGKT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Dec 2021 01:10:19 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:19140 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229511AbhLLGKS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 12 Dec 2021 01:10:18 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4JBZ4Q0SSxz64;
+        Sun, 12 Dec 2021 07:10:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1639289416; bh=VuSaSqZcrW41+uEiAuo1l/ttygVpq/wNgVGxyoOZ6fE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Se5KLieRBNcATvBBOunx0rHx7HuEfdgOk9WDp7fVx4+6kG3zs28wFtU9k/J4M21SE
+         zGcMLgd4EFo5i4VsU2OyUytJnB5P94a2dy7o+rL1f5PqdCY6d1I1l+qVZNYrcYWrnF
+         emwF88A1fMLkqFpXhi+rmLgCnUB9GT6Lbk3X/XxfcLyE1I6QUX4ArcKzTP4BR8qAsC
+         Z/viU6GxVCXZkj3WtqkWtv3+favkbkgBsXAzkniR9xhKmlcfQVqXMR9dhyt3143syq
+         FQxwbfFM9ShuoiBiNVEdno8gl1Xr7tvt5T2BQs9wrkf2d59rFTKXbIXACuxeWnwjN6
+         a9cjxE1oiuL9g==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.3 at mail
+Date:   Sun, 12 Dec 2021 07:10:11 +0100
+From:   Michal Miroslaw <mirq-linux@rere.qmqm.pl>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     akpm@linux-foundation.org, rostedt@goodmis.org,
+        keescook@chromium.org, pmladek@suse.com, david@redhat.com,
+        arnaldo.melo@gmail.com, andrii.nakryiko@gmail.com,
+        alexei.starovoitov@gmail.com, linux-mm@kvack.org,
+        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH -mm v2 2/3] cn_proc: replaced old hard-coded 16 with
+ TASK_COMM_LEN_16
+Message-ID: <YbWSQy0pmO9RgRUu@qmqm.qmqm.pl>
+References: <20211211063949.49533-1-laoar.shao@gmail.com>
+ <20211211063949.49533-3-laoar.shao@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211211063949.49533-3-laoar.shao@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sat, 11 Dec 2021 09:22:42 -0800:
+On Sat, Dec 11, 2021 at 06:39:48AM +0000, Yafang Shao wrote:
+> This TASK_COMM_LEN_16 has the same meaning with the macro defined in
+> linux/sched.h, but we can't include linux/sched.h in a UAPI header, so
+> we should specifically define it in the cn_proc.h.
+[...]
+> index db210625cee8..6dcccaed383f 100644
+> --- a/include/uapi/linux/cn_proc.h
+> +++ b/include/uapi/linux/cn_proc.h
+> @@ -21,6 +21,8 @@
+>  
+>  #include <linux/types.h>
+>  
+> +#define TASK_COMM_LEN_16 16
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.16-fixes-3
+Hi,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e034d9cbf9f17613c954541f65390be5c35807fc
+Since this is added to UAPI header, maybe you could make it a single
+instance also used elsewhere? Even though this is constant and not
+going to change I don't really like multiplying the sources of truth.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Best Regards
+Micha³ Miros³aw
