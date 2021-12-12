@@ -2,106 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 394C8471B8E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Dec 2021 17:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14828471CD2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Dec 2021 20:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbhLLQ0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Dec 2021 11:26:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39206 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbhLLQ0n (ORCPT
+        id S230318AbhLLT4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Dec 2021 14:56:31 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:53576 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230073AbhLLT4a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Dec 2021 11:26:43 -0500
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4342C061714;
-        Sun, 12 Dec 2021 08:26:43 -0800 (PST)
-Received: by mail-qv1-xf34.google.com with SMTP id kl8so12486537qvb.3;
-        Sun, 12 Dec 2021 08:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bNwHjQhCMbCngDQX0H2Ckug8Srm3laq1CXvl0Hu0lM4=;
-        b=TN+GNEmKaM7kZ83XqRhVGt6qR97dFjj2J2am6DzEXDqdOCFKNJ7/f4op+u4uknQvtE
-         LZMq3wH8qQk3WE/BcbZe6Zh2Xhm2Miy2dnLuy/5/Y7ITxSNSuq+4TZS18qpuJLXdSKBr
-         FNBky3Sz17QI0vaTJ7y/T6uPtk5gnjBw8/2eCvmn+F+xjesAV3S9r9kKWHksA8CvznMZ
-         AqpH69+Y7r82RSNyl3AWz7cAnVodlsuk68rVVfbXtiAdcW9gv9CaV3YuNxaV+SXM+eq+
-         mHbJZeSN/yoT8a4L9dkv7793323d86qrOZzQUbPVv8NKNF5sCT2DDPPt8WOCh0FC0LEA
-         IRLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bNwHjQhCMbCngDQX0H2Ckug8Srm3laq1CXvl0Hu0lM4=;
-        b=aT9nuvwK4rbzWeDXa3zfOIof6SQOxjPr2WACpGdXHjElUJLBZNrtXG0ifHPh/2mUoI
-         00FyFJz1ovRWOOSSdjIgnCBctvXrHDB7TRQd/xxojAqMhOnQ26B5ezG/7y2RQtLNqQk4
-         i8+Cw6CBqVUsqCx1ZFzE7yt405YjC9BvNkVWAZ0Wy0teKahr76vDqbllPeU4Al57kfic
-         4E7ROmmFSJJd3r9BH1I7D24FeTp+SOuEHyY1008hkNypYW69AK4s4YHvBVgfmWsX/sp3
-         O79KRsm7c/jlpNhmMZ27gplj3uTFdbrFf8WtwCSRk+noxuSBVj1ErHSaOdwv2bMrIvU9
-         cFKA==
-X-Gm-Message-State: AOAM532OQuXFp+cyDdlDEj6uhGzabrVqWSyxNUVnRMVXXtsyrAmuoobF
-        WImT8NTsENRdKJqkWoEYYai/W5fo3P6Dzo67Pbg=
-X-Google-Smtp-Source: ABdhPJz5keJkRw3D5mHm9P4v597lE0nNgF4GdVDHC/Rk0AvaTN8JHYTdOZU++IiRJNA0ndiLIg1li+HMZ/66oZZqZeE=
-X-Received: by 2002:a05:6214:3019:: with SMTP id ke25mr36724071qvb.69.1639326402741;
- Sun, 12 Dec 2021 08:26:42 -0800 (PST)
+        Sun, 12 Dec 2021 14:56:30 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7AEC6B80CEB;
+        Sun, 12 Dec 2021 19:56:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22C3AC341C6;
+        Sun, 12 Dec 2021 19:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639338988;
+        bh=KOGGsx4RyQodW8+IldIXBrgZnYwoVo+AduzdGZRTPBY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SvQc2t5AcQmbyPKFybvGu6Q8fhChr6cq9XVUi+FD3YnrAq6FBRYQYX72tCyskF1LQ
+         RbIUPx26ToPFe6WQsPJPELA71QqxEOvC6EUM+EoKiXRuYxL/LcHqnWMHiGXLhULdtC
+         +FnEjZbNg8HJQSmmFbIx0/QchKy0IjBgkJz25+55ix+21dPUgJMeKfxJlUZbrnHRmv
+         6X5iif4ZgmZBbLCrWi5RksYEQ6MVhNZ6NiwefP5pYR74c7/DaNP0KUYeRbJMKSgEj0
+         i8XkcY6xI5HT9s8VUMZDMMaJDxWyIDRvzeIPumA859HI4G42wz/cKD7d8Mp3pZQof3
+         sK8AfFgnp40Bg==
+Date:   Sun, 12 Dec 2021 11:56:26 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 05/36] fscrypt: uninline and export fscrypt_require_key
+Message-ID: <YbZT6kXlrVO5doMT@sol.localdomain>
+References: <20211209153647.58953-1-jlayton@kernel.org>
+ <20211209153647.58953-6-jlayton@kernel.org>
+ <YbOuhUalMBuTGAGI@sol.localdomain>
+ <8c90912c5fd01a713688b1d2523ffe47df747513.camel@kernel.org>
 MIME-Version: 1.0
-References: <20211211063949.49533-1-laoar.shao@gmail.com> <20211211063949.49533-3-laoar.shao@gmail.com>
- <YbWSQy0pmO9RgRUu@qmqm.qmqm.pl>
-In-Reply-To: <YbWSQy0pmO9RgRUu@qmqm.qmqm.pl>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Mon, 13 Dec 2021 00:26:04 +0800
-Message-ID: <CALOAHbA+i96zO+XHOBM+k3F1viOnhe=e=z=Vobc+1Bh8NAP9SA@mail.gmail.com>
-Subject: Re: [PATCH -mm v2 2/3] cn_proc: replaced old hard-coded 16 with TASK_COMM_LEN_16
-To:     Michal Miroslaw <mirq-linux@rere.qmqm.pl>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Linux MM <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c90912c5fd01a713688b1d2523ffe47df747513.camel@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 12, 2021 at 2:10 PM Michal Miroslaw <mirq-linux@rere.qmqm.pl> wrote:
->
-> On Sat, Dec 11, 2021 at 06:39:48AM +0000, Yafang Shao wrote:
-> > This TASK_COMM_LEN_16 has the same meaning with the macro defined in
-> > linux/sched.h, but we can't include linux/sched.h in a UAPI header, so
-> > we should specifically define it in the cn_proc.h.
-> [...]
-> > index db210625cee8..6dcccaed383f 100644
-> > --- a/include/uapi/linux/cn_proc.h
-> > +++ b/include/uapi/linux/cn_proc.h
-> > @@ -21,6 +21,8 @@
-> >
-> >  #include <linux/types.h>
-> >
-> > +#define TASK_COMM_LEN_16 16
->
-> Hi,
->
-> Since this is added to UAPI header, maybe you could make it a single
-> instance also used elsewhere? Even though this is constant and not
-> going to change I don't really like multiplying the sources of truth.
->
+On Fri, Dec 10, 2021 at 03:40:20PM -0500, Jeff Layton wrote:
+> On Fri, 2021-12-10 at 11:46 -0800, Eric Biggers wrote:
+> > On Thu, Dec 09, 2021 at 10:36:16AM -0500, Jeff Layton wrote:
+> > > ceph_atomic_open needs to be able to call this.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/crypto/fscrypt_private.h | 26 --------------------------
+> > >  fs/crypto/keysetup.c        | 27 +++++++++++++++++++++++++++
+> > >  include/linux/fscrypt.h     |  5 +++++
+> > >  3 files changed, 32 insertions(+), 26 deletions(-)
+> > 
+> > What is the use case for this, more precisely?  I've been trying to keep
+> > filesystems using helper functions like fscrypt_prepare_*() and
+> > fscrypt_file_open() rather than setting up encryption keys directly, which is a
+> > bit too low-level to be doing outside of fs/crypto/.
+> > 
+> > Perhaps fscrypt_file_open() is what you're looking for here?
+> 
+> That doesn't really help because we don't have the inode for the file
+> yet at the point where we need the key.
+> 
+> atomic_open basically does a lookup+open. You give it a directory inode
+> and a dentry, and it issues an open request by filename. If it gets back
+> ENOENT then we know that the thing is a negative dentry.
+> 
+> In the lookup path, I used __fscrypt_prepare_readdir. This situation is
+> a bit similar so I might be able to use that instead. OTOH, that doesn't
+> fail when you don't have the key, and if you don't, there's not a lot of
+> point in going any further here.
 
-Hmm, what about defining it in include/uapi/linux/sched.h ?
-Then include "sched.h" in cn_proc.h
-And we also define it in tools/include/uapi/linux/sched.h for the
-usage in tools.
+So you're requiring the key on a directory to do a lookup in that directory?
+Normally that's not required, as files can be looked up by no-key name.  Why is
+the atomic_open case different?  The file inode's key is needed to open it, of
+course, but the directory inode's key shouldn't be needed.  In practice you'll
+tend to have the key for both or neither inode, but that's not guaranteed.
 
--- 
-Thanks
-Yafang
+- Eric
