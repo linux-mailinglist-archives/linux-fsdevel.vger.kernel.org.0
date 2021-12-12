@@ -2,97 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DADD4471EB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 00:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4191471EB9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 00:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbhLLX0F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Dec 2021 18:26:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
+        id S230324AbhLLX0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Dec 2021 18:26:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbhLLX0E (ORCPT
+        with ESMTP id S230260AbhLLX0H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Dec 2021 18:26:04 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991E6C06173F;
-        Sun, 12 Dec 2021 15:26:04 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id np3so10627507pjb.4;
-        Sun, 12 Dec 2021 15:26:04 -0800 (PST)
+        Sun, 12 Dec 2021 18:26:07 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88692C06173F;
+        Sun, 12 Dec 2021 15:26:07 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id 200so4190594pgg.3;
+        Sun, 12 Dec 2021 15:26:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ctOJj8vJSmnF76Xt+fHesBQwdRI5nVKPOOT2SR7P/UM=;
-        b=GgSWkvd4FpN4nbu4R29EPGAFY7CTibo7886UnPAuEw1Q5jTTXV2sxhQMXeeE3JKMKF
-         Gj7U0HNiTBYV8oVRPGDTaF1YJsMRbIfA702iEhBmPn3JPTeoDHk0iHoW+Hj661s+myPS
-         oCNy670TVe2Bnimacg39fQ0bECckRySCOwx35eXu7K9ckvg931y8SPwY9nXMH/ZlW5k2
-         HM0RJjV6URZiq0Lg34GUbrwMkjuGgbC71o9b0Qsc6SHzFxoNGxqBfGYSL4nkXcXMyWdX
-         2MesXH6XvyeJuu7ygxd7q25BBWOjXJgc0Dq3Nf6/b22Os3U4JTi8Kmk5WqDVxykReGHv
-         ONpA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Gnz/TM9XA4aQ7WsKnqv951zvpXQKVHgY3IrgIsMRO/M=;
+        b=K+3uziOOeOKh/d37q+FvFgJS/NbGFKy96MApTETuZ91AhV8+L7an2t8wjFlZefAvz0
+         XQrxESyN0BW8wkmHCKyQZ36DLuiqwtJ5jZk9hvpmIx0elvC32hSOAwmQWoRbx6oD4kAk
+         PDzddS4PvnMNcrZzpNfYJ5xfmSalSGVXVLKup18NdYR7spA3XhV1TssfYYorBH6AaC2+
+         Cuj79klRsGUu65iCZHkzUrHyYdTia+DC9lJrkXKhwrxtC4hxUxBIhydzRZoHSvY/0cbV
+         G94MgqNJz2PZ8EDgw5vDLjrEjpz6N7Ax5jHJaVflHob65HrtzvQxUX13wN8GrNVC1fM2
+         3lRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ctOJj8vJSmnF76Xt+fHesBQwdRI5nVKPOOT2SR7P/UM=;
-        b=d6/1f6+Wc/jaY+4dbu/s9BG1qZ7ipMOwPhyX8Jki1Udpdznt1pLLkONqVtpKyw0yoR
-         2MZ5sCZpEf34U0mF2+QJqO2rvC7qE5lmyV6JvEeBMOAgg4HsYys10svlrMsLYpqkACPI
-         sgR2b2n/eLH2cRfCMbpQ7CbsBQlPoa7C87JX2KBOYlkyBcVrahXHxOIX8loZJAM0he2D
-         VvWkELhAH/yAezttd9cTqeeq9kOuLO9/GSo9V6B+fUVgyydSyf54wyWiVsaojXEmitRU
-         uAvqk9TTyHkvbPgbXbAnckskeg5aBJFEnEVzizI+vbk0Ye3z3UQl3S5fbyteiepREtKe
-         1emQ==
-X-Gm-Message-State: AOAM532hO5PeKSZxpF+kAgWVMQHTk9CgnuJGY6nlmavCKU1zu6XyOIbM
-        LkheUgvXkd6Q155mNDde95Y=
-X-Google-Smtp-Source: ABdhPJyxGJjbdiqAXgsTy5dRoaDxViHSM1EU+RoMH+oCBw3/Gkep6S45mmYFhZOOElbZmuUNnLuWIQ==
-X-Received: by 2002:a17:902:cecf:b0:141:e15d:4a2a with SMTP id d15-20020a170902cecf00b00141e15d4a2amr91205431plg.66.1639351564167;
-        Sun, 12 Dec 2021 15:26:04 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Gnz/TM9XA4aQ7WsKnqv951zvpXQKVHgY3IrgIsMRO/M=;
+        b=PP3rAPOSb6HMQvJy34hdsqKUCqgpI4Edim3Sl6kTsrfqMUW2GWzC0f75con9m9bXWd
+         uNhMSfifsI6uPTRtKwIinDMbUg3U0RPe1EvRf7dg64Wjfx4ym9+mZcwIBHpEnE13cKb0
+         DrcEUuPxZpTuMKw9Gv2wuR6ZIbmjexZQzvFwlTHp/mYokKFZCh7AKG9tWPrxVd5Hta38
+         vD/3ngAsrgxPzfELu97ipBullmhl1MgbjIGXjMYgLfSPzc4ULRznIQGUDGqeDfY47f6P
+         nXlsc/dT+zOSAjI/HgNGWiAwFNFJjlJ2RlN6LNDyHQRAvdDwZDjdiwtUzNcKGaFdGboO
+         PR9w==
+X-Gm-Message-State: AOAM533CgpzV8eHh5O/n37kVmWCpA4dsfegYTX7Wv/o1B0ZxSt/8sD3i
+        DkaPiSF+OG8Dy66UMTuvJns=
+X-Google-Smtp-Source: ABdhPJyhvvVw0VGUM335WCYGq2rSABmUhc3rGgu2XW5SThzTd8lU1W4o5G19nZVHX6zuxDvNztfcfQ==
+X-Received: by 2002:a63:3446:: with SMTP id b67mr43321464pga.424.1639351567052;
+        Sun, 12 Dec 2021 15:26:07 -0800 (PST)
 Received: from hibiki.localdomain ([2400:2410:93a3:bc00:c35d:e29e:99a3:5fd9])
-        by smtp.googlemail.com with ESMTPSA id j7sm5281813pjf.41.2021.12.12.15.26.01
+        by smtp.googlemail.com with ESMTPSA id j7sm5281813pjf.41.2021.12.12.15.26.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Dec 2021 15:26:03 -0800 (PST)
+        Sun, 12 Dec 2021 15:26:06 -0800 (PST)
 From:   Akira Kawata <akirakawata1@gmail.com>
 To:     akpm@linux-foundation.org, adobriyan@gmail.com,
         viro@zeniv.linux.org.uk, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, lukas.bulwahn@gmail.com
-Cc:     akirakawata1@gmail.com, Eric Biederman <ebiederm@xmission.com>,
+Cc:     akirakawata1@gmail.com, kernel test robot <lkp@intel.com>,
+        Eric Biederman <ebiederm@xmission.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/2] [PATCH v4 0/2] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-Date:   Mon, 13 Dec 2021 08:24:10 +0900
-Message-Id: <20211212232414.1402199-1-akirakawata1@gmail.com>
+Subject: [PATCH v4 1/2] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
+Date:   Mon, 13 Dec 2021 08:24:11 +0900
+Message-Id: <20211212232414.1402199-2-akirakawata1@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211212232414.1402199-1-akirakawata1@gmail.com>
+References: <20211212232414.1402199-1-akirakawata1@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- These patches fix a bug in AT_PHDR calculation. 
- 
- We cannot calculate AT_PHDR as the sum of load_addr and exec->e_phoff.
- This is because exec->e_phoff is the offset of PHDRs in the file and the
- address of PHDRs in the memory may differ from it. These patches fix the
- bug by calculating the address of program headers from PT_LOADs
- directly.
- 
- Sorry for my latency.
- 
- Changes in v4
- - Reflecting comments from Lukas, add a refactoring commit.
- 
- Changes in v3:
- - Fix a reported bug from kernel test robot.
- 
- Changes in v2:
- - Remove unused load_addr from create_elf_tables.
- - Improve the commit message.
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=197921
 
-Akira Kawata (2):
-  fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-  fs/binfmt_elf: Refactor load_elf_binary function
+As pointed out in the discussion of buglink, we cannot calculate AT_PHDR
+as the sum of load_addr and exec->e_phoff.
 
- fs/binfmt_elf.c | 36 +++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+: The AT_PHDR of ELF auxiliary vectors should point to the memory address
+: of program header. But binfmt_elf.c calculates this address as follows:
+:
+: NEW_AUX_ENT(AT_PHDR, load_addr + exec->e_phoff);
+:
+: which is wrong since e_phoff is the file offset of program header and
+: load_addr is the memory base address from PT_LOAD entry.
+:
+: The ld.so uses AT_PHDR as the memory address of program header. In normal
+: case, since the e_phoff is usually 64 and in the first PT_LOAD region, it
+: is the correct program header address.
+:
+: But if the address of program header isn't equal to the first PT_LOAD
+: address + e_phoff (e.g.  Put the program header in other non-consecutive
+: PT_LOAD region), ld.so will try to read program header from wrong address
+: then crash or use incorrect program header.
 
+This is because exec->e_phoff
+is the offset of PHDRs in the file and the address of PHDRs in the
+memory may differ from it. This patch fixes the bug by calculating the
+address of program headers from PT_LOADs directly.
 
-base-commit: 4eee8d0b64ecc3231040fa68ba750317ffca5c52
+Signed-off-by: Akira Kawata <akirakawata1@gmail.com>
+Reported-by: kernel test robot <lkp@intel.com>
+---
+ fs/binfmt_elf.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index beeb1247b5c4..828e88841cb4 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -170,8 +170,8 @@ static int padzero(unsigned long elf_bss)
+ 
+ static int
+ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+-		unsigned long load_addr, unsigned long interp_load_addr,
+-		unsigned long e_entry)
++		unsigned long interp_load_addr,
++		unsigned long e_entry, unsigned long phdr_addr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	unsigned long p = bprm->p;
+@@ -257,7 +257,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+ 	NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
+ 	NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
+ 	NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
+-	NEW_AUX_ENT(AT_PHDR, load_addr + exec->e_phoff);
++	NEW_AUX_ENT(AT_PHDR, phdr_addr);
+ 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+ 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+ 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
+@@ -822,7 +822,7 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
+ static int load_elf_binary(struct linux_binprm *bprm)
+ {
+ 	struct file *interpreter = NULL; /* to shut gcc up */
+- 	unsigned long load_addr = 0, load_bias = 0;
++	unsigned long load_addr, load_bias = 0, phdr_addr = 0;
+ 	int load_addr_set = 0;
+ 	unsigned long error;
+ 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+@@ -1168,6 +1168,13 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 				reloc_func_desc = load_bias;
+ 			}
+ 		}
++
++		if (elf_ppnt->p_offset <= elf_ex->e_phoff &&
++		    elf_ex->e_phoff < elf_ppnt->p_offset + elf_ppnt->p_filesz) {
++			phdr_addr = elf_ex->e_phoff - elf_ppnt->p_offset +
++				    elf_ppnt->p_vaddr;
++		}
++
+ 		k = elf_ppnt->p_vaddr;
+ 		if ((elf_ppnt->p_flags & PF_X) && k < start_code)
+ 			start_code = k;
+@@ -1203,6 +1210,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	}
+ 
+ 	e_entry = elf_ex->e_entry + load_bias;
++	phdr_addr += load_bias;
+ 	elf_bss += load_bias;
+ 	elf_brk += load_bias;
+ 	start_code += load_bias;
+@@ -1266,8 +1274,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		goto out;
+ #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
+ 
+-	retval = create_elf_tables(bprm, elf_ex,
+-			  load_addr, interp_load_addr, e_entry);
++	retval = create_elf_tables(bprm, elf_ex, interp_load_addr,
++				   e_entry, phdr_addr);
+ 	if (retval < 0)
+ 		goto out;
+ 
 -- 
 2.34.1
 
