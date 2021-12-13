@@ -2,103 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85AA8472136
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 07:50:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EE1472139
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 07:51:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232260AbhLMGuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 01:50:17 -0500
-Received: from tartarus.angband.pl ([51.83.246.204]:34492 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232221AbhLMGuQ (ORCPT
+        id S232284AbhLMGvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 01:51:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44722 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232267AbhLMGvM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 01:50:16 -0500
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.94.2)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1mwf7g-00HGOd-Va; Mon, 13 Dec 2021 07:47:44 +0100
-Date:   Mon, 13 Dec 2021 07:47:44 +0100
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Cc:     Sean Young <sean@mess.org>, Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Incorrect handling of . and .. files
-Message-ID: <YbbskNBJI8Ak1Vl/@angband.pl>
-References: <20210927111948.GA16257@gofer.mess.org>
- <20211211020453.mkuzumgpnignsuri@pali>
+        Mon, 13 Dec 2021 01:51:12 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66F35C061748
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Dec 2021 22:51:12 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id f18-20020a17090aa79200b001ad9cb23022so12503834pjq.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Dec 2021 22:51:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=yMpVC2kpu7YFJ/s6LMhrkQcovk/km/8dHffArUV16q0=;
+        b=oPGvhlBLdePFU+vncJhdgAZjBfHeKjhh6MPusmJt+0IB/EJccsFj7zrhUb/Aja+8Zz
+         EszcTrfoJLa3TkwV8b+m0u+uOSZh79kVe/lc0vRwoEmRxqeQc4LorXEj7MwmhlPWRUQV
+         wIYmWdM/3KTBHocPo0OIzgJ4W/M8jnPKjv+jP+MhKhx9t/mh/A2eH3fZbu96x9o5hREI
+         pN2I4c3T/6fYUR2OLSIQaCu9RYxzGOd5rTsYKT+8dnpHQzFFMf3cTp8qq4FyA8z0DjuR
+         aid1hpYFQBEWppb66PdvAZ1aJ50d23ValXXxDqMUkJtNDsh5pu6Xwli1somJSt5nQGgv
+         zdbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=yMpVC2kpu7YFJ/s6LMhrkQcovk/km/8dHffArUV16q0=;
+        b=1pkzzBeN4gAnCbMHdoSFVWlb00hNh3Q+PKOZRxLiuv50SeBOIVCrb2O+jAz2tDU4El
+         aD3rf3m2WtZBhfimj/3xQwQerVUzSO08D6dISS3aCvP87Ebt/N82UiTTH90aagZcAWaR
+         oeiFZccgd2YJwW3NdnMunhoULyHlbkDNWpo5NokkSD3rdrjtXwb7VqJsmY1YwpYZnHna
+         iUcs7djTd/lTnl4QqDOxut+Efnqsc2C2o8VWFYiXO2D1mtsIERi6BXsg0x7AzjmBZ28o
+         krscVgoJ62uOQRgU5c4vTGDBBcY/bJa2jmkg68NFB2By3r3nYUyOOuKUkUdUsLiyWSrS
+         Qq/g==
+X-Gm-Message-State: AOAM533aoAUk5keBffRvWMG5q+BfkzfMKStXgiZcfspImBvYJzv4xFIR
+        aMfGbRb1jTmW5t7pG1qHe6C2nw==
+X-Google-Smtp-Source: ABdhPJw6Ii106D5I9zYxT/oqiqsbsiSwsVIAzMOg3NbCSBjxDSmPtMPSzECMrPXJQBkaBymf7eS8uQ==
+X-Received: by 2002:a17:90b:3508:: with SMTP id ls8mr42473847pjb.51.1639378271977;
+        Sun, 12 Dec 2021 22:51:11 -0800 (PST)
+Received: from [10.76.43.192] ([61.120.150.76])
+        by smtp.gmail.com with ESMTPSA id f10sm5904851pjm.52.2021.12.12.22.51.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Dec 2021 22:51:11 -0800 (PST)
+Message-ID: <15bbfed1-5b7c-e6ff-07e9-9de3a0ee4728@bytedance.com>
+Date:   Mon, 13 Dec 2021 14:49:48 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211211020453.mkuzumgpnignsuri@pali>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.4.0
+Subject: Re: [PATCH v3] sched/numa: add per-process numa_balancing
+Content-Language: en-US
+To:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20211206024530.11336-1-ligang.bdlg@bytedance.com>
+From:   Gang Li <ligang.bdlg@bytedance.com>
+In-Reply-To: <20211206024530.11336-1-ligang.bdlg@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 11, 2021 at 03:04:53AM +0100, Pali Rohár wrote:
-> I tried to find some information what is allowed and what not.
+Hi,
+Any comments plz ;)
+
+On 2021/12/6 10:45, Gang Li wrote:
+> This patch add a new api PR_NUMA_BALANCING in prctl.
 > 
-> On Monday 27 September 2021 12:19:48 Sean Young wrote:
-> > Windows allows files and directories called "." and ".." to be created
-> > using UNC paths, i.e. "\\?\D:\..". Now this is totally insane behaviour,
-> > but when an exfat filesytem with such a file is mounted on Linux, those
-> > files show up as another directory and its contents is inaccessible.
-> > 
-> > I can replicate this using exfat filesystems, but not ntfs.
+> A large number of page faults will cause performance loss when numa
+> balancing is performing. Thus those processes which care about worst-case
+> performance need numa balancing disabled. Others, on the contrary, allow a
+> temporary performance loss in exchange for higher average performance, so
+> enable numa balancing is better for them.
 > 
-> Microsoft exFAT specification explicitly disallow "." and "..", see:
-[...]
-> On the other hand Microsoft FAT32 specification can be understood that
-> file may have long name (vfat) set to "." or ".." but not short name.
-[...]
-> OSTA UDF 2.60 specification does not disallow "." and ".." entries, but
-[...]
-> So it means that "." and ".." entries could be stored on disk as valid
-> file names.
-
-It doesn't matter one whit what the specification says.  Anyone with a disk
-editor can craft a filesystem containing filenames such as "." or "..", "/"
-"foo/bar" or anything else we would like to ban.
-
-> > So, in Linux cannot read "." or ".." (i.e., I can't see "Hello, World!"). I
-> > don't know what the correct handling should be, but having two "." and two
-> > ".." files does not seem right at all.
+> Numa balancing can only be controlled globally by
+> /proc/sys/kernel/numa_balancing. Due to the above case, we want to
+> disable/enable numa_balancing per-process instead.
 > 
-> This is really a bug in Linux kernel. It should not export "." and ".."
-> into VFS even when filesystem disk format supports such insane file
-> names.
-
-This.
-
-Otherwise, every filesystem driver would need to contain redundant code for
-checking for such bad names.
-
-> So either Linux needs to completely hide these insane file names from
-> VFS or translate them to something which do not conflict with other
-> files in correct directory.
-
-Escaping bad names has the problem of the escaped name also possibly
-existing -- perhaps even recursively.  Plus, the filesystem might be using
-hashed or tree indices which could go wrong if a name is altered.
-
-But then, I once proposed (and I'm pondering reviving) a ban for characters
-\x01..\x1f and possibly others, and if banned, they can still legitimately
-occur in old filesystems.
-
-> I guess that hiding them for exfat is valid thing as Microsoft
-> specification explicitly disallow them. Probably fsck.exfat can be teach
-> to rename these files and/or put them to lost+found directory.
-
-fsck fixing those is a good thing but we still need to handle them at
-runtime.
+> Add numa_balancing under mm_struct. Then use it in task_tick_fair.
+> 
+> Set per-process numa balancing:
+> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DISABLE); //disable
+> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
+> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DEFAULT); //follow global
+> Get numa_balancing state:
+> 	prctl(PR_NUMA_BALANCING, PR_GET_NUMAB, &ret);
+> 	cat /proc/<pid>/status | grep NumaB_enabled
+> 
+> Cc: linux-api@vger.kernel.org
+> Signed-off-by: Gang Li <ligang.bdlg@bytedance.com>
 
 
-Meow!
--- 
-⢀⣴⠾⠻⢶⣦⠀
-⣾⠁⢠⠒⠀⣿⡁ in the beginning was the boot and root floppies and they were good.
-⢿⡄⠘⠷⠚⠋⠀                                       -- <willmore> on #linux-sunxi
-⠈⠳⣄⠀⠀⠀⠀
