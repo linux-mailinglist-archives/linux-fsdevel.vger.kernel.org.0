@@ -2,97 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5721D4722B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 09:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B519B4722C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 09:39:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232875AbhLMIak convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 03:30:40 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:44479 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231845AbhLMIaj (ORCPT
+        id S232186AbhLMIi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 03:38:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230198AbhLMIi5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 03:30:39 -0500
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-48-uEn-QkNbO3KqUuXVw7bKDg-1; Mon, 13 Dec 2021 08:30:34 +0000
-X-MC-Unique: uEn-QkNbO3KqUuXVw7bKDg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.26; Mon, 13 Dec 2021 08:30:33 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.026; Mon, 13 Dec 2021 08:30:33 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Matthew Wilcox' <willy@infradead.org>
-CC:     'Tiezhu Yang' <yangtiezhu@loongson.cn>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Xuefeng Li <lixuefeng@loongson.cn>
-Subject: RE: [PATCH v2 0/2] kdump: simplify code
-Thread-Topic: [PATCH v2 0/2] kdump: simplify code
-Thread-Index: AQHX7j/jzYqw5kMpA0qY43nH0kUm2Kwtku5wgAEsrYCAAVr28A==
-Date:   Mon, 13 Dec 2021 08:30:33 +0000
-Message-ID: <b7a75ae9253445af81ff2fedd5268af4@AcuMS.aculab.com>
-References: <1639193588-7027-1-git-send-email-yangtiezhu@loongson.cn>
- <0c5cb37139af4f3e85cc2c5115d7d006@AcuMS.aculab.com>
- <YbXhVxRJfjvKw++W@casper.infradead.org>
-In-Reply-To: <YbXhVxRJfjvKw++W@casper.infradead.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 13 Dec 2021 03:38:57 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9781CC06173F;
+        Mon, 13 Dec 2021 00:38:57 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id g14so48663955edb.8;
+        Mon, 13 Dec 2021 00:38:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mhgDMsvRarSfV0WUVOS+UIrf7Z2BgPxSrPMePub8zEI=;
+        b=ev+wZKb9RhuR6DO8+Mc5e9v1nvGYgn5/Jl2RppiCCSFZt39G84O4PobYVmalE3z3Mm
+         KGa/DKT7HYUh3VThDWcNN1Jr/3E3WmfL2kMtcsFHjTZQTaBw4NAczCyVQpxxxQCfhANV
+         eObecQpVIlenUEfnZOKw3AjkLGhsAZ0qbCj1I6srxzZ5wDfmZVh0Q9+bd2GwT3o5P5Ha
+         CNZiSvo2I0BZVH0O3Rt6C+7Y8cSgSSdd/fj1j0CHlOp4a4kWKxnW6t0AwI00GYeLuWcO
+         VjKuBVHNohLRpxxD/lXEhRgreirGTm3zlfeySW4zE8e8qChCZRDHjrq/9xmYIeKxQkQ4
+         v+2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mhgDMsvRarSfV0WUVOS+UIrf7Z2BgPxSrPMePub8zEI=;
+        b=qtHlPLVBVqRh6Vux4RKLR8Y9EHRiXr+yJaYL7HuxVbhGBcLbdxdHxfO38h0w4gZq6U
+         9vMtZu4uCSn7W0d0Dfzdfg3j+coYLG8ZaRhvHOioi6jf4QXKqWE3GB64RkoHCeBa7vwo
+         9WoleCdH3IQjh5natw0rILWAjSauEEjL+wHce/SZPvYaaPg+iJVQL4BGry/Y+UFgN11a
+         TGiQI/OEd/4JTLYrpeIeiD9CjwKWu8QOniojlGW2EWcswt0ddDDDlKCz/ufeK6qdXxHF
+         fC/lqQysuHgi2zmcZvqBydtn5Bjhku1PrCLifH4omRaBclguTWGxUVxMAC4uHc7MiuvN
+         VXcQ==
+X-Gm-Message-State: AOAM530NT9naBulBZr+R5BFfG8upl2xKUIgxV9nsYZzQF3RPT/PAaSBe
+        UVNNUe+VDvJocR20tPg2t3+EEnZ3v6cFK2j9e4k=
+X-Google-Smtp-Source: ABdhPJyzicQrltpvFvHdvxxR4MA4FPSz4sVTF6W6YypDa+e0iCqDsSkMQnDmhxBDb+aSI37ZovL6TsK1YTM+BZalpW4=
+X-Received: by 2002:a17:906:7109:: with SMTP id x9mr41899126ejj.559.1639384736111;
+ Mon, 13 Dec 2021 00:38:56 -0800 (PST)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20211130201652.2218636d@mail.inbox.lv> <2dc51fc8-f14e-17ed-a8c6-0ec70423bf54@valdikss.org.ru>
+In-Reply-To: <2dc51fc8-f14e-17ed-a8c6-0ec70423bf54@valdikss.org.ru>
+From:   Barry Song <21cnbao@gmail.com>
+Date:   Mon, 13 Dec 2021 21:38:45 +1300
+Message-ID: <CAGsJ_4zMoV6UJGC_X-VRM7p8w68a0Q8sLVfS3sRFxuQUtHoASw@mail.gmail.com>
+Subject: Re: [PATCH] mm/vmscan: add sysctl knobs for protecting the working set
+To:     ValdikSS <iam@valdikss.org.ru>
+Cc:     Alexey Avramov <hakavlad@inbox.lv>, Linux-MM <linux-mm@kvack.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>, mcgrof@kernel.org,
+        Kees Cook <keescook@chromium.org>, yzaikin@google.com,
+        oleksandr@natalenko.name, kernel@xanmod.org, aros@gmx.com,
+        hakavlad@gmail.com, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Matthew Wilcox
-> Sent: 12 December 2021 11:48
-> 
-> On Sat, Dec 11, 2021 at 05:53:46PM +0000, David Laight wrote:
-> > From: Tiezhu Yang
-> > > Sent: 11 December 2021 03:33
-> > >
-> > > v2:
-> > >   -- add copy_to_user_or_kernel() in lib/usercopy.c
-> > >   -- define userbuf as bool type
-> >
-> > Instead of having a flag to indicate whether the buffer is user or kernel,
-> > would it be better to have two separate buffer pointers.
-> > One for a user space buffer, the other for a kernel space buffer.
-> > Exactly one of the buffers should always be NULL.
-> 
-> No.  You should be using an iov_iter instead.  See
-> https://lore.kernel.org/all/Ya4bdB0UBJCZhUSo@casper.infradead.org/
-> for a start on this.
+On Tue, Dec 7, 2021 at 5:47 AM ValdikSS <iam@valdikss.org.ru> wrote:
+>
+> This patchset is surprisingly effective and very useful for low-end PC
+> with slow HDD, single-board ARM boards with slow storage, cheap Android
+> smartphones with limited amount of memory. It almost completely prevents
+> thrashing condition and aids in fast OOM killer invocation.
+>
 
-iov_iter gets horribly expensive...
+Can you please post your hardware information like what is the cpu, how much
+memory you have and also post your sysctl knobs, like how do you set
+vm.anon_min_kbytes,  vm.clean_low_kbytes and vm.clean_min_kbytes?
 
-	David
+> The similar file-locking patch is used in ChromeOS for nearly 10 years
+> but not on stock Linux or Android. It would be very beneficial for
+> lower-performance Android phones, SBCs, old PCs and other devices.
+>
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Can you post the link of the similar file-locking patch?
 
+> With this patch, combined with zram, I'm able to run the following
+> software on an old office PC from 2007 with __only 2GB of RAM__
+> simultaneously:
+>
+>   * Firefox with 37 active tabs (all data in RAM, no tab unloading)
+>   * Discord
+>   * Skype
+>   * LibreOffice with the document opened
+>   * Two PDF files (14 and 47 megabytes in size)
+>
+> And the PC doesn't crawl like a snail, even with 2+ GB in zram!
+> Without the patch, this PC is barely usable.
+> Please watch the video:
+> https://notes.valdikss.org.ru/linux-for-old-pc-from-2007/en/
+>
+
+The video was captured before using this patch? what video says
+"the result of the test computer after the configuration", what does
+"the configuration" mean?
+
+Thanks
+Barry
