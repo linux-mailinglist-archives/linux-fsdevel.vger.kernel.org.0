@@ -2,96 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D703C473392
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 19:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98FE847339B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 19:08:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241595AbhLMSIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 13:08:31 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45297 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241559AbhLMSIa (ORCPT
+        id S241689AbhLMSIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 13:08:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241633AbhLMSIv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 13:08:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639418909;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ykESYpv/5u+O8vn68tOYD0QwBQmexsCFWdt6W0E3KR8=;
-        b=dAsqvxfh8qO/wb1GL6tJQThJzGnD4dc3xDlO9/8nYF4rqVO686pbp6/OP9MvEY1wnqKVGL
-        5Z0cuQQY1SnPs1XWk0Ihdr+vKIlODK/abs+x3ZAnq3uHJ0iuYlq3j1EIAroeLdsEAFB6z3
-        QHjE6mfBikLouMbtqzz4lwZ/OkznUbY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-386-r19kVBu4P3uaBOejU99rnQ-1; Mon, 13 Dec 2021 13:08:28 -0500
-X-MC-Unique: r19kVBu4P3uaBOejU99rnQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45FD0100C662;
-        Mon, 13 Dec 2021 18:08:27 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EC57919EF9;
-        Mon, 13 Dec 2021 18:08:26 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 79EBD2233DF; Mon, 13 Dec 2021 13:08:26 -0500 (EST)
-Date:   Mon, 13 Dec 2021 13:08:26 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu, virtio-fs@redhat.com,
-        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v8 1/7] fuse: add fuse_should_enable_dax() helper
-Message-ID: <YbeMGlULQP53bSlq@redhat.com>
-References: <20211125070530.79602-1-jefflexu@linux.alibaba.com>
- <20211125070530.79602-2-jefflexu@linux.alibaba.com>
+        Mon, 13 Dec 2021 13:08:51 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA73C061574;
+        Mon, 13 Dec 2021 10:08:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=8oozV1IRwA/A2R6zNk07Fx/Spsm9jrjC4UBxcDZXjf8=; b=a6vpnrKVMF7x9NRBbcUvJJkaGU
+        RWh+pCMAqyR7ZiLSPPNcT98z7kIFfBf76Sqay4RnDh6+ugjgoWZ5sIX7XG5eFA2Cwip4P3s6Ntze9
+        Fja3JFi7V/R7KbQBODnprlW9WRKXx+Oxsbx8Mv5I9kTgeNAI0Js8pmN/ghN4SkLbov4UbrEOJSZNC
+        IFDopsbq4RMY821Yuh1RERU4vC8BEeyCfXb9ds/0vI7FfqyfgT6X7azS5w03GEKJVeul/XXOrczsb
+        z42C93gofmG/ain5V80l4WRqk/RvlQnREstO2qSp1Ycd3SvyvM8FMoH9apeXSCFxsB/uD+wrJiIHd
+        9CEqXj+w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mwpkl-00D2OR-QG; Mon, 13 Dec 2021 18:08:47 +0000
+Date:   Mon, 13 Dec 2021 18:08:47 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J . Wong " <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v2 19/28] iomap: Convert __iomap_zero_iter to use a folio
+Message-ID: <YbeML8UdqwsooSPb@casper.infradead.org>
+References: <20211108040551.1942823-1-willy@infradead.org>
+ <20211108040551.1942823-20-willy@infradead.org>
+ <YbJ3O1qf+9p/HWka@casper.infradead.org>
+ <YbN+KqqCG0032NMG@casper.infradead.org>
+ <Ybb3nmf0hPXhlnOu@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211125070530.79602-2-jefflexu@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <Ybb3nmf0hPXhlnOu@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 25, 2021 at 03:05:24PM +0800, Jeffle Xu wrote:
-> This is in prep for following per inode DAX checking.
+On Sun, Dec 12, 2021 at 11:34:54PM -0800, Christoph Hellwig wrote:
+> On Fri, Dec 10, 2021 at 04:19:54PM +0000, Matthew Wilcox wrote:
+> > After attempting the merge with Christoph's ill-timed refactoring,
 > 
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> I did give you a headsup before..
 
-Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
+I thought that was going in via Darrick's tree.  I had no idea Dan was
+going to take it.
 
-Vivek
-> ---
->  fs/fuse/dax.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+> > I decided that eliding the use of 'bytes' here was the wrong approach,
+> > because it very much needs to be put back in for the merge.
 > 
-> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-> index 5778ebfbce5e..4c48a57632bd 100644
-> --- a/fs/fuse/dax.c
-> +++ b/fs/fuse/dax.c
-> @@ -1329,11 +1329,19 @@ static const struct address_space_operations fuse_dax_file_aops  = {
->  	.invalidatepage	= noop_invalidatepage,
->  };
->  
-> -void fuse_dax_inode_init(struct inode *inode)
-> +static bool fuse_should_enable_dax(struct inode *inode)
->  {
->  	struct fuse_conn *fc = get_fuse_conn(inode);
->  
->  	if (!fc->dax)
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +void fuse_dax_inode_init(struct inode *inode)
-> +{
-> +	if (!fuse_should_enable_dax(inode))
->  		return;
->  
->  	inode->i_flags |= S_DAX;
-> -- 
-> 2.27.0
-> 
+> Is there any good reason to not just delay the iomp_zero_iter folio
+> conversion for now?
 
+It would hold up about half of the iomap folio conversion (~10 patches).
+I don't understand what the benefit is of your patch series.  Moving
+filesystems away from being bdev based just doesn't seem interesting
+to me.  Having DAX as an optional feature that some bdevs have seems
+like a far superior option.
