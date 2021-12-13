@@ -2,179 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E16472F88
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 15:39:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8053472F95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 15:41:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239592AbhLMOjq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 09:39:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43206 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239581AbhLMOjl (ORCPT
+        id S239622AbhLMOlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 09:41:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:31964 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234501AbhLMOls (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 09:39:41 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF619C061574;
-        Mon, 13 Dec 2021 06:39:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=uhXSvJxIfSiLhz6ER94oXeBAN14hDZk1W2orwDIFDJ8=; b=wTs6dZWb1Z8yzeeKu4je0rr93P
-        ieOVZ3WMTi/QlC4WbhA6d+nujVqpacZoBdl1/nXs+kLZ+MfbZShNVwSTsVISQhUwtIN1OY4hXpgo7
-        fNSSFy3iHWwoW7x1FidQBzZ+v1w7FE8RftnxtGj1p+5GAeg627P617nL0FeNJy/DaTYBVNlOSmLEX
-        ROYl9hz3taCMh8b7Xc3y/difEXhIZe4jiqBCTO1/ZblzjiPh3OGZ3aPiQGrBa4hLME/ql1aVvjDY+
-        5uCEFA6drR/jUHx3PU9curUuNTVGp4ynD9sfbfLLmj5DOxVFrzgdPT6BX+cbNzc0y+Q6oOwiY/fZ1
-        0pMGZr6g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mwmUC-00CsXQ-Eb; Mon, 13 Dec 2021 14:39:28 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 3/3] vmcore: Convert read_from_oldmem() to take an iov_iter
-Date:   Mon, 13 Dec 2021 14:39:27 +0000
-Message-Id: <20211213143927.3069508-4-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211213143927.3069508-1-willy@infradead.org>
-References: <20211213143927.3069508-1-willy@infradead.org>
+        Mon, 13 Dec 2021 09:41:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639406508;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7pRXXV0v9giuYsYC3tANypl3E9qVvVmrrv2MfnznAFU=;
+        b=Num+ODX2Qyv6G7GeWMm1//vDkim3rLSVWPNDStYxpAxzl2sA4hzgkDV1IuslW1PQgk08pF
+        o4qYa2j9aBReau/UJ6AkgSzHf3P77ONYs8NnpM6sjadDnG+ZamXMRFRDlh2c4ickuryHdK
+        uLgbDm4NFk9xdw1PLv6TyhP8gGuNSRw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-85-ECzO6Z1SN76dikTi79kudQ-1; Mon, 13 Dec 2021 09:41:47 -0500
+X-MC-Unique: ECzO6Z1SN76dikTi79kudQ-1
+Received: by mail-wr1-f72.google.com with SMTP id b1-20020a5d6341000000b001901ddd352eso3967592wrw.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Dec 2021 06:41:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=7pRXXV0v9giuYsYC3tANypl3E9qVvVmrrv2MfnznAFU=;
+        b=4q9Wf+NFX71chNa/nbCzLFkBcXKettQRpAFuc2+AtHgfMISfgUEPMXRh8rp72GE/kR
+         baooFKbO/foeiGlKEiB66eTvXsvy2d6f43k/s8prHA8TTXTfS1tp94HTKyX0cVmDLMOt
+         pn0I+aSbswXbi9xmHP7jxj0hvCeJG4rW5wv35ccGPwg+WadoKfXoul+nEnFfqk41wRl9
+         3ezv1xO/AHLPmojkaBcIoj0qEGWBt6zjcWRGnwL/oHvt9Zpu7cSpG4dIWGlsAl/EstcU
+         o3+Oipu9LVtEdm8mintrnBatHbNmSJLm7RQsNs6D7Eh8ntfhfACTmexraC8iGh4GkPUl
+         ljlA==
+X-Gm-Message-State: AOAM533kiMf1HPAgyLvDnk5Vu6usolghTb0RgEfIYpZQhhqh/390+Ph7
+        Ee83aCWwPPsp68a07tm647FkMhJkclTX2tSCiYQdR3/90Qry4oEZy8ZM/pud+ZRIyNhjxn/ZHvk
+        szeAV/30mkaQrE15hBJBNfu7V0w==
+X-Received: by 2002:a5d:58c5:: with SMTP id o5mr32290706wrf.15.1639406505602;
+        Mon, 13 Dec 2021 06:41:45 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxPAxLL4xqt1e2lYLjiNAvw/yEFjfmet00BfOTBtz3NKFTpNLzYP5C8W/QeX/MZCf+tcLiyLA==
+X-Received: by 2002:a5d:58c5:: with SMTP id o5mr32290677wrf.15.1639406505341;
+        Mon, 13 Dec 2021 06:41:45 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c6276.dip0.t-ipconnect.de. [91.12.98.118])
+        by smtp.gmail.com with ESMTPSA id u13sm8658152wmq.14.2021.12.13.06.41.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Dec 2021 06:41:44 -0800 (PST)
+Message-ID: <b0539137-c91d-0787-721e-c6ed4ced69ec@redhat.com>
+Date:   Mon, 13 Dec 2021 15:41:43 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH -mm v2 1/3] elfcore: replace old hard-code 16 with
+ TASK_COMM_LEN_16
+Content-Language: en-US
+To:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
+        rostedt@goodmis.org, keescook@chromium.org, pmladek@suse.com,
+        arnaldo.melo@gmail.com, andrii.nakryiko@gmail.com,
+        alexei.starovoitov@gmail.com
+Cc:     linux-mm@kvack.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20211211063949.49533-1-laoar.shao@gmail.com>
+ <20211211063949.49533-2-laoar.shao@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20211211063949.49533-2-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove the read_from_oldmem() wrapper introduced earlier and convert
-all the remaining callers to pass an iov_iter.
+On 11.12.21 07:39, Yafang Shao wrote:
+> A new macro TASK_COMM_LEN_16 is introduced for the old hard-coded 16 to
+> make it more grepable. As explained above this marco, the difference
+> between TASK_COMM_LEN and TASK_COMM_LEN_16 is that TASK_COMM_LEN_16 must
+> be a fixed size 16 and can't be changed.
+> 
+> Suggested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Petr Mladek <pmladek@suse.com>
+> ---
+>  include/linux/elfcore-compat.h | 8 ++------
+>  include/linux/elfcore.h        | 9 ++-------
+>  include/linux/sched.h          | 5 +++++
+>  3 files changed, 9 insertions(+), 13 deletions(-)
+> 
+> diff --git a/include/linux/elfcore-compat.h b/include/linux/elfcore-compat.h
+> index 54feb64e9b5d..69fa1a728964 100644
+> --- a/include/linux/elfcore-compat.h
+> +++ b/include/linux/elfcore-compat.h
+> @@ -5,6 +5,7 @@
+>  #include <linux/elf.h>
+>  #include <linux/elfcore.h>
+>  #include <linux/compat.h>
+> +#include <linux/sched.h>
+>  
+>  /*
+>   * Make sure these layouts match the linux/elfcore.h native definitions.
+> @@ -43,12 +44,7 @@ struct compat_elf_prpsinfo
+>  	__compat_uid_t			pr_uid;
+>  	__compat_gid_t			pr_gid;
+>  	compat_pid_t			pr_pid, pr_ppid, pr_pgrp, pr_sid;
+> -	/*
+> -	 * The hard-coded 16 is derived from TASK_COMM_LEN, but it can't be
+> -	 * changed as it is exposed to userspace. We'd better make it hard-coded
+> -	 * here.
+> -	 */
+> -	char				pr_fname[16];
+> +	char				pr_fname[TASK_COMM_LEN_16];
+>  	char				pr_psargs[ELF_PRARGSZ];
+>  };
+>  
+> diff --git a/include/linux/elfcore.h b/include/linux/elfcore.h
+> index 746e081879a5..d3bb4bd3c985 100644
+> --- a/include/linux/elfcore.h
+> +++ b/include/linux/elfcore.h
+> @@ -65,13 +65,8 @@ struct elf_prpsinfo
+>  	__kernel_gid_t	pr_gid;
+>  	pid_t	pr_pid, pr_ppid, pr_pgrp, pr_sid;
+>  	/* Lots missing */
+> -	/*
+> -	 * The hard-coded 16 is derived from TASK_COMM_LEN, but it can't be
+> -	 * changed as it is exposed to userspace. We'd better make it hard-coded
+> -	 * here.
+> -	 */
+> -	char	pr_fname[16];	/* filename of executable */
+> -	char	pr_psargs[ELF_PRARGSZ];	/* initial part of arg list */
+> +	char	pr_fname[TASK_COMM_LEN_16];	/* filename of executable */
+> +	char	pr_psargs[ELF_PRARGSZ];		/* initial part of arg list */
+>  };
+>  
+>  static inline void elf_core_copy_regs(elf_gregset_t *elfregs, struct pt_regs *regs)
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index c79bd7ee6029..8d963a50a2a8 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -279,6 +279,11 @@ struct task_group;
+>   * BPF programs.
+>   */
+>  enum {
+> +	/*
+> +	 * For the old hard-coded 16, which is exposed to userspace and can't
+> +	 * be changed.
+> +	 */
+> +	TASK_COMM_LEN_16 = 16,
+>  	TASK_COMM_LEN = 16,
+>  };
+>  
+> 
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- arch/x86/kernel/crash_dump_64.c |  7 +++++-
- fs/proc/vmcore.c                | 40 +++++++++++++--------------------
- include/linux/crash_dump.h      | 10 ++++-----
- 3 files changed, 25 insertions(+), 32 deletions(-)
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
-index f922d51c9d1f..0fa87648e55c 100644
---- a/arch/x86/kernel/crash_dump_64.c
-+++ b/arch/x86/kernel/crash_dump_64.c
-@@ -55,6 +55,11 @@ ssize_t copy_oldmem_page_encrypted(struct iov_iter *iter, unsigned long pfn,
- 
- ssize_t elfcorehdr_read(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0,
-+	struct kvec kvec = { .iov_base = buf, .iov_len = count };
-+	struct iov_iter iter;
-+
-+	iov_iter_kvec(&iter, READ, &kvec, 1, count);
-+
-+	return read_from_oldmem(&iter, count, ppos,
- 				cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT));
- }
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index 7b25f568d20d..bee05b40196b 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -133,7 +133,7 @@ static int open_vmcore(struct inode *inode, struct file *file)
- }
- 
- /* Reads a page from the oldmem device from given offset. */
--static ssize_t read_from_oldmem_iter(struct iov_iter *iter, size_t count,
-+ssize_t read_from_oldmem(struct iov_iter *iter, size_t count,
- 			 u64 *ppos, bool encrypted)
- {
- 	unsigned long pfn, offset;
-@@ -181,27 +181,6 @@ static ssize_t read_from_oldmem_iter(struct iov_iter *iter, size_t count,
- 	return read;
- }
- 
--ssize_t read_from_oldmem(char *buf, size_t count,
--			 u64 *ppos, int userbuf,
--			 bool encrypted)
--{
--	struct iov_iter iter;
--	struct iovec iov;
--	struct kvec kvec;
--
--	if (userbuf) {
--		iov.iov_base = (__force void __user *)buf;
--		iov.iov_len = count;
--		iov_iter_init(&iter, READ, &iov, 1, count);
--	} else {
--		kvec.iov_base = buf;
--		kvec.iov_len = count;
--		iov_iter_kvec(&iter, READ, &kvec, 1, count);
--	}
--
--	return read_from_oldmem_iter(&iter, count, ppos, encrypted);
--}
--
- /*
-  * Architectures may override this function to allocate ELF header in 2nd kernel
-  */
-@@ -221,7 +200,12 @@ void __weak elfcorehdr_free(unsigned long long addr)
-  */
- ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0, false);
-+	struct kvec kvec = { .iov_base = buf, .iov_len = count };
-+	struct iov_iter iter;
-+
-+	iov_iter_kvec(&iter, READ, &kvec, 1, count);
-+
-+	return read_from_oldmem(&iter, count, ppos, false);
- }
- 
- /*
-@@ -229,7 +213,13 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
-  */
- ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0, cc_platform_has(CC_ATTR_MEM_ENCRYPT));
-+	struct kvec kvec = { .iov_base = buf, .iov_len = count };
-+	struct iov_iter iter;
-+
-+	iov_iter_kvec(&iter, READ, &kvec, 1, count);
-+
-+	return read_from_oldmem(&iter, count, ppos,
-+			cc_platform_has(CC_ATTR_MEM_ENCRYPT));
- }
- 
- /*
-@@ -404,7 +394,7 @@ static ssize_t __read_vmcore(struct iov_iter *iter, loff_t *fpos)
- 					    m->offset + m->size - *fpos,
- 					    iter->count);
- 			start = m->paddr + *fpos - m->offset;
--			tmp = read_from_oldmem_iter(iter, tsz, &start,
-+			tmp = read_from_oldmem(iter, tsz, &start,
- 					cc_platform_has(CC_ATTR_MEM_ENCRYPT));
- 			if (tmp < 0)
- 				return tmp;
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index a1cf7d5c03c7..0f3a656293b0 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -134,13 +134,11 @@ static inline int vmcore_add_device_dump(struct vmcoredd_data *data)
- #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
- 
- #ifdef CONFIG_PROC_VMCORE
--ssize_t read_from_oldmem(char *buf, size_t count,
--			 u64 *ppos, int userbuf,
--			 bool encrypted);
-+ssize_t read_from_oldmem(struct iov_iter *iter, size_t count,
-+			 u64 *ppos, bool encrypted);
- #else
--static inline ssize_t read_from_oldmem(char *buf, size_t count,
--				       u64 *ppos, int userbuf,
--				       bool encrypted)
-+static inline ssize_t read_from_oldmem(struct iov_iter *iter, size_t count,
-+				       u64 *ppos, bool encrypted)
- {
- 	return -EOPNOTSUPP;
- }
 -- 
-2.33.0
+Thanks,
+
+David / dhildenb
 
