@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0AE4729DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 11:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C8B84726BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 10:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238807AbhLMKZ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 05:25:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37100 "EHLO
+        id S236972AbhLMJyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 04:54:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239306AbhLMKXx (ORCPT
+        with ESMTP id S237091AbhLMJvi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 05:23:53 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1176C0138BC;
-        Mon, 13 Dec 2021 01:59:33 -0800 (PST)
+        Mon, 13 Dec 2021 04:51:38 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A194AC08EACC;
+        Mon, 13 Dec 2021 01:44:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 221FACE0F5A;
-        Mon, 13 Dec 2021 09:59:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85E1CC34602;
-        Mon, 13 Dec 2021 09:59:29 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 68D90B80E1A;
+        Mon, 13 Dec 2021 09:44:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96ED3C00446;
+        Mon, 13 Dec 2021 09:44:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1639389570;
-        bh=9UnqZFdGJG2wX05zuY9KTt+B1qffw46sy++tKyOF1Io=;
+        s=korg; t=1639388650;
+        bh=ckel8VmpIK8a3LnqsjXrr4bDqjrILsoQJlnUWLFIQYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TZQDXok+ciOmUpGLwPsK3XH5NeebD9jXc0yqdMdTiQcaLFhstqXazUlR3Y5kEBjif
-         DUCXC04M3tWjdmu+LiaxU/hhRw1bLi1ZIKLCzmBWDTPvVMWPr25I3J1y3Vpv6PXnFZ
-         dPf1whVB69g+nqvs5GJtDuaAgHTqfuForDqrxtvQ=
+        b=Jl5YsLx+aoZKeA08OrclhJhitauusOcYSU30ReeIKpGxcS6pm6lPsHwVGPnOlIF/l
+         Zc24sNf/RXY0WMHT6YgWRjMsbWWjTzQg2PHFRq6z9shNNBVkNBZbWB6yr+LOeVmJmb
+         RCpRHus4e1TgXhNl6c5QlKlLkBIg5QJAa2iFm2hg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +40,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kalesh Singh <kaleshsingh@google.com>,
         Yabin Cui <yabinc@google.com>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 5.15 100/171] tracefs: Set all files to the same group ownership as the mount option
-Date:   Mon, 13 Dec 2021 10:30:15 +0100
-Message-Id: <20211213092948.409132667@linuxfoundation.org>
+Subject: [PATCH 5.4 48/88] tracefs: Set all files to the same group ownership as the mount option
+Date:   Mon, 13 Dec 2021 10:30:18 +0100
+Message-Id: <20211213092934.916108352@linuxfoundation.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211213092945.091487407@linuxfoundation.org>
-References: <20211213092945.091487407@linuxfoundation.org>
+In-Reply-To: <20211213092933.250314515@linuxfoundation.org>
+References: <20211213092933.250314515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -109,7 +109,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/tracefs/inode.c
 +++ b/fs/tracefs/inode.c
-@@ -161,6 +161,77 @@ struct tracefs_fs_info {
+@@ -159,6 +159,77 @@ struct tracefs_fs_info {
  	struct tracefs_mount_opts mount_opts;
  };
  
@@ -150,7 +150,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +
 +		if (!list_empty(&dentry->d_subdirs)) {
 +			spin_unlock(&this_parent->d_lock);
-+			spin_release(&dentry->d_lock.dep_map, _RET_IP_);
++			spin_release(&dentry->d_lock.dep_map, 1, _RET_IP_);
 +			this_parent = dentry;
 +			spin_acquire(&this_parent->d_lock.dep_map, 0, 1, _RET_IP_);
 +			goto repeat;
@@ -187,7 +187,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  static int tracefs_parse_options(char *data, struct tracefs_mount_opts *opts)
  {
  	substring_t args[MAX_OPT_ARGS];
-@@ -193,6 +264,7 @@ static int tracefs_parse_options(char *d
+@@ -191,6 +262,7 @@ static int tracefs_parse_options(char *d
  			if (!gid_valid(gid))
  				return -EINVAL;
  			opts->gid = gid;
