@@ -2,151 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEFC4472CAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 13:59:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33532472DA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 14:42:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236646AbhLMM7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 07:59:16 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:53720 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231465AbhLMM7P (ORCPT
+        id S237786AbhLMNmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 08:42:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231224AbhLMNmn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 07:59:15 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3326AB80EC1;
-        Mon, 13 Dec 2021 12:59:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D279C34602;
-        Mon, 13 Dec 2021 12:59:10 +0000 (UTC)
-Date:   Mon, 13 Dec 2021 13:59:06 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH - regression] devtmpfs: reconfigure on each mount
-Message-ID: <20211213125906.ngqbjsywxwibvcuq@wittgenstein>
-References: <163935794678.22433.16837658353666486857@noble.neil.brown.name>
+        Mon, 13 Dec 2021 08:42:43 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF694C061574;
+        Mon, 13 Dec 2021 05:42:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fzITg/C3AS/xrQ0JoO9TDJsVEk/WX7/81xritNYAsiM=; b=a3g9gHu2+gfYdV7A698je03RQW
+        U3hQDkE6nmLgCdzcacomQPwTyfAEMg8EbiUnwbA1r+G4w8GHzmG8bNzGWm2Rgyjx9S+vaB16ho13J
+        MBXtE5Eff2mDxmDJbd6xqqnH7MwRUvVuVklLEUvtBiPT65P70G52RhCfNikNrZq5ZJmsWDgoJpPOP
+        4YmjK9Hi7l10AaGPO1KGlUoO9AG7xxU8D/EDx0Df2lyTnEwsf2CcXYWVAKMCckHCOcbSxS32XjJHa
+        4wkLpX0pKi302peWLolD9n7Eh/yWFkQwWRfa+CX9u6JEaTdy0NYxiuUi195i7pDy+KCmTD8K6PZUB
+        1krsfYVw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mwlb8-00CpkO-IA; Mon, 13 Dec 2021 13:42:34 +0000
+Date:   Mon, 13 Dec 2021 13:42:34 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+        Tiezhu Yang <yangtiezhu@loongson.cn>,
+        linux-kernel@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] vmcore: Convert read_from_oldmem() to take an
+ iov_iter
+Message-ID: <YbdNyjqSugLqsEXN@casper.infradead.org>
+References: <20211213000636.2932569-1-willy@infradead.org>
+ <20211213000636.2932569-4-willy@infradead.org>
+ <20211213080257.GC20986@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163935794678.22433.16837658353666486857@noble.neil.brown.name>
+In-Reply-To: <20211213080257.GC20986@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 12:12:26PM +1100, NeilBrown wrote:
+On Mon, Dec 13, 2021 at 09:02:57AM +0100, Christoph Hellwig wrote:
+> >  
+> >  ssize_t elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+> >  {
+> > -	return read_from_oldmem(buf, count, ppos, 0,
+> > +	struct kvec kvec = { .iov_base = buf, .iov_len = count };
+> > +	struct iov_iter iter;
+> > +
+> > +	iov_iter_kvec(&iter, READ, &kvec, 1, count);
+> > +
+> > +	return read_from_oldmem(&iter, count, ppos,
+> >  				cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT));
+> >  }
 > 
-> Prior to Linux v5.4 devtmpfs used mount_single() which treats the given
-> mount options as "remount" options, updating the configuration of the
-> single super_block on each mount.
-> Since that was changed, the mount options used for devtmpfs are ignored.
-> This is a regression which affects systemd - which mounts devtmpfs
-> with "-o mode=755,size=4m,nr_inodes=1m".
-> 
-> This patch restores the "remount" effect by calling reconfigure_single()
-> 
-> Fixes: d401727ea0d7 ("devtmpfs: don't mix {ramfs,shmem}_fill_super() with mount_single()")
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
+> elfcorehdr_read should probably also take an iov_iter while we're at it.
 
-Hey Neil,
+I don't like how that looks.  For example:
 
-So far this hasn't been an issue for us in systemd upstream. Is there a
-specific use-case where this is causing issues? I'm mostly asking
-because this change is fairly old.
+@@ -1246,11 +1247,14 @@ static int __init parse_crash_elf64_headers(void)
+        int rc=0;
+        Elf64_Ehdr ehdr;
+        u64 addr;
++       struct iov_iter iter;
++       struct kvec kvec = { .iov_base = &ehdr, .iov_len = sizeof(ehdr) };
 
-What I actually find more odd is that there's no .reconfigure for
-devtmpfs for non-vfs generic mount options it supports.
+        addr = elfcorehdr_addr;
 
-So it's possible to change vfs generic stuff like
+        /* Read Elf header */
+-       rc = elfcorehdr_read((char *)&ehdr, sizeof(Elf64_Ehdr), &addr);
++       iov_iter_kvec(&iter, READ, &kvec, 1, sizeof(ehdr));
++       rc = elfcorehdr_read(&iter, &addr);
+        if (rc < 0)
+                return rc;
 
-mount -o remount,ro,nosuid /dev
+@@ -1277,7 +1281,10 @@ static int __init parse_crash_elf64_headers(void)
+        if (!elfcorebuf)
+                return -ENOMEM;
+        addr = elfcorehdr_addr;
+-       rc = elfcorehdr_read(elfcorebuf, elfcorebuf_sz_orig, &addr);
++       kvec.iov_base = elfcorebuf;
++       kvec.iov_len = elfcorebuf_sz_orig;
++       iov_iter_kvec(&iter, READ, &kvec, 1, elfcorebuf_sz_orig);
++       rc = elfcorehdr_read(&iter, &addr);
+        if (rc < 0)
+                goto fail;
 
-but none of the other mount options it supports and there's no word lost
-anywhere about whether or not that's on purpose.
 
-It feels odd because it uses the fs parameters from shmem/ramfs
+I don't think this makes the code clearer, and it's already pretty ugly
+code.  I'd rather leave constructing the iov_iter to elfcorehdr_read().
+(Same remarks apply to elfcorehdr_read_notes())
 
-const struct fs_parameter_spec shmem_fs_parameters[] = {
-	fsparam_u32   ("gid",		Opt_gid),
-	fsparam_enum  ("huge",		Opt_huge,  shmem_param_enums_huge),
-	fsparam_u32oct("mode",		Opt_mode),
-	fsparam_string("mpol",		Opt_mpol),
-	fsparam_string("nr_blocks",	Opt_nr_blocks),
-	fsparam_string("nr_inodes",	Opt_nr_inodes),
-	fsparam_string("size",		Opt_size),
-	fsparam_u32   ("uid",		Opt_uid),
-	fsparam_flag  ("inode32",	Opt_inode32),
-	fsparam_flag  ("inode64",	Opt_inode64),
-	{}
-}
+> I also don't quite understand why we even need the arch overrides for it,
+> but that would require some digging into the history of this interface.
 
-but doesn't allow to actually change them neither with your fix or with
-the old way of doing things. But afaict, all of them could be set via
-the "devtmpfs.mount" kernel command line option. So I could set gid=,
-uid=, and mpol= for devtmpfs via devtmpfs.mount but wouldn't be able to
-change it through remount or - in your case - with a mount with new
-parameters?
-
-Just wondering whether that's on purpose or an oversight.
-
->  drivers/base/devtmpfs.c    | 7 +++++++
->  fs/super.c                 | 4 ++--
->  include/linux/fs_context.h | 2 ++
->  3 files changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-> index 8be352ab4ddb..fa13ad49d211 100644
-> --- a/drivers/base/devtmpfs.c
-> +++ b/drivers/base/devtmpfs.c
-> @@ -59,8 +59,15 @@ static struct dentry *public_dev_mount(struct file_system_type *fs_type, int fla
->  		      const char *dev_name, void *data)
->  {
->  	struct super_block *s = mnt->mnt_sb;
-> +	int err;
-> +
->  	atomic_inc(&s->s_active);
->  	down_write(&s->s_umount);
-> +	err = reconfigure_single(s, flags, data);
-> +	if (err < 0) {
-> +		deactivate_locked_super(s);
-> +		return ERR_PTR(err);
-> +	}
->  	return dget(s->s_root);
->  }
->  
-> diff --git a/fs/super.c b/fs/super.c
-> index 3bfc0f8fbd5b..a6405d44d4ca 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1423,8 +1423,8 @@ struct dentry *mount_nodev(struct file_system_type *fs_type,
->  }
->  EXPORT_SYMBOL(mount_nodev);
->  
-> -static int reconfigure_single(struct super_block *s,
-> -			      int flags, void *data)
-> +int reconfigure_single(struct super_block *s,
-> +		       int flags, void *data)
->  {
->  	struct fs_context *fc;
->  	int ret;
-> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-> index 6b54982fc5f3..13fa6f3df8e4 100644
-> --- a/include/linux/fs_context.h
-> +++ b/include/linux/fs_context.h
-> @@ -142,6 +142,8 @@ extern void put_fs_context(struct fs_context *fc);
->  extern int vfs_parse_fs_param_source(struct fs_context *fc,
->  				     struct fs_parameter *param);
->  extern void fc_drop_locked(struct fs_context *fc);
-> +int reconfigure_single(struct super_block *s,
-> +		       int flags, void *data);
->  
->  /*
->   * sget() wrappers to be called from the ->get_tree() op.
-> -- 
-> 2.34.1
-> 
+I decided I didn't want to know ;-)
