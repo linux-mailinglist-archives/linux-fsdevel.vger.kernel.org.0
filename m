@@ -2,106 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33EE1472139
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 07:51:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69391472150
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 08:04:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232284AbhLMGvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 01:51:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44722 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232267AbhLMGvM (ORCPT
+        id S232332AbhLMHEU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 02:04:20 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:35556 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230479AbhLMHET (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 01:51:12 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66F35C061748
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Dec 2021 22:51:12 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id f18-20020a17090aa79200b001ad9cb23022so12503834pjq.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Dec 2021 22:51:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=yMpVC2kpu7YFJ/s6LMhrkQcovk/km/8dHffArUV16q0=;
-        b=oPGvhlBLdePFU+vncJhdgAZjBfHeKjhh6MPusmJt+0IB/EJccsFj7zrhUb/Aja+8Zz
-         EszcTrfoJLa3TkwV8b+m0u+uOSZh79kVe/lc0vRwoEmRxqeQc4LorXEj7MwmhlPWRUQV
-         wIYmWdM/3KTBHocPo0OIzgJ4W/M8jnPKjv+jP+MhKhx9t/mh/A2eH3fZbu96x9o5hREI
-         pN2I4c3T/6fYUR2OLSIQaCu9RYxzGOd5rTsYKT+8dnpHQzFFMf3cTp8qq4FyA8z0DjuR
-         aid1hpYFQBEWppb66PdvAZ1aJ50d23ValXXxDqMUkJtNDsh5pu6Xwli1somJSt5nQGgv
-         zdbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=yMpVC2kpu7YFJ/s6LMhrkQcovk/km/8dHffArUV16q0=;
-        b=1pkzzBeN4gAnCbMHdoSFVWlb00hNh3Q+PKOZRxLiuv50SeBOIVCrb2O+jAz2tDU4El
-         aD3rf3m2WtZBhfimj/3xQwQerVUzSO08D6dISS3aCvP87Ebt/N82UiTTH90aagZcAWaR
-         oeiFZccgd2YJwW3NdnMunhoULyHlbkDNWpo5NokkSD3rdrjtXwb7VqJsmY1YwpYZnHna
-         iUcs7djTd/lTnl4QqDOxut+Efnqsc2C2o8VWFYiXO2D1mtsIERi6BXsg0x7AzjmBZ28o
-         krscVgoJ62uOQRgU5c4vTGDBBcY/bJa2jmkg68NFB2By3r3nYUyOOuKUkUdUsLiyWSrS
-         Qq/g==
-X-Gm-Message-State: AOAM533aoAUk5keBffRvWMG5q+BfkzfMKStXgiZcfspImBvYJzv4xFIR
-        aMfGbRb1jTmW5t7pG1qHe6C2nw==
-X-Google-Smtp-Source: ABdhPJw6Ii106D5I9zYxT/oqiqsbsiSwsVIAzMOg3NbCSBjxDSmPtMPSzECMrPXJQBkaBymf7eS8uQ==
-X-Received: by 2002:a17:90b:3508:: with SMTP id ls8mr42473847pjb.51.1639378271977;
-        Sun, 12 Dec 2021 22:51:11 -0800 (PST)
-Received: from [10.76.43.192] ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id f10sm5904851pjm.52.2021.12.12.22.51.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Dec 2021 22:51:11 -0800 (PST)
-Message-ID: <15bbfed1-5b7c-e6ff-07e9-9de3a0ee4728@bytedance.com>
-Date:   Mon, 13 Dec 2021 14:49:48 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.4.0
-Subject: Re: [PATCH v3] sched/numa: add per-process numa_balancing
-Content-Language: en-US
-To:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20211206024530.11336-1-ligang.bdlg@bytedance.com>
-From:   Gang Li <ligang.bdlg@bytedance.com>
-In-Reply-To: <20211206024530.11336-1-ligang.bdlg@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Mon, 13 Dec 2021 02:04:19 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D09C81F3B0;
+        Mon, 13 Dec 2021 07:04:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1639379057; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aEqBV9gaFo2wyx1G4xG19C/0b13L1C/hoEvYE9B85GE=;
+        b=l/hLlA5w3OBwKRP+sBt/ehoVB3EoaTuRtFJa9WBwUg8DKSN0+dWtXmPaULZ5nea0glf+3i
+        /y099EP4z9wGokt1s7ezqdFqw780FOZu/+ajH8HFYxpYwantjdLh91yQrYkA6XOijRd/n1
+        sLfk1JR2eSud6NM0G4BZ3LPOJ7i0/y8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1639379057;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aEqBV9gaFo2wyx1G4xG19C/0b13L1C/hoEvYE9B85GE=;
+        b=fbIFNrfIGETnM5AYz2WyO2gy+fZNb61dtNZ2rejU57HQMud9rQbH2LfXezo8Za7bUX9l4C
+        gqceDp2a6mOOzNCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A220013B51;
+        Mon, 13 Dec 2021 07:04:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0YQoF23wtmFUaQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 13 Dec 2021 07:04:13 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Dave Chinner" <david@fromorbit.com>
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Mel Gorman" <mgorman@suse.de>,
+        "Philipp Reisner" <philipp.reisner@linbit.com>,
+        "Lars Ellenberg" <lars.ellenberg@linbit.com>,
+        "Jan Kara" <jack@suse.com>,
+        "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Remove bdi_congested() and wb_congested() and related
+ functions
+In-reply-to: <20211213050736.GS449541@dread.disaster.area>
+References: <163936868317.23860.5037433897004720387.stgit@noble.brown>,
+ <163936886727.23860.5245364396572576756.stgit@noble.brown>,
+ <20211213050736.GS449541@dread.disaster.area>
+Date:   Mon, 13 Dec 2021 18:04:10 +1100
+Message-id: <163937905049.22433.10716750573737410875@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-Any comments plz ;)
+On Mon, 13 Dec 2021, Dave Chinner wrote:
+> On Mon, Dec 13, 2021 at 03:14:27PM +1100, NeilBrown wrote:
+> > These functions are no longer useful as the only bdis that report
+> > congestion are in ceph, fuse, and nfs.  None of those bdis can be the
+> > target of the calls in drbd, ext2, nilfs2, or xfs.
+> > 
+> > Removing the test on bdi_write_contested() in current_may_throttle()
+> > could cause a small change in behaviour, but only when PF_LOCAL_THROTTLE
+> > is set.
+> > 
+> > So replace the calls by 'false' and simplify the code - and remove the
+> > functions.
+> > 
+> > Signed-off-by: NeilBrown <neilb@suse.de>
+> ....
+> > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> > index 631c5a61d89b..22f73b3e888e 100644
+> > --- a/fs/xfs/xfs_buf.c
+> > +++ b/fs/xfs/xfs_buf.c
+> > @@ -843,9 +843,6 @@ xfs_buf_readahead_map(
+> >  {
+> >  	struct xfs_buf		*bp;
+> >  
+> > -	if (bdi_read_congested(target->bt_bdev->bd_disk->bdi))
+> > -		return;
+> 
+> Ok, but this isn't a "throttle writeback" test here - it's trying to
+> avoid having speculative readahead blocking on a full request queue
+> instead of just skipping the readahead IO. i.e. prevent readahead
+> thrashing and/or adding unnecessary read load when we already have a
+> full read queue...
+> 
+> So what is the replacement for that? We want to skip the entire
+> buffer lookup/setup/read overhead if we're likely to block on IO
+> submission - is there anything we can use to do this these days?
 
-On 2021/12/6 10:45, Gang Li wrote:
-> This patch add a new api PR_NUMA_BALANCING in prctl.
-> 
-> A large number of page faults will cause performance loss when numa
-> balancing is performing. Thus those processes which care about worst-case
-> performance need numa balancing disabled. Others, on the contrary, allow a
-> temporary performance loss in exchange for higher average performance, so
-> enable numa balancing is better for them.
-> 
-> Numa balancing can only be controlled globally by
-> /proc/sys/kernel/numa_balancing. Due to the above case, we want to
-> disable/enable numa_balancing per-process instead.
-> 
-> Add numa_balancing under mm_struct. Then use it in task_tick_fair.
-> 
-> Set per-process numa balancing:
-> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DISABLE); //disable
-> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
-> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DEFAULT); //follow global
-> Get numa_balancing state:
-> 	prctl(PR_NUMA_BALANCING, PR_GET_NUMAB, &ret);
-> 	cat /proc/<pid>/status | grep NumaB_enabled
-> 
-> Cc: linux-api@vger.kernel.org
-> Signed-off-by: Gang Li <ligang.bdlg@bytedance.com>
+I don't think there is a concept of a "full read queue" any more.
+There are things that can block an IO submission though.
+There is allocation of the bio from a mempool, and there is
+rq_qos_throttle, and there are probably other places where submission
+can block.  I don't think you can tell in advance if a submission is
+likely to block.
 
+I think the idea is that the top level of the submission stack should
+rate-limit based on the estimated throughput of the stack.  I think
+write-back does this.  I don't know about read-ahead.
 
+NeilBrown
