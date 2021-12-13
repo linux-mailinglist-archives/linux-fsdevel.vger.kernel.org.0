@@ -2,70 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39A574732E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 18:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D703C473392
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 19:08:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241311AbhLMRY6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 12:24:58 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:59538 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236018AbhLMRY6 (ORCPT
+        id S241595AbhLMSIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 13:08:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45297 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241559AbhLMSIa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 12:24:58 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 13 Dec 2021 13:08:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639418909;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ykESYpv/5u+O8vn68tOYD0QwBQmexsCFWdt6W0E3KR8=;
+        b=dAsqvxfh8qO/wb1GL6tJQThJzGnD4dc3xDlO9/8nYF4rqVO686pbp6/OP9MvEY1wnqKVGL
+        5Z0cuQQY1SnPs1XWk0Ihdr+vKIlODK/abs+x3ZAnq3uHJ0iuYlq3j1EIAroeLdsEAFB6z3
+        QHjE6mfBikLouMbtqzz4lwZ/OkznUbY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-386-r19kVBu4P3uaBOejU99rnQ-1; Mon, 13 Dec 2021 13:08:28 -0500
+X-MC-Unique: r19kVBu4P3uaBOejU99rnQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DB241B811E0;
-        Mon, 13 Dec 2021 17:24:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E403C34602;
-        Mon, 13 Dec 2021 17:24:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639416295;
-        bh=sb0MvNrSORCLQFaBLBkUnz6crCYZ7ga2CwkWso4TfW8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b8W591K813BG47h6LlTFVEqZtJijk76LEhgC4GRuU0elgH6H7Y6LHTsCHjyV5V6YY
-         oQB264X/8mG1uC5yESyBIJPkG2Re7h4MlNd6ROTYED90qi3hrVEW7qLOLLep9o+pF1
-         Q6AQIqMBRdlprEqNPQPqSiUyl6E0Dxd6L8OV3LP7AArE98us7DEjB+f78vch9nAi9d
-         eceXaIGHmEAjeOCEkamTd2DMvxDfj6cDJyuPkiJ/imNa55kVy0vCqqxylWOOkuRMds
-         7VkVRKsQg3CIuHot2cf755jwNau6yZRJXCyyKUhPJH8/RZskBF9oy86F2n06EzfSiu
-         //ItGLzNASnYA==
-Date:   Mon, 13 Dec 2021 09:24:42 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ramji Jiyani <ramjiyani@google.com>,
-        Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
-Message-ID: <YbeB2jueI86NBthA@sol.localdomain>
-References: <20211209010455.42744-1-ebiggers@kernel.org>
- <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
- <YbJM6H2wOisBY6gU@sol.localdomain>
- <20211213072339.GB20423@lst.de>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45FD0100C662;
+        Mon, 13 Dec 2021 18:08:27 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.17.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC57919EF9;
+        Mon, 13 Dec 2021 18:08:26 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 79EBD2233DF; Mon, 13 Dec 2021 13:08:26 -0500 (EST)
+Date:   Mon, 13 Dec 2021 13:08:26 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     stefanha@redhat.com, miklos@szeredi.hu, virtio-fs@redhat.com,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com
+Subject: Re: [PATCH v8 1/7] fuse: add fuse_should_enable_dax() helper
+Message-ID: <YbeMGlULQP53bSlq@redhat.com>
+References: <20211125070530.79602-1-jefflexu@linux.alibaba.com>
+ <20211125070530.79602-2-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211213072339.GB20423@lst.de>
+In-Reply-To: <20211125070530.79602-2-jefflexu@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 08:23:39AM +0100, Christoph Hellwig wrote:
-> On Thu, Dec 09, 2021 at 10:37:28AM -0800, Eric Biggers wrote:
-> > I was hoping that Al would review and apply these, given that he's listed as the
-> > maintainer for this file, and he's worked on this code before.  I was also
-> > hoping for review from Christoph, since he added IOCB_CMD_POLL originally.  But
+On Thu, Nov 25, 2021 at 03:05:24PM +0800, Jeffle Xu wrote:
+> This is in prep for following per inode DAX checking.
 > 
-> I was planning to get to it,  but it seems like it got merged over this
-> weekend?
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 
-There weren't any indications that anyone else was going to review it, and it
-wasn't appropriate to wait any longer.  If you'd still like to review it, please
-do so; if you find any problem I'll fix it in a follow-on fix.
+Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
 
-- Eric
+Vivek
+> ---
+>  fs/fuse/dax.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+> index 5778ebfbce5e..4c48a57632bd 100644
+> --- a/fs/fuse/dax.c
+> +++ b/fs/fuse/dax.c
+> @@ -1329,11 +1329,19 @@ static const struct address_space_operations fuse_dax_file_aops  = {
+>  	.invalidatepage	= noop_invalidatepage,
+>  };
+>  
+> -void fuse_dax_inode_init(struct inode *inode)
+> +static bool fuse_should_enable_dax(struct inode *inode)
+>  {
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+>  
+>  	if (!fc->dax)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +void fuse_dax_inode_init(struct inode *inode)
+> +{
+> +	if (!fuse_should_enable_dax(inode))
+>  		return;
+>  
+>  	inode->i_flags |= S_DAX;
+> -- 
+> 2.27.0
+> 
+
