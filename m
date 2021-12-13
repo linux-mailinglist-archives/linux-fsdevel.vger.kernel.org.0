@@ -2,107 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7642C471ECE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 00:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D594A471EF1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 01:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbhLLXfc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Dec 2021 18:35:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34282 "EHLO
+        id S230389AbhLMAG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Dec 2021 19:06:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhLLXfc (ORCPT
+        with ESMTP id S230324AbhLMAGw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Dec 2021 18:35:32 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3A2C06173F;
-        Sun, 12 Dec 2021 15:35:32 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id p13so13447979pfw.2;
-        Sun, 12 Dec 2021 15:35:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Vul1OGbjqBROCNkeOAsbkteBYUXUUsTZZv/sSf95TQs=;
-        b=IY9xXNmoIlQPgefKKfU89Vk+s3rwK4ZnNF20PSf4TKmA3jgzBJKVbuRSeWhQQ7WdmT
-         bf2ti/O5Lyw6rItRLYcCuDznUhGE3WQ2uElZhMF0rZEEkN/HT9e7vKaElV10OKrBVnyX
-         FuBQkXBfXTU+qigolDluuxN55LuTm5W1rG2PCPyzy6MumpFeDXPoouMOeKd+6ggxOZsY
-         YtWAnmZBaIprJ6sI5e5+WcxnsmErfePq2xCEzkqMmYD6dfxiTBT62RR2YqiPCJngryes
-         70qVY+SVZ/ByWZzA/SLQszX6r9qkUVvqfjF8JOQFTrLC8vq93kIiZrqRvplFH1KxfvVA
-         safQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Vul1OGbjqBROCNkeOAsbkteBYUXUUsTZZv/sSf95TQs=;
-        b=lKQEbvZN69gng6IpshhSw93e47yayLKDPaF/UQvr7uDMxWJAuDckiNdVvIy4GRAgPO
-         xGu146A3K0w4BAe77RR6CtDufpBGNXu9Zl7kVeZF7zxExEGupOWlQNvhWfFQryz/jmkc
-         is0QR9iDlNtVtaBIJcD2WKkCfHPfXdKbIPVfqzrT0cmnqcY3LesSOgtDBBCzHKaq4Cpp
-         JMQaSFtjfBUsjwo8nnAkPCTWSYdmXEYMNjOWUbtmYG8n5NW+RVH49/WPRYFZHRGCgZ8O
-         t2lUv+tf5Mi0m7zaefXU09EPfHKHGjSFSImvMfSNryPBJ/lx9tU11Xp6f7NMwj9fuMuE
-         /5OQ==
-X-Gm-Message-State: AOAM531ysgKuWUd9nWFrE0NZkuDbWuqMLvU81mxFyQcEJW0fkk5LjwAk
-        vFSLsJIbelxPpMAcay+zc/s=
-X-Google-Smtp-Source: ABdhPJxC3x7xtLN5DOMm6sXuyN+uKuUo+yEF+4+E+Tn+FT3R8GCQP3mi1y9CgGbN5YCUEItH16/zBA==
-X-Received: by 2002:a63:42c4:: with SMTP id p187mr49825420pga.585.1639352131821;
-        Sun, 12 Dec 2021 15:35:31 -0800 (PST)
-Received: from gmail.com ([2400:2410:93a3:bc00:c35d:e29e:99a3:5fd9])
-        by smtp.gmail.com with ESMTPSA id w19sm8443122pga.80.2021.12.12.15.35.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Dec 2021 15:35:31 -0800 (PST)
-Date:   Mon, 13 Dec 2021 08:35:26 +0900
-From:   Akira Kawata <akirakawata1@gmail.com>
-To:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        viro@zeniv.linux.org.uk, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, lukas.bulwahn@gmail.com
-Cc:     Eric Biederman <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] [PATCH v4 0/2] fs/binfmt_elf: Fix AT_PHDR for
- unusual ELF files
-Message-ID: <20211212233526.ikyszt7jy4gzmita@gmail.com>
-References: <20211212232414.1402199-1-akirakawata1@gmail.com>
- <20211212232414.1402199-4-akirakawata1@gmail.com>
+        Sun, 12 Dec 2021 19:06:52 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B0ABC06173F;
+        Sun, 12 Dec 2021 16:06:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=0/ZSeD2g9sHV3CBi2MWygycQsl1GshpalXb84wvvZ1g=; b=NgBcLYQkdEZIozaqZuceqlvHGH
+        ZCCyK4gc6K95hW2sZuGlrI3BGOtc1RY3ujpuGiVlROJ9kzTdts+noh9XCLrb5HP7vwsUhpiDjwtXe
+        +wmq0x70oTDMEjZ8oMBjXxCPIWiiPdfLUrz3Jzy1Z/Txut7IEzVLqh9nhtTpOkg0IJmok9sG98V3T
+        82etjIYRG4Z8XwIAsxaDmKoKLaGW63c6AjKINiR0HSCv/xzzyctC/jnTUC3B09DuBZzv+VWWv3FnU
+        GBMkDXN1vFs61dNJOpFrOFs6chFMKDvxqleTPOM+QTDGtT9JDL7nK4l1Pmio0Q58pgWhNwHO1uJsk
+        6sz+yQHA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mwYrW-00CIuE-1G; Mon, 13 Dec 2021 00:06:38 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>,
+        linux-kernel@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Christoph Hellwig <hch@lst.de>, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/3] Convert vmcore to use an iov_iter
+Date:   Mon, 13 Dec 2021 00:06:33 +0000
+Message-Id: <20211213000636.2932569-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211212232414.1402199-4-akirakawata1@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 08:24:13AM +0900, Akira Kawata wrote:
->  These patches fix a bug in AT_PHDR calculation. 
->  
->  We cannot calculate AT_PHDR as the sum of load_addr and exec->e_phoff.
->  This is because exec->e_phoff is the offset of PHDRs in the file and the
->  address of PHDRs in the memory may differ from it. These patches fix the
->  bug by calculating the address of program headers from PT_LOADs
->  directly.
->  
->  Sorry for my latency.
->  
->  Changes in v4
->  - Reflecting comments from Lukas, add a refactoring commit.
->  
->  Changes in v3:
->  - Fix a reported bug from kernel test robot.
->  
->  Changes in v2:
->  - Remove unused load_addr from create_elf_tables.
->  - Improve the commit message.
-> 
-> Akira Kawata (2):
->   fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
->   fs/binfmt_elf: Refactor load_elf_binary function
-> 
->  fs/binfmt_elf.c | 36 +++++++++++++++++++++---------------
->  1 file changed, 21 insertions(+), 15 deletions(-)
-> 
-> 
-> base-commit: 4eee8d0b64ecc3231040fa68ba750317ffca5c52
-> -- 
-> 2.34.1
-> 
+For some reason several people have been sending bad patches to fix
+compiler warnings in vmcore recently.  Here's how it should be done.
+Compile-tested only on x86.  As noted in the first patch, s390 should
+take this conversion a bit further, but I'm not inclined to do that
+work myself.
 
-I am sorry for sending duplicated emails by mistake.
-Please ignore the later ones.
+Matthew Wilcox (Oracle) (3):
+  vmcore: Convert copy_oldmem_page() to take an iov_iter
+  vmcore: Convert __read_vmcore to use an iov_iter
+  vmcore: Convert read_from_oldmem() to take an iov_iter
 
-Akira
+ arch/arm/kernel/crash_dump.c     |  14 +---
+ arch/arm64/kernel/crash_dump.c   |  14 +---
+ arch/ia64/kernel/crash_dump.c    |  12 +--
+ arch/mips/kernel/crash_dump.c    |  13 +---
+ arch/powerpc/kernel/crash_dump.c |  20 +----
+ arch/riscv/kernel/crash_dump.c   |  13 +---
+ arch/s390/kernel/crash_dump.c    |  12 +--
+ arch/sh/kernel/crash_dump.c      |  15 +---
+ arch/x86/kernel/crash_dump_32.c  |  13 +---
+ arch/x86/kernel/crash_dump_64.c  |  31 ++++----
+ fs/proc/vmcore.c                 | 130 +++++++++++++------------------
+ include/linux/crash_dump.h       |  19 ++---
+ 12 files changed, 112 insertions(+), 194 deletions(-)
+
+-- 
+2.33.0
+
