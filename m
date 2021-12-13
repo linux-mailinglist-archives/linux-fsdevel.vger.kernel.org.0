@@ -2,22 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C073847219F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 08:23:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D237C4721A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 08:23:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232478AbhLMHXK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 02:23:10 -0500
-Received: from verein.lst.de ([213.95.11.211]:46372 "EHLO verein.lst.de"
+        id S232488AbhLMHXm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 02:23:42 -0500
+Received: from verein.lst.de ([213.95.11.211]:46379 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229695AbhLMHXK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 02:23:10 -0500
+        id S229537AbhLMHXm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Dec 2021 02:23:42 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id E10BB68AA6; Mon, 13 Dec 2021 08:23:05 +0100 (CET)
-Date:   Mon, 13 Dec 2021 08:23:05 +0100
+        id 8B96968AA6; Mon, 13 Dec 2021 08:23:39 +0100 (CET)
+Date:   Mon, 13 Dec 2021 08:23:39 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -26,23 +25,23 @@ Cc:     Eric Biggers <ebiggers@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Martijn Coenen <maco@android.com>,
-        Xie Yongji <xieyongji@bytedance.com>
-Subject: Re: [GIT PULL] aio poll fixes for 5.16-rc5
-Message-ID: <20211213072305.GA20423@lst.de>
-References: <YbOdV8CPbyPAF234@sol.localdomain> <CAHk-=wh5X0iQ7dDY1joBj0eoZ65rbMb4-v0ewirN1teY8VD=8A@mail.gmail.com> <YbPcFIUFYmEueuXX@sol.localdomain> <YbP0s7E1a5s+6q9B@mit.edu>
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
+Message-ID: <20211213072339.GB20423@lst.de>
+References: <20211209010455.42744-1-ebiggers@kernel.org> <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com> <YbJM6H2wOisBY6gU@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YbP0s7E1a5s+6q9B@mit.edu>
+In-Reply-To: <YbJM6H2wOisBY6gU@sol.localdomain>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 10, 2021 at 07:45:39PM -0500, Theodore Y. Ts'o wrote:
-> distributions are compiling them with AIO enabled, since you can get
-> better performance with AIO.  Fio also uses AIO, and many fio recipes
-> that are trying to benchmark file systems or block devices use
-> AIO/DIO.
+On Thu, Dec 09, 2021 at 10:37:28AM -0800, Eric Biggers wrote:
+> I was hoping that Al would review and apply these, given that he's listed as the
+> maintainer for this file, and he's worked on this code before.  I was also
+> hoping for review from Christoph, since he added IOCB_CMD_POLL originally.  But
 
-As does qemu and many commercial databases.
+I was planning to get to it,  but it seems like it got merged over this
+weekend?
