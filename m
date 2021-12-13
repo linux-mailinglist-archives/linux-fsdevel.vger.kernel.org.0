@@ -2,33 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FE94723F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 10:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB68472448
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Dec 2021 10:35:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233833AbhLMJdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Dec 2021 04:33:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233751AbhLMJcx (ORCPT
+        id S234251AbhLMJf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Dec 2021 04:35:27 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:48464 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233902AbhLMJel (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Dec 2021 04:32:53 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD89C0617A1;
-        Mon, 13 Dec 2021 01:32:52 -0800 (PST)
+        Mon, 13 Dec 2021 04:34:41 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 27627CE0B59;
-        Mon, 13 Dec 2021 09:32:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C9FC00446;
-        Mon, 13 Dec 2021 09:32:48 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AE9DAB80E16;
+        Mon, 13 Dec 2021 09:34:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04400C341CA;
+        Mon, 13 Dec 2021 09:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1639387969;
+        s=korg; t=1639388078;
         bh=xzVkQ9hdLO29h6SFG2SXAulAR8G5KxM/+U2yM8ovitM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hCg6dFoSPyKXVM4TlPIg8IK6EcCUCcY9Wt9ihe00M+tdYVz8ZDxRDphf3tfJsrPbl
-         I4FcuaVhFWl926PwaKaxGwejsNV5IP445MnaNzzvZnQ5MpsDqxEXG0a3SmjVRRubmN
-         zhhISIf+Hymj1QB/WJOidRm1LKfC9zTI94rEdNnE=
+        b=rthby03NgExDjGQ7PqGwi2Ru7BhaCzf5GbCWgGV2qpGgdLznlPYmEfstO7IW9xBPB
+         g5CvG/rrX+cC+Pkolj5uVCaxid2NXKjpjlMKTgjzERUC4pMVyEpD1HdlDNf4b2cVK9
+         +kMA++gHkCusWYd07B2uUu/nhUTGivZY/LAU+Mjs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +37,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kalesh Singh <kaleshsingh@google.com>,
         Yabin Cui <yabinc@google.com>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 21/37] tracefs: Set all files to the same group ownership as the mount option
-Date:   Mon, 13 Dec 2021 10:29:59 +0100
-Message-Id: <20211213092926.062459381@linuxfoundation.org>
+Subject: [PATCH 4.9 22/42] tracefs: Set all files to the same group ownership as the mount option
+Date:   Mon, 13 Dec 2021 10:30:04 +0100
+Message-Id: <20211213092927.298812141@linuxfoundation.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211213092925.380184671@linuxfoundation.org>
-References: <20211213092925.380184671@linuxfoundation.org>
+In-Reply-To: <20211213092926.578829548@linuxfoundation.org>
+References: <20211213092926.578829548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
