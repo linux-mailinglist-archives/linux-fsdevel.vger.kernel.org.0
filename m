@@ -2,96 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AF29474408
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 14:59:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0939474470
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 15:05:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234622AbhLNN7J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Dec 2021 08:59:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:60348 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232428AbhLNN7I (ORCPT
+        id S234718AbhLNOFB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Dec 2021 09:05:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232598AbhLNOFB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Dec 2021 08:59:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639490347;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=m/5pRcl9h3yj8MAkqvRPCHvPcL0c1vkmrKvq7UUnKBk=;
-        b=R3Pf0BtheeKCR+6DQSyWJYaEe4fbm54u+afSsZqD8yWyWP0PptSLbc90j0aBv1rbRkpBqr
-        fV+lHDJzyENjvDJoW5BjuykfC4VW1hTtJSHQl7dI9bnRCxTQzh2kPA0eTkNaZPAN+Id1Oa
-        0pDAhTOYKzR3UlEmF7pQyMadKJzDpUU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-93-0kDh8FCsOqi2t6NYQJXz-g-1; Tue, 14 Dec 2021 08:59:04 -0500
-X-MC-Unique: 0kDh8FCsOqi2t6NYQJXz-g-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BA20F1966320;
-        Tue, 14 Dec 2021 13:59:01 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 25B375BE02;
-        Tue, 14 Dec 2021 13:59:01 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id A5F242233DF; Tue, 14 Dec 2021 08:59:00 -0500 (EST)
-Date:   Tue, 14 Dec 2021 08:59:00 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 5/5] dax: always use _copy_mc_to_iter in dax_copy_to_iter
-Message-ID: <YbijJOjhLAwvyNag@redhat.com>
-References: <20211209063828.18944-1-hch@lst.de>
- <20211209063828.18944-6-hch@lst.de>
- <YbNejVRF5NQB0r83@redhat.com>
- <CAPcyv4i_HdnMcq6MmDMt-a5p=ojh_vsoAiES0vUYEh7HvC1O-A@mail.gmail.com>
+        Tue, 14 Dec 2021 09:05:01 -0500
+Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1170C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:05:00 -0800 (PST)
+Received: by mail-ua1-x934.google.com with SMTP id l24so35033086uak.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:05:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1xbz4OXeAqbKGLrAlz6aBGLF8sjufKoUKm+Xe5+JoJA=;
+        b=JARGe2eoC/eTZcuanFZRzYpsDXDSoQewPbnakQD+331znIsBHz8gmitw9WPtlEmsg5
+         uuC/oF7UnkIzFru6YZykfCHoA/dCQ/aZhOpgLLllCCfuMP4s+3GHvBi4UJdWXIbaal7e
+         8gluZ7eIr+cjylNfqkyc7DZbfFc4OwOPvFz4w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1xbz4OXeAqbKGLrAlz6aBGLF8sjufKoUKm+Xe5+JoJA=;
+        b=r8JARpZLitgEt0PBHmLza1l5cij38kl4y+a3nXnXhK0LUeXscBV5QDn520G2d8D76U
+         oY9rv7qXzYdTHN+tEEMJHqEKMg/m36sabBvQ2bqLhBgv9nJjIf2IY47usdUKafoKBV6U
+         +QPbLmx/zL7INkL80JQR/btcEHx/DAl9GH5/Qca86snIVWd8K8jHBS8WnzhAbRY+rnDn
+         UfzL0Unqi61sWKRzn7n396s0GU8f0VEfytZtqkH3RymSi/FTSTL8rhzGHLWS4r8TnLMp
+         jtGYW2ZKgg2nWbRX3+EdhyCzUmJ0QcVHbFczQj2irrZm9KQNy80b+5tWwDpAd/Cj5mUY
+         sD0w==
+X-Gm-Message-State: AOAM530oM5gxwTlYOuUbry6ikWlcx0SxgZYM1n3+vTpRW53qWWXt2j0e
+        gu6u1pHP1qSP/aqwFbbYuPnPNqO3aEn+9nCS7WmZyQ==
+X-Google-Smtp-Source: ABdhPJw8wIxuLC1AhuXLJvqn7YhSyg+qMm3mcnrLJRJlJySTp7NA5ryLzri0V1MgE3AcPcaQZqRlasYp55P7URrgslA=
+X-Received: by 2002:ab0:2696:: with SMTP id t22mr5457527uao.13.1639490700022;
+ Tue, 14 Dec 2021 06:05:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4i_HdnMcq6MmDMt-a5p=ojh_vsoAiES0vUYEh7HvC1O-A@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <CADVsYmhF2=Y9AktyHdvKq5=CzJBALBjKfrSu8+2+=YdkSRazpg@mail.gmail.com>
+In-Reply-To: <CADVsYmhF2=Y9AktyHdvKq5=CzJBALBjKfrSu8+2+=YdkSRazpg@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 14 Dec 2021 15:04:49 +0100
+Message-ID: <CAJfpegvEppXZbX25Nage463biMjWPKthr=519PSJ61yZmTavCw@mail.gmail.com>
+Subject: Re: [fuse-devel] Reconnect to FUSE session
+To:     Robert Vasek <rvasek01@gmail.com>
+Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Hao Peng <flyingpenghao@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 12, 2021 at 06:48:05AM -0800, Dan Williams wrote:
-> On Fri, Dec 10, 2021 at 6:05 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Thu, Dec 09, 2021 at 07:38:28AM +0100, Christoph Hellwig wrote:
-> > > While using the MC-safe copy routines is rather pointless on a virtual device
-> > > like virtiofs,
-> >
-> > I was wondering about that. Is it completely pointless.
-> >
-> > Typically we are just mapping host page cache into qemu address space.
-> > That shows as virtiofs device pfn in guest and that pfn is mapped into
-> > guest application address space in mmap() call.
-> >
-> > Given on host its DRAM, so I would not expect machine check on load side
-> > so there was no need to use machine check safe variant.
-> 
-> That's a broken assumption, DRAM experiences multi-bit ECC errors.
-> Machine checks, data aborts, etc existed before PMEM.
+On Tue, 14 Dec 2021 at 13:58, Robert Vasek <rvasek01@gmail.com> wrote:
+>
+> Hello fuse-devel,
+>
+> I'd like to ask about the feasibility of having a reconnect feature added=
+ into the FUSE kernel module.
+>
+> The idea is that when a FUSE driver disconnects (process exited due to a =
+bug, signal, etc.), all pending and future ops for that session would wait =
+for that driver to appear again, and then continue as normal. Waiting would=
+ be on a timer, with ENOTCONN returned in case it times out. Obviously, "co=
+ntinue as normal" isn't possible for all FUSE drivers, as it depends on wha=
+t they do and how they implement things -- they would have to opt-in for th=
+is feature.
+>
+> Use-cases span across basically anything where the lifecycle of a FUSE dr=
+iver is managed by some external component (e.g. systemd, container orchest=
+rators). This is especially true in containerized environments: volume moun=
+ts provided by FUSE drivers running in containers may get killed / reschedu=
+led by the Orchestrator, or they may crash due to bugs, memory pressure, ..=
+., leading to very possible data corruption and severed mounts. Having the =
+ability to recover from such situations would greatly improve reliability o=
+f these systems.
+>
+> I haven't looked at how this would be implemented yet though. I'm just wo=
+ndering if this makes sense at all and if you folks would be interested in =
+such a feature?
 
-So we should use MC safe variant when loading from DRAM as well?
-(If needed platoform support is there).
+A kernel patch[1] as well as example userspace code[2] has already
+been proposed.
 
-Vivek
+[1] https://lore.kernel.org/linux-fsdevel/CAPm50a+j8UL9g3UwpRsye5e+a=3DM0Hy=
+7Tf1FdfwOrUUBWMyosNg@mail.gmail.com/
 
+[2] https://lore.kernel.org/linux-fsdevel/CAPm50aLuK8Smy4NzdytUPmGM1vpzokKJ=
+dRuwxawUDA4jnJg=3DFg@mail.gmail.com/
+
+The example recovery is not very practical, but I can see how it would
+be possible to extend to a read-only fs.
+
+Is this what you had in mind?
+
+Thanks,
+Miklos
