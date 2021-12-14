@@ -2,143 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD3A474027
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 11:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9279474030
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 11:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232870AbhLNKMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Dec 2021 05:12:15 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:60228 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232869AbhLNKMO (ORCPT
+        id S232879AbhLNKOd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Dec 2021 05:14:33 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:33528 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232869AbhLNKOb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Dec 2021 05:12:14 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 771EB6144A;
-        Tue, 14 Dec 2021 10:12:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A609BC34600;
-        Tue, 14 Dec 2021 10:12:11 +0000 (UTC)
-Date:   Tue, 14 Dec 2021 11:12:07 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Anthony Iliopoulos <ailiop@suse.com>
-Cc:     NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH - regression] devtmpfs: reconfigure on each mount
-Message-ID: <20211214101207.6yyp7x7hj2nmrmvi@wittgenstein>
-References: <163935794678.22433.16837658353666486857@noble.neil.brown.name>
- <20211213125906.ngqbjsywxwibvcuq@wittgenstein>
- <YbexPXpuI8RdOb8q@technoir>
+        Tue, 14 Dec 2021 05:14:31 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 358CC1F3C4;
+        Tue, 14 Dec 2021 10:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1639476870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=RMZaY+rA5tmkbUf8JzLdGe9JjYsq40PJZ05Xghdt73E=;
+        b=KlBRHCaEZPgMgvz5xLBLTjVDLT6NPtLbWvPp7CIcDMOe5i/AzoRNYegLlzz4S6e/i6wjHS
+        3JJ2a8BJNkvbnUpW+ASGe5+uWNJSK3ZVAm5P/H7DLJZdcJsiLoEKxiddq36D/E276/04PW
+        iYc7kQkuTsSO4JkmRLXiI2aIrjGmhuY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1639476870;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=RMZaY+rA5tmkbUf8JzLdGe9JjYsq40PJZ05Xghdt73E=;
+        b=RpLM8t+fmm4dZwijzbxW4qRyGHqQQT6Vt7bxbt1oro8m1hyPoh/uYjrrbGLUu5O6ng6V3S
+        SHmj8+XIh+eA3OCA==
+Received: from quack2.suse.cz (unknown [10.163.28.18])
+        by relay2.suse.de (Postfix) with ESMTP id 22A09A3B81;
+        Tue, 14 Dec 2021 10:14:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E83AC1E1581; Tue, 14 Dec 2021 11:14:29 +0100 (CET)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        syzbot+9ca499bb57a2b9e4c652@syzkaller.appspotmail.com
+Subject: [PATCH] udf: Fix error handling in udf_new_inode()
+Date:   Tue, 14 Dec 2021 11:14:28 +0100
+Message-Id: <20211214101428.32085-1-jack@suse.cz>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1126; h=from:subject; bh=s7i1qo9+BxjbNF4Fh5eka9bRRRcBiim8/YPGYAu+vnc=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBhuG5+tS4R0+0kMNahpqRuUS0q4w9jUf7NS1GDSsU3 Yx4NbO+JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYbhufgAKCRCcnaoHP2RA2QbzCA DQN/j3W1m35mhHQ5PIfpW3AKC8dfF6tQtqqb+Zk3zDbFftGrjj/+T7mBYE5EOH0kvL5RrujJ54gs9/ oNeZ/qpdTZppxyhTQDQKZyCeSOt49wEv3c+97ZrkE9kLzGLRdVJUpCxWhyKCDfdzOUL/zvuvPqmuDh 1jgUgBjEM0ZCT0Ei4b3AggVwibW85f6R1aekOKoxvHHc1Ks1nl9rT7AJDurMW04q76zYLcqh0NJ1M/ 1Ou7CFoYW5zg8klRdDTQficnVgdn5aemjeKo/sQ436bUmHaLhoysTVRwYBAqXD2HRvg/PIHDCzKnyD FxVMg2nzFyxVSlArIGROr4V7Fm5Xmx
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <YbexPXpuI8RdOb8q@technoir>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 09:46:53PM +0100, Anthony Iliopoulos wrote:
-> On Mon, Dec 13, 2021 at 01:59:06PM +0100, Christian Brauner wrote:
-> > On Mon, Dec 13, 2021 at 12:12:26PM +1100, NeilBrown wrote:
-> > > 
-> > > Prior to Linux v5.4 devtmpfs used mount_single() which treats the given
-> > > mount options as "remount" options, updating the configuration of the
-> > > single super_block on each mount.
-> > > Since that was changed, the mount options used for devtmpfs are ignored.
-> > > This is a regression which affects systemd - which mounts devtmpfs
-> > > with "-o mode=755,size=4m,nr_inodes=1m".
-> > > 
-> > > This patch restores the "remount" effect by calling reconfigure_single()
-> > > 
-> > > Fixes: d401727ea0d7 ("devtmpfs: don't mix {ramfs,shmem}_fill_super() with mount_single()")
-> > > Signed-off-by: NeilBrown <neilb@suse.de>
-> > > ---
-> > 
-> > Hey Neil,
-> > 
-> > So far this hasn't been an issue for us in systemd upstream. Is there a
-> > specific use-case where this is causing issues? I'm mostly asking
-> > because this change is fairly old.
-> 
-> This is standard init with systemd for SLE, where the systemd-provided
-> mount params for devtmpfs are being effectively ignored due to this
-> regression, so nr_inodes and size params are falling back to kernel
-> defaults. It is also not specific to systemd, and can be easily
-> reproduced by e.g. booting with devtmpfs.mount=0 and doing mount -t
-> devtmpfs none /dev -o nr_inodes=1024.
-> 
-> > What I actually find more odd is that there's no .reconfigure for
-> > devtmpfs for non-vfs generic mount options it supports.
-> 
-> There is a .reconfigure for devtmpfs, e.g. shmem_init_fs_context sets
-> fc->ops to shmem_fs_context_ops, so everything goes through
-> shmem_reconfigure.
-> 
-> > So it's possible to change vfs generic stuff like
-> > 
-> > mount -o remount,ro,nosuid /dev
-> > 
-> > but none of the other mount options it supports and there's no word lost
-> > anywhere about whether or not that's on purpose.
-> 
-> That's not the case: even after d401727ea0d7 a remount can change any
-> shmem-specific mount params.
-> 
-> > It feels odd because it uses the fs parameters from shmem/ramfs
-> > 
-> > const struct fs_parameter_spec shmem_fs_parameters[] = {
-> > 	fsparam_u32   ("gid",		Opt_gid),
-> > 	fsparam_enum  ("huge",		Opt_huge,  shmem_param_enums_huge),
-> > 	fsparam_u32oct("mode",		Opt_mode),
-> > 	fsparam_string("mpol",		Opt_mpol),
-> > 	fsparam_string("nr_blocks",	Opt_nr_blocks),
-> > 	fsparam_string("nr_inodes",	Opt_nr_inodes),
-> > 	fsparam_string("size",		Opt_size),
-> > 	fsparam_u32   ("uid",		Opt_uid),
-> > 	fsparam_flag  ("inode32",	Opt_inode32),
-> > 	fsparam_flag  ("inode64",	Opt_inode64),
-> > 	{}
-> > }
-> > 
-> > but doesn't allow to actually change them neither with your fix or with
-> > the old way of doing things. But afaict, all of them could be set via
-> 
-> As per above, all those mount params are changeable via remount
-> irrespective of the regression. What d401727ea0d7 regressed is that all
+When memory allocation of iinfo or block allocation fails, already
+allocated struct udf_inode_info gets freed with iput() and
+udf_evict_inode() may look at inode fields which are not properly
+initialized. Fix it by marking inode bad before dropping reference to it
+in udf_new_inode().
 
-Ah, I missed that. So shmem_reconfigure simple ignores some options for
-remount instead of returning an error. That's annoying:
+Reported-by: syzbot+9ca499bb57a2b9e4c652@syzkaller.appspotmail.com
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/udf/ialloc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-root@f2-vm:~# findmnt  | grep devtmpfs
-├─/dev                         udev          devtmpfs    rw,nosuid,noexec,relatime,size=1842984k,nr_inodes=460746,mode=755,inode64
+I plan to queue this fix into my tree.
 
-root@f2-vm:~# mount -o remount,gid=1000 /dev/
-root@f2-vm:~# findmnt  | grep devtmpfs
-├─/dev                         udev          devtmpfs    rw,nosuid,noexec,relatime,size=1842984k,nr_inodes=460746,mode=755,inode64
+								Honza
 
-root@f2-vm:~# mount -o remount,mode=600 /dev
-root@f2-vm:~# findmnt  | grep devtmpfs
-├─/dev                         udev          devtmpfs    rw,nosuid,noexec,relatime,size=1842984k,nr_inodes=460746,mode=755,inode64
+diff --git a/fs/udf/ialloc.c b/fs/udf/ialloc.c
+index 2ecf0e87660e..b5d611cee749 100644
+--- a/fs/udf/ialloc.c
++++ b/fs/udf/ialloc.c
+@@ -77,6 +77,7 @@ struct inode *udf_new_inode(struct inode *dir, umode_t mode)
+ 					GFP_KERNEL);
+ 	}
+ 	if (!iinfo->i_data) {
++		make_bad_inode(inode);
+ 		iput(inode);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -86,6 +87,7 @@ struct inode *udf_new_inode(struct inode *dir, umode_t mode)
+ 			      dinfo->i_location.partitionReferenceNum,
+ 			      start, &err);
+ 	if (err) {
++		make_bad_inode(inode);
+ 		iput(inode);
+ 		return ERR_PTR(err);
+ 	}
+-- 
+2.26.2
 
-
-> those params are being ignored on new mounts only (and thus any init
-> that mounts devtmpfs with params would be affected).
-> 
-> > the "devtmpfs.mount" kernel command line option. So I could set gid=,
-> > uid=, and mpol= for devtmpfs via devtmpfs.mount but wouldn't be able to
-> > change it through remount or - in your case - with a mount with new
-> > parameters?
-> 
-> The devtmpfs.mount kernel boot param only controls if devtmpfs will be
-> automatically mounted by the kernel during boot, and has nothing to do
-> with the actual tmpfs mount params.
-
-Thanks!
-I'm not a fan of a proper mount changing mount options tbh but if it is
-a regression for users then we should fix it.
-Though I'm surprised it took that such a long time to even realize that
-there was a regression.
