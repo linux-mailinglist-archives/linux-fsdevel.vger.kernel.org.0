@@ -2,92 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56044474489
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 15:11:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 527D84744A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 15:18:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234718AbhLNOLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Dec 2021 09:11:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56596 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230093AbhLNOLb (ORCPT
+        id S234866AbhLNOSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Dec 2021 09:18:32 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:39618 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234863AbhLNOSc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Dec 2021 09:11:31 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229BFC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:11:31 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id z9so8848310edb.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:11:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=KzLgDz7d2Gll4mrNvllKXj4KFgN8S+Ovisil7/bb6fs=;
-        b=YwXowzOmFKaHmQFre/ULmnTY2vtrdl9FpdAhRZu64awx/4ti3KZGz8bKc4AB7+nXGv
-         FGhAXqbVXwO2yMsbimg0NGJOTFBHvjbjyaVUw3YwVOigR1hr83Ts1oqJ/X/ITWwkvsJg
-         e+cfONSZnH7txRtTwEVL1wXIACcIj6RlmQ7iVAWu4fMB1fQuysE2Br3gzBqpmHBLgZOx
-         UDGwovb15VaqINAuygoqHqFbHy/pWXR11fgGbFaIEzsIh2gOa5QsXXQonC9b6DmQKcl2
-         LuZf0tO7C+fS/53qcmWAQzZxbfthQHwya4MEA5RI58andQ1RdJZgF0Uws4cQX7wGimXT
-         o2Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=KzLgDz7d2Gll4mrNvllKXj4KFgN8S+Ovisil7/bb6fs=;
-        b=Pos1PGqOfZUYhEAls/TkdodZcsCGnVtCkEQfIKDi/KAML0qNzDlAVf1FElsxgaJdHw
-         fkjHtfKFUhI35li0+XBvX+JJ8YFWzlCFjWBaIS0kkMzS8iAh4tb7yYkLLrJHGDKZUT4y
-         b0BgPJ+M3IeHXfwC+RURZ/teprAdT9qNniLb2FsxBAh2WumBfbIPjc9rmvLr2cu9mso+
-         s0Yu3OJw1SN8YET9IFfgcz1KiFOESNOFSpuEfxf9BjWwqkJGpryuCoTiOSPb0MH+Q3iM
-         jfkefNvI+V+PaH0t02DPh5i3w1pOc1aK0ED8R1bm8c1wBdNu9nDdiARb7pAlwKspyYP2
-         CPog==
-X-Gm-Message-State: AOAM530PSeZtGaRJZ8PC9pNpM0ZuMLVQv2Nmal83HpGXy6FkJ+R3IQpM
-        s9hnL5T4BDIIp6RbhjDaw2NIf0Xv5APuDJYpfGw=
-X-Google-Smtp-Source: ABdhPJxmB6qX7GCggmt5IjB1Bag3CvUqTfLDJT/XLhGNLZ+hzt7ikWasoNpRgzq//ljg77IyMoIxH8H1RPdrdSzeFaI=
-X-Received: by 2002:a05:6402:2079:: with SMTP id bd25mr8259515edb.116.1639491089595;
- Tue, 14 Dec 2021 06:11:29 -0800 (PST)
+        Tue, 14 Dec 2021 09:18:32 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 52C03B819D9;
+        Tue, 14 Dec 2021 14:18:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92606C34605;
+        Tue, 14 Dec 2021 14:18:27 +0000 (UTC)
+Date:   Tue, 14 Dec 2021 15:18:24 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Anthony Iliopoulos <ailiop@suse.com>
+Cc:     NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH - regression] devtmpfs: reconfigure on each mount
+Message-ID: <20211214141824.fvmtwvp57pqg7ost@wittgenstein>
+References: <163935794678.22433.16837658353666486857@noble.neil.brown.name>
+ <20211213125906.ngqbjsywxwibvcuq@wittgenstein>
+ <YbexPXpuI8RdOb8q@technoir>
+ <20211214101207.6yyp7x7hj2nmrmvi@wittgenstein>
+ <Ybik5dWF2w06JQM6@technoir>
 MIME-Version: 1.0
-Received: by 2002:a54:3842:0:0:0:0:0 with HTTP; Tue, 14 Dec 2021 06:11:29
- -0800 (PST)
-Reply-To: uchennailobitenone@gmail.com
-From:   uchenna <okeyyoyopa@gmail.com>
-Date:   Tue, 14 Dec 2021 06:11:29 -0800
-Message-ID: <CAHTws=++jJdRZbhWGQ4rhanMRDgdn2XEUOY-=ySf_DG1jQz8_Q@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Ybik5dWF2w06JQM6@technoir>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-May the Almighty Lord be with you....
-Am A WIDOW TO LATE MR David HOLLAND,  I AM 59 .YEARS OLD. My name is
-Josephine HOLLAND.  I am married to Late Mr. David HOLLAND, who worked
-in the France Embassy a here in Lome -Togo West Africa for nine years
-before he died in the
-year 2019.
+On Tue, Dec 14, 2021 at 03:06:29PM +0100, Anthony Iliopoulos wrote:
+> On Tue, Dec 14, 2021 at 11:12:07AM +0100, Christian Brauner wrote:
+> > On Mon, Dec 13, 2021 at 09:46:53PM +0100, Anthony Iliopoulos wrote:
+> > > On Mon, Dec 13, 2021 at 01:59:06PM +0100, Christian Brauner wrote:
+> > > > On Mon, Dec 13, 2021 at 12:12:26PM +1100, NeilBrown wrote:
+> > > > > 
+> > > > > Prior to Linux v5.4 devtmpfs used mount_single() which treats the given
+> > > > > mount options as "remount" options, updating the configuration of the
+> > > > > single super_block on each mount.
+> > > > > Since that was changed, the mount options used for devtmpfs are ignored.
+> > > > > This is a regression which affects systemd - which mounts devtmpfs
+> > > > > with "-o mode=755,size=4m,nr_inodes=1m".
+> > > > > 
+> > > > > This patch restores the "remount" effect by calling reconfigure_single()
+> > > > > 
+> > > > > Fixes: d401727ea0d7 ("devtmpfs: don't mix {ramfs,shmem}_fill_super() with mount_single()")
+> > > > > Signed-off-by: NeilBrown <neilb@suse.de>
+> > > > > ---
+> > > > 
+> > > > Hey Neil,
+> > > > 
+> > > > So far this hasn't been an issue for us in systemd upstream. Is there a
+> > > > specific use-case where this is causing issues? I'm mostly asking
+> > > > because this change is fairly old.
+> > > 
+> > > This is standard init with systemd for SLE, where the systemd-provided
+> > > mount params for devtmpfs are being effectively ignored due to this
+> > > regression, so nr_inodes and size params are falling back to kernel
+> > > defaults. It is also not specific to systemd, and can be easily
+> > > reproduced by e.g. booting with devtmpfs.mount=0 and doing mount -t
+> > > devtmpfs none /dev -o nr_inodes=1024.
+> > > 
+> > > > What I actually find more odd is that there's no .reconfigure for
+> > > > devtmpfs for non-vfs generic mount options it supports.
+> > > 
+> > > There is a .reconfigure for devtmpfs, e.g. shmem_init_fs_context sets
+> > > fc->ops to shmem_fs_context_ops, so everything goes through
+> > > shmem_reconfigure.
+> > > 
+> > > > So it's possible to change vfs generic stuff like
+> > > > 
+> > > > mount -o remount,ro,nosuid /dev
+> > > > 
+> > > > but none of the other mount options it supports and there's no word lost
+> > > > anywhere about whether or not that's on purpose.
+> > > 
+> > > That's not the case: even after d401727ea0d7 a remount can change any
+> > > shmem-specific mount params.
+> > > 
+> > > > It feels odd because it uses the fs parameters from shmem/ramfs
+> > > > 
+> > > > const struct fs_parameter_spec shmem_fs_parameters[] = {
+> > > > 	fsparam_u32   ("gid",		Opt_gid),
+> > > > 	fsparam_enum  ("huge",		Opt_huge,  shmem_param_enums_huge),
+> > > > 	fsparam_u32oct("mode",		Opt_mode),
+> > > > 	fsparam_string("mpol",		Opt_mpol),
+> > > > 	fsparam_string("nr_blocks",	Opt_nr_blocks),
+> > > > 	fsparam_string("nr_inodes",	Opt_nr_inodes),
+> > > > 	fsparam_string("size",		Opt_size),
+> > > > 	fsparam_u32   ("uid",		Opt_uid),
+> > > > 	fsparam_flag  ("inode32",	Opt_inode32),
+> > > > 	fsparam_flag  ("inode64",	Opt_inode64),
+> > > > 	{}
+> > > > }
+> > > > 
+> > > > but doesn't allow to actually change them neither with your fix or with
+> > > > the old way of doing things. But afaict, all of them could be set via
+> > > 
+> > > As per above, all those mount params are changeable via remount
+> > > irrespective of the regression. What d401727ea0d7 regressed is that all
+> > 
+> > Ah, I missed that. So shmem_reconfigure simple ignores some options for
+> > remount instead of returning an error. That's annoying:
+> > 
+> > root@f2-vm:~# findmnt  | grep devtmpfs
+> > ├─/dev                         udev          devtmpfs    rw,nosuid,noexec,relatime,size=1842984k,nr_inodes=460746,mode=755,inode64
+> > 
+> > root@f2-vm:~# mount -o remount,gid=1000 /dev/
+> > root@f2-vm:~# findmnt  | grep devtmpfs
+> > ├─/dev                         udev          devtmpfs    rw,nosuid,noexec,relatime,size=1842984k,nr_inodes=460746,mode=755,inode64
+> > 
+> > root@f2-vm:~# mount -o remount,mode=600 /dev
+> > root@f2-vm:~# findmnt  | grep devtmpfs
+> > ├─/dev                         udev          devtmpfs    rw,nosuid,noexec,relatime,size=1842984k,nr_inodes=460746,mode=755,inode64
+> 
+> This is a slightly different issue: shmem_reconfigure intentionally and
+> specifically does not reconfigure any of the uid/gid/mode options that
+> you picked in the above examples, and those can only be set on initial
+> mounts (and only on tmpfs, not devtmpfs).
+> 
+> This was the case since devtmps inception given that there was always an
+> internal kernel mount with hardcoded mount options (mode=0755), and any
+> subsequent public mounts from userspace are simply remounts (thus for
+> devtmpfs specifying uid/gid/mode was never possible).
+> 
+> But any other shmem-specific mount option that can be reconfigured via
+> remounts is working irrespective of this regression. What has really
 
-You are chosen to Receive A Donation Cash Grant of my late husband
-that funds $5.7,000,  000,00 (Five Million Seven Hundred Thousand
-United States Dollars) to help the poor and orphanages through your
-sincere help before my death. I am suffering from long time cancer of
-the Breast, from all indication my conditions is really deteriorating
-and it is quite obvious that I wouldn't live any more longer according
-to my doctor because the cancer has gotten to a very bad stage that no
-hope for me to be a living person again, All i need from you is your
-sincerity to use this funds to do this project as i desired and I need
-your information as where My Bank will be sending the funds,
+Right, I understood all that. Just confusing from todays perspective
+that mount options that can't be changed on (superblock) remount are
+silently skipped instead of causing an error. But for historical reasons
+it obviously makes sense.
 
-such as:
-Receiver's name:_ Address:_ Phone
-number:_ Country:_
+> regressed is the ability to set the rest of the shmem_fs_parameters on
+> devtmpfs on initial mounts (remounts work just fine).
+> 
+> > > those params are being ignored on new mounts only (and thus any init
+> > > that mounts devtmpfs with params would be affected).
+> > > 
+> > > > the "devtmpfs.mount" kernel command line option. So I could set gid=,
+> > > > uid=, and mpol= for devtmpfs via devtmpfs.mount but wouldn't be able to
+> > > > change it through remount or - in your case - with a mount with new
+> > > > parameters?
+> > > 
+> > > The devtmpfs.mount kernel boot param only controls if devtmpfs will be
+> > > automatically mounted by the kernel during boot, and has nothing to do
+> > > with the actual tmpfs mount params.
+> > 
+> > Thanks!
+> > I'm not a fan of a proper mount changing mount options tbh but if it is
+> > a regression for users then we should fix it.
+> > Though I'm surprised it took that such a long time to even realize that
+> > there was a regression.
+> 
+> I think this is due to the devtmpfs shmem options falling back to kernel
+> defaults, which are apparently good enough for most use-cases. The only
+> reason we observed the regression is due to a customer case where the
+> avail inodes in /dev where exhausted and thus userspace was getting
+> -ENOSPC. Subsequent attempts to raise the nr_inodes during boot were
+> failing due to the regression.
 
-Please do not be offended by the way or manner I came to you as a
-stranger to do this, it is about the only way I could get to you after
-going through your contacts Id. I shall give you the contacts of the
-bank. For legitimacy with  a letter of authority that will establish
-you as my appointed beneficiary of this money.
-
-I am waiting for your reply.
-From Sister Josephine HOLLAND.
-
-You should contact me through my private email address:
-
-mrsjosephineoneholland@gmail.com
+Ah, that sucks.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
