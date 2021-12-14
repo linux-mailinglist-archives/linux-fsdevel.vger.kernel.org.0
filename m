@@ -2,101 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BAB64743D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 14:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF29474408
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 14:59:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234556AbhLNNu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Dec 2021 08:50:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232274AbhLNNu4 (ORCPT
+        id S234622AbhLNN7J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Dec 2021 08:59:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:60348 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232428AbhLNN7I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Dec 2021 08:50:56 -0500
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24613C06173F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 05:50:56 -0800 (PST)
-Received: by mail-qv1-xf36.google.com with SMTP id m6so120444qvh.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 05:50:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Rx+hqR5BLDytRmc1k+qRylCXkJ+6AQ7elY7tUqHK8RA=;
-        b=SAn4jhcDHzoZJgY6lNfz1wDtjhMMGbgWvc0lPp7zZX7SuNOLZF+4qB4Ky040g04jVZ
-         xzMHRnnCINKQEcs6YvsOWKPpXyj9FidivDBbfCEzj/PbELvdznhM0sKgL4YmEZJlIo+n
-         KUmcaQT76EqQI5jsUrshYIfS28FPn4nvLmbOOjACQ5tLrpXYwpVnsv8tC6M4gJXFrrXj
-         4GHfTbdKjqLNERoy9OCH0WdYGV+IrpdndDDYITNl57sFm+XGTuVTi0jOIy2CUNoTjzXu
-         Gbs1xM2qzeapIYvRFeiedU155eAv2wfclcaONKwzBjxndW3piEWPi2Mlr/c7IAarZUhC
-         nRoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Rx+hqR5BLDytRmc1k+qRylCXkJ+6AQ7elY7tUqHK8RA=;
-        b=3tUYmnOp0LIOl0xBhndOeVCHOuLmUwz5d2cWVTnDVQXDjJ0/kpcjCh+j/RtGKZO9Vg
-         qMbLoq47HYZ/74yjmFWArfUtPWPuBNDIQl7CujiMNuaNhkyESiL4e0YJW9CmglrmASm1
-         wTqZXZGO15YC22YD9tiy3xJHlTtPz1EM0ukcaxhJosWy4zwBwWQxw+AOZf3ClBTwSTRN
-         1yIiPOb3NxCTSV4qA5reWL73hWXbKJKVOJBDdgEa2dCiZSUSZpnEa6hfu0Vt3Tdgf27E
-         LjhUlBEs+BrCnUFbjDZBXFS7fGcSIbZdzNQ0u4JtRGzdRTSnaKErBRrmGqAKMrwhdeMX
-         GS9Q==
-X-Gm-Message-State: AOAM530/YfgSIAsMay2IC4dwEmGQdUMPDoLfmJb2wvGtDoFE8MKESSk9
-        sdR9zKw3ISPX8zi7OO5neU+9z8FvvO8r5gKi
-X-Google-Smtp-Source: ABdhPJyY3iPu7+f980O6CZq77edRBaM323uDa1Fe74X6ayyglYZzYoBacLC4AtJ5fzzQ6Ldvs3bcXQ==
-X-Received: by 2002:a05:6214:1631:: with SMTP id e17mr5489515qvw.58.1639489855166;
-        Tue, 14 Dec 2021 05:50:55 -0800 (PST)
-Received: from localhost ([2620:10d:c091:480::1:e1e4])
-        by smtp.gmail.com with ESMTPSA id y15sm7671961qko.74.2021.12.14.05.50.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Dec 2021 05:50:53 -0800 (PST)
-Date:   Tue, 14 Dec 2021 14:50:48 +0100
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     willy@infradead.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, shakeelb@google.com, guro@fb.com,
-        shy828301@gmail.com, alexs@kernel.org, richard.weiyang@gmail.com,
-        david@fromorbit.com, trond.myklebust@hammerspace.com,
-        anna.schumaker@netapp.com, jaegeuk@kernel.org, chao@kernel.org,
-        kari.argillander@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, zhengqi.arch@bytedance.com,
-        duanxiongchun@bytedance.com, fam.zheng@bytedance.com,
-        smuchun@gmail.com
-Subject: Re: [PATCH v4 02/17] mm: introduce kmem_cache_alloc_lru
-Message-ID: <YbihOFJHqvQ9hsjO@cmpxchg.org>
-References: <20211213165342.74704-1-songmuchun@bytedance.com>
- <20211213165342.74704-3-songmuchun@bytedance.com>
+        Tue, 14 Dec 2021 08:59:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639490347;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=m/5pRcl9h3yj8MAkqvRPCHvPcL0c1vkmrKvq7UUnKBk=;
+        b=R3Pf0BtheeKCR+6DQSyWJYaEe4fbm54u+afSsZqD8yWyWP0PptSLbc90j0aBv1rbRkpBqr
+        fV+lHDJzyENjvDJoW5BjuykfC4VW1hTtJSHQl7dI9bnRCxTQzh2kPA0eTkNaZPAN+Id1Oa
+        0pDAhTOYKzR3UlEmF7pQyMadKJzDpUU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-93-0kDh8FCsOqi2t6NYQJXz-g-1; Tue, 14 Dec 2021 08:59:04 -0500
+X-MC-Unique: 0kDh8FCsOqi2t6NYQJXz-g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BA20F1966320;
+        Tue, 14 Dec 2021 13:59:01 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.33.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 25B375BE02;
+        Tue, 14 Dec 2021 13:59:01 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id A5F242233DF; Tue, 14 Dec 2021 08:59:00 -0500 (EST)
+Date:   Tue, 14 Dec 2021 08:59:00 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 5/5] dax: always use _copy_mc_to_iter in dax_copy_to_iter
+Message-ID: <YbijJOjhLAwvyNag@redhat.com>
+References: <20211209063828.18944-1-hch@lst.de>
+ <20211209063828.18944-6-hch@lst.de>
+ <YbNejVRF5NQB0r83@redhat.com>
+ <CAPcyv4i_HdnMcq6MmDMt-a5p=ojh_vsoAiES0vUYEh7HvC1O-A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211213165342.74704-3-songmuchun@bytedance.com>
+In-Reply-To: <CAPcyv4i_HdnMcq6MmDMt-a5p=ojh_vsoAiES0vUYEh7HvC1O-A@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 14, 2021 at 12:53:27AM +0800, Muchun Song wrote:
-> +/*
-> + * The allocated list lru pointers array is not accounted directly.
-> + * Moreover, it should not come from DMA buffer and is not readily
-> + * reclaimable. So those GFP bits should be masked off.
-> + */
-> +#define LRUS_CLEAR_MASK	(__GFP_DMA | __GFP_RECLAIMABLE | __GFP_ACCOUNT | __GFP_ZERO)
+On Sun, Dec 12, 2021 at 06:48:05AM -0800, Dan Williams wrote:
+> On Fri, Dec 10, 2021 at 6:05 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Thu, Dec 09, 2021 at 07:38:28AM +0100, Christoph Hellwig wrote:
+> > > While using the MC-safe copy routines is rather pointless on a virtual device
+> > > like virtiofs,
+> >
+> > I was wondering about that. Is it completely pointless.
+> >
+> > Typically we are just mapping host page cache into qemu address space.
+> > That shows as virtiofs device pfn in guest and that pfn is mapped into
+> > guest application address space in mmap() call.
+> >
+> > Given on host its DRAM, so I would not expect machine check on load side
+> > so there was no need to use machine check safe variant.
+> 
+> That's a broken assumption, DRAM experiences multi-bit ECC errors.
+> Machine checks, data aborts, etc existed before PMEM.
 
-There is already GFP_RECLAIM_MASK for this purpose, you can use that.
+So we should use MC safe variant when loading from DRAM as well?
+(If needed platoform support is there).
 
-> +int memcg_list_lru_alloc(struct mem_cgroup *memcg, struct list_lru *lru,
-> +			 gfp_t gfp)
-> +{
-> +	int i;
-> +	unsigned long flags;
-> +	struct list_lru_memcg *mlrus;
-> +	struct list_lru_memcg_table {
-> +		struct list_lru_per_memcg *mlru;
-> +		struct mem_cgroup *memcg;
-> +	} *table;
-> +
-> +	if (!list_lru_memcg_aware(lru) || memcg_list_lru_allocated(memcg, lru))
-> +		return 0;
-> +
-> +	gfp &= ~LRUS_CLEAR_MASK;
+Vivek
 
-	gfp &= GFP_RECLAIM_MASK;
