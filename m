@@ -2,92 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0576F474487
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 15:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56044474489
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Dec 2021 15:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234775AbhLNOJx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Dec 2021 09:09:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        id S234718AbhLNOLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Dec 2021 09:11:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbhLNOJw (ORCPT
+        with ESMTP id S230093AbhLNOLb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Dec 2021 09:09:52 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C480C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:09:51 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id s9so17265608qvk.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:09:51 -0800 (PST)
+        Tue, 14 Dec 2021 09:11:31 -0500
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229BFC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:11:31 -0800 (PST)
+Received: by mail-ed1-x541.google.com with SMTP id z9so8848310edb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Dec 2021 06:11:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=e/FTEzYorakqcCqN0foNPkMgFogJ8h7Uad16SL0Kod8=;
-        b=fiM4FWee3dul+2cfhZ6ic8ErBUv5+rkcAB8xBrNiE8/yU0VqkMKWUerZTWAglEdzdh
-         W6MJBZtSejf4gmfD42WSu62rv/jtlZnPptrfWvHKHYRp3yGdN/DseeN2LBRTj4+ECtd8
-         3mO5fl3fKCMNsVpWvdmBd7po3Bj4ugGiq9GghUy/aj2PGYjfX1EycYqSEDu6BdkEnAbx
-         9LbLh76pnG1R2zCG1pVaRNy/+TBgkJXcj2HZ8xXnbH32oEMIs1jrXRDNy0GmyW5QZuS7
-         FD/8lebSWnO/lhHAYtAk+tb49nMxdVn5qOEZtQWT4LL/tcnIOUVn4fRLYX8hzKZrQtu+
-         xuvA==
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=KzLgDz7d2Gll4mrNvllKXj4KFgN8S+Ovisil7/bb6fs=;
+        b=YwXowzOmFKaHmQFre/ULmnTY2vtrdl9FpdAhRZu64awx/4ti3KZGz8bKc4AB7+nXGv
+         FGhAXqbVXwO2yMsbimg0NGJOTFBHvjbjyaVUw3YwVOigR1hr83Ts1oqJ/X/ITWwkvsJg
+         e+cfONSZnH7txRtTwEVL1wXIACcIj6RlmQ7iVAWu4fMB1fQuysE2Br3gzBqpmHBLgZOx
+         UDGwovb15VaqINAuygoqHqFbHy/pWXR11fgGbFaIEzsIh2gOa5QsXXQonC9b6DmQKcl2
+         LuZf0tO7C+fS/53qcmWAQzZxbfthQHwya4MEA5RI58andQ1RdJZgF0Uws4cQX7wGimXT
+         o2Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=e/FTEzYorakqcCqN0foNPkMgFogJ8h7Uad16SL0Kod8=;
-        b=hJAL7cUmnvO7eIxYsoVjJ1w/igPkSgCcdrzqvuRAhJMu7hx8TRObZya4HycDODCU/u
-         +qGbytL4Hckgenw2dFpDYBEfFnEWizAL/UuzcT6ftu8C0jXjihcS1FcZ7fEHE1RKe7sP
-         VVr6ghGZyyC3U7TDRRfZW7Fha4UsJvmVisPgcuZvvW9SMkGQF37zQW4V4XCcgGmPqigR
-         v4VNZBWNd1r4iJR0jgLZAEoBRpc0iRrI+6X5ce65necDyPgfWiuMko7a5IKVwpjpFbTD
-         /lqW7leb5Xu6goxB1pxzoE+WllNja1552T8zL9UEby7B2UDvGPX83dzBdJggaAvAS34n
-         7r4w==
-X-Gm-Message-State: AOAM531mHBYwjzpQdJo15LbFvj5jYqRbPiazmRQ3btUaTwZnYBQitr/u
-        71sCFlGZ0F1LT+V4vlBPlrxLRA==
-X-Google-Smtp-Source: ABdhPJxD4XJX7z+NX4zxsgKTvBDdRu6CMymo1161/eZjp2r4yhFzTcY1TXXuJLhI8Hjhn6i4vHaVgQ==
-X-Received: by 2002:a05:6214:20e4:: with SMTP id 4mr5743250qvk.95.1639490989223;
-        Tue, 14 Dec 2021 06:09:49 -0800 (PST)
-Received: from localhost ([2620:10d:c091:480::1:e1e4])
-        by smtp.gmail.com with ESMTPSA id v12sm12189863qtx.80.2021.12.14.06.09.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Dec 2021 06:09:48 -0800 (PST)
-Date:   Tue, 14 Dec 2021 15:09:46 +0100
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     willy@infradead.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, shakeelb@google.com, guro@fb.com,
-        shy828301@gmail.com, alexs@kernel.org, richard.weiyang@gmail.com,
-        david@fromorbit.com, trond.myklebust@hammerspace.com,
-        anna.schumaker@netapp.com, jaegeuk@kernel.org, chao@kernel.org,
-        kari.argillander@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, zhengqi.arch@bytedance.com,
-        duanxiongchun@bytedance.com, fam.zheng@bytedance.com,
-        smuchun@gmail.com
-Subject: Re: [PATCH v4 09/17] mm: workingset: use xas_set_lru() to pass
- shadow_nodes
-Message-ID: <YbilqnwnuTiQ2FEB@cmpxchg.org>
-References: <20211213165342.74704-1-songmuchun@bytedance.com>
- <20211213165342.74704-10-songmuchun@bytedance.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=KzLgDz7d2Gll4mrNvllKXj4KFgN8S+Ovisil7/bb6fs=;
+        b=Pos1PGqOfZUYhEAls/TkdodZcsCGnVtCkEQfIKDi/KAML0qNzDlAVf1FElsxgaJdHw
+         fkjHtfKFUhI35li0+XBvX+JJ8YFWzlCFjWBaIS0kkMzS8iAh4tb7yYkLLrJHGDKZUT4y
+         b0BgPJ+M3IeHXfwC+RURZ/teprAdT9qNniLb2FsxBAh2WumBfbIPjc9rmvLr2cu9mso+
+         s0Yu3OJw1SN8YET9IFfgcz1KiFOESNOFSpuEfxf9BjWwqkJGpryuCoTiOSPb0MH+Q3iM
+         jfkefNvI+V+PaH0t02DPh5i3w1pOc1aK0ED8R1bm8c1wBdNu9nDdiARb7pAlwKspyYP2
+         CPog==
+X-Gm-Message-State: AOAM530PSeZtGaRJZ8PC9pNpM0ZuMLVQv2Nmal83HpGXy6FkJ+R3IQpM
+        s9hnL5T4BDIIp6RbhjDaw2NIf0Xv5APuDJYpfGw=
+X-Google-Smtp-Source: ABdhPJxmB6qX7GCggmt5IjB1Bag3CvUqTfLDJT/XLhGNLZ+hzt7ikWasoNpRgzq//ljg77IyMoIxH8H1RPdrdSzeFaI=
+X-Received: by 2002:a05:6402:2079:: with SMTP id bd25mr8259515edb.116.1639491089595;
+ Tue, 14 Dec 2021 06:11:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211213165342.74704-10-songmuchun@bytedance.com>
+Received: by 2002:a54:3842:0:0:0:0:0 with HTTP; Tue, 14 Dec 2021 06:11:29
+ -0800 (PST)
+Reply-To: uchennailobitenone@gmail.com
+From:   uchenna <okeyyoyopa@gmail.com>
+Date:   Tue, 14 Dec 2021 06:11:29 -0800
+Message-ID: <CAHTws=++jJdRZbhWGQ4rhanMRDgdn2XEUOY-=ySf_DG1jQz8_Q@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 14, 2021 at 12:53:34AM +0800, Muchun Song wrote:
-> The workingset will add the xa_node to shadow_nodes, so we should use
-> xas_set_lru() to pass the list_lru which we want to insert xa_node
-> into to set up the xa_node reclaim context correctly.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+May the Almighty Lord be with you....
+Am A WIDOW TO LATE MR David HOLLAND,  I AM 59 .YEARS OLD. My name is
+Josephine HOLLAND.  I am married to Late Mr. David HOLLAND, who worked
+in the France Embassy a here in Lome -Togo West Africa for nine years
+before he died in the
+year 2019.
 
-Ah, you can't instantiate the list on-demand in list_lru_add() because
-that's happening in an atomic context. So you need the lru available
-in the broader xa update context and group the lru setup in with the
-other pre-atomic node allocation bits. Fair enough. I think it would
-be a bit easier to read if this patch and the previous one were
-squashed (workingset is the only user of xa_lru anyway) and you added
-that explanation. But other than that, the changes make sense to me;
-to a combined patch, please add:
+You are chosen to Receive A Donation Cash Grant of my late husband
+that funds $5.7,000,  000,00 (Five Million Seven Hundred Thousand
+United States Dollars) to help the poor and orphanages through your
+sincere help before my death. I am suffering from long time cancer of
+the Breast, from all indication my conditions is really deteriorating
+and it is quite obvious that I wouldn't live any more longer according
+to my doctor because the cancer has gotten to a very bad stage that no
+hope for me to be a living person again, All i need from you is your
+sincerity to use this funds to do this project as i desired and I need
+your information as where My Bank will be sending the funds,
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+such as:
+Receiver's name:_ Address:_ Phone
+number:_ Country:_
+
+Please do not be offended by the way or manner I came to you as a
+stranger to do this, it is about the only way I could get to you after
+going through your contacts Id. I shall give you the contacts of the
+bank. For legitimacy with  a letter of authority that will establish
+you as my appointed beneficiary of this money.
+
+I am waiting for your reply.
+From Sister Josephine HOLLAND.
+
+You should contact me through my private email address:
+
+mrsjosephineoneholland@gmail.com
