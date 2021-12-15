@@ -2,244 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1443F47623D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 20:54:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BACF476343
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 21:27:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232830AbhLOTyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Dec 2021 14:54:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42654 "EHLO
+        id S235965AbhLOU1k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Dec 2021 15:27:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbhLOTyu (ORCPT
+        with ESMTP id S235936AbhLOU1j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Dec 2021 14:54:50 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0117CC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 11:54:50 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id x6so31703530iol.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 11:54:49 -0800 (PST)
+        Wed, 15 Dec 2021 15:27:39 -0500
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37281C061401
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 12:27:39 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id l18so16368122pgj.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 12:27:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ALt1Hb7Qa7bjO8VxujJAaYdZEXhXT8CXyG09xsCi9Qw=;
-        b=bh7AbqnSnaHPpjnf/WLCUXwSULoQLSQ+ntjWOuHzwUmwMQAq02wDvgakifAnkzrS3h
-         W8bxp82nr+FKh5buagap6SrPHF8xuid0GevTnQsKRaCIuISBgWG11K7So6veGpumEdPj
-         lexi5yNbgFcEjAbPA7X/Q59woW3JnwO6GfGa4lJBV/d0wZwrH6w6FT6mCBeibSWSspi5
-         erQlVblyZrMoYKbhIyDseYzPyhlxfQZ0zhsMBr39btqv0wrDV9SCkGHJfWcU20EncF9G
-         EgZx07kSe5FUZaKOTzvZ4gSueSxCmkM19qhrBcWg6qYixPj/uG1n96bnFFNWOnnZOwzI
-         MrtA==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=aE16Ssev0R3Q0ozi7skL6Cwz7O3Mts6BMgT8usCXa9g=;
+        b=hhyRh/Fi5pUZwZtqb9iOEO7Su2F46hg7qQa8cA2wOH7PpRCGWIluis5BV5nZYuvvKL
+         jikxNd+5TYThteRoHJ3In943yYAXy4XfHPSAtqp+DA6omeHgPpckwf8gmu+jIYpevk0x
+         cII/iPsShb3dss1KOkmhPfgJWqIh01TMHqIBxjdY8tBV0k5MrX5fVudgkvNC+IUXFGjU
+         wB49KOhNgiaeuzeZsRqvmGx3mwPYwjLCTWeuu5o1A8WH0UYFAapCIjiSm0J4FuFCOvTE
+         6sVbToGXsTe1rBwuDNauTnJYY0typNW2kQ6MEYLL8N6N2rLJ0myFKZhAPRpkxsac/MxC
+         LRXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ALt1Hb7Qa7bjO8VxujJAaYdZEXhXT8CXyG09xsCi9Qw=;
-        b=UUmUOMnZnZJRa/00ygtUR12M5vFeg59cRAhoLAxuoQWLtWjcgHhRGuliKlWyed3R5X
-         N7Q3II6uUF7p64R132AR0ZrCsXpdcywT3bRBY5cf80TnNuwnws79Pn0h1JX7su7vsYV7
-         8a45GLb3C8l3XJVqfwIEcP0snQPn1dnM/DJ2Ue0NoK5MF/kBrZ9dADr8yX7G8+FBoL2P
-         pnDjwCGmMY177b2wilZ1v7fuU3QjTMm28gJvNdV3d/0V0fdpq1S8MdeoKcXO+iNf+9NP
-         SxB9tnRzTEqj6mK10YHHt09AkUCDhGUQDyzuNd43SsiS5PQ7c26AMkArTS0hOwBb+1D4
-         7rJQ==
-X-Gm-Message-State: AOAM53383r80wGxZh5kTrH/6i2F4+G6JWkiZ/rZ6/jjl165sDGnNPuzn
-        hjbHxVOPePk6vL9wxdOLfqg1rbxFY4uByVMVNoE=
-X-Google-Smtp-Source: ABdhPJxqD+Nhmm12J7OXTI/Y1LUaWF3CPGlWViRj/0qe14AZpFR7CAHgeczUTYGOYv6Ye7JJeCCIXEnRZiv+Jkt2Y6o=
-X-Received: by 2002:a05:6638:33a6:: with SMTP id h38mr6870660jav.188.1639598089336;
- Wed, 15 Dec 2021 11:54:49 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=aE16Ssev0R3Q0ozi7skL6Cwz7O3Mts6BMgT8usCXa9g=;
+        b=LJXEXbNht5xeFIMMt5TWK5KU4TrghTrZbxVC5rHltvWXJts7/ogw0YyqTW67qkVATP
+         IhLXfE/aQ9L5pxfU8h1g3kOU2JOa9W+8+bC4AJlVaW4dF6yE87eUHKFEcaoOj8T4k4oH
+         jFNJ6y1OnrRwoJMIfIh5jk/mH1d14dYkmjypcDqWxYz+vnqX3NknmJo066dNi4AZI1FB
+         2azJtjAluFicZAk4MsF1LUpQvkf6zctkcw1PA2SZMvaAT2/NeBgFTCfpwI5DgYAasbix
+         HQop8vdBUnVOhNC7NtR5kjSdvR5MN95ihgWX8mbpQToQAWynFkDXMQatE3NeapZQu4Hr
+         YzOA==
+X-Gm-Message-State: AOAM532WGRUsYUOs9fUyZcHkblTBjhrQyhYrPKehcn7Pn720RKLSk81L
+        qNVdueGyF51gw2x8hUoKejTZFA==
+X-Google-Smtp-Source: ABdhPJwHZJT+dWs9l1mfZOWrpDuFV6ttBbBlmCJ32uyq29Yx8dw1z9DEi7NrlFpjab6ra/mTVp9Auw==
+X-Received: by 2002:a63:5518:: with SMTP id j24mr9070570pgb.401.1639600058655;
+        Wed, 15 Dec 2021 12:27:38 -0800 (PST)
+Received: from [192.168.254.17] ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id b1sm3636253pfl.101.2021.12.15.12.27.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Dec 2021 12:27:38 -0800 (PST)
+Message-ID: <2cd473d4-734d-95e2-4f3f-d793d065c449@linaro.org>
+Date:   Wed, 15 Dec 2021 12:27:37 -0800
 MIME-Version: 1.0
-References: <20211111173043.GB25491@quack2.suse.cz> <CAOQ4uxiOUM6=190w4018w4nJRnqi+9gzzfQTsLh5gGwbQH_HgQ@mail.gmail.com>
- <CANXojcy9JzXeLQ6bz9+UOekkpqo8NkgQbhugmGmPE+x3+_=h3Q@mail.gmail.com>
- <CAO17o21YVczE2-BTAVg-0HJU6gjSUkzUSqJVs9k-_t7mYFNHaA@mail.gmail.com>
- <CAOQ4uxjpGMYZrq74S=EaSO2nvss4hm1WZ_k+Xxgrj2k9pngJgg@mail.gmail.com>
- <YaZC+R7xpGimBrD1@redhat.com> <CAO17o21uh3fJHd0gMu-SmZei5et6HJo91DiLk_YyfUqrtHy2pQ@mail.gmail.com>
- <CAOQ4uxjfCs=+Of69U6moOJ9T6_zDb1wcrLXWu4DROVme1cNnfQ@mail.gmail.com>
- <YbobZMGEl6sl+gcX@redhat.com> <CAOQ4uxj9XZNhHB3y9LuGcUJYp-i4f-LXQa2tzX8AkZpRERH+8w@mail.gmail.com>
- <Ybo/5h9umGlinaM4@redhat.com>
-In-Reply-To: <Ybo/5h9umGlinaM4@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 15 Dec 2021 21:54:38 +0200
-Message-ID: <CAOQ4uxheVq-YHkT9eOu3vUNt1RU4Wa6MkyzXXLboHE_Pj6-6tw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        Stef Bon <stefbon@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>,
-        Nathan Youngman <git@nathany.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH] io_uring: prevent io_put_identity() from freeing a static
+ identity
+Content-Language: en-US
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org,
+        syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+References: <20211104012120.729261-1-tadeusz.struk@linaro.org>
+ <dd53f11a-ae6f-79af-2ea2-8091d1c4f15e@linaro.org>
+In-Reply-To: <dd53f11a-ae6f-79af-2ea2-8091d1c4f15e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 9:20 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Wed, Dec 15, 2021 at 07:29:29PM +0200, Amir Goldstein wrote:
-> > > >
-> > > > The mistake in your premise at 1) is to state that "fuse does not
-> > > > support persistent file handles"
-> > > > without looking into what that statement means.
-> > > > What it really means is that user cannot always open_by_handle_at()
-> > > > from a previously
-> > > > obtained file handle, which has obvious impact on exporting fuse to NFS (*).
-> > >
-> > > Hi Amir,
-> > >
-> > > What good is file handle if one can't use it for open_by_handle_at(). I
-> > > mean, are there other use cases?
-> >
-> > commit 44d705b0:
-> > "...There are several ways that an application can use this information:
-> >
-> >     1. When watching a single directory, the name is always relative to
-> >     the watched directory, so application need to fstatat(2) the name
-> >     relative to the watched directory.
-> >
-> >     2. When watching a set of directories, the application could keep a map
-> >     of dirfd for all watched directories and hash the map by fid obtained
-> >     with name_to_handle_at(2).  When getting a name event, the fid in the
-> >     event info could be used to lookup the base dirfd in the map and then
-> >     call fstatat(2) with that dirfd.
->
-> Ok, so case 1 and 2 still might be doable.
->
-> >
-> >     3. When watching a filesystem (FAN_MARK_FILESYSTEM) or a large set of
-> >     directories, the application could use open_by_handle_at(2) with the fid
-> >     in event info to obtain dirfd for the directory where event happened and
-> >     call fstatat(2) with this dirfd.
-> >
-> >     The last option scales better for a large number of watched directories.
-> >     The first two options may be available in the future also for non
-> >     privileged fanotify watchers, because open_by_handle_at(2) requires
-> >     the CAP_DAC_READ_SEARCH capability.
-> > "
->
-> This is one is not possible as it needs open_by_handle_at().
->
-> >
-> > fsnotifywait [1] has an example of use case #2.
-> > Essentially, when watching inodes, the fanotify file identifier is not very much
-> > different from the inotify "watch descriptor" - it identifies the watched object
-> > and the watched object is pinned to cache as long as the inode mark is set
-> > so file handle would not change also in fuse.
->
-> Ok, so if we are maintaining a hash map keyed by file handle, then first
-> we need to pin down the inode and then call name_to_handle_at() for the
-> watched object and add to hash table. Something like this.
->
-> A. foo_fd = open(foo.txt)
-> B. name_to_handle_at(.., foo.txt,...)
-> C. Add info in hash table using foo_handle as key.
-> D. Add watch on foo.txt (fanotify_mark()).
-> E. close(foo_fd).
->
-> One could probably skip step A and E. And do this instead.
->
-> A. Add watch on foo.txt (fanotify_mark())
-> B. name_to_handle_at(.., foo.txt,...)
-> C. Add info in hash table using foo_handle as key.
->
-> But this is little bit racy. You might start getting events with file
-> handles of foo.txt before you could complete B or C.
->
+On 11/15/21 08:38, Tadeusz Struk wrote:
+> On 11/3/21 18:21, Tadeusz Struk wrote:
+>> Note: this applies to 5.10 stable only. It doesn't trigger on anything
+>> above 5.10 as the code there has been substantially reworked. This also
+>> doesn't apply to any stable kernel below 5.10 afaict.
+>>
+>> Syzbot found a bug: KASAN: invalid-free in io_dismantle_req
+>> https://syzkaller.appspot.com/bug?id=123d9a852fc88ba573ffcb2dbcf4f9576c3b0559
+>>
+>> The test submits bunch of io_uring writes and exits, which then triggers
+>> uring_task_cancel() and io_put_identity(), which in some corner cases,
+>> tries to free a static identity. This causes a panic as shown in the
+>> trace below:
+>>
+>>   BUG: KASAN: double-free or invalid-free in kfree+0xd5/0x310
+>>   CPU: 0 PID: 4618 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #17
+>>   Call Trace:
+>>    dump_stack_lvl+0x1b2/0x21b
+>>    print_address_description+0x8d/0x3b0
+>>    kasan_report_invalid_free+0x58/0x130
+>>    ____kasan_slab_free+0x14b/0x170
+>>    __kasan_slab_free+0x11/0x20
+>>    slab_free_freelist_hook+0xcc/0x1a0
+>>    kfree+0xd5/0x310
+>>    io_dismantle_req+0x9b0/0xd90
+>>    io_do_iopoll+0x13a4/0x23e0
+>>    io_iopoll_try_reap_events+0x116/0x290
+>>    io_uring_cancel_task_requests+0x197d/0x1ee0
+>>    io_uring_flush+0x170/0x6d0
+>>    filp_close+0xb0/0x150
+>>    put_files_struct+0x1d4/0x350
+>>    exit_files+0x80/0xa0
+>>    do_exit+0x6d9/0x2390
+>>    do_group_exit+0x16a/0x2d0
+>>    get_signal+0x133e/0x1f80
+>>    arch_do_signal+0x7b/0x610
+>>    exit_to_user_mode_prepare+0xaa/0xe0
+>>    syscall_exit_to_user_mode+0x24/0x40
+>>    do_syscall_64+0x3d/0x70
+>>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>>   Allocated by task 4611:
+>>    ____kasan_kmalloc+0xcd/0x100
+>>    __kasan_kmalloc+0x9/0x10
+>>    kmem_cache_alloc_trace+0x208/0x390
+>>    io_uring_alloc_task_context+0x57/0x550
+>>    io_uring_add_task_file+0x1f7/0x290
+>>    io_uring_create+0x2195/0x3490
+>>    __x64_sys_io_uring_setup+0x1bf/0x280
+>>    do_syscall_64+0x31/0x70
+>>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>>   The buggy address belongs to the object at ffff88810732b500
+>>    which belongs to the cache kmalloc-192 of size 192
+>>   The buggy address is located 88 bytes inside of
+>>    192-byte region [ffff88810732b500, ffff88810732b5c0)
+>>   Kernel panic - not syncing: panic_on_warn set ...
+>>
+>> This issue bisected to this commit:
+>> commit 186725a80c4e ("io_uring: fix skipping disabling sqo on exec")
+>>
+>> Simple reverting the offending commit doesn't work as it hits some
+>> other, related issues like:
+>>
+>> /* sqo_dead check is for when this happens after cancellation */
+>> WARN_ON_ONCE(ctx->sqo_task == current && !ctx->sqo_dead &&
+>>          !xa_load(&tctx->xa, (unsigned long)file));
+>>
+>>   ------------[ cut here ]------------
+>>   WARNING: CPU: 1 PID: 5622 at fs/io_uring.c:8960 io_uring_flush+0x5bc/0x6d0
+>>   Modules linked in:
+>>   CPU: 1 PID: 5622 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #16
+>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-6.fc35 
+>> 04/01/2014
+>>   RIP: 0010:io_uring_flush+0x5bc/0x6d0
+>>   Call Trace:
+>>   filp_close+0xb0/0x150
+>>   put_files_struct+0x1d4/0x350
+>>   reset_files_struct+0x88/0xa0
+>>   bprm_execve+0x7f2/0x9f0
+>>   do_execveat_common+0x46f/0x5d0
+>>   __x64_sys_execve+0x92/0xb0
+>>   do_syscall_64+0x31/0x70
+>>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>> Changing __io_uring_task_cancel() to call io_disable_sqo_submit() directly,
+>> as the comment suggests, only if __io_uring_files_cancel() is not executed
+>> seems to fix the issue.
+>>
+>> Cc: Jens Axboe <axboe@kernel.dk>
+>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>> Cc: <io-uring@vger.kernel.org>
+>> Cc: <linux-fsdevel@vger.kernel.org>
+>> Cc: <linux-kernel@vger.kernel.org>
+>> Cc: <stable@vger.kernel.org>
+>> Reported-by: syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+>> Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
+>> ---
+>>   fs/io_uring.c | 21 +++++++++++++++++----
+>>   1 file changed, 17 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 0736487165da..fcf9ffe9b209 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -8882,20 +8882,18 @@ void __io_uring_task_cancel(void)
+>>       struct io_uring_task *tctx = current->io_uring;
+>>       DEFINE_WAIT(wait);
+>>       s64 inflight;
+>> +    int canceled = 0;
+>>       /* make sure overflow events are dropped */
+>>       atomic_inc(&tctx->in_idle);
+>> -    /* trigger io_disable_sqo_submit() */
+>> -    if (tctx->sqpoll)
+>> -        __io_uring_files_cancel(NULL);
+>> -
+>>       do {
+>>           /* read completions before cancelations */
+>>           inflight = tctx_inflight(tctx);
+>>           if (!inflight)
+>>               break;
+>>           __io_uring_files_cancel(NULL);
+>> +        canceled = 1;
+>>           prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+>> @@ -8909,6 +8907,21 @@ void __io_uring_task_cancel(void)
+>>           finish_wait(&tctx->wait, &wait);
+>>       } while (1);
+>> +    /*
+>> +     * trigger io_disable_sqo_submit()
+>> +     * if not already done by __io_uring_files_cancel()
+>> +     */
+>> +    if (tctx->sqpoll && !canceled) {
+>> +        struct file *file;
+>> +        unsigned long index;
+>> +
+>> +        xa_for_each(&tctx->xa, index, file) {
+>> +            struct io_ring_ctx *ctx = file->private_data;
+>> +
+>> +            io_disable_sqo_submit(ctx);
+>> +        }
+>> +    }
+>> +
+>>       atomic_dec(&tctx->in_idle);
+>>       io_uring_remove_task_files(tctx);
+>>
+> 
+> Hi,
+> Any comments on this one? It needs to be ACK'ed by the maintainer before
+> it is applied to 5.10 stable.
+> 
 
-I suppose you can also use O_PATH fd to name_to_handle_at()
-with AT_EMPTY_PATH if you are concerned with races, but the
-races of name_to_handle_at() vs read events are pretty easy to handle
-in userspace.
+This still triggers on 5.10.85. Anyone want to have a look?
 
-> >
-> > [1] https://github.com/inotify-tools/inotify-tools/pull/134
-> >
-> > >
-> > > IIUC, file handle for the same object can change if inode had been flushed
-> > > out of guest cache and brought back in later. So if application say
-> > > generated file handle for an object and saved it and later put a watch
-> > > on that object, by that time file handle of the object might have changed
-> > > (as seen by fuse). So one can't even use to match it with previous saved
-> > > file handle.
-> > >
-> >
-> > The argument is not applicable for inode watches.
->
-> Fair enough. I could see a very limited use case and thought that's not
-> enough. But looks like you seem to be ok with that.
->
-> > Filesystem and mount watches are not going to be supported with virtiofs
-> > or any filesystem that does not support persistent file handles.
->
-> Ok, so no filesystem and mount watches for virtiofs to begin with.
->
-
-No, but I do expect the remote fsnotify vfs API design to take those
-into account as future extensions.
-
-> >
-> > > So I can't use file handle for open_by_handle_at(). I can't use it to
-> > > match it with previously saved file handle. So what can I use it for?
-> > >
-> > > IOW, I could not imagine supporting fanotify file handles without
-> > > fixing the file handles properly in fuse. And it needs fixing in
-> > > virtiofs as well as we can't trust random file handles from guest
-> > > for regular files.
-> > >
-> >
-> > Partly correct statements, but when looking at the details, they are
-> > not relevant to the case of fanotify inode watch.
-> >
-> > Note that at the moment, fuse does not even support local fanotify
-> > watch with file handles because of fanotify_test_fsid() - fuse does
-> > not set f_fsid (not s_uuid), so it's not really about supporting fanotify
-> > on fuse now.
->
-> Hmm..., that means we first will have to look into supporting local
-> fanotify events with file handles on fuse. Without that we can't even
-> test our remote fsnotify changes looks like.
->
-> This sounds like another blocker (or dependency project to complete first)
-> before one can make progress with remote inotify/fanotify/fsnotify.
->
-
-I am not saying you need to do any of those things, but you need to
-take into account that someone else will want to implement them
-in virtiofs, other fuse server or other remote fs.
-
-All I am asking is that the vfs API and to some extent also the FUSE
-fsnotify protocol extension will not be limited to inotify terminology.
-
-> > It's about the vfs APIs for remote fsnotify that should not be inotify
-> > specific.
->
-> I understand that part. But at the same time, remote fsnotify API will
-> probably evolve as you keep on adding more functionality. What if there
-> is another notification mechanism tomorrow say newfancynotify(), we
-> might have to modify remote fsnoitfy again to accomodate that.
->
-> IOW, fsnotify seems to be just underlying plumbing and whatever you
-> add today might not be enough to support tomorrow's features. That's
-> why I wanted to start with a minimal set of functionality and add
-> more to it later.
->
-
-I do want to start with minimal functionality.
-I did not request that you implement more functionality than what inotify
-provides.
-
-TBH, I can't even remember the specific details that made me say
-"this is remote inotify not remote fsnotify", but there were such details.
-I remember inotify rename cookie being one of them.
-
-I guess this discussion is not very productive at this point as none of us
-are saying anything very specific about what should and should not
-be done, so let me try to suggest something -
-
-Try to see if you could replace the server side implementation with
-fanotify even if you use CAP_SYS_ADMIN for the experiment.
-fanotify should be almost a drop-in replacement for inotify at this point
-If you think that you cannot make this experiment with your current
-protocol and vfs extensions then you must have done something wrong
-and tied the protocol and/or the vfs API to inotify terminology.
-
+-- 
 Thanks,
-Amir.
+Tadeusz
