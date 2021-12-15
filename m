@@ -2,598 +2,381 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B0D4751D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 06:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A983A4751DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 06:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239812AbhLOFGW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Dec 2021 00:06:22 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:39056 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239777AbhLOFGV (ORCPT
+        id S239837AbhLOFNK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Dec 2021 00:13:10 -0500
+Received: from mx07-001d1705.pphosted.com ([185.132.183.11]:56444 "EHLO
+        mx07-001d1705.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231436AbhLOFNI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Dec 2021 00:06:21 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1111E617F6;
-        Wed, 15 Dec 2021 05:06:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F792C34604;
-        Wed, 15 Dec 2021 05:06:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639544780;
-        bh=ROfNpUhavXtK3i+z6uzVAM8or/1wIuotU5/XoVi2MuQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V8Cr7/571APUusDmVb4wrlSdHrPtyMxK4WiSG/DO+Dw7DMU8lZlXUbbHVomZx5sKT
-         7tkSz01o+NB+wc0Z9qbvREX+HqaU7kTA1Bpn6rfNJXHskjJF7aQHgKeKsoWXEPGY6U
-         oG72j2V1GXQTJNIh7wR25VC7ySKMy4hU1rXUMYmjIAMSWChrUDa0tqX3Ya1YecMz5B
-         LT4B6B000s9KsJ4aL/vIVwT0regy7cfeQq/ilW+J6NcFhgHr2MbrllSVAx7hYfQ6gO
-         gG0V6+KSX6ulZ9bFNctRh80JODZDwOOj+LMrWTHbNcCqcVSEcPdNVAolAxPXWdo70a
-         z1RELkdfgoq+g==
-Date:   Tue, 14 Dec 2021 21:06:19 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] xfs: make sure link path does not go away at access
-Message-ID: <20211215050619.GJ1218082@magnolia>
-References: <YZPVSTDIWroHNvFS@bfoster>
- <20211117002251.GR449541@dread.disaster.area>
- <YZVQUSCWWgOs+cRB@bfoster>
- <20211117214852.GU449541@dread.disaster.area>
- <YZf+lRsb0lBWdYgN@bfoster>
- <20211122000851.GE449541@dread.disaster.area>
- <YZvvP9RFXi3/jX0q@bfoster>
- <20211122232657.GF449541@dread.disaster.area>
- <YZ6m4ZyUDt5SaICI@bfoster>
- <54f47924fbb3c3af17497fd6d1b1c5326a2d7c3d.camel@themaw.net>
+        Wed, 15 Dec 2021 00:13:08 -0500
+Received: from pps.filterd (m0209328.ppops.net [127.0.0.1])
+        by mx08-001d1705.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BF4jxQk029075;
+        Wed, 15 Dec 2021 05:12:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
+ subject : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=S1; bh=uh5yDYkTpbVTe9QhvTvqoweefZyALrOKuvQqzeKT0kc=;
+ b=gLDIfvNyZTedOjMqBX7c2/HJfinJNXowdYv4SGYqy7jjYDC/wZOYhVOcxrB+rUmfgPya
+ U1Nd6sQ15mPDIEjZKW9KDO5dq1fS/QBl2gXmYuz62f1j+kvPH4+H1o0MDi+yHAHKOKaX
+ xU3ENa3KEbsqCvv/3lN74JRkUlj08M0z/JreEo2RXQTZOFgekDWDWx7ugpVIbatCjduf
+ izd1IYhhAGeUqKPO9CI/pSExhnhDo2myMFnmdRnGGwJ1YU2gizz6A/GUsjK7E0ndPnox
+ lBPiikYRrxbVMRdowS/4Bd6cyeTJ3Q3bQ7bSUq1vrqdizssdfXpRz6IbNrlLlUpDwTPB Ug== 
+Received: from apc01-psa-obe.outbound.protection.outlook.com (mail-psaapc01lp2040.outbound.protection.outlook.com [104.47.26.40])
+        by mx08-001d1705.pphosted.com with ESMTP id 3cvn5m2s6h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Dec 2021 05:12:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ejUL618GMyoyvrvY2IBIqvDH/TviPWFx1ireAvcwxpLKi5R2k92bXWIW5dr+uyvd5fsK3xKTqSECUz6koLHZkgMFBG5y19e3MWLMO/aFS7/RvCGI9ecRcIk6iSWNm5Qds4v4JGWIKYMmOwS+Eb5RIJ7uCizbvCS05F5JRVjwznEhR9RUCVPQF9jQwTpncPVEPis+PLaMluWwaMORN60za6GgR/o+Mo1AD6bmGahtplJFILkeqSf+CPvM0XTOjdQzbLVCDCvy7v6XYjCMpdeFH29hqdWt4LuWiiYUfDk9aWzYx48iMtKEkiwLjHilSeJ+Wks8Q1nFSAh1AOm5TKRMTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uh5yDYkTpbVTe9QhvTvqoweefZyALrOKuvQqzeKT0kc=;
+ b=eCvxHhlSx+71A9et9x9b/WN4hkSOgQTJAxP67Lu6IyYpq2AN1e788AaOXnr0Q0i7/xKzk5mvhyCV+0j9apJ6kVfE9vcJaIA+o0ePvYgrnPy1bsTCAhbJ99AX7Sgq8obEirPVtySzFDtv8XMjY0pDM2nMnlTygCIrAgU3JZ4FJBiIWV2HF1LXIVjh5zvTYKoQd5GG+KJgNlKIpMXCNzHM7y5F+A/8mEBj+C85vP7Hm3L6IgoiELMh5AGXomnEwuVXQaHl8GMq2viWL2/f6dYseLAoKxeyQxaSZtVpRBtBGB/orWGbcW01ZfoP9/y5BCSCYl9EwWc6qveSIANhEOHbxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from HK2PR04MB3891.apcprd04.prod.outlook.com (2603:1096:202:35::13)
+ by HK2PR04MB3585.apcprd04.prod.outlook.com (2603:1096:202:3c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.16; Wed, 15 Dec
+ 2021 05:12:39 +0000
+Received: from HK2PR04MB3891.apcprd04.prod.outlook.com
+ ([fe80::98d0:88f2:dfa9:93e]) by HK2PR04MB3891.apcprd04.prod.outlook.com
+ ([fe80::98d0:88f2:dfa9:93e%3]) with mapi id 15.20.4778.018; Wed, 15 Dec 2021
+ 05:12:39 +0000
+From:   <Yuezhang.Mo@sony.com>
+To:     <linkinjeon@kernel.org>, <sj1557.seo@samsung.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] exfat: remove argument 'sector' from exfat_get_dentry()
+Thread-Topic: [PATCH] exfat: remove argument 'sector' from exfat_get_dentry()
+Thread-Index: AQHX8XBa71IUEcVNJUe4HwKqFnmS4w==
+Date:   Wed, 15 Dec 2021 05:12:38 +0000
+Message-ID: <HK2PR04MB38919EB7F957C4BBB0B94C3781769@HK2PR04MB3891.apcprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+suggested_attachment_session_id: f4c28ac8-0097-a718-655b-fea97bcc4e56
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1a8c6f70-9562-44fc-1a61-08d9bf8983bf
+x-ms-traffictypediagnostic: HK2PR04MB3585:EE_
+x-microsoft-antispam-prvs: <HK2PR04MB3585F7643FD361BF0401A9EE81769@HK2PR04MB3585.apcprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:74;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: QfOXwTfGUPlgDKeEv+7D3t9C3XJ5mHln9Os7T98wJ9T1mRMsD0UX9sv/24ZXesNgoE0pQJCx+SR70k3pxQOlcIweBzoEHe68/ZehCFY6YdcBZqyzIGdRF+LMWMPqEMCpFrbKefi6fZ8fKd0m8BuVP0rNNd4Fz4eVS0wQA8emHL1XiwfWAd5HTS32vwtzwkELZLJOBih7ShbEmaIB3mvIGdnmL3PRNdJM9IM54KJDp0QLsWmO8eHlvS675jn4cozBuFmX1x9I4fBwq5dWBSnkhiatUMWHFwsyKnYZsg9ACSJ5paGQrPzhmHKRrOUMjbQwkF+p8/T3HNiv7R42Ov+ltu/0vhp+o4xwOC3fN66zRBDMkw7i2zYfqgy+RN88GBhqFfN/l0zBgCdDDl0VW3V385k1nCLJ8zZ051+d3Q0EcS+KTctL6x9mW7Oh3nGjwrOoFktc+B/S1v9nxMmS4ur3S1dA+lylprJ5Bg4JehsAFOhA2nETCK4o3xUFv9vJUyJ87dvMNZ1Oo6PRangr1Dpbt0DKqGsYEqAXzW6QlgyDSO9TCYWbfq4hwpgLjTYiCEbRksMO5jguVF6rjGAPsoCc/r3mwMgkA3v5aYK693ly1UzQAdX9pIYMFVMWA+BsxmVWPmtbXQO1gY1hwthhwmyMPV6ArBE8YtJ/roRL1ayIt3KAYP7/PUbxmN5RaRLud0jCHdEupn4+ThDYmUQRRrp/EQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK2PR04MB3891.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(186003)(6506007)(4326008)(66476007)(66946007)(66556008)(66446008)(64756008)(71200400001)(2906002)(9686003)(55016003)(33656002)(76116006)(30864003)(91956017)(5660300002)(52536014)(54906003)(38100700002)(316002)(122000001)(110136005)(83380400001)(8676002)(8936002)(82960400001)(508600001)(7696005)(38070700005)(86362001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?gb2312?B?TnZleHlscDhKYzlWYytLNEg0WmcxWWpna2tlbDMxL1NKY2p6aW9HUHJRNi9Z?=
+ =?gb2312?B?elFjNW9RMHZIZUxKWEZCK1lEalFRNnZJKzR3OTczQ005dFRSUm03ZlZlTkk1?=
+ =?gb2312?B?UFdNa1diSXJ2K1JVZTNNbG1wSTF3K3p5Rlh2QzRRY1VjZ3JnYlYwMEVVQU9u?=
+ =?gb2312?B?cXZsSUxrM3ZlTUV5cGswY1hRaVlxang5RWpXS2paNnRaVXlKazBHa0xXdnRF?=
+ =?gb2312?B?Q25JWEhJVVNscWRVcXZSRW02NVFVbUxRd29ZSVN3UlRrMmhDTEZaYWU2Y0RT?=
+ =?gb2312?B?cTJtUklJV0h6Yk56VCt0bjgzbXVOemlOOG5SOUVCSG9WM05FVGk0WXlxLzd3?=
+ =?gb2312?B?ZjlWK3A5K0NlVFVtUjFiL0dCSENJUWpFTUtQMk5VU040OEF4QVl0bjB5aUJw?=
+ =?gb2312?B?WlpaQ0VPSjU3V0ttdVNTOE5CNUNLRXR2c0dZUHQ4V1p0WGlEVm1rYzVYMGxu?=
+ =?gb2312?B?TksybzdkRkp6MHkzRTdwRWpzbW94SSthb2FNSDlHK1p5Zm1NKzFUdlBZbERD?=
+ =?gb2312?B?UVI5ZkN5SjJmQ1NrWFNjMHQwdnZVUStENXEva25nYU1pYTh0ZUxRVDdSQ2NR?=
+ =?gb2312?B?SklpRU95aFNFOER3TEt6V2hWd1BibW9LUFpjSVpUVFFnc0gxOW1FbGRHK3dC?=
+ =?gb2312?B?aGVQdjg5dDRpcmE3c1grU0p6aGl0ajRURW5HcUpsRnZFbjVMYlVMWEZHVTBP?=
+ =?gb2312?B?U2ZkWUZCS0tSaCt2YmE4amRTUEo0ODMvVHF6TTdTSGQwSDM5S1ljdFBGT2hz?=
+ =?gb2312?B?ejkxYkt5K3RBaWZESmwzQ2c5Um92cWdqY3pkc3dHQzgzZ0pjcC9TVzhSbmht?=
+ =?gb2312?B?Q0hFUFVya1dGKzZTS09VanJGb2VkZ0p3UFg1bFBnZnZDWTFXRHBINzlmL2pn?=
+ =?gb2312?B?Nm5xeWJJdXdkUmE5S01OalljNXpYM25jbWJQaHh2NWcrYXp3Z3JyUWp6anlM?=
+ =?gb2312?B?K1dmMk80M1A3dGh1UHJBTlhSbnRoUjNFa3R0STJ2NHhMZ2tWTnU5c1hLU3dR?=
+ =?gb2312?B?cVFzaFNMVE10eGF5czZCMVd1V2cxcW5LbU9zV2N3eFcyMTNKYzBGbDVzaFIw?=
+ =?gb2312?B?RFZWL1d1V0pYYld1ZFdaRkc4d05KZGdzL0E1YTlEMkNYQXRRYXdwcU1pNDhy?=
+ =?gb2312?B?NUhFbkdWSnh1RTE4d2h4cWQrZ29WbG5pQWw1QkRUeWJUaTNqNDN5alNxY0ZQ?=
+ =?gb2312?B?WkZGV0pZVElhYVJmSlBpMVcxeWZpdTVQY2FaWk9hMU9EdkdhVmtkMnhMTGpU?=
+ =?gb2312?B?d29hL2RJck95Yk81ZjFYU1ArU2poYzloSDFNRXYxdko3M3FTSEF1ZUs5dDNZ?=
+ =?gb2312?B?NG1zZm5oY2xPUmZjb256bTArSUhJK2l0QmdHNlRZbTRvNGs2bjlMY2JQQWl1?=
+ =?gb2312?B?MG5qQ0I3VmJYU1hudUFnczFXL2FjZmhNZyt4YTgwdk9uR1hnYTBJall1ZkQv?=
+ =?gb2312?B?a3g4N2ZLTlhpVmlmcUZjTzR6M3BLR2tIZG5OS2pvSU5tWW52aW9mTHI3bDYz?=
+ =?gb2312?B?aDJGNFJCSERmUXBJMDVnMjFpaXB5eTdrMnJTRnZ3R1ZOYk93anhVOFZEK1Ex?=
+ =?gb2312?B?R3NMc2FsQU1xd2NaR3MrRG1DaXlOdDNmZ3Bza2E1TEFkRjJPN0NxMFcrc29X?=
+ =?gb2312?B?YkhPK1JLT2dVUUlOeWsvc0pnOFBCdHdRbjFxb2xrRUQzM3h1cSszRk5CVW4x?=
+ =?gb2312?B?NHJJK1liSXhCeG95ZEFIWnA0S0lZL3JIOUVUN3lpNGU3WDhTR0dQSzI3QzVQ?=
+ =?gb2312?B?UkFxdnIyMHdVSFRwSFVJaTZhLzhOc3NGWldwMXh0ZHEzL3k4ZTZvWW5FTmFa?=
+ =?gb2312?B?ZndSTnd4ejArYXZqREQ1YUlBSGpDUVprbmZ6V1RlK1d0Z05TcFVVVVJZKzhR?=
+ =?gb2312?B?L2l5MzRBOEhJSWduZEVmY01HM0dDUG9mVFFjYjZXUlUzUkN6cDU0MC9XSkg4?=
+ =?gb2312?B?UG9SUUEvSVlIT20wZDhpTExaSVRRdFk4dTJVWFZVS0t5bXRmalh6K2FDbnh1?=
+ =?gb2312?B?VzZ2ejFZMDNycGxxWUo1L0tHL0VlUGpDSndXMnIvN29GWkpnSXlCV3NQemxM?=
+ =?gb2312?B?UVkxUjMyWHVybzdlTHhFUzc3MEVlS3RWc3laSDZoM3d4Z0NWeUxoTlIxM2J3?=
+ =?gb2312?B?RnNHellySUVMZUh2Zy82QTBCVVNaQmRjbmZneUFOSkZBS3B0L3ZoREczV1Bv?=
+ =?gb2312?Q?YVEh3vO3qd+SwkZgCjR6d4k=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <54f47924fbb3c3af17497fd6d1b1c5326a2d7c3d.camel@themaw.net>
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: HK2PR04MB3891.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a8c6f70-9562-44fc-1a61-08d9bf8983bf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Dec 2021 05:12:38.4534
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /fB20gL1ZFrmbm/fmyiG8Ty8TJsioJCfZF3mbMXTLKkJx8sglMfb4ZrFwF9YwGXDmW1RAPDQvz37Cy7aaglyGg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR04MB3585
+X-Proofpoint-GUID: Y1roIRDmfROespjXOECxlQVHsKC7_PCr
+X-Proofpoint-ORIG-GUID: Y1roIRDmfROespjXOECxlQVHsKC7_PCr
+X-Sony-Outbound-GUID: Y1roIRDmfROespjXOECxlQVHsKC7_PCr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_01,2021-12-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 bulkscore=0 mlxlogscore=999
+ clxscore=1011 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2112150029
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 11:54:11AM +0800, Ian Kent wrote:
-> On Wed, 2021-11-24 at 15:56 -0500, Brian Foster wrote:
-> > On Tue, Nov 23, 2021 at 10:26:57AM +1100, Dave Chinner wrote:
-> > > On Mon, Nov 22, 2021 at 02:27:59PM -0500, Brian Foster wrote:
-> > > > On Mon, Nov 22, 2021 at 11:08:51AM +1100, Dave Chinner wrote:
-> > > > > On Fri, Nov 19, 2021 at 02:44:21PM -0500, Brian Foster wrote:
-> > > > > > In
-> > > > > > any event, another experiment I ran in light of the above
-> > > > > > results that
-> > > > > > might be similar was to put the inode queueing component of
-> > > > > > destroy_inode() behind an rcu callback. This reduces the
-> > > > > > single threaded
-> > > > > > perf hit from the previous approach by about 50%. So not
-> > > > > > entirely
-> > > > > > baseline performance, but it's back closer to baseline if I
-> > > > > > double the
-> > > > > > throttle threshold (and actually faster at 4x). Perhaps my
-> > > > > > crude
-> > > > > > prototype logic could be optimized further to not rely on
-> > > > > > percpu
-> > > > > > threshold changes to match the baseline.
-> > > > > > 
-> > > > > > My overall takeaway from these couple hacky experiments is
-> > > > > > that the
-> > > > > > unconditional synchronous rcu wait is indeed probably too
-> > > > > > heavy weight,
-> > > > > > as you point out. The polling or callback (or perhaps your
-> > > > > > separate
-> > > > > > queue) approach seems to be in the ballpark of viability,
-> > > > > > however,
-> > > > > > particularly when we consider the behavior of scaled or mixed
-> > > > > > workloads
-> > > > > > (since inactive queue processing seems to be size driven vs.
-> > > > > > latency
-> > > > > > driven).
-> > > > > > 
-> > > > > > So I dunno.. if you consider the various severity and
-> > > > > > complexity
-> > > > > > tradeoffs, this certainly seems worth more consideration to
-> > > > > > me. I can
-> > > > > > think of other potentially interesting ways to experiment
-> > > > > > with
-> > > > > > optimizing the above or perhaps tweak queueing to better
-> > > > > > facilitate
-> > > > > > taking advantage of grace periods, but it's not worth going
-> > > > > > too far down
-> > > > > > that road if you're wedded to the "busy inodes" approach.
-> > > > > 
-> > > > > I'm not wedded to "busy inodes" but, as your experiments are
-> > > > > indicating, trying to handle rcu grace periods into the
-> > > > > deferred
-> > > > > inactivation path isn't completely mitigating the impact of
-> > > > > having
-> > > > > to wait for a grace period for recycling of inodes.
-> > > > > 
-> > > > 
-> > > > What I'm seeing so far is that the impact seems to be limited to
-> > > > the
-> > > > single threaded workload and largely mitigated by an increase in
-> > > > the
-> > > > percpu throttle limit. IOW, it's not completely free right out of
-> > > > the
-> > > > gate, but the impact seems isolated and potentially mitigated by
-> > > > adjustment of the pipeline.
-> > > > 
-> > > > I realize the throttle is a percpu value, so that is what has me
-> > > > wondering about some potential for gains in efficiency to try and
-> > > > get
-> > > > more of that single-threaded performance back in other ways, or
-> > > > perhaps
-> > > > enhancements that might be more broadly beneficial to deferred
-> > > > inactivations in general (i.e. some form of adaptive throttling
-> > > > thresholds to balance percpu thresholds against a global
-> > > > threshold).
-> > > 
-> > > I ran experiments on queue depth early on. Once we go over a few
-> > > tens of inodes we start to lose the "hot cache" effect and
-> > > performance starts to go backwards. By queue depths of hundreds,
-> > > we've lost all the hot cache and nothing else gets that performance
-> > > back because we can't avoid the latency of all the memory writes
-> > > from cache eviction and the followup memory loads that result.
-> > > 
-> > 
-> > Admittedly my testing is simple/crude as I'm just exploring the
-> > potential viability of a concept, not fine tuning a workload, etc.
-> > That
-> > said, I'm curious to know what your tests for this look like because
-> > I
-> > suspect I'm running into different conditions. My tests frequently
-> > hit
-> > the percpu throttle threshold (256 inodes), which is beyond your
-> > ideal
-> > tens of inodes range (and probably more throttle limited than cpu
-> > cache
-> > limited).
-> > 
-> > > Making the per-cpu queues longer or shorter based on global state
-> > > won't gain us anything. ALl it will do is slow down local
-> > > operations
-> > > that don't otherwise need slowing down....
-> > > 
-> > 
-> > This leaves out context. The increase in throttle threshold mitigates
-> > the delays I've introduced via the rcu callback. That happens to
-> > produce
-> > observable results comparable to my baseline test, but it's more of a
-> > measure of the impact of the delay than a direct proposal. If there's
-> > a
-> > more fine grained test worth running here (re: above), please
-> > describe
-> > it.
-> > 
-> > > > > I suspect a rethink on the inode recycling mechanism is needed.
-> > > > > THe
-> > > > > way it is currently implemented was a brute force solution - it
-> > > > > is
-> > > > > simple and effective. However, we need more nuance in the
-> > > > > recycling
-> > > > > logic now.  That is, if we are recycling an inode that is
-> > > > > clean, has
-> > > > > nlink >=1 and has not been unlinked, it means the VFS evicted
-> > > > > it too
-> > > > > soon and we are going to re-instantiate it as the identical
-> > > > > inode
-> > > > > that was evicted from cache.
-> > > > > 
-> > > > 
-> > > > Probably. How advantageous is inode memory reuse supposed to be
-> > > > in the
-> > > > first place? I've more considered it a necessary side effect of
-> > > > broader
-> > > > architecture (i.e. deferred reclaim, etc.) as opposed to a
-> > > > primary
-> > > > optimization.
-> > > 
-> > > Yes, it's an architectural feature resulting from the filesystem
-> > > inode life cycle being different to the VFS inode life cycle. This
-> > > was inherited from Irix - it had separate inactivation vs reclaim
-> > > states and action steps for vnodes - inactivation occurred when the
-> > > vnode refcount went to zero, reclaim occurred when the vnode was to
-> > > be freed.
-> > > 
-> > > Architecturally, Linux doesn't have this two-step infrastructure;
-> > > it
-> > > just has evict() that runs everything when the inode needs to be
-> > > reclaimed. Hence we hide the two-phase reclaim architecture of XFS
-> > > behind that, and so we always had this troublesome impedence
-> > > mismatch on Linux.
-> > > 
-> > 
-> > Ok, that was generally how I viewed it.
-> > 
-> > > Thinking a bit about this, maybe there is a more integrated way to
-> > > handle this life cycle impedence mismatch by making the way we
-> > > interact with the linux inode cache to be more ...  Irix like.
-> > > Linux
-> > > does actually give us a a callback when the last reference to an
-> > > inode goes away: .drop_inode()
-> > > 
-> > > i.e. Maybe we should look to triggering inactivation work from
-> > > ->drop_inode instead of ->destroy_inode and hence always leaving
-> > > unreferenced, reclaimable inodes in the VFS cache on the LRU. i.e.
-> > > rather than hiding the two-phase XFS inode inactivation+reclaim
-> > > algorithm from the VFS, move it up into the VFS.  If we prevent
-> > > inodes from being reclaimed from the LRU until they have finished
-> > > inactivation and are clean (easy enough just by marking the inode
-> > > as
-> > > dirty), that would allow us to immediately reclaim and free inodes
-> > > in evict() context. Integration with __wait_on_freeing_inode()
-> > > would
-> > > like solve the RCU reuse/recycling issues.
-> > > 
-> > 
-> > Hmm.. this is the point where we decide whether the inode remains
-> > cached, which is currently basically whether the inode has a link
-> > count
-> > or not. That makes me curious what (can) happens with an
-> > unlinked/inactivated inode on the lru. I'm not sure any other fs' do
-> > anything like that currently..?
-> > 
-> > > There's more to it than just this, but perhaps the longer term
-> > > direction should be closer integration with the Linux inode cache
-> > > life cycle rather than trying to solve all these problems
-> > > underneath
-> > > the VFS cache whilst still trying to play by it's rules...
-> > > 
-> > 
-> > Yeah. Caching logic details aside, I think that makes sense.
-> > 
-> > > > I still see reuse occur with deferred inactivation, we
-> > > > just end up cycling through the same set of inodes as they fall
-> > > > through
-> > > > the queue rather than recycling the same one over and over. I'm
-> > > > sort of
-> > > > wondering what the impact would be if we didn't do this at all
-> > > > (for the
-> > > > new allocation case at least).
-> > > 
-> > > We end up with a larger pool of free inodes in the finobt. This is
-> > > basically what my "busy inode check" proposal is based on - inodes
-> > > that we can't allocate without recycling just remain on the finobt
-> > > for longer before they can be used. This would be awful if we
-> > > didn't
-> > > have the finobt to efficiently locate free inodes - the finobt
-> > > record iteration makes it pretty low overhead to scan inodes here.
-> > > 
-> > 
-> > I get the idea. That last bit is what I'm skeptical about. The finobt
-> > is
-> > based on the premise that free inode lookup becomes a predictable
-> > tree
-> > lookup instead of the old searching algorithm on the inobt, which we
-> > still support and can be awful in its own right under worst case
-> > conditions. I agree that this would be bad on the inobt (which raises
-> > the question on how we'd provide these recycling correctness
-> > guarantees
-> > on !finobt fs'). What I'm more concerned about is whether this could
-> > make finobt enabled fs' (transiently) just as poor as the old algo
-> > under
-> > certain workloads/conditions.
-> > 
-> > I think there needs to be at least some high level description of the
-> > search algorithm before we can sufficiently reason about it's
-> > behavior..
-> > 
-> > > > > So how much re-initialisation do we actually need for that
-> > > > > inode?
-> > > > > Almost everything in the inode is still valid; the problems
-> > > > > come
-> > > > > from inode_init_always() resetting the entire internal inode
-> > > > > state
-> > > > > and XFS then having to set them up again.  The internal state
-> > > > > is
-> > > > > already largely correct when we start recycling, and the
-> > > > > identity of
-> > > > > the recycled inode does not change when nlink >= 1. Hence
-> > > > > eliding
-> > > > > inode_init_always() would also go a long way to avoiding the
-> > > > > need
-> > > > > for a RCU grace period to pass before we can make the inode
-> > > > > visible
-> > > > > to the VFS again.
-> > > > > 
-> > > > > If we can do that, then the only indoes that need a grace
-> > > > > period
-> > > > > before they can be recycled are unlinked inodes as they change
-> > > > > identity when being recycled. That identity change absolutely
-> > > > > requires a grace period to expire before the new instantiation
-> > > > > can
-> > > > > be made visible.  Given the arbitrary delay that this can
-> > > > > introduce
-> > > > > for an inode allocation operation, it seems much better suited
-> > > > > to
-> > > > > detecting busy inodes than waiting for a global OS state change
-> > > > > to
-> > > > > occur...
-> > > > > 
-> > > > 
-> > > > Maybe..? The experiments I've been doing are aimed at simplicity
-> > > > and
-> > > > reducing the scope of the changes. Part of the reason for this is
-> > > > tbh
-> > > > I'm not totally convinced we really need to do anything more
-> > > > complex
-> > > > than preserve the inline symlink buffer one way or another (for
-> > > > example,
-> > > > see the rfc patch below for an alternative to the inline symlink
-> > > > rcuwalk
-> > > > disable patch). Maybe we should consider something like this
-> > > > anyways.
-> > > > 
-> > > > With busy inodes, we need to alter inode allocation to some
-> > > > degree to
-> > > > accommodate. We can have (tens of?) thousands of inodes under the
-> > > > grace
-> > > > period at any time based on current batching behavior, so it's
-> > > > not
-> > > > totally evident to me that we won't end up with some of the same
-> > > > fundamental issues to deal with here, just needing to be
-> > > > accommodated in
-> > > > the inode allocation algorithm rather than the teardown sequence.
-> > > 
-> > > Sure, but the purpose of the allocation selection
-> > > policy is to select the best inode to allocate for the current
-> > > context.  The cost of not being able to use an inode immediately
-> > > needs to be factored into that allocation policy. i.e. if the
-> > > selected inode has an associated delay with it before it can be
-> > > reused and other free inodes don't, then we should not be selecting
-> > > the inode with a delay associcated with it.
-> > > 
-> > 
-> > We still have to find those "no delay" inodes. AFAICT the worst case
-> > conditions on the system I've been playing with can have something
-> > like
-> > 20k free && busy inodes. That could cover all or most of the finobt
-> > at
-> > the time of an inode allocation. What happens from there depends on
-> > the
-> > search algorithm.
-> > 
-> > > This is exactly the reasoning and logic we use for busy extents. 
-> > > We
-> > > only take the blocking penalty for resolving busy extent state if
-> > > we
-> > > run out of free extents to search before we've found an allocation
-> > > candidate. I think it makes sense for inode allocation, too.
-> > > 
-> > 
-> > Sure, the idea makes sense and it's worth looking into. But there are
-> > enough contextual differences that I wouldn't just assume the same
-> > logic
-> > translates over to the finobt without potential for performance
-> > impact.
-> > For example, extent allocation has some advantages with things like
-> > delalloc (physical block allocation occurs async from buffered write
-> > syscall time) and the fact that metadata allocs can reuse busy
-> > blocks.
-> > The finobt only tracks existing chunks with free inodes, so it's
-> > easily
-> > possible to have conditions where the finobt is 100% (or majority)
-> > populated with busy inodes (whether it be one inode or several
-> > thousand).
-> > 
-> > This raises questions like at what point does search cost become a
-> > factor? At what point and with what frequency do we suffer the
-> > blocking
-> > penalty? Do we opt to allocate new chunks based on gp state?
-> > Something
-> > else? We don't need to answer these questions here (this thread is
-> > long
-> > enough :P). I'm just trying to say that it's one thing to consider
-> > the
-> > approach a viable option, but it isn't automatically preferable just
-> > because we use it for extents. Further details beyond "detect busy
-> > inodes" would be nice to objectively reason about.
-> > 
-> > > > --- 8< ---
-> > > > 
-> > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > > > index 64b9bf334806..058e3fc69ff7 100644
-> > > > --- a/fs/xfs/xfs_inode.c
-> > > > +++ b/fs/xfs/xfs_inode.c
-> > > > @@ -2644,7 +2644,7 @@ xfs_ifree(
-> > > >          * already been freed by xfs_attr_inactive.
-> > > >          */
-> > > >         if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL) {
-> > > > -               kmem_free(ip->i_df.if_u1.if_data);
-> > > > +               kfree_rcu(ip->i_df.if_u1.if_data);
-> > > >                 ip->i_df.if_u1.if_data = NULL;
-> > > 
-> > > That would need to be rcu_assign_pointer(ip->i_df.if_u1.if_data,
-> > > NULL) to put the correct memory barriers in place, right? Also, I
-> > > think ip->i_df.if_u1.if_data needs to be set to NULL before calling
-> > > kfree_rcu() so racing lookups will always see NULL before
-> > > the object is freed.
-> > > 
-> > 
-> > I think rcu_assign_pointer() is intended to be paired with the
-> > associated rcu deref and for scenarios like making sure an object
-> > isn't
-> > made available until it's completely initialized (i.e. such as for
-> > rcu
-> > protected list traversals, etc.).
-> > 
-> > With regard to ordering, we no longer access if_data in rcuwalk mode
-> > with this change. Thus I think all we need here is the
-> > WRITE_ONCE(i_link, NULL) that pairs with the READ_ONCE() in the vfs,
-> > and
-> > that happens earlier in xfs_inactive_symlink() before we rcu free the
-> > memory here. With that, ISTM a racing lookup should either see an rcu
-> > protected i_link or NULL, the latter of which calls into ->get_link()
-> > and triggers refwalk mode. Hm?
-> > 
-> > > But again, as I asked up front, why do we even need to free this
-> > > memory buffer here? It will be freed in xfs_inode_free_callback()
-> > > after the current RCU grace period expires, so what do we gain by
-> > > freeing it separately here?
-> > > 
-> 
-> The thing that's been bugging me is not knowing if the VFS has
-> finished using the link string.
-> 
-> The link itself can be removed while the link path could still
-> be valid and the VFS will then walk that path. So rcu grace time
-> might not be sufficient but stashing the pointer and rcu freeing
-> it ensures the pointer won't go away while the walk is under way
-> without any grace period guessing. Relating this to the current
-> path walk via an rcu delayed free is a reliable way to do what's
-> needed.
-> 
-> The only problem here is that path string remaining while it is
-> being used. If there aren't any other known problems with the
-> xfs inode re-use sub system I don't see any worth in complicating
-> it to cater for this special case.
-> 
-> Brian's patch is a variation on the original patch and is all
-> that's really needed. IMHO going this way (whatever we end up
-> with) is the sensible thing to do.
-
-Why not simply change xfs_readlink to memcpy ip->i_df.if_u1.if_data into
-the caller's link buffer?  We shouldn't be exposing internal XFS
-metadata buffers to the VFS to scribble on without telling us; this gets
-rid of the dual inode_operations for symlinks; and we're probably
-breaking a locking rule somewhere by not taking any locks AFAICT.  That
-seems a lot less complex than adding rcu freeing rules to understand how
-to handle local format file forks.
-
-(I say this from the vantage point of online repair, which will try to
-salvage damaged symlinks, for which we actually /do/ want to be able to
-lock out readers and change the data fork after symlink creation... but
-I was saving that for 2022 because I'm too overwhelmed to try to send
-that again.)
-
---D
-
-> 
-> Ian
-> > 
-> > One prevented memory leak? ;)
-> > 
-> > It won't be freed in xfs_inode_free_callback() because we change the
-> > data fork format type (and clear i_mode) in this path. Perhaps that
-> > could use an audit, but that's a separate issue.
-> > 
-> > > >                 ip->i_df.if_bytes = 0;
-> > > >         }
-> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > > > index a607d6aca5c4..e98d7f10ba7d 100644
-> > > > --- a/fs/xfs/xfs_iops.c
-> > > > +++ b/fs/xfs/xfs_iops.c
-> > > > @@ -511,27 +511,6 @@ xfs_vn_get_link(
-> > > >         return ERR_PTR(error);
-> > > >  }
-> > > >  
-> > > > -STATIC const char *
-> > > > -xfs_vn_get_link_inline(
-> > > > -       struct dentry           *dentry,
-> > > > -       struct inode            *inode,
-> > > > -       struct delayed_call     *done)
-> > > > -{
-> > > > -       struct xfs_inode        *ip = XFS_I(inode);
-> > > > -       char                    *link;
-> > > > -
-> > > > -       ASSERT(ip->i_df.if_format == XFS_DINODE_FMT_LOCAL);
-> > > > -
-> > > > -       /*
-> > > > -        * The VFS crashes on a NULL pointer, so return -
-> > > > EFSCORRUPTED if
-> > > > -        * if_data is junk.
-> > > > -        */
-> > > > -       link = ip->i_df.if_u1.if_data;
-> > > > -       if (XFS_IS_CORRUPT(ip->i_mount, !link))
-> > > > -               return ERR_PTR(-EFSCORRUPTED);
-> > > > -       return link;
-> > > > -}
-> > > > -
-> > > >  static uint32_t
-> > > >  xfs_stat_blksize(
-> > > >         struct xfs_inode        *ip)
-> > > > @@ -1250,14 +1229,6 @@ static const struct inode_operations
-> > > > xfs_symlink_inode_operations = {
-> > > >         .update_time            = xfs_vn_update_time,
-> > > >  };
-> > > >  
-> > > > -static const struct inode_operations
-> > > > xfs_inline_symlink_inode_operations = {
-> > > > -       .get_link               = xfs_vn_get_link_inline,
-> > > > -       .getattr                = xfs_vn_getattr,
-> > > > -       .setattr                = xfs_vn_setattr,
-> > > > -       .listxattr              = xfs_vn_listxattr,
-> > > > -       .update_time            = xfs_vn_update_time,
-> > > > -};
-> > > > -
-> > > >  /* Figure out if this file actually supports DAX. */
-> > > >  static bool
-> > > >  xfs_inode_supports_dax(
-> > > > @@ -1409,9 +1380,8 @@ xfs_setup_iops(
-> > > >                 break;
-> > > >         case S_IFLNK:
-> > > >                 if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL)
-> > > > -                       inode->i_op =
-> > > > &xfs_inline_symlink_inode_operations;
-> > > > -               else
-> > > > -                       inode->i_op =
-> > > > &xfs_symlink_inode_operations;
-> > > > +                       inode->i_link = ip->i_df.if_u1.if_data;
-> > > > +               inode->i_op = &xfs_symlink_inode_operations;
-> > > 
-> > > This still needs corruption checks - ip->i_df.if_u1.if_data can be
-> > > null if there's some kind of inode corruption detected.
-> > > 
-> > 
-> > It's fine for i_link to be NULL. We'd just fall into the get_link()
-> > call
-> > and have to handle it there like the current callback does.
-> > 
-> > However, this does need to restore some of the code removed from
-> > xfs_vn_get_link() in commit 30ee052e12b9 ("xfs: optimize inline
-> > symlinks") to handle the local format case. If if_data can be NULL
-> > we'll
-> > obviously need to handle it there anyways.
-> > 
-> > If there's no fundamental objection I'll address these issues, give
-> > it
-> > some proper testing and send a real patch..
-> > 
-> > Brian
-> > 
-> > > >                 break;
-> > > >         default:
-> > > >                 inode->i_op = &xfs_inode_operations;
-> > > > diff --git a/fs/xfs/xfs_symlink.c b/fs/xfs/xfs_symlink.c
-> > > > index fc2c6a404647..20ec2f450c56 100644
-> > > > --- a/fs/xfs/xfs_symlink.c
-> > > > +++ b/fs/xfs/xfs_symlink.c
-> > > > @@ -497,6 +497,7 @@ xfs_inactive_symlink(
-> > > >          * do here in that case.
-> > > >          */
-> > > >         if (ip->i_df.if_format == XFS_DINODE_FMT_LOCAL) {
-> > > > +               WRITE_ONCE(VFS_I(ip)->i_link, NULL);
-> > > 
-> > > Again, rcu_assign_pointer(), yes?
-> > > 
-> > > >                 xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> > > >                 return 0;
-> > > >         }
-> > > > 
-> > > > 
-> > > 
-> > > -- 
-> > > Dave Chinner
-> > > david@fromorbit.com
-> > > 
-> > 
-> 
-> 
+Tm8gYW55IGZ1bmN0aW9uIHVzZXMgYXJndW1lbnQgJ3NlY3RvcicsIHJlbW92ZSBpdC4KClNpZ25l
+ZC1vZmYtYnk6IFl1ZXpoYW5nLk1vIDxZdWV6aGFuZy5Nb0Bzb255LmNvbT4KUmV2aWV3ZWQtYnk6
+IEFuZHkuV3UgPEFuZHkuV3VAc29ueS5jb20+ClJldmlld2VkLWJ5OiBBb3lhbWEsIFdhdGFydSA8
+d2F0YXJ1LmFveWFtYUBzb255LmNvbT4KLS0tCiBmcy9leGZhdC9iYWxsb2MuYyAgIHwgIDIgKy0K
+IGZzL2V4ZmF0L2Rpci5jICAgICAgfCAzNiArKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0KIGZzL2V4ZmF0L2V4ZmF0X2ZzLmggfCAgMyArLS0KIGZzL2V4ZmF0L25hbWVpLmMgICAg
+fCA0MiArKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGZzL2V4ZmF0
+L25scy5jICAgICAgfCAgMiArLQogNSBmaWxlcyBjaGFuZ2VkLCAzMyBpbnNlcnRpb25zKCspLCA1
+MiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9leGZhdC9iYWxsb2MuYyBiL2ZzL2V4ZmF0
+L2JhbGxvYy5jCmluZGV4IGNjNWNmZmM0YTc2OS4uMDNmMTQyMzA3MTc0IDEwMDY0NAotLS0gYS9m
+cy9leGZhdC9iYWxsb2MuYworKysgYi9mcy9leGZhdC9iYWxsb2MuYwpAQCAtMTA1LDcgKzEwNSw3
+IEBAIGludCBleGZhdF9sb2FkX2JpdG1hcChzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiKQogCQkJc3Ry
+dWN0IGV4ZmF0X2RlbnRyeSAqZXA7CiAJCQlzdHJ1Y3QgYnVmZmVyX2hlYWQgKmJoOwogCi0JCQll
+cCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsICZjbHUsIGksICZiaCwgTlVMTCk7CisJCQllcCA9IGV4
+ZmF0X2dldF9kZW50cnkoc2IsICZjbHUsIGksICZiaCk7CiAJCQlpZiAoIWVwKQogCQkJCXJldHVy
+biAtRUlPOwogCmRpZmYgLS1naXQgYS9mcy9leGZhdC9kaXIuYyBiL2ZzL2V4ZmF0L2Rpci5jCmlu
+ZGV4IGNiMWMwZDhjMTcxNC4uMTRjODE5ZjM1OTlmIDEwMDY0NAotLS0gYS9mcy9leGZhdC9kaXIu
+YworKysgYi9mcy9leGZhdC9kaXIuYwpAQCAtNjQsNyArNjQsNiBAQCBzdGF0aWMgaW50IGV4ZmF0
+X3JlYWRkaXIoc3RydWN0IGlub2RlICppbm9kZSwgbG9mZl90ICpjcG9zLCBzdHJ1Y3QgZXhmYXRf
+ZGlyX2VudAogewogCWludCBpLCBkZW50cmllc19wZXJfY2x1LCBkZW50cmllc19wZXJfY2x1X2Jp
+dHMgPSAwLCBudW1fZXh0OwogCXVuc2lnbmVkIGludCB0eXBlLCBjbHVfb2Zmc2V0LCBtYXhfZGVu
+dHJpZXM7Ci0Jc2VjdG9yX3Qgc2VjdG9yOwogCXN0cnVjdCBleGZhdF9jaGFpbiBkaXIsIGNsdTsK
+IAlzdHJ1Y3QgZXhmYXRfdW5pX25hbWUgdW5pX25hbWU7CiAJc3RydWN0IGV4ZmF0X2RlbnRyeSAq
+ZXA7CkBAIC0xMTUsNyArMTE0LDcgQEAgc3RhdGljIGludCBleGZhdF9yZWFkZGlyKHN0cnVjdCBp
+bm9kZSAqaW5vZGUsIGxvZmZfdCAqY3Bvcywgc3RydWN0IGV4ZmF0X2Rpcl9lbnQKIAkJaSA9IGRl
+bnRyeSAmIChkZW50cmllc19wZXJfY2x1IC0gMSk7CiAKIAkJZm9yICggOyBpIDwgZGVudHJpZXNf
+cGVyX2NsdTsgaSsrLCBkZW50cnkrKykgewotCQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCAm
+Y2x1LCBpLCAmYmgsICZzZWN0b3IpOworCQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCAmY2x1
+LCBpLCAmYmgpOwogCQkJaWYgKCFlcCkKIAkJCQlyZXR1cm4gLUVJTzsKIApAQCAtMTU2LDcgKzE1
+NSw3IEBAIHN0YXRpYyBpbnQgZXhmYXRfcmVhZGRpcihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBsb2Zm
+X3QgKmNwb3MsIHN0cnVjdCBleGZhdF9kaXJfZW50CiAJCQkJZGlyX2VudHJ5LT5uYW1lYnVmLmxm
+bmJ1Zl9sZW4pOwogCQkJYnJlbHNlKGJoKTsKIAotCQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNi
+LCAmY2x1LCBpICsgMSwgJmJoLCBOVUxMKTsKKwkJCWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwg
+JmNsdSwgaSArIDEsICZiaCk7CiAJCQlpZiAoIWVwKQogCQkJCXJldHVybiAtRUlPOwogCQkJZGly
+X2VudHJ5LT5zaXplID0KQEAgLTQ0NSw3ICs0NDQsNiBAQCBpbnQgZXhmYXRfaW5pdF9kaXJfZW50
+cnkoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGV4ZmF0X2NoYWluICpwX2RpciwKIAlzdHJ1
+Y3Qgc3VwZXJfYmxvY2sgKnNiID0gaW5vZGUtPmlfc2I7CiAJc3RydWN0IGV4ZmF0X3NiX2luZm8g
+KnNiaSA9IEVYRkFUX1NCKHNiKTsKIAlzdHJ1Y3QgdGltZXNwZWM2NCB0cyA9IGN1cnJlbnRfdGlt
+ZShpbm9kZSk7Ci0Jc2VjdG9yX3Qgc2VjdG9yOwogCXN0cnVjdCBleGZhdF9kZW50cnkgKmVwOwog
+CXN0cnVjdCBidWZmZXJfaGVhZCAqYmg7CiAKQEAgLTQ1Myw3ICs0NTEsNyBAQCBpbnQgZXhmYXRf
+aW5pdF9kaXJfZW50cnkoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGV4ZmF0X2NoYWluICpw
+X2RpciwKIAkgKiBXZSBjYW5ub3QgdXNlIGV4ZmF0X2dldF9kZW50cnlfc2V0IGhlcmUgYmVjYXVz
+ZSBmaWxlIGVwIGlzIG5vdAogCSAqIGluaXRpYWxpemVkIHlldC4KIAkgKi8KLQllcCA9IGV4ZmF0
+X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSwgJmJoLCAmc2VjdG9yKTsKKwllcCA9IGV4ZmF0
+X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSwgJmJoKTsKIAlpZiAoIWVwKQogCQlyZXR1cm4g
+LUVJTzsKIApAQCAtNDc3LDcgKzQ3NSw3IEBAIGludCBleGZhdF9pbml0X2Rpcl9lbnRyeShzdHJ1
+Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZXhmYXRfY2hhaW4gKnBfZGlyLAogCWV4ZmF0X3VwZGF0
+ZV9iaChiaCwgSVNfRElSU1lOQyhpbm9kZSkpOwogCWJyZWxzZShiaCk7CiAKLQllcCA9IGV4ZmF0
+X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSArIDEsICZiaCwgJnNlY3Rvcik7CisJZXAgPSBl
+eGZhdF9nZXRfZGVudHJ5KHNiLCBwX2RpciwgZW50cnkgKyAxLCAmYmgpOwogCWlmICghZXApCiAJ
+CXJldHVybiAtRUlPOwogCkBAIC00OTYsMTIgKzQ5NCwxMSBAQCBpbnQgZXhmYXRfdXBkYXRlX2Rp
+cl9jaGtzdW0oc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGV4ZmF0X2NoYWluICpwX2RpciwK
+IAlzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiID0gaW5vZGUtPmlfc2I7CiAJaW50IHJldCA9IDA7CiAJ
+aW50IGksIG51bV9lbnRyaWVzOwotCXNlY3Rvcl90IHNlY3RvcjsKIAl1MTYgY2hrc3VtOwogCXN0
+cnVjdCBleGZhdF9kZW50cnkgKmVwLCAqZmVwOwogCXN0cnVjdCBidWZmZXJfaGVhZCAqZmJoLCAq
+Ymg7CiAKLQlmZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCBwX2RpciwgZW50cnksICZmYmgsICZz
+ZWN0b3IpOworCWZlcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSwgJmZiaCk7
+CiAJaWYgKCFmZXApCiAJCXJldHVybiAtRUlPOwogCkBAIC01MDksNyArNTA2LDcgQEAgaW50IGV4
+ZmF0X3VwZGF0ZV9kaXJfY2hrc3VtKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBleGZhdF9j
+aGFpbiAqcF9kaXIsCiAJY2hrc3VtID0gZXhmYXRfY2FsY19jaGtzdW0xNihmZXAsIERFTlRSWV9T
+SVpFLCAwLCBDU19ESVJfRU5UUlkpOwogCiAJZm9yIChpID0gMTsgaSA8IG51bV9lbnRyaWVzOyBp
+KyspIHsKLQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCBwX2RpciwgZW50cnkgKyBpLCAmYmgs
+IE5VTEwpOworCQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSArIGksICZi
+aCk7CiAJCWlmICghZXApIHsKIAkJCXJldCA9IC1FSU87CiAJCQlnb3RvIHJlbGVhc2VfZmJoOwpA
+QCAtNTMxLDEzICs1MjgsMTIgQEAgaW50IGV4ZmF0X2luaXRfZXh0X2VudHJ5KHN0cnVjdCBpbm9k
+ZSAqaW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqcF9kaXIsCiB7CiAJc3RydWN0IHN1cGVyX2Js
+b2NrICpzYiA9IGlub2RlLT5pX3NiOwogCWludCBpOwotCXNlY3Rvcl90IHNlY3RvcjsKIAl1bnNp
+Z25lZCBzaG9ydCAqdW5pbmFtZSA9IHBfdW5pbmFtZS0+bmFtZTsKIAlzdHJ1Y3QgZXhmYXRfZGVu
+dHJ5ICplcDsKIAlzdHJ1Y3QgYnVmZmVyX2hlYWQgKmJoOwogCWludCBzeW5jID0gSVNfRElSU1lO
+Qyhpbm9kZSk7CiAKLQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSwgJmJo
+LCAmc2VjdG9yKTsKKwllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSwgJmJo
+KTsKIAlpZiAoIWVwKQogCQlyZXR1cm4gLUVJTzsKIApAQCAtNTQ1LDcgKzU0MSw3IEBAIGludCBl
+eGZhdF9pbml0X2V4dF9lbnRyeShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZXhmYXRfY2hh
+aW4gKnBfZGlyLAogCWV4ZmF0X3VwZGF0ZV9iaChiaCwgc3luYyk7CiAJYnJlbHNlKGJoKTsKIAot
+CWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9kaXIsIGVudHJ5ICsgMSwgJmJoLCAmc2VjdG9y
+KTsKKwllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSArIDEsICZiaCk7CiAJ
+aWYgKCFlcCkKIAkJcmV0dXJuIC1FSU87CiAKQEAgLTU1NSw3ICs1NTEsNyBAQCBpbnQgZXhmYXRf
+aW5pdF9leHRfZW50cnkoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGV4ZmF0X2NoYWluICpw
+X2RpciwKIAlicmVsc2UoYmgpOwogCiAJZm9yIChpID0gRVhGQVRfRklSU1RfQ0xVU1RFUjsgaSA8
+IG51bV9lbnRyaWVzOyBpKyspIHsKLQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCBwX2Rpciwg
+ZW50cnkgKyBpLCAmYmgsICZzZWN0b3IpOworCQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBf
+ZGlyLCBlbnRyeSArIGksICZiaCk7CiAJCWlmICghZXApCiAJCQlyZXR1cm4gLUVJTzsKIApAQCAt
+NTc0LDEyICs1NzAsMTEgQEAgaW50IGV4ZmF0X3JlbW92ZV9lbnRyaWVzKHN0cnVjdCBpbm9kZSAq
+aW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqcF9kaXIsCiB7CiAJc3RydWN0IHN1cGVyX2Jsb2Nr
+ICpzYiA9IGlub2RlLT5pX3NiOwogCWludCBpOwotCXNlY3Rvcl90IHNlY3RvcjsKIAlzdHJ1Y3Qg
+ZXhmYXRfZGVudHJ5ICplcDsKIAlzdHJ1Y3QgYnVmZmVyX2hlYWQgKmJoOwogCiAJZm9yIChpID0g
+b3JkZXI7IGkgPCBudW1fZW50cmllczsgaSsrKSB7Ci0JCWVwID0gZXhmYXRfZ2V0X2RlbnRyeShz
+YiwgcF9kaXIsIGVudHJ5ICsgaSwgJmJoLCAmc2VjdG9yKTsKKwkJZXAgPSBleGZhdF9nZXRfZGVu
+dHJ5KHNiLCBwX2RpciwgZW50cnkgKyBpLCAmYmgpOwogCQlpZiAoIWVwKQogCQkJcmV0dXJuIC1F
+SU87CiAKQEAgLTcxNyw4ICs3MTIsNyBAQCBzdGF0aWMgaW50IGV4ZmF0X2Rpcl9yZWFkYWhlYWQo
+c3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgc2VjdG9yX3Qgc2VjKQogfQogCiBzdHJ1Y3QgZXhmYXRf
+ZGVudHJ5ICpleGZhdF9nZXRfZGVudHJ5KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsCi0JCXN0cnVj
+dCBleGZhdF9jaGFpbiAqcF9kaXIsIGludCBlbnRyeSwgc3RydWN0IGJ1ZmZlcl9oZWFkICoqYmgs
+Ci0JCXNlY3Rvcl90ICpzZWN0b3IpCisJCXN0cnVjdCBleGZhdF9jaGFpbiAqcF9kaXIsIGludCBl
+bnRyeSwgc3RydWN0IGJ1ZmZlcl9oZWFkICoqYmgpCiB7CiAJdW5zaWduZWQgaW50IGRlbnRyaWVz
+X3Blcl9wYWdlID0gRVhGQVRfQl9UT19ERU4oUEFHRV9TSVpFKTsKIAlpbnQgb2ZmOwpAQCAtNzQw
+LDggKzczNCw2IEBAIHN0cnVjdCBleGZhdF9kZW50cnkgKmV4ZmF0X2dldF9kZW50cnkoc3RydWN0
+IHN1cGVyX2Jsb2NrICpzYiwKIAlpZiAoISpiaCkKIAkJcmV0dXJuIE5VTEw7CiAKLQlpZiAoc2Vj
+dG9yKQotCQkqc2VjdG9yID0gc2VjOwogCXJldHVybiAoc3RydWN0IGV4ZmF0X2RlbnRyeSAqKSgo
+KmJoKS0+Yl9kYXRhICsgb2ZmKTsKIH0KIApAQCAtOTYwLDcgKzk1Miw3IEBAIGludCBleGZhdF9m
+aW5kX2Rpcl9lbnRyeShzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLCBzdHJ1Y3QgZXhmYXRfaW5vZGVf
+aW5mbyAqZWksCiAJCQlpZiAocmV3aW5kICYmIGRlbnRyeSA9PSBlbmRfZWlkeCkKIAkJCQlnb3Rv
+IG5vdF9mb3VuZDsKIAotCQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCAmY2x1LCBpLCAmYmgs
+IE5VTEwpOworCQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCAmY2x1LCBpLCAmYmgpOwogCQkJ
+aWYgKCFlcCkKIAkJCQlyZXR1cm4gLUVJTzsKIApAQCAtMTE0NSw3ICsxMTM3LDcgQEAgaW50IGV4
+ZmF0X2NvdW50X2V4dF9lbnRyaWVzKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHN0cnVjdCBleGZh
+dF9jaGFpbiAqcF9kaXIsCiAJc3RydWN0IGJ1ZmZlcl9oZWFkICpiaDsKIAogCWZvciAoaSA9IDAs
+IGVudHJ5Kys7IGkgPCBlcC0+ZGVudHJ5LmZpbGUubnVtX2V4dDsgaSsrLCBlbnRyeSsrKSB7Ci0J
+CWV4dF9lcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBlbnRyeSwgJmJoLCBOVUxMKTsK
+KwkJZXh0X2VwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9kaXIsIGVudHJ5LCAmYmgpOwogCQlp
+ZiAoIWV4dF9lcCkKIAkJCXJldHVybiAtRUlPOwogCkBAIC0xMTc1LDcgKzExNjcsNyBAQCBpbnQg
+ZXhmYXRfY291bnRfZGlyX2VudHJpZXMoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgc3RydWN0IGV4
+ZmF0X2NoYWluICpwX2RpcikKIAogCXdoaWxlIChjbHUuZGlyICE9IEVYRkFUX0VPRl9DTFVTVEVS
+KSB7CiAJCWZvciAoaSA9IDA7IGkgPCBkZW50cmllc19wZXJfY2x1OyBpKyspIHsKLQkJCWVwID0g
+ZXhmYXRfZ2V0X2RlbnRyeShzYiwgJmNsdSwgaSwgJmJoLCBOVUxMKTsKKwkJCWVwID0gZXhmYXRf
+Z2V0X2RlbnRyeShzYiwgJmNsdSwgaSwgJmJoKTsKIAkJCWlmICghZXApCiAJCQkJcmV0dXJuIC1F
+SU87CiAJCQllbnRyeV90eXBlID0gZXhmYXRfZ2V0X2VudHJ5X3R5cGUoZXApOwpkaWZmIC0tZ2l0
+IGEvZnMvZXhmYXQvZXhmYXRfZnMuaCBiL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgKaW5kZXggMWQ2ZGE2
+MTE1N2M5Li4zNzY5N2I1MGVkYmUgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgKKysr
+IGIvZnMvZXhmYXQvZXhmYXRfZnMuaApAQCAtNDYyLDggKzQ2Miw3IEBAIGludCBleGZhdF9hbGxv
+Y19uZXdfZGlyKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqY2x1KTsK
+IGludCBleGZhdF9maW5kX2xvY2F0aW9uKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHN0cnVjdCBl
+eGZhdF9jaGFpbiAqcF9kaXIsCiAJCWludCBlbnRyeSwgc2VjdG9yX3QgKnNlY3RvciwgaW50ICpv
+ZmZzZXQpOwogc3RydWN0IGV4ZmF0X2RlbnRyeSAqZXhmYXRfZ2V0X2RlbnRyeShzdHJ1Y3Qgc3Vw
+ZXJfYmxvY2sgKnNiLAotCQlzdHJ1Y3QgZXhmYXRfY2hhaW4gKnBfZGlyLCBpbnQgZW50cnksIHN0
+cnVjdCBidWZmZXJfaGVhZCAqKmJoLAotCQlzZWN0b3JfdCAqc2VjdG9yKTsKKwkJc3RydWN0IGV4
+ZmF0X2NoYWluICpwX2RpciwgaW50IGVudHJ5LCBzdHJ1Y3QgYnVmZmVyX2hlYWQgKipiaCk7CiBz
+dHJ1Y3QgZXhmYXRfZGVudHJ5ICpleGZhdF9nZXRfZGVudHJ5X2NhY2hlZChzdHJ1Y3QgZXhmYXRf
+ZW50cnlfc2V0X2NhY2hlICplcywKIAkJaW50IG51bSk7CiBzdHJ1Y3QgZXhmYXRfZW50cnlfc2V0
+X2NhY2hlICpleGZhdF9nZXRfZGVudHJ5X3NldChzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLApkaWZm
+IC0tZ2l0IGEvZnMvZXhmYXQvbmFtZWkuYyBiL2ZzL2V4ZmF0L25hbWVpLmMKaW5kZXggMjRiNDEx
+MDNkMWNjLi40YTllYTU5ZTg5MTUgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZmF0L25hbWVpLmMKKysrIGIv
+ZnMvZXhmYXQvbmFtZWkuYwpAQCAtMjI5LDcgKzIyOSw3IEBAIHN0YXRpYyBpbnQgZXhmYXRfc2Vh
+cmNoX2VtcHR5X3Nsb3Qoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwKIAkJaSA9IGRlbnRyeSAmIChk
+ZW50cmllc19wZXJfY2x1IC0gMSk7CiAKIAkJZm9yICg7IGkgPCBkZW50cmllc19wZXJfY2x1OyBp
+KyssIGRlbnRyeSsrKSB7Ci0JCQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsICZjbHUsIGksICZi
+aCwgTlVMTCk7CisJCQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsICZjbHUsIGksICZiaCk7CiAJ
+CQlpZiAoIWVwKQogCQkJCXJldHVybiAtRUlPOwogCQkJdHlwZSA9IGV4ZmF0X2dldF9lbnRyeV90
+eXBlKGVwKTsKQEAgLTMwNiw3ICszMDYsNiBAQCBzdGF0aWMgaW50IGV4ZmF0X2ZpbmRfZW1wdHlf
+ZW50cnkoc3RydWN0IGlub2RlICppbm9kZSwKIHsKIAlpbnQgZGVudHJ5OwogCXVuc2lnbmVkIGlu
+dCByZXQsIGxhc3RfY2x1OwotCXNlY3Rvcl90IHNlY3RvcjsKIAlsb2ZmX3Qgc2l6ZSA9IDA7CiAJ
+c3RydWN0IGV4ZmF0X2NoYWluIGNsdTsKIAlzdHJ1Y3QgZXhmYXRfZGVudHJ5ICplcCA9IE5VTEw7
+CkBAIC0zNzksNyArMzc4LDcgQEAgc3RhdGljIGludCBleGZhdF9maW5kX2VtcHR5X2VudHJ5KHN0
+cnVjdCBpbm9kZSAqaW5vZGUsCiAJCQlzdHJ1Y3QgYnVmZmVyX2hlYWQgKmJoOwogCiAJCQllcCA9
+IGV4ZmF0X2dldF9kZW50cnkoc2IsCi0JCQkJJihlaS0+ZGlyKSwgZWktPmVudHJ5ICsgMSwgJmJo
+LCAmc2VjdG9yKTsKKwkJCQkmKGVpLT5kaXIpLCBlaS0+ZW50cnkgKyAxLCAmYmgpOwogCQkJaWYg
+KCFlcCkKIAkJCQlyZXR1cm4gLUVJTzsKIApAQCAtNzc5LDcgKzc3OCw2IEBAIHN0YXRpYyBpbnQg
+ZXhmYXRfdW5saW5rKHN0cnVjdCBpbm9kZSAqZGlyLCBzdHJ1Y3QgZGVudHJ5ICpkZW50cnkpCiAJ
+c3RydWN0IGlub2RlICppbm9kZSA9IGRlbnRyeS0+ZF9pbm9kZTsKIAlzdHJ1Y3QgZXhmYXRfaW5v
+ZGVfaW5mbyAqZWkgPSBFWEZBVF9JKGlub2RlKTsKIAlzdHJ1Y3QgYnVmZmVyX2hlYWQgKmJoOwot
+CXNlY3Rvcl90IHNlY3RvcjsKIAlpbnQgbnVtX2VudHJpZXMsIGVudHJ5LCBlcnIgPSAwOwogCiAJ
+bXV0ZXhfbG9jaygmRVhGQVRfU0Ioc2IpLT5zX2xvY2spOwpAQCAtNzkxLDcgKzc4OSw3IEBAIHN0
+YXRpYyBpbnQgZXhmYXRfdW5saW5rKHN0cnVjdCBpbm9kZSAqZGlyLCBzdHJ1Y3QgZGVudHJ5ICpk
+ZW50cnkpCiAJCWdvdG8gdW5sb2NrOwogCX0KIAotCWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwg
+JmNkaXIsIGVudHJ5LCAmYmgsICZzZWN0b3IpOworCWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwg
+JmNkaXIsIGVudHJ5LCAmYmgpOwogCWlmICghZXApIHsKIAkJZXJyID0gLUVJTzsKIAkJZ290byB1
+bmxvY2s7CkBAIC04OTUsNyArODkzLDcgQEAgc3RhdGljIGludCBleGZhdF9jaGVja19kaXJfZW1w
+dHkoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwKIAogCXdoaWxlIChjbHUuZGlyICE9IEVYRkFUX0VP
+Rl9DTFVTVEVSKSB7CiAJCWZvciAoaSA9IDA7IGkgPCBkZW50cmllc19wZXJfY2x1OyBpKyspIHsK
+LQkJCWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgJmNsdSwgaSwgJmJoLCBOVUxMKTsKKwkJCWVw
+ID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgJmNsdSwgaSwgJmJoKTsKIAkJCWlmICghZXApCiAJCQkJ
+cmV0dXJuIC1FSU87CiAJCQl0eXBlID0gZXhmYXRfZ2V0X2VudHJ5X3R5cGUoZXApOwpAQCAtOTMy
+LDcgKzkzMCw2IEBAIHN0YXRpYyBpbnQgZXhmYXRfcm1kaXIoc3RydWN0IGlub2RlICpkaXIsIHN0
+cnVjdCBkZW50cnkgKmRlbnRyeSkKIAlzdHJ1Y3QgZXhmYXRfc2JfaW5mbyAqc2JpID0gRVhGQVRf
+U0Ioc2IpOwogCXN0cnVjdCBleGZhdF9pbm9kZV9pbmZvICplaSA9IEVYRkFUX0koaW5vZGUpOwog
+CXN0cnVjdCBidWZmZXJfaGVhZCAqYmg7Ci0Jc2VjdG9yX3Qgc2VjdG9yOwogCWludCBudW1fZW50
+cmllcywgZW50cnksIGVycjsKIAogCW11dGV4X2xvY2soJkVYRkFUX1NCKGlub2RlLT5pX3NiKS0+
+c19sb2NrKTsKQEAgLTk1Nyw3ICs5NTQsNyBAQCBzdGF0aWMgaW50IGV4ZmF0X3JtZGlyKHN0cnVj
+dCBpbm9kZSAqZGlyLCBzdHJ1Y3QgZGVudHJ5ICpkZW50cnkpCiAJCWdvdG8gdW5sb2NrOwogCX0K
+IAotCWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgJmNkaXIsIGVudHJ5LCAmYmgsICZzZWN0b3Ip
+OworCWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgJmNkaXIsIGVudHJ5LCAmYmgpOwogCWlmICgh
+ZXApIHsKIAkJZXJyID0gLUVJTzsKIAkJZ290byB1bmxvY2s7CkBAIC0xMDA1LDEzICsxMDAyLDEy
+IEBAIHN0YXRpYyBpbnQgZXhmYXRfcmVuYW1lX2ZpbGUoc3RydWN0IGlub2RlICppbm9kZSwgc3Ry
+dWN0IGV4ZmF0X2NoYWluICpwX2RpciwKIAkJc3RydWN0IGV4ZmF0X2lub2RlX2luZm8gKmVpKQog
+ewogCWludCByZXQsIG51bV9vbGRfZW50cmllcywgbnVtX25ld19lbnRyaWVzOwotCXNlY3Rvcl90
+IHNlY3Rvcl9vbGQsIHNlY3Rvcl9uZXc7CiAJc3RydWN0IGV4ZmF0X2RlbnRyeSAqZXBvbGQsICpl
+cG5ldzsKIAlzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiID0gaW5vZGUtPmlfc2I7CiAJc3RydWN0IGJ1
+ZmZlcl9oZWFkICpuZXdfYmgsICpvbGRfYmg7CiAJaW50IHN5bmMgPSBJU19ESVJTWU5DKGlub2Rl
+KTsKIAotCWVwb2xkID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9kaXIsIG9sZGVudHJ5LCAmb2xk
+X2JoLCAmc2VjdG9yX29sZCk7CisJZXBvbGQgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCBwX2Rpciwg
+b2xkZW50cnksICZvbGRfYmgpOwogCWlmICghZXBvbGQpCiAJCXJldHVybiAtRUlPOwogCkBAIC0x
+MDMyLDggKzEwMjgsNyBAQCBzdGF0aWMgaW50IGV4ZmF0X3JlbmFtZV9maWxlKHN0cnVjdCBpbm9k
+ZSAqaW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqcF9kaXIsCiAJCWlmIChuZXdlbnRyeSA8IDAp
+CiAJCQlyZXR1cm4gbmV3ZW50cnk7IC8qIC1FSU8gb3IgLUVOT1NQQyAqLwogCi0JCWVwbmV3ID0g
+ZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9kaXIsIG5ld2VudHJ5LCAmbmV3X2JoLAotCQkJJnNlY3Rv
+cl9uZXcpOworCQllcG5ldyA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBuZXdlbnRyeSwg
+Jm5ld19iaCk7CiAJCWlmICghZXBuZXcpCiAJCQlyZXR1cm4gLUVJTzsKIApAQCAtMTA0NiwxMiAr
+MTA0MSwxMCBAQCBzdGF0aWMgaW50IGV4ZmF0X3JlbmFtZV9maWxlKHN0cnVjdCBpbm9kZSAqaW5v
+ZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqcF9kaXIsCiAJCWJyZWxzZShvbGRfYmgpOwogCQlicmVs
+c2UobmV3X2JoKTsKIAotCQllcG9sZCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBvbGRl
+bnRyeSArIDEsICZvbGRfYmgsCi0JCQkmc2VjdG9yX29sZCk7CisJCWVwb2xkID0gZXhmYXRfZ2V0
+X2RlbnRyeShzYiwgcF9kaXIsIG9sZGVudHJ5ICsgMSwgJm9sZF9iaCk7CiAJCWlmICghZXBvbGQp
+CiAJCQlyZXR1cm4gLUVJTzsKLQkJZXBuZXcgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCBwX2Rpciwg
+bmV3ZW50cnkgKyAxLCAmbmV3X2JoLAotCQkJJnNlY3Rvcl9uZXcpOworCQllcG5ldyA9IGV4ZmF0
+X2dldF9kZW50cnkoc2IsIHBfZGlyLCBuZXdlbnRyeSArIDEsICZuZXdfYmgpOwogCQlpZiAoIWVw
+bmV3KSB7CiAJCQlicmVsc2Uob2xkX2JoKTsKIAkJCXJldHVybiAtRUlPOwpAQCAtMTA5MywxMiAr
+MTA4NiwxMSBAQCBzdGF0aWMgaW50IGV4ZmF0X21vdmVfZmlsZShzdHJ1Y3QgaW5vZGUgKmlub2Rl
+LCBzdHJ1Y3QgZXhmYXRfY2hhaW4gKnBfb2xkZGlyLAogCQlzdHJ1Y3QgZXhmYXRfdW5pX25hbWUg
+KnBfdW5pbmFtZSwgc3RydWN0IGV4ZmF0X2lub2RlX2luZm8gKmVpKQogewogCWludCByZXQsIG5l
+d2VudHJ5LCBudW1fbmV3X2VudHJpZXMsIG51bV9vbGRfZW50cmllczsKLQlzZWN0b3JfdCBzZWN0
+b3JfbW92LCBzZWN0b3JfbmV3OwogCXN0cnVjdCBleGZhdF9kZW50cnkgKmVwbW92LCAqZXBuZXc7
+CiAJc3RydWN0IHN1cGVyX2Jsb2NrICpzYiA9IGlub2RlLT5pX3NiOwogCXN0cnVjdCBidWZmZXJf
+aGVhZCAqbW92X2JoLCAqbmV3X2JoOwogCi0JZXBtb3YgPSBleGZhdF9nZXRfZGVudHJ5KHNiLCBw
+X29sZGRpciwgb2xkZW50cnksICZtb3ZfYmgsICZzZWN0b3JfbW92KTsKKwllcG1vdiA9IGV4ZmF0
+X2dldF9kZW50cnkoc2IsIHBfb2xkZGlyLCBvbGRlbnRyeSwgJm1vdl9iaCk7CiAJaWYgKCFlcG1v
+dikKIAkJcmV0dXJuIC1FSU87CiAKQEAgLTExMTYsNyArMTEwOCw3IEBAIHN0YXRpYyBpbnQgZXhm
+YXRfbW92ZV9maWxlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqcF9v
+bGRkaXIsCiAJaWYgKG5ld2VudHJ5IDwgMCkKIAkJcmV0dXJuIG5ld2VudHJ5OyAvKiAtRUlPIG9y
+IC1FTk9TUEMgKi8KIAotCWVwbmV3ID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9uZXdkaXIsIG5l
+d2VudHJ5LCAmbmV3X2JoLCAmc2VjdG9yX25ldyk7CisJZXBuZXcgPSBleGZhdF9nZXRfZGVudHJ5
+KHNiLCBwX25ld2RpciwgbmV3ZW50cnksICZuZXdfYmgpOwogCWlmICghZXBuZXcpCiAJCXJldHVy
+biAtRUlPOwogCkBAIC0xMTI5LDEyICsxMTIxLDEwIEBAIHN0YXRpYyBpbnQgZXhmYXRfbW92ZV9m
+aWxlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBleGZhdF9jaGFpbiAqcF9vbGRkaXIsCiAJ
+YnJlbHNlKG1vdl9iaCk7CiAJYnJlbHNlKG5ld19iaCk7CiAKLQllcG1vdiA9IGV4ZmF0X2dldF9k
+ZW50cnkoc2IsIHBfb2xkZGlyLCBvbGRlbnRyeSArIDEsICZtb3ZfYmgsCi0JCSZzZWN0b3JfbW92
+KTsKKwllcG1vdiA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfb2xkZGlyLCBvbGRlbnRyeSArIDEs
+ICZtb3ZfYmgpOwogCWlmICghZXBtb3YpCiAJCXJldHVybiAtRUlPOwotCWVwbmV3ID0gZXhmYXRf
+Z2V0X2RlbnRyeShzYiwgcF9uZXdkaXIsIG5ld2VudHJ5ICsgMSwgJm5ld19iaCwKLQkJJnNlY3Rv
+cl9uZXcpOworCWVwbmV3ID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9uZXdkaXIsIG5ld2VudHJ5
+ICsgMSwgJm5ld19iaCk7CiAJaWYgKCFlcG5ldykgewogCQlicmVsc2UobW92X2JoKTsKIAkJcmV0
+dXJuIC1FSU87CkBAIC0xMjE2LDcgKzEyMDYsNyBAQCBzdGF0aWMgaW50IF9fZXhmYXRfcmVuYW1l
+KHN0cnVjdCBpbm9kZSAqb2xkX3BhcmVudF9pbm9kZSwKIAlleGZhdF9jaGFpbl9kdXAoJm9sZGRp
+ciwgJmVpLT5kaXIpOwogCWRlbnRyeSA9IGVpLT5lbnRyeTsKIAotCWVwID0gZXhmYXRfZ2V0X2Rl
+bnRyeShzYiwgJm9sZGRpciwgZGVudHJ5LCAmb2xkX2JoLCBOVUxMKTsKKwllcCA9IGV4ZmF0X2dl
+dF9kZW50cnkoc2IsICZvbGRkaXIsIGRlbnRyeSwgJm9sZF9iaCk7CiAJaWYgKCFlcCkgewogCQly
+ZXQgPSAtRUlPOwogCQlnb3RvIG91dDsKQEAgLTEyMzcsNyArMTIyNyw3IEBAIHN0YXRpYyBpbnQg
+X19leGZhdF9yZW5hbWUoc3RydWN0IGlub2RlICpvbGRfcGFyZW50X2lub2RlLAogCiAJCXBfZGly
+ID0gJihuZXdfZWktPmRpcik7CiAJCW5ld19lbnRyeSA9IG5ld19laS0+ZW50cnk7Ci0JCWVwID0g
+ZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9kaXIsIG5ld19lbnRyeSwgJm5ld19iaCwgTlVMTCk7CisJ
+CWVwID0gZXhmYXRfZ2V0X2RlbnRyeShzYiwgcF9kaXIsIG5ld19lbnRyeSwgJm5ld19iaCk7CiAJ
+CWlmICghZXApCiAJCQlnb3RvIG91dDsKIApAQCAtMTI3Nyw3ICsxMjY3LDcgQEAgc3RhdGljIGlu
+dCBfX2V4ZmF0X3JlbmFtZShzdHJ1Y3QgaW5vZGUgKm9sZF9wYXJlbnRfaW5vZGUsCiAKIAlpZiAo
+IXJldCAmJiBuZXdfaW5vZGUpIHsKIAkJLyogZGVsZXRlIGVudHJpZXMgb2YgbmV3X2RpciAqLwot
+CQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBuZXdfZW50cnksICZuZXdfYmgsIE5V
+TEwpOworCQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsIHBfZGlyLCBuZXdfZW50cnksICZuZXdf
+YmgpOwogCQlpZiAoIWVwKSB7CiAJCQlyZXQgPSAtRUlPOwogCQkJZ290byBkZWxfb3V0OwpkaWZm
+IC0tZ2l0IGEvZnMvZXhmYXQvbmxzLmMgYi9mcy9leGZhdC9ubHMuYwppbmRleCAzMTRkNTQwN2Ex
+YmUuLmVmMTE1ZTY3MzQwNiAxMDA2NDQKLS0tIGEvZnMvZXhmYXQvbmxzLmMKKysrIGIvZnMvZXhm
+YXQvbmxzLmMKQEAgLTc2MSw3ICs3NjEsNyBAQCBpbnQgZXhmYXRfY3JlYXRlX3VwY2FzZV90YWJs
+ZShzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiKQogCiAJd2hpbGUgKGNsdS5kaXIgIT0gRVhGQVRfRU9G
+X0NMVVNURVIpIHsKIAkJZm9yIChpID0gMDsgaSA8IHNiaS0+ZGVudHJpZXNfcGVyX2NsdTsgaSsr
+KSB7Ci0JCQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsICZjbHUsIGksICZiaCwgTlVMTCk7CisJ
+CQllcCA9IGV4ZmF0X2dldF9kZW50cnkoc2IsICZjbHUsIGksICZiaCk7CiAJCQlpZiAoIWVwKQog
+CQkJCXJldHVybiAtRUlPOwogCi0tIAoyLjI1LjE=
