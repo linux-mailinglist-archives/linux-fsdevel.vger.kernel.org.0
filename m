@@ -2,208 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A537B47566C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 11:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A66BD47586C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 13:09:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241691AbhLOKbP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Dec 2021 05:31:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25314 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241683AbhLOKbP (ORCPT
+        id S242305AbhLOMJs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Dec 2021 07:09:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46242 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237061AbhLOMJr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Dec 2021 05:31:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639564274;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VTGLyY6hDvfJisvSsGOM1bt/y1TKbXPdUsXzyZE3JvY=;
-        b=TLQgF+6PMm/B11LECsMuIwRH6meWYcWsCYiLO3s1efEb+k1nyKVsuOjgE1hL8wI0GGzf7X
-        HAi8t7tcUv/YIR0hJvGS1IadL7Z+OlondwIR/vw5ACExeo6PRmYo9lp+7w5z9fhgh5wEo8
-        C8qa9WfX6X0k2lF/frtnZl+fASOIxBs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-56-0H-PkOtzNP--ID7Hz_26bg-1; Wed, 15 Dec 2021 05:31:11 -0500
-X-MC-Unique: 0H-PkOtzNP--ID7Hz_26bg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C57EB760EB;
-        Wed, 15 Dec 2021 10:31:08 +0000 (UTC)
-Received: from localhost (unknown [10.39.195.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A249674EB5;
-        Wed, 15 Dec 2021 10:30:52 +0000 (UTC)
-Date:   Wed, 15 Dec 2021 10:30:50 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 4/5] dax: remove the copy_from_iter and copy_to_iter
- methods
-Message-ID: <YbnD2iDmN92Bure9@stefanha-x1.localdomain>
-References: <20211209063828.18944-1-hch@lst.de>
- <20211209063828.18944-5-hch@lst.de>
- <YbNhPXBg7G/ridkV@redhat.com>
- <CAPcyv4g4_yFqDeS+pnAZOxcB=Ua+iArK5mqn0iMG4PX6oL=F_A@mail.gmail.com>
- <20211213082318.GB21462@lst.de>
- <YbiosqZoG8e6rDkj@redhat.com>
- <CAPcyv4hFjKsPrPTB4NtLHiY8gyaELz9+45N1OFj3hz+uJ=9JnA@mail.gmail.com>
- <Ybj/azxrUyU4PZEr@redhat.com>
+        Wed, 15 Dec 2021 07:09:47 -0500
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5679C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 04:09:46 -0800 (PST)
+Received: by mail-yb1-xb34.google.com with SMTP id v64so54567412ybi.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 04:09:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=medD3Xi3kZKH5q7bagszydyhriMt4qJw4H1Wjw4BIeA=;
+        b=hFy0KgQxd2bJci/Xd+n8sv+Gu5RmYMvEDhUBuj2Yrq8ctOAyB8hlUNmxpM2IiWLKGy
+         GE3vvn8E0z4jskkFd9srdqyZ83G3qGSVOcrD2grWx5AMKa7YPQ48/Vv0KqUhJi54LfOy
+         dD7WRE2C4pHHS/JIsZt35udpFpfLB/bfGhx9yBgUoW8bTi5myNlDaZXqEKI6Kx46FisJ
+         68kZKS3svXvUdYbK5/j6C34dFY+I1Rbbh4hEBrVj5Z8GkSaIoGT6INxX0WmFow5netem
+         tEe/Dm5Fek5uzcugw8IodwEebZjX23z7LIjzHm5KAIPoJ2dg3exHdgGp4uP3a5We1NHj
+         TTAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=medD3Xi3kZKH5q7bagszydyhriMt4qJw4H1Wjw4BIeA=;
+        b=Pdfy3r4bkN5LzCAnn7jTRENjitbnk/twz0vL2s32OHG0H/jA/sw9SVvNxZ9XoPzusc
+         3qnFkxTBvBgAiZPUCFfZ+GMVV3KNnZ0m0rp+/Twa1jglWP2Zv+nkt2JpNvzXcDWmvrnn
+         UvxhS7wUhaI2hpk0ah0iE6YCWcGKU7UiVEUBJapMV3q4vsbyqTLhaY5BFiyfTsnQgzpm
+         RTNe2yUQzypUCJqDidB+E4qPqOByNzuQhxa9Sch804L5ot1y4b5HIeWgJI2yKiH9EN7q
+         tfsCXeq6+JBYTDEm1tqWkOTiuGpcFMeuuQJPt4qfhrtuCG5uQ+OKe8V1ybRdaoHXEFDj
+         AMLQ==
+X-Gm-Message-State: AOAM530eOCjOQv4DLMyJzwm0MvJWOx6n0r8u3hjLEnQUbi0h5Leh0D9E
+        9VZWGiBvops4evcmKqXN4pLd4phDyQXjKITK5r3JJg==
+X-Google-Smtp-Source: ABdhPJwQ0At3Bjn2QQCan5WHYT82Z/7G6PUgdH5xVAc30+lYih6V821vw+gn8W1jOKI1DU2w2zfhyVDYOnqoiKKOUGU=
+X-Received: by 2002:a05:6902:52b:: with SMTP id y11mr5529088ybs.199.1639570186129;
+ Wed, 15 Dec 2021 04:09:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fVCyKoqL/Gzi3K+T"
-Content-Disposition: inline
-In-Reply-To: <Ybj/azxrUyU4PZEr@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <20211213165342.74704-1-songmuchun@bytedance.com>
+ <20211213165342.74704-2-songmuchun@bytedance.com> <YbieX3WCUt7hdZlW@cmpxchg.org>
+In-Reply-To: <YbieX3WCUt7hdZlW@cmpxchg.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Wed, 15 Dec 2021 20:09:10 +0800
+Message-ID: <CAMZfGtWPt2wk91Js6NRnw-wpMVQHc+ZRZo8OUyrkNAJBB3f8yQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/17] mm: list_lru: optimize memory consumption of
+ arrays of per cgroup lists
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
+        Alex Shi <alexs@kernel.org>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        jaegeuk@kernel.org, chao@kernel.org,
+        Kari Argillander <kari.argillander@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-nfs@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        fam.zheng@bytedance.com, Muchun Song <smuchun@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Dec 14, 2021 at 9:38 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> On Tue, Dec 14, 2021 at 12:53:26AM +0800, Muchun Song wrote:
+> > The list_lru uses an array (list_lru_memcg->lru) to store pointers
+> > which point to the list_lru_one. And the array is per memcg per node.
+> > Therefore, the size of the arrays will be 10K * number_of_node * 8 (
+> > a pointer size on 64 bits system) when we run 10k containers in the
+> > system. The memory consumption of the arrays becomes significant. The
+> > more numa node, the more memory it consumes.
+>
+> The complexity for the lists themselves is still nrmemcgs * nrnodes
+> right? But the rcu_head goes from that to nrmemcgs.
 
---fVCyKoqL/Gzi3K+T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Right.
 
-On Tue, Dec 14, 2021 at 03:32:43PM -0500, Vivek Goyal wrote:
-> On Tue, Dec 14, 2021 at 08:41:30AM -0800, Dan Williams wrote:
-> > On Tue, Dec 14, 2021 at 6:23 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Mon, Dec 13, 2021 at 09:23:18AM +0100, Christoph Hellwig wrote:
-> > > > On Sun, Dec 12, 2021 at 06:44:26AM -0800, Dan Williams wrote:
-> > > > > On Fri, Dec 10, 2021 at 6:17 AM Vivek Goyal <vgoyal@redhat.com> w=
-rote:
-> > > > > > Going forward, I am wondering should virtiofs use flushcache ve=
-rsion as
-> > > > > > well. What if host filesystem is using DAX and mapping persiste=
-nt memory
-> > > > > > pfn directly into qemu address space. I have never tested that.
-> > > > > >
-> > > > > > Right now we are relying on applications to do fsync/msync on v=
-irtiofs
-> > > > > > for data persistence.
-> > > > >
-> > > > > This sounds like it would need coordination with a paravirtualized
-> > > > > driver that can indicate whether the host side is pmem or not, li=
-ke
-> > > > > the virtio_pmem driver. However, if the guest sends any fsync/msy=
-nc
-> > > > > you would still need to go explicitly cache flush any dirty page
-> > > > > because you can't necessarily trust that the guest did that alrea=
-dy.
-> > > >
-> > > > Do we?  The application can't really know what backend it is on, so
-> > > > it sounds like the current virtiofs implementation doesn't really, =
-does it?
-> > >
-> > > Agreed that application does not know what backend it is on. So virti=
-ofs
-> > > just offers regular posix API where applications have to do fsync/msy=
-nc
-> > > for data persistence. No support for mmap(MAP_SYNC). We don't offer p=
-ersistent
-> > > memory programming model on virtiofs. That's not the expectation. DAX
-> > > is used only to bypass guest page cache.
-> > >
-> > > With this assumption, I think we might not have to use flushcache ver=
-sion
-> > > at all even if shared filesystem is on persistent memory on host.
-> > >
-> > > - We mmap() host files into qemu address space. So any dax store in v=
-irtiofs
-> > >   should make corresponding pages dirty in page cache on host and when
-> > >   and fsync()/msync() comes later, it should flush all the data to PM=
-EM.
-> > >
-> > > - In case of file extending writes, virtiofs falls back to regular
-> > >   FUSE_WRITE path (and not use DAX), and in that case host pmem driver
-> > >   should make sure writes are flushed to pmem immediately.
-> > >
-> > > Are there any other path I am missing. If not, looks like we might not
-> > > have to use flushcache version in virtiofs at all as long as we are n=
-ot
-> > > offering guest applications user space flushes and MAP_SYNC support.
-> > >
-> > > We still might have to use machine check safe variant though as loads
-> > > might generate synchronous machine check. What's not clear to me is
-> > > that if this MC safe variant should be used only in case of PMEM or
-> > > should it be used in case of non-PMEM as well.
-> >=20
-> > It should be used on any memory address that can throw exception on
-> > load, which is any physical address, in paths that can tolerate
-> > memcpy() returning an error code, most I/O paths, and can tolerate
-> > slower copy performance on older platforms that do not support MC
-> > recovery with fast string operations, to date that's only PMEM users.
->=20
-> Ok, So basically latest cpus can do fast string operations with MC
-> recovery so that using MC safe variant is not a problem.
->=20
-> Then there is range of cpus which can do MC recovery but do slower
-> versions of memcpy and that's where the issue is.
->=20
-> So if we knew that virtiofs dax window is backed by a pmem device
-> then we should always use MC safe variant. Even if it means paying
-> the price of slow version for the sake of correctness.=20
->=20
-> But if we are not using pmem on host, then there is no point in
-> using MC safe variant.
->=20
-> IOW.
->=20
-> 	if (virtiofs_backed_by_pmem) {
-> 		use_mc_safe_version
-> 	else
-> 		use_non_mc_safe_version
-> 	}
->=20
-> Now question is, how do we know if virtiofs dax window is backed by
-> a pmem or not. I checked virtio_pmem driver and that does not seem
-> to communicate anything like that. It just communicates start of the
-> range and size of range, nothing else.
->=20
-> I don't have full handle on stack of modules of virtio_pmem, but my guess
-> is it probably is using MC safe version always (because it does not
-> know anthing about the backing storage).
->=20
-> /me will definitely like to pay penalty of slower memcpy if virtiofs
-> device is not backed by a pmem.
+>
+> > I have done a simple test, which creates 10K memcg and mount point
+> > each in a two-node system. The memory consumption of the list_lru
+> > will be 24464MB. After converting the array from per memcg per node
+> > to per memcg, the memory consumption is going to be 21957MB. It is
+> > reduces by 2.5GB. In our AMD servers, there are 8 numa nodes in
+> > those system, the memory consumption could be more significant.
+>
+> The code looks good to me, but it would be useful to include a
+> high-level overview of the new scheme, explain that the savings come
+> from the rcu heads, that it simplifies the alloc/dealloc path etc.
 
-Reads from the page cache handle machine checks (filemap_read() ->
-raw_copy_to_user()). I think virtiofs should therefore always handle
-machine checks when reading from the DAX Window.
+Will do in the next version.
 
-Stefan
+>
+> With that,
+>
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
---fVCyKoqL/Gzi3K+T
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmG5w9oACgkQnKSrs4Gr
-c8j4SQf/fNuEZjHQ7MgEmyQ7cl+ER5jQ4O1RsP/Y0hXNm9hU5bbbbeRF+BIcSsj7
-cmU9GGe6McyCdpHBOjaUPbRJkEmwA3F6Sbr4c8xm8dL21fPP6TNJu/4gLXmI6+KY
-kNihoEXb/lWXT8YQcngs3s1pkScfsZaxPnUo6m4E/dMLbxkikpIDqfQI9m6KzSUL
-uqODFy0itv0pIKrN+OGweqx+UKBZ3DofuOzUUAGZRae/WENY7fRhVzPH359eDfXO
-aDPOB9PFwnNxHYiNpQDgyhoOeG0B6+erdSDHzPcYvOoXWHbsaHKI854Ocg3i1sah
-QCfMd4tH3XVaVS1cwnupcnXt9IFNmg==
-=ySzP
------END PGP SIGNATURE-----
-
---fVCyKoqL/Gzi3K+T--
-
+>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
