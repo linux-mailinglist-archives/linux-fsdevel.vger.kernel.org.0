@@ -2,218 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0DF475DCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 17:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E940475E83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Dec 2021 18:23:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244980AbhLOQq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Dec 2021 11:46:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54860 "EHLO
+        id S245302AbhLORWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Dec 2021 12:22:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244893AbhLOQq2 (ORCPT
+        with ESMTP id S245282AbhLORWh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Dec 2021 11:46:28 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D47C06173F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 08:46:28 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id p18so2041209pld.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Dec 2021 08:46:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zYAnJX+TpDGLkEzNmA27WFkqeU//5jbR+UQpskrIy5I=;
-        b=kkabp0tXSY3ReH2D3KZMrsifXVc9rJJ6PrTgRFZ8gD9AdXtYiUQ//ZGjx3VH9KjuWD
-         hNsIKstKwW82iaDXmRFXCdyLAA0lrEdIViQtyCNgzvG/KVIFwlMAf0vfe9DnvkwsYbUh
-         KsFUMxlz6n14jE8yPGWuNF1TUPnr2r89bpquMm+I6+nUmnNnAniDCvG+Ej20pZm5llBQ
-         atsGUASafXKTnlAQVSwSuww5AniywCj37Eh5LF6rweEojSWhlI3q0OdLudJu7galsQsk
-         n0rPDXkDS4NjHtuGVXQ0QXEBLhIybIsv3OtRD0baE/WoQq8d/FrqqliCkLnnqZET/JHg
-         Xpyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zYAnJX+TpDGLkEzNmA27WFkqeU//5jbR+UQpskrIy5I=;
-        b=58wCQgw7XI2Hbi+aI+hHyKEWyTrjBCSwAqT6oDHSezdB1bGciWe5YAbYDPQu4wIiOi
-         3X3JsWn2sVqXMsVjmyae6mGyqMWCIaGP5M26CTXBeY/ZBmwzWOob0/A0B2YXKnopAj8x
-         tXIPqr3kEe/QDy/n50hKe9Q8q2MM6nRtQGzGo9okFbusdtD9uiEX1fNAIMaPHVWCuQyB
-         n/eo3++gf0r6AL9oby7V2KL9od53t+1mODmKIE6udq64rrusf2IVPnoxr8OAaoxp4c0E
-         HgMsNaATPTnDsEEI8YOLqH6i1YKrLNZg/J5NZfy9RzTRV4qDA69Ybp9mXC0+bD8gt75w
-         sNLA==
-X-Gm-Message-State: AOAM530xacjEeZ2sJd7agwBO0i8Bd/crbnhtfIxa9toZXFLW+DOUj21q
-        9pDfaXDb60nIeQvc16pR60UZL6bsBfyQjisVTmSnHQ==
-X-Google-Smtp-Source: ABdhPJzwOIbkvP/+iBD3SIgTnAQn/UcxBAdqLsfj8FwGgFjPWSHfw+JOD+iFOYO8kxJi1FuIXtuIk9Ci48Jn1RQ/m50=
-X-Received: by 2002:a17:90b:1e49:: with SMTP id pi9mr686283pjb.220.1639586787855;
- Wed, 15 Dec 2021 08:46:27 -0800 (PST)
+        Wed, 15 Dec 2021 12:22:37 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8743FC061574;
+        Wed, 15 Dec 2021 09:22:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1DFB4B82027;
+        Wed, 15 Dec 2021 17:22:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53EC7C36AE2;
+        Wed, 15 Dec 2021 17:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1639588953;
+        bh=nTSN4lL/rHeDQ8yPNiUCIdVHvKjayGHxJzXv6YOPbBE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ugM9hBgC/Se3GnDtnxxC6Q6kryPjsFEkAFiMmN+MXp01liUpCYNDP1l3g5ySOXlZx
+         CUY6uMrtUqnV97SvbeEKcMSPifsdhTTLQUS61pm50cNFPJiWxgHqCcgZ5cZzFqrdDB
+         L3hPo0uYXyU8IjM/3qtJTZsRGGPLnbnJretvmcZo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.15 11/42] netfs: Fix lockdep warning from taking sb_writers whilst holding mmap_lock
+Date:   Wed, 15 Dec 2021 18:20:52 +0100
+Message-Id: <20211215172027.028132662@linuxfoundation.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211215172026.641863587@linuxfoundation.org>
+References: <20211215172026.641863587@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-References: <20211209063828.18944-1-hch@lst.de> <20211209063828.18944-5-hch@lst.de>
- <YbNhPXBg7G/ridkV@redhat.com> <CAPcyv4g4_yFqDeS+pnAZOxcB=Ua+iArK5mqn0iMG4PX6oL=F_A@mail.gmail.com>
- <20211213082318.GB21462@lst.de> <YbiosqZoG8e6rDkj@redhat.com>
- <CAPcyv4hFjKsPrPTB4NtLHiY8gyaELz9+45N1OFj3hz+uJ=9JnA@mail.gmail.com>
- <Ybj/azxrUyU4PZEr@redhat.com> <CAPcyv4h_iFe8U8UrXCbhAYaruFm-xg0n_U3H8wnK-uGoEubTvw@mail.gmail.com>
- <YboPTSExR05zeDil@redhat.com>
-In-Reply-To: <YboPTSExR05zeDil@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 15 Dec 2021 08:46:18 -0800
-Message-ID: <CAPcyv4jDhK_tzb=p4CCm1_OKqJU1a3UMPhbo=8BgwXSrsQXxVQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] dax: remove the copy_from_iter and copy_to_iter methods
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 7:53 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Tue, Dec 14, 2021 at 03:43:38PM -0800, Dan Williams wrote:
-> > On Tue, Dec 14, 2021 at 12:33 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Tue, Dec 14, 2021 at 08:41:30AM -0800, Dan Williams wrote:
-> > > > On Tue, Dec 14, 2021 at 6:23 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > >
-> > > > > On Mon, Dec 13, 2021 at 09:23:18AM +0100, Christoph Hellwig wrote:
-> > > > > > On Sun, Dec 12, 2021 at 06:44:26AM -0800, Dan Williams wrote:
-> > > > > > > On Fri, Dec 10, 2021 at 6:17 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > > > > > Going forward, I am wondering should virtiofs use flushcache version as
-> > > > > > > > well. What if host filesystem is using DAX and mapping persistent memory
-> > > > > > > > pfn directly into qemu address space. I have never tested that.
-> > > > > > > >
-> > > > > > > > Right now we are relying on applications to do fsync/msync on virtiofs
-> > > > > > > > for data persistence.
-> > > > > > >
-> > > > > > > This sounds like it would need coordination with a paravirtualized
-> > > > > > > driver that can indicate whether the host side is pmem or not, like
-> > > > > > > the virtio_pmem driver. However, if the guest sends any fsync/msync
-> > > > > > > you would still need to go explicitly cache flush any dirty page
-> > > > > > > because you can't necessarily trust that the guest did that already.
-> > > > > >
-> > > > > > Do we?  The application can't really know what backend it is on, so
-> > > > > > it sounds like the current virtiofs implementation doesn't really, does it?
-> > > > >
-> > > > > Agreed that application does not know what backend it is on. So virtiofs
-> > > > > just offers regular posix API where applications have to do fsync/msync
-> > > > > for data persistence. No support for mmap(MAP_SYNC). We don't offer persistent
-> > > > > memory programming model on virtiofs. That's not the expectation. DAX
-> > > > > is used only to bypass guest page cache.
-> > > > >
-> > > > > With this assumption, I think we might not have to use flushcache version
-> > > > > at all even if shared filesystem is on persistent memory on host.
-> > > > >
-> > > > > - We mmap() host files into qemu address space. So any dax store in virtiofs
-> > > > >   should make corresponding pages dirty in page cache on host and when
-> > > > >   and fsync()/msync() comes later, it should flush all the data to PMEM.
-> > > > >
-> > > > > - In case of file extending writes, virtiofs falls back to regular
-> > > > >   FUSE_WRITE path (and not use DAX), and in that case host pmem driver
-> > > > >   should make sure writes are flushed to pmem immediately.
-> > > > >
-> > > > > Are there any other path I am missing. If not, looks like we might not
-> > > > > have to use flushcache version in virtiofs at all as long as we are not
-> > > > > offering guest applications user space flushes and MAP_SYNC support.
-> > > > >
-> > > > > We still might have to use machine check safe variant though as loads
-> > > > > might generate synchronous machine check. What's not clear to me is
-> > > > > that if this MC safe variant should be used only in case of PMEM or
-> > > > > should it be used in case of non-PMEM as well.
-> > > >
-> > > > It should be used on any memory address that can throw exception on
-> > > > load, which is any physical address, in paths that can tolerate
-> > > > memcpy() returning an error code, most I/O paths, and can tolerate
-> > > > slower copy performance on older platforms that do not support MC
-> > > > recovery with fast string operations, to date that's only PMEM users.
-> > >
-> > > Ok, So basically latest cpus can do fast string operations with MC
-> > > recovery so that using MC safe variant is not a problem.
-> > >
-> > > Then there is range of cpus which can do MC recovery but do slower
-> > > versions of memcpy and that's where the issue is.
-> > >
-> > > So if we knew that virtiofs dax window is backed by a pmem device
-> > > then we should always use MC safe variant. Even if it means paying
-> > > the price of slow version for the sake of correctness.
-> > >
-> > > But if we are not using pmem on host, then there is no point in
-> > > using MC safe variant.
-> > >
-> > > IOW.
-> > >
-> > >         if (virtiofs_backed_by_pmem) {
-> >
-> > No, PMEM should not be considered at all relative to whether to use MC
-> > or not, it is 100% a decision of whether you expect virtiofs users
-> > will balk more at unhandled machine checks or performance regressions
-> > on the platforms that set "enable_copy_mc_fragile()".
->
-> If we don't handle machine check, kernel will panic(), right? So that's
-> the trade off. Whether get higher performance (on select platforms) and
-> crash if MC happens OR get slower memcpy() performance (on select
-> platoforms) and recover from MC. Hmm...
->
->
-> > See
-> > quirk_intel_brickland_xeon_ras_cap() and
-> > quirk_intel_purley_xeon_ras_cap() in arch/x86/kernel/quirks.c.
-> >
-> > >                 use_mc_safe_version
-> > >         else
-> > >                 use_non_mc_safe_version
-> > >         }
-> > >
-> > > Now question is, how do we know if virtiofs dax window is backed by
-> > > a pmem or not. I checked virtio_pmem driver and that does not seem
-> > > to communicate anything like that. It just communicates start of the
-> > > range and size of range, nothing else.
-> > >
-> > > I don't have full handle on stack of modules of virtio_pmem, but my guess
-> > > is it probably is using MC safe version always (because it does not
-> > > know anthing about the backing storage).
-> > >
-> > > /me will definitely like to pay penalty of slower memcpy if virtiofs
-> > > device is not backed by a pmem.
-> >
-> > I assume you meant "not like",
->
-> Yes. It was a typo.
->
-> > but again PMEM has no bearing on
-> > whether using that device will throw machine checks. I'm sure there
-> > are people that would make the opposite tradeoff.
->
-> Why pmem driver does not have to make such trade off and it always
-> uses machine check variant.
+From: David Howells <dhowells@redhat.com>
 
-It certainly did. I can't find the thread now, but the end result was
-to accept the performance regression in favor of maximal MC handling
-protection.
+[ Upstream commit 598ad0bd09329818ee041cb3e4b60ba0a70cb1ee ]
 
-> As you mentioned machine checks can happen with DRAM too. So why loading
-> from page cache not use machine check variant (or given an option to user
-> allow making a choice).
+Taking sb_writers whilst holding mmap_lock isn't allowed and will result in
+a lockdep warning like that below.  The problem comes from cachefiles
+needing to take the sb_writers lock in order to do a write to the cache,
+but being asked to do this by netfslib called from readpage, readahead or
+write_begin[1].
 
-...because regressing page cache operations is fraught, and x86
-machine check architecture elicits strong feelings.
+Fix this by always offloading the write to the cache off to a worker
+thread.  The main thread doesn't need to wait for it, so deadlock can be
+avoided.
 
-> BTW, stefan mentioned that we could think of adding a device feature
-> bit to signal whether to do MC safe memcpy() or not if it becomes
-> really necessary. For now probably let us stick to performance
-> variant and if users demand machine check handling, then either
-> introduce it unconditionally or make it an opt-in based on device
-> feature bit.
+This can be tested by running the quick xfstests on something like afs or
+ceph with lockdep enabled.
 
-Sure, it's a reasonable choice.
+WARNING: possible circular locking dependency detected
+5.15.0-rc1-build2+ #292 Not tainted
+------------------------------------------------------
+holetest/65517 is trying to acquire lock:
+ffff88810c81d730 (mapping.invalidate_lock#3){.+.+}-{3:3}, at: filemap_fault+0x276/0x7a5
+
+but task is already holding lock:
+ffff8881595b53e8 (&mm->mmap_lock#2){++++}-{3:3}, at: do_user_addr_fault+0x28d/0x59c
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&mm->mmap_lock#2){++++}-{3:3}:
+       validate_chain+0x3c4/0x4a8
+       __lock_acquire+0x89d/0x949
+       lock_acquire+0x2dc/0x34b
+       __might_fault+0x87/0xb1
+       strncpy_from_user+0x25/0x18c
+       removexattr+0x7c/0xe5
+       __do_sys_fremovexattr+0x73/0x96
+       do_syscall_64+0x67/0x7a
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #1 (sb_writers#10){.+.+}-{0:0}:
+       validate_chain+0x3c4/0x4a8
+       __lock_acquire+0x89d/0x949
+       lock_acquire+0x2dc/0x34b
+       cachefiles_write+0x2b3/0x4bb
+       netfs_rreq_do_write_to_cache+0x3b5/0x432
+       netfs_readpage+0x2de/0x39d
+       filemap_read_page+0x51/0x94
+       filemap_get_pages+0x26f/0x413
+       filemap_read+0x182/0x427
+       new_sync_read+0xf0/0x161
+       vfs_read+0x118/0x16e
+       ksys_read+0xb8/0x12e
+       do_syscall_64+0x67/0x7a
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #0 (mapping.invalidate_lock#3){.+.+}-{3:3}:
+       check_noncircular+0xe4/0x129
+       check_prev_add+0x16b/0x3a4
+       validate_chain+0x3c4/0x4a8
+       __lock_acquire+0x89d/0x949
+       lock_acquire+0x2dc/0x34b
+       down_read+0x40/0x4a
+       filemap_fault+0x276/0x7a5
+       __do_fault+0x96/0xbf
+       do_fault+0x262/0x35a
+       __handle_mm_fault+0x171/0x1b5
+       handle_mm_fault+0x12a/0x233
+       do_user_addr_fault+0x3d2/0x59c
+       exc_page_fault+0x85/0xa5
+       asm_exc_page_fault+0x1e/0x30
+
+other info that might help us debug this:
+
+Chain exists of:
+  mapping.invalidate_lock#3 --> sb_writers#10 --> &mm->mmap_lock#2
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&mm->mmap_lock#2);
+                               lock(sb_writers#10);
+                               lock(&mm->mmap_lock#2);
+  lock(mapping.invalidate_lock#3);
+
+ *** DEADLOCK ***
+
+1 lock held by holetest/65517:
+ #0: ffff8881595b53e8 (&mm->mmap_lock#2){++++}-{3:3}, at: do_user_addr_fault+0x28d/0x59c
+
+stack backtrace:
+CPU: 0 PID: 65517 Comm: holetest Not tainted 5.15.0-rc1-build2+ #292
+Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+Call Trace:
+ dump_stack_lvl+0x45/0x59
+ check_noncircular+0xe4/0x129
+ ? print_circular_bug+0x207/0x207
+ ? validate_chain+0x461/0x4a8
+ ? add_chain_block+0x88/0xd9
+ ? hlist_add_head_rcu+0x49/0x53
+ check_prev_add+0x16b/0x3a4
+ validate_chain+0x3c4/0x4a8
+ ? check_prev_add+0x3a4/0x3a4
+ ? mark_lock+0xa5/0x1c6
+ __lock_acquire+0x89d/0x949
+ lock_acquire+0x2dc/0x34b
+ ? filemap_fault+0x276/0x7a5
+ ? rcu_read_unlock+0x59/0x59
+ ? add_to_page_cache_lru+0x13c/0x13c
+ ? lock_is_held_type+0x7b/0xd3
+ down_read+0x40/0x4a
+ ? filemap_fault+0x276/0x7a5
+ filemap_fault+0x276/0x7a5
+ ? pagecache_get_page+0x2dd/0x2dd
+ ? __lock_acquire+0x8bc/0x949
+ ? pte_offset_kernel.isra.0+0x6d/0xc3
+ __do_fault+0x96/0xbf
+ ? do_fault+0x124/0x35a
+ do_fault+0x262/0x35a
+ ? handle_pte_fault+0x1c1/0x20d
+ __handle_mm_fault+0x171/0x1b5
+ ? handle_pte_fault+0x20d/0x20d
+ ? __lock_release+0x151/0x254
+ ? mark_held_locks+0x1f/0x78
+ ? rcu_read_unlock+0x3a/0x59
+ handle_mm_fault+0x12a/0x233
+ do_user_addr_fault+0x3d2/0x59c
+ ? pgtable_bad+0x70/0x70
+ ? rcu_read_lock_bh_held+0xab/0xab
+ exc_page_fault+0x85/0xa5
+ ? asm_exc_page_fault+0x8/0x30
+ asm_exc_page_fault+0x1e/0x30
+RIP: 0033:0x40192f
+Code: ff 48 89 c3 48 8b 05 50 28 00 00 48 85 ed 7e 23 31 d2 4b 8d 0c 2f eb 0a 0f 1f 00 48 8b 05 39 28 00 00 48 0f af c2 48 83 c2 01 <48> 89 1c 01 48 39 d5 7f e8 8b 0d f2 27 00 00 31 c0 85 c9 74 0e 8b
+RSP: 002b:00007f9931867eb0 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 00007f9931868700 RCX: 00007f993206ac00
+RDX: 0000000000000001 RSI: 0000000000000000 RDI: 00007ffc13e06ee0
+RBP: 0000000000000100 R08: 0000000000000000 R09: 00007f9931868700
+R10: 00007f99318689d0 R11: 0000000000000202 R12: 00007ffc13e06ee0
+R13: 0000000000000c00 R14: 00007ffc13e06e00 R15: 00007f993206a000
+
+Fixes: 726218fdc22c ("netfs: Define an interface to talk to a cache")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: Jeff Layton <jlayton@kernel.org>
+cc: Jan Kara <jack@suse.cz>
+cc: linux-cachefs@redhat.com
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20210922110420.GA21576@quack2.suse.cz/ [1]
+Link: https://lore.kernel.org/r/163887597541.1596626.2668163316598972956.stgit@warthog.procyon.org.uk/ # v1
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/netfs/read_helper.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 994ec22d40402..4b54529f8176b 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -354,16 +354,11 @@ static void netfs_rreq_write_to_cache_work(struct work_struct *work)
+ 	netfs_rreq_do_write_to_cache(rreq);
+ }
+ 
+-static void netfs_rreq_write_to_cache(struct netfs_read_request *rreq,
+-				      bool was_async)
++static void netfs_rreq_write_to_cache(struct netfs_read_request *rreq)
+ {
+-	if (was_async) {
+-		rreq->work.func = netfs_rreq_write_to_cache_work;
+-		if (!queue_work(system_unbound_wq, &rreq->work))
+-			BUG();
+-	} else {
+-		netfs_rreq_do_write_to_cache(rreq);
+-	}
++	rreq->work.func = netfs_rreq_write_to_cache_work;
++	if (!queue_work(system_unbound_wq, &rreq->work))
++		BUG();
+ }
+ 
+ /*
+@@ -560,7 +555,7 @@ static void netfs_rreq_assess(struct netfs_read_request *rreq, bool was_async)
+ 	wake_up_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS);
+ 
+ 	if (test_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq->flags))
+-		return netfs_rreq_write_to_cache(rreq, was_async);
++		return netfs_rreq_write_to_cache(rreq);
+ 
+ 	netfs_rreq_completed(rreq, was_async);
+ }
+-- 
+2.33.0
+
+
+
