@@ -2,114 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C99D0476BF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 09:31:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D5E476C1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 09:43:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232701AbhLPIbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 03:31:32 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:15745 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232475AbhLPIba (ORCPT
+        id S234977AbhLPInk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 03:43:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51992 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230051AbhLPInk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 03:31:30 -0500
-Received: from kwepemi100005.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4JF4y34LtRzZd4C;
-        Thu, 16 Dec 2021 16:28:27 +0800 (CST)
-Received: from kwepemm600019.china.huawei.com (7.193.23.64) by
- kwepemi100005.china.huawei.com (7.221.188.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 16 Dec 2021 16:31:28 +0800
-Received: from [10.174.177.210] (10.174.177.210) by
- kwepemm600019.china.huawei.com (7.193.23.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 16 Dec 2021 16:31:28 +0800
-Subject: Re: [PATCH] pipe: remove needless spin_lock in pipe_read/pipe_write
-From:   yangerkun <yangerkun@huawei.com>
-To:     <dhowells@redhat.com>, <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>
-References: <20211122041135.2450220-1-yangerkun@huawei.com>
- <22dd76ec-a50d-a2f1-8001-2a86de1d50c0@huawei.com>
-Message-ID: <559be9c0-96da-24bd-2a2b-e87808a522c5@huawei.com>
-Date:   Thu, 16 Dec 2021 16:31:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Thu, 16 Dec 2021 03:43:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639644219;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UfCZtz1ccK1G4KuhCQww9wOX9Yntwu2r9HaxdHV6uW0=;
+        b=HOquVJ0Itil4LDbZ8JmBKFUVLQnUHJzFZ7+IrXlD42sgHhe1GRL6E2RzhkZ8UBUdPNUyAx
+        ucxgeE9GhjMk6zLVtikx+EpAML9nVc9k9q2K3atVbf05EvkBtIyfDbaF28XSMbtMNIrlr1
+        JM/FlSHxBZSYCdKTQn/tu+waO+E14tc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-282-mMnn5J3YO22tFqJtLTsJrQ-1; Thu, 16 Dec 2021 03:43:36 -0500
+X-MC-Unique: mMnn5J3YO22tFqJtLTsJrQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1696981EE60;
+        Thu, 16 Dec 2021 08:43:35 +0000 (UTC)
+Received: from localhost (ovpn-12-63.pek2.redhat.com [10.72.12.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E525C84FF9;
+        Thu, 16 Dec 2021 08:43:27 +0000 (UTC)
+Date:   Thu, 16 Dec 2021 16:43:25 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, prudo@redhat.com
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+        kexec@lists.infradead.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
+        linux-kernel@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Convert vmcore to use an iov_iter
+Message-ID: <20211216084325.GH3023@MiWiFi-R3L-srv>
+References: <20211213143927.3069508-1-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <22dd76ec-a50d-a2f1-8001-2a86de1d50c0@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.210]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600019.china.huawei.com (7.193.23.64)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211213143927.3069508-1-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ping...
+On 12/13/21 at 02:39pm, Matthew Wilcox (Oracle) wrote:
+> For some reason several people have been sending bad patches to fix
+> compiler warnings in vmcore recently.  Here's how it should be done.
+> Compile-tested only on x86.  As noted in the first patch, s390 should
+> take this conversion a bit further, but I'm not inclined to do that
+> work myself.
 
-On 2021/11/29 14:22, yangerkun wrote:
-> ping
+Add Philipp to the CC.
+
+He used to work on s390 arch. Now he joins Redhat and will focus
+on kexec/kdump. See if he has any thoughts on the s390 part of work, or
+may reach out to s390 developer.
+
 > 
-> On 2021/11/22 12:11, yangerkun wrote:
->> Once enable CONFIG_WATCH_QUEUE, we should protect pipe with
->> pipe->rd_wait.lock since post_one_notification may write pipe from
->> contexts where pipe->mutex cannot be token. But nowdays we will try
->> take it for anycase, it seems needless. Besides, pipe_write will break
->> once it's pipe with O_NOTIFICATION_PIPE, pipe->rd_wait.lock seems no
->> need at all. We make some change base on that, and it can help improve
->> performance for some case like pipe_pst1 in libMicro.
->>
->> ARMv7 for our scene, before this patch:
->>    5483 nsecs/call
->> After this patch:
->>    4854 nsecs/call
->>
->> Signed-off-by: yangerkun <yangerkun@huawei.com>
->> ---
->>   fs/pipe.c | 15 +++++++--------
->>   1 file changed, 7 insertions(+), 8 deletions(-)
->>
->> diff --git a/fs/pipe.c b/fs/pipe.c
->> index 6d4342bad9f1..e8ced0c50824 100644
->> --- a/fs/pipe.c
->> +++ b/fs/pipe.c
->> @@ -320,14 +320,18 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->>               if (!buf->len) {
->>                   pipe_buf_release(pipe, buf);
->> -                spin_lock_irq(&pipe->rd_wait.lock);
->>   #ifdef CONFIG_WATCH_QUEUE
->> +                if (pipe->watch_queue)
->> +                    spin_lock_irq(&pipe->rd_wait.lock);
->>                   if (buf->flags & PIPE_BUF_FLAG_LOSS)
->>                       pipe->note_loss = true;
->>   #endif
->>                   tail++;
->>                   pipe->tail = tail;
->> -                spin_unlock_irq(&pipe->rd_wait.lock);
->> +#ifdef CONFIG_WATCH_QUEUE
->> +                if (pipe->watch_queue)
->> +                    spin_unlock_irq(&pipe->rd_wait.lock);
->> +#endif
->>               }
->>               total_len -= chars;
->>               if (!total_len)
->> @@ -504,16 +508,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter 
->> *from)
->>                * it, either the reader will consume it or it'll still
->>                * be there for the next write.
->>                */
->> -            spin_lock_irq(&pipe->rd_wait.lock);
->> -
->>               head = pipe->head;
->> -            if (pipe_full(head, pipe->tail, pipe->max_usage)) {
->> -                spin_unlock_irq(&pipe->rd_wait.lock);
->> +            if (pipe_full(head, pipe->tail, pipe->max_usage))
->>                   continue;
->> -            }
->>               pipe->head = head + 1;
->> -            spin_unlock_irq(&pipe->rd_wait.lock);
->>               /* Insert it into the buffer array */
->>               buf = &pipe->bufs[head & mask];
->>
-> .
+> v3:
+>  - Send the correct patches this time
+> v2:
+>  - Removed unnecessary kernel-doc
+>  - Included uio.h to fix compilation problems
+>  - Made read_from_oldmem_iter static to avoid compile warnings during the
+>    conversion
+>  - Use iov_iter_truncate() (Christoph)
+> 
+> Matthew Wilcox (Oracle) (3):
+>   vmcore: Convert copy_oldmem_page() to take an iov_iter
+>   vmcore: Convert __read_vmcore to use an iov_iter
+>   vmcore: Convert read_from_oldmem() to take an iov_iter
+> 
+>  arch/arm/kernel/crash_dump.c     |  27 +------
+>  arch/arm64/kernel/crash_dump.c   |  29 +------
+>  arch/ia64/kernel/crash_dump.c    |  32 +-------
+>  arch/mips/kernel/crash_dump.c    |  27 +------
+>  arch/powerpc/kernel/crash_dump.c |  35 ++-------
+>  arch/riscv/kernel/crash_dump.c   |  26 +------
+>  arch/s390/kernel/crash_dump.c    |  13 ++--
+>  arch/sh/kernel/crash_dump.c      |  29 ++-----
+>  arch/x86/kernel/crash_dump_32.c  |  29 +------
+>  arch/x86/kernel/crash_dump_64.c  |  48 ++++--------
+>  fs/proc/vmcore.c                 | 129 +++++++++++++------------------
+>  include/linux/crash_dump.h       |  19 ++---
+>  12 files changed, 122 insertions(+), 321 deletions(-)
+> 
+> -- 
+> 2.33.0
+> 
+
