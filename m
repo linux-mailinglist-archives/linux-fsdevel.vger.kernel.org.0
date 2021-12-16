@@ -2,44 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1AC7477797
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 17:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 892674777A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 17:14:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239156AbhLPQOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 11:14:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:23694 "EHLO
+        id S239189AbhLPQOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 11:14:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:44391 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239168AbhLPQOK (ORCPT
+        by vger.kernel.org with ESMTP id S239195AbhLPQOn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 11:14:10 -0500
+        Thu, 16 Dec 2021 11:14:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639671249;
+        s=mimecast20190719; t=1639671282;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8PMt+FqRlQnmMdL79TNuHVSNgEhfX51ZlG0cU5bJI58=;
-        b=I9P4eFq5HOeBLp54QRuPR1gM83yED8F+tAr5tPBDGKA3dlte5XfAs9NSJuf7JM6Ks2XnWA
-        d9b/yzqTK9aZNlTDn3D2OW2P5/ixBYj2iAdUMD7DKOzqIGnseqryJFqxFiDNFdt5JfVAjC
-        wiZcLyiqsQANmBnqEfdSrWyvxMYP9xM=
+        bh=E4r14Gi7ZGNfCvBqbuHL7jPY5j2GdfJP2Fk/LIAKN9c=;
+        b=V3hJSxRy81yFmX0mdjCd6IpKxZyIslHOd4MrLEaMlrfQqSow3nidEqAJbjvI5Vc4bFvCkL
+        RrCTgRg+p8euwS/y83ymfFRGrEuevwNeGqaZ4SgBt3Kt9JFHIpQOGobP/4rQPomSvINptq
+        sY0xqqGl+7ctFSm6f8/z6p33MtdkPNM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-131-zMKrL8AYNrWUP7SedPwhWA-1; Thu, 16 Dec 2021 11:14:03 -0500
-X-MC-Unique: zMKrL8AYNrWUP7SedPwhWA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-343-m4HY6U51MF2HWNowdmJ0tQ-1; Thu, 16 Dec 2021 11:14:38 -0500
+X-MC-Unique: m4HY6U51MF2HWNowdmJ0tQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6FA0894EE2;
-        Thu, 16 Dec 2021 16:14:00 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5E613802928;
+        Thu, 16 Dec 2021 16:14:35 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E3CB278D85;
-        Thu, 16 Dec 2021 16:13:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D5944E2C3;
+        Thu, 16 Dec 2021 16:14:06 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v3 26/68] fscache: Implement higher-level write I/O interface
+Subject: [PATCH v3 27/68] vfs,
+ fscache: Implement pinning of cache usage for writeback
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
@@ -56,257 +57,241 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 16 Dec 2021 16:13:56 +0000
-Message-ID: <163967123599.1823006.12946816026724657428.stgit@warthog.procyon.org.uk>
+Date:   Thu, 16 Dec 2021 16:14:05 +0000
+Message-ID: <163967124567.1823006.14188359004568060298.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
 References: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a higher-level function than fscache_write() to perform a write
-from an inode's pagecache to the cache, whilst fending off concurrent
-writes by means of the PG_fscache mark on a page:
+Cachefiles has a problem in that it needs to keep the backing file for a
+cookie open whilst there are local modifications pending that need to be
+written to it.  However, we don't want to keep the file open indefinitely,
+as that causes EMFILE/ENFILE/ENOMEM problems.
 
-	void fscache_write_to_cache(struct fscache_cookie *cookie,
-				    struct address_space *mapping,
-				    loff_t start,
-				    size_t len,
-				    loff_t i_size,
-				    netfs_io_terminated_t term_func,
-				    void *term_func_priv,
-				    bool caching);
+Reopening the cache file, however, is a problem if this is being done due
+to writeback triggered by exit().  Some filesystems will oops if we try to
+open a file in that context because they want to access current->fs or
+other resources that have already been dismantled.
 
-If caching is false, this function does nothing except call (*term_func)()
-if given.  It assumes that, in such a case, PG_fscache will not have been
-set on the pages.
+To get around this, I added the following:
 
-Otherwise, if caching is true, this function requires the source pages to
-have had PG_fscache set on them before calling.  start and len define the
-region of the file to be modified and i_size indicates the new file size.
-The source pages are extracted from the mapping.
+ (1) An inode flag, I_PINNING_FSCACHE_WB, to be set on a network filesystem
+     inode to indicate that we have a usage count on the cookie caching
+     that inode.
 
-term_func and term_func_priv work as for fscache_write().  The PG_fscache
-marks will be cleared at the end of the operation, before term_func is
-called or the function otherwise returns.
+ (2) A flag in struct writeback_control, unpinned_fscache_wb, that is set
+     when __writeback_single_inode() clears the last dirty page from
+     i_pages - at which point it clears I_PINNING_FSCACHE_WB and sets this
+     flag.
 
-There is an additonal helper function to clear the PG_fscache bits from a
-range of pages:
+     This has to be done here so that clearing I_PINNING_FSCACHE_WB can be
+     done atomically with the check of PAGECACHE_TAG_DIRTY that clears
+     I_DIRTY_PAGES.
 
-	void fscache_clear_page_bits(struct fscache_cookie *cookie,
-				     struct address_space *mapping,
-				     loff_t start, size_t len,
-				     bool caching);
+ (3) A function, fscache_set_page_dirty(), which if it is not set, sets
+     I_PINNING_FSCACHE_WB and calls fscache_use_cookie() to pin the cache
+     resources.
 
-If caching is true, the pages to be managed are expected to be located on
-mapping in the range defined by start and len.  If caching is false, it
-does nothing.
+ (4) A function, fscache_unpin_writeback(), to be called by ->write_inode()
+     to unuse the cookie.
+
+ (5) A function, fscache_clear_inode_writeback(), to be called when the
+     inode is evicted, before clear_inode() is called.  This cleans up any
+     lingering I_PINNING_FSCACHE_WB.
+
+The network filesystem can then use these tools to make sure that
+fscache_write_to_cache() can write locally modified data to the cache as
+well as to the server.
+
+For the future, I'm working on write helpers for netfs lib that should
+allow this facility to be removed by keeping track of the dirty regions
+separately - but that's incomplete at the moment and is also going to be
+affected by folios, one way or another, since it deals with pages
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-cachefs@redhat.com
-Link: https://lore.kernel.org/r/163819614155.215744.5528123235123721230.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/163906916346.143852.15632773570362489926.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/163819615157.215744.17623791756928043114.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/163906917856.143852.8224898306177154573.stgit@warthog.procyon.org.uk/ # v2
 ---
 
- fs/fscache/io.c         |  104 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fscache.h |   63 ++++++++++++++++++++++++++++
- 2 files changed, 167 insertions(+)
+ fs/fs-writeback.c         |    8 ++++++++
+ fs/fscache/io.c           |   38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h        |    3 +++
+ include/linux/fscache.h   |   41 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/writeback.h |    1 +
+ 5 files changed, 91 insertions(+)
 
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 67f0e88eed01..8294a60ce323 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1666,6 +1666,13 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ 
+ 	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+ 		inode->i_state |= I_DIRTY_PAGES;
++	else if (unlikely(inode->i_state & I_PINNING_FSCACHE_WB)) {
++		if (!(inode->i_state & I_DIRTY_PAGES)) {
++			inode->i_state &= ~I_PINNING_FSCACHE_WB;
++			wbc->unpinned_fscache_wb = true;
++			dirty |= I_PINNING_FSCACHE_WB; /* Cause write_inode */
++		}
++	}
+ 
+ 	spin_unlock(&inode->i_lock);
+ 
+@@ -1675,6 +1682,7 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ 		if (ret == 0)
+ 			ret = err;
+ 	}
++	wbc->unpinned_fscache_wb = false;
+ 	trace_writeback_single_inode(inode, wbc, nr_to_write);
+ 	return ret;
+ }
 diff --git a/fs/fscache/io.c b/fs/fscache/io.c
-index 460a43473019..74cde7acf434 100644
+index 74cde7acf434..e9e5d6758ea8 100644
 --- a/fs/fscache/io.c
 +++ b/fs/fscache/io.c
-@@ -149,3 +149,107 @@ int __fscache_begin_read_operation(struct netfs_cache_resources *cres,
- 				       fscache_access_io_read);
+@@ -150,6 +150,44 @@ int __fscache_begin_read_operation(struct netfs_cache_resources *cres,
  }
  EXPORT_SYMBOL(__fscache_begin_read_operation);
-+
-+struct fscache_write_request {
-+	struct netfs_cache_resources cache_resources;
-+	struct address_space	*mapping;
-+	loff_t			start;
-+	size_t			len;
-+	bool			set_bits;
-+	netfs_io_terminated_t	term_func;
-+	void			*term_func_priv;
-+};
-+
-+void __fscache_clear_page_bits(struct address_space *mapping,
-+			       loff_t start, size_t len)
-+{
-+	pgoff_t first = start / PAGE_SIZE;
-+	pgoff_t last = (start + len - 1) / PAGE_SIZE;
-+	struct page *page;
-+
-+	if (len) {
-+		XA_STATE(xas, &mapping->i_pages, first);
-+
-+		rcu_read_lock();
-+		xas_for_each(&xas, page, last) {
-+			end_page_fscache(page);
-+		}
-+		rcu_read_unlock();
-+	}
-+}
-+EXPORT_SYMBOL(__fscache_clear_page_bits);
-+
-+/*
-+ * Deal with the completion of writing the data to the cache.
+ 
++/**
++ * fscache_set_page_dirty - Mark page dirty and pin a cache object for writeback
++ * @page: The page being dirtied
++ * @cookie: The cookie referring to the cache object
++ *
++ * Set the dirty flag on a page and pin an in-use cache object in memory when
++ * dirtying a page so that writeback can later write to it.  This is intended
++ * to be called from the filesystem's ->set_page_dirty() method.
++ *
++ *  Returns 1 if PG_dirty was set on the page, 0 otherwise.
 + */
-+static void fscache_wreq_done(void *priv, ssize_t transferred_or_error,
-+			      bool was_async)
++int fscache_set_page_dirty(struct page *page, struct fscache_cookie *cookie)
 +{
-+	struct fscache_write_request *wreq = priv;
++	struct inode *inode = page->mapping->host;
++	bool need_use = false;
 +
-+	fscache_clear_page_bits(fscache_cres_cookie(&wreq->cache_resources),
-+				wreq->mapping, wreq->start, wreq->len,
-+				wreq->set_bits);
++	_enter("");
 +
-+	if (wreq->term_func)
-+		wreq->term_func(wreq->term_func_priv, transferred_or_error,
-+				was_async);
-+	fscache_end_operation(&wreq->cache_resources);
-+	kfree(wreq);
++	if (!__set_page_dirty_nobuffers(page))
++		return 0;
++	if (!fscache_cookie_valid(cookie))
++		return 1;
++
++	if (!(inode->i_state & I_PINNING_FSCACHE_WB)) {
++		spin_lock(&inode->i_lock);
++		if (!(inode->i_state & I_PINNING_FSCACHE_WB)) {
++			inode->i_state |= I_PINNING_FSCACHE_WB;
++			need_use = true;
++		}
++		spin_unlock(&inode->i_lock);
++
++		if (need_use)
++			fscache_use_cookie(cookie, true);
++	}
++	return 1;
 +}
++EXPORT_SYMBOL(fscache_set_page_dirty);
 +
-+void __fscache_write_to_cache(struct fscache_cookie *cookie,
-+			      struct address_space *mapping,
-+			      loff_t start, size_t len, loff_t i_size,
-+			      netfs_io_terminated_t term_func,
-+			      void *term_func_priv,
-+			      bool cond)
-+{
-+	struct fscache_write_request *wreq;
-+	struct netfs_cache_resources *cres;
-+	struct iov_iter iter;
-+	int ret = -ENOBUFS;
-+
-+	if (len == 0)
-+		goto abandon;
-+
-+	_enter("%llx,%zx", start, len);
-+
-+	wreq = kzalloc(sizeof(struct fscache_write_request), GFP_NOFS);
-+	if (!wreq)
-+		goto abandon;
-+	wreq->mapping		= mapping;
-+	wreq->start		= start;
-+	wreq->len		= len;
-+	wreq->set_bits		= cond;
-+	wreq->term_func		= term_func;
-+	wreq->term_func_priv	= term_func_priv;
-+
-+	cres = &wreq->cache_resources;
-+	if (fscache_begin_operation(cres, cookie, FSCACHE_WANT_WRITE,
-+				    fscache_access_io_write) < 0)
-+		goto abandon_free;
-+
-+	ret = cres->ops->prepare_write(cres, &start, &len, i_size, false);
-+	if (ret < 0)
-+		goto abandon_end;
-+
-+	/* TODO: Consider clearing page bits now for space the write isn't
-+	 * covering.  This is more complicated than it appears when THPs are
-+	 * taken into account.
-+	 */
-+
-+	iov_iter_xarray(&iter, WRITE, &mapping->i_pages, start, len);
-+	fscache_write(cres, start, &iter, fscache_wreq_done, wreq);
-+	return;
-+
-+abandon_end:
-+	return fscache_wreq_done(wreq, ret, false);
-+abandon_free:
-+	kfree(wreq);
-+abandon:
-+	fscache_clear_page_bits(cookie, mapping, start, len, cond);
-+	if (term_func)
-+		term_func(term_func_priv, ret, false);
-+}
-+EXPORT_SYMBOL(__fscache_write_to_cache);
+ struct fscache_write_request {
+ 	struct netfs_cache_resources cache_resources;
+ 	struct address_space	*mapping;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbf812ce89a8..2c0b8e77d9ab 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2418,6 +2418,8 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+  *			Used to detect that mark_inode_dirty() should not move
+  * 			inode between dirty lists.
+  *
++ * I_PINNING_FSCACHE_WB	Inode is pinning an fscache object for writeback.
++ *
+  * Q: What is the difference between I_WILL_FREE and I_FREEING?
+  */
+ #define I_DIRTY_SYNC		(1 << 0)
+@@ -2440,6 +2442,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+ #define I_CREATING		(1 << 15)
+ #define I_DONTCACHE		(1 << 16)
+ #define I_SYNC_QUEUED		(1 << 17)
++#define I_PINNING_FSCACHE_WB	(1 << 18)
+ 
+ #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+ #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
 diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-index bfc52de59aa0..e2318c92d609 100644
+index e2318c92d609..884f7650d5a7 100644
 --- a/include/linux/fscache.h
 +++ b/include/linux/fscache.h
-@@ -165,6 +165,11 @@ extern void __fscache_relinquish_cookie(struct fscache_cookie *, bool);
- extern void __fscache_invalidate(struct fscache_cookie *, const void *, loff_t, unsigned int);
- extern int __fscache_begin_read_operation(struct netfs_cache_resources *, struct fscache_cookie *);
+@@ -16,6 +16,7 @@
  
-+extern void __fscache_write_to_cache(struct fscache_cookie *, struct address_space *,
-+				     loff_t, size_t, loff_t, netfs_io_terminated_t, void *,
-+				     bool);
-+extern void __fscache_clear_page_bits(struct address_space *, loff_t, size_t);
-+
- /**
-  * fscache_acquire_volume - Register a volume as desiring caching services
-  * @volume_key: An identification string for the volume
-@@ -504,4 +509,62 @@ int fscache_write(struct netfs_cache_resources *cres,
- 	return ops->write(cres, start_pos, iter, term_func, term_func_priv);
+ #include <linux/fs.h>
+ #include <linux/netfs.h>
++#include <linux/writeback.h>
+ 
+ #if defined(CONFIG_FSCACHE) || defined(CONFIG_FSCACHE_MODULE)
+ #define __fscache_available (1)
+@@ -567,4 +568,44 @@ static inline void fscache_write_to_cache(struct fscache_cookie *cookie,
+ 
  }
  
++#if __fscache_available
++extern int fscache_set_page_dirty(struct page *page, struct fscache_cookie *cookie);
++#else
++#define fscache_set_page_dirty(PAGE, COOKIE) (__set_page_dirty_nobuffers((PAGE)))
++#endif
++
 +/**
-+ * fscache_clear_page_bits - Clear the PG_fscache bits from a set of pages
-+ * @cookie: The cookie representing the cache object
-+ * @mapping: The netfs inode to use as the source
-+ * @start: The start position in @mapping
-+ * @len: The amount of data to unlock
-+ * @caching: If PG_fscache has been set
++ * fscache_unpin_writeback - Unpin writeback resources
++ * @wbc: The writeback control
++ * @cookie: The cookie referring to the cache object
 + *
-+ * Clear the PG_fscache flag from a sequence of pages and wake up anyone who's
-+ * waiting.
++ * Unpin the writeback resources pinned by fscache_set_page_dirty().  This is
++ * intended to be called by the netfs's ->write_inode() method.
 + */
-+static inline void fscache_clear_page_bits(struct fscache_cookie *cookie,
-+					   struct address_space *mapping,
-+					   loff_t start, size_t len,
-+					   bool caching)
++static inline void fscache_unpin_writeback(struct writeback_control *wbc,
++					   struct fscache_cookie *cookie)
 +{
-+	if (caching)
-+		__fscache_clear_page_bits(mapping, start, len);
++	if (wbc->unpinned_fscache_wb)
++		fscache_unuse_cookie(cookie, NULL, NULL);
 +}
 +
 +/**
-+ * fscache_write_to_cache - Save a write to the cache and clear PG_fscache
-+ * @cookie: The cookie representing the cache object
-+ * @mapping: The netfs inode to use as the source
-+ * @start: The start position in @mapping
-+ * @len: The amount of data to write back
-+ * @i_size: The new size of the inode
-+ * @term_func: The function to call upon completion
-+ * @term_func_priv: The private data for @term_func
-+ * @caching: If PG_fscache has been set
++ * fscache_clear_inode_writeback - Clear writeback resources pinned by an inode
++ * @cookie: The cookie referring to the cache object
++ * @inode: The inode to clean up
++ * @aux: Auxiliary data to apply to the inode
 + *
-+ * Helper function for a netfs to write dirty data from an inode into the cache
-+ * object that's backing it.
-+ *
-+ * @start and @len describe the range of the data.  This does not need to be
-+ * page-aligned, but to satisfy DIO requirements, the cache may expand it up to
-+ * the page boundaries on either end.  All the pages covering the range must be
-+ * marked with PG_fscache.
-+ *
-+ * If given, @term_func will be called upon completion and supplied with
-+ * @term_func_priv.  Note that the PG_fscache flags will have been cleared by
-+ * this point, so the netfs must retain its own pin on the mapping.
++ * Clear any writeback resources held by an inode when the inode is evicted.
++ * This must be called before clear_inode() is called.
 + */
-+static inline void fscache_write_to_cache(struct fscache_cookie *cookie,
-+					  struct address_space *mapping,
-+					  loff_t start, size_t len, loff_t i_size,
-+					  netfs_io_terminated_t term_func,
-+					  void *term_func_priv,
-+					  bool caching)
++static inline void fscache_clear_inode_writeback(struct fscache_cookie *cookie,
++						 struct inode *inode,
++						 const void *aux)
 +{
-+	if (caching)
-+		__fscache_write_to_cache(cookie, mapping, start, len, i_size,
-+					 term_func, term_func_priv, caching);
-+	else if (term_func)
-+		term_func(term_func_priv, -ENOBUFS, false);
-+
++	if (inode->i_state & I_PINNING_FSCACHE_WB) {
++		loff_t i_size = i_size_read(inode);
++		fscache_unuse_cookie(cookie, aux, &i_size);
++	}
 +}
 +
  #endif /* _LINUX_FSCACHE_H */
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 3bfd487d1dd2..fec248ab1fec 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -68,6 +68,7 @@ struct writeback_control {
+ 	unsigned for_reclaim:1;		/* Invoked from the page allocator */
+ 	unsigned range_cyclic:1;	/* range_start is cyclic */
+ 	unsigned for_sync:1;		/* sync(2) WB_SYNC_ALL writeback */
++	unsigned unpinned_fscache_wb:1;	/* Cleared I_PINNING_FSCACHE_WB */
+ 
+ 	/*
+ 	 * When writeback IOs are bounced through async layers, only the
 
 
