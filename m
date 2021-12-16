@@ -2,94 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4AF7477DC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 21:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A830477E1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 22:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236123AbhLPUn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 15:43:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48258 "EHLO
+        id S241546AbhLPVHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 16:07:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234032AbhLPUn6 (ORCPT
+        with ESMTP id S231656AbhLPVHU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 15:43:58 -0500
+        Thu, 16 Dec 2021 16:07:20 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E447C061574;
-        Thu, 16 Dec 2021 12:43:58 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909A2C061574;
+        Thu, 16 Dec 2021 13:07:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YfhwUBS2lrVjAKDoz7mKoyOUc8g9bLIUsgePZeXTb8o=; b=bWkst33a+Ic7U7iKhFkHODkaeZ
-        yPMCrxKpAQREkQ0JPFB00jPk14VLvWhn91P6GMttexp1K6Jv6knybv8O+/uuup4czcWvfA1SIO9Nw
-        ZaI3TzgbLv6i7LIN55sCN7wVgWjgeAY0zlXlpVlTHNMWfoqS4j09E+Vfb+G+pE/if/OmB7VfsNVYg
-        Lgkq+B2UmgOlyxriOPZeluqpKxVxukx3BCQftN5aihISXoPGZw7GYEJin0Zcn9DrIzbgHjWSL91Xp
-        slUtKjoqpykWqmepdJmc8lQ1BBgotzLoDaUUzlKh1pSQ/3fKYP9204CwgEJt1mCIBRO7SlzxUBw5D
-        WlRE8ukQ==;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=eopyKE4k2XeTajA356L1MfJ+TGRn08rwtoWo6zNEjPA=; b=HmohCdjvgCsB3u/7t72y0Pnuh5
+        BguTcTUmOvDPhuY0wco1NY4bKL+mgJAVOLL2zNu3F9nT4kZQXwCSQxSJmlOSpQkGMUETKAkOI0IR2
+        Eh0Pla1qoz/soS4Sn3GviyJat9zlF8lpAKVj1aCOHsqra+GW5ih5kiVXWz8PW4ywFozArAJHL/710
+        l5ncbZ6akbSjDPxfEhZ3sliwOZXJA5DNtz0xRlkVK2rO45tou4aJJ9lGJ1tWcp/h18fxJHxNmOwG/
+        j/h/p3WSTEvPglsrGYOL5iTMyQYGycYcf7gO8woeub8/mnxcb2zS7v9fWrX6YR04MCjjtVIruJ8xm
+        7ag+AK9A==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mxxbV-00Fw7k-NY; Thu, 16 Dec 2021 20:43:53 +0000
-Date:   Thu, 16 Dec 2021 20:43:53 +0000
-From:   Matthew Wilcox <willy@infradead.org>
+        id 1mxxyA-00Fx34-Sv; Thu, 16 Dec 2021 21:07:18 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 19/28] iomap: Convert __iomap_zero_iter to use a folio
-Message-ID: <YbulCVh8xwwRKAN3@casper.infradead.org>
-References: <20211108040551.1942823-1-willy@infradead.org>
- <20211108040551.1942823-20-willy@infradead.org>
- <YbJ3O1qf+9p/HWka@casper.infradead.org>
- <20211216193614.GA27676@magnolia>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/25] iomap/xfs folio patches
+Date:   Thu, 16 Dec 2021 21:06:50 +0000
+Message-Id: <20211216210715.3801857-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211216193614.GA27676@magnolia>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 11:36:14AM -0800, Darrick J. Wong wrote:
-> > 
-> > +       /* gfs2 does not support large folios yet */
-> > +       if (len > PAGE_SIZE)
-> > +               len = PAGE_SIZE;
-> 
-> This is awkward -- gfs2 doesn't set the mapping flag to indicate that it
-> supports large folios, so it should never be asked to deal with more
-> than a page at a time.  Shouldn't iomap_write_begin clamp its len
-> argument to PAGE_SIZE at the start if the mapping doesn't have the large
-> folios flag set?
+This patchset converts XFS & iomap to use folios, and gets them to a
+state where they can handle multi-page folios.  Applying these patches
+is not yet sufficient to actually start using multi-page folios for
+XFS; more page cache changes are needed.  I don't anticipate needing to
+touch XFS again until we're at the point where we want to convert the
+aops to be type-safe.  It completes an xfstests run with no unexpected
+failures.
 
-You're right, this is awkward.  And it's a bit of a beartrap for
-another filesystem that wants to implement ->prepare_page in the
-future.
+I think everything here has been posted before, but I want to get
+acks/reviews on patch 15 in particular.  I'll send a pull request
+for these patches tomorrow.
 
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 9270db17c435..d67108489148 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -968,9 +968,6 @@ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
-        struct gfs2_sbd *sdp = GFS2_SB(inode);
-        unsigned int blocks;
+v3:
+ - Rebased to -rc5, which removes the first four patches from v2.
+ - Fixed passing lengths > PAGE_SIZE to iomap_write_begin().
+v2:
+ - Added review tags from Jens, Darrick & Christoph (thanks!)
+ - Added folio_zero_* wrappers around zero_user_*()
+ - Added a patch to rename AS_THP_SUPPORT
+ - Added a patch to convert __block_write_begin_int() to take a folio
+ - Split the iomap_add_to_ioend() patch into three
+ - Updated changelog of bio_add_folio() (Jens)
+ - Adjusted whitespace of bio patches (Christoph, Jens)
+ - Improved changelog of readahead conversion to explain why the put_page()
+   disappeared (Christoph)
+ - Add a patch to zero an entire folio at a time, instead of limiting to
+   a page
+ - Switch pos & end_pos back to being u64 from loff_t
+ - Call block_write_end() and ->page_done with the head page of the folio,
+   as that's what those functions expect.
 
--       /* gfs2 does not support large folios yet */
--       if (len > PAGE_SIZE)
--               len = PAGE_SIZE;
-        blocks = ((pos & blockmask) + len + blockmask) >> inode->i_blkbits;
-        return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
- }
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1a9e897ee25a..b1ded5204d1c 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -619,6 +619,9 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
-        if (fatal_signal_pending(current))
-                return -EINTR;
- 
-+       if (!mapping_large_folio_support(iter->inode->i_mapping))
-+               len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
-+
-        if (page_ops && page_ops->page_prepare) {
-                status = page_ops->page_prepare(iter->inode, pos, len);
-                if (status)
+Matthew Wilcox (Oracle) (25):
+  block: Add bio_add_folio()
+  block: Add bio_for_each_folio_all()
+  fs/buffer: Convert __block_write_begin_int() to take a folio
+  iomap: Convert to_iomap_page to take a folio
+  iomap: Convert iomap_page_create to take a folio
+  iomap: Convert iomap_page_release to take a folio
+  iomap: Convert iomap_releasepage to use a folio
+  iomap: Add iomap_invalidate_folio
+  iomap: Pass the iomap_page into iomap_set_range_uptodate
+  iomap: Convert bio completions to use folios
+  iomap: Use folio offsets instead of page offsets
+  iomap: Convert iomap_read_inline_data to take a folio
+  iomap: Convert readahead and readpage to use a folio
+  iomap: Convert iomap_page_mkwrite to use a folio
+  iomap: Allow iomap_write_begin() to be called with the full length
+  iomap: Convert __iomap_zero_iter to use a folio
+  iomap: Convert iomap_write_begin() and iomap_write_end() to folios
+  iomap: Convert iomap_write_end_inline to take a folio
+  iomap,xfs: Convert ->discard_page to ->discard_folio
+  iomap: Simplify iomap_writepage_map()
+  iomap: Simplify iomap_do_writepage()
+  iomap: Convert iomap_add_to_ioend() to take a folio
+  iomap: Convert iomap_migrate_page() to use folios
+  iomap: Support large folios in invalidatepage
+  xfs: Support large folios
+
+ Documentation/core-api/kernel-api.rst |   1 +
+ block/bio.c                           |  22 ++
+ fs/buffer.c                           |  23 +-
+ fs/internal.h                         |   2 +-
+ fs/iomap/buffered-io.c                | 518 +++++++++++++-------------
+ fs/xfs/xfs_aops.c                     |  24 +-
+ fs/xfs/xfs_icache.c                   |   2 +
+ include/linux/bio.h                   |  56 ++-
+ include/linux/iomap.h                 |   3 +-
+ 9 files changed, 373 insertions(+), 278 deletions(-)
+
+-- 
+2.33.0
 
