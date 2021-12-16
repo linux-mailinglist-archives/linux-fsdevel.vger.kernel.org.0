@@ -2,98 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06618477C8D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 20:29:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7294E477CA1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 20:36:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237412AbhLPT33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 14:29:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59314 "EHLO
+        id S241034AbhLPTgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 14:36:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232560AbhLPT32 (ORCPT
+        with ESMTP id S230188AbhLPTgQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 14:29:28 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9922BC061574;
-        Thu, 16 Dec 2021 11:29:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=N9CxEizcUKUMKe7tygLAy2SKNqVIaZunBZQhmUvlaCo=; b=TfIC8wH+3iPtFaTNNHTiwoOSwz
-        Bpsoi/K/YScFLbzdHHr0K8D4ikaBbFc/WqSk3CClQHeadtbcZldeGLW1OWzKGfUrcONUURVgJ3AKW
-        7vvwE7ExhcmC69CTT6pe0i9JUhRALDvQ/XpthdOB/NXqZHs1AuyGOUHNH/oNkTuSwVfvAjuIfuhGC
-        Y605ibUw+jfKHeuEPoHslvWaMnVjItExifSdcTybxLgeV5XJXC9PJB18n9KIcEQwZFGm02AaimUXN
-        XxcV0oSs+Qu5b4zlqfrJAGknSX+Z66iNgHKFBxEBI2dGXXpHL/POwbDa64BswFZhhWynw0aJMTSGl
-        MNr1Gg0w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mxwQj-00Ft6U-EP; Thu, 16 Dec 2021 19:28:41 +0000
-Date:   Thu, 16 Dec 2021 19:28:41 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 56/68] afs: Handle len being extending over page end
- in write_begin/write_end
-Message-ID: <YbuTaRbNUAJx5xOA@casper.infradead.org>
-References: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
- <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk>
- <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com>
+        Thu, 16 Dec 2021 14:36:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4505AC061574;
+        Thu, 16 Dec 2021 11:36:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D85A461F56;
+        Thu, 16 Dec 2021 19:36:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C2F0C36AE7;
+        Thu, 16 Dec 2021 19:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639683375;
+        bh=XYnENVWX+t/nsTdqIGGKpVqYRQAVeLyh8aT//mTOS3A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QtTcM8L2QH3VtjpGERJHzEPIkwXHyY2Sudl0Zyby7cdQBbKU5euOKAcvzA25//NJ1
+         wmpamRKgynzun8QhHV0OLeUcMYKYRF6n1qYvlBRzTQjHu9IVZuNCmIlsIdIt5LuSru
+         pE3xACQEux175tL2tmo+RtFd/dM93rUW0fSX2pf486n0FXChi+/n65CzCabtzeSN7s
+         mhBQpBwE1Xi7RljJdPk7yB4u0WwPO/l8qfvVQDWsqNaDFpDVJdxE4w4TKyb4zpO8bp
+         qBd+ax17pif9NKjxBQ7HTATUU8eQs2mpj7YRvGRvL8utUbyf0XPOBT7oeCMcmztvZd
+         OCMHHoLSMweAA==
+Date:   Thu, 16 Dec 2021 11:36:14 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 19/28] iomap: Convert __iomap_zero_iter to use a folio
+Message-ID: <20211216193614.GA27676@magnolia>
+References: <20211108040551.1942823-1-willy@infradead.org>
+ <20211108040551.1942823-20-willy@infradead.org>
+ <YbJ3O1qf+9p/HWka@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com>
+In-Reply-To: <YbJ3O1qf+9p/HWka@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 08:31:19AM -0800, Linus Torvalds wrote:
-> On Thu, Dec 16, 2021 at 8:22 AM David Howells <dhowells@redhat.com> wrote:
-> >
-> > With transparent huge pages, in the future, write_begin() and write_end()
-> > may be passed a length parameter that, in combination with the offset into
-> > the page, exceeds the length of that page.  This allows
-> > grab_cache_page_write_begin() to better choose the size of THP to allocate.
+On Thu, Dec 09, 2021 at 09:38:03PM +0000, Matthew Wilcox wrote:
+> On Mon, Nov 08, 2021 at 04:05:42AM +0000, Matthew Wilcox (Oracle) wrote:
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -881,17 +881,20 @@ EXPORT_SYMBOL_GPL(iomap_file_unshare);
+> >  
+> >  static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
+> >  {
+> > +	struct folio *folio;
+> >  	struct page *page;
+> >  	int status;
+> > -	unsigned offset = offset_in_page(pos);
+> > -	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
+> > +	size_t offset, bytes;
+> >  
+> > -	status = iomap_write_begin(iter, pos, bytes, &page);
+> > +	status = iomap_write_begin(iter, pos, length, &page);
 > 
-> I still think this is a fundamental bug in the caller. That
-> "explanation" is weak, and the whole concept smells like week-old fish
-> to me.
+> This turned out to be buggy.  Darrick and I figured out why his tests
+> were failing and mine weren't; this only shows up with a 4kB block
+> size filesystem and I was only testing with 1kB block size filesystems.
+> (at least on x86; I haven't figured out why it passes with 1kB block size
+> filesystems, so I'm not sure what would be true on other filesystems).
+> iomap_write_begin() is not prepared to deal with a length that spans a
+> page boundary.  So I'm replacing this patch with the following patches
+> (whitespace damaged; pick them up from
+> https://git.infradead.org/users/willy/linux.git/tag/refs/tags/iomap-folio-5.17c
+> if you want to compile them):
+> 
+> commit 412212960b72
+> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Date:   Thu Dec 9 15:47:44 2021 -0500
+> 
+>     iomap: Allow iomap_write_begin() to be called with the full length
+> 
+>     In the future, we want write_begin to know the entire length of the
+>     write so that it can choose to allocate large folios.  Pass the full
+>     length in from __iomap_zero_iter() and limit it where necessary.
+> 
+>     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+> index d67108489148..9270db17c435 100644
+> --- a/fs/gfs2/bmap.c
+> +++ b/fs/gfs2/bmap.c
+> @@ -968,6 +968,9 @@ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
+>         struct gfs2_sbd *sdp = GFS2_SB(inode);
+>         unsigned int blocks;
+> 
+> +       /* gfs2 does not support large folios yet */
+> +       if (len > PAGE_SIZE)
+> +               len = PAGE_SIZE;
 
-You're right that  ->write_end can't be called with more bytes than fit
-in the folio.  That makes no sense at all.
+This is awkward -- gfs2 doesn't set the mapping flag to indicate that it
+supports large folios, so it should never be asked to deal with more
+than a page at a time.  Shouldn't iomap_write_begin clamp its len
+argument to PAGE_SIZE at the start if the mapping doesn't have the large
+folios flag set?
 
-I haven't finished fully fleshing this out yet (and as a result we still
-only create PAGE_SIZE folios on writes), but my basic plan was:
+--D
 
-generic_perform_write:
--	bytes = min_t(unsigned long, PAGE_SIZE - offset,
-+	bytes = min_t(unsigned long, FOLIO_MAX_PAGE_CACHE_SIZE - offset,
- 					iov_iter_count(i));
-...
-                status = a_ops->write_begin(file, mapping, pos, bytes, flags,
--                                               &page, &fsdata);
-+                                               &folio, &fsdata);
-
-+		offset = offset_in_folio(folio, pos);
-+		bytes = folio_size(folio - offset);
-...
-                status = a_ops->write_end(file, mapping, pos, bytes, copied,
--                                               page, fsdata);
-+                                               folio, fsdata);
-
-Since ->write_begin is the place where we actually create folios, it
-needs to know what size folio to create.  Unless you'd rather we do
-something to actually create the folio before calling ->write_begin?
+>         blocks = ((pos & blockmask) + len + blockmask) >> inode->i_blkbits;
+>         return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
+>  }
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 8d7a67655b60..67fcd3b9928d 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -632,6 +632,8 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>                 goto out_no_page;
+>         }
+>         folio = page_folio(page);
+> +       if (pos + len > folio_pos(folio) + folio_size(folio))
+> +               len = folio_pos(folio) + folio_size(folio) - pos;
+> 
+>         if (srcmap->type == IOMAP_INLINE)
+>                 status = iomap_write_begin_inline(iter, page);
+> @@ -891,16 +893,19 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff
+> _t pos, u64 length)
+>         struct page *page;
+>         int status;
+>         unsigned offset = offset_in_page(pos);
+> -       unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
+> 
+> -       status = iomap_write_begin(iter, pos, bytes, &page);
+> +       if (length > UINT_MAX)
+> +               length = UINT_MAX;
+> +       status = iomap_write_begin(iter, pos, length, &page);
+>         if (status)
+>                 return status;
+> +       if (length > PAGE_SIZE - offset)
+> +               length = PAGE_SIZE - offset;
+> 
+> -       zero_user(page, offset, bytes);
+> +       zero_user(page, offset, length);
+>         mark_page_accessed(page);
+> 
+> -       return iomap_write_end(iter, pos, bytes, bytes, page);
+> +       return iomap_write_end(iter, pos, length, length, page);
+>  }
+> 
+>  static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+> 
+> 
+> commit 78c747a1b3a1
+> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Date:   Fri Nov 5 14:24:09 2021 -0400
+> 
+>     iomap: Convert __iomap_zero_iter to use a folio
+>     
+>     The zero iterator can work in folio-sized chunks instead of page-sized
+>     chunks.  This will save a lot of page cache lookups if the file is cached
+>     in large folios.
+>     
+>     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>     Reviewed-by: Christoph Hellwig <hch@lst.de>
+>     Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 67fcd3b9928d..bbde6d4f27cd 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -890,20 +890,23 @@ EXPORT_SYMBOL_GPL(iomap_file_unshare);
+>  
+>  static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
+>  {
+> +       struct folio *folio;
+>         struct page *page;
+>         int status;
+> -       unsigned offset = offset_in_page(pos);
+> +       size_t offset;
+>  
+>         if (length > UINT_MAX)
+>                 length = UINT_MAX;
+>         status = iomap_write_begin(iter, pos, length, &page);
+>         if (status)
+>                 return status;
+> -       if (length > PAGE_SIZE - offset)
+> -               length = PAGE_SIZE - offset;
+> +       folio = page_folio(page);
+>  
+> -       zero_user(page, offset, length);
+> -       mark_page_accessed(page);
+> +       offset = offset_in_folio(folio, pos);
+> +       if (length > folio_size(folio) - offset)
+> +               length = folio_size(folio) - offset;
+> +       folio_zero_range(folio, offset, length);
+> +       folio_mark_accessed(folio);
+>  
+>         return iomap_write_end(iter, pos, length, length, page);
+>  }
+> 
+> 
+> The xfstests that Darrick identified as failing all passed.  Running a
+> full sweep now; then I'll re-run with a 1kB filesystem to be sure that
+> still passes.  Then I'll send another pull request.
