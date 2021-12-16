@@ -2,126 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB09477D5D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 21:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4AF7477DC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 21:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241341AbhLPUVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 15:21:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42902 "EHLO
+        id S236123AbhLPUn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 15:43:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232814AbhLPUVE (ORCPT
+        with ESMTP id S234032AbhLPUn6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 15:21:04 -0500
+        Thu, 16 Dec 2021 15:43:58 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59047C061574;
-        Thu, 16 Dec 2021 12:21:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E447C061574;
+        Thu, 16 Dec 2021 12:43:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XqnUXa9RW7uRpASlJT6RfFyTUcif6Eix1YgAPYLKeT8=; b=MX6WDKLG1OL6cTeGQdGY+wgibY
-        Ll9mC56eOlFh37FPX41YNMduoufYqbHvKzG37ydlx6UrCUQlo3fsxYKXTB8XSfeJih3eLvh2ulurZ
-        UAq+weJj9S1y75jcgGgTlW+pZlugSZvh0gdBNPYCHZomHQ88c5LVGSUc5ZdP8W4wArLoqs4ITVUxK
-        sQ/pssRK0WSdbasQQD8ktK/KjuTBnt0Yp8Vq5EwJX78mf6XlTgI4EsJsZ++2N1rSxRmKV2sguuD4g
-        XN2WFfsDXEyr3sGDX+3E0wEj1hINEP9R8QYGpzjbfP3vM/db1mMd2vQa8eUB/JcEkQh9ZW77Y1ApP
-        JLe01syQ==;
+        bh=YfhwUBS2lrVjAKDoz7mKoyOUc8g9bLIUsgePZeXTb8o=; b=bWkst33a+Ic7U7iKhFkHODkaeZ
+        yPMCrxKpAQREkQ0JPFB00jPk14VLvWhn91P6GMttexp1K6Jv6knybv8O+/uuup4czcWvfA1SIO9Nw
+        ZaI3TzgbLv6i7LIN55sCN7wVgWjgeAY0zlXlpVlTHNMWfoqS4j09E+Vfb+G+pE/if/OmB7VfsNVYg
+        Lgkq+B2UmgOlyxriOPZeluqpKxVxukx3BCQftN5aihISXoPGZw7GYEJin0Zcn9DrIzbgHjWSL91Xp
+        slUtKjoqpykWqmepdJmc8lQ1BBgotzLoDaUUzlKh1pSQ/3fKYP9204CwgEJt1mCIBRO7SlzxUBw5D
+        WlRE8ukQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mxxEx-00FvEE-Bh; Thu, 16 Dec 2021 20:20:35 +0000
-Date:   Thu, 16 Dec 2021 20:20:35 +0000
+        id 1mxxbV-00Fw7k-NY; Thu, 16 Dec 2021 20:43:53 +0000
+Date:   Thu, 16 Dec 2021 20:43:53 +0000
 From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 56/68] afs: Handle len being extending over page end
- in write_begin/write_end
-Message-ID: <YbufkzMCoxssd6Vi@casper.infradead.org>
-References: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
- <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk>
- <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com>
- <YbuTaRbNUAJx5xOA@casper.infradead.org>
- <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 19/28] iomap: Convert __iomap_zero_iter to use a folio
+Message-ID: <YbulCVh8xwwRKAN3@casper.infradead.org>
+References: <20211108040551.1942823-1-willy@infradead.org>
+ <20211108040551.1942823-20-willy@infradead.org>
+ <YbJ3O1qf+9p/HWka@casper.infradead.org>
+ <20211216193614.GA27676@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
+In-Reply-To: <20211216193614.GA27676@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 11:46:18AM -0800, Linus Torvalds wrote:
-> On Thu, Dec 16, 2021 at 11:28 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > Since ->write_begin is the place where we actually create folios, it
-> > needs to know what size folio to create.  Unless you'd rather we do
-> > something to actually create the folio before calling ->write_begin?
+On Thu, Dec 16, 2021 at 11:36:14AM -0800, Darrick J. Wong wrote:
+> > 
+> > +       /* gfs2 does not support large folios yet */
+> > +       if (len > PAGE_SIZE)
+> > +               len = PAGE_SIZE;
 > 
-> I don't think we can create a folio before that, because the
-> filesystem may not even want a folio (think persistent memory or
-> whatever).
-> 
-> Honestly, I think you need to describe more what you actually want to
-> happen. Because generic_perform_write() has already decided to use a
-> PAGE_SIZE by the time write_begin() is called,
-> 
-> Right now the world order is "we chunk things by PAGE_SIZE", and
-> that's just how it is.
+> This is awkward -- gfs2 doesn't set the mapping flag to indicate that it
+> supports large folios, so it should never be asked to deal with more
+> than a page at a time.  Shouldn't iomap_write_begin clamp its len
+> argument to PAGE_SIZE at the start if the mapping doesn't have the large
+> folios flag set?
 
-Right.  And we could leave it like that.  There's a huge amount of win
-that comes from just creating large folios as part of readahead, and
-anything we do for writes is going to be a smaller win.
+You're right, this is awkward.  And it's a bit of a beartrap for
+another filesystem that wants to implement ->prepare_page in the
+future.
 
-That said, I would like it if a program which does:
+diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+index 9270db17c435..d67108489148 100644
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -968,9 +968,6 @@ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
+        struct gfs2_sbd *sdp = GFS2_SB(inode);
+        unsigned int blocks;
 
-fd = creat("foo", 0644);
-write(fd, buf, 64 * 1024);
-close(fd);
-
-uses a single 64k page.
-
-> I can see other options - like the filesystem passing in the chunk
-> size when it calls generic_perform_write().
-
-I'm hoping to avoid that.  Ideally filesystems don't know what the
-"chunk size" is that's being used; they'll see a mixture of sizes
-being used for any given file (potentially).  Depends on access
-patterns, availability of higher-order memory, etc.
-
-> Or we make the rule be that ->write_begin() simply always is given the
-> whole area, and the filesystem can decide how it wants to chunk things
-> up, and return the size of the write chunk in the status (rather than
-> the current "success or error").
-
-We do need to be slightly more limiting than "always gets the whole
-area", because we do that fault_in_iov_iter_readable() call first,
-and if the user has been mean and asked to write() 2GB of memory on
-a (virtual) machine with 256MB, I'd prefer it if we didn't swap our way
-through 2GB of address space before calling into ->write_begin.
-
-> But at no point will this *EVER* be a "afs will limit the size to the
-> folio size" issue. Nothing like that will ever make sense. Allowing
-> bigger chunks will not be about any fscache issues, it will be about
-> every single filesystem that uses generic_perform_write().
-
-I agree that there should be nothing here that is specific to fscache.
-David has in the past tried to convince me that he should always get
-256kB folios, and I've done my best to explain that the MM just isn't
-going to make that guarantee.
-
-That said, this patch seems to be doing the right thing; it passes
-the entire length into netfs_write_begin(), and is then truncating
-the length to stop at the end of the folio that it got back.
+-       /* gfs2 does not support large folios yet */
+-       if (len > PAGE_SIZE)
+-               len = PAGE_SIZE;
+        blocks = ((pos & blockmask) + len + blockmask) >> inode->i_blkbits;
+        return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
+ }
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 1a9e897ee25a..b1ded5204d1c 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -619,6 +619,9 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+        if (fatal_signal_pending(current))
+                return -EINTR;
+ 
++       if (!mapping_large_folio_support(iter->inode->i_mapping))
++               len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
++
+        if (page_ops && page_ops->page_prepare) {
+                status = page_ops->page_prepare(iter->inode, pos, len);
+                if (status)
 
