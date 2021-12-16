@@ -2,67 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D70F4778F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 17:28:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BFD447791B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 17:31:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234004AbhLPQ2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 11:28:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44850 "EHLO
+        id S239441AbhLPQbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 11:31:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233731AbhLPQ2K (ORCPT
+        with ESMTP id S239411AbhLPQbj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 11:28:10 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA9AC06173E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 08:28:10 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id z7so27278713edc.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 08:28:10 -0800 (PST)
+        Thu, 16 Dec 2021 11:31:39 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C9EC061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 08:31:39 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id z5so89699354edd.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 08:31:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fkh9SA21WJAwLXrex3D5hDMvc6XDF8J0dz4irJ+Ae9Y=;
-        b=TZ91WtmX33bYGxQ28DYuwMlA4L/Ykfses9BBTD3iJ52Q9qh/2tU+S4awSqTTbNIEfO
-         NIVIGXtvrTssU7E/Ib+EszfgqaQI3Ug/c2E/ITq3PkTvuJKpkp8KHKAP+FyMLrxxfyHm
-         7LDKJiXUmfROJo2atlx1zLIBfA58BXXUjM6Yc=
+        bh=/0tfi6GWjQ8PFg1rClE3QlQWN0cjd+HtwnOPSpFHrtM=;
+        b=ZUmg4A/7HjP6eAASANt+4keQHSopn9fF9fVMthVZu/c/YjSSrDTZVizCt53w3pjZTz
+         ALdrT2CetN7y0UB7HWM9QXKDG/IjiRvTGiiwA+eAdMgcIrCfVT3wEDCrbPcgGrLjCxw0
+         amQe/8kTyLnJyS+EwJHlBCCyQJgU9esnPnqpg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fkh9SA21WJAwLXrex3D5hDMvc6XDF8J0dz4irJ+Ae9Y=;
-        b=4cdXDOjK3PxLWGvCBtfTnWhAX/F5i5haAgZS7xV+QXKcjAeYmsFTKlz1VYotcMU6pP
-         pn9SAbS2xFxUqi5hpltGt3fbdmLLSIDmeeMkEFZX4Njuhzwsw/YxlXp8vYXEEFgUgrfs
-         GixGrzfsoap7TEJwf0vUhuB1GgXE6qUYLXBKHeZO/QtJYTPq2F0ST1VG/YJ39l3z2hmQ
-         p77Uw4LgpKzL+RnBtz2eP2xfnirpRwpV1vPYWZVJ5AH50UfpNWdGTAMkWtK+3TZSVLI3
-         eVRuf/uR0qv6134J2EACMVR1PFMiWt6uEzo8dx6uEH5HeL8XmorS95Z0pMdAK4xIwJOn
-         AoLA==
-X-Gm-Message-State: AOAM5321dI13FH6WCId+1WyfktQvCg/aj2oW0gHiLc0n5c8OkxbiSGd/
-        DGs/wdHFHowo0yfyrZrs/su4bc3hdr+lvA5l
-X-Google-Smtp-Source: ABdhPJzDgRSmuQmbjWte52rhsr9AYnLKwVAmNk9lhqYyQDfZKM3LYm3x3+famRMbHbXeMH4Fjm5Vjw==
-X-Received: by 2002:a50:9b05:: with SMTP id o5mr21885929edi.66.1639672088760;
-        Thu, 16 Dec 2021 08:28:08 -0800 (PST)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
-        by smtp.gmail.com with ESMTPSA id gn8sm1983115ejc.23.2021.12.16.08.28.06
+        bh=/0tfi6GWjQ8PFg1rClE3QlQWN0cjd+HtwnOPSpFHrtM=;
+        b=05OHc8BPsCZQKDZi5vVm/t7k3maK4mFMo0J6BdcoDfWBwwXlJSKpD1Q5cOoowYvNJ0
+         WDhSvDPpG7ncRZ1zU++QHNIcm8ixZ1BPnvrjRZbUEjz6LAsBq2iOWZI+eEY1Gq+tmYWI
+         j7x7wTShfnmtktJLyrn282vUJ95p1IwpCNSJqUfagb8jvb7FPnQUQi1kQbTYzGuAWjaE
+         7bJzCSHyU0rHHKu9tBvunNjXvyQ1c5uUbOzUSaM5sX3vX3bRyVSYMRzXJE+tZzh5R3Wh
+         j598QBxPexPI5+6gttT3t8D8m5N4DQ8ww1znAV+m6HwyDp3v8gKEHst0FgRjNyjLljgE
+         U2aQ==
+X-Gm-Message-State: AOAM533D9vlpEDXYu8bwhhgax06YaN61jRpmau/MC3QScXOd6EU+FLOm
+        3CWP5BlaLx3LBjly4hzQGG0hXNFSfkrBqudx
+X-Google-Smtp-Source: ABdhPJw191VPlN3g/nBdfOVMTsHebwmrfyPDWuHJQMRCi05rlSiVtdTGQHrz+7uHaPj6XnTZErm7AA==
+X-Received: by 2002:a05:6402:40d3:: with SMTP id z19mr21808653edb.185.1639672297478;
+        Thu, 16 Dec 2021 08:31:37 -0800 (PST)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
+        by smtp.gmail.com with ESMTPSA id k19sm1161081ejv.38.2021.12.16.08.31.35
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Dec 2021 08:28:07 -0800 (PST)
-Received: by mail-wr1-f52.google.com with SMTP id j9so13078447wrc.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 08:28:06 -0800 (PST)
-X-Received: by 2002:a5d:6211:: with SMTP id y17mr9727999wru.97.1639672086343;
- Thu, 16 Dec 2021 08:28:06 -0800 (PST)
+        Thu, 16 Dec 2021 08:31:36 -0800 (PST)
+Received: by mail-wr1-f44.google.com with SMTP id v11so45170816wrw.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 08:31:35 -0800 (PST)
+X-Received: by 2002:adf:d1a6:: with SMTP id w6mr6315246wrc.274.1639672295092;
+ Thu, 16 Dec 2021 08:31:35 -0800 (PST)
 MIME-Version: 1.0
 References: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
- <163967172373.1823006.6118195970180365070.stgit@warthog.procyon.org.uk>
-In-Reply-To: <163967172373.1823006.6118195970180365070.stgit@warthog.procyon.org.uk>
+ <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk>
+In-Reply-To: <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 16 Dec 2021 08:27:50 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjiba2VRKKjOYAiCZn1Tk9H1tiXcOvjekdo3wPHHmedyQ@mail.gmail.com>
-Message-ID: <CAHk-=wjiba2VRKKjOYAiCZn1Tk9H1tiXcOvjekdo3wPHHmedyQ@mail.gmail.com>
-Subject: Re: [PATCH v3 57/68] afs: Fix afs_write_end() to handle len > page size
+Date:   Thu, 16 Dec 2021 08:31:19 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com>
+Message-ID: <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 56/68] afs: Handle len being extending over page end in write_begin/write_end
 To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, Jeff Layton <jlayton@kernel.org>,
+Cc:     linux-cachefs@redhat.com,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
         Marc Dionne <marc.dionne@auristor.com>,
-        Matthew Wilcox <willy@infradead.org>,
         linux-afs@lists.infradead.org,
         Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -83,16 +84,13 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, Dec 16, 2021 at 8:22 AM David Howells <dhowells@redhat.com> wrote:
 >
-> It is possible for the len argument to afs_write_end() to overrun the end
-> of the page (len is used to key the size of the page in afs_write_start()
-> when compound pages become a regular thing).
+> With transparent huge pages, in the future, write_begin() and write_end()
+> may be passed a length parameter that, in combination with the offset into
+> the page, exceeds the length of that page.  This allows
+> grab_cache_page_write_begin() to better choose the size of THP to allocate.
 
-This smells like a bug in the caller.
+I still think this is a fundamental bug in the caller. That
+"explanation" is weak, and the whole concept smells like week-old fish
+to me.
 
-It's just insane to call "write_end()" with a range that doesn't
-actually fit in the page provided.
-
-Exactly how does that happen, and why should AFS deal with it, not
-whoever called write_end()?
-
-              Linus
+         Linus
