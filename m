@@ -2,82 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B081477E97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 22:18:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EC26477F7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 22:45:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234470AbhLPVSC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 16:18:02 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:42430 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234284AbhLPVSB (ORCPT
+        id S241763AbhLPVpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 16:45:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33000 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237631AbhLPVoZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 16:18:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639689478;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Szv2WCpyhjVjn4Fey8iXx2Wp1kssTkyePEeP3VFIu8g=;
-        b=GbRUD3+MKFN7Kya/IXXWDpTv7Rn8vMKtmkOYUzb9I+g0uWYq6bME+qysj3rGVe1RY/rj7P
-        VW3/Vd6+DaDDrbpQMu2fIjgbQifhVr0fz7YrQ+Vc2egrilW+iU42QfiZOXsDCLSpwe6AT9
-        6VXov1HQbhjU/09wFmZU/HwgNdjjMDU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-65-9OVE1SGIPOa1lU4pLKOZTQ-1; Thu, 16 Dec 2021 16:17:57 -0500
-X-MC-Unique: 9OVE1SGIPOa1lU4pLKOZTQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 16 Dec 2021 16:44:25 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC2AC08E6DF;
+        Thu, 16 Dec 2021 13:43:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 91DAA1937FC0;
-        Thu, 16 Dec 2021 21:17:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85D2C6E96B;
-        Thu, 16 Dec 2021 21:17:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
-References: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com> <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk> <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk> <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com> <YbuTaRbNUAJx5xOA@casper.infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        linux-cachefs@redhat.com, Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 56/68] afs: Handle len being extending over page end in write_begin/write_end
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B8F161F9A;
+        Thu, 16 Dec 2021 21:43:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB210C36AE2;
+        Thu, 16 Dec 2021 21:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639690996;
+        bh=+OesseL9+8IhwYVrl5VuIRe5XfUosJ8w79J9FNaaKXk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SVD6AztPK7hK9N7qAbWvqRRQuaOpZEqldpPwoYClQfQku+aQvNZheTq3HyRFnj0mC
+         WPR0Bx/20rSossdAKJ9UPe3+rBzQWJw9Crm6+gpheRs3yZmoAnxY0A6vkJs8A1PVUn
+         A5syAIhxyqiuPWnMu3qo/H/rNFJGwjOiCMJHZKAOOYkR5IKqe/HFkkLOieLZnfyo99
+         bs2wMYZh2ad2yNPdNNgZRUDYRB5Tu562PRHWGCg8FsEuPM8G3fVM7oyDvEbNSeZly7
+         c0srGBES0CP0Jo6LLjz+j1Y8JNF3Tw7S12u7/1QAeY6bo4B69TQpCPvUsB1T4dOkPY
+         AY/llqietP2Pg==
+Date:   Thu, 16 Dec 2021 13:43:16 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 15/25] iomap: Allow iomap_write_begin() to be called
+ with the full length
+Message-ID: <20211216214316.GE27664@magnolia>
+References: <20211216210715.3801857-1-willy@infradead.org>
+ <20211216210715.3801857-16-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1840346.1639689467.1@warthog.procyon.org.uk>
-Date:   Thu, 16 Dec 2021 21:17:47 +0000
-Message-ID: <1840347.1639689467@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211216210715.3801857-16-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, Dec 16, 2021 at 09:07:05PM +0000, Matthew Wilcox (Oracle) wrote:
+> In the future, we want write_begin to know the entire length of the
+> write so that it can choose to allocate large folios.  Pass the full
+> length in from __iomap_zero_iter() and limit it where necessary.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-> So I will NAK these patches by David, because they are fundamentally
-> wrong, whichever way we turn. Any "write in bigger chunks" patch will
-> be something else entirely.
+Seems reasonable,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-I'll just drop patches 56 and 57 for now, then.  I think the problem only
-manifests if I set the flag saying the filesystem/inode/whatever supports
-multipage folios.
+--D
 
-David
-
+> ---
+>  fs/iomap/buffered-io.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 8d7a67655b60..b1ded5204d1c 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -619,6 +619,9 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  	if (fatal_signal_pending(current))
+>  		return -EINTR;
+>  
+> +	if (!mapping_large_folio_support(iter->inode->i_mapping))
+> +		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
+> +
+>  	if (page_ops && page_ops->page_prepare) {
+>  		status = page_ops->page_prepare(iter->inode, pos, len);
+>  		if (status)
+> @@ -632,6 +635,8 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  		goto out_no_page;
+>  	}
+>  	folio = page_folio(page);
+> +	if (pos + len > folio_pos(folio) + folio_size(folio))
+> +		len = folio_pos(folio) + folio_size(folio) - pos;
+>  
+>  	if (srcmap->type == IOMAP_INLINE)
+>  		status = iomap_write_begin_inline(iter, page);
+> @@ -891,11 +896,13 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
+>  	struct page *page;
+>  	int status;
+>  	unsigned offset = offset_in_page(pos);
+> -	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
+> +	unsigned bytes = min_t(u64, UINT_MAX, length);
+>  
+>  	status = iomap_write_begin(iter, pos, bytes, &page);
+>  	if (status)
+>  		return status;
+> +	if (bytes > PAGE_SIZE - offset)
+> +		bytes = PAGE_SIZE - offset;
+>  
+>  	zero_user(page, offset, bytes);
+>  	mark_page_accessed(page);
+> -- 
+> 2.33.0
+> 
