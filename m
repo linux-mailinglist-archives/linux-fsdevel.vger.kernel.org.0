@@ -2,102 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57D5E476C1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 09:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A97476D69
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 10:29:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234977AbhLPInk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 03:43:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51992 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230051AbhLPInk (ORCPT
+        id S235359AbhLPJ3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 04:29:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53552 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232923AbhLPJ3G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 03:43:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639644219;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UfCZtz1ccK1G4KuhCQww9wOX9Yntwu2r9HaxdHV6uW0=;
-        b=HOquVJ0Itil4LDbZ8JmBKFUVLQnUHJzFZ7+IrXlD42sgHhe1GRL6E2RzhkZ8UBUdPNUyAx
-        ucxgeE9GhjMk6zLVtikx+EpAML9nVc9k9q2K3atVbf05EvkBtIyfDbaF28XSMbtMNIrlr1
-        JM/FlSHxBZSYCdKTQn/tu+waO+E14tc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-282-mMnn5J3YO22tFqJtLTsJrQ-1; Thu, 16 Dec 2021 03:43:36 -0500
-X-MC-Unique: mMnn5J3YO22tFqJtLTsJrQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1696981EE60;
-        Thu, 16 Dec 2021 08:43:35 +0000 (UTC)
-Received: from localhost (ovpn-12-63.pek2.redhat.com [10.72.12.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E525C84FF9;
-        Thu, 16 Dec 2021 08:43:27 +0000 (UTC)
-Date:   Thu, 16 Dec 2021 16:43:25 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, prudo@redhat.com
-Cc:     Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-        kexec@lists.infradead.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Thu, 16 Dec 2021 04:29:06 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BG876Fr012421;
+        Thu, 16 Dec 2021 09:28:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=4UYqN4pVlQMbSDiJg/IcU0Peamsj4/1Hc55y6tyNRUk=;
+ b=JpVkLelbdqeo4XrxSRBdsTACL2/X62VFBupg0qN4nfZgD0p/YTUPRCP/jyCbfOMLO0ZS
+ iJPDbOZ2PYdV767s1WCMGPK/0E0Q+N4LftHOA8qUiYngb6LRVuoYk8k9MHWVfjHuThIg
+ M8/cDTuC9Df1YfqjaPMmoDmEIZ9HUMaxfSuTO1E3pTpWy1P/NKEzbleOw0BIhSzSf5Lo
+ xEt+SYKl1AdkCslwl7sgeORp535WQpzqChOS6OIw5OGjBu4pqLGQ6DJdYloPKTw5fTUd
+ vASlvdeJFZFfrbZbMMmH26wdy3Zc6Wquqm6+/31Tic9ZPftFdpmu+/wFp7OGaaCtkBBS lA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cyq8un6vc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Dec 2021 09:28:45 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BG8oMW5004562;
+        Thu, 16 Dec 2021 09:28:44 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cyq8un6ur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Dec 2021 09:28:44 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BG9RcLR023271;
+        Thu, 16 Dec 2021 09:28:42 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 3cy7qw550c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Dec 2021 09:28:42 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BG9Scjt46596358
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Dec 2021 09:28:38 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6F21AE04D;
+        Thu, 16 Dec 2021 09:28:38 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26A1FAE045;
+        Thu, 16 Dec 2021 09:28:38 +0000 (GMT)
+Received: from osiris (unknown [9.145.8.245])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 16 Dec 2021 09:28:38 +0000 (GMT)
+Date:   Thu, 16 Dec 2021 10:28:36 +0100
+From:   Heiko Carstens <hca@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+        Tiezhu Yang <yangtiezhu@loongson.cn>,
         linux-kernel@vger.kernel.org,
         Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Convert vmcore to use an iov_iter
-Message-ID: <20211216084325.GH3023@MiWiFi-R3L-srv>
-References: <20211213143927.3069508-1-willy@infradead.org>
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH 1/3] vmcore: Convert copy_oldmem_page() to take an
+ iov_iter
+Message-ID: <YbsGxJRo1153aykr@osiris>
+References: <20211213000636.2932569-1-willy@infradead.org>
+ <20211213000636.2932569-2-willy@infradead.org>
+ <20211213075725.GA20986@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211213143927.3069508-1-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20211213075725.GA20986@lst.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 2tBGfTBNsLkquTgKNYuLjZSJgkpEalRA
+X-Proofpoint-GUID: E9Y1WVUVnHyD8lhRcrpVPe9dEdVog6Br
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-16_03,2021-12-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=687 phishscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2112160051
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/13/21 at 02:39pm, Matthew Wilcox (Oracle) wrote:
-> For some reason several people have been sending bad patches to fix
-> compiler warnings in vmcore recently.  Here's how it should be done.
-> Compile-tested only on x86.  As noted in the first patch, s390 should
-> take this conversion a bit further, but I'm not inclined to do that
-> work myself.
+On Mon, Dec 13, 2021 at 08:57:25AM +0100, Christoph Hellwig wrote:
+> On Mon, Dec 13, 2021 at 12:06:34AM +0000, Matthew Wilcox (Oracle) wrote:
+> > Instead of passing in a 'buf' and 'userbuf' argument, pass in an iov_iter.
+> > s390 needs more work to pass the iov_iter down further, or refactor,
+> > but I'd be more comfortable if someone who can test on s390 did that work.
+> > 
+> > It's more convenient to convert the whole of read_from_oldmem() to
+> > take an iov_iter at the same time, so rename it to read_from_oldmem_iter()
+> > and add a temporary read_from_oldmem() wrapper that creates an iov_iter.
+> 
+> This looks pretty reasonable.  s390 could use some love from people that
+> know the code, and yes, the kerneldoc comments should go away.
 
-Add Philipp to the CC.
-
-He used to work on s390 arch. Now he joins Redhat and will focus
-on kexec/kdump. See if he has any thoughts on the s390 part of work, or
-may reach out to s390 developer.
-
-> 
-> v3:
->  - Send the correct patches this time
-> v2:
->  - Removed unnecessary kernel-doc
->  - Included uio.h to fix compilation problems
->  - Made read_from_oldmem_iter static to avoid compile warnings during the
->    conversion
->  - Use iov_iter_truncate() (Christoph)
-> 
-> Matthew Wilcox (Oracle) (3):
->   vmcore: Convert copy_oldmem_page() to take an iov_iter
->   vmcore: Convert __read_vmcore to use an iov_iter
->   vmcore: Convert read_from_oldmem() to take an iov_iter
-> 
->  arch/arm/kernel/crash_dump.c     |  27 +------
->  arch/arm64/kernel/crash_dump.c   |  29 +------
->  arch/ia64/kernel/crash_dump.c    |  32 +-------
->  arch/mips/kernel/crash_dump.c    |  27 +------
->  arch/powerpc/kernel/crash_dump.c |  35 ++-------
->  arch/riscv/kernel/crash_dump.c   |  26 +------
->  arch/s390/kernel/crash_dump.c    |  13 ++--
->  arch/sh/kernel/crash_dump.c      |  29 ++-----
->  arch/x86/kernel/crash_dump_32.c  |  29 +------
->  arch/x86/kernel/crash_dump_64.c  |  48 ++++--------
->  fs/proc/vmcore.c                 | 129 +++++++++++++------------------
->  include/linux/crash_dump.h       |  19 ++---
->  12 files changed, 122 insertions(+), 321 deletions(-)
-> 
-> -- 
-> 2.33.0
-> 
-
+Sure, we will take care of this. Added to ToDo list.
