@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B4564777C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 17:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D2114777CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 17:16:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239262AbhLPQPs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 11:15:48 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30094 "EHLO
+        id S239257AbhLPQP7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 11:15:59 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:41670 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239261AbhLPQPr (ORCPT
+        by vger.kernel.org with ESMTP id S239265AbhLPQPz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 11:15:47 -0500
+        Thu, 16 Dec 2021 11:15:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639671346;
+        s=mimecast20190719; t=1639671354;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=HC5BKZhdKdZEJF2CQ6Vgr0OEoLsit8v3uqAROetNOO8=;
-        b=hnWNSCNZFRKrXVf3vGBLN+FeaNxmqGdA35ORQ4JuHziaYkm2uSjA5Syvkto5NtdzTdN98N
-        htHz6fYXjtI3MGBLpr+K1GjpIXIo8nC5kBFnP6HjSc6eQxgsT0D80sgf7v9VW9BNGupdlg
-        bavKSi5tFZS28ggi7REwN+TLnavKZEI=
+        bh=rhSCYlNAxROZVZPugYlqvIpH9Ku/neDzWS3oKwN+gC8=;
+        b=ILtnY5sOVzHOHSqaLIatHaf+RE9pA4DNP3/eCfd5sEN0+qXwbZuobUgba3d1flS8DDHUFO
+        fi4LC+viV+497frLAs9eI8dZfdWv2Bz+DeThrpdwZqUGIYPQDAeehhN95iQ5Jj4ky/chnk
+        +wwqTqcoY8blT4SWfhYDJ3TDV8C+pFo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-100-cTL2YdM5NOOm0biSUYVGdA-1; Thu, 16 Dec 2021 11:15:41 -0500
-X-MC-Unique: cTL2YdM5NOOm0biSUYVGdA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-91-M1a_Wi9cOyO3-Fzu0A1bTg-1; Thu, 16 Dec 2021 11:15:51 -0500
+X-MC-Unique: M1a_Wi9cOyO3-Fzu0A1bTg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DDC3FA0BE1;
-        Thu, 16 Dec 2021 16:15:38 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A737910B7464;
+        Thu, 16 Dec 2021 16:15:48 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EF0D15E483;
-        Thu, 16 Dec 2021 16:15:14 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 051FF5BE3C;
+        Thu, 16 Dec 2021 16:15:44 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v3 31/68] cachefiles: Define structs
+Subject: [PATCH v3 32/68] cachefiles: Add some error injection support
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
@@ -56,91 +56,205 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 16 Dec 2021 16:15:14 +0000
-Message-ID: <163967131405.1823006.4480555941533935597.stgit@warthog.procyon.org.uk>
+Date:   Thu, 16 Dec 2021 16:15:44 +0000
+Message-ID: <163967134412.1823006.7354285948280296595.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
 References: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Define the cachefiles_cache struct that's going to carry the cache-level
-parameters and state of a cache.
+Add support for injecting ENOSPC or EIO errors.  This needs to be enabled
+by CONFIG_CACHEFILES_ERROR_INJECTION=y.  Once enabled, ENOSPC on things
+like write and mkdir can be triggered by:
 
-Define the beginning of the cachefiles_object struct that's going to carry
-the state for a data storage object.  For the moment this is just a
-debugging ID for logging purposes.
+        echo 1 >/proc/sys/cachefiles/error_injection
+
+and EIO can be triggered on most operations by:
+
+        echo 2 >/proc/sys/cachefiles/error_injection
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-cachefs@redhat.com
-Link: https://lore.kernel.org/r/163819623690.215744.2824739137193655547.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/163906924292.143852.15881439716653984905.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/163819624706.215744.6911916249119962943.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/163906925343.143852.5465695512984025812.stgit@warthog.procyon.org.uk/ # v2
 ---
 
- fs/cachefiles/internal.h |   46 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ fs/cachefiles/Kconfig        |    7 ++++++
+ fs/cachefiles/Makefile       |    2 ++
+ fs/cachefiles/error_inject.c |   46 ++++++++++++++++++++++++++++++++++++++++++
+ fs/cachefiles/internal.h     |   42 +++++++++++++++++++++++++++++++++++++-
+ fs/cachefiles/main.c         |   12 +++++++++++
+ 5 files changed, 108 insertions(+), 1 deletion(-)
+ create mode 100644 fs/cachefiles/error_inject.c
 
+diff --git a/fs/cachefiles/Kconfig b/fs/cachefiles/Kconfig
+index 6827b40f7ddc..719faeeda168 100644
+--- a/fs/cachefiles/Kconfig
++++ b/fs/cachefiles/Kconfig
+@@ -19,3 +19,10 @@ config CACHEFILES_DEBUG
+ 	  caching on files module.  If this is set, the debugging output may be
+ 	  enabled by setting bits in /sys/modules/cachefiles/parameter/debug or
+ 	  by including a debugging specifier in /etc/cachefilesd.conf.
++
++config CACHEFILES_ERROR_INJECTION
++	bool "Provide error injection for cachefiles"
++	depends on CACHEFILES && SYSCTL
++	help
++	  This permits error injection to be enabled in cachefiles whilst a
++	  cache is in service.
+diff --git a/fs/cachefiles/Makefile b/fs/cachefiles/Makefile
+index a7f3e982e249..183fb5f3b8b1 100644
+--- a/fs/cachefiles/Makefile
++++ b/fs/cachefiles/Makefile
+@@ -6,4 +6,6 @@
+ cachefiles-y := \
+ 	main.o
+ 
++cachefiles-$(CONFIG_CACHEFILES_ERROR_INJECTION) += error_inject.o
++
+ obj-$(CONFIG_CACHEFILES) := cachefiles.o
+diff --git a/fs/cachefiles/error_inject.c b/fs/cachefiles/error_inject.c
+new file mode 100644
+index 000000000000..58f8aec964e4
+--- /dev/null
++++ b/fs/cachefiles/error_inject.c
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Error injection handling.
++ *
++ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#include <linux/sysctl.h>
++#include "internal.h"
++
++unsigned int cachefiles_error_injection_state;
++
++static struct ctl_table_header *cachefiles_sysctl;
++static struct ctl_table cachefiles_sysctls[] = {
++	{
++		.procname	= "error_injection",
++		.data		= &cachefiles_error_injection_state,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec,
++	},
++	{}
++};
++
++static struct ctl_table cachefiles_sysctls_root[] = {
++	{
++		.procname	= "cachefiles",
++		.mode		= 0555,
++		.child		= cachefiles_sysctls,
++	},
++	{}
++};
++
++int __init cachefiles_register_error_injection(void)
++{
++	cachefiles_sysctl = register_sysctl_table(cachefiles_sysctls_root);
++	if (!cachefiles_sysctl)
++		return -ENOMEM;
++	return 0;
++
++}
++
++void cachefiles_unregister_error_injection(void)
++{
++	unregister_sysctl_table(cachefiles_sysctl);
++}
 diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 26e0e23d7702..cff4b2a5f928 100644
+index cff4b2a5f928..1f2fea902d3e 100644
 --- a/fs/cachefiles/internal.h
 +++ b/fs/cachefiles/internal.h
-@@ -16,6 +16,52 @@
- #include <linux/cred.h>
- #include <linux/security.h>
+@@ -64,7 +64,47 @@ struct cachefiles_cache {
  
-+struct cachefiles_cache;
-+struct cachefiles_object;
-+
-+/*
-+ * Data file records.
-+ */
-+struct cachefiles_object {
-+	int				debug_id;	/* debugging ID */
-+};
-+
-+/*
-+ * Cache files cache definition
-+ */
-+struct cachefiles_cache {
-+	struct vfsmount			*mnt;		/* mountpoint holding the cache */
-+	struct file			*cachefilesd;	/* manager daemon handle */
-+	const struct cred		*cache_cred;	/* security override for accessing cache */
-+	struct mutex			daemon_mutex;	/* command serialisation mutex */
-+	wait_queue_head_t		daemon_pollwq;	/* poll waitqueue for daemon */
-+	atomic_t			gravecounter;	/* graveyard uniquifier */
-+	atomic_t			f_released;	/* number of objects released lately */
-+	atomic_long_t			b_released;	/* number of blocks released lately */
-+	unsigned			frun_percent;	/* when to stop culling (% files) */
-+	unsigned			fcull_percent;	/* when to start culling (% files) */
-+	unsigned			fstop_percent;	/* when to stop allocating (% files) */
-+	unsigned			brun_percent;	/* when to stop culling (% blocks) */
-+	unsigned			bcull_percent;	/* when to start culling (% blocks) */
-+	unsigned			bstop_percent;	/* when to stop allocating (% blocks) */
-+	unsigned			bsize;		/* cache's block size */
-+	unsigned			bshift;		/* min(ilog2(PAGE_SIZE / bsize), 0) */
-+	uint64_t			frun;		/* when to stop culling */
-+	uint64_t			fcull;		/* when to start culling */
-+	uint64_t			fstop;		/* when to stop allocating */
-+	sector_t			brun;		/* when to stop culling */
-+	sector_t			bcull;		/* when to start culling */
-+	sector_t			bstop;		/* when to stop allocating */
-+	unsigned long			flags;
-+#define CACHEFILES_READY		0	/* T if cache prepared */
-+#define CACHEFILES_DEAD			1	/* T if cache dead */
-+#define CACHEFILES_CULLING		2	/* T if cull engaged */
-+#define CACHEFILES_STATE_CHANGED	3	/* T if state changed (poll trigger) */
-+	char				*rootdirname;	/* name of cache root directory */
-+	char				*secctx;	/* LSM security context */
-+	char				*tag;		/* cache binding tag */
-+};
-+
  
  /*
-  * Debug tracing.
+- * Debug tracing.
++ * error_inject.c
++ */
++#ifdef CONFIG_CACHEFILES_ERROR_INJECTION
++extern unsigned int cachefiles_error_injection_state;
++extern int cachefiles_register_error_injection(void);
++extern void cachefiles_unregister_error_injection(void);
++
++#else
++#define cachefiles_error_injection_state 0
++
++static inline int cachefiles_register_error_injection(void)
++{
++	return 0;
++}
++
++static inline void cachefiles_unregister_error_injection(void)
++{
++}
++#endif
++
++
++static inline int cachefiles_inject_read_error(void)
++{
++	return cachefiles_error_injection_state & 2 ? -EIO : 0;
++}
++
++static inline int cachefiles_inject_write_error(void)
++{
++	return cachefiles_error_injection_state & 2 ? -EIO :
++		cachefiles_error_injection_state & 1 ? -ENOSPC :
++		0;
++}
++
++static inline int cachefiles_inject_remove_error(void)
++{
++	return cachefiles_error_injection_state & 2 ? -EIO : 0;
++}
++
++
++/*
++ * Debug tracing
+  */
+ extern unsigned cachefiles_debug;
+ #define CACHEFILES_DEBUG_KENTER	1
+diff --git a/fs/cachefiles/main.c b/fs/cachefiles/main.c
+index 47bc1cc078de..387d42c7185f 100644
+--- a/fs/cachefiles/main.c
++++ b/fs/cachefiles/main.c
+@@ -36,8 +36,18 @@ MODULE_LICENSE("GPL");
+  */
+ static int __init cachefiles_init(void)
+ {
++	int ret;
++
++	ret = cachefiles_register_error_injection();
++	if (ret < 0)
++		goto error_einj;
++
+ 	pr_info("Loaded\n");
+ 	return 0;
++
++error_einj:
++	pr_err("failed to register: %d\n", ret);
++	return ret;
+ }
+ 
+ fs_initcall(cachefiles_init);
+@@ -48,6 +58,8 @@ fs_initcall(cachefiles_init);
+ static void __exit cachefiles_exit(void)
+ {
+ 	pr_info("Unloading\n");
++
++	cachefiles_unregister_error_injection();
+ }
+ 
+ module_exit(cachefiles_exit);
 
 
