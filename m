@@ -2,78 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA56C477E62
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 22:08:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B081477E97
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 22:18:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242036AbhLPVIW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 16:08:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241588AbhLPVHY (ORCPT
+        id S234470AbhLPVSC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 16:18:02 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:42430 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234284AbhLPVSB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 16:07:24 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB40AC061751;
-        Thu, 16 Dec 2021 13:07:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=C/aEEIUI8R1IaR4jIAxLPfTciBIfzrBXc1+qsDU9LWQ=; b=aBSQ2v/hS8CUP+5vmDxnEbfDm2
-        xNkZzKlEY251Gwp3szPLCYi1bdov1Nu8pYaqMxObQJoSWMp6K4j4MeBuhXIRue07oDRPP9wK6Y6lf
-        W4itzeHSKgawVtnubEkqjdH7+ux9w4+n35RkF7hUVEV9/IOyJ3BEE+JgTaM4s8ynEyvCveDDhxQ9C
-        7dj225p7o/WDzITGYj46OR6lin5M63FTJ9PHiSn3+119t834sFKZvxoaOHhQuFhVV28uC3Tsncf+J
-        O35ziU7uZGD4txO3uFHWPq/OhZwI+GzZ3SH8mOYxdw2AeY53O4XjxhKRRoS5Nh9lu5uYq7LBowsxe
-        6PrZGACw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mxxyD-00Fx5o-V0; Thu, 16 Dec 2021 21:07:22 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 25/25] xfs: Support large folios
-Date:   Thu, 16 Dec 2021 21:07:15 +0000
-Message-Id: <20211216210715.3801857-26-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211216210715.3801857-1-willy@infradead.org>
-References: <20211216210715.3801857-1-willy@infradead.org>
+        Thu, 16 Dec 2021 16:18:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639689478;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Szv2WCpyhjVjn4Fey8iXx2Wp1kssTkyePEeP3VFIu8g=;
+        b=GbRUD3+MKFN7Kya/IXXWDpTv7Rn8vMKtmkOYUzb9I+g0uWYq6bME+qysj3rGVe1RY/rj7P
+        VW3/Vd6+DaDDrbpQMu2fIjgbQifhVr0fz7YrQ+Vc2egrilW+iU42QfiZOXsDCLSpwe6AT9
+        6VXov1HQbhjU/09wFmZU/HwgNdjjMDU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-65-9OVE1SGIPOa1lU4pLKOZTQ-1; Thu, 16 Dec 2021 16:17:57 -0500
+X-MC-Unique: 9OVE1SGIPOa1lU4pLKOZTQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 91DAA1937FC0;
+        Thu, 16 Dec 2021 21:17:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85D2C6E96B;
+        Thu, 16 Dec 2021 21:17:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
+References: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com> <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk> <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk> <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com> <YbuTaRbNUAJx5xOA@casper.infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        linux-cachefs@redhat.com, Jeff Layton <jlayton@kernel.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 56/68] afs: Handle len being extending over page end in write_begin/write_end
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1840346.1639689467.1@warthog.procyon.org.uk>
+Date:   Thu, 16 Dec 2021 21:17:47 +0000
+Message-ID: <1840347.1639689467@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that iomap has been converted, XFS is large folio safe.
-Indicate to the VFS that it can now create large folios for XFS.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/xfs/xfs_icache.c | 2 ++
- 1 file changed, 2 insertions(+)
+> So I will NAK these patches by David, because they are fundamentally
+> wrong, whichever way we turn. Any "write in bigger chunks" patch will
+> be something else entirely.
 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index da4af2142a2b..cdc39f576ca1 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -87,6 +87,7 @@ xfs_inode_alloc(
- 	/* VFS doesn't initialise i_mode or i_state! */
- 	VFS_I(ip)->i_mode = 0;
- 	VFS_I(ip)->i_state = 0;
-+	mapping_set_large_folios(VFS_I(ip)->i_mapping);
- 
- 	XFS_STATS_INC(mp, vn_active);
- 	ASSERT(atomic_read(&ip->i_pincount) == 0);
-@@ -320,6 +321,7 @@ xfs_reinit_inode(
- 	inode->i_rdev = dev;
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
-+	mapping_set_large_folios(inode->i_mapping);
- 	return error;
- }
- 
--- 
-2.33.0
+I'll just drop patches 56 and 57 for now, then.  I think the problem only
+manifests if I set the flag saying the filesystem/inode/whatever supports
+multipage folios.
+
+David
 
