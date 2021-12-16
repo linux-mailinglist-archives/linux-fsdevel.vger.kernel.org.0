@@ -2,115 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A830477E1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 22:07:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51740477E1E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 22:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241546AbhLPVHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 16:07:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53476 "EHLO
+        id S241565AbhLPVHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 16:07:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231656AbhLPVHU (ORCPT
+        with ESMTP id S241532AbhLPVHV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 16:07:20 -0500
+        Thu, 16 Dec 2021 16:07:21 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909A2C061574;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E16C1C06173F;
         Thu, 16 Dec 2021 13:07:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=eopyKE4k2XeTajA356L1MfJ+TGRn08rwtoWo6zNEjPA=; b=HmohCdjvgCsB3u/7t72y0Pnuh5
-        BguTcTUmOvDPhuY0wco1NY4bKL+mgJAVOLL2zNu3F9nT4kZQXwCSQxSJmlOSpQkGMUETKAkOI0IR2
-        Eh0Pla1qoz/soS4Sn3GviyJat9zlF8lpAKVj1aCOHsqra+GW5ih5kiVXWz8PW4ywFozArAJHL/710
-        l5ncbZ6akbSjDPxfEhZ3sliwOZXJA5DNtz0xRlkVK2rO45tou4aJJ9lGJ1tWcp/h18fxJHxNmOwG/
-        j/h/p3WSTEvPglsrGYOL5iTMyQYGycYcf7gO8woeub8/mnxcb2zS7v9fWrX6YR04MCjjtVIruJ8xm
-        7ag+AK9A==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=i1uGRLSmQDRzx2wkY5dVs/7U4AY55WJaVteBHDy5RtE=; b=gwxjH/rb5enuTNjKvPygJBHPep
+        2C5Jg33thj/JnCT6E3/u0VuI9B5FXhDQJvdmjdfohcy+3Admd9s4h9JVmTaxaq7zP3j5jnaJew4Ko
+        oaYzg47cGMhmEQNO4a4AfbAIY5E+sFEcZ1u/myYCozQ7kO+fK0JmnxPjNyqGTOVqAfjybB9WJn67J
+        vPQd5i35DNlwEdAVQEJnTIFxxcKUB8BcJ8/2z4EUDInJjKs7HdOF4J2j5tZOlT1kl6GQ/CPpLuy81
+        6SQWYLOlTVa9urbqFvcQd7K8D7IVq5lIIXq4SPeGzh+1e5/zW9sAAGFBp2mCxAZqvW/yL5PUaWZlE
+        4Ep08g4g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mxxyA-00Fx34-Sv; Thu, 16 Dec 2021 21:07:18 +0000
+        id 1mxxyA-00Fx36-VX; Thu, 16 Dec 2021 21:07:19 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 00/25] iomap/xfs folio patches
-Date:   Thu, 16 Dec 2021 21:06:50 +0000
-Message-Id: <20211216210715.3801857-1-willy@infradead.org>
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v3 01/25] block: Add bio_add_folio()
+Date:   Thu, 16 Dec 2021 21:06:51 +0000
+Message-Id: <20211216210715.3801857-2-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20211216210715.3801857-1-willy@infradead.org>
+References: <20211216210715.3801857-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset converts XFS & iomap to use folios, and gets them to a
-state where they can handle multi-page folios.  Applying these patches
-is not yet sufficient to actually start using multi-page folios for
-XFS; more page cache changes are needed.  I don't anticipate needing to
-touch XFS again until we're at the point where we want to convert the
-aops to be type-safe.  It completes an xfstests run with no unexpected
-failures.
+This is a thin wrapper around bio_add_page().  The main advantage here
+is the documentation that folios larger than 2GiB are not supported.
+It's not currently possible to allocate folios that large, but if it
+ever becomes possible, this function will fail gracefully instead of
+doing I/O to the wrong bytes.
 
-I think everything here has been posted before, but I want to get
-acks/reviews on patch 15 in particular.  I'll send a pull request
-for these patches tomorrow.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+---
+ block/bio.c         | 22 ++++++++++++++++++++++
+ include/linux/bio.h |  3 ++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-v3:
- - Rebased to -rc5, which removes the first four patches from v2.
- - Fixed passing lengths > PAGE_SIZE to iomap_write_begin().
-v2:
- - Added review tags from Jens, Darrick & Christoph (thanks!)
- - Added folio_zero_* wrappers around zero_user_*()
- - Added a patch to rename AS_THP_SUPPORT
- - Added a patch to convert __block_write_begin_int() to take a folio
- - Split the iomap_add_to_ioend() patch into three
- - Updated changelog of bio_add_folio() (Jens)
- - Adjusted whitespace of bio patches (Christoph, Jens)
- - Improved changelog of readahead conversion to explain why the put_page()
-   disappeared (Christoph)
- - Add a patch to zero an entire folio at a time, instead of limiting to
-   a page
- - Switch pos & end_pos back to being u64 from loff_t
- - Call block_write_end() and ->page_done with the head page of the folio,
-   as that's what those functions expect.
-
-Matthew Wilcox (Oracle) (25):
-  block: Add bio_add_folio()
-  block: Add bio_for_each_folio_all()
-  fs/buffer: Convert __block_write_begin_int() to take a folio
-  iomap: Convert to_iomap_page to take a folio
-  iomap: Convert iomap_page_create to take a folio
-  iomap: Convert iomap_page_release to take a folio
-  iomap: Convert iomap_releasepage to use a folio
-  iomap: Add iomap_invalidate_folio
-  iomap: Pass the iomap_page into iomap_set_range_uptodate
-  iomap: Convert bio completions to use folios
-  iomap: Use folio offsets instead of page offsets
-  iomap: Convert iomap_read_inline_data to take a folio
-  iomap: Convert readahead and readpage to use a folio
-  iomap: Convert iomap_page_mkwrite to use a folio
-  iomap: Allow iomap_write_begin() to be called with the full length
-  iomap: Convert __iomap_zero_iter to use a folio
-  iomap: Convert iomap_write_begin() and iomap_write_end() to folios
-  iomap: Convert iomap_write_end_inline to take a folio
-  iomap,xfs: Convert ->discard_page to ->discard_folio
-  iomap: Simplify iomap_writepage_map()
-  iomap: Simplify iomap_do_writepage()
-  iomap: Convert iomap_add_to_ioend() to take a folio
-  iomap: Convert iomap_migrate_page() to use folios
-  iomap: Support large folios in invalidatepage
-  xfs: Support large folios
-
- Documentation/core-api/kernel-api.rst |   1 +
- block/bio.c                           |  22 ++
- fs/buffer.c                           |  23 +-
- fs/internal.h                         |   2 +-
- fs/iomap/buffered-io.c                | 518 +++++++++++++-------------
- fs/xfs/xfs_aops.c                     |  24 +-
- fs/xfs/xfs_icache.c                   |   2 +
- include/linux/bio.h                   |  56 ++-
- include/linux/iomap.h                 |   3 +-
- 9 files changed, 373 insertions(+), 278 deletions(-)
-
+diff --git a/block/bio.c b/block/bio.c
+index 15ab0d6d1c06..4b3087e20d51 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1033,6 +1033,28 @@ int bio_add_page(struct bio *bio, struct page *page,
+ }
+ EXPORT_SYMBOL(bio_add_page);
+ 
++/**
++ * bio_add_folio - Attempt to add part of a folio to a bio.
++ * @bio: BIO to add to.
++ * @folio: Folio to add.
++ * @len: How many bytes from the folio to add.
++ * @off: First byte in this folio to add.
++ *
++ * Filesystems that use folios can call this function instead of calling
++ * bio_add_page() for each page in the folio.  If @off is bigger than
++ * PAGE_SIZE, this function can create a bio_vec that starts in a page
++ * after the bv_page.  BIOs do not support folios that are 4GiB or larger.
++ *
++ * Return: Whether the addition was successful.
++ */
++bool bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
++		   size_t off)
++{
++	if (len > UINT_MAX || off > UINT_MAX)
++		return 0;
++	return bio_add_page(bio, &folio->page, len, off) > 0;
++}
++
+ void __bio_release_pages(struct bio *bio, bool mark_dirty)
+ {
+ 	struct bvec_iter_all iter_all;
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index fe6bdfbbef66..a783cac49978 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -409,7 +409,8 @@ extern void bio_uninit(struct bio *);
+ extern void bio_reset(struct bio *);
+ void bio_chain(struct bio *, struct bio *);
+ 
+-extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
++int bio_add_page(struct bio *, struct page *, unsigned len, unsigned off);
++bool bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
+ extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
+ 			   unsigned int, unsigned int);
+ int bio_add_zone_append_page(struct bio *bio, struct page *page,
 -- 
 2.33.0
 
