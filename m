@@ -2,70 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E7E24774D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 15:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32E474774E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Dec 2021 15:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238081AbhLPOlX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Dec 2021 09:41:23 -0500
-Received: from o1.smtp.templ.io ([149.72.221.78]:6036 "EHLO o1.smtp.templ.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232369AbhLPOlW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Dec 2021 09:41:22 -0500
-X-Greylist: delayed 302 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Dec 2021 09:41:22 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synbar.se;
-        h=subject:from:mime-version:reply-to:to:content-type:
-        content-transfer-encoding;
-        s=s1; bh=WOLzfQBbrrVku3F02whXwyeU/KLRHl9wHiUHQVbM1ns=;
-        b=a0QVlNC+M4eUuDKn33OXUQL85PxZNbW3DwoaM2JE6RETd+Wso4MpOq9U1BEgdy6Cf8RH
-        2kZ5yws9qLBzD0csUWtmXYw1vcCuwfLPIYXAiHKjYI9GVvmytvorta/ETETzvVDy8wT5q5
-        sxgQ5LJJXWJ9lw0sdd3b0WQdhQy6NnMW0xu5Z88J1tDpsM6dO+4Oh/kiNMpTy9vJMdx6CH
-        hLhhbcO7DEKbM4lCWoAPv2+kpY+r9JFU8DISgDPmmLDU/fS7YY7nFAdkkRbyM6tiZ8CxeD
-        WRzDx/TyPqkE7cMpHewynFKnKgS1CkuZpmwxbapOzE3+us8FORvrh0KtMI1/XuGw==
-Received: by filterdrecv-656998cfdd-rqq5v with SMTP id filterdrecv-656998cfdd-rqq5v-1-61BB4EE3-55
-        2021-12-16 14:36:19.6467377 +0000 UTC m=+7398540.400660097
-Received: from mail2.wootemple.com (unknown)
-        by geopod-ismtpd-4-2 (SG)
-        with ESMTP id ryoUNTNKTF65cqoeVBJofw
-        for <linux-fsdevel@vger.kernel.org>;
-        Thu, 16 Dec 2021 14:36:19.496 +0000 (UTC)
-Received: by mail2.wootemple.com (Postfix, from userid 1001)
-        id F125E400A3; Thu, 16 Dec 2021 14:36:17 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail2.wootemple.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.4 required=5.0 tests=ALL_TRUSTED,AWL,SHORT_SHORTNER,
-        URIBL_DBL_ABUSE_REDIR autolearn=no autolearn_force=no version=3.4.2
-Received: from localhost (219.62.228.35.bc.googleusercontent.com [35.228.62.219])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail2.wootemple.com (Postfix) with ESMTPSA id A6F334007A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 14:36:17 +0000 (UTC)
-Subject: Vi har tagit emot din =?UTF-8?B?ZsO2cmZyw6VnYW4=?=
-Date:   Thu, 16 Dec 2021 14:36:19 +0000 (UTC)
-From:   Synbar <info@synbar.se>
-Message-ID: <yCz2ccc2siCyIEBJWfiWodHuBX6P9cEbLU7hrlyrKk@synbar.se>
-X-Mailer: PHPMailer 6.5.0 (https://github.com/PHPMailer/PHPMailer)
+        id S234925AbhLPOqL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Dec 2021 09:46:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47442 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234897AbhLPOqL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Dec 2021 09:46:11 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44248C06173E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 06:46:11 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id q17so19586883plr.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Dec 2021 06:46:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CYu6jkE9mC5EqzWSMs0sHWtkpkosTO/wJoYnnIHVS8s=;
+        b=yKO91YT+/Jc+If7nShBSGfZaIBlXosKfX6YRmEZnVXerxEYn1Ytd072EpSQppbKtk+
+         IGwO3/h2chGq1ABTbQbnDvqVjp2ibQdtF0QkHEja1FDzx9G/u3/5TrBGYoGp0t1lsD5W
+         nkZ5RzA2kwSNQpiH0xfxUDae9cvYZbsbl5mMrgt6mNUnHPqV6L3rt20tELK2GRcnZzxL
+         YfChhlrSCw0mcug8o/lZ+KxcQnc+tFFkGAbwuojl241BtMef/riTpW6/t6RBX75tVbHj
+         mDQGmEpq215upL3smcctREVFv5rLthDJnllAlqUqDQhHvC4Dg3N2aUrgr3n2IspynJgq
+         eXuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CYu6jkE9mC5EqzWSMs0sHWtkpkosTO/wJoYnnIHVS8s=;
+        b=vXwov85l02W/Slp9gYQZXZEQPPo7WSEAf2AnXLfpE13p8Itz0gApdQK4Q1FKNNBm4D
+         hw87AshE81a1PrEWq0q8ImnNi9hdJx3RdBa1QEjMP6B+krfb7vLf228QBJW4YX9WlTeZ
+         NQijjv9VXk9eUymuxw1EJuZ4w6EOKwzt0CO6OHyUklxo/sXU2RsVaHkbb3jslmzWbaW+
+         p4EvmYZ6eDQ0y/1Pqs7iqYrlmNzj8voAbSrMdpnCM+RnMnYK5clJMKh7yRwviHCnEDyv
+         OxZpW5JBFnik0d8zEcABgQyNq5LBmsXhG38vsAaBc0B7B/ODn/oXcylOdmokFPhj9rXg
+         JZWw==
+X-Gm-Message-State: AOAM530N5ki7Tmu5GiGegcw3JOH6Lo4jpDizA/0GQ69+YAR1j5E/6cZL
+        qYssNh9FmwlMQ6FVnrm5dr8ebQ==
+X-Google-Smtp-Source: ABdhPJxqqQakxgtZ4jCpo+kNykWtVaxdYFQj/nfy5ZBD6qwDzxx30KkbRJKudiAzKAxMbXTz8FwrmA==
+X-Received: by 2002:a17:90b:1e0e:: with SMTP id pg14mr6319635pjb.143.1639665970759;
+        Thu, 16 Dec 2021 06:46:10 -0800 (PST)
+Received: from localhost.localdomain ([139.177.225.225])
+        by smtp.gmail.com with ESMTPSA id p2sm5642735pja.55.2021.12.16.06.46.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Dec 2021 06:46:10 -0800 (PST)
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xieyongji@bytedance.com,
+        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Subject: [PATCH] fuse: fix deadlock between O_TRUNC open() and non-O_TRUNC open()
+Date:   Thu, 16 Dec 2021 22:45:58 +0800
+Message-Id: <20211216144558.63931-1-zhangjiachen.jaycee@bytedance.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Reply-To: info@synbar.se
-X-SG-EID: =?us-ascii?Q?EQqlghAJKjbVo17WjTRqOBjn7VJmRUJHLCYCj8OvfGXNloQKRzKsWnNVquJj=2Fh?=
- =?us-ascii?Q?2Xezn5rymnD45XOKzWY=2FCGY1HkGiKT1vT0uwTu0?=
- =?us-ascii?Q?KXizWMFpQkNDbEeGVcVzKSV2uiEei3Z81rYB1P1?=
- =?us-ascii?Q?MR78nzbDs8f2OJA8Bxc9CvdHxpn67+OPiwIAgwB?=
- =?us-ascii?Q?N+SCJjwMXR7mokXBXwiH8gpcuNV44L51yh6rH0+?=
- =?us-ascii?Q?WieXnNPREPmjDyJuoVG+1SS34WedihMoGv4Fvi?=
-To:     linux-fsdevel@vger.kernel.org
-X-Entity-ID: 70VCimqY4QvSyxdlFwL69w==
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hej ❤️ You have unread messages from Whitney (2)! Click Here: http://bit.do/fSTHz?evg ❤️,
+fuse_finish_open() will be called with FUSE_NOWRITE set in case of atomic
+O_TRUNC open(), so commit 76224355db75 ("fuse: truncate pagecache on
+atomic_o_trunc") replaced invalidate_inode_pages2() by truncate_pagecache()
+in such a case to avoid the A-A deadlock. However, we found another A-B-B-A
+deadlock related to the case above, which will cause the xfstests
+generic/464 testcase hung in our virtio-fs test environment.
 
-Det här är ett automatiskt meddelande som bekräftar att vi tagit emot ditt meddelande. Om du har några frågor kan du alltid svara på det här mailet, om inte annat så tar vi kontakt med dig inom kort.
+Consider two processes concurrently open one same file, one with O_TRUNC
+and another without O_TRUNC. The deadlock case is described below, if
+open(O_TRUNC) is already set_nowrite(acquired A), and is trying to lock
+a page (acquiring B), open() could have held the page lock (acquired B),
+and waiting on the page writeback (acquiring A). This would lead to
+deadlocks.
 
-NYHET — Nu kan du beställa frigolitskyltar hos oss.
+This commit tries to fix it by locking inode in fuse_open_common() even
+if O_TRUNC is not set. This introduces a lock C to protect the area with
+A-B-B-A the deadlock rick.
 
-Med vänliga hälsningar 
-Teamet på Synbar
+open(O_TRUNC)
+----------------------------------------------------------------
+fuse_open_common
+  lock_inode		[C acquire]
+  fuse_set_nowrite	[A acquire]
+
+  fuse_finish_open
+    truncate_pagecache
+      lock_page		[B acquire]
+      truncate_inode_page
+      unlock_page	[B release]
+
+  fuse_release_nowrite	[A release]
+  unlock_inode		[C release]
+----------------------------------------------------------------
+
+open()
+----------------------------------------------------------------
+fuse_open_common
+  (lock_inode)		[C acquire, introduced by this commit]
+
+  fuse_finish_open
+    invalidate_inode_pages2
+      lock_page		[B acquire]
+        fuse_launder_page
+          fuse_wait_on_page_writeback [A acquire]
+      unlock_page	[B release]
+
+  (unlock_inode)	[C release, introduced by this commit]
+----------------------------------------------------------------
+
+Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+---
+ fs/fuse/file.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 829094451774..73fec30e0a37 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -229,8 +229,10 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
+ 	bool is_wb_truncate = (file->f_flags & O_TRUNC) &&
+ 			  fc->atomic_o_trunc &&
+ 			  fc->writeback_cache;
+-	bool dax_truncate = (file->f_flags & O_TRUNC) &&
++	bool is_dax_truncate = (file->f_flags & O_TRUNC) &&
+ 			  fc->atomic_o_trunc && FUSE_IS_DAX(inode);
++	bool may_truncate = fc->atomic_o_trunc &&
++			  (fc->writeback_cache || FUSE_IS_DAX(inode));
+ 
+ 	if (fuse_is_bad(inode))
+ 		return -EIO;
+@@ -239,12 +241,12 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
+ 	if (err)
+ 		return err;
+ 
+-	if (is_wb_truncate || dax_truncate) {
++	if (may_truncate)
+ 		inode_lock(inode);
++	if (is_wb_truncate || is_dax_truncate)
+ 		fuse_set_nowrite(inode);
+-	}
+ 
+-	if (dax_truncate) {
++	if (is_dax_truncate) {
+ 		filemap_invalidate_lock(inode->i_mapping);
+ 		err = fuse_dax_break_layouts(inode, 0, 0);
+ 		if (err)
+@@ -256,13 +258,13 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
+ 		fuse_finish_open(inode, file);
+ 
+ out:
+-	if (dax_truncate)
++	if (is_dax_truncate)
+ 		filemap_invalidate_unlock(inode->i_mapping);
+ 
+-	if (is_wb_truncate | dax_truncate) {
++	if (is_wb_truncate | is_dax_truncate)
+ 		fuse_release_nowrite(inode);
++	if (may_truncate)
+ 		inode_unlock(inode);
+-	}
+ 
+ 	return err;
+ }
+-- 
+2.20.1
 
