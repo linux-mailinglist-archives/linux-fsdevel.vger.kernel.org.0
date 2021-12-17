@@ -2,46 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 680514790EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Dec 2021 17:05:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91E7A4790F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Dec 2021 17:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238827AbhLQQF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Dec 2021 11:05:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38072 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238815AbhLQQFx (ORCPT
+        id S238847AbhLQQHO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Dec 2021 11:07:14 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:49926 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235239AbhLQQHO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Dec 2021 11:05:53 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA472C061574;
-        Fri, 17 Dec 2021 08:05:52 -0800 (PST)
+        Fri, 17 Dec 2021 11:07:14 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A532622D4;
-        Fri, 17 Dec 2021 16:05:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59742C36AE1;
-        Fri, 17 Dec 2021 16:05:51 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id ED4C9CE256C
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Dec 2021 16:07:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABF8C36AE7;
+        Fri, 17 Dec 2021 16:07:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639757151;
-        bh=PJFnrVXutaDsS0GGOVfe1ozbfu7JIBdhtdTztRPL2xw=;
+        s=k20201202; t=1639757231;
+        bh=Nw2qYC4zWyZleo0QiV+P/Oe8akNTTifA49QiiPctp88=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=aarYIwFlmPgdkScXMMiXMbOCePS6V/hCQcmLRhQ35h9W/6MT9wUcOaxsvVFZy/7uo
-         vBpv4R/y35tlLneX3oCx6Ea3kGXfogdLL7GGi+j0Pq/jEj3l4mwRx9KRsO+6MzU1rU
-         FjvdhcHzU9nRqrFLEXCYZGcUYBOA9F/ACcP5ezjxY+kHuW0Ty8fFPFmr53b2gF5GiO
-         2azPjYKm8fpgPv6PiFDsmsx3I8cExj2QD5FmP0GRZ0GFMIQotI6ltX0rLIJotr49zv
-         FapB3URXRhFtYs5MoVJH7qeON0h0JiV2wkkvt2h+CIssS24iKA/mlaJItF+Brcn9lL
-         QfYCC9UkftnPQ==
-Message-ID: <83e3e52d8233da57f46026b0b84a262da2bd06ee.camel@kernel.org>
-Subject: Re: [PATCH v2 1/2] ceph: Uninline the data on a file opened for
- writing
+        b=O6y9ZN1iYwyzwNx2gp66GljozzVdXJKY3f6z+DEhul4upH5pXyXmUTkqFzUAJvmkt
+         pfwy4DZm9ZTIt6gI1xihpwSxixTTSQuLh4tXUQTayTkI+xBZfnEaze6MYYp1VeS176
+         +vEq9tvItYkfpdQ/fgJRUwa6zJX6nmGEOZ0XnR52rPcIEM2UZvc2isUFHlkpJ43jRn
+         T1M1CV3/l3QjJMAHvxozZH+zyWxPB3JVs3bRTp1R1j6ND9wNeLbVaEo9+Jk3BIpY3N
+         FcqXdov9nCf3UD71yygaAGOK0Unki48G1MbnMiDrd9ERqElIlcWVpIuuH9IVCb/GCq
+         tcUrZjjpko+Lg==
+Message-ID: <7017d22f7e09b1c8f6b181cdfcc8fd4c9f8566ce.camel@kernel.org>
+Subject: Re: [PATCH v2 2/2] ceph: Remove some other inline-setting bits
 From:   Jeff Layton <jlayton@kernel.org>
 To:     David Howells <dhowells@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 17 Dec 2021 11:05:50 -0500
-In-Reply-To: <163975498535.2021751.13839139728966985077.stgit@warthog.procyon.org.uk>
+Cc:     idryomov@gmail.com, linux-fsdevel@vger.kernel.org
+Date:   Fri, 17 Dec 2021 11:07:09 -0500
+In-Reply-To: <163975499268.2021751.9526015087273381693.stgit@warthog.procyon.org.uk>
 References: <163975498535.2021751.13839139728966985077.stgit@warthog.procyon.org.uk>
+         <163975499268.2021751.9526015087273381693.stgit@warthog.procyon.org.uk>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
@@ -51,277 +47,72 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, 2021-12-17 at 15:29 +0000, David Howells wrote:
-> If a ceph file is made up of inline data, uninline that in the ceph_open()
-> rather than in ceph_page_mkwrite(), ceph_write_iter(), ceph_fallocate() or
-> ceph_write_begin().
-> 
-> This makes it easier to convert to using the netfs library for VM write
-> hooks.
-> 
-> Changes
-> =======
-> ver #2:
->  - Removed the uninline-handling code from ceph_write_begin() also.
+> Remove some other bits where a ceph file can't be inline because we
+> uninlined it when we opened it for writing.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: ceph-devel@vger.kernel.org
 > ---
 > 
->  fs/ceph/addr.c  |   97 +++++++++++++------------------------------------------
->  fs/ceph/file.c  |   28 +++++++++-------
->  fs/ceph/super.h |    2 +
->  3 files changed, 40 insertions(+), 87 deletions(-)
+>  fs/ceph/addr.c |    4 +---
+>  fs/ceph/file.c |    4 ----
+>  2 files changed, 1 insertion(+), 7 deletions(-)
 > 
 > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index e836f8f1d4f8..6e1b15cc87cf 100644
+> index 6e1b15cc87cf..553e2b5653f3 100644
 > --- a/fs/ceph/addr.c
 > +++ b/fs/ceph/addr.c
-> @@ -1278,45 +1278,11 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
->  			    struct page **pagep, void **fsdata)
->  {
->  	struct inode *inode = file_inode(file);
-> -	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct folio *folio = NULL;
-> -	pgoff_t index = pos >> PAGE_SHIFT;
->  	int r;
+> @@ -1534,11 +1534,9 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>  		ceph_put_snap_context(snapc);
+>  	} while (err == 0);
 >  
-> -	/*
-> -	 * Uninlining should have already been done and everything updated, EXCEPT
-> -	 * for inline_version sent to the MDS.
-> -	 */
-> -	if (ci->i_inline_version != CEPH_INLINE_NONE) {
-> -		unsigned int fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
-> -		if (aop_flags & AOP_FLAG_NOFS)
-> -			fgp_flags |= FGP_NOFS;
-> -		folio = __filemap_get_folio(mapping, index, fgp_flags,
-> -					    mapping_gfp_mask(mapping));
-> -		if (!folio)
-> -			return -ENOMEM;
-> -
-> -		/*
-> -		 * The inline_version on a new inode is set to 1. If that's the
-> -		 * case, then the folio is brand new and isn't yet Uptodate.
-> -		 */
-> -		r = 0;
-> -		if (index == 0 && ci->i_inline_version != 1) {
-> -			if (!folio_test_uptodate(folio)) {
-> -				WARN_ONCE(1, "ceph: write_begin called on still-inlined inode (inline_version %llu)!\n",
-> -					  ci->i_inline_version);
-> -				r = -EINVAL;
-> -			}
-> -			goto out;
-> -		}
-> -		zero_user_segment(&folio->page, 0, folio_size(folio));
-> -		folio_mark_uptodate(folio);
-> -		goto out;
-> -	}
-> -
->  	r = netfs_write_begin(file, inode->i_mapping, pos, len, 0, &folio, NULL,
->  			      &ceph_netfs_read_ops, NULL);
-> -out:
->  	if (r == 0)
->  		folio_wait_fscache(folio);
->  	if (r < 0) {
-> @@ -1512,19 +1478,6 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->  	sb_start_pagefault(inode->i_sb);
->  	ceph_block_sigs(&oldset);
->  
-> -	if (ci->i_inline_version != CEPH_INLINE_NONE) {
-> -		struct page *locked_page = NULL;
-> -		if (off == 0) {
-> -			lock_page(page);
-> -			locked_page = page;
-> -		}
-> -		err = ceph_uninline_data(vma->vm_file, locked_page);
-> -		if (locked_page)
-> -			unlock_page(locked_page);
-> -		if (err < 0)
-> -			goto out_free;
-> -	}
-> -
->  	if (off + thp_size(page) <= size)
->  		len = thp_size(page);
->  	else
-> @@ -1649,13 +1602,14 @@ void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
->  	}
->  }
->  
-> -int ceph_uninline_data(struct file *filp, struct page *locked_page)
-> +int ceph_uninline_data(struct file *file)
->  {
-> -	struct inode *inode = file_inode(filp);
-> +	struct inode *inode = file_inode(file);
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
->  	struct ceph_osd_request *req;
-> -	struct page *page = NULL;
-> +	struct folio *folio = NULL;
-> +	struct page *pages[1];
->  	u64 len, inline_version;
->  	int err = 0;
->  	bool from_pagecache = false;
-> @@ -1671,34 +1625,30 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
->  	    inline_version == CEPH_INLINE_NONE)
->  		goto out;
->  
-> -	if (locked_page) {
-> -		page = locked_page;
-> -		WARN_ON(!PageUptodate(page));
-> -	} else if (ceph_caps_issued(ci) &
-> -		   (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
-> -		page = find_get_page(inode->i_mapping, 0);
-> -		if (page) {
-> -			if (PageUptodate(page)) {
-> +	if (ceph_caps_issued(ci) & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
-> +		folio = filemap_get_folio(inode->i_mapping, 0);
-> +		if (folio) {
-> +			if (folio_test_uptodate(folio)) {
->  				from_pagecache = true;
-> -				lock_page(page);
-> +				folio_lock(folio);
->  			} else {
-> -				put_page(page);
-> -				page = NULL;
-> +				folio_put(folio);
-> +				folio = NULL;
->  			}
->  		}
->  	}
->  
-> -	if (page) {
-> +	if (folio) {
->  		len = i_size_read(inode);
-> -		if (len > PAGE_SIZE)
-> -			len = PAGE_SIZE;
-> +		if (len >  folio_size(folio))
-> +			len = folio_size(folio);
->  	} else {
-> -		page = __page_cache_alloc(GFP_NOFS);
-> -		if (!page) {
-> +		folio = filemap_alloc_folio(GFP_NOFS, 0);
-> +		if (!folio) {
->  			err = -ENOMEM;
->  			goto out;
->  		}
-> -		err = __ceph_do_getattr(inode, page,
-> +		err = __ceph_do_getattr(inode, folio_page(folio, 0),
->  					CEPH_STAT_CAP_INLINE_DATA, true);
->  		if (err < 0) {
->  			/* no inline data */
-> @@ -1736,7 +1686,8 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
->  		goto out;
->  	}
->  
-> -	osd_req_op_extent_osd_data_pages(req, 1, &page, len, 0, false, false);
-> +	pages[0] = folio_page(folio, 0);
-> +	osd_req_op_extent_osd_data_pages(req, 1, pages, len, 0, false, false);
->  
->  	{
->  		__le64 xattr_buf = cpu_to_le64(inline_version);
-> @@ -1773,12 +1724,10 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
->  	if (err == -ECANCELED)
->  		err = 0;
->  out:
-> -	if (page && page != locked_page) {
-> -		if (from_pagecache) {
-> -			unlock_page(page);
-> -			put_page(page);
-> -		} else
-> -			__free_pages(page, 0);
-> +	if (folio) {
-> +		if (from_pagecache)
-> +			folio_unlock(folio);
-> +		folio_put(folio);
->  	}
->  
->  	dout("uninline_data %p %llx.%llx inline_version %llu = %d\n",
+> -	if (ret == VM_FAULT_LOCKED ||
+> -	    ci->i_inline_version != CEPH_INLINE_NONE) {
+> +	if (ret == VM_FAULT_LOCKED) {
+>  		int dirty;
+>  		spin_lock(&ci->i_ceph_lock);
+> -		ci->i_inline_version = CEPH_INLINE_NONE;
+>  		dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+>  					       &prealloc_cf);
+>  		spin_unlock(&ci->i_ceph_lock);
 > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index bf1017682d09..d16ba8720783 100644
+> index d16ba8720783..4a0aeed7f660 100644
 > --- a/fs/ceph/file.c
 > +++ b/fs/ceph/file.c
-> @@ -205,6 +205,7 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
->  {
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_file_info *fi;
-> +	int ret;
+> @@ -1031,7 +1031,6 @@ static void ceph_aio_complete(struct inode *inode,
+>  		}
 >  
->  	dout("%s %p %p 0%o (%s)\n", __func__, inode, file,
->  			inode->i_mode, isdir ? "dir" : "regular");
-> @@ -235,7 +236,22 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
->  	INIT_LIST_HEAD(&fi->rw_contexts);
->  	fi->filp_gen = READ_ONCE(ceph_inode_to_client(inode)->filp_gen);
+>  		spin_lock(&ci->i_ceph_lock);
+> -		ci->i_inline_version = CEPH_INLINE_NONE;
+>  		dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+>  					       &aio_req->prealloc_cf);
+>  		spin_unlock(&ci->i_ceph_lock);
+> @@ -1838,7 +1837,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		int dirty;
 >  
-> +	if ((file->f_mode & FMODE_WRITE) &&
-> +	    ci->i_inline_version != CEPH_INLINE_NONE) {
-> +		ret = ceph_uninline_data(file);
-> +		if (ret < 0)
-> +			goto error;
-> +	}
-> +
->  	return 0;
-> +
-> +error:
-> +	ceph_fscache_unuse_cookie(inode, file->f_mode & FMODE_WRITE);
-> +	ceph_put_fmode(ci, fi->fmode, 1);
-> +	kmem_cache_free(ceph_file_cachep, fi);
-> +	/* wake up anyone waiting for caps on this inode */
-> +	wake_up_all(&ci->i_cap_wq);
-> +	return ret;
->  }
+>  		spin_lock(&ci->i_ceph_lock);
+> -		ci->i_inline_version = CEPH_INLINE_NONE;
+>  		dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+>  					       &prealloc_cf);
+>  		spin_unlock(&ci->i_ceph_lock);
+> @@ -2116,7 +2114,6 @@ static long ceph_fallocate(struct file *file, int mode,
 >  
->  /*
-> @@ -1751,12 +1767,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	if (err)
->  		goto out;
->  
-> -	if (ci->i_inline_version != CEPH_INLINE_NONE) {
-> -		err = ceph_uninline_data(file, NULL);
-> -		if (err < 0)
-> -			goto out;
-> -	}
-> -
->  	dout("aio_write %p %llx.%llx %llu~%zd getting caps. i_size %llu\n",
->  	     inode, ceph_vinop(inode), pos, count, i_size_read(inode));
->  	if (fi->fmode & CEPH_FILE_MODE_LAZY)
-> @@ -2082,12 +2092,6 @@ static long ceph_fallocate(struct file *file, int mode,
->  		goto unlock;
+>  	if (!ret) {
+>  		spin_lock(&ci->i_ceph_lock);
+> -		ci->i_inline_version = CEPH_INLINE_NONE;
+>  		dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+>  					       &prealloc_cf);
+>  		spin_unlock(&ci->i_ceph_lock);
+> @@ -2509,7 +2506,6 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
 >  	}
->  
-> -	if (ci->i_inline_version != CEPH_INLINE_NONE) {
-> -		ret = ceph_uninline_data(file, NULL);
-> -		if (ret < 0)
-> -			goto unlock;
-> -	}
-> -
->  	size = i_size_read(inode);
->  
->  	/* Are we punching a hole beyond EOF? */
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index d0142cc5c41b..f1cec05e4eb8 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1207,7 +1207,7 @@ extern void __ceph_touch_fmode(struct ceph_inode_info *ci,
->  /* addr.c */
->  extern const struct address_space_operations ceph_aops;
->  extern int ceph_mmap(struct file *file, struct vm_area_struct *vma);
-> -extern int ceph_uninline_data(struct file *filp, struct page *locked_page);
-> +extern int ceph_uninline_data(struct file *file);
->  extern int ceph_pool_perm_check(struct inode *inode, int need);
->  extern void ceph_pool_perm_destroy(struct ceph_mds_client* mdsc);
->  int ceph_purge_inode_cap(struct inode *inode, struct ceph_cap *cap, bool *invalidate);
+>  	/* Mark Fw dirty */
+>  	spin_lock(&dst_ci->i_ceph_lock);
+> -	dst_ci->i_inline_version = CEPH_INLINE_NONE;
+>  	dirty = __ceph_mark_dirty_caps(dst_ci, CEPH_CAP_FILE_WR, &prealloc_cf);
+>  	spin_unlock(&dst_ci->i_ceph_lock);
+>  	if (dirty)
 > 
 > 
 
-It's a substantial reduction in code and gets the uninlining out of the
-write codepaths. I like it.
-
-Looks like this relies on the changes in your fscache-rewrite branch, so
-we may need to wait until after the upcoming merge window to take this
-in, or just plan to fold your fscache-rewrite branch into the ceph
-testing branch for now.
-
-I'll at least do some local testing in the interim, but it's not trivial
-to set up inlining these days, so we may not be able to test what this
-affects easily.
+I'll probably just fold this one into the first patch if that's ok.
 -- 
 Jeff Layton <jlayton@kernel.org>
