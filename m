@@ -2,248 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 889C2478D25
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Dec 2021 15:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2946B478EF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Dec 2021 16:04:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236989AbhLQOPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Dec 2021 09:15:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:58932 "EHLO
+        id S237825AbhLQPEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Dec 2021 10:04:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:32757 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236979AbhLQOPI (ORCPT
+        by vger.kernel.org with ESMTP id S237809AbhLQPEo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Dec 2021 09:15:08 -0500
+        Fri, 17 Dec 2021 10:04:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639750508;
+        s=mimecast20190719; t=1639753483;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qA/Y6Vf3DLZ5id2YnnP/uhQgtuKkkSPiGRZHafVSZWg=;
-        b=Ef1Bid/IF+kMQXFtjzdgS3MOOBPhe0H++c+eEjRuClKj9ZJKDgn1HUfaAJ30RMltKZ8lLU
-        vpX1mf+/kQaHjNUzkks68P8pvxhhNNgwFXQ8qWfCR/CiKe+kZoSaEnb9FN+h5FrS8SSsFH
-        LYwX/th6Ni5EcqHl+6DFahLdixsUdhk=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=k9xcqiNnhTjzn2fwr0M1ZTkGaqs6PIqW/lJHwIqnnWc=;
+        b=TaCv2MUUQCx4uAz5hrtSj3+nn5JjI5ukwV1uJqHD3VRy/UwpIrrjz6PacGraPFePNavc8N
+        IOscS/epD+ibatpbvapfuM3wfh4exAWJZZPMMX9dRXs8sJm8HMTcS32tY8PxW5ERJVo+qe
+        rBCdz89159/tJ5WOECWbQFMrvAMxNxQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-639-scUvGU5hNiCwMhxhPU0X-w-1; Fri, 17 Dec 2021 09:15:04 -0500
-X-MC-Unique: scUvGU5hNiCwMhxhPU0X-w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-63-DvWHLaHuNkivacyvYWc37Q-1; Fri, 17 Dec 2021 10:04:40 -0500
+X-MC-Unique: DvWHLaHuNkivacyvYWc37Q-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A7BAF81CCBE;
-        Fri, 17 Dec 2021 14:15:02 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.32.226])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D5A888F3;
-        Fri, 17 Dec 2021 14:15:01 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 2AAA5220BCF; Fri, 17 Dec 2021 09:15:01 -0500 (EST)
-Date:   Fri, 17 Dec 2021 09:15:01 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        Stef Bon <stefbon@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>,
-        Nathan Youngman <git@nathany.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-Message-ID: <YbybZQHaSxV5MXkI@redhat.com>
-References: <CAOQ4uxjfCs=+Of69U6moOJ9T6_zDb1wcrLXWu4DROVme1cNnfQ@mail.gmail.com>
- <YbobZMGEl6sl+gcX@redhat.com>
- <CAOQ4uxj9XZNhHB3y9LuGcUJYp-i4f-LXQa2tzX8AkZpRERH+8w@mail.gmail.com>
- <Ybo/5h9umGlinaM4@redhat.com>
- <CAOQ4uxheVq-YHkT9eOu3vUNt1RU4Wa6MkyzXXLboHE_Pj6-6tw@mail.gmail.com>
- <CAOQ4uxjzW7mt0pqA+K_sEJokYcv_D3e7axAOWLXxQ84bZDnfcw@mail.gmail.com>
- <YbtoQGKflkChU8lZ@redhat.com>
- <CAOQ4uxhucsMYO1YdHdLDPBJEaoOOyXb57wFJgijQznis2feE1A@mail.gmail.com>
- <Ybu8gBglHi+xikww@redhat.com>
- <CAOQ4uxj6FKZr_QWRN_Ts14+dcT1cxR6PmtZCJEyp2chCGKVh7w@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE04C94EF0;
+        Fri, 17 Dec 2021 15:04:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BBD3B78DFB;
+        Fri, 17 Dec 2021 15:04:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] ceph: Uninline the data on a file opened for writing
+From:   David Howells <dhowells@redhat.com>
+To:     jlayton@kernel.org
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org
+Date:   Fri, 17 Dec 2021 15:04:29 +0000
+Message-ID: <163975346937.2001835.1323687821705230415.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxj6FKZr_QWRN_Ts14+dcT1cxR6PmtZCJEyp2chCGKVh7w@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 06:21:28AM +0200, Amir Goldstein wrote:
-> > Ok, lets spend some time on figuring out how the fsnotify_out struct
-> > should look like to meet the needs of fanotify as well.
-> >
-> > >
-> > > I thought you passed the name as buffer in iov array.
-> > > Or maybe that's not how it works?
-> > >
-> > > My suggestion:
-> > > 1. Reserve a zero padded 64bit member for future child nodeid
-> > >     in struct fuse_notify_fsnotify_out
-> >
-> > Ok, I think this doable. So right now it can send only one nodeid. You
-> > basically want to have capability to send two 64bit nodeids in same
-> > event, right. This is useful where you might want to send nodeid
-> > of dir and nodeid of child object, IIUC.
-> 
-> Correct, but I forgot to mention (I mentioned it earlier in review) that the
-> protocol should send nodeid+generation
-> this is not related to file handles.
-> It is needed to avoid reporting an event on the wrong object
-> when FUSE reuses nodeid.
+If a ceph file is made up of inline data, uninline that in the ceph_open()
+rather than in ceph_page_mkwrite(), ceph_write_iter() or ceph_fallocate().
 
-Makes sense. Will add generation id as well for each nodeid.
+This makes it easier to convert to using the netfs library for VM write
+hooks.
 
-> 
-> >
-> > Maybe we should add a 64bit field for some sort of flags also which
-> > might give additional informatin about the event.
-> >
-> > It might look like.
-> >
-> > struct fuse_notify_fsnotify_out {
-> >         uint64_t inode;
-> >         uint64_t mask;
-> 
-> So you may want to cram 32bit gen above and make mask 32bit
-> depending on how much you really need to save space in the event queue.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: ceph-devel@vger.kernel.org
+---
 
-May be. Not sure if mask needs to be 64bit or not. 
+ fs/ceph/addr.c  |   63 ++++++++++++++++++++-----------------------------------
+ fs/ceph/file.c  |   28 ++++++++++++++----------
+ fs/ceph/super.h |    2 +-
+ 3 files changed, 40 insertions(+), 53 deletions(-)
 
-Alternatively, use 32bit generation and reserve 32bit for future use.
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index e836f8f1d4f8..46f1cc6c91e4 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1512,19 +1512,6 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ 	sb_start_pagefault(inode->i_sb);
+ 	ceph_block_sigs(&oldset);
+ 
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		struct page *locked_page = NULL;
+-		if (off == 0) {
+-			lock_page(page);
+-			locked_page = page;
+-		}
+-		err = ceph_uninline_data(vma->vm_file, locked_page);
+-		if (locked_page)
+-			unlock_page(locked_page);
+-		if (err < 0)
+-			goto out_free;
+-	}
+-
+ 	if (off + thp_size(page) <= size)
+ 		len = thp_size(page);
+ 	else
+@@ -1649,13 +1636,14 @@ void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
+ 	}
+ }
+ 
+-int ceph_uninline_data(struct file *filp, struct page *locked_page)
++int ceph_uninline_data(struct file *file)
+ {
+-	struct inode *inode = file_inode(filp);
++	struct inode *inode = file_inode(file);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	struct ceph_osd_request *req;
+-	struct page *page = NULL;
++	struct folio *folio = NULL;
++	struct page *pages[1];
+ 	u64 len, inline_version;
+ 	int err = 0;
+ 	bool from_pagecache = false;
+@@ -1671,34 +1659,30 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 	    inline_version == CEPH_INLINE_NONE)
+ 		goto out;
+ 
+-	if (locked_page) {
+-		page = locked_page;
+-		WARN_ON(!PageUptodate(page));
+-	} else if (ceph_caps_issued(ci) &
+-		   (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
+-		page = find_get_page(inode->i_mapping, 0);
+-		if (page) {
+-			if (PageUptodate(page)) {
++	if (ceph_caps_issued(ci) & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
++		folio = filemap_get_folio(inode->i_mapping, 0);
++		if (folio) {
++			if (folio_test_uptodate(folio)) {
+ 				from_pagecache = true;
+-				lock_page(page);
++				folio_lock(folio);
+ 			} else {
+-				put_page(page);
+-				page = NULL;
++				folio_put(folio);
++				folio = NULL;
+ 			}
+ 		}
+ 	}
+ 
+-	if (page) {
++	if (folio) {
+ 		len = i_size_read(inode);
+-		if (len > PAGE_SIZE)
+-			len = PAGE_SIZE;
++		if (len >  folio_size(folio))
++			len = folio_size(folio);
+ 	} else {
+-		page = __page_cache_alloc(GFP_NOFS);
+-		if (!page) {
++		folio = filemap_alloc_folio(GFP_NOFS, 0);
++		if (!folio) {
+ 			err = -ENOMEM;
+ 			goto out;
+ 		}
+-		err = __ceph_do_getattr(inode, page,
++		err = __ceph_do_getattr(inode, folio_page(folio, 0),
+ 					CEPH_STAT_CAP_INLINE_DATA, true);
+ 		if (err < 0) {
+ 			/* no inline data */
+@@ -1736,7 +1720,8 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 		goto out;
+ 	}
+ 
+-	osd_req_op_extent_osd_data_pages(req, 1, &page, len, 0, false, false);
++	pages[0] = folio_page(folio, 0);
++	osd_req_op_extent_osd_data_pages(req, 1, pages, len, 0, false, false);
+ 
+ 	{
+ 		__le64 xattr_buf = cpu_to_le64(inline_version);
+@@ -1773,12 +1758,10 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 	if (err == -ECANCELED)
+ 		err = 0;
+ out:
+-	if (page && page != locked_page) {
+-		if (from_pagecache) {
+-			unlock_page(page);
+-			put_page(page);
+-		} else
+-			__free_pages(page, 0);
++	if (folio) {
++		if (from_pagecache)
++			folio_unlock(folio);
++		folio_put(folio);
+ 	}
+ 
+ 	dout("uninline_data %p %llx.%llx inline_version %llu = %d\n",
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index bf1017682d09..d16ba8720783 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -205,6 +205,7 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_file_info *fi;
++	int ret;
+ 
+ 	dout("%s %p %p 0%o (%s)\n", __func__, inode, file,
+ 			inode->i_mode, isdir ? "dir" : "regular");
+@@ -235,7 +236,22 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ 	INIT_LIST_HEAD(&fi->rw_contexts);
+ 	fi->filp_gen = READ_ONCE(ceph_inode_to_client(inode)->filp_gen);
+ 
++	if ((file->f_mode & FMODE_WRITE) &&
++	    ci->i_inline_version != CEPH_INLINE_NONE) {
++		ret = ceph_uninline_data(file);
++		if (ret < 0)
++			goto error;
++	}
++
+ 	return 0;
++
++error:
++	ceph_fscache_unuse_cookie(inode, file->f_mode & FMODE_WRITE);
++	ceph_put_fmode(ci, fi->fmode, 1);
++	kmem_cache_free(ceph_file_cachep, fi);
++	/* wake up anyone waiting for caps on this inode */
++	wake_up_all(&ci->i_cap_wq);
++	return ret;
+ }
+ 
+ /*
+@@ -1751,12 +1767,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (err)
+ 		goto out;
+ 
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		err = ceph_uninline_data(file, NULL);
+-		if (err < 0)
+-			goto out;
+-	}
+-
+ 	dout("aio_write %p %llx.%llx %llu~%zd getting caps. i_size %llu\n",
+ 	     inode, ceph_vinop(inode), pos, count, i_size_read(inode));
+ 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+@@ -2082,12 +2092,6 @@ static long ceph_fallocate(struct file *file, int mode,
+ 		goto unlock;
+ 	}
+ 
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		ret = ceph_uninline_data(file, NULL);
+-		if (ret < 0)
+-			goto unlock;
+-	}
+-
+ 	size = i_size_read(inode);
+ 
+ 	/* Are we punching a hole beyond EOF? */
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index d0142cc5c41b..f1cec05e4eb8 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1207,7 +1207,7 @@ extern void __ceph_touch_fmode(struct ceph_inode_info *ci,
+ /* addr.c */
+ extern const struct address_space_operations ceph_aops;
+ extern int ceph_mmap(struct file *file, struct vm_area_struct *vma);
+-extern int ceph_uninline_data(struct file *filp, struct page *locked_page);
++extern int ceph_uninline_data(struct file *file);
+ extern int ceph_pool_perm_check(struct inode *inode, int need);
+ extern void ceph_pool_perm_destroy(struct ceph_mds_client* mdsc);
+ int ceph_purge_inode_cap(struct inode *inode, struct ceph_cap *cap, bool *invalidate);
 
-uint32_t generation;
-uint32_t reserved;
-uint64_t mask
-
-I think our biggest memory usage will come from "name" and rest seems
-very small in comparison. So I am not too worried about saving little
-bit of space here.
-
-> 
-> >         uint32_t namelen;
-> >         uint32_t cookie;
-> >         /* Can carry additional info about the event */
-> >         uint64_t flags;
-> >         /* Reserved for future use. Possibly another inode node id */
-> >         uint64_t reserved;
-> 
-> Same here, we will need ino+gen for child
-
-Right. May be I can reduce the flag to 32 bit instead and use rest 32bit
-for generation.
-
-uint32_t flags
-uint32_t reserved (for genearation possibly)
-uint64_t reserved (for another inode id).
-
-So this might look as follows.
-
-struct fuse_notify_fsnotify_out {
-        uint64_t inode;
-        uint32_t generation;
-        uint32_t reserved;
-        uint64_t mask;
-        uint32_t namelen;
-        uint32_t cookie;
-        /* Can carry additional info about the event */
-        uint32_t flags;
-        /* Reserved for future use. Another inode node id and generation */
-        uint32_t reserved;
-        uint64_t reserved;
-};
-
-> 
-> > };
-> >
-> > > 2. For FS_RENAME, will we be able to pass 4 buffers in iov?
-> > >     src_fuse_notify_fsnotify_out, src_name,
-> > >     dst_fuse_notify_fsnotify_out, dst_name
-> >
-> > So it is sort of two fsnotify events travelling in same event. We will
-> > have to have some sort of information in the src_fuse_notify_fsnotify_out
-> > which signals that another fsnotify_out is following. May be that's
-> > where fsnotify_flags->field can be used. Set a bit to signal another
-> > fsnotify_out is part of same event and this will also mean first one
-> > is src and second one is dst.
-> >
-> > Challenge I see is "src_name" and "dst_name", especially in the context
-> > of virtio queues.
-> >
-> > So we have a notification queue and for each notification, driver
-> > allocates a fixed amount of memory for each element and queues these
-> > elements in virtqueue. Server side pops these elements, places
-> > notification info in this vq element and sends back.
-> >
-> > So basically size of notification buffer needs to be known in advance,
-> > because these are allocated by driver (and not device/server). And
-> > that's the reason virtio spec has added a new filed "notify_buf_size"
-> > in device configuration space. Using this field device lets the driver
-> > know how much memory to allocate for each notification element.
-> >
-> > IOW, we can put variable sized elements in notifiation but max size
-> > of that variable length needs to be fixed in advance and needs to
-> > be told to driver at device initialization time.
-> >
-> > So what can be the max length of "src_name" and "dst_name"? Is it fair
-> > to use NAME_MAX to determine max length of name. So say "255" bytes
-> > (not including null) for each name. That means notify_buf_size will
-> > be.
-> >
-> > notify_buf_size = 2 * 255 + 2 * sizeof(struct fuse_notify_fsnotify_out);
-> >
-> 
-> Can you push two subsequent elements to the events queue atomically?
-> If you can, then it is not a problem to queue the FS_MOVED_FROM
-> event (with one name) followed by FS_MOVED_TO event with
-> a self generated cookie in response to FAN_RENAME event on virtiofsd
-> server and rejoin them in virtiofs client.
-
-Hmm..., so basically break down FAN_RENAME event into two events joined
-by cookie and send them separately. I guess sounds reasonable because
-it helps reduce the max size of event.
-
-What do you mean by "atomically"? Do you mean strict ordering and these
-two events are right after each other. But if they are joined by cookie,
-we don't have to enforce it. Driver should be able to maintain an internal
-list and queue the event and wait for pair event to arrive. This also
-means that these broken down events will have to be joined back, possibly
-by some fsnotify helper.
-
-We will probably need a flag to differentiate whether its the case of
-broken down FAN_RENAME or not. Because in this case driver will wait
-for second event to arrive. But if it is regular FS_MOVED_FROM event,
-then don't wait and deliver it to user space.
-
-Driver will have to be careful to not block actual event queue event
-while waiting for pair event to arrive. It should create a copy and
-add virtqueue element back to notification queue. Otherwise deadlock
-is possible where all elements in virtqueue are being used to wait for
-pair event and no free elements are available to actually send paired
-event.
-
-> 
-> You see, I don't mind using the rename cookie API as long as rejoining
-> the disjoint events is possible for reporting the joint event to fanotify user.
-
-Right this will allow server to join independent FAN_MOVED_FROM and
-FAN_MOVED_TO if need be.
-
-> 
-> In case virtiofsd backend is implemented with inotify, it will receive and
-> report only disjoint events and in that case, FAN_RENAME cannot be
-> requested by fanotify user which is fine, as long as it will be possible
-> with another implementation of virtiofsd server down the road.
-
-Fair enough. In simplest form, virtiofsd will support FAN_RENAME only if
-host kernel fanotify supports FAN_RENAME. 
-
-In more advanced form, virtiofsd (or other server) can wait for two
-events and then join and report as FAN_RENAME with user space generated
-cookie.
-
-I think I like this idea of reporting two events joined by cookie to
-reduce the size of event. Will give it a try.
-
-Thanks
-Vivek
 
