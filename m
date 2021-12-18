@@ -2,210 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D9A4799BA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Dec 2021 09:28:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 985CE479C68
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Dec 2021 20:50:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229911AbhLRI2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Dec 2021 03:28:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58684 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230152AbhLRI2r (ORCPT
+        id S234035AbhLRTuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Dec 2021 14:50:21 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:48826 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234031AbhLRTuV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Dec 2021 03:28:47 -0500
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31A41C061574
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Dec 2021 00:28:47 -0800 (PST)
-Received: by mail-il1-x12a.google.com with SMTP id x15so3463671ilc.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Dec 2021 00:28:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o5r47P0lDnh8p/eo9TD8r7nz1nR9ZM2uNQzV6N58XN0=;
-        b=O8KPMPeAGEKPrZk6Ba4+0lEiXFS8uAI3uMd7KE4ssvtKZ2wMtmG04OINsK68epbyih
-         bTSzzc1ijBc0FnL+sxWy7UHAbkGY2V21IS3cET1wWyhMUUASZrqDdk2YNXDckwe1h2Vx
-         r7NYFC5O60hOrP2er8JNlZ/6LoZDAYvqmK/dIBtaaneDy3t3CPUadctbhck8CpJbdmX1
-         Zlt1qsyM3I0b0mHl64fP/yPedqB96tuvedCAz36aOOsMJ0gRukjOUXVIECGFxHOia+ZH
-         f96mm6qtu+SvumLnQ0wCwDMCXu92uKQNmofQUANjyl+exNmGSs6S+Y6gCS655QXxnoPB
-         jc1w==
+        Sat, 18 Dec 2021 14:50:21 -0500
+Received: by mail-io1-f71.google.com with SMTP id g23-20020a6be617000000b005e245747fb4so4001021ioh.15
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Dec 2021 11:50:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o5r47P0lDnh8p/eo9TD8r7nz1nR9ZM2uNQzV6N58XN0=;
-        b=5g5jtMIXLuEfyO+dbHANjt4BN81yugUbuqaCVIxn6nwgNdBG5YGWWgBtgkKzkIURjU
-         o9zyYKcBpHnqqeisA43ihGugw/xefweflxEA5xXo3QAUbu41U0u1iNNdRmQyMYUHvS6P
-         ZVpo4DvN7luRj0gmByjFQug3K6wOxJe/dB/VwLpHE1kl3KIdBybH544bBl6+U0/Osxdi
-         Gro6SFt1XzSiXOsBHIL2le6+evcc9FQQQnSPWreV+UH7n3wibzpkH0Fao6XCzHh3QEPa
-         6wYSRrOh7y3jZuauVM22qxsc8YkeF82VG5S8Y/ONGas8ppua5QQqU0qqIRrqnxrckYoR
-         IsUA==
-X-Gm-Message-State: AOAM532cUWH8X6tQ5CLlrkwg5JEwVxgSQGKMS62dqNaHDkak7rrtsNUA
-        ZJGzlsbp/1aTMv355b0YusNjMAIxsiis4WEXUAk=
-X-Google-Smtp-Source: ABdhPJxtI5BThykCcOdiO19jClP8bq+kH7QdMhzZVNT1ieaZBx1s/g+engYhn00nqzXMVH544mlo2vrOUZ6rigZ2GQU=
-X-Received: by 2002:a92:d451:: with SMTP id r17mr3599673ilm.319.1639816126514;
- Sat, 18 Dec 2021 00:28:46 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=7C/TYsmHCje+Y9Ci09sL4rbdHe/+0BCYOqyNToLN6Nc=;
+        b=0WuRKWSdzk66RQM3m0OM8gZdy9FchoIVD4+R7uo9kYknkI94hxi1PdvdELKWo1xDkD
+         jUyOqExD9qBx8msZpuuBkViSg6aEYIMij1OPQpUzrcYA3TZwHsOEEUt6lzlFsr5yIvp+
+         T92aAdTIhcfDEslC0BtcpvgMBSPK7h87Qssvh+vP2fgPFtB4UiLao1u4zaMjLOuUiRdW
+         nPqvXLt7oopGdl0laCyUvFDHweRZf7SFSy/9evPihruscFgulHCxGBoUJAdLi/7S6M1O
+         nKzi8eBelRU6R436nHpJE8G97DK8BhvCW09eUraMnhtsXDeml88lWsQzAwdmF8Oaa7Um
+         6LZg==
+X-Gm-Message-State: AOAM532ddRSWyRmMLJqK+T3LQ4ceDzeTNQCdf/DP09H1+RHfFuzcMxzq
+        /af6BHu7Spm6XR9zax8P8rEwkxI5wGlfE7oWFh8H2Q1NUd8I
+X-Google-Smtp-Source: ABdhPJw8/tV+aT7xauXXueKxaP2lYiNkq6WHyTs6x55CGpVVpAUu2FXPJewExJW9hiO6Q6Psw6GeD4P8EyilqfWavaBCUr4FflV4
 MIME-Version: 1.0
-References: <CAOQ4uxjfCs=+Of69U6moOJ9T6_zDb1wcrLXWu4DROVme1cNnfQ@mail.gmail.com>
- <YbobZMGEl6sl+gcX@redhat.com> <CAOQ4uxj9XZNhHB3y9LuGcUJYp-i4f-LXQa2tzX8AkZpRERH+8w@mail.gmail.com>
- <Ybo/5h9umGlinaM4@redhat.com> <CAOQ4uxheVq-YHkT9eOu3vUNt1RU4Wa6MkyzXXLboHE_Pj6-6tw@mail.gmail.com>
- <CAOQ4uxjzW7mt0pqA+K_sEJokYcv_D3e7axAOWLXxQ84bZDnfcw@mail.gmail.com>
- <YbtoQGKflkChU8lZ@redhat.com> <CAOQ4uxhucsMYO1YdHdLDPBJEaoOOyXb57wFJgijQznis2feE1A@mail.gmail.com>
- <Ybu8gBglHi+xikww@redhat.com> <CAOQ4uxj6FKZr_QWRN_Ts14+dcT1cxR6PmtZCJEyp2chCGKVh7w@mail.gmail.com>
- <YbybZQHaSxV5MXkI@redhat.com>
-In-Reply-To: <YbybZQHaSxV5MXkI@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 18 Dec 2021 10:28:35 +0200
-Message-ID: <CAOQ4uxiWL8bc6f1qY+uzr3_FyN3S3o7sMToqy08G8okHOX-LEQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        Stef Bon <stefbon@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>,
-        Nathan Youngman <git@nathany.com>
+X-Received: by 2002:a05:6e02:12e6:: with SMTP id l6mr4624891iln.275.1639857020637;
+ Sat, 18 Dec 2021 11:50:20 -0800 (PST)
+Date:   Sat, 18 Dec 2021 11:50:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000032992d05d370f75f@google.com>
+Subject: [syzbot] INFO: task hung in jbd2_journal_commit_transaction (3)
+From:   syzbot <syzbot+9c3fb12e9128b6e1d7eb@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > >
-> > > > 2. For FS_RENAME, will we be able to pass 4 buffers in iov?
-> > > >     src_fuse_notify_fsnotify_out, src_name,
-> > > >     dst_fuse_notify_fsnotify_out, dst_name
-> > >
-> > > So it is sort of two fsnotify events travelling in same event. We will
-> > > have to have some sort of information in the src_fuse_notify_fsnotify_out
-> > > which signals that another fsnotify_out is following. May be that's
-> > > where fsnotify_flags->field can be used. Set a bit to signal another
-> > > fsnotify_out is part of same event and this will also mean first one
-> > > is src and second one is dst.
-> > >
-> > > Challenge I see is "src_name" and "dst_name", especially in the context
-> > > of virtio queues.
-> > >
-> > > So we have a notification queue and for each notification, driver
-> > > allocates a fixed amount of memory for each element and queues these
-> > > elements in virtqueue. Server side pops these elements, places
-> > > notification info in this vq element and sends back.
-> > >
-> > > So basically size of notification buffer needs to be known in advance,
-> > > because these are allocated by driver (and not device/server). And
-> > > that's the reason virtio spec has added a new filed "notify_buf_size"
-> > > in device configuration space. Using this field device lets the driver
-> > > know how much memory to allocate for each notification element.
-> > >
-> > > IOW, we can put variable sized elements in notifiation but max size
-> > > of that variable length needs to be fixed in advance and needs to
-> > > be told to driver at device initialization time.
-> > >
-> > > So what can be the max length of "src_name" and "dst_name"? Is it fair
-> > > to use NAME_MAX to determine max length of name. So say "255" bytes
-> > > (not including null) for each name. That means notify_buf_size will
-> > > be.
-> > >
-> > > notify_buf_size = 2 * 255 + 2 * sizeof(struct fuse_notify_fsnotify_out);
-> > >
-> >
-> > Can you push two subsequent elements to the events queue atomically?
-> > If you can, then it is not a problem to queue the FS_MOVED_FROM
-> > event (with one name) followed by FS_MOVED_TO event with
-> > a self generated cookie in response to FAN_RENAME event on virtiofsd
-> > server and rejoin them in virtiofs client.
->
-> Hmm..., so basically break down FAN_RENAME event into two events joined
-> by cookie and send them separately. I guess sounds reasonable because
-> it helps reduce the max size of event.
->
-> What do you mean by "atomically"? Do you mean strict ordering and these
-> two events are right after each other. But if they are joined by cookie,
-> we don't have to enforce it. Driver should be able to maintain an internal
-> list and queue the event and wait for pair event to arrive. This also
+Hello,
 
-This is what I would consider repeating mistakes of past APIs (i.e. inotify).
-Why should the driver work hard to join events that were already joint before
-the queue? Is there really a technical challenge in queueing the two events
-together?
+syzbot found the following issue on:
 
-> means that these broken down events will have to be joined back, possibly
-> by some fsnotify helper.
->
+HEAD commit:    5472f14a3742 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11132113b00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e3bdfd29b408d1b6
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c3fb12e9128b6e1d7eb
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14559113b00000
 
-Currently, for local events, fsnotify() gets from vfs old dir inode and old name
-and the moved dentry, from which fanotify extracts all other information.
-Same for events on child (e.g. FS_OPEN).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9c3fb12e9128b6e1d7eb@syzkaller.appspotmail.com
 
-Getting that moved (or opened) fuse dentry may be a challenge.
-Driver can look for a dentry with the parent dir and child inode and name,
-but there may not be such an entry in dcache or no such entry at all,
-by the time the event is read by the driver.
+INFO: task jbd2/sda1-8:2937 blocked for more than 143 seconds.
+      Not tainted 5.16.0-rc5-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:jbd2/sda1-8     state:D stack:27112 pid: 2937 ppid:     2 flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:4972 [inline]
+ __schedule+0xa9a/0x4940 kernel/sched/core.c:6253
+ schedule+0xd2/0x260 kernel/sched/core.c:6326
+ io_schedule+0xee/0x170 kernel/sched/core.c:8371
+ bit_wait_io+0x12/0xd0 kernel/sched/wait_bit.c:209
+ __wait_on_bit+0x60/0x190 kernel/sched/wait_bit.c:49
+ out_of_line_wait_on_bit+0xd5/0x110 kernel/sched/wait_bit.c:64
+ wait_on_bit_io include/linux/wait_bit.h:101 [inline]
+ __wait_on_buffer+0x7a/0x90 fs/buffer.c:122
+ wait_on_buffer include/linux/buffer_head.h:356 [inline]
+ journal_wait_on_commit_record fs/jbd2/commit.c:175 [inline]
+ jbd2_journal_commit_transaction+0x4e3c/0x6be0 fs/jbd2/commit.c:931
+ kjournald2+0x1d0/0x930 fs/jbd2/journal.c:213
+ kthread+0x405/0x4f0 kernel/kthread.c:327
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+ </TASK>
 
-I guess in that case, we could allow passing a disconnected dentry
-and teach fanotify how to deal with it and not report the NEW_DFID
-record or the child FID record, so I think it's doable.
+Showing all locks held in the system:
+1 lock held by khungtaskd/27:
+ #0: ffffffff8bb812e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6458
+1 lock held by udevd/2974:
+2 locks held by getty/3287:
+ #0: ffff88807ec56098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:252
+ #1: ffffc90002b8e2e8 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xcf0/0x1230 drivers/tty/n_tty.c:2113
+2 locks held by kworker/1:0/3663:
+ #0: ffff888010c76538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010c76538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: arch_atomic_long_set include/linux/atomic/atomic-long.h:41 [inline]
+ #0: ffff888010c76538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic_long_set include/linux/atomic/atomic-instrumented.h:1198 [inline]
+ #0: ffff888010c76538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:635 [inline]
+ #0: ffff888010c76538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:662 [inline]
+ #0: ffff888010c76538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: process_one_work+0x896/0x1690 kernel/workqueue.c:2269
+ #1: ffffc90001b27db0 ((work_completion)(&rew.rew_work)){+.+.}-{0:0}, at: process_one_work+0x8ca/0x1690 kernel/workqueue.c:2273
+2 locks held by syz-executor.2/13278:
+ #0: ffffffff8bc4c6c8 (perf_sched_mutex){+.+.}-{3:3}, at: account_event kernel/events/core.c:11445 [inline]
+ #0: ffffffff8bc4c6c8 (perf_sched_mutex){+.+.}-{3:3}, at: perf_event_alloc.part.0+0x31f9/0x3b10 kernel/events/core.c:11678
+ #1: ffffffff8bb8a668 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
+ #1: ffffffff8bb8a668 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x4fa/0x620 kernel/rcu/tree_exp.h:836
 
-> We will probably need a flag to differentiate whether its the case of
-> broken down FAN_RENAME or not. Because in this case driver will wait
-> for second event to arrive. But if it is regular FS_MOVED_FROM event,
-> then don't wait and deliver it to user space.
->
+=============================================
 
-Yes, a "multi part event" flag.
+NMI backtrace for cpu 0
+CPU: 0 PID: 27 Comm: khungtaskd Not tainted 5.16.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ nmi_cpu_backtrace.cold+0x47/0x144 lib/nmi_backtrace.c:111
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:210 [inline]
+ watchdog+0xc1d/0xf50 kernel/hung_task.c:295
+ kthread+0x405/0x4f0 kernel/kthread.c:327
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 10 Comm: kworker/u4:1 Not tainted 5.16.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound toggle_allocation_gate
+RIP: 0010:__kasan_check_read+0x4/0x10 mm/kasan/shadow.c:31
+Code: 44 07 48 85 db 0f 85 d0 9f 45 07 48 83 c4 60 5b 5d 41 5c 41 5d c3 c3 e9 d0 a0 45 07 cc cc cc cc cc cc cc cc cc cc 48 8b 0c 24 <89> f6 31 d2 e9 f3 f9 ff ff 0f 1f 00 48 8b 0c 24 89 f6 ba 01 00 00
+RSP: 0018:ffffc90000f0f630 EFLAGS: 00000002
+RAX: 0000000000000002 RBX: 1ffff920001e1ece RCX: ffffffff815b774f
+RDX: 0000000000000092 RSI: 0000000000000008 RDI: ffffffff8ff77a10
+RBP: 0000000000000100 R08: 0000000000000000 R09: ffffffff8ff77a17
+R10: 0000000000000001 R11: 000000000000003f R12: 0000000000000008
+R13: ffff888011c7eda8 R14: 0000000000000092 R15: ffff888011c7edc8
+FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555557b2708 CR3: 000000000b88e000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ instrument_atomic_read include/linux/instrumented.h:71 [inline]
+ test_bit include/asm-generic/bitops/instrumented-non-atomic.h:134 [inline]
+ hlock_class kernel/locking/lockdep.c:199 [inline]
+ mark_lock+0xef/0x17b0 kernel/locking/lockdep.c:4583
+ mark_usage kernel/locking/lockdep.c:4526 [inline]
+ __lock_acquire+0x8a7/0x54a0 kernel/locking/lockdep.c:4981
+ lock_acquire kernel/locking/lockdep.c:5637 [inline]
+ lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5602
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:349 [inline]
+ __get_locked_pte+0x2b6/0x4d0 mm/memory.c:1722
+ get_locked_pte include/linux/mm.h:2160 [inline]
+ __text_poke+0x1ae/0x8c0 arch/x86/kernel/alternative.c:1000
+ text_poke_bp_batch+0x3d7/0x560 arch/x86/kernel/alternative.c:1361
+ text_poke_flush arch/x86/kernel/alternative.c:1451 [inline]
+ text_poke_flush arch/x86/kernel/alternative.c:1448 [inline]
+ text_poke_finish+0x16/0x30 arch/x86/kernel/alternative.c:1458
+ arch_jump_label_transform_apply+0x13/0x20 arch/x86/kernel/jump_label.c:146
+ jump_label_update+0x1d5/0x430 kernel/jump_label.c:830
+ static_key_enable_cpuslocked+0x1b1/0x260 kernel/jump_label.c:177
+ static_key_enable+0x16/0x20 kernel/jump_label.c:190
+ toggle_allocation_gate mm/kfence/core.c:732 [inline]
+ toggle_allocation_gate+0x100/0x390 mm/kfence/core.c:724
+ process_one_work+0x9b2/0x1690 kernel/workqueue.c:2298
+ worker_thread+0x658/0x11f0 kernel/workqueue.c:2445
+ kthread+0x405/0x4f0 kernel/kthread.c:327
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+ </TASK>
+sd 0:0:1:0: tag#6693 FAILED Result: hostbyte=DID_ABORT driverbyte=DRIVER_OK cmd_age=0s
+sd 0:0:1:0: tag#6693 CDB: opcode=0xe5 (vendor)
+sd 0:0:1:0: tag#6693 CDB[00]: e5 f4 32 73 2f 4e 09 6d 26 e2 c7 35 d1 35 12 1c
+sd 0:0:1:0: tag#6693 CDB[10]: 92 1b da 40 b8 58 5b a8 d4 7d 34 f3 90 4c f1 2d
+sd 0:0:1:0: tag#6693 CDB[20]: ba
+----------------
+Code disassembly (best guess):
+   0:	44 07                	rex.R (bad)
+   2:	48 85 db             	test   %rbx,%rbx
+   5:	0f 85 d0 9f 45 07    	jne    0x7459fdb
+   b:	48 83 c4 60          	add    $0x60,%rsp
+   f:	5b                   	pop    %rbx
+  10:	5d                   	pop    %rbp
+  11:	41 5c                	pop    %r12
+  13:	41 5d                	pop    %r13
+  15:	c3                   	retq
+  16:	c3                   	retq
+  17:	e9 d0 a0 45 07       	jmpq   0x745a0ec
+  1c:	cc                   	int3
+  1d:	cc                   	int3
+  1e:	cc                   	int3
+  1f:	cc                   	int3
+  20:	cc                   	int3
+  21:	cc                   	int3
+  22:	cc                   	int3
+  23:	cc                   	int3
+  24:	cc                   	int3
+  25:	cc                   	int3
+  26:	48 8b 0c 24          	mov    (%rsp),%rcx
+* 2a:	89 f6                	mov    %esi,%esi <-- trapping instruction
+  2c:	31 d2                	xor    %edx,%edx
+  2e:	e9 f3 f9 ff ff       	jmpq   0xfffffa26
+  33:	0f 1f 00             	nopl   (%rax)
+  36:	48 8b 0c 24          	mov    (%rsp),%rcx
+  3a:	89 f6                	mov    %esi,%esi
+  3c:	ba                   	.byte 0xba
+  3d:	01 00                	add    %eax,(%rax)
 
-> Driver will have to be careful to not block actual event queue event
-> while waiting for pair event to arrive. It should create a copy and
-> add virtqueue element back to notification queue. Otherwise deadlock
-> is possible where all elements in virtqueue are being used to wait for
-> pair event and no free elements are available to actually send paired
-> event.
->
 
-See, this is the unneeded complexity I am talking about.
-Letting the server wait until there are swo slots available in the queue
-and always queue the two parts together seems a lot easier, unless
-I am missing something?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> >
-> > You see, I don't mind using the rename cookie API as long as rejoining
-> > the disjoint events is possible for reporting the joint event to fanotify user.
->
-> Right this will allow server to join independent FAN_MOVED_FROM and
-> FAN_MOVED_TO if need be.
->
-
-Yes, if the server wants, it can work harder to join independent inotify events,
-but it is not a must.
-
-> >
-> > In case virtiofsd backend is implemented with inotify, it will receive and
-> > report only disjoint events and in that case, FAN_RENAME cannot be
-> > requested by fanotify user which is fine, as long as it will be possible
-> > with another implementation of virtiofsd server down the road.
->
-> Fair enough. In simplest form, virtiofsd will support FAN_RENAME only if
-> host kernel fanotify supports FAN_RENAME.
-
-Correct.
-Or as I wrote before, a multi-client server can also report FS_RENAME
-after executing a rename request from another client.
-You need to think of the remote fsnotify service in a manner that is completely
-detached from the backend facility used to provide the notifications.
-
->
-> In more advanced form, virtiofsd (or other server) can wait for two
-> events and then join and report as FAN_RENAME with user space generated
-> cookie.
->
-
-Yeh, that's possible.
-
-> I think I like this idea of reporting two events joined by cookie to
-> reduce the size of event. Will give it a try.
->
-
-I am glad we seem to be converging :)
-
-Thanks,
-Amir.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
