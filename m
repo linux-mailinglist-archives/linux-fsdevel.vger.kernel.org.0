@@ -2,107 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF00347A01D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Dec 2021 10:59:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B4A47A202
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Dec 2021 21:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235543AbhLSJ7J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Dec 2021 04:59:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49732 "EHLO
+        id S236486AbhLSULp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Dec 2021 15:11:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbhLSJ7I (ORCPT
+        with ESMTP id S229582AbhLSULo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Dec 2021 04:59:08 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9932C061574;
-        Sun, 19 Dec 2021 01:59:07 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id gj24so6507308pjb.0;
-        Sun, 19 Dec 2021 01:59:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=dG68qbbN9Wct+UUNDOZqFZ/544NhXHzV1/15tPR+FZQ=;
-        b=qxHxo7P4Hmn3Co0lx+drz0KAQB5rS9kl7ZYFcZdRRbb7g8xE1kzNS9GNUyxxCrMfQT
-         RfAJN7vWYS9skka5kzDB1Rk7Gqe+jr7H7ZR4rCq/iR+ldQ+zl0mhhqv5TJNPGxfrRFup
-         VJIghQje4LiOG7OwXFupSwLFgvyJcmRjHr5QJnyogq9MtAhlEcNzqC+YKsVkw7lirTfN
-         sryZgZcqIQjPiWa+p0CLYu3O/jGddC88jYvKOATqcgJMdsv/mwwY1LpZIPhNB1OWkZh6
-         f1tP3fFcrEzCu8G/Id+li3Q7c0//Ank/PSro7DjAkv/7Er1Q8IW0Oc7NlqTRQoC9YKL6
-         bA+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=dG68qbbN9Wct+UUNDOZqFZ/544NhXHzV1/15tPR+FZQ=;
-        b=QVUYrwd9bvSQ63Ke2hmBcTPBAKII75ghBMYb2a/mfo4Qt3gAJd9TlSZLGwfYUalIkb
-         81zH7YvS3896f5Di0KfCg37lazSxO217WfLyGsEZXtDVzMPxxhPXHkzGlOt5xrn7ejyk
-         T9AjsmVqIfQhC76YbShYVWSuj/dHtZu2OFjb+JbEjExjQe7fZRCZmBZalI2zb7syhN5N
-         oBuvC6+7oQ3pzbxN1NMnv4wR24kaZyqk7eDGVoEGGjmV+HZqiUksQhrW0tJ5AYsCZsHp
-         V/fvs4S0v8kZe7rarAu0jr7BNQultJrcqklrwycb+u6iWxHuETQcttawpmLvTot8BbBV
-         L9fQ==
-X-Gm-Message-State: AOAM532YTl0Ula1wzvw7VzaNV5rl3J9r7ggC5WuLCDAijcvml1UGLl31
-        y1SUOn4Ig4NHt0R/u1e178c=
-X-Google-Smtp-Source: ABdhPJwzUCgNcdoLqJpWlON/LozZCUZMCGAOfGDxUBk0PHq7KdOUOS95eg7rsJ8IVKUG17BiUM2tnQ==
-X-Received: by 2002:a17:90b:3850:: with SMTP id nl16mr13879309pjb.190.1639907947026;
-        Sun, 19 Dec 2021 01:59:07 -0800 (PST)
-Received: from smtpclient.apple ([123.114.22.133])
-        by smtp.gmail.com with ESMTPSA id lb12sm1924537pjb.27.2021.12.19.01.59.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 Dec 2021 01:59:06 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.40.0.1.81\))
-Subject: Re: [PATCH v4 00/17] Optimize list lru memory consumption
-From:   xiaoqiang zhao <zhaoxiaoqiang007@gmail.com>
-In-Reply-To: <YbyM17OMHlEmLfhH@casper.infradead.org>
-Date:   Sun, 19 Dec 2021 17:58:55 +0800
-Cc:     Muchun Song <songmuchun@bytedance.com>, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        shakeelb@google.com, guro@fb.com, shy828301@gmail.com,
-        alexs@kernel.org, richard.weiyang@gmail.com, david@fromorbit.com,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        jaegeuk@kernel.org, chao@kernel.org, kari.argillander@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
-        fam.zheng@bytedance.com, smuchun@gmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0AF1C950-FA7A-4D70-9E92-72C7BE32293A@gmail.com>
-References: <20211213165342.74704-1-songmuchun@bytedance.com>
- <745ddcd6-77e3-22e0-1f8e-e6b05c644eb4@gmail.com>
- <YbyM17OMHlEmLfhH@casper.infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-X-Mailer: Apple Mail (2.3693.40.0.1.81)
+        Sun, 19 Dec 2021 15:11:44 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A124C061574;
+        Sun, 19 Dec 2021 12:11:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=4h6NPaUlmZgxir2424x/Qf/OO7HJPde/NgVzMLtT4Ig=; b=e0zd389yAG+hzti3DV7WFxKv8c
+        A2Y8qkC1OJ+Siz/+zVwBEQA1dNMbJsg8TCsrbc3dIFx9VDBTxAvkdW3c4b19d8vhbwvEWz2VY1BGn
+        V32jWf0HjcKLIuDlvpORzpEkz6qPys5xBX59QhK0C4mwOyLw5gdfZa6w+3SzMuxkyXiaS+UQGXMMB
+        Dxb+8GROS8t4L89qod7wWnPxMqlu1+3daysJEosN0Lkxd6xViVTDJijvT2QBrsuqA5yxk2Fi47lNB
+        8/WiE4kLFiRZ/Yc9XccsfyDKqEZwLvq3IuA/rM72FilyRb6T+VNXEdUO0GrIvH9G2bkZPZssiTGIC
+        6g6d/4Kw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mz2Wy-00GvAC-PT; Sun, 19 Dec 2021 20:11:40 +0000
+Date:   Sun, 19 Dec 2021 12:11:40 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, siglesias@igalia.com,
+        kernel@gpiccoli.net
+Subject: Re: [PATCH 2/3] panic: Add option to dump all CPUs backtraces in
+ panic_print
+Message-ID: <Yb+R/OVeBkdYLWeH@bombadil.infradead.org>
+References: <20211109202848.610874-1-gpiccoli@igalia.com>
+ <20211109202848.610874-3-gpiccoli@igalia.com>
+ <20211130051206.GB89318@shbuild999.sh.intel.com>
+ <6f269857-2cbe-b4dd-714a-82372dc3adfc@igalia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f269857-2cbe-b4dd-714a-82372dc3adfc@igalia.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Dec 03, 2021 at 12:09:06PM -0300, Guilherme G. Piccoli wrote:
+> On 30/11/2021 02:12, Feng Tang wrote:
+> > On Tue, Nov 09, 2021 at 05:28:47PM -0300, Guilherme G. Piccoli wrote:
+> >> [...]
+> > This looks to be helpful for debugging panic.
+> > 
+> > Reviewed-by: Feng Tang <feng.tang@intel.com>
+> > 
+> > Thanks,
+> > Feng
+> 
+> Thanks a lot Feng, for both your reviews! Do you have any opinions about
+> patch 3?
+> 
+> Also, as a generic question to all CCed, what is the way forward with
+> this thread?
+> Cheers,
 
+mcgrof@sumo ~/linux-next (git::master)$ ./scripts/get_maintainer.pl
+kernel/printk/
+Petr Mladek <pmladek@suse.com> (maintainer:PRINTK)
+Sergey Senozhatsky <senozhatsky@chromium.org> (maintainer:PRINTK)
+Steven Rostedt <rostedt@goodmis.org> (reviewer:PRINTK)
+John Ogness <john.ogness@linutronix.de> (reviewer:PRINTK)
+linux-kernel@vger.kernel.org (open list)    
 
-> 2021=E5=B9=B412=E6=9C=8817=E6=97=A5 =E4=B8=8B=E5=8D=889:12=EF=BC=8CMatth=
-ew Wilcox <willy@infradead.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Fri, Dec 17, 2021 at 06:05:00PM +0800, xiaoqiang zhao wrote:
->>=20
->>=20
->> =E5=9C=A8 2021/12/14 0:53, Muchun Song =E5=86=99=E9=81=93:
->>> This series is based on Linux 5.16-rc3.
->>>=20
->>> In our server, we found a suspected memory leak problem. The =
-kmalloc-32
->>> consumes more than 6GB of memory. Other kmem_caches consume less =
-than 2GB
->>> memory.
->>>=20
->>> After our in-depth analysis, the memory consumption of kmalloc-32 =
-slab
->>> cache is the cause of list_lru_one allocation.
->>=20
->> IIUC, you mean: "the memory consumption of kmalloc-32 slab cache is
->> caused by list_lru_one allocation"
->>=20
->=20
-> Please trim the unnecessary parts.  You quoted almost 200 extra lines
-> after this that I (and everybody else reading) have to look through
-> to see if you said anything else.
+So I suggest you email the patches to those.
 
-Sorry for the inconvenience, WILL do next time ;-)=
+  Luis
