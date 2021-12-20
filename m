@@ -2,98 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF7247B51B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Dec 2021 22:24:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A7747B5CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Dec 2021 23:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbhLTVY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Dec 2021 16:24:56 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33218 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231239AbhLTVYw (ORCPT
+        id S232527AbhLTWKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Dec 2021 17:10:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51092 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231875AbhLTWKn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Dec 2021 16:24:52 -0500
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1BKLOQng007278
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Dec 2021 16:24:27 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 69CAE15C33A4; Mon, 20 Dec 2021 16:24:26 -0500 (EST)
-Date:   Mon, 20 Dec 2021 16:24:26 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+9c3fb12e9128b6e1d7eb@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] INFO: task hung in jbd2_journal_commit_transaction (3)
-Message-ID: <YcD0itBAoOPNNKvX@mit.edu>
-References: <00000000000032992d05d370f75f@google.com>
- <20211219023540.1638-1-hdanton@sina.com>
- <Yb6zKVoxuD3lQMA/@casper.infradead.org>
+        Mon, 20 Dec 2021 17:10:43 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3756DC061574;
+        Mon, 20 Dec 2021 14:10:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Tv+e0YzWj7EnlpLaFuicF+ep+GIPnCrnk5iHywil75Y=; b=fG+mYiUzwhdMYKpKlw6RitBL9U
+        Dd60zq/eWe7QyCAe2DH7ZQktAP/xFZJbovS9+DrnhbZsZybIIbjqwSzhmmNCP8pvtmwrUIoYMRHi5
+        pNxvEUrI9eaSEpe/m/D7ql9CfprRvYZbFG4iEw6iQuLu28X9di1F5FhdgUe3hORXOa8vHindWgtNa
+        9ayzoh9mpCrGYAVpvH958cAxr4JeiPYG9M059O4Z5/bQlh2aOnf9+MYUzDXr9Cj0eG3CK3d8O30F2
+        aao/zuLCI/u7nNVEKx96IaWANTrW0dzEFbbIDQ7dSxctMMf6G6QWBVJEFkxV2ysH4B2An9aIDS7gp
+        UtX642UQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mzQra-001xdx-FZ; Mon, 20 Dec 2021 22:10:34 +0000
+Date:   Mon, 20 Dec 2021 22:10:34 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] iomap: turn the byte variable in iomap_zero_iter into a
+ ssize_t
+Message-ID: <YcD/WjYXg9LKydhY@casper.infradead.org>
+References: <20211208091203.2927754-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yb6zKVoxuD3lQMA/@casper.infradead.org>
+In-Reply-To: <20211208091203.2927754-1-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 19, 2021 at 04:20:57AM +0000, Matthew Wilcox wrote:
-> > Hey Willy
-> > >
-> > >sched_setattr(0x0, &(0x7f0000000080)={0x38, 0x1, 0x0, 0x0, 0x1}, 0x0)
-> > >
-> > >so you've set a SCHED_FIFO priority and then are surprised that some
-> > >tasks are getting starved?
-> > 
-> > Can you speficy a bit more on how fifo could block journald waiting for
-> > IO completion more than 120 seconds?
+Dan, why is this erroneous commit still in your tree?
+iomap_write_end() cannot return an errno; if an error occurs, it
+returns zero.  The code in iomap_zero_iter() should be:
+
+                bytes = iomap_write_end(iter, pos, bytes, bytes, page);
+                if (WARN_ON_ONCE(bytes == 0))
+                        return -EIO;
+
+On Wed, Dec 08, 2021 at 10:12:03AM +0100, Christoph Hellwig wrote:
+> bytes also hold the return value from iomap_write_end, which can contain
+> a negative error value.  As bytes is always less than the page size even
+> the signed type can hold the entire possible range.
 > 
-> Sure!  You can see from the trace below that jbd2/sda1-8 is in D state,
-> so we know nobody's called unlock_buffer() yet, which would have woken
-> it.  That would happen in journal_end_buffer_io_sync(), which is
-> the b_end_io for the buffer.
+> Fixes: c6f40468657d ("fsdax: decouple zeroing from the iomap buffered I/O code")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Learning more detail than that would require knowing the I/O path
-> for this particular test system.  I suspect that the I/O was submitted
-> and has even completed, but there's a kernel thread waiting to run which
-> will call the ->b_end_io that hasn't been scheduled yet, because it's
-> at a lower priority than all the threads which are running at
-> SCHED_FIFO.
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index b1511255b4df8..ac040d607f4fe 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -883,7 +883,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+>  
+>  	do {
+>  		unsigned offset = offset_in_page(pos);
+> -		size_t bytes = min_t(u64, PAGE_SIZE - offset, length);
+> +		ssize_t bytes = min_t(u64, PAGE_SIZE - offset, length);
+>  		struct page *page;
+>  		int status;
+>  
+> -- 
+> 2.30.2
 > 
-> I'm disinclined to look at this report much further because syzbot is
-> stumbling around trying things which are definitely in the category of
-> "if you do this and things break, you get to keep both pieces".  You
-> can learn some interesting things by playing with the various RT
-> scheduling classes, but mostly what you can learn is that you need to
-> choose your priorities carefully to have a functioning system.
-
-In general, real-time threads (anything scheduled with SCHED_FIFO or
-SCHED_RT) should never, *ever* try to do any kind of I/O.  After all,
-I/O can block, and if a real-time thread blocks, so much for any kind
-of real-time guarantee that you might have.
-
-If you must use do I/O from soft real-time thread, one trick you *can*
-do is to some number of CPU's which are reserved for real-time
-threads, and a subset of threads which are reserved for non-real-time
-threads, enforced using CPU pinning.  It's still not prefect, since
-there are still priority inheritance issues, and while this protects
-against a non-real-time thread holding some lock which is needed by a
-real-time (SCHED_FIFO) thread, if there are two SCHED_FIFO running at
-different priorities it's still possible to deadlock the entire
-kernel.
-
-Can it be done?  Sure; I was part of an effort to make it work for the
-US Navy's DDG-1000 Zumwalt-class destroyer[1].  But it's tricky, and
-it's why IBM got paid the big bucks. :-)  Certainly it's going to be
-problematic for syzkaller if it's just going to be randomly trying to
-set some threads to be real-time without doing any kind of formal
-planning.
-
-[1] https://dl.acm.org/doi/10.1147/sj.472.0207
-
-Cheers,
-
-						- Ted
