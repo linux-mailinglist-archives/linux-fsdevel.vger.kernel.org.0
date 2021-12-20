@@ -2,86 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D9C447A9C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Dec 2021 13:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ACF747A9E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Dec 2021 13:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230361AbhLTMis (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Dec 2021 07:38:48 -0500
-Received: from fanzine2.igalia.com ([213.97.179.56]:36608 "EHLO
-        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbhLTMir (ORCPT
+        id S231765AbhLTMuF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Dec 2021 07:50:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231130AbhLTMuF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Dec 2021 07:38:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
-        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=fX8aLO7bG6Mm38H7q0aoXpd//d9kXKKfvCn5eQeXOvU=; b=kZJtj+YT+YliPtcEGEpBJX7J1e
-        o1nCj49tqM1w2FX0nNXyjmhtf3vpx72RcgrYINyJsUpu79d4B2lN0hX/w0U40ZYybPRPhG3lC84wy
-        vxWu9Q40xtyngmBbHgGSFyK+IX5Lwwjh16baw9Hkan5Xq/C18dvRe0UPtDWSqXYAwttvAiXe9HVP7
-        x0QC+ure8ARnwxm6jEE5QmZRudMcY49iyKIhTCbdSft/YdaK0X9ATqQrlmrZn5dy7cJaSiQ7MD+mo
-        wmJ453A7jdx8xwYmS5dgrLcd7cUT04KNvPgqAtUakC0rkDhWcDU/Lz8+/O9w8rnffqe5jRguqU+Mr
-        u1fklFww==;
-Received: from [177.103.99.151] (helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1mzHw7-00037r-8H; Mon, 20 Dec 2021 13:38:39 +0100
-Subject: Re: [PATCH 2/3] panic: Add option to dump all CPUs backtraces in
- panic_print
-To:     Luis Chamberlain <mcgrof@kernel.org>, akpm@linux-foundation.org
-Cc:     Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        keescook@chromium.org, yzaikin@google.com, siglesias@igalia.com,
-        kernel@gpiccoli.net
-References: <20211109202848.610874-1-gpiccoli@igalia.com>
- <20211109202848.610874-3-gpiccoli@igalia.com>
- <20211130051206.GB89318@shbuild999.sh.intel.com>
- <6f269857-2cbe-b4dd-714a-82372dc3adfc@igalia.com>
- <Yb+R/OVeBkdYLWeH@bombadil.infradead.org>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Message-ID: <911e81d3-5ffe-b936-f668-bf1f6a9b6cfb@igalia.com>
-Date:   Mon, 20 Dec 2021 09:38:23 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Mon, 20 Dec 2021 07:50:05 -0500
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A50CC06173E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Dec 2021 04:50:05 -0800 (PST)
+Received: by mail-vk1-xa35.google.com with SMTP id c10so3266818vkn.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Dec 2021 04:50:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mebw+t+6AZGZkXmp7vDvG7ApJYeVNYn7Za2C9wEefaI=;
+        b=keM546ZVFFY7h+ySf8UPE/BR4WPf6nIR/oud8lzcFMmsUIRn/5xDfjXOKshw/TvhjS
+         gOdGtopoEPiz83D+JA9aRr5js22m+Od50s37c3zjkulqv8xF0zznlVyzFpyB3+hJgRlQ
+         HHNj2qzinTd0e6RP6cM/DvqaSZo5pbWSgiClw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mebw+t+6AZGZkXmp7vDvG7ApJYeVNYn7Za2C9wEefaI=;
+        b=DdddeJENvFo1KqlADpzntZkx6Ns/Ox6qotHOGEf8FdxaZnUE1oO5LVU+Rm4TkfXua7
+         OP8koqA7BrAC36M+0TGhhm8A6isS7JDSxqXeuNg/H5mAXPi5PquFtK5QDKNN9iO027zj
+         wVradnGlweIP3L6hVgAP00tqtNbCcp8forBj2Ovv36OzF+1z7Sdyn+1dfY2L8lWGjiSG
+         U561GdQH7+rZLO2UdSWfyygw8S+w3n/Xl+mXhk8wcjyWOjP8HxK7nctsyS4azt1RwWyg
+         UDln7PLWiBiLbJksVJu714m+0a/0i1K5tCOq6jpXMP4mKs7dONf/YEh1TAPRtJk0xdl6
+         wphA==
+X-Gm-Message-State: AOAM531RPcaXCBlR4Fc8aRJwIjp33DQyJITqxnmjYVwiGB+TZqN51/2T
+        nNTVRWNKuRX3VqY5DW4plaM/0PgPo6D7AGjIant6tXErl/gXvQ==
+X-Google-Smtp-Source: ABdhPJxLi7dYvgVXTw3RKjMCy6zDRgzU5qsr8lQryPwB1pb3R1jBRbvjqe/N/HUAouhiNhYAaHVuoEFdX4st1ZpxUOA=
+X-Received: by 2002:a1f:52c7:: with SMTP id g190mr5544848vkb.1.1640004604088;
+ Mon, 20 Dec 2021 04:50:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <Yb+R/OVeBkdYLWeH@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211216144558.63931-1-zhangjiachen.jaycee@bytedance.com>
+In-Reply-To: <20211216144558.63931-1-zhangjiachen.jaycee@bytedance.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 20 Dec 2021 13:49:53 +0100
+Message-ID: <CAJfpegvQCmBOD4XDncijGaFDgrmKhtWK1-h28VCUELPXdgw0JQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix deadlock between O_TRUNC open() and non-O_TRUNC open()
+To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xie Yongji <xieyongji@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19/12/2021 17:11, Luis Chamberlain wrote:
-> mcgrof@sumo ~/linux-next (git::master)$ ./scripts/get_maintainer.pl
-> kernel/printk/
-> Petr Mladek <pmladek@suse.com> (maintainer:PRINTK)
-> Sergey Senozhatsky <senozhatsky@chromium.org> (maintainer:PRINTK)
-> Steven Rostedt <rostedt@goodmis.org> (reviewer:PRINTK)
-> John Ogness <john.ogness@linutronix.de> (reviewer:PRINTK)
-> linux-kernel@vger.kernel.org (open list)    
-> 
-> So I suggest you email the patches to those.
-> 
->   Luis
-> 
+On Thu, 16 Dec 2021 at 15:46, Jiachen Zhang
+<zhangjiachen.jaycee@bytedance.com> wrote:
+>
+> fuse_finish_open() will be called with FUSE_NOWRITE set in case of atomic
+> O_TRUNC open(), so commit 76224355db75 ("fuse: truncate pagecache on
+> atomic_o_trunc") replaced invalidate_inode_pages2() by truncate_pagecache()
+> in such a case to avoid the A-A deadlock. However, we found another A-B-B-A
+> deadlock related to the case above, which will cause the xfstests
+> generic/464 testcase hung in our virtio-fs test environment.
+>
+> Consider two processes concurrently open one same file, one with O_TRUNC
+> and another without O_TRUNC. The deadlock case is described below, if
+> open(O_TRUNC) is already set_nowrite(acquired A), and is trying to lock
+> a page (acquiring B), open() could have held the page lock (acquired B),
+> and waiting on the page writeback (acquiring A). This would lead to
+> deadlocks.
+>
+> This commit tries to fix it by locking inode in fuse_open_common() even
+> if O_TRUNC is not set. This introduces a lock C to protect the area with
+> A-B-B-A the deadlock rick.
 
-Hi Luis, thank you! But I confess I'm very confused with this series. I
-saw emails from Andrew that the patches had been accepted and were
-available in -mm tree ([0] for example) but I'm not seeing them in
-linux-next nor mmotm/mmots (although I saw them in mmotm directory for a
-while before).
+Okay.
 
-Andrew, could you clarify the state of them?
-Appreciate that!
+One problem is that this seems to affect a number of other calls to
+invalidate_inode_pages2(), specifically those without lock_inode()
+protection:
 
-Cheers,
+- dmap_writeback_invalidate()
+- fuse_file_mmap()
+- fuse_change_attributes()
+- fuse_reverse_inval_inode()
 
+fuse_change_attributes() is especially problematic because it can be
+called with or without the inode lock.
 
-Guilherme
+The other issue is that locking the inode may impact performance and
+doing it unconditionally for all opens seems excessive.
 
+If there are no better ideas, then the brute force fix is to introduce
+another lock (since the inode lock cannot always be used) to protect
+fuse_set_nowrite()/fuse_clear_nowrite() racing with
+invalidate_inode_pages2().
 
-[0]
-https://lore.kernel.org/mm-commits/20211214182909._sQRtXv89%25akpm@linux-foundation.org/
+Thoughts?
+
+Thanks,
+Miklos
