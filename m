@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BEA47C273
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 342F947C276
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:13:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239138AbhLUPNT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 10:13:19 -0500
-Received: from mga09.intel.com ([134.134.136.24]:55988 "EHLO mga09.intel.com"
+        id S239148AbhLUPN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 10:13:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:45698 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239092AbhLUPNT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 10:13:19 -0500
+        id S235964AbhLUPN0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Dec 2021 10:13:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640099599; x=1671635599;
+  t=1640099606; x=1671635606;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=fdSTZmNU5WiLyWiykXl851QB1KBby9LMRNODzJD3mcE=;
-  b=AfBy0Po48GjAbWZS1riIomnCboTiPlfCM5CsUnrJX0i/v1/jeO/UdYwA
-   f2Q7r0T0oIcE+ojLG8bZsvMqTGoIjJxV/4m5HcPsV36qcPv6fjVLo+PhR
-   o1b5NXoBnArv7+xD5JzqjhmKlRw+23zf8IUmejuM9/p60P6mQKZEGrwZa
-   /LzKVELdjAE+NHEzHxWlSDDg5mvsZZchMO/rpOR7Mx6WNNXlhB/vUALEJ
-   csSgRrUIegrgq8BoCusbh7LVZi8QVQUdiVbjQM5GZucOE+O23WakQDZHr
-   hev9uWX+cmm+DK1tWlCCXL8n15g86z1RmXjr1CwNnId73qtiy88T4UmUd
+  bh=UCZ3wCwPhn9VbKdlrvPKEkilFsRm15PDP2AM/u3UGdI=;
+  b=PenU/4XRYr0yLcYA8XRCR0hVgYdTsxrYHhvHhHwdjeP/wZNLANrNq8JC
+   3hPHQTwMFuAw7k7u9SqK0RwB0VOXIUhYCHA/ebq4qUDjoOVDchJ35S/b5
+   lFvhJCV/sPVfL+m70I8cIZeuytLDbWLXlY/Ev7oTe+e93u6pg1QfRnqLB
+   f/+dwnvCkvK40FybeveEieRzekkZV+LcVXREHQ1CAAKVP2gu6dDBpzsU7
+   wZejemyKh1CVW8zH5gk5ccDsUZ28AIK3Oez9UuplyKm0v2Ekrvvg7ADNb
+   H1WiK9mkULODpuMBCnJpuydDaFOzYQbNozm94rsD/EYg6jd3nNPvUCJ73
    A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10204"; a="240216686"
+X-IronPort-AV: E=McAfee;i="6200,9189,10204"; a="227259520"
 X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="240216686"
+   d="scan'208";a="227259520"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 07:13:18 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 07:13:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="684688531"
+   d="scan'208";a="684688544"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga005.jf.intel.com with ESMTP; 21 Dec 2021 07:13:10 -0800
+  by orsmga005.jf.intel.com with ESMTP; 21 Dec 2021 07:13:18 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: [PATCH v3 09/15] KVM: Implement fd-based memory invalidation
-Date:   Tue, 21 Dec 2021 23:11:19 +0800
-Message-Id: <20211221151125.19446-10-chao.p.peng@linux.intel.com>
+Subject: [PATCH v3 10/15] KVM: Add kvm_map_gfn_range
+Date:   Tue, 21 Dec 2021 23:11:20 +0800
+Message-Id: <20211221151125.19446-11-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
 References: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
@@ -68,173 +68,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-KVM gets notified when userspace punches a hole in a fd which is used
-for guest memory. KVM should invalidate the mapping in the second MMU
-page tables. This is the same logic as MMU notifier invalidation except
-the fd related information is carried around to indicate the memory
-range. KVM hence can reuse most of existing MMU notifier invalidation
-code including looping through the memslots and then calling into
-kvm_unmap_gfn_range() which should do whatever needed for fd-based
-memory unmapping (e.g. for private memory managed by TDX it may need
-call into SEAM-MODULE).
+This new function establishes the mapping in KVM page tables for a
+given gfn range. It can be used in the memory fallocate callback for
+memfd based memory to establish the mapping for KVM secondary MMU when
+the pages are allocated in the memory backend.
 
 Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- include/linux/kvm_host.h |  8 ++++-
- virt/kvm/kvm_main.c      | 69 +++++++++++++++++++++++++++++++---------
- virt/kvm/memfd.c         |  2 ++
- 3 files changed, 63 insertions(+), 16 deletions(-)
+ arch/x86/kvm/mmu/mmu.c   | 47 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/kvm_host.h |  2 ++
+ virt/kvm/kvm_main.c      |  5 +++++
+ 3 files changed, 54 insertions(+)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 7279f46f35d3..d9573305e273 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -229,7 +229,7 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
- #endif
- 
--#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
-+#if defined(KVM_ARCH_WANT_MMU_NOTIFIER) || defined(CONFIG_MEMFD_OPS)
- struct kvm_gfn_range {
- 	struct kvm_memory_slot *slot;
- 	gfn_t start;
-@@ -1874,4 +1874,10 @@ static inline void kvm_handle_signal_exit(struct kvm_vcpu *vcpu)
- /* Max number of entries allowed for each kvm dirty ring */
- #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
- 
-+#ifdef CONFIG_MEMFD_OPS
-+int kvm_memfd_invalidate_range(struct kvm *kvm, struct inode *inode,
-+			       unsigned long start, unsigned long end);
-+#endif /* CONFIG_MEMFD_OPS */
-+
-+
- #endif
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 59f01e68337b..d84cb867b686 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -453,7 +453,8 @@ void kvm_vcpu_destroy(struct kvm_vcpu *vcpu)
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 2da19356679d..a7006e1ac2d2 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -1781,6 +1781,53 @@ static __always_inline bool kvm_handle_gfn_range(struct kvm *kvm,
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(kvm_vcpu_destroy);
  
--#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
-+#if defined(CONFIG_MEMFD_OPS) ||\
-+	(defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER))
- 
- typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
- 
-@@ -564,6 +565,30 @@ static __always_inline int __kvm_handle_useraddr_range(struct kvm *kvm,
- 	/* The notifiers are averse to booleans. :-( */
- 	return (int)ret;
- }
-+
-+static void mn_active_invalidate_count_inc(struct kvm *kvm)
++bool kvm_map_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
 +{
-+	spin_lock(&kvm->mn_invalidate_lock);
-+	kvm->mn_active_invalidate_count++;
-+	spin_unlock(&kvm->mn_invalidate_lock);
++	struct kvm_vcpu *vcpu;
++	kvm_pfn_t pfn;
++	gfn_t gfn;
++	int idx;
++	bool ret = true;
 +
-+}
++	/* Need vcpu context for kvm_mmu_do_page_fault. */
++	vcpu = kvm_get_vcpu(kvm, 0);
++	if (mutex_lock_killable(&vcpu->mutex))
++		return false;
 +
-+static void mn_active_invalidate_count_dec(struct kvm *kvm)
-+{
-+	bool wake;
++	vcpu_load(vcpu);
++	idx = srcu_read_lock(&kvm->srcu);
 +
-+	spin_lock(&kvm->mn_invalidate_lock);
-+	wake = (--kvm->mn_active_invalidate_count == 0);
-+	spin_unlock(&kvm->mn_invalidate_lock);
++	kvm_mmu_reload(vcpu);
 +
-+	/*
-+	 * There can only be one waiter, since the wait happens under
-+	 * slots_lock.
-+	 */
-+	if (wake)
-+		rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
-+}
- #endif
- 
- #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
-@@ -701,9 +726,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 	 *
- 	 * Pairs with the decrement in range_end().
- 	 */
--	spin_lock(&kvm->mn_invalidate_lock);
--	kvm->mn_active_invalidate_count++;
--	spin_unlock(&kvm->mn_invalidate_lock);
-+	mn_active_invalidate_count_inc(kvm);
- 
- 	__kvm_handle_useraddr_range(kvm, &useraddr_range);
- 
-@@ -742,21 +765,11 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 		.may_block	= mmu_notifier_range_blockable(range),
- 		.inode		= NULL,
- 	};
--	bool wake;
- 
- 	__kvm_handle_useraddr_range(kvm, &useraddr_range);
- 
- 	/* Pairs with the increment in range_start(). */
--	spin_lock(&kvm->mn_invalidate_lock);
--	wake = (--kvm->mn_active_invalidate_count == 0);
--	spin_unlock(&kvm->mn_invalidate_lock);
--
--	/*
--	 * There can only be one waiter, since the wait happens under
--	 * slots_lock.
--	 */
--	if (wake)
--		rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
-+	mn_active_invalidate_count_dec(kvm);
- 
- 	BUG_ON(kvm->mmu_notifier_count < 0);
- }
-@@ -841,6 +854,32 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
- 
- #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
- 
-+#ifdef CONFIG_MEMFD_OPS
-+int kvm_memfd_invalidate_range(struct kvm *kvm, struct inode *inode,
-+			       unsigned long start, unsigned long end)
-+{
-+	int ret;
-+	const struct kvm_useraddr_range useraddr_range = {
-+		.start		= start,
-+		.end		= end,
-+		.pte		= __pte(0),
-+		.handler	= kvm_unmap_gfn_range,
-+		.on_lock	= (void *)kvm_null_fn,
-+		.flush_on_ret	= true,
-+		.may_block	= false,
-+		.inode		= inode,
-+	};
++	gfn = range->start;
++	while (gfn < range->end) {
++		if (signal_pending(current)) {
++			ret = false;
++			break;
++		}
 +
++		if (need_resched())
++			cond_resched();
 +
-+	/* Prevent memslot modification */
-+	mn_active_invalidate_count_inc(kvm);
-+	ret = __kvm_handle_useraddr_range(kvm, &useraddr_range);
-+	mn_active_invalidate_count_dec(kvm);
++		pfn = kvm_mmu_do_page_fault(vcpu, gfn << PAGE_SHIFT,
++					PFERR_WRITE_MASK | PFERR_USER_MASK,
++					false);
++		if (is_error_noslot_pfn(pfn) || kvm->vm_bugged) {
++			ret = false;
++			break;
++		}
++
++		gfn++;
++	}
++
++	srcu_read_unlock(&kvm->srcu, idx);
++	vcpu_put(vcpu);
++
++	mutex_unlock(&vcpu->mutex);
 +
 +	return ret;
 +}
-+#endif /* CONFIG_MEMFD_OPS */
 +
- #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
- static int kvm_pm_notifier_call(struct notifier_block *bl,
- 				unsigned long state,
-diff --git a/virt/kvm/memfd.c b/virt/kvm/memfd.c
-index 96a1a5bee0f7..d092a9b6f496 100644
---- a/virt/kvm/memfd.c
-+++ b/virt/kvm/memfd.c
-@@ -16,6 +16,8 @@ static const struct memfd_pfn_ops *memfd_ops;
- static void memfd_invalidate_page_range(struct inode *inode, void *owner,
- 					pgoff_t start, pgoff_t end)
+ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
  {
-+	kvm_memfd_invalidate_range(owner, inode, start >> PAGE_SHIFT,
-+						 end >> PAGE_SHIFT);
- }
+ 	bool flush = false;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index d9573305e273..9c02fb53b8ab 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -237,6 +237,8 @@ struct kvm_gfn_range {
+ 	pte_t pte;
+ 	bool may_block;
+ };
++
++bool kvm_map_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
+ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
+ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
+ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index d84cb867b686..b9855b2fdaae 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -456,6 +456,11 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_destroy);
+ #if defined(CONFIG_MEMFD_OPS) ||\
+ 	(defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER))
  
- static void memfd_fallocate(struct inode *inode, void *owner,
++bool __weak kvm_map_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
++{
++	return false;
++}
++
+ typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+ 
+ typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
 -- 
 2.17.1
 
