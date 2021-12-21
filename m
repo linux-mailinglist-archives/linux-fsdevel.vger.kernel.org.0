@@ -2,100 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A6447C6D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D26247C707
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241500AbhLUSpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 13:45:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50232 "EHLO
+        id S241590AbhLUSxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 13:53:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbhLUSpE (ORCPT
+        with ESMTP id S241559AbhLUSxe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 13:45:04 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A637C061574;
-        Tue, 21 Dec 2021 10:45:03 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id bg19-20020a05600c3c9300b0034565e837b6so1493315wmb.1;
-        Tue, 21 Dec 2021 10:45:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sP8tGVLSq+J8OoY4ZEIZdlL5ioBYvuT3xm7rNvUEflw=;
-        b=Jg3B9hSImyqr8JAxuDtr8VSKOk2Y/dAXnQlgy7Gs0O7lNN48oonawsgfd5T0X99BMo
-         3prOZpl0lcyHbJkGoeQwRcYztxCp+92XIxOGuuSg6El7mc6aTdhK+T+tTj/i2VYsIkqU
-         gY4zk7gyYyq74X4e4k7hJkOwXU8o37tJO+WpnIyFLBAnAOWNNONTc1q9kMAwmb9jkEnt
-         I91RZjm6gypNO5i37RPnL531XZMYwFlPpkaU+lQ8bkzy9e7gkPtEg11oida65UkuZBiX
-         g6SwKhPOWCEuCI3L3WC3qL/CvbAbkOjUohDi9YCu83hiYtcqFyy60QjlVj1VsEQut2Go
-         lp0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sP8tGVLSq+J8OoY4ZEIZdlL5ioBYvuT3xm7rNvUEflw=;
-        b=viOibeA3xtFisKTuL82WURXpMRrWLw3FuGd1rqtESA/rA+/1lVau51cDVho6eG426o
-         98xeLCxPV9neGLNnsqoks/LQrnDUXgoX/peImMW3z/RUsdwgYxlCdERncKxOyPsif+Rr
-         4ZZQFjEQNrZkNicYWVn20lPqMhcIyXwai7yXjVjp4gDBZ7MIOMSJP61quYyF30kdeC7h
-         1YQljHMYv0QGrkGZ8TosTTxJ/UxyK+e+H+XSEImaCk91rIKdVSQtKt7BB12fGMxF0s6Q
-         spBoiqS3Fa4mQrfWKzYDIWywgIcwmEfTg+UKYVowghyxq5CBIy3PMxCokN3Gl/STmy3a
-         t68w==
-X-Gm-Message-State: AOAM531rClg+gtYQcG717gNPX/3PpwU22/Bf5oTPjaLHuDXxOZ+RrGjA
-        YIvK9648r2lpFiZ1pDYGPmc=
-X-Google-Smtp-Source: ABdhPJwNmb5CLJkrtrJvYyjtqY1LRirngqPgqUNRGYXV+tkZmmmRO1HN1TdmGtt0k3LRJ6c2lALRaQ==
-X-Received: by 2002:a7b:c94f:: with SMTP id i15mr3892023wml.79.1640112302147;
-        Tue, 21 Dec 2021 10:45:02 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n8sm20269308wri.47.2021.12.21.10.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Dec 2021 10:45:01 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH][next] kernel/sysctl.c: remove unused variable ten_thousand
-Date:   Tue, 21 Dec 2021 18:45:01 +0000
-Message-Id: <20211221184501.574670-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Tue, 21 Dec 2021 13:53:34 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E09BC061574;
+        Tue, 21 Dec 2021 10:53:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gwpHtrzIOugNZWMQx41hhR0OAIjfgE+ZuqRIceukEmM=; b=D2vhuElqYArhg+AijxsJfFAeR2
+        vJUS7dqklDDbRCMIMKSh692SjhB+K3ojUs6yc/MOqv0Vvqm5SL/6mKIny/YTKoQ1oAPrGeo5lXL4G
+        UGnlNN9hcnihZPnDPi6wqtBYamemWq5vLO8LL8ceJemx0mssL8uqI7GlgMalOEgV/d8jpGp9/B5c5
+        BmasU8LCDE+edfezHWrdAcbnrAu8cfEA23mnjgr8XcTJA4tZ8Wfaqe6H3TaRWm2ojGQ2MuiTATRwq
+        GeLi4YZQyXLY1ry1iUBoyVJpoTcPiy6rWAJ5p8xmrr52E/J2JcDUdTPwDnDXDbC6LmBwaaXD4XKBT
+        LChGTR9w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mzkGL-002jVn-Tw; Tue, 21 Dec 2021 18:53:25 +0000
+Date:   Tue, 21 Dec 2021 18:53:25 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: iomap-folio & nvdimm merge
+Message-ID: <YcIipecYCUrqbRBu@casper.infradead.org>
+References: <20211216210715.3801857-1-willy@infradead.org>
+ <20211216210715.3801857-17-willy@infradead.org>
+ <YcIIbtKhOulAL4s4@casper.infradead.org>
+ <20211221184115.GY27664@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211221184115.GY27664@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The const variable ten_thousand is not used, it is redundant and can
-be removed.
+On Tue, Dec 21, 2021 at 10:41:15AM -0800, Darrick J. Wong wrote:
+> >     iomap: Inline __iomap_zero_iter into its caller
+> > 
+> >     To make the merge easier, replicate the inlining of __iomap_zero_iter()
+> >     into iomap_zero_iter() that is currently in the nvdimm tree.
+> > 
+> >     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> Looks like a reasonable function promotion to me...
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Cleans up clang warning:
-kernel/sysctl.c:99:18: warning: unused variable 'ten_thousand' [-Wunused-const-variable]
-static const int ten_thousand = 10000;
+Thanks, applied that to the commit.
 
-Fixes: c26da54dc8ca ("printk: move printk sysctl to printk/sysctl.c")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- kernel/sysctl.c | 3 ---
- 1 file changed, 3 deletions(-)
+> > Shall I push out a version of this patch series which includes the
+> > "iomap: Inline __iomap_zero_iter into its caller" patch I pasted above?
+> 
+> Yes.
+> 
+> I've been distracted for months with first a Huge Customer Escalation
+> and now a <embargoed>, which means that I've been and continue to be
+> very distracted.  I /think/ there are no other iomap patches being
+> proposed for inclusion -- Andreas' patches were applied as fixes during
+> 5.16-rc, Christoph's DAX refactoring is now in the nvdimm tree, and that
+> leaves Matthew's folios refactoring.
+> 
+> So seeing as (I think?) there are no other iomap patches for 5.17, if
+> Matthew wants to add his branch to for-next and push directly to Linus
+> (rather than pushing to me to push the exact same branch to Linus) I
+> think that would be ... better than letting it block on me.  IIRC I've
+> RVB'd everything in the folios branch. :(
+> 
+> FWIW I ran the 5.17e branch through my fstests cloud and nothing fell
+> out, so I think it's in good enough shape to merge to for-next.
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 7f07b058b180..ace130de4a17 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -95,9 +95,6 @@
- 
- /* Constants used for minimum and  maximum */
- 
--#ifdef CONFIG_PRINTK
--static const int ten_thousand = 10000;
--#endif
- #ifdef CONFIG_PERF_EVENTS
- static const int six_hundred_forty_kb = 640 * 1024;
- #endif
--- 
-2.33.1
+Glad to hear it passed that thorough testing.  Stephen, please pick
+up a new tree (hopefully just temporarily until Darrick can swim to
+the surface):
 
+ git://git.infradead.org/users/willy/linux.git folio-iomap
+
+Hopefully the previous message will give you enough context for
+the merge conflict resolution.
