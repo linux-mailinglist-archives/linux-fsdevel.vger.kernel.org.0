@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD8A47C26B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9FBA47C26F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239094AbhLUPNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 10:13:06 -0500
-Received: from mga18.intel.com ([134.134.136.126]:45664 "EHLO mga18.intel.com"
+        id S239127AbhLUPNL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 10:13:11 -0500
+Received: from mga01.intel.com ([192.55.52.88]:50989 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239092AbhLUPND (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 10:13:03 -0500
+        id S239092AbhLUPNL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Dec 2021 10:13:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640099583; x=1671635583;
+  t=1640099591; x=1671635591;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=COdj1UvXQdkAqzxtXCPYFm0EISfGJg8Z8mzxkFecT00=;
-  b=beU8rVoQBTWa+Tw16yFjPtrbBml6hlZe6XcOPyOAa01v1mG6kFtUBklJ
-   eKkGvn/ip+GCdbXlV5KTvaSgBDIqpaBnZzqKI1lyXYfuHaDy+vIqwpPzL
-   YyARbCY7gxLlv/8j+NN9Be2l0q4Efjzn1PL44FF/9KV0gMN76EfTFfcQ0
-   qmzzF6l5D5hCYkIHwrhvkxtQwjqN/9/JYT4q6H3NMui80zLeksHnzu0m+
-   mJ/z5Cq3M3kFU+wehalIE0PZCetcwUCD2+LWcEnibHYM5BA13DJa89l1M
-   UQa9tt4nA2j1I6sPEjYLVzy0dqjsBoLUg0P850tx3FxeBFSBhZq5j41hm
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10204"; a="227259435"
+  bh=mFDIpY3/LyMlA/FBo77jj+CP6HruamtUy42MpTsU/84=;
+  b=AVwry+phgw40FTojjGSPSXlou3Ah2zxcPkeiTCsiA0wmgp+dlKhG8ATV
+   p931r/L8hjKta302PqrQVR+XfLtbQO98DbJbMCbdpLy/wbQxoRJsjmpku
+   2qh9HfuYJY3oTRT8yFykj6iBW1qbGhHQ4+y8xnwVvlNNs+vgl2LuhOQQ8
+   p9eH52RguTr290RlrE7y1ZqoCGccWpyLNXNkgKXQ/jyq+yA5W2BFFrD6d
+   tRV1fyCrkzxLbjVRMWU6tddTh4JELHmkeSyzd/iJ9VM5phISFJQHeeKOA
+   JfFHAhqihlAvio1isJ23pKky4/EDQhmYc9TSUfh6RW6yOhD5hupvVTr5n
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10204"; a="264601414"
 X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="227259435"
+   d="scan'208";a="264601414"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 07:13:03 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 07:13:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="684688485"
+   d="scan'208";a="684688504"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga005.jf.intel.com with ESMTP; 21 Dec 2021 07:12:55 -0800
+  by orsmga005.jf.intel.com with ESMTP; 21 Dec 2021 07:13:03 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: [PATCH v3 07/15] KVM: Special handling for fd-based memory invalidation
-Date:   Tue, 21 Dec 2021 23:11:17 +0800
-Message-Id: <20211221151125.19446-8-chao.p.peng@linux.intel.com>
+Subject: [PATCH v3 08/15] KVM: Split out common memory invalidation code
+Date:   Tue, 21 Dec 2021 23:11:18 +0800
+Message-Id: <20211221151125.19446-9-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
 References: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
@@ -68,104 +68,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For fd-based guest memory, the memory backend (e.g. the fd provider)
-should notify KVM to unmap/invalidate the privated memory from KVM
-second MMU when userspace punches hole on the fd (e.g. when userspace
-converts private memory to shared memory).
+When fd-based memory is enabled, there will be two types of memory
+invalidation:
+  - memory invalidation from native MMU through mmu_notifier callback
+    for hva-based memory, and,
+  - memory invalidation from memfd through memfd_notifier callback for
+    fd-based memory.
 
-To support fd-based memory invalidation, existing hva-based memory
-invalidation needs to be extended. A new 'inode' for the fd is passed in
-from memfd_falloc_notifier and the 'start/end' will represent start/end
-offset in the fd instead of hva range. During the invalidation KVM needs
-to check this inode against that in the memslot. Only when the 'inode' in
-memslot equals to the passed-in 'inode' we should invalidate the mapping
-in KVM.
+Some code can be shared between these two types of memory invalidation.
+This patch moves these shared code into one place so that it can be
+used for CONFIG_MMU_NOTIFIER as well as CONFIG_MEMFD_NOTIFIER.
 
 Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- virt/kvm/kvm_main.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ virt/kvm/kvm_main.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 856f89ed8ab5..0f2d1002f6a7 100644
+index 0f2d1002f6a7..59f01e68337b 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -479,6 +479,7 @@ typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
- struct kvm_useraddr_range {
- 	unsigned long start;
- 	unsigned long end;
-+	struct inode *inode;
- 	pte_t pte;
- 	gfn_handler_t handler;
- 	on_lock_fn_t on_lock;
-@@ -519,9 +520,19 @@ static __always_inline int __kvm_handle_useraddr_range(struct kvm *kvm,
- 		slots = __kvm_memslots(kvm, i);
- 		kvm_for_each_memslot(slot, slots) {
- 			unsigned long useraddr_start, useraddr_end;
-+			unsigned long useraddr_base;
+@@ -454,22 +454,6 @@ void kvm_vcpu_destroy(struct kvm_vcpu *vcpu)
+ EXPORT_SYMBOL_GPL(kvm_vcpu_destroy);
  
--			useraddr_start = max(range->start, slot->userspace_addr);
--			useraddr_end = min(range->end, slot->userspace_addr +
-+			if (range->inode) {
-+				if (!slot->file ||
-+				    slot->file->f_inode != range->inode)
-+					continue;
-+				useraddr_base = slot->file_ofs;
-+			} else
-+				useraddr_base = slot->userspace_addr;
+ #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+-static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
+-{
+-	return container_of(mn, struct kvm, mmu_notifier);
+-}
+-
+-static void kvm_mmu_notifier_invalidate_range(struct mmu_notifier *mn,
+-					      struct mm_struct *mm,
+-					      unsigned long start, unsigned long end)
+-{
+-	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+-	int idx;
+-
+-	idx = srcu_read_lock(&kvm->srcu);
+-	kvm_arch_mmu_notifier_invalidate_range(kvm, start, end);
+-	srcu_read_unlock(&kvm->srcu, idx);
+-}
+ 
+ typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+ 
+@@ -580,6 +564,25 @@ static __always_inline int __kvm_handle_useraddr_range(struct kvm *kvm,
+ 	/* The notifiers are averse to booleans. :-( */
+ 	return (int)ret;
+ }
++#endif
 +
++#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
++static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
++{
++	return container_of(mn, struct kvm, mmu_notifier);
++}
 +
-+			useraddr_start = max(range->start, useraddr_base);
-+			useraddr_end = min(range->end, useraddr_base +
- 						  (slot->npages << PAGE_SHIFT));
- 			if (useraddr_start >= useraddr_end)
- 				continue;
-@@ -540,10 +551,10 @@ static __always_inline int __kvm_handle_useraddr_range(struct kvm *kvm,
- 			 * {gfn_start, gfn_start+1, ..., gfn_end-1}.
- 			 */
- 			gfn_range.start = useraddr_to_gfn_memslot(useraddr_start,
--								  slot, true);
-+							slot, !range->inode);
- 			gfn_range.end = useraddr_to_gfn_memslot(
- 						useraddr_end + PAGE_SIZE - 1,
--						slot, true);
-+						slot, !range->inode);
- 			gfn_range.slot = slot;
++static void kvm_mmu_notifier_invalidate_range(struct mmu_notifier *mn,
++					      struct mm_struct *mm,
++					      unsigned long start, unsigned long end)
++{
++	struct kvm *kvm = mmu_notifier_to_kvm(mn);
++	int idx;
++
++	idx = srcu_read_lock(&kvm->srcu);
++	kvm_arch_mmu_notifier_invalidate_range(kvm, start, end);
++	srcu_read_unlock(&kvm->srcu, idx);
++}
  
- 			if (!locked) {
-@@ -585,6 +596,7 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
- 		.on_lock	= (void *)kvm_null_fn,
- 		.flush_on_ret	= true,
- 		.may_block	= false,
-+		.inode		= NULL,
- 	};
- 
- 	return __kvm_handle_useraddr_range(kvm, &range);
-@@ -604,6 +616,7 @@ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn
- 		.on_lock	= (void *)kvm_null_fn,
- 		.flush_on_ret	= false,
- 		.may_block	= false,
-+		.inode		= NULL,
- 	};
- 
- 	return __kvm_handle_useraddr_range(kvm, &range);
-@@ -672,6 +685,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 		.on_lock	= kvm_inc_notifier_count,
- 		.flush_on_ret	= true,
- 		.may_block	= mmu_notifier_range_blockable(range),
-+		.inode		= NULL,
- 	};
- 
- 	trace_kvm_unmap_hva_range(range->start, range->end);
-@@ -723,6 +737,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 		.on_lock	= kvm_dec_notifier_count,
- 		.flush_on_ret	= false,
- 		.may_block	= mmu_notifier_range_blockable(range),
-+		.inode		= NULL,
- 	};
- 	bool wake;
- 
+ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
+ 						unsigned long start,
 -- 
 2.17.1
 
