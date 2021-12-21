@@ -2,75 +2,277 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4B547B938
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 05:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED7147BA4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 07:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232345AbhLUEpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Dec 2021 23:45:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbhLUEpG (ORCPT
+        id S229732AbhLUGwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 01:52:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:56072 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229551AbhLUGwb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Dec 2021 23:45:06 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE0AC061574;
-        Mon, 20 Dec 2021 20:45:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=5rGtk37LcrNh+N9Whvt+Y0DkA2xZOzII17DUWEsUco4=; b=RHHTkbFKO4fVOwSUASIK7/uQSu
-        4lmo7CCF6ndRNOTuomIglQUhaJNzfxZ8G6buWvbuscA0/d48eZmGpf6SzaZ/HPgP/8EsHn5pirnG/
-        xoMAJvPJ5U1F8tDqdX0iwSp27lfDDXRpgr7IP06y5AtTmliJ7+UktVWgoWP/NmZnjRDrbPH9YEMMP
-        v/FiL+h/ies4neEJD6bDtnxY9rBKUWrHpkBxmY9MPUXlHeFyyutkJXN6JKGq/mvcSinjmSCMehDby
-        hjvkljFmeyC/KA1mqzRspdtsAaCw2wmJqWWd9FZ52aQf1+01EqWU0ON7u4fJDrpbQmLtOKqhrRqrR
-        lcmvkECQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mzX1E-002AeV-6f; Tue, 21 Dec 2021 04:44:56 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] iomap: Fix error handling in iomap_zero_iter()
-Date:   Tue, 21 Dec 2021 04:44:50 +0000
-Message-Id: <20211221044450.517558-1-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
+        Tue, 21 Dec 2021 01:52:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1640069550;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2yD916/h8up9wxshnuCprdFf9EbxTiB8RWRE9+mpT/4=;
+        b=fYfIJEhgE4DsG+BGgJDxawuOBUUZ8XFQ8bmrkm8fsmSR+VpmQoKJAR9f6lUERiiMthBdQQ
+        nf33iZquPe1ef/iPd5Z0qrsyrA26w3lAD8tkgXVxGyCA7TUs5YoUGJFskRoMkORnjE4LKK
+        nxLaCCyA9g/ho93k/Pp0sclT0B/xw0U=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-495-bLfoejczN8uKO9MW2Ozr2A-1; Tue, 21 Dec 2021 01:52:29 -0500
+X-MC-Unique: bLfoejczN8uKO9MW2Ozr2A-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 72A391800D50;
+        Tue, 21 Dec 2021 06:52:27 +0000 (UTC)
+Received: from localhost (ovpn-12-118.pek2.redhat.com [10.72.12.118])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD7DA34D5E;
+        Tue, 21 Dec 2021 06:52:22 +0000 (UTC)
+Date:   Tue, 21 Dec 2021 14:52:16 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+        kexec@lists.infradead.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
+        linux-kernel@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] vmcore: Convert __read_vmcore to use an iov_iter
+Message-ID: <20211221065216.GA7986@MiWiFi-R3L-srv>
+References: <20211213143927.3069508-1-willy@infradead.org>
+ <20211213143927.3069508-3-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211213143927.3069508-3-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iomap_write_end() does not return a negative errno to indicate an
-error, but the number of bytes successfully copied.  It cannot return
-an error today, so include a debugging assertion like the one in
-iomap_unshare_iter().
+On 12/13/21 at 02:39pm, Matthew Wilcox (Oracle) wrote:
+> This gets rid of copy_to() and let us use proc_read_iter() instead
+> of proc_read().
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Fixes: c6f40468657d ("fsdax: decouple zeroing from the iomap buffered I/O code")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/iomap/buffered-io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Baoquan He <bhe@redhat.com>
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index f3176cf90351..955f51f94b3f 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -901,8 +901,8 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		mark_page_accessed(page);
- 
- 		bytes = iomap_write_end(iter, pos, bytes, bytes, page);
--		if (bytes < 0)
--			return bytes;
-+		if (WARN_ON_ONCE(bytes == 0))
-+			return -EIO;
- 
- 		pos += bytes;
- 		length -= bytes;
--- 
-2.33.0
+> ---
+>  fs/proc/vmcore.c | 81 +++++++++++++++++-------------------------------
+>  1 file changed, 29 insertions(+), 52 deletions(-)
+> 
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 958cad6476e6..7b25f568d20d 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -252,22 +252,8 @@ ssize_t __weak copy_oldmem_page_encrypted(struct iov_iter *iter,
+>  	return copy_oldmem_page(iter, pfn, csize, offset);
+>  }
+>  
+> -/*
+> - * Copy to either kernel or user space
+> - */
+> -static int copy_to(void *target, void *src, size_t size, int userbuf)
+> -{
+> -	if (userbuf) {
+> -		if (copy_to_user((char __user *) target, src, size))
+> -			return -EFAULT;
+> -	} else {
+> -		memcpy(target, src, size);
+> -	}
+> -	return 0;
+> -}
+> -
+>  #ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
+> -static int vmcoredd_copy_dumps(void *dst, u64 start, size_t size, int userbuf)
+> +static int vmcoredd_copy_dumps(struct iov_iter *iter, u64 start, size_t size)
+>  {
+>  	struct vmcoredd_node *dump;
+>  	u64 offset = 0;
+> @@ -280,14 +266,13 @@ static int vmcoredd_copy_dumps(void *dst, u64 start, size_t size, int userbuf)
+>  		if (start < offset + dump->size) {
+>  			tsz = min(offset + (u64)dump->size - start, (u64)size);
+>  			buf = dump->buf + start - offset;
+> -			if (copy_to(dst, buf, tsz, userbuf)) {
+> +			if (copy_to_iter(buf, tsz, iter) < tsz) {
+>  				ret = -EFAULT;
+>  				goto out_unlock;
+>  			}
+>  
+>  			size -= tsz;
+>  			start += tsz;
+> -			dst += tsz;
+>  
+>  			/* Leave now if buffer filled already */
+>  			if (!size)
+> @@ -343,33 +328,28 @@ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
+>  /* Read from the ELF header and then the crash dump. On error, negative value is
+>   * returned otherwise number of bytes read are returned.
+>   */
+> -static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+> -			     int userbuf)
+> +static ssize_t __read_vmcore(struct iov_iter *iter, loff_t *fpos)
+>  {
+>  	ssize_t acc = 0, tmp;
+>  	size_t tsz;
+>  	u64 start;
+>  	struct vmcore *m = NULL;
+>  
+> -	if (buflen == 0 || *fpos >= vmcore_size)
+> +	if (iter->count == 0 || *fpos >= vmcore_size)
+>  		return 0;
+>  
+> -	/* trim buflen to not go beyond EOF */
+> -	if (buflen > vmcore_size - *fpos)
+> -		buflen = vmcore_size - *fpos;
+> +	iov_iter_truncate(iter, vmcore_size - *fpos);
+>  
+>  	/* Read ELF core header */
+>  	if (*fpos < elfcorebuf_sz) {
+> -		tsz = min(elfcorebuf_sz - (size_t)*fpos, buflen);
+> -		if (copy_to(buffer, elfcorebuf + *fpos, tsz, userbuf))
+> +		tsz = min(elfcorebuf_sz - (size_t)*fpos, iter->count);
+> +		if (copy_to_iter(elfcorebuf + *fpos, tsz, iter) < tsz)
+>  			return -EFAULT;
+> -		buflen -= tsz;
+>  		*fpos += tsz;
+> -		buffer += tsz;
+>  		acc += tsz;
+>  
+>  		/* leave now if filled buffer already */
+> -		if (buflen == 0)
+> +		if (iter->count == 0)
+>  			return acc;
+>  	}
+>  
+> @@ -390,35 +370,31 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+>  		/* Read device dumps */
+>  		if (*fpos < elfcorebuf_sz + vmcoredd_orig_sz) {
+>  			tsz = min(elfcorebuf_sz + vmcoredd_orig_sz -
+> -				  (size_t)*fpos, buflen);
+> +				  (size_t)*fpos, iter->count);
+>  			start = *fpos - elfcorebuf_sz;
+> -			if (vmcoredd_copy_dumps(buffer, start, tsz, userbuf))
+> +			if (vmcoredd_copy_dumps(iter, start, tsz))
+>  				return -EFAULT;
+>  
+> -			buflen -= tsz;
+>  			*fpos += tsz;
+> -			buffer += tsz;
+>  			acc += tsz;
+>  
+>  			/* leave now if filled buffer already */
+> -			if (!buflen)
+> +			if (!iter->count)
+>  				return acc;
+>  		}
+>  #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
+>  
+>  		/* Read remaining elf notes */
+> -		tsz = min(elfcorebuf_sz + elfnotes_sz - (size_t)*fpos, buflen);
+> +		tsz = min(elfcorebuf_sz + elfnotes_sz - (size_t)*fpos, iter->count);
+>  		kaddr = elfnotes_buf + *fpos - elfcorebuf_sz - vmcoredd_orig_sz;
+> -		if (copy_to(buffer, kaddr, tsz, userbuf))
+> +		if (copy_to_iter(kaddr, tsz, iter) < tsz)
+>  			return -EFAULT;
+>  
+> -		buflen -= tsz;
+>  		*fpos += tsz;
+> -		buffer += tsz;
+>  		acc += tsz;
+>  
+>  		/* leave now if filled buffer already */
+> -		if (buflen == 0)
+> +		if (iter->count == 0)
+>  			return acc;
+>  	}
+>  
+> @@ -426,19 +402,17 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+>  		if (*fpos < m->offset + m->size) {
+>  			tsz = (size_t)min_t(unsigned long long,
+>  					    m->offset + m->size - *fpos,
+> -					    buflen);
+> +					    iter->count);
+>  			start = m->paddr + *fpos - m->offset;
+> -			tmp = read_from_oldmem(buffer, tsz, &start,
+> -					       userbuf, cc_platform_has(CC_ATTR_MEM_ENCRYPT));
+> +			tmp = read_from_oldmem_iter(iter, tsz, &start,
+> +					cc_platform_has(CC_ATTR_MEM_ENCRYPT));
+>  			if (tmp < 0)
+>  				return tmp;
+> -			buflen -= tsz;
+>  			*fpos += tsz;
+> -			buffer += tsz;
+>  			acc += tsz;
+>  
+>  			/* leave now if filled buffer already */
+> -			if (buflen == 0)
+> +			if (iter->count == 0)
+>  				return acc;
+>  		}
+>  	}
+> @@ -446,15 +420,14 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+>  	return acc;
+>  }
+>  
+> -static ssize_t read_vmcore(struct file *file, char __user *buffer,
+> -			   size_t buflen, loff_t *fpos)
+> +static ssize_t read_vmcore(struct kiocb *iocb, struct iov_iter *iter)
+>  {
+> -	return __read_vmcore((__force char *) buffer, buflen, fpos, 1);
+> +	return __read_vmcore(iter, &iocb->ki_pos);
+>  }
+>  
+>  /*
+>   * The vmcore fault handler uses the page cache and fills data using the
+> - * standard __vmcore_read() function.
+> + * standard __read_vmcore() function.
+>   *
+>   * On s390 the fault handler is used for memory regions that can't be mapped
+>   * directly with remap_pfn_range().
+> @@ -464,9 +437,10 @@ static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
+>  #ifdef CONFIG_S390
+>  	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+>  	pgoff_t index = vmf->pgoff;
+> +	struct iov_iter iter;
+> +	struct kvec kvec;
+>  	struct page *page;
+>  	loff_t offset;
+> -	char *buf;
+>  	int rc;
+>  
+>  	page = find_or_create_page(mapping, index, GFP_KERNEL);
+> @@ -474,8 +448,11 @@ static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
+>  		return VM_FAULT_OOM;
+>  	if (!PageUptodate(page)) {
+>  		offset = (loff_t) index << PAGE_SHIFT;
+> -		buf = __va((page_to_pfn(page) << PAGE_SHIFT));
+> -		rc = __read_vmcore(buf, PAGE_SIZE, &offset, 0);
+> +		kvec.iov_base = page_address(page);
+> +		kvec.iov_len = PAGE_SIZE;
+> +		iov_iter_kvec(&iter, READ, &kvec, 1, PAGE_SIZE);
+> +
+> +		rc = __read_vmcore(&iter, &offset);
+>  		if (rc < 0) {
+>  			unlock_page(page);
+>  			put_page(page);
+> @@ -725,7 +702,7 @@ static int mmap_vmcore(struct file *file, struct vm_area_struct *vma)
+>  
+>  static const struct proc_ops vmcore_proc_ops = {
+>  	.proc_open	= open_vmcore,
+> -	.proc_read	= read_vmcore,
+> +	.proc_read_iter	= read_vmcore,
+>  	.proc_lseek	= default_llseek,
+>  	.proc_mmap	= mmap_vmcore,
+>  };
+> -- 
+> 2.33.0
+> 
 
