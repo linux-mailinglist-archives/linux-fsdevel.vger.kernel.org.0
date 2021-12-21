@@ -2,111 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 08ED247C50E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 18:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98ED747C517
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 18:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234013AbhLURcv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 12:32:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229925AbhLURcv (ORCPT
+        id S240438AbhLURgH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 12:36:07 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:40538 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240435AbhLURgH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 12:32:51 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DC9C061574;
-        Tue, 21 Dec 2021 09:32:50 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id bg2-20020a05600c3c8200b0034565c2be15so2260562wmb.0;
-        Tue, 21 Dec 2021 09:32:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=6TAi1T4m7vwlDw2N+ktNv0MdRsmpYSgXdgAq3T79/4s=;
-        b=XIyM9YOatEk1MZlES9L723GUIGIXTg44gfibPFvoOOK/CnoKAa+yp/E/SsCz2maP/+
-         QOdE8MbMb73HqD1P11+kiJPiIl8GXBS1Mk9XbtS7Izu1yr01sEHy4dhuvy8iuIF/Tmvv
-         fEMSh3qu1tbLW3z2ntZoybcTYyB+ukZv3hRAcKSkwFa/0kNLCHMYnLlH/E3rxDG39Iqh
-         JBFj9gIWryVMtNmLRHlxL+caWeLKqCFmsX8I0hzTtT74gHNsiENrheX+75EnbVCfxo73
-         P+2/bHxg+8Tmv7v9qwzCpk+sbnFBSnp0lYp2LhX1zS5fp2MQrgtp+r9MH/NwHMXcNzQt
-         tn/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=6TAi1T4m7vwlDw2N+ktNv0MdRsmpYSgXdgAq3T79/4s=;
-        b=frpXknmMYpJoyFhywRYEYRDp5Syf/cpNhy9hU1K0/6RsoefrgonEhIfqu8omZNe5QU
-         Arksbesf0MdNFoBSq3PnMP9JUMvPicL/1zFLrIm5nfA13/XATPpbqRmvvC1ZkXyPrV5f
-         Qxv+m3a7V3wSdEqNR5257nwbuzFe4XGT6odyjMejfOhl+z9Bqm8a5rQCTpgu1N0qVudT
-         tPQLK2TwNd3dy5VfaMPMP56A3wmcvFI0L7JodUHkq4qqvbLUpGj5dBWG5CnOHGwGcouW
-         /0BpuvafeND2Xx6IpDZCyeYF/RnV0SlDvoUVNvBbut+3IhadzKp0vfNZiFncZniV+8ZF
-         PoWw==
-X-Gm-Message-State: AOAM532z+/Nd3qeervoJOsjyv2qGVKcppAFZ2ZeCYugYNwZnuF+45qDz
-        PrnIN+e2pYZ7RPyJN3ETZDk=
-X-Google-Smtp-Source: ABdhPJycLTMDz3SQnxWj9+MRtDs4mqU0fPH//fyE1Uv88Qh9sFmrISVsGP0t0qu82IQx38T3TUrjgQ==
-X-Received: by 2002:a05:600c:5010:: with SMTP id n16mr3599481wmr.139.1640107969342;
-        Tue, 21 Dec 2021 09:32:49 -0800 (PST)
-Received: from [192.168.8.198] ([148.252.128.24])
-        by smtp.gmail.com with ESMTPSA id n14sm22052537wrf.69.2021.12.21.09.32.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 09:32:48 -0800 (PST)
-Message-ID: <0d38a455-f619-042b-85de-d8194e0f792b@gmail.com>
-Date:   Tue, 21 Dec 2021 17:32:35 +0000
+        Tue, 21 Dec 2021 12:36:07 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52]:44578)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mzj3V-009677-7v; Tue, 21 Dec 2021 10:36:05 -0700
+Received: from ip68-227-161-49.om.om.cox.net ([68.227.161.49]:54094 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mzj3U-0048xo-5Q; Tue, 21 Dec 2021 10:36:04 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Laurent Vivier <laurent@vivier.eu>,
+        YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>,
+        Willy Tarreau <w@1wt.eu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20211221021744.864115-1-longman@redhat.com>
+        <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
+        <4f67dc4c-7038-7dde-cad9-4feeaa6bc71b@redhat.com>
+Date:   Tue, 21 Dec 2021 11:35:57 -0600
+In-Reply-To: <4f67dc4c-7038-7dde-cad9-4feeaa6bc71b@redhat.com> (Waiman Long's
+        message of "Tue, 21 Dec 2021 11:41:27 -0500")
+Message-ID: <87czlp7tdu.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v4 5/5] io_uring: add fgetxattr and getxattr support
-Content-Language: en-US
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@fb.com
-Cc:     viro@zeniv.linux.org.uk
-References: <20211215221702.3695098-1-shr@fb.com>
- <20211215221702.3695098-6-shr@fb.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211215221702.3695098-6-shr@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1mzj3U-0048xo-5Q;;;mid=<87czlp7tdu.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.161.49;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX180lGSi0e9hseN5KMysEPq9tcqjvvxHmw4=
+X-SA-Exim-Connect-IP: 68.227.161.49
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=3.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong,
+        XMSubMetaSxObfu_03,XMSubMetaSx_00,XM_B_SpammyWords autolearn=disabled
+        version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4710]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  1.0 XMSubMetaSx_00 1+ Sexy Words
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Waiman Long <longman@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 484 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 4.7 (1.0%), b_tie_ro: 3.3 (0.7%), parse: 1.18
+        (0.2%), extract_message_metadata: 13 (2.6%), get_uri_detail_list: 3.3
+        (0.7%), tests_pri_-1000: 4.2 (0.9%), tests_pri_-950: 1.08 (0.2%),
+        tests_pri_-900: 0.85 (0.2%), tests_pri_-90: 71 (14.6%), check_bayes:
+        69 (14.3%), b_tokenize: 7 (1.3%), b_tok_get_all: 9 (1.9%),
+        b_comp_prob: 2.3 (0.5%), b_tok_touch_all: 48 (9.9%), b_finish: 0.75
+        (0.2%), tests_pri_0: 375 (77.3%), check_dkim_signature: 0.47 (0.1%),
+        check_dkim_adsp: 2.4 (0.5%), poll_dns_idle: 0.79 (0.2%), tests_pri_10:
+        1.67 (0.3%), tests_pri_500: 10 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] exec: Make suid_dumpable apply to SUID/SGID binaries irrespective of invoking users
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/15/21 22:17, Stefan Roesch wrote:
-> This adds support to io_uring for the fgetxattr and getxattr API.
 
-Same comments as with 4/5, only one additional below
+Adding a couple of other people who have expressed opinions on how
+to mitigate this issue in the kernel.
 
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
-> ---
->   fs/io_uring.c                 | 150 ++++++++++++++++++++++++++++++++++
->   include/uapi/linux/io_uring.h |   2 +
->   2 files changed, 152 insertions(+)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index fc2239635342..c365944a8054 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-[...]
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index dbf473900da2..cd9160272308 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -145,7 +145,9 @@ enum {
->   	IORING_OP_MKDIRAT,
->   	IORING_OP_SYMLINKAT,
->   	IORING_OP_LINKAT,
-> +	IORING_OP_FGETXATTR,
+Waiman Long <longman@redhat.com> writes:
 
-Even though it's just one-commit gap, it's not great changing uapi,
-e.g. +1 to previous IORING_OP_FSETXATTR. It may actually make more
-sense to keep xget and xfget closer together because you're reusing
-code for them and compiler may _potentially_ better optimise it,
-e.g. ifs in switches.
+> On 12/21/21 10:55, Eric W. Biederman wrote:
+>> Waiman Long <longman@redhat.com> writes:
+>>
+>>> The begin_new_exec() function checks for SUID or SGID binaries by
+>>> comparing effective uid and gid against real uid and gid and using
+>>> the suid_dumpable sysctl parameter setting only if either one of them
+>>> differs.
+>>>
+>>> In the special case that the uid and/or gid of the SUID/SGID binaries
+>>> matches the id's of the user invoking it, the suid_dumpable is not
+>>> used and SUID_DUMP_USER will be used instead. The documentation for the
+>>> suid_dumpable sysctl parameter does not include that exception and so
+>>> this will be an undocumented behavior.
+>>>
+>>> Eliminate this undocumented behavior by adding a flag in the linux_binprm
+>>> structure to designate a SUID/SGID binary and use it for determining
+>>> if the suid_dumpable setting should be applied or not.
+>> I see that you are making the code match the documentation.
+>> What harm/problems does this mismatch cause in practice?
+>> What is the motivation for this change?
+>>
+>> I am trying to see the motivation but all I can see is that
+>> in the case where suid and sgid do nothing in practice the code
+>> does not change dumpable.  The point of dumpable is to refuse to
+>> core dump when it is not safe.  In this case since nothing happened
+>> in practice it is safe.
+>>
+>> So how does this matter in practice.  If there isn't a good
+>> motivation my feel is that it is the documentation that needs to be
+>> updated rather than the code.
+>>
+>> There are a lot of warts to the suid/sgid handling during exec.  This
+>> just doesn't look like one of them
+>
+> This patch is a minor mitigation in response to the security
+> vulnerability as posted in
+> https://www.openwall.com/lists/oss-security/2021/10/20/2 (aka
+> CVE-2021-3864). In particular, the Su PoC (tested on CentOS 7) showing
+> that the su invokes /usr/sbin/unix_chkpwd which is also a SUID
+> binary. The initial su invocation won't generate a core dump because
+> the real uid and euid differs, but the second unix_chkpwd invocation
+> will. This patch eliminates this hole by making sure that all SUID
+> binaries follow suid_dumpable setting.
 
->   	IORING_OP_FSETXATTR,
-> +	IORING_OP_GETXATTR,
->   	IORING_OP_SETXATTR,
->   
->   	/* this goes last, obviously */
+All that is required to take advantage of this vulnerability is
+for an suid program to exec something that will coredump.  That
+exec resets the dumpability.
 
--- 
-Pavel Begunkov
+While the example exploit is execing a suid program it is not required
+that the exec'd program be suid.
+
+This makes your proposed change is not a particularly effective mitigation.
+
+
+The best idea I have seen to mitigate this from the kernel side is:
+
+1) set RLIMIT_CORE to 0 during an suid exec
+2) update do_coredump to honor an rlimit of 0 for pipes
+
+Anecdotally this should not effect the common systems that pipe
+coredumps into programs as those programs are reported to honor
+RLIMIT_CORE of 0.  This needs to be verified.
+
+If those programs do honor RLIMIT_CORE of 0 we won't have any user
+visible changes if they never see coredumps from a program with a
+RLIMIT_CORE of 0.
+
+
+I have been meaning to audit userspace and see if the common coredump
+catchers truly honor an RLIMIT_CORE of 0.  Unfortunately I have not
+found time to do that yet.
+
+
+Eric
