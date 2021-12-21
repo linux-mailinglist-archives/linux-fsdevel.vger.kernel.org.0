@@ -2,45 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F4847C288
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:14:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC7747C34D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239228AbhLUPOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 10:14:06 -0500
-Received: from mga09.intel.com ([134.134.136.24]:56050 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239203AbhLUPOE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 10:14:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640099644; x=1671635644;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=We7gK/h+jEknZOV42LJTALD74jcdTiL5CfglrMRHFxI=;
-  b=agCPuVx8JsdpkpYpKJR3WvUNB+rjROd49vaYMAbyCuq3I2bQStc/S4cM
-   mXuiAY3Uc034Mn5EZutFf4KZtOovUUHVwgI0wFDfwlTYvd1XXtRlRwD/2
-   p2XIjGoe0RGqqJfPUtv3WD5tq7Ox4ZAXxlCk4zki/WLwW4lYB7YBuHXFT
-   TmIpaEY6YJ8Wbrx2NZCP23nhR4az/henWGp43C9m+lhr5Zwm7OK3BGD6T
-   ga+8xmLHOP12U9VwR1yOpyG5pbi5jLPjCaREqnDkpD6+oMDpYuAQZuyMd
-   lzTFa2rw89j8fFo4kCAY/h+YJ2Fm+dAoArBP4Rlng/CTb0CA5MkJMwYXT
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10204"; a="240216779"
-X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="240216779"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 07:14:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="684688711"
-Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga005.jf.intel.com with ESMTP; 21 Dec 2021 07:13:56 -0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S232385AbhLUPqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 10:46:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239516AbhLUPop (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Dec 2021 10:44:45 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88549C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 07:44:45 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id k64so12092493pfd.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 07:44:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=k/JMvwK29hd8F/EfV5XzDRnc59RW8yzi0W84ODXNMgs=;
+        b=AbVrsJdBc5MN3KQC0A9AIyS9IRMdFjbEfvVJtUC3LZIrYXKcfifwgybiMrJ1dzyejd
+         q8YUFb1QM78QNIXTzVIec5gAsnLvo3X4AAG9zJHBWwIwUsGBs7Az4wPXZREawmQ76537
+         D4yK7omm6pLvt14gmta/yF+uKHmpG3uYwhvqYGCO1YbTfXustV5RYUKJ6USZinlk6B9J
+         dms6mrO1SjUxJjtuiu0tTWEq3XPddVfxNpbBEmbK2Nvq8909cqhkI5e1UBaZoLob+Zff
+         NFQDtXgY+753bzTe2lIKwytRe5IF/iysrdIxwl5Qq0gfzEU22ZxLymbf3FGvWJr/8MfY
+         IGdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=k/JMvwK29hd8F/EfV5XzDRnc59RW8yzi0W84ODXNMgs=;
+        b=O53sWBt0hgPulQ6Hrrzspy9OQpqALeXCyB2tDKEZEgWjJ97Bmj0/xF+yV5JeoxghST
+         NrYD12Nqf/JdgMALr4+Ce9BdS4ElX53YpDjjEBwJt9ykNHNfjoN2NkU+h1/P6TB7r1U2
+         qE3AlG7w5HBgLI60Sx+rpeWvOYIIyaJQ1IRWDFnucd+4HNiIcxJpMDdOvrG5eSVKl/mc
+         yhp9SFiryD/qYwV3JEKfLVt5tsbxZ722bDgnx68q+Az/z+5hW8rM2aciZ9Pu7Uim4TiG
+         I+2VFPfGovdYN1ubvh0Ypbknt6LStPMWOK8cilWYI9SKla5QkKOlQYZM+gujPLnn/QkU
+         ZYCA==
+X-Gm-Message-State: AOAM531bfyoE6P58WCGA/6iy7CUvOynSG5i1vIBAgjjwDOBcD2OMwQ8v
+        QMabnANSyCdlho5lSBash02Eug==
+X-Google-Smtp-Source: ABdhPJxrzNHBFbWmw0xZGAtZ2iGNWlJDv22rYelmdk8vCnJP2iZK3gUwsvnZ7g69hELWZvhhMRjJJA==
+X-Received: by 2002:a63:8249:: with SMTP id w70mr3516432pgd.274.1640101484781;
+        Tue, 21 Dec 2021 07:44:44 -0800 (PST)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id s16sm22577607pfu.109.2021.12.21.07.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Dec 2021 07:44:44 -0800 (PST)
+Date:   Tue, 21 Dec 2021 15:44:40 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
         Jim Mattson <jmattson@google.com>,
@@ -53,131 +67,76 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: [PATCH v3 15/15] KVM: Register/unregister private memory slot to memfd
-Date:   Tue, 21 Dec 2021 23:11:25 +0800
-Message-Id: <20211221151125.19446-16-chao.p.peng@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
+Subject: Re: [PATCH v3 00/15] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <YcH2aGNJn57pLihJ@google.com>
 References: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Expose KVM_MEM_PRIVATE flag and register/unregister private memory
-slot to memfd when userspace sets the flag.
+On Tue, Dec 21, 2021, Chao Peng wrote:
+> This is the third version of this series which try to implement the
+> fd-based KVM guest private memory.
 
-KVM_MEM_PRIVATE is disallowed by default but architecture code can
-turn it on by implementing kvm_arch_private_memory_supported().
+...
 
-Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
----
- include/linux/kvm_host.h |  2 ++
- virt/kvm/kvm_main.c      | 35 +++++++++++++++++++++++++++++++----
- 2 files changed, 33 insertions(+), 4 deletions(-)
+> Test
+> ----
+> This code has been tested with latest TDX code patches hosted at
+> (https://github.com/intel/tdx/tree/kvm-upstream) with minimal TDX
+> adaption and QEMU support.
+> 
+> Example QEMU command line:
+> -object tdx-guest,id=tdx \
+> -object memory-backend-memfd-private,id=ram1,size=2G \
+> -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
+> 
+> Changelog
+> ----------
+> v3:
+>   - Added locking protection when calling
+>     invalidate_page_range/fallocate callbacks.
+>   - Changed memslot structure to keep use useraddr for shared memory.
+>   - Re-organized F_SEAL_INACCESSIBLE and MEMFD_OPS.
+>   - Added MFD_INACCESSIBLE flag to force F_SEAL_INACCESSIBLE.
+>   - Commit message improvement.
+>   - Many small fixes for comments from the last version.
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 0c53df0a6b2e..0f0e24f19892 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1096,6 +1096,8 @@ int kvm_arch_post_init_vm(struct kvm *kvm);
- void kvm_arch_pre_destroy_vm(struct kvm *kvm);
- int kvm_arch_create_vm_debugfs(struct kvm *kvm);
- bool kvm_arch_dirty_log_supported(struct kvm *kvm);
-+bool kvm_arch_private_memory_supported(struct kvm *kvm);
-+
- 
- #ifndef __KVM_HAVE_ARCH_VM_ALLOC
- /*
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 79313c549fb9..6eb0d86abdcf 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1509,6 +1509,11 @@ bool __weak kvm_arch_dirty_log_supported(struct kvm *kvm)
- 	return true;
- }
- 
-+bool __weak kvm_arch_private_memory_supported(struct kvm *kvm)
-+{
-+	return false;
-+}
-+
- static int check_memory_region_flags(struct kvm *kvm,
- 			     const struct kvm_userspace_memory_region_ext *mem)
- {
-@@ -1517,6 +1522,9 @@ static int check_memory_region_flags(struct kvm *kvm,
- 	if (kvm_arch_dirty_log_supported(kvm))
- 		valid_flags |= KVM_MEM_LOG_DIRTY_PAGES;
- 
-+	if (kvm_arch_private_memory_supported(kvm))
-+		valid_flags |= KVM_MEM_PRIVATE;
-+
- #ifdef __KVM_HAVE_READONLY_MEM
- 	valid_flags |= KVM_MEM_READONLY;
- #endif
-@@ -1708,9 +1716,21 @@ static int kvm_set_memslot(struct kvm *kvm,
- 	/* Copy the arch-specific data, again after (re)acquiring slots_arch_lock. */
- 	memcpy(&new->arch, &old.arch, sizeof(old.arch));
- 
-+	if (mem->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE) {
-+		r = kvm_memfd_register(kvm, mem, new);
-+		if (r)
-+			goto out_slots;
-+	}
-+
- 	r = kvm_arch_prepare_memory_region(kvm, new, mem, change);
--	if (r)
-+	if (r) {
-+		if (mem->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE)
-+			kvm_memfd_unregister(kvm, new);
- 		goto out_slots;
-+	}
-+
-+	if (mem->flags & KVM_MEM_PRIVATE && change == KVM_MR_DELETE)
-+		kvm_memfd_unregister(kvm, new);
- 
- 	update_memslots(slots, new, change);
- 	slots = install_new_memslots(kvm, as_id, slots);
-@@ -1786,10 +1806,12 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		return -EINVAL;
- 	if (mem->guest_phys_addr & (PAGE_SIZE - 1))
- 		return -EINVAL;
--	/* We can read the guest memory with __xxx_user() later on. */
- 	if ((mem->userspace_addr & (PAGE_SIZE - 1)) ||
--	    (mem->userspace_addr != untagged_addr(mem->userspace_addr)) ||
--	     !access_ok((void __user *)(unsigned long)mem->userspace_addr,
-+	    (mem->userspace_addr != untagged_addr(mem->userspace_addr)))
-+		return -EINVAL;
-+	/* We can read the guest memory with __xxx_user() later on. */
-+	if (!(mem->flags & KVM_MEM_PRIVATE) &&
-+	    !access_ok((void __user *)(unsigned long)mem->userspace_addr,
- 			mem->memory_size))
- 		return -EINVAL;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
-@@ -1821,6 +1843,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 	new.npages = mem->memory_size >> PAGE_SHIFT;
- 	new.flags = mem->flags;
- 	new.userspace_addr = mem->userspace_addr;
-+	new.file = NULL;
-+	new.file_ofs = 0;
- 
- 	if (new.npages > KVM_MEM_MAX_NR_PAGES)
- 		return -EINVAL;
-@@ -1829,6 +1853,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		change = KVM_MR_CREATE;
- 		new.dirty_bitmap = NULL;
- 	} else { /* Modify an existing slot. */
-+		/* Private memslots are immutable, they can only be deleted. */
-+		if (mem->flags & KVM_MEM_PRIVATE)
-+			return -EINVAL;
- 		if ((new.userspace_addr != old.userspace_addr) ||
- 		    (new.npages != old.npages) ||
- 		    ((new.flags ^ old.flags) & KVM_MEM_READONLY))
--- 
-2.17.1
+Can you rebase on top of kvm/queue and send a new version?  There's a massive
+overhaul of KVM's memslots code that's queued for 5.17, and the KVM core changes
+in this series conflict mightily.
+
+It's ok if the private memslot support isn't tested exactly as-is, it's not like
+any of us reviewers can test it anyways, but I would like to be able to apply
+cleanly and verify that the series doesn't break existing functionality.
+
+This version also appears to be based on an internal development branch, e.g. patch
+12/15 has some bits from the TDX series.
+
+@@ -336,6 +348,7 @@ struct kvm_tdx_exit {
+ #define KVM_EXIT_X86_BUS_LOCK     33
+ #define KVM_EXIT_XEN              34
+ #define KVM_EXIT_RISCV_SBI        35
++#define KVM_EXIT_MEMORY_ERROR     36
+ #define KVM_EXIT_TDX              50   /* dump number to avoid conflict. */
+
+ /* For KVM_EXIT_INTERNAL_ERROR */
+@@ -554,6 +567,8 @@ struct kvm_run {
+                        unsigned long args[6];
+                        unsigned long ret[2];
+                } riscv_sbi;
++               /* KVM_EXIT_MEMORY_ERROR */
++               struct kvm_memory_exit mem;
+                /* KVM_EXIT_TDX_VMCALL */
+                struct kvm_tdx_exit tdx;
+                /* Fix the size of the union. */
 
