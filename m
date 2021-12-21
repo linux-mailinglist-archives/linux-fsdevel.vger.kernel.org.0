@@ -2,110 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D51047C402
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 17:41:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB19D47C422
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 17:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239956AbhLUQlh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 11:41:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:53157 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239950AbhLUQlg (ORCPT
+        id S240008AbhLUQuG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 11:50:06 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:30354 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236510AbhLUQuG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 11:41:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1640104895;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ElFYDTfqtVS9AbMiX7GjxVwW3BhW7qK1g9VgLu9frpo=;
-        b=F2HFuVoGeIqmkor/Q5vh91s+YeN9TjObPpSIgrSiNM+HMMJYKPC6BjqIWmULCSRrkgFgWM
-        iF8l9DcHeSNtRcV9QcPZama4fGlb2IDSWrtdqWv5UNho/MZc8dh/Y91MKk7vjS8BKFRw6Y
-        Y9nWHsWjEWAL4o1zq+d+hucQlZIsGIY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-556-QX0IpJNRNQWAy9uhjQGsQQ-1; Tue, 21 Dec 2021 11:41:30 -0500
-X-MC-Unique: QX0IpJNRNQWAy9uhjQGsQQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE985100C609;
-        Tue, 21 Dec 2021 16:41:28 +0000 (UTC)
-Received: from [10.22.9.221] (unknown [10.22.9.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8ED8C60BD8;
-        Tue, 21 Dec 2021 16:41:27 +0000 (UTC)
-Message-ID: <4f67dc4c-7038-7dde-cad9-4feeaa6bc71b@redhat.com>
-Date:   Tue, 21 Dec 2021 11:41:27 -0500
+        Tue, 21 Dec 2021 11:50:06 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BL7oH2u026611
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 08:50:06 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=Y1SXiLrwbgDL939FeJOCbxv7lrWUJO6M7Adej7DbHtc=;
+ b=iy0hMXnn1f6KiCFAwhd3oM3dunQhzvB0rCQ5keobOSBCC527UgqgNcifG8kLR3yoTAdb
+ Wt+6vMpyAZOMZb+CKVbCWvoBbcBdre1MVGONbe1HRdfIgs7llz2J5AWbb9OtRZ4qb62h
+ IiIhKoVExIfhBs6+fmVinQlfBHGc5Xew06M= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d3avnbav3-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 08:50:05 -0800
+Received: from twshared7750.08.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 21 Dec 2021 08:50:03 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id A270385C07D4; Tue, 21 Dec 2021 08:50:01 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <torvalds@linux-foundation.org>, <shr@fb.com>
+Subject: [PATCH v5 0/5] io_uring: add xattr support
+Date:   Tue, 21 Dec 2021 08:49:54 -0800
+Message-ID: <20211221164959.174480-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] exec: Make suid_dumpable apply to SUID/SGID binaries
- irrespective of invoking users
-Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Laurent Vivier <laurent@vivier.eu>,
-        YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>
-References: <20211221021744.864115-1-longman@redhat.com>
- <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
-From:   Waiman Long <longman@redhat.com>
-In-Reply-To: <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: QTcvAhF8r5u7-Cbq6DkcdbAJIsaJ4pC4
+X-Proofpoint-GUID: QTcvAhF8r5u7-Cbq6DkcdbAJIsaJ4pC4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-21_04,2021-12-21_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 phishscore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=811 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2112210083
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-On 12/21/21 10:55, Eric W. Biederman wrote:
-> Waiman Long <longman@redhat.com> writes:
->
->> The begin_new_exec() function checks for SUID or SGID binaries by
->> comparing effective uid and gid against real uid and gid and using
->> the suid_dumpable sysctl parameter setting only if either one of them
->> differs.
->>
->> In the special case that the uid and/or gid of the SUID/SGID binaries
->> matches the id's of the user invoking it, the suid_dumpable is not
->> used and SUID_DUMP_USER will be used instead. The documentation for the
->> suid_dumpable sysctl parameter does not include that exception and so
->> this will be an undocumented behavior.
->>
->> Eliminate this undocumented behavior by adding a flag in the linux_binprm
->> structure to designate a SUID/SGID binary and use it for determining
->> if the suid_dumpable setting should be applied or not.
-> I see that you are making the code match the documentation.
-> What harm/problems does this mismatch cause in practice?
-> What is the motivation for this change?
->
-> I am trying to see the motivation but all I can see is that
-> in the case where suid and sgid do nothing in practice the code
-> does not change dumpable.  The point of dumpable is to refuse to
-> core dump when it is not safe.  In this case since nothing happened
-> in practice it is safe.
->
-> So how does this matter in practice.  If there isn't a good
-> motivation my feel is that it is the documentation that needs to be
-> updated rather than the code.
->
-> There are a lot of warts to the suid/sgid handling during exec.  This
-> just doesn't look like one of them
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
 
-This patch is a minor mitigation in response to the security 
-vulnerability as posted in 
-https://www.openwall.com/lists/oss-security/2021/10/20/2 (aka 
-CVE-2021-3864). In particular, the Su PoC (tested on CentOS 7) showing 
-that the su invokes /usr/sbin/unix_chkpwd which is also a SUID binary. 
-The initial su invocation won't generate a core dump because the real 
-uid and euid differs, but the second unix_chkpwd invocation will. This 
-patch eliminates this hole by making sure that all SUID binaries follow 
-suid_dumpable setting.
+Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+  This splits off a new function do_user_path_at_empty from
+  user_path_at_empty that is based on filename and not on a
+  user-specified string.
 
-Cheers,
-Longman
+Patch 2: fs: split off setxattr_setup function from setxattr
+  Split off the setup part of the setxattr function.
 
+Patch 3: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
+
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+V5: - add kname array to xattr_ctx structure
+V4: - rebased patch series
+V3: - remove req->file checks in prep functions
+    - change size parameter in do_xattr
+V2: - split off function do_user_path_empty instead of changing
+      the function signature of user_path_at
+    - Fix datatype size problem in do_getxattr
+
+Stefan Roesch (5):
+  fs: split off do_user_path_at_empty from user_path_at_empty()
+  fs: split off setxattr_setup function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  22 +++
+ fs/io_uring.c                 | 301 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |  10 +-
+ fs/xattr.c                    | 105 +++++++-----
+ include/linux/namei.h         |   2 +
+ include/uapi/linux/io_uring.h |   8 +-
+ 6 files changed, 408 insertions(+), 40 deletions(-)
+
+
+base-commit: d09358c3d161dcea8f02eae1281bc996819cc769
+--=20
+2.30.2
 
