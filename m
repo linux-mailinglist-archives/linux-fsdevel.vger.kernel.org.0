@@ -2,127 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3640647C650
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B63C347C679
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:24:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241208AbhLUSUG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 13:20:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        id S241287AbhLUSYn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 13:24:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241202AbhLUSUG (ORCPT
+        with ESMTP id S241320AbhLUSYl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 13:20:06 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15093C06173F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 10:20:05 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id y13so55384842edd.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 10:20:05 -0800 (PST)
+        Tue, 21 Dec 2021 13:24:41 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E755DC061574;
+        Tue, 21 Dec 2021 10:24:40 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id x15so55587975edv.1;
+        Tue, 21 Dec 2021 10:24:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VKR0oGhdwDiMPz4S3RLSWot9z0K8O/O76m6YKus1B8k=;
-        b=M/LLHLW9L8aMGHfWKPPMyQiCPWO5vJYDCklHLamES2SVq/PsrxRMNrHW3PUoAxV97O
-         OGYasdt+65MvCQMB+KP0+mt+1iTaUIpM/X0t7W/vZoiLT/IUgpjWt4BfWdq4492pwEe3
-         q9u9bEN8sLwt+eywsvLHb3AEo//KdDVwrNCzs=
+        bh=3Hq3RnoiEcvsan7k4kj7uVUUhz/68iMva3y9mC4g9r4=;
+        b=Ybw0cZ1JFCzgBmFoMH/eDNFmW/OePKcv8QQxFv9GfMzP/5czSPytZK25bULpvKc8fd
+         lsV7uykSq9M3UChWpWNq1QEash3+BA5THLEYk0kTjfWBPZkP+dzh3H0u1QMiYZEiCyg/
+         g9ncntDZG0Zfj25OmuRKOT7718h9YKuw7rCC9cKilxkMqwFgrQa9Dgis9anXJdP2PuqQ
+         aqBPXBd0I/aDnnk2Y7hmNDku/ucJS/j26KkpEJm3O0IHc8EXkK32vAUD3gJIHjrPEFXo
+         n2TvdM9+YgzLqDxdmNgmOUTnR5uL91et0+kOUsVl9uOamaCeeNs0FSgdVGzUcaIA2hGd
+         FG4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VKR0oGhdwDiMPz4S3RLSWot9z0K8O/O76m6YKus1B8k=;
-        b=fvcz3Dqx+Lq4s7RDu8sGpexSNichwDOEA7BR4CAXrLr96flBMTyBVfgsEt1c9h1akk
-         5Fsbw6efhaK0QDMpnZ0i3Gk8R6RJvREUZalL9zrnA6XvoN+mNzUe5nLwdm3LiQDJgu8f
-         L0Bq8gx1nbYzQD8aQ/uoHc6uW3Yj0YSVUGwQi6SbSyuu1sijeitQlc/hUnpsHA6Zi5W9
-         zrK7znA+afQ6GoKq7VPFpoYOz1VhJAuwlUkk1ObbW31BfSOQalXLj4SR7IWly3OvHiJE
-         8aFMultAPqFeBKeO9lcCcV0+UWP+fiMcB/SWFBeHNutpAjn4NEtoAETj+3dF8DHngH8W
-         4q9g==
-X-Gm-Message-State: AOAM5304XrTdvCX/QV9dPl279VVd5WU389YpQFnAwfY21KzFlA5OOrAB
-        Ph++K+axTaqf5oJHqvp34stXpTbVxF8IQWdU1WI=
-X-Google-Smtp-Source: ABdhPJyQULEths73guAaNqQfqrDo7U6HLYzp5UM0ch0HAdLbdhBQLn/5lIs2OmaTlCsgDln8MHxM/g==
-X-Received: by 2002:a05:6402:1650:: with SMTP id s16mr4529943edx.193.1640110803931;
-        Tue, 21 Dec 2021 10:20:03 -0800 (PST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
-        by smtp.gmail.com with ESMTPSA id ck14sm4318694edb.5.2021.12.21.10.20.02
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 10:20:02 -0800 (PST)
-Received: by mail-wm1-f44.google.com with SMTP id f134-20020a1c1f8c000000b00345c05bc12dso19467wmf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 10:20:02 -0800 (PST)
-X-Received: by 2002:a1c:7312:: with SMTP id d18mr3851982wmb.8.1640110802139;
- Tue, 21 Dec 2021 10:20:02 -0800 (PST)
+        bh=3Hq3RnoiEcvsan7k4kj7uVUUhz/68iMva3y9mC4g9r4=;
+        b=O3pddCfQKxBfayhxu8PoajrFGk4fgiwo0ZAepW+YUvL2Y0R2xI79uyJTIanbkCBCbt
+         B59u4FKY3rLJGqAAccJnzl7RUqaWCUfIa1DKpU/+9HUL2poOPu27e0TRmtHeaWFPXp0H
+         TazvWaAbE0t9WWQy+Tw4Q9JmAfFcWubW/jtzzakkCtYf4h/KJIuXWSHlAWHX+apdhCMJ
+         mzOHn2BONTGZiuLHJtkQQKIOb/rnK8VyTuA2KqPwmbzhsJgt7NposrXfUb1Jmo1KeXbr
+         lQEmterLqbZ8vOpwtPv2os0ke/23RVBIneQ5Lff+bzBbPG2qQ18aeBdiXGTKwDEBQbE9
+         EEhg==
+X-Gm-Message-State: AOAM533CkWAs9qJdx2vnpR/93aZrSGFax60nkakud7OPURqRCXdK2gng
+        ngcxVmQTl/USJp/PagMnHJSao5o/V5lt3S3u0d4=
+X-Google-Smtp-Source: ABdhPJxtKe2UvpiwF9LTZHjaKfr64yPN7TlecVJLgQzxmyesSlzRK//2jzWoSFX7uRR/b083Z+63tcso5zVOkKebZ4Q=
+X-Received: by 2002:a17:906:3e8a:: with SMTP id a10mr3726701ejj.612.1640111079503;
+ Tue, 21 Dec 2021 10:24:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20211221021744.864115-1-longman@redhat.com> <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
- <4f67dc4c-7038-7dde-cad9-4feeaa6bc71b@redhat.com> <87czlp7tdu.fsf@email.froward.int.ebiederm.org>
- <e78085e4-74cd-52e1-bc0e-4709fac4458a@redhat.com>
-In-Reply-To: <e78085e4-74cd-52e1-bc0e-4709fac4458a@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 21 Dec 2021 10:19:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg+qpNvqcROndhRidOE1i7bQm93xM=jmre98-X4qkVkMw@mail.gmail.com>
-Message-ID: <CAHk-=wg+qpNvqcROndhRidOE1i7bQm93xM=jmre98-X4qkVkMw@mail.gmail.com>
-Subject: Re: [PATCH] exec: Make suid_dumpable apply to SUID/SGID binaries
- irrespective of invoking users
-To:     Waiman Long <longman@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+References: <00000000000017977605c395a751@google.com> <0000000000009411bb05d3ab468f@google.com>
+In-Reply-To: <0000000000009411bb05d3ab468f@google.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 21 Dec 2021 10:24:27 -0800
+Message-ID: <CAHbLzkoU_giAFiOyhHZvxLT9Vie2-8TmQv_XLDpRxbec5r5weg@mail.gmail.com>
+Subject: Re: [syzbot] kernel BUG in __page_mapcount
+To:     syzbot <syzbot+1f52b3a18d5633fa7f82@syzkaller.appspotmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alistair Popple <apopple@nvidia.com>,
+        chinwen.chang@mediatek.com, fgheet255t@gmail.com,
+        Jann Horn <jannh@google.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Vivier <laurent@vivier.eu>,
-        YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>,
-        Willy Tarreau <w@1wt.eu>
+        Linux MM <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        Vlastimil Babka <vbabka@suse.cz>, walken@google.com,
+        Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 21, 2021 at 10:01 AM Waiman Long <longman@redhat.com> wrote:
+On Tue, Dec 21, 2021 at 9:24 AM syzbot
+<syzbot+1f52b3a18d5633fa7f82@syzkaller.appspotmail.com> wrote:
 >
-> Default RLIMIT_CORE to 0 will likely mitigate this vulnerability.
-> However, there are still some userspace impacts as existing behavior
-> will be modified. For instance, we may need to modify su to restore a
-> proper value for RLIMIT_CORE after successful authentication.
+> syzbot has found a reproducer for the following issue on:
+>
+> HEAD commit:    6e0567b73052 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14c192b3b00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ae22d1ee4fbca18
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1f52b3a18d5633fa7f82
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133200fdb00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c3102db00000
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+1f52b3a18d5633fa7f82@syzkaller.appspotmail.com
+>
+>  __mmput+0x122/0x4b0 kernel/fork.c:1113
+>  mmput+0x56/0x60 kernel/fork.c:1134
+>  exit_mm kernel/exit.c:507 [inline]
+>  do_exit+0xb27/0x2b40 kernel/exit.c:819
+>  do_group_exit+0x125/0x310 kernel/exit.c:929
+>  get_signal+0x47d/0x2220 kernel/signal.c:2852
+>  arch_do_signal_or_restart+0x2a9/0x1c40 arch/x86/kernel/signal.c:868
+>  handle_signal_work kernel/entry/common.c:148 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
+>  exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:207
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
+>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
+>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> ------------[ cut here ]------------
+> kernel BUG at include/linux/page-flags.h:785!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 4392 Comm: syz-executor560 Not tainted 5.16.0-rc6-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:PageDoubleMap include/linux/page-flags.h:785 [inline]
+> RIP: 0010:__page_mapcount+0x2d2/0x350 mm/util.c:744
 
-We had a "clever" idea for this that I thought people were ok with.
+It seems the THP is split during smaps walk. The reproducer does call
+MADV_FREE on partial THP which may split the huge page.
 
-It's been some time since this came up, but iirc the notion was to
-instead of setting the rlimit to zero (which makes it really hard to
-restore afterwards, because you don't know what the restored value
-would be, so you are dependent on user space doing it), we just never
-reset set_dumpable() when we execve.
+The below fix (untested) should be able to fix it.
 
-So any suid exec will do set_dumpable() to suid_dumpable, and exec'ing
-something else does nothing at all - it stays non-dumpable (obviously
-"non-dumpable" here depends on the actual value for "suid_dumpable" -
-you can enable suid dump debugging manually).
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index ad667dbc96f5..97feb15a2448 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -433,6 +433,7 @@ static void smaps_account(struct mem_size_stats
+*mss, struct page *page,
+ {
+        int i, nr = compound ? compound_nr(page) : 1;
+        unsigned long size = nr * PAGE_SIZE;
++       struct page *head = compound_head(page);
 
-And instead, we say that operations like "setsid()" that start a new
-session - *those* are the ones that enable core dumping again. Or
-doing things like a "ulimit(RLIMIT_CORE)" (which clearly implies "I
-want core-dumps").
+        /*
+         * First accumulate quantities that depend only on |size| and the type
+@@ -462,6 +463,11 @@ static void smaps_account(struct mem_size_stats
+*mss, struct page *page,
+                        locked, true);
+                return;
+        }
++
++       /* Lost the race with THP split */
++       if (!get_page_unless_zero(head))
++               return;
++
+        for (i = 0; i < nr; i++, page++) {
+                int mapcount = page_mapcount(page);
+                unsigned long pss = PAGE_SIZE << PSS_SHIFT;
+@@ -470,6 +476,8 @@ static void smaps_account(struct mem_size_stats
+*mss, struct page *page,
+                smaps_page_accumulate(mss, page, PAGE_SIZE, pss, dirty, locked,
+                                      mapcount < 2);
+        }
++
++       put_page(head);
+ }
 
-Those will all very naturally make "login" and friends work correctly,
-while keeping core-dumps disabled for some suid situation that doesn't
-explicitly set up a new context.
 
-I think the basic problem with the traditional UNIX model of "suid
-exec doesn't core dump" is that the "enter non-core-dump" is a nice
-clear "your privileges changed".
-
-But then the "exit non-core-dump" thing is an exec that *doesn't*
-change privileges. That's the odd and crazy part: you just disabled
-core-dumps because there was a privilege level change, and then you
-enable core-dumps again because there *wasn't* a privilege change -
-even if you're still at those elevated privileges.
-
-Now, this is clearly not a Linux issue - we're just doing what others
-have been doing too. But I think we should just admit that "what
-others have been doing" is simply broken.
-
-And yes, some odd situation migth be broken by this kind of change,
-but I think this kind of "the old model was broken" may simply require
-that. I suspect we can find a solution that fixes all the regular
-cases.
-
-Hmm?
-
-               Linus
+> Code: e8 d3 16 d1 ff 48 c7 c6 c0 00 b6 89 48 89 ef e8 94 4e 04 00 0f 0b e8 bd 16 d1 ff 48 c7 c6 60 01 b6 89 48 89 ef e8 7e 4e 04 00 <0f> 0b e8 a7 16 d1 ff 48 c7 c6 a0 01 b6 89 4c 89 f7 e8 68 4e 04 00
+> RSP: 0018:ffffc90002b6f7b8 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: ffff888019619d00 RSI: ffffffff81a68c12 RDI: 0000000000000003
+> RBP: ffffea0001bdc2c0 R08: 0000000000000029 R09: 00000000ffffffff
+> R10: ffffffff8903e29f R11: 00000000ffffffff R12: 00000000ffffffff
+> R13: 00000000ffffea00 R14: ffffc90002b6fb30 R15: ffffea0001bd8001
+> FS:  00007faa2aefd700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fff7e663318 CR3: 0000000018c6e000 CR4: 00000000003506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  page_mapcount include/linux/mm.h:837 [inline]
+>  smaps_account+0x470/0xb10 fs/proc/task_mmu.c:466
+>  smaps_pte_entry fs/proc/task_mmu.c:538 [inline]
+>  smaps_pte_range+0x611/0x1250 fs/proc/task_mmu.c:601
+>  walk_pmd_range mm/pagewalk.c:128 [inline]
+>  walk_pud_range mm/pagewalk.c:205 [inline]
+>  walk_p4d_range mm/pagewalk.c:240 [inline]
+>  walk_pgd_range mm/pagewalk.c:277 [inline]
+>  __walk_page_range+0xe23/0x1ea0 mm/pagewalk.c:379
+>  walk_page_vma+0x277/0x350 mm/pagewalk.c:530
+>  smap_gather_stats.part.0+0x148/0x260 fs/proc/task_mmu.c:768
+>  smap_gather_stats fs/proc/task_mmu.c:741 [inline]
+>  show_smap+0xc6/0x440 fs/proc/task_mmu.c:822
+>  seq_read_iter+0xbb0/0x1240 fs/seq_file.c:272
+>  seq_read+0x3e0/0x5b0 fs/seq_file.c:162
+>  vfs_read+0x1b5/0x600 fs/read_write.c:479
+>  ksys_read+0x12d/0x250 fs/read_write.c:619
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x7faa2af6c969
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007faa2aefd288 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 00007faa2aff4418 RCX: 00007faa2af6c969
+> RDX: 0000000000002025 RSI: 0000000020000100 RDI: 0000000000000003
+> RBP: 00007faa2aff4410 R08: 00007faa2aefd700 R09: 0000000000000000
+> R10: 00007faa2aefd700 R11: 0000000000000246 R12: 00007faa2afc20ac
+> R13: 00007fff7e6632bf R14: 00007faa2aefd400 R15: 0000000000022000
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 24ec93ff95e4ac3d ]---
+> RIP: 0010:PageDoubleMap include/linux/page-flags.h:785 [inline]
+> RIP: 0010:__page_mapcount+0x2d2/0x350 mm/util.c:744
+> Code: e8 d3 16 d1 ff 48 c7 c6 c0 00 b6 89 48 89 ef e8 94 4e 04 00 0f 0b e8 bd 16 d1 ff 48 c7 c6 60 01 b6 89 48 89 ef e8 7e 4e 04 00 <0f> 0b e8 a7 16 d1 ff 48 c7 c6 a0 01 b6 89 4c 89 f7 e8 68 4e 04 00
+> RSP: 0018:ffffc90002b6f7b8 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: ffff888019619d00 RSI: ffffffff81a68c12 RDI: 0000000000000003
+> RBP: ffffea0001bdc2c0 R08: 0000000000000029 R09: 00000000ffffffff
+> R10: ffffffff8903e29f R11: 00000000ffffffff R12: 00000000ffffffff
+> R13: 00000000ffffea00 R14: ffffc90002b6fb30 R15: ffffea0001bd8001
+> FS:  00007faa2aefd700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fff7e663318 CR3: 0000000018c6e000 CR4: 00000000003506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
