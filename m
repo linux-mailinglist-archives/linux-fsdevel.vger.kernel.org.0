@@ -2,157 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BAA47C5A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3640647C650
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240341AbhLUSBo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 13:01:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28651 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235961AbhLUSBl (ORCPT
+        id S241208AbhLUSUG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 13:20:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241202AbhLUSUG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 13:01:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1640109698;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zdQUxA4IWUHrYu4e+fUkTkyaddFqElt05hSeiqm5Sro=;
-        b=QzcTR3LYHViblFPgzl4qRkpk4fZ3eQM+bByigG7rVHaUmexMVrTf47nXOJY7fX18RcC9P+
-        3RWJG5766F2GJYYDW7gxH48eGwZmOE5mb84BckYZddrPwmsqbZ9Gkj/3xg9FbjQAIHO6T4
-        XEJovVPh0pWPZ3adrMrwZL2+trWNvdo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-384-RJ2pbKEkNpikbFvNFtmNVw-1; Tue, 21 Dec 2021 13:01:34 -0500
-X-MC-Unique: RJ2pbKEkNpikbFvNFtmNVw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03DA68042E0;
-        Tue, 21 Dec 2021 18:01:32 +0000 (UTC)
-Received: from [10.22.33.162] (unknown [10.22.33.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0189B4E2CC;
-        Tue, 21 Dec 2021 18:01:29 +0000 (UTC)
-Message-ID: <e78085e4-74cd-52e1-bc0e-4709fac4458a@redhat.com>
-Date:   Tue, 21 Dec 2021 13:01:29 -0500
+        Tue, 21 Dec 2021 13:20:06 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15093C06173F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 10:20:05 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id y13so55384842edd.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 10:20:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VKR0oGhdwDiMPz4S3RLSWot9z0K8O/O76m6YKus1B8k=;
+        b=M/LLHLW9L8aMGHfWKPPMyQiCPWO5vJYDCklHLamES2SVq/PsrxRMNrHW3PUoAxV97O
+         OGYasdt+65MvCQMB+KP0+mt+1iTaUIpM/X0t7W/vZoiLT/IUgpjWt4BfWdq4492pwEe3
+         q9u9bEN8sLwt+eywsvLHb3AEo//KdDVwrNCzs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VKR0oGhdwDiMPz4S3RLSWot9z0K8O/O76m6YKus1B8k=;
+        b=fvcz3Dqx+Lq4s7RDu8sGpexSNichwDOEA7BR4CAXrLr96flBMTyBVfgsEt1c9h1akk
+         5Fsbw6efhaK0QDMpnZ0i3Gk8R6RJvREUZalL9zrnA6XvoN+mNzUe5nLwdm3LiQDJgu8f
+         L0Bq8gx1nbYzQD8aQ/uoHc6uW3Yj0YSVUGwQi6SbSyuu1sijeitQlc/hUnpsHA6Zi5W9
+         zrK7znA+afQ6GoKq7VPFpoYOz1VhJAuwlUkk1ObbW31BfSOQalXLj4SR7IWly3OvHiJE
+         8aFMultAPqFeBKeO9lcCcV0+UWP+fiMcB/SWFBeHNutpAjn4NEtoAETj+3dF8DHngH8W
+         4q9g==
+X-Gm-Message-State: AOAM5304XrTdvCX/QV9dPl279VVd5WU389YpQFnAwfY21KzFlA5OOrAB
+        Ph++K+axTaqf5oJHqvp34stXpTbVxF8IQWdU1WI=
+X-Google-Smtp-Source: ABdhPJyQULEths73guAaNqQfqrDo7U6HLYzp5UM0ch0HAdLbdhBQLn/5lIs2OmaTlCsgDln8MHxM/g==
+X-Received: by 2002:a05:6402:1650:: with SMTP id s16mr4529943edx.193.1640110803931;
+        Tue, 21 Dec 2021 10:20:03 -0800 (PST)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
+        by smtp.gmail.com with ESMTPSA id ck14sm4318694edb.5.2021.12.21.10.20.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Dec 2021 10:20:02 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id f134-20020a1c1f8c000000b00345c05bc12dso19467wmf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 10:20:02 -0800 (PST)
+X-Received: by 2002:a1c:7312:: with SMTP id d18mr3851982wmb.8.1640110802139;
+ Tue, 21 Dec 2021 10:20:02 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
+References: <20211221021744.864115-1-longman@redhat.com> <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
+ <4f67dc4c-7038-7dde-cad9-4feeaa6bc71b@redhat.com> <87czlp7tdu.fsf@email.froward.int.ebiederm.org>
+ <e78085e4-74cd-52e1-bc0e-4709fac4458a@redhat.com>
+In-Reply-To: <e78085e4-74cd-52e1-bc0e-4709fac4458a@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 21 Dec 2021 10:19:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg+qpNvqcROndhRidOE1i7bQm93xM=jmre98-X4qkVkMw@mail.gmail.com>
+Message-ID: <CAHk-=wg+qpNvqcROndhRidOE1i7bQm93xM=jmre98-X4qkVkMw@mail.gmail.com>
 Subject: Re: [PATCH] exec: Make suid_dumpable apply to SUID/SGID binaries
  irrespective of invoking users
-Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Waiman Long <longman@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Laurent Vivier <laurent@vivier.eu>,
         YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>,
-        Willy Tarreau <w@1wt.eu>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20211221021744.864115-1-longman@redhat.com>
- <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
- <4f67dc4c-7038-7dde-cad9-4feeaa6bc71b@redhat.com>
- <87czlp7tdu.fsf@email.froward.int.ebiederm.org>
-From:   Waiman Long <longman@redhat.com>
-In-Reply-To: <87czlp7tdu.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        Willy Tarreau <w@1wt.eu>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/21/21 12:35, Eric W. Biederman wrote:
-> Adding a couple of other people who have expressed opinions on how
-> to mitigate this issue in the kernel.
+On Tue, Dec 21, 2021 at 10:01 AM Waiman Long <longman@redhat.com> wrote:
 >
-> Waiman Long <longman@redhat.com> writes:
->
->> On 12/21/21 10:55, Eric W. Biederman wrote:
->>> Waiman Long <longman@redhat.com> writes:
->>>
->>>> The begin_new_exec() function checks for SUID or SGID binaries by
->>>> comparing effective uid and gid against real uid and gid and using
->>>> the suid_dumpable sysctl parameter setting only if either one of them
->>>> differs.
->>>>
->>>> In the special case that the uid and/or gid of the SUID/SGID binaries
->>>> matches the id's of the user invoking it, the suid_dumpable is not
->>>> used and SUID_DUMP_USER will be used instead. The documentation for the
->>>> suid_dumpable sysctl parameter does not include that exception and so
->>>> this will be an undocumented behavior.
->>>>
->>>> Eliminate this undocumented behavior by adding a flag in the linux_binprm
->>>> structure to designate a SUID/SGID binary and use it for determining
->>>> if the suid_dumpable setting should be applied or not.
->>> I see that you are making the code match the documentation.
->>> What harm/problems does this mismatch cause in practice?
->>> What is the motivation for this change?
->>>
->>> I am trying to see the motivation but all I can see is that
->>> in the case where suid and sgid do nothing in practice the code
->>> does not change dumpable.  The point of dumpable is to refuse to
->>> core dump when it is not safe.  In this case since nothing happened
->>> in practice it is safe.
->>>
->>> So how does this matter in practice.  If there isn't a good
->>> motivation my feel is that it is the documentation that needs to be
->>> updated rather than the code.
->>>
->>> There are a lot of warts to the suid/sgid handling during exec.  This
->>> just doesn't look like one of them
->> This patch is a minor mitigation in response to the security
->> vulnerability as posted in
->> https://www.openwall.com/lists/oss-security/2021/10/20/2 (aka
->> CVE-2021-3864). In particular, the Su PoC (tested on CentOS 7) showing
->> that the su invokes /usr/sbin/unix_chkpwd which is also a SUID
->> binary. The initial su invocation won't generate a core dump because
->> the real uid and euid differs, but the second unix_chkpwd invocation
->> will. This patch eliminates this hole by making sure that all SUID
->> binaries follow suid_dumpable setting.
-> All that is required to take advantage of this vulnerability is
-> for an suid program to exec something that will coredump.  That
-> exec resets the dumpability.
->
-> While the example exploit is execing a suid program it is not required
-> that the exec'd program be suid.
->
-> This makes your proposed change is not a particularly effective mitigation.
+> Default RLIMIT_CORE to 0 will likely mitigate this vulnerability.
+> However, there are still some userspace impacts as existing behavior
+> will be modified. For instance, we may need to modify su to restore a
+> proper value for RLIMIT_CORE after successful authentication.
 
-Yes, I am aware of that. That is why I said it is just a minor 
-mitigation. This patch was inspired after investigating this problem, 
-but I do think it is good to make the code consistent with the 
-documentation. Of course, we can go either way. I prefer my approach to 
-use a flag to indicate a suid binary instead of just comparing ruid and 
-euid.
+We had a "clever" idea for this that I thought people were ok with.
 
+It's been some time since this came up, but iirc the notion was to
+instead of setting the rlimit to zero (which makes it really hard to
+restore afterwards, because you don't know what the restored value
+would be, so you are dependent on user space doing it), we just never
+reset set_dumpable() when we execve.
 
->
-> The best idea I have seen to mitigate this from the kernel side is:
->
-> 1) set RLIMIT_CORE to 0 during an suid exec
-> 2) update do_coredump to honor an rlimit of 0 for pipes
->
-> Anecdotally this should not effect the common systems that pipe
-> coredumps into programs as those programs are reported to honor
-> RLIMIT_CORE of 0.  This needs to be verified.
->
-> If those programs do honor RLIMIT_CORE of 0 we won't have any user
-> visible changes if they never see coredumps from a program with a
-> RLIMIT_CORE of 0.
->
->
-> I have been meaning to audit userspace and see if the common coredump
-> catchers truly honor an RLIMIT_CORE of 0.  Unfortunately I have not
-> found time to do that yet.
+So any suid exec will do set_dumpable() to suid_dumpable, and exec'ing
+something else does nothing at all - it stays non-dumpable (obviously
+"non-dumpable" here depends on the actual value for "suid_dumpable" -
+you can enable suid dump debugging manually).
 
-Default RLIMIT_CORE to 0 will likely mitigate this vulnerability. 
-However, there are still some userspace impacts as existing behavior 
-will be modified. For instance, we may need to modify su to restore a 
-proper value for RLIMIT_CORE after successful authentication.
+And instead, we say that operations like "setsid()" that start a new
+session - *those* are the ones that enable core dumping again. Or
+doing things like a "ulimit(RLIMIT_CORE)" (which clearly implies "I
+want core-dumps").
 
-Cheers,
-Longman
+Those will all very naturally make "login" and friends work correctly,
+while keeping core-dumps disabled for some suid situation that doesn't
+explicitly set up a new context.
 
+I think the basic problem with the traditional UNIX model of "suid
+exec doesn't core dump" is that the "enter non-core-dump" is a nice
+clear "your privileges changed".
+
+But then the "exit non-core-dump" thing is an exec that *doesn't*
+change privileges. That's the odd and crazy part: you just disabled
+core-dumps because there was a privilege level change, and then you
+enable core-dumps again because there *wasn't* a privilege change -
+even if you're still at those elevated privileges.
+
+Now, this is clearly not a Linux issue - we're just doing what others
+have been doing too. But I think we should just admit that "what
+others have been doing" is simply broken.
+
+And yes, some odd situation migth be broken by this kind of change,
+but I think this kind of "the old model was broken" may simply require
+that. I suspect we can find a solution that fixes all the regular
+cases.
+
+Hmm?
+
+               Linus
