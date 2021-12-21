@@ -2,231 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 265A547C6BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:41:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3A6447C6D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 19:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241428AbhLUSlR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 13:41:17 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:53780 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241405AbhLUSlR (ORCPT
+        id S241500AbhLUSpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 13:45:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231534AbhLUSpE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 13:41:17 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C1E73614BB;
-        Tue, 21 Dec 2021 18:41:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 216B2C36AE8;
-        Tue, 21 Dec 2021 18:41:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640112076;
-        bh=TcAhcmKPDJiTf+3xKMg5zwHb806xTj+Tx5tC6UoVrt4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PJeFxALm+X04MXxMeR+/iLZCr2Ze1PLGeIrjhiM8JAKWXe/ubcDnlUA/zXuq7WDkw
-         o249ShRlKSXU305LCzwED3MYQ0n6za44JTnH9bdVz/k1uRcp0bax6RF69jC+hE2ym+
-         XVezbO0IwYMeJOn2vHsP3FlksNah6vvfdXtHf6Fx+6RhFgjb7cVTdJZ5wleEDYJmSs
-         LsowiGjeyCKq6572miX7HULT9a+6ZrISNzSf69nheee5X0t9wcDo6rnyOnDgF4WdOW
-         dXe9do7Y3oPqAUc1JhNzNhlM5wk/2FTcqN24HGcgbKOD2lsMgjS5LTzUyZnvH9xNSo
-         eWefCck6kuH5g==
-Date:   Tue, 21 Dec 2021 10:41:15 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: iomap-folio & nvdimm merge
-Message-ID: <20211221184115.GY27664@magnolia>
-References: <20211216210715.3801857-1-willy@infradead.org>
- <20211216210715.3801857-17-willy@infradead.org>
- <YcIIbtKhOulAL4s4@casper.infradead.org>
+        Tue, 21 Dec 2021 13:45:04 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A637C061574;
+        Tue, 21 Dec 2021 10:45:03 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id bg19-20020a05600c3c9300b0034565e837b6so1493315wmb.1;
+        Tue, 21 Dec 2021 10:45:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sP8tGVLSq+J8OoY4ZEIZdlL5ioBYvuT3xm7rNvUEflw=;
+        b=Jg3B9hSImyqr8JAxuDtr8VSKOk2Y/dAXnQlgy7Gs0O7lNN48oonawsgfd5T0X99BMo
+         3prOZpl0lcyHbJkGoeQwRcYztxCp+92XIxOGuuSg6El7mc6aTdhK+T+tTj/i2VYsIkqU
+         gY4zk7gyYyq74X4e4k7hJkOwXU8o37tJO+WpnIyFLBAnAOWNNONTc1q9kMAwmb9jkEnt
+         I91RZjm6gypNO5i37RPnL531XZMYwFlPpkaU+lQ8bkzy9e7gkPtEg11oida65UkuZBiX
+         g6SwKhPOWCEuCI3L3WC3qL/CvbAbkOjUohDi9YCu83hiYtcqFyy60QjlVj1VsEQut2Go
+         lp0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sP8tGVLSq+J8OoY4ZEIZdlL5ioBYvuT3xm7rNvUEflw=;
+        b=viOibeA3xtFisKTuL82WURXpMRrWLw3FuGd1rqtESA/rA+/1lVau51cDVho6eG426o
+         98xeLCxPV9neGLNnsqoks/LQrnDUXgoX/peImMW3z/RUsdwgYxlCdERncKxOyPsif+Rr
+         4ZZQFjEQNrZkNicYWVn20lPqMhcIyXwai7yXjVjp4gDBZ7MIOMSJP61quYyF30kdeC7h
+         1YQljHMYv0QGrkGZ8TosTTxJ/UxyK+e+H+XSEImaCk91rIKdVSQtKt7BB12fGMxF0s6Q
+         spBoiqS3Fa4mQrfWKzYDIWywgIcwmEfTg+UKYVowghyxq5CBIy3PMxCokN3Gl/STmy3a
+         t68w==
+X-Gm-Message-State: AOAM531rClg+gtYQcG717gNPX/3PpwU22/Bf5oTPjaLHuDXxOZ+RrGjA
+        YIvK9648r2lpFiZ1pDYGPmc=
+X-Google-Smtp-Source: ABdhPJwNmb5CLJkrtrJvYyjtqY1LRirngqPgqUNRGYXV+tkZmmmRO1HN1TdmGtt0k3LRJ6c2lALRaQ==
+X-Received: by 2002:a7b:c94f:: with SMTP id i15mr3892023wml.79.1640112302147;
+        Tue, 21 Dec 2021 10:45:02 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id n8sm20269308wri.47.2021.12.21.10.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Dec 2021 10:45:01 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH][next] kernel/sysctl.c: remove unused variable ten_thousand
+Date:   Tue, 21 Dec 2021 18:45:01 +0000
+Message-Id: <20211221184501.574670-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YcIIbtKhOulAL4s4@casper.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 21, 2021 at 05:01:34PM +0000, Matthew Wilcox wrote:
-> On Thu, Dec 16, 2021 at 09:07:06PM +0000, Matthew Wilcox (Oracle) wrote:
-> > The zero iterator can work in folio-sized chunks instead of page-sized
-> > chunks.  This will save a lot of page cache lookups if the file is cached
-> > in large folios.
-> 
-> This patch (and a few others) end up conflicting with what Christoph did
-> that's now in the nvdimm tree.  In an effort to make the merge cleaner,
-> I took the next-20211220 tag and did the following:
-> 
-> Revert de291b590286
-> Apply: https://lore.kernel.org/linux-xfs/20211221044450.517558-1-willy@infradead.org/
-> (these two things are likely to happen in the nvdimm tree imminently)
-> 
-> I then checked out iomap-folio-5.17e and added this patch:
-> 
->     iomap: Inline __iomap_zero_iter into its caller
-> 
->     To make the merge easier, replicate the inlining of __iomap_zero_iter()
->     into iomap_zero_iter() that is currently in the nvdimm tree.
-> 
->     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+The const variable ten_thousand is not used, it is redundant and can
+be removed.
 
-Looks like a reasonable function promotion to me...
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Cleans up clang warning:
+kernel/sysctl.c:99:18: warning: unused variable 'ten_thousand' [-Wunused-const-variable]
+static const int ten_thousand = 10000;
 
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index ba80bedd9590..c6b3a148e898 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -895,27 +895,6 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
->  }
->  EXPORT_SYMBOL_GPL(iomap_file_unshare);
->  
-> -static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
-> -{
-> -       struct folio *folio;
-> -       int status;
-> -       size_t offset;
-> -       size_t bytes = min_t(u64, SIZE_MAX, length);
-> -
-> -       status = iomap_write_begin(iter, pos, bytes, &folio);
-> -       if (status)
-> -               return status;
-> -
-> -       offset = offset_in_folio(folio, pos);
-> -       if (bytes > folio_size(folio) - offset)
-> -               bytes = folio_size(folio) - offset;
-> -
-> -       folio_zero_range(folio, offset, bytes);
-> -       folio_mark_accessed(folio);
-> -
-> -       return iomap_write_end(iter, pos, bytes, bytes, folio);
-> -}
-> -
->  static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  {
->         struct iomap *iomap = &iter->iomap;
-> @@ -929,14 +908,34 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->                 return length;
->  
->         do {
-> -               s64 bytes;
-> +               struct folio *folio;
-> +               int status;
-> +               size_t offset;
-> +               size_t bytes = min_t(u64, SIZE_MAX, length);
-> +
-> +               if (IS_DAX(iter->inode)) {
-> +                       s64 tmp = dax_iomap_zero(pos, bytes, iomap);
-> +                       if (tmp < 0)
-> +                               return tmp;
-> +                       bytes = tmp;
-> +                       goto good;
-> +               }
->  
-> -               if (IS_DAX(iter->inode))
-> -                       bytes = dax_iomap_zero(pos, length, iomap);
-> -               else
-> -                       bytes = __iomap_zero_iter(iter, pos, length);
-> -               if (bytes < 0)
-> -                       return bytes;
-> +               status = iomap_write_begin(iter, pos, bytes, &folio);
-> +               if (status)
-> +                       return status;
-> +
-> +               offset = offset_in_folio(folio, pos);
-> +               if (bytes > folio_size(folio) - offset)
-> +                       bytes = folio_size(folio) - offset;
-> +
-> +               folio_zero_range(folio, offset, bytes);
-> +               folio_mark_accessed(folio);
-> +
-> +               bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
-> +good:
-> +               if (WARN_ON_ONCE(bytes == 0))
-> +                       return -EIO;
->  
->                 pos += bytes;
->                 length -= bytes;
-> 
-> 
-> 
-> Then I did the merge, and the merge commit looks pretty sensible
-> afterwards:
-> 
->     Merge branch 'iomap-folio-5.17f' into fixup
-> 
-> diff --cc fs/iomap/buffered-io.c
-> index 955f51f94b3f,c6b3a148e898..c938bbad075e
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@@ -888,19 -908,32 +907,23 @@@ static loff_t iomap_zero_iter(struct io
->                 return length;
-> 
->         do {
-> -               unsigned offset = offset_in_page(pos);
-> -               size_t bytes = min_t(u64, PAGE_SIZE - offset, length);
-> -               struct page *page;
-> +               struct folio *folio;
->                 int status;
-> +               size_t offset;
-> +               size_t bytes = min_t(u64, SIZE_MAX, length);
-> 
-> -               status = iomap_write_begin(iter, pos, bytes, &page);
->  -              if (IS_DAX(iter->inode)) {
->  -                      s64 tmp = dax_iomap_zero(pos, bytes, iomap);
->  -                      if (tmp < 0)
->  -                              return tmp;
->  -                      bytes = tmp;
->  -                      goto good;
->  -              }
->  -
-> +               status = iomap_write_begin(iter, pos, bytes, &folio);
->                 if (status)
->                         return status;
-> 
-> -               zero_user(page, offset, bytes);
-> -               mark_page_accessed(page);
-> +               offset = offset_in_folio(folio, pos);
-> +               if (bytes > folio_size(folio) - offset)
-> +                       bytes = folio_size(folio) - offset;
-> +
-> +               folio_zero_range(folio, offset, bytes);
-> +               folio_mark_accessed(folio);
-> 
-> -               bytes = iomap_write_end(iter, pos, bytes, bytes, page);
-> +               bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
->  -good:
+Fixes: c26da54dc8ca ("printk: move printk sysctl to printk/sysctl.c")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/sysctl.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Assuming I'm reading the metadiff properly, I think this merge
-resolution looks correct given what both patchsets are trying to do.
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 7f07b058b180..ace130de4a17 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -95,9 +95,6 @@
+ 
+ /* Constants used for minimum and  maximum */
+ 
+-#ifdef CONFIG_PRINTK
+-static const int ten_thousand = 10000;
+-#endif
+ #ifdef CONFIG_PERF_EVENTS
+ static const int six_hundred_forty_kb = 640 * 1024;
+ #endif
+-- 
+2.33.1
 
->                 if (WARN_ON_ONCE(bytes == 0))
->                         return -EIO;
-> 
-> 
-> 
-> Shall I push out a version of this patch series which includes the
-> "iomap: Inline __iomap_zero_iter into its caller" patch I pasted above?
-
-Yes.
-
-I've been distracted for months with first a Huge Customer Escalation
-and now a <embargoed>, which means that I've been and continue to be
-very distracted.  I /think/ there are no other iomap patches being
-proposed for inclusion -- Andreas' patches were applied as fixes during
-5.16-rc, Christoph's DAX refactoring is now in the nvdimm tree, and that
-leaves Matthew's folios refactoring.
-
-So seeing as (I think?) there are no other iomap patches for 5.17, if
-Matthew wants to add his branch to for-next and push directly to Linus
-(rather than pushing to me to push the exact same branch to Linus) I
-think that would be ... better than letting it block on me.  IIRC I've
-RVB'd everything in the folios branch. :(
-
-FWIW I ran the 5.17e branch through my fstests cloud and nothing fell
-out, so I think it's in good enough shape to merge to for-next.
-
---D
