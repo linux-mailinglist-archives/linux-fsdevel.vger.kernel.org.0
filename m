@@ -2,118 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4093547C873
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 21:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC8047C8DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 22:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235306AbhLUU4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 15:56:43 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:49881 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235188AbhLUU4m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 15:56:42 -0500
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 1BLKuZvK030434;
-        Tue, 21 Dec 2021 21:56:35 +0100
-Date:   Tue, 21 Dec 2021 21:56:35 +0100
-From:   Willy Tarreau <w@1wt.eu>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Vivier <laurent@vivier.eu>,
-        YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>
-Subject: Re: [PATCH] exec: Make suid_dumpable apply to SUID/SGID binaries
- irrespective of invoking users
-Message-ID: <20211221205635.GB30289@1wt.eu>
-References: <20211221021744.864115-1-longman@redhat.com>
- <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
- <4f67dc4c-7038-7dde-cad9-4feeaa6bc71b@redhat.com>
- <87czlp7tdu.fsf@email.froward.int.ebiederm.org>
- <e78085e4-74cd-52e1-bc0e-4709fac4458a@redhat.com>
- <CAHk-=wg+qpNvqcROndhRidOE1i7bQm93xM=jmre98-X4qkVkMw@mail.gmail.com>
- <7f0f8e71-cf62-4c0b-5f13-a41919c6cd9b@redhat.com>
+        id S237075AbhLUVqF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 16:46:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230251AbhLUVqE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Dec 2021 16:46:04 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C027C061574;
+        Tue, 21 Dec 2021 13:46:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wmyG4GcRJFalrXkbb0B8y6T9Oyn5h7Nc/yyRPx5vccY=; b=tElqbK4j3a5iiMxWZewRz8qZM/
+        q8xc04yS2FXDm5sSTnd7XZ73fqt1dwR5JB2Fh4F3jIx8oF3uVesnj4kc/ZotAKsr8VM/IFZKqlJ3O
+        6lvRYKyVMWon/J7I6L0+ptTuK5KQH5fWOmHIAQ24u5XdW6fvWYIGsqTylXZ7WRMHp4jMGdFJLfWPs
+        1ru6WlqiKFSsk1N3YcX+1E7kwtHU8Eanlvl4kpye5ylly1zJoUYvSYe1w/mKfvk5w+ae3nZyNNg3p
+        eG0i3JESWJAz6xB4wAPglixjN+izpgGydUMUPDVCNznfqZjXoygOGmEQkF5E3wIddgPPeO7E6Wm6X
+        cEIa3YYw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mzmxJ-008ZU6-Lw; Tue, 21 Dec 2021 21:45:57 +0000
+Date:   Tue, 21 Dec 2021 13:45:57 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH][next] kernel/sysctl.c: remove unused variable
+ ten_thousand
+Message-ID: <YcJLFQh9IA2XzXu3@bombadil.infradead.org>
+References: <20211221184501.574670-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7f0f8e71-cf62-4c0b-5f13-a41919c6cd9b@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211221184501.574670-1-colin.i.king@gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 21, 2021 at 02:27:47PM -0500, Waiman Long wrote:
-> On 12/21/21 13:19, Linus Torvalds wrote:
-> > On Tue, Dec 21, 2021 at 10:01 AM Waiman Long <longman@redhat.com> wrote:
-> > > Default RLIMIT_CORE to 0 will likely mitigate this vulnerability.
-> > > However, there are still some userspace impacts as existing behavior
-> > > will be modified. For instance, we may need to modify su to restore a
-> > > proper value for RLIMIT_CORE after successful authentication.
-> > We had a "clever" idea for this that I thought people were ok with.
-> > 
-> > It's been some time since this came up, but iirc the notion was to
-> > instead of setting the rlimit to zero (which makes it really hard to
-> > restore afterwards, because you don't know what the restored value
-> > would be, so you are dependent on user space doing it), we just never
-> > reset set_dumpable() when we execve.
-> > 
-> > So any suid exec will do set_dumpable() to suid_dumpable, and exec'ing
-> > something else does nothing at all - it stays non-dumpable (obviously
-> > "non-dumpable" here depends on the actual value for "suid_dumpable" -
-> > you can enable suid dump debugging manually).
-> > 
-> > And instead, we say that operations like "setsid()" that start a new
-> > session - *those* are the ones that enable core dumping again. Or
-> > doing things like a "ulimit(RLIMIT_CORE)" (which clearly implies "I
-> > want core-dumps").
-> > 
-> > Those will all very naturally make "login" and friends work correctly,
-> > while keeping core-dumps disabled for some suid situation that doesn't
-> > explicitly set up a new context.
-> > 
-> > I think the basic problem with the traditional UNIX model of "suid
-> > exec doesn't core dump" is that the "enter non-core-dump" is a nice
-> > clear "your privileges changed".
-> > 
-> > But then the "exit non-core-dump" thing is an exec that *doesn't*
-> > change privileges. That's the odd and crazy part: you just disabled
-> > core-dumps because there was a privilege level change, and then you
-> > enable core-dumps again because there *wasn't* a privilege change -
-> > even if you're still at those elevated privileges.
-> > 
-> > Now, this is clearly not a Linux issue - we're just doing what others
-> > have been doing too. But I think we should just admit that "what
-> > others have been doing" is simply broken.
-> > 
-> > And yes, some odd situation migth be broken by this kind of change,
-> > but I think this kind of "the old model was broken" may simply require
-> > that. I suspect we can find a solution that fixes all the regular
-> > cases.
-> > 
-> > Hmm?
+On Tue, Dec 21, 2021 at 06:45:01PM +0000, Colin Ian King wrote:
+> The const variable ten_thousand is not used, it is redundant and can
+> be removed.
 > 
-> I think this is a pretty clever idea. At least it is better than resetting
-> RLIMIT_CORE to 0.
+> Cleans up clang warning:
+> kernel/sysctl.c:99:18: warning: unused variable 'ten_thousand' [-Wunused-const-variable]
+> static const int ten_thousand = 10000;
+> 
+> Fixes: c26da54dc8ca ("printk: move printk sysctl to printk/sysctl.c")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Another problem that was raised when discussing RLIMIT_CORE to zero was
-the loss of the old value.
+Acked-by: Andrew Morton <akpm@linux-foundation.org>
 
-> As it is all done within the kernel, there is no need to
-> change any userspace code. We may need to add a flag bit in the task
-> structure to indicate using the suid_dumpable setting so that it can be
-> inherited across fork/exec.
-
-Depending on what we change there can be some subtly visible changes.
-In one of my servers I explicitly re-enable dumpable before setsid()
-when a core dump is desired for debugging. But other deamons could do
-the exact opposite. If setsid() systematically restores suid_dumpable,
-a process that explicitly disables it before calling setsid() would
-see it come back. But if we have a special "suid_in_progress" flag
-to mask suid_dumpable and that's reset by setsid() and possibly
-prctl(PR_SET_DUMPABLE) then I think it could even cover that unlikely
-case.
-
-Just my two cents,
-Willy
+  Luis
