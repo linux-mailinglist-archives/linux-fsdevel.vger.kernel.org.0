@@ -2,141 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFC7747C34D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:46:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4AD547C361
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Dec 2021 16:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232385AbhLUPqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 10:46:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239516AbhLUPop (ORCPT
+        id S236719AbhLUP40 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 10:56:26 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:50522 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236690AbhLUP4Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 10:44:45 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88549C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 07:44:45 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id k64so12092493pfd.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Dec 2021 07:44:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=k/JMvwK29hd8F/EfV5XzDRnc59RW8yzi0W84ODXNMgs=;
-        b=AbVrsJdBc5MN3KQC0A9AIyS9IRMdFjbEfvVJtUC3LZIrYXKcfifwgybiMrJ1dzyejd
-         q8YUFb1QM78QNIXTzVIec5gAsnLvo3X4AAG9zJHBWwIwUsGBs7Az4wPXZREawmQ76537
-         D4yK7omm6pLvt14gmta/yF+uKHmpG3uYwhvqYGCO1YbTfXustV5RYUKJ6USZinlk6B9J
-         dms6mrO1SjUxJjtuiu0tTWEq3XPddVfxNpbBEmbK2Nvq8909cqhkI5e1UBaZoLob+Zff
-         NFQDtXgY+753bzTe2lIKwytRe5IF/iysrdIxwl5Qq0gfzEU22ZxLymbf3FGvWJr/8MfY
-         IGdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=k/JMvwK29hd8F/EfV5XzDRnc59RW8yzi0W84ODXNMgs=;
-        b=O53sWBt0hgPulQ6Hrrzspy9OQpqALeXCyB2tDKEZEgWjJ97Bmj0/xF+yV5JeoxghST
-         NrYD12Nqf/JdgMALr4+Ce9BdS4ElX53YpDjjEBwJt9ykNHNfjoN2NkU+h1/P6TB7r1U2
-         qE3AlG7w5HBgLI60Sx+rpeWvOYIIyaJQ1IRWDFnucd+4HNiIcxJpMDdOvrG5eSVKl/mc
-         yhp9SFiryD/qYwV3JEKfLVt5tsbxZ722bDgnx68q+Az/z+5hW8rM2aciZ9Pu7Uim4TiG
-         I+2VFPfGovdYN1ubvh0Ypbknt6LStPMWOK8cilWYI9SKla5QkKOlQYZM+gujPLnn/QkU
-         ZYCA==
-X-Gm-Message-State: AOAM531bfyoE6P58WCGA/6iy7CUvOynSG5i1vIBAgjjwDOBcD2OMwQ8v
-        QMabnANSyCdlho5lSBash02Eug==
-X-Google-Smtp-Source: ABdhPJxrzNHBFbWmw0xZGAtZ2iGNWlJDv22rYelmdk8vCnJP2iZK3gUwsvnZ7g69hELWZvhhMRjJJA==
-X-Received: by 2002:a63:8249:: with SMTP id w70mr3516432pgd.274.1640101484781;
-        Tue, 21 Dec 2021 07:44:44 -0800 (PST)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id s16sm22577607pfu.109.2021.12.21.07.44.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Dec 2021 07:44:44 -0800 (PST)
-Date:   Tue, 21 Dec 2021 15:44:40 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [PATCH v3 00/15] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <YcH2aGNJn57pLihJ@google.com>
-References: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
+        Tue, 21 Dec 2021 10:56:25 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51]:33234)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mzhV1-003gN3-Uw; Tue, 21 Dec 2021 08:56:24 -0700
+Received: from ip68-227-161-49.om.om.cox.net ([68.227.161.49]:49674 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mzhUz-00H9yH-EX; Tue, 21 Dec 2021 08:56:22 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Laurent Vivier <laurent@vivier.eu>,
+        YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>
+References: <20211221021744.864115-1-longman@redhat.com>
+Date:   Tue, 21 Dec 2021 09:55:55 -0600
+In-Reply-To: <20211221021744.864115-1-longman@redhat.com> (Waiman Long's
+        message of "Mon, 20 Dec 2021 21:17:44 -0500")
+Message-ID: <87lf0e7y0k.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1mzhUz-00H9yH-EX;;;mid=<87lf0e7y0k.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.161.49;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18U2aPtJ7SsPDwfN7xIrscU+68zQg5I4G0=
+X-SA-Exim-Connect-IP: 68.227.161.49
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.8 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong,
+        XMSubMetaSxObfu_03,XMSubMetaSx_00 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+        *  1.0 XMSubMetaSx_00 1+ Sexy Words
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Waiman Long <longman@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 728 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 14 (2.0%), b_tie_ro: 12 (1.6%), parse: 1.13
+        (0.2%), extract_message_metadata: 4.6 (0.6%), get_uri_detail_list:
+        1.97 (0.3%), tests_pri_-1000: 3.8 (0.5%), tests_pri_-950: 1.43 (0.2%),
+        tests_pri_-900: 1.23 (0.2%), tests_pri_-90: 316 (43.4%), check_bayes:
+        314 (43.1%), b_tokenize: 8 (1.1%), b_tok_get_all: 10 (1.4%),
+        b_comp_prob: 3.0 (0.4%), b_tok_touch_all: 287 (39.5%), b_finish: 1.23
+        (0.2%), tests_pri_0: 365 (50.2%), check_dkim_signature: 0.51 (0.1%),
+        check_dkim_adsp: 3.5 (0.5%), poll_dns_idle: 1.63 (0.2%), tests_pri_10:
+        2.1 (0.3%), tests_pri_500: 9 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] exec: Make suid_dumpable apply to SUID/SGID binaries irrespective of invoking users
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 21, 2021, Chao Peng wrote:
-> This is the third version of this series which try to implement the
-> fd-based KVM guest private memory.
+Waiman Long <longman@redhat.com> writes:
 
-...
+> The begin_new_exec() function checks for SUID or SGID binaries by
+> comparing effective uid and gid against real uid and gid and using
+> the suid_dumpable sysctl parameter setting only if either one of them
+> differs.
+>
+> In the special case that the uid and/or gid of the SUID/SGID binaries
+> matches the id's of the user invoking it, the suid_dumpable is not
+> used and SUID_DUMP_USER will be used instead. The documentation for the
+> suid_dumpable sysctl parameter does not include that exception and so
+> this will be an undocumented behavior.
+>
+> Eliminate this undocumented behavior by adding a flag in the linux_binprm
+> structure to designate a SUID/SGID binary and use it for determining
+> if the suid_dumpable setting should be applied or not.
 
-> Test
-> ----
-> This code has been tested with latest TDX code patches hosted at
-> (https://github.com/intel/tdx/tree/kvm-upstream) with minimal TDX
-> adaption and QEMU support.
-> 
-> Example QEMU command line:
-> -object tdx-guest,id=tdx \
-> -object memory-backend-memfd-private,id=ram1,size=2G \
-> -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
-> 
-> Changelog
-> ----------
-> v3:
->   - Added locking protection when calling
->     invalidate_page_range/fallocate callbacks.
->   - Changed memslot structure to keep use useraddr for shared memory.
->   - Re-organized F_SEAL_INACCESSIBLE and MEMFD_OPS.
->   - Added MFD_INACCESSIBLE flag to force F_SEAL_INACCESSIBLE.
->   - Commit message improvement.
->   - Many small fixes for comments from the last version.
+I see that you are making the code match the documentation.
+What harm/problems does this mismatch cause in practice?
+What is the motivation for this change?
 
-Can you rebase on top of kvm/queue and send a new version?  There's a massive
-overhaul of KVM's memslots code that's queued for 5.17, and the KVM core changes
-in this series conflict mightily.
+I am trying to see the motivation but all I can see is that
+in the case where suid and sgid do nothing in practice the code
+does not change dumpable.  The point of dumpable is to refuse to
+core dump when it is not safe.  In this case since nothing happened
+in practice it is safe.
 
-It's ok if the private memslot support isn't tested exactly as-is, it's not like
-any of us reviewers can test it anyways, but I would like to be able to apply
-cleanly and verify that the series doesn't break existing functionality.
+So how does this matter in practice.  If there isn't a good
+motivation my feel is that it is the documentation that needs to be
+updated rather than the code.
 
-This version also appears to be based on an internal development branch, e.g. patch
-12/15 has some bits from the TDX series.
+There are a lot of warts to the suid/sgid handling during exec.  This
+just doesn't look like one of them.
 
-@@ -336,6 +348,7 @@ struct kvm_tdx_exit {
- #define KVM_EXIT_X86_BUS_LOCK     33
- #define KVM_EXIT_XEN              34
- #define KVM_EXIT_RISCV_SBI        35
-+#define KVM_EXIT_MEMORY_ERROR     36
- #define KVM_EXIT_TDX              50   /* dump number to avoid conflict. */
+Eric
 
- /* For KVM_EXIT_INTERNAL_ERROR */
-@@ -554,6 +567,8 @@ struct kvm_run {
-                        unsigned long args[6];
-                        unsigned long ret[2];
-                } riscv_sbi;
-+               /* KVM_EXIT_MEMORY_ERROR */
-+               struct kvm_memory_exit mem;
-                /* KVM_EXIT_TDX_VMCALL */
-                struct kvm_tdx_exit tdx;
-                /* Fix the size of the union. */
 
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  fs/exec.c               | 6 +++---
+>  include/linux/binfmts.h | 5 ++++-
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 537d92c41105..60e02e678fb6 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1344,9 +1344,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	 * is wrong, but userspace depends on it. This should be testing
+>  	 * bprm->secureexec instead.
+>  	 */
+> -	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
+> -	    !(uid_eq(current_euid(), current_uid()) &&
+> -	      gid_eq(current_egid(), current_gid())))
+> +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP || bprm->is_sugid)
+>  		set_dumpable(current->mm, suid_dumpable);
+>  	else
+>  		set_dumpable(current->mm, SUID_DUMP_USER);
+> @@ -1619,11 +1617,13 @@ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
+>  	if (mode & S_ISUID) {
+>  		bprm->per_clear |= PER_CLEAR_ON_SETID;
+>  		bprm->cred->euid = uid;
+> +		bprm->is_sugid = 1;
+>  	}
+>  
+>  	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
+>  		bprm->per_clear |= PER_CLEAR_ON_SETID;
+>  		bprm->cred->egid = gid;
+> +		bprm->is_sugid = 1;
+>  	}
+>  }
+>  
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index 049cf9421d83..6d9893c59085 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -41,7 +41,10 @@ struct linux_binprm {
+>  		 * Set when errors can no longer be returned to the
+>  		 * original userspace.
+>  		 */
+> -		point_of_no_return:1;
+> +		point_of_no_return:1,
+> +
+> +		/* Is a SUID or SGID binary? */
+> +		is_sugid:1;
+>  #ifdef __alpha__
+>  	unsigned int taso:1;
+>  #endif
