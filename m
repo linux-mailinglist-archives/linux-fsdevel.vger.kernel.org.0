@@ -2,139 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E48047D138
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Dec 2021 12:45:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A64E847D14C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Dec 2021 12:51:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240278AbhLVLpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Dec 2021 06:45:43 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51400 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238045AbhLVLpm (ORCPT
+        id S239086AbhLVLvp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Dec 2021 06:51:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238070AbhLVLvo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Dec 2021 06:45:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1640173541;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=t8hfe6Gfw3N3sm/iHXx5ElkmaS7YGmdkl1wnNMkOIrk=;
-        b=EG4DRgTgn5m3fOZmedxzXpQ6UXa3B8Ntzx2zfRwyxAbbclKkIEjLAnysduX84gxqj9Mj6E
-        DK2c1nIUnWlyRGSIcTgqBSPpud/6p0b3Nr2wlMhr9LuGhjRXw4tWMgcPrbEtaz9OchwE2R
-        gMLaM4t9CCngRN1FtBp0JFW8jEZnI5Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-160-5CSJt_XzNSmqpNF8X7sCyQ-1; Wed, 22 Dec 2021 06:45:36 -0500
-X-MC-Unique: 5CSJt_XzNSmqpNF8X7sCyQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C54651018720;
-        Wed, 22 Dec 2021 11:45:32 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-211.pek2.redhat.com [10.72.12.211])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E96477314B;
-        Wed, 22 Dec 2021 11:45:21 +0000 (UTC)
-Date:   Wed, 22 Dec 2021 19:45:18 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, feng.tang@intel.com,
-        siglesias@igalia.com, kernel@gpiccoli.net,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH 3/3] panic: Allow printing extra panic information on
- kdump
-Message-ID: <YcMPzs6t8MKpEacq@dhcp-128-65.nay.redhat.com>
-References: <20211109202848.610874-1-gpiccoli@igalia.com>
- <20211109202848.610874-4-gpiccoli@igalia.com>
+        Wed, 22 Dec 2021 06:51:44 -0500
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32420C061574;
+        Wed, 22 Dec 2021 03:51:44 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id l25so2007350qkl.5;
+        Wed, 22 Dec 2021 03:51:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=krAEN6Zex7VeUxtUXXor7t+1Wwiow6aQFdDlf1o9eFs=;
+        b=GAUNCaZ9VbBnxrS4hcy5iDfj1gNYrahOGJQJ5WEKsUqkp4PVs1SQGIe0SXgSIow1HT
+         bsc4LC8A25HRyCbrerGN9LFGsQEB9aHae+GZ2GZofBMp4GrpKzxtXobZSoTGrG3paSab
+         OcwFbGgnbHA+1mjUedRUQhkfuKZiCFIpxh2gNUrxiw20wb6HODqPJ6Hmgc2BJI3oDGSc
+         Gk9JCdl8M7nZcr/mlr350iIRIM20KFxYx02MzoPDvqRP2pFVEJxwLUsXSloH+yp9X/1s
+         kqHXspL+t4RpiZJhXj0c5dLuUd1NXYEqzpvJx6T17KAw3le3Wz342u/xM812+xWB2Nm3
+         +tfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=krAEN6Zex7VeUxtUXXor7t+1Wwiow6aQFdDlf1o9eFs=;
+        b=AS8K/2DfM3yZmIvUnzknutk8uKf2G53xJ0UsY3gBhyVY1DisvOCTpLTY4hzgcHjYTI
+         ebQkkOD73oQv/X5bOHo79LD3E6spCkV1AIwuERx2J9HgT2X8g3MdY1rxwOVmm/00eq2G
+         L1cf/2ooFfgcXmgz5GdWzChutBY/FEyfTCktzDTOUQlkEV1PpwFBZah0z0JEVddJlbUP
+         k6lLPuSqaVQO55PXNl+z3Uyr0wmNedyG8fgEkzwoxF5aOvBprbGzB/YC1Dv6982L5Juc
+         ae4He8haLJc3lmS4JVKzCh5VikqUNabbo3bQ3x4TpReh20BeVxDPlmJYi2+22qVg1Kxd
+         QA3g==
+X-Gm-Message-State: AOAM531Cj1kjzJqB8OZniA42JPPt7cdIh46ulP+a8qouXqvmGfpHFuYT
+        SHeJ4y0xdpK6HOJH0hHkOKjgiYLr3fw=
+X-Google-Smtp-Source: ABdhPJy8o062nCHl8EM3TZEgSArbs1gzLl4SrqyabF8ABZVIXyhdbshHi5gjgDR8CX8jCy9Hl9gahQ==
+X-Received: by 2002:a37:88c4:: with SMTP id k187mr1616923qkd.718.1640173903386;
+        Wed, 22 Dec 2021 03:51:43 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id q21sm1585385qkl.52.2021.12.22.03.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Dec 2021 03:51:42 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: xu.xin16@zte.com.cn
+To:     mcgrof@kernel.org
+Cc:     keescook@chromium.org, yzaikin@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        xu xin <xu.xin16@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH linux-next] sysctl: add comments to make the code more clear
+Date:   Wed, 22 Dec 2021 11:51:35 +0000
+Message-Id: <20211222115135.485298-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211109202848.610874-4-gpiccoli@igalia.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Guilherme,
+From: xu xin <xu.xin16@zte.com.cn>
 
-Thanks for you patch.  Could you add kexec list for any following up
-patches?  This could change kdump behavior so let's see if any comments
-from kexec list.
+Adding some comments for ctl_table is more clear.
 
-Kudos for the lore+lei tool so that I can catch this by seeing this
-coming into Andrews tree :)
-On 11/09/21 at 05:28pm, Guilherme G. Piccoli wrote:
-> Currently we have the "panic_print" parameter/sysctl to allow some extra
-> information to be printed in a panic event. On the other hand, the kdump
-> mechanism allows to kexec a new kernel to collect a memory dump for the
-> running kernel in case of panic.
-> Right now these options are incompatible: the user either sets the kdump
-> or makes use of "panic_print". The code path of "panic_print" isn't
-> reached when kdump is configured.
-> 
-> There are situations though in which this would be interesting: for
-> example, in systems that are very memory constrained, a handcrafted
-> tiny kernel/initrd for kdump might be used in order to only collect the
-> dmesg in kdump kernel. Even more common, systems with no disk space for
-> the full (compressed) memory dump might very well rely in this
-> functionality too, dumping only the dmesg with the additional information
-> provided by "panic_print".
-> 
-> So, this is what the patch does: allows both functionality to co-exist;
-> if "panic_print" is set and the system performs a kdump, the extra
-> information is printed on dmesg before the kexec. Some notes about the
-> design choices here:
-> 
-> (a) We could have introduced a sysctl or an extra bit on "panic_print"
-> to allow enabling the co-existence of kdump and "panic_print", but seems
-> that would be over-engineering; we have 3 cases, let's check how this
-> patch change things:
-> 
-> - if the user have kdump set and not "panic_print", nothing changes;
-> - if the user have "panic_print" set and not kdump, nothing changes;
-> - if both are enabled, now we print the extra information before kdump,
-> which is exactly the goal of the patch (and should be the goal of the
-> user, since they enabled both options).
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+---
+ include/linux/sysctl.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-People may enable kdump crashkernel and panic_print together but
-they are not aware the extra panic print could cause kdump not reliable
-(in theory).  So at least some words in kernel-parameters.txt would
-help.
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 180adf7da785..105b18a290c4 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -131,14 +131,14 @@ static inline void *proc_sys_poll_event(struct ctl_table_poll *poll)
+ /* A sysctl table is an array of struct ctl_table: */
+ struct ctl_table {
+ 	const char *procname;		/* Text ID for /proc/sys, or zero */
+-	void *data;
+-	int maxlen;
+-	umode_t mode;
++	void *data;			/* a pointer to data for use by proc_handler */
++	int maxlen;			/* the maximum size in bytes of the data */
++	umode_t mode;			/* the file permissions for the /proc/sys file */
+ 	struct ctl_table *child;	/* Deprecated */
+ 	proc_handler *proc_handler;	/* Callback for text formatting */
+-	struct ctl_table_poll *poll;
++	struct ctl_table_poll *poll;	/* Support for userspace poll() to watch for changes */
+ 	void *extra1;
+-	void *extra2;
++	void *extra2;			/* extra pointers usually as minimum and maximum of data */
+ } __randomize_layout;
  
-> 
-> (b) We assume that the code path won't return from __crash_kexec()
-> so we didn't guard against double execution of panic_print_sys_info().
-> 
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> ---
->  kernel/panic.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 5da71fa4e5f1..439dbf93b406 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -243,6 +243,13 @@ void panic(const char *fmt, ...)
->  	 */
->  	kgdb_panic(buf);
->  
-> +	/*
-> +	 * If we have a kdump kernel loaded, give a chance to panic_print
-> +	 * show some extra information on kernel log if it was set...
-> +	 */
-> +	if (kexec_crash_loaded())
-> +		panic_print_sys_info();
-> +
->  	/*
->  	 * If we have crashed and we have a crash kernel loaded let it handle
->  	 * everything else.
-> -- 
-> 2.33.1
-> 
-> 
-
-Thanks
-Dave
+ struct ctl_node {
+-- 
+2.25.1
 
