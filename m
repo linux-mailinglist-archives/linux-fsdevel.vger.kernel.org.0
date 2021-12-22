@@ -2,82 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B248447C9D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Dec 2021 00:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A930847CAB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Dec 2021 02:23:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238132AbhLUXsT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Dec 2021 18:48:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33584 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbhLUXsT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Dec 2021 18:48:19 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37768C061574;
-        Tue, 21 Dec 2021 15:48:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 928CE617CD;
-        Tue, 21 Dec 2021 23:48:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80971C36AE9;
-        Tue, 21 Dec 2021 23:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1640130497;
-        bh=nkeYhgSpZg8GwUUiGealAh8ivf01200zRJ3+PYAI5F8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Lh6ssbN33FYDgwbEi+9vBxlu2T+MOua02MEpGQyzfKN01ZRCBbrE/do8B3o+73fsR
-         Z/47DiCxrv85LJV0vBqhK6XzEiveRpNugmpuo7OJzQI7cDSCI3pIIXZ/g+p5kHEyEm
-         GljPIXcmGYGWNt9J0C6wHsaoV3BaRvcQ9SyvolDo=
-Date:   Tue, 21 Dec 2021 15:48:16 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        keescook@chromium.org, yzaikin@google.com, siglesias@igalia.com,
-        kernel@gpiccoli.net
-Subject: Re: [PATCH 2/3] panic: Add option to dump all CPUs backtraces in
- panic_print
-Message-Id: <20211221154816.4a7472c55073d06df0c25f74@linux-foundation.org>
-In-Reply-To: <911e81d3-5ffe-b936-f668-bf1f6a9b6cfb@igalia.com>
-References: <20211109202848.610874-1-gpiccoli@igalia.com>
-        <20211109202848.610874-3-gpiccoli@igalia.com>
-        <20211130051206.GB89318@shbuild999.sh.intel.com>
-        <6f269857-2cbe-b4dd-714a-82372dc3adfc@igalia.com>
-        <Yb+R/OVeBkdYLWeH@bombadil.infradead.org>
-        <911e81d3-5ffe-b936-f668-bf1f6a9b6cfb@igalia.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S240779AbhLVBXJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Dec 2021 20:23:09 -0500
+Received: from mga18.intel.com ([134.134.136.126]:32526 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234213AbhLVBXJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Dec 2021 20:23:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1640136189; x=1671672189;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=soai/pmfaSqocLc0zgIUXqg4L+dRY+Q0ibdRNh+8JpM=;
+  b=MDX1v/gFkcqRXhrIBBknWseLYvpOYRiWsAcnhDaPBejDJQNuKGHAMesf
+   sjsHfFvAH4SLzzQHRLWmxRk9Ey0eFAb48EE00z3neHWBoCJv13l3aVn97
+   U1ByIEliLUYGUdWMhEqMnlssHo+/qiGhlwkgHklJUJBZ6lBydw7vclyB6
+   +kf/Ko+j7ZCQhpaZ0qVBu8/1iDrq5KrpF7/Ggyv4cgfPh/7ihH8j9/Jk3
+   bOAR+pz/bViAi8f6XdPfGf4/zldp8+GBFonPkz1F3s8+nvjPZepAMUg57
+   abgTvo1cNqJ8Umen20kyid4oSAvL60ecsANVjDeSeah2OPZtkBgZjSZcy
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10205"; a="227372590"
+X-IronPort-AV: E=Sophos;i="5.88,224,1635231600"; 
+   d="scan'208";a="227372590"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 17:23:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,224,1635231600"; 
+   d="scan'208";a="521477368"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga008.jf.intel.com with ESMTP; 21 Dec 2021 17:23:01 -0800
+Date:   Wed, 22 Dec 2021 09:22:23 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [PATCH v3 00/15] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20211222012223.GA22448@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20211221151125.19446-1-chao.p.peng@linux.intel.com>
+ <YcH2aGNJn57pLihJ@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YcH2aGNJn57pLihJ@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 20 Dec 2021 09:38:23 -0300 "Guilherme G. Piccoli" <gpiccoli@igalia.com> wrote:
-
-> On 19/12/2021 17:11, Luis Chamberlain wrote:
-> > mcgrof@sumo ~/linux-next (git::master)$ ./scripts/get_maintainer.pl
-> > kernel/printk/
-> > Petr Mladek <pmladek@suse.com> (maintainer:PRINTK)
-> > Sergey Senozhatsky <senozhatsky@chromium.org> (maintainer:PRINTK)
-> > Steven Rostedt <rostedt@goodmis.org> (reviewer:PRINTK)
-> > John Ogness <john.ogness@linutronix.de> (reviewer:PRINTK)
-> > linux-kernel@vger.kernel.org (open list)    
-> > 
-> > So I suggest you email the patches to those.
-> > 
-> >   Luis
-> > 
+On Tue, Dec 21, 2021 at 03:44:40PM +0000, Sean Christopherson wrote:
+> On Tue, Dec 21, 2021, Chao Peng wrote:
+> > This is the third version of this series which try to implement the
+> > fd-based KVM guest private memory.
 > 
-> Hi Luis, thank you! But I confess I'm very confused with this series. I
-> saw emails from Andrew that the patches had been accepted and were
-> available in -mm tree ([0] for example) but I'm not seeing them in
-> linux-next nor mmotm/mmots (although I saw them in mmotm directory for a
-> while before).
+> ...
 > 
-> Andrew, could you clarify the state of them?
+> > Test
+> > ----
+> > This code has been tested with latest TDX code patches hosted at
+> > (https://github.com/intel/tdx/tree/kvm-upstream) with minimal TDX
+> > adaption and QEMU support.
+> > 
+> > Example QEMU command line:
+> > -object tdx-guest,id=tdx \
+> > -object memory-backend-memfd-private,id=ram1,size=2G \
+> > -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
+> > 
+> > Changelog
+> > ----------
+> > v3:
+> >   - Added locking protection when calling
+> >     invalidate_page_range/fallocate callbacks.
+> >   - Changed memslot structure to keep use useraddr for shared memory.
+> >   - Re-organized F_SEAL_INACCESSIBLE and MEMFD_OPS.
+> >   - Added MFD_INACCESSIBLE flag to force F_SEAL_INACCESSIBLE.
+> >   - Commit message improvement.
+> >   - Many small fixes for comments from the last version.
+> 
+> Can you rebase on top of kvm/queue and send a new version?  There's a massive
+> overhaul of KVM's memslots code that's queued for 5.17, and the KVM core changes
+> in this series conflict mightily.
 
-They'll turn up on ozlabs after I've tested it all then uploaded.  I do
-this a couple of times a week, approx.
+Sure, will do the rebase and send a new version.
+
+> 
+> It's ok if the private memslot support isn't tested exactly as-is, it's not like
+> any of us reviewers can test it anyways, but I would like to be able to apply
+> cleanly and verify that the series doesn't break existing functionality.
+
+Good, it will ease me if that is acceptable (e.g. test on the relative
+new TDX codebase but send out the patch on latest kvm/queue which is not
+verified for the new function). This gets rid of the 'chicken and egg'
+dependency between this series and TDX patchset.
+
+> 
+> This version also appears to be based on an internal development branch, e.g. patch
+> 12/15 has some bits from the TDX series.
+
+Right, it's based on latest TDX code https://github.com/intel/tdx/tree/kvm-upstream.
+I did this because this is the only way I can test the code. 
+
+Thanks,
+Chao
+> 
+> @@ -336,6 +348,7 @@ struct kvm_tdx_exit {
+>  #define KVM_EXIT_X86_BUS_LOCK     33
+>  #define KVM_EXIT_XEN              34
+>  #define KVM_EXIT_RISCV_SBI        35
+> +#define KVM_EXIT_MEMORY_ERROR     36
+>  #define KVM_EXIT_TDX              50   /* dump number to avoid conflict. */
+> 
+>  /* For KVM_EXIT_INTERNAL_ERROR */
+> @@ -554,6 +567,8 @@ struct kvm_run {
+>                         unsigned long args[6];
+>                         unsigned long ret[2];
+>                 } riscv_sbi;
+> +               /* KVM_EXIT_MEMORY_ERROR */
+> +               struct kvm_memory_exit mem;
+>                 /* KVM_EXIT_TDX_VMCALL */
+>                 struct kvm_tdx_exit tdx;
+>                 /* Fix the size of the union. */
