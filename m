@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D428F47D9E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 00:17:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4EDA47D9EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 00:17:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242959AbhLVXRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Dec 2021 18:17:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24412 "EHLO
+        id S243137AbhLVXRi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Dec 2021 18:17:38 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52202 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237602AbhLVXRN (ORCPT
+        by vger.kernel.org with ESMTP id S243216AbhLVXRi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Dec 2021 18:17:13 -0500
+        Wed, 22 Dec 2021 18:17:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1640215033;
+        s=mimecast20190719; t=1640215057;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ROUKDoITxu+2ETxvzt25hXmhtJ3R05UryHKl5XiJ3sI=;
-        b=E6UvYcuOt0UXgXdCqy+5qXB5CZO+UImv3eqbhi0s5gTnSu0IQP779jDCOOTF4LSUxo5An7
-        vdWePAblPXjKxMt/2adbGO9Vb+AQZJW3UROU0CHkjumy8/88WTvdZTBBznU+FTWIyuw1GF
-        GzK41WlzM9M2hZt+uLItlWOLMPyvD/E=
+        bh=JPs0d8McpnvIH7NhvGVVl2s3D4mu+qr9paao6pmhXrA=;
+        b=Voh3DRPwXWZcFRUEbyBXOB+kd1OpY9gagUIIhG1nGHFy/1vsd1kLMihonc7AQUyGUHXT+M
+        pYsVgVtGfpi0krM7mSZSKiAjzeND90Ez0LZPPhrNXagOVZ1RoNNUl+8qx7hBWsaNveiFRG
+        mOg6aOGvdzxvvWS71BhQzC95V18ags4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-574-L1K_vZMBOKGnFMT1fw42zw-1; Wed, 22 Dec 2021 18:17:07 -0500
-X-MC-Unique: L1K_vZMBOKGnFMT1fw42zw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-456-rUiLj0szNpqes3tgzE_fTw-1; Wed, 22 Dec 2021 18:17:32 -0500
+X-MC-Unique: rUiLj0szNpqes3tgzE_fTw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6412A801ADB;
-        Wed, 22 Dec 2021 23:17:05 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2DB7710168C3;
+        Wed, 22 Dec 2021 23:17:30 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 59D0584765;
-        Wed, 22 Dec 2021 23:16:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 80B822B5AC;
+        Wed, 22 Dec 2021 23:17:11 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v4 12/68] fscache: Implement volume-level access helpers
+Subject: [PATCH v4 13/68] fscache: Implement cookie-level access helpers
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
@@ -57,225 +57,238 @@ Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 22 Dec 2021 23:16:55 +0000
-Message-ID: <164021501546.640689.9631510472149608443.stgit@warthog.procyon.org.uk>
+Date:   Wed, 22 Dec 2021 23:17:10 +0000
+Message-ID: <164021503063.640689.8870918985269528670.stgit@warthog.procyon.org.uk>
 In-Reply-To: <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk>
 References: <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a pair of helper functions to manage access to a volume, pinning the
-volume in place for the duration to prevent cache withdrawal from removing
-it:
+Add a number of helper functions to manage access to a cookie, pinning the
+cache object in place for the duration to prevent cache withdrawal from
+removing it:
 
-	bool fscache_begin_volume_access(struct fscache_volume *volume,
-					 enum fscache_access_trace why);
-	void fscache_end_volume_access(struct fscache_volume *volume,
-				       enum fscache_access_trace why);
+ (1) void fscache_init_access_gate(struct fscache_cookie *cookie);
 
-The way the access gate on the volume works/will work is:
+     This function initialises the access count when a cache binds to a
+     cookie.  An extra ref is taken on the access count to prevent wakeups
+     while the cache is active.  We're only interested in the wakeup when a
+     cookie is being withdrawn and we're waiting for it to quiesce - at
+     which point the counter will be decremented before the wait.
 
-  (1) If the cache tests as not live (state is not FSCACHE_CACHE_IS_ACTIVE),
-      then we return false to indicate access was not permitted.
+     The FSCACHE_COOKIE_NACC_ELEVATED flag is set on the cookie to keep
+     track of the extra ref in order to handle a race between
+     relinquishment and withdrawal both trying to drop the extra ref.
 
-  (2) If the cache tests as live, then we increment the volume's n_accesses
-      count and then recheck the cache liveness, ending the access if it
-      ceased to be live.
+ (2) bool fscache_begin_cookie_access(struct fscache_cookie *cookie,
+				      enum fscache_access_trace why);
 
-  (3) When we end the access, we decrement the volume's n_accesses and wake
-      up the any waiters if it reaches 0.
+     This function attempts to begin access upon a cookie, pinning it in
+     place if it's cached.  If successful, it returns true and leaves a the
+     access count incremented.
 
-  (4) Whilst the cache is caching, the volume's n_accesses is kept
-      artificially incremented to prevent wakeups from happening.
+ (3) void fscache_end_cookie_access(struct fscache_cookie *cookie,
+				    enum fscache_access_trace why);
 
-  (5) When the cache is taken offline, the state is changed to prevent new
-      accesses, the volume's n_accesses is decremented and we wait for it to
-      become 0.
+     This function drops the access count obtained by (2), permitting
+     object withdrawal to take place when it reaches zero.
+
+A tracepoint is provided to track changes to the access counter on a
+cookie.
+
+Changes
+=======
+ver #2:
+ - Don't hold n_accesses elevated whilst cache is bound to a cookie, but
+   rather add a flag that prevents the state machine from being queued when
+   n_accesses reaches 0.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 cc: linux-cachefs@redhat.com
-Link: https://lore.kernel.org/r/163819594158.215744.8285859817391683254.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/163906894315.143852.5454793807544710479.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/163967095028.1823006.9173132503876627466.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/163819595085.215744.1706073049250505427.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/163906895313.143852.10141619544149102193.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/163967095980.1823006.1133648159424418877.stgit@warthog.procyon.org.uk/ # v3
 ---
 
+ fs/fscache/cookie.c            |   98 ++++++++++++++++++++++++++++++++++++++++
  fs/fscache/internal.h          |    3 +
  fs/fscache/main.c              |    1 
- fs/fscache/volume.c            |   84 ++++++++++++++++++++++++++++++++++++++++
- include/linux/fscache-cache.h  |    4 ++
- include/trace/events/fscache.h |   34 ++++++++++++++++
- 5 files changed, 126 insertions(+)
+ include/linux/fscache-cache.h  |    2 +
+ include/trace/events/fscache.h |   29 ++++++++++++
+ 5 files changed, 133 insertions(+)
 
-diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-index be29816b37ef..91a4ea08ec0b 100644
---- a/fs/fscache/internal.h
-+++ b/fs/fscache/internal.h
-@@ -130,6 +130,9 @@ struct fscache_volume *fscache_get_volume(struct fscache_volume *volume,
- 					  enum fscache_volume_trace where);
- void fscache_put_volume(struct fscache_volume *volume,
- 			enum fscache_volume_trace where);
-+bool fscache_begin_volume_access(struct fscache_volume *volume,
-+				 struct fscache_cookie *cookie,
-+				 enum fscache_access_trace why);
- void fscache_create_volume(struct fscache_volume *volume, bool wait);
- 
- 
-diff --git a/fs/fscache/main.c b/fs/fscache/main.c
-index 876f4bee5840..6cab5d99ba4c 100644
---- a/fs/fscache/main.c
-+++ b/fs/fscache/main.c
-@@ -22,6 +22,7 @@ MODULE_PARM_DESC(fscache_debug,
- 		 "FS-Cache debugging mask");
- 
- EXPORT_TRACEPOINT_SYMBOL(fscache_access_cache);
-+EXPORT_TRACEPOINT_SYMBOL(fscache_access_volume);
- 
- struct workqueue_struct *fscache_wq;
- EXPORT_SYMBOL(fscache_wq);
-diff --git a/fs/fscache/volume.c b/fs/fscache/volume.c
-index 630894fefd02..20497f0f10bb 100644
---- a/fs/fscache/volume.c
-+++ b/fs/fscache/volume.c
-@@ -33,6 +33,90 @@ static void fscache_see_volume(struct fscache_volume *volume,
- 	trace_fscache_volume(volume->debug_id, ref, where);
+diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
+index 438b0098aa73..04d2127bd354 100644
+--- a/fs/fscache/cookie.c
++++ b/fs/fscache/cookie.c
+@@ -62,6 +62,104 @@ static void fscache_free_cookie(struct fscache_cookie *cookie)
+ 	kmem_cache_free(fscache_cookie_jar, cookie);
  }
  
 +/*
-+ * Pin the cache behind a volume so that we can access it.
++ * Initialise the access gate on a cookie by setting a flag to prevent the
++ * state machine from being queued when the access counter transitions to 0.
++ * We're only interested in this when we withdraw caching services from the
++ * cookie.
 + */
-+static void __fscache_begin_volume_access(struct fscache_volume *volume,
-+					  struct fscache_cookie *cookie,
-+					  enum fscache_access_trace why)
++static void fscache_init_access_gate(struct fscache_cookie *cookie)
 +{
 +	int n_accesses;
 +
-+	n_accesses = atomic_inc_return(&volume->n_accesses);
-+	smp_mb__after_atomic();
-+	trace_fscache_access_volume(volume->debug_id, cookie ? cookie->debug_id : 0,
-+				    refcount_read(&volume->ref),
-+				    n_accesses, why);
++	n_accesses = atomic_read(&cookie->n_accesses);
++	trace_fscache_access(cookie->debug_id, refcount_read(&cookie->ref),
++			     n_accesses, fscache_access_cache_pin);
++	set_bit(FSCACHE_COOKIE_NO_ACCESS_WAKE, &cookie->flags);
 +}
 +
 +/**
-+ * fscache_begin_volume_access - Pin a cache so a volume can be accessed
-+ * @volume: The volume cookie
-+ * @cookie: A datafile cookie for a tracing reference (or NULL)
++ * fscache_end_cookie_access - Unpin a cache at the end of an access.
++ * @cookie: A data file cookie
 + * @why: An indication of the circumstances of the access for tracing
 + *
-+ * Attempt to pin the cache to prevent it from going away whilst we're
-+ * accessing a volume and returns true if successful.  This works as follows:
++ * Unpin a cache cookie after we've accessed it and bring a deferred
++ * relinquishment or withdrawal state into effect.
 + *
-+ *  (1) If the cache tests as not live (state is not FSCACHE_CACHE_IS_ACTIVE),
-+ *      then we return false to indicate access was not permitted.
-+ *
-+ *  (2) If the cache tests as live, then we increment the volume's n_accesses
-+ *      count and then recheck the cache liveness, ending the access if it
-+ *      ceased to be live.
-+ *
-+ *  (3) When we end the access, we decrement the volume's n_accesses and wake
-+ *      up the any waiters if it reaches 0.
-+ *
-+ *  (4) Whilst the cache is caching, the volume's n_accesses is kept
-+ *      artificially incremented to prevent wakeups from happening.
-+ *
-+ *  (5) When the cache is taken offline, the state is changed to prevent new
-+ *      accesses, the volume's n_accesses is decremented and we wait for it to
-+ *      become 0.
-+ *
-+ * The datafile @cookie and the @why indicator are merely provided for tracing
-+ * purposes.
++ * The @why indicator is provided for tracing purposes.
 + */
-+bool fscache_begin_volume_access(struct fscache_volume *volume,
-+				 struct fscache_cookie *cookie,
-+				 enum fscache_access_trace why)
-+{
-+	if (!fscache_cache_is_live(volume->cache))
-+		return false;
-+	__fscache_begin_volume_access(volume, cookie, why);
-+	if (!fscache_cache_is_live(volume->cache)) {
-+		fscache_end_volume_access(volume, cookie, fscache_access_unlive);
-+		return false;
-+	}
-+	return true;
-+}
-+
-+/**
-+ * fscache_end_volume_access - Unpin a cache at the end of an access.
-+ * @volume: The volume cookie
-+ * @cookie: A datafile cookie for a tracing reference (or NULL)
-+ * @why: An indication of the circumstances of the access for tracing
-+ *
-+ * Unpin a cache volume after we've accessed it.  The datafile @cookie and the
-+ * @why indicator are merely provided for tracing purposes.
-+ */
-+void fscache_end_volume_access(struct fscache_volume *volume,
-+			       struct fscache_cookie *cookie,
++void fscache_end_cookie_access(struct fscache_cookie *cookie,
 +			       enum fscache_access_trace why)
 +{
 +	int n_accesses;
 +
 +	smp_mb__before_atomic();
-+	n_accesses = atomic_dec_return(&volume->n_accesses);
-+	trace_fscache_access_volume(volume->debug_id, cookie ? cookie->debug_id : 0,
-+				    refcount_read(&volume->ref),
-+				    n_accesses, why);
-+	if (n_accesses == 0)
-+		wake_up_var(&volume->n_accesses);
++	n_accesses = atomic_dec_return(&cookie->n_accesses);
++	trace_fscache_access(cookie->debug_id, refcount_read(&cookie->ref),
++			     n_accesses, why);
++	if (n_accesses == 0 &&
++	    !test_bit(FSCACHE_COOKIE_NO_ACCESS_WAKE, &cookie->flags)) {
++		// PLACEHOLDER: Need to poke the state machine
++	}
 +}
-+EXPORT_SYMBOL(fscache_end_volume_access);
++EXPORT_SYMBOL(fscache_end_cookie_access);
 +
- static bool fscache_volume_same(const struct fscache_volume *a,
- 				const struct fscache_volume *b)
++/*
++ * Pin the cache behind a cookie so that we can access it.
++ */
++static void __fscache_begin_cookie_access(struct fscache_cookie *cookie,
++					  enum fscache_access_trace why)
++{
++	int n_accesses;
++
++	n_accesses = atomic_inc_return(&cookie->n_accesses);
++	smp_mb__after_atomic(); /* (Future) read state after is-caching.
++				 * Reread n_accesses after is-caching
++				 */
++	trace_fscache_access(cookie->debug_id, refcount_read(&cookie->ref),
++			     n_accesses, why);
++}
++
++/**
++ * fscache_begin_cookie_access - Pin a cache so data can be accessed
++ * @cookie: A data file cookie
++ * @why: An indication of the circumstances of the access for tracing
++ *
++ * Attempt to pin the cache to prevent it from going away whilst we're
++ * accessing data and returns true if successful.  This works as follows:
++ *
++ *  (1) If the cookie is not being cached (ie. FSCACHE_COOKIE_IS_CACHING is not
++ *      set), we return false to indicate access was not permitted.
++ *
++ *  (2) If the cookie is being cached, we increment its n_accesses count and
++ *      then recheck the IS_CACHING flag, ending the access if it got cleared.
++ *
++ *  (3) When we end the access, we decrement the cookie's n_accesses and wake
++ *      up the any waiters if it reaches 0.
++ *
++ *  (4) Whilst the cookie is actively being cached, its n_accesses is kept
++ *      artificially incremented to prevent wakeups from happening.
++ *
++ *  (5) When the cache is taken offline or if the cookie is culled, the flag is
++ *      cleared to prevent new accesses, the cookie's n_accesses is decremented
++ *      and we wait for it to become 0.
++ *
++ * The @why indicator are merely provided for tracing purposes.
++ */
++bool fscache_begin_cookie_access(struct fscache_cookie *cookie,
++				 enum fscache_access_trace why)
++{
++	if (!test_bit(FSCACHE_COOKIE_IS_CACHING, &cookie->flags))
++		return false;
++	__fscache_begin_cookie_access(cookie, why);
++	if (!test_bit(FSCACHE_COOKIE_IS_CACHING, &cookie->flags) ||
++	    !fscache_cache_is_live(cookie->volume->cache)) {
++		fscache_end_cookie_access(cookie, fscache_access_unlive);
++		return false;
++	}
++	return true;
++}
++
+ static inline void wake_up_cookie_state(struct fscache_cookie *cookie)
  {
+ 	/* Use a barrier to ensure that waiters see the state variable
+diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
+index 91a4ea08ec0b..e0d8ef212e82 100644
+--- a/fs/fscache/internal.h
++++ b/fs/fscache/internal.h
+@@ -59,6 +59,9 @@ extern struct kmem_cache *fscache_cookie_jar;
+ extern const struct seq_operations fscache_cookies_seq_ops;
+ 
+ extern void fscache_print_cookie(struct fscache_cookie *cookie, char prefix);
++extern bool fscache_begin_cookie_access(struct fscache_cookie *cookie,
++					enum fscache_access_trace why);
++
+ static inline void fscache_see_cookie(struct fscache_cookie *cookie,
+ 				      enum fscache_cookie_trace where)
+ {
+diff --git a/fs/fscache/main.c b/fs/fscache/main.c
+index 6cab5d99ba4c..dad85fd84f6f 100644
+--- a/fs/fscache/main.c
++++ b/fs/fscache/main.c
+@@ -23,6 +23,7 @@ MODULE_PARM_DESC(fscache_debug,
+ 
+ EXPORT_TRACEPOINT_SYMBOL(fscache_access_cache);
+ EXPORT_TRACEPOINT_SYMBOL(fscache_access_volume);
++EXPORT_TRACEPOINT_SYMBOL(fscache_access);
+ 
+ struct workqueue_struct *fscache_wq;
+ EXPORT_SYMBOL(fscache_wq);
 diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index c4355b888c91..fbbd8a2afe12 100644
+index fbbd8a2afe12..66624407ba84 100644
 --- a/include/linux/fscache-cache.h
 +++ b/include/linux/fscache-cache.h
-@@ -53,6 +53,10 @@ extern struct rw_semaphore fscache_addremove_sem;
- extern struct fscache_cache *fscache_acquire_cache(const char *name);
- extern void fscache_relinquish_cache(struct fscache_cache *cache);
- 
-+extern void fscache_end_volume_access(struct fscache_volume *volume,
-+				      struct fscache_cookie *cookie,
-+				      enum fscache_access_trace why);
-+
- extern struct fscache_cookie *fscache_get_cookie(struct fscache_cookie *cookie,
+@@ -61,6 +61,8 @@ extern struct fscache_cookie *fscache_get_cookie(struct fscache_cookie *cookie,
  						 enum fscache_cookie_trace where);
  extern void fscache_put_cookie(struct fscache_cookie *cookie,
+ 			       enum fscache_cookie_trace where);
++extern void fscache_end_cookie_access(struct fscache_cookie *cookie,
++				      enum fscache_access_trace why);
+ extern void fscache_set_cookie_state(struct fscache_cookie *cookie,
+ 				     enum fscache_cookie_state state);
+ 
 diff --git a/include/trace/events/fscache.h b/include/trace/events/fscache.h
-index 734966bc49e1..4f40cfa52469 100644
+index 4f40cfa52469..b1a962adfd16 100644
 --- a/include/trace/events/fscache.h
 +++ b/include/trace/events/fscache.h
-@@ -43,6 +43,7 @@ enum fscache_volume_trace {
- 	fscache_volume_put_relinquish,
- 	fscache_volume_see_create_work,
- 	fscache_volume_see_hash_wake,
-+	fscache_volume_wait_create_work,
- };
- 
- enum fscache_cookie_trace {
-@@ -245,6 +246,39 @@ TRACE_EVENT(fscache_access_cache,
+@@ -279,6 +279,35 @@ TRACE_EVENT(fscache_access_volume,
  		      __entry->n_accesses)
  	    );
  
-+TRACE_EVENT(fscache_access_volume,
-+	    TP_PROTO(unsigned int volume_debug_id,
-+		     unsigned int cookie_debug_id,
++TRACE_EVENT(fscache_access,
++	    TP_PROTO(unsigned int cookie_debug_id,
 +		     int ref,
 +		     int n_accesses,
 +		     enum fscache_access_trace why),
 +
-+	    TP_ARGS(volume_debug_id, cookie_debug_id, ref, n_accesses, why),
++	    TP_ARGS(cookie_debug_id, ref, n_accesses, why),
 +
 +	    TP_STRUCT__entry(
-+		    __field(unsigned int,		volume		)
 +		    __field(unsigned int,		cookie		)
 +		    __field(int,			ref		)
 +		    __field(int,			n_accesses	)
@@ -283,15 +296,13 @@ index 734966bc49e1..4f40cfa52469 100644
 +			     ),
 +
 +	    TP_fast_assign(
-+		    __entry->volume	= volume_debug_id;
 +		    __entry->cookie	= cookie_debug_id;
 +		    __entry->ref	= ref;
 +		    __entry->n_accesses	= n_accesses;
 +		    __entry->why	= why;
 +			   ),
 +
-+	    TP_printk("V=%08x c=%08x %s r=%d a=%d",
-+		      __entry->volume,
++	    TP_printk("c=%08x %s r=%d a=%d",
 +		      __entry->cookie,
 +		      __print_symbolic(__entry->why, fscache_access_traces),
 +		      __entry->ref,
