@@ -2,73 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0890047D1D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Dec 2021 13:37:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BD647D871
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Dec 2021 22:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244900AbhLVMhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Dec 2021 07:37:53 -0500
-Received: from fanzine2.igalia.com ([213.97.179.56]:33770 "EHLO
-        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233073AbhLVMhw (ORCPT
+        id S237897AbhLVVBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Dec 2021 16:01:36 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:50340 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237566AbhLVVBf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Dec 2021 07:37:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
-        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=8MaPpGxJgEGfhSRIWktUPu8Djx/Jd3vJZEcOcNPLJuQ=; b=iIlX9D5ZmpxcdPauNLWoUmXHzS
-        8vtQjJHZizUdOJ9GIJOBrpuZMTr+W4eLIfSnahX4eM304VvQGMH8NpfidPqxTyZhDaRuGpC83qDGH
-        IW/AMwPg3Hz3HscPK1NBNQSPk83j5X828tLNL/Qd7e23y8H8cnFuQzzY+LXjaCD3179cvkyDDQ9oE
-        wFyWvb8Ej8lHmhRpzJHF0PyRQvNzurq7BvO9v56V0CzeeErVDNRLu0qsVqAi1UjJfVkBLjdveywDk
-        vFD1sKnsJaVfvUDxM1VpFAi+h8Sbdi3FzOIEcO8OTDj3ICHTMWQqSfThWOCev50j+HHT28XHWMtxb
-        g2vyvZCw==;
-Received: from 200-153-146-242.dsl.telesp.net.br ([200.153.146.242] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1n00s3-0003eR-DI; Wed, 22 Dec 2021 13:37:27 +0100
-Subject: Re: [PATCH 2/3] panic: Add option to dump all CPUs backtraces in
- panic_print
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        keescook@chromium.org, yzaikin@google.com, siglesias@igalia.com,
-        kernel@gpiccoli.net
-References: <20211109202848.610874-1-gpiccoli@igalia.com>
- <20211109202848.610874-3-gpiccoli@igalia.com>
- <20211130051206.GB89318@shbuild999.sh.intel.com>
- <6f269857-2cbe-b4dd-714a-82372dc3adfc@igalia.com>
- <Yb+R/OVeBkdYLWeH@bombadil.infradead.org>
- <911e81d3-5ffe-b936-f668-bf1f6a9b6cfb@igalia.com>
- <20211221154816.4a7472c55073d06df0c25f74@linux-foundation.org>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Message-ID: <1758d4a0-6158-01b1-7460-c8ffd091d3dc@igalia.com>
-Date:   Wed, 22 Dec 2021 09:37:13 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Wed, 22 Dec 2021 16:01:35 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BMIrCFF022624
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Dec 2021 13:01:35 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=cUFU43HbwgQ544ozH9BDFFclJYl6i3/yQmmixHNGvkk=;
+ b=BWqA0Tct3Gxn3dD49dx+phLxoWiFMxrRTPcfsO0iryTXnFZfNB91zZMiJwip8CKJuweD
+ qFho3fFPwDPqYuL0FRJyQuMF7vQECAiQmDJTaUNDybTluZvIRVCmiiSQocRFXUJod2S6
+ 8Z5+XtBxLS4bYSqVXCjX6IOTQEVpmcbqmAc= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d49pdgrgk-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Dec 2021 13:01:35 -0800
+Received: from twshared12416.02.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Wed, 22 Dec 2021 13:01:34 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 35D2986EFCD4; Wed, 22 Dec 2021 13:01:30 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <torvalds@linux-foundation.org>, <shr@fb.com>
+Subject: [PATCH v6 0/5] io_uring: add xattr support
+Date:   Wed, 22 Dec 2021 13:01:22 -0800
+Message-ID: <20211222210127.958902-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20211221154816.4a7472c55073d06df0c25f74@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: vHquH3ugG25AuiSHpN60IF8i3srNnd1m
+X-Proofpoint-ORIG-GUID: vHquH3ugG25AuiSHpN60IF8i3srNnd1m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-22_09,2021-12-22_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 mlxscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=870 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112220111
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21/12/2021 20:48, Andrew Morton wrote:
->[...]
-> 
-> They'll turn up on ozlabs after I've tested it all then uploaded.  I do
-> this a couple of times a week, approx.
-> 
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-OK, thank you Andrew. Will I get some ping when that happens, through
-some bot or anything? I'm waiting them to show up in linux-next tree so
-to start a backport to an in-house kernel and starting using them.
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
 
-Cheers,
+Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+  This splits off a new function do_user_path_at_empty from
+  user_path_at_empty that is based on filename and not on a
+  user-specified string.
+
+Patch 2: fs: split off setxattr_setup function from setxattr
+  Split off the setup part of the setxattr function.
+
+Patch 3: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
+
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
 
 
-Guilherme
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+
+V6: - reverted addition of kname array to xattr_ctx structure
+      Adding the kname array increases the io_kiocb beyond 64 bytes
+      (increases it to 224 bytes). We try hard to limit it to 64 bytes.
+      Keeping the original interface also is a bit more efficient.
+    - rebased on for-5.17/io_uring-getdents64
+V5: - add kname array to xattr_ctx structure
+V4: - rebased patch series
+V3: - remove req->file checks in prep functions
+    - change size parameter in do_xattr
+V2: - split off function do_user_path_empty instead of changing
+      the function signature of user_path_at
+    - Fix datatype size problem in do_getxattr
+
+
+
+Stefan Roesch (5):
+  fs: split off do_user_path_at_empty from user_path_at_empty()
+  fs: split off setxattr_setup function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  23 +++
+ fs/io_uring.c                 | 318 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |  10 +-
+ fs/xattr.c                    | 107 ++++++++----
+ include/linux/namei.h         |   2 +
+ include/uapi/linux/io_uring.h |   8 +-
+ 6 files changed, 428 insertions(+), 40 deletions(-)
+
+
+base-commit: b4518682080d3a1cdd6ea45a54ff6772b8b2797a
+--=20
+2.30.2
+
