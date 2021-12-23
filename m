@@ -2,110 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF5147E8A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 21:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2200547E99E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 00:13:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350208AbhLWULu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 15:11:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38314 "EHLO
+        id S240684AbhLWXJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 18:09:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233073AbhLWULu (ORCPT
+        with ESMTP id S229834AbhLWXJz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 15:11:50 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4423C061401
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 12:11:49 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id j21so25493967edt.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 12:11:49 -0800 (PST)
+        Thu, 23 Dec 2021 18:09:55 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33609C061401;
+        Thu, 23 Dec 2021 15:09:55 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id e5so4186714wmq.1;
+        Thu, 23 Dec 2021 15:09:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bUoKqKXav8GLeL8li3Vc/v8SEeuVLhpuAYYxjYZyCOs=;
-        b=HBVjgu0AzE2cyS3rGvR4GkNmbepRCwIYU1YnXYIATUUKwMJ4CLwLln8sDgup/0C9V5
-         wB8DGO1L1VZZtzRTC93vFJ/yD4p/E24ViKIkLiS7xnFaJM8EsBm+ypSvTf7HSJRqi5EN
-         I1MlMHJoKIuQZBwvzanaLfgP1lA2YEfqjmyko=
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=dgbT8DN+Tw3GNuf5KJthTWpp6lDkFZBiYQzZimRcuRE=;
+        b=ehxbIBRAS2aXNbnGgB0k0x6R5UnwGvaUuLQwHieKejHDCyBTff1JOdaDIPIckgtJou
+         8hYkLoqNGiii4+iF8QW2us8YgNv9kljvbT4qGb/bQUff9DbRMmIrP0045w7Uw3CUCOK8
+         TTwrauAIdVxgec9tqmZeT0ABn4zy0J9Ld1K8K1eW8x56QfvdoJ4Dm/BexqyjR/YwzPZw
+         lDqlfT6bv88bZRj1nDoITdfdxhxwY3gc40PVSTqhV1FQbyf1IA5N0iLVeBCj3xHVVZgn
+         NV7mk5eCxTD4+SUpFaDQwPqH182VQ8mtL51XgD/+4dSE1ey1EoQe53Wn8U4cWrQUgaMC
+         9neA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bUoKqKXav8GLeL8li3Vc/v8SEeuVLhpuAYYxjYZyCOs=;
-        b=eUP1l0sNiL6WoHbzzGM+vxm0VsaGel/t6x+mk9GCM9wzxen7Y3Y7HgtONtJ5XSkD7E
-         p6m9GYRT7woFnwczYC0doAmUCgdl2ZukdmCPcgAegiMkLMDBqL72CgC8yxHrB9UblF2t
-         dcjKnlSm2f6vwhLa2E/97sDMOLZVJDy3cgVJNlr7nHwdWcMNRaw0sJ/pP0lpCjKhqyNN
-         8SRTfJyN4is3vfRfX8F1bmufgUiYGCGNe7pawjQ20X7Cw7Dob5RjmSc2yLb5l7mKrNgt
-         8Ztd4rkClCURkX2ulsKH31BhcqHXTh91XdI7u6org7zKHKGoWPhgBclckkcbnfkHDpIS
-         6McA==
-X-Gm-Message-State: AOAM530eAjjnZmuVjbE/5k0Wy3hqRtEbi+ujl+ajvG0vPlnoIAO2DJ83
-        G2M+DCjPSdxzai2LIhtU/SHDWu+mLeJzKCQXBNo=
-X-Google-Smtp-Source: ABdhPJysazXl9/+oYIKt+cmv32YmbWD0/l2Ubg2hUfcpuItTkgnfin/N7JhIB34UyKviug43lz7hIg==
-X-Received: by 2002:a17:906:5603:: with SMTP id f3mr3102506ejq.272.1640290308084;
-        Thu, 23 Dec 2021 12:11:48 -0800 (PST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id bx6sm2288183edb.78.2021.12.23.12.11.47
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :subject:content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=dgbT8DN+Tw3GNuf5KJthTWpp6lDkFZBiYQzZimRcuRE=;
+        b=o4y2wHRFmnHEptWe2GP8e3dul2mqXrLlB31CwsgAlX4QnaS5Ch7MJdhHYpAkIoam5P
+         SGB37Fx5ZGN186NbY2INJurdUedBCX4rgL5SmUaXfOhIb+sXHJfKPGu5S5cSRVBsNbEM
+         296rGoCDgMLmpsU93hhW8ApHF9AQt6JItlo8q8vIeTPhNw6DiacNwlfUiz0jbVSmp/6n
+         K/pKg4wjn5EQ7lUJ852IgEnq0/3ZRjg3oJCW3fiX/otRF2x17VHk1i350qJsB1JwcqS6
+         beQ6GKkzM+lhYgsl2oH0dS71j8rd62DiuOvsuhaiVvGRrxpfrwCQ2LxkHiE3d2fm0ei5
+         Zf/A==
+X-Gm-Message-State: AOAM533nsrGrWtZpRG8X65WjrW1Am5/mdhgEGNx3lAxJQmt28ZCsdbAa
+        XOOyar0cQhMt7NWkdoVHPfea91WY7f8=
+X-Google-Smtp-Source: ABdhPJxl1U9OmTr5nW/WPKnQ66/Eyo9O1/bfTZjkkZoBY6qhl1LyNXjyknMXkm7SCe/TuBNlpdLL3A==
+X-Received: by 2002:a05:600c:c7:: with SMTP id u7mr3032584wmm.85.1640300993673;
+        Thu, 23 Dec 2021 15:09:53 -0800 (PST)
+Received: from ?IPV6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.googlemail.com with ESMTPSA id c11sm10989913wmq.48.2021.12.23.15.09.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Dec 2021 12:11:47 -0800 (PST)
-Received: by mail-wm1-f52.google.com with SMTP id e5so3971239wmq.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 12:11:47 -0800 (PST)
-X-Received: by 2002:a05:600c:4f13:: with SMTP id l19mr2912168wmq.152.1640290307233;
- Thu, 23 Dec 2021 12:11:47 -0800 (PST)
+        Thu, 23 Dec 2021 15:09:53 -0800 (PST)
+Sender: Paolo Bonzini <paolo.bonzini@gmail.com>
+Message-ID: <e3fe04eb-1a01-bea4-f1ea-cb9ee98ee216@redhat.com>
+Date:   Fri, 24 Dec 2021 00:09:47 +0100
 MIME-Version: 1.0
-References: <20211223195658.2805049-1-shr@fb.com> <20211223195658.2805049-3-shr@fb.com>
-In-Reply-To: <20211223195658.2805049-3-shr@fb.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 23 Dec 2021 12:11:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjZ4YORKUBswiH5CZ5pukRju=k+Aby6pKwdgCbqXJP1Nw@mail.gmail.com>
-Message-ID: <CAHk-=wjZ4YORKUBswiH5CZ5pukRju=k+Aby6pKwdgCbqXJP1Nw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/5] fs: split off setxattr_copy and do_setxattr
- function from setxattr
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v3 kvm/queue 06/16] KVM: Implement fd-based memory using
+ MEMFD_OPS interfaces
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
+ <20211223123011.41044-7-chao.p.peng@linux.intel.com>
+ <YcTBLpVlETdI8JHi@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <YcTBLpVlETdI8JHi@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 23, 2021 at 11:57 AM Stefan Roesch <shr@fb.com> wrote:
->
-> +       /* Attribute name */
-> +       char *kname;
-> +       int kname_sz;
+On 12/23/21 19:34, Sean Christopherson wrote:
+>>   	select HAVE_KVM_PM_NOTIFIER if PM
+>> +	select MEMFD_OPS
+> MEMFD_OPS is a weird Kconfig name given that it's not just memfd() that can
+> implement the ops.
+> 
 
-I still don't like this.
+Or, it's kvm that implements them to talk to memfd?
 
-Clearly the "just embed the kname in the context" didn't work, but I
-hate how this adds that "pointer and size", when the size really
-should be part of the type.
-
-The patch takes what used to be a fixed size, and turns it into
-something we pass along as an argument - for no actual good reason.
-The 'size' isn't even the size of the name, it's literally the size of
-the allocation that has a fixed definition.
-
-Can we perhaps do it another way, by just encoding the size in the
-type itself - but keeping it as a pointer.
-
-We have a fixed size for attribute names, so maybe we can do
-
-        struct xattr_name {
-                char name[XATTR_NAME_MAX + 1];
-        };
-
-and actually use that.
-
-Because I don't see that kname_sz is ever validly anything else, and
-ever has any actual value to be passed around?
-
-Maybe some day we'd actually make that "xattr_name" structure also
-have the actual length of the name in it, but that would still *not*
-be the size of the allocation.
-
-I think it's actively misleading to have "kname_sz' that isn't
-actually the size of the name, but I also think it's stupid to have a
-variable for what is a constant value.
-
-             Linus
+Paolo
