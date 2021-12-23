@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4ECA47E34C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 13:31:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB01947E34F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 13:31:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348289AbhLWMbI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 07:31:08 -0500
-Received: from mga14.intel.com ([192.55.52.115]:56919 "EHLO mga14.intel.com"
+        id S1348299AbhLWMbN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 07:31:13 -0500
+Received: from mga05.intel.com ([192.55.52.43]:55451 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348255AbhLWMbH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 07:31:07 -0500
+        id S1348192AbhLWMbM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Dec 2021 07:31:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640262667; x=1671798667;
+  t=1640262672; x=1671798672;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=xtbgbUjVJSiP/3NOnfjZyjZXB+ptWQ3Ys8Zly2meUqc=;
-  b=R7mpZQAJwvmQ0/0Ng6q9p/z/dHXYOnUFv5eoi2q9yfLFVU/0mWB34sXA
-   8Tz/1aZQXg0xPJckFFR/KsZf56EHMjq2Y6rDVhsEx0MVolJTI6ndSj6wl
-   N4PrWjStR7lqHIYsnnViLIrWEzWPzRGRtHdzSrhO5CtRMamrQVnvOOAf7
-   JF78MRnXZb+5SCMnscJ20zOD//kDnvuWh/A57DKmDYt4+Kwh4RHvYt8Va
-   xpxwOufr4DvMxHrM11NPTwILRE8r2NQPrckUv7zwLs2/vtdk3SPs8myca
-   fHO3Prgmlh6pHK6vX4xTJwqC+HdrhFNlBCplWWiGdER443dxYqhiHaZwb
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10206"; a="241040343"
+  bh=L6zzX+w0dRm95JSP/7w36iYjjnEIWuQgAZ4mQ5a+0Og=;
+  b=XEpwouWP76cQhIwmz0fH9wTxTCUWE/gaMQNsu5y26hnSU06rpIs5Xndd
+   W3xENRZ/bhHzzEqms3XstM6C9paceu2h7Cs2bhP5pApH79Mxlo7b7E4km
+   o5OGVassMF5FZKdAx1XXEKF9wtMoQoiu7fgPnNhz4gXupacKizjsSdQoz
+   S3rBjjETpmRbhOhEa7AmOJWciPI+buKZT/5cb+Kkf9Lk+qbQf+hs8J3Ix
+   3D3lYDwsNXNf/2cJEU3zQe1w/PYjX3cxrAMd91Mu0jnrbvNm4lbJ05Ojr
+   Y0Q1CliOleuyecqxSL+RKuqcU/NMZ40YJ/U7cFkl68zOkQST1LY9l9t6z
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10206"; a="327129630"
 X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
-   d="scan'208";a="241040343"
+   d="scan'208";a="327129630"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 04:31:04 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 04:31:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
-   d="scan'208";a="522078480"
+   d="scan'208";a="522078537"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2021 04:30:56 -0800
+  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2021 04:31:04 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: [PATCH v3 kvm/queue 01/16] mm/shmem: Introduce F_SEAL_INACCESSIBLE
-Date:   Thu, 23 Dec 2021 20:29:56 +0800
-Message-Id: <20211223123011.41044-2-chao.p.peng@linux.intel.com>
+Subject: [PATCH v3 kvm/queue 02/16] mm/memfd: Introduce MFD_INACCESSIBLE flag
+Date:   Thu, 23 Dec 2021 20:29:57 +0800
+Message-Id: <20211223123011.41044-3-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
 References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
@@ -68,125 +68,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Introduce a new memfd_create() flag indicating the content of the
+created memfd is inaccessible from userspace. It does this by force
+setting F_SEAL_INACCESSIBLE seal when the file is created. It also set
+F_SEAL_SEAL to prevent future sealing, which means, it can not coexist
+with MFD_ALLOW_SEALING.
 
-Introduce a new seal F_SEAL_INACCESSIBLE indicating the content of
-the file is inaccessible from userspace in any possible ways like
-read(),write() or mmap() etc.
-
-It provides semantics required for KVM guest private memory support
-that a file descriptor with this seal set is going to be used as the
-source of guest memory in confidential computing environments such
-as Intel TDX/AMD SEV but may not be accessible from host userspace.
-
-At this time only shmem implements this seal.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- include/uapi/linux/fcntl.h |  1 +
- mm/shmem.c                 | 37 +++++++++++++++++++++++++++++++++++--
- 2 files changed, 36 insertions(+), 2 deletions(-)
+ include/uapi/linux/memfd.h |  1 +
+ mm/memfd.c                 | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 2f86b2ad6d7e..e2bad051936f 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -43,6 +43,7 @@
- #define F_SEAL_GROW	0x0004	/* prevent file from growing */
- #define F_SEAL_WRITE	0x0008	/* prevent writes */
- #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
-+#define F_SEAL_INACCESSIBLE	0x0020  /* prevent file from accessing */
- /* (1U << 31) is reserved for signed error codes */
+diff --git a/include/uapi/linux/memfd.h b/include/uapi/linux/memfd.h
+index 7a8a26751c23..48750474b904 100644
+--- a/include/uapi/linux/memfd.h
++++ b/include/uapi/linux/memfd.h
+@@ -8,6 +8,7 @@
+ #define MFD_CLOEXEC		0x0001U
+ #define MFD_ALLOW_SEALING	0x0002U
+ #define MFD_HUGETLB		0x0004U
++#define MFD_INACCESSIBLE	0x0008U
  
  /*
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 18f93c2d68f1..faa7e9b1b9bc 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1098,6 +1098,10 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
- 		    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
- 			return -EPERM;
+  * Huge page size encoding when MFD_HUGETLB is specified, and a huge page
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 9f80f162791a..c898a007fb76 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -245,7 +245,8 @@ long memfd_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
+ #define MFD_NAME_PREFIX_LEN (sizeof(MFD_NAME_PREFIX) - 1)
+ #define MFD_NAME_MAX_LEN (NAME_MAX - MFD_NAME_PREFIX_LEN)
  
-+		if ((info->seals & F_SEAL_INACCESSIBLE) &&
-+		    (newsize & ~PAGE_MASK))
-+			return -EINVAL;
-+
- 		if (newsize != oldsize) {
- 			error = shmem_reacct_size(SHMEM_I(inode)->flags,
- 					oldsize, newsize);
-@@ -1364,6 +1368,8 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
- 		goto redirty;
- 	if (!total_swap_pages)
- 		goto redirty;
-+	if (info->seals & F_SEAL_INACCESSIBLE)
-+		goto redirty;
+-#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB)
++#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB | \
++		       MFD_INACCESSIBLE)
  
- 	/*
- 	 * Our capabilities prevent regular writeback or sync from ever calling
-@@ -2262,6 +2268,9 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (ret)
- 		return ret;
- 
-+	if (info->seals & F_SEAL_INACCESSIBLE)
-+		return -EPERM;
-+
- 	/* arm64 - allow memory tagging on RAM-based files */
- 	vma->vm_flags |= VM_MTE_ALLOWED;
- 
-@@ -2459,12 +2468,15 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
- 	pgoff_t index = pos >> PAGE_SHIFT;
- 
- 	/* i_rwsem is held by caller */
--	if (unlikely(info->seals & (F_SEAL_GROW |
--				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
-+	if (unlikely(info->seals & (F_SEAL_GROW | F_SEAL_WRITE |
-+				    F_SEAL_FUTURE_WRITE |
-+				    F_SEAL_INACCESSIBLE))) {
- 		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
- 			return -EPERM;
- 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
- 			return -EPERM;
-+		if (info->seals & F_SEAL_INACCESSIBLE)
-+			return -EPERM;
+ SYSCALL_DEFINE2(memfd_create,
+ 		const char __user *, uname,
+@@ -267,6 +268,10 @@ SYSCALL_DEFINE2(memfd_create,
+ 			return -EINVAL;
  	}
  
- 	return shmem_getpage(inode, index, pagep, SGP_WRITE);
-@@ -2538,6 +2550,21 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		end_index = i_size >> PAGE_SHIFT;
- 		if (index > end_index)
- 			break;
++	/* Disallow sealing when MFD_INACCESSIBLE is set. */
++	if (flags & MFD_INACCESSIBLE && flags & MFD_ALLOW_SEALING)
++		return -EINVAL;
 +
-+		/*
-+		 * inode_lock protects setting up seals as well as write to
-+		 * i_size. Setting F_SEAL_INACCESSIBLE only allowed with
-+		 * i_size == 0.
-+		 *
-+		 * Check F_SEAL_INACCESSIBLE after i_size. It effectively
-+		 * serialize read vs. setting F_SEAL_INACCESSIBLE without
-+		 * taking inode_lock in read path.
-+		 */
-+		if (SHMEM_I(inode)->seals & F_SEAL_INACCESSIBLE) {
-+			error = -EPERM;
-+			break;
-+		}
-+
- 		if (index == end_index) {
- 			nr = i_size & ~PAGE_MASK;
- 			if (nr <= offset)
-@@ -2663,6 +2690,12 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
- 			goto out;
- 		}
+ 	/* length includes terminating zero */
+ 	len = strnlen_user(uname, MFD_NAME_MAX_LEN + 1);
+ 	if (len <= 0)
+@@ -315,6 +320,11 @@ SYSCALL_DEFINE2(memfd_create,
+ 		*file_seals &= ~F_SEAL_SEAL;
+ 	}
  
-+		if ((info->seals & F_SEAL_INACCESSIBLE) &&
-+		    (offset & ~PAGE_MASK || len & ~PAGE_MASK)) {
-+			error = -EINVAL;
-+			goto out;
-+		}
++	if (flags & MFD_INACCESSIBLE) {
++		file_seals = memfd_file_seals_ptr(file);
++		*file_seals &= F_SEAL_SEAL | F_SEAL_INACCESSIBLE;
++	}
 +
- 		shmem_falloc.waitq = &shmem_falloc_waitq;
- 		shmem_falloc.start = (u64)unmap_start >> PAGE_SHIFT;
- 		shmem_falloc.next = (unmap_end + 1) >> PAGE_SHIFT;
+ 	fd_install(fd, file);
+ 	kfree(name);
+ 	return fd;
 -- 
 2.17.1
 
