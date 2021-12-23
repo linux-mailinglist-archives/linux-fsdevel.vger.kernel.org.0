@@ -2,102 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2200547E99E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 00:13:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B2C247E9B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 00:52:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240684AbhLWXJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 18:09:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48848 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbhLWXJz (ORCPT
+        id S245153AbhLWXwC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 18:52:02 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:26944 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240780AbhLWXwB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 18:09:55 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33609C061401;
-        Thu, 23 Dec 2021 15:09:55 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id e5so4186714wmq.1;
-        Thu, 23 Dec 2021 15:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=dgbT8DN+Tw3GNuf5KJthTWpp6lDkFZBiYQzZimRcuRE=;
-        b=ehxbIBRAS2aXNbnGgB0k0x6R5UnwGvaUuLQwHieKejHDCyBTff1JOdaDIPIckgtJou
-         8hYkLoqNGiii4+iF8QW2us8YgNv9kljvbT4qGb/bQUff9DbRMmIrP0045w7Uw3CUCOK8
-         TTwrauAIdVxgec9tqmZeT0ABn4zy0J9Ld1K8K1eW8x56QfvdoJ4Dm/BexqyjR/YwzPZw
-         lDqlfT6bv88bZRj1nDoITdfdxhxwY3gc40PVSTqhV1FQbyf1IA5N0iLVeBCj3xHVVZgn
-         NV7mk5eCxTD4+SUpFaDQwPqH182VQ8mtL51XgD/+4dSE1ey1EoQe53Wn8U4cWrQUgaMC
-         9neA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=dgbT8DN+Tw3GNuf5KJthTWpp6lDkFZBiYQzZimRcuRE=;
-        b=o4y2wHRFmnHEptWe2GP8e3dul2mqXrLlB31CwsgAlX4QnaS5Ch7MJdhHYpAkIoam5P
-         SGB37Fx5ZGN186NbY2INJurdUedBCX4rgL5SmUaXfOhIb+sXHJfKPGu5S5cSRVBsNbEM
-         296rGoCDgMLmpsU93hhW8ApHF9AQt6JItlo8q8vIeTPhNw6DiacNwlfUiz0jbVSmp/6n
-         K/pKg4wjn5EQ7lUJ852IgEnq0/3ZRjg3oJCW3fiX/otRF2x17VHk1i350qJsB1JwcqS6
-         beQ6GKkzM+lhYgsl2oH0dS71j8rd62DiuOvsuhaiVvGRrxpfrwCQ2LxkHiE3d2fm0ei5
-         Zf/A==
-X-Gm-Message-State: AOAM533nsrGrWtZpRG8X65WjrW1Am5/mdhgEGNx3lAxJQmt28ZCsdbAa
-        XOOyar0cQhMt7NWkdoVHPfea91WY7f8=
-X-Google-Smtp-Source: ABdhPJxl1U9OmTr5nW/WPKnQ66/Eyo9O1/bfTZjkkZoBY6qhl1LyNXjyknMXkm7SCe/TuBNlpdLL3A==
-X-Received: by 2002:a05:600c:c7:: with SMTP id u7mr3032584wmm.85.1640300993673;
-        Thu, 23 Dec 2021 15:09:53 -0800 (PST)
-Received: from ?IPV6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
-        by smtp.googlemail.com with ESMTPSA id c11sm10989913wmq.48.2021.12.23.15.09.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Dec 2021 15:09:53 -0800 (PST)
-Sender: Paolo Bonzini <paolo.bonzini@gmail.com>
-Message-ID: <e3fe04eb-1a01-bea4-f1ea-cb9ee98ee216@redhat.com>
-Date:   Fri, 24 Dec 2021 00:09:47 +0100
+        Thu, 23 Dec 2021 18:52:01 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BNJwMw7012241
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 15:52:01 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=dl+FdLW958lkDIOtJEup6mIlPAXFCYqThMezos0gW0g=;
+ b=Y02HwgmGuUwdfI6zOeSsQfUvsCmRSw0o9e+RAy9bRDhrpTi6j+UXrRjEDiwc7f1jPGrX
+ pQMbgG8FZbmPIgYXKlmW/MnteacNhjiGVXJ3vGKGolhqBUGfOYiQeJMGkwmBXoYUM+YC
+ 5s/s0xYHbkyoIVTFBFOdqF5l4SpgKUGMR84= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3d4yqw92c8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 15:52:01 -0800
+Received: from twshared4941.18.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Thu, 23 Dec 2021 15:52:00 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 6B0D987DF60A; Thu, 23 Dec 2021 15:51:55 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <torvalds@linux-foundation.org>, <christian.brauner@ubuntu.com>,
+        <shr@fb.com>
+Subject: [PATCH v8 0/5] io_uring: add xattr support
+Date:   Thu, 23 Dec 2021 15:51:18 -0800
+Message-ID: <20211223235123.4092764-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v3 kvm/queue 06/16] KVM: Implement fd-based memory using
- MEMFD_OPS interfaces
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-7-chao.p.peng@linux.intel.com>
- <YcTBLpVlETdI8JHi@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <YcTBLpVlETdI8JHi@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: mksK6EPcpwF24y8O12Tj6xRt4C7X3Lof
+X-Proofpoint-ORIG-GUID: mksK6EPcpwF24y8O12Tj6xRt4C7X3Lof
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-23_04,2021-12-22_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 suspectscore=0
+ mlxlogscore=999 adultscore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112230122
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/23/21 19:34, Sean Christopherson wrote:
->>   	select HAVE_KVM_PM_NOTIFIER if PM
->> +	select MEMFD_OPS
-> MEMFD_OPS is a weird Kconfig name given that it's not just memfd() that can
-> implement the ops.
-> 
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-Or, it's kvm that implements them to talk to memfd?
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
 
-Paolo
+Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+  This splits off a new function do_user_path_at_empty from
+  user_path_at_empty that is based on filename and not on a
+  user-specified string.
+
+Patch 2: fs: split off setxattr_copy and do_setxattr function from setxat=
+tr
+  Split off the setup part of the setxattr function in the setxattr_copy
+  function. Split off the processing part in do_setxattr.
+
+Patch 3: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
+
+Patch 4: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 5: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+
+V8: - introduce xattr_name struct as advised by Linus
+    - remove kname_sz field in xattr_ctx
+V7: - split off setxattr in two functions as recommeneded by
+      Christian.
+V6: - reverted addition of kname array to xattr_ctx structure
+      Adding the kname array increases the io_kiocb beyond 64 bytes
+      (increases it to 224 bytes). We try hard to limit it to 64 bytes.
+      Keeping the original interface also is a bit more efficient.
+    - addressed Pavel's reordering comment
+    - addressed Pavel's putname comment
+    - addressed Pavel's kvfree comment
+    - rebased on for-5.17/io_uring-getdents64
+V5: - add kname array to xattr_ctx structure
+V4: - rebased patch series
+V3: - remove req->file checks in prep functions
+    - change size parameter in do_xattr
+V2: - split off function do_user_path_empty instead of changing
+      the function signature of user_path_at
+    - Fix datatype size problem in do_getxattr
+
+
+Stefan Roesch (5):
+  fs: split off do_user_path_at_empty from user_path_at_empty()
+  fs: split off setxattr_copy and do_setxattr function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  28 +++
+ fs/io_uring.c                 | 315 ++++++++++++++++++++++++++++++++++
+ fs/namei.c                    |  10 +-
+ fs/xattr.c                    | 119 +++++++++----
+ include/linux/namei.h         |   2 +
+ include/uapi/linux/io_uring.h |   8 +-
+ 6 files changed, 445 insertions(+), 37 deletions(-)
+
+
+base-commit: b4518682080d3a1cdd6ea45a54ff6772b8b2797a
+--=20
+2.30.2
+
