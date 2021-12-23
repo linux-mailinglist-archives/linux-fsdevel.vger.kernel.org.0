@@ -2,243 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C77E847DE87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 06:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A66A47DEBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 06:32:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232218AbhLWFMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 00:12:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34832 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230035AbhLWFMM (ORCPT
+        id S1346427AbhLWFc0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 00:32:26 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:57124 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346405AbhLWFcZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 00:12:12 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FF4C061401
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Dec 2021 21:12:12 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id o7so3790222ioo.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Dec 2021 21:12:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UuLwAbQ1jnMAbt5WK9pjv43q57hnU7ZpBUC8SgtaEwY=;
-        b=JWxLbg9g+XejRLq6wFQZpd5b0q8gKjHY9sZebAr8x3oA25Db6O6zBt+GFcAjAvPT3H
-         BahMkHRUOAEN7R1iUuzMEy0mfXFv40fkjxw3ivHYwmdssofubyraMQ5fq6XVoFo0EIcb
-         nxrJuKTASdTWnHPwcAjTKPvCEB4fEutD3Q8tj6hjfBzYBVEcw+ec5mCSIyJRHfkwOYoB
-         c/hqjuX9DQql7KXadsl0y8DOA1BDqaxiQGcuvd5REVk6/tcZWyyBcxSs5q7UnUx3wvZx
-         aIDa0hOJLkULAyCMDQ+4KE1yP31Jvg6pnnz3jasOpPWN5g1tK4fLwfAhWBaY8YOpiNpP
-         WCng==
+        Thu, 23 Dec 2021 00:32:25 -0500
+Received: by mail-io1-f71.google.com with SMTP id d187-20020a6bb4c4000000b00601c0b8532aso2533791iof.23
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Dec 2021 21:32:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UuLwAbQ1jnMAbt5WK9pjv43q57hnU7ZpBUC8SgtaEwY=;
-        b=J4r13wloS9wBvOwi3GYHOgvP8LkYoF25F0AvCHuVPnwDOw9qKFK1oAQoBEKiEN3XLF
-         nfwrHc+TAlYG+33WvX7g9ofiBBFOqLU+lUM54pPo1S/QaXLmtK67rgewfbqmAVc8xED2
-         RFHk/0tgeW7Qs/eMBqdKrKLSnYd+r5dey/3faz4UHzV5wF2jxjjvy2/JMxmuU5cmnwSw
-         I+g09AIbfNBoDXP6Kqlu71B6pbydGNTjrxNQre/e/1M+qMEW1yWIX/26h9m9QzKrDXpk
-         eBTTiPBfPa0MuTwUkq9Vr+JsPPEOBxPz9Q6UBxfBfV+nEYHvjGetEJXTB51J7KhC+FAd
-         xRvQ==
-X-Gm-Message-State: AOAM531WIL1aoGbgMv3insWMJZsSY/U1Blx0JU+ujNBbh9ytHCn3ueqH
-        S3goWnnqmHSaBrp/KbEtBZ8=
-X-Google-Smtp-Source: ABdhPJyFfKXX+2kAlC6TqGgP8VNft2z3Dloqkcrd5Ea90+WU9dHoDi+7biR8HedP8N/IurSGrGM8Mg==
-X-Received: by 2002:a05:6638:2402:: with SMTP id z2mr365165jat.200.1640236331920;
-        Wed, 22 Dec 2021 21:12:11 -0800 (PST)
-Received: from smtpclient.apple ([2601:285:8200:efd:acef:6a41:306c:188b])
-        by smtp.gmail.com with ESMTPSA id k7sm2648838iov.40.2021.12.22.21.12.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Dec 2021 21:12:11 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.40.0.1.81\))
-Subject: Re: [PATCH] mm,fs: Split dump_mapping() out from dump_page()
-From:   William Kucharski <kucharsk@gmail.com>
-In-Reply-To: <20211121121056.2870061-1-willy@infradead.org>
-Date:   Wed, 22 Dec 2021 22:12:09 -0700
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0DC4DA13-319E-4EA3-B154-761D1D20FFD5@gmail.com>
-References: <20211121121056.2870061-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-X-Mailer: Apple Mail (2.3693.40.0.1.81)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=3CLZiLFF405jT2WdEAO9CtD0OFkbBGpKriTt/oxie+4=;
+        b=lVmrqB24/1l/3fEcg9JUc1YnXQUPz49IXTU9Wv+6TPPbQ4qaUAfT/HantkRbaXfHI8
+         Iz8gcY8KxvDjfITOmvo0VAz/3H/L6JLDBP6fmg5ll7GKZYdVh39k2kvEkMY8Te6feSC5
+         PjbMPxA2lOXN+zIoRsyVyigzYbHez8x3AauMYE7TUWBIUB6UJsXJprAG7LTlW7OYlfY3
+         StoLys/AFpkDQO2UQYuWPBb6y5lEJFhUKkM6+YAWqns9wKF2ziUtqnicmfwpHA8P+JnA
+         KU8dj+SppNlFJea1CTyjKGTz8Tq+Fh18VUp8TJ4FIc4BUVABS4druuiSOSOcUZoRVQW3
+         ajOA==
+X-Gm-Message-State: AOAM532ECxIrVKuimiro9qfgyfiN2eA47u/rl8yPi6pmvXYRfkFfMIWx
+        EFnBlqGGyOQR2TMp77RUUdb3JhkOb9vWfHcfgjhUQdAUKigQ
+X-Google-Smtp-Source: ABdhPJwA7db+Pvu3SL7oFifrFuZ1GKT1pJ1+LA++nXSqBQmu1BNUQOJfDjOZGhU9UQymRPV4WOX8TuClNub+A83TPCi1/vMYItPv
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:b23:: with SMTP id e3mr313922ilu.32.1640237544994;
+ Wed, 22 Dec 2021 21:32:24 -0800 (PST)
+Date:   Wed, 22 Dec 2021 21:32:24 -0800
+In-Reply-To: <00000000000032992d05d370f75f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000377ea405d3c9906d@google.com>
+Subject: Re: [syzbot] INFO: task hung in jbd2_journal_commit_transaction (3)
+From:   syzbot <syzbot+9c3fb12e9128b6e1d7eb@syzkaller.appspotmail.com>
+To:     hdanton@sina.com, jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu,
+        viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good to me.
+syzbot has found a reproducer for the following issue on:
 
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+HEAD commit:    3f066e882bf1 Merge tag 'for-5.16/parisc-7' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13aeaedbb00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6104739ac5f067ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c3fb12e9128b6e1d7eb
+compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130e8ea5b00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b3620db00000
 
-> On Nov 21, 2021, at 5:10 AM, Matthew Wilcox (Oracle) =
-<willy@infradead.org> wrote:
->=20
-> dump_mapping() is a big chunk of dump_page(), and it'd be handy to be
-> able to call it when we don't have a struct page.  Split it out and =
-move
-> it to fs/inode.c.  Take the opportunity to simplify some of the debug
-> messages a little.
->=20
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
-> fs/inode.c         | 49 +++++++++++++++++++++++++++++++++++++++++++
-> include/linux/fs.h |  1 +
-> mm/debug.c         | 52 ++--------------------------------------------
-> 3 files changed, 52 insertions(+), 50 deletions(-)
->=20
-> diff --git a/fs/inode.c b/fs/inode.c
-> index bdfbd5962f2b..67758b2b702f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -522,6 +522,55 @@ void __remove_inode_hash(struct inode *inode)
-> }
-> EXPORT_SYMBOL(__remove_inode_hash);
->=20
-> +void dump_mapping(const struct address_space *mapping)
-> +{
-> +	struct inode *host;
-> +	const struct address_space_operations *a_ops;
-> +	struct hlist_node *dentry_first;
-> +	struct dentry *dentry_ptr;
-> +	struct dentry dentry;
-> +	unsigned long ino;
-> +
-> +	/*
-> +	 * If mapping is an invalid pointer, we don't want to crash
-> +	 * accessing it, so probe everything depending on it carefully.
-> +	 */
-> +	if (get_kernel_nofault(host, &mapping->host) ||
-> +	    get_kernel_nofault(a_ops, &mapping->a_ops)) {
-> +		pr_warn("invalid mapping:%px\n", mapping);
-> +		return;
-> +	}
-> +
-> +	if (!host) {
-> +		pr_warn("aops:%ps\n", a_ops);
-> +		return;
-> +	}
-> +
-> +	if (get_kernel_nofault(dentry_first, &host->i_dentry.first) ||
-> +	    get_kernel_nofault(ino, &host->i_ino)) {
-> +		pr_warn("aops:%ps invalid inode:%px\n", a_ops, host);
-> +		return;
-> +	}
-> +
-> +	if (!dentry_first) {
-> +		pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
-> +		return;
-> +	}
-> +
-> +	dentry_ptr =3D container_of(dentry_first, struct dentry, =
-d_u.d_alias);
-> +	if (get_kernel_nofault(dentry, dentry_ptr)) {
-> +		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
-> +				a_ops, ino, dentry_ptr);
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * if dentry is corrupted, the %pd handler may still crash,
-> +	 * but it's unlikely that we reach here with a corrupt mapping
-> +	 */
-> +	pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n", a_ops, ino, =
-&dentry);
-> +}
-> +
-> void clear_inode(struct inode *inode)
-> {
-> 	/*
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d6a4eb6cf825..acaad2b0d5b9 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3149,6 +3149,7 @@ extern void unlock_new_inode(struct inode *);
-> extern void discard_new_inode(struct inode *);
-> extern unsigned int get_next_ino(void);
-> extern void evict_inodes(struct super_block *sb);
-> +void dump_mapping(const struct address_space *);
->=20
-> /*
->  * Userspace may rely on the the inode number being non-zero. For =
-example, glibc
-> diff --git a/mm/debug.c b/mm/debug.c
-> index fae0f81ad831..b3ebfab21cb3 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -110,56 +110,8 @@ static void __dump_page(struct page *page)
-> 		type =3D "ksm ";
-> 	else if (PageAnon(page))
-> 		type =3D "anon ";
-> -	else if (mapping) {
-> -		struct inode *host;
-> -		const struct address_space_operations *a_ops;
-> -		struct hlist_node *dentry_first;
-> -		struct dentry *dentry_ptr;
-> -		struct dentry dentry;
-> -		unsigned long ino;
-> -
-> -		/*
-> -		 * mapping can be invalid pointer and we don't want to =
-crash
-> -		 * accessing it, so probe everything depending on it =
-carefully
-> -		 */
-> -		if (get_kernel_nofault(host, &mapping->host) ||
-> -		    get_kernel_nofault(a_ops, &mapping->a_ops)) {
-> -			pr_warn("failed to read mapping contents, not a =
-valid kernel address?\n");
-> -			goto out_mapping;
-> -		}
-> -
-> -		if (!host) {
-> -			pr_warn("aops:%ps\n", a_ops);
-> -			goto out_mapping;
-> -		}
-> -
-> -		if (get_kernel_nofault(dentry_first, =
-&host->i_dentry.first) ||
-> -		    get_kernel_nofault(ino, &host->i_ino)) {
-> -			pr_warn("aops:%ps with invalid host inode =
-%px\n",
-> -					a_ops, host);
-> -			goto out_mapping;
-> -		}
-> -
-> -		if (!dentry_first) {
-> -			pr_warn("aops:%ps ino:%lx\n", a_ops, ino);
-> -			goto out_mapping;
-> -		}
-> -
-> -		dentry_ptr =3D container_of(dentry_first, struct dentry, =
-d_u.d_alias);
-> -		if (get_kernel_nofault(dentry, dentry_ptr)) {
-> -			pr_warn("aops:%ps ino:%lx with invalid dentry =
-%px\n",
-> -					a_ops, ino, dentry_ptr);
-> -		} else {
-> -			/*
-> -			 * if dentry is corrupted, the %pd handler may =
-still
-> -			 * crash, but it's unlikely that we reach here =
-with a
-> -			 * corrupted struct page
-> -			 */
-> -			pr_warn("aops:%ps ino:%lx dentry =
-name:\"%pd\"\n",
-> -					a_ops, ino, &dentry);
-> -		}
-> -	}
-> -out_mapping:
-> +	else if (mapping)
-> +		dump_mapping(mapping);
-> 	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) !=3D __NR_PAGEFLAGS + =
-1);
->=20
-> 	pr_warn("%sflags: %#lx(%pGp)%s\n", type, head->flags, =
-&head->flags,
-> --=20
-> 2.33.0
->=20
->=20
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9c3fb12e9128b6e1d7eb@syzkaller.appspotmail.com
+
+INFO: task jbd2/sda1-8:2935 blocked for more than 143 seconds.
+      Not tainted 5.16.0-rc6-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:jbd2/sda1-8     state:D stack:24688 pid: 2935 ppid:     2 flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:4972 [inline]
+ __schedule+0xb72/0x1460 kernel/sched/core.c:6253
+ schedule+0x12b/0x1f0 kernel/sched/core.c:6326
+ jbd2_journal_commit_transaction+0xc24/0x5c00 fs/jbd2/commit.c:496
+ kjournald2+0x4b4/0x940 fs/jbd2/journal.c:213
+ kthread+0x468/0x490 kernel/kthread.c:327
+ ret_from_fork+0x1f/0x30
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/27:
+ #0: ffffffff8cb1de00 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x0/0x30
+2 locks held by getty/3281:
+ #0: ffff88814b4a6098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x21/0x70 drivers/tty/tty_ldisc.c:252
+ #1: ffffc90002b962e8 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6c5/0x1c60 drivers/tty/n_tty.c:2113
+2 locks held by syz-executor272/3690:
+ #0: ffff88806d05dda8 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: iterate_dir+0x124/0x640 fs/readdir.c:55
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2505 [inline]
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: iterate_dir+0x552/0x640 fs/readdir.c:70
+2 locks held by syz-executor272/3689:
+ #0: ffff88806d0349b8 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: iterate_dir+0x124/0x640 fs/readdir.c:55
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2505 [inline]
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: iterate_dir+0x552/0x640 fs/readdir.c:70
+3 locks held by syz-executor272/3691:
+ #0: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:376
+ #1: ffff888074dcf198 (&type->i_mutex_dir_key#4/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:818 [inline]
+ #1: ffff888074dcf198 (&type->i_mutex_dir_key#4/1){+.+.}-{3:3}, at: filename_create+0x1da/0x4e0 fs/namei.c:3654
+ #2: ffff88814b6d4990 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0x136d/0x1630 fs/jbd2/transaction.c:466
+2 locks held by syz-executor272/3693:
+ #0: ffff88806d0317e0 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: iterate_dir+0x124/0x640 fs/readdir.c:55
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2505 [inline]
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: iterate_dir+0x552/0x640 fs/readdir.c:70
+2 locks held by syz-executor272/3694:
+ #0: ffff88806d0617e0 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: iterate_dir+0x124/0x640 fs/readdir.c:55
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2505 [inline]
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: iterate_dir+0x552/0x640 fs/readdir.c:70
+2 locks held by syz-executor272/3695:
+ #0: ffff88806d035da8 (&type->i_mutex_dir_key#4){++++}-{3:3}, at: iterate_dir+0x124/0x640 fs/readdir.c:55
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2505 [inline]
+ #1: ffff88814b6d0460 (sb_writers#5){.+.+}-{0:0}, at: iterate_dir+0x552/0x640 fs/readdir.c:70
+2 locks held by kworker/u4:1/3719:
+4 locks held by kworker/u4:4/3847:
+ #0: ffff888013bf3938 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x7ca/0x1140
+ #1: ffffc90003167d20 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x808/0x1140 kernel/workqueue.c:2273
+ #2: ffff88814b6d00e0 (&type->s_umount_key#31){++++}-{3:3}, at: trylock_super+0x1b/0xf0 fs/super.c:418
+ #3: ffff88814b6d2bd8 (&sbi->s_writepages_rwsem){.+.+}-{0:0}, at: ext4_writepages+0x1dd/0x4080 fs/ext4/inode.c:2655
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 27 Comm: khungtaskd Not tainted 5.16.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1dc/0x2d8 lib/dump_stack.c:106
+ nmi_cpu_backtrace+0x45f/0x490 lib/nmi_backtrace.c:111
+ nmi_trigger_cpumask_backtrace+0x16a/0x280 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:210 [inline]
+ watchdog+0xc82/0xcd0 kernel/hung_task.c:295
+ kthread+0x468/0x490 kernel/kthread.c:327
+ ret_from_fork+0x1f/0x30
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 3719 Comm: kworker/u4:1 Not tainted 5.16.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: bat_events batadv_nc_worker
+RIP: 0010:mark_lock+0x6/0x1e00 kernel/locking/lockdep.c:4566
+Code: 07 80 c1 03 38 c1 0f 8c 6f ff ff ff 4c 89 ff e8 80 fb 69 00 e9 62 ff ff ff e8 26 e7 ac 08 66 0f 1f 44 00 00 55 48 89 e5 41 57 <41> 56 41 55 41 54 53 48 83 e4 e0 48 81 ec c0 01 00 00 65 48 8b 04
+RSP: 0018:ffffc900029bf8e8 EFLAGS: 00000046
+RAX: 0000000000000002 RBX: ffff8880217761d0 RCX: 00000000ffffffff
+RDX: 0000000000000008 RSI: ffff8880217761b0 RDI: ffff888021775700
+RBP: ffffc900029bf8f0 R08: dffffc0000000000 R09: fffffbfff1ff3ff8
+R10: fffffbfff1ff3ff8 R11: 0000000000000000 R12: 000000000000000a
+R13: ffff8880217761b0 R14: ffff888021775700 R15: ffff8880217761d0
+FS:  0000000000000000(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005621d6c67680 CR3: 000000000c88e000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ mark_usage kernel/locking/lockdep.c:4526 [inline]
+ __lock_acquire+0xd38/0x2b00 kernel/locking/lockdep.c:4981
+ lock_acquire+0x19f/0x4d0 kernel/locking/lockdep.c:5637
+ rcu_lock_acquire+0x2a/0x30 include/linux/rcupdate.h:268
+ rcu_read_lock include/linux/rcupdate.h:688 [inline]
+ batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:412 [inline]
+ batadv_nc_worker+0xc8/0x5b0 net/batman-adv/network-coding.c:723
+ process_one_work+0x853/0x1140 kernel/workqueue.c:2298
+ worker_thread+0xac1/0x1320 kernel/workqueue.c:2445
+ kthread+0x468/0x490 kernel/kthread.c:327
+ ret_from_fork+0x1f/0x30
+ </TASK>
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	80 c1 03             	add    $0x3,%cl
+   3:	38 c1                	cmp    %al,%cl
+   5:	0f 8c 6f ff ff ff    	jl     0xffffff7a
+   b:	4c 89 ff             	mov    %r15,%rdi
+   e:	e8 80 fb 69 00       	callq  0x69fb93
+  13:	e9 62 ff ff ff       	jmpq   0xffffff7a
+  18:	e8 26 e7 ac 08       	callq  0x8ace743
+  1d:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+  23:	55                   	push   %rbp
+  24:	48 89 e5             	mov    %rsp,%rbp
+  27:	41 57                	push   %r15
+* 29:	41 56                	push   %r14 <-- trapping instruction
+  2b:	41 55                	push   %r13
+  2d:	41 54                	push   %r12
+  2f:	53                   	push   %rbx
+  30:	48 83 e4 e0          	and    $0xffffffffffffffe0,%rsp
+  34:	48 81 ec c0 01 00 00 	sub    $0x1c0,%rsp
+  3b:	65                   	gs
+  3c:	48                   	rex.W
+  3d:	8b                   	.byte 0x8b
+  3e:	04                   	.byte 0x4
 
