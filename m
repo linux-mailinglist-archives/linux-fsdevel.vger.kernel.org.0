@@ -2,52 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 301BE47DFAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 08:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A5947DFB0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 08:43:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231772AbhLWHmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 02:42:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbhLWHmA (ORCPT
+        id S1346897AbhLWHnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 02:43:04 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:16854 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231772AbhLWHnD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 02:42:00 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1577C061401
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Dec 2021 23:42:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1WbIDyvneo6FzdXekP16+AlihuWBwfsSFS6ufT2C0b0=; b=g3m3jdpyk2F65NMQjT8Er5w9pF
-        f34+Rhc2WX2tRY1+vwT0HKfQv42pyP0h2JP7JJotAJL9oQBz39A96amHei3SuV0OQlWIXs99qQyGb
-        lNhRqeIEwyxQOlIUibeDVifRBfBv/tPLGDWx2Dq5lGlpiCZiho5JkJNtZ7k/ARe3Om4szNFI56G1y
-        slaXp0drMKB21PtvQZ/l9PgOaHRIibfpWdo92oBePLoELEH3Q0xGt6c6A7b9XzbFPayTUMXD4y6ys
-        Ga/Op1mCxgNofo396TzRMTBMn9tsqXq4bEDVB/h9uDqwAfQKrv5S5umgfAPljBtWWjiSXIM2JpuhB
-        yYCpu76A==;
-Received: from 089144214178.atnat0023.highway.a1.net ([89.144.214.178] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n0IjV-00Bz69-3t; Thu, 23 Dec 2021 07:42:00 +0000
-Date:   Thu, 23 Dec 2021 08:40:17 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 27/48] filemap: Convert page_cache_delete_batch to folios
-Message-ID: <YcQn4b8EW0iIvpb9@infradead.org>
-References: <20211208042256.1923824-1-willy@infradead.org>
- <20211208042256.1923824-28-willy@infradead.org>
+        Thu, 23 Dec 2021 02:43:03 -0500
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JKMbR2ftMz91nw;
+        Thu, 23 Dec 2021 15:42:11 +0800 (CST)
+Received: from dggpeml500017.china.huawei.com (7.185.36.243) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Thu, 23 Dec 2021 15:43:02 +0800
+Received: from [10.174.178.174] (10.174.178.174) by
+ dggpeml500017.china.huawei.com (7.185.36.243) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Thu, 23 Dec 2021 15:43:01 +0800
+Subject: Re: [PATCH] chardev: fix error handling in cdev_device_add()
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <viro@zeniv.linux.org.uk>, <logang@deltatee.com>,
+        <dan.j.williams@intel.com>, <hans.verkuil@cisco.com>,
+        <alexandre.belloni@free-electrons.com>
+References: <20211012130915.3426584-1-yangyingliang@huawei.com>
+ <1959fa74-b06c-b8bc-d14f-b71e5c4290ee@huawei.com>
+ <YcQh+M/7STAG/4Ka@kroah.com>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <ca8f58ad-033b-4350-6715-0d54efdbfc3e@huawei.com>
+Date:   Thu, 23 Dec 2021 15:43:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211208042256.1923824-28-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <YcQh+M/7STAG/4Ka@kroah.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.174.178.174]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500017.china.huawei.com (7.185.36.243)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 08, 2021 at 04:22:35AM +0000, Matthew Wilcox (Oracle) wrote:
-> Saves one call to compound_head() and reduces text size by 15 bytes.
+Hi,
 
-Looks good,
+On 2021/12/23 15:15, Greg KH wrote:
+> On Thu, Dec 23, 2021 at 09:41:03AM +0800, Yang Yingliang wrote:
+>> ping...
+> ping of what?  You suddenly added a bunch of people that were not on the
+> original thread here with no context :(
+> .
+This patch has been in mail list for a while time, I add the author and 
+reviewer of fixed patch
+to this thread,  I would like to get some advice. Should I resend the 
+patch with cc those people ?
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks,
+Yang
