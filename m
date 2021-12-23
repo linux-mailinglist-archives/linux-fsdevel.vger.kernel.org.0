@@ -2,77 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E4A47E566
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 16:18:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B767447E56D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 16:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348854AbhLWPSg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 10:18:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57166 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243989AbhLWPSg (ORCPT
+        id S235447AbhLWPYb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 10:24:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49283 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234595AbhLWPYa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 10:18:36 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EADCC061401
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 07:18:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KXbYPtu6c4izulwkGYHyNy4v0pLcq0pJiP6IwBzT1BY=; b=dZsKdYlICJs6w6ZgnrzsjBjap0
-        0YmUCN5iRmK8z01ycWdIlX1qVGfroYBjD+Gq5x+BTbGAY5+tUuicq/xCncIVjO6DCA63PxWzotinj
-        69NNUqiiw4ZT/Hp0bcjOsOW1V4vQgtfxaKtINuqWuCt9zWrqfbMhP8OIhDFN+Jt8Z9qEtCrQEvUBO
-        OZH2y/DBe5Rsj8GpHvDU8vpOenTpdfs1M4Vl1pQv2e4yaUZBQmDt94cxD9wfIRAqp9hl7kKFiI+zn
-        xxkh28aDpHGr2QDKuMc3NCYmh5VK2jRnxPL1309SOlTb62BF+3z2iMBKKyVeRBEFyDdIDEpFDdiat
-        wxO7krhg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n0PrW-004MpU-DL; Thu, 23 Dec 2021 15:18:34 +0000
-Date:   Thu, 23 Dec 2021 15:18:34 +0000
-From:   Matthew Wilcox <willy@infradead.org>
+        Thu, 23 Dec 2021 10:24:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1640273069;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8xvHhyqpJnfAF4nzjhPGcOWeASMzT5CGLatcRq8FkGU=;
+        b=Ao0Gy1sVDD24y9fQRdk+YdPjwPUbyaJQ91nJMWovh8zVJoFpR7grPn3LAwKjFRdLbWsFIz
+        mvfivAPqBQuMMdPsb43nouDn9f4ZmFe20lShKVehkv5AOoI6UobPWvmpmV4sZK4FM3vxXn
+        qkQsZfvjOq+BmGgr2175ekANC8kXjPQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-176-cFA9QJpoPXC-y6nZ_4xKOw-1; Thu, 23 Dec 2021 10:24:24 -0500
+X-MC-Unique: cFA9QJpoPXC-y6nZ_4xKOw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29B978042E1;
+        Thu, 23 Dec 2021 15:24:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1DF73610A6;
+        Thu, 23 Dec 2021 15:24:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YcQd2Fw7atXoU3Dn@infradead.org>
+References: <YcQd2Fw7atXoU3Dn@infradead.org> <20211208042256.1923824-1-willy@infradead.org> <20211208042256.1923824-8-willy@infradead.org>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 25/48] filemap: Add read_cache_folio and
- read_mapping_folio
-Message-ID: <YcSTSnTYINYgkMhJ@casper.infradead.org>
-References: <20211208042256.1923824-1-willy@infradead.org>
- <20211208042256.1923824-26-willy@infradead.org>
- <YcQlbjBKzMlGOLI7@infradead.org>
+Cc:     dhowells@redhat.com,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 07/48] iov_iter: Convert iter_xarray to use folios
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YcQlbjBKzMlGOLI7@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <800799.1640273061.1@warthog.procyon.org.uk>
+Date:   Thu, 23 Dec 2021 15:24:21 +0000
+Message-ID: <800800.1640273061@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 23, 2021 at 08:39:59AM +0100, Christoph Hellwig wrote:
-> > thn makes up for the extra 100 bytes of text added to the various
-> 
-> s/thn/
-> 
-> >  	return read_cache_page(mapping, index, NULL, data);
-> >  }
-> >  
-> > +static inline struct folio *read_mapping_folio(struct address_space *mapping,
-> > +				pgoff_t index, void *data)
-> > +{
-> > +	return read_cache_folio(mapping, index, NULL, data);
-> > +}
-> 
-> Is there much of a point in this wrapper?
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Comparing read_mapping_page() vs read_cache_page(), 4 callers vs ~50.
-It's definitely the preferred form, so I'd rather keep it.
-
-> > +static struct page *do_read_cache_page(struct address_space *mapping,
-> > +		pgoff_t index, filler_t *filler, void *data, gfp_t gfp)
-> > +{
-> > +	struct folio *folio = read_cache_folio(mapping, index, filler, data);
-> > +	if (IS_ERR(folio))
-> > +		return &folio->page;
-> > +	return folio_file_page(folio, index);
-> > +}
+> > +		size_t offset = offset_in_folio(folio, start + __off);	\
+> > +		if (xas_retry(&xas, folio))			\
+> >  			continue;				\
+> > +		if (WARN_ON(xa_is_value(folio)))		\
+> >  			break;					\
+> > +		if (WARN_ON(folio_test_hugetlb(folio)))		\
+> >  			break;					\
+> > +		while (offset < folio_size(folio)) {		\
 > 
-> This drops the gfp on the floor.
+> Nit: I'd be tempted to use a for loop on offset here.
 
-Oops.  Will fix.
+A while-loop makes more sense here.  The adjustment you need for offset
+(ie. len) is overwritten after offset is altered at the end of the loop:
+
+> +			offset += len;				\
+> +			len = PAGE_SIZE;			\
+>  		}						\
+
+So you'd have to move both of these into the for-incrementor expression, in
+addition to moving in the initialiser expression, making the thing less
+readable.
+
+David
+
