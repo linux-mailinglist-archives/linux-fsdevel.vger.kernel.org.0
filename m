@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE48747E381
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 13:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BAA47E38A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 13:36:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348525AbhLWMc6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 07:32:58 -0500
-Received: from mga12.intel.com ([192.55.52.136]:40345 "EHLO mga12.intel.com"
+        id S243852AbhLWMd5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 07:33:57 -0500
+Received: from mga17.intel.com ([192.55.52.151]:7858 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348522AbhLWMcz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 07:32:55 -0500
+        id S1348474AbhLWMdw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Dec 2021 07:33:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640262775; x=1671798775;
+  t=1640262832; x=1671798832;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=ZDfyC3JzEks8dbWtdmTIC7qG6w7nH+1ENlm6SIYFT0Y=;
-  b=jkBfnTd0y0UF7NCbe8HsJ4BkzOciZR8j9B86t+PXnqQaPdVu1MrA+jOM
-   6/4ZfxEMho+yAfH6/chA0kTAOG0wG9WShDoCmpVVcx5vDJQ2v3KsWSX6p
-   9HSf7FICjxdnymtLH78rD00ZmlIywZBKBSOubXs1qYqLNFsdEkZYvam8S
-   inGY7a5qlcfVO/8u9nWC3TK+z9ufowKA5O007MEeNKgSy37qQ4/0mkpKg
-   IJ3g9W/9bPD9UBx5D70tPRGov1RED+BAxcmI0P2pi6L1/WxTdr5lWqipF
-   99sDU0QWKfKgu+UgXQo53Jr2s1Klg08vS46oEXtYTCzVn5wQNvdIIg6P/
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10206"; a="220827146"
+  bh=gr3qIQtqhPgZ2sWGOjcNk2j5JakW0dks3WgAyQ1CBMA=;
+  b=K71yiEJ/fCwQmNrv28asR3IyWbW8VKgc8yn1G/fvQ+NkHoreUFgshfY9
+   Iam2RisJwnuOngCOY7PZfvYs19LSV9Hr0EiEKUKrYlrzcHUpjAhBeuI5F
+   MdsJGe5AttFnOvR6Cy47OXO6m/PSMua60LgFRkYnDvHPIyMdjy8Now83m
+   Zll5R99S7pwW1xeYEaqAqKBu3yhM3Ha7x0vobk8JVVWi2m3kEcUKS28or
+   ImHHTDqCNk0CHT9UyqqmclYYnBffpWvGMj0mjUQpOJKYI3rcQod7VUNLr
+   bqmLLOh3988I41YWVoUVqRv+DtVFD43S2+wm04OgAtSnsQGc5DIpn9Ef2
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10206"; a="221493021"
 X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
-   d="scan'208";a="220827146"
+   d="scan'208";a="221493021"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 04:32:54 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 04:33:02 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
-   d="scan'208";a="522079140"
+   d="scan'208";a="522079184"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2021 04:32:47 -0800
+  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2021 04:32:54 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: [PATCH v3 kvm/queue 15/16] KVM: Use kvm_userspace_memory_region_ext
-Date:   Thu, 23 Dec 2021 20:30:10 +0800
-Message-Id: <20211223123011.41044-16-chao.p.peng@linux.intel.com>
+Subject: [PATCH v3 kvm/queue 16/16] KVM: Register/unregister private memory slot to memfd
+Date:   Thu, 23 Dec 2021 20:30:11 +0800
+Message-Id: <20211223123011.41044-17-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
 References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
@@ -68,114 +68,121 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the new extended memslot structure kvm_userspace_memory_region_ext
-which includes two additional fd/ofs fields comparing to the current
-kvm_userspace_memory_region. The fields fd/ofs will be copied from
-userspace only when KVM_MEM_PRIVATE is set.
+Expose KVM_MEM_PRIVATE flag and register/unregister private memory
+slot to memfd when userspace sets the flag.
 
-Internal the KVM we change all existing kvm_userspace_memory_region to
-kvm_userspace_memory_region_ext since the new extended structure covers
-all the existing fields in kvm_userspace_memory_region.
+KVM_MEM_PRIVATE is disallowed by default but architecture code can
+turn on it by implementing kvm_arch_private_memory_supported().
 
 Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- arch/x86/kvm/x86.c       |  2 +-
- include/linux/kvm_host.h |  4 ++--
- virt/kvm/kvm_main.c      | 19 +++++++++++++------
- 3 files changed, 16 insertions(+), 9 deletions(-)
+ include/linux/kvm_host.h |  1 +
+ virt/kvm/kvm_main.c      | 34 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 42bde45a1bc2..52942195def3 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -11551,7 +11551,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
- 	}
- 
- 	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
--		struct kvm_userspace_memory_region m;
-+		struct kvm_userspace_memory_region_ext m;
- 
- 		m.slot = id | (i << 16);
- 		m.flags = 0;
 diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index ad89a0e8bf6b..fabab3b77d57 100644
+index fabab3b77d57..5173c52e70d4 100644
 --- a/include/linux/kvm_host.h
 +++ b/include/linux/kvm_host.h
-@@ -981,9 +981,9 @@ enum kvm_mr_change {
- };
+@@ -1229,6 +1229,7 @@ bool kvm_arch_dy_has_pending_interrupt(struct kvm_vcpu *vcpu);
+ int kvm_arch_post_init_vm(struct kvm *kvm);
+ void kvm_arch_pre_destroy_vm(struct kvm *kvm);
+ int kvm_arch_create_vm_debugfs(struct kvm *kvm);
++bool kvm_arch_private_memory_supported(struct kvm *kvm);
  
- int kvm_set_memory_region(struct kvm *kvm,
--			  const struct kvm_userspace_memory_region *mem);
-+			  const struct kvm_userspace_memory_region_ext *mem);
- int __kvm_set_memory_region(struct kvm *kvm,
--			    const struct kvm_userspace_memory_region *mem);
-+			    const struct kvm_userspace_memory_region_ext *mem);
- void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
- void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
- int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ #ifndef __KVM_HAVE_ARCH_VM_ALLOC
+ /*
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 36dd2adcd7fc..cf8dcb3b8c7f 100644
+index cf8dcb3b8c7f..1caebded52c4 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -1514,7 +1514,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
+@@ -1514,10 +1514,19 @@ static void kvm_replace_memslot(struct kvm *kvm,
  	}
  }
  
--static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
-+static int check_memory_region_flags(const struct kvm_userspace_memory_region_ext *mem)
+-static int check_memory_region_flags(const struct kvm_userspace_memory_region_ext *mem)
++bool __weak kvm_arch_private_memory_supported(struct kvm *kvm)
++{
++	return false;
++}
++
++static int check_memory_region_flags(struct kvm *kvm,
++			const struct kvm_userspace_memory_region_ext *mem)
  {
  	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
  
-@@ -1907,7 +1907,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
-  * Must be called holding kvm->slots_lock for write.
-  */
- int __kvm_set_memory_region(struct kvm *kvm,
--			    const struct kvm_userspace_memory_region *mem)
-+			    const struct kvm_userspace_memory_region_ext *mem)
++	if (kvm_arch_private_memory_supported(kvm))
++		valid_flags |= KVM_MEM_PRIVATE;
++
+ #ifdef __KVM_HAVE_READONLY_MEM
+ 	valid_flags |= KVM_MEM_READONLY;
+ #endif
+@@ -1756,6 +1765,8 @@ static void kvm_delete_memslot(struct kvm *kvm,
+ 			       struct kvm_memory_slot *old,
+ 			       struct kvm_memory_slot *invalid_slot)
  {
- 	struct kvm_memory_slot *old, *new;
- 	struct kvm_memslots *slots;
-@@ -2011,7 +2011,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
- EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
++	if (old->flags & KVM_MEM_PRIVATE)
++		kvm_memfd_unregister(old);
+ 	/*
+ 	 * Remove the old memslot (in the inactive memslots) by passing NULL as
+ 	 * the "new" slot, and for the invalid version in the active slots.
+@@ -1836,6 +1847,14 @@ static int kvm_set_memslot(struct kvm *kvm,
+ 		kvm_invalidate_memslot(kvm, old, invalid_slot);
+ 	}
  
- int kvm_set_memory_region(struct kvm *kvm,
--			  const struct kvm_userspace_memory_region *mem)
-+			  const struct kvm_userspace_memory_region_ext *mem)
- {
++	if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE) {
++		r = kvm_memfd_register(kvm, new);
++		if (r) {
++			mutex_unlock(&kvm->slots_arch_lock);
++			return r;
++		}
++	}
++
+ 	r = kvm_prepare_memory_region(kvm, old, new, change);
+ 	if (r) {
+ 		/*
+@@ -1850,6 +1869,10 @@ static int kvm_set_memslot(struct kvm *kvm,
+ 		} else {
+ 			mutex_unlock(&kvm->slots_arch_lock);
+ 		}
++
++		if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE)
++			kvm_memfd_unregister(new);
++
+ 		return r;
+ 	}
+ 
+@@ -1917,7 +1940,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 	int as_id, id;
  	int r;
  
-@@ -2023,7 +2023,7 @@ int kvm_set_memory_region(struct kvm *kvm,
- EXPORT_SYMBOL_GPL(kvm_set_memory_region);
+-	r = check_memory_region_flags(mem);
++	r = check_memory_region_flags(kvm, mem);
+ 	if (r)
+ 		return r;
  
- static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
--					  struct kvm_userspace_memory_region *mem)
-+				struct kvm_userspace_memory_region_ext *mem)
- {
- 	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
- 		return -EINVAL;
-@@ -4569,12 +4569,19 @@ static long kvm_vm_ioctl(struct file *filp,
- 		break;
- 	}
- 	case KVM_SET_USER_MEMORY_REGION: {
--		struct kvm_userspace_memory_region kvm_userspace_mem;
-+		struct kvm_userspace_memory_region_ext kvm_userspace_mem;
+@@ -1974,6 +1997,10 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 		if ((kvm->nr_memslot_pages + npages) < kvm->nr_memslot_pages)
+ 			return -EINVAL;
+ 	} else { /* Modify an existing slot. */
++		/* Private memslots are immutable, they can only be deleted. */
++		if (mem->flags & KVM_MEM_PRIVATE)
++			return -EINVAL;
++
+ 		if ((mem->userspace_addr != old->userspace_addr) ||
+ 		    (npages != old->npages) ||
+ 		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY))
+@@ -2002,6 +2029,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 	new->npages = npages;
+ 	new->flags = mem->flags;
+ 	new->userspace_addr = mem->userspace_addr;
++	new->fd = mem->fd;
++	new->file = NULL;
++	new->ofs = mem->ofs;
  
- 		r = -EFAULT;
- 		if (copy_from_user(&kvm_userspace_mem, argp,
--						sizeof(kvm_userspace_mem)))
-+				sizeof(struct kvm_userspace_memory_region)))
- 			goto out;
-+		if (kvm_userspace_mem.flags & KVM_MEM_PRIVATE) {
-+			int offset = offsetof(
-+				struct kvm_userspace_memory_region_ext, ofs);
-+			if (copy_from_user(&kvm_userspace_mem.ofs, argp + offset,
-+					   sizeof(kvm_userspace_mem) - offset))
-+				goto out;
-+		}
- 
- 		r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
- 		break;
+ 	r = kvm_set_memslot(kvm, old, new, change);
+ 	if (r)
 -- 
 2.17.1
 
