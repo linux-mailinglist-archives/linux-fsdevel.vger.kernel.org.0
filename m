@@ -2,65 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFD6247E098
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 09:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B6C47E161
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 11:24:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347199AbhLWIrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 03:47:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235252AbhLWIrM (ORCPT
+        id S1347688AbhLWKYs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 05:24:48 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:49688 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347664AbhLWKYr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 03:47:12 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BFEBC061401
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 00:47:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=hr4b/hNqOZgXqkjuRvvg4uXvR6MmXFNQm+5G++mKMcM=; b=0akfVuEXciCD3pI1J6EvL/nHy1
-        vgJeb+CGCVmd2KnXqCozWjE3T8aCB7fDfun1q+IbsL8eoKcjvGN7IQf7aMWpo22uKh7GA4r82X7m3
-        i8h4Ojbv4N1sgroB6Rb411w4RqDTwvsHP9vADCQsVVMYalGCRM9bO70vCs2cV6cHM2e8g0mdoTJGu
-        BNDQrwkxgVhkTgctt09bPqzrh5y8AtGIppeOPFAbdSQmE2hNekq0ZIrtcpyJ1VYL2LTJ5zkC5LDKY
-        xnGU+GfEdgvqtHMUBUEH236oQ8elT6uKy6fFln23w55B2loaRHEwOqIvBKm2ID9BVayKgOtdhMQKI
-        dlTQMHbw==;
-Received: from [46.183.103.8] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n0Jkl-00CKnV-FR; Thu, 23 Dec 2021 08:47:12 +0000
-Date:   Thu, 23 Dec 2021 09:47:09 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 48/48] mm: Use multi-index entries in the page cache
-Message-ID: <YcQ3jf7/ASHSK0bi@infradead.org>
-References: <20211208042256.1923824-1-willy@infradead.org>
- <20211208042256.1923824-49-willy@infradead.org>
+        Thu, 23 Dec 2021 05:24:47 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 57FB161E1C;
+        Thu, 23 Dec 2021 10:24:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CFCC36AE9;
+        Thu, 23 Dec 2021 10:24:44 +0000 (UTC)
+Date:   Thu, 23 Dec 2021 11:24:40 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@fb.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH v6 2/5] fs: split off setxattr_setup function from
+ setxattr
+Message-ID: <20211223102440.4bd5t25tojkhpbuy@wittgenstein>
+References: <20211222210127.958902-1-shr@fb.com>
+ <20211222210127.958902-3-shr@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211208042256.1923824-49-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20211222210127.958902-3-shr@fb.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 08, 2021 at 04:22:56AM +0000, Matthew Wilcox (Oracle) wrote:
-> We currently store large folios as 2^N consecutive entries.  While this
-> consumes rather more memory than necessary, it also turns out to be buggy.
-> A writeback operation which starts within a tail page of a dirty folio will
-> not write back the folio as the xarray's dirty bit is only set on the
-> head index.  With multi-index entries, the dirty bit will be found no
-> matter where in the folio the operation starts.
+On Wed, Dec 22, 2021 at 01:01:24PM -0800, Stefan Roesch wrote:
+> This splits of the setup part of the function
+> setxattr in its own dedicated function called
+> setxattr_setup.
 > 
-> This does end up simplifying the page cache slightly, although not as
-> much as I had hoped.
+> This makes it possible to call this function
+> from io_uring in the pre-processing of an
+> xattr request.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
 
-This looks sensible to me, but I'm not xarray expert.
+I like the introduction of struct xattr_ctx.
+But I would prefer if we called this setxattr_prepare() to mirror
+setattr_prepare() and change the signature to:
 
-So the only thing I have to offer is a superficial nit:
+int setxattr_setup(struct user_namespace *mnt_userns,
+                   const char __user *name,
+		   struct xattr_ctx *ctx,
+		   void **xattr_val);
 
-> +static inline
-> +bool folio_more_pages(struct folio *folio, pgoff_t index, pgoff_t max)
+Since NULL is a success condition I think it makes more sense to have an
+error returned and the value be a return argument. So sm like
+(uncompiled and untested):
 
-Weird identation indentation here.
+int setxattr_prepare(struct user_namespace *mnt_userns, const char __user *name,
+		     struct xattr_ctx *ctx, void **xattr_val)
+{
+	void *kvalue = NULL;
+	int error;
+
+	if (ctx->flags & ~(XATTR_CREATE | XATTR_REPLACE))
+		return -EINVAL;
+
+	error = strncpy_from_user(ctx->kname, name, ctx->kname_sz);
+	if (error == 0 || error == ctx->kname_sz)
+		return -ERANGE;
+	if (error < 0)
+		return error;
+
+	if (ctx->size) {
+		if (ctx->size > XATTR_SIZE_MAX)
+			return -E2BIG;
+
+		kvalue = kvmalloc(ctx->size, GFP_KERNEL);
+		if (!kvalue)
+			return -ENOMEM;
+
+		if (copy_from_user(kvalue, ctx->value, ctx->size)) {
+			kvfree(kvalue);
+			return -EFAULT;
+		}
+
+		if ((strcmp(ctx->kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+		    (strcmp(ctx->kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+			posix_acl_fix_xattr_from_user(mnt_userns, kvalue, ctx->size);
+	}
+
+	*xattr_val = kvalue;
+	return 0;
+}
