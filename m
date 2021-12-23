@@ -2,55 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EB047E48B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 15:33:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0DFB47E494
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 15:39:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348831AbhLWOdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 09:33:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46936 "EHLO
+        id S1348843AbhLWOjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 09:39:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232888AbhLWOdB (ORCPT
+        with ESMTP id S243856AbhLWOjk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 09:33:01 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 919A8C061401
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 06:33:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QcDVR64BxqDwzqoahP33c28v+/sUsP60ObvEvRp3VzA=; b=OOmPCM8DjrglabG0TzcBn8t/DE
-        yLPzvuSs69nlkWcn7IiI0nKudl7xEnkujpIuhWub11koR3NgN7wE4JBkwpKL0N3PZijdYiXiNg2Hh
-        iihpLaPevCwZ/EpqrQOzmA6x37/i0VJGFeS6p47nHwGWgTWXK47HW4vI5RTHpmG+z9hox/aMwKz54
-        VMFHrz4TqEeV4a8HFHbGsv4nPb/DaUAB69+alR6+AoIRGlAMXumcidykImF5QiDhV+Ixk71+dZiuG
-        ago1OviBVc+MJ6slEYa6Pzon22xVkmXyNINqP80qcd3a/J4CZTIWoMQa7tm6v8264jwZiRUtp1Lfk
-        kTV1Y5yA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n0P9P-004Kvp-1f; Thu, 23 Dec 2021 14:32:59 +0000
-Date:   Thu, 23 Dec 2021 14:32:59 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 09/48] filemap: Add folio_put_wait_locked()
-Message-ID: <YcSIm9Qf1pU+BJM1@casper.infradead.org>
-References: <20211208042256.1923824-1-willy@infradead.org>
- <20211208042256.1923824-10-willy@infradead.org>
- <YcQemGi3byMpaIo3@infradead.org>
+        Thu, 23 Dec 2021 09:39:40 -0500
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20988C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 06:39:40 -0800 (PST)
+Received: by mail-il1-x131.google.com with SMTP id u8so4437319ilk.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 06:39:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=s3f+TQ9iLWlS/aXZfN59r6gQT00y4xqFdXItiX16uEA=;
+        b=ligSn8AupJaRrFczpGV4q6H/3/bTv6/7LQtPLnL9PG1Dx9KMWzQinPejWuyzkHup20
+         2rNFqCXjmAKhfV5oUiROfqMWxqbQ9FfTTXOFw3sip0m9Mmd6Qi1H5zrwRNo9ovbDOjnp
+         auDJ8fqrIJbV52V7Gbi5p55W91fX3OhUo4E7jIEGUrmiOAt28jwN0jVTl8R2UPyjrqTj
+         FHWyNrmrRiMRu81z0g0IFbemqeB5IvkZrawXq9kUDaJZAejoRsvTqKBV8loJszYXhuh/
+         Ip+Zsmuv29fBKbGVbxzLlpGjsr4/XTn179onNRk2Md0KSsqHYKSXpGtvZEq957+dzq2f
+         ALAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=s3f+TQ9iLWlS/aXZfN59r6gQT00y4xqFdXItiX16uEA=;
+        b=a4HlRTUp0ZLX8EIVWVF4O7dUZ0qq1vBonCQ2iI0YVwoTvtNuo3ANYjrkcFVYdaGHgS
+         /02Y9u66TZ3R5JEt12/Jb0noPPho+noQ/vkkF4pIjaKpdjb0q0BkSKxZuB4WMl254ZlE
+         3BB66YFj1an7ByQZHtsY+IFt+zQRKraYMVO5UZpwvRltXwUmYULAV1wCUWnkrz8CwE7O
+         OWLYARh+S7VBX22GO0eoApE/DF3WBOHq/DyzEsnulM0IjqJOmOFk9u5QL26QW5CpE0aB
+         5j/gc1EdfCZzi8jkMKKeVvwf8xg5mJoGcXR5xkqiHphmW9WhHKBpbQ4e1UZNAy0/9qlk
+         k0VA==
+X-Gm-Message-State: AOAM5308Ehd4ct+ixYKMUDVj/VYInV1DBExOz6wSWcOJNxHhdZrW5jIf
+        VHpJgZqccU3cIvGngNtCZ9IajXmyJJdQnA==
+X-Google-Smtp-Source: ABdhPJxZrSZe4H7uidNIV+/qoXI6tri4TEfxgw2ZcdRaSrBlm4uyt0hNGEWTRJ767v1Ee2Z8kdxEFw==
+X-Received: by 2002:a05:6e02:1546:: with SMTP id j6mr1148273ilu.310.1640270378743;
+        Thu, 23 Dec 2021 06:39:38 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id r1sm2653450ilo.38.2021.12.23.06.39.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Dec 2021 06:39:38 -0800 (PST)
+Subject: Re: [PATCH v6 0/5] io_uring: add xattr support
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@fb.com, torvalds@linux-foundation.org
+References: <20211222210127.958902-1-shr@fb.com>
+ <20211223110453.zbyah76jpc3ivjfp@wittgenstein>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <35dcdd4b-8bf3-bd67-d045-bd99ea524777@kernel.dk>
+Date:   Thu, 23 Dec 2021 07:39:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YcQemGi3byMpaIo3@infradead.org>
+In-Reply-To: <20211223110453.zbyah76jpc3ivjfp@wittgenstein>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 22, 2021 at 11:00:40PM -0800, Christoph Hellwig wrote:
-> > -int put_and_wait_on_page_locked(struct page *page, int state);
-> > +int folio_put_wait_locked(struct folio *folio, int state);
+On 12/23/21 4:04 AM, Christian Brauner wrote:
+> On Wed, Dec 22, 2021 at 01:01:22PM -0800, Stefan Roesch wrote:
+>> This adds the xattr support to io_uring. The intent is to have a more
+>> complete support for file operations in io_uring.
+>>
+>> This change adds support for the following functions to io_uring:
+>> - fgetxattr
+>> - fsetxattr
+>> - getxattr
+>> - setxattr
+>>
+>> Patch 1: fs: split off do_user_path_at_empty from user_path_at_empty()
+>>   This splits off a new function do_user_path_at_empty from
+>>   user_path_at_empty that is based on filename and not on a
+>>   user-specified string.
+>>
+>> Patch 2: fs: split off setxattr_setup function from setxattr
+>>   Split off the setup part of the setxattr function.
+>>
+>> Patch 3: fs: split off do_getxattr from getxattr
+>>   Split of the do_getxattr part from getxattr. This will
+>>   allow it to be invoked it from io_uring.
+>>
+>> Patch 4: io_uring: add fsetxattr and setxattr support
+>>   This adds new functions to support the fsetxattr and setxattr
+>>   functions.
+>>
+>> Patch 5: io_uring: add fgetxattr and getxattr support
+>>   This adds new functions to support the fgetxattr and getxattr
+>>   functions.
+>>
+>>
+>> There are two additional patches:
+>>   liburing: Add support for xattr api's.
+>>             This also includes the tests for the new code.
+>>   xfstests: Add support for io_uring xattr support.
+>>
+>>
+>> V6: - reverted addition of kname array to xattr_ctx structure
+>>       Adding the kname array increases the io_kiocb beyond 64 bytes
+>>       (increases it to 224 bytes). We try hard to limit it to 64 bytes.
+>>       Keeping the original interface also is a bit more efficient.
+>>     - rebased on for-5.17/io_uring-getdents64
+>> V5: - add kname array to xattr_ctx structure
+>> V4: - rebased patch series
+>> V3: - remove req->file checks in prep functions
+>>     - change size parameter in do_xattr
+>> V2: - split off function do_user_path_empty instead of changing
+>>       the function signature of user_path_at
+>>     - Fix datatype size problem in do_getxattr
+>>
+>>
+>>
+>> Stefan Roesch (5):
+>>   fs: split off do_user_path_at_empty from user_path_at_empty()
+>>   fs: split off setxattr_setup function from setxattr
+>>   fs: split off do_getxattr from getxattr
+>>   io_uring: add fsetxattr and setxattr support
+>>   io_uring: add fgetxattr and getxattr support
+>>
+>>  fs/internal.h                 |  23 +++
+>>  fs/io_uring.c                 | 318 ++++++++++++++++++++++++++++++++++
+>>  fs/namei.c                    |  10 +-
+>>  fs/xattr.c                    | 107 ++++++++----
+>>  include/linux/namei.h         |   2 +
+>>  include/uapi/linux/io_uring.h |   8 +-
+>>  6 files changed, 428 insertions(+), 40 deletions(-)
+>>
+>>
+>> base-commit: b4518682080d3a1cdd6ea45a54ff6772b8b2797a
 > 
-> This could actually move to mm/internal.h.
+> Jens, please keep me in the loop once this series lands.
 
-It doesn't have any callers outside mm/ for now (and actually a couple
-of the callers are going away), but conceptually it's part of the
-lock_page() family of functions.  Some other places might benefit from
-waiting without the reference held.
+You bet, and thanks for the reviews!
+
+> I maintain a large vfs testsuite for idmapped mounts (It's actually a
+> generic testsuite which also tests idmapped mounts.) and it currently
+> already has tests for io_uring:
+> 
+> https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/tree/src/idmapped-mounts/idmapped-mounts.c#n6942
+> 
+> Once this lands we need to expand it to test xattr support for io_uring
+> as well (It should probably also include mkdir/link/mknod that we added
+> last cycle.).
+
+There are a few basic tests here:
+
+https://git.kernel.dk/cgit/liburing/log/?h=xattr
+
+as well, but more of a sanity kind of checking, would be great if tests
+were added to the VFS suite as well.
+
+With the last few kinks ironed out, I hope to queue the next version
+posted for 5.17.
+
+-- 
+Jens Axboe
+
