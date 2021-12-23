@@ -2,164 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C34D47E7A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 19:34:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2739447E7AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 19:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349722AbhLWSe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 13:34:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44688 "EHLO
+        id S1349849AbhLWSg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 13:36:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240285AbhLWSe1 (ORCPT
+        with ESMTP id S240342AbhLWSg0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 13:34:27 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1DBCC061401
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 10:34:26 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id z3so4984513plg.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 10:34:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wgoegRi5bG9RfU6sMp0VEJxN3NnOXgdV/DTIFT/FP9s=;
-        b=L+zXpuXCNgLWcMvoCH32XVHU3LmaAvryhek/ia9zaFUu0ZSn7rADevGixqyB2soisL
-         lb8sy3eZ0Qb13+uIbTieaElB9/eNeY1LdDq+a6B1I4SCMgjk8KynVB6mC3VxCjS62dVR
-         shouleL8Xc9cW4Wz78SXSVxVyqQLoN4F0NG+DvAR8pOfjTfWeQzVKxXB0o9Pq4oNeD2u
-         D/l3mjhlcj2MVLlMZngH+SksfEZR9/1Wk/yngiydrBqbgLH3qAIjqS5gEc7eeKDfOTuB
-         avLlOIlX+XDpMaVWp30QaJoxFQY/I8sNhRtyyMDPfKjd8Jl1YaMQ7pZgNNA9C4UmrgVB
-         9akA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wgoegRi5bG9RfU6sMp0VEJxN3NnOXgdV/DTIFT/FP9s=;
-        b=kUL2E8vxoxrYYSjhBzxu2ylexTj4SCKE/WBNnngViDCw2BMBqqAQn0/YFM7UYxJNX4
-         ITdy1yySBmpFr0v6OB5B4R7AZZPSIF428TwT/Wt1YKG88c83P6WvAiofCB32CAn9QzT3
-         hqE8JMcPov7DeDBNpa4EqWcv8rwbnqEL1Ya5ablpq1zh8UpmBJ3mNwXfCVickTUC2leT
-         hadGaehIaWjHN2DiQhZ+MaZRYSB6RmYtZag3Ue+0/pS+bwz4Pq4Q/rJxiXepbMcHqfo4
-         ZFMLbWe5nftZIShZVSyN9OBsGNCu3Un8LR46eKIEf1pDDU0Bajk/5hLm8Mzf7gyTaC25
-         F0iQ==
-X-Gm-Message-State: AOAM532J+m6gbOzU/KzAFQOfgG6tgrG6CatAsQv9V8UWb3Hn/dWM8D7N
-        tBY316uk8To/6vSihjlZwRJFKw==
-X-Google-Smtp-Source: ABdhPJymsNE7J9ptKr2BtgChAzAfQEzAGp2WzRVvToHDYcXxBbfV5GZE58CrgE/W67Py/7kxVbiHvg==
-X-Received: by 2002:a17:90a:c58f:: with SMTP id l15mr3967558pjt.227.1640284466086;
-        Thu, 23 Dec 2021 10:34:26 -0800 (PST)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id k6sm6898801pff.17.2021.12.23.10.34.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Dec 2021 10:34:25 -0800 (PST)
-Date:   Thu, 23 Dec 2021 18:34:22 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [PATCH v3 kvm/queue 06/16] KVM: Implement fd-based memory using
- MEMFD_OPS interfaces
-Message-ID: <YcTBLpVlETdI8JHi@google.com>
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-7-chao.p.peng@linux.intel.com>
+        Thu, 23 Dec 2021 13:36:26 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D20C061401
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 10:36:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=F53Sr3hxlzVnq8IAZPudB03T7dblSjwWxj479CJVwP4=; b=bXA4mL9pQKJ+X8NPTXyC7qziYC
+        fzT8yINMfwf+NywJMg7SDn3lLBKNStYYnfwHlJdZrjxLcd26uIEEYwP/vbsY8ziqJt2jxIR/zb7nm
+        QLg+vGKFUpMfP2DTca7uyN3Qyd7fZeDp8b89mUA0rMRRkH4toNTSSfbxhtEOcTwHbFkLuyVM9vm4e
+        AZhF3b9zFXbeJ8ejjZj95FnW5sRjSR0ZTIBPnNm2Iz0P67geapmTJaVUTLIg3drhqIAHfBq7ROFmf
+        Q7PG1w1v9nQbdGQrlUBzdJL5m7q0X6r9Yc/QN6c3eY3WWESyg0/DaLYfX39fbw1xrH21707USte8x
+        j4h4G3NQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n0Swy-004Usa-Br; Thu, 23 Dec 2021 18:36:24 +0000
+Date:   Thu, 23 Dec 2021 18:36:24 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH 25/48] filemap: Add read_cache_folio and
+ read_mapping_folio
+Message-ID: <YcTBqAkrFxGeR+Y2@casper.infradead.org>
+References: <20211208042256.1923824-1-willy@infradead.org>
+ <20211208042256.1923824-26-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211223123011.41044-7-chao.p.peng@linux.intel.com>
+In-Reply-To: <20211208042256.1923824-26-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 23, 2021, Chao Peng wrote:
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 03b2ce34e7f4..86655cd660ca 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -46,6 +46,7 @@ config KVM
->  	select SRCU
->  	select INTERVAL_TREE
->  	select HAVE_KVM_PM_NOTIFIER if PM
-> +	select MEMFD_OPS
-
-MEMFD_OPS is a weird Kconfig name given that it's not just memfd() that can
-implement the ops.
-
->  	help
->  	  Support hosting fully virtualized guest machines using hardware
->  	  virtualization extensions.  You will need a fairly recent
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 3bd875f9669f..21f8b1880723 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -806,6 +806,12 @@ static inline void kvm_irqfd_exit(void)
->  {
->  }
->  #endif
-> +
-> +int kvm_memfd_register(struct kvm *kvm, struct kvm_memory_slot *slot);
-> +void kvm_memfd_unregister(struct kvm_memory_slot *slot);
-> +long kvm_memfd_get_pfn(struct kvm_memory_slot *slot, gfn_t gfn, int *order);
-> +void kvm_memfd_put_pfn(kvm_pfn_t pfn);
-> +
->  int kvm_init(void *opaque, unsigned vcpu_size, unsigned vcpu_align,
->  		  struct module *module);
->  void kvm_exit(void);
-> diff --git a/virt/kvm/Makefile.kvm b/virt/kvm/Makefile.kvm
-> index ffdcad3cc97a..8842128d8429 100644
-> --- a/virt/kvm/Makefile.kvm
-> +++ b/virt/kvm/Makefile.kvm
-> @@ -5,7 +5,7 @@
+On Wed, Dec 08, 2021 at 04:22:33AM +0000, Matthew Wilcox (Oracle) wrote:
+> @@ -3503,23 +3491,23 @@ static struct page *do_read_cache_page(struct address_space *mapping,
+>  	 * avoid spurious serialisations and wakeups when multiple processes
+>  	 * wait on the same page for IO to complete.
+>  	 */
+> -	wait_on_page_locked(page);
+> -	if (PageUptodate(page))
+> +	folio_wait_locked(folio);
+> +	if (folio_test_uptodate(folio))
+>  		goto out;
 >  
->  KVM ?= ../../../virt/kvm
+>  	/* Distinguish between all the cases under the safety of the lock */
+> -	lock_page(page);
+> +	folio_lock(folio);
 >  
-> -kvm-y := $(KVM)/kvm_main.o $(KVM)/eventfd.o $(KVM)/binary_stats.o
-> +kvm-y := $(KVM)/kvm_main.o $(KVM)/eventfd.o $(KVM)/binary_stats.o $(KVM)/memfd.o
+>  	/* Case c or d, restart the operation */
+> -	if (!page->mapping) {
+> -		unlock_page(page);
+> -		put_page(page);
+> +	if (!folio->mapping) {
+> +		folio_unlock(folio);
+> +		folio_put(folio);
+>  		goto repeat;
+>  	}
 
-This should be
+Re-reviewing this patch after Christoph's feedback, I believe it is
+wrong to sleep with the refcount elevated, waiting for someone else to
+unlock the page.  Doing that prevents anyone from splitting the folio,
+which can be annoying.
 
-   kvm-$(CONFIG_MEMFD_OPS) += $(KVM)/memfd.o
+So I'm thinking about adding this patch (as a follow-on).  It brings
+the code closer to the read_iter path, which is always a good thing.
+The comment was going to be made untrue by this patch, and I tried
+rewriting it, but concluded ultimately that it was more distracting than
+informative.
 
-with stubs provided in a header file as needed.  I also really dislike naming KVM's
-file memfd.c, though I don't have a good alternative off the top of my head.
-
->  kvm-$(CONFIG_KVM_VFIO) += $(KVM)/vfio.o
->  kvm-$(CONFIG_KVM_MMIO) += $(KVM)/coalesced_mmio.o
->  kvm-$(CONFIG_KVM_ASYNC_PF) += $(KVM)/async_pf.o
-
-
-> +#ifdef CONFIG_MEMFD_OPS
-> +static const struct memfd_pfn_ops *memfd_ops;
-
-memfd_ops needs to be associated with the slot, e.g. userspace should be able to
-map multiple types of a backing stores into a single VM.  This doesn't even allow
-that for multiple VMs, and there are all kinds of ordering issues.
-
-> +void kvm_memfd_unregister(struct kvm_memory_slot *slot)
-> +{
-> +#ifdef CONFIG_MEMFD_OPS
-> +	if (slot->file) {
-> +		fput(slot->file);
-
-Needs to actually unregister.
-
-> +		slot->file = NULL;
-> +	}
-> +#endif
-> +}
-> -- 
-> 2.17.1
-> 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 6f541d931a4c..33077c264d79 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3451,45 +3451,12 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
+ 	if (folio_test_uptodate(folio))
+ 		goto out;
+ 
+-	/*
+-	 * Page is not up to date and may be locked due to one of the following
+-	 * case a: Page is being filled and the page lock is held
+-	 * case b: Read/write error clearing the page uptodate status
+-	 * case c: Truncation in progress (page locked)
+-	 * case d: Reclaim in progress
+-	 *
+-	 * Case a, the page will be up to date when the page is unlocked.
+-	 *    There is no need to serialise on the page lock here as the page
+-	 *    is pinned so the lock gives no additional protection. Even if the
+-	 *    page is truncated, the data is still valid if PageUptodate as
+-	 *    it's a race vs truncate race.
+-	 * Case b, the page will not be up to date
+-	 * Case c, the page may be truncated but in itself, the data may still
+-	 *    be valid after IO completes as it's a read vs truncate race. The
+-	 *    operation must restart if the page is not uptodate on unlock but
+-	 *    otherwise serialising on page lock to stabilise the mapping gives
+-	 *    no additional guarantees to the caller as the page lock is
+-	 *    released before return.
+-	 * Case d, similar to truncation. If reclaim holds the page lock, it
+-	 *    will be a race with remove_mapping that determines if the mapping
+-	 *    is valid on unlock but otherwise the data is valid and there is
+-	 *    no need to serialise with page lock.
+-	 *
+-	 * As the page lock gives no additional guarantee, we optimistically
+-	 * wait on the page to be unlocked and check if it's up to date and
+-	 * use the page if it is. Otherwise, the page lock is required to
+-	 * distinguish between the different cases. The motivation is that we
+-	 * avoid spurious serialisations and wakeups when multiple processes
+-	 * wait on the same page for IO to complete.
+-	 */
+-	folio_wait_locked(folio);
+-	if (folio_test_uptodate(folio))
+-		goto out;
+-
+-	/* Distinguish between all the cases under the safety of the lock */
+-	folio_lock(folio);
++	if (!folio_trylock(folio)) {
++		folio_put_wait_locked(folio, TASK_UNINTERRUPTIBLE);
++		goto repeat;
++	}
+ 
+-	/* Case c or d, restart the operation */
++	/* Folio was truncated from mapping */
+ 	if (!folio->mapping) {
+ 		folio_unlock(folio);
+ 		folio_put(folio);
