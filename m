@@ -2,268 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7116947E369
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 13:33:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7270C47E345
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Dec 2021 13:31:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348396AbhLWMcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 07:32:09 -0500
-Received: from mga12.intel.com ([192.55.52.136]:40276 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348392AbhLWMcI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 07:32:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640262728; x=1671798728;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=XyofphUy/LJlVhXv9gCJ1GZDqZ6qMpJmsB+GMsVzLxI=;
-  b=Pifxit7zZDb6dB8z3AoliBefXHlOG3ClqS7pngoC+zpeSgednxk6UlsO
-   f1vU1V5m+Qe7rCt80zhsfWoCfrgflcFq4IuN7dCCEBVQujRNwth4kiFMM
-   bEaW9W96cDpCxCIWWGMW3SOs1TchWlRKo9fwLLefyklQBqqTFxTdgTZCH
-   2Z7ltHvelASPpGEbEh3YjuRVznMMtgqPWFrOla80/kzlvF/3gTmG4hYO9
-   cDs+259Dhbt1CkkbqqyuM6TkJnn6Uq0xTpQkFaRUhXX1jqot830VKWM9M
-   H+BYsHk8jMmO1Rpp/FiyOTkFIUt7slzqBkMcZz1F6/Hyfqim+3XqHDsZz
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10206"; a="220826972"
-X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
-   d="scan'208";a="220826972"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 04:31:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
-   d="scan'208";a="522078768"
-Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2021 04:31:42 -0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: [PATCH v3 kvm/queue 07/16] KVM: Refactor hva based memory invalidation code
-Date:   Thu, 23 Dec 2021 20:30:02 +0800
-Message-Id: <20211223123011.41044-8-chao.p.peng@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
+        id S1348270AbhLWMa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 07:30:26 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:49897 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243453AbhLWMaX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Dec 2021 07:30:23 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=cruzzhao@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V.XmPDo_1640262604;
+Received: from AliYun.localdomain(mailfrom:CruzZhao@linux.alibaba.com fp:SMTPD_---0V.XmPDo_1640262604)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 23 Dec 2021 20:30:20 +0800
+From:   Cruz Zhao <CruzZhao@linux.alibaba.com>
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com
+Cc:     adobriyan@gmail.com, CruzZhao@linux.alibaba.com,
+        joshdon@google.com, edumazet@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 2/2] sched/core: Uncookied force idle accounting per cpu
+Date:   Thu, 23 Dec 2021 20:30:03 +0800
+Message-Id: <1640262603-19339-3-git-send-email-CruzZhao@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1640262603-19339-1-git-send-email-CruzZhao@linux.alibaba.com>
+References: <1640262603-19339-1-git-send-email-CruzZhao@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The purpose of this patch is for fd-based memslot to reuse the same
-mmu_notifier based guest memory invalidation code for private pages.
+Forced idle can be divided into two types, forced idle with cookie'd task
+running on it SMT sibling, and forced idle with uncookie'd task running
+on it SMT sibling, which should be accounting to measure the cost of
+enabling core scheduling too.
 
-No functional changes except renaming 'hva' to more neutral 'useraddr'
-so that it can also cover 'offset' in a fd that private pages live in.
+This patch accounts the forced idle time with uncookie'd task, and the
+sum of both.
 
-Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+A few details:
+ - Uncookied forceidle time and total forceidle time is displayed via
+   the last two columns of /proc/stat.
+ - Uncookied forceidle time is ony accounted when this cpu is forced
+   idle and a sibling hyperthread is running with an uncookie'd task.
+
+Signed-off-by: Cruz Zhao <CruzZhao@linux.alibaba.com>
 ---
- include/linux/kvm_host.h |  8 ++++--
- virt/kvm/kvm_main.c      | 55 ++++++++++++++++++++++------------------
- 2 files changed, 36 insertions(+), 27 deletions(-)
+ fs/proc/stat.c              | 13 ++++++++++++-
+ include/linux/kernel_stat.h |  1 +
+ kernel/sched/core.c         |  3 +--
+ kernel/sched/core_sched.c   |  7 ++++---
+ 4 files changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 21f8b1880723..07863ff855cd 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1464,9 +1464,13 @@ static inline int memslot_id(struct kvm *kvm, gfn_t gfn)
- }
+diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+index 3a2fbc9..21607cf 100644
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -110,7 +110,7 @@ static int show_stat(struct seq_file *p, void *v)
+ 	int i, j;
+ 	u64 user, nice, system, idle, iowait, irq, softirq, steal;
+ #ifdef CONFIG_SCHED_CORE
+-	u64 cookied_forceidle = 0;
++	u64 cookied_forceidle, uncookied_forceidle, forceidle;
+ #endif
+ 	u64 guest, guest_nice;
+ 	u64 sum = 0;
+@@ -121,6 +121,9 @@ static int show_stat(struct seq_file *p, void *v)
+ 	user = nice = system = idle = iowait =
+ 		irq = softirq = steal = 0;
+ 	guest = guest_nice = 0;
++#ifdef CONFIG_SCHED_CORE
++	cookied_forceidle = uncookied_forceidle = forceidle = 0;
++#endif
+ 	getboottime64(&boottime);
+ 	/* shift boot timestamp according to the timens offset */
+ 	timens_sub_boottime(&boottime);
+@@ -145,6 +148,8 @@ static int show_stat(struct seq_file *p, void *v)
+ 		sum		+= arch_irq_stat_cpu(i);
+ #ifdef CONFIG_SCHED_CORE
+ 		cookied_forceidle	+= cpustat[CPUTIME_COOKIED_FORCEIDLE];
++		uncookied_forceidle	+= cpustat[CPUTIME_UNCOOKIED_FORCEIDLE];
++		forceidle		= cookied_forceidle + uncookied_forceidle;
+ #endif
  
- static inline gfn_t
--hva_to_gfn_memslot(unsigned long hva, struct kvm_memory_slot *slot)
-+useraddr_to_gfn_memslot(unsigned long useraddr, struct kvm_memory_slot *slot,
-+			bool addr_is_hva)
- {
--	gfn_t gfn_offset = (hva - slot->userspace_addr) >> PAGE_SHIFT;
-+	unsigned long useraddr_base = addr_is_hva ? slot->userspace_addr
-+						  : slot->ofs;
-+
-+	gfn_t gfn_offset = (useraddr - useraddr_base) >> PAGE_SHIFT;
+ 		for (j = 0; j < NR_SOFTIRQS; j++) {
+@@ -168,6 +173,8 @@ static int show_stat(struct seq_file *p, void *v)
+ 	seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest_nice));
+ #ifdef CONFIG_SCHED_CORE
+ 	seq_put_decimal_ull(p, " ", nsec_to_clock_t(cookied_forceidle));
++	seq_put_decimal_ull(p, " ", nsec_to_clock_t(uncookied_forceidle));
++	seq_put_decimal_ull(p, " ", nsec_to_clock_t(forceidle));
+ #endif
+ 	seq_putc(p, '\n');
  
- 	return slot->base_gfn + gfn_offset;
- }
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 47e96d1eb233..b7a1c4d7eaaa 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -486,16 +486,16 @@ static void kvm_mmu_notifier_invalidate_range(struct mmu_notifier *mn,
- 	srcu_read_unlock(&kvm->srcu, idx);
- }
+@@ -190,6 +197,8 @@ static int show_stat(struct seq_file *p, void *v)
+ 		guest_nice	= cpustat[CPUTIME_GUEST_NICE];
+ #ifdef CONFIG_SCHED_CORE
+ 		cookied_forceidle	= cpustat[CPUTIME_COOKIED_FORCEIDLE];
++		uncookied_forceidle	= cpustat[CPUTIME_UNCOOKIED_FORCEIDLE];
++		forceidle		= cookied_forceidle + uncookied_forceidle;
+ #endif
+ 		seq_printf(p, "cpu%d", i);
+ 		seq_put_decimal_ull(p, " ", nsec_to_clock_t(user));
+@@ -204,6 +213,8 @@ static int show_stat(struct seq_file *p, void *v)
+ 		seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest_nice));
+ #ifdef CONFIG_SCHED_CORE
+ 		seq_put_decimal_ull(p, " ", nsec_to_clock_t(cookied_forceidle));
++		seq_put_decimal_ull(p, " ", nsec_to_clock_t(uncookied_forceidle));
++		seq_put_decimal_ull(p, " ", nsec_to_clock_t(forceidle));
+ #endif
+ 		seq_putc(p, '\n');
+ 	}
+diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
+index a21b065..23945c1 100644
+--- a/include/linux/kernel_stat.h
++++ b/include/linux/kernel_stat.h
+@@ -30,6 +30,7 @@ enum cpu_usage_stat {
+ 	CPUTIME_GUEST_NICE,
+ #ifdef CONFIG_SCHED_CORE
+ 	CPUTIME_COOKIED_FORCEIDLE,
++	CPUTIME_UNCOOKIED_FORCEIDLE,
+ #endif
+ 	NR_STATS,
+ };
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f4f4b24..16d937e4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5822,8 +5822,7 @@ static inline struct task_struct *pick_task(struct rq *rq)
+ 	}
  
--typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
-+typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+ 	if (rq->core->core_forceidle_count) {
+-		if (cookie)
+-			rq->core->core_forceidle_start = rq_clock(rq->core);
++		rq->core->core_forceidle_start = rq_clock(rq->core);
+ 		rq->core->core_forceidle_occupation = occ;
+ 	}
  
- typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
- 			     unsigned long end);
+diff --git a/kernel/sched/core_sched.c b/kernel/sched/core_sched.c
+index bc5f45f..89bd49d 100644
+--- a/kernel/sched/core_sched.c
++++ b/kernel/sched/core_sched.c
+@@ -265,11 +265,12 @@ void sched_core_account_forceidle(struct rq *rq)
+ 		rq_i = cpu_rq(i);
+ 		p = rq_i->core_pick ?: rq_i->curr;
  
--struct kvm_hva_range {
-+struct kvm_useraddr_range {
- 	unsigned long start;
- 	unsigned long end;
- 	pte_t pte;
--	hva_handler_t handler;
-+	gfn_handler_t handler;
- 	on_lock_fn_t on_lock;
- 	bool flush_on_ret;
- 	bool may_block;
-@@ -515,13 +515,13 @@ static void kvm_null_fn(void)
- #define IS_KVM_NULL_FN(fn) ((fn) == (void *)kvm_null_fn)
+-		if (!rq->core->core_cookie)
+-			continue;
+ 		if (p == rq_i->idle && rq_i->nr_running) {
+ 			cpustat = kcpustat_cpu(i).cpustat;
+-			cpustat[CPUTIME_COOKIED_FORCEIDLE] += delta;
++			if (rq->core->core_cookie)
++				cpustat[CPUTIME_COOKIED_FORCEIDLE] += delta;
++			else
++				cpustat[CPUTIME_UNCOOKIED_FORCEIDLE] += delta;
+ 		}
+ 	}
  
- /* Iterate over each memslot intersecting [start, last] (inclusive) range */
--#define kvm_for_each_memslot_in_hva_range(node, slots, start, last)	     \
--	for (node = interval_tree_iter_first(&slots->hva_tree, start, last); \
-+#define kvm_for_each_memslot_in_useraddr_range(node, tree, start, last)	     \
-+	for (node = interval_tree_iter_first(tree, start, last);	     \
- 	     node;							     \
- 	     node = interval_tree_iter_next(node, start, last))	     \
- 
--static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
--						  const struct kvm_hva_range *range)
-+static __always_inline int __kvm_handle_useraddr_range(struct kvm *kvm,
-+					const struct kvm_useraddr_range *range)
- {
- 	bool ret = false, locked = false;
- 	struct kvm_gfn_range gfn_range;
-@@ -540,17 +540,19 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
- 	idx = srcu_read_lock(&kvm->srcu);
- 
- 	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-+		struct rb_root_cached *useraddr_tree;
- 		struct interval_tree_node *node;
- 
- 		slots = __kvm_memslots(kvm, i);
--		kvm_for_each_memslot_in_hva_range(node, slots,
-+		useraddr_tree = &slots->hva_tree;
-+		kvm_for_each_memslot_in_useraddr_range(node, useraddr_tree,
- 						  range->start, range->end - 1) {
--			unsigned long hva_start, hva_end;
-+			unsigned long useraddr_start, useraddr_end;
- 
- 			slot = container_of(node, struct kvm_memory_slot, hva_node[slots->node_idx]);
--			hva_start = max(range->start, slot->userspace_addr);
--			hva_end = min(range->end, slot->userspace_addr +
--						  (slot->npages << PAGE_SHIFT));
-+			useraddr_start = max(range->start, slot->userspace_addr);
-+			useraddr_end = min(range->end, slot->userspace_addr +
-+						       (slot->npages << PAGE_SHIFT));
- 
- 			/*
- 			 * To optimize for the likely case where the address
-@@ -562,11 +564,14 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
- 			gfn_range.may_block = range->may_block;
- 
- 			/*
--			 * {gfn(page) | page intersects with [hva_start, hva_end)} =
-+			 * {gfn(page) | page intersects with [useraddr_start, useraddr_end)} =
- 			 * {gfn_start, gfn_start+1, ..., gfn_end-1}.
- 			 */
--			gfn_range.start = hva_to_gfn_memslot(hva_start, slot);
--			gfn_range.end = hva_to_gfn_memslot(hva_end + PAGE_SIZE - 1, slot);
-+			gfn_range.start = useraddr_to_gfn_memslot(useraddr_start,
-+								  slot, true);
-+			gfn_range.end = useraddr_to_gfn_memslot(
-+						useraddr_end + PAGE_SIZE - 1,
-+						slot, true);
- 			gfn_range.slot = slot;
- 
- 			if (!locked) {
-@@ -597,10 +602,10 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
- 						unsigned long start,
- 						unsigned long end,
- 						pte_t pte,
--						hva_handler_t handler)
-+						gfn_handler_t handler)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range range = {
-+	const struct kvm_useraddr_range range = {
- 		.start		= start,
- 		.end		= end,
- 		.pte		= pte,
-@@ -610,16 +615,16 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
- 		.may_block	= false,
- 	};
- 
--	return __kvm_handle_hva_range(kvm, &range);
-+	return __kvm_handle_useraddr_range(kvm, &range);
- }
- 
- static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn,
- 							 unsigned long start,
- 							 unsigned long end,
--							 hva_handler_t handler)
-+							 gfn_handler_t handler)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range range = {
-+	const struct kvm_useraddr_range range = {
- 		.start		= start,
- 		.end		= end,
- 		.pte		= __pte(0),
-@@ -629,7 +634,7 @@ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn
- 		.may_block	= false,
- 	};
- 
--	return __kvm_handle_hva_range(kvm, &range);
-+	return __kvm_handle_useraddr_range(kvm, &range);
- }
- static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
- 					struct mm_struct *mm,
-@@ -687,7 +692,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 					const struct mmu_notifier_range *range)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range hva_range = {
-+	const struct kvm_useraddr_range useraddr_range = {
- 		.start		= range->start,
- 		.end		= range->end,
- 		.pte		= __pte(0),
-@@ -711,7 +716,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 	kvm->mn_active_invalidate_count++;
- 	spin_unlock(&kvm->mn_invalidate_lock);
- 
--	__kvm_handle_hva_range(kvm, &hva_range);
-+	__kvm_handle_useraddr_range(kvm, &useraddr_range);
- 
- 	return 0;
- }
-@@ -738,7 +743,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 					const struct mmu_notifier_range *range)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range hva_range = {
-+	const struct kvm_useraddr_range useraddr_range = {
- 		.start		= range->start,
- 		.end		= range->end,
- 		.pte		= __pte(0),
-@@ -749,7 +754,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 	};
- 	bool wake;
- 
--	__kvm_handle_hva_range(kvm, &hva_range);
-+	__kvm_handle_useraddr_range(kvm, &useraddr_range);
- 
- 	/* Pairs with the increment in range_start(). */
- 	spin_lock(&kvm->mn_invalidate_lock);
 -- 
-2.17.1
+1.8.3.1
 
