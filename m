@@ -2,128 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63C8147EA98
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 03:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6357D47EA5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 02:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241161AbhLXCdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 21:33:23 -0500
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:42350 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233638AbhLXCdX (ORCPT
+        id S1350829AbhLXBff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 20:35:35 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21134 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245067AbhLXBfd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 21:33:23 -0500
-X-Greylist: delayed 3505 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Dec 2021 21:33:22 EST
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:42768 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1n0ZU0-0002N8-9d; Thu, 23 Dec 2021 20:34:56 -0500
-Message-ID: <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
-Subject: Re: [RFC] coredump: Do not interrupt dump for TIF_NOTIFY_SIGNAL
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 23 Dec 2021 20:34:54 -0500
-In-Reply-To: <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
-References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
-         <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
-         <87h7i694ij.fsf_-_@disp2133>
-         <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.42.2 
+        Thu, 23 Dec 2021 20:35:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1640309732;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2AW47MdiyK0n8imN2X9qNAgasY2HGNdMX+KQBBxAfgI=;
+        b=bumzTv1ezCZCQ5RNJ8ybrXB+7I5so2eKeYAvDIl0MnppwPOwrw8DkSgIzNhr5zJ7Bbk/vb
+        779AjlvzLb45H53konFf0p3blcdE/2PY/HV35c4L7EIEsi5wZr4ceRAwLZ7sS8QbpDKDkh
+        mK/KyS2+k+FuRx2CzLZgy3LfRbh6aVg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-622-fVezeQVtNUSmsJ7rkb3uYg-1; Thu, 23 Dec 2021 20:35:29 -0500
+X-MC-Unique: fVezeQVtNUSmsJ7rkb3uYg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE9F91800D50;
+        Fri, 24 Dec 2021 01:35:27 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-179.pek2.redhat.com [10.72.12.179])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 78C3B1017E27;
+        Fri, 24 Dec 2021 01:35:17 +0000 (UTC)
+Date:   Fri, 24 Dec 2021 09:35:12 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, feng.tang@intel.com,
+        siglesias@igalia.com, kernel@gpiccoli.net,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH 3/3] panic: Allow printing extra panic information on
+ kdump
+Message-ID: <YcUj0EJvQt77OVs2@dhcp-128-65.nay.redhat.com>
+References: <20211109202848.610874-1-gpiccoli@igalia.com>
+ <20211109202848.610874-4-gpiccoli@igalia.com>
+ <YcMPzs6t8MKpEacq@dhcp-128-65.nay.redhat.com>
+ <2d24ea70-e315-beb5-0028-683880c438be@igalia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d24ea70-e315-beb5-0028-683880c438be@igalia.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-10-22 at 15:13 +0100, Pavel Begunkov wrote:
-> On 6/9/21 21:17, Eric W. Biederman wrote:
+Hi Guilherme,
+On 12/22/21 at 09:34am, Guilherme G. Piccoli wrote:
+> On 22/12/2021 08:45, Dave Young wrote:
+> > Hi Guilherme,
 > > 
-> > Folks,
+> > Thanks for you patch.  Could you add kexec list for any following up
+> > patches?  This could change kdump behavior so let's see if any comments
+> > from kexec list.
 > > 
-> > Olivier Langlois has been struggling with coredumps getting
-> > truncated in
-> > tasks using io_uring.  He has also apparently been struggling with
-> > the some of his email messages not making it to the lists.
+> > Kudos for the lore+lei tool so that I can catch this by seeing this
+> > coming into Andrews tree :)
 > 
-> Looks syzbot hit something relevant, see
-> https://lore.kernel.org/io-
-> uring/0000000000000012fb05cee99477@google.com/
-> 
-> In short, a task creates an io_uring worker thread, then the worker
-> submits a task_work item to the creator task and won't die until
-> the item is executed/cancelled. And I found that the creator task is
-> sleeping in do_coredump() -> wait_for_completion()
-> 
-> 0xffffffff81343ccb is in do_coredump (fs/coredump.c:469).
-> 464
-> 465             if (core_waiters > 0) {
-> 466                     struct core_thread *ptr;
-> 467
-> 468                     freezer_do_not_count();
-> 469                     wait_for_completion(&core_state->startup);
-> 470                     freezer_count();
-> 
-> 
-> A hack executing tws there helps (see diff below).
-> Any chance anyone knows what this is and how to fix it?
-> 
-> 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 3224dee44d30..f6f9dfb02296 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -466,7 +466,8 @@ static int coredump_wait(int exit_code, struct
-> core_state *core_state)
->           struct core_thread *ptr;
->   
->           freezer_do_not_count();
-> -        wait_for_completion(&core_state->startup);
-> +        while (wait_for_completion_interruptible(&core_state-
-> >startup))
-> +            tracehook_notify_signal();
->           freezer_count();
->           /*
->            * Wait for all the threads to become inactive, so that
-> 
-> 
-> 
-> 
-Pavel,
+> Hi Dave, I'm really sorry for not adding the kexec list, I forgot. But I
+> will do next time for sure, my apologies. And thanks for taking a look
+> after you noticed that on lore, I appreciate your feedback!
 
-I cannot comment on the merit of the proposed hack but my proposed
-patch to fix the coredump truncation issue when a process using
-io_uring core dumps that I submitted back in August is still
-unreviewed!
+Thanks!
 
-https://lore.kernel.org/lkml/1625bc89782bf83d9d8c7c63e8ffcb651ccb15fa.1629655338.git.olivier@trillion01.com/
+> 
+> > [...]
+> > People may enable kdump crashkernel and panic_print together but
+> > they are not aware the extra panic print could cause kdump not reliable
+> > (in theory).  So at least some words in kernel-parameters.txt would
+> > help.
+> >  
+> 
+> That makes sense, I'll improve that in a follow-up patch, how about
+> that? Indeed it's a good idea to let people be sure that panic_print
+> might affect kdump reliability, although I consider the risk to be
+> pretty low. And I'll loop the kexec list for sure!
 
-I have been using it since then I must have generated many dozens of
-perfect core dump files with it and I have not seen a single truncated
-core dump files like I used to have prior to the patch.
+If only the doc update, I think it is fine to be another follup-up
+patch.
 
-I am bringing back my patch to your attention because one nice side
-effect of it is that it would have avoided totally the problem that you
-have encountered in coredump_wait() since it does cancel io_uring
-resources before calling coredump_wait()!
+About your 1st option in patch log, there is crash_kexec_post_notifiers
+kernel param which can be used to switch on panic notifiers before kdump
+bootup.   Another way probably you can try to move panic print to be
+panic notifier. Have this been discussed before? 
 
-Greetings,
-Olivier
+> 
+> Cheers,
+> 
+> 
+> Guilherme
+
+Thanks
+Dave
 
