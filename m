@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D35147EC08
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 07:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47FFC47EC0A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 07:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351509AbhLXGXH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Dec 2021 01:23:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58476 "EHLO
+        id S1351520AbhLXGXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Dec 2021 01:23:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351502AbhLXGXF (ORCPT
+        with ESMTP id S1351512AbhLXGXI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Dec 2021 01:23:05 -0500
+        Fri, 24 Dec 2021 01:23:08 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF9CC061401;
-        Thu, 23 Dec 2021 22:23:05 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29286C061757;
+        Thu, 23 Dec 2021 22:23:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Ysp7KI34BFaTU9eSZuM6/aPIu5KK8PLOWYGZFEFmhdw=; b=unTB9+A0BFt91fd/IA+pU8NsCD
-        uAxkcmTxIq/io8IlXw4hjtJIi3IoOhOYlcFg7IlLH7unDSePnwd/7I2xFxnUIl1zA1Ebgnz3DphTt
-        puduvpbDyw88VXudWJmaShninMheAKwYLUchGptOssTzrlM3Ji7Cpk4oqNe18p0hA6EX0TQ98YJQl
-        4pW5QNHmASSXanN4EQ5KRdXJ1xqaPWRt/p3cS6qFLgJpQ5rZn8lWHZ0aDpf+ZYqAgaBjThJzEqpVs
-        c5zzYreXHZbBiz0yTQ2bzZjIA6iHbuTFMyWQGdB+EVMF/hKC8iZBcpqV75AqALycW1z1KsNSKuGrc
-        4vDAWKqg==;
+        bh=gHqv6kMDsq/2+y1n4ZZkTVYmU0VIRJiHvL8ybQks4bw=; b=eX99TK5vA8W9CJKecAaI2PFNuU
+        GuyMw9RXR48sk3sYubW92CcupEDBWC1oj8RM+7vAyLz6NJXtvx20kbgNllyxKaBsgQ44+YDCitYBe
+        BHIjWysMsh+dnDsLDhwFMjOfbpoO10huxP+bnNH60zrj9mJ/8s5bYtd6ETmP75wbrcEBb67EPmPsC
+        0yxtgyWqhayzUdZ3VW8w6giyQKeny1FzsFaMK4JbOx/1H4SFCLY4uZK66IyYAAhpJj9Auwz7xJdca
+        yWEo95XfCGSCasonwBQQT9EQlWSqSPp0NSGM3D0L5ubP0QPXDxZbl3gJJGJB900IVYhhDr8F0QB/x
+        ecqKL6tQ==;
 Received: from p4fdb0b85.dip0.t-ipconnect.de ([79.219.11.133] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n0dyh-00DmzR-KB; Fri, 24 Dec 2021 06:22:56 +0000
+        id 1n0dyk-00Dn0B-AW; Fri, 24 Dec 2021 06:22:58 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
@@ -38,9 +38,9 @@ Cc:     Hugh Dickins <hughd@google.com>,
         Matthew Wilcox <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 02/13] frontswap: remove frontswap_writethrough
-Date:   Fri, 24 Dec 2021 07:22:35 +0100
-Message-Id: <20211224062246.1258487-3-hch@lst.de>
+Subject: [PATCH 03/13] frontswap: remove frontswap_tmem_exclusive_gets
+Date:   Fri, 24 Dec 2021 07:22:36 +0100
+Message-Id: <20211224062246.1258487-4-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211224062246.1258487-1-hch@lst.de>
 References: <20211224062246.1258487-1-hch@lst.de>
@@ -51,92 +51,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-frontswap_writethrough is never called, so remove it.
+frontswap_tmem_exclusive_gets is never called, so remove it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- Documentation/vm/frontswap.rst |  6 ------
- include/linux/frontswap.h      |  1 -
- mm/frontswap.c                 | 23 +----------------------
- 3 files changed, 1 insertion(+), 29 deletions(-)
+ include/linux/frontswap.h |  2 --
+ mm/frontswap.c            | 23 +----------------------
+ 2 files changed, 1 insertion(+), 24 deletions(-)
 
-diff --git a/Documentation/vm/frontswap.rst b/Documentation/vm/frontswap.rst
-index e2e5ab3e375e3..2ab660651d04e 100644
---- a/Documentation/vm/frontswap.rst
-+++ b/Documentation/vm/frontswap.rst
-@@ -39,12 +39,6 @@ a disk write and, if the data is later read back, a disk read are avoided.
- If a store returns failure, transcendent memory has rejected the data, and the
- page can be written to swap as usual.
- 
--If a backend chooses, frontswap can be configured as a "writethrough
--cache" by calling frontswap_writethrough().  In this mode, the reduction
--in swap device writes is lost (and also a non-trivial performance advantage)
--in order to allow the backend to arbitrarily "reclaim" space used to
--store frontswap pages to more completely manage its memory usage.
--
- Note that if a page is stored and the page already exists in transcendent memory
- (a "duplicate" store), either the store succeeds and the data is overwritten,
- or the store fails AND the page is invalidated.  This ensures stale data may
 diff --git a/include/linux/frontswap.h b/include/linux/frontswap.h
-index b07d88c92bb29..4a03fda415725 100644
+index 4a03fda415725..83a56392cc7f6 100644
 --- a/include/linux/frontswap.h
 +++ b/include/linux/frontswap.h
-@@ -26,7 +26,6 @@ struct frontswap_ops {
+@@ -26,8 +26,6 @@ struct frontswap_ops {
  extern void frontswap_register_ops(struct frontswap_ops *ops);
  extern void frontswap_shrink(unsigned long);
  extern unsigned long frontswap_curr_pages(void);
--extern void frontswap_writethrough(bool);
- #define FRONTSWAP_HAS_EXCLUSIVE_GETS
- extern void frontswap_tmem_exclusive_gets(bool);
+-#define FRONTSWAP_HAS_EXCLUSIVE_GETS
+-extern void frontswap_tmem_exclusive_gets(bool);
  
+ extern bool __frontswap_test(struct swap_info_struct *, pgoff_t);
+ extern void __frontswap_init(unsigned type, unsigned long *map);
 diff --git a/mm/frontswap.c b/mm/frontswap.c
-index 6bed12260dea7..51a662a839559 100644
+index 51a662a839559..dba7f087ee862 100644
 --- a/mm/frontswap.c
 +++ b/mm/frontswap.c
-@@ -32,16 +32,6 @@ static struct frontswap_ops *frontswap_ops __read_mostly;
+@@ -32,13 +32,6 @@ static struct frontswap_ops *frontswap_ops __read_mostly;
  #define for_each_frontswap_ops(ops)		\
  	for ((ops) = frontswap_ops; (ops); (ops) = (ops)->next)
  
 -/*
-- * If enabled, frontswap_store will return failure even on success.  As
-- * a result, the swap subsystem will always write the page to swap, in
-- * effect converting frontswap into a writethrough cache.  In this mode,
-- * there is no direct reduction in swap writes, but a frontswap backend
-- * can unilaterally "reclaim" any pages in use with no data loss, thus
-- * providing increases control over maximum memory usage due to frontswap.
+- * If enabled, the underlying tmem implementation is capable of doing
+- * exclusive gets, so frontswap_load, on a successful tmem_get must
+- * mark the page as no longer in frontswap AND mark it dirty.
 - */
--static bool frontswap_writethrough_enabled __read_mostly;
+-static bool frontswap_tmem_exclusive_gets_enabled __read_mostly;
 -
+ #ifdef CONFIG_DEBUG_FS
  /*
-  * If enabled, the underlying tmem implementation is capable of doing
-  * exclusive gets, so frontswap_load, on a successful tmem_get must
-@@ -170,15 +160,6 @@ void frontswap_register_ops(struct frontswap_ops *ops)
+  * Counters available via /sys/kernel/debug/frontswap (if debugfs is
+@@ -160,15 +153,6 @@ void frontswap_register_ops(struct frontswap_ops *ops)
  }
  EXPORT_SYMBOL(frontswap_register_ops);
  
 -/*
-- * Enable/disable frontswap writethrough (see above).
+- * Enable/disable frontswap exclusive gets (see above).
 - */
--void frontswap_writethrough(bool enable)
+-void frontswap_tmem_exclusive_gets(bool enable)
 -{
--	frontswap_writethrough_enabled = enable;
+-	frontswap_tmem_exclusive_gets_enabled = enable;
 -}
--EXPORT_SYMBOL(frontswap_writethrough);
+-EXPORT_SYMBOL(frontswap_tmem_exclusive_gets);
 -
  /*
-  * Enable/disable frontswap exclusive gets (see above).
+  * Called when a swap device is swapon'd.
   */
-@@ -283,9 +264,7 @@ int __frontswap_store(struct page *page)
- 	} else {
- 		inc_frontswap_failed_stores();
+@@ -296,13 +280,8 @@ int __frontswap_load(struct page *page)
+ 		if (!ret) /* successful load */
+ 			break;
  	}
--	if (frontswap_writethrough_enabled)
--		/* report failure so swap also writes to swap device */
--		ret = -1;
-+
+-	if (ret == 0) {
++	if (ret == 0)
+ 		inc_frontswap_loads();
+-		if (frontswap_tmem_exclusive_gets_enabled) {
+-			SetPageDirty(page);
+-			__frontswap_clear(sis, offset);
+-		}
+-	}
  	return ret;
  }
- EXPORT_SYMBOL(__frontswap_store);
+ EXPORT_SYMBOL(__frontswap_load);
 -- 
 2.30.2
 
