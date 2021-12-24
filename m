@@ -2,91 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69CC847EB62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 05:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1246F47EBFC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 07:13:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241221AbhLXE0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 23:26:40 -0500
-Received: from mga02.intel.com ([134.134.136.20]:40249 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229752AbhLXE0j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 23:26:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640319999; x=1671855999;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=XVICpTcj5dklnFFnMTQIYshv6lyZmXqWiuOZMigDHD4=;
-  b=XrCFEYcODreSC2ByYZGGZU5TaNJn+a3POjvTrQrMIBxMyaCJpPYYYZNy
-   F0tcMsTI1w+AiT1lLuzoQcdnWalZ4GEySKYmWOh0tHWBdVDsti3xWVjWf
-   9vWawJfpNTOI9L2ze0Uykn/C/HHZma5etjwMEOCFfGRFtfSc0sX6paLeb
-   pdIHt6+2eyEAJWsTChbN5CPJ7qqwPKL0Za9olyL40YWmA0AEz4ptQM/Zv
-   G34jL2nDoHyRtU+UZK7sEFT/NcNuP9TWnGKGXv/hKRymZUyHpdl26ziDZ
-   RPaDlsOh4BMyjKE/gZ+pfTS6KfPTIl3CxoaRJI2LEFzn1BjpsWJS6qEvm
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10207"; a="228226524"
-X-IronPort-AV: E=Sophos;i="5.88,231,1635231600"; 
-   d="scan'208";a="228226524"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 20:26:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,231,1635231600"; 
-   d="scan'208";a="664767253"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Dec 2021 20:26:31 -0800
-Date:   Fri, 24 Dec 2021 12:25:54 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [PATCH v3 kvm/queue 06/16] KVM: Implement fd-based memory using
- MEMFD_OPS interfaces
-Message-ID: <20211224042554.GD44042@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-7-chao.p.peng@linux.intel.com>
- <YcTBLpVlETdI8JHi@google.com>
- <e3fe04eb-1a01-bea4-f1ea-cb9ee98ee216@redhat.com>
+        id S1351490AbhLXGNw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Dec 2021 01:13:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351418AbhLXGNw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Dec 2021 01:13:52 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E61C061401
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Dec 2021 22:13:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=OSbaZTqKO+62u9cusxHxQ6TwpDTKYkm0NWnnBX3ZHrw=; b=klzHngZXFcBOZ3RsrZeHiBva9X
+        Yp2bB9r7BMkxpc3G78yUuw5QmBMfMa0zsJk8g5cWFPwXr2JhNuGwhNgXUVCaHP4gkiqNDl2BTGVt5
+        i228WQm7xXmA4607M1jUhVEigpvW3X8O4FCWMaJDZGRbAKGjVnbQfzFuvmBpI6iGkp88XVQBRh9aV
+        n4DXT7D3VPVNwA+J2iSUY3yrV5RxDZnpym/JKJJ6rpzyuXoNcklupi4MhLu7v7A9S0KAKrabZLYEz
+        emZFysRgQlDq0+CtjixwQmzY2ttqwQFsv+nuC/EN+i0dHm0DNVDdA3uYqadkdWm+390jVPG6UN7cA
+        /ErlOOIw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n0dpu-00Dmid-Pl; Fri, 24 Dec 2021 06:13:50 +0000
+Date:   Thu, 23 Dec 2021 22:13:50 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 05/48] pagevec: Add folio_batch
+Message-ID: <YcVlHqtUQpBKl9nG@infradead.org>
+References: <20211208042256.1923824-1-willy@infradead.org>
+ <20211208042256.1923824-6-willy@infradead.org>
+ <YcQdI9lvCfBY8odQ@infradead.org>
+ <YcSFQBrz9vgroel9@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e3fe04eb-1a01-bea4-f1ea-cb9ee98ee216@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <YcSFQBrz9vgroel9@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 24, 2021 at 12:09:47AM +0100, Paolo Bonzini wrote:
-> On 12/23/21 19:34, Sean Christopherson wrote:
-> > >   	select HAVE_KVM_PM_NOTIFIER if PM
-> > > +	select MEMFD_OPS
-> > MEMFD_OPS is a weird Kconfig name given that it's not just memfd() that can
-> > implement the ops.
+On Thu, Dec 23, 2021 at 02:18:40PM +0000, Matthew Wilcox wrote:
+> > I think these casts need documentation, both here and at the
+> > struct folio_batch and struct pagevec definitions.
 > > 
+> > Alternatively I wonder if a union in stuct pagevec so that it can store
+> > folios or pages might be the better option.
 > 
-> Or, it's kvm that implements them to talk to memfd?
-
-The only thing is VFIO may also use the same set of callbacks, as
-discussed in the v2. But I think that's fine.
-
-Chao
+> I tried that way first, but then the caller & callee need to agree
+> whether they're storing folios or pages in the pagevec.  And that's kind
+> of why we have types.
 > 
-> Paolo
+> pagevec_remove_exceptionals() goes away by the end of this series.
+> pagevec_release() will take longer to remove.  What documentation
+> do you want to see?
+
+Mostly comments at the pagevec and folio_batch definitions that they
+need to match because of these two functions, and then maybe a
+backreference from the casts to the definitions.
