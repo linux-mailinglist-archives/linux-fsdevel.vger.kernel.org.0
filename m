@@ -2,115 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7FCA47EDE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 10:38:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBA9447EE4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 11:38:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241582AbhLXJig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Dec 2021 04:38:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
+        id S1352457AbhLXKiK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Dec 2021 05:38:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343812AbhLXJif (ORCPT
+        with ESMTP id S1343932AbhLXKiK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Dec 2021 04:38:35 -0500
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50076C061757
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Dec 2021 01:38:35 -0800 (PST)
-Received: by mail-qk1-x743.google.com with SMTP id de30so7971405qkb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Dec 2021 01:38:35 -0800 (PST)
+        Fri, 24 Dec 2021 05:38:10 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81EEC061401;
+        Fri, 24 Dec 2021 02:38:09 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id i22so16680146wrb.13;
+        Fri, 24 Dec 2021 02:38:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=DA2RfWm5BfTc8dY4tRUxJejPvziWb2AgHmDwtjqgqi8=;
-        b=F6+6pKm4yoIXJYa9fnLiTd8NEUh+N86TvoEOdgBeon8dawwpV2bQWrseUhrVdcftZ+
-         Ix0+/JHtRgXDDsSFsmUFSkL3idX9kj2Um+x+1KdGTM9pnhNHnQ9xpUAGg4Z6Qv5CHhqD
-         NuOl7mke/K046d18wDn6vvaN8knr5AQhPONRV229BfhfUN13AMERRMHpWJfsmylDhrsU
-         EdDLL8wdF8tNyShgnkJvny69ubEE5eBYOOWh7+HDpTsAZHNr0lNJDpbfKb+Ec+1GM5N+
-         0A4/misEuUCMkhfsaMGTCduSbSdUqJQzbdIP3EPP2tdQWEFwu2Ua6ZGEeLCzFOqeazal
-         /LnQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=XjBGi+dJXXQnmTq7rq+KjohVrDPP5Z8h7UOS9LTpl7A=;
+        b=Rj37lDjhRFUc7q2M+C6fi9hbOPuyZjdMGbHyY4K6HHo3T1eJHJGMoM/400ZwXdh9sB
+         ltN6Zd82Ah1EEaxr+ol7thpVVvDzlZKSDrTC4QgoT3mkjKRc5wAFPRVV5hPf/UjNqdYl
+         I8D5Ou9/Ofl56PLVyO+s2wNMP+TLGZkvvGYPx6yDoiPM7iYCgbFhXHwUoB/73pjTSz8k
+         pPZTQ4BuDb+if26Rp2Hb4ItZOQZH++3kuu8SxXIVnLD36SlAMyp/E3V94KBPYPBzgJr0
+         5oi5+oTPgs8ujfXKyZhDhTsAyPyx9C6GK8w1cYr+bedjnMAMVNj/8xLQOLUkPxRFmrik
+         d6yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=DA2RfWm5BfTc8dY4tRUxJejPvziWb2AgHmDwtjqgqi8=;
-        b=BHggqkE/Ykygu0rZrWg+dM2VjkqR1qh75u4F6y7dD545JjWYShRy9YAqbYVZLdw2DX
-         nWx3SYAK44FF5e6Ka2SU72YrpXHFxj6eVldOHcgWtEkdq/hj4IgqknELq341oRFce0CT
-         7r8xgheUGV6mnQ/+dkm01e6A3zJGZixgdUxyykSkpXSzaPDYBDDtGMJsJBqbG6jaR9cf
-         DsID5ReqSR6XbXA30u6qDtM4vA4YXtZ6zWK+KIibt/Usd+B2gYbCPcwA3bg7CZHLdRHz
-         RXGJYThAD7nLcy7XTn2f/nLGb93cVsnN1SFBfJy1BkDc+5mp9Grf6b7BwjHrRELaXwXa
-         hRBw==
-X-Gm-Message-State: AOAM531IpDM06y8hkm+gm0OxQo98pWmAra5uxDNKFaAN+Ypb1bwVbCAo
-        H7qOnAl13DbUMoIcMLxUwmrortgII4JcKHjkq0Q=
-X-Google-Smtp-Source: ABdhPJw+WCdD703KGr4zTlSj9oRbEiBT7EFydvo85iIoTEz8Kpc33aCGN+jdiBYfYom1B94pYTeP1+O/E9zUrWSBAfQ=
-X-Received: by 2002:ae9:e892:: with SMTP id a140mr4089993qkg.399.1640338714503;
- Fri, 24 Dec 2021 01:38:34 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=XjBGi+dJXXQnmTq7rq+KjohVrDPP5Z8h7UOS9LTpl7A=;
+        b=Zhzxpo8z6PSuun6bneeo+evkMMhf8RapTv4Vo0ZhjvGNqCWffIzYZVJZHvTZ/DlC6/
+         vpJZwJg6O22+G0wjYkXiwgUrgLw7fiICubG/TPiQBKiOSQn46iI/j+kiOgY0T/J3Z+xH
+         TvPtDROcEHPzh2IFmHKqBFbV1Gb308fFbkgGN4CLFVd3Gfl3xPLlsJwXVkWjnE4gQ0+7
+         1ObmRFexBB8IMy0nKNpXttoRhZ9XFGvZM08JxnxcSJyFCMwjOmE+agqIT3fVSIUFRxE8
+         R9ewkmVCNZRaRSNhaoBEL0VJmjtSnU8UtBMsL6OtEXMzwx3W+dBxhAB8JAh0tDakmmFi
+         Vvog==
+X-Gm-Message-State: AOAM531VwKj+YCX0Qp977lH5/Syndz9tH0DpXPsjwY9CdKvsX4hsa/TQ
+        iEcoxCWHhE7+zTcuXT3jQrGOUajnMlM=
+X-Google-Smtp-Source: ABdhPJys90a3kGzt+UsOHuNN9q/es+YbAMysaOzL5WhNevcs2Vf/ooc2d4G0kjBwoGEKL3i9w4pl7Q==
+X-Received: by 2002:a5d:6049:: with SMTP id j9mr4166002wrt.332.1640342288320;
+        Fri, 24 Dec 2021 02:38:08 -0800 (PST)
+Received: from [192.168.8.198] ([148.252.132.189])
+        by smtp.gmail.com with ESMTPSA id a1sm7598466wru.113.2021.12.24.02.38.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Dec 2021 02:38:07 -0800 (PST)
+Message-ID: <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
+Date:   Fri, 24 Dec 2021 10:37:31 +0000
 MIME-Version: 1.0
-Received: by 2002:ad4:5c62:0:0:0:0:0 with HTTP; Fri, 24 Dec 2021 01:38:34
- -0800 (PST)
-Reply-To: williamsreneta2019@gmail.com
-From:   MISS WILLIAMS <info.turvateealfastar@gmail.com>
-Date:   Fri, 24 Dec 2021 01:38:34 -0800
-Message-ID: <CAM-qQYasm5NAOQHnUKG4arFnKKcRouFSkZWKDCavBBwVZvp==g@mail.gmail.com>
-Subject: Greetings Dearest One,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [RFC] coredump: Do not interrupt dump for TIF_NOTIFY_SIGNAL
+Content-Language: en-US
+To:     Olivier Langlois <olivier@trillion01.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
+ <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
+ <87h7i694ij.fsf_-_@disp2133> <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
+ <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greetings Dearest One,
+On 12/24/21 01:34, Olivier Langlois wrote:
+> On Fri, 2021-10-22 at 15:13 +0100, Pavel Begunkov wrote:
+>> On 6/9/21 21:17, Eric W. Biederman wrote:
+>> In short, a task creates an io_uring worker thread, then the worker
+>> submits a task_work item to the creator task and won't die until
+>> the item is executed/cancelled. And I found that the creator task is
+>> sleeping in do_coredump() -> wait_for_completion()
+>>
+[...]
+>> A hack executing tws there helps (see diff below).
+>> Any chance anyone knows what this is and how to fix it?
+>>
+[...]
+> Pavel,
+> 
+> I cannot comment on the merit of the proposed hack but my proposed
+> patch to fix the coredump truncation issue when a process using
+> io_uring core dumps that I submitted back in August is still
+> unreviewed!
 
-How are you today, together with your family?Hope fine.I would like to
-use this opportunity to introduce myself to you. I am Miss Reneta
-Williams, From Benin Republic, West Africa. And my late parents are
-Mr. and Mrs. Dikko Williams; my father was a highly reputable business
-magnet who operated in Benin Republic during his days.
+That's unfortunate. Not like I can help in any case, but I assumed
+it was dealt with by
 
-I am writing this mail to you with tears and sorrow from my heart.
-With due respect trust and humanity, I know this mail will come to you
-as a surprise since we haven't known or come across each other before,
-considering the fact that I sourced your email contact through the
-Internet in search of trusted person who can be trusted and will
-assist me.
+commit 06af8679449d4ed282df13191fc52d5ba28ec536
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Thu Jun 10 15:11:11 2021 -0500
 
-It is sad to say that he passed away mysteriously in France during one
-of his business trips abroad. Though his sudden death was linked or
-rather suspected to have been masterminded by an uncle of his who
-traveled with him at that time. But God knows the truth! My mother
-died when I was just 6yrs old, and since then my father took me so
-special.
+     coredump: Limit what can interrupt coredumps
+     
+     Olivier Langlois has been struggling with coredumps being incompletely written in
+     processes using io_uring.
+     ...
 
-Before his death, he called me and informed me that he has the sum of
-Eighteen Million Five Hundred , United State Dollar
-(USD$18.500,000.00) left in fixed deposit account in one of the
-leading banks in Africa. He further told me that he deposited the
-money in my name, and also gave me all the necessary but legal
-documents to this fund with the bank.
+> https://lore.kernel.org/lkml/1625bc89782bf83d9d8c7c63e8ffcb651ccb15fa.1629655338.git.olivier@trillion01.com/
+> 
+> I have been using it since then I must have generated many dozens of
+> perfect core dump files with it and I have not seen a single truncated
+> core dump files like I used to have prior to the patch.
+> 
+> I am bringing back my patch to your attention because one nice side
+> effect of it is that it would have avoided totally the problem that you
+> have encountered in coredump_wait() since it does cancel io_uring
+> resources before calling coredump_wait()!
 
-I am 21 years old and a university undergraduate and really don't know
-what to do. Now I want an account overseas where I can transfer this
-funds and after the transaction I will come and reside permanently in
-your country till such a time that it will be convenient for me to
-return back home if I so desire.
+FWIW, I worked it around in io_uring back then by breaking the
+dependency.
 
-The death of my father actually brought sorrow to my life. I also want
-to invest the fund under your care because I am ignorant of business
-world. I am in a sincere desire of your humble assistance in this
-regards. Your suggestions and ideas will be highly regarded.
-
-Now permit me to ask these few questions:
-
-1. Can you honestly help me from your heart?
-
-2. Can I completely trust you?
-
-3. What percentage of the total amount in question will be good for
-you after the money is in your account?
-
-Please, consider this and get back to me as soon as
-possible.Immediately and confirm your willingness on this my
-email(williamsreneta2019@gmail.com), here is one of my Picture and
-also i will inform you more details involved in this matter.
-
-Regards,
-
-Miss Reneta Williams.
+-- 
+Pavel Begunkov
