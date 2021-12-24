@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CF3947EB5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 05:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CC847EB62
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 05:26:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241221AbhLXEXT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Dec 2021 23:23:19 -0500
-Received: from mga14.intel.com ([192.55.52.115]:27867 "EHLO mga14.intel.com"
+        id S241221AbhLXE0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Dec 2021 23:26:40 -0500
+Received: from mga02.intel.com ([134.134.136.20]:40249 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229752AbhLXEXS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Dec 2021 23:23:18 -0500
+        id S229752AbhLXE0j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Dec 2021 23:26:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640319798; x=1671855798;
+  t=1640319999; x=1671855999;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=GdIKH/iBPvDupvqz2hjBtyd1i8tjlmODP8lZ1Dq9nAY=;
-  b=DvrIOphqApNgHUBCH/Bg5aJHBDp1pBQLoSZPuBFEodhG/l0EGF1Zi8lp
-   2jJ/czbL/BGL/SFLtRO4/SSz0/FtwkxqMg2a/M/YP0JWfhqXbP0M/GOng
-   A10xvuK3uW0Cd3SN/nP79kuLb51AC6hV6y/qLq4cWAu1doEdKtYGAR/nC
-   FXGwM1mqlDFEFMCWPoVvGkb5vEpH2U8OtFfz7pqlntXzwsdG9/xJQ8Olm
-   tNAMXw3Rnulk1pazuLfKr4q2ka3buL/rgsI3Dx69Z6MEiHVB4iy08/xNf
-   +jTL9X2MlflVLtXupSJTs3NvzxXchpu/LNU3w300BiTLi+02QjQJZzJYw
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10207"; a="241149080"
+  bh=XVICpTcj5dklnFFnMTQIYshv6lyZmXqWiuOZMigDHD4=;
+  b=XrCFEYcODreSC2ByYZGGZU5TaNJn+a3POjvTrQrMIBxMyaCJpPYYYZNy
+   F0tcMsTI1w+AiT1lLuzoQcdnWalZ4GEySKYmWOh0tHWBdVDsti3xWVjWf
+   9vWawJfpNTOI9L2ze0Uykn/C/HHZma5etjwMEOCFfGRFtfSc0sX6paLeb
+   pdIHt6+2eyEAJWsTChbN5CPJ7qqwPKL0Za9olyL40YWmA0AEz4ptQM/Zv
+   G34jL2nDoHyRtU+UZK7sEFT/NcNuP9TWnGKGXv/hKRymZUyHpdl26ziDZ
+   RPaDlsOh4BMyjKE/gZ+pfTS6KfPTIl3CxoaRJI2LEFzn1BjpsWJS6qEvm
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10207"; a="228226524"
 X-IronPort-AV: E=Sophos;i="5.88,231,1635231600"; 
-   d="scan'208";a="241149080"
+   d="scan'208";a="228226524"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 20:23:18 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 20:26:39 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,231,1635231600"; 
-   d="scan'208";a="664766834"
+   d="scan'208";a="664767253"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Dec 2021 20:23:11 -0800
-Date:   Fri, 24 Dec 2021 12:22:34 +0800
+  by fmsmga001.fm.intel.com with ESMTP; 23 Dec 2021 20:26:31 -0800
+Date:   Fri, 24 Dec 2021 12:25:54 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
         Jonathan Corbet <corbet@lwn.net>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
@@ -59,34 +59,34 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         david@redhat.com
 Subject: Re: [PATCH v3 kvm/queue 06/16] KVM: Implement fd-based memory using
  MEMFD_OPS interfaces
-Message-ID: <20211224042234.GC44042@chaop.bj.intel.com>
+Message-ID: <20211224042554.GD44042@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
 References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
  <20211223123011.41044-7-chao.p.peng@linux.intel.com>
  <YcTBLpVlETdI8JHi@google.com>
+ <e3fe04eb-1a01-bea4-f1ea-cb9ee98ee216@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YcTBLpVlETdI8JHi@google.com>
+In-Reply-To: <e3fe04eb-1a01-bea4-f1ea-cb9ee98ee216@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 23, 2021 at 06:34:22PM +0000, Sean Christopherson wrote:
-> On Thu, Dec 23, 2021, Chao Peng wrote:
-> >  
-> > -kvm-y := $(KVM)/kvm_main.o $(KVM)/eventfd.o $(KVM)/binary_stats.o
-> > +kvm-y := $(KVM)/kvm_main.o $(KVM)/eventfd.o $(KVM)/binary_stats.o $(KVM)/memfd.o
+On Fri, Dec 24, 2021 at 12:09:47AM +0100, Paolo Bonzini wrote:
+> On 12/23/21 19:34, Sean Christopherson wrote:
+> > >   	select HAVE_KVM_PM_NOTIFIER if PM
+> > > +	select MEMFD_OPS
+> > MEMFD_OPS is a weird Kconfig name given that it's not just memfd() that can
+> > implement the ops.
+> > 
 > 
-> This should be
-> 
->    kvm-$(CONFIG_MEMFD_OPS) += $(KVM)/memfd.o
-> 
-> with stubs provided in a header file as needed.  I also really dislike naming KVM's
-> file memfd.c, though I don't have a good alternative off the top of my head.
+> Or, it's kvm that implements them to talk to memfd?
 
-Is memory-backend.c better? if we end up introducing the callback
-definition in KVM we can call it CONFIG_KVM_MEMORY_BACKEDN_OPS.
+The only thing is VFIO may also use the same set of callbacks, as
+discussed in the v2. But I think that's fine.
 
 Chao
+> 
+> Paolo
