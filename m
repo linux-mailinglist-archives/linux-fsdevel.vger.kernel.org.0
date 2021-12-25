@@ -2,147 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3497E47F0CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Dec 2021 20:53:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23DD347F2FC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Dec 2021 11:36:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353464AbhLXTxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Dec 2021 14:53:01 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:57062 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239476AbhLXTxA (ORCPT
+        id S231429AbhLYKgH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Dec 2021 05:36:07 -0500
+Received: from mail-ua1-f43.google.com ([209.85.222.43]:46825 "EHLO
+        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229728AbhLYKgG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Dec 2021 14:53:00 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51]:58742)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1n0qcb-00GdBQ-FX; Fri, 24 Dec 2021 12:52:57 -0700
-Received: from ip68-110-24-146.om.om.cox.net ([68.110.24.146]:46092 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1n0qcZ-00BbDq-RV; Fri, 24 Dec 2021 12:52:56 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Olivier Langlois <olivier@trillion01.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
-        <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
-        <87h7i694ij.fsf_-_@disp2133>
-        <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
-        <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
-        <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
-Date:   Fri, 24 Dec 2021 13:52:24 -0600
-In-Reply-To: <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com> (Pavel
-        Begunkov's message of "Fri, 24 Dec 2021 10:37:31 +0000")
-Message-ID: <878rw9u6fb.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sat, 25 Dec 2021 05:36:06 -0500
+Received: by mail-ua1-f43.google.com with SMTP id 30so18600668uag.13;
+        Sat, 25 Dec 2021 02:36:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WSqSuMuP1GC9zuDtXwCcS1k5lJH6Ajg56eS0dRt9IM8=;
+        b=Pms/GE/5CD7rgHExdwFv6+gOtbNA/SaBCo4KMlzBWIIbaLTDHOAb9ErCFcX3c02MXE
+         8btmTuHz6mEylZyNrVd49oG5Jes5hNg1UvERfzhRJZIdaQbTbeIee8uHNIzqd5HJN1V8
+         ddteujHYcpQcd7nsIhHkRcw85XcXH1WmvuxotRXe8b6E5UIXwcJ8OgkqVP4vhIXIf0to
+         Q4ALlSIaI/A8NSlqiSz2wic1T/gMdmy0ZXAG6HEXplfJ+gyfDiFwTVJDbB4xJqWTQ/rL
+         OPYkoPjqukq6/1jG3nCLfIrHpUGcH4P1+F2SqPqSDYw97P3MOKzvvD+1xjdC2w3J6HLG
+         Ka+A==
+X-Gm-Message-State: AOAM531o4gK1CLfxckVbUZ0BVkdeph2G9X2aqJo0qX6AyYOhTBUDDbJr
+        3N/o4AdKMd5KO2XS6ENm1FrwE+JGPcystQ==
+X-Google-Smtp-Source: ABdhPJwI2Ec9NQHfGojFI5MM10AYxO7BHlp9FJuU8sn3S4JK9g62KEpnCbrHZOuEJ+Y7uao7FyCm/g==
+X-Received: by 2002:a05:6102:b04:: with SMTP id b4mr2819364vst.61.1640428565121;
+        Sat, 25 Dec 2021 02:36:05 -0800 (PST)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id p12sm2036914uae.18.2021.12.25.02.36.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Dec 2021 02:36:04 -0800 (PST)
+Received: by mail-ua1-f46.google.com with SMTP id p37so18661544uae.8;
+        Sat, 25 Dec 2021 02:36:04 -0800 (PST)
+X-Received: by 2002:a67:c81c:: with SMTP id u28mr2771847vsk.38.1640428563782;
+ Sat, 25 Dec 2021 02:36:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1n0qcZ-00BbDq-RV;;;mid=<878rw9u6fb.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.24.146;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19mPJmblv6WwRKHpEjF0+D8zktreABL94Q=
-X-SA-Exim-Connect-IP: 68.110.24.146
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong,XM_B_SpammyWords
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4989]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Pavel Begunkov <asml.silence@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 407 ms - load_scoreonly_sql: 0.02 (0.0%),
-        signal_user_changed: 4.8 (1.2%), b_tie_ro: 3.3 (0.8%), parse: 1.13
-        (0.3%), extract_message_metadata: 11 (2.8%), get_uri_detail_list: 2.7
-        (0.7%), tests_pri_-1000: 11 (2.7%), tests_pri_-950: 1.06 (0.3%),
-        tests_pri_-900: 0.81 (0.2%), tests_pri_-90: 59 (14.5%), check_bayes:
-        58 (14.2%), b_tokenize: 6 (1.5%), b_tok_get_all: 9 (2.1%),
-        b_comp_prob: 2.3 (0.6%), b_tok_touch_all: 38 (9.2%), b_finish: 0.77
-        (0.2%), tests_pri_0: 306 (75.1%), check_dkim_signature: 0.39 (0.1%),
-        check_dkim_adsp: 2.7 (0.7%), poll_dns_idle: 1.31 (0.3%), tests_pri_10:
-        2.7 (0.7%), tests_pri_500: 7 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] coredump: Do not interrupt dump for TIF_NOTIFY_SIGNAL
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20211224062246.1258487-1-hch@lst.de> <20211224062246.1258487-2-hch@lst.de>
+In-Reply-To: <20211224062246.1258487-2-hch@lst.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 25 Dec 2021 11:35:52 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWcfnALb7G-5yiEZ-_s3gG_5NXgffk+hCcv24aFojwObQ@mail.gmail.com>
+Message-ID: <CAMuHMdWcfnALb7G-5yiEZ-_s3gG_5NXgffk+hCcv24aFojwObQ@mail.gmail.com>
+Subject: Re: [PATCH 01/13] mm: remove cleancache
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Hugh Dickins <hughd@google.com>,
+        Seth Jennings <sjenning@redhat.com>,
+        Dan Streetman <ddstreet@ieee.org>,
+        Vitaly Wool <vitaly.wool@konsulko.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pavel Begunkov <asml.silence@gmail.com> writes:
-
-> On 12/24/21 01:34, Olivier Langlois wrote:
->> On Fri, 2021-10-22 at 15:13 +0100, Pavel Begunkov wrote:
->>> On 6/9/21 21:17, Eric W. Biederman wrote:
->>> In short, a task creates an io_uring worker thread, then the worker
->>> submits a task_work item to the creator task and won't die until
->>> the item is executed/cancelled. And I found that the creator task is
->>> sleeping in do_coredump() -> wait_for_completion()
->>>
-> [...]
->>> A hack executing tws there helps (see diff below).
->>> Any chance anyone knows what this is and how to fix it?
->>>
-> [...]
->> Pavel,
->>
->> I cannot comment on the merit of the proposed hack but my proposed
->> patch to fix the coredump truncation issue when a process using
->> io_uring core dumps that I submitted back in August is still
->> unreviewed!
+On Sat, Dec 25, 2021 at 2:41 AM Christoph Hellwig <hch@lst.de> wrote:
+> The cleancache subsystem is unused since the removal of Xen tmem driver
+> in commit 814bbf49dcd0 ("xen: remove tmem driver").
 >
-> That's unfortunate. Not like I can help in any case, but I assumed
-> it was dealt with by
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+>  arch/m68k/configs/amiga_defconfig    |   1 -
+>  arch/m68k/configs/apollo_defconfig   |   1 -
+>  arch/m68k/configs/atari_defconfig    |   1 -
+>  arch/m68k/configs/bvme6000_defconfig |   1 -
+>  arch/m68k/configs/hp300_defconfig    |   1 -
+>  arch/m68k/configs/mac_defconfig      |   1 -
+>  arch/m68k/configs/multi_defconfig    |   1 -
+>  arch/m68k/configs/mvme147_defconfig  |   1 -
+>  arch/m68k/configs/mvme16x_defconfig  |   1 -
+>  arch/m68k/configs/q40_defconfig      |   1 -
+>  arch/m68k/configs/sun3_defconfig     |   1 -
+>  arch/m68k/configs/sun3x_defconfig    |   1 -
+
+Although this would be removed during the next refresh anyway:
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -444,28 +444,6 @@ config USE_PERCPU_NUMA_NODE_ID
+>  config HAVE_SETUP_PER_CPU_AREA
+>         bool
 >
-> commit 06af8679449d4ed282df13191fc52d5ba28ec536
-> Author: Eric W. Biederman <ebiederm@xmission.com>
-> Date:   Thu Jun 10 15:11:11 2021 -0500
->
->     coredump: Limit what can interrupt coredumps
->       Olivier Langlois has been struggling with coredumps being incompletely
-> written in
->     processes using io_uring.
->     ...
+> -config CLEANCACHE
+> -       bool "Enable cleancache driver to cache clean pages if tmem is present"
+> -       help
+> -         Cleancache can be thought of as a page-granularity victim cache
+> -         for clean pages that the kernel's pageframe replacement algorithm
+> -         (PFRA) would like to keep around, but can't since there isn't enough
+> -         memory.  So when the PFRA "evicts" a page, it first attempts to use
+> -         cleancache code to put the data contained in that page into
+> -         "transcendent memory", memory that is not directly accessible or
+> -         addressable by the kernel and is of unknown and possibly
+> -         time-varying size.  And when a cleancache-enabled
+> -         filesystem wishes to access a page in a file on disk, it first
+> -         checks cleancache to see if it already contains it; if it does,
+> -         the page is copied into the kernel and a disk access is avoided.
+> -         When a transcendent memory driver is available (such as zcache or
+> -         Xen transcendent memory), a significant I/O reduction
+> -         may be achieved.  When none is available, all cleancache calls
+> -         are reduced to a single pointer-compare-against-NULL resulting
+> -         in a negligible performance hit.
+> -
+> -         If unsure, say Y to enable cleancache
 
-I thought it had been too.
+Ah, the joy of good advice...
 
->> https://lore.kernel.org/lkml/1625bc89782bf83d9d8c7c63e8ffcb651ccb15fa.1629655338.git.olivier@trillion01.com/
->>
->> I have been using it since then I must have generated many dozens of
->> perfect core dump files with it and I have not seen a single truncated
->> core dump files like I used to have prior to the patch.
->>
->> I am bringing back my patch to your attention because one nice side
->> effect of it is that it would have avoided totally the problem that you
->> have encountered in coredump_wait() since it does cancel io_uring
->> resources before calling coredump_wait()!
->
-> FWIW, I worked it around in io_uring back then by breaking the
-> dependency.
+> -
+>  config FRONTSWAP
+>         bool "Enable frontswap to cache swap pages if tmem is present"
+>         depends on SWAP
 
-I am in the middle of untangling the dependencies between ptrace,
-coredump, signal handling and maybe a few related things.
+Gr{oetje,eeting}s,
 
-Do folks have a reproducer I can look at?  Pavel especially if you have
-something that reproduces on the current kernels.
+                        Geert
 
-As part of that I am in the process of guaranteeing all of the coredump
-work happens in get_signal so nothing of io_uring or any cleanup
-anywhere else runs until the coredump completes.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I haven't quite posted the code for review because it's the holidays.
-But I am aiming at v5.17 or possibly v5.18, as the code is just about
-ready.
-
-Eric
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
