@@ -2,86 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF00247F9EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 04:15:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79BF047FA1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 05:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbhL0DOz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Dec 2021 22:14:55 -0500
-Received: from fanzine2.igalia.com ([213.97.179.56]:49020 "EHLO
-        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbhL0DOz (ORCPT
+        id S235205AbhL0EjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Dec 2021 23:39:23 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:53023 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232532AbhL0EjW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Dec 2021 22:14:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
-        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=j9oVpDXMLf5UTVTj+LUGAgLKZZxdeOo7rBjpxsDl9Qw=; b=ITVtqcKgqplAhsuCYkF9p+QvDZ
-        LvwW3Y9oKo/apL5zTXRynWUs+UniJum2buHMJa8qkLJT5pudXnVGoUcMqFqaIe1bzPu+hh1Bo+FAz
-        S9FNc3yDoXPjRLxTWqimqqoVg6EoQSUyYZvNQ/0wFoJWHULSSwDyrRYpx31QVEHPtFZW7sSJSicfa
-        NEgMRNy6jg+4Dw0eO9jbmEl5zFASUDAxbAJgO6K2AyNwTiuaM/UZtfMOep2hE0oY9eKkuKdMpzg6y
-        0Sd7G0lB6NWig7A6Eer8EakRiMHBll/utLbDkAcndl9ljzFBZsUKasrOf5A/jAk1/DWZJu1cpZCHD
-        bunD6lEw==;
-Received: from [187.39.124.208] (helo=[192.168.0.109])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1n1gSq-000A6b-9L; Mon, 27 Dec 2021 04:14:20 +0100
-Subject: Re: [PATCH 3/3] panic: Allow printing extra panic information on
- kdump
-To:     Dave Young <dyoung@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, feng.tang@intel.com,
-        siglesias@igalia.com, kernel@gpiccoli.net,
-        kexec@lists.infradead.org
-References: <20211109202848.610874-1-gpiccoli@igalia.com>
- <20211109202848.610874-4-gpiccoli@igalia.com>
- <YcMPzs6t8MKpEacq@dhcp-128-65.nay.redhat.com>
- <2d24ea70-e315-beb5-0028-683880c438be@igalia.com>
- <YcUj0EJvQt77OVs2@dhcp-128-65.nay.redhat.com>
- <5b817a4f-0bba-7d79-8aab-33c58e922293@igalia.com>
- <Yckaz79zg5HdEgcH@dhcp-128-65.nay.redhat.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Message-ID: <f4ca2296-f1fe-8836-9040-6025062f0a8b@igalia.com>
-Date:   Mon, 27 Dec 2021 00:14:05 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Sun, 26 Dec 2021 23:39:22 -0500
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1BR4d5kI029959
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 26 Dec 2021 23:39:06 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 64FC215C33A3; Sun, 26 Dec 2021 23:39:05 -0500 (EST)
+Date:   Sun, 26 Dec 2021 23:39:05 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, hch@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] fs: super: possible ABBA deadlocks in
+ do_thaw_all_callback() and freeze_bdev()
+Message-ID: <YclDafAwrN0TkhCi@mit.edu>
+References: <e3de0d83-1170-05c8-672c-4428e781b988@gmail.com>
+ <YckgOocIWOrOoRvf@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <Yckaz79zg5HdEgcH@dhcp-128-65.nay.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YckgOocIWOrOoRvf@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26/12/2021 22:45, Dave Young wrote:
-> On 12/25/21 at 04:21pm, Guilherme G. Piccoli wrote:
-> [...] 
-> Hi Guilherme, yes, I have the same concern.  But there could be more
-> things like the panic_print in the future, it looks odd to have more
-> kernel cmdline params though.
+On Mon, Dec 27, 2021 at 02:08:58AM +0000, Matthew Wilcox wrote:
+> On Mon, Dec 27, 2021 at 10:03:35AM +0800, Jia-Ju Bai wrote:
+> > My static analysis tool reports several possible ABBA deadlocks in Linux
+> > 5.10:
+> > 
+> > do_thaw_all_callback()
+> >   down_write(&sb->s_umount); --> Line 1028 (Lock A)
+> >   emergency_thaw_bdev()
+> >     thaw_bdev()
+> >       mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 602 (Lock B)
+> > 
+> > freeze_bdev()
+> >   mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 556 (Lock B)
+> >   freeze_super()
+> >     down_write(&sb->s_umount); --> Line 1716 (Lock A)
+> >     down_write(&sb->s_umount); --> Line 1738 (Lock A)
+> >   deactivate_super()
+> >     down_write(&s->s_umount); --> Line 365 (Lock A)
+> > 
+> > When do_thaw_all_callback() and freeze_bdev() are concurrently executed, the
+> > deadlocks can occur.
+> > 
+> > I am not quite sure whether these possible deadlocks are real and how to fix
+> > them if them are real.
+> > Any feedback would be appreciated, thanks :)
 > 
+> As a rule, ABBA deadlocks that can actually occur are already found by
+> lockdep.    Tools that think they've found something are generally wrong.
+> I'm not inclined to look in detail to find out why this tool is wrong
+> because lockdep is so effective.
 
-Agreed! We're on the same page here, definitely.
+Well, to be fair, lockdep will only find problems if both code paths
+are actually executed during a boot session where lockdep is active.
 
+In this particular case, "do_thaw_all_callback()" is called only from
+emergency_thaw_all(), which is executed via a magic-sysrq.  (Sysrq-j).
+In practice, this sysrq is almost never used except to work around
+userspace bugs where a particular block device is frozen via the
+FIFREEZE ioctl, and never thawed via the FITHAW ioctl.
 
-> [...] 
-> It is definitely a good idea, I'm more than glad to see this if you
-> would like to work on this! 
-> 
+So unless we had, say, an xfstest which tried to simulate triggering
+sysrq-j (e.g., via "echo j > /proc/sysrq-trigger"), lockdep would
+never find it.  Of course, how likely is it that a user would try to
+trigger sysrq-j, because the user was trying to debug a buggy program
+that froze a block device and then, say, crashed before it had a
+chance to thaw it?  It's probably pretty darned unlikely.
 
-Awesome! I'll try to give it a shot this week, let's see how complex
-that'd be.
+So as to whether or not it's real, I'm sure we could probably trigger
+the deadlock using an artificial workload if you had one process
+constantly calling FIFREEZE and FITHAW on a block device, and other
+process constantly triggering "echo j > /proc/sysrq-trigger".  So it
+*technically* could happen.  Is it *likely* to happen under any kind
+of normal workload?  Not hardly....
 
-Thanks again for the great feedback!
+This makes it fall in the category of, "patch to fix something that
+never happens in real life, and would require root privs to trigger,
+and root can screw over the system in enough other ways anyway so it's
+kind of pointless", versus "let's try to shut up the static checker so
+we can find real bugs".
+
+And there I'd agree with Willy; I run xfstests with lockdep enabled,
+and given that the code coverage of xfstests is pretty good, I'm
+confident that any ABBA deadlocks that are *likely* to happen in real
+life tend to be found quickly, and fixed.
+
+If someone wanted to rewrite the emergency_thaw codepath to fix the
+locking order, in my opinion it's *technically* a bug fix.  But it's
+the sort of thing which gets categorized as a P2 bug, and after a
+year, gets dropped down to P3, and a year after that, dropped down to
+P4 and ignored, since for most engineering organizations, resources
+are finite, and while this is a real bug, for most companies it's not
+worth fixing.
+
 Cheers,
 
-
-Guilherme
-
-
+					- Ted
 
