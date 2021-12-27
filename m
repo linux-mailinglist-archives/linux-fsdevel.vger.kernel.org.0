@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3279480522
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 23:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C2A480524
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 23:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233846AbhL0Whe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Dec 2021 17:37:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27747 "EHLO
+        id S233870AbhL0WiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Dec 2021 17:38:08 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:26811 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233819AbhL0Whe (ORCPT
+        by vger.kernel.org with ESMTP id S231834AbhL0WiI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Dec 2021 17:37:34 -0500
+        Mon, 27 Dec 2021 17:38:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1640644653;
+        s=mimecast20190719; t=1640644687;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=oRQiwqjB0NQi4Sdbyi3eqHG7nJYYCHzMQstJ4Dw6XnM=;
-        b=K2OdjMnKAkHABzMJac2IDR3CJXOHB02spONVAqvmFt/+JMB8kaaewpEK//0o4s+DF+/kXM
-        PfzKbWSmrMXQIwtJfGGKyfW2tpJZJDdOCiVkTgvsXQadPNuO9A5e0YlpycZ2neXnel1KOb
-        RqJWJhGJyjvOvcVz56Y/NSAApaiAp6M=
+        bh=5Uf/VTxgXWXe/MU6bZ79vAxvKJyPz0bXiu+f31mk1cc=;
+        b=X08n57P1ou7h6Rc4wEsKYh2R6xxljjnq+UbRLDXh5ylc4rioZojb20R6MSdkqKlvyaJyjc
+        /g4Lj8JGdbzA+2Qp0l6fPucScYmWBrtoCzTaRQrjoyOaVAMhfDrz4pFuobywuNA70Cxq2l
+        JPPJk5cOumqcBUlfllvsYKxI0OiJ3rA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-150-YAFzHXULPnKfsmnBuVDelg-1; Mon, 27 Dec 2021 17:37:30 -0500
-X-MC-Unique: YAFzHXULPnKfsmnBuVDelg-1
+ us-mta-17-0kjuCe4ENGeeTDfRukP9Yw-1; Mon, 27 Dec 2021 17:38:04 -0500
+X-MC-Unique: 0kjuCe4ENGeeTDfRukP9Yw-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 27031102CB3D;
-        Mon, 27 Dec 2021 22:37:28 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E96B081CCB4;
+        Mon, 27 Dec 2021 22:38:01 +0000 (UTC)
 Received: from wcosta.com (ovpn-116-95.gru2.redhat.com [10.97.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A5B178D8F;
-        Mon, 27 Dec 2021 22:36:55 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 153BB78D8F;
+        Mon, 27 Dec 2021 22:37:29 +0000 (UTC)
 From:   Wander Lairson Costa <wander@redhat.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Ingo Molnar <mingo@redhat.com>,
@@ -45,21 +45,22 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Steven Rostedt <rostedt@goodmis.org>,
         Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
+        YunQiang Su <ysu@wavecomp.com>,
         Laurent Vivier <laurent@vivier.eu>,
         Wander Lairson Costa <wander@redhat.com>,
-        YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>,
+        Helge Deller <deller@gmx.de>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Alexey Gladkov <legion@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
         Rafael Aquini <aquini@redhat.com>,
         Phil Auld <pauld@redhat.com>, Rolf Eike Beer <eb@emlix.com>,
         Muchun Song <songmuchun@bytedance.com>,
         linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
         infrastructure)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RFC 3/4] coredump: mitigate privilege escalation of process coredump
-Date:   Mon, 27 Dec 2021 19:34:34 -0300
-Message-Id: <20211227223436.317091-4-wander@redhat.com>
+Subject: [PATCH RFC 4/4] exec: only set the suid flag if the current proc isn't root
+Date:   Mon, 27 Dec 2021 19:34:35 -0300
+Message-Id: <20211227223436.317091-5-wander@redhat.com>
 In-Reply-To: <20211227223436.317091-1-wander@redhat.com>
 References: <20211227223436.317091-1-wander@redhat.com>
 MIME-Version: 1.0
@@ -69,55 +70,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A set-uid executable might be a vector to a privilege escalation if the
-system configures the coredump file name pattern as a relative
-directory destiny. The full description of the vulnerability and
-a demonstration of how we can exploit it can be found at [1].
+The goal of PF_SUID flag is to check if it is safe to coredump the
+process. If the current process is already privileged, there is no
+point in performing security checks because the name image is a
+set-uid process.
 
-We now check if the core dump pattern is relative. If it is, then we
-verify if root owns the current directory and if it does, we deny
-writing the core file unless the directory is universally writable.
-
-[1] https://www.openwall.com/lists/oss-security/2021/10/20/2
+Because of that, we don't set the suid flag if the forked process
+already runs as root.
 
 Signed-off-by: Wander Lairson Costa <wander@redhat.com>
 ---
- fs/coredump.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ fs/exec.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 07afb5ddb1c4..74eae7bd144d 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -580,6 +580,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	struct core_name cn;
- 	struct mm_struct *mm = current->mm;
- 	struct linux_binfmt * binfmt;
-+	struct inode *pwd_inode;
- 	const struct cred *old_cred;
- 	struct cred *cred;
- 	int retval = 0;
-@@ -625,6 +626,20 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		need_suid_safe = true;
- 	}
+diff --git a/fs/exec.c b/fs/exec.c
+index b4bd157a5282..d73b21b6298c 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1312,7 +1312,11 @@ int begin_new_exec(struct linux_binprm * bprm)
+ 	me->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
+ 					PF_NOFREEZE | PF_NO_SETAFFINITY);
  
+-	if (bprm->suid_bin)
 +	/*
-+	 * If we are a set-uid/gid root process and the current directory is
-+	 * owned by root but not universally writable, prohibit dumps under
-+	 * this path.
-+	 *
-+	 * Mitigate https://www.openwall.com/lists/oss-security/2021/10/20/2
++	 * We set the PF_SUID flags for security reasons. There is no
++	 * point in setting it if the parent is root.
 +	 */
-+	pwd_inode = current->fs->pwd.dentry->d_inode;
-+	if (current->flags & PF_SUID &&
-+	    capable(CAP_SYS_ADMIN) &&
-+	    uid_eq(pwd_inode->i_uid, GLOBAL_ROOT_UID) &&
-+	    !(pwd_inode->i_mode & 0002))
-+		need_suid_safe = true;
-+
- 	retval = coredump_wait(siginfo->si_signo, &core_state);
- 	if (retval < 0)
- 		goto fail_creds;
++	if (bprm->suid_bin && !capable(CAP_SYS_ADMIN))
+ 		me->flags |= PF_SUID;
+ 
+ 	flush_thread();
 -- 
 2.27.0
 
