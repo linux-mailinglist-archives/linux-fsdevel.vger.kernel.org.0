@@ -2,99 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DB6147F9B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 03:03:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E444947F9B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 03:09:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234467AbhL0CDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Dec 2021 21:03:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56288 "EHLO
+        id S234965AbhL0CJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Dec 2021 21:09:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhL0CDj (ORCPT
+        with ESMTP id S229637AbhL0CJF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Dec 2021 21:03:39 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C411C06173E;
-        Sun, 26 Dec 2021 18:03:39 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id mj19so12291663pjb.3;
-        Sun, 26 Dec 2021 18:03:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=CX8RPFqWxmhuiVbKNQ4FRnbHGl327frRd5MQyfbYU5o=;
-        b=SkVSEBC+WnWQHfBwRMVBlgMGQHQ3PnLzPy1yC/PTMRU7Xh+jbaHq5XsadJwSUWh/5G
-         j883urY7a00EbAyfKOhvGGkwNTcxzB+einvMknl78hpSShRlSrDd+/AlqBP/AE3YEpEJ
-         OQe2YsqWGC9U9+R80qfX/i1en4WDHWS6o9oZvHDe5lgCipOAR8nw3n/eUDUH6lmH2reH
-         fMbXLObfyfMs8aDm3l50DyXhTayqUE2moS4Yr1EdCau3Rk9862oDumoToycKpWQwT53A
-         Jg4fEQcDISNjoHvol0BkihC01usi8mVsvnCzdL7i6FRmrrPfmrB8rrZOIvUW4Z8q0zkR
-         FAeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=CX8RPFqWxmhuiVbKNQ4FRnbHGl327frRd5MQyfbYU5o=;
-        b=yO6NyR+oCx2CGPORNNV9WXg+v1m89rcNRemV6RP0A9fGybCJNIm+hIS6Aict7hsWHf
-         bZXw/kFcuR1cdoUcP8KJgQvo0FEZTLRo53yLieTsuk3c7l7ii5f2aN1G3a3vfOJIkRVP
-         7UzLoWArZfb0dydIDt7epJh556Sm7TNNUOaPCd9pscNKuFzPhr0XhyRL2aW4R9Iwrc4W
-         pLgkUcY8X9lVwFOz1xBF2pYUir3t4829iFL7Tp8nTrTojW3zcYN94bP+6wQyslNpjqPM
-         xbFoEDa2C9pYDLIaKOHIOFnRTOP6yuRJ6/Tws7xq2qj2moS3URpyGGyCn1J0Jjog7QNt
-         teSQ==
-X-Gm-Message-State: AOAM532Tb/rZaxwAYlwZ/JZQUbyxn4fDidHCDSvO37E3PKRtLlKA1Q1w
-        K9IdSP7awgSo9SzkHjLKcBdyJ/wY3Bg=
-X-Google-Smtp-Source: ABdhPJx9dp/ISjZkX0GFCT7ZHg5zUj2X6FUNNQAIL8tHfuC/vnpQIWWCd5moAcra8W/SfkGluOQyxw==
-X-Received: by 2002:a17:90b:38c6:: with SMTP id nn6mr19144122pjb.26.1640570618594;
-        Sun, 26 Dec 2021 18:03:38 -0800 (PST)
-Received: from [192.168.1.100] ([166.111.139.127])
-        by smtp.gmail.com with ESMTPSA id oo6sm16806044pjb.7.2021.12.26.18.03.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Dec 2021 18:03:38 -0800 (PST)
-To:     viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>,
-        hch@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Sun, 26 Dec 2021 21:09:05 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51598C06173E;
+        Sun, 26 Dec 2021 18:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=t6MHcFRQOEAfAbf+pBhcCNXckGDe+GUmSYQySEIVgis=; b=FleukhVUyFoQqc0DFr9Mofp9Bw
+        BAGQvyPVmANzpJ09/f7kPV+IgBFWC/S+iRRIXcwcmO93IL9q6d4m9K7IFKIKmnP2auG7vmsUS4ZFs
+        tCP7Hmsat6c+XiRPf8zPvkfeVQdDglfL+1XeX4nDqiRM2xrhs0Ow5jwQUKmE9GE33DZymihlf5EO2
+        QaVfTaw5bKW5VpuHEx7Ahxd41/rZWyjj1vgvRthdbQpcXo1vkcIOF/UcHB4us4FFIiCS3n9WW+qJm
+        iCVtdYTVNd6fGZCm51kcgpdde6081ZireGvim/HRfR3UfsHR9bsXw0ssRSUNp42gx9xXwOjq3CAXp
+        AG8HfzJw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n1fRa-0074rg-3W; Mon, 27 Dec 2021 02:08:58 +0000
+Date:   Mon, 27 Dec 2021 02:08:58 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>,
+        hch@infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] fs: super: possible ABBA deadlocks in do_thaw_all_callback()
- and freeze_bdev()
-Message-ID: <e3de0d83-1170-05c8-672c-4428e781b988@gmail.com>
-Date:   Mon, 27 Dec 2021 10:03:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+Subject: Re: [BUG] fs: super: possible ABBA deadlocks in
+ do_thaw_all_callback() and freeze_bdev()
+Message-ID: <YckgOocIWOrOoRvf@casper.infradead.org>
+References: <e3de0d83-1170-05c8-672c-4428e781b988@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <e3de0d83-1170-05c8-672c-4428e781b988@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Dec 27, 2021 at 10:03:35AM +0800, Jia-Ju Bai wrote:
+> My static analysis tool reports several possible ABBA deadlocks in Linux
+> 5.10:
+> 
+> do_thaw_all_callback()
+>   down_write(&sb->s_umount); --> Line 1028 (Lock A)
+>   emergency_thaw_bdev()
+>     thaw_bdev()
+>       mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 602 (Lock B)
+> 
+> freeze_bdev()
+>   mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 556 (Lock B)
+>   freeze_super()
+>     down_write(&sb->s_umount); --> Line 1716 (Lock A)
+>     down_write(&sb->s_umount); --> Line 1738 (Lock A)
+>   deactivate_super()
+>     down_write(&s->s_umount); --> Line 365 (Lock A)
+> 
+> When do_thaw_all_callback() and freeze_bdev() are concurrently executed, the
+> deadlocks can occur.
+> 
+> I am not quite sure whether these possible deadlocks are real and how to fix
+> them if them are real.
+> Any feedback would be appreciated, thanks :)
 
-My static analysis tool reports several possible ABBA deadlocks in Linux 
-5.10:
-
-do_thaw_all_callback()
- Â  down_write(&sb->s_umount); --> Line 1028 (Lock A)
- Â  emergency_thaw_bdev()
- Â Â Â  thaw_bdev()
- Â Â Â Â Â  mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 602 (Lock B)
-
-freeze_bdev()
- Â  mutex_lock(&bdev->bd_fsfreeze_mutex); --> Line 556 (Lock B)
- Â  freeze_super()
- Â Â Â  down_write(&sb->s_umount); --> Line 1716 (Lock A)
- Â Â Â  down_write(&sb->s_umount); --> Line 1738 (Lock A)
- Â  deactivate_super()
- Â Â Â  down_write(&s->s_umount); --> Line 365 (Lock A)
-
-When do_thaw_all_callback() and freeze_bdev() are concurrently executed, 
-the deadlocks can occur.
-
-I am not quite sure whether these possible deadlocks are real and how to 
-fix them if them are real.
-Any feedback would be appreciated, thanks :)
-
-Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
-
-
-Best wishes,
-Jia-Ju Bai
+As a rule, ABBA deadlocks that can actually occur are already found by
+lockdep.    Tools that think they've found something are generally wrong.
+I'm not inclined to look in detail to find out why this tool is wrong
+because lockdep is so effective.
