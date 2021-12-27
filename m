@@ -2,104 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6C2A480524
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 23:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5976348053F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Dec 2021 00:50:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233870AbhL0WiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Dec 2021 17:38:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:26811 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231834AbhL0WiI (ORCPT
+        id S234010AbhL0Xus (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Dec 2021 18:50:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34258 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233993AbhL0Xus (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Dec 2021 17:38:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1640644687;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Uf/VTxgXWXe/MU6bZ79vAxvKJyPz0bXiu+f31mk1cc=;
-        b=X08n57P1ou7h6Rc4wEsKYh2R6xxljjnq+UbRLDXh5ylc4rioZojb20R6MSdkqKlvyaJyjc
-        /g4Lj8JGdbzA+2Qp0l6fPucScYmWBrtoCzTaRQrjoyOaVAMhfDrz4pFuobywuNA70Cxq2l
-        JPPJk5cOumqcBUlfllvsYKxI0OiJ3rA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-17-0kjuCe4ENGeeTDfRukP9Yw-1; Mon, 27 Dec 2021 17:38:04 -0500
-X-MC-Unique: 0kjuCe4ENGeeTDfRukP9Yw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E96B081CCB4;
-        Mon, 27 Dec 2021 22:38:01 +0000 (UTC)
-Received: from wcosta.com (ovpn-116-95.gru2.redhat.com [10.97.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 153BB78D8F;
-        Mon, 27 Dec 2021 22:37:29 +0000 (UTC)
-From:   Wander Lairson Costa <wander@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        YunQiang Su <ysu@wavecomp.com>,
-        Laurent Vivier <laurent@vivier.eu>,
-        Wander Lairson Costa <wander@redhat.com>,
-        Helge Deller <deller@gmx.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexey Gladkov <legion@kernel.org>,
+        Mon, 27 Dec 2021 18:50:48 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4ECCC06173E;
+        Mon, 27 Dec 2021 15:50:47 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id g2so14555604pgo.9;
+        Mon, 27 Dec 2021 15:50:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jMDYAAEzWKf+ZWKv9FVeegcQUYl4xuyCtWob58cAQWw=;
+        b=Mn7hUoT2uvnAFbeYWRxfKqSyou/4u6IWp5Ab9qGalAnlr7CngmbOyRZZC+s5asEIUW
+         D9pKUg8BUKSlcrGHpuRE0eVQ4R7/edscU9ohcmHdtsmKqr+Boz5j3tg6LOO5/I88JJv4
+         TZK7o2ygufhlP3LYfuzuoWG7p9becxKvBXHa41Cizd2XQ8ivuEkcaWMZ99iHFwZnjN1i
+         KeMwOIR2V0jav1n+UfooUNeR5uBznQwTmB2E267YriDa4fRhYLSFBc3Uf4oK+pSoJTaC
+         K1JaaZzvNioZAMKg1NKVaFFaQ2xG0686bGDyixKpHfpRm1UO6iFaJuVD9qoCX9mzH8P7
+         OoSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jMDYAAEzWKf+ZWKv9FVeegcQUYl4xuyCtWob58cAQWw=;
+        b=ipoPxSmj4yk7e5sCGclQPtw21XY/kUbGuvicZHjDtKAiFkaIWKTbfHRzSip1uH7Wmn
+         YnPmmAdIQg5k6ZAP2qz7F0+yUaU08NzwiOZz6X6RIC7Ke0TsGFEjVoYP93tOuTMApnmM
+         MRr07zYVuWPfck5V1kHJlTmS6u1sifycPfRUbJLJhh0KUKvqheOHya7I9MKYKo2AEazv
+         lD6/kwFw5Fsv0fbPTYp16pjrbZZttltdLVPT8H+uvJZKCFJdDvz5HOm3soxuNSOWUGkR
+         ZI2lgJc1fPYlG8bI6LmPyrqeV7gP8YkbO4NOk+8ZkG+RuIjTiGxYt9deA8KWmsnZv/lw
+         Ljvw==
+X-Gm-Message-State: AOAM533nUHlu+h0BRza8iDp1m8CLLOLSAo90qg/5bprG8+eSvW46luQL
+        Q/5VNwcpCyu4slvh/ZPke7o=
+X-Google-Smtp-Source: ABdhPJyliKjaqPaj3bkR5OEDX+2h8UmXBD78mFpsM4oAqOKbEenA5uObRsI4rm3mReETZDeq4yKueA==
+X-Received: by 2002:a62:158f:0:b0:4ba:b456:24b9 with SMTP id 137-20020a62158f000000b004bab45624b9mr19854677pfv.86.1640649047357;
+        Mon, 27 Dec 2021 15:50:47 -0800 (PST)
+Received: from localhost (176.222.229.35.bc.googleusercontent.com. [35.229.222.176])
+        by smtp.gmail.com with ESMTPSA id 10sm18533824pfm.56.2021.12.27.15.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Dec 2021 15:50:46 -0800 (PST)
+Date:   Tue, 28 Dec 2021 07:50:42 +0800
+From:   Yao Yuan <yaoyuan0329os@gmail.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Rafael Aquini <aquini@redhat.com>,
-        Phil Auld <pauld@redhat.com>, Rolf Eike Beer <eb@emlix.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
-        infrastructure)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RFC 4/4] exec: only set the suid flag if the current proc isn't root
-Date:   Mon, 27 Dec 2021 19:34:35 -0300
-Message-Id: <20211227223436.317091-5-wander@redhat.com>
-In-Reply-To: <20211227223436.317091-1-wander@redhat.com>
-References: <20211227223436.317091-1-wander@redhat.com>
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [PATCH v3 kvm/queue 05/16] KVM: Maintain ofs_tree for fast
+ memslot lookup by file offset
+Message-ID: <20211227235042.rmnwzcqy6ujj75zp@sapienza>
+References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
+ <20211223123011.41044-6-chao.p.peng@linux.intel.com>
+ <YcS5uStTallwRs0G@google.com>
+ <20211224035418.GA43608@chaop.bj.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211224035418.GA43608@chaop.bj.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The goal of PF_SUID flag is to check if it is safe to coredump the
-process. If the current process is already privileged, there is no
-point in performing security checks because the name image is a
-set-uid process.
+On Fri, Dec 24, 2021 at 11:54:18AM +0800, Chao Peng wrote:
+> On Thu, Dec 23, 2021 at 06:02:33PM +0000, Sean Christopherson wrote:
+> > On Thu, Dec 23, 2021, Chao Peng wrote:
+> > > Similar to hva_tree for hva range, maintain interval tree ofs_tree for
+> > > offset range of a fd-based memslot so the lookup by offset range can be
+> > > faster when memslot count is high.
+> >
+> > This won't work.  The hva_tree relies on there being exactly one virtual address
+> > space, whereas with private memory, userspace can map multiple files into the
+> > guest at different gfns, but with overlapping offsets.
+>
+> OK, that's the point.
+>
+> >
+> > I also dislike hijacking __kvm_handle_hva_range() in patch 07.
+> >
+> > KVM also needs to disallow mapping the same file+offset into multiple gfns, which
+> > I don't see anywhere in this series.
+>
+> This can be checked against file+offset overlapping with existing slots
+> when register a new one.
+>
+> >
+> > In other words, there needs to be a 1:1 gfn:file+offset mapping.  Since userspace
+> > likely wants to allocate a single file for guest private memory and map it into
+> > multiple discontiguous slots, e.g. to skip the PCI hole, the best idea off the top
+> > of my head would be to register the notifier on a per-slot basis, not a per-VM
+> > basis.  It would require a 'struct kvm *' in 'struct kvm_memory_slot', but that's
+> > not a huge deal.
+> >
+> > That way, KVM's notifier callback already knows the memslot and can compute overlap
+> > between the memslot and the range by reversing the math done by kvm_memfd_get_pfn().
+> > Then, armed with the gfn and slot, invalidation is just a matter of constructing
+> > a struct kvm_gfn_range and invoking kvm_unmap_gfn_range().
+>
+> KVM is easy but the kernel bits would be difficulty, it has to maintain
+> fd+offset to memslot mapping because one fd can have multiple memslots,
+> it need decide which memslot needs to be notified.
 
-Because of that, we don't set the suid flag if the forked process
-already runs as root.
+How about pass "context" of fd (e.g. the gfn/hva start point) when register
+the invalidation notifier to fd, then in callback kvm can convert the
+offset to absolute hva/gfn with such "context", then do memslot invalidation.
 
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
----
- fs/exec.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index b4bd157a5282..d73b21b6298c 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1312,7 +1312,11 @@ int begin_new_exec(struct linux_binprm * bprm)
- 	me->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
- 					PF_NOFREEZE | PF_NO_SETAFFINITY);
- 
--	if (bprm->suid_bin)
-+	/*
-+	 * We set the PF_SUID flags for security reasons. There is no
-+	 * point in setting it if the parent is root.
-+	 */
-+	if (bprm->suid_bin && !capable(CAP_SYS_ADMIN))
- 		me->flags |= PF_SUID;
- 
- 	flush_thread();
--- 
-2.27.0
-
+>
+> Thanks,
+> Chao
