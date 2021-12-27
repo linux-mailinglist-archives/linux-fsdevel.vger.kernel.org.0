@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64982480520
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 23:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3279480522
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Dec 2021 23:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233846AbhL0WhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Dec 2021 17:37:02 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:29572 "EHLO
+        id S233846AbhL0Whe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Dec 2021 17:37:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27747 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233844AbhL0WhB (ORCPT
+        by vger.kernel.org with ESMTP id S233819AbhL0Whe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Dec 2021 17:37:01 -0500
+        Mon, 27 Dec 2021 17:37:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1640644621;
+        s=mimecast20190719; t=1640644653;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=k4U1IPyVy0EekGo2lRPabdEHbBtnmJjEveSqzKeRMmQ=;
-        b=S6/+UOwMeHYBujb1wLT/28yVt+PrN9kasRYfgGAq/w/FTwZCU9TE476cPNmZPi4Z5Zu5ER
-        qf9t22sTc0vdSzu+vLP1CbMz06fJflUcAgjDSclwa4r+78vBloMe1eA7dO9C4iSvpWr4bz
-        k8Y7Ll+w3teJYJcLkBf69BYzdxY2234=
+        bh=oRQiwqjB0NQi4Sdbyi3eqHG7nJYYCHzMQstJ4Dw6XnM=;
+        b=K2OdjMnKAkHABzMJac2IDR3CJXOHB02spONVAqvmFt/+JMB8kaaewpEK//0o4s+DF+/kXM
+        PfzKbWSmrMXQIwtJfGGKyfW2tpJZJDdOCiVkTgvsXQadPNuO9A5e0YlpycZ2neXnel1KOb
+        RqJWJhGJyjvOvcVz56Y/NSAApaiAp6M=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-613-HygyfgOWM6-B9MfclocP6w-1; Mon, 27 Dec 2021 17:36:57 -0500
-X-MC-Unique: HygyfgOWM6-B9MfclocP6w-1
+ us-mta-150-YAFzHXULPnKfsmnBuVDelg-1; Mon, 27 Dec 2021 17:37:30 -0500
+X-MC-Unique: YAFzHXULPnKfsmnBuVDelg-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8BD4A14756;
-        Mon, 27 Dec 2021 22:36:54 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 27031102CB3D;
+        Mon, 27 Dec 2021 22:37:28 +0000 (UTC)
 Received: from wcosta.com (ovpn-116-95.gru2.redhat.com [10.97.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D125F78DD7;
-        Mon, 27 Dec 2021 22:36:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A5B178D8F;
+        Mon, 27 Dec 2021 22:36:55 +0000 (UTC)
 From:   Wander Lairson Costa <wander@redhat.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Ingo Molnar <mingo@redhat.com>,
@@ -46,21 +46,20 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Laurent Vivier <laurent@vivier.eu>,
-        YunQiang Su <ysu@wavecomp.com>,
         Wander Lairson Costa <wander@redhat.com>,
-        Helge Deller <deller@gmx.de>,
+        YunQiang Su <ysu@wavecomp.com>, Helge Deller <deller@gmx.de>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>,
         Rafael Aquini <aquini@redhat.com>,
         Phil Auld <pauld@redhat.com>, Rolf Eike Beer <eb@emlix.com>,
         Muchun Song <songmuchun@bytedance.com>,
         linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
         infrastructure)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RFC 2/4] process: add the PF_SUID flag
-Date:   Mon, 27 Dec 2021 19:34:33 -0300
-Message-Id: <20211227223436.317091-3-wander@redhat.com>
+Subject: [PATCH RFC 3/4] coredump: mitigate privilege escalation of process coredump
+Date:   Mon, 27 Dec 2021 19:34:34 -0300
+Message-Id: <20211227223436.317091-4-wander@redhat.com>
 In-Reply-To: <20211227223436.317091-1-wander@redhat.com>
 References: <20211227223436.317091-1-wander@redhat.com>
 MIME-Version: 1.0
@@ -70,60 +69,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If the binary file in an execve system call is a suid executable, we add
-the PF_SUID flag to the process and all its future new children and
-threads.
+A set-uid executable might be a vector to a privilege escalation if the
+system configures the coredump file name pattern as a relative
+directory destiny. The full description of the vulnerability and
+a demonstration of how we can exploit it can be found at [1].
 
-In a later commit, we will use this information to determine if it is
-safe to core dump such a process.
+We now check if the core dump pattern is relative. If it is, then we
+verify if root owns the current directory and if it does, we deny
+writing the core file unless the directory is universally writable.
+
+[1] https://www.openwall.com/lists/oss-security/2021/10/20/2
 
 Signed-off-by: Wander Lairson Costa <wander@redhat.com>
 ---
- fs/exec.c             | 4 ++++
- include/linux/sched.h | 1 +
- kernel/fork.c         | 2 ++
- 3 files changed, 7 insertions(+)
+ fs/coredump.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 3913b335b95f..b4bd157a5282 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1311,6 +1311,10 @@ int begin_new_exec(struct linux_binprm * bprm)
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 07afb5ddb1c4..74eae7bd144d 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -580,6 +580,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 	struct core_name cn;
+ 	struct mm_struct *mm = current->mm;
+ 	struct linux_binfmt * binfmt;
++	struct inode *pwd_inode;
+ 	const struct cred *old_cred;
+ 	struct cred *cred;
+ 	int retval = 0;
+@@ -625,6 +626,20 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		need_suid_safe = true;
+ 	}
  
- 	me->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
- 					PF_NOFREEZE | PF_NO_SETAFFINITY);
++	/*
++	 * If we are a set-uid/gid root process and the current directory is
++	 * owned by root but not universally writable, prohibit dumps under
++	 * this path.
++	 *
++	 * Mitigate https://www.openwall.com/lists/oss-security/2021/10/20/2
++	 */
++	pwd_inode = current->fs->pwd.dentry->d_inode;
++	if (current->flags & PF_SUID &&
++	    capable(CAP_SYS_ADMIN) &&
++	    uid_eq(pwd_inode->i_uid, GLOBAL_ROOT_UID) &&
++	    !(pwd_inode->i_mode & 0002))
++		need_suid_safe = true;
 +
-+	if (bprm->suid_bin)
-+		me->flags |= PF_SUID;
-+
- 	flush_thread();
- 	me->personality &= ~bprm->per_clear;
- 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index e3b328b81ac0..f7811c42b004 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1651,6 +1651,7 @@ extern struct pid *cad_pid;
- #define PF_VCPU			0x00000001	/* I'm a virtual CPU */
- #define PF_IDLE			0x00000002	/* I am an IDLE thread */
- #define PF_EXITING		0x00000004	/* Getting shut down */
-+#define PF_SUID			0x00000008	/* The process comes from a suid/sgid binary */
- #define PF_IO_WORKER		0x00000010	/* Task is an IO worker */
- #define PF_WQ_WORKER		0x00000020	/* I'm a workqueue worker */
- #define PF_FORKNOEXEC		0x00000040	/* Forked but didn't exec */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 231b1ba3ca9f..1e1ffff70d14 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2080,6 +2080,8 @@ static __latent_entropy struct task_struct *copy_process(
- 	delayacct_tsk_init(p);	/* Must remain after dup_task_struct() */
- 	p->flags &= ~(PF_SUPERPRIV | PF_WQ_WORKER | PF_IDLE | PF_NO_SETAFFINITY);
- 	p->flags |= PF_FORKNOEXEC;
-+	if (current->flags & PF_SUID)
-+		p->flags |= PF_SUID;
- 	INIT_LIST_HEAD(&p->children);
- 	INIT_LIST_HEAD(&p->sibling);
- 	rcu_copy_process(p);
+ 	retval = coredump_wait(siginfo->si_signo, &core_state);
+ 	if (retval < 0)
+ 		goto fail_creds;
 -- 
 2.27.0
 
