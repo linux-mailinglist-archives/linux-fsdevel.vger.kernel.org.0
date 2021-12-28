@@ -2,1059 +2,303 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A6B0480CC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Dec 2021 20:25:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E8A480D1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Dec 2021 22:01:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237150AbhL1TZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Dec 2021 14:25:35 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:45876 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236062AbhL1TZe (ORCPT
+        id S237272AbhL1VBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Dec 2021 16:01:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236170AbhL1VBH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Dec 2021 14:25:34 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D1A89B8125E;
-        Tue, 28 Dec 2021 19:25:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9CADC36AEC;
-        Tue, 28 Dec 2021 19:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640719530;
-        bh=OiUkchb5cjAHs/7wjwgee5V8uvmcMDpNzAiPy9t9pDs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OS6kekIbWoYJtLQ99sfUZtotdPiuG1fAxDRiQhUwCmrjG6NK5/ixB0D9tWkP0tsvX
-         hGFDNCsk+QqWWJx2dNgsa9NI4Zk8IFpCikH1NRO1mmzEGc5mqrBUM8iyLCDWRDcRwa
-         cMgqcyBDr8TadEv6ZYkbssKMEKlDgtq++au67/kWxvNT6/xR4XvXTmOxXnSCujPw4e
-         60CvMZVs+iI987teAxgIsijpd+TW/axRp+h909WvFaitxYF/vmCLjf452GN5dS5zDc
-         ODZhAN1yxLJiPIgn5uii3i8PQGU4z0BF1HOz0D8Dszx6vfh1f8vbO6QPoXASUxQEnK
-         vIL98jXdKJNKg==
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     ast@kernel.org, daniel@iogearbox.net
-Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, luiz.dentz@gmail.com, dledford@redhat.com,
-        jgg@ziepe.ca, mustafa.ismail@intel.com, shiraz.saleem@intel.com,
-        leon@kernel.org, ap420073@gmail.com, wg@grandegger.com,
-        mkl@pengutronix.de, woojung.huh@microchip.com,
-        UNGLinuxDriver@microchip.com, andrew@lunn.ch,
-        vivien.didelot@gmail.com, f.fainelli@gmail.com, olteanv@gmail.com,
-        george.mccollister@gmail.com, michael.chan@broadcom.com,
-        jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        hawk@kernel.org, john.fastabend@gmail.com, tariqt@nvidia.com,
-        saeedm@nvidia.com, ecree.xilinx@gmail.com,
-        habetsm.xilinx@gmail.com, jreuter@yaina.de, dsahern@kernel.org,
-        kvalo@codeaurora.org, pkshih@realtek.com,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        viro@zeniv.linux.org.uk, andrii@kernel.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, nikolay@nvidia.com,
-        jiri@nvidia.com, wintera@linux.ibm.com, wenjia@linux.ibm.com,
-        pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de,
-        ralf@linux-mips.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        kgraul@linux.ibm.com, sgarzare@redhat.com,
-        steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-        arnd@arndb.de, linux-bluetooth@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-can@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-hams@vger.kernel.org,
-        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        bridge@lists.linux-foundation.org,
-        linux-decnet-user@lists.sourceforge.net,
-        linux-s390@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, virtualization@lists.linux-foundation.org
-Subject: [PATCH bpf-next] net: don't include filter.h from net/sock.h
-Date:   Tue, 28 Dec 2021 11:25:19 -0800
-Message-Id: <20211228192519.386913-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.31.1
+        Tue, 28 Dec 2021 16:01:07 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F058FC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Dec 2021 13:01:06 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id f5so78375238edq.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Dec 2021 13:01:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jU4PjftdeYPyhuEQhv6UTPS8Qab10sSiPyrfaWEOmvM=;
+        b=Fg1TtB46wKOPq/WxTo/k4pidM1IoR/AtmDzu2XgHsP3EQtwV8oicBb8sNB8X8mdDqt
+         tmTKqOWeTXaKEHVBjc8n5M0+HdMU7/CalwZ9OSt/o71pnijqxfEWrWcJI0CIX0Yvbtfc
+         AvaHukSqUzlIBJpmT1AhJFJw29JZcRH7u878qgTXUhBA3o4+7E7WFG8y+HL+3hp+fJ2X
+         GrzVqDz0EUdUM8oEx3TeM4h0TRqhWs8f/0N6I1HW5YiG6RLDsIWhHCWskcZRVt49COli
+         EDDBegyHBvE8m6wDvAOREajt40AWbFrRD3R7uiOuYEhSmydkoBUblBwJYPmmcDDMO9QW
+         wXLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jU4PjftdeYPyhuEQhv6UTPS8Qab10sSiPyrfaWEOmvM=;
+        b=p9RMe390eFl6Q8cb1hwRPxJlD2ijefg6aHxPbYnQHsq9M9M4QR7baq2wmamafAOsBg
+         XDFQ1qiYVqBim3YK/g0VC5pfDOtZzP/N/euRMD5+RQJcmAkyyUhayUyBC33iDIeXDJks
+         syp5Dgi5x02IPhZy2+4tPmsJKlaSYQSUpBjeCSZkGE7ik0j688SLLqkSH1RR4hiYhEEp
+         zBckYNZTU657rO4ncXALYC8vaj7cQGGWWAv4FbNjS2eydPWSIEgGWIV2gU/T1T80/JE3
+         nFcYKco7ykfBe511G37p/mHGX9u+ZAUnsJ+RUOMfnjbSufxXwWDqmP6WTSqzJMNnSkSc
+         S9iw==
+X-Gm-Message-State: AOAM532SjBt1v3z/azl35U2jfg5J8H+l5+ufyFHTzyfQ37fXwgbnq2jd
+        yEjhkdayTha4Qm7TlrFyNXmzS5o8tpc9SJV+H5c=
+X-Google-Smtp-Source: ABdhPJw+Lioe45L5YjVqGGKKHiEARkz52a0QlHuCINLgAKRlanok+johSc5Vv1mudH8qIVZwpme6VHTeVnGMKGU1c5M=
+X-Received: by 2002:aa7:d2d1:: with SMTP id k17mr22513798edr.250.1640725265338;
+ Tue, 28 Dec 2021 13:01:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAFYqD2pe-sjPrHXGsNCHa2fcdECNm44UEZbEn4P5VgygFnrn7A@mail.gmail.com>
+ <YaJFoadpGAwPfdLv@casper.infradead.org>
+In-Reply-To: <YaJFoadpGAwPfdLv@casper.infradead.org>
+From:   August Wikerfors <august.wikerfors@gmail.com>
+Date:   Tue, 28 Dec 2021 22:00:53 +0100
+Message-ID: <CAP62yhUh2ULCaD4+RX6Lj_QZmJN+uh5L46xzb7NvrWU3vHeCfw@mail.gmail.com>
+Subject: Re: Bug using new ntfs3 file system driver (5.15.2 on Arch Linux)
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mohan R <mohan43u@gmail.com>, uwe.sauter.de@gmail.com,
+        almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, ntfs3@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-sock.h is pretty heavily used (5k objects rebuilt on x86 after
-it's touched). We can drop the include of filter.h from it and
-add a forward declaration of struct sk_filter instead.
-This decreases the number of rebuilt objects when bpf.h
-is touched from ~5k to ~1k.
+(resending from gmail due to bounce with outlook)
 
-There's a lot of missing includes this was masking. Primarily
-in networking tho, this time.
+Hi, I ran into a bug with a very similar call trace, also when copying files
+with rsync from a filesystem mounted using ntfs3. I was able to reproduce it
+on both the default Arch Linux kernel (5.15.11-arch2-1) and on mainline
+5.16-rc7.
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
----
-CC: marcel@holtmann.org
-CC: johan.hedberg@gmail.com
-CC: luiz.dentz@gmail.com
-CC: dledford@redhat.com
-CC: jgg@ziepe.ca
-CC: mustafa.ismail@intel.com
-CC: shiraz.saleem@intel.com
-CC: leon@kernel.org
-CC: ap420073@gmail.com
-CC: wg@grandegger.com
-CC: mkl@pengutronix.de
-CC: woojung.huh@microchip.com
-CC: UNGLinuxDriver@microchip.com
-CC: andrew@lunn.ch
-CC: vivien.didelot@gmail.com
-CC: f.fainelli@gmail.com
-CC: olteanv@gmail.com
-CC: george.mccollister@gmail.com
-CC: michael.chan@broadcom.com
-CC: jesse.brandeburg@intel.com
-CC: anthony.l.nguyen@intel.com
-CC: ast@kernel.org
-CC: daniel@iogearbox.net
-CC: hawk@kernel.org
-CC: john.fastabend@gmail.com
-CC: tariqt@nvidia.com
-CC: saeedm@nvidia.com
-CC: ecree.xilinx@gmail.com
-CC: habetsm.xilinx@gmail.com
-CC: jreuter@yaina.de
-CC: dsahern@kernel.org
-CC: kvalo@codeaurora.org
-CC: pkshih@realtek.com
-CC: trond.myklebust@hammerspace.com
-CC: anna.schumaker@netapp.com
-CC: viro@zeniv.linux.org.uk
-CC: andrii@kernel.org
-CC: mcgrof@kernel.org
-CC: keescook@chromium.org
-CC: yzaikin@google.com
-CC: nikolay@nvidia.com
-CC: jiri@nvidia.com
-CC: wintera@linux.ibm.com
-CC: wenjia@linux.ibm.com
-CC: pablo@netfilter.org
-CC: kadlec@netfilter.org
-CC: fw@strlen.de
-CC: ralf@linux-mips.org
-CC: jhs@mojatatu.com
-CC: xiyou.wangcong@gmail.com
-CC: kgraul@linux.ibm.com
-CC: sgarzare@redhat.com
-CC: steffen.klassert@secunet.com
-CC: herbert@gondor.apana.org.au
-CC: arnd@arndb.de
-CC: linux-bluetooth@vger.kernel.org
-CC: linux-rdma@vger.kernel.org
-CC: linux-can@vger.kernel.org
-CC: intel-wired-lan@lists.osuosl.org
-CC: bpf@vger.kernel.org
-CC: linux-hams@vger.kernel.org
-CC: ath11k@lists.infradead.org
-CC: linux-wireless@vger.kernel.org
-CC: linux-nfs@vger.kernel.org
-CC: linux-fsdevel@vger.kernel.org
-CC: bridge@lists.linux-foundation.org
-CC: linux-decnet-user@lists.sourceforge.net
-CC: linux-s390@vger.kernel.org
-CC: netfilter-devel@vger.kernel.org
-CC: coreteam@netfilter.org
-CC: virtualization@lists.linux-foundation.org
----
- drivers/bluetooth/btqca.c                         | 1 +
- drivers/infiniband/core/cache.c                   | 1 +
- drivers/infiniband/hw/irdma/ctrl.c                | 2 ++
- drivers/infiniband/hw/irdma/uda.c                 | 2 ++
- drivers/infiniband/hw/mlx5/doorbell.c             | 1 +
- drivers/infiniband/hw/mlx5/qp.c                   | 1 +
- drivers/net/amt.c                                 | 1 +
- drivers/net/appletalk/ipddp.c                     | 1 +
- drivers/net/can/usb/peak_usb/pcan_usb.c           | 1 +
- drivers/net/dsa/microchip/ksz8795.c               | 1 +
- drivers/net/dsa/xrs700x/xrs700x.c                 | 1 +
- drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c | 1 +
- drivers/net/ethernet/huawei/hinic/hinic_tx.c      | 1 +
- drivers/net/ethernet/intel/ice/ice_devlink.c      | 2 ++
- drivers/net/ethernet/intel/ice/ice_txrx_lib.c     | 2 ++
- drivers/net/ethernet/intel/igc/igc_xdp.c          | 1 +
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c    | 1 +
- drivers/net/ethernet/mellanox/mlx5/core/en/qos.c  | 1 +
- drivers/net/ethernet/sfc/efx.c                    | 1 +
- drivers/net/ethernet/sfc/efx_channels.c           | 1 +
- drivers/net/ethernet/sfc/efx_common.c             | 1 +
- drivers/net/hamradio/hdlcdrv.c                    | 1 +
- drivers/net/hamradio/scc.c                        | 1 +
- drivers/net/loopback.c                            | 1 +
- drivers/net/vrf.c                                 | 1 +
- drivers/net/wireless/ath/ath11k/debugfs.c         | 2 ++
- drivers/net/wireless/realtek/rtw89/debug.c        | 2 ++
- fs/nfs/dir.c                                      | 1 +
- fs/nfs/fs_context.c                               | 1 +
- fs/select.c                                       | 1 +
- include/linux/bpf_local_storage.h                 | 1 +
- include/linux/dsa/loop.h                          | 1 +
- include/net/ipv6.h                                | 2 ++
- include/net/route.h                               | 1 +
- include/net/sock.h                                | 2 +-
- include/net/xdp_sock.h                            | 1 +
- kernel/sysctl.c                                   | 1 +
- net/bluetooth/bnep/sock.c                         | 1 +
- net/bluetooth/eir.h                               | 2 ++
- net/bluetooth/hidp/sock.c                         | 1 +
- net/bluetooth/l2cap_sock.c                        | 1 +
- net/bridge/br_ioctl.c                             | 1 +
- net/caif/caif_socket.c                            | 1 +
- net/core/devlink.c                                | 1 +
- net/core/flow_dissector.c                         | 1 +
- net/core/lwt_bpf.c                                | 1 +
- net/core/sock_diag.c                              | 1 +
- net/core/sysctl_net_core.c                        | 1 +
- net/decnet/dn_nsp_in.c                            | 1 +
- net/dsa/dsa_priv.h                                | 1 +
- net/ethtool/ioctl.c                               | 1 +
- net/ipv4/nexthop.c                                | 1 +
- net/ipv6/seg6_local.c                             | 1 +
- net/iucv/af_iucv.c                                | 1 +
- net/kcm/kcmsock.c                                 | 1 +
- net/netfilter/nfnetlink_hook.c                    | 1 +
- net/netfilter/nft_reject_netdev.c                 | 1 +
- net/netlink/af_netlink.c                          | 2 ++
- net/packet/af_packet.c                            | 1 +
- net/rose/rose_in.c                                | 1 +
- net/sched/sch_frag.c                              | 1 +
- net/smc/smc_ib.c                                  | 2 ++
- net/smc/smc_ism.c                                 | 1 +
- net/unix/af_unix.c                                | 1 +
- net/vmw_vsock/af_vsock.c                          | 1 +
- net/xdp/xskmap.c                                  | 1 +
- net/xfrm/xfrm_state.c                             | 1 +
- net/xfrm/xfrm_user.c                              | 1 +
- 68 files changed, 78 insertions(+), 1 deletion(-)
+> This is where the real bug happened.  It would be helpful if you
+> could run
+> ./scripts/faddr2line /path/to/vmlinux page_cache_ra_unbounded+0x1c5/0x250
+>
+> It'll spit out something like:
+> page_cache_ra_unbounded at mm/readahead.c:241
+>
+> but probably a different line number from that.
+I had to rebuild the vmlinux of my kernels in order for this to work but the
+output for the page_cache_ra_unbounded line is below the dmesg outputs.
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index be04d74037d2..f7bf311d7910 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -6,6 +6,7 @@
-  */
- #include <linux/module.h>
- #include <linux/firmware.h>
-+#include <linux/vmalloc.h>
- 
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
-diff --git a/drivers/infiniband/core/cache.c b/drivers/infiniband/core/cache.c
-index 0c98dd3dee67..b79f816a7203 100644
---- a/drivers/infiniband/core/cache.c
-+++ b/drivers/infiniband/core/cache.c
-@@ -33,6 +33,7 @@
-  * SOFTWARE.
-  */
- 
-+#include <linux/if_vlan.h>
- #include <linux/module.h>
- #include <linux/errno.h>
- #include <linux/slab.h>
-diff --git a/drivers/infiniband/hw/irdma/ctrl.c b/drivers/infiniband/hw/irdma/ctrl.c
-index 7264f8c2f7d5..3141a9c85de5 100644
---- a/drivers/infiniband/hw/irdma/ctrl.c
-+++ b/drivers/infiniband/hw/irdma/ctrl.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0 or Linux-OpenIB
- /* Copyright (c) 2015 - 2021 Intel Corporation */
-+#include <linux/etherdevice.h>
-+
- #include "osdep.h"
- #include "status.h"
- #include "hmc.h"
-diff --git a/drivers/infiniband/hw/irdma/uda.c b/drivers/infiniband/hw/irdma/uda.c
-index f5b1b6150cdc..7a9988ddbd01 100644
---- a/drivers/infiniband/hw/irdma/uda.c
-+++ b/drivers/infiniband/hw/irdma/uda.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0 or Linux-OpenIB
- /* Copyright (c) 2016 - 2021 Intel Corporation */
-+#include <linux/etherdevice.h>
-+
- #include "osdep.h"
- #include "status.h"
- #include "hmc.h"
-diff --git a/drivers/infiniband/hw/mlx5/doorbell.c b/drivers/infiniband/hw/mlx5/doorbell.c
-index 6398e2f48579..e32111117a5e 100644
---- a/drivers/infiniband/hw/mlx5/doorbell.c
-+++ b/drivers/infiniband/hw/mlx5/doorbell.c
-@@ -32,6 +32,7 @@
- 
- #include <linux/kref.h>
- #include <linux/slab.h>
-+#include <linux/sched/mm.h>
- #include <rdma/ib_umem.h>
- 
- #include "mlx5_ib.h"
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index e5abbcfc1d57..29475cf8c7c3 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -30,6 +30,7 @@
-  * SOFTWARE.
-  */
- 
-+#include <linux/etherdevice.h>
- #include <linux/module.h>
- #include <rdma/ib_umem.h>
- #include <rdma/ib_cache.h>
-diff --git a/drivers/net/amt.c b/drivers/net/amt.c
-index b732ee9a50ef..a1c7a8acd9c8 100644
---- a/drivers/net/amt.c
-+++ b/drivers/net/amt.c
-@@ -11,6 +11,7 @@
- #include <linux/net.h>
- #include <linux/igmp.h>
- #include <linux/workqueue.h>
-+#include <net/sch_generic.h>
- #include <net/net_namespace.h>
- #include <net/ip.h>
- #include <net/udp.h>
-diff --git a/drivers/net/appletalk/ipddp.c b/drivers/net/appletalk/ipddp.c
-index 5566daefbff4..d558535390f9 100644
---- a/drivers/net/appletalk/ipddp.c
-+++ b/drivers/net/appletalk/ipddp.c
-@@ -23,6 +23,7 @@
-  *      of the GNU General Public License, incorporated herein by reference.
-  */
- 
-+#include <linux/compat.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-diff --git a/drivers/net/can/usb/peak_usb/pcan_usb.c b/drivers/net/can/usb/peak_usb/pcan_usb.c
-index 876218752766..ac6772fe9746 100644
---- a/drivers/net/can/usb/peak_usb/pcan_usb.c
-+++ b/drivers/net/can/usb/peak_usb/pcan_usb.c
-@@ -8,6 +8,7 @@
-  *
-  * Many thanks to Klaus Hitschler <klaus.hitschler@gmx.de>
-  */
-+#include <asm/unaligned.h>
- #include <linux/netdevice.h>
- #include <linux/usb.h>
- #include <linux/module.h>
-diff --git a/drivers/net/dsa/microchip/ksz8795.c b/drivers/net/dsa/microchip/ksz8795.c
-index 013e9c02be71..991b9c6b6ce7 100644
---- a/drivers/net/dsa/microchip/ksz8795.c
-+++ b/drivers/net/dsa/microchip/ksz8795.c
-@@ -10,6 +10,7 @@
- #include <linux/delay.h>
- #include <linux/export.h>
- #include <linux/gpio.h>
-+#include <linux/if_vlan.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/platform_data/microchip-ksz.h>
-diff --git a/drivers/net/dsa/xrs700x/xrs700x.c b/drivers/net/dsa/xrs700x/xrs700x.c
-index 35fa19ddaf19..0730352cdd57 100644
---- a/drivers/net/dsa/xrs700x/xrs700x.c
-+++ b/drivers/net/dsa/xrs700x/xrs700x.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <net/dsa.h>
-+#include <linux/etherdevice.h>
- #include <linux/if_bridge.h>
- #include <linux/of_device.h>
- #include <linux/netdev_features.h>
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-index 951c4c569a9b..4da31b1b84f9 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/pci.h>
- #include <linux/netdevice.h>
-+#include <linux/vmalloc.h>
- #include <net/devlink.h>
- #include "bnxt_hsi.h"
- #include "bnxt.h"
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-index a984a7a6dd2e..8d59babbf476 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-@@ -4,6 +4,7 @@
-  * Copyright(c) 2017 Huawei Technologies Co., Ltd
-  */
- 
-+#include <linux/if_vlan.h>
- #include <linux/kernel.h>
- #include <linux/netdevice.h>
- #include <linux/u64_stats_sync.h>
-diff --git a/drivers/net/ethernet/intel/ice/ice_devlink.c b/drivers/net/ethernet/intel/ice/ice_devlink.c
-index 1cfe918db8b9..716ec8616ff0 100644
---- a/drivers/net/ethernet/intel/ice/ice_devlink.c
-+++ b/drivers/net/ethernet/intel/ice/ice_devlink.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2020, Intel Corporation. */
- 
-+#include <linux/vmalloc.h>
-+
- #include "ice.h"
- #include "ice_lib.h"
- #include "ice_devlink.h"
-diff --git a/drivers/net/ethernet/intel/ice/ice_txrx_lib.c b/drivers/net/ethernet/intel/ice/ice_txrx_lib.c
-index 1dd7e84f41f8..9520b140bdbf 100644
---- a/drivers/net/ethernet/intel/ice/ice_txrx_lib.c
-+++ b/drivers/net/ethernet/intel/ice/ice_txrx_lib.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2019, Intel Corporation. */
- 
-+#include <linux/filter.h>
-+
- #include "ice_txrx_lib.h"
- #include "ice_eswitch.h"
- #include "ice_lib.h"
-diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c b/drivers/net/ethernet/intel/igc/igc_xdp.c
-index a8cf5374be47..aeeb34e64610 100644
---- a/drivers/net/ethernet/intel/igc/igc_xdp.c
-+++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2020, Intel Corporation. */
- 
-+#include <linux/if_vlan.h>
- #include <net/xdp_sock_drv.h>
- 
- #include "igc.h"
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-index f1c10f2bda78..40acfe12adc9 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-@@ -33,6 +33,7 @@
- 
- #include <linux/bpf.h>
- #include <linux/etherdevice.h>
-+#include <linux/filter.h>
- #include <linux/tcp.h>
- #include <linux/if_vlan.h>
- #include <linux/delay.h>
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-index 50977f01a050..00449df98a5e 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/qos.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB
- /* Copyright (c) 2020, Mellanox Technologies inc. All rights reserved. */
-+#include <net/sch_generic.h>
- 
- #include "en.h"
- #include "params.h"
-diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-index a8c252e2b252..302dc835ac3d 100644
---- a/drivers/net/ethernet/sfc/efx.c
-+++ b/drivers/net/ethernet/sfc/efx.c
-@@ -5,6 +5,7 @@
-  * Copyright 2005-2013 Solarflare Communications Inc.
-  */
- 
-+#include <linux/filter.h>
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/netdevice.h>
-diff --git a/drivers/net/ethernet/sfc/efx_channels.c b/drivers/net/ethernet/sfc/efx_channels.c
-index 3dbea028b325..b015d1f2e204 100644
---- a/drivers/net/ethernet/sfc/efx_channels.c
-+++ b/drivers/net/ethernet/sfc/efx_channels.c
-@@ -10,6 +10,7 @@
- 
- #include "net_driver.h"
- #include <linux/module.h>
-+#include <linux/filter.h>
- #include "efx_channels.h"
- #include "efx.h"
- #include "efx_common.h"
-diff --git a/drivers/net/ethernet/sfc/efx_common.c b/drivers/net/ethernet/sfc/efx_common.c
-index f187631b2c5c..af37c990217e 100644
---- a/drivers/net/ethernet/sfc/efx_common.c
-+++ b/drivers/net/ethernet/sfc/efx_common.c
-@@ -9,6 +9,7 @@
-  */
- 
- #include "net_driver.h"
-+#include <linux/filter.h>
- #include <linux/module.h>
- #include <linux/netdevice.h>
- #include <net/gre.h>
-diff --git a/drivers/net/hamradio/hdlcdrv.c b/drivers/net/hamradio/hdlcdrv.c
-index b0edb91bb10a..8297411e87ea 100644
---- a/drivers/net/hamradio/hdlcdrv.c
-+++ b/drivers/net/hamradio/hdlcdrv.c
-@@ -30,6 +30,7 @@
- /*****************************************************************************/
- 
- #include <linux/capability.h>
-+#include <linux/compat.h>
- #include <linux/module.h>
- #include <linux/types.h>
- #include <linux/net.h>
-diff --git a/drivers/net/hamradio/scc.c b/drivers/net/hamradio/scc.c
-index 3d59dac063ac..f90830d3dfa6 100644
---- a/drivers/net/hamradio/scc.c
-+++ b/drivers/net/hamradio/scc.c
-@@ -148,6 +148,7 @@
- 
- /* ----------------------------------------------------------------------- */
- 
-+#include <linux/compat.h>
- #include <linux/module.h>
- #include <linux/errno.h>
- #include <linux/signal.h>
-diff --git a/drivers/net/loopback.c b/drivers/net/loopback.c
-index a1c77cc00416..ed0edf5884ef 100644
---- a/drivers/net/loopback.c
-+++ b/drivers/net/loopback.c
-@@ -44,6 +44,7 @@
- #include <linux/etherdevice.h>
- #include <linux/skbuff.h>
- #include <linux/ethtool.h>
-+#include <net/sch_generic.h>
- #include <net/sock.h>
- #include <net/checksum.h>
- #include <linux/if_ether.h>	/* For the statistics structure. */
-diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
-index b4c64226b7ca..e0b1ab99a359 100644
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@ -34,6 +34,7 @@
- #include <net/addrconf.h>
- #include <net/l3mdev.h>
- #include <net/fib_rules.h>
-+#include <net/sch_generic.h>
- #include <net/netns/generic.h>
- #include <net/netfilter/nf_conntrack.h>
- 
-diff --git a/drivers/net/wireless/ath/ath11k/debugfs.c b/drivers/net/wireless/ath/ath11k/debugfs.c
-index dba055d085be..eb8b4f20c95e 100644
---- a/drivers/net/wireless/ath/ath11k/debugfs.c
-+++ b/drivers/net/wireless/ath/ath11k/debugfs.c
-@@ -3,6 +3,8 @@
-  * Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
-  */
- 
-+#include <linux/vmalloc.h>
-+
- #include "debugfs.h"
- 
- #include "core.h"
-diff --git a/drivers/net/wireless/realtek/rtw89/debug.c b/drivers/net/wireless/realtek/rtw89/debug.c
-index 1e85808aaf4b..be761157ea22 100644
---- a/drivers/net/wireless/realtek/rtw89/debug.c
-+++ b/drivers/net/wireless/realtek/rtw89/debug.c
-@@ -2,6 +2,8 @@
- /* Copyright(c) 2019-2020  Realtek Corporation
-  */
- 
-+#include <linux/vmalloc.h>
-+
- #include "coex.h"
- #include "debug.h"
- #include "fw.h"
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 731d31015b6a..347793626f19 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -18,6 +18,7 @@
-  *  6 Jun 1999	Cache readdir lookups in the page cache. -DaveM
-  */
- 
-+#include <linux/compat.h>
- #include <linux/module.h>
- #include <linux/time.h>
- #include <linux/errno.h>
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index 0d444a90f513..ea17fa1f31ec 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -10,6 +10,7 @@
-  * Split from fs/nfs/super.c by David Howells <dhowells@redhat.com>
-  */
- 
-+#include <linux/compat.h>
- #include <linux/module.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-diff --git a/fs/select.c b/fs/select.c
-index 945896d0ac9e..02cd8cb5e69f 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -15,6 +15,7 @@
-  *     of fds to overcome nfds < 16390 descriptors limit (Tigran Aivazian).
-  */
- 
-+#include <linux/compat.h>
- #include <linux/kernel.h>
- #include <linux/sched/signal.h>
- #include <linux/sched/rt.h>
-diff --git a/include/linux/bpf_local_storage.h b/include/linux/bpf_local_storage.h
-index 24496bc28e7b..a2b625960ffe 100644
---- a/include/linux/bpf_local_storage.h
-+++ b/include/linux/bpf_local_storage.h
-@@ -8,6 +8,7 @@
- #define _BPF_LOCAL_STORAGE_H
- 
- #include <linux/bpf.h>
-+#include <linux/filter.h>
- #include <linux/rculist.h>
- #include <linux/list.h>
- #include <linux/hash.h>
-diff --git a/include/linux/dsa/loop.h b/include/linux/dsa/loop.h
-index 5a3470bcc8a7..b8fef35591aa 100644
---- a/include/linux/dsa/loop.h
-+++ b/include/linux/dsa/loop.h
-@@ -2,6 +2,7 @@
- #ifndef DSA_LOOP_H
- #define DSA_LOOP_H
- 
-+#include <linux/if_vlan.h>
- #include <linux/types.h>
- #include <linux/ethtool.h>
- #include <net/dsa.h>
-diff --git a/include/net/ipv6.h b/include/net/ipv6.h
-index 53ac7707ca70..3afcb128e064 100644
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -21,6 +21,8 @@
- #include <net/snmp.h>
- #include <net/netns/hash.h>
- 
-+struct ip_tunnel_info;
-+
- #define SIN6_LEN_RFC2133	24
- 
- #define IPV6_MAXPLEN		65535
-diff --git a/include/net/route.h b/include/net/route.h
-index 2e6c0e153e3a..4c858dcf1aa8 100644
---- a/include/net/route.h
-+++ b/include/net/route.h
-@@ -43,6 +43,7 @@
- #define RT_CONN_FLAGS(sk)   (RT_TOS(inet_sk(sk)->tos) | sock_flag(sk, SOCK_LOCALROUTE))
- #define RT_CONN_FLAGS_TOS(sk,tos)   (RT_TOS(tos) | sock_flag(sk, SOCK_LOCALROUTE))
- 
-+struct ip_tunnel_info;
- struct fib_nh;
- struct fib_info;
- struct uncached_list;
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 37f878564d25..40f6406b9ca5 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -56,7 +56,6 @@
- #include <linux/wait.h>
- #include <linux/cgroup-defs.h>
- #include <linux/rbtree.h>
--#include <linux/filter.h>
- #include <linux/rculist_nulls.h>
- #include <linux/poll.h>
- #include <linux/sockptr.h>
-@@ -249,6 +248,7 @@ struct sock_common {
- };
- 
- struct bpf_local_storage;
-+struct sk_filter;
- 
- /**
-   *	struct sock - network layer representation of sockets
-diff --git a/include/net/xdp_sock.h b/include/net/xdp_sock.h
-index fff069d2ed1b..3057e1a4a11c 100644
---- a/include/net/xdp_sock.h
-+++ b/include/net/xdp_sock.h
-@@ -6,6 +6,7 @@
- #ifndef _LINUX_XDP_SOCK_H
- #define _LINUX_XDP_SOCK_H
- 
-+#include <linux/bpf.h>
- #include <linux/workqueue.h>
- #include <linux/if_xdp.h>
- #include <linux/mutex.h>
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 083be6af29d7..d7ed1dffa426 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -33,6 +33,7 @@
- #include <linux/security.h>
- #include <linux/ctype.h>
- #include <linux/kmemleak.h>
-+#include <linux/filter.h>
- #include <linux/fs.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-diff --git a/net/bluetooth/bnep/sock.c b/net/bluetooth/bnep/sock.c
-index d515571b2afb..57d509d77cb4 100644
---- a/net/bluetooth/bnep/sock.c
-+++ b/net/bluetooth/bnep/sock.c
-@@ -24,6 +24,7 @@
-    SOFTWARE IS DISCLAIMED.
- */
- 
-+#include <linux/compat.h>
- #include <linux/export.h>
- #include <linux/file.h>
- 
-diff --git a/net/bluetooth/eir.h b/net/bluetooth/eir.h
-index 724662f8f8b1..05e2e917fc25 100644
---- a/net/bluetooth/eir.h
-+++ b/net/bluetooth/eir.h
-@@ -5,6 +5,8 @@
-  * Copyright (C) 2021 Intel Corporation
-  */
- 
-+#include <asm/unaligned.h>
-+
- void eir_create(struct hci_dev *hdev, u8 *data);
- 
- u8 eir_create_adv_data(struct hci_dev *hdev, u8 instance, u8 *ptr);
-diff --git a/net/bluetooth/hidp/sock.c b/net/bluetooth/hidp/sock.c
-index 595fb3c9d6c3..369ed92dac99 100644
---- a/net/bluetooth/hidp/sock.c
-+++ b/net/bluetooth/hidp/sock.c
-@@ -20,6 +20,7 @@
-    SOFTWARE IS DISCLAIMED.
- */
- 
-+#include <linux/compat.h>
- #include <linux/export.h>
- #include <linux/file.h>
- 
-diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-index 4574c5cb1b59..dc50737b785b 100644
---- a/net/bluetooth/l2cap_sock.c
-+++ b/net/bluetooth/l2cap_sock.c
-@@ -29,6 +29,7 @@
- 
- #include <linux/module.h>
- #include <linux/export.h>
-+#include <linux/filter.h>
- #include <linux/sched/signal.h>
- 
- #include <net/bluetooth/bluetooth.h>
-diff --git a/net/bridge/br_ioctl.c b/net/bridge/br_ioctl.c
-index db4ab2c2ce18..9b54d7d0bfc4 100644
---- a/net/bridge/br_ioctl.c
-+++ b/net/bridge/br_ioctl.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <linux/capability.h>
-+#include <linux/compat.h>
- #include <linux/kernel.h>
- #include <linux/if_bridge.h>
- #include <linux/netdevice.h>
-diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
-index e12fd3cad619..2b8892d502f7 100644
---- a/net/caif/caif_socket.c
-+++ b/net/caif/caif_socket.c
-@@ -6,6 +6,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ":%s(): " fmt, __func__
- 
-+#include <linux/filter.h>
- #include <linux/fs.h>
- #include <linux/init.h>
- #include <linux/module.h>
-diff --git a/net/core/devlink.c b/net/core/devlink.c
-index 0a9349a02cad..492a26d3c3f1 100644
---- a/net/core/devlink.c
-+++ b/net/core/devlink.c
-@@ -7,6 +7,7 @@
-  * Copyright (c) 2016 Jiri Pirko <jiri@mellanox.com>
-  */
- 
-+#include <linux/etherdevice.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/types.h>
-diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-index 257976cb55ce..de1109f2cfcf 100644
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -5,6 +5,7 @@
- #include <linux/ip.h>
- #include <linux/ipv6.h>
- #include <linux/if_vlan.h>
-+#include <linux/filter.h>
- #include <net/dsa.h>
- #include <net/dst_metadata.h>
- #include <net/ip.h>
-diff --git a/net/core/lwt_bpf.c b/net/core/lwt_bpf.c
-index 2f7940bcf715..349480ef68a5 100644
---- a/net/core/lwt_bpf.c
-+++ b/net/core/lwt_bpf.c
-@@ -2,6 +2,7 @@
- /* Copyright (c) 2016 Thomas Graf <tgraf@tgraf.ch>
-  */
- 
-+#include <linux/filter.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/skbuff.h>
-diff --git a/net/core/sock_diag.c b/net/core/sock_diag.c
-index c9c45b935f99..f7cf74cdd3db 100644
---- a/net/core/sock_diag.c
-+++ b/net/core/sock_diag.c
-@@ -1,5 +1,6 @@
- /* License: GPL */
- 
-+#include <linux/filter.h>
- #include <linux/mutex.h>
- #include <linux/socket.h>
- #include <linux/skbuff.h>
-diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
-index 5f88526ad61c..7b4d485aac7a 100644
---- a/net/core/sysctl_net_core.c
-+++ b/net/core/sysctl_net_core.c
-@@ -6,6 +6,7 @@
-  * Added /proc/sys/net/core directory entry (empty =) ). [MS]
-  */
- 
-+#include <linux/filter.h>
- #include <linux/mm.h>
- #include <linux/sysctl.h>
- #include <linux/module.h>
-diff --git a/net/decnet/dn_nsp_in.c b/net/decnet/dn_nsp_in.c
-index 7ab788f41a3f..c59be5b04479 100644
---- a/net/decnet/dn_nsp_in.c
-+++ b/net/decnet/dn_nsp_in.c
-@@ -38,6 +38,7 @@
- *******************************************************************************/
- 
- #include <linux/errno.h>
-+#include <linux/filter.h>
- #include <linux/types.h>
- #include <linux/socket.h>
- #include <linux/in.h>
-diff --git a/net/dsa/dsa_priv.h b/net/dsa/dsa_priv.h
-index 38ce5129a33d..0194a969c9b5 100644
---- a/net/dsa/dsa_priv.h
-+++ b/net/dsa/dsa_priv.h
-@@ -8,6 +8,7 @@
- #define __DSA_PRIV_H
- 
- #include <linux/if_bridge.h>
-+#include <linux/if_vlan.h>
- #include <linux/phy.h>
- #include <linux/netdevice.h>
- #include <linux/netpoll.h>
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index 9a113d893521..b2cdba1b4aae 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <linux/compat.h>
-+#include <linux/etherdevice.h>
- #include <linux/module.h>
- #include <linux/types.h>
- #include <linux/capability.h>
-diff --git a/net/ipv4/nexthop.c b/net/ipv4/nexthop.c
-index 1319d093cdda..eeafeccebb8d 100644
---- a/net/ipv4/nexthop.c
-+++ b/net/ipv4/nexthop.c
-@@ -8,6 +8,7 @@
- #include <linux/nexthop.h>
- #include <linux/rtnetlink.h>
- #include <linux/slab.h>
-+#include <linux/vmalloc.h>
- #include <net/arp.h>
- #include <net/ipv6_stubs.h>
- #include <net/lwtunnel.h>
-diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
-index 2dc40b3f373e..a5eea182149d 100644
---- a/net/ipv6/seg6_local.c
-+++ b/net/ipv6/seg6_local.c
-@@ -7,6 +7,7 @@
-  *  eBPF support: Mathieu Xhonneux <m.xhonneux@gmail.com>
-  */
- 
-+#include <linux/filter.h>
- #include <linux/types.h>
- #include <linux/skbuff.h>
- #include <linux/net.h>
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index 49ecbe8d176a..a1760add5bf1 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -13,6 +13,7 @@
- #define KMSG_COMPONENT "af_iucv"
- #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
- 
-+#include <linux/filter.h>
- #include <linux/module.h>
- #include <linux/netdevice.h>
- #include <linux/types.h>
-diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
-index 11a715d76a4f..71899e5a5a11 100644
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -9,6 +9,7 @@
- #include <linux/errno.h>
- #include <linux/errqueue.h>
- #include <linux/file.h>
-+#include <linux/filter.h>
- #include <linux/in.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-diff --git a/net/netfilter/nfnetlink_hook.c b/net/netfilter/nfnetlink_hook.c
-index d5c719c9e36c..71e29adac48b 100644
---- a/net/netfilter/nfnetlink_hook.c
-+++ b/net/netfilter/nfnetlink_hook.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/kallsyms.h>
- #include <linux/kernel.h>
- #include <linux/types.h>
- #include <linux/skbuff.h>
-diff --git a/net/netfilter/nft_reject_netdev.c b/net/netfilter/nft_reject_netdev.c
-index d89f68754f42..61cd8c4ac385 100644
---- a/net/netfilter/nft_reject_netdev.c
-+++ b/net/netfilter/nft_reject_netdev.c
-@@ -4,6 +4,7 @@
-  * Copyright (c) 2020 Jose M. Guisado <guigom@riseup.net>
-  */
- 
-+#include <linux/etherdevice.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/module.h>
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 4be2d97ff93e..7b344035bfe3 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -20,8 +20,10 @@
- 
- #include <linux/module.h>
- 
-+#include <linux/bpf.h>
- #include <linux/capability.h>
- #include <linux/kernel.h>
-+#include <linux/filter.h>
- #include <linux/init.h>
- #include <linux/signal.h>
- #include <linux/sched.h>
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index a1ffdb48cc47..3ca4f890371a 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -49,6 +49,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/ethtool.h>
-+#include <linux/filter.h>
- #include <linux/types.h>
- #include <linux/mm.h>
- #include <linux/capability.h>
-diff --git a/net/rose/rose_in.c b/net/rose/rose_in.c
-index 6af786d66b03..4d67f36dce1b 100644
---- a/net/rose/rose_in.c
-+++ b/net/rose/rose_in.c
-@@ -9,6 +9,7 @@
-  * diagrams as the code is not obvious and probably very easy to break.
-  */
- #include <linux/errno.h>
-+#include <linux/filter.h>
- #include <linux/types.h>
- #include <linux/socket.h>
- #include <linux/in.h>
-diff --git a/net/sched/sch_frag.c b/net/sched/sch_frag.c
-index 8c06381391d6..cd85a69820b1 100644
---- a/net/sched/sch_frag.c
-+++ b/net/sched/sch_frag.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB
-+#include <linux/if_vlan.h>
- #include <net/netlink.h>
- #include <net/sch_generic.h>
- #include <net/dst.h>
-diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
-index d93055ec17ae..905604c378ad 100644
---- a/net/smc/smc_ib.c
-+++ b/net/smc/smc_ib.c
-@@ -12,6 +12,8 @@
-  *  Author(s):  Ursula Braun <ubraun@linux.vnet.ibm.com>
-  */
- 
-+#include <linux/etherdevice.h>
-+#include <linux/if_vlan.h>
- #include <linux/random.h>
- #include <linux/workqueue.h>
- #include <linux/scatterlist.h>
-diff --git a/net/smc/smc_ism.c b/net/smc/smc_ism.c
-index fd28cc498b98..a2084ecdb97e 100644
---- a/net/smc/smc_ism.c
-+++ b/net/smc/smc_ism.c
-@@ -6,6 +6,7 @@
-  * Copyright IBM Corp. 2018
-  */
- 
-+#include <linux/if_vlan.h>
- #include <linux/spinlock.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 4d6e33bbd446..c19569819866 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -89,6 +89,7 @@
- #include <linux/socket.h>
- #include <linux/un.h>
- #include <linux/fcntl.h>
-+#include <linux/filter.h>
- #include <linux/termios.h>
- #include <linux/sockios.h>
- #include <linux/net.h>
-diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index ed0df839c38c..3235261f138d 100644
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -85,6 +85,7 @@
-  *   TCP_LISTEN - listening
-  */
- 
-+#include <linux/compat.h>
- #include <linux/types.h>
- #include <linux/bitops.h>
- #include <linux/cred.h>
-diff --git a/net/xdp/xskmap.c b/net/xdp/xskmap.c
-index 2e48d0e094d9..65b53fb3de13 100644
---- a/net/xdp/xskmap.c
-+++ b/net/xdp/xskmap.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/bpf.h>
-+#include <linux/filter.h>
- #include <linux/capability.h>
- #include <net/xdp_sock.h>
- #include <linux/slab.h>
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index a2f4001221d1..0407272a990c 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -14,6 +14,7 @@
-  *
-  */
- 
-+#include <linux/compat.h>
- #include <linux/workqueue.h>
- #include <net/xfrm.h>
- #include <linux/pfkeyv2.h>
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 7c36cc1f3d79..e3e26f4da6c2 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -11,6 +11,7 @@
-  *
-  */
- 
-+#include <linux/compat.h>
- #include <linux/crypto.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
--- 
-2.31.1
+5.15.11-arch2-1 dmesg:
+[  486.360050] BUG: unable to handle page fault for address: ffffff8306d925ff
+[  486.360083] #PF: supervisor instruction fetch in kernel mode
+[  486.360113] #PF: error_code(0x0010) - not-present page
+[  486.360142] PGD 171815067 P4D 171815067 PUD 0
+[  486.360160] Oops: 0010 [#1] PREEMPT SMP PTI
+[  486.360177] CPU: 2 PID: 1129 Comm: rsync Tainted: G           OE
+ 5.15.11-arch2-1 #1 03010ffba27108079ccfa4d61c5b01422e5fb7c7
+[  486.360216] Hardware name: ASUSTeK COMPUTER INC. S551LN/S551LN,
+BIOS S551LN.209 07/08/2014
+[  486.360243] RIP: 0010:0xffffff8306d925ff
+[  486.360260] Code: Unable to access opcode bytes at RIP 0xffffff8306d925d5.
+[  486.360302] RSP: 0018:ffffaa9ec0f8fb37 EFLAGS: 00010246
+[  486.360322] RAX: 0000000000000000 RBX: 00000000000002ab RCX: 0000000000000000
+[  486.360355] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  486.360389] RBP: ffaa9ec0f8fbf800 R08: 0000000000000000 R09: 0000000000000000
+[  486.360413] R10: 0000000000000000 R11: 0000000000000000 R12: ff99687f5746e000
+[  486.360456] R13: 00000001112ccaff R14: fffcbb8097368000 R15: 00000000000001ff
+[  486.360481] FS:  00007f9a38011580(0000) GS:ffff9968a6f00000(0000)
+knlGS:0000000000000000
+[  486.360509] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  486.360529] CR2: ffffff8306d925d5 CR3: 000000013e140001 CR4: 00000000001706e0
+[  486.360553] Call Trace:
+[  486.360564]  <TASK>
+[  486.360584] BUG: unable to handle page fault for address: ffffaa9ec0f90000
+[  486.360608] #PF: supervisor read access in kernel mode
+[  486.360626] #PF: error_code(0x0000) - not-present page
+[  486.360644] PGD 100000067 P4D 100000067 PUD 1001be067 PMD 10ed20067 PTE 0
+[  486.360669] Oops: 0000 [#2] PREEMPT SMP PTI
+[  486.360685] CPU: 2 PID: 1129 Comm: rsync Tainted: G           OE
+ 5.15.11-arch2-1 #1 03010ffba27108079ccfa4d61c5b01422e5fb7c7
+[  486.360723] Hardware name: ASUSTeK COMPUTER INC. S551LN/S551LN,
+BIOS S551LN.209 07/08/2014
+[  486.360769] RIP: 0010:show_trace_log_lvl+0x1a4/0x32d
+[  486.360789] Code: c7 c4 64 25 84 e8 0f be 00 00 4d 85 ed 74 41 0f
+b6 95 37 ff ff ff 4c 89 f1 4c 89 ee 48 8d bd 50 ff ff ff e8 dc fd ff
+ff eb 26 <4c> 8b 3b 48 8d bd 70 ff ff ff e8 2e 2e 52 ff 4c 89 ff 48 89
+85 28
+[  486.360866] RSP: 0018:ffffaa9ec0f8f8c8 EFLAGS: 00010012
+[  486.360885] RAX: 0000000000000000 RBX: ffffaa9ec0f8ffff RCX: 0000000000000000
+[  486.360910] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  486.360934] RBP: ffffaa9ec0f8f9a8 R08: 0000000000000000 R09: 0000000000000000
+[  486.360958] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9967a2801fc0
+[  486.360983] R13: 0000000000000000 R14: ffffffff8427d77f R15: 0000000000002b00
+[  486.361006] FS:  00007f9a38011580(0000) GS:ffff9968a6f00000(0000)
+knlGS:0000000000000000
+[  486.361033] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  486.361053] CR2: ffffaa9ec0f90000 CR3: 000000013e140001 CR4: 00000000001706e0
+[  486.361077] Call Trace:
+[  486.361087]  <TASK>
+[  486.361098]  __die_body.cold+0x1a/0x1f
+[  486.361114]  page_fault_oops+0x19e/0x310
+[  486.361142]  exc_page_fault+0xda/0x180
+[  486.361159]  asm_exc_page_fault+0x1e/0x30
+[  486.361177] RIP: 0010:0xffffff8306d925ff
+[  486.361192] Code: Unable to access opcode bytes at RIP 0xffffff8306d925d5.
+[  486.361214] RSP: 0018:ffffaa9ec0f8fb37 EFLAGS: 00010246
+[  486.361232] RAX: 0000000000000000 RBX: 00000000000002ab RCX: 0000000000000000
+[  486.361255] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  486.361279] RBP: ffaa9ec0f8fbf800 R08: 0000000000000000 R09: 0000000000000000
+[  486.361302] R10: 0000000000000000 R11: 0000000000000000 R12: ff99687f5746e000
+[  486.361324] R13: 00000001112ccaff R14: fffcbb8097368000 R15: 00000000000001ff
+[  486.361349]  ? page_cache_ra_unbounded+0x1c5/0x250
+[  486.361369]  ? filemap_get_pages+0x117/0x730
+[  486.361386]  ? make_kuid+0xf/0x20
+[  486.361401]  ? generic_permission+0x27/0x210
+[  486.361419]  ? walk_component+0x11d/0x1c0
+[  486.361435]  ? filemap_read+0xb9/0x360
+[  486.361451]  ? new_sync_read+0x159/0x1f0
+[  486.361467]  ? vfs_read+0xff/0x1a0
+[  486.361489]  ? ksys_read+0x67/0xf0
+[  486.361503]  ? do_syscall_64+0x5c/0x90
+[  486.361517]  ? __audit_syscall_exit+0x255/0x2c0
+[  486.361533]  ? syscall_exit_to_user_mode+0x23/0x50
+[  486.362508]  ? do_syscall_64+0x69/0x90
+[  486.363455]  ? do_syscall_64+0x69/0x90
+[  486.364401]  ? do_syscall_64+0x69/0x90
+[  486.365322]  ? entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  486.366263]  </TASK>
+[  486.367197] Modules linked in: 8021q garp mrp stp llc nls_iso8859_1
+vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2
+videobuf2_common videodev mc x86_pkg_temp_thermal intel_powerclamp
+mt76x0e snd_hda_codec_realtek coretemp snd_hda_codec_generic
+ledtrig_audio rtsx_usb_ms snd_hda_codec_hdmi memstick kvm_intel
+mt76x0_common ntfs3 snd_hda_intel kvm mt76x02_lib joydev asus_nb_wmi
+intel_spi_platform intel_spi spi_nor asus_wmi mt76 mtd mousedev
+iTCO_wdt snd_intel_dspcfg sparse_keymap intel_pmc_bxt mei_hdcp
+intel_rapl_msr iTCO_vendor_support at24 irqbypass platform_profile
+mxm_wmi mac80211 snd_intel_sdw_acpi snd_hda_codec snd_hda_core
+crct10dif_pclmul i915 crc32_pclmul r8169 snd_hwdep libarc4 cfg80211
+snd_pcm ghash_clmulni_intel aesni_intel crypto_simd snd_timer rfkill
+realtek cryptd mdio_devres processor_thermal_device_pci_legacy libphy
+rapl processor_thermal_device intel_cstate snd pcspkr
+processor_thermal_rfim processor_thermal_mbox intel_uncore
+processor_thermal_rapl
+[  486.367240]  mei_me intel_rapl_common soundcore ttm mei
+intel_soc_dts_iosf intel_gtt video lpc_ich i2c_i801 int3402_thermal
+i2c_smbus intel_pch_thermal psmouse int3400_thermal
+int340x_thermal_zone wmi acpi_thermal_rel asus_wireless mac_hid
+vboxnetflt(OE) vboxnetadp(OE) vboxdrv(OE) crypto_user fuse bpf_preload
+ip_tables x_tables btrfs blake2b_generic libcrc32c crc32c_generic xor
+raid6_pq rtsx_usb_sdmmc mmc_core rtsx_usb serio_raw atkbd libps2
+crc32c_intel xhci_pci sr_mod i8042 cdrom xhci_pci_renesas serio
+[  486.376305] CR2: ffffaa9ec0f90000
+[  486.377512] ---[ end trace 2b657e7ade0f9e60 ]---
+[  486.378748] RIP: 0010:0xffffff8306d925ff
+[  486.380001] Code: Unable to access opcode bytes at RIP 0xffffff8306d925d5.
+[  486.381220] RSP: 0018:ffffaa9ec0f8fb37 EFLAGS: 00010246
+[  486.382432] RAX: 0000000000000000 RBX: 00000000000002ab RCX: 0000000000000000
+[  486.383656] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  486.384871] RBP: ffaa9ec0f8fbf800 R08: 0000000000000000 R09: 0000000000000000
+[  486.386072] R10: 0000000000000000 R11: 0000000000000000 R12: ff99687f5746e000
+[  486.387278] R13: 00000001112ccaff R14: fffcbb8097368000 R15: 00000000000001ff
+[  486.388478] FS:  00007f9a38011580(0000) GS:ffff9968a6f00000(0000)
+knlGS:0000000000000000
+[  486.389684] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  486.390890] CR2: ffffff8306d925d5 CR3: 000000013e140001 CR4: 00000000001706e0
 
+$ scripts/faddr2line vmlinux.5.15.11-arch2-1 page_cache_ra_unbounded+0x1c5/0x250
+page_cache_ra_unbounded+0x1c5/0x250:
+filemap_invalidate_unlock_shared at include/linux/fs.h:853
+(inlined by) page_cache_ra_unbounded at mm/readahead.c:240
+
+5.16-rc7 dmesg:
+[  258.570806] ------------[ cut here ]------------
+[  258.570810] kernel BUG at mm/readahead.c:151!
+[  258.570817] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+[  258.570822] CPU: 0 PID: 1136 Comm: rsync Not tainted
+5.16.0-rc7-1-mainline #1 b49cff4185a0eb169c9f956a386eb3a9156e4796
+[  258.570827] Hardware name: ASUSTeK COMPUTER INC. S551LN/S551LN,
+BIOS S551LN.209 07/08/2014
+[  258.570829] RIP: 0010:read_pages+0x26c/0x280
+[  258.570836] Code: eb 87 48 8b 07 48 c1 e8 38 83 e0 07 83 f8 04 75
+e4 48 8b 47 08 8b 40 68 83 e8 01 83 f8 01 77 d5 e8 39 18 00 00 e9 5f
+ff ff ff <0f> 0b 0f 0b e8 bb 4d 96 00 66 66 2e 0f 1f 84 00 00 00 00 00
+0f 1f
+[  258.570838] RSP: 0018:ffff9d59c0b1fa78 EFLAGS: 00010206
+[  258.570842] RAX: ff9d59c0b1fb1000 RBX: ffff9d59c0b1fbc0 RCX: 0000000000000000
+[  258.570844] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  258.570846] RBP: ffff9d59c0b1fb0f R08: 0000000000000000 R09: 0000000000000000
+[  258.570848] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[  258.570850] R13: 0000000000000000 R14: ffffc4ba4632d680 R15: 0000000000000002
+[  258.570852] FS:  00007f9a9ec98580(0000) GS:ffff8b9f26e00000(0000)
+knlGS:0000000000000000
+[  258.570855] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  258.570857] CR2: 00005646e709b000 CR3: 00000001361ee005 CR4: 00000000001706f0
+[  258.570860] Call Trace:
+[  258.570862]  <TASK>
+[  258.570865]  page_cache_ra_unbounded+0x1d9/0x270
+[  258.570872]  filemap_get_pages+0x11e/0x7e0
+[  258.570878]  ? generic_permission+0x27/0x210
+[  258.570885]  ? walk_component+0x11d/0x1c0
+[  258.570891]  filemap_read+0xcc/0x380
+[  258.570897]  new_sync_read+0x159/0x1f0
+[  258.570902]  vfs_read+0xff/0x1a0
+[  258.570907]  ksys_read+0x67/0xf0
+[  258.570911]  do_syscall_64+0x5c/0x90
+[  258.570919]  ? syscall_exit_to_user_mode+0x23/0x50
+[  258.570923]  ? do_syscall_64+0x69/0x90
+[  258.570927]  ? exit_to_user_mode_prepare+0x8d/0x180
+[  258.570932]  ? syscall_exit_to_user_mode+0x23/0x50
+[  258.570935]  ? do_syscall_64+0x69/0x90
+[  258.570938]  ? do_syscall_64+0x69/0x90
+[  258.570942]  ? do_syscall_64+0x69/0x90
+[  258.570946]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  258.570951] RIP: 0033:0x7f9a9edb0862
+[  258.570954] Code: c0 e9 b2 fe ff ff 50 48 8d 3d 5a 29 0a 00 e8 55
+e4 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75
+10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89
+54 24
+[  258.570957] RSP: 002b:00007ffdd97ee518 EFLAGS: 00000246 ORIG_RAX:
+0000000000000000
+[  258.570960] RAX: ffffffffffffffda RBX: 00005646e6850640 RCX: 00007f9a9edb0862
+[  258.570962] RDX: 000000000000219e RSI: 00005646e6f1cab0 RDI: 0000000000000003
+[  258.570964] RBP: 000000000000219e R08: 0000000000000000 R09: 00007f9a9ee81a60
+[  258.570966] R10: 00007f9a9ee821b0 R11: 0000000000000246 R12: 0000000000000000
+[  258.570968] R13: 0000000000000000 R14: 0000000000000000 R15: 000000000000219e
+[  258.570971]  </TASK>
+[  258.570972] Modules linked in: 8021q garp mrp stp llc nls_iso8859_1
+vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2
+videobuf2_common videodev mc ntfs3 intel_spi_platform intel_spi
+x86_pkg_temp_thermal spi_nor intel_powerclamp mtd
+snd_hda_codec_realtek rtsx_usb_ms coretemp iTCO_wdt
+snd_hda_codec_generic memstick intel_pmc_bxt snd_hda_codec_hdmi
+kvm_intel iTCO_vendor_support ledtrig_audio kvm joydev mousedev at24
+asus_nb_wmi intel_rapl_msr mei_hdcp asus_wmi mt76x0e sparse_keymap
+platform_profile irqbypass crct10dif_pclmul snd_hda_intel
+mt76x0_common snd_intel_dspcfg crc32_pclmul mt76x02_lib
+ghash_clmulni_intel aesni_intel mt76 crypto_simd snd_intel_sdw_acpi
+mac80211 snd_hda_codec libarc4 cfg80211 cryptd snd_hda_core rfkill
+r8169 rapl intel_cstate realtek intel_uncore mxm_wmi mdio_devres
+libphy i915 processor_thermal_device_pci_legacy
+processor_thermal_device processor_thermal_rfim snd_hwdep i2c_i801
+processor_thermal_mbox snd_pcm snd_timer processor_thermal_rapl mei_me
+[  258.571036]  video mei i2c_smbus ttm lpc_ich intel_rapl_common snd
+intel_gtt intel_pch_thermal soundcore mac_hid intel_soc_dts_iosf
+psmouse pcspkr int3400_thermal wmi int3402_thermal acpi_thermal_rel
+int340x_thermal_zone asus_wireless crypto_user fuse bpf_preload
+ip_tables x_tables btrfs blake2b_generic libcrc32c crc32c_generic xor
+raid6_pq rtsx_usb_sdmmc mmc_core rtsx_usb serio_raw atkbd libps2
+xhci_pci crc32c_intel sr_mod i8042 cdrom xhci_pci_renesas serio
+[  258.571071] ---[ end trace 685ffdce3faf85b7 ]---
+[  258.571073] RIP: 0010:read_pages+0x26c/0x280
+[  258.571077] Code: eb 87 48 8b 07 48 c1 e8 38 83 e0 07 83 f8 04 75
+e4 48 8b 47 08 8b 40 68 83 e8 01 83 f8 01 77 d5 e8 39 18 00 00 e9 5f
+ff ff ff <0f> 0b 0f 0b e8 bb 4d 96 00 66 66 2e 0f 1f 84 00 00 00 00 00
+0f 1f
+[  258.571079] RSP: 0018:ffff9d59c0b1fa78 EFLAGS: 00010206
+[  258.571081] RAX: ff9d59c0b1fb1000 RBX: ffff9d59c0b1fbc0 RCX: 0000000000000000
+[  258.571083] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  258.571085] RBP: ffff9d59c0b1fb0f R08: 0000000000000000 R09: 0000000000000000
+[  258.571087] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[  258.571088] R13: 0000000000000000 R14: ffffc4ba4632d680 R15: 0000000000000002
+[  258.571090] FS:  00007f9a9ec98580(0000) GS:ffff8b9f26e00000(0000)
+knlGS:0000000000000000
+[  258.571093] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  258.571095] CR2: 00005646e709b000 CR3: 00000001361ee005 CR4: 00000000001706f0
+
+$ scripts/faddr2line vmlinux.5.16.0-rc7-1-mainline
+page_cache_ra_unbounded+0x1d9/0x270
+page_cache_ra_unbounded+0x1d9/0x270:
+filemap_invalidate_unlock_shared at include/linux/fs.h:850
+(inlined by) page_cache_ra_unbounded at mm/readahead.c:239
