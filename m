@@ -2,134 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5976348053F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Dec 2021 00:50:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 721654805BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Dec 2021 03:31:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234010AbhL0Xus (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Dec 2021 18:50:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34258 "EHLO
+        id S234588AbhL1Cbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Dec 2021 21:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233993AbhL0Xus (ORCPT
+        with ESMTP id S230372AbhL1Cbb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Dec 2021 18:50:48 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4ECCC06173E;
-        Mon, 27 Dec 2021 15:50:47 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id g2so14555604pgo.9;
-        Mon, 27 Dec 2021 15:50:47 -0800 (PST)
+        Mon, 27 Dec 2021 21:31:31 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47895C06173E;
+        Mon, 27 Dec 2021 18:31:31 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id w20so26506585wra.9;
+        Mon, 27 Dec 2021 18:31:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jMDYAAEzWKf+ZWKv9FVeegcQUYl4xuyCtWob58cAQWw=;
-        b=Mn7hUoT2uvnAFbeYWRxfKqSyou/4u6IWp5Ab9qGalAnlr7CngmbOyRZZC+s5asEIUW
-         D9pKUg8BUKSlcrGHpuRE0eVQ4R7/edscU9ohcmHdtsmKqr+Boz5j3tg6LOO5/I88JJv4
-         TZK7o2ygufhlP3LYfuzuoWG7p9becxKvBXHa41Cizd2XQ8ivuEkcaWMZ99iHFwZnjN1i
-         KeMwOIR2V0jav1n+UfooUNeR5uBznQwTmB2E267YriDa4fRhYLSFBc3Uf4oK+pSoJTaC
-         K1JaaZzvNioZAMKg1NKVaFFaQ2xG0686bGDyixKpHfpRm1UO6iFaJuVD9qoCX9mzH8P7
-         OoSQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Wz8zeI20HalqtebnxY/VQRKKWH6al7/r6x+JqAjZOIQ=;
+        b=ltGaoEU7RlUuoNcgFbFyC0ca+4UlT0ZzN1mgLyNTk5sFT654E5beEaP0rSeaHIXdA9
+         5PXoeqSUENPjrbxIyDmIT7jwhCF56sOHLehaqCsbgAReCCpCUw0XkeHOs9sJ2MEMr6pR
+         AiodT1flUpJxQpsIsSnv4TfOyq+wgkqrIYUgTx60OZFsAIvvofJ6tZAMqqZmUKM+wC7r
+         Y4jtaEmj8KSq/OADSRE1ufT6nZ0AzBYTUAViHg+caKf8R53gOwPgk0w4Uv+JcuBllEpy
+         cpmmvMYAvUqgBd7DAz9TrlF/tTGdcJDHk5ouAI1q0tYCAFCybNUP14JreL1zFEWD5BIJ
+         8hBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jMDYAAEzWKf+ZWKv9FVeegcQUYl4xuyCtWob58cAQWw=;
-        b=ipoPxSmj4yk7e5sCGclQPtw21XY/kUbGuvicZHjDtKAiFkaIWKTbfHRzSip1uH7Wmn
-         YnPmmAdIQg5k6ZAP2qz7F0+yUaU08NzwiOZz6X6RIC7Ke0TsGFEjVoYP93tOuTMApnmM
-         MRr07zYVuWPfck5V1kHJlTmS6u1sifycPfRUbJLJhh0KUKvqheOHya7I9MKYKo2AEazv
-         lD6/kwFw5Fsv0fbPTYp16pjrbZZttltdLVPT8H+uvJZKCFJdDvz5HOm3soxuNSOWUGkR
-         ZI2lgJc1fPYlG8bI6LmPyrqeV7gP8YkbO4NOk+8ZkG+RuIjTiGxYt9deA8KWmsnZv/lw
-         Ljvw==
-X-Gm-Message-State: AOAM533nUHlu+h0BRza8iDp1m8CLLOLSAo90qg/5bprG8+eSvW46luQL
-        Q/5VNwcpCyu4slvh/ZPke7o=
-X-Google-Smtp-Source: ABdhPJyliKjaqPaj3bkR5OEDX+2h8UmXBD78mFpsM4oAqOKbEenA5uObRsI4rm3mReETZDeq4yKueA==
-X-Received: by 2002:a62:158f:0:b0:4ba:b456:24b9 with SMTP id 137-20020a62158f000000b004bab45624b9mr19854677pfv.86.1640649047357;
-        Mon, 27 Dec 2021 15:50:47 -0800 (PST)
-Received: from localhost (176.222.229.35.bc.googleusercontent.com. [35.229.222.176])
-        by smtp.gmail.com with ESMTPSA id 10sm18533824pfm.56.2021.12.27.15.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Dec 2021 15:50:46 -0800 (PST)
-Date:   Tue, 28 Dec 2021 07:50:42 +0800
-From:   Yao Yuan <yaoyuan0329os@gmail.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [PATCH v3 kvm/queue 05/16] KVM: Maintain ofs_tree for fast
- memslot lookup by file offset
-Message-ID: <20211227235042.rmnwzcqy6ujj75zp@sapienza>
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-6-chao.p.peng@linux.intel.com>
- <YcS5uStTallwRs0G@google.com>
- <20211224035418.GA43608@chaop.bj.intel.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Wz8zeI20HalqtebnxY/VQRKKWH6al7/r6x+JqAjZOIQ=;
+        b=UPkNfHBfcoMKg+si1puJEpTrwX8Z+yhWOISEtCNIfaQ2LKcgni0W58fXEgXaVx8hDa
+         XYY4DHN4uYLTSVX55wnXQegJc/Dph9h/egQwGoHmu4euP0KpZv5fMMZ9abDyxFqKgEVE
+         CxnBr57JNsjWaypqqcvqEeKdOPznLlwALdULGdg/y+23qxRUM4qVokWWM3mGn84Gm2Up
+         RQkG4yuo8Zhpj7mqDFa74iyIdlcgO0WEbYfN4LrUKURzQDvWcfrgmxG6b3U1dcsOeaXj
+         m3B5Xup4es4A/LPvFXiKmec8Y3gHROcF7ihE+pHpGiC8oloHOb2Bn3QqcWJn8Xg5LczR
+         32eg==
+X-Gm-Message-State: AOAM530bUZGmyUekQlT3DBydmxJqkHT2+Vow6cmOUCLDVhm5DtevwSbF
+        Qa4S2IXA8F1VvAY0KuySRMD11w9iCrw=
+X-Google-Smtp-Source: ABdhPJxOEtL3danJ29EvFL9hT/KByy7zQsSmh3yq5taCtscXFQY0ZTEiEyrT7TiLrIAt8ZrUPe/g4w==
+X-Received: by 2002:a5d:4486:: with SMTP id j6mr13857030wrq.160.1640658689674;
+        Mon, 27 Dec 2021 18:31:29 -0800 (PST)
+Received: from [10.101.0.6] ([85.203.46.195])
+        by smtp.gmail.com with ESMTPSA id h14sm12912601wmq.16.2021.12.27.18.31.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Dec 2021 18:31:29 -0800 (PST)
+Subject: Re: [BUG] fs: super: possible ABBA deadlocks in
+ do_thaw_all_callback() and freeze_bdev()
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, hch@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <e3de0d83-1170-05c8-672c-4428e781b988@gmail.com>
+ <YckgOocIWOrOoRvf@casper.infradead.org> <YclDafAwrN0TkhCi@mit.edu>
+ <a9dde5cc-b919-9c82-a185-851c2eab5442@gmail.com> <YcnC85Vc95OTBJSV@mit.edu>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <c6d8e729-6537-1a6a-43ff-255e8fbcec7d@gmail.com>
+Date:   Tue, 28 Dec 2021 10:31:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211224035418.GA43608@chaop.bj.intel.com>
+In-Reply-To: <YcnC85Vc95OTBJSV@mit.edu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 24, 2021 at 11:54:18AM +0800, Chao Peng wrote:
-> On Thu, Dec 23, 2021 at 06:02:33PM +0000, Sean Christopherson wrote:
-> > On Thu, Dec 23, 2021, Chao Peng wrote:
-> > > Similar to hva_tree for hva range, maintain interval tree ofs_tree for
-> > > offset range of a fd-based memslot so the lookup by offset range can be
-> > > faster when memslot count is high.
-> >
-> > This won't work.  The hva_tree relies on there being exactly one virtual address
-> > space, whereas with private memory, userspace can map multiple files into the
-> > guest at different gfns, but with overlapping offsets.
->
-> OK, that's the point.
->
-> >
-> > I also dislike hijacking __kvm_handle_hva_range() in patch 07.
-> >
-> > KVM also needs to disallow mapping the same file+offset into multiple gfns, which
-> > I don't see anywhere in this series.
->
-> This can be checked against file+offset overlapping with existing slots
-> when register a new one.
->
-> >
-> > In other words, there needs to be a 1:1 gfn:file+offset mapping.  Since userspace
-> > likely wants to allocate a single file for guest private memory and map it into
-> > multiple discontiguous slots, e.g. to skip the PCI hole, the best idea off the top
-> > of my head would be to register the notifier on a per-slot basis, not a per-VM
-> > basis.  It would require a 'struct kvm *' in 'struct kvm_memory_slot', but that's
-> > not a huge deal.
-> >
-> > That way, KVM's notifier callback already knows the memslot and can compute overlap
-> > between the memslot and the range by reversing the math done by kvm_memfd_get_pfn().
-> > Then, armed with the gfn and slot, invalidation is just a matter of constructing
-> > a struct kvm_gfn_range and invoking kvm_unmap_gfn_range().
->
-> KVM is easy but the kernel bits would be difficulty, it has to maintain
-> fd+offset to memslot mapping because one fd can have multiple memslots,
-> it need decide which memslot needs to be notified.
 
-How about pass "context" of fd (e.g. the gfn/hva start point) when register
-the invalidation notifier to fd, then in callback kvm can convert the
-offset to absolute hva/gfn with such "context", then do memslot invalidation.
+
+On 2021/12/27 21:43, Theodore Ts'o wrote:
+> On Mon, Dec 27, 2021 at 05:32:09PM +0800, Jia-Ju Bai wrote:
+>> Thanks for your reply and suggestions.
+>> I will try to trigger this possible deadlock by enabling lockdep and using
+>> the workloads that you suggested.
+>> In my opinion, static analysis can conveniently cover some code that is hard
+>> to be covered at runtime, and thus it is useful to detecting some
+>> infrequently-triggered bugs.
+>> However, it is true that static analysis sometimes has many false positives,
+>> which is unsatisfactory :(
+>> I am trying some works to relieve this problem in kernel-code analysis.
+>> I can understand that the related code is not frequently executed, but I
+>> think that finding and fixing bugs should be always useful in practice :)
+> The thing about the sysrq commands is that they are almost always used
+> in emergency situations when the system administrator with physical
+> access to the console sends a sysrq command (e.g., by sending a BREAK
+> to the serial console).  This is usually done when the system has
+> *already* locked up for some reason, such as getting livelocked due to
+> an out of memory condition, or maybe even a deadlock.  So if sysrq-j
+> could potentially cause a deadlock, so what?  Sysrq-j would only be
+> used when the system was in a really bad state due to a bug in any
+> case.  In over 10 years of kernel development, I can't remember a
+> single time when I've needed to use sysrq-j.
+>
+> So it might be that the better way to handle this would be to make
+> sure all of the emergency sysrq code in fs/super.c is under the
+> CONFIG_MAGIC_SYSRQ #ifdef --- and then do the static analysis without
+> CONFIG_MAGIC_SYSRQ defined.
+
+Thanks for the explanation.
+In fact, I did not know the sysrq commands, before finding this bug and 
+seeing your explanation.
 
 >
-> Thanks,
-> Chao
+> As I said, I agree it's a bug, and if I had infinite resources, I'd
+> certainly ask an engineer to completely rework the emergency sysrq-j
+> code path to address the potential ABBA deadlock.  The problem is I do
+> *not* have infinite resources, which means I have to prioritize which
+> bugs get attention, and how much time engineers on my team spend
+> working on new features or performance enhacements that can justify
+> their salaries and ensure that they get good performance ratings ---
+> since leadership, technical difficulty and business impact is how
+> engineers get judged at my company.
+
+I can understand the priority of bug fixing, with the consideration of 
+resources and time.
+My static analysis tool just provides a small message that there is a 
+possible bug :)
+
+>
+> Unfortunately, judging business impact is one of those things that is
+> unfair to expect a static analyzer to do.
+
+Thanks for your understanding :)
+Before seeing your explanation, I have no idea of business impact.
+But it is indeed practical to consider business impact and resource 
+assignment in kernel development.
+
+>   And after all, if we have
+> infinite resources, why should an OS bother with a VM?  We can just
+> pin all process text/data segments in memory, if money (and DRAM
+> availability in the supply chain) is no object.  :-)
+
+Haha, interesting idea :)
+
+
+Thanks a lot,
+Jia-Ju Bai
