@@ -2,85 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C721F480FA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 05:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC213481098
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 08:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbhL2EnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Dec 2021 23:43:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47112 "EHLO
+        id S239074AbhL2HKp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Dec 2021 02:10:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238701AbhL2EnU (ORCPT
+        with ESMTP id S231551AbhL2HKp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Dec 2021 23:43:20 -0500
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52488C06173F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Dec 2021 20:43:20 -0800 (PST)
-Received: by mail-qt1-x82a.google.com with SMTP id bp39so17657809qtb.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Dec 2021 20:43:20 -0800 (PST)
+        Wed, 29 Dec 2021 02:10:45 -0500
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB6C1C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Dec 2021 23:10:44 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id e128so25125096iof.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Dec 2021 23:10:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Qn/qIc+IdWDrpF18flmXoRQQTkgxgsIUgH+1qRMEjCs=;
-        b=bvUGWX9ch70TIOYOJbYXzTJsTo8ENXlnLLGJcL59Chnr6M93j9Ou55hjCg1XoQhL7C
-         QeJMm4Zzw/9fGH15jcHgb/xp9mhVYcJFoYGY4Z1WEP1JHB2eNgY8vkUvj3cFZaSGHWfV
-         GhYtp1GpjpdoQm2n0hxNsIIHaTKH9uLQOJiAYBUBnamKgUmkfn34KJ2QwXcOsiEd6E/m
-         IAgDOiLbAmP54IkNg24jy0SdZDYP/0bTPKn/0VllmOkX01O2DyCP/lHXEUYOP1cCBecb
-         OdBafXccM/gJJYoMpomHrV53NCx0+VwyueHraP99xhkEX14DMnPgww7jzftxidkyFKOO
-         2/vQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Rlp4VRFlaQvcrJiJtb5dxBlkL5CmHTyPBV26aYsqzUY=;
+        b=pQ0hsHEXz7BsCG1xx48PjgeH58oyV42LOc1wgR+k3UiF5ji0AM3BzC3wjqhH0SrDCo
+         2xxEwaMpwTnMbL7SYIdqDGXQRUxcICZpZxvklhsYoVVlwwDzZqCQOKwfIoorZQcE/sVR
+         9cvV7MY8MT45savJS7bTYkB6x+dcKpuV2L5F5+3YYrYdIvE0ajIPiLTgW5qPz/rqX6ZO
+         EFCs5qm8npT3vfx+Bw0eBeUV32y5fITZtDxxqkHy6dy0tRPZN9KWh+EfDDkdUd+LeM4z
+         MizcUmAWpvfwI6aNXV6KtPsrRy+hPhxFNEqZJ8k3JMBpKjMoEw4grwGRElQSP5fEMdGB
+         ucjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Qn/qIc+IdWDrpF18flmXoRQQTkgxgsIUgH+1qRMEjCs=;
-        b=cQjUQMPC+zzQowgTLqK/9qeQCKgHRK/2jyBKaDT2cfNuNXlPETRXYwzapCgwXJu/J0
-         UuJsBoo8uXaWlvV8CYKNBT4hqm4vLMPr56VPHMGjOIHRv9EXQN3eVePrvfI75nL3gGAX
-         bBDZ0csc/23GARpo7a1inoQXWNmEsjJuy5eTJ2L+D6uwyCOJfrrOCohApvlPYrKZ7JKd
-         l9sXDjfh/MnhQyxjYp+dUjE6XUOtiHhtWLf/jIS0WcKeAGsu/x5xL2ATgGHp88Um4y2E
-         vQUKqJYxbl2FqUzAx+5jaNKQnYF8GrxgT28QrlbZRspdivOgqCl4RGaTZo8lJSuyXeei
-         0P9g==
-X-Gm-Message-State: AOAM530unwrvXbo+9QZLT5WCIonrLtzCp1+wfYS2sNcYjns2iTeIdN9t
-        ADpG2HphnqXhs7eAqJhRbQYfJuEZSwLPzp8upu8=
-X-Google-Smtp-Source: ABdhPJyzMVqpzBDJbMwvoSTMwboacqpy5DyVLAnWb9Vf3sZg3kDOLsvds95rrxVQnhxv/+Gebvv01r4A6hCsnZgQi4c=
-X-Received: by 2002:a05:622a:ca:: with SMTP id p10mr21266702qtw.89.1640752999156;
- Tue, 28 Dec 2021 20:43:19 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Rlp4VRFlaQvcrJiJtb5dxBlkL5CmHTyPBV26aYsqzUY=;
+        b=N/11DfcZE3EJDk8pqzZOXpwskuLj/aX1EDk1pBAhz7HsMt76iZukrHVQq0U8seMxKV
+         GJiWB6n0824OyuXBKKUTTmatGX9JBzzwdF6YOnO2Ud+KvTuykbhzOsCzuWBB+wOkPSfs
+         TcvnFzdSnmS1BjveIqpQ8FJozDQIjg9y6W3H7xjdtOr9vTrEkFkgybpoH3csCis2L3po
+         xap2hoYziZNEmsnF9hFutLv6w1TO9Yiixpwax5JkWx0wc9MCbsDSbkbZLwkgGi8JZj2j
+         OS15fQs5vxcqJBjj9TEQA3VAtQbjKivCv10ucWZsepKRlmc45BSp8nF1kGqYpceuXTis
+         bHXQ==
+X-Gm-Message-State: AOAM530Ctj4RMXR86IWaR2mt9yb1b8diOl7I+o/4RnFNQGqZHtLIzGft
+        Y3YGjKHHVel7ahrM/0eM1XpnrqKtXy2Y8QYNG8Y=
+X-Google-Smtp-Source: ABdhPJzbWnjF0q64HfeQu4ixJKDCWBKwuZ52bKSLV3Ug9sq9kKjBVv5txOQJhjz4KsbZhyQBs6Qdw7O+nkctZtZ14Nk=
+X-Received: by 2002:a05:6602:29c2:: with SMTP id z2mr11092361ioq.196.1640761844239;
+ Tue, 28 Dec 2021 23:10:44 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:ad4:4e83:0:0:0:0:0 with HTTP; Tue, 28 Dec 2021 20:43:18
- -0800 (PST)
-Reply-To: jw257243@gmail.com
-From:   Ahmad Massoud <hervedodzi@gmail.com>
-Date:   Wed, 29 Dec 2021 05:43:18 +0100
-Message-ID: <CAG7OqbLsLPcQ6PD_YfFKgjYt_TyOZh+8V_c-BvCojsHRdtMaZg@mail.gmail.com>
-Subject: Hello,
-To:     undisclosed-recipients:;
+References: <SE1P216MB12869894048CCEDFCAECE9098F449@SE1P216MB1286.KORP216.PROD.OUTLOOK.COM>
+In-Reply-To: <SE1P216MB12869894048CCEDFCAECE9098F449@SE1P216MB1286.KORP216.PROD.OUTLOOK.COM>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 29 Dec 2021 09:10:33 +0200
+Message-ID: <CAOQ4uxjUt-x7Jgn+D6j4p6V2TyFEatvAe=sadK1svd8cRLShhQ@mail.gmail.com>
+Subject: Re: Inquiries about how to ignore sub-events when using a designated
+ directory as 'ignore mark'.
+To:     =?UTF-8?B?6rmA7Zic7J24?= <hyein.kim@ahnlab.com>
+Cc:     "jack@suse.cz" <jack@suse.cz>,
+        "repnop@google.com" <repnop@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Peace be unto you.
+On Wed, Dec 29, 2021 at 6:39 AM =EA=B9=80=ED=98=9C=EC=9D=B8 <hyein.kim@ahnl=
+ab.com> wrote:
+>
+>
+> Hello.
+>
+> I'd like to ask you about 'fanotify', a 'monitoring file system events'.
+>
+> I am using the 'fanotify_init' option below, and I used "fanotify" in Ubu=
+ntu OS, where many file events occur.
+>
 
-Myself, Ahmad Massoud, from Afghanistan, a politician and government
-official working with the ministry of finance before the Talibans took
-control of Afghanistan. I plead for your help to receive and secure my
-luggage in your country.
+Which kernel version?
 
-I want to send out my digital safe box containing my life savings, two
-million six hundred thousand dollars and some of my very important
-documents through diplomatic delivery from Afghanistan to your country
-for security reasons and for investment in your country.
-Unfortunately, I cannot send the money through bank because the
-Talibans has taken control of all the institutions in afghanistan. we
-are under imminent threat from massacres and targeted executions of
-government officials since the Talibans returned to power in our
-country and I have been in hiding to avoid the risk of deadly
-reprisals by the Talibans as I wait for paperwork to evacuate with my
-family.
+> But the 'sy' value of the top command is almost 100 and OS Hang has occur=
+red.
+>
 
-I hope to hear from you through email [ jw257243@gmail.com ] for my
-safety because the Talibans are tracking calls to find out our exact
-location in Kabul. For the delivery to your country, please send me
-your full name, address and telephone number.
+That is probably due to inefficient event merging.
+If you are going to use FAN_UNLIMITED_QUEUE and have a workload with
+large event bursts
+you are going to need kernel >=3D v5.13 with commit
+  94e00d28a680 ("fsnotify: use hash table for faster events merge")
 
-I look forward to hearing from you.
+Or at least one of the stable kernels (e.g. >=3D v5.10.67) with backported =
+commit
+"fanotify: limit number of event merge attempts"
 
-Ahmad Massoud.
+> So, I deleted the 'FAN_UNLIMITED_QUEUE' option and monitored it again, an=
+d the OS was operating normally.
+>
+> fanotify_init(FAN_CLASS_CONTENT | FAN_CLOEXEC | FAN_NONBLOCK | FAN_UNLIMI=
+TED_MARKS | FAN_UNLIMITED_QUEUE, O_CLOEXEC | O_RDONLY | O_LARGEFILE)
+>
+
+Just to be sure, are you using permission events?
+Otherwise, why are you using the class FAN_CLASS_CONTENT?
+Is it for priority?
+
+Please specify the fanotify_mark() arguments you used for the filesystem ma=
+rk.
+
+>
+> Exception processing was performed using the option below in 'fanotify_ma=
+rk' to exclude monitoring targets,
+> and even if the directory was exceptionally processed, all events in thos=
+e sub-files were delivered.
+>
+> fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK | FAN_MARK_IGNORED=
+_SURV_MODIFY, FAN_CLOSE_WRITE | FAN_OPEN, AT_FDCWD, path)
+>
+>
+> I would like to ask you if there is a way to ignore all sub-events when t=
+he designated directory is 'ignore mark'.
+>
+
+If you want the ignored mask to apply to events on children of the
+directory you should add
+FAN_EVENT_ON_CHILD to the mask.
+
+And make sure that you are running with kernel >=3D v5.8 with commit 2f02fd=
+3fa13e
+("fanotify: fix ignore mask logic for events on child and on dir")
+There may have been some other fix commits after this one.
+
+Thanks,
+Amir.
