@@ -2,71 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD70048142C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 15:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C6C481439
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 15:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240332AbhL2OoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Dec 2021 09:44:13 -0500
-Received: from fanzine2.igalia.com ([213.97.179.56]:44002 "EHLO
-        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236856AbhL2OoN (ORCPT
+        id S240413AbhL2OsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Dec 2021 09:48:11 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:56024 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236856AbhL2OsJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Dec 2021 09:44:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-        Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=xEhvsXnlkpoIMlNWlhVl6uBETW3daxxgh1OifCL6/Ic=; b=bY5rGx8IUHHNnLVISLoLY+p4+p
-        48DUo77tF4nAHpbOlSNNgz7RAkYTihdO/MiVG7bTRVx4+oKW/xpAdZmUoLnpc/vIpRhDcsM/lT/P8
-        0nn0vOYUVD7fgvj5k34q5ldRiMxqq/xzlq1Qwkav3nPKDgKDbasXm1JIpEMxXYivcxan0HU5mVtx7
-        iT3tKgpqZUEtfCC66bJhK171KSuKgetpvHYaljZz/Iuz6BAjPs40hHUS9LqghiXMTNOfbKYJAGTrs
-        oQeg7Kgdh5lX4rr8nVh+0wReP+F31gFMlAe+y8x4tFRtsm6biUt19vvCT+GRjQ2WVYmZ01MTldcO/
-        l9lN5tEA==;
-Received: from 200-153-146-242.dsl.telesp.net.br ([200.153.146.242] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1n2aBT-0008hr-Mp; Wed, 29 Dec 2021 15:44:07 +0100
-To:     keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        gpiccoli@igalia.com, "Guilherme G. Piccoli" <kernel@gpiccoli.net>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Subject: pstore/ramoops - why only collect a partial dmesg?
-Message-ID: <a21201cf-1e5f-fed1-356d-42c83a66fa57@igalia.com>
-Date:   Wed, 29 Dec 2021 11:43:51 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Wed, 29 Dec 2021 09:48:09 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C8BD3614F0;
+        Wed, 29 Dec 2021 14:48:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5786CC36AE7;
+        Wed, 29 Dec 2021 14:48:06 +0000 (UTC)
+Date:   Wed, 29 Dec 2021 15:48:02 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@fb.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH v9 2/5] fs: split off setxattr_copy and do_setxattr
+ function from setxattr
+Message-ID: <20211229144802.udabxntfvcsxlnii@wittgenstein>
+References: <20211228184145.1131605-1-shr@fb.com>
+ <20211228184145.1131605-3-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20211228184145.1131605-3-shr@fb.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Anton / Colin / Kees / Tony, I'd like to understand the rationale
-behind a ramoops behavior, appreciate in advance any information/advice!
+On Tue, Dec 28, 2021 at 10:41:42AM -0800, Stefan Roesch wrote:
+> This splits of the setup part of the function
+> setxattr in its own dedicated function called
+> setxattr_copy. In addition it also exposes a
+> new function called do_setxattr for making the
+> setxattr call.
+> 
+> This makes it possible to call these two functions
+> from io_uring in the processing of an xattr request.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
 
-I've noticed that while using ramoops as a backend for pstore, only the
-first "record_size" bytes of dmesg is collected/saved in sysfs on panic.
-It is the "Part 1" of dmesg - seems this is on purpose [0], so I'm
-curious on why can't we save the full dmesg split in multi-part files,
-like efi-pstore for example?
+(One completely optional thing below.)
 
-If that's an interesting idea, I'm willing to try implementing that in
-case there are no available patches for it already (maybe somebody
-worked on it for their own usage). My idea would be to have a tuning to
-enable or disable such new behavior, and we could have files like
-"dmesg-ramoops-0.partX" as the partitions of the full "dmesg-ramoops-0".
+Looks good,
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Thanks in advance,
+>  fs/internal.h | 21 +++++++++++++
+>  fs/xattr.c    | 82 ++++++++++++++++++++++++++++++++++++---------------
+>  2 files changed, 80 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 432ea3ce76ec..00c98b0cd634 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -202,3 +202,24 @@ struct linux_dirent64;
+>  
+>  int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+>  		 unsigned int count, loff_t *pos);
+> +
+> + /*
+> +  * fs/xattr.c:
+> +  */
+> +struct xattr_name {
+> +	char name[XATTR_NAME_MAX + 1];
+> +};
 
+Fwiw, one additional idea is to implement this similar to struct
+filename and have it keep the __user name together with the kernel name:
 
-Guilherme
+struct xattr_name {
+	const __user char	*uname;	/* original userland pointer */
+	char name[XATTR_NAME_MAX + 1];
+};
 
+and then sm like:
 
-[0]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/pstore/ram.c#n353
+From 3d85d31eb65f007e48e838fce776f16811732fc0 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Wed, 29 Dec 2021 15:43:46 +0100
+Subject: [PATCH] UNTESTED
+
+---
+ fs/internal.h |  3 ++-
+ fs/io_uring.c | 18 ++++++++----------
+ fs/xattr.c    | 20 +++++++++++---------
+ 3 files changed, 21 insertions(+), 20 deletions(-)
+
+diff --git a/fs/internal.h b/fs/internal.h
+index 942b2005a2be..bb97042ebd04 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -207,7 +207,8 @@ int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+   * fs/xattr.c:
+   */
+ struct xattr_name {
+-	char name[XATTR_NAME_MAX + 1];
++	const char __user *uname;
++	char kname[XATTR_NAME_MAX + 1];
+ };
+ 
+ struct xattr_ctx {
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c88916b8cccc..55ad854d3c64 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3916,7 +3916,6 @@ static int __io_getxattr_prep(struct io_kiocb *req,
+ 			      const struct io_uring_sqe *sqe)
+ {
+ 	struct io_xattr *ix = &req->xattr;
+-	const char __user *name;
+ 	int ret;
+ 
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+@@ -3928,7 +3927,7 @@ static int __io_getxattr_prep(struct io_kiocb *req,
+ 
+ 	ix->filename = NULL;
+ 	ix->ctx.kvalue = NULL;
+-	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
++	ix->ctx.name = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	ix->ctx.value = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	ix->ctx.size = READ_ONCE(sqe->len);
+ 	ix->ctx.flags = READ_ONCE(sqe->xattr_flags);
+@@ -3940,9 +3939,9 @@ static int __io_getxattr_prep(struct io_kiocb *req,
+ 	if (!ix->ctx.kname)
+ 		return -ENOMEM;
+ 
+-	ret = strncpy_from_user(ix->ctx.kname->name, name,
+-				sizeof(ix->ctx.kname->name));
+-	if (!ret || ret == sizeof(ix->ctx.kname->name))
++	ret = strncpy_from_user(ix->ctx.kname->kname, ix->ctx.name,
++				sizeof(ix->ctx.kname->kname));
++	if (!ret || ret == sizeof(ix->ctx.kname->kname))
+ 		ret = -ERANGE;
+ 	if (ret < 0) {
+ 		kfree(ix->ctx.kname);
+@@ -3991,7 +3990,7 @@ static int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	ret = do_getxattr(mnt_user_ns(req->file->f_path.mnt),
+ 			req->file->f_path.dentry,
+-			ix->ctx.kname->name,
++			ix->ctx.kname->kname,
+ 			(void __user *)ix->ctx.value,
+ 			ix->ctx.size);
+ 
+@@ -4019,7 +4018,7 @@ static int io_getxattr(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (!ret) {
+ 		ret = do_getxattr(mnt_user_ns(path.mnt),
+ 				path.dentry,
+-				ix->ctx.kname->name,
++				ix->ctx.kname->kname,
+ 				(void __user *)ix->ctx.value,
+ 				ix->ctx.size);
+ 
+@@ -4044,7 +4043,6 @@ static int __io_setxattr_prep(struct io_kiocb *req,
+ 			const struct io_uring_sqe *sqe)
+ {
+ 	struct io_xattr *ix = &req->xattr;
+-	const char __user *name;
+ 	int ret;
+ 
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+@@ -4055,7 +4053,7 @@ static int __io_setxattr_prep(struct io_kiocb *req,
+ 		return -EBADF;
+ 
+ 	ix->filename = NULL;
+-	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
++	ix->ctx.name = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	ix->ctx.value = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	ix->ctx.kvalue = NULL;
+ 	ix->ctx.size = READ_ONCE(sqe->len);
+@@ -4065,7 +4063,7 @@ static int __io_setxattr_prep(struct io_kiocb *req,
+ 	if (!ix->ctx.kname)
+ 		return -ENOMEM;
+ 
+-	ret = setxattr_copy(name, &ix->ctx);
++	ret = setxattr_copy(&ix->ctx);
+ 	if (ret) {
+ 		kfree(ix->ctx.kname);
+ 		return ret;
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 3b6d683d07b9..27c64bb0ca65 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -542,16 +542,16 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
+  * Extended attribute SET operations
+  */
+ 
+-int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
++int setxattr_copy(struct xattr_ctx *ctx)
+ {
+ 	int error;
+ 
+ 	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
+ 		return -EINVAL;
+ 
+-	error = strncpy_from_user(ctx->kname->name, name,
+-				sizeof(ctx->kname->name));
+-	if (error == 0 || error == sizeof(ctx->kname->name))
++	error = strncpy_from_user(ctx->kname->kname, ctx->kname->name,
++				sizeof(ctx->kname->kname));
++	if (error == 0 || error == sizeof(ctx->kname->kname))
+ 		return  -ERANGE;
+ 	if (error < 0)
+ 		return error;
+@@ -577,8 +577,8 @@ static void setxattr_convert(struct user_namespace *mnt_userns,
+ 			struct xattr_ctx *ctx)
+ {
+ 	if (ctx->size &&
+-		((strcmp(ctx->kname->name, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+-		(strcmp(ctx->kname->name, XATTR_NAME_POSIX_ACL_DEFAULT) == 0)))
++		((strcmp(ctx->kname->kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
++		(strcmp(ctx->kname->kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0)))
+ 		posix_acl_fix_xattr_from_user(mnt_userns, ctx->kvalue, ctx->size);
+ }
+ 
+@@ -586,7 +586,7 @@ int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct xattr_ctx *ctx)
+ {
+ 	setxattr_convert(mnt_userns, ctx);
+-	return vfs_setxattr(mnt_userns, dentry, ctx->kname->name,
++	return vfs_setxattr(mnt_userns, dentry, ctx->kname->kname,
+ 			ctx->kvalue, ctx->size, ctx->flags);
+ }
+ 
+@@ -595,7 +595,9 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	const char __user *name, const void __user *value, size_t size,
+ 	int flags)
+ {
+-	struct xattr_name kname;
++	struct xattr_name kname = {
++		.uname = name;
++	};
+ 	struct xattr_ctx ctx = {
+ 		.value    = value,
+ 		.kvalue   = NULL,
+@@ -605,7 +607,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	};
+ 	int error;
+ 
+-	error = setxattr_copy(name, &ctx);
++	error = setxattr_copy(&ctx);
+ 	if (error)
+ 		return error;
+ 
+-- 
+2.30.2
+
