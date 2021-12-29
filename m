@@ -2,91 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD2548141A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 15:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD70048142C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 15:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240223AbhL2Obf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Dec 2021 09:31:35 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:44014 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236856AbhL2Obe (ORCPT
+        id S240332AbhL2OoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Dec 2021 09:44:13 -0500
+Received: from fanzine2.igalia.com ([213.97.179.56]:44002 "EHLO
+        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236856AbhL2OoN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Dec 2021 09:31:34 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 88447B81905;
-        Wed, 29 Dec 2021 14:31:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C165FC36AE7;
-        Wed, 29 Dec 2021 14:31:30 +0000 (UTC)
-Date:   Wed, 29 Dec 2021 15:31:26 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, torvalds@linux-foundation.org
-Subject: Re: [PATCH v9 1/5] fs: split off do_user_path_at_empty from
- user_path_at_empty()
-Message-ID: <20211229143126.advkumqim7tztlmq@wittgenstein>
-References: <20211228184145.1131605-1-shr@fb.com>
- <20211228184145.1131605-2-shr@fb.com>
+        Wed, 29 Dec 2021 09:44:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+        Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=xEhvsXnlkpoIMlNWlhVl6uBETW3daxxgh1OifCL6/Ic=; b=bY5rGx8IUHHNnLVISLoLY+p4+p
+        48DUo77tF4nAHpbOlSNNgz7RAkYTihdO/MiVG7bTRVx4+oKW/xpAdZmUoLnpc/vIpRhDcsM/lT/P8
+        0nn0vOYUVD7fgvj5k34q5ldRiMxqq/xzlq1Qwkav3nPKDgKDbasXm1JIpEMxXYivcxan0HU5mVtx7
+        iT3tKgpqZUEtfCC66bJhK171KSuKgetpvHYaljZz/Iuz6BAjPs40hHUS9LqghiXMTNOfbKYJAGTrs
+        oQeg7Kgdh5lX4rr8nVh+0wReP+F31gFMlAe+y8x4tFRtsm6biUt19vvCT+GRjQ2WVYmZ01MTldcO/
+        l9lN5tEA==;
+Received: from 200-153-146-242.dsl.telesp.net.br ([200.153.146.242] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1n2aBT-0008hr-Mp; Wed, 29 Dec 2021 15:44:07 +0100
+To:     keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com
+Cc:     linux-kernel@vger.kernel.org,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        gpiccoli@igalia.com, "Guilherme G. Piccoli" <kernel@gpiccoli.net>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Subject: pstore/ramoops - why only collect a partial dmesg?
+Message-ID: <a21201cf-1e5f-fed1-356d-42c83a66fa57@igalia.com>
+Date:   Wed, 29 Dec 2021 11:43:51 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211228184145.1131605-2-shr@fb.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 28, 2021 at 10:41:41AM -0800, Stefan Roesch wrote:
-> This splits off a do_user_path_at_empty function from the
-> user_path_at_empty_function. This is required so it can be
-> called from io_uring.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
->  fs/namei.c            | 10 ++++++++--
->  include/linux/namei.h |  2 ++
->  2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 1f9d2187c765..d988e241b32c 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2794,12 +2794,18 @@ int path_pts(struct path *path)
->  }
->  #endif
->  
-> +int do_user_path_at_empty(int dfd, struct filename *filename, unsigned int flags,
-> +		       struct path *path)
-> +{
-> +	return filename_lookup(dfd, filename, flags, path, NULL);
-> +}
-> +
->  int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
-> -		 struct path *path, int *empty)
-> +		struct path *path, int *empty)
->  {
->  	struct filename *filename = getname_flags(name, flags, empty);
-> -	int ret = filename_lookup(dfd, filename, flags, path, NULL);
->  
-> +	int ret = do_user_path_at_empty(dfd, filename, flags, path);
->  	putname(filename);
->  	return ret;
->  }
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index e89329bb3134..8f3ef38c057b 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -49,6 +49,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
->  
->  extern int path_pts(struct path *path);
->  
-> +extern int do_user_path_at_empty(int dfd, struct filename *filename,
-> +				unsigned int flags, struct path *path);
+Hi Anton / Colin / Kees / Tony, I'd like to understand the rationale
+behind a ramoops behavior, appreciate in advance any information/advice!
 
-Sorry, just seeing this now but this wants to live in internal.h not in
-namei.h similar to all the other io_uring specific exports we added over
-the last releases. There's no need to make this a kernel-wide thing if
-we can avoid it, imho. With that changed:
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+I've noticed that while using ramoops as a backend for pstore, only the
+first "record_size" bytes of dmesg is collected/saved in sysfs on panic.
+It is the "Part 1" of dmesg - seems this is on purpose [0], so I'm
+curious on why can't we save the full dmesg split in multi-part files,
+like efi-pstore for example?
+
+If that's an interesting idea, I'm willing to try implementing that in
+case there are no available patches for it already (maybe somebody
+worked on it for their own usage). My idea would be to have a tuning to
+enable or disable such new behavior, and we could have files like
+"dmesg-ramoops-0.partX" as the partitions of the full "dmesg-ramoops-0".
+
+Thanks in advance,
+
+
+Guilherme
+
+
+[0]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/pstore/ram.c#n353
