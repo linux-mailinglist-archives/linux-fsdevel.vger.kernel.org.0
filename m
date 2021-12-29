@@ -2,314 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A9848143D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 15:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B390481559
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Dec 2021 17:51:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240424AbhL2OwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Dec 2021 09:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39764 "EHLO
+        id S240940AbhL2Qvi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Dec 2021 11:51:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233850AbhL2OwG (ORCPT
+        with ESMTP id S240895AbhL2Qvf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Dec 2021 09:52:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7106FC061574;
-        Wed, 29 Dec 2021 06:52:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D7322614FF;
-        Wed, 29 Dec 2021 14:52:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31744C36AE7;
-        Wed, 29 Dec 2021 14:52:01 +0000 (UTC)
-Date:   Wed, 29 Dec 2021 15:51:58 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, torvalds@linux-foundation.org
-Subject: Re: [PATCH v9 4/5] io_uring: add fsetxattr and setxattr support
-Message-ID: <20211229145158.ir7h7uii4l46zctu@wittgenstein>
-References: <20211228184145.1131605-1-shr@fb.com>
- <20211228184145.1131605-5-shr@fb.com>
+        Wed, 29 Dec 2021 11:51:35 -0500
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEC1C061574;
+        Wed, 29 Dec 2021 08:51:35 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id x15so16250935plg.1;
+        Wed, 29 Dec 2021 08:51:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eyiokD87yXLE7dKoF/rAesIX6IaZjzEtJI7+LN04FEk=;
+        b=jbps2qryj0Z0zQWn+lrBBlSxcDefe6KXi88QIlXKVc6Y7PKqWfUapjY8JxFcaIGigd
+         ft7+84WoQ0h4UhL3vyJ1DIBHIIiAm5llGYmfk4nVkAe+3GrrBf97zhKbWsvTPX6JejKF
+         1dkXJo0UGl+pIxJTyh0L4R8V7cOazLao67YG1WvcCgMJUT7Zmhf0eicJkPKKBztKsk7v
+         D05fKDj1dOQc8zLv828bRzJys90kfBlRY+f583hLSA+S27xtYBrr/t46oqhBNzw2uXBi
+         meZ8HORQpYNqIJLSkK446oH4j64Ut5bibHP4XsZdHoPvyO6AnHzKO5rs+vK+c+HbGKip
+         7LUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eyiokD87yXLE7dKoF/rAesIX6IaZjzEtJI7+LN04FEk=;
+        b=hWiaPoUqJrVzY5vg6f/c77RBAEYa17d/E6UGC8KAVQ+PYzfl82InjrArHXDEYwGOrL
+         Qzc7Ez+e+rsoxqHvzJ2Tl5tnaatkpPeDU21KW9xHyhXtBw89SFUtYFgniKE3B5IUj+qj
+         9HQKl6gBjyYgTyZV5+siJvSF+1TSNYukxsk33ecnbRThqJlu8stTQBgWADo8WNiKz+h+
+         D8Du/HL+xqgYpxsgJgqRHxplC8RyPO08lvkqj80xLavY1gGH9lcjdPKFx4iQpJ05bB67
+         et7HX70AlLPPjV0Uy+wW3vf7NXVl3Ns3muYCId5E1T9/1lcC9YEpMHm2D4XpWeMKeyrb
+         e2iA==
+X-Gm-Message-State: AOAM532kVlzxktAb+63NYKaT5zI1au11QfZbWHHa7x75GfqwF4Be4MwS
+        CzTN9/xCStm7aaFTSxXK+usG6kccsejec4v8/5A=
+X-Google-Smtp-Source: ABdhPJxws7iMiWFQ81pkeV1J6AYDjsQKCDaoIm81c0ZOXt5vTQ/CRD6VrIFy5sdtzv5w8UmX3Hk8KIPfWDSHxOMnNg4=
+X-Received: by 2002:a17:902:c443:b0:148:f689:d924 with SMTP id
+ m3-20020a170902c44300b00148f689d924mr27252809plm.78.1640796694708; Wed, 29
+ Dec 2021 08:51:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211228184145.1131605-5-shr@fb.com>
+References: <20211229004913.513372-1-kuba@kernel.org>
+In-Reply-To: <20211229004913.513372-1-kuba@kernel.org>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 29 Dec 2021 08:51:23 -0800
+Message-ID: <CAADnVQLd2y_Cuqrn+cAQzCjpXM_Lub5_X6xEfZdMMC2a2Jq41A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2] net: don't include filter.h from net/sock.h
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        bpf <bpf@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, mustafa.ismail@intel.com,
+        shiraz.saleem@intel.com, Leon Romanovsky <leon@kernel.org>,
+        Taehee Yoo <ap420073@gmail.com>, wg@grandegger.com,
+        woojung.huh@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+        vivien.didelot@gmail.com, Florian Fainelli <f.fainelli@gmail.com>,
+        olteanv@gmail.com, george.mccollister@gmail.com,
+        Michael Chan <michael.chan@broadcom.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        anthony.l.nguyen@intel.com,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Tariq Toukan <tariqt@nvidia.com>, saeedm@nvidia.com,
+        ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com, jreuter@yaina.de,
+        David Ahern <dsahern@kernel.org>, kvalo@codeaurora.org,
+        pkshih@realtek.com, trond.myklebust@hammerspace.com,
+        anna.schumaker@netapp.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>, nikolay@nvidia.com,
+        jiri@nvidia.com, wintera@linux.ibm.com, wenjia@linux.ibm.com,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>, kgraul@linux.ibm.com,
+        sgarzare@redhat.com,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>, linux-bluetooth@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-can@vger.kernel.org,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        linux-hams@vger.kernel.org, ath11k@lists.infradead.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-nfs@vger.kernel.org,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
+        linux-decnet-user@lists.sourceforge.net,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        netfilter-devel <netfilter-devel@vger.kernel.org>,
+        coreteam@netfilter.org, virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 28, 2021 at 10:41:44AM -0800, Stefan Roesch wrote:
-> This adds support to io_uring for the fsetxattr and setxattr API.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
+On Tue, Dec 28, 2021 at 4:49 PM Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> sock.h is pretty heavily used (5k objects rebuilt on x86 after
+> it's touched). We can drop the include of filter.h from it and
+> add a forward declaration of struct sk_filter instead.
+> This decreases the number of rebuilt objects when bpf.h
+> is touched from ~5k to ~1k.
+>
+> There's a lot of missing includes this was masking. Primarily
+> in networking tho, this time.
+>
+> Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 > ---
->  fs/io_uring.c                 | 165 ++++++++++++++++++++++++++++++++++
->  include/uapi/linux/io_uring.h |   6 +-
->  2 files changed, 170 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index c8258c784116..2a0138a2876a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -82,6 +82,7 @@
->  #include <linux/audit.h>
->  #include <linux/security.h>
->  #include <linux/atomic-ref.h>
-> +#include <linux/xattr.h>
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/io_uring.h>
-> @@ -726,6 +727,12 @@ struct io_async_rw {
->  	struct wait_page_queue		wpq;
->  };
->  
-> +struct io_xattr {
-> +	struct file			*file;
-> +	struct xattr_ctx		ctx;
-> +	struct filename			*filename;
-> +};
-> +
->  enum {
->  	REQ_F_FIXED_FILE_BIT	= IOSQE_FIXED_FILE_BIT,
->  	REQ_F_IO_DRAIN_BIT	= IOSQE_IO_DRAIN_BIT,
-> @@ -866,6 +873,7 @@ struct io_kiocb {
->  		struct io_symlink	symlink;
->  		struct io_hardlink	hardlink;
->  		struct io_getdents	getdents;
-> +		struct io_xattr		xattr;
->  	};
->  
->  	u8				opcode;
-> @@ -1118,6 +1126,10 @@ static const struct io_op_def io_op_defs[] = {
->  	[IORING_OP_GETDENTS] = {
->  		.needs_file		= 1,
->  	},
-> +	[IORING_OP_FSETXATTR] = {
-> +		.needs_file = 1
-> +	},
-> +	[IORING_OP_SETXATTR] = {},
->  };
->  
->  /* requests with any of those set should undergo io_disarm_next() */
-> @@ -3887,6 +3899,140 @@ static int io_renameat(struct io_kiocb *req, unsigned int issue_flags)
->  	return 0;
->  }
->  
-> +static int __io_setxattr_prep(struct io_kiocb *req,
-> +			const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	const char __user *name;
-> +	int ret;
-> +
-> +	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-> +		return -EINVAL;
-> +	if (unlikely(sqe->ioprio))
-> +		return -EINVAL;
-> +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-> +		return -EBADF;
-> +
-> +	ix->filename = NULL;
-> +	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> +	ix->ctx.value = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-> +	ix->ctx.kvalue = NULL;
-> +	ix->ctx.size = READ_ONCE(sqe->len);
-> +	ix->ctx.flags = READ_ONCE(sqe->xattr_flags);
-> +
-> +	ix->ctx.kname = kmalloc(sizeof(*ix->ctx.kname), GFP_KERNEL);
-> +	if (!ix->ctx.kname)
-> +		return -ENOMEM;
-> +
-> +	ret = setxattr_copy(name, &ix->ctx);
-> +	if (ret) {
-> +		kfree(ix->ctx.kname);
-> +		return ret;
-> +	}
-> +
-> +	req->flags |= REQ_F_NEED_CLEANUP;
-> +	return 0;
-> +}
-> +
-> +static int io_setxattr_prep(struct io_kiocb *req,
-> +			const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	const char __user *path;
-> +	int ret;
-> +
-> +	ret = __io_setxattr_prep(req, sqe);
-> +	if (ret)
-> +		return ret;
-> +
-> +	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
-> +
-> +	ix->filename = getname_flags(path, LOOKUP_FOLLOW, NULL);
-> +	if (IS_ERR(ix->filename)) {
-> +		ret = PTR_ERR(ix->filename);
-> +		ix->filename = NULL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int io_fsetxattr_prep(struct io_kiocb *req,
-> +			const struct io_uring_sqe *sqe)
-> +{
-> +	return __io_setxattr_prep(req, sqe);
-> +}
-> +
-> +static int __io_setxattr(struct io_kiocb *req, unsigned int issue_flags,
-> +			struct path *path)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	int ret;
-> +
-> +	ret = mnt_want_write(path->mnt);
-> +	if (!ret) {
-> +		ret = do_setxattr(mnt_user_ns(path->mnt), path->dentry, &ix->ctx);
-> +		mnt_drop_write(path->mnt);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	int ret;
-> +
-> +	if (issue_flags & IO_URING_F_NONBLOCK)
-> +		return -EAGAIN;
-> +
-> +	ret = __io_setxattr(req, issue_flags, &req->file->f_path);
-> +
-> +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> +	kfree(ix->ctx.kname);
-> +
-> +	if (ix->ctx.kvalue)
-> +		kvfree(ix->ctx.kvalue);
-> +	if (ret < 0)
-> +		req_set_fail(req);
-> +
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
-> +
-> +static int io_setxattr(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_xattr *ix = &req->xattr;
-> +	unsigned int lookup_flags = LOOKUP_FOLLOW;
-> +	struct path path;
-> +	int ret;
-> +
-> +	if (issue_flags & IO_URING_F_NONBLOCK)
-> +		return -EAGAIN;
-> +
-> +retry:
-> +	ret = do_user_path_at_empty(AT_FDCWD, ix->filename, lookup_flags, &path);
-> +	if (!ret) {
-> +		ret = __io_setxattr(req, issue_flags, &path);
-> +		path_put(&path);
-> +		if (retry_estale(ret, lookup_flags)) {
-> +			lookup_flags |= LOOKUP_REVAL;
-> +			goto retry;
-> +		}
-> +	}
-> +	putname(ix->filename);
-> +
-> +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> +	kfree(ix->ctx.kname);
-> +
-> +	if (ix->ctx.kvalue)
-> +		kvfree(ix->ctx.kvalue);
-> +	if (ret < 0)
-> +		req_set_fail(req);
-> +
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
+> v2: https://lore.kernel.org/all/20211228192519.386913-1-kuba@kernel.org/
+>  - fix build in bond on ia64
+>  - fix build in ip6_fib with randconfig
 
-(One suggestin below.)
-
-Looks good,
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
-You could minimize the redudancy by implementing a simple helper
-callable from both io_fsetxattr() and io_setxattr() if you think it's
-worth with. So sm like:
-
-From 2f837aa2a19b5cd8e73fffb9b87b6e6b22c5cae7 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Wed, 29 Dec 2021 15:22:34 +0100
-Subject: [PATCH] UNTESTED
-
----
- fs/io_uring.c | 36 +++++++++++++++++-------------------
- 1 file changed, 17 insertions(+), 19 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7204b8d593e4..c88916b8cccc 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4118,6 +4118,21 @@ static int __io_setxattr(struct io_kiocb *req, unsigned int issue_flags,
- 	return ret;
- }
- 
-+static void __io_setxattr_finish(struct io_kiocb *req, int ret)
-+{
-+	struct xattr_ctx *ctx = &req->xattr.ctx;
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+
-+	kfree(ctx->kname);
-+	if (ctx->kvalue)
-+		kvfree(ctx->kvalue);
-+
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_complete(req, ret);
-+}
-+
- static int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_xattr *ix = &req->xattr;
-@@ -4127,16 +4142,7 @@ static int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
- 		return -EAGAIN;
- 
- 	ret = __io_setxattr(req, issue_flags, &req->file->f_path);
--
--	req->flags &= ~REQ_F_NEED_CLEANUP;
--	kfree(ix->ctx.kname);
--
--	if (ix->ctx.kvalue)
--		kvfree(ix->ctx.kvalue);
--	if (ret < 0)
--		req_set_fail(req);
--
--	io_req_complete(req, ret);
-+	__io_setxattr_finish(req, ret);
- 	return 0;
- }
- 
-@@ -4162,15 +4168,7 @@ static int io_setxattr(struct io_kiocb *req, unsigned int issue_flags)
- 	}
- 	putname(ix->filename);
- 
--	req->flags &= ~REQ_F_NEED_CLEANUP;
--	kfree(ix->ctx.kname);
--
--	if (ix->ctx.kvalue)
--		kvfree(ix->ctx.kvalue);
--	if (ret < 0)
--		req_set_fail(req);
--
--	io_req_complete(req, ret);
-+	__io_setxattr_finish(req, ret);
- 	return 0;
- }
- 
--- 
-2.30.2
-
+Nice! Applied. Thanks
