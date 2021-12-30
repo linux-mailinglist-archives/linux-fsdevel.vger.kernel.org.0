@@ -2,121 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0029F481F64
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Dec 2021 20:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A6A6481FD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Dec 2021 20:23:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236996AbhL3TJP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Dec 2021 14:09:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236868AbhL3TJO (ORCPT
+        id S241900AbhL3TXb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Dec 2021 14:23:31 -0500
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:44142
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240217AbhL3TXa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Dec 2021 14:09:14 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F59C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Dec 2021 11:09:14 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id m1so22059274pfk.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Dec 2021 11:09:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fysHuqj+dz2GT8PfjvEueGj5F+LE15D/0WG+fpJBFj8=;
-        b=dr0oMzHttPZio81W+Cvd202qGfrnrosKh+GXHoWdp6Uu7WsAsLwplCsJXEXh4RWhH6
-         4jn3xb+6L/GqOpblnrGCxXth6KXVoNLUF2ayc+ALarKa9HtUA22jq7qHpiFjAgzUForX
-         VD9QSmf9gHbz9cRh4z6UNhmwBRO+cytxEO464zC0kUZ9lSXEwAcfhpcHi4KfvmMDG/AM
-         vIZW10av4d5R+xgOxNCLS6wNGk5YiA2dNRMV8R0/rOjyrky13OX9h+Cv1Qv3i9P1D+G3
-         iNpAuJRdTkTL1uxoPLWyPzvc8LYCxd5Dg1RfXuv14XTdciBAhFoJY3eqlPosUe5Q8nU+
-         oPbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fysHuqj+dz2GT8PfjvEueGj5F+LE15D/0WG+fpJBFj8=;
-        b=el4EjfPEEje/AERxzNSGxOnHZ/etOP5pEwoE2yukcwoy5/sFcW7y6K0i313AG+B+P2
-         eGUf4eJjokCPUIXY+kE2ARomefAA7b+UcUNOx3qoST3s3LoE4tMNsyMR17tyRlTY9iJy
-         rxnPys1cVNoS08OW9ZFuR40nlblBvA2VvKQWWQNPub8QD+1HBA0Ob+ek3nrnBqpzKMNT
-         d2X1+5lW8se3lJurhSsgKpOQWwD9DYU7vMp8XrT2u4DyyVpfuRWK3jl/NLj4SG9Trreq
-         JQzGUTQtaZf7ukIjEWu+0QdvQ/AgNhSV4FLBJACP/9mw7aCw7/A17ufLaD86KGGlzOXY
-         QOZA==
-X-Gm-Message-State: AOAM531xpeSAghKzy0hwCJiKgVBHldwLxuRlatiDe5O+imOTMW1zXPp8
-        QMmOz644vDNfm0fTo8Y+rqEffA==
-X-Google-Smtp-Source: ABdhPJy3bvE4xvTWtBoPuqhngT5QK0vpda0T7b2brmUMNDRQHdIyd+zcEUX+BhqO14U7BnjRF5RPmQ==
-X-Received: by 2002:a63:9d8a:: with SMTP id i132mr14004425pgd.329.1640891354045;
-        Thu, 30 Dec 2021 11:09:14 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id y32sm29575892pfa.92.2021.12.30.11.09.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Dec 2021 11:09:13 -0800 (PST)
-Subject: Re: [PATCH v10 4/5] io_uring: add fsetxattr and setxattr support
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
-        torvalds@linux-foundation.org
-References: <20211229203002.4110839-1-shr@fb.com>
- <20211229203002.4110839-5-shr@fb.com>
- <Yc0Ws8LevbWc+N1q@zeniv-ca.linux.org.uk>
- <Yc0hwttkEu4wSPGa@zeniv-ca.linux.org.uk>
- <20211230101242.j6jzxc4ahmx2plqx@wittgenstein>
- <Yc3bYj33YPwpAg8q@zeniv-ca.linux.org.uk>
- <20211230180114.vuum3zorhafd2zta@wittgenstein>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5030f5fa-79c3-b3b7-857d-3ac62bf2b982@kernel.dk>
-Date:   Thu, 30 Dec 2021 11:09:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 30 Dec 2021 14:23:30 -0500
+Received: from wittgenstein.fritz.box (ip5f5bd15c.dynamic.kabel-deutschland.de [95.91.209.92])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id C86CF3F12E;
+        Thu, 30 Dec 2021 19:23:22 +0000 (UTC)
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH] fs/mount_setattr: always cleanup mount_kattr
+Date:   Thu, 30 Dec 2021 20:23:09 +0100
+Message-Id: <20211230192309.115524-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20211230180114.vuum3zorhafd2zta@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/30/21 10:01 AM, Christian Brauner wrote:
->> However, what I really want to see is the answer to my question re control
->> flow and the place where we do copy the arguments from userland.  Including
->> the pathname.
->>
->> *IF* there's a subtle reason that has to be done from prep phase (and there
->> might very well be - figuring out the control flow in io_uring is bloody
->> painful), I would really like to see it spelled out, along with the explanation
->> of the reasons why statx() doesn't need anything of that sort.
->>
->> If there's no such reasons, I would bloody well leave marshalling to the
-> 
-> That's really something the io_uring folks should explain to us. I can't
-> help much there either apart from what I can gather from looking through
-> the io_req_prep() switch.
-> 
-> Where it's clear that nearly all syscall-operations immediately do a
-> getname() and/or copy their arguments in the *_prep() phase as, not in
-> the actual "do-the-work" phase. For example, io_epoll_ctl_prep() which
-> copies struct epoll_event via copy_from_user(). It doesn't do it in
-> io_epoll_ctl(). So as such io_statx_prep() is the outlier...
+Make sure that finish_mount_kattr() is called after mount_kattr was
+succesfully built in both the success and failure case to prevent
+leaking any references we took when we built it. So far we returned
+early if path lookup failed thereby risking to leak an additional
+reference we took when building mount_kattr when an idmapped mount was
+requested.
 
-For each command, there are two steps:
+Cc: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+Hey Linus,
 
-- The prep of it, this happens inline from the system call where the
-  request, or requests, are submitted. The prep phase should ensure that
-  argument structs are stable. Hence a caller can prep a request and
-  have memory on stack, as long as it submits before it becomes invalid.
-  An example of that are iovecs for readv/writev. The caller does not
-  need to have them stable for the duration of the request, just across
-  submit. That's the io_${cmd}_prep() helpers.
+This contains a simple fix to get rid of a pointless refcount bump when
+requesting an idmapped mount after we built mount_kattr but in case we
+failed too lookup the target path and error out early without calling
+finish_mount_kattr().
 
-- The execution of it. May be separate from prep and from an async
-  worker. Where the lower layers don't support a nonblocking attempt,
-  they are always done async. The statx stuff is an example of that.
+Would you be ok with applying this fix directly? I'm happy to send a pr
+too of course but I wasn't sure if that was worth it as there's not much
+explaining to do in the pr message for this one, I think.
 
-Hence prep needs to copy from userland on the prep side always for the
-statx family, as execution will happen out-of-line from the submission.
+This hasn't been in -next but given that it hasn't been updated in about
+a week I don't think it makes much sense to delay this. The fix should
+hopefully be straightforward.
+Fstests and mount_setattr selftests pass without regressions
+(showing only relevant tests):
 
-Does that explain it?
+SECTION       -- xfs
+RECREATING    -- xfs on /dev/loop4
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc7-fs-mount-setattr-fixes-1a24ab33373b #33 SMP PREEMPT Thu Dec 30 15:55:39 UTC 2021
+MKFS_OPTIONS  -- -f -f /dev/loop5
+MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
 
+generic/633 5s ...  25s
+generic/644 18s ...  14s
+generic/645 80s ...  75s
+generic/656 3s ...  15s
+xfs/152 63s ...  70s
+xfs/153 43s ...  46s
+Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
+Passed all 6 tests
+
+SECTION       -- ext4
+RECREATING    -- ext4 on /dev/loop4
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc7-fs-mount-setattr-fixes-1a24ab33373b #33 SMP PREEMPT Thu Dec 30 15:55:39 UTC 2021
+MKFS_OPTIONS  -- -F -F /dev/loop5
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop5 /mnt/scratch
+
+generic/633 25s ...  18s
+generic/644 14s ...  4s
+generic/645 75s ...  59s
+generic/656 15s ...  8s
+Ran: generic/633 generic/644 generic/645 generic/656
+Passed all 4 tests
+
+SECTION       -- btrfs
+RECREATING    -- btrfs on /dev/loop4
+FSTYP         -- btrfs
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-rc7-fs-mount-setattr-fixes-1a24ab33373b #33 SMP PREEMPT Thu Dec 30 15:55:39 UTC 2021
+MKFS_OPTIONS  -- -f /dev/loop5
+MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
+
+btrfs/245 9s ...  10s
+generic/633 18s ...  21s
+generic/644 4s ...  4s
+generic/645 59s ...  62s
+generic/656 8s ...  8s
+Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
+Passed all 5 tests
+
+SECTION       -- xfs
+=========================
+Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
+Passed all 6 tests
+
+SECTION       -- ext4
+=========================
+Ran: generic/633 generic/644 generic/645 generic/656
+Passed all 4 tests
+
+SECTION       -- btrfs
+=========================
+Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
+Passed all 5 tests
+
+Thanks!
+Christian
+---
+ fs/namespace.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 659a8f39c61a..b696543adab8 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4263,12 +4263,11 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
+ 		return err;
+ 
+ 	err = user_path_at(dfd, path, kattr.lookup_flags, &target);
+-	if (err)
+-		return err;
+-
+-	err = do_mount_setattr(&target, &kattr);
++	if (!err) {
++		err = do_mount_setattr(&target, &kattr);
++		path_put(&target);
++	}
+ 	finish_mount_kattr(&kattr);
+-	path_put(&target);
+ 	return err;
+ }
+ 
+
+base-commit: fc74e0a40e4f9fd0468e34045b0c45bba11dcbb2
 -- 
-Jens Axboe
+2.30.2
 
