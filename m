@@ -2,137 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7939481E02
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Dec 2021 17:16:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DEF2481EA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Dec 2021 18:32:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240632AbhL3QQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Dec 2021 11:16:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34920 "EHLO
+        id S241468AbhL3Rcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Dec 2021 12:32:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239267AbhL3QQi (ORCPT
+        with ESMTP id S231386AbhL3Rcr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Dec 2021 11:16:38 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B167C061574;
-        Thu, 30 Dec 2021 08:16:38 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n2y6U-00G2Vv-Pq; Thu, 30 Dec 2021 16:16:34 +0000
-Date:   Thu, 30 Dec 2021 16:16:34 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH v10 4/5] io_uring: add fsetxattr and setxattr support
-Message-ID: <Yc3bYj33YPwpAg8q@zeniv-ca.linux.org.uk>
-References: <20211229203002.4110839-1-shr@fb.com>
- <20211229203002.4110839-5-shr@fb.com>
- <Yc0Ws8LevbWc+N1q@zeniv-ca.linux.org.uk>
- <Yc0hwttkEu4wSPGa@zeniv-ca.linux.org.uk>
- <20211230101242.j6jzxc4ahmx2plqx@wittgenstein>
+        Thu, 30 Dec 2021 12:32:47 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91046C061574;
+        Thu, 30 Dec 2021 09:32:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=aA9xBCuC2t/FCahUtFoF9vl9PxKpUL1fgzD9EinxOdo=; b=Z8drxXgAC81DL2C+p/fauQxUXf
+        NsKPhFvqfekg/WFrvVja5bA4fBORGdpvl0dWCK1Aoy3l5uVtRvRBA9iSLlKP7MEsBfdf/5Fu5FSLU
+        sDrJhGQg0kzhDDj/znSXRYMKj8gNfjGfKfzPuBuKqbI+FiNy+JxXh4xugYlsC7E9GWKVC6f1MDl9S
+        Y6gPYgQNL7lvyLoboMGvlG7EvgBVcGm9mBUQH3kBagIVy5gjGwDniIoBNVLLGX4ciE9bYzSNqeSxg
+        TaJvSv6YFKo1M5aY7TKF3d6WSTbKPOsj5qwdeTGeZpTdggtOoHpx+gKJFlk48Ggu+VoGK6+XLFRGa
+        4m2kFgjQ==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n2zI7-009x46-N5; Thu, 30 Dec 2021 17:32:39 +0000
+Message-ID: <3ad11107-30d8-ab75-961b-8142404c8c21@infradead.org>
+Date:   Thu, 30 Dec 2021 09:32:35 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211230101242.j6jzxc4ahmx2plqx@wittgenstein>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: mmotm 2021-12-29-20-07 uploaded (mm/damon)
+Content-Language: en-US
+To:     Baolin Wang <baolin.wang@linux.alibaba.com>,
+        akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        SeongJae Park <sj@kernel.org>
+References: <20211230040740.SbquJAFf5%akpm@linux-foundation.org>
+ <a57f9bc4-2c1b-f819-17a6-2e1d2f9dd173@infradead.org>
+ <1aaf9c11-0d8e-b92d-5c92-46e50a6e8d4e@linux.alibaba.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <1aaf9c11-0d8e-b92d-5c92-46e50a6e8d4e@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 30, 2021 at 11:12:42AM +0100, Christian Brauner wrote:
 
-> @@ -545,6 +545,7 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
->  int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
->  {
->  	int error;
-> +	struct xattr_ctx *new_ctx;
->  
->  	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
->  		return -EINVAL;
-> @@ -606,12 +607,9 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
->  	int error;
->  
->  	error = setxattr_copy(name, &ctx);
-> -	if (error)
-> -		return error;
-> -
-> -	error = do_setxattr(mnt_userns, d, &ctx);
-> -
-> -	kvfree(ctx.kvalue);
-> +	if (!error)
-> +		error = do_setxattr(mnt_userns, d, &ctx);
-> +	setxattr_finish(&ctx);
->  	return error;
->  }
 
-Huh?  Have you lost a chunk or two in there?  The only modification of
-setxattr_copy() in your delta is the introduction of an unused local
-variable.  Confused...
+On 12/29/21 22:33, Baolin Wang wrote:
+> Hi,
+> 
+> On 12/30/2021 2:27 PM, Randy Dunlap wrote:
+>> Hi--
+>>
+>> On 12/29/21 20:07, akpm@linux-foundation.org wrote:
+>>> The mm-of-the-moment snapshot 2021-12-29-20-07 has been uploaded to
+>>>
+>>>     https://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> mmotm-readme.txt says
+>>>
+>>> README for mm-of-the-moment:
+>>>
+>>> https://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>> more than once a week.
+>>>
+>>> You will need quilt to apply these patches to the latest Linus release (5.x
+>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>>> https://ozlabs.org/~akpm/mmotm/series
+>>>
+>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>>> followed by the base kernel version against which this patch series is to
+>>> be applied.
+>>
+>>
+>> On i386:
+>>
+>> ../mm/damon/vaddr.c: In function ‘damon_hugetlb_mkold’:
+>> ../mm/damon/vaddr.c:402:17: warning: unused variable ‘h’ [-Wunused-variable]
+>>    struct hstate *h = hstate_vma(vma);
+> 
+> Ah, thanks for report, I think below changes can fix the warning. And I'll send a new version to address this warning.
 
-What I had in mind is something like this:
+Yes, that works. Thanks.
 
-// same for getxattr and setxattr
-static int xattr_name_from_user(const char __user *name, struct xattr_ctx *ctx)
-{
-	int copied;
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-	if (!ctx->xattr_name) {
-		ctx->xattr_name = kmalloc(XATTR_NAME_MAX + 1, GFP_KERNEL);
-		if (!ctx->xattr_name)
-			return -ENOMEM;
-	}
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index bcdc602..25bff8a 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -397,7 +397,6 @@ static void damon_hugetlb_mkold(pte_t *pte, struct mm_struct *mm,
+>                                 struct vm_area_struct *vma, unsigned long addr)
+>  {
+>         bool referenced = false;
+> -       struct hstate *h = hstate_vma(vma);
+>         pte_t entry = huge_ptep_get(pte);
+>         struct page *page = pte_page(entry);
+> 
+> @@ -414,7 +413,7 @@ static void damon_hugetlb_mkold(pte_t *pte, struct mm_struct *mm,
+>         }
+> 
+>  #ifdef CONFIG_MMU_NOTIFIER
+> -       if (mmu_notifier_clear_young(mm, addr, addr + huge_page_size(h)))
+> +       if (mmu_notifier_clear_young(mm, addr, addr + huge_page_size(hstate_vma(vma))))
+>                 referenced = true;
+>  #endif /* CONFIG_MMU_NOTIFIER */
 
-	copied = strncpy_from_user(ctx->xattr_name, name, XATTR_NAME_MAX + 1);
- 	if (copied < 0)
- 		return copied;	// copyin failure; almost always -EFAULT
-	if (copied == 0 || copied == XATTR_NAME_MAX + 1)
-		return  -ERANGE;
-	return 0;
-}
-
-// freeing is up to the caller, whether we succeed or not
-int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
-{
- 	int error;
-
-	if (ctx->flags & ~(XATTR_CREATE|XATTR_REPLACE))
- 		return -EINVAL;
-
-	error = xattr_name_from_user(name, ctx);
- 	if (error)
- 		return error;
-
-	if (ctx->size) {
-		void *p;
-
-		if (ctx->size > XATTR_SIZE_MAX)
- 			return -E2BIG;
-
-		p = vmemdup_user(ctx->value, ctx->size);
-		if (IS_ERR(p))
-			return PTR_ERR(p);
-		ctx->kvalue = p;
- 	}
-	return 0;
-}
-
-with syscall side concluded with freeing ->kvalue (unconditionally), while
-io_uring one - ->kvalue and ->xattr_name (also unconditionally).  And to
-hell with struct xattr_name - a string is a string.
-
-However, what I really want to see is the answer to my question re control
-flow and the place where we do copy the arguments from userland.  Including
-the pathname.
-
-*IF* there's a subtle reason that has to be done from prep phase (and there
-might very well be - figuring out the control flow in io_uring is bloody
-painful), I would really like to see it spelled out, along with the explanation
-of the reasons why statx() doesn't need anything of that sort.
-
-If there's no such reasons, I would bloody well leave marshalling to the
-payload, allowing to share a lot more with the syscall path.  In that
-case xattr_ctx only needs to carry the userland pointers/size/flags.
-And all that "do we allocate the kernel copy of the name dynamically,
-or does it live on stack" simply goes away.
-
-Details, please.
+-- 
+~Randy
