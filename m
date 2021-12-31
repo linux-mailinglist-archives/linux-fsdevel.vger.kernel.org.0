@@ -2,90 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D09644825E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Dec 2021 22:18:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD44B482618
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jan 2022 00:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231792AbhLaVSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Dec 2021 16:18:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46040 "EHLO
+        id S231902AbhLaXOH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Dec 2021 18:14:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbhLaVSb (ORCPT
+        with ESMTP id S230094AbhLaXOG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Dec 2021 16:18:31 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB799C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Dec 2021 13:18:30 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id f5so112221791edq.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Dec 2021 13:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DyekG4kFjnr+PJmkJt2my9Q9IwijxrDikfprPRjgUB0=;
-        b=I5RBhHI6Fk4znjKVzEGRQq7L/KIfGQBjt1zOGbjgwZJCRL/LGtR6UgIe0z3Fc9FipS
-         fcId7ZLwJ++9KoZ7D84Kj1l7M5k/OMtDUiz1hpNTc+6N9jrL4yxMpBk7Ib4WUdM/mtMD
-         jVoOLnqLDEyPuenZk2xfAkKtwiZz0SHDpR7Eg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DyekG4kFjnr+PJmkJt2my9Q9IwijxrDikfprPRjgUB0=;
-        b=6C8fuCwqDreRvmFCE/4nCin3WIX6jo4K2FiEeaUby/gawHyAnNz5iz2Wtu6fZ4O0ML
-         KEObIS0KCysQ8EAtzS4UoUwfRpJjbLcfXafr0GPVlyU0K7ovs31KRWLyxmtGBtdKUy4Q
-         cuSDNOJGBoE5U8C1BDv7FpryOoyNLhCwHLzOSayIVMDS9wLbZ3sx/uXndO1M9TgaEkPu
-         NoqWElRyuByP/M4w+lh3LYMu4EdcGCtpFb7JdNzFF+HNNpMKZSf6M8byKVGX7gXPjUmK
-         ZcUs69LgAxZTVPtM6mwJLJJdDTJ6oJ7bmwHIq+GWashqQJEXNTfD61UTLg8K2/8JcpM7
-         bHRg==
-X-Gm-Message-State: AOAM533Rg8gGGvv/D4uTkojLMmubZRnMWzb6pc5BIibatcKC1QAMqKcY
-        KO9LGu2LPjbEIkzzraYg34ta75tjvR/WkAM1qQo=
-X-Google-Smtp-Source: ABdhPJwq4k149qx5iJ67/55IcL1uXr1RQgiH8k2su7XEUjqv9oiA6K4W1cwGONw7j/BxeRo0K2TOTw==
-X-Received: by 2002:a50:ff10:: with SMTP id a16mr35470923edu.275.1640985509251;
-        Fri, 31 Dec 2021 13:18:29 -0800 (PST)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
-        by smtp.gmail.com with ESMTPSA id n14sm2248773edx.62.2021.12.31.13.18.28
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Dec 2021 13:18:28 -0800 (PST)
-Received: by mail-wr1-f48.google.com with SMTP id v11so57747531wrw.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Dec 2021 13:18:28 -0800 (PST)
-X-Received: by 2002:adf:f54e:: with SMTP id j14mr29913691wrp.442.1640985507933;
- Fri, 31 Dec 2021 13:18:27 -0800 (PST)
+        Fri, 31 Dec 2021 18:14:06 -0500
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF60C061574;
+        Fri, 31 Dec 2021 15:14:06 -0800 (PST)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n3R64-00GK7l-PI; Fri, 31 Dec 2021 23:14:04 +0000
+Date:   Fri, 31 Dec 2021 23:14:04 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
+Message-ID: <Yc+OvLHveebsQlAT@zeniv-ca.linux.org.uk>
+References: <20211221164004.119663-1-shr@fb.com>
 MIME-Version: 1.0
-References: <20211202150614.22440-1-mgorman@techsingularity.net>
- <caf247ab-f6fe-a3b9-c4b5-7ce17d1d5e43@leemhuis.info> <20211229154553.09dd5bb657bc19d45c3de8dd@linux-foundation.org>
- <5c9d7c6b-05cd-4d17-b941-a93d90197cd3@leemhuis.info> <CAHk-=wi3z_aFJ7kkJb+GDLzUMAzxYMRpVzuMRh5QFaFJnhGydA@mail.gmail.com>
- <CAHk-=whj9ZWJ2Fmv2vY-NAB_nR-KgpzpRx6Oxs=ayyTEN7E8zw@mail.gmail.com> <20211231130427.2239793015906a1c1ede44a4@linux-foundation.org>
-In-Reply-To: <20211231130427.2239793015906a1c1ede44a4@linux-foundation.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 31 Dec 2021 13:18:11 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjvmT-Gx875NvvZfZau+7Vx5h9VhBwdoLnw_Et_HyKfWg@mail.gmail.com>
-Message-ID: <CAHk-=wjvmT-Gx875NvvZfZau+7Vx5h9VhBwdoLnw_Et_HyKfWg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] mm: vmscan: Reduce throttling due to a failure to
- make progress
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thorsten Leemhuis <regressions@leemhuis.info>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mark Brown <broonie@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Avramov <hakavlad@inbox.lv>,
-        Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Darrick Wong <djwong@kernel.org>,
-        Linux regressions mailing list <regressions@lists.linux.dev>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211221164004.119663-1-shr@fb.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 31, 2021 at 1:04 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> Needs this fixup, which I shall tweak a bit then send formally
-> in a few minutes.
+On Tue, Dec 21, 2021 at 08:40:01AM -0800, Stefan Roesch wrote:
+> This series adds support for getdents64 in liburing. The intent is to
+> provide a more complete I/O interface for io_uring.
+> 
+> Patch 1: fs: add offset parameter to iterate_dir function.
+>   This adds an offset parameter to the iterate_dir()
+>   function. The new parameter allows the caller to specify
+>   the offset to use.
+> 
+> Patch 2: fs: split off vfs_getdents function from getdents64 system call
+>   This splits of the iterate_dir part of the syscall in its own
+>   dedicated function. This allows to call the function directly from
+>   io_uring.
+> 
+> Patch 3: io_uring: add support for getdents64
+>   Adds the functions to io_uring to support getdents64.
+> 
+> There is also a patch series for the changes to liburing. This includes
+> a new test. The patch series is called "liburing: add getdents support."
+> 
+> The following tests have been performed:
+> - new liburing getdents test program has been run
+> - xfstests have been run
+> - both tests have been repeated with the kernel memory leak checker
+>   and no leaks have been reported.
 
-Thanks, applied.
+AFAICS, it completely breaks the "is the position known to be valid"
+logics in a lot of ->iterate_dir() instances.  For a reasonably simple
+example see e.g. ext2_readdir():
 
-           Linus
+        bool need_revalidate = !inode_eq_iversion(inode, file->f_version);
+
+.....
+                if (unlikely(need_revalidate)) {
+                        if (offset) {
+                                offset = ext2_validate_entry(kaddr, offset, chunk_mask);
+                                ctx->pos = (n<<PAGE_SHIFT) + offset;
+                        }
+                        file->f_version = inode_query_iversion(inode);
+                        need_revalidate = false;
+                }
+and that, combined with
+	* directory modifications bumping iversion
+	* lseek explicitly cleaing ->f_version on location changes
+and resulting position going back into ->f_pos, *BEFORE* we unlock the damn
+file.
+
+makes sure that we call ext2_validate_entry() for any untrusted position.
+
+Your code breaks the living hell out of that.  First of all, the offset is
+completely arbitrary and no amount of struct file-based checks is going to
+be relevant.  Furthermore, this "we'd normalized the position, the valid
+one will go into ->f_pos and do so before the caller does fdput_pos(), so
+mark the file as known-good-position" logics also break - ->f_pos is *NOT*
+locked and new positition, however valid it might be, is not going to
+be put there.
+
+How could that possibly work?  I'm not saying that the current variant is
+particularly nice, but the need to avoid revalidation of position on each
+getdents(2) call is real, and this revalidation is not cheap.
+
+Furthermore, how would that work on e.g. shmem/tmpfs/ramfs/etc.?
+There the validation is not an issue, simply because the position is
+not used at all - a per-file cursor is, and it's moved by dcache_dir_lseek()
+and dcache_readdir().
+
+Folks, readdir from arbitrary position had been a source of pain since
+mid-80s.  A plenty of PITA all around, and now you introduce another
+API that shoves things into the same orifices without even a benefit of
+going through lseek(2), or any of the exclusion warranties regarding
+the file position?
