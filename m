@@ -2,85 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C51482150
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Dec 2021 02:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 001D848217E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Dec 2021 03:27:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242507AbhLaBmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Dec 2021 20:42:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46072 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242471AbhLaBmY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Dec 2021 20:42:24 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F0E4C061574;
-        Thu, 30 Dec 2021 17:42:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=zWJ2X9Lq+4uil6rtKyXxlpP4WArw8+jtoSi/ql08s+Y=; b=UHXidHTQIzC2NYqBQGlOhgqkZ4
-        mtL6qGE7842aQ4ATKj/zZRml0r2EyNpBorwEbbR5lauc9SxzjAQLSpfp75fIvlqu63gygQT4Yt/dk
-        bA5Dw6shmuJKPCTp9IXposFZO9+qD2PerFAOmXvhnj3Mct8NbTb3kJFlm3LdCutmuHXBfojdDWkCl
-        IYQhmr9ov8yhx2yCbf1Xyod+2PmCuzgpRbWSLWlpn2jf7qxZVw5Th8i08VaB81RotoNg7G/VHxVLH
-        OVjPBa7v8h+bvIgwU+HlH6t2Z1BFzVVPIBNaKpNdgqUuVak84BvZm8nnv3T3a3vOiXkkXoJwcnjg/
-        f9pJSWIg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n36w0-00AEtE-7H; Fri, 31 Dec 2021 01:42:20 +0000
-Date:   Fri, 31 Dec 2021 01:42:20 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     trondmy@kernel.org
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
-Message-ID: <Yc5f/C1I+N8MPHcd@casper.infradead.org>
-References: <20211230193522.55520-1-trondmy@kernel.org>
+        id S241002AbhLaC1W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Dec 2021 21:27:22 -0500
+Received: from mga01.intel.com ([192.55.52.88]:14779 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230097AbhLaC1V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Dec 2021 21:27:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1640917641; x=1672453641;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=GWTpTesJcb+925QqthMUbTz8/8tLtbXxt+lqNt52Aec=;
+  b=AQ0+8iJghNMqDB+Y8FnQKy7cDdtA2gxWPiL+a0hND5hFQBzbwDoIixd2
+   cRJCrITIh5/Scm5FtUJjF1nzyuk8u+flATutN9NatsBM/VGbjGaNSxET1
+   KOWDJpt4ulYvXSoUQX2mRP6vvpNYlzZ5Ud4rw5g+j2hRljDuo+cE8YMk9
+   d1SwOgE1pWiny72NaVsPPfX/KrdufVTiVkVBncTZN5011JsNta+OfwrcS
+   R05uXzYaaNRHR2kLXgNmbDjbAnoxoJjMqWxyGBhlmI9yT6o3YUT/lXBF4
+   DyMEru9SlYgBqkgbFRiJT2oceZuamHCkV6Ene+cqDDpQcOOF3QAlch+LT
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10213"; a="266011070"
+X-IronPort-AV: E=Sophos;i="5.88,250,1635231600"; 
+   d="scan'208";a="266011070"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2021 18:27:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,250,1635231600"; 
+   d="scan'208";a="666705441"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by fmsmga001.fm.intel.com with ESMTP; 30 Dec 2021 18:27:12 -0800
+Date:   Fri, 31 Dec 2021 10:26:36 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [PATCH v3 kvm/queue 05/16] KVM: Maintain ofs_tree for fast
+ memslot lookup by file offset
+Message-ID: <20211231022636.GA7025@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
+ <20211223123011.41044-6-chao.p.peng@linux.intel.com>
+ <YcS5uStTallwRs0G@google.com>
+ <20211224035418.GA43608@chaop.bj.intel.com>
+ <YcuGGCo5pR31GkZE@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211230193522.55520-1-trondmy@kernel.org>
+In-Reply-To: <YcuGGCo5pR31GkZE@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 30, 2021 at 02:35:22PM -0500, trondmy@kernel.org wrote:
->  Workqueue: xfs-conv/md127 xfs_end_io [xfs]
->  RIP: 0010:_raw_spin_unlock_irqrestore+0x11/0x20
->  Code: 7c ff 48 29 e8 4c 39 e0 76 cf 80 0b 08 eb 8c 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 e8 e6 db 7e ff 66 90 48 89 f7 57 9d <0f> 1f 44 00 00 c3 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 8b 07
->  RSP: 0018:ffffac51d26dfd18 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff12
->  RAX: 0000000000000001 RBX: ffffffff980085a0 RCX: dead000000000200
->  RDX: ffffac51d3893c40 RSI: 0000000000000202 RDI: 0000000000000202
->  RBP: 0000000000000202 R08: ffffac51d3893c40 R09: 0000000000000000
->  R10: 00000000000000b9 R11: 00000000000004b3 R12: 0000000000000a20
->  R13: ffffd228f3e5a200 R14: ffff963cf7f58d10 R15: ffffd228f3e5a200
->  FS:  0000000000000000(0000) GS:ffff9625bfb00000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 00007f5035487500 CR3: 0000000432810004 CR4: 00000000003706e0
->  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->  Call Trace:
->   wake_up_page_bit+0x8a/0x110
->   iomap_finish_ioend+0xd7/0x1c0
->   iomap_finish_ioends+0x7f/0xb0
+On Tue, Dec 28, 2021 at 09:48:08PM +0000, Sean Christopherson wrote:
+> On Fri, Dec 24, 2021, Chao Peng wrote:
+> > On Thu, Dec 23, 2021 at 06:02:33PM +0000, Sean Christopherson wrote:
+> > > On Thu, Dec 23, 2021, Chao Peng wrote:
+> > > 
+> > > In other words, there needs to be a 1:1 gfn:file+offset mapping.  Since userspace
+> > > likely wants to allocate a single file for guest private memory and map it into
+> > > multiple discontiguous slots, e.g. to skip the PCI hole, the best idea off the top
+> > > of my head would be to register the notifier on a per-slot basis, not a per-VM
+> > > basis.  It would require a 'struct kvm *' in 'struct kvm_memory_slot', but that's
+> > > not a huge deal.
+> > > 
+> > > That way, KVM's notifier callback already knows the memslot and can compute overlap
+> > > between the memslot and the range by reversing the math done by kvm_memfd_get_pfn().
+> > > Then, armed with the gfn and slot, invalidation is just a matter of constructing
+> > > a struct kvm_gfn_range and invoking kvm_unmap_gfn_range().
+> > 
+> > KVM is easy but the kernel bits would be difficulty, it has to maintain
+> > fd+offset to memslot mapping because one fd can have multiple memslots,
+> > it need decide which memslot needs to be notified.
+> 
+> No, the kernel side maintains an opaque pointer like it does today,
 
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1052,9 +1052,11 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
->  			next = bio->bi_private;
->  
->  		/* walk each page on bio, ending page IO on them */
-> -		bio_for_each_segment_all(bv, bio, iter_all)
-> +		bio_for_each_segment_all(bv, bio, iter_all) {
->  			iomap_finish_page_writeback(inode, bv->bv_page, error,
->  					bv->bv_len);
-> +			cond_resched();
-> +		}
->  		bio_put(bio);
->  	}
->  	/* The ioend has been freed by bio_put() */
+But the opaque pointer will now become memslot, isn't it? That said,
+kernel side should maintain a list of opaque pointer (memslot) instead
+of one for each fd (inode) since a fd to memslot mapping is 1:M now.
 
-As I recall, iomap_finish_ioend() can be called in softirq (or even
-hardirq?) context currently.  I think we've seen similar things before,
-and the solution suggested at the time was to aggregate fewer writeback
-pages into a single bio.
+>KVM handles
+> reverse engineering the memslot to get the offset and whatever else it needs.
+> notify_fallocate() and other callbacks are unchanged, though they probably can
+> drop the inode.
+> 
+> E.g. likely with bad math and handwaving on the overlap detection:
+> 
+> int kvm_private_fd_fallocate_range(void *owner, pgoff_t start, pgoff_t end)
+> {
+> 	struct kvm_memory_slot *slot = owner;
+> 	struct kvm_gfn_range gfn_range = {
+> 		.slot	   = slot,
+> 		.start	   = (start - slot->private_offset) >> PAGE_SHIFT,
+> 		.end	   = (end - slot->private_offset) >> PAGE_SHIFT,
+> 		.may_block = true,
+> 	};
+> 
+> 	if (!has_overlap(slot, start, end))
+> 		return 0;
+> 
+> 	gfn_range.end = min(gfn_range.end, slot->base_gfn + slot->npages);
+> 
+> 	kvm_unmap_gfn_range(slot->kvm, &gfn_range);
+> 	return 0;
+> }
+
+I understand this KVM side handling, but again one fd can have multiple
+memslots. How shmem decides to notify which memslot from a list of
+memslots when it invokes the notify_fallocate()? Or just notify all
+the possible memslots then let KVM to check? 
+
+Thanks,
+Chao
