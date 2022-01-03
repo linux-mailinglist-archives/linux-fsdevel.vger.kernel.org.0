@@ -2,85 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF9C48319A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 14:54:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF024833A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 15:40:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233125AbiACNyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 08:54:36 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:57736 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiACNye (ORCPT
+        id S234243AbiACOkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 09:40:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233962AbiACOih (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 08:54:34 -0500
-Date:   Mon, 3 Jan 2022 14:54:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1641218073;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=s+KBghPb4YbTCFpwaI5dNaX5KTm96nhcPYF43GxcRUE=;
-        b=LZxNq96AE4KdjkEMj14zH5gBv0W/V0Xf/m18z9vsXdjyEt9F/rLAPhL8hl4BPl0txT1/oD
-        AlE4YvaWdvjuzlfnQF1q/z9hzbPGO9TECk9C+Sjz8PIjTrrGcuk6EFv/fT1uZKBgQWroQe
-        ypLCj3W63QKmmo+rf1+GOhpgy6sRV4HFBbUumq4FTP9VmWUTbPnOfYUD3016jv4K5hQzo9
-        EoHz/6AeCMABBsLJHjqXqnID+72t0Zhocb19eJiTt7wGkzLxacSwMe09DDvh+j97zfYrkb
-        Tk39BeftMXApsLFHAJczpzbzRqtD/ZvY2e/YXMv9LUiERbZNb72zADpBr+VXgQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1641218073;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=s+KBghPb4YbTCFpwaI5dNaX5KTm96nhcPYF43GxcRUE=;
-        b=H9NxDqcnSvrEm5479zg41Jb+DYGrdr0PKZVyHCr87aEQmaGDVJ/3Vb/BCGi23jrGqMDrun
-        azQRhMJUZeKId4CQ==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Gregor Beck <gregor.beck@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH REPOST REPOST v2] fscache: Use only one
- fscache_object_cong_wait.
-Message-ID: <YdMAF7vPKZTXE1FW@linutronix.de>
-References: <20211223163500.2625491-1-bigeasy@linutronix.de>
- <901885.1640279829@warthog.procyon.org.uk>
- <YcS8rc64cVIckeW0@linutronix.de>
- <20211226162030.fc5340c2278c95342690467d@linux-foundation.org>
+        Mon, 3 Jan 2022 09:38:37 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C862C07E5DC;
+        Mon,  3 Jan 2022 06:34:26 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A72C61126;
+        Mon,  3 Jan 2022 14:34:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0F3C36AED;
+        Mon,  3 Jan 2022 14:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1641220465;
+        bh=WPLmlQqOR7SkKcUjHuJ4sFpR5uksz7Q9+HJ4UudbmCA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rmZfwXIvA6MBHuQW8FrE3LHDgWVeiBFxL0zAiSs+zSQDm4i3D1j3v9duDSYOg66or
+         +0BRxREolgWGguBXRMWdvF6tul0oFZ39WIkve83ZqnnngxI8SlEe4cbNACR1pxFVpy
+         jjtTBxnFXhXgM6+egG4dk9XgEVwYkYyWUN5yCmGY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.15 70/73] fs/mount_setattr: always cleanup mount_kattr
+Date:   Mon,  3 Jan 2022 15:24:31 +0100
+Message-Id: <20220103142059.188665953@linuxfoundation.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220103142056.911344037@linuxfoundation.org>
+References: <20220103142056.911344037@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211226162030.fc5340c2278c95342690467d@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-12-26 16:20:30 [-0800], Andrew Morton wrote:
-> On Thu, 23 Dec 2021 19:15:09 +0100 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> 
-> > On 2021-12-23 17:17:09 [+0000], David Howells wrote:
-> > > Thanks, but this is gone in the upcoming fscache rewrite.  I'm hoping that
-> > > will get in the next merge window.
-> > 
-> > Yes, I noticed that. What about current tree, v5.16-rc6 and less?
-> > Shouldn't this be addressed?
-> 
-> If the bug is serious enough to justify a -stable backport then yes, we
-> should merge a fix such as this ahead of the fscache rewrite, so we
-> have something suitable for backporting.
-> 
-> Is the bug serious enough?
-> 
-> Or is the bug in a not-yet-noticed state?  In other words, is it
-> possible that four years from now, someone will hit this bug in a
-> 5.15-based kernel and will then wish we'd backported a fix?
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-I can't answer how serious it is but:
-- with CONFIG_DEBUG_PREEMPT enabled there has to be a visible backtrace
-  due this_cpu_ptr() usage.
-- because of schedule_timeout(60 * HZ) there is no visible hang. It
-  should be either woken up properly (via the waitqueue) or after a
-  minute due to the timeout.
+commit 012e332286e2bb9f6ac77d195f17e74b2963d663 upstream.
 
-both things don't look good in general.
+Make sure that finish_mount_kattr() is called after mount_kattr was
+succesfully built in both the success and failure case to prevent
+leaking any references we took when we built it.  We returned early if
+path lookup failed thereby risking to leak an additional reference we
+took when building mount_kattr when an idmapped mount was requested.
 
-Sebastian
+Cc: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Fixes: 9caccd41541a ("fs: introduce MOUNT_ATTR_IDMAP")
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/namespace.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4263,12 +4263,11 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd,
+ 		return err;
+ 
+ 	err = user_path_at(dfd, path, kattr.lookup_flags, &target);
+-	if (err)
+-		return err;
+-
+-	err = do_mount_setattr(&target, &kattr);
++	if (!err) {
++		err = do_mount_setattr(&target, &kattr);
++		path_put(&target);
++	}
+ 	finish_mount_kattr(&kattr);
+-	path_put(&target);
+ 	return err;
+ }
+ 
+
+
