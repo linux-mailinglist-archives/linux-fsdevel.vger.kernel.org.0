@@ -2,110 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 135ED48300B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 11:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF9C48319A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 14:54:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232755AbiACKt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 05:49:29 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52656 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232752AbiACKt2 (ORCPT
+        id S233125AbiACNyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 08:54:36 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57736 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229531AbiACNye (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 05:49:28 -0500
-Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 203AnN5b094507;
-        Mon, 3 Jan 2022 19:49:23 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
- Mon, 03 Jan 2022 19:49:23 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 203AnG8t094290
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Jan 2022 19:49:23 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <3392d41c-5477-118a-677f-5780f9cedf95@I-love.SAKURA.ne.jp>
-Date:   Mon, 3 Jan 2022 19:49:11 +0900
+        Mon, 3 Jan 2022 08:54:34 -0500
+Date:   Mon, 3 Jan 2022 14:54:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1641218073;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=s+KBghPb4YbTCFpwaI5dNaX5KTm96nhcPYF43GxcRUE=;
+        b=LZxNq96AE4KdjkEMj14zH5gBv0W/V0Xf/m18z9vsXdjyEt9F/rLAPhL8hl4BPl0txT1/oD
+        AlE4YvaWdvjuzlfnQF1q/z9hzbPGO9TECk9C+Sjz8PIjTrrGcuk6EFv/fT1uZKBgQWroQe
+        ypLCj3W63QKmmo+rf1+GOhpgy6sRV4HFBbUumq4FTP9VmWUTbPnOfYUD3016jv4K5hQzo9
+        EoHz/6AeCMABBsLJHjqXqnID+72t0Zhocb19eJiTt7wGkzLxacSwMe09DDvh+j97zfYrkb
+        Tk39BeftMXApsLFHAJczpzbzRqtD/ZvY2e/YXMv9LUiERbZNb72zADpBr+VXgQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1641218073;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=s+KBghPb4YbTCFpwaI5dNaX5KTm96nhcPYF43GxcRUE=;
+        b=H9NxDqcnSvrEm5479zg41Jb+DYGrdr0PKZVyHCr87aEQmaGDVJ/3Vb/BCGi23jrGqMDrun
+        azQRhMJUZeKId4CQ==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>, Gregor Beck <gregor.beck@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH REPOST REPOST v2] fscache: Use only one
+ fscache_object_cong_wait.
+Message-ID: <YdMAF7vPKZTXE1FW@linutronix.de>
+References: <20211223163500.2625491-1-bigeasy@linutronix.de>
+ <901885.1640279829@warthog.procyon.org.uk>
+ <YcS8rc64cVIckeW0@linutronix.de>
+ <20211226162030.fc5340c2278c95342690467d@linux-foundation.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: [PATCH] block: add filemap_invalidate_lock_killable()
-Content-Language: en-US
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>
-References: <0000000000007305e805d4a9e7f9@google.com>
-Cc:     linux-block@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <0000000000007305e805d4a9e7f9@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211226162030.fc5340c2278c95342690467d@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot is reporting hung task at blkdev_fallocate() [1], for it can take
-minutes with mapping->invalidate_lock held. Since fallocate() has to accept
-size > MAX_RW_COUNT bytes, we can't predict how long it will take. Thus,
-mitigate this problem by using killable wait where possible.
+On 2021-12-26 16:20:30 [-0800], Andrew Morton wrote:
+> On Thu, 23 Dec 2021 19:15:09 +0100 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> 
+> > On 2021-12-23 17:17:09 [+0000], David Howells wrote:
+> > > Thanks, but this is gone in the upcoming fscache rewrite.  I'm hoping that
+> > > will get in the next merge window.
+> > 
+> > Yes, I noticed that. What about current tree, v5.16-rc6 and less?
+> > Shouldn't this be addressed?
+> 
+> If the bug is serious enough to justify a -stable backport then yes, we
+> should merge a fix such as this ahead of the fscache rewrite, so we
+> have something suitable for backporting.
+> 
+> Is the bug serious enough?
+> 
+> Or is the bug in a not-yet-noticed state?  In other words, is it
+> possible that four years from now, someone will hit this bug in a
+> 5.15-based kernel and will then wish we'd backported a fix?
 
-  ----------
-  #define _GNU_SOURCE
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <fcntl.h>
-  #include <unistd.h>
+I can't answer how serious it is but:
+- with CONFIG_DEBUG_PREEMPT enabled there has to be a visible backtrace
+  due this_cpu_ptr() usage.
+- because of schedule_timeout(60 * HZ) there is no visible hang. It
+  should be either woken up properly (via the waitqueue) or after a
+  minute due to the timeout.
 
-  int main(int argc, char *argv[])
-  {
-    fork();
-    fallocate(open("/dev/nullb0", O_RDWR), 0x11ul, 0ul, 0x7ffffffffffffffful);
-    return 0;
-  }
-  ----------
+both things don't look good in general.
 
-Link: https://syzkaller.appspot.com/bug?extid=39b75c02b8be0a061bfc [1]
-Reported-by: syzbot <syzbot+39b75c02b8be0a061bfc@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- block/fops.c       | 4 +++-
- include/linux/fs.h | 5 +++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/block/fops.c b/block/fops.c
-index 0da147edbd18..a87050db4670 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -622,7 +622,9 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	if ((start | len) & (bdev_logical_block_size(bdev) - 1))
- 		return -EINVAL;
- 
--	filemap_invalidate_lock(inode->i_mapping);
-+	/* fallocate() might take minutes with lock held. */
-+	if (filemap_invalidate_lock_killable(inode->i_mapping))
-+		return -EINTR;
- 
- 	/* Invalidate the page cache, including dirty pages. */
- 	error = truncate_bdev_range(bdev, file->f_mode, start, end);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bbf812ce89a8..27b3d36bb73c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -828,6 +828,11 @@ static inline void filemap_invalidate_lock(struct address_space *mapping)
- 	down_write(&mapping->invalidate_lock);
- }
- 
-+static inline int filemap_invalidate_lock_killable(struct address_space *mapping)
-+{
-+	return down_write_killable(&mapping->invalidate_lock);
-+}
-+
- static inline void filemap_invalidate_unlock(struct address_space *mapping)
- {
- 	up_write(&mapping->invalidate_lock);
--- 
-2.32.0
-
-
+Sebastian
