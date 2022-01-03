@@ -2,91 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF024833A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 15:40:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D518D4833D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 16:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234243AbiACOkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 09:40:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
+        id S232419AbiACPAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 10:00:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233962AbiACOih (ORCPT
+        with ESMTP id S231329AbiACPAj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 09:38:37 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C862C07E5DC;
-        Mon,  3 Jan 2022 06:34:26 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A72C61126;
-        Mon,  3 Jan 2022 14:34:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0F3C36AED;
-        Mon,  3 Jan 2022 14:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1641220465;
-        bh=WPLmlQqOR7SkKcUjHuJ4sFpR5uksz7Q9+HJ4UudbmCA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rmZfwXIvA6MBHuQW8FrE3LHDgWVeiBFxL0zAiSs+zSQDm4i3D1j3v9duDSYOg66or
-         +0BRxREolgWGguBXRMWdvF6tul0oFZ39WIkve83ZqnnngxI8SlEe4cbNACR1pxFVpy
-         jjtTBxnFXhXgM6+egG4dk9XgEVwYkYyWUN5yCmGY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.15 70/73] fs/mount_setattr: always cleanup mount_kattr
-Date:   Mon,  3 Jan 2022 15:24:31 +0100
-Message-Id: <20220103142059.188665953@linuxfoundation.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220103142056.911344037@linuxfoundation.org>
-References: <20220103142056.911344037@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Mon, 3 Jan 2022 10:00:39 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A87C061761
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jan 2022 07:00:39 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id e128so40685185iof.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jan 2022 07:00:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iX+J3aUp4/IGEYlAX+jrwzk7n9Ng8QNRRPfY0+N+Kk0=;
+        b=HO7yn1sHsLHQ8xV6Fb5gP9LX9CRdwL8v10dc8u0Qz9x1J7mhvwM/WuLdgcLLj+ocHF
+         tKYU+TzUGmAhpJj8Rj0+X/XJaOC0/u+OBLLfMLVZF5n95is3OMam9ROEaJUtWEMyURge
+         nf3JVFnvfvSdt0QPx41emgEZ0y2MW1ouDMFOH0gW7TP6PJ/B500/5yyto3V4k+KFFR79
+         kvVYxR/l182j+Onmfda+fHwr9lwQIkWsOG3cWajZPizzt2u5b6u0cCevtAvskcUATmS9
+         tPrZ5olhHdTZZAzlxtYSCS2eH2kpIRLBXaHqJPZQrVNno91OHRl8yktJesxZphVqHSte
+         n0Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iX+J3aUp4/IGEYlAX+jrwzk7n9Ng8QNRRPfY0+N+Kk0=;
+        b=KaZUJ+Kbv/JoKQv9qYcgtBypRy0ScDjOoK+Ypt2jgQs2EjlIfvnwUs+OygelYEE9dR
+         DKD7RTFPl2M3XJp7BoHdKLd5tu17/VhacJqSZPO+PJZdarDpaQnQYt/jhj72lD0CSB4D
+         /TjCmDAsoEDgCjp8RbBrWejVKXPt4qtBwriSsuvMRqW5DJFzxkNBriMmxScwh2OXIqpf
+         DFEt8l0lVvVV6zmwVTDzeItVMobS+MsiD5w7VcAJnOiLJ15W6FhxHKa+LpcyWrHUNyGQ
+         NuG9qkcu1D37uUlq22Wv+GSJjrQTh7yuxZRUhDyFCu6ZUlOW26SG9zNnSgXpikC0WdCN
+         Ookw==
+X-Gm-Message-State: AOAM531EgVucD8mY9yatWLLfbzFZIPMXM6nNdhVJa8Pq/XYT9evuM/J/
+        qZxDRJvq4WthzMiFFab2srLNE7sZB31sSg==
+X-Google-Smtp-Source: ABdhPJxpUJWBb8t7exxUVuaHvXrw5nM1iSJzHo9x/1RIfXrTiIGXiV1X9VTNjSB411TykyOMMeTNbA==
+X-Received: by 2002:a02:734b:: with SMTP id a11mr12608906jae.168.1641222038571;
+        Mon, 03 Jan 2022 07:00:38 -0800 (PST)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id z13sm2228796iln.43.2022.01.03.07.00.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jan 2022 07:00:38 -0800 (PST)
+Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
+To:     Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <20211221164004.119663-1-shr@fb.com>
+ <CAHk-=wgHC_niLQqhmJRPTDULF7K9n8XRDfHV=SCOWvCPugUv5Q@mail.gmail.com>
+ <Yc+PK4kRo5ViXu0O@zeniv-ca.linux.org.uk>
+ <YdCyoQNPNcaM9rqD@zeniv-ca.linux.org.uk>
+ <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <308dafb1-9ed8-c626-2cf5-34ecf914db4f@kernel.dk>
+Date:   Mon, 3 Jan 2022 08:00:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On 1/2/22 11:03 PM, Jann Horn wrote:
+> io_uring has some dodgy code that seems to be reading and writing
+> file->f_pos without holding the file->f_pos_lock. And even if the file
+> doesn't have an f_op->read or f_op->read_iter handler, I think you
+> might be able to read ->f_pos of an ext4 directory and write the value
+> back later, unless I'm missing a check somewhere?
 
-commit 012e332286e2bb9f6ac77d195f17e74b2963d663 upstream.
+I posted an RFC to hold f_pos_lock across those operations before the
+break:
 
-Make sure that finish_mount_kattr() is called after mount_kattr was
-succesfully built in both the success and failure case to prevent
-leaking any references we took when we built it.  We returned early if
-path lookup failed thereby risking to leak an additional reference we
-took when building mount_kattr when an idmapped mount was requested.
+https://lore.kernel.org/io-uring/8a9e55bf-3195-5282-2907-41b2f2b23cc8@kernel.dk/
 
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Fixes: 9caccd41541a ("fs: introduce MOUNT_ATTR_IDMAP")
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/namespace.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+picking it up this week and flushing it out, hopefully.
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4263,12 +4263,11 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd,
- 		return err;
- 
- 	err = user_path_at(dfd, path, kattr.lookup_flags, &target);
--	if (err)
--		return err;
--
--	err = do_mount_setattr(&target, &kattr);
-+	if (!err) {
-+		err = do_mount_setattr(&target, &kattr);
-+		path_put(&target);
-+	}
- 	finish_mount_kattr(&kattr);
--	path_put(&target);
- 	return err;
- }
- 
-
+-- 
+Jens Axboe
 
