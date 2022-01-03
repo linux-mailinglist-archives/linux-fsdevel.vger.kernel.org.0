@@ -2,62 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4981B48383B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 22:12:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 886294838AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 23:03:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbiACVMv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 16:12:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbiACVMu (ORCPT
+        id S230054AbiACWDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 17:03:16 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:48828 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229525AbiACWDP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 16:12:50 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B556C061761;
-        Mon,  3 Jan 2022 13:12:50 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n4UdJ-00H1C4-0I; Mon, 03 Jan 2022 21:12:45 +0000
-Date:   Mon, 3 Jan 2022 21:12:44 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Stefan Roesch <shr@fb.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
-Message-ID: <YdNmzESyEHeN2Gcv@zeniv-ca.linux.org.uk>
-References: <20211221164004.119663-1-shr@fb.com>
- <CAHk-=wgHC_niLQqhmJRPTDULF7K9n8XRDfHV=SCOWvCPugUv5Q@mail.gmail.com>
- <Yc+PK4kRo5ViXu0O@zeniv-ca.linux.org.uk>
- <YdCyoQNPNcaM9rqD@zeniv-ca.linux.org.uk>
- <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
+        Mon, 3 Jan 2022 17:03:15 -0500
+Received: from dread.disaster.area (pa49-181-243-119.pa.nsw.optusnet.com.au [49.181.243.119])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 1FF4262BFF9;
+        Tue,  4 Jan 2022 09:03:12 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1n4VQ6-00B0CT-Tk; Tue, 04 Jan 2022 09:03:10 +1100
+Date:   Tue, 4 Jan 2022 09:03:10 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     "bfoster@redhat.com" <bfoster@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "trondmy@kernel.org" <trondmy@kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>
+Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
+Message-ID: <20220103220310.GG945095@dread.disaster.area>
+References: <20211230193522.55520-1-trondmy@kernel.org>
+ <Yc5f/C1I+N8MPHcd@casper.infradead.org>
+ <6f746786a3928844fbe644e7e409008b4f50c239.camel@hammerspace.com>
+ <20220101035516.GE945095@dread.disaster.area>
+ <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=61d372a1
+        a=BEa52nrBdFykVEm6RU8P4g==:117 a=BEa52nrBdFykVEm6RU8P4g==:17
+        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
+        a=XKqQFd1370Qps8Tql14A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 03, 2022 at 08:03:51AM +0100, Jann Horn wrote:
+On Sat, Jan 01, 2022 at 05:39:45PM +0000, Trond Myklebust wrote:
+> On Sat, 2022-01-01 at 14:55 +1100, Dave Chinner wrote:
+> > As it is, if you are getting soft lockups in this location, that's
+> > an indication that the ioend chain that is being built by XFS is
+> > way, way too long. IOWs, the completion latency problem is caused by
+> > a lack of submit side ioend chain length bounding in combination
+> > with unbound completion side merging in xfs_end_bio - it's not a
+> > problem with the generic iomap code....
+> > 
+> > Let's try to address this in the XFS code, rather than hack
+> > unnecessary band-aids over the problem in the generic code...
+> > 
+> > Cheers,
+> > 
+> > Dave.
+> 
+> Fair enough. As long as someone is working on a solution, then I'm
+> happy. Just a couple of things:
+> 
+> Firstly, we've verified that the cond_resched() in the bio loop does
+> suffice to resolve the issue with XFS, which would tend to confirm what
+> you're saying above about the underlying issue being the ioend chain
+> length.
+> 
+> Secondly, note that we've tested this issue with a variety of older
+> kernels, including 4.18.x, 5.1.x and 5.15.x, so please bear in mind
+> that it would be useful for any fix to be backward portable through the
+> stable mechanism.
 
-> io_prep_rw() grabs file->f_pos; then later, io_read() calls
-> io_iter_do_read() (which will fail with -EINVAL), and then the error
-> path goes through kiocb_done(), which writes the position back to
-> req->file->f_pos. So I think the following race might work:
+The infrastructure hasn't changed that much, so whatever the result
+is it should be backportable.
 
-Why does it touch ->f_pos on failure, anyway?  It's a bug, plain and
-simple; note that read(2) and write(2) are explicitly requested to
-leave IO position alone if they return an error.  See e.g.
-fs/read_write.c:ksys_read() -
-                ret = vfs_read(f.file, buf, count, ppos);
-		if (ret >= 0 && ppos)
-			f.file->f_pos = pos;
-		fdput_pos(f);
-Position update happens only on success (and only for non-stream
-files, at that).
+As it is, is there a specific workload that triggers this issue? Or
+a specific machine config (e.g. large memory, slow storage). Are
+there large fragmented files in use (e.g. randomly written VM image
+files)? There are a few factors that can exacerbate the ioend chain
+lengths, so it would be handy to have some idea of what is actually
+triggering this behaviour...
 
-No matter how special io-uring is (it's not covered by POSIX, for
-obvious reasons), this is simply wrong, directories or no directories.
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
