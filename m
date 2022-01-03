@@ -2,97 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 142D048373D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 19:55:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A40148374E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 19:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235899AbiACSzw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 13:55:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235898AbiACSzv (ORCPT
+        id S235946AbiACS7v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 13:59:51 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:24547 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235930AbiACS7u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 13:55:51 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A25AC061761
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jan 2022 10:55:50 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id u25so18004237edf.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jan 2022 10:55:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h/tl740B5dKu3LcT9k/DwsMLta3onSSEJxNz0w7L77Q=;
-        b=Kswum6/H/CUH2m0aHNjA1M5P7b2h+4XmNGY0uwlFwhgK88+sTraM9oPHfrCUvC7BBC
-         z9HqFO/bsZzRqNxojrBth5Oqqu5mYpoIPKcy4zoL5GBEtm0KpwU4q8c0MbhbFUQPm6Z1
-         +tMVNRgmFAbuDQCKKiMS5Qsyxrr9JVh2pPJKs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h/tl740B5dKu3LcT9k/DwsMLta3onSSEJxNz0w7L77Q=;
-        b=IhpJc4KsjW2/0URwcppiB4REPT5x//RXI0cqCzLCKbnzS+PmhqxLzK1eJYDvTm1m7S
-         KQj+3G2OboFD5mYwTxguEPP+dJY0VcHP1pXo1fkzvE9womqSyR30kxnUUlUmI3LvLAtL
-         5ffU2FwQVibEcFKUjLQlLuHlFj7zERyygZtnwRe1ynuVsyY5sK4RK5nRwT64wUZxFr4u
-         62mnY9MpAOv/BmWw8TiQHlM2mftAsV4xIX/XL4r3PS8CVgEE5n6qqBrYfugI9KjM8ddV
-         sSxWT2Cll3rTzsIyNFLrpgunsQCi0xDJj9Kq/D9ckA/ydYHNFw2rYWm8QVQJzx3iKdjd
-         vpbg==
-X-Gm-Message-State: AOAM530t95fObc3iNf0vzMPGkD8WtwuupVMloq3h9tki8tzt+519THrS
-        O1K/yJaIfZQyQJSVn2fzCVMefQjr1+U7lzpJ
-X-Google-Smtp-Source: ABdhPJxvpbu4licyKCb8SceqrDL8/Yr6l2QlF8IzL/jy/DEx9zfmmyS6jCekDyYwOva4v+TFfKhnrg==
-X-Received: by 2002:a05:6402:38d:: with SMTP id o13mr45530816edv.129.1641236148538;
-        Mon, 03 Jan 2022 10:55:48 -0800 (PST)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id lv23sm10775078ejb.125.2022.01.03.10.55.47
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jan 2022 10:55:47 -0800 (PST)
-Received: by mail-wr1-f53.google.com with SMTP id s1so71580101wra.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jan 2022 10:55:47 -0800 (PST)
-X-Received: by 2002:a05:6000:10d2:: with SMTP id b18mr39310306wrx.193.1641236147522;
- Mon, 03 Jan 2022 10:55:47 -0800 (PST)
+        Mon, 3 Jan 2022 13:59:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1641236389;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=D7IfqB4zPCzQSoJV/s4pB72Hc3OW2Ee/G74o39d7npI=;
+        b=QNWHRGNKO+28Khkm29EmEGiHw7oN1wjo8OcK6pDhK36ytj14lBPfwQXJF1wZoHv0IuO5ty
+        i8UTHVvwW+C1OqY8rOhXtoNsbG8TPM7NCLYdKzoUhl0dXM/2zcGymZl3kLZQb+fNATuFXL
+        fT2+7LzRM6DUNZLRlbaPnGhKKWfF+2c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-99-exIbtul3OU-AAqtCE1CqWQ-1; Mon, 03 Jan 2022 13:59:46 -0500
+X-MC-Unique: exIbtul3OU-AAqtCE1CqWQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E6DE801962;
+        Mon,  3 Jan 2022 18:59:45 +0000 (UTC)
+Received: from work (unknown [10.40.194.183])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E35B010A3BC3;
+        Mon,  3 Jan 2022 18:59:43 +0000 (UTC)
+Date:   Mon, 3 Jan 2022 19:59:40 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Martin Wilck <mwilck@suse.com>
+Cc:     Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>, mwilck@suse.de,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
+Message-ID: <20220103185940.z5dnjj2shquz7yvg@work>
+References: <20211115114821.swt3nqtw2pdgahsq@work>
+ <20211115125141.GD23412@quack2.suse.cz>
+ <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
+ <20211115145312.g4ptf22rl55jf37l@work>
+ <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
+ <20211116115626.anbvho4xtb5vsoz5@work>
+ <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
+ <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
+ <20211122135304.uwyqtm7cqc2fhjii@work>
+ <ad5272b5b63acf64a47b707d95ecc288d113d637.camel@suse.com>
 MIME-Version: 1.0
-References: <20211221164004.119663-1-shr@fb.com> <CAHk-=wgHC_niLQqhmJRPTDULF7K9n8XRDfHV=SCOWvCPugUv5Q@mail.gmail.com>
- <Yc+PK4kRo5ViXu0O@zeniv-ca.linux.org.uk> <YdCyoQNPNcaM9rqD@zeniv-ca.linux.org.uk>
- <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
-In-Reply-To: <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Jan 2022 10:55:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjPEDXkiyTtLijupF80JdNbKG9Rr8QA448u1siuZLCfkw@mail.gmail.com>
-Message-ID: <CAHk-=wjPEDXkiyTtLijupF80JdNbKG9Rr8QA448u1siuZLCfkw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
-To:     Jann Horn <jannh@google.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
-        Stefan Roesch <shr@fb.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad5272b5b63acf64a47b707d95ecc288d113d637.camel@suse.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 2, 2022 at 11:04 PM Jann Horn <jannh@google.com> wrote:
->
-> And for this validation caching to work properly, AFAIU you need to
-> hold the file->f_pos_lock (or have exclusive access to the "struct
-> file"), which happens in the normal getdents() path via fdget_pos().
-> This guarantees that the readdir handler has exclusive access to the
-> file's ->f_version, which has to stay in sync with the position.
+On Mon, Jan 03, 2022 at 04:34:40PM +0100, Martin Wilck wrote:
+> On Mon, 2021-11-22 at 14:53 +0100, Lukas Czerner wrote:
+> > On Fri, Nov 19, 2021 at 04:43:53PM +0100, Martin Wilck wrote:
+> > > Hi Martin, Lukas,
+> > > 
+> > > On Tue, 2021-11-16 at 23:35 -0500, Martin K. Petersen wrote:
+> > > 
+> > 
+> > Thanks you Martin P. for clarifying.
+> > 
+> > > 
+> > > I've checked btrfs and xfs, and they treat the minlen like Jan's
+> > > patch
+> > > would - the minlen is set to the device's granularity, and
+> > > discarding
+> > > smaller ranges is silently not even attempted.
+> > > 
+> > > So this seems to be common practice among file system
+> > > implementations,
+> > > and thus Jan's patch would make ext4 behave like the others. But
+> > > I'm
+> > > still uncertain if this behavior is ideal, and your remarks seem to
+> > > confirm that.
+> > 
+> > Yeah I modeled my change for ext4 on the work in xfs done by
+> > Christoph
+> > and so it kind of spread organically to other file systems.
+> 
+> Ok. I still believe that it's not ideal this way, but this logic is
+> only applied in corner cases AFAICS, so it doesn't really hurt.
+> 
+> I'm fine with Jan's patch for the time being.
+> 
+> > 
+> > > 
+> > > The fstrim man page text is highly misleading. "The default value
+> > > is
+> > > zero, discarding every free block" is obviously wrong, given the
+> > > current actual behavior of the major filesystems.
+> > 
+> > Originally there was no discard granularity optimization so it is
+> > what
+> > it meant. 
+> 
+> Not quite. That man page text is from 2019, commit ce3d198d7 ("fstrim:
+> document kernel return minlen explicitly"). At that time,
+> discard_granularity had existed for 10 years already.
 
-Yes.
+Not really, the sentence you're pointing out above was there from the
+beginning. Commit ce3d198d7 didn't change that.
 
-So the whole 'preaddir()' model was wrong, and thanks to Al for noticing.
+> 
+> 
+> > And it also says "fstrim will adjust the minimum if it's
+> > smaller than the device's minimum". So I am not sure if it's
+> > necessarily
+> > misleading.
+> 
+> It is misleading, because it's not fstrim that adjusts anything, but
+> the file system code in the kernel.
 
-It turns out that you cannot pass in a different 'pos' than f_pos,
-because we have that very tight coupling between the 'struct file' and
-readdir().
+This makes absolutely no difference from the user POV. Enough nitpicking,
+feel free to cc me if you decide to send a patch.
 
-It's not just about f_pos and f_version, either - Al pointed out the
-virtual filesystems, which use a special dentry cursor to traverse the
-child dentries for readdir, and that one uses 'file->private_data'.
+Thanks!
+-Lukas
 
-So the directory position isn't really about some simple passed-in
-pos, it has locking rules, it has validation, and it has actual
-secondary data in the file pointer.
-
-                  Linus
