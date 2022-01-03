@@ -2,93 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D518D4833D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 16:00:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 771E0483449
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 16:34:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232419AbiACPAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 10:00:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231329AbiACPAj (ORCPT
+        id S232647AbiACPen (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 10:34:43 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:48424 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232654AbiACPem (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 10:00:39 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A87C061761
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jan 2022 07:00:39 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id e128so40685185iof.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jan 2022 07:00:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iX+J3aUp4/IGEYlAX+jrwzk7n9Ng8QNRRPfY0+N+Kk0=;
-        b=HO7yn1sHsLHQ8xV6Fb5gP9LX9CRdwL8v10dc8u0Qz9x1J7mhvwM/WuLdgcLLj+ocHF
-         tKYU+TzUGmAhpJj8Rj0+X/XJaOC0/u+OBLLfMLVZF5n95is3OMam9ROEaJUtWEMyURge
-         nf3JVFnvfvSdt0QPx41emgEZ0y2MW1ouDMFOH0gW7TP6PJ/B500/5yyto3V4k+KFFR79
-         kvVYxR/l182j+Onmfda+fHwr9lwQIkWsOG3cWajZPizzt2u5b6u0cCevtAvskcUATmS9
-         tPrZ5olhHdTZZAzlxtYSCS2eH2kpIRLBXaHqJPZQrVNno91OHRl8yktJesxZphVqHSte
-         n0Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iX+J3aUp4/IGEYlAX+jrwzk7n9Ng8QNRRPfY0+N+Kk0=;
-        b=KaZUJ+Kbv/JoKQv9qYcgtBypRy0ScDjOoK+Ypt2jgQs2EjlIfvnwUs+OygelYEE9dR
-         DKD7RTFPl2M3XJp7BoHdKLd5tu17/VhacJqSZPO+PJZdarDpaQnQYt/jhj72lD0CSB4D
-         /TjCmDAsoEDgCjp8RbBrWejVKXPt4qtBwriSsuvMRqW5DJFzxkNBriMmxScwh2OXIqpf
-         DFEt8l0lVvVV6zmwVTDzeItVMobS+MsiD5w7VcAJnOiLJ15W6FhxHKa+LpcyWrHUNyGQ
-         NuG9qkcu1D37uUlq22Wv+GSJjrQTh7yuxZRUhDyFCu6ZUlOW26SG9zNnSgXpikC0WdCN
-         Ookw==
-X-Gm-Message-State: AOAM531EgVucD8mY9yatWLLfbzFZIPMXM6nNdhVJa8Pq/XYT9evuM/J/
-        qZxDRJvq4WthzMiFFab2srLNE7sZB31sSg==
-X-Google-Smtp-Source: ABdhPJxpUJWBb8t7exxUVuaHvXrw5nM1iSJzHo9x/1RIfXrTiIGXiV1X9VTNjSB411TykyOMMeTNbA==
-X-Received: by 2002:a02:734b:: with SMTP id a11mr12608906jae.168.1641222038571;
-        Mon, 03 Jan 2022 07:00:38 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id z13sm2228796iln.43.2022.01.03.07.00.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jan 2022 07:00:38 -0800 (PST)
-Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
-To:     Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <20211221164004.119663-1-shr@fb.com>
- <CAHk-=wgHC_niLQqhmJRPTDULF7K9n8XRDfHV=SCOWvCPugUv5Q@mail.gmail.com>
- <Yc+PK4kRo5ViXu0O@zeniv-ca.linux.org.uk>
- <YdCyoQNPNcaM9rqD@zeniv-ca.linux.org.uk>
- <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <308dafb1-9ed8-c626-2cf5-34ecf914db4f@kernel.dk>
-Date:   Mon, 3 Jan 2022 08:00:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 3 Jan 2022 10:34:42 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id CE49C1F386;
+        Mon,  3 Jan 2022 15:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1641224081; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oAyNsVFt7bVr7gCrB5/8iHXsWlY0nBTExzlSITo8HMs=;
+        b=iciOmgltFZJ/2mkVUxI2wYfcLn0qCZOlSHWgbLRqdx3+uCda1/1HmIQGWoot8iaCj3VwVo
+        x1HyDT4JdaruUN3WEN0mpQCq4fHwBMVHA/r+W/v0mXzn0TJutebSNOSHLGdU1d1ynHPtAo
+        TjG8EzjPUTH1nMXys40H0oVujaHHBFU=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 82ACA13AED;
+        Mon,  3 Jan 2022 15:34:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id dDfFHZEX02FbdgAAMHmgww
+        (envelope-from <mwilck@suse.com>); Mon, 03 Jan 2022 15:34:41 +0000
+Message-ID: <ad5272b5b63acf64a47b707d95ecc288d113d637.camel@suse.com>
+Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
+From:   Martin Wilck <mwilck@suse.com>
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>,
+        mwilck@suse.de, linux-fsdevel@vger.kernel.org
+Date:   Mon, 03 Jan 2022 16:34:40 +0100
+In-Reply-To: <20211122135304.uwyqtm7cqc2fhjii@work>
+References: <20211112152202.26614-1-jack@suse.cz>
+         <20211115114821.swt3nqtw2pdgahsq@work>
+         <20211115125141.GD23412@quack2.suse.cz>
+         <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
+         <20211115145312.g4ptf22rl55jf37l@work>
+         <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
+         <20211116115626.anbvho4xtb5vsoz5@work>
+         <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
+         <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
+         <20211122135304.uwyqtm7cqc2fhjii@work>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/2/22 11:03 PM, Jann Horn wrote:
-> io_uring has some dodgy code that seems to be reading and writing
-> file->f_pos without holding the file->f_pos_lock. And even if the file
-> doesn't have an f_op->read or f_op->read_iter handler, I think you
-> might be able to read ->f_pos of an ext4 directory and write the value
-> back later, unless I'm missing a check somewhere?
+On Mon, 2021-11-22 at 14:53 +0100, Lukas Czerner wrote:
+> On Fri, Nov 19, 2021 at 04:43:53PM +0100, Martin Wilck wrote:
+> > Hi Martin, Lukas,
+> > 
+> > On Tue, 2021-11-16 at 23:35 -0500, Martin K. Petersen wrote:
+> > 
+> 
+> Thanks you Martin P. for clarifying.
+> 
+> > 
+> > I've checked btrfs and xfs, and they treat the minlen like Jan's
+> > patch
+> > would - the minlen is set to the device's granularity, and
+> > discarding
+> > smaller ranges is silently not even attempted.
+> > 
+> > So this seems to be common practice among file system
+> > implementations,
+> > and thus Jan's patch would make ext4 behave like the others. But
+> > I'm
+> > still uncertain if this behavior is ideal, and your remarks seem to
+> > confirm that.
+> 
+> Yeah I modeled my change for ext4 on the work in xfs done by
+> Christoph
+> and so it kind of spread organically to other file systems.
 
-I posted an RFC to hold f_pos_lock across those operations before the
-break:
+Ok. I still believe that it's not ideal this way, but this logic is
+only applied in corner cases AFAICS, so it doesn't really hurt.
 
-https://lore.kernel.org/io-uring/8a9e55bf-3195-5282-2907-41b2f2b23cc8@kernel.dk/
+I'm fine with Jan's patch for the time being.
 
-picking it up this week and flushing it out, hopefully.
+> 
+> > 
+> > The fstrim man page text is highly misleading. "The default value
+> > is
+> > zero, discarding every free block" is obviously wrong, given the
+> > current actual behavior of the major filesystems.
+> 
+> Originally there was no discard granularity optimization so it is
+> what
+> it meant. 
 
--- 
-Jens Axboe
+Not quite. That man page text is from 2019, commit ce3d198d7 ("fstrim:
+document kernel return minlen explicitly"). At that time,
+discard_granularity had existed for 10 years already.
+
+
+> And it also says "fstrim will adjust the minimum if it's
+> smaller than the device's minimum". So I am not sure if it's
+> necessarily
+> misleading.
+
+It is misleading, because it's not fstrim that adjusts anything, but
+the file system code in the kernel.
+
+> 
+> Still I think it should be best effort from the fs, not guarantee.
+> 
+> > 
+> > The way this is currently implemented, the user has no way to
+> > actually
+> > "discard every free block" to the extent supported by the device. I
+> > think that being able to do this would be desirable, at least in
+> > certain situations.
+> > 
+> > If we changed this, with the default value of 0 used by fstrim,
+> > file
+> > systems would attempt to free every block, which is slow and would
+> > likely either fail or have no effect on may devices. Maybe we
+> > should
+> > treat the value "0" like "automatic", i.e. adjust it the minlen to
+> > the
+> > device's granularity like we do now, but leave the value unchanged
+> > if
+> > the user explicitly sets a small non-zero value? That way "fstrim -
+> > m
+> > 512" could be used to force discarding every block that can be
+> > discarded.
+> 
+> Perhaps, this sounds like a reasonable solution to me.
+
+This could be implemented in a second step, then.
+
+Thanks,
+Martin
+
+
 
