@@ -2,246 +2,786 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F774836FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 19:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C4A4836E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jan 2022 19:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232071AbiACSgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 13:36:14 -0500
+        id S235778AbiACSfM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 13:35:12 -0500
 Received: from drummond.us ([74.95.14.229]:40377 "EHLO
         talisker.home.drummond.us" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231354AbiACSgI (ORCPT
+        by vger.kernel.org with ESMTP id S235681AbiACSfG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 13:36:08 -0500
-X-Greylist: delayed 829 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Jan 2022 13:35:51 EST
+        Mon, 3 Jan 2022 13:35:06 -0500
+X-Greylist: delayed 836 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Jan 2022 13:34:55 EST
 Received: from talisker.home.drummond.us (localhost [127.0.0.1])
-        by talisker.home.drummond.us (8.15.2/8.15.2/Debian-20) with ESMTP id 203IKUrZ983478;
-        Mon, 3 Jan 2022 10:20:30 -0800
+        by talisker.home.drummond.us (8.15.2/8.15.2/Debian-20) with ESMTP id 203IKWH6983492;
+        Mon, 3 Jan 2022 10:20:32 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=home.drummond.us;
-        s=default; t=1641234030;
-        bh=E5fnl6UDJWZKDRpYiS+tfaqNC1+q8ROkLPZx/9dIiQE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zXbbImMEGQ9pUpv1DxfY2XmQttregvHgLm+qsl9EG8U8kPMhSbyKD5DQ25UYOdRzo
-         BfoL/P72aybwUNV/dOsh0KUrU+F+6X19Cgfu7MENmFok86fj7YBUHIKHTe6B3r/2l0
-         iFHFBcYB/awOvzTkhHjnaPiTR52hfe6PHcBRzY7m0xTugBKuJxGGgsr0nguKo8yqGW
-         0VW8sn37JwEbBrD9p0qZEb9YsC8UbN/YcXTbNbKSZNHo8cvcUPBLwqbV6LWX9tWvlN
-         QEeMhR0gHOFTcJtLQUs5HTxDDyu0MNDZscXnTgsu1kqViQK/ikejaInqcv0AX04Too
-         CMrZIYqUTCwPQ==
+        s=default; t=1641234032;
+        bh=s0/ZBp9Jrtlt/uuSXSFQcrmEVihhU+gaTmMV80bD7Vk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GQhAKvpJMy7NCbgHgjLqOk8bgZX3S+KH52GLsgvI3GmlwB1DChH30sUNhgIvpvgt9
+         HVN0P+YwVKbaIXk2Z3aIowaP18Hxs4CBD2QZHHJOF1qPM9lEMLuUdiDOaD0+yksxIe
+         a5mAgFp8dD545UVdCRWUvGJqYqMNzlhLd3m0D8AVJCr5ItcRGcj0HJevqga7i/VQ9k
+         KyqK1cvlqktZ0WWgL4g5mmW0U6DqU6ysFR6t9WSkfUYqiFBI/Yq9IiisQAIH+K/Rmq
+         s/EqkY2v3XWZttQbGkF5QEBMWjFS16B8OLRUUUiGUft0xNyMgWa9R0hi5yu3dSMwT1
+         2j/1J/Ep0lpZQ==
 Received: (from walt@localhost)
-        by talisker.home.drummond.us (8.15.2/8.15.2/Submit) id 203IKMj7983477;
-        Mon, 3 Jan 2022 10:20:22 -0800
+        by talisker.home.drummond.us (8.15.2/8.15.2/Submit) id 203IKW7q983491;
+        Mon, 3 Jan 2022 10:20:32 -0800
 From:   Walt Drummond <walt@drummond.us>
-To:     aacraid@microsemi.com, viro@zeniv.linux.org.uk,
-        anna.schumaker@netapp.com, arnd@arndb.de, bsegall@google.com,
-        bp@alien8.de, chuck.lever@oracle.com, bristot@redhat.com,
-        dave.hansen@linux.intel.com, dwmw2@infradead.org,
-        dietmar.eggemann@arm.com, dinguyen@kernel.org,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
-        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
-        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
-        john.johansen@canonical.com, juri.lelli@redhat.com,
-        keescook@chromium.org, mcgrof@kernel.org,
-        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
-        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
-        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
-        x86@kernel.org
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, Walt Drummond <walt@drummond.us>,
-        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [RFC PATCH 0/8] signals: Support more than 64 signals
-Date:   Mon,  3 Jan 2022 10:19:48 -0800
-Message-Id: <20220103181956.983342-1-walt@drummond.us>
+        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [RFC PATCH 1/8] signals: Make the real-time signal system calls accept different sized sigset_t from user space.
+Date:   Mon,  3 Jan 2022 10:19:49 -0800
+Message-Id: <20220103181956.983342-2-walt@drummond.us>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220103181956.983342-1-walt@drummond.us>
+References: <20220103181956.983342-1-walt@drummond.us>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch set expands the number of signals in Linux beyond the
-current cap of 64.  It sets a new cap at the somewhat arbitrary limit
-of 1024 signals, both because it’s what GLibc and MUSL support and
-because many architectures pad sigset_t or ucontext_t in the kernel to
-this cap.  This limit is not fixed and can be further expanded within
-reason.
+The real-time signals API provides a mechanism for user space to tell
+the kernel how many bytes is has in sigset_t. Make these system calls
+use that mechanism and accept differently sized sigset_t.
 
-Despite best efforts, there is some non-zero potential that this could
-break user space; I'd appreciate any comments, review and/or pointers
-to areas of concern.
+Add a value to the auxvec to inform user space of the maximum size
+sigset_t the kernel can accept.
 
-Basically, these changes entail:
+Signed-off-by: Walt Drummond <walt@drummond.us>
+---
+ fs/binfmt_elf.c             |   1 +
+ fs/binfmt_elf_fdpic.c       |   1 +
+ fs/signalfd.c               |  24 +++---
+ include/linux/compat.h      |  98 +++++++++++++++++++++---
+ include/linux/signal.h      |  62 +++++++++++++++
+ include/uapi/linux/auxvec.h |   1 +
+ kernel/compat.c             |  24 ------
+ kernel/ptrace.c             |  16 ++--
+ kernel/signal.c             | 147 +++++++++++++++++++-----------------
+ virt/kvm/kvm_main.c         |  16 ++--
+ 10 files changed, 257 insertions(+), 133 deletions(-)
 
- - Make all system calls that accept sigset_t honor the existing
-   sigsetsize parameter for values between 8 and 128, and to return
-   sigsetsize bytes to user space.
-
- - Add AT_SIGSET_SZ to the aux vector to signal to user space the
-   maximum size sigset_t the kernel can accept.
-
- - Remove the sigmask() macro except in compatibility cases, change
-   the sigaddset()/sigdelset()/etc. to accept a comma separated list
-   of signal numbers.
-
- - Change the _NSIG_WORDS calculation to round up when needed on
-   generic and x86.
-
- - Place the complete sigmask in the real time signal frame (x86_64,
-   x32 and ia32).
-
- - Various fixes where sigset_t size is assumed.
-
- - Add BSD SIGINFO (and VSTATUS) as a test.
-
-The changes that have the most risk of breaking user space are the
-ones that put more than 8 bytes of sigset_t in the real time signal
-stack frame (Patches 2 & 6), and I should note that an earlier and
-incomplete version of patch 2 was NAK’ed by Al in
-https://lore.kernel.org/lkml/20201119221132.1515696-1-walt@drummond.us/.
-
-As far as I have been able to determine this patchset, and
-specifically changing the size of sigset_t, does not break user space.
-
-The two uses of sigset_t that pose the most user space risk are 1) as
-a member of ucontext_t passed as a parameter to the signal handler and
-2) when user space performs manual inspection of the real-time signal
-stack frame.
-
-In case (1), user space has definitions of both siget_t and ucontext_t
-that are independent of, and may differ from, the kernel (eg, sigset_t
-in uclibc-ng is 16 bytes, musl is 128 bytes, glibc is 128 bytes on all
-architectures except Arc, etc.).  User space will interpret the data
-on the signal stack through these definitions, and extensions to
-sigset_t will be opaque.  Other non-C runtimes are similarly
-independent from kernel sigset_t and ucontext_t and derive their
-definition of sigset_t from libc either directly or indirectly, and do
-not manually inspect the signal stack (specifically OpenJDK, Golang,
-Python3, Rust and Perl).
-
-The only instances I found of case (2), manually inspecting the signal
-stack frame, are in stack unwinders/backtracers (GDB, GCC, libunwind)
-and in GDB when recording program execution, and only on the i386,
-x86_64, s390 and powerpc architectures.  The GDB, GCC and libunwind
-behave consistently with and without this patchset.
-
-GDB's execution recording is somewhat more complicated.  It uses
-internally defined architecture specific constants to represent the
-total size of the signal frame, and will save that entire frame for
-later use.  I cannot confirm that the values for powerpc and s390 are
-correct, but for this purpose it doesn't matter as these architectures
-explicitly pad for an expanded uc_sigmask.  I can, however, confirm
-that the values for i386 and x86_64 are not correct, and that GDB is
-recording an incorrect amount of stack data.  This doesn’t appear to
-be an issue; while I cannot build a test case on x86_64 due to a known
-bug[1], a basic test on i386 shows that the stack is correctly being
-recorded, and forward and reverse replay seems to work just fine
-across signal handlers.
-
-There are other cases to consider if the number of signals and
-therefore the size of sigset_t changes:
-
-Impact on struct rt_sigframe member elements
-
-  The placement of ucontext_t in struct rt_sigframe has the potential
-  to move following member elements in ways that could break user
-  space if user space relied on the offsets of these elements.
-  However a review shows that any elements in rt_sigframe after
-  ucontext_t.uc_sigmask are either (1) unused or only used by the
-  kernel or (2) fall into the x86_64/i386 floating point state case
-  above.
-
-Kernel has new signals, user space does not
-
-  Any new bits in ucontext.uc_sigmask placed on the signal stack are
-  opaque to user space (except in cases where user space already has a
-  larger sigset_t, as in glibc).
-
-  There are no changes to the real-time signals system call semantics,
-  as the kernel will honor the hard-coded sigsetsize value of 8 in
-  libc and behave as it has before these changes.
-
-  Signal numbers larger than 64 cannot be blocked or caught until user
-  space is updated, however their default action will work as
-  expected.  This can cause one problem: a parent process that uses
-  the signal number a child exited with as an index into an array
-  without bounds checking can cause a crash.  I’ve seen exactly one
-  instance of this in tcsh, and is, I think, a bug in tcsh.
-
-User space has new signals, kernel does not
-
-  User space attempting to use a signal number not supported by the
-  kernel in system calls (eg, sigaction()) or other libc functions (eg,
-  sigaddset()) will result in EINVAL, as expected.
-
-  User space needs to know how to set the sigsetsize parameter to the
-  real time signal system calls and it can use getauxval(AT_SIGSET_SZ)
-  to determine this.  If it returns zero the sigsetsize must be 8,
-  otherwise the kernel will accept sigsetsize between 8 and the return
-  value.
-
-[1] https://sourceware.org/bugzilla/show_bug.cgi?id=23188
-
-Walt Drummond (8):
-  signals: Make the real-time signal system calls accept different sized
-    sigset_t from user space.
-  signals: Put the full signal mask on the signal stack for x86_64, X32
-    and ia32 compatibility mode
-  signals: Use a helper function to test if a signal is a real-time
-    signal.
-  signals: Remove sigmask() macro
-  signals: Better support cases where _NSIG_WORDS is greater than 2
-  signals: Round up _NSIG_WORDS
-  signals: Add signal debugging
-  signals: Support BSD VSTATUS, KERNINFO and SIGINFO
-
- arch/alpha/kernel/signal.c          |   4 +-
- arch/m68k/include/asm/signal.h      |   6 +-
- arch/nios2/kernel/signal.c          |   2 -
- arch/x86/ia32/ia32_signal.c         |   5 +-
- arch/x86/include/asm/sighandling.h  |  34 +++
- arch/x86/include/asm/signal.h       |  10 +-
- arch/x86/include/uapi/asm/signal.h  |   4 +-
- arch/x86/kernel/signal.c            |  11 +-
- drivers/scsi/dpti.h                 |   2 -
- drivers/tty/Makefile                |   2 +-
- drivers/tty/n_tty.c                 |  21 ++
- drivers/tty/tty_io.c                |  10 +-
- drivers/tty/tty_ioctl.c             |   4 +
- drivers/tty/tty_status.c            | 135 ++++++++++
- fs/binfmt_elf.c                     |   1 +
- fs/binfmt_elf_fdpic.c               |   1 +
- fs/ceph/addr.c                      |   2 +-
- fs/jffs2/background.c               |   2 +-
- fs/lockd/svc.c                      |   1 -
- fs/proc/array.c                     |  32 +--
- fs/proc/base.c                      |  48 ++++
- fs/signalfd.c                       |  26 +-
- include/asm-generic/termios.h       |   4 +-
- include/linux/compat.h              |  98 ++++++-
- include/linux/sched.h               |  52 +++-
- include/linux/signal.h              | 389 ++++++++++++++++++++--------
- include/linux/tty.h                 |   8 +
- include/uapi/asm-generic/ioctls.h   |   2 +
- include/uapi/asm-generic/signal.h   |   8 +-
- include/uapi/asm-generic/termbits.h |  34 +--
- include/uapi/linux/auxvec.h         |   1 +
- kernel/compat.c                     |  30 +--
- kernel/fork.c                       |   2 +-
- kernel/ptrace.c                     |  18 +-
- kernel/signal.c                     | 288 ++++++++++----------
- kernel/sysctl.c                     |  41 +++
- kernel/time/posix-timers.c          |   3 +-
- lib/Kconfig.debug                   |  10 +
- security/apparmor/ipc.c             |   4 +-
- virt/kvm/kvm_main.c                 |  18 +-
- 40 files changed, 974 insertions(+), 399 deletions(-)
- create mode 100644 drivers/tty/tty_status.c
-
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index a813b70f594e..7133515fd386 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -274,6 +274,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+ #ifdef ELF_HWCAP2
+ 	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
+ #endif
++	NEW_AUX_ENT(AT_SIGSET_SZ, SIGSETSIZE_MAX);
+ 	NEW_AUX_ENT(AT_EXECFN, bprm->exec);
+ 	if (k_platform) {
+ 		NEW_AUX_ENT(AT_PLATFORM,
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index 6d8fd6030cbb..09249dc4364b 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -659,6 +659,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+ 	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
+ 	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
+ 	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
++	NEW_AUX_ENT(AT_SIGSET_SZ, SIGSETSIZE_MAX);
+ 
+ #ifdef ARCH_DLINFO
+ 	nr = 0;
+diff --git a/fs/signalfd.c b/fs/signalfd.c
+index 040e1cf90528..12fdc282e299 100644
+--- a/fs/signalfd.c
++++ b/fs/signalfd.c
+@@ -311,24 +311,24 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+ SYSCALL_DEFINE4(signalfd4, int, ufd, sigset_t __user *, user_mask,
+ 		size_t, sizemask, int, flags)
+ {
++	int ret;
+ 	sigset_t mask;
+ 
+-	if (sizemask != sizeof(sigset_t))
+-		return -EINVAL;
+-	if (copy_from_user(&mask, user_mask, sizeof(mask)))
+-		return -EFAULT;
++	ret = copy_sigset_from_user(&mask, user_mask, sizemask);
++	if (ret)
++		return ret;
+ 	return do_signalfd4(ufd, &mask, flags);
+ }
+ 
+ SYSCALL_DEFINE3(signalfd, int, ufd, sigset_t __user *, user_mask,
+ 		size_t, sizemask)
+ {
++	int ret;
+ 	sigset_t mask;
+ 
+-	if (sizemask != sizeof(sigset_t))
+-		return -EINVAL;
+-	if (copy_from_user(&mask, user_mask, sizeof(mask)))
+-		return -EFAULT;
++	ret = copy_sigset_from_user(&mask, user_mask, sizemask);
++	if (ret)
++		return ret;
+ 	return do_signalfd4(ufd, &mask, 0);
+ }
+ 
+@@ -338,11 +338,11 @@ static long do_compat_signalfd4(int ufd,
+ 			compat_size_t sigsetsize, int flags)
+ {
+ 	sigset_t mask;
++	int ret;
+ 
+-	if (sigsetsize != sizeof(compat_sigset_t))
+-		return -EINVAL;
+-	if (get_compat_sigset(&mask, user_mask))
+-		return -EFAULT;
++	ret = copy_compat_sigset_from_user(&mask, user_mask, sigsetsize);
++	if (ret)
++		return ret;
+ 	return do_signalfd4(ufd, &mask, flags);
+ }
+ 
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index 1c758b0e0359..ecdbff1d2218 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -407,33 +407,109 @@ int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
+ int get_compat_sigevent(struct sigevent *event,
+ 		const struct compat_sigevent __user *u_event);
+ 
+-extern int get_compat_sigset(sigset_t *set, const compat_sigset_t __user *compat);
+-
+ /*
+  * Defined inline such that size can be compile time constant, which avoids
+  * CONFIG_HARDENED_USERCOPY complaining about copies from task_struct
+  */
+ static inline int
+-put_compat_sigset(compat_sigset_t __user *compat, const sigset_t *set,
+-		  unsigned int size)
++copy_compat_sigset_to_user(compat_sigset_t __user *compat, const sigset_t *set,
++			   size_t sigsetsize)
+ {
+-	/* size <= sizeof(compat_sigset_t) <= sizeof(sigset_t) */
++	size_t copybytes;
+ #if defined(__BIG_ENDIAN) && defined(CONFIG_64BIT)
+ 	compat_sigset_t v;
++	int i;
++#endif
++
++	if (!valid_sigsetsize(sigsetsize))
++		return -EINVAL;
++
++	copybytes = min(sizeof(compat_sigset_t), sigsetsize);
++
++#if defined(__BIG_ENDIAN) && defined(CONFIG_64BIT)
++	switch (_NSIG_WORDS) {
++	default:
++		for (i = 0; i < _NSIG_WORDS; i++) {
++			v.sig[(i * 2)]     = set->sig[i];
++			v.sig[(i * 2) + 1] = set->sig[i] >> 32;
++		}
++		break;
++	case 4:
++		v.sig[7] = (set->sig[3] >> 32);
++		v.sig[6] =  set->sig[3];
++		fallthrough;
++	case 3:
++		v.sig[5] = (set->sig[2] >> 32);
++		v.sig[4] =  set->sig[2];
++		fallthrough;
++	case 2:
++		v.sig[3] = (set->sig[1] >> 32);
++		v.sig[2] =  set->sig[1];
++		fallthrough;
++	case 1:
++		v.sig[1] = (set->sig[0] >> 32);
++		v.sig[0] =  set->sig[0];
++	}
++	if (copy_to_user(compat, &v, copybytes))
++		return -EFAULT;
++#else
++	if (copy_to_user(compat, set, copybytes))
++		return -EFAULT;
++#endif
++	/* Zero any unused part of mask */
++	if (sigsetsize > sizeof(compat_sigset_t)) {
++		if (clear_user((char *)compat + copybytes,
++			       sigsetsize - sizeof(compat_sigset_t)))
++			return -EFAULT;
++	}
++
++	return 0;
++}
++#define put_compat_sigset(set, compat, size)		\
++	copy_compat_sigset_to_user((set), (compat), (size))
++
++static inline int
++copy_compat_sigset_from_user(sigset_t *set,
++			     const compat_sigset_t __user *compat, size_t size)
++{
++#if defined(__BIG_ENDIAN) && defined(CONFIG_64BIT)
++	compat_sigset_t v;
++	int i;
++#endif
++
++	if (!valid_sigsetsize(size))
++		return -EINVAL;
++
++#if defined(__BIG_ENDIAN) && defined(CONFIG_64BIT)
++	if (copy_from_user(&v, compat, min(sizeof(compat_sigset_t), size)))
++		return -EFAULT;
+ 	switch (_NSIG_WORDS) {
+-	case 4: v.sig[7] = (set->sig[3] >> 32); v.sig[6] = set->sig[3];
++	default:
++		for (i = 0; i < _NSIG_WORDS; i++) {
++			set->sig[i] =    v.sig[(i * 2)] |
++				(((long) v.sig[(i * 2) + 1]) << 32);
++		}
++		break;
++	case 4:
++		set->sig[3] = v.sig[6] | (((long)v.sig[7]) << 32);
+ 		fallthrough;
+-	case 3: v.sig[5] = (set->sig[2] >> 32); v.sig[4] = set->sig[2];
++	case 3:
++		set->sig[2] = v.sig[4] | (((long)v.sig[5]) << 32);
+ 		fallthrough;
+-	case 2: v.sig[3] = (set->sig[1] >> 32); v.sig[2] = set->sig[1];
++	case 2:
++		set->sig[1] = v.sig[2] | (((long)v.sig[3]) << 32);
+ 		fallthrough;
+-	case 1: v.sig[1] = (set->sig[0] >> 32); v.sig[0] = set->sig[0];
++	case 1:
++		set->sig[0] = v.sig[0] | (((long)v.sig[1]) << 32);
+ 	}
+-	return copy_to_user(compat, &v, size) ? -EFAULT : 0;
+ #else
+-	return copy_to_user(compat, set, size) ? -EFAULT : 0;
++	if (copy_from_user(set, compat, min(sizeof(compat_sigset_t), size)))
++		return -EFAULT;
+ #endif
++	return 0;
+ }
++#define get_compat_sigset(set, compat)					\
++	copy_compat_sigset_from_user((set), (compat), sizeof(compat_sigset_t))
+ 
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+ #define unsafe_put_compat_sigset(compat, set, label) do {		\
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 3f96a6374e4f..c66d4f520228 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -5,6 +5,7 @@
+ #include <linux/bug.h>
+ #include <linux/signal_types.h>
+ #include <linux/string.h>
++#include <linux/uaccess.h>
+ 
+ struct task_struct;
+ 
+@@ -260,6 +261,67 @@ static inline void siginitsetinv(sigset_t *set, unsigned long mask)
+ 
+ #endif /* __HAVE_ARCH_SIG_SETOPS */
+ 
++/* Safely copy a sigset_t from user space handling any differences in
++ * size between user space and kernel sigset_t.  We don't use
++ * copy_struct_from_user() here as we can't ensure that in the case
++ * where sigisetsize > sizeof(sigset_t), the unused bytes are zeroed.
++ *
++ * SIGSETSIZE_MIN *must* be 8 bytes and cannot change.
++ *
++ * SIGSETSIZE_MAX shouldn't be too small, nor should it be too large.
++ * We've somewhat randomly picked 128 bytes to keep this sync'ed with
++ * glibc and musl; this can be changed as needed.
++ */
++
++#define SIGSETSIZE_MIN 8
++#define SIGSETSIZE_MAX 128
++
++static inline int valid_sigsetsize(size_t sigsetsize)
++{
++	return  sigsetsize >= SIGSETSIZE_MIN &&
++		sigsetsize <= SIGSETSIZE_MAX;
++}
++
++static inline int copy_sigset_from_user(sigset_t *kmask,
++					const sigset_t __user *umask,
++					size_t sigsetsize)
++{
++	if (!valid_sigsetsize(sigsetsize))
++		return -EINVAL;
++
++	if (kmask == NULL)
++		return -EFAULT;
++
++	sigemptyset(kmask);
++
++	if (copy_from_user(kmask, umask, min(sizeof(sigset_t), sigsetsize)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static inline int copy_sigset_to_user(sigset_t __user *umask,
++				      sigset_t *kmask,
++				      size_t sigsetsize)
++{
++	size_t copybytes;
++
++	if (!valid_sigsetsize(sigsetsize))
++		return -EINVAL;
++
++	copybytes = min(sizeof(sigset_t), sigsetsize);
++	if (copy_to_user(umask, kmask, copybytes))
++		return -EFAULT;
++
++	/* Zero unused parts of umask */
++	if (sigsetsize > copybytes) {
++		if (clear_user((char *)umask + copybytes,
++			       sigsetsize - copybytes))
++			return -EFAULT;
++	}
++	return 0;
++}
++
+ static inline void init_sigpending(struct sigpending *sig)
+ {
+ 	sigemptyset(&sig->signal);
+diff --git a/include/uapi/linux/auxvec.h b/include/uapi/linux/auxvec.h
+index c7e502bf5a6f..752184abf620 100644
+--- a/include/uapi/linux/auxvec.h
++++ b/include/uapi/linux/auxvec.h
+@@ -30,6 +30,7 @@
+ 				 * differ from AT_PLATFORM. */
+ #define AT_RANDOM 25	/* address of 16 random bytes */
+ #define AT_HWCAP2 26	/* extension of AT_HWCAP */
++#define AT_SIGSET_SZ 27	/* sizeof(sigset_t) */
+ 
+ #define AT_EXECFN  31	/* filename of program */
+ 
+diff --git a/kernel/compat.c b/kernel/compat.c
+index 55551989d9da..cc2438f4070c 100644
+--- a/kernel/compat.c
++++ b/kernel/compat.c
+@@ -245,27 +245,3 @@ long compat_put_bitmap(compat_ulong_t __user *umask, unsigned long *mask,
+ 	user_write_access_end();
+ 	return -EFAULT;
+ }
+-
+-int
+-get_compat_sigset(sigset_t *set, const compat_sigset_t __user *compat)
+-{
+-#ifdef __BIG_ENDIAN
+-	compat_sigset_t v;
+-	if (copy_from_user(&v, compat, sizeof(compat_sigset_t)))
+-		return -EFAULT;
+-	switch (_NSIG_WORDS) {
+-	case 4: set->sig[3] = v.sig[6] | (((long)v.sig[7]) << 32 );
+-		fallthrough;
+-	case 3: set->sig[2] = v.sig[4] | (((long)v.sig[5]) << 32 );
+-		fallthrough;
+-	case 2: set->sig[1] = v.sig[2] | (((long)v.sig[3]) << 32 );
+-		fallthrough;
+-	case 1: set->sig[0] = v.sig[0] | (((long)v.sig[1]) << 32 );
+-	}
+-#else
+-	if (copy_from_user(set, compat, sizeof(compat_sigset_t)))
+-		return -EFAULT;
+-#endif
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(get_compat_sigset);
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index f8589bf8d7dc..2f7ee345a629 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -1074,8 +1074,9 @@ int ptrace_request(struct task_struct *child, long request,
+ 
+ 	case PTRACE_GETSIGMASK: {
+ 		sigset_t *mask;
++		size_t sigsetsize = (size_t) addr;
+ 
+-		if (addr != sizeof(sigset_t)) {
++		if (!valid_sigsetsize(sigsetsize) == 0) {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+@@ -1085,7 +1086,7 @@ int ptrace_request(struct task_struct *child, long request,
+ 		else
+ 			mask = &child->blocked;
+ 
+-		if (copy_to_user(datavp, mask, sizeof(sigset_t)))
++		if (copy_sigset_to_user(datavp, mask, sigsetsize))
+ 			ret = -EFAULT;
+ 		else
+ 			ret = 0;
+@@ -1095,16 +1096,11 @@ int ptrace_request(struct task_struct *child, long request,
+ 
+ 	case PTRACE_SETSIGMASK: {
+ 		sigset_t new_set;
++		size_t sigsetsize = (size_t) addr;
+ 
+-		if (addr != sizeof(sigset_t)) {
+-			ret = -EINVAL;
+-			break;
+-		}
+-
+-		if (copy_from_user(&new_set, datavp, sizeof(sigset_t))) {
+-			ret = -EFAULT;
++		ret = copy_sigset_from_user(&new_set, datavp, sigsetsize);
++		if (ret)
+ 			break;
+-		}
+ 
+ 		sigdelsetmask(&new_set, sigmask(SIGKILL)|sigmask(SIGSTOP));
+ 
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 487bf4f5dadf..94b1828ae973 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3091,13 +3091,14 @@ EXPORT_SYMBOL(sigprocmask);
+ int set_user_sigmask(const sigset_t __user *umask, size_t sigsetsize)
+ {
+ 	sigset_t kmask;
++	int ret;
+ 
+ 	if (!umask)
+ 		return 0;
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
+-	if (copy_from_user(&kmask, umask, sizeof(sigset_t)))
+-		return -EFAULT;
++
++	ret = copy_sigset_from_user(&kmask, umask, sigsetsize);
++	if (ret)
++		return ret;
+ 
+ 	set_restore_sigmask();
+ 	current->saved_sigmask = current->blocked;
+@@ -3111,13 +3112,14 @@ int set_compat_user_sigmask(const compat_sigset_t __user *umask,
+ 			    size_t sigsetsize)
+ {
+ 	sigset_t kmask;
++	int ret;
+ 
+ 	if (!umask)
+ 		return 0;
+-	if (sigsetsize != sizeof(compat_sigset_t))
+-		return -EINVAL;
+-	if (get_compat_sigset(&kmask, umask))
+-		return -EFAULT;
++
++	ret = copy_compat_sigset_from_user(&kmask, umask, sigsetsize);
++	if (ret)
++		return ret;
+ 
+ 	set_restore_sigmask();
+ 	current->saved_sigmask = current->blocked;
+@@ -3140,14 +3142,13 @@ SYSCALL_DEFINE4(rt_sigprocmask, int, how, sigset_t __user *, nset,
+ 	sigset_t old_set, new_set;
+ 	int error;
+ 
+-	/* XXX: Don't preclude handling different sized sigset_t's.  */
+-	if (sigsetsize != sizeof(sigset_t))
++	if (!valid_sigsetsize(sigsetsize))
+ 		return -EINVAL;
+ 
+ 	old_set = current->blocked;
+ 
+ 	if (nset) {
+-		if (copy_from_user(&new_set, nset, sizeof(sigset_t)))
++		if (copy_sigset_from_user(&new_set, nset, sigsetsize))
+ 			return -EFAULT;
+ 		sigdelsetmask(&new_set, sigmask(SIGKILL)|sigmask(SIGSTOP));
+ 
+@@ -3157,7 +3158,7 @@ SYSCALL_DEFINE4(rt_sigprocmask, int, how, sigset_t __user *, nset,
+ 	}
+ 
+ 	if (oset) {
+-		if (copy_to_user(oset, &old_set, sizeof(sigset_t)))
++		if (copy_sigset_to_user(oset, &old_set, sigsetsize))
+ 			return -EFAULT;
+ 	}
+ 
+@@ -3168,16 +3169,16 @@ SYSCALL_DEFINE4(rt_sigprocmask, int, how, sigset_t __user *, nset,
+ COMPAT_SYSCALL_DEFINE4(rt_sigprocmask, int, how, compat_sigset_t __user *, nset,
+ 		compat_sigset_t __user *, oset, compat_size_t, sigsetsize)
+ {
+-	sigset_t old_set = current->blocked;
++	sigset_t old_set, new_set;
++	int error;
+ 
+-	/* XXX: Don't preclude handling different sized sigset_t's.  */
+-	if (sigsetsize != sizeof(sigset_t))
++	if (!valid_sigsetsize(sigsetsize))
+ 		return -EINVAL;
+ 
++	old_set = current->blocked;
++
+ 	if (nset) {
+-		sigset_t new_set;
+-		int error;
+-		if (get_compat_sigset(&new_set, nset))
++		if (copy_compat_sigset_from_user(&new_set, nset, sigsetsize))
+ 			return -EFAULT;
+ 		sigdelsetmask(&new_set, sigmask(SIGKILL)|sigmask(SIGSTOP));
+ 
+@@ -3185,7 +3186,12 @@ COMPAT_SYSCALL_DEFINE4(rt_sigprocmask, int, how, compat_sigset_t __user *, nset,
+ 		if (error)
+ 			return error;
+ 	}
+-	return oset ? put_compat_sigset(oset, &old_set, sizeof(*oset)) : 0;
++	if (oset) {
++		if (copy_compat_sigset_to_user(oset, &old_set, sigsetsize))
++			return -EFAULT;
++	}
++
++	return 0;
+ }
+ #endif
+ 
+@@ -3210,12 +3216,12 @@ SYSCALL_DEFINE2(rt_sigpending, sigset_t __user *, uset, size_t, sigsetsize)
+ {
+ 	sigset_t set;
+ 
+-	if (sigsetsize > sizeof(*uset))
++	if (!valid_sigsetsize(sigsetsize))
+ 		return -EINVAL;
+ 
+ 	do_sigpending(&set);
+ 
+-	if (copy_to_user(uset, &set, sigsetsize))
++	if (copy_sigset_to_user(uset, &set, sigsetsize))
+ 		return -EFAULT;
+ 
+ 	return 0;
+@@ -3227,12 +3233,15 @@ COMPAT_SYSCALL_DEFINE2(rt_sigpending, compat_sigset_t __user *, uset,
+ {
+ 	sigset_t set;
+ 
+-	if (sigsetsize > sizeof(*uset))
++	if (!valid_sigsetsize(sigsetsize))
+ 		return -EINVAL;
+ 
+ 	do_sigpending(&set);
+ 
+-	return put_compat_sigset(uset, &set, sigsetsize);
++	if (copy_compat_sigset_to_user(uset, &set, sigsetsize))
++		return -EFAULT;
++
++	return 0;
+ }
+ #endif
+ 
+@@ -3627,12 +3636,9 @@ SYSCALL_DEFINE4(rt_sigtimedwait, const sigset_t __user *, uthese,
+ 	kernel_siginfo_t info;
+ 	int ret;
+ 
+-	/* XXX: Don't preclude handling different sized sigset_t's.  */
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&these, uthese, sizeof(these)))
+-		return -EFAULT;
++	ret = copy_sigset_from_user(&these, uthese, sigsetsize);
++	if (ret)
++		return ret;
+ 
+ 	if (uts) {
+ 		if (get_timespec64(&ts, uts))
+@@ -3660,11 +3666,9 @@ SYSCALL_DEFINE4(rt_sigtimedwait_time32, const sigset_t __user *, uthese,
+ 	kernel_siginfo_t info;
+ 	int ret;
+ 
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&these, uthese, sizeof(these)))
+-		return -EFAULT;
++	ret = copy_sigset_from_user(&these, uthese, sigsetsize);
++	if (ret)
++		return ret;
+ 
+ 	if (uts) {
+ 		if (get_old_timespec32(&ts, uts))
+@@ -3692,11 +3696,9 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait_time64, compat_sigset_t __user *, uthese,
+ 	kernel_siginfo_t info;
+ 	long ret;
+ 
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
+-
+-	if (get_compat_sigset(&s, uthese))
+-		return -EFAULT;
++	ret = copy_compat_sigset_from_user(&s, uthese, sigsetsize);
++	if (ret)
++		return ret;
+ 
+ 	if (uts) {
+ 		if (get_timespec64(&t, uts))
+@@ -3723,11 +3725,9 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait_time32, compat_sigset_t __user *, uthese,
+ 	kernel_siginfo_t info;
+ 	long ret;
+ 
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
+-
+-	if (get_compat_sigset(&s, uthese))
+-		return -EFAULT;
++	ret = copy_compat_sigset_from_user(&s, uthese, sigsetsize);
++	if (ret)
++		return ret;
+ 
+ 	if (uts) {
+ 		if (get_old_timespec32(&t, uts))
+@@ -4370,21 +4370,36 @@ SYSCALL_DEFINE4(rt_sigaction, int, sig,
+ 		size_t, sigsetsize)
+ {
+ 	struct k_sigaction new_sa, old_sa;
++	size_t sa_len = sizeof(struct sigaction) - sizeof(sigset_t);
+ 	int ret;
+ 
+-	/* XXX: Don't preclude handling different sized sigset_t's.  */
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
++	/* struct sigaction contains a sigset_t; handle cases where
++	 * user and kernel sizes of sigset_t differ.
++	 */
+ 
+-	if (act && copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)))
+-		return -EFAULT;
++	memset(&new_sa.sa, 0, sizeof(struct sigaction));
++
++	if (act) {
++		if (copy_from_user(&new_sa.sa, act, sa_len))
++			return -EFAULT;
++		ret = copy_sigset_from_user(&new_sa.sa.sa_mask, &act->sa_mask,
++					    sigsetsize);
++		if (ret)
++			return ret;
++	}
+ 
+ 	ret = do_sigaction(sig, act ? &new_sa : NULL, oact ? &old_sa : NULL);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (oact && copy_to_user(oact, &old_sa.sa, sizeof(old_sa.sa)))
+-		return -EFAULT;
++	if (oact) {
++		if (copy_to_user(oact, &old_sa.sa, sa_len))
++			return -EFAULT;
++		ret = copy_sigset_to_user(&oact->sa_mask, &old_sa.sa.sa_mask,
++					  sigsetsize);
++		if (ret)
++			return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -4400,8 +4415,7 @@ COMPAT_SYSCALL_DEFINE4(rt_sigaction, int, sig,
+ #endif
+ 	int ret;
+ 
+-	/* XXX: Don't preclude handling different sized sigset_t's.  */
+-	if (sigsetsize != sizeof(compat_sigset_t))
++	if (!valid_sigsetsize(sigsetsize))
+ 		return -EINVAL;
+ 
+ 	if (act) {
+@@ -4412,7 +4426,8 @@ COMPAT_SYSCALL_DEFINE4(rt_sigaction, int, sig,
+ 		ret |= get_user(restorer, &act->sa_restorer);
+ 		new_ka.sa.sa_restorer = compat_ptr(restorer);
+ #endif
+-		ret |= get_compat_sigset(&new_ka.sa.sa_mask, &act->sa_mask);
++		ret |= copy_compat_sigset_from_user(&new_ka.sa.sa_mask,
++						    &act->sa_mask, sigsetsize);
+ 		ret |= get_user(new_ka.sa.sa_flags, &act->sa_flags);
+ 		if (ret)
+ 			return -EFAULT;
+@@ -4422,8 +4437,8 @@ COMPAT_SYSCALL_DEFINE4(rt_sigaction, int, sig,
+ 	if (!ret && oact) {
+ 		ret = put_user(ptr_to_compat(old_ka.sa.sa_handler), 
+ 			       &oact->sa_handler);
+-		ret |= put_compat_sigset(&oact->sa_mask, &old_ka.sa.sa_mask,
+-					 sizeof(oact->sa_mask));
++		ret |= copy_compat_sigset_to_user(&oact->sa_mask,
++						  &old_ka.sa.sa_mask, sigsetsize);
+ 		ret |= put_user(old_ka.sa.sa_flags, &oact->sa_flags);
+ #ifdef __ARCH_HAS_SA_RESTORER
+ 		ret |= put_user(ptr_to_compat(old_ka.sa.sa_restorer),
+@@ -4590,13 +4605,11 @@ static int sigsuspend(sigset_t *set)
+ SYSCALL_DEFINE2(rt_sigsuspend, sigset_t __user *, unewset, size_t, sigsetsize)
+ {
+ 	sigset_t newset;
++	int ret;
+ 
+-	/* XXX: Don't preclude handling different sized sigset_t's.  */
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&newset, unewset, sizeof(newset)))
+-		return -EFAULT;
++	ret = copy_sigset_from_user(&newset, unewset, sigsetsize);
++	if (ret)
++		return ret;
+ 	return sigsuspend(&newset);
+ }
+  
+@@ -4604,13 +4617,11 @@ SYSCALL_DEFINE2(rt_sigsuspend, sigset_t __user *, unewset, size_t, sigsetsize)
+ COMPAT_SYSCALL_DEFINE2(rt_sigsuspend, compat_sigset_t __user *, unewset, compat_size_t, sigsetsize)
+ {
+ 	sigset_t newset;
++	int ret;
+ 
+-	/* XXX: Don't preclude handling different sized sigset_t's.  */
+-	if (sigsetsize != sizeof(sigset_t))
+-		return -EINVAL;
+-
+-	if (get_compat_sigset(&newset, unewset))
+-		return -EFAULT;
++	ret = copy_compat_sigset_from_user(&newset, unewset, sigsetsize);
++	if (ret)
++		return ret;
+ 	return sigsuspend(&newset);
+ }
+ #endif
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 7851f3a1b5f7..c8b3645c9a7d 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3891,8 +3891,10 @@ static long kvm_vcpu_ioctl(struct file *filp,
+ 			if (copy_from_user(&kvm_sigmask, argp,
+ 					   sizeof(kvm_sigmask)))
+ 				goto out;
+-			r = -EINVAL;
+-			if (kvm_sigmask.len != sizeof(sigset))
++			r = copy_sigset_from_user(&sigset,
++				       (sigset_t __user *) &sigmask_arg->sigset,
++				       kvm_sigmask.len);
++			if (r)
+ 				goto out;
+ 			r = -EFAULT;
+ 			if (copy_from_user(&sigset, sigmask_arg->sigset,
+@@ -3963,12 +3965,10 @@ static long kvm_vcpu_compat_ioctl(struct file *filp,
+ 			if (copy_from_user(&kvm_sigmask, argp,
+ 					   sizeof(kvm_sigmask)))
+ 				goto out;
+-			r = -EINVAL;
+-			if (kvm_sigmask.len != sizeof(compat_sigset_t))
+-				goto out;
+-			r = -EFAULT;
+-			if (get_compat_sigset(&sigset,
+-					      (compat_sigset_t __user *)sigmask_arg->sigset))
++			r = copy_compat_sigset_from_user(&sigset,
++				(compat_sigset_t __user *) &sigmask_arg->sigset,
++				kvm_sigmask.len);
++			if (r)
+ 				goto out;
+ 			r = kvm_vcpu_ioctl_set_sigmask(vcpu, &sigset);
+ 		} else
 -- 
 2.30.2
 
