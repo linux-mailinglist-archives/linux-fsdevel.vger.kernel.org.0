@@ -2,117 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1D05484870
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 20:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 228164848AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 20:37:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236489AbiADTXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 14:23:25 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:56896 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235922AbiADTXY (ORCPT
+        id S230300AbiADThI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 14:37:08 -0500
+Received: from fanzine2.igalia.com ([213.97.179.56]:58576 "EHLO
+        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229697AbiADThH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 14:23:24 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4E595B817DE;
-        Tue,  4 Jan 2022 19:23:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1731AC36AE9;
-        Tue,  4 Jan 2022 19:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641324202;
-        bh=kFXhcxSguP4J87bclpOKVk/E7FEOX2MRw/6e/KBHsS8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G6/+BCSeOkPFqxKfWdAOvubSEitoNbJ0VdCkSPZEzI47gpIoED6IJXEmhrvbZ7u9B
-         LFzuvEVcQnkQR6kIzxvoWx7IXAqv63+FSqf26DABkxYcD1B4pL2l5MxePkuVYdAKld
-         jjtjNtpHT5li0zcpAHf7AB7rE3bUjPX+jPjFnau8ZBAOOJeHWVunYUoqom9t4nnYaK
-         HrD2f+v5noUYTIyOBfujyjOoorVHxmG9gFu/u8/x3LmovycVt6WIhdn4moQMOTmqwH
-         e4vCbD1IKMF0hlS1XuH5iRZSq+Cu3xn5XtW4B1MTuDt5Eaew1Ga+q8pN/svoxIR5w9
-         biK1EVg/XYkZw==
-Date:   Tue, 4 Jan 2022 11:23:21 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "trondmy@kernel.org" <trondmy@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>
-Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
-Message-ID: <20220104192321.GF31606@magnolia>
-References: <20211230193522.55520-1-trondmy@kernel.org>
- <Yc5f/C1I+N8MPHcd@casper.infradead.org>
- <6f746786a3928844fbe644e7e409008b4f50c239.camel@hammerspace.com>
- <20220101035516.GE945095@dread.disaster.area>
- <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
- <YdRNasL3WFugVe8c@bfoster>
+        Tue, 4 Jan 2022 14:37:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
+        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=c79Cvyi3tuo9WddH41m2TtymOCs7U8J7heJs6dXudQ8=; b=svRBeHTRJns4oIluDmkept3Yev
+        s/akUraqokxa/ewz2G5aFGKEiDr8OqfqBlal+izIZqK0AhsmdyedebCjeDq8OBCFyZROhaJM38ddG
+        EJyGArTs9ncVcBhXLPcrdwbHrcrxZg5BU5N38fHtBOXQSD2W2LEsRoQnehteijDKUvcCSAESRFmWB
+        I2iHNCGybG2RyINDFAsPUAChtXpdNoqZiKJzTbRK2z7MPp2OnRbJsKC+PC+lazkfHse/UFZ6HOxZw
+        Ce9K2VxN/mUift8HTw9Qvdc9V0mC0XCqCZe0fGm12Q9kYylLU1gG4/rwy6lOdJFHyxV29MwBUsRz4
+        QvoJn+BA==;
+Received: from 200-153-146-242.dsl.telesp.net.br ([200.153.146.242] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1n4pcB-000Bpn-3m; Tue, 04 Jan 2022 20:36:59 +0100
+Subject: Re: pstore/ramoops - why only collect a partial dmesg?
+To:     "Luck, Tony" <tony.luck@intel.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "anton@enomsg.org" <anton@enomsg.org>,
+        "ccross@android.com" <ccross@android.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Guilherme G. Piccoli" <kernel@gpiccoli.net>
+References: <a21201cf-1e5f-fed1-356d-42c83a66fa57@igalia.com>
+ <2d1e9afa38474de6a8b1efc14925d095@intel.com>
+ <0ca4c27a-a707-4d36-9689-b09ef715ac67@igalia.com>
+ <a361c64213e7474ea39c97f7f7bd26ec@intel.com>
+ <c5a04638-90c2-8ec0-4573-a0e5d2e24b6b@igalia.com>
+ <8675f69c1643451b91f797b114dfc311@intel.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Message-ID: <b2d66d9f-15a6-415c-2485-44649027a1d5@igalia.com>
+Date:   Tue, 4 Jan 2022 16:36:43 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YdRNasL3WFugVe8c@bfoster>
+In-Reply-To: <8675f69c1643451b91f797b114dfc311@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 04, 2022 at 08:36:42AM -0500, Brian Foster wrote:
-> On Sat, Jan 01, 2022 at 05:39:45PM +0000, Trond Myklebust wrote:
-> ...
-> > 
-> > Fair enough. As long as someone is working on a solution, then I'm
-> > happy. Just a couple of things:
-> > 
-> > Firstly, we've verified that the cond_resched() in the bio loop does
-> > suffice to resolve the issue with XFS, which would tend to confirm what
-> > you're saying above about the underlying issue being the ioend chain
-> > length.
-> > 
-> > Secondly, note that we've tested this issue with a variety of older
-> > kernels, including 4.18.x, 5.1.x and 5.15.x, so please bear in mind
-> > that it would be useful for any fix to be backward portable through the
-> > stable mechanism.
-> > 
-> 
-> I've sent a couple or so different variants of this in the past. The
-> last I believe was here [1], but still never seemed to go anywhere
-> (despite having reviews on the first couple patches). That one was
-> essentially a sequence of adding a cond_resched() call in the iomap code
-> to address the soft lockup warning followed by capping the ioend size
-> for latency reasons.
+On 04/01/2022 15:46, Luck, Tony wrote:
+> That does change things ... I wonder how many megabytes you need
+> for a big system (hundreds of cores, thousands of tasks)!
 
-Huh.  I wonder why I didn't ever merge that?  I said I was going to do
-that for 5.14 and ... never did.  ISTR Matthew saying something about
-wanting to key the decision off of the number of pages/folios we'd have
-to touch, and then musing about adding QOS metrics, me getting fussy
-about that, trying to figure out if there was a way to make
-iomap_finish_page_writeback cheaper, and ...
-
-<checks notes>
-
-...and decided that since the folio merge was imminent (HA!) I would
-merge it after all the dust settled.  Add several months of Things I
-Still Cannot Talk About and now it's 2022. :(
-
-Ah, ok, I'll go reply elsewhere in the thread since I think my thinking
-on all this has evolved somewhat since then.
-
---D
+Heheh indeed, this case would require a very big log buffer I guess! But
+our setup is not so big, only 4/8 CPUs, not so much RAM and not that
+many tasks expected, opposed to a big server with maybe multiple VMs,
+containers, etc...
 
 > 
-> Brian
-> 
-> [1] https://lore.kernel.org/linux-xfs/20210517171722.1266878-1-bfoster@redhat.com/
-> 
-> > 
-> > Thanks, and Happy New Year!
-> > 
-> >   Trond
-> > 
-> > -- 
-> > Trond Myklebust
-> > Linux NFS client maintainer, Hammerspace
-> > trond.myklebust@hammerspace.com
-> > 
-> > 
-> 
+> This use case does look like it could use multiple chunks in ramoops.
+
+Cool, thanks! If nobody complains or show any reason in that ramoops
+shouldn't be changed to deal with multi-chunk dmesg, I'll try to come up
+with something then.
+
+Cheers,
+
+
+Guilherme
