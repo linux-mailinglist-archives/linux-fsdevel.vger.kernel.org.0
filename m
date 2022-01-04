@@ -2,281 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B6E4839BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 02:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 530CE4839ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 02:41:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231678AbiADBWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 20:22:20 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:55191 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230227AbiADBWU (ORCPT
+        id S231633AbiADBlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 20:41:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230341AbiADBlU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 20:22:20 -0500
-Received: from dread.disaster.area (pa49-181-243-119.pa.nsw.optusnet.com.au [49.181.243.119])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0574210A806E;
-        Tue,  4 Jan 2022 12:22:16 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1n4YWl-00B3Rq-Rr; Tue, 04 Jan 2022 12:22:15 +1100
-Date:   Tue, 4 Jan 2022 12:22:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "bfoster@redhat.com" <bfoster@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "trondmy@kernel.org" <trondmy@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>
-Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
-Message-ID: <20220104012215.GH945095@dread.disaster.area>
-References: <20211230193522.55520-1-trondmy@kernel.org>
- <Yc5f/C1I+N8MPHcd@casper.infradead.org>
- <6f746786a3928844fbe644e7e409008b4f50c239.camel@hammerspace.com>
- <20220101035516.GE945095@dread.disaster.area>
- <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
- <20220103220310.GG945095@dread.disaster.area>
- <9f51fa6169f4c67d54dd8563b52c540c94c7703a.camel@hammerspace.com>
+        Mon, 3 Jan 2022 20:41:20 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A584C061761
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jan 2022 17:41:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=WOy6BEe8DTUUn2Ogp8WUshPR+7LTWicV3SlwuC7r7OA=; b=AiklbhMFdIQf61bxOL5Uyenywt
+        4dxOTeH/PP4vyCwLCS0+3xWYPzYT34vjAPwbeS7ov8A5xnoh9DdcFivHPwWahpvg3am87W4RhngYh
+        Q7eNYnvtXpOOSDYsAFEQ7dMscOi4dhm5AOx6WteWk1NeDZPlVLKWayuIdR3rI3mBoSqGi+LCDwK6K
+        EG85X5WZ6djaMorx/WGHyKCf67iMqIOIBMRYCH8RQq7NEb2StMLcZpuXvIUqkiIs3Ji86CqJ2SlsU
+        OlMsQONw8z4vzdWXXCLw4hq48rojKpz3do1vz1IcigKhS2I8qnydxZEQW/kgisMypuOEvSCPwny6u
+        EZ0Dg9kQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n4Yp5-00DJTJ-5X; Tue, 04 Jan 2022 01:41:11 +0000
+Date:   Tue, 4 Jan 2022 01:41:11 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH next 3/3] shmem: Fix "Unused swap" messages
+Message-ID: <YdOlt5FJn9L+3sjM@casper.infradead.org>
+References: <49ae72d6-f5f-5cd-e480-e2212cb7af97@google.com>
+ <YdMYCFIHA/wtcDVV@casper.infradead.org>
+ <2da9d057-8111-5759-a0dc-d9dca9fb8c9f@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9f51fa6169f4c67d54dd8563b52c540c94c7703a.camel@hammerspace.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=61d3a14a
-        a=BEa52nrBdFykVEm6RU8P4g==:117 a=BEa52nrBdFykVEm6RU8P4g==:17
-        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8 a=20KFwNOVAAAA:8
-        a=Pg6NTAlpwK2RErHD_QMA:9 a=CjuIK1q_8ugA:10 a=DiKeHqHhRZ4A:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <2da9d057-8111-5759-a0dc-d9dca9fb8c9f@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 04, 2022 at 12:04:23AM +0000, Trond Myklebust wrote:
-> On Tue, 2022-01-04 at 09:03 +1100, Dave Chinner wrote:
-> > On Sat, Jan 01, 2022 at 05:39:45PM +0000, Trond Myklebust wrote:
-> > > On Sat, 2022-01-01 at 14:55 +1100, Dave Chinner wrote:
-> > > > As it is, if you are getting soft lockups in this location,
-> > > > that's
-> > > > an indication that the ioend chain that is being built by XFS is
-> > > > way, way too long. IOWs, the completion latency problem is caused
-> > > > by
-> > > > a lack of submit side ioend chain length bounding in combination
-> > > > with unbound completion side merging in xfs_end_bio - it's not a
-> > > > problem with the generic iomap code....
-> > > > 
-> > > > Let's try to address this in the XFS code, rather than hack
-> > > > unnecessary band-aids over the problem in the generic code...
-> > > > 
-> > > > Cheers,
-> > > > 
-> > > > Dave.
+On Mon, Jan 03, 2022 at 12:10:21PM -0800, Hugh Dickins wrote:
+> On Mon, 3 Jan 2022, Matthew Wilcox wrote:
+> > On Sun, Jan 02, 2022 at 05:35:50PM -0800, Hugh Dickins wrote:
+> > > shmem_swapin_page()'s swap_free() has occasionally been generating
+> > > "_swap_info_get: Unused swap offset entry" messages.  Usually that's
+> > > no worse than noise; but perhaps it indicates a worse case, when we
+> > > might there be freeing swap already reused by others.
 > > > 
-> > > Fair enough. As long as someone is working on a solution, then I'm
-> > > happy. Just a couple of things:
+> > > The multi-index xas_find_conflict() loop in shmem_add_to_page_cache()
+> > > did not allow for entry found NULL when expected to be non-NULL, so did
+> > > not catch that race when the swap has already been freed.
 > > > 
-> > > Firstly, we've verified that the cond_resched() in the bio loop
-> > > does
-> > > suffice to resolve the issue with XFS, which would tend to confirm
-> > > what
-> > > you're saying above about the underlying issue being the ioend
-> > > chain
-> > > length.
-> > > 
-> > > Secondly, note that we've tested this issue with a variety of older
-> > > kernels, including 4.18.x, 5.1.x and 5.15.x, so please bear in mind
-> > > that it would be useful for any fix to be backward portable through
-> > > the
-> > > stable mechanism.
+> > > The loop would not actually catch a realistic conflict which the single
+> > > check does not catch, so revert it back to the single check.
 > > 
-> > The infrastructure hasn't changed that much, so whatever the result
-> > is it should be backportable.
+> > I think what led to the loop was concern for the xa_state if trying
+> > to find a swap entry that's smaller than the size of the folio.
+> > So yes, the loop was expected to execute twice, but I didn't consider
+> > the case where we were looking for something non-NULL and actually found
+> > NULL.
 > > 
-> > As it is, is there a specific workload that triggers this issue? Or
-> > a specific machine config (e.g. large memory, slow storage). Are
-> > there large fragmented files in use (e.g. randomly written VM image
-> > files)? There are a few factors that can exacerbate the ioend chain
-> > lengths, so it would be handy to have some idea of what is actually
-> > triggering this behaviour...
-> > 
-> > Cheers,
-> > 
-> > Dave.
+> > So should we actually call xas_find_conflict() twice (if we're looking
+> > for something non-NULL), and check that we get @expected, followed by
+> > NULL?
 > 
-> We have different reproducers. The common feature appears to be the
-> need for a decently fast box with fairly large memory (128GB in one
-> case, 400GB in the other). It has been reproduced with HDs, SSDs and
-> NVME systems.
+> Sorry, I've no idea.
 > 
-> On the 128GB box, we had it set up with 10+ disks in a JBOD
-> configuration and were running the AJA system tests.
+> You say "twice", and that does not fit the imaginary model I had when I
+> said "The loop would not actually catch a realistic conflict which the
+> single check does not catch".
 > 
-> On the 400GB box, we were just serially creating large (> 6GB) files
-> using fio and that was occasionally triggering the issue. However doing
-> an strace of that workload to disk reproduced the problem faster :-).
+> I was imagining it either looking at a single entry, or looking at an
+> array of (perhaps sometimes in shmem's case 512) entries, looking for
+> conflict with the supplied pointer/value expected there.
+> 
+> The loop technique was already unable to report on unexpected NULLs,
+> and the single test would catch a non-NULL entry different from an
+> expected non-NULL entry.  Its only relative weakness appeared to be
+> if that array contained (perhaps some NULLs then) a "narrow" instance
+> of the same pointer/value that was expected to fill the array; and I
+> didn't see any possibility for shmem to be inserting small and large
+> folios sharing the same address at the same time.
+> 
+> That "explanation" may make no sense to you, don't worry about it;
+> just as "twice" makes no immediate sense to me - I'd have to go off
+> and study multi-index XArray to make sense of it, which I'm not
+> about to do.
+> 
+> I've seen no problems with the proposed patch, but if you see a real
+> case that it's failing to cover, yes, please do improve it of course.
+> 
+> Though now I'm wondering if the "loop" totally misled me; and your
+> "twice" just means that we need to test first this and then that and
+> we're done - yeah, maybe.
 
-Ok, that matches up with the "lots of logically sequential dirty
-data on a single inode in cache" vector that is required to create
-really long bio chains on individual ioends.
+Sorry; I wrote the above in a hurry and early in the morning, so probably
+even less coherent than usual.  Also, the multi-index xarray code is
+new to everyone (and adds new things to consider), so it's no surprise
+we're talking past each other.  It's a bit strange for me to read your
+explanations because you're only reading what I actually wrote instead
+of what I intended to write.
 
-Can you try the patch below and see if addresses the issue?
+So let me try again.  My concern was that we might be trying to store
+a 2MB entry which had a non-NULL 'expected' entry which was found in a
+4k (ie single-index) slot within the 512 entries (as the first non-NULL
+entry in that range), and we'd then store the 2MB entry into a
+single-entry slot.
 
-Cheers,
+Now, maybe that can't happen for higher-level reasons, and I don't need
+to worry about it.  But I feel like we should check for that?  Anyway,
+I think the right fix is this:
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
++++ b/mm/shmem.c
+@@ -733,11 +733,12 @@ static int shmem_add_to_page_cache(struct page *page,
+        cgroup_throttle_swaprate(page, gfp);
 
+        do {
+-               void *entry;
+                xas_lock_irq(&xas);
+-               while ((entry = xas_find_conflict(&xas)) != NULL) {
+-                       if (entry == expected)
+-                               continue;
++               if (expected != xas_find_conflict(&xas)) {
++                       xas_set_err(&xas, -EEXIST);
++                       goto unlock;
++               }
++               if (expected && xas_find_conflict(&xas)) {
+                        xas_set_err(&xas, -EEXIST);
+                        goto unlock;
+                }
 
-xfs: limit individual ioend chain length in writeback
+which says what I mean.  I certainly didn't intend to imply that I
+was expecting to see 512 consecutive entries which were all identical,
+which would be the idiomatic way to read the code that was there before.
+I shouldn't've tried to be so concise.
 
-From: Dave Chinner <dchinner@redhat.com>
-
-Trond Myklebust reported soft lockups in XFS IO completion such as
-this:
-
- watchdog: BUG: soft lockup - CPU#12 stuck for 23s! [kworker/12:1:3106]
- CPU: 12 PID: 3106 Comm: kworker/12:1 Not tainted 4.18.0-305.10.2.el8_4.x86_64 #1
- Workqueue: xfs-conv/md127 xfs_end_io [xfs]
- RIP: 0010:_raw_spin_unlock_irqrestore+0x11/0x20
- Call Trace:
-  wake_up_page_bit+0x8a/0x110
-  iomap_finish_ioend+0xd7/0x1c0
-  iomap_finish_ioends+0x7f/0xb0
-  xfs_end_ioend+0x6b/0x100 [xfs]
-  xfs_end_io+0xb9/0xe0 [xfs]
-  process_one_work+0x1a7/0x360
-  worker_thread+0x1fa/0x390
-  kthread+0x116/0x130
-  ret_from_fork+0x35/0x40
-
-Ioends are processed as an atomic completion unit when all the
-chained bios in the ioend have completed their IO. Logically
-contiguous ioends can also be merged and completed as a single,
-larger unit.  Both of these things can be problematic as both the
-bio chains per ioend and the size of the merged ioends processed as
-a single completion are both unbound.
-
-If we have a large sequential dirty region in the page cache,
-write_cache_pages() will keep feeding us sequential pages and we
-will keep mapping them into ioends and bios until we get a dirty
-page at a non-sequential file offset. These large sequential runs
-can will result in bio and ioend chaining to optimise the io
-patterns. The pages iunder writeback are pinned within these chains
-until the submission chaining is broken, allowing the entire chain
-to be completed. This can result in huge chains being processed
-in IO completion context.
-
-We get deep bio chaining if we have large contiguous physical
-extents. We will keep adding pages to the current bio until it is
-full, then we'll chain a new bio to keep adding pages for writeback.
-Hence we can build bio chains that map millions of pages and tens of
-gigabytes of RAM if the page cache contains big enough contiguous
-dirty file regions. This long bio chain pins those pages until the
-final bio in the chain completes and the ioend can iterate all the
-chained bios and complete them.
-
-OTOH, if we have a physically fragmented file, we end up submitting
-one ioend per physical fragment that each have a small bio or bio
-chain attached to them. We do not chain these at IO submission time,
-but instead we chain them at completion time based on file
-offset via iomap_ioend_try_merge(). Hence we can end up with unbound
-ioend chains being built via completion merging.
-
-XFS can then do COW remapping or unwritten extent conversion on that
-merged chain, which involves walking an extent fragment at a time
-and running a transaction to modify the physical extent information.
-IOWs, we merge all the discontiguous ioends together into a
-contiguous file range, only to then process them individually as
-discontiguous extents.
-
-This extent manipulation is computationally expensive and can run in
-a tight loop, so merging logically contiguous but physically
-discontigous ioends gains us nothing except for hiding the fact the
-fact we broke the ioends up into individual physical extents at
-submission and then need to loop over those individual physical
-extents at completion.
-
-Hence we need to have two mechanisms to limit ioend sizes -
-one on the submission side to limit bio chain lengths, and one on
-the completion side to avoid merging physically discontiguous
-ioends. This then allows us to add a cond_resched() between
-processing individual ioends to limit the amount of CPU time we
-consume without releasing the CPU to the scheduler in IO
-completion.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/iomap/buffered-io.c | 16 ++++++++++++++++
- fs/xfs/xfs_aops.c      | 16 +++++++++++++++-
- 2 files changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 71a36ae120ee..ee681ff20994 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1098,6 +1098,15 @@ iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
- 		return false;
- 	if (ioend->io_offset + ioend->io_size != next->io_offset)
- 		return false;
-+	/*
-+	 * Do not merge physically discontiguous ioends. The filesystem
-+	 * completion functions will have to iterate the physical
-+	 * discontiguities even if we merge the ioends at a logical level, so
-+	 * we don't gain anything by merging physical discontiguities here.
-+	 */
-+	if (ioend->io_inline_bio.bi_iter.bi_sector + (ioend->io_size >> 9) !=
-+	    next->io_inline_bio.bi_iter.bi_sector)
-+		return false;
- 	return true;
- }
- 
-@@ -1241,6 +1250,13 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
- 		return false;
- 	if (sector != bio_end_sector(wpc->ioend->io_bio))
- 		return false;
-+	/*
-+	 * Limit ioend bio chain lengths to minimise IO completion latency. This
-+	 * also prevents long tight loops ending page writeback on all the pages
-+	 * in the ioend.
-+	 */
-+	if (wpc->ioend->io_size >= 4096 * PAGE_SIZE)
-+		return false;
- 	return true;
- }
- 
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index c8c15c3c3147..148a8fce7029 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -136,7 +136,20 @@ xfs_end_ioend(
- 	memalloc_nofs_restore(nofs_flag);
- }
- 
--/* Finish all pending io completions. */
-+/*
-+ * Finish all pending IO completions that require transactional modifications.
-+ *
-+ * We try to merge physical and logically contiguous ioends before completion to
-+ * minimise the number of transactions we need to perform during IO completion.
-+ * Both unwritten extent conversion and COW remapping need to iterate and modify
-+ * one physical extent at a time, so we gain nothing by merging physically
-+ * discontiguous extents here.
-+ *
-+ * The ioend chain length that we can be processing here is largely unbound in
-+ * length and we may have to perform significant amounts of work on each ioend
-+ * to complete it. Hence we have to be careful about holding the CPU for too
-+ * long in this loop.
-+ */
- void
- xfs_end_io(
- 	struct work_struct	*work)
-@@ -157,6 +170,7 @@ xfs_end_io(
- 		list_del_init(&ioend->io_list);
- 		iomap_ioend_try_merge(ioend, &tmp);
- 		xfs_end_ioend(ioend);
-+		cond_resched();
- 	}
- }
- 
+(If you'd rather I write any of this differently, I'm more than happy
+to change it)
