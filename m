@@ -2,250 +2,564 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77405483FCC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 11:23:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DEA484020
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 11:50:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231315AbiADKXw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 05:23:52 -0500
-Received: from mga07.intel.com ([134.134.136.100]:50805 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229772AbiADKXv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 05:23:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641291831; x=1672827831;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=cRmQp72roVP7l2p3EpKp9b++E4cZUwks/tvVGLmjE5Q=;
-  b=ahh7lMnNLUPBqEc7RAcWemkE4kC76CW9LE6dLuGNxTTwfjy8MBcgpqHd
-   KSkHvqcEt4eHxQshizk96+UYHtTEFUcRi3lBavCeK3OncXrQl515S2EqO
-   wYs0nux+e5TfeQUaUPP8wgLlF8PhhOnnH91RZBsb0ClqUsgCov4EpQGjg
-   UcPmpEfliNwDq2GZsnxmHFQ8WWllfwgIjVqRea8kGTFbj5CTKDZ7GdO2/
-   OM8BbyX4njwZKiW6e/W6Y6oMC0crKNbmYZ8pIbhcQIcGG3ecmJYim6/ZO
-   yB+rANcWrMpRf2avSzQCPtB73qjLsRty7NXKoZinqexW0fqLXZuU91x+D
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10216"; a="305551924"
-X-IronPort-AV: E=Sophos;i="5.88,260,1635231600"; 
-   d="scan'208";a="305551924"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2022 02:23:50 -0800
-X-IronPort-AV: E=Sophos;i="5.88,260,1635231600"; 
-   d="scan'208";a="525991028"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.43])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2022 02:23:44 -0800
-Date:   Tue, 4 Jan 2022 18:06:12 +0800
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [PATCH v3 kvm/queue 14/16] KVM: Handle page fault for private
- memory
-Message-ID: <20220104100612.GA19947@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-15-chao.p.peng@linux.intel.com>
- <20220104014629.GA2330@yzhao56-desk.sh.intel.com>
- <20220104091008.GA21806@chaop.bj.intel.com>
+        id S231636AbiADKu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 05:50:27 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:47952 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230076AbiADKu0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jan 2022 05:50:26 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 36845B8119E;
+        Tue,  4 Jan 2022 10:50:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7D5FC36AEB;
+        Tue,  4 Jan 2022 10:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641293423;
+        bh=b7caZoSvhF6DIOohOd5kWFh6CIsZ87H49inezYjoww4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=sdpPUa8zowZQz8zDA/FVG1hQuS23vQAn6vgIHAB0yZ602tFNxNKCQs6kYdAEk0eJi
+         6FlbtZ6R9kb4DDRv17OjZ1ZQnQeSso0Ebu47NqXY9njdjhG4ric18bcnCXgsUyiFDx
+         B/Bw/aWx482lNcbSF/BiYBrncU0aOK5Pxl6y/wXN9/F2oYIkfOMojHyLMmCR64d5nj
+         0zPf98SNzdCYko1h8ITPibFyrwi9WtopFOBkWmp6rQFxD54G7TbQIKE7wvfp3Ts9gj
+         HyopAzJT8EvVp8yttF/1hN1WUtyr7RXGJVlz81PtgdIjmh4rdRS0dhInFJtgbv5KyD
+         WGL9+GlQr0nKw==
+Message-ID: <1f25d125ffee734644abfe5c63ca4c90d95104aa.camel@kernel.org>
+Subject: Re: [PATCH v4 00/68] fscache, cachefiles: Rewrite
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     ceph-devel@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-cifs@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Shyam Prasad N <nspmangalore@gmail.com>, linux-mm@kvack.org,
+        linux-afs@lists.infradead.org,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-nfs@vger.kernel.org, Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 04 Jan 2022 05:50:19 -0500
+In-Reply-To: <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk>
+References: <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220104091008.GA21806@chaop.bj.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 04, 2022 at 05:10:08PM +0800, Chao Peng wrote:
-> On Tue, Jan 04, 2022 at 09:46:35AM +0800, Yan Zhao wrote:
-> > On Thu, Dec 23, 2021 at 08:30:09PM +0800, Chao Peng wrote:
-> > > When a page fault from the secondary page table while the guest is
-> > > running happens in a memslot with KVM_MEM_PRIVATE, we need go
-> > > different paths for private access and shared access.
-> > > 
-> > >   - For private access, KVM checks if the page is already allocated in
-> > >     the memory backend, if yes KVM establishes the mapping, otherwise
-> > >     exits to userspace to convert a shared page to private one.
-> > >
-> > will this conversion be atomical or not?
-> > For example, after punching a hole in a private memory slot, will KVM
-> > see two notifications: one for invalidation of the whole private memory
-> > slot, and one for fallocate of the rest ranges besides the hole?
-> > Or, KVM only sees one invalidation notification for the hole?
+On Wed, 2021-12-22 at 23:13 +0000, David Howells wrote:
+> Here's a set of patches implements a rewrite of the fscache driver and a
+> matching rewrite of the cachefiles driver, significantly simplifying the
+> code compared to what's upstream, removing the complex operation scheduling
+> and object state machine in favour of something much smaller and simpler.
 > 
-> Punching hole doesn't need to invalidate the whole memory slot. It only
-> send one invalidation notification to KVM for the 'hole' part.
-good :)
+> The patchset is structured such that the first few patches disable fscache
+> use by the network filesystems using it, remove the cachefiles driver
+> entirely and as much of the fscache driver as can be got away with without
+> causing build failures in the network filesystems.  The patches after that
+> recreate fscache and then cachefiles, attempting to add the pieces in a
+> logical order.  Finally, the filesystems are reenabled and then the very
+> last patch changes the documentation.
+> 
+> 
+> WHY REWRITE?
+> ============
+> 
+> Fscache's operation scheduling API was intended to handle sequencing of
+> cache operations, which were all required (where possible) to run
+> asynchronously in parallel with the operations being done by the network
+> filesystem, whilst allowing the cache to be brought online and offline and
+> to interrupt service for invalidation.
+> 
+> With the advent of the tmpfile capacity in the VFS, however, an opportunity
+> arises to do invalidation much more simply, without having to wait for I/O
+> that's actually in progress: Cachefiles can simply create a tmpfile, cut
+> over the file pointer for the backing object attached to a cookie and
+> abandon the in-progress I/O, dismissing it upon completion.
+> 
+> Future work here would involve using Omar Sandoval's vfs_link() with
+> AT_LINK_REPLACE[1] to allow an extant file to be displaced by a new hard
+> link from a tmpfile as currently I have to unlink the old file first.
+> 
+> These patches can also simplify the object state handling as I/O operations
+> to the cache don't all have to be brought to a stop in order to invalidate
+> a file.  To that end, and with an eye on to writing a new backing cache
+> model in the future, I've taken the opportunity to simplify the indexing
+> structure.
+> 
+> I've separated the index cookie concept from the file cookie concept by C
+> type now.  The former is now called a "volume cookie" (struct
+> fscache_volume) and there is a container of file cookies.  There are then
+> just the two levels.  All the index cookie levels are collapsed into a
+> single volume cookie, and this has a single printable string as a key.  For
+> instance, an AFS volume would have a key of something like
+> "afs,example.com,1000555", combining the filesystem name, cell name and
+> volume ID.  This is freeform, but must not have '/' chars in it.
+> 
+> I've also eliminated all pointers back from fscache into the network
+> filesystem.  This required the duplication of a little bit of data in the
+> cookie (cookie key, coherency data and file size), but it's not actually
+> that much.  This gets rid of problems with making sure we keep netfs data
+> structures around so that the cache can access them.
+> 
+> These patches mean that most of the code that was in the drivers before is
+> simply gone and those drivers are now almost entirely new code.  That being
+> the case, there doesn't seem any particular reason to try and maintain
+> bisectability across it.  Further, there has to be a point in the middle
+> where things are cut over as there's a single point everything has to go
+> through (ie. /dev/cachefiles) and it can't be in use by two drivers at
+> once.
+> 
+> 
+> ISSUES YET OUTSTANDING
+> ======================
+> 
+> There are some issues still outstanding, unaddressed by this patchset, that
+> will need fixing in future patchsets, but that don't stop this series from
+> being usable:
+> 
+>  (1) The cachefiles driver needs to stop using the backing filesystem's
+>      metadata to store information about what parts of the cache are
+>      populated.  This is not reliable with modern extent-based filesystems.
+> 
+>      Fixing this is deferred to a separate patchset as it involves
+>      negotiation with the network filesystem and the VM as to how much data
+>      to download to fulfil a read - which brings me on to (2)...
+> 
+>  (2) NFS and CIFS do not take account of how the cache would like I/O to be
+>      structured to meet its granularity requirements.  Previously, the
+>      cache used page granularity, which was fine as the network filesystems
+>      also dealt in page granularity, and the backing filesystem (ext4, xfs
+>      or whatever) did whatever it did out of sight.  However, we now have
+>      folios to deal with and the cache will now have to store its own
+>      metadata to track its contents.
+> 
+>      The change I'm looking at making for cachefiles is to store content
+>      bitmaps in one or more xattrs and making a bit in the map correspond
+>      to something like a 256KiB block.  However, the size of an xattr and
+>      the fact that they have to be read/updated in one go means that I'm
+>      looking at covering 1GiB of data per 512-byte map and storing each map
+>      in an xattr.  Cachefiles has the potential to grow into a fully
+>      fledged filesystem of its very own if I'm not careful.
+> 
+>      However, I'm also looking at changing things even more radically and
+>      going to a different model of how the cache is arranged and managed -
+>      one that's more akin to the way, say, openafs does things - which
+>      brings me on to (3)...
+> 
+>  (3) The way cachefilesd does culling is very inefficient for large caches
+>      and it would be better to move it into the kernel if I can as
+>      cachefilesd has to keep asking the kernel if it can cull a file.
+>      Changing the way the backend works would allow this to be addressed.
+> 
+> 
+> BITS THAT MAY BE CONTROVERSIAL
+> ==============================
+> 
+> There are some bits I've added that may be controversial:
+> 
+>  (1) I've provided a flag, S_KERNEL_FILE, that cachefiles uses to check if
+>      a files is already being used by some other kernel service (e.g. a
+>      duplicate cachefiles cache in the same directory) and reject it if it
+>      is.  This isn't entirely necessary, but it helps prevent accidental
+>      data corruption.
+> 
+>      I don't want to use S_SWAPFILE as that has other effects, but quite
+>      possibly swapon() should set S_KERNEL_FILE too.
+> 
+>      Note that it doesn't prevent userspace from interfering, though
+>      perhaps it should.  (I have made it prevent a marked directory from
+>      being rmdir-able).
+> 
+>  (2) Cachefiles wants to keep the backing file for a cookie open whilst we
+>      might need to write to it from network filesystem writeback.  The
+>      problem is that the network filesystem unuses its cookie when its file
+>      is closed, and so we have nothing pinning the cachefiles file open and
+>      it will get closed automatically after a short time to avoid
+>      EMFILE/ENFILE problems.
+> 
+>      Reopening the cache file, however, is a problem if this is being done
+>      due to writeback triggered by exit().  Some filesystems will oops if
+>      we try to open a file in that context because they want to access
+>      current->fs or suchlike.
+> 
+>      To get around this, I added the following:
+> 
+>      (A) An inode flag, I_PINNING_FSCACHE_WB, to be set on a network
+>      	 filesystem inode to indicate that we have a usage count on the
+>      	 cookie caching that inode.
+> 
+>      (B) A flag in struct writeback_control, unpinned_fscache_wb, that is
+>      	 set when __writeback_single_inode() clears the last dirty page
+>      	 from i_pages - at which point it clears I_PINNING_FSCACHE_WB and
+>      	 sets this flag.
+> 
+> 	 This has to be done here so that clearing I_PINNING_FSCACHE_WB can
+> 	 be done atomically with the check of PAGECACHE_TAG_DIRTY that
+> 	 clears I_DIRTY_PAGES.
+> 
+>      (C) A function, fscache_set_page_dirty(), which if it is not set, sets
+>      	 I_PINNING_FSCACHE_WB and calls fscache_use_cookie() to pin the
+>      	 cache resources.
+> 
+>      (D) A function, fscache_unpin_writeback(), to be called by
+>      	 ->write_inode() to unuse the cookie.
+> 
+>      (E) A function, fscache_clear_inode_writeback(), to be called when the
+>      	 inode is evicted, before clear_inode() is called.  This cleans up
+>      	 any lingering I_PINNING_FSCACHE_WB.
+> 
+>      The network filesystem can then use these tools to make sure that
+>      fscache_write_to_cache() can write locally modified data to the cache
+>      as well as to the server.
+> 
+>      For the future, I'm working on write helpers for netfs lib that should
+>      allow this facility to be removed by keeping track of the dirty
+>      regions separately - but that's incomplete at the moment and is also
+>      going to be affected by folios, one way or another, since it deals
+>      with pages.
+> 
+> 
+> These patches can be found also on:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-rewrite
+> 
+> David
+> 
+> 
+> Changes
+> =======
+> ver #4:
+>  - Dropped a pair of patches to try and cope with multipage folios in
+>    afs_write_begin/end() - it should really be done in the caller[7].
+>  - Fixed the use of sizeof with memset in cifs.
+>  - Removed an extraneous kdoc param.
+>  - Added a patch to add a tracepoint for fscache_use/unuse_cookie().
+>  - In cifs, tcon->vol_create_time is __le64 so doesn't need cpu_to_le64().
+>  - Add an expanded version of a patch to use current_is_kswapd() instead of
+>    !gfpflags_allow_blocking()[8].
+>  - Removed a couple of debugging print statements.
+> 
+> ver #3:
+>  - Fixed a race in the cookie state machine between LRU discard and
+>    relinquishment[4].
+>  - Fixed up the hashing to make it portable[5].
+>  - Fixed up some netfs coherency data to make it portable.
+>  - Fixed some missing NFS_FSCACHE=n fallback functions in nfs[6].
+>  - Added a patch to store volume coherency data in an xattr.
+>  - Added a check that the cookie is unhashed before being freed.
+>  - Fixed fscache to use remove_proc_subtree() to remove /proc/fs/fscache/.
+> 
+> ver #2:
+>  - Fix an unused-var warning due to CONFIG_9P_FSCACHE=n.
+>  - Use gfpflags_allow_blocking() rather than using flag directly.
+>  - Fixed some error logging in a couple of cachefiles functions.
+>  - Fixed an error check in the fscache volume allocation.
+>  - Need to unmark an inode we've moved to the graveyard before unlocking.
+>  - Upgraded to -rc4 to allow for upstream changes to cifs.
+>  - Should only change to inval state if can get access to cache.
+>  - Don't hold n_accesses elevated whilst cache is bound to a cookie, but
+>    rather add a flag that prevents the state machine from being queued when
+>    n_accesses reaches 0.
+>  - Remove the unused cookie pointer field from the fscache_acquire
+>    tracepoint.
+>  - Added missing transition to LRU_DISCARDING state.
+>  - Added two ceph patches from Jeff Layton[2].
+>  - Remove NFS_INO_FSCACHE as it's no longer used.
+>  - In NFS, need to unuse a cookie on file-release, not inode-clear.
+>  - Filled in the NFS cache I/O routines, borrowing from the previously posted
+>    fallback I/O code[3].
+> 
+> 
+> Link: https://lore.kernel.org/r/cover.1580251857.git.osandov@fb.com/ [1]
+> Link: https://lore.kernel.org/r/20211207134451.66296-1-jlayton@kernel.org/ [2]
+> Link: https://lore.kernel.org/r/163189108292.2509237.12615909591150927232.stgit@warthog.procyon.org.uk/ [3]
+> Link: https://lore.kernel.org/r/599331.1639410068@warthog.procyon.org.uk/ [4]
+> Link: https://lore.kernel.org/r/CAHk-=whtkzB446+hX0zdLsdcUJsJ=8_-0S1mE_R+YurThfUbLA@mail.gmail.com [5]
+> Link: https://lore.kernel.org/r/61b90f3d.H1IkoeQfEsGNhvq9%lkp@intel.com/ [6]
+> Link: https://lore.kernel.org/r/CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com/ [7]
+> Link: https://lore.kernel.org/r/1638952658-20285-1-git-send-email-huangzhaoyang@gmail.com/ [8]
+> 
+> 
+> References
+> ==========
+> 
+> These patches have been published for review before, firstly as part of a
+> larger set:
+> 
+> Link: https://lore.kernel.org/r/158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk/
+> 
+> Link: https://lore.kernel.org/r/159465766378.1376105.11619976251039287525.stgit@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/159465821598.1377938.2046362270225008168.stgit@warthog.procyon.org.uk/
+> 
+> Link: https://lore.kernel.org/r/160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk/
+> 
+> Then as a cut-down set:
+> 
+> Link: https://lore.kernel.org/r/161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk/ # v4
+> Link: https://lore.kernel.org/r/161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk/ # v5
+> 
+> I split out a set to just restructure the I/O, which got merged back in to
+> this one:
+> 
+> Link: https://lore.kernel.org/r/163363935000.1980952.15279841414072653108.stgit@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/163189104510.2509237.10805032055807259087.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/163363935000.1980952.15279841414072653108.stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/163551653404.1877519.12363794970541005441.stgit@warthog.procyon.org.uk/ # v4
+> 
+> ... and a larger set to do the conversion, also merged back into this one:
+> 
+> Link: https://lore.kernel.org/r/163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk/ # v2
+> 
+> Older versions of this one:
+> 
+> Link: https://lore.kernel.org/r/163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk/ # v3
+> 
+> Proposals/information about the design have been published here:
+> 
+> Link: https://lore.kernel.org/r/24942.1573667720@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/2758811.1610621106@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/1441311.1598547738@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/160655.1611012999@warthog.procyon.org.uk/
+> 
+> And requests for information:
+> 
+> Link: https://lore.kernel.org/r/3326.1579019665@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/4467.1579020509@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/3577430.1579705075@warthog.procyon.org.uk/
+> 
+> I've posted partial patches to try and help 9p and cifs along:
+> 
+> Link: https://lore.kernel.org/r/1514086.1605697347@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/1794123.1605713481@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/241017.1612263863@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/270998.1612265397@warthog.procyon.org.uk/
+> 
+> ---
+> Dave Wysochanski (1):
+>       nfs: Convert to new fscache volume/cookie API
+> 
+> David Howells (65):
+>       fscache, cachefiles: Disable configuration
+>       cachefiles: Delete the cachefiles driver pending rewrite
+>       fscache: Remove the contents of the fscache driver, pending rewrite
+>       netfs: Display the netfs inode number in the netfs_read tracepoint
+>       netfs: Pass a flag to ->prepare_write() to say if there's no alloc'd space
+>       fscache: Introduce new driver
+>       fscache: Implement a hash function
+>       fscache: Implement cache registration
+>       fscache: Implement volume registration
+>       fscache: Implement cookie registration
+>       fscache: Implement cache-level access helpers
+>       fscache: Implement volume-level access helpers
+>       fscache: Implement cookie-level access helpers
+>       fscache: Implement functions add/remove a cache
+>       fscache: Provide and use cache methods to lookup/create/free a volume
+>       fscache: Add a function for a cache backend to note an I/O error
+>       fscache: Implement simple cookie state machine
+>       fscache: Implement cookie user counting and resource pinning
+>       fscache: Implement cookie invalidation
+>       fscache: Provide a means to begin an operation
+>       fscache: Count data storage objects in a cache
+>       fscache: Provide read/write stat counters for the cache
+>       fscache: Provide a function to let the netfs update its coherency data
+>       netfs: Pass more information on how to deal with a hole in the cache
+>       fscache: Implement raw I/O interface
+>       fscache: Implement higher-level write I/O interface
+>       vfs, fscache: Implement pinning of cache usage for writeback
+>       fscache: Provide a function to note the release of a page
+>       fscache: Provide a function to resize a cookie
+>       cachefiles: Introduce rewritten driver
+>       cachefiles: Define structs
+>       cachefiles: Add some error injection support
+>       cachefiles: Add a couple of tracepoints for logging errors
+>       cachefiles: Add cache error reporting macro
+>       cachefiles: Add security derivation
+>       cachefiles: Register a miscdev and parse commands over it
+>       cachefiles: Provide a function to check how much space there is
+>       vfs, cachefiles: Mark a backing file in use with an inode flag
+>       cachefiles: Implement a function to get/create a directory in the cache
+>       cachefiles: Implement cache registration and withdrawal
+>       cachefiles: Implement volume support
+>       cachefiles: Add tracepoints for calls to the VFS
+>       cachefiles: Implement object lifecycle funcs
+>       cachefiles: Implement key to filename encoding
+>       cachefiles: Implement metadata/coherency data storage in xattrs
+>       cachefiles: Mark a backing file in use with an inode flag
+>       cachefiles: Implement culling daemon commands
+>       cachefiles: Implement backing file wrangling
+>       cachefiles: Implement begin and end I/O operation
+>       cachefiles: Implement cookie resize for truncate
+>       cachefiles: Implement the I/O routines
+>       fscache, cachefiles: Store the volume coherency data
+>       cachefiles: Allow cachefiles to actually function
+>       fscache, cachefiles: Display stats of no-space events
+>       fscache, cachefiles: Display stat of culling events
+>       afs: Convert afs to use the new fscache API
+>       afs: Copy local writes to the cache when writing to the server
+>       afs: Skip truncation on the server of data we haven't written yet
+>       9p: Use fscache indexing rewrite and reenable caching
+>       9p: Copy local writes to the cache when writing to the server
+>       nfs: Implement cache I/O by accessing the cache directly
+>       cifs: Support fscache indexing rewrite (untested)
+>       fscache: Rewrite documentation
+>       fscache: Add a tracepoint for cookie use/unuse
+>       9p, afs, ceph, cifs, nfs: Use current_is_kswapd() rather than gfpflags_allow_blocking()
+> 
+> Jeff Layton (2):
+>       ceph: conversion to new fscache API
+>       ceph: add fscache writeback support
+> 
+> 
+>  .../filesystems/caching/backend-api.rst       |  850 ++++------
+>  .../filesystems/caching/cachefiles.rst        |    6 +-
+>  Documentation/filesystems/caching/fscache.rst |  525 ++----
+>  Documentation/filesystems/caching/index.rst   |    4 +-
+>  .../filesystems/caching/netfs-api.rst         | 1136 ++++---------
+>  Documentation/filesystems/caching/object.rst  |  313 ----
+>  .../filesystems/caching/operations.rst        |  210 ---
+>  Documentation/filesystems/netfs_library.rst   |   16 +-
+>  fs/9p/Kconfig                                 |    2 +-
+>  fs/9p/cache.c                                 |  195 +--
+>  fs/9p/cache.h                                 |   25 +-
+>  fs/9p/v9fs.c                                  |   17 +-
+>  fs/9p/v9fs.h                                  |   13 +-
+>  fs/9p/vfs_addr.c                              |   57 +-
+>  fs/9p/vfs_dir.c                               |   13 +
+>  fs/9p/vfs_file.c                              |    3 +-
+>  fs/9p/vfs_inode.c                             |   26 +-
+>  fs/9p/vfs_inode_dotl.c                        |    3 +-
+>  fs/9p/vfs_super.c                             |    3 +
+>  fs/afs/Kconfig                                |    2 +-
+>  fs/afs/Makefile                               |    3 -
+>  fs/afs/cache.c                                |   68 -
+>  fs/afs/cell.c                                 |   12 -
+>  fs/afs/file.c                                 |   38 +-
+>  fs/afs/inode.c                                |  101 +-
+>  fs/afs/internal.h                             |   37 +-
+>  fs/afs/main.c                                 |   14 -
+>  fs/afs/super.c                                |    1 +
+>  fs/afs/volume.c                               |   29 +-
+>  fs/afs/write.c                                |   88 +-
+>  fs/cachefiles/Kconfig                         |    7 +
+>  fs/cachefiles/Makefile                        |    6 +-
+>  fs/cachefiles/bind.c                          |  278 ----
+>  fs/cachefiles/cache.c                         |  378 +++++
+>  fs/cachefiles/daemon.c                        |  180 +-
+>  fs/cachefiles/error_inject.c                  |   46 +
+>  fs/cachefiles/interface.c                     |  747 ++++-----
+>  fs/cachefiles/internal.h                      |  270 +--
+>  fs/cachefiles/io.c                            |  330 +++-
+>  fs/cachefiles/key.c                           |  201 ++-
+>  fs/cachefiles/main.c                          |   22 +-
+>  fs/cachefiles/namei.c                         | 1223 ++++++--------
+>  fs/cachefiles/rdwr.c                          |  972 -----------
+>  fs/cachefiles/security.c                      |    2 +-
+>  fs/cachefiles/volume.c                        |  139 ++
+>  fs/cachefiles/xattr.c                         |  421 ++---
+>  fs/ceph/Kconfig                               |    2 +-
+>  fs/ceph/addr.c                                |  102 +-
+>  fs/ceph/cache.c                               |  218 +--
+>  fs/ceph/cache.h                               |   97 +-
+>  fs/ceph/caps.c                                |    3 +-
+>  fs/ceph/file.c                                |   13 +-
+>  fs/ceph/inode.c                               |   22 +-
+>  fs/ceph/super.c                               |   10 +-
+>  fs/ceph/super.h                               |    3 +-
+>  fs/cifs/Kconfig                               |    2 +-
+>  fs/cifs/Makefile                              |    2 +-
+>  fs/cifs/cache.c                               |  105 --
+>  fs/cifs/cifsfs.c                              |   11 +-
+>  fs/cifs/cifsglob.h                            |    5 +-
+>  fs/cifs/connect.c                             |   12 -
+>  fs/cifs/file.c                                |   64 +-
+>  fs/cifs/fscache.c                             |  333 +---
+>  fs/cifs/fscache.h                             |  126 +-
+>  fs/cifs/inode.c                               |   36 +-
+>  fs/fs-writeback.c                             |    8 +
+>  fs/fscache/Makefile                           |    6 +-
+>  fs/fscache/cache.c                            |  618 +++----
+>  fs/fscache/cookie.c                           | 1448 +++++++++--------
+>  fs/fscache/fsdef.c                            |   98 --
+>  fs/fscache/internal.h                         |  317 +---
+>  fs/fscache/io.c                               |  376 ++++-
+>  fs/fscache/main.c                             |  147 +-
+>  fs/fscache/netfs.c                            |   74 -
+>  fs/fscache/object.c                           | 1125 -------------
+>  fs/fscache/operation.c                        |  633 -------
+>  fs/fscache/page.c                             | 1242 --------------
+>  fs/fscache/proc.c                             |   47 +-
+>  fs/fscache/stats.c                            |  293 +---
+>  fs/fscache/volume.c                           |  517 ++++++
+>  fs/namei.c                                    |    3 +-
+>  fs/netfs/read_helper.c                        |   10 +-
+>  fs/nfs/Kconfig                                |    2 +-
+>  fs/nfs/Makefile                               |    2 +-
+>  fs/nfs/client.c                               |    4 -
+>  fs/nfs/direct.c                               |    2 +
+>  fs/nfs/file.c                                 |   13 +-
+>  fs/nfs/fscache-index.c                        |  140 --
+>  fs/nfs/fscache.c                              |  490 ++----
+>  fs/nfs/fscache.h                              |  180 +-
+>  fs/nfs/inode.c                                |   11 +-
+>  fs/nfs/nfstrace.h                             |    1 -
+>  fs/nfs/read.c                                 |   25 +-
+>  fs/nfs/super.c                                |   28 +-
+>  fs/nfs/write.c                                |    8 +-
+>  include/linux/fs.h                            |    4 +
+>  include/linux/fscache-cache.h                 |  614 ++-----
+>  include/linux/fscache.h                       | 1021 +++++-------
+>  include/linux/netfs.h                         |   15 +-
+>  include/linux/nfs_fs.h                        |    1 -
+>  include/linux/nfs_fs_sb.h                     |    9 +-
+>  include/linux/writeback.h                     |    1 +
+>  include/trace/events/cachefiles.h             |  527 ++++--
+>  include/trace/events/fscache.h                |  642 ++++----
+>  include/trace/events/netfs.h                  |    5 +-
+>  105 files changed, 7396 insertions(+), 13509 deletions(-)
+>  delete mode 100644 Documentation/filesystems/caching/object.rst
+>  delete mode 100644 Documentation/filesystems/caching/operations.rst
+>  delete mode 100644 fs/afs/cache.c
+>  delete mode 100644 fs/cachefiles/bind.c
+>  create mode 100644 fs/cachefiles/cache.c
+>  create mode 100644 fs/cachefiles/error_inject.c
+>  delete mode 100644 fs/cachefiles/rdwr.c
+>  create mode 100644 fs/cachefiles/volume.c
+>  delete mode 100644 fs/cifs/cache.c
+>  delete mode 100644 fs/fscache/fsdef.c
+>  delete mode 100644 fs/fscache/netfs.c
+>  delete mode 100644 fs/fscache/object.c
+>  delete mode 100644 fs/fscache/operation.c
+>  delete mode 100644 fs/fscache/page.c
+>  create mode 100644 fs/fscache/volume.c
+>  delete mode 100644 fs/nfs/fscache-index.c
+> 
+> 
 
-> 
-> Taking shared-to-private conversion as example it only invalidates the
-> 'hole' part (that usually only the portion of the whole memory) on the
-> shared fd,, and then fallocate the private memory in the private fd at
-> the 'hole'. The KVM invalidation notification happens when the shared
-> hole gets invalidated. The establishment of the private mapping happens
-> at subsequent KVM page fault handlers.
-> 
-> > Could you please show QEMU code about this conversion?
-> 
-> See below for the QEMU side conversion code. The above described
-> invalidation and fallocation will be two steps in this conversion. If
-> error happens in the middle then this error will be propagated to
-> kvm_run to do the proper action (e.g. may kill the guest?).
-> 
-> int ram_block_convert_range(RAMBlock *rb, uint64_t start, size_t length,
->                             bool shared_to_private)
-> {
->     int ret; 
->     int fd_from, fd_to;
-> 
->     if (!rb || rb->private_fd <= 0) { 
->         return -1;
->     }    
-> 
->     if (!QEMU_PTR_IS_ALIGNED(start, rb->page_size) ||
->         !QEMU_PTR_IS_ALIGNED(length, rb->page_size)) {
->         return -1;
->     }    
-> 
->     if (length > rb->max_length) {
->         return -1;
->     }    
-> 
->     if (shared_to_private) {
->         fd_from = rb->fd;
->         fd_to = rb->private_fd;
->     } else {
->         fd_from = rb->private_fd;
->         fd_to = rb->fd;
->     }    
-> 
->     ret = ram_block_discard_range_fd(rb, start, length, fd_from);
->     if (ret) {
->         return ret; 
->     }    
-> 
->     if (fd_to > 0) { 
->         return fallocate(fd_to, 0, start, length);
->     }    
-> 
->     return 0;
-> }
-> 
-Thanks. So QEMU will re-generate memslots and set KVM_MEM_PRIVATE
-accordingly? Will it involve slot deletion and create?
+I tested these on ceph with the caches both enabled and disabled and
+everything looks good.
 
-> > 
-> > 
-> > >   - For shared access, KVM also checks if the page is already allocated
-> > >     in the memory backend, if yes then exit to userspace to convert a
-> > >     private page to shared one, otherwise it's treated as a traditional
-> > >     hva-based shared memory, KVM lets existing code to obtain a pfn with
-> > >     get_user_pages() and establish the mapping.
-> > > 
-> > > The above code assume private memory is persistent and pre-allocated in
-> > > the memory backend so KVM can use this information as an indicator for
-> > > a page is private or shared. The above check is then performed by
-> > > calling kvm_memfd_get_pfn() which currently is implemented as a
-> > > pagecache search but in theory that can be implemented differently
-> > > (i.e. when the page is even not mapped into host pagecache there should
-> > > be some different implementation).
-> > > 
-> > > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > > ---
-> > >  arch/x86/kvm/mmu/mmu.c         | 73 ++++++++++++++++++++++++++++++++--
-> > >  arch/x86/kvm/mmu/paging_tmpl.h | 11 +++--
-> > >  2 files changed, 77 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > > index 2856eb662a21..fbcdf62f8281 100644
-> > > --- a/arch/x86/kvm/mmu/mmu.c
-> > > +++ b/arch/x86/kvm/mmu/mmu.c
-> > > @@ -2920,6 +2920,9 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
-> > >  	if (max_level == PG_LEVEL_4K)
-> > >  		return PG_LEVEL_4K;
-> > >  
-> > > +	if (kvm_slot_is_private(slot))
-> > > +		return max_level;
-> > > +
-> > >  	host_level = host_pfn_mapping_level(kvm, gfn, pfn, slot);
-> > >  	return min(host_level, max_level);
-> > >  }
-> > > @@ -3950,7 +3953,59 @@ static bool kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-> > >  				  kvm_vcpu_gfn_to_hva(vcpu, gfn), &arch);
-> > >  }
-> > >  
-> > > -static bool kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault, int *r)
-> > > +static bool kvm_vcpu_is_private_gfn(struct kvm_vcpu *vcpu, gfn_t gfn)
-> > > +{
-> > > +	/*
-> > > +	 * At this time private gfn has not been supported yet. Other patch
-> > > +	 * that enables it should change this.
-> > > +	 */
-> > > +	return false;
-> > > +}
-> > > +
-> > > +static bool kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
-> > > +				    struct kvm_page_fault *fault,
-> > > +				    bool *is_private_pfn, int *r)
-> > > +{
-> > > +	int order;
-> > > +	int mem_convert_type;
-> > > +	struct kvm_memory_slot *slot = fault->slot;
-> > > +	long pfn = kvm_memfd_get_pfn(slot, fault->gfn, &order);
-> > For private memory slots, it's possible to have pfns backed by
-> > backends other than memfd, e.g. devicefd.
-> 
-> Surely yes, although this patch only supports memfd, but it's designed
-> to be extensible to support other memory backing stores than memfd. There
-> is one assumption in this design however: one private memslot can be
-> backed by only one type of such memory backing store, e.g. if the
-> devicefd you mentioned can independently provide memory for a memslot
-> then that's no issue.
-> 
-> >So is it possible to let those
-> > private memslots keep private and use traditional hva-based way?
-> 
-> Typically this fd-based private memory uses the 'offset' as the
-> userspace address to get a pfn from the backing store fd. But I believe
-> the current code does not prevent you from using the hva as the
-By hva-based way, I mean mmap is required for this fd.
-
-> userspace address, as long as your memory backing store understand that
-> address and can provide the pfn basing on it. But since you already have
-> the hva, you probably already mmap-ed the fd to userspace, that seems
-> not this private memory patch can protect you. Probably I didn't quite
-Yes, for this fd, though mapped in private memslot, there's no need to
-prevent QEMU/host from accessing it as it will not cause the severe machine
-check.
-
-> understand 'keep private' you mentioned here.
-'keep private' means allow this kind of private memslot which does not
-require protection from this private memory patch :)
-
-
-Thanks
-Yan
-> > Reasons below:
-> > 1. only memfd is supported in this patch set.
-> > 2. qemu/host read/write to those private memslots backing up by devicefd may
-> > not cause machine check.
-> > 
+Tested-by: Jeff Layton <jlayton@kernel.org>
