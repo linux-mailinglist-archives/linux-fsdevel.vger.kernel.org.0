@@ -2,131 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4895D48472A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:43:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 544B348474D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235927AbiADRnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 12:43:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43514 "EHLO
+        id S236020AbiADR6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 12:58:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235916AbiADRnz (ORCPT
+        with ESMTP id S234387AbiADR6a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 12:43:55 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E5CC061761
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 09:43:55 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id 8so33315310pgc.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 09:43:55 -0800 (PST)
+        Tue, 4 Jan 2022 12:58:30 -0500
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67296C061784
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 09:58:30 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id i3so95854851ybh.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 09:58:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=13+cbru1EicSyFl290RL62qNhQ55+dHM2uIjjFzOwWQ=;
-        b=qiqd4ZBl5BqJHPRL1WkKqev6zYNCBKXygXrnDR+B8P5U+ncr+nyYGcNLR7VtJRMbR+
-         nu+XvQR0ZvTHDgijE3+Ephw/fASHy6xXWP0G97pDtjkfz1dKRsQLmc6PexXKZ6eOiTmr
-         wLjrAbgjf1xpI3WYhgSKqeScUoNRXJvAlDnLd371vsx/3pwzIE9KXiKfaj3I/ZdHjqA8
-         xBpOOwl5sZ+x9RvltjE0m8jfdToQt4TESxL7mb+P6lBPBE7kEi7z47aEbg/ZFbrTwxVh
-         thDTi9pkTIUf/VFrmufk4T+y2xu0pNllCtxK03hhz2Xp5v22QQLi5JXx3XoNiDlljx2j
-         eUEg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lKYugI14weLPX72dba0R8OyZDrnFDsVWJDf+XD0rZGo=;
+        b=dXgIwxD8i4PoqUe119pPc/sEWYIzl+sLHg+NEe1rLa9tFyMlJVpl1FG86uMmlsnyHB
+         2DYJn8udr6JTTYCX02TKcjSakwE+4wAaa9EjA0r1ZH/MngxxT/liU9sT6JBmVJyWXQCu
+         2l44McQXoBdQqaaAOc1Z7f26GR6+7BK8FCxQcn1Qu+bouDGzvKelWFqx7ZGzymc6cma7
+         I5N/UJmEu8QkA/ADb+T61W1rIzfc1Al7mVC/eIF/mmztF8l+XpV0newj5oGye1ENG3B6
+         t0Br0D9QGpFk22n8QaHtipwIicjdMLmXVmBBwFbnrkeiMAuG8WEjIRAYu5ODAys7emo9
+         Lm7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=13+cbru1EicSyFl290RL62qNhQ55+dHM2uIjjFzOwWQ=;
-        b=4M9BmZZSBYTgh4Kx4Yq1qYjH6qv3HFXsAFkLRDcpshzIS5as87HQ3LJbt91Nw7gJsu
-         eCPI8R2nM16PWER0imywFsw2rdejdqYRnuvGJkcO7kGy39F/AgqJmlhBk5aWnRSkOy0i
-         OwuEZ4dM8Uxesfd9S83+HZ3sjOXuyJBMHwL4mw2aLBmawYDW2/tRh6sTcsu2RjohGwSM
-         FuFZd+mRrEcv8yHTJ8bWoEQzc1soox9LKX0tNHUddMGAwHvQGXVcaes7xe5+Efl+/mqU
-         Lw9CihcZSbU6MTp/8DQJz+DLnDFxNVk7tYlAe2FofjkFU1bdFGiI84w3Ca8nMPyxjKoj
-         ox+g==
-X-Gm-Message-State: AOAM533YcoVxvoTy1V9EOdJgdKNYDB7L+oWWQQGMlyIR//cygcZvvyA5
-        /G2xlZlwdcs3qISlldykiNexXw==
-X-Google-Smtp-Source: ABdhPJzQtrrXhdr9JNHtClHOyyxM1wCawkxYoqgHsdkj3QcxdAXEJm9cAZOEh3vO62LsqFUjGuIFog==
-X-Received: by 2002:a63:ba47:: with SMTP id l7mr46031570pgu.75.1641318234513;
-        Tue, 04 Jan 2022 09:43:54 -0800 (PST)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id n14sm34881764pgd.80.2022.01.04.09.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 09:43:53 -0800 (PST)
-Date:   Tue, 4 Jan 2022 17:43:50 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [PATCH v3 kvm/queue 05/16] KVM: Maintain ofs_tree for fast
- memslot lookup by file offset
-Message-ID: <YdSHViDXGkjz5t/Q@google.com>
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-6-chao.p.peng@linux.intel.com>
- <YcS5uStTallwRs0G@google.com>
- <20211224035418.GA43608@chaop.bj.intel.com>
- <YcuGGCo5pR31GkZE@google.com>
- <20211231022636.GA7025@chaop.bj.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lKYugI14weLPX72dba0R8OyZDrnFDsVWJDf+XD0rZGo=;
+        b=jvi90chKNFXrCXbjw7PwHGeGHeBuE5qbVF8VszEOC6SeJALiafpqfdhlw5xPt8xnTl
+         Bb8Qb3mqw7v8HupO8DKGWEIAr/OcHvpfqidYPA4uI6m62svljr5eLLU/NcsrOiQgcC6k
+         SJFEAR3WR3O6DD9jg4VgUFHD7VB7P2wwMZ7st8/qanKusbt/WG4J6urvGSM3Vr78Us2v
+         35fUfuwvQafOiEd6OyVGGOa6bVV6Hhq5DhWk0MGr40n7CsUG95FQJ6Chen2ArwJE/kC3
+         PNcOWpkQkNuSDEvZ/ECWTEsOMtsYdNw85EW66wd5l06DFZWt6Xi1i1/umWZyEtpRfCJo
+         Xg2A==
+X-Gm-Message-State: AOAM533W81gvyZQUGGdXHU5XiBy69B9v1LQzxqBCXhstR+7f9G8g/KYr
+        2czbUvrOWlIaQ/CpsmmN7zA3qk9tmfFb4kCo3GNxWQ==
+X-Google-Smtp-Source: ABdhPJx7iE9F4XiDdZX0VcwtfzkIvbL155r3HPzcjPWDmI4J3EegNVpdjVjYfIHTFYaDTjlFY8z/HCRg04KPU3IVCxM=
+X-Received: by 2002:a25:2786:: with SMTP id n128mr27908830ybn.491.1641319109224;
+ Tue, 04 Jan 2022 09:58:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211231022636.GA7025@chaop.bj.intel.com>
+References: <1640262603-19339-1-git-send-email-CruzZhao@linux.alibaba.com> <048124e2-8436-62e3-6205-f122ec386763@linux.alibaba.com>
+In-Reply-To: <048124e2-8436-62e3-6205-f122ec386763@linux.alibaba.com>
+From:   Josh Don <joshdon@google.com>
+Date:   Tue, 4 Jan 2022 09:58:18 -0800
+Message-ID: <CABk29Ntcq-ou=2JPBRs4HhOUcOcsL-hdG5ns55-TTHCOePhnZg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Forced idle time accounting per cpu
+To:     cruzzhao <cruzzhao@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 31, 2021, Chao Peng wrote:
-> On Tue, Dec 28, 2021 at 09:48:08PM +0000, Sean Christopherson wrote:
-> >KVM handles
-> > reverse engineering the memslot to get the offset and whatever else it needs.
-> > notify_fallocate() and other callbacks are unchanged, though they probably can
-> > drop the inode.
-> > 
-> > E.g. likely with bad math and handwaving on the overlap detection:
-> > 
-> > int kvm_private_fd_fallocate_range(void *owner, pgoff_t start, pgoff_t end)
-> > {
-> > 	struct kvm_memory_slot *slot = owner;
-> > 	struct kvm_gfn_range gfn_range = {
-> > 		.slot	   = slot,
-> > 		.start	   = (start - slot->private_offset) >> PAGE_SHIFT,
-> > 		.end	   = (end - slot->private_offset) >> PAGE_SHIFT,
-> > 		.may_block = true,
-> > 	};
-> > 
-> > 	if (!has_overlap(slot, start, end))
-> > 		return 0;
-> > 
-> > 	gfn_range.end = min(gfn_range.end, slot->base_gfn + slot->npages);
-> > 
-> > 	kvm_unmap_gfn_range(slot->kvm, &gfn_range);
-> > 	return 0;
-> > }
-> 
-> I understand this KVM side handling, but again one fd can have multiple
-> memslots. How shmem decides to notify which memslot from a list of
-> memslots when it invokes the notify_fallocate()? Or just notify all
-> the possible memslots then let KVM to check? 
+On Mon, Jan 3, 2022 at 11:15 PM cruzzhao <cruzzhao@linux.alibaba.com> wrote:
+>
+> Ping.
+> Accounting forced idle time for per cpu can help us measure the cost of
+> enabling core scheduling from a global perspective. Mind having a look
+> at it?
 
-Heh, yeah, those are the two choices.  :-)
+Sorry, just got back from vacation. I'll have a look at the patches
+later today, but the idea sounds reasonable.
 
-Either the backing store needs to support registering callbacks for specific,
-arbitrary ranges, or it needs to invoke all registered callbacks.  Invoking all
-callbacks has my vote; it's much simpler to implement and is unlikely to incur
-meaningful overhead.  _Something_ has to find the overlapping ranges, that cost
-doesn't magically go away if it's pushed into the backing store.
-
-Note, invoking all notifiers is also aligned with the mmu_notifier behavior.
+Best,
+Josh
