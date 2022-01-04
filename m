@@ -2,91 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B762484838
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 20:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF346484854
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 20:09:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235949AbiADTGk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 14:06:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233413AbiADTGk (ORCPT
+        id S234837AbiADTJw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 14:09:52 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47662 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231343AbiADTJv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 14:06:40 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F800C061761
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 11:06:40 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id co15so32077940pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 11:06:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wIU3J482L2HImj/M7R+fXYKFsH0w5gR4YGEoAmTcGjc=;
-        b=JqUfSCH0gNRmBEZivXmIZBqiJWZC3f0gKXawXUk/5m81ir0nsEab8NnikNVCnTcv58
-         DPY/ZNMzske4DAC3qW8/DLG5yzRvXWVhuec4ZfWH2YXtvLWPKvNcuksYK9i40dwOcMsP
-         t6wQdZzdgqdWepVsDdwp1di0fLpKCOEH2XMYCtSYRmSTjflbk2gGiGDBKS1eX1xPLZRQ
-         q/To+qpyyGftKnvUPpKii3aMYeQXLUAHc/jqnx54CAU+1xT5xU1Loi827jxvy+irpYRh
-         AENMWfS4vjakeqFse5b3PrOSfU7XWqMqWP9U3MTNjZrqHOZXCK4QXcpG57MOvBety5jO
-         5rrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wIU3J482L2HImj/M7R+fXYKFsH0w5gR4YGEoAmTcGjc=;
-        b=B9mef1exhFD3fO93aa5R73VAokwY3WtN6g2GvIu3D8K2J5fyPAyMCnVrmj9j+ycZ3h
-         8vsyxSdn88a374Za8sUxuaAaaSF32cPnhxGDxwX9vnc12lDICeGz7xOtJUurV+Rs+IiU
-         z9M3rwJIwOfN3m/YUiiwzo5u/KNZWP81SDYcuockFK5a8UvDbVmAPQ1/bUwGALtOGVG8
-         uLpy2BahjbxV/hVWxemyo51B7R88B/UZXx7LEAHXjJNRyUPC9NUzY8mfNG8GY+96h6lv
-         aRGpVIXVQOJAVTB7FNc4r8CSxMKZdZHQYhHcoNsnTtCIzNgRierRPWuDKyf6nny/m/BL
-         kmow==
-X-Gm-Message-State: AOAM533TtQ3Vr9nD/uACsiup5kxwT0kL2WKWKDX9DThjzLtCtWiQtKqj
-        k2M0VDXasI8/xh/gM/E1MGROeQ==
-X-Google-Smtp-Source: ABdhPJx2Knho2SUpw0270NeHzwWXeefQ77+9gVkZzvHPJPl8XnmGVGi0b0nSalDE/G82t9/BjYsRAA==
-X-Received: by 2002:a17:90b:1b04:: with SMTP id nu4mr19349907pjb.205.1641323199661;
-        Tue, 04 Jan 2022 11:06:39 -0800 (PST)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:7bfc])
-        by smtp.gmail.com with ESMTPSA id x40sm40917010pfu.185.2022.01.04.11.06.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 11:06:39 -0800 (PST)
-Date:   Tue, 4 Jan 2022 11:06:38 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     linux-btrfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v11 01/14] fs: export rw_verify_area()
-Message-ID: <YdSavheBK2RcpKZ1@relinquished.localdomain>
-References: <cover.1630514529.git.osandov@fb.com>
- <9cd494dbd55c46a22f07c56ca42a399af78accd1.1630514529.git.osandov@fb.com>
- <YZanS89YcCeN9i3y@relinquished.localdomain>
+        Tue, 4 Jan 2022 14:09:51 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 204GFOXn019540
+        for <linux-fsdevel@vger.kernel.org>; Tue, 4 Jan 2022 11:09:51 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=DXeIzVPghLGFxUiVUkz8ASRNUB5lxCLthbUVSkvaEv0=;
+ b=TUzJDGx0brQGL46dsNyPbqF1ZtNWRUS8wxER4G8LLKkyv+AQ9c5+WI9FdoWOORnbkgly
+ QpeHPZ3xL6cL76+B/55FHLFVIv2IkIR9KGvFZZ37UGVZ4UQaOx2X1t11WC2qkh0nOheo
+ vUuHLL7QRvslNcBIYeeDqzqRx3r+iZ4t6L4= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3dcp6h2eqh-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 11:09:51 -0800
+Received: from twshared12416.02.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 4 Jan 2022 11:09:44 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id B33558FC8E0B; Tue,  4 Jan 2022 11:09:38 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <torvalds@linux-foundation.org>, <christian.brauner@ubuntu.com>,
+        <shr@fb.com>
+Subject: [PATCH v11 0/4] io_uring: add xattr support
+Date:   Tue, 4 Jan 2022 11:09:32 -0800
+Message-ID: <20220104190936.3085647-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YZanS89YcCeN9i3y@relinquished.localdomain>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: PxKFMPx4G0SvaXlZXYkGkznDRCbZNvlj
+X-Proofpoint-ORIG-GUID: PxKFMPx4G0SvaXlZXYkGkznDRCbZNvlj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-04_09,2022-01-04_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 phishscore=0 mlxlogscore=897 bulkscore=0
+ mlxscore=0 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201040127
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 18, 2021 at 11:19:39AM -0800, Omar Sandoval wrote:
-> On Wed, Sep 01, 2021 at 10:00:56AM -0700, Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > I'm adding Btrfs ioctls to read and write compressed data, and rather
-> > than duplicating the checks in rw_verify_area(), let's just export it.
-> > 
-> > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> > Signed-off-by: Omar Sandoval <osandov@fb.com>
-> > ---
-> >  fs/internal.h      | 5 -----
-> >  fs/read_write.c    | 1 +
-> >  include/linux/fs.h | 1 +
-> >  3 files changed, 2 insertions(+), 5 deletions(-)
-> 
-> Could I please get an ack from the VFS side on this patch and "fs:
-> export variant of generic_write_checks without iov_iter"? We're going
-> the route of doing this as a Btrfs ioctl since we couldn't agree on a
-> generic interface, so this is all I need from the VFS.
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-Ping.
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
+
+Patch 1: fs: split off setxattr_copy and do_setxattr function from setxat=
+tr
+  Split off the setup part of the setxattr function in the setxattr_copy
+  function. Split off the processing part in do_setxattr.
+
+Patch 2: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
+
+Patch 3: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 4: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+
+V11: - removed the do_user_path_at_empty function and directly
+       call filename_lookup
+     - introduce __io_xattr_finish and io_xattr_finish functions
+       to unify the cleanup code
+     - remove the older __io_setxattr_finish function
+V10: - move do_user_path_at_empty definition to fs/internal.h
+     - introduce __io_setxattr_finish function
+     - introduce __io_getxattr_finish function
+V9 : - keep kvalue in struct xattr_ctx
+V8 : - introduce xattr_name struct as advised by Linus
+     - remove kname_sz field in xattr_ctx
+V7 : - split off setxattr in two functions as recommeneded by
+       Christian.
+V6 : - reverted addition of kname array to xattr_ctx structure
+       Adding the kname array increases the io_kiocb beyond 64 bytes
+       (increases it to 224 bytes). We try hard to limit it to 64 bytes.
+       Keeping the original interface also is a bit more efficient.
+     - addressed Pavel's reordering comment
+     - addressed Pavel's putname comment
+     - addressed Pavel's kvfree comment
+     - rebased on for-5.17/io_uring-getdents64
+V5 : - add kname array to xattr_ctx structure
+V4 : - rebased patch series
+V3 : - remove req->file checks in prep functions
+     - change size parameter in do_xattr
+V2 : - split off function do_user_path_empty instead of changing
+       the function signature of user_path_at
+     - Fix datatype size problem in do_getxattr
+
+
+Stefan Roesch (4):
+  fs: split off setxattr_copy and do_setxattr function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  28 ++++
+ fs/io_uring.c                 | 298 ++++++++++++++++++++++++++++++++++
+ fs/xattr.c                    | 114 +++++++++----
+ include/uapi/linux/io_uring.h |   8 +-
+ 4 files changed, 411 insertions(+), 37 deletions(-)
+
+
+base-commit: b4518682080d3a1cdd6ea45a54ff6772b8b2797a
+--=20
+2.30.2
+
