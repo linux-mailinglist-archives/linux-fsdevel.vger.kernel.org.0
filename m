@@ -2,143 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0963F483C37
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 08:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248F5483DE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 09:12:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233156AbiADH1M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 02:27:12 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:37202 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231707AbiADH1L (ORCPT
+        id S232461AbiADIMd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 03:12:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52324 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230026AbiADIMc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 02:27:11 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 529E3B81155;
-        Tue,  4 Jan 2022 07:27:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04620C36AE9;
-        Tue,  4 Jan 2022 07:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1641281228;
-        bh=YAiWEaNKF4OI+SkuBr/lyYfKRYi/Gm5pnRDcrQZpCmU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p6Dr+J3eoIPr88f5SrpQUnwUrZXyoXl/kT2XVwpgjzziwr/C0+obD7+XFPCiS5pA7
-         LcOcSUxCPaH9WAurgjU7r0c4wPzq25/p67w0pWTMTlO2xSFot/3nCYkkTHfEZaY/aE
-         +8m2UB+PCmWQCSUeqB1Kj9ZqkVXPMfEwduaVkorc=
-Date:   Tue, 4 Jan 2022 08:27:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Walt Drummond <walt@drummond.us>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [RFC PATCH 8/8] signals: Support BSD VSTATUS, KERNINFO and
- SIGINFO
-Message-ID: <YdP2yvYfmMp3QKKi@kroah.com>
-References: <20220103181956.983342-1-walt@drummond.us>
- <20220103181956.983342-9-walt@drummond.us>
+        Tue, 4 Jan 2022 03:12:32 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 772F1C061761
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 00:12:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=0ZFNf44xEqkPioc2DQVEKQudWiDloTzRNMpXtQmnZ6k=; b=WqVEAn1UQ/q55As7DWBwh9m7Rl
+        GoW6xb3gHKm1QtZoD5GRzwzhJ4oBDAODkV1sOJHTja/hXRkPmKelHBa4+zH95jPh4Akig1zpK7j+v
+        3RM3r7pXkCWgInIVTYcU1WgLzaoWTpmFInATznL8SMjrlXH5DY1y2JCd8dMzx3wO+kGIl52lldGrY
+        /PwASaeWNb3gN7MA6WYjfjA/Sase23YNcnnZqIKglQ3g2TqWM7oMnVcFyAFo9gWktuabVSFeMHDVO
+        IML68gD5GXgQeM7NeJj0IkyBA9yN8yK9bk7hVodmJ7Yl+bc26uCzx240+K283oM2rCkmGlGB0qmo7
+        60re6+zg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n4evh-00DVFq-T3; Tue, 04 Jan 2022 08:12:25 +0000
+Date:   Tue, 4 Jan 2022 08:12:25 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH next 3/3] shmem: Fix "Unused swap" messages
+Message-ID: <YdQBaYbQNC9laavZ@casper.infradead.org>
+References: <49ae72d6-f5f-5cd-e480-e2212cb7af97@google.com>
+ <YdMYCFIHA/wtcDVV@casper.infradead.org>
+ <2da9d057-8111-5759-a0dc-d9dca9fb8c9f@google.com>
+ <YdOlt5FJn9L+3sjM@casper.infradead.org>
+ <2fb90c3-5285-56ca-65af-439c4527dbe4@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220103181956.983342-9-walt@drummond.us>
+In-Reply-To: <2fb90c3-5285-56ca-65af-439c4527dbe4@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 03, 2022 at 10:19:56AM -0800, Walt Drummond wrote:
-> Support TTY VSTATUS character, NOKERNINFO local control bit and the
-> signal SIGINFO, all as in 4.3BSD.
+On Mon, Jan 03, 2022 at 08:43:13PM -0800, Hugh Dickins wrote:
+> On Tue, 4 Jan 2022, Matthew Wilcox wrote:
+> > So let me try again.  My concern was that we might be trying to store
+> > a 2MB entry which had a non-NULL 'expected' entry which was found in a
+> > 4k (ie single-index) slot within the 512 entries (as the first non-NULL
+> > entry in that range), and we'd then store the 2MB entry into a
+> > single-entry slot.
+> 
+> Thanks, that sounds much more like how I was imagining it.  And the
+> two separate tests much more understandable than twice round a loop.
+> 
+> > Now, maybe that can't happen for higher-level reasons, and I don't need
+> > to worry about it.  But I feel like we should check for that?  Anyway,
+> > I think the right fix is this:
+> 
+> I don't object to (cheaply) excluding a possibility at the low level,
+> even if there happen to be high level reasons why it cannot happen at
+> present.
+> 
+> But I don't think your second xas_find_conflict() gives quite as much
+> assurance as you're expecting of it.  Since xas_find_conflict() skips
+> NULLs, the conflict test would pass if there were 511 NULLs and one
+> 4k entry matching the expected entry, but a 2MB entry to be inserted
+> (the "small and large folios" case in my earlier ramblings).
+> 
+> I think xas_find_conflict() is not really up to giving that assurance;
+> and maybe better than a second call to xas_find_conflict(), might be
+> a VM_BUG_ON earlier, to say that if 'expected' is non-NULL, then the
+> range is PAGE_SIZE - or something more folio-friendly like that?
+> That would give you the extra assurance you're looking for,
+> wouldn't it?
 
-I am sorry, but this changelog text does not make any sense to me at
-all.  It needs to be much more detailed and explain why you are doing
-this and what exactly it is doing as I have no idea.
+I actually don't need that assurance.  The wretch who wrote the
+documentation for xas_find_conflict() needs to be put on a diet of
+bread and water, but the promise that it should make is that once it
+returns NULL, the xa_state is restored to where it was before the first
+call to xas_find_conflict().  So if you're trying to store a 2MB entry
+and the only swap entry in the 2MB range is a 4KB entry, the xa_state
+gets walked back up to point at the original 512-aligned entry and the
+subsequent xas_store() will free the node containing the swap entry.
 
-Also, you seem to be adding new user/kernel apis here with no
-documentation that I can see, nor any tests.  So how is anyone supposed
-to use this?
+> For now and the known future, shmem only swaps PAGE_SIZE, out and in;
+> maybe someone will want to change that one day, then xas_find_conflict()
+> could be enhanced to know more of what's expected.
 
-And finally:
+Good to know.
 
-> --- /dev/null
-> +++ b/drivers/tty/tty_status.c
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: GPL-1.0+
-
-Please no, you know better than that, and the checkpatch tool should
-have warned you.
-
-
-> +/*
-> + * tty_status.c --- implements VSTATUS and TIOCSTAT from BSD4.3/4.4
-> + *
-> + */
-> +
-> +#include <linux/sched.h>
-> +#include <linux/mm.h>
-> +#include <linux/tty.h>
-> +#include <linux/sched/cputime.h>
-> +#include <linux/sched/loadavg.h>
-> +#include <linux/pid.h>
-> +#include <linux/slab.h>
-> +#include <linux/math64.h>
-> +
-> +#define MSGLEN (160 + TASK_COMM_LEN)
-> +
-> +inline unsigned long getRSSk(struct mm_struct *mm)
-> +{
-> +	if (mm == NULL)
-> +		return 0;
-> +	return get_mm_rss(mm) * PAGE_SIZE / 1024;
-> +}
-> +
-> +inline long nstoms(long l)
-> +{
-> +	l /= NSEC_PER_MSEC * 10;
-> +	if (l < 10)
-> +		l *= 10;
-> +	return l;
-> +}
-> +
-> +inline struct task_struct *compare(struct task_struct *new,
-> +				   struct task_struct *old)
-> +{
-> +	unsigned int ostate, nstate;
-> +
-> +	if (old == NULL)
-> +		return new;
-> +
-> +	ostate = task_state_index(old);
-> +	nstate = task_state_index(new);
-> +
-> +	if (ostate == nstate) {
-> +		if (old->start_time > new->start_time)
-> +			return old;
-> +		return new;
-> +	}
-> +
-> +	if (ostate < nstate)
-> +		return old;
-> +
-> +	return new;
-> +}
-> +
-> +struct task_struct *pick_process(struct pid *pgrp)
-
-Also, always run sparse on your changes, you have loads of new global
-functions for no reason.
-
-thanks,
-
-greg k-h
+> > 
+> > +++ b/mm/shmem.c
+> > @@ -733,11 +733,12 @@ static int shmem_add_to_page_cache(struct page *page,
+> >         cgroup_throttle_swaprate(page, gfp);
+> > 
+> >         do {
+> > -               void *entry;
+> >                 xas_lock_irq(&xas);
+> > -               while ((entry = xas_find_conflict(&xas)) != NULL) {
+> > -                       if (entry == expected)
+> > -                               continue;
+> > +               if (expected != xas_find_conflict(&xas)) {
+> > +                       xas_set_err(&xas, -EEXIST);
+> > +                       goto unlock;
+> > +               }
+> > +               if (expected && xas_find_conflict(&xas)) {
+> >                         xas_set_err(&xas, -EEXIST);
+> >                         goto unlock;
+> >                 }
+> 
+> That also worried me because, if the second xas_find_conflict()
+> is to make any sense, the first must have had a side-effect on xas:
+> are those side-effects okay for the subsequent xas_store(&xas, page)?
+> You'll know that they are, but it's not obvious to the reader.
+> 
+> > 
+> > which says what I mean.  I certainly didn't intend to imply that I
+> > was expecting to see 512 consecutive entries which were all identical,
+> > which would be the idiomatic way to read the code that was there before.
+> > I shouldn't've tried to be so concise.
+> > 
+> > (If you'd rather I write any of this differently, I'm more than happy
+> > to change it)
+> 
+> No, I'm happy with the style of it, just discontented that the second
+> xas_find_conflict() pretends to more than it provides (I think).
+> 
+> Hugh
