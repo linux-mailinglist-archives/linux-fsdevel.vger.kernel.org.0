@@ -2,86 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1F134843FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 15:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA2948442F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 16:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233118AbiADO66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 09:58:58 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:52494 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231989AbiADO66 (ORCPT
+        id S234664AbiADPFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 10:05:47 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:43326 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234679AbiADPFq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 09:58:58 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V0z5cF9_1641308333;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V0z5cF9_1641308333)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 04 Jan 2022 22:58:55 +0800
-Date:   Tue, 4 Jan 2022 22:58:53 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
-        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 07/23] erofs: add nodev mode
-Message-ID: <YdRgrWEDU8sJVExX@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
-        dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
-        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
-        linux-kernel@vger.kernel.org
-References: <20211227125444.21187-1-jefflexu@linux.alibaba.com>
- <20211227125444.21187-8-jefflexu@linux.alibaba.com>
- <YdRattisu+ITYvvZ@B-P7TQMD6M-0146.local>
+        Tue, 4 Jan 2022 10:05:46 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C6086212B8;
+        Tue,  4 Jan 2022 15:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1641308745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3YyemQGmPQISjhWhCFgIYhlUvtjrM7czIpaHRc8cgQo=;
+        b=smnA9MKLKMEJkx726j0XwTzYkchrKORY2pnuhjBEKHB8W2gGfPkkjbjb+wA1GR69gH62Uv
+        554+WZ4joFakTzsiljVkb8yyC7ilNNm2snUleY8RJjGULeetjGwzWHFfQEMxDib0TrkLTt
+        JTMSY82fmbtRXB8tzDFjrF6nvXUxnA8=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 89E8413B16;
+        Tue,  4 Jan 2022 15:05:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id ioNGH0li1GH+IQAAMHmgww
+        (envelope-from <mwilck@suse.com>); Tue, 04 Jan 2022 15:05:45 +0000
+Message-ID: <8bcc53097ec596bf91097aca9120dae6fcf0ef9f.camel@suse.com>
+Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
+From:   Martin Wilck <mwilck@suse.com>
+To:     Jan Kara <jack@suse.cz>, Lukas Czerner <lczerner@redhat.com>
+Cc:     Ted Tso <tytso@mit.edu>, mwilck@suse.de,
+        linux-fsdevel@vger.kernel.org
+Date:   Tue, 04 Jan 2022 16:05:44 +0100
+In-Reply-To: <20220104145511.u4sfkid4ltgrqlqg@quack3.lan>
+References: <20211115125141.GD23412@quack2.suse.cz>
+         <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
+         <20211115145312.g4ptf22rl55jf37l@work>
+         <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
+         <20211116115626.anbvho4xtb5vsoz5@work>
+         <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
+         <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
+         <20211122135304.uwyqtm7cqc2fhjii@work>
+         <ad5272b5b63acf64a47b707d95ecc288d113d637.camel@suse.com>
+         <20220103185940.z5dnjj2shquz7yvg@work>
+         <20220104145511.u4sfkid4ltgrqlqg@quack3.lan>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YdRattisu+ITYvvZ@B-P7TQMD6M-0146.local>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 04, 2022 at 10:33:26PM +0800, Gao Xiang wrote:
-> On Mon, Dec 27, 2021 at 08:54:28PM +0800, Jeffle Xu wrote:
-> > Until then erofs is exactly blockdev based filesystem. In other using
-> > scenarios (e.g. container image), erofs needs to run upon files.
-> > 
-> > This patch introduces a new nodev mode, in which erofs could be mounted
-> > from a bootstrap blob file containing the complete erofs image.
-> > 
-> > The following patch will introduce a new mount option "uuid", by which
-> > users could specify the bootstrap blob file.
-> > 
-> > Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+On Tue, 2022-01-04 at 15:55 +0100, Jan Kara wrote:
 > 
-> I think the order of some patches in this patchset can be improved.
+> So I think the conclusion is that we go with my original patch? Just
+> I
+> should update it to return computed minlen back to the user, correct?
 > 
-> Take this patch as an example. This patch introduces a new mount
-> option called "uuid", so the kernel will just accept it (which
-> generates a user-visible impact) after this patch but it doesn't
-> actually work.
-> 
-> Therefore, we actually have three different behaviors here:
->  - kernel doesn't support "uuid" mount option completely;
->  - kernel support "uuid" but it doesn't work;
->  - kernel support "uuid" correctly (maybe after some random patch);
-> 
-> Actually that is bad for bisecting since there are some commits
-> having temporary behaviors. And we don't know which commit
-> actually fully implements this "uuid" mount option.
-> 
-> So personally I think the proper order is just like the bottom-up
-> approach, and make sure each patch can be tested / bisected
-> independently.
+>                                                                 Honza
 
-Oh, I may misread this patch, but I still think we'd better to
-avoid dead paths "TODO" like this as much as possible.
+Yes, that's my understanding.
 
-Just do in the bottom-up way.
+Martin
 
-Thanks,
-Gao Xiang
+
+
