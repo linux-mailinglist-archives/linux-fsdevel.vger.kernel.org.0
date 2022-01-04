@@ -2,79 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA2948442F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 16:05:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 355524844EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 16:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234664AbiADPFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 10:05:47 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:43326 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234679AbiADPFq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 10:05:46 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C6086212B8;
-        Tue,  4 Jan 2022 15:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1641308745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3YyemQGmPQISjhWhCFgIYhlUvtjrM7czIpaHRc8cgQo=;
-        b=smnA9MKLKMEJkx726j0XwTzYkchrKORY2pnuhjBEKHB8W2gGfPkkjbjb+wA1GR69gH62Uv
-        554+WZ4joFakTzsiljVkb8yyC7ilNNm2snUleY8RJjGULeetjGwzWHFfQEMxDib0TrkLTt
-        JTMSY82fmbtRXB8tzDFjrF6nvXUxnA8=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 89E8413B16;
-        Tue,  4 Jan 2022 15:05:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ioNGH0li1GH+IQAAMHmgww
-        (envelope-from <mwilck@suse.com>); Tue, 04 Jan 2022 15:05:45 +0000
-Message-ID: <8bcc53097ec596bf91097aca9120dae6fcf0ef9f.camel@suse.com>
-Subject: Re: [PATCH] ext4: Avoid trim error on fs with small groups
-From:   Martin Wilck <mwilck@suse.com>
-To:     Jan Kara <jack@suse.cz>, Lukas Czerner <lczerner@redhat.com>
-Cc:     Ted Tso <tytso@mit.edu>, mwilck@suse.de,
-        linux-fsdevel@vger.kernel.org
-Date:   Tue, 04 Jan 2022 16:05:44 +0100
-In-Reply-To: <20220104145511.u4sfkid4ltgrqlqg@quack3.lan>
-References: <20211115125141.GD23412@quack2.suse.cz>
-         <59b60aae9401a043f7d7cec0f8004f2ca7d4f4db.camel@suse.com>
-         <20211115145312.g4ptf22rl55jf37l@work>
-         <4e4d1ac7735c38f1395db19b97025bf411982b60.camel@suse.com>
-         <20211116115626.anbvho4xtb5vsoz5@work>
-         <yq1y25n8lpb.fsf@ca-mkp.ca.oracle.com>
-         <0a3061a3f443c86cf3b38007e85c51d94e9d7845.camel@suse.com>
-         <20211122135304.uwyqtm7cqc2fhjii@work>
-         <ad5272b5b63acf64a47b707d95ecc288d113d637.camel@suse.com>
-         <20220103185940.z5dnjj2shquz7yvg@work>
-         <20220104145511.u4sfkid4ltgrqlqg@quack3.lan>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.2 
+        id S233805AbiADPn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 10:43:59 -0500
+Received: from mga02.intel.com ([134.134.136.20]:10197 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232505AbiADPn6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jan 2022 10:43:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1641311038; x=1672847038;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=22y9EjrBRaMVy/mz9REdCI0A1LxLuq5BPOq8HpG1+gg=;
+  b=UnovQSwallIVIqbAQyjb9NCARDilaA1Ue7nDtEe8kXT723v2h7NU6tzj
+   LD6SUjbvz3nozkJw8+lesaECkScGnd3tq1MXNUhS6ph/dAAdDj9SGhGDW
+   t9O1lZy5P95H2zSPB49Cg2C+Q5W4gojbfFrRI+7YvtubgVf3LL17XC36p
+   iRNu6nngL5TFQCIXF/T+2ah1UzGqBz3z9U3LSSr/hy1MHXgIHwiXKsXYk
+   5KYL4R3+5otT7W3IRllPUq6NF+Cxf78guqRC8FDxs0dMLx8dPHYp6PXL/
+   QGseiTvWtgDcIgNUhUWJTKsqAffWp71R3vWF4Ng/dugEYwryWUUfNtkUd
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10216"; a="229559359"
+X-IronPort-AV: E=Sophos;i="5.88,261,1635231600"; 
+   d="scan'208";a="229559359"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2022 07:43:58 -0800
+X-IronPort-AV: E=Sophos;i="5.88,261,1635231600"; 
+   d="scan'208";a="688600650"
+Received: from smile.fi.intel.com ([10.237.72.61])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2022 07:43:52 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1n4lxK-006GMj-Qz;
+        Tue, 04 Jan 2022 17:42:34 +0200
+Date:   Tue, 4 Jan 2022 17:42:34 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jakub Kicinski <kuba@kernel.org>, mingo@kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>, ast@kernel.org,
+        daniel@iogearbox.net, bpf@vger.kernel.org, netdev@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-can@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        linux-hams@vger.kernel.org, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, bridge@lists.linux-foundation.org,
+        linux-decnet-user@lists.sourceforge.net,
+        linux-s390@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH bpf-next v2] net: don't include filter.h from net/sock.h
+Message-ID: <YdRq6vKceOqscaKK@smile.fi.intel.com>
+References: <20211229004913.513372-1-kuba@kernel.org>
+ <5a82690c-7dc0-81de-4dd6-06e26e4b9b92@gmail.com>
+ <20211229092012.635e9f2b@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211229092012.635e9f2b@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-01-04 at 15:55 +0100, Jan Kara wrote:
+On Wed, Dec 29, 2021 at 09:20:12AM -0800, Jakub Kicinski wrote:
+> On Tue, 28 Dec 2021 17:33:39 -0800 Florian Fainelli wrote:
+> > It would be nice if we used the number of files rebuilt because of a 
+> > header file change as another metric that the kernel is evaluated with 
+> > from release to release (or even on a commit by commit basis). Food for 
+> > thought.
 > 
-> So I think the conclusion is that we go with my original patch? Just
-> I
-> should update it to return computed minlen back to the user, correct?
+> Maybe Andy has some thoughts, he has been working on dropping
+> unnecessary includes of kernel.h, it seems.
+
+With this [1] announcement I believe Ingo is the best to tell you if this is a
+right direction.
+
+> It'd be cool to plug something that'd warn us about significant
+> increases in dependencies into the patchwork build bot.
 > 
->                                                                 Honza
+> I have one more small series which un-includes uapi/bpf.h from
+> netdevice.h at which point I hope we'll be largely in the clear 
+> from build bot performance perspective.
 
-Yes, that's my understanding.
+[1]: https://lore.kernel.org/lkml/YdIfz+LMewetSaEB@gmail.com/T/#u
 
-Martin
-
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
