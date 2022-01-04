@@ -2,133 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCFD74846B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:11:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 075A94846FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:31:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233231AbiADRLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 12:11:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35950 "EHLO
+        id S235660AbiADRbf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 12:31:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231733AbiADRLP (ORCPT
+        with ESMTP id S233463AbiADRbe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 12:11:15 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A90C061761;
-        Tue,  4 Jan 2022 09:11:15 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id gj24so31933202pjb.0;
-        Tue, 04 Jan 2022 09:11:15 -0800 (PST)
+        Tue, 4 Jan 2022 12:31:34 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E4B1C061784
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 09:31:34 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id l10-20020a17090a384a00b001b22190e075so108911pjf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 09:31:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UboeUmb8H0AVGAmewa2oS6rOO216gnmYoMnDmA4f5dg=;
-        b=CboQD2EBoXiAlB4NVewyVjgWRsGkcg5jedETFZOWB+mnMGz9VnOySZwfmCZTWhmywq
-         L7QYy4gZiGqOJL5eyynTgYHDhJTMXSLi25CLTKG8SLRC0H5CgE8KQptXaJzzKYIIWt5f
-         Nvv2DpTURZzHGAzxAMcKGwZfoTwXP+3KB+VXaL1UK4ywHkDx9UKu3nMR7qU2S2ONJQtT
-         ysEhRs2tkZ8HZ9yB9gVPnaiR9yI0MwbDr1pudlucXGLhAjM116X7UNPzam2yzYJxMlpa
-         42lWjF8CsPEPugCs70iBmBRLWY5zYDodkRrkVml+NiIypt8Ggf/gBkj32SHJx3lxjA56
-         lQQA==
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rOI9lx3ly2W5g+I//wMzwDwVhtW2WkhsJvnaYL+oVaA=;
+        b=GM1vaX8nnsQ5aen4uuxpsO114wif5ycCG9Oq+Pc5m0xedO5AWvlwlk+0nur670mGKt
+         onzOYTKoI9ivHrmZ5omlX7G/9g8vG1Dk7BMz+AhbgZkQYjM5XKrkVKn/mua46+jhsgFl
+         2x7N1/izW3LtGJIoZWWYJyzycZQWJVLVQuROwTwUx6Lb7wS1WfjJ2ZYfADX8e7fCk4Gv
+         3x2oDnc8GvPEK74RL4V15y2/q8Wd2PT6kYpMQXV19pxe40QE3h194kOApOsI9U9v5KmD
+         d9EPsZeQajXh15idUScX3jRX2SE0PftIP1z+OqwywcvLzNIoSgKRELKr5w7K0PR0/UYB
+         ULOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UboeUmb8H0AVGAmewa2oS6rOO216gnmYoMnDmA4f5dg=;
-        b=z5qqLVc1G2SquOvBxqpKHXeN/4BTp5KPWlwkie9kkAA9PIrCx/WppHOitpndEHw7kZ
-         qHyamUhUq8eeq2stUuAxd82asD1beiVw8nZ0p/d95fPcbRuL2l7paXeKHfjg4hRuIwyl
-         VNPpw/eR/CkTbiUzY7i5B+rCuun4qnCk2C3jvRg1W2hjFlgsneNbZEilG15QL26C4yd+
-         pq6NkxSTE4gQ3x9DT8A89T/9tEg2lWPJu1IHAi4nEb0ViBJ/K9vwdO/b57PIhgH459jD
-         Ea8Tzb29qRbtqXyvQBJ2xGYgEQlIEvdTgY17xJrmWcfKJxyD9cbRPAHH05tCkksr1QrY
-         tDiQ==
-X-Gm-Message-State: AOAM53194y2G23nEYBZAipFbM6as/rjUov5QZVwt69+if50p/BQw5/8S
-        RXD+kRW2C+TwLrrehBFxpvrObL6gAZg=
-X-Google-Smtp-Source: ABdhPJxy+peU+s5QAQimkKKq9pVTzjQlCisLmQBQbn2isAYCP/wA1mD4Xck0RuwvePEHpE6p0JFnqg==
-X-Received: by 2002:a17:902:e282:b0:148:ef58:10d8 with SMTP id o2-20020a170902e28200b00148ef5810d8mr51800506plc.116.1641316274749;
-        Tue, 04 Jan 2022 09:11:14 -0800 (PST)
-Received: from laptop.hsd1.wa.comcast.net ([2601:600:8500:5f14:bd71:fea:c430:7b0a])
-        by smtp.gmail.com with ESMTPSA id g16sm40746591pfv.159.2022.01.04.09.11.14
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rOI9lx3ly2W5g+I//wMzwDwVhtW2WkhsJvnaYL+oVaA=;
+        b=h30ICHuHxBvNozsCBjjImZhNh8U4NsKqQHvsDsm0sTPF+Ew1L9aXbf/g/JCWXOslrd
+         5nNSvY7VLDUMjSR6ChfvoGIVg+wtdZHEDl6vYo6ICAA0ImmtQgEGda0UVi0tsXovJ56B
+         unGeWe/dJZE0cITRiCAov9eOxnlx1fDCmTRWyOYc65j1kr2J+nRIOZARJnMKW/xdGHfD
+         Ett1HQQrXIdJ9OdZY84s/h9DZHVUM/DXahBHvL6DVWK9xDKs0kYGE52cTq2L+9CTEK8g
+         n/+oodMhWtxaZOoKBt0HVcywaMtD3ppw5PBxUz6xk1hYlNP6q8eut8UctqPDqp5R9kWd
+         l5Pg==
+X-Gm-Message-State: AOAM531d5MbsKDX82ljd/CiMZYuyy4e0iZubSBYAf8ixIy9e8+vvj4VO
+        uFV4ebK8HUy1/pEbwaU5Vlz79g==
+X-Google-Smtp-Source: ABdhPJyW9pN160gPJHaycV7mP2xi077B27olHyhgGOoe6nr/BCGbiHdtFfrcOodNTbojl/LtojMyPQ==
+X-Received: by 2002:a17:902:8645:b0:149:7d71:c229 with SMTP id y5-20020a170902864500b001497d71c229mr39146383plt.141.1641317493940;
+        Tue, 04 Jan 2022 09:31:33 -0800 (PST)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id l22sm43563684pfc.167.2022.01.04.09.31.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 09:11:14 -0800 (PST)
-From:   Andrei Vagin <avagin@gmail.com>
-To:     linux-kernel@vger.kernel.org,
+        Tue, 04 Jan 2022 09:31:33 -0800 (PST)
+Date:   Tue, 4 Jan 2022 17:31:30 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>
-Subject: [PATCH] fs/pipe: use kvcalloc to allocate a pipe_buffer array
-Date:   Tue,  4 Jan 2022 09:10:58 -0800
-Message-Id: <20220104171058.22580-1-avagin@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [PATCH v3 kvm/queue 11/16] KVM: Add kvm_map_gfn_range
+Message-ID: <YdSEcknuErGe0gQa@google.com>
+References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
+ <20211223123011.41044-12-chao.p.peng@linux.intel.com>
+ <YcS6m9CieYaIGA3F@google.com>
+ <20211224041351.GB44042@chaop.bj.intel.com>
+ <20211231023334.GA7255@chaop.bj.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211231023334.GA7255@chaop.bj.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Right now, kcalloc is used to allocate a pipe_buffer array.  The size of
-the pipe_buffer struct is 40 bytes. kcalloc allows allocating reliably
-chunks with sizes less or equal to PAGE_ALLOC_COSTLY_ORDER (3). It means
-that the maximum pipe size is 3.2MB in this case.
+On Fri, Dec 31, 2021, Chao Peng wrote:
+> On Fri, Dec 24, 2021 at 12:13:51PM +0800, Chao Peng wrote:
+> > On Thu, Dec 23, 2021 at 06:06:19PM +0000, Sean Christopherson wrote:
+> > > On Thu, Dec 23, 2021, Chao Peng wrote:
+> > > > This new function establishes the mapping in KVM page tables for a
+> > > > given gfn range. It can be used in the memory fallocate callback for
+> > > > memfd based memory to establish the mapping for KVM secondary MMU when
+> > > > the pages are allocated in the memory backend.
+> > > 
+> > > NAK, under no circumstance should KVM install SPTEs in response to allocating
+> > > memory in a file.   The correct thing to do is to invalidate the gfn range
+> > > associated with the newly mapped range, i.e. wipe out any shared SPTEs associated
+> > > with the memslot.
+> > 
+> > Right, thanks.
+> 
+> BTW, I think the current fallocate() callback is just useless as long as
+> we don't want to install KVM SPTEs in response to allocating memory in a
+> file. The invalidation of the shared SPTEs should be notified through 
+> mmu_notifier of the shared memory backend, not memfd_notifier of the
+> private memory backend.
 
-In CRIU, we use pipes to dump processes memory. CRIU freezes a target
-process, injects a parasite code into it and then this code splices
-memory into pipes. If a maximum pipe size is small, we need to
-do many iterations or create many pipes.
-
-kvcalloc attempt to allocate physically contiguous memory, but upon
-failure, fall back to non-contiguous (vmalloc) allocation and so it
-isn't limited by PAGE_ALLOC_COSTLY_ORDER.
-
-The maximum pipe size for non-root users is limited by
-the /proc/sys/fs/pipe-max-size sysctl that is 1MB by default, so only
-the root user will be able to trigger vmalloc allocations.
-
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
----
- fs/pipe.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 6d4342bad9f1..45565773ec33 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -802,7 +802,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
- 	if (too_many_pipe_buffers_hard(user_bufs) && pipe_is_unprivileged_user())
- 		goto out_revert_acct;
- 
--	pipe->bufs = kcalloc(pipe_bufs, sizeof(struct pipe_buffer),
-+	pipe->bufs = kvcalloc(pipe_bufs, sizeof(struct pipe_buffer),
- 			     GFP_KERNEL_ACCOUNT);
- 
- 	if (pipe->bufs) {
-@@ -845,7 +845,7 @@ void free_pipe_info(struct pipe_inode_info *pipe)
- 	}
- 	if (pipe->tmp_page)
- 		__free_page(pipe->tmp_page);
--	kfree(pipe->bufs);
-+	kvfree(pipe->bufs);
- 	kfree(pipe);
- }
- 
-@@ -1260,8 +1260,7 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	if (nr_slots < n)
- 		return -EBUSY;
- 
--	bufs = kcalloc(nr_slots, sizeof(*bufs),
--		       GFP_KERNEL_ACCOUNT | __GFP_NOWARN);
-+	bufs = kvcalloc(nr_slots, sizeof(*bufs), GFP_KERNEL_ACCOUNT);
- 	if (unlikely(!bufs))
- 		return -ENOMEM;
- 
-@@ -1288,7 +1287,7 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	head = n;
- 	tail = 0;
- 
--	kfree(pipe->bufs);
-+	kvfree(pipe->bufs);
- 	pipe->bufs = bufs;
- 	pipe->ring_size = nr_slots;
- 	if (pipe->max_usage > nr_slots)
--- 
-2.33.1
-
+No, because the private fd is the final source of truth as to whether or not a
+GPA is private, e.g. userspace may choose to not unmap the shared backing.
+KVM's rule per Paolo's/this proposoal is that a GPA is private if it has a private
+memslot and is present in the private backing store.  And the other core rule is
+that KVM must never map both the private and shared variants of a GPA into the
+guest.
