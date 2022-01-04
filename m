@@ -2,100 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD50484366
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 15:31:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C7B148436E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 15:33:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234215AbiADOb0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 09:31:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37981 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229808AbiADObZ (ORCPT
+        id S232922AbiADOdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 09:33:31 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:41455 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231607AbiADOda (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 09:31:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641306685;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PSbFiIkCa7pMhGDthWmAfMNT0dx4lGgrz3BAfDoZH5c=;
-        b=JnEIsbCTr22Sa5c6cNYIhBUQ62oGMMX6jMl/cLMplqh0yvDk/5RtQx09Hk7ZdQB9K3edaE
-        Z0GkrYVN33Pr+IGratkg4TbMngLrDjwuXFaPVkXhAP4dAre857JA4EwkQVDTfvP8Kp8Jy4
-        BvrGyB5bxdK+upTw5enAjyIiIilNA/Q=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-640-N5yEjGjWOL-u4Uq2aksM7Q-1; Tue, 04 Jan 2022 09:31:23 -0500
-X-MC-Unique: N5yEjGjWOL-u4Uq2aksM7Q-1
-Received: by mail-wm1-f69.google.com with SMTP id d4-20020a05600c34c400b00345d5d47d54so364953wmq.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 06:31:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=PSbFiIkCa7pMhGDthWmAfMNT0dx4lGgrz3BAfDoZH5c=;
-        b=tXGqr4O4e1hsca++oFdGBpqiY62gQvb9uLpTuCdGxTGjf59YvMVqba2iC+85+SlDlJ
-         jmLXpfi+S2GjB8R17g0GI+OxF+00UEJX1uEiRzw0YA3YXdr1tzymET39BHf5Unm6aTd1
-         Fvtq+hGrVF1zBotR0PCCmgQ8x6sOl6lWx6uQlcWWkmxUk6sqmM4mmzoXDF8R0Wcf751B
-         PDV5hbgXv4G7v5H7kDMd/SsGDTC4BNYAlY2bcfLRhSwZXNsDmc8Z/k2MUCPQwBqgORqR
-         QiLFQ2/JgjBJn7HKAOaioRS/BNxZTnD1Yr7jawiLLMQNs5g99AyK1oimtUpdR720lubG
-         1Ttw==
-X-Gm-Message-State: AOAM533hTZMjvINQjWJr0arbew+BxpphwvJzQHf8EXrG+nhqZCU+U9dq
-        vw//9NTb99FPPGCbQBeFYHdYiQn3ToaWpM5YqE16oVnYsg6O9+hVJLf5NuT7VR1TjTpUlnooiiN
-        OCNAeKfIiQOviO19fw2wiIWElnw==
-X-Received: by 2002:a1c:2b42:: with SMTP id r63mr35437023wmr.80.1641306682491;
-        Tue, 04 Jan 2022 06:31:22 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzoD394cIAvWOPJzX1c3qieoiNBQSBerEgc05mgXT5JV6oRQFZPfL/TP84Ze3JTIZi6PiROVQ==
-X-Received: by 2002:a1c:2b42:: with SMTP id r63mr35437000wmr.80.1641306682335;
-        Tue, 04 Jan 2022 06:31:22 -0800 (PST)
-Received: from [192.168.3.132] (p5b0c62bd.dip0.t-ipconnect.de. [91.12.98.189])
-        by smtp.gmail.com with ESMTPSA id a2sm43078904wri.17.2022.01.04.06.31.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jan 2022 06:31:21 -0800 (PST)
-Message-ID: <10ec73d4-6658-4f60-abe1-84ece53ca373@redhat.com>
-Date:   Tue, 4 Jan 2022 15:31:20 +0100
+        Tue, 4 Jan 2022 09:33:30 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V0xwPNn_1641306806;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V0xwPNn_1641306806)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 04 Jan 2022 22:33:28 +0800
+Date:   Tue, 4 Jan 2022 22:33:26 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 07/23] erofs: add nodev mode
+Message-ID: <YdRattisu+ITYvvZ@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
+        dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org
+References: <20211227125444.21187-1-jefflexu@linux.alibaba.com>
+ <20211227125444.21187-8-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: remove Xen tmem leftovers
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Seth Jennings <sjenning@redhat.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        Vitaly Wool <vitaly.wool@konsulko.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20211224062246.1258487-1-hch@lst.de>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20211224062246.1258487-1-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211227125444.21187-8-jefflexu@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 24.12.21 07:22, Christoph Hellwig wrote:
-> Hi all,
+On Mon, Dec 27, 2021 at 08:54:28PM +0800, Jeffle Xu wrote:
+> Until then erofs is exactly blockdev based filesystem. In other using
+> scenarios (e.g. container image), erofs needs to run upon files.
 > 
-> since the remove of the Xen tmem driver in 2019, the cleancache hooks are
-> entirely unused, as are large parts of frontswap.  This series against
-> linux-next (with the folio changes included) removes cleancaches, and cuts
-> down frontswap to the bits actually used by zswap.
+> This patch introduces a new nodev mode, in which erofs could be mounted
+> from a bootstrap blob file containing the complete erofs image.
 > 
+> The following patch will introduce a new mount option "uuid", by which
+> users could specify the bootstrap blob file.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 
-Just out of curiosity, why was tmem removed from Linux (or even Xen?).
-Do you have any information?
+I think the order of some patches in this patchset can be improved.
 
-Happy to see this cleanup.
+Take this patch as an example. This patch introduces a new mount
+option called "uuid", so the kernel will just accept it (which
+generates a user-visible impact) after this patch but it doesn't
+actually work.
 
--- 
+Therefore, we actually have three different behaviors here:
+ - kernel doesn't support "uuid" mount option completely;
+ - kernel support "uuid" but it doesn't work;
+ - kernel support "uuid" correctly (maybe after some random patch);
+
+Actually that is bad for bisecting since there are some commits
+having temporary behaviors. And we don't know which commit
+actually fully implements this "uuid" mount option.
+
+So personally I think the proper order is just like the bottom-up
+approach, and make sure each patch can be tested / bisected
+independently.
+
+> ---
+>  fs/erofs/data.c     | 13 ++++++++---
+>  fs/erofs/internal.h |  1 +
+>  fs/erofs/super.c    | 56 +++++++++++++++++++++++++++++++++------------
+>  3 files changed, 53 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index 477aaff0c832..61fa431d0713 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -11,11 +11,18 @@
+>  
+>  struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr)
+>  {
+> -	struct address_space *const mapping = sb->s_bdev->bd_inode->i_mapping;
+> +	struct address_space *mapping;
+>  	struct page *page;
+>  
+> -	page = read_cache_page_gfp(mapping, blkaddr,
+> -				   mapping_gfp_constraint(mapping, ~__GFP_FS));
+
+Apart from the recommendation above, if my understanding is
+correct, I think after we implement fscache_aops, 
+read_cache_page_gfp() can work with proper fscache mapping.
+
+So no need to implement something like erofs_readpage_from_fscache()
+later (at least for the case here.)
+
 Thanks,
+Gao Xiang
 
-David / dhildenb
-
+> +	if (sb->s_bdev) {
+> +		mapping = sb->s_bdev->bd_inode->i_mapping;
+> +		page = read_cache_page_gfp(mapping, blkaddr,
+> +				mapping_gfp_constraint(mapping, ~__GFP_FS));
+> +	} else {
+> +		/* TODO: data path in nodev mode */
+> +		page = ERR_PTR(-EINVAL);
+> +	}
+> +
