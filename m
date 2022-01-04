@@ -2,67 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9023C4839FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 02:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5B52483A7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 03:10:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231890AbiADBu7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jan 2022 20:50:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51606 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbiADBu6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jan 2022 20:50:58 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88668C061761;
-        Mon,  3 Jan 2022 17:50:58 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n4YxK-00H3st-Q5; Tue, 04 Jan 2022 01:49:42 +0000
-Date:   Tue, 4 Jan 2022 01:49:42 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Walt Drummond <walt@drummond.us>
-Cc:     aacraid@microsemi.com, anna.schumaker@netapp.com, arnd@arndb.de,
-        bsegall@google.com, bp@alien8.de, chuck.lever@oracle.com,
-        bristot@redhat.com, dave.hansen@linux.intel.com,
-        dwmw2@infradead.org, dietmar.eggemann@arm.com, dinguyen@kernel.org,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
-        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
-        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
-        john.johansen@canonical.com, juri.lelli@redhat.com,
-        keescook@chromium.org, mcgrof@kernel.org,
-        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
-        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
-        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
-Message-ID: <YdOntksAAhc/oaU1@zeniv-ca.linux.org.uk>
-References: <20220103181956.983342-1-walt@drummond.us>
- <YdNE6UXRT02135Pd@zeniv-ca.linux.org.uk>
- <CADCN6nx4VWtR79TBDTENRExjsa=KAGuUpyz06iu2EGmSTPyc+Q@mail.gmail.com>
- <YdOf4WBwR1H93GAt@zeniv-ca.linux.org.uk>
+        id S230490AbiADCK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jan 2022 21:10:26 -0500
+Received: from m12-16.163.com ([220.181.12.16]:4206 "EHLO m12-16.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229469AbiADCKZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Jan 2022 21:10:25 -0500
+X-Greylist: delayed 928 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Jan 2022 21:10:23 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=anOjr
+        qvHO1Z4432Qm8RpuzEHkUu3oj36DsNbGYJrNVU=; b=KyKG1GHdAkxVeJp33G9eT
+        Y+5gs5+xSFU0+pcoKf26zFJj27qEsWPkRFDKCfHQIyhRhS1ldclaUs+RWcoDqM2n
+        c9us2PyYmVgl0zLc/s0XIZn5WQZSSHQ4+vnCjaWGwVl5PEDx1BOkidB0b2jYgWBw
+        zSTFK+ZSqmylrTXQ/MUWW8=
+Received: from localhost.localdomain (unknown [101.93.205.203])
+        by smtp12 (Coremail) with SMTP id EMCowADH_EHgqNNh6ZCeAw--.4698S2;
+        Tue, 04 Jan 2022 09:54:50 +0800 (CST)
+From:   Qinghua Jin <qhjin_dev@163.com>
+Cc:     qhjin_dev@163.com, Colin Ian King <colin.king@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] vfs: fix bug when opening a file with O_DIRECT on a file system that does not support it will leave an empty file
+Date:   Tue,  4 Jan 2022 09:53:58 +0800
+Message-Id: <20220104015358.57443-1-qhjin_dev@163.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YdOf4WBwR1H93GAt@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: EMCowADH_EHgqNNh6ZCeAw--.4698S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw1DKF1kCw4xCFWktry5Jwb_yoW8ZF4kpF
+        WfKa4UK34kJryIgF1kZa1vv3W0g34xGay7JrWkWa4DArnIvFyFgFWagF1kWr1YqF95Ar4F
+        qw45Aw1UWrW5AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRLSdPUUUUU=
+X-Originating-IP: [101.93.205.203]
+X-CM-SenderInfo: ptkmx0hbgh4qqrwthudrp/1tbi7xN+HFr8Ad0C5gAAsA
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 04, 2022 at 01:16:17AM +0000, Al Viro wrote:
-> On Mon, Jan 03, 2022 at 05:00:58PM -0800, Walt Drummond wrote:
-> > I simply wanted SIGINFO and VSTATUS, and that necessitated this.
-> 
-> Elaborate, please.  What exactly requires more than 32 rt signals?
+Colin Ian King reported the following
 
-More to the point, which system had SIGINFO >= SIGRTMIN?  Or signals
-with numbers greater than SIGRTMAX, for that matter?
+1. create a minix file system and mount it
+2. open a file on the file system with O_RDWR | O_CREAT | O_TRUNC | O_DIRECT
+3. open fails with -EINVAL but leaves an empty file behind.  All other open() failures don't leave the
+failed open files behind.
 
-I really don't get it...
+The reason is because when checking the O_DIRECT in do_dentry_open, the inode has created, and later err
+processing can't remove the inode:
+
+        /* NB: we're sure to have correct a_ops only after f_op->open */
+        if (f->f_flags & O_DIRECT) {
+                if (!f->f_mapping->a_ops || !f->f_mapping->a_ops->direct_IO)
+                        return -EINVAL;
+        }
+
+The patch will check the O_DIRECT before creating the inode in lookup_open function.
+
+Signed-off-by: Qinghua Jin <qhjin_dev@163.com>
+Reported-by:  Colin Ian King <colin.king@canonical.com>
+---
+ fs/namei.c | 7 +++++++
+ fs/open.c  | 6 ------
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 1f9d2187c765..24c6bcba702d 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3277,6 +3277,13 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 			goto out_dput;
+ 		}
+ 
++		if (open_flag & O_DIRECT) {
++			if (!dir_inode->i_mapping || !dir_inode->i_mapping->a_ops ||
++					!dir_inode->i_mapping->a_ops->direct_IO) {
++				error = -EINVAL;
++				goto out_dput;
++			}
++		}
+ 		error = dir_inode->i_op->create(mnt_userns, dir_inode, dentry,
+ 						mode, open_flag & O_EXCL);
+ 		if (error)
+diff --git a/fs/open.c b/fs/open.c
+index f732fb94600c..2829c3613c0f 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -838,12 +838,6 @@ static int do_dentry_open(struct file *f,
+ 
+ 	file_ra_state_init(&f->f_ra, f->f_mapping->host->i_mapping);
+ 
+-	/* NB: we're sure to have correct a_ops only after f_op->open */
+-	if (f->f_flags & O_DIRECT) {
+-		if (!f->f_mapping->a_ops || !f->f_mapping->a_ops->direct_IO)
+-			return -EINVAL;
+-	}
+-
+ 	/*
+ 	 * XXX: Huge page cache doesn't support writing yet. Drop all page
+ 	 * cache for this file before processing writes.
+-- 
+2.30.2
+
+
