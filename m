@@ -2,70 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6376F48425B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 14:27:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D91C4842AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 14:42:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233490AbiADN1C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 08:27:02 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:51054 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232029AbiADN1C (ORCPT
+        id S233546AbiADNmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 08:42:12 -0500
+Received: from mail-m2838.qiye.163.com ([103.74.28.38]:60538 "EHLO
+        mail-m2838.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229821AbiADNmL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 08:27:02 -0500
-Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 204DQnIh029242;
-        Tue, 4 Jan 2022 22:26:49 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
- Tue, 04 Jan 2022 22:26:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 204DQn84029235
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 4 Jan 2022 22:26:49 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <8b2a61cb-4850-8bd7-3ff3-cebebefdb01b@I-love.SAKURA.ne.jp>
-Date:   Tue, 4 Jan 2022 22:26:44 +0900
+        Tue, 4 Jan 2022 08:42:11 -0500
+X-Greylist: delayed 483 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Jan 2022 08:42:11 EST
+Received: from localhost.localdomain (unknown [106.75.220.2])
+        by mail-m2838.qiye.163.com (Hmail) with ESMTPA id A99833C01A5;
+        Tue,  4 Jan 2022 21:34:05 +0800 (CST)
+From:   wanghonghui <wanghonghui@ucloud.cn>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, wanghonghui <wanghonghui@ucloud.cn>
+Subject: [PATCH 1/1] fuse: fix memleak in fuse_writepage_locked
+Date:   Tue,  4 Jan 2022 21:34:04 +0800
+Message-Id: <20220104133404.69073-1-wanghonghui@ucloud.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH] block: add filemap_invalidate_lock_killable()
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <0000000000007305e805d4a9e7f9@google.com>
- <3392d41c-5477-118a-677f-5780f9cedf95@I-love.SAKURA.ne.jp>
- <YdPzygDErbQffQMM@infradead.org>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <YdPzygDErbQffQMM@infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+        kWDxoPAgseWUFZKDYvK1lXWShZQUlCN1dZLVlBSVdZDwkaFQgSH1lBWUMdTh5WSEpCTk9LSB1DSU
+        1DVRkRExYaEhckFA4PWVdZFhoPEhUdFFlBWVVLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Kz46Hhw6NjI8OENPSx0xLRlR
+        HQwKCyFVSlVKTU9KSEtISU9NSEJPVTMWGhIXVQwaFRwTFBUcEw4SOw4YFxQOH1UYFUVZV1kSC1lB
+        WUpLTVVMTlVJSUtVSVlXWQgBWUFKT0lKNwY+
+X-HM-Tid: 0a7e254c04c78420kuqwa99833c01a5
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/01/04 16:14, Christoph Hellwig wrote:
-> On Mon, Jan 03, 2022 at 07:49:11PM +0900, Tetsuo Handa wrote:
->> syzbot is reporting hung task at blkdev_fallocate() [1], for it can take
->> minutes with mapping->invalidate_lock held. Since fallocate() has to accept
->> size > MAX_RW_COUNT bytes, we can't predict how long it will take. Thus,
->> mitigate this problem by using killable wait where possible.
-> 
-> Well, but that also means we want all other users of the invalidate_lock
-> to be killable, as fallocate vs fallocate synchronization is probably
-> not the interesting case.
+In function fuse_writepage_args_alloc, both wpa's memory and
+wpa->ia.ap->pages's memory were allocated，but when failed
+it only free wpa's memory
 
-Right. But being responsive to SIGKILL is generally preferable.
+We need free wpa->ia.ap->pages's memory before free wpa
 
-syzbot (and other syzkaller based fuzzing) is reporting many hung task reports,
-but many of such reports are simply overstressing.
+Signed-off-by: Wang Honghui <wanghonghui@ucloud.cn>
+---
+ fs/fuse/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-We can't use killable lock wait for release operation because it is a "void"
-function. But we can use killable lock wait for majority of operations which
-are not "void" functions. Use of killable lock wait where possible can improve
-situation.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 829094451774..c89966d7dbcc 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1949,6 +1949,7 @@ static int fuse_writepage_locked(struct page *page)
+ err_nofile:
+ 	__free_page(tmp_page);
+ err_free:
++	kfree(ap->pages);
+ 	kfree(wpa);
+ err:
+ 	mapping_set_error(page->mapping, error);
+-- 
+2.25.1
 
