@@ -2,118 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3608484294
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 14:36:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02E674842C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 14:51:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230142AbiADNgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 08:36:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:27876 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229841AbiADNgr (ORCPT
+        id S233834AbiADNvf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 08:51:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45246 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232396AbiADNve (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 08:36:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641303406;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KzTPGW2JymMzrDS1j8vpaZmq1mjrtuWjLdCBriVQUJ8=;
-        b=NNhZsLraAT+ZC8RXGIip0dpih8S2p7Wu0F8CSno3gqQu3Dlus/BCFMDTpIx8dEuwkSfvCp
-        0m0RjVvot+JEFDzzLpmPI7UWC76HLaVCat9a7pqqXoiQCxYnPmCyIiVhs/3UMXYGqfT+JH
-        ZjnoB5OBNSyS45en38WItMpx482yrdo=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-361-XKED4PWpNPKdmhH9m88iaQ-1; Tue, 04 Jan 2022 08:36:45 -0500
-X-MC-Unique: XKED4PWpNPKdmhH9m88iaQ-1
-Received: by mail-qv1-f69.google.com with SMTP id j8-20020a05621419c800b004115bbe358cso29832730qvc.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 05:36:45 -0800 (PST)
+        Tue, 4 Jan 2022 08:51:34 -0500
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E19DC061784
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 05:51:34 -0800 (PST)
+Received: by mail-yb1-xb2f.google.com with SMTP id y130so83836223ybe.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 05:51:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=+7stB07F66gy7f2VANIvvg5E8xLAfpXtFohPRnaTtmY=;
+        b=MOD+Zv88AfSiXD9TtMDuvVQHaZVJyUAeaxECTeG9iw00CgAPOtVuaUrvRQgb+Kyo7a
+         YGKtd9w6xYgWXybFChpwQsY/Z7aOn47wsHW8BI3FN7zOA/x9QHpRwJoG4Njhmn7q+W3H
+         /X80Fs3tmiKe/HzVL1a9A/IU7em0sC/u3HuAEOu7eVddJJx97dwVt+Kyr1lM4+5InF/n
+         CSCj6fdhNf5kG1YKyn/e2yx7ros4b2Bsl+WbhpdxpVvzjz1/cR9a+FxL1rP3jz/N/CAm
+         c1h7GeOD0y9rIJZECxY+yXnLjmNmLkTJCqFgSwwAXzWjLyUEC3AZwkLwI0eebNddDkcT
+         UszQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KzTPGW2JymMzrDS1j8vpaZmq1mjrtuWjLdCBriVQUJ8=;
-        b=SVTh0tQiNwrflHKkQvAhps14qSM1RuQZUhHRiYBNmD4XfcyL7hGA3++THXwKXD1JJY
-         ePZB2ygml4CfZzsYnhVwQ4j0WAjEVrWEEy2AM/p+QfegBFIRU/6FwW8oR+8PiSen2XIw
-         GDeOG1weXgsRvpl0ByHVFiHkZgxrcUZ+K2miROojY6N+T4pYoNwyjnLKnVHMORqv4lg0
-         Ks1OFwx0hG2TjIUTp9uIs82M+DQkEDF2HjjBBmo7+47g7vhrfqF2+Sya+QeCYBgiyReL
-         1XjE+/wVdqGJZd8ltsZavAP69qjbKhrSRq4rUdphDgImnLlusJWDZugEpODaOjXbuuCp
-         v/AA==
-X-Gm-Message-State: AOAM531RfzAHpZSIYs6jeBKBrbno+JFACuWOAGQkfJxPxcSTuMTwn8fX
-        Hqg/rwq85Qk9wiXR6fxvn75ZsQJbvUkbCbZJeX1VWkjgCMfm/fiqNhz5PCZ0rEpvA3ti/vyy0pd
-        8K/Doi0UJb+uhwVMcsVqxgFCfcQ==
-X-Received: by 2002:a37:a716:: with SMTP id q22mr35188714qke.249.1641303405038;
-        Tue, 04 Jan 2022 05:36:45 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzr3X6E0Hb2ZXIDS/jRCm7BkGNJvh1DTGyzsgltkU4PR76XM32hvopdA+7cQ3D59BZXMHh/Ow==
-X-Received: by 2002:a37:a716:: with SMTP id q22mr35188706qke.249.1641303404844;
-        Tue, 04 Jan 2022 05:36:44 -0800 (PST)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id 8sm33838927qtz.28.2022.01.04.05.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 05:36:44 -0800 (PST)
-Date:   Tue, 4 Jan 2022 08:36:42 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "david@fromorbit.com" <david@fromorbit.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "trondmy@kernel.org" <trondmy@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>
-Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
-Message-ID: <YdRNasL3WFugVe8c@bfoster>
-References: <20211230193522.55520-1-trondmy@kernel.org>
- <Yc5f/C1I+N8MPHcd@casper.infradead.org>
- <6f746786a3928844fbe644e7e409008b4f50c239.camel@hammerspace.com>
- <20220101035516.GE945095@dread.disaster.area>
- <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=+7stB07F66gy7f2VANIvvg5E8xLAfpXtFohPRnaTtmY=;
+        b=clcSs8N5FYNOiUdzqoM9QCmYawCKxBnsa2dgVNtW1Fy2Y1TlZNJYZXV9SOI/NQDLGg
+         xTVCM7ZxW1kQKI2TRG2UcBBM3bIxGp1tK5R1ZzCdGpERqZbVBpMX1Ri99U+4hAe4rG1o
+         u7H7JtO2b3ndob2EzGWLQ2S3IdCTzK1rsfDZ8dhmlHkH50h+hyBWQQ/CYmtRk2JhDbpJ
+         sBFznuN2tdCnPHEGvgImvsNJYbB/fKaSrttyhDElr3QYH8G3kjbi2R1VpSHgSqi5/Sn1
+         EqCps7+KS2uQGBfdKA3GWE59abjylo0w30h2HLkXAc5qwDO1+mDRhyBz//ijBOPJJINP
+         Dw0A==
+X-Gm-Message-State: AOAM533X+0vMkA/24Jrb2BkMT/6C+Do1dPXXPOhHgcOiqs9/mpbF6F3Y
+        yTeB0f+tnDk8tZkITesgMr5RnGdAxNENr4aleyA=
+X-Google-Smtp-Source: ABdhPJwY1D3h7V5MHnZOmyNzPYCobsd1mMk6JYbhfyblVkWwdST0DBL7VM9P3qB9mgRVm87RSwskLoWaZaxK9HrC9NA=
+X-Received: by 2002:a25:e70d:: with SMTP id e13mr58689415ybh.24.1641304292868;
+ Tue, 04 Jan 2022 05:51:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
+Received: by 2002:a5b:f10:0:0:0:0:0 with HTTP; Tue, 4 Jan 2022 05:51:32 -0800 (PST)
+Reply-To: michelmadi01@gmail.com
+From:   Mr Michel Madi <ousmaneouedraogo05@gmail.com>
+Date:   Tue, 4 Jan 2022 13:51:32 +0000
+Message-ID: <CA+u7ZgSnVSJ4B5jscL7RiqPZ7vs2oQWV3ygY3oJVv4dnyH5-rg@mail.gmail.com>
+Subject: Request
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 01, 2022 at 05:39:45PM +0000, Trond Myklebust wrote:
-...
-> 
-> Fair enough. As long as someone is working on a solution, then I'm
-> happy. Just a couple of things:
-> 
-> Firstly, we've verified that the cond_resched() in the bio loop does
-> suffice to resolve the issue with XFS, which would tend to confirm what
-> you're saying above about the underlying issue being the ioend chain
-> length.
-> 
-> Secondly, note that we've tested this issue with a variety of older
-> kernels, including 4.18.x, 5.1.x and 5.15.x, so please bear in mind
-> that it would be useful for any fix to be backward portable through the
-> stable mechanism.
-> 
+Dear Friend,
 
-I've sent a couple or so different variants of this in the past. The
-last I believe was here [1], but still never seemed to go anywhere
-(despite having reviews on the first couple patches). That one was
-essentially a sequence of adding a cond_resched() call in the iomap code
-to address the soft lockup warning followed by capping the ioend size
-for latency reasons.
+Let me start by introducing myself, I am Mr Michel Madi Manager of
+Bank Of Africa Burkina Faso.
 
-Brian
+I am writing you this letter based on the latest development at my
+Department which I will like to bring to your personal edification.
+(7.5 million U.S Dollars transfer claims).
 
-[1] https://lore.kernel.org/linux-xfs/20210517171722.1266878-1-bfoster@redhat.com/
+This is a legitimate transaction and I agreed to offer you 40% of this
+money as my foreign partner after confirmation of the fund in your
+bank account, if you are interested, get back to me with the following
+details below.
 
-> 
-> Thanks, and Happy New Year!
-> 
->   Trond
-> 
-> -- 
-> Trond Myklebust
-> Linux NFS client maintainer, Hammerspace
-> trond.myklebust@hammerspace.com
-> 
-> 
+(1)Your age........
 
+(2)Your occupation.....
+
+(3)Your marital status.....
+
+(4)Your full residential address.......
+
+(5)Your private phone and fax number and your complete name.......
+
+As soon as I receive these data's, I will forward to you the
+application form which you will complete and send to the bank to
+commence the processing of the transfer, you can get back to me
+through this my private email address (michelmadi01@gmail.com)
+
+
+Best Regard
+Mr. Michel Madi
