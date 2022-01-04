@@ -2,97 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB082484654
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFD74846B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:11:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235603AbiADRA7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 12:00:59 -0500
-Received: from mga03.intel.com ([134.134.136.65]:3496 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234144AbiADRA7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 12:00:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641315659; x=1672851659;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=X6xbl59nYo7TcjzEql3Y63Xhgv2KDDu7I5UBZu7/Nvc=;
-  b=SiID7IuhFhdXHez/6cpCW4OVhyr4sSVe8qxxyqtlalIfp0kjRIXyXpT6
-   E3vJowgYDuavgTV/20l115/yT5bPve9oHI0TuSzN8TOINVdqz0Y0adrRG
-   oO2wGHGRTggnjked7Hi/+JXyKUX9h3LFO0u67UytORsiwA2D9D5YTpdBU
-   qIE58R+LN0yLS2NTLsK82Vizti9Gh5DXANWrBSwGRofCATh12oEKqvK1A
-   xrlksXDrrLllAshsWclW14pMDycN6AO8OeRgS4tS1dZcNg8jKLQNqCmSU
-   NHMo0tXG/+/lujOva2R0l3OoxNqCsmMzr5fV5Wi7qL4bHvpJM7FEUjirR
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10216"; a="242215552"
-X-IronPort-AV: E=Sophos;i="5.88,261,1635231600"; 
-   d="scan'208";a="242215552"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2022 09:00:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,261,1635231600"; 
-   d="scan'208";a="620710371"
-Received: from fmsmsx605.amr.corp.intel.com ([10.18.126.85])
-  by orsmga004.jf.intel.com with ESMTP; 04 Jan 2022 09:00:58 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 4 Jan 2022 09:00:58 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 4 Jan 2022 09:00:57 -0800
-Received: from fmsmsx610.amr.corp.intel.com ([10.18.126.90]) by
- fmsmsx610.amr.corp.intel.com ([10.18.126.90]) with mapi id 15.01.2308.020;
- Tue, 4 Jan 2022 09:00:57 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Guilherme G. Piccoli" <kernel@gpiccoli.net>
-Subject: RE: pstore/ramoops - why only collect a partial dmesg?
-Thread-Topic: pstore/ramoops - why only collect a partial dmesg?
-Thread-Index: AQHX/MKP8AekIclEL0GvU4ZDFIVyq6xR+V6AgAFdcoD//8ds4A==
-Date:   Tue, 4 Jan 2022 17:00:57 +0000
-Message-ID: <a361c64213e7474ea39c97f7f7bd26ec@intel.com>
-References: <a21201cf-1e5f-fed1-356d-42c83a66fa57@igalia.com>
- <2d1e9afa38474de6a8b1efc14925d095@intel.com>
- <0ca4c27a-a707-4d36-9689-b09ef715ac67@igalia.com>
-In-Reply-To: <0ca4c27a-a707-4d36-9689-b09ef715ac67@igalia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.6.200.16
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S233231AbiADRLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 12:11:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35950 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231733AbiADRLP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jan 2022 12:11:15 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A90C061761;
+        Tue,  4 Jan 2022 09:11:15 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id gj24so31933202pjb.0;
+        Tue, 04 Jan 2022 09:11:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UboeUmb8H0AVGAmewa2oS6rOO216gnmYoMnDmA4f5dg=;
+        b=CboQD2EBoXiAlB4NVewyVjgWRsGkcg5jedETFZOWB+mnMGz9VnOySZwfmCZTWhmywq
+         L7QYy4gZiGqOJL5eyynTgYHDhJTMXSLi25CLTKG8SLRC0H5CgE8KQptXaJzzKYIIWt5f
+         Nvv2DpTURZzHGAzxAMcKGwZfoTwXP+3KB+VXaL1UK4ywHkDx9UKu3nMR7qU2S2ONJQtT
+         ysEhRs2tkZ8HZ9yB9gVPnaiR9yI0MwbDr1pudlucXGLhAjM116X7UNPzam2yzYJxMlpa
+         42lWjF8CsPEPugCs70iBmBRLWY5zYDodkRrkVml+NiIypt8Ggf/gBkj32SHJx3lxjA56
+         lQQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UboeUmb8H0AVGAmewa2oS6rOO216gnmYoMnDmA4f5dg=;
+        b=z5qqLVc1G2SquOvBxqpKHXeN/4BTp5KPWlwkie9kkAA9PIrCx/WppHOitpndEHw7kZ
+         qHyamUhUq8eeq2stUuAxd82asD1beiVw8nZ0p/d95fPcbRuL2l7paXeKHfjg4hRuIwyl
+         VNPpw/eR/CkTbiUzY7i5B+rCuun4qnCk2C3jvRg1W2hjFlgsneNbZEilG15QL26C4yd+
+         pq6NkxSTE4gQ3x9DT8A89T/9tEg2lWPJu1IHAi4nEb0ViBJ/K9vwdO/b57PIhgH459jD
+         Ea8Tzb29qRbtqXyvQBJ2xGYgEQlIEvdTgY17xJrmWcfKJxyD9cbRPAHH05tCkksr1QrY
+         tDiQ==
+X-Gm-Message-State: AOAM53194y2G23nEYBZAipFbM6as/rjUov5QZVwt69+if50p/BQw5/8S
+        RXD+kRW2C+TwLrrehBFxpvrObL6gAZg=
+X-Google-Smtp-Source: ABdhPJxy+peU+s5QAQimkKKq9pVTzjQlCisLmQBQbn2isAYCP/wA1mD4Xck0RuwvePEHpE6p0JFnqg==
+X-Received: by 2002:a17:902:e282:b0:148:ef58:10d8 with SMTP id o2-20020a170902e28200b00148ef5810d8mr51800506plc.116.1641316274749;
+        Tue, 04 Jan 2022 09:11:14 -0800 (PST)
+Received: from laptop.hsd1.wa.comcast.net ([2601:600:8500:5f14:bd71:fea:c430:7b0a])
+        by smtp.gmail.com with ESMTPSA id g16sm40746591pfv.159.2022.01.04.09.11.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jan 2022 09:11:14 -0800 (PST)
+From:   Andrei Vagin <avagin@gmail.com>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>
+Subject: [PATCH] fs/pipe: use kvcalloc to allocate a pipe_buffer array
+Date:   Tue,  4 Jan 2022 09:10:58 -0800
+Message-Id: <20220104171058.22580-1-avagin@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBIaSBUb255LCB0aGFua3MgYSBsb3QgZm9yIHlvdXIgcmVzcG9uc2UhIEl0IG1ha2VzIHNlbnNl
-IGluZGVlZCwgYnV0IGluDQo+IG15IGNhc2UsIGZvciBleGFtcGxlLCBJIGhhdmUgYSAibG9nX2J1
-Zl9sZW49NE0iLCBidXQgY2Fubm90IGFsbG9jYXRlIGENCj4gNE0gcmVjb3JkX3NpemUgLSB3aGVu
-IEkgdHJ5IHRoYXQsIEkgY2FuIG9ubHkgc2VlIHBhZ2VfYWxsb2Mgc3Bld3MgYW5kDQo+IHBzdG9y
-ZS9yYW1vb3BzIGRvZXNuJ3Qgd29yay4gU28sIEkgY291bGQgYWxsb2NhdGUgMk0gYW5kIHRoYXQg
-d29ya3MNCj4gZmluZSwgYnV0IEkgdGhlbiBsb3NlIGhhbGYgb2YgbXkgZG1lc2cgaGVoDQo+IEhl
-bmNlIG15IHF1ZXN0aW9uLg0KPg0KPiBJZiB0aGVyZSdzIG5vIHNwZWNpYWwgcmVhc29uLCBJIGd1
-ZXNzIHdvdWxkIG1ha2Ugc2Vuc2UgdG8gYWxsb3cgcmFtb29wcw0KPiB0byBzcGxpdCB0aGUgZG1l
-c2csIHdoYXQgZG8geW91IHRoaW5rPw0KDQpHdWlsaGVybWUsDQoNCkxpbnV4IGlzIGluZGVlZCBz
-b21ld2hhdCByZWx1Y3RhbnQgdG8gaGFuZCBvdXQgYWxsb2NhdGlvbnMgPiAyTUIuIDotKA0KDQpE
-byB5b3UgcmVhbGx5IG5lZWQgdGhlIHdob2xlIGRtZXNnIGluIHRoZSBwc3RvcmUgZHVtcD8gIFRo
-ZSBleHBlY3RhdGlvbg0KaXMgdGhhdCBzeXN0ZW1zIHJ1biBub3JtYWxseSBmb3IgYSB3aGlsZS4g
-RHVyaW5nIHRoYXQgdGltZSBjb25zb2xlIGxvZ3MgYXJlDQpzYXZlZCBvZmYgdG8gL3Zhci9sb2cv
-bWVzc2FnZXMuDQoNCldoZW4gdGhlIHN5c3RlbSBjcmFzaGVzLCB0aGUgbGFzdCBwYXJ0ICh0aGUg
-aW50ZXJlc3RpbmcgYml0ISkgb2YgdGhlIGNvbnNvbGUNCmxvZyBpcyBsb3N0LiAgVGhlIHB1cnBv
-c2Ugb2YgcHN0b3JlIGlzIHRvIHNhdmUgdGhhdCBsYXN0IGJpdC4NCg0KU28gd2hpbGUgeW91IGNv
-dWxkIGFkZCBjb2RlIHRvIHJhbW9vcHMgdG8gc2F2ZSBtdWx0aXBsZSAyTUIgY2h1bmtzLCBpdA0K
-ZG9lc24ndCBzZWVtICh0byBtZSkgdGhhdCBpdCB3b3VsZCBhZGQgbXVjaCB2YWx1ZS4NCg0KLVRv
-bnkNCg==
+Right now, kcalloc is used to allocate a pipe_buffer array.  The size of
+the pipe_buffer struct is 40 bytes. kcalloc allows allocating reliably
+chunks with sizes less or equal to PAGE_ALLOC_COSTLY_ORDER (3). It means
+that the maximum pipe size is 3.2MB in this case.
+
+In CRIU, we use pipes to dump processes memory. CRIU freezes a target
+process, injects a parasite code into it and then this code splices
+memory into pipes. If a maximum pipe size is small, we need to
+do many iterations or create many pipes.
+
+kvcalloc attempt to allocate physically contiguous memory, but upon
+failure, fall back to non-contiguous (vmalloc) allocation and so it
+isn't limited by PAGE_ALLOC_COSTLY_ORDER.
+
+The maximum pipe size for non-root users is limited by
+the /proc/sys/fs/pipe-max-size sysctl that is 1MB by default, so only
+the root user will be able to trigger vmalloc allocations.
+
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+---
+ fs/pipe.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 6d4342bad9f1..45565773ec33 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -802,7 +802,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
+ 	if (too_many_pipe_buffers_hard(user_bufs) && pipe_is_unprivileged_user())
+ 		goto out_revert_acct;
+ 
+-	pipe->bufs = kcalloc(pipe_bufs, sizeof(struct pipe_buffer),
++	pipe->bufs = kvcalloc(pipe_bufs, sizeof(struct pipe_buffer),
+ 			     GFP_KERNEL_ACCOUNT);
+ 
+ 	if (pipe->bufs) {
+@@ -845,7 +845,7 @@ void free_pipe_info(struct pipe_inode_info *pipe)
+ 	}
+ 	if (pipe->tmp_page)
+ 		__free_page(pipe->tmp_page);
+-	kfree(pipe->bufs);
++	kvfree(pipe->bufs);
+ 	kfree(pipe);
+ }
+ 
+@@ -1260,8 +1260,7 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+ 	if (nr_slots < n)
+ 		return -EBUSY;
+ 
+-	bufs = kcalloc(nr_slots, sizeof(*bufs),
+-		       GFP_KERNEL_ACCOUNT | __GFP_NOWARN);
++	bufs = kvcalloc(nr_slots, sizeof(*bufs), GFP_KERNEL_ACCOUNT);
+ 	if (unlikely(!bufs))
+ 		return -ENOMEM;
+ 
+@@ -1288,7 +1287,7 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+ 	head = n;
+ 	tail = 0;
+ 
+-	kfree(pipe->bufs);
++	kvfree(pipe->bufs);
+ 	pipe->bufs = bufs;
+ 	pipe->ring_size = nr_slots;
+ 	if (pipe->max_usage > nr_slots)
+-- 
+2.33.1
+
