@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC89A48470D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4895D48472A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 18:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235802AbiADRio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 12:38:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42270 "EHLO
+        id S235927AbiADRnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 12:43:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234295AbiADRin (ORCPT
+        with ESMTP id S235916AbiADRnz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 12:38:43 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12DE1C061784
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 09:38:43 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id n16so27594076plc.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 09:38:43 -0800 (PST)
+        Tue, 4 Jan 2022 12:43:55 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E5CC061761
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jan 2022 09:43:55 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id 8so33315310pgc.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jan 2022 09:43:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=lyYzwxTZWc2pKk20hwF7g02tZU/8D7vFzmqot46zr3o=;
-        b=hF4kd1Mq//yjpl61nrYwvKMLJT6MIhV0E6IJ7zAD3JWlI+Lf9Kl7EjPWqG9SBDfEF8
-         bLQriumtvq/d4LPMxq+QOQ59vvcAi7NGeWaxhSlxlkxdhBfO29QiUCBdFlPXpq95IOxu
-         JnrHN+97F5CEcTUWcX51rjIW0pyoQQer1CQy1E5p5jQtDlIK/mVO/JhHG7vsEQcySXvf
-         BNaUi94Me+iu/Cekap3IlPAukuOJezwMa5QK5Oa7ly7GCgO/RioM5k2JBuseJG/0A/de
-         MBbrQnE1pKQwoHwCb9W1/cXrW4NS+qeUQ6HoMhdMIjuDjY1Jis5Xz1s308oEz41ERKbt
-         +qzg==
+        bh=13+cbru1EicSyFl290RL62qNhQ55+dHM2uIjjFzOwWQ=;
+        b=qiqd4ZBl5BqJHPRL1WkKqev6zYNCBKXygXrnDR+B8P5U+ncr+nyYGcNLR7VtJRMbR+
+         nu+XvQR0ZvTHDgijE3+Ephw/fASHy6xXWP0G97pDtjkfz1dKRsQLmc6PexXKZ6eOiTmr
+         wLjrAbgjf1xpI3WYhgSKqeScUoNRXJvAlDnLd371vsx/3pwzIE9KXiKfaj3I/ZdHjqA8
+         xBpOOwl5sZ+x9RvltjE0m8jfdToQt4TESxL7mb+P6lBPBE7kEi7z47aEbg/ZFbrTwxVh
+         thDTi9pkTIUf/VFrmufk4T+y2xu0pNllCtxK03hhz2Xp5v22QQLi5JXx3XoNiDlljx2j
+         eUEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=lyYzwxTZWc2pKk20hwF7g02tZU/8D7vFzmqot46zr3o=;
-        b=GIQBPIUmglvjjsAaUfm1aFWcPlR+9k2bFWHmdkh/8hD1NMdg0hi958Ej4CDb4A2urc
-         uFiPi2X5fFKPTymPKKtHCGCJLmiaIpou7Qnb4r0bUjl5X5uEp6+pSqgDpeFBwwA0d2CX
-         BPuDwZrhUwwKBJwsVTHhc5DEo321CAN1rwKXpib3cBilzTrt2VQEPDtaRY+mIFReMsQ2
-         iz4vdHLgOsXUXHDrOhFFmHniaPg0rVKff7cD3G2rUc40SU0oATuZ9D8NnqyL5AFWP3aE
-         pNvzQeiat2ioVcoPJ6FawU2irxSofP6Jz6wrO579PHIHxj1cjasNlmIZdzWXrlDmp5h4
-         0bkw==
-X-Gm-Message-State: AOAM533XYlEJwiofOQ4zTSqjDe0YmuHPVV5PGjuCX0DHQ5X9EDXOrXYe
-        Hy6/3jm68u7shJ/aQ6zngGbj1g==
-X-Google-Smtp-Source: ABdhPJzjgo+EqH45rd3keKS/UyOltBLQmBVP2JYcV5J6T2Al78JIvydxac3UZxoz6wC2BU8T/FSzTQ==
-X-Received: by 2002:a17:90b:4d86:: with SMTP id oj6mr61729268pjb.185.1641317922423;
-        Tue, 04 Jan 2022 09:38:42 -0800 (PST)
+        bh=13+cbru1EicSyFl290RL62qNhQ55+dHM2uIjjFzOwWQ=;
+        b=4M9BmZZSBYTgh4Kx4Yq1qYjH6qv3HFXsAFkLRDcpshzIS5as87HQ3LJbt91Nw7gJsu
+         eCPI8R2nM16PWER0imywFsw2rdejdqYRnuvGJkcO7kGy39F/AgqJmlhBk5aWnRSkOy0i
+         OwuEZ4dM8Uxesfd9S83+HZ3sjOXuyJBMHwL4mw2aLBmawYDW2/tRh6sTcsu2RjohGwSM
+         FuFZd+mRrEcv8yHTJ8bWoEQzc1soox9LKX0tNHUddMGAwHvQGXVcaes7xe5+Efl+/mqU
+         Lw9CihcZSbU6MTp/8DQJz+DLnDFxNVk7tYlAe2FofjkFU1bdFGiI84w3Ca8nMPyxjKoj
+         ox+g==
+X-Gm-Message-State: AOAM533YcoVxvoTy1V9EOdJgdKNYDB7L+oWWQQGMlyIR//cygcZvvyA5
+        /G2xlZlwdcs3qISlldykiNexXw==
+X-Google-Smtp-Source: ABdhPJzQtrrXhdr9JNHtClHOyyxM1wCawkxYoqgHsdkj3QcxdAXEJm9cAZOEh3vO62LsqFUjGuIFog==
+X-Received: by 2002:a63:ba47:: with SMTP id l7mr46031570pgu.75.1641318234513;
+        Tue, 04 Jan 2022 09:43:54 -0800 (PST)
 Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id k23sm407842pji.3.2022.01.04.09.38.41
+        by smtp.gmail.com with ESMTPSA id n14sm34881764pgd.80.2022.01.04.09.43.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 09:38:41 -0800 (PST)
-Date:   Tue, 4 Jan 2022 17:38:38 +0000
+        Tue, 04 Jan 2022 09:43:53 -0800 (PST)
+Date:   Tue, 4 Jan 2022 17:43:50 +0000
 From:   Sean Christopherson <seanjc@google.com>
 To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Robert Hoo <robert.hu@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
@@ -72,62 +71,62 @@ Cc:     Robert Hoo <robert.hu@linux.intel.com>, kvm@vger.kernel.org,
         luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
         jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
         david@redhat.com
-Subject: Re: [PATCH v3 kvm/queue 03/16] mm/memfd: Introduce MEMFD_OPS
-Message-ID: <YdSGHnMFV5Mu9vdF@google.com>
+Subject: Re: [PATCH v3 kvm/queue 05/16] KVM: Maintain ofs_tree for fast
+ memslot lookup by file offset
+Message-ID: <YdSHViDXGkjz5t/Q@google.com>
 References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-4-chao.p.peng@linux.intel.com>
- <95d13ac7da32aa1530d6883777ef3279e4ad825d.camel@linux.intel.com>
- <20211231023853.GB7255@chaop.bj.intel.com>
+ <20211223123011.41044-6-chao.p.peng@linux.intel.com>
+ <YcS5uStTallwRs0G@google.com>
+ <20211224035418.GA43608@chaop.bj.intel.com>
+ <YcuGGCo5pR31GkZE@google.com>
+ <20211231022636.GA7025@chaop.bj.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211231023853.GB7255@chaop.bj.intel.com>
+In-Reply-To: <20211231022636.GA7025@chaop.bj.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, Dec 31, 2021, Chao Peng wrote:
-> On Fri, Dec 24, 2021 at 11:53:15AM +0800, Robert Hoo wrote:
-> > On Thu, 2021-12-23 at 20:29 +0800, Chao Peng wrote:
-> > > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > >  
-> > > +static void notify_fallocate(struct inode *inode, pgoff_t start,
-> > > pgoff_t end)
-> > > +{
-> > > +#ifdef CONFIG_MEMFD_OPS
-> > > +	struct shmem_inode_info *info = SHMEM_I(inode);
-> > > +	const struct memfd_falloc_notifier *notifier;
-> > > +	void *owner;
-> > > +	bool ret;
-> > > +
-> > > +	if (!info->falloc_notifier)
-> > > +		return;
-> > > +
-> > > +	spin_lock(&info->lock);
-> > > +	notifier = info->falloc_notifier;
-> > > +	if (!notifier) {
-> > > +		spin_unlock(&info->lock);
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	owner = info->owner;
-> > > +	ret = notifier->get_owner(owner);
-> > > +	spin_unlock(&info->lock);
-> > > +	if (!ret)
-> > > +		return;
-> > > +
-> > > +	notifier->fallocate(inode, owner, start, end);
+> On Tue, Dec 28, 2021 at 09:48:08PM +0000, Sean Christopherson wrote:
+> >KVM handles
+> > reverse engineering the memslot to get the offset and whatever else it needs.
+> > notify_fallocate() and other callbacks are unchanged, though they probably can
+> > drop the inode.
 > > 
-> > I see notifier->fallocate(), i.e. memfd_fallocate(), discards
-> > kvm_memfd_fallocate_range()'s return value. Should it be checked?
+> > E.g. likely with bad math and handwaving on the overlap detection:
+> > 
+> > int kvm_private_fd_fallocate_range(void *owner, pgoff_t start, pgoff_t end)
+> > {
+> > 	struct kvm_memory_slot *slot = owner;
+> > 	struct kvm_gfn_range gfn_range = {
+> > 		.slot	   = slot,
+> > 		.start	   = (start - slot->private_offset) >> PAGE_SHIFT,
+> > 		.end	   = (end - slot->private_offset) >> PAGE_SHIFT,
+> > 		.may_block = true,
+> > 	};
+> > 
+> > 	if (!has_overlap(slot, start, end))
+> > 		return 0;
+> > 
+> > 	gfn_range.end = min(gfn_range.end, slot->base_gfn + slot->npages);
+> > 
+> > 	kvm_unmap_gfn_range(slot->kvm, &gfn_range);
+> > 	return 0;
+> > }
 > 
-> I think we can ignore it, just like how current mmu_notifier does,
-> the return value of __kvm_handle_hva_range is discarded in
-> kvm_mmu_notifier_invalidate_range_start(). Even when KVM side failed,
-> it's not fatal, it should not block the operation in the primary MMU.
+> I understand this KVM side handling, but again one fd can have multiple
+> memslots. How shmem decides to notify which memslot from a list of
+> memslots when it invokes the notify_fallocate()? Or just notify all
+> the possible memslots then let KVM to check? 
 
-If the return value is ignored, it'd be better to have no return value at all so
-that it's clear fallocate() will continue on regardless of whether or not the
-secondary MMU callback succeeds.  E.g. if KVM can't handle the fallocate() for
-whatever reason, then knowing that fallocate() will continue on means KVM should
-mark the VM as dead so that the broken setup cannot be abused by userspace.
+Heh, yeah, those are the two choices.  :-)
+
+Either the backing store needs to support registering callbacks for specific,
+arbitrary ranges, or it needs to invoke all registered callbacks.  Invoking all
+callbacks has my vote; it's much simpler to implement and is unlikely to incur
+meaningful overhead.  _Something_ has to find the overlapping ranges, that cost
+doesn't magically go away if it's pushed into the backing store.
+
+Note, invoking all notifiers is also aligned with the mmu_notifier behavior.
