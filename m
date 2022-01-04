@@ -2,110 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F9E8484764
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 19:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F1148477C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jan 2022 19:08:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236056AbiADSEP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jan 2022 13:04:15 -0500
-Received: from fanzine2.igalia.com ([213.97.179.56]:43254 "EHLO
-        fanzine2.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233070AbiADSEO (ORCPT
+        id S234528AbiADSIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jan 2022 13:08:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49122 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232991AbiADSIb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jan 2022 13:04:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
-        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=gQt+rsQM2B7+yEGYuuKhCQquw5+qO0kTX2uHBXUI904=; b=kdEqKQB6hlKRYbeVXE/Xa0r/vi
-        QSuS/8K5Lx/wy6dDYwEjQPE9CVIiSoP1fupEeKKvT67w83NGtO7LOujyggqmgJo8ayvLCCtN9DSYB
-        x7tUMXJM8PdUjzlVKtc5fKorLPFHGym3XuzKQOUJZaoeZuJRjRnewEcxtrx7aqj5FOgKcjuGI6kmV
-        8PhALYlsb/KPOy3t6lcMdDyFpk20a/wBqYdzZRRuplOcuhzUOnJow/mh5P5jWigwb++HLnBgPCxFx
-        +k74jDFDsEVI0FKDAuHmVIJiVSZ+r+0eSq8DUuZn+7Lbc/8r4gNFvJ36qbfjKehOWoS8W9UuYupRl
-        e9C+ck8A==;
-Received: from 200-153-146-242.dsl.telesp.net.br ([200.153.146.242] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1n4oAL-0009Yn-2h; Tue, 04 Jan 2022 19:04:09 +0100
-Subject: Re: pstore/ramoops - why only collect a partial dmesg?
-To:     "Luck, Tony" <tony.luck@intel.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Guilherme G. Piccoli" <kernel@gpiccoli.net>
-References: <a21201cf-1e5f-fed1-356d-42c83a66fa57@igalia.com>
- <2d1e9afa38474de6a8b1efc14925d095@intel.com>
- <0ca4c27a-a707-4d36-9689-b09ef715ac67@igalia.com>
- <a361c64213e7474ea39c97f7f7bd26ec@intel.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Message-ID: <c5a04638-90c2-8ec0-4573-a0e5d2e24b6b@igalia.com>
-Date:   Tue, 4 Jan 2022 15:03:54 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Tue, 4 Jan 2022 13:08:31 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B13F8C061761;
+        Tue,  4 Jan 2022 10:08:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=QuiQtYWCOIprm8FAAD7U5pdcjxOOYewWBK2lmqcEfX0=; b=TTIrUqmUVqa5+k9EQA/jSeWigF
+        LCPjCN841vZufWrpxL1fQAOJ/ifGDVqYA6XhIqnJnxw39jaACYzfpFm32ZYzMSd5mJ9aGTJmXvcOd
+        v5XeUzV12BaODeOndPU9ejTjQeoBOv244LHG/+FEHjieM/k1At/fl+U+/vhvRhVnSigdvK7yfW+82
+        1uljqrg4ah1M41Cjd/eeMEMROFX8t3OxzGEx/n0oib0D6UugVu4XTuweXGNvKYne9AJ0bp0EsUTWb
+        ugm4LEr82EzRrZZkL5pr2pkEIwsWShvtlXrLgZQBujQjdWyKQh6+oU/gQpN61XhiCgVSCQhBS3W95
+        e5sbtGgw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n4oES-00DsoE-CA; Tue, 04 Jan 2022 18:08:24 +0000
+Date:   Tue, 4 Jan 2022 18:08:24 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "hch@infradead.org" <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "bfoster@redhat.com" <bfoster@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "trondmy@kernel.org" <trondmy@kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
+Message-ID: <YdSNGAupnxF/ouis@casper.infradead.org>
+References: <20211230193522.55520-1-trondmy@kernel.org>
+ <Yc5f/C1I+N8MPHcd@casper.infradead.org>
+ <6f746786a3928844fbe644e7e409008b4f50c239.camel@hammerspace.com>
+ <20220101035516.GE945095@dread.disaster.area>
+ <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
+ <20220103220310.GG945095@dread.disaster.area>
+ <9f51fa6169f4c67d54dd8563b52c540c94c7703a.camel@hammerspace.com>
+ <20220104012215.GH945095@dread.disaster.area>
+ <YdPyhpdxykDscMtJ@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <a361c64213e7474ea39c97f7f7bd26ec@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YdPyhpdxykDscMtJ@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 04/01/2022 14:00, Luck, Tony wrote:
-> [...] 
-> Guilherme,
+On Mon, Jan 03, 2022 at 11:08:54PM -0800, hch@infradead.org wrote:
+> > +	/*
+> > +	 * Limit ioend bio chain lengths to minimise IO completion latency. This
+> > +	 * also prevents long tight loops ending page writeback on all the pages
+> > +	 * in the ioend.
+> > +	 */
+> > +	if (wpc->ioend->io_size >= 4096 * PAGE_SIZE)
+> > +		return false;
 > 
-> Linux is indeed somewhat reluctant to hand out allocations > 2MB. :-(
-> 
-> Do you really need the whole dmesg in the pstore dump?  The expectation
-> is that systems run normally for a while. During that time console logs are
-> saved off to /var/log/messages.
-> 
-> When the system crashes, the last part (the interesting bit!) of the console
-> log is lost.  The purpose of pstore is to save that last bit.
-> 
-> So while you could add code to ramoops to save multiple 2MB chunks, it
-> doesn't seem (to me) that it would add much value.
-> 
+> And this stops making sense with the impending additions of large folio
+> support.  I think we need to count the pages/folios instead as the
+> operations are once per page/folio.
 
-Thanks again Tony, for the interesting points. So, I partially agree
-with you: indeed, in a normal situation we have all messages collected
-by some userspace daemon, and when some issue/oops happens, we can rely
-on pstore to collect the latest portion of the log buffer (2M is a
-bunch!) and "merge" that with the previously collected portion, likely
-saved in a /var/log/ file.
+I think it's fine to put in a fix like this now that's readily
+backportable.  For folios, I can't help but think we want a
+restructuring to iterate per-extent first, then per-folio and finally
+per-sector instead of the current model where we iterate per folio,
+looking up the extent for each sector.
 
-The problem is that our use case is a bit different: the idea is to rely
-on pstore/ramoops to collect the most information we can in a panic
-event, without the need of kdump. The latter is a pretty
-comprehensive/complete approach, but requires a bunch of memory reserved
-- it's a bit too much if we want just the task list, backtraces and
-memory state of the system, for example. And for that...we have the
-"panic_print" setting!
-
-There lies the issue: if I set panic_print to dump all backtraces, task
-info and memory state in a panic event, that information + the
-panic/oops and some previous relevant stuff, does it all fit in the 2M
-chunk? Likely so, but *if it doesn't fit*, we may lose _exactly_ the
-most important piece, which is the panic cause.
-
-The same way I have the "log_buf_len" tuning to determine how much size
-my log buffer has, I'd like to be able to effectively collect that much
-information using pstore/ramoops. Requiring that amount of space in an
-efi-pstore, for example, would be indeed really crazy! But ramoops is
-just a way for using some portion of the system RAM to save the log
-buffer, so I feel it'd be interesting to be able to properly collect
-full logs there, no matter the size of the logs. Of course, I'd like to
-see that as a setting, because the current behavior is great/enough for
-most of users I guess, as you pointed, and there's no need to change it
-by default.
-
-Let me know your thoughts and maybe others also have good opinions about
-that!
-Cheers,
-
-
-Guilherme
+Particularly for the kind of case Trond is talking about here; when we
+want to fsync(), as long as the entire folio is Uptodate, we want to
+write the entire thing back.  Doing it in portions and merging them back
+together seems like a lot of wasted effort.
