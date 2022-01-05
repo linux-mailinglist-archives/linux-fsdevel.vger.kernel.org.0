@@ -2,361 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF406485A89
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 22:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07DB0485AF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 22:47:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244395AbiAEVRu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jan 2022 16:17:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51052 "EHLO
+        id S244576AbiAEVra (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jan 2022 16:47:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244377AbiAEVRt (ORCPT
+        with ESMTP id S244577AbiAEVrT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jan 2022 16:17:49 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF947C061212
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 13:17:48 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id s1so294660pga.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 13:17:48 -0800 (PST)
+        Wed, 5 Jan 2022 16:47:19 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DDF1C061245;
+        Wed,  5 Jan 2022 13:47:19 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id n30-20020a17090a5aa100b001b2b6509685so396921pji.3;
+        Wed, 05 Jan 2022 13:47:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ncCC9L0WeEGzChuvJR0/68WabesH5+cAdTHSnuR8eYQ=;
-        b=fRuWCBZ33gONpGtMPl8wsjLgCQiQy7Wmiy3X1oq/2DBXxwzbc4JDSM+0dbA2bKYlRV
-         Jq/bdCQ6RUtk4h7PVQuIl80f7fC6jXCldD9VSMLz9HFNzNZTHc1lfTZtw3zL8aem+raD
-         PTrMTA9G9XJj0okCXm8iQlPaEceCAnAllllMDBzrdP4NrPOc30RmhB9ceW6DJjO0feeG
-         hgtQNE4oIj03MDPpj9yEQi3mi4VsbDUmbwHNCxgs2AXWAyUFoPKzAN89Oe/pSF+YfQ3f
-         1SjTD/MJrDfctrNx4II3BgN9/kWH6/zdeK9hrvd725mro2a3Qha4nanF0fk3yOsUSYNY
-         2Ezg==
+        bh=WXiynHfff1QyF0kCg/WK+39NSHycE0ztcW8/CVkTVZM=;
+        b=mfMSLyIf3L2aI8kNRaikm3oksBjAqBiunrJwRV35L5TRuqDs3ccaJmDyXqjYpauqRU
+         thnDTlMs+sbaPVD6JOsnbnMi0dss2rugbgpoHKzQ90E82kv+6X9sphMneP4cxTz/dGak
+         zbB9mykmpixaCb0ecoemKNWcOR/e0dOf8wH4FxTVzRDzTsbVFfiIs/0E9mppEl2I9J/L
+         h/bG+MPa4+yFqHK3Ak1wcBEMS11CCT3+g9UhXE8wyQtKGNO5FcYGbxIZ7GKhwdDb6dCG
+         d4dmL6BY6TgP1ZwKKbUh+spoS7py6f+qCFtEM4wgkAfKMviCG7pF48XMs0YR49wegJ+S
+         gTqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ncCC9L0WeEGzChuvJR0/68WabesH5+cAdTHSnuR8eYQ=;
-        b=WDZ28ZAT38PtfTGWUZVqRIVgPUQ//UPZxENgCgWTDvFZ4au2d5LZKoE/Hn0Ypvhb/b
-         pEml/+LcDfKuqTFokSP/YI+PSX+LmNGdc93pk4LTbv52gUIMoskj7wuwDL+MTk6GRWcN
-         U+cI+pm+qeXm+cWKS5P0xIfnoOU5D3F9Qf10ZhexU+sIu0yYvQ04NR2/XdGTT9BQIR1l
-         iPFw4pH3Ulkft7jVMu0/IdK6XyKCkabJQmxWYdBPkTgK44EsMoYFzRvPB5GsLZvzazjD
-         5N0piqvmz+3oXdKJ2mhkhQ7DPK0nknDy5PunnOBV9cXBTVksO5KmY0eqZugK7L7PrJsO
-         BLdw==
-X-Gm-Message-State: AOAM530v/92Jc92Wo8yPXFWR+Fg+EcF0lLqD0hQvRbz7GxWIBlSiFI+C
-        3S3mODb3eK0coeVLjDENfcgc9ORoz+Kr1yd8R4QP4G+74EY=
-X-Google-Smtp-Source: ABdhPJxgli9znNEolSNy97di7dIxA0jaBSFzjSHHHebIOCoYgJOYK/Ii+cU9k3sIosh4ktBtiagjcEUcU+NH0sLpGo0=
-X-Received: by 2002:a63:ab01:: with SMTP id p1mr1770235pgf.437.1641417468262;
- Wed, 05 Jan 2022 13:17:48 -0800 (PST)
+        bh=WXiynHfff1QyF0kCg/WK+39NSHycE0ztcW8/CVkTVZM=;
+        b=sChHUjHGhKHLaVRAlK/UXYIa1STi20cHQ/5w8fZR0Iy/JsNPXnajMLoohtLAbPN0uN
+         kGiEvo7SIvk9eZL0kPFGRAiFau7Jw1c4BDtZtx3pOi5vaWJoKfgdwf9B+c8sEiGZmunk
+         Xc2VnHEVzbUFXqMfecwL/t7yDVpqwQJfpatSyRuxZRRG0VQVqVRiZd0IMeUoUpHdJFXu
+         qnNQVja8RH4C6xqMvPdVnzjI+nmMrmmFrEU2SdZxsYhpUmoo/qC4ionwGuY0nKNsCWmC
+         gxhv71KGCVeswoqBs54tYLYF/js+w7t5abI/RFoDV9R6AuKNCgMfemY/qo6J9cTkZvTY
+         iNzA==
+X-Gm-Message-State: AOAM5322TUxZRXN5lzNHsqRTykFTloi2Ia5mR7hkWLvP8tJWZvlA1z/W
+        yMS2Vvi1zY0Q2BJl992CYyzqApPQe1KhuEqJqL4=
+X-Google-Smtp-Source: ABdhPJwHFuUGSbUZ7sqlq6GcSKsSc1ildEHYHDGdnIxlCiTdfDDxMW2u4hnH2n62y7jrKV0l6Q3PVNBj41QAoVuUcuE=
+X-Received: by 2002:a17:902:e149:b0:149:9b8e:1057 with SMTP id
+ d9-20020a170902e14900b001499b8e1057mr33484968pla.144.1641419238758; Wed, 05
+ Jan 2022 13:47:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
- <20211226143439.3985960-10-ruansy.fnst@fujitsu.com> <20220105185334.GD398655@magnolia>
-In-Reply-To: <20220105185334.GD398655@magnolia>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 5 Jan 2022 13:17:37 -0800
-Message-ID: <CAPcyv4jYOvK57LqGzvZwyHo=4sEKmdAV1jgCzDw5eeCySPGS6w@mail.gmail.com>
-Subject: Re: [PATCH v9 09/10] xfs: Implement ->notify_failure() for XFS
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        david <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>
+References: <20220104171058.22580-1-avagin@gmail.com> <77862a7a-3fd2-ff2b-8136-93482f98ed3c@gmail.com>
+In-Reply-To: <77862a7a-3fd2-ff2b-8136-93482f98ed3c@gmail.com>
+From:   Andrei Vagin <avagin@gmail.com>
+Date:   Wed, 5 Jan 2022 13:47:08 -0800
+Message-ID: <CANaxB-zM1EhPR1f4tubCQTMEMAuRAtAWYZsWFTVhfeqYMHhKdg@mail.gmail.com>
+Subject: Re: [PATCH] fs/pipe: use kvcalloc to allocate a pipe_buffer array
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 5, 2022 at 10:53 AM Darrick J. Wong <djwong@kernel.org> wrote:
+On Tue, Jan 4, 2022 at 10:54 PM Dmitry Safonov <0x7f454c46@gmail.com> wrote:
 >
-> On Sun, Dec 26, 2021 at 10:34:38PM +0800, Shiyang Ruan wrote:
-> > Introduce xfs_notify_failure.c to handle failure related works, such as
-> > implement ->notify_failure(), register/unregister dax holder in xfs, and
-> > so on.
+> On 1/4/22 17:10, Andrei Vagin wrote:
+> > Right now, kcalloc is used to allocate a pipe_buffer array.  The size of
+> > the pipe_buffer struct is 40 bytes. kcalloc allows allocating reliably
+> > chunks with sizes less or equal to PAGE_ALLOC_COSTLY_ORDER (3). It means
+> > that the maximum pipe size is 3.2MB in this case.
 > >
-> > If the rmap feature of XFS enabled, we can query it to find files and
-> > metadata which are associated with the corrupt data.  For now all we do
-> > is kill processes with that file mapped into their address spaces, but
-> > future patches could actually do something about corrupt metadata.
+> > In CRIU, we use pipes to dump processes memory. CRIU freezes a target
+> > process, injects a parasite code into it and then this code splices
+> > memory into pipes. If a maximum pipe size is small, we need to
+> > do many iterations or create many pipes.
 > >
-> > After that, the memory failure needs to notify the processes who are
-> > using those files.
+> > kvcalloc attempt to allocate physically contiguous memory, but upon
+> > failure, fall back to non-contiguous (vmalloc) allocation and so it
+> > isn't limited by PAGE_ALLOC_COSTLY_ORDER.
 > >
-> > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> > ---
-> >  fs/xfs/Makefile             |   1 +
-> >  fs/xfs/xfs_buf.c            |  15 +++
-> >  fs/xfs/xfs_fsops.c          |   3 +
-> >  fs/xfs/xfs_mount.h          |   1 +
-> >  fs/xfs/xfs_notify_failure.c | 189 ++++++++++++++++++++++++++++++++++++
-> >  fs/xfs/xfs_notify_failure.h |  10 ++
-> >  6 files changed, 219 insertions(+)
-> >  create mode 100644 fs/xfs/xfs_notify_failure.c
-> >  create mode 100644 fs/xfs/xfs_notify_failure.h
+> > The maximum pipe size for non-root users is limited by
+> > the /proc/sys/fs/pipe-max-size sysctl that is 1MB by default, so only
+> > the root user will be able to trigger vmalloc allocations.
 > >
-> > diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-> > index 04611a1068b4..389970b3e13b 100644
-> > --- a/fs/xfs/Makefile
-> > +++ b/fs/xfs/Makefile
-> > @@ -84,6 +84,7 @@ xfs-y                               += xfs_aops.o \
-> >                                  xfs_message.o \
-> >                                  xfs_mount.o \
-> >                                  xfs_mru_cache.o \
-> > +                                xfs_notify_failure.o \
-> >                                  xfs_pwork.o \
-> >                                  xfs_reflink.o \
-> >                                  xfs_stats.o \
-> > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > index bbb0fbd34e64..d0df7604fa9e 100644
-> > --- a/fs/xfs/xfs_buf.c
-> > +++ b/fs/xfs/xfs_buf.c
-> > @@ -19,6 +19,7 @@
-> >  #include "xfs_errortag.h"
-> >  #include "xfs_error.h"
-> >  #include "xfs_ag.h"
-> > +#include "xfs_notify_failure.h"
-> >
-> >  static struct kmem_cache *xfs_buf_cache;
-> >
-> > @@ -1892,6 +1893,8 @@ xfs_free_buftarg(
-> >       list_lru_destroy(&btp->bt_lru);
-> >
-> >       blkdev_issue_flush(btp->bt_bdev);
-> > +     if (btp->bt_daxdev)
-> > +             dax_unregister_holder(btp->bt_daxdev);
-> >       fs_put_dax(btp->bt_daxdev);
-> >
-> >       kmem_free(btp);
-> > @@ -1946,6 +1949,18 @@ xfs_alloc_buftarg(
-> >       btp->bt_dev =  bdev->bd_dev;
-> >       btp->bt_bdev = bdev;
-> >       btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off);
-> > +     if (btp->bt_daxdev) {
-> > +             dax_write_lock(btp->bt_daxdev);
-> > +             if (dax_get_holder(btp->bt_daxdev)) {
-> > +                     dax_write_unlock(btp->bt_daxdev);
-> > +                     xfs_err(mp, "DAX device already in use?!");
-> > +                     goto error_free;
-> > +             }
-> > +
-> > +             dax_register_holder(btp->bt_daxdev, mp,
-> > +                             &xfs_dax_holder_operations);
-> > +             dax_write_unlock(btp->bt_daxdev);
-> > +     }
-> >
-> >       /*
-> >        * Buffer IO error rate limiting. Limit it to no more than 10 messages
-> > diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
-> > index 33e26690a8c4..d4d36c5bef11 100644
-> > --- a/fs/xfs/xfs_fsops.c
-> > +++ b/fs/xfs/xfs_fsops.c
-> > @@ -542,6 +542,9 @@ xfs_do_force_shutdown(
-> >       } else if (flags & SHUTDOWN_CORRUPT_INCORE) {
-> >               tag = XFS_PTAG_SHUTDOWN_CORRUPT;
-> >               why = "Corruption of in-memory data";
-> > +     } else if (flags & SHUTDOWN_CORRUPT_ONDISK) {
-> > +             tag = XFS_PTAG_SHUTDOWN_CORRUPT;
-> > +             why = "Corruption of on-disk metadata";
-> >       } else {
-> >               tag = XFS_PTAG_SHUTDOWN_IOERROR;
-> >               why = "Metadata I/O Error";
-> > diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> > index 00720a02e761..47ff4ac53c4c 100644
-> > --- a/fs/xfs/xfs_mount.h
-> > +++ b/fs/xfs/xfs_mount.h
-> > @@ -435,6 +435,7 @@ void xfs_do_force_shutdown(struct xfs_mount *mp, int flags, char *fname,
-> >  #define SHUTDOWN_LOG_IO_ERROR        0x0002  /* write attempt to the log failed */
-> >  #define SHUTDOWN_FORCE_UMOUNT        0x0004  /* shutdown from a forced unmount */
-> >  #define SHUTDOWN_CORRUPT_INCORE      0x0008  /* corrupt in-memory data structures */
-> > +#define SHUTDOWN_CORRUPT_ONDISK      0x0010  /* corrupt metadata on device */
-> >
-> >  #define XFS_SHUTDOWN_STRINGS \
-> >       { SHUTDOWN_META_IO_ERROR,       "metadata_io" }, \
-> > diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-> > new file mode 100644
-> > index 000000000000..a87bd08365f4
-> > --- /dev/null
-> > +++ b/fs/xfs/xfs_notify_failure.c
-> > @@ -0,0 +1,189 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2021 Fujitsu.  All Rights Reserved.
-> > + */
-> > +
-> > +#include "xfs.h"
-> > +#include "xfs_shared.h"
-> > +#include "xfs_format.h"
-> > +#include "xfs_log_format.h"
-> > +#include "xfs_trans_resv.h"
-> > +#include "xfs_mount.h"
-> > +#include "xfs_alloc.h"
-> > +#include "xfs_bit.h"
-> > +#include "xfs_btree.h"
-> > +#include "xfs_inode.h"
-> > +#include "xfs_icache.h"
-> > +#include "xfs_rmap.h"
-> > +#include "xfs_rmap_btree.h"
-> > +#include "xfs_rtalloc.h"
-> > +#include "xfs_trans.h"
-> > +
-> > +#include <linux/mm.h>
-> > +#include <linux/dax.h>
-> > +
-> > +struct failure_info {
-> > +     xfs_agblock_t           startblock;
-> > +     xfs_filblks_t           blockcount;
-> > +     int                     mf_flags;
+> > Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+> > Signed-off-by: Andrei Vagin <avagin@gmail.com>
 >
-> Why is blockcount a 64-bit quantity, when the failure information is
-> dealt with on a per-AG basis?  I think "xfs_extlen_t blockcount" should
-> be large enough here.  (I'll get back to this further down.)
+> Good idea!
 >
-> > +};
-> > +
-> > +static pgoff_t
-> > +xfs_failure_pgoff(
-> > +     struct xfs_mount                *mp,
-> > +     const struct xfs_rmap_irec      *rec,
-> > +     const struct failure_info       *notify)
-> > +{
-> > +     uint64_t pos = rec->rm_offset;
+> I wonder if you need to apply this on the top:
 >
-> Nit: indenting ^^^^^ here.
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 45565773ec33..b4ccafffa350 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -605,7 +605,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+>  static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned
+> long arg)
+>  {
+>         struct pipe_inode_info *pipe = filp->private_data;
+> -       int count, head, tail, mask;
+> +       unsigned int count, head, tail, mask;
 >
-> > +
-> > +     if (notify->startblock > rec->rm_startblock)
-> > +             pos += XFS_FSB_TO_B(mp,
-> > +                             notify->startblock - rec->rm_startblock);
-> > +     return pos >> PAGE_SHIFT;
-> > +}
-> > +
-> > +static unsigned long
-> > +xfs_failure_pgcnt(
-> > +     struct xfs_mount                *mp,
-> > +     const struct xfs_rmap_irec      *rec,
-> > +     const struct failure_info       *notify)
-> > +{
-> > +     xfs_agblock_t start_rec = rec->rm_startblock;
-> > +     xfs_agblock_t end_rec = rec->rm_startblock + rec->rm_blockcount;
-> > +     xfs_agblock_t start_notify = notify->startblock;
-> > +     xfs_agblock_t end_notify = notify->startblock + notify->blockcount;
-> > +     xfs_agblock_t start_cross = max(start_rec, start_notify);
-> > +     xfs_agblock_t end_cross = min(end_rec, end_notify);
+>         switch (cmd) {
+>         case FIONREAD:
+> @@ -827,7 +827,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
 >
-> Indenting and rather more local variables than we need?
+>  void free_pipe_info(struct pipe_inode_info *pipe)
+>  {
+> -       int i;
+> +       unsigned int i;
 >
-> static unsigned long
-> xfs_failure_pgcnt(
->         struct xfs_mount                *mp,
->         const struct xfs_rmap_irec      *rec,
->         const struct failure_info       *notify)
-> {
->         xfs_agblock_t                   end_rec;
->         xfs_agblock_t                   end_notify;
->         xfs_agblock_t                   start_cross;
->         xfs_agblock_t                   end_cross;
+>  #ifdef CONFIG_WATCH_QUEUE
+>         if (pipe->watch_queue) {
+> --->8---
 >
->         start_cross = max(rec->rm_startblock, notify->startblock);
->
->         end_rec = rec->rm_startblock + rec->rm_blockcount;
->         end_notify = notify->startblock + notify->blockcount;
->         end_cross = min(end_rec, end_notify);
->
->         return XFS_FSB_TO_B(mp, end_cross - start_cross) >> PAGE_SHIFT;
-> }
->
-> > +
-> > +     return XFS_FSB_TO_B(mp, end_cross - start_cross) >> PAGE_SHIFT;
-> > +}
-> > +
-> > +static int
-> > +xfs_dax_failure_fn(
-> > +     struct xfs_btree_cur            *cur,
-> > +     const struct xfs_rmap_irec      *rec,
-> > +     void                            *data)
-> > +{
-> > +     struct xfs_mount                *mp = cur->bc_mp;
-> > +     struct xfs_inode                *ip;
-> > +     struct address_space            *mapping;
-> > +     struct failure_info             *notify = data;
-> > +     int                             error = 0;
-> > +
-> > +     if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
-> > +         (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-> > +             /* TODO check and try to fix metadata */
-> > +             xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-> > +             return -EFSCORRUPTED;
-> > +     }
-> > +
-> > +     /* Get files that incore, filter out others that are not in use. */
-> > +     error = xfs_iget(mp, cur->bc_tp, rec->rm_owner, XFS_IGET_INCORE,
-> > +                      0, &ip);
-> > +     /* Continue the rmap query if the inode isn't incore */
-> > +     if (error == -ENODATA)
-> > +             return 0;
-> > +     if (error)
-> > +             return error;
-> > +
-> > +     mapping = VFS_I(ip)->i_mapping;
-> > +     if (IS_ENABLED(CONFIG_MEMORY_FAILURE)) {
->
-> Is there a situation where we can receive media failure notices from DAX
-> but CONFIG_MEMORY_FAILURE is not enabled?  (I think the answer is yes?)
+> Otherwise this loop in free_pipe_info() may become lockup on some ugly
+> platforms with INTMAX allocation reachable, I think. I may be wrong :-)
 
-Good catch, yes, I was planning to reuse this notification
-infrastructure for the "whoops you ripped out your CXL card that was
-being used with FSDAX" case. Although, if someone builds the kernel
-with CONFIG_MEMORY_FAILURE=n then I think a lack of notification for
-that case is to be expected? Perhaps CONFIG_FSDAX should just depend
-on CONFIG_MEMORY_FAILURE when that "hot remove" failure case is added.
-For now, CONFIG_MEMORY_FAILURE is the only source of errors.
+This change looks reasonable, it makes types of local variables consistent
+with proper fields of pipe_inode_info. But right now, the maximum pipe size
+is limited by (1<<31) (look at round_pipe_size) and so we don't have a real
+issue here.
 
->
-> > +             pgoff_t off = xfs_failure_pgoff(mp, rec, notify);
-> > +             unsigned long cnt = xfs_failure_pgcnt(mp, rec, notify);
-> > +
-> > +             error = mf_dax_kill_procs(mapping, off, cnt, notify->mf_flags);
-> > +     }
->
-> If so, then we ought to do /something/ besides silently dropping the
-> error, right?  Even if that something is rudely shutting down the fs,
-> like we do for attr/bmbt mappings above?
->
-> What I'm getting at is that I think this function should be:
->
-> #if IS_ENABLED(CONFIG_MEMORY_FAILURE)
-> static int
-> xfs_dax_failure_fn(
->         struct xfs_btree_cur            *cur,
->         const struct xfs_rmap_irec      *rec,
->         void                            *data)
-> {
->         /* shut down if attr/bmbt record like above */
->
->         error = xfs_iget(...);
->         if (error == -ENODATA)
->                 return 0;
->         if (error)
->                 return error;
->
->         off = xfs_failure_pgoff(mp, rec, notify);
->         cnt = xfs_failure_pgcnt(mp, rec, notify);
->
->         error = mf_dax_kill_procs(mapping, off, cnt, notify->mf_flags);
->         xfs_irele(ip);
->         return error;
-> }
-> #else
-> static int
-> xfs_dax_failure_fn(
->         struct xfs_btree_cur            *cur,
->         const struct xfs_rmap_irec      *rec,
->         void                            *data)
-> {
->         /* No other option besides shutting down the fs. */
->         xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
->         return -EFSCORRUPTED;
-> }
-> #endif /* CONFIG_MEMORY_FAILURE */
-
-Oh, yeah that makes sense to me.
+Thanks,
+Andrei
