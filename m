@@ -2,153 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8BC4857DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 19:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6191C4857FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 19:12:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242688AbiAESDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jan 2022 13:03:04 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44846 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242686AbiAESDD (ORCPT
+        id S242774AbiAESMf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jan 2022 13:12:35 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:38654 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242736AbiAESMd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jan 2022 13:03:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641405782;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=S1qUAxYXkU/UKH+717qJdM5UOe1+cv20Xw7cUSOE+Y8=;
-        b=eUlL7VadEavLljb2hYKjwg5KM36XuxRAaNW5lsMRyzLyxyHBq0LdWY0OJIKhuFAnxR8Btf
-        jnK6GBhyj07COBJ7OFWJX3mPbb42uEobJzI4vojedWU9E9DsQOrogSr0C+W5CDwPoYkWPE
-        W7Pk7E0FJakk09CEIjL+5vIJ7tW+tDk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-512-Aepn0ABWMleDR30G5Agg9w-1; Wed, 05 Jan 2022 13:03:01 -0500
-X-MC-Unique: Aepn0ABWMleDR30G5Agg9w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 5 Jan 2022 13:12:33 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 91AB21800D50
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 18:03:00 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.8.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5019477466
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 18:03:00 +0000 (UTC)
-From:   Brian Foster <bfoster@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] namei: clear nd->root.mnt before O_CREAT unlazy
-Date:   Wed,  5 Jan 2022 13:02:59 -0500
-Message-Id: <20220105180259.115760-1-bfoster@redhat.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 319E76186E;
+        Wed,  5 Jan 2022 18:12:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A1BC36AE0;
+        Wed,  5 Jan 2022 18:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641406350;
+        bh=1171XJwm1v/PulkFnAieJP983+An49f4YwMoJU08ZfY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nWn/JuTGixcFXT48t84+1b4oKeUMJWE+/eNez7UjXuQo48HXoQ836yzTuko5QN9LI
+         62G1DC6hUtta2Q7rpOxWImksLXPwkzrBrYS6WhO+HC0/f6I7QdmBx+qtM6LFtiNzlW
+         sSfSv6OXfGJc3oGSPqHK6OMk5SWhEVIeGygz/VBBYcYktH2mDxxDANWAk5xEeYKZIp
+         EP7osuMcpT+TKgUFzBXOCzCpXzQI9sjKz2HZxpmOLjBcMsn3C+GS9T58AfNhPoB5NG
+         Vs6BnLTxzjvQ4W323hvKdhY11ZU8caQCNDIrtDUiQsoMeqbs6olGT5AIeGiK7aMuIk
+         HbVoI0B/j5shA==
+Date:   Wed, 5 Jan 2022 10:12:30 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        david@fromorbit.com, hch@infradead.org, jane.chu@oracle.com
+Subject: Re: [PATCH v9 02/10] dax: Introduce holder for dax_device
+Message-ID: <20220105181230.GC398655@magnolia>
+References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
+ <20211226143439.3985960-3-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211226143439.3985960-3-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The unlazy sequence of an rcuwalk lookup occurs a bit earlier than
-normal for O_CREAT lookups (i.e. in open_last_lookups()). The create
-logic here historically invoked complete_walk(), which clears the
-nd->root.mnt pointer when appropriate before the unlazy.  This
-changed in commit 72287417abd1 ("open_last_lookups(): don't abuse
-complete_walk() when all we want is unlazy"), which refactored the
-create path to invoke unlazy_walk() and not consider nd->root.mnt.
+On Sun, Dec 26, 2021 at 10:34:31PM +0800, Shiyang Ruan wrote:
+> To easily track filesystem from a pmem device, we introduce a holder for
+> dax_device structure, and also its operation.  This holder is used to
+> remember who is using this dax_device:
+>  - When it is the backend of a filesystem, the holder will be the
+>    instance of this filesystem.
+>  - When this pmem device is one of the targets in a mapped device, the
+>    holder will be this mapped device.  In this case, the mapped device
+>    has its own dax_device and it will follow the first rule.  So that we
+>    can finally track to the filesystem we needed.
+> 
+> The holder and holder_ops will be set when filesystem is being mounted,
+> or an target device is being activated.
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  drivers/dax/super.c | 62 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/dax.h | 29 +++++++++++++++++++++
+>  2 files changed, 91 insertions(+)
+> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index c46f56e33d40..94c51f2ee133 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -20,15 +20,20 @@
+>   * @inode: core vfs
+>   * @cdev: optional character interface for "device dax"
+>   * @private: dax driver private data
+> + * @holder_data: holder of a dax_device: could be filesystem or mapped device
+>   * @flags: state and boolean properties
+> + * @ops: operations for dax_device
+> + * @holder_ops: operations for the inner holder
+>   */
+>  struct dax_device {
+>  	struct inode inode;
+>  	struct cdev cdev;
+>  	void *private;
+>  	struct percpu_rw_semaphore rwsem;
+> +	void *holder_data;
+>  	unsigned long flags;
+>  	const struct dax_operations *ops;
+> +	const struct dax_holder_operations *holder_ops;
+>  };
+>  
+>  static dev_t dax_devt;
+> @@ -192,6 +197,29 @@ int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+>  }
+>  EXPORT_SYMBOL_GPL(dax_zero_page_range);
+>  
+> +int dax_holder_notify_failure(struct dax_device *dax_dev, u64 off,
+> +			      u64 len, int mf_flags)
+> +{
+> +	int rc;
+> +
+> +	dax_read_lock(dax_dev);
+> +	if (!dax_alive(dax_dev)) {
+> +		rc = -ENXIO;
+> +		goto out;
+> +	}
+> +
+> +	if (!dax_dev->holder_ops) {
+> +		rc = -EOPNOTSUPP;
+> +		goto out;
+> +	}
+> +
+> +	rc = dax_dev->holder_ops->notify_failure(dax_dev, off, len, mf_flags);
+> +out:
+> +	dax_read_unlock(dax_dev);
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_holder_notify_failure);
+> +
+>  #ifdef CONFIG_ARCH_HAS_PMEM_API
+>  void arch_wb_cache_pmem(void *addr, size_t size);
+>  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
+> @@ -254,6 +282,10 @@ void kill_dax(struct dax_device *dax_dev)
+>  		return;
+>  	dax_write_lock(dax_dev);
+>  	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+> +
+> +	/* clear holder data */
+> +	dax_dev->holder_ops = NULL;
+> +	dax_dev->holder_data = NULL;
+>  	dax_write_unlock(dax_dev);
+>  }
+>  EXPORT_SYMBOL_GPL(kill_dax);
+> @@ -401,6 +433,36 @@ void put_dax(struct dax_device *dax_dev)
+>  }
+>  EXPORT_SYMBOL_GPL(put_dax);
+>  
+> +void dax_register_holder(struct dax_device *dax_dev, void *holder,
+> +		const struct dax_holder_operations *ops)
+> +{
+> +	if (!dax_alive(dax_dev))
+> +		return;
+> +
+> +	dax_dev->holder_data = holder;
+> +	dax_dev->holder_ops = ops;
 
-This tweak negatively impacts performance on a concurrent
-open(O_CREAT) workload to multiple independent mounts beneath the
-root directory. This attributes to increased spinlock contention on
-the root dentry via legitimize_root(), to the point where the
-spinlock becomes the primary bottleneck over the directory inode
-rwsem of the individual submounts. For example, the completion rate
-of a 32k thread aim7 create/close benchmark that repeatedly passes
-O_CREAT to open preexisting files drops from over 700k "jobs per
-minute" to 30, increasing the overall test time from a few minutes
-to over an hour.
+Shouldn't this return an error code if the dax device is dead or if
+someone already registered a holder?  I'm pretty sure XFS should not
+bind to a dax device if someone else already registered for it...
 
-A similar, more simplified test to create a set of opener tasks
-across a set of submounts can demonstrate the problem more quickly.
-For example, consider sets of 100 open/close tasks each running
-against 64 independent filesystem mounts (i.e. 6400 tasks total),
-with each task completing 10k iterations before it exits. On an
-80xcpu box running v5.16.0-rc2, this test completes in 50-55s. With
-this patch applied, the same test completes in 10-15s.
+...unless you want to use a notifier chain for failure events so that
+there can be multiple consumers of dax failure events?
 
-This is not the most realistic workload in the world as it factors
-out inode allocation in the filesystem. The contention can also be
-avoided by more selective use of O_CREAT or via use of relative
-pathnames. That said, this regression appears to be an unintentional
-side effect of code cleanup and might be unexpected for users.
-Restore original behavior prior to commit 72287417abd1 by factoring
-the rcu logic from complete_walk() into a new helper and invoke that
-from both places.
+--D
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/namei.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 1f9d2187c765..b32fcbc99929 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -856,6 +856,22 @@ static inline int d_revalidate(struct dentry *dentry, unsigned int flags)
- 		return 1;
- }
- 
-+static inline bool complete_walk_rcu(struct nameidata *nd)
-+{
-+	if (nd->flags & LOOKUP_RCU) {
-+		/*
-+		 * We don't want to zero nd->root for scoped-lookups or
-+		 * externally-managed nd->root.
-+		 */
-+		if (!(nd->state & ND_ROOT_PRESET))
-+			if (!(nd->flags & LOOKUP_IS_SCOPED))
-+				nd->root.mnt = NULL;
-+		nd->flags &= ~LOOKUP_CACHED;
-+		return try_to_unlazy(nd);
-+	}
-+	return true;
-+}
-+
- /**
-  * complete_walk - successful completion of path walk
-  * @nd:  pointer nameidata
-@@ -871,18 +887,8 @@ static int complete_walk(struct nameidata *nd)
- 	struct dentry *dentry = nd->path.dentry;
- 	int status;
- 
--	if (nd->flags & LOOKUP_RCU) {
--		/*
--		 * We don't want to zero nd->root for scoped-lookups or
--		 * externally-managed nd->root.
--		 */
--		if (!(nd->state & ND_ROOT_PRESET))
--			if (!(nd->flags & LOOKUP_IS_SCOPED))
--				nd->root.mnt = NULL;
--		nd->flags &= ~LOOKUP_CACHED;
--		if (!try_to_unlazy(nd))
--			return -ECHILD;
--	}
-+	if (!complete_walk_rcu(nd))
-+		return -ECHILD;
- 
- 	if (unlikely(nd->flags & LOOKUP_IS_SCOPED)) {
- 		/*
-@@ -3325,10 +3331,9 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		BUG_ON(nd->flags & LOOKUP_RCU);
- 	} else {
- 		/* create side of things */
--		if (nd->flags & LOOKUP_RCU) {
--			if (!try_to_unlazy(nd))
--				return ERR_PTR(-ECHILD);
--		}
-+		if (!complete_walk_rcu(nd))
-+			return ERR_PTR(-ECHILD);
-+
- 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
- 		/* trailing slashes? */
- 		if (unlikely(nd->last.name[nd->last.len]))
--- 
-2.31.1
-
+> +}
+> +EXPORT_SYMBOL_GPL(dax_register_holder);
+> +
+> +void dax_unregister_holder(struct dax_device *dax_dev)
+> +{
+> +	if (!dax_alive(dax_dev))
+> +		return;
+> +
+> +	dax_dev->holder_data = NULL;
+> +	dax_dev->holder_ops = NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_unregister_holder);
+> +
+> +void *dax_get_holder(struct dax_device *dax_dev)
+> +{
+> +	if (!dax_alive(dax_dev))
+> +		return NULL;
+> +
+> +	return dax_dev->holder_data;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_get_holder);
+> +
+>  /**
+>   * inode_dax: convert a public inode into its dax_dev
+>   * @inode: An inode with i_cdev pointing to a dax_dev
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index a146bfb80804..e16a9e0ee857 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -44,6 +44,22 @@ struct dax_operations {
+>  #if IS_ENABLED(CONFIG_DAX)
+>  struct dax_device *alloc_dax(void *private, const struct dax_operations *ops,
+>  		unsigned long flags);
+> +struct dax_holder_operations {
+> +	/*
+> +	 * notify_failure - notify memory failure into inner holder device
+> +	 * @dax_dev: the dax device which contains the holder
+> +	 * @offset: offset on this dax device where memory failure occurs
+> +	 * @len: length of this memory failure event
+> +	 * @flags: action flags for memory failure handler
+> +	 */
+> +	int (*notify_failure)(struct dax_device *dax_dev, u64 offset,
+> +			u64 len, int mf_flags);
+> +};
+> +
+> +void dax_register_holder(struct dax_device *dax_dev, void *holder,
+> +		const struct dax_holder_operations *ops);
+> +void dax_unregister_holder(struct dax_device *dax_dev);
+> +void *dax_get_holder(struct dax_device *dax_dev);
+>  void put_dax(struct dax_device *dax_dev);
+>  void kill_dax(struct dax_device *dax_dev);
+>  void dax_write_cache(struct dax_device *dax_dev, bool wc);
+> @@ -71,6 +87,17 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
+>  	return dax_synchronous(dax_dev);
+>  }
+>  #else
+> +static inline void dax_register_holder(struct dax_device *dax_dev, void *holder,
+> +		const struct dax_holder_operations *ops)
+> +{
+> +}
+> +static inline void dax_unregister_holder(struct dax_device *dax_dev)
+> +{
+> +}
+> +static inline void *dax_get_holder(struct dax_device *dax_dev)
+> +{
+> +	return NULL;
+> +}
+>  static inline struct dax_device *alloc_dax(void *private,
+>  		const struct dax_operations *ops, unsigned long flags)
+>  {
+> @@ -209,6 +236,8 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+>  		size_t bytes, struct iov_iter *i);
+>  int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+>  			size_t nr_pages);
+> +int dax_holder_notify_failure(struct dax_device *dax_dev, u64 off, u64 len,
+> +		int mf_flags);
+>  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
+>  
+>  ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+> -- 
+> 2.34.1
+> 
+> 
+> 
