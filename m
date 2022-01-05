@@ -2,348 +2,297 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC844853E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 14:56:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83AFF4855B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 16:21:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240456AbiAEN4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jan 2022 08:56:39 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:56797 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240446AbiAEN4i (ORCPT
+        id S241369AbiAEPVD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jan 2022 10:21:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241358AbiAEPVA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jan 2022 08:56:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641390997;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lAnb9ExP59W1WcCw2keeKsSqnGFwaEvZYymHit+h4EI=;
-        b=fTYujzEax7ok53pvTqwmAvNpOthD7mNk7NgG15FvgKPnznW07PEdhuRBReNQ9ZLIybEU3R
-        Ix2zaklekSKIR4BRqnpkXIU72rxpHKuC1zEL82oDpqD0DlM9t68CQbBnEg2jKcSBszMLo9
-        K/EOfACHU9kvMe1v+VLRivlOv4A27Tg=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-147-fm-E3BaKNJWhSZvvs5iBgQ-1; Wed, 05 Jan 2022 08:56:37 -0500
-X-MC-Unique: fm-E3BaKNJWhSZvvs5iBgQ-1
-Received: by mail-qk1-f197.google.com with SMTP id q5-20020a05620a0d8500b004738c1b48beso23151504qkl.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 05:56:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lAnb9ExP59W1WcCw2keeKsSqnGFwaEvZYymHit+h4EI=;
-        b=tnsd3koI/MJFr3q4XVRRzxbxIZ6uQrxoyineTFQC3jVreNHsrEko3tlK/l08NghU3A
-         Cs4X6doh8fotq/OkqyZZ478ck6K/hGgOfq6BfbVULk70pPLsSAS7G6NRSe14Y+cHdeLe
-         qOeEL3MGalPi2bZuaXSfakp9zCHrzUE1Aus3jUmLPET4yDWt98iIH4Qu8UZZtU+kexQb
-         C7fi8+ru4K85MXjDDe88/iiDVNZyeP7L/mFL7ZRd/qPmLgGLmbMb/Hjfpd8UYUgkxf0z
-         gk8T1tzJM4rEEv9d2wqJufLRTRvAvZmCiW2Vzf3Pz5yJN/sSsUUEjaI9e2tSuJvRDeMN
-         jjDw==
-X-Gm-Message-State: AOAM5315i8JnAPD+XB+BWJEJiF3Dghm5DwUxav7l9Ppgi9XbcaOyzbA9
-        5UymEUyGdLEYa78evN/ynJwcVXsxB7Gzo8EB7IEH0Qxnj3/AFhGtdgBAI33fAK6Psk5uRDDPVqL
-        /wScnth7Ss9LstevnFdPf0vGj0g==
-X-Received: by 2002:a05:622a:5d2:: with SMTP id d18mr48565496qtb.154.1641390996343;
-        Wed, 05 Jan 2022 05:56:36 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzLR1ABO1/WYGPP2Y/t4JrQrCYiXSEhy35dlzb+duuFRPMjZDF5icGiWJ/ql+fcnfkoGDzDYg==
-X-Received: by 2002:a05:622a:5d2:: with SMTP id d18mr48565477qtb.154.1641390995995;
-        Wed, 05 Jan 2022 05:56:35 -0800 (PST)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id s126sm31397679qkf.7.2022.01.05.05.56.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jan 2022 05:56:35 -0800 (PST)
-Date:   Wed, 5 Jan 2022 08:56:33 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "trondmy@kernel.org" <trondmy@kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
-Message-ID: <YdWjkW7hhbTl4TQa@bfoster>
-References: <20220103220310.GG945095@dread.disaster.area>
- <9f51fa6169f4c67d54dd8563b52c540c94c7703a.camel@hammerspace.com>
- <20220104012215.GH945095@dread.disaster.area>
- <YdPyhpdxykDscMtJ@infradead.org>
- <YdSNGAupnxF/ouis@casper.infradead.org>
- <YdSOgyvDnZadYpUP@infradead.org>
- <20220104192227.GA398655@magnolia>
- <20220104215227.GJ945095@dread.disaster.area>
- <20220104231230.GG31606@magnolia>
- <20220105021022.GL945095@dread.disaster.area>
+        Wed, 5 Jan 2022 10:21:00 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C86C061245;
+        Wed,  5 Jan 2022 07:20:59 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 83C04617C3;
+        Wed,  5 Jan 2022 15:20:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E128C36AE0;
+        Wed,  5 Jan 2022 15:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641396059;
+        bh=/25R0FQcPSf/i9hVOvLBLhYFD+ye0thJ4O7lFL3jSNM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bMHpM4Uluu77qzCtoonvP4I06+piBKgSKNITTPOIDaUSIlrDN37f9Z2asaO6BEBnA
+         XgInAT6EM90Cj1XI6GoX+0EBQVHvQGKLXv9xGZlh52tbbMXfYyqRKBI/retX0613MY
+         7wK5zoF/OtvoHAscc3uALt2hvkl23c8kwE7AJJUXODWyMv9sOdk0g2zMT3sV3G7Xkp
+         em0QQaqi3umV9oC7pwX1h0cKSmhwbcaOXB9QiMmzpIK1WggrifBE8Lw+ZbcmX3oYsX
+         Cq74tPlDzDICWPVWiRQCQYplh/xUxQjQUjIGxs4C577gOF+Noag+xZ8bwJhAKH0uXw
+         q7CJTtfRygUBg==
+Date:   Wed, 5 Jan 2022 07:20:57 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>, Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: psi_trigger_poll() is completely broken
+Message-ID: <YdW3WfHURBXRmn/6@sol.localdomain>
+References: <000000000000e8f8f505d0e479a5@google.com>
+ <20211211015620.1793-1-hdanton@sina.com>
+ <YbQUSlq76Iv5L4cC@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220105021022.GL945095@dread.disaster.area>
+In-Reply-To: <YbQUSlq76Iv5L4cC@sol.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 05, 2022 at 01:10:22PM +1100, Dave Chinner wrote:
-> On Tue, Jan 04, 2022 at 03:12:30PM -0800, Darrick J. Wong wrote:
-> > On Wed, Jan 05, 2022 at 08:52:27AM +1100, Dave Chinner wrote:
-> > > On Tue, Jan 04, 2022 at 11:22:27AM -0800, Darrick J. Wong wrote:
-> > > > On Tue, Jan 04, 2022 at 10:14:27AM -0800, hch@infradead.org wrote:
-> > > > > On Tue, Jan 04, 2022 at 06:08:24PM +0000, Matthew Wilcox wrote:
-> > > > > > I think it's fine to put in a fix like this now that's readily
-> > > > > > backportable.  For folios, I can't help but think we want a
-> > > > > > restructuring to iterate per-extent first, then per-folio and finally
-> > > > > > per-sector instead of the current model where we iterate per folio,
-> > > > > > looking up the extent for each sector.
-> > > > > 
-> > > > > We don't look up the extent for each sector.  We look up the extent
-> > > > > once and then add as much of it as we can to the bio until either the
-> > > > > bio is full or the extent ends.  In the first case we then allocate
-> > > > > a new bio and add it to the ioend.
-> > > > 
-> > > > Can we track the number of folios that have been bio_add_folio'd to the
-> > > > iomap_ioend, and make iomap_can_add_to_ioend return false when the
-> > > > number of folios reaches some threshold?  I think that would solve the
-> > > > problem of overly large ioends while not splitting folios across ioends
-> > > > unnecessarily.
+[changed subject line to hopefully get people to stop ignoring this]
+
+Please see my message below where I explained the problem in detail.  Any
+response from the maintainers of kernel/sched/psi.c?  There are a lot of you:
+
+$ ./scripts/get_maintainer.pl kernel/sched/psi.c
+Johannes Weiner <hannes@cmpxchg.org> (maintainer:PRESSURE STALL INFORMATION (PSI))
+Ingo Molnar <mingo@redhat.com> (maintainer:SCHEDULER)
+Peter Zijlstra <peterz@infradead.org> (maintainer:SCHEDULER)
+Juri Lelli <juri.lelli@redhat.com> (maintainer:SCHEDULER)
+Vincent Guittot <vincent.guittot@linaro.org> (maintainer:SCHEDULER)
+Dietmar Eggemann <dietmar.eggemann@arm.com> (reviewer:SCHEDULER)
+Steven Rostedt <rostedt@goodmis.org> (reviewer:SCHEDULER)
+Ben Segall <bsegall@google.com> (reviewer:SCHEDULER)
+Mel Gorman <mgorman@suse.de> (reviewer:SCHEDULER)
+Daniel Bristot de Oliveira <bristot@redhat.com> (reviewer:SCHEDULER)
+linux-kernel@vger.kernel.org (open list:SCHEDULER)
+
+On Fri, Dec 10, 2021 at 07:00:26PM -0800, Eric Biggers wrote:
+> On Sat, Dec 11, 2021 at 09:56:20AM +0800, Hillf Danton wrote:
+> > On Fri, 10 Dec 2021 14:42:22 -0800
+> > > syzbot has found a reproducer for the following issue on:
 > > > 
-> > > See my reply to Christoph up thread.
+> > > HEAD commit:    e5d75fc20b92 sh_eth: Use dev_err_probe() helper
+> > > git tree:       net-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1540cdceb00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=24fd48984584829b
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=cdb5dd11c97cc532efad
+> > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15de00bab00000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ad646db00000
 > > > 
-> > > The problem is multiple blocks per page/folio - bio_add_folio() will
-> > > get called for the same folio many times, and we end up not knowing
-> > > when a new page/folio is attached. Hence dynamically calculating it
-> > > as we build the bios is .... convoluted.
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com
+> > > 
+> > > ==================================================================
+> > > BUG: KASAN: use-after-free in __lock_acquire+0x3d86/0x54a0 kernel/locking/lockdep.c:4897
+> > > Read of size 8 at addr ffff888015be3740 by task syz-executor161/3598
+> > > 
+> > > CPU: 1 PID: 3598 Comm: syz-executor161 Not tainted 5.16.0-rc4-syzkaller #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > > Call Trace:
+> > >  <TASK>
+> > >  __dump_stack lib/dump_stack.c:88 [inline]
+> > >  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+> > >  print_address_description.constprop.0.cold+0x8d/0x320 mm/kasan/report.c:247
+> > >  __kasan_report mm/kasan/report.c:433 [inline]
+> > >  kasan_report.cold+0x83/0xdf mm/kasan/report.c:450
+> > >  __lock_acquire+0x3d86/0x54a0 kernel/locking/lockdep.c:4897
+> > >  lock_acquire kernel/locking/lockdep.c:5637 [inline]
+> > >  lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5602
+> > >  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+> > >  _raw_spin_lock_irqsave+0x39/0x50 kernel/locking/spinlock.c:162
+> > >  remove_wait_queue+0x1d/0x180 kernel/sched/wait.c:55
+> > >  ep_remove_wait_queue+0x88/0x1a0 fs/eventpoll.c:545
+> > >  ep_unregister_pollwait fs/eventpoll.c:561 [inline]
+> > >  ep_remove+0x106/0x9c0 fs/eventpoll.c:690
+> > >  eventpoll_release_file+0xe1/0x130 fs/eventpoll.c:923
+> > >  eventpoll_release include/linux/eventpoll.h:53 [inline]
+> > >  __fput+0x87b/0x9f0 fs/file_table.c:271
+> > >  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+> > >  tracehook_notify_resume include/linux/tracehook.h:189 [inline]
+> > >  exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
+> > >  exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:207
+> > >  __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
+> > >  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
+> > >  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > > RIP: 0033:0x7f3167c0def3
+> > > Code: c7 c2 c0 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb ba 0f 1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 45 c3 0f 1f 40 00 48 83 ec 18 89 7c 24 0c e8
+> > > RSP: 002b:00007ffddef2e488 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+> > > RAX: 0000000000000000 RBX: 0000000000000005 RCX: 00007f3167c0def3
+> > > RDX: 000000000000002f RSI: 0000000020001340 RDI: 0000000000000004
+> > > RBP: 0000000000000000 R08: 0000000000000014 R09: 00007ffddef2e4b0
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffddef2e4ac
+> > > R13: 00007ffddef2e4c0 R14: 00007ffddef2e500 R15: 0000000000000000
+> > >  </TASK>
+> > > 
+> > > Allocated by task 3598:
+> > >  kasan_save_stack+0x1e/0x50 mm/kasan/common.c:38
+> > >  kasan_set_track mm/kasan/common.c:46 [inline]
+> > >  set_alloc_info mm/kasan/common.c:434 [inline]
+> > >  ____kasan_kmalloc mm/kasan/common.c:513 [inline]
+> > >  ____kasan_kmalloc mm/kasan/common.c:472 [inline]
+> > >  __kasan_kmalloc+0xa9/0xd0 mm/kasan/common.c:522
+> > >  kmalloc include/linux/slab.h:590 [inline]
+> > >  psi_trigger_create.part.0+0x15e/0x7f0 kernel/sched/psi.c:1141
+> > >  cgroup_pressure_write+0x15d/0x6b0 kernel/cgroup/cgroup.c:3645
+> > >  cgroup_file_write+0x1ec/0x780 kernel/cgroup/cgroup.c:3852
+> > >  kernfs_fop_write_iter+0x342/0x500 fs/kernfs/file.c:296
+> > >  call_write_iter include/linux/fs.h:2162 [inline]
+> > >  new_sync_write+0x429/0x660 fs/read_write.c:503
+> > >  vfs_write+0x7cd/0xae0 fs/read_write.c:590
+> > >  ksys_write+0x12d/0x250 fs/read_write.c:643
+> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> > >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > > 
+> > > Freed by task 3598:
+> > >  kasan_save_stack+0x1e/0x50 mm/kasan/common.c:38
+> > >  kasan_set_track+0x21/0x30 mm/kasan/common.c:46
+> > >  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:370
+> > >  ____kasan_slab_free mm/kasan/common.c:366 [inline]
+> > >  ____kasan_slab_free mm/kasan/common.c:328 [inline]
+> > >  __kasan_slab_free+0xff/0x130 mm/kasan/common.c:374
+> > >  kasan_slab_free include/linux/kasan.h:235 [inline]
+> > >  slab_free_hook mm/slub.c:1723 [inline]
+> > >  slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1749
+> > >  slab_free mm/slub.c:3513 [inline]
+> > >  kfree+0xf6/0x560 mm/slub.c:4561
+> > >  cgroup_pressure_write+0x18d/0x6b0 kernel/cgroup/cgroup.c:3651
+> > >  cgroup_file_write+0x1ec/0x780 kernel/cgroup/cgroup.c:3852
+> > >  kernfs_fop_write_iter+0x342/0x500 fs/kernfs/file.c:296
+> > >  call_write_iter include/linux/fs.h:2162 [inline]
+> > >  new_sync_write+0x429/0x660 fs/read_write.c:503
+> > >  vfs_write+0x7cd/0xae0 fs/read_write.c:590
+> > >  ksys_write+0x12d/0x250 fs/read_write.c:643
+> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> > >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > > 
+> > > The buggy address belongs to the object at ffff888015be3700
+> > >  which belongs to the cache kmalloc-192 of size 192
+> > > The buggy address is located 64 bytes inside of
+> > >  192-byte region [ffff888015be3700, ffff888015be37c0)
+> > > The buggy address belongs to the page:
+> > > page:ffffea000056f8c0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x15be3
+> > > flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
+> > > raw: 00fff00000000200 0000000000000000 dead000000000001 ffff888010c41a00
+> > > raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+> > > page dumped because: kasan: bad access detected
+> > > page_owner tracks the page as allocated
+> > > page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 1, ts 1983850449, free_ts 0
+> > >  prep_new_page mm/page_alloc.c:2418 [inline]
+> > >  get_page_from_freelist+0xa72/0x2f50 mm/page_alloc.c:4149
+> > >  __alloc_pages+0x1b2/0x500 mm/page_alloc.c:5369
+> > >  alloc_page_interleave+0x1e/0x200 mm/mempolicy.c:2036
+> > >  alloc_pages+0x29f/0x300 mm/mempolicy.c:2186
+> > >  alloc_slab_page mm/slub.c:1793 [inline]
+> > >  allocate_slab mm/slub.c:1930 [inline]
+> > >  new_slab+0x32d/0x4a0 mm/slub.c:1993
+> > >  ___slab_alloc+0x918/0xfe0 mm/slub.c:3022
+> > >  __slab_alloc.constprop.0+0x4d/0xa0 mm/slub.c:3109
+> > >  slab_alloc_node mm/slub.c:3200 [inline]
+> > >  slab_alloc mm/slub.c:3242 [inline]
+> > >  kmem_cache_alloc_trace+0x289/0x2c0 mm/slub.c:3259
+> > >  kmalloc include/linux/slab.h:590 [inline]
+> > >  kzalloc include/linux/slab.h:724 [inline]
+> > >  call_usermodehelper_setup+0x97/0x340 kernel/umh.c:365
+> > >  kobject_uevent_env+0xf73/0x1650 lib/kobject_uevent.c:614
+> > >  version_sysfs_builtin kernel/params.c:878 [inline]
+> > >  param_sysfs_init+0x146/0x43b kernel/params.c:969
+> > >  do_one_initcall+0x103/0x650 init/main.c:1297
+> > >  do_initcall_level init/main.c:1370 [inline]
+> > >  do_initcalls init/main.c:1386 [inline]
+> > >  do_basic_setup init/main.c:1405 [inline]
+> > >  kernel_init_freeable+0x6b1/0x73a init/main.c:1610
+> > >  kernel_init+0x1a/0x1d0 init/main.c:1499
+> > >  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+> > > page_owner free stack trace missing
+> > > 
+> > > Memory state around the buggy address:
+> > >  ffff888015be3600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > >  ffff888015be3680: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+> > > >ffff888015be3700: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > >                                            ^
+> > >  ffff888015be3780: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+> > >  ffff888015be3800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > ==================================================================
 > > 
-> > Hm.  Indulge me in a little more frame-shifting for a moment --
+> > Hey Eric
 > > 
-> > As I see it, the problem here is that we're spending too much time
-> > calling iomap_finish_page_writeback over and over and over, right?
+> > Let us know if this uaf adds another call site for what you added [1].
 > > 
-
-I think the fundamental problem is an excessively large page list that
-requires a tight enough loop in iomap_finish_ioend() with no opportunity
-for scheduling. AIUI, this can occur a few different ways atm. The first
-is a large bio chain associated with an ioend. Another potential vector
-is a series of large bio vecs, since IIUC a vector can cover something
-like 4GB worth of pages if physically contiguous. Since Trond's instance
-seems to be via the completion workqueue, yet another vector is likely
-via a chain of merged ioends.
-
-IOW, I think there is potential for such a warning in either of the two
-loops in iomap_finish_ioend() or the ioend loop in iomap_finish_ioends()
-depending on circumstance. Trond's earlier feedback on his initial patch
-(i.e. without ioend size capping) suggests he's hitting more of the bio
-chain case, since a cond_resched() in the bio iteration loop in
-iomap_finish_ioend() mitigated the problem but lifting it outside into
-iomap_finish_ioends() did not.
-
-> > If we have a single page with a single mapping that fits in a single
-> > bio, that means we call bio_add_page once, and on the other end we call
-> > iomap_finish_page_writeback once.
+> > Hillf
 > > 
-> > If we have (say) an 8-page folio with 4 blocks per page, in the worst
-> > case we'd create 32 different ioends, each with a single-block bio,
-> > which means 32 calls to iomap_finish_page_writeback, right?
-> 
-> Yes, but in this case, we've had to issue and complete 32 bios and
-> ioends to get one call to end_page_writeback(). That is overhead we
-> cannot avoid if we have worst-case physical fragmentation of the
-> filesystem. But, quite frankly, if that's the case we just don't
-> care about performance of IO completion - performance will suck
-> because we're doing 32 IOs instead of 1 for that data, not because
-> IO completion has to do more work per page/folio....
-> 
-> > From what I can see, the number of bio_add_folio calls is proportional
-> > to the amount of ioend work we do without providing any external signs
-> > of life to the watchdog, right?
+> > [1] https://lore.kernel.org/lkml/20211209010455.42744-2-ebiggers@kernel.org/
 > > 
-> > So forget the number of folios or the byte count involved.  Isn't the
-> > number of future iomap_finish_page_writeback calls exactly the metric
-> > that we want to decide when to cut off ioend submission?
+> > +++ x/kernel/sched/psi.c
+> > @@ -1193,7 +1193,7 @@ static void psi_trigger_destroy(struct k
+> >  	 * Wakeup waiters to stop polling. Can happen if cgroup is deleted
+> >  	 * from under a polling process.
+> >  	 */
+> > -	wake_up_interruptible(&t->event_wait);
+> > +	wake_up_pollfree(&t->event_wait);
+> >  
+> >  	mutex_lock(&group->trigger_lock);
 > 
-> Isn't that exactly what I suggested by counting bio segments in the
-> ioend at bio submission time? I mean, iomap_finish_page_writeback()
-> iterates bio segments, not pages, folios or filesystem blocks....
+> [added linux-mm and all maintainers for kernel/sched/psi.c]
 > 
-> > > Hence generic iomap code will only end up calling
-> > > iomap_finish_ioends() with the same ioend that was submitted. i.e.
-> > > capped to 4096 pages by this patch. THerefore it does not need
-> > > cond_resched() calls - the place that needs it is where the ioends
-> > > are merged and then finished. That is, in the filesystem completion
-> > > processing that does the merging....
-> > 
-> > Huh?  I propose adding cond_resched to iomap_finish_ioends (plural),
+> Well, it is the same sort of issue, but POLLFREE is *not* enough here.  POLLFREE
+> only works if the lifetime of waitqueue is tied to the polling task, as blocking
+> polls don't handle it -- only non-blocking polls do.
 > 
-> Which is only called from XFS on merged ioends after XFS has
-> processed the merged ioend.....
+> The kernel/sched/psi.c use case is just totally broken, since the lifetime of
+> its waitqueue is totally arbitrary; the open file descriptor can be written to
+> at any time by any process, which causes the waitqueue to be freed.  So it will
+> cause a use-after-free even for regular blocking poll().
 > 
-> > which walks a list of ioends and calls iomap_finish_ioend (singular) on
-> > each ioend.  IOWs, we'd call cond_resched in between finishing one ioend
-> > and starting on the next one.  Isn't that where ioends are finished?
-> > 
-> > (I'm starting to wonder if we're talking past each other?)
-> > 
-> > So looking at xfs_end_io:
-> > 
-> > /* Finish all pending io completions. */
-> > void
-> > xfs_end_io(
-> > 	struct work_struct	*work)
-> > {
-> > 	struct xfs_inode	*ip =
-> > 		container_of(work, struct xfs_inode, i_ioend_work);
-> > 	struct iomap_ioend	*ioend;
-> > 	struct list_head	tmp;
-> > 	unsigned long		flags;
-> > 
-> > 	spin_lock_irqsave(&ip->i_ioend_lock, flags);
-> > 	list_replace_init(&ip->i_ioend_list, &tmp);
-> > 	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
-> > 
-> > 	iomap_sort_ioends(&tmp);
-> > 	while ((ioend = list_first_entry_or_null(&tmp, struct iomap_ioend,
-> > 			io_list))) {
-> > 		list_del_init(&ioend->io_list);
-> > 
-> > Here we pull the first ioend off the sorted list of ioends.
-> > 
-> > 		iomap_ioend_try_merge(ioend, &tmp);
-> > 
-> > Now we've merged that first ioend with as many subsequent ioends as we
-> > could merge.  Let's say there were 200 ioends, each 100MB.  Now ioend
+> To fix this, I think the psi trigger stuff will need to be refactored to have
+> just one waitqueue per open file.  We need to be removing uses of POLLFREE, not
+> adding new ones.  (See Linus' comments on POLLFREE here:
+> https://lore.kernel.org/lkml/CAHk-=wgvt7PH+AU_29H95tJQZ9FnhS8vVmymbhpZ6NZ7yaAigw@mail.gmail.com/)
 > 
-> Ok, so how do we get to this completion state right now?
+> Here are some repros:
 > 
-> 1. an ioend is a physically contiguous extent so submission is
->    broken down into an ioend per physical extent.
-> 2. we merge logically contiguous ioends at completion.
+> #include <fcntl.h>
+> #include <sys/epoll.h>
+> #include <unistd.h>
+> int main()
+> {
+>         int fd = open("/proc/pressure/cpu", O_RDWR);
+>         int epfd = epoll_create(1);
+>         const char trigger[] = "some 100000 1000000";
+>         struct epoll_event event = { .events = EPOLLIN };
 > 
-> So, if we have 200 ioends of 100MB each that are logically
-> contiguous we'll currently always merge them into a single 20GB
-> ioend that gets processed as a single entity even if submission
-> broke them up because they were physically discontiguous.
+>         write(fd, trigger, sizeof(trigger));
+>         epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event);
+>         write(fd, trigger, sizeof(trigger));
+> }
 > 
-> Now, with this patch we add:
 > 
-> 3. Individual ioends are limited to 16MB.
-> 4. completion can only merge physically contiguous ioends.
-> 5. we cond_resched() between physically contiguous ioend completion.
+> #include <fcntl.h>
+> #include <sys/poll.h>
+> #include <unistd.h>
+> int main()
+> {
+>         int fd = open("/proc/pressure/cpu", O_RDWR);
+>         const char trigger[] = "some 100000 1000000";
 > 
-> Submission will break that logically contiguous 20GB dirty range
-> down into 200x6x16MB ioends.
+>         if (fork()) {
+>                 struct pollfd pfd = { .fd = fd, .events = POLLIN };
 > 
-> Now completion will only merge ioends that are both physically and
-> logically contiguous. That results in a maximum merged ioend chain
-> size of 100MB at completion. They'll get merged one 100MB chunk at a
-> time.
-> 
-
-I'm missing something with the reasoning here.. how does a contiguity
-check in the ioend merge code guarantee we don't construct an
-excessively large list of pages via a chain of merged ioends? Obviously
-it filters out the discontig case, but what if the extents are
-physically contiguous?
-
-> > is a chain (of those other 199 ioends) representing 20GB of data.
-> > 
-> > 		xfs_end_ioend(ioend);
-> 
-> We now do one conversion transaction for the entire 100MB extent,
-> then....
-> 
-> > At the end of this routine, we call iomap_finish_ioends on the 20GB
-> > ioend chain.  This now has to mark 5.2 million pages...
-> 
-> run iomap_finish_ioends() on 100MB of pages, which is about 25,000
-> pages, not 5 million...
-> 
-> > 		cond_resched();
-> > 
-> > ...before we get to the cond_resched.
-> 
-> ... and so in this scenario this patch reduces the time between
-> reschedule events by a factor of 200 - the number of physical
-> extents the ioends map....
-> 
-> That's kind of my point - we can't ignore why the filesystem needs
-> merging or how it should optimise merging for it's own purposes in
-> this discussion. Because logically merged ioends require the
-> filesystem to do internal loops over physical discontiguities,
-> requiring us to drive cond_resched() into both the iomap loops and
-> the lower layer filesystem loops.
-> 
-> i.e. when we have ioend merging based on logical contiguity, we need
-> to limit the number of the loops the filesystem does internally, not
-> just the loops that the ioend code is doing...
-> 
-> > I'd really rather do the
-> > cond_resched between each of those 200 ioends that (supposedly) are
-> > small enough not to trip the hangcheck timers.
-> > 
-> > 	}
-> > }
-> > /*
-> >  * Mark writeback finished on a chain of ioends.  Caller must not call
-> >  * this function from atomic/softirq context.
-> >  */
-> > void
-> > iomap_finish_ioends(struct iomap_ioend *ioend, int error)
-> > {
-> > 	struct list_head tmp;
-> > 
-> > 	list_replace_init(&ioend->io_list, &tmp);
-> > 	iomap_finish_ioend(ioend, error);
-> > 
-> > 	while (!list_empty(&tmp)) {
-> > 		cond_resched();
-> > 
-> > So I propose doing it ^^^ here instead.
-> > 
-> > 		ioend = list_first_entry(&tmp, struct iomap_ioend, io_list);
-> > 		list_del_init(&ioend->io_list);
-> > 		iomap_finish_ioend(ioend, error);
-> > 	}
-> > }
-
-Hmm.. I'm not seeing how this is much different from Dave's patch, and
-I'm not totally convinced the cond_resched() in Dave's patch is
-effective without something like Darrick's earlier suggestion to limit
-the $object (page/folio/whatever) count of the entire merged mapping (to
-ensure that iomap_finish_ioend() is no longer a soft lockup vector by
-itself).
-
-Trond reports that the test patch mitigates his reproducer, but that
-patch also includes the ioend size cap and so the test doesn't
-necessarily isolate whether the cond_resched() is effective or whether
-the additional submission/completion overhead is enough to avoid the
-pathological conditions that enable it via the XFS merging code. I'd be
-curious to have a more tangible datapoint on that. The easiest way to
-test without getting into the weeds of looking at merging behavior is
-probably just see whether the problem returns with the cond_resched()
-removed and all of the other changes in place. Trond, is that something
-you can test?
-
-Brian
-
-> 
-> Yes, but this only addresses a single aspect of the issue when
-> filesystem driven merging is used. That is, we might have just had
-> to do a long unbroken loop in xfs_end_ioend() that might have to run
-> conversion of several thousand physical extents that the logically
-> merged ioends might have covered. Hence even with the above, we'd
-> still need to add cond_resched() calls to the XFS code. Hence from
-> an XFS IO completion point of view, we only want to merge to
-> physical extent boundaries and issue cond_resched() at physical
-> extent boundaries because that's what our filesystem completion
-> processing loops on, not pages/folios.
-> 
-> Hence my point that we cannot ignore what the filesystem is doing
-> with these merged ioends and only think about iomap in isolation.
-> 
-> Cheers,
-> 
-> Dave.
-> 
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
-
+>                 for (;;)
+>                         poll(&pfd, 1, -1);
+>         } else {
+>                 for (;;)
+>                         write(fd, trigger, sizeof(trigger));
+>         }
+> }
