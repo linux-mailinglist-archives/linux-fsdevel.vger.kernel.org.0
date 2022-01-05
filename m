@@ -2,181 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5308748581A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 19:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B9A44858AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 19:50:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242856AbiAESXU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jan 2022 13:23:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39388 "EHLO
+        id S243182AbiAESu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jan 2022 13:50:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242851AbiAESXT (ORCPT
+        with ESMTP id S243178AbiAESux (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jan 2022 13:23:19 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749D9C061212
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 10:23:19 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id 200so36205317pgg.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 10:23:19 -0800 (PST)
+        Wed, 5 Jan 2022 13:50:53 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7CEC061245
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 10:50:52 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id q14so238293edi.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 10:50:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=O3txqHljQl/GCNxyCJxfFojCjkO470bmaKiTOmC1xSE=;
-        b=iDaMKn+q7SGqX3ujdNUGLIq8rR9uST+ZG/7EUkKHkYITiY/9guw1ZRXf3Ht59Dz2kA
-         IljULJEO3i+pPOzOnZXhD3vALfxADxcPKVZqVKrO/pzmcxvaa37+fRTER/WdpRu2YXiH
-         XqA6bprq+O3qlgt6rpbnONeUrs2A5iUPw0Rr1Oy1rrK9MTDAm9TcPBdRKFW5yS4YufWJ
-         Npd4V2aXugQPk341QkO2dH7kuWmID7i5orec/rVIGU1QPRTl8oafYAQgyLhqEOk1JFG/
-         fpy6WAxwAtIUhlSp+IGClZEoLSmXUYQNHBB+0UeoK9tpNTY6HPYa/lBmoGxCn8zwKVzT
-         bdLw==
+        bh=cfHNQGe03MWFiDjULzVbgtf6gbGg6JH50kN5fzPFHfA=;
+        b=ewSSp59OgURps0hS/LbW55Aq+2LDBhNRyITlsFPwMv1qN0xdjkSe8cJKmF/NCk/WBt
+         R58wzWpaldO8LqJhB/qpMqjiN9D3/kGtQKNirCRALgXZp5BNYKxw1hgUKICOPRv6gKDu
+         Ljv/jlukGMuGKpoZcZe1iXxy98uqcnQ97Dx4g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=O3txqHljQl/GCNxyCJxfFojCjkO470bmaKiTOmC1xSE=;
-        b=dbyimM/UEBWCh+t2KWdwpnmbD2mOxonLmVni8J+LavWI2YkT1WSBFRj3/7cNEpJsC7
-         BbsunaCZ+Sweh8a8pn9eqh59dqdgL8vOMfEFpBHy4PTlodcLSJ0nsevKjRJ0pj9+5DI/
-         w+fmzK2cydKdgVHnAApNId/+Z5X77AlNFpiyRKymMGkpLdg4hKB/bJJeTJBaFFPCxM+n
-         Y+Ni1jSUd6Vmg8tSpgAKKY9rFp4iscsMDejagVjBv5GVlpULMWxaGVT6G/7T1EBca0Gu
-         njzCkSwHpEQVT/+KOPRpRbwmqB/heHDsfcIl6SdCPlmtdaSqXqF0ORd1RGU6sx9GJGdk
-         k/2A==
-X-Gm-Message-State: AOAM531nfmlSEplCkpBjV74/F6HBTMvaWlpk3OJi/5pRzGosd/YgDOJ9
-        mvv88A5snSrDtmFniKNjg00OxTdAS3/ZrwpCcVN6UQ==
-X-Google-Smtp-Source: ABdhPJxoBP/aT1AEtcGz3BudjHksIAmWp/YqSFrZQveftZYxEW3pAAMJ+2H/kJ2DcT1CwoBX6W8azzzA4zy/f9WM0+k=
-X-Received: by 2002:a63:710f:: with SMTP id m15mr18291969pgc.40.1641406998932;
- Wed, 05 Jan 2022 10:23:18 -0800 (PST)
+        bh=cfHNQGe03MWFiDjULzVbgtf6gbGg6JH50kN5fzPFHfA=;
+        b=mHClh15UijeIkSkILMQJgY6ened3CPWPfzAEsga9fBLsNq4SpzYNCDxzpeKQuqhftQ
+         wTARWohxbLs2v10dELlmH2MkKLKWIlhRjJnYifMF3fMXsyQd1Mss5eF/V0wixZq0PJWv
+         CrfDcY8Iw57ErdbwXTn0FtkGOij77+iC4iRmts2KGVoayJNnDBwdJSm6rEEs8jfuf0i+
+         WXIQCGrdoEF3k7zP2guBFQlcefF9sD8kcrqLzu7XOzqOQ2uU3OmUe5vlVY+SNqT7kbJC
+         tOSBQCP4I8/8gnOrQz2cT0pzJKGpNnMYIDzJaqDsZK8Brjuoi1JwJ81K2Bra68exZLLi
+         4QaA==
+X-Gm-Message-State: AOAM532TPHtIMeTNlj5BK19CJrn4H7hg/Hq98uiAYvEkOSjBT3GipBvr
+        fZPss3S+wgoN3bbZKR8VzDCfXnm6mpAm7KgATl0=
+X-Google-Smtp-Source: ABdhPJyZiiMZWKblXSKOz4IkDsGgwaMkWz+qRvwHJ5wCMrVsknJD15qWGeKZIsMYwrYR4T6rRZx02g==
+X-Received: by 2002:a17:906:3e4b:: with SMTP id t11mr598726eji.744.1641408650925;
+        Wed, 05 Jan 2022 10:50:50 -0800 (PST)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
+        by smtp.gmail.com with ESMTPSA id u9sm9449563ejh.193.2022.01.05.10.50.49
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jan 2022 10:50:50 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id v10-20020a05600c214a00b00345e59928eeso2492549wml.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 10:50:49 -0800 (PST)
+X-Received: by 2002:a7b:c305:: with SMTP id k5mr4008893wmj.144.1641408649511;
+ Wed, 05 Jan 2022 10:50:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
- <20211226143439.3985960-3-ruansy.fnst@fujitsu.com> <20220105181230.GC398655@magnolia>
-In-Reply-To: <20220105181230.GC398655@magnolia>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 5 Jan 2022 10:23:08 -0800
-Message-ID: <CAPcyv4iTaneUgdBPnqcvLr4Y_nAxQp31ZdUNkSRPsQ=9CpMWHg@mail.gmail.com>
-Subject: Re: [PATCH v9 02/10] dax: Introduce holder for dax_device
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
+References: <000000000000e8f8f505d0e479a5@google.com> <20211211015620.1793-1-hdanton@sina.com>
+ <YbQUSlq76Iv5L4cC@sol.localdomain> <YdW3WfHURBXRmn/6@sol.localdomain>
+In-Reply-To: <YdW3WfHURBXRmn/6@sol.localdomain>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 5 Jan 2022 10:50:33 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
+Message-ID: <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
+Subject: Re: psi_trigger_poll() is completely broken
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        david <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 5, 2022 at 10:12 AM Darrick J. Wong <djwong@kernel.org> wrote:
+On Wed, Jan 5, 2022 at 7:21 AM Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> On Sun, Dec 26, 2021 at 10:34:31PM +0800, Shiyang Ruan wrote:
-> > To easily track filesystem from a pmem device, we introduce a holder for
-> > dax_device structure, and also its operation.  This holder is used to
-> > remember who is using this dax_device:
-> >  - When it is the backend of a filesystem, the holder will be the
-> >    instance of this filesystem.
-> >  - When this pmem device is one of the targets in a mapped device, the
-> >    holder will be this mapped device.  In this case, the mapped device
-> >    has its own dax_device and it will follow the first rule.  So that we
-> >    can finally track to the filesystem we needed.
-> >
-> > The holder and holder_ops will be set when filesystem is being mounted,
-> > or an target device is being activated.
-> >
-> > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> > ---
-> >  drivers/dax/super.c | 62 +++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/dax.h | 29 +++++++++++++++++++++
-> >  2 files changed, 91 insertions(+)
-> >
-> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> > index c46f56e33d40..94c51f2ee133 100644
-> > --- a/drivers/dax/super.c
-> > +++ b/drivers/dax/super.c
-> > @@ -20,15 +20,20 @@
-> >   * @inode: core vfs
-> >   * @cdev: optional character interface for "device dax"
-> >   * @private: dax driver private data
-> > + * @holder_data: holder of a dax_device: could be filesystem or mapped device
-> >   * @flags: state and boolean properties
-> > + * @ops: operations for dax_device
-> > + * @holder_ops: operations for the inner holder
-> >   */
-> >  struct dax_device {
-> >       struct inode inode;
-> >       struct cdev cdev;
-> >       void *private;
-> >       struct percpu_rw_semaphore rwsem;
-> > +     void *holder_data;
-> >       unsigned long flags;
-> >       const struct dax_operations *ops;
-> > +     const struct dax_holder_operations *holder_ops;
-> >  };
-> >
-> >  static dev_t dax_devt;
-> > @@ -192,6 +197,29 @@ int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
-> >  }
-> >  EXPORT_SYMBOL_GPL(dax_zero_page_range);
-> >
-> > +int dax_holder_notify_failure(struct dax_device *dax_dev, u64 off,
-> > +                           u64 len, int mf_flags)
-> > +{
-> > +     int rc;
-> > +
-> > +     dax_read_lock(dax_dev);
-> > +     if (!dax_alive(dax_dev)) {
-> > +             rc = -ENXIO;
-> > +             goto out;
-> > +     }
-> > +
-> > +     if (!dax_dev->holder_ops) {
-> > +             rc = -EOPNOTSUPP;
-> > +             goto out;
-> > +     }
-> > +
-> > +     rc = dax_dev->holder_ops->notify_failure(dax_dev, off, len, mf_flags);
-> > +out:
-> > +     dax_read_unlock(dax_dev);
-> > +     return rc;
-> > +}
-> > +EXPORT_SYMBOL_GPL(dax_holder_notify_failure);
-> > +
-> >  #ifdef CONFIG_ARCH_HAS_PMEM_API
-> >  void arch_wb_cache_pmem(void *addr, size_t size);
-> >  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
-> > @@ -254,6 +282,10 @@ void kill_dax(struct dax_device *dax_dev)
-> >               return;
-> >       dax_write_lock(dax_dev);
-> >       clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
-> > +
-> > +     /* clear holder data */
-> > +     dax_dev->holder_ops = NULL;
-> > +     dax_dev->holder_data = NULL;
-> >       dax_write_unlock(dax_dev);
-> >  }
-> >  EXPORT_SYMBOL_GPL(kill_dax);
-> > @@ -401,6 +433,36 @@ void put_dax(struct dax_device *dax_dev)
-> >  }
-> >  EXPORT_SYMBOL_GPL(put_dax);
-> >
-> > +void dax_register_holder(struct dax_device *dax_dev, void *holder,
-> > +             const struct dax_holder_operations *ops)
-> > +{
-> > +     if (!dax_alive(dax_dev))
-> > +             return;
-> > +
-> > +     dax_dev->holder_data = holder;
-> > +     dax_dev->holder_ops = ops;
+> [changed subject line to hopefully get people to stop ignoring this]
 >
-> Shouldn't this return an error code if the dax device is dead or if
-> someone already registered a holder?  I'm pretty sure XFS should not
-> bind to a dax device if someone else already registered for it...
+> Please see my message below where I explained the problem in detail.  Any
+> response from the maintainers of kernel/sched/psi.c?  There are a lot of you:
 
-Agree, yes.
+Ok, this one is clearly a kernel/sched/psi.c bug, since the lifetime
+isn't even maintained by the fiel reference.
 
->
-> ...unless you want to use a notifier chain for failure events so that
-> there can be multiple consumers of dax failure events?
+I think the proper thing to do is to move the whole "get kref to
+trigger pointer" in the open/close code, and keep the ref around that
+way.
 
-No, I would hope not. It should be 1:1 holders to dax-devices. Similar
-ownership semantics like bd_prepare_to_claim().
+The natural thing to do would be to look up the trigger at open time,
+save the pointer in seq->private, and release it at close time.
+
+Sadly, right now the code actually uses that 'seq->private' as an
+indirect rcu-pointer to the trigger data, instead of as the trigger
+data itself. And that seems very much on purpose and inherent to that
+'psi_write()' model, where it changes the trigger pointer very much on
+purpose.
+
+So I agree 100% - the PSI code is fundamentally broken. psi_write()
+seems to be literally _designed_ to do the wrong thing.
+
+I don't know who - if anybody - uses this. My preference would be to
+just disable the completely broken poll support.
+
+Another alternative is to just make 'psi_write()' return -EBUSY if
+there are existing poll waiters (ie t->event_wait not being empty.  At
+least then the open file would keep the kref to the trigger.
+
+That would require that 'psi_trigger_replace()' serialize with the
+waitqueue lock (easy), but all callers would also have to check the
+return value of it
+
+The cgroup code does
+
+        psi_trigger_replace(&of->priv, NULL);
+
+in the release function, but I guess that might work since at release
+time there shouldn't be any pending polls anyway.
+
+But it would also mean that anybody who can open the file for reading
+(so that they can poll it) would be able to keep people from changing
+it.
+
+But yes, I think that unless we get some reply from the PSI
+maintainers, we will have to just disable polling entirely.
+
+I hope there are no users that would break, but considering that the
+current code is clearly too broken to live, this may be one of those
+"we have no choice" cases.
+
+                         Linus
