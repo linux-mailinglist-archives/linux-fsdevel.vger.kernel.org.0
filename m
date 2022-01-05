@@ -2,170 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71BAC4858DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 20:06:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E5F4858E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 20:07:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243323AbiAETGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jan 2022 14:06:09 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:60600 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243317AbiAETGJ (ORCPT
+        id S243339AbiAETHg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jan 2022 14:07:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243276AbiAETHd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jan 2022 14:06:09 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2C65617E8;
-        Wed,  5 Jan 2022 19:06:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 047E5C36AE9;
-        Wed,  5 Jan 2022 19:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641409568;
-        bh=ztzxbkalbIPb30j4PLPt7jHsX6mRQuIWYMcP+uqwvmQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aT67lFvl11sy9BIgecg0Kz380qFY+pYepVbhAUFLy7PEyjgor69LxPqBjXdayt/e/
-         C0gyhb1wUPKgvkGTVI4wlxWQ0xGjkDpywELvRhkB9DFbL8AOD4IICNKTEu1t9Cq/dT
-         m8vT7XHura2XbBcDoUeGm6pvUmST7COe5ziWW0RnfHuNGIRbMOrk0+o7K/MKqYi5k+
-         22E5+yGJKj77XTFMfTMA6KXaHbTRZ1YGXU4K5SCFMpjrxKpDBpYPHgmv+19P2gFdtu
-         vulXlgXM+O8G3YKkvsmeb/0lfNLRVJ8+MDt7tJIy4BSQc+OQ4AFZzM8/scBXZC8Rgc
-         Zj01m1diKnDig==
-Date:   Wed, 5 Jan 2022 11:06:07 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@infradead.org, jane.chu@oracle.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v9 04/10] pagemap,pmem: Introduce ->memory_failure()
-Message-ID: <20220105190607.GF398655@magnolia>
-References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
- <20211226143439.3985960-5-ruansy.fnst@fujitsu.com>
+        Wed, 5 Jan 2022 14:07:33 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E7AC061245
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 11:07:33 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id b13so309786edd.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 11:07:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IyMNvvq0PEPzslt4MSGCkpasRaRMjefk5SUq0r41MJo=;
+        b=HCszAIvsRbzHlCtHIRPeDuKPDcR1lrL6BkCRu+HjowLsRZyE6WlMB5UCoxalh9VvvT
+         kNldojtQrvE7JFw+ZnKXRQn72R/lUyGgBVxRVVw5o7OJlhyAP9cJ50FBeLDiJcWfJb0N
+         YXqwklj0PcrrhPDeOOqJIDM2iPvpqRymF2iBU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IyMNvvq0PEPzslt4MSGCkpasRaRMjefk5SUq0r41MJo=;
+        b=MwaSCzaGjLCyZq1nrZGz+0kuNi1e9cUGALQynTkcikUC4gXJYEywdVEBheThWwJbl4
+         Qp264LVwnU6Rxr0pTdY+B24gZ0iwXvwIZNlzPr3tCfqBo/Qs/sQUqX25KhHwOLaG4294
+         JWOEI7AXPpZ5g2c+1Au1RAuTrLzBwXC8eP7RSnSaVD+jpm1PI02EZPvFpraSyg0xPLOo
+         7lfxrWjO4B7Eo175vWnB9Ilax32BnHqNBfIu67zr3MIZFXkuFtWMiCpK37I9kenhLmmE
+         XWkZjqWrfkfzI55XdMGQLJ01etH0r3QE+igrQssQuouLzWtkH+bEWD0djFBVRqOqNw4S
+         OPLw==
+X-Gm-Message-State: AOAM5310CzjW8maKjHQ4Ethc4aOcGM8f7IxcZ9q8y2+kahGADcIV3sjJ
+        sEeGCxDI3WiCJMsIjQxX+uqB4rfwkZbfVa9vkoA=
+X-Google-Smtp-Source: ABdhPJxEv5MW6Hmr0OVRp0Zjx/DPWJ75ndu7rzn+SWp6Js8mKvdcIqikb6btsulIeTx2uUxSvN+HOA==
+X-Received: by 2002:a17:907:d07:: with SMTP id gn7mr45284473ejc.575.1641409651554;
+        Wed, 05 Jan 2022 11:07:31 -0800 (PST)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
+        by smtp.gmail.com with ESMTPSA id qt5sm12350029ejb.214.2022.01.05.11.07.29
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jan 2022 11:07:30 -0800 (PST)
+Received: by mail-wr1-f47.google.com with SMTP id l10so184439wrh.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 11:07:29 -0800 (PST)
+X-Received: by 2002:a05:6000:10d2:: with SMTP id b18mr47391843wrx.193.1641409649356;
+ Wed, 05 Jan 2022 11:07:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211226143439.3985960-5-ruansy.fnst@fujitsu.com>
+References: <000000000000e8f8f505d0e479a5@google.com> <20211211015620.1793-1-hdanton@sina.com>
+ <YbQUSlq76Iv5L4cC@sol.localdomain> <YdW3WfHURBXRmn/6@sol.localdomain> <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 5 Jan 2022 11:07:13 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjddvNbZBuvh9m_2VYFC1W7HvbP33mAzkPGOCHuVi5fJg@mail.gmail.com>
+Message-ID: <CAHk-=wjddvNbZBuvh9m_2VYFC1W7HvbP33mAzkPGOCHuVi5fJg@mail.gmail.com>
+Subject: Re: psi_trigger_poll() is completely broken
+To:     Eric Biggers <ebiggers@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 26, 2021 at 10:34:33PM +0800, Shiyang Ruan wrote:
-> When memory-failure occurs, we call this function which is implemented
-> by each kind of devices.  For the fsdax case, pmem device driver
-> implements it.  Pmem device driver will find out the filesystem in which
-> the corrupted page located in.
-> 
-> With dax_holder notify support, we are able to notify the memory failure
-> from pmem driver to upper layers.  If there is something not support in
-> the notify routine, memory_failure will fall back to the generic hanlder.
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/nvdimm/pmem.c    | 16 ++++++++++++++++
->  include/linux/memremap.h |  9 +++++++++
->  mm/memory-failure.c      | 14 ++++++++++++++
->  3 files changed, 39 insertions(+)
-> 
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 4190c8c46ca8..2114554358eb 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -386,6 +386,20 @@ static void pmem_release_disk(void *__pmem)
->  	blk_cleanup_disk(pmem->disk);
->  }
->  
-> +static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
-> +		unsigned long pfn, u64 len, int mf_flags)
-> +{
-> +	struct pmem_device *pmem =
-> +			container_of(pgmap, struct pmem_device, pgmap);
-> +	loff_t offset = PFN_PHYS(pfn) - pmem->phys_addr - pmem->data_offset;
+On Wed, Jan 5, 2022 at 10:50 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> That would require that 'psi_trigger_replace()' serialize with the
+> waitqueue lock (easy)
 
-Use u64 here ^^^ because this isn't a file offset, this is a physical
-offset.  Also, loff_t is signed, which you probably don't want.
+I take the "easy" back. The other side of that serialization would
+require that the poll() side also re-lookup the trigger pointer under
+that same lock.
 
-> +
-> +	return dax_holder_notify_failure(pmem->dax_dev, offset, len, mf_flags);
-> +}
-> +
-> +static const struct dev_pagemap_ops fsdax_pagemap_ops = {
-> +	.memory_failure		= pmem_pagemap_memory_failure,
-> +};
-> +
->  static int pmem_attach_disk(struct device *dev,
->  		struct nd_namespace_common *ndns)
->  {
-> @@ -448,6 +462,7 @@ static int pmem_attach_disk(struct device *dev,
->  	pmem->pfn_flags = PFN_DEV;
->  	if (is_nd_pfn(dev)) {
->  		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
-> +		pmem->pgmap.ops = &fsdax_pagemap_ops;
->  		addr = devm_memremap_pages(dev, &pmem->pgmap);
->  		pfn_sb = nd_pfn->pfn_sb;
->  		pmem->data_offset = le64_to_cpu(pfn_sb->dataoff);
-> @@ -461,6 +476,7 @@ static int pmem_attach_disk(struct device *dev,
->  		pmem->pgmap.range.end = res->end;
->  		pmem->pgmap.nr_range = 1;
->  		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
-> +		pmem->pgmap.ops = &fsdax_pagemap_ops;
->  		addr = devm_memremap_pages(dev, &pmem->pgmap);
->  		pmem->pfn_flags |= PFN_MAP;
->  		bb_range = pmem->pgmap.range;
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index c0e9d35889e8..820c2f33b163 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -87,6 +87,15 @@ struct dev_pagemap_ops {
->  	 * the page back to a CPU accessible page.
->  	 */
->  	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
-> +
-> +	/*
-> +	 * Handle the memory failure happens on a range of pfns.  Notify the
-> +	 * processes who are using these pfns, and try to recover the data on
-> +	 * them if necessary.  The mf_flags is finally passed to the recover
-> +	 * function through the whole notify routine.
+And you can't do that with the waitqueue lock, because 'poll_wait()'
+does the add_wait_queue() internally, and that will take the waitqueue
+lock. So you can't take and hold the waitqueue lock in the caller in
+poll, it would just deadlock.
 
+And not holding the lock over the call would mean that you'd have a
+small race between adding a new poll waiter, and checking that the
+trigger is still the same one.
 
-Might want to state here that the generic implementation will be used if
-->memory_failure is NULL or calling the function returns -EOPNOTSUPP.
+We could use another lock - the code in kernel/sched/psi.c already does
 
---D
+        mutex_lock(&seq->lock);
+        psi_trigger_replace(&seq->private, new);
+        mutex_unlock(&seq->lock);
 
-> +	 */
-> +	int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
-> +			      u64 len, int mf_flags);
->  };
->  
->  #define PGMAP_ALTMAP_VALID	(1 << 0)
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 1ee7d626fed7..3cc612b29f89 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1625,6 +1625,20 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  	if (!pgmap_pfn_valid(pgmap, pfn))
->  		goto out;
->  
-> +	/*
-> +	 * Call driver's implementation to handle the memory failure, otherwise
-> +	 * fall back to generic handler.
-> +	 */
-> +	if (pgmap->ops->memory_failure) {
-> +		rc = pgmap->ops->memory_failure(pgmap, pfn, PAGE_SIZE, flags);
-> +		/*
-> +		 * Fall back to generic handler too if operation is not
-> +		 * supported inside the driver/device/filesystem.
-> +		 */
-> +		if (rc != -EOPNOTSUPP)
-> +			goto out;
-> +	}
-> +
->  	rc = mf_generic_kill_procs(pfn, flags, pgmap);
->  out:
->  	/* drop pgmap ref acquired in caller */
-> -- 
-> 2.34.1
-> 
-> 
-> 
+and could use that same lock around the poll sequence too.
+
+But the cgroup_pressure_write() code doesn't even do that, and
+concurrent writes aren't serialized at all (much less concurrent
+poll() calls).
+
+Side note: it looks like concurrent writes in the
+cgroup_pressure_write() is literally broken. Because
+psi_trigger_replace() is *not* handling concurrency, and does that
+
+        struct psi_trigger *old = *trigger_ptr;
+        ....
+        if (old)
+                kref_put(&old->refcount, psi_trigger_destroy);
+
+assuming that the caller holds some lock that makes '*trigger_ptr' a
+stable thing.
+
+Again, kernel/sched/psi.c itself does that already, but the cgroup
+code doesn't seem to.
+
+So the bugs in this area go deeper than "just" poll(). The whole
+psi_trigger_replace() thing is literally broken even ignoring the
+poll() interactions.
+
+Whoever came up with that stupid "replace existing trigger with a
+write()" model should feel bad. It's garbage, and it's actively buggy
+in multiple ways.
+
+                  Linus
