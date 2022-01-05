@@ -2,110 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E839485682
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 17:11:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3F3C485702
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 18:03:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241851AbiAEQLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jan 2022 11:11:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37438 "EHLO
+        id S242066AbiAERD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jan 2022 12:03:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241841AbiAEQLe (ORCPT
+        with ESMTP id S242122AbiAERD2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jan 2022 11:11:34 -0500
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD08AC061245
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 08:11:33 -0800 (PST)
-Received: by mail-io1-xd36.google.com with SMTP id h23so38792156iol.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 08:11:33 -0800 (PST)
+        Wed, 5 Jan 2022 12:03:28 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799E6C061201
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jan 2022 09:03:28 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id s15so1370plg.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jan 2022 09:03:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jhqeMcG2tRiIaFP/5tlL9AeEOUXxieFWeJV5lNZQQTo=;
-        b=kAX8kDcSz0UK2eUUa2bgD+twqctqIEEtpzqJq2WtfO+Co/Vr5ubyxTimR7JrHwlONb
-         TwL/i6CM4r6IR9oEz6CUCctIAedmOCv1+RjoveQHxzH94esjtPC3KXF5neJEc0I8Gxmi
-         kVnwcx6ZO4XJfei76juANG1zmH7GtVT7zK6GXos1XVOdilv7/5wTnv14qhTWCit0HA/D
-         0QPIXMqECsUm98uFHzj6dm1HMLsL3/LYgPnMpb+7ia2sQ45HgB2rEscaQZNOIx60nfDq
-         y/9Wunbr8Th4R64alhLOSPCFWTSXe3zZ9hW54qTWGkdR70KkL/7v5JCivrOCUvfthxsv
-         m60g==
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=20PcXM2SOqh0bhoeFDgkuJ5Ggj44o0SuiK3MzhyRmsU=;
+        b=rsVhd0t9UYWasE9JkCnUdxw73v/C1RJiVYZucEuqofNaX7J+c9jjVQkj/bSH9/hzML
+         1AQ45ueMsGZqHhb+ONFIOTRVECck4WDJiLkhJ0dCZbZRd5F9dDTBiVu7r7REZXD9nDtu
+         Xwabj8vwZirYN27UmfT+MFejoQWUI9qJwppOAO8SVy7LPqm06bw6Rk+FSk4JnYLfNzKN
+         6FSWMsczvkGo3kv1fgbZktu3eIC0s4j4r+mMRKUgyd5AhelCtF7hT13ZZzUMad8zhHYs
+         NsjHcQfwZ6EHDGIT1RaMTzGYfSxfIcJSuUk+//z6aXiUfPd4LC0DhqXQ2LFXonhbNUZK
+         5pzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jhqeMcG2tRiIaFP/5tlL9AeEOUXxieFWeJV5lNZQQTo=;
-        b=cHTNol6PRpESB/juP5Kqlaoi61r4MEuXnUcpLSvULMapWgEOY4O9vor6b/hrZYGQcj
-         itotqSZLoRU82FQfqk+HeoAdx548sOgOdhDLi8c+3m+J0Txztma11UGv724VrJhejfQ+
-         5N274ATS9ipOLLgi3leq1+AAid8U8JLyydPime8lNGPPK+beyFNS0tzrCbJmRz6XFd65
-         pgGP/9Fu+vAmyN+m4gdxJLKQPsS1IbKsYgSZ8yg0350NEO3yJ+LSQv8lFq23P0rSAh82
-         rLTIvjy4qoK8d39nrpcPrmxisrVCw8UK/G1a1obrKsASUnPOi/uyioGIvvkd3pxSQiuq
-         2DAA==
-X-Gm-Message-State: AOAM5339qY49srJTrroKtsX5+9CvxCGT7aYe2SoK8ULaZlc3Sa6SMTpH
-        rwtoxotl7kizJiKw0mXQB7gskXfGg4NgOg==
-X-Google-Smtp-Source: ABdhPJy5WyTP6kBKm3mZ7Q+fKR6ckyKxiZ3Qrefqhp65+jXCj3qTmYGpSMbFfk2FHQlAwM3ioVSbJQ==
-X-Received: by 2002:a05:6638:1302:: with SMTP id r2mr24186773jad.37.1641399093189;
-        Wed, 05 Jan 2022 08:11:33 -0800 (PST)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id j2sm24138705ilr.71.2022.01.05.08.11.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jan 2022 08:11:32 -0800 (PST)
-Subject: Re: [PATCH v3 0/5] aio: fix use-after-free and missing wakeups
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ramji Jiyani <ramjiyani@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Martijn Coenen <maco@android.com>,
-        stable <stable@vger.kernel.org>
-References: <20211209010455.42744-1-ebiggers@kernel.org>
- <CAHk-=wjkXez+ugCbF3YpODQQS-g=-4poCwXaisLW4p2ZN_=hxw@mail.gmail.com>
- <4a472e72-d527-db79-d46e-efa9d4cad5bb@kernel.dk>
- <YdW4sApUUBi/5UHh@sol.localdomain>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8289804d-dc19-2ecd-d03e-d4af97b5ee18@kernel.dk>
-Date:   Wed, 5 Jan 2022 09:11:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=20PcXM2SOqh0bhoeFDgkuJ5Ggj44o0SuiK3MzhyRmsU=;
+        b=CDs7KPn7y3G7p95u3omcmy4ezRhpkeVWIaDq/BFatkZ31HWDs9WX1+hMvY7xgxVCND
+         A4Q3+ZCLpaqCsefeNW3rm31pTojP3zVtV7lB97SEv9O/280f6do0N9H7hfitF3hrQW6c
+         A6CUDBf8ZoOK9KIIN/RXX3n83yclxUKuVGk/F9MQ2TbbudPwGRCOi3HzP/8JBiHZ4MkP
+         cU3TFkjLsGKZlWcF+BFYLT9XWXNOYxq5CwWL2NHuUDPOnLa0CRy24TvLzdUVZi+jSaPX
+         25HBwGZJAXcB5VlB7TGYfP+ziZd36WiFHYU7f9rdqvlySI+1+DX4IPgbCyOzpfRglRws
+         7P6w==
+X-Gm-Message-State: AOAM532TXH1MhG/ZtB2PR/So4G4pRyM5oHk0bt3ADhWVzDNmZqo+2pR0
+        rT5q3b4HnbHU8Eh5BXYR6+0qZQ==
+X-Google-Smtp-Source: ABdhPJxImFHzV2wP+eap8aozdummb4OVmFsl2PXCC7t1JdswItec85C5qV0TEmNNUwSf2xDAMgaO6g==
+X-Received: by 2002:a17:90b:1c86:: with SMTP id oo6mr4975265pjb.165.1641402207756;
+        Wed, 05 Jan 2022 09:03:27 -0800 (PST)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id v3sm23315094pgl.64.2022.01.05.09.03.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jan 2022 09:03:27 -0800 (PST)
+Date:   Wed, 5 Jan 2022 17:03:23 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [PATCH v3 kvm/queue 11/16] KVM: Add kvm_map_gfn_range
+Message-ID: <YdXPW+2hZDsgZD/a@google.com>
+References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
+ <20211223123011.41044-12-chao.p.peng@linux.intel.com>
+ <YcS6m9CieYaIGA3F@google.com>
+ <20211224041351.GB44042@chaop.bj.intel.com>
+ <20211231023334.GA7255@chaop.bj.intel.com>
+ <YdSEcknuErGe0gQa@google.com>
+ <20220105061410.GA25283@chaop.bj.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <YdW4sApUUBi/5UHh@sol.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220105061410.GA25283@chaop.bj.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/5/22 7:26 AM, Eric Biggers wrote:
-> On Thu, Dec 09, 2021 at 02:46:45PM -0700, Jens Axboe wrote:
->> On 12/9/21 11:00 AM, Linus Torvalds wrote:
->>> On Wed, Dec 8, 2021 at 5:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
->>>>
->>>> Careful review is appreciated; the aio poll code is very hard to work
->>>> with, and it doesn't appear to have many tests.  I've verified that it
->>>> passes the libaio test suite, which provides some coverage of poll.
->>>>
->>>> Note, it looks like io_uring has the same bugs as aio poll.  I haven't
->>>> tried to fix io_uring.
->>>
->>> I'm hoping Jens is looking at the io_ring case, but I'm also assuming
->>> that I'll just get a pull request for this at some point.
->>
->> Yes, when I saw this original posting I did discuss it with Pavel as
->> well, and we agree that the same issue exists there. Which isn't too
->> surprising, as that's where the io_uring poll code from originally.
->>
+On Wed, Jan 05, 2022, Chao Peng wrote:
+> On Tue, Jan 04, 2022 at 05:31:30PM +0000, Sean Christopherson wrote:
+> > On Fri, Dec 31, 2021, Chao Peng wrote:
+> > > On Fri, Dec 24, 2021 at 12:13:51PM +0800, Chao Peng wrote:
+> > > > On Thu, Dec 23, 2021 at 06:06:19PM +0000, Sean Christopherson wrote:
+> > > > > On Thu, Dec 23, 2021, Chao Peng wrote:
+> > > > > > This new function establishes the mapping in KVM page tables for a
+> > > > > > given gfn range. It can be used in the memory fallocate callback for
+> > > > > > memfd based memory to establish the mapping for KVM secondary MMU when
+> > > > > > the pages are allocated in the memory backend.
+> > > > > 
+> > > > > NAK, under no circumstance should KVM install SPTEs in response to allocating
+> > > > > memory in a file.   The correct thing to do is to invalidate the gfn range
+> > > > > associated with the newly mapped range, i.e. wipe out any shared SPTEs associated
+> > > > > with the memslot.
+> > > > 
+> > > > Right, thanks.
+> > > 
+> > > BTW, I think the current fallocate() callback is just useless as long as
+> > > we don't want to install KVM SPTEs in response to allocating memory in a
+> > > file. The invalidation of the shared SPTEs should be notified through 
+> > > mmu_notifier of the shared memory backend, not memfd_notifier of the
+> > > private memory backend.
+> > 
+> > No, because the private fd is the final source of truth as to whether or not a
+> > GPA is private, e.g. userspace may choose to not unmap the shared backing.
+> > KVM's rule per Paolo's/this proposoal is that a GPA is private if it has a private
+> > memslot and is present in the private backing store.  And the other core rule is
+> > that KVM must never map both the private and shared variants of a GPA into the
+> > guest.
 > 
-> Jens, any update on fixing the io_uring version of the bug?  Note,
-> syzbot has managed to use io_uring poll to hit the WARN_ON_ONCE() that
-> I added in __wake_up_pollfree(), which proves that it is broken.
+> That's true, but I'm wondering if zapping the shared variant can be
+> handled at the time when the private one gets mapped in the KVM page
+> fault. No bothering the backing store to dedicate a callback to tell
+> KVM.
 
-There are two parts to this, first part is queued up for 5.17 for a few
-weeks. Work in progress...
+Hmm, I don't think that would work for the TDP MMU due to page faults taking
+mmu_lock for read.  E.g. if two vCPUs concurrently fault in both the shared and
+private variants, a race could exist where the private page fault sees the gfn
+as private and the shared page fault sees it as shared.  In that case, both faults
+will install a SPTE and KVM would end up running with both variants mapped into the
+guest.
 
--- 
-Jens Axboe
-
+There's also a performance penalty, as KVM would need to walk the shared EPT tree
+on every private page fault.
