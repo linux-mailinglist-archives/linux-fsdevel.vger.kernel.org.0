@@ -2,125 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E95248594E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 20:39:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D12634859D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jan 2022 21:10:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243629AbiAETjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jan 2022 14:39:14 -0500
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:49804 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243596AbiAETjN (ORCPT
+        id S243882AbiAEUKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jan 2022 15:10:54 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:40776 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243875AbiAEUKx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jan 2022 14:39:13 -0500
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:43070 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1n5C7r-0007nD-6h; Wed, 05 Jan 2022 14:39:11 -0500
-Message-ID: <8b6f2ce48c4097a23f5d03d631ed9363ecd45ddf.camel@trillion01.com>
-Subject: Re: [RFC] coredump: Do not interrupt dump for TIF_NOTIFY_SIGNAL
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 05 Jan 2022 14:39:09 -0500
-In-Reply-To: <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
-References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
-         <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
-         <87h7i694ij.fsf_-_@disp2133>
-         <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
-         <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
-         <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.42.2 
+        Wed, 5 Jan 2022 15:10:53 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 96C7921117;
+        Wed,  5 Jan 2022 20:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1641413452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DyWt1G495VFeKjaC/pvT63EifJLiD3d3EYcDijVDLAI=;
+        b=iTPfnt5Z3E+Mpp3QF36vdxNoL383jGjG0E6HoLxJKLXLmEaYVooU2p+zFjtAR/jcS7xWTZ
+        BcYTlINkNuD9CqcVyKUUqLicnnbQwZ8tQTB6mW3+PR0mmHAQvmU0n3JJc4Q99SXOVUw+hP
+        OBfhVeDpVk08xalZMRuWUg37pX+Iix0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1641413452;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DyWt1G495VFeKjaC/pvT63EifJLiD3d3EYcDijVDLAI=;
+        b=3GeMv2N2/sO/6Nd1bvkjYwqleJ8sEQZu9Hx2KzxHZI0eskO7myfVyvDTBmWUlSF1Xlo2Ul
+        CUr/9QZ6u3XNeKDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6F3FF13C0A;
+        Wed,  5 Jan 2022 20:10:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 92jLGUz71WFeZAAAMHmgww
+        (envelope-from <ddiss@suse.de>); Wed, 05 Jan 2022 20:10:52 +0000
+Date:   Wed, 5 Jan 2022 21:10:51 +0100
+From:   David Disseldorp <ddiss@suse.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Martin Wilck <mwilck@suse.com>, viro@zeniv.linux.org.uk,
+        willy@infradead.org
+Subject: Re: [PATCH v5 2/5] initramfs: add INITRAMFS_PRESERVE_MTIME Kconfig
+ option
+Message-ID: <20220105211051.7c1c5ab9@suse.de>
+In-Reply-To: <20211213232007.26851-3-ddiss@suse.de>
+References: <20211213232007.26851-1-ddiss@suse.de>
+        <20211213232007.26851-3-ddiss@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-12-24 at 10:37 +0000, Pavel Begunkov wrote:
-> On 12/24/21 01:34, Olivier Langlois wrote:
-> > On Fri, 2021-10-22 at 15:13 +0100, Pavel Begunkov wrote:
-> > > On 6/9/21 21:17, Eric W. Biederman wrote:
-> > > In short, a task creates an io_uring worker thread, then the
-> > > worker
-> > > submits a task_work item to the creator task and won't die until
-> > > the item is executed/cancelled. And I found that the creator task
-> > > is
-> > > sleeping in do_coredump() -> wait_for_completion()
-> > > 
-> [...]
-> > > A hack executing tws there helps (see diff below).
-> > > Any chance anyone knows what this is and how to fix it?
-> > > 
-> [...]
-> > Pavel,
-> > 
-> > I cannot comment on the merit of the proposed hack but my proposed
-> > patch to fix the coredump truncation issue when a process using
-> > io_uring core dumps that I submitted back in August is still
-> > unreviewed!
-> 
-> That's unfortunate. Not like I can help in any case, but I assumed
-> it was dealt with by
-> 
-> commit 06af8679449d4ed282df13191fc52d5ba28ec536
-> Author: Eric W. Biederman <ebiederm@xmission.com>
-> Date:   Thu Jun 10 15:11:11 2021 -0500
-> 
->      coredump: Limit what can interrupt coredumps
->      
->      Olivier Langlois has been struggling with coredumps being
-> incompletely written in
->      processes using io_uring.
->      ...
-> 
-It was a partial fix only. Oleg Nesterov pointed out that the fix was
-not good if if the core dump was written into a pipe.
+On Tue, 14 Dec 2021 00:20:05 +0100, David Disseldorp wrote:
 
-https://lore.kernel.org/io-uring/20210614141032.GA13677@redhat.com/
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -17,6 +17,8 @@
+...
+> -static void __init dir_add(const char *name, time64_t mtime)
+> -{
+> -	struct dir_entry *de = kmalloc(sizeof(struct dir_entry), GFP_KERNEL);
+> -	if (!de)
+> -		panic_show_mem("can't allocate dir_entry buffer");
+> -	INIT_LIST_HEAD(&de->list);
+> -	de->name = kstrdup(name, GFP_KERNEL);
+> -	de->mtime = mtime;
+> -	list_add(&de->list, &dir_list);
+> -}
+...
+> --- /dev/null
+> +++ b/init/initramfs_mtime.h
+...
+> +static void __init dir_add(const char *name, time64_t mtime)
+> +{
+> +	struct dir_entry *de = kmalloc(sizeof(struct dir_entry), GFP_KERNEL);
+> +	if (!de)
+> +		panic("can't allocate dir_entry buffer");
+> +	INIT_LIST_HEAD(&de->list);
+> +	de->name = kstrdup(name, GFP_KERNEL);
+> +	de->mtime = mtime;
+> +	list_add(&de->list, &dir_list);
+> +}
 
-> > https://lore.kernel.org/lkml/1625bc89782bf83d9d8c7c63e8ffcb651ccb15
-> > fa.1629655338.git.olivier@trillion01.com/
-> > 
-> > I have been using it since then I must have generated many dozens
-> > of
-> > perfect core dump files with it and I have not seen a single
-> > truncated
-> > core dump files like I used to have prior to the patch.
-> > 
-> > I am bringing back my patch to your attention because one nice side
-> > effect of it is that it would have avoided totally the problem that
-> > you
-> > have encountered in coredump_wait() since it does cancel io_uring
-> > resources before calling coredump_wait()!
-> 
-> FWIW, I worked it around in io_uring back then by breaking the
-> dependency.
-> 
-Yes I have seen your work to fix the problem.
-
-It just seems to me that there is no good reason to keep io_uring
-process requests once you are generating a core dump and simply
-cancelling io_uring before generating the core dump would have avoided
-the problem that you have encountered plus any other similar issues yet
-to come...
-
-Greetings,
-
+I might as well fix the unhandled kstrdup() failure, rather than copying
+it here. I'll post another round which allocates the "name" buffer via
+the dir_entry kmalloc() call.
