@@ -2,39 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF57486721
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jan 2022 16:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02EBC48679A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jan 2022 17:27:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240776AbiAFPzS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jan 2022 10:55:18 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:55946 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240757AbiAFPzQ (ORCPT
+        id S241206AbiAFQ1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jan 2022 11:27:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:25793 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241202AbiAFQ1G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jan 2022 10:55:16 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 6 Jan 2022 11:27:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1641486426;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bqGE+ogCsKbt8jpL4JhbwafMN3V+xGn5LKE8WlKnEkY=;
+        b=YvdqY8XN6VFaN78TGcvB1ybWA0/cr3CWgvTifKaXO8JBsCERqwnpgL8W60ifNl+2xvc/rq
+        SCWHtZq9ehjtzi3UcjbHdjGQHolZgHybwSK5eRFYoD9Zm1QMqns1BYAtgkEHLh0RFyLVV6
+        fQD2r5FJjYHCZCsjlzU9LUqYGzriVAc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-215-2bLqDce9NF-N5Qh7l0pIvA-1; Thu, 06 Jan 2022 11:27:04 -0500
+X-MC-Unique: 2bLqDce9NF-N5Qh7l0pIvA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 523EC61CCD;
-        Thu,  6 Jan 2022 15:55:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA9EC36AED;
-        Thu,  6 Jan 2022 15:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641484515;
-        bh=Zs49UM4op7FhcCag8kpRl0gmJmPkQMG6LyUseoRbg+0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=u/X2RYkCkXWlEbdzZylMfFjFSEVyRT5Ca3qVn7cp9C12kkSDpjgzNfNvUmOCIJizx
-         DommcboOU+mfgMmoOi08pZRyP+WiWUHP2RIG7uehFtB1oWZtypyF8sWK4S/xTD38sh
-         Y1XgFY7Ix5jLFUTR/9KYwRCm4cHtFN4stWf7TxUjUkUiy5DK4m/VEiFiF0MUQQtwM5
-         CO6xPJVth9K2ogc2C0OdzBJPzd9r7HwWMa3eqeonRWKWg2fW5fpAghr2pKvhzexsb+
-         afyqg3LXWlrEtyE5ww0K0lsmykZcj63W0+M+mg0S4X+1a8SAezzwD6LHmxXCGzt6RL
-         uY4rs4xgdqKUA==
-Message-ID: <043a206f03929c2667a465314144e518070a9b2d.camel@kernel.org>
-Subject: Re: [PATCH v4 28/68] fscache: Provide a function to note the
- release of a page
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF7AD92500;
+        Thu,  6 Jan 2022 16:27:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26CED70D3D;
+        Thu,  6 Jan 2022 16:26:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <043a206f03929c2667a465314144e518070a9b2d.camel@kernel.org>
+References: <043a206f03929c2667a465314144e518070a9b2d.camel@kernel.org> <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk> <164021525963.640689.9264556596205140044.stgit@warthog.procyon.org.uk>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>,
@@ -47,71 +57,78 @@ Cc:     Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Jan 2022 10:55:12 -0500
-In-Reply-To: <164021525963.640689.9264556596205140044.stgit@warthog.procyon.org.uk>
-References: <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk>
-         <164021525963.640689.9264556596205140044.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
+Subject: Re: [PATCH v4 28/68] fscache: Provide a function to note the release of a page
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2848130.1641486417.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 06 Jan 2022 16:26:57 +0000
+Message-ID: <2848131.1641486417@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-12-22 at 23:20 +0000, David Howells wrote:
-> Provide a function to be called from a network filesystem's releasepage
-> method to indicate that a page has been released that might have been a
-> reflection of data upon the server - and now that data must be reloaded
-> from the server or the cache.
-> 
-> This is used to end an optimisation for empty files, in particular files
-> that have just been created locally, whereby we know there cannot yet be
-> any data that we would need to read from the server or the cache.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-cachefs@redhat.com
-> Link: https://lore.kernel.org/r/163819617128.215744.4725572296135656508.stgit@warthog.procyon.org.uk/ # v1
-> Link: https://lore.kernel.org/r/163906920354.143852.7511819614661372008.stgit@warthog.procyon.org.uk/ # v2
-> Link: https://lore.kernel.org/r/163967128061.1823006.611781655060034988.stgit@warthog.procyon.org.uk/ # v3
-> ---
-> 
->  include/linux/fscache.h |   16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-> index 18e725671594..28ce258c1f87 100644
-> --- a/include/linux/fscache.h
-> +++ b/include/linux/fscache.h
-> @@ -607,4 +607,20 @@ static inline void fscache_clear_inode_writeback(struct fscache_cookie *cookie,
->  	}
->  }
->  
-> +/**
-> + * fscache_note_page_release - Note that a netfs page got released
-> + * @cookie: The cookie corresponding to the file
-> + *
-> + * Note that a page that has been copied to the cache has been released.  This
-> + * means that future reads will need to look in the cache to see if it's there.
-> + */
-> +static inline
-> +void fscache_note_page_release(struct fscache_cookie *cookie)
-> +{
-> +	if (cookie &&
-> +	    test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
-> +	    test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
-> +		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
-> +}
-> +
->  #endif /* _LINUX_FSCACHE_H */
-> 
-> 
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Is this logic correct?
+> > +/**
+> > + * fscache_note_page_release - Note that a netfs page got released
+> > + * @cookie: The cookie corresponding to the file
+> > + *
+> > + * Note that a page that has been copied to the cache has been releas=
+ed.  This
+> > + * means that future reads will need to look in the cache to see if i=
+t's there.
+> > + */
+> > +static inline
+> > +void fscache_note_page_release(struct fscache_cookie *cookie)
+> > +{
+> > +	if (cookie &&
+> > +	    test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
+> > +	    test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+> > +		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
+> > +}
+> > +
+> >  #endif /* _LINUX_FSCACHE_H */
+> > =
 
-FSCACHE_COOKIE_HAVE_DATA gets set in cachefiles_write_complete, but will
-that ever be called on a cookie that has no data? Will we ever call
-cachefiles_write at all when there is no data to be written?
+> > =
 
---
-Jeff Layton <jlayton@kernel.org>
+> =
+
+> Is this logic correct?
+> =
+
+> FSCACHE_COOKIE_HAVE_DATA gets set in cachefiles_write_complete, but will
+> that ever be called on a cookie that has no data? Will we ever call
+> cachefiles_write at all when there is no data to be written?
+
+FSCACHE_COOKIE_NO_DATA_TO_READ is set if we have no data in the cache yet
+(ie. the backing file lookup was negative, the file is 0 length or the coo=
+kie
+got invalidated).  It means that we have no data in the cache, not that th=
+e
+file is necessarily empty on the server.
+
+FSCACHE_COOKIE_HAVE_DATA is set once we've stored data in the backing file=
+.
+=46rom that point on, we have data we *could* read - however, it's covered=
+ by
+pages in the netfs pagecache until at such time one of those covering page=
+s is
+released.
+
+So if we've written data to the cache (HAVE_DATA) and there wasn't any dat=
+a in
+the cache when we started (NO_DATA_TO_READ), it may no longer be true that=
+ we
+can skip reading from the cache.
+
+Read skipping is done by cachefiles_prepare_read().
+
+Note that I'm not doing tracking on a per-page basis, but only on a per-fi=
+le
+basis.
+
+David
+
