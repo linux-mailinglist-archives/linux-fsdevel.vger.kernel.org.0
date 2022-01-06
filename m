@@ -2,87 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B595D4861F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jan 2022 10:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD6948635B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jan 2022 12:00:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237259AbiAFJQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jan 2022 04:16:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237096AbiAFJQ1 (ORCPT
+        id S238238AbiAFLA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jan 2022 06:00:56 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:51152 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238102AbiAFLAy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jan 2022 04:16:27 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594E1C061245;
-        Thu,  6 Jan 2022 01:16:27 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id l15so2081816pls.7;
-        Thu, 06 Jan 2022 01:16:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GCYiRWu5Twt8jb0SnPCRioqDUt5sXlWSFguvONMtegs=;
-        b=cayzXj22vb+PLt1HX9Yeczs5Gvt5MPkQJKhuPFT8rMKSmtG9QpgzI9K8HWKSlIwrbc
-         8ksy8ZGwEN7j53sK4yBsuySRYB1/44jTksE1qMlBaaSgYd4LFkwPycaxyER0RrgZC+e+
-         5h2sVpavfL6hQotymaAF/hJP6M6B59RslkFg3DPnsDMr40LfCcl3aiNaL3kuY1VYBlX3
-         FWF+fsjtBIp97ZcjSGtH2ovDr4aW32ONZSTJyTVyv1I7IGWfDacfCO9dDIukJcejgliU
-         Hi2emE7s6fhKYlgFaiQ94SurBnXhtRMZJVvi5Fqt9B8Zz51Ldkb/+ALkcYIXLD1zy/5p
-         FJMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GCYiRWu5Twt8jb0SnPCRioqDUt5sXlWSFguvONMtegs=;
-        b=zBt7axyx11eXrk3eMlVsH/Ox2tEkax8jCgfvtsVn2ggINwtwLuDWC+8+a3xp30pboj
-         nJHem2f5uKlpW6hTFyuwXof0gTRh0Va4TDsF+NIFCqTpjqmFVrfuCMc/vV6VdLuFJACJ
-         NLPHdb67d+JNlFHPV3C7HZ5RGx9MF0OcPbqmknmT749q6/kOZ3NeGqgA3VCy1c++/qzs
-         +/0PHziQ6ePB3D3ISDu5clSpXew4qaSyP+QFAFVUY0N/SEl0AZqy4fjhcYdYU3CRtmUu
-         g7MlT2tVJZfiYgSBeY9wImhjGwM1EtEmhPp7Pf6ri0eLGD/xNnxOYS/+Q+UzkyzE7hOQ
-         huGA==
-X-Gm-Message-State: AOAM531AemNMj58nKzilHdezo+GPx2Mqx7fH8ftBEOchcXsOoeLxkt9Y
-        vdgQKVIdsjFptzuBPLbLDqBi6l0VQj5zNQ==
-X-Google-Smtp-Source: ABdhPJx+G48UabDMPQ8c2ODdOfQ34Nuucr4gaHJoJuUCENCzL2rLFrpfj5qTU1VPd5Oc5nREktYyvQ==
-X-Received: by 2002:a17:902:e0d4:b0:149:d19e:e3d with SMTP id e20-20020a170902e0d400b00149d19e0e3dmr6867885pla.87.1641460586903;
-        Thu, 06 Jan 2022 01:16:26 -0800 (PST)
-Received: from localhost.localdomain ([94.177.118.151])
-        by smtp.googlemail.com with ESMTPSA id l12sm1852194pfc.181.2022.01.06.01.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jan 2022 01:16:26 -0800 (PST)
-From:   Qinghua Jin <qhjin.dev@gmail.com>
-Cc:     Qinghua Jin <qhjin.dev@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] coredump: fix typo
-Date:   Thu,  6 Jan 2022 17:16:01 +0800
-Message-Id: <20220106091601.356240-1-qhjin.dev@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 6 Jan 2022 06:00:54 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0F04321106;
+        Thu,  6 Jan 2022 11:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1641466853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IEvBu7dHeD6Gxq79SWvMNCBIMerIX/L+M1nvgZS7GIA=;
+        b=c9tjKvCDKtEOwp/kJiBfMqCa2Hx8pjG8zls8M2T3zZUkvtbMScBxARnqXHD8qHriSx68g6
+        Fzb9hhw1w49D5ywmlk5xCq7JwW/Hi54rHTHaoCaBtESyOKlx6dj/yhu++1VWpbefA8QVzz
+        2z+FuFvRmU7Jv+/GSo8XqEphvhVWcng=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B46BA13C3E;
+        Thu,  6 Jan 2022 11:00:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id cdVkK+TL1mHWEAAAMHmgww
+        (envelope-from <mkoutny@suse.com>); Thu, 06 Jan 2022 11:00:52 +0000
+Date:   Thu, 6 Jan 2022 12:00:51 +0100
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        guro@fb.com, shy828301@gmail.com, alexs@kernel.org,
+        richard.weiyang@gmail.com, david@fromorbit.com,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        jaegeuk@kernel.org, chao@kernel.org, kari.argillander@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
+        fam.zheng@bytedance.com, smuchun@gmail.com
+Subject: Re: [PATCH v5 10/16] mm: list_lru: allocate list_lru_one only when
+ needed
+Message-ID: <20220106110051.GA470@blackbody.suse.cz>
+References: <20211220085649.8196-1-songmuchun@bytedance.com>
+ <20211220085649.8196-11-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211220085649.8196-11-songmuchun@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-change 'postion' to 'position'
+On Mon, Dec 20, 2021 at 04:56:43PM +0800, Muchun Song <songmuchun@bytedance.com> wrote:
+(Thanks for pointing me here.)
 
-Signed-off-by: Qinghua Jin <qhjin.dev@gmail.com>
----
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> -void memcg_drain_all_list_lrus(int src_idx, struct mem_cgroup *dst_memcg)
+> +void memcg_drain_all_list_lrus(struct mem_cgroup *src, struct mem_cgroup *dst)
+>  {
+> +	struct cgroup_subsys_state *css;
+>  	struct list_lru *lru;
+> +	int src_idx = src->kmemcg_id;
+> +
+> +	/*
+> +	 * Change kmemcg_id of this cgroup and all its descendants to the
+> +	 * parent's id, and then move all entries from this cgroup's list_lrus
+> +	 * to ones of the parent.
+> +	 *
+> +	 * After we have finished, all list_lrus corresponding to this cgroup
+> +	 * are guaranteed to remain empty. So we can safely free this cgroup's
+> +	 * list lrus in memcg_list_lru_free().
+> +	 *
+> +	 * Changing ->kmemcg_id to the parent can prevent memcg_list_lru_alloc()
+> +	 * from allocating list lrus for this cgroup after memcg_list_lru_free()
+> +	 * call.
+> +	 */
+> +	rcu_read_lock();
+> +	css_for_each_descendant_pre(css, &src->css) {
+> +		struct mem_cgroup *memcg;
+> +
+> +		memcg = mem_cgroup_from_css(css);
+> +		memcg->kmemcg_id = dst->kmemcg_id;
+> +	}
+> +	rcu_read_unlock();
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index a6b3c196cdef..96963f4594d9 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -752,7 +752,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		core_dumped = binfmt->core_dump(&cprm);
- 		/*
- 		 * Ensures that file size is big enough to contain the current
--		 * file postion. This prevents gdb from complaining about
-+		 * file position. This prevents gdb from complaining about
- 		 * a truncated file if the last "write" to the file was
- 		 * dump_skip.
- 		 */
--- 
-2.30.2
+Do you envision using this function anywhere else beside offlining?
+If not, you shouldn't need traversing whole subtree because normally
+parents are offlined only after children (see cgroup_subsys_state.online_cnt).
 
+>  
+>  	mutex_lock(&list_lrus_mutex);
+>  	list_for_each_entry(lru, &memcg_list_lrus, list)
+> -		memcg_drain_list_lru(lru, src_idx, dst_memcg);
+> +		memcg_drain_list_lru(lru, src_idx, dst);
+>  	mutex_unlock(&list_lrus_mutex);
+
+If you do, then here you only drain list_lru of the subtree root but not
+the descendants anymore.
+
+So I do get that mem_cgroup.kmemcg_id refernces the "effective"
+kmemcg_id after offlining, so that proper list_lrus are used afterwards.
+
+I wonder -- is this necessary when objcgs are reparented too? IOW would
+anyone query the offlined child's kmemcg_id?
+(Maybe it's worth explaining better in the commit message, I think even
+current approach is OK (better safe than sorry).)
+
+
+Thanks,
+Michal
