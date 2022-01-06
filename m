@@ -2,102 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 707D2486DDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 00:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7EE9486E01
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 00:46:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245577AbiAFXhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jan 2022 18:37:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41400 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245546AbiAFXhq (ORCPT
+        id S245650AbiAFXqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jan 2022 18:46:15 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:40423 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245538AbiAFXqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jan 2022 18:37:46 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56518C061245
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jan 2022 15:37:45 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id p13so9274764lfh.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jan 2022 15:37:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZQgaHCAz+4zHANZcp3Rs7RBfJqdzxQQmeo6/berIQ9U=;
-        b=HuagXbpCAiQyDWw6Sas35jYs1AreAg+q+bw0innkNvPZ9FTVYFQis70MSlQY+FrtCv
-         l4xJ/tZRqOCKKn63jqe0sh7mAAVyTibFPLIq4EWeM6zRH0vW28MWiHGIEo5OEWB6ZEDZ
-         pW0GYMO6VPLMcORxvhj6lhXNx94ku/x58AEYrLla/a6xneiNXMC/qRTxO7G3t6H2iMjj
-         E91J2yGrNUnu96G82iBZy/zjd7JrxxzqSn16qterd7h+SQ8o6uiMiHAQzwF14UXDY4Eb
-         edvntcGUa98ECEBO8N3M4JhSpckhuCAi6au5FCqMSlz8bXvWytuXSzZvFSmxBZ9a1P6c
-         qJTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZQgaHCAz+4zHANZcp3Rs7RBfJqdzxQQmeo6/berIQ9U=;
-        b=8EupNbBonThP/3EGGRqRxilEIXWDTZTHDKpSq2AFGH4mq3o1zLqO/9FfQB7ZptwEL6
-         YEeqJtfnwV433IhnYvCXsI2nzw3bD76ep8qOpvdsLNExWggTaxQawmVP3RfgNj2oq4dY
-         v2Kn9BkdZDFkplKCDNZkkoY37oBRqVIzfIFIaocPSgpAETXotDPpYxRuTDN5r6njJWaA
-         azeoUiZ+I4zLpvX7GyUeU6E36mC6i21Y8eIpmnHLtY5qReUR73jkrznfcHoSPm5/RWiG
-         +PyCt55XeaGruoyQHx53J+FFcfmvbegsdBQK8yEz4wwiBpj30QOPP7It3s5k+RH6V0FJ
-         9VwA==
-X-Gm-Message-State: AOAM533v2lpINodnozB8G3LXouoz7JCxjnNUo1tUpqFenQbmRXmG0eqO
-        RItlDPjyeCg7/8R0vANS1L/1k8/Kseut35/3Gtpm5KYnxqY=
-X-Google-Smtp-Source: ABdhPJwGjywM76++RnCkRqRPDuCKzo2hz/E9jmJx/FdymSiau6Fq4p6vhHdIFGtSRlQrZVWeq+NmvzHx5b30eyMmTU0=
-X-Received: by 2002:a05:6512:2083:: with SMTP id t3mr53063993lfr.595.1641512263562;
- Thu, 06 Jan 2022 15:37:43 -0800 (PST)
-MIME-Version: 1.0
-References: <CAOQ4uxjsULgLuOFUYkEePySx6iPXRczgCZMxx8E5ncw=oarLPg@mail.gmail.com>
- <YYMO1ip9ynXFXc8f@redhat.com> <20211104100316.GA10060@quack2.suse.cz>
- <YYU/7269JX2neLjz@redhat.com> <CAOQ4uxiM_i+6Zs+ewg8mfA5aKs-gY7yj3kdrmPLO8Zn+bz4DbA@mail.gmail.com>
- <20211111173043.GB25491@quack2.suse.cz> <CAOQ4uxiOUM6=190w4018w4nJRnqi+9gzzfQTsLh5gGwbQH_HgQ@mail.gmail.com>
- <CANXojcy9JzXeLQ6bz9+UOekkpqo8NkgQbhugmGmPE+x3+_=h3Q@mail.gmail.com>
- <CAO17o21YVczE2-BTAVg-0HJU6gjSUkzUSqJVs9k-_t7mYFNHaA@mail.gmail.com>
- <CAOQ4uxjpGMYZrq74S=EaSO2nvss4hm1WZ_k+Xxgrj2k9pngJgg@mail.gmail.com> <YaZC+R7xpGimBrD1@redhat.com>
-In-Reply-To: <YaZC+R7xpGimBrD1@redhat.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 6 Jan 2022 17:37:32 -0600
-Message-ID: <CAH2r5mv1x9J0uR4x=D3hApNbaZpoYrQdifSQqdu3nBHrkOaxgg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Ioannis Angelakopoulos <iangelak@redhat.com>,
-        Stef Bon <stefbon@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>,
-        Nathan Youngman <git@nathany.com>
+        Thu, 6 Jan 2022 18:46:15 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id D98803200583;
+        Thu,  6 Jan 2022 18:46:14 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 06 Jan 2022 18:46:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        mS5zbJ214wOhNLtYIH8U+6E/Un0NpGJAgFEhf31fkYY=; b=as+4blKqTzjBTnJB
+        6Qnx1gLBHrT6Yx6yU+oyhzmyX68RokDNnpHdiQHJ2vsGbmV/QQ0N6s+jVSrATfZ0
+        A4vm+cBkiwUi6KKlC1dKCMpH3t7KSCUPyeMZ4g/jssTO7FnEAlDJzvnyPIrpL/0K
+        ArFMVLvHVBvygG42iN4RFBJkFKi/mg3vb1Drt+j+M6owGZROgpWprUOsje1zNKcb
+        njzYq2xpyIkN/gWEpUViw7gubPE9ueBwzJoCnTzffNjwFiOX8bnJ8PeOPzcAd4Up
+        whvIlrgeMmviVWIPMJI8vwrDUkUJFfHKlGFnP9PEESB0HEatTbvshE+askMkUXAz
+        /WX3Iw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=mS5zbJ214wOhNLtYIH8U+6E/Un0NpGJAgFEhf31fk
+        YY=; b=Dfno8f2rhiXfdIIFccLaHqj5PsCYmA8CPuGS/pdH0Vy/gM0HMLMaFvzf3
+        QCjdzQ1oCoMjXZ1EKzEIki7R/6zvN6iCwgfRFSg+caWekiwNHIC/Z/LsOvNZ8Ats
+        XVYaZK7OYEkbGj+MO0G3utLef8cO3SJTt7IGoLmfTsZDdyoSsgSclSFGFg8QIya3
+        iOcR4xhpjoEECraw/1ySUf4g3tmjWMtKBkTXw59tnW9oQhoUCCE1qqErC67NL9MZ
+        WMROvJS3mOa4XLIsK+JYjMl6k6OVE64BB+w/iFY8/Qn2JMzNOy+8kljCFNOqw4g6
+        oGdHfVqenyE14gzs2o8BdVumKd+bw==
+X-ME-Sender: <xms:Rn_XYXbnf3wHyMSqwAvsY8C74GO3eLX42VRdfpmPxwGTZci-CMJYiw>
+    <xme:Rn_XYWatJ-kpg415SATGCC-Qw0fSeQOqkX71_LOxxncdLLJRBTcQnSPNdALmUJCuW
+    5Ekpid6yz_8>
+X-ME-Received: <xmr:Rn_XYZ_QFjGItvxrmNcCdneRtqoD_VwWCiu1H6hS7VouzeY3cD2sl6jbHDce3C3IC6nWIgpzUfMLCksUXp-rbUo8yfMROSIv-M--51H8XUZgZnbObmpK_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrudegtddgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:Rn_XYdoZnd994H38voZsNenFC1TdHgQB1J_7Fk56kezz3uVjK7w3vg>
+    <xmx:Rn_XYSqiWXjQhCmprVMjNz8KzopPgDf-5HGG8P83JzpxRNwUNhOKyg>
+    <xmx:Rn_XYTRkejHyGoEql-6C8VOqoM_-ucFkmtXJwb08mnRMJNscY3NibQ>
+    <xmx:Rn_XYQHnUYxHtId39CcLvbkA88l43xOpnE4L5pSq95ze99AXQQK93A>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Jan 2022 18:46:12 -0500 (EST)
+Message-ID: <4a13a560520e1ef522fcbb9f7dfd5e8c88d5b238.camel@themaw.net>
+Subject: Re: [PATCH] namei: clear nd->root.mnt before O_CREAT unlazy
+From:   Ian Kent <raven@themaw.net>
+To:     Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
+Date:   Fri, 07 Jan 2022 07:46:10 +0800
+In-Reply-To: <20220105180259.115760-1-bfoster@redhat.com>
+References: <20220105180259.115760-1-bfoster@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 1, 2021 at 9:06 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Wed, Nov 17, 2021 at 08:40:57AM +0200, Amir Goldstein wrote:
-> > On Wed, Nov 17, 2021 at 12:12 AM Ioannis Angelakopoulos
-> > <iangelak@redhat.com> wrote:
-> > >
-> > >
-> > >
-> > > On Tue, Nov 16, 2021 at 12:10 AM Stef Bon <stefbon@gmail.com> wrote:
-> > >>
-> > >> Hi Ioannis,
-> > >>
-> > >> I see that you have been working on making fsnotify work on virtiofs.
-> > >> Earlier you contacted me since I've written this:
-> > >>
-> > >> https://github.com/libfuse/libfuse/wiki/Fsnotify-and-FUSE
-> > >>
+On Wed, 2022-01-05 at 13:02 -0500, Brian Foster wrote:
+> The unlazy sequence of an rcuwalk lookup occurs a bit earlier than
+> normal for O_CREAT lookups (i.e. in open_last_lookups()). The create
+> logic here historically invoked complete_walk(), which clears the
+> nd->root.mnt pointer when appropriate before the unlazy.  This
+> changed in commit 72287417abd1 ("open_last_lookups(): don't abuse
+> complete_walk() when all we want is unlazy"), which refactored the
+> create path to invoke unlazy_walk() and not consider nd->root.mnt.
+> 
+> This tweak negatively impacts performance on a concurrent
+> open(O_CREAT) workload to multiple independent mounts beneath the
+> root directory. This attributes to increased spinlock contention on
+> the root dentry via legitimize_root(), to the point where the
+> spinlock becomes the primary bottleneck over the directory inode
+> rwsem of the individual submounts. For example, the completion rate
+> of a 32k thread aim7 create/close benchmark that repeatedly passes
+> O_CREAT to open preexisting files drops from over 700k "jobs per
+> minute" to 30, increasing the overall test time from a few minutes
+> to over an hour.
+> 
+> A similar, more simplified test to create a set of opener tasks
+> across a set of submounts can demonstrate the problem more quickly.
+> For example, consider sets of 100 open/close tasks each running
+> against 64 independent filesystem mounts (i.e. 6400 tasks total),
+> with each task completing 10k iterations before it exits. On an
+> 80xcpu box running v5.16.0-rc2, this test completes in 50-55s. With
+> this patch applied, the same test completes in 10-15s.
+> 
+> This is not the most realistic workload in the world as it factors
+> out inode allocation in the filesystem. The contention can also be
+> avoided by more selective use of O_CREAT or via use of relative
+> pathnames. That said, this regression appears to be an unintentional
+> side effect of code cleanup and might be unexpected for users.
+> Restore original behavior prior to commit 72287417abd1 by factoring
+> the rcu logic from complete_walk() into a new helper and invoke that
+> from both places.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
+>  fs/namei.c | 37 +++++++++++++++++++++----------------
+>  1 file changed, 21 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1f9d2187c765..b32fcbc99929 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -856,6 +856,22 @@ static inline int d_revalidate(struct dentry
+> *dentry, unsigned int flags)
+>                 return 1;
+>  }
+>  
+> +static inline bool complete_walk_rcu(struct nameidata *nd)
+> +{
+> +       if (nd->flags & LOOKUP_RCU) {
+> +               /*
+> +                * We don't want to zero nd->root for scoped-lookups
+> or
+> +                * externally-managed nd->root.
+> +                */
+> +               if (!(nd->state & ND_ROOT_PRESET))
+> +                       if (!(nd->flags & LOOKUP_IS_SCOPED))
+> +                               nd->root.mnt = NULL;
+> +               nd->flags &= ~LOOKUP_CACHED;
+> +               return try_to_unlazy(nd);
+> +       }
+> +       return true;
+> +}
+> +
+>  /**
+>   * complete_walk - successful completion of path walk
+>   * @nd:  pointer nameidata
+> @@ -871,18 +887,8 @@ static int complete_walk(struct nameidata *nd)
+>         struct dentry *dentry = nd->path.dentry;
+>         int status;
+>  
+> -       if (nd->flags & LOOKUP_RCU) {
+> -               /*
+> -                * We don't want to zero nd->root for scoped-lookups
+> or
+> -                * externally-managed nd->root.
+> -                */
+> -               if (!(nd->state & ND_ROOT_PRESET))
+> -                       if (!(nd->flags & LOOKUP_IS_SCOPED))
+> -                               nd->root.mnt = NULL;
+> -               nd->flags &= ~LOOKUP_CACHED;
+> -               if (!try_to_unlazy(nd))
+> -                       return -ECHILD;
+> -       }
+> +       if (!complete_walk_rcu(nd))
+> +               return -ECHILD;
+>  
+>         if (unlikely(nd->flags & LOOKUP_IS_SCOPED)) {
+>                 /*
+> @@ -3325,10 +3331,9 @@ static const char *open_last_lookups(struct
+> nameidata *nd,
+>                 BUG_ON(nd->flags & LOOKUP_RCU);
+>         } else {
+>                 /* create side of things */
+> -               if (nd->flags & LOOKUP_RCU) {
+> -                       if (!try_to_unlazy(nd))
+> -                               return ERR_PTR(-ECHILD);
+> -               }
+> +               if (!complete_walk_rcu(nd))
+> +                       return ERR_PTR(-ECHILD);
+> +
+>                 audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+>                 /* trailing slashes? */
+>                 if (unlikely(nd->last.name[nd->last.len]))
 
-We had a few customer requests recently to fix inotify for network fs
-which reminded me of Miklos's earlier patch to fix the VFS layer, but
-if changes to extend inotify in userspace were also done it would be
-important to tie them in with network/cluster filesystems that expose
-change notification over their network API.    Most or all major SMB
-servers support change notification today so it is extremely common
-over SMB3.1.1 (and earlier dialects as well).    If you have userspace
-inotify libraries while we wait for changes to the VFS layer to enable
-remote change notification - in the interim you can use an existing
-fsspecific ioctl for some filesystems like cifs.ko. See
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/cifs/ioctl.c?id=d26c2ddd33569667e3eeb577c4c1d966ca9192e2
+Looks good, assuming Al is ok with the re-factoring.
+Reviewed-by: Ian Kent <raven@themaw.net>
+
+Ian
+
