@@ -2,79 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2AE487063
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 03:31:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93DCD48710E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 04:09:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345405AbiAGCbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jan 2022 21:31:04 -0500
-Received: from mout.gmx.net ([212.227.17.22]:60611 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345392AbiAGCbE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jan 2022 21:31:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1641522661;
-        bh=qbXL3q/1u8jUtLvDNJiSLgKfHPydeo3BlrhfPtIUxvE=;
-        h=X-UI-Sender-Class:Date:To:From:Subject;
-        b=O2mKhHU5jkWlarAW0lUJihJ/cWSKU2wMQawGhApk9u9bMkviD1oVe/HN1oub2fRyA
-         h7BgDQd16CVYYUiYlXnGrTJxildnwwX7QJRFn2vAcGO6jZ0nanu3y4yfyV6NNrU9XT
-         W4xoQH7YRNpJYRF7HynpTMBE27TUzxzNzAApxqa4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MGQj7-1nAs5h15Th-00Gti1; Fri, 07
- Jan 2022 03:31:01 +0100
-Message-ID: <0535d6c3-dec3-fb49-3707-709e8d26b538@gmx.com>
-Date:   Fri, 7 Jan 2022 10:30:56 +0800
+        id S230054AbiAGDJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jan 2022 22:09:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229769AbiAGDJU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jan 2022 22:09:20 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B20A6C061245
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jan 2022 19:09:19 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id w16so16787705edc.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jan 2022 19:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=edPTzEAV1hVzS2HKTkNPYzKZ/466ozy+AT9vQnB4coE=;
+        b=TKJRp3LPKmjJ3b36zVPp0s/0cqBJpINGn0zaSw3y+OdfzHEolQhieDfHDUSTJ1VZAW
+         lNISfdKs92nUGEeasV1w5sg86TFv7o/MWeN33Ok9j3sa2XYvlQ0RDvwm1CWp2XqU67H7
+         fNHKftVjzcqE4iBbWBJAbokffKXE9LZrSN9DI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=edPTzEAV1hVzS2HKTkNPYzKZ/466ozy+AT9vQnB4coE=;
+        b=mZ22xmShtauV03WTCt3F5Bar1HWEdDt1J2KSSiskiCCWznlrYF47cTvOKPaLe/6uuk
+         7RwITfo1l4M4dZmfZH6kq/+mfLqxMiFT9jmBpk5CVQOlM1sXH06cw0xw3VMbS+lvgIbs
+         lCMWKECs0FnK/FpCh7Hihm+Ob2UfYQnIGwnm7xChQUxWl9yL3jmFggTux7zC6lj/O+lh
+         ZVEG596wBflr1XIdb1U90sy1uqpiN/ODFQ+NmhHWJzPg4nzalBTGFy5qiB8ZYrphljCZ
+         RKUgJN5l6grvlXiYfEKuMmBXEaNXH8LwxcDlRqglF2NOFRMS5jHRej2nfOFxm9RUNGuC
+         mQ7Q==
+X-Gm-Message-State: AOAM533Nadzs+5kibzSnZoTC4+qYJkdHvZlmcqPRXZKbGCU2yRfnDDP1
+        yJtrlzQSGLdg9EVnaRO7Bh424DwCFhQ2YsCP0jo=
+X-Google-Smtp-Source: ABdhPJyBxALUxwYjpqgFIJKO0Brm4LX+y4G/i30Yg5G7Ji4LiHdc//RMs0fH6WkexbEK4CrgXY6i1w==
+X-Received: by 2002:aa7:cada:: with SMTP id l26mr61435680edt.376.1641524958254;
+        Thu, 06 Jan 2022 19:09:18 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id mp9sm986216ejc.106.2022.01.06.19.09.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jan 2022 19:09:18 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id c71so5357593edf.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jan 2022 19:09:18 -0800 (PST)
+X-Received: by 2002:a05:6000:10d2:: with SMTP id b18mr52431797wrx.193.1641524594244;
+ Thu, 06 Jan 2022 19:03:14 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Content-Language: en-US
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: Proper way to test RAID456?
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kphmq0FEyg7Wx9XOgZDjRrSzWN242v/TGFEZ+QKFhrInxyqw1jv
- 0RBpSjIXo2rzYMDTqIQE5LtmdvKNuC1Q/y6uIGM1e5+/2xd1E5KEn9oWNKrysxwwGW3rOBl
- 640Msj/jcUo/VmIrP5VA0THSNyEWF1EbDc7xCrj8sFP1BKR2CdwSXX3nZC0owYPEtwP5c69
- yQIqwNtN8wLoPUIRLOBpQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WAV2ONlsCUA=:LxY7Ga4tvO+a/q7NmLyBXw
- w6MzyDLBLjmVMKdfO08JW61KyXhtI4PSa3KhOjrROW6PqAA2uHVcwQENA6NrGzex6wwv10+Fc
- 42HO7K+1nr2tlnH5YXUYe/7tR5BB4yDfAq1gc7NqMCWxLYkiWDCC9kPgTwD6qyfGBYVeL+uh9
- NRsporstUTKNNO8BCBZKG4DhE9MqTNwwKScmapvFCM4blktdm3zj6PaUGZGgn9uNGtIvTtoJV
- USczmyxVQdGDcrUk7ZELqjz+mk05oTgkWhgWfE1IdVXl+njrlGp+oUdWiMIkeebgMT2xtx//F
- nmHHtNTCF1XO+imz2iEXZ0iD5gcQfMGQuscBcsBsuXUS6GNHPWM605dPJM+5PCcm72YDOM4ZZ
- LJ8AHh2OzyNDxOIA/mKLwtfF2KhHH2ZrjIUIbvtJpJTdZC0IaM56ptzJPwKC41B1H+Z0A6KP0
- UiKmiVEwqsXoPweGyBjAxEt4rAckzT2QYpzZQeo4VS1oyVuWX5xJo9us8MX1wqu3183ZV0lMU
- dXn32Hb/+xS+z0CrFgaIGjG83c/4+9HjT/iCV0vuyemyNqfY1ddroOkMueNM5oMPDqi9n6/Zh
- kbvuvTYreeGW4I7NUaDusgGDeTFZ9bE/VpST+K3oBMu8Gd+78cikQl35rRGvwkiYb0TqXmDKk
- 2DIvqzxwuQz2dM7QF0M/VkmboJ/eMhiVb9GK/Pvjcepk/FKPNFXWMumJKIsVTleF1rhBv7kVr
- Nyjm9lPeoh3jXlbnN2p7tp//4DJxIRO4ia2UabpDHopCh3CYGLR5yWkhRqIuuLQhEFlLJBDGa
- LtlxWq6f/75L7gaRfP/nnr5NAsZkT/DNa2pg6Qr82hXIGOt9LvIeUMXnh98Wvuk1MO1/UNqqU
- /Dpz64X9QsTtc2d/NPZphVgd8/gOBfqPW+ihIU1nfqxmV4FX/rPww0RHFSrzwp31ZQEvHAYh0
- rd43astCnN8bwj+QjoIEXBZFTHrRyoDVaJ3iPdKlABT/w/97+PJyXLSJ2lMeasZykvF4xbDLq
- vaZJsYDyM97Ef7vWekTlCONC6DUmRruuMH4T7bYcEWjKBgPBNdk/GrEQlQSoj+I0t5egMD8gq
- VYEQqu7IXqLBx8=
+References: <000000000000e8f8f505d0e479a5@google.com> <20211211015620.1793-1-hdanton@sina.com>
+ <YbQUSlq76Iv5L4cC@sol.localdomain> <YdW3WfHURBXRmn/6@sol.localdomain>
+ <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
+ <CAHk-=wjddvNbZBuvh9m_2VYFC1W7HvbP33mAzkPGOCHuVi5fJg@mail.gmail.com>
+ <CAHk-=wjn5xkLWaF2_4pMVEkZrTA=LiOH=_pQK0g-_BMSE-8Jxg@mail.gmail.com>
+ <YddnuSh15BAGdjAD@slm.duckdns.org> <CAHk-=whhcoeTOZB_de-Nh28Fy4iNTu2DXzKXEPOubzL36+ME=A@mail.gmail.com>
+ <YdeFx9i/LaAC346s@sol.localdomain>
+In-Reply-To: <YdeFx9i/LaAC346s@sol.localdomain>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 6 Jan 2022 19:02:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiCv6m9g2=tGSVkf8KEdZFFJp47hiepo93NyLruYoGLAQ@mail.gmail.com>
+Message-ID: <CAHk-=wiCv6m9g2=tGSVkf8KEdZFFJp47hiepo93NyLruYoGLAQ@mail.gmail.com>
+Subject: Re: psi_trigger_poll() is completely broken
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Thu, Jan 6, 2022 at 4:14 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> I had to make the following changes to Linus's patch:
 
-Recently I'm working on refactor btrfs raid56 (with long term objective
-to add proper journal to solve write-hole), and the coverage of current
-fstests for btrfs RAID56 is not that ideal.
+Ack. Thanks.
 
-Is there any project testing dm/md RAID456 for things like
-re-silvering/write-hole problems?
+> This is one way to fix the use-after-free, but the fact that it allows anyone
+> who can write to a /proc/pressure/* file to cause the kernel to allocate an
+> unbounded number of 'struct psi_trigger' structs is still really broken.
 
-And how you dm guys do the tests for stacked RAID456?
+Yeah, I agree. Very non-optimal - that patch really was trying to just
+keep the status quo, and fixing the immediate problems.
 
-I really hope to learn some tricks from the existing, tried-and-true
-RAID456 implementations, and hopefully to solve the known write-hole
-bugs in btrfs.
+Modifying that patch to only allow a previous NULL value in
+psi_trigger_replace() would be fairly simple - it would basically just
+get rid of the "stale_trigger" list (and the loops it creates).
 
-Thanks,
-Qu
+You'd still want the psi_trigger_release() model to separate that
+whole "release" from "new trigger".
+
+But that does require that nobody ever does more than a single write
+to one file.
+
+Debian code search finds those "/proc/pressure/xyz" files mentioned at
+least by systemd and the chromium chrome browser sources. Whether they
+actually write triggers to them, I can't say.
+
+Maybe we just need to try.
+
+               Linus
