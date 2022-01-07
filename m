@@ -2,124 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D27E487659
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 12:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D47CB487670
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 12:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347031AbiAGLUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jan 2022 06:20:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57938 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237721AbiAGLUL (ORCPT
+        id S1347102AbiAGLZm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jan 2022 06:25:42 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:60243 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1347089AbiAGLZk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jan 2022 06:20:11 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38ADFC061245;
-        Fri,  7 Jan 2022 03:20:11 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id t32so5201871pgm.7;
-        Fri, 07 Jan 2022 03:20:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5V2o61eWDAqOXcsRe6/XgMQ5T1T2V+4fY1qcRTcYrWA=;
-        b=dmel9QbML+hRkxqAxsjXKi/G1CKnpFHxOh41J9gB+etNt4UfC2Q7EqVpHguXdfIYea
-         jo0e05LRR6HnCnMgFoTI6yTSCLKbAKEEWhXAcEcSZMI9MBtUK18W0D2udvo19LmNLBux
-         3ADjKMUAAhEPEc+qd2QfFCdElPzR4L2s/My9txaygB+BgAJLltTa6EKcmljGN2qnYy2c
-         8ziwEQPgbhwrCOoHQvOjPtWKhqsh2/jpq3iSMXAhYQTCWf3uDUGg9vflKV6V9Z+69ZqW
-         4YYRr/2oSZXPE3O5c9P0XSgZjGkMUeLzOScd7uHlGRhpWDPahaYkZTTUoOSobycgwprh
-         z9XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5V2o61eWDAqOXcsRe6/XgMQ5T1T2V+4fY1qcRTcYrWA=;
-        b=2J/V9hdW4Xj16DD13dXw+H6/hJVxORTjbA9pwTKa7SPYn2XjI9+SHgIFKm/+9SHNC8
-         b3ki0rwfrr0/s5l8fdWPL9DrvT2XIiVfWpF2lxb1AUlHEHNe5vmIlwU0DREud1YVZ8Aj
-         G9hTmpsdn2Yo7L4H/zLup3WjHA+ua9DZ33CLdy+YjarokvwmaJ+SACbZyZyPP7KfTH3d
-         n7zO5uy1FnTSCULizZ2EhHsh+JDm4QNPIvleOu6IN+K/BfnbTgQM0G4Q52q6SEl7pQzl
-         iO4JC4XV5y6a/Tv9WBywqgWLBR5lwsAbjZ2jbwmoEqtlCKpQH+XnQeAJ1yL/tFgdl1aL
-         10AA==
-X-Gm-Message-State: AOAM530UdvwPe/rGNkDSsLvtfgEy+kkFUzRlaA63Dl21rgHkWrsfXAUw
-        2vMNfAY1nMbrP5s+45wVXC0=
-X-Google-Smtp-Source: ABdhPJwS8i6iyuX0/y+5MDM+0BNxr5UYrpsDhUf3e+diuS5EI3aS4hNwaNwH24cHMs9oCTeskUODRA==
-X-Received: by 2002:a62:7a42:0:b0:4ba:5289:1f18 with SMTP id v63-20020a627a42000000b004ba52891f18mr63745171pfc.54.1641554410613;
-        Fri, 07 Jan 2022 03:20:10 -0800 (PST)
-Received: from gmail.com (113x33x71x97.ap113.ftth.ucom.ne.jp. [113.33.71.97])
-        by smtp.gmail.com with ESMTPSA id m14sm5312821pff.151.2022.01.07.03.20.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jan 2022 03:20:10 -0800 (PST)
-Date:   Fri, 7 Jan 2022 20:20:05 +0900
-From:   Akira Kawata <akirakawata1@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        Fri, 7 Jan 2022 06:25:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1641554739;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LihP/f7kkQcoH5EB358WZj2ActRS2QGX7JqNWfqK9rU=;
+        b=Ohl5L76r0hKkxCpTTtIEE+HjjFZ/0G814H02JauPWnHGG4Thwewxz8CbK5yMSpNYxaADsA
+        K7+/gtJxtqZttX9ZMpTJQE0hDYF8TySDyiq/yVoR0uJj8MMFy2hBnitxQp46nn3Dn1BqL+
+        3R6zgXjhn+pSl7PFB1I/XDeVSB+ZdpA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-25-ujFKLBTZNaCuaYSpYvGkxQ-1; Fri, 07 Jan 2022 06:25:33 -0500
+X-MC-Unique: ujFKLBTZNaCuaYSpYvGkxQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0C3041800D50;
+        Fri,  7 Jan 2022 11:25:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C1DF02A189;
+        Fri,  7 Jan 2022 11:25:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <94b5163b0652c6106aa01a0f4c03bdf57c0a7e71.camel@kernel.org>
+References: <94b5163b0652c6106aa01a0f4c03bdf57c0a7e71.camel@kernel.org> <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk> <164021552299.640689.10578652796777392062.stgit@warthog.procyon.org.uk>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 RESEND 0/2] fs/binfmt_elf: Fix AT_PHDR for unusual ELF
- files
-Message-ID: <20220107112005.gdvtvjvgqfs6umha@gmail.com>
-References: <20220106232513.143014-1-akirakawata1@gmail.com>
- <CAKXUXMwzULZHmfx5T74cjG++gd8mFKVOR7Z4aS8RabKnXWGOdQ@mail.gmail.com>
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 46/68] cachefiles: Mark a backing file in use with an inode flag
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKXUXMwzULZHmfx5T74cjG++gd8mFKVOR7Z4aS8RabKnXWGOdQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3149601.1641554716.1@warthog.procyon.org.uk>
+Date:   Fri, 07 Jan 2022 11:25:16 +0000
+Message-ID: <3149602.1641554716@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 07, 2022 at 07:40:50AM +0100, Lukas Bulwahn wrote:
-> On Fri, Jan 7, 2022 at 12:25 AM Akira Kawata <akirakawata1@gmail.com> wrote:
-> >
-> >  These patches fix a bug in AT_PHDR calculation.
-> >
-> >  We cannot calculate AT_PHDR as the sum of load_addr and exec->e_phoff.
-> >  This is because exec->e_phoff is the offset of PHDRs in the file and the
-> >  address of PHDRs in the memory may differ from it. These patches fix the
-> >  bug by calculating the address of program headers from PT_LOADs
-> >  directly.
-> >
-> >  Sorry for my latency.
-> >
-> >  Changes in v4
-> >  - Reflecting comments from Lukas, add a refactoring commit.
-> >
-> 
-> Thanks for removing the dead store with your refactoring as a small
-> stylistic change, but I really think that Kees Cook's comment that you
-> simply removed an important feature is much more important to address.
-> There was no reply to that and it seems that Kees hypothesis that the
-> feature has been removed, was not questioned by anyone.
-> 
-> Lukas
-> 
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Thank you for your comments.
+> Probably, this patch should be merged with #38. The commit logs are the
+> same, and they are at least somewhat related.
 
-I will try to understand Kees Cook's comment again although I couldn't
-it the last year.
+That's not so simple, unfortunately.  Patch 46 requires bits of patches 43 and
+45 in addition to patch 38 and patch 39 depends on patch 38.
 
-Akira
+David
 
-> >  Changes in v3:
-> >  - Fix a reported bug from kernel test robot.
-> >
-> >  Changes in v2:
-> >  - Remove unused load_addr from create_elf_tables.
-> >  - Improve the commit message. *** SUBJECT HERE ***
-> >
-> > Akira Kawata (2):
-> >   fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-> >   fs/binfmt_elf: Refactor load_elf_binary function
-> >
-> >  fs/binfmt_elf.c | 36 +++++++++++++++++++++---------------
-> >  1 file changed, 21 insertions(+), 15 deletions(-)
-> >
-> >
-> > base-commit: 4eee8d0b64ecc3231040fa68ba750317ffca5c52
-> > --
-> > 2.25.1
-> >
