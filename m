@@ -2,69 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 001D8487357
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 08:11:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C541D48737A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 08:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234476AbiAGHLE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jan 2022 02:11:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58164 "EHLO
+        id S235056AbiAGHW6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jan 2022 02:22:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233435AbiAGHLD (ORCPT
+        with ESMTP id S235043AbiAGHW6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jan 2022 02:11:03 -0500
+        Fri, 7 Jan 2022 02:22:58 -0500
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 510E0C061245
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jan 2022 23:11:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245AFC061201
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jan 2022 23:22:58 -0800 (PST)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n5jOt-000I7E-Gi; Fri, 07 Jan 2022 07:10:59 +0000
-Date:   Fri, 7 Jan 2022 07:10:59 +0000
+        id 1n5jaR-000IFY-NT; Fri, 07 Jan 2022 07:22:55 +0000
+Date:   Fri, 7 Jan 2022 07:22:55 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Ian Kent <raven@themaw.net>
 Cc:     Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] namei: clear nd->root.mnt before O_CREAT unlazy
-Message-ID: <YdfngxyGWatLfa5h@zeniv-ca.linux.org.uk>
+Message-ID: <YdfqT+KyYV+pqEc6@zeniv-ca.linux.org.uk>
 References: <20220105180259.115760-1-bfoster@redhat.com>
  <4a13a560520e1ef522fcbb9f7dfd5e8c88d5b238.camel@themaw.net>
  <YdfVG56XZnkePk7c@zeniv-ca.linux.org.uk>
+ <b14cd1790c18e2be0ab6e5cfce91dee5611ceb9d.camel@themaw.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YdfVG56XZnkePk7c@zeniv-ca.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b14cd1790c18e2be0ab6e5cfce91dee5611ceb9d.camel@themaw.net>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 07, 2022 at 05:52:27AM +0000, Al Viro wrote:
+On Fri, Jan 07, 2022 at 03:04:46PM +0800, Ian Kent wrote:
 
-> > Looks good, assuming Al is ok with the re-factoring.
-> > Reviewed-by: Ian Kent <raven@themaw.net>
+> > Ummm....  Mind resending that?  I'm still digging myself from under
+> > the huge pile of mail, and this seems to have been lost in process...
 > 
-> Ummm....  Mind resending that?  I'm still digging myself from under
-> the huge pile of mail, and this seems to have been lost in process...
+> Brain wrote and sent the patch, I'm sure he'll resent it.
+> 
+> The re-factor I mention is just pulling out the needed bits from
+> complete_walk() rather than open coding it or reverting the original
+> change, commit 72287417abd1 ("open_last_lookups(): don't abuse
+> complete_walk() when all we want is unlazy").
 
-Non-obvious part is that current code only does this forgetting
-the root when we are certain that we won't look at it later in
-pathwalk.  IOW, it's guaranteed to be the same through the entire
-thing.  This patch changes that; the final component may very well
-be e.g. an absolute symlink.  We won't know that until we unlazy,
-so we can't make forgetting conditional upon that.
+Good grief...  Ian, please fix your MUA - something's crapping those
+NBSP (this time - UTF8 ones) into your replies...
 
-I _think_ it's not going to lead to any problems, but I'll need to
-take a good look at the entire thing after I get some sleep -
-I'm about to fall down right now.
+Anyway, the problem is that it's not an equivalent transformation
+and I'm not sure at the moment that there won't be interplay with
+the things added during the last couple of years.
 
-Other problems here (aside of whitespace damage - was that a
-cut'n'paste of some kind?  Looks like 8859-1 NBSP for each
-leading space...) are
-	* misleading name of the new helper - it sounds like
-"non-RCU side of complete_walk()" and that's not what it does
-	* LOOKUP_CACHED needs to be mentioned in commit message
-(it's incompatible with O_CREAT, so it couldn't occur on that
-codepath - the transformation is an equivalent one, but that
-ought to be mentioned)
-	* the change I mentioned above needs to be in commit
-message - this one is a lot more subtle.
-
-Anyway, I'll look into that tomorrow - too sleepy right now
-to do any serious analysis.
+Tomorrow...
