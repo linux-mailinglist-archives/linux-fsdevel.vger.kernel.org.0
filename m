@@ -2,55 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FF30487757
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 13:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A084048784A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jan 2022 14:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238104AbiAGMGZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jan 2022 07:06:25 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:47916 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237988AbiAGMGY (ORCPT
+        id S1347537AbiAGNiY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jan 2022 08:38:24 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:44098 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238886AbiAGNiX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jan 2022 07:06:24 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Fri, 7 Jan 2022 08:38:23 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id EA32F1F397;
+        Fri,  7 Jan 2022 13:38:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1641562702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=6gvf0L+H6Pi82qXTszDAYwKzmaKlw3vu6UPipNLCu2I=;
+        b=NLurY9MQEHSyrHh6qV7gEba5MPSlO6eLieyM5Tt5eEJ3M6ZvOed6tOJXexYFopxDmimKw2
+        xlozNCtpB2C09QXdXchpXKOCjuHdnZA2oYl28njxmvoGcGDPLje4s2TjJKNyWXxJUUacx9
+        Dd66LTKdtJ/cvllXxJpwk3xywXSGZoM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1641562702;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=6gvf0L+H6Pi82qXTszDAYwKzmaKlw3vu6UPipNLCu2I=;
+        b=kcbl0wvTw4k6Ms0odo0hBrjUIFLWw0qyuxUGzufBRKbE1k0J4+0DRhrCOA8cwQpVnhJvJQ
+        Q01Z5Gz6KeFKlPDQ==
+Received: from echidna.suse.de (ddiss.udp.ovpn2.nue.suse.de [10.163.47.146])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8623E61538;
-        Fri,  7 Jan 2022 12:06:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F0AC36AE5;
-        Fri,  7 Jan 2022 12:06:22 +0000 (UTC)
-Date:   Fri, 7 Jan 2022 13:06:19 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>
-Subject: Re: [PATCH] fs/pipe: local vars has to match types of proper
- pipe_inode_info fields
-Message-ID: <20220107120619.zueev37fhuvq3k6i@wittgenstein>
-References: <20220106171946.36128-1-avagin@gmail.com>
+        by relay2.suse.de (Postfix) with ESMTPS id C4398A3B87;
+        Fri,  7 Jan 2022 13:38:22 +0000 (UTC)
+From:   David Disseldorp <ddiss@suse.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Martin Wilck <mwilck@suse.com>, viro@zeniv.linux.org.uk,
+        willy@infradead.org
+Subject: [PATCH v6 0/6] initramfs: "crc" cpio format and INITRAMFS_PRESERVE_MTIME
+Date:   Fri,  7 Jan 2022 14:38:08 +0100
+Message-Id: <20220107133814.32655-1-ddiss@suse.de>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220106171946.36128-1-avagin@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 06, 2022 at 09:19:46AM -0800, Andrei Vagin wrote:
-> head, tail, ring_size are declared as unsigned int, so all local
-> variables that operate with these fields have to be unsigned to avoid
-> signed integer overflow.
-> 
-> Right now, it isn't an issue because the maximum pipe size is limited by
-> 1U<<31.
-> 
-> Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-> Suggested-by: Dmitry Safonov <0x7f454c46@gmail.com>
-> Signed-off-by: Andrei Vagin <avagin@gmail.com>
-> ---
+This patchset does some minor initramfs refactoring and allows cpio
+entry mtime preservation to be disabled via a new Kconfig
+INITRAMFS_PRESERVE_MTIME option.
+Patches 4/6 to 6/6 implement support for creation and extraction of
+"crc" cpio archives, which carry file data checksums. Basic tests for
+this functionality can be found at
+Link: https://github.com/rapido-linux/rapido/pull/163
 
-Looks good,
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Changes since v5:
+- add PATCH 2/6 initramfs: make dir_entry.name a flexible array member
+- minor commit message rewording
+
+Changes since v4, following feedback from Matthew Wilcox:
+- implement cpio "crc" archive creation and extraction
+- add patch to fix gen_init_cpio short read handling
+- drop now-unnecessary "crc" documentation and error msg changes
+
+Changes since v3, following feedback from Martin Wilck:
+- 4/4: keep vfs_utimes() call in do_copy() path
+  + drop [PATCH v3 4/5] initramfs: use do_utime() wrapper consistently
+  + add do_utime_path() helper
+  + clean up timespec64 initialisation
+- 4/4: move all mtime preservation logic to initramfs_mtime.h and drop
+  separate .c
+- 4/4: improve commit message
+
+
+ init/Kconfig           | 10 +++++
+ init/initramfs.c       | 89 +++++++++++++++-------------------------
+ init/initramfs_mtime.h | 52 ++++++++++++++++++++++++
+ usr/gen_init_cpio.c    | 92 ++++++++++++++++++++++++++++++------------
+ 4 files changed, 161 insertions(+), 82 deletions(-)
+
+
