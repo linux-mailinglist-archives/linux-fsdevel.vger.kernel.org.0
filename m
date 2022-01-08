@@ -2,120 +2,255 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 684D5488117
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jan 2022 04:27:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E2564881A9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jan 2022 06:34:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233459AbiAHD1D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jan 2022 22:27:03 -0500
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:54591 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233462AbiAHD1C (ORCPT
+        id S230472AbiAHFcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Jan 2022 00:32:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229708AbiAHFcm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jan 2022 22:27:02 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id BAA473201DE2;
-        Fri,  7 Jan 2022 22:27:00 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 07 Jan 2022 22:27:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        Drod5sNhsivc7N2/9D6/o/MYUJj+1swCdtB1mjRfUVE=; b=H6bzfqlohtX1E02S
-        lMgENfW6BZoWYoY4qWX6afdU+o7SZBkI5U5kYorNjlLXG4AJXKwQL2Qw4d9jo+gU
-        f7PiJPMkGKY3P2TG/VV2qW9DxfTc6QxOBaLqt7wnR0gto22h2L0eVRFAHLvEIkHQ
-        X+0d5AkOuuxI/4DvG9gDymUWmR5lQK+XnUWXwxEhOGF5A7oFtGKei0pBYTi8Rdje
-        sYF70ldJJnguV09e0qNXvV1udHXoNG/mk+IfbPagVERK8ZNVNSQDLiTJ7Z0brhMv
-        H5cMECBBQSTmHWWDNMRZJgnUmPddZk1MVQTsG4qhyjE1T00UbcTkvqv6CO/h1sTF
-        Hgphyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=Drod5sNhsivc7N2/9D6/o/MYUJj+1swCdtB1mjRfU
-        VE=; b=C89yJ5nT3pfU2ZkVrJ4TMZnrdVI9f5BYx5qnI1Xn5jim7ppl9Wj/ygEcB
-        ctj9FPXDmLo5V7uipjYojVy1jTy+Q9eRgC0Ho93PuQvIPbgMPntQOAxOfyP79RA5
-        2YBiFAvJATL3FHubwdIqcQ8TxnUmJBlY2lBq2VtcEc3kFw+CEl5DA8NVEn1RAuE3
-        ZtYmK/ICVmhi+gdQ5Kmv0XToPzbyenfmFvBLzr4nFS3TQxeAZQbnOIiy+K4Qw5HZ
-        bfCS2ViZ1wLKBT+KVRSNSL04I8cdM05N5E0X2r321XUebSV4+Z/bzv1TUzUGWPQG
-        5lg/G2sVNN5QMed/BHHMaePYT4/Wg==
-X-ME-Sender: <xms:hATZYUiFCfiA54vfSlbtPv7PkM8yxADchs2rd0RyHZwlYx_-yNokmA>
-    <xme:hATZYdCLIsCctHPuGDO4Wvo8pyQ-PwAQcDPSCoAQXOIL61ChzBUcB3yc-jJMX1fKT
-    1eHErKcWRso>
-X-ME-Received: <xmr:hATZYcG_chNUJqgkGT7B0Opb4Ma_tTexAGba0zLqQkOIyG2PAJ8unwF-nCNQtnVMxDqfrtD4Dy1risVKb76hPK2au9iX-6KRVFlBq5p6YEIN-ndZaxOT5w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrudegfedgheekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderudenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    ffledvtdelheevudevhfekjeefvdekteffueejtdduveeftdevheeuveeihfelffenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:hATZYVR38sidJbrDQVYeYSRYnL6vQhkO3H_bOQ_rQLw6pk8QLpgPpA>
-    <xmx:hATZYRwLJnxaTVtgc5QiT0DMMAf2fa2Jmd9XfYVUfwpT_OXUkFc-QQ>
-    <xmx:hATZYT5_5BCeVKLujUS_LlJYyBd49urxBi4VU6j_oRhhTnzHSL-31g>
-    <xmx:hATZYfazFYVw_apl20Vv6LS9pdcF1pfqlrh9cmJ7VnELgOYmr-j7fA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Jan 2022 22:26:58 -0500 (EST)
-Message-ID: <02d56c068933d8084daa68dcad3bc87be764078c.camel@themaw.net>
-Subject: Re: [PATCH] namei: clear nd->root.mnt before O_CREAT unlazy
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Brian Foster <bfoster@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Date:   Sat, 08 Jan 2022 11:26:52 +0800
-In-Reply-To: <Ydh9uKldc0cbusbt@zeniv-ca.linux.org.uk>
-References: <20220105180259.115760-1-bfoster@redhat.com>
-         <4a13a560520e1ef522fcbb9f7dfd5e8c88d5b238.camel@themaw.net>
-         <YdfVG56XZnkePk7c@zeniv-ca.linux.org.uk>
-         <YdfngxyGWatLfa5h@zeniv-ca.linux.org.uk> <Ydh5If9ON/fRs7+N@bfoster>
-         <Ydh9uKldc0cbusbt@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+        Sat, 8 Jan 2022 00:32:42 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB3BC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jan 2022 21:32:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=JnCPt2QlLXrB8RRmtfFumFFVUAmLrdq9M1ysDGy3Ypc=; b=LmdQNj/EpD2VPfZk5nxu/jhpRe
+        4ZnYBxJEc9zewDj5ZA7vxWqeERnt+QP1jqhRdaicxGHh/g1flWANIMpUbmUuuslQG6Vy0NGblsBUj
+        qwvP6ZlANHDCFeRnxX7oNdQruzzd9zGilLfdZhaGCp+5zBC7lJ2610lUI3Ptyd+azC7zeq8yeu512
+        amF9Jj4OhnplLWF728XqkM4bjM1zOzWyse+jk3+iV8Vt67We4R3fk5mbt6P3w1TtWJm5rkCuIpNPx
+        Q8f5YNerWiNkVxyAqBbpKmSiTa5W2RgUX6McHJf+PT4wzC9VzqkNQGfJqvXHdly39fVnQVOYKFcNZ
+        AxjqWyag==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n64LF-000RrW-Mv; Sat, 08 Jan 2022 05:32:37 +0000
+Date:   Sat, 8 Jan 2022 05:32:37 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 00/48] Folios for 5.17
+Message-ID: <Ydkh9SXkDlYJTd35@casper.infradead.org>
+References: <20211208042256.1923824-1-willy@infradead.org>
+ <YdHQnSqA10iwhJ85@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YdHQnSqA10iwhJ85@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-01-07 at 17:51 +0000, Al Viro wrote:
-> On Fri, Jan 07, 2022 at 12:32:17PM -0500, Brian Foster wrote:
+On Sun, Jan 02, 2022 at 04:19:41PM +0000, Matthew Wilcox wrote:
+> On Wed, Dec 08, 2021 at 04:22:08AM +0000, Matthew Wilcox (Oracle) wrote:
+> > This all passes xfstests with no new failures on both xfs and tmpfs.
+> > I intend to put all this into for-next tomorrow.
 > 
-> > > Other problems here (aside of whitespace damage - was that a
-> > > cut'n'paste of some kind?  Looks like 8859-1 NBSP for each
-> > > leading space...) are
-> > 
-> > Hmm.. I don't see any whitespace damage, even if I pull the patch
-> > back
-> > from the mailing list into my tree..?
-> 
-> That had occured in Ian's reply, almost certainly.  Looks like
-> whatever
-> he's using for MUA (Evolution?) is misconfigured into doing
-> whitespace
-> damage - his next mail (in utf8, rather than 8859-1) had a scattering
-> of
-> U+00A0 in it...  Frankly, I'd never seen a decent GUI MUA, so I've no
-> real experience with that thing and no suggestions on how to fix
-> that.
+> As a result of Christoph's review, here's the diff.  I don't
+> think it's worth re-posting the entire patch series.
 
-Yes, your right, I've changed that.
-I'll play around some more to see if I can verify things are working,
-mutt should be able to tell me that ...
+After further review and integrating Hugh's fixes, here's what
+I've just updated the for-next tree with.  A little late, but that's
+this time of year ...
 
-Ian
-> 
-> > >         * misleading name of the new helper - it sounds like
-> > > "non-RCU side of complete_walk()" and that's not what it does
-> > 
-> > The intent was the opposite, of course. :P I'm not sure how you
-> > infer
-> > the above from _rcu(), but I'll name the helper whatever.
-> > Suggestions?
-> 
-> s/non-// in the above (I really had been half-asleep).  What I'm
-> saying is that this name invites an assumption that in RCU case
-> complete_walk() is equivalent to it.  Which is wrong - that's
-> what complete_walk() does as the first step if it needs to get
-> out of RCU mode.
-
-
+diff --git a/mm/internal.h b/mm/internal.h
+index e989d8ceec91..26af8a5a5be3 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -76,28 +76,7 @@ static inline bool can_madv_lru_vma(struct vm_area_struct *vma)
+ 	return !(vma->vm_flags & (VM_LOCKED|VM_HUGETLB|VM_PFNMAP));
+ }
+ 
+-/*
+- * Parameter block passed down to zap_pte_range in exceptional cases.
+- */
+-struct zap_details {
+-	struct address_space *zap_mapping;	/* Check page->mapping if set */
+-	struct folio *single_folio;	/* Locked folio to be unmapped */
+-};
+-
+-/*
+- * We set details->zap_mappings when we want to unmap shared but keep private
+- * pages. Return true if skip zapping this page, false otherwise.
+- */
+-static inline bool
+-zap_skip_check_mapping(struct zap_details *details, struct page *page)
+-{
+-	if (!details || !page)
+-		return false;
+-
+-	return details->zap_mapping &&
+-	    (details->zap_mapping != page_rmapping(page));
+-}
+-
++struct zap_details;
+ void unmap_page_range(struct mmu_gather *tlb,
+ 			     struct vm_area_struct *vma,
+ 			     unsigned long addr, unsigned long end,
+diff --git a/mm/memory.c b/mm/memory.c
+index a86027026f2a..23f2f1300d42 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1304,6 +1304,28 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 	return ret;
+ }
+ 
++/*
++ * Parameter block passed down to zap_pte_range in exceptional cases.
++ */
++struct zap_details {
++	struct address_space *zap_mapping;	/* Check page->mapping if set */
++	struct folio *single_folio;	/* Locked folio to be unmapped */
++};
++
++/*
++ * We set details->zap_mapping when we want to unmap shared but keep private
++ * pages. Return true if skip zapping this page, false otherwise.
++ */
++static inline bool
++zap_skip_check_mapping(struct zap_details *details, struct page *page)
++{
++	if (!details || !page)
++		return false;
++
++	return details->zap_mapping &&
++		(details->zap_mapping != page_rmapping(page));
++}
++
+ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 				struct vm_area_struct *vma, pmd_t *pmd,
+ 				unsigned long addr, unsigned long end,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 637de21ff40b..28d627444a24 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -151,19 +151,6 @@ int shmem_getpage(struct inode *inode, pgoff_t index,
+ 		mapping_gfp_mask(inode->i_mapping), NULL, NULL, NULL);
+ }
+ 
+-static int shmem_get_folio(struct inode *inode, pgoff_t index,
+-		struct folio **foliop, enum sgp_type sgp)
+-{
+-	struct page *page = NULL;
+-	int ret = shmem_getpage(inode, index, &page, sgp);
+-
+-	if (page)
+-		*foliop = page_folio(page);
+-	else
+-		*foliop = NULL;
+-	return ret;
+-}
+-
+ static inline struct shmem_sb_info *SHMEM_SB(struct super_block *sb)
+ {
+ 	return sb->s_fs_info;
+@@ -890,6 +877,28 @@ void shmem_unlock_mapping(struct address_space *mapping)
+ 	}
+ }
+ 
++static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
++{
++	struct folio *folio;
++	struct page *page;
++
++	/*
++	 * At first avoid shmem_getpage(,,,SGP_READ): that fails
++	 * beyond i_size, and reports fallocated pages as holes.
++	 */
++	folio = __filemap_get_folio(inode->i_mapping, index,
++					FGP_ENTRY | FGP_LOCK, 0);
++	if (!xa_is_value(folio))
++		return folio;
++	/*
++	 * But read a page back from swap if any of it is within i_size
++	 * (although in some cases this is just a waste of time).
++	 */
++	page = NULL;
++	shmem_getpage(inode, index, &page, SGP_READ);
++	return page ? page_folio(page) : NULL;
++}
++
+ /*
+  * Remove range of pages and swap entries from page cache, and free them.
+  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+@@ -904,10 +913,10 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 	struct folio_batch fbatch;
+ 	pgoff_t indices[PAGEVEC_SIZE];
+ 	struct folio *folio;
++	bool same_folio;
+ 	long nr_swaps_freed = 0;
+ 	pgoff_t index;
+ 	int i;
+-	bool partial_end;
+ 
+ 	if (lend == -1)
+ 		end = -1;	/* unsigned, so actually very big */
+@@ -943,14 +952,10 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 		index++;
+ 	}
+ 
+-	partial_end = ((lend + 1) % PAGE_SIZE) != 0;
+-	shmem_get_folio(inode, lstart >> PAGE_SHIFT, &folio, SGP_READ);
++	same_folio = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
++	folio = shmem_get_partial_folio(inode, lstart >> PAGE_SHIFT);
+ 	if (folio) {
+-		bool same_folio;
+-
+ 		same_folio = lend < folio_pos(folio) + folio_size(folio);
+-		if (same_folio)
+-			partial_end = false;
+ 		folio_mark_dirty(folio);
+ 		if (!truncate_inode_partial_folio(folio, lstart, lend)) {
+ 			start = folio->index + folio_nr_pages(folio);
+@@ -962,8 +967,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 		folio = NULL;
+ 	}
+ 
+-	if (partial_end)
+-		shmem_get_folio(inode, end, &folio, SGP_READ);
++	if (!same_folio)
++		folio = shmem_get_partial_folio(inode, lend >> PAGE_SHIFT);
+ 	if (folio) {
+ 		folio_mark_dirty(folio);
+ 		if (!truncate_inode_partial_folio(folio, lstart, lend))
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 749aac71fda5..5c87cdc70e7b 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -351,7 +351,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
+ 	pgoff_t		index;
+ 	int		i;
+ 	struct folio	*folio;
+-	bool		partial_end;
++	bool		same_folio;
+ 
+ 	if (mapping_empty(mapping))
+ 		goto out;
+@@ -388,12 +388,10 @@ void truncate_inode_pages_range(struct address_space *mapping,
+ 		cond_resched();
+ 	}
+ 
+-	partial_end = ((lend + 1) % PAGE_SIZE) != 0;
++	same_folio = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
+ 	folio = __filemap_get_folio(mapping, lstart >> PAGE_SHIFT, FGP_LOCK, 0);
+ 	if (folio) {
+-		bool same_folio = lend < folio_pos(folio) + folio_size(folio);
+-		if (same_folio)
+-			partial_end = false;
++		same_folio = lend < folio_pos(folio) + folio_size(folio);
+ 		if (!truncate_inode_partial_folio(folio, lstart, lend)) {
+ 			start = folio->index + folio_nr_pages(folio);
+ 			if (same_folio)
+@@ -404,8 +402,9 @@ void truncate_inode_pages_range(struct address_space *mapping,
+ 		folio = NULL;
+ 	}
+ 
+-	if (partial_end)
+-		folio = __filemap_get_folio(mapping, end, FGP_LOCK, 0);
++	if (!same_folio)
++		folio = __filemap_get_folio(mapping, lend >> PAGE_SHIFT,
++						FGP_LOCK, 0);
+ 	if (folio) {
+ 		if (!truncate_inode_partial_folio(folio, lstart, lend))
+ 			end = folio->index;
