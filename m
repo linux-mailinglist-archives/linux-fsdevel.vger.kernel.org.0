@@ -2,90 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 119B94884EA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jan 2022 18:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 414A2488595
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jan 2022 20:27:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232477AbiAHRU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Jan 2022 12:20:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60924 "EHLO
+        id S232422AbiAHT1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Jan 2022 14:27:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232177AbiAHRU0 (ORCPT
+        with ESMTP id S232135AbiAHT1d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Jan 2022 12:20:26 -0500
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84FA7C06173F
-        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Jan 2022 09:20:26 -0800 (PST)
-Received: by mail-qv1-xf36.google.com with SMTP id ke6so8956953qvb.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Jan 2022 09:20:26 -0800 (PST)
+        Sat, 8 Jan 2022 14:27:33 -0500
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2309FC06173F
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Jan 2022 11:27:33 -0800 (PST)
+Received: by mail-pj1-x1041.google.com with SMTP id i8-20020a17090a138800b001b3936fb375so1339845pja.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Jan 2022 11:27:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=NS6xZ3k2ptD1ngV7iuDVWu/5o23kt9imwB2Z3/xXb7s=;
-        b=I6AFxtkkev5cOvPUqvXIaaAtQuuuOMGbXx20bA39MRd4pj/+s/ShP7QPLoxY+v0UWl
-         upRNgNOJhHXndOyEIoAy7lyzf6oAoMu0N+NtXXOPDbOV3jUI7lN5srVRBJ+2Jxxo4uHl
-         fmBhiUPJEZ36Ba5sWdeNBiPkZ3+MDx91LZgLZCMlKWVcrJcHNimrv6ueMkLzk3kn+sk8
-         mJLGPQ781Y+zrGG9o7G9w2VCM1qqdviBE09H8nteT1rTLIPlcJLcwGLbIkm3o5oDVjpa
-         MgAuc8HkNEJb87Pk2CR5o9E5lzRlwmkfAugzswpZkb3YYvT/7QK7uE+VPJyV2ZK3mhpJ
-         qyiQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=1Di1EWhRlPVRP/2CFPwbk6MqAcZec526Df/fLH2Tdag=;
+        b=T5QYjmk0t2rD6VPzw1V/CAx5+tRCund//MyVN9ykG3DL1Z8kV++Zmo3D9Jh8FChzpt
+         NDTEOKVjf5D74OhwFDa7ookY7iXEsti6XsyI5BFirNE0euGDphVOS55W/iQIFphKaVLE
+         aF172OtpSPVQE5EuDob1PehA4q7At2n/zlNvmTtW4fB3DT7EOi2kbixfeBx7R5R9l8Dk
+         Q2sWrS4DktNVFZnx9X4Cz2TYEh5bsHUw5Qu6A2r5VIVUufLtud2k6BL/nOeD8z0d14Fa
+         meIVCuxnYY/PX5+4LKOl7AlYeaFsSBwyfgVyLQJi5qLGJ/hfgpSgLenJvWWS/ffEPqdA
+         +ftQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=NS6xZ3k2ptD1ngV7iuDVWu/5o23kt9imwB2Z3/xXb7s=;
-        b=thHHNedE6xYcdKDPm3gml0UgbHWvnPatD+HoWSDVHa7ue43pcQOT1kJWqQZGTVXHoG
-         p/e89IZl8K9byj2Kz8aPD7Kg5B/3NiHlT0/c5TMvQU+KcdNV5djau1s+8QI7KHxI+b75
-         IzvrB6daX25d9iugxwf6SqMTfrs14kr0KK3UTwaJSqHdImhDVQl25TZd8q/TUQXvZEck
-         Dau/8w/dKsV0pSBcqupX4LBBpKe4VocdIWPbK83wX+TgtmruDA2NM4pwYLsBZ6vyL2zD
-         OmKcKoj/2cjiD89ECaUYyb5YnxJvkYS61CC8HJZo0ZzIrfiI3RPqSaK1xvZwd9tvIgxF
-         6F7w==
-X-Gm-Message-State: AOAM532DaVsng3k2GfjaKRbFS5Zqu19Lwaj4fOQBmuenLAJ2Zc50omrI
-        POLsm9lMtGZQITSF4Ls9FK0GgxpvJhLltg==
-X-Google-Smtp-Source: ABdhPJyaofUJNNZcRsCyhRrVzbzfDTfn+/paah5kaLZaMSpupd8rgWCGMjzOk6RwBgnfTBGOs+SMtA==
-X-Received: by 2002:a05:6214:e46:: with SMTP id o6mr11715150qvc.110.1641662425518;
-        Sat, 08 Jan 2022 09:20:25 -0800 (PST)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id bm30sm1315889qkb.4.2022.01.08.09.20.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jan 2022 09:20:24 -0800 (PST)
-Date:   Sat, 8 Jan 2022 09:20:13 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 00/48] Folios for 5.17
-In-Reply-To: <YdnBcaSLv4TAGjfL@casper.infradead.org>
-Message-ID: <b151e2b3-3315-533e-a06e-b0b6e4d2e74c@google.com>
-References: <20211208042256.1923824-1-willy@infradead.org> <YdHQnSqA10iwhJ85@casper.infradead.org> <Ydkh9SXkDlYJTd35@casper.infradead.org> <a5433775-23b0-4ac-51c7-1178fad73fc@google.com> <YdnBcaSLv4TAGjfL@casper.infradead.org>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=1Di1EWhRlPVRP/2CFPwbk6MqAcZec526Df/fLH2Tdag=;
+        b=6kkv97Ycg6MWNN42N3t1QL472U/pciB7KG8wxtv2EeKThC4Gil9Lw37lkzBWhLqzri
+         FlLGUpihIcf3/7GoOSjhBgn3CO8DsKohaiXqFMMH2P6FC3jgwz8++Df/Za1EdCmgRdH8
+         1bAL7W7cGjhNr2RZUtGMiYVuX5PmSfwqSU+HdUY3CTu5TOPjQG3c/jbCskAtKSnUidhS
+         6pXrPpjTiFEeNjSbcSzEtgoQtIKE2hfvJ/n5+JKBmATkJCwmEUetlaaw0ON4kdukGVMb
+         z+FtjFBy7+8g3b1U7TH1aqqyQxYf28V8SuC8UhUnD6wzNRgcqqCmFcTic9e3wlJWiSy3
+         icCw==
+X-Gm-Message-State: AOAM530uOGBJmEafnjzodQCyncZNqp52RYBzjv/tcmTgqvmxebB3A7SV
+        9RugqF1io9L+53Yw7nV+D/xvdJrDI3kWVTx3OSU=
+X-Google-Smtp-Source: ABdhPJwpBdzDZk82OvUVu0pc2Qqyq3hWn290tfwRAqVgz7p8c2jegtwzmJ9HLHunWhlaB4EIfqrPy1ssHf7v+n7JlLY=
+X-Received: by 2002:a05:6a00:216f:b0:49f:dcb7:2bf2 with SMTP id
+ r15-20020a056a00216f00b0049fdcb72bf2mr70191678pff.19.1641670052668; Sat, 08
+ Jan 2022 11:27:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: by 2002:a17:90a:9ee:0:0:0:0 with HTTP; Sat, 8 Jan 2022 11:27:32
+ -0800 (PST)
+Reply-To: risht5h2@gmail.com
+From:   Elizabeth Michael <alimahassanq@gmail.com>
+Date:   Sat, 8 Jan 2022 20:27:32 +0100
+Message-ID: <CAN0bQuf-OhvJcTrSiG=5HYHgz8gAaj2FaMZyxpLtfrQEOhqBdA@mail.gmail.com>
+Subject: Hello Beloved One
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 8 Jan 2022, Matthew Wilcox wrote:
-> On Sat, Jan 08, 2022 at 08:47:49AM -0800, Hugh Dickins wrote:
-> > On Sat, 8 Jan 2022, Matthew Wilcox wrote:
-> > > On Sun, Jan 02, 2022 at 04:19:41PM +0000, Matthew Wilcox wrote:
-> > > > On Wed, Dec 08, 2021 at 04:22:08AM +0000, Matthew Wilcox (Oracle) wrote:
-> > > > > This all passes xfstests with no new failures on both xfs and tmpfs.
-> > > > > I intend to put all this into for-next tomorrow.
-> > > > 
-> > > > As a result of Christoph's review, here's the diff.  I don't
-> > > > think it's worth re-posting the entire patch series.
-> > > 
-> > > After further review and integrating Hugh's fixes, here's what
-> > > I've just updated the for-next tree with.  A little late, but that's
-> > > this time of year ...
-> > 
-> > I don't see any fix to shmem_add_to_page_cache() in this diff, my 3/3
-> > shmem: Fix "Unused swap" messages - I'm not sure whether you decided
-> > my fix has to be adjusted or not, but some fix is needed there.
-> 
-> I pushed that earlier because I had more confidence in my understanding
-> of that patch.  Here's what's currently in for-next:
+Dear beloved one, I am Mrs. Elizabeth Michael, 65 years old, deaf and
+a widow. I was married to the late Engr Howard Michael, Who worked
+with Shell Development Company in London for Twenty-Six years before
+he died in the year 2017 in a car accident. When my late husband was
+alive he deposited the sum of =C2=A38.500 Million Pounds in a Bank here.
 
-Okay, thanks: I tried that variant when you proposed it, and it worked fine.
+Following my ill health (Cancer of the Lungs) My Doctor told me that I
+may not live longer than required due to my health condition. I am
+looking forward to seeing someone who can use this money in charitable
+works. More details will be made known to you upon your response.
+Please get back to me for further directives.
 
-Hugh
+May God Bless You.
+Mrs. Elizabeth Michael
