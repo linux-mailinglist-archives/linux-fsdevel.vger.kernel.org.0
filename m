@@ -2,209 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C359B4898CE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 13:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 075734898F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 13:58:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245641AbiAJMpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 07:45:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38070 "EHLO
+        id S233552AbiAJM60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 07:58:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234404AbiAJMpE (ORCPT
+        with ESMTP id S236030AbiAJM4X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 07:45:04 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF7EC06173F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 04:45:03 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id c6so35577906ybk.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 04:45:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1P551vXMJtNOZg3UvulkEAqSICcinl0woD2ztefNS7o=;
-        b=J8HT5LkxET+0mA/gLuJ/3I8tJ0L1dk9wNhAOo5DNNY42Isd7GnY4vVgeym1jIAII2B
-         bvQt1mrEEzlsg5P4duvDpbkgIZRSJzSTr3LCqsRK2HjFvfLSwEYkMX0Z4EkSQkLeEmsS
-         SMH1+FtPy+xbvVMMKNaUum/LkvsBs7FV0YOpMH0yap7J8BOTb2Xg3g8RGwxPhmEWnoYz
-         tJfU3dJM2REGP9rRTf1HrXs19n529ELk+fOGcWZO3sNhJUi8k2Unc1m1lFXG6Mp9yPyz
-         kNoKClvpJ8IAb2ZAOAKFZ80zAsEslE/hUTtJbsWl0wLarmgu4uW/Iw9Wc3Ik+LQ2rSFX
-         GEiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1P551vXMJtNOZg3UvulkEAqSICcinl0woD2ztefNS7o=;
-        b=J7rlk5TZ9Vre9KaLbHBAT2yg89LvnBQDJSCNbsend7EfDVEX/JdWPXo9cqarwpGen2
-         +z9SWp7WIpQ+CcdQzLUJtNd6/kRsWn+kQAwwkEyo0PvYZ2fbVcPFgwq+qWiJ6iEtt7HK
-         GuA+rTDVRdSkFiqf1TGYyev2OXuCbMNuV7e+jBl/JS0NnTwBqHmJSbLC6kVl6xPvyQhh
-         GVubdg8rchSNxfaPHOgt1AZ94nknVBBTTDbcT/CCU2d4pndRVGk8SLoV8hrHE4NnamZk
-         bmi8lzeW7t02zRcQh15xuLbVC6pLTeg77+zzKQjPwoIk3tuV3x1/lAad8v4R4zH6q/5M
-         P7jg==
-X-Gm-Message-State: AOAM532CoSM6kpOTily0L64QOMDta0+R1VsM9RJ69bUApZEOJG/9UpNN
-        cUX9/UwUWXxyQdyTjHqzgoHfncScXkYBLxsB4AaEGm4rz39Gg0Z0
-X-Google-Smtp-Source: ABdhPJycy2dWcyvhhb6q58G9qtGURkXbwLiSXEN+llTRHtfSBr0UI1jHi2mIcsMkEMzGfGjYnibJ42BIPjr7DUTTC8g=
-X-Received: by 2002:a05:6902:1106:: with SMTP id o6mr67371292ybu.89.1641818702890;
- Mon, 10 Jan 2022 04:45:02 -0800 (PST)
+        Mon, 10 Jan 2022 07:56:23 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F202BC06173F;
+        Mon, 10 Jan 2022 04:56:22 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9140560E75;
+        Mon, 10 Jan 2022 12:56:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F23A7C36AE5;
+        Mon, 10 Jan 2022 12:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641819382;
+        bh=AX1VuxxrVVqHBENLERvgpzoDnpMpY/BCtLx68yD5Ue8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MikKJ/f0ib+YfyBEBP61X19zAi3ugsjBvgNNYcdYjNmBpBdwGFENQrkFqKSmVwGxM
+         Km0SWXdZzT2lpfb6w658pIYsQHXAbypbKc8rcx45Lxp242vVgXZ97p6+oMkYppGvk2
+         mHWQtQSU1ZUZDmCZOo/jGGI2aU5KFpo/GJctwu9sXqnkTMawqlfA6KKUxDcGT/HVh6
+         h0Mn6g0BVEJ1gTWlLv0NAPm+oPPEHuJt0OZUYyc9FNyzTJE4h+F4DiAix/JXu0jmPE
+         kHob0z0kUVc5y1YPOnkKKNVL+kSpkeLJkdErYIVn9BYBmfTsX+rLStO3HzWBKLncSZ
+         65XWlvKz+j0yQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] fs idmapping updates
+Date:   Mon, 10 Jan 2022 13:56:00 +0100
+Message-Id: <20220110125600.440171-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20210402055745.3690281-1-varmam@google.com> <CAMyCerJ2wjdXeEP3iRaKOgXOm94rdqVkzAf5iy2cwpjMWVj0hA@mail.gmail.com>
-In-Reply-To: <CAMyCerJ2wjdXeEP3iRaKOgXOm94rdqVkzAf5iy2cwpjMWVj0hA@mail.gmail.com>
-From:   Manish Varma <varmam@google.com>
-Date:   Mon, 10 Jan 2022 18:14:51 +0530
-Message-ID: <CAMyCerLCsP=oHLkLZhfQmU8ZTxQWkOBboo_V1KY8LCk7BtmYxg@mail.gmail.com>
-Subject: Re: [PATCH v3] fs: Improve eventpoll logging to stop indicting timerfd
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, kernel test robot <lkp@intel.com>,
-        Kelly Rossmoyer <krossmo@google.com>,
-        Vijay Nayak <nayakvij@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Alexander and Thomas,
+Hi Linus,
 
-Friendly ping if you could share feedback (if any) to get this patch
-merged.
+/* Summary */
+This contains the work to enable the idmapping infrastructure to support
+idmapped mounts of filesystems mounted with an idmapping. In addition this
+contains various cleanups that avoid repeated open-coding of the same
+functionality and simplify the code in quite a few places. We also finish
+the renaming of the mapping helpers we started a few kernel releases back
+and move them to a dedicated header to not continue polluting the fs
+header needlessly with low-level idmapping helpers. With this series the fs
+header only contains idmapping helpers that interact with fs objects.
 
-Thanks,
-Manish
+Currently we only support idmapped mounts for filesystems mounted without
+an idmapping themselves. This was a conscious decision mentioned in
+multiple places (cf. [1]).
 
+As explained at length in [3] it is perfectly fine to extend support for
+idmapped mounts to filesystem's mounted with an idmapping should the need
+arise. The need has been there for some time now (cf. [2]).
 
-On Tue, Jun 22, 2021 at 3:36 AM Manish Varma <varmam@google.com> wrote:
->
-> Hello Alexander and Thomas,
->
-> Please share if you have any further feedback on this patch, or if
-> there's any other action required from my end to before this gets
-> merged.
->
-> Thanks,
-> Manish
->
-> On Thu, Apr 1, 2021 at 10:57 PM Manish Varma <varmam@google.com> wrote:
-> >
-> > timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
-> > it names them after the underlying file descriptor, and since all
-> > timerfd file descriptors are named "[timerfd]" (which saves memory on
-> > systems like desktops with potentially many timerfd instances), all
-> > wakesources created as a result of using the eventpoll-on-timerfd idiom
-> > are called... "[timerfd]".
-> >
-> > However, it becomes impossible to tell which "[timerfd]" wakesource is
-> > affliated with which process and hence troubleshooting is difficult.
-> >
-> > This change addresses this problem by changing the way eventpoll
-> > wakesources are named:
-> >
-> > 1) the top-level per-process eventpoll wakesource is now named "epoll:P"
-> > (instead of just "eventpoll"), where P, is the PID of the creating
-> > process.
-> > 2) individual per-underlying-filedescriptor eventpoll wakesources are
-> > now named "epollitemN:P.F", where N is a unique ID token and P is PID
-> > of the creating process and F is the name of the underlying file
-> > descriptor.
-> >
-> > All together that should be splitted up into a change to eventpoll and
-> > timerfd (or other file descriptors).
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
-> > Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
-> > Signed-off-by: Manish Varma <varmam@google.com>
-> > ---
-> >  drivers/base/power/wakeup.c | 10 ++++++++--
-> >  fs/eventpoll.c              | 10 ++++++++--
-> >  include/linux/pm_wakeup.h   |  4 ++--
-> >  3 files changed, 18 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> > index 01057f640233..3628536c67a5 100644
-> > --- a/drivers/base/power/wakeup.c
-> > +++ b/drivers/base/power/wakeup.c
-> > @@ -216,13 +216,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
-> >  /**
-> >   * wakeup_source_register - Create wakeup source and add it to the list.
-> >   * @dev: Device this wakeup source is associated with (or NULL if virtual).
-> > - * @name: Name of the wakeup source to register.
-> > + * @fmt: format string for the wakeup source name
-> >   */
-> >  struct wakeup_source *wakeup_source_register(struct device *dev,
-> > -                                            const char *name)
-> > +                                            const char *fmt, ...)
-> >  {
-> >         struct wakeup_source *ws;
-> >         int ret;
-> > +       char name[128];
-> > +       va_list args;
-> > +
-> > +       va_start(args, fmt);
-> > +       vsnprintf(name, sizeof(name), fmt, args);
-> > +       va_end(args);
-> >
-> >         ws = wakeup_source_create(name);
-> >         if (ws) {
-> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > index 7df8c0fa462b..7c35987a8887 100644
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -312,6 +312,7 @@ struct ctl_table epoll_table[] = {
-> >  };
-> >  #endif /* CONFIG_SYSCTL */
-> >
-> > +static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
-> >  static const struct file_operations eventpoll_fops;
-> >
-> >  static inline int is_file_epoll(struct file *f)
-> > @@ -1451,15 +1452,20 @@ static int ep_create_wakeup_source(struct epitem *epi)
-> >  {
-> >         struct name_snapshot n;
-> >         struct wakeup_source *ws;
-> > +       pid_t task_pid;
-> > +       int id;
-> > +
-> > +       task_pid = task_pid_nr(current);
-> >
-> >         if (!epi->ep->ws) {
-> > -               epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
-> > +               epi->ep->ws = wakeup_source_register(NULL, "epoll:%d", task_pid);
-> >                 if (!epi->ep->ws)
-> >                         return -ENOMEM;
-> >         }
-> >
-> > +       id = atomic_inc_return(&wakesource_create_id);
-> >         take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
-> > -       ws = wakeup_source_register(NULL, n.name.name);
-> > +       ws = wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task_pid, n.name.name);
-> >         release_dentry_name_snapshot(&n);
-> >
-> >         if (!ws)
-> > diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-> > index aa3da6611533..cb91c84f6f08 100644
-> > --- a/include/linux/pm_wakeup.h
-> > +++ b/include/linux/pm_wakeup.h
-> > @@ -95,7 +95,7 @@ extern void wakeup_source_destroy(struct wakeup_source *ws);
-> >  extern void wakeup_source_add(struct wakeup_source *ws);
-> >  extern void wakeup_source_remove(struct wakeup_source *ws);
-> >  extern struct wakeup_source *wakeup_source_register(struct device *dev,
-> > -                                                   const char *name);
-> > +                                                   const char *fmt, ...);
-> >  extern void wakeup_source_unregister(struct wakeup_source *ws);
-> >  extern int wakeup_sources_read_lock(void);
-> >  extern void wakeup_sources_read_unlock(int idx);
-> > @@ -137,7 +137,7 @@ static inline void wakeup_source_add(struct wakeup_source *ws) {}
-> >  static inline void wakeup_source_remove(struct wakeup_source *ws) {}
-> >
-> >  static inline struct wakeup_source *wakeup_source_register(struct device *dev,
-> > -                                                          const char *name)
-> > +                                                          const char *fmt, ...)
-> >  {
-> >         return NULL;
-> >  }
-> > --
-> > 2.31.0.208.g409f899ff0-goog
-> >
->
->
-> --
-> Manish Varma | Software Engineer | varmam@google.com | 650-686-0858
+Before we can port any filesystem that is mountable with an idmapping to
+support idmapped mounts in the coming cycles, we need to first extend the
+mapping helpers to account for the filesystem's idmapping. This again, is
+explained at length in our documentation at [3] and also in the individual
+commit messages so here's an overview.
+
+Currently, the low-level mapping helpers implement the remapping algorithms
+described in [3] in a simplified manner as we could rely on the fact
+that all filesystems supporting idmapped mounts are mounted without an
+idmapping.
+
+In contrast, filesystems mounted with an idmapping are very likely to not
+use an identity mapping and will instead use a non-identity mapping. So the
+translation step from or into the filesystem's idmapping in the remapping
+algorithm cannot be skipped for such filesystems.
+
+Non-idmapped filesystems and filesystems not supporting idmapped mounts are
+unaffected by this change as the remapping algorithms can take the same
+shortcut as before. If the low-level helpers detect that they are dealing
+with an idmapped mount but the underlying filesystem is mounted without an
+idmapping we can rely on the previous shortcut and can continue to skip the
+translation step from or into the filesystem's idmapping. And of course, if
+the low-level helpers detect that they are not dealing with an idmapped
+mount they can simply return the relevant id unchanged; no remapping needs
+to be performed at all.
+
+These checks guarantee that only the minimal amount of work is performed.
+As before, if idmapped mounts aren't used the low-level helpers are
+idempotent and no work is performed at all.
+
+Link: [1] commit 2ca4dcc4909d ("fs/mount_setattr: tighten permission checks")
+Link: [2] https://github.com/containers/podman/issues/10374
+Link: [3] Documentations/filesystems/idmappings.rst
+Link: [4] commit a65e58e791a1 ("fs: document and rename fsid helpers")
+
+/* Testing */
+All patches are based on v5.16-rc3 and have been sitting in linux-next. No
+build failures or warnings were observed and fstests are passing:
+
+SECTION       -- xfs
+RECREATING    -- xfs on /dev/loop4
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-fs.idmapped.v5.17-88a4b8c3b3c3 #42 SMP PREEMPT Mon Jan 10 10:57:44 UTC 2022
+MKFS_OPTIONS  -- -f -f /dev/loop5
+MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
+
+generic/633 25s ...  26s
+generic/644 4s ...  16s
+generic/645 209s ...  77s
+generic/656 14s ...  17s
+xfs/152 75s ...  70s
+xfs/153 48s ...  43s
+Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
+Passed all 6 tests
+
+SECTION       -- ext4
+RECREATING    -- ext4 on /dev/loop4
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-fs.idmapped.v5.17-88a4b8c3b3c3 #42 SMP PREEMPT Mon Jan 10 10:57:44 UTC 2022
+MKFS_OPTIONS  -- -F -F /dev/loop5
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop5 /mnt/scratch
+
+generic/633 26s ...  17s
+generic/644 16s ...  4s
+generic/645 77s ...  58s
+generic/656 17s ...  8s
+Ran: generic/633 generic/644 generic/645 generic/656
+Passed all 4 tests
+
+SECTION       -- btrfs
+RECREATING    -- btrfs on /dev/loop4
+FSTYP         -- btrfs
+PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-fs.idmapped.v5.17-88a4b8c3b3c3 #42 SMP PREEMPT Mon Jan 10 10:57:44 UTC 2022
+MKFS_OPTIONS  -- -f /dev/loop5
+MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
+
+btrfs/245 11s ...  11s
+generic/633 17s ...  21s
+generic/644 4s ...  6s
+generic/645 58s ...  60s
+generic/656 8s ...  8s
+Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
+Passed all 5 tests
+
+SECTION       -- xfs
+=========================
+Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
+Passed all 6 tests
+
+SECTION       -- ext4
+=========================
+Ran: generic/633 generic/644 generic/645 generic/656
+Passed all 4 tests
+
+SECTION       -- btrfs
+=========================
+Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
+Passed all 5 tests
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts showed up doing a test-merge
+with current mainline.
+
+There's a merge conflict reported from -next with David's fscache rewrite.
+Although I'm not sure David still intends to send it for the v5.17 merge window
+we covered the conflict in thread [1] where stated in [2] that the conflict is
+trivial enough for you to resolve during the merge. (I'm posting the links so
+you can double-check.)
+
+[1]: https://lore.kernel.org/linux-fsdevel/20211207142405.179428-1-brauner@kernel.org
+[2]: https://lore.kernel.org/linux-fsdevel/CAHk-=wjjxBRNkav+RjpdHjDZHRPAJgjdM4wTFi_oEnk0_dc67g@mail.gmail.com
+
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with current
+mainline.
+
+The following changes since commit d58071a8a76d779eedab38033ae4c821c30295a5:
+
+  Linux 5.16-rc3 (2021-11-28 14:09:19 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.idmapped.v5.17
+
+for you to fetch changes up to bd303368b776eead1c29e6cdda82bde7128b82a7:
+
+  fs: support mapped mounts of mapped filesystems (2021-12-05 10:28:57 +0100)
+
+Please consider pulling these changes from the signed fs.idmapped.v5.17 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+fs.idmapped.v5.17
+
+----------------------------------------------------------------
+Christian Brauner (10):
+      fs: add is_idmapped_mnt() helper
+      fs: move mapping helpers
+      fs: tweak fsuidgid_has_mapping()
+      fs: account for filesystem mappings
+      docs: update mapping documentation
+      fs: use low-level mapping helpers
+      fs: remove unused low-level mapping helpers
+      fs: port higher-level mapping helpers
+      fs: add i_user_ns() helper
+      fs: support mapped mounts of mapped filesystems
+
+ Documentation/filesystems/idmappings.rst |  72 ----------
+ fs/cachefiles/bind.c                     |   2 +-
+ fs/ecryptfs/main.c                       |   2 +-
+ fs/ksmbd/smbacl.c                        |  19 +--
+ fs/ksmbd/smbacl.h                        |   5 +-
+ fs/namespace.c                           |  53 +++++--
+ fs/nfsd/export.c                         |   2 +-
+ fs/open.c                                |   8 +-
+ fs/overlayfs/super.c                     |   2 +-
+ fs/posix_acl.c                           |  17 ++-
+ fs/proc_namespace.c                      |   2 +-
+ fs/xfs/xfs_inode.c                       |   8 +-
+ fs/xfs/xfs_linux.h                       |   1 +
+ fs/xfs/xfs_symlink.c                     |   4 +-
+ include/linux/fs.h                       | 141 ++++++-------------
+ include/linux/mnt_idmapping.h            | 234 +++++++++++++++++++++++++++++++
+ security/commoncap.c                     |  15 +-
+ 17 files changed, 356 insertions(+), 231 deletions(-)
+ create mode 100644 include/linux/mnt_idmapping.h
