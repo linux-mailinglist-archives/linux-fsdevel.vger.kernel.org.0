@@ -2,74 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44531489ED7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 19:11:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F36489F0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 19:19:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238734AbiAJSL3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 13:11:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57234 "EHLO
+        id S239044AbiAJSTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 13:19:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238764AbiAJSL3 (ORCPT
+        with ESMTP id S239025AbiAJSTN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 13:11:29 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEEB0C06173F;
-        Mon, 10 Jan 2022 10:11:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=IXDclvvGfX8g/ZBckJ/3SLWrdaDRKpz0LF1OPGXVzvI=; b=ff+m+P71beGj0MkK/YASQ9YUEQ
-        6eQGd4BXDI642TW373K/AecrqG2BPxwVOprIKkkjlP70PP7awfl7CTMA6I7YbEop3wWuddvBz0Tlr
-        w66cIGirclHcNqmgQiHr2CJvcJx+SKYjTSzTJjwCZFrlT0dJPsdFXvZ9CibBXuWnHcSlW+0TPBklH
-        LFEAfaW63NFoBQEG9MhZCdDRHOi52p6SWuc4V79Fy+VAP1UfgAy6nQbSvuJVRFsrGrZz0NLtU07dJ
-        h4lyedzaF5yBW8OA/yAvUSf/ms70Mk2agPsxwzmwOZgd1CBnmOCHG1ooJOBe3AgSZfP21flP9asVi
-        3FtJ2plg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n6z8Y-00Cgu5-33; Mon, 10 Jan 2022 18:11:18 +0000
-Date:   Mon, 10 Jan 2022 10:11:18 -0800
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "trondmy@kernel.org" <trondmy@kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
-Message-ID: <Ydx2xtqMpGBO6vlW@infradead.org>
-References: <YdSOgyvDnZadYpUP@infradead.org>
- <20220104192227.GA398655@magnolia>
- <20220104215227.GJ945095@dread.disaster.area>
- <20220104231230.GG31606@magnolia>
- <20220105021022.GL945095@dread.disaster.area>
- <YdWjkW7hhbTl4TQa@bfoster>
- <20220105220421.GM945095@dread.disaster.area>
- <YdccZ4Ut3VlJhSMS@bfoster>
- <20220110081847.GW945095@dread.disaster.area>
- <YdxwnaT0nYHgGQZR@bfoster>
+        Mon, 10 Jan 2022 13:19:13 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB217C061748
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 10:19:13 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id m6so30035211ybc.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 10:19:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ozjIGPdXpEGjhtrg7M9VDsi92b2yheJb0XVg1R0oCbg=;
+        b=fGaKbNq7gW4Ltg3I9MP05btVJ6khCEq4ydjLMoCyQ1T6LAiTW5HyVlirDB1nTJxqkK
+         CfkP3LlUCKOcCJQsUkVvhmBsfmyVbp4aJ55ti58tzyWVAL34R3Y4vsHdBy0Hj44hEZmR
+         f+V8kKf3bl1hHVTV8s8K+oNZty1euOaZobUa2bBroTP6JD8r0rU0MET/MnOifuNMjHr6
+         Q/umUsqZv3b320YCrj8og3k7n850WCE89aIEFeFXrM1czElniv0Go3sDUAkq7DCy+g2f
+         PkclGpD3DAXUcEHqa0NGndTEbmlZ3RpjJ1cCT7K4mz9CKrDe5Swpz0FNjY+0mFDK8YjN
+         flGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ozjIGPdXpEGjhtrg7M9VDsi92b2yheJb0XVg1R0oCbg=;
+        b=r+7sW4PMg9FlhjaXGlIAMpBY+qkTmYZL8rG6JFr6LysnShp1wk+5F/pRvoMTAOmQvA
+         9i8tSMu6JrV6CBoz4FGbPMkVW4GDt40wkVo3ceyc282O/WeGdYh/qQ9CVtSj6tSfOTgi
+         RZy5EasvJzz6l5Qd8oO034V5DhAItHNNg4dkhnotmWx7YHaXKttaHoNf020f6BQgogSV
+         HFn/Q8Nd+LhHP6J9pZi9VBIkmAZ82DnzGXzp5f0ed//U2CtCGv+KgphO/oaN1tPssE5V
+         wubdx801IPSA4TlLpOCR7dXXeKYqw6YWi9e4t7ukd/p31ZytMLmID33BIfUZwqWZFhmR
+         wdyg==
+X-Gm-Message-State: AOAM532cH6oRUkqDQd9sCno/wo9ciMDBBW4MjpK7H1LGrbMRoVmbUkxu
+        AwZzbxeh4Z1h0ugpbnOwvJTWs3Lg+7K7OPRmhoGZQw==
+X-Google-Smtp-Source: ABdhPJw5558XhgRjCcRfT/CqFjcX6F4tW6g3+lEt8isEvNJmqNNK9qXJpBoekCCbDpCmlDJ7K9OUxCe3STiF/6nmwSo=
+X-Received: by 2002:a05:6902:703:: with SMTP id k3mr1066936ybt.225.1641838752718;
+ Mon, 10 Jan 2022 10:19:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YdxwnaT0nYHgGQZR@bfoster>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <000000000000e8f8f505d0e479a5@google.com> <20211211015620.1793-1-hdanton@sina.com>
+ <YbQUSlq76Iv5L4cC@sol.localdomain> <YdW3WfHURBXRmn/6@sol.localdomain>
+ <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
+ <CAHk-=wjddvNbZBuvh9m_2VYFC1W7HvbP33mAzkPGOCHuVi5fJg@mail.gmail.com>
+ <CAHk-=wjn5xkLWaF2_4pMVEkZrTA=LiOH=_pQK0g-_BMSE-8Jxg@mail.gmail.com>
+ <Ydw4hWCRjAhGfCAv@cmpxchg.org> <CAJuCfpHg=SPzx7SGUL75DVpMy0BDEwVj4o-SM0UKGmEJrOSdvg@mail.gmail.com>
+ <CAHk-=wiZ=oic3UfejGzy_31RYggtZWUeF1gE82_NHAA=ENY6Kw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiZ=oic3UfejGzy_31RYggtZWUeF1gE82_NHAA=ENY6Kw@mail.gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 10 Jan 2022 10:19:01 -0800
+Message-ID: <CAJuCfpFFQx525=d8odiiAyi6w5M6KKx-1726zvuV=eADPB8wKg@mail.gmail.com>
+Subject: Re: psi_trigger_poll() is completely broken
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Eric Biggers <ebiggers@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 10, 2022 at 12:45:01PM -0500, Brian Foster wrote:
-> With regard to the iterators, my understanding was that
-> bio_for_each_segment_all() walks the multipage bvecs but
-> bio_for_each_segment() does not, but that could certainly be wrong as I
-> find the iterators a bit confusing. Either way, the most recent test
-> with the ioend granular filter implies that a single ioend can still
-> become a soft lockup vector from non-atomic context.
+On Mon, Jan 10, 2022 at 9:42 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Jan 10, 2022 at 9:25 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > About the issue of serializing concurrent writes for
+> > cgroup_pressure_write() similar to how psi_write() does. Doesn't
+> > of->mutex inside kernfs_fop_write_iter() serialize the writes to the
+> > same file?
+>
+> Ahh, yes, it looks like that does solve the serialization issue.
+> Sorry, I missed that because I'm not actually all that familiar with
+> the kernfs 'of' code.
+>
+> So the only issue is the trigger lifetime one, and if a single trigger
+> is sufficient and returning -EBUSY for trying to replace an existing
+> one is good, then I think that's the proper fix.
+>
+> I'm very busy with the merge window (and some upcoming travel and
+> family events), so I'm hoping somebody will write and test such a
+> patch. Please?
 
-the segment iterators iterate over the pages segments, the
-bvec iterators over the multi-page bvecs.  The _all suffix means
-it iterates over the whole bio independent of clones and partial
-submission state and is for use in the cmpletion handlers.  The
-version without it are for use in the block drivers.
+Yes, definitely. I'm on it. Will try posting it later today or
+tomorrow morning if testing reveals something unexpected.
+Thanks!
+
+>
+>                    Linus
