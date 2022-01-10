@@ -2,105 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F36489F0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 19:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 782F4489F11
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 19:19:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239044AbiAJSTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 13:19:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59100 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239025AbiAJSTN (ORCPT
+        id S239056AbiAJSTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 13:19:32 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:59740 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239002AbiAJSTb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 13:19:13 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB217C061748
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 10:19:13 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id m6so30035211ybc.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 10:19:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ozjIGPdXpEGjhtrg7M9VDsi92b2yheJb0XVg1R0oCbg=;
-        b=fGaKbNq7gW4Ltg3I9MP05btVJ6khCEq4ydjLMoCyQ1T6LAiTW5HyVlirDB1nTJxqkK
-         CfkP3LlUCKOcCJQsUkVvhmBsfmyVbp4aJ55ti58tzyWVAL34R3Y4vsHdBy0Hj44hEZmR
-         f+V8kKf3bl1hHVTV8s8K+oNZty1euOaZobUa2bBroTP6JD8r0rU0MET/MnOifuNMjHr6
-         Q/umUsqZv3b320YCrj8og3k7n850WCE89aIEFeFXrM1czElniv0Go3sDUAkq7DCy+g2f
-         PkclGpD3DAXUcEHqa0NGndTEbmlZ3RpjJ1cCT7K4mz9CKrDe5Swpz0FNjY+0mFDK8YjN
-         flGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ozjIGPdXpEGjhtrg7M9VDsi92b2yheJb0XVg1R0oCbg=;
-        b=r+7sW4PMg9FlhjaXGlIAMpBY+qkTmYZL8rG6JFr6LysnShp1wk+5F/pRvoMTAOmQvA
-         9i8tSMu6JrV6CBoz4FGbPMkVW4GDt40wkVo3ceyc282O/WeGdYh/qQ9CVtSj6tSfOTgi
-         RZy5EasvJzz6l5Qd8oO034V5DhAItHNNg4dkhnotmWx7YHaXKttaHoNf020f6BQgogSV
-         HFn/Q8Nd+LhHP6J9pZi9VBIkmAZ82DnzGXzp5f0ed//U2CtCGv+KgphO/oaN1tPssE5V
-         wubdx801IPSA4TlLpOCR7dXXeKYqw6YWi9e4t7ukd/p31ZytMLmID33BIfUZwqWZFhmR
-         wdyg==
-X-Gm-Message-State: AOAM532cH6oRUkqDQd9sCno/wo9ciMDBBW4MjpK7H1LGrbMRoVmbUkxu
-        AwZzbxeh4Z1h0ugpbnOwvJTWs3Lg+7K7OPRmhoGZQw==
-X-Google-Smtp-Source: ABdhPJw5558XhgRjCcRfT/CqFjcX6F4tW6g3+lEt8isEvNJmqNNK9qXJpBoekCCbDpCmlDJ7K9OUxCe3STiF/6nmwSo=
-X-Received: by 2002:a05:6902:703:: with SMTP id k3mr1066936ybt.225.1641838752718;
- Mon, 10 Jan 2022 10:19:12 -0800 (PST)
+        Mon, 10 Jan 2022 13:19:31 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 8BDD61F380;
+        Mon, 10 Jan 2022 18:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1641838770; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Tc6uSLPqv62h4JI1ptGbmPdCKWGxhmbcPM9/hq73LKg=;
+        b=WXWn6ovnn62O+AKmwKyp1zCVlOJWK4Qvg4vFVMfhNTvtivwtBVtnojRNVz+oD70RyFkmT0
+        +03Mbimxxd64R8ljcsgArqAEzFziVn1niWTstd124DH0FUcsXuN9q3c6MyL3Zy7BXVqPJB
+        a+0V70kuWiEa84Fqti+7TlYIAU5xNpk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1641838770;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Tc6uSLPqv62h4JI1ptGbmPdCKWGxhmbcPM9/hq73LKg=;
+        b=4+LwV5fDiwutxbus7lpsrmWy4qKYKzpTsfsHP3FnyKyUIlFQ6GsdQDC4oAmBNIJoQPkvDj
+        mbd61UN7Cnjs+RAg==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 7CCC3A3B88;
+        Mon, 10 Jan 2022 18:19:30 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 265BDA05A2; Mon, 10 Jan 2022 19:19:27 +0100 (CET)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, stable@vger.kernel.org
+Subject: [PATCH v2] select: Fix indefinitely sleeping task in poll_schedule_timeout()
+Date:   Mon, 10 Jan 2022 19:19:23 +0100
+Message-Id: <20220110181923.5340-1-jack@suse.cz>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <000000000000e8f8f505d0e479a5@google.com> <20211211015620.1793-1-hdanton@sina.com>
- <YbQUSlq76Iv5L4cC@sol.localdomain> <YdW3WfHURBXRmn/6@sol.localdomain>
- <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
- <CAHk-=wjddvNbZBuvh9m_2VYFC1W7HvbP33mAzkPGOCHuVi5fJg@mail.gmail.com>
- <CAHk-=wjn5xkLWaF2_4pMVEkZrTA=LiOH=_pQK0g-_BMSE-8Jxg@mail.gmail.com>
- <Ydw4hWCRjAhGfCAv@cmpxchg.org> <CAJuCfpHg=SPzx7SGUL75DVpMy0BDEwVj4o-SM0UKGmEJrOSdvg@mail.gmail.com>
- <CAHk-=wiZ=oic3UfejGzy_31RYggtZWUeF1gE82_NHAA=ENY6Kw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiZ=oic3UfejGzy_31RYggtZWUeF1gE82_NHAA=ENY6Kw@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 10 Jan 2022 10:19:01 -0800
-Message-ID: <CAJuCfpFFQx525=d8odiiAyi6w5M6KKx-1726zvuV=eADPB8wKg@mail.gmail.com>
-Subject: Re: psi_trigger_poll() is completely broken
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Eric Biggers <ebiggers@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3997; h=from:subject; bh=lnTSGez6Q9eImCh8FdjJFqJchZTtgEYbqvsPKds/zgY=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBh3HiqiV0DU4uw6pew4XLkDsl6GTheYha3jjbCcxtr FaChu/aJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYdx4qgAKCRCcnaoHP2RA2azqB/ 43htG4GA3mcQSeADLe+MmvELA7tb0mgy6vgcdZB8HdS+/8C7YRackdNf9zP2seujMd8BtYdUBC1Xpf s4bN9duKCihjnNl3eO5ab8lA8TtdLi3Cu7z+vyYpLranaNUkd9CyYtfiiIi1IBvRGj8YJH2xd2qIYH xB3AnlxB8iLywgL7vKixRgEf2zq8dacG7pC+kueGvs3IRofFTryuhpg0+MA7XiQJQ7LRLtMytH4SJM WvUwXeF+25mU0CgLsqIHtRzvgknfC6nxsNZv/snckwovfWnTerpfxLh1oZ3ZzT/mtAQ83/31Sj9Bb3 aLA8sOKi6mMFi5oY1L6hVWGrKMpcyx
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 10, 2022 at 9:42 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, Jan 10, 2022 at 9:25 AM Suren Baghdasaryan <surenb@google.com> wrote:
-> >
-> > About the issue of serializing concurrent writes for
-> > cgroup_pressure_write() similar to how psi_write() does. Doesn't
-> > of->mutex inside kernfs_fop_write_iter() serialize the writes to the
-> > same file?
->
-> Ahh, yes, it looks like that does solve the serialization issue.
-> Sorry, I missed that because I'm not actually all that familiar with
-> the kernfs 'of' code.
->
-> So the only issue is the trigger lifetime one, and if a single trigger
-> is sufficient and returning -EBUSY for trying to replace an existing
-> one is good, then I think that's the proper fix.
->
-> I'm very busy with the merge window (and some upcoming travel and
-> family events), so I'm hoping somebody will write and test such a
-> patch. Please?
+A task can end up indefinitely sleeping in do_select() ->
+poll_schedule_timeout() when the following race happens:
 
-Yes, definitely. I'm on it. Will try posting it later today or
-tomorrow morning if testing reveals something unexpected.
-Thanks!
+TASK1 (thread1)             TASK2                   TASK1 (thread2)
+do_select()
+  setup poll_wqueues table
+  with 'fd'
+                            write data to 'fd'
+                              pollwake()
+                                table->triggered = 1
+                                                    closes 'fd' thread1 is
+                                                      waiting for
+  poll_schedule_timeout()
+    - sees table->triggered
+    table->triggered = 0
+    return -EINTR
+  loop back in do_select() but fdget() in the setup of poll_wqueues
+fails now so we never find 'fd' is ready for reading and sleep in
+poll_schedule_timeout() indefinitely.
 
->
->                    Linus
+Treat fd that got closed as a fd on which some event happened. This
+makes sure cannot block indefinitely in do_select().
+
+Another option would be to return -EBADF in this case but that has a
+potential of subtly breaking applications that excercise this behavior
+and it happens to work for them. So returning fd as active seems like a
+safer choice.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/select.c | 63 ++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 33 insertions(+), 30 deletions(-)
+
+diff --git a/fs/select.c b/fs/select.c
+index 945896d0ac9e..5edffee1162c 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -458,9 +458,11 @@ static int max_select_fd(unsigned long n, fd_set_bits *fds)
+ 	return max;
+ }
+ 
+-#define POLLIN_SET (EPOLLRDNORM | EPOLLRDBAND | EPOLLIN | EPOLLHUP | EPOLLERR)
+-#define POLLOUT_SET (EPOLLWRBAND | EPOLLWRNORM | EPOLLOUT | EPOLLERR)
+-#define POLLEX_SET (EPOLLPRI)
++#define POLLIN_SET (EPOLLRDNORM | EPOLLRDBAND | EPOLLIN | EPOLLHUP | EPOLLERR |\
++			EPOLLNVAL)
++#define POLLOUT_SET (EPOLLWRBAND | EPOLLWRNORM | EPOLLOUT | EPOLLERR |\
++			 EPOLLNVAL)
++#define POLLEX_SET (EPOLLPRI | EPOLLNVAL)
+ 
+ static inline void wait_key_set(poll_table *wait, unsigned long in,
+ 				unsigned long out, unsigned long bit,
+@@ -527,6 +529,7 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
+ 					break;
+ 				if (!(bit & all_bits))
+ 					continue;
++				mask = EPOLLNVAL;
+ 				f = fdget(i);
+ 				if (f.file) {
+ 					wait_key_set(wait, in, out, bit,
+@@ -534,34 +537,34 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
+ 					mask = vfs_poll(f.file, wait);
+ 
+ 					fdput(f);
+-					if ((mask & POLLIN_SET) && (in & bit)) {
+-						res_in |= bit;
+-						retval++;
+-						wait->_qproc = NULL;
+-					}
+-					if ((mask & POLLOUT_SET) && (out & bit)) {
+-						res_out |= bit;
+-						retval++;
+-						wait->_qproc = NULL;
+-					}
+-					if ((mask & POLLEX_SET) && (ex & bit)) {
+-						res_ex |= bit;
+-						retval++;
+-						wait->_qproc = NULL;
+-					}
+-					/* got something, stop busy polling */
+-					if (retval) {
+-						can_busy_loop = false;
+-						busy_flag = 0;
+-
+-					/*
+-					 * only remember a returned
+-					 * POLL_BUSY_LOOP if we asked for it
+-					 */
+-					} else if (busy_flag & mask)
+-						can_busy_loop = true;
+-
+ 				}
++				if ((mask & POLLIN_SET) && (in & bit)) {
++					res_in |= bit;
++					retval++;
++					wait->_qproc = NULL;
++				}
++				if ((mask & POLLOUT_SET) && (out & bit)) {
++					res_out |= bit;
++					retval++;
++					wait->_qproc = NULL;
++				}
++				if ((mask & POLLEX_SET) && (ex & bit)) {
++					res_ex |= bit;
++					retval++;
++					wait->_qproc = NULL;
++				}
++				/* got something, stop busy polling */
++				if (retval) {
++					can_busy_loop = false;
++					busy_flag = 0;
++
++				/*
++				 * only remember a returned
++				 * POLL_BUSY_LOOP if we asked for it
++				 */
++				} else if (busy_flag & mask)
++					can_busy_loop = true;
++
+ 			}
+ 			if (res_in)
+ 				*rinp = res_in;
+-- 
+2.31.1
+
