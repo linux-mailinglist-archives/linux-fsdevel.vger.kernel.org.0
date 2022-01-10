@@ -2,181 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 782F4489F11
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 19:19:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DD2C489F5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 19:40:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239056AbiAJSTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 13:19:32 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:59740 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239002AbiAJSTb (ORCPT
+        id S241481AbiAJSkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 13:40:42 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:47096 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241479AbiAJSkm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 13:19:31 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 8BDD61F380;
-        Mon, 10 Jan 2022 18:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1641838770; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=Tc6uSLPqv62h4JI1ptGbmPdCKWGxhmbcPM9/hq73LKg=;
-        b=WXWn6ovnn62O+AKmwKyp1zCVlOJWK4Qvg4vFVMfhNTvtivwtBVtnojRNVz+oD70RyFkmT0
-        +03Mbimxxd64R8ljcsgArqAEzFziVn1niWTstd124DH0FUcsXuN9q3c6MyL3Zy7BXVqPJB
-        a+0V70kuWiEa84Fqti+7TlYIAU5xNpk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1641838770;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=Tc6uSLPqv62h4JI1ptGbmPdCKWGxhmbcPM9/hq73LKg=;
-        b=4+LwV5fDiwutxbus7lpsrmWy4qKYKzpTsfsHP3FnyKyUIlFQ6GsdQDC4oAmBNIJoQPkvDj
-        mbd61UN7Cnjs+RAg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 7CCC3A3B88;
-        Mon, 10 Jan 2022 18:19:30 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 265BDA05A2; Mon, 10 Jan 2022 19:19:27 +0100 (CET)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, stable@vger.kernel.org
-Subject: [PATCH v2] select: Fix indefinitely sleeping task in poll_schedule_timeout()
-Date:   Mon, 10 Jan 2022 19:19:23 +0100
-Message-Id: <20220110181923.5340-1-jack@suse.cz>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3997; h=from:subject; bh=lnTSGez6Q9eImCh8FdjJFqJchZTtgEYbqvsPKds/zgY=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBh3HiqiV0DU4uw6pew4XLkDsl6GTheYha3jjbCcxtr FaChu/aJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYdx4qgAKCRCcnaoHP2RA2azqB/ 43htG4GA3mcQSeADLe+MmvELA7tb0mgy6vgcdZB8HdS+/8C7YRackdNf9zP2seujMd8BtYdUBC1Xpf s4bN9duKCihjnNl3eO5ab8lA8TtdLi3Cu7z+vyYpLranaNUkd9CyYtfiiIi1IBvRGj8YJH2xd2qIYH xB3AnlxB8iLywgL7vKixRgEf2zq8dacG7pC+kueGvs3IRofFTryuhpg0+MA7XiQJQ7LRLtMytH4SJM WvUwXeF+25mU0CgLsqIHtRzvgknfC6nxsNZv/snckwovfWnTerpfxLh1oZ3ZzT/mtAQ83/31Sj9Bb3 aLA8sOKi6mMFi5oY1L6hVWGrKMpcyx
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
+        Mon, 10 Jan 2022 13:40:42 -0500
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20AI7XDp014709;
+        Mon, 10 Jan 2022 18:40:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2021-07-09;
+ bh=V/2GGaBTZ1c7p3laThIUnq01Gf+Z9U2NvjfsLnj48/g=;
+ b=fHDdovb4czKahReVeHJMZILQZ0WJfqmzqAx+4TNjuOiqZfZtvR25sub1i9wGTgad2WFB
+ q59lek8hUtUlEFYMV9sql3xCWCG+xki5r2oD6wxQDaT58z+5m4PjvVJKnd4i5ATAolXS
+ saSfL1ETlJ3HbVVUwHs1q+/uf8DShfn3PD39oMDYntbwSM4bQuvlcpsopk9y2haL5cF0
+ fauNzbDlfGWMK5vwSyUQoS0kLsmjAL3maRlZQarQtEUJTk07sNPcTm9iuboBzOF8HiYL
+ RB2eX1ZmZpNmw+Z6YU7DoRdLYshK6v8W6UAIcFccATzVZzOdrXB2oONlxz9MaUS+m+YS Hw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3dgmk992c5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Jan 2022 18:40:39 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20AIePVT063590;
+        Mon, 10 Jan 2022 18:40:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 3df0ncxjd9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Jan 2022 18:40:38 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 20AIebwx064436;
+        Mon, 10 Jan 2022 18:40:37 GMT
+Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
+        by aserp3030.oracle.com with ESMTP id 3df0ncxjcd-1;
+        Mon, 10 Jan 2022 18:40:37 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     bfields@fieldses.org, chuck.lever@oracle.com
+Cc:     jlayton@redhat.com, viro@zeniv.linux.org.uk, linux-nfs@vger.kernel,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC v9 0/2] nfsd: Initial implementation of NFSv4 Courteous Server
+Date:   Mon, 10 Jan 2022 10:40:27 -0800
+Message-Id: <1641840029-20972-1-git-send-email-dai.ngo@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-GUID: YTqr7aI8P1MsfOX3mngAaD9xTmaaZjyY
+X-Proofpoint-ORIG-GUID: YTqr7aI8P1MsfOX3mngAaD9xTmaaZjyY
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A task can end up indefinitely sleeping in do_select() ->
-poll_schedule_timeout() when the following race happens:
+Hi Bruce, Chuck
 
-TASK1 (thread1)             TASK2                   TASK1 (thread2)
-do_select()
-  setup poll_wqueues table
-  with 'fd'
-                            write data to 'fd'
-                              pollwake()
-                                table->triggered = 1
-                                                    closes 'fd' thread1 is
-                                                      waiting for
-  poll_schedule_timeout()
-    - sees table->triggered
-    table->triggered = 0
-    return -EINTR
-  loop back in do_select() but fdget() in the setup of poll_wqueues
-fails now so we never find 'fd' is ready for reading and sleep in
-poll_schedule_timeout() indefinitely.
+This series of patches implement the NFSv4 Courteous Server.
 
-Treat fd that got closed as a fd on which some event happened. This
-makes sure cannot block indefinitely in do_select().
+A server which does not immediately expunge the state on lease expiration
+is known as a Courteous Server.  A Courteous Server continues to recognize
+previously generated state tokens as valid until conflict arises between
+the expired state and the requests from another client, or the server
+reboots.
 
-Another option would be to return -EBADF in this case but that has a
-potential of subtly breaking applications that excercise this behavior
-and it happens to work for them. So returning fd as active seems like a
-safer choice.
+The v2 patch includes the following:
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-CC: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/select.c | 63 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 33 insertions(+), 30 deletions(-)
+. add new callback, lm_expire_lock, to lock_manager_operations to
+  allow the lock manager to take appropriate action with conflict lock.
 
-diff --git a/fs/select.c b/fs/select.c
-index 945896d0ac9e..5edffee1162c 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -458,9 +458,11 @@ static int max_select_fd(unsigned long n, fd_set_bits *fds)
- 	return max;
- }
- 
--#define POLLIN_SET (EPOLLRDNORM | EPOLLRDBAND | EPOLLIN | EPOLLHUP | EPOLLERR)
--#define POLLOUT_SET (EPOLLWRBAND | EPOLLWRNORM | EPOLLOUT | EPOLLERR)
--#define POLLEX_SET (EPOLLPRI)
-+#define POLLIN_SET (EPOLLRDNORM | EPOLLRDBAND | EPOLLIN | EPOLLHUP | EPOLLERR |\
-+			EPOLLNVAL)
-+#define POLLOUT_SET (EPOLLWRBAND | EPOLLWRNORM | EPOLLOUT | EPOLLERR |\
-+			 EPOLLNVAL)
-+#define POLLEX_SET (EPOLLPRI | EPOLLNVAL)
- 
- static inline void wait_key_set(poll_table *wait, unsigned long in,
- 				unsigned long out, unsigned long bit,
-@@ -527,6 +529,7 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
- 					break;
- 				if (!(bit & all_bits))
- 					continue;
-+				mask = EPOLLNVAL;
- 				f = fdget(i);
- 				if (f.file) {
- 					wait_key_set(wait, in, out, bit,
-@@ -534,34 +537,34 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
- 					mask = vfs_poll(f.file, wait);
- 
- 					fdput(f);
--					if ((mask & POLLIN_SET) && (in & bit)) {
--						res_in |= bit;
--						retval++;
--						wait->_qproc = NULL;
--					}
--					if ((mask & POLLOUT_SET) && (out & bit)) {
--						res_out |= bit;
--						retval++;
--						wait->_qproc = NULL;
--					}
--					if ((mask & POLLEX_SET) && (ex & bit)) {
--						res_ex |= bit;
--						retval++;
--						wait->_qproc = NULL;
--					}
--					/* got something, stop busy polling */
--					if (retval) {
--						can_busy_loop = false;
--						busy_flag = 0;
--
--					/*
--					 * only remember a returned
--					 * POLL_BUSY_LOOP if we asked for it
--					 */
--					} else if (busy_flag & mask)
--						can_busy_loop = true;
--
- 				}
-+				if ((mask & POLLIN_SET) && (in & bit)) {
-+					res_in |= bit;
-+					retval++;
-+					wait->_qproc = NULL;
-+				}
-+				if ((mask & POLLOUT_SET) && (out & bit)) {
-+					res_out |= bit;
-+					retval++;
-+					wait->_qproc = NULL;
-+				}
-+				if ((mask & POLLEX_SET) && (ex & bit)) {
-+					res_ex |= bit;
-+					retval++;
-+					wait->_qproc = NULL;
-+				}
-+				/* got something, stop busy polling */
-+				if (retval) {
-+					can_busy_loop = false;
-+					busy_flag = 0;
-+
-+				/*
-+				 * only remember a returned
-+				 * POLL_BUSY_LOOP if we asked for it
-+				 */
-+				} else if (busy_flag & mask)
-+					can_busy_loop = true;
-+
- 			}
- 			if (res_in)
- 				*rinp = res_in;
--- 
-2.31.1
+. handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
+
+. expire courtesy client after 24hr if client has not reconnected.
+
+. do not allow expired client to become courtesy client if there are
+  waiters for client's locks.
+
+. modify client_info_show to show courtesy client and seconds from
+  last renew.
+
+. fix a problem with NFSv4.1 server where the it keeps returning
+  SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+  the courtesy client re-connects, causing the client to keep sending
+  BCTS requests to server.
+
+The v3 patch includes the following:
+
+. modified posix_test_lock to check and resolve conflict locks
+  to handle NLM TEST and NFSv4 LOCKT requests.
+
+. separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v4 patch includes:
+
+. rework nfsd_check_courtesy to avoid dead lock of fl_lock and client_lock
+  by asking the laudromat thread to destroy the courtesy client.
+
+. handle NFSv4 share reservation conflicts with courtesy client. This
+  includes conflicts between access mode and deny mode and vice versa.
+
+. drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v5 patch includes:
+
+. fix recursive locking of file_rwsem from posix_lock_file. 
+
+. retest with LOCKDEP enabled.
+
+The v6 patch includes:
+
+. merge witn 5.15-rc7
+
+. fix a bug in nfs4_check_deny_bmap that did not check for matched
+  nfs4_file before checking for access/deny conflict. This bug causes
+  pynfs OPEN18 to fail since the server taking too long to release
+  lots of un-conflict clients' state.
+
+. enhance share reservation conflict handler to handle case where
+  a large number of conflict courtesy clients need to be expired.
+  The 1st 100 clients are expired synchronously and the rest are
+  expired in the background by the laundromat and NFS4ERR_DELAY
+  is returned to the NFS client. This is needed to prevent the
+  NFS client from timing out waiting got the reply.
+
+The v7 patch includes:
+
+. Fix race condition in posix_test_lock and posix_lock_inode after
+  dropping spinlock.
+
+. Enhance nfsd4_fl_expire_lock to work with with new lm_expire_lock
+  callback
+
+. Always resolve share reservation conflicts asynchrously.
+
+. Fix bug in nfs4_laundromat where spinlock is not used when
+  scanning cl_ownerstr_hashtbl.
+
+. Fix bug in nfs4_laundromat where idr_get_next was called
+  with incorrect 'id'. 
+
+. Merge nfs4_destroy_courtesy_client into nfsd4_fl_expire_lock.
+
+The v8 patch includes:
+
+. Fix warning in nfsd4_fl_expire_lock reported by test robot.
+
+The V9 patch include:
+
+. Simplify lm_expire_lock API by (1) remove the 'testonly' flag
+  and (2) specifying return value as true/false to indicate
+  whether conflict was succesfully resolved.
+
+. Rework nfsd4_fl_expire_lock to mark client with
+  NFSD4_DESTROY_COURTESY_CLIENT then tell the laundromat to expire
+  the client in the background.
+
+. Add a spinlock in nfs4_client to synchronize access to the
+  NFSD4_COURTESY_CLIENT and NFSD4_DESTROY_COURTESY_CLIENT flag to
+  handle race conditions when resolving lock and share reservation
+  conflict.
+
+. Courtesy client that was marked as NFSD4_DESTROY_COURTESY_CLIENT
+  are now consisdered 'dead', waiting for the laundromat to expire
+  it. This client is no longer allowed to use its states if it
+  re-connects before the laundromat finishes expiring the client.
+
+  For v4.1 client, the detection is done in the processing of the
+  SEQUENCE op and returns NFS4ERR_BAD_SESSION to force the client
+  to re-establish new clientid and session.
+  For v4.0 client, the detection is done in the processing of the
+  RENEW and state-related ops and return NFS4ERR_EXPIRE to force
+  the client to re-establish new clientid.
+
 
