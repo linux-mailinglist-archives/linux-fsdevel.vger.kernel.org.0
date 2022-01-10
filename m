@@ -2,131 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8453489A6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 14:46:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FE9D489AD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 14:54:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234009AbiAJNqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 08:46:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52316 "EHLO
+        id S233241AbiAJNyW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 08:54:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234710AbiAJNp5 (ORCPT
+        with ESMTP id S229986AbiAJNyU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 08:45:57 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F8EC061751
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 05:45:51 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id u25so53827843edf.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 05:45:51 -0800 (PST)
+        Mon, 10 Jan 2022 08:54:20 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53284C061751
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 05:54:20 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id z22so8798601edd.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 05:54:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=bHeTRojrHT97CzcJwwp8ETZD3FH9KBheVLaCf3e+Bz0=;
-        b=mam0LsLi8LoWTGNIdMOetg75e2XJQGJ0mNUoJa9FG0TO6dRWdqOWRNLdf+K1w2HCvn
-         ekYd1httCsa1T8n7aCJEd2iRaN9JPVswWNi4V4+8QXBahGH9CmKwtF2fOYG5qCCzLeE+
-         MG5PXOzkIGYFwWUVzNWAB2+Dl6nQHonD2kk2/xKDWsDE20PchZ8sFeNsreLfHgz8BtcZ
-         oVS/WCHrk7F2C/U0h5gntBVEI6yQZUI/Uwj0PVyMu/QaOlmYwR1GJZff4he0ywtp6D32
-         cJ1i3G7EOdxnqUy88mBICgzyC4FU6+rmZ1T3ihyWYr0gp2JMb52qWRbKIZujTXgqTuPK
-         +ufA==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=djPW+e1c8spfYeyL5AbJ32h9GSIUYbKoLv2DLHaOq+0=;
+        b=bl9J2QtWDuUmQlp5N7WmOsJhVeMPiTX+NiVRwh9l87FNYClRzAhBufVdMy0MCqtNFV
+         dq4421mAxg0ILI2S2MCCP1ns1H4QhlZT4aWwoBhR0cZUmunXHRx+d+HuOX/d5PKXrzPG
+         TK+4Hu5xgpHlwxKj6pUbOw6pX2/G4EJ8DfXnXNMUesmDYorizgDzkPnVKpRJhctC8sUZ
+         B2ri5NpHRwtPw2fRocdZhxoBuaBCKzAjfaykJZay8LbVDX930o0CDQ/LHWyda4xFV+Hc
+         WugS89G4jBlr4VL2uypPxdIO8AzpqLxqh+es+3YLGWyAingktkoxMNPCyXb/hyfzuCo6
+         mj1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bHeTRojrHT97CzcJwwp8ETZD3FH9KBheVLaCf3e+Bz0=;
-        b=uxpr4qcOjX6I1azjPMvxOi+Z5ex3UpGPL25ggi6txwqvvUC7ZsAFeNK4WJqUkI2wYE
-         Ykt6+Y3ybnhyn2iPQupfLMATkT04HtMz4HNBJvqFzS7x2Jak+YjYR6vBj9qCBUojjb/Z
-         5aRSK/qekqTGAkFh+RI18Y+I9pf7H57vpVwmBfj/4r5SNBH209nBK/irv8mHqfbNOnT9
-         QXblqpCkN+eq55ED1yrZB0EADJIhYktNKck6bO50FHJIJNsriW06L/Q2bUv1f1WWcrBB
-         p4Ok6YzEomE8P0LIOK5a5a2E4CEipMcqXfWF8zUMIXzrf/DsqHXO+z2rPft5BCt1rzWT
-         5z/g==
-X-Gm-Message-State: AOAM530YvDgHVaCg7E+xcTwpP+2sKrE/zSumkZBZFYRUKFCqUhBI6LAn
-        FSF14utfHpR+OmLBJ4YH3BfjYg==
-X-Google-Smtp-Source: ABdhPJxeRE0a4BzWgsaDYzwOeQO6iPCeZjoODWDm48/LJAdqsxT5P++dvckwm+iL3KZk5c4Bb65k1Q==
-X-Received: by 2002:a17:907:960d:: with SMTP id gb13mr3041620ejc.572.1641822350222;
-        Mon, 10 Jan 2022 05:45:50 -0800 (PST)
-Received: from localhost ([57.190.1.3])
-        by smtp.gmail.com with ESMTPSA id l18sm2464463ejf.7.2022.01.10.05.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jan 2022 05:45:49 -0800 (PST)
-Date:   Mon, 10 Jan 2022 14:45:41 +0100
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: psi_trigger_poll() is completely broken
-Message-ID: <Ydw4hWCRjAhGfCAv@cmpxchg.org>
-References: <000000000000e8f8f505d0e479a5@google.com>
- <20211211015620.1793-1-hdanton@sina.com>
- <YbQUSlq76Iv5L4cC@sol.localdomain>
- <YdW3WfHURBXRmn/6@sol.localdomain>
- <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
- <CAHk-=wjddvNbZBuvh9m_2VYFC1W7HvbP33mAzkPGOCHuVi5fJg@mail.gmail.com>
- <CAHk-=wjn5xkLWaF2_4pMVEkZrTA=LiOH=_pQK0g-_BMSE-8Jxg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=djPW+e1c8spfYeyL5AbJ32h9GSIUYbKoLv2DLHaOq+0=;
+        b=XAJBFu2tOxeAej5h9GwOgWse83FCvwi3MjPOX58cm+paFVOTHA15OGfTpsF77XMhc9
+         MWCulNAoqZ0G+bwZn7MfddfydhA4cY7wPJG8UKoqZsHydV0byrn6MjswpYawC+8nIavF
+         iikcFODn/0klt0mJMn9dy+1RFfPyUp14ykhb4D1FrNFExedZuxI8007uH4YlppS+q2yx
+         t/mwQrLK152BKnB1MwfbXMxIs1Bh6Bj3PrX2WfgyBztjVgYy4x1xMKmYd9KV8UI3DTZC
+         OPhr2SMXYXMaOWUfIDjg6CEnMLcJyLVzWdwn8zEbHG0lEOnTZ+JgJ2Miwtw3RQkgIkdX
+         H6Sw==
+X-Gm-Message-State: AOAM533iVH5te7acDcDTH3WL9or5uOPxEfkVdDYpO7AF0ggHBDuvp+c5
+        /cXz+6guBLkiAlJhHP8EwO3p1iKI2v36QBx7fqQq
+X-Google-Smtp-Source: ABdhPJyFGnfUMGEnoNxRXvUJpCvABNYtlKdS/8DhFo1CC6qDSFOT+cL5Hg32zlVk43P8LVymiEdjB1533Wdjtj+EyFw=
+X-Received: by 2002:a05:6402:cbb:: with SMTP id cn27mr5089054edb.246.1641822858820;
+ Mon, 10 Jan 2022 05:54:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjn5xkLWaF2_4pMVEkZrTA=LiOH=_pQK0g-_BMSE-8Jxg@mail.gmail.com>
+References: <20210830141737.181-1-xieyongji@bytedance.com> <20220110075546-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20220110075546-mutt-send-email-mst@kernel.org>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Mon, 10 Jan 2022 21:54:08 +0800
+Message-ID: <CACycT3v1aEViw7vV4x5qeGVPrSrO-BTDvQshEX35rx_X0Au2vw@mail.gmail.com>
+Subject: Re: [PATCH v12 00/13] Introduce VDUSE - vDPA Device in Userspace
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Liu Xiaodong <xiaodong.liu@intel.com>,
+        Joe Perches <joe@perches.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>,
+        John Garry <john.garry@huawei.com>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Netdev <netdev@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 05, 2022 at 11:13:30AM -0800, Linus Torvalds wrote:
-> On Wed, Jan 5, 2022 at 11:07 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+On Mon, Jan 10, 2022 at 8:57 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Mon, Aug 30, 2021 at 10:17:24PM +0800, Xie Yongji wrote:
+> > This series introduces a framework that makes it possible to implement
+> > software-emulated vDPA devices in userspace. And to make the device
+> > emulation more secure, the emulated vDPA device's control path is handled
+> > in the kernel and only the data path is implemented in the userspace.
 > >
-> > Whoever came up with that stupid "replace existing trigger with a
-> > write()" model should feel bad. It's garbage, and it's actively buggy
-> > in multiple ways.
-> 
-> What are the users? Can we make the rule for -EBUSY simply be that you
-> can _install_ a trigger, but you can't replace an existing one (except
-> with NULL, when you close it).
+> > Since the emuldated vDPA device's control path is handled in the kernel,
+> > a message mechnism is introduced to make userspace be aware of the data
+> > path related changes. Userspace can use read()/write() to receive/reply
+> > the control messages.
+> >
+> > In the data path, the core is mapping dma buffer into VDUSE daemon's
+> > address space, which can be implemented in different ways depending on
+> > the vdpa bus to which the vDPA device is attached.
+> >
+> > In virtio-vdpa case, we implements a MMU-based software IOTLB with
+> > bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+> > buffer is reside in a userspace memory region which can be shared to the
+> > VDUSE userspace processs via transferring the shmfd.
+> >
+> > The details and our user case is shown below:
+> >
+> > ------------------------    -------------------------   ----------------------------------------------
+> > |            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+> > |       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+> > |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+> > ------------+-----------     -----------+------------   -------------+----------------------+---------
+> >             |                           |                            |                      |
+> >             |                           |                            |                      |
+> > ------------+---------------------------+----------------------------+----------------------+---------
+> > |    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+> > |    -------+--------           --------+--------            -------+--------          -----+----    |
+> > |           |                           |                           |                       |        |
+> > | ----------+----------       ----------+-----------         -------+-------                |        |
+> > | | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+> > | ----------+----------       ----------+-----------         -------+-------                |        |
+> > |           |      virtio bus           |                           |                       |        |
+> > |   --------+----+-----------           |                           |                       |        |
+> > |                |                      |                           |                       |        |
+> > |      ----------+----------            |                           |                       |        |
+> > |      | virtio-blk device |            |                           |                       |        |
+> > |      ----------+----------            |                           |                       |        |
+> > |                |                      |                           |                       |        |
+> > |     -----------+-----------           |                           |                       |        |
+> > |     |  virtio-vdpa driver |           |                           |                       |        |
+> > |     -----------+-----------           |                           |                       |        |
+> > |                |                      |                           |    vdpa bus           |        |
+> > |     -----------+----------------------+---------------------------+------------           |        |
+> > |                                                                                        ---+---     |
+> > -----------------------------------------------------------------------------------------| NIC |------
+> >                                                                                          ---+---
+> >                                                                                             |
+> >                                                                                    ---------+---------
+> >                                                                                    | Remote Storages |
+> >                                                                                    -------------------
+> >
+> > We make use of it to implement a block device connecting to
+> > our distributed storage, which can be used both in containers and
+> > VMs. Thus, we can have an unified technology stack in this two cases.
+> >
+> > To test it with null-blk:
+> >
+> >   $ qemu-storage-daemon \
+> >       --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+> >       --monitor chardev=charmonitor \
+> >       --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+> >       --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
+> >
+> > The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
+>
+> It's been half a year - any plans to upstream this?
 
-Apologies for the delay, I'm traveling right now.
+Yeah, this is on my to-do list this month.
 
-The primary user of the poll interface is still Android userspace OOM
-killing. I'm CCing Suren who is the most familiar with this usecase.
+Sorry for taking so long... I've been working on another project
+enabling userspace RDMA with VDUSE for the past few months. So I
+didn't have much time for this. Anyway, I will submit the first
+version as soon as possible.
 
-Suren, the way the refcounting is written right now assumes that
-poll_wait() is the actual blocking wait. That's not true, it just
-queues the waiter and saves &t->event_wait, and the *caller* of
-psi_trigger_poll() continues to interact with it afterwards.
-
-If at all possible, I would also prefer the simplicity of one trigger
-setup per fd; if you need a new trigger, close the fd and open again.
-
-Can you please take a look if that is workable from the Android side?
-
-(I'm going to follow up on the static branch issue Linus pointed out,
-later this week when I'm back home. I also think we should add Suren
-as additional psi maintainer since the polling code is a good chunk of
-the codebase and he shouldn't miss threads like these.)
-
-> That would fix the poll() lifetime issue, and would make the
-> psi_trigger_replace() races fairly easy to fix - just use
-> 
->         if (cmpxchg(trigger_ptr, NULL, new) != NULL) {
->                 ... free 'new', return -EBUSY ..
-> 
-> to install the new one, instead of
-> 
->         rcu_assign_pointer(*trigger_ptr, new);
-> 
-> or something like that. No locking necessary.
-> 
-> But I assume people actually end up re-writing triggers, because
-> people are perverse and have taken advantage of this completely broken
-> API.
-> 
->                Linus
+Thanks,
+Yongji
