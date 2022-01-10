@@ -2,40 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B8948A20E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 22:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9309D48A26C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 23:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244488AbiAJVmU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 16:42:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244460AbiAJVmU (ORCPT
+        id S241441AbiAJWGT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 17:06:19 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:50110 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240960AbiAJWGS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 16:42:20 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED1C6C06173F;
-        Mon, 10 Jan 2022 13:42:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=D2CDLhpjsz7o31CCd9ppZAmOhMYse76ti3BtARyxTwo=; b=ZfvzTlxBNw+cAPkCZ0pN//I3lE
-        Ly13DkZ5GGFAXytOrGG4ZQHuoea73RT84n84CykknGVi3kw8wtzO7ogUIdy2nTJ5sY527HD/drciM
-        h12QJU2pyqle6PZSlBPc50236N3dblSHNZWg08pZqM2ne5TXmmAD9pGnWizd/SMp6O8X823S2leJ7
-        v5MQJPFXvgUQFmH62wketZe/oM3UXFGFoRwkk3EYw8AVdHaU1WvQEXcxl3Fo6ZbPOwSkyzIti/FXZ
-        tw4dHHiCoanes2d1H5hOTAI7fs7kWw62R/zPFjP+n1ll8kPAkYMy4eY2Y4Pwn6NEe6tDN//it/L2c
-        Sdrw6p3Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n72Qh-002k3m-Hr; Mon, 10 Jan 2022 21:42:15 +0000
-Date:   Mon, 10 Jan 2022 21:42:15 +0000
-From:   Matthew Wilcox <willy@infradead.org>
+        Mon, 10 Jan 2022 17:06:18 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6E442B8180C;
+        Mon, 10 Jan 2022 22:06:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ED69C36AE9;
+        Mon, 10 Jan 2022 22:06:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641852376;
+        bh=0EknUIecnauWxeDKBTherSAPBBzXTdCu/8DysfmHeQc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DsqDjduXjGcJL/m+4zf3/kFjC3DcMLMLNwFj0dWWsqNPDTYM7drDmVjN4x+gT+moN
+         OxaJCCJzAoWiIqK+n6olTqp5lbbyMliNYd4IO4FtiQIdVRCygo0t46BNRfZ1tib7jM
+         IZeqEamENLNSwPuO2GFN4odNOPoG9mct8MMdXQdpWil3qkQ5vpsHEeKaSvLqTjnSEu
+         XU2E3JtJEvsaHf+nVtDvxMN7CF1PZq9mP+8yg52hU5rSfnU/p78QFGPDErH4mfIKw7
+         55COssmfGNU3MHMtGo9BeZrbWmsGbIJn7xjooG7FL/mTNzj1mYpS351Cnw3HW48sTA
+         4s6hP982+u5+w==
+Date:   Mon, 10 Jan 2022 14:06:15 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        nvdimm@lists.linux.dev, Dan Williams <dan.j.williams@intel.com>
-Subject: [GIT PULL] iomap for 5.17
-Message-ID: <YdyoN7RU/JMOk/lW@casper.infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] xfs: new code for 5.17
+Message-ID: <20220110220615.GA656707@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -43,19 +44,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I know these requests usually come from Darrick, and we had intended
-that they would come that route.  Between the holidays and various
-things which Darrick needed to work on, he asked if I could send the
-pull request directly.  There weren't any other iomap patches pending
-for this release, which probably also played a role.
+Hi Linus,
 
-There is a conflict between this tree and the nvdimm tree.  We've done
-our best to make the resolution easy for you with the last patch in this
-series ("Inline __iomap_zero_iter into its caller").  If you'd rather just
-resolve the entire conflict yourself, feel free to drop that last patch.
+Please pull this new code for Linux 5.17.  The big new feature here is
+that the mount code now only bothers to try to free stale COW staging
+extents if the fs unmounted uncleanly.  This should reduce mount times,
+particularly on filesystems supporting reflink and containing a large
+number of allocation groups.
 
-The resolution Stephen has been carrying is here:
-https://lore.kernel.org/all/20211224172421.3f009baa@canb.auug.org.au/
+Everything else this cycle are bugfixes, as the iomap folios conversion
+should be plenty enough excitement for anyone.  That and I ran out of
+brain bandwidth after Thanksgiving last year.
+
+The branch merges cleanly against upstream as of a few minutes ago.
+Please let me know if anything else strange happens during the merge
+process.  There will definitely be a second pull request coming with
+at least one more bug fix and most probably a full withdrawal of the
+recently troublesome ALLOCSP ioctl family.
+
+--D
 
 The following changes since commit 2585cf9dfaaddf00b069673f27bb3f8530e2039c:
 
@@ -63,57 +70,77 @@ The following changes since commit 2585cf9dfaaddf00b069673f27bb3f8530e2039c:
 
 are available in the Git repository at:
 
-  git://git.infradead.org/users/willy/linux.git tags/iomap-5.17
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-2
 
-for you to fetch changes up to 4d7bd0eb72e5831ddb1288786a96448b48440825:
+for you to fetch changes up to 7e937bb3cbe1f6b9840a43f879aa6e3f1a5e6537:
 
-  iomap: Inline __iomap_zero_iter into its caller (2021-12-21 13:51:08 -0500)
-
-----------------------------------------------------------------
-Convert xfs/iomap to use folios
-
-This should be all that is needed for XFS to use large folios.
-There is no code in this pull request to create large folios, but
-no additional changes should be needed to XFS or iomap once they
-are created.
+  xfs: warn about inodes with project id of -1 (2022-01-06 10:43:30 -0800)
 
 ----------------------------------------------------------------
-Matthew Wilcox (Oracle) (26):
-      block: Add bio_add_folio()
-      block: Add bio_for_each_folio_all()
-      fs/buffer: Convert __block_write_begin_int() to take a folio
-      iomap: Convert to_iomap_page to take a folio
-      iomap: Convert iomap_page_create to take a folio
-      iomap: Convert iomap_page_release to take a folio
-      iomap: Convert iomap_releasepage to use a folio
-      iomap: Add iomap_invalidate_folio
-      iomap: Pass the iomap_page into iomap_set_range_uptodate
-      iomap: Convert bio completions to use folios
-      iomap: Use folio offsets instead of page offsets
-      iomap: Convert iomap_read_inline_data to take a folio
-      iomap: Convert readahead and readpage to use a folio
-      iomap: Convert iomap_page_mkwrite to use a folio
-      iomap: Allow iomap_write_begin() to be called with the full length
-      iomap: Convert __iomap_zero_iter to use a folio
-      iomap: Convert iomap_write_begin() and iomap_write_end() to folios
-      iomap: Convert iomap_write_end_inline to take a folio
-      iomap,xfs: Convert ->discard_page to ->discard_folio
-      iomap: Simplify iomap_writepage_map()
-      iomap: Simplify iomap_do_writepage()
-      iomap: Convert iomap_add_to_ioend() to take a folio
-      iomap: Convert iomap_migrate_page() to use folios
-      iomap: Support large folios in invalidatepage
-      xfs: Support large folios
-      iomap: Inline __iomap_zero_iter into its caller
+New code for 5.17:
+ - Fix log recovery with da btree buffers when metauuid is in use.
+ - Fix type coercion problems in xattr buffer size validation.
+ - Fix a bug in online scrub dir leaf bestcount checking.
+ - Only run COW recovery when recovering the log.
+ - Fix symlink target buffer UAF problems and symlink locking problems
+   by not exposing xfs innards to the VFS.
+ - Fix incorrect quotaoff lock usage.
+ - Don't let transactions cancel cleanly if they have deferred work
+   items attached.
+ - Fix a UAF when we're deciding if we need to relog an intent item.
+ - Reduce kvmalloc overhead for log shadow buffers.
+ - Clean up sysfs attr group usage.
+ - Fix a bug where scrub's bmap/rmap checking could race with a quota
+   file block allocation due to insufficient locking.
+ - Teach scrub to complain about invalid project ids.
 
- Documentation/core-api/kernel-api.rst |   1 +
- block/bio.c                           |  22 ++
- fs/buffer.c                           |  23 +-
- fs/internal.h                         |   2 +-
- fs/iomap/buffered-io.c                | 551 +++++++++++++++++-----------------
- fs/xfs/xfs_aops.c                     |  24 +-
- fs/xfs/xfs_icache.c                   |   2 +
- include/linux/bio.h                   |  56 +++-
- include/linux/iomap.h                 |   3 +-
- 9 files changed, 389 insertions(+), 295 deletions(-)
+----------------------------------------------------------------
+Dan Carpenter (1):
+      xfs: prevent a WARN_ONCE() in xfs_ioc_attr_list()
 
+Darrick J. Wong (8):
+      xfs: shut down filesystem if we xfs_trans_cancel with deferred work items
+      xfs: fix quotaoff mutex usage now that we don't support disabling it
+      xfs: don't expose internal symlink metadata buffers to the vfs
+      xfs: only run COW extent recovery when there are no live extents
+      xfs: fix a bug in the online fsck directory leaf1 bestcount check
+      xfs: prevent UAF in xfs_log_item_in_current_chkpt
+      xfs: hold quota inode ILOCK_EXCL until the end of dqalloc
+      xfs: warn about inodes with project id of -1
+
+Dave Chinner (2):
+      xfs: check sb_meta_uuid for dabuf buffer recovery
+      xfs: reduce kvmalloc overhead for CIL shadow buffers
+
+Greg Kroah-Hartman (1):
+      xfs: sysfs: use default_groups in kobj_type
+
+Jiapeng Chong (1):
+      xfs: Remove redundant assignment of mp
+
+Yang Xu (1):
+      xfs: Fix comments mentioning xfs_ialloc
+
+ fs/xfs/scrub/dir.c            | 15 +++++---
+ fs/xfs/scrub/inode.c          | 14 ++++++++
+ fs/xfs/scrub/quota.c          |  4 +--
+ fs/xfs/scrub/repair.c         |  3 ++
+ fs/xfs/scrub/scrub.c          |  4 ---
+ fs/xfs/scrub/scrub.h          |  1 -
+ fs/xfs/xfs_buf_item_recover.c |  2 +-
+ fs/xfs/xfs_dquot.c            | 79 +++++++++++++++----------------------------
+ fs/xfs/xfs_error.c            |  3 +-
+ fs/xfs/xfs_icache.c           |  3 +-
+ fs/xfs/xfs_ioctl.c            |  2 +-
+ fs/xfs/xfs_ioctl.h            |  5 +--
+ fs/xfs/xfs_iops.c             | 40 +++-------------------
+ fs/xfs/xfs_log_cil.c          | 52 ++++++++++++++++++++--------
+ fs/xfs/xfs_log_recover.c      | 26 ++++++++++++--
+ fs/xfs/xfs_mount.c            | 10 ------
+ fs/xfs/xfs_qm_syscalls.c      | 11 +-----
+ fs/xfs/xfs_reflink.c          |  5 ++-
+ fs/xfs/xfs_super.c            |  9 -----
+ fs/xfs/xfs_symlink.c          | 27 ++++++++++-----
+ fs/xfs/xfs_sysfs.c            | 16 +++++----
+ fs/xfs/xfs_trans.c            | 11 +++++-
+ 22 files changed, 175 insertions(+), 167 deletions(-)
