@@ -2,234 +2,314 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 075734898F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 13:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CF94898F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 13:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233552AbiAJM60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 07:58:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236030AbiAJM4X (ORCPT
+        id S231163AbiAJM6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 07:58:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27973 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231523AbiAJM5A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 07:56:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F202BC06173F;
-        Mon, 10 Jan 2022 04:56:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9140560E75;
-        Mon, 10 Jan 2022 12:56:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F23A7C36AE5;
-        Mon, 10 Jan 2022 12:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641819382;
-        bh=AX1VuxxrVVqHBENLERvgpzoDnpMpY/BCtLx68yD5Ue8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MikKJ/f0ib+YfyBEBP61X19zAi3ugsjBvgNNYcdYjNmBpBdwGFENQrkFqKSmVwGxM
-         Km0SWXdZzT2lpfb6w658pIYsQHXAbypbKc8rcx45Lxp242vVgXZ97p6+oMkYppGvk2
-         mHWQtQSU1ZUZDmCZOo/jGGI2aU5KFpo/GJctwu9sXqnkTMawqlfA6KKUxDcGT/HVh6
-         h0Mn6g0BVEJ1gTWlLv0NAPm+oPPEHuJt0OZUYyc9FNyzTJE4h+F4DiAix/JXu0jmPE
-         kHob0z0kUVc5y1YPOnkKKNVL+kSpkeLJkdErYIVn9BYBmfTsX+rLStO3HzWBKLncSZ
-         65XWlvKz+j0yQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] fs idmapping updates
-Date:   Mon, 10 Jan 2022 13:56:00 +0100
-Message-Id: <20220110125600.440171-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.32.0
+        Mon, 10 Jan 2022 07:57:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1641819418;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AVvp/Hc7qPRUEz7YJl4ozj14nYLlyYVQtjr0ms9L8NQ=;
+        b=GoMtm1QG1S+jJ9oFHDvnKJAq2fFQyfWRt8qn1vcRIBrHgitYR+6uihJ2Igvzf/hYVAe6zd
+        8o6o2DtUQYPur+D9zg2VH6Bbmbf5A5C8Wyc+3gW26v4zQe5WD9mSxhVlb4exp9XV/5qUfI
+        9yVJkqcIAWwBnyhT7ar8LaG0jdy7RGU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-400-lmPoVzcTPY2qH3I7DI5vmA-1; Mon, 10 Jan 2022 07:56:57 -0500
+X-MC-Unique: lmPoVzcTPY2qH3I7DI5vmA-1
+Received: by mail-wm1-f69.google.com with SMTP id i81-20020a1c3b54000000b003467c58cbddso8489832wma.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 04:56:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=AVvp/Hc7qPRUEz7YJl4ozj14nYLlyYVQtjr0ms9L8NQ=;
+        b=fZXPU4wdFVpAK5WOAnrsE4kVW+4woMcav3VLnj2fGiWA/6vI3uxJqiFidcsHlyfwqq
+         B+TY4u//RhiGL6dzUJUiGIz+SPy4UIPAtTKLkomUXwLJlnCzSoUe/uyznmSQXrEQzN0/
+         fWCsOl1NsSt/7ZiA0uAsGzl2b5SGpUh6RXIlvjdNA3FEmptlZwaMH8s86NQd4kb5Wx7X
+         fGKw1GlluSUPgEbLLFj87EZoVfKQtNpYYtU/CRlZZBa9jAyn+2GCQiMGvfHDnETl1XR+
+         zJcuwUVpRjdw83DmFlAS0IB1MYtp9kdq4ZRrae+fdHe8PaRrYyIge9l9jiHuZ+d3S475
+         1xWQ==
+X-Gm-Message-State: AOAM533bzDWpDarkW8glvf44Ge1jy9Jny+5QgWiLu0Ybp95N4cj8/UEe
+        VrP9iaawEjAB7PIh2g+SZXpcE5vO7Ktgc84xMW7TFcU6Wuc9lDnFKAK83+m0QaEarY9XsFGo2af
+        9bLkaU/vjGDwFEsAinTysLqrXkA==
+X-Received: by 2002:a5d:6811:: with SMTP id w17mr1492939wru.443.1641819415868;
+        Mon, 10 Jan 2022 04:56:55 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwdbhYXvkJBaz3bkMPO/rSfqHXfqP57/N68w5WuSlZAf8/gWErxx+H35vqh9TdefF+KiFBoKA==
+X-Received: by 2002:a5d:6811:: with SMTP id w17mr1492925wru.443.1641819415636;
+        Mon, 10 Jan 2022 04:56:55 -0800 (PST)
+Received: from redhat.com ([2.55.13.160])
+        by smtp.gmail.com with ESMTPSA id g6sm6862655wri.67.2022.01.10.04.56.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jan 2022 04:56:55 -0800 (PST)
+Date:   Mon, 10 Jan 2022 07:56:49 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
+        parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com,
+        will@kernel.org, john.garry@huawei.com, songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 00/13] Introduce VDUSE - vDPA Device in Userspace
+Message-ID: <20220110075546-mutt-send-email-mst@kernel.org>
+References: <20210830141737.181-1-xieyongji@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210830141737.181-1-xieyongji@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Mon, Aug 30, 2021 at 10:17:24PM +0800, Xie Yongji wrote:
+> This series introduces a framework that makes it possible to implement
+> software-emulated vDPA devices in userspace. And to make the device
+> emulation more secure, the emulated vDPA device's control path is handled
+> in the kernel and only the data path is implemented in the userspace.
+> 
+> Since the emuldated vDPA device's control path is handled in the kernel,
+> a message mechnism is introduced to make userspace be aware of the data
+> path related changes. Userspace can use read()/write() to receive/reply
+> the control messages.
+> 
+> In the data path, the core is mapping dma buffer into VDUSE daemon's
+> address space, which can be implemented in different ways depending on
+> the vdpa bus to which the vDPA device is attached.
+> 
+> In virtio-vdpa case, we implements a MMU-based software IOTLB with
+> bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+> buffer is reside in a userspace memory region which can be shared to the
+> VDUSE userspace processs via transferring the shmfd.
+> 
+> The details and our user case is shown below:
+> 
+> ------------------------    -------------------------   ----------------------------------------------
+> |            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+> |       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+> |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+> ------------+-----------     -----------+------------   -------------+----------------------+---------
+>             |                           |                            |                      |
+>             |                           |                            |                      |
+> ------------+---------------------------+----------------------------+----------------------+---------
+> |    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+> |    -------+--------           --------+--------            -------+--------          -----+----    |
+> |           |                           |                           |                       |        |
+> | ----------+----------       ----------+-----------         -------+-------                |        |
+> | | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+> | ----------+----------       ----------+-----------         -------+-------                |        |
+> |           |      virtio bus           |                           |                       |        |
+> |   --------+----+-----------           |                           |                       |        |
+> |                |                      |                           |                       |        |
+> |      ----------+----------            |                           |                       |        |
+> |      | virtio-blk device |            |                           |                       |        |
+> |      ----------+----------            |                           |                       |        |
+> |                |                      |                           |                       |        |
+> |     -----------+-----------           |                           |                       |        |
+> |     |  virtio-vdpa driver |           |                           |                       |        |
+> |     -----------+-----------           |                           |                       |        |
+> |                |                      |                           |    vdpa bus           |        |
+> |     -----------+----------------------+---------------------------+------------           |        |
+> |                                                                                        ---+---     |
+> -----------------------------------------------------------------------------------------| NIC |------
+>                                                                                          ---+---
+>                                                                                             |
+>                                                                                    ---------+---------
+>                                                                                    | Remote Storages |
+>                                                                                    -------------------
+> 
+> We make use of it to implement a block device connecting to
+> our distributed storage, which can be used both in containers and
+> VMs. Thus, we can have an unified technology stack in this two cases.
+> 
+> To test it with null-blk:
+> 
+>   $ qemu-storage-daemon \
+>       --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+>       --monitor chardev=charmonitor \
+>       --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+>       --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
+> 
+> The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
 
-/* Summary */
-This contains the work to enable the idmapping infrastructure to support
-idmapped mounts of filesystems mounted with an idmapping. In addition this
-contains various cleanups that avoid repeated open-coding of the same
-functionality and simplify the code in quite a few places. We also finish
-the renaming of the mapping helpers we started a few kernel releases back
-and move them to a dedicated header to not continue polluting the fs
-header needlessly with low-level idmapping helpers. With this series the fs
-header only contains idmapping helpers that interact with fs objects.
+It's been half a year - any plans to upstream this?
+I'm beginning to worry I made a mistake merging this
+with the module being unused by major userspace ...
 
-Currently we only support idmapped mounts for filesystems mounted without
-an idmapping themselves. This was a conscious decision mentioned in
-multiple places (cf. [1]).
+> To make the userspace VDUSE processes such as qemu-storage-daemon able
+> to be run by an unprivileged user. We limit the supported device type
+> to virtio block device currently. The support for other device types
+> can be added after the security issue of corresponding device driver
+> is clarified or fixed in the future.
+> 
+> Future work:
+>   - Improve performance
+>   - Userspace library (find a way to reuse device emulation code in qemu/rust-vmm)
+>   - Support more device types
+> 
+> V11 to V12:
+> - Rebased to vhost.git
+> - Add reset support for all vdpa drivers
+> - Remove the dependency on other patches
+> - Export eventfd_wake_count
+> - Use workqueue for virtqueue kicking in some cases
+> 
+> V10 to V11:
+> - Rebased to newest kernel tree
+> - Add a device attribute for message timeout
+> - Add check for the reserved field of some structures
+> - Add a reset callback in vdpa_config_ops and handle it in VDUSE case
+> - Remove the patches that handle virtio-vdpa reset failure
+> - Document the structures in include/uapi/linux/vduse.h using kernel doc
+> - Add the reserved field for struct vduse_vq_config
+> 
+> V9 to V10:
+> - Forbid some userspace operations after a timeout
+> - Rename VDUSE_DEV_INJECT_IRQ to VDUSE_DEV_INJECT_CONFIG_IRQ
+> - Use fixed bounce buffer size
+> - Fix more code indentation issues in include/linux/vdpa.h
+> - Remove the section describing bounce-buffer mechanism in documentation
+> - Fix some commit logs and documentation
+> 
+> V8 to V9:
+> - Add VDUSE_SET_STATUS message to replace VDUSE_START/STOP_DATAPLANE messages
+> - Support packed virtqueue state
+> - Handle the reset failure in both virtio-vdpa and vhost-vdpa cases
+> - Add more details in documentation
+> - Remove VDUSE_REQ_FLAGS_NO_REPLY flag
+> - Add VDUSE_VQ_SETUP ioctl to support per-vq configuration
+> - Separate config interrupt injecting out of config update
+> - Flush kworker for interrupt inject during resetting
+> - Validate the config_size in .get_config()
+> 
+> V7 to V8:
+> - Rebased to newest kernel tree
+> - Rework VDUSE driver to handle the device's control path in kernel
+> - Limit the supported device type to virtio block device
+> - Export free_iova_fast()
+> - Remove the virtio-blk and virtio-scsi patches (will send them alone)
+> - Remove all module parameters
+> - Use the same MAJOR for both control device and VDUSE devices
+> - Avoid eventfd cleanup in vduse_dev_release()
+> 
+> V6 to V7:
+> - Export alloc_iova_fast()
+> - Add get_config_size() callback
+> - Add some patches to avoid trusting virtio devices
+> - Add limited device emulation
+> - Add some documents
+> - Use workqueue to inject config irq
+> - Add parameter on vq irq injecting
+> - Rename vduse_domain_get_mapping_page() to vduse_domain_get_coherent_page()
+> - Add WARN_ON() to catch message failure
+> - Add some padding/reserved fields to uAPI structure
+> - Fix some bugs
+> - Rebase to vhost.git
+> 
+> V5 to V6:
+> - Export receive_fd() instead of __receive_fd()
+> - Factor out the unmapping logic of pa and va separatedly
+> - Remove the logic of bounce page allocation in page fault handler
+> - Use PAGE_SIZE as IOVA allocation granule
+> - Add EPOLLOUT support
+> - Enable setting API version in userspace
+> - Fix some bugs
+> 
+> V4 to V5:
+> - Remove the patch for irq binding
+> - Use a single IOTLB for all types of mapping
+> - Factor out vhost_vdpa_pa_map()
+> - Add some sample codes in document
+> - Use receice_fd_user() to pass file descriptor
+> - Fix some bugs
+> 
+> V3 to V4:
+> - Rebase to vhost.git
+> - Split some patches
+> - Add some documents
+> - Use ioctl to inject interrupt rather than eventfd
+> - Enable config interrupt support
+> - Support binding irq to the specified cpu
+> - Add two module parameter to limit bounce/iova size
+> - Create char device rather than anon inode per vduse
+> - Reuse vhost IOTLB for iova domain
+> - Rework the message mechnism in control path
+> 
+> V2 to V3:
+> - Rework the MMU-based IOMMU driver
+> - Use the iova domain as iova allocator instead of genpool
+> - Support transferring vma->vm_file in vhost-vdpa
+> - Add SVA support in vhost-vdpa
+> - Remove the patches on bounce pages reclaim
+> 
+> V1 to V2:
+> - Add vhost-vdpa support
+> - Add some documents
+> - Based on the vdpa management tool
+> - Introduce a workqueue for irq injection
+> - Replace interval tree with array map to store the iova_map
+> 
+> Xie Yongji (13):
+>   iova: Export alloc_iova_fast() and free_iova_fast()
+>   eventfd: Export eventfd_wake_count to modules
+>   file: Export receive_fd() to modules
+>   vdpa: Fix some coding style issues
+>   vdpa: Add reset callback in vdpa_config_ops
+>   vhost-vdpa: Handle the failure of vdpa_reset()
+>   vhost-iotlb: Add an opaque pointer for vhost IOTLB
+>   vdpa: Add an opaque pointer for vdpa_config_ops.dma_map()
+>   vdpa: factor out vhost_vdpa_pa_map() and vhost_vdpa_pa_unmap()
+>   vdpa: Support transferring virtual addressing during DMA mapping
+>   vduse: Implement an MMU-based software IOTLB
+>   vduse: Introduce VDUSE - vDPA Device in Userspace
+>   Documentation: Add documentation for VDUSE
+> 
+>  Documentation/userspace-api/index.rst              |    1 +
+>  Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+>  Documentation/userspace-api/vduse.rst              |  233 +++
+>  drivers/iommu/iova.c                               |    2 +
+>  drivers/vdpa/Kconfig                               |   10 +
+>  drivers/vdpa/Makefile                              |    1 +
+>  drivers/vdpa/ifcvf/ifcvf_main.c                    |   37 +-
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c                  |   42 +-
+>  drivers/vdpa/vdpa.c                                |    9 +-
+>  drivers/vdpa/vdpa_sim/vdpa_sim.c                   |   26 +-
+>  drivers/vdpa/vdpa_user/Makefile                    |    5 +
+>  drivers/vdpa/vdpa_user/iova_domain.c               |  545 +++++++
+>  drivers/vdpa/vdpa_user/iova_domain.h               |   73 +
+>  drivers/vdpa/vdpa_user/vduse_dev.c                 | 1641 ++++++++++++++++++++
+>  drivers/vdpa/virtio_pci/vp_vdpa.c                  |   17 +-
+>  drivers/vhost/iotlb.c                              |   20 +-
+>  drivers/vhost/vdpa.c                               |  168 +-
+>  fs/eventfd.c                                       |    1 +
+>  fs/file.c                                          |    6 +
+>  include/linux/file.h                               |    7 +-
+>  include/linux/vdpa.h                               |   62 +-
+>  include/linux/vhost_iotlb.h                        |    3 +
+>  include/uapi/linux/vduse.h                         |  306 ++++
+>  23 files changed, 3112 insertions(+), 104 deletions(-)
+>  create mode 100644 Documentation/userspace-api/vduse.rst
+>  create mode 100644 drivers/vdpa/vdpa_user/Makefile
+>  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+>  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+>  create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+>  create mode 100644 include/uapi/linux/vduse.h
+> 
+> -- 
+> 2.11.0
 
-As explained at length in [3] it is perfectly fine to extend support for
-idmapped mounts to filesystem's mounted with an idmapping should the need
-arise. The need has been there for some time now (cf. [2]).
-
-Before we can port any filesystem that is mountable with an idmapping to
-support idmapped mounts in the coming cycles, we need to first extend the
-mapping helpers to account for the filesystem's idmapping. This again, is
-explained at length in our documentation at [3] and also in the individual
-commit messages so here's an overview.
-
-Currently, the low-level mapping helpers implement the remapping algorithms
-described in [3] in a simplified manner as we could rely on the fact
-that all filesystems supporting idmapped mounts are mounted without an
-idmapping.
-
-In contrast, filesystems mounted with an idmapping are very likely to not
-use an identity mapping and will instead use a non-identity mapping. So the
-translation step from or into the filesystem's idmapping in the remapping
-algorithm cannot be skipped for such filesystems.
-
-Non-idmapped filesystems and filesystems not supporting idmapped mounts are
-unaffected by this change as the remapping algorithms can take the same
-shortcut as before. If the low-level helpers detect that they are dealing
-with an idmapped mount but the underlying filesystem is mounted without an
-idmapping we can rely on the previous shortcut and can continue to skip the
-translation step from or into the filesystem's idmapping. And of course, if
-the low-level helpers detect that they are not dealing with an idmapped
-mount they can simply return the relevant id unchanged; no remapping needs
-to be performed at all.
-
-These checks guarantee that only the minimal amount of work is performed.
-As before, if idmapped mounts aren't used the low-level helpers are
-idempotent and no work is performed at all.
-
-Link: [1] commit 2ca4dcc4909d ("fs/mount_setattr: tighten permission checks")
-Link: [2] https://github.com/containers/podman/issues/10374
-Link: [3] Documentations/filesystems/idmappings.rst
-Link: [4] commit a65e58e791a1 ("fs: document and rename fsid helpers")
-
-/* Testing */
-All patches are based on v5.16-rc3 and have been sitting in linux-next. No
-build failures or warnings were observed and fstests are passing:
-
-SECTION       -- xfs
-RECREATING    -- xfs on /dev/loop4
-FSTYP         -- xfs (debug)
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-fs.idmapped.v5.17-88a4b8c3b3c3 #42 SMP PREEMPT Mon Jan 10 10:57:44 UTC 2022
-MKFS_OPTIONS  -- -f -f /dev/loop5
-MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
-
-generic/633 25s ...  26s
-generic/644 4s ...  16s
-generic/645 209s ...  77s
-generic/656 14s ...  17s
-xfs/152 75s ...  70s
-xfs/153 48s ...  43s
-Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
-Passed all 6 tests
-
-SECTION       -- ext4
-RECREATING    -- ext4 on /dev/loop4
-FSTYP         -- ext4
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-fs.idmapped.v5.17-88a4b8c3b3c3 #42 SMP PREEMPT Mon Jan 10 10:57:44 UTC 2022
-MKFS_OPTIONS  -- -F -F /dev/loop5
-MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop5 /mnt/scratch
-
-generic/633 26s ...  17s
-generic/644 16s ...  4s
-generic/645 77s ...  58s
-generic/656 17s ...  8s
-Ran: generic/633 generic/644 generic/645 generic/656
-Passed all 4 tests
-
-SECTION       -- btrfs
-RECREATING    -- btrfs on /dev/loop4
-FSTYP         -- btrfs
-PLATFORM      -- Linux/x86_64 f2-vm 5.16.0-fs.idmapped.v5.17-88a4b8c3b3c3 #42 SMP PREEMPT Mon Jan 10 10:57:44 UTC 2022
-MKFS_OPTIONS  -- -f /dev/loop5
-MOUNT_OPTIONS -- /dev/loop5 /mnt/scratch
-
-btrfs/245 11s ...  11s
-generic/633 17s ...  21s
-generic/644 4s ...  6s
-generic/645 58s ...  60s
-generic/656 8s ...  8s
-Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
-Passed all 5 tests
-
-SECTION       -- xfs
-=========================
-Ran: generic/633 generic/644 generic/645 generic/656 xfs/152 xfs/153
-Passed all 6 tests
-
-SECTION       -- ext4
-=========================
-Ran: generic/633 generic/644 generic/645 generic/656
-Passed all 4 tests
-
-SECTION       -- btrfs
-=========================
-Ran: btrfs/245 generic/633 generic/644 generic/645 generic/656
-Passed all 5 tests
-
-/* Conflicts */
-At the time of creating this PR no merge conflicts showed up doing a test-merge
-with current mainline.
-
-There's a merge conflict reported from -next with David's fscache rewrite.
-Although I'm not sure David still intends to send it for the v5.17 merge window
-we covered the conflict in thread [1] where stated in [2] that the conflict is
-trivial enough for you to resolve during the merge. (I'm posting the links so
-you can double-check.)
-
-[1]: https://lore.kernel.org/linux-fsdevel/20211207142405.179428-1-brauner@kernel.org
-[2]: https://lore.kernel.org/linux-fsdevel/CAHk-=wjjxBRNkav+RjpdHjDZHRPAJgjdM4wTFi_oEnk0_dc67g@mail.gmail.com
-
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with current
-mainline.
-
-The following changes since commit d58071a8a76d779eedab38033ae4c821c30295a5:
-
-  Linux 5.16-rc3 (2021-11-28 14:09:19 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.idmapped.v5.17
-
-for you to fetch changes up to bd303368b776eead1c29e6cdda82bde7128b82a7:
-
-  fs: support mapped mounts of mapped filesystems (2021-12-05 10:28:57 +0100)
-
-Please consider pulling these changes from the signed fs.idmapped.v5.17 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-fs.idmapped.v5.17
-
-----------------------------------------------------------------
-Christian Brauner (10):
-      fs: add is_idmapped_mnt() helper
-      fs: move mapping helpers
-      fs: tweak fsuidgid_has_mapping()
-      fs: account for filesystem mappings
-      docs: update mapping documentation
-      fs: use low-level mapping helpers
-      fs: remove unused low-level mapping helpers
-      fs: port higher-level mapping helpers
-      fs: add i_user_ns() helper
-      fs: support mapped mounts of mapped filesystems
-
- Documentation/filesystems/idmappings.rst |  72 ----------
- fs/cachefiles/bind.c                     |   2 +-
- fs/ecryptfs/main.c                       |   2 +-
- fs/ksmbd/smbacl.c                        |  19 +--
- fs/ksmbd/smbacl.h                        |   5 +-
- fs/namespace.c                           |  53 +++++--
- fs/nfsd/export.c                         |   2 +-
- fs/open.c                                |   8 +-
- fs/overlayfs/super.c                     |   2 +-
- fs/posix_acl.c                           |  17 ++-
- fs/proc_namespace.c                      |   2 +-
- fs/xfs/xfs_inode.c                       |   8 +-
- fs/xfs/xfs_linux.h                       |   1 +
- fs/xfs/xfs_symlink.c                     |   4 +-
- include/linux/fs.h                       | 141 ++++++-------------
- include/linux/mnt_idmapping.h            | 234 +++++++++++++++++++++++++++++++
- security/commoncap.c                     |  15 +-
- 17 files changed, 356 insertions(+), 231 deletions(-)
- create mode 100644 include/linux/mnt_idmapping.h
