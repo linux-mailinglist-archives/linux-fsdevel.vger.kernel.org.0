@@ -2,192 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C13489321
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 09:16:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D31A4489327
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jan 2022 09:18:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239879AbiAJIQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 03:16:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35018 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238318AbiAJIQZ (ORCPT
+        id S240015AbiAJISz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 03:18:55 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:54987 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231458AbiAJISw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 03:16:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641802585;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6DXb2Qdot0WJqkZ8hEt07gD3PLBZLtkyHeR+k71iLxo=;
-        b=i4VpzvGG0iYWOH8CvnU6oxXsGoGyYFo2MDi4xCQl8rI0xm/Cy5um40U+ngxronZPd7JLXi
-        3DwR1ZcUH0pd2K7pyKz9nwZGoxhXiR+7sLCr3DXy/X5Z1UoSd6FQKU7eQo0tkVha4HkSiu
-        +Jg4zROCibIU7xgfI9weFDql2wVHeVM=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-564-2ZKqUkQOMRWHNyJMq5lQDg-1; Mon, 10 Jan 2022 03:16:22 -0500
-X-MC-Unique: 2ZKqUkQOMRWHNyJMq5lQDg-1
-Received: by mail-ed1-f72.google.com with SMTP id z10-20020a05640235ca00b003f8efab3342so9487928edc.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 00:16:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=6DXb2Qdot0WJqkZ8hEt07gD3PLBZLtkyHeR+k71iLxo=;
-        b=dunQt7sEjTE4yJdrz2hNEgFxF784EOwkHPfLf5AIkpXLBoWLR2csJuyCZerDThqhJl
-         MNO/SRoEHwMbVXE5zgxYq/BgTs9OrwoNluNKzbdriWSt70rCfpMeF97u3/UXmncr8oRT
-         ApdbSSqt2Tzd+xRzk37w3YtQ2iMpxVScS4Dw8oiIHf5LI4U/H9wBQqQeG24DrA3Sn/ja
-         LRgu14wpI7eSud6c9YPYxqm+azJU7jqsEhKOA8IIqqXM50rwZD3QUwyswdlZoPGlVcJ7
-         P0eQTgItKRuX9lUItgA1XdalZvizOpezMQ1lUc9ocOUKf04IAY6L/WLrBxtmzX9MYoca
-         G+Uw==
-X-Gm-Message-State: AOAM531bzRVIOdBO47WHhbRVT6jGXe229rqpLvDjEHWwwkIv4qxne79k
-        ZCX4WsHRvYZgFlPHfQk+ZnSLPzu1xOChFWHjthvuWoZW8MbwxMwoSmLBe/vQE1EKZ2rcLtz1bro
-        aa9XTjAdVRGrk9kQQTupyMLg9uQ==
-X-Received: by 2002:a17:907:6da0:: with SMTP id sb32mr4805824ejc.455.1641802581498;
-        Mon, 10 Jan 2022 00:16:21 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxng77QYf5XAHe4Ds2nAHQWNTds07aUYSF1+NQLW6VnRIrXWSP6tbZZhTPAWIzZvUhxiRRfgQ==
-X-Received: by 2002:a17:907:6da0:: with SMTP id sb32mr4805813ejc.455.1641802581236;
-        Mon, 10 Jan 2022 00:16:21 -0800 (PST)
-Received: from ?IPV6:2003:cb:c701:cf00:ac25:f2e3:db05:65c3? (p200300cbc701cf00ac25f2e3db0565c3.dip0.t-ipconnect.de. [2003:cb:c701:cf00:ac25:f2e3:db05:65c3])
-        by smtp.gmail.com with ESMTPSA id f15sm3191568edq.33.2022.01.10.00.16.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jan 2022 00:16:20 -0800 (PST)
-Message-ID: <93865d07-1cc6-8cad-c14a-7fcded63e954@redhat.com>
-Date:   Mon, 10 Jan 2022 09:16:20 +0100
+        Mon, 10 Jan 2022 03:18:52 -0500
+Received: from dread.disaster.area (pa49-181-243-119.pa.nsw.optusnet.com.au [49.181.243.119])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 5569E62C1B7;
+        Mon, 10 Jan 2022 19:18:49 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1n6pt9-00DX9k-J0; Mon, 10 Jan 2022 19:18:47 +1100
+Date:   Mon, 10 Jan 2022 19:18:47 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "trondmy@kernel.org" <trondmy@kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
+Message-ID: <20220110081847.GW945095@dread.disaster.area>
+References: <YdPyhpdxykDscMtJ@infradead.org>
+ <YdSNGAupnxF/ouis@casper.infradead.org>
+ <YdSOgyvDnZadYpUP@infradead.org>
+ <20220104192227.GA398655@magnolia>
+ <20220104215227.GJ945095@dread.disaster.area>
+ <20220104231230.GG31606@magnolia>
+ <20220105021022.GL945095@dread.disaster.area>
+ <YdWjkW7hhbTl4TQa@bfoster>
+ <20220105220421.GM945095@dread.disaster.area>
+ <YdccZ4Ut3VlJhSMS@bfoster>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH 1/2] mm/memremap.c: Add pfn_to_devmap_page() to get page
- in ZONE_DEVICE
-Content-Language: en-US
-To:     sxwjean@me.com, akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, osalvador@suse.de,
-        naoya.horiguchi@nec.com, thunder.leizhen@huawei.com
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiongwei Song <sxwjean@gmail.com>
-References: <20220109130515.140092-1-sxwjean@me.com>
- <20220109130515.140092-2-sxwjean@me.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20220109130515.140092-2-sxwjean@me.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YdccZ4Ut3VlJhSMS@bfoster>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=61dbebea
+        a=BEa52nrBdFykVEm6RU8P4g==:117 a=BEa52nrBdFykVEm6RU8P4g==:17
+        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
+        a=thn2x24IeB6EKl0Mb6oA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09.01.22 14:05, sxwjean@me.com wrote:
-> From: Xiongwei Song <sxwjean@gmail.com>
+On Thu, Jan 06, 2022 at 11:44:23AM -0500, Brian Foster wrote:
+> On Thu, Jan 06, 2022 at 09:04:21AM +1100, Dave Chinner wrote:
+> > On Wed, Jan 05, 2022 at 08:56:33AM -0500, Brian Foster wrote:
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 71a36ae120ee..39214577bc46 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1066,17 +1066,34 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+> >  	}
+> >  }
+> >  
+> > +/*
+> > + * Ioend completion routine for merged bios. This can only be called from task
+> > + * contexts as merged ioends can be of unbound length. Hence we have to break up
+> > + * the page writeback completion into manageable chunks to avoid long scheduler
+> > + * holdoffs. We aim to keep scheduler holdoffs down below 10ms so that we get
+> > + * good batch processing throughput without creating adverse scheduler latency
+> > + * conditions.
+> > + */
+> >  void
+> >  iomap_finish_ioends(struct iomap_ioend *ioend, int error)
+> >  {
+> >  	struct list_head tmp;
+> > +	int segments;
+> > +
+> > +	might_sleep();
+> >  
+> >  	list_replace_init(&ioend->io_list, &tmp);
+> > +	segments = ioend->io_segments;
+> >  	iomap_finish_ioend(ioend, error);
+> >  
+> >  	while (!list_empty(&tmp)) {
+> > +		if (segments > 32768) {
+> > +			cond_resched();
+> > +			segments = 0;
+> > +		}
 > 
-> when requesting page information by /proc/kpage*, the pages in ZONE_DEVICE
-> were missed. We need a function to help on this.
-> 
-> The pfn_to_devmap_page() function like pfn_to_online_page(), but only
-> concerns the pages in ZONE_DEVICE.
-> 
-> Signed-off-by: Xiongwei Song <sxwjean@gmail.com>
-> ---
->  include/linux/memremap.h |  8 ++++++++
->  mm/memremap.c            | 42 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 50 insertions(+)
-> 
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index c0e9d35889e8..621723e9c4a5 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -137,6 +137,8 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
->  void devm_memunmap_pages(struct device *dev, struct dev_pagemap *pgmap);
->  struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
->  		struct dev_pagemap *pgmap);
-> +struct page *pfn_to_devmap_page(unsigned long pfn,
-> +		struct dev_pagemap **pgmap);
->  bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
->  
->  unsigned long vmem_altmap_offset(struct vmem_altmap *altmap);
-> @@ -166,6 +168,12 @@ static inline struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
->  	return NULL;
->  }
->  
-> +static inline struct page *pfn_to_devmap_page(unsigned long pfn,
-> +		struct dev_pagemap **pgmap)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn)
->  {
->  	return false;
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index 5a66a71ab591..072dbe6ab81c 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -494,6 +494,48 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
->  }
->  EXPORT_SYMBOL_GPL(get_dev_pagemap);
->  
-> +/**
-> + * pfn_to_devmap_page - get page pointer which belongs to dev_pagemap by @pfn
-> + * @pfn: page frame number to lookup page_map
-> + * @pgmap: to save pgmap address which is for putting reference
-> + *
-> + * If @pgmap is non-NULL, then pfn is on ZONE_DEVICE and return page pointer.
-> + */
-> +struct page *pfn_to_devmap_page(unsigned long pfn, struct dev_pagemap **pgmap)
-> +{
-> +	unsigned long nr = pfn_to_section_nr(pfn);
-> +	struct mem_section *ms;
-> +	struct page *page = NULL;
-> +
-> +	if (nr >= NR_MEM_SECTIONS)
-> +		return NULL;
-> +
-> +	if (IS_ENABLED(CONFIG_HAVE_ARCH_PFN_VALID) && !pfn_valid(pfn))
-> +		return NULL;
-> +
-> +	ms = __nr_to_section(nr);
-> +	if (!valid_section(ms))
-> +		return NULL;
-> +	if (!pfn_section_valid(ms, pfn))
-> +		return NULL;
-> +
-> +	/*
-> +	 * Two types of sections may include valid pfns:
-> +	 * - The pfns of section belong to ZONE_DEVICE and ZONE_{NORMAL,MOVABLE}
-> +	 *   at the same time.
-> +	 * - All pfns in one section are offline but valid.
-> +	 */
-> +	if (!online_device_section(ms) && online_section(ms))
-> +		return NULL;
-> +
-> +	*pgmap = get_dev_pagemap(pfn, NULL);
-> +	if (*pgmap)
-> +		page = pfn_to_page(pfn);
-> +
-> +	return page;
-> +}
-> +EXPORT_SYMBOL_GPL(pfn_to_devmap_page);
+> How is this intended to address the large bi_vec scenario? AFAICT
+> bio_segments() doesn't account for multipage bvecs so the above logic
+> can allow something like 34b (?) 4k pages before a yield.
 
-Is this complexity really required?
+Right now the bvec segment iteration in iomap_finish_ioend() is
+completely unaware of multipage bvecs - as per above
+bio_for_each_segment_all() iterates by PAGE_SIZE within a bvec,
+regardless of whether they are stored in a multipage bvec or not.
+Hence it always iterates the entire bio a single page at a time.
 
-Take a look at mm/memory-failure.c
+IOWs, we don't use multi-page bvecs in iomap writeback, nor is it
+aware of them at all. We're adding single pages to bios via
+bio_add_page() which may merge them internally into multipage bvecs.
+However, all our iterators use single page interfaces, hence we
+don't see the internal multi-page structure of the bio at all.
+As such, bio_segments() should return the number of PAGE_SIZE pages
+attached to the bio regardless of it's internal structure.
 
-p = pfn_to_online_page(pfn);
-if (!p) {
-	if (pfn_valid(pfn)) {
-		pgmap = get_dev_pagemap(pfn, NULL);
-		if (pgmap)
-			// success
-		// error
-	}
-	// error
-}
+That is what I see on a trace from a large single file submission,
+comparing bio_segments() output from the page count on an ioend:
 
+   kworker/u67:2-187   [017] 13530.753548: iomap_do_writepage: 2. bios 4096, pages 4096, start sector 0x370400 bi_vcnt 1, bi_size 16777216
+   kworker/u67:2-187   [017] 13530.759706: iomap_do_writepage: 2. bios 4096, pages 4096, start sector 0x378400 bi_vcnt 1, bi_size 16777216
+   kworker/u67:2-187   [017] 13530.766326: iomap_do_writepage: 2. bios 4096, pages 4096, start sector 0x380400 bi_vcnt 1, bi_size 16777216
+   kworker/u67:2-187   [017] 13530.770689: iomap_do_writepage: 2. bios 4096, pages 4096, start sector 0x388400 bi_vcnt 1, bi_size 16777216
+   kworker/u67:2-187   [017] 13530.774716: iomap_do_writepage: 2. bios 4096, pages 4096, start sector 0x390400 bi_vcnt 1, bi_size 16777216
+   kworker/u67:2-187   [017] 13530.777157: iomap_writepages: 3. bios 2048, pages 2048, start sector 0x398400 bi_vcnt 1, bi_size 8388608
 
-Also, why do we need the export?
+Which shows we are building ioends with a single bio with a single
+bvec, containing 4096 pages and 4096 bio segments. So, as expected,
+bio_segments() matches the page count and we submit 4096 page ioends
+with a single bio attached to it.
 
+This is clearly a case where we are getting physically contiguous
+page cache page allocation during write() syscalls, and the result
+is a single contiguous bvec from bio_add_page() doing physical page
+merging at the bvec level. Hence we see bio->bi_vcnt = 1 and a
+physically contiguous 4096 multipage bvec being dispatched. The
+lower layers slice and dice these huge bios to what the hardware can
+handle...
+
+What I'm not yet reproducing is whatever vector that Trond is seeing
+that is causing the multi-second hold-offs. I get page completion
+processed at a rate of about a million pages per second per CPU, but
+I'm bandwidth limited to about 400,000 pages per second due to
+mapping->i_pages lock contention (reclaim vs page cache
+instantiation vs writeback completion). I'm not seeing merged ioend
+batches of larger than about 40,000 pages being processed at once.
+Hence I can't yet see where the millions of pages in a single ioend
+completion that would be required to hold a CPU for tens of seconds
+is coming from yet...
+
+> That aside, I find the approach odd in that we calculate the segment
+> count for each bio via additional iteration (which is how bio_segments()
+> works) and track the summation of the chain in the ioend only to provide
+> iomap_finish_ioends() with a subtly inaccurate view of how much work
+> iomap_finish_ioend() is doing as the loop iterates.
+
+I just did that so I didn't have to count pages as the bio is built.
+Easy to change - in fact I have changed it to check that
+bio_segments() was returning the page count I expected it should be
+returning....
+
+I also changed the completion side to just count
+end_page_writeback() calls, and I get the same number of
+cond_resched() calls being made as the bio_segment. So AFAICT
+there's no change of behaviour or accounting between the two
+methods, and I'm not sure where the latest problem Trond reported
+is...
+
+> We already have this
+> information in completion context and iomap_finish_ioends() is just a
+> small iterator function, so I don't understand why we wouldn't do
+> something like factor these two loops into a non-atomic context only
+> variant that yields based on the actual amount of page processing work
+> being done (i.e. including multipage bvecs). That seems more robust and
+> simple to me, but that's just my .02.
+
+iomap_finish_ioends() is pretty much that non-atomic version of
+the ioend completion code. Merged ioend chains cannot be sanely
+handled in atomic context and so it has to be called from task
+context. Hence the "might_sleep()" I added to ensure that we get
+warnings if it is called from atomic contexts.
+
+As for limiting atomic context completion processing, we've
+historically done that by limiting the size of individual IO chains
+submitted during writeback. This means that atomic completion
+contexts don't need any special signalling (i.e. conditional
+"in_atomic()" behaviour) because they aren't given anything to
+process that would cause problems in atomic contexts...
+
+Cheers,
+
+Dave.
 -- 
-Thanks,
-
-David / dhildenb
-
+Dave Chinner
+david@fromorbit.com
