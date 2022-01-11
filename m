@@ -2,245 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DACD048AE20
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 14:04:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A94C048AE6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 14:29:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240299AbiAKNE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jan 2022 08:04:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:47298 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240093AbiAKNEW (ORCPT
+        id S240328AbiAKN3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jan 2022 08:29:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239945AbiAKN3e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jan 2022 08:04:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641906261;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CnoXRZzxHpYZJCWWJWjQzv34cSxRuBzuUNROP7tocqU=;
-        b=J7ie4awMUKp0X52WIJ4CV5Qxr2LakL28ytYOoKgQITNXvU9CNe3qs3IDReFf5unlz9AKQB
-        Tu1X/N+gH1psYAw3N6kdPipV0FuOAX21+FkZgvnO/OLQN6NpKwpiJDY2n6IejNhWeLpMro
-        oLdkfXa7LzoZEmEeIM8JQc6SBxRBv/A=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-453-IqI79_tzMZCJqtcy_X7ZiQ-1; Tue, 11 Jan 2022 08:04:20 -0500
-X-MC-Unique: IqI79_tzMZCJqtcy_X7ZiQ-1
-Received: by mail-ed1-f72.google.com with SMTP id x19-20020a05640226d300b003f8b80f5729so13136266edd.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jan 2022 05:04:20 -0800 (PST)
+        Tue, 11 Jan 2022 08:29:34 -0500
+Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97009C06173F;
+        Tue, 11 Jan 2022 05:29:34 -0800 (PST)
+Received: by mail-yb1-xb44.google.com with SMTP id g14so18748529ybs.8;
+        Tue, 11 Jan 2022 05:29:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=jL+yPSB/x8F3npn1ApaD1l+3nlGvKvDyURY4vjl6cjk=;
+        b=PBuDYGZeIwCcDpXJCYSBxIwHB7BJ5t2zQ0lahrmzemAvzmzimIXgjU/rYz6l0MtTyK
+         2HHrE9ppSHjg18RTs+v+AK7+vfNLIuD7hEOCrVsKWr+t5EStZkRC6HN//KJFK8TqGkYC
+         FePJKOwbsV4EEPHBZ7pKHeHQC/UBGieXsnJGmgPp4Mq40qqbvQxT3KQ4qJQ5+gfXoo9h
+         vXWsx3Izd2LM0vjuBXWJvISZVgMVDL6HUKaavTDE/JgmHp2XQ6TvkD2K1ViE8fz9MIKt
+         TizgZo0RMP4NgFKcOSgmSnjwR/SZZierPfS3bVhZcMdjXbPNOQ7iMu4/Z0tEUmXbxKam
+         v24w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=CnoXRZzxHpYZJCWWJWjQzv34cSxRuBzuUNROP7tocqU=;
-        b=8A8S+ktgd6XRaZtBtGsGLtc7El/KoZAhYpkzoIr4CZmwQLtHjsqf3Swb7QowMaMOfz
-         joVH5JOQm3RQ2T5PcLU/QaXZn4EsLHkdI/U5ZPjAExeFkL2/rNRbCHKIJsBTF3PY3Avo
-         ZaebXWnF8GI3j1nHoVfN/usJ/3t5YFo2w9cWvDrbCLobB6j/fqEwEQbZx3WZswiZFVm4
-         AEHn0AlXwHjJy/wmBYc3H8d5wcd2127svBuML40MLmFYqtJqxlCLGuOTNJDU1IQudwjr
-         3H+Wbm6lZGDctPsm8z2DUWTS1+cl9lWINkTL6ztl30gDqml1xQZRcTq3KotcQ0CLCfah
-         0mGQ==
-X-Gm-Message-State: AOAM531NMjboUYMG/+o28ZtAdTkGG9Y5dmDW/9KFR1yuBUz/z6cX/fRA
-        T1iL51E77z+j5bU9GyWhxemTXgwjpnl6bF8hxCw5NNA0NvnWz7f6ZBn2jGmWkQew78zVKwfvAz2
-        beSltmbeS7IIOwnMXBnmOObs85A==
-X-Received: by 2002:a17:906:3707:: with SMTP id d7mr3673139ejc.688.1641906259336;
-        Tue, 11 Jan 2022 05:04:19 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyufWlr/Lw1gvdqS0EUpwg1gh0cWIzsXPiLkrC7aOl+Vt8tOWZrM6glrUNIyzIuktDWyNcriw==
-X-Received: by 2002:a17:906:3707:: with SMTP id d7mr3673099ejc.688.1641906259017;
-        Tue, 11 Jan 2022 05:04:19 -0800 (PST)
-Received: from redhat.com ([2.55.5.100])
-        by smtp.gmail.com with ESMTPSA id j5sm3591214ejo.171.2022.01.11.05.04.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jan 2022 05:04:18 -0800 (PST)
-Date:   Tue, 11 Jan 2022 08:04:10 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        John Garry <john.garry@huawei.com>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Netdev <netdev@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 00/13] Introduce VDUSE - vDPA Device in Userspace
-Message-ID: <20220111080359-mutt-send-email-mst@kernel.org>
-References: <20210830141737.181-1-xieyongji@bytedance.com>
- <20220110075546-mutt-send-email-mst@kernel.org>
- <CACycT3v1aEViw7vV4x5qeGVPrSrO-BTDvQshEX35rx_X0Au2vw@mail.gmail.com>
- <20220110100911-mutt-send-email-mst@kernel.org>
- <CACycT3v6jo3-8ATWUzf659vV94a2oRrm-zQtGNDZd6OQr-MENA@mail.gmail.com>
- <20220110103938-mutt-send-email-mst@kernel.org>
- <CACycT3sbJC1Jn7NeWk_ccQ_2_YgKybjugfxmKpfgCP3Ayoju4w@mail.gmail.com>
- <20220111065301-mutt-send-email-mst@kernel.org>
- <CACycT3sdfAbdByKJwg8N-Jb2qVDdgfSqprp_aOp5fpYz4LxmgA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=jL+yPSB/x8F3npn1ApaD1l+3nlGvKvDyURY4vjl6cjk=;
+        b=Xk4efCegRYo7mytQrVJxr0jVLRJcC7XeDnbgFyMpbly8Bj8kLVBuA66i9tI3H+TF2X
+         EWL6nWWjam8CG98TJ+7CNt6+m7mqEUWDmJUEdsYpoDmkTt3BRWVAN5pRSRyWBQbdcDfn
+         cArkbJCKRlXv+HzgJELqyyLVzUVrI1NPDg84MytZ5+jVRuCjBifSr9niPg6EWy+bA47w
+         /1S6VoiuAJ5sBFk9yn9rd2G4v+RABa5Zm6nCvszg9jyln3Ytptl5Wik/pxiShEIFC+aV
+         93Vo7C2QOTKEF/uU+I+6GVG36hnWgGR87NGlFtiN0pBsatCDF0SSbtUjQvmDr5K804PN
+         wlWA==
+X-Gm-Message-State: AOAM5317RTVNHptfTBwK0fsZSYASe64KD4wysGusNxiVAQi68KwfPK1E
+        +O+XcuUVMUIHyNdtpUoAt0vap7arVJdlQhUuCYY=
+X-Google-Smtp-Source: ABdhPJyHlIrey4/cjQgBVGtOy7gYF3fLifZxYuLIUX8n9ONzUtNiWpsPRX0o0X/lBfo/3uF7iRbtnhZnJl3KAGLMge4=
+X-Received: by 2002:a25:b00b:: with SMTP id q11mr85198ybf.421.1641907773833;
+ Tue, 11 Jan 2022 05:29:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACycT3sdfAbdByKJwg8N-Jb2qVDdgfSqprp_aOp5fpYz4LxmgA@mail.gmail.com>
+From:   Kaia Yadira <hypericumperforatum4444@gmail.com>
+Date:   Tue, 11 Jan 2022 21:29:22 +0800
+Message-ID: <CACDmwr-0J1C=8Eba9bX9sCRdxVmF_u370xWoNo5vnTr4giUPCw@mail.gmail.com>
+Subject: KCSAN: data-race in step_into / vfs_unlink
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Cc:     sunhao.th@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 08:57:49PM +0800, Yongji Xie wrote:
-> On Tue, Jan 11, 2022 at 7:54 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Tue, Jan 11, 2022 at 11:31:37AM +0800, Yongji Xie wrote:
-> > > On Mon, Jan 10, 2022 at 11:44 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Mon, Jan 10, 2022 at 11:24:40PM +0800, Yongji Xie wrote:
-> > > > > On Mon, Jan 10, 2022 at 11:10 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > >
-> > > > > > On Mon, Jan 10, 2022 at 09:54:08PM +0800, Yongji Xie wrote:
-> > > > > > > On Mon, Jan 10, 2022 at 8:57 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Aug 30, 2021 at 10:17:24PM +0800, Xie Yongji wrote:
-> > > > > > > > > This series introduces a framework that makes it possible to implement
-> > > > > > > > > software-emulated vDPA devices in userspace. And to make the device
-> > > > > > > > > emulation more secure, the emulated vDPA device's control path is handled
-> > > > > > > > > in the kernel and only the data path is implemented in the userspace.
-> > > > > > > > >
-> > > > > > > > > Since the emuldated vDPA device's control path is handled in the kernel,
-> > > > > > > > > a message mechnism is introduced to make userspace be aware of the data
-> > > > > > > > > path related changes. Userspace can use read()/write() to receive/reply
-> > > > > > > > > the control messages.
-> > > > > > > > >
-> > > > > > > > > In the data path, the core is mapping dma buffer into VDUSE daemon's
-> > > > > > > > > address space, which can be implemented in different ways depending on
-> > > > > > > > > the vdpa bus to which the vDPA device is attached.
-> > > > > > > > >
-> > > > > > > > > In virtio-vdpa case, we implements a MMU-based software IOTLB with
-> > > > > > > > > bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
-> > > > > > > > > buffer is reside in a userspace memory region which can be shared to the
-> > > > > > > > > VDUSE userspace processs via transferring the shmfd.
-> > > > > > > > >
-> > > > > > > > > The details and our user case is shown below:
-> > > > > > > > >
-> > > > > > > > > ------------------------    -------------------------   ----------------------------------------------
-> > > > > > > > > |            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
-> > > > > > > > > |       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
-> > > > > > > > > |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
-> > > > > > > > > ------------+-----------     -----------+------------   -------------+----------------------+---------
-> > > > > > > > >             |                           |                            |                      |
-> > > > > > > > >             |                           |                            |                      |
-> > > > > > > > > ------------+---------------------------+----------------------------+----------------------+---------
-> > > > > > > > > |    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
-> > > > > > > > > |    -------+--------           --------+--------            -------+--------          -----+----    |
-> > > > > > > > > |           |                           |                           |                       |        |
-> > > > > > > > > | ----------+----------       ----------+-----------         -------+-------                |        |
-> > > > > > > > > | | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
-> > > > > > > > > | ----------+----------       ----------+-----------         -------+-------                |        |
-> > > > > > > > > |           |      virtio bus           |                           |                       |        |
-> > > > > > > > > |   --------+----+-----------           |                           |                       |        |
-> > > > > > > > > |                |                      |                           |                       |        |
-> > > > > > > > > |      ----------+----------            |                           |                       |        |
-> > > > > > > > > |      | virtio-blk device |            |                           |                       |        |
-> > > > > > > > > |      ----------+----------            |                           |                       |        |
-> > > > > > > > > |                |                      |                           |                       |        |
-> > > > > > > > > |     -----------+-----------           |                           |                       |        |
-> > > > > > > > > |     |  virtio-vdpa driver |           |                           |                       |        |
-> > > > > > > > > |     -----------+-----------           |                           |                       |        |
-> > > > > > > > > |                |                      |                           |    vdpa bus           |        |
-> > > > > > > > > |     -----------+----------------------+---------------------------+------------           |        |
-> > > > > > > > > |                                                                                        ---+---     |
-> > > > > > > > > -----------------------------------------------------------------------------------------| NIC |------
-> > > > > > > > >                                                                                          ---+---
-> > > > > > > > >                                                                                             |
-> > > > > > > > >                                                                                    ---------+---------
-> > > > > > > > >                                                                                    | Remote Storages |
-> > > > > > > > >                                                                                    -------------------
-> > > > > > > > >
-> > > > > > > > > We make use of it to implement a block device connecting to
-> > > > > > > > > our distributed storage, which can be used both in containers and
-> > > > > > > > > VMs. Thus, we can have an unified technology stack in this two cases.
-> > > > > > > > >
-> > > > > > > > > To test it with null-blk:
-> > > > > > > > >
-> > > > > > > > >   $ qemu-storage-daemon \
-> > > > > > > > >       --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
-> > > > > > > > >       --monitor chardev=charmonitor \
-> > > > > > > > >       --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
-> > > > > > > > >       --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
-> > > > > > > > >
-> > > > > > > > > The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
-> > > > > > > >
-> > > > > > > > It's been half a year - any plans to upstream this?
-> > > > > > >
-> > > > > > > Yeah, this is on my to-do list this month.
-> > > > > > >
-> > > > > > > Sorry for taking so long... I've been working on another project
-> > > > > > > enabling userspace RDMA with VDUSE for the past few months. So I
-> > > > > > > didn't have much time for this. Anyway, I will submit the first
-> > > > > > > version as soon as possible.
-> > > > > > >
-> > > > > > > Thanks,
-> > > > > > > Yongji
-> > > > > >
-> > > > > > Oh fun. You mean like virtio-rdma? Or RDMA as a backend for regular
-> > > > > > virtio?
-> > > > > >
-> > > > >
-> > > > > Yes, like virtio-rdma. Then we can develop something like userspace
-> > > > > rxe、siw or custom protocol with VDUSE.
-> > > > >
-> > > > > Thanks,
-> > > > > Yongji
-> > > >
-> > > > Would be interesting to see the spec for that.
-> > >
-> > > Will send it ASAP.
-> > >
-> > > > The issues with RDMA revolved around the fact that current
-> > > > apps tend to either use non-standard propocols for connection
-> > > > establishment or use UD where there's IIRC no standard
-> > > > at all. So QP numbers are hard to virtualize.
-> > > > Similarly many use LIDs directly with the same effect.
-> > > > GUIDs might be virtualizeable but no one went to the effort.
-> > > >
-> > >
-> > > Actually we aimed at emulating a soft RDMA with normal NIC (not use
-> > > RDMA capability) rather than virtualizing a physical RDMA NIC into
-> > > several vRDMA devices. If so, I think we won't have those issues,
-> > > right?
-> >
-> > Right, maybe you won't.
-> >
-> > > > To say nothing about the interaction with memory overcommit.
-> > > >
-> > >
-> > > I don't get you here. Could you give me more details?
-> > >
-> > > Thanks,
-> > > Yongji
-> >
-> > RDMA devices tend to want to pin the memory under DMA.
-> >
-> 
-> I see. Maybe something like dm or odp could be helpful.
-> 
-> Thanks,
-> Yongji
+Hello,
 
-Yes sure.
+When using Syzkaller to fuzz the latest Linux kernel, the following
+crash was triggered.
 
--- 
-MST
+HEAD commit: a7904a538933 Linux 5.16-rc6
+git tree: upstream
+console output: KCSAN: data-race in step_into / vfs_unlink
+kernel config: https://paste.ubuntu.com/p/QB39MJKWKb/plain/
+Syzlang reproducer: https://paste.ubuntu.com/p/qQPrVRrYfb/plain/
 
+If you fix this issue, please add the following tag to the commit:
+
+Reported-by: Hypericum <hypericumperforatum4444@gmail.com>
+
+I think the program data race at the both reading and read/write at
+the dentry->d_flags
+
+reproducer log: https://paste.ubuntu.com/p/2xsqF6W3sB/plain/
+reproducer report:
+
+==================================================================
+BUG: KCSAN: data-race in step_into / vfs_unlink
+
+read-write to 0xffff88810a3899c0 of 4 bytes by task 5771 on cpu 1:
+ dont_mount include/linux/dcache.h:358 [inline]
+ vfs_unlink+0x28e/0x440 fs/namei.c:4102
+ do_unlinkat+0x278/0x540 fs/namei.c:4167
+ __do_sys_unlink fs/namei.c:4215 [inline]
+ __se_sys_unlink fs/namei.c:4213 [inline]
+ __x64_sys_unlink+0x2c/0x30 fs/namei.c:4213
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+read to 0xffff88810a3899c0 of 4 bytes by task 1537 on cpu 5:
+ __follow_mount_rcu fs/namei.c:1429 [inline]
+ handle_mounts fs/namei.c:1486 [inline]
+ step_into+0xf4/0xea0 fs/namei.c:1800
+ walk_component+0x1a1/0x360 fs/namei.c:1976
+ lookup_last fs/namei.c:2425 [inline]
+ path_lookupat+0x12d/0x3c0 fs/namei.c:2449
+ filename_lookup+0x130/0x310 fs/namei.c:2478
+ user_path_at_empty+0x3e/0x110 fs/namei.c:2801
+ do_readlinkat+0x97/0x210 fs/stat.c:443
+ __do_sys_readlink fs/stat.c:476 [inline]
+ __se_sys_readlink fs/stat.c:473 [inline]
+ __x64_sys_readlink+0x43/0x50 fs/stat.c:473
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+value changed: 0x00600008 -> 0x00008008
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 5 PID: 1537 Comm: systemd-udevd Not tainted 5.16.0-rc8+ #11
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.13.0-1ubuntu1.1 04/01/2014
+==================================================================
