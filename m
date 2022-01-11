@@ -2,135 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED20848A5CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 03:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9BDC48A604
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 04:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346633AbiAKCoJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 21:44:09 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:57324 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244189AbiAKCoI (ORCPT
+        id S235587AbiAKDCd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 22:02:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235690AbiAKDCN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 21:44:08 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BD9F8B8181E;
-        Tue, 11 Jan 2022 02:44:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B632C36AF3;
-        Tue, 11 Jan 2022 02:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641869045;
-        bh=ZU/rHB8FnpSXUsKne+pbLzZ+noAo0MmMuqR+JolfoEE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FIXZmAOcNHXQ7ZM8JZhHkhdBWZszVi+ECpPOUMS7Q2uAMUWdtSKJgKxm4iPtpaQ5x
-         I21P4xp3+iDmYip4C+ATD3Hqnxzlkk/Y+fOC3iOZWcI+MAk1G6A6JbeyITPek/lmAz
-         pnP/Qdgpq7CWUIHiMFxdqzslfvavEROTb5R2s9RhCijilg8mEIkXGHdcQroc6CN9GY
-         MmBTswGCNQ7Dcolsem3eW0EaTRnKzPoPSa0G+/Xhq2TnZaSOhdNbMk8usIMM9zp34/
-         iYYC2acRHzBNo+XfhlJmI0nEozUnX/UaLGUcwGJVd5qv1KqMl88lPx4k3JUHzNSEpi
-         SMbg8w1JgJPaw==
-Received: by mail-vk1-f174.google.com with SMTP id g5so5638757vkg.0;
-        Mon, 10 Jan 2022 18:44:05 -0800 (PST)
-X-Gm-Message-State: AOAM533rcPavlSW2iwxEo9a1OxPETZTFaQD1rGmfFnynYx4zW1kUZTAe
-        nYWH/9yWVOgD/fkF1P0IRFP/KnZD6lDZqMnr5cM=
-X-Google-Smtp-Source: ABdhPJxiL77rGTLuws5g7KGQ/X9mfhysvv2bOJP9MXedX7dnBC1sSY9bwxU9DL7TLgPk3W1o87rBKfppwaCBYGQoNO8=
-X-Received: by 2002:a1f:e243:: with SMTP id z64mr1284031vkg.28.1641869044562;
- Mon, 10 Jan 2022 18:44:04 -0800 (PST)
+        Mon, 10 Jan 2022 22:02:13 -0500
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95725C06173F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:02:13 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id c6so41472879ybk.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:02:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UsWqKCbZLBuzi7usjCmtz/JjjGQctwwjiuVxBcWGtdk=;
+        b=COAmUaQw1ztu/k34hHssrqxJ5Ru3MzmDhsKdPPt76mfpNYxw3av7/WBjz3CxjQpK0P
+         c8WaHCZoGcMflm4zxQj3xt3AExLTuuwAVwPzhm4wAGd4WDQZaMoE+QsfRvxHm/xC30MC
+         tMQdBzZ94m+7iRWM+StA7HvVqsD/xsw5/b+Moc0mT/nllajjOGKBVi/v+hNlKHcklW6l
+         4rwBvGjPvnV8z4NjMehPSrJzkRalwtqGA/k/j1xwnSe+wOWIL96dXFP1QRAkn4Jr7Pfl
+         0v/kHVgCFYj7OTUm+rO3SJ3JCOqgZPJPd2yy+Nr9ldppnJPpYqNXQGP2oCANCXR6J6gc
+         fyoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UsWqKCbZLBuzi7usjCmtz/JjjGQctwwjiuVxBcWGtdk=;
+        b=WxRgDqw39rpPgaotWA2rYAxVGuMzhTmjFfLFFYCHb2g2BLPDhLRxpfHO3CPRDTNKtJ
+         6n4fYmiCqdvLL3fvZtuOan2Wf9PRCwhkF9wBkUrgpnYQ3v185BMfTx0fusagQ7f9xyFy
+         moezcw//uGNQZKO2xbaFGm6DwRRiMmoLEQNOkKk56qck3I+7azbQ6mkI8mUNkebCwfFh
+         iOKrA+sY05uIHuoHJTOKizQeSSefgm38PxXAmUm+4/g4SUoCWU5Epr81JXGXq+5lh0/G
+         mHj5yxFIQR2ZBLxiqBv/mpTftY8Px/LSpLVtU7T/qq5HFi2pH5BHSvpZTp9kI+tU0jg9
+         7GzQ==
+X-Gm-Message-State: AOAM533aijI6B2jv+fiGlUpjomkAMn6Qf+5Emp/l0oSSEapRaMrXivuD
+        vt8SjaOPOQEXkmbZ4ZlqZp6JKCxikhG9fYoopQA0NA==
+X-Google-Smtp-Source: ABdhPJzDqMdEbnslQ3eNG6BEi4iBJgsxYWS/6DXV0gipP6o4EahWyajWmuxQEoDLns7m53UXcNmtAhCtWktzOBb64gk=
+X-Received: by 2002:a25:6942:: with SMTP id e63mr3568929ybc.602.1641870132644;
+ Mon, 10 Jan 2022 19:02:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20211228143958.3409187-1-guoren@kernel.org> <20211228143958.3409187-4-guoren@kernel.org>
- <CAK8P3a2zn9M6X09WsjJ9HYiS9WnO_YPCvJLSBk+HaH+yZHQqfA@mail.gmail.com>
-In-Reply-To: <CAK8P3a2zn9M6X09WsjJ9HYiS9WnO_YPCvJLSBk+HaH+yZHQqfA@mail.gmail.com>
-From:   Guo Ren <guoren@kernel.org>
-Date:   Tue, 11 Jan 2022 10:43:53 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTzUV1teCh0Avw7rTsrd=50atKGCdpQsVyEeUus1TeGjA@mail.gmail.com>
-Message-ID: <CAJF2gTTzUV1teCh0Avw7rTsrd=50atKGCdpQsVyEeUus1TeGjA@mail.gmail.com>
-Subject: Re: [PATCH V2 03/17] asm-generic: fcntl: compat: Remove duplicate definitions
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        liush <liush@allwinnertech.com>, Wei Fu <wefu@redhat.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Wang Junqiang <wangjunqiang@iscas.ac.cn>,
-        Christoph Hellwig <hch@infradead.org>,
+References: <000000000000e8f8f505d0e479a5@google.com> <20211211015620.1793-1-hdanton@sina.com>
+ <YbQUSlq76Iv5L4cC@sol.localdomain> <YdW3WfHURBXRmn/6@sol.localdomain>
+ <CAHk-=wjqh_R9w4-=wfegut2C0Bg=sJaPrayk39JRCkZc=O+gsw@mail.gmail.com>
+ <CAHk-=wjddvNbZBuvh9m_2VYFC1W7HvbP33mAzkPGOCHuVi5fJg@mail.gmail.com>
+ <CAHk-=wjn5xkLWaF2_4pMVEkZrTA=LiOH=_pQK0g-_BMSE-8Jxg@mail.gmail.com>
+ <Ydw4hWCRjAhGfCAv@cmpxchg.org> <CAJuCfpHg=SPzx7SGUL75DVpMy0BDEwVj4o-SM0UKGmEJrOSdvg@mail.gmail.com>
+ <CAHk-=wiZ=oic3UfejGzy_31RYggtZWUeF1gE82_NHAA=ENY6Kw@mail.gmail.com> <CAJuCfpFFQx525=d8odiiAyi6w5M6KKx-1726zvuV=eADPB8wKg@mail.gmail.com>
+In-Reply-To: <CAJuCfpFFQx525=d8odiiAyi6w5M6KKx-1726zvuV=eADPB8wKg@mail.gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 10 Jan 2022 19:02:01 -0800
+Message-ID: <CAJuCfpEoDOCR--=xshfR+8kPrCN1zSx9Ku7rQS2D+q8WOPee0Q@mail.gmail.com>
+Subject: Re: psi_trigger_poll() is completely broken
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Eric Biggers <ebiggers@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+cdb5dd11c97cc532efad@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-csky@vger.kernel.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        inux-parisc@vger.kernel.org,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Guo Ren <guoren@linux.alibaba.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 10, 2022 at 9:35 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Jan 10, 2022 at 10:19 AM Suren Baghdasaryan <surenb@google.com> wrote:
 >
-> On Tue, Dec 28, 2021 at 3:39 PM <guoren@kernel.org> wrote:
+> On Mon, Jan 10, 2022 at 9:42 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > From: Guo Ren <guoren@linux.alibaba.com>
+> > On Mon, Jan 10, 2022 at 9:25 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> > >
+> > > About the issue of serializing concurrent writes for
+> > > cgroup_pressure_write() similar to how psi_write() does. Doesn't
+> > > of->mutex inside kernfs_fop_write_iter() serialize the writes to the
+> > > same file?
 > >
-> > Remove duplicate F_GETLK64,F_SETLK64,F_SETLKW64 definitions in
-> > arch/*/include/asm/compat.h.
+> > Ahh, yes, it looks like that does solve the serialization issue.
+> > Sorry, I missed that because I'm not actually all that familiar with
+> > the kernfs 'of' code.
 > >
-> > Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-> > Signed-off-by: Guo Ren <guoren@kernel.org>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
->
-> Unfortunately, this one does not look correct to me:
->
-> > @@ -116,7 +116,7 @@
-> >  #define F_GETSIG       11      /* for sockets. */
-> >  #endif
+> > So the only issue is the trigger lifetime one, and if a single trigger
+> > is sufficient and returning -EBUSY for trying to replace an existing
+> > one is good, then I think that's the proper fix.
 > >
-> > -#ifndef CONFIG_64BIT
-> > +#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT)
-> >  #ifndef F_GETLK64
-> >  #define F_GETLK64      12      /*  using 'struct flock64' */
-> >  #define F_SETLK64      13
+> > I'm very busy with the merge window (and some upcoming travel and
+> > family events), so I'm hoping somebody will write and test such a
+> > patch. Please?
 >
-> The problem here is that include/uapi/ headers cannot contain checks for
-> CONFIG_* symbols because those may have different meanings in user space
-> compared to kernel.
->
-> This is a preexisting problem in the header, but I think the change
-> makes it worse.
->
-> With the current behavior, user space will always see the definitions,
-> unless it happens to have its own definition for CONFIG_64BIT already.
-> On 64-bit parisc, this has the effect of defining the macros to the
-> same values as F_SETOWN/F_SETSIG/F_GETSIG, which is potentially
-> harmful. On MIPS, it uses values that are different from the 32-bit numbers
-> but are otherwise unused. Everywhere else, we get the definition from
-> the 32-bit architecture in user space, which will do nothing in the kernel.
->
-> The correct check for a uapi header would be to test for
-> __BITS_PER_LONG==32. We should probably do that here, but
-> this won't help you move the definitions, and it is a user-visible change
-> as the incorrect definition will no longer be visible. [Adding Jeff and Bruce
-> (the flock mainainers) to Cc for additional feedback on this]
->
-> For your series, I would suggest just moving the macro definitions to
-> include/linux/compat.h along with the 'struct compat_flock64'
-> definition, and leaving the duplicate one in the uapi header unchanged
-> until we have decided on a solution.
-Okay.
+> Yes, definitely. I'm on it. Will try posting it later today or
+> tomorrow morning if testing reveals something unexpected.
 
+My first attempt to fix this issue is posted at:
+https://lore.kernel.org/all/20220111025138.1071848-1-surenb@google.com/
+Couple notes:
+- I don't think we need psi_trigger::refcount anymore, therefore it's removed.
+- synchronize_rcu is kept to ensure we do not free group->poll_task
+while psi_schedule_poll_work is using it.
+- Documentation needed minimal changes because it did not clearly
+specify how trigger overwrite should work. Now it does.
+
+I ran as many test cases as I could find/create. I'll work on adding
+some kselftests for psi triggers to test different usage patterns.
+Thanks,
+Suren.
+
+> Thanks!
 >
->         Arnd
-
-
-
--- 
-Best Regards
- Guo Ren
-
-ML: https://lore.kernel.org/linux-csky/
+> >
+> >                    Linus
