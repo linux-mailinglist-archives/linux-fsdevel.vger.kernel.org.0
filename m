@@ -2,263 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4C448A657
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 04:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9056D48A67C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 04:39:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346967AbiAKDbv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 22:31:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48212 "EHLO
+        id S235654AbiAKDjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 22:39:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346952AbiAKDbu (ORCPT
+        with ESMTP id S230073AbiAKDjF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 22:31:50 -0500
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0485EC061756
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:31:50 -0800 (PST)
-Received: by mail-il1-x12c.google.com with SMTP id d3so13270314ilr.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:31:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WjJwUUWZ/BCy26tG6i0H8TGwk6V985nqQvOicOWTZ4M=;
-        b=Kt/SXme2spmF1Q4vRsvS4pG+rCHvAFzpHY6/g+ah9uXn8dEf8B+SiQy74uNTNlfzu+
-         fI86pnBPd36ytsLrsYVt+JYuMg4mD2Cbjr+zRIvUoEFk42um/CGgPgZzAJVesTcyceDW
-         1k2nbgWOrjiVu2NGqqueDgsqMN4JvUiPUeB/ILX3mxmPSGxrFW0bZhC7osF093nslXUD
-         dQcVO1MjKr7QrGgG6xYLmU9DOzNGYxeQhnk4tBkDGumVMH/auGCVkA/4RWUFHbCLqwcy
-         LfvGZ2RjfROO0lVZu8VzzhE+dY1i+pIfTo3kWazj3HlFXLJjk0xUNbsrRXnZytjoJ/tY
-         C1gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WjJwUUWZ/BCy26tG6i0H8TGwk6V985nqQvOicOWTZ4M=;
-        b=IQs3DihU3I/dyU+yC9wQwov1Ji6Nzl6i9HqdVEf5YGXQ3CNtJIcl7af2Hau1j25dc9
-         Pl5SpGuZhuCYk1mK3RHlrM/3ZEuJUo9+jKVjwm1fxaUOcfO04cxHXf81gaXJXRAbmSRW
-         1KeWcD+nJc0TAy80ftjtA1CmQrxtl18lIYod7zf9aGZujhk5qsALMNWAiC4Y0s7REVAI
-         e9v0NOJ5qrZAvzR02jr4fUfL10Ni/ugmilX+GzsINI4HsiC9SKg5VvO0fhTUoZW9n1Dx
-         geLFmZVpz/Rzwtx6NbJh1zsz8UTnrtNEepGVqtcglZjDcBP3JscGMn4IWLN4zrTuJO7d
-         9mUg==
-X-Gm-Message-State: AOAM5311X1Z3E/3YIPZsFRSNHUsMd+7GUjck3Dto1XfGrK2pe4nuGSJ8
-        AzmWNcgykxhR4Fmc5XEil1pOShZigl/cx/4S30eZ
-X-Google-Smtp-Source: ABdhPJzAm1xFKAL/SDZlyq0Folm6Knaez8RQjNeQ6v1fXaBZB6Z4O8nf2/JHKKIjXLTJDZb9MJQc9tdaDTRaMZwQSZ4=
-X-Received: by 2002:a05:6e02:1e08:: with SMTP id g8mr1423993ila.270.1641871909341;
- Mon, 10 Jan 2022 19:31:49 -0800 (PST)
+        Mon, 10 Jan 2022 22:39:05 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25ACC06173F;
+        Mon, 10 Jan 2022 19:39:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Ts/n3siA3nMVMadT3uCIkpSxRREOFD9Q0gbm2aG02OE=; b=nBsDDkttTOd7ZQsB5LQnQnAN2X
+        57ss9ztEQtVysHd8qzJrjnjJcYIe8VsLj2IdJ/xXOoNwId1dU/Y/gvjCzuGx2dHhhL5K4SacQ0hdr
+        LV0AzxmU8/bjo6g5dQtbjkz4f7nsNOW0HtNXa4XOmxTM4Ooql8XcoQ5cO9/cl4HCV1hLXNrFRrzhM
+        UT71eRmc3bFnyIIc0G3CaWdFGxb1LBzqoiPbLMdj/ICCNB95ukDTwRp0IBlhApd6bgV848wsOwhh6
+        RSG6ifM9zdXSTp+sux/WGIq48EkT+myoLjN2W3uWkNe9lAj9Yxp7ozGAjDyLWNTiBTVk0QlrARvfD
+        hKO3Wj9Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n77zx-002wLj-H6; Tue, 11 Jan 2022 03:39:01 +0000
+Date:   Tue, 11 Jan 2022 03:39:01 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     cruise k <cruise4k@gmail.com>, Dmitry Vyukov <dvyukov@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sunhao.th@gmail.com, syzkaller@googlegroups.com
+Subject: Re: INFO: task hung in path_openat
+Message-ID: <Ydz71Ux9fCVB2bGB@casper.infradead.org>
+References: <CAKcFiNCg-hp7g-yBZFBB4D8yJ7uXyLvsZ_1P8804YgqLhWUt8w@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210830141737.181-1-xieyongji@bytedance.com> <20220110075546-mutt-send-email-mst@kernel.org>
- <CACycT3v1aEViw7vV4x5qeGVPrSrO-BTDvQshEX35rx_X0Au2vw@mail.gmail.com>
- <20220110100911-mutt-send-email-mst@kernel.org> <CACycT3v6jo3-8ATWUzf659vV94a2oRrm-zQtGNDZd6OQr-MENA@mail.gmail.com>
- <20220110103938-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20220110103938-mutt-send-email-mst@kernel.org>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 11 Jan 2022 11:31:37 +0800
-Message-ID: <CACycT3sbJC1Jn7NeWk_ccQ_2_YgKybjugfxmKpfgCP3Ayoju4w@mail.gmail.com>
-Subject: Re: [PATCH v12 00/13] Introduce VDUSE - vDPA Device in Userspace
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        John Garry <john.garry@huawei.com>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Netdev <netdev@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKcFiNCg-hp7g-yBZFBB4D8yJ7uXyLvsZ_1P8804YgqLhWUt8w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 10, 2022 at 11:44 PM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> On Mon, Jan 10, 2022 at 11:24:40PM +0800, Yongji Xie wrote:
-> > On Mon, Jan 10, 2022 at 11:10 PM Michael S. Tsirkin <mst@redhat.com> wr=
-ote:
-> > >
-> > > On Mon, Jan 10, 2022 at 09:54:08PM +0800, Yongji Xie wrote:
-> > > > On Mon, Jan 10, 2022 at 8:57 PM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
-> > > > >
-> > > > > On Mon, Aug 30, 2021 at 10:17:24PM +0800, Xie Yongji wrote:
-> > > > > > This series introduces a framework that makes it possible to im=
-plement
-> > > > > > software-emulated vDPA devices in userspace. And to make the de=
-vice
-> > > > > > emulation more secure, the emulated vDPA device's control path =
-is handled
-> > > > > > in the kernel and only the data path is implemented in the user=
-space.
-> > > > > >
-> > > > > > Since the emuldated vDPA device's control path is handled in th=
-e kernel,
-> > > > > > a message mechnism is introduced to make userspace be aware of =
-the data
-> > > > > > path related changes. Userspace can use read()/write() to recei=
-ve/reply
-> > > > > > the control messages.
-> > > > > >
-> > > > > > In the data path, the core is mapping dma buffer into VDUSE dae=
-mon's
-> > > > > > address space, which can be implemented in different ways depen=
-ding on
-> > > > > > the vdpa bus to which the vDPA device is attached.
-> > > > > >
-> > > > > > In virtio-vdpa case, we implements a MMU-based software IOTLB w=
-ith
-> > > > > > bounce-buffering mechanism to achieve that. And in vhost-vdpa c=
-ase, the dma
-> > > > > > buffer is reside in a userspace memory region which can be shar=
-ed to the
-> > > > > > VDUSE userspace processs via transferring the shmfd.
-> > > > > >
-> > > > > > The details and our user case is shown below:
-> > > > > >
-> > > > > > ------------------------    -------------------------   -------=
----------------------------------------
-> > > > > > |            Container |    |              QEMU(VM) |   |      =
-                         VDUSE daemon |
-> > > > > > |       ---------      |    |  -------------------  |   | -----=
--------------------- ---------------- |
-> > > > > > |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDP=
-A device emulation | | block driver | |
-> > > > > > ------------+-----------     -----------+------------   -------=
-------+----------------------+---------
-> > > > > >             |                           |                      =
-      |                      |
-> > > > > >             |                           |                      =
-      |                      |
-> > > > > > ------------+---------------------------+----------------------=
-------+----------------------+---------
-> > > > > > |    | block device |           |  vhost device |            | =
-vduse driver |          | TCP/IP |    |
-> > > > > > |    -------+--------           --------+--------            --=
------+--------          -----+----    |
-> > > > > > |           |                           |                      =
-     |                       |        |
-> > > > > > | ----------+----------       ----------+-----------         --=
------+-------                |        |
-> > > > > > | | virtio-blk driver |       |  vhost-vdpa driver |         | =
-vdpa device |                |        |
-> > > > > > | ----------+----------       ----------+-----------         --=
------+-------                |        |
-> > > > > > |           |      virtio bus           |                      =
-     |                       |        |
-> > > > > > |   --------+----+-----------           |                      =
-     |                       |        |
-> > > > > > |                |                      |                      =
-     |                       |        |
-> > > > > > |      ----------+----------            |                      =
-     |                       |        |
-> > > > > > |      | virtio-blk device |            |                      =
-     |                       |        |
-> > > > > > |      ----------+----------            |                      =
-     |                       |        |
-> > > > > > |                |                      |                      =
-     |                       |        |
-> > > > > > |     -----------+-----------           |                      =
-     |                       |        |
-> > > > > > |     |  virtio-vdpa driver |           |                      =
-     |                       |        |
-> > > > > > |     -----------+-----------           |                      =
-     |                       |        |
-> > > > > > |                |                      |                      =
-     |    vdpa bus           |        |
-> > > > > > |     -----------+----------------------+----------------------=
------+------------           |        |
-> > > > > > |                                                              =
-                          ---+---     |
-> > > > > > ---------------------------------------------------------------=
---------------------------| NIC |------
-> > > > > >                                                                =
-                          ---+---
-> > > > > >                                                                =
-                             |
-> > > > > >                                                                =
-                    ---------+---------
-> > > > > >                                                                =
-                    | Remote Storages |
-> > > > > >                                                                =
-                    -------------------
-> > > > > >
-> > > > > > We make use of it to implement a block device connecting to
-> > > > > > our distributed storage, which can be used both in containers a=
-nd
-> > > > > > VMs. Thus, we can have an unified technology stack in this two =
-cases.
-> > > > > >
-> > > > > > To test it with null-blk:
-> > > > > >
-> > > > > >   $ qemu-storage-daemon \
-> > > > > >       --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,se=
-rver,nowait \
-> > > > > >       --monitor chardev=3Dcharmonitor \
-> > > > > >       --blockdev driver=3Dhost_device,cache.direct=3Don,aio=3Dn=
-ative,filename=3D/dev/nullb0,node-name=3Ddisk0 \
-> > > > > >       --export type=3Dvduse-blk,id=3Dtest,node-name=3Ddisk0,wri=
-table=3Don,name=3Dvduse-null,num-queues=3D16,queue-size=3D128
-> > > > > >
-> > > > > > The qemu-storage-daemon can be found at https://github.com/byte=
-dance/qemu/tree/vduse
-> > > > >
-> > > > > It's been half a year - any plans to upstream this?
-> > > >
-> > > > Yeah, this is on my to-do list this month.
-> > > >
-> > > > Sorry for taking so long... I've been working on another project
-> > > > enabling userspace RDMA with VDUSE for the past few months. So I
-> > > > didn't have much time for this. Anyway, I will submit the first
-> > > > version as soon as possible.
-> > > >
-> > > > Thanks,
-> > > > Yongji
-> > >
-> > > Oh fun. You mean like virtio-rdma? Or RDMA as a backend for regular
-> > > virtio?
-> > >
-> >
-> > Yes, like virtio-rdma. Then we can develop something like userspace
-> > rxe=E3=80=81siw or custom protocol with VDUSE.
-> >
-> > Thanks,
-> > Yongji
->
-> Would be interesting to see the spec for that.
+Dmitry,
 
-Will send it ASAP.
+Please stop syzbot from playing with the SCHED_FIFO setting.
+We're being inundated with these useless bug reports.
 
-> The issues with RDMA revolved around the fact that current
-> apps tend to either use non-standard propocols for connection
-> establishment or use UD where there's IIRC no standard
-> at all. So QP numbers are hard to virtualize.
-> Similarly many use LIDs directly with the same effect.
-> GUIDs might be virtualizeable but no one went to the effort.
->
-
-Actually we aimed at emulating a soft RDMA with normal NIC (not use
-RDMA capability) rather than virtualizing a physical RDMA NIC into
-several vRDMA devices. If so, I think we won't have those issues,
-right?
-
-> To say nothing about the interaction with memory overcommit.
->
-
-I don't get you here. Could you give me more details?
-
-Thanks,
-Yongji
+On Tue, Jan 11, 2022 at 10:15:26AM +0800, cruise k wrote:
+> Hi,
+> 
+> Syzkaller found the following issue:
+> 
+> HEAD commit: 75acfdb Linux 5.16-rc8
+> git tree: upstream
+> console output: https://pastebin.com/raw/7TSe1kGF
+> kernel config: https://pastebin.com/raw/XsnKfdRt
+> 
+> And hope the report log can help you.
+> 
+> INFO: task systemd-udevd:27429 blocked for more than 146 seconds.
+>       Not tainted 5.16.0-rc8+ #10
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:systemd-udevd   state:D stack:26528 pid:27429 ppid:  3127 flags:0x00000000
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:4972 [inline]
+>  __schedule+0xcd9/0x2550 kernel/sched/core.c:6253
+>  schedule+0xd2/0x260 kernel/sched/core.c:6326
+>  rwsem_down_write_slowpath+0x664/0x1190 kernel/locking/rwsem.c:1151
+>  __down_write_common kernel/locking/rwsem.c:1268 [inline]
+>  __down_write_common kernel/locking/rwsem.c:1265 [inline]
+>  __down_write kernel/locking/rwsem.c:1277 [inline]
+>  down_write+0x135/0x150 kernel/locking/rwsem.c:1524
+>  inode_lock include/linux/fs.h:783 [inline]
+>  open_last_lookups fs/namei.c:3347 [inline]
+>  path_openat+0xa66/0x26c0 fs/namei.c:3556
+>  do_filp_open+0x1c1/0x290 fs/namei.c:3586
+>  do_sys_openat2+0x61b/0x9a0 fs/open.c:1212
+>  do_sys_open+0xc3/0x140 fs/open.c:1228
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x7fde8feb06f0
+> RSP: 002b:00007ffdc8b61368 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fde8feb06f0
+> RDX: 0000000000000180 RSI: 00000000000800c2 RDI: 00005624b8ca9880
+> RBP: 000000000003a2f8 R08: 000000000000fefe R09: 00007fde8ff03740
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00005624b8ca9895
+> R13: 8421084210842109 R14: 00000000000800c2 R15: 00007fde8ff3e540
+>  </TASK>
+> INFO: task systemd-udevd:27467 blocked for more than 148 seconds.
+>       Not tainted 5.16.0-rc8+ #10
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:systemd-udevd   state:D stack:27072 pid:27467 ppid:  3127 flags:0x00000000
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:4972 [inline]
+>  __schedule+0xcd9/0x2550 kernel/sched/core.c:6253
+>  schedule+0xd2/0x260 kernel/sched/core.c:6326
+>  rwsem_down_write_slowpath+0x664/0x1190 kernel/locking/rwsem.c:1151
+>  __down_write_common kernel/locking/rwsem.c:1268 [inline]
+>  __down_write_common kernel/locking/rwsem.c:1265 [inline]
+>  __down_write kernel/locking/rwsem.c:1277 [inline]
+>  down_write+0x135/0x150 kernel/locking/rwsem.c:1524
+>  inode_lock include/linux/fs.h:783 [inline]
+>  open_last_lookups fs/namei.c:3347 [inline]
+>  path_openat+0xa66/0x26c0 fs/namei.c:3556
+>  do_filp_open+0x1c1/0x290 fs/namei.c:3586
+>  do_sys_openat2+0x61b/0x9a0 fs/open.c:1212
+>  do_sys_open+0xc3/0x140 fs/open.c:1228
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x7fde8feb06f0
+> RSP: 002b:00007ffdc8b60d78 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fde8feb06f0
+> RDX: 0000000000000180 RSI: 00000000000800c2 RDI: 00005624b8c989c0
+> RBP: 000000000003a2f8 R08: 000000000000fcfe R09: 00007fde8ff03740
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00005624b8c989d6
+> R13: 8421084210842109 R14: 00000000000800c2 R15: 00007fde8ff3e540
+>  </TASK>
+> INFO: task systemd-udevd:27515 blocked for more than 150 seconds.
+>       Not tainted 5.16.0-rc8+ #10
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:systemd-udevd   state:D stack:27584 pid:27515 ppid:  3127 flags:0x00004000
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:4972 [inline]
+>  __schedule+0xcd9/0x2550 kernel/sched/core.c:6253
+>  schedule+0xd2/0x260 kernel/sched/core.c:6326
+>  rwsem_down_write_slowpath+0x664/0x1190 kernel/locking/rwsem.c:1151
+>  __down_write_common kernel/locking/rwsem.c:1268 [inline]
+>  __down_write_common kernel/locking/rwsem.c:1265 [inline]
+>  __down_write kernel/locking/rwsem.c:1277 [inline]
+>  down_write+0x135/0x150 kernel/locking/rwsem.c:1524
+>  inode_lock include/linux/fs.h:783 [inline]
+>  open_last_lookups fs/namei.c:3347 [inline]
+>  path_openat+0xa66/0x26c0 fs/namei.c:3556
+>  do_filp_open+0x1c1/0x290 fs/namei.c:3586
+>  do_sys_openat2+0x61b/0x9a0 fs/open.c:1212
+>  do_sys_open+0xc3/0x140 fs/open.c:1228
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x7fde8feb06f0
+> RSP: 002b:00007ffdc8b60d78 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fde8feb06f0
+> RDX: 0000000000000180 RSI: 00000000000800c2 RDI: 00005624b8cad110
+> RBP: 000000000003a2f8 R08: 000000000000fefe R09: 00007fde8ff03740
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00005624b8cad126
+> R13: 8421084210842109 R14: 00000000000800c2 R15: 00007fde8ff3e540
+>  </TASK>
+> INFO: task systemd-udevd:27530 blocked for more than 153 seconds.
+>       Not tainted 5.16.0-rc8+ #10
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:systemd-udevd   state:D stack:26048 pid:27530 ppid:  3127 flags:0x00000000
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:4972 [inline]
+>  __schedule+0xcd9/0x2550 kernel/sched/core.c:6253
+>  schedule+0xd2/0x260 kernel/sched/core.c:6326
+>  rwsem_down_write_slowpath+0x664/0x1190 kernel/locking/rwsem.c:1151
+>  __down_write_common kernel/locking/rwsem.c:1268 [inline]
+>  __down_write_common kernel/locking/rwsem.c:1265 [inline]
+>  __down_write kernel/locking/rwsem.c:1277 [inline]
+>  down_write+0x135/0x150 kernel/locking/rwsem.c:1524
+>  inode_lock include/linux/fs.h:783 [inline]
+>  open_last_lookups fs/namei.c:3347 [inline]
+>  path_openat+0xa66/0x26c0 fs/namei.c:3556
+>  do_filp_open+0x1c1/0x290 fs/namei.c:3586
+>  do_sys_openat2+0x61b/0x9a0 fs/open.c:1212
+>  do_sys_open+0xc3/0x140 fs/open.c:1228
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x7fde8feb06f0
+> RSP: 002b:00007ffdc8b61368 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fde8feb06f0
+> RDX: 0000000000000180 RSI: 00000000000800c2 RDI: 00005624b8ca9880
+> RBP: 000000000003a2f8 R08: 000000000000fefe R09: 00007fde8ff03740
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00005624b8ca9896
+> R13: 8421084210842109 R14: 00000000000800c2 R15: 00007fde8ff3e540
+>  </TASK>
