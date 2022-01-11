@@ -2,39 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE48B48B69E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 20:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4667248B6A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 20:16:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350439AbiAKTQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jan 2022 14:16:15 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:36074 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346070AbiAKTQO (ORCPT
+        id S1346070AbiAKTQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jan 2022 14:16:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40084 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346195AbiAKTQP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jan 2022 14:16:14 -0500
+        Tue, 11 Jan 2022 14:16:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08FEC06173F;
+        Tue, 11 Jan 2022 11:16:14 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AB34961781;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 71D8861786;
+        Tue, 11 Jan 2022 19:16:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8C1C36AF3;
         Tue, 11 Jan 2022 19:16:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E47C36AE9;
-        Tue, 11 Jan 2022 19:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1641928573;
-        bh=6x0OJ1T2M4Aq5qaTrx3AT15x7MQ7bwyNPgvLZjT0jOs=;
+        bh=jalGUt9ZafDs2GuYKK8aDfW3xF3Fml9KLI7Z387tWcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AJt2ENw8vJfA+WRn0wc+MebIjHlSi61FfJ+FN5Wd6Tu0id8KHFmFpFEJFxMdtXeBw
-         H8nHyqV7xeVTbQ45Zb39SfcHBvEiTniWcQ/eNy4lsyb/iAKiXtUhFs/vDFfvawaPgk
-         S0xGcLnBH3BNaicvYj03EEoDA2A14rdx1YB988QNkkApfIR4o1ZCAx7MZgIXXRl3is
-         q9tUACwtdabv5Aao4jw71j1yD5dByEqkD7TM92sN/7TXSMx5vYBmHKADcuFxAkkI+x
-         H+irCEIA5w5pL5AjBjSSAjEFvgU6RUiYGj4HCplpr0e4hfsLWti5JBvvaetmJSnOhx
-         ev2EYL+ynE+WA==
+        b=mNjEvGmTIb319/vOej7Os7bs50I+26SK7d5YgouJsveduJtBKECykQ8OJZBR7330E
+         BWfvxlS8nfoGx5LZn2I42JkFED70I8C/XRiqsUks4h2eOzXjMlibgwjfdAI/enPu5Y
+         k7/kr/43f/inBvZCFCH2KncUajcU6kHGa+HpnVTekAVSIqjCavGRId+337JJAMRhww
+         gednPRS6qzWRo2PXa3wji3BMzLnYd0ECQ7HoW9PoZDgYRWDketFbgyoKbiOQD50sqA
+         81KbWJMQi/pzW02tZzMINrEW+x7Hm2Bttp2a9TMHXQ/vDOawxhVtc6eKrUCwOtUpCC
+         W+X/XdBc/n2mA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com
-Subject: [RFC PATCH v10 03/48] fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
-Date:   Tue, 11 Jan 2022 14:15:23 -0500
-Message-Id: <20220111191608.88762-4-jlayton@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com,
+        Eric Biggers <ebiggers@google.com>
+Subject: [RFC PATCH v10 04/48] fscrypt: add fscrypt_context_for_new_inode
+Date:   Tue, 11 Jan 2022 14:15:24 -0500
+Message-Id: <20220111191608.88762-5-jlayton@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220111191608.88762-1-jlayton@kernel.org>
 References: <20220111191608.88762-1-jlayton@kernel.org>
@@ -44,160 +48,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For ceph, we want to use our own scheme for handling filenames that are
-are longer than NAME_MAX after encryption and Base64 encoding. This
-allows us to have a consistent view of the encrypted filenames for
-clients that don't support fscrypt and clients that do but that don't
-have the key.
+Most filesystems just call fscrypt_set_context on new inodes, which
+usually causes a setxattr. That's a bit late for ceph, which can send
+along a full set of attributes with the create request.
 
-Currently, fs/crypto only supports encrypting filenames using
-fscrypt_setup_filename, but that also handles encoding nokey names. Ceph
-can't use that because it handles nokey names in a different way.
+Doing so allows it to avoid race windows that where the new inode could
+be seen by other clients without the crypto context attached. It also
+avoids the separate round trip to the server.
 
-Export fscrypt_fname_encrypt. Rename fscrypt_fname_encrypted_size to
-__fscrypt_fname_encrypted_size and add a new wrapper called
-fscrypt_fname_encrypted_size that takes an inode argument rather than a
-pointer to a fscrypt_policy union.
+Refactor the fscrypt code a bit to allow us to create a new crypto
+context, attach it to the inode, and write it to the buffer, but without
+calling set_context on it. ceph can later use this to marshal the
+context into the attributes we send along with the create request.
 
+Acked-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/crypto/fname.c           | 36 ++++++++++++++++++++++++++++++------
- fs/crypto/fscrypt_private.h |  9 +++------
- fs/crypto/hooks.c           |  6 +++---
- include/linux/fscrypt.h     |  4 ++++
- 4 files changed, 40 insertions(+), 15 deletions(-)
+ fs/crypto/policy.c      | 35 +++++++++++++++++++++++++++++------
+ include/linux/fscrypt.h |  1 +
+ 2 files changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 1e4233c95005..733ae43da6ec 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -79,7 +79,8 @@ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
- /**
-  * fscrypt_fname_encrypt() - encrypt a filename
-  * @inode: inode of the parent directory (for regular filenames)
-- *	   or of the symlink (for symlink targets)
-+ *	   or of the symlink (for symlink targets). Key must already be
-+ *	   set up.
-  * @iname: the filename to encrypt
-  * @out: (output) the encrypted filename
-  * @olen: size of the encrypted filename.  It must be at least @iname->len.
-@@ -130,6 +131,7 @@ int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(fscrypt_fname_encrypt);
- 
- /**
-  * fname_decrypt() - decrypt a filename
-@@ -257,9 +259,9 @@ int fscrypt_base64url_decode(const char *src, int srclen, u8 *dst)
- }
- EXPORT_SYMBOL_GPL(fscrypt_base64url_decode);
- 
--bool fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
--				  u32 orig_len, u32 max_len,
--				  u32 *encrypted_len_ret)
-+bool __fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
-+				    u32 orig_len, u32 max_len,
-+				    u32 *encrypted_len_ret)
- {
- 	int padding = 4 << (fscrypt_policy_flags(policy) &
- 			    FSCRYPT_POLICY_FLAGS_PAD_MASK);
-@@ -273,6 +275,29 @@ bool fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
- 	return true;
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index ed3d623724cd..ec861af96252 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -664,6 +664,32 @@ const union fscrypt_policy *fscrypt_policy_to_inherit(struct inode *dir)
+ 	return fscrypt_get_dummy_policy(dir->i_sb);
  }
  
 +/**
-+ * fscrypt_fname_encrypted_size() - calculate length of encrypted filename
-+ * @inode: 		parent inode of dentry name being encrypted. Key must
-+ * 			already be set up.
-+ * @orig_len:		length of the original filename
-+ * @max_len:		maximum length to return
-+ * @encrypted_len_ret:	where calculated length should be returned (on success)
++ * fscrypt_context_for_new_inode() - create an encryption context for a new inode
++ * @ctx: where context should be written
++ * @inode: inode from which to fetch policy and nonce
 + *
-+ * Filenames that are shorter than the maximum length may have their lengths
-+ * increased slightly by encryption, due to padding that is applied.
++ * Given an in-core "prepared" (via fscrypt_prepare_new_inode) inode,
++ * generate a new context and write it to ctx. ctx _must_ be at least
++ * FSCRYPT_SET_CONTEXT_MAX_SIZE bytes.
 + *
-+ * Return: false if the orig_len is greater than max_len. Otherwise, true and
-+ * 	   fill out encrypted_len_ret with the length (up to max_len).
++ * Return: size of the resulting context or a negative error code.
 + */
-+bool fscrypt_fname_encrypted_size(const struct inode *inode, u32 orig_len,
-+				  u32 max_len, u32 *encrypted_len_ret)
++int fscrypt_context_for_new_inode(void *ctx, struct inode *inode)
 +{
-+	return __fscrypt_fname_encrypted_size(&inode->i_crypt_info->ci_policy,
-+					      orig_len, max_len,
-+					      encrypted_len_ret);
++	struct fscrypt_info *ci = inode->i_crypt_info;
++
++	BUILD_BUG_ON(sizeof(union fscrypt_context) !=
++			FSCRYPT_SET_CONTEXT_MAX_SIZE);
++
++	/* fscrypt_prepare_new_inode() should have set up the key already. */
++	if (WARN_ON_ONCE(!ci))
++		return -ENOKEY;
++
++	return fscrypt_new_context(ctx, &ci->ci_policy, ci->ci_nonce);
 +}
-+EXPORT_SYMBOL_GPL(fscrypt_fname_encrypted_size);
++EXPORT_SYMBOL_GPL(fscrypt_context_for_new_inode);
 +
  /**
-  * fscrypt_fname_alloc_buffer() - allocate a buffer for presented filenames
-  * @max_encrypted_len: maximum length of encrypted filenames the buffer will be
-@@ -428,8 +453,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 		return ret;
+  * fscrypt_set_context() - Set the fscrypt context of a new inode
+  * @inode: a new inode
+@@ -680,12 +706,9 @@ int fscrypt_set_context(struct inode *inode, void *fs_data)
+ 	union fscrypt_context ctx;
+ 	int ctxsize;
  
- 	if (fscrypt_has_encryption_key(dir)) {
--		if (!fscrypt_fname_encrypted_size(&dir->i_crypt_info->ci_policy,
--						  iname->len, NAME_MAX,
-+		if (!fscrypt_fname_encrypted_size(dir, iname->len, NAME_MAX,
- 						  &fname->crypto_buf.len))
- 			return -ENAMETOOLONG;
- 		fname->crypto_buf.name = kmalloc(fname->crypto_buf.len,
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 5b0a9e6478b5..f3e6e566daff 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -297,14 +297,11 @@ void fscrypt_generate_iv(union fscrypt_iv *iv, u64 lblk_num,
- 			 const struct fscrypt_info *ci);
- 
- /* fname.c */
--int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
--			  u8 *out, unsigned int olen);
--bool fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
--				  u32 orig_len, u32 max_len,
--				  u32 *encrypted_len_ret);
-+bool __fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
-+				    u32 orig_len, u32 max_len,
-+				    u32 *encrypted_len_ret);
- 
- /* hkdf.c */
+-	/* fscrypt_prepare_new_inode() should have set up the key already. */
+-	if (WARN_ON_ONCE(!ci))
+-		return -ENOKEY;
 -
- struct fscrypt_hkdf {
- 	struct crypto_shash *hmac_tfm;
- };
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index af74599ae1cf..7c01025879b3 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -228,9 +228,9 @@ int fscrypt_prepare_symlink(struct inode *dir, const char *target,
- 	 * counting it (even though it is meaningless for ciphertext) is simpler
- 	 * for now since filesystems will assume it is there and subtract it.
- 	 */
--	if (!fscrypt_fname_encrypted_size(policy, len,
--					  max_len - sizeof(struct fscrypt_symlink_data),
--					  &disk_link->len))
-+	if (!__fscrypt_fname_encrypted_size(policy, len,
-+					    max_len - sizeof(struct fscrypt_symlink_data),
-+					    &disk_link->len))
- 		return -ENAMETOOLONG;
- 	disk_link->len += sizeof(struct fscrypt_symlink_data);
+-	BUILD_BUG_ON(sizeof(ctx) != FSCRYPT_SET_CONTEXT_MAX_SIZE);
+-	ctxsize = fscrypt_new_context(&ctx, &ci->ci_policy, ci->ci_nonce);
++	ctxsize = fscrypt_context_for_new_inode(&ctx, inode);
++	if (ctxsize < 0)
++		return ctxsize;
  
+ 	/*
+ 	 * This may be the first time the inode number is available, so do any
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 671181d196a8..c90e176b5843 100644
+index c90e176b5843..530433098f82 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
-@@ -308,8 +308,12 @@ void fscrypt_free_inode(struct inode *inode);
- int fscrypt_drop_inode(struct inode *inode);
+@@ -276,6 +276,7 @@ int fscrypt_ioctl_get_policy(struct file *filp, void __user *arg);
+ int fscrypt_ioctl_get_policy_ex(struct file *filp, void __user *arg);
+ int fscrypt_ioctl_get_nonce(struct file *filp, void __user *arg);
+ int fscrypt_has_permitted_context(struct inode *parent, struct inode *child);
++int fscrypt_context_for_new_inode(void *ctx, struct inode *inode);
+ int fscrypt_set_context(struct inode *inode, void *fs_data);
  
- /* fname.c */
-+int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
-+			  u8 *out, unsigned int olen);
- int fscrypt_base64url_encode(const u8 *src, int len, char *dst);
- int fscrypt_base64url_decode(const char *src, int len, u8 *dst);
-+bool fscrypt_fname_encrypted_size(const struct inode *inode, u32 orig_len,
-+				  u32 max_len, u32 *encrypted_len_ret);
- int fscrypt_setup_filename(struct inode *inode, const struct qstr *iname,
- 			   int lookup, struct fscrypt_name *fname);
- 
+ struct fscrypt_dummy_policy {
 -- 
 2.34.1
 
