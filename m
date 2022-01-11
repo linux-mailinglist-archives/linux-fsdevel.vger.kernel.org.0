@@ -2,192 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 994CA48A62C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 04:19:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4C448A657
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 04:32:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245262AbiAKDTp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 22:19:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44674 "EHLO
+        id S1346967AbiAKDbv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 22:31:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346862AbiAKDTm (ORCPT
+        with ESMTP id S1346952AbiAKDbu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 22:19:42 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC80FC06175D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:19:41 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id p187so1058885ybc.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:19:41 -0800 (PST)
+        Mon, 10 Jan 2022 22:31:50 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0485EC061756
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:31:50 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id d3so13270314ilr.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jan 2022 19:31:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5EBf9IiwrsGpNW9Obfjl+AtKxYOGgprHkSqzFWQENdI=;
-        b=dc1lbQBKRWe5Q0/AtI77wPv/JJIVAuu74aEoXrpslvIEHtREn97kHGjxA39TizH+Bg
-         6n5A8oeZbZURuegDPdJ9wlP4V44PWU3m5ZCSurSGAwHBepBocZkve4mqJWEEXCv57wLl
-         FrwlOeJVEsmwP6MoyeO/qRsAzsDoE7D90Zl7zAvmnB1Vt+sHNnaVB2jxznVenQW8ZokG
-         jOjJBJIKZ4UDK1R1ou4vqzWv5R0Z3LKw5ft6/dtrTPyckj2Ikj/5WbbyM82fEvktvfl2
-         D9QV/7rIcPs8XIqVOe6fr8Xn3RqMGBio/EqH8we82eVwPh4ddMkrpE13UUFsv7Qq2vzE
-         cVzw==
+         :cc:content-transfer-encoding;
+        bh=WjJwUUWZ/BCy26tG6i0H8TGwk6V985nqQvOicOWTZ4M=;
+        b=Kt/SXme2spmF1Q4vRsvS4pG+rCHvAFzpHY6/g+ah9uXn8dEf8B+SiQy74uNTNlfzu+
+         fI86pnBPd36ytsLrsYVt+JYuMg4mD2Cbjr+zRIvUoEFk42um/CGgPgZzAJVesTcyceDW
+         1k2nbgWOrjiVu2NGqqueDgsqMN4JvUiPUeB/ILX3mxmPSGxrFW0bZhC7osF093nslXUD
+         dQcVO1MjKr7QrGgG6xYLmU9DOzNGYxeQhnk4tBkDGumVMH/auGCVkA/4RWUFHbCLqwcy
+         LfvGZ2RjfROO0lVZu8VzzhE+dY1i+pIfTo3kWazj3HlFXLJjk0xUNbsrRXnZytjoJ/tY
+         C1gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5EBf9IiwrsGpNW9Obfjl+AtKxYOGgprHkSqzFWQENdI=;
-        b=cKJGxHzJiUqrPgW5AEqRmi1tAyXwYG72AxnEh3iJNZzhRlBgOKQ5D4Pxn+0Rh7f2JK
-         35vjY5iAOvXNexDZzrueYzlMxkvQOPCJG0j+tF493mbgyPQpqpALApTcU8VmC3swx7ph
-         HbD6o4hLJYPPfD6a1AzlgwbS5OrhcS/FYouw9c7IglyU2IVz5xDHmnaVt5FPhdYJs1Cb
-         Naou7/Fh/inhJL9TRdpdgjkBwPRUwK8gUrXjI2GJfdH4A9kZSj/0woURrxDT5RQM0DdW
-         1vqpwVTpor7B7snFkUBAlmbk78Sl2r21wAFvWrzeAb4eyaM25da88taSYNBnsJ8p8ukS
-         i4Sw==
-X-Gm-Message-State: AOAM533s0EgMuVwX9dhBFdSvvIMsKHi3XV8q0dMlsusVLKo8lIx0IK7u
-        Cr0pUZFMFZpD+rDGPndoiqdMtVsgRpKfEaNixqzxWA==
-X-Google-Smtp-Source: ABdhPJwVDZnN4qKaKZWU5xT65Jon7AIpUB45deglJ5jO2u724/5prxvNeb77GYV6EXBDZAeFqdTMs9sq4E9WfYe3S+k=
-X-Received: by 2002:a25:af4b:: with SMTP id c11mr3660515ybj.49.1641871180863;
- Mon, 10 Jan 2022 19:19:40 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WjJwUUWZ/BCy26tG6i0H8TGwk6V985nqQvOicOWTZ4M=;
+        b=IQs3DihU3I/dyU+yC9wQwov1Ji6Nzl6i9HqdVEf5YGXQ3CNtJIcl7af2Hau1j25dc9
+         Pl5SpGuZhuCYk1mK3RHlrM/3ZEuJUo9+jKVjwm1fxaUOcfO04cxHXf81gaXJXRAbmSRW
+         1KeWcD+nJc0TAy80ftjtA1CmQrxtl18lIYod7zf9aGZujhk5qsALMNWAiC4Y0s7REVAI
+         e9v0NOJ5qrZAvzR02jr4fUfL10Ni/ugmilX+GzsINI4HsiC9SKg5VvO0fhTUoZW9n1Dx
+         geLFmZVpz/Rzwtx6NbJh1zsz8UTnrtNEepGVqtcglZjDcBP3JscGMn4IWLN4zrTuJO7d
+         9mUg==
+X-Gm-Message-State: AOAM5311X1Z3E/3YIPZsFRSNHUsMd+7GUjck3Dto1XfGrK2pe4nuGSJ8
+        AzmWNcgykxhR4Fmc5XEil1pOShZigl/cx/4S30eZ
+X-Google-Smtp-Source: ABdhPJzAm1xFKAL/SDZlyq0Folm6Knaez8RQjNeQ6v1fXaBZB6Z4O8nf2/JHKKIjXLTJDZb9MJQc9tdaDTRaMZwQSZ4=
+X-Received: by 2002:a05:6e02:1e08:: with SMTP id g8mr1423993ila.270.1641871909341;
+ Mon, 10 Jan 2022 19:31:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20211220085649.8196-1-songmuchun@bytedance.com>
- <20211220085649.8196-2-songmuchun@bytedance.com> <YdeDym9IUghnagrK@carbon.dhcp.thefacebook.com>
- <CAMZfGtV2G=R9nTuSYGAeqv+RkJsCVVACc3h47OeWA7n3mWbqsA@mail.gmail.com> <Ydx+BWQp18hjdO32@carbon.dhcp.thefacebook.com>
-In-Reply-To: <Ydx+BWQp18hjdO32@carbon.dhcp.thefacebook.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 11 Jan 2022 11:19:04 +0800
-Message-ID: <CAMZfGtVDjtG2D3Ri4WROD5F1cSeA+V+t1W+TXmOQzJoJdPg+kQ@mail.gmail.com>
-Subject: Re: [PATCH v5 01/16] mm: list_lru: optimize memory consumption of
- arrays of per cgroup lists
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Yang Shi <shy828301@gmail.com>, Alex Shi <alexs@kernel.org>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Dave Chinner <david@fromorbit.com>,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        jaegeuk@kernel.org, chao@kernel.org,
-        Kari Argillander <kari.argillander@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-nfs@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        Fam Zheng <fam.zheng@bytedance.com>,
-        Muchun Song <smuchun@gmail.com>
+References: <20210830141737.181-1-xieyongji@bytedance.com> <20220110075546-mutt-send-email-mst@kernel.org>
+ <CACycT3v1aEViw7vV4x5qeGVPrSrO-BTDvQshEX35rx_X0Au2vw@mail.gmail.com>
+ <20220110100911-mutt-send-email-mst@kernel.org> <CACycT3v6jo3-8ATWUzf659vV94a2oRrm-zQtGNDZd6OQr-MENA@mail.gmail.com>
+ <20220110103938-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20220110103938-mutt-send-email-mst@kernel.org>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Tue, 11 Jan 2022 11:31:37 +0800
+Message-ID: <CACycT3sbJC1Jn7NeWk_ccQ_2_YgKybjugfxmKpfgCP3Ayoju4w@mail.gmail.com>
+Subject: Re: [PATCH v12 00/13] Introduce VDUSE - vDPA Device in Userspace
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Liu Xiaodong <xiaodong.liu@intel.com>,
+        Joe Perches <joe@perches.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>,
+        John Garry <john.garry@huawei.com>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Netdev <netdev@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 2:42 AM Roman Gushchin <guro@fb.com> wrote:
+On Mon, Jan 10, 2022 at 11:44 PM Michael S. Tsirkin <mst@redhat.com> wrote:
 >
-> On Sun, Jan 09, 2022 at 12:49:56PM +0800, Muchun Song wrote:
-> > On Fri, Jan 7, 2022 at 8:05 AM Roman Gushchin <guro@fb.com> wrote:
+> On Mon, Jan 10, 2022 at 11:24:40PM +0800, Yongji Xie wrote:
+> > On Mon, Jan 10, 2022 at 11:10 PM Michael S. Tsirkin <mst@redhat.com> wr=
+ote:
 > > >
-> > > On Mon, Dec 20, 2021 at 04:56:34PM +0800, Muchun Song wrote:
-> > > > The list_lru uses an array (list_lru_memcg->lru) to store pointers
-> > > > which point to the list_lru_one. And the array is per memcg per node.
-> > > > Therefore, the size of the arrays will be 10K * number_of_node * 8 (
-> > > > a pointer size on 64 bits system) when we run 10k containers in the
-> > > > system. The memory consumption of the arrays becomes significant. The
-> > > > more numa node, the more memory it consumes.
+> > > On Mon, Jan 10, 2022 at 09:54:08PM +0800, Yongji Xie wrote:
+> > > > On Mon, Jan 10, 2022 at 8:57 PM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+> > > > >
+> > > > > On Mon, Aug 30, 2021 at 10:17:24PM +0800, Xie Yongji wrote:
+> > > > > > This series introduces a framework that makes it possible to im=
+plement
+> > > > > > software-emulated vDPA devices in userspace. And to make the de=
+vice
+> > > > > > emulation more secure, the emulated vDPA device's control path =
+is handled
+> > > > > > in the kernel and only the data path is implemented in the user=
+space.
+> > > > > >
+> > > > > > Since the emuldated vDPA device's control path is handled in th=
+e kernel,
+> > > > > > a message mechnism is introduced to make userspace be aware of =
+the data
+> > > > > > path related changes. Userspace can use read()/write() to recei=
+ve/reply
+> > > > > > the control messages.
+> > > > > >
+> > > > > > In the data path, the core is mapping dma buffer into VDUSE dae=
+mon's
+> > > > > > address space, which can be implemented in different ways depen=
+ding on
+> > > > > > the vdpa bus to which the vDPA device is attached.
+> > > > > >
+> > > > > > In virtio-vdpa case, we implements a MMU-based software IOTLB w=
+ith
+> > > > > > bounce-buffering mechanism to achieve that. And in vhost-vdpa c=
+ase, the dma
+> > > > > > buffer is reside in a userspace memory region which can be shar=
+ed to the
+> > > > > > VDUSE userspace processs via transferring the shmfd.
+> > > > > >
+> > > > > > The details and our user case is shown below:
+> > > > > >
+> > > > > > ------------------------    -------------------------   -------=
+---------------------------------------
+> > > > > > |            Container |    |              QEMU(VM) |   |      =
+                         VDUSE daemon |
+> > > > > > |       ---------      |    |  -------------------  |   | -----=
+-------------------- ---------------- |
+> > > > > > |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDP=
+A device emulation | | block driver | |
+> > > > > > ------------+-----------     -----------+------------   -------=
+------+----------------------+---------
+> > > > > >             |                           |                      =
+      |                      |
+> > > > > >             |                           |                      =
+      |                      |
+> > > > > > ------------+---------------------------+----------------------=
+------+----------------------+---------
+> > > > > > |    | block device |           |  vhost device |            | =
+vduse driver |          | TCP/IP |    |
+> > > > > > |    -------+--------           --------+--------            --=
+-----+--------          -----+----    |
+> > > > > > |           |                           |                      =
+     |                       |        |
+> > > > > > | ----------+----------       ----------+-----------         --=
+-----+-------                |        |
+> > > > > > | | virtio-blk driver |       |  vhost-vdpa driver |         | =
+vdpa device |                |        |
+> > > > > > | ----------+----------       ----------+-----------         --=
+-----+-------                |        |
+> > > > > > |           |      virtio bus           |                      =
+     |                       |        |
+> > > > > > |   --------+----+-----------           |                      =
+     |                       |        |
+> > > > > > |                |                      |                      =
+     |                       |        |
+> > > > > > |      ----------+----------            |                      =
+     |                       |        |
+> > > > > > |      | virtio-blk device |            |                      =
+     |                       |        |
+> > > > > > |      ----------+----------            |                      =
+     |                       |        |
+> > > > > > |                |                      |                      =
+     |                       |        |
+> > > > > > |     -----------+-----------           |                      =
+     |                       |        |
+> > > > > > |     |  virtio-vdpa driver |           |                      =
+     |                       |        |
+> > > > > > |     -----------+-----------           |                      =
+     |                       |        |
+> > > > > > |                |                      |                      =
+     |    vdpa bus           |        |
+> > > > > > |     -----------+----------------------+----------------------=
+-----+------------           |        |
+> > > > > > |                                                              =
+                          ---+---     |
+> > > > > > ---------------------------------------------------------------=
+--------------------------| NIC |------
+> > > > > >                                                                =
+                          ---+---
+> > > > > >                                                                =
+                             |
+> > > > > >                                                                =
+                    ---------+---------
+> > > > > >                                                                =
+                    | Remote Storages |
+> > > > > >                                                                =
+                    -------------------
+> > > > > >
+> > > > > > We make use of it to implement a block device connecting to
+> > > > > > our distributed storage, which can be used both in containers a=
+nd
+> > > > > > VMs. Thus, we can have an unified technology stack in this two =
+cases.
+> > > > > >
+> > > > > > To test it with null-blk:
+> > > > > >
+> > > > > >   $ qemu-storage-daemon \
+> > > > > >       --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,se=
+rver,nowait \
+> > > > > >       --monitor chardev=3Dcharmonitor \
+> > > > > >       --blockdev driver=3Dhost_device,cache.direct=3Don,aio=3Dn=
+ative,filename=3D/dev/nullb0,node-name=3Ddisk0 \
+> > > > > >       --export type=3Dvduse-blk,id=3Dtest,node-name=3Ddisk0,wri=
+table=3Don,name=3Dvduse-null,num-queues=3D16,queue-size=3D128
+> > > > > >
+> > > > > > The qemu-storage-daemon can be found at https://github.com/byte=
+dance/qemu/tree/vduse
+> > > > >
+> > > > > It's been half a year - any plans to upstream this?
 > > > >
-> > > > I have done a simple test, which creates 10K memcg and mount point
-> > > > each in a two-node system. The memory consumption of the list_lru
-> > > > will be 24464MB. After converting the array from per memcg per node
-> > > > to per memcg, the memory consumption is going to be 21957MB. It is
-> > > > reduces by 2.5GB. In our AMD servers with 8 numa nodes in those
-> > > > sysuem, the memory consumption could be more significant. The savings
-> > > > come from the list_lru_one heads, that it also simplifies the
-> > > > alloc/dealloc path.
+> > > > Yeah, this is on my to-do list this month.
 > > > >
-> > > > The new scheme looks like the following.
+> > > > Sorry for taking so long... I've been working on another project
+> > > > enabling userspace RDMA with VDUSE for the past few months. So I
+> > > > didn't have much time for this. Anyway, I will submit the first
+> > > > version as soon as possible.
 > > > >
-> > > >   +----------+   mlrus   +----------------+   mlru   +----------------------+
-> > > >   | list_lru +---------->| list_lru_memcg +--------->|  list_lru_per_memcg  |
-> > > >   +----------+           +----------------+          +----------------------+
-> > > >                                                      |  list_lru_per_memcg  |
-> > > >                                                      +----------------------+
-> > > >                                                      |          ...         |
-> > > >                           +--------------+   node    +----------------------+
-> > > >                           | list_lru_one |<----------+  list_lru_per_memcg  |
-> > > >                           +--------------+           +----------------------+
-> > > >                           | list_lru_one |
-> > > >                           +--------------+
-> > > >                           |      ...     |
-> > > >                           +--------------+
-> > > >                           | list_lru_one |
-> > > >                           +--------------+
-> > > >
-> > > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > > > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> > > > Thanks,
+> > > > Yongji
 > > >
-> > > As much as I like the code changes (there is indeed a significant simplification!),
-> > > I don't like the commit message and title, because I wasn't able to understand
-> > > what the patch is doing and some parts look simply questionable. Overall it
-> > > sounds like you reduce the number of list_lru_one structures, which is not true.
+> > > Oh fun. You mean like virtio-rdma? Or RDMA as a backend for regular
+> > > virtio?
 > > >
-> > > How about something like this?
-> > >
-> > > --
-> > > mm: list_lru: transpose the array of per-node per-memcg lru lists
-> > >
-> > > The current scheme of maintaining per-node per-memcg lru lists looks like:
-> > >   struct list_lru {
-> > >     struct list_lru_node *node;           (for each node)
-> > >       struct list_lru_memcg *memcg_lrus;
-> > >         struct list_lru_one *lru[];       (for each memcg)
-> > >   }
-> > >
-> > > By effectively transposing the two-dimension array of list_lru_one's structures
-> > > (per-node per-memcg => per-memcg per-node) it's possible to save some memory
-> > > and simplify alloc/dealloc paths. The new scheme looks like:
-> > >   struct list_lru {
-> > >     struct list_lru_memcg *mlrus;
-> > >       struct list_lru_per_memcg *mlru[];  (for each memcg)
-> > >         struct list_lru_one node[0];      (for each node)
-> > >   }
-> > >
-> > > Memory savings are coming from having fewer list_lru_memcg structures, which
-> > > contain an extra struct rcu_head to handle the destruction process.
 > >
-> > My bad English. Actually, the saving is coming from not only 'struct rcu_head'
-> > but also some pointer arrays used to store the pointer to 'struct list_lru_one'.
-> > The array is per node and its size is 8 (a pointer) * num_memcgs.
->
-> Nice! Please, add this to the commit log.
-
-Will do.
-
->
-> > So the total
-> > size of the arrays is  8 * num_nodes * memcg_nr_cache_ids. After this patch,
-> > the size becomes 8 * memcg_nr_cache_ids. So the saving is
+> > Yes, like virtio-rdma. Then we can develop something like userspace
+> > rxe=E3=80=81siw or custom protocol with VDUSE.
 > >
-> >    8 * (num_nodes - 1) * memcg_nr_cache_ids.
-> >
-> > > --
-> > >
-> > > But what worries me is that memory savings numbers you posted don't do up.
-> > > In theory we can save
-> > > 16 (size of struct rcu_head) * 10000 (number of cgroups) * 2 (number of numa nodes) = 320k
-> > > per slab cache. Did you have a ton of mount points? Otherwise I don't understand
-> > > where these 2.5Gb are coming from.
-> >
-> > memcg_nr_cache_ids is 12286 when creating 10k memcgs. So the saving
-> > of arrays of one list_lru is 8 * 1 (number of numa nodes - 1) * 12286 = 96k.
-> > There will be 2 * 10k list_lru when mounting 10k points. So the total
-> > saving is 96k * 2 * 10k = 1920 M.
+> > Thanks,
+> > Yongji
 >
-> So, there are 10k cgroups _and_ 10k mountpoints. Please, make it obvious from
-> the commit log. Most users don't have that many mount points (and likely cgroups),
-> so they shouldn't expect Gb's in savings.
+> Would be interesting to see the spec for that.
 
-I'll add those infos into the commit log.
+Will send it ASAP.
 
+> The issues with RDMA revolved around the fact that current
+> apps tend to either use non-standard propocols for connection
+> establishment or use UD where there's IIRC no standard
+> at all. So QP numbers are hard to virtualize.
+> Similarly many use LIDs directly with the same effect.
+> GUIDs might be virtualizeable but no one went to the effort.
 >
-> Thanks!
->
-> PS I hope to review the rest of the patchset till the end of this week.
 
-Thanks Roman.
+Actually we aimed at emulating a soft RDMA with normal NIC (not use
+RDMA capability) rather than virtualizing a physical RDMA NIC into
+several vRDMA devices. If so, I think we won't have those issues,
+right?
+
+> To say nothing about the interaction with memory overcommit.
+>
+
+I don't get you here. Could you give me more details?
+
+Thanks,
+Yongji
