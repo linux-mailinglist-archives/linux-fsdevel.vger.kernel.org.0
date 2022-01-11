@@ -2,87 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF7B48A401
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 00:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27E6348A42E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 01:08:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345529AbiAJXw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jan 2022 18:52:56 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:60484 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242630AbiAJXw4 (ORCPT
+        id S1345822AbiAKAIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jan 2022 19:08:14 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:58226 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242685AbiAKAIM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jan 2022 18:52:56 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EF7CAB8182C;
-        Mon, 10 Jan 2022 23:52:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664DFC36AE9;
-        Mon, 10 Jan 2022 23:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641858773;
-        bh=4VvzZMtfRjogNATVuly7HCr4bU/KjXd//JPKVpmM4iI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PhOJdb/BbbetmhvRZ8YfkUuHc91RnIu3ITcVX1WlCaW9qc9hrsvuAco5XA6y86sXV
-         OwcvK9SdD4r+guOkuSSE4TIAPF4/qrfkoN/dmJmGbdY0/mAPD3UuvOZn4s7/3k5xmc
-         1CilNEeSwYRsioZWBfo6V0VGA45oaVFjCVI1uNxZKuWQRvYS8LRW/wCfKcjVwfDJly
-         9pszTO4GCse8ddhehZeYy5XRA51kSzfcIU08rSVU/7BPax44dYRKnnivW8UzlY2pPt
-         udGBYB1i/bOPwS+QI0lYfV2DLI0PkVpNwl/Q4p4KicAzLUXe9gUDbTgDLgQmsYzSLK
-         lcSYw2/CboAXA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fuse: move FUSE_SUPER_MAGIC definition to magic.h
-Date:   Mon, 10 Jan 2022 18:52:52 -0500
-Message-Id: <20220110235252.138931-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 10 Jan 2022 19:08:12 -0500
+Received: from dread.disaster.area (pa49-181-243-119.pa.nsw.optusnet.com.au [49.181.243.119])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CF03E62C003;
+        Tue, 11 Jan 2022 11:08:10 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1n74hs-00DnUR-7j; Tue, 11 Jan 2022 11:08:08 +1100
+Date:   Tue, 11 Jan 2022 11:08:08 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     "bfoster@redhat.com" <bfoster@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "trondmy@kernel.org" <trondmy@kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>
+Subject: Re: [PATCH] iomap: Address soft lockup in iomap_finish_ioend()
+Message-ID: <20220111000808.GD945095@dread.disaster.area>
+References: <20220101035516.GE945095@dread.disaster.area>
+ <fb964769132eb01ed4e8b67d6972d50ee3387e24.camel@hammerspace.com>
+ <20220103220310.GG945095@dread.disaster.area>
+ <9f51fa6169f4c67d54dd8563b52c540c94c7703a.camel@hammerspace.com>
+ <20220104012215.GH945095@dread.disaster.area>
+ <0996c40657b5873dda5119344bf74556491e27b9.camel@hammerspace.com>
+ <c9d9b7850c6086b123b4add4de7b1992cb62f6ad.camel@hammerspace.com>
+ <20220105224829.GO945095@dread.disaster.area>
+ <28e975e8235a41c529bccb2bc0e73b4bb2d1e45e.camel@hammerspace.com>
+ <20220110233746.GB945095@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220110233746.GB945095@dread.disaster.area>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=61dcca6b
+        a=BEa52nrBdFykVEm6RU8P4g==:117 a=BEa52nrBdFykVEm6RU8P4g==:17
+        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
+        a=tzrAO7XPkmZgBS5PYtwA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-...to help userland apps that need to identify FUSE mounts.
+On Tue, Jan 11, 2022 at 10:37:46AM +1100, Dave Chinner wrote:
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index c8c15c3c3147..82515d1ad4e0 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -136,7 +136,20 @@ xfs_end_ioend(
+>  	memalloc_nofs_restore(nofs_flag);
+>  }
+>  
+> -/* Finish all pending io completions. */
+> +/*
+> + * Finish all pending IO completions that require transactional modifications.
+> + *
+> + * We try to merge physical and logically contiguous ioends before completion to
+> + * minimise the number of transactions we need to perform during IO completion.
+> + * Both unwritten extent conversion and COW remapping need to iterate and modify
+> + * one physical extent at a time, so we gain nothing by merging physically
+> + * discontiguous extents here.
+> + *
+> + * The ioend chain length that we can be processing here is largely unbound in
+> + * length and we may have to perform significant amounts of work on each ioend
+> + * to complete it. Hence we have to be careful about holding the CPU for too
+> + * long in this loop.
+> + */
+>  void
+>  xfs_end_io(
+>  	struct work_struct	*work)
+> @@ -147,6 +160,7 @@ xfs_end_io(
+>  	struct list_head	tmp;
+>  	unsigned long		flags;
+>  
+> +	msleep(5000);
+>  	spin_lock_irqsave(&ip->i_ioend_lock, flags);
+>  	list_replace_init(&ip->i_ioend_list, &tmp);
+>  	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/fuse/inode.c            | 3 +--
- include/uapi/linux/magic.h | 1 +
- 2 files changed, 2 insertions(+), 2 deletions(-)
+You might want to comment that 5s completion delay out before you
+run the patch, Trond...
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 8b89e3ba7df3..672793e163a5 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -23,6 +23,7 @@
- #include <linux/exportfs.h>
- #include <linux/posix_acl.h>
- #include <linux/pid_namespace.h>
-+#include <uapi/linux/magic.h>
- 
- MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
- MODULE_DESCRIPTION("Filesystem in Userspace");
-@@ -50,8 +51,6 @@ MODULE_PARM_DESC(max_user_congthresh,
-  "Global limit for the maximum congestion threshold an "
-  "unprivileged user can set");
- 
--#define FUSE_SUPER_MAGIC 0x65735546
--
- #define FUSE_DEFAULT_BLKSIZE 512
- 
- /** Maximum number of outstanding background requests */
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index 53a3c20394cf..a3034558b018 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -36,6 +36,7 @@
- #define EFIVARFS_MAGIC		0xde5e81e4
- #define HOSTFS_SUPER_MAGIC	0x00c0ffee
- #define OVERLAYFS_SUPER_MAGIC	0x794c7630
-+#define FUSE_SUPER_MAGIC	0x65735546
- 
- #define MINIX_SUPER_MAGIC	0x137F		/* minix v1 fs, 14 char names */
- #define MINIX_SUPER_MAGIC2	0x138F		/* minix v1 fs, 30 char names */
+Cheers,
+
+Dave.
 -- 
-2.34.1
-
+Dave Chinner
+david@fromorbit.com
