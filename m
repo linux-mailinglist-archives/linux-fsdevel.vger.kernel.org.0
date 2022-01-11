@@ -2,153 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6177748B730
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 20:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47D8B48B74F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jan 2022 20:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350727AbiAKTSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jan 2022 14:18:40 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:58916 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350434AbiAKTRs (ORCPT
+        id S235496AbiAKT0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jan 2022 14:26:34 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:42882 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229677AbiAKT0e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jan 2022 14:17:48 -0500
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20BHRjnJ014692;
-        Tue, 11 Jan 2022 11:17:34 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=hZQiIJUm16CqibqNVksTqdV5uktE9Nw2soHeyOqscYQ=;
- b=KzXgSvzNe9y9tDpB9uWr1lJwTFNXPkfADbn/pq4RjvYgQRjPiQ67plwUYT+BEUWPUS7c
- eZpn7dhnhr87fYRgEKc/IgOuVVQ5pa9XA+EYlnBdDAsq4+ukFaK/4P7lAFqLnx7gpy76
- Is+PaS3wFZ9wa0yaEp7nR5HDSF6weY4KOZA= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3dgtffg2p3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 11 Jan 2022 11:17:34 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 11 Jan 2022 11:17:32 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gqR7+tdk6eUC/ft60N/eclc+I83dt4lpEjUW8/Tr9kZXNZFdzW/qj0EihFKTcit3n3Um/F9r0ztRS4HQWNmEdYy02ggquqHwZuDAT01Vl+toqX9aSIuPbNXYhBV0VBR8bNAdqTP8Ki7EKMU8ZDJkeV/eRls+m87Zcx+YDcqO+o59BQ7BmhincNX4AozV9l1L8B/i5o0T0gjpByDAtXpGRYcfWaMmQ2f8siBGx3n+RSwFQe9QsNCuWNE6a4AZ9HnRYuCc4MDlCjvRsxjaqlS7K59wi+GHHeUDwvoMJRmUb97B8ZNBXaCGwmrLSx2DXc9vHKuFJKcvo4wE6aSqBP5CXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hZQiIJUm16CqibqNVksTqdV5uktE9Nw2soHeyOqscYQ=;
- b=mWgF0pfqPNSX3EiaLuimByGKAEt0gNM7wlLxZrLmeUtLwDy8XszEqzuLuDooNS+FeMJafjxOcVbqlp5LNWjmqYUmPdl3mlunLVHDL7gAvX8QStx+WIBYk8oPBTG8xcC8CiXg7AK9sCi3hGArxXKcQmlHQcTmn8c6//zlpDqnXbqNLGQkWQXPTDMgeA4alkdhPWjXFh8PcKDqMqk7jcXsH6DD/P2xupoz4w3pnSuZuJbIOgQ96y+vnX1ONq79f6wbMJq05YLqFHDZraJ4tF6mTl6P9T2tiST5ZsbA1SUQTrUB+47shqcRBCWg4GLCATXrObnv4cJAcr1bk2pVWUsKRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by SJ0PR15MB4758.namprd15.prod.outlook.com (2603:10b6:a03:37b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.9; Tue, 11 Jan
- 2022 19:17:31 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::c4e9:672d:1e51:7913]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::c4e9:672d:1e51:7913%3]) with mapi id 15.20.4867.012; Tue, 11 Jan 2022
- 19:17:31 +0000
-Date:   Tue, 11 Jan 2022 11:17:27 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-CC:     <willy@infradead.org>, <akpm@linux-foundation.org>,
-        <hannes@cmpxchg.org>, <mhocko@kernel.org>,
-        <vdavydov.dev@gmail.com>, <shakeelb@google.com>,
-        <shy828301@gmail.com>, <alexs@kernel.org>,
-        <richard.weiyang@gmail.com>, <david@fromorbit.com>,
-        <trond.myklebust@hammerspace.com>, <anna.schumaker@netapp.com>,
-        <jaegeuk@kernel.org>, <chao@kernel.org>,
-        <kari.argillander@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-nfs@vger.kernel.org>, <zhengqi.arch@bytedance.com>,
-        <duanxiongchun@bytedance.com>, <fam.zheng@bytedance.com>,
-        <smuchun@gmail.com>
-Subject: Re: [PATCH v5 09/16] mm: memcontrol: move memcg_online_kmem() to
- mem_cgroup_css_online()
-Message-ID: <Yd3Xx/ZX0CY68bEv@carbon.dhcp.thefacebook.com>
-References: <20211220085649.8196-1-songmuchun@bytedance.com>
- <20211220085649.8196-10-songmuchun@bytedance.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20211220085649.8196-10-songmuchun@bytedance.com>
-X-ClientProxiedBy: MW4PR03CA0249.namprd03.prod.outlook.com
- (2603:10b6:303:b4::14) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
+        Tue, 11 Jan 2022 14:26:34 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CE42B61784;
+        Tue, 11 Jan 2022 19:26:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C19C36AE3;
+        Tue, 11 Jan 2022 19:26:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641929193;
+        bh=Uiqq2GOscSkTVHC2A5gyz9KyUQQGw4zbvgmNCOoqtLQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Nmu0n+VIUn/MUxxGXOodIzIAjPrpWhrjVn4xrBib5IFEHyfWfDVrEfCxDGhZmxx+F
+         blq7RoYkyV3Rz0XSedwB+71hS9tbpCAFXMgmCF5HPB+ChaHiY/jyiU52qfAaPhJZtg
+         U3dMoNCsEGwEAf2YvDhq/hZynK82ddkZGd2dtMbwqkCRcojZOEmMCwva3Jao2JAKag
+         YhqDwmDW+N8fdlq6983QLlhSJjmFJ6YVHxlp6IykGxf+bAcTulpkQixWgSQVBEmfPO
+         Gn9NY5Wr6Sf67RO6NQ74UukPI1IRottehIUgFPGRBVvIIzP9gUZ27Q+wp+1HWKWeyg
+         RIJkAAJrDd6IQ==
+Message-ID: <3805468de9a6a97ce55d5ce56b4debe2df8ec99f.camel@kernel.org>
+Subject: Re: [RFC PATCH v10 00/48] ceph+fscrypt: full support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com,
+        xiubli <xiubli@redhat.com>, Luis Henriques <lhenriques@suse.com>
+Date:   Tue, 11 Jan 2022 14:26:31 -0500
+In-Reply-To: <20220111191608.88762-1-jlayton@kernel.org>
+References: <20220111191608.88762-1-jlayton@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d794c050-54f7-42e3-4659-08d9d53703f1
-X-MS-TrafficTypeDiagnostic: SJ0PR15MB4758:EE_
-X-Microsoft-Antispam-PRVS: <SJ0PR15MB475842E4894106947638C585BE519@SJ0PR15MB4758.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5PenNlAd+7RyDttUJ9YEyWz7AxPNkOYV3xxfpRuMtR8R2rAPaJ6cIid1Q7pHNlGHCII9XDyuDmPeG/S8y88cHsyF8kP2+jMNkkqhefRYI/sVSWQEKUeqKxajGzFvV/L6lppS43zXn7Xb8A1sMZrmxR8BZAiMoi1vEVnapDzRA508jU4nd5SdnfJ3QRmGVh4pm9jNU025UeDp7vW1KARnqUVn6SOfElB/jJ5Pmr2pxbgy+SFg32V8Nbal4Zcf/UIBoQUyEfDco62/MBlqRPhapcT6KE85v8tw9xwKXtZxAszCBu6WE4xE2hRJMaTdfM6xnnANyvv0KlMaF7SpytRvbkRo7eRUbowLXMl6k5EK6mN04/DSsr2Zx0DyivHoMcaJ9/B9hZeUEE9LdTSAFNJlH95ZhM1vumoB37tlIE4h3BqPvQ5JixTUwDMHWLIEjc09ialV4EE/IJO2mkFkrcEmyug1kGZZ5CLo/CPqjhT50NNPAkvpjNzjVlE3gOcb5mdU6JL8uPBgjM1tW3rtUgoNIdzBHJ8FHQuKR+NEQ1F2jemA0LAcqaxFZNiPs9vkwblEzxENa36kyuHSXETuZgLCG/Dv1SSM2/J9gsKoKFExDzd/7uirz+JjOv7ZkIrZLf9rsMOnPX24VdFNBT2JF56f2Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(52116002)(508600001)(6506007)(6916009)(8936002)(66946007)(38100700002)(7416002)(6666004)(4744005)(83380400001)(2906002)(9686003)(316002)(6512007)(186003)(66556008)(5660300002)(8676002)(4326008)(86362001)(66476007)(6486002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gsWujptz58ELMLJC9z7hOBAZMgXtrXLI201wwyGtxHPJqC7zMzqVgPl/fGBN?=
- =?us-ascii?Q?Bd+oP1XochIkAzGSdiMkCNczFB89T3cKFQtKpl4qNHYrh0u1Ul+Z0SjxxyUB?=
- =?us-ascii?Q?QtqKoT/4gZ+AzjAMYXOmiLVgQLgL0Vhlrnhnei8zc3cKFTsH86X4+xxwz6JW?=
- =?us-ascii?Q?XxXT8NbB/nkd6/6OY7SQatAM79VYNGyC9iwRfETnBeYC0xHsXrXOkGglgqJO?=
- =?us-ascii?Q?Un1FbOzhcjYkWOYJCJhxvINlwIddtIofdDnUQxPXVRjxkozgOFZjFTM79VIb?=
- =?us-ascii?Q?VMrbhhNA29fWh3usCvP9TBUmhHpRgxGJh5EiXmRRrYKnlEfZheZwUBEUf3P3?=
- =?us-ascii?Q?DwPrLVCFqDOYdCHAJ7/cHvpSBoC2KFqkzlXhfsmdzOiT4bUCVPuk9CIwFTVo?=
- =?us-ascii?Q?w9g9XenIhwQEQVQzu6lD2K2ebpO+bGp95QyGuLSlKS1luwpTp6nMLLimyUzF?=
- =?us-ascii?Q?R4XEKNrq4YFWDtTMjvGydRVLHJfHpE7rxHdpRbuRVj9eFC9/nvJ1rkY9k7wH?=
- =?us-ascii?Q?aDXuzNg1UlC8giKVtvNboUQ/ToqEJZnWkKA8uXAN3/SeeNUad1GnXT4RykNP?=
- =?us-ascii?Q?iWDoKegLLPlFL+eCw/IXIspyFzSnCyRpPm31khuLdVeCFYF3LP6S6SiNcq2a?=
- =?us-ascii?Q?ZgvMD2K19giLxglVM2XlEu5gnb3vxMNqv0Sc/HPPQ7Ft5ALw2lhV8oU2Bwln?=
- =?us-ascii?Q?2hi9LlrLg3RltwX4rmrsnOOmkwMYawJiR58gWbJoL3fBLBEFEAI52cbZHbaW?=
- =?us-ascii?Q?klS3KlZL63o9pLGDliYq2N/gHNqyreTi0wEG0Pys/H0sbTVG10rduaXkR1hr?=
- =?us-ascii?Q?JKz957+nvDbweohap4ep1BE0R8jcg8ntKZIXAPUOy/YjI2+3pzsHZxgNLqgB?=
- =?us-ascii?Q?RBlhronOFa92fCbuyNwy9pjwVIm8MxJoYVlrADqohS8pkcGqMWpFNuC20/pr?=
- =?us-ascii?Q?2p7g5B5KW4HW/c8N4uKJig+oJkGnKBB/ekA9UlMjxjIWfTiY4F4OMIqdNue7?=
- =?us-ascii?Q?791N5ZtIfZ9xcKT/iQUiq4o12sc1s0ToBF9Z/xeJ5AtCVozQHjwGye3FQ/VP?=
- =?us-ascii?Q?BJUJmq1+he6ZM++HkwQKclShtI7JU6n+km0g5nDeT5xsuuZql0wjM7NoU49j?=
- =?us-ascii?Q?D4BgEXQve72X4P3Odkjd/yjE9qTatvfhEujfBsA0EgDKiSNJrwl9u2x/4bGL?=
- =?us-ascii?Q?OUtvEl10n6ZPvxcq56cOOiua69Wp6a7gso9XkAgxBK0f83BD5Tpb3g+w6/qg?=
- =?us-ascii?Q?IpqA04M8nnjDNVgRHSs+kkednjSJCTCTo52g16uFq7meQU7J0o5mjRDQ2om3?=
- =?us-ascii?Q?IfhYbzxS76U1uYE1Ad6KuefBsDcFD2jpoG3gRmSpiFmDi6ALWandnmVptjTQ?=
- =?us-ascii?Q?oLJkXNPPQg90Bha5wsinP0RHAkVyvdIekVyg6BoFXK8NcwPGHIOdK4hCDVOU?=
- =?us-ascii?Q?KKbjn8bSnrNz1hotwnb3/SFsvjLwOWqZeplqRcmu7p9VAtVPwoiISQxkWg4G?=
- =?us-ascii?Q?tU/Y/c7YC42c3bORkefir44P/zDSPBXYJUTDXc9ku3h8RLPNiAQhPmfej/M3?=
- =?us-ascii?Q?hDu7/qTDVx+p5j3jwEucxfNYy499FnjKW+y4NQ/O?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d794c050-54f7-42e3-4659-08d9d53703f1
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2022 19:17:31.8040
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iqAuhyvy4kgNv3nf+TluuOkYIS8PHDvhTeAcbq3Dmj+GLiRWO+UUacMcq9ZIAkEX
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB4758
-X-OriginatorOrg: fb.com
-X-Proofpoint-GUID: Q-S_8XBAe6d4fMyq8vlnx7YaQKlr3DY3
-X-Proofpoint-ORIG-GUID: Q-S_8XBAe6d4fMyq8vlnx7YaQKlr3DY3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-11_04,2022-01-11_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 bulkscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=660 impostorscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201110103
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 20, 2021 at 04:56:42PM +0800, Muchun Song wrote:
-> It will simplify the code if moving memcg_online_kmem() to
-> mem_cgroup_css_online() and do not need to set ->kmemcg_id
-> to -1 to indicate the memcg is offline. In the next patch,
-> ->kmemcg_id will be used to sync list lru reparenting which
-> requires not to change ->kmemcg_id.
+On Tue, 2022-01-11 at 14:15 -0500, Jeff Layton wrote:
+> This patchset represents a (mostly) complete rough draft of fscrypt
+> support for cephfs. The context, filename and symlink support is more or
+> less the same as the versions posted before, and comprise the first half
+> of the patches.
 > 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> The new bits here are the size handling changes and support for content
+> encryption, in buffered, direct and synchronous codepaths. Much of this
+> code is still very rough and needs a lot of cleanup work.
+> 
+> fscrypt support relies on some MDS changes that are being tracked here:
+> 
+>     https://github.com/ceph/ceph/pull/43588
+> 
+> In particular, this PR adds some new opaque fields in the inode that we
+> use to store fscrypt-specific information, like the context and the real
+> size of a file. That is slated to be merged for the upcoming Quincy
+> release (which is sometime this northern spring).
+> 
+> There are still some notable bugs:
+> 
+> 1/ we've identified a few more potential races in truncate handling
+> which will probably necessitate a protocol change, as well as changes to
+> the MDS and kclient patchsets. The good news is that we think we have
+> an approach that will resolve this.
+> 
+> 2/ the kclient doesn't handle reading sparse regions in OSD objects
+> properly yet. The client can end up writing to a non-zero offset in a
+> non-existent object. Then, if the client tries to read the written
+> region back later, it'll get back zeroes and give you garbage when you
+> try to decrypt them.
+> 
+> It turns out that the OSD already supports a SPARSE_READ operation, so
+> I'm working on implementing that in the kclient to make it not try to
+> decrypt the sparse regions.
+> 
+> Still, I was able to run xfstests on this set yesterday. Bug #2 above
+> prevented all of the tests from passing, but it didn't oops! I call that
+> progress! Given that, I figured this is a good time to post what I have
+> so far.
+> 
+> Note that the buffered I/O changes in this set are not suitable for
+> merge and will likely end up being discarded. We need to plumb the
+> encryption in at the netfs layer, so that we can store encrypted data
+> in fscache.
+> 
+> The non-buffered codepaths will likely also need substantial changes
+> before merging. It may be simpler to just move that into the netfs layer
+> too as cifs will need something similar anyway.
+> 
+> My goal is to get most of this into v5.18, but v5.19 might be more
+> realistiv. Hopefully I'll have a non-RFC patchset to send in a few
+> weeks.
+> 
+> Special thanks to Xiubo who came through with the MDS patches. Also,
+> thanks to everyone (especially Eric Biggers) for all of the previous
+> reviews. It's much appreciated!
+> 
+> Jeff Layton (43):
+>   vfs: export new_inode_pseudo
+>   fscrypt: export fscrypt_base64url_encode and fscrypt_base64url_decode
+>   fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
+>   fscrypt: add fscrypt_context_for_new_inode
+>   ceph: preallocate inode for ops that may create one
+>   ceph: crypto context handling for ceph
+>   ceph: parse new fscrypt_auth and fscrypt_file fields in inode traces
+>   ceph: add fscrypt_* handling to caps.c
+>   ceph: add ability to set fscrypt_auth via setattr
+>   ceph: implement -o test_dummy_encryption mount option
+>   ceph: decode alternate_name in lease info
+>   ceph: add fscrypt ioctls
+>   ceph: make ceph_msdc_build_path use ref-walk
+>   ceph: add encrypted fname handling to ceph_mdsc_build_path
+>   ceph: send altname in MClientRequest
+>   ceph: encode encrypted name in dentry release
+>   ceph: properly set DCACHE_NOKEY_NAME flag in lookup
+>   ceph: make d_revalidate call fscrypt revalidator for encrypted
+>     dentries
+>   ceph: add helpers for converting names for userland presentation
+>   ceph: add fscrypt support to ceph_fill_trace
+>   ceph: add support to readdir for encrypted filenames
+>   ceph: create symlinks with encrypted and base64-encoded targets
+>   ceph: make ceph_get_name decrypt filenames
+>   ceph: add a new ceph.fscrypt.auth vxattr
+>   ceph: add some fscrypt guardrails
+>   libceph: add CEPH_OSD_OP_ASSERT_VER support
+>   ceph: size handling for encrypted inodes in cap updates
+>   ceph: fscrypt_file field handling in MClientRequest messages
+>   ceph: get file size from fscrypt_file when present in inode traces
+>   ceph: handle fscrypt fields in cap messages from MDS
+>   ceph: add infrastructure for file encryption and decryption
+>   libceph: allow ceph_osdc_new_request to accept a multi-op read
+>   ceph: disable fallocate for encrypted inodes
+>   ceph: disable copy offload on encrypted inodes
+>   ceph: don't use special DIO path for encrypted inodes
+>   ceph: set encryption context on open
+>   ceph: align data in pages in ceph_sync_write
+>   ceph: add read/modify/write to ceph_sync_write
+>   ceph: plumb in decryption during sync reads
+>   ceph: set i_blkbits to crypto block size for encrypted inodes
+>   ceph: add fscrypt decryption support to ceph_netfs_issue_op
+>   ceph: add encryption support to writepage
+>   ceph: fscrypt support for writepages
+> 
+> Luis Henriques (1):
+>   ceph: don't allow changing layout on encrypted files/directories
+> 
+> Xiubo Li (4):
+>   ceph: add __ceph_get_caps helper support
+>   ceph: add __ceph_sync_read helper support
+>   ceph: add object version support for sync read
+>   ceph: add truncate size handling support for fscrypt
+> 
+>  fs/ceph/Makefile                |   1 +
+>  fs/ceph/acl.c                   |   4 +-
+>  fs/ceph/addr.c                  | 128 +++++--
+>  fs/ceph/caps.c                  | 211 ++++++++++--
+>  fs/ceph/crypto.c                | 374 +++++++++++++++++++++
+>  fs/ceph/crypto.h                | 237 +++++++++++++
+>  fs/ceph/dir.c                   | 209 +++++++++---
+>  fs/ceph/export.c                |  44 ++-
+>  fs/ceph/file.c                  | 476 +++++++++++++++++++++-----
+>  fs/ceph/inode.c                 | 576 +++++++++++++++++++++++++++++---
+>  fs/ceph/ioctl.c                 |  87 +++++
+>  fs/ceph/mds_client.c            | 349 ++++++++++++++++---
+>  fs/ceph/mds_client.h            |  24 +-
+>  fs/ceph/super.c                 |  90 ++++-
+>  fs/ceph/super.h                 |  43 ++-
+>  fs/ceph/xattr.c                 |  29 ++
+>  fs/crypto/fname.c               |  44 ++-
+>  fs/crypto/fscrypt_private.h     |   9 +-
+>  fs/crypto/hooks.c               |   6 +-
+>  fs/crypto/policy.c              |  35 +-
+>  fs/inode.c                      |   1 +
+>  include/linux/ceph/ceph_fs.h    |  21 +-
+>  include/linux/ceph/osd_client.h |   6 +-
+>  include/linux/ceph/rados.h      |   4 +
+>  include/linux/fscrypt.h         |  10 +
+>  net/ceph/osd_client.c           |  32 +-
+>  26 files changed, 2700 insertions(+), 350 deletions(-)
+>  create mode 100644 fs/ceph/crypto.c
+>  create mode 100644 fs/ceph/crypto.h
+> 
 
-Nice!
+I should also mention that I've pushed this series into a new
+wip-fscrypt branch in the ceph-client tree for anyone that wants to
+check it out.
 
-Acked-by: Roman Gushchin <guro@fb.com>
+    https://github.com/ceph/ceph-client/commits/wip-fscrypt
+
+I can't recommend this for general use yet until the data corruption
+bugs are fixed, of course.
+-- 
+Jeff Layton <jlayton@kernel.org>
