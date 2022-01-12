@@ -2,185 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 584E248C613
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 15:29:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DBA848C61D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 15:35:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354118AbiALO2y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 09:28:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47298 "EHLO
+        id S239993AbiALOeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 09:34:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239993AbiALO2x (ORCPT
+        with ESMTP id S232903AbiALOef (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 09:28:53 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4936AC06173F;
-        Wed, 12 Jan 2022 06:28:53 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 12 Jan 2022 09:34:35 -0500
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050::465:102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB36C06173F;
+        Wed, 12 Jan 2022 06:34:35 -0800 (PST)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [80.241.60.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 09937B81F02;
-        Wed, 12 Jan 2022 14:28:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F02EC36AEA;
-        Wed, 12 Jan 2022 14:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641997730;
-        bh=8WIH+0qVHO2YBYQ9GPnvwj6icMEELix8gczxJYwvnIw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dzS4M2/DzXW/uYSD3qH8Mf3jszHIBeMg7D7/vFjqrT5ZWPax2SV9M31DbttMAtqvC
-         PTLiWacplV6qtagr2TBtoLqK+Joe1tf+AmUyqHuW3+l401kpQY85aez7caWtQ5Syue
-         BYA0T5DDOXr9pyNd7qm6kxDRamLGSJY2mBMB1rIbQFHsOCKNg0RWuIp+wRw1OwZDW1
-         Z7L525sW7HAvzM25rfl8376n5ysqcFTNefviVmYEfltshpNPn1ydTK7umxmXO5twgh
-         fWQq4ykVAnb2GyfppHl3e9QAvNRUqXXur2z4wrW2oRMey6OFDhVWHM+hQCXGfZPV4H
-         0+uZCUlOg9/Eg==
-Date:   Wed, 12 Jan 2022 15:28:46 +0100
-From:   Alexey Gladkov <legion@kernel.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, LTP List <ltp@lists.linux.it>,
-        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev,
-        containers@lists.linux.dev, Sven Schnelle <svens@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [next]: LTP: getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER)
- failed: ENOSPC (28)
-Message-ID: <20220112142846.3b3m2dyhdtppgwrw@example.org>
-References: <CA+G9fYsMHhXJCgO-ykR0oO1kVdusGnthgj6ifxEKaGPHZJ-ZCw@mail.gmail.com>
- <20220112131837.igsjkkttqskw4eix@wittgenstein>
- <CADYN=9Lvm-1etZS817eZK91NUyxkFBmsu=5-q_8Ei-1eV8DuZQ@mail.gmail.com>
- <20220112140254.cvngcwggeevwaazw@wittgenstein>
- <20220112141445.txgrdlycvfkiwsv5@example.org>
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4JYqnz5Cl6zQjXy;
+        Wed, 12 Jan 2022 15:34:31 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Date:   Thu, 13 Jan 2022 01:34:19 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        christian.brauner@ubuntu.com, ptikhomirov@virtuozzo.com,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH] fs/open: add new RESOLVE_EMPTY_PATH flag for openat2
+Message-ID: <20220112143419.rgxumbts2jjb4aig@senku>
+References: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5pumzmarjtdhuhq2"
 Content-Disposition: inline
-In-Reply-To: <20220112141445.txgrdlycvfkiwsv5@example.org>
+In-Reply-To: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 12, 2022 at 03:14:45PM +0100, Alexey Gladkov wrote:
-> On Wed, Jan 12, 2022 at 03:02:54PM +0100, Christian Brauner wrote:
-> > On Wed, Jan 12, 2022 at 02:22:42PM +0100, Anders Roxell wrote:
-> > > On Wed, 12 Jan 2022 at 14:18, Christian Brauner
-> > > <christian.brauner@ubuntu.com> wrote:
-> > > >
-> > > > On Wed, Jan 12, 2022 at 05:15:37PM +0530, Naresh Kamboju wrote:
-> > > > > While testing LTP syscalls with Linux next 20220110 (and till date 20220112)
-> > > > > on x86_64, i386, arm and arm64 the following tests failed.
-> > > > >
-> > > > > tst_test.c:1365: TINFO: Timeout per run is 0h 15m 00s
-> > > > > getxattr05.c:87: TPASS: Got same data when acquiring the value of
-> > > > > system.posix_acl_access twice
-> > > > > getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
-> > > > > tst_test.c:391: TBROK: Invalid child (13545) exit value 1
-> > > > >
-> > > > > fanotify17.c:176: TINFO: Test #1: Global groups limit in privileged user ns
-> > > > > fanotify17.c:155: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
-> > > > > tst_test.c:391: TBROK: Invalid child (14739) exit value 1
-> > > > >
-> > > > > sendto03.c:48: TBROK: unshare(268435456) failed: ENOSPC (28)
-> > > > >
-> > > > > setsockopt05.c:45: TBROK: unshare(268435456) failed: ENOSPC (28)
-> > > > >
-> > > > > strace output:
-> > > > > --------------
-> > > > > [pid   481] wait4(-1, 0x7fff52f5ae8c, 0, NULL) = -1 ECHILD (No child processes)
-> > > > > [pid   481] clone(child_stack=NULL,
-> > > > > flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD,
-> > > > > child_tidptr=0x7f3af0fa7a10) = 483
-> > > > > strace: Process 483 attached
-> > > > > [pid   481] wait4(-1,  <unfinished ...>
-> > > > > [pid   483] unshare(CLONE_NEWUSER)      = -1 ENOSPC (No space left on device)
-> > > >
-> > > > This looks like another regression in the ucount code. Reverting the
-> > > > following commit fixes it and makes the getxattr05 test work again:
-> > > >
-> > > > commit 0315b634f933b0f12cfa82660322f6186c1aa0f4
-> > > > Author: Alexey Gladkov <legion@kernel.org>
-> > > > Date:   Fri Dec 17 15:48:23 2021 +0100
-> > > >
-> > > >     ucounts: Split rlimit and ucount values and max values
-> > > >
-> > > >     Since the semantics of maximum rlimit values are different, it would be
-> > > >     better not to mix ucount and rlimit values. This will prevent the error
-> > > >     of using inc_count/dec_ucount for rlimit parameters.
-> > > >
-> > > >     This patch also renames the functions to emphasize the lack of
-> > > >     connection between rlimit and ucount.
-> > > >
-> > > >     v2:
-> > > >     - Fix the array-index-out-of-bounds that was found by the lkp project.
-> > > >
-> > > >     Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > >     Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > > >     Link: https://lkml.kernel.org/r/73ea569042babda5cee2092423da85027ceb471f.1639752364.git.legion@kernel.org
-> > > >     Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> > > >
-> > > > The issue only surfaces if /proc/sys/user/max_user_namespaces is
-> > > > actually written to.
-> > > 
-> > > I did a git bisect and that pointed me to this patch too.
-> > 
-> > Uhm, doesn't this want to be:
-> 
-> Yes. I miss it. I tried not to mix the logic, but I myself stepped on this
-> problem.
 
-It should be fixed in the four places:
+--5pumzmarjtdhuhq2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 22070f004e97..5c373a453f43 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -264,7 +264,7 @@ long inc_rlimit_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v)
- 	long ret = 0;
- 
- 	for (iter = ucounts; iter; iter = iter->ns->ucounts) {
--		long new = atomic_long_add_return(v, &iter->ucount[type]);
-+		long new = atomic_long_add_return(v, &iter->rlimit[type]);
- 		if (new < 0 || new > max)
- 			ret = LONG_MAX;
- 		else if (iter == ucounts)
-@@ -279,7 +279,7 @@ bool dec_rlimit_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v)
- 	struct ucounts *iter;
- 	long new = -1; /* Silence compiler warning */
- 	for (iter = ucounts; iter; iter = iter->ns->ucounts) {
--		long dec = atomic_long_sub_return(v, &iter->ucount[type]);
-+		long dec = atomic_long_sub_return(v, &iter->rlimit[type]);
- 		WARN_ON_ONCE(dec < 0);
- 		if (iter == ucounts)
- 			new = dec;
-@@ -292,7 +292,7 @@ static void do_dec_rlimit_put_ucounts(struct ucounts *ucounts,
- {
- 	struct ucounts *iter, *next;
- 	for (iter = ucounts; iter != last; iter = next) {
--		long dec = atomic_long_sub_return(1, &iter->ucount[type]);
-+		long dec = atomic_long_sub_return(1, &iter->rlimit[type]);
- 		WARN_ON_ONCE(dec < 0);
- 		next = iter->ns->ucounts;
- 		if (dec == 0)
-@@ -313,7 +313,7 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
- 	long dec, ret = 0;
- 
- 	for (iter = ucounts; iter; iter = iter->ns->ucounts) {
--		long new = atomic_long_add_return(1, &iter->ucount[type]);
-+		long new = atomic_long_add_return(1, &iter->rlimit[type]);
- 		if (new < 0 || new > max)
- 			goto unwind;
- 		if (iter == ucounts)
-@@ -330,7 +330,7 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
- 	}
- 	return ret;
- dec_unwind:
--	dec = atomic_long_sub_return(1, &iter->ucount[type]);
-+	dec = atomic_long_sub_return(1, &iter->rlimit[type]);
- 	WARN_ON_ONCE(dec < 0);
- unwind:
- 	do_dec_rlimit_put_ucounts(ucounts, iter, type);
+On 2022-01-12, Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com> wrote:
+> If you have an opened O_PATH file, currently there is no way to re-open
+> it with other flags with openat/openat2. As a workaround it is possible
+> to open it via /proc/self/fd/<X>, however
+> 1) You need to ensure that /proc exists
+> 2) You cannot use O_NOFOLLOW flag
 
--- 
-Rgrds, legion
+There is also another issue -- you can mount on top of magic-links so if
+you're a container runtime that has been tricked into creating bad
+mounts of top of /proc/ subdirectories there's no way of detecting that
+this has happened. (Though I think in the long-term we will need to
+make it possible for unprivileged users to create a procfs mountfd if
+they have hidepid=3D4,subset=3Dpids set -- there are loads of things
+containers need to touch in procfs which can be overmounted in malicious
+ways.)
 
+> Both problems may look insignificant, but they are sensitive for CRIU.
+> First of all, procfs may not be mounted in the namespace where we are
+> restoring the process. Secondly, if someone opens a file with O_NOFOLLOW
+> flag, it is exposed in /proc/pid/fdinfo/<X>. So CRIU must also open the
+> file with this flag during restore.
+>=20
+> This patch adds new constant RESOLVE_EMPTY_PATH for resolve field of
+> struct open_how and changes getname() call to getname_flags() to avoid
+> ENOENT for empty filenames.
+
+This is something I've wanted to implement for a while, but from memory
+we need to add some other protections in place before enabling this.
+
+The main one is disallowing re-opening of a path when it was originally
+opened with a different set of modes. [1] is the patch I originally
+wrote as part of the openat2(2) (but I dropped it since I wasn't sure
+whether it might break some systems in subtle ways -- though according
+to my testing there wasn't an issue on any of my machines).
+
+I'd can try to revive that patchset if you'd like. Being able to re-open
+paths without going through procfs is something I've wanted to finish up
+for a while, so thanks for sending this patch. :D
+
+[1]: https://lore.kernel.org/lkml/20190930183316.10190-2-cyphar@cyphar.com/
+
+> Signed-off-by: Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>
+> ---
+>=20
+> Why does even CRIU needs to reopen O_PATH files?
+> Long story short: to support restoring opened files that are overmounted
+> with single file bindmounts.
+> In-depth explanation: when restoring mount tree, before doing mount()
+> call, CRIU opens mountpoint with O_PATH and saves this fd for later use
+> for each mount. If we need to restore overmounted file, we look at the
+> mount which overmounts file mount and use its saved mountpoint fd in
+> openat(<saved_fd>, <relative_path>, flags).
+> If we need to open an overmounted mountpoint directory itself, we can use
+> openat(<saved_fd>, ".", flags). However, if we have a bindmount, its
+> mountpoint is a regular file. Therefore to open it we need to be able to
+> reopen O_PATH descriptor. As I mentioned above, procfs workaround is
+> possible but imposes several restrictions. Not to mention a hussle with
+> /proc.
+>=20
+> Important note: the algorithm above relies on Virtozzo CRIU "mount-v2"
+> engine, which is currently being prepared for mainstream CRIU.
+> This patch ensures that CRIU will support all kinds of overmounted files.
+>=20
+>  fs/open.c                    | 4 +++-
+>  include/linux/fcntl.h        | 2 +-
+>  include/uapi/linux/openat2.h | 2 ++
+>  3 files changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/open.c b/fs/open.c
+> index f732fb9..cfde988 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1131,6 +1131,8 @@ inline int build_open_flags(const struct open_how *=
+how, struct open_flags *op)
+>  			return -EAGAIN;
+>  		lookup_flags |=3D LOOKUP_CACHED;
+>  	}
+> +	if (how->resolve & RESOLVE_EMPTY_PATH)
+> +		lookup_flags |=3D LOOKUP_EMPTY;
+> =20
+>  	op->lookup_flags =3D lookup_flags;
+>  	return 0;
+> @@ -1203,7 +1205,7 @@ static long do_sys_openat2(int dfd, const char __us=
+er *filename,
+>  	if (fd)
+>  		return fd;
+> =20
+> -	tmp =3D getname(filename);
+> +	tmp =3D getname_flags(filename, op.lookup_flags, 0);
+>  	if (IS_ERR(tmp))
+>  		return PTR_ERR(tmp);
+> =20
+> diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+> index a332e79..eabc7a8 100644
+> --- a/include/linux/fcntl.h
+> +++ b/include/linux/fcntl.h
+> @@ -15,7 +15,7 @@
+>  /* List of all valid flags for the how->resolve argument: */
+>  #define VALID_RESOLVE_FLAGS \
+>  	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
+> -	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_CACHED)
+> +	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_CACHED | RESOLVE_EMPTY_PAT=
+H)
+> =20
+>  /* List of all open_how "versions". */
+>  #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+> diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+> index a5feb76..a42cf88 100644
+> --- a/include/uapi/linux/openat2.h
+> +++ b/include/uapi/linux/openat2.h
+> @@ -39,5 +39,7 @@ struct open_how {
+>  					completed through cached lookup. May
+>  					return -EAGAIN if that's not
+>  					possible. */
+> +#define RESOLVE_EMPTY_PATH	0x40 /* If pathname is an empty string, open
+> +					the file referred by dirfd */
+> =20
+>  #endif /* _UAPI_LINUX_OPENAT2_H */
+> --=20
+> 1.8.3.1
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--5pumzmarjtdhuhq2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCYd7m6AAKCRCdlLljIbnQ
+EijbAP9taRXH0Rx3FrDRUx7b/y2/91yAXet5lfqjgudLJs2y+QD+POd5BcVXjPm1
+cUAx8p6QLoA5J3XoCbw2xFwGsDRa4wY=
+=h9MR
+-----END PGP SIGNATURE-----
+
+--5pumzmarjtdhuhq2--
