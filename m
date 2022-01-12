@@ -2,83 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C29548BEB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 07:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0BA248BEDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 08:11:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237353AbiALGv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 01:51:56 -0500
-Received: from smtp25.cstnet.cn ([159.226.251.25]:35670 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235485AbiALGvz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 01:51:55 -0500
-Received: from localhost.localdomain (unknown [124.16.138.126])
-        by APP-05 (Coremail) with SMTP id zQCowADXtxR4et5hb+QQBg--.19910S2;
-        Wed, 12 Jan 2022 14:51:37 +0800 (CST)
-From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
-To:     ebiggers@kernel.org
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Subject: [PATCH v2] fs/eventfd.c: Check error number after calling ida_simple_get
-Date:   Wed, 12 Jan 2022 14:51:35 +0800
-Message-Id: <20220112065135.692325-1-jiasheng@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+        id S237480AbiALHLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 02:11:36 -0500
+Received: from condef-02.nifty.com ([202.248.20.67]:50852 "EHLO
+        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237258AbiALHLf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jan 2022 02:11:35 -0500
+X-Greylist: delayed 505 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Jan 2022 02:11:35 EST
+Received: from conssluserg-03.nifty.com ([10.126.8.82])by condef-02.nifty.com with ESMTP id 20C6vfAI019493
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 15:57:41 +0900
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 20C6vG0S003348;
+        Wed, 12 Jan 2022 15:57:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 20C6vG0S003348
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1641970637;
+        bh=i1PlQ/quVgHzU+uDRbIbEo3QNPjg7ooeaREp/ks6wOM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ICbm5xMSp2Rq1ZNEnqifbhpXLl/mBfaOCfaq8oby1oEnPzmGVnAMWazopuoTkAf6a
+         hJar+E/+U1YL0+6vL9VXa5B09w6yh/AFG/dcCB5Hn9jgyC71gpB9yc34l1i+BHDopC
+         bOHaNIZtKpMf229FSkIMd9A1yEEYUzmQ+PHVE/SJc8vs253VXDURmm7Rz07Z9LkDA0
+         EHbSToLgDBuwYe4Y7M2QJiJlbXVHgz77y2Aoe1SfOt9qC5eWwExVAp3hEAp0nEFB8w
+         J3yINjhDp6CEIdn1kde2TMxWmsbb6yh8PW+KCV4wWJzxPdqjVLakNYqEoQbPL6WGfj
+         Dnkf/SfrbFsDQ==
+X-Nifty-SrcIP: [209.85.216.46]
+Received: by mail-pj1-f46.google.com with SMTP id o3so3041388pjs.1;
+        Tue, 11 Jan 2022 22:57:16 -0800 (PST)
+X-Gm-Message-State: AOAM530XgSZw2Ul6QqwESjU9+sUqHtBxDGXy2wMIowMb7pgzOyhpIF+d
+        Jbk46IbfycTFgUFNrOEX1o2l+RQ8qgMDKiAFq4A=
+X-Google-Smtp-Source: ABdhPJxeLBb7B/GCmOS/c/vzomfd/+R2HLi234h6SPu7Vtzuz0ghOnqw0U5tHKWS3/3pgg8evXBZKbvEF6DeKNeM0C0=
+X-Received: by 2002:a17:90a:680a:: with SMTP id p10mr7196155pjj.144.1641970635971;
+ Tue, 11 Jan 2022 22:57:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADXtxR4et5hb+QQBg--.19910S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruFy7WF1kGF43XF45XF18Krg_yoWfZrXEyF
-        4kCwn5uay5tFna93srJrWYyry09w4rAw47JrZrKF17W3sxK34DXrWDZryYyrW8AF42gryY
-        k3sFyFWxu34a9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbcAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-        Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
-        W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_GF1l
-        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
-        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAK
-        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-        42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUnJPEDUUUU
-X-Originating-IP: [124.16.138.126]
-X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
+References: <20220112023416.215644-1-mcgrof@kernel.org> <3e721c69-afa9-6634-2e52-e9a9c2a89372@infradead.org>
+In-Reply-To: <3e721c69-afa9-6634-2e52-e9a9c2a89372@infradead.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 12 Jan 2022 15:56:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARiDFpphJrhk5q00d5sSPWAQ2mMLu8Z2YP0Xwk=3WGt3w@mail.gmail.com>
+Message-ID: <CAK7LNARiDFpphJrhk5q00d5sSPWAQ2mMLu8Z2YP0Xwk=3WGt3w@mail.gmail.com>
+Subject: Re: [PATCH] firmware_loader: simplfy builtin or module check
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Borislav Petkov <bp@suse.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As the possible failure of the allocation, the ida_simple_get() will
-return error number.
-And then ctx->id will be printed in eventfd_show_fdinfo().
-Therefore, it should be better to check it and return error if fails,
-like the other allocation.
+On Wed, Jan 12, 2022 at 3:37 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+>
+>
+> On 1/11/22 18:34, Luis Chamberlain wrote:
+> > The existing check is outdated and confuses developers. Use the
+> > already existing IS_ENABLED() defined on kconfig.h which makes
+> > the intention much clearer.
+> >
+> > Reported-by: Borislav Petkov <bp@alien8.de>
+> > Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> Thanks.
+>
+> > ---
+> >  include/linux/firmware.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+> > index 3b057dfc8284..fa3493dbe84a 100644
+> > --- a/include/linux/firmware.h
+> > +++ b/include/linux/firmware.h
+> > @@ -34,7 +34,7 @@ static inline bool firmware_request_builtin(struct firmware *fw,
+> >  }
+> >  #endif
+> >
+> > -#if defined(CONFIG_FW_LOADER) || (defined(CONFIG_FW_LOADER_MODULE) && defined(MODULE))
+>
+> The "defined(MODULE)" part wasn't needed here. :)
 
-Fixes: b556db17b0e7 ("eventfd: present id to userspace via fdinfo")
-Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
----
-Changelog
 
-v1 -> v2
 
-* Change 1. Correct the check condition.
----
- fs/eventfd.c | 4 ++++
- 1 file changed, 4 insertions(+)
+It _is_ needed.
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 3627dd7d25db..3e226f6cbe4f 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -424,6 +424,10 @@ static int do_eventfd(unsigned int count, int flags)
- 	ctx->count = count;
- 	ctx->flags = flags;
- 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-+	if (ctx->id < 0) {
-+		fd = ctx->id;
-+		goto err;
-+	}
- 
- 	flags &= EFD_SHARED_FCNTL_FLAGS;
- 	flags |= O_RDWR;
+This seems to be equivalent to IS_REACHABLE(CONFIG_FW_LOADER),
+not IS_ENABLE(CONFIG_FW_LOADER).
+
+
+
+>
+> > +#if IS_ENABLED(CONFIG_FW_LOADER)
+> >  int request_firmware(const struct firmware **fw, const char *name,
+> >                    struct device *device);
+> >  int firmware_request_nowarn(const struct firmware **fw, const char *name,
+>
+> --
+> ~Randy
+
+
+
 -- 
-2.25.1
-
+Best Regards
+Masahiro Yamada
