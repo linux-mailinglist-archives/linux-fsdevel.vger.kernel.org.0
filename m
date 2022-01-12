@@ -2,128 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 152FB48C0A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 10:03:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C22748C36F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 12:45:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238082AbiALJDt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 04:03:49 -0500
-Received: from relay.sw.ru ([185.231.240.75]:35188 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351902AbiALJDs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 04:03:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=virtuozzo.com; s=relay; h=Message-Id:Date:Subject:From:Content-Type:
-        MIME-Version; bh=LXvcwvu/pJrvH+K8D0GYcsss9hjGYIeQtVGsSlxqdyg=; b=wGzyYFRnLJJZ
-        mucOf3wrqT9EYp3thymNqbGrxkM7GLWq6g4wz/Xr/AjKYgp7P/LM4XFBfpL7gWL6dJ+L/9ecw/JSA
-        AXwQbd/AicomCnyNMMaX15iq7iAwys86WxDE/OCQXGH1t0jiiZok0JDz5XGJh1mOBPLXSVb9giFTE
-        jtawA=;
-Received: from [10.93.0.12] (helo=dptest2.perf.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.94.2)
-        (envelope-from <andrey.zhadchenko@virtuozzo.com>)
-        id 1n7ZXk-0060qk-Ql; Wed, 12 Jan 2022 12:03:44 +0300
-From:   Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     cyphar@cyphar.com, viro@zeniv.linux.org.uk,
-        christian.brauner@ubuntu.com, ptikhomirov@virtuozzo.com,
-        linux-api@vger.kernel.org, andrey.zhadchenko@virtuozzo.com
-Subject: [PATCH] fs/open: add new RESOLVE_EMPTY_PATH flag for openat2
-Date:   Wed, 12 Jan 2022 12:02:17 +0300
-Message-Id: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1352952AbiALLpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 06:45:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240331AbiALLpt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jan 2022 06:45:49 -0500
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14187C06173F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 03:45:49 -0800 (PST)
+Received: by mail-yb1-xb2c.google.com with SMTP id e198so5540635ybf.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 03:45:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=1oAWQHZqJjxGspd66xUUwdpCocjq4RF4bRYfPMa0RgM=;
+        b=LCxuNDTBSrsTxNHCIoEpEJhzykzI1PqU0Qu7+y1h/2eirkEaNcUWcRKGGAWaV79ru6
+         Xv6at+0+iUtpOEe63PUlXlbArXuMTPWdZ+/I9QGm1/Tn/3qseWRDveOL4FnagSPN1A/T
+         WQA5lRrrNPqlTtbO2930mHMbqr0IbKawgZZJX2ACEHAPmOPO0eKb5zSkXu2527bDe22H
+         qZSNnQTvKG1BZvNckxJgIPiclQ2QGrvZHaHYpAF4Yj1u61rLGVSA/EQd1E9Vbu/Wv0mM
+         76FeBD8ggDrgJZACy1k8ttE1LmolWjhAvrPauqbZAqe0sJtrtel+dc7OKUTio8KPUJJT
+         BrjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=1oAWQHZqJjxGspd66xUUwdpCocjq4RF4bRYfPMa0RgM=;
+        b=PzTPMcSsajBeWzUmPbEZEmFpA6ZHWHbqJOU6cE0nHYsFdq7tXk29fqIc5iTbmLHQHQ
+         PYJ8t0ifDwCWbWRNXY3DukSrnzaZmXXlREevzeBD6rTb52BuCF12gCw/ed0bBfwB5Vxq
+         V9DOZ0JinqdlfQ1fUpnrxKiMr2IqTOZj6XLw24eI9RF7pPDksJxdfKCugGMKsqICQTVA
+         4swLfLd/IgGAfNRinSSKPEAF7ap2P8SlnawyUHv44Y4Rxf3nBfZfpyN32CVVCy7nZtAo
+         9pHuLD213F+SkRKGlJRpJTe0KbQu/MN4ht8rOVbATwRCrDnCB7wTOsgHOZapD/bxjpLg
+         Rhlg==
+X-Gm-Message-State: AOAM533qpJa90iG0tZ7cAzF0LgVmD5G8d5Gxa7i6UJmBJ+so2OOqZehi
+        2+wqXlO2e71KGgQ/bwZKfkRaj8q1+GZ3yaOgHSQ8pQ==
+X-Google-Smtp-Source: ABdhPJy833HxrFP8l/AcVNmiqInufp1tn6sOo1ri3JhrVF4Lbfk3FqLKPmb8gT8eZ0+nFbb7F4rgAXM2QRTArxbTsF4=
+X-Received: by 2002:a5b:d09:: with SMTP id y9mr7287068ybp.146.1641987948106;
+ Wed, 12 Jan 2022 03:45:48 -0800 (PST)
+MIME-Version: 1.0
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 12 Jan 2022 17:15:37 +0530
+Message-ID: <CA+G9fYsMHhXJCgO-ykR0oO1kVdusGnthgj6ifxEKaGPHZJ-ZCw@mail.gmail.com>
+Subject: [next]: LTP: getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER) failed:
+ ENOSPC (28)
+To:     open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, LTP List <ltp@lists.linux.it>,
+        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev
+Cc:     Alexey Gladkov <legion@kernel.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If you have an opened O_PATH file, currently there is no way to re-open
-it with other flags with openat/openat2. As a workaround it is possible
-to open it via /proc/self/fd/<X>, however
-1) You need to ensure that /proc exists
-2) You cannot use O_NOFOLLOW flag
+While testing LTP syscalls with Linux next 20220110 (and till date 20220112)
+on x86_64, i386, arm and arm64 the following tests failed.
 
-Both problems may look insignificant, but they are sensitive for CRIU.
-First of all, procfs may not be mounted in the namespace where we are
-restoring the process. Secondly, if someone opens a file with O_NOFOLLOW
-flag, it is exposed in /proc/pid/fdinfo/<X>. So CRIU must also open the
-file with this flag during restore.
+tst_test.c:1365: TINFO: Timeout per run is 0h 15m 00s
+getxattr05.c:87: TPASS: Got same data when acquiring the value of
+system.posix_acl_access twice
+getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
+tst_test.c:391: TBROK: Invalid child (13545) exit value 1
 
-This patch adds new constant RESOLVE_EMPTY_PATH for resolve field of
-struct open_how and changes getname() call to getname_flags() to avoid
-ENOENT for empty filenames.
+fanotify17.c:176: TINFO: Test #1: Global groups limit in privileged user ns
+fanotify17.c:155: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
+tst_test.c:391: TBROK: Invalid child (14739) exit value 1
 
-Signed-off-by: Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>
----
+sendto03.c:48: TBROK: unshare(268435456) failed: ENOSPC (28)
 
-Why does even CRIU needs to reopen O_PATH files?
-Long story short: to support restoring opened files that are overmounted
-with single file bindmounts.
-In-depth explanation: when restoring mount tree, before doing mount()
-call, CRIU opens mountpoint with O_PATH and saves this fd for later use
-for each mount. If we need to restore overmounted file, we look at the
-mount which overmounts file mount and use its saved mountpoint fd in
-openat(<saved_fd>, <relative_path>, flags).
-If we need to open an overmounted mountpoint directory itself, we can use
-openat(<saved_fd>, ".", flags). However, if we have a bindmount, its
-mountpoint is a regular file. Therefore to open it we need to be able to
-reopen O_PATH descriptor. As I mentioned above, procfs workaround is
-possible but imposes several restrictions. Not to mention a hussle with
-/proc.
+setsockopt05.c:45: TBROK: unshare(268435456) failed: ENOSPC (28)
 
-Important note: the algorithm above relies on Virtozzo CRIU "mount-v2"
-engine, which is currently being prepared for mainstream CRIU.
-This patch ensures that CRIU will support all kinds of overmounted files.
+strace output:
+--------------
+[pid   481] wait4(-1, 0x7fff52f5ae8c, 0, NULL) = -1 ECHILD (No child processes)
+[pid   481] clone(child_stack=NULL,
+flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD,
+child_tidptr=0x7f3af0fa7a10) = 483
+strace: Process 483 attached
+[pid   481] wait4(-1,  <unfinished ...>
+[pid   483] unshare(CLONE_NEWUSER)      = -1 ENOSPC (No space left on device)
 
- fs/open.c                    | 4 +++-
- include/linux/fcntl.h        | 2 +-
- include/uapi/linux/openat2.h | 2 ++
- 3 files changed, 6 insertions(+), 2 deletions(-)
+metadata:
+  git branch: master
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git commit: 57c149e506d5bec1b845ad1a8a631063fcac1f6e
+  git describe: next-20220110
+  arch: x86
+  toolchain: gcc-11
 
-diff --git a/fs/open.c b/fs/open.c
-index f732fb9..cfde988 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1131,6 +1131,8 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
- 			return -EAGAIN;
- 		lookup_flags |= LOOKUP_CACHED;
- 	}
-+	if (how->resolve & RESOLVE_EMPTY_PATH)
-+		lookup_flags |= LOOKUP_EMPTY;
- 
- 	op->lookup_flags = lookup_flags;
- 	return 0;
-@@ -1203,7 +1205,7 @@ static long do_sys_openat2(int dfd, const char __user *filename,
- 	if (fd)
- 		return fd;
- 
--	tmp = getname(filename);
-+	tmp = getname_flags(filename, op.lookup_flags, 0);
- 	if (IS_ERR(tmp))
- 		return PTR_ERR(tmp);
- 
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index a332e79..eabc7a8 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -15,7 +15,7 @@
- /* List of all valid flags for the how->resolve argument: */
- #define VALID_RESOLVE_FLAGS \
- 	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
--	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_CACHED)
-+	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_CACHED | RESOLVE_EMPTY_PATH)
- 
- /* List of all open_how "versions". */
- #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
-diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
-index a5feb76..a42cf88 100644
---- a/include/uapi/linux/openat2.h
-+++ b/include/uapi/linux/openat2.h
-@@ -39,5 +39,7 @@ struct open_how {
- 					completed through cached lookup. May
- 					return -EAGAIN if that's not
- 					possible. */
-+#define RESOLVE_EMPTY_PATH	0x40 /* If pathname is an empty string, open
-+					the file referred by dirfd */
- 
- #endif /* _UAPI_LINUX_OPENAT2_H */
--- 
-1.8.3.1
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+GOOD: next-20220107
+ BAD:    next-20220110
+
+Test logs:
+https://lkft.validation.linaro.org/scheduler/job/4301888#L1474
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220110/testrun/7253656/suite/ltp-syscalls-tests/test/getxattr05/log
+
+compare test history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220112/testrun/7277164/suite/ltp-syscalls-tests/test/getxattr05/history/
+
+kernel-config:
+https://builds.tuxbuild.com/23V6AwGvHW7H3kr6WxZZwueajVS/config
+
+We are investigating this regression.
+
+Steps to reproduce:
+   # cd /opt/ltp
+   # ./runltp -s getxattr05
+
+--
+Linaro LKFT
+https://lkft.linaro.org
