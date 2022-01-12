@@ -2,232 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A78A48C8A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 17:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0953748C8FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 18:01:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355285AbiALQnD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 11:43:03 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:43080 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349822AbiALQnD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 11:43:03 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51]:49380)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1n7giC-008Sxe-NA; Wed, 12 Jan 2022 09:43:00 -0700
-Received: from ip68-110-24-146.om.om.cox.net ([68.110.24.146]:41266 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1n7giB-005CcX-Bl; Wed, 12 Jan 2022 09:43:00 -0700
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, LTP List <ltp@lists.linux.it>,
-        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev,
-        containers@lists.linux.dev, Sven Schnelle <svens@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <CA+G9fYsMHhXJCgO-ykR0oO1kVdusGnthgj6ifxEKaGPHZJ-ZCw@mail.gmail.com>
-        <20220112131837.igsjkkttqskw4eix@wittgenstein>
-        <CADYN=9Lvm-1etZS817eZK91NUyxkFBmsu=5-q_8Ei-1eV8DuZQ@mail.gmail.com>
-        <20220112140254.cvngcwggeevwaazw@wittgenstein>
-        <20220112141445.txgrdlycvfkiwsv5@example.org>
-        <20220112142846.3b3m2dyhdtppgwrw@example.org>
-        <CADYN=9LBjp0=mqyPkTGmdeMx52cg4pM39fnXe-ODTZ=_1OP+zw@mail.gmail.com>
-Date:   Wed, 12 Jan 2022 10:42:32 -0600
-In-Reply-To: <CADYN=9LBjp0=mqyPkTGmdeMx52cg4pM39fnXe-ODTZ=_1OP+zw@mail.gmail.com>
-        (Anders Roxell's message of "Wed, 12 Jan 2022 16:56:27 +0100")
-Message-ID: <87v8yoq51j.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        id S1355412AbiALRBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 12:01:46 -0500
+Received: from mout.web.de ([212.227.15.3]:46721 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1349807AbiALRBp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jan 2022 12:01:45 -0500
+X-Greylist: delayed 313 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Jan 2022 12:01:44 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1642006904;
+        bh=VpwX7tXhTbrLuzi1YF8Uzmb4A2oBhdUT14fAMPWrFis=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=PeskKWovL/ACSiPTBh401vUzji0my+TACRDRioT7OKxnbJRg38vK9L8VFKIJbqPcI
+         KXjyohg8wbSuXw6mRJ/2iQZJDVi6V7V1HeWGMM4MpinLd1V/Nl02zr+lUveXqI73dF
+         dKp91ZyAl1wVDk5yZVzUixu1s0L2gub2JgC+352M=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from gecko ([46.223.151.70]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M91Pe-1n1fJI3tgc-006XPY; Wed, 12
+ Jan 2022 17:56:15 +0100
+Date:   Wed, 12 Jan 2022 16:56:12 +0000
+From:   Lukas Straub <lukasstraub2@web.de>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        linux-raid@vger.kernel.org
+Subject: Re: [dm-devel] Proper way to test RAID456?
+Message-ID: <20220112155351.5b670d81@gecko>
+In-Reply-To: <24998019-960c-0808-78df-72e0d08c904e@gmx.com>
+References: <0535d6c3-dec3-fb49-3707-709e8d26b538@gmx.com>
+        <20220108195259.33e9bdf0@gecko>
+        <20220108202922.6b00de19@gecko>
+        <5ffc44f1-7e82-bc85-fbb1-a4f89711ae8f@gmx.com>
+        <e209bfe191442846f66d790321f2db672edfb8ca.camel@infradead.org>
+        <24998019-960c-0808-78df-72e0d08c904e@gmx.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1n7giB-005CcX-Bl;;;mid=<87v8yoq51j.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.24.146;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19xVjhWaZhYL0/HgEx+P4VRuQZTUh+RHAs=
-X-SA-Exim-Connect-IP: 68.110.24.146
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: ****
-X-Spam-Status: No, score=4.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
-        T_TooManySym_01,T_TooManySym_02,T_TooManySym_03,T_XMDrugObfuBody_08,
-        XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.7 XMSubLong Long Subject
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ****;Anders Roxell <anders.roxell@linaro.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 663 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.9 (0.6%), b_tie_ro: 2.7 (0.4%), parse: 0.85
-        (0.1%), extract_message_metadata: 18 (2.7%), get_uri_detail_list: 3.3
-        (0.5%), tests_pri_-1000: 25 (3.7%), tests_pri_-950: 1.01 (0.2%),
-        tests_pri_-900: 0.83 (0.1%), tests_pri_-90: 73 (10.9%), check_bayes:
-        71 (10.8%), b_tokenize: 12 (1.8%), b_tok_get_all: 13 (1.9%),
-        b_comp_prob: 2.5 (0.4%), b_tok_touch_all: 41 (6.2%), b_finish: 0.66
-        (0.1%), tests_pri_0: 526 (79.3%), check_dkim_signature: 0.44 (0.1%),
-        check_dkim_adsp: 1.45 (0.2%), poll_dns_idle: 0.27 (0.0%),
-        tests_pri_10: 2.8 (0.4%), tests_pri_500: 10 (1.5%), rewrite_mail: 0.00
-        (0.0%)
-Subject: Re: [next]: LTP: getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER)
- failed: ENOSPC (28)
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; boundary="Sig_/trK2B+bQZg4U+J+J8zLUK/8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Provags-ID: V03:K1:heywFokXSb224cpwvQrsi2v/LXbEHOE0r74vVZ0tAW61GPjbn6c
+ eDdc9ppwND/oggCfxDn5DN/mNAEMOVaVO4sSRcD5N3Lu0QPeZ0mcwnxvixwiuMB9gADj3xX
+ dVwYWnfBfnpweGh1YlYWJL76eTBrK6kgl6tA9RTyCdIlzfqKoVwEtzccIk2kpvTVW8uMHiR
+ nbXSeKAdNKk+mM7NioWjQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:HoFGdC2jWiw=:IO49La0OrTdQ2Ah/QSu86R
+ PInkEFYz0f7sLMKmILByyxEbjUOcCQgktOoaHafjY777p5GLH7bbCdB8Jz7611+wkdnpBRu7r
+ uOsURFWjr4Uv/Va3/HJqSR2CzbbVn/T4mQUwGUfZe+gJF9uOHT1FEj2hL8swfEpA2hKBagFFG
+ ahOztmFrt5u5vJ+7cSOi66FDfXwg9xr7L+ocsKIuXF/gA0XBzD4/9jsCrEtjlIhgfw4L/JcVT
+ E6XNq63820FwJ/iQvuDpBIH7/1f5WVZBonMyexMx7FEDeE98Q1hfz+DbMiFXMUDMajCB3yAgX
+ aRhDNXsrCu0seOZLJYeQNzhjJ7q3MmVx/71Ur8SzphSEKAm/Yp1bCE4Nqcyx19SZxUSSgJfso
+ MeWdPL9FHR+oRO8iNFcc6YA9p52dilbL6s7ycJbAr7RwVpXs/EZaD/3CZMIuKKFcwtkb8w+gA
+ DfKTiGgkSf7PndQWkSk260pTzE9gj6L9HpgoS74v5hXd27wuXTQxjM6UiAjcl0ujB3+TUni3e
+ cTO0EOcBYgpy85HayzEQMcnWDbP7A+Wia9gkjREnmEwhjLeBkWENf83z1uOo2AiX7V+pwgwv1
+ qMOLIOomVl+0Tr+FpBW+X4pFXqkvS+TEpeRgKny27cY00YaWBhLoiNXnIKAEidd/qA5WQbIJ5
+ alM8JfrfHK4cmMBtX+E/zwqH/HYaOtP58bwh8pjyNfJOjgqe0ym3ej6CcfCMHP3ci1YhzhmbL
+ sIMjcCUlLCD5ILBna9NQElbEAfcSACWI/bkz+g4kAehupxO6RM+2C6Msg7t0l/uclPPw6+wS+
+ d7OHze5YbfgRLNDHLyxYbl3cwM6zLgWj0i4pdXXSiinBcnh+JNndgXR4TR/Mcg6BqEcQJDJ+U
+ O3x24kK3e9PlhPSxSuHspAc1qoSqghi86xAX8NCS2y95PAceQbjOv01dZDBQCijS/L3xo8aTt
+ sdhGSC2NrB4ibyEf6PEKhxNZINhJX4JlFi9/VgOcnhsbyNjXw99oAo5wq99zxF50iolzY2bzw
+ U4/2Xn2bc4Sb9HdUEj8iOqHOx0g8+IWNXuvX7S3ZnfQbINbYU8F07rFS+GO+YZOtVaEBSZg1W
+ 4GFIFl2Xg7/rdQ=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Anders Roxell <anders.roxell@linaro.org> writes:
+--Sig_/trK2B+bQZg4U+J+J8zLUK/8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, 12 Jan 2022 at 15:28, Alexey Gladkov <legion@kernel.org> wrote:
->>
->> On Wed, Jan 12, 2022 at 03:14:45PM +0100, Alexey Gladkov wrote:
->> > On Wed, Jan 12, 2022 at 03:02:54PM +0100, Christian Brauner wrote:
->> > > On Wed, Jan 12, 2022 at 02:22:42PM +0100, Anders Roxell wrote:
->> > > > On Wed, 12 Jan 2022 at 14:18, Christian Brauner
->> > > > <christian.brauner@ubuntu.com> wrote:
->> > > > >
->> > > > > On Wed, Jan 12, 2022 at 05:15:37PM +0530, Naresh Kamboju wrote:
->> > > > > > While testing LTP syscalls with Linux next 20220110 (and till date 20220112)
->> > > > > > on x86_64, i386, arm and arm64 the following tests failed.
->> > > > > >
->> > > > > > tst_test.c:1365: TINFO: Timeout per run is 0h 15m 00s
->> > > > > > getxattr05.c:87: TPASS: Got same data when acquiring the value of
->> > > > > > system.posix_acl_access twice
->> > > > > > getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
->> > > > > > tst_test.c:391: TBROK: Invalid child (13545) exit value 1
->> > > > > >
->> > > > > > fanotify17.c:176: TINFO: Test #1: Global groups limit in privileged user ns
->> > > > > > fanotify17.c:155: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
->> > > > > > tst_test.c:391: TBROK: Invalid child (14739) exit value 1
->> > > > > >
->> > > > > > sendto03.c:48: TBROK: unshare(268435456) failed: ENOSPC (28)
->> > > > > >
->> > > > > > setsockopt05.c:45: TBROK: unshare(268435456) failed: ENOSPC (28)
->> > > > > >
->> > > > > > strace output:
->> > > > > > --------------
->> > > > > > [pid   481] wait4(-1, 0x7fff52f5ae8c, 0, NULL) = -1 ECHILD (No child processes)
->> > > > > > [pid   481] clone(child_stack=NULL,
->> > > > > > flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD,
->> > > > > > child_tidptr=0x7f3af0fa7a10) = 483
->> > > > > > strace: Process 483 attached
->> > > > > > [pid   481] wait4(-1,  <unfinished ...>
->> > > > > > [pid   483] unshare(CLONE_NEWUSER)      = -1 ENOSPC (No space left on device)
->> > > > >
->> > > > > This looks like another regression in the ucount code. Reverting the
->> > > > > following commit fixes it and makes the getxattr05 test work again:
->> > > > >
->> > > > > commit 0315b634f933b0f12cfa82660322f6186c1aa0f4
->> > > > > Author: Alexey Gladkov <legion@kernel.org>
->> > > > > Date:   Fri Dec 17 15:48:23 2021 +0100
->> > > > >
->> > > > >     ucounts: Split rlimit and ucount values and max values
->> > > > >
->> > > > >     Since the semantics of maximum rlimit values are different, it would be
->> > > > >     better not to mix ucount and rlimit values. This will prevent the error
->> > > > >     of using inc_count/dec_ucount for rlimit parameters.
->> > > > >
->> > > > >     This patch also renames the functions to emphasize the lack of
->> > > > >     connection between rlimit and ucount.
->> > > > >
->> > > > >     v2:
->> > > > >     - Fix the array-index-out-of-bounds that was found by the lkp project.
->> > > > >
->> > > > >     Reported-by: kernel test robot <oliver.sang@intel.com>
->> > > > >     Signed-off-by: Alexey Gladkov <legion@kernel.org>
->> > > > >     Link: https://lkml.kernel.org/r/73ea569042babda5cee2092423da85027ceb471f.1639752364.git.legion@kernel.org
->> > > > >     Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
->> > > > >
->> > > > > The issue only surfaces if /proc/sys/user/max_user_namespaces is
->> > > > > actually written to.
->> > > >
->> > > > I did a git bisect and that pointed me to this patch too.
->> > >
->> > > Uhm, doesn't this want to be:
->> >
->> > Yes. I miss it. I tried not to mix the logic, but I myself stepped on this
->> > problem.
->>
->> It should be fixed in the four places:
->>
->> diff --git a/kernel/ucount.c b/kernel/ucount.c
->> index 22070f004e97..5c373a453f43 100644
->> --- a/kernel/ucount.c
->> +++ b/kernel/ucount.c
->> @@ -264,7 +264,7 @@ long inc_rlimit_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v)
->>         long ret = 0;
->>
->>         for (iter = ucounts; iter; iter = iter->ns->ucounts) {
->> -               long new = atomic_long_add_return(v, &iter->ucount[type]);
->> +               long new = atomic_long_add_return(v, &iter->rlimit[type]);
->>                 if (new < 0 || new > max)
->>                         ret = LONG_MAX;
->>                 else if (iter == ucounts)
->> @@ -279,7 +279,7 @@ bool dec_rlimit_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v)
->>         struct ucounts *iter;
->>         long new = -1; /* Silence compiler warning */
->>         for (iter = ucounts; iter; iter = iter->ns->ucounts) {
->> -               long dec = atomic_long_sub_return(v, &iter->ucount[type]);
->> +               long dec = atomic_long_sub_return(v, &iter->rlimit[type]);
->>                 WARN_ON_ONCE(dec < 0);
->>                 if (iter == ucounts)
->>                         new = dec;
->> @@ -292,7 +292,7 @@ static void do_dec_rlimit_put_ucounts(struct ucounts *ucounts,
->>  {
->>         struct ucounts *iter, *next;
->>         for (iter = ucounts; iter != last; iter = next) {
->> -               long dec = atomic_long_sub_return(1, &iter->ucount[type]);
->> +               long dec = atomic_long_sub_return(1, &iter->rlimit[type]);
->>                 WARN_ON_ONCE(dec < 0);
->>                 next = iter->ns->ucounts;
->>                 if (dec == 0)
->> @@ -313,7 +313,7 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
->>         long dec, ret = 0;
->>
->>         for (iter = ucounts; iter; iter = iter->ns->ucounts) {
->> -               long new = atomic_long_add_return(1, &iter->ucount[type]);
->> +               long new = atomic_long_add_return(1, &iter->rlimit[type]);
->>                 if (new < 0 || new > max)
->>                         goto unwind;
->>                 if (iter == ucounts)
->> @@ -330,7 +330,7 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
->>         }
->>         return ret;
->>  dec_unwind:
->> -       dec = atomic_long_sub_return(1, &iter->ucount[type]);
->> +       dec = atomic_long_sub_return(1, &iter->rlimit[type]);
->>         WARN_ON_ONCE(dec < 0);
->>  unwind:
->>         do_dec_rlimit_put_ucounts(ucounts, iter, type);
->>
->
-> Thank you for the fix.
-> I applied this patch and built and ran it in qemu for arm64 and x86.
-> './runltp -s getxattr05' passed on both architectures.
->
-> Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On Sun, 9 Jan 2022 20:13:36 +0800
+Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
 
-Thank you all.
+> On 2022/1/9 18:04, David Woodhouse wrote:
+> > On Sun, 2022-01-09 at 07:55 +0800, Qu Wenruo wrote: =20
+> >> On 2022/1/9 04:29, Lukas Straub wrote: =20
+> >>> But there is a even simpler solution for btrfs: It could just not tou=
+ch
+> >>> stripes that already contain data. =20
+> >>
+> >> That would waste a lot of space, if the fs is fragemented.
+> >>
+> >> Or we have to write into data stripes when free space is low.
+> >>
+> >> That's why I'm trying to implement a PPL-like journal for btrfs RAID56=
+. =20
+> >
+> > PPL writes the P/Q of the unmodified chunks from the stripe, doesn't
+> > it? =20
+>=20
+> Did I miss something or the PPL isn't what I thought?
+>=20
+> I thought PPL either:
+>=20
+> a) Just write a metadata entry into the journal to indicate a full
+>     stripe (along with its location) is going to be written.
+>=20
+> b) Write a metadata entry into the journal about a non-full stripe
+>     write, then write the new data and new P/Q into the journal
+>=20
+> And this is before we start any data/P/Q write.
+>=20
+> And after related data/P/Q write is finished, remove corresponding
+> metadata and data entry from the journal.
+>=20
+> Or PPL have even better solution?
 
-For now I have dropped this from linux-next.  I will add the fix and
-will aim to get this cleanup in the next merge window.
+Yes, PPL is a bit better than a journal as you described it (md
+supports both). Because a journal would need to be replicated to
+multiple devices (raid1) in the array while the PPL is only written to
+the drive containing the parity for the particular stripe. And since the
+parity is distributed across all drives, the PPL overhead is also
+distributed across all drives. However, PPL only works for raid5 as
+you'll see.
 
-Eric
+PPL works like this:
+
+Before any data/parity write either:
+
+ a) Just write a metadata entry into the PPL on the parity drive to
+    indicate a full stripe (along with its location) is going to be
+    written.
+
+ b) Write a metadata entry into the PPL on the parity drive about a
+    non-full stripe write, including which data chunks are going to be
+    modified, then write the XOR of chunks not modified by this write in
+    to the PPL.
+
+To recover a inconsistent array with a lost drive:
+
+In case a), the stripe consists only of newly written data, so it will
+be affected by the write-hole (this is the trade-off that PPL makes) so
+just standard parity recovery.
+
+In case b), XOR what we wrote to the PPL (the XOR of chunks not
+modified) with the modified data chunks to get our new (consistent)
+parity. Then do standard parity recovery. This just works if we lost a
+unmodified data chunk.
+If we lost a modified data chunk this is not possible and just do
+standard parity recovery from the beginning. Again, the newly written
+data is affected by the write-hole but existing data is not.
+If we lost the parity drive (containing the PPL) there is no need to
+recover since all the data chunks are present.
+
+Of course, this was a simplified explanation, see drivers/md/raid5-ppl.c
+for details (it has good comments with examples). This also covers the
+case where a data chunk is only partially modified and the unmodified
+part of the chunk also needs to be protected (by working on a per-block
+basis instead of per-chunk).
+
+The PPL is not possible for raid6 AFAIK, because there it could happen
+that you loose both a modified data chunk and a unmodified data chunk.
+
+Regards,
+Lukas Straub
+
+> >
+> > An alternative in a true file system which can do its own block
+> > allocation is to just calculate the P/Q of the final stripe after it's
+> > been modified, and write those (and) the updated data out to newly-
+> > allocated blocks instead of overwriting the original. =20
+>=20
+> This is what Johannes is considering, but for a different purpose.
+> Johannes' idea is to support zoned device. As the physical location a
+> zoned append write will only be known after it's written.
+>=20
+> So his idea is to maintain another mapping tree for zoned write, so that
+> full stripe update will also happen in that tree.
+>=20
+> But that idea is still in the future, on the other hand I still prefer
+> some tried-and-true method, as I'm 100% sure there will be new
+> difficulties waiting us for the new mapping tree method.
+>=20
+> Thanks,
+> Qu
+>=20
+> >
+> > Then the final step is to free the original data blocks and P/Q.
+> >
+> > This means that your RAID stripes no longer have a fixed topology; you
+> > need metadata to be able to *find* the component data and P/Q chunks...
+> > it ends up being non-trivial, but it has attractive properties if we
+> > can work it out. =20
+
+
+
+--=20
+
+
+--Sig_/trK2B+bQZg4U+J+J8zLUK/8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEg/qxWKDZuPtyYo+kNasLKJxdslgFAmHfCCwACgkQNasLKJxd
+slj5YRAAriTi+zPKCzdoJ0d2cj8ZkHXtVoQMa5qr3R5f20aEyu/oTPkMFvmtsOKj
+ViMcFhTaV5Ceardq7Td7G3N2QzBJjEQsrg0FIl6aD9Jp8XWW49VwXRTyHihXi7xy
+HRCziWCxp8HWc6qy3IpOCm/XD3i0i37IDrm8dmA7r62swOALFX5g5zIpDo/CkfNU
+Tln3wA97KMEd93dWLzvWZsXFhETQ2lX9l5EMYzTjUqR0PAtbVJlHfeVYTnF1eAnw
+S5+TyiwfXa0lqOKUABYR8Ygnelu98VROpNWXUJi25CaY8l2T5jigskFdNvm+Ihy+
+era4R8dAsXCBhTEmO4JXNLmE42IU+m+6DnZlGHxn+v3wuh7Tz46sAAC9JX73R6Fk
+e925eXQ2e2df7Ej964r3f4u/yiVO+/MaoiLUacz+U3VbZu9LOGYJ+xmnmycjhV3X
+NmfBV1nnWIeYU6fHvRigLCMJXnVd9dPlYlqW0alRq/OtLW2rKlUkXf+RWLOpT8By
++ZMyloNz0/84MFLN+XhgdbwpEJ/NStbaJXJtD7T2nUf2l3+kWV6rFrmPIgxdPYyb
+7yJMWxj9rGaU+2XmAkqoyC5ahj30apruZbQLyCXqc1EeHlGY8/Wrq5h2ZBAJcDbr
+CH22cVV2JzDT77MvzC+9nPWT/rkm8MNna4TRLZgtTauio9bPGHg=
+=Jly6
+-----END PGP SIGNATURE-----
+
+--Sig_/trK2B+bQZg4U+J+J8zLUK/8--
