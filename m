@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C49C348C663
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 15:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9A7648C660
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 15:46:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354255AbiALOqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1354249AbiALOqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 12 Jan 2022 09:46:34 -0500
-Received: from mr85p00im-zteg06011501.me.com ([17.58.23.182]:47736 "EHLO
+Received: from mr85p00im-zteg06011501.me.com ([17.58.23.182]:47702 "EHLO
         mr85p00im-zteg06011501.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1354253AbiALOqb (ORCPT
+        by vger.kernel.org with ESMTP id S243573AbiALOq3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 09:46:31 -0500
+        Wed, 12 Jan 2022 09:46:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1641998199; bh=J8I1NMVpmtmxYOzkUXhKs7c0idUTGDpRCI8xL5DNgZY=;
+        t=1641998216; bh=d0cZDTdkbq2OLCsejXnziUbJRkiUwF2JPM28YjzJMvc=;
         h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=GafK0KHp7PLgmiiaPBS4vqdd+jk1oZhYM1EyhZqEZ8urPXuTY/hxrt0t2b9cYfrsI
-         6k73Jn7DXYfOx5w2TO+M1664IDA3yNJF6AkV2Z+4hygO6LowndI1vo9wMaq0Baxfa1
-         hMB8Yxz+z56ut7ipUxrg6LdicrUJw9ogBM7poeyjWqeEs9BX53ONfGWRAUWAY05Uoj
-         obAZ3mgOsRD2epz67cIjVlvg/+qkiz1VT8Tbg8IQNuJZMeiZbBXNtN7G/5pW6lnvsJ
-         WXM6Z427Lq9qjZGc8BGVPreQHjouLAqvRBu6q9KiyaA1eJ7EZ074CljQrQHDUPp+oq
-         y+wnLInHtuysA==
+        b=wrc8VTVY5uaQ+01UGn4ZudroMr5Ch1kUZ1i8CPrKIvjrG2J0jI9gb2TOWLI11acsI
+         UKF6omEoaKN9lyqhwOtCkbP9qPzh8Qf3E85Ym/EEdpJy7ww+yEhveam9fI1NyjU9bK
+         SQ1VF8Id8nIiTA5ZYBob+8ZPIi74gupc6+vf65GRsExcWuV1BGARkXA5M7WuVUTeof
+         yq5nbH+Fg37LPN0AYCmJ4OL76HmYgAtVDmQgI1x+K6Luvzf6EtmJlcSB4WcIP7VTwA
+         5c/zq1MBCyxcG0y2mMS5/J6LzELELtWHGv/ajTcZNOwP5+PhzbxfyweTMhp6omEh2H
+         WG3dUFUms6iPQ==
 Received: from xiongwei.. (unknown [120.245.2.88])
-        by mr85p00im-zteg06011501.me.com (Postfix) with ESMTPSA id 680ED480EE0;
-        Wed, 12 Jan 2022 14:36:13 +0000 (UTC)
+        by mr85p00im-zteg06011501.me.com (Postfix) with ESMTPSA id C8C51480823;
+        Wed, 12 Jan 2022 14:36:42 +0000 (UTC)
 From:   sxwjean@me.com
 To:     akpm@linux-foundation.org, david@redhat.com, mhocko@suse.com,
         dan.j.williams@intel.com, osalvador@suse.de,
         naoya.horiguchi@nec.com, thunder.leizhen@huawei.com
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Xiongwei Song <sxwjean@gmail.com>
-Subject: [PATCH v3 1/2] mm/memremap.c: Add pfn_to_devmap_page() to get page in ZONE_DEVICE
-Date:   Wed, 12 Jan 2022 22:35:16 +0800
-Message-Id: <20220112143517.262143-2-sxwjean@me.com>
+Subject: [PATCH v3 2/2] proc: Add getting pages info of ZONE_DEVICE support
+Date:   Wed, 12 Jan 2022 22:35:17 +0800
+Message-Id: <20220112143517.262143-3-sxwjean@me.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220112143517.262143-1-sxwjean@me.com>
 References: <20220112143517.262143-1-sxwjean@me.com>
@@ -42,7 +42,7 @@ X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c
  =?UTF-8?Q?2903e8d5c8f:6.0.425,18.0.790,17.0.607.475.0000000_definitions?=
  =?UTF-8?Q?=3D2022-01-12=5F04:2022-01-11=5F01,2022-01-12=5F04,2020-04-07?=
  =?UTF-8?Q?=5F01_signatures=3D0?=
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=922 bulkscore=0
  malwarescore=0 mlxscore=0 adultscore=0 clxscore=1015 suspectscore=0
  phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2009150000 definitions=main-2201120095
@@ -52,79 +52,133 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Xiongwei Song <sxwjean@gmail.com>
 
-when requesting page information by /proc/kpage*, the pages in ZONE_DEVICE
-were ignored . We need a function to help on this.
+When requesting pages info by /proc/kpage*, the pages in ZONE_DEVICE were
+ignored.
 
-The pfn_to_devmap_page() function like pfn_to_online_page(), but only
-concerns the pages in ZONE_DEVICE.
+The pfn_to_devmap_page() function can help to get page that belongs to
+ZONE_DEVICE.
 
-Suggested-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Xiongwei Song <sxwjean@gmail.com>
 ---
-v3: Before returning page pointer, check validity of page by 
-    pgmap_pfn_valid().
-v2: Simplify pfn_to_devmap_page() as David suggested.
+V3: Reset pgmap to NULL after putting dev_pagemap to prevent false non-NULL.
 ---
- include/linux/memremap.h |  8 ++++++++
- mm/memremap.c            | 19 +++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ fs/proc/page.c | 41 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index c0e9d35889e8..621723e9c4a5 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -137,6 +137,8 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
- void devm_memunmap_pages(struct device *dev, struct dev_pagemap *pgmap);
- struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
- 		struct dev_pagemap *pgmap);
-+struct page *pfn_to_devmap_page(unsigned long pfn,
-+		struct dev_pagemap **pgmap);
- bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 9f1077d94cde..d4fc308765f5 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -15,6 +15,7 @@
+ #include <linux/page_idle.h>
+ #include <linux/kernel-page-flags.h>
+ #include <linux/uaccess.h>
++#include <linux/memremap.h>
+ #include "internal.h"
  
- unsigned long vmem_altmap_offset(struct vmem_altmap *altmap);
-@@ -166,6 +168,12 @@ static inline struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
- 	return NULL;
- }
- 
-+static inline struct page *pfn_to_devmap_page(unsigned long pfn,
-+		struct dev_pagemap **pgmap)
-+{
-+	return NULL;
-+}
-+
- static inline bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn)
+ #define KPMSIZE sizeof(u64)
+@@ -46,6 +47,7 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
  {
- 	return false;
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 5a66a71ab591..782309b74d71 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -494,6 +494,25 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
- }
- EXPORT_SYMBOL_GPL(get_dev_pagemap);
+ 	const unsigned long max_dump_pfn = get_max_dump_pfn();
+ 	u64 __user *out = (u64 __user *)buf;
++	struct dev_pagemap *pgmap = NULL;
+ 	struct page *ppage;
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+@@ -60,17 +62,20 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
  
-+/**
-+ * pfn_to_devmap_page - get page pointer which belongs to dev_pagemap by @pfn
-+ * @pfn: page frame number to lookup page_map
-+ * @pgmap: to save pgmap address which is for putting reference
-+ *
-+ * If @pgmap is non-NULL, then pfn is on ZONE_DEVICE. Meanwhile check if
-+ * pfn is valid in @pgmap, if yes return page pointer.
-+ */
-+struct page *pfn_to_devmap_page(unsigned long pfn, struct dev_pagemap **pgmap)
-+{
-+	if (pfn_valid(pfn)) {
-+		*pgmap = get_dev_pagemap(pfn, NULL);
-+		if (*pgmap && pgmap_pfn_valid(*pgmap, pfn))
-+			return pfn_to_page(pfn);
-+	}
+ 	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+ 		ppage = pfn_to_online_page(pfn);
++		if (!ppage)
++			ppage = pfn_to_devmap_page(pfn, &pgmap);
+ 
+ 		if (!ppage || PageSlab(ppage) || page_has_type(ppage))
+ 			pcount = 0;
+ 		else
+ 			pcount = page_mapcount(ppage);
+ 
++		if (pgmap) {
++			put_dev_pagemap(pgmap);
++			pgmap = NULL;
++		}
 +
-+	return NULL;
-+}
-+
- #ifdef CONFIG_DEV_PAGEMAP_OPS
- void free_devmap_managed_page(struct page *page)
+ 		if (put_user(pcount, out)) {
+ 			ret = -EFAULT;
+ 			break;
+@@ -229,10 +234,12 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
  {
+ 	const unsigned long max_dump_pfn = get_max_dump_pfn();
+ 	u64 __user *out = (u64 __user *)buf;
++	struct dev_pagemap *pgmap = NULL;
+ 	struct page *ppage;
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
++	u64 flags;
+ 
+ 	pfn = src / KPMSIZE;
+ 	if (src & KPMMASK || count & KPMMASK)
+@@ -242,13 +249,17 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
+ 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+ 
+ 	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+ 		ppage = pfn_to_online_page(pfn);
++		if (!ppage)
++			ppage = pfn_to_devmap_page(pfn, &pgmap);
++
++		flags = stable_page_flags(ppage);
++		if (pgmap) {
++			put_dev_pagemap(pgmap);
++			pgmap = NULL;
++		}
+ 
+-		if (put_user(stable_page_flags(ppage), out)) {
++		if (put_user(flags, out)) {
+ 			ret = -EFAULT;
+ 			break;
+ 		}
+@@ -277,6 +288,7 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+ {
+ 	const unsigned long max_dump_pfn = get_max_dump_pfn();
+ 	u64 __user *out = (u64 __user *)buf;
++	struct dev_pagemap *pgmap = NULL;
+ 	struct page *ppage;
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+@@ -291,17 +303,20 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+ 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+ 
+ 	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+ 		ppage = pfn_to_online_page(pfn);
++		if (!ppage)
++			ppage = pfn_to_devmap_page(pfn, &pgmap);
+ 
+ 		if (ppage)
+ 			ino = page_cgroup_ino(ppage);
+ 		else
+ 			ino = 0;
+ 
++		if (pgmap) {
++			put_dev_pagemap(pgmap);
++			pgmap = NULL;
++		}
++
+ 		if (put_user(ino, out)) {
+ 			ret = -EFAULT;
+ 			break;
 -- 
 2.30.2
 
