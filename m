@@ -2,73 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B9C48C06E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 09:54:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEFC748C097
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 10:02:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351797AbiALIyJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 03:54:09 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58447 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1351785AbiALIyH (ORCPT
+        id S1349402AbiALJCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 04:02:18 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40505 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238082AbiALJCR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 03:54:07 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0V1e05Wd_1641977645;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V1e05Wd_1641977645)
+        Wed, 12 Jan 2022 04:02:17 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V1e06w2_1641978133;
+Received: from 30.225.24.52(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V1e06w2_1641978133)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 12 Jan 2022 16:54:05 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     jack@suse.cz
-Cc:     amir73il@gmail.com, repnop@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] fanotify: remove variable set but not used
-Date:   Wed, 12 Jan 2022 16:54:03 +0800
-Message-Id: <20220112085403.74670-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+          Wed, 12 Jan 2022 17:02:14 +0800
+Message-ID: <99c94a78-58c4-f0af-e1d4-9aaa51bab281@linux.alibaba.com>
+Date:   Wed, 12 Jan 2022 17:02:13 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.2
+Subject: Re: [PATCH v1 19/23] cachefiles: implement .demand_read() for demand
+ read
+Content-Language: en-US
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org
+References: <20211227125444.21187-1-jefflexu@linux.alibaba.com>
+ <20211227125444.21187-20-jefflexu@linux.alibaba.com>
+ <YcndgcpQQWY8MJBD@casper.infradead.org>
+ <47831875-4bdd-8398-9f2d-0466b31a4382@linux.alibaba.com>
+In-Reply-To: <47831875-4bdd-8398-9f2d-0466b31a4382@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The code that uses the pointer info has been removed in
-'https://lore.kernel.org/all/20211129201537.1932819-11-amir73il@gmail.com/'
-and fanotify_event_info() doesn't change 'event', so the declaration and 
-assignment of info can be removed.
 
-Eliminate the following clang warning:
-fs/notify/fanotify/fanotify_user.c:161:24: warning: variable ‘info’ set
-but not used
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- fs/notify/fanotify/fanotify_user.c | 3 ---
- 1 file changed, 3 deletions(-)
+On 12/28/21 8:33 PM, JeffleXu wrote:
+> 
+> 
+> On 12/27/21 11:36 PM, Matthew Wilcox wrote:
+>> On Mon, Dec 27, 2021 at 08:54:40PM +0800, Jeffle Xu wrote:
+>>> +	spin_lock(&cache->reqs_lock);
+>>> +	ret = idr_alloc(&cache->reqs, req, 0, 0, GFP_KERNEL);
+>>
+>> GFP_KERNEL while holding a spinlock?
+> 
+> Right. Thanks for pointing it out.
+> 
+>>
+>> You should be using an XArray instead of an IDR in new code anyway.
+>>
+> 
+> Regards.
+> 
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 73b1615f9d96..1026f67b1d1e 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -158,7 +158,6 @@ static size_t fanotify_event_len(unsigned int info_mode,
- 				 struct fanotify_event *event)
- {
- 	size_t event_len = FAN_EVENT_METADATA_LEN;
--	struct fanotify_info *info;
- 	int fh_len;
- 	int dot_len = 0;
- 
-@@ -168,8 +167,6 @@ static size_t fanotify_event_len(unsigned int info_mode,
- 	if (fanotify_is_error_event(event->mask))
- 		event_len += FANOTIFY_ERROR_INFO_LEN;
- 
--	info = fanotify_event_info(event);
--
- 	if (fanotify_event_has_any_dir_fh(event)) {
- 		event_len += fanotify_dir_name_info_len(event);
- 	} else if ((info_mode & FAN_REPORT_NAME) &&
+Hi Matthew,
+
+I'm afraid IDR can't be replaced by xarray here. Because we need an 'ID'
+for each pending read request, so that after fetching data from remote,
+user daemon could notify kernel which read request has finished by this
+'ID'.
+
+Currently this 'ID' is get from idr_alloc(), and actually identifies the
+position of corresponding read request inside the IDR tree. I can't find
+similar API of xarray implementing similar function, i.e., returning an
+'ID'.
+
+As for the issue of GFP_KERNEL while holding a spinlock, I'm going to
+fix this with idr_preload(), somehing like
+
++       idr_preload(GFP_KERNEL);
++       idr_lock(&cache->reqs);
++
++       ret = idr_alloc(&cache->reqs, req, 0, 0, GFP_ATOMIC);
++       if (ret >= 0)
++               req->req_in.id = ret;
++
++       idr_unlock(&cache->reqs);
++       idr_preload_end();
+
+Please correct me if I'm wrong.
+
 -- 
-2.20.1.7.g153144c
-
+Thanks,
+Jeffle
