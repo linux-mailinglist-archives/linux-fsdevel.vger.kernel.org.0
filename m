@@ -2,104 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2AD348C651
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 15:44:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 902BC48C681
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 15:52:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242913AbiALOoQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 09:44:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241952AbiALOoO (ORCPT
+        id S1354319AbiALOvX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 09:51:23 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:50306 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354317AbiALOvR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 09:44:14 -0500
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD34DC06173F;
-        Wed, 12 Jan 2022 06:44:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=qlFlkECPRVUfbaXMoD/8vlzFEq0cbbwMCSchJ4LcKmA=; b=ETiOH3cX3l64g4+xs3cWHLUrdN
-        7WR6s0Q0zlVj69t0YQ65pnGYn4EismXW1LBUlOOvnE31JkoIkXUv5M63Zyy4bapawDeqbgov6qqwK
-        X45/FT76S+b9mdv8iiwlis1MZ8pMQeWw4Ku9VGsU9qKu9kao7NpElqX+qFDoLwn1QshZn/sdewSVI
-        kl0pN1N86BrdV8X6dVgNvb7J4DmbHj5WCJuxwRBTbrBrmmaemjQMG2jIj5WMxdPkj8mc6mCUgjQAN
-        EiUugVc26avg9zr1YZVanW80LAZGRExwd/Yq337LmHGZ7OY7c95K81iGaYey7WzRcKrst8+gdw02p
-        wUopTTpg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n7eqz-000ocW-2C; Wed, 12 Jan 2022 14:43:57 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AB48B3001CD;
-        Wed, 12 Jan 2022 15:43:54 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 660E82006F92B; Wed, 12 Jan 2022 15:43:54 +0100 (CET)
-Date:   Wed, 12 Jan 2022 15:43:54 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Gang Li <ligang.bdlg@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3] sched/numa: add per-process numa_balancing
-Message-ID: <Yd7pKuvjayH4q14L@hirez.programming.kicks-ass.net>
-References: <20211206024530.11336-1-ligang.bdlg@bytedance.com>
+        Wed, 12 Jan 2022 09:51:17 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AC113B81F44;
+        Wed, 12 Jan 2022 14:51:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501FEC36AEB;
+        Wed, 12 Jan 2022 14:51:13 +0000 (UTC)
+Date:   Wed, 12 Jan 2022 15:51:09 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        ptikhomirov@virtuozzo.com, linux-api@vger.kernel.org
+Subject: Re: [PATCH] fs/open: add new RESOLVE_EMPTY_PATH flag for openat2
+Message-ID: <20220112145109.pou6676bsoatfg6x@wittgenstein>
+References: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
+ <20220112143419.rgxumbts2jjb4aig@senku>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211206024530.11336-1-ligang.bdlg@bytedance.com>
+In-Reply-To: <20220112143419.rgxumbts2jjb4aig@senku>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 06, 2021 at 10:45:28AM +0800, Gang Li wrote:
-> This patch add a new api PR_NUMA_BALANCING in prctl.
+On Thu, Jan 13, 2022 at 01:34:19AM +1100, Aleksa Sarai wrote:
+> On 2022-01-12, Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com> wrote:
+> > If you have an opened O_PATH file, currently there is no way to re-open
+> > it with other flags with openat/openat2. As a workaround it is possible
+> > to open it via /proc/self/fd/<X>, however
+> > 1) You need to ensure that /proc exists
+> > 2) You cannot use O_NOFOLLOW flag
 > 
-> A large number of page faults will cause performance loss when numa
-> balancing is performing. Thus those processes which care about worst-case
-> performance need numa balancing disabled. Others, on the contrary, allow a
-> temporary performance loss in exchange for higher average performance, so
-> enable numa balancing is better for them.
-> 
-> Numa balancing can only be controlled globally by
-> /proc/sys/kernel/numa_balancing. Due to the above case, we want to
-> disable/enable numa_balancing per-process instead.
-> 
-> Add numa_balancing under mm_struct. Then use it in task_tick_fair.
-> 
-> Set per-process numa balancing:
-> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DISABLE); //disable
-> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
-> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DEFAULT); //follow global
+> There is also another issue -- you can mount on top of magic-links so if
+> you're a container runtime that has been tricked into creating bad
+> mounts of top of /proc/ subdirectories there's no way of detecting that
+> this has happened. (Though I think in the long-term we will need to
+> make it possible for unprivileged users to create a procfs mountfd if
+> they have hidepid=4,subset=pids set -- there are loads of things
+> containers need to touch in procfs which can be overmounted in malicious
+> ways.)
 
-This seems to imply you can prctl(ENABLE) even if the global is
-disabled, IOW sched_numa_balancing is off.
+Yeah, though I see this as a less pressing issue for now. I'd rather
+postpone this and make userspace work a bit more. There are ways to
+design programs so you know that the procfs instance you're interacting
+with is the one you want to interact with without requiring unprivileged
+mounting outside of a userns+pidns+mountns pair. ;)
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 884f29d07963..2980f33ac61f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -11169,8 +11169,12 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
->  		entity_tick(cfs_rq, se, queued);
->  	}
->  
-> -	if (static_branch_unlikely(&sched_numa_balancing))
-> +#ifdef CONFIG_NUMA_BALANCING
-> +	if (curr->mm && (curr->mm->numab_enabled == NUMAB_ENABLED
-> +	    || (static_branch_unlikely(&sched_numa_balancing)
-> +	    && curr->mm->numab_enabled == NUMAB_DEFAULT)))
->  		task_tick_numa(rq, curr);
-> +#endif
->  
->  	update_misfit_status(curr, rq);
->  	update_overutilized_status(task_rq(curr));
+> 
+> > Both problems may look insignificant, but they are sensitive for CRIU.
+> > First of all, procfs may not be mounted in the namespace where we are
+> > restoring the process. Secondly, if someone opens a file with O_NOFOLLOW
+> > flag, it is exposed in /proc/pid/fdinfo/<X>. So CRIU must also open the
+> > file with this flag during restore.
+> > 
+> > This patch adds new constant RESOLVE_EMPTY_PATH for resolve field of
+> > struct open_how and changes getname() call to getname_flags() to avoid
+> > ENOENT for empty filenames.
+> 
+> This is something I've wanted to implement for a while, but from memory
+> we need to add some other protections in place before enabling this.
+> 
+> The main one is disallowing re-opening of a path when it was originally
+> opened with a different set of modes. [1] is the patch I originally
+> wrote as part of the openat2(2) (but I dropped it since I wasn't sure
+> whether it might break some systems in subtle ways -- though according
+> to my testing there wasn't an issue on any of my machines).
 
-There's just about everything wrong there... not least of all the
-horrific coding style.
+Oh this is the discussion we had around turning an opath fd into a say
+O_RDWR fd, I think.
+So yes, I think restricting fd reopening makes sense. However, going
+from an O_PATH fd to e.g. an fd with O_RDWR does make sense and needs to
+be the default anyway. So we would need to implement this as a denylist
+anyway. The default is that opath fds can be reopened with whatever and
+only if the opath creator has restricted reopening will it fail, i.e.
+it's similar to a denylist.
+
+But this patch wouldn't prevent that or hinder the upgrade mask
+restriction afaict.
