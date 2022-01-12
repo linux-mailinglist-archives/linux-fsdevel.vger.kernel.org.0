@@ -2,93 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D69348BD7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 03:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C5648BDDE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 05:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348998AbiALC4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jan 2022 21:56:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32930 "EHLO
+        id S1350680AbiALE2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jan 2022 23:28:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348987AbiALC4c (ORCPT
+        with ESMTP id S231799AbiALE2Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jan 2022 21:56:32 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749B3C06173F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jan 2022 18:56:31 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id g81so2438205ybg.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jan 2022 18:56:31 -0800 (PST)
+        Tue, 11 Jan 2022 23:28:16 -0500
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE21BC06173F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jan 2022 20:28:15 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id q186so1856464oih.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jan 2022 20:28:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zdgI3Zt03Z9yu5gw1AVJ9FZ0coQfTSlXMvH0cNGXvgo=;
-        b=obpEDlbTBNVc0ialZgTqwmfTDtdmvE9nkCFctdSCLRHt41Kf7zO8z/PUVdUnyMkRqs
-         5MIb1HRW+bE2l/qRgtUHe7YNjxYAIfUEPhngcYd3bDzozP+HiYM8BOH4dS222yZp1SKx
-         ikHECaW7xeMH6R3LmlhaGwC2r0uvbPax53uE/cwEm4OKAlH+hLpeamBQiOOeGr9t6bvB
-         koskXZ64keEmaP620oo7bzAv3FL8oEFZS+hXNMGhzySlygLOlEA2hxuZ/RenGzwk8v+6
-         VMUnFAt4zkp3/KkOA3vXcpJjhNCrNG0eXUfW0WewAVvSQz7pJnxwxf14Tq8Na93pbTuV
-         8luA==
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=LZtWmPGQEylMl27a95oHEEFMgz6flTZjSnwWdQnptpk=;
+        b=rxtOkz6QILIxVkVp4Wsd+qxbtmnmwwouMiRWY53cMXJVC/qCWPHxrgGCqDmfagNc71
+         +MrLZIUF7UXKsGLaSL7MVZaR52vwOLam3kHHSHgeortaqeVIYQLxc0fAA2gMWMlbfoh7
+         V00frTkKcOFBVys0X8gxUq+hhpen7m7baXYnwSbBoPQqHZlSaZWwy3Zs6GY7JSK7hzYa
+         7I/1+RicyCuoZAw/34noouyUpiGQ+AKBRiTe9zTWi+kZoTSX+b5+B794T1VfUdjUFKoE
+         Z+7tbyVl6wSsZCiaSdKMaTqKMKP8HM2h3WLaw6lkk6Dm9fY2zv78fTJ6ooVO0CeIzfQP
+         /sLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zdgI3Zt03Z9yu5gw1AVJ9FZ0coQfTSlXMvH0cNGXvgo=;
-        b=1eLRnBIjstHaf5pnX2RfJgvVsxR+uH6Iiw1DtqFCv4kKh2z6yQKNrBEspd8fEmi087
-         n3hwsmT5A4BydFITKzVhHZBK1Mtu61b+smdhoyT88fraT3I0nw5jldiKtHpVm9eVVWYg
-         VGf1Gm+CYIqrzO+vfAcQqe4IHmh7lkXYK4nIKgAaf6iJFWuUheMvC3GyHLvg5wdQWbSj
-         pJt4XxewsPN1gPZ+unnBev0N6I8wG20xxcE7hqiHWtaj9UU49v47FGWwbk/S5nnaNtmk
-         1KEGMIv2yZ1Yhw4PJsmoAOs64/9hP6YmNd5+xSPkiAvqYvXRntbfFNiEsBBAdp8Z0nUx
-         vT3g==
-X-Gm-Message-State: AOAM532jDKI/sSOa9DwMFFzWQduBGMbo8uRXpx1MLrNqOPgdf0jlduDk
-        JpM5KocS5I5zS1inQz0vaE3c54amtWh6/bJWujsnMg==
-X-Google-Smtp-Source: ABdhPJxjYC1WaBKd1/OkWaghbsu4OSs2IYGS94HFmYSGQsFxRIfiLwnY3TJvgShBoOtj9pIN381fuSYp6loOYXf2PQA=
-X-Received: by 2002:a25:7312:: with SMTP id o18mr3742934ybc.485.1641956190618;
- Tue, 11 Jan 2022 18:56:30 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=LZtWmPGQEylMl27a95oHEEFMgz6flTZjSnwWdQnptpk=;
+        b=S3eKv467J4NbSUxWktC2vFg4yYWfWfvmJwdjhwALbh5Bl1JTysS6mrVnnl43YI7Lnk
+         SmiDEHFkHB4oLMu+f2EvPKLXJwT9AmW0vX8bNW1NJGyqT1R5apMNyAcOqryrf75EyGtH
+         ts7O7kpQodweULDab0d50axCWsTRgpQ91qxmSjBv26HggvdnneSWQUvQmLoaScRtxD7j
+         GLNEuwDAhMfs3VsXSMi6vWhrqf/OHmBtF39/6elXpKTqeFhS/wRJXRpr1QVsmP20JhWD
+         XwEBZyptfshkTjO+NHf96DV4qtdlLi7nkN6ZbpHgv1PQ3MIHMMofQCCS4vhMrVHRMmqu
+         2EZw==
+X-Gm-Message-State: AOAM532GbKYST23rFqzsSdSosHV+NqdBTm6+PGkFyL3Ufrfwan47iqWV
+        gEJU+X1AY2vnxTXBIQAI8+2jzQ==
+X-Google-Smtp-Source: ABdhPJz+x7ra4zniEkvn4mIcNbZDei9J4aWiqie7lTDvKWpmXTTdsYnybrjr475jveqwnABjfGIUwA==
+X-Received: by 2002:a05:6808:ec2:: with SMTP id q2mr3953557oiv.136.1641961694937;
+        Tue, 11 Jan 2022 20:28:14 -0800 (PST)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id k24sm2440634otl.31.2022.01.11.20.28.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jan 2022 20:28:14 -0800 (PST)
+Date:   Tue, 11 Jan 2022 20:28:02 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Lukas Czerner <lczerner@redhat.com>
+cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Zdenek Kabelac <zkabelac@redhat.com>, hughd@google.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: unusual behavior of loop dev with backing file in tmpfs
+In-Reply-To: <20211126075100.gd64odg2bcptiqeb@work>
+Message-ID: <5e66a9-4739-80d9-5bb5-cbe2c8fef36@google.com>
+References: <20211126075100.gd64odg2bcptiqeb@work>
 MIME-Version: 1.0
-References: <20211220085649.8196-1-songmuchun@bytedance.com>
- <20211220085649.8196-5-songmuchun@bytedance.com> <Yd3TVKpvsBmZM51k@carbon.dhcp.thefacebook.com>
-In-Reply-To: <Yd3TVKpvsBmZM51k@carbon.dhcp.thefacebook.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 12 Jan 2022 10:55:54 +0800
-Message-ID: <CAMZfGtXcGv_ZcNZZDGhj=O4pXGOsnftLZpYS2qrNsQqOFuh3ZA@mail.gmail.com>
-Subject: Re: [PATCH v5 04/16] fs: allocate inode by using alloc_inode_sb()
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Yang Shi <shy828301@gmail.com>, Alex Shi <alexs@kernel.org>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Dave Chinner <david@fromorbit.com>,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        jaegeuk@kernel.org, chao@kernel.org,
-        Kari Argillander <kari.argillander@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-nfs@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        Fam Zheng <fam.zheng@bytedance.com>,
-        Muchun Song <smuchun@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 12, 2022 at 2:58 AM Roman Gushchin <guro@fb.com> wrote:
->
-> On Mon, Dec 20, 2021 at 04:56:37PM +0800, Muchun Song wrote:
-> > The inode allocation is supposed to use alloc_inode_sb(), so convert
-> > kmem_cache_alloc() of all filesystems to alloc_inode_sb().
-> >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > Acked-by: Theodore Ts'o <tytso@mit.edu>               [ext4]
->
-> LGTM
->
-> Acked-by: Roman Gushchin <guro@fb.com>
+On Fri, 26 Nov 2021, Lukas Czerner wrote:
+> 
+> I've noticed unusual test failure in e2fsprogs testsuite
+> (m_assume_storage_prezeroed) where we use mke2fs to create a file system
+> on loop device backed in file on tmpfs. For some reason sometimes the
+> resulting file number of allocated blocks (stat -c '%b' /tmp/file) differs,
+> but it really should not.
+> 
+> I was trying to create a simplified reproducer and noticed the following
+> behavior on mainline kernel (v5.16-rc2-54-g5d9f4cf36721)
+> 
+> # truncate -s16M /tmp/file
+> # stat -c '%b' /tmp/file
+> 0
+> 
+> # losetup -f /tmp/file
+> # stat -c '%b' /tmp/file
+> 672
+> 
+> That alone is a little unexpected since the file is really supposed to
+> be empty and when copied out of the tmpfs, it really is empty. But the
+> following is even more weird.
+> 
+> We have a loop setup from above, so let's assume it's /dev/loop0. The
+> following should be executed in quick succession, like in a script.
+> 
+> # dd if=/dev/zero of=/dev/loop0 bs=4k
+> # blkdiscard -f /dev/loop0
+> # stat -c '%b' /tmp/file
+> 0
+> # sleep 1
+> # stat -c '%b' /tmp/file
+> 672
+> 
+> Is that expected behavior ? From what I've seen when I use mkfs instead
+> of this simplified example the number of blocks allocated as reported by
+> stat can vary a quite a lot given more complex operations. The file itself
+> does not seem to be corrupted in any way, so it is likely just an
+> accounting problem.
+> 
+> Any idea what is going on there ?
 
-Thanks Roman.
+I have half an answer; but maybe you worked it all out meanwhile anyway.
+
+Yes, it happens like that for me too: 672 (but 216 on an old installation).
+
+Half the answer is that funny code at the head of shmem_file_read_iter():
+	/*
+	 * Might this read be for a stacking filesystem?  Then when reading
+	 * holes of a sparse file, we actually need to allocate those pages,
+	 * and even mark them dirty, so it cannot exceed the max_blocks limit.
+	 */
+	if (!iter_is_iovec(to))
+		sgp = SGP_CACHE;
+which allocates pages to the tmpfs for reads from /dev/loop0; whereas
+normally a read of a sparse tmpfs file would just give zeroes without
+allocating.
+
+[Do we still need that code? Mikulas asked 18 months ago, and I never
+responded (sorry) because I failed to arrive at an informed answer.
+It comes from a time while unionfs on tmpfs was actively developing,
+and solved a real problem then; but by the time it went into tmpfs,
+unionfs had already been persuaded to proceed differently, and no
+longer needed it. I kept it in for indeterminate other stacking FSs,
+but it's probably just culted cargo, doing more harm than good. I
+suspect the best thing to do is, after the 5.17 merge window closes,
+revive Mikulas's patch to delete it and see if anyone complains.]
+
+But what is asynchronously reading /dev/loop0 (instantiating pages
+initially, and reinstantiating them after blkdiscard)? I assume it's
+some block device tracker, trying to read capacity and/or partition
+table; whether from inside or outside the kernel, I expect you'll
+guess much better than I can.
+
+Hugh
