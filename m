@@ -2,133 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF35B48C931
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 18:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A7A948C9F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 18:39:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355536AbiALRTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 12:19:42 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:59540 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348434AbiALRTk (ORCPT
+        id S1350093AbiALRjI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 12:39:08 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:38100 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1355758AbiALRjA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 12:19:40 -0500
+        Wed, 12 Jan 2022 12:39:00 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0E4ECB81F47
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 17:19:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C80A8C36AEA;
-        Wed, 12 Jan 2022 17:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642007977;
-        bh=o4t9U0eYLfqHTIBmy++CHkJ+gEPvd4uI1Gekf+xhCng=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DD8C761912;
+        Wed, 12 Jan 2022 17:38:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F64CC36AEA;
+        Wed, 12 Jan 2022 17:38:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1642009139;
+        bh=WgSDsvFQ7gn+YpLk25HuiZ2Pi3djY+iPCKxFKlfE+FI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P83jDWg9wPnwg99E7rOT8E5xfPyQK2mStynhV57nj3IMZQwgaHQw0Ea0Q0EGetGIK
-         pC4J6e+oG57m928hhTCTAUbEVzwjFnlAQM4j+BVymLHRPzg+K0wLTjY6VAUJ+abEjs
-         sFlo0sgbPnZOYw9nu9DfIXmS7kcU3bzjVLcx6gTVZKlEfl2bXSISzTAVQsrN6Q981W
-         0GcsvPdnykc697cOu5VIwVNEFKINNgcj0YHiYmvHkiQJHODsLITaRYjV472fviVmk+
-         Hs5kTNyoKAmiwfGsMO3dF63b79Wyp2yrNQWdw/4/JIWwDtHJ4Y7CpomiICUuNSczsv
-         pW7q+dViBJGHQ==
-Date:   Wed, 12 Jan 2022 09:19:37 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Lukas Czerner <lczerner@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Zdenek Kabelac <zkabelac@redhat.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: unusual behavior of loop dev with backing file in tmpfs
-Message-ID: <20220112171937.GA19154@magnolia>
-References: <20211126075100.gd64odg2bcptiqeb@work>
- <5e66a9-4739-80d9-5bb5-cbe2c8fef36@google.com>
+        b=1AJQlcSu1Df3SWiSAeIOVcUqPJ05eu/1DK8VMn5pDVNjC04TcHZWMnSlZBE71LPjz
+         /0HeXOLwGJB5O87PmZpUY4wKUCfYwe3se5kaIV3RDLWjNChwh2tlBHJ86++Ukc8Aye
+         hWUKXsanImo0eBLrIHig+iseWztsd3kvvqnPaC00=
+Date:   Wed, 12 Jan 2022 18:38:55 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     bp@suse.de, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2] firmware_loader: simplfy builtin or module check
+Message-ID: <Yd8SL0WmIQhunU/F@kroah.com>
+References: <20220112160053.723795-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5e66a9-4739-80d9-5bb5-cbe2c8fef36@google.com>
+In-Reply-To: <20220112160053.723795-1-mcgrof@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 08:28:02PM -0800, Hugh Dickins wrote:
-> On Fri, 26 Nov 2021, Lukas Czerner wrote:
-> > 
-> > I've noticed unusual test failure in e2fsprogs testsuite
-> > (m_assume_storage_prezeroed) where we use mke2fs to create a file system
-> > on loop device backed in file on tmpfs. For some reason sometimes the
-> > resulting file number of allocated blocks (stat -c '%b' /tmp/file) differs,
-> > but it really should not.
-> > 
-> > I was trying to create a simplified reproducer and noticed the following
-> > behavior on mainline kernel (v5.16-rc2-54-g5d9f4cf36721)
-> > 
-> > # truncate -s16M /tmp/file
-> > # stat -c '%b' /tmp/file
-> > 0
-> > 
-> > # losetup -f /tmp/file
-> > # stat -c '%b' /tmp/file
-> > 672
-> > 
-> > That alone is a little unexpected since the file is really supposed to
-> > be empty and when copied out of the tmpfs, it really is empty. But the
-> > following is even more weird.
-> > 
-> > We have a loop setup from above, so let's assume it's /dev/loop0. The
-> > following should be executed in quick succession, like in a script.
-> > 
-> > # dd if=/dev/zero of=/dev/loop0 bs=4k
-> > # blkdiscard -f /dev/loop0
-> > # stat -c '%b' /tmp/file
-> > 0
-> > # sleep 1
-> > # stat -c '%b' /tmp/file
-> > 672
-> > 
-> > Is that expected behavior ? From what I've seen when I use mkfs instead
-> > of this simplified example the number of blocks allocated as reported by
-> > stat can vary a quite a lot given more complex operations. The file itself
-> > does not seem to be corrupted in any way, so it is likely just an
-> > accounting problem.
-> > 
-> > Any idea what is going on there ?
+On Wed, Jan 12, 2022 at 08:00:53AM -0800, Luis Chamberlain wrote:
+> The existing check is outdated and confuses developers. Use the
+> already existing IS_REACHABLE() defined on kconfig.h which makes
+> the intention much clearer.
 > 
-> I have half an answer; but maybe you worked it all out meanwhile anyway.
+> Reported-by: Borislav Petkov <bp@alien8.de>
+> Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  include/linux/firmware.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Yes, it happens like that for me too: 672 (but 216 on an old installation).
+> diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+> index 3b057dfc8284..ec2ccfebef65 100644
+> --- a/include/linux/firmware.h
+> +++ b/include/linux/firmware.h
+> @@ -34,7 +34,7 @@ static inline bool firmware_request_builtin(struct firmware *fw,
+>  }
+>  #endif
+>  
+> -#if defined(CONFIG_FW_LOADER) || (defined(CONFIG_FW_LOADER_MODULE) && defined(MODULE))
+> +#if IS_REACHABLE(CONFIG_FW_LOADER)
+>  int request_firmware(const struct firmware **fw, const char *name,
+>  		     struct device *device);
+>  int firmware_request_nowarn(const struct firmware **fw, const char *name,
+> -- 
+> 2.34.1
 > 
-> Half the answer is that funny code at the head of shmem_file_read_iter():
-> 	/*
-> 	 * Might this read be for a stacking filesystem?  Then when reading
-> 	 * holes of a sparse file, we actually need to allocate those pages,
-> 	 * and even mark them dirty, so it cannot exceed the max_blocks limit.
-> 	 */
-> 	if (!iter_is_iovec(to))
-> 		sgp = SGP_CACHE;
-> which allocates pages to the tmpfs for reads from /dev/loop0; whereas
-> normally a read of a sparse tmpfs file would just give zeroes without
-> allocating.
-> 
-> [Do we still need that code? Mikulas asked 18 months ago, and I never
-> responded (sorry) because I failed to arrive at an informed answer.
-> It comes from a time while unionfs on tmpfs was actively developing,
-> and solved a real problem then; but by the time it went into tmpfs,
-> unionfs had already been persuaded to proceed differently, and no
-> longer needed it. I kept it in for indeterminate other stacking FSs,
-> but it's probably just culted cargo, doing more harm than good. I
-> suspect the best thing to do is, after the 5.17 merge window closes,
-> revive Mikulas's patch to delete it and see if anyone complains.]
 
-I for one wouldn't mind if tmpfs no longer instantiated cache pages for
-a read from a hole -- it's a little strange, since most disk filesystems
-(well ok xfs and ext4, haven't checked the others) don't do that.
-Anyone who really wants a preallocated page should probably be using
-fallocate or something...
+Hi,
 
---D
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-> But what is asynchronously reading /dev/loop0 (instantiating pages
-> initially, and reinstantiating them after blkdiscard)? I assume it's
-> some block device tracker, trying to read capacity and/or partition
-> table; whether from inside or outside the kernel, I expect you'll
-> guess much better than I can.
-> 
-> Hugh
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/SubmittingPatches for what needs to be done
+  here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
