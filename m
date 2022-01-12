@@ -2,122 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C22748C36F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 12:45:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BA4848C3EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 13:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352952AbiALLpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 06:45:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240331AbiALLpt (ORCPT
+        id S240509AbiALM3V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 07:29:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:33370 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240498AbiALM3U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 06:45:49 -0500
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14187C06173F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 03:45:49 -0800 (PST)
-Received: by mail-yb1-xb2c.google.com with SMTP id e198so5540635ybf.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 03:45:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=1oAWQHZqJjxGspd66xUUwdpCocjq4RF4bRYfPMa0RgM=;
-        b=LCxuNDTBSrsTxNHCIoEpEJhzykzI1PqU0Qu7+y1h/2eirkEaNcUWcRKGGAWaV79ru6
-         Xv6at+0+iUtpOEe63PUlXlbArXuMTPWdZ+/I9QGm1/Tn/3qseWRDveOL4FnagSPN1A/T
-         WQA5lRrrNPqlTtbO2930mHMbqr0IbKawgZZJX2ACEHAPmOPO0eKb5zSkXu2527bDe22H
-         qZSNnQTvKG1BZvNckxJgIPiclQ2QGrvZHaHYpAF4Yj1u61rLGVSA/EQd1E9Vbu/Wv0mM
-         76FeBD8ggDrgJZACy1k8ttE1LmolWjhAvrPauqbZAqe0sJtrtel+dc7OKUTio8KPUJJT
-         BrjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=1oAWQHZqJjxGspd66xUUwdpCocjq4RF4bRYfPMa0RgM=;
-        b=PzTPMcSsajBeWzUmPbEZEmFpA6ZHWHbqJOU6cE0nHYsFdq7tXk29fqIc5iTbmLHQHQ
-         PYJ8t0ifDwCWbWRNXY3DukSrnzaZmXXlREevzeBD6rTb52BuCF12gCw/ed0bBfwB5Vxq
-         V9DOZ0JinqdlfQ1fUpnrxKiMr2IqTOZj6XLw24eI9RF7pPDksJxdfKCugGMKsqICQTVA
-         4swLfLd/IgGAfNRinSSKPEAF7ap2P8SlnawyUHv44Y4Rxf3nBfZfpyN32CVVCy7nZtAo
-         9pHuLD213F+SkRKGlJRpJTe0KbQu/MN4ht8rOVbATwRCrDnCB7wTOsgHOZapD/bxjpLg
-         Rhlg==
-X-Gm-Message-State: AOAM533qpJa90iG0tZ7cAzF0LgVmD5G8d5Gxa7i6UJmBJ+so2OOqZehi
-        2+wqXlO2e71KGgQ/bwZKfkRaj8q1+GZ3yaOgHSQ8pQ==
-X-Google-Smtp-Source: ABdhPJy833HxrFP8l/AcVNmiqInufp1tn6sOo1ri3JhrVF4Lbfk3FqLKPmb8gT8eZ0+nFbb7F4rgAXM2QRTArxbTsF4=
-X-Received: by 2002:a5b:d09:: with SMTP id y9mr7287068ybp.146.1641987948106;
- Wed, 12 Jan 2022 03:45:48 -0800 (PST)
+        Wed, 12 Jan 2022 07:29:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1641990559;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zJjZLA05/EVAnL9glMI370u+RyOka7ubh9bOziaJLmU=;
+        b=PMas6BU4e9XCbX6vH/fClw969nSO5csWabhA81FsGl/9yz9qp58WE8iga1boAqqAd1WdBl
+        Q/3N3vy7NMxDiQiJyPeo/AjkiutJDL9i/yzC92Z4MKQ7qiqRb9e2za+9sFdMDPK6be726x
+        b1GPTZ7hpEdxSWRAl+M2SkJg19MKjXA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-7-s4u3pdpIN4axsi6-rARwNg-1; Wed, 12 Jan 2022 07:29:18 -0500
+X-MC-Unique: s4u3pdpIN4axsi6-rARwNg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EFA29363A5;
+        Wed, 12 Jan 2022 12:29:16 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D2C1E708C9;
+        Wed, 12 Jan 2022 12:29:12 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 20CCTCNb027823;
+        Wed, 12 Jan 2022 07:29:12 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 20CCTB7j027819;
+        Wed, 12 Jan 2022 07:29:11 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 12 Jan 2022 07:29:11 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Hugh Dickins <hughd@google.com>
+cc:     Lukas Czerner <lczerner@redhat.com>,
+        Zdenek Kabelac <zkabelac@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: unusual behavior of loop dev with backing file in tmpfs
+In-Reply-To: <5e66a9-4739-80d9-5bb5-cbe2c8fef36@google.com>
+Message-ID: <alpine.LRH.2.02.2201120725500.27581@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20211126075100.gd64odg2bcptiqeb@work> <5e66a9-4739-80d9-5bb5-cbe2c8fef36@google.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 12 Jan 2022 17:15:37 +0530
-Message-ID: <CA+G9fYsMHhXJCgO-ykR0oO1kVdusGnthgj6ifxEKaGPHZJ-ZCw@mail.gmail.com>
-Subject: [next]: LTP: getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER) failed:
- ENOSPC (28)
-To:     open list <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, LTP List <ltp@lists.linux.it>,
-        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While testing LTP syscalls with Linux next 20220110 (and till date 20220112)
-on x86_64, i386, arm and arm64 the following tests failed.
 
-tst_test.c:1365: TINFO: Timeout per run is 0h 15m 00s
-getxattr05.c:87: TPASS: Got same data when acquiring the value of
-system.posix_acl_access twice
-getxattr05.c:97: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
-tst_test.c:391: TBROK: Invalid child (13545) exit value 1
 
-fanotify17.c:176: TINFO: Test #1: Global groups limit in privileged user ns
-fanotify17.c:155: TFAIL: unshare(CLONE_NEWUSER) failed: ENOSPC (28)
-tst_test.c:391: TBROK: Invalid child (14739) exit value 1
+On Tue, 11 Jan 2022, Hugh Dickins wrote:
 
-sendto03.c:48: TBROK: unshare(268435456) failed: ENOSPC (28)
+> But what is asynchronously reading /dev/loop0 (instantiating pages
+> initially, and reinstantiating them after blkdiscard)? I assume it's
+> some block device tracker, trying to read capacity and/or partition
+> table; whether from inside or outside the kernel, I expect you'll
+> guess much better than I can.
+> 
+> Hugh
 
-setsockopt05.c:45: TBROK: unshare(268435456) failed: ENOSPC (28)
+That's udev. It reads filesystem signature on every block device, so that 
+it can create symlinks in /dev/disk/by-uuid.
 
-strace output:
---------------
-[pid   481] wait4(-1, 0x7fff52f5ae8c, 0, NULL) = -1 ECHILD (No child processes)
-[pid   481] clone(child_stack=NULL,
-flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD,
-child_tidptr=0x7f3af0fa7a10) = 483
-strace: Process 483 attached
-[pid   481] wait4(-1,  <unfinished ...>
-[pid   483] unshare(CLONE_NEWUSER)      = -1 ENOSPC (No space left on device)
+If you open the block device for write and close it, udev will re-scan it.
 
-metadata:
-  git branch: master
-  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  git commit: 57c149e506d5bec1b845ad1a8a631063fcac1f6e
-  git describe: next-20220110
-  arch: x86
-  toolchain: gcc-11
+Mikulas
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-GOOD: next-20220107
- BAD:    next-20220110
-
-Test logs:
-https://lkft.validation.linaro.org/scheduler/job/4301888#L1474
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220110/testrun/7253656/suite/ltp-syscalls-tests/test/getxattr05/log
-
-compare test history:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220112/testrun/7277164/suite/ltp-syscalls-tests/test/getxattr05/history/
-
-kernel-config:
-https://builds.tuxbuild.com/23V6AwGvHW7H3kr6WxZZwueajVS/config
-
-We are investigating this regression.
-
-Steps to reproduce:
-   # cd /opt/ltp
-   # ./runltp -s getxattr05
-
---
-Linaro LKFT
-https://lkft.linaro.org
