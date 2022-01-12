@@ -2,95 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEFC748C097
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 10:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 152FB48C0A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 10:03:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349402AbiALJCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 04:02:18 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40505 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238082AbiALJCR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 04:02:17 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V1e06w2_1641978133;
-Received: from 30.225.24.52(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V1e06w2_1641978133)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 12 Jan 2022 17:02:14 +0800
-Message-ID: <99c94a78-58c4-f0af-e1d4-9aaa51bab281@linux.alibaba.com>
-Date:   Wed, 12 Jan 2022 17:02:13 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.2
-Subject: Re: [PATCH v1 19/23] cachefiles: implement .demand_read() for demand
- read
-Content-Language: en-US
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
-        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
-        linux-kernel@vger.kernel.org
-References: <20211227125444.21187-1-jefflexu@linux.alibaba.com>
- <20211227125444.21187-20-jefflexu@linux.alibaba.com>
- <YcndgcpQQWY8MJBD@casper.infradead.org>
- <47831875-4bdd-8398-9f2d-0466b31a4382@linux.alibaba.com>
-In-Reply-To: <47831875-4bdd-8398-9f2d-0466b31a4382@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        id S238082AbiALJDt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 04:03:49 -0500
+Received: from relay.sw.ru ([185.231.240.75]:35188 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351902AbiALJDs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jan 2022 04:03:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=virtuozzo.com; s=relay; h=Message-Id:Date:Subject:From:Content-Type:
+        MIME-Version; bh=LXvcwvu/pJrvH+K8D0GYcsss9hjGYIeQtVGsSlxqdyg=; b=wGzyYFRnLJJZ
+        mucOf3wrqT9EYp3thymNqbGrxkM7GLWq6g4wz/Xr/AjKYgp7P/LM4XFBfpL7gWL6dJ+L/9ecw/JSA
+        AXwQbd/AicomCnyNMMaX15iq7iAwys86WxDE/OCQXGH1t0jiiZok0JDz5XGJh1mOBPLXSVb9giFTE
+        jtawA=;
+Received: from [10.93.0.12] (helo=dptest2.perf.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.94.2)
+        (envelope-from <andrey.zhadchenko@virtuozzo.com>)
+        id 1n7ZXk-0060qk-Ql; Wed, 12 Jan 2022 12:03:44 +0300
+From:   Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     cyphar@cyphar.com, viro@zeniv.linux.org.uk,
+        christian.brauner@ubuntu.com, ptikhomirov@virtuozzo.com,
+        linux-api@vger.kernel.org, andrey.zhadchenko@virtuozzo.com
+Subject: [PATCH] fs/open: add new RESOLVE_EMPTY_PATH flag for openat2
+Date:   Wed, 12 Jan 2022 12:02:17 +0300
+Message-Id: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+If you have an opened O_PATH file, currently there is no way to re-open
+it with other flags with openat/openat2. As a workaround it is possible
+to open it via /proc/self/fd/<X>, however
+1) You need to ensure that /proc exists
+2) You cannot use O_NOFOLLOW flag
 
+Both problems may look insignificant, but they are sensitive for CRIU.
+First of all, procfs may not be mounted in the namespace where we are
+restoring the process. Secondly, if someone opens a file with O_NOFOLLOW
+flag, it is exposed in /proc/pid/fdinfo/<X>. So CRIU must also open the
+file with this flag during restore.
 
-On 12/28/21 8:33 PM, JeffleXu wrote:
-> 
-> 
-> On 12/27/21 11:36 PM, Matthew Wilcox wrote:
->> On Mon, Dec 27, 2021 at 08:54:40PM +0800, Jeffle Xu wrote:
->>> +	spin_lock(&cache->reqs_lock);
->>> +	ret = idr_alloc(&cache->reqs, req, 0, 0, GFP_KERNEL);
->>
->> GFP_KERNEL while holding a spinlock?
-> 
-> Right. Thanks for pointing it out.
-> 
->>
->> You should be using an XArray instead of an IDR in new code anyway.
->>
-> 
-> Regards.
-> 
+This patch adds new constant RESOLVE_EMPTY_PATH for resolve field of
+struct open_how and changes getname() call to getname_flags() to avoid
+ENOENT for empty filenames.
 
-Hi Matthew,
+Signed-off-by: Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>
+---
 
-I'm afraid IDR can't be replaced by xarray here. Because we need an 'ID'
-for each pending read request, so that after fetching data from remote,
-user daemon could notify kernel which read request has finished by this
-'ID'.
+Why does even CRIU needs to reopen O_PATH files?
+Long story short: to support restoring opened files that are overmounted
+with single file bindmounts.
+In-depth explanation: when restoring mount tree, before doing mount()
+call, CRIU opens mountpoint with O_PATH and saves this fd for later use
+for each mount. If we need to restore overmounted file, we look at the
+mount which overmounts file mount and use its saved mountpoint fd in
+openat(<saved_fd>, <relative_path>, flags).
+If we need to open an overmounted mountpoint directory itself, we can use
+openat(<saved_fd>, ".", flags). However, if we have a bindmount, its
+mountpoint is a regular file. Therefore to open it we need to be able to
+reopen O_PATH descriptor. As I mentioned above, procfs workaround is
+possible but imposes several restrictions. Not to mention a hussle with
+/proc.
 
-Currently this 'ID' is get from idr_alloc(), and actually identifies the
-position of corresponding read request inside the IDR tree. I can't find
-similar API of xarray implementing similar function, i.e., returning an
-'ID'.
+Important note: the algorithm above relies on Virtozzo CRIU "mount-v2"
+engine, which is currently being prepared for mainstream CRIU.
+This patch ensures that CRIU will support all kinds of overmounted files.
 
-As for the issue of GFP_KERNEL while holding a spinlock, I'm going to
-fix this with idr_preload(), somehing like
+ fs/open.c                    | 4 +++-
+ include/linux/fcntl.h        | 2 +-
+ include/uapi/linux/openat2.h | 2 ++
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
-+       idr_preload(GFP_KERNEL);
-+       idr_lock(&cache->reqs);
-+
-+       ret = idr_alloc(&cache->reqs, req, 0, 0, GFP_ATOMIC);
-+       if (ret >= 0)
-+               req->req_in.id = ret;
-+
-+       idr_unlock(&cache->reqs);
-+       idr_preload_end();
-
-Please correct me if I'm wrong.
-
+diff --git a/fs/open.c b/fs/open.c
+index f732fb9..cfde988 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1131,6 +1131,8 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ 			return -EAGAIN;
+ 		lookup_flags |= LOOKUP_CACHED;
+ 	}
++	if (how->resolve & RESOLVE_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
+ 
+ 	op->lookup_flags = lookup_flags;
+ 	return 0;
+@@ -1203,7 +1205,7 @@ static long do_sys_openat2(int dfd, const char __user *filename,
+ 	if (fd)
+ 		return fd;
+ 
+-	tmp = getname(filename);
++	tmp = getname_flags(filename, op.lookup_flags, 0);
+ 	if (IS_ERR(tmp))
+ 		return PTR_ERR(tmp);
+ 
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index a332e79..eabc7a8 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -15,7 +15,7 @@
+ /* List of all valid flags for the how->resolve argument: */
+ #define VALID_RESOLVE_FLAGS \
+ 	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
+-	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_CACHED)
++	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_CACHED | RESOLVE_EMPTY_PATH)
+ 
+ /* List of all open_how "versions". */
+ #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+index a5feb76..a42cf88 100644
+--- a/include/uapi/linux/openat2.h
++++ b/include/uapi/linux/openat2.h
+@@ -39,5 +39,7 @@ struct open_how {
+ 					completed through cached lookup. May
+ 					return -EAGAIN if that's not
+ 					possible. */
++#define RESOLVE_EMPTY_PATH	0x40 /* If pathname is an empty string, open
++					the file referred by dirfd */
+ 
+ #endif /* _UAPI_LINUX_OPENAT2_H */
 -- 
-Thanks,
-Jeffle
+1.8.3.1
+
