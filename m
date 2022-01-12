@@ -2,84 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 579DA48C689
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 15:54:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A53848C748
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 16:36:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354338AbiALOxc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 09:53:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
+        id S1354634AbiALPgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 10:36:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354308AbiALOxa (ORCPT
+        with ESMTP id S1354632AbiALPgx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 09:53:30 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA56C061748;
-        Wed, 12 Jan 2022 06:53:30 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BBAB61879;
-        Wed, 12 Jan 2022 14:53:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33271C36AE5;
-        Wed, 12 Jan 2022 14:53:28 +0000 (UTC)
-Date:   Wed, 12 Jan 2022 15:53:25 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        ptikhomirov@virtuozzo.com, linux-api@vger.kernel.org
-Subject: Re: [PATCH] fs/open: add new RESOLVE_EMPTY_PATH flag for openat2
-Message-ID: <20220112145325.hdim2q2qgewvgceh@wittgenstein>
-References: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
- <20220112143940.ugj27xzprmptqmr7@wittgenstein>
- <20220112144331.dpbhi7j2vwutrxyt@senku>
+        Wed, 12 Jan 2022 10:36:53 -0500
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3BFC061751
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 07:36:52 -0800 (PST)
+Received: by mail-ed1-x541.google.com with SMTP id u21so11525187edd.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jan 2022 07:36:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=pFQlRwVs64l+mhGnFgsqy5BuLBon+B2tD/h1013B7pA=;
+        b=QzqyPaQ29wk/535/mqu2iWnjEbZEvV5DPaoeeXxkQ+LF4iriofj5ZloKOQPaEo8mq1
+         4Ok2uSRIvsJ1dpLerR+PqrvemFbeiGCdrtYeRlA8w2gc80/B5dKsMyNMY4KhXc5tp2cR
+         znG9K0aUnnYZJlWFanPSZuUIfaCNvZzvhe8Ss=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=pFQlRwVs64l+mhGnFgsqy5BuLBon+B2tD/h1013B7pA=;
+        b=FHztGFhSzT0BXteIRKHhUhxwgVgP9uK4QVZaAXtOHytk8+kidepHYiTOWitOQXl8q2
+         f+z+c68BwXQ4LUb4m5mdRZgLxKs0vOw92OTrj5OQWkrZG/eGMbKXZcJGYBZkT5gtBXUn
+         NjRtThoifZv2zabYPZUCNTr2xWTigDAOphlMpYQcD26hQm486Ja3WsstUdVSnjUn/rhZ
+         Xrq4sAZFr6zEG8raqb1evsLuqmuXpOwxMk/iwF1OdO843uh6E7WQKlfb0Qj/XC+DPXvK
+         DhXdhq04qdThTsaBG2llF7X3ELZCjMyL/gozFsRRiVpRq+OscFNXN45BAinJPHPYj9Xt
+         k80w==
+X-Gm-Message-State: AOAM532TUeTi+lwfv7zJeoPS7NuMYBy4YnIuOOQBgVKTz0ULMQhz4SOf
+        6FoSBH4kXouZRE002UKKdCKYbQ==
+X-Google-Smtp-Source: ABdhPJyhR2ASi9+GtKBfKy+OT8soYwXQEidXwNi5BGuIk/eoLc5gqe3YWIlj8uA/tAbZc4ODk8QK9Q==
+X-Received: by 2002:a05:6402:51cc:: with SMTP id r12mr172836edd.239.1642001811228;
+        Wed, 12 Jan 2022 07:36:51 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.broadband.hu. [178.48.189.3])
+        by smtp.gmail.com with ESMTPSA id l10sm18542ejh.102.2022.01.12.07.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jan 2022 07:36:50 -0800 (PST)
+Date:   Wed, 12 Jan 2022 16:36:43 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse update for 5.17
+Message-ID: <Yd71i1Yul3rPO2Lp@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220112144331.dpbhi7j2vwutrxyt@senku>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 13, 2022 at 01:43:31AM +1100, Aleksa Sarai wrote:
-> On 2022-01-12, Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> > On Wed, Jan 12, 2022 at 12:02:17PM +0300, Andrey Zhadchenko wrote:
-> > > If you have an opened O_PATH file, currently there is no way to re-open
-> > > it with other flags with openat/openat2. As a workaround it is possible
-> > > to open it via /proc/self/fd/<X>, however
-> > > 1) You need to ensure that /proc exists
-> > > 2) You cannot use O_NOFOLLOW flag
-> > > 
-> > > Both problems may look insignificant, but they are sensitive for CRIU.
-> > 
-> > Not just CRIU. It's also an issue for systemd, LXD, and other users.
-> > (One old example is where we do need to sometimes stash an O_PATH fd to
-> > a /dev/pts/ptmx device and to actually perform an open on the device we
-> > reopen via /proc/<pid>/fd/<nr>.)
-> > 
-> > > First of all, procfs may not be mounted in the namespace where we are
-> > > restoring the process. Secondly, if someone opens a file with O_NOFOLLOW
-> > > flag, it is exposed in /proc/pid/fdinfo/<X>. So CRIU must also open the
-> > > file with this flag during restore.
-> > > 
-> > > This patch adds new constant RESOLVE_EMPTY_PATH for resolve field of
-> > > struct open_how and changes getname() call to getname_flags() to avoid
-> > > ENOENT for empty filenames.
-> > 
-> > From my perspective this makes sense and is something that would be
-> > very useful instead of having to hack around this via procfs.
-> > 
-> > However, e should consider adding RESOLVE_EMPTY_PATH since we already
-> > have AT_EMPTY_PATH. If we think this is workable we should try and reuse
-> > AT_EMPTY_PATH that keeps the api consistent with linkat(), readlinkat(),
-> > execveat(), statx(), open_tree(), mount_setattr() etc.
-> > 
-> > If AT_EMPTY_PATH doesn't conflict with another O_* flag one could make
-> > openat() support it too?
-> 
-> I would much prefer O_EMPTYPATH, in fact I think this is what I called
-> it in my first draft ages ago. RESOLVE_ is meant to be related to
-> resolution restrictions, not changing the opening mode.
+Hi Linus,
 
-That seems okay to me too. The advantage of AT_EMPTY_PATH is that we
-don't double down on the naming confusion, imho.
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-5.17
+
+- Fix a regression introduced in 5.15.
+
+- Extend the size of the FUSE_INIT request to accommodate for more flags.
+  There's a slight possibility of a regression for obscure fuse servers; if
+  this happens, then more complexity will need to be added to the protocol.
+
+- Allow the DAX property to be controlled by the server on a per-inode
+  basis in virtiofs.
+
+- Allow sending security context to the server when creating a file or
+  directory.
+
+Thanks,
+Miklos
+
+---
+Jeffle Xu (7):
+      fuse: add fuse_should_enable_dax() helper
+      fuse: make DAX mount option a tri-state
+      fuse: support per inode DAX in fuse protocol
+      fuse: enable per inode DAX
+      fuse: negotiate per inode DAX in FUSE_INIT
+      fuse: mark inode DONT_CACHE when per inode DAX hint changes
+      Documentation/filesystem/dax: DAX on virtiofs
+
+Miklos Szeredi (1):
+      fuse: extend init flags
+
+Vivek Goyal (1):
+      fuse: send security context of inode on file
+
+Xie Yongji (1):
+      fuse: Pass correct lend value to filemap_write_and_wait_range()
+
+---
+ Documentation/filesystems/dax.rst | 20 ++++++++-
+ fs/fuse/dax.c                     | 36 +++++++++++++++-
+ fs/fuse/dir.c                     | 91 +++++++++++++++++++++++++++++++++++++++
+ fs/fuse/file.c                    |  6 +--
+ fs/fuse/fuse_i.h                  | 31 +++++++++++--
+ fs/fuse/inode.c                   | 89 +++++++++++++++++++++++---------------
+ fs/fuse/virtio_fs.c               | 18 ++++++--
+ include/uapi/linux/fuse.h         | 55 +++++++++++++++++++++--
+ 8 files changed, 294 insertions(+), 52 deletions(-)
