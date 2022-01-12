@@ -2,105 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 992E748BCC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 02:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDBBA48BD53
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jan 2022 03:34:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348082AbiALB7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jan 2022 20:59:02 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56474 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348072AbiALB7A (ORCPT
+        id S1348829AbiALCeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jan 2022 21:34:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56302 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348820AbiALCeS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jan 2022 20:59:00 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 41AB61F44896
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1641952739;
-        bh=PF3ZlHbSf6Aq8JxiqzqbyxWalp7fsDDicZK8qmN8P8E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bxtPlOI2O8fiNwobm6Uw7SqhUN3uGufkvzXzy81i/UbTq1R2/nodo9PX3bv/5U8+7
-         2JdK2yFLRe2ipy10Yw3D+T4yAWedzWKfV8naSEf5qE1L3ysgyinRE1ZBp3gG6HQU9H
-         woJX0h4r7gH+vd89YietJNlCoBRB6VX1wLwOtpQLjezlcWj53N8NXjmtebQ8Uq1T+5
-         Mwoq8hTmaKHGAdMCg7C1yWZjCuybzHtiQBKjuOO/pgvwcg7rtUUA/F3BYRaPsIy5XZ
-         ojgCvyfy2vG68u6HJ6LpzVYNmiutgVbWj/sJOdFb5aRzLTnQwmquFHqu67SInN681V
-         mkcEfTH4A/tOQ==
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc:     hch@lst.de, chao@kernel.org, tytso@mit.edu,
-        linux-kernel@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [GIT PULL] unicode patches for 5.17
-Date:   Tue, 11 Jan 2022 20:58:54 -0500
-Message-ID: <87a6g11zq9.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 11 Jan 2022 21:34:18 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF37C06173F;
+        Tue, 11 Jan 2022 18:34:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=lAmMImhY7cLXv0Zia2nBSBgJ5zwPiW79XSAGp7Fylqc=; b=cqsOZ3UM1DSQIKpcTX0Pl8Izb4
+        yW1auuGqF5kEOtmIsKnR/JHohfUIwoeixZF8JcSdH7l4ny4+EXCpRe3m+g34aZ7+0Y9srKVutJjWq
+        wiJIwHI7HyH6YsQhhR9JmYLbEe9uSHEN6mI8FLoWuxJkID58hq+9RPYzNiQB3V+f85qbUCoZN6Wfe
+        zfm7xNoYmyGvzGcaNIkP9gRFchkLz8Uy7AuoJilY6lAdFNBJaLTMtGFi8QX7i3KSx8CMMH/pob/cj
+        uBcRBPxx95VZEVQUxKw4gEsZgjjzMTvkyFIphFi5IKQmEAaGUzhhFHcjnNtOsg7v3KNzPCPC5IatQ
+        3ErZseRQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n7TSr-000u7T-Hv; Wed, 12 Jan 2022 02:34:17 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     gregkh@linuxfoundation.org, bp@suse.de
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] firmware_loader: simplfy builtin or module check
+Date:   Tue, 11 Jan 2022 18:34:16 -0800
+Message-Id: <20220112023416.215644-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 9e1ff307c779ce1f0f810c7ecce3d95bbae40896:
+The existing check is outdated and confuses developers. Use the
+already existing IS_ENABLED() defined on kconfig.h which makes
+the intention much clearer.
 
-  Linux 5.15-rc4 (2021-10-03 14:08:47 -0700)
+Reported-by: Borislav Petkov <bp@alien8.de>
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ include/linux/firmware.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git tags/unicode-for-next-5.17
-
-for you to fetch changes up to e2a58d2d3416aceeae63dfc7bf680dd390ff331d:
-
-  unicode: only export internal symbols for the selftests (2021-10-12 11:41:39 -0300)
-
-----------------------------------------------------------------
-This branch has patches from Christoph Hellwig to split the large data
-tables of the unicode subsystem into a loadable module, which allow
-users to not have them around if case-insensitive filesystems are not to
-be used.  It also includes minor code fixes to unicode and its users,
-from the same author.
-
-There is a trivial conflict in the function encoding_show in
-fs/f2fs/sysfs.c reported by linux-next between commit
-
-84eab2a899f2 ("f2fs: replace snprintf in show functions with sysfs_emit")
-
-and commit a440943e68cd ("unicode: remove the charset field from struct
-unicode_map") from my tree.
-
-I left an example of how I would solve it on the branch
-unicode-f2fs-mergeconflict of my tree.
-
-All the patches here have been on linux-next releases for the past
-months.
-
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-----------------------------------------------------------------
-Christoph Hellwig (11):
-      ext4: simplify ext4_sb_read_encoding
-      f2fs: simplify f2fs_sb_read_encoding
-      unicode: remove the charset field from struct unicode_map
-      unicode: mark the version field in struct unicode_map unsigned
-      unicode: pass a UNICODE_AGE() tripple to utf8_load
-      unicode: remove the unused utf8{,n}age{min,max} functions
-      unicode: simplify utf8len
-      unicode: move utf8cursor to utf8-selftest.c
-      unicode: cache the normalization tables in struct unicode_map
-      unicode: Add utf8-data module
-      unicode: only export internal symbols for the selftests
-
- fs/ext4/super.c                                    |  39 ++-
- fs/f2fs/super.c                                    |  38 +--
- fs/f2fs/sysfs.c                                    |   3 +-
- fs/unicode/Kconfig                                 |  13 +-
- fs/unicode/Makefile                                |  13 +-
- fs/unicode/mkutf8data.c                            |  24 +-
- fs/unicode/utf8-core.c                             | 109 ++++-----
- fs/unicode/utf8-norm.c                             | 262 +++------------------
- fs/unicode/utf8-selftest.c                         |  94 ++++----
- .../{utf8data.h_shipped => utf8data.c_shipped}     |  22 +-
- fs/unicode/utf8n.h                                 |  81 +++----
- include/linux/unicode.h                            |  49 +++-
- 12 files changed, 291 insertions(+), 456 deletions(-)
- rename fs/unicode/{utf8data.h_shipped => utf8data.c_shipped} (99%)
+diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+index 3b057dfc8284..fa3493dbe84a 100644
+--- a/include/linux/firmware.h
++++ b/include/linux/firmware.h
+@@ -34,7 +34,7 @@ static inline bool firmware_request_builtin(struct firmware *fw,
+ }
+ #endif
+ 
+-#if defined(CONFIG_FW_LOADER) || (defined(CONFIG_FW_LOADER_MODULE) && defined(MODULE))
++#if IS_ENABLED(CONFIG_FW_LOADER)
+ int request_firmware(const struct firmware **fw, const char *name,
+ 		     struct device *device);
+ int firmware_request_nowarn(const struct firmware **fw, const char *name,
+-- 
+2.34.1
 
