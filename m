@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B19348D4AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 10:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 875F948D50A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 10:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232274AbiAMJCZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 04:02:25 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:56284 "EHLO
+        id S233478AbiAMJbm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 04:31:42 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:59610 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232380AbiAMJCV (ORCPT
+        with ESMTP id S231216AbiAMJbl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 04:02:21 -0500
+        Thu, 13 Jan 2022 04:31:41 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id A88C21F3A8;
-        Thu, 13 Jan 2022 09:02:19 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 69B621F3D0;
+        Thu, 13 Jan 2022 09:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1642064539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1642066300; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=maRJiYWWsej6VtzU8BY/ZSUfh+jtG5r9ye7Nqwr2LU4=;
-        b=row7JZbSGynM/P4rzOyrZA53mgeZpQ9CUH1boo32eLI2QtXUzdCwIHjzi8q1ZEUlZC5Mky
-        HH8OAdNQh9fpQ5v7SgDnlIj22beb+/UbCbwZQNCioCJPlb9z0KC/o5zZ0HtSWttQYPnVaz
-        047dfsye0991We8g9UV70dKfxUcsJoI=
+        bh=4tNIWwIUMcDmi9ZqG5FAYmz9YUg0nC27JkLBuHr5SBc=;
+        b=Tuxkb0QbikOTnHX/qShX311jOaC3/A/+Ryh1bHBu2gI7kpsTfiTJyPsCSdkgS/zo2flwu3
+        pC4QePv8f6rVUUZ6wMoBknMEM5Xu12uzfeTuZqaJSrD5v93WsugocgUKjkrlPeasQ+KVjL
+        kN2vwbfv4l9NUNGgL9Kpysux80tYzF4=
 Received: from suse.cz (unknown [10.100.224.162])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 822C7A3B88;
-        Thu, 13 Jan 2022 09:02:19 +0000 (UTC)
-Date:   Thu, 13 Jan 2022 10:02:19 +0100
+        by relay2.suse.de (Postfix) with ESMTPS id 461FEA3B84;
+        Thu, 13 Jan 2022 09:31:40 +0000 (UTC)
+Date:   Thu, 13 Jan 2022 10:31:39 +0100
 From:   Petr Mladek <pmladek@suse.com>
 To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -36,70 +36,68 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         keescook@chromium.org, yzaikin@google.com,
         akpm@linux-foundation.org, feng.tang@intel.com,
         siglesias@igalia.com, kernel@gpiccoli.net
-Subject: Re: [PATCH 3/3] panic: Allow printing extra panic information on
- kdump
-Message-ID: <Yd/qmyz+qSuoUwbs@alley>
+Subject: Re: [PATCH 2/3] panic: Add option to dump all CPUs backtraces in
+ panic_print
+Message-ID: <Yd/xe5c2HfhwqWwk@alley>
 References: <20211109202848.610874-1-gpiccoli@igalia.com>
- <20211109202848.610874-4-gpiccoli@igalia.com>
+ <20211109202848.610874-3-gpiccoli@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211109202848.610874-4-gpiccoli@igalia.com>
+In-Reply-To: <20211109202848.610874-3-gpiccoli@igalia.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 2021-11-09 17:28:48, Guilherme G. Piccoli wrote:
-> Currently we have the "panic_print" parameter/sysctl to allow some extra
-> information to be printed in a panic event. On the other hand, the kdump
-> mechanism allows to kexec a new kernel to collect a memory dump for the
-> running kernel in case of panic.
-> Right now these options are incompatible: the user either sets the kdump
-> or makes use of "panic_print". The code path of "panic_print" isn't
-> reached when kdump is configured.
-> 
-> There are situations though in which this would be interesting: for
-> example, in systems that are very memory constrained, a handcrafted
-> tiny kernel/initrd for kdump might be used in order to only collect the
-> dmesg in kdump kernel. Even more common, systems with no disk space for
-> the full (compressed) memory dump might very well rely in this
-> functionality too, dumping only the dmesg with the additional information
-> provided by "panic_print".
+On Tue 2021-11-09 17:28:47, Guilherme G. Piccoli wrote:
+> Currently the "panic_print" parameter/sysctl allows some interesting debug
+> information to be printed during a panic event. This is useful for example
+> in cases the user cannot kdump due to resource limits, or if the user
+> collects panic logs in a serial output (or pstore) and prefers a fast
+> reboot instead of a kdump.
 
-Is anyone really using this approach? kmsg_dump() looks like a better
-choice when there are memory constrains. It does not need to reserve
-memory for booting the crash kernel.
+Yes, I have missed this possibility many times.
 
-I would not mind much but this change depends on a not fully reliable
-assumption, see below.
+> Happens that currently there's no way to see all CPUs backtraces in
+> a panic using "panic_print" on architectures that support that. We do
+> have "oops_all_cpu_backtrace" sysctl, but although partially overlapping
+> in the functionality, they are orthogonal in nature: "panic_print" is
+> a panic tuning (and we have panics without oopses, like direct calls to
+> panic() or maybe other paths that don't go through oops_enter()
+> function), and the original purpose of "oops_all_cpu_backtrace" is to
+> provide more information on oopses for cases in which the users desire
+> to continue running the kernel even after an oops, i.e., used in
+> non-panic scenarios.
 
-Also it will also complicate the solution for the kmsg_dump() code path.
-It would be better to discuss this togeter with the other patch
-https://lore.kernel.org/r/20220106212835.119409-1-gpiccoli@igalia.com
+panic() already prevents double backtrace of the CPU that Oopsed, see:
 
+#ifdef CONFIG_DEBUG_BUGVERBOSE
+	/*
+	 * Avoid nested stack-dumping if a panic occurs during oops processing
+	 */
+	if (!test_taint(TAINT_DIE) && oops_in_progress <= 1)
+		dump_stack();
+#endif
 
-> So, this is what the patch does: allows both functionality to co-exist;
-> if "panic_print" is set and the system performs a kdump, the extra
-> information is printed on dmesg before the kexec. Some notes about the
-> design choices here:
-> 
-> (a) We could have introduced a sysctl or an extra bit on "panic_print"
-> to allow enabling the co-existence of kdump and "panic_print", but seems
-> that would be over-engineering; we have 3 cases, let's check how this
-> patch change things:
-> 
-> - if the user have kdump set and not "panic_print", nothing changes;
-> - if the user have "panic_print" set and not kdump, nothing changes;
-> - if both are enabled, now we print the extra information before kdump,
-> which is exactly the goal of the patch (and should be the goal of the
-> user, since they enabled both options).
-> 
-> (b) We assume that the code path won't return from __crash_kexec()
-> so we didn't guard against double execution of panic_print_sys_info().
+It should be possible to do something similar also for backtraces
+on all CPUs.
 
-This sounds suspiciously. There is small race window but it actually works.
-__crash_kexec() really never returns when @kexec_crash_image is
-loaded. Well, it might break in the future if the code is modified.
+There are more situation when the backtraces are printed and panic()
+is called, for example: softlockup_panic and
+softlockup_all_cpu_backtrace.
+
+Well, it is just nice to have. People probably will not use these
+options together. And it is better to have the backtraces twice
+than do not have them at all.
+
+> So, we hereby introduce an additional bit for "panic_print" to allow
+> dumping the CPUs backtraces during a panic event.
+>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+
+Feel free to use:
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
 Best Regards,
 Petr
