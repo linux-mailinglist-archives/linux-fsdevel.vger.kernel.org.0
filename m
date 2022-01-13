@@ -2,113 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9322B48D6B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 12:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AC2648D729
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 13:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234184AbiAMLax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 06:30:53 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:46446 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230283AbiAMLaw (ORCPT
+        id S234272AbiAMMIT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 07:08:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:31114 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230310AbiAMMIS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 06:30:52 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 861181F3A5;
-        Thu, 13 Jan 2022 11:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1642073451; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Thu, 13 Jan 2022 07:08:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642075697;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=knNxTHuHCUWy+TfikTNU9RikhIY8xv43/13z9bJTOUE=;
-        b=hPdAG+6sEAbjAcgtqa89wm7DgwL8JgdEyvPYxKcqohHVkCH/gjeus+5xKe4Z+jBtifr8gT
-        sS5iyvLPxGb5VRDeOxFyCMG2sYOsTY+a5B7mj2hzB/bwj2Qn1nBy7Bruz68U1jrXWTsrK6
-        NIxnXAhHdzFOZlrEfRmbM2Hkm02J3kE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1642073451;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=knNxTHuHCUWy+TfikTNU9RikhIY8xv43/13z9bJTOUE=;
-        b=ByKIMFrBvSO/sVz8lPoa39xOYyxeqYwimGsvQdry6rrvuIYkGSP/fegbtaLrTFBQYEIWbX
-        Qr3a96MQCvZ1xaBw==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        bh=TCNkeFEK71+LV6A7k+ZbeQqGlDkwam6mXnXbXpILn2s=;
+        b=Hs2CxMpU2yw1fXFlDGVM6qARbmKDAjT/UjT+JKCKFOZP971KQJ5sxn9jHyUqQzkrG/limh
+        WvlG7Oxw//RZ5R6diYu9fv9XX2DSKWaGPQxp1buDIw2AH4uAbK8dTRR8Fr1eAF8oQBlr+z
+        6byZfwpUJ66AUVvmQ1EG6tXzk8tEdUE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-57-jwoGwns4MtiJQq0oalNNIQ-1; Thu, 13 Jan 2022 07:08:14 -0500
+X-MC-Unique: jwoGwns4MtiJQq0oalNNIQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 72926A3B87;
-        Thu, 13 Jan 2022 11:30:51 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 317CAA05E2; Thu, 13 Jan 2022 12:30:51 +0100 (CET)
-Date:   Thu, 13 Jan 2022 12:30:51 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, tytso@mit.edu,
-        Eric Whitney <enwlinux@gmail.com>
-Subject: Re: [PATCH 5/6] jbd2: Refactor wait logic for transaction updates
- into a common function
-Message-ID: <20220113113051.5ehxl2ap3v64eyya@quack3.lan>
-References: <cover.1642044249.git.riteshh@linux.ibm.com>
- <95fa94cbeb4bb0275430a6721a588bd738d5a9aa.1642044249.git.riteshh@linux.ibm.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2564F10247B4;
+        Thu, 13 Jan 2022 12:08:13 +0000 (UTC)
+Received: from work (unknown [10.40.194.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D203D7A8C7;
+        Thu, 13 Jan 2022 12:08:11 +0000 (UTC)
+Date:   Thu, 13 Jan 2022 13:08:07 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 12/13] ext4: switch to the new mount api
+Message-ID: <20220113120807.xlyg4wmbbhajuftu@work>
+References: <20211021114508.21407-1-lczerner@redhat.com>
+ <20211021114508.21407-13-lczerner@redhat.com>
+ <286d36c9-e9ab-b896-e23c-2a95c6385817@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <95fa94cbeb4bb0275430a6721a588bd738d5a9aa.1642044249.git.riteshh@linux.ibm.com>
+In-Reply-To: <286d36c9-e9ab-b896-e23c-2a95c6385817@nvidia.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 13-01-22 08:56:28, Ritesh Harjani wrote:
-> No functionality change as such in this patch. This only refactors the
-> common piece of code which waits for t_updates to finish into a common
-> function named as jbd2_journal_wait_updates(journal_t *)
+On Thu, Jan 13, 2022 at 11:29:24AM +0000, Jon Hunter wrote:
+> Hi Lukas,
 > 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> On 21/10/2021 12:45, Lukas Czerner wrote:
+> > Add the necessary functions for the fs_context_operations. Convert and
+> > rename ext4_remount() and ext4_fill_super() to ext4_get_tree() and
+> > ext4_reconfigure() respectively and switch the ext4 to use the new api.
+> > 
+> > One user facing change is the fact that we no longer have access to the
+> > entire string of mount options provided by mount(2) since the mount api
+> > does not store it anywhere. As a result we can't print the options to
+> > the log as we did in the past after the successful mount.
+> > 
+> > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> 
+> 
+> I have noticed the following error on -next on various ARM64 platforms that
+> we have ...
+> 
+>  ERR KERN /dev/mmcblk1: Can't open blockdev
+> 
+> I have bisected this, to see where this was introduced and bisect is
+> pointing to this commit. I have not looked any further so far, but wanted to
+> see if you had any ideas/suggestions?
 
-Just one nit, otherwise. Feel free to add:
+Hi,
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+this error does not come from the ext4, but probably rather from vfs. More
+specifically from get_tree_bdev()
 
-> @@ -1757,6 +1757,35 @@ static inline unsigned long jbd2_log_space_left(journal_t *journal)
->  	return max_t(long, free, 0);
->  }
->  
-> +/*
-> + * Waits for any outstanding t_updates to finish.
-> + * This is called with write j_state_lock held.
-> + */
-> +static inline void jbd2_journal_wait_updates(journal_t *journal)
-> +{
-> +	transaction_t *commit_transaction = journal->j_running_transaction;
-> +
-> +	if (!commit_transaction)
-> +		return;
-> +
-> +	spin_lock(&commit_transaction->t_handle_lock);
-> +	while (atomic_read(&commit_transaction->t_updates)) {
-> +		DEFINE_WAIT(wait);
-> +
-> +		prepare_to_wait(&journal->j_wait_updates, &wait,
-> +					TASK_UNINTERRUPTIBLE);
-> +		if (atomic_read(&commit_transaction->t_updates)) {
-> +			spin_unlock(&commit_transaction->t_handle_lock);
-> +			write_unlock(&journal->j_state_lock);
-> +			schedule();
-> +			write_lock(&journal->j_state_lock);
-> +			spin_lock(&commit_transaction->t_handle_lock);
-> +		}
-> +		finish_wait(&journal->j_wait_updates, &wait);
-> +	}
-> +	spin_unlock(&commit_transaction->t_handle_lock);
-> +}
-> +
+        bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type);
+        if (IS_ERR(bdev)) {
+                errorf(fc, "%s: Can't open blockdev", fc->source);
+                return PTR_ERR(bdev);
+        }
 
-I don't think making this inline makes sence. Neither the commit code nor
-jbd2_journal_lock_updates() are so hot that it would warrant this large
-inline function...
+I have no idea why this fails in your case. Do you know what kind of
+error it fails with? Any oher error or warning messages preceding the one you
+point out in the logs?
 
-								Honza
+I assume that this happens on mount and the device that you're trying to
+mount contains ext4 file system? Ext4 is not the only file system
+utilizing the new mount api, can you try the same with xfs on the device?
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Does this happen only on some specific devices? I see that the error
+is mentioning /dev/mmcblk1. Is it the case that it only affects MMC ?
+Does this happen when you try to mount a different type of block device
+with ext4 on it?
+
+Any specific mount options you're using? Is it rw mount? If so, any
+chance the device is read only?
+
+Do you have any way of reliably reproducing this?
+
+Thanks!
+-Lukas
+> 
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
+> 
+
