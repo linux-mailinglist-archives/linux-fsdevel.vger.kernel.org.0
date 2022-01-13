@@ -2,117 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A1F48D5D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 11:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9B548D630
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 11:58:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231487AbiAMKeC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 05:34:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230436AbiAMKeA (ORCPT
+        id S233837AbiAMK6E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 05:58:04 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:43218 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233820AbiAMK6C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 05:34:00 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2EAC06173F;
-        Thu, 13 Jan 2022 02:34:00 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Thu, 13 Jan 2022 05:58:02 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 40CE71F3BC;
+        Thu, 13 Jan 2022 10:58:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1642071481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jG2YBmKxjGm7yo2Ve7nOVVYEHMKVyhyJf6tIbfNxbRM=;
+        b=xaEBgzRALckvYaXQWmg0Sp787ke7YPnqaZ2GgC2sp/walSexq0QHRNs0E/6sHmlx5xKelc
+        NJwoBZHbGMGjjvn8yqZOEkz6Pm7YPZEjkL2e9/TdOBj4pSVS0ClGKRovoBa2m4Ju5FEeJj
+        NP9UcuF/PnucO4i6INRvlydh1kAC4tI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1642071481;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jG2YBmKxjGm7yo2Ve7nOVVYEHMKVyhyJf6tIbfNxbRM=;
+        b=Cgjr6zCU/nrJzGkMdXvSwhSSk8ftcCjcJRB60rbuIKLIGSNQnZ08zAVL9Migzjyi+z7MMB
+        z2RbVJL13CZSbVAw==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5A89461BE6;
-        Thu, 13 Jan 2022 10:34:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D43CFC36AE9;
-        Thu, 13 Jan 2022 10:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642070039;
-        bh=97BXsEJgLSUpPhg628TSSEHtF2xTCt2ytK13UUxhfiw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BxvdI9BK40TbhY/2DZbCySwg7nBs/3dkd6k/I2TE8+UmIrfJmDcfrvoLK8i28EXaP
-         QSAZYUQ5OxfKXCvQ04l301ASU/BqfxF5ez0jc8Z2Neos7MPG8qSreRAcoaqNIVWCrM
-         wAge+hVKxC12eD/nIruP+gxcOqiY9axR+xCHoLY/5ncqHBQSpeZTdI0Tmuac9QhXDS
-         DNcXM7jc6Ok59zic0TaqQKgSJWHa06vWyFOclVvNs25QqRLnxxYEqGqZxTrvrqHo7W
-         RiBLWRpX9UtCt9W1wxV4ZyyS032Zy7F0aw+0uT9Z1dAHYUdsaxNnQoVndc4A5dUh/w
-         wJTAbw0CrtPoQ==
-Date:   Thu, 13 Jan 2022 11:33:54 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        ptikhomirov@virtuozzo.com, linux-api@vger.kernel.org
-Subject: Re: [PATCH] fs/open: add new RESOLVE_EMPTY_PATH flag for openat2
-Message-ID: <20220113103354.mirvx3copcltiquy@wittgenstein>
-References: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
- <20220112143940.ugj27xzprmptqmr7@wittgenstein>
- <20220112144331.dpbhi7j2vwutrxyt@senku>
- <20220112145325.hdim2q2qgewvgceh@wittgenstein>
- <0140c600-89e2-6be7-2967-f4b13b0baeaa@virtuozzo.com>
- <20220113064751.y6sqhdnyudz2eo7e@senku>
+        by relay2.suse.de (Postfix) with ESMTPS id 2F9F6A3B83;
+        Thu, 13 Jan 2022 10:58:01 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id CCCB2A05E2; Thu, 13 Jan 2022 11:58:00 +0100 (CET)
+Date:   Thu, 13 Jan 2022 11:58:00 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, tytso@mit.edu,
+        Eric Whitney <enwlinux@gmail.com>
+Subject: Re: [PATCH 2/6] ext4: Remove redundant max inline_size check in
+ ext4_da_write_inline_data_begin()
+Message-ID: <20220113105800.onazeyrdh3mr2bjw@quack3.lan>
+References: <cover.1642044249.git.riteshh@linux.ibm.com>
+ <fc7f7b3ad709da48c49ab14a2ce86e00a7defe0e.1642044249.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220113064751.y6sqhdnyudz2eo7e@senku>
+In-Reply-To: <fc7f7b3ad709da48c49ab14a2ce86e00a7defe0e.1642044249.git.riteshh@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 13, 2022 at 05:47:51PM +1100, Aleksa Sarai wrote:
-> On 2022-01-12, Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com> wrote:
-> > 
-> > 
-> > On 1/12/22 17:53, Christian Brauner wrote:
-> > > On Thu, Jan 13, 2022 at 01:43:31AM +1100, Aleksa Sarai wrote:
-> > > > On 2022-01-12, Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> > > > > On Wed, Jan 12, 2022 at 12:02:17PM +0300, Andrey Zhadchenko wrote:
-> > > > > > If you have an opened O_PATH file, currently there is no way to re-open
-> > > > > > it with other flags with openat/openat2. As a workaround it is possible
-> > > > > > to open it via /proc/self/fd/<X>, however
-> > > > > > 1) You need to ensure that /proc exists
-> > > > > > 2) You cannot use O_NOFOLLOW flag
-> > > > > > 
-> > > > > > Both problems may look insignificant, but they are sensitive for CRIU.
-> > > > > 
-> > > > > Not just CRIU. It's also an issue for systemd, LXD, and other users.
-> > > > > (One old example is where we do need to sometimes stash an O_PATH fd to
-> > > > > a /dev/pts/ptmx device and to actually perform an open on the device we
-> > > > > reopen via /proc/<pid>/fd/<nr>.)
-> > > > > 
-> > > > > > First of all, procfs may not be mounted in the namespace where we are
-> > > > > > restoring the process. Secondly, if someone opens a file with O_NOFOLLOW
-> > > > > > flag, it is exposed in /proc/pid/fdinfo/<X>. So CRIU must also open the
-> > > > > > file with this flag during restore.
-> > > > > > 
-> > > > > > This patch adds new constant RESOLVE_EMPTY_PATH for resolve field of
-> > > > > > struct open_how and changes getname() call to getname_flags() to avoid
-> > > > > > ENOENT for empty filenames.
-> > > > > 
-> > > > >  From my perspective this makes sense and is something that would be
-> > > > > very useful instead of having to hack around this via procfs.
-> > > > > 
-> > > > > However, e should consider adding RESOLVE_EMPTY_PATH since we already
-> > > > > have AT_EMPTY_PATH. If we think this is workable we should try and reuse
-> > > > > AT_EMPTY_PATH that keeps the api consistent with linkat(), readlinkat(),
-> > > > > execveat(), statx(), open_tree(), mount_setattr() etc.
-> > > > > 
-> > > > > If AT_EMPTY_PATH doesn't conflict with another O_* flag one could make
-> > > > > openat() support it too?
-> > > > 
-> > > > I would much prefer O_EMPTYPATH, in fact I think this is what I called
-> > > > it in my first draft ages ago. RESOLVE_ is meant to be related to
-> > > > resolution restrictions, not changing the opening mode.
-> > > 
-> > > That seems okay to me too. The advantage of AT_EMPTY_PATH is that we
-> > > don't double down on the naming confusion, imho.
-> > Unfortunately AT_EMPTY_PATH is 0x1000 which is O_DSYNC (octal 010000).
-> > At first I thought to add new field in struct open_how for AT_* flags.
-> > However most of them are irrelevant, except AT_SYMLINK_NOFOLLOW, which
-> > duplicates RESOLVE flags, and maybe AT_NO_AUTOMOUNT.
-> > O_EMPTYPATH idea seems cool
+On Thu 13-01-22 08:56:25, Ritesh Harjani wrote:
+> ext4_prepare_inline_data() already checks for ext4_get_max_inline_size()
+> and returns -ENOSPC. So there is no need to check it twice within
+> ext4_da_write_inline_data_begin(). This patch removes the extra check.
 > 
-> Yeah the issue is that openat/openat2 don't actually take AT_* flags and
-> all of the constants conflict. I would prefer not mixing O_ and AT_
-> flags in open (and I suspect Al would also prefer that).
+> It also makes it more clean.
+> 
+> No functionality change in this patch.
+> 
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-If we can't reuse the value then it's not that important. But then we
-should probably consider adding O_EMPTYPATH indeed. It doesn't make much
-sense as a resolve flag (I think you mentioned that in an earlier mail
-too.).
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/inline.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+> index 31741e8a462e..c52b0037983d 100644
+> --- a/fs/ext4/inline.c
+> +++ b/fs/ext4/inline.c
+> @@ -913,7 +913,7 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+>  				    struct page **pagep,
+>  				    void **fsdata)
+>  {
+> -	int ret, inline_size;
+> +	int ret;
+>  	handle_t *handle;
+>  	struct page *page;
+>  	struct ext4_iloc iloc;
+> @@ -930,14 +930,9 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+>  		goto out;
+>  	}
+>  
+> -	inline_size = ext4_get_max_inline_size(inode);
+> -
+> -	ret = -ENOSPC;
+> -	if (inline_size >= pos + len) {
+> -		ret = ext4_prepare_inline_data(handle, inode, pos + len);
+> -		if (ret && ret != -ENOSPC)
+> -			goto out_journal;
+> -	}
+> +	ret = ext4_prepare_inline_data(handle, inode, pos + len);
+> +	if (ret && ret != -ENOSPC)
+> +		goto out_journal;
+>  
+>  	/*
+>  	 * We cannot recurse into the filesystem as the transaction
+> -- 
+> 2.31.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
