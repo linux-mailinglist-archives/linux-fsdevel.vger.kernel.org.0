@@ -2,83 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3350248E083
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 23:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E571248E116
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jan 2022 00:42:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238061AbiAMWlz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 17:41:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
+        id S238265AbiAMXl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 18:41:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238044AbiAMWly (ORCPT
+        with ESMTP id S235773AbiAMXlz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 17:41:54 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 137BAC061749
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jan 2022 14:41:53 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id t32so1168238pgm.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jan 2022 14:41:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=YbEI3Q/NEjCtDTVCV1jkA7nYNYBH/Wfa2wk3IkVyJko=;
-        b=OZP/QoKN8ru5XovrHZZEtRGAPOqy8yRZtZX0efEKVWs/Q7f6+2JX3Mloojh5SZ/AxH
-         cPAHMJhJrLRzzoPYh5n9fG2/pMOrYfS/PU2zx88sTYLTj0Dv1cVWivcA/TNU5IJgRtzI
-         yyO22l7H4XiZ577o8zD4nj2E5AestX9VYls3ntwqOHZNPl0OsU/EptDmXh66odxZFNCy
-         EIQC+hO6HyVDK/x5ziZcfqIxZJTlgvB+YGNZLq+4zSXQW5IZ9FoHkF7Eb5K19JwK6tqA
-         L1pbJiPTkM7B36B6kKA792uSFGR69D9KVeYMTQ95Fzk4WvuXfGt3UHBLmZ7aOqdAe8eh
-         8P+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=YbEI3Q/NEjCtDTVCV1jkA7nYNYBH/Wfa2wk3IkVyJko=;
-        b=evGykGCBFpub/OS+e35ovaqC30pZb+YU8yXLAEG57PTS7MvF8bpuBd1cxGExDvItGr
-         3Y8X4Q2XDkFSH9LDFh5MXdtcS6nueBlTzDWDyvWIsL7caesWaVOwKuEHtOFCaXWCoC8W
-         imbZuB7QcBhUMEE8mpyAmVhdNGeh0Xih/5OnDIykllM4/OVyNX9Cc6F5N/ZSrJI1W4Ys
-         L6YIbsoxd2V4Nn3tCcilDafjQQOZhQM8uL1ag7y11jZ5kTjHeVRmKNc8rkEOxfQ15Kfg
-         GRNGoBphKYqMDKhCaXGJ8gi67jKUWUS2s+rG7Pvcw59r9QO2fI/izWCqPiUg7ITg2pJA
-         6QHw==
-X-Gm-Message-State: AOAM532YyOtQZiwmF7Qgh9F2Fw8IhyoF1buUlO1b5WisK+GQPDE7vKBq
-        970ATafY0a59/sG/dvRzneG3cwFoKq29kxMTzGw=
-X-Google-Smtp-Source: ABdhPJwo/BFuE/MyrXvV4Wc2jiueqzTZxw+feN+I2rvhYn2V6MZ0AjtfVc00EmStBrmKGTDtifrnIaK8zXPI0L+vd18=
-X-Received: by 2002:a63:4507:: with SMTP id s7mr5556975pga.252.1642113712456;
- Thu, 13 Jan 2022 14:41:52 -0800 (PST)
+        Thu, 13 Jan 2022 18:41:55 -0500
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B68C06173E;
+        Thu, 13 Jan 2022 15:41:55 -0800 (PST)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id D3E00C01A; Fri, 14 Jan 2022 00:41:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1642117312; bh=2aEkqz5/AQOW2kreM22bx+J68/cwIwKWJKqmf4QjsjY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fOCM/jGT4Vooq5gEl0Un1DBDULNAt5Y+iZKAL2CHv6Js5Wkfff6LKgMKcEND+dbIQ
+         FkV0j7bZdD6WfAcVvNP3vsyQ+v9rSPqbk0ZsCPYPFc7f99GHcxmD4GzcWW1Msx+zOq
+         cFxYVohFnbOqIaOnBOn1KoguhqxcubeH3pctTcspAPXigl0WMwcpDCTmpFoW0SdA2C
+         j2TadpDRx6tPf1gYAJHaFJeZ94VWHxqUCI9gmkCcKzHsjVHyn5v+hidi6rYVMjnjUI
+         UXhCmX9TywFDDmX5cdZk55j/u6Vj6cfviofSMl+6Kro12YJm4GzaJbr1XGFsDyuGGO
+         Ip95DHVI1XHjA==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id E9BABC009;
+        Fri, 14 Jan 2022 00:41:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1642117312; bh=2aEkqz5/AQOW2kreM22bx+J68/cwIwKWJKqmf4QjsjY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fOCM/jGT4Vooq5gEl0Un1DBDULNAt5Y+iZKAL2CHv6Js5Wkfff6LKgMKcEND+dbIQ
+         FkV0j7bZdD6WfAcVvNP3vsyQ+v9rSPqbk0ZsCPYPFc7f99GHcxmD4GzcWW1Msx+zOq
+         cFxYVohFnbOqIaOnBOn1KoguhqxcubeH3pctTcspAPXigl0WMwcpDCTmpFoW0SdA2C
+         j2TadpDRx6tPf1gYAJHaFJeZ94VWHxqUCI9gmkCcKzHsjVHyn5v+hidi6rYVMjnjUI
+         UXhCmX9TywFDDmX5cdZk55j/u6Vj6cfviofSMl+6Kro12YJm4GzaJbr1XGFsDyuGGO
+         Ip95DHVI1XHjA==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 0509ad97;
+        Thu, 13 Jan 2022 23:41:47 +0000 (UTC)
+Date:   Fri, 14 Jan 2022 08:41:32 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [GIT PULL] 9p for 5.17-rc1
+Message-ID: <YeC4rCJjQhLOJGlH@codewreck.org>
 MIME-Version: 1.0
-Received: by 2002:a05:6a10:f38c:0:0:0:0 with HTTP; Thu, 13 Jan 2022 14:41:52
- -0800 (PST)
-Reply-To: mchristophdaniel@gmail.com
-From:   Marcus Galois <marcus.galois@gmail.com>
-Date:   Thu, 13 Jan 2022 23:41:52 +0100
-Message-ID: <CANqBaXVSfOGLj7J26QWPsx3dwN0Cxmg71Yc9hV9b7yv0f0E1qQ@mail.gmail.com>
-Subject: Good News Finally.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello friend.
+The following changes since commit 2585cf9dfaaddf00b069673f27bb3f8530e2039c:
 
-You might find it so difficult to remember me, though it is indeed a
-very long time, I am much delighted to contact you again after a long
-period of time, I remember you despite circumstances that made things
-not worked out as we projected then. I want to inform you that the
-transaction we're doing together then finally worked out and I decided
-to contact you and to let you know because of your tremendous effort
-to make things work out then.
+  Linux 5.16-rc5 (2021-12-12 14:53:01 -0800)
 
-Meanwhile I must inform you that I'm presently in Caribbean Island for
-numerous business negotiation with some partners. with my sincere
-heart i have decided to compensate you with USD$900,000 for your
-dedication then on our transaction, you tried so much that period and
-I appreciated your effort. I wrote a cheque/check on your name, as
-soon as you receive it, you let me know.
+are available in the Git repository at:
 
-Contact my secretary now on his email: mchristophdaniel@gmail.com
-Name: Mr. Christoph Daniel
+  git://github.com/martinetd/linux tags/9p-for-5.17-rc1
 
-You are to forward to him your Name........ Address.......,Phone
-number......for shipment/dispatch of the cheque/Check to you
+for you to fetch changes up to 19d1c32652bbbf406063025354845fdddbcecd3a:
 
-Regards,
-Mr. Marcus Galois
+  9p: fix enodata when reading growing file (2022-01-11 15:21:53 +0900)
+
+----------------------------------------------------------------
+9p-for-5.17-rc1: fixes, split 9p_net_fd, new reviewer
+
+- fix possible uninitialized memory usage for setattr
+- fix fscache reading hole in a file just after it's been grown
+- split net/9p/trans_fd.c in its own module like other transports
+  that module defaults to 9P_NET and is autoloaded if required so
+  users should not be impacted
+- add Christian Schoenebeck to 9p reviewers
+- some more trivial cleanup
+
+----------------------------------------------------------------
+Changcheng Deng (1):
+      fs: 9p: remove unneeded variable
+
+Christian Brauner (1):
+      9p: only copy valid iattrs in 9P2000.L setattr implementation
+
+Christian Schoenebeck (2):
+      MAINTAINERS: 9p: add Christian Schoenebeck as reviewer
+      net/9p: show error message if user 'msize' cannot be satisfied
+
+Dominique Martinet (1):
+      9p: fix enodata when reading growing file
+
+Thomas Weißschuh (3):
+      9p/trans_fd: split into dedicated module
+      9p/xen: autoload when xenbus service is available
+      net/p9: load default transports
+
+Zhang Mingyu (1):
+      9p: Use BUG_ON instead of if condition followed by BUG.
+
+zhuxinran (1):
+      9p/trans_virtio: Fix typo in the comment for p9_virtio_create()
+
+ MAINTAINERS                |  1 +
+ fs/9p/vfs_addr.c           |  5 +++++
+ fs/9p/vfs_file.c           |  6 ++----
+ fs/9p/vfs_inode_dotl.c     | 29 ++++++++++++++++++++---------
+ include/net/9p/9p.h        |  2 --
+ include/net/9p/transport.h |  2 +-
+ net/9p/Kconfig             |  7 +++++++
+ net/9p/Makefile            |  5 ++++-
+ net/9p/client.c            |  7 ++++++-
+ net/9p/mod.c               | 15 +++++++++++----
+ net/9p/trans_fd.c          | 14 ++++++++++++--
+ net/9p/trans_virtio.c      |  2 +-
+ net/9p/trans_xen.c         |  1 +
+ 13 files changed, 71 insertions(+), 25 deletions(-)
+
+-- 
+Dominique
