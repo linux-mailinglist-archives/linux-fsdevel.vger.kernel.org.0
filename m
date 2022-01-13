@@ -2,152 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D23E48D0AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 04:11:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D9948D0E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 04:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231913AbiAMDLG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jan 2022 22:11:06 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:57093 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231916AbiAMDLC (ORCPT
+        id S232060AbiAMD0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jan 2022 22:26:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62706 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231983AbiAMD0p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jan 2022 22:11:02 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0V1i735m_1642043457;
-Received: from 30.225.24.62(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V1i735m_1642043457)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 13 Jan 2022 11:10:58 +0800
-Message-ID: <9eafb56b-809c-c340-5627-a54a6265122b@linux.alibaba.com>
-Date:   Thu, 13 Jan 2022 11:10:57 +0800
+        Wed, 12 Jan 2022 22:26:45 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20D2PUeu008922;
+        Thu, 13 Jan 2022 03:26:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=v78yGgeDZFl5IT6BvF4m4QZiJgGeCfcZrZNKYT09JYc=;
+ b=G2+SQEhSo7neb20hY6ee5JdRSrTVudmdPKk+FSM1H4LTPJHPURphE6rPQ06XVUxWOa2l
+ cH+c8G5W7cC8MTV6rJtZmrMfxmckr+RO3OY59cFUd5nEeBGCMe8UvMm092kwmClDbYan
+ m7WkXw/XRE2MhgkuhC/Otzy1mLyqzNp0H8BAh7EVWnHPDmlxTjItwOwxKt3tTKX+612z
+ DXAqpKVp3p6iTS/ctCbJMnrR1iVsQEk4RdJHOgk+AijDW7oEv5LEJpX8On1GaCXS/x+6
+ 6UP+L/o06VE88AyZVKdoH8oX06i9q5YBgCc46kLBkqJNRTDOSCPJrln1I4Wl4EHXRRNT UQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dj79pvgff-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 03:26:38 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20D3Fnxc025792;
+        Thu, 13 Jan 2022 03:26:38 GMT
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dj79pvgf7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 03:26:38 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20D3D19h032232;
+        Thu, 13 Jan 2022 03:26:36 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03fra.de.ibm.com with ESMTP id 3df289prba-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 03:26:36 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20D3QXBv39321980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jan 2022 03:26:34 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8315A405E;
+        Thu, 13 Jan 2022 03:26:33 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 57E3EA4053;
+        Thu, 13 Jan 2022 03:26:33 +0000 (GMT)
+Received: from localhost (unknown [9.43.54.234])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Jan 2022 03:26:33 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, tytso@mit.edu,
+        Eric Whitney <enwlinux@gmail.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCH 0/6] ext4/jbd2: inline_data fixes and some cleanups
+Date:   Thu, 13 Jan 2022 08:56:23 +0530
+Message-Id: <cover.1642044249.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: OUiwFAEpHtx9vm1RPxXf2QLgpI1xRwT1
+X-Proofpoint-GUID: AS_53x8ubC0iSzGfxZtRZMv5-c1Pqgde
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.2
-Subject: Re: [Linux-cachefs] [PATCH v1 05/23] netfs: add inode parameter to
- netfs_alloc_read_request()
-Content-Language: en-US
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     tao.peng@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        linux-fsdevel@vger.kernel.org, eguan@linux.alibaba.com,
-        gerry@linux.alibaba.com, linux-cachefs@redhat.com,
-        xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org
-References: <20211227125444.21187-1-jefflexu@linux.alibaba.com>
- <20211227125444.21187-6-jefflexu@linux.alibaba.com>
-In-Reply-To: <20211227125444.21187-6-jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-13_01,2022-01-11_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 spamscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 phishscore=0 adultscore=0
+ mlxlogscore=486 impostorscore=0 mlxscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2201130013
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+Hellos,
 
-What would you think about this cleanup? We need this in prep for the
-following fscache-based on-demand reading feature. It would be great if
-it could be cherry picked in advance.
+Patch[1]: fixes BUG_ON with inline_data which was reported [1] with generic/475.
 
-I also simplify the commit message as suggested by Gao Xiang. I could
-resend a v2 patch with the updated commit message if you'd like.
+Patch[2]: is mostly cleanup found during code review of inline_data code.
 
-    netfs: add inode parameter to netfs_alloc_read_request()
+Patch[3]: is a possible memory corruption fix in case of krealloc failure.
 
-    Make the @file parameter optional, and derive inode from the @folio
-    parameter instead.
+Patch[4-5]: Cleanups.
 
-    @file parameter can't be removed completely, since it also works as
-    the private data of ops->init_rreq().
+Patch[6]: Needs careful review. As it gets rid of t_handle_lock spinlock
+in jbd2_journal_wait_updates(). From the code review I found it to be not
+required. But let me know if I missed anything here.
 
-    Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+[1]: https://lore.kernel.org/linux-ext4/20210527192418.GA2633@localhost.localdomain/
 
+Ritesh Harjani (6):
+  ext4: Fix error handling in ext4_restore_inline_data()
+  ext4: Remove redundant max inline_size check in ext4_da_write_inline_data_begin()
+  ext4: Fix error handling in ext4_fc_record_modified_inode()
+  jbd2: Cleanup unused functions declarations from jbd2.h
+  jbd2: Refactor wait logic for transaction updates into a common function
+  jbd2: No need to use t_handle_lock in jbd2_journal_wait_updates
 
-On 12/27/21 8:54 PM, Jeffle Xu wrote:
-> When working as the local cache, the @file parameter of
-> netfs_alloc_read_request() represents the backed file inside netfs. It
-> is for two use: 1) we can derive the corresponding inode from file,
-> 2) works as the argument for ops->init_rreq().
-> 
-> In the new introduced demand-read mode, netfs_readpage() will be called
-> by the upper fs to read from backing files. However in this new mode,
-> the backed file may not be opened, and thus the @file argument is NULL
-> in this case.
-> 
-> For netfs_readpage(), @file parameter represents the backed file inside
-> netfs, while @folio parameter represents one page cache inside the
-> address space of this backed file. We can still derive the inode from
-> the @folio parameter, even when @file parameter is NULL.
-> 
-> Thus refactor netfs_alloc_read_request() somewhat for this change.
-> 
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> ---
->  fs/netfs/read_helper.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-> index 8c58cff420ba..ca84918b6b5d 100644
-> --- a/fs/netfs/read_helper.c
-> +++ b/fs/netfs/read_helper.c
-> @@ -39,7 +39,7 @@ static void netfs_put_subrequest(struct netfs_read_subrequest *subreq,
->  
->  static struct netfs_read_request *netfs_alloc_read_request(
->  	const struct netfs_read_request_ops *ops, void *netfs_priv,
-> -	struct file *file)
-> +	struct inode *inode, struct file *file)
->  {
->  	static atomic_t debug_ids;
->  	struct netfs_read_request *rreq;
-> @@ -48,7 +48,7 @@ static struct netfs_read_request *netfs_alloc_read_request(
->  	if (rreq) {
->  		rreq->netfs_ops	= ops;
->  		rreq->netfs_priv = netfs_priv;
-> -		rreq->inode	= file_inode(file);
-> +		rreq->inode	= inode;
->  		rreq->i_size	= i_size_read(rreq->inode);
->  		rreq->debug_id	= atomic_inc_return(&debug_ids);
->  		INIT_LIST_HEAD(&rreq->subrequests);
-> @@ -870,6 +870,7 @@ void netfs_readahead(struct readahead_control *ractl,
->  		     void *netfs_priv)
->  {
->  	struct netfs_read_request *rreq;
-> +	struct inode *inode = file_inode(ractl->file);
->  	unsigned int debug_index = 0;
->  	int ret;
->  
-> @@ -878,7 +879,7 @@ void netfs_readahead(struct readahead_control *ractl,
->  	if (readahead_count(ractl) == 0)
->  		goto cleanup;
->  
-> -	rreq = netfs_alloc_read_request(ops, netfs_priv, ractl->file);
-> +	rreq = netfs_alloc_read_request(ops, netfs_priv, inode, ractl->file);
->  	if (!rreq)
->  		goto cleanup;
->  	rreq->mapping	= ractl->mapping;
-> @@ -948,12 +949,13 @@ int netfs_readpage(struct file *file,
->  		   void *netfs_priv)
->  {
->  	struct netfs_read_request *rreq;
-> +	struct inode *inode = folio_file_mapping(folio)->host;
->  	unsigned int debug_index = 0;
->  	int ret;
->  
->  	_enter("%lx", folio_index(folio));
->  
-> -	rreq = netfs_alloc_read_request(ops, netfs_priv, file);
-> +	rreq = netfs_alloc_read_request(ops, netfs_priv, inode, file);
->  	if (!rreq) {
->  		if (netfs_priv)
->  			ops->cleanup(folio_file_mapping(folio), netfs_priv);
-> @@ -1122,7 +1124,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
->  	}
->  
->  	ret = -ENOMEM;
-> -	rreq = netfs_alloc_read_request(ops, netfs_priv, file);
-> +	rreq = netfs_alloc_read_request(ops, netfs_priv, inode, file);
->  	if (!rreq)
->  		goto error;
->  	rreq->mapping		= folio_file_mapping(folio);
-> 
+ fs/ext4/fast_commit.c | 64 ++++++++++++++++++++-----------------------
+ fs/ext4/inline.c      | 23 +++++++++-------
+ fs/jbd2/commit.c      | 19 ++-----------
+ fs/jbd2/transaction.c | 24 ++--------------
+ include/linux/jbd2.h  | 34 +++++++++++++++++------
+ 5 files changed, 74 insertions(+), 90 deletions(-)
 
--- 
-Thanks,
-Jeffle
+--
+2.31.1
+
