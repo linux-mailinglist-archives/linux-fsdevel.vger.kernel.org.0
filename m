@@ -2,114 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F9B548D630
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 11:58:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E14648D635
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 11:59:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233837AbiAMK6E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 05:58:04 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:43218 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233820AbiAMK6C (ORCPT
+        id S233854AbiAMK6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 05:58:23 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:38844 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230395AbiAMK6W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 05:58:02 -0500
+        Thu, 13 Jan 2022 05:58:22 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 40CE71F3BC;
-        Thu, 13 Jan 2022 10:58:01 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 0A311218E0;
+        Thu, 13 Jan 2022 10:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1642071481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1642071501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jG2YBmKxjGm7yo2Ve7nOVVYEHMKVyhyJf6tIbfNxbRM=;
-        b=xaEBgzRALckvYaXQWmg0Sp787ke7YPnqaZ2GgC2sp/walSexq0QHRNs0E/6sHmlx5xKelc
-        NJwoBZHbGMGjjvn8yqZOEkz6Pm7YPZEjkL2e9/TdOBj4pSVS0ClGKRovoBa2m4Ju5FEeJj
-        NP9UcuF/PnucO4i6INRvlydh1kAC4tI=
+        bh=4IMrKA/PfkHfsGFZxrciKPudtLRXhqWq+CAnS18bQaQ=;
+        b=J0k6Wqie5VsYuLq2hLH1VAjJl/JABbfxZlaZ+8KateT+rioarTdU5jIyNBeX4cXUF5ixnK
+        5EuDSaJNz1is+H4E3l4AVb4ExP+f6RYWhk113JBe11xTAmyANwS2zJT6UlQ4RIQsujzpsw
+        mSTH7pPrxjFtDBTridGGhG9C439P78U=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1642071481;
+        s=susede2_ed25519; t=1642071501;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jG2YBmKxjGm7yo2Ve7nOVVYEHMKVyhyJf6tIbfNxbRM=;
-        b=Cgjr6zCU/nrJzGkMdXvSwhSSk8ftcCjcJRB60rbuIKLIGSNQnZ08zAVL9Migzjyi+z7MMB
-        z2RbVJL13CZSbVAw==
+        bh=4IMrKA/PfkHfsGFZxrciKPudtLRXhqWq+CAnS18bQaQ=;
+        b=31hqsRw1ks2eT47YNtpNs4mADtu6D3ewklxEZX+Alq3uy4kC1BPIUrDibvt9s6/dO0bKVb
+        teBRK16Ra+57YABg==
 Received: from quack3.suse.cz (unknown [10.163.28.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 2F9F6A3B83;
-        Thu, 13 Jan 2022 10:58:01 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id EF023A3B83;
+        Thu, 13 Jan 2022 10:58:20 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id CCCB2A05E2; Thu, 13 Jan 2022 11:58:00 +0100 (CET)
-Date:   Thu, 13 Jan 2022 11:58:00 +0100
+        id AFF16A05E2; Thu, 13 Jan 2022 11:58:20 +0100 (CET)
+Date:   Thu, 13 Jan 2022 11:58:20 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Ritesh Harjani <riteshh@linux.ibm.com>
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jan Kara <jack@suse.com>,
         Andreas Dilger <adilger.kernel@dilger.ca>, tytso@mit.edu,
         Eric Whitney <enwlinux@gmail.com>
-Subject: Re: [PATCH 2/6] ext4: Remove redundant max inline_size check in
- ext4_da_write_inline_data_begin()
-Message-ID: <20220113105800.onazeyrdh3mr2bjw@quack3.lan>
+Subject: Re: [PATCH 1/6] ext4: Fix error handling in
+ ext4_restore_inline_data()
+Message-ID: <20220113105820.dzusr7ytt6ih3okw@quack3.lan>
 References: <cover.1642044249.git.riteshh@linux.ibm.com>
- <fc7f7b3ad709da48c49ab14a2ce86e00a7defe0e.1642044249.git.riteshh@linux.ibm.com>
+ <e10d89e0184f47ccf9093f50276c2e188c19fd3f.1642044249.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc7f7b3ad709da48c49ab14a2ce86e00a7defe0e.1642044249.git.riteshh@linux.ibm.com>
+In-Reply-To: <e10d89e0184f47ccf9093f50276c2e188c19fd3f.1642044249.git.riteshh@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 13-01-22 08:56:25, Ritesh Harjani wrote:
-> ext4_prepare_inline_data() already checks for ext4_get_max_inline_size()
-> and returns -ENOSPC. So there is no need to check it twice within
-> ext4_da_write_inline_data_begin(). This patch removes the extra check.
+On Thu 13-01-22 08:56:24, Ritesh Harjani wrote:
+> While running "./check -I 200 generic/475" it sometimes gives below
+> kernel BUG(). Ideally we should not call ext4_write_inline_data() if
+> ext4_create_inline_data() has failed.
 > 
-> It also makes it more clean.
+> <log snip>
+> [73131.453234] kernel BUG at fs/ext4/inline.c:223!
 > 
-> No functionality change in this patch.
+> <code snip>
+>  212 static void ext4_write_inline_data(struct inode *inode, struct ext4_iloc *iloc,
+>  213                                    void *buffer, loff_t pos, unsigned int len)
+>  214 {
+> <...>
+>  223         BUG_ON(!EXT4_I(inode)->i_inline_off);
+>  224         BUG_ON(pos + len > EXT4_I(inode)->i_inline_size);
 > 
+> This patch handles the error and prints out a emergency msg saying potential
+> data loss for the given inode (since we couldn't restore the original
+> inline_data due to some previous error).
+> 
+> [ 9571.070313] EXT4-fs (dm-0): error restoring inline_data for inode -- potential data loss! (inode 1703982, error -30)
+> 
+> Reported-by: Eric Whitney <enwlinux@gmail.com>
 > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-Looks good. Feel free to add:
+Makes sence. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/ext4/inline.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
+>  fs/ext4/inline.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
 > diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-> index 31741e8a462e..c52b0037983d 100644
+> index 534c0329e110..31741e8a462e 100644
 > --- a/fs/ext4/inline.c
 > +++ b/fs/ext4/inline.c
-> @@ -913,7 +913,7 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
->  				    struct page **pagep,
->  				    void **fsdata)
+> @@ -1135,7 +1135,15 @@ static void ext4_restore_inline_data(handle_t *handle, struct inode *inode,
+>  				     struct ext4_iloc *iloc,
+>  				     void *buf, int inline_size)
 >  {
-> -	int ret, inline_size;
+> -	ext4_create_inline_data(handle, inode, inline_size);
 > +	int ret;
->  	handle_t *handle;
->  	struct page *page;
->  	struct ext4_iloc iloc;
-> @@ -930,14 +930,9 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
->  		goto out;
->  	}
->  
-> -	inline_size = ext4_get_max_inline_size(inode);
-> -
-> -	ret = -ENOSPC;
-> -	if (inline_size >= pos + len) {
-> -		ret = ext4_prepare_inline_data(handle, inode, pos + len);
-> -		if (ret && ret != -ENOSPC)
-> -			goto out_journal;
-> -	}
-> +	ret = ext4_prepare_inline_data(handle, inode, pos + len);
-> +	if (ret && ret != -ENOSPC)
-> +		goto out_journal;
->  
->  	/*
->  	 * We cannot recurse into the filesystem as the transaction
+> +
+> +	ret = ext4_create_inline_data(handle, inode, inline_size);
+> +	if (ret) {
+> +		ext4_msg(inode->i_sb, KERN_EMERG,
+> +			"error restoring inline_data for inode -- potential data loss! (inode %lu, error %d)",
+> +			inode->i_ino, ret);
+> +		return;
+> +	}
+>  	ext4_write_inline_data(inode, iloc, buf, 0, inline_size);
+>  	ext4_set_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
+>  }
 > -- 
 > 2.31.1
 > 
