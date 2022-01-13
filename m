@@ -2,174 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F9148DB2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 16:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A5A48DB69
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 17:10:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236412AbiAMP5D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 10:57:03 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:50808 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236399AbiAMP5A (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 10:57:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642089417;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iVjjhSTO5jv7G5CNfPQaqxy98s1YUf5RmxMVGvagrRU=;
-        b=N3zuWt+qJlJ1/lgg9nWUgBBSVDXlkQwA+tscrTjhQxCvLvipy1cBqOcl09cO+oiJtLkEhA
-        /yRg5DnpikhUkVIGoRroOid0Ba0FGb3bxeZutaKFF1b4U2JF9kaMeToc054R0vHhtGmBly
-        SgkvZ9PN6NU9zN3Fms76Zbj6SfXv8G8=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-595-Dvth5m44NTilOzBEAx32Bg-1; Thu, 13 Jan 2022 10:56:56 -0500
-X-MC-Unique: Dvth5m44NTilOzBEAx32Bg-1
-Received: by mail-ed1-f72.google.com with SMTP id i9-20020a05640242c900b003fe97faab62so5711041edc.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jan 2022 07:56:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=iVjjhSTO5jv7G5CNfPQaqxy98s1YUf5RmxMVGvagrRU=;
-        b=2JcdZWcS7bBfMsI8BjHl4EVJy6Ly4FG3EMqM0RIm5uALRjSmLXtBfGZeyz+13ItjIC
-         uVaAR+ZF1c12xAqfJ1JDI+UKwfvhF3r3Xch1KzNHeBpCzap5S0zhasxS0xSDaDXm2tNl
-         yMhTv4/ThGVo1PGFeaggG525c6jTREzmR1txUfsyHBqY1gLmC+5br4N9PajRIHLZBelT
-         1EIH+IOmt8JjHupFewNsGWPxaL28V5j20ai5G+Dv4F/gvp9z0N1qFIOc//VO8nYsVFdi
-         VRkbWe+P39Vgm6YgFrjw72ZM/ZayeLDPe3tCQY9JmCx3KsNh6RHT913REAXFnFXPs9rO
-         JFFQ==
-X-Gm-Message-State: AOAM532fuxLEBgNEkNTJrBLVQR/dAqkH/kppYvyH0512X9O74Cna/tzU
-        qH/nuZ0Y27JwX+uHmguNdo1L7HTF8Xcc8bLU92WJjfdt2vai0T0jPfCqdiQzMBuaaEUZlc/CwZn
-        sIa3ImR1OSdTXMVzbeEhbP/UP+Q==
-X-Received: by 2002:a17:907:3ea2:: with SMTP id hs34mr3985593ejc.191.1642089415158;
-        Thu, 13 Jan 2022 07:56:55 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxdEZGBZ+SY0OUOH5+ulUWsavApWdL/E+Vnbzgt7kPf6DLvU3IuDpfFk7n3gAZ11fQX3pswoQ==
-X-Received: by 2002:a17:907:3ea2:: with SMTP id hs34mr3985577ejc.191.1642089414855;
-        Thu, 13 Jan 2022 07:56:54 -0800 (PST)
-Received: from ?IPV6:2003:cb:c703:e200:8511:ed0f:ac2c:42f7? (p200300cbc703e2008511ed0fac2c42f7.dip0.t-ipconnect.de. [2003:cb:c703:e200:8511:ed0f:ac2c:42f7])
-        by smtp.gmail.com with ESMTPSA id f29sm986699ejj.209.2022.01.13.07.56.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jan 2022 07:56:54 -0800 (PST)
-Message-ID: <0893e873-20c4-7e07-e7e4-3971dbb79118@redhat.com>
-Date:   Thu, 13 Jan 2022 16:56:53 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v3 kvm/queue 01/16] mm/shmem: Introduce
- F_SEAL_INACCESSIBLE
+        id S232324AbiAMQKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 11:10:39 -0500
+Received: from mail-mw2nam08on2054.outbound.protection.outlook.com ([40.107.101.54]:46177
+        "EHLO NAM04-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229580AbiAMQKj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jan 2022 11:10:39 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YxR2nBPtDzmw7B1KOmbf5H4iZRzuIA3SDTkJSbNpLMju9D3k4hOfgnDdSnHeMTryt3+ZrroygLKyCTE1pC5zhJef4812eUzrTEMlfx5HzGdu/H37CZsPV8VIOkydcQfK9nL47zefi/PxA8uzeWgyjJ/h6OwVrBe+Bu2qSnYkd4i4CpJBx6nGoaUpLugZDdKPE2LW9qaE8ASOiD5h5MDeILXFJzYwzARGWkQISwjJ2LbLGeaAczaaSYOUyAMnnBrEKTWJ6syiQzhdYWKfri9qroBhs+trh+0A+mbfR6/X9Sm1t919/GMGVGXpBf2jQ84V9WtwsYCK9jc8ydgchfcAPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j/6d49dadxESDjBjlAJvT+Y8+zuqn0Ttz21PvswQ9Es=;
+ b=bXYRD2IfdK/1OrGStxYdHtIXPOKDq/BKRBdEl5/IfJKLUhIFUmxHgittB3EWLAQhIdu1nwmNZK6FU1SE1hfpMXjUCurRrewyHCirrN3x8u9El2y8k72xDPMOCAHzVLqVFt0+PKlbNx71p31U6ge3XQMv9ymHHwjKzEcUFAxPwtLY1Ql0KYCUA99htidrRHgqR9Ex764Xb8LOcgd2ITdELKIwPYf644cLipbNIfGDZvqd81DMdarippOkTK1mMgp/0RIKmY4PEcIGUNk3LDA+U59xoBG0XemHJmIm6MK5JHwiAsbaOaR75uMDdfQ7UlDGUEYHgAwdzLUPmtPk7o53Sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j/6d49dadxESDjBjlAJvT+Y8+zuqn0Ttz21PvswQ9Es=;
+ b=IcOzGQ/r3VvNXWDFKnHqKncEOT9ObVVwUCBXWFTVhfF0Jg6ZNcwbHlExS+IvhZXSLO8aZZ7FQ3JOw1zGDROt99IVFaw0dmhqD3MDD7rdzk2aRgnwsipfPpHd4DkFTY4XBJC+nPzWBkKQj3MH5RGLhJTZeRo4XM2DHXBcpdW2psEQUd7UKkJT/27OzbMcqmOteEDmkYNYkjlJCnY5HjxK3I1zS8PcqFGbsw5WDSgFsOQxSJhn5N0NdzzgEKg/qBNZ42WYjTDeY3eUnwV/xKDMt/2Fzqxq9Q0zetYc2vMaiQ1wmWdpd+na8OStzUD2l/aPNHjrRFk2Y2h4rhk7bxW8QQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY4PR12MB1253.namprd12.prod.outlook.com (2603:10b6:903:3c::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4888.11; Thu, 13 Jan 2022 16:10:37 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::b120:5877:dc4b:1a7e]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::b120:5877:dc4b:1a7e%7]) with mapi id 15.20.4888.011; Thu, 13 Jan 2022
+ 16:10:37 +0000
+Subject: Re: [PATCH v3 12/13] ext4: switch to the new mount api
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20211021114508.21407-1-lczerner@redhat.com>
+ <20211021114508.21407-13-lczerner@redhat.com>
+ <286d36c9-e9ab-b896-e23c-2a95c6385817@nvidia.com>
+ <20220113120807.xlyg4wmbbhajuftu@work>
+ <0535c04a-db7c-fa10-149e-91110eb18804@nvidia.com>
+Message-ID: <afa501e4-802d-e8a2-4272-4b67572c6d14@nvidia.com>
+Date:   Thu, 13 Jan 2022 16:10:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+In-Reply-To: <0535c04a-db7c-fa10-149e-91110eb18804@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com
-References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
- <20211223123011.41044-2-chao.p.peng@linux.intel.com>
- <7eb40902-45dd-9193-37f1-efaca381529b@redhat.com>
- <20220106130638.GB43371@chaop.bj.intel.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20220106130638.GB43371@chaop.bj.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM5PR04CA0022.eurprd04.prod.outlook.com
+ (2603:10a6:206:1::35) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5a0e9902-395b-4c9e-795c-08d9d6af3c7d
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1253:EE_
+X-Microsoft-Antispam-PRVS: <CY4PR12MB125345CB1B06592DBEECE8F9D9539@CY4PR12MB1253.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Hk0UGQHMZZOfkXt3sZW4Dy+5Nk8L40Htxv0bgfZWbIWMAqb4OgeCK7Bx3rHBJo9k3jlAtw8MPVp3aWlNNHdRNr1vwTGcUK4c4l/Qs6hiHi/UE51HAaTZENYQBjHjB4XeF1R4MZq34PHSOSCqHWRHZQ24QDA47rQET4Yy9xxuu6SKewnJJf2ocuGXxnBqhvkSmvYP2Ng1f5zCbyIn8fJ4vbTIU7WgWyTAdtnzg7lskjEuOHhBgKT2//cewcgcnZcjv1ZncPVXQ0CbeHzSWCDm9GZHCituvb0VkVl6Zv1PDsm5JLfkKVykfpxhFKG+PzGeVxqH6XeaP8wDinCaANOdTgw9RQ27bAvHLOiD2yRhospKAOebVo6cE+JK0Mu3g+A2kd0gBLunSsklIp+1rZRP12O579ttUAMKpk/vPtkM0YbEAjb4I0Ntb1n23ng4GeW9dmzYbhlM5m5D8d2OJec7yOhVl83S42DP4VbPZ2SMX0HGcQpoeDDVQTTar+Thspnriq+VXIJ1aGtaqw5qC4yPI3tnyrdlVVTyxc1morZBVaVFXCRuApTe4ZxwmaaaZRoPAT60xzdvWFHBQexsN9Wfp9rgYPnH7mRJCSZGsBqwoZolaptah7mG17YBO98atR3k1Bxw18pbIT2M1LumdqNcv2x3gBILYnokKas6IgAUdDbaX3RZ8Ba/LwV3MMe0iNvEQm2X+3qGumKV8ha1H3tf2zRIznU5vdOHnaU2DgMRqHEa4svDRPI15kvmOI7nYCDo
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(2906002)(6486002)(38100700002)(4326008)(316002)(83380400001)(31686004)(6506007)(6666004)(508600001)(186003)(6916009)(86362001)(66946007)(66476007)(66556008)(26005)(31696002)(36756003)(2616005)(8676002)(6512007)(53546011)(5660300002)(8936002)(55236004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NGRDTkxPaUMyQ092czUyQ0JSbDFCQ2Y0YTc5TFptVGd2aVYwWHk1ejNIdDhB?=
+ =?utf-8?B?WDRpRWx0TEN6VzV0S3FHTURzODZROWpNVWdOLzZrR1RmZnRZRVU3RTBoQk9V?=
+ =?utf-8?B?SFFjMHVOb2tZTWNQb3Joa3EwWS9EYUgydlhtSmlvL1pjVGlwWTJwK2Rhb2RL?=
+ =?utf-8?B?M05qaE9vNytHOXJXaE1YZHU0Z3dOOXBjUWtISEtsck0yZ2wzSUpxOXFwTW91?=
+ =?utf-8?B?OFdFNXM1cmp4ak9vNTFPYzlKbDdrTUtBaXNrSE8yZm5yMU1FVU5CeExIMnFo?=
+ =?utf-8?B?QW9TRHllVjFBb01mZlVsODBFck5mUloxRWJGS3FDYktHblhsajFROTNOSWUy?=
+ =?utf-8?B?UXBpMmx4S2l0OHd0OGVDNFBHRExxT2d5VXJxQ0Z5RmwxSVIzUGEydXZDU0Nh?=
+ =?utf-8?B?VFRmQzhHb1ExTENoYXM0Z0FnUy9SekM5eTNueDFWRWovUmNNRkRFOXkzbXl6?=
+ =?utf-8?B?aHNJeTcyUGJ1Qy9JVlZFNmY5QWVPNENqSXN1TSszZm5tUTlPUXVOTDhnZVlG?=
+ =?utf-8?B?YkkwZDVkR255ODRaTlByeldQYVU3ZFhFUHdQWkVNNEhrTUlhS1NmeXg5TG1h?=
+ =?utf-8?B?WE1aMTBuVjZIWTZGL0NwcW02ZFVGNU9KUFgyYVpsbU1ybEhMZStRMzFQM1hD?=
+ =?utf-8?B?M1g3RURUY29vZ1FyUHRhSmVrREp2MTB2aXc2ZkU5NlBtS0VYY1NNTVB3UVdl?=
+ =?utf-8?B?V2k0N3g2Mkd1VXJzbjJlblVIdDVBN3Y0UlgyYStidTA3TjNkN3BjQUlHYVBD?=
+ =?utf-8?B?eTEvM25iSFBURHQ4L3daUmZsc0ZULzArMDhJS29vV2xUU2R1RHNyY3JVbGVr?=
+ =?utf-8?B?Q09IM1FUcjlocnJES2tWeGZVZFgvRk1oc2FsZWpLNGFQeFpCOXVpOEVrOUZO?=
+ =?utf-8?B?azJrZFhFY3RtVTdubHloaFRaTS9vRi9WM3h6Rms2YSs2S3FocnFWWFFvck9I?=
+ =?utf-8?B?SnVhTk4ramprVEczRDNGTGNGZXdSUUhFMW1pamIzUHJSOHQ5eWxrMVhjd29Q?=
+ =?utf-8?B?SHVnOFA2RGVBdnRvSitVOHVGWGx2S2tOZDhXSWF1WVBqTkJtcFduUHBZbzJD?=
+ =?utf-8?B?aFo4NlZ5dW5DQ0dMeUh2KzdBNWladHFta0dPcWhYOFlNbGZPeW5SUk5LV25I?=
+ =?utf-8?B?Z2lGbUtoL3lZMTdCTm82bVVoSWRsb3Q4a0tXeEd3bHNsZFhBWVM2WFFEZ09t?=
+ =?utf-8?B?bDhUeEZ0SitnSEc2eGNQcVNBNjhCWFdtK2Z1WmVSWkJPcjVrT0NTd3RaZ2d1?=
+ =?utf-8?B?dVVvNk8vdEVQRGI0cVRzMC9abnhkQWZVcEU3ZHovcFFlN2xPY1U4MU02ckQr?=
+ =?utf-8?B?NHFQb2RMQS9kb3hRZldYU1J1ZURmS3ZIRis0LzRqM1NOMXAxZnA0Y1JLQ2NO?=
+ =?utf-8?B?amt1RXdoL0RRNkd4NVBkcm10WUtUZFIycUpjOGFBTTMvM0pIOGFsN0grcHhl?=
+ =?utf-8?B?cXB5azZTVlYydE1URmlBc0hycmg5TDQzMHArWEpYUW1jTDVjTUJEMEhnLzRv?=
+ =?utf-8?B?bklhS0hCQ00yODVxMit1aVRvUWZoNkpHWXV2bGppcFJhN1doS0t1VktlMzFW?=
+ =?utf-8?B?R0JnWDhkallvYXVGSFZnL3NjNUlLRTZZSDNqcUJlMUI4TGhHdWFPU0dFVnRq?=
+ =?utf-8?B?Yi9NUFBkUTJadjRrN3o4QnQ1bUlrMCswUkNJUk53L3diMzA0UHcxL3QrNHdF?=
+ =?utf-8?B?WnIxOHFqVXIvQ1hld3NJV25zNEVTNlJWb2pZQ2lyY2x0UkdBTFdNdkFFT2Nq?=
+ =?utf-8?B?aS96ejBTSkIvMEJhcHBWWjZJNHFaaE9uczNzaDB1aUJzTDdCTjBwYkFod3Rr?=
+ =?utf-8?B?RTdQWWhwK3p5eFRlT041R1oyUWJEZnU1RllwYzUzeUFQazNnOGJMUTNENkx0?=
+ =?utf-8?B?WUhXNlVFZk5nMGdUWUl6SHNxR0hUUitvVkVLYVdJaG5lOEl0clJYUmJWWkZG?=
+ =?utf-8?B?RWtnRzFDaFBmZmdTNWErZVo3MUxnS3dQWDhpRERJcm14dWhhSk5udkNpL2Va?=
+ =?utf-8?B?VXJJRzBKTFJvZjVLRXB1TGtvYzJEQ0UxcldEbVA2bTAvQnBVUGVsS1YxbGNS?=
+ =?utf-8?B?VmZoQ2habjVPQ1N6Z3lUWTd5Q2hZT2dWOE5rUnhyTm41S082bW9BOHMwazFL?=
+ =?utf-8?B?ZFliY0g2Z1RpY2pBYmp5RkRBVFV5R3dvdkdXNzFIc01LYk1Ed2NFUHpSeGlZ?=
+ =?utf-8?Q?iTKChnF00gdZuhpGSx3I81w=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a0e9902-395b-4c9e-795c-08d9d6af3c7d
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2022 16:10:37.3831
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4ZeK8TxNGXXR73SX56mO24OtIe0M6p0A/M4k4N78EBeCl/91bSdOeR/8LThNQSNnaTSqasqz6jbWS0lVlBxiQQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1253
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06.01.22 14:06, Chao Peng wrote:
-> On Tue, Jan 04, 2022 at 03:22:07PM +0100, David Hildenbrand wrote:
->> On 23.12.21 13:29, Chao Peng wrote:
->>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->>>
->>> Introduce a new seal F_SEAL_INACCESSIBLE indicating the content of
->>> the file is inaccessible from userspace in any possible ways like
->>> read(),write() or mmap() etc.
->>>
->>> It provides semantics required for KVM guest private memory support
->>> that a file descriptor with this seal set is going to be used as the
->>> source of guest memory in confidential computing environments such
->>> as Intel TDX/AMD SEV but may not be accessible from host userspace.
->>>
->>> At this time only shmem implements this seal.
->>>
->>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
->>> ---
->>>  include/uapi/linux/fcntl.h |  1 +
->>>  mm/shmem.c                 | 37 +++++++++++++++++++++++++++++++++++--
->>>  2 files changed, 36 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
->>> index 2f86b2ad6d7e..e2bad051936f 100644
->>> --- a/include/uapi/linux/fcntl.h
->>> +++ b/include/uapi/linux/fcntl.h
->>> @@ -43,6 +43,7 @@
->>>  #define F_SEAL_GROW	0x0004	/* prevent file from growing */
->>>  #define F_SEAL_WRITE	0x0008	/* prevent writes */
->>>  #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
->>> +#define F_SEAL_INACCESSIBLE	0x0020  /* prevent file from accessing */
->>
->> I think this needs more clarification: the file content can still be
->> accessed using in-kernel mechanisms such as MEMFD_OPS for KVM. It
->> effectively disallows traditional access to a file (read/write/mmap)
->> that will result in ordinary MMU access to file content.
->>
->> Not sure how to best clarify that: maybe, prevent ordinary MMU access
->> (e.g., read/write/mmap) to file content?
+
+On 13/01/2022 15:06, Jon Hunter wrote:
 > 
-> Or: prevent userspace access (e.g., read/write/mmap) to file content?
-
-The issue with that phrasing is that userspace will be able to access
-that content, just via a different mechanism eventually ... e.g., via
-the KVM MMU indirectly. If that makes it clearer what I mean :)
-
+> On 13/01/2022 12:08, Lukas Czerner wrote:
+>> On Thu, Jan 13, 2022 at 11:29:24AM +0000, Jon Hunter wrote:
+>>> Hi Lukas,
+>>>
+>>> On 21/10/2021 12:45, Lukas Czerner wrote:
+>>>> Add the necessary functions for the fs_context_operations. Convert and
+>>>> rename ext4_remount() and ext4_fill_super() to ext4_get_tree() and
+>>>> ext4_reconfigure() respectively and switch the ext4 to use the new api.
+>>>>
+>>>> One user facing change is the fact that we no longer have access to the
+>>>> entire string of mount options provided by mount(2) since the mount api
+>>>> does not store it anywhere. As a result we can't print the options to
+>>>> the log as we did in the past after the successful mount.
+>>>>
+>>>> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+>>>
+>>>
+>>> I have noticed the following error on -next on various ARM64 
+>>> platforms that
+>>> we have ...
+>>>
+>>>   ERR KERN /dev/mmcblk1: Can't open blockdev
+>>>
+>>> I have bisected this, to see where this was introduced and bisect is
+>>> pointing to this commit. I have not looked any further so far, but 
+>>> wanted to
+>>> see if you had any ideas/suggestions?
 >>
->>>  /* (1U << 31) is reserved for signed error codes */
->>>  
->>>  /*
->>> diff --git a/mm/shmem.c b/mm/shmem.c
->>> index 18f93c2d68f1..faa7e9b1b9bc 100644
->>> --- a/mm/shmem.c
->>> +++ b/mm/shmem.c
->>> @@ -1098,6 +1098,10 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
->>>  		    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
->>>  			return -EPERM;
->>>  
->>> +		if ((info->seals & F_SEAL_INACCESSIBLE) &&
->>> +		    (newsize & ~PAGE_MASK))
->>> +			return -EINVAL;
->>> +
+>> Hi,
 >>
->> What happens when sealing and there are existing mmaps?
+>> this error does not come from the ext4, but probably rather from vfs. 
+>> More
+>> specifically from get_tree_bdev()
+>>
+>>          bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type);
+>>          if (IS_ERR(bdev)) {
+>>                  errorf(fc, "%s: Can't open blockdev", fc->source);
+>>                  return PTR_ERR(bdev);
+>>          }
 > 
-> I think this is similar to ftruncate, in either case we just allow that.
-> The existing mmaps will be unmapped and KVM will be notified to
-> invalidate the mapping in the secondary MMU as well. This assume we
-> trust the userspace even though it can not access the file content.
+> Yes, obviously this warning has been there for a while but only seen 
+> after this change was made.
+> 
+>> I have no idea why this fails in your case. Do you know what kind of
+>> error it fails with? Any oher error or warning messages preceding the 
+>> one you
+>> point out in the logs?
+> 
+> No only this one.
+> 
+>> I assume that this happens on mount and the device that you're trying to
+>> mount contains ext4 file system? Ext4 is not the only file system
+>> utilizing the new mount api, can you try the same with xfs on the device?
+> 
+> This is happening on a board in the test farm and so not easy to 
+> reformat. Looking some more /dev/mmcblk1 is not a valid device, I only 
+> see /dev/mmcblk0 from the bootlogs on this board. Hmmm, OK I will have 
+> to take a closer look to see where this is coming from.
 
-Can't we simply check+forbid instead?
+
+OK, I see what is happening. It appears that our test harness always 
+tries to mount a device called /dev/mmcblk1. Prior to this change there 
+was not kernel error generated and looking at the logs I would see ...
+
+mount: /mnt: special device /dev/mmcblk1 does not exist.
+
+Following this change, now a kernel warning is generated and I see ...
+
+[  137.078994] /dev/mmcblk1: Can't open blockdev
+mount: /mnt: special device /dev/mmcblk1 does not exist.
+
+So there is a change in behaviour but at the same time the error looks 
+correct. So sorry for the false-positive.
+
+Cheers
+Jon
+
+
 
 -- 
-Thanks,
-
-David / dhildenb
-
+nvpublic
