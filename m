@@ -2,85 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C22C448E010
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 23:09:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3350248E083
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 23:42:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236886AbiAMWIa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 17:08:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55670 "EHLO
+        id S238061AbiAMWlz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 17:41:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236852AbiAMWI1 (ORCPT
+        with ESMTP id S238044AbiAMWly (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 17:08:27 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D3EAC06161C;
-        Thu, 13 Jan 2022 14:08:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=q9nFMAXidlMSlpH4UFL2WxiRClvDd+0fOTOBK1//bNg=; b=LclWvncTGXFpwXn41udv2Z9LpA
-        Sifs0222WJ1sP6F8XvF70+De+xZ/JfE2ktsvrnR6XanUpZXi/Msvr5hrOaGfDjFdAA24yvNRRrdWw
-        oMnTEVutC0iSvJ7/ER5DuO/HzTuwFKRBiW+2QBe+TWmYin5KEsArjAiKsKtpWQwNyPrtjPwqOAt7V
-        ga5oa4bkwRtmxMvUzVP8pSH/ZLWUaL+L5bzMdOWb9RhQCKrqpL3s+mk/ERKiCUHscGh3Eo88YYddS
-        0YqLIOcTeLhEyGesHGO2l2qwzTcWILDpsrjWOERd9tOZIpnj6wYiIXU0ovm6qtj1yqP3nyyFtfnOR
-        w0Mo5p8A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n88Gc-005HEY-Fq; Thu, 13 Jan 2022 22:08:22 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 2/2] filemap: Use folio_put_refs() in filemap_free_folio()
-Date:   Thu, 13 Jan 2022 22:08:16 +0000
-Message-Id: <20220113220816.1257657-3-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220113220816.1257657-1-willy@infradead.org>
-References: <20220113220816.1257657-1-willy@infradead.org>
+        Thu, 13 Jan 2022 17:41:54 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 137BAC061749
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jan 2022 14:41:53 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id t32so1168238pgm.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jan 2022 14:41:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=YbEI3Q/NEjCtDTVCV1jkA7nYNYBH/Wfa2wk3IkVyJko=;
+        b=OZP/QoKN8ru5XovrHZZEtRGAPOqy8yRZtZX0efEKVWs/Q7f6+2JX3Mloojh5SZ/AxH
+         cPAHMJhJrLRzzoPYh5n9fG2/pMOrYfS/PU2zx88sTYLTj0Dv1cVWivcA/TNU5IJgRtzI
+         yyO22l7H4XiZ577o8zD4nj2E5AestX9VYls3ntwqOHZNPl0OsU/EptDmXh66odxZFNCy
+         EIQC+hO6HyVDK/x5ziZcfqIxZJTlgvB+YGNZLq+4zSXQW5IZ9FoHkF7Eb5K19JwK6tqA
+         L1pbJiPTkM7B36B6kKA792uSFGR69D9KVeYMTQ95Fzk4WvuXfGt3UHBLmZ7aOqdAe8eh
+         8P+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=YbEI3Q/NEjCtDTVCV1jkA7nYNYBH/Wfa2wk3IkVyJko=;
+        b=evGykGCBFpub/OS+e35ovaqC30pZb+YU8yXLAEG57PTS7MvF8bpuBd1cxGExDvItGr
+         3Y8X4Q2XDkFSH9LDFh5MXdtcS6nueBlTzDWDyvWIsL7caesWaVOwKuEHtOFCaXWCoC8W
+         imbZuB7QcBhUMEE8mpyAmVhdNGeh0Xih/5OnDIykllM4/OVyNX9Cc6F5N/ZSrJI1W4Ys
+         L6YIbsoxd2V4Nn3tCcilDafjQQOZhQM8uL1ag7y11jZ5kTjHeVRmKNc8rkEOxfQ15Kfg
+         GRNGoBphKYqMDKhCaXGJ8gi67jKUWUS2s+rG7Pvcw59r9QO2fI/izWCqPiUg7ITg2pJA
+         6QHw==
+X-Gm-Message-State: AOAM532YyOtQZiwmF7Qgh9F2Fw8IhyoF1buUlO1b5WisK+GQPDE7vKBq
+        970ATafY0a59/sG/dvRzneG3cwFoKq29kxMTzGw=
+X-Google-Smtp-Source: ABdhPJwo/BFuE/MyrXvV4Wc2jiueqzTZxw+feN+I2rvhYn2V6MZ0AjtfVc00EmStBrmKGTDtifrnIaK8zXPI0L+vd18=
+X-Received: by 2002:a63:4507:: with SMTP id s7mr5556975pga.252.1642113712456;
+ Thu, 13 Jan 2022 14:41:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:6a10:f38c:0:0:0:0 with HTTP; Thu, 13 Jan 2022 14:41:52
+ -0800 (PST)
+Reply-To: mchristophdaniel@gmail.com
+From:   Marcus Galois <marcus.galois@gmail.com>
+Date:   Thu, 13 Jan 2022 23:41:52 +0100
+Message-ID: <CANqBaXVSfOGLj7J26QWPsx3dwN0Cxmg71Yc9hV9b7yv0f0E1qQ@mail.gmail.com>
+Subject: Good News Finally.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This shrinks filemap_free_folio() by 55 bytes in my .config; 24 bytes
-from removing the VM_BUG_ON_FOLIO() and 31 bytes from unifying the
-small/large folio paths.
+Hello friend.
 
-We could just use folio_ref_sub() here since the caller should hold a
-reference (as the VM_BUG_ON_FOLIO() was asserting), but that's fragile.
+You might find it so difficult to remember me, though it is indeed a
+very long time, I am much delighted to contact you again after a long
+period of time, I remember you despite circumstances that made things
+not worked out as we projected then. I want to inform you that the
+transaction we're doing together then finally worked out and I decided
+to contact you and to let you know because of your tremendous effort
+to make things work out then.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- mm/filemap.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Meanwhile I must inform you that I'm presently in Caribbean Island for
+numerous business negotiation with some partners. with my sincere
+heart i have decided to compensate you with USD$900,000 for your
+dedication then on our transaction, you tried so much that period and
+I appreciated your effort. I wrote a cheque/check on your name, as
+soon as you receive it, you let me know.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 2fd9b2f24025..afc8f5ca85ac 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -231,17 +231,15 @@ void __filemap_remove_folio(struct folio *folio, void *shadow)
- void filemap_free_folio(struct address_space *mapping, struct folio *folio)
- {
- 	void (*freepage)(struct page *);
-+	int refs = 1;
- 
- 	freepage = mapping->a_ops->freepage;
- 	if (freepage)
- 		freepage(&folio->page);
- 
--	if (folio_test_large(folio) && !folio_test_hugetlb(folio)) {
--		folio_ref_sub(folio, folio_nr_pages(folio));
--		VM_BUG_ON_FOLIO(folio_ref_count(folio) <= 0, folio);
--	} else {
--		folio_put(folio);
--	}
-+	if (folio_test_large(folio) && !folio_test_hugetlb(folio))
-+		refs = folio_nr_pages(folio);
-+	folio_put_refs(folio, refs);
- }
- 
- /**
--- 
-2.33.0
+Contact my secretary now on his email: mchristophdaniel@gmail.com
+Name: Mr. Christoph Daniel
 
+You are to forward to him your Name........ Address.......,Phone
+number......for shipment/dispatch of the cheque/Check to you
+
+Regards,
+Mr. Marcus Galois
