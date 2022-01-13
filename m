@@ -2,111 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1819348D63F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 12:01:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A68848D6A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jan 2022 12:27:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233909AbiAMLBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 06:01:40 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:43790 "EHLO
+        id S234143AbiAML1v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jan 2022 06:27:51 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:46128 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233476AbiAMLBh (ORCPT
+        with ESMTP id S230283AbiAML1u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 06:01:37 -0500
+        Thu, 13 Jan 2022 06:27:50 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id C0BD41F3D2;
-        Thu, 13 Jan 2022 11:01:35 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 858EC1F387;
+        Thu, 13 Jan 2022 11:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1642071695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1642073269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RCDhP7bldJJEb5IG2FBAn7a1olbFjes1C2dIqW8mwjw=;
-        b=CC9Nzi6B3YsNyzP4H/xjYZtVOAL05nzfcS4oc14tKBhAk2ZYDZ7ZfxrXzYFLLxNluOR005
-        +9HDrUMJslDFGmRT1liCKOnsYrFiTUEWG0p8reMYL1lKHmilYRXY/svCjUcZkfQJS0zvHx
-        QRLR8aMcE4Xc4yQ/XtCmKoo7drACoDU=
+        bh=LyGhN7hblXB7OSogHgGIQp9mGn45dx0dO14tJWAFnYQ=;
+        b=iRO0oF76FHvA3jwng5an+CJn/ltBuOQZyF881Dv93bS2hDqiESIvHK5nfCcwxrHygYLr4+
+        zB+wW44O8FIxDL7qCMPtls2taxwVEJCTufTuK9WuUI3VjTxy4cWbNC92Y+1J/B7hdrlWmC
+        YKfRqZhNheOK9527IQCZX5m3jpNPmDY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1642071695;
+        s=susede2_ed25519; t=1642073269;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RCDhP7bldJJEb5IG2FBAn7a1olbFjes1C2dIqW8mwjw=;
-        b=GrP0n0thBal5rejUK13WuIJHUBGqyf6OQf0LcoRDkeAiVOqQ9JVC0mkx3GuFRFXqBwgqcH
-        0VkJAJ/aVzAA/sDg==
+        bh=LyGhN7hblXB7OSogHgGIQp9mGn45dx0dO14tJWAFnYQ=;
+        b=FFxcOOpTXVSqzs602md/Ux8LTX6kFiJQ/Z0d26owzBBf6V2PqP1/mD1yWwHyrGfi2B8E/0
+        3F4aRUnFAhPjNdBQ==
 Received: from quack3.suse.cz (unknown [10.163.28.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id B1AD4A3B88;
-        Thu, 13 Jan 2022 11:01:35 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id 72FBFA3B85;
+        Thu, 13 Jan 2022 11:27:49 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 773D2A05E2; Thu, 13 Jan 2022 12:01:35 +0100 (CET)
-Date:   Thu, 13 Jan 2022 12:01:35 +0100
+        id 235C1A05E2; Thu, 13 Jan 2022 12:27:49 +0100 (CET)
+Date:   Thu, 13 Jan 2022 12:27:49 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Ritesh Harjani <riteshh@linux.ibm.com>
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jan Kara <jack@suse.com>,
         Andreas Dilger <adilger.kernel@dilger.ca>, tytso@mit.edu,
         Eric Whitney <enwlinux@gmail.com>
-Subject: Re: [PATCH 4/6] jbd2: Cleanup unused functions declarations from
- jbd2.h
-Message-ID: <20220113110135.jpmi2ogjunxyyleh@quack3.lan>
+Subject: Re: [PATCH 6/6] jbd2: No need to use t_handle_lock in
+ jbd2_journal_wait_updates
+Message-ID: <20220113112749.d5tfszcksvxvshnn@quack3.lan>
 References: <cover.1642044249.git.riteshh@linux.ibm.com>
- <bd827c4a3a5b369fe4391b5fc929a00a08af8184.1642044249.git.riteshh@linux.ibm.com>
+ <e7e0f8c54306591a3a9c8fead1e0e54358052ab6.1642044249.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bd827c4a3a5b369fe4391b5fc929a00a08af8184.1642044249.git.riteshh@linux.ibm.com>
+In-Reply-To: <e7e0f8c54306591a3a9c8fead1e0e54358052ab6.1642044249.git.riteshh@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 13-01-22 08:56:27, Ritesh Harjani wrote:
-> During code review found no references of few of these below function
-> declarations. This patch cleans those up from jbd2.h
+On Thu 13-01-22 08:56:29, Ritesh Harjani wrote:
+> Since jbd2_journal_wait_updates() uses waitq based on t_updates atomic_t
+> variable. So from code review it looks like we don't need to use
+> t_handle_lock spinlock for checking t_updates value.
+> Hence this patch gets rid of the spinlock protection in
+> jbd2_journal_wait_updates()
 > 
 > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-Spring cleaning :). Feel free to add:
+This patch looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
+
+Actually looking at it, t_handle_lock seems to be very much unused. I agree
+we don't need it when waiting for outstanding handles but the only
+remaining uses are:
+
+1) jbd2_journal_extend() where it is not needed either - we use
+atomic_add_return() to manipulate t_outstanding_credits and hold
+j_state_lock for reading which provides us enough exclusion.
+
+2) update_t_max_wait() - this is the only valid use of t_handle_lock but we
+can just switch it to cmpxchg loop with a bit of care. Something like:
+
+	unsigned long old;
+
+	ts = jbd2_time_diff(ts, transaction->t_start);
+	old = transaction->t_max_wait;
+	while (old < ts)
+		old = cmpxchg(&transaction->t_max_wait, old, ts);
+
+So perhaps you can add two more patches to remove other t_handle_lock uses
+and drop it completely.
 
 								Honza
 
 > ---
->  include/linux/jbd2.h | 7 -------
->  1 file changed, 7 deletions(-)
+>  include/linux/jbd2.h | 4 ----
+>  1 file changed, 4 deletions(-)
 > 
 > diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index fd933c45281a..f76598265896 100644
+> index 34b051aa9009..9bef47622b9d 100644
 > --- a/include/linux/jbd2.h
 > +++ b/include/linux/jbd2.h
-> @@ -1419,9 +1419,7 @@ extern void jbd2_journal_unfile_buffer(journal_t *, struct journal_head *);
->  extern bool __jbd2_journal_refile_buffer(struct journal_head *);
->  extern void jbd2_journal_refile_buffer(journal_t *, struct journal_head *);
->  extern void __jbd2_journal_file_buffer(struct journal_head *, transaction_t *, int);
-> -extern void __journal_free_buffer(struct journal_head *bh);
->  extern void jbd2_journal_file_buffer(struct journal_head *, transaction_t *, int);
-> -extern void __journal_clean_data_list(transaction_t *transaction);
->  static inline void jbd2_file_log_bh(struct list_head *head, struct buffer_head *bh)
->  {
->  	list_add_tail(&bh->b_assoc_buffers, head);
-> @@ -1486,9 +1484,6 @@ extern int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  					      struct buffer_head **bh_out,
->  					      sector_t blocknr);
+> @@ -1768,22 +1768,18 @@ static inline void jbd2_journal_wait_updates(journal_t *journal)
+>  	if (!commit_transaction)
+>  		return;
 >  
-> -/* Transaction locking */
-> -extern void		__wait_on_journal (journal_t *);
-> -
->  /* Transaction cache support */
->  extern void jbd2_journal_destroy_transaction_cache(void);
->  extern int __init jbd2_journal_init_transaction_cache(void);
-> @@ -1774,8 +1769,6 @@ static inline unsigned long jbd2_log_space_left(journal_t *journal)
->  #define BJ_Reserved	4	/* Buffer is reserved for access by journal */
->  #define BJ_Types	5
+> -	spin_lock(&commit_transaction->t_handle_lock);
+>  	while (atomic_read(&commit_transaction->t_updates)) {
+>  		DEFINE_WAIT(wait);
 >  
-> -extern int jbd_blocks_per_page(struct inode *inode);
-> -
->  /* JBD uses a CRC32 checksum */
->  #define JBD_MAX_CHECKSUM_SIZE 4
+>  		prepare_to_wait(&journal->j_wait_updates, &wait,
+>  					TASK_UNINTERRUPTIBLE);
+>  		if (atomic_read(&commit_transaction->t_updates)) {
+> -			spin_unlock(&commit_transaction->t_handle_lock);
+>  			write_unlock(&journal->j_state_lock);
+>  			schedule();
+>  			write_lock(&journal->j_state_lock);
+> -			spin_lock(&commit_transaction->t_handle_lock);
+>  		}
+>  		finish_wait(&journal->j_wait_updates, &wait);
+>  	}
+> -	spin_unlock(&commit_transaction->t_handle_lock);
+>  }
 >  
+>  /*
 > -- 
 > 2.31.1
 > 
