@@ -2,83 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E80F648E839
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jan 2022 11:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 097D648E973
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jan 2022 12:51:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237519AbiANKSs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jan 2022 05:18:48 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:33000 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237487AbiANKSr (ORCPT
+        id S240887AbiANLvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jan 2022 06:51:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234325AbiANLu7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jan 2022 05:18:47 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id A863E21940;
-        Fri, 14 Jan 2022 10:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1642155526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kWddwJSL1o1Vp5zBtOWqmgsbQtzopDy7PEJEHXyvaFA=;
-        b=lFjyX/WQB8eQn8Cx1M1xLjGpIm3TtyamT9rIjr6HViTm/dozNA44nJRPWIfnhKGp7w3c0V
-        A/Q/InTc66rhdHrnCeikgPWyAMUAQeiNbrSliotwPorA0DF2fQpnPLXwT6Q8LaTlOW/Pzl
-        FDfj92IHU9nu4ovRTey66DCwFQ9qGI0=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 12E58A3B8E;
-        Fri, 14 Jan 2022 10:18:46 +0000 (UTC)
-Date:   Fri, 14 Jan 2022 11:18:45 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Xiongwei Song <sxwjean@gmail.com>
-Cc:     Xiongwei Song <sxwjean@me.com>, akpm@linux-foundation.org,
-        David Hildenbrand <david@redhat.com>, dan.j.williams@intel.com,
-        osalvador@suse.de, naoya.horiguchi@nec.com,
-        thunder.leizhen@huawei.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] proc: Add getting pages info of ZONE_DEVICE
- support
-Message-ID: <YeFOBWz1OZTpEuwt@dhcp22.suse.cz>
-References: <20220112143517.262143-1-sxwjean@me.com>
- <20220112143517.262143-3-sxwjean@me.com>
- <YeBFxBwaHtfs8jmg@dhcp22.suse.cz>
- <CAEVVKH-L-6Yra75XEWUNiq=ajJmtWauDTcmN=b1VCcJ0NVS7OA@mail.gmail.com>
+        Fri, 14 Jan 2022 06:50:59 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9FCC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 03:50:59 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id r16-20020a17090a0ad000b001b276aa3aabso21821860pje.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 03:50:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=h0ot/9Bfj6gbigRp33fTwcN2wrGdo9obxY37DOqaflo=;
+        b=UqaivxmB0ISUX7Oxm9jowEz7vblhwOxA6yBvmSDo63xyf/A9m05dwaef2H4hQG//ih
+         52izJHQLYd+2oefALvskRy5Vl77l3MUx05aT6BRXnQJQsQkXUPWKzi/qYh/aSrlFZl9T
+         dBucxfQUaHE07JxQV+b+BWJkqt+5MNGZO7RZhoer/IrbC+vEclQlM72ZqdipGTpjLRuA
+         Mi7ix5BUEN5M3tl7597uZvhJYMalDWN+mHr9EOLo6r+DRRCO99haSvC6JCTDSnQk8HTV
+         m26VAn2IRX15EzbSClg9rKz0UclD+6UcaaIVBRRF3gfoGAU/P/0EbF+lH3pyAIRiJWNi
+         n5Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=h0ot/9Bfj6gbigRp33fTwcN2wrGdo9obxY37DOqaflo=;
+        b=pjS6puFdyGh+S8dDj52doYB21+OqDDaIhjxYLDDw2a1bsRVfmEMeaI+Zc9ahhiHD38
+         xDIgJH6EP3qzZMGZzwyVbqzadE9kispiLi92cN8Bo7qYxyfnghe1anN9nSQAKEtGbUoc
+         Fe2w88PgMokpf7pjRPRVZGd7YHc60JpJ5LrEb7IHlNatfcHNywvGYcg8nggnJfETI/bd
+         HUUqNOe3zSLWI/pGRL7ZrYCyQIxh+jydj6l/ZCbSTNJss+oKtt9PJOTQWJCF5ylgiFb1
+         4QAGZux0+uBDv+DFRCvFhxEAlEcxCILGO53Cn/0WAPbYbqq4dSwwx2S9n/nkdIfdVwn3
+         ++pQ==
+X-Gm-Message-State: AOAM532PiDWsnNzYO7JEYYXV2qCKGAHYtsU6zgcQSMonlIi0FVfuCyvc
+        LKry5Sb5PP9BOe3ZSGT/E1fJju3JTVjxrtAVlYA=
+X-Google-Smtp-Source: ABdhPJxvzUq2BojFr3GJ3LgW3yay0UwwoxyQkCZqJ6B8tvdUcX7m3Ub9ENjMg5OHsf+d2rMGMMbwcs69dKf48Q1Ap9U=
+X-Received: by 2002:a17:902:bd94:b0:149:c926:7c26 with SMTP id
+ q20-20020a170902bd9400b00149c9267c26mr9198996pls.64.1642161058998; Fri, 14
+ Jan 2022 03:50:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEVVKH-L-6Yra75XEWUNiq=ajJmtWauDTcmN=b1VCcJ0NVS7OA@mail.gmail.com>
+Reply-To: ymrzerbo@gmail.com
+Sender: dr.siaokabore@gmail.com
+Received: by 2002:a05:6a20:2318:b0:6b:2327:c203 with HTTP; Fri, 14 Jan 2022
+ 03:50:58 -0800 (PST)
+From:   "Mr.Zerbo Yameogo" <ymrzerbo@gmail.com>
+Date:   Fri, 14 Jan 2022 03:50:58 -0800
+X-Google-Sender-Auth: 4JEhKKPWrxVMzx4GWmhnHzqfkaI
+Message-ID: <CA+rg4NvygDH0MsaEZ4VPLEaXMsuK0GX+qEtefiM-HFqpwSpg4w@mail.gmail.com>
+Subject: VERY VERY URGENT.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 14-01-22 18:03:04, Xiongwei Song wrote:
-> HI Michal,
-> 
-> On Thu, Jan 13, 2022 at 11:31 PM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Wed 12-01-22 22:35:17, sxwjean@me.com wrote:
-> > > From: Xiongwei Song <sxwjean@gmail.com>
-> > >
-> > > When requesting pages info by /proc/kpage*, the pages in ZONE_DEVICE were
-> > > ignored.
-> > >
-> > > The pfn_to_devmap_page() function can help to get page that belongs to
-> > > ZONE_DEVICE.
-> >
-> > Why is this needed? Who would consume that information and what for?
-> 
-> It's for debug purpose, which checks page flags in system wide. No any other
-> special thought. But it looks like it's not appropriate to expose now from my
-> understand, which is from David's comment.
-> https://lore.kernel.org/linux-mm/20220110141957.259022-1-sxwjean@me.com/T/#m4eccbb2698dbebc80ec00be47382b34b0f64b4fc
+Hello,
 
-yes, I do agree with David. This is the reason I am asking because I do
-remember we have deliberately excluded those pages. If there is no real
-user to use that information then I do not think we want to make the
-code more complex and check for memmap and other peculiarities.
+My Name is Mr.Zerbo Yameogo the Chief Operating Officer of  Bank of
+Africa and I am in need of a reliable foreigner to carry out this
+important deal.
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+An account was opened in my bank by one of my customers in the name of
+MR. THOMAS BAHIA a Dutch National from Germany who made a fixed
+deposit of $18,500,000.00 (Eighteen Million, Five Hundred Thousand
+United States Dollars) and never show up again and I later discovered
+that he died with his entire family members on a plane crash that
+occurred in Libya on the 12th of May 2010 and below is a link for your
+view.
+
+http://www.nytimes.com/2010/05/13/world/middleeast/13libya.html
+
+Now I want to present a foreigner as next of kin to late Thomas so we
+can make the claim and you can contact me if you are interested so I
+can give you more detailed information about this transaction. For the
+sharing of the money will be shared in the ratio of 50% for me, 40%
+for you and 10% to cover our expenses after the deal.
+
+Please for further information and inquires feel free to contact me back
+immediately for more explanation and better understanding I want you to
+assure me your capability of handling this project with trust by providing
+me your following information details such as:
+
+(1)NAME..............
+(2)AGE:................
+(3)SEX:.....................
+(4)PHONE NUMBER:.................
+(5)OCCUPATION:................ .....
+(6)YOUR COUNTRY:.....................
+
+Please keep this absolutely confidential weather interested or not.
+
+Thanks.
+
+Mr.Zerbo Yameogo.
