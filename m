@@ -2,311 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E625D48E346
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jan 2022 05:28:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D65A48E40F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jan 2022 07:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236324AbiANE2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jan 2022 23:28:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55068 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229740AbiANE2f (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jan 2022 23:28:35 -0500
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D22CEC061574;
-        Thu, 13 Jan 2022 20:28:34 -0800 (PST)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4JZpFp6tDXzQlM6;
-        Fri, 14 Jan 2022 05:28:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Date:   Fri, 14 Jan 2022 15:28:17 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        ptikhomirov@virtuozzo.com, linux-api@vger.kernel.org
-Subject: Re: [PATCH] fs/open: add new RESOLVE_EMPTY_PATH flag for openat2
-Message-ID: <20220114042817.qxpqims6qbteyasc@senku>
-References: <1641978137-754828-1-git-send-email-andrey.zhadchenko@virtuozzo.com>
- <20220112143419.rgxumbts2jjb4aig@senku>
- <20220112145109.pou6676bsoatfg6x@wittgenstein>
- <011a03b8-81a8-9b0e-a41b-93d9dde12d5f@virtuozzo.com>
- <20220113064643.dhhdhb7kw2qetyu3@senku>
- <8452fb29-b308-df9a-c2d4-f0ad29b1649c@virtuozzo.com>
- <f1128946-5675-7d8e-e475-d889dc7f5f80@virtuozzo.com>
+        id S239275AbiANGK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jan 2022 01:10:59 -0500
+Received: from mga11.intel.com ([192.55.52.93]:41075 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234997AbiANGK7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Jan 2022 01:10:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1642140659; x=1673676659;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=vFkrUx7JlBhH8tQHdr680ZVtcCkoqOiY56p9j5M74UM=;
+  b=cjaPPKNK9hWLEikc2M+MeiR/Nr8cD17Ly/AEtI2UV2rh7b9Lw6QF0VXh
+   MsaPvYPVsmV1o5dwpVk/mq9tAYDHSw2RVyoZQb7U25rq+amiBnVeVKDQg
+   wozjzPLjV2ag33t6B+bBEroy8M9NYD/w9prrVdrcaDjQBGYXs0YgIk8ud
+   AgfozJJXcnwo45gRPCZDprUYeGv2SND92NNb9py5gRWW727VJAn2luT7m
+   T9WBI2S0FYYjdJN71zLM2A79TRavcNTlQqfPguJ1bNoTQROvzqKmDbmAh
+   q1a70HqKWOWRYh4fhURXzksbsEJR2hcSASGcmjjDI9YynIA2xnFroEomL
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10226"; a="241751127"
+X-IronPort-AV: E=Sophos;i="5.88,287,1635231600"; 
+   d="scan'208";a="241751127"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2022 22:10:59 -0800
+X-IronPort-AV: E=Sophos;i="5.88,287,1635231600"; 
+   d="scan'208";a="559370934"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.43])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2022 22:10:52 -0800
+Date:   Fri, 14 Jan 2022 13:53:15 +0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, john.ji@intel.com, susie.li@intel.com,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com
+Subject: Re: [PATCH v3 kvm/queue 14/16] KVM: Handle page fault for private
+ memory
+Message-ID: <20220114055315.GA29165@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20211223123011.41044-1-chao.p.peng@linux.intel.com>
+ <20211223123011.41044-15-chao.p.peng@linux.intel.com>
+ <20220104014629.GA2330@yzhao56-desk.sh.intel.com>
+ <20220104091008.GA21806@chaop.bj.intel.com>
+ <20220104100612.GA19947@yzhao56-desk.sh.intel.com>
+ <20220105062810.GB25283@chaop.bj.intel.com>
+ <20220105075356.GB19947@yzhao56-desk.sh.intel.com>
+ <YdYFFzlPTvgFdSXL@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="os7jubhpjvhhykva"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f1128946-5675-7d8e-e475-d889dc7f5f80@virtuozzo.com>
+In-Reply-To: <YdYFFzlPTvgFdSXL@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+hi Sean,
+Sorry for the late reply. I just saw this mail in my mailbox.
 
---os7jubhpjvhhykva
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 05, 2022 at 08:52:39PM +0000, Sean Christopherson wrote:
+> On Wed, Jan 05, 2022, Yan Zhao wrote:
+> > Sorry, maybe I didn't express it clearly.
+> > 
+> > As in the kvm_faultin_pfn_private(), 
+> > static bool kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
+> > 				    struct kvm_page_fault *fault,
+> > 				    bool *is_private_pfn, int *r)
+> > {
+> > 	int order;
+> > 	int mem_convert_type;
+> > 	struct kvm_memory_slot *slot = fault->slot;
+> > 	long pfn = kvm_memfd_get_pfn(slot, fault->gfn, &order);
+> > 	...
+> > }
+> > Currently, kvm_memfd_get_pfn() is called unconditionally.
+> > However, if the backend of a private memslot is not memfd, and is device
+> > fd for example, a different xxx_get_pfn() is required here.
+> 
+> Ya, I've complained about this in a different thread[*].  This should really be
+> something like kvm_private_fd_get_pfn(), where the underlying ops struct can point
+> at any compatible backing store.
+> 
+> https://lore.kernel.org/all/YcuMUemyBXFYyxCC@google.com/
+>
+ok. 
 
-On 2022-01-14, Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com> wrote:
->=20
->=20
-> On 1/13/22 10:52, Andrey Zhadchenko wrote:
-> >=20
-> >=20
-> > On 1/13/22 09:46, Aleksa Sarai wrote:
-> > > On 2022-01-12, Andrey Zhadchenko <andrey.zhadchenko@virtuozzo.com> wr=
-ote:
-> > > > On 1/12/22 17:51, Christian Brauner wrote:
-> > > > > On Thu, Jan 13, 2022 at 01:34:19AM +1100, Aleksa Sarai wrote:
-> > > > > > On 2022-01-12, Andrey Zhadchenko
-> > > > > > <andrey.zhadchenko@virtuozzo.com> wrote:
-> > > > > > > If you have an opened O_PATH file, currently there
-> > > > > > > is no way to re-open
-> > > > > > > it with other flags with openat/openat2. As a
-> > > > > > > workaround it is possible
-> > > > > > > to open it via /proc/self/fd/<X>, however
-> > > > > > > 1) You need to ensure that /proc exists
-> > > > > > > 2) You cannot use O_NOFOLLOW flag
-> > > > > >=20
-> > > > > > There is also another issue -- you can mount on top of
-> > > > > > magic-links so if
-> > > > > > you're a container runtime that has been tricked into creating =
-bad
-> > > > > > mounts of top of /proc/ subdirectories there's no way of
-> > > > > > detecting that
-> > > > > > this has happened. (Though I think in the long-term we will nee=
-d to
-> > > > > > make it possible for unprivileged users to create a procfs moun=
-tfd if
-> > > > > > they have hidepid=3D4,subset=3Dpids set -- there are loads of t=
-hings
-> > > > > > containers need to touch in procfs which can be
-> > > > > > overmounted in malicious
-> > > > > > ways.)
-> > > > >=20
-> > > > > Yeah, though I see this as a less pressing issue for now. I'd rat=
-her
-> > > > > postpone this and make userspace work a bit more. There are ways =
-to
-> > > > > design programs so you know that the procfs instance you're inter=
-acting
-> > > > > with is the one you want to interact with without requiring
-> > > > > unprivileged
-> > > > > mounting outside of a userns+pidns+mountns pair. ;)
-> > > > >=20
-> > > > > >=20
-> > > > > > > Both problems may look insignificant, but they are
-> > > > > > > sensitive for CRIU.
-> > > > > > > First of all, procfs may not be mounted in the namespace wher=
-e we are
-> > > > > > > restoring the process. Secondly, if someone opens a
-> > > > > > > file with O_NOFOLLOW
-> > > > > > > flag, it is exposed in /proc/pid/fdinfo/<X>. So CRIU
-> > > > > > > must also open the
-> > > > > > > file with this flag during restore.
-> > > > > > >=20
-> > > > > > > This patch adds new constant RESOLVE_EMPTY_PATH for resolve f=
-ield of
-> > > > > > > struct open_how and changes getname() call to
-> > > > > > > getname_flags() to avoid
-> > > > > > > ENOENT for empty filenames.
-> > > > > >=20
-> > > > > > This is something I've wanted to implement for a while,
-> > > > > > but from memory
-> > > > > > we need to add some other protections in place before enabling =
-this.
-> > > > > >=20
-> > > > > > The main one is disallowing re-opening of a path when it
-> > > > > > was originally
-> > > > > > opened with a different set of modes. [1] is the patch I origin=
-ally
-> > > > I looked at this patch. However I am not able to reproduce the prob=
-lem.
-> > > > For example, I can't open /proc/self/exe as RDWR with the following:
-> > > > fd1 =3D open(/proc/self/exe, O_PATH)
-> > > > fd2 =3D open(/proc/self/fd/3, O_RDWR) <- error
-> > > > or open file with incorrect flags via O_PATH to O_PATH fd from proc
-> > > > This is fixed or did I understand this problem wrong?
-> > >=20
-> > > You will get -ETXTBSY because the /proc/self/exe is still a current->=
-mm
-> > > of a process. What you need to do is have two processes (or fork+exec=
- a
-> > > process and do this):
-> > >=20
-> > > =A0 1. Grab the /proc/$pid/exe handle of the target process.
-> > > =A0 2. Wait for the target process to do an exec() of another program=
- (or
-> > > =A0=A0=A0=A0 exit).
-> > > =A0 3. *Then* re-open the fd with write permissions. This is allowed
-> > > =A0=A0=A0=A0 because the file is no longer being used as the current-=
->mm of a
-> > > =A0=A0=A0=A0process and thus is treated like a regular file handle ev=
-en though
-> > > =A0=A0=A0=A0it was only ever resolveable through /proc/self/exe which=
- should
-> > > =A0=A0=A0=A0(semantically) only ever be readable.
-> > >=20
-> > > This attack was used against runc in 2016 and a similar attack was
-> > > possible with some later CVEs (I think there was also one against LXC=
- at
-> > > some point but I might be mistaken). There were other bugs which lead=
- to
-> > > this vector being usable, but my view is that this shouldn't have been
-> > > possible in the first place.
-> > >=20
-> > > I can cook up a simple example if the above description isn't explain=
-ing
-> > > the issue thoroughly enough.
-> > >=20
-> >=20
-> > Thanks for the explanation! I get it now
-> >=20
-> > > > > > wrote as part of the openat2(2) (but I dropped it since I wasn'=
-t sure
-> > > > > > whether it might break some systems in subtle ways -- though ac=
-cording
-> > > > > > to my testing there wasn't an issue on any of my machines).
-> > > > >=20
-> > > > > Oh this is the discussion we had around turning an opath fd into =
-a say
-> > > > > O_RDWR fd, I think.
-> > > > > So yes, I think restricting fd reopening makes sense. However, go=
-ing
-> > > > > from an O_PATH fd to e.g. an fd with O_RDWR does make sense
-> > > > > and needs to
-> > > > > be the default anyway. So we would need to implement this as a de=
-nylist
-> > > > > anyway. The default is that opath fds can be reopened with whatev=
-er and
-> > > > > only if the opath creator has restricted reopening will it fail, =
-i.e.
-> > > > > it's similar to a denylist.
-> > > > >=20
-> > > > > But this patch wouldn't prevent that or hinder the upgrade mask
-> > > > > restriction afaict.
-> > > >=20
-> > > > This issue is actually more complicated than I thought.
-> > > >=20
-> > > > What do you think of the following:
-> > > > 1. Add new O_EMPTYPATH constant
-> > > > 2. When we open something with O_PATH, remember access flags (curre=
-ntly
-> > > > we drop all flags in do_dentry_open() for O_PATH fds). This is simi=
-lar
-> > > > to Aleksa Sarai idea, but I do not think we should add some new fie=
-lds,
-> > > > because CRIU needs to be able to see it. Just leave access flags
-> > > > untouched.
-> > >=20
-> > > There are two problems with this:
-> > >=20
-> > > =A0 * The problem with this is that O_PATH and O_PATH|O_RDONLY are
-> > > =A0=A0=A0 identical. O_RDONLY is defined as 0. I guess by new fields =
-you're
-> >=20
-> > Yes, I didn't thought about that.
-> >=20
-> > > =A0=A0=A0 referring to what you'd get from fcntl(F_GETFL)?
-> > >=20
-> > > =A0=A0=A0 What you're suggesting here is the openat2() O_PATH access =
-mask
-> > > =A0=A0=A0 stuff. That is a feature I think would be useful, but it's =
-not
-> > > =A0=A0=A0 necessary to get O_EMPTYPATH working.
-> > >=20
-> > > =A0=A0=A0 If you really need to be able to get the O_PATH re-opening =
-mask of a
-> > > =A0=A0=A0 file descriptor (which you probably do for CRIU) we can add=
- that
-> > > =A0=A0=A0 information to F_GETFL or some other such interface.
-> >=20
-> > That would be cool. In the patch I saw new FMODE_PATH_READ and
-> > MODE_PATH_WRITE but there was no option to dump it.
-> >=20
-> > >=20
-> > > =A0 * We need to make sure that the default access modes of O_PATH on
-> > > =A0=A0=A0 magic links are correct. We can't simply allow any access m=
-ode in
-> > > =A0=A0=A0 that case, because if we do then we haven't really solved t=
-he
-> > > =A0=A0=A0 /proc/self/exe issue.
-> > >=20
-> > > > 3. for openat(fd, "", O_EMPTYPATH | <access flags>) additionally ch=
-eck
-> > > > access flags against the ones we remembered for O_PATH fd
-> > >=20
-> > > =A0 * We also need to add the same restrictions for opening through
-> > > =A0=A0=A0 /proc/self/fd/$n.
-> > >=20
-> > > > This won't solve magiclinks problems but there at least will be API=
- to
-> > > > avoid procfs and which allow to add some restrictions.
-> > >=20
-> > > I think the magic link problems need to be solved if we're going to
-> > > enshrine this fd reopening behaviour by adding an O_* flag for it.
-> > > Though of course this is already an issue with /proc/self/fd/$n
-> > > re-opening.
-> >=20
-> > I think these issues are close but still different. Probably we can make
-> > three ideas from this discussion.
-> > 1. Add an O_EMPTYPATH flag to re-open O_PATH descriptor. This won't be
-> > really a new feature (since we can already do it via /proc for most
-> > cases). And also this won't break anything.
-> > 2. Add modes for magiclinks. This is more restrictive change. However I
-> > don't think any non-malicious programs will do procfs shenanigans and
-> > will be affected by this changes. This is the patch you sent some time
-> > ago
->=20
-> Oops, I didn't notice third patch in you series "open: O_EMPTYPATH:
-> procfs-less file descriptor re-opening". This is exactly what I tried to
-> do.
-> It will be very cool if you resurrect and re-send magic-links
-> adjustments and O_EMPTYPATH.
+> > Further, though mapped to a private gfn, it might be ok for QEMU to
+> > access the device fd in hva-based way (or call it MMU access way, e.g.
+> > read/write/mmap), it's desired that it could use the traditional to get
+> > pfn without convert the range to a shared one.
+> 
+> No, this is expressly forbidden.  The backing store for a private gfn must not
+> be accessible by userspace.  It's possible a backing store could support both, but
+> not concurrently, and any conversion must be done without KVM being involved.
+> In other words, resolving a private gfn must either succeed or fail (exit to
+> userspace), KVM cannot initiate any conversions.
+>
+When it comes to a device passthrough via VFIO, there might be more work
+related to the device fd as a backend.
 
-I'll rebase it (adding a way to dump the reopening mask for O_PATH
-descriptors) and send it next week (assuming it doesn't require too
-much tweaking).
+First, unlike memfd which can allocate one private fd for a set of PFNs,
+and one shared fd for another set of PFNs, for device fd, it needs to open
+the same physical device twice, one for shared fd, and one for private fd.
 
-It should be noted that on paper you can get the reopening mask with the
-current version of the patchset (look at the mode of the magic link in
-/proc/self/fd/$n) but that's obviously not a reasonable solution.
+Then, for private device fd, now its ramblock has to use qemu_ram_alloc_from_fd()
+instead of current qemu_ram_alloc_from_ptr().
+And as in VFIO, this private fd is shared by several ramblocks (each locating from
+a different base offset), the base offsets also need to be kept somewhere 
+in order to call get_pfn successfully. (this info is kept in
+vma through mmap() previously, so without mmap(), a new interface might
+be required). 
 
-> > 3. Add an option to restrict O_PATH re-opening (maybe via fcntl?). And
-> > make it apply if someone tries to do /proc workaround with this exact
-> > O_PATH fd
+Also, for shared device fd,  mmap() is required in order to allocate the
+ramblock with qemu_ram_alloc_from_ptr(), and more importantly to make
+the future gfn_to_hva, and hva_to_pfn possible.
+But as the shared and private fds are based on the same physical device,
+the vfio driver needs to record which vma ranges are allowed for the actual
+mmap_fault, which vma area are not.
 
-I originally wanted to do this in openat2() since it feels analogous to
-open modes for regular file descriptors (in fact I planned to make
-how->mode a union with how->upgrade_mask) but I'll need to think about
-how to expose that in fcntl().
+With the above changes, it only prevents the host user space from accessing
+the device mapped to private GFNs.
+For memory backends, host kernel space accessing is prevented via MKTME.
+And for device, the device needs to the work to disallow host kernel
+space access.
+However, unlike memory side, the device side would not cause any MCE. 
+Thereby, host user space access to the device also would not cause MCEs, either. 
 
-> > > However since I already have a patch which solves this issue, I can w=
-ork
-> > > on reviving it and re-send it.
-> >=20
-> > Why not if it only makes it better
+So, I'm not sure if the above work is worthwhile to the device fd.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
 
---os7jubhpjvhhykva
-Content-Type: application/pgp-signature; name="signature.asc"
+> > pfn = __gfn_to_pfn_memslot(slot, fault->gfn, ...)
+> > 	|->addr = __gfn_to_hva_many (slot, gfn,...)
+> > 	|  pfn = hva_to_pfn (addr,...)
+> > 
+> > 
+> > So, is it possible to recognize such kind of backends in KVM, and to get
+> > the pfn in traditional way without converting them to shared?
+> > e.g.
+> > - specify KVM_MEM_PRIVATE_NONPROTECT to memory regions with such kind
+> > of backends, or
+> > - detect the fd type and check if get_pfn is provided. if no, go the
+> >   traditional way.
+> 
+> No, because the whole point of this is to make guest private memory inaccessible
+> to host userspace.  Or did I misinterpret your questions?
+I think the host unmap series is based on the assumption that host user
+space access to the memory based to private guest GFNs would cause fatal
+MCEs.
+So, I hope for backends who will not bring this fatal error can keep
+using traditional way to get pfn and be mapped to private GFNs at the
+same time.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCYeD73gAKCRCdlLljIbnQ
-EtfFAP48CHGw6F78mWVhsHbAVinc0QKOuaWH9r5DkJkb5j8uqgEArFxyp1ECK4Cy
-ca4IwWuF7RtBelaJ5JXbIULJnz9segk=
-=6fT0
------END PGP SIGNATURE-----
-
---os7jubhpjvhhykva--
+Thanks
+Yan
