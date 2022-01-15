@@ -2,67 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97FCF48F54B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jan 2022 06:54:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E12948F581
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jan 2022 07:38:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232562AbiAOFyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Jan 2022 00:54:20 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:37508 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229852AbiAOFyT (ORCPT
+        id S232608AbiAOGix (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Jan 2022 01:38:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232594AbiAOGiw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Jan 2022 00:54:19 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 629ADB8267E;
-        Sat, 15 Jan 2022 05:54:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 34B5CC36AE3;
-        Sat, 15 Jan 2022 05:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642226057;
-        bh=tPK6A+KAurLSbT04ZK/PwxUXvru4+gqg5l3FBa2AjM8=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=uyVU3cP9c0s196Cs1rV0uoVgrtEc7GjMH9xaSFiOQcXMcX1TV1zuiKltnVUpHTrVO
-         TMnhgL2WUHH0ZwWHgUGb8smnwWP4HeNNImK8ntPv/ToH2O/FlRw4gPmlSQdXjHWViz
-         nR6x9hNTFYwkSqamvk6aYrJwQlp256T/r8c8GfHyJ9t2BhDz1/q+Z5ri/XHfllfH8p
-         I9nFPliJdMiH4Vm+vyB22iBtrQ/9cK8LmFuZYzuRfz5Rzb5x25bZQtjmxyiMk2g3XA
-         KPeqYZ6NKxqZcz8xxNCnATsGBxTL9PH1XNu5Hn/mXynPwX98/BajFQ2d98MV19/WtL
-         VmYHKjR7v6nPQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 22694F6078E;
-        Sat, 15 Jan 2022 05:54:17 +0000 (UTC)
-Subject: Re: Re: [GIT PULL] xfs: new code for 5.17
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220115041712.GD90423@magnolia>
-References: <20220110220615.GA656707@magnolia> <20220115041712.GD90423@magnolia>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220115041712.GD90423@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-3
-X-PR-Tracked-Commit-Id: 4a9bca86806fa6fc4fbccf050c1bd36a4778948a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a33f5c380c4bd3fa5278d690421b72052456d9fe
-Message-Id: <164222605713.3683.14066920600931696273.pr-tracker-bot@kernel.org>
-Date:   Sat, 15 Jan 2022 05:54:17 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+        Sat, 15 Jan 2022 01:38:52 -0500
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91B11C061574;
+        Fri, 14 Jan 2022 22:38:52 -0800 (PST)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n8chz-0025ZF-G2; Sat, 15 Jan 2022 06:38:39 +0000
+Date:   Sat, 15 Jan 2022 06:38:39 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] vfs: check dentry is still valid in get_link()
+Message-ID: <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
+References: <164180589176.86426.501271559065590169.stgit@mickey.themaw.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <164180589176.86426.501271559065590169.stgit@mickey.themaw.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 14 Jan 2022 20:17:12 -0800:
+On Mon, Jan 10, 2022 at 05:11:31PM +0800, Ian Kent wrote:
+> When following a trailing symlink in rcu-walk mode it's possible for
+> the dentry to become invalid between the last dentry seq lock check
+> and getting the link (eg. an unlink) leading to a backtrace similar
+> to this:
+> 
+> crash> bt
+> PID: 10964  TASK: ffff951c8aa92f80  CPU: 3   COMMAND: "TaniumCX"
+> …
+>  #7 [ffffae44d0a6fbe0] page_fault at ffffffff8d6010fe
+>     [exception RIP: unknown or invalid address]
+>     RIP: 0000000000000000  RSP: ffffae44d0a6fc90  RFLAGS: 00010246
+>     RAX: ffffffff8da3cc80  RBX: ffffae44d0a6fd30  RCX: 0000000000000000
+>     RDX: ffffae44d0a6fd98  RSI: ffff951aa9af3008  RDI: 0000000000000000
+>     RBP: 0000000000000000   R8: ffffae44d0a6fb94   R9: 0000000000000000
+>     R10: ffff951c95d8c318  R11: 0000000000080000  R12: ffffae44d0a6fd98
+>     R13: ffff951aa9af3008  R14: ffff951c8c9eb840  R15: 0000000000000000
+>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+>  #8 [ffffae44d0a6fc90] trailing_symlink at ffffffff8cf24e61
+>  #9 [ffffae44d0a6fcc8] path_lookupat at ffffffff8cf261d1
+> #10 [ffffae44d0a6fd28] filename_lookup at ffffffff8cf2a700
+> #11 [ffffae44d0a6fe40] vfs_statx at ffffffff8cf1dbc4
+> #12 [ffffae44d0a6fe98] __do_sys_newstat at ffffffff8cf1e1f9
+> #13 [ffffae44d0a6ff38] do_syscall_64 at ffffffff8cc0420b
+> 
+> Most of the time this is not a problem because the inode is unchanged
+> while the rcu read lock is held.
+> 
+> But xfs can re-use inodes which can result in the inode ->get_link()
+> method becoming invalid (or NULL).
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-3
+Without an RCU delay?  Then we have much worse problems...
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a33f5c380c4bd3fa5278d690421b72052456d9fe
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Details, please.
