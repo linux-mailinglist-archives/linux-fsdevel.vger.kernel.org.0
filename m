@@ -2,100 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 097D648E973
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jan 2022 12:51:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 113C748F489
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jan 2022 04:12:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240887AbiANLvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jan 2022 06:51:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
+        id S232285AbiAODLy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jan 2022 22:11:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234325AbiANLu7 (ORCPT
+        with ESMTP id S232283AbiAODLx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jan 2022 06:50:59 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9FCC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 03:50:59 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id r16-20020a17090a0ad000b001b276aa3aabso21821860pje.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 03:50:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=h0ot/9Bfj6gbigRp33fTwcN2wrGdo9obxY37DOqaflo=;
-        b=UqaivxmB0ISUX7Oxm9jowEz7vblhwOxA6yBvmSDo63xyf/A9m05dwaef2H4hQG//ih
-         52izJHQLYd+2oefALvskRy5Vl77l3MUx05aT6BRXnQJQsQkXUPWKzi/qYh/aSrlFZl9T
-         dBucxfQUaHE07JxQV+b+BWJkqt+5MNGZO7RZhoer/IrbC+vEclQlM72ZqdipGTpjLRuA
-         Mi7ix5BUEN5M3tl7597uZvhJYMalDWN+mHr9EOLo6r+DRRCO99haSvC6JCTDSnQk8HTV
-         m26VAn2IRX15EzbSClg9rKz0UclD+6UcaaIVBRRF3gfoGAU/P/0EbF+lH3pyAIRiJWNi
-         n5Pw==
+        Fri, 14 Jan 2022 22:11:53 -0500
+Received: from mail-ot1-x362.google.com (mail-ot1-x362.google.com [IPv6:2607:f8b0:4864:20::362])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E82C061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 19:11:53 -0800 (PST)
+Received: by mail-ot1-x362.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so12322663otu.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 19:11:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=h0ot/9Bfj6gbigRp33fTwcN2wrGdo9obxY37DOqaflo=;
-        b=pjS6puFdyGh+S8dDj52doYB21+OqDDaIhjxYLDDw2a1bsRVfmEMeaI+Zc9ahhiHD38
-         xDIgJH6EP3qzZMGZzwyVbqzadE9kispiLi92cN8Bo7qYxyfnghe1anN9nSQAKEtGbUoc
-         Fe2w88PgMokpf7pjRPRVZGd7YHc60JpJ5LrEb7IHlNatfcHNywvGYcg8nggnJfETI/bd
-         HUUqNOe3zSLWI/pGRL7ZrYCyQIxh+jydj6l/ZCbSTNJss+oKtt9PJOTQWJCF5ylgiFb1
-         4QAGZux0+uBDv+DFRCvFhxEAlEcxCILGO53Cn/0WAPbYbqq4dSwwx2S9n/nkdIfdVwn3
-         ++pQ==
-X-Gm-Message-State: AOAM532PiDWsnNzYO7JEYYXV2qCKGAHYtsU6zgcQSMonlIi0FVfuCyvc
-        LKry5Sb5PP9BOe3ZSGT/E1fJju3JTVjxrtAVlYA=
-X-Google-Smtp-Source: ABdhPJxvzUq2BojFr3GJ3LgW3yay0UwwoxyQkCZqJ6B8tvdUcX7m3Ub9ENjMg5OHsf+d2rMGMMbwcs69dKf48Q1Ap9U=
-X-Received: by 2002:a17:902:bd94:b0:149:c926:7c26 with SMTP id
- q20-20020a170902bd9400b00149c9267c26mr9198996pls.64.1642161058998; Fri, 14
- Jan 2022 03:50:58 -0800 (PST)
-MIME-Version: 1.0
-Reply-To: ymrzerbo@gmail.com
-Sender: dr.siaokabore@gmail.com
-Received: by 2002:a05:6a20:2318:b0:6b:2327:c203 with HTTP; Fri, 14 Jan 2022
- 03:50:58 -0800 (PST)
-From:   "Mr.Zerbo Yameogo" <ymrzerbo@gmail.com>
-Date:   Fri, 14 Jan 2022 03:50:58 -0800
-X-Google-Sender-Auth: 4JEhKKPWrxVMzx4GWmhnHzqfkaI
-Message-ID: <CA+rg4NvygDH0MsaEZ4VPLEaXMsuK0GX+qEtefiM-HFqpwSpg4w@mail.gmail.com>
-Subject: VERY VERY URGENT.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:dkim-signature:date:from:to:cc:subject
+         :message-id:content-disposition:user-agent;
+        bh=plSwlEbLO3tG/wv5pbnbZDWr8mlodkQb5tRKykFZF3c=;
+        b=uD3gyC1MzQhiVLRILaY2HZ1Sv2HuFe5rx473JMtV3w4CB7+mNaP51+LixISiWG6ttN
+         NBnocKO04N8rE/+HKV3aVXcgNaU4u7sf5VaUx1DXeJgj6B4VuNE1Gy+nJrgFL7LrDsVB
+         993Gp6jptjhsPfjuwhlNClBzjR7fbYy/UL6rdhoBWr9BXXkjJxEM5urTtp0MlspQi2GT
+         fUkHip1+NDv3nj60NbACHbTjprMe8g0YiKw28F+oNys3NbwnCwPsxqZVpwX4RDPdYwey
+         afIsBdI0AWEC91Cd2IIxo7QeZKS0SzM7/frxUHUFHkotHMh6a1URCBqcMVM1yfYqvuqj
+         mqFg==
+X-Gm-Message-State: AOAM5312My6+LeMroGHXSAokpXn43dbhVrPvkzhZBTyuT0ZpgW+RS6qc
+        SUSy5x3KBTD8oOdztG2yXKd6bDRfJv92qTI2YTpvmbvWoh0b
+X-Google-Smtp-Source: ABdhPJylK3h0tJWMbDrjA/V/n/5gEBHMtlV5iyqgIqnsoN8vJhyPTDOOQeCYjgqvgKx5V3HJRM6HlbtPkdIP
+X-Received: by 2002:a05:6830:1e37:: with SMTP id t23mr4884926otr.160.1642216312808;
+        Fri, 14 Jan 2022 19:11:52 -0800 (PST)
+Received: from smtp.aristanetworks.com (mx.aristanetworks.com. [162.210.129.12])
+        by smtp-relay.gmail.com with ESMTPS id n91sm1666021ota.0.2022.01.14.19.11.52
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jan 2022 19:11:52 -0800 (PST)
+X-Relaying-Domain: arista.com
+Received: from visor (unknown [10.95.68.127])
+        by smtp.aristanetworks.com (Postfix) with ESMTPS id EB486402048;
+        Fri, 14 Jan 2022 19:11:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1642216312;
+        bh=plSwlEbLO3tG/wv5pbnbZDWr8mlodkQb5tRKykFZF3c=;
+        h=Date:From:To:Cc:Subject:From;
+        b=t4fFQfDd+jg6sRh+kZIXaqOSmSj1zRUaKl4+xo2R0AyFUvAlMTOz6sHc4EFrQoMyM
+         BTxagJZ28jCZLdefSUv+TvzQwfNCa1khzAOkx+TnAyUM/4whRNQy+7MK1JCoq/hO1f
+         5TNl9Eq/XZoKd9UKJJGYYKwZKMhvF+IggzGj1s5d8eX9XYwGLkR9EciwjacbyZWbsO
+         XArd8zBNwxkR7Z5nMHvaSLBZklDOMFcq/hN4TXH+YfXai+APrI3YQJFMdOqzT1hK64
+         EUJ+UQCeqe8ILq1Hgu8dsHmyE3l+L8zGLfgauPPnhSzEBgkKRGl/V5sUcWe6ZckN6X
+         zE2v/wtKG/wXg==
+Date:   Fri, 14 Jan 2022 19:11:50 -0800
+From:   Ivan Delalande <colona@arista.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Potential regression after fsnotify_nameremove() rework in 5.3
+Message-ID: <YeI7duagtzCtKMbM@visor>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi,
 
-My Name is Mr.Zerbo Yameogo the Chief Operating Officer of  Bank of
-Africa and I am in need of a reliable foreigner to carry out this
-important deal.
+Sorry to bring this up so late but we might have found a regression
+introduced by your "Sort out fsnotify_nameremove() mess" patch series
+merged in 5.3 (116b9731ad76..7377f5bec133), and that can still be
+reproduced on v5.16.
 
-An account was opened in my bank by one of my customers in the name of
-MR. THOMAS BAHIA a Dutch National from Germany who made a fixed
-deposit of $18,500,000.00 (Eighteen Million, Five Hundred Thousand
-United States Dollars) and never show up again and I later discovered
-that he died with his entire family members on a plane crash that
-occurred in Libya on the 12th of May 2010 and below is a link for your
-view.
+Some of our processes use inotify to watch for IN_DELETE events (for
+files on tmpfs mostly), and relied on the fact that once such events are
+received, the files they refer to have actually been unlinked and can't
+be open/read. So if and once open() succeeds then it is a new version of
+the file that has been recreated with new content.
 
-http://www.nytimes.com/2010/05/13/world/middleeast/13libya.html
+This was true and working reliably before 5.3, but changed after
+49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
+d_delete()") specifically. There is now a time window where a process
+receiving one of those IN_DELETE events may still be able to open the
+file and read its old content before it's really unlinked from the FS.
 
-Now I want to present a foreigner as next of kin to late Thomas so we
-can make the claim and you can contact me if you are interested so I
-can give you more detailed information about this transaction. For the
-sharing of the money will be shared in the ratio of 50% for me, 40%
-for you and 10% to cover our expenses after the deal.
+I'm not very familiar with the VFS and fsnotify internals, would you
+consider this a regression, or was there never any intentional guarantee
+for that behavior and it's best we work around this change in userspace?
 
-Please for further information and inquires feel free to contact me back
-immediately for more explanation and better understanding I want you to
-assure me your capability of handling this project with trust by providing
-me your following information details such as:
+Thanks a lot,
 
-(1)NAME..............
-(2)AGE:................
-(3)SEX:.....................
-(4)PHONE NUMBER:.................
-(5)OCCUPATION:................ .....
-(6)YOUR COUNTRY:.....................
-
-Please keep this absolutely confidential weather interested or not.
-
-Thanks.
-
-Mr.Zerbo Yameogo.
+-- 
+Ivan Delalande
+Arista Networks
