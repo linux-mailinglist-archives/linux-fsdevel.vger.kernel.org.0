@@ -2,93 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 113C748F489
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jan 2022 04:12:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43DD348F4AE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jan 2022 05:17:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232285AbiAODLy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jan 2022 22:11:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
+        id S232371AbiAOERR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jan 2022 23:17:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232283AbiAODLx (ORCPT
+        with ESMTP id S229964AbiAOERR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jan 2022 22:11:53 -0500
-Received: from mail-ot1-x362.google.com (mail-ot1-x362.google.com [IPv6:2607:f8b0:4864:20::362])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E82C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 19:11:53 -0800 (PST)
-Received: by mail-ot1-x362.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so12322663otu.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jan 2022 19:11:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:dkim-signature:date:from:to:cc:subject
-         :message-id:content-disposition:user-agent;
-        bh=plSwlEbLO3tG/wv5pbnbZDWr8mlodkQb5tRKykFZF3c=;
-        b=uD3gyC1MzQhiVLRILaY2HZ1Sv2HuFe5rx473JMtV3w4CB7+mNaP51+LixISiWG6ttN
-         NBnocKO04N8rE/+HKV3aVXcgNaU4u7sf5VaUx1DXeJgj6B4VuNE1Gy+nJrgFL7LrDsVB
-         993Gp6jptjhsPfjuwhlNClBzjR7fbYy/UL6rdhoBWr9BXXkjJxEM5urTtp0MlspQi2GT
-         fUkHip1+NDv3nj60NbACHbTjprMe8g0YiKw28F+oNys3NbwnCwPsxqZVpwX4RDPdYwey
-         afIsBdI0AWEC91Cd2IIxo7QeZKS0SzM7/frxUHUFHkotHMh6a1URCBqcMVM1yfYqvuqj
-         mqFg==
-X-Gm-Message-State: AOAM5312My6+LeMroGHXSAokpXn43dbhVrPvkzhZBTyuT0ZpgW+RS6qc
-        SUSy5x3KBTD8oOdztG2yXKd6bDRfJv92qTI2YTpvmbvWoh0b
-X-Google-Smtp-Source: ABdhPJylK3h0tJWMbDrjA/V/n/5gEBHMtlV5iyqgIqnsoN8vJhyPTDOOQeCYjgqvgKx5V3HJRM6HlbtPkdIP
-X-Received: by 2002:a05:6830:1e37:: with SMTP id t23mr4884926otr.160.1642216312808;
-        Fri, 14 Jan 2022 19:11:52 -0800 (PST)
-Received: from smtp.aristanetworks.com (mx.aristanetworks.com. [162.210.129.12])
-        by smtp-relay.gmail.com with ESMTPS id n91sm1666021ota.0.2022.01.14.19.11.52
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jan 2022 19:11:52 -0800 (PST)
-X-Relaying-Domain: arista.com
-Received: from visor (unknown [10.95.68.127])
-        by smtp.aristanetworks.com (Postfix) with ESMTPS id EB486402048;
-        Fri, 14 Jan 2022 19:11:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1642216312;
-        bh=plSwlEbLO3tG/wv5pbnbZDWr8mlodkQb5tRKykFZF3c=;
-        h=Date:From:To:Cc:Subject:From;
-        b=t4fFQfDd+jg6sRh+kZIXaqOSmSj1zRUaKl4+xo2R0AyFUvAlMTOz6sHc4EFrQoMyM
-         BTxagJZ28jCZLdefSUv+TvzQwfNCa1khzAOkx+TnAyUM/4whRNQy+7MK1JCoq/hO1f
-         5TNl9Eq/XZoKd9UKJJGYYKwZKMhvF+IggzGj1s5d8eX9XYwGLkR9EciwjacbyZWbsO
-         XArd8zBNwxkR7Z5nMHvaSLBZklDOMFcq/hN4TXH+YfXai+APrI3YQJFMdOqzT1hK64
-         EUJ+UQCeqe8ILq1Hgu8dsHmyE3l+L8zGLfgauPPnhSzEBgkKRGl/V5sUcWe6ZckN6X
-         zE2v/wtKG/wXg==
-Date:   Fri, 14 Jan 2022 19:11:50 -0800
-From:   Ivan Delalande <colona@arista.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: Potential regression after fsnotify_nameremove() rework in 5.3
-Message-ID: <YeI7duagtzCtKMbM@visor>
+        Fri, 14 Jan 2022 23:17:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F27B7C061574;
+        Fri, 14 Jan 2022 20:17:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3A5BBB823FF;
+        Sat, 15 Jan 2022 04:17:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D112CC36AE3;
+        Sat, 15 Jan 2022 04:17:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642220232;
+        bh=L9jZwPl+ulM1n91M5X+pPqPaIs8EmocblrHHoBwI/NU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UY52dugeZGoZV8ns0dXi5uSI1slG40Tri+6JivHyATPasfY/Z4rYVljD+SoQmTzhv
+         8BvmevtjUUKY0/z4cUcW3tguj+lF20IXtLdzvKYBkfwlkR+lnJvhMRYZXylZOkTZsl
+         vbM4iF26pM4/aNu2UNpKdVUWm3msRMQAReVuQV8NjbprixvKxXjzRL2A/7qDG8zgiV
+         Qvd1OZKpl8iqQzL1V2Xoz0MF2aZo4ayCtTOdzMpk5TWyHVAuptuvs0eK4/MhhxN6B3
+         9xVgahRos77eiEvmpCu2YO54aXnwFq5UICAvH7VufF2At+t1x6phqIWy4FdLf9H9tD
+         sCn9M70GyB2kQ==
+Date:   Fri, 14 Jan 2022 20:17:12 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: Re: [GIT PULL] xfs: new code for 5.17
+Message-ID: <20220115041712.GD90423@magnolia>
+References: <20220110220615.GA656707@magnolia>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
+In-Reply-To: <20220110220615.GA656707@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hi Linus,
 
-Sorry to bring this up so late but we might have found a regression
-introduced by your "Sort out fsnotify_nameremove() mess" patch series
-merged in 5.3 (116b9731ad76..7377f5bec133), and that can still be
-reproduced on v5.16.
+Please pull these bug fixes for Linux 5.17.  These are the last few
+obvious fixes that I found while stress testing online fsck for XFS
+prior to initiating a design review of the whole giant machinery.
 
-Some of our processes use inotify to watch for IN_DELETE events (for
-files on tmpfs mostly), and relied on the fact that once such events are
-received, the files they refer to have actually been unlinked and can't
-be open/read. So if and once open() succeeds then it is a new version of
-the file that has been recreated with new content.
+The branch merges cleanly against upstream as of a few minutes ago.
+Please let me know if anything else strange happens during the merge
+process.  There will definitely be a third pull request coming with a
+removal of the recently troublesome ALLOCSP/FREESP ioctl family and the
+long dead SGI XFS HSM ioctls.
 
-This was true and working reliably before 5.3, but changed after
-49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
-d_delete()") specifically. There is now a time window where a process
-receiving one of those IN_DELETE events may still be able to open the
-file and read its old content before it's really unlinked from the FS.
+--D
 
-I'm not very familiar with the VFS and fsnotify internals, would you
-consider this a regression, or was there never any intentional guarantee
-for that behavior and it's best we work around this change in userspace?
+The following changes since commit 7e937bb3cbe1f6b9840a43f879aa6e3f1a5e6537:
 
-Thanks a lot,
+  xfs: warn about inodes with project id of -1 (2022-01-06 10:43:30 -0800)
 
--- 
-Ivan Delalande
-Arista Networks
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-3
+
+for you to fetch changes up to 4a9bca86806fa6fc4fbccf050c1bd36a4778948a:
+
+  xfs: fix online fsck handling of v5 feature bits on secondary supers (2022-01-12 09:45:21 -0800)
+
+----------------------------------------------------------------
+New code for 5.17:
+
+ - Fix a minor locking inconsistency in readdir
+ - Fix incorrect fs feature bit validation for secondary superblocks
+
+----------------------------------------------------------------
+Darrick J. Wong (2):
+      xfs: take the ILOCK when readdir inspects directory mapping data
+      xfs: fix online fsck handling of v5 feature bits on secondary supers
+
+ fs/xfs/scrub/agheader.c        | 53 ++++++++++++++++++++--------------------
+ fs/xfs/scrub/agheader_repair.c | 12 +++++++++
+ fs/xfs/xfs_dir2_readdir.c      | 55 +++++++++++++++++++++++++++---------------
+ 3 files changed, 73 insertions(+), 47 deletions(-)
