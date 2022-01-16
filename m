@@ -2,128 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B8FB48FC9C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jan 2022 13:19:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD1448FF69
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jan 2022 23:07:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235097AbiAPMSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jan 2022 07:18:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58164 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235038AbiAPMS3 (ORCPT
+        id S236294AbiAPWHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jan 2022 17:07:40 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:57870 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230171AbiAPWHj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jan 2022 07:18:29 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7BAC06173E;
-        Sun, 16 Jan 2022 04:18:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=n98nGVb9Cb+XvLGLcWCumBllUZqlAwFV4o2oMVvKDzc=; b=o2t+DeyBUbS3FevpABu9qYgtan
-        rupYDPIC9rxuQOAHz+dZRxG8INRfiE7ODy5CXtaBeYJBCNNg3pVTAxPa4mpHTyByTf38ZmKRMscg2
-        fR5Nr5Mfh1eTKO6PbCjVgEAEhVno3UrZGhbLjsLQkMIH1kQdG6m9pA9NRt9ix/G1/MtOpwxZnrmqn
-        3AL6nVaDn1iqZZBHuFy9SEL8U3dzAec/FHw8YWsemfqETZDhmSqU3/6z8gGH7qs0FDVWMZQ5jHcmI
-        GOaKc47uNoHsD34cT7Thya53pYEXEpJWuNse3/zAZBn/iWhOwEd6hgSkQnLt5nWaNgGkHjiMj6Mvn
-        1LDB0d3A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n94UN-007FUv-5q; Sun, 16 Jan 2022 12:18:27 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 12/12] selftests/vm/transhuge-stress: Support file-backed PMD folios
-Date:   Sun, 16 Jan 2022 12:18:22 +0000
-Message-Id: <20220116121822.1727633-13-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220116121822.1727633-1-willy@infradead.org>
-References: <20220116121822.1727633-1-willy@infradead.org>
+        Sun, 16 Jan 2022 17:07:39 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4E2F71F37B;
+        Sun, 16 Jan 2022 22:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1642370858; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2ux+cjqDfKM9y7l7EW+chWJOdcxq8/Set71C0Gfwhnk=;
+        b=F9LbMxiu7IaXElzxJ33nkgmsNBeSOpWABZ5swO1HBZMQ+e0L+iohMBTICPAdzEegTdytWe
+        dtSIeMfyFBmf/3sMeZbyE99ufIRAXVEHvt7PYdU6B509PMrPPUUleJWkPOmJ6cMHZPfjZQ
+        ynFdWLT22eD/bpUa89HxmP2Jv/W4ubM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1642370858;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2ux+cjqDfKM9y7l7EW+chWJOdcxq8/Set71C0Gfwhnk=;
+        b=+pDW7mEqfW5TbqRYHhSF+HDd6t14DSpM5uNAhXFZEmfiWm5blHuUnfm77guyYn47KXWVFD
+        IfETWWwEGHH5kaAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7F350132D4;
+        Sun, 16 Jan 2022 22:07:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id KI2WDieX5GGDZgAAMHmgww
+        (envelope-from <neilb@suse.de>); Sun, 16 Jan 2022 22:07:35 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   "NeilBrown" <neilb@suse.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org
+cc:     "Christian Brauner" <christian.brauner@ubuntu.com>,
+        Anthony Iliopoulos <ailiop@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH - resend] devtmpfs regression fix: reconfigure on each mount
+In-reply-to: <20211214141824.fvmtwvp57pqg7ost@wittgenstein>
+References: <163935794678.22433.16837658353666486857@noble.neil.brown.name>,
+ <20211213125906.ngqbjsywxwibvcuq@wittgenstein>, <YbexPXpuI8RdOb8q@technoir>,
+ <20211214101207.6yyp7x7hj2nmrmvi@wittgenstein>, <Ybik5dWF2w06JQM6@technoir>,
+ <20211214141824.fvmtwvp57pqg7ost@wittgenstein>
+Date:   Mon, 17 Jan 2022 09:07:26 +1100
+Message-id: <164237084692.24166.3761469608708322913@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a -f <filename> option to test PMD folios on files
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Prior to Linux v5.4 devtmpfs used mount_single() which treats the given
+mount options as "remount" options, so it updates the configuration of the
+single super_block on each mount.
+Since that was changed, the mount options used for devtmpfs are ignored.
+This is a regression which affect systemd - which mounts devtmpfs
+with "-o mode=3D755,size=3D4m,nr_inodes=3D1m".
+
+This patch restores the "remount" effect by calling reconfigure_single()
+
+Fixes: d401727ea0d7 ("devtmpfs: don't mix {ramfs,shmem}_fill_super() with mou=
+nt_single()")
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- tools/testing/selftests/vm/transhuge-stress.c | 35 +++++++++++++------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+ drivers/base/devtmpfs.c    | 7 +++++++
+ fs/super.c                 | 4 ++--
+ include/linux/fs_context.h | 2 ++
+ 3 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/vm/transhuge-stress.c b/tools/testing/selftests/vm/transhuge-stress.c
-index 5e4c036f6ad3..a03cb3fce1f6 100644
---- a/tools/testing/selftests/vm/transhuge-stress.c
-+++ b/tools/testing/selftests/vm/transhuge-stress.c
-@@ -26,15 +26,17 @@
- #define PAGEMAP_PFN(ent)	((ent) & ((1ull << 55) - 1))
- 
- int pagemap_fd;
-+int backing_fd = -1;
-+int mmap_flags = MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE;
-+#define PROT_RW (PROT_READ | PROT_WRITE)
- 
- int64_t allocate_transhuge(void *ptr)
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index 1e2c2d3882e2..f41063ac1aee 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -65,8 +65,15 @@ static struct dentry *public_dev_mount(struct file_system_=
+type *fs_type, int fla
+ 		      const char *dev_name, void *data)
  {
- 	uint64_t ent[2];
- 
- 	/* drop pmd */
--	if (mmap(ptr, HPAGE_SIZE, PROT_READ | PROT_WRITE,
--				MAP_FIXED | MAP_ANONYMOUS |
--				MAP_NORESERVE | MAP_PRIVATE, -1, 0) != ptr)
-+	if (mmap(ptr, HPAGE_SIZE, PROT_RW, MAP_FIXED | mmap_flags,
-+		 backing_fd, 0) != ptr)
- 		errx(2, "mmap transhuge");
- 
- 	if (madvise(ptr, HPAGE_SIZE, MADV_HUGEPAGE))
-@@ -60,6 +62,8 @@ int main(int argc, char **argv)
- 	size_t ram, len;
- 	void *ptr, *p;
- 	struct timespec a, b;
-+	int i = 0;
-+	char *name = NULL;
- 	double s;
- 	uint8_t *map;
- 	size_t map_len;
-@@ -69,13 +73,23 @@ int main(int argc, char **argv)
- 		ram = SIZE_MAX / 4;
- 	else
- 		ram *= sysconf(_SC_PAGESIZE);
-+	len = ram;
+ 	struct super_block *s =3D mnt->mnt_sb;
++	int err;
 +
-+	while (++i < argc) {
-+		if (!strcmp(argv[i], "-h"))
-+			errx(1, "usage: %s [size in MiB]", argv[0]);
-+		else if (!strcmp(argv[i], "-f"))
-+			name = argv[++i];
-+		else
-+			len = atoll(argv[i]) << 20;
+ 	atomic_inc(&s->s_active);
+ 	down_write(&s->s_umount);
++	err =3D reconfigure_single(s, flags, data);
++	if (err < 0) {
++		deactivate_locked_super(s);
++		return ERR_PTR(err);
 +	}
- 
--	if (argc == 1)
--		len = ram;
--	else if (!strcmp(argv[1], "-h"))
--		errx(1, "usage: %s [size in MiB]", argv[0]);
--	else
--		len = atoll(argv[1]) << 20;
-+	if (name) {
-+		backing_fd = open(name, O_RDWR);
-+		if (backing_fd == -1)
-+			errx(2, "open %s", name);
-+		mmap_flags = MAP_SHARED;
-+	}
- 
- 	warnx("allocate %zd transhuge pages, using %zd MiB virtual memory"
- 	      " and %zd MiB of ram", len >> HPAGE_SHIFT, len >> 20,
-@@ -86,8 +100,7 @@ int main(int argc, char **argv)
- 		err(2, "open pagemap");
- 
- 	len -= len % HPAGE_SIZE;
--	ptr = mmap(NULL, len + HPAGE_SIZE, PROT_READ | PROT_WRITE,
--			MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
-+	ptr = mmap(NULL, len + HPAGE_SIZE, PROT_RW, mmap_flags, backing_fd, 0);
- 	if (ptr == MAP_FAILED)
- 		err(2, "initial mmap");
- 	ptr += HPAGE_SIZE - (uintptr_t)ptr % HPAGE_SIZE;
--- 
+ 	return dget(s->s_root);
+ }
+=20
+diff --git a/fs/super.c b/fs/super.c
+index 3bfc0f8fbd5b..a6405d44d4ca 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1423,8 +1423,8 @@ struct dentry *mount_nodev(struct file_system_type *fs_=
+type,
+ }
+ EXPORT_SYMBOL(mount_nodev);
+=20
+-static int reconfigure_single(struct super_block *s,
+-			      int flags, void *data)
++int reconfigure_single(struct super_block *s,
++		       int flags, void *data)
+ {
+ 	struct fs_context *fc;
+ 	int ret;
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 6b54982fc5f3..13fa6f3df8e4 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -142,6 +142,8 @@ extern void put_fs_context(struct fs_context *fc);
+ extern int vfs_parse_fs_param_source(struct fs_context *fc,
+ 				     struct fs_parameter *param);
+ extern void fc_drop_locked(struct fs_context *fc);
++int reconfigure_single(struct super_block *s,
++		       int flags, void *data);
+=20
+ /*
+  * sget() wrappers to be called from the ->get_tree() op.
+--=20
 2.34.1
 
