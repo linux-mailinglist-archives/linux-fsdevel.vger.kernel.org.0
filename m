@@ -2,69 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04E23490077
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 04:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CD97490083
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 04:18:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234146AbiAQDGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jan 2022 22:06:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52496 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234096AbiAQDGx (ORCPT
+        id S236917AbiAQDSA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jan 2022 22:18:00 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:45337 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230324AbiAQDR7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jan 2022 22:06:53 -0500
-Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F9D4C06161C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jan 2022 19:06:53 -0800 (PST)
-Received: by mail-vk1-xa2d.google.com with SMTP id v192so6541140vkv.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jan 2022 19:06:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=imgEyPKZJXioT57QZIHImgBbmP2LjKkzFSDJsibRDbM=;
-        b=kPgeUI9bfKS0MOPNxI0JU+UnN4Kcte0UTj6EZbF6XPgtlIglUSJlVMXp+zq252TtML
-         dgui6z7EAivT8iwp6wLCqibVo1KHf9kTToJtfiswmfdabVqYXEPrkHL/yZNwCMB6XG9J
-         PtMx77vvDxQmtND0WDffkknr4LSS/sr5NhQlP3rCFgfpCv3s8070tDZb8Zof1el1QFJK
-         zaBMAaKuhlHbm4yN2fyXy6mZvk7iPmNejL0GL1r0jvxIw3anoKjXZ6rVj9e1mESp6PNh
-         458be5ikipQGQUBmJJZ5wvjwA3y07juSTrEgg9wzYIC2FCqz6TEVhe8VkW7WNo8xeGwc
-         ZmXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=imgEyPKZJXioT57QZIHImgBbmP2LjKkzFSDJsibRDbM=;
-        b=vNEjFeGi4GpaIbIexPSnfNjIW6nXn+GR/noivdIZzsVecKGEp8er/cWYQxF3U1kC7a
-         12ssSvwPX+cczPhAY5y962BlGsWIw6KGm2ZwboAlJYA/qtWvlZ8iJfuuHdZ1NCMNhRNQ
-         S3T9vJus4umxyavxjj3COjMFLHsg+iO4lDRTRg5fxZ3ZJZYJYNODTaiRoB/uCdBJl5fU
-         ahUsp0ucoITLSDRGQI0dM/qkIR+plUDOXe4v9hdqzYDhR13P5QnXgJdJCIxDfOEDphgT
-         dUvY/5NzyBYqWhWShZeWGgyHmFmthEZpciZgEBlSZk35o+Xe6BXQI30C/Igsjq5rZ+c8
-         MMaQ==
-X-Gm-Message-State: AOAM532WuRvsaNZ9WqNbIpQCJgCHHwG/2YhIqjwbUmGCsgMf6dtrDR8J
-        3IbyQOBJ5+5OswwbDatZflmKp+ATxiAjvhtMDg==
-X-Google-Smtp-Source: ABdhPJzgRwneYkMSV+x6oBQu3+VLcAKngCyg3QZAmFxIn/SllM0SzuWcdUMBOL+JItDffMDoG5JPV2xTms3DSJyVQZ8=
-X-Received: by 2002:ac5:cbc8:: with SMTP id h8mr5392658vkn.8.1642388811958;
- Sun, 16 Jan 2022 19:06:51 -0800 (PST)
+        Sun, 16 Jan 2022 22:17:59 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=rongwei.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V1zqFQx_1642389476;
+Received: from 30.240.98.42(mailfrom:rongwei.wang@linux.alibaba.com fp:SMTPD_---0V1zqFQx_1642389476)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 17 Jan 2022 11:17:57 +0800
+Message-ID: <d4ac99a0-6c45-e81b-c08a-56083c4cdd6e@linux.alibaba.com>
+Date:   Mon, 17 Jan 2022 11:17:55 +0800
 MIME-Version: 1.0
-Sender: mrabuduhassan@gmail.com
-Received: by 2002:a05:6102:3663:0:0:0:0 with HTTP; Sun, 16 Jan 2022 19:06:51
- -0800 (PST)
-From:   Mrs bill Sma chantal <mrsbillsamchantal01@gmail.com>
-Date:   Sun, 16 Jan 2022 19:06:51 -0800
-X-Google-Sender-Auth: o3wpz5CZsBBYV2w7v_mfmB5bd5Y
-Message-ID: <CAPHe=quXrjQMOP_qSTUQou2Hc83z5KMqsStAr=TK=R3cM4EX6A@mail.gmail.com>
-Subject: GOOD NEWS
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:96.0)
+ Gecko/20100101 Thunderbird/96.0
+Subject: Re: [PATCH 09/12] mm/readahead: Align file mappings for non-DAX
+Content-Language: en-US
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     William Kucharski <william.kucharski@oracle.com>
+References: <20220116121822.1727633-1-willy@infradead.org>
+ <20220116121822.1727633-10-willy@infradead.org>
+From:   Rongwei Wang <rongwei.wang@linux.alibaba.com>
+In-Reply-To: <20220116121822.1727633-10-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hello....
 
-You have been compensated with the sum of 6.1 million dollars in this
-united nation the payment will be issue into atm visa  card and send
-to you from the santander bank we need your address and your
-Whatsapp number
 
-Thanks my
+On 1/16/22 8:18 PM, Matthew Wilcox (Oracle) wrote:
+> From: William Kucharski <william.kucharski@oracle.com>
+> 
+> When we have the opportunity to use PMDs to map a file, we want to follow
+> the same rules as DAX.
+> 
+> Signed-off-by: William Kucharski <william.kucharski@oracle.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>   mm/huge_memory.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f58524394dc1..28c29a0d854b 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -582,13 +582,10 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>   	unsigned long ret;
+>   	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
+>   
+> -	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
+> -		goto out;
+> -
+>   	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE);
+>   	if (ret)
+>   		return ret;
+> -out:
+> +
+>   	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
+Hi, Matthew
 
-Mrs bill Sma chantal
+It seems this patch will make all file mappings align with PMD_SIZE? And 
+support realize all file THP, not only executable file THP?
+
+Actually, what I want to say is we had merged a similar patch to only 
+align DSO mapping in glibc:
+
+"718fdd8 elf: Properly align PT_LOAD segments [BZ #28676]"
+
+
+>   }
+>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
