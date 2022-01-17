@@ -2,199 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3FE6490827
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 13:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF1E490861
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 13:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239524AbiAQMFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 07:05:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239522AbiAQMFm (ORCPT
+        id S239624AbiAQMMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 07:12:13 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S239566AbiAQMMM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 07:05:42 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4ECEC06173E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 04:05:41 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id c14-20020a17090a674e00b001b31e16749cso29914250pjm.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 04:05:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XijcxB+wrJg3ZDH3E17cd83OGIYlUVleo3c/t8keBF4=;
-        b=pvS1drTgYlxOHbq1NlOx3QYGVPt5JWFMIddUJJ3ULXO8iydp+S1FK/u73Uc52T5Hza
-         Jet7UL2E0vB4JqpLN4YrAp5+a0zORYw8nv14kOAb1nwFybzcfL4TxREa6CrM0st7zrZH
-         tH5NrijSlZNo/STm+4WRmJBBK/l8TLztaqpW8cNqu9kvg5mf9Y3z8qBd/GT2f1ihhUFx
-         31gF8JaaIpGC6xpZMcdgtCVmgjDuOKpLQmAJVte3ad0Vigb7YT8pCtT9dqnhNsHWDSTf
-         0IIdww93Q1FirqQTpbuQ+qiIRlMhpFQ3uJaAk9oXBgUN08iTyQ3uFl/5Vxdo1aFw48cW
-         h5pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XijcxB+wrJg3ZDH3E17cd83OGIYlUVleo3c/t8keBF4=;
-        b=ROXg9JDPhZ2eK+umkfelOJYRzSoVArGOSaK5bQpP1+V+FiN99VDEZQiSKIXRdTzQxA
-         8SMHLcgCZ01rPavWhxhpyLgowpL2IKugRzX5Rsx2+sjzlk4vtuRBpOtmKR3sy2RClQ1v
-         QofC/VvUcYgvpsxXp3kgZq+2tMmifZQsYHpBX9PT+665PlEMYwogHEuOemavBuZD/mjK
-         w3CglfbKbjVzJcg3kVl8GWFhyrK5syRzz+Er0mq0Kg1T1kVZkHfP97Yn3dXWovflfgcm
-         g3vbCbICVzr71XRhK//tFFQRxBLxwaNrndv0nm0Iuc4PewG2nAE6BFU/m3RXdyop1odZ
-         ruhw==
-X-Gm-Message-State: AOAM532clFZTIVmgZ3RFcRyRRMvmcMreq06QSDqnrQrxw+e2rtFwgEEp
-        RR8xMTEhf8XM818tOCJMDa/2i9Itl0gCRA==
-X-Google-Smtp-Source: ABdhPJwrUuk78lZNrfiG770Yo5MOGfnn4jr2+NM30ZcoP+0dpl0xE1BMEcu7vMn7DjaKPNOh+nnbAg==
-X-Received: by 2002:a17:902:f545:b0:14a:725f:74a5 with SMTP id h5-20020a170902f54500b0014a725f74a5mr22194104plf.2.1642421141062;
-        Mon, 17 Jan 2022 04:05:41 -0800 (PST)
-Received: from localhost.localdomain ([39.121.10.168])
-        by smtp.gmail.com with ESMTPSA id j11sm13455885pfn.199.2022.01.17.04.05.39
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jan 2022 04:05:40 -0800 (PST)
-From:   ByeongGyu Jeon <ntnegm@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     ByeongGyu Jeon <ntnegm@gmail.com>
-Subject: [PATCH] fs: read_write: fix coding style error
-Date:   Mon, 17 Jan 2022 21:05:28 +0900
-Message-Id: <20220117120528.2346-1-ntnegm@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 17 Jan 2022 07:12:12 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20HAQiTl028585;
+        Mon, 17 Jan 2022 12:12:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=ePlWrfXeQSjPqPELlVtlVqdW/MNwtNzvwNj72l+xVb8=;
+ b=rZzl+9Qx7C+0JTs41JowR9QdAV29RyNkVaTsrPQj1qB5qUO7CLHweYs94nkCvBTQmlPG
+ KB73Tt5DQo5GkMyr0NQohAPUelnUULKlvqNUTdH8pq6C+cxP+clwlGHNw21UVQXy/ZJn
+ cooOL/QPiQOTe/P7PrW4A0RBOjBB64Qg3KyNkUE9CGBbIVwrbGk4zl8J8d1yEDXWm/eb
+ kdFkG7oT7kDZynytWBcZJ73311VZwAvrxhWhYnbrKVJaBm37L1Kxn4sYQRIOn9KOurM8
+ d4dRzV5nwVXffcMZrxMQV6uHqSwmpymKHUe1UyZtRa4MsgO/XDXYaOUE6UP5z7lNsuUV XQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dn6q7a924-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jan 2022 12:12:04 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20HBdNMU007276;
+        Mon, 17 Jan 2022 12:12:03 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dn6q7a91k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jan 2022 12:12:03 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20HC71XK028680;
+        Mon, 17 Jan 2022 12:12:02 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03ams.nl.ibm.com with ESMTP id 3dknw9br2r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jan 2022 12:12:01 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20HC2jsI42140064
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jan 2022 12:02:45 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 874BCA4059;
+        Mon, 17 Jan 2022 12:11:59 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2397EA4040;
+        Mon, 17 Jan 2022 12:11:59 +0000 (GMT)
+Received: from localhost (unknown [9.43.45.117])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jan 2022 12:11:58 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, tytso@mit.edu,
+        Eric Whitney <enwlinux@gmail.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCHv2 0/5] ext4/jbd2: inline_data fixes and minor cleanups
+Date:   Mon, 17 Jan 2022 17:41:46 +0530
+Message-Id: <cover.1642416995.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: HPcCaafScTUjtW9lhc9f7NbbHDON7_WQ
+X-Proofpoint-GUID: SLarXViisqWBuLXZugH_aqflRw8D8FVv
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Antivirus: Avast (VPS 220117-2, 2022-1-17), Outbound message
-X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-17_05,2022-01-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ suspectscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0
+ impostorscore=0 phishscore=0 mlxlogscore=729 adultscore=0
+ priorityscore=1501 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2201170077
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fixed coding style errors of fs/read_write.c
+Hello,
 
-Signed-off-by: ByeongGyu Jeon <ntnegm@gmail.com>
----
- fs/read_write.c | 74 ++++++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 37 deletions(-)
+Please find v2 of the inline_data fixes and some minor cleanups found during
+code review.
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 0074afa7ecb3..160e3c7da473 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -240,39 +240,39 @@ loff_t default_llseek(struct file *file, loff_t offse=
-t, int whence)
- 
- 	inode_lock(inode);
- 	switch (whence) {
--		case SEEK_END:
--			offset +=3D i_size_read(inode);
--			break;
--		case SEEK_CUR:
--			if (offset =3D=3D 0) {
--				retval =3D file->f_pos;
--				goto out;
--			}
--			offset +=3D file->f_pos;
--			break;
--		case SEEK_DATA:
--			/*
--			 * In the generic case the entire file is data, so as
--			 * long as offset isn't at the end of the file then the
--			 * offset is data.
--			 */
--			if (offset >=3D inode->i_size) {
--				retval =3D -ENXIO;
--				goto out;
--			}
--			break;
--		case SEEK_HOLE:
--			/*
--			 * There is a virtual hole at the end of the file, so
--			 * as long as offset isn't i_size or larger, return
--			 * i_size.
--			 */
--			if (offset >=3D inode->i_size) {
--				retval =3D -ENXIO;
--				goto out;
--			}
--			offset =3D inode->i_size;
--			break;
-+	case SEEK_END:
-+		offset +=3D i_size_read(inode);
-+		break;
-+	case SEEK_CUR:
-+		if (offset =3D=3D 0) {
-+			retval =3D file->f_pos;
-+			goto out;
-+		}
-+		offset +=3D file->f_pos;
-+		break;
-+	case SEEK_DATA:
-+		/*
-+		 * In the generic case the entire file is data, so as
-+		 * long as offset isn't at the end of the file then the
-+		 * offset is data.
-+		 */
-+		if (offset >=3D inode->i_size) {
-+			retval =3D -ENXIO;
-+			goto out;
-+		}
-+		break;
-+	case SEEK_HOLE:
-+		/*
-+		 * There is a virtual hole at the end of the file, so
-+		 * as long as offset isn't i_size or larger, return
-+		 * i_size.
-+		 */
-+		if (offset >=3D inode->i_size) {
-+			retval =3D -ENXIO;
-+			goto out;
-+		}
-+		offset =3D inode->i_size;
-+		break;
- 	}
- 	retval =3D -EINVAL;
- 	if (offset >=3D 0 || unsigned_offsets(file)) {
-@@ -693,7 +693,7 @@ ssize_t ksys_pwrite64(unsigned int fd, const char __use=
-r *buf,
- 	f =3D fdget(fd);
- 	if (f.file) {
- 		ret =3D -ESPIPE;
--		if (f.file->f_mode & FMODE_PWRITE)  
-+		if (f.file->f_mode & FMODE_PWRITE)
- 			ret =3D vfs_write(f.file, buf, count, &pos);
- 		fdput(f);
- 	}
-@@ -1137,7 +1137,7 @@ COMPAT_SYSCALL_DEFINE4(pwritev64, unsigned long, fd,
- #endif
- 
- COMPAT_SYSCALL_DEFINE5(pwritev, compat_ulong_t, fd,
--		const struct iovec __user *,vec,
-+		const struct iovec __user *, vec,
- 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high)
- {
- 	loff_t pos =3D ((loff_t)pos_high << 32) | pos_low;
-@@ -1157,7 +1157,7 @@ COMPAT_SYSCALL_DEFINE5(pwritev64v2, unsigned long, fd=
-,
- #endif
- 
- COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
--		const struct iovec __user *,vec,
-+		const struct iovec __user *, vec,
- 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high, rwf_t, flags)
- {
- 	loff_t pos =3D ((loff_t)pos_high << 32) | pos_low;
-@@ -1169,7 +1169,7 @@ COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
- #endif /* CONFIG_COMPAT */
- 
- static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
--		  	   size_t count, loff_t max)
-+		size_t count, loff_t max)
- {
- 	struct fd in, out;
- 	struct inode *in_inode, *out_inode;
--- 
-2.17.1
+I have dropped patch-6 in v2 which was removing use of t_handle_lock (spinlock)
+from within jbd2_journal_wait_updates(). Based on Jan comments, I feel we can
+push that as killing of t_handle_lock into a separate series (which will be on
+top of this).
 
+v1 -> v2
+========
+1. Added Jan's Reviewed-by tag & addressed one of his comment on no need to make
+jbd2_journal_wait_updates() function inline.
+2. Dropped patch-6 as described above.
 
--- 
-=EC=9D=B4 =EC=9D=B4=EB=A9=94=EC=9D=BC=EC=9D=80 Avast =EC=95=88=ED=8B=B0=EB=
-=B0=94=EC=9D=B4=EB=9F=AC=EC=8A=A4 =EC=86=8C=ED=94=84=ED=8A=B8=EC=9B=A8=EC=
-=96=B4=EB=A1=9C =EB=B0=94=EC=9D=B4=EB=9F=AC=EC=8A=A4 =EA=B2=80=EC=82=AC=EB=
-=A5=BC =EC=99=84=EB=A3=8C=ED=96=88=EC=8A=B5=EB=8B=88=EB=8B=A4.
-https://www.avast.com/antivirus
+Description
+============
+Patch[1]: fixes BUG_ON with inline_data which was reported [1] with generic/475.
+
+Patch[2]: is mostly cleanup found during code review of inline_data code.
+
+Patch[3]: is a possible memory corruption fix in case of krealloc failure.
+
+Patch[4-5]: Cleanups.
+
+[v1]: https://lore.kernel.org/linux-ext4/cover.1642044249.git.riteshh@linux.ibm.com/T/
+
+Ritesh Harjani (5):
+  ext4: Fix error handling in ext4_restore_inline_data()
+  ext4: Remove redundant max inline_size check in ext4_da_write_inline_data_begin()
+  ext4: Fix error handling in ext4_fc_record_modified_inode()
+  jbd2: Cleanup unused functions declarations from jbd2.h
+  jbd2: Refactor wait logic for transaction updates into a common function
+
+ fs/ext4/fast_commit.c | 64 ++++++++++++++++++++-----------------------
+ fs/ext4/inline.c      | 23 +++++++++-------
+ fs/jbd2/commit.c      | 19 ++-----------
+ fs/jbd2/transaction.c | 53 +++++++++++++++++++++--------------
+ include/linux/jbd2.h  | 11 ++------
+ 5 files changed, 80 insertions(+), 90 deletions(-)
+
+--
+2.31.1
 
