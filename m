@@ -2,66 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18242490BF1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 16:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE82C490C08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 17:06:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237224AbiAQP5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 10:57:53 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46677 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235153AbiAQP5x (ORCPT
+        id S237623AbiAQQF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 11:05:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232617AbiAQQF7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 10:57:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642435072;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GlW7wziCR/iSWHom9gifGt8Wr9zVXy1LW82p3EUsHAw=;
-        b=YJwwrKaJWkFiSUDkd2XPsA0622/gLYck+D9MjrxFP6d/qdHq9ki8WGB4RI7Y/Y2HU0PjlZ
-        CusSKwtnnNOrKT3uxBuybAfLDAzy1s/0eXG14BLBHQ7PSQKijSLDcnIWlfl3TXHWkNFVhM
-        7Pd2TwF9biArylSlLuheut8M0TvsOsA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-100-ZVuekCvMPoSkuz0VL21--Q-1; Mon, 17 Jan 2022 10:57:49 -0500
-X-MC-Unique: ZVuekCvMPoSkuz0VL21--Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 440F0100E337;
-        Mon, 17 Jan 2022 15:57:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 45B687BB67;
-        Mon, 17 Jan 2022 15:57:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YeVzZZLcsX5Krcjh@casper.infradead.org>
-References: <YeVzZZLcsX5Krcjh@casper.infradead.org> <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, ceph-devel@vger.kernel.org,
-        jlayton@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ceph: Uninline the data on a file opened for writing
+        Mon, 17 Jan 2022 11:05:59 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1050C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 08:05:58 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id bu18so36395588lfb.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 08:05:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/8mQ26icbv/X+xjUK5EuBssp15+UZVQvU7z9wm1s+VU=;
+        b=y4LkLPToOBlnbqiNxg1SV3Wm0LkYQ8dPL0Om/Ts1G+wBefAKhwPikq/43UY0lvLLNL
+         rIdV9JOcimmlKBcILN79asMQZi/OiRzQMtJoObAK7oHSxobLDIo54TibCvHxFhYSF/Iw
+         /qPaLSlaA1bYt6dPXmXeTjOS1mMf9WWMRnu0gR/8f4t+Ljohx+TY1slEyXgQen02xjBn
+         oSAVwIbPKXQyfEI7rgsxzEl4bETkrAonlGn2vXAE7FQBVj1Fce35F6ZYJ2rK0eNjrobr
+         4LpDVGWgoSO5yeWGPf1r3PrmcnZJJTpZdvrKQRZbRoEvWAJBbiD1odsV1cRn6NBDJZjb
+         GHZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/8mQ26icbv/X+xjUK5EuBssp15+UZVQvU7z9wm1s+VU=;
+        b=LPzSI9MBP7cxrVDhopW+wwBKKtAF9q9NGYOwSvPL+5J6Lbgdj5HdHp2Msq9CjHjFO3
+         Op0sy3I7SAhREVad+DXJACWifCI0FJrsAru6rsLQNolEXgaAZCFTq+IhL02+mNDwKQfa
+         /iBhSzXkPgYacEv/8rC8pg/0YA26tMt+QmoNMJ1L6prb8k9QGBRFKK/1qlxttR2CFRML
+         k2ryQVZgmKm8wd41ddvpicoChvucUYxDZjp86NOseR1ojNX1ZF3jCLQ6a0UAfaydDCOY
+         azP3V9E/Oyzhl8UAIXsAYY7eEzAA4xB4LMI9fyQlixw59zOatrSYpzarpdTXv9CoR4Hn
+         qUcg==
+X-Gm-Message-State: AOAM532czEYr32EgBuEAyhyjxnXvIUr5G3w0YviHoVksuIE565PIHJSa
+        H4mv24QTBJywVP73MMz7rCW+RfFXoBq33Q==
+X-Google-Smtp-Source: ABdhPJyzoqLDfFVobgvsBI+4cTEP0RjqyjuLETC90ErunX0xTAUNCEvDAu4Yeu5iaQ3hp2lqQtJ0FQ==
+X-Received: by 2002:a05:6512:3a96:: with SMTP id q22mr12143245lfu.14.1642435557024;
+        Mon, 17 Jan 2022 08:05:57 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id q9sm1154818lfd.266.2022.01.17.08.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jan 2022 08:05:56 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 1C34D10387E; Mon, 17 Jan 2022 19:06:25 +0300 (+03)
+Date:   Mon, 17 Jan 2022 19:06:25 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/12] mm/vmscan: Free non-shmem folios without splitting
+ them
+Message-ID: <20220117160625.oofpzl7tqm5udwaj@box.shutemov.name>
+References: <20220116121822.1727633-1-willy@infradead.org>
+ <20220116121822.1727633-5-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2811245.1642435061.1@warthog.procyon.org.uk>
-Date:   Mon, 17 Jan 2022 15:57:41 +0000
-Message-ID: <2811246.1642435061@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220116121822.1727633-5-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Sun, Jan 16, 2022 at 12:18:14PM +0000, Matthew Wilcox (Oracle) wrote:
+> We have to allocate memory in order to split a file-backed folio, so
+> it's not a good idea to split them in the memory freeing path.
 
-> read_mapping_folio() does what you want, as long as you pass 'filp'
-> as your 'void *data'.  I should fix that type ...
+Could elaborate on why split a file-backed folio requires memory
+allocation?
 
-Ah, but *can* I pass file in at that point?  It's true that I have a file* -
-but that's in the process of being set up.
+> It also
+> doesn't work for XFS because pages have an extra reference count from
+> page_has_private() and split_huge_page() expects that reference to have
+> already been removed.
 
-David
+Need to adjust can_split_huge_page()?
 
+> Unfortunately, we still have to split shmem THPs
+> because we can't handle swapping out an entire THP yet.
+
+... especially if the system doesn't have swap :P
+
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/vmscan.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 700434db5735..45665874082d 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1728,8 +1728,8 @@ static unsigned int shrink_page_list(struct list_head *page_list,
+>  				/* Adding to swap updated mapping */
+>  				mapping = page_mapping(page);
+>  			}
+> -		} else if (unlikely(PageTransHuge(page))) {
+> -			/* Split file THP */
+> +		} else if (PageSwapBacked(page) && PageTransHuge(page)) {
+> +			/* Split shmem THP */
+>  			if (split_huge_page_to_list(page, page_list))
+>  				goto keep_locked;
+>  		}
+> -- 
+> 2.34.1
+> 
+
+-- 
+ Kirill A. Shutemov
