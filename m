@@ -2,73 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71AD4490CA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 17:47:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24112490CED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 18:00:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241129AbiAQQrU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 11:47:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237780AbiAQQrT (ORCPT
+        id S241495AbiAQRAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 12:00:02 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:20968 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241250AbiAQQ7m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 11:47:19 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1190C061574;
-        Mon, 17 Jan 2022 08:47:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=n3kkNLTmhK35xzkBXz1aImqDg3lnVlGgMXIfZT5Y36U=; b=tnoOapNJu+dGw5Se/8wRgkoLr4
-        FC/MCGdzWh4NDKbC4Eq3eW3Pn7sVP/oGvywH7RLHRWsWlSjwWbvUdEBN9hEIBzFyP+ZOQMQcl+XGl
-        yO0szP5JFyM7yMci0/f4PCZr0x9Fc28Ve3Qdz3rvAFpgBHSm02hR3RaAxXV/zr4VP6varEIMuTucU
-        s5+uYsznM2Q2O3hlO4xbeLIEBtChuJXj9wUbhW+7c5iZ2YgYD1JuVF6vMiao5ldEzFI/BisO3+zQg
-        bdAzg3wLAOKvZN1tvq4OafvfW8XPXgGusZPLcOxx4yQY1csr2QevalAKTwN5LdqMc81PXk4XM4s8T
-        10lXBZhw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n9VA5-008OE0-4I; Mon, 17 Jan 2022 16:47:17 +0000
-Date:   Mon, 17 Jan 2022 16:47:17 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org
+        Mon, 17 Jan 2022 11:59:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642438781;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jEMJ4JQFyg+gEDwX5klaVTKJLzkbLHEr8lRFSE5ROn4=;
+        b=TQRqos+ewfJujEqLeK5PU16DEqFPTILevSa/5CeSE7NtJibEGRS/d8u8f3ks1kv/Q0QNq/
+        YpzIsQfN3EDlB4owIeb+zewwqpx1zUwZaj1YsdLpi3+9ZNRiX1i7FCvppuVa9QKa7yoEcX
+        mQFWan+FXbKWOLbTftOUHu+vhjKVuac=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-221-ksLxfNUSOuqezqYdVXnkeQ-1; Mon, 17 Jan 2022 11:59:38 -0500
+X-MC-Unique: ksLxfNUSOuqezqYdVXnkeQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2889C83DD22;
+        Mon, 17 Jan 2022 16:59:37 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B1CE10A48A7;
+        Mon, 17 Jan 2022 16:59:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YeWdlR7nsBG8fYO2@casper.infradead.org>
+References: <YeWdlR7nsBG8fYO2@casper.infradead.org> <164243678893.2863669.12713835397467153827.stgit@warthog.procyon.org.uk> <164243679615.2863669.15715941907688580296.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, ceph-devel@vger.kernel.org,
+        jlayton@kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH 2/3] ceph: Uninline the data on a file opened for writing
-Message-ID: <YeWdlR7nsBG8fYO2@casper.infradead.org>
-References: <164243678893.2863669.12713835397467153827.stgit@warthog.procyon.org.uk>
- <164243679615.2863669.15715941907688580296.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <164243679615.2863669.15715941907688580296.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2883818.1642438775.1@warthog.procyon.org.uk>
+Date:   Mon, 17 Jan 2022 16:59:35 +0000
+Message-ID: <2883819.1642438775@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 04:26:36PM +0000, David Howells wrote:
-> +	folio = read_mapping_folio(inode->i_mapping, 0, file);
-> +	if (IS_ERR(folio))
-> +		goto out;
+Matthew Wilcox <willy@infradead.org> wrote:
 
-... you need to set 'err' here, right?
+> > +	if (folio_test_uptodate(folio))
+> > +		goto out_put_folio;
+> 
+> Er ... if (!folio_test_uptodate(folio)), perhaps?  And is it even
+> worth testing if read_mapping_folio() returned success?  I feel like
+> we should take ->readpage()'s word for it that success means the
+> folio is now uptodate.
 
-> +	if (folio_test_uptodate(folio))
-> +		goto out_put_folio;
+Actually, no, I shouldn't need to do this since it comes out with the page
+lock still held.
 
-Er ... if (!folio_test_uptodate(folio)), perhaps?  And is it even
-worth testing if read_mapping_folio() returned success?  I feel like
-we should take ->readpage()'s word for it that success means the
-folio is now uptodate.
+> > +	len = i_size_read(inode);
+> > +	if (len >  folio_size(folio))
+> 
+> extra space.  Plus, you're hardcoding 4096 below, but using folio_size()
+> here which is a bit weird to me.
 
-> +	err = folio_lock_killable(folio);
-> +	if (err < 0)
-> +		goto out_put_folio;
-> +
-> +	if (inline_version == 1 || /* initial version, no data */
-> +	    inline_version == CEPH_INLINE_NONE)
-> +		goto out_unlock;
-> +
-> +	len = i_size_read(inode);
-> +	if (len >  folio_size(folio))
+As I understand it, 4096 is the maximum length of the inline data, not
+PAGE_SIZE, so I have to be careful when doing a DIO read because it might
+start after the data - and there's also truncate to consider:-/
 
-extra space.  Plus, you're hardcoding 4096 below, but using folio_size()
-here which is a bit weird to me.
+I wonder if the uninlining code should lock the inode while it does it and the
+truncation code should do uninlining too.
+
+David
+
