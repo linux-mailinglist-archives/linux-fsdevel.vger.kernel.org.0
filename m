@@ -2,81 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 441E1490BB2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 16:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41531490BCE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 16:56:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237298AbiAQPpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 10:45:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
+        id S240664AbiAQP4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 10:56:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237294AbiAQPpH (ORCPT
+        with ESMTP id S237337AbiAQP4Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 10:45:07 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FCDBC061574;
-        Mon, 17 Jan 2022 07:45:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F183560FE6;
-        Mon, 17 Jan 2022 15:45:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D570BC36AE3;
-        Mon, 17 Jan 2022 15:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642434306;
-        bh=9pS77Ri4doiZRhZlhU/7ZE+74d7wP8KT6W7H2Zwu2vM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UrFDJYhG9TuIwXcPfsT9tCNBOKeCZAgUCBsrJfiZXFBYr68rdsG/bmg2fn3H765NM
-         Fnw29RTjnjTJe7jNP96v9THDT56w2gNlX0aBg0mPziU64/+dDfVLsfRoR/NOZW0KUy
-         XOyPZLg0EBoWHEDixi9YVdtAXe2q6LGLKgBm5ircBLIzemsmk+S8FvxeljEsKQ1F0y
-         9hlxAXBUKBO4rOgz2mbW8nBx6wx6/E2bq+EU/ff4v3O4B/ydPln5Ls0UVv89nqOQH3
-         kYVdeZOtieYbnhy/9cNs7Rqz5/evg89pVNGGLA8QaW9gDMNCDjd30HwV7b5Oz01fnz
-         s1TPAgp/4pUAA==
-Message-ID: <9c1fac5b5a11b5960b291f44f2c6baf56965b301.camel@kernel.org>
-Subject: Re: [PATCH 1/3] ceph: Uninline the data on a file opened for writing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
+        Mon, 17 Jan 2022 10:56:16 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52B9C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 07:56:15 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id m3so45271858lfu.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 07:56:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=hLXVfGuqokAhjQPquljpv4IuCQa5SRFe/JWEcrZu/DE=;
+        b=vWlPwu36tQDWXefh3AbPXuoJBEob07beXqKflgEp+7ZAnJW5ToHIDMHJIor8471x1c
+         nFYXIH7cEZDVMG3Ad1Imes4RlH8Ydng8D3FkDW5MMRCK22hHEVThHKgMd85wVsb7GFYN
+         NjF51iRPH0L/P/djgibOK7lcyHSKmyAdtxFeBBJf6FY8PPwF7Tw2bYnIWeB4Xuf5pF2j
+         gac7TcyYTjXdsC0I9fClYQR/2Xm0R2RHuY/uCppEBkwPgNSHe4J3imjM2CYIZYS9qZe3
+         9CkqPiTksIsEa0tVVl3iEHdCi5/WLw/yxczM5hZetsHNeD8jc+DfAsoK7XK+iNuiLe/v
+         ECHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hLXVfGuqokAhjQPquljpv4IuCQa5SRFe/JWEcrZu/DE=;
+        b=OxrEaRguFL1yRAOQ/k2BnaM6ipf5QwSZpIEGrFPOQ0Dsib8IfrS4SOFbHlDSn9CwQS
+         YT+yoew5tzvg81Z3trcz5A+pJ3LV4M0MQlOUj1AQTt5QQ+hf/SqO0UEXRCPpcCIAR0Fp
+         yXbqvHKCsMnP9y/evy7AddSvX1E2ZOcix46YMHT5LiMF9TMcsi9J2DfUQ+znHTc3m6qq
+         PP6k4DDxidwqpBXvBy52KpO/Yk4NF3D3qgblyGyKRfKCc3Es9t0nTgxtdF1pza5C6vUi
+         q/6rJSPncju7hDgXWSjTuMOTpjHJmZNpBoxRMf8DQ2aNXUxakhc9AS41djbaJFVbKFOO
+         zqTA==
+X-Gm-Message-State: AOAM531ahM623byvPB9biXW4MXHEdgaxY3DvJvCD9m+LGBVuN/m4RZEz
+        2xZUH3qJov+F91JShqsO9x0YA8fUqLR0iw==
+X-Google-Smtp-Source: ABdhPJz7FbfdpZdmtC5Jx84Ckv5DAebrmkY0nZUOV+wJaKhApnBN6pH5FhbND8E1a+JvKqJk7BwvRw==
+X-Received: by 2002:ac2:5597:: with SMTP id v23mr16906486lfg.477.1642434974035;
+        Mon, 17 Jan 2022 07:56:14 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id k19sm1425334lfu.176.2022.01.17.07.56.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jan 2022 07:56:13 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 84A7810387E; Mon, 17 Jan 2022 18:56:41 +0300 (+03)
+Date:   Mon, 17 Jan 2022 18:56:41 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Date:   Mon, 17 Jan 2022 10:45:04 -0500
-In-Reply-To: <2807617.1642433067@warthog.procyon.org.uk>
-References: <240e60443076a84c0599ccd838bd09c97f4cc5f9.camel@kernel.org>
-         <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
-         <YeVzZZLcsX5Krcjh@casper.infradead.org>
-         <2807617.1642433067@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
+Subject: Re: [PATCH 02/12] filemap: Use folio_put_refs() in
+ filemap_free_folio()
+Message-ID: <20220117155641.u5ysambg72nq2p6y@box.shutemov.name>
+References: <20220116121822.1727633-1-willy@infradead.org>
+ <20220116121822.1727633-3-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220116121822.1727633-3-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-01-17 at 15:24 +0000, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
+On Sun, Jan 16, 2022 at 12:18:12PM +0000, Matthew Wilcox (Oracle) wrote:
+> This shrinks filemap_free_folio() by 55 bytes in my .config; 24 bytes
+> from removing the VM_BUG_ON_FOLIO() and 31 bytes from unifying the
+> small/large folio paths.
 > 
-> > On Mon, 2022-01-17 at 13:47 +0000, Matthew Wilcox wrote:
-> > > This all falls very much under "doing it the hard way", and quite
-> > > possibly under the "actively buggy with races" category.
-> > > 
-> > > read_mapping_folio() does what you want, as long as you pass 'filp'
-> > > as your 'void *data'.  I should fix that type ...
+> We could just use folio_ref_sub() here since the caller should hold a
+> reference (as the VM_BUG_ON_FOLIO() was asserting), but that's fragile.
 > 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/filemap.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
 > 
-> How much do we care about the case where we don't have either the
-> CEPH_CAP_FILE_CACHE or the CEPH_CAP_FILE_LAZYIO caps?  Is it possible just to
-> shove the page into the pagecache whatever we do?  At the moment there are two
-> threads, both of which get a page - one attached to the page cache, one not.
-> The rest is then common because from that point on, it doesn't matter where
-> the folio resides.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 2fd9b2f24025..afc8f5ca85ac 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -231,17 +231,15 @@ void __filemap_remove_folio(struct folio *folio, void *shadow)
+>  void filemap_free_folio(struct address_space *mapping, struct folio *folio)
+>  {
+>  	void (*freepage)(struct page *);
+> +	int refs = 1;
+>  
+>  	freepage = mapping->a_ops->freepage;
+>  	if (freepage)
+>  		freepage(&folio->page);
+>  
+> -	if (folio_test_large(folio) && !folio_test_hugetlb(folio)) {
+> -		folio_ref_sub(folio, folio_nr_pages(folio));
+> -		VM_BUG_ON_FOLIO(folio_ref_count(folio) <= 0, folio);
+> -	} else {
+> -		folio_put(folio);
+> -	}
+> +	if (folio_test_large(folio) && !folio_test_hugetlb(folio))
+> +		refs = folio_nr_pages(folio);
+
+Isn't folio_test_large() check redundant? folio_nr_pages() would return 1
+for non-large folio, wouldn't it?
+
+> +	folio_put_refs(folio, refs);
+>  }
+>  
+>  /**
+> -- 
+> 2.34.1
 > 
 
-Well, the protocol says that if you don't have CEPH_CAP_FILE_CACHE (Fc)
-then you're not allowed to do reads from the cache. I wouldn't care if
-we stuffed the page into the mapping anyway, but that could potentially
-affect mmap readers at the same time.
-
-OTOH, mmap reads when we don't have Fc is somewhat racy anyway. Maybe it
-doesn't matter... 
 -- 
-Jeff Layton <jlayton@kernel.org>
+ Kirill A. Shutemov
