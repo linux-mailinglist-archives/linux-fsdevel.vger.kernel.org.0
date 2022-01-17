@@ -2,87 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6348B4910C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 20:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B71491133
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 22:00:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243026AbiAQTs6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 14:48:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55604 "EHLO
+        id S243198AbiAQVAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 16:00:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235639AbiAQTs5 (ORCPT
+        with ESMTP id S235739AbiAQVAb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 14:48:57 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6E1C06161C;
-        Mon, 17 Jan 2022 11:48:57 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n9Xzl-002dQo-IP; Mon, 17 Jan 2022 19:48:49 +0000
-Date:   Mon, 17 Jan 2022 19:48:49 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>, "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] vfs: check dentry is still valid in get_link()
-Message-ID: <YeXIIf6/jChv7JN6@zeniv-ca.linux.org.uk>
-References: <164180589176.86426.501271559065590169.stgit@mickey.themaw.net>
- <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
- <275358741c4ee64b5e4e008d514876ed4ec1071c.camel@themaw.net>
- <YeV+zseKGNqnSuKR@bfoster>
- <YeWZRL88KPtLWlkI@zeniv-ca.linux.org.uk>
- <YeWxHPDbdSfBDtyX@zeniv-ca.linux.org.uk>
+        Mon, 17 Jan 2022 16:00:31 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E789C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 13:00:31 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id bu18so39341641lfb.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 13:00:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QdXHGenv3tZIOnYPfCA1iCRPfis03+iHQr5vhZDRmzE=;
+        b=LHCrYpBn/smiTJofppxDrX+ObncdoQHEUbtlu7Uv8G9dvP69Qbsxn1Zd8Npqatpqgn
+         V/+c1uEyFCqjxVX8KFt4LnZvrRJ9IpXUHupdXbi4Y4EtgbS0hk95vFQWV1xYNHzk0eDz
+         cifHShq1ecjEPg/13qDD/r3F6WOXCCGJtXcmJX41XoCwt0atbYn9NZeIyJLtjpNaUGFZ
+         jYHi+5tF/8g+r697NSHleOOlNMAPrhK+CNlU6yXI21P+N3wYvwuJc5udF519uNScPBIp
+         VcG5hLejYUs/hq2PnxOVpiwqwUoh4fWBfzAsNzrgrefvDSxxVjPYn0NQXkszk587E9DI
+         a26Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QdXHGenv3tZIOnYPfCA1iCRPfis03+iHQr5vhZDRmzE=;
+        b=HSGM/EIm8D7N/pK/P+Rp4GvAqQmwo5mEuE6Rn3n0obscjWkiwGG77JhAz15m7LDHwi
+         1Y0Va8eC3ya1/8GERTn3b20xaabjac7g4EHlrhItAPytFozT3+9TBpj/e8kAqn+KtnYG
+         Xe0y/eJI70U7JAiz7TLDtVDtas32r8Ujl3IDMy/Jk2FHUE6Z7AHfDg73c0GZgwkwMLZR
+         ZfqmhjggqQkfKZKd8hRFIbuF54Fcjxms56tAr1Opgnitd52ndJHW/kCUtIVgKnQhmh5i
+         JJgY4dib7h05KXcpqnF2aCzj7AYUOTtYrUenct6WQDTdh0zMOnCnOGb+EGIWbt3tb1Ht
+         uzsA==
+X-Gm-Message-State: AOAM531fvC/WrKG801s4pr9XM7JCvcpXKY/pUmJH1xB+S4GScuIX3qNd
+        rx2eoeSA6kqmKHqUQbq5s7o2+o+9OZMj8A==
+X-Google-Smtp-Source: ABdhPJwo88Lo7R6WVD9bXds5DI6nWc0dJtRADfIjRocxWhl6taT1Sq4djYHIrDbA3yWrii1W/rWEKA==
+X-Received: by 2002:a2e:b70a:: with SMTP id j10mr13657179ljo.376.1642453229685;
+        Mon, 17 Jan 2022 13:00:29 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id k9sm1037129lfg.121.2022.01.17.13.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jan 2022 13:00:28 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 49E4D10387E; Tue, 18 Jan 2022 00:00:57 +0300 (+03)
+Date:   Tue, 18 Jan 2022 00:00:57 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/12] mm/vmscan: Free non-shmem folios without splitting
+ them
+Message-ID: <20220117210057.o2aug2unmovufrdz@box.shutemov.name>
+References: <20220116121822.1727633-1-willy@infradead.org>
+ <20220116121822.1727633-5-willy@infradead.org>
+ <20220117160625.oofpzl7tqm5udwaj@box.shutemov.name>
+ <YeWVBkgYMp4MctTW@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YeWxHPDbdSfBDtyX@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <YeWVBkgYMp4MctTW@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 06:10:36PM +0000, Al Viro wrote:
-> On Mon, Jan 17, 2022 at 04:28:52PM +0000, Al Viro wrote:
+On Mon, Jan 17, 2022 at 04:10:46PM +0000, Matthew Wilcox wrote:
+> On Mon, Jan 17, 2022 at 07:06:25PM +0300, Kirill A. Shutemov wrote:
+> > On Sun, Jan 16, 2022 at 12:18:14PM +0000, Matthew Wilcox (Oracle) wrote:
+> > > We have to allocate memory in order to split a file-backed folio, so
+> > > it's not a good idea to split them in the memory freeing path.
+> > 
+> > Could elaborate on why split a file-backed folio requires memory
+> > allocation?
 > 
-> > IOW, ->free_inode() is RCU-delayed part of ->destroy_inode().  If both
-> > are present, ->destroy_inode() will be called synchronously, followed
-> > by ->free_inode() from RCU callback, so you can have both - moving just
-> > the "finally mark for reuse" part into ->free_inode() would be OK.
-> > Any blocking stuff (if any) can be left in ->destroy_inode()...
+> In the commit message or explain it to you now?
 > 
-> BTW, we *do* have a problem with ext4 fast symlinks.  Pathwalk assumes that
-> strings it parses are not changing under it.  There are rather delicate
-> dances in dcache lookups re possibility of ->d_name contents changing under
-> it, but the search key is assumed to be stable.
-> 
-> What's more, there's a correctness issue even if we do not oops.  Currently
-> we do not recheck ->d_seq of symlink dentry when we dismiss the symlink from
-> the stack.  After all, we'd just finished traversing what used to be the
-> contents of a symlink that used to be in the right place.  It might have been
-> unlinked while we'd been traversing it, but that's not a correctness issue.
-> 
-> But that critically depends upon the contents not getting mangled.  If it
-> *can* be screwed by such unlink, we risk successful lookup leading to the
-> wrong place, with nothing to tell us that it's happening.  We could handle
-> that by adding a check to fs/namei.c:put_link(), and propagating the error
-> to callers.  It's not impossible, but it won't be pretty.
-> 
-> And that assumes we avoid oopsen on string changing under us in the first
-> place.  Which might or might not be true - I hadn't finished the audit yet.
-> Note that it's *NOT* just fs/namei.c + fs/dcache.c + some fs methods -
-> we need to make sure that e.g. everything called by ->d_hash() instances
-> is OK with strings changing right under them.  Including utf8_to_utf32(),
-> crc32_le(), utf8_casefold_hash(), etc.
+> We need to allocate xarray nodes to store all the newly-independent
+> pages.  With a folio that's more than 64 entries in size (current
+> implementation), we elide the lowest layer of the radix tree.  But
+> with any data structure that tracks folios, we'll need to create
+> space in it to track N folios instead of 1.
 
-And AFAICS, ext4, xfs and possibly ubifs (I'm unfamiliar with that one and
-the call chains there are deep enough for me to miss something) have the
-"bugger the contents of string returned by RCU ->get_link() if unlink()
-happens" problem.
+Looks good.
 
-I would very much prefer to have them deal with that crap, especially
-since I don't see why does ext4_evict_inode() need to do that memset() -
-can't we simply check ->i_op in ext4_can_truncate() and be done with
-that?
+> > > It also
+> > > doesn't work for XFS because pages have an extra reference count from
+> > > page_has_private() and split_huge_page() expects that reference to have
+> > > already been removed.
+> > 
+> > Need to adjust can_split_huge_page()?
+> 
+> no?
+
+I meant we can make can_split_huge_page() expect extra pin if
+page_has_private() is true. If it is the only thing that stops
+split_huge_page() from handling XFS pages.
+
+-- 
+ Kirill A. Shutemov
