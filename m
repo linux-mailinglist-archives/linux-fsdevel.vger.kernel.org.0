@@ -2,92 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7632149031E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 08:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA148490324
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 08:48:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237674AbiAQHr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 02:47:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58690 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235240AbiAQHr2 (ORCPT
+        id S237688AbiAQHsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 02:48:21 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:30284 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235240AbiAQHsV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 02:47:28 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F00FC061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jan 2022 23:47:27 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id c71so61861789edf.6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jan 2022 23:47:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KxaKd126ds9B/hqHoJr3I0DdwvzQ+yakIqTbnoGSuO8=;
-        b=RGXdV4HyYc3xaX2rdnh+hAKPvPMFKV81qHTYLnM9kE6m4ww5iFzzJhvkM+GlTCXgm4
-         ZokwaT+e53zJt/1DXVTyJxkad79H3Eh05BUmTyYG8YMTO182roVXLBbdNIAzvTxe8TWX
-         8mdvIHdvuFPgQbda+EO/U/kRqlj5jS7Vae7u4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KxaKd126ds9B/hqHoJr3I0DdwvzQ+yakIqTbnoGSuO8=;
-        b=rZ9NogJcjl41yLTT0pPSPvIoipAMssp2JcaM+x4RDkA4idDGY7VhPf7wKn4QJhOb9f
-         16CfGTf59/nzF/3uMyIigDzzRagwqNrXTpKmojgcfgc3wLSKfnbRLnv3K8VYLEZHCpOh
-         Do3oZiCQMSX1R4Uxkf2TmHNvEQGX0S9vS9gOxy6Loua6tsLP9aXmb+xGjd8/o7x1TM84
-         w4waytirUpvt82irWmNWx8pRnJJdTAFIg25ncsVp9yVAGps7cYLzFBApxW7UQH9HrYfl
-         /FEeAtBmMXUPNNPYWGN+Lx3Z+GJZs2iYX8ZdNjWbs6YRI2nGLDgUbl7ms601R29YI5ih
-         57Qw==
-X-Gm-Message-State: AOAM531aMoLtVLMHiPPkNXaFkhiUnPFUU1lakAn4rckONo3EB76SDOl4
-        UL89Tq45tV4fE8JZSGiW+tAx3FkCsoVRdXb5
-X-Google-Smtp-Source: ABdhPJw3NH4m+7O8UxlR5VubBu3jzMkBSjS7rgb1xTgQByXSFirudrtKrrjfU06gULdnNS6ml64tuw==
-X-Received: by 2002:a05:6402:c12:: with SMTP id co18mr10709560edb.246.1642405646073;
-        Sun, 16 Jan 2022 23:47:26 -0800 (PST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com. [209.85.128.43])
-        by smtp.gmail.com with ESMTPSA id r3sm4149516ejr.79.2022.01.16.23.47.24
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jan 2022 23:47:24 -0800 (PST)
-Received: by mail-wm1-f43.google.com with SMTP id ay4-20020a05600c1e0400b0034a81a94607so19684932wmb.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jan 2022 23:47:24 -0800 (PST)
-X-Received: by 2002:a05:6000:1787:: with SMTP id e7mr4294373wrg.281.1642405644098;
- Sun, 16 Jan 2022 23:47:24 -0800 (PST)
+        Mon, 17 Jan 2022 02:48:21 -0500
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JckX76vvlzbk0g;
+        Mon, 17 Jan 2022 15:47:35 +0800 (CST)
+Received: from [10.174.178.185] (10.174.178.185) by
+ canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Mon, 17 Jan 2022 15:48:19 +0800
+Subject: Re: [PATCH] pipe: Fix endless sleep problem due to the out-of-order
+To:     "miaoxie (A)" <miaoxie@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <31566e37493540ada2dda862fe8fb32b@huawei.com>
+From:   yebin <yebin10@huawei.com>
+Message-ID: <61E51F42.8030202@huawei.com>
+Date:   Mon, 17 Jan 2022 15:48:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 MIME-Version: 1.0
-References: <163935794678.22433.16837658353666486857@noble.neil.brown.name>
- <20211213125906.ngqbjsywxwibvcuq@wittgenstein> <YbexPXpuI8RdOb8q@technoir>
- <20211214101207.6yyp7x7hj2nmrmvi@wittgenstein> <Ybik5dWF2w06JQM6@technoir>
- <20211214141824.fvmtwvp57pqg7ost@wittgenstein> <164237084692.24166.3761469608708322913@noble.neil.brown.name>
-In-Reply-To: <164237084692.24166.3761469608708322913@noble.neil.brown.name>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 17 Jan 2022 09:47:08 +0200
-X-Gmail-Original-Message-ID: <CAHk-=wiLi2_JJ1+VnhZ3aWr_cag7rVxbhpf6zKVrOuRHMsfQ4Q@mail.gmail.com>
-Message-ID: <CAHk-=wiLi2_JJ1+VnhZ3aWr_cag7rVxbhpf6zKVrOuRHMsfQ4Q@mail.gmail.com>
-Subject: Re: [PATCH - resend] devtmpfs regression fix: reconfigure on each mount
-To:     NeilBrown <neilb@suse.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Anthony Iliopoulos <ailiop@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <31566e37493540ada2dda862fe8fb32b@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.178.185]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ canpemm500010.china.huawei.com (7.192.105.118)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 12:07 AM NeilBrown <neilb@suse.de> wrote:
+Gentel ping....
+
+
+On 2021/12/12 0:51, miaoxie (A) wrote:
+> Thers is a out-of-order access problem which would cause endless sleep
+> when we use pipe with epoll.
 >
-> Since that was changed, the mount options used for devtmpfs are ignored.
-> This is a regression which affect systemd - which mounts devtmpfs
-> with "-o mode=755,size=4m,nr_inodes=1m".
+> The story is following, we assume the ring size is 2, the ring head
+> is 1, the ring tail is 0, task0 is write task, task1 is read task,
+> task2 is write task.
+> Task0					Task1		Task2
+> epoll_ctl(fd, EPOLL_CTL_ADD, ...)
+>    pipe_poll()
+>      poll_wait()
+>      tail = READ_ONCE(pipe->tail);
+>      	// Re-order and get tail=0
+> 				  	pipe_read
+> 					tail++ //tail=1
+> 							pipe_write
+> 							head++ //head=2
+>      head = READ_ONCE(pipe->head);
+>      	// head = 2
+>      check ring is full by head - tail
+> Task0 get head = 2 and tail = 0, so it mistake that the pipe ring is
+> full, then task0 is not add into ready list. If the ring is not full
+> anymore, task0 would not be woken up forever
+>
+> The reason of this problem is that we got inconsistent head/tail value
+> of the pipe ring, so we fix the problem by getting them by atomic.
+>
+> It seems that pipe_readable and pipe_writable is safe, so we don't
+> change them.
+>
+> Signed-off-by: Miao Xie <miaoxie@huawei.com>
+> ---
+>   fs/pipe.c                 |  6 ++++--
+>   include/linux/pipe_fs_i.h | 32 ++++++++++++++++++++++++++++++--
+>   2 files changed, 34 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 6d4342bad9f1..454056b1eaad 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -649,6 +649,7 @@ pipe_poll(struct file *filp, poll_table *wait)
+>   	__poll_t mask;
+>   	struct pipe_inode_info *pipe = filp->private_data;
+>   	unsigned int head, tail;
+> +	u64 ring_idxs;
+>   
+>   	/* Epoll has some historical nasty semantics, this enables them */
+>   	pipe->poll_usage = 1;
+> @@ -669,8 +670,9 @@ pipe_poll(struct file *filp, poll_table *wait)
+>   	 * if something changes and you got it wrong, the poll
+>   	 * table entry will wake you up and fix it.
+>   	 */
+> -	head = READ_ONCE(pipe->head);
+> -	tail = READ_ONCE(pipe->tail);
+> +	ring_idxs = (u64)atomic64_read(&pipe->ring_idxs);
+> +	head = pipe_get_ring_head(ring_idxs);
+> +	tail = pipe_get_ring_tail(ring_idxs);
+>   
+>   	mask = 0;
+>   	if (filp->f_mode & FMODE_READ) {
+> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+> index fc5642431b92..9a7cb8077dc8 100644
+> --- a/include/linux/pipe_fs_i.h
+> +++ b/include/linux/pipe_fs_i.h
+> @@ -58,8 +58,18 @@ struct pipe_buffer {
+>   struct pipe_inode_info {
+>   	struct mutex mutex;
+>   	wait_queue_head_t rd_wait, wr_wait;
+> -	unsigned int head;
+> -	unsigned int tail;
+> +	union {
+> +		/*
+> +		 * If someone want to change this structure, you should also
+> +		 * change the macro *PIPE_GET_DOORBELL* that is used to
+> +		 * generate the ring head/tail access function.
+> +		 */
+> +		struct {
+> +			unsigned int head;
+> +			unsigned int tail;
+> +		};
+> +		atomic64_t ring_idxs;
+> +	};
+>   	unsigned int max_usage;
+>   	unsigned int ring_size;
+>   #ifdef CONFIG_WATCH_QUEUE
+> @@ -82,6 +92,24 @@ struct pipe_inode_info {
+>   #endif
+>   };
+>   
+> +#define PIPE_GET_DOORBELL(bellname)					\
+> +static inline unsigned int pipe_get_ring_##bellname(u64 ring_idxs)	\
+> +{									\
+> +	unsigned int doorbell;						\
+> +	unsigned char *ptr = ((char *)&ring_idxs);			\
+> +	int offset;							\
+> +									\
+> +	offset = (int)offsetof(struct pipe_inode_info, bellname);	\
+> +	offset -= (int)offsetof(struct pipe_inode_info, ring_idxs);	\
+> +	ptr += offset;							\
+> +	doorbell = *((unsigned int *)ptr);				\
+> +									\
+> +	return doorbell;						\
+> +}
+> +
+> +PIPE_GET_DOORBELL(head)
+> +PIPE_GET_DOORBELL(tail)
+> +
+>   /*
+>    * Note on the nesting of these functions:
+>    *
 
-Hmm, I've applied this, but I'd have loved to see what the actual
-symptoms of the problem were. Particularly since it's apparently been
-broken for 18 months with this being the first I hear of it.
-
-Yes, yes, I could (and did) search for this on the mailing lists, and
-found the discussion and more information, but I think that info
-should have been in the commit message rather than me having to go
-look for it just to see the clarifications..
-
-                Linus
