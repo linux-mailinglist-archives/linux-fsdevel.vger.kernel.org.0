@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6BC4909A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 14:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F12F24909AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 14:44:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232815AbiAQNoI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 08:44:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56124 "EHLO
+        id S233875AbiAQNoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 08:44:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232656AbiAQNoH (ORCPT
+        with ESMTP id S233849AbiAQNoR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 08:44:07 -0500
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6211FC061574;
-        Mon, 17 Jan 2022 05:44:07 -0800 (PST)
-Received: by mail-qk1-x729.google.com with SMTP id o135so8651066qke.8;
-        Mon, 17 Jan 2022 05:44:07 -0800 (PST)
+        Mon, 17 Jan 2022 08:44:17 -0500
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB3DC06161C;
+        Mon, 17 Jan 2022 05:44:16 -0800 (PST)
+Received: by mail-qt1-x833.google.com with SMTP id y17so19176680qtx.9;
+        Mon, 17 Jan 2022 05:44:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wcgdBMETg09EaIqnlllAs1b5H6LLPh/71QIKDM8zgoQ=;
-        b=aB4uPEUcyHIddyBjA09c1Ve85mosTSF4qF+8O1xymYerqPxVfWr3/YKiK62kzwU8bE
-         Sw5+sbvrsh7deGjMKqTomRo7c3uygv/DgWuHMhIS/jHIvKMNkD3LfKc2ewCOJcxxkeFy
-         joI1PqdJYlkwzdNvo4WQ5mKC8fkYJvkO03rzLT2fKw51Wz0Y5nLXDDDiwm849/K1FQ6R
-         4v0PmCVacEOP3k3t1wJWrAtNrk6Da+0dyUBesvecag4qDirawZNxHFq6/fxlvjxvAQ8C
-         mXMpNFRsmvnSGwdhV9pzynuuz7L8WnSemFB8BjFlXRcLXfGn8BZy/uc/v7LyDfyLnNoZ
-         AaUQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DXdJ1Wu64slVHJ1cuUusc0RVIkVBLrraxvrfe/fkEAc=;
+        b=PBYzj9/f5BfD87HuXENKRr4lCmln39PPI1X8u1+hoDdGbYkv02jO+YFPHp4Mm+3Eip
+         YMoMJzlDNp2Di5yLDVEpomX688I8CF8YrWTwh3WyW48nXt+dkupEXk+vS1WrdY2Ezc8f
+         sDDnY/pEA/l06PIjoFP44G26k7p3F7ZXP1TcNxJTWZQAIB6YmbpBTdQY7cgjrPwnCmey
+         I1CGXRWUrQW4FEq9DXOG38Syqe8mtZPSdTP+GbDuIEleY03G0tcwMCG1jlvBSS4taQAP
+         r+HKcqKiLccjmsYva346xf2XCNgq6y+T1mKGnTNBqhIZi/FOm26I3IbfQHWcmVnXSOy5
+         nomA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wcgdBMETg09EaIqnlllAs1b5H6LLPh/71QIKDM8zgoQ=;
-        b=XL9vv2j3kYSJBJ8hGO+bvF3etbZro8P9ffoy+KVNNMinYv2+0hyM8FxYA4v3vN4u2Z
-         pTKVM7OF+RHMAcCEHhIMBZ0W0ExLzgICRgK2QGxsVdJ7lW02EhxMY/9APrUim0BMSj1z
-         DAZ0yK4PrIWjrmziW5Osps8PhK1M26K5wE09Ba7NVfBT7RT7xShAJw+3zgatTzkFQrDw
-         UV/kNL+PQ6sA54NBrL4ai/DWXNDhLaygjUNZUwMq2QOIDQBBL0UhwoWnFCwwdQxFHqYb
-         PRsHaGRtM2YsLAGE9Nu9FgwV3pjy/OR7UgN7+zHNMpQX0jptv7DfILWHugGPNYH9UKvi
-         m7jQ==
-X-Gm-Message-State: AOAM533VFoNjFktYCZPzE4SxtKlwvs91N80QIEe39UuqDgNmQ2BaWI0h
-        vOfTKFa+MCq9jeTizScMg1s=
-X-Google-Smtp-Source: ABdhPJzvafk1T1OUqBxHnB53261+ZqfPQG+SyFnzkux6s+4h35+3vQj53k6oFQCsvq83Ui9dpOXg2w==
-X-Received: by 2002:a05:620a:458c:: with SMTP id bp12mr3572279qkb.175.1642427046452;
-        Mon, 17 Jan 2022 05:44:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DXdJ1Wu64slVHJ1cuUusc0RVIkVBLrraxvrfe/fkEAc=;
+        b=5lCiswHNRUEg/OSZbAUxVwjOyF2DTFxOutxYlrrylVTAd4t3T6VQzltoEq1sBWECeR
+         QTA2lUIX/4zSvh7aSF4zmyzsGnQDSnOdZnztXHtFqmgF5dqTwuSvAXuhAsRo6RX7tOko
+         fmGmFVBvhSwFWfWLHTkccji5gN6cQkdO+IsN0kNo+Cp99iuMAodL26683YfA0OTaQWiv
+         2fCYRC5wOhz6cNgj6S4SRPHkrFnhKDHdLfy/7tS1KjSsaUOIZSOOqBxl/vNfMT7oMgXx
+         zt8vHml8yn5pYZ8pfLzHkRr+Rshfg6cGSocl4l9WqTSUcVilMArFOiIQZ3kVQdfX/qmD
+         rmRw==
+X-Gm-Message-State: AOAM5310NoCr1Us2//MBoNmpqXdtKuMfTN1QATfQpXtEUw8zf9Mf2g2p
+        /zUIuUSoKbebfuClUExDtcE=
+X-Google-Smtp-Source: ABdhPJwW56XhB17V4FOfsibHf7gI3R9NsaIBYqJc14q+k44PVnI7Wc10DN080EnTikhRXdOwmTBESA==
+X-Received: by 2002:a05:622a:15c9:: with SMTP id d9mr5759731qty.681.1642427056076;
+        Mon, 17 Jan 2022 05:44:16 -0800 (PST)
 Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id s1sm9124073qtw.25.2022.01.17.05.43.59
+        by smtp.gmail.com with ESMTPSA id s1sm9124073qtw.25.2022.01.17.05.44.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jan 2022 05:44:05 -0800 (PST)
+        Mon, 17 Jan 2022 05:44:15 -0800 (PST)
 From:   cgel.zte@gmail.com
 X-Google-Original-From: zhang.yunkai@zte.com.cn
 To:     mhiramat@kernel.org
@@ -61,11 +61,14 @@ Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
         wangkefeng.wang@huawei.com, rostedt@goodmis.org,
         ahalaney@redhat.com, valentin.schneider@arm.com,
         peterz@infradead.org, geert@linux-m68k.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 0/2] init/initramfs.c: make initramfs support pivot_root
-Date:   Mon, 17 Jan 2022 13:43:50 +0000
-Message-Id: <20220117134352.866706-1-zhang.yunkai@zte.com.cn>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Menglong Dong <dong.menglong@zte.com.cn>
+Subject: [PATCH v7 1/2] init/main.c: introduce function ramdisk_exec_exist()
+Date:   Mon, 17 Jan 2022 13:43:51 +0000
+Message-Id: <20220117134352.866706-2-zhang.yunkai@zte.com.cn>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220117134352.866706-1-zhang.yunkai@zte.com.cn>
+References: <20220117134352.866706-1-zhang.yunkai@zte.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -74,87 +77,86 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Zhang Yunkai <zhang.yunkai@zte.com.cn>
 
-As Luis Chamberlain suggested, I split the patch:
-[init/initramfs.c: make initramfs support pivot_root]
-(https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
-into three.
+Introduce the function ramdisk_exec_exist, which is used to check the
+exist of 'ramdisk_execute_command'.
 
-The goal of the series patches is to make pivot_root() support initramfs.
+To make path lookup follow the mount on '/', use vfs_path_lookup() in
+init_eaccess(), and make the filesystem that mounted on '/' as root
+during path lookup.
 
-In the first patch, I introduce the function ramdisk_exec_exist(), which
-is used to check the exist of 'ramdisk_execute_command' in LOOKUP_DOWN
-lookup mode.
-
-In the second patch, I create a second mount, which is called
-'user root', and make it become the root. Therefore, the root has a
-parent mount, and it can be umounted or pivot_root.
-
-In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
-directly any more, and it make no sense to switch it between ramfs and
-tmpfs, just fix it with ramfs to simplify the code.
-
-Changes since V6:
-
-Fix some bugs by Zhang Yunkai.
-
-
-Changes since V5:
-
-Remove the third patch and make it combined with the second one.
-
-
-Changes since V4:                                                                                                                                                     
-                                                                                                                                                                      
-Do some more code cleanup for the second patch, include:                                                                                                              
-- move 'ramdisk_exec_exist()' to 'init.h'                                                                                                                             
-- remove unnecessary struct 'fs_rootfs_root'                                                                                                                          
-- introduce 'revert_mount_rootfs()'                                                                                                                                   
-- [...]                                                                                                                                                               
-
-
-Changes since V3:
-
-Do a code cleanup for the second patch, as Christian Brauner suggested:
-- remove the concept 'user root', which seems not suitable.
-- introduce inline function 'check_tmpfs_enabled()' to avoid duplicated
-  code.
-- rename function 'mount_user_root' to 'prepare_mount_rootfs'
-- rename function 'end_mount_user_root' to 'finish_mount_rootfs'
-- join 'init_user_rootfs()' with 'prepare_mount_rootfs()'
-
-Changes since V2:
-
-In the first patch, I use vfs_path_lookup() in init_eaccess() to make the
-path lookup follow the mount on '/'. After this, the problem reported by
-Masami Hiramatsu is solved. Thanks for your report :/
-
-
-Changes since V1:
-
-In the first patch, I add the flag LOOKUP_DOWN to init_eaccess(), to make
-it support the check of filesystem mounted on '/'.
-
-In the second patch, I control 'user root' with kconfig option
-'CONFIG_INITRAMFS_USER_ROOT', and add some comments, as Luis Chamberlain
-suggested.
-
-In the third patch, I make 'rootfs_fs_type' in control of
-'CONFIG_INITRAMFS_USER_ROOT'.
-
-
-Zhang Yunkai (2):
-  init/main.c: introduce function ramdisk_exec_exist()
-  init/do_mounts.c: create second mount for initramfs
-
+Reported-by: Menglong Dong <dong.menglong@zte.com.cn>
+Signed-off-by: Zhang Yunkai <zhang.yunkai@zte.com.cn>
+---
  fs/init.c            | 11 +++++++++--
  include/linux/init.h |  1 +
- init/do_mounts.c     | 45 ++++++++++++++++++++++++++++++++++++++++++++
- init/do_mounts.h     | 17 ++++++++++++++++-
- init/initramfs.c     | 12 +++++++++++-
  init/main.c          |  7 ++++++-
- usr/Kconfig          | 10 ++++++++++
- 7 files changed, 98 insertions(+), 5 deletions(-)
+ 3 files changed, 16 insertions(+), 3 deletions(-)
 
+diff --git a/fs/init.c b/fs/init.c
+index 5c36adaa9b44..166356a1f15f 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -112,14 +112,21 @@ int __init init_chmod(const char *filename, umode_t mode)
+ 
+ int __init init_eaccess(const char *filename)
+ {
+-	struct path path;
++	struct path path, root;
+ 	int error;
+ 
+-	error = kern_path(filename, LOOKUP_FOLLOW, &path);
++	error = kern_path("/", LOOKUP_DOWN, &root);
+ 	if (error)
+ 		return error;
++	error = vfs_path_lookup(root.dentry, root.mnt, filename,
++				LOOKUP_FOLLOW, &path);
++	if (error)
++		goto on_err;
+ 	error = path_permission(&path, MAY_ACCESS);
++
+ 	path_put(&path);
++on_err:
++	path_put(&root);
+ 	return error;
+ }
+ 
+diff --git a/include/linux/init.h b/include/linux/init.h
+index d82b4b2e1d25..889d538b6dfa 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -149,6 +149,7 @@ extern unsigned int reset_devices;
+ void setup_arch(char **);
+ void prepare_namespace(void);
+ void __init init_rootfs(void);
++bool ramdisk_exec_exist(void);
+ extern struct file_system_type rootfs_fs_type;
+ 
+ #if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX)
+diff --git a/init/main.c b/init/main.c
+index bb984ed79de0..ed1c63f4ed87 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1577,6 +1577,11 @@ void __init console_on_rootfs(void)
+ 	fput(file);
+ }
+ 
++bool __init ramdisk_exec_exist(void)
++{
++	return init_eaccess(ramdisk_execute_command) == 0;
++}
++
+ static noinline void __init kernel_init_freeable(void)
+ {
+ 	/* Now the scheduler is fully set up and can do blocking allocations */
+@@ -1618,7 +1623,7 @@ static noinline void __init kernel_init_freeable(void)
+ 	 * check if there is an early userspace init.  If yes, let it do all
+ 	 * the work
+ 	 */
+-	if (init_eaccess(ramdisk_execute_command) != 0) {
++	if (!ramdisk_exec_exist()) {
+ 		ramdisk_execute_command = NULL;
+ 		prepare_namespace();
+ 	}
 -- 
 2.25.1
 
