@@ -2,64 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E892C4909BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 14:49:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCC8490A08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 15:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234433AbiAQNrV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 08:47:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbiAQNrU (ORCPT
+        id S234389AbiAQOLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 09:11:40 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:41964 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230445AbiAQOLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 08:47:20 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA8BC061574;
-        Mon, 17 Jan 2022 05:47:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=y+GfV1ciTu5PkTMNHSQWf16IvxPhRvaU9RtvP9UrOCc=; b=MOoLrZE07HPBDM6LInnvE+cZfW
-        1kZb9ZUhWaETScJlrqeH/ZPMLYpZTaaM1OxJ0mPPDbRzIOe6SruMhZ/TDdu+nvGRJk62SbNwkjA1K
-        rG51l/cgmWN1MgRlYUgnRZc+yf2z/UHjj1uI/n6othnfwHYjwMmvl99fvyRTyWe7jC79/ttn0rgJg
-        Xr/0uVtiEx5Lp17guB1cytWhCwuPWE7H7Wop5j2WN4Kyb6IBelJNdr6koAgdabz1IiwwArUKrHD77
-        WPwRWst5eAzlG3MqiLG8v+AspYj5nhFkTO9s4uqna3a1+ZRbeS2PsM1nbczMTm9MV/P7OpxwWuFNi
-        dB8IfxPg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n9SLt-008FTt-UV; Mon, 17 Jan 2022 13:47:18 +0000
-Date:   Mon, 17 Jan 2022 13:47:17 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org
+        Mon, 17 Jan 2022 09:11:39 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E72D6123C;
+        Mon, 17 Jan 2022 14:11:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D15C36AE7;
+        Mon, 17 Jan 2022 14:11:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642428698;
+        bh=HoOILvkdf4H0e24pigB+sdyo7uxDcs/7jN5xyGkmBzc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=GHwVvXDU1drse2bqii6h/38dWWbkgGz9utxWMq+afRnOXySGgk8lEbAOge73XyuNT
+         NZtPd+PBPRKY6g4A9rF5AB/0TSkr7mMsoNH0WKMSk9x1J7GoWTEF3JHmYY65AoATGb
+         Jdkc8ulK7upmIyNRURLnZHwhIrb4clPbYh4BA11I4LhQLZJsgha/kF+QTF3ND+Z+/v
+         rQwfZR2aCoA808K9gN2bSV2Ln3uEGYox5ez3mkM53LnTBHBs5IsUJKaHsZ7oVyaKyb
+         wckRKQ8/KwPQeZlkebjdIhUO3ZVxhlUJWyACCRRX2NHBoeeb4m00x9XKvaOkr71i85
+         bqNrya4+Zme+Q==
+Message-ID: <240e60443076a84c0599ccd838bd09c97f4cc5f9.camel@kernel.org>
 Subject: Re: [PATCH 1/3] ceph: Uninline the data on a file opened for writing
-Message-ID: <YeVzZZLcsX5Krcjh@casper.infradead.org>
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date:   Mon, 17 Jan 2022 09:11:36 -0500
+In-Reply-To: <YeVzZZLcsX5Krcjh@casper.infradead.org>
 References: <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
+         <YeVzZZLcsX5Krcjh@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 12:44:33PM +0000, David Howells wrote:
-> +	if (ceph_caps_issued(ci) & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
-> +		folio = filemap_get_folio(inode->i_mapping, 0);
-> +		if (folio) {
-> +			if (folio_test_uptodate(folio)) {
->  				from_pagecache = true;
-> -				lock_page(page);
-> +				folio_lock(folio);
->  			} else {
-> -				put_page(page);
-> -				page = NULL;
-> +				folio_put(folio);
-> +				folio = NULL;
+On Mon, 2022-01-17 at 13:47 +0000, Matthew Wilcox wrote:
+> On Mon, Jan 17, 2022 at 12:44:33PM +0000, David Howells wrote:
+> > +	if (ceph_caps_issued(ci) & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
+> > +		folio = filemap_get_folio(inode->i_mapping, 0);
+> > +		if (folio) {
+> > +			if (folio_test_uptodate(folio)) {
+> >  				from_pagecache = true;
+> > -				lock_page(page);
+> > +				folio_lock(folio);
+> >  			} else {
+> > -				put_page(page);
+> > -				page = NULL;
+> > +				folio_put(folio);
+> > +				folio = NULL;
+> 
+> This all falls very much under "doing it the hard way", and quite
+> possibly under the "actively buggy with races" category.
+> 
+> read_mapping_folio() does what you want, as long as you pass 'filp'
+> as your 'void *data'.  I should fix that type ...
+> 
 
-This all falls very much under "doing it the hard way", and quite
-possibly under the "actively buggy with races" category.
-
-read_mapping_folio() does what you want, as long as you pass 'filp'
-as your 'void *data'.  I should fix that type ...
-
+That would be nicer, I think. If you do that though, then patch #3
+probably needs to come first in the series...
+-- 
+Jeff Layton <jlayton@kernel.org>
