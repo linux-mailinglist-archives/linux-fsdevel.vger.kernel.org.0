@@ -2,62 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 927774900DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 05:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7840C490114
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 06:18:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237079AbiAQEkn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jan 2022 23:40:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiAQEkm (ORCPT
+        id S231756AbiAQFSw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 00:18:52 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:44116 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230445AbiAQFSv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jan 2022 23:40:42 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0721C061574;
-        Sun, 16 Jan 2022 20:40:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=uR8uodyrCDk4BZAzJIFK2uL40QezGKhhsTM0fjhGqBA=; b=XaGX4PUAsNwC+GX21L2mOSsd5j
-        l6sXSsu40ncOTZXWtkuTJcyWBEO3Z4W15v/kMSQxToYd4Or8X/HBzM7DQZVcdogS2IbZiove5JSG7
-        hrfM+X3wmhNsJawL69MAD9VgyAEjfu+buOArRCEIN0/KBiLdP4WZZcYO/8iKgMCDkTWdZVU6deFJa
-        2GQa2387O+6CrFQKRUm4clJJ7K2IbURfhRjQ+aGniaBj8DBIZ27rJ5wX04qP9d5Lanf7gaju5lvJe
-        jmB93yn4pjMY+nXv5cS2ImHrYix6wLBl8gK2ox8QscqxBILXz9TjQiyvXbVlCceSb3957wBZ6X6aZ
-        sLVOZokw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n9Jon-007khC-Kq; Mon, 17 Jan 2022 04:40:33 +0000
-Date:   Mon, 17 Jan 2022 04:40:33 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Rongwei Wang <rongwei.wang@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH 09/12] mm/readahead: Align file mappings for non-DAX
-Message-ID: <YeTzQU+JR43x6kha@casper.infradead.org>
-References: <20220116121822.1727633-1-willy@infradead.org>
- <20220116121822.1727633-10-willy@infradead.org>
- <d4ac99a0-6c45-e81b-c08a-56083c4cdd6e@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4ac99a0-6c45-e81b-c08a-56083c4cdd6e@linux.alibaba.com>
+        Mon, 17 Jan 2022 00:18:51 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2D617B80D94;
+        Mon, 17 Jan 2022 05:18:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03800C36AED;
+        Mon, 17 Jan 2022 05:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642396729;
+        bh=NoAkdTtev+HNuPcLbeSn9K4A3H/YPjNlqwRima0N01E=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=kzfy9X25ngGdKl5mucevDwJknh+BBMoe06E/RgWZijQh4p0XOMKZ/Kt9o8YKTBRvY
+         PXuzJpNnj8YaTYHZiTysAxxtBvfCHFcxGwQyA6EsVQb8JVG02Zbg5qKtVDF1pGw76F
+         Koycen+JjohRUqg+ULyvB1T108JluOB2BTQjx6KGdww6nIZIShmMFMSH628bJYkagl
+         JzSmuKJRjJgAHZ8ojAU2EZCu/81rnJHTDspIEgDEvVI830PD1/Yxe2Q/zyyGGCjAYb
+         qpd6qXe2tpiWaIOWVyZVGDxwI+Le5gEGEylQ3dyOXV31aDrIF/Ycg6+LdM6+SYGN2c
+         q5R2x+FzOl6nQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E5D3CF60799;
+        Mon, 17 Jan 2022 05:18:48 +0000 (UTC)
+Subject: Re: [GIT PULL] unicode patches for 5.17
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <87a6g11zq9.fsf@collabora.com>
+References: <87a6g11zq9.fsf@collabora.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87a6g11zq9.fsf@collabora.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git tags/unicode-for-next-5.17
+X-PR-Tracked-Commit-Id: e2a58d2d3416aceeae63dfc7bf680dd390ff331d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6661224e66f03706daea8e27714436851cf01731
+Message-Id: <164239672893.10913.18407387537720759248.pr-tracker-bot@kernel.org>
+Date:   Mon, 17 Jan 2022 05:18:48 +0000
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>, hch@lst.de,
+        chao@kernel.org, tytso@mit.edu, linux-kernel@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 11:17:55AM +0800, Rongwei Wang wrote:
-> It seems this patch will make all file mappings align with PMD_SIZE?
+The pull request you sent on Tue, 11 Jan 2022 20:58:54 -0500:
 
-Only those which are big enough.  See __thp_get_unmapped_area():
+> https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git tags/unicode-for-next-5.17
 
-        if (off_end <= off_align || (off_end - off_align) < size)
-                return 0;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6661224e66f03706daea8e27714436851cf01731
 
-> And
-> support realize all file THP, not only executable file THP?
+Thank you!
 
-Executables are not the only files which benefit from being mapped
-to an aligned address.  If you can use a PMD to map a font file,
-for example, that's valuable.
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
