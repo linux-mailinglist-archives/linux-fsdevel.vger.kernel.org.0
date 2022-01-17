@@ -2,89 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E56D490AF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 15:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51DA5490B54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 16:24:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbiAQO6c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 09:58:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44876 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbiAQO6c (ORCPT
+        id S240447AbiAQPYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 10:24:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46542 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240406AbiAQPYq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 09:58:32 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04850C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 06:58:32 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id s22so23738710oie.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 06:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=i+j824UcBodVo3CNdwZcWn2XCk2uTYdhyy7Y79Vjqi8=;
-        b=dqKW01WJm4Th7OWr4ZP2XCeTmRuEq63iWEji8iC6az97QLF1A68zfo32B7REESxUSv
-         QT825aM8K7FDd3G0oHPEENm8R1Edr+EudF6GoMbdruUenokwIhqti/ujHTojnA9J7sVW
-         o3Wdp0lCuCsE1PwENlPYPY+NZ7X0deDlGSj6STMDfpZF8KXEEywYHszhmFlSvkQ7mqrV
-         pBwjyECcX3ZgllgKbOH9yYfMXHzJarE6yilY4JjWbEgX+25q6BVwnvrieutQUPgJhwkZ
-         dEL0eI7jFhJjChDI57y2mHwokvKTTp6n9h6ulNGm0bnjIofBfFPVGJvSCry1C5OoUCAZ
-         CPeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=i+j824UcBodVo3CNdwZcWn2XCk2uTYdhyy7Y79Vjqi8=;
-        b=m0XKZZ8xRMBiPLGHvNNvOepovS4ekZtW1wuxeMS0JIebsYanduokFIUhTJb4eNwG7F
-         abCP8+KlZ3xQr2DE3e/BoYznF0GyrPXxzshOKTIZsxYKOUlxHTxklgw+IoQXT0YKp2qj
-         XDLX746fF8crH4jb7JnsjVqwksoAH1sQmK1ZgFTPoJMMkcX/J4lwytS8YZN46beWkX1J
-         ymVFvAHOSX+6WxuwtDKLcdn/QPq8B7rHrhkT0zdMo2K+QkcR9qaGxViWqkHN73gFsWcm
-         YbRYJBlr3Djq3OaC4+QzLivNpA+ldTUykmRBt0MlROeNKWuZKK4hhMGb9AF5BKVYgdqh
-         J4nw==
-X-Gm-Message-State: AOAM531Te6Ep4hC0uqDVyDhi+RaIu1K9qQef/l2HPte2HXFBg0tFhxrZ
-        qy2R7+29L/9qSLpJphvs804vW2h7IFnn4DYh4WO9KEs/Gxt1LA==
-X-Google-Smtp-Source: ABdhPJz9UJRhK7448V4iaco6LN6flf82lMFr17mk3KgF2Y0aIaWn5yTsxZa8gfB7+onhYLU5WMZ4jMgdiEf7AqOTIkM=
-X-Received: by 2002:a05:6808:90e:: with SMTP id w14mr17903473oih.135.1642431511401;
- Mon, 17 Jan 2022 06:58:31 -0800 (PST)
+        Mon, 17 Jan 2022 10:24:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642433085;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=D0EKPYhKbnUV4EKNstvISBeawh1wW6zNUbDlwrY8aQs=;
+        b=ZAVLlYq/2uNbYTj0kW8XrfkjF2isipUJxjfQvpawH0ErG8VkL/zbkJN5LeFiW8yS95FRCs
+        uOxAi97rKtBdB1nnC0UkBAOGxOsR/I1Y5LS7iqPmxqOLFaMDb4/bSYDiJpXQFzTA333nbV
+        /uzumWYgW8+bZjhKbaoBQKoyuHw9eE8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-474-cfzkIH6iNmGIFntsF-bZAg-1; Mon, 17 Jan 2022 10:24:32 -0500
+X-MC-Unique: cfzkIH6iNmGIFntsF-bZAg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8653110247B1;
+        Mon, 17 Jan 2022 15:24:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 88D787BB48;
+        Mon, 17 Jan 2022 15:24:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <240e60443076a84c0599ccd838bd09c97f4cc5f9.camel@kernel.org>
+References: <240e60443076a84c0599ccd838bd09c97f4cc5f9.camel@kernel.org> <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk> <YeVzZZLcsX5Krcjh@casper.infradead.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ceph: Uninline the data on a file opened for writing
 MIME-Version: 1.0
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Mon, 17 Jan 2022 09:58:20 -0500
-Message-ID: <CAOg9mSQ6pvuOTOoTkzwwsYmrVLOO8kYrEJ0fOWDE+ewec_1Svg@mail.gmail.com>
-Subject: [GIT PULL] orangefs: fixes for 5.17
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2807616.1642433067.1@warthog.procyon.org.uk>
+Date:   Mon, 17 Jan 2022 15:24:27 +0000
+Message-ID: <2807617.1642433067@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit fc74e0a40e4f9fd0468e34045b0c45bba11dcbb2:
+Jeff Layton <jlayton@kernel.org> wrote:
 
-  Linux 5.16-rc7 (2021-12-26 13:17:17 -0800)
+> On Mon, 2022-01-17 at 13:47 +0000, Matthew Wilcox wrote:
+> > This all falls very much under "doing it the hard way", and quite
+> > possibly under the "actively buggy with races" category.
+> > 
+> > read_mapping_folio() does what you want, as long as you pass 'filp'
+> > as your 'void *data'.  I should fix that type ...
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-5.17-ofs-1
+How much do we care about the case where we don't have either the
+CEPH_CAP_FILE_CACHE or the CEPH_CAP_FILE_LAZYIO caps?  Is it possible just to
+shove the page into the pagecache whatever we do?  At the moment there are two
+threads, both of which get a page - one attached to the page cache, one not.
+The rest is then common because from that point on, it doesn't matter where
+the folio resides.
 
-for you to fetch changes up to 40a74870b2d1d3d44e13b3b73c6571dd34f5614d:
+David
 
-  orangefs: Fix the size of a memory allocation in
-orangefs_bufmap_alloc() (2021-12-31 14:37:43 -0500)
-
-----------------------------------------------------------------
-orangefs: two fixes
-
-  Fix the size of a memory allocation in orangefs_bufmap_alloc()
-  Christophe JAILLET
-
-  use default_groups in kobj_type
-  Greg KH
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      orangefs: Fix the size of a memory allocation in orangefs_bufmap_alloc()
-
-Greg Kroah-Hartman (1):
-      orangefs: use default_groups in kobj_type
-
- fs/orangefs/orangefs-bufmap.c |  7 +++----
- fs/orangefs/orangefs-sysfs.c  | 21 ++++++++++++++-------
- 2 files changed, 17 insertions(+), 11 deletions(-)
