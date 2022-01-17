@@ -2,118 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41531490BCE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 16:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18242490BF1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 16:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240664AbiAQP4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 10:56:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58236 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237337AbiAQP4Q (ORCPT
+        id S237224AbiAQP5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 10:57:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46677 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235153AbiAQP5x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 10:56:16 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52B9C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 07:56:15 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id m3so45271858lfu.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jan 2022 07:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=hLXVfGuqokAhjQPquljpv4IuCQa5SRFe/JWEcrZu/DE=;
-        b=vWlPwu36tQDWXefh3AbPXuoJBEob07beXqKflgEp+7ZAnJW5ToHIDMHJIor8471x1c
-         nFYXIH7cEZDVMG3Ad1Imes4RlH8Ydng8D3FkDW5MMRCK22hHEVThHKgMd85wVsb7GFYN
-         NjF51iRPH0L/P/djgibOK7lcyHSKmyAdtxFeBBJf6FY8PPwF7Tw2bYnIWeB4Xuf5pF2j
-         gac7TcyYTjXdsC0I9fClYQR/2Xm0R2RHuY/uCppEBkwPgNSHe4J3imjM2CYIZYS9qZe3
-         9CkqPiTksIsEa0tVVl3iEHdCi5/WLw/yxczM5hZetsHNeD8jc+DfAsoK7XK+iNuiLe/v
-         ECHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hLXVfGuqokAhjQPquljpv4IuCQa5SRFe/JWEcrZu/DE=;
-        b=OxrEaRguFL1yRAOQ/k2BnaM6ipf5QwSZpIEGrFPOQ0Dsib8IfrS4SOFbHlDSn9CwQS
-         YT+yoew5tzvg81Z3trcz5A+pJ3LV4M0MQlOUj1AQTt5QQ+hf/SqO0UEXRCPpcCIAR0Fp
-         yXbqvHKCsMnP9y/evy7AddSvX1E2ZOcix46YMHT5LiMF9TMcsi9J2DfUQ+znHTc3m6qq
-         PP6k4DDxidwqpBXvBy52KpO/Yk4NF3D3qgblyGyKRfKCc3Es9t0nTgxtdF1pza5C6vUi
-         q/6rJSPncju7hDgXWSjTuMOTpjHJmZNpBoxRMf8DQ2aNXUxakhc9AS41djbaJFVbKFOO
-         zqTA==
-X-Gm-Message-State: AOAM531ahM623byvPB9biXW4MXHEdgaxY3DvJvCD9m+LGBVuN/m4RZEz
-        2xZUH3qJov+F91JShqsO9x0YA8fUqLR0iw==
-X-Google-Smtp-Source: ABdhPJz7FbfdpZdmtC5Jx84Ckv5DAebrmkY0nZUOV+wJaKhApnBN6pH5FhbND8E1a+JvKqJk7BwvRw==
-X-Received: by 2002:ac2:5597:: with SMTP id v23mr16906486lfg.477.1642434974035;
-        Mon, 17 Jan 2022 07:56:14 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id k19sm1425334lfu.176.2022.01.17.07.56.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jan 2022 07:56:13 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 84A7810387E; Mon, 17 Jan 2022 18:56:41 +0300 (+03)
-Date:   Mon, 17 Jan 2022 18:56:41 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 02/12] filemap: Use folio_put_refs() in
- filemap_free_folio()
-Message-ID: <20220117155641.u5ysambg72nq2p6y@box.shutemov.name>
-References: <20220116121822.1727633-1-willy@infradead.org>
- <20220116121822.1727633-3-willy@infradead.org>
+        Mon, 17 Jan 2022 10:57:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642435072;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GlW7wziCR/iSWHom9gifGt8Wr9zVXy1LW82p3EUsHAw=;
+        b=YJwwrKaJWkFiSUDkd2XPsA0622/gLYck+D9MjrxFP6d/qdHq9ki8WGB4RI7Y/Y2HU0PjlZ
+        CusSKwtnnNOrKT3uxBuybAfLDAzy1s/0eXG14BLBHQ7PSQKijSLDcnIWlfl3TXHWkNFVhM
+        7Pd2TwF9biArylSlLuheut8M0TvsOsA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-100-ZVuekCvMPoSkuz0VL21--Q-1; Mon, 17 Jan 2022 10:57:49 -0500
+X-MC-Unique: ZVuekCvMPoSkuz0VL21--Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 440F0100E337;
+        Mon, 17 Jan 2022 15:57:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 45B687BB67;
+        Mon, 17 Jan 2022 15:57:42 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YeVzZZLcsX5Krcjh@casper.infradead.org>
+References: <YeVzZZLcsX5Krcjh@casper.infradead.org> <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, ceph-devel@vger.kernel.org,
+        jlayton@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ceph: Uninline the data on a file opened for writing
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220116121822.1727633-3-willy@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2811245.1642435061.1@warthog.procyon.org.uk>
+Date:   Mon, 17 Jan 2022 15:57:41 +0000
+Message-ID: <2811246.1642435061@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 16, 2022 at 12:18:12PM +0000, Matthew Wilcox (Oracle) wrote:
-> This shrinks filemap_free_folio() by 55 bytes in my .config; 24 bytes
-> from removing the VM_BUG_ON_FOLIO() and 31 bytes from unifying the
-> small/large folio paths.
-> 
-> We could just use folio_ref_sub() here since the caller should hold a
-> reference (as the VM_BUG_ON_FOLIO() was asserting), but that's fragile.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/filemap.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 2fd9b2f24025..afc8f5ca85ac 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -231,17 +231,15 @@ void __filemap_remove_folio(struct folio *folio, void *shadow)
->  void filemap_free_folio(struct address_space *mapping, struct folio *folio)
->  {
->  	void (*freepage)(struct page *);
-> +	int refs = 1;
->  
->  	freepage = mapping->a_ops->freepage;
->  	if (freepage)
->  		freepage(&folio->page);
->  
-> -	if (folio_test_large(folio) && !folio_test_hugetlb(folio)) {
-> -		folio_ref_sub(folio, folio_nr_pages(folio));
-> -		VM_BUG_ON_FOLIO(folio_ref_count(folio) <= 0, folio);
-> -	} else {
-> -		folio_put(folio);
-> -	}
-> +	if (folio_test_large(folio) && !folio_test_hugetlb(folio))
-> +		refs = folio_nr_pages(folio);
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Isn't folio_test_large() check redundant? folio_nr_pages() would return 1
-for non-large folio, wouldn't it?
+> read_mapping_folio() does what you want, as long as you pass 'filp'
+> as your 'void *data'.  I should fix that type ...
 
-> +	folio_put_refs(folio, refs);
->  }
->  
->  /**
-> -- 
-> 2.34.1
-> 
+Ah, but *can* I pass file in at that point?  It's true that I have a file* -
+but that's in the process of being set up.
 
--- 
- Kirill A. Shutemov
+David
+
