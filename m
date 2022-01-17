@@ -2,180 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 796E8490041
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 03:34:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6295E490067
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 03:57:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236815AbiAQCev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jan 2022 21:34:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230132AbiAQCeu (ORCPT
+        id S236889AbiAQCzn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jan 2022 21:55:43 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:40301 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232541AbiAQCzm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jan 2022 21:34:50 -0500
-Received: from mail-ot1-x362.google.com (mail-ot1-x362.google.com [IPv6:2607:f8b0:4864:20::362])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1523C061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jan 2022 18:34:50 -0800 (PST)
-Received: by mail-ot1-x362.google.com with SMTP id a12-20020a0568301dcc00b005919e149b4cso18111233otj.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jan 2022 18:34:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:dkim-signature:date:from:to:cc:subject
-         :message-id:references:content-disposition:in-reply-to:user-agent;
-        bh=OIuBfc7zAPYkZAy85GHXR3lNnSGWQNOSPGFnL140mf0=;
-        b=MwcG6u6x5xyBAJl+QUeBz3pPU6lbQcgcy9QEdNl+0rVsAcNZsmhk+t+ZLR8Q2rWRWm
-         VsbGhm3D97utLSRnWog4eCL0jXY4MLbVPaUnJulXJ9Ne5EE53bjKqr4ODHWJCP/Er5y1
-         YPUjS4Sh0s9ipJDSFrOJwoE45/bFPQlvOzmmHfMB5rhglxEC1dnNWcA+EDcRN1cyvc9E
-         t8atc/qdHq8j2fupLzNUtC9TiGDddJ1J3rI5WUIkLlJgqogI+qMoB1waTeoKo/4/yIe/
-         ywMWBau4YgdxiM3luokQ4A/cimZPqy2u0sSyC9LtyUBtXwUEx3pYJnF9Pw6MaM788lr+
-         /jig==
-X-Gm-Message-State: AOAM530im+1eJsZFhjNLAOJS2hX418HU4fncfSPGGlsuMZYoGZnbJ8xJ
-        6zNuOlkRlmW+T1phPn9p4D4YPj7uHg0d8r9DJQ3xGRt+n391
-X-Google-Smtp-Source: ABdhPJwPyRcVZsA4g5JHkKOeqDeIJCIr2ZyyZK8+06zZ4CZ/IZ9uXqAYdSCL3NkVYUUXMhegYxPmT6qKMF7o
-X-Received: by 2002:a05:6830:168c:: with SMTP id k12mr3694040otr.100.1642386889915;
-        Sun, 16 Jan 2022 18:34:49 -0800 (PST)
-Received: from smtp.aristanetworks.com (mx.aristanetworks.com. [162.210.129.12])
-        by smtp-relay.gmail.com with ESMTPS id y15sm1947155oov.17.2022.01.16.18.34.49
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Jan 2022 18:34:49 -0800 (PST)
-X-Relaying-Domain: arista.com
-Received: from visor (unknown [10.95.68.127])
-        by smtp.aristanetworks.com (Postfix) with ESMTPS id 1C30140187B;
-        Sun, 16 Jan 2022 18:34:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1642386889;
-        bh=OIuBfc7zAPYkZAy85GHXR3lNnSGWQNOSPGFnL140mf0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xiDD0OX7H/IeydzNUa5UAWD88MUcIcsbzgxlKbJ2uFARjrgzMviuJS8wRQ+PJ79JS
-         sdVGeUMc4uHlXkQ9BkbYgaQBr24Cy85cj8gc8YvWkMuZ+/vzLxOLn0eGIde90FcLwZ
-         Ni0f6PcN7Tu3LCFJ4J98vLM9h6r/XCC+G+bdTQ9bvU9WIX4SfQn8elof5Sz0CM81Nj
-         h/0WzS7ULyIPTs6UczLMu/e+yLTlck/1lwNEtHpJg5p0vJu3x9YteMYKdg0v14PVNQ
-         gI8F1bsbIDdrIwL0xzb4XCQw3EsULy04ZWVd6KpncHUhV4hn8t+d1z9DLGz5pGYtlR
-         /xQ0ntHnseqow==
-Date:   Sun, 16 Jan 2022 18:34:47 -0800
-From:   Ivan Delalande <colona@arista.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: Potential regression after fsnotify_nameremove() rework in 5.3
-Message-ID: <YeTVx//KrRKiT67U@visor>
-References: <YeI7duagtzCtKMbM@visor>
- <CAOQ4uxjiFewan=kxBKRHr0FOmN2AJ-WKH3DT2-7kzMoBMNVWJA@mail.gmail.com>
- <YeNyzoDM5hP5LtGW@visor>
- <CAOQ4uxhaSh4cUMENkaDJij4t2M9zMU9nCT4S8j+z+p-7h6aDnQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhaSh4cUMENkaDJij4t2M9zMU9nCT4S8j+z+p-7h6aDnQ@mail.gmail.com>
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
+        Sun, 16 Jan 2022 21:55:42 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id C75AE5C0178;
+        Sun, 16 Jan 2022 21:55:41 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Sun, 16 Jan 2022 21:55:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        E9QgnAUv2s26J9MTI8ndOrZNGiuEedtyCcEYZbzeGJo=; b=NwRb8bdJdaiTQKGy
+        GJ2BrkhunJl1KtrPlditG7Zri29Tr+TNG8U4fXU609URd2NGKJDu35bHrhRBMI0k
+        8mD773leNTSuv1LUW+UcQeitZQmqOj0RFUIMNmJRMsSrw/fFiptHcc/MwVrVIdj1
+        0TQm9kZLgWY/EnBlSGXS3OZ1xfEbNt9SVLToSjgXNaGbGpIii6RTU4T4iztQvj5O
+        UCOiHARXDdcaogcTMNoAcXpw/EWa+IFzZVnykQAw0Tm//JIEbtkxnAJCsQ/DR4mK
+        56/LvDklAqfmZmufNTkn8gnA8GPAUNPpHkz7OUEYtkHj93NAtdRenB0pVDom2sye
+        ZR+wuQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=E9QgnAUv2s26J9MTI8ndOrZNGiuEedtyCcEYZbzeG
+        Jo=; b=YviPgv1/ZewuNWQT2Id+prNM1DYyFI3Xx8mv5y8zuyGIFulN+xV5xg/KC
+        tazwKTGtV0Bb5MWYdxOnm/aZt6PGMT5YvNKkzB/9l0GZBVYiclKNqokKlvLCOrgb
+        fsXQ1H2mJqwkAP79HLjgie2btWDQoyVacPJAEL16mw/qDHsKu/LL39iq+GqE/xXN
+        tmXvS4+k6aNt/IoiOlqVwX9Hh3ZyS+ZgMrR54fl7nD+zb14QnmlFXQDmYdrfxfsN
+        Qjsbk9PPOs0WlJ0QxykCQ6IzBxGX3tcF73Svorh7VOL8bzFbN7Bwf7HDJWFGAB59
+        QLB1NsqjMsbeiOP1WUDslwpcKKiMw==
+X-ME-Sender: <xms:rNrkYYE0HYrvUh-zueIxA3z0Hr19UMvzO9sz_fGsKWuOmh81A3CyuQ>
+    <xme:rNrkYRVdfZhKm0D8QXdo92wkJm-1cfpV08RJwFNsayTUgzuK9F00I3FcUBYCNzFHk
+    BpbcxTix6Ze>
+X-ME-Received: <xmr:rNrkYSLYvYtY3T9HjPL504xEiIKuGnSZNvlkg9oVfEB9JH1Sm5xYdMYFobLoQv43bLSYgCThJXTfdJlA8D3twZmVihOr6-2BilkN0ovlez0N5OYBywMYDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddruddtgdehfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtkeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepgf
+    elleekteehleegheeujeeuudfhueffgfelhefgvedthefhhffhhfdtudfgfeehnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
+    hhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:rNrkYaH-PhDhLPg8DqKK9gORapF0NpMqKWfvc7of-k6eEkRlUc7wcA>
+    <xmx:rNrkYeXURhqG7mqbrqYbahDIvQU2CO8bOgeXedvI3LmEu7V0RhvPtA>
+    <xmx:rNrkYdP_cC3xu4c2DHBKpNt1Kf_v5c8_8OFQFEMzcc3nOLEQ-zZL9w>
+    <xmx:rdrkYQK8tCH2y3tmTRMY0L5SlRhaRM7YwMuO6UVwiFMR32ZsEZNw4A>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 16 Jan 2022 21:55:37 -0500 (EST)
+Message-ID: <275358741c4ee64b5e4e008d514876ed4ec1071c.camel@themaw.net>
+Subject: Re: [PATCH] vfs: check dentry is still valid in get_link()
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>
+Date:   Mon, 17 Jan 2022 10:55:32 +0800
+In-Reply-To: <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
+References: <164180589176.86426.501271559065590169.stgit@mickey.themaw.net>
+         <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 16, 2022 at 12:14:01PM +0200, Amir Goldstein wrote:
-> On Sun, Jan 16, 2022 at 3:20 AM Ivan Delalande <colona@arista.com> wrote:
->> On Sat, Jan 15, 2022 at 09:50:20PM +0200, Amir Goldstein wrote:
->>> On Sat, Jan 15, 2022 at 5:11 AM Ivan Delalande <colona@arista.com> wrote:
->>>> Sorry to bring this up so late but we might have found a regression
->>>> introduced by your "Sort out fsnotify_nameremove() mess" patch series
->>>> merged in 5.3 (116b9731ad76..7377f5bec133), and that can still be
->>>> reproduced on v5.16.
->>>>
->>>> Some of our processes use inotify to watch for IN_DELETE events (for
->>>> files on tmpfs mostly), and relied on the fact that once such events are
->>>> received, the files they refer to have actually been unlinked and can't
->>>> be open/read. So if and once open() succeeds then it is a new version of
->>>> the file that has been recreated with new content.
->>>>
->>>> This was true and working reliably before 5.3, but changed after
->>>> 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
->>>> d_delete()") specifically. There is now a time window where a process
->>>> receiving one of those IN_DELETE events may still be able to open the
->>>> file and read its old content before it's really unlinked from the FS.
->>>
->>> This is a bit surprising to me.
->>> Do you have a reproducer?
->>
->> Yeah, I was using the following one to bisect this. It will print a
->> message every time it succeeds to read the file after receiving a
->> IN_DELETE event when run with something like `mkdir /tmp/foo;
->> ./indelchurn /tmp/foo`. It seems to hit pretty frequently and reliably
->> on various systems after 5.3, even for different #define-parameters.
->>
+On Sat, 2022-01-15 at 06:38 +0000, Al Viro wrote:
+> On Mon, Jan 10, 2022 at 05:11:31PM +0800, Ian Kent wrote:
+> > When following a trailing symlink in rcu-walk mode it's possible
+> > for
+> > the dentry to become invalid between the last dentry seq lock check
+> > and getting the link (eg. an unlink) leading to a backtrace similar
+> > to this:
+> > 
+> > crash> bt
+> > PID: 10964  TASK: ffff951c8aa92f80  CPU: 3   COMMAND: "TaniumCX"
+> > …
+> >  #7 [ffffae44d0a6fbe0] page_fault at ffffffff8d6010fe
+> >     [exception RIP: unknown or invalid address]
+> >     RIP: 0000000000000000  RSP: ffffae44d0a6fc90  RFLAGS: 00010246
+> >     RAX: ffffffff8da3cc80  RBX: ffffae44d0a6fd30  RCX:
+> > 0000000000000000
+> >     RDX: ffffae44d0a6fd98  RSI: ffff951aa9af3008  RDI:
+> > 0000000000000000
+> >     RBP: 0000000000000000   R8: ffffae44d0a6fb94   R9:
+> > 0000000000000000
+> >     R10: ffff951c95d8c318  R11: 0000000000080000  R12:
+> > ffffae44d0a6fd98
+> >     R13: ffff951aa9af3008  R14: ffff951c8c9eb840  R15:
+> > 0000000000000000
+> >     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+> >  #8 [ffffae44d0a6fc90] trailing_symlink at ffffffff8cf24e61
+> >  #9 [ffffae44d0a6fcc8] path_lookupat at ffffffff8cf261d1
+> > #10 [ffffae44d0a6fd28] filename_lookup at ffffffff8cf2a700
+> > #11 [ffffae44d0a6fe40] vfs_statx at ffffffff8cf1dbc4
+> > #12 [ffffae44d0a6fe98] __do_sys_newstat at ffffffff8cf1e1f9
+> > #13 [ffffae44d0a6ff38] do_syscall_64 at ffffffff8cc0420b
+> > 
+> > Most of the time this is not a problem because the inode is
+> > unchanged
+> > while the rcu read lock is held.
+> > 
+> > But xfs can re-use inodes which can result in the inode -
+> > >get_link()
+> > method becoming invalid (or NULL).
 > 
-> I see yes, it's a race between fsnotify_unlink() and d_delete()
-> fsnotify_unlink() in explicitly required to be called before d_delete(), so
-> it has the d_inode information and that leaves a windows for opening
-> the file from cached dentry before d_delete().
-> 
-> I would rather that we try to address this not as a regression until
-> there is proof of more users that expect the behavior you mentioned.
-> I would like to provide you an API to opt-in for this behavior, because
-> fixing it for everyone may cause other workloads to break.
-> 
-> Please test the attached patch on top of v5.16 and use
-> IN_DELETE|IN_EXCL_UNLINK as the watch mask for testing.
-> 
-> I am assuming that it would be possible for you to modify the application
-> and add the IN_EXCL_UNLINK flag and that your application does not
-> care about getting IN_OPEN events on unlinked files?
-> 
-> My patch overloads the existing flag IN_EXCL_UNLINK with a new
-> meaning. It's a bit of a hack and we can use some other flag if we need to
-> but it actually makes some sense that an application that does not care for
-> events on d_unlinked() files will be guaranteed to not get those events
-> after getting an IN_DELETE event. It is another form of the race that you
-> described.
-> 
-> Will that solution work out for you?
+> Without an RCU delay?  Then we have much worse problems...
 
-Yeah, sounds perfect for us, and adding IN_EXCL_UNLINK to our
-applications is fine indeed. I've tested the 5.16 patch on my laptop
-with the reproducer and can't reproduce the issue. I've also tried the
-5.10 patch on our products and also stop seeing the issue both with
-the reproducer but also with our internal applications and test cases
-that made us look into this initially. So this looks like a good fix on
-our side at least.
+Sorry for the delay.
 
->>>> I'm not very familiar with the VFS and fsnotify internals, would you
->>>> consider this a regression, or was there never any intentional guarantee
->>>> for that behavior and it's best we work around this change in userspace?
->>>
->>> It may be a regression if applications depend on behavior that changed,
->>> but if are open for changes in your application please describe in more details
->>> what it tries to accomplish using IN_DELETE and the ekernel your application
->>> is running on and then I may be able to recommend a more reliable method.
->>
->> I can discuss it with our team and get more details on this but it may
->> be pretty complicated and costly to change. My understanding is that
->> these watched files are used as ID/version references for in-memory
->> objects shared between multiple processes to synchronize state, and
->> resynchronize when there are crashes or restarts. So they can be
->> recreated in place with the same or a different content, and so their
->> inode number or mtime etc. may not be useable as additonnal check.
->>
->> I think we can also have a very large number of these objects and files
->> on some configurations, so waiting to see if we have a following
->> IN_CREATE, or adding more checks/synchronization logic will probably
->> have a significant impact at scale.
->>
->> And we're targeting 5.10 and building it with our own config.
->>
-> 
-> I am not convinced that this is needed as a regression fix for stable
-> kernels, but since you are building your own kernel I can help you do the
-> backport - attached *untested* patch for v5.10 that also backport of
-> "fsnotify: pass dentry instead of inode data".
+That was a problem that was discussed at length with the original post
+of this patch that included a patch for this too (misguided though it
+was).
 
-Thanks a lot for making the backport too, actually later 5.10.y have
-your 950cc0d2bef0 and fecc4559780d changes, so I think we should just
-use the same fsnotify.c patch hunk as your 5.16 patch (but yeah still
-need the fsnotify_data_dentry bit). That's what I tested on our product,
-and as mentionned above seems to be working great.
+That discussion resulted in Darrick merging the problem xfs inline
+symlink handling with the xfs normal symlink handling.
 
-And we do carry a few custom patches and mainline backports so it's
-perfectly fine if you prefer not to submit it to stable.
+Another problem with these inline syslinks was they would hand a
+pointer to internal xfs storage to the VFS. Darrick's change
+allocates and copies the link then hands it to the VFS to free
+after use. And since there's an allocation in the symlink handler
+the rcu-walk case returns -ECHILD (on passed NULL dentry) so the
+VFS will call unlazy before that next call which I think is itself
+enough to resolve this problem.
 
-Thanks again,
+The only thing I think might be questionable is the VFS copy of the
+inode pointer but I think the inode is rcu freed so it will be
+around and the seq count will have changed so I think it should be
+ok.
 
--- 
-Ivan Delalande
-Arista Networks
+If I'm missing something please say so, ;)
+
+Darrick's patch is (was last I looked) in his xfs-next tree.
+
+Ian
+
+
