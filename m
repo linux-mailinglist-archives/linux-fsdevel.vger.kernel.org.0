@@ -2,155 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F007E4925B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 13:27:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E2B749262E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 13:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbiARM1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 07:27:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
+        id S240975AbiARM4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 07:56:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234413AbiARM1R (ORCPT
+        with ESMTP id S241090AbiARM4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 07:27:17 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7E8C061574;
-        Tue, 18 Jan 2022 04:27:17 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id a2so11483322ilr.0;
-        Tue, 18 Jan 2022 04:27:17 -0800 (PST)
+        Tue, 18 Jan 2022 07:56:31 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08ADC06173F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jan 2022 04:56:30 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id c2so21919920wml.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jan 2022 04:56:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pYLlRD99Rz4D8D8EFfAOvi+cuOnyBu6LT0ax/HdUAW8=;
-        b=HQENVoDnS5popVrwNgMRiH2t26Msaa3pBT9VvGcHbYXxcMFrniRWByy4qGw+LZmdHC
-         SiSVrqR3wF0PNQjtVDmopQcOPUuHt+4p70CBRZDZiG6YXRW3MAZoPWMn0sjruiPhfazD
-         ACg1OoJ5jA2nnU672DZrNT3n3kS7PA3jgQ2Olg9jN0Lc3I8HiF12niBR2yOnnKiwfnLO
-         FA0grxgWm38yZvIOyqM6DW1zNebvfLiPNt6hE5jYRuHKq0fPuv7aKz3P8LPm9mOqBJgi
-         LNOIp6x3X41c/i8mrRiKhDcTiY83jAKdMqFGJjZxq5BAEnzbnPYPOAa3jvIS2pXTM4aq
-         /4Gw==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=kt7BSYvG+rr2bLEECwLOEMCvBVZotJIk44/4XcKD9H0=;
+        b=qVnMKKFkDFfregDqIMLKYbf/6Rfv7ZYgGOembxhYq270XML2HKFtTQgZWIe4suSlTH
+         9ZzqBt5SMc2HUATvpaoydj6CpAH75hfC5DF+qG4KwifTo4DrFaHm4c8fs1QJQm7jolVG
+         Yz4zXdaQM20LOthQjIWFNEHmWnNyurUbd97AZ4ibUQhIkLNbnMtMag6Xrg6QZ8gZZqDm
+         AhE1vYxascg6oV2aYaMhw3KgbAVODS8uHXaxJLKE26GX1yPfuLfQGBvcHdmtP8IdG3mL
+         tZhPduIc/yXpUOsnqZjXTAJXBz08l+EgG80HPIwCF9codvQmj8aBOWuUqBF+k09ulJ3k
+         hb2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pYLlRD99Rz4D8D8EFfAOvi+cuOnyBu6LT0ax/HdUAW8=;
-        b=ElrzmrhH78ML6id+QmUkK4zZAFp8wmBE3r1Z6cHCHAneAGAKy45aGF6SUanHkOjtX3
-         AnYu59zEdOHXhHrGT+jIzi7KZ2uvn6Mn8wRT32obtYlMsuRZoEssYubTMLNxFGhjn1wn
-         7PBRNUmG585V0aXAMVuNs49vkfrgQ3wjnMaMQKc/L7lDQX+dgOUXkkvvcKfJr/rKs6hB
-         zV/FcNwfA+0e8ys/BDbm+XFSxkA0HAQtWUp0tMhwjhiu8DgxEwe5yLCxXs7fTAAkxnzq
-         k8o5WkmzPuZeq5LjXTfBYFwu4yRuUSWkkkhWFT6WFWu8yeoXDlj3DrQCDGotEDnvzNCa
-         bqwQ==
-X-Gm-Message-State: AOAM530anFrtus8BaLBUaOaun/KnaCDXyE3+8l6ZnGLtoJv7dy8EdUs9
-        e7w/dSKVFLgbqbYrrbp67X/i+sOfLn7oPVkgMao=
-X-Google-Smtp-Source: ABdhPJzpJQUqRjCwGM5v0i9hUV+DkW7ufrPpgzCnbQjGahgFEJ0t2xDaWNS9eavha93xTlAy+YocQMkJ4txbevUvXHI=
-X-Received: by 2002:a05:6e02:1948:: with SMTP id x8mr14609753ilu.107.1642508836861;
- Tue, 18 Jan 2022 04:27:16 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=kt7BSYvG+rr2bLEECwLOEMCvBVZotJIk44/4XcKD9H0=;
+        b=UOKDGPk+1TuZCkEMmrOBkj62ptpXPgRqOFO8f8f8t8DeWpCGbtX+2WbR6SPIL7xELW
+         oE8yQSi9ELY2Y1dHVoOsk/qlrD6NMRtCjxY8rZxMcZmZUyUQdvi4Noj6NZrwlPkh92sx
+         LBS7KTY3HL2Sbasp4vbYDMepYsOdxUtqYoq2Ve550W4TIKaTb0tLVo0cOlkqnm9uH82E
+         UstQq2N9+gCaLrDhW5Ur7HHxhR2/m5lq/CYZ0Kkn3KgYbTrIfPPsplCFIXTvmER/dHW/
+         nkdu34dKCqXluaOtOx56pFuwiDtvcmj39mHDShai49d/Q/KWfeYSUBC7M8jXjUEL3d4T
+         Kn8A==
+X-Gm-Message-State: AOAM530vMx5d97NvX7qeVB/MOdws6z0fUMPn03OXbee+1TTqHnXh0R0k
+        3JxOimrzXD7xHge/VnzCay9pUhpdqurLV1VhLEQ=
+X-Google-Smtp-Source: ABdhPJxGKt76Lg3GTqSnJwaq8ce07osyp5P35JeSOcN9tb1VXjOIJO04UXEDjKYPd9tAaf1+CAAgchajeREZcdHreE4=
+X-Received: by 2002:a05:6000:1b0e:: with SMTP id f14mr24751578wrz.100.1642510589314;
+ Tue, 18 Jan 2022 04:56:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20220118120031.196123-1-amir73il@gmail.com>
-In-Reply-To: <20220118120031.196123-1-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 18 Jan 2022 14:27:05 +0200
-Message-ID: <CAOQ4uxg3PJBx6MjDnPYcLjJ-tY-Kc-c1d0YDr7OZAiJ=qk7USw@mail.gmail.com>
-Subject: Re: [PATCH] fnotify: invalidate dcache before IN_DELETE event
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        Ivan Delalande <colona@arista.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
+Received: by 2002:adf:e18f:0:0:0:0:0 with HTTP; Tue, 18 Jan 2022 04:56:28
+ -0800 (PST)
+Reply-To: mohsheikhalhamed@gmail.com
+From:   bratikox <bratikox@gmail.com>
+Date:   Tue, 18 Jan 2022 13:56:28 +0100
+Message-ID: <CAFuXTSxdo5QqN-cWu1zvOLDOxST9c2oW0BX-ZHL4Uwk2Qh45dA@mail.gmail.com>
+Subject: Salam Alaikum /ADIA LOAN OFFER
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 18, 2022 at 2:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Apparently, there are some applications that use IN_DELETE event as an
-> invalidation mechanism and expect that if they try to open a file with
-> the name reported with the delete event, that it should not contain the
-> content of the deleted file.
->
-> Commit 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
-> d_delete()") moved the fsnotify delete hook before d_delete() so fsnotify
-> will have access to a positive dentry.
->
-> This allowed a race where opening the deleted file via cached dentry
-> is now possible after receiving the IN_DELETE event.
->
-> To fix the regression, we use two different techniques:
-> 1) For call sites that call d_delete() with elevated refcount, convert
->    the call to d_drop() and move the fsnotify hook after d_drop().
-> 2) For the vfs helpers that may turn dentry to negative on d_delete(),
->    use a helper d_delete_notify() to pin the inode, so we can pass it
->    to an fsnotify hook after d_delete().
->
-> Create a new hook fsnotify_delete() that allows to pass a negative
-> dentry and takes the unlinked inode as an argument.
->
-> Add a missing fsnotify_unlink() hook in nfsdfs that was found during
-> the call sites audit.
->
-> Note that the call sites in simple_recursive_removal() follow
-> d_invalidate(), so they require no change.
->
-> Backporting hint: this regression is from v5.3. Although patch will
-> apply with only trivial conflicts to v5.4 and v5.10, it won't build,
-> because fsnotify_delete() implementation is different in each of those
-> versions (see fsnotify_link()).
->
-> Reported-by: Ivan Delalande <colona@arista.com>
-> Link: https://lore.kernel.org/linux-fsdevel/YeNyzoDM5hP5LtGW@visor/
-> Fixes: 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of d_delete()")
-> Cc: stable@vger.kernel.org # v5.3+
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->
-> Jan,
->
-> This turned into an audit of fsnotify_unlink/rmdir() call sites, so
-> besides fixing the regression, I also added one missing hook and replaced
-> most of the d_delete() calls with d_drop() to simplify things.
->
-> I will follow up with backports for v5.4 and v5.10 and will send the
-> repro to LTP guys.
->
-> Thanks,
-> Amir.
->
->  fs/btrfs/ioctl.c         |  5 ++---
->  fs/configfs/dir.c        |  6 +++---
->  fs/devpts/inode.c        |  2 +-
->  fs/namei.c               | 27 ++++++++++++++++++++++-----
->  fs/nfsd/nfsctl.c         |  5 +++--
->  include/linux/fsnotify.h | 20 ++++++++++++++++++++
->  net/sunrpc/rpc_pipe.c    |  4 ++--
->  7 files changed, 53 insertions(+), 16 deletions(-)
->
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index edfecfe62b4b..121e8f439996 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -3060,10 +3060,9 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
->         btrfs_inode_lock(inode, 0);
->         err = btrfs_delete_subvolume(dir, dentry);
->         btrfs_inode_unlock(inode, 0);
-> -       if (!err) {
-> +       d_drop(dentry);
-> +       if (!err)
->                 fsnotify_rmdir(dir, dentry);
-> -               d_delete(dentry);
-> -       }
->
+Salam Alaikum,
 
-oops that an unintentional logic change.
-Was supposed to be:
+We are a United Arab Emirates based investment company known as Abu
+Dhabi Investment Authority working on expanding its portfolio globally
+and financing projects.
 
-        if (!err) {
-+               d_drop(dentry);
-                fsnotify_rmdir(dir, dentry);
--               d_delete(dentry);
-        }
+We are offering Corporate and Personal Loan at 3.5% Interest Rate for
+a duration of 5 to 10 years.
 
-Anyway, fix is pushed to fsnotify-fixes branch.
+Please get back to us on Email: mohsheikhalhamed@gmail.com ,if you are
+interested for further embellishment.
 
-Thanks,
-Amir.
+We also pay 2% commission to brokers who introduce project owners for
+finance or other opportunities.
+
+
+ Yours truly,
+ Hamed Mohammad
+ (Personal Assistant)
+ Abu Dhabi Investment Authority
+ 211 Corniche, P.O Box 3600
+ Abu Dhabi,United Arab Emirates
