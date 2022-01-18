@@ -2,115 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9923C491204
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jan 2022 23:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F51491366
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 02:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238413AbiAQW51 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 17:57:27 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:57186 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230456AbiAQW50 (ORCPT
+        id S238660AbiARBce (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 20:32:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45776 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229705AbiARBcd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 17:57:26 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4DCBD212C6;
-        Mon, 17 Jan 2022 22:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1642460245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=P7n87uEdX6AP7WiZCRETbtzvEHDHupG/dHaxrwEAQC8=;
-        b=IIp0lRCZ46tjOlNYdKtcQvs4fMVMos27RVH1sts3oeBtQ++NY4e/Bg7ORS0HB+r/0jR7w9
-        KhwiE03oScvFl1sJD5UkMFQEA6zQ0bAEhlSacM/0Io7G0SqlrGXelAlkT5J9wR8JYef3oL
-        Un0vYOE3FfRoAIqbzxGYGQkkVFqEiYk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1642460245;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=P7n87uEdX6AP7WiZCRETbtzvEHDHupG/dHaxrwEAQC8=;
-        b=oiXsTGkzXw7eP/0rTLj8LfUczvFMyqm38HLIOw0dEdqaNm6GyrqdqlRGs5q8a8dVkoGhD1
-        k1Y4JajvAaC7YbAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A4D5213EA9;
-        Mon, 17 Jan 2022 22:57:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id x4U/GFL05WE3DQAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 17 Jan 2022 22:57:22 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Jan 2022 20:32:33 -0500
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72DE6C061574;
+        Mon, 17 Jan 2022 17:32:33 -0800 (PST)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n9dMF-002gha-WE; Tue, 18 Jan 2022 01:32:24 +0000
+Date:   Tue, 18 Jan 2022 01:32:23 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Ian Kent <raven@themaw.net>, "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] vfs: check dentry is still valid in get_link()
+Message-ID: <YeYYp89adipRN64k@zeniv-ca.linux.org.uk>
+References: <164180589176.86426.501271559065590169.stgit@mickey.themaw.net>
+ <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
+ <275358741c4ee64b5e4e008d514876ed4ec1071c.camel@themaw.net>
+ <YeV+zseKGNqnSuKR@bfoster>
+ <YeWZRL88KPtLWlkI@zeniv-ca.linux.org.uk>
+ <YeWxHPDbdSfBDtyX@zeniv-ca.linux.org.uk>
+ <YeXIIf6/jChv7JN6@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Christian Brauner" <christian.brauner@ubuntu.com>,
-        "Anthony Iliopoulos" <ailiop@suse.com>,
-        "David Howells" <dhowells@redhat.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "LKML" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH - resend] devtmpfs regression fix: reconfigure on each mount
-In-reply-to: <CAHk-=wiLi2_JJ1+VnhZ3aWr_cag7rVxbhpf6zKVrOuRHMsfQ4Q@mail.gmail.com>
-References: <163935794678.22433.16837658353666486857@noble.neil.brown.name>,
- <20211213125906.ngqbjsywxwibvcuq@wittgenstein>, <YbexPXpuI8RdOb8q@technoir>,
- <20211214101207.6yyp7x7hj2nmrmvi@wittgenstein>, <Ybik5dWF2w06JQM6@technoir>,
- <20211214141824.fvmtwvp57pqg7ost@wittgenstein>,
- <164237084692.24166.3761469608708322913@noble.neil.brown.name>,
- <CAHk-=wiLi2_JJ1+VnhZ3aWr_cag7rVxbhpf6zKVrOuRHMsfQ4Q@mail.gmail.com>
-Date:   Tue, 18 Jan 2022 09:57:19 +1100
-Message-id: <164246023981.24166.3391008944843186406@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YeXIIf6/jChv7JN6@zeniv-ca.linux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 17 Jan 2022, Linus Torvalds wrote:
-> On Mon, Jan 17, 2022 at 12:07 AM NeilBrown <neilb@suse.de> wrote:
-> >
-> > Since that was changed, the mount options used for devtmpfs are ignored.
-> > This is a regression which affect systemd - which mounts devtmpfs
-> > with "-o mode=755,size=4m,nr_inodes=1m".
+On Mon, Jan 17, 2022 at 07:48:49PM +0000, Al Viro wrote:
+> > But that critically depends upon the contents not getting mangled.  If it
+> > *can* be screwed by such unlink, we risk successful lookup leading to the
+> > wrong place, with nothing to tell us that it's happening.  We could handle
+> > that by adding a check to fs/namei.c:put_link(), and propagating the error
+> > to callers.  It's not impossible, but it won't be pretty.
+> > 
+> > And that assumes we avoid oopsen on string changing under us in the first
+> > place.  Which might or might not be true - I hadn't finished the audit yet.
+> > Note that it's *NOT* just fs/namei.c + fs/dcache.c + some fs methods -
+> > we need to make sure that e.g. everything called by ->d_hash() instances
+> > is OK with strings changing right under them.  Including utf8_to_utf32(),
+> > crc32_le(), utf8_casefold_hash(), etc.
 > 
-> Hmm, I've applied this, but I'd have loved to see what the actual
-> symptoms of the problem were. Particularly since it's apparently been
-> broken for 18 months with this being the first I hear of it.
+> And AFAICS, ext4, xfs and possibly ubifs (I'm unfamiliar with that one and
+> the call chains there are deep enough for me to miss something) have the
+> "bugger the contents of string returned by RCU ->get_link() if unlink()
+> happens" problem.
 > 
-> Yes, yes, I could (and did) search for this on the mailing lists, and
-> found the discussion and more information, but I think that info
-> should have been in the commit message rather than me having to go
-> look for it just to see the clarifications..
+> I would very much prefer to have them deal with that crap, especially
+> since I don't see why does ext4_evict_inode() need to do that memset() -
+> can't we simply check ->i_op in ext4_can_truncate() and be done with
+> that?
 
-Sorry about that.  The trail was a bit convoluted and I hadn't bothered
-to straighten it out as the behavioural change was so easy to
-demonstrate.
+This reuse-without-delay has another fun side, AFAICS.  Suppose the new use
+for inode comes with the same ->i_op (i.e. it's a symlink again) and it
+happens right after ->get_link() has returned the pointer to body.
 
-I've had a better look now.
-A customer with a 5.3 based kernel reported that udev was having
-problems creating all the symlinks for lots of LUNs for some storage
-array (With dm devices over the LUNs etc).
-It ran out of inodes because systemd always mounts devtmpfs with 
-  size=4m,nr_inodes=64k
-This was bumped to 128k and then to 1m in systemd-v250.
+We are already past whatever checks we might add in pick_link().  And the
+pointer is still valid.  So we end up quietly traversing the body of
+completely unrelated symlink that never had been anywhere near any directory
+we might be looking at.  With no indication of anything going wrong - just
+a successful resolution with bogus result.
 
-We provided our customer with a systemd which used a larger limit, but
-when we tested this fix on Tumbleweed (with a newer kernel), we noticed
-that it had no effect.
-
-Now admittedly the default provided by the kernel is a lot bigger than
-even the current 1m setting from systemd so maybe this doesn't matter.
-Had the commit which changed behaviour said "systemd sets nr_inodes to a
-stupidly low number, let's just ignore the mount options", then I
-probably would have accept it.  But it looked like behaviour change
-without justification and that suggests a regression. So I patched it.
-
-Thanks,
-NeilBrown
+Could XFS folks explain what exactly goes wrong if we make actual marking
+inode as ready for reuse RCU-delayed, by shifting just that into
+->free_inode()?  Why would we need any extra synchronize_rcu() anywhere?
