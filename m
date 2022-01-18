@@ -2,74 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04242492C40
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 18:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9F2492CC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 18:54:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346973AbiARRZo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 12:25:44 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:58676 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243633AbiARRZo (ORCPT
+        id S244297AbiARRyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 12:54:13 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35785 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244247AbiARRyN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 12:25:44 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 027631F3B5;
-        Tue, 18 Jan 2022 17:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1642526743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Tue, 18 Jan 2022 12:54:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642528452;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=oiezLhDBKqAsWLi6gm10m7XokcstGprj+9tuWvvQhsk=;
-        b=yunBoXD59wcdMOdC6jSlp6grM4HDP84gSfaEKLGK/grrlsWi2uu6vt+LKSZwvVcV8jDIL8
-        Rs8lqPawv9e4c4L8LLCiBFcgDs/9H4LkrAHaiZx2fVAkbGf+bZJJkXOa60ooS6G1ZOwWq+
-        K+MnPQcmPr8gV3aYe/9bdodZn7upewA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1642526743;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oiezLhDBKqAsWLi6gm10m7XokcstGprj+9tuWvvQhsk=;
-        b=/Tzvd+GjJ4ZTY3qiCq3rukhQ7hdMdbSlcbarH6Y2uVrAn6xgpRe9wjfhRgzgkqZWiwfUCg
-        vIBxESx1p4ks/rCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=nPPBU7fRyyAQC3IqAePmc/y5C5VKzN6r/ufwnOhkpIs=;
+        b=dlSGAkhzfpDZol/WYYE7Ym3qY5/T48qtMvkYnjNAQWewp4pdK+23EO/R86IA8Y6saB5/aV
+        g8n85DFzVa3zLWwovG/jR7I+2ZjArgm/HN5jXh/f1Z+EYhfXO9IWgL4eMS07nOu9XxS4B3
+        FLXNQxIxVR48djPPOWF/i7IjH9GIZyU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-654-dYizNdE7Pt6DN4j2koeeug-1; Tue, 18 Jan 2022 12:54:08 -0500
+X-MC-Unique: dYizNdE7Pt6DN4j2koeeug-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BD98D13DC8;
-        Tue, 18 Jan 2022 17:25:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ayNDLBb45mH9IQAAMHmgww
-        (envelope-from <ddiss@suse.de>); Tue, 18 Jan 2022 17:25:42 +0000
-Date:   Tue, 18 Jan 2022 18:25:41 +0100
-From:   David Disseldorp <ddiss@suse.de>
-To:     viro@zeniv.linux.org.uk, willy@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, Martin Wilck <mwilck@suse.com>
-Subject: Re: [PATCH v6 0/6] initramfs: "crc" cpio format and
- INITRAMFS_PRESERVE_MTIME
-Message-ID: <20220118182541.3e454a94@suse.de>
-In-Reply-To: <20220107133814.32655-1-ddiss@suse.de>
-References: <20220107133814.32655-1-ddiss@suse.de>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B8231109455A;
+        Tue, 18 Jan 2022 17:40:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A82257ED93;
+        Tue, 18 Jan 2022 17:40:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YebpktrcUZOlBHkZ@infradead.org>
+References: <YebpktrcUZOlBHkZ@infradead.org> <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk> <164251409447.3435901.10092442643336534999.stgit@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <smfrench@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] vfs, fscache: Add an IS_KERNEL_FILE() macro for the S_KERNEL_FILE flag
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3613680.1642527614.1@warthog.procyon.org.uk>
+Date:   Tue, 18 Jan 2022 17:40:14 +0000
+Message-ID: <3613681.1642527614@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri,  7 Jan 2022 14:38:08 +0100, David Disseldorp wrote:
+Christoph Hellwig <hch@infradead.org> wrote:
 
-> This patchset does some minor initramfs refactoring and allows cpio
-> entry mtime preservation to be disabled via a new Kconfig
-> INITRAMFS_PRESERVE_MTIME option.
-> Patches 4/6 to 6/6 implement support for creation and extraction of
-> "crc" cpio archives, which carry file data checksums. Basic tests for
-> this functionality can be found at
-> Link: https://github.com/rapido-linux/rapido/pull/163
+> On Tue, Jan 18, 2022 at 01:54:54PM +0000, David Howells wrote:
+> > Add an IS_KERNEL_FILE() macro to test the S_KERNEL_FILE inode flag as is
+> > common practice for the other inode flags[1].
+> 
+> Please fix the flag to have a sensible name first, as the naming of the
+> flag and this new helper is utterly wrong as we already discussed.
 
-Ping, anything I can do to help move this patchset along?
+And I suggested a new name, which you didn't comment on.
+
+David
+
