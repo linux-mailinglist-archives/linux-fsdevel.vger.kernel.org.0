@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D13C4927C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 14:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 415704927D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 14:55:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244200AbiARNzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 08:55:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43054 "EHLO
+        id S244543AbiARNzb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 08:55:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:33249 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244383AbiARNzH (ORCPT
+        by vger.kernel.org with ESMTP id S244561AbiARNzN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 08:55:07 -0500
+        Tue, 18 Jan 2022 08:55:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642514106;
+        s=mimecast20190719; t=1642514113;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VF4onKqMIrYu5mloBKsdeoO9FD6g9xK5Udf/2HJaEOo=;
-        b=Ft/EeX36ihTrK+KY+x9utp711JR7zeYWwzDXdMP3184EcK1N/+t9EJY+F50vTna0vvIBWk
-        PB9q599FC3bcfmW3iQn01ifdpYtWMR1B5+Cdfm0QffUoCwdq9N7Qj7uVw+yGak9kv5UkYO
-        nD8JY0QyFMMeu4zSlSX93zm72uxLhuc=
+        bh=nVXdBfar06aN8bLGcQhg3hoHTwA3zNmoM5BZNTP/YMg=;
+        b=HQVdhLc0zrP1sQFhSAeBZCFB+w3X9X6hexsygjK2gy8qrZIVjWx6wMucRvEkXFhqTk+EKL
+        c3WgBv4041IuU2jhB3JxS4kfP0lXbUxhUD/pXBrpar7MnESNyTtmUF1JBc9lltMBTmRvdM
+        8HVkISlfk7fZ9ZvKGyy+sEHvf6x++yo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-58-vgBLGJ2uORa7FAsl4Z7w7Q-1; Tue, 18 Jan 2022 08:55:03 -0500
-X-MC-Unique: vgBLGJ2uORa7FAsl4Z7w7Q-1
+ us-mta-315-E2DiHj7XNe26-nTe-KwSqA-1; Tue, 18 Jan 2022 08:55:08 -0500
+X-MC-Unique: E2DiHj7XNe26-nTe-KwSqA-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3A5521090017;
-        Tue, 18 Jan 2022 13:54:49 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EFDF18B9EA9;
+        Tue, 18 Jan 2022 13:54:58 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AAE842DE92;
-        Tue, 18 Jan 2022 13:54:45 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 578142B6E9;
+        Tue, 18 Jan 2022 13:54:55 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 08/11] fscache: Add a comment explaining how page-release
- optimisation works
+Subject: [PATCH 09/11] vfs,
+ fscache: Add an IS_KERNEL_FILE() macro for the S_KERNEL_FILE flag
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
-Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
+Cc:     Jeff Layton <jlayton@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+        dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <smfrench@gmail.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
@@ -58,8 +58,8 @@ Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 18 Jan 2022 13:54:44 +0000
-Message-ID: <164251408479.3435901.9540165422908194636.stgit@warthog.procyon.org.uk>
+Date:   Tue, 18 Jan 2022 13:54:54 +0000
+Message-ID: <164251409447.3435901.10092442643336534999.stgit@warthog.procyon.org.uk>
 In-Reply-To: <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
 References: <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
@@ -71,53 +71,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a comment into fscache_note_page_release() to explain how the
-page-release optimisation logic works[1].  It's not entirely obvious as it
-has nothing to do with whether or not the netfs file contains data.
+Add an IS_KERNEL_FILE() macro to test the S_KERNEL_FILE inode flag as is
+common practice for the other inode flags[1].
 
-FSCACHE_COOKIE_NO_DATA_TO_READ is set if we have no data in the cache yet
-(ie. the backing file lookup was negative, the file is 0 length or the
-cookie got invalidated).  It means that we have no data in the cache, not
-that the file is necessarily empty on the server.
-
-FSCACHE_COOKIE_HAVE_DATA is set once we've stored data in the backing file.
-From that point on, we have data we *could* read - however, it's covered by
-pages in the netfs pagecache until at such time one of those covering pages
-is released.
-
-So if we've written data to the cache (HAVE_DATA) and there wasn't any data
-in the cache when we started (NO_DATA_TO_READ), it may no longer be true
-that we can skip reading from the cache.
-
-Read skipping is done by cachefiles_prepare_read().
-
-Note that tracking is not done on a per-page basis, but only on a per-file
-basis.
-
+Suggested-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 cc: linux-cachefs@redhat.com
-Link: https://lore.kernel.org/r/043a206f03929c2667a465314144e518070a9b2d.camel@kernel.org/ [1]
+Link: https://lore.kernel.org/r/88d7f8970dcc0fd0ead891b1f42f160b8d17d60e.camel@kernel.org/ [1]
 ---
 
- include/linux/fscache.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/cachefiles/namei.c |    6 +++---
+ fs/namei.c            |    2 +-
+ include/linux/fs.h    |    1 +
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-index ede50406bcb0..296c5f1d9f35 100644
---- a/include/linux/fscache.h
-+++ b/include/linux/fscache.h
-@@ -665,6 +665,11 @@ static inline void fscache_clear_inode_writeback(struct fscache_cookie *cookie,
- static inline
- void fscache_note_page_release(struct fscache_cookie *cookie)
- {
-+	/* If we've written data to the cache (HAVE_DATA) and there wasn't any
-+	 * data in the cache when we started (NO_DATA_TO_READ), it may no
-+	 * longer be true that we can skip reading from the cache - so clear
-+	 * the flag that causes reads to be skipped.
-+	 */
- 	if (cookie &&
- 	    test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
- 	    test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index f256c8aff7bb..04563f759e99 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -20,7 +20,7 @@ static bool __cachefiles_mark_inode_in_use(struct cachefiles_object *object,
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	bool can_use = false;
+ 
+-	if (!(inode->i_flags & S_KERNEL_FILE)) {
++	if (!IS_KERNEL_FILE(inode)) {
+ 		inode->i_flags |= S_KERNEL_FILE;
+ 		trace_cachefiles_mark_active(object, inode);
+ 		can_use = true;
+@@ -746,7 +746,7 @@ static struct dentry *cachefiles_lookup_for_cull(struct cachefiles_cache *cache,
+ 		goto lookup_error;
+ 	if (d_is_negative(victim))
+ 		goto lookup_put;
+-	if (d_inode(victim)->i_flags & S_KERNEL_FILE)
++	if (IS_KERNEL_FILE(d_inode(victim)))
+ 		goto lookup_busy;
+ 	return victim;
+ 
+@@ -793,7 +793,7 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
+ 	/* check to see if someone is using this object */
+ 	inode = d_inode(victim);
+ 	inode_lock(inode);
+-	if (inode->i_flags & S_KERNEL_FILE) {
++	if (IS_KERNEL_FILE(inode)) {
+ 		ret = -EBUSY;
+ 	} else {
+ 		/* Stop the cache from picking it back up */
+diff --git a/fs/namei.c b/fs/namei.c
+index d81f04f8d818..c2175ab3849d 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3959,7 +3959,7 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	error = -EBUSY;
+ 	if (is_local_mountpoint(dentry) ||
+-	    (dentry->d_inode->i_flags & S_KERNEL_FILE))
++	    IS_KERNEL_FILE(dentry->d_inode))
+ 		goto out;
+ 
+ 	error = security_inode_rmdir(dir, dentry);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f5d3bf5b69a6..227497793282 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2216,6 +2216,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
+ #define IS_ENCRYPTED(inode)	((inode)->i_flags & S_ENCRYPTED)
+ #define IS_CASEFOLDED(inode)	((inode)->i_flags & S_CASEFOLD)
+ #define IS_VERITY(inode)	((inode)->i_flags & S_VERITY)
++#define IS_KERNEL_FILE(inode)	((inode)->i_flags & S_KERNEL_FILE)
+ 
+ #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
+ 				 (inode)->i_rdev == WHITEOUT_DEV)
 
 
