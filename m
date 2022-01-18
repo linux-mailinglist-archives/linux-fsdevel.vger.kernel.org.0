@@ -2,333 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB8349254D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 13:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD8CC492560
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 13:07:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241134AbiARMAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 07:00:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50454 "EHLO
+        id S241274AbiARMH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 07:07:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237808AbiARMAg (ORCPT
+        with ESMTP id S231260AbiARMH3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 07:00:36 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AD9C061574;
-        Tue, 18 Jan 2022 04:00:35 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id l35-20020a05600c1d2300b0034d477271c1so3282000wms.3;
-        Tue, 18 Jan 2022 04:00:35 -0800 (PST)
+        Tue, 18 Jan 2022 07:07:29 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D575BC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jan 2022 04:07:28 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id o80so3294475yba.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jan 2022 04:07:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HA4ESTFs25OMuYhDg2twMGj0iH/c0h6PHoeBSRM4/oo=;
-        b=m3BaXGK+q+hH9rY7V+dUYfVyTm0n1NZQtFtorEJk9FGcq0K4QNZAgo1o8RN2PpVMFD
-         1AdZK5pGNheFGgNGuQ/IfPKmAR6tapK0qAkERTC2lp6W1nrjJswA0MBsKlV9bB9GUel/
-         MiEzQ5SJt8mP32vxYj+dGZIbymZCUekpFdqqSX+tun1t3Ory5z5eCcamvM+81a/82jNm
-         INtMHIFpQcDR8mCA2mIXmIvB/s+1qrpa7IKukhLygAnBfWEUxbFajJBWhk0HOHcD0B8u
-         ZB1gDqIElny+rwmMFVxY6RWKvdwPy4wSuGHFImJCY71XpcaqYNGiL52ayohlvE8fjzze
-         Em7w==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=OC5quY8+bzQ7YwLxGQW1P7Vgcog//q1EsjQWuTsPZiA=;
+        b=c3af9NXfUtTV/ISsfNREopmBIAf8fT4PPP17qdILfbQoqvb1yfMa+D0XLlYT6JoNjU
+         ePaLArNrWW5zLYdpo1aCAVvBM7NZdg3qoad2pIpBpn+dKX2qpHWbIzeTo/ZWGlUzG9m6
+         hdWzHLZgMHYc+km3yxBo/4gsymQJh83zgMLiF405qZowaqIxM7BnTJJFnGp2/q35ZIA6
+         maVqxHfZSqMXQDeOLAlQCpQMgLny1kM6wpQgjMqc1MgA20REMRU1Kyb60DSCWB1/YGt0
+         nmM29RNua0k7xFUkauKHhL0GFjcs9AX976BwT6xrQiJmMLPjBfkMK40ffRMoWetReJqm
+         /lFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HA4ESTFs25OMuYhDg2twMGj0iH/c0h6PHoeBSRM4/oo=;
-        b=LROmoudFNhrcxk06pKyGnoP3EoVBsqs1cjH6jQlD0BhwGPFXaXa7Z+aAyYSzsddAjQ
-         PdnxxAZykEfioCR2ggcV9mVjvMqr+9wJ9tsUEZZ2uPHU1l4gtMY3+Gno+GzNXmOCcbC5
-         Ig2+dgsXUay2+ZasedXqeUivB9SsFPF5OR8vBO3aOLO3Zsx/dhiU1hLyG6ffOmCjUwhP
-         1oWK5iQ5K8EgU1ueSh5uKw6vYp/HS7kqJdQ7WRiKY5o40cCHJnDPUJGKv6prieeOnZAA
-         6lWoS4J+5DmUBUUOX3BRMZcfZvX7Xx0mddf7wBMWxlKHh2Mh9ICrfef4GcbXEKsQzgat
-         iTYw==
-X-Gm-Message-State: AOAM533mg+9RfaQY4aj0mObinayvNRNjbxYEVx4lD8MTsHTAbKRDj9ln
-        mVmXFepCEgwyL8wphm5VdHA=
-X-Google-Smtp-Source: ABdhPJyvZAjjKPVT0+mBfA8mbZ6rWZP1tZAgd7e1S3GiT71MukQ1H80VPW+mUXSWumQrOMRrTxxMWA==
-X-Received: by 2002:a5d:4584:: with SMTP id p4mr23536890wrq.607.1642507234232;
-        Tue, 18 Jan 2022 04:00:34 -0800 (PST)
-Received: from localhost.localdomain ([82.114.46.14])
-        by smtp.gmail.com with ESMTPSA id m40sm2369188wms.34.2022.01.18.04.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jan 2022 04:00:33 -0800 (PST)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        Ivan Delalande <colona@arista.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH] fnotify: invalidate dcache before IN_DELETE event
-Date:   Tue, 18 Jan 2022 14:00:31 +0200
-Message-Id: <20220118120031.196123-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OC5quY8+bzQ7YwLxGQW1P7Vgcog//q1EsjQWuTsPZiA=;
+        b=wkmZfRsCAnTmP6a9e60wtI4ceA1x2I6RyNFsrD/sr8TqD828CJNRwWUk25ytKeRHsq
+         RCojCySFHK8uHWX8KTu6MP/f663wwhEjB90EKVpfovjX38E8vNpZdp9SNDPW5SHhP/hf
+         KKHhvOArk9RNd7KBM5tDCXe+allSkUe92Ie5FtkCz3oONxed+AlZAbYnpetUssOkXC5b
+         GYx7aP1tTumEbJWwqHg0ysMZbvE4uoBcPZA2RLnnkQrqa0oDQ61pgSF8pqqzSmEhb6Dr
+         8VXzzwvZzWm8NfUDD5wVYFifeQL33ADX894a8m9XPf7VvpzI3uc0WTAhuyIejJIt3un7
+         GovQ==
+X-Gm-Message-State: AOAM533ksgjtB/MTiFxbPqwSnXf/tlOZ+ITJ6YZDkZzElL62QblJPkLD
+        3+oZ0umKMhPLWoXVIDymxW6uO5j3YTYLwxmGQd20lw==
+X-Google-Smtp-Source: ABdhPJxNFvL/SkKU6juzzW+raWlteR7gaAX3pdOhU7lWwwCB3tPpMz6t5NIUds1vo4+A7k0YLFoYLeZ3JS1yM7GxpMg=
+X-Received: by 2002:a25:8806:: with SMTP id c6mr31085871ybl.199.1642507648082;
+ Tue, 18 Jan 2022 04:07:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211220085649.8196-1-songmuchun@bytedance.com>
+ <20211220085649.8196-11-songmuchun@bytedance.com> <20220106110051.GA470@blackbody.suse.cz>
+ <CAMZfGtXZA+rLMUw5yLSW=eUncT0BjH++Dpi1EzKwXvV9zwqF1w@mail.gmail.com> <20220113133213.GA28468@blackbody.suse.cz>
+In-Reply-To: <20220113133213.GA28468@blackbody.suse.cz>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 18 Jan 2022 20:05:44 +0800
+Message-ID: <CAMZfGtWJeov9XD_MEkDJwTK5b73OKPYxJBQi=D5-NSyNSSKLCw@mail.gmail.com>
+Subject: Re: [PATCH v5 10/16] mm: list_lru: allocate list_lru_one only when needed
+To:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
+        Alex Shi <alexs@kernel.org>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        jaegeuk@kernel.org, chao@kernel.org,
+        Kari Argillander <kari.argillander@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-nfs@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        Fam Zheng <fam.zheng@bytedance.com>,
+        Muchun Song <smuchun@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Apparently, there are some applications that use IN_DELETE event as an
-invalidation mechanism and expect that if they try to open a file with
-the name reported with the delete event, that it should not contain the
-content of the deleted file.
+On Thu, Jan 13, 2022 at 9:32 PM Michal Koutn=C3=BD <mkoutny@suse.com> wrote=
+:
+>
+> On Wed, Jan 12, 2022 at 09:22:36PM +0800, Muchun Song <songmuchun@bytedan=
+ce.com> wrote:
+> >   root(-1) -> A(0) -> B(1) -> C(2)
+> >
+> > CPU0:                                   CPU1:
+> > memcg_list_lru_alloc(C)
+> >                                         memcg_drain_all_list_lrus(C)
+> >                                         memcg_drain_all_list_lrus(B)
+> >                                         // Now C and B are offline. The
+> >                                         // kmemcg_id becomes the follow=
+ing if
+> >                                         // we do not the kmemcg_id of i=
+ts
+> >                                         // descendants in
+> >                                         // memcg_drain_all_list_lrus().
+> >                                         //
+> >                                         // root(-1) -> A(0) -> B(0) -> =
+C(1)
+> >
+> >   for (i =3D 0; memcg; memcg =3D parent_mem_cgroup(memcg), i++) {
+> >       // allocate struct list_lru_per_memcg for memcg C
+> >       table[i].mlru =3D memcg_init_list_lru_one(gfp);
+> >   }
+> >
+> >   spin_lock_irqsave(&lru->lock, flags);
+> >   while (i--) {
+> >       // here index =3D 1
+> >       int index =3D table[i].memcg->kmemcg_id;
+> >
+> >       struct list_lru_per_memcg *mlru =3D table[i].mlru;
+> >       if (index < 0 || rcu_dereference_protected(mlrus->mlru[index], tr=
+ue))
+> >           kfree(mlru);
+> >       else
+> >           // mlrus->mlru[index] will be assigned a new value regardless
+> >           // memcg C is already offline.
+> >           rcu_assign_pointer(mlrus->mlru[index], mlru);
+> >   }
+> >   spin_unlock_irqrestore(&lru->lock, flags);
+> >
+>
+> > So changing ->kmemcg_id of all its descendants can prevent
+> > memcg_list_lru_alloc() from allocating list lrus for the offlined
+> > cgroup after memcg_list_lru_free() calling.
+>
+> Thanks for the illustrative example. I can see how this can be a problem
+> in a general call of memcg_list_lru_alloc(C).
+>
+> However, the code, as I understand it, resolves the memcg to which lru
+> allocation should be associated via get_mem_cgroup_from_objcg() and
+> memcg_reparent_list_lrus(C) comes after memcg_reparent_objcgs(C, B),
+> i.e. the allocation would target B (or even A if after
+> memcg_reparent_objcgs(B, A))?
+>
+> It seems to me like "wasting" the existing objcg reparenting mechanism.
+> Or what do you think could be a problem relying on it?
+>
 
-Commit 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
-d_delete()") moved the fsnotify delete hook before d_delete() so fsnotify
-will have access to a positive dentry.
+I have thought about this. It's a little different to rely on objcg
+reparenting since the user can get memcg from objcg and
+then does not realize the memcg has reparented. Although it
+can check memcg->objcg to know whether the memcg is
+reparented, it should also prevent this memcg from being
+reparented throughout memcg_list_lru_alloc(). Maybe
+holding css_set_lock can do that. I do not think this
+is a good choice. Do you have any thoughts about this?
 
-This allowed a race where opening the deleted file via cached dentry
-is now possible after receiving the IN_DELETE event.
-
-To fix the regression, we use two different techniques:
-1) For call sites that call d_delete() with elevated refcount, convert
-   the call to d_drop() and move the fsnotify hook after d_drop().
-2) For the vfs helpers that may turn dentry to negative on d_delete(),
-   use a helper d_delete_notify() to pin the inode, so we can pass it
-   to an fsnotify hook after d_delete().
-
-Create a new hook fsnotify_delete() that allows to pass a negative
-dentry and takes the unlinked inode as an argument.
-
-Add a missing fsnotify_unlink() hook in nfsdfs that was found during
-the call sites audit.
-
-Note that the call sites in simple_recursive_removal() follow
-d_invalidate(), so they require no change.
-
-Backporting hint: this regression is from v5.3. Although patch will
-apply with only trivial conflicts to v5.4 and v5.10, it won't build,
-because fsnotify_delete() implementation is different in each of those
-versions (see fsnotify_link()).
-
-Reported-by: Ivan Delalande <colona@arista.com>
-Link: https://lore.kernel.org/linux-fsdevel/YeNyzoDM5hP5LtGW@visor/
-Fixes: 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of d_delete()")
-Cc: stable@vger.kernel.org # v5.3+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Jan,
-
-This turned into an audit of fsnotify_unlink/rmdir() call sites, so
-besides fixing the regression, I also added one missing hook and replaced
-most of the d_delete() calls with d_drop() to simplify things.
-
-I will follow up with backports for v5.4 and v5.10 and will send the
-repro to LTP guys.
-
-Thanks,
-Amir.
-
- fs/btrfs/ioctl.c         |  5 ++---
- fs/configfs/dir.c        |  6 +++---
- fs/devpts/inode.c        |  2 +-
- fs/namei.c               | 27 ++++++++++++++++++++++-----
- fs/nfsd/nfsctl.c         |  5 +++--
- include/linux/fsnotify.h | 20 ++++++++++++++++++++
- net/sunrpc/rpc_pipe.c    |  4 ++--
- 7 files changed, 53 insertions(+), 16 deletions(-)
-
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index edfecfe62b4b..121e8f439996 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -3060,10 +3060,9 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
- 	btrfs_inode_lock(inode, 0);
- 	err = btrfs_delete_subvolume(dir, dentry);
- 	btrfs_inode_unlock(inode, 0);
--	if (!err) {
-+	d_drop(dentry);
-+	if (!err)
- 		fsnotify_rmdir(dir, dentry);
--		d_delete(dentry);
--	}
- 
- out_dput:
- 	dput(dentry);
-diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-index 1466b5d01cbb..d3cd2a94d1e8 100644
---- a/fs/configfs/dir.c
-+++ b/fs/configfs/dir.c
-@@ -1780,8 +1780,8 @@ void configfs_unregister_group(struct config_group *group)
- 	configfs_detach_group(&group->cg_item);
- 	d_inode(dentry)->i_flags |= S_DEAD;
- 	dont_mount(dentry);
-+	d_drop(dentry);
- 	fsnotify_rmdir(d_inode(parent), dentry);
--	d_delete(dentry);
- 	inode_unlock(d_inode(parent));
- 
- 	dput(dentry);
-@@ -1922,10 +1922,10 @@ void configfs_unregister_subsystem(struct configfs_subsystem *subsys)
- 	configfs_detach_group(&group->cg_item);
- 	d_inode(dentry)->i_flags |= S_DEAD;
- 	dont_mount(dentry);
--	fsnotify_rmdir(d_inode(root), dentry);
- 	inode_unlock(d_inode(dentry));
- 
--	d_delete(dentry);
-+	d_drop(dentry);
-+	fsnotify_rmdir(d_inode(root), dentry);
- 
- 	inode_unlock(d_inode(root));
- 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index 42e5a766d33c..4f25015aa534 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -621,8 +621,8 @@ void devpts_pty_kill(struct dentry *dentry)
- 
- 	dentry->d_fsdata = NULL;
- 	drop_nlink(dentry->d_inode);
--	fsnotify_unlink(d_inode(dentry->d_parent), dentry);
- 	d_drop(dentry);
-+	fsnotify_unlink(d_inode(dentry->d_parent), dentry);
- 	dput(dentry);	/* d_alloc_name() in devpts_pty_new() */
- }
- 
-diff --git a/fs/namei.c b/fs/namei.c
-index 1f9d2187c765..b11991b57f9b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3929,6 +3929,23 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
- 	return do_mkdirat(AT_FDCWD, getname(pathname), mode);
- }
- 
-+/**
-+ * d_delete_notify - delete a dentry and call fsnotify_delete()
-+ * @dentry: The dentry to delete
-+ *
-+ * This helper is used to guaranty that the unlinked inode cannot be found
-+ * by lookup of this name after fsnotify_delete() event has been delivered.
-+ */
-+static void d_delete_notify(struct inode *dir, struct dentry *dentry)
-+{
-+	struct inode *inode = d_inode(dentry);
-+
-+	ihold(inode);
-+	d_delete(dentry);
-+	fsnotify_delete(dir, inode, dentry);
-+	iput(inode);
-+}
-+
- /**
-  * vfs_rmdir - remove directory
-  * @mnt_userns:	user namespace of the mount the inode was found from
-@@ -3973,13 +3990,12 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
- 	dentry->d_inode->i_flags |= S_DEAD;
- 	dont_mount(dentry);
- 	detach_mounts(dentry);
--	fsnotify_rmdir(dir, dentry);
- 
- out:
- 	inode_unlock(dentry->d_inode);
- 	dput(dentry);
- 	if (!error)
--		d_delete(dentry);
-+		d_delete_notify(dir, dentry);
- 	return error;
- }
- EXPORT_SYMBOL(vfs_rmdir);
-@@ -4101,7 +4117,6 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
- 			if (!error) {
- 				dont_mount(dentry);
- 				detach_mounts(dentry);
--				fsnotify_unlink(dir, dentry);
- 			}
- 		}
- 	}
-@@ -4109,9 +4124,11 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
- 	inode_unlock(target);
- 
- 	/* We don't d_delete() NFS sillyrenamed files--they still exist. */
--	if (!error && !(dentry->d_flags & DCACHE_NFSFS_RENAMED)) {
-+	if (dentry->d_flags & DCACHE_NFSFS_RENAMED) {
-+		fsnotify_unlink(dir, dentry);
-+	} else if (!error) {
- 		fsnotify_link_count(target);
--		d_delete(dentry);
-+		d_delete_notify(dir, dentry);
- 	}
- 
- 	return error;
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 51a49e0cfe37..d0761ca8cb54 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1249,7 +1249,8 @@ static void nfsdfs_remove_file(struct inode *dir, struct dentry *dentry)
- 	clear_ncl(d_inode(dentry));
- 	dget(dentry);
- 	ret = simple_unlink(dir, dentry);
--	d_delete(dentry);
-+	d_drop(dentry);
-+	fsnotify_unlink(dir, dentry);
- 	dput(dentry);
- 	WARN_ON_ONCE(ret);
- }
-@@ -1340,8 +1341,8 @@ void nfsd_client_rmdir(struct dentry *dentry)
- 	dget(dentry);
- 	ret = simple_rmdir(dir, dentry);
- 	WARN_ON_ONCE(ret);
-+	d_drop(dentry);
- 	fsnotify_rmdir(dir, dentry);
--	d_delete(dentry);
- 	dput(dentry);
- 	inode_unlock(dir);
- }
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 3a2d7dc3c607..b4a4085adc89 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -224,6 +224,26 @@ static inline void fsnotify_link(struct inode *dir, struct inode *inode,
- 		      dir, &new_dentry->d_name, 0);
- }
- 
-+/*
-+ * fsnotify_delete - @dentry was unlinked and unhashed
-+ *
-+ * Caller must make sure that dentry->d_name is stable.
-+ *
-+ * Note: unlike fsnotify_unlink(), we have to pass also the unlinked inode
-+ * as this may be called after d_delete() and old_dentry may be negative.
-+ */
-+static inline void fsnotify_delete(struct inode *dir, struct inode *inode,
-+				   struct dentry *dentry)
-+{
-+	__u32 mask = FS_DELETE;
-+
-+	if (S_ISDIR(inode->i_mode))
-+		mask |= FS_ISDIR;
-+
-+	fsnotify_name(mask, inode, FSNOTIFY_EVENT_INODE, dir, &dentry->d_name,
-+		      0);
-+}
-+
- /*
-  * fsnotify_unlink - 'name' was unlinked
-  *
-diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-index ee5336d73fdd..35588f0afa86 100644
---- a/net/sunrpc/rpc_pipe.c
-+++ b/net/sunrpc/rpc_pipe.c
-@@ -600,9 +600,9 @@ static int __rpc_rmdir(struct inode *dir, struct dentry *dentry)
- 
- 	dget(dentry);
- 	ret = simple_rmdir(dir, dentry);
-+	d_drop(dentry);
- 	if (!ret)
- 		fsnotify_rmdir(dir, dentry);
--	d_delete(dentry);
- 	dput(dentry);
- 	return ret;
- }
-@@ -613,9 +613,9 @@ static int __rpc_unlink(struct inode *dir, struct dentry *dentry)
- 
- 	dget(dentry);
- 	ret = simple_unlink(dir, dentry);
-+	d_drop(dentry);
- 	if (!ret)
- 		fsnotify_unlink(dir, dentry);
--	d_delete(dentry);
- 	dput(dentry);
- 	return ret;
- }
--- 
-2.34.1
-
+Thanks.
