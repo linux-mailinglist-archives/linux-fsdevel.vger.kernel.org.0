@@ -2,152 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD8CC492560
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 13:07:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F007E4925B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 13:27:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241274AbiARMH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 07:07:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
+        id S232814AbiARM1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 07:27:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231260AbiARMH3 (ORCPT
+        with ESMTP id S234413AbiARM1R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 07:07:29 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D575BC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jan 2022 04:07:28 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id o80so3294475yba.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jan 2022 04:07:28 -0800 (PST)
+        Tue, 18 Jan 2022 07:27:17 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7E8C061574;
+        Tue, 18 Jan 2022 04:27:17 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id a2so11483322ilr.0;
+        Tue, 18 Jan 2022 04:27:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OC5quY8+bzQ7YwLxGQW1P7Vgcog//q1EsjQWuTsPZiA=;
-        b=c3af9NXfUtTV/ISsfNREopmBIAf8fT4PPP17qdILfbQoqvb1yfMa+D0XLlYT6JoNjU
-         ePaLArNrWW5zLYdpo1aCAVvBM7NZdg3qoad2pIpBpn+dKX2qpHWbIzeTo/ZWGlUzG9m6
-         hdWzHLZgMHYc+km3yxBo/4gsymQJh83zgMLiF405qZowaqIxM7BnTJJFnGp2/q35ZIA6
-         maVqxHfZSqMXQDeOLAlQCpQMgLny1kM6wpQgjMqc1MgA20REMRU1Kyb60DSCWB1/YGt0
-         nmM29RNua0k7xFUkauKHhL0GFjcs9AX976BwT6xrQiJmMLPjBfkMK40ffRMoWetReJqm
-         /lFQ==
+         :cc;
+        bh=pYLlRD99Rz4D8D8EFfAOvi+cuOnyBu6LT0ax/HdUAW8=;
+        b=HQENVoDnS5popVrwNgMRiH2t26Msaa3pBT9VvGcHbYXxcMFrniRWByy4qGw+LZmdHC
+         SiSVrqR3wF0PNQjtVDmopQcOPUuHt+4p70CBRZDZiG6YXRW3MAZoPWMn0sjruiPhfazD
+         ACg1OoJ5jA2nnU672DZrNT3n3kS7PA3jgQ2Olg9jN0Lc3I8HiF12niBR2yOnnKiwfnLO
+         FA0grxgWm38yZvIOyqM6DW1zNebvfLiPNt6hE5jYRuHKq0fPuv7aKz3P8LPm9mOqBJgi
+         LNOIp6x3X41c/i8mrRiKhDcTiY83jAKdMqFGJjZxq5BAEnzbnPYPOAa3jvIS2pXTM4aq
+         /4Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OC5quY8+bzQ7YwLxGQW1P7Vgcog//q1EsjQWuTsPZiA=;
-        b=wkmZfRsCAnTmP6a9e60wtI4ceA1x2I6RyNFsrD/sr8TqD828CJNRwWUk25ytKeRHsq
-         RCojCySFHK8uHWX8KTu6MP/f663wwhEjB90EKVpfovjX38E8vNpZdp9SNDPW5SHhP/hf
-         KKHhvOArk9RNd7KBM5tDCXe+allSkUe92Ie5FtkCz3oONxed+AlZAbYnpetUssOkXC5b
-         GYx7aP1tTumEbJWwqHg0ysMZbvE4uoBcPZA2RLnnkQrqa0oDQ61pgSF8pqqzSmEhb6Dr
-         8VXzzwvZzWm8NfUDD5wVYFifeQL33ADX894a8m9XPf7VvpzI3uc0WTAhuyIejJIt3un7
-         GovQ==
-X-Gm-Message-State: AOAM533ksgjtB/MTiFxbPqwSnXf/tlOZ+ITJ6YZDkZzElL62QblJPkLD
-        3+oZ0umKMhPLWoXVIDymxW6uO5j3YTYLwxmGQd20lw==
-X-Google-Smtp-Source: ABdhPJxNFvL/SkKU6juzzW+raWlteR7gaAX3pdOhU7lWwwCB3tPpMz6t5NIUds1vo4+A7k0YLFoYLeZ3JS1yM7GxpMg=
-X-Received: by 2002:a25:8806:: with SMTP id c6mr31085871ybl.199.1642507648082;
- Tue, 18 Jan 2022 04:07:28 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=pYLlRD99Rz4D8D8EFfAOvi+cuOnyBu6LT0ax/HdUAW8=;
+        b=ElrzmrhH78ML6id+QmUkK4zZAFp8wmBE3r1Z6cHCHAneAGAKy45aGF6SUanHkOjtX3
+         AnYu59zEdOHXhHrGT+jIzi7KZ2uvn6Mn8wRT32obtYlMsuRZoEssYubTMLNxFGhjn1wn
+         7PBRNUmG585V0aXAMVuNs49vkfrgQ3wjnMaMQKc/L7lDQX+dgOUXkkvvcKfJr/rKs6hB
+         zV/FcNwfA+0e8ys/BDbm+XFSxkA0HAQtWUp0tMhwjhiu8DgxEwe5yLCxXs7fTAAkxnzq
+         k8o5WkmzPuZeq5LjXTfBYFwu4yRuUSWkkkhWFT6WFWu8yeoXDlj3DrQCDGotEDnvzNCa
+         bqwQ==
+X-Gm-Message-State: AOAM530anFrtus8BaLBUaOaun/KnaCDXyE3+8l6ZnGLtoJv7dy8EdUs9
+        e7w/dSKVFLgbqbYrrbp67X/i+sOfLn7oPVkgMao=
+X-Google-Smtp-Source: ABdhPJzpJQUqRjCwGM5v0i9hUV+DkW7ufrPpgzCnbQjGahgFEJ0t2xDaWNS9eavha93xTlAy+YocQMkJ4txbevUvXHI=
+X-Received: by 2002:a05:6e02:1948:: with SMTP id x8mr14609753ilu.107.1642508836861;
+ Tue, 18 Jan 2022 04:27:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20211220085649.8196-1-songmuchun@bytedance.com>
- <20211220085649.8196-11-songmuchun@bytedance.com> <20220106110051.GA470@blackbody.suse.cz>
- <CAMZfGtXZA+rLMUw5yLSW=eUncT0BjH++Dpi1EzKwXvV9zwqF1w@mail.gmail.com> <20220113133213.GA28468@blackbody.suse.cz>
-In-Reply-To: <20220113133213.GA28468@blackbody.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 18 Jan 2022 20:05:44 +0800
-Message-ID: <CAMZfGtWJeov9XD_MEkDJwTK5b73OKPYxJBQi=D5-NSyNSSKLCw@mail.gmail.com>
-Subject: Re: [PATCH v5 10/16] mm: list_lru: allocate list_lru_one only when needed
-To:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
-        Alex Shi <alexs@kernel.org>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Dave Chinner <david@fromorbit.com>,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        jaegeuk@kernel.org, chao@kernel.org,
-        Kari Argillander <kari.argillander@gmail.com>,
+References: <20220118120031.196123-1-amir73il@gmail.com>
+In-Reply-To: <20220118120031.196123-1-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 18 Jan 2022 14:27:05 +0200
+Message-ID: <CAOQ4uxg3PJBx6MjDnPYcLjJ-tY-Kc-c1d0YDr7OZAiJ=qk7USw@mail.gmail.com>
+Subject: Re: [PATCH] fnotify: invalidate dcache before IN_DELETE event
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        Ivan Delalande <colona@arista.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-nfs@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        Fam Zheng <fam.zheng@bytedance.com>,
-        Muchun Song <smuchun@gmail.com>
+        stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 13, 2022 at 9:32 PM Michal Koutn=C3=BD <mkoutny@suse.com> wrote=
-:
+On Tue, Jan 18, 2022 at 2:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> On Wed, Jan 12, 2022 at 09:22:36PM +0800, Muchun Song <songmuchun@bytedan=
-ce.com> wrote:
-> >   root(-1) -> A(0) -> B(1) -> C(2)
-> >
-> > CPU0:                                   CPU1:
-> > memcg_list_lru_alloc(C)
-> >                                         memcg_drain_all_list_lrus(C)
-> >                                         memcg_drain_all_list_lrus(B)
-> >                                         // Now C and B are offline. The
-> >                                         // kmemcg_id becomes the follow=
-ing if
-> >                                         // we do not the kmemcg_id of i=
-ts
-> >                                         // descendants in
-> >                                         // memcg_drain_all_list_lrus().
-> >                                         //
-> >                                         // root(-1) -> A(0) -> B(0) -> =
-C(1)
-> >
-> >   for (i =3D 0; memcg; memcg =3D parent_mem_cgroup(memcg), i++) {
-> >       // allocate struct list_lru_per_memcg for memcg C
-> >       table[i].mlru =3D memcg_init_list_lru_one(gfp);
-> >   }
-> >
-> >   spin_lock_irqsave(&lru->lock, flags);
-> >   while (i--) {
-> >       // here index =3D 1
-> >       int index =3D table[i].memcg->kmemcg_id;
-> >
-> >       struct list_lru_per_memcg *mlru =3D table[i].mlru;
-> >       if (index < 0 || rcu_dereference_protected(mlrus->mlru[index], tr=
-ue))
-> >           kfree(mlru);
-> >       else
-> >           // mlrus->mlru[index] will be assigned a new value regardless
-> >           // memcg C is already offline.
-> >           rcu_assign_pointer(mlrus->mlru[index], mlru);
-> >   }
-> >   spin_unlock_irqrestore(&lru->lock, flags);
-> >
+> Apparently, there are some applications that use IN_DELETE event as an
+> invalidation mechanism and expect that if they try to open a file with
+> the name reported with the delete event, that it should not contain the
+> content of the deleted file.
 >
-> > So changing ->kmemcg_id of all its descendants can prevent
-> > memcg_list_lru_alloc() from allocating list lrus for the offlined
-> > cgroup after memcg_list_lru_free() calling.
+> Commit 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
+> d_delete()") moved the fsnotify delete hook before d_delete() so fsnotify
+> will have access to a positive dentry.
 >
-> Thanks for the illustrative example. I can see how this can be a problem
-> in a general call of memcg_list_lru_alloc(C).
+> This allowed a race where opening the deleted file via cached dentry
+> is now possible after receiving the IN_DELETE event.
 >
-> However, the code, as I understand it, resolves the memcg to which lru
-> allocation should be associated via get_mem_cgroup_from_objcg() and
-> memcg_reparent_list_lrus(C) comes after memcg_reparent_objcgs(C, B),
-> i.e. the allocation would target B (or even A if after
-> memcg_reparent_objcgs(B, A))?
+> To fix the regression, we use two different techniques:
+> 1) For call sites that call d_delete() with elevated refcount, convert
+>    the call to d_drop() and move the fsnotify hook after d_drop().
+> 2) For the vfs helpers that may turn dentry to negative on d_delete(),
+>    use a helper d_delete_notify() to pin the inode, so we can pass it
+>    to an fsnotify hook after d_delete().
 >
-> It seems to me like "wasting" the existing objcg reparenting mechanism.
-> Or what do you think could be a problem relying on it?
+> Create a new hook fsnotify_delete() that allows to pass a negative
+> dentry and takes the unlinked inode as an argument.
+>
+> Add a missing fsnotify_unlink() hook in nfsdfs that was found during
+> the call sites audit.
+>
+> Note that the call sites in simple_recursive_removal() follow
+> d_invalidate(), so they require no change.
+>
+> Backporting hint: this regression is from v5.3. Although patch will
+> apply with only trivial conflicts to v5.4 and v5.10, it won't build,
+> because fsnotify_delete() implementation is different in each of those
+> versions (see fsnotify_link()).
+>
+> Reported-by: Ivan Delalande <colona@arista.com>
+> Link: https://lore.kernel.org/linux-fsdevel/YeNyzoDM5hP5LtGW@visor/
+> Fixes: 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of d_delete()")
+> Cc: stable@vger.kernel.org # v5.3+
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Jan,
+>
+> This turned into an audit of fsnotify_unlink/rmdir() call sites, so
+> besides fixing the regression, I also added one missing hook and replaced
+> most of the d_delete() calls with d_drop() to simplify things.
+>
+> I will follow up with backports for v5.4 and v5.10 and will send the
+> repro to LTP guys.
+>
+> Thanks,
+> Amir.
+>
+>  fs/btrfs/ioctl.c         |  5 ++---
+>  fs/configfs/dir.c        |  6 +++---
+>  fs/devpts/inode.c        |  2 +-
+>  fs/namei.c               | 27 ++++++++++++++++++++++-----
+>  fs/nfsd/nfsctl.c         |  5 +++--
+>  include/linux/fsnotify.h | 20 ++++++++++++++++++++
+>  net/sunrpc/rpc_pipe.c    |  4 ++--
+>  7 files changed, 53 insertions(+), 16 deletions(-)
+>
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index edfecfe62b4b..121e8f439996 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -3060,10 +3060,9 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
+>         btrfs_inode_lock(inode, 0);
+>         err = btrfs_delete_subvolume(dir, dentry);
+>         btrfs_inode_unlock(inode, 0);
+> -       if (!err) {
+> +       d_drop(dentry);
+> +       if (!err)
+>                 fsnotify_rmdir(dir, dentry);
+> -               d_delete(dentry);
+> -       }
 >
 
-I have thought about this. It's a little different to rely on objcg
-reparenting since the user can get memcg from objcg and
-then does not realize the memcg has reparented. Although it
-can check memcg->objcg to know whether the memcg is
-reparented, it should also prevent this memcg from being
-reparented throughout memcg_list_lru_alloc(). Maybe
-holding css_set_lock can do that. I do not think this
-is a good choice. Do you have any thoughts about this?
+oops that an unintentional logic change.
+Was supposed to be:
 
-Thanks.
+        if (!err) {
++               d_drop(dentry);
+                fsnotify_rmdir(dir, dentry);
+-               d_delete(dentry);
+        }
+
+Anyway, fix is pushed to fsnotify-fixes branch.
+
+Thanks,
+Amir.
