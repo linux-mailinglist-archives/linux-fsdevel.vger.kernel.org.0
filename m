@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32191491FD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 08:20:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D746491FD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 08:20:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244684AbiARHUW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 02:20:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41972 "EHLO
+        id S244726AbiARHUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 02:20:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244726AbiARHUS (ORCPT
+        with ESMTP id S244892AbiARHUU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 02:20:18 -0500
+        Tue, 18 Jan 2022 02:20:20 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E41CC061574;
-        Mon, 17 Jan 2022 23:20:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C88C06161C;
+        Mon, 17 Jan 2022 23:20:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=NiiyVm7T1RSoly2lncOqK9SkmVJ5v0QSThOfEky6q20=; b=MpqAqQ8K5Fa6Y5wTGJl/gbG8OO
-        dn6PaxcYnaVlNfT2mS1jeUKelsFExp+uG3u9mIvCpmas8BzQ0HJleX15bQnbvwePmlkVlO5W0vzSK
-        HvgBfIGs0RGASj9FFd6sE8tJ4qfhkmRCextanNUhqXChTqh8JwFoHdtpflmklbp5zQYV6ZVzOyC1T
-        pwKLY+kGCwUQFPrabqHRfoONsuU1ADJ9WWyYqDlTyqsbbVI8ypgDGmJbl8/GUeu7NuW8yznpIFL9H
-        xC7HLvhlMXxb+qdKze/uBd+r7dTrjI/Jf8j/c9/dF2KRq4+f8hr1Qn1e+/PCC7wHouMmupch1ruki
-        Eavz2L2w==;
+        bh=cyA51tgTzJ0oURPYTTRoUDyOePKkV9xxN4Hqcjy0whE=; b=EZc+81CnUzY0T30EvM67aJI3+z
+        2rcuaMsV8QKya0T+YqJZdegYjqp1PSm05E4gs6vx0Jt/MxKpnwmJHh4/aNoyUrZeAM3Prtq2GFePM
+        BO4MGJtNsAatp0/5dziB1d4d4st+oJrfBxUUJQAiYMZ+KJovpwX39qCF8yUJCa825KYnFVdItc84c
+        6xLHv/tfE20kLMoMKZxyxrkM62nSchOu0k3vrL0A26HdUN1YMVExtPahqJQnW425+XQ2iIzCQWeK2
+        IPoxv0wlF2h4cuNTWml1G6MmXXo4IVVe+Y5OHqJChA16e9zR2aTSMLwE+hPB4fTw4oRJEB6F4uarB
+        D3MrbYJQ==;
 Received: from [2001:4bb8:184:72a4:a4a9:19c0:5242:7768] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n9imp-000ZRg-HC; Tue, 18 Jan 2022 07:20:12 +0000
+        id 1n9ims-000ZTk-8m; Tue, 18 Jan 2022 07:20:14 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
@@ -44,9 +44,9 @@ Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
         xen-devel@lists.xenproject.org, drbd-dev@lists.linbit.com
-Subject: [PATCH 06/19] dm-crypt: remove clone_init
-Date:   Tue, 18 Jan 2022 08:19:39 +0100
-Message-Id: <20220118071952.1243143-7-hch@lst.de>
+Subject: [PATCH 07/19] dm-snap: use blkdev_issue_flush instead of open coding it
+Date:   Tue, 18 Jan 2022 08:19:40 +0100
+Message-Id: <20220118071952.1243143-8-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220118071952.1243143-1-hch@lst.de>
 References: <20220118071952.1243143-1-hch@lst.de>
@@ -57,71 +57,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Just open code it next to the bio allocations, which saves a few lines
-of code, prepares for future changes and allows to remove the duplicate
-bi_opf assignment for the bio_clone_fast case in kcryptd_io_read.
+Use blkdev_issue_flush, which uses an on-stack bio instead of an
+opencoded version with a bio embedded into struct dm_snapshot.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/dm-crypt.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ drivers/md/dm-snap.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 20abe3486aba1..3c5ecd35d3483 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -234,7 +234,7 @@ static volatile unsigned long dm_crypt_pages_per_client;
- #define DM_CRYPT_MEMORY_PERCENT			2
- #define DM_CRYPT_MIN_PAGES_PER_CLIENT		(BIO_MAX_VECS * 16)
- 
--static void clone_init(struct dm_crypt_io *, struct bio *);
-+static void crypt_endio(struct bio *clone);
- static void kcryptd_queue_crypt(struct dm_crypt_io *io);
- static struct scatterlist *crypt_get_sg_data(struct crypt_config *cc,
- 					     struct scatterlist *sg);
-@@ -1673,7 +1673,10 @@ static struct bio *crypt_alloc_buffer(struct dm_crypt_io *io, unsigned size)
- 		mutex_lock(&cc->bio_alloc_lock);
- 
- 	clone = bio_alloc_bioset(GFP_NOIO, nr_iovecs, &cc->bs);
--	clone_init(io, clone);
-+	clone->bi_private = io;
-+	clone->bi_end_io = crypt_endio;
-+	bio_set_dev(clone, cc->dev->bdev);
-+	clone->bi_opf = io->base_bio->bi_opf;
- 
- 	remaining_size = size;
- 
-@@ -1826,16 +1829,6 @@ static void crypt_endio(struct bio *clone)
- 	crypt_dec_pending(io);
- }
- 
--static void clone_init(struct dm_crypt_io *io, struct bio *clone)
--{
--	struct crypt_config *cc = io->cc;
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index dcf34c6b05ad3..0d336b5ec5714 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -141,11 +141,6 @@ struct dm_snapshot {
+ 	 * for them to be committed.
+ 	 */
+ 	struct bio_list bios_queued_during_merge;
 -
--	clone->bi_private = io;
--	clone->bi_end_io  = crypt_endio;
--	bio_set_dev(clone, cc->dev->bdev);
--	clone->bi_opf	  = io->base_bio->bi_opf;
+-	/*
+-	 * Flush data after merge.
+-	 */
+-	struct bio flush_bio;
+ };
+ 
+ /*
+@@ -1127,17 +1122,6 @@ static void snapshot_merge_next_chunks(struct dm_snapshot *s)
+ 
+ static void error_bios(struct bio *bio);
+ 
+-static int flush_data(struct dm_snapshot *s)
+-{
+-	struct bio *flush_bio = &s->flush_bio;
+-
+-	bio_reset(flush_bio);
+-	bio_set_dev(flush_bio, s->origin->bdev);
+-	flush_bio->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH;
+-
+-	return submit_bio_wait(flush_bio);
 -}
 -
- static int kcryptd_io_read(struct dm_crypt_io *io, gfp_t gfp)
+ static void merge_callback(int read_err, unsigned long write_err, void *context)
  {
- 	struct crypt_config *cc = io->cc;
-@@ -1850,10 +1843,12 @@ static int kcryptd_io_read(struct dm_crypt_io *io, gfp_t gfp)
- 	clone = bio_clone_fast(io->base_bio, gfp, &cc->bs);
- 	if (!clone)
- 		return 1;
-+	clone->bi_private = io;
-+	clone->bi_end_io = crypt_endio;
-+	bio_set_dev(clone, cc->dev->bdev);
+ 	struct dm_snapshot *s = context;
+@@ -1151,7 +1135,7 @@ static void merge_callback(int read_err, unsigned long write_err, void *context)
+ 		goto shut;
+ 	}
  
- 	crypt_inc_pending(io);
+-	if (flush_data(s) < 0) {
++	if (blkdev_issue_flush(s->origin->bdev) < 0) {
+ 		DMERR("Flush after merge failed: shutting down merge");
+ 		goto shut;
+ 	}
+@@ -1340,7 +1324,6 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	s->first_merging_chunk = 0;
+ 	s->num_merging_chunks = 0;
+ 	bio_list_init(&s->bios_queued_during_merge);
+-	bio_init(&s->flush_bio, NULL, 0);
  
--	clone_init(io, clone);
- 	clone->bi_iter.bi_sector = cc->start + io->sector;
+ 	/* Allocate hash table for COW data */
+ 	if (init_hash_tables(s)) {
+@@ -1528,8 +1511,6 @@ static void snapshot_dtr(struct dm_target *ti)
  
- 	if (dm_crypt_integrity_io_alloc(io, clone)) {
+ 	dm_exception_store_destroy(s->store);
+ 
+-	bio_uninit(&s->flush_bio);
+-
+ 	dm_put_device(ti, s->cow);
+ 
+ 	dm_put_device(ti, s->origin);
 -- 
 2.30.2
 
