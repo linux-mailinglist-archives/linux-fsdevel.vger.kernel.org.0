@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56048491FC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 08:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90BE5491FC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 08:20:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244665AbiARHUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 02:20:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41914 "EHLO
+        id S244677AbiARHUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 02:20:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244621AbiARHUG (ORCPT
+        with ESMTP id S229661AbiARHUH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 02:20:06 -0500
+        Tue, 18 Jan 2022 02:20:07 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7990C06161C;
-        Mon, 17 Jan 2022 23:20:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D882C061574;
+        Mon, 17 Jan 2022 23:20:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=YxQPbVqFWlutwQ2g8QVoc6P1c2MdSC28Qzk+anwg+hU=; b=Aj57TSt044wK2CCPLfgXb0ZAwk
-        9mWJT/5UNCkKd3f1yXIMAN9xyDLJUu3QU7reZqN8AlrNxLUkACdZGVqWAyrPW2DXx4b56mN360ajs
-        tnrM1tSyMJMrxuGoWL7slxfWQQoTCNIGc+Rce+QIvDGRGudY75/w9mNMqH7INE3qjcSL6PPIQSpar
-        izSBzVi51KHPBDpVwknJRkLmOKFNYTbqx6opFFMC7PlZQEtbU/zkFVQ4suZAA2E9o65JtfCHUoPjI
-        mvtq0z4UUf/AABSsCrJejqHjARkD7w5ZiIc7BbCbrPrVs9JefbbyVyP6CMS+regjgEJQy9onPqeWH
-        P5XYqC+Q==;
+        bh=7QPyuzOR2N2LqXuXA08GkKhJ7fsHc2fxZXqTeovi8aQ=; b=mwLo7/0/BOPnfEnPa3xkh1wtp3
+        15wY0VF1l5wgNEmlmFx9qahgWnFhyJl6myyHdYnnzRUVdOqVBkw7UQ2s8GiXprR+T/gsvB/2g/F5v
+        UCaXHspI+nVqVsB58mvQw0HRJkvSn89DW90IDAfE05lkscu3Lf/H7fIN1bqOWBihdD4Tp5Ut6juFU
+        WNJ1skjZ7Xkx6wUi1wozYtRk77Q0Gy2FFrBE57k2vN/cSiZKuWEEa/FwDkaLAeAptVbMHq6BGRtqX
+        s60rfzBqA3qtv2QplYalZU7PGOtQaONd/6YhcyxH1JxZ9Vqhkoc/TOJtrX45PcQTGjUSplXja4jev
+        6N8KX46Q==;
 Received: from [2001:4bb8:184:72a4:a4a9:19c0:5242:7768] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n9imb-000ZN9-IU; Tue, 18 Jan 2022 07:19:58 +0000
+        id 1n9ime-000ZNW-EE; Tue, 18 Jan 2022 07:20:01 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
@@ -44,9 +44,9 @@ Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
         xen-devel@lists.xenproject.org, drbd-dev@lists.linbit.com
-Subject: [PATCH 01/19] fs: remove mpage_alloc
-Date:   Tue, 18 Jan 2022 08:19:34 +0100
-Message-Id: <20220118071952.1243143-2-hch@lst.de>
+Subject: [PATCH 02/19] nilfs2: remove nilfs_alloc_seg_bio
+Date:   Tue, 18 Jan 2022 08:19:35 +0100
+Message-Id: <20220118071952.1243143-3-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220118071952.1243143-1-hch@lst.de>
 References: <20220118071952.1243143-1-hch@lst.de>
@@ -57,84 +57,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-open code mpage_alloc in it's two callers and simplify the results
-because of the context:
-
- - __mpage_writepage always passes GFP_NOFS and can thus always sleep and
-    will never get a NULL return from bio_alloc at all.
- - do_mpage_readpage can only get a non-sleeping context for readahead
-   which never sets PF_MEMALLOC and thus doesn't need the retry loop
-   either.
-
-Both cases will never have __GFP_HIGH set.
+bio_alloc will never fail when it can sleep.  Remove the now simple
+nilfs_alloc_seg_bio helper and open code it in the only caller.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/mpage.c | 35 ++++++-----------------------------
- 1 file changed, 6 insertions(+), 29 deletions(-)
+ fs/nilfs2/segbuf.c | 31 ++++---------------------------
+ 1 file changed, 4 insertions(+), 27 deletions(-)
 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 334e7d09aa652..c5817699b369b 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -67,29 +67,6 @@ static struct bio *mpage_bio_submit(int op, int op_flags, struct bio *bio)
- 	return NULL;
+diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
+index 43287b0d3e9b6..53b7c6d21cdd8 100644
+--- a/fs/nilfs2/segbuf.c
++++ b/fs/nilfs2/segbuf.c
+@@ -371,29 +371,6 @@ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
+ 	return err;
  }
  
--static struct bio *
--mpage_alloc(struct block_device *bdev,
--		sector_t first_sector, int nr_vecs,
--		gfp_t gfp_flags)
+-/**
+- * nilfs_alloc_seg_bio - allocate a new bio for writing log
+- * @nilfs: nilfs object
+- * @start: start block number of the bio
+- * @nr_vecs: request size of page vector.
+- *
+- * Return Value: On success, pointer to the struct bio is returned.
+- * On error, NULL is returned.
+- */
+-static struct bio *nilfs_alloc_seg_bio(struct the_nilfs *nilfs, sector_t start,
+-				       int nr_vecs)
 -{
 -	struct bio *bio;
 -
--	/* Restrict the given (page cache) mask for slab allocations */
--	gfp_flags &= GFP_KERNEL;
--	bio = bio_alloc(gfp_flags, nr_vecs);
--
--	if (bio == NULL && (current->flags & PF_MEMALLOC)) {
--		while (!bio && (nr_vecs /= 2))
--			bio = bio_alloc(gfp_flags, nr_vecs);
--	}
--
--	if (bio) {
--		bio_set_dev(bio, bdev);
--		bio->bi_iter.bi_sector = first_sector;
+-	bio = bio_alloc(GFP_NOIO, nr_vecs);
+-	if (likely(bio)) {
+-		bio_set_dev(bio, nilfs->ns_bdev);
+-		bio->bi_iter.bi_sector =
+-			start << (nilfs->ns_blocksize_bits - 9);
 -	}
 -	return bio;
 -}
 -
- /*
-  * support function for mpage_readahead.  The fs supplied get_block might
-  * return an up to date buffer.  This is used to map that buffer into
-@@ -303,10 +280,11 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
- 								page))
- 				goto out;
- 		}
--		args->bio = mpage_alloc(bdev, blocks[0] << (blkbits - 9),
--					bio_max_segs(args->nr_pages), gfp);
-+		args->bio = bio_alloc(gfp, bio_max_segs(args->nr_pages));
- 		if (args->bio == NULL)
- 			goto confused;
-+		bio_set_dev(args->bio, bdev);
-+		args->bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
+ static void nilfs_segbuf_prepare_write(struct nilfs_segment_buffer *segbuf,
+ 				       struct nilfs_write_info *wi)
+ {
+@@ -414,10 +391,10 @@ static int nilfs_segbuf_submit_bh(struct nilfs_segment_buffer *segbuf,
+ 	BUG_ON(wi->nr_vecs <= 0);
+  repeat:
+ 	if (!wi->bio) {
+-		wi->bio = nilfs_alloc_seg_bio(wi->nilfs, wi->blocknr + wi->end,
+-					      wi->nr_vecs);
+-		if (unlikely(!wi->bio))
+-			return -ENOMEM;
++		wi->bio = bio_alloc(GFP_NOIO, wi->nr_vecs);
++		bio_set_dev(wi->bio, wi->nilfs->ns_bdev);
++		wi->bio->bi_iter.bi_sector = (wi->blocknr + wi->end) <<
++			(wi->nilfs->ns_blocksize_bits - 9);
  	}
  
- 	length = first_hole << blkbits;
-@@ -615,10 +593,9 @@ static int __mpage_writepage(struct page *page, struct writeback_control *wbc,
- 								page, wbc))
- 				goto out;
- 		}
--		bio = mpage_alloc(bdev, blocks[0] << (blkbits - 9),
--				BIO_MAX_VECS, GFP_NOFS|__GFP_HIGH);
--		if (bio == NULL)
--			goto confused;
-+		bio = bio_alloc(GFP_NOFS, BIO_MAX_VECS);
-+		bio_set_dev(bio, bdev);
-+		bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
- 
- 		wbc_init_bio(wbc, bio);
- 		bio->bi_write_hint = inode->i_write_hint;
+ 	len = bio_add_page(wi->bio, bh->b_page, bh->b_size, bh_offset(bh));
 -- 
 2.30.2
 
