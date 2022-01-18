@@ -2,153 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9144049199C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 03:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A592D491C10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 04:14:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238035AbiARCzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jan 2022 21:55:17 -0500
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:51353 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345807AbiARCcE (ORCPT
+        id S1349620AbiARDNV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jan 2022 22:13:21 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:46717 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352933AbiARDAt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jan 2022 21:32:04 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id D682C3200946;
-        Mon, 17 Jan 2022 21:32:02 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 17 Jan 2022 21:32:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        3mRA+fAp1gnVKZsZvkvI9SKUFhnHcen/USfAGlZMD/8=; b=J1u9Ac5VDXG/UgfA
-        F8k48UeRsyAyOn/Y50lgKLzHMDZI+ShW7HwAVKNSeugYAhLsjh0BPxpo4JwDF2pg
-        WsMLL8f78+K643A5XY4XJ08C0Qf+w6HqXYlEXsxdiGkwScq5s/aYjuvmvzuropJt
-        fMkQeb1ceDG4lpxiTrkJFfYaQE6M6JekrwgAdCEutgAhGu8h2W613VZYncd7FGpp
-        oKf7kXK0nHAYljf/n7RFFS/DPUiev4r8WaLzCN6suPwbInNAZ8iyYqu8IB+qIRxz
-        dqUpXsr8BQfBjRaFPixaCT3VqjLWiKQCwMd0vLQwG0gw8iRMHrBkZKAfb8nwEJd3
-        d17PVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=3mRA+fAp1gnVKZsZvkvI9SKUFhnHcen/USfAGlZMD
-        /8=; b=ITwNEwhut6PP8iq1nNC8XPTdHIXmjj5o8W3zahgmGmZWysKwg2DduJy/V
-        GwT5UF0fD2l2i6k0WrygOK4G2VwKEN49L1J5WauKkKDJQtliqirfUVbRMn56wxFi
-        Ho1OiO0SCM49WtBBCm3toZQk98Z3Iscp4XSICloQ2qKxvjkFa8YPgh6m+jWe/nQh
-        /uuPg3WeGDBUG/hDmA3cXs9FYBrHF0P//ah2NeVN8qoSx9ZCLkZ5pQacVcb51IP8
-        wvCcPgbhvS12RFAZQ6HFhQUAsNAVxEAuwX3rWBgL29DIKA0ezSmy3XDxAVrrYGzB
-        sRjXjFUa9XoU72Iy4uwDsFwjov4Gw==
-X-ME-Sender: <xms:oSbmYbj_qZA5piY38Id3KBaazhhP5VptdlLDwYRIuX5hZSh9DhFeaQ>
-    <xme:oSbmYYBNt-nwe24mh5If3Q6mBAsczYBwW_Q7CEUzauxuONvxr4xduNE6OHO8UJc95
-    xjVJtaeX0oz>
-X-ME-Received: <xmr:oSbmYbFXDZytBiBBL_Cw7tSauEo0Uznr7bA0zBNINPlfPqZfXiOnF7an2HhUTMZ0P-Kj5RAMzKFpApBrh2PTE_tRBpPnoqryV35TUk-y1Dc9Vtrl9HC1Ag>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddruddvgdegkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtkeertddtredunecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepff
-    elvddtleehveduvefhkeejfedvkeetffeujedtudevfedtveehueeviefhleffnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
-    hhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:oSbmYYTIhggIrp71O7yWw-TQ6b5xK0kAeKGYw1rH_MMcrJ4YapDk8A>
-    <xmx:oSbmYYy8fUfoQGXXEPpCZW9FRH8vuaDoUkxCw2MSqJ0k6pxPgkLPOA>
-    <xmx:oSbmYe6r5SE_V0WaSMcXu2xkqbgDd2LYHt-RSAy4vi8gjFYNRnND4w>
-    <xmx:oibmYbw3j9aiq0OZdyFolqdDMoGwTI4RfeniaHfHt_GCmyBQdzqCOA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Jan 2022 21:31:58 -0500 (EST)
-Message-ID: <0f6c2348dae2c47ea46a986884a75fc7d44bb6fb.camel@themaw.net>
-Subject: Re: [PATCH] vfs: check dentry is still valid in get_link()
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Brian Foster <bfoster@redhat.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Mon, 17 Jan 2022 22:00:49 -0500
+Received: from dread.disaster.area (pa49-179-45-11.pa.nsw.optusnet.com.au [49.179.45.11])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 80E6562BFEC;
+        Tue, 18 Jan 2022 14:00:43 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1n9ejh-00180W-6I; Tue, 18 Jan 2022 14:00:41 +1100
+Date:   Tue, 18 Jan 2022 14:00:41 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Brian Foster <bfoster@redhat.com>, Ian Kent <raven@themaw.net>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Miklos Szeredi <miklos@szeredi.hu>,
         David Howells <dhowells@redhat.com>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 18 Jan 2022 10:31:53 +0800
-In-Reply-To: <YeYYp89adipRN64k@zeniv-ca.linux.org.uk>
+        xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] vfs: check dentry is still valid in get_link()
+Message-ID: <20220118030041.GB59729@dread.disaster.area>
 References: <164180589176.86426.501271559065590169.stgit@mickey.themaw.net>
-         <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
-         <275358741c4ee64b5e4e008d514876ed4ec1071c.camel@themaw.net>
-         <YeV+zseKGNqnSuKR@bfoster> <YeWZRL88KPtLWlkI@zeniv-ca.linux.org.uk>
-         <YeWxHPDbdSfBDtyX@zeniv-ca.linux.org.uk>
-         <YeXIIf6/jChv7JN6@zeniv-ca.linux.org.uk>
-         <YeYYp89adipRN64k@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+ <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
+ <275358741c4ee64b5e4e008d514876ed4ec1071c.camel@themaw.net>
+ <YeV+zseKGNqnSuKR@bfoster>
+ <YeWZRL88KPtLWlkI@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YeWZRL88KPtLWlkI@zeniv-ca.linux.org.uk>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=61e62d5f
+        a=Eslsx4mF8WGvnV49LKizaA==:117 a=Eslsx4mF8WGvnV49LKizaA==:17
+        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
+        a=ZbRbMrvnt3dbDbI5YVEA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-01-18 at 01:32 +0000, Al Viro wrote:
-> On Mon, Jan 17, 2022 at 07:48:49PM +0000, Al Viro wrote:
-> > > But that critically depends upon the contents not getting
-> > > mangled.  If it
-> > > *can* be screwed by such unlink, we risk successful lookup
-> > > leading to the
-> > > wrong place, with nothing to tell us that it's happening.  We
-> > > could handle
-> > > that by adding a check to fs/namei.c:put_link(), and propagating
-> > > the error
-> > > to callers.  It's not impossible, but it won't be pretty.
-> > > 
-> > > And that assumes we avoid oopsen on string changing under us in
-> > > the first
-> > > place.  Which might or might not be true - I hadn't finished the
-> > > audit yet.
-> > > Note that it's *NOT* just fs/namei.c + fs/dcache.c + some fs
-> > > methods -
-> > > we need to make sure that e.g. everything called by ->d_hash()
-> > > instances
-> > > is OK with strings changing right under them.  Including
-> > > utf8_to_utf32(),
-> > > crc32_le(), utf8_casefold_hash(), etc.
+On Mon, Jan 17, 2022 at 04:28:52PM +0000, Al Viro wrote:
+> On Mon, Jan 17, 2022 at 09:35:58AM -0500, Brian Foster wrote:
+> 
+> > To Al's question, at the end of the day there is no rcu delay involved
+> > with inode reuse in XFS. We do use call_rcu() for eventual freeing of
+> > inodes (see __xfs_inode_free()), but inode reuse occurs for inodes that
+> > have been put into a "reclaim" state before getting to the point of
+> > freeing the struct inode memory. This lead to the long discussion [1]
+> > Ian references around ways to potentially deal with that. I think the
+> > TLDR of that thread is there are various potential options for
+> > improvement, such as to rcu wait on inode creation/reuse (either
+> > explicitly or via more open coded grace period cookie tracking), to rcu
+> > wait somewhere in the destroy sequence before inodes become reuse
+> > candidates, etc., but none of them seemingly agreeable for varying
+> > reasons (IIRC mostly stemming from either performance or compexity) [2].
 > > 
-> > And AFAICS, ext4, xfs and possibly ubifs (I'm unfamiliar with that
-> > one and
-> > the call chains there are deep enough for me to miss something)
-> > have the
-> > "bugger the contents of string returned by RCU ->get_link() if
-> > unlink()
-> > happens" problem.
-> > 
-> > I would very much prefer to have them deal with that crap,
-> > especially
-> > since I don't see why does ext4_evict_inode() need to do that
-> > memset() -
-> > can't we simply check ->i_op in ext4_can_truncate() and be done
-> > with
-> > that?
+> > The change that has been made so far in XFS is to turn rcuwalk for
+> > symlinks off once again, which looks like landed in Linus' tree as
+> > commit 7b7820b83f23 ("xfs: don't expose internal symlink metadata
+> > buffers to the vfs"). The hope is that between that patch and this
+> > prospective vfs tweak, we can have a couple incremental fixes that at
+> > least address the practical problem users have been running into (which
+> > is a crash due to a NULL ->get_link() callback pointer due to inode
+> > reuse). The inode reuse vs. rcu thing might still be a broader problem,
+> > but AFAIA that mechanism has been in place in XFS on Linux pretty much
+> > forever.
 > 
-> This reuse-without-delay has another fun side, AFAICS.  Suppose the
-> new use
-> for inode comes with the same ->i_op (i.e. it's a symlink again) and
-> it
-> happens right after ->get_link() has returned the pointer to body.
+> My problem with that is that pathname resolution very much relies upon
+> the assumption that any inode it observes will *not* change its nature
+> until the final rcu_read_unlock().  Papering over ->i_op->get_link reads
+> in symlink case might be sufficient at the moment (I'm still not certain
+> about that, though), but that's rather brittle.  E.g. if some XFS change
+> down the road adds ->permission() on some inodes, you'll get the same
+> problem in do_inode_permission().  We also have places where we rely upon
+> 	sample ->d_seq
+> 	fetch ->d_flags
+> 	fetch ->d_inode
+> 	validate ->d_seq
+> 	...
+> 	assume that inode type matches the information in flags
 > 
-> We are already past whatever checks we might add in pick_link().  And
-> the
-> pointer is still valid.  So we end up quietly traversing the body of
-> completely unrelated symlink that never had been anywhere near any
-> directory
-> we might be looking at.  With no indication of anything going wrong -
-> just
-> a successful resolution with bogus result.
+> How painful would it be to make xfs_destroy_inode() a ->free_inode() instance?
+> IOW, how far is xfs_inode_mark_reclaimable() from being callable in RCU
+> callback context?
 
-Wouldn't that case be caught by the unlazy call since ->get_link()
-needs to return -ECHILD for the rcu case now (in xfs anyway)?
+AIUI, not very close at all,
 
-> 
-> Could XFS folks explain what exactly goes wrong if we make actual
-> marking
-> inode as ready for reuse RCU-delayed, by shifting just that into
-> ->free_inode()?  Why would we need any extra synchronize_rcu()
-> anywhere?
+I'm pretty sure we can't put it under RCU callback context at all
+because xfs_fs_destroy_inode() can take sleeping locks, perform
+transactions, do IO, run rcu_read_lock() critical sections, etc.
+This means that needs to run an a full task context and so can't run
+from RCU callback context at all.
 
+> IOW, ->free_inode() is RCU-delayed part of ->destroy_inode().  If both
+> are present, ->destroy_inode() will be called synchronously, followed
+> by ->free_inode() from RCU callback, so you can have both - moving just
+> the "finally mark for reuse" part into ->free_inode() would be OK.
+> Any blocking stuff (if any) can be left in ->destroy_inode()...
 
+Yup, that's pretty much what we already do, except that we run the
+RCU-delayed part of freeing the inode once XFS has finished with the
+inode internally and the background inode GC reclaims it.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
