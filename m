@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6ABB49278E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 14:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2818492793
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jan 2022 14:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243503AbiARNxM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jan 2022 08:53:12 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:55615 "EHLO
+        id S243320AbiARNxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jan 2022 08:53:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34476 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243342AbiARNxK (ORCPT
+        by vger.kernel.org with ESMTP id S243667AbiARNxU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jan 2022 08:53:10 -0500
+        Tue, 18 Jan 2022 08:53:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642513989;
+        s=mimecast20190719; t=1642513999;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4htnmkNySJ/oktaad7TuAp0Fag88xgfEYjq3cg5L6fw=;
-        b=D8U8xKZE4KZt+kF1dVEYPHgN/tkpZPUTs7K2UJrAXC1RtJsh49ah3iH4f8ql0YSDb9RG0T
-        o5dLVobmJxbJt56SvDr9YaD1r4UqwG2mqTrbizgAgS5p2aaBGrxFV9lpWDZjwAwelcI6Dv
-        h5tK9xYa24G7K8IK5Ji9nsFihfA8tOk=
+        bh=f1/6bttthYxGZ2PNoIYnYIvi+O9+QETgRx4g1YmnfF8=;
+        b=jAaQsiTjVILPUUYLbFHkDMzERjS2nuS+5ky2c5gB3yEe19xKRgrCzJuoZtDvAWL3ZIwIrL
+        5TTYpzEdfGUKDiZac46hJt+l+SVtnlrPfoGFsoYX/hwJoLj1J5BVL8p/eL6pY+xvyLm9iF
+        vtg9MrbFWjzb2t0+p/2DuviyyU+UdYM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-357-dlqYnCgjPRWkFL8XS9LGlQ-1; Tue, 18 Jan 2022 08:53:06 -0500
-X-MC-Unique: dlqYnCgjPRWkFL8XS9LGlQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-396-1AjLwm_8PmusG_GxXabdTQ-1; Tue, 18 Jan 2022 08:53:16 -0500
+X-MC-Unique: 1AjLwm_8PmusG_GxXabdTQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4DA3710144E1;
-        Tue, 18 Jan 2022 13:53:04 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1D0710199B9;
+        Tue, 18 Jan 2022 13:53:13 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 024BA8462A;
-        Tue, 18 Jan 2022 13:53:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 686FD798DA;
+        Tue, 18 Jan 2022 13:53:10 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 01/11] fscache: Fix the volume collision wait condition
+Subject: [PATCH 02/11] cachefiles: Calculate the blockshift in terms of bytes,
+ not pages
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
-Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <smfrench@gmail.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
@@ -57,55 +57,106 @@ Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 18 Jan 2022 13:53:00 +0000
-Message-ID: <164251398010.3435901.943876048104930939.stgit@warthog.procyon.org.uk>
+Date:   Tue, 18 Jan 2022 13:53:09 +0000
+Message-ID: <164251398954.3435901.7138806620218474123.stgit@warthog.procyon.org.uk>
 In-Reply-To: <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
 References: <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The condition that the waits in fscache_wait_on_volume_collision() are
-waiting until are inverted.  This suddenly started happening on the
-upstream kernel with something like the following appearing in dmesg when
-running xfstests:
+Cachefiles keeps track of how much space is available on the backing
+filesystem and refuses new writes permission to start if there isn't enough
+(we especially don't want ENOSPC happening).  It also tracks the amount of
+data pending in DIO writes (cache->b_writing) and reduces the amount of
+free space available by this amount before deciding if it can set up a new
+write.
 
-	CacheFiles: cachefiles: Inode already in use: Iexample.com,100055
+However, the old fscache I/O API was very much page-granularity dependent
+and, as such, cachefiles's cache->bshift was meant to be a multiplier to
+get from PAGE_SIZE to block size (ie. a blocksize of 512 would give a shift
+of 3 for a 4KiB page) - and this was incorrectly being used to turn the
+number of bytes in a DIO write into a number of blocks, leading to a
+massive over estimation of the amount of data in flight.
 
-Fix them by inverting the conditions.
+Fix this by changing cache->bshift to be a multiplier from bytes to
+blocksize and deal with quantities of blocks, not quantities of pages.
 
-Fixes: 62ab63352350 ("fscache: Implement volume registration")
+Fix also the rounding in the calculation in cachefiles_write() which needs
+a "- 1" inserting.
+
+Fixes: 047487c947e8 ("cachefiles: Implement the I/O routines")
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
 cc: linux-cachefs@redhat.com
 ---
 
- fs/fscache/volume.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/cachefiles/cache.c    |    7 ++-----
+ fs/cachefiles/internal.h |    2 +-
+ fs/cachefiles/io.c       |    2 +-
+ 3 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/fs/fscache/volume.c b/fs/fscache/volume.c
-index a57c6cbee858..f2aa7dbad766 100644
---- a/fs/fscache/volume.c
-+++ b/fs/fscache/volume.c
-@@ -142,12 +142,12 @@ static void fscache_wait_on_volume_collision(struct fscache_volume *candidate,
- 					     unsigned int collidee_debug_id)
- {
- 	wait_var_event_timeout(&candidate->flags,
--			       fscache_is_acquire_pending(candidate), 20 * HZ);
-+			       !fscache_is_acquire_pending(candidate), 20 * HZ);
- 	if (!fscache_is_acquire_pending(candidate)) {
- 		pr_notice("Potential volume collision new=%08x old=%08x",
- 			  candidate->debug_id, collidee_debug_id);
- 		fscache_stat(&fscache_n_volumes_collision);
--		wait_var_event(&candidate->flags, fscache_is_acquire_pending(candidate));
-+		wait_var_event(&candidate->flags, !fscache_is_acquire_pending(candidate));
- 	}
- }
+diff --git a/fs/cachefiles/cache.c b/fs/cachefiles/cache.c
+index ce4d4785003c..1e9c71666c6a 100644
+--- a/fs/cachefiles/cache.c
++++ b/fs/cachefiles/cache.c
+@@ -84,9 +84,7 @@ int cachefiles_add_cache(struct cachefiles_cache *cache)
+ 		goto error_unsupported;
  
+ 	cache->bsize = stats.f_bsize;
+-	cache->bshift = 0;
+-	if (stats.f_bsize < PAGE_SIZE)
+-		cache->bshift = PAGE_SHIFT - ilog2(stats.f_bsize);
++	cache->bshift = ilog2(stats.f_bsize);
+ 
+ 	_debug("blksize %u (shift %u)",
+ 	       cache->bsize, cache->bshift);
+@@ -106,7 +104,6 @@ int cachefiles_add_cache(struct cachefiles_cache *cache)
+ 	       (unsigned long long) cache->fcull,
+ 	       (unsigned long long) cache->fstop);
+ 
+-	stats.f_blocks >>= cache->bshift;
+ 	do_div(stats.f_blocks, 100);
+ 	cache->bstop = stats.f_blocks * cache->bstop_percent;
+ 	cache->bcull = stats.f_blocks * cache->bcull_percent;
+@@ -209,7 +206,7 @@ int cachefiles_has_space(struct cachefiles_cache *cache,
+ 		return ret;
+ 	}
+ 
+-	b_avail = stats.f_bavail >> cache->bshift;
++	b_avail = stats.f_bavail;
+ 	b_writing = atomic_long_read(&cache->b_writing);
+ 	if (b_avail > b_writing)
+ 		b_avail -= b_writing;
+diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+index 8dd54d9375b6..c793d33b0224 100644
+--- a/fs/cachefiles/internal.h
++++ b/fs/cachefiles/internal.h
+@@ -86,7 +86,7 @@ struct cachefiles_cache {
+ 	unsigned			bcull_percent;	/* when to start culling (% blocks) */
+ 	unsigned			bstop_percent;	/* when to stop allocating (% blocks) */
+ 	unsigned			bsize;		/* cache's block size */
+-	unsigned			bshift;		/* min(ilog2(PAGE_SIZE / bsize), 0) */
++	unsigned			bshift;		/* ilog2(bsize) */
+ 	uint64_t			frun;		/* when to stop culling */
+ 	uint64_t			fcull;		/* when to start culling */
+ 	uint64_t			fstop;		/* when to stop allocating */
+diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
+index 60b1eac2ce78..04eb52736990 100644
+--- a/fs/cachefiles/io.c
++++ b/fs/cachefiles/io.c
+@@ -264,7 +264,7 @@ static int cachefiles_write(struct netfs_cache_resources *cres,
+ 	ki->term_func		= term_func;
+ 	ki->term_func_priv	= term_func_priv;
+ 	ki->was_async		= true;
+-	ki->b_writing		= (len + (1 << cache->bshift)) >> cache->bshift;
++	ki->b_writing		= (len + (1 << cache->bshift) - 1) >> cache->bshift;
+ 
+ 	if (ki->term_func)
+ 		ki->iocb.ki_complete = cachefiles_write_complete;
 
 
