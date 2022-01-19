@@ -2,124 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 484654936CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jan 2022 10:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A2549370E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jan 2022 10:19:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352791AbiASJFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jan 2022 04:05:52 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:38692 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351966AbiASJFw (ORCPT
+        id S1352975AbiASJSZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jan 2022 04:18:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:42275 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352967AbiASJSY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jan 2022 04:05:52 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 19 Jan 2022 04:18:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642583903;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qsHFjR3VZGRzuJsXGrmQKYKJ/CFlVyV1IKZ/8UEEbWk=;
+        b=hZx9c6vsj4M4OonxWbm7CmdS40XFOkgCe1NXyf4qqlUE4hMR5w5gbhZsBTfFwORPNPjB1S
+        IRt8bm1waqCNvz2l2/6Ut+UWk+4WGSJrNdFHGAMFN+aiyng7tQqy8zbQFlPlGKZBH1iM6l
+        JXclfyN5w+kkmy6hnIxhNj4Zp4hTGao=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-315-GmWhYa85PziqVu9-iauLvg-1; Wed, 19 Jan 2022 04:18:20 -0500
+X-MC-Unique: GmWhYa85PziqVu9-iauLvg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A6B9B61455;
-        Wed, 19 Jan 2022 09:05:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D595C004E1;
-        Wed, 19 Jan 2022 09:05:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642583151;
-        bh=ZMOPZrlt2cfOSpv918Af7deBI9py27ecaOS2zZN7Fts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hk155RLaUI34TSdu/3GM/6cpGvyn1xUZLY3b5Hjh/SQ3Wcp90FhOyK91omzs4vaLP
-         dC0S2YhRU37+kkL/twHPgX90Lr+heQWM0QHrlv3zkp5bIRQa8t0TwcHbZ8L4nVadxH
-         /m+6uzkvqiEX5g9Y07El5k5avzpTn9EkNkcGdBmu8T6QpuupWR/DEv1h+Ttw4V7lUy
-         POLBBRxOcfDGR9aefBrKC7UGyFXA8UpozwKV2BTaeO56GXMftmhiSq0zC17RfOs0eM
-         QnFot1Rxish0OOwZ0JfMxo2hXVqq4AA2zXq0T0v8VTDxst29ODbAViC26bRYO7Ycdx
-         JORN+q7lEZuaw==
-Date:   Wed, 19 Jan 2022 10:05:45 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Brian Foster <bfoster@redhat.com>, Ian Kent <raven@themaw.net>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] vfs: check dentry is still valid in get_link()
-Message-ID: <20220119090545.b25trkg2kjigf3fi@wittgenstein>
-References: <164180589176.86426.501271559065590169.stgit@mickey.themaw.net>
- <YeJr7/E+9stwEb3t@zeniv-ca.linux.org.uk>
- <275358741c4ee64b5e4e008d514876ed4ec1071c.camel@themaw.net>
- <YeV+zseKGNqnSuKR@bfoster>
- <YeWZRL88KPtLWlkI@zeniv-ca.linux.org.uk>
- <YeWxHPDbdSfBDtyX@zeniv-ca.linux.org.uk>
- <20220118082911.rsmv5m2pjeyt6wpg@wittgenstein>
- <YeblIix0fyXyBipW@zeniv-ca.linux.org.uk>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1B820814249;
+        Wed, 19 Jan 2022 09:18:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 163D27B9D6;
+        Wed, 19 Jan 2022 09:18:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YeefizLOGt1Qf35o@infradead.org>
+References: <YeefizLOGt1Qf35o@infradead.org> <YebpktrcUZOlBHkZ@infradead.org> <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk> <164251409447.3435901.10092442643336534999.stgit@warthog.procyon.org.uk> <3613681.1642527614@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <smfrench@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] vfs, fscache: Add an IS_KERNEL_FILE() macro for the S_KERNEL_FILE flag
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YeblIix0fyXyBipW@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3765723.1642583885.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 19 Jan 2022 09:18:05 +0000
+Message-ID: <3765724.1642583885@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 18, 2022 at 04:04:50PM +0000, Al Viro wrote:
-> On Tue, Jan 18, 2022 at 09:29:11AM +0100, Christian Brauner wrote:
-> > On Mon, Jan 17, 2022 at 06:10:36PM +0000, Al Viro wrote:
-> > > On Mon, Jan 17, 2022 at 04:28:52PM +0000, Al Viro wrote:
-> > > 
-> > > > IOW, ->free_inode() is RCU-delayed part of ->destroy_inode().  If both
-> > > > are present, ->destroy_inode() will be called synchronously, followed
-> > > > by ->free_inode() from RCU callback, so you can have both - moving just
-> > > > the "finally mark for reuse" part into ->free_inode() would be OK.
-> > > > Any blocking stuff (if any) can be left in ->destroy_inode()...
-> > > 
-> > > BTW, we *do* have a problem with ext4 fast symlinks.  Pathwalk assumes that
-> > > strings it parses are not changing under it.  There are rather delicate
-> > > dances in dcache lookups re possibility of ->d_name contents changing under
-> > > it, but the search key is assumed to be stable.
-> > > 
-> > > What's more, there's a correctness issue even if we do not oops.  Currently
-> > > we do not recheck ->d_seq of symlink dentry when we dismiss the symlink from
-> > > the stack.  After all, we'd just finished traversing what used to be the
-> > > contents of a symlink that used to be in the right place.  It might have been
-> > > unlinked while we'd been traversing it, but that's not a correctness issue.
-> > > 
-> > > But that critically depends upon the contents not getting mangled.  If it
-> > > *can* be screwed by such unlink, we risk successful lookup leading to the
-> > 
-> > Out of curiosity: whether or not it can get mangled depends on the
-> > filesystem and how it implements fast symlinks or do fast symlinks
-> > currently guarantee that contents are mangled?
-> 
-> Not sure if I understand your question correctly...
-> 
-> 	Filesystems should guarantee that the contents of string returned
-> by ->get_link() (or pointed to by ->i_link) remains unchanged for as long
-> as we are looking at it (until fs/namei.c:put_link() that drops it or
-> fs/namei.c:drop_links() in the end of pathwalk).  Fast symlinks or not -
-> doesn't matter.
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Yep, got that.
+> On Tue, Jan 18, 2022 at 05:40:14PM +0000, David Howells wrote:
+> > Christoph Hellwig <hch@infradead.org> wrote:
+> > =
 
-> 
-> 	The only cases where that does not hold (there are two of them in
-> the entire kernel) happen to be fast symlinks.	Both cases are bugs.
+> > > On Tue, Jan 18, 2022 at 01:54:54PM +0000, David Howells wrote:
+> > > > Add an IS_KERNEL_FILE() macro to test the S_KERNEL_FILE inode flag=
+ as is
+> > > > common practice for the other inode flags[1].
+> > > =
 
-Ok, that's what I was essentially after whether or not they were bugs in
-the filesystems or it's a generic bug.
+> > > Please fix the flag to have a sensible name first, as the naming of =
+the
+> > > flag and this new helper is utterly wrong as we already discussed.
+> > =
 
-> ext4 case is actually easy to fix - the only reason it ends up mangling
-> the string is the way ext4_truncate() implements its check for victim
-> being a fast symlink (and thus needing no work).  It gets disrupted
-> by zeroing ->i_size, which we need to do in this case (inode removal).
-> That's not hard to get right.
+> > And I suggested a new name, which you didn't comment on.
+> =
 
-Oh, I see, it zeroes i_size and erases i_data which obviously tramples
-the fast symlink contents.
+> Again, look at the semantics of the flag:  The only thing it does in the
+> VFS is to prevent a rmdir.  So you might want to name it after that.
+> =
 
-Given that ext4 makes use of i_flags for their ext4 inode containers why
-couldn't this just be sm like
+> Or in fact drop the flag entirely.  We don't have that kind of
+> protection for other in-kernel file use or important userspace daemons
+> either.  I can't see why cachefiles is the magic snowflake here that
+> suddenly needs semantics no one else has.
 
-#define EXT4_FAST_SYMLINK	        0x<some-free-value>
+The flag cannot just be dropped - it's an important part of the interactio=
+n
+with cachefilesd with regard to culling.  Culling to free up space is
+offloaded to userspace rather than being done within the kernel.
 
-	if (EXT4_I(inode)->i_flags & EXT4_FAST_SYMLINK)
-		return <im-a-fast-symlink>;
+Previously, cachefiles, the kernel module, had to maintain a huge tree of
+records of every backing inode that it was currently using so that it coul=
+d
+forbid cachefilesd to cull one when cachefilesd asked.  I've reduced that =
+to a
+single bit flag on the inode struct, thereby saving both memory and time. =
+ You
+can argue whether it's worth sacrificing an inode flag bit for that, but t=
+he
+flag can be reused for any other kernel service that wants to similarly ma=
+rk
+an inode in use.
 
-? Which seems simpler and more obvious to someone reading that code than
-logic based on substracting blocks or checking i_size.
+Further, it's used as a mark to prevent cachefiles accidentally using an i=
+node
+twice - say someone misconfigures a second cache overlapping the first - a=
+nd,
+again, this works if some other kernel driver wants to mark inode it is us=
+ing
+in use.  Cachefiles will refuse to use them if it ever sees them, so no
+problem there.
+
+And it's not true that we don't have that kind of protection for other
+in-kernel file use.  See S_SWAPFILE.  I did consider using that, but that =
+has
+other side effects.  I mentioned that perhaps I should make swapon set
+S_KERNEL_FILE also.  Also blockdevs have some exclusion also, I think.
+
+The rmdir thing should really apply to rename and unlink also.  That's to
+prevent someone, cachefilesd included, causing cachefiles to malfunction b=
+y
+removing the directories it created.  Possibly this should be a separate b=
+it
+to S_KERNEL_FILE, maybe S_NO_DELETE.
+
+So I could change S_KERNEL_FILE to S_KERNEL_LOCK, say, or maybe S_EXCLUSIV=
+E.
+
+David
+
