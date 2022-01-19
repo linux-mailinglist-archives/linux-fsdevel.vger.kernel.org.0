@@ -2,266 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40E1949343F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jan 2022 06:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6819493446
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jan 2022 06:20:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243980AbiASFSZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jan 2022 00:18:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57473 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240892AbiASFSZ (ORCPT
+        id S244075AbiASFU3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jan 2022 00:20:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32794 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231567AbiASFU2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jan 2022 00:18:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642569504;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9a1wEH6ePGC7fV0oIaU455+6ECCky8ZZbJOjMCVJj64=;
-        b=OXYmiGRJ4dm5LCi9rcPnXLzxFt8fdvyXrZwBH930TZsVE/zb69l8eeI2/gr4GKDeGZl3A6
-        zHHt4Z/kRJTuChFi1RE9mtXgoj+XP42bl77Ve7nwFkjoQegjfUPWqCxJl66dTTnOPf7ujF
-        zv8E0c0GWEghO+r7FQChuEnIvDOrlUo=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-158-QRlaGYGKOTyZGdWefkjZgg-1; Wed, 19 Jan 2022 00:18:23 -0500
-X-MC-Unique: QRlaGYGKOTyZGdWefkjZgg-1
-Received: by mail-pg1-f197.google.com with SMTP id p6-20020a63ab06000000b0033fcc84d4f6so889053pgf.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jan 2022 21:18:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=9a1wEH6ePGC7fV0oIaU455+6ECCky8ZZbJOjMCVJj64=;
-        b=49Rq6YBRTjwBVKXOcGw5wceTT9CrtNJocs6Rz/QaA6BWLdiFV0N3fkksppeeuMGpRJ
-         NnmLuS/chMfoCHEx9aUpubwocYPY9dWAe6VoiyM0tmWE3KaeaDUFL+D0IER+d2852hFK
-         qFFgCcPQT+qkz49WZfNzB+25KcJ1yRq+yTDJcN25bJkdwYmF8cUAqMUBfFxPHprFRDTZ
-         gGZpMJzJ8qsCgJcObspqPpa7a2haLkrTmUZnfdpC1Dm9NDnowdYzmYI7k6WIg0Q8Toym
-         0gaqdOW3cqpIoCJKr31nO1IR41er55M+ToEOuNeQvPQvCoqTWWXGdPv6CoRBVI2wQA4P
-         jCZg==
-X-Gm-Message-State: AOAM532XxiuidN7Xp4bkosvtNHQ4bm2R8gp9mEsdwxzAXcnsrod10lWw
-        8iT71kpJQqokNCowwBH3xe1kblXLscldeNnWhnEuOzLP1qQAmYm252GqWby/UjlJLtQTvtA8u72
-        duJVBg+kieDrLOadyiCDFzydcYg==
-X-Received: by 2002:a63:360c:: with SMTP id d12mr25785039pga.395.1642569501899;
-        Tue, 18 Jan 2022 21:18:21 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxmcOEdsEeXClRkUFdwkWTDMuyoLYhtokWHW1sIbn5SOt2Yx5gbW9QOwvgD3y1kerWmpN9ILQ==
-X-Received: by 2002:a63:360c:: with SMTP id d12mr25785026pga.395.1642569501567;
-        Tue, 18 Jan 2022 21:18:21 -0800 (PST)
-Received: from [10.72.12.81] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id r19sm7982852pgi.58.2022.01.18.21.18.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jan 2022 21:18:20 -0800 (PST)
-Subject: Re: [RFC PATCH v10 44/48] ceph: plumb in decryption during sync reads
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com
-References: <20220111191608.88762-1-jlayton@kernel.org>
- <20220111191608.88762-45-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <961b7838-6c03-f3bf-4004-619ff5c36252@redhat.com>
-Date:   Wed, 19 Jan 2022 13:18:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Wed, 19 Jan 2022 00:20:28 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B25D0C061574;
+        Tue, 18 Jan 2022 21:20:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zCnUn09sb6ERyGqIvgioo3seFmwAbbVIJnBrFXm1CgA=; b=2IiHzr3sF6AOeiLyrYxB3stg6B
+        In72SYB4+LQGzhMbHoql1xCZ3FVDIuJnKKf2vow9nyfeDi7RuGy9/Qlno8PlYmL9Ug3tC9RB/E8Js
+        MW22sT6fJYOti8nlF//wxgcYQmr8yUxIdbAVb++QfZ9fi2BeEIvGq9P/v/eUZgTqO3/HwBjWQ9WCG
+        B99ElFBr2hiiTS9KQriCGobMvbk5ORDrXoWfhAC0AypL72vq6MIc/I70ZBTuX5L53jI6tdazyHAbN
+        qCCIw0znLs/dl1/oCtbeHkjgltfsFJKoCyax0bk6b5j2QduT2Tln9uSU1wDSAWBODpQ2Am6X2vX1h
+        4SK/v2Cw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nA3OF-003qhc-Es; Wed, 19 Jan 2022 05:20:11 +0000
+Date:   Tue, 18 Jan 2022 21:20:11 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <smfrench@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] vfs, fscache: Add an IS_KERNEL_FILE() macro for
+ the S_KERNEL_FILE flag
+Message-ID: <YeefizLOGt1Qf35o@infradead.org>
+References: <YebpktrcUZOlBHkZ@infradead.org>
+ <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
+ <164251409447.3435901.10092442643336534999.stgit@warthog.procyon.org.uk>
+ <3613681.1642527614@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20220111191608.88762-45-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3613681.1642527614@warthog.procyon.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jan 18, 2022 at 05:40:14PM +0000, David Howells wrote:
+> Christoph Hellwig <hch@infradead.org> wrote:
+> 
+> > On Tue, Jan 18, 2022 at 01:54:54PM +0000, David Howells wrote:
+> > > Add an IS_KERNEL_FILE() macro to test the S_KERNEL_FILE inode flag as is
+> > > common practice for the other inode flags[1].
+> > 
+> > Please fix the flag to have a sensible name first, as the naming of the
+> > flag and this new helper is utterly wrong as we already discussed.
+> 
+> And I suggested a new name, which you didn't comment on.
 
-On 1/12/22 3:16 AM, Jeff Layton wrote:
-> Note that the crypto block may be smaller than a page, but the reverse
-> cannot be true.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/file.c | 94 ++++++++++++++++++++++++++++++++++++--------------
->   1 file changed, 69 insertions(+), 25 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 41766b2012e9..b4f2fcd33837 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -926,9 +926,17 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
->   		bool more;
->   		int idx;
->   		size_t left;
-> +		u64 read_off = off;
-> +		u64 read_len = len;
-> +
-> +		/* determine new offset/length if encrypted */
-> +		fscrypt_adjust_off_and_len(inode, &read_off, &read_len);
-> +
-> +		dout("sync_read orig %llu~%llu reading %llu~%llu",
-> +		     off, len, read_off, read_len);
->   
->   		req = ceph_osdc_new_request(osdc, &ci->i_layout,
-> -					ci->i_vino, off, &len, 0, 1,
-> +					ci->i_vino, read_off, &read_len, 0, 1,
->   					CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ,
->   					NULL, ci->i_truncate_seq,
->   					ci->i_truncate_size, false);
-> @@ -937,10 +945,13 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
->   			break;
->   		}
->   
-> +		/* adjust len downward if the request truncated the len */
-> +		if (off + len > read_off + read_len)
-> +			len = read_off + read_len - off;
->   		more = len < iov_iter_count(to);
->   
-> -		num_pages = calc_pages_for(off, len);
-> -		page_off = off & ~PAGE_MASK;
-> +		num_pages = calc_pages_for(read_off, read_len);
-> +		page_off = offset_in_page(off);
->   		pages = ceph_alloc_page_vector(num_pages, GFP_KERNEL);
->   		if (IS_ERR(pages)) {
->   			ceph_osdc_put_request(req);
-> @@ -948,7 +959,8 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
->   			break;
->   		}
->   
-> -		osd_req_op_extent_osd_data_pages(req, 0, pages, len, page_off,
-> +		osd_req_op_extent_osd_data_pages(req, 0, pages, read_len,
-> +						 offset_in_page(read_off),
->   						 false, false);
->   		ret = ceph_osdc_start_request(osdc, req, false);
->   		if (!ret)
-> @@ -957,23 +969,50 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
->   		ceph_update_read_metrics(&fsc->mdsc->metric,
->   					 req->r_start_latency,
->   					 req->r_end_latency,
-> -					 len, ret);
-> +					 read_len, ret);
->   
->   		if (ret > 0)
->   			objver = req->r_version;
->   		ceph_osdc_put_request(req);
-> -
->   		i_size = i_size_read(inode);
->   		dout("sync_read %llu~%llu got %zd i_size %llu%s\n",
->   		     off, len, ret, i_size, (more ? " MORE" : ""));
->   
-> -		if (ret == -ENOENT)
-> +		if (ret == -ENOENT) {
-> +			/* No object? Then this is a hole */
->   			ret = 0;
-> +		} else if (ret > 0 && IS_ENCRYPTED(inode)) {
-> +			int fret;
-> +
-> +			fret = ceph_fscrypt_decrypt_pages(inode, pages, read_off, ret);
-> +			if (fret < 0) {
-> +				ceph_release_page_vector(pages, num_pages);
-> +				ret = fret;
-> +				break;
-> +			}
-> +
-> +			dout("sync_read decrypted fret %d\n", fret);
-> +
-> +			/* account for any partial block at the beginning */
-> +			fret -= (off - read_off);
-> +
-> +			/*
-> +			 * Short read after big offset adjustment?
-> +			 * Nothing is usable, just call it a zero
-> +			 * len read.
-> +			 */
-> +			fret = max(fret, 0);
-> +
-> +			/* account for partial block at the end */
-> +			ret = min_t(ssize_t, fret, len);
-> +		}
-> +
-> +		/* Short read but not EOF? Zero out the remainder. */
->   		if (ret >= 0 && ret < len && (off + ret < i_size)) {
->   			int zlen = min(len - ret, i_size - off - ret);
->   			int zoff = page_off + ret;
->   			dout("sync_read zero gap %llu~%llu\n",
-> -                             off + ret, off + ret + zlen);
-> +			     off + ret, off + ret + zlen);
->   			ceph_zero_page_vector_range(zoff, zlen, pages);
->   			ret += zlen;
->   		}
-> @@ -981,15 +1020,15 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
->   		idx = 0;
->   		left = ret > 0 ? ret : 0;
->   		while (left > 0) {
-> -			size_t len, copied;
-> -			page_off = off & ~PAGE_MASK;
-> -			len = min_t(size_t, left, PAGE_SIZE - page_off);
-> +			size_t plen, copied;
-> +			plen = min_t(size_t, left, PAGE_SIZE - page_off);
->   			SetPageUptodate(pages[idx]);
->   			copied = copy_page_to_iter(pages[idx++],
-> -						   page_off, len, to);
-> +						   page_off, plen, to);
->   			off += copied;
->   			left -= copied;
-> -			if (copied < len) {
-> +			page_off = 0;
-> +			if (copied < plen) {
->   				ret = -EFAULT;
->   				break;
->   			}
-> @@ -1006,20 +1045,21 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
->   			break;
->   	}
->   
-> -	if (off > *ki_pos) {
-> -		if (off >= i_size) {
-> -			*retry_op = CHECK_EOF;
-> -			ret = i_size - *ki_pos;
-> -			*ki_pos = i_size;
-> -		} else {
-> -			ret = off - *ki_pos;
-> -			*ki_pos = off;
-> +	if (ret > 0) {
-> +		if (off > *ki_pos) {
-> +			if (off >= i_size) {
-> +				*retry_op = CHECK_EOF;
-> +				ret = i_size - *ki_pos;
-> +				*ki_pos = i_size;
-> +			} else {
-> +				ret = off - *ki_pos;
-> +				*ki_pos = off;
-> +			}
->   		}
-> -	}
-> -
-> -	if (last_objver && ret > 0)
-> -		*last_objver = objver;
->   
-> +		if (last_objver)
-> +			*last_objver = objver;
-> +	}
->   	dout("sync_read result %zd retry_op %d\n", ret, *retry_op);
->   	return ret;
->   }
-> @@ -1532,6 +1572,9 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
->   		last = (pos + len) != (write_pos + write_len);
->   		rmw = first || last;
->   
-> +		dout("sync_write ino %llx %lld~%llu adjusted %lld~%llu -- %srmw\n",
-> +		     ci->i_vino.ino, pos, len, write_pos, write_len, rmw ? "" : "no ");
-> +
+Again, look at the semantics of the flag:  The only thing it does in the
+VFS is to prevent a rmdir.  So you might want to name it after that.
 
-Should this move to the previous patch ?
-
-
->   		/*
->   		 * The data is emplaced into the page as it would be if it were in
->   		 * an array of pagecache pages.
-> @@ -1761,6 +1804,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
->   		ceph_clear_error_write(ci);
->   		pos += len;
->   		written += len;
-> +		dout("sync_write written %d\n", written);
->   		if (pos > i_size_read(inode)) {
->   			check_caps = ceph_inode_set_size(inode, pos);
->   			if (check_caps)
-
+Or in fact drop the flag entirely.  We don't have that kind of
+protection for other in-kernel file use or important userspace daemons
+either.  I can't see why cachefiles is the magic snowflake here that
+suddenly needs semantics no one else has.
