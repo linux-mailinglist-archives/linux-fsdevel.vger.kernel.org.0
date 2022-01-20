@@ -2,114 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E82F4953D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 19:03:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8809495417
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 19:21:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233510AbiATSDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 13:03:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233042AbiATSDr (ORCPT
+        id S1346893AbiATSUo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 13:20:44 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:52248 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347496AbiATSUm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 13:03:47 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF45BC061574;
-        Thu, 20 Jan 2022 10:03:46 -0800 (PST)
+        Thu, 20 Jan 2022 13:20:42 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 98C7BB81D74;
-        Thu, 20 Jan 2022 18:03:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA23C340E0;
-        Thu, 20 Jan 2022 18:03:44 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DAC86B81D84;
+        Thu, 20 Jan 2022 18:20:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5F3FC340E0;
+        Thu, 20 Jan 2022 18:20:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642701824;
-        bh=hnCvMNzGWqbC4sL/0zVTHFsSyDTS0wssN9HVuAtSlEE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b5HKZ1DiR5MGJUva6SjqfLdFN29GNFkr5XOv88VzjZDFQXBrdd1QySbriErYp4A3y
-         +qbt2fzqWG8LegRWAii4Yu8MGRyqhey3z9gjKULit5ycvchECXktUrUWZrEYIIxmWl
-         4k1vk0uJFHNuX249R2yqJNFIz1fNUqgOAthaezSJxIZbvcduZB0pu03JbAKfSUsW5K
-         a8zotVTBVrwGTwBWBXgc1OkdPxmT1244v7vrufWG6WVIf+01wTpdFW+3dJc08DX2m+
-         hCqkEDcH6uJKt32C4rglP4k4WNbkJpYHME5RUHRJEVy0ARAl+MCDlZxKp6Tltp6kLq
-         rpxrOALfkFFZw==
-Date:   Thu, 20 Jan 2022 10:03:44 -0800
+        s=k20201202; t=1642702839;
+        bh=8fdxfst3ycYwM4HdtXKC1Zd0zG9g+8M9vAbEwluGCDE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=D4qDLNWB+TJ7l7WzJbI+X72BjTRhu8ELUauQKLsKda2aFYhrtCJLA/wOBc5zfUvjk
+         Yoo7INXvhnCYso3M8yUn9vGLn13dN80ZIIOxiRgKjatoRhBUrGMF1fBtY9g7cUuKMs
+         13pq5zueUoojdYTk5YDNlBEEhme0QQHLuQJRkrBoRD+gy0MfRP5GwwKpFVAdYNNH8X
+         dIS5tVnpnxwepz6NtIHID/FyyOzJTnIR+5SfQ9nlyJu2AF8vwcR/SXGB1ENGcQwvwF
+         ugfIZtR+HChxPMzfcAomaxSaAAgZVyTV3VH/U8fyyXa0Zbjho3WXvSn7bGGBSbhETn
+         wPp1nexGTN1vA==
+Date:   Thu, 20 Jan 2022 10:20:39 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Anthony Iliopoulos <ailiop@suse.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] mount: warn only once about timestamp range
- expiration
-Message-ID: <20220120180344.GA13499@magnolia>
-References: <20220119202934.26495-1-ailiop@suse.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] xfs: DMAPI ioctl housecleaning for 5.17-rc1
+Message-ID: <20220120182039.GN13540@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119202934.26495-1-ailiop@suse.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 09:29:34PM +0100, Anthony Iliopoulos wrote:
-> Commit f8b92ba67c5d ("mount: Add mount warning for impending timestamp
-> expiry") introduced a mount warning regarding filesystem timestamp
-> limits, that is printed upon each writable mount or remount.
-> 
-> This can result in a lot of unnecessary messages in the kernel log in
-> setups where filesystems are being frequently remounted (or mounted
-> multiple times).
-> 
-> Avoid this by setting a superblock flag which indicates that the warning
-> has been emitted at least once for any particular mount, as suggested in
-> [1].
-> 
-> Signed-off-by: Anthony Iliopoulos <ailiop@suse.com>
+Hi Linus,
 
-I'm glad someone finally turned down the volume on this.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+This is the first of a series of small pull requests that perform some
+long overdue housecleaning of XFS ioctls.  This first pull request
+removes the FSSETDM ioctl, which was used to set DMAPI event attributes
+on XFS files.  The DMAPI support has never been merged upstream and the
+implementation of FSSETDM itself was removed two years ago, so let's
+withdraw it completely.
+
+As usual, I did a test-merge with upstream master as of a few minutes
+ago and didn't see any merge conflicts.  Please let me know if you
+encounter any problems.
 
 --D
 
-> 
-> [1] https://lore.kernel.org/CAHk-=wim6VGnxQmjfK_tDg6fbHYKL4EFkmnTjVr9QnRqjDBAeA@mail.gmail.com/
-> ---
->  fs/namespace.c     | 2 ++
->  include/linux/fs.h | 1 +
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index c6feb92209a6..fec0f79aa2eb 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2583,6 +2583,7 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
->  	struct super_block *sb = mnt->mnt_sb;
->  
->  	if (!__mnt_is_readonly(mnt) &&
-> +	   (!(sb->s_iflags & SB_I_TS_EXPIRY_WARNED)) &&
->  	   (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
->  		char *buf = (char *)__get_free_page(GFP_KERNEL);
->  		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
-> @@ -2597,6 +2598,7 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
->  			tm.tm_year+1900, (unsigned long long)sb->s_time_max);
->  
->  		free_page((unsigned long)buf);
-> +		sb->s_iflags |= SB_I_TS_EXPIRY_WARNED;
->  	}
->  }
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f3daaea16554..5c537cd9b006 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1435,6 +1435,7 @@ extern int send_sigurg(struct fown_struct *fown);
->  
->  #define SB_I_SKIP_SYNC	0x00000100	/* Skip superblock at global sync */
->  #define SB_I_PERSB_BDI	0x00000200	/* has a per-sb bdi */
-> +#define SB_I_TS_EXPIRY_WARNED 0x00000400 /* warned about timestamp range expiry */
->  
->  /* Possible states of 'frozen' field */
->  enum {
-> -- 
-> 2.34.1
-> 
+The following changes since commit 4a9bca86806fa6fc4fbccf050c1bd36a4778948a:
+
+  xfs: fix online fsck handling of v5 feature bits on secondary supers (2022-01-12 09:45:21 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-4
+
+for you to fetch changes up to 9dec0368b9640c09ef5af48214e097245e57a204:
+
+  xfs: remove the XFS_IOC_FSSETDM definitions (2022-01-17 09:16:40 -0800)
+
+----------------------------------------------------------------
+Withdraw the ioctl definition for the FSSETDM ioctl.
+
+----------------------------------------------------------------
+Darrick J. Wong (1):
+      xfs: remove the XFS_IOC_FSSETDM definitions
+
+ fs/xfs/libxfs/xfs_fs.h | 29 ++++-------------------------
+ 1 file changed, 4 insertions(+), 25 deletions(-)
