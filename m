@@ -2,73 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BDA2494DDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 13:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0652C494DFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 13:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241517AbiATM0c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 07:26:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60198 "EHLO
+        id S241857AbiATMce (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 07:32:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbiATM0b (ORCPT
+        with ESMTP id S237223AbiATMcd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 07:26:31 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFA2C061574;
-        Thu, 20 Jan 2022 04:26:31 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id m4so27843702edb.10;
-        Thu, 20 Jan 2022 04:26:30 -0800 (PST)
+        Thu, 20 Jan 2022 07:32:33 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC76C061574;
+        Thu, 20 Jan 2022 04:32:32 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id j2so27941012edj.8;
+        Thu, 20 Jan 2022 04:32:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=SKRq4lKenw91+Znt4tUNU3j+2p6da+FhYVba+8njzzI=;
-        b=R7MxVWj3C09fc5Sb9LAqGxKYKTxKNj6ahxflEXwLVZ5le/dxNP7ddIVbJEoKWtfUm7
-         nk5OJlNAQWYkYy4TCMUxawa5fwLmn285AAfAD2+/powo/MH0cw7zWxAztrK8F9GssCow
-         psC51Lii4mJL3CHqO0tueRySo5atmAa5U0jBjE1q8iDYHLcNl/fFole+fECq25umr5mj
-         MSGPntPqb6bJ6POwqlyvlT6dlHoU537LW66wteMDKCFOwV/0utA+J6vV72RHtHcOE92L
-         OQlp+I2KFLLfNtX/8e7JH4AJQKIe092YxU4mSHgjuy4Z8s1LEJy9fBeKVG2R52dOHHbD
-         QusQ==
+        bh=+EwLT/2jDgcvr2DeZgLKH9n4CqCysJdE2z1e9Aoco+Y=;
+        b=cGeHy5YkiSyNGK+p1vG6CVLVXaAWpgHMgA2iL3VtDxeBxfNnWUfTEu2ZcmIuWtZjUi
+         2GGw7+PUEcTakt6JjD6hwNvVFJgeOgs1JFrIJXRphXUxBKKzEwu4mgZk4GxRNQ+ms5Cm
+         l/TNWmBOi6gVlv/HTQobi/VNUvjJsQ62A5N9pS76dkS58Bj1Tlkb7Z6Oms2GuSnKHv+F
+         FUjNI2GRTFOI+AM9IDk3ov9Z1q/5hk+Ubw7rfeCjTSEQwahxjJTKp96/PJRM0xx8o05e
+         vgFwHDe5Y9lMHa3xdh+mz/EriWYxcQ10kQzm75qBoxa4ersPSPKGIj4lZqviap8sXIFE
+         PV1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=SKRq4lKenw91+Znt4tUNU3j+2p6da+FhYVba+8njzzI=;
-        b=RpDe09hzj8jE9BVMgB1koOqV9tJ+fuX4Zj5qE3v/z01l/5wa8woUZxxRe7BWvP4fa8
-         6YCRp8yY4kIbiHCVxvZQmJxcS5WpbmnAYU0RpqWl6MjYHwLEX6awZteRTDlc9W/ZEQBP
-         6kCzBUZYS+5p/YWSb7bZkfyxJmL+xE0XRaZWhh8wu16eqS3UDmRbeAd7td8ftJZJwpYp
-         00WXmPAtcpHw7FMJ/xBmwK/p+xOkOG8S5j5fbK4wtvu3xdPV0QsMx6gXJWuMyvHGIVvp
-         1UT+sozTM3TcqtqHPK9kGM4hGb3/j0pf4ysxXMo1N/nhZCgrTWBHEyggX6d1f0FzTzKE
-         BkRQ==
-X-Gm-Message-State: AOAM531fmQ956KSAn0t0Jfb3FL870rdmpGyQgpZ62ZOJp7TyEcwxWAUN
-        HOOfnnvQCg2H/QgwOqmyiQ==
-X-Google-Smtp-Source: ABdhPJxsbHWpP+Kt9MPp2c3xlwMiGWhXywTqsoXYzn/pVpQp4DmncA19FTLBKP5E2MGRnrnG1lt9kQ==
-X-Received: by 2002:a05:6402:27cd:: with SMTP id c13mr36480249ede.137.1642681589590;
-        Thu, 20 Jan 2022 04:26:29 -0800 (PST)
+        bh=+EwLT/2jDgcvr2DeZgLKH9n4CqCysJdE2z1e9Aoco+Y=;
+        b=dG7empm/31ixstGBHh8avY32y3tWflWG2pLx0y91myRFMCOzRi0a8cg5QkdjlDqSQ1
+         KsIvBb/DkxeYklR6DTe72gYH13aGIgu1xPms/JytY3ubZfJGLDWT+Im6ngC+Ohx072Vs
+         kPsvdZaW83iRy35aTTQpVysYKmbyYxOjz1wKGwQsVfSyq91aIhH0Hy6uQ6ErpikXrNPf
+         /zHtf0ai7JCrAW8vrCtAX+fIolAVYVNZ4vofzRewKQf/Wl/uCywLTiyFiTjpaAbIS2D+
+         DLWwWy5j/cMn/CzRFAP/87GdrRqg/uJETczro7rim2xnk2Kx5Xn3HkwTbtf1gLoJZ7A3
+         FMuA==
+X-Gm-Message-State: AOAM530Mkr+Knq5hd3q82bnUT9uVcDIBYBOMvhZFcq1FEB2yhK/shhzX
+        OUSh2pTavOQQllYmE1A5zA==
+X-Google-Smtp-Source: ABdhPJwH6zjYa5j5HcdiO6U7G5sNFguznEq7iDkXMSqZuOwt1jjJjuvKGiecydxCoecEwVmwHdC29Q==
+X-Received: by 2002:a05:6402:26ce:: with SMTP id x14mr18394913edd.147.1642681951589;
+        Thu, 20 Jan 2022 04:32:31 -0800 (PST)
 Received: from localhost.localdomain ([46.53.254.155])
-        by smtp.gmail.com with ESMTPSA id c7sm941576ejm.204.2022.01.20.04.26.28
+        by smtp.gmail.com with ESMTPSA id w27sm964224ejb.90.2022.01.20.04.32.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jan 2022 04:26:29 -0800 (PST)
-Date:   Thu, 20 Jan 2022 15:26:27 +0300
+        Thu, 20 Jan 2022 04:32:31 -0800 (PST)
+Date:   Thu, 20 Jan 2022 15:32:29 +0300
 From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Alexey Gladkov <legion@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
 Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
         akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stephen.s.brennan@oracle.com
+        linux-fsdevel@vger.kernel.org, stephen.s.brennan@oracle.com,
+        legion@kernel.org, cyphar@cyphar.com
 Subject: Re: [PATCH v2] proc: "mount -o lookup=" support
-Message-ID: <YelU89iAjQF07bW+@localhost.localdomain>
+Message-ID: <YelWXWKZkR//mD8i@localhost.localdomain>
 References: <YegysyqL3LvljK66@localhost.localdomain>
- <20220119170432.oxxaazjwvf4q6xvh@example.org>
+ <20220119162423.eqbyefywhtzm22tr@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220119170432.oxxaazjwvf4q6xvh@example.org>
+In-Reply-To: <20220119162423.eqbyefywhtzm22tr@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 06:04:32PM +0100, Alexey Gladkov wrote:
+On Wed, Jan 19, 2022 at 05:24:23PM +0100, Christian Brauner wrote:
 > On Wed, Jan 19, 2022 at 06:48:03PM +0300, Alexey Dobriyan wrote:
-> > >From 61376c85daab50afb343ce50b5a97e562bc1c8d3 Mon Sep 17 00:00:00 2001
+> > From 61376c85daab50afb343ce50b5a97e562bc1c8d3 Mon Sep 17 00:00:00 2001
 > > From: Alexey Dobriyan <adobriyan@gmail.com>
 > > Date: Mon, 22 Nov 2021 20:41:06 +0300
 > > Subject: [PATCH 1/1] proc: "mount -o lookup=..." support
@@ -82,79 +83,35 @@ On Wed, Jan 19, 2022 at 06:04:32PM +0100, Alexey Gladkov wrote:
 > > Implement proper mount option which selectively disables lookup/readdir
 > > in the top level /proc directory so that MaskedPaths doesn't need
 > > to be updated as time goes on.
-> > 
-> > Syntax is
-> > 
-> > 			Filter everything
-> > 	# mount -t proc -o lookup=/ proc /proc
-> > 	# ls /proc
-> > 	dr-xr-xr-x   8 root       root          0 Nov 22 21:12 995
-> > 	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 self -> 1163
-> > 	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 thread-self -> 1163/task/1163
-> > 
-> > 			Allow /proc/cpuinfo and /proc/uptime
-> > 	# mount -t proc proc -o lookup=cpuinfo/uptime /proc
-> > 
-> > 	# ls /proc
-> > 				...
-> > 	dr-xr-xr-x   8 root       root          0 Nov 22 21:12 995
-> > 	-r--r--r--   1 root       root          0 Nov 22 21:12 cpuinfo
-> > 	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 self -> 1163
-> > 	lrwxrwxrwx   1 root       root          0 Nov 22 21:12 thread-self -> 1163/task/1163
-> > 	-r--r--r--   1 root       root          0 Nov 22 21:12 uptime
-> > 
-> > Trailing slash is optional but saves 1 allocation.
-> > Trailing slash is mandatory for "filter everything".
-> > 
-> > Remounting with lookup= is disabled so that files and dcache entries
-> > don't stay active while filter list is changed. Users are supposed
-> > to unmount and mount again with different lookup= set.
-> > Remount rules may change in the future. (Eric W. Biederman)
-> > 
-> > Re: speed
-> > This is the price for filtering, given that lookup= is whitelist it is
-> > not supposed to be very long. Second, it is one linear memory scan per
-> > lookup, there are no linked lists. It may be faster than rbtree in fact.
-> > It consumes 1 allocation per superblock which is list of names itself.
-> > 
-> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > ---
-> > 
-> > 	v2
-> > 	documentation!
-> > 	descriptive comments!
-> > 	disable remount
-> > 
-> >  Documentation/filesystems/proc.rst |   8 ++
-> >  fs/proc/generic.c                  |  18 ++--
-> >  fs/proc/internal.h                 |  31 ++++++-
-> >  fs/proc/proc_net.c                 |   2 +-
-> >  fs/proc/root.c                     | 127 ++++++++++++++++++++++++++++-
-> >  include/linux/proc_fs.h            |   2 +
-> >  6 files changed, 178 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> > index 8d7f141c6fc7..9a328f0b4346 100644
-> > --- a/Documentation/filesystems/proc.rst
-> > +++ b/Documentation/filesystems/proc.rst
-> > @@ -2186,6 +2186,7 @@ The following mount options are supported:
-> >  	hidepid=	Set /proc/<pid>/ access mode.
-> >  	gid=		Set the group authorized to learn processes information.
-> >  	subset=		Show only the specified subset of procfs.
-> > +        lookup=         Top-level /proc filter, independent of subset=
 > 
-> Will it be possible to combine lookup= and subset= options when mounting?
+> I might've missed this when this was sent the last time so maybe it was
+> clearly explained in an earlier thread: What's the reason this needs to
+> live in the kernel?
 
-Currently only subset=pid is implemented, which is equivalent to
+The reasons are:
+	MaskedPaths or equivalents are blacklists, not future proof
 
-	mount -t proc -o lookup=/ proc /proc
+	MaskedPaths is applied at container creation once,
+	lookup= is applied at mount time surely but names aren't
+	required to exist to be filtered (read: some silly ISV module
+	gets loaded, creates /proc entries, containers get them with all
+	security holes)
 
-In the future subset= might expand and lookup= could filter whatever
-exposed.
+> The MaskedPaths entry is optional so runtimes aren't required to block
+> anything by default and this mostly makes sense for workloads that run
+> privileged.
+> 
+> In addition MaskedPaths is a generic option which allows to hide any
+> existing path, not just proc. Even in the very docker-specific defaults
+> /sys/firmware is covered.
 
-> > +lookup= mount option makes available only listed files/directories in
-> > +the top-level /proc directory. Individual names are separated
-> > +by slash. Empty list is equivalent to subset=pid. lookup= filters before
-> > +subset= if both options are supplied. lookup= doesn't affect /proc/${pid}
-> > +directories availability as well as /proc/self and /proc/thread-self
-> > +symlinks. More fine-grained filtering is not supported at the moment.
+Sure, the patch is for /proc only. MaskedPaths can't overmount with
+/dev/null file which doesn't exist yet.
+
+> I do see clear value in the subset= and hidepid= options. They are
+> generally useful independent of opinionated container workloads. I don't
+> see the same for lookup=.
+> 
+> An alternative I find more sensible is to add a new value for subset=
+> that hides anything(?) that only global root should have read/write
+> access too.
