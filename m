@@ -2,68 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5ECD4949DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 09:47:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E54CA4949EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 09:48:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240265AbiATIrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 03:47:18 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:60202 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359369AbiATIrO (ORCPT
+        id S1359383AbiATIr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 03:47:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1359413AbiATIrq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 03:47:14 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7031FB81D09;
-        Thu, 20 Jan 2022 08:47:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F25C340E5;
-        Thu, 20 Jan 2022 08:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642668432;
-        bh=uymmtLY3ykuPPTJX+D/fvcl6pnd2cceSyUotgGzVGCE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e7HNn4fFPcTaohBWRYUvtow+lpJ341SlzUM+TXWkJid/DyRMTy6qoXvV86VQMMlmX
-         NZ3VBTfMzmyFcxmxDbCYfCvgJR7V/nRhWehA1csKmiEpLG/uisCiFb41cCnKZq0RQE
-         6LetKDDsWl0GvyeeG9JfWthQXvvdTaDAWyQ6KquleByCdX8aAytkVXevzpSYDVexjW
-         cwgfhXKlJut1iVe2kjap0DHPSfDJTDS4qByL8EJGI90UEiV0STBb9klbH0xFYlITHv
-         NG50dCdnZQJ+O2BUTHw9hCL7NzVS/XTLLnGDW1lkfPWqFXnuvFpg/4A1fv80Mde0+9
-         hhtanxufmvxSw==
-Date:   Thu, 20 Jan 2022 09:47:07 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Anthony Iliopoulos <ailiop@suse.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] mount: warn only once about timestamp range
- expiration
-Message-ID: <20220120084707.bsiyxudl4yfqqywd@wittgenstein>
-References: <20220119202934.26495-1-ailiop@suse.com>
+        Thu, 20 Jan 2022 03:47:46 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279FFC061756;
+        Thu, 20 Jan 2022 00:47:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fNusMrWQ+iaAxCx5W24yZJ93BWZfAuFDm6S8/KGzbK0=; b=D39kfHS+T/0kWsqL02joFtiv09
+        ubeTypbD4543NiZpFkfezmtBZWQPlrZpYwm/nLxZD9YK8pWH41dX2UJdscRc7NmMJvro+lxKIaBId
+        K7jnSerZ73JAr+mJgGNAbVwjVHOW9sFo2xVDGlluJ5YFRPbCzMgZWrwNKA1PwHpa3SU0W6DbeyEZM
+        8Jhb0XYD0mJ+HB19llClYpTW+tEqw/tkvKNOsFZfQsn8N3aCVrg/s/BVVvN1k/LtRGQa2vqe92Uv8
+        WYO1RKbzkm+czYu/+x0/YVypor1v53PG6zh7AENpjveWc5STtRuijyEz/bq9rbZuNmyIZsgE89SL4
+        P4DvTPTw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nAT6S-009tud-Lg; Thu, 20 Jan 2022 08:47:32 +0000
+Date:   Thu, 20 Jan 2022 00:47:32 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
+        dan.j.williams@intel.com, david@fromorbit.com, hch@infradead.org,
+        jane.chu@oracle.com
+Subject: Re: [PATCH v9 07/10] mm: move pgoff_address() to vma_pgoff_address()
+Message-ID: <YekhpF0VS+OA4Yud@infradead.org>
+References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
+ <20211226143439.3985960-8-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119202934.26495-1-ailiop@suse.com>
+In-Reply-To: <20211226143439.3985960-8-ruansy.fnst@fujitsu.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 09:29:34PM +0100, Anthony Iliopoulos wrote:
-> Commit f8b92ba67c5d ("mount: Add mount warning for impending timestamp
-> expiry") introduced a mount warning regarding filesystem timestamp
-> limits, that is printed upon each writable mount or remount.
+On Sun, Dec 26, 2021 at 10:34:36PM +0800, Shiyang Ruan wrote:
+> Since it is not a DAX-specific function, move it into mm and rename it
+> to be a generic helper.
 > 
-> This can result in a lot of unnecessary messages in the kernel log in
-> setups where filesystems are being frequently remounted (or mounted
-> multiple times).
-> 
-> Avoid this by setting a superblock flag which indicates that the warning
-> has been emitted at least once for any particular mount, as suggested in
-> [1].
-> 
-> Signed-off-by: Anthony Iliopoulos <ailiop@suse.com>
-> 
-> [1] https://lore.kernel.org/CAHk-=wim6VGnxQmjfK_tDg6fbHYKL4EFkmnTjVr9QnRqjDBAeA@mail.gmail.com/
-> ---
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Looks good,
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
