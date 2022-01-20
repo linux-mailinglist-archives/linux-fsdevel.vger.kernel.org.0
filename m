@@ -2,116 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0652C494DFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 13:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9527E494E1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 13:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241857AbiATMce (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 07:32:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237223AbiATMcd (ORCPT
+        id S242906AbiATMoG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 07:44:06 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:34658 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242871AbiATMoF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 07:32:33 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC76C061574;
-        Thu, 20 Jan 2022 04:32:32 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id j2so27941012edj.8;
-        Thu, 20 Jan 2022 04:32:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+EwLT/2jDgcvr2DeZgLKH9n4CqCysJdE2z1e9Aoco+Y=;
-        b=cGeHy5YkiSyNGK+p1vG6CVLVXaAWpgHMgA2iL3VtDxeBxfNnWUfTEu2ZcmIuWtZjUi
-         2GGw7+PUEcTakt6JjD6hwNvVFJgeOgs1JFrIJXRphXUxBKKzEwu4mgZk4GxRNQ+ms5Cm
-         l/TNWmBOi6gVlv/HTQobi/VNUvjJsQ62A5N9pS76dkS58Bj1Tlkb7Z6Oms2GuSnKHv+F
-         FUjNI2GRTFOI+AM9IDk3ov9Z1q/5hk+Ubw7rfeCjTSEQwahxjJTKp96/PJRM0xx8o05e
-         vgFwHDe5Y9lMHa3xdh+mz/EriWYxcQ10kQzm75qBoxa4ersPSPKGIj4lZqviap8sXIFE
-         PV1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+EwLT/2jDgcvr2DeZgLKH9n4CqCysJdE2z1e9Aoco+Y=;
-        b=dG7empm/31ixstGBHh8avY32y3tWflWG2pLx0y91myRFMCOzRi0a8cg5QkdjlDqSQ1
-         KsIvBb/DkxeYklR6DTe72gYH13aGIgu1xPms/JytY3ubZfJGLDWT+Im6ngC+Ohx072Vs
-         kPsvdZaW83iRy35aTTQpVysYKmbyYxOjz1wKGwQsVfSyq91aIhH0Hy6uQ6ErpikXrNPf
-         /zHtf0ai7JCrAW8vrCtAX+fIolAVYVNZ4vofzRewKQf/Wl/uCywLTiyFiTjpaAbIS2D+
-         DLWwWy5j/cMn/CzRFAP/87GdrRqg/uJETczro7rim2xnk2Kx5Xn3HkwTbtf1gLoJZ7A3
-         FMuA==
-X-Gm-Message-State: AOAM530Mkr+Knq5hd3q82bnUT9uVcDIBYBOMvhZFcq1FEB2yhK/shhzX
-        OUSh2pTavOQQllYmE1A5zA==
-X-Google-Smtp-Source: ABdhPJwH6zjYa5j5HcdiO6U7G5sNFguznEq7iDkXMSqZuOwt1jjJjuvKGiecydxCoecEwVmwHdC29Q==
-X-Received: by 2002:a05:6402:26ce:: with SMTP id x14mr18394913edd.147.1642681951589;
-        Thu, 20 Jan 2022 04:32:31 -0800 (PST)
-Received: from localhost.localdomain ([46.53.254.155])
-        by smtp.gmail.com with ESMTPSA id w27sm964224ejb.90.2022.01.20.04.32.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jan 2022 04:32:31 -0800 (PST)
-Date:   Thu, 20 Jan 2022 15:32:29 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stephen.s.brennan@oracle.com,
-        legion@kernel.org, cyphar@cyphar.com
-Subject: Re: [PATCH v2] proc: "mount -o lookup=" support
-Message-ID: <YelWXWKZkR//mD8i@localhost.localdomain>
-References: <YegysyqL3LvljK66@localhost.localdomain>
- <20220119162423.eqbyefywhtzm22tr@wittgenstein>
+        Thu, 20 Jan 2022 07:44:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V2MYYzM_1642682637;
+Received: from 192.168.31.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V2MYYzM_1642682637)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 20 Jan 2022 20:43:59 +0800
+Message-ID: <a5b495d3-cafe-548a-2130-b7aa9e597f41@linux.alibaba.com>
+Date:   Thu, 20 Jan 2022 20:43:57 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220119162423.eqbyefywhtzm22tr@wittgenstein>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.2
+Subject: Re: [PATCH v1 19/23] cachefiles: implement .demand_read() for demand
+ read
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org
+References: <20211227125444.21187-1-jefflexu@linux.alibaba.com>
+ <20211227125444.21187-20-jefflexu@linux.alibaba.com>
+ <YcndgcpQQWY8MJBD@casper.infradead.org>
+ <47831875-4bdd-8398-9f2d-0466b31a4382@linux.alibaba.com>
+ <99c94a78-58c4-f0af-e1d4-9aaa51bab281@linux.alibaba.com>
+ <YegQOHs9yjIgu1Qi@casper.infradead.org>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <YegQOHs9yjIgu1Qi@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 05:24:23PM +0100, Christian Brauner wrote:
-> On Wed, Jan 19, 2022 at 06:48:03PM +0300, Alexey Dobriyan wrote:
-> > From 61376c85daab50afb343ce50b5a97e562bc1c8d3 Mon Sep 17 00:00:00 2001
-> > From: Alexey Dobriyan <adobriyan@gmail.com>
-> > Date: Mon, 22 Nov 2021 20:41:06 +0300
-> > Subject: [PATCH 1/1] proc: "mount -o lookup=..." support
-> > 
-> > Docker implements MaskedPaths configuration option
-> > 
-> > 	https://github.com/estesp/docker/blob/9c15e82f19b0ad3c5fe8617a8ec2dddc6639f40a/oci/defaults.go#L97
-> > 
-> > to disable certain /proc files. It overmounts them with /dev/null.
-> > 
-> > Implement proper mount option which selectively disables lookup/readdir
-> > in the top level /proc directory so that MaskedPaths doesn't need
-> > to be updated as time goes on.
+
+
+On 1/19/22 9:20 PM, Matthew Wilcox wrote:
+> On Wed, Jan 12, 2022 at 05:02:13PM +0800, JeffleXu wrote:
+>> I'm afraid IDR can't be replaced by xarray here. Because we need an 'ID'
+>> for each pending read request, so that after fetching data from remote,
+>> user daemon could notify kernel which read request has finished by this
+>> 'ID'.
+>>
+>> Currently this 'ID' is get from idr_alloc(), and actually identifies the
+>> position of corresponding read request inside the IDR tree. I can't find
+>> similar API of xarray implementing similar function, i.e., returning an
+>> 'ID'.
 > 
-> I might've missed this when this was sent the last time so maybe it was
-> clearly explained in an earlier thread: What's the reason this needs to
-> live in the kernel?
-
-The reasons are:
-	MaskedPaths or equivalents are blacklists, not future proof
-
-	MaskedPaths is applied at container creation once,
-	lookup= is applied at mount time surely but names aren't
-	required to exist to be filtered (read: some silly ISV module
-	gets loaded, creates /proc entries, containers get them with all
-	security holes)
-
-> The MaskedPaths entry is optional so runtimes aren't required to block
-> anything by default and this mostly makes sense for workloads that run
-> privileged.
+> xa_alloc().
 > 
-> In addition MaskedPaths is a generic option which allows to hide any
-> existing path, not just proc. Even in the very docker-specific defaults
-> /sys/firmware is covered.
 
-Sure, the patch is for /proc only. MaskedPaths can't overmount with
-/dev/null file which doesn't exist yet.
+Oh yes. Thanks. I will try to convert to xarray API...
 
-> I do see clear value in the subset= and hidepid= options. They are
-> generally useful independent of opinionated container workloads. I don't
-> see the same for lookup=.
-> 
-> An alternative I find more sensible is to add a new value for subset=
-> that hides anything(?) that only global root should have read/write
-> access too.
+-- 
+Thanks,
+Jeffle
