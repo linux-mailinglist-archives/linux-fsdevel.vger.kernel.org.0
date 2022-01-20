@@ -2,98 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94023495487
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 19:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C24C495574
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 21:39:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377377AbiATS7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 13:59:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346922AbiATS7X (ORCPT
+        id S1377656AbiATUjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 15:39:18 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:39686 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229701AbiATUjS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 13:59:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87623C061574;
-        Thu, 20 Jan 2022 10:59:23 -0800 (PST)
+        Thu, 20 Jan 2022 15:39:18 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B357E617BE;
-        Thu, 20 Jan 2022 18:59:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FEA8C340E0;
-        Thu, 20 Jan 2022 18:59:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B045D61834;
+        Thu, 20 Jan 2022 20:39:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9512C340E0;
+        Thu, 20 Jan 2022 20:39:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642705161;
-        bh=Uz+ErrzCvsPs8XI14OrT140VYUl1+xldNmUfTLio22M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ATDC0bEoLEh2/8T7ESqS8zsslSvruR+pnXqkSrY9LpKZ1kD3kMN3rs2G3xleWnGRK
-         CeaCh/bGZl7EKxv2IOv/1/w2ZjC8Tqq78K1Da1yP8RaqkVuc9PYSGXHRxAaDcpi4kg
-         2iK6AboStWMRHLU+dr5Qq0JW5KZQHact99A2KSnD/HTbyoIcrWDwXiDYj4usILNaiy
-         M6c49exdlFi6WKp7Cj3jBLUuIWG89IfhZjib//UINlIHJMe8/KnV+WR+dpaj+MtKaK
-         JMDRrRYW9tERQY1Hi06Sksz5uOD3FYkJW0NHHXM49VQL0LFpT24cOw68UqnrDjJ7Ci
-         UHX/KB4xrmOvQ==
-Date:   Thu, 20 Jan 2022 10:59:20 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: legacy Irix ioctl housecleaning for 5.17-rc1, part 2
-Message-ID: <20220120185920.GP13540@magnolia>
+        s=k20201202; t=1642711156;
+        bh=xHyJV2OF1Wme9jGp3aO4nKBDG16B8D+4M9ewndf2eJc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mXLj0tywklYTXnw6izq3AIlPI96bKEb6CLyl+fLbQESaYmG1kISbixIyFAv/S46Yt
+         c3w5LXM0tWf7J4YyUpYmBMvJfRLefA1hgMgn0qeGwsxM2fMFZcmVdHiBwREeqoh+Bj
+         U5cKYdGF1Zwo5HRRQ/D6nYOFBwCGrr26BzMfnPtcGXUP+Wv4ZGHpTCuuhQ2JBijA4h
+         4aoYP4S5J+7wdukl7VBSaO/CKCgyDxK0dy/8QciVjrp0hOtcXOMuN3kyj1aD3vBBZn
+         oy6iTnANsohSdKfd13BW8GoWBfQ63urh/ZWj8SglSPCOw4zdk3yK2mi4cq2SLUmDAU
+         LHZ1eZC58PDsg==
+Date:   Thu, 20 Jan 2022 12:39:14 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v10 0/5] add support for direct I/O with fscrypt using
+ blk-crypto
+Message-ID: <YenIcshA706d/ziV@sol.localdomain>
+References: <20220120071215.123274-1-ebiggers@kernel.org>
+ <YekdnxpeunTGfXqX@infradead.org>
+ <20220120171027.GL13540@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20220120171027.GL13540@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Thu, Jan 20, 2022 at 09:10:27AM -0800, Darrick J. Wong wrote:
+> On Thu, Jan 20, 2022 at 12:30:23AM -0800, Christoph Hellwig wrote:
+> > On Wed, Jan 19, 2022 at 11:12:10PM -0800, Eric Biggers wrote:
+> > > 
+> > > Given the above, as far as I know the only remaining objection to this
+> > > patchset would be that DIO constraints aren't sufficiently discoverable
+> > > by userspace.  Now, to put this in context, this is a longstanding issue
+> > > with all Linux filesystems, except XFS which has XFS_IOC_DIOINFO.  It's
+> > > not specific to this feature, and it doesn't actually seem to be too
+> > > important in practice; many other filesystem features place constraints
+> > > on DIO, and f2fs even *only* allows fully FS block size aligned DIO.
+> > > (And for better or worse, many systems using fscrypt already have
+> > > out-of-tree patches that enable DIO support, and people don't seem to
+> > > have trouble with the FS block size alignment requirement.)
+> > 
+> > It might make sense to use this as an opportunity to implement
+> > XFS_IOC_DIOINFO for ext4 and f2fs.
+> 
+> Hmm.  A potential problem with DIOINFO is that it doesn't explicitly
+> list the /file/ position alignment requirement:
+> 
+> struct dioattr {
+> 	__u32		d_mem;		/* data buffer memory alignment */
+> 	__u32		d_miniosz;	/* min xfer size		*/
+> 	__u32		d_maxiosz;	/* max xfer size		*/
+> };
 
-This is the third and final of a series of small pull requests that
-perform some long overdue housecleaning of XFS ioctls.  This time, we're
-withdrawing all variants of the ALLOCSP and FREESP ioctls from XFS'
-userspace API.  This might be a little premature since we've only just
-removed the functionality, but as I pointed out in the last pull
-request, nobody (including fstests) noticed that it was broken for 20
-years.
+Well, the comment above struct dioattr says:
 
-In response to the patch, we received a single comment from someone who
-stated that they 'augment' the ioctl for their own purposes, but
-otherwise acquiesced to the withdrawal.  I still want to try to clobber
-these old ioctl definitions in 5.17, but if you decide that we should
-wait longer, I can work with that.
+	/*
+	 * Direct I/O attribute record used with XFS_IOC_DIOINFO
+	 * d_miniosz is the min xfer size, xfer size multiple and file seek offset
+	 * alignment.
+	 */
 
-As usual, I did a test-merge with upstream master as of a few minutes
-ago, and didn't see any conflicts.  Please let me know if you encounter
-any problems.
+So d_miniosz serves that purpose already.
 
---D
+> 
+> Since I /think/ fscrypt requires that directio writes be aligned to file
+> block size, right?
 
-The following changes since commit 4d1b97f9ce7c0d2af2bb85b12d48e6902172a28e:
+The file position must be a multiple of the filesystem block size, yes.
+Likewise for the "minimum xfer size" and "xfer size multiple", and the "data
+buffer memory alignment" for that matter.  So I think XFS_IOC_DIOINFO would be
+good enough for the fscrypt direct I/O case.
 
-  xfs: kill the XFS_IOC_{ALLOC,FREE}SP* ioctls (2022-01-17 09:16:41 -0800)
+The real question is whether there are any direct I/O implementations where
+XFS_IOC_DIOINFO would *not* be good enough, for example due to "xfer size
+multiple" != "file seek offset alignment" being allowed.  In that case we would
+need to define a new ioctl that is more general (like the one you described
+below) rather than simply uplifting XFS_IOC_DIOINFO.
 
-are available in the Git repository at:
+More general is nice, but it's not helpful if no one will actually use the extra
+information.  So we need to figure out what is actually useful.
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-6
+> How about something like this:
+> 
+> struct dioattr2 {
+> 	__u32		d_mem;		/* data buffer memory alignment */
+> 	__u32		d_miniosz;	/* min xfer size		*/
+> 	__u32		d_maxiosz;	/* max xfer size		*/
+> 
+> 	/* file range must be aligned to this value */
+> 	__u32		d_min_fpos;
+> 
+> 	/* for optimal performance, align file range to this */
+> 	__u32		d_opt_fpos;
+> 
+> 	__u32		d_padding[11];
+> };
+> 
 
-for you to fetch changes up to b3bb9413e717b44e4aea833d07f14e90fb91cf97:
-
-  xfs: remove the XFS_IOC_{ALLOC,FREE}SP* definitions (2022-01-17 09:17:11 -0800)
-
-----------------------------------------------------------------
-Withdraw the XFS_IOC_ALLOCSP* and XFS_IOC_FREESP* ioctl definitions.
-
-Remove the header definitions for these ioctls.  The just-removed
-implementation has allowed callers to read stale disk contents for more
-than **21 years** and nobody noticed or complained, which implies a lack
-of users aside from exploit programs.
-
-----------------------------------------------------------------
-Darrick J. Wong (1):
-      xfs: remove the XFS_IOC_{ALLOC,FREE}SP* definitions
-
- fs/xfs/libxfs/xfs_fs.h | 8 ++++----
- fs/xfs/xfs_ioctl.c     | 9 +++++++++
- fs/xfs/xfs_ioctl32.h   | 4 ----
- 3 files changed, 13 insertions(+), 8 deletions(-)
+- Eric
