@@ -2,60 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A90A494A17
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 09:51:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EDB1494A21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 09:55:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359472AbiATIvi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 03:51:38 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:46446 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239430AbiATIvi (ORCPT
+        id S1359340AbiATIzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 03:55:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239356AbiATIzZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 03:51:38 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B3EAF6178E;
-        Thu, 20 Jan 2022 08:51:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DF4C340E0;
-        Thu, 20 Jan 2022 08:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642668697;
-        bh=dkLdf3lbzd0Tp2Q+IWqLFX0sC22K1J2jFtMc7CnCQxQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AihWf4BZBf00zTG6mlZh81sc2cXytbv4+OvwS2THDWGDdcvHpbS0gHrlzhhpFJ+0A
-         bVNnrEge9J4sSHwzsqIJhYuXTWGsJ4a6yX1JKhw6mRnTOZGgxV8OcJuYc+id4uvzuF
-         WL0Lq8eQGo43wfj5F6ObkvBYZBM9zVpHv0zWgKYBk/sZDNMtxLBbwRytKR3Y46aIfl
-         Uv4ZN/R+i5f1Lo/7NYiLEutMXWVpxjG6pvYQvMD+eT+zTi9FOkcUID9K2JiTxhuf9p
-         ZNMYqG+pVDMMTO0+H6XmEJ3i9hUgRuRTUDTRCwMagANwIggy0fFO4df5N2iQJqOH/b
-         HMmVQ51sHpGrA==
-Date:   Thu, 20 Jan 2022 09:51:32 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] pipe: remove redundant assignment to pointer buf
-Message-ID: <20220120085132.27w7lwam3tq6yyby@wittgenstein>
-References: <20220119225633.147658-1-colin.i.king@gmail.com>
+        Thu, 20 Jan 2022 03:55:25 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95094C061574;
+        Thu, 20 Jan 2022 00:55:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=m3ABMTZ0MqErW8PpbsHm9RBDGHUsM/mvFKByXoormFo=; b=SxEy3X14fIKUJuIVsOyebOtHH3
+        sCqrNsrU7uE7l+o3d7nKHHDUetnw9U4hDvA6eBMxhiWfpVGpZrqJyRA0tQvp9ijhHmgKxbPW7OJ6w
+        FXyUz8QAZRmZiTnwCnNeFfvf3WvAwMJTXYmqVTenYPkw+eKdFbO+WVJO5h2nwBnpsPL/EpbkwnDXd
+        oiYjBb+Pv5nCVlHsD2xl6fcXaGkAp6dvS/B8COFSRJSjp0CHovZdCUqJMXgAjKRxeo68YKCsmj919
+        ofA6bccFpyXfML557aIivCGOZTab0MieYiVvRV2WV5QCu2thOPA/kElA4+f8IFd8PaXb0oI22Vupu
+        dzeu+kaQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nATE4-009xcp-3W; Thu, 20 Jan 2022 08:55:24 +0000
+Date:   Thu, 20 Jan 2022 00:55:24 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
+        dan.j.williams@intel.com, david@fromorbit.com, hch@infradead.org,
+        jane.chu@oracle.com
+Subject: Re: [PATCH v9 08/10] mm: Introduce mf_dax_kill_procs() for fsdax case
+Message-ID: <YekjfDJOz2bXgKqv@infradead.org>
+References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
+ <20211226143439.3985960-9-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119225633.147658-1-colin.i.king@gmail.com>
+In-Reply-To: <20211226143439.3985960-9-ruansy.fnst@fujitsu.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 10:56:33PM +0000, Colin Ian King wrote:
-> The pointer buf is being assigned a value that is never read, it is
-> being re-assigned later on closer to where is it required to be set.
-> The assignment is redundant and can be removed. Cleans up clang
-> scan build warning:
-> 
-> fs/pipe.c:490:24: warning: Value stored to 'buf' during its
-> initialization is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
-
-Acked-by: Christian Brauner <brauner@kernel.org>
+Please only build the new DAX code if CONFIG_FS_DAX is set.
