@@ -2,105 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2C01494AB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 10:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B32494AE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 10:38:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359533AbiATJ2w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 04:28:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359532AbiATJ2v (ORCPT
+        id S1359514AbiATJiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 04:38:00 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:35279 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1359380AbiATJhz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 04:28:51 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B72DC061574;
-        Thu, 20 Jan 2022 01:28:51 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id z22so25820609edd.12;
-        Thu, 20 Jan 2022 01:28:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xI2hjvF9QTy4qeUkVgaLn/r0k38qP5qMUW5kFpgn8cU=;
-        b=aI2x5RhX2hh/tGP+a92b/dfubNDO5fhTRlSNlwpOyyT1umGfCiPQePIxdF0Op14ug0
-         XSAmli/b4t6S6U4Mf5GXRVU3E+KuSCtJPdoHejK64AmYFtw8K5GMM/MeEUiSKFc9srAl
-         SlGFM0zxQthDSCoKwtC4f5vTyQ9dVvrCzVti6aLJ93dkm0Hpn1ek3mtpkKuN+G/7+Tyb
-         eWp5luyPOAcDlLl36glvvsYm79qfhlVe/3UX10Gho1q0uubNQ3AfUhwAzUCRRtO8+EL3
-         YF8uwflxnpMQ6plfkdAa+eI4RrvJhR4LEMlCH8aC2TA7htHd/wUmsRHn/V/ln57c7dOW
-         4t3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xI2hjvF9QTy4qeUkVgaLn/r0k38qP5qMUW5kFpgn8cU=;
-        b=IwNmcWW34k9OswqCZTv5b/3ESewFL9ifhlSVPlpV8lpNWcqHSUJVv7aJVdPk02Ljty
-         Vw6v3zJDSkeElLW/7Lg7MUIEsSQmbg30h7Fg7AE9/VsLiQZPVlgEQhHMxjHt1pP0V0VL
-         yq/g8Yf7paSb2JR+ChYxd83GkKhKrGFJaxt7AYCTXIoiQGc+BW2qxSNT07+SJ8U7iXLv
-         XndblhVxHlXlKQwP2jOdZwyV+HgeqQV5Ag5SKGnoR5iar1pvyqi5XRY+BT4MNrxIoyCT
-         IbUEGC0d6ttGxsJazoZr2eiSRWkwOns4GF4qVTQ5pHxCxScXZ+UrVb4/ZMXTB6IGOsQ8
-         rMNg==
-X-Gm-Message-State: AOAM532nqO7wT/+Mr1M0s6Z9SsCu+8D0KjxB/3mwuQFLJ/gmVCTxOWqZ
-        b1dMa7iw425k39xvSdJ4exqjT+K9xNrBZtMjWCIuNK8Svy4Uxw==
-X-Google-Smtp-Source: ABdhPJwuxrqyAkpBzpTeZzlfnn6LGo2LitiLvI7m8TfC8LkdCV8tI2az6AWpg4xCckCJbPz3b27c8Cb00O0A31YVGKA=
-X-Received: by 2002:a17:906:2b8a:: with SMTP id m10mr27831650ejg.479.1642670929710;
- Thu, 20 Jan 2022 01:28:49 -0800 (PST)
+        Thu, 20 Jan 2022 04:37:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642671474;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vwaun9h4PrGOctit7O7Y3jbampOsovEgn1eDqCi+RHc=;
+        b=eEOaJNDcXSVmUCR8334IO0KLZV3N7JPN3xW4LrzGKFY/MnJgFbXUE0vVv7TrTeExBK8gTC
+        lqtEPyTgSiSV8UwyESUS4TFe1hWKoi+NYdQgdFfMJppKKMeqb9z3ohFxVAgw1heLgzA56r
+        tP3GcXugnaKkKKXvcgNlLqnzW1DCxb4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-45-TlUAgrb-MjSgqaMVPtjPzw-1; Thu, 20 Jan 2022 04:37:49 -0500
+X-MC-Unique: TlUAgrb-MjSgqaMVPtjPzw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A09901091DA5;
+        Thu, 20 Jan 2022 09:37:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B386D131CC;
+        Thu, 20 Jan 2022 09:37:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YekmpeQvNlGlMvNY@infradead.org>
+References: <YekmpeQvNlGlMvNY@infradead.org> <YeefizLOGt1Qf35o@infradead.org> <YebpktrcUZOlBHkZ@infradead.org> <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk> <164251409447.3435901.10092442643336534999.stgit@warthog.procyon.org.uk> <3613681.1642527614@warthog.procyon.org.uk> <3765724.1642583885@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <smfrench@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] vfs, fscache: Add an IS_KERNEL_FILE() macro for the S_KERNEL_FILE flag
 MIME-Version: 1.0
-References: <20211011030956.2459172-1-mudongliangabcd@gmail.com>
-In-Reply-To: <20211011030956.2459172-1-mudongliangabcd@gmail.com>
-From:   Dongliang Mu <mudongliangabcd@gmail.com>
-Date:   Thu, 20 Jan 2022 17:28:23 +0800
-Message-ID: <CAD-N9QXHwzt9Dui3i6sFF-4d-8Z41LoOJydPykdQQh_jWh+_SA@mail.gmail.com>
-Subject: Re: [PATCH] fs: fix GPF in nilfs_mdt_destroy
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <58089.1642671440.1@warthog.procyon.org.uk>
+Date:   Thu, 20 Jan 2022 09:37:20 +0000
+Message-ID: <58090.1642671440@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 11:10 AM Dongliang Mu <mudongliangabcd@gmail.com> wrote:
->
-> In alloc_inode, inode_init_always could return -NOMEM if
-> security_inode_alloc fails. In its error handling, i_callback and
-> nilfs_free_inode will be called. However, because inode->i_private is
-> not initialized due to the failure of security_inode_alloc, the function
-> nilfs_is_metadata_file_inode can return true and nilfs_mdt_destroy will
-> be executed to lead to GPF bug.
->
-> Fix this bug by moving the assignment of inode->i_private before
-> security_inode_alloc.
->
+Christoph Hellwig <hch@infradead.org> wrote:
 
-ping?
+> But you tricked Linus
 
-> BTW, this bug is triggered by fault injection in the syzkaller.
->
-> Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
-> ---
->  fs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index ed0cab8a32db..f6fce84bf550 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -160,6 +160,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
->         inode->i_dir_seq = 0;
->         inode->i_rdev = 0;
->         inode->dirtied_when = 0;
-> +       inode->i_private = NULL;
->
->  #ifdef CONFIG_CGROUP_WRITEBACK
->         inode->i_wb_frn_winner = 0;
-> @@ -194,7 +195,6 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
->         lockdep_set_class_and_name(&mapping->invalidate_lock,
->                                    &sb->s_type->invalidate_lock_key,
->                                    "mapping.invalidate_lock");
-> -       inode->i_private = NULL;
->         inode->i_mapping = mapping;
->         INIT_HLIST_HEAD(&inode->i_dentry);      /* buggered by rcu freeing */
->  #ifdef CONFIG_FS_POSIX_ACL
-> --
-> 2.25.1
->
+Tricked?  I put a notice explicitly pointing out that I was adding it and
+indicating that it might be controversial in the cover note and the pull
+request and further explained the use in the patches that handle it.  I posted
+the patches adding/using it a bunch of times to various mailing lists.  TYVM.
+
+David
+
