@@ -2,113 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4087149517D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 16:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A71264951E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 16:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376648AbiATPba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 10:31:30 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:36248 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346385AbiATPb0 (ORCPT
+        id S1376781AbiATP63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 10:58:29 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37526 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S243632AbiATP6W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 10:31:26 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 8BBC92190B;
-        Thu, 20 Jan 2022 15:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1642692685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CeAKA/iV/5m4aLZ6NbhTnNQny+wAlGZwM27Jzkopjbk=;
-        b=3X1YObwzeOcHGUM+4drtok74aVJX/znxmEe8AHAeUtWM7LKR8t0lQ+tUAu/DO059k9FOn6
-        07NT2yZOAqVCrrzsf6HNrfMMh/Gyb3veNwU0sTZ8b+ocyWEzIChYNW+HZ0+it8T6VAEi3K
-        c2FFP5WAMjO7ZqlBxMvxRK0qoVTOJoc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1642692685;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CeAKA/iV/5m4aLZ6NbhTnNQny+wAlGZwM27Jzkopjbk=;
-        b=efaUYMlqQ+jZRmwujeIMi7RF1nt+/XzC8Hi8u9mm+xOxtaQu2Uv6PnufTHs6vnAJfhSX8s
-        3oKomywEZIpwYHDw==
-Received: from quack3.suse.cz (unknown [10.100.200.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 7B22EA3B89;
-        Thu, 20 Jan 2022 15:31:25 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 38308A05D3; Thu, 20 Jan 2022 16:31:22 +0100 (CET)
-Date:   Thu, 20 Jan 2022 16:31:22 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        Ivan Delalande <colona@arista.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH] fnotify: invalidate dcache before IN_DELETE event
-Message-ID: <20220120153122.fpxg24okcmcvkcay@quack3.lan>
-References: <20220118120031.196123-1-amir73il@gmail.com>
- <20220120125208.jmm2xjwcxaswt3tn@quack3.lan>
- <CAOQ4uxjxayK006RDAiEm9hKP_JAZhZZDcj7tbnANjQWP-_XObA@mail.gmail.com>
+        Thu, 20 Jan 2022 10:58:22 -0500
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 20KFwDfQ001102
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jan 2022 10:58:14 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id CF09C15C41B6; Thu, 20 Jan 2022 10:58:13 -0500 (EST)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     linux-ext4@vger.kernel.org, Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
+        Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHv2 0/5] ext4/jbd2: inline_data fixes and minor cleanups
+Date:   Thu, 20 Jan 2022 10:58:12 -0500
+Message-Id: <164269428249.194735.9368808618979556408.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <cover.1642416995.git.riteshh@linux.ibm.com>
+References: <cover.1642416995.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjxayK006RDAiEm9hKP_JAZhZZDcj7tbnANjQWP-_XObA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-01-22 16:31:11, Amir Goldstein wrote:
-> On Thu, Jan 20, 2022 at 2:52 PM Jan Kara <jack@suse.cz> wrote:
-> > > +/*
-> > > + * fsnotify_delete - @dentry was unlinked and unhashed
-> > > + *
-> > > + * Caller must make sure that dentry->d_name is stable.
-> > > + *
-> > > + * Note: unlike fsnotify_unlink(), we have to pass also the unlinked inode
-> > > + * as this may be called after d_delete() and old_dentry may be negative.
-> > > + */
-> > > +static inline void fsnotify_delete(struct inode *dir, struct inode *inode,
-> > > +                                struct dentry *dentry)
-> > > +{
-> > > +     __u32 mask = FS_DELETE;
-> > > +
-> > > +     if (S_ISDIR(inode->i_mode))
-> > > +             mask |= FS_ISDIR;
-> > > +
-> > > +     fsnotify_name(mask, inode, FSNOTIFY_EVENT_INODE, dir, &dentry->d_name,
-> > > +                   0);
-> > > +}
-> > > +
-> >
-> > OK, this is fine because we use dentry only for FAN_RENAME event, don't we?
+On Mon, 17 Jan 2022 17:41:46 +0530, Ritesh Harjani wrote:
+> Please find v2 of the inline_data fixes and some minor cleanups found during
+> code review.
 > 
-> Almost.
-> We also use dentry in FS_CREATE to get sb from d_sb for error event, because:
->  * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
->  * ->d_inode later
-
-Ah, right.
-
-> > In all other cases we always use only inode anyway. Can we perhaps cleanup
-> > include/linux/fsnotify.h to use FSNOTIFY_EVENT_DENTRY only in that one call
-> > site inside fsnotify_move() and use FSNOTIFY_EVENT_INODE in all the other
-> > cases? So that this is clear and also so that we don't start using dentry
-> > inadvertedly for something inside fsnotify thus breaking unlink reporting
-> > in subtle ways...
-> >
+> I have dropped patch-6 in v2 which was removing use of t_handle_lock (spinlock)
+> from within jbd2_journal_wait_updates(). Based on Jan comments, I feel we can
+> push that as killing of t_handle_lock into a separate series (which will be on
+> top of this).
 > 
-> I don't know.
-> For fsnotify_unlink/rmdir we check d_is_negative, so it's fine to use
-> FSNOTIFY_EVENT_INODE.
-> For fsnotify_link,fsnotify_move we get the inode explicitly, but we already
-> use FSNOTIFY_EVENT_INODE in those cases (except FS_RENAME).
+> [...]
 
-Yeah, plus we have the xattr and attrib events which need dentry to lookup
-parent. So scratch this idea.
+Applied, thanks!
 
-								Honza
+[1/5] ext4: Fix error handling in ext4_restore_inline_data()
+      commit: 2fdd85005f708691a64270ecb67d98191d668c4c
+[2/5] ext4: Remove redundant max inline_size check in ext4_da_write_inline_data_begin()
+      commit: c7fc77e512a432bba754f969c4eb72b33cda3431
+[3/5] ext4: Fix error handling in ext4_fc_record_modified_inode()
+      commit: 6dcee78ea266fb736a3357c2e04d81ee7ec7b6e4
+[4/5] jbd2: Cleanup unused functions declarations from jbd2.h
+      commit: 16263b9820b0d40c778c8ee867f853d3fe638f37
+[5/5] jbd2: Refactor wait logic for transaction updates into a common function
+      commit: b0544c1f23ddeabd89480d842867ca1c6894e021
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Theodore Ts'o <tytso@mit.edu>
