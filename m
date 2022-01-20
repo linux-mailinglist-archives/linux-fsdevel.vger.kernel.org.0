@@ -2,36 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C84494807
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 08:16:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA2649480D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 08:16:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358941AbiATHQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 02:16:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358745AbiATHQQ (ORCPT
+        id S1358968AbiATHQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 02:16:20 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:52854 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229496AbiATHQR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 02:16:16 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D513C061574;
-        Wed, 19 Jan 2022 23:16:16 -0800 (PST)
+        Thu, 20 Jan 2022 02:16:17 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 46E2AB81CEC;
+        by ams.source.kernel.org (Postfix) with ESMTPS id E0500B81902;
         Thu, 20 Jan 2022 07:16:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B753EC340E0;
-        Thu, 20 Jan 2022 07:16:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B7C0C340E9;
+        Thu, 20 Jan 2022 07:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1642662974;
-        bh=YfVf7rAvgCs/3ET6tKl91x/+y+054s6VdI88iVi2crE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PAlOlzacCH2/P3OqiqE/xQAyMQxkbvDpWWaF3mSbkECHkWdbNB3Pkfhdi7TgkKZM4
-         BFoV7ewBtSy2vNip6LmTlBCekvL4uPu07h+n/AoifvoAD3TpvOz+VfTz8In8lj7Hyk
-         o1PD5/yFkvRk3bbYrx5PbtceEkvBJiAMrM0pJXgKYT45Hy7A9wCjlsOwtEDL/nM4RQ
-         kmp9owsKM1ed0iN5+iFWARjZCq1fe9exZMZEGFBi2IbYD463R2L8iFu5eqmiSSSEgf
-         pZB3oCs7fKv4fJ6/eABBNsOWdfaE5RZ02o2lZEKPi1GW2xs0kgblUGLGx4JVArZH3x
-         vWGUG/jsWCi+w==
+        bh=AisQShPpFV3Eliyeb/P+Zfoyyi9GVLa7kPFiEZALl0g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IHAvIpo1+755z5fv7ooM7Nesr4mQJSyaBUqw8X6GRahDTVAr1bAMg5yTVoE+3z8Xq
+         Eb2PU+2Mq4r6EUCZayEIC7VKcw/9UJovPV8pt1f/K2jRVa2KGSTYVmzUdS/RZw7mdX
+         NDUz3XkTnhsSfwHJWuuctR3i9DPzzEd9x8KhMwD9b/uerU6kCSD5NO/RN8satfzmQ6
+         u+NF61eQFHva2iPADFlVLnjoSQ1G4/z1HBfUexL8UPjIuDC7xcj4zFcSAeBoxbdTN8
+         YeNlqI95xW6mPlzucXxAdGclB62r0wc/TyJSDNeyawGapMu4LwmbAIwBl8qA1x60fI
+         ZFUpTsHtfOIGA==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -40,99 +37,217 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Dave Chinner <david@fromorbit.com>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Subject: [PATCH v10 0/5] add support for direct I/O with fscrypt using blk-crypto
-Date:   Wed, 19 Jan 2022 23:12:10 -0800
-Message-Id: <20220120071215.123274-1-ebiggers@kernel.org>
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Satya Tangirala <satyat@google.com>
+Subject: [PATCH v10 1/5] fscrypt: add functions for direct I/O support
+Date:   Wed, 19 Jan 2022 23:12:11 -0800
+Message-Id: <20220120071215.123274-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220120071215.123274-1-ebiggers@kernel.org>
+References: <20220120071215.123274-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Eric Biggers <ebiggers@google.com>
+
 Encrypted files traditionally haven't supported DIO, due to the need to
 encrypt/decrypt the data.  However, when the encryption is implemented
 using inline encryption (blk-crypto) instead of the traditional
 filesystem-layer encryption, it is straightforward to support DIO.
 
-This series adds support for this.  There are multiple use cases for DIO
-on encrypted files, but avoiding double caching on loopback devices
-located in an encrypted directory is the main one currently.
+In preparation for supporting this, add the following functions:
 
-Previous versions of this series were sent out by Satya Tangirala.
-I've cleaned up a few things since Satya's last version, v9
-(https://lore.kernel.org/all/20210604210908.2105870-1-satyat@google.com/T/#u).
-But more notably, I've made a couple simplifications.
+- fscrypt_dio_unsupported() checks whether a DIO request is unsupported
+  due to encryption constraints.  Encrypted files will only support DIO
+  when inline encryption is used and the I/O request is properly
+  aligned; this function checks these preconditions.
 
-First, since f2fs has now been converted to use iomap for DIO, I've
-dropped the patch which added fscrypt support to fs/direct-io.c.
+- fscrypt_limit_io_blocks() limits the length of a bio to avoid crossing
+  a place in the file that a bio with an encryption context cannot
+  cross due to a DUN discontiguity.  This function is needed by
+  filesystems that use the iomap DIO implementation (which operates
+  directly on logical ranges, so it won't use fscrypt_mergeable_bio())
+  and that support FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32.
 
-Second, I've returned to the original design where DIO requests must be
-fully aligned to the FS block size in terms of file position, length,
-and memory buffers.  Satya previously was pursuing a slightly different
-design, where the memory buffers (but not the file position and length)
-were allowed to be aligned to just the block device logical block size.
-This was at the request of Dave Chinner on v4 and v6 of the patchset
-(https://lore.kernel.org/linux-fscrypt/20200720233739.824943-1-satyat@google.com/T/#u
-and
-https://lore.kernel.org/linux-fscrypt/20200724184501.1651378-1-satyat@google.com/T/#u).
+Co-developed-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/crypto.c       |  8 ++++
+ fs/crypto/inline_crypt.c | 90 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/fscrypt.h  | 18 ++++++++
+ 3 files changed, 116 insertions(+)
 
-I believe that approach is a dead end, for two reasons.  First, it
-necessarily causes it to be possible that crypto data units span bvecs.
-Splits cannot occur at such locations; however the block layer currently
-assumes that bios can be split at any bvec boundary.  Changing that is
-quite difficult, as Satya's v9 patchset demonstrated.  This is not an
-issue if we require FS block aligned buffers instead.  Second, it
-doesn't change the fact that FS block alignment is still required for
-the file position and I/O length; this is unavoidable due to the
-granularity of encryption being the FS block size.  So, it seems that
-relaxing the memory buffer alignment requirement wouldn't make things
-meaningfully easier for applications, which raises the question of why
-we would bother with it in the first place.
-
-Christoph Hellwig also said that he much prefers that fscrypt DIO be
-supported without sector-only alignment to start:
-https://lore.kernel.org/r/YPu+88KReGlt94o3@infradead.org
-
-Given the above, as far as I know the only remaining objection to this
-patchset would be that DIO constraints aren't sufficiently discoverable
-by userspace.  Now, to put this in context, this is a longstanding issue
-with all Linux filesystems, except XFS which has XFS_IOC_DIOINFO.  It's
-not specific to this feature, and it doesn't actually seem to be too
-important in practice; many other filesystem features place constraints
-on DIO, and f2fs even *only* allows fully FS block size aligned DIO.
-(And for better or worse, many systems using fscrypt already have
-out-of-tree patches that enable DIO support, and people don't seem to
-have trouble with the FS block size alignment requirement.)
-
-I plan to propose a new generic ioctl to address the issue of DIO
-constraints being insufficiently discoverable.  But until then, I'm
-wondering if people are willing to consider this patchset again, or
-whether it is considered blocked by this issue alone.  (And if this
-patchset is still unacceptable, would it be acceptable with f2fs support
-only, given that f2fs *already* only allows FS block size aligned DIO?)
-
-Eric Biggers (5):
-  fscrypt: add functions for direct I/O support
-  iomap: support direct I/O with fscrypt using blk-crypto
-  ext4: support direct I/O with fscrypt using blk-crypto
-  f2fs: support direct I/O with fscrypt using blk-crypto
-  fscrypt: update documentation for direct I/O support
-
- Documentation/filesystems/fscrypt.rst | 25 +++++++-
- fs/crypto/crypto.c                    |  8 +++
- fs/crypto/inline_crypt.c              | 90 +++++++++++++++++++++++++++
- fs/ext4/file.c                        | 10 +--
- fs/ext4/inode.c                       |  7 +++
- fs/f2fs/data.c                        |  7 +++
- fs/f2fs/f2fs.h                        |  6 +-
- fs/iomap/direct-io.c                  |  6 ++
- include/linux/fscrypt.h               | 18 ++++++
- 9 files changed, 170 insertions(+), 7 deletions(-)
-
-
-base-commit: 1d1df41c5a33359a00e919d54eaebfb789711fdc
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 4ef3f714046aa..4fcca79f39aeb 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -69,6 +69,14 @@ void fscrypt_free_bounce_page(struct page *bounce_page)
+ }
+ EXPORT_SYMBOL(fscrypt_free_bounce_page);
+ 
++/*
++ * Generate the IV for the given logical block number within the given file.
++ * For filenames encryption, lblk_num == 0.
++ *
++ * Keep this in sync with fscrypt_limit_io_blocks().  fscrypt_limit_io_blocks()
++ * needs to know about any IV generation methods where the low bits of IV don't
++ * simply contain the lblk_num (e.g., IV_INO_LBLK_32).
++ */
+ void fscrypt_generate_iv(union fscrypt_iv *iv, u64 lblk_num,
+ 			 const struct fscrypt_info *ci)
+ {
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index c57bebfa48fea..304ae414cbbf2 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -17,6 +17,7 @@
+ #include <linux/buffer_head.h>
+ #include <linux/sched/mm.h>
+ #include <linux/slab.h>
++#include <linux/uio.h>
+ 
+ #include "fscrypt_private.h"
+ 
+@@ -315,6 +316,10 @@ EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx_bh);
+  *
+  * fscrypt_set_bio_crypt_ctx() must have already been called on the bio.
+  *
++ * This function isn't required in cases where crypto-mergeability is ensured in
++ * another way, such as I/O targeting only a single file (and thus a single key)
++ * combined with fscrypt_limit_io_blocks() to ensure DUN contiguity.
++ *
+  * Return: true iff the I/O is mergeable
+  */
+ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+@@ -363,3 +368,88 @@ bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ 	return fscrypt_mergeable_bio(bio, inode, next_lblk);
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_mergeable_bio_bh);
++
++/**
++ * fscrypt_dio_unsupported() - check whether a DIO (direct I/O) request is
++ *			       unsupported due to encryption constraints
++ * @iocb: the file and position the I/O is targeting
++ * @iter: the I/O data segment(s)
++ *
++ * Return: true if DIO is unsupported
++ */
++bool fscrypt_dio_unsupported(struct kiocb *iocb, struct iov_iter *iter)
++{
++	const struct inode *inode = file_inode(iocb->ki_filp);
++	const unsigned int blocksize = i_blocksize(inode);
++
++	/* If the file is unencrypted, no veto from us. */
++	if (!fscrypt_needs_contents_encryption(inode))
++		return false;
++
++	/* We only support DIO with inline crypto, not fs-layer crypto. */
++	if (!fscrypt_inode_uses_inline_crypto(inode))
++		return true;
++
++	/*
++	 * Since the granularity of encryption is filesystem blocks, the file
++	 * position and total I/O length must be aligned to the filesystem block
++	 * size -- not just to the block device's logical block size as is
++	 * traditionally the case for DIO on many filesystems (not including
++	 * f2fs, which only allows filesystem block aligned DIO anyway).
++	 *
++	 * We also require that the user-provided memory buffers be block
++	 * aligned too.  It is simpler to have a single alignment value required
++	 * for all properties of the I/O, as is normally the case for DIO.
++	 * Also, allowing less aligned buffers would also imply that a data unit
++	 * could cross bvecs, which would greatly complicate the I/O stack,
++	 * which assumes that bios can be split at any bvec boundary.
++	 */
++	if (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter), blocksize))
++		return true;
++
++	return false;
++}
++EXPORT_SYMBOL_GPL(fscrypt_dio_unsupported);
++
++/**
++ * fscrypt_limit_io_blocks() - limit I/O blocks to avoid discontiguous DUNs
++ * @inode: the file on which I/O is being done
++ * @lblk: the block at which the I/O is being started from
++ * @nr_blocks: the number of blocks we want to submit starting at @lblk
++ *
++ * Determine the limit to the number of blocks that can be submitted in a bio
++ * targeting @lblk without causing a data unit number (DUN) discontiguity.
++ *
++ * This is normally just @nr_blocks, as normally the DUNs just increment along
++ * with the logical blocks.  (Or the file is not encrypted.)
++ *
++ * In rare cases, fscrypt can be using an IV generation method that allows the
++ * DUN to wrap around within logically contiguous blocks, and that wraparound
++ * will occur.  If this happens, a value less than @nr_blocks will be returned
++ * so that the wraparound doesn't occur in the middle of a bio, which would
++ * cause encryption/decryption to produce the wrong results.
++ *
++ * Return: the actual number of blocks that can be submitted
++ */
++u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks)
++{
++	const struct fscrypt_info *ci = inode->i_crypt_info;
++	u32 dun;
++
++	if (!fscrypt_inode_uses_inline_crypto(inode))
++		return nr_blocks;
++
++	if (nr_blocks <= 1)
++		return nr_blocks;
++
++	if (!(fscrypt_policy_flags(&ci->ci_policy) &
++	      FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32))
++		return nr_blocks;
++
++	/* With IV_INO_LBLK_32, the DUN can wrap around from U32_MAX to 0. */
++
++	dun = ci->ci_hashed_ino + lblk;
++
++	return min_t(u64, nr_blocks, (u64)U32_MAX + 1 - dun);
++}
++EXPORT_SYMBOL_GPL(fscrypt_limit_io_blocks);
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 91ea9477e9bd2..87ec5f63b0a82 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -714,6 +714,10 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+ bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ 			      const struct buffer_head *next_bh);
+ 
++bool fscrypt_dio_unsupported(struct kiocb *iocb, struct iov_iter *iter);
++
++u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks);
++
+ #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 
+ static inline bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+@@ -742,6 +746,20 @@ static inline bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ {
+ 	return true;
+ }
++
++static inline bool fscrypt_dio_unsupported(struct kiocb *iocb,
++					   struct iov_iter *iter)
++{
++	const struct inode *inode = file_inode(iocb->ki_filp);
++
++	return fscrypt_needs_contents_encryption(inode);
++}
++
++static inline u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk,
++					  u64 nr_blocks)
++{
++	return nr_blocks;
++}
+ #endif /* !CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 
+ /**
 -- 
 2.34.1
 
