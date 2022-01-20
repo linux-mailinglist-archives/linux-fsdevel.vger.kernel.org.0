@@ -2,60 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F2D6494B2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 10:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 067D5494CB3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 12:19:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359675AbiATJzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 04:55:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53504 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359671AbiATJzQ (ORCPT
+        id S230449AbiATLTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 06:19:11 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:59984 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230429AbiATLTJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 04:55:16 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1133CC061574;
-        Thu, 20 Jan 2022 01:55:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=miTZg2pVFmJuzEKwmZN7RGqLaJXxQpzXayXIfG5hwT4=; b=B8jytzy0tMkYJ1DNic83kx/OVa
-        rOI38O1V85EZvBqrIOlpU1Vqc0ErYUcgCKTWZO0DQehpEZ2K/vC3dZMl6+gDudWHfh6c6GGyxUHfT
-        9mzV+DNQ524FhTt0IDEP1irIm3ivGiiJ894mIEGPTzyD7mEACFxu0oUopl4d/qnR9nPrQUGOLopjx
-        m2s9hD1iEcLp0nLi00AoIo7KeeMPx4qbjlau0B4tGWdUwm/2yDzt6zFTeA0VCPCEdiwDddXnI8gag
-        inwi+ILJHSES2Kvx+sEC4ByPXyDkEbeTQ8uFZ4fhjiWzpn7EtluQMJZkonkfc/8+b6ht+CmIwHNpR
-        OjgBMd5g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nAU9n-00AOBe-9r; Thu, 20 Jan 2022 09:55:03 +0000
-Date:   Thu, 20 Jan 2022 01:55:03 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] DAX poison recovery
-Message-ID: <Yekxd1/MboidZo4C@infradead.org>
-References: <20220111185930.2601421-1-jane.chu@oracle.com>
+        Thu, 20 Jan 2022 06:19:09 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 54F201F3A9;
+        Thu, 20 Jan 2022 11:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1642677548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7AZa5VRmcpWHj6hCOAWHbSa52oxF6GD2dL5tDTIevTM=;
+        b=DL+XbIJotgeulUmQOzrGxR9u33IGoZYj70aVix56xvBQvcsvDVuXVMWnckk7+ooyBI+/50
+        8flxdCwHlmx/xhG41t0Rk9NgyO44ErTF5GZy4zlUHeWws1PHK6RPZBcSUDSs2d3a/EzKNf
+        F4/Lxva0aLGAaEs95BPwpCANwAgqGw8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1642677548;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7AZa5VRmcpWHj6hCOAWHbSa52oxF6GD2dL5tDTIevTM=;
+        b=ioFCMBj/FkHn26vm+77ZgKfz3L60dzCc2DPf8RW1I4Potl1g8Eo+cifsl1VibswrBwE72x
+        ox8I0LyLc1JA5zBg==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 6635DA3B83;
+        Thu, 20 Jan 2022 11:19:02 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 09A1CA05D9; Thu, 20 Jan 2022 12:19:08 +0100 (CET)
+Date:   Thu, 20 Jan 2022 12:19:08 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        butt3rflyh4ck <butterflyhuangxx@gmail.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] udf: Restore i_lenAlloc when inode expansion fails
+Message-ID: <20220120111908.yurtt6drlo3w5uhf@quack3.lan>
+References: <20220118095449.2937-1-jack@suse.cz>
+ <20220118095753.627-2-jack@suse.cz>
+ <Yekl+0/fagqyUNin@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220111185930.2601421-1-jane.chu@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <Yekl+0/fagqyUNin@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 11:59:23AM -0700, Jane Chu wrote:
-> In v3, dax recovery code path is independent of that of
-> normal write. Competing dax recovery threads are serialized,
-> racing read threads are guaranteed not overlapping with the
-> recovery process.
+On Thu 20-01-22 01:06:03, Christoph Hellwig wrote:
+> On Tue, Jan 18, 2022 at 10:57:48AM +0100, Jan Kara wrote:
+> > When we fail to expand inode from inline format to a normal format, we
+> > restore inode to contain the original inline formatting but we forgot to
+> > set i_lenAlloc back. The mismatch between i_lenAlloc and i_size was then
+> > causing further problems such as warnings and lost data down the line.
 > 
-> In this phase, the recovery granularity is page, future patch
-> will explore recovery in finer granularity.
+> Looks good,
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> Btw, how did the reported even hit that failure in a way where the
+> file system continues working?  If we fail to write back data we'd
+> probably better stop modifying anything and bail out..
 
-What tree is this against? I can't apply it to either 5.16 or Linus'
-current tree.
+We can fail the expansion from inline to out-of-line format e.g. when the
+filesystem is full (ENOSPC). So we have to handle that case gracefully and
+the filesystem should be fully operational after this.
+
+Thanks for review!
+
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
