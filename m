@@ -2,219 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6871B49502B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 15:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D77FB495057
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 15:37:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347860AbiATObY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 09:31:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60806 "EHLO
+        id S1353507AbiATOhu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 09:37:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345897AbiATObX (ORCPT
+        with ESMTP id S238270AbiATOht (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 09:31:23 -0500
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E0B3C061574;
-        Thu, 20 Jan 2022 06:31:23 -0800 (PST)
-Received: by mail-il1-x12f.google.com with SMTP id i14so5095592ila.11;
-        Thu, 20 Jan 2022 06:31:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jyaTCgjaFQUju0SFsP0ZB8pA8uyEshT7ZeJShX00Fic=;
-        b=bgkkQZRmFjDjpdaYb5ZeVctERtljthNdF+gUDXurru0NOJ6BzHDqwo89PYJh0QFWCI
-         gvHRhIN04YyF6e1yH5tuAT6S0l1HiM7PLWOcK47lK+LpNRzfBUDYukzPcxS+PReyg5BO
-         ercxx03DE1hEOX4DaLvMZlEj+Wm+LVj4dtbMBzDQiR2VBNer+0p+xMdfdk8KemUm0sCD
-         y32fQIUA4/xY8fYZLsgtyLEilHnq7cCaTJ5aHTWE8F/9QJLjiwyveyzYjuN5Ftp2cX1T
-         yKTbcvWe4vSQlqAsxeVKdFGUj2wceFpJuD+udeabcgcdMIQFi41DNfoNoxOX3d5x+P+3
-         8P1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jyaTCgjaFQUju0SFsP0ZB8pA8uyEshT7ZeJShX00Fic=;
-        b=P0mBJzTOzR20TKXp2//3pPVO73n15KJUHCLBTMcBJ0H34C7EnopLOb6faZKKFYzuXe
-         RWttW+mfCitUQCPyeA5x9KbimyE8JavO61pNaef4CPnpGkIAaslssaE0U+BlyX3XIjY/
-         N1z0TA4aNbBg6j1kBXi3HU+nYfh4BTqmBbT2LbAs6SnDPqYYzdmX20IF+i+oQ7Y90z51
-         v+7iRqrXn1LwyCwlXL3CPBPN8nV0+csSJ6OU4roLw8rZmbiUBbPEpTeCuxum5GyP+wDW
-         qJZ+8qcH1Ky4NXdAn300HQLNH0UjVij25a36IVdrg1CRpBGvhJL2XK2Pmy95z+NZySu2
-         x0+A==
-X-Gm-Message-State: AOAM532xZuRi22IcOQ1yTM4eoRmrw32goFdP9uULRDKiTBQQkwNIRQcf
-        +aLcW3N/dfbwLAPGV2AJVCS9/vbyR8r76ULy0xI=
-X-Google-Smtp-Source: ABdhPJy7vtpI17SbG63ALoJsRPqPxEIS1qyiEDiaHGBzQL8q4Ik4B6fALDftrmtq2SPx4UCGRd+uZQrS/re5qMg5/OM=
-X-Received: by 2002:a92:c242:: with SMTP id k2mr17334765ilo.198.1642689082674;
- Thu, 20 Jan 2022 06:31:22 -0800 (PST)
+        Thu, 20 Jan 2022 09:37:49 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4CCFC061574;
+        Thu, 20 Jan 2022 06:37:48 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4EDAB617C6;
+        Thu, 20 Jan 2022 14:37:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C7AC340E0;
+        Thu, 20 Jan 2022 14:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642689467;
+        bh=g+oxM2J81EeSrKkemxOsGMCNcdknSpVI4hLP1FM05Xs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=MnZcO5TzvNwS9pEOr4S5gVif6UGpwSNbnSXXJZh6XS93LaIl7LTP62I8ziVCBTyMI
+         +COlt3mR5w8dKC1SKfDAX9jqXm4bPbD9AFcHYM0dy4jO+J15kEl7YYCF6ElVuV/hSz
+         ikpdf0P27ZIVK6AhiRfOve0DDJfwuGpEqkzdcLHzY/vf4ke09D26D/af1LzBgMJFIV
+         I60YCraKJXRkTGaGrXphPq3gFukh+0zhz0Z3sz1DqbsJ7jaO7YSSM8CAk8+a6IKqgE
+         hjl4Ba9JZ7o7SBtFgL/B+4oMlame9nnpajA2uKu3ImpOXXYG+dThM3Y01S8GpF1Pzl
+         R0L/sMo0ns8mg==
+Date:   Thu, 20 Jan 2022 15:37:42 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, stephen.s.brennan@oracle.com,
+        legion@kernel.org, cyphar@cyphar.com
+Subject: Re: [PATCH v2] proc: "mount -o lookup=" support
+Message-ID: <20220120143742.saz5yh5mlkg43yxl@wittgenstein>
 MIME-Version: 1.0
-References: <20220118120031.196123-1-amir73il@gmail.com> <20220120125208.jmm2xjwcxaswt3tn@quack3.lan>
-In-Reply-To: <20220120125208.jmm2xjwcxaswt3tn@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 20 Jan 2022 16:31:11 +0200
-Message-ID: <CAOQ4uxjxayK006RDAiEm9hKP_JAZhZZDcj7tbnANjQWP-_XObA@mail.gmail.com>
-Subject: Re: [PATCH] fnotify: invalidate dcache before IN_DELETE event
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        Ivan Delalande <colona@arista.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YelWXWKZkR//mD8i@localhost.localdomain>
+ <YelUKIOjLd7A9XQN@localhost.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 20, 2022 at 2:52 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 18-01-22 14:00:31, Amir Goldstein wrote:
-> > Apparently, there are some applications that use IN_DELETE event as an
-> > invalidation mechanism and expect that if they try to open a file with
-> > the name reported with the delete event, that it should not contain the
-> > content of the deleted file.
-> >
-> > Commit 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
-> > d_delete()") moved the fsnotify delete hook before d_delete() so fsnotify
-> > will have access to a positive dentry.
-> >
-> > This allowed a race where opening the deleted file via cached dentry
-> > is now possible after receiving the IN_DELETE event.
-> >
-> > To fix the regression, we use two different techniques:
-> > 1) For call sites that call d_delete() with elevated refcount, convert
-> >    the call to d_drop() and move the fsnotify hook after d_drop().
->
-> Maybe do this in a separate patch? It's quite a bit of mostly mechanical
-> changes, after separating them it is more obvious what the logical changes
-> actually are (and backporting is actually less error prone as well).
+On Thu, Jan 20, 2022 at 03:32:29PM +0300, Alexey Dobriyan wrote:
+> On Wed, Jan 19, 2022 at 05:24:23PM +0100, Christian Brauner wrote:
+> > On Wed, Jan 19, 2022 at 06:48:03PM +0300, Alexey Dobriyan wrote:
+> > > From 61376c85daab50afb343ce50b5a97e562bc1c8d3 Mon Sep 17 00:00:00 2001
+> > > From: Alexey Dobriyan <adobriyan@gmail.com>
+> > > Date: Mon, 22 Nov 2021 20:41:06 +0300
+> > > Subject: [PATCH 1/1] proc: "mount -o lookup=..." support
+> > > 
+> > > Docker implements MaskedPaths configuration option
+> > > 
+> > > 	https://github.com/estesp/docker/blob/9c15e82f19b0ad3c5fe8617a8ec2dddc6639f40a/oci/defaults.go#L97
+> > > 
+> > > to disable certain /proc files. It overmounts them with /dev/null.
+> > > 
+> > > Implement proper mount option which selectively disables lookup/readdir
+> > > in the top level /proc directory so that MaskedPaths doesn't need
+> > > to be updated as time goes on.
+> > 
+> > I might've missed this when this was sent the last time so maybe it was
+> > clearly explained in an earlier thread: What's the reason this needs to
+> > live in the kernel?
+> 
+> The reasons are:
+> 	MaskedPaths or equivalents are blacklists, not future proof
+> 
+> 	MaskedPaths is applied at container creation once,
+> 	lookup= is applied at mount time surely but names aren't
+> 	required to exist to be filtered (read: some silly ISV module
+> 	gets loaded, creates /proc entries, containers get them with all
+> 	security holes)
+> 
+> > The MaskedPaths entry is optional so runtimes aren't required to block
+> > anything by default and this mostly makes sense for workloads that run
+> > privileged.
+> > 
+> > In addition MaskedPaths is a generic option which allows to hide any
+> > existing path, not just proc. Even in the very docker-specific defaults
+> > /sys/firmware is covered.
+> 
+> Sure, the patch is for /proc only. MaskedPaths can't overmount with
+> /dev/null file which doesn't exist yet.
+> 
+> > I do see clear value in the subset= and hidepid= options. They are
+> > generally useful independent of opinionated container workloads. I don't
+> > see the same for lookup=.
+> > 
+> > An alternative I find more sensible is to add a new value for subset=
+> > that hides anything(?) that only global root should have read/write
+> > access too.
 
-ok.
+On Thu, Jan 20, 2022 at 03:23:04PM +0300, Alexey Dobriyan wrote:
+> On Wed, Jan 19, 2022 at 05:24:23PM +0100, Christian Brauner wrote:
+> > On Wed, Jan 19, 2022 at 06:48:03PM +0300, Alexey Dobriyan wrote:
+> > > From 61376c85daab50afb343ce50b5a97e562bc1c8d3 Mon Sep 17 00:00:00 2001
+> > > From: Alexey Dobriyan <adobriyan@gmail.com>
+> > > Date: Mon, 22 Nov 2021 20:41:06 +0300
+> > > Subject: [PATCH 1/1] proc: "mount -o lookup=..." support
+> > > 
+> > > Docker implements MaskedPaths configuration option
+> > > 
+> > > 	https://github.com/estesp/docker/blob/9c15e82f19b0ad3c5fe8617a8ec2dddc6639f40a/oci/defaults.go#L97
+> > > 
+> > > to disable certain /proc files. It overmounts them with /dev/null.
+> > > 
+> > > Implement proper mount option which selectively disables lookup/readdir
+> > > in the top level /proc directory so that MaskedPaths doesn't need
+> > > to be updated as time goes on.
+> > 
+> > I might've missed this when this was sent the last time so maybe it was
+> > clearly explained in an earlier thread: What's the reason this needs to
+> > live in the kernel?
+> > 
+> > The MaskedPaths entry is optional so runtimes aren't required to block
+> > anything by default and this mostly makes sense for workloads that run
+> > privileged.
+> > 
+> > In addition MaskedPaths is a generic option which allows to hide any
+> > existing path, not just proc. Even in the very docker-specific defaults
+> > /sys/firmware is covered.
+> 
+> MaskedPaths is not future proof, new entries might pop up and nobody
+> will update the MaskedPaths list.
+> 
+> > I do see clear value in the subset= and hidepid= options. They are
+> > generally useful independent of opinionated container workloads. I don't
+> > see the same for lookup=.
+> 
+> The value is if you get /proc/cpuinfo you get everything else
+> but you might not want everything else given that "everything else"
+> changes over time.
+> 
+> > An alternative I find more sensible is to add a new value for subset=
+> > that hides anything(?) that only global root should have read/write
+> > access too.
 
->
-> > 2) For the vfs helpers that may turn dentry to negative on d_delete(),
-> >    use a helper d_delete_notify() to pin the inode, so we can pass it
-> >    to an fsnotify hook after d_delete().
-> >
-> > Create a new hook fsnotify_delete() that allows to pass a negative
-> > dentry and takes the unlinked inode as an argument.
-> >
-> > Add a missing fsnotify_unlink() hook in nfsdfs that was found during
-> > the call sites audit.
-> >
-> > Note that the call sites in simple_recursive_removal() follow
-> > d_invalidate(), so they require no change.
-> >
-> > Backporting hint: this regression is from v5.3. Although patch will
-> > apply with only trivial conflicts to v5.4 and v5.10, it won't build,
-> > because fsnotify_delete() implementation is different in each of those
-> > versions (see fsnotify_link()).
-> >
-> > Reported-by: Ivan Delalande <colona@arista.com>
-> > Link: https://lore.kernel.org/linux-fsdevel/YeNyzoDM5hP5LtGW@visor/
-> > Fixes: 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of d_delete()")
-> > Cc: stable@vger.kernel.org # v5.3+
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> ...
->
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 1f9d2187c765..b11991b57f9b 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -3929,6 +3929,23 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
-> >       return do_mkdirat(AT_FDCWD, getname(pathname), mode);
-> >  }
-> >
-> > +/**
-> > + * d_delete_notify - delete a dentry and call fsnotify_delete()
-> > + * @dentry: The dentry to delete
-> > + *
-> > + * This helper is used to guaranty that the unlinked inode cannot be found
->                              ^^^ guarantee
->
-> > + * by lookup of this name after fsnotify_delete() event has been delivered.
-> > + */
-> > +static void d_delete_notify(struct inode *dir, struct dentry *dentry)
-> > +{
-> > +     struct inode *inode = d_inode(dentry);
-> > +
-> > +     ihold(inode);
-> > +     d_delete(dentry);
-> > +     fsnotify_delete(dir, inode, dentry);
-> > +     iput(inode);
-> > +}
-> > +
-> >  /**
-> >   * vfs_rmdir - remove directory
-> >   * @mnt_userns:      user namespace of the mount the inode was found from
-> ...
-> > @@ -4101,7 +4117,6 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
-> >                       if (!error) {
-> >                               dont_mount(dentry);
-> >                               detach_mounts(dentry);
-> > -                             fsnotify_unlink(dir, dentry);
-> >                       }
-> >               }
-> >       }
-> > @@ -4109,9 +4124,11 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
-> >       inode_unlock(target);
-> >
-> >       /* We don't d_delete() NFS sillyrenamed files--they still exist. */
-> > -     if (!error && !(dentry->d_flags & DCACHE_NFSFS_RENAMED)) {
-> > +     if (dentry->d_flags & DCACHE_NFSFS_RENAMED) {
-> > +             fsnotify_unlink(dir, dentry);
-> > +     } else if (!error) {
-> >               fsnotify_link_count(target);
-> > -             d_delete(dentry);
-> > +             d_delete_notify(dir, dentry);
-> >       }
->
-> Are we sure that if DCACHE_NFSFS_RENAMED is set, error == 0? Maybe yes but
-> it is not completely clear to me - e.g. if you try to rename something to a
-> name that is taken by sillyrenamed file, the unlink will fail but dentry
-> has DCACHE_NFSFS_RENAMED set...
->
+Thanks for providing some more details.
 
-That's an oversight.
+If we really introduce new proc files in the future that are unsafe for
+unprivileged containers then that's a whole bigger problem.
 
-> > +/*
-> > + * fsnotify_delete - @dentry was unlinked and unhashed
-> > + *
-> > + * Caller must make sure that dentry->d_name is stable.
-> > + *
-> > + * Note: unlike fsnotify_unlink(), we have to pass also the unlinked inode
-> > + * as this may be called after d_delete() and old_dentry may be negative.
-> > + */
-> > +static inline void fsnotify_delete(struct inode *dir, struct inode *inode,
-> > +                                struct dentry *dentry)
-> > +{
-> > +     __u32 mask = FS_DELETE;
-> > +
-> > +     if (S_ISDIR(inode->i_mode))
-> > +             mask |= FS_ISDIR;
-> > +
-> > +     fsnotify_name(mask, inode, FSNOTIFY_EVENT_INODE, dir, &dentry->d_name,
-> > +                   0);
-> > +}
-> > +
->
-> OK, this is fine because we use dentry only for FAN_RENAME event, don't we?
+We shouldn't taper over this with a procfs mount option however.
+Especially, since it's very likely that such new procfs files that would
+be exploitable in unprivileged containers would also be exploitable by
+regular users. The argument can't be that in order to protect against
+buggy or information leaking future proc files we need to give proc a
+special mount option for containers to restrict access to files and
+directories.
 
-Almost.
-We also use dentry in FS_CREATE to get sb from d_sb for error event, because:
- * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
- * ->d_inode later
+And for the legacy files that existed before containers were a big thing
+MaskedPath in userspace has worked fine with the last changes to update
+the list from 2018 for the addition of a rather old directory.
 
-> In all other cases we always use only inode anyway. Can we perhaps cleanup
-> include/linux/fsnotify.h to use FSNOTIFY_EVENT_DENTRY only in that one call
-> site inside fsnotify_move() and use FSNOTIFY_EVENT_INODE in all the other
-> cases? So that this is clear and also so that we don't start using dentry
-> inadvertedly for something inside fsnotify thus breaking unlink reporting
-> in subtle ways...
->
+And the same problem exists for sysfs. That's why /sys/firmware is in
+there. (In fact, it can be argued that they should restrict sysfs way
+more via MaskedPaths than procfs for privileged containers since it
+leaks way more system-wide information and provides a way bigger attack
+surface which is presumable why the mount is ro but then strangely only
+hide /sys/firmware. Anyway, besides the point.)
 
-I don't know.
-For fsnotify_unlink/rmdir we check d_is_negative, so it's fine to use
-FSNOTIFY_EVENT_INODE.
-For fsnotify_link,fsnotify_move we get the inode explicitly, but we already
-use FSNOTIFY_EVENT_INODE in those cases (except FS_RENAME).
+MaskedPath is mostly a protection mechanism useful for privileged
+containers as an unprivileged container can't modify anything that would
+allow it to attack the system.
 
-Thanks,
-Amir.
+Ultimately, I think the current proposal here is too much modeled after
+how a specific tool runs specific workloads and for containers and I
+don't think that's a good idea.
+
+We should do a generally useful thing that doesn't require any dynamic
+filtering and userspace giving us files that are ok to show.
+
+Alternative proposals to appear later in the thread. I'd be ok to
+endorse one of those if you were to implement one of them. But for now
+I'm not firmly convinced of lookup=.
