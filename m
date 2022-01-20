@@ -2,65 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 783824949C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 09:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 174F14949CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 09:46:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359340AbiATIqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 03:46:18 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:41066 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240038AbiATIqS (ORCPT
+        id S1359366AbiATIq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 03:46:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1359357AbiATIqX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 03:46:18 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A9B36176A;
-        Thu, 20 Jan 2022 08:46:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5FEFC340E0;
-        Thu, 20 Jan 2022 08:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642668377;
-        bh=zP3H8L0yrvKhCJfCDvCtc/pV9g2tPG9DoyeOBdGOFKs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FeqtfDGRhBQtFD2IqzWbr3Kxs0Me8/suyudAtJOzH9rAjOtfnKPcohQMveqex58mu
-         t++C1E6Tyty/Uaf92mvE7AE91N5g3FcgyNSvL7h9inT7bdG1rjYc+8/jlVG7TPZ0tf
-         ZXGRXqh7SDvqyZY7u1qhYxVw/izQXd5J2/585OpJHu171enVfwYqkVoTcIQrX50FX0
-         GRICs1LgU/Rm00W+3lDyT+vTyhSg/6xCjP7qrRVPEk1wmG2u16vTf6HrVHdxDgrx8B
-         +9sPgnfQ5ffK+MIwMD3Xl0tla7QoKVmqjDoz9AfLVloLu3pf3qqMh3zxpc4ddcBGtj
-         8SGyJ8HQiSIYg==
-Date:   Thu, 20 Jan 2022 09:46:12 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Anthony Iliopoulos <ailiop@suse.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] devtmpfs: drop redundant fs parameters from internal fs
-Message-ID: <20220120084612.hl5ekd4aplmduj6u@wittgenstein>
-References: <20220119220248.32225-1-ailiop@suse.com>
+        Thu, 20 Jan 2022 03:46:23 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2D3C06173F;
+        Thu, 20 Jan 2022 00:46:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Fc144p+00WPTTP0zDhiznn2Saihska6K3bXQ86DJDN8=; b=zvTVKUKQd9PEBeP/epohTKoS+l
+        or0ElzDA6K1hJ+W7u12fMmcQpP7gHqMjL3UzuuGFGloW2ww1X/tKQiBNw7gj+Fj7abYWevriIOS6H
+        1GzCib8DXwF5Hr1I6wLxqUm6hPlDb58oR7iQ5ohv5nmbRvA7GXelUVCdaF4HjMlyS7E+/ZxcG9XH0
+        09qYIkZ//VSEouo9f4Uy3qffJOfHEiW1mS8AfmNQpZTvyqZPB4iNotwURjoiG8xOk9mM4ndDLy1sp
+        z3qtmtboIzdqQc863Ssh+x57Dn1FKDdh26S8CkLMnfMD5neyvmq3y7BR5cJwcJb9R0BU973hNaXU2
+        r6+tKmWg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nAT5I-009tD3-5C; Thu, 20 Jan 2022 08:46:20 +0000
+Date:   Thu, 20 Jan 2022 00:46:20 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        david <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>
+Subject: Re: [PATCH v9 02/10] dax: Introduce holder for dax_device
+Message-ID: <YekhXENAEYJJNy7e@infradead.org>
+References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
+ <20211226143439.3985960-3-ruansy.fnst@fujitsu.com>
+ <20220105181230.GC398655@magnolia>
+ <CAPcyv4iTaneUgdBPnqcvLr4Y_nAxQp31ZdUNkSRPsQ=9CpMWHg@mail.gmail.com>
+ <20220105185626.GE398655@magnolia>
+ <CAPcyv4h3M9f1-C5e9kHTfPaRYR_zN4gzQWgR+ZyhNmG_SL-u+A@mail.gmail.com>
+ <20220105224727.GG398655@magnolia>
+ <CAPcyv4iZ88FPeZC1rt_bNdWHDZ5oh7ua31NuET2-oZ1UcMrH2Q@mail.gmail.com>
+ <20220105235407.GN656707@magnolia>
+ <CAPcyv4gUmpDnGkhd+WdhcJVMP07u+CT8NXRjzcOTp5KF-5Yo5g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119220248.32225-1-ailiop@suse.com>
+In-Reply-To: <CAPcyv4gUmpDnGkhd+WdhcJVMP07u+CT8NXRjzcOTp5KF-5Yo5g@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 11:02:48PM +0100, Anthony Iliopoulos wrote:
-> The internal_fs_type is mounted via vfs_kernel_mount() and is never
-> registered as a filesystem, thus specifying the parameters is redundant
-> as those params will not be validated by fs_validate_description().
-> 
-> Both {shmem,ramfs}_fs_parameters are anyway validated when those
-> respective filesystems are first registered, so there is no reason to
-> pass them to devtmpfs too, drop them.
-> 
-> Signed-off-by: Anthony Iliopoulos <ailiop@suse.com>
-> ---
+On Wed, Jan 05, 2022 at 04:12:04PM -0800, Dan Williams wrote:
+> We ended up with explicit callbacks after hch balked at a notifier
+> call-chain, but I think we're back to that now. The partition mistake
+> might be unfixable, but at least bdev_dax_pgoff() is dead. Notifier
+> call chains have their own locking so, Ruan, this still does not need
+> to touch dax_read_lock().
 
-Ah yes, I "complained" about this on the patch re-enabling
-reconfigure_mnt() for devtmpfs.
+I think we have a few options here:
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+ (1) don't allow error notifications on partitions.  And error return from
+     the holder registration with proper error handling in the file
+     system would give us that
+ (2) extent the holder mechanism to cover a range
+ (3) bite the bullet and create a new stacked dax_device for each
+     partition
+
+I think (1) is the best option for now.  If people really do need
+partitions we'll have to go for (3)
