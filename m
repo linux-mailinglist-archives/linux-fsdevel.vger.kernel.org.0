@@ -2,141 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 385504955B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 22:00:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 420AA495625
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 22:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377727AbiATVAd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 16:00:33 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:48280 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347149AbiATVAa (ORCPT
+        id S1347592AbiATVxK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 16:53:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48758 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1377992AbiATVxK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 16:00:30 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 400DAB81E5B;
-        Thu, 20 Jan 2022 21:00:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F31C340E0;
-        Thu, 20 Jan 2022 21:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642712428;
-        bh=Sgn6vsiQaVTZl6FA2Bi6v2vMumeBHvXQ8WnUp3/OgOQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rg3DWs5KzBBcatjdrT34CEMOazOi9A8JaCoVRLZDvRuX6uUX4LDihsBfpqnhGACwl
-         mQLMV34CpRp6JgYQYU7oc8ZvkXFlU98cUhrfsyxCO3aBZplrE4JLcxYjp4X2zouMD3
-         a4iHIGG0S+HYkf4bJxKU/LwG2k9Z+r4GRYbpZQnHts0hmDLKtEj7dn5Yg6JQC8jYSF
-         9s6uhJa5exrDusE53neADlAA1qMvq2PTuiBnYrkBDgrSRiIVaSuRDqHpqPSSvAv6YT
-         rzHDLupGZd3WwwUNnWYYQ7TfYZaszzj3iKB6iAztLjBX6WklwqP0O0mc7x2TYX1AMS
-         gnCMv9pVePpTQ==
-Date:   Thu, 20 Jan 2022 13:00:27 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v10 0/5] add support for direct I/O with fscrypt using
- blk-crypto
-Message-ID: <20220120210027.GQ13540@magnolia>
-References: <20220120071215.123274-1-ebiggers@kernel.org>
- <YekdnxpeunTGfXqX@infradead.org>
- <20220120171027.GL13540@magnolia>
- <YenIcshA706d/ziV@sol.localdomain>
+        Thu, 20 Jan 2022 16:53:10 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACB4BC061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jan 2022 13:53:09 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id p18so14614813wmg.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jan 2022 13:53:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=owYBj3z3qtZIuCerjEhAIA2+Qt9amCwshWFa8kE1v/8=;
+        b=p1XximwjKMNTxrSRh511H4+96wU4ZE8Y5Uc6138UYWGVSmydJhZo99sMhNbeasp1O3
+         pq/+V6YxyF1OjlzhC/CLhM2/xtTkV3+8U2pucQOiklZxFgOqVITYNs8yuEHCs4/QWG6x
+         /Z/5mmEfdK0XS93SubMncOBKxuLxQJUO/fFnp1XiIQ0KOjph/Zx9GUIoGzJskvpzAceU
+         UJ3qsE3Uo06IT5ZnXsE8yONSnMDjcKuNuRficukL4p5VvftcCaFgFaiGPkZ/4y0sLH/J
+         GeS0yxRIAbD59nh/mwuorghyHzT/HwctajgXNs+lOYLBf6ARXZ2GShcS4ChSK5i9Pc5m
+         XG2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=owYBj3z3qtZIuCerjEhAIA2+Qt9amCwshWFa8kE1v/8=;
+        b=K+7nHEHlYPIpvwaqlUsSrRztC1SGL+ow5cvp5S8A4qFKLYhIBxgbk5jFa1U/qCpORr
+         Z+EbaElAhIFgb/MnQ0X/PGGkwHqaXByyhyJdc/T9O41xHGlEnW1NgRgBarvBOtdSnHGY
+         8AL7wHSz3Teiro2MnFDP/5S71JykjFj36wet7LshOQ+5kxy/alZiVN1Jm6RXx1hW3Nf1
+         VLB7bm5dXDN37uulmkeNQoo1wlSyt2Wu08W6tdCw8ZjZ/9OwNm2eqOfwBtqd1GRQW+/b
+         RlscsSerC+7NCc4R8jdLee4ScjQCU60m7rvFs03WzmLdYaigT8VbI2HTPNY04D+BtpLo
+         f70Q==
+X-Gm-Message-State: AOAM530B3qqpetF8vsbN4ubdqy1S/OUmbIWS+ADKy5nLJ5/UZiqGqM5f
+        njIiwk0SiySFWOWsc/umWMs=
+X-Google-Smtp-Source: ABdhPJyPmKabZr4saWp986v+Mhx8Q0dGh51Z1XSRBZ+gc8i58TkA3YZTwlBOY45X59bfchIEEeeKRg==
+X-Received: by 2002:a1c:1b97:: with SMTP id b145mr10834490wmb.181.1642715588040;
+        Thu, 20 Jan 2022 13:53:08 -0800 (PST)
+Received: from localhost.localdomain ([77.137.71.153])
+        by smtp.gmail.com with ESMTPSA id y8sm4839519wrd.8.2022.01.20.13.53.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jan 2022 13:53:07 -0800 (PST)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        Ivan Delalande <colona@arista.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 1/2] fsnotify: invalidate dcache before IN_DELETE event
+Date:   Thu, 20 Jan 2022 23:53:04 +0200
+Message-Id: <20220120215305.282577-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YenIcshA706d/ziV@sol.localdomain>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 20, 2022 at 12:39:14PM -0800, Eric Biggers wrote:
-> On Thu, Jan 20, 2022 at 09:10:27AM -0800, Darrick J. Wong wrote:
-> > On Thu, Jan 20, 2022 at 12:30:23AM -0800, Christoph Hellwig wrote:
-> > > On Wed, Jan 19, 2022 at 11:12:10PM -0800, Eric Biggers wrote:
-> > > > 
-> > > > Given the above, as far as I know the only remaining objection to this
-> > > > patchset would be that DIO constraints aren't sufficiently discoverable
-> > > > by userspace.  Now, to put this in context, this is a longstanding issue
-> > > > with all Linux filesystems, except XFS which has XFS_IOC_DIOINFO.  It's
-> > > > not specific to this feature, and it doesn't actually seem to be too
-> > > > important in practice; many other filesystem features place constraints
-> > > > on DIO, and f2fs even *only* allows fully FS block size aligned DIO.
-> > > > (And for better or worse, many systems using fscrypt already have
-> > > > out-of-tree patches that enable DIO support, and people don't seem to
-> > > > have trouble with the FS block size alignment requirement.)
-> > > 
-> > > It might make sense to use this as an opportunity to implement
-> > > XFS_IOC_DIOINFO for ext4 and f2fs.
-> > 
-> > Hmm.  A potential problem with DIOINFO is that it doesn't explicitly
-> > list the /file/ position alignment requirement:
-> > 
-> > struct dioattr {
-> > 	__u32		d_mem;		/* data buffer memory alignment */
-> > 	__u32		d_miniosz;	/* min xfer size		*/
-> > 	__u32		d_maxiosz;	/* max xfer size		*/
-> > };
-> 
-> Well, the comment above struct dioattr says:
-> 
-> 	/*
-> 	 * Direct I/O attribute record used with XFS_IOC_DIOINFO
-> 	 * d_miniosz is the min xfer size, xfer size multiple and file seek offset
-> 	 * alignment.
-> 	 */
-> 
-> So d_miniosz serves that purpose already.
-> 
-> > 
-> > Since I /think/ fscrypt requires that directio writes be aligned to file
-> > block size, right?
-> 
-> The file position must be a multiple of the filesystem block size, yes.
-> Likewise for the "minimum xfer size" and "xfer size multiple", and the "data
-> buffer memory alignment" for that matter.  So I think XFS_IOC_DIOINFO would be
-> good enough for the fscrypt direct I/O case.
+Apparently, there are some applications that use IN_DELETE event as an
+invalidation mechanism and expect that if they try to open a file with
+the name reported with the delete event, that it should not contain the
+content of the deleted file.
 
-Oh, ok then.  In that case, just hoist XFS_IOC_DIOINFO to the VFS and
-add a couple of implementations for ext4 and f2fs, and I think that'll
-be enough to get the fscrypt patchset moving again.
+Commit 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
+d_delete()") moved the fsnotify delete hook before d_delete() so fsnotify
+will have access to a positive dentry.
 
-> The real question is whether there are any direct I/O implementations where
-> XFS_IOC_DIOINFO would *not* be good enough, for example due to "xfer size
-> multiple" != "file seek offset alignment" being allowed.  In that case we would
-> need to define a new ioctl that is more general (like the one you described
-> below) rather than simply uplifting XFS_IOC_DIOINFO.
+This allowed a race where opening the deleted file via cached dentry
+is now possible after receiving the IN_DELETE event.
 
-I don't think there are any currently, but if anyone ever redesigns
-DIOINFO we might as well make all those pieces explicit.
+To fix the regression, create a new hook fsnotify_delete() that takes
+the unlinked inode as an argument and use a helper d_delete_notify() to
+pin the inode, so we can pass it to fsnotify_delete() after d_delete().
 
-> More general is nice, but it's not helpful if no one will actually use the extra
-> information.  So we need to figure out what is actually useful.
+Backporting hint: this regression is from v5.3. Although patch will
+apply with only trivial conflicts to v5.4 and v5.10, it won't build,
+because fsnotify_delete() implementation is different in each of those
+versions (see fsnotify_link()).
 
-<nod> Clearly I haven't wanted d_opt_fpos badly enough to propose
-revving the ioctl. ;)
+A follow up patch will fix the fsnotify_unlink/rmdir() calls in pseudo
+filesystem that do not need to call d_delete().
 
---D
+Reported-by: Ivan Delalande <colona@arista.com>
+Link: https://lore.kernel.org/linux-fsdevel/YeNyzoDM5hP5LtGW@visor/
+Fixes: 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of d_delete()")
+Cc: stable@vger.kernel.org # v5.3+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-> 
-> > How about something like this:
-> > 
-> > struct dioattr2 {
-> > 	__u32		d_mem;		/* data buffer memory alignment */
-> > 	__u32		d_miniosz;	/* min xfer size		*/
-> > 	__u32		d_maxiosz;	/* max xfer size		*/
-> > 
-> > 	/* file range must be aligned to this value */
-> > 	__u32		d_min_fpos;
-> > 
-> > 	/* for optimal performance, align file range to this */
-> > 	__u32		d_opt_fpos;
-> > 
-> > 	__u32		d_padding[11];
-> > };
-> > 
-> 
-> - Eric
+Changes since v1:
+- Split patch for pseudo filesystem (Jan)
+- Fix logic change for DCACHE_NFSFS_RENAMED (Jan)
+- btrfs also needs d_delete_notify()
+- Make fsnotify_unlink/rmdir() wrappers of fsnotify_delete()
+- FS_DELETE event always uses FSNOTIFY_EVENT_INODE data_type
+
+
+ fs/btrfs/ioctl.c         |  6 ++---
+ fs/namei.c               | 10 ++++----
+ include/linux/fsnotify.h | 49 +++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 50 insertions(+), 15 deletions(-)
+
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index edfecfe62b4b..a5ee6ffeadf5 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3060,10 +3060,8 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
+ 	btrfs_inode_lock(inode, 0);
+ 	err = btrfs_delete_subvolume(dir, dentry);
+ 	btrfs_inode_unlock(inode, 0);
+-	if (!err) {
+-		fsnotify_rmdir(dir, dentry);
+-		d_delete(dentry);
+-	}
++	if (!err)
++		d_delete_notify(dir, dentry);
+ 
+ out_dput:
+ 	dput(dentry);
+diff --git a/fs/namei.c b/fs/namei.c
+index 1f9d2187c765..3c0568d3155b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3973,13 +3973,12 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 	dentry->d_inode->i_flags |= S_DEAD;
+ 	dont_mount(dentry);
+ 	detach_mounts(dentry);
+-	fsnotify_rmdir(dir, dentry);
+ 
+ out:
+ 	inode_unlock(dentry->d_inode);
+ 	dput(dentry);
+ 	if (!error)
+-		d_delete(dentry);
++		d_delete_notify(dir, dentry);
+ 	return error;
+ }
+ EXPORT_SYMBOL(vfs_rmdir);
+@@ -4101,7 +4100,6 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 			if (!error) {
+ 				dont_mount(dentry);
+ 				detach_mounts(dentry);
+-				fsnotify_unlink(dir, dentry);
+ 			}
+ 		}
+ 	}
+@@ -4109,9 +4107,11 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 	inode_unlock(target);
+ 
+ 	/* We don't d_delete() NFS sillyrenamed files--they still exist. */
+-	if (!error && !(dentry->d_flags & DCACHE_NFSFS_RENAMED)) {
++	if (!error && dentry->d_flags & DCACHE_NFSFS_RENAMED) {
++		fsnotify_unlink(dir, dentry);
++	} else if (!error) {
+ 		fsnotify_link_count(target);
+-		d_delete(dentry);
++		d_delete_notify(dir, dentry);
+ 	}
+ 
+ 	return error;
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index 3a2d7dc3c607..bb8467cd11ae 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -224,6 +224,43 @@ static inline void fsnotify_link(struct inode *dir, struct inode *inode,
+ 		      dir, &new_dentry->d_name, 0);
+ }
+ 
++/*
++ * fsnotify_delete - @dentry was unlinked and unhashed
++ *
++ * Caller must make sure that dentry->d_name is stable.
++ *
++ * Note: unlike fsnotify_unlink(), we have to pass also the unlinked inode
++ * as this may be called after d_delete() and old_dentry may be negative.
++ */
++static inline void fsnotify_delete(struct inode *dir, struct inode *inode,
++				   struct dentry *dentry)
++{
++	__u32 mask = FS_DELETE;
++
++	if (S_ISDIR(inode->i_mode))
++		mask |= FS_ISDIR;
++
++	fsnotify_name(mask, inode, FSNOTIFY_EVENT_INODE, dir, &dentry->d_name,
++		      0);
++}
++
++/**
++ * d_delete_notify - delete a dentry and call fsnotify_delete()
++ * @dentry: The dentry to delete
++ *
++ * This helper is used to guaranty that the unlinked inode cannot be found
++ * by lookup of this name after fsnotify_delete() event has been delivered.
++ */
++static inline void d_delete_notify(struct inode *dir, struct dentry *dentry)
++{
++	struct inode *inode = d_inode(dentry);
++
++	ihold(inode);
++	d_delete(dentry);
++	fsnotify_delete(dir, inode, dentry);
++	iput(inode);
++}
++
+ /*
+  * fsnotify_unlink - 'name' was unlinked
+  *
+@@ -231,10 +268,10 @@ static inline void fsnotify_link(struct inode *dir, struct inode *inode,
+  */
+ static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
+ {
+-	/* Expected to be called before d_delete() */
+-	WARN_ON_ONCE(d_is_negative(dentry));
++	if (WARN_ON_ONCE(d_is_negative(dentry)))
++		return;
+ 
+-	fsnotify_dirent(dir, dentry, FS_DELETE);
++	fsnotify_delete(dir, d_inode(dentry), dentry);
+ }
+ 
+ /*
+@@ -258,10 +295,10 @@ static inline void fsnotify_mkdir(struct inode *dir, struct dentry *dentry)
+  */
+ static inline void fsnotify_rmdir(struct inode *dir, struct dentry *dentry)
+ {
+-	/* Expected to be called before d_delete() */
+-	WARN_ON_ONCE(d_is_negative(dentry));
++	if (WARN_ON_ONCE(d_is_negative(dentry)))
++		return;
+ 
+-	fsnotify_dirent(dir, dentry, FS_DELETE | FS_ISDIR);
++	fsnotify_delete(dir, d_inode(dentry), dentry);
+ }
+ 
+ /*
+-- 
+2.34.1
+
