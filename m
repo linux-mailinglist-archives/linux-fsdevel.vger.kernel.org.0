@@ -2,61 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 158384949D9
+	by mail.lfdr.de (Postfix) with ESMTP id D5ECD4949DB
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 09:47:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359353AbiATIrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 03:47:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234860AbiATIrG (ORCPT
+        id S240265AbiATIrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 03:47:18 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:60202 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1359369AbiATIrO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 03:47:06 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84095C061574;
-        Thu, 20 Jan 2022 00:47:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=7GM0HQf9tPss24x1/mYICgALcB2ZyBdjeGTVOCICW9E=; b=eL9BOsWNbgECzttqklZYLdsSej
-        v6CLpdwxnbZTGfeAsDpcDIJA0F9xwMJcOsdBch5qvVDMdgpYU0V7A3xTI60TXrnsJ2XbOSs54uBCA
-        BwW/N13hfhrnbf6BYY/ZKy+5joy0zxM64YW89SeJjiu4Qswv42/RhTGli0tb18hGZ3XnOkKx/MLaQ
-        JsuQSgBe/GG+pPRC1KuHXaqIlzc7FaDRxb+zXyDOpOL6SiEQ1pxR4jd2TNk6aFhnqcGpdXOcZ9aIz
-        t/+qNmK1OkOpMrIzKa5RSba26vzKY0JzRWV4U5M0AzpgeL1BuDyH0zttuu2oF5DDe/FIZ/oIScpWX
-        iM9DU0qw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nAT62-009tcm-2s; Thu, 20 Jan 2022 08:47:06 +0000
-Date:   Thu, 20 Jan 2022 00:47:06 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
-        dan.j.williams@intel.com, david@fromorbit.com, hch@infradead.org,
-        jane.chu@oracle.com
-Subject: Re: [PATCH v9 05/10] fsdax: fix function description
-Message-ID: <YekhisDyJUmF/cQI@infradead.org>
-References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
- <20211226143439.3985960-6-ruansy.fnst@fujitsu.com>
+        Thu, 20 Jan 2022 03:47:14 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7031FB81D09;
+        Thu, 20 Jan 2022 08:47:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F25C340E5;
+        Thu, 20 Jan 2022 08:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642668432;
+        bh=uymmtLY3ykuPPTJX+D/fvcl6pnd2cceSyUotgGzVGCE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e7HNn4fFPcTaohBWRYUvtow+lpJ341SlzUM+TXWkJid/DyRMTy6qoXvV86VQMMlmX
+         NZ3VBTfMzmyFcxmxDbCYfCvgJR7V/nRhWehA1csKmiEpLG/uisCiFb41cCnKZq0RQE
+         6LetKDDsWl0GvyeeG9JfWthQXvvdTaDAWyQ6KquleByCdX8aAytkVXevzpSYDVexjW
+         cwgfhXKlJut1iVe2kjap0DHPSfDJTDS4qByL8EJGI90UEiV0STBb9klbH0xFYlITHv
+         NG50dCdnZQJ+O2BUTHw9hCL7NzVS/XTLLnGDW1lkfPWqFXnuvFpg/4A1fv80Mde0+9
+         hhtanxufmvxSw==
+Date:   Thu, 20 Jan 2022 09:47:07 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Anthony Iliopoulos <ailiop@suse.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] mount: warn only once about timestamp range
+ expiration
+Message-ID: <20220120084707.bsiyxudl4yfqqywd@wittgenstein>
+References: <20220119202934.26495-1-ailiop@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211226143439.3985960-6-ruansy.fnst@fujitsu.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20220119202934.26495-1-ailiop@suse.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 26, 2021 at 10:34:34PM +0800, Shiyang Ruan wrote:
-> The function name has been changed, so the description should be updated
-> too.
+On Wed, Jan 19, 2022 at 09:29:34PM +0100, Anthony Iliopoulos wrote:
+> Commit f8b92ba67c5d ("mount: Add mount warning for impending timestamp
+> expiry") introduced a mount warning regarding filesystem timestamp
+> limits, that is printed upon each writable mount or remount.
 > 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> This can result in a lot of unnecessary messages in the kernel log in
+> setups where filesystems are being frequently remounted (or mounted
+> multiple times).
+> 
+> Avoid this by setting a superblock flag which indicates that the warning
+> has been emitted at least once for any particular mount, as suggested in
+> [1].
+> 
+> Signed-off-by: Anthony Iliopoulos <ailiop@suse.com>
+> 
+> [1] https://lore.kernel.org/CAHk-=wim6VGnxQmjfK_tDg6fbHYKL4EFkmnTjVr9QnRqjDBAeA@mail.gmail.com/
+> ---
 
-Looks good,
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-
-Dan, can you send this to Linux for 5.17 so that we can get it out of
-the way?
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
