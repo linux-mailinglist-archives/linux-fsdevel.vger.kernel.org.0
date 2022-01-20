@@ -2,83 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BB98494A60
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 10:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C01494AB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 10:28:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229825AbiATJKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 04:10:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42966 "EHLO
+        id S1359533AbiATJ2w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 04:28:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231761AbiATJJL (ORCPT
+        with ESMTP id S1359532AbiATJ2v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 04:09:11 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05F08C061574;
-        Thu, 20 Jan 2022 01:09:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ojH90duUrlg/GDFel8G8XOOeQrX2zbxUTaKAoe1bGvs=; b=tCO5lD4il6m52dcPk+/cYpHidp
-        +onLjblS0VrPFPxS9ZGJUQvdyNeZPPGHNAfF+5peIslo4QgfZyN8BmETycomdYalpvi6wzkvq4RyL
-        xpk6fgqFhh41z7Jecw/dPJnI+IIgRJgrJPksZWbTPWwU8R3QsvMLuMlkPHQ3yTy59btCClyFa50/d
-        T+CHX9m/pw3Xmdpesim/0kl6EPfhr0hcZN+/djS0aMkWwifGzbSVu6YPpYkiUaN68OlmHsaX3qOtf
-        0RJQrwayc+fmmfjAoqUshIAxqNkE7rnwubq99z+oFJjmVHdfhSYo6uk3OXvGjR9gwacmvJ57xP/KY
-        f83fZOtA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nATR7-00A4wf-Az; Thu, 20 Jan 2022 09:08:53 +0000
-Date:   Thu, 20 Jan 2022 01:08:53 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <smfrench@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] vfs, fscache: Add an IS_KERNEL_FILE() macro for
- the S_KERNEL_FILE flag
-Message-ID: <YekmpeQvNlGlMvNY@infradead.org>
-References: <YeefizLOGt1Qf35o@infradead.org>
- <YebpktrcUZOlBHkZ@infradead.org>
- <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
- <164251409447.3435901.10092442643336534999.stgit@warthog.procyon.org.uk>
- <3613681.1642527614@warthog.procyon.org.uk>
- <3765724.1642583885@warthog.procyon.org.uk>
+        Thu, 20 Jan 2022 04:28:51 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B72DC061574;
+        Thu, 20 Jan 2022 01:28:51 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id z22so25820609edd.12;
+        Thu, 20 Jan 2022 01:28:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xI2hjvF9QTy4qeUkVgaLn/r0k38qP5qMUW5kFpgn8cU=;
+        b=aI2x5RhX2hh/tGP+a92b/dfubNDO5fhTRlSNlwpOyyT1umGfCiPQePIxdF0Op14ug0
+         XSAmli/b4t6S6U4Mf5GXRVU3E+KuSCtJPdoHejK64AmYFtw8K5GMM/MeEUiSKFc9srAl
+         SlGFM0zxQthDSCoKwtC4f5vTyQ9dVvrCzVti6aLJ93dkm0Hpn1ek3mtpkKuN+G/7+Tyb
+         eWp5luyPOAcDlLl36glvvsYm79qfhlVe/3UX10Gho1q0uubNQ3AfUhwAzUCRRtO8+EL3
+         YF8uwflxnpMQ6plfkdAa+eI4RrvJhR4LEMlCH8aC2TA7htHd/wUmsRHn/V/ln57c7dOW
+         4t3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xI2hjvF9QTy4qeUkVgaLn/r0k38qP5qMUW5kFpgn8cU=;
+        b=IwNmcWW34k9OswqCZTv5b/3ESewFL9ifhlSVPlpV8lpNWcqHSUJVv7aJVdPk02Ljty
+         Vw6v3zJDSkeElLW/7Lg7MUIEsSQmbg30h7Fg7AE9/VsLiQZPVlgEQhHMxjHt1pP0V0VL
+         yq/g8Yf7paSb2JR+ChYxd83GkKhKrGFJaxt7AYCTXIoiQGc+BW2qxSNT07+SJ8U7iXLv
+         XndblhVxHlXlKQwP2jOdZwyV+HgeqQV5Ag5SKGnoR5iar1pvyqi5XRY+BT4MNrxIoyCT
+         IbUEGC0d6ttGxsJazoZr2eiSRWkwOns4GF4qVTQ5pHxCxScXZ+UrVb4/ZMXTB6IGOsQ8
+         rMNg==
+X-Gm-Message-State: AOAM532nqO7wT/+Mr1M0s6Z9SsCu+8D0KjxB/3mwuQFLJ/gmVCTxOWqZ
+        b1dMa7iw425k39xvSdJ4exqjT+K9xNrBZtMjWCIuNK8Svy4Uxw==
+X-Google-Smtp-Source: ABdhPJwuxrqyAkpBzpTeZzlfnn6LGo2LitiLvI7m8TfC8LkdCV8tI2az6AWpg4xCckCJbPz3b27c8Cb00O0A31YVGKA=
+X-Received: by 2002:a17:906:2b8a:: with SMTP id m10mr27831650ejg.479.1642670929710;
+ Thu, 20 Jan 2022 01:28:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3765724.1642583885@warthog.procyon.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20211011030956.2459172-1-mudongliangabcd@gmail.com>
+In-Reply-To: <20211011030956.2459172-1-mudongliangabcd@gmail.com>
+From:   Dongliang Mu <mudongliangabcd@gmail.com>
+Date:   Thu, 20 Jan 2022 17:28:23 +0800
+Message-ID: <CAD-N9QXHwzt9Dui3i6sFF-4d-8Z41LoOJydPykdQQh_jWh+_SA@mail.gmail.com>
+Subject: Re: [PATCH] fs: fix GPF in nilfs_mdt_destroy
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 09:18:05AM +0000, David Howells wrote:
-> The flag cannot just be dropped - it's an important part of the interaction
-> with cachefilesd with regard to culling.  Culling to free up space is
-> offloaded to userspace rather than being done within the kernel.
-> 
-> Previously, cachefiles, the kernel module, had to maintain a huge tree of
-> records of every backing inode that it was currently using so that it could
-> forbid cachefilesd to cull one when cachefilesd asked.  I've reduced that to a
-> single bit flag on the inode struct, thereby saving both memory and time.  You
-> can argue whether it's worth sacrificing an inode flag bit for that, but the
-> flag can be reused for any other kernel service that wants to similarly mark
-> an inode in use.
+On Mon, Oct 11, 2021 at 11:10 AM Dongliang Mu <mudongliangabcd@gmail.com> wrote:
+>
+> In alloc_inode, inode_init_always could return -NOMEM if
+> security_inode_alloc fails. In its error handling, i_callback and
+> nilfs_free_inode will be called. However, because inode->i_private is
+> not initialized due to the failure of security_inode_alloc, the function
+> nilfs_is_metadata_file_inode can return true and nilfs_mdt_destroy will
+> be executed to lead to GPF bug.
+>
+> Fix this bug by moving the assignment of inode->i_private before
+> security_inode_alloc.
+>
 
-Which is a horrible interface.   But you tricked Linus into merging this
-crap, so let's not pretent it is a "kernel file".  We have plenty of
-those, basically every caller of filp_open is one.
+ping?
 
-It is something like "pinned for fscache/cachefiles", so name it that
-way and add a big fat comment expaining the atrocities.
+> BTW, this bug is triggered by fault injection in the syzkaller.
+>
+> Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+> ---
+>  fs/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/inode.c b/fs/inode.c
+> index ed0cab8a32db..f6fce84bf550 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -160,6 +160,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>         inode->i_dir_seq = 0;
+>         inode->i_rdev = 0;
+>         inode->dirtied_when = 0;
+> +       inode->i_private = NULL;
+>
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+>         inode->i_wb_frn_winner = 0;
+> @@ -194,7 +195,6 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>         lockdep_set_class_and_name(&mapping->invalidate_lock,
+>                                    &sb->s_type->invalidate_lock_key,
+>                                    "mapping.invalidate_lock");
+> -       inode->i_private = NULL;
+>         inode->i_mapping = mapping;
+>         INIT_HLIST_HEAD(&inode->i_dentry);      /* buggered by rcu freeing */
+>  #ifdef CONFIG_FS_POSIX_ACL
+> --
+> 2.25.1
+>
