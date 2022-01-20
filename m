@@ -2,184 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D77FB495057
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 15:37:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8B47495088
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 15:52:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353507AbiATOhu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 09:37:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
+        id S1356646AbiATOuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 09:50:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238270AbiATOht (ORCPT
+        with ESMTP id S1355000AbiATOu3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 09:37:49 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4CCFC061574;
-        Thu, 20 Jan 2022 06:37:48 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4EDAB617C6;
-        Thu, 20 Jan 2022 14:37:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C7AC340E0;
-        Thu, 20 Jan 2022 14:37:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642689467;
-        bh=g+oxM2J81EeSrKkemxOsGMCNcdknSpVI4hLP1FM05Xs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=MnZcO5TzvNwS9pEOr4S5gVif6UGpwSNbnSXXJZh6XS93LaIl7LTP62I8ziVCBTyMI
-         +COlt3mR5w8dKC1SKfDAX9jqXm4bPbD9AFcHYM0dy4jO+J15kEl7YYCF6ElVuV/hSz
-         ikpdf0P27ZIVK6AhiRfOve0DDJfwuGpEqkzdcLHzY/vf4ke09D26D/af1LzBgMJFIV
-         I60YCraKJXRkTGaGrXphPq3gFukh+0zhz0Z3sz1DqbsJ7jaO7YSSM8CAk8+a6IKqgE
-         hjl4Ba9JZ7o7SBtFgL/B+4oMlame9nnpajA2uKu3ImpOXXYG+dThM3Y01S8GpF1Pzl
-         R0L/sMo0ns8mg==
-Date:   Thu, 20 Jan 2022 15:37:42 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stephen.s.brennan@oracle.com,
-        legion@kernel.org, cyphar@cyphar.com
-Subject: Re: [PATCH v2] proc: "mount -o lookup=" support
-Message-ID: <20220120143742.saz5yh5mlkg43yxl@wittgenstein>
+        Thu, 20 Jan 2022 09:50:29 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E502C06161C;
+        Thu, 20 Jan 2022 06:50:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=sA8kW5IUXvgUaS8EINQ5uOPdCx1tdexwAGGQdvNG+oc=; b=tlBYKVCI/68e3/DbYEZBkxzg0g
+        4JJApXwqheJzidUEupziizgK5CCr9CXKESKnL/XTmkC0Y9mUt8Fgi1fiu+AjRyDuEPhzC/s9vOCoT
+        D2huYhnLNa+qEvqWB2XLULGY6rrtMfOhhC5jspVnisN1lJQU3b/uWB3RwVd3ysBsPfes3Als5Ll/E
+        /phUxbqm/DlrSCbKivT41R/YluR+AUg88M41GmifbTeLr0BEwonCY0e5UDfcuId42gXvd6TM8BaY0
+        grjO3dCaKzTtpj5ju8VR2sh20xIItTsvaqjsXMO6mTEy8PoeAROlHz4p8H1VtcB8LHsQ3c047uJSV
+        gSO8ApQg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nAYlg-00Byti-0o; Thu, 20 Jan 2022 14:50:28 +0000
+Date:   Thu, 20 Jan 2022 06:50:27 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Palmer Dabbelt <palmer@rivosinc.com>
+Cc:     keescook@chromium.org, yzaikin@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] perf_events: sysctl: Avoid unused one_thousand definition
+Message-ID: <Yel2sz+D8p1BVHk6@bombadil.infradead.org>
+References: <20220119194019.27703-1-palmer@rivosinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YelWXWKZkR//mD8i@localhost.localdomain>
- <YelUKIOjLd7A9XQN@localhost.localdomain>
+In-Reply-To: <20220119194019.27703-1-palmer@rivosinc.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 20, 2022 at 03:32:29PM +0300, Alexey Dobriyan wrote:
-> On Wed, Jan 19, 2022 at 05:24:23PM +0100, Christian Brauner wrote:
-> > On Wed, Jan 19, 2022 at 06:48:03PM +0300, Alexey Dobriyan wrote:
-> > > From 61376c85daab50afb343ce50b5a97e562bc1c8d3 Mon Sep 17 00:00:00 2001
-> > > From: Alexey Dobriyan <adobriyan@gmail.com>
-> > > Date: Mon, 22 Nov 2021 20:41:06 +0300
-> > > Subject: [PATCH 1/1] proc: "mount -o lookup=..." support
-> > > 
-> > > Docker implements MaskedPaths configuration option
-> > > 
-> > > 	https://github.com/estesp/docker/blob/9c15e82f19b0ad3c5fe8617a8ec2dddc6639f40a/oci/defaults.go#L97
-> > > 
-> > > to disable certain /proc files. It overmounts them with /dev/null.
-> > > 
-> > > Implement proper mount option which selectively disables lookup/readdir
-> > > in the top level /proc directory so that MaskedPaths doesn't need
-> > > to be updated as time goes on.
-> > 
-> > I might've missed this when this was sent the last time so maybe it was
-> > clearly explained in an earlier thread: What's the reason this needs to
-> > live in the kernel?
+On Wed, Jan 19, 2022 at 11:40:19AM -0800, Palmer Dabbelt wrote:
+> From: Palmer Dabbelt <palmer@rivosinc.com>
 > 
-> The reasons are:
-> 	MaskedPaths or equivalents are blacklists, not future proof
+> The variable "one_thousand" is only used under CONFIG_PERF_EVENTS=y, but
+> is unconditionally defined.  This can fire a warning.
 > 
-> 	MaskedPaths is applied at container creation once,
-> 	lookup= is applied at mount time surely but names aren't
-> 	required to exist to be filtered (read: some silly ISV module
-> 	gets loaded, creates /proc entries, containers get them with all
-> 	security holes)
+> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
 > 
-> > The MaskedPaths entry is optional so runtimes aren't required to block
-> > anything by default and this mostly makes sense for workloads that run
-> > privileged.
-> > 
-> > In addition MaskedPaths is a generic option which allows to hide any
-> > existing path, not just proc. Even in the very docker-specific defaults
-> > /sys/firmware is covered.
+> ---
 > 
-> Sure, the patch is for /proc only. MaskedPaths can't overmount with
-> /dev/null file which doesn't exist yet.
+> I went with an #ifdef instead of a __maybe_unused because that's what
+> the other code is using, and I left the one_thousand in order despite
+> that requiring another #ifdef.
+> ---
+>  kernel/sysctl.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> > I do see clear value in the subset= and hidepid= options. They are
-> > generally useful independent of opinionated container workloads. I don't
-> > see the same for lookup=.
-> > 
-> > An alternative I find more sensible is to add a new value for subset=
-> > that hides anything(?) that only global root should have read/write
-> > access too.
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index ef77be575d87..81a6f2d47f77 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -122,7 +122,9 @@ static unsigned long one_ul = 1;
+>  static unsigned long long_max = LONG_MAX;
+>  static int one_hundred = 100;
+>  static int two_hundred = 200;
+> +#ifdef CONFIG_PERF_EVENTS
+>  static int one_thousand = 1000;
+> +#endif
 
-On Thu, Jan 20, 2022 at 03:23:04PM +0300, Alexey Dobriyan wrote:
-> On Wed, Jan 19, 2022 at 05:24:23PM +0100, Christian Brauner wrote:
-> > On Wed, Jan 19, 2022 at 06:48:03PM +0300, Alexey Dobriyan wrote:
-> > > From 61376c85daab50afb343ce50b5a97e562bc1c8d3 Mon Sep 17 00:00:00 2001
-> > > From: Alexey Dobriyan <adobriyan@gmail.com>
-> > > Date: Mon, 22 Nov 2021 20:41:06 +0300
-> > > Subject: [PATCH 1/1] proc: "mount -o lookup=..." support
-> > > 
-> > > Docker implements MaskedPaths configuration option
-> > > 
-> > > 	https://github.com/estesp/docker/blob/9c15e82f19b0ad3c5fe8617a8ec2dddc6639f40a/oci/defaults.go#L97
-> > > 
-> > > to disable certain /proc files. It overmounts them with /dev/null.
-> > > 
-> > > Implement proper mount option which selectively disables lookup/readdir
-> > > in the top level /proc directory so that MaskedPaths doesn't need
-> > > to be updated as time goes on.
-> > 
-> > I might've missed this when this was sent the last time so maybe it was
-> > clearly explained in an earlier thread: What's the reason this needs to
-> > live in the kernel?
-> > 
-> > The MaskedPaths entry is optional so runtimes aren't required to block
-> > anything by default and this mostly makes sense for workloads that run
-> > privileged.
-> > 
-> > In addition MaskedPaths is a generic option which allows to hide any
-> > existing path, not just proc. Even in the very docker-specific defaults
-> > /sys/firmware is covered.
-> 
-> MaskedPaths is not future proof, new entries might pop up and nobody
-> will update the MaskedPaths list.
-> 
-> > I do see clear value in the subset= and hidepid= options. They are
-> > generally useful independent of opinionated container workloads. I don't
-> > see the same for lookup=.
-> 
-> The value is if you get /proc/cpuinfo you get everything else
-> but you might not want everything else given that "everything else"
-> changes over time.
-> 
-> > An alternative I find more sensible is to add a new value for subset=
-> > that hides anything(?) that only global root should have read/write
-> > access too.
+Please use linux-next, this has changed quite a bit there.
+You can git grep for SYSCTL_ONE_THOUSAND.
 
-Thanks for providing some more details.
-
-If we really introduce new proc files in the future that are unsafe for
-unprivileged containers then that's a whole bigger problem.
-
-We shouldn't taper over this with a procfs mount option however.
-Especially, since it's very likely that such new procfs files that would
-be exploitable in unprivileged containers would also be exploitable by
-regular users. The argument can't be that in order to protect against
-buggy or information leaking future proc files we need to give proc a
-special mount option for containers to restrict access to files and
-directories.
-
-And for the legacy files that existed before containers were a big thing
-MaskedPath in userspace has worked fine with the last changes to update
-the list from 2018 for the addition of a rather old directory.
-
-And the same problem exists for sysfs. That's why /sys/firmware is in
-there. (In fact, it can be argued that they should restrict sysfs way
-more via MaskedPaths than procfs for privileged containers since it
-leaks way more system-wide information and provides a way bigger attack
-surface which is presumable why the mount is ro but then strangely only
-hide /sys/firmware. Anyway, besides the point.)
-
-MaskedPath is mostly a protection mechanism useful for privileged
-containers as an unprivileged container can't modify anything that would
-allow it to attack the system.
-
-Ultimately, I think the current proposal here is too much modeled after
-how a specific tool runs specific workloads and for containers and I
-don't think that's a good idea.
-
-We should do a generally useful thing that doesn't require any dynamic
-filtering and userspace giving us files that are ok to show.
-
-Alternative proposals to appear later in the thread. I'd be ok to
-endorse one of those if you were to implement one of them. But for now
-I'm not firmly convinced of lookup=.
+  Luis
