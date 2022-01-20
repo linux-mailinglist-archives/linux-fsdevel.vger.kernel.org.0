@@ -2,78 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B47495088
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 15:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4087149517D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jan 2022 16:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356646AbiATOuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 09:50:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36894 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355000AbiATOu3 (ORCPT
+        id S1376648AbiATPba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 10:31:30 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:36248 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346385AbiATPb0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 09:50:29 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E502C06161C;
-        Thu, 20 Jan 2022 06:50:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=sA8kW5IUXvgUaS8EINQ5uOPdCx1tdexwAGGQdvNG+oc=; b=tlBYKVCI/68e3/DbYEZBkxzg0g
-        4JJApXwqheJzidUEupziizgK5CCr9CXKESKnL/XTmkC0Y9mUt8Fgi1fiu+AjRyDuEPhzC/s9vOCoT
-        D2huYhnLNa+qEvqWB2XLULGY6rrtMfOhhC5jspVnisN1lJQU3b/uWB3RwVd3ysBsPfes3Als5Ll/E
-        /phUxbqm/DlrSCbKivT41R/YluR+AUg88M41GmifbTeLr0BEwonCY0e5UDfcuId42gXvd6TM8BaY0
-        grjO3dCaKzTtpj5ju8VR2sh20xIItTsvaqjsXMO6mTEy8PoeAROlHz4p8H1VtcB8LHsQ3c047uJSV
-        gSO8ApQg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nAYlg-00Byti-0o; Thu, 20 Jan 2022 14:50:28 +0000
-Date:   Thu, 20 Jan 2022 06:50:27 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Palmer Dabbelt <palmer@rivosinc.com>
-Cc:     keescook@chromium.org, yzaikin@google.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] perf_events: sysctl: Avoid unused one_thousand definition
-Message-ID: <Yel2sz+D8p1BVHk6@bombadil.infradead.org>
-References: <20220119194019.27703-1-palmer@rivosinc.com>
+        Thu, 20 Jan 2022 10:31:26 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 8BBC92190B;
+        Thu, 20 Jan 2022 15:31:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1642692685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CeAKA/iV/5m4aLZ6NbhTnNQny+wAlGZwM27Jzkopjbk=;
+        b=3X1YObwzeOcHGUM+4drtok74aVJX/znxmEe8AHAeUtWM7LKR8t0lQ+tUAu/DO059k9FOn6
+        07NT2yZOAqVCrrzsf6HNrfMMh/Gyb3veNwU0sTZ8b+ocyWEzIChYNW+HZ0+it8T6VAEi3K
+        c2FFP5WAMjO7ZqlBxMvxRK0qoVTOJoc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1642692685;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CeAKA/iV/5m4aLZ6NbhTnNQny+wAlGZwM27Jzkopjbk=;
+        b=efaUYMlqQ+jZRmwujeIMi7RF1nt+/XzC8Hi8u9mm+xOxtaQu2Uv6PnufTHs6vnAJfhSX8s
+        3oKomywEZIpwYHDw==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 7B22EA3B89;
+        Thu, 20 Jan 2022 15:31:25 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 38308A05D3; Thu, 20 Jan 2022 16:31:22 +0100 (CET)
+Date:   Thu, 20 Jan 2022 16:31:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        Ivan Delalande <colona@arista.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] fnotify: invalidate dcache before IN_DELETE event
+Message-ID: <20220120153122.fpxg24okcmcvkcay@quack3.lan>
+References: <20220118120031.196123-1-amir73il@gmail.com>
+ <20220120125208.jmm2xjwcxaswt3tn@quack3.lan>
+ <CAOQ4uxjxayK006RDAiEm9hKP_JAZhZZDcj7tbnANjQWP-_XObA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119194019.27703-1-palmer@rivosinc.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <CAOQ4uxjxayK006RDAiEm9hKP_JAZhZZDcj7tbnANjQWP-_XObA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 11:40:19AM -0800, Palmer Dabbelt wrote:
-> From: Palmer Dabbelt <palmer@rivosinc.com>
+On Thu 20-01-22 16:31:11, Amir Goldstein wrote:
+> On Thu, Jan 20, 2022 at 2:52 PM Jan Kara <jack@suse.cz> wrote:
+> > > +/*
+> > > + * fsnotify_delete - @dentry was unlinked and unhashed
+> > > + *
+> > > + * Caller must make sure that dentry->d_name is stable.
+> > > + *
+> > > + * Note: unlike fsnotify_unlink(), we have to pass also the unlinked inode
+> > > + * as this may be called after d_delete() and old_dentry may be negative.
+> > > + */
+> > > +static inline void fsnotify_delete(struct inode *dir, struct inode *inode,
+> > > +                                struct dentry *dentry)
+> > > +{
+> > > +     __u32 mask = FS_DELETE;
+> > > +
+> > > +     if (S_ISDIR(inode->i_mode))
+> > > +             mask |= FS_ISDIR;
+> > > +
+> > > +     fsnotify_name(mask, inode, FSNOTIFY_EVENT_INODE, dir, &dentry->d_name,
+> > > +                   0);
+> > > +}
+> > > +
+> >
+> > OK, this is fine because we use dentry only for FAN_RENAME event, don't we?
 > 
-> The variable "one_thousand" is only used under CONFIG_PERF_EVENTS=y, but
-> is unconditionally defined.  This can fire a warning.
-> 
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-> 
-> ---
-> 
-> I went with an #ifdef instead of a __maybe_unused because that's what
-> the other code is using, and I left the one_thousand in order despite
-> that requiring another #ifdef.
-> ---
->  kernel/sysctl.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index ef77be575d87..81a6f2d47f77 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -122,7 +122,9 @@ static unsigned long one_ul = 1;
->  static unsigned long long_max = LONG_MAX;
->  static int one_hundred = 100;
->  static int two_hundred = 200;
-> +#ifdef CONFIG_PERF_EVENTS
->  static int one_thousand = 1000;
-> +#endif
+> Almost.
+> We also use dentry in FS_CREATE to get sb from d_sb for error event, because:
+>  * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
+>  * ->d_inode later
 
-Please use linux-next, this has changed quite a bit there.
-You can git grep for SYSCTL_ONE_THOUSAND.
+Ah, right.
 
-  Luis
+> > In all other cases we always use only inode anyway. Can we perhaps cleanup
+> > include/linux/fsnotify.h to use FSNOTIFY_EVENT_DENTRY only in that one call
+> > site inside fsnotify_move() and use FSNOTIFY_EVENT_INODE in all the other
+> > cases? So that this is clear and also so that we don't start using dentry
+> > inadvertedly for something inside fsnotify thus breaking unlink reporting
+> > in subtle ways...
+> >
+> 
+> I don't know.
+> For fsnotify_unlink/rmdir we check d_is_negative, so it's fine to use
+> FSNOTIFY_EVENT_INODE.
+> For fsnotify_link,fsnotify_move we get the inode explicitly, but we already
+> use FSNOTIFY_EVENT_INODE in those cases (except FS_RENAME).
+
+Yeah, plus we have the xattr and attrib events which need dentry to lookup
+parent. So scratch this idea.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
