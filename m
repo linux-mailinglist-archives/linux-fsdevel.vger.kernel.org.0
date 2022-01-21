@@ -2,92 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADDB9495E2F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 12:09:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD23495F54
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 13:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344558AbiAULJw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 06:09:52 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:34890 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380091AbiAULJZ (ORCPT
+        id S1380502AbiAUM7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 07:59:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51878 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1380493AbiAUM73 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 06:09:25 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A6C461A27;
-        Fri, 21 Jan 2022 11:09:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D39C340E1;
-        Fri, 21 Jan 2022 11:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642763364;
-        bh=V4yrtIZgsqs0WlCeHnDvpWADei1ftXx0D93HzFs1TeE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ya147kKlKxdnovsF2UwX6JG6zUdeR8jBsqvCaJt65ir2ypFpa2QyGXlhBimN6qnuI
-         RrWi/1U0aXj0+rP4CTDIm7ijzGB3c9fGjejbsAd6JjlGUvRE9Vwp4JHO+YrpM9AKHR
-         vlJR8yRzE5PEbb1cDOvrupBsMPn8jECTSC7UvlVYYXweW4JiL117tzwJgTIftPfsMr
-         QKT81eO5olDojn0UoKokGbUrmaAOHU1CdJ4BIJGxArOPoZUmJR9in/NI2uAECynvm7
-         UV4LOZcj/5Df6dZZw3d6ZMwAUMyQnGVXQjTOb42+P/kWLNQEDg6LTzztVmdfx2qujv
-         PSSyU5Qr9YEQQ==
-Message-ID: <b65ee653c451a485d85d0207322e650e7535c22d.camel@kernel.org>
-Subject: Re: [PATCH 2/3] ceph: Uninline the data on a file opened for writing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Fri, 21 Jan 2022 06:09:22 -0500
-In-Reply-To: <YeWdlR7nsBG8fYO2@casper.infradead.org>
-References: <164243678893.2863669.12713835397467153827.stgit@warthog.procyon.org.uk>
-         <164243679615.2863669.15715941907688580296.stgit@warthog.procyon.org.uk>
-         <YeWdlR7nsBG8fYO2@casper.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        Fri, 21 Jan 2022 07:59:29 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC08EC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jan 2022 04:59:29 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id h79so2955104iof.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jan 2022 04:59:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=CUhRv4YXxtxxw42sl90J7AL1ll0Y4UPtMGkkfwHi7SY=;
+        b=cOEOGbaxcrIsIPIzQN5qReRkza8SMij2aWDy/XI/MDCl48iAr1uJ8xZn2iE/pjTooC
+         5KzGeyi4/NySZJrh5XesYp0jZ+nnmAuLN1p5Tx3G6r0mg/4EIrR8IAeCWzSWFND0v0zk
+         J1SOChffKXL2OMJC4aHpWAMEMghloBXAiw6fl9mSBPF1kA6kOsPbpXb2e1UisRytzIPN
+         Xro5Pzsb87/e3NmLSXffPZSjc+/yboFUX2VGS5W5rOT48Jl/S7Spi4I/Xq5b6XEQ3EHh
+         yJMMxLQl3AuJsYEKbZ67ih7fcHNmZ2qccxLOEDNWpjt+q82mfqfS3ccll5KWatnSEIhQ
+         f42Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=CUhRv4YXxtxxw42sl90J7AL1ll0Y4UPtMGkkfwHi7SY=;
+        b=Fi/r8rB7rhnQwqF+g6tLzgDJ4OsCcGXngVnttnZQMy4RhqNqINMN27gn7W9SqIElYO
+         ot2qm9zNItQoA2FVmBZkunNAW+qzFeipZzy4d+MHG6332aqk52V6oXZk1muGNC6BMtpF
+         RSSomUS5/eXq/Tgw2bkFFgh4eHwBOJdX65+SjgEII3jgANPT9ZdbJvWIdZ2U2rK254Bg
+         QVzdOeYulk4NxdbBOBw+Apb5l/WwWPYlmrGoAsImmNCh1Um81ObTrCWzX6evQqrfVwX3
+         myM0rI32D/hGA+oOpcI7TwIi/dymQDGeAOJ0LkFQJR3V18X84teZsuEjrLlr/G9nV8Sa
+         v4OQ==
+X-Gm-Message-State: AOAM5302muFcIdVhA5RN55aIeqci0gdv1YpCslgHacYgqM1A8GT3+kp8
+        naUDmQk5O7S7S2+W+LVJ4acP9M8iN6BbDpxRosg=
+X-Google-Smtp-Source: ABdhPJxFIN3awdKWb0EUFiHQ+HWvnkcV8myPdHSJ4/2a2p+UDnTGZEsrh4X9Vu/UsDuk6vafVU+K4YYZPtN8ayKAkBE=
+X-Received: by 2002:a05:6602:1608:: with SMTP id x8mr1850565iow.54.1642769969227;
+ Fri, 21 Jan 2022 04:59:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Reply-To: kmark@iname.com
+From:   mark koffi <mrmarkkoffi2000@gmail.com>
+Date:   Fri, 21 Jan 2022 13:59:17 +0100
+Message-ID: <CABfujoMC4FMa+C714UJYd+NkPYOH4iTrG7odSyOPz3PxBuHQZQ@mail.gmail.com>
+Subject: CC
+To:     mark koffi <mrmarkkoffi2000@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-01-17 at 16:47 +0000, Matthew Wilcox wrote:
-> On Mon, Jan 17, 2022 at 04:26:36PM +0000, David Howells wrote:
-> > +	folio = read_mapping_folio(inode->i_mapping, 0, file);
-> > +	if (IS_ERR(folio))
-> > +		goto out;
-> 
-> ... you need to set 'err' here, right?
-> 
-> > +	if (folio_test_uptodate(folio))
-> > +		goto out_put_folio;
-> 
-> Er ... if (!folio_test_uptodate(folio)), perhaps?  And is it even
-> worth testing if read_mapping_folio() returned success?  I feel like
-> we should take ->readpage()'s word for it that success means the
-> folio is now uptodate.
-> 
-> > +	err = folio_lock_killable(folio);
-> > +	if (err < 0)
-> > +		goto out_put_folio;
-> > +
-> > +	if (inline_version == 1 || /* initial version, no data */
-> > +	    inline_version == CEPH_INLINE_NONE)
-> > +		goto out_unlock;
-> > +
-> > +	len = i_size_read(inode);
-> > +	if (len >  folio_size(folio))
-> 
-> extra space.  Plus, you're hardcoding 4096 below, but using folio_size()
-> here which is a bit weird to me.
-
-The client actually decides how big a region to inline when it does
-this. The default is 4k, but someone could inline up to 64k (and
-potentially larger, if they tweak settings the right way).
-
-I'd suggest not capping the length in this function at all. If you find
-more than 4k, just assume that some other client stashed more data than
-expected, and uninline whatever is there.
-
-You might also consider throwing in a pr_warn or something in that case,
-since finding more than 4k uninlined would be unexpected (though not
-necessarily broken).
--- 
-Jeff Layton <jlayton@kernel.org>
+GREETING TO YOU    :
+I am contacting you to assist  in retrieving  a fund of US$ 10.5m
+deposited by Mr. Weinberger  with the bank before it got confiscated
+by the bank management . if you are willing to carry on with it.
+Get back to me for more details
+Regards
+MarK
