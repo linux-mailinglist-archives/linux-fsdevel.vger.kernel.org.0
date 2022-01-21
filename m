@@ -2,114 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA184964BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 19:06:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BCC5496552
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 19:53:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381782AbiAUSGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 13:06:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239373AbiAUSGF (ORCPT
+        id S229599AbiAUSxL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 13:53:11 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45707 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229453AbiAUSxK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 13:06:05 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CFE7C06173B;
-        Fri, 21 Jan 2022 10:06:05 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id h7so2243952ejf.1;
-        Fri, 21 Jan 2022 10:06:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HB00Dk4BxVgWeQmFduo2LILaD1FFGYAEdZ3PebPBEBw=;
-        b=btFmWrH/V9v5abyka+eab1Rs3zrpPn0nci4AUiouqLNDpjw/NkYUFUhvw773WCVIAk
-         xVmqjmn/xkl65jW4CpvfWhM1dxlKUEOH+mZCaCYyhd3lampu7yFeaohMhgJxOLABmYK2
-         0sgxwzihFGSQPijTrND8NtNoGE8QvLZsgDbb2u0jCFaiMSvU8eaXk992+0Fs/m8gK2i+
-         dW9hP3ZqPsSXfA2BbKSsAN3XxXk1xRi2PsGpzdmTfbm/tAAg4TFXNNL6U3UECgd/ag2J
-         5N6t40/gB1LtQRaV0K3wOggY/uAWuhlL/2gu3bKqYOK3tbn4edp4axjVfBashkqM4zQI
-         xYTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HB00Dk4BxVgWeQmFduo2LILaD1FFGYAEdZ3PebPBEBw=;
-        b=aJwjgfhuIcKYYqsAE2Hg+KPN4ocLmK4hyijj0FRxSsEcSS9g3bdLTEqec9Y5/NC+5I
-         PfR5zwrrvjhCQADjeg0f32mVABF/br5Vk7SFkBU5t6kDVpp5F6kccMQs8D0xtjbeyYA1
-         aFOfkk9/ZJiZjp9Set2lyFV6nPs4cnuCgj8SMX+8I2xBxy3k6Xc5In4nUQOUGDYtF0t/
-         zuciEhwR1HT+bh4/dDsbp/zRt9bu3FzpUZdCg74I/G6y+iXfjuoZNqTRFDGkjR96oBtv
-         RqFqizlRhripbWsTMy1U6J8PuZpJFs6a7Zgk+Hh3xSRdkbsyxpneZ2mdnuNcUt3oQcqP
-         /xIA==
-X-Gm-Message-State: AOAM532MNSiq9gaeMlvD1wDJwv9vUVuNMktOzvhjAHjWXBNNKGqTwkv/
-        hJfAY2CGMMbtvU5CjISk2zwaGR3JJQsHzQYb48o=
-X-Google-Smtp-Source: ABdhPJx/A/eFYcqDd4G5OcIvASWaZyYXtR3rIaew10BEAtQbSwm0/TspzVHpdvckLjatHTglZw4oLp9D9/+CH3DiukM=
-X-Received: by 2002:a17:907:94c9:: with SMTP id dn9mr4119453ejc.270.1642788363547;
- Fri, 21 Jan 2022 10:06:03 -0800 (PST)
+        Fri, 21 Jan 2022 13:53:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642791190;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=AsIAvBTcI5g7o+PrVjk2os/OZq2YScnOHuSRIsTSZcM=;
+        b=BuRp+YSbSEVQWCY3qcHeto59Xw9m9P03AnI0ejIpYsqWAdpP3koSOrP9lQti/GNnivUGN7
+        /wulXU548lGKm0T7RWUXCOfbRb8eoEYkttPWNmEqrtYiVJI2Ist+pWACEvld97LhN0M9+l
+        S2FO7yfnf0r/1tItcYWG1lC+bhQbSFY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-612-kcRpiG9KP9O_MocB27JiPQ-1; Fri, 21 Jan 2022 13:53:08 -0500
+X-MC-Unique: kcRpiG9KP9O_MocB27JiPQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6B8261006AA3;
+        Fri, 21 Jan 2022 18:53:07 +0000 (UTC)
+Received: from llong.com (unknown [10.22.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B03734D50;
+        Fri, 21 Jan 2022 18:53:01 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] vfs: Pre-allocate superblock in sget_fc() if !test
+Date:   Fri, 21 Jan 2022 13:52:55 -0500
+Message-Id: <20220121185255.27601-1-longman@redhat.com>
 MIME-Version: 1.0
-References: <20220121075515.79311-1-songmuchun@bytedance.com>
-In-Reply-To: <20220121075515.79311-1-songmuchun@bytedance.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 21 Jan 2022 10:05:51 -0800
-Message-ID: <CAHbLzkqzu+20TJc8RGDDCyDaFmG+Q7xjkVgpJF5-uPqubMN2HA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] mm: rmap: fix cache flush on THP pages
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alistair Popple <apopple@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Hugh Dickins <hughd@google.com>, xiyuyang19@fudan.edu.cn,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        zwisler@kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        nvdimm@lists.linux.dev,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 20, 2022 at 11:56 PM Muchun Song <songmuchun@bytedance.com> wrote:
->
-> The flush_cache_page() only remove a PAGE_SIZE sized range from the cache.
-> However, it does not cover the full pages in a THP except a head page.
-> Replace it with flush_cache_range() to fix this issue. At least, no
-> problems were found due to this. Maybe because the architectures that
-> have virtual indexed caches is less.
+When the test function is not defined in sget_fc(), we always need
+to allocate a new superblock. So there is no point in acquiring the
+sb_lock twice in this case. Optimize the !test case by pre-allocating
+the superblock first before acquring the lock.
 
-Yeah, actually flush_cache_page()/flush_cache_range() are no-op for
-the most architectures which have THP supported, i.e. x86, aarch64,
-powerpc, etc.
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ fs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-And currently just tmpfs and read-only files support PMD-mapped THP,
-but both don't have to do writeback. And it seems DAX doesn't have
-writeback either, which uses __set_page_dirty_no_writeback() for
-set_page_dirty. So this code should never be called IIUC.
+diff --git a/fs/super.c b/fs/super.c
+index a6405d44d4ca..c2bd5c34a826 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -520,6 +520,8 @@ struct super_block *sget_fc(struct fs_context *fc,
+ 	struct user_namespace *user_ns = fc->global ? &init_user_ns : fc->user_ns;
+ 	int err;
+ 
++	if (!test)
++		s = alloc_super(fc->fs_type, fc->sb_flags, user_ns);
+ retry:
+ 	spin_lock(&sb_lock);
+ 	if (test) {
+-- 
+2.27.0
 
-But anyway your fix looks correct to me. Reviewed-by: Yang Shi
-<shy828301@gmail.com>
-
->
-> Fixes: f27176cfc363 ("mm: convert page_mkclean_one() to use page_vma_mapped_walk()")
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->  mm/rmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index b0fd9dc19eba..65670cb805d6 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -974,7 +974,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
->                         if (!pmd_dirty(*pmd) && !pmd_write(*pmd))
->                                 continue;
->
-> -                       flush_cache_page(vma, address, page_to_pfn(page));
-> +                       flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
->                         entry = pmdp_invalidate(vma, address, pmd);
->                         entry = pmd_wrprotect(entry);
->                         entry = pmd_mkclean(entry);
-> --
-> 2.11.0
->
