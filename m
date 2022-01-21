@@ -2,111 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0042A495854
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 03:34:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F006495861
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 03:36:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378543AbiAUCeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jan 2022 21:34:06 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:45919 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1378483AbiAUCeF (ORCPT
+        id S1348449AbiAUCgI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jan 2022 21:36:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54456 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244394AbiAUCgI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jan 2022 21:34:05 -0500
-IronPort-Data: =?us-ascii?q?A9a23=3A8jWpIK8vHuEnOF7kREpCDrUD63+TJUtcMsCJ2f8?=
- =?us-ascii?q?bfWQNrUp33zxSxmFKXWjSP6uKa2Cje9F0PITn8UIG65CDzNJiSVdlrnsFo1Bi8?=
- =?us-ascii?q?5ScXYvDRqvT04J+FuWaFQQ/qZx2huDodKjYdVeB4Ef9WlTdhSMkj/vQH+CkULW?=
- =?us-ascii?q?s1h1ZHmeIdg9w0HqPpMZp2uaEsfDha++8kYuaT//3YTdJ6BYoWo4g0J9vnTs01?=
- =?us-ascii?q?BjEVJz0iXRlDRxDlAe2e3D4l/vzL4npR5fzatE88uJX24/+IL+FEmPxp3/BC/u?=
- =?us-ascii?q?ulPD1b08LXqXPewOJjxK6WYD72l4b+HN0if19aZLwam8O49mNt8pswdNWpNq+T?=
- =?us-ascii?q?xw1FqPRmuUBSAQeGCZ7VUFD0OadeSbi6JLPkCUqdFOpmZ2CFnoeMYQG++pfD3t?=
- =?us-ascii?q?J8PsCIjERKBuEgoqewLm7YuhqiN4qIMTiMMUYoH4I5T3QC7AkB4/CR6HL7NpD9?=
- =?us-ascii?q?DY2ms1KW/3ZYqIxZThwaxLPSx5CIFEaDNQ5hujArn3+dSBI7VeQjakp6mPQigt?=
- =?us-ascii?q?r39DFNsTZe9mPbcFUhVqD4GbH+XnpRB0XKrS3yzOD/zSnhvLnmjnyU4YfUra/8?=
- =?us-ascii?q?5ZChFyV23xWBgYaWEW2pdGnhUOkHdFSMUoZ/mwpt6da3EiqSMTtGh61uniJujY?=
- =?us-ascii?q?CVNdKVe438geAzuzT+QnxLmwFSCNRLcwor+coSjEwkFyEhdXkAXpoqrL9dJ433?=
- =?us-ascii?q?t94thvrYW5MczBEPnRCEGM4DxDYiNlbpnryohxLScZZVuHIJAw=3D?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AW6esQatRAK2MUU2DkOwCCOZ77skDStV00zEX?=
- =?us-ascii?q?/kB9WHVpm62j5qSTdZEguCMc5wx+ZJheo7q90cW7IE80lqQFhLX5X43SPzUO0V?=
- =?us-ascii?q?HARO5fBODZsl/d8kPFltJ15ONJdqhSLJnKB0FmsMCS2mKFOudl7N6Z0K3Av4vj?=
- =?us-ascii?q?80s=3D?=
-X-IronPort-AV: E=Sophos;i="5.88,303,1635177600"; 
-   d="scan'208";a="120651647"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 21 Jan 2022 10:34:03 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id C8E454D15A5C;
-        Fri, 21 Jan 2022 10:33:58 +0800 (CST)
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Fri, 21 Jan 2022 10:33:56 +0800
-Received: from [192.168.22.28] (10.167.225.141) by
- G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Fri, 21 Jan 2022 10:33:56 +0800
-Message-ID: <70a24c20-d7ee-064c-e863-9f012422a2f5@fujitsu.com>
-Date:   Fri, 21 Jan 2022 10:33:58 +0800
+        Thu, 20 Jan 2022 21:36:08 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEEBFC061574;
+        Thu, 20 Jan 2022 18:36:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 55A02B81D84;
+        Fri, 21 Jan 2022 02:36:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF61C340E0;
+        Fri, 21 Jan 2022 02:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642732564;
+        bh=7WwbHgXEEmyGk8VsUc9soyxxvD8Rd4CVOIzfWVbGxgg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TJWHvQOYkvpukFEO29VsctzeUshaTt9r4j2tPBeTNRkhlOAXQFmschOiLFwTw6Vgu
+         kC1CNn/nzXp7xSsldL30IPcWqUdgLtC1WKXtNmnG11pqmtpicA1Hs++8V/A012/q7x
+         4mPI8QRzywjj+HqybFxooxhslpzJjRRCyU3i5ec7nJwO/9wPnVvvOmpe9SQDa/dkM7
+         6rE7wpJ6XE3K4YGGCFPBxob2vexcsDcGHAPAAmhcnrY8Q5+rPbXfAIaqLMpL1a3PWT
+         I0CXVQab1nmPAnsYio6Mnl6xT1TdoYFeBAUlqZdOlZCK6LiWewa1WyG/oOjDmSxpES
+         btPl9CCCv+54w==
+Date:   Thu, 20 Jan 2022 18:36:03 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v10 0/5] add support for direct I/O with fscrypt using
+ blk-crypto
+Message-ID: <20220121023603.GH13563@magnolia>
+References: <20220120071215.123274-1-ebiggers@kernel.org>
+ <YekdnxpeunTGfXqX@infradead.org>
+ <20220120171027.GL13540@magnolia>
+ <YenIcshA706d/ziV@sol.localdomain>
+ <20220120210027.GQ13540@magnolia>
+ <20220120220414.GH59729@dread.disaster.area>
+ <Yenm1Ipx87JAlyXg@sol.localdomain>
+ <20220120235755.GI59729@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v9 10/10] fsdax: set a CoW flag when associate reflink
- mappings
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>,
-        <dan.j.williams@intel.com>, <david@fromorbit.com>,
-        <jane.chu@oracle.com>
-References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
- <20211226143439.3985960-11-ruansy.fnst@fujitsu.com>
- <YekkYAJ+QegoDKCJ@infradead.org>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <YekkYAJ+QegoDKCJ@infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-yoursite-MailScanner-ID: C8E454D15A5C.A13C7
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220120235755.GI59729@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jan 21, 2022 at 10:57:55AM +1100, Dave Chinner wrote:
+> On Thu, Jan 20, 2022 at 02:48:52PM -0800, Eric Biggers wrote:
+> > On Fri, Jan 21, 2022 at 09:04:14AM +1100, Dave Chinner wrote:
+> > > On Thu, Jan 20, 2022 at 01:00:27PM -0800, Darrick J. Wong wrote:
+> > > > On Thu, Jan 20, 2022 at 12:39:14PM -0800, Eric Biggers wrote:
+> > > > > On Thu, Jan 20, 2022 at 09:10:27AM -0800, Darrick J. Wong wrote:
+> > > > > > On Thu, Jan 20, 2022 at 12:30:23AM -0800, Christoph Hellwig wrote:
+> > > > > > > On Wed, Jan 19, 2022 at 11:12:10PM -0800, Eric Biggers wrote:
+> > > > > > > > 
+> > > > > > > > Given the above, as far as I know the only remaining objection to this
+> > > > > > > > patchset would be that DIO constraints aren't sufficiently discoverable
+> > > > > > > > by userspace.  Now, to put this in context, this is a longstanding issue
+> > > > > > > > with all Linux filesystems, except XFS which has XFS_IOC_DIOINFO.  It's
+> > > > > > > > not specific to this feature, and it doesn't actually seem to be too
+> > > > > > > > important in practice; many other filesystem features place constraints
+> > > > > > > > on DIO, and f2fs even *only* allows fully FS block size aligned DIO.
+> > > > > > > > (And for better or worse, many systems using fscrypt already have
+> > > > > > > > out-of-tree patches that enable DIO support, and people don't seem to
+> > > > > > > > have trouble with the FS block size alignment requirement.)
+> > > > > > > 
+> > > > > > > It might make sense to use this as an opportunity to implement
+> > > > > > > XFS_IOC_DIOINFO for ext4 and f2fs.
+> > > > > > 
+> > > > > > Hmm.  A potential problem with DIOINFO is that it doesn't explicitly
+> > > > > > list the /file/ position alignment requirement:
+> > > > > > 
+> > > > > > struct dioattr {
+> > > > > > 	__u32		d_mem;		/* data buffer memory alignment */
+> > > > > > 	__u32		d_miniosz;	/* min xfer size		*/
+> > > > > > 	__u32		d_maxiosz;	/* max xfer size		*/
+> > > > > > };
+> > > > > 
+> > > > > Well, the comment above struct dioattr says:
+> > > > > 
+> > > > > 	/*
+> > > > > 	 * Direct I/O attribute record used with XFS_IOC_DIOINFO
+> > > > > 	 * d_miniosz is the min xfer size, xfer size multiple and file seek offset
+> > > > > 	 * alignment.
+> > > > > 	 */
+> > > > > 
+> > > > > So d_miniosz serves that purpose already.
+> > > > > 
+> > > > > > 
+> > > > > > Since I /think/ fscrypt requires that directio writes be aligned to file
+> > > > > > block size, right?
+> > > > > 
+> > > > > The file position must be a multiple of the filesystem block size, yes.
+> > > > > Likewise for the "minimum xfer size" and "xfer size multiple", and the "data
+> > > > > buffer memory alignment" for that matter.  So I think XFS_IOC_DIOINFO would be
+> > > > > good enough for the fscrypt direct I/O case.
+> > > > 
+> > > > Oh, ok then.  In that case, just hoist XFS_IOC_DIOINFO to the VFS and
+> > > > add a couple of implementations for ext4 and f2fs, and I think that'll
+> > > > be enough to get the fscrypt patchset moving again.
+> > > 
+> > > On the contrary, I'd much prefer to see this information added to
+> > > statx(). The file offset alignment info is a property of the current
+> > > file (e.g. XFS can have different per-file requirements depending on
+> > > whether the file data is hosted on the data or RT device, etc) and
+> > > so it's not a fixed property of the filesystem.
+> > > 
+> > > statx() was designed to be extended with per-file property
+> > > information, and we already have stuff like filesystem block size in
+> > > that syscall. Hence I would much prefer that we extend it with the
+> > > DIO properties we need to support rather than "create" a new VFS
+> > > ioctl to extract this information. We already have statx(), so let's
+> > > use it for what it was intended for.
 
+Eh, ok.  Let's do that instead.
 
-在 2022/1/20 16:59, Christoph Hellwig 写道:
-> On Sun, Dec 26, 2021 at 10:34:39PM +0800, Shiyang Ruan wrote:
->> +#define FS_DAX_MAPPING_COW	1UL
->> +
->> +#define MAPPING_SET_COW(m)	(m = (struct address_space *)FS_DAX_MAPPING_COW)
->> +#define MAPPING_TEST_COW(m)	(((unsigned long)m & FS_DAX_MAPPING_COW) == \
->> +					FS_DAX_MAPPING_COW)
+> > > 
+> > 
+> > I assumed that XFS_IOC_DIOINFO *was* per-file.  XFS's *implementation* of it
+> > looks at the filesystem only,
 > 
-> These really should be inline functions and probably use lower case
-> names.
+> You've got that wrong.
+> 
+>         case XFS_IOC_DIOINFO: {
+> >>>>>>          struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
+>                 struct dioattr          da;
+> 
+>                 da.d_mem =  da.d_miniosz = target->bt_logical_sectorsize;
+> 
+> xfs_inode_buftarg() is determining which block device the inode is
+> storing it's data on, so the returned dioattr values can be
+> different for different inodes in the filesystem...
+> 
+> It's always been that way since the early Irix days - XFS RT devices
+> could have very different IO constraints than the data device and
+> DIO had to conform to the hardware limits underlying the filesystem.
+> Hence the dioattr information has -always- been per-inode
+> information.
+> 
+> > (Per-file state is required for encrypted
+> > files.  It's also required for other filesystem features; e.g., files that use
+> > compression or fs-verity don't support direct I/O at all.)
+> 
+> Which is exactly why is should be a property of statx(), rather than
+> try to re-use a ~30 year old filesystem specific API from a
+> different OS that was never intended to indicate things like "DIO
+> not supported on this file at all"....
 
-OK.
+Heh.  You mean like ALLOCSP?  Ok ok point taken.
+
+> We've been bitten many times by this "lift a rarely used filesystem
+> specific ioctl to the VFS because it exists" method of API
+> promotion. It almost always ends up in us discovering further down
+> the track that there's something wrong with the API, it doesn't
+> quite do what we need, we have to extend it anyway, or it's just
+> plain borken, etc. And then we have to create a new, fit for purpose
+> API anyway, and there's two VFS APIs we have to maintain forever
+> instead of just one...
+> 
+> Can we learn from past mistakes this time instead of repeating them
+> yet again?
+
+Sure.  How's this?  I couldn't think of a real case of directio
+requiring different alignments for pos and bytecount, so the only real
+addition here is the alignment requirements for best performance.
+
+struct statx {
+...
+	/* 0x90 */
+	__u64	stx_mnt_id;
+
+	/* Memory buffer alignment required for directio, in bytes. */
+	__u32	stx_dio_mem_align;
+
+	/* File range alignment required for directio, in bytes. */
+	__u32	stx_dio_fpos_align_min;
+
+	/* 0xa0 */
+
+	/* File range alignment needed for best performance, in bytes. */
+	__u32	stx_dio_fpos_align_opt;
+
+	/* Maximum size of a directio request, in bytes. */
+	__u32	stx_dio_max_iosize;
+
+	__u64	__spare3[11];	/* Spare space for future expansion */
+	/* 0x100 */
+};
+
+Along with:
+
+#define STATX_DIRECTIO	0x00001000U	/* Want/got directio geometry */
+
+How about that?
+
+--D
 
 > 
-> But different question, how does this not conflict with:
+> Cheers,
 > 
-> #define PAGE_MAPPING_ANON       0x1
-> 
-> in page-flags.h?
-
-Now we are treating dax pages, so I think its flags should be different 
-from normal page.  In another word, PAGE_MAPPING_ANON is a flag of rmap 
-mechanism for normal page, it doesn't work for dax page.  And now, we 
-have dax rmap for dax page.  So, I think this two kinds of flags are 
-supposed to be used in different mechanisms and won't conflect.
-
-> 
-> Either way I think this flag should move to page-flags.h and be
-> integrated with the PAGE_MAPPING_FLAGS infrastucture.
-
-And that's why I keep them in this dax.c file.
-
-
---
-Thanks,
-Ruan.
-
-
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
