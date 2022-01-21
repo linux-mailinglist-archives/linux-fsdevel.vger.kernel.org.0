@@ -2,142 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53393495DFC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 11:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDB9495E2F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 12:09:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350083AbiAUK5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 05:57:44 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:48014 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234688AbiAUK5n (ORCPT
+        id S1344558AbiAULJw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 06:09:52 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:34890 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1380091AbiAULJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 05:57:43 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0V2R34sx_1642762658;
-Received: from 30.225.24.54(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V2R34sx_1642762658)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 21 Jan 2022 18:57:39 +0800
-Message-ID: <fcc80cb7-3f6e-2818-eb92-76f9f2f5acb5@linux.alibaba.com>
-Date:   Fri, 21 Jan 2022 18:57:38 +0800
+        Fri, 21 Jan 2022 06:09:25 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A6C461A27;
+        Fri, 21 Jan 2022 11:09:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D39C340E1;
+        Fri, 21 Jan 2022 11:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642763364;
+        bh=V4yrtIZgsqs0WlCeHnDvpWADei1ftXx0D93HzFs1TeE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Ya147kKlKxdnovsF2UwX6JG6zUdeR8jBsqvCaJt65ir2ypFpa2QyGXlhBimN6qnuI
+         RrWi/1U0aXj0+rP4CTDIm7ijzGB3c9fGjejbsAd6JjlGUvRE9Vwp4JHO+YrpM9AKHR
+         vlJR8yRzE5PEbb1cDOvrupBsMPn8jECTSC7UvlVYYXweW4JiL117tzwJgTIftPfsMr
+         QKT81eO5olDojn0UoKokGbUrmaAOHU1CdJ4BIJGxArOPoZUmJR9in/NI2uAECynvm7
+         UV4LOZcj/5Df6dZZw3d6ZMwAUMyQnGVXQjTOb42+P/kWLNQEDg6LTzztVmdfx2qujv
+         PSSyU5Qr9YEQQ==
+Message-ID: <b65ee653c451a485d85d0207322e650e7535c22d.camel@kernel.org>
+Subject: Re: [PATCH 2/3] ceph: Uninline the data on a file opened for writing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date:   Fri, 21 Jan 2022 06:09:22 -0500
+In-Reply-To: <YeWdlR7nsBG8fYO2@casper.infradead.org>
+References: <164243678893.2863669.12713835397467153827.stgit@warthog.procyon.org.uk>
+         <164243679615.2863669.15715941907688580296.stgit@warthog.procyon.org.uk>
+         <YeWdlR7nsBG8fYO2@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.2
-Subject: Re: [Linux-cachefs] [PATCH v2 00/20] fscache, erofs: fscache-based
- demand-read semantics
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-References: <Yeeye2AUZITDsdh8@B-P7TQMD6M-0146.local>
-Cc:     xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
-        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
-        linux-kernel@vger.kernel.org
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <Yeeye2AUZITDsdh8@B-P7TQMD6M-0146.local>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
-
-Sincerely would you mind sharing if you like this patch set or not? It
-seems that the use case of file-based on-demand load is quite general.
-And as Gao Xaing noted, we still prefer fscache to implement this
-scenario, whilst fscache has well worked as the local cache for remote
-netfs.
-
-Humbly I'd like to know if this potential new requirement for fscache
-meets your expectation or future plan for fscache. If it is, then we can
-improve the patch set in the later versions. Besides let me know if it
-indeed deviates from the roadmap of fscache.
-
-
-Thanks,
-Jeffle
-
-
-On 1/19/22 2:40 PM, Gao Xiang wrote:
-> Hi David,
+On Mon, 2022-01-17 at 16:47 +0000, Matthew Wilcox wrote:
+> On Mon, Jan 17, 2022 at 04:26:36PM +0000, David Howells wrote:
+> > +	folio = read_mapping_folio(inode->i_mapping, 0, file);
+> > +	if (IS_ERR(folio))
+> > +		goto out;
 > 
-> On Tue, Jan 18, 2022 at 09:11:56PM +0800, Jeffle Xu wrote:
->> changes since v1:
->> - rebase to v5.17
->> - erofs: In chunk based layout, since the logical file offset has the
->>   same remainder over PAGE_SIZE with the corresponding physical address
->>   inside the data blob file, the file page cache can be directly
->>   transferred to netfs library to contain the data from data blob file.
->>   (patch 15) (Gao Xiang)
->> - netfs,cachefiles: manage logical/physical offset separately. (patch 2)
->>   (It is used by erofs_begin_cache_operation() in patch 15.)
->> - cachefiles: introduce a new devnode specificaly for on-demand reading.
->>   (patch 6)
->> - netfs,fscache,cachefiles: add new CONFIG_* for on-demand reading.
->>   (patch 3/5)
->> - You could start a quick test by
->>   https://github.com/lostjeffle/demand-read-cachefilesd
->> - add more background information (mainly introduction to nydus) in the
->>   "Background" part of this cover letter
->>
->> [Important Issues]
->> The following issues still need further discussion. Thanks for your time
->> and patience.
->>
->> 1. I noticed that there's refactoring of netfs library[1], and patch 1
->> is not needed since [2].
->>
->> 2. The current implementation will severely conflict with the
->> refactoring of netfs library[1][2]. The assumption of 'struct
->> netfs_i_context' [2] is that, every file in the upper netfs will
->> correspond to only one backing file. While in our scenario, one file in
->> erofs can correspond to multiple backing files. That is, the content of
->> one file can be divided into multiple chunks, and are distrubuted over
->> multiple blob files, i.e. multiple backing files. Currently I have no
->> good idea solving this conflic.
->>
+> ... you need to set 'err' here, right?
 > 
-> Would you mind give more hints on this? Personally, I still think fscache
-> is useful and clean way for image distribution on-demand load use cases
-> in addition to cache network fs data as a more generic in-kernel caching
-> framework. From the point view of current codestat, it has slight
-> modification of netfslib and cachefiles (except for a new daemon):
->  fs/netfs/Kconfig         |   8 +
->  fs/netfs/read_helper.c   |  65 ++++++--
->  include/linux/netfs.h    |  10 ++
+> > +	if (folio_test_uptodate(folio))
+> > +		goto out_put_folio;
 > 
->  fs/cachefiles/Kconfig    |   8 +
->  fs/cachefiles/daemon.c   | 147 ++++++++++++++++-
->  fs/cachefiles/internal.h |  23 +++
->  fs/cachefiles/io.c       |  82 +++++++++-
->  fs/cachefiles/main.c     |  27 ++++
->  fs/cachefiles/namei.c    |  60 ++++++-
+> Er ... if (!folio_test_uptodate(folio)), perhaps?  And is it even
+> worth testing if read_mapping_folio() returned success?  I feel like
+> we should take ->readpage()'s word for it that success means the
+> folio is now uptodate.
 > 
-> Besides, I think that cookies can be set according to data mapping
-> (instead of fixed per file) will benefit the following scenario in
-> addition to our on-demand load use cases:
->   It will benefit file cache data deduplication. What I can see is that
-> netfslib may have some follow-on development in order to support
-> encryption and compression. However, I think cache data deduplication
-> is also potentially useful to minimize cache storage since many local
-> fses already support reflink. However, I'm not sure if it's a great
-> idea that cachefile relies on underlayfs abilities for cache deduplication.
-> So for cache deduplication scenarios, I'm not sure per-file cookie is
-> still a good idea for us (or alternatively, maintain more complicated
-> mapping per cookie inside fscache besides filesystem mapping, too
-> unnecessary IMO).
->   
-> By the way, in general, I'm not sure if it's a great idea to cache in
-> per-file basis (especially for too many small files), that is why we
-> introduced data deduplicated blobs. At least, it's simpler for read-only
-> fses. Recently, I found another good article to summarize this:
-> http://0pointer.net/blog/casync-a-tool-for-distributing-file-system-images.html
+> > +	err = folio_lock_killable(folio);
+> > +	if (err < 0)
+> > +		goto out_put_folio;
+> > +
+> > +	if (inline_version == 1 || /* initial version, no data */
+> > +	    inline_version == CEPH_INLINE_NONE)
+> > +		goto out_unlock;
+> > +
+> > +	len = i_size_read(inode);
+> > +	if (len >  folio_size(folio))
 > 
-> Thanks,
-> Gao Xiang
-> 
+> extra space.  Plus, you're hardcoding 4096 below, but using folio_size()
+> here which is a bit weird to me.
 
+The client actually decides how big a region to inline when it does
+this. The default is 4k, but someone could inline up to 64k (and
+potentially larger, if they tweak settings the right way).
+
+I'd suggest not capping the length in this function at all. If you find
+more than 4k, just assume that some other client stashed more data than
+expected, and uninline whatever is there.
+
+You might also consider throwing in a pr_warn or something in that case,
+since finding more than 4k uninlined would be unexpected (though not
+necessarily broken).
 -- 
-Thanks,
-Jeffle
+Jeff Layton <jlayton@kernel.org>
