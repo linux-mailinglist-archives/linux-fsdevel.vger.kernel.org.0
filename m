@@ -2,127 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 718E0496488
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 18:53:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA184964BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 19:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351614AbiAURxm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 12:53:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
+        id S1381782AbiAUSGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 13:06:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350142AbiAURxM (ORCPT
+        with ESMTP id S239373AbiAUSGF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 12:53:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE59CC06173B;
-        Fri, 21 Jan 2022 09:53:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BA3261B0D;
-        Fri, 21 Jan 2022 17:53:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20F25C340E1;
-        Fri, 21 Jan 2022 17:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642787590;
-        bh=ThQXA6SoRQU7Z3j3cfZ8hZaWXTx2O3dQBqVmVVdKdRg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Z+uy9Nno6dBEZtnV5CHOdZas1aZMJ4hu9LnjqQjvnKAlaNXGPRY5wjkuKNH84yUfR
-         LA6c/o2PmF1zZtyArrLUx2sAPUKDiuqggo7P1s5B3gtrZ8HAFIrlqoKIhtjKvPT0zr
-         WDJTqrg8144wD16x9bPXIbWNxPO2ajo9hxmQnvQVgpopFUzI63HqEnkruxwGG5Nd/6
-         Ul3wLwr6jSBpxfaT5fgO3GP5I3x+UxV7PAsjAs5xOX1hRBEF7f3jMRSvWEu8VpNOgI
-         xvLjpqyi9VR+Je3dQAxxU57a+G0JMlFCA+Ipa2DQ9DnrdYrg5cHS1lXu5dm6m7SFel
-         3WV98pUOeYZOw==
-Message-ID: <952f31150513af64ca5ccbb440d1e0ca88a37900.camel@kernel.org>
-Subject: Re: [PATCH 05/11] cachefiles: Trace active-mark failure
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <smfrench@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 21 Jan 2022 12:53:08 -0500
-In-Reply-To: <164251404666.3435901.17331742792401482190.stgit@warthog.procyon.org.uk>
-References: <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
-         <164251404666.3435901.17331742792401482190.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        Fri, 21 Jan 2022 13:06:05 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CFE7C06173B;
+        Fri, 21 Jan 2022 10:06:05 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id h7so2243952ejf.1;
+        Fri, 21 Jan 2022 10:06:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HB00Dk4BxVgWeQmFduo2LILaD1FFGYAEdZ3PebPBEBw=;
+        b=btFmWrH/V9v5abyka+eab1Rs3zrpPn0nci4AUiouqLNDpjw/NkYUFUhvw773WCVIAk
+         xVmqjmn/xkl65jW4CpvfWhM1dxlKUEOH+mZCaCYyhd3lampu7yFeaohMhgJxOLABmYK2
+         0sgxwzihFGSQPijTrND8NtNoGE8QvLZsgDbb2u0jCFaiMSvU8eaXk992+0Fs/m8gK2i+
+         dW9hP3ZqPsSXfA2BbKSsAN3XxXk1xRi2PsGpzdmTfbm/tAAg4TFXNNL6U3UECgd/ag2J
+         5N6t40/gB1LtQRaV0K3wOggY/uAWuhlL/2gu3bKqYOK3tbn4edp4axjVfBashkqM4zQI
+         xYTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HB00Dk4BxVgWeQmFduo2LILaD1FFGYAEdZ3PebPBEBw=;
+        b=aJwjgfhuIcKYYqsAE2Hg+KPN4ocLmK4hyijj0FRxSsEcSS9g3bdLTEqec9Y5/NC+5I
+         PfR5zwrrvjhCQADjeg0f32mVABF/br5Vk7SFkBU5t6kDVpp5F6kccMQs8D0xtjbeyYA1
+         aFOfkk9/ZJiZjp9Set2lyFV6nPs4cnuCgj8SMX+8I2xBxy3k6Xc5In4nUQOUGDYtF0t/
+         zuciEhwR1HT+bh4/dDsbp/zRt9bu3FzpUZdCg74I/G6y+iXfjuoZNqTRFDGkjR96oBtv
+         RqFqizlRhripbWsTMy1U6J8PuZpJFs6a7Zgk+Hh3xSRdkbsyxpneZ2mdnuNcUt3oQcqP
+         /xIA==
+X-Gm-Message-State: AOAM532MNSiq9gaeMlvD1wDJwv9vUVuNMktOzvhjAHjWXBNNKGqTwkv/
+        hJfAY2CGMMbtvU5CjISk2zwaGR3JJQsHzQYb48o=
+X-Google-Smtp-Source: ABdhPJx/A/eFYcqDd4G5OcIvASWaZyYXtR3rIaew10BEAtQbSwm0/TspzVHpdvckLjatHTglZw4oLp9D9/+CH3DiukM=
+X-Received: by 2002:a17:907:94c9:: with SMTP id dn9mr4119453ejc.270.1642788363547;
+ Fri, 21 Jan 2022 10:06:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20220121075515.79311-1-songmuchun@bytedance.com>
+In-Reply-To: <20220121075515.79311-1-songmuchun@bytedance.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Fri, 21 Jan 2022 10:05:51 -0800
+Message-ID: <CAHbLzkqzu+20TJc8RGDDCyDaFmG+Q7xjkVgpJF5-uPqubMN2HA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] mm: rmap: fix cache flush on THP pages
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alistair Popple <apopple@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Hugh Dickins <hughd@google.com>, xiyuyang19@fudan.edu.cn,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        zwisler@kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        nvdimm@lists.linux.dev,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-01-18 at 13:54 +0000, David Howells wrote:
-> Add a tracepoint to log failure to apply an active mark to a file in
-> addition to tracing successfully setting and unsetting the mark.
-> 
-> Also include the backing file inode number in the message logged to dmesg.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-cachefs@redhat.com
-> ---
-> 
->  fs/cachefiles/namei.c             |    4 +++-
->  include/trace/events/cachefiles.h |   21 +++++++++++++++++++++
->  2 files changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index 52c9f0864a87..f256c8aff7bb 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -25,7 +25,9 @@ static bool __cachefiles_mark_inode_in_use(struct cachefiles_object *object,
->  		trace_cachefiles_mark_active(object, inode);
->  		can_use = true;
->  	} else {
-> -		pr_notice("cachefiles: Inode already in use: %pd\n", dentry);
-> +		trace_cachefiles_mark_failed(object, inode);
-> +		pr_notice("cachefiles: Inode already in use: %pd (B=%lx)\n",
-> +			  dentry, inode->i_ino);
->  	}
->  
->  	return can_use;
-> diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-> index 093c4acb7a3a..c6f5aa74db89 100644
-> --- a/include/trace/events/cachefiles.h
-> +++ b/include/trace/events/cachefiles.h
-> @@ -573,6 +573,27 @@ TRACE_EVENT(cachefiles_mark_active,
->  		      __entry->obj, __entry->inode)
->  	    );
->  
-> +TRACE_EVENT(cachefiles_mark_failed,
-> +	    TP_PROTO(struct cachefiles_object *obj,
-> +		     struct inode *inode),
-> +
-> +	    TP_ARGS(obj, inode),
-> +
-> +	    /* Note that obj may be NULL */
-> +	    TP_STRUCT__entry(
-> +		    __field(unsigned int,		obj		)
-> +		    __field(ino_t,			inode		)
-> +			     ),
-> +
-> +	    TP_fast_assign(
-> +		    __entry->obj	= obj ? obj->debug_id : 0;
-> +		    __entry->inode	= inode->i_ino;
-> +			   ),
-> +
-> +	    TP_printk("o=%08x B=%lx",
-> +		      __entry->obj, __entry->inode)
-> +	    );
-> +
->  TRACE_EVENT(cachefiles_mark_inactive,
->  	    TP_PROTO(struct cachefiles_object *obj,
->  		     struct inode *inode),
-> 
-> 
+On Thu, Jan 20, 2022 at 11:56 PM Muchun Song <songmuchun@bytedance.com> wrote:
+>
+> The flush_cache_page() only remove a PAGE_SIZE sized range from the cache.
+> However, it does not cover the full pages in a THP except a head page.
+> Replace it with flush_cache_range() to fix this issue. At least, no
+> problems were found due to this. Maybe because the architectures that
+> have virtual indexed caches is less.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Yeah, actually flush_cache_page()/flush_cache_range() are no-op for
+the most architectures which have THP supported, i.e. x86, aarch64,
+powerpc, etc.
+
+And currently just tmpfs and read-only files support PMD-mapped THP,
+but both don't have to do writeback. And it seems DAX doesn't have
+writeback either, which uses __set_page_dirty_no_writeback() for
+set_page_dirty. So this code should never be called IIUC.
+
+But anyway your fix looks correct to me. Reviewed-by: Yang Shi
+<shy828301@gmail.com>
+
+>
+> Fixes: f27176cfc363 ("mm: convert page_mkclean_one() to use page_vma_mapped_walk()")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  mm/rmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index b0fd9dc19eba..65670cb805d6 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -974,7 +974,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
+>                         if (!pmd_dirty(*pmd) && !pmd_write(*pmd))
+>                                 continue;
+>
+> -                       flush_cache_page(vma, address, page_to_pfn(page));
+> +                       flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
+>                         entry = pmdp_invalidate(vma, address, pmd);
+>                         entry = pmd_wrprotect(entry);
+>                         entry = pmd_mkclean(entry);
+> --
+> 2.11.0
+>
