@@ -2,84 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B1E496289
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 17:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE15496463
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 18:47:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381766AbiAUQBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 11:01:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43700 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1381745AbiAUQBr (ORCPT
+        id S1381640AbiAURrb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 12:47:31 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:41474 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345647AbiAURra (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 11:01:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642780906;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=juqMzEmzIRv+9PxXvTzIHJDGlUg5TvTdn7+F99E8dgk=;
-        b=ZfPMYYUM6/NTGYtgImxGKfmfvqTUKGEO7b5V/iyHyE3YKCcZblPZLUeWk2jLQZzwOB6/RJ
-        a9K+nowL54rihiToOg9AyTO2EgjQnDxnxMuXi47D/XAc9R+LMGbChI6RfvQgxjIAUMMtHR
-        doC7MWrskcC0TgfbYMEIYSNEyuTfeVA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-654-cPeA97QOPZOq2pSrDN_TTA-1; Fri, 21 Jan 2022 11:01:43 -0500
-X-MC-Unique: cPeA97QOPZOq2pSrDN_TTA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 21 Jan 2022 12:47:30 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 48B0D8519E6;
-        Fri, 21 Jan 2022 16:01:38 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CFF861091ED6;
-        Fri, 21 Jan 2022 16:01:37 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [libaio PATCH] harness: add test for aio poll missed events
-References: <20220106044943.55242-1-ebiggers@kernel.org>
-        <YeoLAu++cORO5mRL@sol.localdomain>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 21 Jan 2022 11:04:17 -0500
-In-Reply-To: <YeoLAu++cORO5mRL@sol.localdomain> (Eric Biggers's message of
-        "Thu, 20 Jan 2022 17:23:14 -0800")
-Message-ID: <x49k0etf532.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F3D03B82069;
+        Fri, 21 Jan 2022 17:47:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E3DC340E1;
+        Fri, 21 Jan 2022 17:47:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642787247;
+        bh=oKkPWd9txk9tE7fz7famX/0zcd82lrEm08j+OdI1AT4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XNye038kVucvuvASSDWSFeJ+KZjUERhEx5LppAPprw3yBD6/Cd7Eo8MJ9P+a/V9sw
+         hDDeuPayw2/9OplJ332k3lNGLFVd6YgiY5/W9i5SXQ3Cqe6h8vqu1qkE4h6aO6FZL0
+         qJ/Qxf77uvE6rAqq1//DYm9TPlWUBmpIoVnrLg+hCBHSVlWpjJoK4lMjg9Q7CxhBBj
+         5WBBsM7YbDBeeXKzcyTCosgZm8h6X83oeNrjLK7kM7GFOtGucuS4oIootz8JR9c2DE
+         rkjfgPtMT9xkYOz8yHHR+gqtJqrz+lhN3cjrvMxIH5bq9u1e0rpFTKyn67xD0nnOgF
+         sHVmGmcXMTGQg==
+Message-ID: <725c4bcacded089553341003117a3f49104c971b.camel@kernel.org>
+Subject: Re: [PATCH 02/11] cachefiles: Calculate the blockshift in terms of
+ bytes, not pages
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <smfrench@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 21 Jan 2022 12:47:24 -0500
+In-Reply-To: <164251398954.3435901.7138806620218474123.stgit@warthog.procyon.org.uk>
+References: <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk>
+         <164251398954.3435901.7138806620218474123.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
+On Tue, 2022-01-18 at 13:53 +0000, David Howells wrote:
+> Cachefiles keeps track of how much space is available on the backing
+> filesystem and refuses new writes permission to start if there isn't enough
+> (we especially don't want ENOSPC happening).  It also tracks the amount of
+> data pending in DIO writes (cache->b_writing) and reduces the amount of
+> free space available by this amount before deciding if it can set up a new
+> write.
+> 
+> However, the old fscache I/O API was very much page-granularity dependent
+> and, as such, cachefiles's cache->bshift was meant to be a multiplier to
+> get from PAGE_SIZE to block size (ie. a blocksize of 512 would give a shift
+> of 3 for a 4KiB page) - and this was incorrectly being used to turn the
+> number of bytes in a DIO write into a number of blocks, leading to a
+> massive over estimation of the amount of data in flight.
+> 
+> Fix this by changing cache->bshift to be a multiplier from bytes to
+> blocksize and deal with quantities of blocks, not quantities of pages.
+> 
+> Fix also the rounding in the calculation in cachefiles_write() which needs
+> a "- 1" inserting.
+> 
+> Fixes: 047487c947e8 ("cachefiles: Implement the I/O routines")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-cachefs@redhat.com
+> ---
+> 
+>  fs/cachefiles/cache.c    |    7 ++-----
+>  fs/cachefiles/internal.h |    2 +-
+>  fs/cachefiles/io.c       |    2 +-
+>  3 files changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/cachefiles/cache.c b/fs/cachefiles/cache.c
+> index ce4d4785003c..1e9c71666c6a 100644
+> --- a/fs/cachefiles/cache.c
+> +++ b/fs/cachefiles/cache.c
+> @@ -84,9 +84,7 @@ int cachefiles_add_cache(struct cachefiles_cache *cache)
+>  		goto error_unsupported;
+>  
+>  	cache->bsize = stats.f_bsize;
+> -	cache->bshift = 0;
+> -	if (stats.f_bsize < PAGE_SIZE)
+> -		cache->bshift = PAGE_SHIFT - ilog2(stats.f_bsize);
+> +	cache->bshift = ilog2(stats.f_bsize);
+>  
+>  	_debug("blksize %u (shift %u)",
+>  	       cache->bsize, cache->bshift);
+> @@ -106,7 +104,6 @@ int cachefiles_add_cache(struct cachefiles_cache *cache)
+>  	       (unsigned long long) cache->fcull,
+>  	       (unsigned long long) cache->fstop);
+>  
+> -	stats.f_blocks >>= cache->bshift;
+>  	do_div(stats.f_blocks, 100);
+>  	cache->bstop = stats.f_blocks * cache->bstop_percent;
+>  	cache->bcull = stats.f_blocks * cache->bcull_percent;
+> @@ -209,7 +206,7 @@ int cachefiles_has_space(struct cachefiles_cache *cache,
+>  		return ret;
+>  	}
+>  
+> -	b_avail = stats.f_bavail >> cache->bshift;
+> +	b_avail = stats.f_bavail;
+>  	b_writing = atomic_long_read(&cache->b_writing);
+>  	if (b_avail > b_writing)
+>  		b_avail -= b_writing;
+> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+> index 8dd54d9375b6..c793d33b0224 100644
+> --- a/fs/cachefiles/internal.h
+> +++ b/fs/cachefiles/internal.h
+> @@ -86,7 +86,7 @@ struct cachefiles_cache {
+>  	unsigned			bcull_percent;	/* when to start culling (% blocks) */
+>  	unsigned			bstop_percent;	/* when to stop allocating (% blocks) */
+>  	unsigned			bsize;		/* cache's block size */
+> -	unsigned			bshift;		/* min(ilog2(PAGE_SIZE / bsize), 0) */
+> +	unsigned			bshift;		/* ilog2(bsize) */
+>  	uint64_t			frun;		/* when to stop culling */
+>  	uint64_t			fcull;		/* when to start culling */
+>  	uint64_t			fstop;		/* when to stop allocating */
+> diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
+> index 60b1eac2ce78..04eb52736990 100644
+> --- a/fs/cachefiles/io.c
+> +++ b/fs/cachefiles/io.c
+> @@ -264,7 +264,7 @@ static int cachefiles_write(struct netfs_cache_resources *cres,
+>  	ki->term_func		= term_func;
+>  	ki->term_func_priv	= term_func_priv;
+>  	ki->was_async		= true;
+> -	ki->b_writing		= (len + (1 << cache->bshift)) >> cache->bshift;
+> +	ki->b_writing		= (len + (1 << cache->bshift) - 1) >> cache->bshift;
+>  
+>  	if (ki->term_func)
+>  		ki->iocb.ki_complete = cachefiles_write_complete;
+> 
+> 
 
-> On Wed, Jan 05, 2022 at 08:49:43PM -0800, Eric Biggers wrote:
->> From: Eric Biggers <ebiggers@google.com>
->> 
->> Add a regression test for a recently-fixed kernel bug where aio polls
->> sometimes didn't complete even if the file is ready.
->> 
->> This is a cleaned-up version of the test which I originally posted at
->> https://lore.kernel.org/r/YbMKtAjSJdXNTzOk@sol.localdomain
->> 
->> Signed-off-by: Eric Biggers <ebiggers@google.com>
->> ---
->>  harness/cases/23.t | 255 +++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 255 insertions(+)
->>  create mode 100644 harness/cases/23.t
->
-> Jeff, any feedback on this?  It looks like you're maintaining libaio.
->
-> I feel that this should go in the libaio test suite given the other aio tests
-> there already (including the one for aio poll), but I'd also be glad to put this
-> in LTP instead if you would prefer that.  Just let me know...
-
-Sorry for the late reply.  I'll get this integrated.  Thanks a lot for
-providing the test case!
-
--Jeff
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
