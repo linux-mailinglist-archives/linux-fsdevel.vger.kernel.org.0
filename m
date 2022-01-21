@@ -2,67 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2CBF495A31
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 07:56:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A8E495A57
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 08:10:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378831AbiAUG4H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 01:56:07 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:44568 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245091AbiAUG4F (ORCPT
+        id S1378850AbiAUHKB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 02:10:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57602 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348858AbiAUHKB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 01:56:05 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2EC9BB81F4F;
-        Fri, 21 Jan 2022 06:56:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DF8D9C340E9;
-        Fri, 21 Jan 2022 06:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642748162;
-        bh=lUPkbLjoi7pfPVc4Mn9udZWeK9gfT9EFkIAgpBeop3o=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=uF8AVDA9sVr0T+IBuQWrZ7FUKD4yZbhoLkB0s2zbuthVt8hF34Wb0T1VU0LoBZXYl
-         VT/IwPdCVfismlTAmhS8hz0mz6LRHuBg5EVZJV/LTr4s9hXB/Hf6njhoxvhUkN0C3i
-         ebx29MS0vo9Y2s/7OymEUKnmGXjxjkjkGmXapJOAar0jFqSK3mgDr1aBi3XMIYGBeO
-         dJCRqzRWOeafu6CppEDKsC2QNaFZ9DuGFLYmytT23TMYMG85EZoljvaAziYX+l+tIN
-         SqE7Fwxo0UVjvO9aNFmqJPepw9nAgAdW60Vj5o0Aw5gGr46GvC7zHm45gG2BVGkfOK
-         lQJlmfwKOBPHA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CD9E5F6079C;
-        Fri, 21 Jan 2022 06:56:02 +0000 (UTC)
-Subject: Re: [GIT PULL] xfs: legacy Irix ioctl housecleaning for 5.17-rc1, part 2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220120185920.GP13540@magnolia>
-References: <20220120185920.GP13540@magnolia>
-X-PR-Tracked-List-Id: <linux-xfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220120185920.GP13540@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-6
-X-PR-Tracked-Commit-Id: b3bb9413e717b44e4aea833d07f14e90fb91cf97
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 31d949782e1daf4b329337dd36b2d6d60764fe29
-Message-Id: <164274816283.27527.4445590209473650660.pr-tracker-bot@kernel.org>
-Date:   Fri, 21 Jan 2022 06:56:02 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+        Fri, 21 Jan 2022 02:10:01 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529BDC061574;
+        Thu, 20 Jan 2022 23:10:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/iWwKF5zBo+/YqnIlxI/fBLzy6wUHNMRmfKOAf2uK/0=; b=euNtdBdzwfCYHwQlnISZwlowHv
+        Ghmi9l9Zl16SCmCwWK7jluHzRlhl52g/7nnfe1ORbcbWz9eDsTLODftQAP0tQHhTQXNKExIDhJWQR
+        4fKqsCljldRSV8PZQHlegwZhFHZ9EtUloBylY5RK3eI/qjkyxiZFaZj6fQ4MiR0+zNZXQsGMAycnU
+        2oWxcxPC/e7RJEfKpGZ3J1zNhH/rSYHEEISC9QO9qMPLt3qitFPkckTdxf3yffrudX0s+EP6cLkkY
+        1UsupL+zm3akz9Ziutyd2iS7/vdibOYkDaUDgTd30H6/mok/dXO+eYc+FQsShPk5ewqwwszZTJ470
+        kA5hUg5w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nAo3c-00E1cx-0w; Fri, 21 Jan 2022 07:10:00 +0000
+Date:   Thu, 20 Jan 2022 23:10:00 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Satya Tangirala <satyat@google.com>
+Subject: Re: [PATCH v10 1/5] fscrypt: add functions for direct I/O support
+Message-ID: <YepcSJGy2IbBrMZB@infradead.org>
+References: <20220120071215.123274-1-ebiggers@kernel.org>
+ <20220120071215.123274-2-ebiggers@kernel.org>
+ <YekdAa4fCKw7VY3J@infradead.org>
+ <Yeklkcc7NXKYDHUL@sol.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yeklkcc7NXKYDHUL@sol.localdomain>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Thu, 20 Jan 2022 10:59:20 -0800:
+On Thu, Jan 20, 2022 at 01:04:17AM -0800, Eric Biggers wrote:
+> I actually had changed this from v9 because fscrypt_dio_supported() seemed
+> backwards, given that its purpose is to check whether DIO is unsupported, not
+> whether it's supported per se (and the function's comment reflected this).  What
+> ext4 and f2fs do is check a list of reasons why DIO would *not* be supported,
+> and if none apply, then it is supported.  This is just one of those reasons.
+> 
+> This is subjective though, so if people prefer the old way, I'll change it back.
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.17-merge-6
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/31d949782e1daf4b329337dd36b2d6d60764fe29
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I find non-negated API much better and would also help with undinwinding
+the ext4/f2fs mess.  But I'm not going to block the series on such a
+minor detail, of course.
