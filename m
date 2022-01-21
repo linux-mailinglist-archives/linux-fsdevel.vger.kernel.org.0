@@ -2,133 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B806495B88
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 09:03:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FDB495C00
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 09:35:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379365AbiAUIC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 03:02:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41694 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379356AbiAUICy (ORCPT
+        id S234125AbiAUIfE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 03:35:04 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:2637 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234198AbiAUIeV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 03:02:54 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D78BC061574;
-        Fri, 21 Jan 2022 00:02:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=GkhYswWhgZDhLTeBb8jA3GhQ7m9q872GlOap+afnEQI=; b=FiaAtqncYkONo8snw9SQkJCsw9
-        VG4CNYHf0YXnS2SYDh0oAp2TfIMCv2tKKyAb35y4hVkq8A8KL2iFiB5UvZTH65I4H1th7LYptCN/S
-        Yg3/6L5X660xq/qYdJxfFYHM8Nh69tqCK3P4/061gSjLn6UdjawCJyQLleMhRBsVlIFQKTlX56rTu
-        IRcyhFSvsTz9Ubmawk2BNhhIeDVs/rAAHM2ZCdKM9i/olJw8ExzrXY8aXlgjJF60d0dsZw7VLGRAd
-        Tqb4mOCk4aspLz4CnJt3eMJr4lrJhpl+AIbVtCg71qFIeznHBs4GP/V+cpXDVX7s/nVdCf18CKksO
-        U6sGRBOQ==;
-Received: from [2001:4bb8:184:72a4:a29c:780c:65f6:27e6] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nAosk-00EBvi-3w; Fri, 21 Jan 2022 08:02:50 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: rename S_KERNEL_FILE
-Date:   Fri, 21 Jan 2022 09:02:46 +0100
-Message-Id: <20220121080246.459804-1-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
+        Fri, 21 Jan 2022 03:34:21 -0500
+IronPort-Data: =?us-ascii?q?A9a23=3ATGEFKqh5CkSoF7MEZqgz4YuZX161CxEKZh0ujC4?=
+ =?us-ascii?q?5NGQNrF6WrkUAy2YXUD+ObvyMZzCmLot/bojn9h8Av8XTnIJkHgtqqnw8FHgiR?=
+ =?us-ascii?q?ejtX4rAdhiqV8+xwmwvdGo+toNGLICowPkcFhcwnT/wdOixxZVA/fvQHOCkUbS?=
+ =?us-ascii?q?dYnkZqTJME0/NtzoywobVvaY42bBVMyvV0T/Di5W31G2NglaYAUpIg063ky6Di?=
+ =?us-ascii?q?dyp0N8uUvPSUtgQ1LPWvyF94JvyvshdJVOgKmVfNrbSq+ouUNiEEm3lExcFUrt?=
+ =?us-ascii?q?Jk57wdAsEX7zTIROTzHFRXsBOgDAb/mprjPl9b6FaNC+7iB3Q9zx14M9QvJqrW?=
+ =?us-ascii?q?EEnOLbQsOoAURhECDw4NqpDkFPCCSHl6ZLNlhKaKhMAxN0rVinaJ7Yw9u9pAG1?=
+ =?us-ascii?q?m++YfLTcXZBGfwemxxdqTSuJsrsUlItPiMI4Wtjdn1z6xJfovR9bBBbrL4dtZ1?=
+ =?us-ascii?q?TIrrsFIAfvaIcEebFJHYBbfZBtAElQaEpQzmKGvnHaXWzlZrk+F4K8yy2vNxQd?=
+ =?us-ascii?q?ylr/3P7L9fMKGRMBQtkKZvX7duWD4BAwKctCS11Kt8Huqi6nEnT7TX5gbH7m1s?=
+ =?us-ascii?q?PVthTW7wm0VFQ1TW0C3rOe0jmagVN9FbU8Z4Cwjqe417kPDZt38WQCo5X2JpBg?=
+ =?us-ascii?q?RX/JOHOAgrgKA0KzZ50CeHGdsZjpAbsE28d84XhQ02VKT2dDkHzpitPuSU331y?=
+ =?us-ascii?q?1s+hVteIgBMdSlbO3BCFlBDvrHeTEgIpkqnZr5e/GSd17UZwQ3N/g0=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AmS58S6/PRHT7JJgFU+puk+C9I+orL9Y04lQ7?=
+ =?us-ascii?q?vn2ZKCY0TiX2ra2TdZggvyMc6wxxZJhDo7+90cC7KBu2yXcc2/hzAV7IZmXbUQ?=
+ =?us-ascii?q?WTQr1f0Q=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.88,304,1635177600"; 
+   d="scan'208";a="120661741"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 21 Jan 2022 16:34:20 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id 10D3A4D15A58;
+        Fri, 21 Jan 2022 16:34:19 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Fri, 21 Jan 2022 16:34:19 +0800
+Received: from [192.168.22.28] (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Fri, 21 Jan 2022 16:34:16 +0800
+Message-ID: <b928a8cd-e9b5-46fa-20d0-e91fe53ed861@fujitsu.com>
+Date:   Fri, 21 Jan 2022 16:34:18 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v9 10/10] fsdax: set a CoW flag when associate reflink
+ mappings
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>,
+        <dan.j.williams@intel.com>, <david@fromorbit.com>,
+        <jane.chu@oracle.com>
+References: <20211226143439.3985960-1-ruansy.fnst@fujitsu.com>
+ <20211226143439.3985960-11-ruansy.fnst@fujitsu.com>
+ <YekkYAJ+QegoDKCJ@infradead.org>
+ <70a24c20-d7ee-064c-e863-9f012422a2f5@fujitsu.com>
+ <YepdxZ+XrAZYv1dX@infradead.org>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <YepdxZ+XrAZYv1dX@infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-yoursite-MailScanner-ID: 10D3A4D15A58.A4165
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-S_KERNEL_FILE is grossly misnamed.  We have plenty of files hold open by
-the kernel kernel using filp_open.  This flag OTOH signals the inode as
-being a special snowflage that cachefiles holds onto that can't be
-unlinked becaue of ..., erm, pixie dust.  So clearly mark it as such.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/cachefiles/namei.c | 12 ++++++------
- fs/namei.c            |  2 +-
- include/linux/fs.h    |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 9bd692870617c..599dc13a7d9ab 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -20,8 +20,8 @@ static bool __cachefiles_mark_inode_in_use(struct cachefiles_object *object,
- 	struct inode *inode = d_backing_inode(dentry);
- 	bool can_use = false;
- 
--	if (!(inode->i_flags & S_KERNEL_FILE)) {
--		inode->i_flags |= S_KERNEL_FILE;
-+	if (!(inode->i_flags & S_CACHEFILE)) {
-+		inode->i_flags |= S_CACHEFILE;
- 		trace_cachefiles_mark_active(object, inode);
- 		can_use = true;
- 	} else {
-@@ -51,7 +51,7 @@ static void __cachefiles_unmark_inode_in_use(struct cachefiles_object *object,
- {
- 	struct inode *inode = d_backing_inode(dentry);
- 
--	inode->i_flags &= ~S_KERNEL_FILE;
-+	inode->i_flags &= ~S_CACHEFILE;
- 	trace_cachefiles_mark_inactive(object, inode);
- }
- 
-@@ -742,7 +742,7 @@ static struct dentry *cachefiles_lookup_for_cull(struct cachefiles_cache *cache,
- 		goto lookup_error;
- 	if (d_is_negative(victim))
- 		goto lookup_put;
--	if (d_inode(victim)->i_flags & S_KERNEL_FILE)
-+	if (d_inode(victim)->i_flags & S_CACHEFILE)
- 		goto lookup_busy;
- 	return victim;
- 
-@@ -789,11 +789,11 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
- 	/* check to see if someone is using this object */
- 	inode = d_inode(victim);
- 	inode_lock(inode);
--	if (inode->i_flags & S_KERNEL_FILE) {
-+	if (inode->i_flags & S_CACHEFILE) {
- 		ret = -EBUSY;
- 	} else {
- 		/* Stop the cache from picking it back up */
--		inode->i_flags |= S_KERNEL_FILE;
-+		inode->i_flags |= S_CACHEFILE;
- 		ret = 0;
- 	}
- 	inode_unlock(inode);
-diff --git a/fs/namei.c b/fs/namei.c
-index d81f04f8d8188..7402277ecc1f5 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3959,7 +3959,7 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
- 
- 	error = -EBUSY;
- 	if (is_local_mountpoint(dentry) ||
--	    (dentry->d_inode->i_flags & S_KERNEL_FILE))
-+	    (dentry->d_inode->i_flags & S_CACHEFILE))
- 		goto out;
- 
- 	error = security_inode_rmdir(dir, dentry);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c8510da6cc6dc..099d7e03d46e6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2173,7 +2173,7 @@ struct super_operations {
- #define S_ENCRYPTED	(1 << 14) /* Encrypted file (using fs/crypto/) */
- #define S_CASEFOLD	(1 << 15) /* Casefolded file */
- #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
--#define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
-+#define S_CACHEFILE	(1 << 17) /* In use as cachefile, can't be unlinked */
- 
- /*
-  * Note that nosuid etc flags are inode-specific: setting some file-system
--- 
-2.30.2
+在 2022/1/21 15:16, Christoph Hellwig 写道:
+> On Fri, Jan 21, 2022 at 10:33:58AM +0800, Shiyang Ruan wrote:
+>>>
+>>> But different question, how does this not conflict with:
+>>>
+>>> #define PAGE_MAPPING_ANON       0x1
+>>>
+>>> in page-flags.h?
+>>
+>> Now we are treating dax pages, so I think its flags should be different from
+>> normal page.  In another word, PAGE_MAPPING_ANON is a flag of rmap mechanism
+>> for normal page, it doesn't work for dax page.  And now, we have dax rmap
+>> for dax page.  So, I think this two kinds of flags are supposed to be used
+>> in different mechanisms and won't conflect.
+> 
+> It just needs someone to use folio_test_anon in a place where a DAX
+> folio can be passed.  This probably should not happen, but we need to
+> clearly document that.
+> 
+>>> Either way I think this flag should move to page-flags.h and be
+>>> integrated with the PAGE_MAPPING_FLAGS infrastucture.
+>>
+>> And that's why I keep them in this dax.c file.
+> 
+> But that does not integrate it with the infrastructure.  For people
+> to debug things it needs to be next to PAGE_MAPPING_ANON and have
+> documentation explaining why they are exclusive.
+
+Ok, understood.
+
+
+--
+Thanks,
+Ruan.
+
 
