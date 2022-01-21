@@ -2,74 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6914F4961E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 16:19:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B78496200
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jan 2022 16:24:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351305AbiAUPTB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jan 2022 10:19:01 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:47968 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351244AbiAUPTB (ORCPT
+        id S237525AbiAUPYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jan 2022 10:24:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243107AbiAUPYd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jan 2022 10:19:01 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 106F2B81EDB;
-        Fri, 21 Jan 2022 15:19:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C106C340E1;
-        Fri, 21 Jan 2022 15:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642778338;
-        bh=GQxOMg7MVzDCmRtEhr2CwU3Mx4eAuCpyUZKZhjoge+o=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RUVN6yhZ8UpWTzGMKYNArObvP+zJklVzwx8vxKgNPhoMc4WIEFQFvSIRPEF45wYbE
-         xX/w7cjIGY/WfB6eV6KGGWLDYxPz9COmWsyVGBrGTxKV0imnesU1YKWJeWWDqz0Bx9
-         DzoSt5K3YcyREZ2xL3+Zz1KNAwT/BDjmbCkYmzgOQzfkIO/HuYGXfZDZBy9sce0jMp
-         oRlkXf6MgyRx/lm2r46dKoFyYnh4Yqf5GiVdVEP1ylq5poCp0UVfQ25W2biuS4d+YC
-         GzlK3EQw5Iph5dzGuqz+x+xYLY1X0unCOEj6FDzP7e4D7/1yjM9a1rNkZ5djhaLrhy
-         WDbGfXJcoZymA==
-Message-ID: <aa6ecc69eeb4c1e25c11f37f86a7796e7c40997b.camel@kernel.org>
-Subject: Re: [PATCH v3 2/3] ceph: Make ceph_netfs_issue_op() handle inlined
- data
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 21 Jan 2022 10:18:56 -0500
-In-Reply-To: <1130437.1642777077@warthog.procyon.org.uk>
-References: <20220121141838.110954-3-jlayton@kernel.org>
-         <20220121141838.110954-1-jlayton@kernel.org>
-         <1130437.1642777077@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        Fri, 21 Jan 2022 10:24:33 -0500
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1407BC061747
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jan 2022 07:24:33 -0800 (PST)
+Received: by mail-yb1-xb2e.google.com with SMTP id 23so28507690ybf.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jan 2022 07:24:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lHv4QGKyWaC8pJttpt8QUbf3yyP/jMKn3N+flk/PW10=;
+        b=TuYOvf2B9HOi6a6+5H3dsW8U3FeTz9UocCY2hj9gLGhDsiqoc/vJ4m/8w6bS1mIXAx
+         DfzIIKlVbbDQ2XO53YTs+3KImo9w77vLdnlNocWdvZhBO69EUV1qCkr/K/tJYMeQkQIB
+         a1ZSJe9u2MwXLlhK0yvgZNH0jSsNAf+fk6xNknc5OOrvmGPN0OsDYtfU1iEO4oSKz3px
+         FWRYKaz5l7DLNHgHH/Daee6JLM0IhoUGnE2mmF1uDk32AkvK/k0h+7NlhLM5Lwy/3hlB
+         zU8a6LtNI62avuO/YK+UPiDllbENyvd6MONG7fd86WC/2etQOle1gOmHUJYrL2nHP+lv
+         qrAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lHv4QGKyWaC8pJttpt8QUbf3yyP/jMKn3N+flk/PW10=;
+        b=QloYrK3KzkMR3beB54evFWx/QfevhJ1v7EX492HoC8S3v5E54Xtx7foRNgX75YoCIH
+         BaBNvlaYvfrQc3cVo6WnjdcYpsCJjZZ/xFslywQx97bJf/vvp0IpzxIGeS1Fzg8S+7mK
+         PxEhG5FsPwv5nhu584qO9mtM1VP3Emrr0pqSwI10hCuyaSAgoEBNB/ghDsV2ONuvbdg0
+         xxohPy8cETDMb/9J+7qKLIpWOrI33/e/RU7E7HtJhpGEgOqd8kS9F6+73Zk4vueyxGpi
+         k5GT+kyAenEtBMiOhkazfGFqUCLAcZRj99jJIWc2YU6D+Rgw0FCNnUh5KmiSOq+G0MB0
+         fQig==
+X-Gm-Message-State: AOAM530abgz7RYSnGkgPrvLj6WBVinMgrJ3T/CmMiJzShHFBY+IccKd2
+        4wS61SVBQEdeLk13zKACeOtzNazQIDv1dUZqKZ3yCA==
+X-Google-Smtp-Source: ABdhPJx9UVWg3EfP5/63PnvEnF1YOj5Isounp9ZYZMOzIVLh11iewxgOKv8wxnLSIL7XfldkUQ5A1Lpj9PcvCTC39xs=
+X-Received: by 2002:a25:838b:: with SMTP id t11mr4282883ybk.146.1642778671696;
+ Fri, 21 Jan 2022 07:24:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CA+G9fYvuEqeoLO6dC_qtGyRUz=UPv5i0C3jZ_n9nz5kWOuCHYQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYvuEqeoLO6dC_qtGyRUz=UPv5i0C3jZ_n9nz5kWOuCHYQ@mail.gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 21 Jan 2022 20:54:20 +0530
+Message-ID: <CA+G9fYuKGaDfyke81wbSe2yqTm6GqWNuKw2wB6NFaCLa1q7z6A@mail.gmail.com>
+Subject: Re: [next] parisc: allnoconfig: ERROR: modpost: Section mismatches
+ detected. Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
+To:     John David Anglin <dave.anglin@bell.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        regressions@lists.linux.dev, lkft-triage@lists.linaro.org,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-parisc <linux-parisc@vger.kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, pavel@ucw.cz,
+        rppt@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Helge Deller <deller@gmx.de>, Deller <deller@kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-01-21 at 14:57 +0000, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
-> 
-> > +	len = iinfo->inline_len;
-> > +	iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages, subreq->start, len);
-> > +	err = copy_to_iter(iinfo->inline_data, len, &iter);
-> 
-> I think this is probably wrong.  It will read the entirety of the inline data
-> into the buffer, even if it's bigger than the buffer and you need to offset
-> pointer into the buffer.
-> 
-> You need to limit it to subreq->len.  Maybe:
-> 
-> 	len = min_t(size_t, iinfo->inline_len - subreq->start, subreq->len);
-> 	iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages,
-> 			subreq->start, len);
-> 	err = copy_to_iter(iinfo->inline_data + subreq->start, len, &iter);
-> 
-> David
-> 
+On Fri, 21 Jan 2022 at 13:16, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> Linux next-20220121 parisc allnoconfig build failed with gcc-9/10/11.
+>
+> make --silent --keep-going --jobs=8 ARCH=parisc
+> CROSS_COMPILE=hppa-linux-gnu- 'CC=sccache hppa-linux-gnu-gcc'
+> 'HOSTCC=sccache gcc'
+>
+> WARNING: modpost: vmlinux.o(.text+0x1c8): Section mismatch in
+> reference from the function ksys_sync() to the function
+> .init.text:memblock_alloc_try_nid()
+> The function ksys_sync() references
+> the function __init memblock_alloc_try_nid().
+> This is often because ksys_sync lacks a __init
+> annotation or the annotation of memblock_alloc_try_nid is wrong.
+>
+> ERROR: modpost: Section mismatches detected.
+> Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
+> make[2]: *** [/builds/linux/scripts/Makefile.modpost:59:
+> vmlinux.symvers] Error 1
 
-Good point. I'll make that change and re-test, but it makes sense.
--- 
-Jeff Layton <jlayton@kernel.org>
+Anders bisected this build and the first bad commit is point to,
+
+first bad commit: [4f05e5a3946923676e147ad0e33c80df8249b2fe]
+parisc: Drop __init from map_pages declaration
+
+
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> metadata:
+>   git branch: master
+>   git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+>   git describe: next-20220121
+>   kernel-config: https://builds.tuxbuild.com/23zIAxC4uCgy4zadA01JYyOwCR4/config
+>   build: https://builds.tuxbuild.com/23zIAxC4uCgy4zadA01JYyOwCR4/
+>
+> # To install tuxmake on your system globally:
+> # sudo pip3 install -U tuxmake
+> #
+> # See https://docs.tuxmake.org/ for complete documentation.
+> # Original tuxmake command with fragments listed below.
+>
+> tuxmake --runtime podman --target-arch parisc --toolchain gcc-11
+> --kconfig allnoconfig
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
