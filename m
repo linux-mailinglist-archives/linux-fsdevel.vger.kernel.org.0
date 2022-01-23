@@ -2,120 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E665649720B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jan 2022 15:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F50B497387
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jan 2022 18:23:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236721AbiAWOXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Jan 2022 09:23:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50622 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232277AbiAWOXr (ORCPT
+        id S239220AbiAWRXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Jan 2022 12:23:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31992 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239209AbiAWRXq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Jan 2022 09:23:47 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF7CC06173B;
-        Sun, 23 Jan 2022 06:23:47 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id s5so14119635ejx.2;
-        Sun, 23 Jan 2022 06:23:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UJS00ni3OCNaB136EeYoLr1/HomgMMjbmkb3mzujdFI=;
-        b=B61OapB5UZguf7gdBVTOXGVfRurY6/aprVOpZgepOUOQT8EnXr76HGI0Why2qxcqKJ
-         oCOiGurjpU8NUzXQwYoV88WwJrqhRQkHXuNW1dlxDJYS5m54Xm1BkOceTuHpvaomD3Y/
-         HkQsr+vM75sFW6MRDguXal15uStlR7+Rsq2UXRSNelef7bzwoiTStn1i+wMgznfpQZ2o
-         WIV8yloscvS/x2ziGiTp+LNQ8hAhqDro1haTjeMWCOALJ1uK0oxFjGRsAyvo3Qu3Dk1C
-         ESDthpbeUR8Tpti56xFfcdT8mJkbzXFkjHFcw2Bl7lqj/YXH+rh1OGtE1kzSH2hGA6Sy
-         CydA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UJS00ni3OCNaB136EeYoLr1/HomgMMjbmkb3mzujdFI=;
-        b=G6O3zleNsQYKvm3B9HfWPQPldGO7OE/m+4Pp+8Yn/31DH/9kpdd52fvUhj2R0by17i
-         dnaNF/oj2zryPyyovjHeCc52DLQXMXmXfw3NRUzj7V2ALX4pMf7nYYQrnkCU63EfZ/Sc
-         Sr4Wo+6AfJkNujZr/8hSyQuKo07FJDBPucv7u00On7KXoBqff2eYmL51IK94U8Y3UTE+
-         UHXfa1UFpbyKN6fNGHLwhOSxYvPyx6OpJcYNI43FiIAiJqdHRp/vj6uQqEOnKLnCFtHE
-         329Up6jo3Yq1M4Xj/RC0HWD1FxfApHiU6O+/85I5G3o2kq95TubKXY2aRPUzT1fBRuEO
-         9OLg==
-X-Gm-Message-State: AOAM533MTWAFqYoJt69HgjdtPRcBYcaokxX8xsFEwXIS8ChuB/kEb7hQ
-        peokaAhU6nnWj8+fwxNM8AYHDENgI/vajQ4UvQNl+TbiVIY=
-X-Google-Smtp-Source: ABdhPJy0yRz9TeDE7ej229TmAXOSE+OGs81DzmLRI9Kxqvp4URIGPzpuu4xt6AAm4lkDuyqfFPTK7Ltn+9eLEFP4Iow=
-X-Received: by 2002:a17:907:6d94:: with SMTP id sb20mr679658ejc.139.1642947825525;
- Sun, 23 Jan 2022 06:23:45 -0800 (PST)
+        Sun, 23 Jan 2022 12:23:46 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20NBC4mM027485;
+        Sun, 23 Jan 2022 17:23:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=i3Vh3XJA6JQ+zfpjlnzzTalkQ5lrX4tuvsm5X/IloMg=;
+ b=I78wS8Z1iva8xJ672h2oUp9d6GRCSXz9e3z3ieTd0ONoP5euTaAzQzi0e3yCyN9+LjS4
+ vwCW0B4UQZnXaWLVbwXQMbhWq3ZXeTpci/Zg1diLUpfSms/KtKXQPfYSGQ+Dgf70TXRe
+ FrT2IWeiLe0mmiofv6UyCSepyWrGokfR9yNzF0A08/z3zur5vIf+4tnV8YWfut3XVe/J
+ I1RHKlFNNjpMYFE+1KQjHQfXyGq3mk4bisxZX6aGyr7WcU5hYFgW+PTVtRFmLAnXIELl
+ PWYe8gAnM1wzq3c11o8c2pFkK41ryXXxB7CGyKRVC1H6S2I86ioi9Mc4NVlzL4/di01K eA== 
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ds5x8m41d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 23 Jan 2022 17:23:40 +0000
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20NHCxC7006389;
+        Sun, 23 Jan 2022 17:23:38 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma01fra.de.ibm.com with ESMTP id 3dr9j8x6e7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 23 Jan 2022 17:23:38 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20NHNZ1q19464466
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 23 Jan 2022 17:23:35 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3AF3A4055;
+        Sun, 23 Jan 2022 17:23:35 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BF0B7A4053;
+        Sun, 23 Jan 2022 17:23:33 +0000 (GMT)
+Received: from localhost (unknown [9.43.59.179])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 23 Jan 2022 17:23:33 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.com>, tytso@mit.edu,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCHv1 0/2] jbd2: Kill age-old t_handle_lock transaction spinlock
+Date:   Sun, 23 Jan 2022 22:53:26 +0530
+Message-Id: <cover.1642953021.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: U_bWx-XDLp1vBi3cF9Oz4_kcPdQ2jas8
+X-Proofpoint-GUID: U_bWx-XDLp1vBi3cF9Oz4_kcPdQ2jas8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <20220123100837.GA1491@haolee.io> <Ye1eZ5rl2E/jy8Tk@localhost.localdomain>
- <Ye1fCxyZZ0I5lgOL@localhost.localdomain>
-In-Reply-To: <Ye1fCxyZZ0I5lgOL@localhost.localdomain>
-From:   Hao Lee <haolee.swjtu@gmail.com>
-Date:   Sun, 23 Jan 2022 22:23:33 +0800
-Message-ID: <CA+PpKPn3tVsJnijvATXBwfbd_SwcmRps-A-dCJTqi5WYx1Smfg@mail.gmail.com>
-Subject: Re: [PATCH v2] proc: alloc PATH_MAX bytes for /proc/${pid}/fd/ symlinks
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        christian.brauner@ubuntu.com, Kees Cook <keescook@chromium.org>,
-        jamorris@linux.microsoft.com, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-23_05,2022-01-21_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 adultscore=0 mlxscore=0 mlxlogscore=658 malwarescore=0
+ impostorscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2201230132
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 23, 2022 at 9:58 PM Alexey Dobriyan <adobriyan@gmail.com> wrote:
->
-> From: Hao Lee <haolee.swjtu@gmail.com>
->
-> It's not a standard approach that use __get_free_page() to alloc path
-> buffer directly. We'd better use kmalloc and PATH_MAX.
->
->         PAGE_SIZE is different on different archs.
+Hello,
 
-This is indeed a worthy addition. Thanks.
+This small patch series kills the age-old t_handle_lock transaction spinlock,
+which on careful inspection, came out to be not very useful anymore.
+At some of the places it isn't required at all now and for the rest
+(e.g. update_t_max_wait()), we could make use of atomic cmpxchg to make the
+code path lockless.
 
-Regards,
-Hao Lee
+This was tested with fstests with -g quick and -g log on my qemu setup.
+I had also done some extensive fsmark testing to see that we don't see any
+bottleneck resulting from removal of CONFIG_JBD2_DEBUG to update t_max_wait
+in patch-2. None of my test showed any bottleneck.
 
-> An unlinked file
->         with very long canonical pathname will readlink differently
->         because "(deleted)" eats into a buffer. --adobriyan
->
-> Signed-off-by: Hao Lee <haolee.swjtu@gmail.com>
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> ---
->
->  fs/proc/base.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1764,25 +1764,25 @@ static const char *proc_pid_get_link(struct dentry *dentry,
->
->  static int do_proc_readlink(struct path *path, char __user *buffer, int buflen)
->  {
-> -       char *tmp = (char *)__get_free_page(GFP_KERNEL);
-> +       char *tmp = (char *)kmalloc(PATH_MAX, GFP_KERNEL);
->         char *pathname;
->         int len;
->
->         if (!tmp)
->                 return -ENOMEM;
->
-> -       pathname = d_path(path, tmp, PAGE_SIZE);
-> +       pathname = d_path(path, tmp, PATH_MAX);
->         len = PTR_ERR(pathname);
->         if (IS_ERR(pathname))
->                 goto out;
-> -       len = tmp + PAGE_SIZE - 1 - pathname;
-> +       len = tmp + PATH_MAX - 1 - pathname;
->
->         if (len > buflen)
->                 len = buflen;
->         if (copy_to_user(buffer, pathname, len))
->                 len = -EFAULT;
->   out:
-> -       free_page((unsigned long)tmp);
-> +       kfree(tmp);
->         return len;
->  }
->
+Note that there had been several patches in the past over time which had led to
+t_handle_lock becoming obselete now e.g. [1-2]
+In this work, couple of the code paths to remove this spinlock were observed
+while doing code review and to get completely rid of it was something which was
+suggested by Jan [3].
+Thanks to Jan for thorough review and suggestions :)
+
+
+[1]: https://lore.kernel.org/linux-ext4/1280939957-3277-4-git-send-email-tytso@mit.edu/
+[2]: https://lore.kernel.org/linux-ext4/20120103153245.GE31457@quack.suse.cz/
+[3]: https://lore.kernel.org/linux-ext4/20220113112749.d5tfszcksvxvshnn@quack3.lan/
+
+Ritesh Harjani (2):
+  jbd2: Kill t_handle_lock transaction spinlock
+  jbd2: Remove CONFIG_JBD2_DEBUG to update t_max_wait
+
+ fs/jbd2/transaction.c | 36 ++++++++++++------------------------
+ include/linux/jbd2.h  |  3 ---
+ 2 files changed, 12 insertions(+), 27 deletions(-)
+
+--
+2.31.1
+
