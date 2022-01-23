@@ -2,121 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F5DC49738D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jan 2022 18:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD18649763F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 00:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239249AbiAWRYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Jan 2022 12:24:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38326 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239251AbiAWRX5 (ORCPT
+        id S240456AbiAWXDh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Jan 2022 18:03:37 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:55247 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240391AbiAWXDg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Jan 2022 12:23:57 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20NGfXn0009075;
-        Sun, 23 Jan 2022 17:23:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=VPXKgDc+/o6IEC6okWKklSyz1nt6Ay9Hu0WpikTlCgY=;
- b=aCPR3dKKbefPSus+HIzs6DJn5jNQa2XCjpa2hvJU+Em5T7UKBm84i9a55UXOb2BlgmbI
- bpjNvA362S2LLVt9fh8KBf52O7KbX8g24vy9fIVjm0ZGI5yY6pa1EYC6rUUQz+jXGvFU
- 8X8BP8KauxCNjX+sknjsaZRou9uv3r0XQFr8bJmRHYczBkws7V6cGePFZzv6Yymn69Ef
- LBnggZczrdhMLr9RgbziaVqJ4FWd39Jy4sa/YPZVNgvofRkuEhf549E2ypmOdbsp+IOb
- 8GDn+809ZLHLGDEiA8cy8Dc2E46rY7YJNwdaZGdO4GWcKD4URfuiBcbHZV48M3h8l/Qt JQ== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dsarqre6p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 23 Jan 2022 17:23:52 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20NHD2er023675;
-        Sun, 23 Jan 2022 17:23:50 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma04ams.nl.ibm.com with ESMTP id 3dr9j8ppve-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 23 Jan 2022 17:23:50 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20NHNmAN37945738
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 23 Jan 2022 17:23:48 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0EB484C046;
-        Sun, 23 Jan 2022 17:23:48 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 19E554C040;
-        Sun, 23 Jan 2022 17:23:46 +0000 (GMT)
-Received: from localhost (unknown [9.43.59.179])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 23 Jan 2022 17:23:45 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     linux-ext4@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.com>, tytso@mit.edu,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [PATCHv1 2/2] jbd2: Remove CONFIG_JBD2_DEBUG to update t_max_wait
-Date:   Sun, 23 Jan 2022 22:53:28 +0530
-Message-Id: <c1424ac2e6f6f5a21bcf2fb7679203df865c8a60.1642953021.git.riteshh@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1642953021.git.riteshh@linux.ibm.com>
-References: <cover.1642953021.git.riteshh@linux.ibm.com>
+        Sun, 23 Jan 2022 18:03:36 -0500
+Received: from dread.disaster.area (pa49-179-45-11.pa.nsw.optusnet.com.au [49.179.45.11])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2169362C1FD;
+        Mon, 24 Jan 2022 10:03:34 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nBltU-003QSN-Tk; Mon, 24 Jan 2022 10:03:32 +1100
+Date:   Mon, 24 Jan 2022 10:03:32 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v10 0/5] add support for direct I/O with fscrypt using
+ blk-crypto
+Message-ID: <20220123230332.GL59729@dread.disaster.area>
+References: <20220120071215.123274-1-ebiggers@kernel.org>
+ <YekdnxpeunTGfXqX@infradead.org>
+ <20220120171027.GL13540@magnolia>
+ <YenIcshA706d/ziV@sol.localdomain>
+ <20220120210027.GQ13540@magnolia>
+ <20220120220414.GH59729@dread.disaster.area>
+ <Yenm1Ipx87JAlyXg@sol.localdomain>
+ <20220120235755.GI59729@dread.disaster.area>
+ <20220121023603.GH13563@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DHCJZvCUwtFXrW94og8llrKT-W8fpKpT
-X-Proofpoint-ORIG-GUID: DHCJZvCUwtFXrW94og8llrKT-W8fpKpT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-23_05,2022-01-21_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 adultscore=0
- impostorscore=0 mlxlogscore=738 lowpriorityscore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2201230132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220121023603.GH13563@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=61eddec6
+        a=Eslsx4mF8WGvnV49LKizaA==:117 a=Eslsx4mF8WGvnV49LKizaA==:17
+        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
+        a=ja5ArhmkF978jRwlfB8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-CONFIG_JBD2_DEBUG and jbd2_journal_enable_debug knobs were added in
-update_t_max_wait(), since earlier it used to take a spinlock for updating
-t_max_wait, which could cause a bottleneck while starting a txn
-(start_this_handle()).
-Since in previous patch, we have killed t_handle_lock completely, we
-could get rid of this debug config and knob to let t_max_wait be updated
-by default again.
+On Thu, Jan 20, 2022 at 06:36:03PM -0800, Darrick J. Wong wrote:
+> On Fri, Jan 21, 2022 at 10:57:55AM +1100, Dave Chinner wrote:
+> Sure.  How's this?  I couldn't think of a real case of directio
+> requiring different alignments for pos and bytecount, so the only real
+> addition here is the alignment requirements for best performance.
+> 
+> struct statx {
+> ...
+> 	/* 0x90 */
+> 	__u64	stx_mnt_id;
+> 
+> 	/* Memory buffer alignment required for directio, in bytes. */
+> 	__u32	stx_dio_mem_align;
 
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
- fs/jbd2/transaction.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+	__32	stx_mem_align_dio;
 
-diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-index 68dd7de49aff..77634e2e118e 100644
---- a/fs/jbd2/transaction.c
-+++ b/fs/jbd2/transaction.c
-@@ -141,20 +141,19 @@ static void jbd2_get_transaction(journal_t *journal,
-  * t_max_wait is carefully updated here with use of atomic compare exchange.
-  * Note that there could be multiplre threads trying to do this simultaneously
-  * hence using cmpxchg to avoid any use of locks in this case.
-+ * With this t_max_wait can be updated w/o enabling jbd2_journal_enable_debug.
-  */
- static inline void update_t_max_wait(transaction_t *transaction,
- 				     unsigned long ts)
- {
--#ifdef CONFIG_JBD2_DEBUG
- 	unsigned long oldts, newts;
--	if (jbd2_journal_enable_debug &&
--	    time_after(transaction->t_start, ts)) {
-+
-+	if (time_after(transaction->t_start, ts)) {
- 		newts = jbd2_time_diff(ts, transaction->t_start);
- 		oldts = READ_ONCE(transaction->t_max_wait);
- 		while (oldts < newts)
- 			oldts = cmpxchg(&transaction->t_max_wait, oldts, newts);
- 	}
--#endif
- }
+(for consistency with suggestions below)
 
- /*
---
-2.31.1
+> 
+> 	/* File range alignment required for directio, in bytes. */
+> 	__u32	stx_dio_fpos_align_min;
 
+"fpos" is not really a user term - "offset" is the userspace term for
+file position, and it's much less of a random letter salad if it's
+named that way. Also, we don't need "min" in the name; the
+description of the field in the man page can give all the gory
+details about it being the minimum required alignment.
+
+	__u32	stx_offset_align_dio;
+
+> 
+> 	/* 0xa0 */
+> 
+> 	/* File range alignment needed for best performance, in bytes. */
+> 	__u32	stx_dio_fpos_align_opt;
+
+This is a common property of both DIO and buffered IO, so no need
+for it to be dio-only property.
+
+	__u32	stx_offset_align_optimal;
+
+> 
+> 	/* Maximum size of a directio request, in bytes. */
+> 	__u32	stx_dio_max_iosize;
+
+Unnecessary, it will always be the syscall max IO size, because the
+internal DIO code will slice and dice it down to the max sizes the
+hardware supports.
+
+> #define STATX_DIRECTIO	0x00001000U	/* Want/got directio geometry */
+> 
+> How about that?
+
+Mostly seems reasonable at a first look.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
