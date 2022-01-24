@@ -2,248 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6F04498163
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 14:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 047294982C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 15:59:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiAXNub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jan 2022 08:50:31 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:55428 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbiAXNua (ORCPT
+        id S238414AbiAXO67 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jan 2022 09:58:59 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26609 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234477AbiAXO66 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jan 2022 08:50:30 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 9300221993;
-        Mon, 24 Jan 2022 13:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1643032229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 24 Jan 2022 09:58:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643036337;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Ew9r9vB/3DGXISd3go8UWQTuDLp3dz+S9C44MFVpDN0=;
-        b=V+aVPrFoGT4COR1i4E/2iKH9gJ9vCuv/JgYcsVA0WNqaTRPOIo22IDGQc9bJ5jXC9oQS2E
-        Hojvj9gbaJUbK23oahWMknB8MuXOYa1P0PeDd0CbCTxIStNV4FF+98PJoDw6S5bseZHclv
-        is4gPDJHIKb5VVGZ+FLkK9AVwfT5h+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1643032229;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ew9r9vB/3DGXISd3go8UWQTuDLp3dz+S9C44MFVpDN0=;
-        b=dwZMfxgzvHDf7aNmwSoAQci3X5I/9MI6zRsSppiJsbse/jbbaAVvxbYNHmXLz9+vY54Xmt
-        fdxMrWCVZmsZG4Cg==
-Received: from quack3.suse.cz (unknown [10.163.43.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        bh=+GyR2hA3d4f/6NdcbYJKilHqrKzexUXOMmjhu38LlLQ=;
+        b=i7BjrYXccbameZBmegkmW0RBMWprykByG7GHAMNbAUrfRiEAff3qmi1y9OpPLfSmfG0/eI
+        ztkDBuSNej7gZTkgf0z0cfXVQcJBfnhQcjHKTHcNDyMHYNuVMQLeLo1FDpPsOgMQ5Mdxrf
+        q58bL7h0RMc6+Vc7ihLM9GPIXsEr5IE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-62-M3P3h5l0PqW5R3AjSzhSZQ-1; Mon, 24 Jan 2022 09:58:54 -0500
+X-MC-Unique: M3P3h5l0PqW5R3AjSzhSZQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 647A0A3B83;
-        Mon, 24 Jan 2022 13:50:29 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A1528A05E7; Mon, 24 Jan 2022 14:50:23 +0100 (CET)
-Date:   Mon, 24 Jan 2022 14:50:23 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        Ivan Delalande <colona@arista.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] fsnotify: invalidate dcache before IN_DELETE event
-Message-ID: <20220124135023.quzjsqtsrxynffrs@quack3.lan>
-References: <20220120215305.282577-1-amir73il@gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D12D1091DA2;
+        Mon, 24 Jan 2022 14:58:53 +0000 (UTC)
+Received: from [10.22.35.75] (unknown [10.22.35.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 836BA7A23A;
+        Mon, 24 Jan 2022 14:58:52 +0000 (UTC)
+Message-ID: <8e2fa0ee-12e7-b62a-27ef-aa251761d67e@redhat.com>
+Date:   Mon, 24 Jan 2022 09:58:52 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220120215305.282577-1-amir73il@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH] vfs: Pre-allocate superblock in sget_fc() if !test
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220121185255.27601-1-longman@redhat.com>
+ <20220124113758.y34xceepk7oe26h7@wittgenstein>
+From:   Waiman Long <longman@redhat.com>
+In-Reply-To: <20220124113758.y34xceepk7oe26h7@wittgenstein>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-01-22 23:53:04, Amir Goldstein wrote:
-> Apparently, there are some applications that use IN_DELETE event as an
-> invalidation mechanism and expect that if they try to open a file with
-> the name reported with the delete event, that it should not contain the
-> content of the deleted file.
-> 
-> Commit 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of
-> d_delete()") moved the fsnotify delete hook before d_delete() so fsnotify
-> will have access to a positive dentry.
-> 
-> This allowed a race where opening the deleted file via cached dentry
-> is now possible after receiving the IN_DELETE event.
-> 
-> To fix the regression, create a new hook fsnotify_delete() that takes
-> the unlinked inode as an argument and use a helper d_delete_notify() to
-> pin the inode, so we can pass it to fsnotify_delete() after d_delete().
-> 
-> Backporting hint: this regression is from v5.3. Although patch will
-> apply with only trivial conflicts to v5.4 and v5.10, it won't build,
-> because fsnotify_delete() implementation is different in each of those
-> versions (see fsnotify_link()).
-> 
-> A follow up patch will fix the fsnotify_unlink/rmdir() calls in pseudo
-> filesystem that do not need to call d_delete().
-> 
-> Reported-by: Ivan Delalande <colona@arista.com>
-> Link: https://lore.kernel.org/linux-fsdevel/YeNyzoDM5hP5LtGW@visor/
-> Fixes: 49246466a989 ("fsnotify: move fsnotify_nameremove() hook out of d_delete()")
-> Cc: stable@vger.kernel.org # v5.3+
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+On 1/24/22 06:37, Christian Brauner wrote:
+> On Fri, Jan 21, 2022 at 01:52:55PM -0500, Waiman Long wrote:
+>> When the test function is not defined in sget_fc(), we always need
+>> to allocate a new superblock. So there is no point in acquiring the
+>> sb_lock twice in this case. Optimize the !test case by pre-allocating
+>> the superblock first before acquring the lock.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   fs/super.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/super.c b/fs/super.c
+>> index a6405d44d4ca..c2bd5c34a826 100644
+>> --- a/fs/super.c
+>> +++ b/fs/super.c
+>> @@ -520,6 +520,8 @@ struct super_block *sget_fc(struct fs_context *fc,
+>>   	struct user_namespace *user_ns = fc->global ? &init_user_ns : fc->user_ns;
+>>   	int err;
+>>   
+>> +	if (!test)
+>> +		s = alloc_super(fc->fs_type, fc->sb_flags, user_ns);
+> Shouldn't we treat this allocation failure as "fatal" right away and not
+> bother taking locks, walking lists and so on? Seems strange to treat it
+> as fatal below but not here.
+I didn't add the null check because it was a rare case and the check is 
+done later on anyway. I do agree that it may look a bit odd. Perhaps I 
+should rearrange the code flow as suggested.
+>
+> (The code-flow in here has always been a bit challenging to follow imho.
+> So not super keen to see more special-cases in there. Curious: do you
+> see any noticeable performance impact from that lock being taken and
+> dropped for the !test case?)
 
-Thanks. Both patches look good to me now, I've merged them into my tree and
-will push them to Linus later this week.
+I don't believe there is noticeable performance impact with the !test 
+case. The test case, however, can have some noticeable impact if the 
+superblock list is long. I am wondering if we just always preallocate 
+superblock with the risk that it may get unused and freed later on.
 
-								Honza
+Cheers,
+Longman
 
-> ---
-> 
-> Changes since v1:
-> - Split patch for pseudo filesystem (Jan)
-> - Fix logic change for DCACHE_NFSFS_RENAMED (Jan)
-> - btrfs also needs d_delete_notify()
-> - Make fsnotify_unlink/rmdir() wrappers of fsnotify_delete()
-> - FS_DELETE event always uses FSNOTIFY_EVENT_INODE data_type
-> 
-> 
->  fs/btrfs/ioctl.c         |  6 ++---
->  fs/namei.c               | 10 ++++----
->  include/linux/fsnotify.h | 49 +++++++++++++++++++++++++++++++++++-----
->  3 files changed, 50 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index edfecfe62b4b..a5ee6ffeadf5 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -3060,10 +3060,8 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
->  	btrfs_inode_lock(inode, 0);
->  	err = btrfs_delete_subvolume(dir, dentry);
->  	btrfs_inode_unlock(inode, 0);
-> -	if (!err) {
-> -		fsnotify_rmdir(dir, dentry);
-> -		d_delete(dentry);
-> -	}
-> +	if (!err)
-> +		d_delete_notify(dir, dentry);
->  
->  out_dput:
->  	dput(dentry);
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 1f9d2187c765..3c0568d3155b 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3973,13 +3973,12 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
->  	dentry->d_inode->i_flags |= S_DEAD;
->  	dont_mount(dentry);
->  	detach_mounts(dentry);
-> -	fsnotify_rmdir(dir, dentry);
->  
->  out:
->  	inode_unlock(dentry->d_inode);
->  	dput(dentry);
->  	if (!error)
-> -		d_delete(dentry);
-> +		d_delete_notify(dir, dentry);
->  	return error;
->  }
->  EXPORT_SYMBOL(vfs_rmdir);
-> @@ -4101,7 +4100,6 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
->  			if (!error) {
->  				dont_mount(dentry);
->  				detach_mounts(dentry);
-> -				fsnotify_unlink(dir, dentry);
->  			}
->  		}
->  	}
-> @@ -4109,9 +4107,11 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
->  	inode_unlock(target);
->  
->  	/* We don't d_delete() NFS sillyrenamed files--they still exist. */
-> -	if (!error && !(dentry->d_flags & DCACHE_NFSFS_RENAMED)) {
-> +	if (!error && dentry->d_flags & DCACHE_NFSFS_RENAMED) {
-> +		fsnotify_unlink(dir, dentry);
-> +	} else if (!error) {
->  		fsnotify_link_count(target);
-> -		d_delete(dentry);
-> +		d_delete_notify(dir, dentry);
->  	}
->  
->  	return error;
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index 3a2d7dc3c607..bb8467cd11ae 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -224,6 +224,43 @@ static inline void fsnotify_link(struct inode *dir, struct inode *inode,
->  		      dir, &new_dentry->d_name, 0);
->  }
->  
-> +/*
-> + * fsnotify_delete - @dentry was unlinked and unhashed
-> + *
-> + * Caller must make sure that dentry->d_name is stable.
-> + *
-> + * Note: unlike fsnotify_unlink(), we have to pass also the unlinked inode
-> + * as this may be called after d_delete() and old_dentry may be negative.
-> + */
-> +static inline void fsnotify_delete(struct inode *dir, struct inode *inode,
-> +				   struct dentry *dentry)
-> +{
-> +	__u32 mask = FS_DELETE;
-> +
-> +	if (S_ISDIR(inode->i_mode))
-> +		mask |= FS_ISDIR;
-> +
-> +	fsnotify_name(mask, inode, FSNOTIFY_EVENT_INODE, dir, &dentry->d_name,
-> +		      0);
-> +}
-> +
-> +/**
-> + * d_delete_notify - delete a dentry and call fsnotify_delete()
-> + * @dentry: The dentry to delete
-> + *
-> + * This helper is used to guaranty that the unlinked inode cannot be found
-> + * by lookup of this name after fsnotify_delete() event has been delivered.
-> + */
-> +static inline void d_delete_notify(struct inode *dir, struct dentry *dentry)
-> +{
-> +	struct inode *inode = d_inode(dentry);
-> +
-> +	ihold(inode);
-> +	d_delete(dentry);
-> +	fsnotify_delete(dir, inode, dentry);
-> +	iput(inode);
-> +}
-> +
->  /*
->   * fsnotify_unlink - 'name' was unlinked
->   *
-> @@ -231,10 +268,10 @@ static inline void fsnotify_link(struct inode *dir, struct inode *inode,
->   */
->  static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
->  {
-> -	/* Expected to be called before d_delete() */
-> -	WARN_ON_ONCE(d_is_negative(dentry));
-> +	if (WARN_ON_ONCE(d_is_negative(dentry)))
-> +		return;
->  
-> -	fsnotify_dirent(dir, dentry, FS_DELETE);
-> +	fsnotify_delete(dir, d_inode(dentry), dentry);
->  }
->  
->  /*
-> @@ -258,10 +295,10 @@ static inline void fsnotify_mkdir(struct inode *dir, struct dentry *dentry)
->   */
->  static inline void fsnotify_rmdir(struct inode *dir, struct dentry *dentry)
->  {
-> -	/* Expected to be called before d_delete() */
-> -	WARN_ON_ONCE(d_is_negative(dentry));
-> +	if (WARN_ON_ONCE(d_is_negative(dentry)))
-> +		return;
->  
-> -	fsnotify_dirent(dir, dentry, FS_DELETE | FS_ISDIR);
-> +	fsnotify_delete(dir, d_inode(dentry), dentry);
->  }
->  
->  /*
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+
