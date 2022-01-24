@@ -2,120 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 602BE497F0B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 13:15:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 322FD497F25
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 13:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241178AbiAXMPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jan 2022 07:15:21 -0500
-Received: from mga11.intel.com ([192.55.52.93]:63891 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241954AbiAXMOn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jan 2022 07:14:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643026483; x=1674562483;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FR/Plqwyf6P+JXGAx4Yblw5sOsYQlSfhlYedmM/BhpI=;
-  b=It3GvrS4HsbnwOAl9k9BxeAmnNFPLkYcoUt7DYeG1atxtJyvOxi3r388
-   N6xz97Up10aOq6P3iaQzf19+IkWFRj0nYmUtCPRjxH3fw6a8nPsW33c82
-   9g1nc0Y+mxB85s9g9IDAGpUI7sJUdTQt8ocookAjndJxMFmyIGVFdc7KG
-   riXbHaLrotnJjY7ZmRgk//+1NFHXy7ziHk4pIM/nayCaszrfOO3P17rjy
-   4gDU8UZMuXE5cw1p3MCoWMHARV1g5fmhC+z88w+T7oQqwJR3PZa/Bq9/t
-   /LzOKoPyJNTmRRRU3rb1Z9gdRsDHNgmyZKxNAeIsRI6Esc3Li+XmJe4Ln
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10236"; a="243626687"
-X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
-   d="scan'208";a="243626687"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 04:14:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
-   d="scan'208";a="617214240"
-Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Jan 2022 04:14:39 -0800
-Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nByF5-000II9-52; Mon, 24 Jan 2022 12:14:39 +0000
-Date:   Mon, 24 Jan 2022 20:14:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Tong Zhang <ztong0001@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kbuild-all@lists.01.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Tong Zhang <ztong0001@gmail.com>
-Subject: Re: [PATCH v1] binfmt_misc: fix crash when load/unload module
-Message-ID: <202201242006.cqM8NznF-lkp@intel.com>
-References: <20220124003342.1457437-1-ztong0001@gmail.com>
+        id S238286AbiAXMTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jan 2022 07:19:11 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:45108 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238021AbiAXMTK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jan 2022 07:19:10 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 299042198B;
+        Mon, 24 Jan 2022 12:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1643026749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GvRHDiYRgIugofka1vlnrZWBXEJ3aLRDAe2/6SUZnek=;
+        b=C3iqRMlwb6arMtDpxwNQLg2L9o0Y1ZwUPjcDZ/Agy29ENbxrYb68FM+canxMYvFnp4qZcC
+        k1uq01X70B+LhPsWuppzv2BHw+5pm9clF6xCmIgI9uB3hmM/mO/5T78ICM5vPFjfaFdGOk
+        XYW03UOno8liwnEe/OmkXghA01VCRbE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1643026749;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GvRHDiYRgIugofka1vlnrZWBXEJ3aLRDAe2/6SUZnek=;
+        b=DBUtyu0uQV/HBeHT86TXMQynniFXntghYyZ96Wfp8yxmu6Cc3+AeOZRWH8oY1FLjQfqV0n
+        zYWgVsC2C82R5gDA==
+Received: from quack3.suse.cz (unknown [10.163.43.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 19EBBA3B89;
+        Mon, 24 Jan 2022 12:19:09 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 690DCA05E7; Mon, 24 Jan 2022 13:19:03 +0100 (CET)
+Date:   Mon, 24 Jan 2022 13:19:03 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: RFA (Request for Advice): block/bio: get_user_pages() -->
+ pin_user_pages()
+Message-ID: <20220124121903.fono7exjgqi22ify@quack3.lan>
+References: <e83cd4fe-8606-f4de-41ad-33a40f251648@nvidia.com>
+ <20220124100501.gwkaoohkm2b6h7xl@quack3.lan>
+ <cde9acbb-ba1f-16ba-40a8-a5b4fdf2d2dc@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220124003342.1457437-1-ztong0001@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cde9acbb-ba1f-16ba-40a8-a5b4fdf2d2dc@nvidia.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Tong,
+On Mon 24-01-22 10:38:13, Chaitanya Kulkarni wrote:
+> On 1/24/22 2:05 AM, Jan Kara wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > Hello,
+> > 
+> > On Sun 23-01-22 23:52:07, John Hubbard wrote:
+> >> Background: despite having very little experience in the block and bio
+> >> layers, I am attempting to convert the Direct IO parts of them from
+> >> using get_user_pages_fast(), to pin_user_pages_fast(). This requires the
+> >> use of a corresponding special release call: unpin_user_pages(), instead
+> >> of the generic put_page().
+> >>
+> >> Fortunately, Christoph Hellwig has observed [1] (more than once [2]) that
+> >> only "a little" refactoring is required, because it is *almost* true
+> >> that bio_release_pages() could just be switched over from calling
+> >> put_page(), to unpin_user_page(). The "not quite" part is mainly due to
+> >> the zero page. There are a few write paths that pad zeroes, and they use
+> >> the zero page.
+> >>
+> >> That's where I'd like some advice. How to refactor things, so that the
+> >> zero page does not end up in the list of pages that bio_release_pages()
+> >> acts upon?
+> 
+> this maybe wrong but thinking out loudly, have you consider adding a 
+> ZERO_PAGE() address check since it should have a unique same
+> address for each ZERO_PAGE() (unless I'm totally wrong here) and
+> using this check you can distinguish between ZERO_PAGE() and
+> non ZERO_PAGE() on the bio list in bio_release_pages().
 
-Thank you for the patch! Yet something to improve:
+Well, that is another option but it seems a bit ugly and also on some
+architectures (e.g. s390 AFAICS) there can be multiple zero pages (due to
+coloring) so the test for zero page is not completely trivial (probably we
+would have to grow some is_zero_page() checking function implemented
+separately for each arch).
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v5.17-rc1 next-20220124]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+> >> To ground this in reality, one of the partial call stacks is:
+> >>
+> >> do_direct_IO()
+> >>      dio_zero_block()
+> >>          page = ZERO_PAGE(0); <-- This is a problem
+> >>
+> >> I'm not sure what to use, instead of that zero page! The zero page
+> >> doesn't need to be allocated nor tracked, and so any replacement
+> >> approaches would need either other storage, or some horrid scheme that I
+> >> won't go so far as to write on the screen. :)
+> > 
+> > Well, I'm not sure if you consider this ugly but currently we use
+> > get_page() in that path exactly so that bio_release_pages() does not have
+> > to care about zero page. So now we could grab pin on the zero page instead
+> > through try_grab_page() or something like that...
+> > 
+> >        
+> 
+> submit_page_section() does call get_page() in that same path 
+> irrespective of whether it is ZERO_PAGE() or not, this actually
+> makes accounting much easier and we also avoid  any special case
+> for ZERO_PAGE().
+> 
+> dio_zero_block()
+>   submit_page_section()
+>     get_page()
+> 
+> 
+> That also means that on completion of dio for each bio we also call
+> put_page() from bio_release_page() path.
 
-url:    https://github.com/0day-ci/linux/commits/Tong-Zhang/binfmt_misc-fix-crash-when-load-unload-module/20220124-083500
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git dd81e1c7d5fb126e5fbc5c9e334d7b3ec29a16a0
-config: arm-randconfig-c002-20220124 (https://download.01.org/0day-ci/archive/20220124/202201242006.cqM8NznF-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/d649008f3214eb4d94760873831ef5e53c292976
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Tong-Zhang/binfmt_misc-fix-crash-when-load-unload-module/20220124-083500
-        git checkout d649008f3214eb4d94760873831ef5e53c292976
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arm SHELL=/bin/bash
+Well, yes. fs/direct-io.c grabs two page references in fact. One is passed
+along with the bio and released by bio_release_pages(), the other one is
+released directly in fs/direct-io.c after IO is submitted. We need to
+somewhat reorganize the code to better define which is which because with
+pinning they would be of different kind.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+For zero page we currently grab the reference in dio_refill_pages() (this
+needs to be converted to try_grab_page()) and we don't do anything in
+dio_zero_block() - that code needs to be cleaned up to also call
+try_grab_page() and we need to somehow deal with the ref currently grabbed
+in submit_page_section()...
 
-All errors (new ones prefixed by >>):
-
-   fs/binfmt_misc.c: In function 'init_misc_binfmt':
->> fs/binfmt_misc.c:828:28: error: assignment to 'struct ctl_table_header *' from incompatible pointer type 'struct sysctl_header *' [-Werror=incompatible-pointer-types]
-     828 |         binfmt_misc_header = register_sysctl_mount_point("fs/binfmt_misc");
-         |                            ^
-   cc1: some warnings being treated as errors
-
-
-vim +828 fs/binfmt_misc.c
-
-   821	
-   822	static int __init init_misc_binfmt(void)
-   823	{
-   824		int err = register_filesystem(&bm_fs_type);
-   825		if (!err)
-   826			insert_binfmt(&misc_format);
-   827	
- > 828		binfmt_misc_header = register_sysctl_mount_point("fs/binfmt_misc");
-   829		if (!binfmt_misc_header) {
-   830			pr_warn("Failed to create fs/binfmt_misc sysctl mount point");
-   831			return -ENOMEM;
-   832		}
-   833		return 0;
-   834	}
-   835	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
