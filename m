@@ -2,79 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 362A4497E1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 12:38:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E761D497E28
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 12:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237669AbiAXLiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jan 2022 06:38:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52808 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237414AbiAXLiF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jan 2022 06:38:05 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBFB5C06173B;
-        Mon, 24 Jan 2022 03:38:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 97E48B80AE3;
-        Mon, 24 Jan 2022 11:38:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B80C340E9;
-        Mon, 24 Jan 2022 11:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643024282;
-        bh=1MZf/s1Gjno9sXlUpwND0z7JXF7AAJRWueQDZe7+Ol8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r427IhO03TztnS479ygJJ6WhkFqaUcbILkmKBs+4FdfzPBPF/ceZoLeevHJgaqaEj
-         8JSGmyoKMbawO6JMv/k0ftS8SPr4lQHo6A3ijgZpnbSgk3WdMk/ltfHqq9Rs6D+KJ+
-         8Lxp2vO6SUwFEyYE+D+OSRsOKlhRZ4Pi/Y4BqwAHdXktzZmdxVcPNhJyALIhzRYMrI
-         s/Co6kwq5NmzdMv8OFbooqCwRbFdXhP3xcy/22wup6heCaWfUz3zpbgmXgsdxaTdly
-         d/lC5mBex1pcgXl3aomIMNWs6+UNBl36D62hctx7/KdHZdK9I0mfGrecWHdHkWSlqk
-         NinlQ1CyhOM3A==
-Date:   Mon, 24 Jan 2022 12:37:58 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Pre-allocate superblock in sget_fc() if !test
-Message-ID: <20220124113758.y34xceepk7oe26h7@wittgenstein>
-References: <20220121185255.27601-1-longman@redhat.com>
+        id S237826AbiAXLln (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jan 2022 06:41:43 -0500
+Received: from mga03.intel.com ([134.134.136.65]:52131 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237794AbiAXLlm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jan 2022 06:41:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643024502; x=1674560502;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qSwxcSWc61GCN/jeYgEf7uRAI0O6FiXI5qymb1AvrOY=;
+  b=B1ixWgMgdaeKc340do+YY8dOXT5AS8oKjA/dZ5BUFs0YCIf2SD3o+YLD
+   mqv31BRxY7L00ZI0vY8TbiXR80/z6QQr57LHMzMKsADE7DGidJGVz/0rK
+   uNvkjz7T4ESMtBV270I6bZIeoB2su5TYgKhYukj+Z90EWQNj3wqIgk7mT
+   jMi2aNpp3G4Ni3r1anM/cHqjvZrmuz95usATUSN7VHHflauV8AJb3oaq5
+   kOmpPGEJSJlirR/TJMjQ8rDTm6K+9zJRQnuNpAkvyftYcICAYo/AJep3m
+   oBBi2rTFHMXm1m9y2qKoRz1tXUEMe5DO53iLq9VhGII0l5Ws5rH5XMxSv
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10236"; a="245971943"
+X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
+   d="scan'208";a="245971943"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 03:41:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
+   d="scan'208";a="476691737"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 24 Jan 2022 03:41:38 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nBxj7-000IFp-Tr; Mon, 24 Jan 2022 11:41:37 +0000
+Date:   Mon, 24 Jan 2022 19:40:53 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Tong Zhang <ztong0001@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Tong Zhang <ztong0001@gmail.com>
+Subject: Re: [PATCH v1] binfmt_misc: fix crash when load/unload module
+Message-ID: <202201241937.i9KSsyAj-lkp@intel.com>
+References: <20220124003342.1457437-1-ztong0001@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220121185255.27601-1-longman@redhat.com>
+In-Reply-To: <20220124003342.1457437-1-ztong0001@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 21, 2022 at 01:52:55PM -0500, Waiman Long wrote:
-> When the test function is not defined in sget_fc(), we always need
-> to allocate a new superblock. So there is no point in acquiring the
-> sb_lock twice in this case. Optimize the !test case by pre-allocating
-> the superblock first before acquring the lock.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  fs/super.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index a6405d44d4ca..c2bd5c34a826 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -520,6 +520,8 @@ struct super_block *sget_fc(struct fs_context *fc,
->  	struct user_namespace *user_ns = fc->global ? &init_user_ns : fc->user_ns;
->  	int err;
->  
-> +	if (!test)
-> +		s = alloc_super(fc->fs_type, fc->sb_flags, user_ns);
+Hi Tong,
 
-Shouldn't we treat this allocation failure as "fatal" right away and not
-bother taking locks, walking lists and so on? Seems strange to treat it
-as fatal below but not here.
+Thank you for the patch! Yet something to improve:
 
-(The code-flow in here has always been a bit challenging to follow imho.
-So not super keen to see more special-cases in there. Curious: do you
-see any noticeable performance impact from that lock being taken and
-dropped for the !test case?)
+[auto build test ERROR on linus/master]
+[also build test ERROR on v5.17-rc1 next-20220124]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Tong-Zhang/binfmt_misc-fix-crash-when-load-unload-module/20220124-083500
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git dd81e1c7d5fb126e5fbc5c9e334d7b3ec29a16a0
+config: riscv-randconfig-r001-20220123 (https://download.01.org/0day-ci/archive/20220124/202201241937.i9KSsyAj-lkp@intel.com/config)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 7b3d30728816403d1fd73cc5082e9fb761262bce)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/0day-ci/linux/commit/d649008f3214eb4d94760873831ef5e53c292976
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Tong-Zhang/binfmt_misc-fix-crash-when-load-unload-module/20220124-083500
+        git checkout d649008f3214eb4d94760873831ef5e53c292976
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> fs/binfmt_misc.c:828:21: error: incompatible pointer types assigning to 'struct ctl_table_header *' from 'struct sysctl_header *' [-Werror,-Wincompatible-pointer-types]
+           binfmt_misc_header = register_sysctl_mount_point("fs/binfmt_misc");
+                              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+
+
+vim +828 fs/binfmt_misc.c
+
+   821	
+   822	static int __init init_misc_binfmt(void)
+   823	{
+   824		int err = register_filesystem(&bm_fs_type);
+   825		if (!err)
+   826			insert_binfmt(&misc_format);
+   827	
+ > 828		binfmt_misc_header = register_sysctl_mount_point("fs/binfmt_misc");
+   829		if (!binfmt_misc_header) {
+   830			pr_warn("Failed to create fs/binfmt_misc sysctl mount point");
+   831			return -ENOMEM;
+   832		}
+   833		return 0;
+   834	}
+   835	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
