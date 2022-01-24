@@ -2,140 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8A97497D51
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 11:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78426497DA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 12:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236260AbiAXKka (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jan 2022 05:40:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39788 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235874AbiAXKkZ (ORCPT
+        id S237236AbiAXLN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jan 2022 06:13:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:51412 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232330AbiAXLN0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jan 2022 05:40:25 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12FAC061744;
-        Mon, 24 Jan 2022 02:40:24 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 24 Jan 2022 06:13:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643022805;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=BKPWfD2nrm9bw/TsxWz5cvjNFlLigjxmmE53j7IGtF8=;
+        b=XiHprfTRmU4zYsJbvovxvmoNT4JYoh3f7JRGbNjNluMmRE2yZjlSFpSbQA9vZFU45NwkOd
+        VqMnvuvrTxnIX2VT5aFfLLHXObzMlHLYses/OpJ1BPEypK7PIkK4te0rcBFydLQRavBWzO
+        Yf/xTtC/qF6HPcsAbQlEsZaNeFephYo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-29-38h2PACzNTmtPrC9xBCz8w-1; Mon, 24 Jan 2022 06:13:22 -0500
+X-MC-Unique: 38h2PACzNTmtPrC9xBCz8w-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5B709CE1085;
-        Mon, 24 Jan 2022 10:40:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD521C340E1;
-        Mon, 24 Jan 2022 10:40:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643020821;
-        bh=YP3rpOMueEM82W9W/1RDTqqRSLU6FQT/DQxpUNNwtOE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AO682VwdKPveky60qNAVT4BjLT3p5LbEA0/U1l2vCG7W0OdyDN2gVoXEk0EoAaSzn
-         J2usjIuVnFr/PqE+a/7qwP7OfUzBIW7VBjvIaqIOblte/aMsN20KCII7s07o4YoXje
-         gA8dAyxv5aRKRaoQ/y5uxCxti4GX/dNBOfz/l+yWwU6/vSE7Bwxgitdym14MuJeKog
-         yZxC/Y4pDBS4Mvb34ib82ynUkxGy6lHb4NFY6c2Q0wNwsQy66x7yUolcDWy8ZmRVxW
-         7IwBHC45OB2hItlIFm0z+iBUvy9LgzLIUFfHk5Q41mzpK6+TXlJdHzth8oWJisPzQg
-         wfOF5ti9pAMUw==
-Date:   Mon, 24 Jan 2022 11:40:12 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Tong Zhang <ztong0001@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] binfmt_misc: fix crash when load/unload module
-Message-ID: <20220124104012.nblfd6b5on4kojgi@wittgenstein>
-References: <20220124003342.1457437-1-ztong0001@gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6CFB61926DA2;
+        Mon, 24 Jan 2022 11:13:21 +0000 (UTC)
+Received: from ws.net.home (ovpn-112-8.ams2.redhat.com [10.36.112.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8E1847AB51;
+        Mon, 24 Jan 2022 11:13:20 +0000 (UTC)
+Date:   Mon, 24 Jan 2022 12:13:17 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux stable realase v2.37.3
+Message-ID: <20220124111317.uebrrtdwo6c2ed52@ws.net.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220124003342.1457437-1-ztong0001@gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 23, 2022 at 04:33:41PM -0800, Tong Zhang wrote:
-> We should unregister the table upon module unload otherwise something
-> horrible will happen when we load binfmt_misc module again. Also note
-> that we should keep value returned by register_sysctl_mount_point() and
-> release it later, otherwise it will leak.
-> 
-> reproduce:
-> modprobe binfmt_misc
-> modprobe -r binfmt_misc
-> modprobe binfmt_misc
-> modprobe -r binfmt_misc
-> modprobe binfmt_misc
-> 
-> [   18.032038] Call Trace:
-> [   18.032108]  <TASK>
-> [   18.032169]  dump_stack_lvl+0x34/0x44
-> [   18.032273]  __register_sysctl_table+0x6f4/0x720
-> [   18.032397]  ? preempt_count_sub+0xf/0xb0
-> [   18.032508]  ? 0xffffffffc0040000
-> [   18.032600]  init_misc_binfmt+0x2d/0x1000 [binfmt_misc]
-> [   18.042520] binfmt_misc: Failed to create fs/binfmt_misc sysctl mount point
-> modprobe: can't load module binfmt_misc (kernel/fs/binfmt_misc.ko): Cannot allocate memory
-> [   18.063549] binfmt_misc: Failed to create fs/binfmt_misc sysctl mount point
-> [   18.204779] BUG: unable to handle page fault for address: fffffbfff8004802
-> 
-> Fixes: 3ba442d5331f ("fs: move binfmt_misc sysctl to its own file")
-> Signed-off-by: Tong Zhang <ztong0001@gmail.com>
-> ---
->  fs/binfmt_misc.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index ddea6acbddde..614aedb8ab2e 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -817,12 +817,16 @@ static struct file_system_type bm_fs_type = {
->  };
->  MODULE_ALIAS_FS("binfmt_misc");
->  
-> +static struct ctl_table_header *binfmt_misc_header;
-> +
->  static int __init init_misc_binfmt(void)
->  {
->  	int err = register_filesystem(&bm_fs_type);
->  	if (!err)
->  		insert_binfmt(&misc_format);
-> -	if (!register_sysctl_mount_point("fs/binfmt_misc")) {
-> +
-> +	binfmt_misc_header = register_sysctl_mount_point("fs/binfmt_misc");
-> +	if (!binfmt_misc_header) {
 
-The fix itself is obviously needed.
+The util-linux release v2.37.3 is available at
+ 
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.37/
+ 
+Feedback and bug reports, as always, are welcomed.
+ 
+   Karel 
 
-However, afaict the previous patch introduced another bug and this patch
-right here doesn't fix it either.
 
-Namely, if you set CONFIG_SYSCTL=n and CONFIG_BINFMT_MISC={y,m}, then
-register_sysctl_mount_point() will return NULL causing modprobe
-binfmt_misc to fail. However, before 3ba442d5331f ("fs: move binfmt_misc
-sysctl to its own file") loading binfmt_misc would've succeeded even if
-fs/binfmt_misc wasn't created in kernel/sysctl.c. Afaict, that goes for
-both CONFIG_SYSCTL={y,n} since even in the CONFIG_SYSCTL=y case the
-kernel would've moved on if creating the sysctl header would've failed.
-And that makes sense since binfmt_misc is mountable wherever, not just
-at fs/binfmt_misc.
+util-linux 2.37.3 Release Notes
+===============================
 
-All that indicates that the correct fix here would be to simply:
+This release fixes two security mount(8) and umount(8) issues:
 
-binfmt_misc_header = register_sysctl_mount_point("fs/binfmt_misc");
+CVE-2021-3996
+    Improper UID check in libmount allows an unprivileged user to unmount FUSE
+    filesystems of users with similar UID.
 
-without checking for an error. That should fully restore the old
-behavior.
+CVE-2021-3995
+    This issue is related to parsing the /proc/self/mountinfo file allows an
+    unprivileged user to unmount other user's filesystems that are either
+    world-writable themselves or mounted in a world-writable directory.
 
->  		pr_warn("Failed to create fs/binfmt_misc sysctl mount point");
->  		return -ENOMEM;
->  	}
-> @@ -831,6 +835,7 @@ static int __init init_misc_binfmt(void)
->  
->  static void __exit exit_misc_binfmt(void)
->  {
-> +	unregister_sysctl_table(binfmt_misc_header);
->  	unregister_binfmt(&misc_format);
->  	unregister_filesystem(&bm_fs_type);
->  }
-> -- 
-> 2.25.1
-> 
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
