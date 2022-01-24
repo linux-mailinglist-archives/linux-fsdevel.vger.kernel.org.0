@@ -2,114 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD18649763F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 00:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E56C14976C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 01:33:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240456AbiAWXDh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Jan 2022 18:03:37 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:55247 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240391AbiAWXDg (ORCPT
+        id S240634AbiAXAdy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Jan 2022 19:33:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46042 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235420AbiAXAdx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Jan 2022 18:03:36 -0500
-Received: from dread.disaster.area (pa49-179-45-11.pa.nsw.optusnet.com.au [49.179.45.11])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2169362C1FD;
-        Mon, 24 Jan 2022 10:03:34 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nBltU-003QSN-Tk; Mon, 24 Jan 2022 10:03:32 +1100
-Date:   Mon, 24 Jan 2022 10:03:32 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v10 0/5] add support for direct I/O with fscrypt using
- blk-crypto
-Message-ID: <20220123230332.GL59729@dread.disaster.area>
-References: <20220120071215.123274-1-ebiggers@kernel.org>
- <YekdnxpeunTGfXqX@infradead.org>
- <20220120171027.GL13540@magnolia>
- <YenIcshA706d/ziV@sol.localdomain>
- <20220120210027.GQ13540@magnolia>
- <20220120220414.GH59729@dread.disaster.area>
- <Yenm1Ipx87JAlyXg@sol.localdomain>
- <20220120235755.GI59729@dread.disaster.area>
- <20220121023603.GH13563@magnolia>
+        Sun, 23 Jan 2022 19:33:53 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 184C4C06173B;
+        Sun, 23 Jan 2022 16:33:53 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id g2so13685210pgo.9;
+        Sun, 23 Jan 2022 16:33:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HpX4ecSb0e+06p326ykDTkroEp41gEPP6WRFjfBdl4w=;
+        b=O48NMz9Zfry3yFS2QCX3pEEw3gYYzGUh21zsPB4VzU5gnaYI9EzADMqBVsgr2n4pkr
+         axxHq24jBc4QJeGPa8sjcIyx01T6OEuQV2US1iwRmeNhx2e1u8jRzXljPrYEXj6sb4AC
+         XPGz91sAyqFdG5oGxsPriNO4YPNDNXiJg1NS7d/sa76efYIyc1bNDbYrEy0v6T0aSbgu
+         cBZGjqQSOlaWrUGTZaraVg9lxT1dqXiRVJXg2J6AHwgKsCnbklLgMjV9cbauwMzlPNnf
+         E9+Fx6yRmMMEbHYxlZmz+hH9sKRrZtWdh2ds0AVZVl8Ado3jkFoWrX/PiZkJ5EgJo0u2
+         PJHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HpX4ecSb0e+06p326ykDTkroEp41gEPP6WRFjfBdl4w=;
+        b=xg7/xD1sp6Dp5LhTlYNjRy0tYjuLgsor0pGHkjenBGxSvhQgnwU16FDrEYrx7HWGpb
+         A5fkJ+rYaixPOOiPnT0VBQNeFczwr8ztnxmXPubBrLOum23N98NoLISVtXPkMC+/Mfwv
+         xwcJtcejzH9kuw8N78FRf/RS6H4XfmFlK1cqfVcrc9YGf4mDGedVpT4/WDm9g9zvLvt7
+         CMhPhgVB7qCMV5NjtcEziFqkV+gqv4nHkQ8jAs5I4SAJft6Oe/gE8ApQJ4vpPYPpJfxp
+         P0N19XFNbf0JSHyrZPq0c04tC6Vg+QSu16QtGSTloAlpw/yqJ+m6TrM7ZgZyeG47lCZz
+         AY/A==
+X-Gm-Message-State: AOAM530c4w5N0+idgUjhA9V/KyfYbwg08hI2Y0APKa/TiIXUcd5HDQLJ
+        Xw9KONNNPzIVhnIgf5lyCD0=
+X-Google-Smtp-Source: ABdhPJyKg2M4A98BdPmPFrbAvdcUJynOKsgFR9nlZRYDXhyxPRvadysZNeCNoZ5IkZP+0lIkV5VqMg==
+X-Received: by 2002:a63:bf4b:: with SMTP id i11mr9958661pgo.214.1642984432315;
+        Sun, 23 Jan 2022 16:33:52 -0800 (PST)
+Received: from tong-desktop.local (99-105-211-126.lightspeed.sntcca.sbcglobal.net. [99.105.211.126])
+        by smtp.googlemail.com with ESMTPSA id lt17sm10909710pjb.41.2022.01.23.16.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jan 2022 16:33:51 -0800 (PST)
+From:   Tong Zhang <ztong0001@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Tong Zhang <ztong0001@gmail.com>
+Subject: [PATCH v1] binfmt_misc: fix crash when load/unload module
+Date:   Sun, 23 Jan 2022 16:33:41 -0800
+Message-Id: <20220124003342.1457437-1-ztong0001@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220121023603.GH13563@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=61eddec6
-        a=Eslsx4mF8WGvnV49LKizaA==:117 a=Eslsx4mF8WGvnV49LKizaA==:17
-        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
-        a=ja5ArhmkF978jRwlfB8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 20, 2022 at 06:36:03PM -0800, Darrick J. Wong wrote:
-> On Fri, Jan 21, 2022 at 10:57:55AM +1100, Dave Chinner wrote:
-> Sure.  How's this?  I couldn't think of a real case of directio
-> requiring different alignments for pos and bytecount, so the only real
-> addition here is the alignment requirements for best performance.
-> 
-> struct statx {
-> ...
-> 	/* 0x90 */
-> 	__u64	stx_mnt_id;
-> 
-> 	/* Memory buffer alignment required for directio, in bytes. */
-> 	__u32	stx_dio_mem_align;
+We should unregister the table upon module unload otherwise something
+horrible will happen when we load binfmt_misc module again. Also note
+that we should keep value returned by register_sysctl_mount_point() and
+release it later, otherwise it will leak.
 
-	__32	stx_mem_align_dio;
+reproduce:
+modprobe binfmt_misc
+modprobe -r binfmt_misc
+modprobe binfmt_misc
+modprobe -r binfmt_misc
+modprobe binfmt_misc
 
-(for consistency with suggestions below)
+[   18.032038] Call Trace:
+[   18.032108]  <TASK>
+[   18.032169]  dump_stack_lvl+0x34/0x44
+[   18.032273]  __register_sysctl_table+0x6f4/0x720
+[   18.032397]  ? preempt_count_sub+0xf/0xb0
+[   18.032508]  ? 0xffffffffc0040000
+[   18.032600]  init_misc_binfmt+0x2d/0x1000 [binfmt_misc]
+[   18.042520] binfmt_misc: Failed to create fs/binfmt_misc sysctl mount point
+modprobe: can't load module binfmt_misc (kernel/fs/binfmt_misc.ko): Cannot allocate memory
+[   18.063549] binfmt_misc: Failed to create fs/binfmt_misc sysctl mount point
+[   18.204779] BUG: unable to handle page fault for address: fffffbfff8004802
 
-> 
-> 	/* File range alignment required for directio, in bytes. */
-> 	__u32	stx_dio_fpos_align_min;
+Fixes: 3ba442d5331f ("fs: move binfmt_misc sysctl to its own file")
+Signed-off-by: Tong Zhang <ztong0001@gmail.com>
+---
+ fs/binfmt_misc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-"fpos" is not really a user term - "offset" is the userspace term for
-file position, and it's much less of a random letter salad if it's
-named that way. Also, we don't need "min" in the name; the
-description of the field in the man page can give all the gory
-details about it being the minimum required alignment.
-
-	__u32	stx_offset_align_dio;
-
-> 
-> 	/* 0xa0 */
-> 
-> 	/* File range alignment needed for best performance, in bytes. */
-> 	__u32	stx_dio_fpos_align_opt;
-
-This is a common property of both DIO and buffered IO, so no need
-for it to be dio-only property.
-
-	__u32	stx_offset_align_optimal;
-
-> 
-> 	/* Maximum size of a directio request, in bytes. */
-> 	__u32	stx_dio_max_iosize;
-
-Unnecessary, it will always be the syscall max IO size, because the
-internal DIO code will slice and dice it down to the max sizes the
-hardware supports.
-
-> #define STATX_DIRECTIO	0x00001000U	/* Want/got directio geometry */
-> 
-> How about that?
-
-Mostly seems reasonable at a first look.
-
-Cheers,
-
-Dave.
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index ddea6acbddde..614aedb8ab2e 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -817,12 +817,16 @@ static struct file_system_type bm_fs_type = {
+ };
+ MODULE_ALIAS_FS("binfmt_misc");
+ 
++static struct ctl_table_header *binfmt_misc_header;
++
+ static int __init init_misc_binfmt(void)
+ {
+ 	int err = register_filesystem(&bm_fs_type);
+ 	if (!err)
+ 		insert_binfmt(&misc_format);
+-	if (!register_sysctl_mount_point("fs/binfmt_misc")) {
++
++	binfmt_misc_header = register_sysctl_mount_point("fs/binfmt_misc");
++	if (!binfmt_misc_header) {
+ 		pr_warn("Failed to create fs/binfmt_misc sysctl mount point");
+ 		return -ENOMEM;
+ 	}
+@@ -831,6 +835,7 @@ static int __init init_misc_binfmt(void)
+ 
+ static void __exit exit_misc_binfmt(void)
+ {
++	unregister_sysctl_table(binfmt_misc_header);
+ 	unregister_binfmt(&misc_format);
+ 	unregister_filesystem(&bm_fs_type);
+ }
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.1
+
