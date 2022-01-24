@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01390497B51
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 10:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB92497B5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 10:12:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242610AbiAXJLi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jan 2022 04:11:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47316 "EHLO
+        id S236487AbiAXJLo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jan 2022 04:11:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242600AbiAXJLf (ORCPT
+        with ESMTP id S242649AbiAXJLi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jan 2022 04:11:35 -0500
+        Mon, 24 Jan 2022 04:11:38 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59082C06173D;
-        Mon, 24 Jan 2022 01:11:35 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F58C06173B;
+        Mon, 24 Jan 2022 01:11:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=cyA51tgTzJ0oURPYTTRoUDyOePKkV9xxN4Hqcjy0whE=; b=24POPMuL96/As8aG9GXRe4flkw
-        PU2voX+TtVVlvvdQoBbajVZWFUX5Dxw0G62WsA11q+Z8rRjH+LEx651hKp3XtfjI7gXtHN4ZzkX/+
-        zbZ+tlG5Y0PtCwK4dK1YvN9MT7GYMmhUZbx6oA7tclLFQqB/Hk6HGXGms/H0HPQsHLOdwunOcJ2He
-        Z/XTdU7e0f03aHpCO6hyntFD+lSqUwmcuScLWrUHjNVwxSomsOA9gkK7UTP2pkv+Rq271Q+ptnz5u
-        RQQj2WoPvjf4xtnwoz0FDtxL394f4gkw9/czqcZnSk+qNyA0Xz4vOPLIi9B+cPZ8PvyvkOOGVnRjM
-        +yBS+85g==;
+        bh=Mjlg0k+4PavheCjtECQRQWUa0Hx79sA/tX844Pch6ns=; b=Cq0TPNTknrpMgSPyE0DO6o8Qzt
+        f/iZoR0ubS3Fi0mNYFhpPl8fPbwxg/xP1Xsb9wAVH+J7Xi2rGTgLxSNRU/sh9E8Pausv23uDyD8GM
+        MPk203cd/Z1rnUElKzw1r/Wzqi37FWlZ4t6koT8hF+Sk7/ozar/Vdkeh4G40FH4h4j7SnokgW8dXc
+        a8PQHEniFdLS0v2JKyUDqyV7VP5MGaEeYidHKzzT+aNgHNjiPVUSS9tU+PDOLnMLPzkME51Qb/3uf
+        n61njfRrtW/q1yUlOOM1gMmXqSOJ8tw+YUWV8V80IP6LcwNj92/3FhKy5mGr4hvrynh0ZMAvkwguX
+        MwVYB/7Q==;
 Received: from [2001:4bb8:184:72a4:a337:a75f:a24e:7e39] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nBvNo-002k7w-Qx; Mon, 24 Jan 2022 09:11:29 +0000
+        id 1nBvNr-002kA4-JE; Mon, 24 Jan 2022 09:11:32 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
@@ -44,9 +44,9 @@ Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
         xen-devel@lists.xenproject.org, drbd-dev@lists.linbit.com
-Subject: [PATCH 07/19] dm-snap: use blkdev_issue_flush instead of open coding it
-Date:   Mon, 24 Jan 2022 10:10:55 +0100
-Message-Id: <20220124091107.642561-8-hch@lst.de>
+Subject: [PATCH 08/19] dm-thin: use blkdev_issue_flush instead of open coding it
+Date:   Mon, 24 Jan 2022 10:10:56 +0100
+Message-Id: <20220124091107.642561-9-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220124091107.642561-1-hch@lst.de>
 References: <20220124091107.642561-1-hch@lst.de>
@@ -58,73 +58,57 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Use blkdev_issue_flush, which uses an on-stack bio instead of an
-opencoded version with a bio embedded into struct dm_snapshot.
+opencoded version with a bio embedded into struct pool.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/dm-snap.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
+ drivers/md/dm-thin.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index dcf34c6b05ad3..0d336b5ec5714 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -141,11 +141,6 @@ struct dm_snapshot {
- 	 * for them to be committed.
- 	 */
- 	struct bio_list bios_queued_during_merge;
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index 76a9c2e9aeeea..411a3f56ed90c 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -282,8 +282,6 @@ struct pool {
+ 	struct dm_bio_prison_cell **cell_sort_array;
+ 
+ 	mempool_t mapping_pool;
 -
--	/*
--	 * Flush data after merge.
--	 */
 -	struct bio flush_bio;
  };
  
- /*
-@@ -1127,17 +1122,6 @@ static void snapshot_merge_next_chunks(struct dm_snapshot *s)
+ static void metadata_operation_failed(struct pool *pool, const char *op, int r);
+@@ -2906,7 +2904,6 @@ static void __pool_destroy(struct pool *pool)
+ 	if (pool->next_mapping)
+ 		mempool_free(pool->next_mapping, &pool->mapping_pool);
+ 	mempool_exit(&pool->mapping_pool);
+-	bio_uninit(&pool->flush_bio);
+ 	dm_deferred_set_destroy(pool->shared_read_ds);
+ 	dm_deferred_set_destroy(pool->all_io_ds);
+ 	kfree(pool);
+@@ -2987,7 +2984,6 @@ static struct pool *pool_create(struct mapped_device *pool_md,
+ 	pool->low_water_triggered = false;
+ 	pool->suspended = true;
+ 	pool->out_of_data_space = false;
+-	bio_init(&pool->flush_bio, NULL, 0);
  
- static void error_bios(struct bio *bio);
- 
--static int flush_data(struct dm_snapshot *s)
--{
--	struct bio *flush_bio = &s->flush_bio;
+ 	pool->shared_read_ds = dm_deferred_set_create();
+ 	if (!pool->shared_read_ds) {
+@@ -3194,13 +3190,8 @@ static void metadata_low_callback(void *context)
+ static int metadata_pre_commit_callback(void *context)
+ {
+ 	struct pool *pool = context;
+-	struct bio *flush_bio = &pool->flush_bio;
 -
 -	bio_reset(flush_bio);
--	bio_set_dev(flush_bio, s->origin->bdev);
+-	bio_set_dev(flush_bio, pool->data_dev);
 -	flush_bio->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH;
--
+ 
 -	return submit_bio_wait(flush_bio);
--}
--
- static void merge_callback(int read_err, unsigned long write_err, void *context)
- {
- 	struct dm_snapshot *s = context;
-@@ -1151,7 +1135,7 @@ static void merge_callback(int read_err, unsigned long write_err, void *context)
- 		goto shut;
- 	}
++	return blkdev_issue_flush(pool->data_dev);
+ }
  
--	if (flush_data(s) < 0) {
-+	if (blkdev_issue_flush(s->origin->bdev) < 0) {
- 		DMERR("Flush after merge failed: shutting down merge");
- 		goto shut;
- 	}
-@@ -1340,7 +1324,6 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	s->first_merging_chunk = 0;
- 	s->num_merging_chunks = 0;
- 	bio_list_init(&s->bios_queued_during_merge);
--	bio_init(&s->flush_bio, NULL, 0);
- 
- 	/* Allocate hash table for COW data */
- 	if (init_hash_tables(s)) {
-@@ -1528,8 +1511,6 @@ static void snapshot_dtr(struct dm_target *ti)
- 
- 	dm_exception_store_destroy(s->store);
- 
--	bio_uninit(&s->flush_bio);
--
- 	dm_put_device(ti, s->cow);
- 
- 	dm_put_device(ti, s->origin);
+ static sector_t get_dev_size(struct block_device *bdev)
 -- 
 2.30.2
 
