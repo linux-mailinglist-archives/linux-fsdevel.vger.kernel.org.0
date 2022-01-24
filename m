@@ -2,418 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64FD5497B98
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 10:12:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05F75497B76
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jan 2022 10:12:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236690AbiAXJMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jan 2022 04:12:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47390 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236613AbiAXJMY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S236665AbiAXJMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 24 Jan 2022 04:12:24 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECDC5C061401;
-        Mon, 24 Jan 2022 01:12:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=05/2hJ4qFhOy3TMkzw4mOBelv5h6ZZEpdG21LS4VpTk=; b=JaTvMv4BhbACduW0iYKfh03Uqm
-        pgKQoQWMVXFbITfjywkuNAfxnSNkCRIZB8DWScyS758o4cOJMMweGCOLY00c1k3PoOSJoaA71MIuM
-        F1GPJwdu8NOkC6iQsmA3sOKN78b6AhOKdxo1lM+wi6zXwMy5JNmLnEgGR35V9ZsDzEDa5A/5XFoGL
-        sNmcFgnAiLw5kaHoQMFnsbUnCeeBXTYvsJK8OsaMloNw+Kf9u8kl81fh1PwagHR5iDQwEnblUmh6D
-        aGQ2zTZfK6DV6h1X6ZGSRHRCQcafTu26CZB8Js45ktZpZh+CzVsxwWHHDLuB3JdA3XlwIe419/dgz
-        LwganZhQ==;
-Received: from [2001:4bb8:184:72a4:a337:a75f:a24e:7e39] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nBvON-002kVj-Ap; Mon, 24 Jan 2022 09:12:03 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Md . Haris Iqbal " <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.co>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        xen-devel@lists.xenproject.org, drbd-dev@lists.linbit.com,
-        Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [PATCH 19/19] block: pass a block_device and opf to bio_reset
-Date:   Mon, 24 Jan 2022 10:11:07 +0100
-Message-Id: <20220124091107.642561-20-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220124091107.642561-1-hch@lst.de>
-References: <20220124091107.642561-1-hch@lst.de>
+Received: from smtp-out2.suse.de ([195.135.220.29]:42420 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236503AbiAXJLx (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jan 2022 04:11:53 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id BE5831F38F;
+        Mon, 24 Jan 2022 09:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1643015510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pclTjgWx5vU3/PoEZ8sdrQgqpdal8p/gNWrmseRwR/M=;
+        b=zvdxcU0TNbcrU6ysCWVa42iphoQkkHSCL1ZALnKgwFUEpomZ0gmbYwb7t4wgRG834fDJk3
+        TldzlVhRvp5Q0Q7TSA4BhBZTOsBIOkEmucSVYuel0N4J03gcH6SNKMJbaoL3XbF+3rvemi
+        nnRmFj4zqBjZ4D0aTHtJZc18PeG33F8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1643015510;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pclTjgWx5vU3/PoEZ8sdrQgqpdal8p/gNWrmseRwR/M=;
+        b=ZNGRDfh87zOEwMUThSLKEbE2fuuM1DuCPdIl7CiSkv+EQKkEV3BPW3Bwz4znO1g5A07wtz
+        kwSVYSus2mTNnQAQ==
+Received: from quack3.suse.cz (unknown [10.163.43.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id A42DCA3BDB;
+        Mon, 24 Jan 2022 09:11:50 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 44151A05E7; Mon, 24 Jan 2022 10:11:50 +0100 (CET)
+Date:   Mon, 24 Jan 2022 10:11:50 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
+        tytso@mit.edu, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCHv1 1/2] jbd2: Kill t_handle_lock transaction spinlock
+Message-ID: <20220124091150.4zwj4hxpego4zl6w@quack3.lan>
+References: <cover.1642953021.git.riteshh@linux.ibm.com>
+ <089b38635884e95cfd858c003630bdc8bd7f22b0.1642953021.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <089b38635884e95cfd858c003630bdc8bd7f22b0.1642953021.git.riteshh@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pass the block_device that we plan to use this bio for and the
-operation to bio_reset to optimize the assigment.  A NULL block_device
-can be passed, both for the passthrough case on a raw request_queue and
-to temporarily avoid refactoring some nasty code.
+On Sun 23-01-22 22:53:27, Ritesh Harjani wrote:
+> This patch kills t_handle_lock transaction spinlock completely from
+> jbd2.
+> To explain the reasoning, currently there were three sites at which this
+> spinlock was used.
+> 1. jbd2_journal_wait_updates()
+>    a. Based on careful code review it can be seen that, we don't need this
+>       lock here. This is since we wait for any currently ongoing updates
+>       based on a atomic variable t_updates. And we anyway don't take any
+>       t_handle_lock while in stop_this_handle().
+>       i.e.
+> 
+> 	write_lock(&journal->j_state_lock()
+> 	jbd2_journal_wait_updates() 			stop_this_handle()
+> 		while (atomic_read(txn->t_updates) { 		|
+> 		DEFINE_WAIT(wait); 				|
+> 		prepare_to_wait(); 				|
+> 		if (atomic_read(txn->t_updates) 		if (atomic_dec_and_test(txn->t_updates))
+> 			write_unlock(&journal->j_state_lock);
+> 			schedule();					wake_up()
+> 			write_lock(&journal->j_state_lock);
+> 		finish_wait();
+> 	   }
+> 	txn->t_state = T_COMMIT
+> 	write_unlock(&journal->j_state_lock);
+> 
+>    b.  Also note that between atomic_inc(&txn->t_updates) in
+>        start_this_handle() and jbd2_journal_wait_updates(), the
+>        synchronization happens via read_lock(journal->j_state_lock) in
+>        start_this_handle();
+> 
+> 2. jbd2_journal_extend()
+>    a. jbd2_journal_extend() is called with the handle of each process from
+>       task_struct. So no lock required in updating member fields of handle_t
+> 
+>    b. For member fields of h_transaction, all updates happens only via
+>       atomic APIs (which is also within read_lock()).
+>       So, no need of this transaction spinlock.
+> 
+> 3. update_t_max_wait()
+>    Based on Jan suggestion, this can be carefully removed using atomic
+>    cmpxchg API.
+>    Note that there can be several processes which are waiting for a new
+>    transaction to be allocated and started. For doing this only one
+>    process will succeed in taking write_lock() and allocating a new txn.
+>    After that all of the process will be updating the t_max_wait (max
+>    transaction wait time). This can be done via below method w/o taking
+>    any locks using atomic cmpxchg.
+>    For more details refer [1]
+> 
+> 	   new = get_new_val();
+> 	   old = READ_ONCE(ptr->max_val);
+> 	   while (old < new)
+> 		old = cmpxchg(&ptr->max_val, old, new);
+> 
+> [1]: https://lwn.net/Articles/849237/
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
----
- block/bio.c                 |  6 +++++-
- drivers/block/pktcdvd.c     |  8 ++------
- drivers/md/bcache/journal.c | 12 ++++--------
- drivers/md/bcache/request.c |  4 ++--
- drivers/md/raid1.c          |  5 ++---
- drivers/md/raid10.c         |  8 +++-----
- drivers/md/raid5-cache.c    |  9 +++------
- drivers/md/raid5.c          |  8 ++++----
- fs/btrfs/disk-io.c          |  4 +---
- fs/crypto/bio.c             |  8 ++------
- include/linux/bio.h         |  9 +--------
- 11 files changed, 29 insertions(+), 52 deletions(-)
+Looks good. Feel free to add:
 
-diff --git a/block/bio.c b/block/bio.c
-index b2133d86e885e..03cefe81950f2 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -295,6 +295,8 @@ EXPORT_SYMBOL(bio_init);
- /**
-  * bio_reset - reinitialize a bio
-  * @bio:	bio to reset
-+ * @bdev:	block device to use the bio for
-+ * @opf:	operation and flags for bio
-  *
-  * Description:
-  *   After calling bio_reset(), @bio will be in the same state as a freshly
-@@ -302,11 +304,13 @@ EXPORT_SYMBOL(bio_init);
-  *   preserved are the ones that are initialized by bio_alloc_bioset(). See
-  *   comment in struct bio.
-  */
--void bio_reset(struct bio *bio)
-+void bio_reset(struct bio *bio, struct block_device *bdev, unsigned int opf)
- {
- 	bio_uninit(bio);
- 	memset(bio, 0, BIO_RESET_BYTES);
- 	atomic_set(&bio->__bi_remaining, 1);
-+	bio->bi_bdev = bdev;
-+	bio->bi_opf = opf;
- }
- EXPORT_SYMBOL(bio_reset);
- 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 2b6b70a39e760..3aa5954429462 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -1020,9 +1020,8 @@ static void pkt_gather_data(struct pktcdvd_device *pd, struct packet_data *pkt)
- 			continue;
- 
- 		bio = pkt->r_bios[f];
--		bio_reset(bio);
-+		bio_reset(bio, pd->bdev, REQ_OP_READ);
- 		bio->bi_iter.bi_sector = pkt->sector + f * (CD_FRAMESIZE >> 9);
--		bio_set_dev(bio, pd->bdev);
- 		bio->bi_end_io = pkt_end_io_read;
- 		bio->bi_private = pkt;
- 
-@@ -1034,7 +1033,6 @@ static void pkt_gather_data(struct pktcdvd_device *pd, struct packet_data *pkt)
- 			BUG();
- 
- 		atomic_inc(&pkt->io_wait);
--		bio_set_op_attrs(bio, REQ_OP_READ, 0);
- 		pkt_queue_bio(pd, bio);
- 		frames_read++;
- 	}
-@@ -1235,9 +1233,8 @@ static void pkt_start_write(struct pktcdvd_device *pd, struct packet_data *pkt)
- {
- 	int f;
- 
--	bio_reset(pkt->w_bio);
-+	bio_reset(pkt->w_bio, pd->bdev, REQ_OP_WRITE);
- 	pkt->w_bio->bi_iter.bi_sector = pkt->sector;
--	bio_set_dev(pkt->w_bio, pd->bdev);
- 	pkt->w_bio->bi_end_io = pkt_end_io_packet_write;
- 	pkt->w_bio->bi_private = pkt;
- 
-@@ -1270,7 +1267,6 @@ static void pkt_start_write(struct pktcdvd_device *pd, struct packet_data *pkt)
- 
- 	/* Start the write request */
- 	atomic_set(&pkt->io_wait, 1);
--	bio_set_op_attrs(pkt->w_bio, REQ_OP_WRITE, 0);
- 	pkt_queue_bio(pd, pkt->w_bio);
- }
- 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 6d26c5b06e2b6..7c2ca52ca3e43 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -53,14 +53,12 @@ static int journal_read_bucket(struct cache *ca, struct list_head *list,
- reread:		left = ca->sb.bucket_size - offset;
- 		len = min_t(unsigned int, left, PAGE_SECTORS << JSET_BITS);
- 
--		bio_reset(bio);
-+		bio_reset(bio, ca->bdev, REQ_OP_READ);
- 		bio->bi_iter.bi_sector	= bucket + offset;
--		bio_set_dev(bio, ca->bdev);
- 		bio->bi_iter.bi_size	= len << 9;
- 
- 		bio->bi_end_io	= journal_read_endio;
- 		bio->bi_private = &cl;
--		bio_set_op_attrs(bio, REQ_OP_READ, 0);
- 		bch_bio_map(bio, data);
- 
- 		closure_bio_submit(ca->set, bio, &cl);
-@@ -771,16 +769,14 @@ static void journal_write_unlocked(struct closure *cl)
- 
- 		atomic_long_add(sectors, &ca->meta_sectors_written);
- 
--		bio_reset(bio);
-+		bio_reset(bio, ca->bdev, REQ_OP_WRITE | 
-+			  REQ_SYNC | REQ_META | REQ_PREFLUSH | REQ_FUA);
-+		bch_bio_map(bio, w->data);
- 		bio->bi_iter.bi_sector	= PTR_OFFSET(k, i);
--		bio_set_dev(bio, ca->bdev);
- 		bio->bi_iter.bi_size = sectors << 9;
- 
- 		bio->bi_end_io	= journal_write_endio;
- 		bio->bi_private = w;
--		bio_set_op_attrs(bio, REQ_OP_WRITE,
--				 REQ_SYNC|REQ_META|REQ_PREFLUSH|REQ_FUA);
--		bch_bio_map(bio, w->data);
- 
- 		trace_bcache_journal_write(bio, w->data->keys);
- 		bio_list_add(&list, bio);
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index d4b98ebffd948..7ba59d08ed870 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -831,11 +831,11 @@ static void cached_dev_read_done(struct closure *cl)
- 	 */
- 
- 	if (s->iop.bio) {
--		bio_reset(s->iop.bio);
-+		bio_reset(s->iop.bio, s->cache_miss->bi_bdev, REQ_OP_READ);
- 		s->iop.bio->bi_iter.bi_sector =
- 			s->cache_miss->bi_iter.bi_sector;
--		bio_copy_dev(s->iop.bio, s->cache_miss);
- 		s->iop.bio->bi_iter.bi_size = s->insert_bio_sectors << 9;
-+		bio_clone_blkg_association(s->iop.bio, s->cache_miss);
- 		bch_bio_map(s->iop.bio, NULL);
- 
- 		bio_copy_data(s->cache_miss, s->iop.bio);
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 43276f8fdc815..e7710fb5befb4 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2166,11 +2166,10 @@ static void process_checks(struct r1bio *r1_bio)
- 			continue;
- 		/* fixup the bio for reuse, but preserve errno */
- 		status = b->bi_status;
--		bio_reset(b);
-+		bio_reset(b, conf->mirrors[i].rdev->bdev, REQ_OP_READ);
- 		b->bi_status = status;
- 		b->bi_iter.bi_sector = r1_bio->sector +
- 			conf->mirrors[i].rdev->data_offset;
--		bio_set_dev(b, conf->mirrors[i].rdev->bdev);
- 		b->bi_end_io = end_sync_read;
- 		rp->raid_bio = r1_bio;
- 		b->bi_private = rp;
-@@ -2651,7 +2650,7 @@ static struct r1bio *raid1_alloc_init_r1buf(struct r1conf *conf)
- 	for (i = conf->poolinfo->raid_disks; i--; ) {
- 		bio = r1bio->bios[i];
- 		rps = bio->bi_private;
--		bio_reset(bio);
-+		bio_reset(bio, NULL, 0);
- 		bio->bi_private = rps;
- 	}
- 	r1bio->master_bio = NULL;
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index cb7c58050708e..da07bcbc06d08 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -2422,7 +2422,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 		 * bi_vecs, as the read request might have corrupted these
- 		 */
- 		rp = get_resync_pages(tbio);
--		bio_reset(tbio);
-+		bio_reset(tbio, conf->mirrors[d].rdev->bdev, REQ_OP_WRITE);
- 
- 		md_bio_reset_resync_pages(tbio, rp, fbio->bi_iter.bi_size);
- 
-@@ -2430,7 +2430,6 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 		tbio->bi_private = rp;
- 		tbio->bi_iter.bi_sector = r10_bio->devs[i].addr;
- 		tbio->bi_end_io = end_sync_write;
--		bio_set_op_attrs(tbio, REQ_OP_WRITE, 0);
- 
- 		bio_copy_data(tbio, fbio);
- 
-@@ -2441,7 +2440,6 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
- 		if (test_bit(FailFast, &conf->mirrors[d].rdev->flags))
- 			tbio->bi_opf |= MD_FAILFAST;
- 		tbio->bi_iter.bi_sector += conf->mirrors[d].rdev->data_offset;
--		bio_set_dev(tbio, conf->mirrors[d].rdev->bdev);
- 		submit_bio_noacct(tbio);
- 	}
- 
-@@ -3160,12 +3158,12 @@ static struct r10bio *raid10_alloc_init_r10buf(struct r10conf *conf)
- 	for (i = 0; i < nalloc; i++) {
- 		bio = r10bio->devs[i].bio;
- 		rp = bio->bi_private;
--		bio_reset(bio);
-+		bio_reset(bio, NULL, 0);
- 		bio->bi_private = rp;
- 		bio = r10bio->devs[i].repl_bio;
- 		if (bio) {
- 			rp = bio->bi_private;
--			bio_reset(bio);
-+			bio_reset(bio, NULL, 0);
- 			bio->bi_private = rp;
- 		}
- 	}
-diff --git a/drivers/md/raid5-cache.c b/drivers/md/raid5-cache.c
-index 98b9ca11c28d8..86e2bb89d9c7b 100644
---- a/drivers/md/raid5-cache.c
-+++ b/drivers/md/raid5-cache.c
-@@ -1301,10 +1301,9 @@ void r5l_flush_stripe_to_raid(struct r5l_log *log)
- 
- 	if (!do_flush)
- 		return;
--	bio_reset(&log->flush_bio);
--	bio_set_dev(&log->flush_bio, log->rdev->bdev);
-+	bio_reset(&log->flush_bio, log->rdev->bdev,
-+		  REQ_OP_WRITE | REQ_PREFLUSH);
- 	log->flush_bio.bi_end_io = r5l_log_flush_endio;
--	log->flush_bio.bi_opf = REQ_OP_WRITE | REQ_PREFLUSH;
- 	submit_bio(&log->flush_bio);
- }
- 
-@@ -1678,9 +1677,7 @@ static int r5l_recovery_fetch_ra_pool(struct r5l_log *log,
- 				      struct r5l_recovery_ctx *ctx,
- 				      sector_t offset)
- {
--	bio_reset(ctx->ra_bio);
--	bio_set_dev(ctx->ra_bio, log->rdev->bdev);
--	bio_set_op_attrs(ctx->ra_bio, REQ_OP_READ, 0);
-+	bio_reset(ctx->ra_bio, log->rdev->bdev, REQ_OP_READ);
- 	ctx->ra_bio->bi_iter.bi_sector = log->rdev->data_offset + offset;
- 
- 	ctx->valid_pages = 0;
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index a9dcc5bc9c329..7c119208a2143 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -2677,7 +2677,7 @@ static void raid5_end_read_request(struct bio * bi)
- 		(unsigned long long)sh->sector, i, atomic_read(&sh->count),
- 		bi->bi_status);
- 	if (i == disks) {
--		bio_reset(bi);
-+		bio_reset(bi, NULL, 0);
- 		BUG();
- 		return;
- 	}
-@@ -2785,7 +2785,7 @@ static void raid5_end_read_request(struct bio * bi)
- 		}
- 	}
- 	rdev_dec_pending(rdev, conf->mddev);
--	bio_reset(bi);
-+	bio_reset(bi, NULL, 0);
- 	clear_bit(R5_LOCKED, &sh->dev[i].flags);
- 	set_bit(STRIPE_HANDLE, &sh->state);
- 	raid5_release_stripe(sh);
-@@ -2823,7 +2823,7 @@ static void raid5_end_write_request(struct bio *bi)
- 		(unsigned long long)sh->sector, i, atomic_read(&sh->count),
- 		bi->bi_status);
- 	if (i == disks) {
--		bio_reset(bi);
-+		bio_reset(bi, NULL, 0);
- 		BUG();
- 		return;
- 	}
-@@ -2860,7 +2860,7 @@ static void raid5_end_write_request(struct bio *bi)
- 	if (sh->batch_head && bi->bi_status && !replacement)
- 		set_bit(STRIPE_BATCH_ERR, &sh->batch_head->state);
- 
--	bio_reset(bi);
-+	bio_reset(bi, NULL, 0);
- 	if (!test_and_clear_bit(R5_DOUBLE_LOCKED, &sh->dev[i].flags))
- 		clear_bit(R5_LOCKED, &sh->dev[i].flags);
- 	set_bit(STRIPE_HANDLE, &sh->state);
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index f45aa506f9a6f..505ba21230b1f 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -4154,10 +4154,8 @@ static void write_dev_flush(struct btrfs_device *device)
- 		return;
- #endif
- 
--	bio_reset(bio);
-+	bio_reset(bio, device->bdev, REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH);
- 	bio->bi_end_io = btrfs_end_empty_barrier;
--	bio_set_dev(bio, device->bdev);
--	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
- 	init_completion(&device->flush_wait);
- 	bio->bi_private = &device->flush_wait;
- 
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index 755e985a42e0b..2217fe5ece6f9 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -80,9 +80,7 @@ static int fscrypt_zeroout_range_inline_crypt(const struct inode *inode,
- 			err = submit_bio_wait(bio);
- 			if (err)
- 				goto out;
--			bio_reset(bio);
--			bio_set_dev(bio, inode->i_sb->s_bdev);
--			bio->bi_opf = REQ_OP_WRITE;
-+			bio_reset(bio, inode->i_sb->s_bdev, REQ_OP_WRITE);
- 			num_pages = 0;
- 		}
- 	}
-@@ -181,9 +179,7 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 		err = submit_bio_wait(bio);
- 		if (err)
- 			goto out;
--		bio_reset(bio);
--		bio_set_dev(bio, inode->i_sb->s_bdev);
--		bio->bi_opf = REQ_OP_WRITE;
-+		bio_reset(bio, inode->i_sb->s_bdev, REQ_OP_WRITE);
- 	} while (len != 0);
- 	err = 0;
- out:
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 41bedf727f59c..18cfe5bb41ea8 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -459,7 +459,7 @@ extern int submit_bio_wait(struct bio *bio);
- void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
- 	      unsigned short max_vecs, unsigned int opf);
- extern void bio_uninit(struct bio *);
--extern void bio_reset(struct bio *);
-+void bio_reset(struct bio *bio, struct block_device *bdev, unsigned int opf);
- void bio_chain(struct bio *, struct bio *);
- 
- int bio_add_page(struct bio *, struct page *, unsigned len, unsigned off);
-@@ -517,13 +517,6 @@ static inline void bio_set_dev(struct bio *bio, struct block_device *bdev)
- 	bio_associate_blkg(bio);
- }
- 
--static inline void bio_copy_dev(struct bio *dst, struct bio *src)
--{
--	bio_clear_flag(dst, BIO_REMAPPED);
--	dst->bi_bdev = src->bi_bdev;
--	bio_clone_blkg_association(dst, src);
--}
--
- /*
-  * BIO list management for use by remapping drivers (e.g. DM or MD) and loop.
-  *
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/jbd2/transaction.c | 29 +++++++++--------------------
+>  include/linux/jbd2.h  |  3 ---
+>  2 files changed, 9 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+> index 8e2f8275a253..68dd7de49aff 100644
+> --- a/fs/jbd2/transaction.c
+> +++ b/fs/jbd2/transaction.c
+> @@ -107,7 +107,6 @@ static void jbd2_get_transaction(journal_t *journal,
+>  	transaction->t_start_time = ktime_get();
+>  	transaction->t_tid = journal->j_transaction_sequence++;
+>  	transaction->t_expires = jiffies + journal->j_commit_interval;
+> -	spin_lock_init(&transaction->t_handle_lock);
+>  	atomic_set(&transaction->t_updates, 0);
+>  	atomic_set(&transaction->t_outstanding_credits,
+>  		   jbd2_descriptor_blocks_per_trans(journal) +
+> @@ -139,24 +138,21 @@ static void jbd2_get_transaction(journal_t *journal,
+>  /*
+>   * Update transaction's maximum wait time, if debugging is enabled.
+>   *
+> - * In order for t_max_wait to be reliable, it must be protected by a
+> - * lock.  But doing so will mean that start_this_handle() can not be
+> - * run in parallel on SMP systems, which limits our scalability.  So
+> - * unless debugging is enabled, we no longer update t_max_wait, which
+> - * means that maximum wait time reported by the jbd2_run_stats
+> - * tracepoint will always be zero.
+> + * t_max_wait is carefully updated here with use of atomic compare exchange.
+> + * Note that there could be multiplre threads trying to do this simultaneously
+> + * hence using cmpxchg to avoid any use of locks in this case.
+>   */
+>  static inline void update_t_max_wait(transaction_t *transaction,
+>  				     unsigned long ts)
+>  {
+>  #ifdef CONFIG_JBD2_DEBUG
+> +	unsigned long oldts, newts;
+>  	if (jbd2_journal_enable_debug &&
+>  	    time_after(transaction->t_start, ts)) {
+> -		ts = jbd2_time_diff(ts, transaction->t_start);
+> -		spin_lock(&transaction->t_handle_lock);
+> -		if (ts > transaction->t_max_wait)
+> -			transaction->t_max_wait = ts;
+> -		spin_unlock(&transaction->t_handle_lock);
+> +		newts = jbd2_time_diff(ts, transaction->t_start);
+> +		oldts = READ_ONCE(transaction->t_max_wait);
+> +		while (oldts < newts)
+> +			oldts = cmpxchg(&transaction->t_max_wait, oldts, newts);
+>  	}
+>  #endif
+>  }
+> @@ -690,7 +686,6 @@ int jbd2_journal_extend(handle_t *handle, int nblocks, int revoke_records)
+>  		DIV_ROUND_UP(
+>  			handle->h_revoke_credits_requested,
+>  			journal->j_revoke_records_per_block);
+> -	spin_lock(&transaction->t_handle_lock);
+>  	wanted = atomic_add_return(nblocks,
+>  				   &transaction->t_outstanding_credits);
+> 
+> @@ -698,7 +693,7 @@ int jbd2_journal_extend(handle_t *handle, int nblocks, int revoke_records)
+>  		jbd_debug(3, "denied handle %p %d blocks: "
+>  			  "transaction too large\n", handle, nblocks);
+>  		atomic_sub(nblocks, &transaction->t_outstanding_credits);
+> -		goto unlock;
+> +		goto error_out;
+>  	}
+> 
+>  	trace_jbd2_handle_extend(journal->j_fs_dev->bd_dev,
+> @@ -714,8 +709,6 @@ int jbd2_journal_extend(handle_t *handle, int nblocks, int revoke_records)
+>  	result = 0;
+> 
+>  	jbd_debug(3, "extended handle %p by %d\n", handle, nblocks);
+> -unlock:
+> -	spin_unlock(&transaction->t_handle_lock);
+>  error_out:
+>  	read_unlock(&journal->j_state_lock);
+>  	return result;
+> @@ -847,22 +840,18 @@ void jbd2_journal_wait_updates(journal_t *journal)
+>  	if (!commit_transaction)
+>  		return;
+> 
+> -	spin_lock(&commit_transaction->t_handle_lock);
+>  	while (atomic_read(&commit_transaction->t_updates)) {
+>  		DEFINE_WAIT(wait);
+> 
+>  		prepare_to_wait(&journal->j_wait_updates, &wait,
+>  					TASK_UNINTERRUPTIBLE);
+>  		if (atomic_read(&commit_transaction->t_updates)) {
+> -			spin_unlock(&commit_transaction->t_handle_lock);
+>  			write_unlock(&journal->j_state_lock);
+>  			schedule();
+>  			write_lock(&journal->j_state_lock);
+> -			spin_lock(&commit_transaction->t_handle_lock);
+>  		}
+>  		finish_wait(&journal->j_wait_updates, &wait);
+>  	}
+> -	spin_unlock(&commit_transaction->t_handle_lock);
+>  }
+> 
+>  /**
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 575c3057a98a..500a95f8c914 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -554,9 +554,6 @@ struct transaction_chp_stats_s {
+>   *    ->j_list_lock
+>   *
+>   *    j_state_lock
+> - *    ->t_handle_lock
+> - *
+> - *    j_state_lock
+>   *    ->j_list_lock			(journal_unmap_buffer)
+>   *
+>   */
+> --
+> 2.31.1
+> 
 -- 
-2.30.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
