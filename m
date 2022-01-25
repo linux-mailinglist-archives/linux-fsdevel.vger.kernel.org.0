@@ -2,96 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D2D49AA99
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 05:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F0C49AA9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 05:40:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S3408501AbiAYDmi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jan 2022 22:42:38 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:34370 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446100AbiAXVGt (ORCPT
+        id S1323506AbiAYDmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jan 2022 22:42:46 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:47296 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S3415983AbiAYBxq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jan 2022 16:06:49 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 0C9592113D;
-        Mon, 24 Jan 2022 21:06:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1643058400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VfraP3cKwJmMtP30lWjzLJdmL2hZ6cElHw/0YTj4oOo=;
-        b=rWqZLIv+3v+DLIDwvdk769j49PdKC25yGeqwLnjD1sku+u/0SNsawU7aCTTMpGDkVe6gy/
-        mauke740eLAPvJItfmYrWhCyIk9kr1NAee4djfRqfBn0GD9qwctrECPdrOcR/1SU3lsYPe
-        rZdi7OjifrRWQ5kKxCtBwC+HKQ/Ti2g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1643058400;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VfraP3cKwJmMtP30lWjzLJdmL2hZ6cElHw/0YTj4oOo=;
-        b=3mIQCl6QzPrG05KFYhh1ArbsGq0Z+7Q1c5dEwvVO/ZhJfiJjp48e8/xZfHg5e4RWBUu+60
-        5UWCRwOdQTfnM4Bw==
-Received: from quack3.suse.cz (unknown [10.163.43.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id F3541A3B85;
-        Mon, 24 Jan 2022 21:06:39 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id AD513A05D7; Mon, 24 Jan 2022 22:06:36 +0100 (CET)
-Date:   Mon, 24 Jan 2022 22:06:36 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: RFA (Request for Advice): block/bio: get_user_pages() -->
- pin_user_pages()
-Message-ID: <20220124210636.7nfx2qcsc66jvuki@quack3.lan>
-References: <e83cd4fe-8606-f4de-41ad-33a40f251648@nvidia.com>
- <20220124100501.gwkaoohkm2b6h7xl@quack3.lan>
- <cde9acbb-ba1f-16ba-40a8-a5b4fdf2d2dc@nvidia.com>
- <20220124121903.fono7exjgqi22ify@quack3.lan>
- <bdc63efb-5f5f-73ee-5785-ea28c576c52a@nvidia.com>
+        Mon, 24 Jan 2022 20:53:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0V2o6oRt_1643075619;
+Received: from 30.225.24.84(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V2o6oRt_1643075619)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 25 Jan 2022 09:53:40 +0800
+Message-ID: <bbb32b23-b32a-cc6f-c85b-7ccf2aa8b8bc@linux.alibaba.com>
+Date:   Tue, 25 Jan 2022 09:53:39 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bdc63efb-5f5f-73ee-5785-ea28c576c52a@nvidia.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.2
+Subject: Re: [PATCH v2 00/20] fscache,erofs: fscache-based demand-read
+ semantics
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, xiang@kernel.org, chao@kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org
+References: <20220118131216.85338-1-jefflexu@linux.alibaba.com>
+ <2351231.1643044980@warthog.procyon.org.uk>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <2351231.1643044980@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 24-01-22 11:34:25, John Hubbard wrote:
-> On 1/24/22 04:19, Jan Kara wrote:
-> > > address for each ZERO_PAGE() (unless I'm totally wrong here) and
-> > > using this check you can distinguish between ZERO_PAGE() and
-> > > non ZERO_PAGE() on the bio list in bio_release_pages().
-> > 
-> > Well, that is another option but it seems a bit ugly and also on some
-> > architectures (e.g. s390 AFAICS) there can be multiple zero pages (due to
-> > coloring) so the test for zero page is not completely trivial (probably we
-> > would have to grow some is_zero_page() checking function implemented
-> > separately for each arch).
+
+
+On 1/25/22 1:23 AM, David Howells wrote:
+> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
 > 
-> Good point. And adding an is_zero_page() function would also make some
-> of these invocations correct across all architectures:
+>> You could start a quick test by
+>> https://github.com/lostjeffle/demand-read-cachefilesd
+
+There is a quick test script in this repo in addition to the daemon
+(temporarily named with cachefilesd2).
+
 > 
->     is_zero_pfn(page_to_pfn(page))
+> Can you pull this up to v5.17-rc1 or my netfs-lib branch?
 > 
-> ...so it would also be a fix or at least an upgrade.
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-lib
 
-As I'm checking the is_zero_pfn() implementation, it should be working as it
-should for all architectures. I just forgot we already have a function for
-this.
+While this kernel patch set is basically rebased to v5.17-rc1, rather
+than netfs-lib branch. I can see there's quite many refactoring for
+netfs lib in netfs-lib branch.
 
-> I had also wondered why there is no is_zero_page() wrapper function for
-> the above invocation. Maybe because there are only four call sites and
-> no one saw it as worthwhile yet.
 
-Yeah, perhaps.
+> 
+> I'll do my best to have a look at it tomorrow.
+> 
 
-								Honza
+Thanks a lot.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Jeffle
