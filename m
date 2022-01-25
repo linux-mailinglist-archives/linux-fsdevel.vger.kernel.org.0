@@ -2,189 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A58649BE3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 23:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0AA649BE51
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 23:18:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233552AbiAYWLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jan 2022 17:11:48 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60182 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbiAYWLq (ORCPT
+        id S233654AbiAYWSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jan 2022 17:18:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33032 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233633AbiAYWSP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jan 2022 17:11:46 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id EF8EA1F4466C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1643148705;
-        bh=haA1xD8icyCw96+5lD3ONdPtel9Z0YzFWe4Lj84edoI=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=gGWC8WrnglbRpa2lZ+JF+2BhOaLozx2WUUs7LujBWqzFnzm8vDFAwONl+shJ5/L6R
-         Oh/TxTJhaFGHPHpEcuVFy3TGWyEt1MabgjXbczKy+mM0KaCE7DeZbQeMbm/+E0NTuE
-         FxQffYo2xpJQscg8oyATSEguoAUZFv4I44UE2d3nTGVP1j+z122Z1YF5Cx8tL0u+jv
-         PxlZ8EFDtRPu56J4dmsPYwOFbEYldyCtYJZKYKdrJUtrQqjUxPGqkbecpn7XuiXlT1
-         3GfiUFSoslDNsLDssgT9AQUg0DSQ9enYp0dfEClpYxOmlOXSC/u7vuZKeDWc0fUiUW
-         4NAJhDqmehRag==
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        linux-kbuild@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Michal Simek <monstr@monstr.eu>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: unify cmd_copy and cmd_shipped
-Organization: Collabora
-References: <20220125064027.873131-1-masahiroy@kernel.org>
-        <CAKwvOdm=-x1EP_xu2V_OZNdPid=gacVzCTx+=uSYqzCv+1Rbfw@mail.gmail.com>
-Date:   Tue, 25 Jan 2022 17:11:41 -0500
-In-Reply-To: <CAKwvOdm=-x1EP_xu2V_OZNdPid=gacVzCTx+=uSYqzCv+1Rbfw@mail.gmail.com>
-        (Nick Desaulniers's message of "Tue, 25 Jan 2022 13:04:56 -0800")
-Message-ID: <87h79rsbxe.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 25 Jan 2022 17:18:15 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8FDBC06173B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jan 2022 14:18:14 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id m4so34042695ejb.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jan 2022 14:18:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wFxRjQblzuQxMmeuxhqTt69j7JKM+h2YKSCx/fgMhRQ=;
+        b=yy0IFEhuQcD3FvuWwa8wDXGhtUxNSAx66MnZHZbzCNhecpc5I8xOnUPy1+QODPd3Hk
+         pcTAwgfPh2h9MgMpZPC2DpBrI7X0acnAeLs2rnetyF6+0SkWFrSNvygFTwvkpDvcNm6w
+         21Wc/8rlhh71ko/itJqW2AGvK8cYvL7s/7UifnG29xGSNFI8rxsnZErm+P4nfT0PHO3Q
+         xfIYOMB9zGBcqAWfPG2b4c1aYctpkjeSZql1+H1YKXBPDirfysT2c7s0i6cmXbdTvnxE
+         fQ5/90JxAP1yz9/PVgd7b/Scqb4i2/a2o4YiJx43MejbjngUUsh10KSvyozYmqv4tpxg
+         IBbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wFxRjQblzuQxMmeuxhqTt69j7JKM+h2YKSCx/fgMhRQ=;
+        b=fkXz0cyLIE6RYkyAM7OxhzfKXN9HzYlDovx4DsS+2Eh1QaxvEDS14mFPHn7zYn5Lrh
+         xCs+IsMCP/faO5HMg3yxaW2/YW7yHb2fjqD8CnECm7EjlEhZhgAfuyD6zkBsc5iz5rRu
+         F0I6kWwGRJua9tGEzUNtj/4LHQBX/dm1oJDWZX8fQ1huxtBHNCIHPXx+qmC/ARciVSaj
+         BMoZMN9w0cqoWytQiE0WvGfhdhZf0mha5EuI0I4OcePzH6EfroCPkHpTdiyi1V52ENTL
+         3mz2IiBwHLbXb46bBmP1Z5s0AEHJ6b5ZZUFNf1pMCHIYziCTeQQCyCCouA/d2io07xMS
+         jcsg==
+X-Gm-Message-State: AOAM530gwoc1ZsTLi3SkWJ8zT/XWZR+QX4KdCmjmo/AQJq8NS/GPQJCA
+        TVtp9JED6u+ITgbpW4DSsZZFFC8muaXQ+TSPnuk3
+X-Google-Smtp-Source: ABdhPJwrpIOZzAr+bseCxchlMSHEMYAimpBHm2qxGfEpHUACZ+FAiH4QA8BYe2CAjY20qlmr+ZzZ3BXkhD4a14WIxdo=
+X-Received: by 2002:a17:907:968d:: with SMTP id hd13mr8727837ejc.12.1643149093133;
+ Tue, 25 Jan 2022 14:18:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
+ <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein>
+ <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
+In-Reply-To: <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 25 Jan 2022 17:18:02 -0500
+Message-ID: <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
+Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Nick Desaulniers <ndesaulniers@google.com> writes:
-
-> On Mon, Jan 24, 2022 at 10:41 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->>
->> cmd_copy and cmd_shipped have similar functionality. The difference is
->> that cmd_copy uses 'cp' while cmd_shipped 'cat'.
->>
->> Unify them into cmd_copy because this macro name is more intuitive.
->>
->> Going forward, cmd_copy will use 'cat' to avoid the permission issue.
->> I also thought of 'cp --no-preserve=mode' but this option is not
->> mentioned in the POSIX spec [1], so I am keeping the 'cat' command.
->>
->> [1]: https://pubs.opengroup.org/onlinepubs/009695299/utilities/cp.html
->> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->> ---
->>
->>  arch/microblaze/boot/Makefile     |  2 +-
->>  arch/microblaze/boot/dts/Makefile |  2 +-
->>  fs/unicode/Makefile               |  2 +-
->>  scripts/Makefile.lib              | 12 ++++--------
->>  usr/Makefile                      |  4 ++--
->>  5 files changed, 9 insertions(+), 13 deletions(-)
->>
->> diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
->> index cff570a71946..2b42c370d574 100644
->> --- a/arch/microblaze/boot/Makefile
->> +++ b/arch/microblaze/boot/Makefile
->> @@ -29,7 +29,7 @@ $(obj)/simpleImage.$(DTB).ub: $(obj)/simpleImage.$(DTB) FORCE
->>         $(call if_changed,uimage)
->>
->>  $(obj)/simpleImage.$(DTB).unstrip: vmlinux FORCE
->> -       $(call if_changed,shipped)
->> +       $(call if_changed,copy)
->>
->>  $(obj)/simpleImage.$(DTB).strip: vmlinux FORCE
->>         $(call if_changed,strip)
->> diff --git a/arch/microblaze/boot/dts/Makefile b/arch/microblaze/boot/dts/Makefile
->> index ef00dd30d19a..b84e2cbb20ee 100644
->> --- a/arch/microblaze/boot/dts/Makefile
->> +++ b/arch/microblaze/boot/dts/Makefile
->> @@ -12,7 +12,7 @@ $(obj)/linked_dtb.o: $(obj)/system.dtb
->>  # Generate system.dtb from $(DTB).dtb
->>  ifneq ($(DTB),system)
->>  $(obj)/system.dtb: $(obj)/$(DTB).dtb
->> -       $(call if_changed,shipped)
->> +       $(call if_changed,copy)
->>  endif
->>  endif
->>
->> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
->> index 2f9d9188852b..74ae80fc3a36 100644
->> --- a/fs/unicode/Makefile
->> +++ b/fs/unicode/Makefile
->> @@ -31,7 +31,7 @@ $(obj)/utf8data.c: $(obj)/mkutf8data $(filter %.txt, $(cmd_utf8data)) FORCE
->>  else
->>
->>  $(obj)/utf8data.c: $(src)/utf8data.c_shipped FORCE
+On Tue, Oct 12, 2021 at 10:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 10/12/2021 3:32 AM, Christian Brauner wrote:
+> > On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
+> >> The usual LSM hook "bail on fail" scheme doesn't work for cases where
+> >> a security module may return an error code indicating that it does not
+> >> recognize an input.  In this particular case Smack sees a mount option
+> >> that it recognizes, and returns 0. A call to a BPF hook follows, which
+> >> returns -ENOPARAM, which confuses the caller because Smack has processed
+> >> its data.
+> >>
+> >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> > Thanks!
+> > Note, I think that we still have the SELinux issue we discussed in the
+> > other thread:
+> >
+> >       rc = selinux_add_opt(opt, param->string, &fc->security);
+> >       if (!rc) {
+> >               param->string = NULL;
+> >               rc = 1;
+> >       }
+> >
+> > SELinux returns 1 not the expected 0. Not sure if that got fixed or is
+> > queued-up for -next. In any case, this here seems correct independent of
+> > that:
 >
-> do we want to retitle the _shipped suffix for this file to _copy now, too?
-> fs/unicode/Makefile:11
-> fs/unicode/Makefile:33
-> fs/unicode/Makefile:34
-
-I think _copy doesn't convey the sense that this is distributed with the
-kernel tree, even though it is also generated from in-tree sources.
-Even if that is not the original sense of _shipped (is it?), it makes
-sense to me that way, but _copy doesn't.
-
-The patch looks good to me, though.
-
-Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-
+> The aforementioned SELinux change depends on this patch. As the SELinux
+> code is today it blocks the problem seen with Smack, but introduces a
+> different issue. It prevents the BPF hook from being called.
 >
-> Either way
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
->
->> -       $(call if_changed,shipped)
->> +       $(call if_changed,copy)
->>
->>  endif
->>
->> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
->> index 79be57fdd32a..40735a3adb54 100644
->> --- a/scripts/Makefile.lib
->> +++ b/scripts/Makefile.lib
->> @@ -246,20 +246,16 @@ $(foreach m, $(notdir $1), \
->>         $(addprefix $(obj)/, $(foreach s, $3, $($(m:%$(strip $2)=%$(s)))))))
->>  endef
->>
->> -quiet_cmd_copy = COPY    $@
->> -      cmd_copy = cp $< $@
->> -
->> -# Shipped files
->> +# Copy a file
->>  # ===========================================================================
->>  # 'cp' preserves permissions. If you use it to copy a file in read-only srctree,
->>  # the copy would be read-only as well, leading to an error when executing the
->>  # rule next time. Use 'cat' instead in order to generate a writable file.
->> -
->> -quiet_cmd_shipped = SHIPPED $@
->> -cmd_shipped = cat $< > $@
->> +quiet_cmd_copy = COPY    $@
->> +      cmd_copy = cat $< > $@
->>
->>  $(obj)/%: $(src)/%_shipped
->> -       $(call cmd,shipped)
->> +       $(call cmd,copy)
->>
->>  # Commands useful for building a boot image
->>  # ===========================================================================
->> diff --git a/usr/Makefile b/usr/Makefile
->> index cc0d2824e100..59d9e8b07a01 100644
->> --- a/usr/Makefile
->> +++ b/usr/Makefile
->> @@ -3,7 +3,7 @@
->>  # kbuild file for usr/ - including initramfs image
->>  #
->>
->> -compress-y                                     := shipped
->> +compress-y                                     := copy
->>  compress-$(CONFIG_INITRAMFS_COMPRESSION_GZIP)  := gzip
->>  compress-$(CONFIG_INITRAMFS_COMPRESSION_BZIP2) := bzip2
->>  compress-$(CONFIG_INITRAMFS_COMPRESSION_LZMA)  := lzma
->> @@ -37,7 +37,7 @@ endif
->>  # .cpio.*, use it directly as an initramfs, and avoid double compression.
->>  ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
->>  cpio-data := $(ramfs-input)
->> -compress-y := shipped
->> +compress-y := copy
->>  endif
->>
->>  endif
->> --
->> 2.32.0
->>
+> So the question becomes whether the SELinux change should be included
+> here, or done separately. Without the security_fs_context_parse_param()
+> change the selinux_fs_context_parse_param() change results in messy
+> failures for SELinux mounts.
+
+FWIW, this patch looks good to me, so:
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+... and with respect to the SELinux hook implementation returning 1 on
+success, I don't have a good answer and looking through my inbox I see
+David Howells hasn't responded either.  I see nothing in the original
+commit explaining why, so I'm going to say let's just change it to
+zero and be done with it; the good news is that if we do it now we've
+got almost a full cycle in linux-next to see what falls apart.  As far
+as the question of one vs two patches, it might be good to put both
+changes into a single patch just so that folks who do backports don't
+accidentally skip one and create a bad kernel build.  Casey, did you
+want to respin this patch or would you prefer me to submit another
+version?
+
+> > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> >
+> >>  security/security.c | 14 +++++++++++++-
+> >>  1 file changed, 13 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/security/security.c b/security/security.c
+> >> index 09533cbb7221..3cf0faaf1c5b 100644
+> >> --- a/security/security.c
+> >> +++ b/security/security.c
+> >> @@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
+> >>
+> >>  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> >>  {
+> >> -    return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
+> >> +    struct security_hook_list *hp;
+> >> +    int trc;
+> >> +    int rc = -ENOPARAM;
+> >> +
+> >> +    hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+> >> +                         list) {
+> >> +            trc = hp->hook.fs_context_parse_param(fc, param);
+> >> +            if (trc == 0)
+> >> +                    rc = 0;
+> >> +            else if (trc != -ENOPARAM)
+> >> +                    return trc;
+> >> +    }
+> >> +    return rc;
+> >>  }
 
 -- 
-Gabriel Krisman Bertazi
+paul-moore.com
