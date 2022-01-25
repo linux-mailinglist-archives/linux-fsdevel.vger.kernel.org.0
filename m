@@ -2,54 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B46B349B676
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 15:37:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C51649B6AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 15:45:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1578813AbiAYOf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jan 2022 09:35:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1578586AbiAYOU1 (ORCPT
+        id S1580072AbiAYOo1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jan 2022 09:44:27 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:49772 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1578687AbiAYOkY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jan 2022 09:20:27 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F86C061773;
-        Tue, 25 Jan 2022 06:20:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=7e6ehZ3tcjuLk/murL+vFWKBKotB6peub/2KlcTcXaM=; b=p8kQPCYsJkN/Hr0l7LW5uAzqWL
-        eMAQHkoahF4AkBAg3QkrVqCGW8X2TDrd6Y3qJwdOfrbRqKZoiYlBdaKZ1494n5vgljTLdv3sVLMdu
-        G24NkYi/vGjfffnzeVCL9P3vQ0VYNtef8sTCQn9F2ZfTa57QUxxjVIflUC+T+N3k72UtB0UiNaLoA
-        wEyaeYoBMy6q43lg/vniGuxIquC+BIp2CUzEt+dU5GK0e4JQrRGG3D3iXeaQaa4CqQZFhvaDpuNyz
-        dN24gfaiwDqLTs1xKpfwardTrO33U+zYvKVTTX05ztZD0uEKvyEsvaFbOg8alUP0Ezh/FvNybVElQ
-        2nDCv2Zw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nCMgH-002w0r-Fy; Tue, 25 Jan 2022 14:20:21 +0000
-Date:   Tue, 25 Jan 2022 14:20:21 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     smfrench@gmail.com, nspmangalore@gmail.com,
-        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/7] cifs: Transition from ->readpages() to
- ->readahead()
-Message-ID: <YfAHJcXeSsAE4uMB@casper.infradead.org>
-References: <164311902471.2806745.10187041199819525677.stgit@warthog.procyon.org.uk>
- <164311906472.2806745.605202239282432844.stgit@warthog.procyon.org.uk>
+        Tue, 25 Jan 2022 09:40:24 -0500
+Date:   Tue, 25 Jan 2022 15:40:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1643121620;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hxGcF+TkUWCt27KuFgM5m5QlNagJHxzQSviptRLlH2w=;
+        b=LZNFEhIRi0fUU/h2KoqXfbVDxx3MXBwyD4mxNSgd0hUn9FwwRdJjDTnUfhRMh2lbjtDZLU
+        hGgzFB+kfnfLv3YGvBiwQ9Lh7IsKBSrEMTDZnyR55hT3cEvLRxDhyscipMguiaaF7xVF6d
+        +Aymvy7rlXcyfOBJtCvWVn0bKDy87xOrvkkBwPuvHAGWSE4ZzNeq7qQOKlPik3WYFm9rWJ
+        QCaTXrNsbzm3RDANWX032IcDf7fjMZD+rTPI7GWBI0kRL1vz93bI0EXtb+cWAxsy/SlgyW
+        B2jSV6jxtCaibze4OyQPYN/N2WBN6KaptRtoLi75ZYur4ECYOiPc6uHksZ8wVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1643121620;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hxGcF+TkUWCt27KuFgM5m5QlNagJHxzQSviptRLlH2w=;
+        b=ort6qlgi6F9d5XwINlGptYZsqz6LKfWaZ1mJKpvlAQgHw4owSwIjg2HMO6PKK45URTYGbS
+        IzOG9VvScNcZ5yBw==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH REPOST] fs/namespace: Boost the mount_lock.lock owner
+ instead of spinning on PREEMPT_RT.
+Message-ID: <YfAL0tu5P3T8s3rx@linutronix.de>
+References: <20211125120711.dgbsienyrsxfzpoi@linutronix.de>
+ <20211126132414.aunpl5gfbju6ajtn@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <164311906472.2806745.605202239282432844.stgit@warthog.procyon.org.uk>
+In-Reply-To: <20211126132414.aunpl5gfbju6ajtn@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 01:57:44PM +0000, David Howells wrote:
-> +	while (readahead_count(ractl) - ractl->_batch_count) {
+On 2021-11-26 14:24:14 [+0100], Christian Brauner wrote:
+> I thought you'd carry this in -rt, Sebastian and Thomas. So I've picked
+> this up and moved this into -next as we want it there soon so it can sit
+> there for as long as possible. I'll drop it if Al objects to the patch
+> or prefers to carry it.
 
-You do understand that prefixing a structure member with an '_' means
-"Don't use this", right?  If I could get the compiler to prevent you, I
-would.
+It appears it missed -rc1. Did Al object to it or is this -rc2 material?
 
+> Christian
+
+Sebastian
