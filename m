@@ -2,162 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF33449ACB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 07:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE0849ACFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jan 2022 08:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376349AbiAYGuD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jan 2022 01:50:03 -0500
-Received: from condef-06.nifty.com ([202.248.20.71]:33271 "EHLO
-        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359242AbiAYGrc (ORCPT
+        id S1376603AbiAYHFu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jan 2022 02:05:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46240 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358879AbiAYHDr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jan 2022 01:47:32 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-06.nifty.com with ESMTP id 20P6iEZM015119;
-        Tue, 25 Jan 2022 15:44:14 +0900
-Received: from grover.. (133-32-232-101.west.xps.vectant.ne.jp [133.32.232.101]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id 20P6edB5010638;
-        Tue, 25 Jan 2022 15:40:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 20P6edB5010638
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1643092840;
-        bh=TbWmOZ8d8pmojx/2X1ZY7sbtSi55pkmlSEYND/PsdLs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fd45ghN/4u0yHPlNfIEPEQbWadJLXy6My9eYwb5hkMQOAr5/EX8O55veGpYffoeJR
-         a243oUcIPfsh1ePfwQ4oGv16fgh+uLzcKEzL519I+m7/q6rZXujjTiwnrhJTbdoNM/
-         swomFk9oywKkNuqyVHXuRfNpBGoEOxbSenpdJfQQ4k/xlv9IC7q8cfcJGDyGKI4NQV
-         q31BBUrEgEQiQKu5wPi0Q1Cy7pobGfKHrFF0QCyEAuE3pu0qpdHIo5d7t1GXtZoc1Y
-         1v5RmsJH3m8WtlQGxWiVjFq5x6KqOgRnFu/ZkYLeR8B5x4g4PrcR0Mb6UyBK0YBtkH
-         GVXq8wLSvUN/Q==
-X-Nifty-SrcIP: [133.32.232.101]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Michal Simek <monstr@monstr.eu>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: unify cmd_copy and cmd_shipped
-Date:   Tue, 25 Jan 2022 15:40:27 +0900
-Message-Id: <20220125064027.873131-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.32.0
+        Tue, 25 Jan 2022 02:03:47 -0500
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9CDAC02B757
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jan 2022 21:41:52 -0800 (PST)
+Received: by mail-yb1-xb2d.google.com with SMTP id 23so58322799ybf.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jan 2022 21:41:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=KeMi8W+p20zdR41YZoRj2EapY7imNsLYkAgQIQsIzqY=;
+        b=omchJdYJcVvbnbx3iWDsqNfzfvgFxRY5UV8d5JFHFd0Qxp4Fs99oOTWbnsLJvmkGLO
+         KJ9h0aIZipzZCxLYUC1EbKJQXjsTnrYD4skWPu5L6KEa7WwksJ/DgfAKn2I//FvNz16e
+         yvRSMjBJIkfJOiN7QosmIFzfX6t0OymUxXq/kzoldmt5Tk4SMXy3poAlzZfnj4tLqkCO
+         r1uVZjBjIcfKcTHUm4yIRwmNGijXGA0OAhFYRol/6hiAAZJ37V1K6a3bLM+XpGdFXGos
+         hPiIHyT9XSW8aiVFGjIdHRgRcnWLHkX21ZW87GvspRwlXlL9xuI6dXFZXWxBZnRTJWgA
+         Bk5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=KeMi8W+p20zdR41YZoRj2EapY7imNsLYkAgQIQsIzqY=;
+        b=0jiJ0XMQYNqk7QJGNHpEPYl8OrLcioMIsQbMpqDlwyohjCbLJ4sKSzvJYndnG4MALW
+         y9cpslmo5lthTHy/zYJSlSm8WaZ3bucwJKTi9oHmme8hU9o9Fh/sD5BViGPIgEjYhx2S
+         p2p7sxJjA9HZfLdqfcI1GaJODFnz2c1eB0/NuYj5BZdbg5+HCqj1vXpy3hycbFj7gvqM
+         P1HBNvfoe7WNYi6CopW9K3ztRvghRAK9EnAAFAcp+w8oIoHGJ1NVku9uCv6DSz0wBHR0
+         sCE22mDOQDs3jTtMd4r3/8JtI7/sT1GXXwjeNJqLq7c+UZkOB+IH3XhPDYamLuUrUAzd
+         UyfA==
+X-Gm-Message-State: AOAM531vq8GAnSx9kgZXrG3NIVSXH+hrqeqqYZVb5fyJt0BHD9gt2crq
+        bR4Kq8Zd9rsXU2l0I4brrbf/amUz4yHMf3Tn6nkuAw+3XnU=
+X-Google-Smtp-Source: ABdhPJwywiwyTtOCXfovmJIEM7Vqt+PFDzMW3tzxRj90P3fJDPhIlV2jOd/vI9WPw47eCab8Z7S4n4qldrLRD5Ly+Sc=
+X-Received: by 2002:a25:d783:: with SMTP id o125mr27594671ybg.710.1643089301256;
+ Mon, 24 Jan 2022 21:41:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:7000:ad9d:0:0:0:0 with HTTP; Mon, 24 Jan 2022 21:41:40
+ -0800 (PST)
+Reply-To: danielseyba@yahoo.com
+From:   Seyba Daniel <mrssuzaramaling19@gmail.com>
+Date:   Tue, 25 Jan 2022 06:41:40 +0100
+Message-ID: <CAKN-9XgQjuMspSnu-F01fv+Bgr6eZEygpsR3pZ-5cF=m78av-Q@mail.gmail.com>
+Subject: Hello,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cmd_copy and cmd_shipped have similar functionality. The difference is
-that cmd_copy uses 'cp' while cmd_shipped 'cat'.
+Hello,
 
-Unify them into cmd_copy because this macro name is more intuitive.
+I am so sorry contacting you in this means especially when we have never
+met before. I urgently seek your service to represent me in investing in
+your region / country and you will be rewarded for your service without
+affecting your present job with very little time invested in it.
 
-Going forward, cmd_copy will use 'cat' to avoid the permission issue.
-I also thought of 'cp --no-preserve=mode' but this option is not
-mentioned in the POSIX spec [1], so I am keeping the 'cat' command.
+My interest is in buying real estate, private schools or companies with
+potentials for rapid growth in long terms.
 
-[1]: https://pubs.opengroup.org/onlinepubs/009695299/utilities/cp.html
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+So please confirm interest by responding back.
 
- arch/microblaze/boot/Makefile     |  2 +-
- arch/microblaze/boot/dts/Makefile |  2 +-
- fs/unicode/Makefile               |  2 +-
- scripts/Makefile.lib              | 12 ++++--------
- usr/Makefile                      |  4 ++--
- 5 files changed, 9 insertions(+), 13 deletions(-)
+My dearest regards
 
-diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
-index cff570a71946..2b42c370d574 100644
---- a/arch/microblaze/boot/Makefile
-+++ b/arch/microblaze/boot/Makefile
-@@ -29,7 +29,7 @@ $(obj)/simpleImage.$(DTB).ub: $(obj)/simpleImage.$(DTB) FORCE
- 	$(call if_changed,uimage)
- 
- $(obj)/simpleImage.$(DTB).unstrip: vmlinux FORCE
--	$(call if_changed,shipped)
-+	$(call if_changed,copy)
- 
- $(obj)/simpleImage.$(DTB).strip: vmlinux FORCE
- 	$(call if_changed,strip)
-diff --git a/arch/microblaze/boot/dts/Makefile b/arch/microblaze/boot/dts/Makefile
-index ef00dd30d19a..b84e2cbb20ee 100644
---- a/arch/microblaze/boot/dts/Makefile
-+++ b/arch/microblaze/boot/dts/Makefile
-@@ -12,7 +12,7 @@ $(obj)/linked_dtb.o: $(obj)/system.dtb
- # Generate system.dtb from $(DTB).dtb
- ifneq ($(DTB),system)
- $(obj)/system.dtb: $(obj)/$(DTB).dtb
--	$(call if_changed,shipped)
-+	$(call if_changed,copy)
- endif
- endif
- 
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index 2f9d9188852b..74ae80fc3a36 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -31,7 +31,7 @@ $(obj)/utf8data.c: $(obj)/mkutf8data $(filter %.txt, $(cmd_utf8data)) FORCE
- else
- 
- $(obj)/utf8data.c: $(src)/utf8data.c_shipped FORCE
--	$(call if_changed,shipped)
-+	$(call if_changed,copy)
- 
- endif
- 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 79be57fdd32a..40735a3adb54 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -246,20 +246,16 @@ $(foreach m, $(notdir $1), \
- 	$(addprefix $(obj)/, $(foreach s, $3, $($(m:%$(strip $2)=%$(s)))))))
- endef
- 
--quiet_cmd_copy = COPY    $@
--      cmd_copy = cp $< $@
--
--# Shipped files
-+# Copy a file
- # ===========================================================================
- # 'cp' preserves permissions. If you use it to copy a file in read-only srctree,
- # the copy would be read-only as well, leading to an error when executing the
- # rule next time. Use 'cat' instead in order to generate a writable file.
--
--quiet_cmd_shipped = SHIPPED $@
--cmd_shipped = cat $< > $@
-+quiet_cmd_copy = COPY    $@
-+      cmd_copy = cat $< > $@
- 
- $(obj)/%: $(src)/%_shipped
--	$(call cmd,shipped)
-+	$(call cmd,copy)
- 
- # Commands useful for building a boot image
- # ===========================================================================
-diff --git a/usr/Makefile b/usr/Makefile
-index cc0d2824e100..59d9e8b07a01 100644
---- a/usr/Makefile
-+++ b/usr/Makefile
-@@ -3,7 +3,7 @@
- # kbuild file for usr/ - including initramfs image
- #
- 
--compress-y					:= shipped
-+compress-y					:= copy
- compress-$(CONFIG_INITRAMFS_COMPRESSION_GZIP)	:= gzip
- compress-$(CONFIG_INITRAMFS_COMPRESSION_BZIP2)	:= bzip2
- compress-$(CONFIG_INITRAMFS_COMPRESSION_LZMA)	:= lzma
-@@ -37,7 +37,7 @@ endif
- # .cpio.*, use it directly as an initramfs, and avoid double compression.
- ifeq ($(words $(subst .cpio.,$(space),$(ramfs-input))),2)
- cpio-data := $(ramfs-input)
--compress-y := shipped
-+compress-y := copy
- endif
- 
- endif
--- 
-2.32.0
-
+Seyba Daniel
