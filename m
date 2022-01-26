@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E69649D436
+	by mail.lfdr.de (Postfix) with ESMTP id 0A3A049D434
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 22:12:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232134AbiAZVME (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S232187AbiAZVME (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 26 Jan 2022 16:12:04 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:33066 "EHLO
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:32578 "EHLO
         mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232091AbiAZVMA (ORCPT
+        by vger.kernel.org with ESMTP id S232080AbiAZVMA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 26 Jan 2022 16:12:00 -0500
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20QKYcSI012678;
-        Wed, 26 Jan 2022 21:11:44 GMT
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20QKYohX016830;
+        Wed, 26 Jan 2022 21:11:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2021-07-09;
- bh=hLaM827GTTNxGwAx2dc3R/WTT0IBXGaIkPOthxJHxQ0=;
- b=uFJfdxkuJ80V1fq6F/sIv+nm/z2+kLehkVG5VpRfIxE//9NOZ5cfJWOE9EYMfBSaYZgF
- fsxjVvIBLwHW+VwekFyoxlUzn8+uUb0Y9LiFprQJ7e2RYzzaMxoEiExmMv2RBzgBEaoI
- 4iLUCxG3hCMnS9eD0UFQ1TBx/5mFAl5Nd1FXol1DDeWrftu153RKTj2RGFL3Ibs1IU8m
- xW+SzhPzffPdOdemZ6PbrkTkUdrrl/h+NPj886bBk2T67qz9+0Of7IJp8DPVLWCP9TSE
- lOyI/ElW7aieJWyyHANn1piv1QXZUfOLycJW27GEbaxLoI81UXAUwzmyfQT25XaLB52S Lw== 
+ bh=HACBNB6Dlbd22EoArX9+ZdfgySBwzu2+nWVxtO7kBp8=;
+ b=MAH5MqsYDic8uLdLHCY1b3OBfmO4bMzuJ7zoMbegubb0hGeEuCnNp19BUIHoFAhv98sZ
+ 2h6lGE6Z+p7DCZe6AFs56Hf0X4vsNKEW/2H0M6ZPdpEELg1EBeSAVw43WToQPvtsnW+Z
+ 0NdfR/T/9G1ZT78GtRAnjThV3p6pldWzo3ffXny/yusziKDYiA51EJNhYj+0k19k1Dp2
+ uMoe5fLYQwqRaT8fp920fFej+jRX7uWLjZ/Egj57JAxrQpBnV99P6GiM89LK9EhmKvJp
+ QOuk8gsVlUlZeThrYKlp6xvBZLSS2SrDQy7g3u6V9Bs0WkDRO+rJRirv75X4xDZxwiH1 /g== 
 Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3dsvmjfux5-1
+        by mx0b-00069f02.pphosted.com with ESMTP id 3dsy9s77su-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jan 2022 21:11:44 +0000
+        Wed, 26 Jan 2022 21:11:47 +0000
 Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20QL6Ue5020718;
-        Wed, 26 Jan 2022 21:11:43 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-        by userp3020.oracle.com with ESMTP id 3drbcrx82m-1
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20QL6Ue9020718;
+        Wed, 26 Jan 2022 21:11:46 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2175.outbound.protection.outlook.com [104.47.58.175])
+        by userp3020.oracle.com with ESMTP id 3drbcrx866-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jan 2022 21:11:42 +0000
+        Wed, 26 Jan 2022 21:11:45 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nQCNC3UwM2opuKpkn81dC6dAlE6DufCu7r3nX92pO5Sdc6huyZCfqlcWKs/Y0/0BbM10zzq0xNbomhEQ7KOxhacx+/fUjQQaKa/XhVgK2TvhrSxx/36/8fMZq0PbWNtxRQW2Ou9LI8YAvxvB7BU5K6pOHk0OS7uU+PJprf/bk0CMZuUeWZqcHm2jIolJ+qU7ZXNjY+d9ZkN1UAYWXDVS9fLc2wqhV/3PMFJ55jPxFbNdP4piXxe5v4TB3n5f38vn2BdTY+x8GUVVYYN7PA9op7KuZao8Hd1bHt/6hSU9iDTKh+vC8/rMGX23LEyWGPAa58ddtws/YL+rTv/mwc/E0w==
+ b=jIOn0s96CyEcacouOftluGugM7r+Y3rVt9GkVAOhIIgnDWPR0Y/rQr5LjdUhRFIOaVy0NlpXw1UHgzf7GppsoLRC6/MwQ1T6WQIff/l4WLp1nIkd3k0rxUp8xBlWkssyVKH5zbiS5jHSULXFxruAd5H7U6yqebFw9adOHhotjcF4brzBfw6E+agV91z/ZWYgKOn+irugthEIC/p11pfRUQ6I6Nrk5ydjgt4ENx56nVvCmq6J0aZ3gYCv4O9cNGj49lrlidnTw2thTZQvWsHcEANw8dmVQRSKuKd2TCs9Tb17d7KCqOGLM/bP5qK0rr0BufmQxYrN0Isq5oflukrrwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hLaM827GTTNxGwAx2dc3R/WTT0IBXGaIkPOthxJHxQ0=;
- b=mKdr0IFobkhEOQILObuXrbKpeuleNqKJkW85tSa7lvEHz6esMNx7ez+LiWkPFshr1gSMAI2BEpGkoafRnGh94ek8boGpjphBsh8y8diZHtEy2HYCFnud1iMQkxB7Ib5K9tKu2GQlwc2CFRByROlY/CeOlNrgBkxpS6bS1GQIbh6CM+TMfP6IZvdf+215yqZYzuhx6m7CQdSPOke5aHrZAF568EFpHZgtlMb8xwLQfunboX9Nv/Daz+Z9nw5GxS7raU9YdVPLE81HKPuUU8vqx0QXB3phULZKtYZP4ChQ0hggshF4gWaPBzzcxljbh44wX2Bdf31M9xEUN9SMh8SJOw==
+ bh=HACBNB6Dlbd22EoArX9+ZdfgySBwzu2+nWVxtO7kBp8=;
+ b=SpdwPcQ88WKvsiW6IWHnWbJHZIAjO3UQ9EGYIAmKndtM0fZE1OaLhCLC/GLS1nxOSIpurlmOcV1uIqMVeMflcBzlfhGja9eua7glBjWZWw1GOVo30nhldNcHQ8o5IZGqo/e1YHFsWyrbYMn9x7urPURY1mBQqlIPToRdvYMGl/9skayFZbRu3qeVIi2wppGA1grLhiox6wZoCeAmFo+UBq+u9i0hN0m8gJFwM59l63OTqjkdW8AVHYG3WLqU8ftV7IF/h8mTf3I0CQU5+jtQEhxODEM2nd1qGcJjqaP9rz5IBi1q4LaxbDNz++0JHCIduZft013zv2bc9BnDKZbJzA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hLaM827GTTNxGwAx2dc3R/WTT0IBXGaIkPOthxJHxQ0=;
- b=c3ksnw/bSq0arR0KEb+nsnKXRnVI2WGMS7JWBQs+Kdnfnj1XFf5UHN+EjSc1XPWVjVSYlLmz4rldtamqu4AtNKe2RuEKf/d5ykBZJcFBbrYMglYGjzbGw/3fatfwOlgwnx/4D0VoIYcCQaNWzAelxVHdcbVyhcSfl2yXU2zhzt4=
+ bh=HACBNB6Dlbd22EoArX9+ZdfgySBwzu2+nWVxtO7kBp8=;
+ b=HkfRDgNU6LDw5cykL6TNUxOKbjwRhNW0iyQvmQnfuDsmvvYfkkyJbKj1LwWWHo73CMLlDDdkaHhz/597zEX1jhBJvZbPswFv+owmiEsbZN9EO1hvyx1Vxc9mYfaApoeDzgoa7vtD19u93rEQuv9pQPBUfTtB48ymZqPu1TYi7Os=
 Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
  by DM8PR10MB5494.namprd10.prod.outlook.com (2603:10b6:8:21::5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4909.10; Wed, 26 Jan 2022 21:11:40 +0000
+ 15.20.4909.10; Wed, 26 Jan 2022 21:11:43 +0000
 Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
  ([fe80::d034:a8db:9e32:acde]) by SJ0PR10MB4429.namprd10.prod.outlook.com
  ([fe80::d034:a8db:9e32:acde%4]) with mapi id 15.20.4909.019; Wed, 26 Jan 2022
- 21:11:40 +0000
+ 21:11:43 +0000
 From:   Jane Chu <jane.chu@oracle.com>
 To:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
         hch@infradead.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
@@ -64,9 +64,9 @@ To:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
         ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
         linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [PATCH v4 2/7] dax: introduce dax device flag DAXDEV_RECOVERY
-Date:   Wed, 26 Jan 2022 14:11:11 -0700
-Message-Id: <20220126211116.860012-3-jane.chu@oracle.com>
+Subject: [PATCH v4 3/7] dm: make dm aware of target's DAXDEV_RECOVERY capability
+Date:   Wed, 26 Jan 2022 14:11:12 -0700
+Message-Id: <20220126211116.860012-4-jane.chu@oracle.com>
 X-Mailer: git-send-email 2.18.4
 In-Reply-To: <20220126211116.860012-1-jane.chu@oracle.com>
 References: <20220126211116.860012-1-jane.chu@oracle.com>
@@ -76,180 +76,129 @@ X-ClientProxiedBy: SA9PR13CA0112.namprd13.prod.outlook.com
  (2603:10b6:a03:2d1::14)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6b17c1e7-c810-4cff-a655-08d9e110726a
+X-MS-Office365-Filtering-Correlation-Id: b9654b01-5e64-4be3-8a6d-08d9e110743b
 X-MS-TrafficTypeDiagnostic: DM8PR10MB5494:EE_
-X-Microsoft-Antispam-PRVS: <DM8PR10MB54941214A452F1AB32514852F3209@DM8PR10MB5494.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2733;
+X-Microsoft-Antispam-PRVS: <DM8PR10MB54945C7B2533B1575623097AF3209@DM8PR10MB5494.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8iRqKCRsR6KTldW4/RLjdZCOyL+ri1yx9ZuCGTPgBzbGRNZZHl8HzmpOWc8E8tadCN4P9ilT9tcAjIP2MdsQSnld3nzrYPJzh4jCa1dK7jVr6aAsnZA2dLrnoFAJqtMQP4urbu0imil91wze+S68A6QWpmChQYFwYZunvk/mQi4waFnLz1hwkm5iqVtbXmQ0qckpfXPwJpnRX1c8bvB2+Df+RdY/BtqMpV7Ju2k2oFoW3wsAAv3kLbxroqBiWVzCuVHyaD0G56Cxg8yqJHPi1fpIruMNALJsse0xSseHCVzA4SMhdDcN0IDEXGyV7mGtA8aYeYFPmKZe0BT5HzevbLDBjijMUlVxflLO448t1QtPe2zbRfcv7DVutApHjhI04M9h3xtiSSToCXuKLzIaXkcrE0r727bBuJULhid8Fx56h5+Rf1G0L3mABIB1MI8GYqZ7D0J+H3AfExP2YDvZeaEtkKFycL0ldO5TzVAupamG5D06n/NhKhAe7wiPvNJR77qm6TFMQ6LcIohoexBzwRLHKBsogVaYJENKEdEY+sBB/Ex65SHW2u6b7t9xovxPYTPKANvFVMmSMxl131JyL4q7P5hVNrN7rCEmwFCY7cO4euvrQQWWnatVB14dIyM2nLBE18tdYZiFM0ak5jCiP0XCklZtciLZC2Ih5rluFiq3ENCHOU/sWHy63hc5jGsk
+X-Microsoft-Antispam-Message-Info: /7u2fgOv1cQvtFOAc6HvFJ0dR4eZ1ubczcLWLyvILeLj30bsdR3tfiDKP48hygVXcfQYO/UpoZgG8qUDMTIOszFmSbocWaIWFwl6gGmm7EzdcCIMKiTq5tn9mMiZwlD/Wi2vBRJkR2OYW6/w0G+dc5J2oJ7qoIBUcuNKYzvnz7AvCiSpQTjdBkz6uts5kCbbwtzNM9mpn/nCmY4Bzh3J64vatJT6T8AJoPNJ7LBpCSJSjVpqUZpGrbN2SLAuaCusn/yPhs17Pf7ribB2bymNzayHASU7fErHqQp/tmQxtl5BMfxWVTgDqbBFGdicFuGW8xfs7ubFQK6l2xEMqLwhdBunUrq+IFO/JfYr/TgollWT9j2x7JUJ6AMrHu6uBl9LRZx/Wbr/xO7hf7XCY5+34DZASmOy30OyCskOFACIgipiKty2k6wlblqLmu6D9+ChxH8TCPfCjCimoqDMC3XaK4tEQ2qLS8on2xLD/oHuzgqtvfMKYmuHfhYR4M9dMIsKUdjckdKPvlP9ZiMoxnR5uIuBX0p8rFWxJVfvnxzdgWuuCxfNVbTL7nffKimF0m/MpICHnTXjtChRHCVe/pwBw24QEMSCdysuxwGF2h15N4b4n5OEMpgV/9Sz9hnzFL2KnhJNf8EyTvP468YCn/Jn+XpNmcafJZXb7YxR5k2xtFml0158/AU8/vYR/mOOVfDa
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(66946007)(52116002)(86362001)(186003)(8676002)(6666004)(7416002)(6486002)(1076003)(8936002)(921005)(508600001)(6512007)(66476007)(2906002)(6506007)(83380400001)(2616005)(5660300002)(66556008)(36756003)(44832011)(316002)(38100700002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hLH8/cBwAlhBTcGUFXV7YiS5k2/Ieqh8JU1oK7uxkbiOAs0dwzfDz/SGk48m?=
- =?us-ascii?Q?JkStB+9RPR75Dozl3CXUYtvxCev/1Pq7foDQG+i3VXgGWxTmV3nExUjbCV/r?=
- =?us-ascii?Q?JIBWs8NnolppWZmvJTqQiDk8Gw3MGIZMn7oJlATB3xQ4ak63rsnCNVZcBCJp?=
- =?us-ascii?Q?H8n2kq0KpIhYONkakwFG7PqGEAQ5phAqyREEvts+g4sVPzNQe2gOdKq6DoL+?=
- =?us-ascii?Q?d/BvSJVXdKjr8+wY4zZOHdyJHFJAZe9HMrXi7TPRyC3g15vEP2LhHxElOrNO?=
- =?us-ascii?Q?+hBahsaNF4JHuUPiNUYCN5vIkMp1SAZ15nX29EYHMDfYnj00aMfH7cWIw49C?=
- =?us-ascii?Q?yh2jCEXeN8/Y/JDv/2aHrUXvmrc/ses5I9hpPaIM/Q3uwJ508OYE7o/2OUeL?=
- =?us-ascii?Q?plQfQQveGnXpXOlAsn/OW2dt3JHhd0P9lFAmKosyVWXfPi3LJ03z6/9qPf78?=
- =?us-ascii?Q?7H1eAI2wIQPJOPLglL8WfOgTz+CKM6NoNWKobvsSiSHV1CKsCogDyma/TcQv?=
- =?us-ascii?Q?xTl80WLuF2RiCRvDp8p/b2Tvl0tQaHvAAS0S4r3/ETvdtGJpC4L7oOf/6Zd4?=
- =?us-ascii?Q?Uhq/21Do44k8Hl+M0mChIN3f3B3vumY85O0nvDNYsCxEzkwNJNzCIh0wFZ/m?=
- =?us-ascii?Q?4EQ9BTHHI14zC/62xi9ejeQGMeFocnuDTdKm07nC4WGN5td7aQNELSnBCE+4?=
- =?us-ascii?Q?JGpxPi0uLj+bOPWmdObu+SyUEvgmecfiYXMhIuUL8ppRshPLbdwvVtE6g+Lf?=
- =?us-ascii?Q?iYCcE7T/h3pjKG0NdpCCbzcjlvN7ocMbFg4Tvf/8Bxps09lTbMIMyx/0p+PF?=
- =?us-ascii?Q?gRhoD8sXcYt+Byu6ojTTN0jEsUYEGpO8bDYpmGAyZ2Pb73C/C1WYaMvhHtKf?=
- =?us-ascii?Q?7M7qV4A6/m1ZiT/5bgafBMuGDUO7twVsRTr7A7iaeHEoC0PjeukwfXDI6qGP?=
- =?us-ascii?Q?gO/LsJAj28DXSHjQdVzeCdu1G7avlW6ArQPB8ltu1VUOP4kPDYgLiXe1Oozh?=
- =?us-ascii?Q?qkzkAI+qhH/3GNr436zXxIK93KsOb8LfkAnlHGlpklV/ktD9rzLGRBF6n5l6?=
- =?us-ascii?Q?hM5gzqG1sLuziRfgy6FdfFE8zKN6spXfR0VapZTKJa8WOKPqSQZUBPiT2s0l?=
- =?us-ascii?Q?9p9RF3oNdHbzKS309xjrrwWJT2c6pNS5sI0fBzz5DBXFWWYCY+Xobu5oUDvH?=
- =?us-ascii?Q?qaZBD3He6HfU7e2ZPLlAt7+Sm4UIkls2snIhVze/VB0KnKmQgKeZKHDD6D4U?=
- =?us-ascii?Q?3skw1ydDI5wAnwSvce5a74ofnffWQblO72LupimGfgY2gD3Y1xnVh6Guubf/?=
- =?us-ascii?Q?ZNx14FSqa4njVoSDAsaMnd2yMqVadJlsUwA+KlC5a4kucICptEW/0oHEhu5R?=
- =?us-ascii?Q?V8f3OtP0PE2Uxo/RDs6qvm3+q/0v0w9b7OzLmCtxWkTdT+cPiLGikek+lWqW?=
- =?us-ascii?Q?bH9pS9WOyGof2EafxO7aglSlfDqFCMDJZOo8SXLI1RZR0YI4cFaFAlrlU4d6?=
- =?us-ascii?Q?PcZgRli5/XTASbq2/dHOiMhjJhbSJiIyVEk60Yf5b+EJEViyDduf80RhngkP?=
- =?us-ascii?Q?RX7iBTT/mIS7ekwiiUdRJV8rwKNbPsmAm2Ene7S++l4/Pm2gRilzOKwxkZJB?=
- =?us-ascii?Q?Mu8tLeD4taNwi5zUZ28lcNBIT49PHaHqmSZDsi4lg4Ac?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kiMUGc1gJAUG7UuqQvNVUZCiT/0DH4w8QiRT71EW93ofFogfYhugOu/ppMXA?=
+ =?us-ascii?Q?1uypfQF2pH0WrNsm4GaRzlJA6wAQdWnPX6Du7t2UiuZWydYehkLaMgWy6Zvm?=
+ =?us-ascii?Q?fY7fWdGvLx8kGit6jcQ3yn77Kp7Y961774byFWxta+Khb5xpFkSiDGFiGIky?=
+ =?us-ascii?Q?3n5QiuqEkJGc/p+1znKfWjCgbJCOVW6AkCeb0RI4ra5PFg9rOHX4KqLMpBbu?=
+ =?us-ascii?Q?sI0Uz/1pakYm6rVZn9nzEPm6Qxo1lojLYc091JaI2ZhQRsMLyaC5O4JwbfUZ?=
+ =?us-ascii?Q?UURRpIW672ENMQObqhWZnDuSXegVxq3xZigaKnMcguOUsc0vaOq43DwQa9aQ?=
+ =?us-ascii?Q?MO513J13sKGu6PI7/eGb/GFpU48U5lr2FpFsZyHWSMVe2R+BydWZ4hDGaKc1?=
+ =?us-ascii?Q?C2JeGYbvIZEjraWLq+b7Ff/NLhQcHsy4kBhJHxUtyHXrits68gSmmg6ez6Bx?=
+ =?us-ascii?Q?BKUkEi7m0tVe3FYtUr/6tfc7EF2vEIM+07u1CNueAZEksi60aB5I5XVgJuJv?=
+ =?us-ascii?Q?4iaM9HrjXig5lb6tQgmgyJyL3onNmXGe1ejuGBaiwal/0k+a6qIc1xyt+T/r?=
+ =?us-ascii?Q?kes1IwkUcuTpOsbOfzIv9N3u2WensOxbIfQ7Jmq/wpaOUHmNsKRaQqJMxBcX?=
+ =?us-ascii?Q?1nKnFAKkTCuWaMnNuiJAK4rpS7fg7Hr+2+pjzigH/8TCctKvT8SCkJnDPDHo?=
+ =?us-ascii?Q?n9fK6A2STuhEaZaRdTvYQFkJOOgsnExdPAVrHSSFl+Hstnfn+Ly3bsI54+KG?=
+ =?us-ascii?Q?JEigIQIr+PumhHGCE/8uwCynJj0NCgGZdgw4086jeWnXa93HOQoN9cpK3dL3?=
+ =?us-ascii?Q?5vdh6nNI/0twWywJ37Xy5gA5hrLunbTrGeJ172YZM2qTxqTi7oE6lxLss9C+?=
+ =?us-ascii?Q?kpG902U6UhMrXEuoPVv2zeLL9t9Haa6nV7A+Vxrl3zvIwOjrYvC775jmkGjq?=
+ =?us-ascii?Q?KwwD0O4c7aFgSwlLk5WN9oDsNYIIIOvLh54glGckhy6SC5RZLubRvYYzHiWx?=
+ =?us-ascii?Q?vOgSYcnbF3UswuhvrkHZqxnuV+VLLVXNv7koJrqpJlb0DNipo2d1aZShtrhI?=
+ =?us-ascii?Q?nv/sk4OlcQYTsVWSC8PRQfo1ya2SEzc1gbGJke0EHpJzFt2B/QLqSJI2dP1T?=
+ =?us-ascii?Q?Zdc9u8wbRj42Jq9cQOBxh2gukJ1ypgeblKvMl3JJkxiZt0Hj+gFBzx+1BOOC?=
+ =?us-ascii?Q?+7q6jlGSDdUXpclROlh9KeIlmYYGU1g1zdbytsYj5IKwpAXwWfSB8Eigs9Xk?=
+ =?us-ascii?Q?tw+gie8ERJTg6sgGlnCecKPUF94H0V39JdJzJ3/vyjmo2llz1q7fQalf3PXF?=
+ =?us-ascii?Q?dfRqjH7LqiPDg5eGCgRisQMzG6ZVmUjnELTbw5ClXOnlIqMVdZPsRwT8L9z1?=
+ =?us-ascii?Q?iiv4HfzBRxCjRA3mpUMbBzTCYdkYb3wbh+2ggre8/pBHQiItYLXe1uZnT7QF?=
+ =?us-ascii?Q?SwBhCSgLN6YSYUnEpG+bVYaY6edY2tmMFZK8mhFjRZw2WH6JQR70jCjiiSrG?=
+ =?us-ascii?Q?u9e/g27JC0lWTFmNwJVs+PReoP1BOUkBxD2Y/MUwkinjeAoGIXV6FE8JnRzK?=
+ =?us-ascii?Q?rnaD+GFmw6ldTtbgA1UaH3mF44grqU6iquY+IWmcju1fxors6PdWzP9oDBnr?=
+ =?us-ascii?Q?0wre7espXb399Q0irtqIgRtbjejnzUCEgYl5kYG8av4b?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b17c1e7-c810-4cff-a655-08d9e110726a
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9654b01-5e64-4be3-8a6d-08d9e110743b
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2022 21:11:40.6203
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2022 21:11:43.6983
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qvlNmQ64RxRCUzCPiwBPfStL44xNXhX3pQts/X/vm5G3pIXjkWky7xDs1gYYdpxlOEGCYAG/ZWc1OMmIEodjEA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5hvojK836zXGyQAPtezFli5M3b2hIH3YppIAEVg6THJVtvlZGWNT5+8F6sHIPmLp27SezcF5z9Xu1Icwe8D1Hw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR10MB5494
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10239 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 malwarescore=0
  spamscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
  definitions=main-2201260122
-X-Proofpoint-GUID: W1FyW1TOqGE73TG2ekhmDeOX9a5ByR_K
-X-Proofpoint-ORIG-GUID: W1FyW1TOqGE73TG2ekhmDeOX9a5ByR_K
+X-Proofpoint-GUID: Lzl3h92bUsjBcfqz76wYdVNlh0HHa5Ii
+X-Proofpoint-ORIG-GUID: Lzl3h92bUsjBcfqz76wYdVNlh0HHa5Ii
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce dax device flag DAXDEV_RECOVERY to indicate a device
-that is capable of recoverying from media poison.
-For MD raid DAX devices, the capability is allowed for partial
-device as oppose to the entire device. And the final poison
-detection and repair rely on the provisioning base drivers.
+If one of the MD raid participating target dax device supports
+DAXDEV_RECOVERY, then it'll be declared on the whole that the
+MD device is capable of DAXDEV_RECOVERY.
+And only when the recovery process reaches to the target driver,
+it becomes deterministic whether a certain dax address range
+maybe recovered, or not.
 
 Signed-off-by: Jane Chu <jane.chu@oracle.com>
 ---
- drivers/dax/super.c   | 24 ++++++++++++++++++++++++
- drivers/nvdimm/pmem.c |  1 +
- include/linux/dax.h   | 15 +++++++++++++++
- 3 files changed, 40 insertions(+)
+ drivers/md/dm-table.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index e3029389d809..f4f607d9698b 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -109,6 +109,8 @@ enum dax_device_flags {
- 	DAXDEV_NOCACHE,
- 	/* handle CPU fetch exceptions during reads */
- 	DAXDEV_NOMC,
-+	/* flag to indicate device capable of poison recovery */
-+	DAXDEV_RECOVERY,
- };
- 
- /**
-@@ -311,6 +313,28 @@ static void dax_destroy_inode(struct inode *inode)
- 			"kill_dax() must be called before final iput()\n");
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index e43096cfe9e2..8af8a81b6172 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -844,6 +844,36 @@ static bool dm_table_supports_dax(struct dm_table *t,
+ 	return true;
  }
  
-+void set_dax_recovery(struct dax_device *dax_dev)
++/* Check whether device is capable of dax poison recovery */
++static int device_poison_recovery_capable(struct dm_target *ti,
++	struct dm_dev *dev, sector_t start, sector_t len, void *data)
 +{
-+	set_bit(DAXDEV_RECOVERY, &dax_dev->flags);
++	if (!dev->dax_dev)
++		return false;
++	return dax_recovery_capable(dev->dax_dev);
 +}
-+EXPORT_SYMBOL_GPL(set_dax_recovery);
 +
-+bool dax_recovery_capable(struct dax_device *dax_dev)
++static bool dm_table_supports_poison_recovery(struct dm_table *t,
++	iterate_devices_callout_fn func)
 +{
-+	return test_bit(DAXDEV_RECOVERY, &dax_dev->flags);
-+}
-+EXPORT_SYMBOL_GPL(dax_recovery_capable);
++	struct dm_target *ti;
++	unsigned int i;
 +
-+int dax_prep_recovery(struct dax_device *dax_dev, void **kaddr)
-+{
-+	if (dax_recovery_capable(dax_dev)) {
-+		set_bit(DAXDEV_RECOVERY, (unsigned long *)kaddr);
-+		return 0;
++	/* Check if any DAX target supports poison recovery */
++	for (i = 0; i < dm_table_get_num_targets(t); i++) {
++		ti = dm_table_get_target(t, i);
++
++		if (!ti->type->direct_access)
++			return false;
++
++		if (ti->type->iterate_devices &&
++		    ti->type->iterate_devices(ti, func, NULL))
++			return true;
 +	}
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(dax_prep_recovery);
 +
- static const struct super_operations dax_sops = {
- 	.statfs = simple_statfs,
- 	.alloc_inode = dax_alloc_inode,
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 58d95242a836..e8823813a8df 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -487,6 +487,7 @@ static int pmem_attach_disk(struct device *dev,
- 	if (rc)
- 		goto out_cleanup_dax;
- 	dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
-+	set_dax_recovery(dax_dev);
- 	pmem->dax_dev = dax_dev;
- 
- 	rc = device_add_disk(dev, disk, pmem_attribute_groups);
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 9fc5f99a0ae2..5449a0a81c83 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -40,6 +40,8 @@ void dax_write_cache(struct dax_device *dax_dev, bool wc);
- bool dax_write_cache_enabled(struct dax_device *dax_dev);
- bool dax_synchronous(struct dax_device *dax_dev);
- void set_dax_synchronous(struct dax_device *dax_dev);
-+void set_dax_recovery(struct dax_device *dax_dev);
-+bool dax_recovery_capable(struct dax_device *dax_dev);
- /*
-  * Check if given mapping is supported by the file / underlying device.
-  */
-@@ -87,6 +89,13 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
- {
- 	return !(vma->vm_flags & VM_SYNC);
- }
-+static inline void set_dax_recovery(struct dax_device *dax_dev);
-+{
-+}
-+static inline bool dax_recovery_capable(struct dax_device *dax_dev)
-+{
 +	return false;
 +}
- #endif
- 
- void set_dax_nocache(struct dax_device *dax_dev);
-@@ -128,6 +137,7 @@ struct page *dax_layout_busy_page(struct address_space *mapping);
- struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
- dax_entry_t dax_lock_page(struct page *page);
- void dax_unlock_page(struct page *page, dax_entry_t cookie);
-+int dax_prep_recovery(struct dax_device *dax_dev, void **kaddr);
- #else
- static inline struct page *dax_layout_busy_page(struct address_space *mapping)
- {
-@@ -155,6 +165,11 @@ static inline dax_entry_t dax_lock_page(struct page *page)
- static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
- {
- }
 +
-+static inline int dax_prep_recovery(struct dax_device *dax_dev, void **kaddr)
-+{
-+	return -EINVAL;
-+}
- #endif
- 
- int dax_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+ static int device_is_rq_stackable(struct dm_target *ti, struct dm_dev *dev,
+ 				  sector_t start, sector_t len, void *data)
+ {
+@@ -2014,6 +2044,9 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 		blk_queue_flag_set(QUEUE_FLAG_DAX, q);
+ 		if (dm_table_supports_dax(t, device_not_dax_synchronous_capable))
+ 			set_dax_synchronous(t->md->dax_dev);
++		if (dm_table_supports_poison_recovery(t,
++					device_poison_recovery_capable))
++			set_dax_recovery(t->md->dax_dev);
+ 	}
+ 	else
+ 		blk_queue_flag_clear(QUEUE_FLAG_DAX, q);
 -- 
 2.18.4
 
