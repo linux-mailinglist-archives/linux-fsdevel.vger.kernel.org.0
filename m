@@ -2,104 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A49349D1EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 19:42:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D710649D212
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 19:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232876AbiAZSmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 13:42:36 -0500
-Received: from mx1.mailbun.net ([170.39.20.100]:35958 "EHLO mx1.mailbun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229478AbiAZSmf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 13:42:35 -0500
-Received: from [2607:fb90:d98b:8818:5079:94eb:24d5:e5c3] (unknown [172.58.104.31])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S244296AbiAZSwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 13:52:14 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:45242 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229880AbiAZSwO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jan 2022 13:52:14 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: ariadne@dereferenced.org)
-        by mx1.mailbun.net (Postfix) with ESMTPSA id 5A0A111A9EF;
-        Wed, 26 Jan 2022 18:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dereferenced.org;
-        s=mailbun; t=1643222555;
-        bh=B9sZSpn37qjYqPXp6j+5pKTlfv3WGOaoXVIWz/eiUKA=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References;
-        b=NTExFgBVmn5euHiNIO9blmd8dKdOHfl6aKpAYF4lhE1kKSgaBmzyc/diAbCOyE0dh
-         hgQ6MG3BHKyfRg/iYLhI9RdkIbFhVftsLK3mzHbZwdr5pyTzKReIVL80ni27j4YYml
-         d8r9oyUOqnF6nad4hvJB6sCrs/k93LyGCA8SXmIy3IWGVNo+YXvHYJOZGD6AUVlum9
-         Corh5NXXh56eLZ2ByXVq9VNqpRAKYBpOkkbM0AqQ3t2Ytrv+Uyk8mwuoaxt3lVWaNh
-         HB2kpDERbk+w1OupAd0SX8wyZ0WSbH1UcRKXnGl19BcK6TleK5Fw23zkL7MFefC4jt
-         1cvAJE5YZdWDQ==
-Date:   Wed, 26 Jan 2022 12:42:27 -0600 (CST)
-From:   Ariadne Conill <ariadne@dereferenced.org>
-To:     Jann Horn <jannh@google.com>
-cc:     Kees Cook <keescook@chromium.org>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Rich Felker <dalias@libc.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] fs/binfmt_elf: Add padding NULL when argc == 0
-In-Reply-To: <CAG48ez3hN8+zNCmLVP0yU0A5op6BAS+A-rs05aiLm4RQvzzBpg@mail.gmail.com>
-Message-ID: <a89bb47f-677f-4ce7-fd-d3893fe0abbd@dereferenced.org>
-References: <20220126175747.3270945-1-keescook@chromium.org> <CAG48ez3hN8+zNCmLVP0yU0A5op6BAS+A-rs05aiLm4RQvzzBpg@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EB8826158E;
+        Wed, 26 Jan 2022 18:52:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C70C340E3;
+        Wed, 26 Jan 2022 18:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643223133;
+        bh=bq+ubs72mt1p96IPmqJ3At3GXgXmm5/hMhOnaLGNUVQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e6JnpaevJYs+1WgEA+FdJwdbrFxH729NqMr8XGf2BOKVJXUN6JrfNcHjfC42/KVUA
+         75ISQzrtAPIWBGGWEWk8J9DF5Qz2tIuXs2HdY3eu7/4HszJydbZBCbze+tI5cYGfLG
+         Dt4lfSOD5FpasFG9adQW18DE5WhXer3QWF8YWLQwluxiq6yPKzJA9jJSWFROKQMKE/
+         nYvq/LDV0UBNLdPQBGt04O/CfRpK0fvPJY8o3/OrOzh2uJJSqbWl77PagDFhSAfXJf
+         YkZm325a2LEeqnUq3SkTR2tNu0AqZo0Xg3t5QIl1IB+RzJCnMSU05rDeNCyTnz1m0t
+         JRxd90/eOedRQ==
+Date:   Wed, 26 Jan 2022 10:52:11 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, jlayton@kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: fscrypt and potential issues from file sparseness
+Message-ID: <YfGYW7DGecySgYOH@sol.localdomain>
+References: <124549.1643201054@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <124549.1643201054@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hi David,
 
-On Wed, 26 Jan 2022, Jann Horn wrote:
+On Wed, Jan 26, 2022 at 12:44:14PM +0000, David Howells wrote:
+> Hi,
+> 
+> I'm looking at doing content encryption in the network filesystem support
+> library.  It occurs to me that if the filesystem can record sparsity in the
+> file, then a couple of issues may arise if we wish to use that to record
+> zeroed source blocks (ie. the unencrypted blocks).  It further occurs to me
+> that this may occur in extent-based filesystems such as ext4 that support
+> fscrypt and also do extent optimisation.
+> 
+> The issues are:
+> 
+>  (1) Recording source blocks that are all zeroes by not storing them and
+>      leaving a hole in a content is a minor security hole as someone looking
+>      at the file can derive information about the contents from that.  This
+>      probably wouldn't affect most files, but it might affect database files.
 
-> On Wed, Jan 26, 2022 at 6:58 PM Kees Cook <keescook@chromium.org> wrote:
->> Quoting Ariadne Conill:
->>
->> "In several other operating systems, it is a hard requirement that the
->> first argument to execve(2) be the name of a program, thus prohibiting
->> a scenario where argc < 1. POSIX 2017 also recommends this behaviour,
->> but it is not an explicit requirement[1]:
->>
->>     The argument arg0 should point to a filename string that is
->>     associated with the process being started by one of the exec
->>     functions.
->> ...
->> Interestingly, Michael Kerrisk opened an issue about this in 2008[2],
->> but there was no consensus to support fixing this issue then.
->> Hopefully now that CVE-2021-4034 shows practical exploitative use[3]
->> of this bug in a shellcode, we can reconsider."
->>
->> An examination of existing[4] users of execve(..., NULL, NULL) shows
->> mostly test code, or example rootkit code. While rejecting a NULL argv
->> would be preferred, it looks like the main cause of userspace confusion
->> is an assumption that argc >= 1, and buggy programs may skip argv[0]
->> when iterating. To protect against userspace bugs of this nature, insert
->> an extra NULL pointer in argv when argc == 0, so that argv[1] != envp[0].
->>
->> Note that this is only done in the argc == 0 case because some userspace
->> programs expect to find envp at exactly argv[argc]. The overlap of these
->> two misguided assumptions is believed to be zero.
->
-> Will this result in the executed program being told that argc==0 but
-> having an extra NULL pointer on the stack?
-> If so, I believe this breaks the x86-64 ABI documented at
-> https://refspecs.linuxbase.org/elf/x86_64-abi-0.99.pdf - page 29,
-> figure 3.9 describes the layout of the initial process stack.
+This is working as intended; it's a known trade-off between security and
+usability that is documented in Documentation/filesystems/fscrypt.rst.  eCryptfs
+worked differently, and that caused lots of problems because things that would
+be fast on normal filesystems were instead extremely slow.
 
-I'm presently compiling a kernel with the patch to see if it works or not.
+> 
+>  (2) If the filesystem stores a hole for a *source* block of zeroes (not an
+>      encrypted block), then it has the same problems as cachefiles:
+> 
+>      (a) A block of zeroes written to disk (ie. an actually encrypted block)
+>      is very, very unlikely to represent a source block of zeroes, but the
+>      optimiser can punch it out to reduce an extent and recover disk space,
+>      thereby leaving a hole.
+> 
+>      (b) The optimiser could also *insert* blocks of zeroes to bridge an
+>      extent, thereby erasing a hole - but the zeroes would be very unlikely to
+>      decrypt back to a source block of zeroes.
+> 
+>      If either event occurs, data corruption will ensue.
+> 
+>      To evade this one, we have to do one of the following:
+> 
+> 	1. Don't use sparsity to record source blocks of zeroes
+> 	2. Disable extent optimisations of these sorts
+> 	3. Keep a separate map of the content
+> 
+> Now, I don't know if fscrypt does this.  It's hard to tell.
+> 
 
-> Actually, does this even work? Can a program still properly access its
-> environment variables when invoked with argc==0 with this patch
-> applied? AFAIU the way userspace locates envv on x86-64 is by
-> calculating 8*(argc+1)?
+Changing an all-zeroes region to a hole (or vice versa) in an encrypted file is
+impossible without the key, so yes that sort of thing needs to be disabled, e.g.
+based on whether the inode has the encrypt flag set or not.
 
-In the other thread, it was suggested that perhaps we should set up an 
-argv of {"", NULL}.  In that case, it seems like it would be safe to claim 
-argc == 1.
+As far as I know, neither e2fsprogs nor f2fs-tools implement this sort of
+optimization.  e2fsck supports optimizing how the extents are represented on
+disk, but it doesn't mess with the actual data blocks.
 
-What do you think?
-
-Ariadne
+- Eric
