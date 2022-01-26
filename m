@@ -2,123 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8328449D324
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 21:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B641449D326
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 21:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbiAZUIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 15:08:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53682 "EHLO
+        id S229981AbiAZUJK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 15:09:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbiAZUIp (ORCPT
+        with ESMTP id S229601AbiAZUJJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 15:08:45 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D89C06161C;
-        Wed, 26 Jan 2022 12:08:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pBGfaiXr2odCJuv3v+l1X6S49qybF/E8gAqwCt/alyg=; b=bNRb4JYQwKcMtQW4Tp/TU3w8I3
-        ly428vCW5JXET+V4u8AZVpNtDZjpRwugtd+nAEOdPmuqUFnVWqY1CPYdfc2qsGiDhRG0SjZDO7TXK
-        Cjp/6ymK1ZruwOxLunpKfJhpV6nBgy791QPhu1OEJttaSO0kneif6k0bKzjAKHIYy7fYOIMwu0e2T
-        D6ZRShV6NoPQdis8j8oZ+X9d4yGQ98iRcCsBrQ3/NkD4wfXwxsvf6b8+V0BjSZVhe+XAaOCCqS/KT
-        347nnhtJbKi1omhIJ/dgkzXcy36MhVCMaYNF+2NK1vIpBbZLk32/qxevmbbwH9/jH6RCCAE3knupR
-        M0BxGzmg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nCoaU-004PLG-HV; Wed, 26 Jan 2022 20:08:14 +0000
-Date:   Wed, 26 Jan 2022 20:08:14 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jann Horn <jannh@google.com>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Rich Felker <dalias@libc.org>,
+        Wed, 26 Jan 2022 15:09:09 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59DCC06161C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 12:09:09 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id b15so590332plg.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 12:09:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0AM6jAhygFdYam0w1plbFIPS+oA8KN5gbbX1Aawy0Yc=;
+        b=V+TBAmvIKTAiWCAK7WjvLps7Es/Z6nzpnlzRMvlKGM8AusvtUuZTH4QOceHyu1x+aK
+         +vZpUyFxeMBQ7XOFZzT9RbNqIFyLzlK/XJPxeTBt1o4MBdSGqkZPlS34LKsLsvesD7Fq
+         T6vNkaJPx90pd3vUbOsWyJQKka+d2tayLQs1E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0AM6jAhygFdYam0w1plbFIPS+oA8KN5gbbX1Aawy0Yc=;
+        b=FC7ooxMi5tPBsOyZPgrihddCiFyaxsTODJ0AYxdZ876aFyxgOu/ilkXERd6kWQxjnW
+         jif/tICt+JGu9esjEZDWQrQdfljIKEPXBvLETUNjlBc2ZQAuZRZZT6JGKgtTUs0FhUaR
+         MseAS3h+ZmxaVvgJUvM19Z6fBPoDtLnhD3d2RL/PWs1rvwoTKiaiNnn225bcvKLsKPwr
+         y46f0mvcBhgzzce9lzDporS4A9f3L3cVKDiPoH4aES81tmFuZnlOHhP54hAd4K96Kqvv
+         qYONbP6CwyNAVJegAW8q4Xb65ULQBJxoecL+NVCPor2A32PAtIXs2OW0BTG2rToJwNJz
+         l7HQ==
+X-Gm-Message-State: AOAM530/tMYcCsL9fy2kvCk8xJOYF9TCJW4ambtPVSYh/LGI5NQFM7FN
+        rCT1ZIwk5ebt58tD8d51aAWnAw==
+X-Google-Smtp-Source: ABdhPJxulSs3+ojCUhwadjvGOqwtb8zlV+3OgGb7YcJU19djANq4qP9I3tlXzq6Bdt+5z3pysKlPSQ==
+X-Received: by 2002:a17:903:2003:: with SMTP id s3mr567853pla.97.1643227749198;
+        Wed, 26 Jan 2022 12:09:09 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id nm14sm79262pjb.32.2022.01.26.12.09.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jan 2022 12:09:08 -0800 (PST)
+Date:   Wed, 26 Jan 2022 12:09:08 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Ariadne Conill <ariadne@dereferenced.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] fs/binfmt_elf: Add padding NULL when argc == 0
-Message-ID: <YfGqLnE9wNieTsAg@casper.infradead.org>
-References: <20220126175747.3270945-1-keescook@chromium.org>
- <CAG48ez3hN8+zNCmLVP0yU0A5op6BAS+A-rs05aiLm4RQvzzBpg@mail.gmail.com>
- <a89bb47f-677f-4ce7-fd-d3893fe0abbd@dereferenced.org>
- <CAG48ez3iEUDbM03axYSjWOSW+zt-khgzf8CfX1DHmf_6QZap6Q@mail.gmail.com>
- <202201261157.9C3D3C36@keescook>
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] fs/exec: require argv[0] presence in
+ do_execveat_common()
+Message-ID: <202201261202.EC027EB@keescook>
+References: <20220126114447.25776-1-ariadne@dereferenced.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202201261157.9C3D3C36@keescook>
+In-Reply-To: <20220126114447.25776-1-ariadne@dereferenced.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 11:58:39AM -0800, Kees Cook wrote:
-> On Wed, Jan 26, 2022 at 08:50:39PM +0100, Jann Horn wrote:
-> > On Wed, Jan 26, 2022 at 7:42 PM Ariadne Conill <ariadne@dereferenced.org> wrote:
-> > > On Wed, 26 Jan 2022, Jann Horn wrote:
-> > > > On Wed, Jan 26, 2022 at 6:58 PM Kees Cook <keescook@chromium.org> wrote:
-> > > >> Quoting Ariadne Conill:
-> > > >>
-> > > >> "In several other operating systems, it is a hard requirement that the
-> > > >> first argument to execve(2) be the name of a program, thus prohibiting
-> > > >> a scenario where argc < 1. POSIX 2017 also recommends this behaviour,
-> > > >> but it is not an explicit requirement[1]:
-> > > >>
-> > > >>     The argument arg0 should point to a filename string that is
-> > > >>     associated with the process being started by one of the exec
-> > > >>     functions.
-> > > >> ...
-> > > >> Interestingly, Michael Kerrisk opened an issue about this in 2008[2],
-> > > >> but there was no consensus to support fixing this issue then.
-> > > >> Hopefully now that CVE-2021-4034 shows practical exploitative use[3]
-> > > >> of this bug in a shellcode, we can reconsider."
-> > > >>
-> > > >> An examination of existing[4] users of execve(..., NULL, NULL) shows
-> > > >> mostly test code, or example rootkit code. While rejecting a NULL argv
-> > > >> would be preferred, it looks like the main cause of userspace confusion
-> > > >> is an assumption that argc >= 1, and buggy programs may skip argv[0]
-> > > >> when iterating. To protect against userspace bugs of this nature, insert
-> > > >> an extra NULL pointer in argv when argc == 0, so that argv[1] != envp[0].
-> > > >>
-> > > >> Note that this is only done in the argc == 0 case because some userspace
-> > > >> programs expect to find envp at exactly argv[argc]. The overlap of these
-> > > >> two misguided assumptions is believed to be zero.
-> > > >
-> > > > Will this result in the executed program being told that argc==0 but
-> > > > having an extra NULL pointer on the stack?
-> > > > If so, I believe this breaks the x86-64 ABI documented at
-> > > > https://refspecs.linuxbase.org/elf/x86_64-abi-0.99.pdf - page 29,
-> > > > figure 3.9 describes the layout of the initial process stack.
-> > >
-> > > I'm presently compiling a kernel with the patch to see if it works or not.
-> > >
-> > > > Actually, does this even work? Can a program still properly access its
-> > > > environment variables when invoked with argc==0 with this patch
-> > > > applied? AFAIU the way userspace locates envv on x86-64 is by
-> > > > calculating 8*(argc+1)?
-> > >
-> > > In the other thread, it was suggested that perhaps we should set up an
-> > > argv of {"", NULL}.  In that case, it seems like it would be safe to claim
-> > > argc == 1.
-> > >
-> > > What do you think?
-> > 
-> > Sounds good to me, since that's something that could also happen
-> > normally if userspace calls execve(..., {"", NULL}, ...).
-> > 
-> > (I'd like it even better if we could just bail out with an error code,
-> > but I guess the risk of breakage might be too high with that
-> > approach?)
+On Wed, Jan 26, 2022 at 11:44:47AM +0000, Ariadne Conill wrote:
+> In several other operating systems, it is a hard requirement that the
+> first argument to execve(2) be the name of a program, thus prohibiting
+> a scenario where argc < 1.  POSIX 2017 also recommends this behaviour,
+> but it is not an explicit requirement[0]:
 > 
-> We can't mutate argc; it'll turn at least some userspace into an
-> infinite loop:
-> https://sources.debian.org/src/valgrind/1:3.18.1-1/none/tests/execve.c/?hl=22#L22
+>     The argument arg0 should point to a filename string that is
+>     associated with the process being started by one of the exec
+>     functions.
+> 
+> To ensure that execve(2) with argc < 1 is not a useful gadget for
+> shellcode to use, we can validate this in do_execveat_common() and
+> fail for this scenario, effectively blocking successful exploitation
+> of CVE-2021-4034 and similar bugs which depend on this gadget.
+> 
+> The use of -EFAULT for this case is similar to other systems, such
+> as FreeBSD, OpenBSD and Solaris.  QNX uses -EINVAL for this case.
+> 
+> Interestingly, Michael Kerrisk opened an issue about this in 2008[1],
+> but there was no consensus to support fixing this issue then.
+> Hopefully now that CVE-2021-4034 shows practical exploitative use
+> of this bug in a shellcode, we can reconsider.
+> 
+> [0]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
+> [1]: https://bugzilla.kernel.org/show_bug.cgi?id=8408
+> 
+> Changes from v1:
+> - Rework commit message significantly.
+> - Make the argv[0] check explicit rather than hijacking the error-check
+>   for count().
+> 
+> Signed-off-by: Ariadne Conill <ariadne@dereferenced.org>
+> ---
+>  fs/exec.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 79f2c9483302..e52c41991aab 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1899,6 +1899,10 @@ static int do_execveat_common(int fd, struct filename *filename,
+>  	retval = count(argv, MAX_ARG_STRINGS);
+>  	if (retval < 0)
+>  		goto out_free;
+> +	if (retval == 0) {
+> +		retval = -EFAULT;
+> +		goto out_free;
+> +	}
+>  	bprm->argc = retval;
+>  
+>  	retval = count(envp, MAX_ARG_STRINGS);
+> -- 
+> 2.34.1
 
-How does that become an infinite loop?  We obviously wouldn't mutate
-argc in the caller, just the callee.
+Okay, so, the dangerous condition is userspace iterating through envp
+when it thinks it's iterating argv.
 
-Also, there's a version of this where we only mutate argc if we're
-executing a setuid program, which would remove the privilege
-escalation part of things.
+Assuming it is not okay to break valgrind's test suite:
+https://sources.debian.org/src/valgrind/1:3.18.1-1/none/tests/execve.c/?hl=22#L22
+we cannot reject a NULL argv (test will fail), and we cannot mutate
+argc=0 into argc=1 (test will enter infinite loop).
+
+Perhaps we need to reject argv=NULL when envp!=NULL, and add a
+pr_warn_once() about using a NULL argv?
+
+I note that glibc already warns about NULL argv:
+argc0.c:7:3: warning: null argument where non-null required (argument 2)
+[-Wnonnull]
+    7 |   execve(argv[0], NULL, envp);
+      |   ^~~~~~
+
+in the future we could expand this to only looking at argv=NULL?
+
+-- 
+Kees Cook
