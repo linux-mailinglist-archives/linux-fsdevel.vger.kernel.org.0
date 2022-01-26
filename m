@@ -2,131 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A34B49D58B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 23:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EADC349D5A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 23:49:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbiAZWhz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 17:37:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
+        id S230413AbiAZWtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 17:49:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbiAZWhy (ORCPT
+        with ESMTP id S230375AbiAZWtP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 17:37:54 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA647C061748
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id h7so1760719ejf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
+        Wed, 26 Jan 2022 17:49:15 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CCF8C06173B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 14:49:15 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id x11so896182plg.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 14:49:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
-        b=PUexGqcIVlaj1EtFvEn2PSWA9vQAteWtUkZ+SBG5roU+D7QWy3SizXM4RLxmiJb4y+
-         21mBOEtVAyRn8nb9C4lDXvde8VLxHnfQnZ0on+zhj929ODZS2xaTEugtb5I1SNZ79be5
-         8ljRT/rUToeF+GpC+L/8IqXWiHtkcWEEh7ol95oLbGIk8WMtqlVeVFrWEPfAAQoHE/IB
-         e5NMOscmd8hztmFpDP6mVt5uWMfQqlmUDFVvZqpggisNdFMHs9yBDlmWWnPV9jU76suv
-         Ls0/JoEwllWu9cP+w1FEEyV5Qg/PPmKNA4Y/O8pIlMtBA3LqRX9kVPQhN0mOQmqi42If
-         Ss8A==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QeowK8R255Us+nKjz4BPqDxIP7O3Rv/Tsw0L3glrT4Q=;
+        b=E3FWDUveRxI1hYgPJa1ZNUBSk3AJ5jItt9POskqPuQxFr1D1qDPioM9fYOVMkyazoV
+         GHfnkSEGdTIWr8kQPPnyH1Btpm0xLkbqJLpqGhC7n3g49m/IHaTy1I38xtJ9NHZ6qijP
+         0tmwDrgf26AoClhLLknd95bm/cYZ9qDwvxKAE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
-        b=Z366TnfJyrDcEVvzeQhOy9ZNLAgtRQ/0+x78FAmDmZ1N6+yOuFOKtCTvhotEDD4qo9
-         F4oLNAeM/PpdzBkSv59723LsCpsZCgk67vNDAxuo6pvk2CBKvpbIDmTKCxKf+a1RiWlN
-         E+yCpVltEB0XxpQfA80RDsD/53fepFUW/gKbFfjEGwho9HHjdr95rLC+Nvdyo+medu8s
-         8Y7L3kx3LcVUlP3pXg089nmNerkc/C/z4TdgqlQxwuHn/YEadye6Da1+ytQwHz4GQ+Dz
-         0CgXEIxiGENVI/fBJgukhP7vybavmNtxFskLjE8n+PNefBzmME+FBattaswuqCgWZR1k
-         2VpQ==
-X-Gm-Message-State: AOAM531U87GHrVsKOfK6n25HrijIxFz2VwcOZpJP36pO8RmLAYHCg4lZ
-        CRrXMeAN5HZjKoi3QyR0CWxq3JFnG9N01BbNT0jp
-X-Google-Smtp-Source: ABdhPJz7JLCXZXW6bWn+3igBvUCPp+jJroJkHIyDQb/GW3U8GVaEAHFqw3UaonR9mBekrO2084/k8MAzQj1Z8rint7Y=
-X-Received: by 2002:a17:906:2ed0:: with SMTP id s16mr676611eji.327.1643236672195;
- Wed, 26 Jan 2022 14:37:52 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QeowK8R255Us+nKjz4BPqDxIP7O3Rv/Tsw0L3glrT4Q=;
+        b=oFeqjhJqWG0jWHNq4541fRryl+Tm4j7/yQNavN28JBxwDCPcNQImuIUf7oQiQ8HVPE
+         04sp4DTqTMMNzDKle0JZhh2jIgU4TEzVM50qYuYncMg67bXr64YIU+WUNBKnZ78p0t3S
+         s3z4oU9TvTA6fmRcs7+tJWKhitwVl8ZHDyh5alI+l3kC8d3PrMOuyRdva1tzNt+ZfILT
+         D12hqGXOhxSNfrOJ2uJ6O4f8ieIlQc7Wpsgz6WrzXNSpxw5Yap731RHOfpHUZZorhFW2
+         umPbA8PXGq8bFOBUjbeBhgiQxNhnjQTVRc2UyTnvCK5GOBDlLLfBgLL9HAo/TiEe4y9Y
+         BOaQ==
+X-Gm-Message-State: AOAM5322R53SXRqNpfUy06G9W2oVHrxuNnb4npnndKARZF99zNZT8BpR
+        /c6PbRZuIWqEkyWxXF12jBseSA==
+X-Google-Smtp-Source: ABdhPJx5pVg6o3rc7yEuKI/WbUq70Htq1e33E1Lf1zMoqVH2u7MbFdL+lpdosl0Yn3AehkYFwKRnrQ==
+X-Received: by 2002:a17:90b:3850:: with SMTP id nl16mr10929856pjb.131.1643237354638;
+        Wed, 26 Jan 2022 14:49:14 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id u17sm17431673pgi.14.2022.01.26.14.49.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jan 2022 14:49:14 -0800 (PST)
+Date:   Wed, 26 Jan 2022 14:49:13 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Ariadne Conill <ariadne@dereferenced.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] fs/exec: require argv[0] presence in
+ do_execveat_common()
+Message-ID: <202201261440.0C13601104@keescook>
+References: <20220126114447.25776-1-ariadne@dereferenced.org>
+ <202201261202.EC027EB@keescook>
+ <a8fef39-27bf-b25f-7cfe-21782a8d3132@dereferenced.org>
+ <202201261239.CB5D7C991A@keescook>
+ <5e963fab-88d4-2039-1cf4-6661e9bd16b@dereferenced.org>
+ <202201261323.9499FA51@keescook>
+ <64e91dc2-7f5c-6e8-308e-414c82a8ae6b@dereferenced.org>
 MIME-Version: 1.0
-References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
- <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein>
- <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com> <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
- <20220126072442.he4fjegfqnh72kzp@wittgenstein>
-In-Reply-To: <20220126072442.he4fjegfqnh72kzp@wittgenstein>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 26 Jan 2022 17:37:41 -0500
-Message-ID: <CAHC9VhRyAxbJKBLXbW-Zj9voC2TMs3ee6jkcbS8gnNo3E0=WDg@mail.gmail.com>
-Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Brauner <christian@brauner.io>,
-        James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <64e91dc2-7f5c-6e8-308e-414c82a8ae6b@dereferenced.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 2:24 AM Christian Brauner <brauner@kernel.org> wrote:
->
-> On Tue, Jan 25, 2022 at 05:18:02PM -0500, Paul Moore wrote:
-> > On Tue, Oct 12, 2021 at 10:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > On 10/12/2021 3:32 AM, Christian Brauner wrote:
-> > > > On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
-> > > >> The usual LSM hook "bail on fail" scheme doesn't work for cases where
-> > > >> a security module may return an error code indicating that it does not
-> > > >> recognize an input.  In this particular case Smack sees a mount option
-> > > >> that it recognizes, and returns 0. A call to a BPF hook follows, which
-> > > >> returns -ENOPARAM, which confuses the caller because Smack has processed
-> > > >> its data.
-> > > >>
-> > > >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-> > > >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > >> ---
-> > > > Thanks!
-> > > > Note, I think that we still have the SELinux issue we discussed in the
-> > > > other thread:
-> > > >
-> > > >       rc = selinux_add_opt(opt, param->string, &fc->security);
-> > > >       if (!rc) {
-> > > >               param->string = NULL;
-> > > >               rc = 1;
-> > > >       }
-> > > >
-> > > > SELinux returns 1 not the expected 0. Not sure if that got fixed or is
-> > > > queued-up for -next. In any case, this here seems correct independent of
-> > > > that:
-> > >
-> > > The aforementioned SELinux change depends on this patch. As the SELinux
-> > > code is today it blocks the problem seen with Smack, but introduces a
-> > > different issue. It prevents the BPF hook from being called.
-> > >
-> > > So the question becomes whether the SELinux change should be included
-> > > here, or done separately. Without the security_fs_context_parse_param()
-> > > change the selinux_fs_context_parse_param() change results in messy
-> > > failures for SELinux mounts.
-> >
-> > FWIW, this patch looks good to me, so:
-> >
-> > Acked-by: Paul Moore <paul@paul-moore.com>
-> >
-> > ... and with respect to the SELinux hook implementation returning 1 on
-> > success, I don't have a good answer and looking through my inbox I see
-> > David Howells hasn't responded either.  I see nothing in the original
-> > commit explaining why, so I'm going to say let's just change it to
-> > zero and be done with it; the good news is that if we do it now we've
->
->
-> It was originally supposed to return 1 but then this got changed but - a
-> classic - the documentation wasn't.
+On Wed, Jan 26, 2022 at 03:30:13PM -0600, Ariadne Conill wrote:
+> Hi,
+> 
+> On Wed, 26 Jan 2022, Kees Cook wrote:
+> 
+> > On Wed, Jan 26, 2022 at 03:13:10PM -0600, Ariadne Conill wrote:
+> > > Looks good to me, but I wonder if we shouldn't set an argv of
+> > > {bprm->filename, NULL} instead of {"", NULL}.  Discussion in IRC led to the
+> > > realization that multicall programs will try to use argv[0] and might crash
+> > > in this scenario.  If we're going to fake an argv, I guess we should try to
+> > > do it right.
+> > 
+> > They're crashing currently, though, yes? I think the goal is to move
+> > toward making execve(..., NULL, NULL) just not work at all. Using the
+> > {"", NULL} injection just gets us closer to protecting a bad userspace
+> > program. I think things _should_ crash if they try to start depending
+> > on this work-around.
+> 
+> Is there a reason to spawn a program, just to have it crash, rather than
+> just denying it to begin with, though?
 
-I'm shocked! :)
+I think the correct behavior here is to unconditionally reject a NULL
+argv -- and I wish this had gotten fixed in 2008. :P Given the code we've
+found that depends on NULL argv, I think we likely can't make the change
+outright, so we're down this weird rabbit hole of trying to reject what we
+can and create work-around behaviors for the cases that currently exist.
+I think new users of the new work-around shouldn't be considered. We'd
+prefer they get a rejection, etc.
 
-Thanks Christian.
+> I mean, it all seems fine enough, and perhaps I'm just a bit picky on the
+> colors and flavors of my bikesheds, so if you want to go with this patch,
+> I'll be glad to carry it in the Alpine security update I am doing to make
+> sure the *other* GLib-using SUID programs people find don't get exploited in
+> the same way.
+
+They "don't break userspace" guideline is really "don't break userspace
+if someone notices". :P Since this is a mitigation (not strictly a
+security flaw fix), changes to userspace behavior tend to be very
+conservatively viewed by Linus. ;)
+
+My preference is the earlier very simple version to fix this:
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 79f2c9483302..aabadcf4a525 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1897,6 +1897,8 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	}
+ 
+ 	retval = count(argv, MAX_ARG_STRINGS);
++	if (reval == 0)
++		retval = -EINVAL;
+ 	if (retval < 0)
+ 		goto out_free;
+ 	bprm->argc = retval;
+
+So, I guess we should start there and send a patch to valgrind?
 
 -- 
-paul-moore.com
+Kees Cook
