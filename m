@@ -2,162 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3920F49C37E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 07:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE9949C3B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 07:33:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234959AbiAZGLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 01:11:00 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47915 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229772AbiAZGK5 (ORCPT
+        id S232989AbiAZGdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 01:33:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59910 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232418AbiAZGde (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 01:10:57 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R821e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0V2uAg.f_1643177453;
-Received: from 30.225.24.77(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V2uAg.f_1643177453)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 26 Jan 2022 14:10:55 +0800
-Message-ID: <8f88459a-97e0-8b8d-3ec9-260d482a0d38@linux.alibaba.com>
-Date:   Wed, 26 Jan 2022 14:10:53 +0800
+        Wed, 26 Jan 2022 01:33:34 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40200C06161C;
+        Tue, 25 Jan 2022 22:33:34 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id c6so68473871ybk.3;
+        Tue, 25 Jan 2022 22:33:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ChJmRDJEm5pXcjV3RhCmm6g5TfXTFkO1Rcc6sHnIoj4=;
+        b=GhWYMsUW3Qbr9HHuE1hilXCPJIChi71Nm2odYfcUOh34TGObPJ6KOcMJ+S/hQuxHV5
+         F+W+7Msf0GoOhpLBKO05zSE8oWLEp3XTqstMnSDTh7ucRYF+L1RJw58oS5Gby58MOtUC
+         LssQfspxrjVVfjjBD5VDWKj7ajonyXUMjFEvFojFx1ET3d3yo6SmYlpibRrbhmc7vYsx
+         U0uhAruxNq+sOCzJo6bqt6YqZvyK8ZtKm/m7cvPM6YQIqXgf9emV8BAVuU9E1tiP4ez5
+         ILuGa68x6JrWOh8QCeDL2ZNdtxqOD0w4kWaT2xtK7MJ4l2Uv8UT+Fbn8eq9ks8PZMgdy
+         AwXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ChJmRDJEm5pXcjV3RhCmm6g5TfXTFkO1Rcc6sHnIoj4=;
+        b=CN+oIciFpwJrtkKfftFfuzZM500ik0F8tdKMmm0JzhOKDEw48HSB7iTBkkgvCO4D3Y
+         nKH4RUI1CkgoktnEnKVKGX3HmZPS/z1GCSEBPXh88piVmJsNA4kBlpFe2ZBjY717twjR
+         wKVIHvz5IYdyOJrgLcZ0hbNLaye7mw8nyz6dXLVIM/1CJDomOFpVPnikMJb4+QN+T9Am
+         8PcRSLf2UbmfqyRTgkuiwTcBNgVvAU0NPOJjWhLhQPwsMChVBAbF/SQGFAfsJ4I8mFn9
+         rKyXpNkjUDZae8UJ0crHl7X56Xnf/3rBjI4sdDT6Khks64c79tyUwWJ4XZy0HDf6ypqt
+         PThw==
+X-Gm-Message-State: AOAM530BqqBsM+ZtXVAGCdad0pC7SnvV4Ui1JguouPhfcNxdY/ebVDfd
+        bPQWaYyQnLfAEJqOM88Cne4mDElvzn2Ycc+C0A0=
+X-Google-Smtp-Source: ABdhPJyVOElZioeXwIvY64lBpQdHS4C6bPEoMaUFuCbrg+JVWJA/pH6s/0VZ7VCo2DXoBCw92rWh/r2oABcZTMP35VE=
+X-Received: by 2002:a05:6902:1107:: with SMTP id o7mr30485838ybu.270.1643178813246;
+ Tue, 25 Jan 2022 22:33:33 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.2
-Subject: Re: [PATCH v2 00/20] fscache,erofs: fscache-based demand-read
- semantics
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, xiang@kernel.org, chao@kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
-        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org
-References: <20220118131216.85338-1-jefflexu@linux.alibaba.com>
- <2815558.1643127330@warthog.procyon.org.uk>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <2815558.1643127330@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220124003342.1457437-1-ztong0001@gmail.com> <202201241937.i9KSsyAj-lkp@intel.com>
+ <20220124151611.30db4381d910c853fc0c9728@linux-foundation.org>
+ <CADJHv_vh03bhn1FX2-jc6JoH3Hm6cRiWs+iXFO-coGy_yUY1Mw@mail.gmail.com> <CAA5qM4Btrnp9Te2pm0s=OuDk0ASTE3-LyLt8nf0fXKxhehXUgA@mail.gmail.com>
+In-Reply-To: <CAA5qM4Btrnp9Te2pm0s=OuDk0ASTE3-LyLt8nf0fXKxhehXUgA@mail.gmail.com>
+From:   Tong Zhang <ztong0001@gmail.com>
+Date:   Tue, 25 Jan 2022 22:33:22 -0800
+Message-ID: <CAA5qM4DdvMNeG-PndWR9vb_jXTZ3v9aBXpW9QjV66DQFny65Wg@mail.gmail.com>
+Subject: Re: [PATCH v1] binfmt_misc: fix crash when load/unload module
+To:     Murphy Zhou <jencce.kernel@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        kernel test robot <lkp@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jan 25, 2022 at 9:23 PM Tong Zhang <ztong0001@gmail.com> wrote:
+>
+> On Tue, Jan 25, 2022 at 9:04 PM Murphy Zhou <jencce.kernel@gmail.com> wrote:
+> >
+> > Still panic with this patch on Linux-next tree:
+> >
+> > [ 1128.275515] LTP: starting binfmt_misc02 (binfmt_misc02.sh)
+> > [ 1128.303975] CPU: 1 PID: 107182 Comm: modprobe Kdump: loaded
+> > Tainted: G        W         5.17.0-rc1-next-20220125+ #1
+> > [ 1128.305264] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+> > [ 1128.305992] Call Trace:
+> > [ 1128.306376]  <TASK>
+> > [ 1128.306682]  dump_stack_lvl+0x34/0x44
+> > [ 1128.307211]  __register_sysctl_table+0x2c7/0x4a0
+> > [ 1128.307846]  ? load_module+0xb37/0xbb0
+> > [ 1128.308339]  ? 0xffffffffc01b6000
+> > [ 1128.308762]  init_misc_binfmt+0x32/0x1000 [binfmt_misc]
+> > [ 1128.309402]  do_one_initcall+0x44/0x200
+> > [ 1128.309937]  ? kmem_cache_alloc_trace+0x163/0x2c0
+> > [ 1128.310535]  do_init_module+0x5c/0x260
+> > [ 1128.311045]  __do_sys_finit_module+0xb4/0x120
+> > [ 1128.311603]  do_syscall_64+0x3b/0x90
+> > [ 1128.312088]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > [ 1128.312755] RIP: 0033:0x7f929ab85fbd
+> >
+> > Testing patch on Linus tree.
+>
+> Hi Murphy,
+> Did you apply this patch?
+> Link: https://lkml.kernel.org/r/20220124181812.1869535-2-ztong0001@gmail.com
+> I tested it on top of the current master branch and it works on my
+> setup using the reproducer I mentioned.
+> Could you share your test script?
+> Thanks,
+> - Tong
 
+I can find binfmt_misc02.sh on github, and running the following
+command shows: failed 0.
 
-On 1/26/22 12:15 AM, David Howells wrote:
-> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
-> 
->> The following issues still need further discussion. Thanks for your time
->> and patience.
->>
->> 1. I noticed that there's refactoring of netfs library[1],
->> ...
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-lib
-> 
-> Yes.  I'm working towards getting netfslib to do handling writes and dio as
-> well as reads, along with content crypto/compression, and the idea I'm aiming
-> towards is that you just point your address_space_ops at netfs directly if
-> possible - but it's going to require its own context now to manage pending
-> writes.
-> 
-> See my netfs-experimental branch for more of that - it's still a work in
-> progress, though.
+./runltp -s binfmt_misc
+Running tests.......
+<<<test_start>>>
+tag=binfmt_misc01 stime=1643178454
+cmdline="binfmt_misc01.sh"
+contacts=""
+analysis=exit
+<<<test_output>>>
+[   90.908282] LTP: starting binfmt_misc01 (binfmt_misc01.sh)
+binfmt_misc01 1 TINFO: timeout per run is 0h 5m 0s
+binfmt_misc01 1 TPASS: Failed to register a binary type
+binfmt_misc01 2 TPASS: Failed to register a binary type
+binfmt_misc01 3 TPASS: Failed to register a binary type
+binfmt_misc01 4 TPASS: Failed to register a binary type
+binfmt_misc01 5 TPASS: Failed to register a binary type
+binfmt_misc01 6 TPASS: Failed to register a binary type
+binfmt_misc01 7 TPASS: Failed to register a binary type
+binfmt_misc01 8 TPASS: Failed to register a binary type
+binfmt_misc01 9 TPASS: Failed to register a binary type
 
-Got it.
+Summary:
+passed   9
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status="ok"
+duration=0 termination_type=exited termination_id=0 corefile=no
+cutime=2 cstime=17
+<<<test_end>>>
+<<<test_start>>>
+tag=binfmt_misc02 stime=1643178454
+cmdline="binfmt_misc02.sh"
+contacts=""
+analysis=exit
+<<<test_output>>>
+[   91.133399] LTP: starting binfmt_misc02 (binfmt_misc02.sh)
+incrementing stop
+binfmt_misc02 1 TINFO: timeout per run is 0h 5m 0s
+binfmt_misc02 1 TPASS: Recognise and unrecognise a binary type as expected
+binfmt_misc02 2 TPASS: Recognise and unrecognise a binary type as expected
+binfmt_misc02 3 TPASS: Recognise and unrecognise a binary type as expected
+binfmt_misc02 4 TPASS: Recognise and unrecognise a binary type as expected
+binfmt_misc02 5 TPASS: Fail to recognise a binary type
+binfmt_misc02 6 TPASS: Fail to recognise a binary type
 
-> 
-> Btw, you could set rreq->netfs_priv in ->init_rreq() rather than passing it in
-> to netfs_readpage().
-> 
->> 2. The current implementation will severely conflict with the
->> refactoring of netfs library[1][2]. The assumption of 'struct
->> netfs_i_context' [2] is that, every file in the upper netfs will
->> correspond to only one backing file. While in our scenario, one file in
->> erofs can correspond to multiple backing files. That is, the content of
->> one file can be divided into multiple chunks, and are distrubuted over
->> multiple blob files, i.e. multiple backing files. Currently I have no
->> good idea solving this conflic.
-> 
-> I can think of a couple of options to explore:
-> 
->  (1) Duplicate the cachefiles backend.  You can discard a lot of it, since a
->      much of it is concerned with managing local modifications - which you're
->      not going to do since you have a R/O filesystem and you're looking at
->      importing files into the cache externally to the kernel.
-> 
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status="ok"
+duration=0 termination_type=exited termination_id=0 corefile=no
+cutime=3 cstime=25
+<<<test_end>>>
+INFO: ltp-pan reported all tests PASS
+LTP Version: 20220121-9-g010e4f783
 
+       ###############################################################
 
->      I would suggest looking to see if you can do the blob mapping in the
->      backend rather than passing the offset down.  Maybe make the cookie index
->      key hold the index too, e.g. "/path/to/file+offset".
-
-Have been discussed in [1].
-
-[1]
-https://lore.kernel.org/lkml/Yeeye2AUZITDsdh8@B-P7TQMD6M-0146.local/T/#m25b1229f96bf24929fb73746a07e9996e8222ac6
-
-
-"/path/to/file+offset"
-		^
-
-Besides, what does the 'offset' mean?
-
-
-> 
->      Btw, do you still need cachefilesd for its culling duties?
-
-Yes we still need cache management in this on-demand scenario, in case
-of backing files exhausting the available blocks. (Though these backing
-files are prepared by daemon in advance, these files can all be sparse
-files.) And similarly the actual culling work should be done under
-protection of S_KERNEL_FILE, so that the culled backing file can't be
-picked back up.
-
-> 
->  (2) Do you actually need to go through netfslib?  Might it be easier to call
->      fscache_read() directly?  Have a look at fs/nfs/fscache.c
-
-It would be great if we can use fscache_read() directly.
-
-
-> 
->> Besides there are still two quetions:
->> - What's the plan of [1]? When is it planned to be merged?
-> 
-> Hopefully next merge window, but that's going to depend on a number of things.
-> 
->> - It seems that all upper fs using fscache is going to use netfs API,
->>   while the APIs like fscache_read_or_alloc_page() are deprecated. Is
->>   that true?
-> 
-> fscache_read_or_alloc_page() is gone completely.
-> 
-> You don't have to use the netfs API.  You can talk to fscache directly,
-> doing DIO from the cache to an xarray-class iov_iter constructed from your
-> inode's pagecache.
-> 
-> netfslib provides/will provide a number of services, such as multipage
-> folios, transparent caching, crypto, compression and hiding the existence of
-> pages/folios from the filesystem as entirely as possible.  However, you
-> already have some of these implemented on top of iomap for the blockdev
-> interface, it would appear.
-> 
-
-Got it.
-
-
-In summary,
-
-1) I prefer option 2, i.e. calling fscache_read() directly, as the one
-at hand. In this case, the conflict with the netfs lib refactoring can
-be avoided. Besides, there will be less modification needed to
-cachefiles/netfs. Patch 1~3 are no longer required, while patch 4~6 are
-still needed, which mainly introduce the new devnode.
-
-2) Later we can change to option 1, i.e. calling netfs lib and also a
-potential new R/O backend, if the issues in [1] can be clarified or solved.
-
-[1]
-https://lore.kernel.org/lkml/Yeeye2AUZITDsdh8@B-P7TQMD6M-0146.local/T/#m25b1229f96bf24929fb73746a07e9996e8222ac6
-
--- 
-Thanks,
-Jeffle
+            Done executing testcases.
+            LTP Version:  20220121-9-g010e4f783
+       ###############################################################
