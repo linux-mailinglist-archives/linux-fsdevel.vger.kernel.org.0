@@ -2,107 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3308D49D580
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 23:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A34B49D58B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 23:37:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbiAZWfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 17:35:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59192 "EHLO
+        id S229698AbiAZWhz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 17:37:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbiAZWfV (ORCPT
+        with ESMTP id S229674AbiAZWhy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 17:35:21 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AD12C06161C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 14:35:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=czEgEE0p8FWVV54NqFyujRjTBh35gkIdbYekZFplHkI=; b=IhfX/Da7DKSlQtI4yB+nLehwPo
-        REZN7VGUPfu8iWfm4UAqsUFm3BePHHfYnxFYnI7mGB6Qesjj++TirECzIdAlNr/6GytNNJgoffUan
-        +e0w0EnQFGfRgveB8cB7O6Ylqidaqr1aKdMfpLBSfBVK/hoK2ZmXHGZp8XdmYViNal4MfhH1gMf4D
-        ZJ7dm6rSeki8Pbm/pqK4m0qr3JCm/ssS0pB6O7/3Ot+/Wsk29+ICRXUFnZp1e2NOx/XcihlLs5fkp
-        tav9Q4ZK2SUh2v0dWNv82lFpzhQekKaHxLWlI1n1po7S6kAAXWdvpRhsHbKhpx+QBy+9i0uThGoVx
-        jbHfMJKA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nCqsp-004XNu-66; Wed, 26 Jan 2022 22:35:19 +0000
-Date:   Wed, 26 Jan 2022 22:35:19 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hayley Leblanc <hleblanc@utexas.edu>
-Cc:     linux-fsdevel@vger.kernel.org, rust-for-linux@vger-kernel.org,
-        Vijay Chidambaram <vijayc@utexas.edu>
-Subject: Re: Persistent memory file system development in Rust
-Message-ID: <YfHMp+zhEjrMHizL@casper.infradead.org>
-References: <CAFadYX5iw4pCJ2L4s5rtvJCs8mL+tqk=5+tLVjSLOWdDeo7+MQ@mail.gmail.com>
+        Wed, 26 Jan 2022 17:37:54 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA647C061748
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id h7so1760719ejf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
+        b=PUexGqcIVlaj1EtFvEn2PSWA9vQAteWtUkZ+SBG5roU+D7QWy3SizXM4RLxmiJb4y+
+         21mBOEtVAyRn8nb9C4lDXvde8VLxHnfQnZ0on+zhj929ODZS2xaTEugtb5I1SNZ79be5
+         8ljRT/rUToeF+GpC+L/8IqXWiHtkcWEEh7ol95oLbGIk8WMtqlVeVFrWEPfAAQoHE/IB
+         e5NMOscmd8hztmFpDP6mVt5uWMfQqlmUDFVvZqpggisNdFMHs9yBDlmWWnPV9jU76suv
+         Ls0/JoEwllWu9cP+w1FEEyV5Qg/PPmKNA4Y/O8pIlMtBA3LqRX9kVPQhN0mOQmqi42If
+         Ss8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
+        b=Z366TnfJyrDcEVvzeQhOy9ZNLAgtRQ/0+x78FAmDmZ1N6+yOuFOKtCTvhotEDD4qo9
+         F4oLNAeM/PpdzBkSv59723LsCpsZCgk67vNDAxuo6pvk2CBKvpbIDmTKCxKf+a1RiWlN
+         E+yCpVltEB0XxpQfA80RDsD/53fepFUW/gKbFfjEGwho9HHjdr95rLC+Nvdyo+medu8s
+         8Y7L3kx3LcVUlP3pXg089nmNerkc/C/z4TdgqlQxwuHn/YEadye6Da1+ytQwHz4GQ+Dz
+         0CgXEIxiGENVI/fBJgukhP7vybavmNtxFskLjE8n+PNefBzmME+FBattaswuqCgWZR1k
+         2VpQ==
+X-Gm-Message-State: AOAM531U87GHrVsKOfK6n25HrijIxFz2VwcOZpJP36pO8RmLAYHCg4lZ
+        CRrXMeAN5HZjKoi3QyR0CWxq3JFnG9N01BbNT0jp
+X-Google-Smtp-Source: ABdhPJz7JLCXZXW6bWn+3igBvUCPp+jJroJkHIyDQb/GW3U8GVaEAHFqw3UaonR9mBekrO2084/k8MAzQj1Z8rint7Y=
+X-Received: by 2002:a17:906:2ed0:: with SMTP id s16mr676611eji.327.1643236672195;
+ Wed, 26 Jan 2022 14:37:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFadYX5iw4pCJ2L4s5rtvJCs8mL+tqk=5+tLVjSLOWdDeo7+MQ@mail.gmail.com>
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
+ <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein>
+ <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com> <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
+ <20220126072442.he4fjegfqnh72kzp@wittgenstein>
+In-Reply-To: <20220126072442.he4fjegfqnh72kzp@wittgenstein>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 26 Jan 2022 17:37:41 -0500
+Message-ID: <CAHC9VhRyAxbJKBLXbW-Zj9voC2TMs3ee6jkcbS8gnNo3E0=WDg@mail.gmail.com>
+Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 04:02:56PM -0600, Hayley Leblanc wrote:
-> I'm a PhD student at UT Austin advised by Vijay Chidambaram (cc'ed).
-> We are interested in building a file system for persistent memory in
-> Rust, as recent research [1] has indicated that Rust's safety features
-> could eliminate some classes of crash consistency bugs in PM systems.
-> In doing so, we'd like to build a system that has the potential to be
-> adopted beyond the research community. I have a few questions (below)
-> about the direction of work in this area within the Linux community,
-> and would be interested in hearing your thoughts on the general idea
-> of this project as well.
+On Wed, Jan 26, 2022 at 2:24 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Tue, Jan 25, 2022 at 05:18:02PM -0500, Paul Moore wrote:
+> > On Tue, Oct 12, 2021 at 10:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > On 10/12/2021 3:32 AM, Christian Brauner wrote:
+> > > > On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
+> > > >> The usual LSM hook "bail on fail" scheme doesn't work for cases where
+> > > >> a security module may return an error code indicating that it does not
+> > > >> recognize an input.  In this particular case Smack sees a mount option
+> > > >> that it recognizes, and returns 0. A call to a BPF hook follows, which
+> > > >> returns -ENOPARAM, which confuses the caller because Smack has processed
+> > > >> its data.
+> > > >>
+> > > >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> > > >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > >> ---
+> > > > Thanks!
+> > > > Note, I think that we still have the SELinux issue we discussed in the
+> > > > other thread:
+> > > >
+> > > >       rc = selinux_add_opt(opt, param->string, &fc->security);
+> > > >       if (!rc) {
+> > > >               param->string = NULL;
+> > > >               rc = 1;
+> > > >       }
+> > > >
+> > > > SELinux returns 1 not the expected 0. Not sure if that got fixed or is
+> > > > queued-up for -next. In any case, this here seems correct independent of
+> > > > that:
+> > >
+> > > The aforementioned SELinux change depends on this patch. As the SELinux
+> > > code is today it blocks the problem seen with Smack, but introduces a
+> > > different issue. It prevents the BPF hook from being called.
+> > >
+> > > So the question becomes whether the SELinux change should be included
+> > > here, or done separately. Without the security_fs_context_parse_param()
+> > > change the selinux_fs_context_parse_param() change results in messy
+> > > failures for SELinux mounts.
+> >
+> > FWIW, this patch looks good to me, so:
+> >
+> > Acked-by: Paul Moore <paul@paul-moore.com>
+> >
+> > ... and with respect to the SELinux hook implementation returning 1 on
+> > success, I don't have a good answer and looking through my inbox I see
+> > David Howells hasn't responded either.  I see nothing in the original
+> > commit explaining why, so I'm going to say let's just change it to
+> > zero and be done with it; the good news is that if we do it now we've
+>
+>
+> It was originally supposed to return 1 but then this got changed but - a
+> classic - the documentation wasn't.
 
-Hi Hayley,
+I'm shocked! :)
 
-Thanks for reaching out to us.
+Thanks Christian.
 
-First, my standard advice for anyone thinking of writing a Linux
-filesystem: Absolutely do it; you'll learn so much, and it's a great deal
-of fun.  Then my standard advice for anyone thinking about releasing a
-Linux filesystem: Think very carefully about whether you want to do it.
-If you're lucky, it's only about as much work as adopting a puppy.
-If you're unlucky, it's like adopting a parrot; far more work and it
-may outlive you.
-
-In particular, the demands of academia (generate novel insights, write
-as many papers as possible, get your PhD) are at odds with the demands
-of a production filesystem (move slowly, don't break anything, DON'T
-LOSE USER DATA).  You wouldn't be the first person to try to do both,
-but I think you might be the first person to be successful.
-
-There's nothing wrong with having written an academic filesystem
-that you learned things from.  I think I've written three filesystems
-myself that have never seen a public release -- and I'm totally fine
-with that.
-
-> 1. What is the state of PM file system development in the kernel? I
-> know that there was some effort to merge NOVA [2] and nvfs [3] in the
-> last few years, but neither seems to have panned out.
-
-Correct.  I'm not aware of anything else currently under development.
-I'd file both those filesystems under "Things people tried and learned
-things from", although maybe there'll be a renewed push to get one
-or the other merged.
-
-> 2. What is the state of file system work, if any, on the Rust for
-> Linux side of things?
-
-I only have a toe in Rust development, but I'm not aware of
-any work being done specifically for filesystems, that said ...
-
-> 3. We're interested in using a framework called Bento [4] as the basis
-> for our file system development. Is this project on Linux devs' radar?
-> What are the rough chances that this work (or something similar) could
-> end up in the kernel at some point?
-
-Bento seems like a good approach (based on a 30 second scan of their
-git repo).  It wasn't on my radar before, so thanks for bringing it up.
-I think basing your work on Bento is a defensible choice; it might be
-wrong, but the only way to find out is to try.
-
-All this is just my opinion, and it's worth exactly what you're paying
-for it.  I have no say in what gets merged and what doesn't, and I
-decided academia was not for me after getting my BSc.  I hope it all
-works out for you, and we end up seeing your paper(s) in FAST.
+-- 
+paul-moore.com
