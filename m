@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C790A49C12E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 03:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1484349C12F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 03:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236249AbiAZCS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jan 2022 21:18:58 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:34542 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236237AbiAZCS5 (ORCPT
+        id S236270AbiAZCTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jan 2022 21:19:04 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:50692 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236264AbiAZCTB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jan 2022 21:18:57 -0500
+        Tue, 25 Jan 2022 21:19:01 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B0E31B81BD1;
-        Wed, 26 Jan 2022 02:18:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B4DBC340E0;
-        Wed, 26 Jan 2022 02:18:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8175961676;
+        Wed, 26 Jan 2022 02:19:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB46EC340E0;
+        Wed, 26 Jan 2022 02:19:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643163535;
-        bh=D+jdnxWVbFx4+otp0WUb22dBU1BwNtU+JIJS9K7vr38=;
+        s=k20201202; t=1643163540;
+        bh=fYfjNXQI19baYwTgaziCQNXiFjhHSYcgK0focYhPzHI=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kZi+2Ha1b9XmYw8L2vigc5qY5Ok1GpSpTMTpaEz7hQP5p98/1uugwaMe8sPoljrfY
-         AGlq/Qs6n7ZpgF8G2wFqEYOX+lk/7uXoRaPg5VhlXrccaVQRAlGXS+IPnuCx156Tai
-         Y7amDhOSyICL9UhO2brRmw08MD01cQ23k5oUtdxn2pE+wGhxoyVbVxYlyDWfnxVjRJ
-         koI0nAUQO8VYe/dREt4Ge8DFkWlBxuY/onQIxU4Z8uMZ43QVbE2zUelk3QSNEf+6o4
-         z6GuQHG6rhqlBdk2WzTkRsvA8hQYlQG5jqTEeDHwV7ybpCI65GS33b94JHnRKwPozf
-         z9MK3IO/zQqBQ==
-Subject: [PATCH 2/3] xfs: flush log after fallocate for sync mounts and sync
- inodes
+        b=GkE0sUx7tFtQLsjVo76opL6YqWe0biYNT7b1azk8Ngp0FKjnFF3zzSRxOO6ZhGOdy
+         ijCSXqbuUjwIH0K9vJghixhC2gkvHtsNa3iqJ4OJZ6o940pLMaha2bwiU8GC/JJ0JE
+         RJPKLr2L66BENvDacJ4FslBNiV0tmbh47HycElw0lC4ulMQvZWI0N7IipuYkN4h6zG
+         O5y6B/KP9XsigTFa4I8jzjLLpVOWYKzTJf/CxTzOrIdESEIZts0FTbUYQvVWKRjMh8
+         YZsh1TT6aoD80K/3ujAix4xTRRJEzeHg2iZGVONBT8Kqqk398N/szAtb9Y9eUwIdbt
+         3ie3vFOzSykdw==
+Subject: [PATCH 3/3] xfs: ensure log flush at the end of a synchronous
+ fallocate call
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Tue, 25 Jan 2022 18:18:55 -0800
-Message-ID: <164316353511.2600373.9852441567149788159.stgit@magnolia>
+Date:   Tue, 25 Jan 2022 18:19:00 -0800
+Message-ID: <164316354060.2600373.8627019780419133722.stgit@magnolia>
 In-Reply-To: <164316352410.2600373.17669839881121774801.stgit@magnolia>
 References: <164316352410.2600373.17669839881121774801.stgit@magnolia>
 User-Agent: StGit/0.19
@@ -48,72 +48,67 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Since we've started treating fallocate more like a file write, we should
-flush the log to disk if the user has asked for synchronous writes
-either by setting it via fcntl flags, or inode flags, or with the sync
-mount option.  We've already got a helper for this, so use it.
+If the caller wanted us to persist the preallocation to disk before
+returning to userspace, make sure we force the log to disk after making
+all metadata updates.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_file.c |   32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ fs/xfs/xfs_file.c |   23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
 
 diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index eee5fb20cf8d..fb82a61696f0 100644
+index fb82a61696f0..8f2372b96fc4 100644
 --- a/fs/xfs/xfs_file.c
 +++ b/fs/xfs/xfs_file.c
-@@ -895,6 +895,21 @@ xfs_break_layouts(
- 	return error;
- }
+@@ -929,6 +929,7 @@ xfs_file_fallocate(
+ 	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
+ 	loff_t			new_size = 0;
+ 	bool			do_file_insert = false;
++	bool			flush_log;
  
-+/* Does this file, inode, or mount want synchronous writes? */
-+static inline bool xfs_file_sync_writes(struct file *filp)
-+{
-+	struct xfs_inode	*ip = XFS_I(file_inode(filp));
-+
-+	if (xfs_has_wsync(ip->i_mount))
-+		return true;
-+	if (filp->f_flags & (__O_SYNC | O_DSYNC))
-+		return true;
-+	if (IS_SYNC(file_inode(filp)))
-+		return true;
-+
-+	return false;
-+}
-+
- #define	XFS_FALLOC_FL_SUPPORTED						\
- 		(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |		\
- 		 FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_ZERO_RANGE |	\
-@@ -1071,7 +1086,7 @@ xfs_file_fallocate(
+ 	if (!S_ISREG(inode->i_mode))
+ 		return -EINVAL;
+@@ -1081,12 +1082,14 @@ xfs_file_fallocate(
+ 	 * If we need to change the PREALLOC flag, do so.  We already updated
+ 	 * the timestamps and cleared the suid flags, so we don't need to do
+ 	 * that again.  This must be committed before the size change so that
+-	 * we don't trim post-EOF preallocations.
++	 * we don't trim post-EOF preallocations.  If this is the last
++	 * transaction we're going to make, make the update synchronous too.
+ 	 */
++	flush_log = xfs_file_sync_writes(file);
  	if (flags) {
  		flags |= XFS_PREALLOC_INVISIBLE;
  
--		if (file->f_flags & O_DSYNC)
-+		if (xfs_file_sync_writes(file))
+-		if (xfs_file_sync_writes(file))
++		if (flush_log && !(do_file_insert || new_size))
  			flags |= XFS_PREALLOC_SYNC;
  
  		error = xfs_update_prealloc_flags(ip, flags);
-@@ -1130,21 +1145,6 @@ xfs_file_fadvise(
- 	return ret;
- }
+@@ -1112,8 +1115,22 @@ xfs_file_fallocate(
+ 	 * leave shifted extents past EOF and hence losing access to
+ 	 * the data that is contained within them.
+ 	 */
+-	if (do_file_insert)
++	if (do_file_insert) {
+ 		error = xfs_insert_file_space(ip, offset, len);
++		if (error)
++			goto out_unlock;
++	}
++
++	/*
++	 * If the caller wants us to flush the log and either we've made
++	 * changes since updating the PREALLOC flag or we didn't need to
++	 * update the PREALLOC flag, then flush the log now.
++	 */
++	if (flush_log && (do_file_insert || new_size || flags == 0)) {
++		error = xfs_log_force_inode(ip);
++		if (error)
++			goto out_unlock;
++	}
  
--/* Does this file, inode, or mount want synchronous writes? */
--static inline bool xfs_file_sync_writes(struct file *filp)
--{
--	struct xfs_inode	*ip = XFS_I(file_inode(filp));
--
--	if (xfs_has_wsync(ip->i_mount))
--		return true;
--	if (filp->f_flags & (__O_SYNC | O_DSYNC))
--		return true;
--	if (IS_SYNC(file_inode(filp)))
--		return true;
--
--	return false;
--}
--
- STATIC loff_t
- xfs_file_remap_range(
- 	struct file		*file_in,
+ out_unlock:
+ 	xfs_iunlock(ip, iolock);
 
