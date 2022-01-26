@@ -2,63 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB7A49C529
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 09:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D389149C587
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 09:51:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238350AbiAZIV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 03:21:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230268AbiAZIV6 (ORCPT
+        id S238561AbiAZIvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 03:51:51 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37674 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234764AbiAZIvu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 03:21:58 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66E6C06161C;
-        Wed, 26 Jan 2022 00:21:58 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 26 Jan 2022 03:51:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643187110;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pfOp64U0iYvSw+YJXe3pmYBUfoothO/ocAN1AyLo5xI=;
+        b=iNv6FgCr2RzZBFMt/oAuSjVBhgEodPib8UPS9zGaQ5SmlRv3z9QkdJ+ws9yzMXNH2qu5AP
+        URGfYotPfCrbjzGnp8zqKLct8awiYAnrbkNziZurjvSrp/FqAg6CprZLCRighrApH/SByz
+        33NQmGjwGlkACGNDVmMc2xoh5kGB0qY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-528-8QxKUfNEP4SBWpgli8BY4w-1; Wed, 26 Jan 2022 03:51:44 -0500
+X-MC-Unique: 8QxKUfNEP4SBWpgli8BY4w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1741260E75;
-        Wed, 26 Jan 2022 08:21:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B749C340E7;
-        Wed, 26 Jan 2022 08:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643185317;
-        bh=FiLRbzqolbwucvqe3jOU5MhCq30iSskHTZaWdzIdR8E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qdQmxraJzvvl4JTVAMdJRJFis4o9l/t0YxYwcPx49zZt+xjtXiJXXq7RWrIWRLufK
-         +WyKTkSUj+7QtPGMgWR4A/v28ZeWce2+BwZZ3td9rrfby0w/2+x83pLNFmJZwuPjLt
-         R5BKbe6E4UOZq+zZyeMne0VuAeLKISi1DWU932HGCYFobaimplwIdm/JxF7sAxO8zS
-         rkXQnCznMbpGF+0ASN7B85+G+vxb2M7m4F9xHxS9+wzup75o7jKbiBSYnkkMtgAO8z
-         tSYaDIthpeOhEJI/9w3CUvNWq4kB5Czx32vKdIKYsx0aL7S+IcjGVRNhb5Ii0/wdVd
-         BNsxgX+6QOOeQ==
-Date:   Wed, 26 Jan 2022 09:21:53 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.com
-Subject: Re: [PATCHSET 0/4] vfs: actually return fs errors from ->sync_fs
-Message-ID: <20220126082153.mz5prdistkkvc6bc@wittgenstein>
-References: <164316348940.2600168.17153575889519271710.stgit@magnolia>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D402100C609;
+        Wed, 26 Jan 2022 08:51:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BAD2B56F6A;
+        Wed, 26 Jan 2022 08:51:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <8f88459a-97e0-8b8d-3ec9-260d482a0d38@linux.alibaba.com>
+References: <8f88459a-97e0-8b8d-3ec9-260d482a0d38@linux.alibaba.com> <20220118131216.85338-1-jefflexu@linux.alibaba.com> <2815558.1643127330@warthog.procyon.org.uk>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/20] fscache,erofs: fscache-based demand-read semantics
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <164316348940.2600168.17153575889519271710.stgit@magnolia>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <100894.1643187095.1@warthog.procyon.org.uk>
+Date:   Wed, 26 Jan 2022 08:51:35 +0000
+Message-ID: <100895.1643187095@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 06:18:09PM -0800, Darrick J. Wong wrote:
-> Hi all,
-> 
-> While auditing the VFS code, I noticed that while ->sync_fs is allowed
-> to return error codes to reflect some sort of internal filesystem error,
-> none of the callers actually check the return value.  Back when this
-> callout was introduced for sync_filesystem in 2.5 this didn't matter
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
 
-(Also, it looks like that most(/none?) of the filesystems that
-implemented ->sync_fs around 2.5/2.6 (ext3, jfs, jffs2, reiserfs etc.)
-actually did return an error?
-In fact, 5.8 seems to be the first kernel to report other errors than
--EBADF since commit 735e4ae5ba28 ("vfs: track per-sb writeback errors
-and report them to syncfs"?)
+> "/path/to/file+offset"
+> 		^
+> 
+> Besides, what does the 'offset' mean?
+
+Assuming you're storing multiple erofs files within the same backend file, you
+need to tell the the cache backend how to find the data.  Assuming the erofs
+data is arranged such that each erofs file is a single contiguous region, then
+you need a pathname and a file offset to find one of them.
+
+David
+
