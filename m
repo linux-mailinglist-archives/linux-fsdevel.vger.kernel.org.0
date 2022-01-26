@@ -2,82 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B934049D15D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 19:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C095349D161
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 19:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244049AbiAZSEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 13:04:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53280 "EHLO
+        id S244073AbiAZSFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 13:05:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiAZSEA (ORCPT
+        with ESMTP id S229491AbiAZSFK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 13:04:00 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F823C06161C;
-        Wed, 26 Jan 2022 10:03:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=91pY7WHsiZcMLE/SeJIJM6HsjUa7+6H46gg9u/uUPng=; b=vKVRrchafi1klVzAPWTWhsPIdw
-        eQaps9a3g35CEMfkAzjbuKVO7wNtD7O7qlI4DwYoCoi68KaJV3iNgRz3IE6ofLFz3EZsVAFatN7kS
-        wClec6snlHX4x6lzsaNJ3Do3U7ZJnP7rtQcWSsJ82aMPa1FGc6t59vtsAKA6BlWHHMUyTFk8nLXkb
-        rN49WRzlPpfpgSrmJ3MGHI4dq1Y5+UvtINcGhjTepm9ukdME037+3dkmiidKwOgDIebzgsnFWGWuc
-        VJhTvlv8xJdwMonSPezB0mznSndiUftphLgS671GSF9S5lvpNhJSkI/H/vDMv0v1aaks+x6v3uINu
-        51FDZWwQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nCme7-004Hx7-44; Wed, 26 Jan 2022 18:03:51 +0000
-Date:   Wed, 26 Jan 2022 18:03:51 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Ariadne Conill <ariadne@dereferenced.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2] fs/exec: require argv[0] presence in
- do_execveat_common()
-Message-ID: <YfGNBz0gigWwNnHn@casper.infradead.org>
-References: <20220126114447.25776-1-ariadne@dereferenced.org>
- <YfFh6O2JS6MybamT@casper.infradead.org>
- <877damwi2u.fsf@email.froward.int.ebiederm.org>
+        Wed, 26 Jan 2022 13:05:10 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7FFC06161C;
+        Wed, 26 Jan 2022 10:05:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EAB58B80EB0;
+        Wed, 26 Jan 2022 18:05:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5813C340E3;
+        Wed, 26 Jan 2022 18:05:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643220307;
+        bh=0a2V7J6xaCLaV5Cod9PsPrvBBg8SjjTYVv4EL30ji0Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wnj9CmvCHRfhEf8acSJ9ypKyoWP3qxKMeC3MHpll5wFxOHYfZw/DqvNJ5t8Qg8+tP
+         CCRDd86oNizYSKbDU74H+MeDgNgXzqCn5j8OvnDTrRa5VL0orf4ATAe/XNNqzDk42Z
+         sHtZRn+uZpKoW2pXGGgYhYSYtzA1xl+NOwkcPlPSBGpoR5c07tQXazKxFLx6btGxom
+         tBv60WG1oKQNNKUVtKwWkDShk2g4OEn5tKquy9arOrKOtJ5vt9D2XTdyMloI1Wbo+w
+         xisPFuqpHnPFaOvG3wmBaIj9g4h9dpBZUp7rwSfiBqyTxNAmh46Co0xRIs/OfCVly7
+         sZuNQi6wIUoLw==
+Date:   Wed, 26 Jan 2022 10:05:07 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.com
+Subject: Re: [PATCHSET 0/4] vfs: actually return fs errors from ->sync_fs
+Message-ID: <20220126180507.GB13499@magnolia>
+References: <164316348940.2600168.17153575889519271710.stgit@magnolia>
+ <20220126082153.mz5prdistkkvc6bc@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <877damwi2u.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <20220126082153.mz5prdistkkvc6bc@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 10:57:29AM -0600, Eric W. Biederman wrote:
-> Matthew Wilcox <willy@infradead.org> writes:
+On Wed, Jan 26, 2022 at 09:21:53AM +0100, Christian Brauner wrote:
+> On Tue, Jan 25, 2022 at 06:18:09PM -0800, Darrick J. Wong wrote:
+> > Hi all,
+> > 
+> > While auditing the VFS code, I noticed that while ->sync_fs is allowed
+> > to return error codes to reflect some sort of internal filesystem error,
+> > none of the callers actually check the return value.  Back when this
+> > callout was introduced for sync_filesystem in 2.5 this didn't matter
 > 
-> > On Wed, Jan 26, 2022 at 11:44:47AM +0000, Ariadne Conill wrote:
-> >> Interestingly, Michael Kerrisk opened an issue about this in 2008[1],
-> >> but there was no consensus to support fixing this issue then.
-> >> Hopefully now that CVE-2021-4034 shows practical exploitative use
-> >> of this bug in a shellcode, we can reconsider.
-> >> 
-> >> [0]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
-> >> [1]: https://bugzilla.kernel.org/show_bug.cgi?id=8408
-> >
-> > Having now read 8408 ... if ABI change is a concern (and I really doubt
-> > it is), we could treat calling execve() with a NULL argv as if the
-> > caller had passed an array of length 1 with the first element set to
-> > NULL.  Just like we reopen fds 0,1,2 for suid execs if they were
-> > closed.
-> 
-> Where do we reopen fds 0,1,2 for suid execs?  I feel silly but I looked
-> through the code fs/exec.c quickly and I could not see it.
+> (Also, it looks like that most(/none?) of the filesystems that
+> implemented ->sync_fs around 2.5/2.6 (ext3, jfs, jffs2, reiserfs etc.)
+> actually did return an error?
 
-I'm wondering if I misremembered and it's being done in ld.so
-rather than in the kernel?  That might be the right place to put
-this fix too.
+Yes, some of them do -- ext4 will bubble up jbd2 errors and the results
+of flushing the bdev write cache.
 
-> I am attracted to the notion of converting an empty argv array passed
-> to the kernel into something we can safely pass to userspace.
-> 
-> I think it would need to be having the first entry point to "" instead
-> of the first entry being NULL.  That would maintain the invariant that you
-> can always dereference a pointer in the argv array.
+> In fact, 5.8 seems to be the first kernel to report other errors than
+> -EBADF since commit 735e4ae5ba28 ("vfs: track per-sb writeback errors
+> and report them to syncfs"?)
 
-Yes, I like that better than NULL.
+Yeah.  I think the bdev pagecache flush might occasionally return errors
+if there happened to be dirty pages, but (a) that doesn't help XFS which
+has its own buffer cache and (b) that doesn't capture the state "fs has
+errored out but media is fine".
+
+As it is I think the ext4 syncfs needs to start returning EIO if someone
+forced a shutdown, and probably some auditing for dropped error codes
+due to the 'traditional' vfs behavior.  btrfs probably ought to return
+the result of filemap_flush too.
+
+--D
