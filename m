@@ -2,145 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6148649CFA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 17:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A81D49CFE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 17:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236907AbiAZQ03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 11:26:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58600 "EHLO
+        id S243226AbiAZQkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 11:40:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243113AbiAZQ02 (ORCPT
+        with ESMTP id S243213AbiAZQkv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 11:26:28 -0500
-X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 26 Jan 2022 08:26:27 PST
-Received: from mail-out-2.itc.rwth-aachen.de (mail-out-2.itc.rwth-aachen.de [IPv6:2a00:8a60:1:e501::5:47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A1B5C06161C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 08:26:27 -0800 (PST)
-X-IPAS-Result: =?us-ascii?q?A2AgAADjdPFh/6QagoZaGwEBAQEBAQEBBQEBARIBAQEDA?=
- =?us-ascii?q?wEBAUCBSAQBAQELAYFRKIIEaoRJjm6CB4l8knWBfAsBAQEBAQEBAQEIAT8CB?=
- =?us-ascii?q?AEBhQWDYAIlNgcOAQIEAQEBAQMCAwEBAQEBAQMBAQYBAQEBAQEFBIEchS9Gh?=
- =?us-ascii?q?kIBKQ8BRiwDAQIDAiYCEgQzCA4KBAWGGwGtd3qBMYEBiFaBJwkBgQYqAYcrh?=
- =?us-ascii?q?y6CKYEVg2iHXYJlBJFrBgGBDkyYJqd1gigHghBUZKALliYCkVEBlkimOwIEA?=
- =?us-ascii?q?gQFAhaBZwGCDjM+gzhRFwIPjiwWji5BMjgCBgEKAQEDCYI6gwomE4ouAQE?=
-IronPort-Data: A9a23:kwIvzaDCoMuEnRVW/0fiw5YqxClBgxIJ4kV8jS/XYbTApD4i0zQOm
- GMdXzyBb/uPN2rxKtt+OYrg/UgCsJCGztY2OVdlrnsFo1CmCCbmLYnDch2gb3v6wunrFh8PA
- xA2M4GYRCwMZiaA4E/ra9ANlFEkvU2ybuOU5NXsZ2YhFWeIdA970Ug5w7dj3NYy6TSEK1rlV
- e3a8pW31GCNhmYc3lI8s8pvfzs24ZweEBtB1rAPTagjUG32zhH5P7pDTU2FFEYUd6EPdgKMb
- 7uZkOvprjuxEyAFUbtJmp6jGqEDryW70QKm0hK6UID66vROS7BbPqsTbJIhhUlrZzqhw+5Vy
- t9w8reJSA4qOYGWneJMDwEDKnQrVUFG0OevzXmXq9OPz0DWNmCwhvwoFl4qPcgR9qB7DAmi9
- 9RBc2xLN0vbwbjohuvlFoGAhex6RCXvFIYWtXd91nfWF/E9WrjZXLnKoNZR1zc9gIZCEJ4yY
- uJANmM1N06dOkEn1lE/Cr4g38nrjXLGSDBDlnCLga8w/nnMw1kkuFTqGJ+PEjCQfu1Ln1yfj
- nDL+WXnRBUbMsGPjz2f/TSxhYfnkCn6VY4fDriQ5vtrm0aSwWpVAxoTPXO4rPSigUm5WPpUK
- 1YT/yszqO417kPDZt38WQCo5XCfshMCVt54DeI38keOx7DS7gLfAXILJgOtc/Q8q9M2SCxvz
- QPMlpXzGiBv9bSZD36QnluJkQ6P1eEuBTdqTUc5ocEtubEPfKlbYsrzc+te
-IronPort-HdrOrdr: A9a23:oby10KCVY8wInYjlHemX55DYdb4zR+YMi2TC1yhKJiC9Vvbo9f
- xG+85rsCMc6QxhO03I9urrBEDtex7hHP1OgbX5X43CYOCOggLBR72KhbGSpAEIcBeRygcy78
- tdmuRFebnN5Q8Qt7eC3ODuKadH/OW6
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="5.88,318,1635199200"; 
-   d="scan'208,223";a="171232514"
-Received: from rwthex-s4-a.rwth-ad.de ([134.130.26.164])
-  by mail-in-2.itc.rwth-aachen.de with ESMTP; 26 Jan 2022 17:25:21 +0100
-Received: from localhost (2a02:908:1066:22e0:95a5:b322:26dd:ff8d) by
- rwthex-s4-a.rwth-ad.de (2a00:8a60:1:e500::26:164) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Wed, 26 Jan 2022 17:25:20 +0100
-Date:   Wed, 26 Jan 2022 17:25:20 +0100
-From:   Magnus =?utf-8?B?R3Jvw58=?= <magnus.gross@rwth-aachen.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-CC:     Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH] elf: Relax assumptions about vaddr ordering
-Message-ID: <YfF18Dy85mCntXrx@fractal.localdomain>
+        Wed, 26 Jan 2022 11:40:51 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 541C5C06173B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 08:40:51 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id g20so3443565pgn.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 08:40:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=xlvtukPzO3AbDCendFmDfyQYe8h/PUQ59az8EWEzUIM=;
+        b=Tme9WIGcNwKUvBZLe5uBmYfLFGOUWTb7ZOBDb6YzaqQHeVFLZ/Kf02fTmy5XUTXhtz
+         Vdrs7J4JICea53k0jExmgiNaqeAXDYYh60NDrFiruQpSe0jHriYTNcGGwpr73CM3WH0Y
+         aYLHRNmqdcXvH5ys19iNwkqCZFu86lMdSOkgw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xlvtukPzO3AbDCendFmDfyQYe8h/PUQ59az8EWEzUIM=;
+        b=fiEp7CswKFZhcGzCwUF0Jl9e8zKSNhJD3LplVhUUzgD8isB2bKLEZsQwHJ7hEDSFdA
+         JWliDVlfgZfmZgGcrx9gCXnJRdG+gCyANkHzFqvejFZGFNU9DTXp8TcHBbEA385C9ZZO
+         0RhntKcgXojGuMfoJhVM8J6ImuGI979qN+782ILRGR4MkhqNwP+U93Dm2ubqRcV2ZaLS
+         xcPEDuHDRg0fAucIbDc7shf/2xDV1dXsMDPx4KJBELPkYmNraMk1Tanypgn3PNGGm3An
+         dvG5CKywcuWCarLznYB3iFzcibo0IcPCZSgNpv/eU81zERvfvsN0mDeA7tYn3yQwyS8h
+         99QQ==
+X-Gm-Message-State: AOAM533W27wAS7jlOWSwJCyudWHnpoaMJfk+G1XYPfj9H43n2M0nhfVV
+        Hd0lHy4ZdPylWPZbmSkilxBl2w==
+X-Google-Smtp-Source: ABdhPJyazfih2Ue5JGMq/Tmv4ifP9hOFAC5jiPtgcSiXBdga/ZIDhLSQyaX3VcP8OzF1HUiV9tIBJg==
+X-Received: by 2002:a63:2023:: with SMTP id g35mr19834474pgg.432.1643215250805;
+        Wed, 26 Jan 2022 08:40:50 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id mn2sm3393097pjb.38.2022.01.26.08.40.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jan 2022 08:40:50 -0800 (PST)
+Date:   Wed, 26 Jan 2022 08:40:49 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ariadne Conill <ariadne@dereferenced.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] fs/exec: require argv[0] presence in
+ do_execveat_common()
+Message-ID: <202201260832.CCC8BB9@keescook>
+References: <20220126114447.25776-1-ariadne@dereferenced.org>
+ <YfFh6O2JS6MybamT@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
-X-Originating-IP: [2a02:908:1066:22e0:95a5:b322:26dd:ff8d]
-X-ClientProxiedBy: rwthex-s1-b.rwth-ad.de (2a00:8a60:1:e500::26:153) To
- rwthex-s4-a.rwth-ad.de (2a00:8a60:1:e500::26:164)
+In-Reply-To: <YfFh6O2JS6MybamT@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From ff4dde97e82727727bda711f2367c05663498b24 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Magnus=20Gro=C3=9F?= <magnus.gross@rwth-aachen.de>
-Date: Wed, 26 Jan 2022 16:35:07 +0100
-Subject: [PATCH] elf: Relax assumptions about vaddr ordering
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+On Wed, Jan 26, 2022 at 02:59:52PM +0000, Matthew Wilcox wrote:
+> On Wed, Jan 26, 2022 at 11:44:47AM +0000, Ariadne Conill wrote:
+> > Interestingly, Michael Kerrisk opened an issue about this in 2008[1],
+> > but there was no consensus to support fixing this issue then.
+> > Hopefully now that CVE-2021-4034 shows practical exploitative use
+> > of this bug in a shellcode, we can reconsider.
+> > 
+> > [0]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
+> > [1]: https://bugzilla.kernel.org/show_bug.cgi?id=8408
+> 
+> Having now read 8408 ... if ABI change is a concern (and I really doubt
+> it is), we could treat calling execve() with a NULL argv as if the
+> caller had passed an array of length 1 with the first element set to
+> NULL.  Just like we reopen fds 0,1,2 for suid execs if they were closed.
 
-Commit 5f501d555653 ("binfmt_elf: reintroduce using
-MAP_FIXED_NOREPLACE") introduced a regression, where the kernel now
-assumes that PT_LOAD segments are ordered by vaddr in load_elf_binary().
+I was having similar thoughts this morning. We can't actually change the
+argc, though, because of the various tests (see the debian code search
+links) that explicitly tests for argc == 0 in the child. But, the flaw
+is not the count, but rather that argv == argp in the argc == 0 case.
+(Or that argv NULL-checking iteration begins at argv[1].)
 
-Specifically consider an ELF binary with the following PT_LOAD segments:
+But that would could fix easily by just adding an extra NULL. e.g.:
 
-Type  Offset   VirtAddr   PhysAddr   FileSiz  MemSiz    Flg Align
-LOAD  0x000000 0x08000000 0x08000000 0x474585 0x474585  R E 0x1000
-LOAD  0x475000 0x08475000 0x08475000 0x090a4  0xc6c10   RW  0x1000
-LOAD  0x47f000 0x00010000 0x00010000 0x00000  0x7ff0000     0x1000
+Currently:
 
-Note how the last segment is actually the first segment and vice versa.
+argc = 1
+argv = "foo", NULL
+envp = "bar=baz", ..., NULL
 
-Since total_mapping_size() only computes the difference between the
-first and the last segment in the order that they appear, it will return
-a size of 0 in this case, thus causing load_elf_binary() to fail, which
-did not happen before that change.
+argc = 0
+argv = NULL
+envp = "bar=baz", ..., NULL
 
-Strictly speaking total_mapping_size() made that assumption already
-before that patch, but the issue did not appear because the old
-load_addr_set guards never allowed this call to total_mapping_size().
+We could just make the argc = 0 case be:
 
-Instead of fixing this by reverting to the old load_addr_set logic, we
-fix this by comparing the correct first and last segments in
-total_mapping_size().
+argc = 0
+argv = NULL, NULL
+envp = "bar=baz", ..., NULL
 
-Signed-off-by: Magnus Groß <magnus.gross@rwth-aachen.de>
----
- fs/binfmt_elf.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+We need to be careful with the stack utilization counts, though, so I'm
+thinking we could actually make this completely unconditional and just
+pad envp by 1 NULL on the user stack:
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index f8c7f26f1fbb..0caaad9eddd1 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -402,19 +402,29 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
- static unsigned long total_mapping_size(const struct elf_phdr *cmds, int nr)
- {
- 	int i, first_idx = -1, last_idx = -1;
-+	unsigned long min_vaddr = ULONG_MAX, max_vaddr = 0;
- 
- 	for (i = 0; i < nr; i++) {
- 		if (cmds[i].p_type == PT_LOAD) {
--			last_idx = i;
--			if (first_idx == -1)
-+			/*
-+			 * The PT_LOAD segments are not necessarily ordered
-+			 * by vaddr. Make sure that we get the segment with
-+			 * minimum vaddr (maximum vaddr respectively)
-+			 */
-+			if (cmds[i].p_vaddr <= min_vaddr) {
- 				first_idx = i;
-+				min_vaddr = cmds[i].p_vaddr;
-+			}
-+			if (cmds[i].p_vaddr >= max_vaddr) {
-+				last_idx = i;
-+				max_vaddr = cmds[i].p_vaddr;
-+			}
- 		}
- 	}
- 	if (first_idx == -1)
- 		return 0;
- 
--	return cmds[last_idx].p_vaddr + cmds[last_idx].p_memsz -
--				ELF_PAGESTART(cmds[first_idx].p_vaddr);
-+	return max_vaddr + cmds[last_idx].p_memsz - ELF_PAGESTART(min_vaddr);
- }
- 
- static int elf_read(struct file *file, void *buf, size_t len, loff_t pos)
+argv = "what", "ever", NULL
+       NULL
+envp = "bar=baz", ..., NULL
+
+My only concern there is that there may be some code out there that
+depends on envp immediately following the trailing argv NULL, so I think
+my preference would be to pad only in the argc == 0 case and correctly
+manage the stack utilization.
+
 -- 
-2.34.1
+Kees Cook
