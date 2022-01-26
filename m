@@ -2,81 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C095349D161
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 19:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5368B49D16D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 19:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244073AbiAZSFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 13:05:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53538 "EHLO
+        id S244117AbiAZSHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 13:07:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiAZSFK (ORCPT
+        with ESMTP id S244146AbiAZSHt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 13:05:10 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7FFC06161C;
-        Wed, 26 Jan 2022 10:05:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EAB58B80EB0;
-        Wed, 26 Jan 2022 18:05:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5813C340E3;
-        Wed, 26 Jan 2022 18:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643220307;
-        bh=0a2V7J6xaCLaV5Cod9PsPrvBBg8SjjTYVv4EL30ji0Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wnj9CmvCHRfhEf8acSJ9ypKyoWP3qxKMeC3MHpll5wFxOHYfZw/DqvNJ5t8Qg8+tP
-         CCRDd86oNizYSKbDU74H+MeDgNgXzqCn5j8OvnDTrRa5VL0orf4ATAe/XNNqzDk42Z
-         sHtZRn+uZpKoW2pXGGgYhYSYtzA1xl+NOwkcPlPSBGpoR5c07tQXazKxFLx6btGxom
-         tBv60WG1oKQNNKUVtKwWkDShk2g4OEn5tKquy9arOrKOtJ5vt9D2XTdyMloI1Wbo+w
-         xisPFuqpHnPFaOvG3wmBaIj9g4h9dpBZUp7rwSfiBqyTxNAmh46Co0xRIs/OfCVly7
-         sZuNQi6wIUoLw==
-Date:   Wed, 26 Jan 2022 10:05:07 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.com
-Subject: Re: [PATCHSET 0/4] vfs: actually return fs errors from ->sync_fs
-Message-ID: <20220126180507.GB13499@magnolia>
-References: <164316348940.2600168.17153575889519271710.stgit@magnolia>
- <20220126082153.mz5prdistkkvc6bc@wittgenstein>
+        Wed, 26 Jan 2022 13:07:49 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2A9C061747
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 10:07:48 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id c15so718659ljf.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 10:07:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e6GlIwf2gQF3ITti5q/SlwCwbOwNxQ4Vmm6ghQbKw6g=;
+        b=Ua1tzA6BRz4Kicy3wWXE4baxIRed4b9N+oLT8SW2I9QdF1CllcC4jq2nAn5zWd10IO
+         NRGiqajhZhjSigz6UU0a1JEOJou2zOPJ12aECIZ9bjc8mfmO0BauwNMsuq04vVIodApe
+         IHoHDZhgNwNhnqgs3I9PsX7XKNZH1bfLcGbAjDEEmBsdWnRJLrk392k4up2kfQWxGBGK
+         ZE4p0xGXNI2SGwMhgAwQMHa42mmsoHGdVIudHFz4d01ODNhzl2n8r9F9WWgY8V6Vrxgp
+         HvvR2P09koQ/4fm1aRPs7B8PGp9XZEqJKfuuPaWHYVph0twQVUqPMaLvRxCGSEexEdlU
+         tOWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e6GlIwf2gQF3ITti5q/SlwCwbOwNxQ4Vmm6ghQbKw6g=;
+        b=p55PZG53fk0vonoCqzoZXUjsXV2/MffyleB1f6KWy7M7uue2Knk3giT4fQA1isix2r
+         7uOC2RX7qehqYJ3JdDMMNPXrVgtNfpdvCrAOwlzgR+gWKVwBhjEfvuMX6+2GnaNqVniX
+         DrWNPKjQDY1dJuoRlejOv9HsyvQaX8LrVIkRFyi4ZMjKYitjKn4UAjKbhcNElybJ0Kx2
+         8auLPlBk/N8Z0ybYZ4PBXUsc83h1PEBAK0Q6RUp8gUCQ4ZCInK7SNa1vwRQ09aJhBc5h
+         AnTNLLeaAyFMX95vxgFqa9J/EIN8wjWUuFXwQZhpEwIGa4xC8kmFjS1BzBjvrWXQBG2M
+         mk1Q==
+X-Gm-Message-State: AOAM532V/pipq2QqIzn69mqVwUnevZZ8rprqefrIq2DbxGAjwN5U/zWe
+        DvhfX7j8j/IMm7liL6jhP7hmYqvUjEPl9AGCVHXHeA==
+X-Google-Smtp-Source: ABdhPJzaM9QfYFgak03rWnAuv3xprmvfFYLw+Tw36FXo3pPPNnx5IxgcrSkUkrR/bJPmAwTO2cPPsNjs7CeXngEv/vg=
+X-Received: by 2002:a05:651c:984:: with SMTP id b4mr153763ljq.235.1643220466896;
+ Wed, 26 Jan 2022 10:07:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220126082153.mz5prdistkkvc6bc@wittgenstein>
+References: <20220126175747.3270945-1-keescook@chromium.org>
+In-Reply-To: <20220126175747.3270945-1-keescook@chromium.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 26 Jan 2022 19:07:20 +0100
+Message-ID: <CAG48ez3hN8+zNCmLVP0yU0A5op6BAS+A-rs05aiLm4RQvzzBpg@mail.gmail.com>
+Subject: Re: [PATCH] fs/binfmt_elf: Add padding NULL when argc == 0
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ariadne Conill <ariadne@dereferenced.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Rich Felker <dalias@libc.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 09:21:53AM +0100, Christian Brauner wrote:
-> On Tue, Jan 25, 2022 at 06:18:09PM -0800, Darrick J. Wong wrote:
-> > Hi all,
-> > 
-> > While auditing the VFS code, I noticed that while ->sync_fs is allowed
-> > to return error codes to reflect some sort of internal filesystem error,
-> > none of the callers actually check the return value.  Back when this
-> > callout was introduced for sync_filesystem in 2.5 this didn't matter
-> 
-> (Also, it looks like that most(/none?) of the filesystems that
-> implemented ->sync_fs around 2.5/2.6 (ext3, jfs, jffs2, reiserfs etc.)
-> actually did return an error?
+On Wed, Jan 26, 2022 at 6:58 PM Kees Cook <keescook@chromium.org> wrote:
+> Quoting Ariadne Conill:
+>
+> "In several other operating systems, it is a hard requirement that the
+> first argument to execve(2) be the name of a program, thus prohibiting
+> a scenario where argc < 1. POSIX 2017 also recommends this behaviour,
+> but it is not an explicit requirement[1]:
+>
+>     The argument arg0 should point to a filename string that is
+>     associated with the process being started by one of the exec
+>     functions.
+> ...
+> Interestingly, Michael Kerrisk opened an issue about this in 2008[2],
+> but there was no consensus to support fixing this issue then.
+> Hopefully now that CVE-2021-4034 shows practical exploitative use[3]
+> of this bug in a shellcode, we can reconsider."
+>
+> An examination of existing[4] users of execve(..., NULL, NULL) shows
+> mostly test code, or example rootkit code. While rejecting a NULL argv
+> would be preferred, it looks like the main cause of userspace confusion
+> is an assumption that argc >= 1, and buggy programs may skip argv[0]
+> when iterating. To protect against userspace bugs of this nature, insert
+> an extra NULL pointer in argv when argc == 0, so that argv[1] != envp[0].
+>
+> Note that this is only done in the argc == 0 case because some userspace
+> programs expect to find envp at exactly argv[argc]. The overlap of these
+> two misguided assumptions is believed to be zero.
 
-Yes, some of them do -- ext4 will bubble up jbd2 errors and the results
-of flushing the bdev write cache.
+Will this result in the executed program being told that argc==0 but
+having an extra NULL pointer on the stack?
+If so, I believe this breaks the x86-64 ABI documented at
+https://refspecs.linuxbase.org/elf/x86_64-abi-0.99.pdf - page 29,
+figure 3.9 describes the layout of the initial process stack.
 
-> In fact, 5.8 seems to be the first kernel to report other errors than
-> -EBADF since commit 735e4ae5ba28 ("vfs: track per-sb writeback errors
-> and report them to syncfs"?)
-
-Yeah.  I think the bdev pagecache flush might occasionally return errors
-if there happened to be dirty pages, but (a) that doesn't help XFS which
-has its own buffer cache and (b) that doesn't capture the state "fs has
-errored out but media is fine".
-
-As it is I think the ext4 syncfs needs to start returning EIO if someone
-forced a shutdown, and probably some auditing for dropped error codes
-due to the 'traditional' vfs behavior.  btrfs probably ought to return
-the result of filemap_flush too.
-
---D
+Actually, does this even work? Can a program still properly access its
+environment variables when invoked with argc==0 with this patch
+applied? AFAIU the way userspace locates envv on x86-64 is by
+calculating 8*(argc+1)?
