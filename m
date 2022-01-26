@@ -2,112 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD5349D5ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 00:10:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DA949D613
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 00:16:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231966AbiAZXKf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 18:10:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39044 "EHLO
+        id S230230AbiAZXQX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 18:16:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231950AbiAZXKe (ORCPT
+        with ESMTP id S229551AbiAZXQW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 18:10:34 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C127BC06161C;
-        Wed, 26 Jan 2022 15:10:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BciloVExDtalbDY69w9Q/DKrmuCXDfGEkMgEhsQXryA=; b=TzUtU/c6+QVcesfBfkHqCQZNGM
-        8m1PEPue/RUphiXerbKyANLtgYFEDqwpWCLN1I0ZIrSG9tFz0w+DE5vDD5eome44lyxVJwnJ/AQJl
-        rN/Hb3kNN6sXAeREUXN6XgHbBl5ksrsztKp+iQubRIGiNNxyhYXG14Te5Ifr2do/uTUqj1jG+c0v8
-        iOkWyjnqovHX0yuEvIJbs8acPTKxMKvB560WbADi1UXgQleZI4NMuDIlZFB2Y453FUbzhdMA/ig2x
-        PO28unSgcngah/VZSoScDNbxob70O22li1sYgJk5pCwXnrPSYC+cm4a/X11QEaAj8wZ8fvw4NwLJn
-        KQf9K9rA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nCrQt-004Z3S-G3; Wed, 26 Jan 2022 23:10:31 +0000
-Date:   Wed, 26 Jan 2022 23:10:31 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hayley Leblanc <hleblanc@utexas.edu>
-Cc:     linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-        Vijay Chidambaram <vijayc@utexas.edu>
-Subject: Re: Persistent memory file system development in Rust
-Message-ID: <YfHU5/RrpJlRx5sO@casper.infradead.org>
-References: <CAFadYX5iw4pCJ2L4s5rtvJCs8mL+tqk=5+tLVjSLOWdDeo7+MQ@mail.gmail.com>
- <YfHMp+zhEjrMHizL@casper.infradead.org>
+        Wed, 26 Jan 2022 18:16:22 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4313CC06161C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 15:16:22 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id h7so1921208ejf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 15:16:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mariadb.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TkXvE+VWQRHehg+eZZyr8tjYUURIjuYZso1v1m3GLe0=;
+        b=XrmCyEat4NQTFpSScp48kHRNOERJGru+9B4A4HYOuMy3ofRi+svGeFbhKMPvN3Qj2B
+         GG4r+3LGcHVq9QV6ZdYgVMglLnLOCtQJWZL1le/8fmhU98nWv99OVI1l1q1gK/X3Lz2e
+         kYZ6PiHpbX3XD/2NNvJLVF77BU5K9YovBDNr43rR1HlFf7InWkg6iAC7y2o8vkQKtUS0
+         cJQqgk+S2TmhNQK3nrGZe3+E3frYxu246HvBOaSi00tYSHO5gQ7AUU5OYtXtxqPYLDKE
+         ZWgtI5h/MD31S+sDGKJeMpHFrgPltlzo7yvcJ5gofpYG1EeJMhUohUE1mmRT3iUzF36N
+         KSUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TkXvE+VWQRHehg+eZZyr8tjYUURIjuYZso1v1m3GLe0=;
+        b=pvvU/BkWQZFUjkIkziHq70HjN+0I6uJ3ubA5r1UE2F1Bm49eOpQYh9nAgjpHfRtWQW
+         5S4X55exWnB38V5Y99GDsVsADp/7/L2YjjpF6mseEfBxfn4Lh5IFuhndQUDc0BVCKTxQ
+         XPJcUJXgZFFOOSXipH1SXQVUwFz7S/jvdyuj29ecsU3kpGqv9ufdzqfqsvKT9UGB9VUK
+         y7PHXm1Vt2Rw71Jo9hq23Jnw/0/YUTwkvyDN+jalwErPAm8ii8yoIKNDASAopze9ISQJ
+         UNBfDcGoHZYN880c1QYsCrANei1QdEWjBtVVlR7+p2RGIa3iSNCZUC/PDtZsX4Wv0i/L
+         A5IA==
+X-Gm-Message-State: AOAM530FE+ENFY6JBpvetadAX/BJ7fZKCnf6XZ2bfoobSwPRXGJJ14LJ
+        ecm6O4MG03SqI8HT1GENIsjSUsEl6vIkFKcOy7eW+8+CsDG98A==
+X-Google-Smtp-Source: ABdhPJwVPI5xRSamTks0d/aUBiTBbfDE747olZVnXP1khXh5QUMlqKbcFijkrvyAqrtWNJc6p1/2MBRGSgj70CCjkXg=
+X-Received: by 2002:a17:906:c156:: with SMTP id dp22mr845542ejc.240.1643238980846;
+ Wed, 26 Jan 2022 15:16:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YfHMp+zhEjrMHizL@casper.infradead.org>
+References: <CABVffEPxKp4o_-Bz=JzvEvQNSuOBaUmjcSU4wPB3gSzqmApLOw@mail.gmail.com>
+ <YfC5vuwQyxoMfWLP@casper.infradead.org> <CABVffEPReS0d1dN2eKCry_k6K0LCGNNjGf04O3c7-h6P1Q_9zg@mail.gmail.com>
+ <YfHH5HsynuMuFJse@casper.infradead.org>
+In-Reply-To: <YfHH5HsynuMuFJse@casper.infradead.org>
+From:   Daniel Black <daniel@mariadb.org>
+Date:   Thu, 27 Jan 2022 10:16:09 +1100
+Message-ID: <CABVffEOQL7rXGufHESgP1snV+=UjiJ1gaD-+59c3NLuNgQPt=g@mail.gmail.com>
+Subject: Re: fcntl(fd, F_SETFL, O_DIRECT) succeeds followed by EINVAL in write
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jan 27, 2022 at 9:15 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Jan 27, 2022 at 09:03:36AM +1100, Daniel Black wrote:
 
-... This time with the correct email address for the Rust list.
+> > Is it going to be reasonable to expect fcntl(fd, F_SETFL, O_DIRECT) to
+> > return EINVAL if O_DIRECT isn't supported?
+>
+> That is a reasonable expectation.  I can't guarantee that we won't have
+> bugs, of course ...
 
-On Wed, Jan 26, 2022 at 10:35:19PM +0000, Matthew Wilcox wrote:
-> On Tue, Jan 25, 2022 at 04:02:56PM -0600, Hayley Leblanc wrote:
-> > I'm a PhD student at UT Austin advised by Vijay Chidambaram (cc'ed).
-> > We are interested in building a file system for persistent memory in
-> > Rust, as recent research [1] has indicated that Rust's safety features
-> > could eliminate some classes of crash consistency bugs in PM systems.
-> > In doing so, we'd like to build a system that has the potential to be
-> > adopted beyond the research community. I have a few questions (below)
-> > about the direction of work in this area within the Linux community,
-> > and would be interested in hearing your thoughts on the general idea
-> > of this project as well.
-> 
-> Hi Hayley,
-> 
-> Thanks for reaching out to us.
-> 
-> First, my standard advice for anyone thinking of writing a Linux
-> filesystem: Absolutely do it; you'll learn so much, and it's a great deal
-> of fun.  Then my standard advice for anyone thinking about releasing a
-> Linux filesystem: Think very carefully about whether you want to do it.
-> If you're lucky, it's only about as much work as adopting a puppy.
-> If you're unlucky, it's like adopting a parrot; far more work and it
-> may outlive you.
-> 
-> In particular, the demands of academia (generate novel insights, write
-> as many papers as possible, get your PhD) are at odds with the demands
-> of a production filesystem (move slowly, don't break anything, DON'T
-> LOSE USER DATA).  You wouldn't be the first person to try to do both,
-> but I think you might be the first person to be successful.
-> 
-> There's nothing wrong with having written an academic filesystem
-> that you learned things from.  I think I've written three filesystems
-> myself that have never seen a public release -- and I'm totally fine
-> with that.
-> 
-> > 1. What is the state of PM file system development in the kernel? I
-> > know that there was some effort to merge NOVA [2] and nvfs [3] in the
-> > last few years, but neither seems to have panned out.
-> 
-> Correct.  I'm not aware of anything else currently under development.
-> I'd file both those filesystems under "Things people tried and learned
-> things from", although maybe there'll be a renewed push to get one
-> or the other merged.
-> 
-> > 2. What is the state of file system work, if any, on the Rust for
-> > Linux side of things?
-> 
-> I only have a toe in Rust development, but I'm not aware of
-> any work being done specifically for filesystems, that said ...
-> 
-> > 3. We're interested in using a framework called Bento [4] as the basis
-> > for our file system development. Is this project on Linux devs' radar?
-> > What are the rough chances that this work (or something similar) could
-> > end up in the kernel at some point?
-> 
-> Bento seems like a good approach (based on a 30 second scan of their
-> git repo).  It wasn't on my radar before, so thanks for bringing it up.
-> I think basing your work on Bento is a defensible choice; it might be
-> wrong, but the only way to find out is to try.
-> 
-> All this is just my opinion, and it's worth exactly what you're paying
-> for it.  I have no say in what gets merged and what doesn't, and I
-> decided academia was not for me after getting my BSc.  I hope it all
-> works out for you, and we end up seeing your paper(s) in FAST.
+Ha, sure.
+
+I've begun to https://kernelci.org/ options to try to catch at least
+some of them
+pre-release.
+
+> > My problem it seems, I'll see what I can do to get back to using real
+> > filesystems more.
+>
+> Heh.  I know Hugh is looking at "supporting" O_DIRECT on tmpfs, at least
+> for his internal testing.  Not sure what his plans are for merging
+> that support.
+
+I'd be happy to see it in that it will remove a long standing cludge
+bit of weakly
+commented user space code in the fullness of supported kernel lifespans, but
+no great urgency.
+
+Thanks Matthew.
