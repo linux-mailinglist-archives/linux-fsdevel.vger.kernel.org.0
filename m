@@ -2,87 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D27249C9E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 13:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 986DA49C9F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 13:44:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241429AbiAZMkg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 07:40:36 -0500
-Received: from selene.zem.fi ([178.62.79.47]:43204 "EHLO selene.zem.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234178AbiAZMkf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 07:40:35 -0500
-X-Greylist: delayed 385 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jan 2022 07:40:35 EST
-Received: by selene.zem.fi (Postfix, from userid 1000)
-        id F22BF4DC4C; Wed, 26 Jan 2022 12:33:39 +0000 (GMT)
-Date:   Wed, 26 Jan 2022 12:33:39 +0000
-From:   Heikki Kallasjoki <heikki.kallasjoki@iki.fi>
-To:     Ariadne Conill <ariadne@dereferenced.org>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs/exec: require argv[0] presence in do_execveat_common()
-Message-ID: <YfE/owUY+gVnn2b/@selene.zem.fi>
-References: <20220126043947.10058-1-ariadne@dereferenced.org>
- <202201252241.7309AE568F@keescook>
- <39480927-B17F-4573-B335-7FCFD81AB997@chromium.org>
- <44b4472d-1d50-c43f-dbb1-953532339fb4@dereferenced.org>
+        id S241454AbiAZMoX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 07:44:23 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:54756 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234207AbiAZMoW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jan 2022 07:44:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643201062;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=lcgXnF+PwIYGfn2u5tNUBbDBAw5Do5Myjafl0JrRTE0=;
+        b=I7ygIRGcqtYkFrG5oQ2KhrlpoVTz1yBtfx1ecObkZW/GsV9WJNuaxchRaROPghDZOj9ZMA
+        ybtC8z6p1ToYZSZeyVYR59/gWpi58iTu7ttW+RKuV08cwTHh1tLkO9NZg2LPaJOAB3j2V/
+        qFH0IV5pG9OAEB5wPJM+M7v7kvAjGPU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-645-sNLM-IOzOQinTsbLXXQfcw-1; Wed, 26 Jan 2022 07:44:18 -0500
+X-MC-Unique: sNLM-IOzOQinTsbLXXQfcw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 065F51006AA0;
+        Wed, 26 Jan 2022 12:44:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A8A1F7B9D9;
+        Wed, 26 Jan 2022 12:44:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>
+cc:     dhowells@redhat.com, jlayton@kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: fscrypt and potential issues from file sparseness
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44b4472d-1d50-c43f-dbb1-953532339fb4@dereferenced.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <124548.1643201054.1@warthog.procyon.org.uk>
+Date:   Wed, 26 Jan 2022 12:44:14 +0000
+Message-ID: <124549.1643201054@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 05:18:58AM -0600, Ariadne Conill wrote:
-> On Tue, 25 Jan 2022, Kees Cook wrote:
-> > Lots of stuff likes to do:
-> > execve(path, NULL, NULL);
-> 
-> I looked at these, and these seem to basically be lazily-written test cases
-> which should be fixed.  I didn't see any example of real-world applications
-> doing this.  As noted in some of the test cases, there are comments like
-> "Solaris doesn't support this," etc.
+Hi,
 
-See also the (small) handful of instances of `execlp(cmd, NULL);` out
-there, which I imagine would start to fail:
-https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
+I'm looking at doing content encryption in the network filesystem support
+library.  It occurs to me that if the filesystem can record sparsity in the
+file, then a couple of issues may arise if we wish to use that to record
+zeroed source blocks (ie. the unencrypted blocks).  It further occurs to me
+that this may occur in extent-based filesystems such as ext4 that support
+fscrypt and also do extent optimisation.
 
-Two of the hits (ispell, nauty) would seem to be non-test use cases.
+The issues are:
 
-As an aside, saying POSIX "disallows" argc == 0 might be overstating it
-a little. As far as I can tell (quotes below), while a Strictly
-Conforming POSIX Application must provide argc >= 1 to a program it
-executes, the argc == 0 case isn't entirely disallowed.
+ (1) Recording source blocks that are all zeroes by not storing them and
+     leaving a hole in a content is a minor security hole as someone looking
+     at the file can derive information about the contents from that.  This
+     probably wouldn't affect most files, but it might affect database files.
 
-https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap01.html
+ (2) If the filesystem stores a hole for a *source* block of zeroes (not an
+     encrypted block), then it has the same problems as cachefiles:
 
-"should -- describes a feature or behavior that is recommended but not
-mandatory. An application should not rely on the existence of the
-feature or behavior."
+     (a) A block of zeroes written to disk (ie. an actually encrypted block)
+     is very, very unlikely to represent a source block of zeroes, but the
+     optimiser can punch it out to reduce an extent and recover disk space,
+     thereby leaving a hole.
 
-https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/functions/execve.html
+     (b) The optimiser could also *insert* blocks of zeroes to bridge an
+     extent, thereby erasing a hole - but the zeroes would be very unlikely to
+     decrypt back to a source block of zeroes.
 
-"The value in argv[0] *should* point to a filename string that is
-associated with the process --" (emphasis added)
+     If either event occurs, data corruption will ensue.
 
-"Early proposals required that the value of argc passed to main() be
-"one or greater". This was driven by the same requirement in drafts of
-the ISO C standard. In fact, historical implementations have passed a
-value of zero when no arguments are supplied to the caller of the exec
-functions. This requirement was removed from the ISO C standard and
-subsequently removed from this volume of POSIX.1-2017 as well. The
-wording, in particular the use of the word should, requires a Strictly
-Conforming POSIX Application to pass at least one argument to the exec
-function, thus guaranteeing that argc be one or greater when invoked by
-such an application. In fact, this is good practice, since many existing
-applications reference argv[0] without first checking the value of
-argc."
+     To evade this one, we have to do one of the following:
 
-Just to be clear, not disputing the part that disallowing `argc == 0`
-would be a reasonable idea, or claiming that there's a valid use case.
-Just the part where POSIX would *require* the system to disallow this.
+	1. Don't use sparsity to record source blocks of zeroes
+	2. Disable extent optimisations of these sorts
+	3. Keep a separate map of the content
 
--- 
-Heikki Kallasjoki
+Now, I don't know if fscrypt does this.  It's hard to tell.
+
+David
+
