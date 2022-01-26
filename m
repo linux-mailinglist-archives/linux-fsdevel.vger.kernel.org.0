@@ -2,113 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1484349C12F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 03:19:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0077A49C132
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 03:20:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236270AbiAZCTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jan 2022 21:19:04 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:50692 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236264AbiAZCTB (ORCPT
+        id S236251AbiAZCUT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jan 2022 21:20:19 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:29093 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231189AbiAZCUT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jan 2022 21:19:01 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8175961676;
-        Wed, 26 Jan 2022 02:19:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB46EC340E0;
-        Wed, 26 Jan 2022 02:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643163540;
-        bh=fYfjNXQI19baYwTgaziCQNXiFjhHSYcgK0focYhPzHI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=GkE0sUx7tFtQLsjVo76opL6YqWe0biYNT7b1azk8Ngp0FKjnFF3zzSRxOO6ZhGOdy
-         ijCSXqbuUjwIH0K9vJghixhC2gkvHtsNa3iqJ4OJZ6o940pLMaha2bwiU8GC/JJ0JE
-         RJPKLr2L66BENvDacJ4FslBNiV0tmbh47HycElw0lC4ulMQvZWI0N7IipuYkN4h6zG
-         O5y6B/KP9XsigTFa4I8jzjLLpVOWYKzTJf/CxTzOrIdESEIZts0FTbUYQvVWKRjMh8
-         YZsh1TT6aoD80K/3ujAix4xTRRJEzeHg2iZGVONBT8Kqqk398N/szAtb9Y9eUwIdbt
-         3ie3vFOzSykdw==
-Subject: [PATCH 3/3] xfs: ensure log flush at the end of a synchronous
- fallocate call
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     djwong@kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Tue, 25 Jan 2022 18:19:00 -0800
-Message-ID: <164316354060.2600373.8627019780419133722.stgit@magnolia>
-In-Reply-To: <164316352410.2600373.17669839881121774801.stgit@magnolia>
-References: <164316352410.2600373.17669839881121774801.stgit@magnolia>
-User-Agent: StGit/0.19
+        Tue, 25 Jan 2022 21:20:19 -0500
+X-Greylist: delayed 70697 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jan 2022 21:20:18 EST
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 20Q2K38l011369;
+        Wed, 26 Jan 2022 11:20:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 20Q2K38l011369
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1643163603;
+        bh=NdWl0KwbxPAcxWKk3OI0mf1nWCR1CFOUSSVdy5q/57Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RGbUPJMgEgFXMr11YWFoRNcrMdGZaHn8f+NckfU36XynBUzWcokfuuKDD2MjYtxFT
+         wJAIsFzZpyYTNPV3kMGl7kJtJXbQb329v2c6DYfSLq8xTwyFlS610JPog4+sfKCdLQ
+         7HukkDOPnZG6m7PuuIfIeBwlJ6rOffs+qBLgRm/hQpsyUKrYuCB0ZS+NKVueSfJi03
+         PAeGWc/Bw3pUCod5AGCrb6Se3JiBP2AvbuvOLdzM5TG+fPiSSbt4zqvEONC3dt/tzd
+         oIrOV1LjwpwAe+r4bNwBZt3QXQnWZpk/cgrgbk/6lfCgxDAuI8A9JL2xVh6djDiKXc
+         2aCfkaYn1ipCQ==
+X-Nifty-SrcIP: [209.85.215.175]
+Received: by mail-pg1-f175.google.com with SMTP id h23so19842640pgk.11;
+        Tue, 25 Jan 2022 18:20:03 -0800 (PST)
+X-Gm-Message-State: AOAM533rEizy1uNPKcVs8lgySKfGBG3PZNU0S7HwhcmPiIPISdQcKZ7j
+        DvvDG2EW+7IYgco6Bci2WZfnWQNzl0VIrZzvoys=
+X-Google-Smtp-Source: ABdhPJwwWgQ3DGgDxHDnKrFh4JmbcnC+EjCTj7R4RHw0SwNIZ3GLRZEWfZKMQiRBZtpo2DoTmIpgGbD2r08mQv+5xxs=
+X-Received: by 2002:a05:6a00:a8e:b0:4bd:22a:bb1d with SMTP id
+ b14-20020a056a000a8e00b004bd022abb1dmr21071279pfl.32.1643163602190; Tue, 25
+ Jan 2022 18:20:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20220125064027.873131-1-masahiroy@kernel.org> <CAKwvOdm=-x1EP_xu2V_OZNdPid=gacVzCTx+=uSYqzCv+1Rbfw@mail.gmail.com>
+ <87h79rsbxe.fsf@collabora.com>
+In-Reply-To: <87h79rsbxe.fsf@collabora.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 26 Jan 2022 11:19:24 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARSDZUyt_JXhQLKW++9p0NqM1FHncqGMqXPqfU7m3tizA@mail.gmail.com>
+Message-ID: <CAK7LNARSDZUyt_JXhQLKW++9p0NqM1FHncqGMqXPqfU7m3tizA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: unify cmd_copy and cmd_shipped
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Michal Simek <monstr@monstr.eu>,
+        Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <djwong@kernel.org>
+On Wed, Jan 26, 2022 at 7:11 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Nick Desaulniers <ndesaulniers@google.com> writes:
+>
+> > On Mon, Jan 24, 2022 at 10:41 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >>
+> >> cmd_copy and cmd_shipped have similar functionality. The difference is
+> >> that cmd_copy uses 'cp' while cmd_shipped 'cat'.
+> >>
+> >> Unify them into cmd_copy because this macro name is more intuitive.
+> >>
+> >> Going forward, cmd_copy will use 'cat' to avoid the permission issue.
+> >> I also thought of 'cp --no-preserve=mode' but this option is not
+> >> mentioned in the POSIX spec [1], so I am keeping the 'cat' command.
+> >>
+> >> [1]: https://pubs.opengroup.org/onlinepubs/009695299/utilities/cp.html
+> >> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> >> ---
+> >>
+> >>  arch/microblaze/boot/Makefile     |  2 +-
+> >>  arch/microblaze/boot/dts/Makefile |  2 +-
+> >>  fs/unicode/Makefile               |  2 +-
+> >>  scripts/Makefile.lib              | 12 ++++--------
+> >>  usr/Makefile                      |  4 ++--
+> >>  5 files changed, 9 insertions(+), 13 deletions(-)
+> >>
+> >> diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
+> >> index cff570a71946..2b42c370d574 100644
+> >> --- a/arch/microblaze/boot/Makefile
+> >> +++ b/arch/microblaze/boot/Makefile
+> >> @@ -29,7 +29,7 @@ $(obj)/simpleImage.$(DTB).ub: $(obj)/simpleImage.$(DTB) FORCE
+> >>         $(call if_changed,uimage)
+> >>
+> >>  $(obj)/simpleImage.$(DTB).unstrip: vmlinux FORCE
+> >> -       $(call if_changed,shipped)
+> >> +       $(call if_changed,copy)
+> >>
+> >>  $(obj)/simpleImage.$(DTB).strip: vmlinux FORCE
+> >>         $(call if_changed,strip)
+> >> diff --git a/arch/microblaze/boot/dts/Makefile b/arch/microblaze/boot/dts/Makefile
+> >> index ef00dd30d19a..b84e2cbb20ee 100644
+> >> --- a/arch/microblaze/boot/dts/Makefile
+> >> +++ b/arch/microblaze/boot/dts/Makefile
+> >> @@ -12,7 +12,7 @@ $(obj)/linked_dtb.o: $(obj)/system.dtb
+> >>  # Generate system.dtb from $(DTB).dtb
+> >>  ifneq ($(DTB),system)
+> >>  $(obj)/system.dtb: $(obj)/$(DTB).dtb
+> >> -       $(call if_changed,shipped)
+> >> +       $(call if_changed,copy)
+> >>  endif
+> >>  endif
+> >>
+> >> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
+> >> index 2f9d9188852b..74ae80fc3a36 100644
+> >> --- a/fs/unicode/Makefile
+> >> +++ b/fs/unicode/Makefile
+> >> @@ -31,7 +31,7 @@ $(obj)/utf8data.c: $(obj)/mkutf8data $(filter %.txt, $(cmd_utf8data)) FORCE
+> >>  else
+> >>
+> >>  $(obj)/utf8data.c: $(src)/utf8data.c_shipped FORCE
+> >
+> > do we want to retitle the _shipped suffix for this file to _copy now, too?
+> > fs/unicode/Makefile:11
+> > fs/unicode/Makefile:33
+> > fs/unicode/Makefile:34
+>
+> I think _copy doesn't convey the sense that this is distributed with the
+> kernel tree, even though it is also generated from in-tree sources.
+> Even if that is not the original sense of _shipped (is it?), it makes
+> sense to me that way, but _copy doesn't.
+>
+> The patch looks good to me, though.
+>
+> Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>
+>
+> >
 
-If the caller wanted us to persist the preallocation to disk before
-returning to userspace, make sure we force the log to disk after making
-all metadata updates.
+I only renamed the action part (cmd_shipped -> cmd_copy)
+because I thought it was clearer.
 
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/xfs/xfs_file.c |   23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+Actually I do not get the sense of _shipped pretty much, but
+I think we can keep the file suffix part (utf8data.c_shipped) as is.
 
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index fb82a61696f0..8f2372b96fc4 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -929,6 +929,7 @@ xfs_file_fallocate(
- 	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
- 	loff_t			new_size = 0;
- 	bool			do_file_insert = false;
-+	bool			flush_log;
- 
- 	if (!S_ISREG(inode->i_mode))
- 		return -EINVAL;
-@@ -1081,12 +1082,14 @@ xfs_file_fallocate(
- 	 * If we need to change the PREALLOC flag, do so.  We already updated
- 	 * the timestamps and cleared the suid flags, so we don't need to do
- 	 * that again.  This must be committed before the size change so that
--	 * we don't trim post-EOF preallocations.
-+	 * we don't trim post-EOF preallocations.  If this is the last
-+	 * transaction we're going to make, make the update synchronous too.
- 	 */
-+	flush_log = xfs_file_sync_writes(file);
- 	if (flags) {
- 		flags |= XFS_PREALLOC_INVISIBLE;
- 
--		if (xfs_file_sync_writes(file))
-+		if (flush_log && !(do_file_insert || new_size))
- 			flags |= XFS_PREALLOC_SYNC;
- 
- 		error = xfs_update_prealloc_flags(ip, flags);
-@@ -1112,8 +1115,22 @@ xfs_file_fallocate(
- 	 * leave shifted extents past EOF and hence losing access to
- 	 * the data that is contained within them.
- 	 */
--	if (do_file_insert)
-+	if (do_file_insert) {
- 		error = xfs_insert_file_space(ip, offset, len);
-+		if (error)
-+			goto out_unlock;
-+	}
-+
-+	/*
-+	 * If the caller wants us to flush the log and either we've made
-+	 * changes since updating the PREALLOC flag or we didn't need to
-+	 * update the PREALLOC flag, then flush the log now.
-+	 */
-+	if (flush_log && (do_file_insert || new_size || flags == 0)) {
-+		error = xfs_log_force_inode(ip);
-+		if (error)
-+			goto out_unlock;
-+	}
- 
- out_unlock:
- 	xfs_iunlock(ip, iolock);
-
+-- 
+Best Regards
+Masahiro Yamada
