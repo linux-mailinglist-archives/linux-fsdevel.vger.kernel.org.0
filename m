@@ -2,104 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A748F49C8E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 12:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D27249C9E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 13:40:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240855AbiAZLoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 06:44:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240849AbiAZLoy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 06:44:54 -0500
-X-Greylist: delayed 25499 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 26 Jan 2022 03:44:53 PST
-Received: from mx1.mailbun.net (unknown [IPv6:2602:fd37:1::100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB25AC06161C;
-        Wed, 26 Jan 2022 03:44:53 -0800 (PST)
-Received: from localhost.localdomain (unknown [170.39.20.82])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ariadne@dereferenced.org)
-        by mx1.mailbun.net (Postfix) with ESMTPSA id 5B84E11A00E;
-        Wed, 26 Jan 2022 11:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dereferenced.org;
-        s=mailbun; t=1643197493;
-        bh=7jHNM//m/eDez5fIS/+4IvS3dV2J8nwkZpSA6zP+u9o=;
-        h=From:To:Cc:Subject:Date;
-        b=VgBw86tQRL0O699JNWWaPXipe4ag7eWzYI397GBI5hsEzItf1dcEMDNJSDSwH8HZd
-         cIG/+B2Kj5Iy7AHJuz/lpSTGx1gtSxDPnQGPZwYxuw3LMBvg4hdo6V/hBLYJKj5XjS
-         8PjE26Y4LXWK7dVJRT1V7QIEaYSgQu1z+7ZjM2JiZpb1AMP50RO+ePabw3eY/bHcfc
-         wHQLfFUHVOq4eiKiuW9qmBDrR6LtTLUnsNTg6SxHSLk8NTsQFrWPdispjD1aV8Tzwy
-         7WoWnRjfMKIPIbZnR33a+du0pVdLs2ZI45175M4aGGVviBty8KHJkLHD8VTYjiFC6h
-         11LWmxjGcIqYQ==
-From:   Ariadne Conill <ariadne@dereferenced.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
+        id S241429AbiAZMkg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 07:40:36 -0500
+Received: from selene.zem.fi ([178.62.79.47]:43204 "EHLO selene.zem.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234178AbiAZMkf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jan 2022 07:40:35 -0500
+X-Greylist: delayed 385 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jan 2022 07:40:35 EST
+Received: by selene.zem.fi (Postfix, from userid 1000)
+        id F22BF4DC4C; Wed, 26 Jan 2022 12:33:39 +0000 (GMT)
+Date:   Wed, 26 Jan 2022 12:33:39 +0000
+From:   Heikki Kallasjoki <heikki.kallasjoki@iki.fi>
+To:     Ariadne Conill <ariadne@dereferenced.org>
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
         Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ariadne Conill <ariadne@dereferenced.org>
-Subject: [PATCH v2] fs/exec: require argv[0] presence in do_execveat_common()
-Date:   Wed, 26 Jan 2022 11:44:47 +0000
-Message-Id: <20220126114447.25776-1-ariadne@dereferenced.org>
-X-Mailer: git-send-email 2.34.1
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs/exec: require argv[0] presence in do_execveat_common()
+Message-ID: <YfE/owUY+gVnn2b/@selene.zem.fi>
+References: <20220126043947.10058-1-ariadne@dereferenced.org>
+ <202201252241.7309AE568F@keescook>
+ <39480927-B17F-4573-B335-7FCFD81AB997@chromium.org>
+ <44b4472d-1d50-c43f-dbb1-953532339fb4@dereferenced.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <44b4472d-1d50-c43f-dbb1-953532339fb4@dereferenced.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In several other operating systems, it is a hard requirement that the
-first argument to execve(2) be the name of a program, thus prohibiting
-a scenario where argc < 1.  POSIX 2017 also recommends this behaviour,
-but it is not an explicit requirement[0]:
+On Wed, Jan 26, 2022 at 05:18:58AM -0600, Ariadne Conill wrote:
+> On Tue, 25 Jan 2022, Kees Cook wrote:
+> > Lots of stuff likes to do:
+> > execve(path, NULL, NULL);
+> 
+> I looked at these, and these seem to basically be lazily-written test cases
+> which should be fixed.  I didn't see any example of real-world applications
+> doing this.  As noted in some of the test cases, there are comments like
+> "Solaris doesn't support this," etc.
 
-    The argument arg0 should point to a filename string that is
-    associated with the process being started by one of the exec
-    functions.
+See also the (small) handful of instances of `execlp(cmd, NULL);` out
+there, which I imagine would start to fail:
+https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
 
-To ensure that execve(2) with argc < 1 is not a useful gadget for
-shellcode to use, we can validate this in do_execveat_common() and
-fail for this scenario, effectively blocking successful exploitation
-of CVE-2021-4034 and similar bugs which depend on this gadget.
+Two of the hits (ispell, nauty) would seem to be non-test use cases.
 
-The use of -EFAULT for this case is similar to other systems, such
-as FreeBSD, OpenBSD and Solaris.  QNX uses -EINVAL for this case.
+As an aside, saying POSIX "disallows" argc == 0 might be overstating it
+a little. As far as I can tell (quotes below), while a Strictly
+Conforming POSIX Application must provide argc >= 1 to a program it
+executes, the argc == 0 case isn't entirely disallowed.
 
-Interestingly, Michael Kerrisk opened an issue about this in 2008[1],
-but there was no consensus to support fixing this issue then.
-Hopefully now that CVE-2021-4034 shows practical exploitative use
-of this bug in a shellcode, we can reconsider.
+https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap01.html
 
-[0]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
-[1]: https://bugzilla.kernel.org/show_bug.cgi?id=8408
+"should -- describes a feature or behavior that is recommended but not
+mandatory. An application should not rely on the existence of the
+feature or behavior."
 
-Changes from v1:
-- Rework commit message significantly.
-- Make the argv[0] check explicit rather than hijacking the error-check
-  for count().
+https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/functions/execve.html
 
-Signed-off-by: Ariadne Conill <ariadne@dereferenced.org>
----
- fs/exec.c | 4 ++++
- 1 file changed, 4 insertions(+)
+"The value in argv[0] *should* point to a filename string that is
+associated with the process --" (emphasis added)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 79f2c9483302..e52c41991aab 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1899,6 +1899,10 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	retval = count(argv, MAX_ARG_STRINGS);
- 	if (retval < 0)
- 		goto out_free;
-+	if (retval == 0) {
-+		retval = -EFAULT;
-+		goto out_free;
-+	}
- 	bprm->argc = retval;
- 
- 	retval = count(envp, MAX_ARG_STRINGS);
+"Early proposals required that the value of argc passed to main() be
+"one or greater". This was driven by the same requirement in drafts of
+the ISO C standard. In fact, historical implementations have passed a
+value of zero when no arguments are supplied to the caller of the exec
+functions. This requirement was removed from the ISO C standard and
+subsequently removed from this volume of POSIX.1-2017 as well. The
+wording, in particular the use of the word should, requires a Strictly
+Conforming POSIX Application to pass at least one argument to the exec
+function, thus guaranteeing that argc be one or greater when invoked by
+such an application. In fact, this is good practice, since many existing
+applications reference argv[0] without first checking the value of
+argc."
+
+Just to be clear, not disputing the part that disallowing `argc == 0`
+would be a reasonable idea, or claiming that there's a valid use case.
+Just the part where POSIX would *require* the system to disallow this.
+
 -- 
-2.34.1
-
+Heikki Kallasjoki
