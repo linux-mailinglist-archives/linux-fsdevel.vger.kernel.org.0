@@ -2,92 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D68FB49C0AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 02:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8730D49C11A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 03:18:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235728AbiAZBWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jan 2022 20:22:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:47860 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230030AbiAZBWO (ORCPT
+        id S236202AbiAZCSL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jan 2022 21:18:11 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:50152 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236197AbiAZCSK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jan 2022 20:22:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643160133;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GZ3Dedx2+qAhxuYqUMOz36xfZAcdnnXf1bRw8z3k2mE=;
-        b=U1RW/NRDF1h+4pEsrCihjjeRojCj8lp7LZCWzB5iGmOugElLrt0HAYANV6bSsMM9iTkVrg
-        mRL5ZrbyFDNUMWmLjhUcS1Ll8tG70hCx/jrCxjUQbt/uPZ3Uwodde4cSzPjKw1qPGnRceZ
-        VnL/crHNXk2wq4O/VmaUGKhJtNSrE5s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-65-_ehUbgIuM2uPWicB98SjDQ-1; Tue, 25 Jan 2022 20:22:10 -0500
-X-MC-Unique: _ehUbgIuM2uPWicB98SjDQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 25 Jan 2022 21:18:10 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C25B62F25;
-        Wed, 26 Jan 2022 01:22:08 +0000 (UTC)
-Received: from localhost (ovpn-12-215.pek2.redhat.com [10.72.12.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B3F66B1882;
-        Wed, 26 Jan 2022 01:22:07 +0000 (UTC)
-Date:   Wed, 26 Jan 2022 09:22:04 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH v2] proc/vmcore: fix possible deadlock on concurrent mmap
- and read
-Message-ID: <20220126012204.GA2086@MiWiFi-R3L-srv>
-References: <20220119193417.100385-1-david@redhat.com>
- <20220125170900.472fdb649312e77a4a60d9da@linux-foundation.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 80BAC615D5;
+        Wed, 26 Jan 2022 02:18:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD4DFC340E0;
+        Wed, 26 Jan 2022 02:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643163490;
+        bh=QdXqHY16dnBT/c2yDR+Xloz4Oc+CKgHWCU5u0QDMVZ8=;
+        h=Subject:From:To:Cc:Date:From;
+        b=tduP12Tnd8zt0I4bFeDvDPB+gs5Eb+ef6fYUUl1ay6jw85bUA1mOVH6Cs0Ehbq6mx
+         lJaySYzYfMRDQnQYn/Ex+sPec8rQadq1umc6HFOOasDWTVfplZFG27GSKpWO9fnKFc
+         U/JIQG+iJYSObugaS2qAVJ+UDsgcVszDcX9/z3Q/w+k03hssly2t9rhyzxAWS1faNs
+         wE42QJbuHTZtXLLEwR/aAxp8lPrQ3CwUVOZIEGgFTCQUILfaKGpk1dKO1f4ojxKfaP
+         04GsUJIpgWpVvF8HGWN9WeTs0JgRnY8NUXlHCwYIjth2XDg+wJzT4uU6Lxm6uKJKLQ
+         9KS/PFIBl9g8g==
+Subject: [PATCHSET 0/4] vfs: actually return fs errors from ->sync_fs
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     djwong@kernel.org
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.com
+Date:   Tue, 25 Jan 2022 18:18:09 -0800
+Message-ID: <164316348940.2600168.17153575889519271710.stgit@magnolia>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220125170900.472fdb649312e77a4a60d9da@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/25/22 at 05:09pm, Andrew Morton wrote:
-> On Wed, 19 Jan 2022 20:34:17 +0100 David Hildenbrand <david@redhat.com> wrote:
-> 
-> > Lockdep noticed that there is chance for a deadlock if we have
-> > concurrent mmap, concurrent read, and the addition/removal of a
-> > callback.
-> > 
-> > As nicely explained by Boqun:
-> > 
-> > "
-> > Lockdep warned about the above sequences because rw_semaphore is a fair
-> > read-write lock, and the following can cause a deadlock:
-> > 
-> > 	TASK 1			TASK 2		TASK 3
-> > 	======			======		======
-> > 	down_write(mmap_lock);
-> > 				down_read(vmcore_cb_rwsem)
-> > 						down_write(vmcore_cb_rwsem); // blocked
-> > 	down_read(vmcore_cb_rwsem); // cannot get the lock because of the fairness
-> > 				down_read(mmap_lock); // blocked
-> 
-> I'm wondering about cc:stable.  It's hard to believe that this is
-> likely to be observed in real life.  But the ongoing reports of lockdep
-> splats will be irritating.
+Hi all,
 
-This is reported by Redhat CKI on Fedora ARK kernel. That kernel enables
-many debug feature by default, that's why lockdep detected that. Usually
-kdump kernel add 'nr_cpus=1' by default in our distros, so it won't
-hurt. It may cause lock issue in theory, so should be false positive
-warning. Since it has Fixes tag, cc:stable should be OK.
+While auditing the VFS code, I noticed that while ->sync_fs is allowed
+to return error codes to reflect some sort of internal filesystem error,
+none of the callers actually check the return value.  Back when this
+callout was introduced for sync_filesystem in 2.5 this didn't matter
+because we only did it prior to rebooting, and best-effort was enough.
+
+Nowadays, we've grown other callers that mandate persistence of fs
+metadata, like syncfs(2) and quota sync.  Reporting internal fs errors
+is critical for these functions, and we drop the errors.  Fix them, and
+also fix FIFREEZE, so that userspace can't freeze broken filesystems.
+
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
+
+This is an extraordinary way to destroy everything.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=return-sync-fs-errors-5.17
+---
+ fs/quota/dquot.c   |   11 ++++++++---
+ fs/super.c         |   19 ++++++++++++-------
+ fs/sync.c          |   18 ++++++++++++------
+ fs/xfs/xfs_super.c |    6 +++++-
+ 4 files changed, 37 insertions(+), 17 deletions(-)
 
