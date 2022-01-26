@@ -2,359 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B215C49C15D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 03:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A88A49C1AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 04:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236447AbiAZCeF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jan 2022 21:34:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:54318 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236442AbiAZCeF (ORCPT
+        id S236777AbiAZDCZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jan 2022 22:02:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236746AbiAZDCY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jan 2022 21:34:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643164444;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2lYZcdoMmNoVVOhgdbLqUSBCGCBawSokbUMPIdI5srg=;
-        b=C38Ekw8t9wYv56rpwzJoAgBTz1N3Sv79KBckuCIeCl+CTlOaEBJkOqjUtZ3ZyuI9ajFFdb
-        yhaEl7jpzzsr7jVP+G3stZ9G7+zS5yHEJqQHxkUdhAtTzB46qqCLs54jujcPMNN7xXEWHT
-        8AhXOgPWZjdLfB8l9wd7i8ekeWM5RGg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-171-Teu1OUp7Phin521DAM5dgQ-1; Tue, 25 Jan 2022 21:33:58 -0500
-X-MC-Unique: Teu1OUp7Phin521DAM5dgQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F16F183DD22;
-        Wed, 26 Jan 2022 02:33:56 +0000 (UTC)
-Received: from localhost (ovpn-12-215.pek2.redhat.com [10.72.12.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C55ABB18AE;
-        Wed, 26 Jan 2022 02:33:37 +0000 (UTC)
-Date:   Wed, 26 Jan 2022 10:33:34 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH v2] proc/vmcore: fix possible deadlock on concurrent mmap
- and read
-Message-ID: <20220126023334.GA30295@MiWiFi-R3L-srv>
-References: <20220119193417.100385-1-david@redhat.com>
+        Tue, 25 Jan 2022 22:02:24 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 966EFC06161C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jan 2022 19:02:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=tQTJF5XHS5VQSQJitBR3CocNG27uBLA0OWBRDBnJOEo=; b=sfhHdib7fe8us6vfqa/qqJYauc
+        Kq8KbgbY3yKIXaHpJH43pCa8zrjPj/VLlm4GaBYHg6aes19/BkxqUdYsmPn37XHC/InRxY7mOjyvU
+        q7ru7y4C397XSYhat1QaRYu6wV/AZmibMwxl9nzvEveoleUBglrXaZJXVDRrVQT6Yp8UcZE4z3gWO
+        iPdT5CW8xtCXbCUg60r7KJtGqjXV8255GpeKrigc0jjaSnfAcQohk2PSCN0POxbS/a6eVxb/LtkOC
+        Qn2FCbFNu5XwBTx1x6BDJ6ZgSOha0s6YjNFVmjIHJSupt5yZ2Tujmx+GqjSHlpZvrc1J208vgCQf/
+        vJoxwTcQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nCYZi-003eQ2-Hk; Wed, 26 Jan 2022 03:02:22 +0000
+Date:   Wed, 26 Jan 2022 03:02:22 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Daniel Black <daniel@mariadb.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: fcntl(fd, F_SETFL, O_DIRECT) succeeds followed by EINVAL in write
+Message-ID: <YfC5vuwQyxoMfWLP@casper.infradead.org>
+References: <CABVffEPxKp4o_-Bz=JzvEvQNSuOBaUmjcSU4wPB3gSzqmApLOw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119193417.100385-1-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <CABVffEPxKp4o_-Bz=JzvEvQNSuOBaUmjcSU4wPB3gSzqmApLOw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/19/22 at 08:34pm, David Hildenbrand wrote:
-> Lockdep noticed that there is chance for a deadlock if we have
-> concurrent mmap, concurrent read, and the addition/removal of a
-> callback.
+On Wed, Jan 26, 2022 at 09:05:48AM +1100, Daniel Black wrote:
+On Wed, Jan 26, 2022 at 09:05:48AM +1100, Daniel Black wrote:
+> Folks,
 > 
-> As nicely explained by Boqun:
+> I've been testing the following on a 5.15.14-200.fc35.x86_64 kernel
+> with /mnt/nas as a CIFS mount.
 > 
-> "
-> Lockdep warned about the above sequences because rw_semaphore is a fair
-> read-write lock, and the following can cause a deadlock:
+> //192.168.178.171/dan on /mnt/nas type cifs
+> (rw,relatime,vers=3.0,cache=strict,username=dan,domain=WORKGROUP,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.178.171,file_mode=0777,dir_mode=0777,iocharset=utf8,soft,nounix,serverino,mapposix,rsize=4194304,wsize=4194304,bsize=1048576,echo_interval=60,actimeo=1)
 > 
-> 	TASK 1			TASK 2		TASK 3
-> 	======			======		======
-> 	down_write(mmap_lock);
-> 				down_read(vmcore_cb_rwsem)
-> 						down_write(vmcore_cb_rwsem); // blocked
-> 	down_read(vmcore_cb_rwsem); // cannot get the lock because of the fairness
-> 				down_read(mmap_lock); // blocked
+> The following is on MariaDB-10.5 but I've tested on MariaDB-10.2 and
+> it looks to be similarly implemented in MySQL-5.7 and MySQL-8.0.
+> /mnt/nas/datadir is empty so its an initialization failure for
+> simplicity.
+> 
+> strace -f -s 99   -e trace=%file,fcntl,io_submit,write,io_getevents -o
+> /tmp/mysqld.strace sql/mysqld --no-defaults --bootstrap
+> --datadir=/mnt/nas/datadir --innodb_flush_method=O_DIRECT
+> 
+> an extracted summary is:
+> 
+> 65412 openat(AT_FDCWD, "./ibdata1", O_RDWR|O_CLOEXEC) = 10
+> 65412 fcntl(10, F_SETFL, O_RDONLY|O_DIRECT) = 0
+> ...
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\4\377\377\377\377\377\377\377\377\0\0\0\0\0\0#\373E\277\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0}\0\2\0\0\0\0\0\0\0\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\0\0\0\0\0\0\0\0\377\377\377\377\0\0\377\377\377\377\0\0\0\0\0\0\10\1\0\0\3"...,
+> aio_nbytes=16384, aio_offset=65536}]) = 1
+> 65411 <... io_getevents resumed>[{data=0, obj=0x7f4efb46c740, res=-22,
+> res2=0}], NULL) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\0\377\377\377\377\377\377\377\377\0\0\0\0\0\0(M\0\10\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\3\0\0\0\1@\0\0\0\25\0\0\0\r\0\0\0\4\0\0\0\0\0\306\0\0\0\0\1>\0\0\0\1\0\0\0\0\0\236\0\0\0\0\0\236\0\0\0\0\377"...,
+> aio_nbytes=16384, aio_offset=0}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\2\377\377\377\377\377\377\377\377\0\0\0\0\0\0(M\0\3\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\0\0\377\377\377\377\0\0\0\0\0\0\0\0\0\1\0\0\0\0\0\0\0\0\377\377\377\377\0\0\377\377\377\377\0\0\0\0\0\0\377\377\377\377\0\0\377\377\377\377\0\0\0\0\0\0\377"...,
+> aio_nbytes=16384, aio_offset=32768}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\3\377\377\377\377\377\377\377\377\0\0\0\0\0\0#\373\0\6\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
+> aio_nbytes=16384, aio_offset=49152}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\1\377\377\377\377\377\377\377\377\0\0\0\0\0\0#\373\0\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
+> aio_nbytes=16384, aio_offset=16384}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\6\377\377\377\377\377\377\377\377\0\0\0\0\0\0$\335\0\6\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\0\0\377\377\377\377\0\0\0\0\0\0\0\0\0\2\1\262\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"...,
+> aio_nbytes=16384, aio_offset=98304}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\5\377\377\377\377\377\377\377\377\0\0\0\0\0\0$\335\0\7\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0\362\0\0\0\0\0\0\0\6\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"...,
+> aio_nbytes=16384, aio_offset=81920}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\f\377\377\377\377\377\377\377\377\0\0\0\0\0\0(ME\277\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0}\0\2\0\0\0\0\0\0\0\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\4\0\0\0\0\0\0\0\2\t\362\0\0\0\0\0\0\0\2\t2\10\1\0\0\3"...,
+> aio_nbytes=16384, aio_offset=196608}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\v\377\377\377\377\377\377\377\377\0\0\0\0\0\0(ME\277\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0}\0\2\0\0\0\0\0\0\0\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\3\0\0\0\0\0\0\0\2\10r\0\0\0\0\0\0\0\2\7\262\10\1\0\0\3"...,
+> aio_nbytes=16384, aio_offset=180224}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\n\377\377\377\377\377\377\377\377\0\0\0\0\0\0(ME\277\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0}\0\2\0\0\0\0\0\0\0\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0\0\0\0\0\0\0\2\6\362\0\0\0\0\0\0\0\2\0062\10\1\0\0\3"...,
+> aio_nbytes=16384, aio_offset=163840}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\t\377\377\377\377\377\377\377\377\0\0\0\0\0\0(ME\277\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0}\0\2\0\0\0\0\0\0\0\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\5\0\0\0\0\0\0\0\2\5r\0\0\0\0\0\0\0\2\4\262\10\1\0\0\3"...,
+> aio_nbytes=16384, aio_offset=147456}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\10\377\377\377\377\377\377\377\377\0\0\0\0\0\0(ME\277\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0}\0\2\0\0\0\0\0\0\0\5\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\0\0\0\0\2\3\362\0\0\0\0\0\0\0\2\0032\10\1\0\0\3"...,
+> aio_nbytes=16384, aio_offset=131072}]) = 1
+> 65412 io_submit(0x7f4efb83b000, 1, [{aio_data=0,
+> aio_lio_opcode=IOCB_CMD_PWRITE, aio_fildes=10,
+> aio_buf="\0\0\0\0\0\0\0\7\377\377\377\377\377\377\377\377\0\0\0\0\0\0(M\0\6\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\n\0\0\0\0\0\0\0\n\0\0\0\0\0\0\0\n\0\0\0\0\0\0\0\n\0\0\0\10\0\0\0\t\0\0\0\n\0\0\0\v\0\0\0\f\0\0\0\0\0\0\0\0\0"...,
+> aio_nbytes=16384, aio_offset=114688}]) = 1
+> 65411 io_getevents(0x7f4efb83b000, 1, 256, [{data=0,
+> obj=0x7f4efb46c680, res=-22, res2=0}, {data=0, obj=0x7f4efb46c5c0,
+> res=-22, res2=0}, {data=0, obj=0x7f4efb46c500, res=-22, res2=0},
+> {data=0, obj=0x7f4efb46c440, res=-22, res2=0}, {data=0,
+> obj=0x7f4efb46c380, res=-22, res2=0}, {data=0, obj=0x7f4efb46c2c0,
+> res=-22, res2=0}, {data=0, obj=0x7f4efb46c200, res=-22, res2=0},
+> {data=0, obj=0x7f4efb46c140, res=-22, res2=0}, {data=0,
+> obj=0x7f4efb46c080, res=-22, res2=0}, {data=0, obj=0x7f4efb46bfc0,
+> res=-22, res2=0}, {data=0, obj=0x7f4efb46bf00, res=-22, res2=0},
+> {data=0, obj=0x7f4efb46be40, res=-22, res2=0}], NULL) = 12
+> 65413 write(2, "2022-01-25 10:36:50 0 [ERROR] [FATAL] InnoDB: IO Error
+> Invalid argument on file descriptor 10 writi"..., 130) = 130
+> 
+> The error message I added is for clarity that the errno=-22 EVINAL is
+> getting returned for the writes.
+> 
+> The same with --innodb_flush_method=fsync omits the fcntl(10, F_SETFL,
+> O_RDONLY|O_DIRECT) = 0 (btw no idea how O_RDONLY is there, its not in
+> the code - masked out by SETFL_MASK anyway) succeeds without a
+> problem.
 
-It's almost impossible to have chance to register or unregister vmcore
-cb during vmcore dumping, so the deadlock can only exist theorictically.
-While muting the lockdep is still good. This patch looks good to me.
-Thanks for the fix.
+O_RDONLY is defined to be 0, so don't worry about it.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+> The kernel code in setfl seems to want to return EINVAL for
+> filesystems without a direct_IO structure member assigned,
+> 
+> A noop_direct_IO seems to be used frequently to just return EINVAL
+> (like cifs_direct_io).
 
-> 
-> IOW, a reader can block another read if there is a writer queued by the
-> second reader and the lock is fair.
-> "
-> 
-> To fix, convert to srcu to make this deadlock impossible. We need srcu as
-> our callbacks can sleep. With this change, I cannot trigger any lockdep
-> warnings.
-> 
-> [    6.386519] ======================================================
-> [    6.387203] WARNING: possible circular locking dependency detected
-> [    6.387965] 5.17.0-0.rc0.20220117git0c947b893d69.68.test.fc36.x86_64 #1 Not tainted
-> [    6.388899] ------------------------------------------------------
-> [    6.389657] makedumpfile/542 is trying to acquire lock:
-> [    6.390308] ffffffff832d2eb8 (vmcore_cb_rwsem){.+.+}-{3:3}, at: mmap_vmcore+0x340/0x580
-> [    6.391290]
-> [    6.391290] but task is already holding lock:
-> [    6.391978] ffff8880af226438 (&mm->mmap_lock#2){++++}-{3:3}, at: vm_mmap_pgoff+0x84/0x150
-> [    6.392898]
-> [    6.392898] which lock already depends on the new lock.
-> [    6.392898]
-> [    6.393866]
-> [    6.393866] the existing dependency chain (in reverse order) is:
-> [    6.394762]
-> [    6.394762] -> #1 (&mm->mmap_lock#2){++++}-{3:3}:
-> [    6.395530]        lock_acquire+0xc3/0x1a0
-> [    6.396047]        __might_fault+0x4e/0x70
-> [    6.396562]        _copy_to_user+0x1f/0x90
-> [    6.397093]        __copy_oldmem_page+0x72/0xc0
-> [    6.397663]        read_from_oldmem+0x77/0x1e0
-> [    6.398229]        read_vmcore+0x2c2/0x310
-> [    6.398742]        proc_reg_read+0x47/0xa0
-> [    6.399265]        vfs_read+0x101/0x340
-> [    6.399751]        __x64_sys_pread64+0x5d/0xa0
-> [    6.400314]        do_syscall_64+0x43/0x90
-> [    6.400778]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [    6.401390]
-> [    6.401390] -> #0 (vmcore_cb_rwsem){.+.+}-{3:3}:
-> [    6.402063]        validate_chain+0x9f4/0x2670
-> [    6.402560]        __lock_acquire+0x8f7/0xbc0
-> [    6.403054]        lock_acquire+0xc3/0x1a0
-> [    6.403509]        down_read+0x4a/0x140
-> [    6.403948]        mmap_vmcore+0x340/0x580
-> [    6.404403]        proc_reg_mmap+0x3e/0x90
-> [    6.404866]        mmap_region+0x504/0x880
-> [    6.405322]        do_mmap+0x38a/0x520
-> [    6.405744]        vm_mmap_pgoff+0xc1/0x150
-> [    6.406258]        ksys_mmap_pgoff+0x178/0x200
-> [    6.406823]        do_syscall_64+0x43/0x90
-> [    6.407339]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [    6.407975]
-> [    6.407975] other info that might help us debug this:
-> [    6.407975]
-> [    6.408945]  Possible unsafe locking scenario:
-> [    6.408945]
-> [    6.409684]        CPU0                    CPU1
-> [    6.410196]        ----                    ----
-> [    6.410703]   lock(&mm->mmap_lock#2);
-> [    6.411121]                                lock(vmcore_cb_rwsem);
-> [    6.411792]                                lock(&mm->mmap_lock#2);
-> [    6.412465]   lock(vmcore_cb_rwsem);
-> [    6.412873]
-> [    6.412873]  *** DEADLOCK ***
-> [    6.412873]
-> [    6.413522] 1 lock held by makedumpfile/542:
-> [    6.414006]  #0: ffff8880af226438 (&mm->mmap_lock#2){++++}-{3:3}, at: vm_mmap_pgoff+0x84/0x150
-> [    6.414944]
-> [    6.414944] stack backtrace:
-> [    6.415432] CPU: 0 PID: 542 Comm: makedumpfile Not tainted 5.17.0-0.rc0.20220117git0c947b893d69.68.test.fc36.x86_64 #1
-> [    6.416581] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-> [    6.417272] Call Trace:
-> [    6.417593]  <TASK>
-> [    6.417882]  dump_stack_lvl+0x5d/0x78
-> [    6.418346]  print_circular_bug+0x5d7/0x5f0
-> [    6.418821]  ? stack_trace_save+0x3a/0x50
-> [    6.419273]  ? save_trace+0x3d/0x330
-> [    6.419681]  check_noncircular+0xd1/0xe0
-> [    6.420217]  validate_chain+0x9f4/0x2670
-> [    6.420715]  ? __lock_acquire+0x8f7/0xbc0
-> [    6.421234]  ? __lock_acquire+0x8f7/0xbc0
-> [    6.421685]  __lock_acquire+0x8f7/0xbc0
-> [    6.422127]  lock_acquire+0xc3/0x1a0
-> [    6.422535]  ? mmap_vmcore+0x340/0x580
-> [    6.422965]  ? lock_is_held_type+0xe2/0x140
-> [    6.423432]  ? mmap_vmcore+0x340/0x580
-> [    6.423893]  down_read+0x4a/0x140
-> [    6.424321]  ? mmap_vmcore+0x340/0x580
-> [    6.424800]  mmap_vmcore+0x340/0x580
-> [    6.425237]  ? vm_area_alloc+0x1c/0x60
-> [    6.425661]  ? trace_kmem_cache_alloc+0x30/0xe0
-> [    6.426174]  ? kmem_cache_alloc+0x1e0/0x2f0
-> [    6.426641]  proc_reg_mmap+0x3e/0x90
-> [    6.427052]  mmap_region+0x504/0x880
-> [    6.427462]  do_mmap+0x38a/0x520
-> [    6.427842]  vm_mmap_pgoff+0xc1/0x150
-> [    6.428260]  ksys_mmap_pgoff+0x178/0x200
-> [    6.428701]  do_syscall_64+0x43/0x90
-> [    6.429126]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [    6.429745] RIP: 0033:0x7fc7359b8fc7
-> [    6.430157] Code: 00 00 00 89 ef e8 69 b3 ff ff eb e4 e8 c2 64 01 00 66 90 f3 0f 1e fa 41 89 ca 41 f7 c1 ff 0f 00 00 75 10 b8 09 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 21 c3 48 8b 05 21 7e 0e 00 64 c7 00 16 00 00
-> [    6.432147] RSP: 002b:00007fff35b4c208 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-> [    6.432970] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fc7359b8fc7
-> [    6.433746] RDX: 0000000000000001 RSI: 0000000000400000 RDI: 0000000000000000
-> [    6.434529] RBP: 000055a1125ecf10 R08: 0000000000000003 R09: 0000000000002000
-> [    6.435310] R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000002000
-> [    6.436093] R13: 0000000000400000 R14: 000055a1124269e2 R15: 0000000000000000
-> [    6.436887]  </TASK>
-> 
-> Reported-by: Baoquan He <bhe@redhat.com>
-> Fixes: cc5f2704c934 ("proc/vmcore: convert oldmem_pfn_is_ram callback to more generic vmcore callbacks")
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Josh Triplett <josh@joshtriplett.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
-> 
-> Was: [PATCH v1] proc/vmcore: fix false positive lockdep warning
-> 
-> v1 -> v2:
-> - Adjust subject/description
-> - Add Fixes:
-> 
-> ---
->  fs/proc/vmcore.c | 41 ++++++++++++++++++++++-------------------
->  1 file changed, 22 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index 702754dd1daf..edeb01dfe05d 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -62,7 +62,8 @@ core_param(novmcoredd, vmcoredd_disabled, bool, 0);
->  /* Device Dump Size */
->  static size_t vmcoredd_orig_sz;
->  
-> -static DECLARE_RWSEM(vmcore_cb_rwsem);
-> +static DEFINE_SPINLOCK(vmcore_cb_lock);
-> +DEFINE_STATIC_SRCU(vmcore_cb_srcu);
->  /* List of registered vmcore callbacks. */
->  static LIST_HEAD(vmcore_cb_list);
->  /* Whether the vmcore has been opened once. */
-> @@ -70,8 +71,8 @@ static bool vmcore_opened;
->  
->  void register_vmcore_cb(struct vmcore_cb *cb)
->  {
-> -	down_write(&vmcore_cb_rwsem);
->  	INIT_LIST_HEAD(&cb->next);
-> +	spin_lock(&vmcore_cb_lock);
->  	list_add_tail(&cb->next, &vmcore_cb_list);
->  	/*
->  	 * Registering a vmcore callback after the vmcore was opened is
-> @@ -79,14 +80,14 @@ void register_vmcore_cb(struct vmcore_cb *cb)
->  	 */
->  	if (vmcore_opened)
->  		pr_warn_once("Unexpected vmcore callback registration\n");
-> -	up_write(&vmcore_cb_rwsem);
-> +	spin_unlock(&vmcore_cb_lock);
->  }
->  EXPORT_SYMBOL_GPL(register_vmcore_cb);
->  
->  void unregister_vmcore_cb(struct vmcore_cb *cb)
->  {
-> -	down_write(&vmcore_cb_rwsem);
-> -	list_del(&cb->next);
-> +	spin_lock(&vmcore_cb_lock);
-> +	list_del_rcu(&cb->next);
->  	/*
->  	 * Unregistering a vmcore callback after the vmcore was opened is
->  	 * very unusual (e.g., forced driver removal), but we cannot stop
-> @@ -94,7 +95,9 @@ void unregister_vmcore_cb(struct vmcore_cb *cb)
->  	 */
->  	if (vmcore_opened)
->  		pr_warn_once("Unexpected vmcore callback unregistration\n");
-> -	up_write(&vmcore_cb_rwsem);
-> +	spin_unlock(&vmcore_cb_lock);
-> +
-> +	synchronize_srcu(&vmcore_cb_srcu);
->  }
->  EXPORT_SYMBOL_GPL(unregister_vmcore_cb);
->  
-> @@ -103,9 +106,8 @@ static bool pfn_is_ram(unsigned long pfn)
->  	struct vmcore_cb *cb;
->  	bool ret = true;
->  
-> -	lockdep_assert_held_read(&vmcore_cb_rwsem);
-> -
-> -	list_for_each_entry(cb, &vmcore_cb_list, next) {
-> +	list_for_each_entry_srcu(cb, &vmcore_cb_list, next,
-> +				 srcu_read_lock_held(&vmcore_cb_srcu)) {
->  		if (unlikely(!cb->pfn_is_ram))
->  			continue;
->  		ret = cb->pfn_is_ram(cb, pfn);
-> @@ -118,9 +120,9 @@ static bool pfn_is_ram(unsigned long pfn)
->  
->  static int open_vmcore(struct inode *inode, struct file *file)
->  {
-> -	down_read(&vmcore_cb_rwsem);
-> +	spin_lock(&vmcore_cb_lock);
->  	vmcore_opened = true;
-> -	up_read(&vmcore_cb_rwsem);
-> +	spin_unlock(&vmcore_cb_lock);
->  
->  	return 0;
->  }
-> @@ -133,6 +135,7 @@ ssize_t read_from_oldmem(char *buf, size_t count,
->  	unsigned long pfn, offset;
->  	size_t nr_bytes;
->  	ssize_t read = 0, tmp;
-> +	int idx;
->  
->  	if (!count)
->  		return 0;
-> @@ -140,7 +143,7 @@ ssize_t read_from_oldmem(char *buf, size_t count,
->  	offset = (unsigned long)(*ppos % PAGE_SIZE);
->  	pfn = (unsigned long)(*ppos / PAGE_SIZE);
->  
-> -	down_read(&vmcore_cb_rwsem);
-> +	idx = srcu_read_lock(&vmcore_cb_srcu);
->  	do {
->  		if (count > (PAGE_SIZE - offset))
->  			nr_bytes = PAGE_SIZE - offset;
-> @@ -165,7 +168,7 @@ ssize_t read_from_oldmem(char *buf, size_t count,
->  						       offset, userbuf);
->  		}
->  		if (tmp < 0) {
-> -			up_read(&vmcore_cb_rwsem);
-> +			srcu_read_unlock(&vmcore_cb_srcu, idx);
->  			return tmp;
->  		}
->  
-> @@ -176,8 +179,8 @@ ssize_t read_from_oldmem(char *buf, size_t count,
->  		++pfn;
->  		offset = 0;
->  	} while (count);
-> +	srcu_read_unlock(&vmcore_cb_srcu, idx);
->  
-> -	up_read(&vmcore_cb_rwsem);
->  	return read;
->  }
->  
-> @@ -568,18 +571,18 @@ static int vmcore_remap_oldmem_pfn(struct vm_area_struct *vma,
->  			    unsigned long from, unsigned long pfn,
->  			    unsigned long size, pgprot_t prot)
->  {
-> -	int ret;
-> +	int ret, idx;
->  
->  	/*
-> -	 * Check if oldmem_pfn_is_ram was registered to avoid
-> -	 * looping over all pages without a reason.
-> +	 * Check if a callback was registered to avoid looping over all
-> +	 * pages without a reason.
->  	 */
-> -	down_read(&vmcore_cb_rwsem);
-> +	idx = srcu_read_lock(&vmcore_cb_srcu);
->  	if (!list_empty(&vmcore_cb_list))
->  		ret = remap_oldmem_pfn_checked(vma, from, pfn, size, prot);
->  	else
->  		ret = remap_oldmem_pfn_range(vma, from, pfn, size, prot);
-> -	up_read(&vmcore_cb_rwsem);
-> +	srcu_read_unlock(&vmcore_cb_srcu, idx);
->  	return ret;
->  }
->  
-> -- 
-> 2.34.1
-> 
+Sorry for the confusion.  You've caught us mid-transition.  Eventually,
+->direct_IO will be deleted, but for now it signifies whether or not the
+filesystem supports O_DIRECT, even though it's not used (except in some
+scenarios you don't care about).
 
+> Lastly on the list of peculiar behaviors here, is tmpfs will return
+> EINVAL from the fcntl call however it works fine with O_DIRECT
+> (https://bugs.mysql.com/bug.php?id=26662). MySQL (and MariaDB still
+> has the same code) that currently ignores EINVAL, but I'm willing to
+> make that code better.
+
+Out of interest, what behaviour do you _want_ from doing O_DIRECT
+to tmpfs?  O_DIRECT is defined to bypass the page cache, but tmpfs
+only stores data in the page cache.  So what do you intend to happen?
+
+> Does a userspace have to fully try to write to an O_DIRECT file, note
+> the failure, reopen or clear O_DIRECT, and resubmit to use O_DIRECT?
+> 
+> While I see that the success/failure of a O_DIRECT read/write can be
+> related to the capabilities of the underlying block device depending
+> on offset/length of the read/write, are there other traps?
+
+It also must be aligned in memory, but I'm not quite sure what
+limitations cifs imposes.
