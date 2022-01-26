@@ -2,73 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2590749D02D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 18:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C6449D03A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 18:01:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243399AbiAZQ76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 11:59:58 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:30888 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243333AbiAZQ76 (ORCPT
+        id S243428AbiAZRBf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 12:01:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38472 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236882AbiAZRBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 11:59:58 -0500
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-129-QMbyePlyM1eBDjptTIuy9g-1; Wed, 26 Jan 2022 16:59:55 +0000
-X-MC-Unique: QMbyePlyM1eBDjptTIuy9g-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Wed, 26 Jan 2022 16:59:53 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Wed, 26 Jan 2022 16:59:53 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Kees Cook' <keescook@chromium.org>,
-        Ariadne Conill <ariadne@dereferenced.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Eric Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: RE: [PATCH] fs/exec: require argv[0] presence in do_execveat_common()
-Thread-Topic: [PATCH] fs/exec: require argv[0] presence in
- do_execveat_common()
-Thread-Index: AQHYEoZGG+gndwPty0OW8qRUEed8Eax1hgpA
-Date:   Wed, 26 Jan 2022 16:59:53 +0000
-Message-ID: <a33e8f5318e94e01ac4126bc4870b59a@AcuMS.aculab.com>
-References: <20220126043947.10058-1-ariadne@dereferenced.org>
- <202201252241.7309AE568F@keescook>
- <39480927-B17F-4573-B335-7FCFD81AB997@chromium.org>
-In-Reply-To: <39480927-B17F-4573-B335-7FCFD81AB997@chromium.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 26 Jan 2022 12:01:34 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 502DCC06161C;
+        Wed, 26 Jan 2022 09:01:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=vyuyBqRIMMh9+Buu1wPmRydLHC
+        BlGk8+V1RHAbQx2h0FvJRQ5gLwUQNndUx6SX1PtD6QhjtC8w6TjcY+iIIpLzogtV+NdgG8GmFGu+a
+        hAzdqhWNYdeggW3JUHmkt41CG4wIsC2wZbUWOpt/s4rxUDyk3aDU7Y9eKZ0pEi5hZ0IELzym6xXFT
+        aeEB351WaqFX00txzDg1nIbI4j1AD8WUqBKB8bpG4MsdqLgdsBGL1yH7J1DGbVD+UKt9olE1dBvi1
+        woGEdZoprV2f21o+eNvLuzjfWk3wETLqk8jz6vkwl7KJPCsMjP1qr8e3r3ZHuTpstyZmKl2TjVWyK
+        9imIT18A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nClfp-00CpqB-KG; Wed, 26 Jan 2022 17:01:33 +0000
+Date:   Wed, 26 Jan 2022 09:01:33 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.com
+Subject: Re: [PATCH 1/4] vfs: make freeze_super abort when sync_filesystem
+ returns error
+Message-ID: <YfF+bRP0gimCfpdt@infradead.org>
+References: <164316348940.2600168.17153575889519271710.stgit@magnolia>
+ <164316349509.2600168.11461158492068710281.stgit@magnolia>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <164316349509.2600168.11461158492068710281.stgit@magnolia>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogS2VlcyBDb29rDQo+IFNlbnQ6IDI2IEphbnVhcnkgMjAyMiAwNzoyOA0KLi4uDQo+ID4N
-Cj4gPlRoZXJlIHNob3VsZG4ndCBiZSBhbnl0aGluZyBsZWdpdGltYXRlIGFjdHVhbGx5IGRvaW5n
-IHRoaXMgaW4gdXNlcnNwYWNlLg0KPiANCj4gSSBzcG9rZSB0b28gc29vbi4NCj4gDQo+IFVuZm9y
-dHVuYXRlbHksIHRoaXMgaXMgbm90IHRoZSBjYXNlOg0KPiBodHRwczovL2NvZGVzZWFyY2guZGVi
-aWFuLm5ldC9zZWFyY2g/cT1leGVjdmUlNUMrKiU1QyUyOCU1QiU1RSUyQyU1RCUyQiUyQysqTlVM
-TCZsaXRlcmFsPTANCj4gDQo+IExvdHMgb2Ygc3R1ZmYgbGlrZXMgdG8gZG86DQo+IGV4ZWN2ZShw
-YXRoLCBOVUxMLCBOVUxMKTsNCj4gDQo+IERvIHRoZXNlIHRoaW5ncyBkZXBlbmQgb24gYXJnYz09
-MCB3b3VsZCBiZSBteSBuZXh0IHF1ZXN0aW9uLi4uDQoNCldoYXQgYWJvdXQgZW5zdXJpbmcgdGhh
-dCBhcmd2WzBdIGFuZCBhcmd2WzFdIGFyZSBhbHdheXMgcHJlc2VudA0KYW5kIGJvdGggTlVMTCB3
-aGVuIGFyZ2MgaXMgMD8NCg0KVGhlbiBwcm9ncmFtcyB0aGF0IGp1c3Qgc2NhbiBmcm9tIGFyZ3Zb
-MV0gdW50aWwgdGhleSBnZXQgYSBOVUxMDQp3aWxsIGFsd2F5cyBiZSBmaW5lLg0KDQoJRGF2aWQN
-Cg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZh
-cm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYg
-KFdhbGVzKQ0K
+Looks good,
 
+Reviewed-by: Christoph Hellwig <hch@lst.de>
