@@ -2,95 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 986DA49C9F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 13:44:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6093849CB14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jan 2022 14:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241454AbiAZMoX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 07:44:23 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:54756 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234207AbiAZMoW (ORCPT
+        id S240754AbiAZNnh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 08:43:37 -0500
+Received: from brightrain.aerifal.cx ([216.12.86.13]:54002 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240720AbiAZNnh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 07:44:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643201062;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=lcgXnF+PwIYGfn2u5tNUBbDBAw5Do5Myjafl0JrRTE0=;
-        b=I7ygIRGcqtYkFrG5oQ2KhrlpoVTz1yBtfx1ecObkZW/GsV9WJNuaxchRaROPghDZOj9ZMA
-        ybtC8z6p1ToYZSZeyVYR59/gWpi58iTu7ttW+RKuV08cwTHh1tLkO9NZg2LPaJOAB3j2V/
-        qFH0IV5pG9OAEB5wPJM+M7v7kvAjGPU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-645-sNLM-IOzOQinTsbLXXQfcw-1; Wed, 26 Jan 2022 07:44:18 -0500
-X-MC-Unique: sNLM-IOzOQinTsbLXXQfcw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 065F51006AA0;
-        Wed, 26 Jan 2022 12:44:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A8A1F7B9D9;
-        Wed, 26 Jan 2022 12:44:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>
-cc:     dhowells@redhat.com, jlayton@kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: fscrypt and potential issues from file sparseness
+        Wed, 26 Jan 2022 08:43:37 -0500
+Date:   Wed, 26 Jan 2022 08:27:30 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Ariadne Conill <ariadne@dereferenced.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs/exec: require argv[0] presence in do_execveat_common()
+Message-ID: <20220126132729.GA7942@brightrain.aerifal.cx>
+References: <20220126043947.10058-1-ariadne@dereferenced.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <124548.1643201054.1@warthog.procyon.org.uk>
-Date:   Wed, 26 Jan 2022 12:44:14 +0000
-Message-ID: <124549.1643201054@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220126043947.10058-1-ariadne@dereferenced.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Jan 26, 2022 at 04:39:47AM +0000, Ariadne Conill wrote:
+> The first argument to argv when used with execv family of calls is
+> required to be the name of the program being executed, per POSIX.
 
-I'm looking at doing content encryption in the network filesystem support
-library.  It occurs to me that if the filesystem can record sparsity in the
-file, then a couple of issues may arise if we wish to use that to record
-zeroed source blocks (ie. the unencrypted blocks).  It further occurs to me
-that this may occur in extent-based filesystems such as ext4 that support
-fscrypt and also do extent optimisation.
+That's not quite the story. The relevant text is a "should", meaning
+that to be "strictly conforming" an application has to follow the
+convention, but still can't assume its invoker did. (Note that most
+programs do not aim to be "strictly conforming"; it's not just the
+word strictly applied as an adjective to conforming, but a definition
+of its own imposing very stringent portability conditions beyond what
+the standard already imposes.) Moreover, POSIX (following ISO C, after
+this was changed from early C drafts) rejected making it a
+requirement. This is documented in the RATIONALE for execve:
 
-The issues are:
+    Early proposals required that the value of argc passed to main()
+    be "one or greater". This was driven by the same requirement in
+    drafts of the ISO C standard. In fact, historical implementations
+    have passed a value of zero when no arguments are supplied to the
+    caller of the exec functions. This requirement was removed from
+    the ISO C standard and subsequently removed from this volume of
+    POSIX.1-2017 as well. The wording, in particular the use of the
+    word should, requires a Strictly Conforming POSIX Application to
+    pass at least one argument to the exec function, thus guaranteeing
+    that argc be one or greater when invoked by such an application.
+    In fact, this is good practice, since many existing applications
+    reference argv[0] without first checking the value of argc.
 
- (1) Recording source blocks that are all zeroes by not storing them and
-     leaving a hole in a content is a minor security hole as someone looking
-     at the file can derive information about the contents from that.  This
-     probably wouldn't affect most files, but it might affect database files.
+Source: https://pubs.opengroup.org/onlinepubs/9699919799/functions/execve.html
 
- (2) If the filesystem stores a hole for a *source* block of zeroes (not an
-     encrypted block), then it has the same problems as cachefiles:
+Note that despite citing itself as POSIX.1-2017 above, this is not a
+change in the 2017 edition; it's just the way they self-cite. As far
+as I can tell, the change goes back to prior to the first publication
+of the standard.
 
-     (a) A block of zeroes written to disk (ie. an actually encrypted block)
-     is very, very unlikely to represent a source block of zeroes, but the
-     optimiser can punch it out to reduce an extent and recover disk space,
-     thereby leaving a hole.
+> By validating this in do_execveat_common(), we can prevent execution
+> of shellcode which invokes execv(2) family syscalls with argc < 1,
+> a scenario which is disallowed by POSIX, thus providing a mitigation
+> against CVE-2021-4034 and similar bugs in the future.
+> 
+> The use of -EFAULT for this case is similar to other systems, such
+> as FreeBSD and OpenBSD.
 
-     (b) The optimiser could also *insert* blocks of zeroes to bridge an
-     extent, thereby erasing a hole - but the zeroes would be very unlikely to
-     decrypt back to a source block of zeroes.
+I don't like this choice of error, since in principle EFAULT should
+never happen when you haven't invoked memory-safety-violating UB.
+Something like EINVAL would be more appropriate. But if the existing
+practice for systems that do this is to use EFAULT, it's probably best
+to do the same thing.
 
-     If either event occurs, data corruption will ensue.
+> Interestingly, Michael Kerrisk opened an issue about this in 2008,
+> but there was no consensus to support fixing this issue then.
+> Hopefully now that CVE-2021-4034 shows practical exploitative use
+> of this bug in a shellcode, we can reconsider.
 
-     To evade this one, we have to do one of the following:
+I'm not really opposed to attempting to change this with consensus
+(like, actually proposing it on the Austin Group tracker), but a less
+invasive change would be just enforcing it for the case where exec is
+a privilege boundary (suid/sgid/caps). There's really no motivation
+for changing longstanding standard behavior in a
+non-privilege-boundary case.
 
-	1. Don't use sparsity to record source blocks of zeroes
-	2. Disable extent optimisations of these sorts
-	3. Keep a separate map of the content
-
-Now, I don't know if fscrypt does this.  It's hard to tell.
-
-David
-
+Rich
