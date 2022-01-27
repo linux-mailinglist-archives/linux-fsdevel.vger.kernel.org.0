@@ -2,139 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F9A249E2B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 13:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5C4B49E27B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 13:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241304AbiA0MmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 07:42:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52562 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241403AbiA0MmS (ORCPT
+        id S236171AbiA0MlE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 07:41:04 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:49987 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S241186AbiA0MlE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 07:42:18 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CB4AC061748;
-        Thu, 27 Jan 2022 04:42:18 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id d15-20020a17090a110f00b001b4e7d27474so2826678pja.2;
-        Thu, 27 Jan 2022 04:42:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=65lHAvgIrvaTDpQ8E/8HtbPHAXdF5rPPGyXj5G9Napk=;
-        b=m5J49hSw3xUMpmLDf2fGSGxn0Q5aRF+lgicWZiT0ciapljFaf3uFyfr3KGlNMEzvMU
-         6HoVCtvRqf/ZO9VNeQM33Giktu8Ps6mZ+LRhzrs1yraKtt+HdckINvUVNFf/LCcGF8V6
-         YsvjpvUO/M/yek54njRaDuCT3kIPmEvS1uHqe5RNdkA3sW8au6yjnodbmd1gP1gAe6wS
-         yMvdsjfdnHfg8tXckyudtjcLNKUjHJXWHo5mKRAJLD6HSCJ87Si3yGRmMIdve5e+wDOc
-         oNd185layb+NCUlQhllLguOuaoLe51JQRXFcujR4pBxsf8Fbh09BESiSppD24VrsyPu8
-         FIKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=65lHAvgIrvaTDpQ8E/8HtbPHAXdF5rPPGyXj5G9Napk=;
-        b=E+eweg//mN8euUx4n7EXrPCbum2WgLIDp8LtywiT6TumlMXF4/9QWoUPg+bvwQodcr
-         OzT8AgcFaW1LvBkeprDaUNgA5gi9ZFnqoXcpt7zXRqaviX5QBbJD5N6Igl2cnfl1pD9F
-         epLUfWe7l1+tN1OcKRuvQ2mD2FhPMl9nz1vfUlvaz/Ak8pOALkqsgba66b1tDBP/XTTq
-         HU+fFj80ejhvBVF6QDeMkksyNraEMlA4XopVG1sldGwhy1ZR+fFjTPxnF3wRTyGP0yBp
-         9wOher9lMcBtXjcCowMa5nzL4qSh/swyOVeShdRbgG4cmypRZAQ3o1kXaFoM8WHN4Pcv
-         ZqsA==
-X-Gm-Message-State: AOAM531w3TcP53rqce+J3A0EBNvIYo84QfYEXKaTuYKvadd7P7jF6aJ1
-        lSlSaewlD7zUqCAF9S0M2Y4=
-X-Google-Smtp-Source: ABdhPJwTsY+xzKtPDG+leiEAflZIAbiOUmbhEMGb937hqpADqlAhicEQTyVFFRJGC6s3+v4DBGpGYA==
-X-Received: by 2002:a17:902:9306:: with SMTP id bc6mr3266618plb.93.1643287337888;
-        Thu, 27 Jan 2022 04:42:17 -0800 (PST)
-Received: from localhost.localdomain ([2400:2410:93a3:bc00:d205:ec9:b1c6:b9ee])
-        by smtp.gmail.com with ESMTPSA id m38sm19071298pgl.64.2022.01.27.04.42.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jan 2022 04:42:17 -0800 (PST)
-From:   Akira Kawata <akirakawata1@gmail.com>
-To:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        viro@zeniv.linux.org.uk, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, lukas.bulwahn@gmail.com
-Cc:     akirakawata1@gmail.com, Eric Biederman <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] fs/binfmt_elf: Refactor load_elf_binary function
-Date:   Thu, 27 Jan 2022 21:40:17 +0900
-Message-Id: <20220127124014.338760-3-akirakawata1@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220127124014.338760-1-akirakawata1@gmail.com>
-References: <20220127124014.338760-1-akirakawata1@gmail.com>
+        Thu, 27 Jan 2022 07:41:04 -0500
+IronPort-Data: =?us-ascii?q?A9a23=3A7op5waJWE0AXQMIYFE+RupQlxSXFcZb7ZxGrkP8?=
+ =?us-ascii?q?bfHDo0jhz12QFnWoXWGHSa/aKYDSmeNp0YN6w8kpVuMLVn4NqS1BcGVNFFSwT8?=
+ =?us-ascii?q?ZWfbTi6wuYcBwvLd4ubChsPA/w2MrEsF+hpCC+MzvuRGuK59yMkjPvXHuOU5NP?=
+ =?us-ascii?q?sYUideyc1EU/Ntjozw4bVsqYw6TSIK1vlVeHa+qUzC3f5s9JACV/43orYwP9ZU?=
+ =?us-ascii?q?FsejxtD1rA2TagjUFYzDBD5BrpHTU26ByOQroW5goeHq+j/ILGRpgs1/j8mDJW?=
+ =?us-ascii?q?rj7T6blYXBLXVOGBiiFIPA+773EcE/Xd0j87XN9JFAatToy+UltZq2ZNDs4esY?=
+ =?us-ascii?q?Qk0PKzQg/lbWB5de817FfQcoO6eeiLi4KR/yGWDKRMA2c5GAEgoPIEw9PxwBGZ?=
+ =?us-ascii?q?U//0EbjsKa3irh+m26LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
+ =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtOOpgGTvNjhdgFGLrKE0pW/Jw2R?=
+ =?us-ascii?q?Z1qbhMd/QUtiLXtlO2EKZoH/WuWj0HHkyNtWZxHyO8m+EgfXGlif2HokVEdWQ8?=
+ =?us-ascii?q?v9snU3WyHcfBQMbUXOlrvSjzE2zQdRSLwoT4CVGhawz8lG7C9rwRRu1pFaasRM?=
+ =?us-ascii?q?GHdldCes37EeK0KW8ywKYAHUUCy5Pc/Q4u8IsAz8nzFmEm5XuHzMHjVE/YRpx7?=
+ =?us-ascii?q?Z/N9XXrZ3dTdjREOEc5ocI+y4GLiOkOYtjnF76PyJKIs+A=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A2AjC+a2EZlq+c3kS2RMuSAqjBI4kLtp133Aq?=
+ =?us-ascii?q?2lEZdPU1SL39qynKppkmPHDP5gr5J0tLpTntAsi9qBDnhPtICOsqTNSftWDd0Q?=
+ =?us-ascii?q?PGEGgI1/qB/9SPIU3D398Y/aJhXow7M9foEGV95PyQ3CCIV/om3/mLmZrFudvj?=
+X-IronPort-AV: E=Sophos;i="5.88,320,1635177600"; 
+   d="scan'208";a="120913259"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 27 Jan 2022 20:41:01 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id ED70A4D169C7;
+        Thu, 27 Jan 2022 20:40:59 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Thu, 27 Jan 2022 20:41:01 +0800
+Received: from irides.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Thu, 27 Jan 2022 20:40:57 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
+Subject: [PATCH v10 0/9] fsdax: introduce fs query to support reflink
+Date:   Thu, 27 Jan 2022 20:40:49 +0800
+Message-ID: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: ED70A4D169C7.A1DE6
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I delete load_addr because it is not used anymore. And I rename
-load_addr_set to first_pt_load because it is used only to capture the
-first iteration of the loop.
+This patchset is aimed to support shared pages tracking for fsdax.
 
-Signed-off-by: Akira Kawata <akirakawata1@gmail.com>
-Acked-by: Kees Cook <keescook@chromium.org>
----
- fs/binfmt_elf.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Changes since V9:
+  - Remove dax write/read lock patch
+  - Remove dax_lock_entry() in dax_lock_mapping_entry() and rename it to
+      dax_load_page()
+  - Wrap dax code in memory-failure.c with #if IS_ENABLED(CONFIG_FS_DAX)
+  - Wrap xfs_dax_failure_fn() with #if IS_ENABLED(CONFIG_MEMORY_FAILURE)
+  - Move PAGE_MAPPING_DAX_COW into page-flags.h
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index d120ab03795f..3218ebfde409 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -822,8 +822,8 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
- static int load_elf_binary(struct linux_binprm *bprm)
- {
- 	struct file *interpreter = NULL; /* to shut gcc up */
--	unsigned long load_addr, load_bias = 0, phdr_addr = 0;
--	int load_addr_set = 0;
-+	unsigned long load_bias = 0, phdr_addr = 0;
-+	int first_pt_load = 1;
- 	unsigned long error;
- 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
- 	struct elf_phdr *elf_property_phdata = NULL;
-@@ -1073,12 +1073,12 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 
- 		vaddr = elf_ppnt->p_vaddr;
- 		/*
--		 * The first time through the loop, load_addr_set is false:
-+		 * The first time through the loop, first_pt_load is true:
- 		 * layout will be calculated. Once set, use MAP_FIXED since
- 		 * we know we've already safely mapped the entire region with
- 		 * MAP_FIXED_NOREPLACE in the once-per-binary logic following.
- 		 */
--		if (load_addr_set) {
-+		if (!first_pt_load) {
- 			elf_flags |= MAP_FIXED;
- 		} else if (elf_ex->e_type == ET_EXEC) {
- 			/*
-@@ -1138,10 +1138,10 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 
- 		/*
- 		 * Calculate the entire size of the ELF mapping (total_size).
--		 * (Note that load_addr_set is set to true later once the
-+		 * (Note that first_pt_load is set to false later once the
- 		 * initial mapping is performed.)
- 		 */
--		if (!load_addr_set) {
-+		if (first_pt_load) {
- 			total_size = total_mapping_size(elf_phdata,
- 							elf_ex->e_phnum);
- 			if (!total_size) {
-@@ -1158,13 +1158,11 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 			goto out_free_dentry;
- 		}
- 
--		if (!load_addr_set) {
--			load_addr_set = 1;
--			load_addr = (elf_ppnt->p_vaddr - elf_ppnt->p_offset);
-+		if (first_pt_load) {
-+			first_pt_load = 0;
- 			if (elf_ex->e_type == ET_DYN) {
- 				load_bias += error -
- 				             ELF_PAGESTART(load_bias + vaddr);
--				load_addr += load_bias;
- 				reloc_func_desc = load_bias;
- 			}
- 		}
+This patchset moves owner tracking from dax_assocaite_entry() to pmem
+device driver, by introducing an interface ->memory_failure() for struct
+pagemap.  This interface is called by memory_failure() in mm, and
+implemented by pmem device.
+
+Then call holder operations to find the filesystem which the corrupted
+data located in, and call filesystem handler to track files or metadata
+associated with this page.
+
+Finally we are able to try to fix the corrupted data in filesystem and
+do other necessary processing, such as killing processes who are using
+the files affected.
+
+The call trace is like this:
+memory_failure()
+|* fsdax case
+|------------
+|pgmap->ops->memory_failure()      => pmem_pgmap_memory_failure()
+| dax_holder_notify_failure()      =>
+|  dax_device->holder_ops->notify_failure() =>
+|                                     - xfs_dax_notify_failure()
+|  |* xfs_dax_notify_failure()
+|  |--------------------------
+|  |   xfs_rmap_query_range()
+|  |    xfs_dax_failure_fn()
+|  |    * corrupted on metadata
+|  |       try to recover data, call xfs_force_shutdown()
+|  |    * corrupted on file data
+|  |       try to recover data, call mf_dax_kill_procs()
+|* normal case
+|-------------
+|mf_generic_kill_procs()
+
+==
+Shiyang Ruan (9):
+  dax: Introduce holder for dax_device
+  mm: factor helpers for memory_failure_dev_pagemap
+  pagemap,pmem: Introduce ->memory_failure()
+  fsdax: fix function description
+  fsdax: Introduce dax_load_page()
+  mm: move pgoff_address() to vma_pgoff_address()
+  mm: Introduce mf_dax_kill_procs() for fsdax case
+  xfs: Implement ->notify_failure() for XFS
+  fsdax: set a CoW flag when associate reflink mappings
+
+ drivers/dax/super.c         |  62 ++++++++++
+ drivers/nvdimm/pmem.c       |  16 +++
+ fs/dax.c                    | 123 +++++++++++++++----
+ fs/xfs/Makefile             |   1 +
+ fs/xfs/xfs_buf.c            |  12 ++
+ fs/xfs/xfs_fsops.c          |   3 +
+ fs/xfs/xfs_mount.h          |   1 +
+ fs/xfs/xfs_notify_failure.c | 222 ++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_notify_failure.h |  10 ++
+ include/linux/dax.h         |  37 ++++++
+ include/linux/memremap.h    |  12 ++
+ include/linux/mm.h          |  17 +++
+ include/linux/page-flags.h  |   6 +
+ mm/memory-failure.c         | 234 +++++++++++++++++++++++++-----------
+ 14 files changed, 666 insertions(+), 90 deletions(-)
+ create mode 100644 fs/xfs/xfs_notify_failure.c
+ create mode 100644 fs/xfs/xfs_notify_failure.h
+
 -- 
-2.25.1
+2.34.1
+
+
 
