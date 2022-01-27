@@ -2,92 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D0349E891
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 18:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 420E649E97A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 18:57:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244397AbiA0RLo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 12:11:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:42799 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244396AbiA0RLo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 12:11:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643303503;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xtKZnu3m4MJ1lsPgVyhgN06mFCH9uLK+At7c0q3e4j8=;
-        b=LN8FAamK45sm6noJKUN6tg+JuKEjFXTHjCz0Gz3hQXd7xEnG8vCRHb6CYG8/0sito9KieR
-        EoA3uFroRZoPvlL+SDdS4cbDbrpWlWUd6YK5HZdf/U3wzh4GlyqcSS/9tB/oQEndPVNawx
-        37imUkamyk+Z/2GOH1G55UuYiAToeOc=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-553-qLVDU4l5McqSz8itHHvZog-1; Thu, 27 Jan 2022 12:11:42 -0500
-X-MC-Unique: qLVDU4l5McqSz8itHHvZog-1
-Received: by mail-qt1-f200.google.com with SMTP id e28-20020ac8415c000000b002c5e43ca6b7so2689322qtm.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 09:11:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xtKZnu3m4MJ1lsPgVyhgN06mFCH9uLK+At7c0q3e4j8=;
-        b=Z9MtmtEfPgqgwVdKrGizjj/Ng9FYYzuvTPLxtifCyv/l6D+HWx/cU9U+44gjC26/qa
-         +92saFzAUx8n0Bn1RjliRt1k065DgEndST1Oy1Dxcvdk+LRb87k+F1Pt84oJHgn+OwTL
-         0/Rl3GMapnyvfqKeuHdjHfHltCaTKbYmhqDP1wYjDqPKE2k0As5NZlu2+NXZLZyb5/h6
-         mIB3a0Q+OFDJyEh/lXIPyJL1HXFwKgVDVvu8IfF/yMfw6rs0jD7tnXRztimNqh+kM2/L
-         okYVCvSI6J64t+mOUCY+8IBMbns8ApfKjeTV/iQT/HGVoIHnSzWdNrt8NriZa6tHPyZi
-         4mlQ==
-X-Gm-Message-State: AOAM531CRUIB0r/3J3Pb7AtxI55odp4SF5/q+V4c1G791iFNiY6BL+Sx
-        vjUpxvIocg4qMscXazBX7sDbSlWMkadCaOIV2x7Gz8vy2Jhcc6Hu8MdA4jQImJ/9vlLA1vseu38
-        8gOlf4/HqQbIAl2foJIuvA8Bo
-X-Received: by 2002:ad4:5968:: with SMTP id eq8mr3808180qvb.80.1643303501893;
-        Thu, 27 Jan 2022 09:11:41 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJztPCW/ls/HGsD9xe/WMaahh4UjrJsfEVpwqwRI5tHMnXcgyiZLuuvrhgvmY/MRUsNQeYYfvQ==
-X-Received: by 2002:ad4:5968:: with SMTP id eq8mr3808154qvb.80.1643303501730;
-        Thu, 27 Jan 2022 09:11:41 -0800 (PST)
-Received: from localhost (pool-68-160-176-52.bstnma.fios.verizon.net. [68.160.176.52])
-        by smtp.gmail.com with ESMTPSA id w8sm119796qti.21.2022.01.27.09.11.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jan 2022 09:11:41 -0800 (PST)
-Date:   Thu, 27 Jan 2022 12:11:40 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Md . Haris Iqbal " <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.co>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        xen-devel@lists.xenproject.org, drbd-dev@lists.linbit.com
-Subject: Re: [PATCH 08/19] dm-thin: use blkdev_issue_flush instead of open
- coding it
-Message-ID: <YfLSTPB7UUZKqQKL@redhat.com>
-References: <20220124091107.642561-1-hch@lst.de>
- <20220124091107.642561-9-hch@lst.de>
+        id S245280AbiA0R4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 12:56:39 -0500
+Received: from namei.org ([65.99.196.166]:52994 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244907AbiA0Rz7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jan 2022 12:55:59 -0500
+X-Greylist: delayed 551 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jan 2022 12:55:58 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 600C71BC;
+        Thu, 27 Jan 2022 17:33:29 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org 600C71BC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
+        t=1643304809; bh=AGzt62snnTX+RhaQRcauWWHyp7x7hKo4JgECX14Qns0=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=OG0fZTdVPXr4s6bgq6Xx/7z/4tXB6PztAloBvarfSfkiTtlldoPyQcpvAuukv6ljv
+         FO16pBmarlXoFiA6tCsZCl0rJ/Py/sbxZxH7mcl08HhxtyGTH9xiUzEqtPc2+/mjps
+         rErYzBTGmXdVGf67tiaUOLeSoNUzY5/aCy0aS2So=
+Date:   Fri, 28 Jan 2022 04:33:29 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Paul Moore <paul@paul-moore.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH v2] LSM: general protection fault in legacy_parse_param
+In-Reply-To: <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
+Message-ID: <3daaf037-2e67-e939-805f-57a61d67f7b8@namei.org>
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com> <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein> <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
+ <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com> <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220124091107.642561-9-hch@lst.de>
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 24 2022 at  4:10P -0500,
-Christoph Hellwig <hch@lst.de> wrote:
+On Thu, 27 Jan 2022, Casey Schaufler wrote:
 
-> Use blkdev_issue_flush, which uses an on-stack bio instead of an
-> opencoded version with a bio embedded into struct pool.
+> The usual LSM hook "bail on fail" scheme doesn't work for cases where
+> a security module may return an error code indicating that it does not
+> recognize an input.  In this particular case Smack sees a mount option
+> that it recognizes, and returns 0. A call to a BPF hook follows, which
+> returns -ENOPARAM, which confuses the caller because Smack has processed
+> its data.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> The SELinux hook incorrectly returns 1 on success. There was a time
+> when this was correct, however the current expectation is that it
+> return 0 on success. This is repaired.
+> 
+> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Acked-by: Mike Snitzer <snitzer@redhat.com>
+
+Acked-by: James Morris <jamorris@linux.microsoft.com>
+
+> ---
+>  security/security.c      | 17 +++++++++++++++--
+>  security/selinux/hooks.c |  5 ++---
+>  2 files changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/security/security.c b/security/security.c
+> index 3d4eb474f35b..e649c8691be2 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -884,9 +884,22 @@ int security_fs_context_dup(struct fs_context *fc, struct
+> fs_context *src_fc)
+>  	return call_int_hook(fs_context_dup, 0, fc, src_fc);
+>  }
+>  
+> -int security_fs_context_parse_param(struct fs_context *fc, struct
+> fs_parameter *param)
+> +int security_fs_context_parse_param(struct fs_context *fc,
+> +				    struct fs_parameter *param)
+>  {
+> -	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
+> +	struct security_hook_list *hp;
+> +	int trc;
+> +	int rc = -ENOPARAM;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+> +			     list) {
+> +		trc = hp->hook.fs_context_parse_param(fc, param);
+> +		if (trc == 0)
+> +			rc = 0;
+> +		else if (trc != -ENOPARAM)
+> +			return trc;
+> +	}
+> +	return rc;
+>  }
+>  
+>  int security_sb_alloc(struct super_block *sb)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 5b6895e4fc29..371f67a37f9a 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2860,10 +2860,9 @@ static int selinux_fs_context_parse_param(struct
+> fs_context *fc,
+>  		return opt;
+>  
+>  	rc = selinux_add_opt(opt, param->string, &fc->security);
+> -	if (!rc) {
+> +	if (!rc)
+>  		param->string = NULL;
+> -		rc = 1;
+> -	}
+> +
+>  	return rc;
+>  }
+>  
+> 
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
 
