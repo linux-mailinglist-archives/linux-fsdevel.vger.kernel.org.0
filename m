@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E0E749D876
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 03:49:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7BC549D865
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 03:49:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233481AbiA0Ctu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 21:49:50 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:55256 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231881AbiA0Ctt (ORCPT
+        id S235338AbiA0CtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 21:49:09 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:55004 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231881AbiA0CtJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 21:49:49 -0500
+        Wed, 26 Jan 2022 21:49:09 -0500
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id BC4B62190B;
-        Thu, 27 Jan 2022 02:49:47 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D36CF1F45F;
+        Thu, 27 Jan 2022 02:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1643251787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1643251746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OVO5L5oh76QqfW3n1oDvBos2Yawv0E43OsrqMmz97u8=;
-        b=JOFvU7iAGyn/v6BD3Bp+bh089vjSIxSCwY01PObM+BmenfkUZ1j2GJfL9RHxbWRZM/l98u
-        qo/UEFC5lfk1D4MRdyMUcjwh6hIji/NTYfIRlm9cB6k65ocg8RHieVXuXzdIix2W/WWAJB
-        +fCFtWOMn+6HtfPTgy8eWKnyVdE1o0E=
+        bh=cZDgYM8qwS7cEjgCZQh3dYscA/4Dgjn5wr47tYjWHxQ=;
+        b=OabKjx61FrTXFFxOiTH9E0UU6VNFC44VWp7PWLnKiKXP6g2ugD0tfQ02c4R1eM0eHNLx9S
+        G2jSPZ8PxVtwKkHPLyq1DoOJE8/o9xInUSEIPNVQw3bZ9rdhv0nRfFw1T3aU0HrltaTx4Z
+        Wl5jPTVqSxQVC9k6/tLDDrT2ibDEDcM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1643251787;
+        s=susede2_ed25519; t=1643251746;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OVO5L5oh76QqfW3n1oDvBos2Yawv0E43OsrqMmz97u8=;
-        b=IBhAkB2hVQaF92fXW6Y2P175TbQ6CFUUnjY/M7g7xzSXg9kQBD90kXkX3iZRhhBhPwaHez
-        ofEg50iSvDeTM4BA==
+        bh=cZDgYM8qwS7cEjgCZQh3dYscA/4Dgjn5wr47tYjWHxQ=;
+        b=D98bulEbZ/C02MAVX9285ZaaoqlEkffCcUaXh/N7JqN3KhqQHCrwZ5n3haM36DVFvGMwjK
+        I4U0mIHIzRrzrODA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B085A13E46;
-        Thu, 27 Jan 2022 02:49:40 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3ED9513E46;
+        Thu, 27 Jan 2022 02:48:56 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id DVgjG0QI8mF9LAAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 27 Jan 2022 02:49:40 +0000
-Subject: [PATCH 9/9] Remove congestion tracking framework.
+        id KeWrOhgI8mFFLAAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 27 Jan 2022 02:48:56 +0000
+Subject: [PATCH 7/9] NFS: remove congestion control.
 From:   NeilBrown <neilb@suse.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -67,7 +67,7 @@ Cc:     linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
         ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
         linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
 Date:   Thu, 27 Jan 2022 13:46:29 +1100
-Message-ID: <164325158960.29787.17588717894058708630.stgit@noble.brown>
+Message-ID: <164325158959.29787.14903007819591774556.stgit@noble.brown>
 In-Reply-To: <164325106958.29787.4865219843242892726.stgit@noble.brown>
 References: <164325106958.29787.4865219843242892726.stgit@noble.brown>
 User-Agent: StGit/0.23
@@ -78,151 +78,162 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This framework is no longer used - so discard it.
+Linux no longer uses the bdi congestion tracking framework.
+So remove code from bdi which tries to support it.
+
+Also remove the "nfs_congestion_kb" sysctl.  This is a user-visible
+change, but unlikely to be a problematic one.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- include/linux/backing-dev-defs.h |    8 -----
- include/linux/backing-dev.h      |    2 -
- include/trace/events/writeback.h |   28 -------------------
- mm/backing-dev.c                 |   57 --------------------------------------
- 4 files changed, 95 deletions(-)
+ fs/nfs/sysctl.c           |    7 ------
+ fs/nfs/write.c            |   53 +--------------------------------------------
+ include/linux/nfs_fs.h    |    1 -
+ include/linux/nfs_fs_sb.h |    1 -
+ 4 files changed, 1 insertion(+), 61 deletions(-)
 
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-index 993c5628a726..e863c88df95f 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -207,14 +207,6 @@ struct backing_dev_info {
- #endif
+diff --git a/fs/nfs/sysctl.c b/fs/nfs/sysctl.c
+index 7aea195ddb35..18f3ff77fd0c 100644
+--- a/fs/nfs/sysctl.c
++++ b/fs/nfs/sysctl.c
+@@ -22,13 +22,6 @@ static struct ctl_table nfs_cb_sysctls[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_jiffies,
+ 	},
+-	{
+-		.procname	= "nfs_congestion_kb",
+-		.data		= &nfs_congestion_kb,
+-		.maxlen		= sizeof(nfs_congestion_kb),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+ 	{ }
  };
  
--enum {
--	BLK_RW_ASYNC	= 0,
--	BLK_RW_SYNC	= 1,
--};
--
--void clear_bdi_congested(struct backing_dev_info *bdi, int sync);
--void set_bdi_congested(struct backing_dev_info *bdi, int sync);
--
- struct wb_lock_cookie {
- 	bool locked;
- 	unsigned long flags;
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 2d764566280c..87ce24d238f3 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -135,8 +135,6 @@ static inline bool writeback_in_progress(struct bdi_writeback *wb)
- 
- struct backing_dev_info *inode_to_bdi(struct inode *inode);
- 
--long congestion_wait(int sync, long timeout);
--
- static inline bool mapping_can_writeback(struct address_space *mapping)
- {
- 	return inode_to_bdi(mapping->host)->capabilities & BDI_CAP_WRITEBACK;
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index a345b1e12daf..86b2a82da546 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -735,34 +735,6 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
- 	)
- );
- 
--DECLARE_EVENT_CLASS(writeback_congest_waited_template,
--
--	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
--
--	TP_ARGS(usec_timeout, usec_delayed),
--
--	TP_STRUCT__entry(
--		__field(	unsigned int,	usec_timeout	)
--		__field(	unsigned int,	usec_delayed	)
--	),
--
--	TP_fast_assign(
--		__entry->usec_timeout	= usec_timeout;
--		__entry->usec_delayed	= usec_delayed;
--	),
--
--	TP_printk("usec_timeout=%u usec_delayed=%u",
--			__entry->usec_timeout,
--			__entry->usec_delayed)
--);
--
--DEFINE_EVENT(writeback_congest_waited_template, writeback_congestion_wait,
--
--	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
--
--	TP_ARGS(usec_timeout, usec_delayed)
--);
--
- DECLARE_EVENT_CLASS(writeback_single_inode_template,
- 
- 	TP_PROTO(struct inode *inode,
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index eae96dfe0261..7176af65b103 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -1005,60 +1005,3 @@ const char *bdi_dev_name(struct backing_dev_info *bdi)
- 	return bdi->dev_name;
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 987a187bd39a..1c22ea6f23c3 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -397,33 +397,8 @@ static int wb_priority(struct writeback_control *wbc)
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(bdi_dev_name);
--
--static wait_queue_head_t congestion_wqh[2] = {
--		__WAIT_QUEUE_HEAD_INITIALIZER(congestion_wqh[0]),
--		__WAIT_QUEUE_HEAD_INITIALIZER(congestion_wqh[1])
--	};
--static atomic_t nr_wb_congested[2];
--
--void clear_bdi_congested(struct backing_dev_info *bdi, int sync)
--{
--	wait_queue_head_t *wqh = &congestion_wqh[sync];
--	enum wb_congested_state bit;
--
--	bit = sync ? WB_sync_congested : WB_async_congested;
--	if (test_and_clear_bit(bit, &bdi->wb.congested))
--		atomic_dec(&nr_wb_congested[sync]);
--	smp_mb__after_atomic();
--	if (waitqueue_active(wqh))
--		wake_up(wqh);
--}
--EXPORT_SYMBOL(clear_bdi_congested);
--
--void set_bdi_congested(struct backing_dev_info *bdi, int sync)
--{
--	enum wb_congested_state bit;
--
--	bit = sync ? WB_sync_congested : WB_async_congested;
--	if (!test_and_set_bit(bit, &bdi->wb.congested))
--		atomic_inc(&nr_wb_congested[sync]);
--}
--EXPORT_SYMBOL(set_bdi_congested);
--
--/**
-- * congestion_wait - wait for a backing_dev to become uncongested
-- * @sync: SYNC or ASYNC IO
-- * @timeout: timeout in jiffies
-- *
-- * Waits for up to @timeout jiffies for a backing_dev (any backing_dev) to exit
-- * write congestion.  If no backing_devs are congested then just wait for the
-- * next write to be completed.
+ 
+-/*
+- * NFS congestion control
 - */
--long congestion_wait(int sync, long timeout)
+-
+-int nfs_congestion_kb;
+-
+-#define NFS_CONGESTION_ON_THRESH 	(nfs_congestion_kb >> (PAGE_SHIFT-10))
+-#define NFS_CONGESTION_OFF_THRESH	\
+-	(NFS_CONGESTION_ON_THRESH - (NFS_CONGESTION_ON_THRESH >> 2))
+-
+-static void nfs_set_page_writeback(struct page *page)
 -{
--	long ret;
--	unsigned long start = jiffies;
--	DEFINE_WAIT(wait);
--	wait_queue_head_t *wqh = &congestion_wqh[sync];
+-	struct inode *inode = page_file_mapping(page)->host;
+-	struct nfs_server *nfss = NFS_SERVER(inode);
+-	int ret = test_set_page_writeback(page);
 -
--	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
--	ret = io_schedule_timeout(timeout);
--	finish_wait(wqh, &wait);
+-	WARN_ON_ONCE(ret != 0);
 -
--	trace_writeback_congestion_wait(jiffies_to_usecs(timeout),
--					jiffies_to_usecs(jiffies - start));
--
--	return ret;
+-	if (atomic_long_inc_return(&nfss->writeback) >
+-			NFS_CONGESTION_ON_THRESH)
+-		set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
 -}
--EXPORT_SYMBOL(congestion_wait);
+-
+ static void nfs_end_page_writeback(struct nfs_page *req)
+ {
+-	struct inode *inode = page_file_mapping(req->wb_page)->host;
+-	struct nfs_server *nfss = NFS_SERVER(inode);
+ 	bool is_done;
+ 
+ 	is_done = nfs_page_group_sync_on_bit(req, PG_WB_END);
+@@ -432,8 +407,6 @@ static void nfs_end_page_writeback(struct nfs_page *req)
+ 		return;
+ 
+ 	end_page_writeback(req->wb_page);
+-	if (atomic_long_dec_return(&nfss->writeback) < NFS_CONGESTION_OFF_THRESH)
+-		clear_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
+ }
+ 
+ /*
+@@ -617,7 +590,7 @@ static int nfs_page_async_flush(struct nfs_pageio_descriptor *pgio,
+ 	if (IS_ERR(req))
+ 		goto out;
+ 
+-	nfs_set_page_writeback(page);
++	set_page_writeback(page);
+ 	WARN_ON_ONCE(test_bit(PG_CLEAN, &req->wb_flags));
+ 
+ 	/* If there is a fatal error that covers this write, just exit */
+@@ -1850,7 +1823,6 @@ static void nfs_commit_release_pages(struct nfs_commit_data *data)
+ 	struct nfs_page	*req;
+ 	int status = data->task.tk_status;
+ 	struct nfs_commit_info cinfo;
+-	struct nfs_server *nfss;
+ 
+ 	while (!list_empty(&data->pages)) {
+ 		req = nfs_list_entry(data->pages.next);
+@@ -1891,9 +1863,6 @@ static void nfs_commit_release_pages(struct nfs_commit_data *data)
+ 		/* Latency breaker */
+ 		cond_resched();
+ 	}
+-	nfss = NFS_SERVER(data->inode);
+-	if (atomic_long_read(&nfss->writeback) < NFS_CONGESTION_OFF_THRESH)
+-		clear_bdi_congested(inode_to_bdi(data->inode), BLK_RW_ASYNC);
+ 
+ 	nfs_init_cinfo(&cinfo, data->inode, data->dreq);
+ 	nfs_commit_end(cinfo.mds);
+@@ -2162,26 +2131,6 @@ int __init nfs_init_writepagecache(void)
+ 	if (nfs_commit_mempool == NULL)
+ 		goto out_destroy_commit_cache;
+ 
+-	/*
+-	 * NFS congestion size, scale with available memory.
+-	 *
+-	 *  64MB:    8192k
+-	 * 128MB:   11585k
+-	 * 256MB:   16384k
+-	 * 512MB:   23170k
+-	 *   1GB:   32768k
+-	 *   2GB:   46340k
+-	 *   4GB:   65536k
+-	 *   8GB:   92681k
+-	 *  16GB:  131072k
+-	 *
+-	 * This allows larger machines to have larger/more transfers.
+-	 * Limit the default to 256M
+-	 */
+-	nfs_congestion_kb = (16*int_sqrt(totalram_pages())) << (PAGE_SHIFT-10);
+-	if (nfs_congestion_kb > 256*1024)
+-		nfs_congestion_kb = 256*1024;
+-
+ 	return 0;
+ 
+ out_destroy_commit_cache:
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index 02aa49323d1d..17045c229277 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -569,7 +569,6 @@ extern void nfs_complete_unlink(struct dentry *dentry, struct inode *);
+ /*
+  * linux/fs/nfs/write.c
+  */
+-extern int  nfs_congestion_kb;
+ extern int  nfs_writepage(struct page *page, struct writeback_control *wbc);
+ extern int  nfs_writepages(struct address_space *, struct writeback_control *);
+ extern int  nfs_flush_incompatible(struct file *file, struct page *page);
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index ca0959e51e81..3444ebbc63b6 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -137,7 +137,6 @@ struct nfs_server {
+ 	struct rpc_clnt *	client_acl;	/* ACL RPC client handle */
+ 	struct nlm_host		*nlm_host;	/* NLM client handle */
+ 	struct nfs_iostats __percpu *io_stats;	/* I/O statistics */
+-	atomic_long_t		writeback;	/* number of writeback pages */
+ 	unsigned int		flags;		/* various flags */
+ 
+ /* The following are for internal use only. Also see uapi/linux/nfs_mount.h */
 
 
