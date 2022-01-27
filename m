@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58AA249D77C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 02:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D240949D720
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 02:09:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234483AbiA0BbA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 20:31:00 -0500
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:48319 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231940AbiA0Ba7 (ORCPT
+        id S234256AbiA0BJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 20:09:00 -0500
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:60166 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231246AbiA0BI7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 20:30:59 -0500
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.53 with ESMTP; 27 Jan 2022 10:00:57 +0900
-X-Original-SENDERIP: 156.147.1.126
+        Wed, 26 Jan 2022 20:08:59 -0500
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.51 with ESMTP; 27 Jan 2022 10:08:57 +0900
+X-Original-SENDERIP: 156.147.1.125
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.126 with ESMTP; 27 Jan 2022 10:00:57 +0900
+        by 156.147.1.125 with ESMTP; 27 Jan 2022 10:08:57 +0900
 X-Original-SENDERIP: 10.177.244.38
 X-Original-MAILFROM: byungchul.park@lge.com
 From:   Byungchul Park <byungchul.park@lge.com>
@@ -42,9 +42,9 @@ Cc:     peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: Re: [RFC 00/14] DEPT(DEPendency Tracker)
-Date:   Thu, 27 Jan 2022 10:00:53 +0900
-Message-Id: <1643245254-11122-1-git-send-email-byungchul.park@lge.com>
+Subject: Patches(Dept) for v5.17-rc1
+Date:   Thu, 27 Jan 2022 10:08:53 +0900
+Message-Id: <1643245733-14513-1-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1643078204-12663-1-git-send-email-byungchul.park@lge.com>
 References: <1643078204-12663-1-git-send-email-byungchul.park@lge.com>
@@ -52,38 +52,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+cc
+The following messages are for the latest tag, v5.17-rc1.
+Hope you are gonna be satisfied with it!
 
-linux-mm@kvack.org
-akpm@linux-foundation.org
-mhocko@kernel.org
-minchan@kernel.org
-hannes@cmpxchg.org
-vdavydov.dev@gmail.com
-sj@kernel.org
-jglisse@redhat.com
-dennis@kernel.org
-cl@linux.com
-penberg@kernel.org
-rientjes@google.com
-vbabka@suse.cz
-ngupta@vflare.org
-linux-block@vger.kernel.org
-axboe@kernel.dk
-paolo.valente@linaro.org
-josef@toxicpanda.com
-linux-fsdevel@vger.kernel.org
-viro@zeniv.linux.org.uk
-jack@suse.cz
-jlayton@kernel.org
-dan.j.williams@intel.com
-hch@infradead.org
-djwong@kernel.org
-dri-devel@lists.freedesktop.org
-airlied@linux.ie
-rodrigosiqueiramelo@gmail.com
-melissa.srw@gmail.com
-hamohammed.sa@gmail.com
+Thanks,
+Byungchul
 
 --->8---
 From 68ee7ab996fc7d67b6b506f48da106493ca2546a Mon Sep 17 00:00:00 2001
