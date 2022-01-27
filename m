@@ -2,118 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E95A249DE4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 10:44:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC1649DE59
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 10:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238766AbiA0Jo3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 04:44:29 -0500
-Received: from mga17.intel.com ([192.55.52.151]:16502 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238758AbiA0Jo2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 04:44:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643276668; x=1674812668;
-  h=from:to:subject:in-reply-to:references:date:message-id:
-   mime-version:content-transfer-encoding;
-  bh=dk0qamhX2TbtdZHxZwkI3zlHxXhVxx0UNGFBByp7cwQ=;
-  b=jFfHa66eUP05WZJUGGMSnrDlJqW0ew9ltXO+8UC57mEEQjD4rCpjfNXC
-   mqBRml2VfMy7I7aMG9FFOm8zgmzlxfZ2k0Ge2uxKr2zlbFlB+lztxgbW8
-   g2fz4cQjNysHqMYiDSkLbnSCoFxDyZQT4AB2u+wDCYSGzycAt+d+MnCX+
-   HzoQ3+7nRVUTkqctLds+C9DcIhLEvkS98Iouu2RVfcsvrkZb01Yb075jS
-   4xDHxLCDLL1LY9QAUbAsnAvuE/QZl6Qa7KI5rzMSpwtnk+ciV48tHtJpa
-   RqfGuIpjxVvhhNkvIXuqKN2yP3HrxOKQMKrg2Rlj98NgoXhj/z2ssMomY
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10239"; a="227474899"
-X-IronPort-AV: E=Sophos;i="5.88,320,1635231600"; 
-   d="scan'208";a="227474899"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2022 01:44:27 -0800
-X-IronPort-AV: E=Sophos;i="5.88,320,1635231600"; 
-   d="scan'208";a="618268633"
-Received: from johnlyon-mobl.ger.corp.intel.com (HELO localhost) ([10.252.16.209])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2022 01:44:23 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Subject: Re: mmotm 2022-01-26-21-04 uploaded (gpu/drm/i915/i915_gem_evict.h)
-In-Reply-To: <6b4f3d82-01e8-5bf3-927f-33ac62178fd5@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20220127050456.M1eh-ltbc%akpm@linux-foundation.org>
- <6b4f3d82-01e8-5bf3-927f-33ac62178fd5@infradead.org>
-Date:   Thu, 27 Jan 2022 11:44:18 +0200
-Message-ID: <8735l9y0lp.fsf@intel.com>
+        id S238835AbiA0Jp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 04:45:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56288 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238823AbiA0Jp2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jan 2022 04:45:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643276728;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TgdNOmxVZp1dDFXB5FAwhB64SXYVLfcMpBsoeczfvek=;
+        b=ccKV2WIoPfnEclmmfYpjb+YO2n0GrUxccMxU/Grk8QV2nLpEp9Qk5YcQUr0a/LxvrIFrO/
+        8UThghP8Ac7e3J78cI2nayucf7nf6eg4V/XYOcE3ibrNu/jTk14FJ2iF9faImlxH+g8yGa
+        rM5c/karbfHj7GDH2addd4/6OWNeTFM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-130-1dA_-dmbMEiTj6c0TdnXSA-1; Thu, 27 Jan 2022 04:45:22 -0500
+X-MC-Unique: 1dA_-dmbMEiTj6c0TdnXSA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0788883DD26;
+        Thu, 27 Jan 2022 09:45:21 +0000 (UTC)
+Received: from localhost (ovpn-13-51.pek2.redhat.com [10.72.13.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 816896C1A7;
+        Thu, 27 Jan 2022 09:44:59 +0000 (UTC)
+Date:   Thu, 27 Jan 2022 17:44:56 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+        Tiezhu Yang <yangtiezhu@loongson.cn>,
+        linux-kernel@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Convert vmcore to use an iov_iter
+Message-ID: <20220127094456.GD13508@MiWiFi-R3L-srv>
+References: <20211213143927.3069508-1-willy@infradead.org>
+ <Yc+iCla9zjUFkBXt@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yc+iCla9zjUFkBXt@zeniv-ca.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 26 Jan 2022, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 1/26/22 21:04, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2022-01-26-21-04 has been uploaded to
->>=20
->>    https://www.ozlabs.org/~akpm/mmotm/
->>=20
->> mmotm-readme.txt says
->>=20
->> README for mm-of-the-moment:
->>=20
->> https://www.ozlabs.org/~akpm/mmotm/
->>=20
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>=20
->> You will need quilt to apply these patches to the latest Linus release (=
-5.x
->> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated =
-in
->> https://ozlabs.org/~akpm/mmotm/series
->>=20
->> The file broken-out.tar.gz contains two datestamp files: .DATE and
->> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->> followed by the base kernel version against which this patch series is to
->> be applied.
->
-> on x86_64:
-> (from linux-next.patch)
->
->
->   HDRTEST drivers/gpu/drm/i915/i915_gem_evict.h
-> In file included from <command-line>:0:0:
-> ./../drivers/gpu/drm/i915/i915_gem_evict.h:15:15: error: =E2=80=98struct =
-i915_gem_ww_ctx=E2=80=99 declared inside parameter list will not be visible=
- outside of this definition or declaration [-Werror]
->         struct i915_gem_ww_ctx *ww,
->                ^~~~~~~~~~~~~~~
-> ./../drivers/gpu/drm/i915/i915_gem_evict.h:21:14: error: =E2=80=98struct =
-i915_gem_ww_ctx=E2=80=99 declared inside parameter list will not be visible=
- outside of this definition or declaration [-Werror]
->        struct i915_gem_ww_ctx *ww,
->               ^~~~~~~~~~~~~~~
-> ./../drivers/gpu/drm/i915/i915_gem_evict.h:25:16: error: =E2=80=98struct =
-i915_gem_ww_ctx=E2=80=99 declared inside parameter list will not be visible=
- outside of this definition or declaration [-Werror]
->          struct i915_gem_ww_ctx *ww);
->                 ^~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
+Hi,
 
-Thanks for the report.
+On 01/01/22 at 12:36am, Al Viro wrote:
+> On Mon, Dec 13, 2021 at 02:39:24PM +0000, Matthew Wilcox (Oracle) wrote:
+> > For some reason several people have been sending bad patches to fix
+> > compiler warnings in vmcore recently.  Here's how it should be done.
+> > Compile-tested only on x86.  As noted in the first patch, s390 should
+> > take this conversion a bit further, but I'm not inclined to do that
+> > work myself.
+> 
+> A couple of notes: please, use iov_iter_count(i) instead of open-coding
+> i->count.  And there's a preexisting nastiness in read_vmcore() -
+> generally, a fault halfway through the read() is treated as a short read,
+> rather than -EFAULT...
 
-This is only visible with CONFIG_DRM_I915_WERROR=3Dy which depends on
-COMPILE_TEST=3Dn. We use the "HDRTEST" and -Werror for development and CI
-to keep the driver clean, but it's not really intended for general
-consumption. Usually when something like this even hits the tree it's
-because of a merge mishap somewhere down the line.
+Willy must be busy with those tons of folio patches, since I have acked
+this patchset, I will update them as per your comment and repost them
+with v4.
 
-BR,
-Jani.
+Thanks for checking.
 
-
---=20
-Jani Nikula, Intel Open Source Graphics Center
