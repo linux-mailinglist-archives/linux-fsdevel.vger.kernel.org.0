@@ -2,88 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E909649ED91
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 22:38:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1779649EDF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 23:10:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344450AbiA0ViV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 16:38:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37382 "EHLO
+        id S234823AbiA0WK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 17:10:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344424AbiA0ViU (ORCPT
+        with ESMTP id S229507AbiA0WKZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 16:38:20 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB875C061753;
-        Thu, 27 Jan 2022 13:38:19 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id y15so7872257lfa.9;
-        Thu, 27 Jan 2022 13:38:19 -0800 (PST)
+        Thu, 27 Jan 2022 17:10:25 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0EDC061714;
+        Thu, 27 Jan 2022 14:10:25 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id b14so6432113ljb.0;
+        Thu, 27 Jan 2022 14:10:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=z+U+izVFukrEKq10kL5qCCsiT3qJmeLAo+mnNrOVCPU=;
-        b=DwtRea8LCCOg/PGJHjd1bTltmn0bHa2clILkAwGYtZppoAY25qIBMTxyD6B5uMLit6
-         7wk+d+sZiWX35l8wQaAoyrJ9H5CizW30SYci3NU1ojzD14qB67btK2MGpyfbQ3U8Fswu
-         zxqpCDGkYCIAg/NDZ5r6/eIuacbMkuvBlqu9ammCZDYbuScyx0/VXZFI/czsoS4aCdCY
-         RzPo3aqhubsJoGDCZLj5SmdkiGyLla36RWFVNiU5MVGZ7MrbcY5xEOS4+eUv/n2M8qYN
-         MVuY5Y428ZMyJxOjYYJ1BtbtHPjLQ+HBbJ/bfmBPwl0UHF3vKl1N9F7XDbteSxFshMZ6
-         OfIw==
+        bh=pkUjSb/fdfaa3FAu68ePw4JIYSvRfOC6qyjCilb3MLA=;
+        b=RZypLcBcYIUdWY9vV42TppO4LaQPblBv+kCbhi7sSIeity0kCuHxjxBkOW+017vQfl
+         mGJzLUkiIibnMnTTVFBLt50VetVg1KzsVDl5jUao0XF5T7oAmS+N8pzAB7j2FNpZGYiq
+         xbHy2XvQvsScldzehtVeFOoApJ3rHFqpSLvhJxxrFdkCY4SBOyNaqvrt+GIQFpxxuFFh
+         CmyJh/SQOY6vLReOapEDPt77zxgz4JT8F/AZF2zWXE0KCoQ1ChkpEBN24khQj5g1i9qq
+         aguCWoq8pgm51d0p5z0SrS13R+0j/TGLyIS5NFK+7PHw2xgpowySjWS1of9EUGPSq6jn
+         /AOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=z+U+izVFukrEKq10kL5qCCsiT3qJmeLAo+mnNrOVCPU=;
-        b=Nz0EAoWz0IU/5WY3XHQMld9RLIE6u7H0aYgobmmD8kamzGg4mtcs2vPs82+vygFZBt
-         wetvkYu+4j9dTaJ+VCqIfs5TCKyUN4YPJhhpFIH4rkOsDCTQh7BDs7XqOYs50TyyyVFm
-         nC+2yi1kUgxt+ZfZV/8/FqNnFNnAsHoHevE+n702XoJS7fGe0IrVPUkPN0lus3Q4qxdr
-         PX3/2VPJswkQk2VdBHhf6k+P/rPrT1KL0RlchBhA90Jz7wCUp0RRHY8kkO+0NBL5zldr
-         lkh6ZRtsqBJuYMN5eJHnWQKpXysNyQ7MNgZ8/GjmNUq2NRaHwAYPlQKy5K58rmQ7BpyR
-         A2LQ==
-X-Gm-Message-State: AOAM531sNM8rAlW1WGBQD6c5OKhWmvFn7lvHDDkZeQpPog30lN0stT46
-        OZ2Sn9M3UNT1e1PT386yBetUxlKU3IzyQDGjJf4=
-X-Google-Smtp-Source: ABdhPJxaVoQ4SfBVmSOjFCGrgluhZGplrFWaRNqk5pMVob8JHRQWRWEKNtxwMeMPmpBWjy5SR70YaIdo0zrC/X/8wRA=
-X-Received: by 2002:ac2:58f7:: with SMTP id v23mr4043478lfo.390.1643319497799;
- Thu, 27 Jan 2022 13:38:17 -0800 (PST)
+        bh=pkUjSb/fdfaa3FAu68ePw4JIYSvRfOC6qyjCilb3MLA=;
+        b=tfMmVXe40SSgzi1gp75b3U8T5saZ6sZiNg6gAv2dC0KikkIBgFISBUuR2tThVGspTw
+         aravKdUXGq3zPkeylhkxfFugDTTrTL9ovBFHJLqlb8fMIAdVxzWnSPEdQS0Qorlj+E4F
+         Ja+j24Fsky1MVRHsiUPpT5ZHbtv3ukeE3lqaEc6HyQ6TIgrNcu9eE7nlGWLNHXEiu5Tk
+         sErDd5tW7ug4rKwW6CNTObgMD4y7GmuXnbUJLG0uCMMkNrWQUoN+50B5RSAfy6ZCY5Nf
+         +5iovHwdqhSShoYvqEc4tNqacTehQMnkPclg2xrwupMRELVCN8LXcoYM+AUVBXZ3dUpR
+         09vQ==
+X-Gm-Message-State: AOAM530D/tqL6MhFDKXFf5sG2IzJRcf+9Bzs1m3Acmw814enhXbrSQDO
+        3v5uoIek5bVj0cso6gM9x41dbZxlExK4LW4hSGw=
+X-Google-Smtp-Source: ABdhPJy9dJl6L/bnRQi8tK1Am+5DPjPBZvatcTyLSMpbpD4vy19hTtp8mGF/Cl1TBx2f3Cw7TL+lgScx4mlljQ4behg=
+X-Received: by 2002:a2e:5d3:: with SMTP id 202mr3981304ljf.330.1643321423317;
+ Thu, 27 Jan 2022 14:10:23 -0800 (PST)
 MIME-Version: 1.0
-References: <20220124091107.642561-1-hch@lst.de> <20220124091107.642561-3-hch@lst.de>
-In-Reply-To: <20220124091107.642561-3-hch@lst.de>
+References: <164325106958.29787.4865219843242892726.stgit@noble.brown> <164325158955.29787.4769373293473421057.stgit@noble.brown>
+In-Reply-To: <164325158955.29787.4769373293473421057.stgit@noble.brown>
 From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Fri, 28 Jan 2022 06:38:05 +0900
-Message-ID: <CAKFNMomoLqbbOwg5d6aBHCyGT5v+NF=N2Rm3QwYk8NDXsoJHtA@mail.gmail.com>
-Subject: Re: [PATCH 02/19] nilfs2: remove nilfs_alloc_seg_bio
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Md . Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.co>,
+Date:   Fri, 28 Jan 2022 07:10:11 +0900
+Message-ID: <CAKFNMom4Z76ti4fp69UeKYf0d4x635OR7Q_CjVnBj+vQSuhESg@mail.gmail.com>
+Subject: Re: [PATCH 2/9] Remove bdi_congested() and wb_congested() and related functions
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Philipp Reisner <philipp.reisner@linbit.com>,
         Lars Ellenberg <lars.ellenberg@linbit.com>,
-        linux-block@vger.kernel.org,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-nilfs <linux-nilfs@vger.kernel.org>, ntfs3@lists.linux.dev,
-        xen-devel@lists.xenproject.org, drbd-dev@lists.linbit.com
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Linux MM <linux-mm@kvack.org>,
+        linux-nilfs <linux-nilfs@vger.kernel.org>,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 24, 2022 at 6:11 PM Christoph Hellwig <hch@lst.de> wrote:
+On Thu, Jan 27, 2022 at 11:47 AM NeilBrown <neilb@suse.de> wrote:
 >
-> bio_alloc will never fail when it can sleep.  Remove the now simple
-> nilfs_alloc_seg_bio helper and open code it in the only caller.
+> These functions are no longer useful as the only bdis that report
+> congestion are in ceph, fuse, and nfs.  None of those bdis can be the
+> target of the calls in drbd, ext2, nilfs2, or xfs.
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Removing the test on bdi_write_contested() in current_may_throttle()
+> could cause a small change in behaviour, but only when PF_LOCAL_THROTTLE
+> is set.
+>
+> So replace the calls by 'false' and simplify the code - and remove the
+> functions.
+>
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  fs/nilfs2/segbuf.c | 31 ++++---------------------------
->  1 file changed, 4 insertions(+), 27 deletions(-)
+>  drivers/block/drbd/drbd_int.h |    3 ---
+>  drivers/block/drbd/drbd_req.c |    3 +--
+>  fs/ext2/ialloc.c              |    2 --
+>  fs/nilfs2/segbuf.c            |   11 -----------
+>  fs/xfs/xfs_buf.c              |    3 ---
+>  include/linux/backing-dev.h   |   26 --------------------------
+>  mm/vmscan.c                   |    4 +---
+>  7 files changed, 2 insertions(+), 50 deletions(-)
+
+for nilfs2 bits,
 
 Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
-Thanks!
-
+Thanks,
 Ryusuke Konishi
