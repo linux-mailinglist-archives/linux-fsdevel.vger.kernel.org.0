@@ -2,90 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BE9E49D66D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 00:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B0B749D676
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 01:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232287AbiAZX5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 18:57:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49828 "EHLO
+        id S232500AbiA0AAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 19:00:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232351AbiAZX5i (ORCPT
+        with ESMTP id S229547AbiA0AAC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 18:57:38 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D61FC06173B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 15:57:37 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id p37so1109533pfh.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 15:57:37 -0800 (PST)
+        Wed, 26 Jan 2022 19:00:02 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633D0C06161C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 16:00:02 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id h20-20020a17090adb9400b001b518bf99ffso5825830pjv.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 16:00:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Ohka9ylvwErx9g3m7SUbwTYWiZ3JYvdVBIeKBfo+8i0=;
-        b=Fo3BfHkU4Bhk/n3uAwINnKCUL8bWPsJHCe4rvnKyepD/7j1Pk7QkRFXBh83I2ZwVvg
-         bjNpktlScU1tCLFFpJxhpBxX99QBSrKywuixHTivmGrfbThXDOlGPRHxG5feyU6OY6vF
-         3sxvofWqQQldelsTRGDu/XNhH7zFyD3hctGZ8=
+        bh=DwrekoWwD7S8yj0PWXXec9UCQ3/KKV/tBb2QonKO67w=;
+        b=B7sSz9g57GHF8TphX5iKf/ReceRtURdiZA257rxyFhPEJ2GeUmj34TjbX8UnzDaFUs
+         Dn0/XCD9N5x9fawmkAjfCNtft7zD8ix2w2zLHJ6jpbeC07CPW2SGrexilsMvkZwju4hc
+         IuISRG/sx1OpZo7RhodjbGyfx+DdIdhX/G9IU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Ohka9ylvwErx9g3m7SUbwTYWiZ3JYvdVBIeKBfo+8i0=;
-        b=SvGYzmFPz0cLWj4AKUvPrxg0rv6N6thnzbY1BB6IIwZHDCbipIX6iFex6FM0pDWDgv
-         oq3KD5HcDZtZ1el4rsnZZsjIwjN4rx8p612LeKBMbXzG7FHTmGc1pIOJIdN+ZrK+8gui
-         A7Llkj2Abp4BiwhnFcl2Ul+GwdhDZWxtEyMl0whmRH0TfhF4w259kEeM5TtW9KTUpqc8
-         27mj7T9m5EnVMubFbJp0QQKKfUxTwis+CAMtF5rWcP1apI9wUyfXiOKcdO+UYyXT/FxS
-         KsGQJQu2+Z3jEIf2QQTJenkCHzED7w5i0nAPQihn7kiP07SwA2rj712wrIU3/V93KNZs
-         58/w==
-X-Gm-Message-State: AOAM530aySgz02hujcAlKXrOB/IQZYJ93tNohlGzIUok9TDOuFFR3FHE
-        H27YaqjscysYnLFwzCxVZbEvLg==
-X-Google-Smtp-Source: ABdhPJwDHqI4d1T0ybtln+8bfBZPLQu61TysFGOvgsM/oyuBAGRjMWxq0LywCgZLdZRJjy967VKozA==
-X-Received: by 2002:a62:e304:: with SMTP id g4mr1118118pfh.61.1643241456977;
-        Wed, 26 Jan 2022 15:57:36 -0800 (PST)
+        bh=DwrekoWwD7S8yj0PWXXec9UCQ3/KKV/tBb2QonKO67w=;
+        b=4WrDv+5/hNt68x1549RcGzyH+2ixeleclS65dYKwY5xWqUJpBrSimNmroDLRmsMBbI
+         va3wjhjNFu9f3bf/V0MoOBkx3CFqHKhWMlq2gE3tITlo+46EPZtzZFVdVqtTm/aFA1S6
+         57ATquqQNJEdpmG5YFcwfyxShdKM2S0lS+tUz0kw9vOkQQ5lP2Y3cmPTwMvdeWhQu8lO
+         xb3gsom/pyi1Hp0J113gew5RRdwdH55QQq+NzT21FlgxVCGggxzMp2CygLFt9ozSPgJr
+         V3CsjvhDTBQN4Q0MV5pUH/c6eiGkXmbs+O3YpBZVTwf0YZaNdfNUBvRquVuiZpQ9px+O
+         jzjQ==
+X-Gm-Message-State: AOAM5333ytA/qSd/rtmKCItubjvC41ilzEYrWafP/KtrTDbMpPGD0Kn8
+        XoZJWFNTjqxSZpJMmxVe+qYiRg==
+X-Google-Smtp-Source: ABdhPJydBVK1iwsHQRv5UqG9Dei82q+wALz8ZjL9Brp25yjLU800blqVmmdsxJY+Kw5WRFzjAwpSwA==
+X-Received: by 2002:a17:902:c409:: with SMTP id k9mr1083833plk.132.1643241601975;
+        Wed, 26 Jan 2022 16:00:01 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f8sm584999pfv.24.2022.01.26.15.57.36
+        by smtp.gmail.com with ESMTPSA id q17sm3265766pfk.108.2022.01.26.16.00.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jan 2022 15:57:36 -0800 (PST)
-Date:   Wed, 26 Jan 2022 15:57:35 -0800
+        Wed, 26 Jan 2022 16:00:01 -0800 (PST)
+Date:   Wed, 26 Jan 2022 16:00:01 -0800
 From:   Kees Cook <keescook@chromium.org>
-To:     Heikki Kallasjoki <heikki.kallasjoki@iki.fi>
-Cc:     Ariadne Conill <ariadne@dereferenced.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     ariadne@dereferenced.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ebiederm@xmission.com,
+        viro@zeniv.linux.org.uk
 Subject: Re: [PATCH] fs/exec: require argv[0] presence in do_execveat_common()
-Message-ID: <202201261545.D955A71E@keescook>
-References: <20220126043947.10058-1-ariadne@dereferenced.org>
- <202201252241.7309AE568F@keescook>
- <39480927-B17F-4573-B335-7FCFD81AB997@chromium.org>
- <44b4472d-1d50-c43f-dbb1-953532339fb4@dereferenced.org>
- <YfE/owUY+gVnn2b/@selene.zem.fi>
+Message-ID: <202201261558.DAA974162@keescook>
+References: <YfFigbwhImLQqQsQ@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YfE/owUY+gVnn2b/@selene.zem.fi>
+In-Reply-To: <YfFigbwhImLQqQsQ@localhost.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 12:33:39PM +0000, Heikki Kallasjoki wrote:
-> On Wed, Jan 26, 2022 at 05:18:58AM -0600, Ariadne Conill wrote:
-> > On Tue, 25 Jan 2022, Kees Cook wrote:
-> > > Lots of stuff likes to do:
-> > > execve(path, NULL, NULL);
-> > 
-> > I looked at these, and these seem to basically be lazily-written test cases
-> > which should be fixed.  I didn't see any example of real-world applications
-> > doing this.  As noted in some of the test cases, there are comments like
-> > "Solaris doesn't support this," etc.
+On Wed, Jan 26, 2022 at 06:02:25PM +0300, Alexey Dobriyan wrote:
+> >	execve("...", NULL, NULL);
 > 
-> See also the (small) handful of instances of `execlp(cmd, NULL);` out
-> there, which I imagine would start to fail:
-> https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
+> I personally wrote a program which relies on execve(NULL) to succeed.
+> It wasn't an exploit, it was test program against IMA-like kernel
+> "only whitelisted executables can run" feature.
 > 
-> Two of the hits (ispell, nauty) would seem to be non-test use cases.
+> Test copies and "corrupts" itself by appending \0 to the end, then tries
+> to reexec itself with execve("/proc/self/exe", NULL, NULL);
+> main() if run with argc==0 exits with specific error code.
+> 
+> Appending \0 breaks checksum so working kernel protection scheme must
+> not allow it, therefore if execve(NULL) succeeded, than the parent
+> process doing test hard fails.
+> 
+> Also appending \0 doesn't break ELF structure. In other words,
+> if executable A is working (and it is working because it is running)
+> then A||\0 is valid executable as well and will run too.
+> 
+> This is independent from filesystem layout, libc, kernel, dynamic
+> libraries, compile options and what not.
+> 
+> Now QNX doesn't allow execve(NULL) and I don't remember if I changed it
+> to the next simplest variant and I don't work anymore at that company,
+> so I can't check :^)
+> 
+> 	execve("/proc/self/exe", (char*[]){"Alexey", NULL}, NULL);
 
-Ah yeah, I've added this to the Issue tracker:
-https://github.com/KSPP/linux/issues/176
+One of the various suggestions was to inject { path, NULL } when argc=0.
+
+Given that execve(path, NULL, ...) is being used at least a little,
+hopefully there is nothing that depends on argc==0... :P
 
 -- 
 Kees Cook
