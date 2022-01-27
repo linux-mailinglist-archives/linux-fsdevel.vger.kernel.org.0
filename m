@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC0649D74F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 02:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BAB049D751
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 02:12:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234959AbiA0BMG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 20:12:06 -0500
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:46204 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234426AbiA0BL0 (ORCPT
+        id S234499AbiA0BMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 20:12:07 -0500
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:60627 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234430AbiA0BL1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 20:11:26 -0500
+        Wed, 26 Jan 2022 20:11:27 -0500
 Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.53 with ESMTP; 27 Jan 2022 10:11:20 +0900
+        by 156.147.23.51 with ESMTP; 27 Jan 2022 10:11:20 +0900
 X-Original-SENDERIP: 156.147.1.121
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -42,9 +42,9 @@ Cc:     peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: [PATCH on v5.17-rc1 13/14] dept: Separate out SDT(Single-event Dependency Tracker) header
-Date:   Thu, 27 Jan 2022 10:11:11 +0900
-Message-Id: <1643245873-15542-13-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH on v5.17-rc1 14/14] dept: Apply SDT to swait
+Date:   Thu, 27 Jan 2022 10:11:12 +0900
+Message-Id: <1643245873-15542-14-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1643245873-15542-1-git-send-email-byungchul.park@lge.com>
 References: <1643245733-14513-1-git-send-email-byungchul.park@lge.com>
@@ -53,147 +53,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that Dept has already been applied to major synchronization
-machanisms e.g. spinlock, wait_for_completion and the like, we can take
-advantage of Dept by default if CONFIG_DEPT is on.
-
-However, sometimes we need to manually tag wait/event on places where
-Dept hasn't been applied. SDT(Single-event Dependency Tracker) would be
-useful in that case to tag those. The usage is like:
-
-1. Initialize dmap in the instance associated to the wait/event.
-
-	sdt_map_init(dmap);
-
-2. Add the following just before the wait.
-
-	sdt_wait(dmap);
-
-3. Add the following just before the event.
-
-	sdt_event(dmap);
-
-For better reference of SDT APIs, separated the APIs from dept.h.
+Makes SDT able to track dependencies by swait.
 
 Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 ---
- include/linux/dept.h     | 36 --------------------------------
- include/linux/dept_sdt.h | 53 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 36 deletions(-)
- create mode 100644 include/linux/dept_sdt.h
+ include/linux/swait.h | 4 ++++
+ kernel/sched/swait.c  | 8 ++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/include/linux/dept.h b/include/linux/dept.h
-index 5a726bf..10ef7fc 100644
---- a/include/linux/dept.h
-+++ b/include/linux/dept.h
-@@ -504,32 +504,6 @@ struct dept_map_common {
-  */
- extern void dept_key_init(struct dept_key *k);
- extern void dept_key_destroy(struct dept_key *k);
--
--#define DEPT_SDT_MAP_INIT(dname)	{ .name = #dname }
--#define DEFINE_DEPT_SDT(x)		\
--	struct dept_map x = DEPT_SDT_MAP_INIT(x)
--
--/*
-- * SDT(Single-event Dependency Tracker) APIs
-- *
-- * In case that one dept_map instance maps to a single event, SDT APIs
-- * can be used.
-- */
--#define sdt_map_init(m)							\
--	do {								\
--		static struct dept_key __key;				\
--		dept_map_init(m, &__key, 0, #m);			\
--	} while (0)
--#define sdt_map_init_key(m, k)		dept_map_init(m, k, 0, #m)
--
--#define sdt_wait(m)							\
--	do {								\
--		dept_asked_event(m);					\
--		dept_wait(m, 1UL, _THIS_IP_, "wait", 0);		\
--	} while (0)
--#define sdt_ecxt_enter(m)		dept_ecxt_enter(m, 1UL, _THIS_IP_, "start", "event", 0)
--#define sdt_event(m)			dept_event(m, 1UL, _THIS_IP_, "event")
--#define sdt_ecxt_exit(m)		dept_ecxt_exit(m, _THIS_IP_)
- #else /* !CONFIG_DEPT */
- struct dept_task { };
- struct dept_key  { };
-@@ -563,15 +537,5 @@ struct dept_map_common {
- #define dept_asked_event_split_map(me, mc)		do { } while (0)
- #define dept_key_init(k)				do { (void)(k); } while (0)
- #define dept_key_destroy(k)				do { (void)(k); } while (0)
--
--#define DEPT_SDT_MAP_INIT(dname)
--#define DEFINE_DEPT_SDT(x)
--
--#define sdt_map_init(m)					do { } while (0)
--#define sdt_map_init_key(m, k)				do { (void)(k); } while (0)
--#define sdt_wait(m)					do { } while (0)
--#define sdt_ecxt_enter(m)				do { } while (0)
--#define sdt_event(m)					do { } while (0)
--#define sdt_ecxt_exit(m)				do { } while (0)
- #endif
- #endif /* __LINUX_DEPT_H */
-diff --git a/include/linux/dept_sdt.h b/include/linux/dept_sdt.h
-new file mode 100644
-index 0000000..32a4a9e
---- /dev/null
-+++ b/include/linux/dept_sdt.h
-@@ -0,0 +1,53 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Dept Single-event Dependency Tracker
-+ *
-+ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
-+ *
-+ *  Copyright (c) 2020 LG Electronics, Inc., Byungchul Park
-+ */
+diff --git a/include/linux/swait.h b/include/linux/swait.h
+index 6a8c22b..dbdf2ce 100644
+--- a/include/linux/swait.h
++++ b/include/linux/swait.h
+@@ -6,6 +6,7 @@
+ #include <linux/stddef.h>
+ #include <linux/spinlock.h>
+ #include <linux/wait.h>
++#include <linux/dept_sdt.h>
+ #include <asm/current.h>
+ 
+ /*
+@@ -43,6 +44,7 @@
+ struct swait_queue_head {
+ 	raw_spinlock_t		lock;
+ 	struct list_head	task_list;
++	struct dept_map		dmap;
+ };
+ 
+ struct swait_queue {
+@@ -61,6 +63,7 @@ struct swait_queue {
+ #define __SWAIT_QUEUE_HEAD_INITIALIZER(name) {				\
+ 	.lock		= __RAW_SPIN_LOCK_UNLOCKED(name.lock),		\
+ 	.task_list	= LIST_HEAD_INIT((name).task_list),		\
++	.dmap		= DEPT_SDT_MAP_INIT(name),			\
+ }
+ 
+ #define DECLARE_SWAIT_QUEUE_HEAD(name)					\
+@@ -72,6 +75,7 @@ extern void __init_swait_queue_head(struct swait_queue_head *q, const char *name
+ #define init_swait_queue_head(q)				\
+ 	do {							\
+ 		static struct lock_class_key __key;		\
++		sdt_map_init(&(q)->dmap);			\
+ 		__init_swait_queue_head((q), #q, &__key);	\
+ 	} while (0)
+ 
+diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
+index e1c655f..b6c2efb 100644
+--- a/kernel/sched/swait.c
++++ b/kernel/sched/swait.c
+@@ -27,6 +27,7 @@ void swake_up_locked(struct swait_queue_head *q)
+ 		return;
+ 
+ 	curr = list_first_entry(&q->task_list, typeof(*curr), task_list);
++	sdt_event(&q->dmap);
+ 	wake_up_process(curr->task);
+ 	list_del_init(&curr->task_list);
+ }
+@@ -69,6 +70,7 @@ void swake_up_all(struct swait_queue_head *q)
+ 	while (!list_empty(&tmp)) {
+ 		curr = list_first_entry(&tmp, typeof(*curr), task_list);
+ 
++		sdt_event(&q->dmap);
+ 		wake_up_state(curr->task, TASK_NORMAL);
+ 		list_del_init(&curr->task_list);
+ 
+@@ -97,6 +99,9 @@ void prepare_to_swait_exclusive(struct swait_queue_head *q, struct swait_queue *
+ 	__prepare_to_swait(q, wait);
+ 	set_current_state(state);
+ 	raw_spin_unlock_irqrestore(&q->lock, flags);
 +
-+#ifndef __LINUX_DEPT_SDT_H
-+#define __LINUX_DEPT_SDT_H
++	if (state & TASK_NORMAL)
++		sdt_wait(&q->dmap);
+ }
+ EXPORT_SYMBOL(prepare_to_swait_exclusive);
+ 
+@@ -119,6 +124,9 @@ long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait
+ 	}
+ 	raw_spin_unlock_irqrestore(&q->lock, flags);
+ 
++	if (!ret && state & TASK_NORMAL)
++		sdt_wait(&q->dmap);
 +
-+#ifdef CONFIG_DEPT
-+
-+#include <linux/dept.h>
-+
-+#define DEPT_SDT_MAP_INIT(dname)	{ .name = #dname }
-+#define DEFINE_DEPT_SDT(x)		\
-+	struct dept_map x = DEPT_SDT_MAP_INIT(x)
-+
-+/*
-+ * SDT(Single-event Dependency Tracker) APIs
-+ *
-+ * In case that one dept_map instance maps to a single event, SDT APIs
-+ * can be used.
-+ */
-+#define sdt_map_init(m)							\
-+	do {								\
-+		static struct dept_key __key;				\
-+		dept_map_init(m, &__key, 0, #m);			\
-+	} while (0)
-+#define sdt_map_init_key(m, k)		dept_map_init(m, k, 0, #m)
-+
-+#define sdt_wait(m)							\
-+	do {								\
-+		dept_asked_event(m);					\
-+		dept_wait(m, 1UL, _THIS_IP_, "wait", 0);		\
-+	} while (0)
-+#define sdt_ecxt_enter(m)		dept_ecxt_enter(m, 1UL, _THIS_IP_, "start", "event", 0)
-+#define sdt_event(m)			dept_event(m, 1UL, _THIS_IP_, "event")
-+#define sdt_ecxt_exit(m)		dept_ecxt_exit(m, _THIS_IP_)
-+#else /* !CONFIG_DEPT */
-+#define DEPT_SDT_MAP_INIT(dname)
-+#define DEFINE_DEPT_SDT(x)
-+
-+#define sdt_map_init(m)					do { } while (0)
-+#define sdt_map_init_key(m, k)				do { (void)(k); } while (0)
-+#define sdt_wait(m)					do { } while (0)
-+#define sdt_ecxt_enter(m)				do { } while (0)
-+#define sdt_event(m)					do { } while (0)
-+#define sdt_ecxt_exit(m)				do { } while (0)
-+#endif
-+#endif /* __LINUX_DEPT_SDT_H */
+ 	return ret;
+ }
+ EXPORT_SYMBOL(prepare_to_swait_event);
 -- 
 1.9.1
 
