@@ -2,110 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02B0449E711
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 17:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FF2749E713
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 17:08:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235073AbiA0QIm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 11:08:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44822 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235028AbiA0QIl (ORCPT
+        id S238433AbiA0QIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 11:08:48 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:49816 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235028AbiA0QIs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 11:08:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F3E6C061714;
-        Thu, 27 Jan 2022 08:08:41 -0800 (PST)
+        Thu, 27 Jan 2022 11:08:48 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4F122B8013C;
-        Thu, 27 Jan 2022 16:08:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC201C340E4;
-        Thu, 27 Jan 2022 16:08:38 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CF62FB8018A;
+        Thu, 27 Jan 2022 16:08:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BCFC340E4;
+        Thu, 27 Jan 2022 16:08:45 +0000 (UTC)
 From:   Chuck Lever <chuck.lever@oracle.com>
 To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH RFC 2/6] NFSD: Fix NFSv3 SETATTR's handling of large file sizes
-Date:   Thu, 27 Jan 2022 11:08:38 -0500
-Message-Id:  <164329971780.5879.14075937739339830206.stgit@bazille.1015granger.net>
+Subject: [PATCH RFC 3/6] NFSD: COMMIT operations must not return NFS?ERR_INVAL
+Date:   Thu, 27 Jan 2022 11:08:44 -0500
+Message-Id:  <164329972435.5879.13150991880289153111.stgit@bazille.1015granger.net>
 X-Mailer: git-send-email 2.34.0
 In-Reply-To:  <164329914731.5879.7791856151631542523.stgit@bazille.1015granger.net>
 References:  <164329914731.5879.7791856151631542523.stgit@bazille.1015granger.net>
 User-Agent: StGit/1.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2256; h=from:subject:message-id; bh=KZ6nEjCBaasoWlPViPJLjrjxkT/Ax1Hk2VBhr26ctok=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBh8sOFTCBYzUDyEwWX0eU8X+QTd97W25NKickI+VUK 2SklvM+JAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCYfLDhQAKCRAzarMzb2Z/l7lJD/ 9evtlURpyyEV3mJsT6oMaPu0aLir9EJzTg6ZBvtA+E8aONbOs2eZDjjxDY2nHuUUxKVlIu53IkE2f5 GN/LzrgBU7B6YyacRCyvveGwJDSaWm3Wl+i1VzlnpGDRnv1n8HGUNIwRtPIEOg2beVRAcUFrPa3hEV 0Fgubf/D9HADHGxMhC7pl+xjSApWm7Wdq7++pM9Xvgzh/28ytCv87Lans6SvigvLjEr1JQz5S+Olsd eP4U5DOk3DIvjuNstAYQ6lXEF+GSpbBKESzd372P/WYiXS7iB7XuShRJQhhRyNQmP0OA79Tq3fmB2I N0mzVi/pp+kl1vD/pY9RHbrN9GjinPs5ZROgUmEbEJARScYGUwexr6NrtHyGVQ8STC5kTN17xVwDsi 3JVy7g8dGt9kQwioQ4/ZFAYVkl8V9MKOy0Lc8cjbrjVSx6F0DeuHKZptG0rGewLokODH22HwvRDf+B m/zSiaT0fU2Cu9DKOHr5zu/xvaZiZ8F9qBJovfrKT6Ry9EqC3naPb/yzy4VkshQQkL8calIeoi5P02 bVRPSWQxoh3RXs4rNuydTFBYOAzoLF/w0EQWY7GolwkTv9Fvn1NFyJBudEoKYNMN54M0L7/K5+1nDv JOz0EEg7c3MkCvSTbZnG2Sldl3aS06yuH9evH2XeH0x+hTKsK/JAcIZtfyOg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5689; h=from:subject:message-id; bh=tNAgDnoTq2BU4fHER56wSNp8P3VTE6ie3pIbOrhmBvM=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBh8sOMRdtf4Q6WSvZZxV3Cu7tyJbR9xNUIZiQPnwxH ePxhd02JAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCYfLDjAAKCRAzarMzb2Z/l+pLEA DCZRQpbcAAPg7o+VRdWL1BptDJJW9jNPb7KvKLDVm61ZtEM89QAF0YoDiYILlu9VliBziU23lRAS62 aFmjT5lpGB6kMqwIM09/OHtusuL0cxeRc72GE5aZPCM+QCdFX9Xlps30x7y/MPK2AQnhcIoPXrKqui qN5DZ29rTJvQBmnHGwiQwEIng7Bn0l6LMYYPG1FaHhEJkUFeaufKkYHzbm7BIZEpufBkqP3dk3rxtU LdsCp7hnMuMkzL9jCq+VAB6ULHX4/Qks6gN7gfttF/ek/qzC+NoWdM8M0X2KI6i7XpO6jrHpkpX9mn C/XFQtxWoxJGMUslyceBur54ffwaSZW/616azixoE5ebOBu9HRDZzdAR9eqv/Kdm8HKf3TOUyRMkO7 EZf1AdbZJRlIOBM8nt9sOozYQZNwcaIhNKDZaAG6qlsa1R/51u+OdXg+rWFQT1Pmmmnmdu13rbz8LB i2xoUpWZwtmlZggXYKxfejH76PY64gsRKVK4Mg9WihCrqpYVycT+/6O+5BUmbMQrf10NfzPgMUzzpu qoEL7sTAklGhf9Rdud1wCxLx3N+BiU/fboryUE1H9WTSOtr1z+7DsXyZf/5Fen7KRKl09cNrEF2gX2 YEVE1x5JcKKaJ9a8S5YfAxFHwJ8Yc5aWiD/UtPelXtX2T2XMk4qLmu9XhebA==
 X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iattr::ia_size is a loff_t, so the XDR decoders must be careful to
-deal with incoming client size values that are larger than s64_max.
+Since, well, forever, the Linux NFS server's nfsd_commit() function
+has returned nfserr_inval when the passed-in byte range arguments
+were non-sensical.
 
-VFS size comparisons (like in inode_newsize_ok) should now work as
-expected -- it returns -EFBIG if the new size is larger than the
-underlying filesystem's s_maxbytes.
+However, according to RFC 1813 section 3.3.21, NFSv3 COMMIT requests
+are permitted to return only the following non-zero status codes:
 
-However, RFC 1813 permits only WRITE to return NFS3ERR_FBIG. Add an
-extra check to prevent NFSv3 SETATTR from returning FBIG.
+      NFS3ERR_IO
+      NFS3ERR_STALE
+      NFS3ERR_BADHANDLE
+      NFS3ERR_SERVERFAULT
 
-Other NFSv3 procedures that take sattr3 arguments need to be audited
-for this issue.
+NFS3ERR_INVAL is not included in that list. Likewise, NFS4ERR_INVAL
+is not listed in the COMMIT row of Table 6 in RFC 8881.
 
+Instead of dropping or failing a COMMIT request in a byte range that
+is not supported, turn it into a valid request by treating one or
+both arguments as zero. Offset zero means start-of-file, count zero
+means until-end-of-file, so we only ever extend the commit range.
+NFS servers are always allowed to commit more and sooner than
+requested.
+
+The range check is no longer bounded by NFS_OFFSET_MAX, but rather
+by the value that is returned in the maxfilesize field of the NFSv3
+FSINFO procedure or the NFSv4 maxfilesize file attribute.
+
+Note that this change results in a new pynfs failure:
+
+CMT4     st_commit.testCommitOverflow                             : RUNNING
+CMT4     st_commit.testCommitOverflow                             : FAILURE
+           COMMIT with offset + count overflow should return
+           NFS4ERR_INVAL, instead got NFS4_OK
+
+IMO the test is not correct as written: RFC 8881 does not allow the
+COMMIT operation to return NFS4ERR_INVAL.
+
+Reported-by: Dan Aloni <dan.aloni@vastdata.com>
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfsd/nfs3proc.c |   19 ++++++++++++++++++-
- fs/nfsd/nfs3xdr.c  |    2 +-
- 2 files changed, 19 insertions(+), 2 deletions(-)
+ fs/nfsd/nfs3proc.c |    6 ------
+ fs/nfsd/vfs.c      |   53 +++++++++++++++++++++++++++++++++++-----------------
+ fs/nfsd/vfs.h      |    4 ++--
+ 3 files changed, 38 insertions(+), 25 deletions(-)
 
 diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
-index 8ef53f6726ec..aa0f0261ddac 100644
+index aa0f0261ddac..7bca219a8146 100644
 --- a/fs/nfsd/nfs3proc.c
 +++ b/fs/nfsd/nfs3proc.c
-@@ -66,13 +66,30 @@ nfsd3_proc_setattr(struct svc_rqst *rqstp)
- {
- 	struct nfsd3_sattrargs *argp = rqstp->rq_argp;
- 	struct nfsd3_attrstat *resp = rqstp->rq_resp;
-+	struct iattr *iap = &argp->attrs;
+@@ -668,15 +668,9 @@ nfsd3_proc_commit(struct svc_rqst *rqstp)
+ 				argp->count,
+ 				(unsigned long long) argp->offset);
  
- 	dprintk("nfsd: SETATTR(3)  %s\n",
- 				SVCFH_fmt(&argp->fh));
- 
+-	if (argp->offset > NFS_OFFSET_MAX) {
+-		resp->status = nfserr_inval;
+-		goto out;
+-	}
+-
  	fh_copy(&resp->fh, &argp->fh);
--	resp->status = nfsd_setattr(rqstp, &resp->fh, &argp->attrs,
-+
-+	if (iap->ia_valid & ATTR_SIZE) {
-+		struct super_block *sb;
-+
-+		resp->status = fh_verify(rqstp, &resp->fh, S_IFREG,
-+			NFSD_MAY_SATTR|NFSD_MAY_WRITE|NFSD_MAY_OWNER_OVERRIDE);
-+		if (resp->status != nfs_ok)
-+			goto out;
-+
-+		resp->status = nfserr_inval;
-+		sb = resp->fh.fh_dentry->d_sb;
-+		if (iap->ia_size < 0 || iap->ia_size > sb->s_maxbytes)
-+			goto out;
-+	}
-+
-+	resp->status = nfsd_setattr(rqstp, &resp->fh, iap,
- 				    argp->check_guard, argp->guardtime);
-+out:
+ 	resp->status = nfsd_commit(rqstp, &resp->fh, argp->offset,
+ 				   argp->count, resp->verf);
+-out:
  	return rpc_success;
  }
  
-diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
-index 7c45ba4db61b..2e47a07029f1 100644
---- a/fs/nfsd/nfs3xdr.c
-+++ b/fs/nfsd/nfs3xdr.c
-@@ -254,7 +254,7 @@ svcxdr_decode_sattr3(struct svc_rqst *rqstp, struct xdr_stream *xdr,
- 		if (xdr_stream_decode_u64(xdr, &newsize) < 0)
- 			return false;
- 		iap->ia_valid |= ATTR_SIZE;
--		iap->ia_size = min_t(u64, newsize, NFS_OFFSET_MAX);
-+		iap->ia_size = newsize;
- 	}
- 	if (xdr_stream_decode_u32(xdr, &set_it) < 0)
- 		return false;
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 99c2b9dfbb10..f9f72b1ecb73 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1110,42 +1110,61 @@ nfsd_write(struct svc_rqst *rqstp, struct svc_fh *fhp, loff_t offset,
+ }
+ 
+ #ifdef CONFIG_NFSD_V3
+-/*
+- * Commit all pending writes to stable storage.
++/**
++ * nfsd_commit - Commit pending writes to stable storage
++ * @rqstp: RPC request being processed
++ * @fhp: NFS filehandle
++ * @offset: raw offset from beginning of file
++ * @count: raw count of bytes to sync
++ * @verf: filled in with the server's current write verifier
+  *
+- * Note: we only guarantee that data that lies within the range specified
+- * by the 'offset' and 'count' parameters will be synced.
++ * Note: we guarantee that data that lies within the range specified
++ * by the 'offset' and 'count' parameters will be synced. The server
++ * is permitted to sync data that lies outside this range at the
++ * same time.
+  *
+  * Unfortunately we cannot lock the file to make sure we return full WCC
+  * data to the client, as locking happens lower down in the filesystem.
++ *
++ * Return values:
++ *   An nfsstat value in network byte order.
+  */
+ __be32
+-nfsd_commit(struct svc_rqst *rqstp, struct svc_fh *fhp,
+-               loff_t offset, unsigned long count, __be32 *verf)
++nfsd_commit(struct svc_rqst *rqstp, struct svc_fh *fhp, u64 offset,
++	    u32 count, __be32 *verf)
+ {
++	u64			maxbytes;
++	loff_t			start, end;
+ 	struct nfsd_net		*nn;
+ 	struct nfsd_file	*nf;
+-	loff_t			end = LLONG_MAX;
+-	__be32			err = nfserr_inval;
+-
+-	if (offset < 0)
+-		goto out;
+-	if (count != 0) {
+-		end = offset + (loff_t)count - 1;
+-		if (end < offset)
+-			goto out;
+-	}
++	__be32			err;
+ 
+ 	err = nfsd_file_acquire(rqstp, fhp,
+ 			NFSD_MAY_WRITE|NFSD_MAY_NOT_BREAK_LEASE, &nf);
+ 	if (err)
+ 		goto out;
++
++	/*
++	 * Convert the client-provided (offset, count) range to a
++	 * (start, end) range. If the client-provided range falls
++	 * outside the maximum file size of the underlying FS,
++	 * clamp the sync range appropriately.
++	 */
++	start = 0;
++	end = LLONG_MAX;
++	maxbytes = (u64)fhp->fh_dentry->d_sb->s_maxbytes;
++	if (offset < maxbytes) {
++		start = offset;
++		if (count && (offset + count - 1 < maxbytes))
++			end = offset + count - 1;
++	}
++
+ 	nn = net_generic(nf->nf_net, nfsd_net_id);
+ 	if (EX_ISSYNC(fhp->fh_export)) {
+ 		errseq_t since = READ_ONCE(nf->nf_file->f_wb_err);
+ 		int err2;
+ 
+-		err2 = vfs_fsync_range(nf->nf_file, offset, end, 0);
++		err2 = vfs_fsync_range(nf->nf_file, start, end, 0);
+ 		switch (err2) {
+ 		case 0:
+ 			nfsd_copy_write_verifier(verf, nn);
+diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
+index 9f56dcb22ff7..2c43d10e3cab 100644
+--- a/fs/nfsd/vfs.h
++++ b/fs/nfsd/vfs.h
+@@ -74,8 +74,8 @@ __be32		do_nfsd_create(struct svc_rqst *, struct svc_fh *,
+ 				char *name, int len, struct iattr *attrs,
+ 				struct svc_fh *res, int createmode,
+ 				u32 *verifier, bool *truncp, bool *created);
+-__be32		nfsd_commit(struct svc_rqst *, struct svc_fh *,
+-				loff_t, unsigned long, __be32 *verf);
++__be32		nfsd_commit(struct svc_rqst *rqst, struct svc_fh *fhp,
++				u64 offset, u32 count, __be32 *verf);
+ #endif /* CONFIG_NFSD_V3 */
+ #ifdef CONFIG_NFSD_V4
+ __be32		nfsd_getxattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
 
