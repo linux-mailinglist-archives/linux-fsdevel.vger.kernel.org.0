@@ -2,80 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC1649DE59
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 10:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A31CC49DE85
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 10:54:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238835AbiA0Jp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 04:45:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56288 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238823AbiA0Jp2 (ORCPT
+        id S238096AbiA0Jy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 04:54:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238108AbiA0Jyz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 04:45:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643276728;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TgdNOmxVZp1dDFXB5FAwhB64SXYVLfcMpBsoeczfvek=;
-        b=ccKV2WIoPfnEclmmfYpjb+YO2n0GrUxccMxU/Grk8QV2nLpEp9Qk5YcQUr0a/LxvrIFrO/
-        8UThghP8Ac7e3J78cI2nayucf7nf6eg4V/XYOcE3ibrNu/jTk14FJ2iF9faImlxH+g8yGa
-        rM5c/karbfHj7GDH2addd4/6OWNeTFM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-130-1dA_-dmbMEiTj6c0TdnXSA-1; Thu, 27 Jan 2022 04:45:22 -0500
-X-MC-Unique: 1dA_-dmbMEiTj6c0TdnXSA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0788883DD26;
-        Thu, 27 Jan 2022 09:45:21 +0000 (UTC)
-Received: from localhost (ovpn-13-51.pek2.redhat.com [10.72.13.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 816896C1A7;
-        Thu, 27 Jan 2022 09:44:59 +0000 (UTC)
-Date:   Thu, 27 Jan 2022 17:44:56 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Convert vmcore to use an iov_iter
-Message-ID: <20220127094456.GD13508@MiWiFi-R3L-srv>
-References: <20211213143927.3069508-1-willy@infradead.org>
- <Yc+iCla9zjUFkBXt@zeniv-ca.linux.org.uk>
+        Thu, 27 Jan 2022 04:54:55 -0500
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704C0C061714;
+        Thu, 27 Jan 2022 01:54:55 -0800 (PST)
+Received: by mail-ua1-x92e.google.com with SMTP id l1so3674466uap.8;
+        Thu, 27 Jan 2022 01:54:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=trNlS0pW8+AdK8oPoeEN0//SqC3/8UgTG2KJa4FIOBQ=;
+        b=MV3jZwKzZ8VY0/LnWzZV7iU8JTY4uG0D5J5tI3vL27e22iOFngHlGHkDwVcdUwP/Ez
+         awBL3laFjaWTppvjzgEaWNfOvXknm0b1ugIvXeYVCI96fLrexEkRuLZqjTgBck6s/zXZ
+         7H4SzoC3IU5ouBYMlFWaXzSKGKCYzWnQFiC791g0fGnjvGQE9y/yVjeabvY4fVF9KkYU
+         BSY6LZxMfcSZXQ3uOhO9AHCMco+heNQq19aDu1YeWqfXuX84yb0SlF/YsELxLwPOn5Ak
+         yuI027n1H52eQvmyshMuZae6EYzKPgU88pGrSAQIG4TeC+OzEvmYmBMJy3UiITPU0jjp
+         CgGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=trNlS0pW8+AdK8oPoeEN0//SqC3/8UgTG2KJa4FIOBQ=;
+        b=tGozV9KYu2jmSvEblvawFR2bxHZ8bCPBS6HiaLgwb6GjPpW+J51uRLTn6S92nHBsmc
+         UDB6Jb+JRGZro1wRPI8mkmkRKs81k09q4FHK8KiTWxU4vLmejsb4hE41pmuNLDWmsAW3
+         uF6lsYmDUYxxO0jQZVqwR5sGaCKHV3CFviL1yNk7qMiOxD9qSQXhsk4qVAnL+sYZ6Wvl
+         Gc23T8TtJFOnPnVl7uPzdIxjLXRTUpqD78SiTHnj0p0jrCtiy2ebgP0LoKOExXnpLEEw
+         BtwfbXJeiu0VVLVTWfO3a3H6owsgVWx9rL/ZWMMQhdVxWjE0Y4oOKNtiDfCSwvnIO2Zk
+         bLiA==
+X-Gm-Message-State: AOAM533Iuf1Nekp0eBCu2cNCqHGbXPgancVKHUV9wxcQR8oP/MPZS9FG
+        X74bs6N3xVc8Z3hqHsp+7n9u8PsVVIlOo2Vc9phsvtnb7/8=
+X-Google-Smtp-Source: ABdhPJyhaMpwAgKc3/S6K/8UEEl1FmbfGFZ9O/M4KjWIIIOzKmT4dBW+d9wm3u7GRQkRWiRsXFGUUuKIySQrIrsVkg8=
+X-Received: by 2002:a67:b243:: with SMTP id s3mr1350540vsh.62.1643277294480;
+ Thu, 27 Jan 2022 01:54:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yc+iCla9zjUFkBXt@zeniv-ca.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+From:   Bharath SM <bharathsm.hsk@gmail.com>
+Date:   Thu, 27 Jan 2022 15:24:43 +0530
+Message-ID: <CAGypqWxPnYx1PwhCQcyb7LLAB0JPsK2kmPWcrmx98Cs0As1y7A@mail.gmail.com>
+Subject: Mapping between EHOSTDOWN to EACCESS in cifs
+To:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hi Team,
 
-On 01/01/22 at 12:36am, Al Viro wrote:
-> On Mon, Dec 13, 2021 at 02:39:24PM +0000, Matthew Wilcox (Oracle) wrote:
-> > For some reason several people have been sending bad patches to fix
-> > compiler warnings in vmcore recently.  Here's how it should be done.
-> > Compile-tested only on x86.  As noted in the first patch, s390 should
-> > take this conversion a bit further, but I'm not inclined to do that
-> > work myself.
-> 
-> A couple of notes: please, use iov_iter_count(i) instead of open-coding
-> i->count.  And there's a preexisting nastiness in read_vmcore() -
-> generally, a fault halfway through the read() is treated as a short read,
-> rather than -EFAULT...
+I came across the following behavior case of CIFS session setup failures.
+CIFS returns "EHOSTDOWN" to userspace when it fails to reconnect while
+doing session setup because of change in password or change in ACL's.
+Should we instead replace it with EACCESS for these special cases.?
 
-Willy must be busy with those tons of folio patches, since I have acked
-this patchset, I will update them as per your comment and repost them
-with v4.
+I would also like to understand the implications of mapping EHOSTDOWN
+to EACCESS at the user space for the above mentioned case and how it
+is done in other file systems.?
+Can you please share your comments/thoughts on this.?
 
-Thanks for checking.
-
+Thanks,
+Bharath
