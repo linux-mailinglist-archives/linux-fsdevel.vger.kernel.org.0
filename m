@@ -2,152 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA65249E230
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 13:20:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7756B49E23B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 13:22:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241043AbiA0MUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 07:20:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62116 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241033AbiA0MUs (ORCPT
+        id S241089AbiA0MWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 07:22:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241064AbiA0MWS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 07:20:48 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20RBkEZb009133;
-        Thu, 27 Jan 2022 12:20:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=fhkX3cuAqsg+3k/dr3+e9855wqIq6Aj6ohJUQGiCvfQ=;
- b=mCdueMqPnBH5R9k0cmk1u+7u1qIhxyaamnbVs8t2gSx0hFXuzD1m9xsBQIsUylpejpU4
- h0jLxgwIeB3lStuSg8C2quixuWlhE6QcqRQLqmJTIwqLPoTDG4lWvpCEqx4dEC4ei2TQ
- wKH4HOYzV/awJzAwbSoqVK5IDgpQY6KiZQAyT4uiDe9YY5SDGiI4TERWHu3TcXDgYN3s
- e/Ff0QjCmrk2k1xKLh9xMcHCkXTFS4fBQxCfI14uR0hYRQqpACQTQ38VGhPz9J6eNJ+g
- iKGUgVia1v4/xJYG7rX+z/3W8gYJaweycvubc/cnh0hBEe35md2T5IPIdocLEFTZWtKe dA== 
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dutt8gs7u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jan 2022 12:20:46 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20RCE19j022505;
-        Thu, 27 Jan 2022 12:20:45 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03fra.de.ibm.com with ESMTP id 3dr9j9nmu3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jan 2022 12:20:45 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20RCKgiG47710588
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jan 2022 12:20:42 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3837142045;
-        Thu, 27 Jan 2022 12:20:42 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B6B842047;
-        Thu, 27 Jan 2022 12:20:41 +0000 (GMT)
-Received: from localhost (unknown [9.43.13.79])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jan 2022 12:20:41 +0000 (GMT)
-Date:   Thu, 27 Jan 2022 17:50:39 +0530
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     Maxim Blinov <maxim.blinov@embecosm.com>
-Cc:     linux-ext4@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Help! How to delete an 8094-byte PATH?
-Message-ID: <20220127122039.45kxmnm3s7kflo6h@riteshh-domain>
-References: <d4a67b38-3026-59be-06a8-3a9a5f908eb4@embecosm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4a67b38-3026-59be-06a8-3a9a5f908eb4@embecosm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4awuAqW7Ym2xPMW5fqdoDFU-2vhpOvu-
-X-Proofpoint-ORIG-GUID: 4awuAqW7Ym2xPMW5fqdoDFU-2vhpOvu-
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 27 Jan 2022 07:22:18 -0500
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3908C06173B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 04:22:17 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id i10so8065033ybt.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 04:22:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=3hB9Pz6IWWJ5e7Q7LJO+f7Hvw0FPQfxvZX3pslGGprg=;
+        b=ntq5txrAiaRnnSYQlIbMFX9yyxuv2ySgZhUuXwgFl3VjEENE4TPnfiUcbKWy8UlCJH
+         Xv1qCObUn7HIRPtto8YmdaTIigsu2/dBkvzn5zBUCS5Rom0RnrUMLb3Hi/Y53yplNPRb
+         iSCil1KGMM17K5x1zt5/gEOx3o3O4a27dS+B20iOxYHrBaDQQYXZ2skDKGiYC8Yd5U+O
+         rtuO1yMa2eiiI4Fb9RQvskyNLOQwNSn5ioCb+pyLVAHGAUrqZZaeJxTEX4tyDRjirPMy
+         EYuyE+oBQnfwKwtfEK4+pjkM2bct8AFgQJ9DHU8VArEw375D/5uNj8pNWuqBx4OWldmg
+         l05A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=3hB9Pz6IWWJ5e7Q7LJO+f7Hvw0FPQfxvZX3pslGGprg=;
+        b=JkicT7f61OAG5zFOI01Q3GzGk1TGhGAP4lFOr6C69ZwM9oYT2DT8nbgX30t/Fn96cJ
+         phFuFct4IQra6UNFOYh6G9QQsGsq0scR1zbiL+gPJYwrCFmvqZqQKPki65yljS4PSq8j
+         mbvqyFdAdR97u7xkR3zMHTXiJugor/uyyMKWW7I/0oDylJP+UURlB6BzagWpulXv213C
+         +kj81kalMGWOaS4qP9jGDfZeHy4K+i2EDCsbl4FsB6sIF9UZC7rpOFg4rGW6TV93qRzP
+         UQ467OUknHis9FlDdJmBib5CG10ULvqGK8YmZXfK9C1vGV631GrlbiuyZTSfjTnWkpJl
+         MlCg==
+X-Gm-Message-State: AOAM532jcfKTUtQUp6vGJ923acHNVyHrm+yUB/u2rzhBhlfaUFuh3eqn
+        8YnNXxx0e3Y1aGMm5kVCRBpffQ2dD6syFteCNDwIOQ==
+X-Google-Smtp-Source: ABdhPJzytcm5xEDIvl0zeaLFWxg0fZUVG5vboDDlEChIHTA93sE6aZZBgrDRfJIg+aN0+BwPBqgtjUxzA37MsECRi1k=
+X-Received: by 2002:a25:b13:: with SMTP id 19mr4857037ybl.684.1643286137004;
+ Thu, 27 Jan 2022 04:22:17 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-27_03,2022-01-27_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=999 clxscore=1011 impostorscore=0 adultscore=0 phishscore=0
- suspectscore=0 priorityscore=1501 mlxscore=0 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2201270072
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 27 Jan 2022 17:52:05 +0530
+Message-ID: <CA+G9fYtGGdxLwkV=VHdDP_d2C0oLd7=wUhF1wcYtndpp-y5BTA@mail.gmail.com>
+Subject: [next] i386: ERROR: modpost: "__aeabi_uldivmod" [fs/btrfs/btrfs.ko] undefined!
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, lkft-triage@lists.linaro.org,
+        regressions@lists.linux.dev
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cc'ing linux-fsdevel too.
+[ Please ignore this email if it is already reported ]
 
-On 22/01/27 07:06AM, Maxim Blinov wrote:
-> Hi all,
->
-> I'm not a subscriber to this list (so please put me in the CC), but I've
-> hit a really annoying un-googleable issue that I don't know who to ask
-> about.
->
-> A runaway script has been recursively creating sub-directories under
-> sub-directories until it hit the (apparent) OS limit. The path in
-> question goes something like this:
->
-> /work/build-native/binutils-gdb/gnulib/confdir3/confdir3/confdir3/confdir3/confdir3/........
-> (you get the idea)
->
-> It was only stopped by the following error:
-> mkdir: cannot create directory 'confdir3': File name too long
->
-> OK, fine, that was silly but whatever, right? I tried to delete this
-> huge directory from the top with
+Regression detected while building modules Linux next-20220127 on arm and i386
+with kselftest (kselftest-merge) configs with gcc-11.
 
-;)
+Build errors i386:
+------------------
+make --silent --keep-going --jobs=8
+  ARCH=i386 CROSS_COMPILE=i686-linux-gnu- 'CC=sccache
+i686-linux-gnu-gcc' 'HOSTCC=sccache gcc'
 
->
-> rm -rf confdir3/
->
-> but that simply generated the same error as above. So, I figured "Hey,
+ERROR: modpost: "__umoddi3" [fs/btrfs/btrfs.ko] undefined!
+make[2]: *** [/builds/linux/scripts/Makefile.modpost:134:
+modules-only.symvers] Error 1
+make[2]: *** Deleting file 'modules-only.symvers'
 
-Strange. Though I didn't try creating same name subdirectories like how you have
-done above i.e. confdir3 within confdir3 and recurse.
-But I was able to remove the parent directory after hitting the max PATH_LEN
-issue.
+Build errors arm:
+------------------
+make --silent --keep-going --jobs=8
+  ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- 'CC=sccache
+arm-linux-gnueabihf-gcc' 'HOSTCC=sccache gcc'
 
-I ran this test below test to see if it fails on my ext4 latest tree. But this
-passes. https://github.com/pjd/pjdfstest/blob/master/tests/mkdir/03.t
-
-But just curious, by any chance did below fixes it for you?
-echo 3 > /proc/sys/vm/drop_caches
+ERROR: modpost: "__aeabi_uldivmod" [fs/btrfs/btrfs.ko] undefined!
+make[2]: *** [/builds/linux/scripts/Makefile.modpost:134:
+modules-only.symvers] Error 1
 
 
--ritesh
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> I'll just walk all the way to the bottom, and delete the directories
-> one-by-one bottom up". Here's the script I ran to get to the bottom:
->
-> $ for i in $(seq 999999); do echo "im $i levels deep"; cd confdir3; done;
->
-> It then ran for a while, and eventually I got to the bottom:
->
-> ```
-> ...
-> im 892 levels deep
-> im 893 levels deep
-> im 894 levels deep
-> im 895 levels deep
-> im 896 levels deep
-> bash: cd: confdir3: File name too long
-> $ ls
-> <nothing here>
-> ```
->
-> So then, I `cd ../`, and `rmdir confdir3`, but even here, I get
->
-> rmdir: failed to remove 'confdir3/': File name too long
->
-> I would be very grateful if someone could please help suggest how I
-> might get this infernal tower of directories off of my precious ext4
-> partition.
->
-> I was thinking maybe there's some kind of magic "forget this directory
-> inode ever existed" command, but I am out of my depth with filesystems.
->
-> Best Regards,
->
-> Maxim Blinov
+
+meta data:
+-----------
+    git describe: next-20220127
+    git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+    git_sha: 0eb96e2c58c03e79fc2ee833ba88bf9226986564
+    git_short_log: 0eb96e2c58c0 (\"Add linux-next specific files for 20220127\")
+    target_arch: arm / i386
+    toolchain: gcc-11
+
+Build log:
+-------------
+https://builds.tuxbuild.com/24GSTOD7EpxnncxTZgHJzXw97t5/
+https://builds.tuxbuild.com/24A38knX5TuIfIPU54KLcUReDcN/
+
+
+steps to reproduce:
+-------------------
+# To install tuxmake on your system globally:
+# sudo pip3 install -U tuxmake
+#
+# See https://docs.tuxmake.org/ for complete documentation.
+
+tuxmake --runtime podman --target-arch i386 --toolchain gcc-11 \
+ --kconfig https://builds.tuxbuild.com/24GSQgCAtqXT6UgGf37kLxUHlYX/config \
+   cpupower headers kernel kselftest kselftest-merge modules
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
