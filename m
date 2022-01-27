@@ -2,170 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E84AF49DA2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 06:29:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6443549DA57
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 06:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236185AbiA0F3F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 00:29:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39846 "EHLO
+        id S236324AbiA0FvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 00:51:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231796AbiA0F3E (ORCPT
+        with ESMTP id S229551AbiA0FvP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 00:29:04 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AD6BC06161C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 21:29:04 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id b15so1568109plg.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 21:29:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=beUbO3aZF/2kD/fftJXd1EMY7Ug/jw5Wb5BLQxmuCc0=;
-        b=Mkb0P6sWcL3VkVCy3yV8rbOVXIel3FZSZaHpdJ8N0lcjYq6zyx4hUi4mBTLMFaZHeJ
-         lQOR0wGzTYdQ3uC9REhaHrWW8kVj+HKmE2/bLDMmx/G+cO0ZRzYvQBxl7fh/1edZVY++
-         1c90ytUDBbGfHOe4ubEL896FjJreV4KMOheIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=beUbO3aZF/2kD/fftJXd1EMY7Ug/jw5Wb5BLQxmuCc0=;
-        b=tleQuDJdJRjR3MLXAUa/kjJGFcqbkPIsEA5/MAXKGqcJ4js2SgLH14WThejoofgqM9
-         WTtgNUVadIRxDvsM47vp9fq3KUeupirldw6loLV6+mTHi+rlWvO1zwXIfaoT0SEOm70u
-         AgSmOxI03WpybFhNLBfasa4mnSRNMQHp49j9BpDFZSwDpQPhV6Zq88Oj4GXWNlMMaXDP
-         QClpS/FgfaEOLxsMcgBSRAJig3ZCVJAdO9ZpoUP82GrhzGU+0CnklGcNec0xqFRju9l6
-         YqOwwJX5cDUYVFnMSYOUcyjJaSVpPmteO70lUvKKeHKzJedLwNIwCjeBlXIgI5VuWbXp
-         Xkqg==
-X-Gm-Message-State: AOAM531ywSgSslId0I1X3wKNKnHklcT7xbNZJW0x1VUvbUn4e6/ll/Jb
-        fFCi/zTl3J6dKRXYAbTq85155g==
-X-Google-Smtp-Source: ABdhPJwXGj2Q6bkytWK59hvGMzK64mkTpY3dYCfOP2HGl0XbWy3r/zGyfAjqVAai7Y4ZsX1k9UxMgw==
-X-Received: by 2002:a17:903:2309:: with SMTP id d9mr1768705plh.149.1643261344044;
-        Wed, 26 Jan 2022 21:29:04 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id n4sm6545740pjf.0.2022.01.26.21.29.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jan 2022 21:29:03 -0800 (PST)
-Date:   Wed, 26 Jan 2022 21:29:02 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Ariadne Conill <ariadne@dereferenced.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Rich Felker <dalias@libc.org>, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3] fs/exec: require argv[0] presence in
- do_execveat_common()
-Message-ID: <202201262119.105FA8BCA9@keescook>
-References: <20220127000724.15106-1-ariadne@dereferenced.org>
+        Thu, 27 Jan 2022 00:51:15 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee2:21ea])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE46C06161C;
+        Wed, 26 Jan 2022 21:51:14 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JkqTC6jd6z4xcW;
+        Thu, 27 Jan 2022 16:51:11 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1643262672;
+        bh=IT/5oeVf+5eLV6UP5nfiGX/ZILAl3ow5U5CT3rHdSv8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iSnQv1K8TDsJhD2o4WngHRECCgfa2jJ1prXHCjp5z8H+b3LvwOeKOJGBD7fpDq4ga
+         0UzagLisDfofmkxJ3F+f+jD6MxldO/yXFGPi0lnHObd+GlC/gbFUEqFIoHKHueYTfw
+         uVDYQnpoh2x76Xv7Vr2frc1GMaeOPy6rrdgMOSid5DeY7rBS4DpTn2tiYldNcgVzbO
+         DgxmXVatbzCgt9linNyObOeClNgmgodnPA8ZLH2tzZggKFvXOuI2I668BCGUWugZb2
+         sVbheFJcSEgUmkJdMzduewDZnVQVLWhqoLwbNF9iLaAwd1P/QJEZ9cLGBzJt7kfy5b
+         fBqnhU51/6O1g==
+Date:   Thu, 27 Jan 2022 16:51:10 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     akpm@linux-foundation.org
+Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org
+Subject: Re: mmotm 2022-01-26-21-04 uploaded
+Message-ID: <20220127165110.55e88e44@canb.auug.org.au>
+In-Reply-To: <20220127050456.M1eh-ltbc%akpm@linux-foundation.org>
+References: <20220127050456.M1eh-ltbc%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220127000724.15106-1-ariadne@dereferenced.org>
+Content-Type: multipart/signed; boundary="Sig_/yh9HQnnZ0L3mZQiAfJzkJxB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 27, 2022 at 12:07:24AM +0000, Ariadne Conill wrote:
-> In several other operating systems, it is a hard requirement that the
-> second argument to execve(2) be the name of a program, thus prohibiting
-> a scenario where argc < 1.  POSIX 2017 also recommends this behaviour,
-> but it is not an explicit requirement[0]:
-> 
->     The argument arg0 should point to a filename string that is
->     associated with the process being started by one of the exec
->     functions.
-> 
-> To ensure that execve(2) with argc < 1 is not a useful tool for
-> shellcode to use, we can validate this in do_execveat_common() and
-> fail for this scenario, effectively blocking successful exploitation
-> of CVE-2021-4034 and similar bugs which depend on execve(2) working
-> with argc < 1.
-> 
-> We use -EINVAL for this case, mirroring recent changes to FreeBSD and
-> OpenBSD.  -EINVAL is also used by QNX for this, while Solaris uses
-> -EFAULT.
-> 
-> In earlier versions of the patch, it was proposed that we create a
-> fake argv for applications to use when argc < 1, but it was concluded
-> that it would be better to just fail the execve(2) in these cases, as
-> launching a process with an empty or NULL argv[0] was likely to just
-> cause more problems.
+--Sig_/yh9HQnnZ0L3mZQiAfJzkJxB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Let's do it and see what breaks. :)
+Hi Andrew,
 
-I do see at least tools/testing/selftests/exec/recursion-depth.c will
-need a fix. And maybe testcases/kernel/syscalls/execveat/execveat.h
-in LTP.
+On Wed, 26 Jan 2022 21:04:56 -0800 akpm@linux-foundation.org wrote:
+>
+> * docs-sysctl-kernel-add-missing-bit-to-panic_print.patch
+> * panic-add-option-to-dump-all-cpus-backtraces-in-panic_print.patch
+> * panic-allow-printing-extra-panic-information-on-kdump.patch
 
-Acked-by: Kees Cook <keescook@chromium.org>
 
-> 
-> Interestingly, Michael Kerrisk opened an issue about this in 2008[1],
-> but there was no consensus to support fixing this issue then.
-> Hopefully now that CVE-2021-4034 shows practical exploitative use[2]
-> of this bug in a shellcode, we can reconsider.
-> 
-> This issue is being tracked in the KSPP issue tracker[3].
-> 
-> There are a few[4][5] minor edge cases (primarily in test suites) that
-> are caught by this, but we plan to work with the projects to fix those
-> edge cases.
-> 
-> [0]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
-> [1]: https://bugzilla.kernel.org/show_bug.cgi?id=8408
-> [2]: https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt
-> [3]: https://github.com/KSPP/linux/issues/176
-> [4]: https://codesearch.debian.net/search?q=execve%5C+*%5C%28%5B%5E%2C%5D%2B%2C+*NULL&literal=0
-> [5]: https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
-> 
-> Changes from v2:
-> - Switch to using -EINVAL as the error code for this.
-> - Use pr_warn_once() to warn when an execve(2) is rejected due to NULL
->   argv.
-> 
-> Changes from v1:
-> - Rework commit message significantly.
-> - Make the argv[0] check explicit rather than hijacking the error-check
->   for count().
-> 
-> Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
-> To: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Rich Felker <dalias@libc.org>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ariadne Conill <ariadne@dereferenced.org>
-> ---
->  fs/exec.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 79f2c9483302..982730cfe3b8 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1897,6 +1897,10 @@ static int do_execveat_common(int fd, struct filename *filename,
->  	}
->  
->  	retval = count(argv, MAX_ARG_STRINGS);
-> +	if (retval == 0) {
-> +		pr_warn_once("Attempted to run process '%s' with NULL argv\n", bprm->filename);
-> +		retval = -EINVAL;
-> +	}
->  	if (retval < 0)
->  		goto out_free;
->  	bprm->argc = retval;
-> -- 
-> 2.34.1
-> 
+> * sysctl-documentation-fix-table-format-warning.patch
 
--- 
-Kees Cook
+Just wondering why this patch isn't up just after the above patches
+(instead of being in the post-next section)?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/yh9HQnnZ0L3mZQiAfJzkJxB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmHyMs4ACgkQAVBC80lX
+0GzQXgf/ddidSmsqbc+sCcVI3RHLKW6OH0UQ3mWuVlihhKP4No3GXq/ly85xR3hw
+oWGG03tzKRZHTIArg6/VLpIvl/+xaX6ZCO2TiYib0Pd+ckX5acDNWHB3tEc8tewP
+oYDUvxdu4sllfeoCry1JJ+ukusohUjiZSA+gRcn2HP/5CsOPcRzW2Aut5FTWYeOD
+l/rNa4AdhfGpa0SC58eUGhr+7Lilak4x/QHey/hQ9dMqZmoP3whge5R0L0TH4kT8
+oeASJQQBQf0CnrYrXNips9wSJh3HR5ezt9dsdD3tiOBEiEAFYvP8aclNW9c9N2eF
+caVFu0SOQAys91FIitCFjtE3HiUESw==
+=RmY0
+-----END PGP SIGNATURE-----
+
+--Sig_/yh9HQnnZ0L3mZQiAfJzkJxB--
