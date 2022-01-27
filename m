@@ -2,112 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6503849D821
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 03:39:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A56649D83F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 03:47:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232942AbiA0CjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 21:39:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231508AbiA0CjL (ORCPT
+        id S235332AbiA0Crw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 21:47:52 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:55138 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235311AbiA0Cru (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 21:39:11 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D6EC06161C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 18:39:11 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id p15so2562516ejc.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jan 2022 18:39:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mariadb.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qRO+5iU1xnIh2oUFe8LZrtEMc8A8eJi0lDGLCjiGCg4=;
-        b=a7KbSb0Nm/tF9qVySBCoyUn3pGajjq+Ct7Yrb0lEVpkMVGTd+37B89K7Llng3VhTg7
-         FPBlMtJdpB3VBkRldNXktuzL2BZP0PhGdTqpbjArdD+4YSOd33QIM7+clo/iopUmVyda
-         IEfV9oSPgGJEj1W6xhsTE+1F5u9rw+PFvng2Tg9f+0i8hqEXRsiUC3QQ2jNFbj5w2lX3
-         kYC/CZJT38VOZy2+uu0htF2bnewGAOhjE3eH22NyqP5WSrHRGrQezseUm+B7hvRt029S
-         jUVTs/k6w4FZieO8XWXso3V6e97OULBw7qIvwZGXdb/0UERgvuagyPulMw1cp7DUT4oy
-         Lu3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qRO+5iU1xnIh2oUFe8LZrtEMc8A8eJi0lDGLCjiGCg4=;
-        b=Jr9obLNHBCVfz6DTPy170YQHuHoaEaiLUzTI1XcpYV9wLhy9e8xXnisdBNsaz5iAxa
-         OrnFKsJLUvNscrIq3XFdtAlIuZXYM/OPP22pUyWkvIBFsyxZ+pmDQYLNaU46S+9XsB2k
-         t28tz3UV9rV24L0V7HpKbcrjYOqCvN1JfgW2A8Xtsle15OZzcfBjlFdcz1obChGspA8m
-         mUJUF9KGtoTpRgiDMfy895fCUKpgMl97QeZLWqcJYzzOoxhLyrmZ+VAG0kKiTL3CXDbX
-         oAtG/n/cTzD35yvvLxJFsCUHWZBiEJ08g8MSK2hQcFl1QUAcoD7fPGv9n1bHamNV2RHO
-         V/vQ==
-X-Gm-Message-State: AOAM531r1yA30YuXwCzxs5m7Tkyc3KGPKxvnD9j+SmTlFU2hIZfGjaV5
-        qvln186PPnthYO1mp1bjCjJmLPQP3DnKTSZVS15WHV9zXzTAag==
-X-Google-Smtp-Source: ABdhPJwtLX62XVk9zvsoBbFgzeiudo53AV8B5E3OB8xIzH9Vj7lZl38Zi4HTp9aTXW00Q3ZH/uYtmohJY+0DHGZvotI=
-X-Received: by 2002:a17:906:4fcc:: with SMTP id i12mr1299748ejw.682.1643251149999;
- Wed, 26 Jan 2022 18:39:09 -0800 (PST)
+        Wed, 26 Jan 2022 21:47:50 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2D50621901;
+        Thu, 27 Jan 2022 02:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1643251668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M8NYMcBcZD8GUv0cDvsP1eePtGigG8J8np/yV6nLjQQ=;
+        b=lpTMtDdgzXu6IXlWF2Cla7JZeA4O6IZP0tjrp8fZaU7ivDos+PHoL/XQMfCABF+bEfNOP4
+        asGZxs7WKvGfhEBJWG6JTtSILEhDDfyUZDxdz3isEFlXeNYP4t4z60IMGMWtpxXKM9DXAB
+        qZWJthZJaYv1R8Swu1zG6SDpKtDJcMw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1643251668;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M8NYMcBcZD8GUv0cDvsP1eePtGigG8J8np/yV6nLjQQ=;
+        b=GajJ1CW7bGmknt+eypyqRIr6NQ5RkVudFMz7+fbL2W6FyuUKWG82yY6INCh5zJBg+nHfCU
+        1tfjV2LY/eskY2DQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5662613E46;
+        Thu, 27 Jan 2022 02:47:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 1653BcwH8mHgKwAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 27 Jan 2022 02:47:40 +0000
+Subject: [PATCH 3/9] f2fs: change retry waiting for
+ f2fs_write_single_data_page()
+From:   NeilBrown <neilb@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Date:   Thu, 27 Jan 2022 13:46:29 +1100
+Message-ID: <164325158956.29787.7016948342209980097.stgit@noble.brown>
+In-Reply-To: <164325106958.29787.4865219843242892726.stgit@noble.brown>
+References: <164325106958.29787.4865219843242892726.stgit@noble.brown>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <CABVffEPxKp4o_-Bz=JzvEvQNSuOBaUmjcSU4wPB3gSzqmApLOw@mail.gmail.com>
- <YfC5vuwQyxoMfWLP@casper.infradead.org>
-In-Reply-To: <YfC5vuwQyxoMfWLP@casper.infradead.org>
-From:   Daniel Black <daniel@mariadb.org>
-Date:   Thu, 27 Jan 2022 13:38:58 +1100
-Message-ID: <CABVffEM4KhSNywBVg06XN5JpsDaONKf7wQiKvrTvqGXosssXLg@mail.gmail.com>
-Subject: Re: fcntl(fd, F_SETFL, O_DIRECT) succeeds followed by EINVAL in write
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 2:02 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, Jan 26, 2022 at 09:05:48AM +1100, Daniel Black wrote:
-> > The kernel code in setfl seems to want to return EINVAL for
-> > filesystems without a direct_IO structure member assigned,
-> >
-> > A noop_direct_IO seems to be used frequently to just return EINVAL
-> > (like cifs_direct_io).
->
-> Sorry for the confusion.  You've caught us mid-transition.  Eventually,
-> ->direct_IO will be deleted, but for now it signifies whether or not the
-> filesystem supports O_DIRECT, even though it's not used (except in some
-> scenarios you don't care about).
+f2fs_write_single_data_page() can return -EAGAIN if it cannot get
+the cp_rwsem lock - it holds a page lock and so cannot wait for it.
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 9c6c6a3e2de5..ff55a904bb4e 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -58,7 +58,8 @@ static int setfl(int fd, struct file * filp,
-unsigned long arg)
-        /* Pipe packetized mode is controlled by O_DIRECT flag */
-        if (!S_ISFIFO(inode->i_mode) && (arg & O_DIRECT)) {
-                if (!filp->f_mapping || !filp->f_mapping->a_ops ||
--                       !filp->f_mapping->a_ops->direct_IO)
-+                       !filp->f_mapping->a_ops->direct_IO ||
-+                       filp->f_mapping->a_ops->direct_IO == noop_direct_IO)
-                                return -EINVAL;
-        }
+Some code which calls f2fs_write_single_data_page() use
+congestion_wait() and then tries again.  congestion_wait() doesn't do
+anything useful as congestion is no longer tracked.  So this is just a
+simple sleep.
 
-The above patch prevents:
+A better approach is it wait until the cp_rwsem lock can be taken - then
+try again.  There is certainly no point trying again *before* the lock
+can be taken.
 
-  filp->f_flags = (arg & SETFL_MASK) | (filp->f_flags & ~SETFL_MASK);
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/f2fs/compress.c |    6 +++---
+ fs/f2fs/data.c     |    9 ++++++---
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-being executed at the bottom of setfl which keeps the file descriptor
-out of O_DIRECT mode when
-the filesystem (like CIFS doesn't support it). In the original strace
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index d0c3aeba5945..58ff7f4b296c 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1505,9 +1505,9 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 				if (IS_NOQUOTA(cc->inode))
+ 					return 0;
+ 				ret = 0;
+-				cond_resched();
+-				congestion_wait(BLK_RW_ASYNC,
+-						DEFAULT_IO_TIMEOUT);
++				/* Wait until we can get the lock, then try again. */
++				f2fs_lock_op(F2FS_I_SB(cc->inode));
++				f2fs_unlock_op(F2FS_I_SB(cc->inode));
+ 				goto retry_write;
+ 			}
+ 			return ret;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8c417864c66a..1d2341163e2c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3047,9 +3047,12 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 				} else if (ret == -EAGAIN) {
+ 					ret = 0;
+ 					if (wbc->sync_mode == WB_SYNC_ALL) {
+-						cond_resched();
+-						congestion_wait(BLK_RW_ASYNC,
+-							DEFAULT_IO_TIMEOUT);
++						/* Wait until we can get the
++						 * lock, then try again.
++						 */
++						f2fs_lock_op(F2FS_I_SB(mapping->host));
++						f2fs_unlock_op(F2FS_I_SB(mapping->host));
++
+ 						goto retry_write;
+ 					}
+ 					goto next;
 
-So while you are mid-transition, the relatively simple flag of
-direct_IO is good enough a protection
-for a file descriptor entering a mode that isn't supported.
 
-Is this an acceptable stop gap concept and/or stable backport?
-
->.., but I'm not quite sure what limitations cifs imposes.
-
-Given cifs_direct_io is equivalent to the noop_direct_IO return
--EINVAL now, there's no direct io
-there as I discovered testing the bug report
-https://jira.mariadb.org/browse/MDEV-26970.
-
-My patch two of the series would be to replace cifs_direct_io with
-noop_direct_IO.
