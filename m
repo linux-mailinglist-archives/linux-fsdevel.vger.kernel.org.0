@@ -2,96 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7958F49E767
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 17:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7279C49E7EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 17:45:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243630AbiA0QXx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 11:23:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230300AbiA0QXx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 11:23:53 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3831C061714
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 08:23:52 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id z14-20020a17090ab10e00b001b6175d4040so2269012pjq.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 08:23:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6y8wjaR4vxJ8579JrqWtOWVGBP8Ocpho3Gs/0sO8C2Q=;
-        b=Cxk8MCnimiHPkkbbllSaMa1YFEHnvs6PW8LZ0mwwmuBX9LY7ybpXVaqZi19rCLfhFO
-         XVncqmS4p5+FKb0SIPHU9SV9G8p6EIJ5WsNdlfjcHCtvCzN22UpxGQpSmind30O2LnHf
-         P7h+RGAe+V1Mmc4ZhtY0FEsuvRcaJO+plCXow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6y8wjaR4vxJ8579JrqWtOWVGBP8Ocpho3Gs/0sO8C2Q=;
-        b=V4gnR1E4BAN5LnlWRPwts7sy1LgFN+vFBvvlvCpPACD6bkaRoWdzR4tTVRebHw1Udv
-         ojle/IrfU0RI58ZBEecgHLaV5wfdtbKPaggsdH863Vk7evEYCT9ppQQO9pX85YLWCtai
-         rOpC3KX9bCBtbnGp566QPzdvayInCglhqTAaUzUrY86zHmT0NSWEcLmckRlMqiRLMYS6
-         pFZWtLCvx/rH9dC2HjeuWoPILP15wzXtzQX1fXBHhqK3/EpMFKunoroWF1UClMcv3kzW
-         RpY+r/UcwTiJb4DKV2IHP450KiDh9UvKFuIfJPCtjhE5VDcZ9aUR2Rdd1T4k+0JtEQNO
-         r95A==
-X-Gm-Message-State: AOAM533uCbXm0XiSerP1RxHtrlluXZwxMD/OaCF/dKGn5TfI88DxEkP+
-        lolHSqMloi0Qt1JmMlhA0ksWqO5qMLFlSw==
-X-Google-Smtp-Source: ABdhPJyMCj2t5XQMopodXETjSm7BwS4JfRV64awaq5lK9uUxhfSbHwY0vLd5SNeYG2gUhMNHkuVcCA==
-X-Received: by 2002:a17:902:c7cb:: with SMTP id r11mr3982582pla.135.1643300632462;
-        Thu, 27 Jan 2022 08:23:52 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s14sm5611259pfk.65.2022.01.27.08.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jan 2022 08:23:52 -0800 (PST)
-Date:   Thu, 27 Jan 2022 08:23:51 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Akira Kawata <akirakawata1@gmail.com>
-Cc:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        lukas.bulwahn@gmail.com, kernel test robot <lkp@intel.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-Message-ID: <202201270816.5030A2A4B5@keescook>
-References: <20211212232414.1402199-1-akirakawata1@gmail.com>
- <20211212232414.1402199-2-akirakawata1@gmail.com>
- <202201261955.F86F391@keescook>
- <20220127125643.cifk2ihnbnxo5wcl@gmail.com>
+        id S244078AbiA0QpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 11:45:09 -0500
+Received: from mga11.intel.com ([192.55.52.93]:21456 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244072AbiA0QpI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jan 2022 11:45:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643301908; x=1674837908;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0XYCULJz8eCwunpqt4WW86gJKS6aVCwiIa+rTXc0vrY=;
+  b=YUpUQhuP2P2ONDNu4UHFwQJz3C8gKeIwbv2Vx8nQgLz/ReIXjxEID2Ky
+   0Jph+dEdAQQqGcvt0XFhWQTyWBHWg157Ti94RXIry4Z/nT61+boVAypni
+   xGsMDgaVjCz8NDhlbPnfs2y8wx8lq3S6RQEDLZhFvp4F+RlApPiRMpPod
+   petoW8eQmz5jGdW3KTw9nYhYGDm36P2kr6y1rFhqJ+dtccCT+lmaaiZze
+   etRAVh8xAjcKU2Pe3tIemI1n1SV+LgGhMM+0aQOjRuIlFLfDnjGqnlN7q
+   Lc6u9VRbUHWD+gzttJNs2IqYsujht23Skitdpch+9ccRd7KRtqe9XtWtk
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10239"; a="244510328"
+X-IronPort-AV: E=Sophos;i="5.88,321,1635231600"; 
+   d="scan'208";a="244510328"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2022 08:45:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,321,1635231600"; 
+   d="scan'208";a="477935447"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 27 Jan 2022 08:45:04 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nD7tP-000MoH-LD; Thu, 27 Jan 2022 16:45:03 +0000
+Date:   Fri, 28 Jan 2022 00:44:02 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, djwong@kernel.org,
+        dan.j.williams@intel.com, david@fromorbit.com, hch@infradead.org,
+        jane.chu@oracle.com
+Subject: Re: [PATCH v10 1/9] dax: Introduce holder for dax_device
+Message-ID: <202201280035.A565CZYV-lkp@intel.com>
+References: <20220127124058.1172422-2-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220127125643.cifk2ihnbnxo5wcl@gmail.com>
+In-Reply-To: <20220127124058.1172422-2-ruansy.fnst@fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 27, 2022 at 09:56:43PM +0900, Akira Kawata wrote:
-> On Wed, Jan 26, 2022 at 09:01:30PM -0800, Kees Cook wrote:
-> > [...]
-> > 1) The ELF spec says e_phoff is 0 if there's no program header table.
-> > 
-> > The old code would just pass the load_addr as a result. This patch will
-> > now retain the same result (phdr_addr defaults to 0). I wonder if there
-> > is a bug in this behavior, though? (To be addressed in a different patch
-> > if needed...)
-> >
-> 
-> It is better to return NULL from load_elf_phdrs when e_phoff == 0, I
-> think.
+Hi Shiyang,
 
-Yeah, right now it just returns a pointer to file offset 0.
+Thank you for the patch! Perhaps something to improve:
 
-I also wonder if we should sanity-check e_phoff vs PT_PHDR? Right now
-Linux ignores PT_PHDR. Should we reject loading when e_phoff != PT_PHDR
-file offset? (And I wonder if there are "broken" binaries right now that
-have bad PT_PHDR segments that have gone unnoticed...)
+[auto build test WARNING on linux/master]
+[also build test WARNING on linus/master v5.17-rc1 next-20220127]
+[cannot apply to xfs-linux/for-next hnaz-mm/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-And now I'm thinking about the excellent ELF loading analysis at:
-https://nathanotterness.com/2021/10/tiny_elf_modernized.html
+url:    https://github.com/0day-ci/linux/commits/Shiyang-Ruan/fsdax-introduce-fs-query-to-support-reflink/20220127-204239
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 2c271fe77d52a0555161926c232cd5bc07178b39
+config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20220128/202201280035.A565CZYV-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/57669ed05e93b37d995c5247eebe218ab2058c9a
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Shiyang-Ruan/fsdax-introduce-fs-query-to-support-reflink/20220127-204239
+        git checkout 57669ed05e93b37d995c5247eebe218ab2058c9a
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=powerpc SHELL=/bin/bash
 
-;)
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
--- 
-Kees Cook
+All warnings (new ones prefixed by >>):
+
+   In file included from mm/filemap.c:15:
+>> include/linux/dax.h:73:30: warning: 'struct dax_holder_operations' declared inside parameter list will not be visible outside of this definition or declaration
+      73 |                 const struct dax_holder_operations *ops)
+         |                              ^~~~~~~~~~~~~~~~~~~~~
+
+
+vim +73 include/linux/dax.h
+
+    48	
+    49	void dax_register_holder(struct dax_device *dax_dev, void *holder,
+    50			const struct dax_holder_operations *ops);
+    51	void dax_unregister_holder(struct dax_device *dax_dev);
+    52	void *dax_get_holder(struct dax_device *dax_dev);
+    53	void put_dax(struct dax_device *dax_dev);
+    54	void kill_dax(struct dax_device *dax_dev);
+    55	void dax_write_cache(struct dax_device *dax_dev, bool wc);
+    56	bool dax_write_cache_enabled(struct dax_device *dax_dev);
+    57	bool dax_synchronous(struct dax_device *dax_dev);
+    58	void set_dax_synchronous(struct dax_device *dax_dev);
+    59	/*
+    60	 * Check if given mapping is supported by the file / underlying device.
+    61	 */
+    62	static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
+    63						     struct dax_device *dax_dev)
+    64	{
+    65		if (!(vma->vm_flags & VM_SYNC))
+    66			return true;
+    67		if (!IS_DAX(file_inode(vma->vm_file)))
+    68			return false;
+    69		return dax_synchronous(dax_dev);
+    70	}
+    71	#else
+    72	static inline void dax_register_holder(struct dax_device *dax_dev, void *holder,
+  > 73			const struct dax_holder_operations *ops)
+    74	{
+    75	}
+    76	static inline void dax_unregister_holder(struct dax_device *dax_dev)
+    77	{
+    78	}
+    79	static inline void *dax_get_holder(struct dax_device *dax_dev)
+    80	{
+    81		return NULL;
+    82	}
+    83	static inline struct dax_device *alloc_dax(void *private,
+    84			const struct dax_operations *ops)
+    85	{
+    86		/*
+    87		 * Callers should check IS_ENABLED(CONFIG_DAX) to know if this
+    88		 * NULL is an error or expected.
+    89		 */
+    90		return NULL;
+    91	}
+    92	static inline void put_dax(struct dax_device *dax_dev)
+    93	{
+    94	}
+    95	static inline void kill_dax(struct dax_device *dax_dev)
+    96	{
+    97	}
+    98	static inline void dax_write_cache(struct dax_device *dax_dev, bool wc)
+    99	{
+   100	}
+   101	static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
+   102	{
+   103		return false;
+   104	}
+   105	static inline bool dax_synchronous(struct dax_device *dax_dev)
+   106	{
+   107		return true;
+   108	}
+   109	static inline void set_dax_synchronous(struct dax_device *dax_dev)
+   110	{
+   111	}
+   112	static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
+   113					struct dax_device *dax_dev)
+   114	{
+   115		return !(vma->vm_flags & VM_SYNC);
+   116	}
+   117	#endif
+   118	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
