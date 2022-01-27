@@ -2,126 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4FF49E7F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 17:48:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59EC049E806
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 17:51:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243940AbiA0Qs1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 11:48:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234585AbiA0QsY (ORCPT
+        id S244023AbiA0Qvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 11:51:47 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:44244 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234585AbiA0Qvq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 11:48:24 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09169C061714
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 08:48:24 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id q75so2731657pgq.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 08:48:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=utexas-edu.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1nosRojaWRtA9jVc9HpA0DkuLU5dvZGKl9sdgo49WiE=;
-        b=262j/77YP8cXyaDVJlr1R79C2q8jGLht1a5id3s1QU8umVrJFqJnYWcSWnHW95M//S
-         5lPRHgk1ZOGmZbEmPgvol1qCrD7SVRMHq2BtnYSdEIbciU+Wmsjdfy1VvZleVoaxhhX6
-         aZICLlPN5BYmScJk+juu8wUDm4VGH1esbeNiuTaZElbte2u6gzD9byg3PYktv06WWfM3
-         O03ujofzU9lJhc5a94nJa1Rs2XLdUhvOWaR0ri9gUSsE5WAFW7CytV8CBz/oDeci1y9T
-         mDWezYWstKlYRAdUHvCCXWJj9mhClT1rXtWsQd14rSvqAZKcBWctf2NLar2iExD7uIf1
-         cqvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1nosRojaWRtA9jVc9HpA0DkuLU5dvZGKl9sdgo49WiE=;
-        b=5Y660aiTi/rHEa0/ZGSci1WbRWp0m8EVm94yCHYdIVK4brx6mbI1yI4ebJYDVOi2f7
-         G41Zz84cDjghCIbK/l4BDqPfxqkFlVDJ4UHVWMq3hndn7/2ZmpvtkCqZvkFKHNPLOjMs
-         UJPx1vB/aPlLDNDXgYyLbNNzQEPUMjrhrccXXtqfWjynMWWdZ+rQDa6fKaTlgTwllH+1
-         0gs+1isi9+MR7W3P9uPBDjqXqbd+JZwVespY+e+wV2Zd0U3BewBlcAcB8GurG+/KEaUI
-         2E5JQgyCfQ9TBNtp58hK5RHnJvSMi9G6C5JrGZz4/7eCrRGSQRE7NiTRg7RXlmIoG5qd
-         Evlw==
-X-Gm-Message-State: AOAM533A7OwARH0oO0C/tVBD0VOi6GmLrxXPK45IL/jm5Vg6snLfbOBi
-        Zsjzc3wuV159OmWy/iTe7F6DqmD1lNAlLRTdWAOp/WD64wMAPSuD
-X-Google-Smtp-Source: ABdhPJzyEOCjXnl0I9MXgUxOn+eWb+whngsaXv6/0DZ4OLW8b9iARwtg/3WUdF5q5PO3YMYnTuyi5nDD6/jTCC83p3I=
-X-Received: by 2002:a63:e44b:: with SMTP id i11mr3318279pgk.207.1643302103139;
- Thu, 27 Jan 2022 08:48:23 -0800 (PST)
+        Thu, 27 Jan 2022 11:51:46 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52]:34910)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nD7zs-00Db9R-SC; Thu, 27 Jan 2022 09:51:44 -0700
+Received: from ip68-110-24-146.om.om.cox.net ([68.110.24.146]:48590 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nD7zq-009OuW-Bx; Thu, 27 Jan 2022 09:51:44 -0700
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ariadne Conill <ariadne@dereferenced.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Rich Felker <dalias@libc.org>, linux-mm@kvack.org,
+        stable@vger.kernel.org
+References: <20220127000724.15106-1-ariadne@dereferenced.org>
+        <202201262119.105FA8BCA9@keescook>
+Date:   Thu, 27 Jan 2022 10:51:05 -0600
+In-Reply-To: <202201262119.105FA8BCA9@keescook> (Kees Cook's message of "Wed,
+        26 Jan 2022 21:29:02 -0800")
+Message-ID: <87r18tt952.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-References: <CAFadYX5iw4pCJ2L4s5rtvJCs8mL+tqk=5+tLVjSLOWdDeo7+MQ@mail.gmail.com>
- <YfHMp+zhEjrMHizL@casper.infradead.org> <YfHU5/RrpJlRx5sO@casper.infradead.org>
- <CANiq72=fTTreGHn_-t1tBLKxMeCr4b0ENsHGAgWZL1OZ7sKhMA@mail.gmail.com>
-In-Reply-To: <CANiq72=fTTreGHn_-t1tBLKxMeCr4b0ENsHGAgWZL1OZ7sKhMA@mail.gmail.com>
-From:   Hayley Leblanc <hleblanc@utexas.edu>
-Date:   Thu, 27 Jan 2022 10:48:12 -0600
-Message-ID: <CAFadYX6oYC8Ncg7Ma3oO75mF3poKHB5adLBxKkDLLqt+xd64wQ@mail.gmail.com>
-Subject: Re: Persistent memory file system development in Rust
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        rust-for-linux <rust-for-linux@vger.kernel.org>,
-        Vijay Chidambaram <vijayc@utexas.edu>,
-        Samantha Miller <samantha.a.miller123@gmail.com>,
-        austin.chase.m@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1nD7zq-009OuW-Bx;;;mid=<87r18tt952.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.110.24.146;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/mQqfE7iIYE+9AGFkmkLZr5ugXbyjF8J4=
+X-SA-Exim-Connect-IP: 68.110.24.146
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: ***
+X-Spam-Status: No, score=3.4 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,FVGT_m_MULTI_ODD,TR_Symld_Words,
+        T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,T_TooManySym_02,T_TooManySym_03,
+        T_XMDrugObfuBody_08,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
+        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1731 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 12 (0.7%), b_tie_ro: 10 (0.6%), parse: 1.24
+        (0.1%), extract_message_metadata: 60 (3.4%), get_uri_detail_list: 6
+        (0.3%), tests_pri_-1000: 121 (7.0%), tests_pri_-950: 1.65 (0.1%),
+        tests_pri_-900: 1.26 (0.1%), tests_pri_-90: 79 (4.6%), check_bayes: 77
+        (4.5%), b_tokenize: 16 (0.9%), b_tok_get_all: 14 (0.8%), b_comp_prob:
+        4.4 (0.3%), b_tok_touch_all: 36 (2.1%), b_finish: 1.61 (0.1%),
+        tests_pri_0: 1426 (82.4%), check_dkim_signature: 1.09 (0.1%),
+        check_dkim_adsp: 9 (0.5%), poll_dns_idle: 0.53 (0.0%), tests_pri_10:
+        3.7 (0.2%), tests_pri_500: 22 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v3] fs/exec: require argv[0] presence in
+ do_execveat_common()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks Matthew and Miguel for your responses, and thank you Matthew
-for fixing my email address typo :)
+Kees Cook <keescook@chromium.org> writes:
 
-On Thu, Jan 27, 2022 at 3:59 AM Matthew Wilcox <willy@infradead.org> wrote:
-> In particular, the demands of academia (generate novel insights, write
-> as many papers as possible, get your PhD) are at odds with the demands
-> of a production filesystem (move slowly, don't break anything, DON'T
-> LOSE USER DATA).  You wouldn't be the first person to try to do both,
-> but I think you might be the first person to be successful.
-
-This makes sense. Our goal is to make an effort throughout the project
-to align it with
-the community's interests and the trajectory of kernel development,
-such that there's a potential
-for some broader interest and longer-term support. Of course, that's
-easy to say about a
-file system that doesn't exist yet, and I'm sure we will neither be
-the first nor last academics to
-try to get the Linux community excited about our own project :)
-
-It sounds like this will require us to be very serious and very
-intentional about balancing the
-expectations of academic conferences with the requirements of
-production systems in
-the kernel. My personal research interests center mostly on crash
-consistency and
-one of our big goals with this project is to address data
-loss/consistency issues that we've
-encountered in existing PM file systems, so I hope that focus will
-help us target some of
-those production requirements.
-
-On Thu, Jan 27, 2022 at 8:10 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> For your reference: a RamFS port was posted last week. It uses the
-> Rust for Linux support plus `cbindgen` to take an incremental
-> approach, see:
+> On Thu, Jan 27, 2022 at 12:07:24AM +0000, Ariadne Conill wrote:
+>> In several other operating systems, it is a hard requirement that the
+>> second argument to execve(2) be the name of a program, thus prohibiting
+>> a scenario where argc < 1.  POSIX 2017 also recommends this behaviour,
+>> but it is not an explicit requirement[0]:
+>> 
+>>     The argument arg0 should point to a filename string that is
+>>     associated with the process being started by one of the exec
+>>     functions.
+>> 
+>> To ensure that execve(2) with argc < 1 is not a useful tool for
+>> shellcode to use, we can validate this in do_execveat_common() and
+>> fail for this scenario, effectively blocking successful exploitation
+>> of CVE-2021-4034 and similar bugs which depend on execve(2) working
+>> with argc < 1.
+>> 
+>> We use -EINVAL for this case, mirroring recent changes to FreeBSD and
+>> OpenBSD.  -EINVAL is also used by QNX for this, while Solaris uses
+>> -EFAULT.
+>> 
+>> In earlier versions of the patch, it was proposed that we create a
+>> fake argv for applications to use when argc < 1, but it was concluded
+>> that it would be better to just fail the execve(2) in these cases, as
+>> launching a process with an empty or NULL argv[0] was likely to just
+>> cause more problems.
 >
->     https://lore.kernel.org/rust-for-linux/35d69719-2b02-62f2-7e2f-afa367ee684a@gmail.com/
-
-Excellent, thank you! I'll check it out.
-
-> > > Bento seems like a good approach (based on a 30 second scan of their
-> > > git repo).  It wasn't on my radar before, so thanks for bringing it up.
-> > > I think basing your work on Bento is a defensible choice; it might be
-> > > wrong, but the only way to find out is to try.
+> Let's do it and see what breaks. :)
 >
-> Side note: Bento is not using the Rust for Linux support (as far as I
-> know / yet).
+> I do see at least tools/testing/selftests/exec/recursion-depth.c will
+> need a fix. And maybe testcases/kernel/syscalls/execveat/execveat.h
+> in LTP.
+>
+> Acked-by: Kees Cook <keescook@chromium.org>
 
-I have very limited experience with Bento, but I believe it is not. In
-the interest of our goal of
-keeping the project in line with the kernel, it sounds like we should
-go with the existing Rust
-for Linux support for now.
+Yes since this only appears to be tests that will break.
 
-Thanks again for your help!
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Thank you,
-Hayley
+Especially since you are signing up to help fix the tests.
+
+
+>> 
+>> Interestingly, Michael Kerrisk opened an issue about this in 2008[1],
+>> but there was no consensus to support fixing this issue then.
+>> Hopefully now that CVE-2021-4034 shows practical exploitative use[2]
+>> of this bug in a shellcode, we can reconsider.
+>> 
+>> This issue is being tracked in the KSPP issue tracker[3].
+>> 
+>> There are a few[4][5] minor edge cases (primarily in test suites) that
+>> are caught by this, but we plan to work with the projects to fix those
+>> edge cases.
+>> 
+>> [0]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
+>> [1]: https://bugzilla.kernel.org/show_bug.cgi?id=8408
+>> [2]: https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt
+>> [3]: https://github.com/KSPP/linux/issues/176
+>> [4]: https://codesearch.debian.net/search?q=execve%5C+*%5C%28%5B%5E%2C%5D%2B%2C+*NULL&literal=0
+>> [5]: https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
+>> 
+>> Changes from v2:
+>> - Switch to using -EINVAL as the error code for this.
+>> - Use pr_warn_once() to warn when an execve(2) is rejected due to NULL
+>>   argv.
+>> 
+>> Changes from v1:
+>> - Rework commit message significantly.
+>> - Make the argv[0] check explicit rather than hijacking the error-check
+>>   for count().
+>> 
+>> Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
+>> To: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Christian Brauner <brauner@kernel.org>
+>> Cc: Rich Felker <dalias@libc.org>
+>> Cc: Eric Biederman <ebiederm@xmission.com>
+>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Ariadne Conill <ariadne@dereferenced.org>
+>> ---
+>>  fs/exec.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>> 
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index 79f2c9483302..982730cfe3b8 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1897,6 +1897,10 @@ static int do_execveat_common(int fd, struct filename *filename,
+>>  	}
+>>  
+>>  	retval = count(argv, MAX_ARG_STRINGS);
+>> +	if (retval == 0) {
+>> +		pr_warn_once("Attempted to run process '%s' with NULL argv\n", bprm->filename);
+>> +		retval = -EINVAL;
+>> +	}
+>>  	if (retval < 0)
+>>  		goto out_free;
+>>  	bprm->argc = retval;
+>> -- 
+>> 2.34.1
+>> 
