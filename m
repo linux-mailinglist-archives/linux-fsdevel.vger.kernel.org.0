@@ -2,138 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E7F49D689
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 01:07:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDD349D6A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 01:21:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232778AbiA0AHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jan 2022 19:07:32 -0500
-Received: from mx1.mailbun.net ([170.39.20.100]:42890 "EHLO mx1.mailbun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229839AbiA0AHb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jan 2022 19:07:31 -0500
-Received: from localhost.localdomain (unknown [170.39.20.82])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ariadne@dereferenced.org)
-        by mx1.mailbun.net (Postfix) with ESMTPSA id 1185B11A817;
-        Thu, 27 Jan 2022 00:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dereferenced.org;
-        s=mailbun; t=1643242051;
-        bh=KrviaVq2nktezkC2TngWHh7lS7n6CoRmDUx4MPmAHSo=;
-        h=From:To:Cc:Subject:Date;
-        b=jqFlIp7Lw9yFEc4lYI6x1eZQlXDzyYVr4LfXMHNNIWSsXlrZvTnVdOfzD4QofzCoX
-         L0LKOIALzXCOLL3m36vm1aneR45vxryLTfbBz/1WJV+SVhmpyvRBCkS8bbNbBZxWBX
-         o+4QtnrUZEAxmVRJp2xDdOZYjkNjZXC33YpAqU1y/iiv1wfiUz3czf5TkioPgSGPul
-         6OxdrZF60z3uBv3sC0uuMCHpO4tRitNzyjFKGBL++xo/h06vVpMiIAq0l2FYx1T+kB
-         u2e0qbo/vhKIBvK7zF/mPMDp/MLP86Vm/bjzj2+NsZKpCzqBhOIFswilovgKMRJ1FP
-         qnEtSkWD840MA==
-From:   Ariadne Conill <ariadne@dereferenced.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S233802AbiA0AV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jan 2022 19:21:58 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:42110 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229589AbiA0AV6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jan 2022 19:21:58 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52]:56834)
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nCsY0-005wJl-On; Wed, 26 Jan 2022 17:21:56 -0700
+Received: from ip68-110-24-146.om.om.cox.net ([68.110.24.146]:49734 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nCsXz-006pY2-KG; Wed, 26 Jan 2022 17:21:56 -0700
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Heikki Kallasjoki <heikki.kallasjoki@iki.fi>,
         Ariadne Conill <ariadne@dereferenced.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Rich Felker <dalias@libc.org>, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: [PATCH v3] fs/exec: require argv[0] presence in do_execveat_common()
-Date:   Thu, 27 Jan 2022 00:07:24 +0000
-Message-Id: <20220127000724.15106-1-ariadne@dereferenced.org>
-X-Mailer: git-send-email 2.34.1
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20220126043947.10058-1-ariadne@dereferenced.org>
+        <202201252241.7309AE568F@keescook>
+        <39480927-B17F-4573-B335-7FCFD81AB997@chromium.org>
+        <44b4472d-1d50-c43f-dbb1-953532339fb4@dereferenced.org>
+        <YfE/owUY+gVnn2b/@selene.zem.fi> <202201261545.D955A71E@keescook>
+Date:   Wed, 26 Jan 2022 18:20:50 -0600
+In-Reply-To: <202201261545.D955A71E@keescook> (Kees Cook's message of "Wed, 26
+        Jan 2022 15:57:35 -0800")
+Message-ID: <8735lauizh.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1nCsXz-006pY2-KG;;;mid=<8735lauizh.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.110.24.146;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18Sz/maQ5hy2KEQvwA/EgujcJDkBMsam3I=
+X-SA-Exim-Connect-IP: 68.110.24.146
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
+        T_TooManySym_01,T_TooManySym_02,T_TooManySym_03,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4990]
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 604 ms - load_scoreonly_sql: 0.41 (0.1%),
+        signal_user_changed: 14 (2.3%), b_tie_ro: 12 (1.9%), parse: 1.19
+        (0.2%), extract_message_metadata: 20 (3.3%), get_uri_detail_list: 2.7
+        (0.4%), tests_pri_-1000: 30 (4.9%), tests_pri_-950: 1.37 (0.2%),
+        tests_pri_-900: 1.07 (0.2%), tests_pri_-90: 173 (28.7%), check_bayes:
+        170 (28.2%), b_tokenize: 7 (1.2%), b_tok_get_all: 50 (8.3%),
+        b_comp_prob: 3.9 (0.6%), b_tok_touch_all: 105 (17.3%), b_finish: 1.18
+        (0.2%), tests_pri_0: 350 (57.9%), check_dkim_signature: 0.98 (0.2%),
+        check_dkim_adsp: 3.9 (0.6%), poll_dns_idle: 0.84 (0.1%), tests_pri_10:
+        2.1 (0.3%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] fs/exec: require argv[0] presence in do_execveat_common()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In several other operating systems, it is a hard requirement that the
-second argument to execve(2) be the name of a program, thus prohibiting
-a scenario where argc < 1.  POSIX 2017 also recommends this behaviour,
-but it is not an explicit requirement[0]:
+Kees Cook <keescook@chromium.org> writes:
 
-    The argument arg0 should point to a filename string that is
-    associated with the process being started by one of the exec
-    functions.
+> On Wed, Jan 26, 2022 at 12:33:39PM +0000, Heikki Kallasjoki wrote:
+>> On Wed, Jan 26, 2022 at 05:18:58AM -0600, Ariadne Conill wrote:
+>> > On Tue, 25 Jan 2022, Kees Cook wrote:
+>> > > Lots of stuff likes to do:
+>> > > execve(path, NULL, NULL);
+>> > 
+>> > I looked at these, and these seem to basically be lazily-written test cases
+>> > which should be fixed.  I didn't see any example of real-world applications
+>> > doing this.  As noted in some of the test cases, there are comments like
+>> > "Solaris doesn't support this," etc.
+>> 
+>> See also the (small) handful of instances of `execlp(cmd, NULL);` out
+>> there, which I imagine would start to fail:
+>> https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
+>> 
+>> Two of the hits (ispell, nauty) would seem to be non-test use cases.
+>
+> Ah yeah, I've added this to the Issue tracker:
+> https://github.com/KSPP/linux/issues/176
 
-To ensure that execve(2) with argc < 1 is not a useful tool for
-shellcode to use, we can validate this in do_execveat_common() and
-fail for this scenario, effectively blocking successful exploitation
-of CVE-2021-4034 and similar bugs which depend on execve(2) working
-with argc < 1.
+I just took a slightly deeper look at these.
 
-We use -EINVAL for this case, mirroring recent changes to FreeBSD and
-OpenBSD.  -EINVAL is also used by QNX for this, while Solaris uses
--EFAULT.
+There are two patterns found by that search.
 
-In earlier versions of the patch, it was proposed that we create a
-fake argv for applications to use when argc < 1, but it was concluded
-that it would be better to just fail the execve(2) in these cases, as
-launching a process with an empty or NULL argv[0] was likely to just
-cause more problems.
+-  execlp("/proc/self/exec", NULL)
 
-Interestingly, Michael Kerrisk opened an issue about this in 2008[1],
-but there was no consensus to support fixing this issue then.
-Hopefully now that CVE-2021-4034 shows practical exploitative use[2]
-of this bug in a shellcode, we can reconsider.
+    Which in both both the proot and care packages is a testt that
+    deliberately loops and checks to see if it can generate "argc == 0".
 
-This issue is being tracked in the KSPP issue tracker[3].
+    That is the case where changing argc == 0 into { "", NULL }
+    will loop forever.
 
-There are a few[4][5] minor edge cases (primarily in test suites) that
-are caught by this, but we plan to work with the projects to fix those
-edge cases.
+    For that test failing to exec the "argc == 0" will cause a test
+    failure but for a security issue that seems a reasonable thing
+    to do to a test.
 
-[0]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
-[1]: https://bugzilla.kernel.org/show_bug.cgi?id=8408
-[2]: https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt
-[3]: https://github.com/KSPP/linux/issues/176
-[4]: https://codesearch.debian.net/search?q=execve%5C+*%5C%28%5B%5E%2C%5D%2B%2C+*NULL&literal=0
-[5]: https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
+- execlp(MACRO, NULL)
 
-Changes from v2:
-- Switch to using -EINVAL as the error code for this.
-- Use pr_warn_once() to warn when an execve(2) is rejected due to NULL
-  argv.
+    The macro happens to contain commas so what looks via inspection
+    will generate an application run with "argc == 0" actually
+    does not.
 
-Changes from v1:
-- Rework commit message significantly.
-- Make the argv[0] check explicit rather than hijacking the error-check
-  for count().
-
-Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Rich Felker <dalias@libc.org>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Ariadne Conill <ariadne@dereferenced.org>
----
- fs/exec.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 79f2c9483302..982730cfe3b8 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1897,6 +1897,10 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	}
- 
- 	retval = count(argv, MAX_ARG_STRINGS);
-+	if (retval == 0) {
-+		pr_warn_once("Attempted to run process '%s' with NULL argv\n", bprm->filename);
-+		retval = -EINVAL;
-+	}
- 	if (retval < 0)
- 		goto out_free;
- 	bprm->argc = retval;
--- 
-2.34.1
-
+Eric
