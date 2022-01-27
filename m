@@ -2,84 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 146CF49DD65
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 10:11:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E95A249DE4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 10:44:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234809AbiA0JLJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 04:11:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58474 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231837AbiA0JLJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 04:11:09 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E89AAC061714;
-        Thu, 27 Jan 2022 01:11:08 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 81CD161AA8;
-        Thu, 27 Jan 2022 09:11:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B89C340E4;
-        Thu, 27 Jan 2022 09:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643274667;
-        bh=hzv6BBLBmy3v1zyFdlGFfXIlH/vYw+ko+X4k+Zwpdb0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lytURb+uK4yu32zgERAJBLoC3F/nHoC+NIY5i8kN7AqkSiJnN2kOj46tyuAtUbKME
-         vXh6ru25JsfHnDF6KcyBOIlLSXhkDDNBnJN593umDr6CKQB2kRXIW9vr4N8TRTJCz/
-         K8/8EfmrsIXvD8anW9n7vlvE7ib7Uo0nx4eIuHXIfuawHbLNSYj9Djzs31D3zoAhdD
-         jgohlWp6qhfHdtT7itwnB0zcW+lheU76aA0LEMxGX69muue8Z2nsm8+2JMVadpJttn
-         qlyF+9Yguo/o5crqm/zAqaQviOb/M9C9TNIpyBA2iJcej0SmE2bV9fsVCxpJ+hN+zj
-         O5iikH0o8Fjsw==
-Date:   Thu, 27 Jan 2022 10:11:03 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.com
-Subject: Re: [PATCHSET 0/4] vfs: actually return fs errors from ->sync_fs
-Message-ID: <20220127091103.yfmqj3u3fzxegrq3@wittgenstein>
-References: <164316348940.2600168.17153575889519271710.stgit@magnolia>
- <20220126082153.mz5prdistkkvc6bc@wittgenstein>
- <20220126180507.GB13499@magnolia>
+        id S238766AbiA0Jo3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 04:44:29 -0500
+Received: from mga17.intel.com ([192.55.52.151]:16502 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238758AbiA0Jo2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jan 2022 04:44:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643276668; x=1674812668;
+  h=from:to:subject:in-reply-to:references:date:message-id:
+   mime-version:content-transfer-encoding;
+  bh=dk0qamhX2TbtdZHxZwkI3zlHxXhVxx0UNGFBByp7cwQ=;
+  b=jFfHa66eUP05WZJUGGMSnrDlJqW0ew9ltXO+8UC57mEEQjD4rCpjfNXC
+   mqBRml2VfMy7I7aMG9FFOm8zgmzlxfZ2k0Ge2uxKr2zlbFlB+lztxgbW8
+   g2fz4cQjNysHqMYiDSkLbnSCoFxDyZQT4AB2u+wDCYSGzycAt+d+MnCX+
+   HzoQ3+7nRVUTkqctLds+C9DcIhLEvkS98Iouu2RVfcsvrkZb01Yb075jS
+   4xDHxLCDLL1LY9QAUbAsnAvuE/QZl6Qa7KI5rzMSpwtnk+ciV48tHtJpa
+   RqfGuIpjxVvhhNkvIXuqKN2yP3HrxOKQMKrg2Rlj98NgoXhj/z2ssMomY
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10239"; a="227474899"
+X-IronPort-AV: E=Sophos;i="5.88,320,1635231600"; 
+   d="scan'208";a="227474899"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2022 01:44:27 -0800
+X-IronPort-AV: E=Sophos;i="5.88,320,1635231600"; 
+   d="scan'208";a="618268633"
+Received: from johnlyon-mobl.ger.corp.intel.com (HELO localhost) ([10.252.16.209])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2022 01:44:23 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+Subject: Re: mmotm 2022-01-26-21-04 uploaded (gpu/drm/i915/i915_gem_evict.h)
+In-Reply-To: <6b4f3d82-01e8-5bf3-927f-33ac62178fd5@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20220127050456.M1eh-ltbc%akpm@linux-foundation.org>
+ <6b4f3d82-01e8-5bf3-927f-33ac62178fd5@infradead.org>
+Date:   Thu, 27 Jan 2022 11:44:18 +0200
+Message-ID: <8735l9y0lp.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220126180507.GB13499@magnolia>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 10:05:07AM -0800, Darrick J. Wong wrote:
-> On Wed, Jan 26, 2022 at 09:21:53AM +0100, Christian Brauner wrote:
-> > On Tue, Jan 25, 2022 at 06:18:09PM -0800, Darrick J. Wong wrote:
-> > > Hi all,
-> > > 
-> > > While auditing the VFS code, I noticed that while ->sync_fs is allowed
-> > > to return error codes to reflect some sort of internal filesystem error,
-> > > none of the callers actually check the return value.  Back when this
-> > > callout was introduced for sync_filesystem in 2.5 this didn't matter
-> > 
-> > (Also, it looks like that most(/none?) of the filesystems that
-> > implemented ->sync_fs around 2.5/2.6 (ext3, jfs, jffs2, reiserfs etc.)
-> > actually did return an error?
-> 
-> Yes, some of them do -- ext4 will bubble up jbd2 errors and the results
-> of flushing the bdev write cache.
-> 
-> > In fact, 5.8 seems to be the first kernel to report other errors than
-> > -EBADF since commit 735e4ae5ba28 ("vfs: track per-sb writeback errors
-> > and report them to syncfs"?)
-> 
-> Yeah.  I think the bdev pagecache flush might occasionally return errors
-> if there happened to be dirty pages, but (a) that doesn't help XFS which
-> has its own buffer cache and (b) that doesn't capture the state "fs has
-> errored out but media is fine".
-> 
-> As it is I think the ext4 syncfs needs to start returning EIO if someone
-> forced a shutdown, and probably some auditing for dropped error codes
-> due to the 'traditional' vfs behavior.  btrfs probably ought to return
-> the result of filemap_flush too.
+On Wed, 26 Jan 2022, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 1/26/22 21:04, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2022-01-26-21-04 has been uploaded to
+>>=20
+>>    https://www.ozlabs.org/~akpm/mmotm/
+>>=20
+>> mmotm-readme.txt says
+>>=20
+>> README for mm-of-the-moment:
+>>=20
+>> https://www.ozlabs.org/~akpm/mmotm/
+>>=20
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>=20
+>> You will need quilt to apply these patches to the latest Linus release (=
+5.x
+>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated =
+in
+>> https://ozlabs.org/~akpm/mmotm/series
+>>=20
+>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>> followed by the base kernel version against which this patch series is to
+>> be applied.
+>
+> on x86_64:
+> (from linux-next.patch)
+>
+>
+>   HDRTEST drivers/gpu/drm/i915/i915_gem_evict.h
+> In file included from <command-line>:0:0:
+> ./../drivers/gpu/drm/i915/i915_gem_evict.h:15:15: error: =E2=80=98struct =
+i915_gem_ww_ctx=E2=80=99 declared inside parameter list will not be visible=
+ outside of this definition or declaration [-Werror]
+>         struct i915_gem_ww_ctx *ww,
+>                ^~~~~~~~~~~~~~~
+> ./../drivers/gpu/drm/i915/i915_gem_evict.h:21:14: error: =E2=80=98struct =
+i915_gem_ww_ctx=E2=80=99 declared inside parameter list will not be visible=
+ outside of this definition or declaration [-Werror]
+>        struct i915_gem_ww_ctx *ww,
+>               ^~~~~~~~~~~~~~~
+> ./../drivers/gpu/drm/i915/i915_gem_evict.h:25:16: error: =E2=80=98struct =
+i915_gem_ww_ctx=E2=80=99 declared inside parameter list will not be visible=
+ outside of this definition or declaration [-Werror]
+>          struct i915_gem_ww_ctx *ww);
+>                 ^~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
 
-Makes sense. Fwiw,
-Acked-by: Christian Brauner <brauner@kernel.org>
+Thanks for the report.
+
+This is only visible with CONFIG_DRM_I915_WERROR=3Dy which depends on
+COMPILE_TEST=3Dn. We use the "HDRTEST" and -Werror for development and CI
+to keep the driver clean, but it's not really intended for general
+consumption. Usually when something like this even hits the tree it's
+because of a merge mishap somewhere down the line.
+
+BR,
+Jani.
+
+
+--=20
+Jani Nikula, Intel Open Source Graphics Center
