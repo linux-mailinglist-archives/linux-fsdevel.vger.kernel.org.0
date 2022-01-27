@@ -2,61 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0022649E297
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 13:41:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB4B249E28E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 13:41:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241342AbiA0Mlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 07:41:31 -0500
+        id S241263AbiA0MlY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 07:41:24 -0500
 Received: from mail.cn.fujitsu.com ([183.91.158.132]:35621 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S241307AbiA0MlS (ORCPT
+        with ESMTP id S241269AbiA0MlN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 07:41:18 -0500
-IronPort-Data: =?us-ascii?q?A9a23=3AML6vV6swYY2BfdKRGB96qgEVGOfnVD1fMUV32f8?=
- =?us-ascii?q?akzHdYEJGY0x3zTYaUG2HO/rfazDyct12PIjno0MBucDdmIM3SQo9pX1gHilAw?=
- =?us-ascii?q?SbnLY7Hdx+vZUt+DSFioHpPtpxYMp+ZRCwNZie0SiyFb/6x/RGQ6YnSHuCmULe?=
- =?us-ascii?q?eZXgoLeNZYHxJZSxLyrdRbrFA0YDR7zOl4bsekuWHULOX82cc3lE8t8pvnChSU?=
- =?us-ascii?q?MHa41v0iLCRicdj5zcyn1FNZH4WyDrYw3HQGuG4FcbiLwrPIS3Qw4/Xw/stIov?=
- =?us-ascii?q?NfrfTeUtMTKPQPBSVlzxdXK3Kbhpq/3R0i/hkcqFHLxo/ZzahxridzP1XqJW2U?=
- =?us-ascii?q?hZvMKvXhMwTThtZDzpje6ZB/dcrJFDm65TClhacLCOEL/JGSRte0Zcj0up+H2B?=
- =?us-ascii?q?C3fICLzUKdBqCm6S9x7fTYulnhuwiKsfxNY8Ss30myivWZd4qSJaFQePV5Ntc3?=
- =?us-ascii?q?T41nehPG+rTY4wSbj8HRBjCfBpJNX8UBYg4kePugWPwGxVcqVSIte8y5kDQ0gV?=
- =?us-ascii?q?60/7qKtW9UtqUScRQm26cp3na5CL9AxcHJJqTxCTt2nClgOKJliPmcIUIHba8+?=
- =?us-ascii?q?7hhh1j77mgSDgAGEFWgrfSnh0qWRd1SMQoX9zAooKx081akJvH5XhulsDuHswQ?=
- =?us-ascii?q?aVt54DeI38keOx7DS7gLfAXILJhZFado7pIomSycCyFCEhZXqCCZpvbnTTmiSn?=
- =?us-ascii?q?op4Bxva1TM9dDdEPHFbC1BepYSLnW36tTqXJv4LLUJ/poCd9enM/g23?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3Ajr5wsaNB+rwXhsBcTv2jsMiBIKoaSvp037BL?=
- =?us-ascii?q?7TEUdfUxSKGlfq+V8sjzqiWftN98YhAdcLO7Scy9qBHnhP1ICOAqVN/MYOCMgh?=
- =?us-ascii?q?rLEGgN1+vf6gylMyj/28oY7q14bpV5YeeaMXFKyer8/ym0euxN/OW6?=
+        Thu, 27 Jan 2022 07:41:13 -0500
+IronPort-Data: =?us-ascii?q?A9a23=3AGu77Sq1qpoBzEfTk4vbD5bhwkn2cJEfYwER7XOP?=
+ =?us-ascii?q?LsXnJ1TtwgTQCnDMYWzzXOK6OZWCmf9ogOorl9RsAupGBy9c2QQE+nZ1PZygU8?=
+ =?us-ascii?q?JKaX7x1DatR0xu6d5SFFAQ+hyknQoGowPscEzmM9n9BDpC79SMmjfjSGeKlYAL?=
+ =?us-ascii?q?5EnsZqTFMGX5JZS1Ly7ZRbr5A2bBVMivV0T/Ai5S31GyNh1aYBlkpB5er83uDi?=
+ =?us-ascii?q?hhdVAQw5TTSbdgT1LPXeuJ84Jg3fcldJFOgKmVY83LTegrN8F251juxExYFAdX?=
+ =?us-ascii?q?jnKv5c1ERX/jZOg3mZnh+AvDk20Yd4HdplPtT2Pk0MC+7jx2Tgtl308QLu5qrV?=
+ =?us-ascii?q?S8nI6/NhP8AFRJfFkmSOIUfoueWeCPl75P7I0ruNiGEL+9VJE0/I4wU0uhtBmR?=
+ =?us-ascii?q?J7/YZNHYGaRXrr+K9wJq6TOd2j8guJcWtO5kQ0llsxDefD7A5QJTHQqzP/vdZ2?=
+ =?us-ascii?q?is9goZFGvO2T8Ybdj1pYzzDbgdJN1NRD4gx9M+sh3/iY3hdrXqWu6M84C7U1gM?=
+ =?us-ascii?q?Z+L7zPNvQf/SORN5JhQCcp2Tb7yL1Dw9yHN6WzzfD+XKxrujVlCj/VcQZE7jQ3?=
+ =?us-ascii?q?vprhkCDg2IIBBAIWF+Tv/a0kAi9VshZJkhS/TAhxYA29Uq2Xpz+Uge+rXqsoBE?=
+ =?us-ascii?q?RQZxTHvc85QXLzbDbiy6dB24ZXntRZscOqsA7X3op20WPktevAiZg2IB541r1G?=
+ =?us-ascii?q?qy89Gv0YHZKazRZI3JscOfM2PG7yKlbs/4FZowL/HaJs+DI?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AXDcdwq9o3AciuZzctHtuk+DkI+orL9Y04lQ7?=
+ =?us-ascii?q?vn2ZKCYlFvBw8vrCoB1173HJYUkqMk3I9ergBEDiewK4yXcW2/hzAV7KZmCP11?=
+ =?us-ascii?q?dAR7sSj7cKrQeBJwTOssZZ1YpFN5N1EcDMCzFB5vrS0U2VFMkBzbC8nJyVuQ?=
+ =?us-ascii?q?=3D=3D?=
 X-IronPort-AV: E=Sophos;i="5.88,320,1635177600"; 
-   d="scan'208";a="120913270"
+   d="scan'208";a="120913267"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 27 Jan 2022 20:41:07 +0800
 Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 393224D169CB;
-        Thu, 27 Jan 2022 20:41:05 +0800 (CST)
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+        by cn.fujitsu.com (Postfix) with ESMTP id 1958D4D169CC;
+        Thu, 27 Jan 2022 20:41:06 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
  G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Thu, 27 Jan 2022 20:41:05 +0800
+ (TLS) id 15.0.1497.23; Thu, 27 Jan 2022 20:41:06 +0800
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Thu, 27 Jan 2022 20:41:06 +0800
 Received: from irides.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Thu, 27 Jan 2022 20:41:02 +0800
+ id 15.0.1497.23 via Frontend Transport; Thu, 27 Jan 2022 20:41:03 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
-Subject: [PATCH v10 8/9] xfs: Implement ->notify_failure() for XFS
-Date:   Thu, 27 Jan 2022 20:40:57 +0800
-Message-ID: <20220127124058.1172422-9-ruansy.fnst@fujitsu.com>
+Subject: [PATCH v10 9/9] fsdax: set a CoW flag when associate reflink mappings
+Date:   Thu, 27 Jan 2022 20:40:58 +0800
+Message-ID: <20220127124058.1172422-10-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com>
 References: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 393224D169CB.A1435
+X-yoursite-MailScanner-ID: 1958D4D169CC.A120D
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -64,349 +68,140 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce xfs_notify_failure.c to handle failure related works, such as
-implement ->notify_failure(), register/unregister dax holder in xfs, and
-so on.
+Introduce a PAGE_MAPPING_DAX_COW flag to support association with CoW file
+mappings.  In this case, the dax-RMAP already takes the responsibility
+to look up for shared files by given dax page.  The page->mapping is no
+longer to used for rmap but for marking that this dax page is shared.
+And to make sure disassociation works fine, we use page->index as
+refcount, and clear page->mapping to the initial state when page->index
+is decreased to 0.
 
-If the rmap feature of XFS enabled, we can query it to find files and
-metadata which are associated with the corrupt data.  For now all we do
-is kill processes with that file mapped into their address spaces, but
-future patches could actually do something about corrupt metadata.
-
-After that, the memory failure needs to notify the processes who are
-using those files.
+With the help of this new flag, it is able to distinguish normal case
+and CoW case, and keep the warning in normal case.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 ---
- fs/xfs/Makefile             |   1 +
- fs/xfs/xfs_buf.c            |  12 ++
- fs/xfs/xfs_fsops.c          |   3 +
- fs/xfs/xfs_mount.h          |   1 +
- fs/xfs/xfs_notify_failure.c | 222 ++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_notify_failure.h |  10 ++
- 6 files changed, 249 insertions(+)
- create mode 100644 fs/xfs/xfs_notify_failure.c
- create mode 100644 fs/xfs/xfs_notify_failure.h
+ fs/dax.c                   | 65 ++++++++++++++++++++++++++++++++------
+ include/linux/page-flags.h |  6 ++++
+ 2 files changed, 62 insertions(+), 9 deletions(-)
 
-diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-index 04611a1068b4..389970b3e13b 100644
---- a/fs/xfs/Makefile
-+++ b/fs/xfs/Makefile
-@@ -84,6 +84,7 @@ xfs-y				+= xfs_aops.o \
- 				   xfs_message.o \
- 				   xfs_mount.o \
- 				   xfs_mru_cache.o \
-+				   xfs_notify_failure.o \
- 				   xfs_pwork.o \
- 				   xfs_reflink.o \
- 				   xfs_stats.o \
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index b45e0d50a405..017010b3d601 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -19,6 +19,7 @@
- #include "xfs_errortag.h"
- #include "xfs_error.h"
- #include "xfs_ag.h"
-+#include "xfs_notify_failure.h"
+diff --git a/fs/dax.c b/fs/dax.c
+index 250794a5b789..88879c579c1f 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -334,13 +334,46 @@ static unsigned long dax_end_pfn(void *entry)
+ 	for (pfn = dax_to_pfn(entry); \
+ 			pfn < dax_end_pfn(entry); pfn++)
  
- static struct kmem_cache *xfs_buf_cache;
- 
-@@ -1892,6 +1893,8 @@ xfs_free_buftarg(
- 	list_lru_destroy(&btp->bt_lru);
- 
- 	blkdev_issue_flush(btp->bt_bdev);
-+	if (btp->bt_daxdev)
-+		dax_unregister_holder(btp->bt_daxdev);
- 	fs_put_dax(btp->bt_daxdev);
- 
- 	kmem_free(btp);
-@@ -1946,6 +1949,15 @@ xfs_alloc_buftarg(
- 	btp->bt_dev =  bdev->bd_dev;
- 	btp->bt_bdev = bdev;
- 	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off);
-+	if (btp->bt_daxdev) {
-+		if (dax_get_holder(btp->bt_daxdev)) {
-+			xfs_err(mp, "DAX device already in use?!");
-+			goto error_free;
-+		}
++static inline void dax_mapping_set_cow_flag(struct address_space *mapping)
++{
++	mapping = (struct address_space *)PAGE_MAPPING_DAX_COW;
++}
 +
-+		dax_register_holder(btp->bt_daxdev, mp,
-+				&xfs_dax_holder_operations);
-+	}
- 
- 	/*
- 	 * Buffer IO error rate limiting. Limit it to no more than 10 messages
-diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
-index 33e26690a8c4..d4d36c5bef11 100644
---- a/fs/xfs/xfs_fsops.c
-+++ b/fs/xfs/xfs_fsops.c
-@@ -542,6 +542,9 @@ xfs_do_force_shutdown(
- 	} else if (flags & SHUTDOWN_CORRUPT_INCORE) {
- 		tag = XFS_PTAG_SHUTDOWN_CORRUPT;
- 		why = "Corruption of in-memory data";
-+	} else if (flags & SHUTDOWN_CORRUPT_ONDISK) {
-+		tag = XFS_PTAG_SHUTDOWN_CORRUPT;
-+		why = "Corruption of on-disk metadata";
- 	} else {
- 		tag = XFS_PTAG_SHUTDOWN_IOERROR;
- 		why = "Metadata I/O Error";
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index 00720a02e761..47ff4ac53c4c 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -435,6 +435,7 @@ void xfs_do_force_shutdown(struct xfs_mount *mp, int flags, char *fname,
- #define SHUTDOWN_LOG_IO_ERROR	0x0002	/* write attempt to the log failed */
- #define SHUTDOWN_FORCE_UMOUNT	0x0004	/* shutdown from a forced unmount */
- #define SHUTDOWN_CORRUPT_INCORE	0x0008	/* corrupt in-memory data structures */
-+#define SHUTDOWN_CORRUPT_ONDISK	0x0010  /* corrupt metadata on device */
- 
- #define XFS_SHUTDOWN_STRINGS \
- 	{ SHUTDOWN_META_IO_ERROR,	"metadata_io" }, \
-diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-new file mode 100644
-index 000000000000..6abaa043f4bc
---- /dev/null
-+++ b/fs/xfs/xfs_notify_failure.c
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2021 Fujitsu.  All Rights Reserved.
++static inline bool dax_mapping_is_cow(struct address_space *mapping)
++{
++	return (unsigned long)mapping == PAGE_MAPPING_DAX_COW;
++}
++
+ /*
+- * TODO: for reflink+dax we need a way to associate a single page with
+- * multiple address_space instances at different linear_page_index()
+- * offsets.
++ * Set or Update the page->mapping with FS_DAX_MAPPING_COW flag.
++ * Return true if it is an Update.
 + */
-+
-+#include "xfs.h"
-+#include "xfs_shared.h"
-+#include "xfs_format.h"
-+#include "xfs_log_format.h"
-+#include "xfs_trans_resv.h"
-+#include "xfs_mount.h"
-+#include "xfs_alloc.h"
-+#include "xfs_bit.h"
-+#include "xfs_btree.h"
-+#include "xfs_inode.h"
-+#include "xfs_icache.h"
-+#include "xfs_rmap.h"
-+#include "xfs_rmap_btree.h"
-+#include "xfs_rtalloc.h"
-+#include "xfs_trans.h"
-+
-+#include <linux/mm.h>
-+#include <linux/dax.h>
-+
-+struct failure_info {
-+	xfs_agblock_t		startblock;
-+	xfs_extlen_t		blockcount;
-+	int			mf_flags;
-+};
-+
-+#if IS_ENABLED(CONFIG_MEMORY_FAILURE) && IS_ENABLED(CONFIG_FS_DAX)
-+static pgoff_t
-+xfs_failure_pgoff(
-+	struct xfs_mount		*mp,
-+	const struct xfs_rmap_irec	*rec,
-+	const struct failure_info	*notify)
++static inline bool dax_mapping_set_cow(struct page *page)
 +{
-+	uint64_t			pos = rec->rm_offset;
-+
-+	if (notify->startblock > rec->rm_startblock)
-+		pos += XFS_FSB_TO_B(mp,
-+				notify->startblock - rec->rm_startblock);
-+	return pos >> PAGE_SHIFT;
-+}
-+
-+static unsigned long
-+xfs_failure_pgcnt(
-+	struct xfs_mount		*mp,
-+	const struct xfs_rmap_irec	*rec,
-+	const struct failure_info	*notify)
-+{
-+	xfs_agblock_t			end_rec;
-+	xfs_agblock_t			end_notify;
-+	xfs_agblock_t			start_cross;
-+	xfs_agblock_t			end_cross;
-+
-+	start_cross = max(rec->rm_startblock, notify->startblock);
-+
-+	end_rec = rec->rm_startblock + rec->rm_blockcount;
-+	end_notify = notify->startblock + notify->blockcount;
-+	end_cross = min(end_rec, end_notify);
-+
-+	return XFS_FSB_TO_B(mp, end_cross - start_cross) >> PAGE_SHIFT;
-+}
-+
-+static int
-+xfs_dax_failure_fn(
-+	struct xfs_btree_cur		*cur,
-+	const struct xfs_rmap_irec	*rec,
-+	void				*data)
-+{
-+	struct xfs_mount		*mp = cur->bc_mp;
-+	struct xfs_inode		*ip;
-+	struct failure_info		*notify = data;
-+	int				error = 0;
-+
-+	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
-+	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-+		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	/* Get files that incore, filter out others that are not in use. */
-+	error = xfs_iget(mp, cur->bc_tp, rec->rm_owner, XFS_IGET_INCORE,
-+			 0, &ip);
-+	/* Continue the rmap query if the inode isn't incore */
-+	if (error == -ENODATA)
-+		return 0;
-+	if (error)
-+		return error;
-+
-+	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
-+				  xfs_failure_pgoff(mp, rec, notify),
-+				  xfs_failure_pgcnt(mp, rec, notify),
-+				  notify->mf_flags);
-+	xfs_irele(ip);
-+	return error;
-+}
-+#else
-+static int
-+xfs_dax_failure_fn(
-+	struct xfs_btree_cur		*cur,
-+	const struct xfs_rmap_irec	*rec,
-+	void				*data)
-+{
-+	struct xfs_mount		*mp = cur->bc_mp;
-+
-+	/* No other option besides shutting down the fs. */
-+	xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-+	return -EFSCORRUPTED;
-+}
-+#endif /* CONFIG_MEMORY_FAILURE && CONFIG_FS_DAX */
-+
-+static int
-+xfs_dax_notify_ddev_failure(
-+	struct xfs_mount	*mp,
-+	xfs_daddr_t		daddr,
-+	xfs_daddr_t		bblen,
-+	int			mf_flags)
-+{
-+	struct xfs_trans	*tp = NULL;
-+	struct xfs_btree_cur	*cur = NULL;
-+	struct xfs_buf		*agf_bp = NULL;
-+	struct failure_info	notify;
-+	int			error = 0;
-+	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
-+	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
-+	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp, daddr + bblen);
-+	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
-+
-+	/*
-+	 * Once a file is found by rmap, we take the intersection of two ranges:
-+	 * notification range and file extent range, to make sure we won't go
-+	 * out of scope.
-+	 */
-+	notify.mf_flags = mf_flags;
-+	notify.startblock = XFS_FSB_TO_AGBNO(mp, fsbno);
-+	notify.blockcount = XFS_BB_TO_FSB(mp, bblen);
-+
-+	error = xfs_trans_alloc_empty(mp, &tp);
-+	if (error)
-+		return error;
-+
-+	for (; agno <= end_agno; agno++) {
-+		struct xfs_rmap_irec	ri_low = { };
-+		struct xfs_rmap_irec	ri_high;
-+
-+		error = xfs_alloc_read_agf(mp, tp, agno, 0, &agf_bp);
-+		if (error)
-+			break;
-+
-+		cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, agf_bp->b_pag);
++	if (page->mapping) {
++		/* flag already set */
++		if (dax_mapping_is_cow(page->mapping))
++			return false;
 +
 +		/*
-+		 * Set the rmap range from ri_low to ri_high, which represents
-+		 * a [start, end] where we looking for the files or metadata.
-+		 * The part of range out of a AG will be ignored.  So, it's fine
-+		 * to set ri_low to "startblock" in all loops.  When it reaches
-+		 * the last AG, set the ri_high to "endblock" to make sure we
-+		 * actually end at the end.
++		 * This page has been mapped even before it is shared, just
++		 * need to set this FS_DAX_MAPPING_COW flag.
 +		 */
-+		memset(&ri_high, 0xFF, sizeof(ri_high));
-+		ri_low.rm_startblock = XFS_FSB_TO_AGBNO(mp, fsbno);
-+		if (agno == end_agno)
-+			ri_high.rm_startblock = XFS_FSB_TO_AGBNO(mp, end_fsbno);
-+
-+		error = xfs_rmap_query_range(cur, &ri_low, &ri_high,
-+				xfs_dax_failure_fn, &notify);
-+		xfs_btree_del_cursor(cur, error);
-+		xfs_trans_brelse(tp, agf_bp);
-+		if (error)
-+			break;
-+
-+		fsbno = XFS_AGB_TO_FSB(mp, agno + 1, 0);
++		dax_mapping_set_cow_flag(page->mapping);
++		return true;
 +	}
-+
-+	xfs_trans_cancel(tp);
-+	return error;
++	/* Newly associate CoW mapping */
++	dax_mapping_set_cow_flag(page->mapping);
++	return false;
 +}
 +
-+static int
-+xfs_dax_notify_failure(
-+	struct dax_device	*dax_dev,
-+	u64			offset,
-+	u64			len,
-+	int			mf_flags)
-+{
-+	struct xfs_mount	*mp = dax_get_holder(dax_dev);
-+
-+	if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_daxdev == dax_dev) {
-+		xfs_warn(mp,
-+			 "notify_failure() not supported on realtime device!");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
-+	    mp->m_logdev_targp != mp->m_ddev_targp) {
-+		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
-+		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	if (!xfs_has_rmapbt(mp)) {
-+		xfs_warn(mp, "notify_failure() needs rmapbt enabled!");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (offset < mp->m_ddev_targp->bt_dax_part_off ||
-+	    ((offset + len) > mp->m_ddev_targp->bt_bdev->bd_nr_sectors <<
-+				SECTOR_SHIFT)) {
-+		xfs_warn(mp, "notify_failure() goes out of the scope.");
-+		return -ENXIO;
-+	}
-+
-+	offset -= mp->m_ddev_targp->bt_dax_part_off;
-+	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
-+			mf_flags);
-+}
-+
-+const struct dax_holder_operations xfs_dax_holder_operations = {
-+	.notify_failure		= xfs_dax_notify_failure,
-+};
-diff --git a/fs/xfs/xfs_notify_failure.h b/fs/xfs/xfs_notify_failure.h
-new file mode 100644
-index 000000000000..f40cb315e7ce
---- /dev/null
-+++ b/fs/xfs/xfs_notify_failure.h
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2021 Fujitsu.  All Rights Reserved.
++ * When it is called in dax_insert_entry(), the cow flag will indicate that
++ * whether this entry is shared by multiple files.  If so, set the page->mapping
++ * to be FS_DAX_MAPPING_COW, and use page->index as refcount.
+  */
+ static void dax_associate_entry(void *entry, struct address_space *mapping,
+-		struct vm_area_struct *vma, unsigned long address)
++		struct vm_area_struct *vma, unsigned long address, bool cow)
+ {
+ 	unsigned long size = dax_entry_size(entry), pfn, index;
+ 	int i = 0;
+@@ -352,9 +385,17 @@ static void dax_associate_entry(void *entry, struct address_space *mapping,
+ 	for_each_mapped_pfn(entry, pfn) {
+ 		struct page *page = pfn_to_page(pfn);
+ 
+-		WARN_ON_ONCE(page->mapping);
+-		page->mapping = mapping;
+-		page->index = index + i++;
++		if (cow) {
++			if (dax_mapping_set_cow(page)) {
++				/* Was normal, now updated to CoW */
++				page->index = 2;
++			} else
++				page->index++;
++		} else {
++			WARN_ON_ONCE(page->mapping);
++			page->mapping = mapping;
++			page->index = index + i++;
++		}
+ 	}
+ }
+ 
+@@ -370,7 +411,12 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+ 		struct page *page = pfn_to_page(pfn);
+ 
+ 		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
+-		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
++		if (!dax_mapping_is_cow(page->mapping)) {
++			/* keep the CoW flag if this page is still shared */
++			if (page->index-- > 0)
++				continue;
++		} else
++			WARN_ON_ONCE(page->mapping && page->mapping != mapping);
+ 		page->mapping = NULL;
+ 		page->index = 0;
+ 	}
+@@ -810,7 +856,8 @@ static void *dax_insert_entry(struct xa_state *xas,
+ 		void *old;
+ 
+ 		dax_disassociate_entry(entry, mapping, false);
+-		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address);
++		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address,
++				false);
+ 		/*
+ 		 * Only swap our new entry into the page cache if the current
+ 		 * entry is a zero page or an empty entry.  If a normal PTE or
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 1c3b6e5c8bfd..6370d279795a 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -572,6 +572,12 @@ __PAGEFLAG(Reported, reported, PF_NO_COMPOUND)
+ #define PAGE_MAPPING_KSM	(PAGE_MAPPING_ANON | PAGE_MAPPING_MOVABLE)
+ #define PAGE_MAPPING_FLAGS	(PAGE_MAPPING_ANON | PAGE_MAPPING_MOVABLE)
+ 
++/*
++ * Different with flags above, this flag is used only for fsdax mode.  It
++ * indicates that this page->mapping is now under reflink case.
 + */
-+#ifndef __XFS_NOTIFY_FAILURE_H__
-+#define __XFS_NOTIFY_FAILURE_H__
++#define PAGE_MAPPING_DAX_COW	0x1
 +
-+extern const struct dax_holder_operations xfs_dax_holder_operations;
-+
-+#endif  /* __XFS_NOTIFY_FAILURE_H__ */
+ static __always_inline int PageMappingFlags(struct page *page)
+ {
+ 	return ((unsigned long)page->mapping & PAGE_MAPPING_FLAGS) != 0;
 -- 
 2.34.1
 
