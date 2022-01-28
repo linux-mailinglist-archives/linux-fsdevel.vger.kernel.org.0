@@ -2,100 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7178249F7B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 11:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4741549F7ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 12:09:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347954AbiA1K6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 05:58:24 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:49924 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242852AbiA1K6X (ORCPT
+        id S1348019AbiA1LJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 06:09:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348074AbiA1LJ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 05:58:23 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1FCF561DFF;
-        Fri, 28 Jan 2022 10:58:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF14CC340E0;
-        Fri, 28 Jan 2022 10:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643367502;
-        bh=+zWMkFDrZZM+qbNwpezGJFJ66XZ2aI38VXsj6i5zjVc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=n2GH3c7VO+JatCdg0jYNo1RcnnnE6Tof8QDipRbmPk+HfcvlbFNLW3SMyMW3v9xDR
-         XvcyPjQ+zoBMaFiIKbF/tqUDjVspc1G6LJwMKY4DtoSJ2KXnm/6PcxgIbMDlaMVZXi
-         pb2+obmFd/8+yM0m5/GQrVyAKczJMz9xx29t4vVYf6gfmpiVY+kpqH13W7lmOVz5VY
-         VW19GXitDz+VslMV9LqEoIE2wjWWnUmWV9G550P5RpLY/K7VmgePVtnpx7ceTzmX/J
-         pQfwOpWyooISOPvAVxAcrCNdf/ZYURJx1w+rki4YAv7LBw6X1mzp5ceEXPFVJWonmp
-         lNnYMldKZd+6A==
-Message-ID: <e5bee4a3e8a7c860d447fe74d5cf2d1846e8600d.camel@kernel.org>
-Subject: Re: [PATCH 0/4] cifs: Use fscache I/O again after the rewrite
- disabled it
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>,
-        Steve French <smfrench@gmail.com>
-Cc:     Shyam Prasad N <nspmangalore@gmail.com>,
-        linux-cifs@vger.kernel.org, linux-cachefs@redhat.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jan 2022 05:58:20 -0500
-In-Reply-To: <164329930161.843658.7387773437540491743.stgit@warthog.procyon.org.uk>
-References: <164329930161.843658.7387773437540491743.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        Fri, 28 Jan 2022 06:09:26 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1BDC061749;
+        Fri, 28 Jan 2022 03:09:26 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id e8so5034631ilm.13;
+        Fri, 28 Jan 2022 03:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wDt4jv4w3YC6Q40GetvSo+cqdaAT0L68ivf9sPs/K8Q=;
+        b=EJ4fNl8jGpwOF+l7mYmqwnMdwQaU7ijAZyfJ0sMP9w1lOujGb+aadfBn078cU/LVXQ
+         CIjZFd2s8/1wcIz/IAfucniv59I5ug6C1Wdfc4DmVqaGXWPlVnXX7KfoI2I8zkuY9qlP
+         slYslrq1aeQhKYeGIWKYTvFuoORRrgA2yZSefrae4Ke3pluEiuMI7Dxy/N72sYXzYXx7
+         Fr+7EpWiyElnfqtE0K2vQhHIsB3XjL8vEbzhId/UQ5TsdvG+J8gcQUD25CwxTorFlFOy
+         5OjZ4v7itBoShKaf4qwlumgWCxZW6/wuL1AbNbZbaJQHo00QFfeTgUAUvJl5/SQ3uTFN
+         KTLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wDt4jv4w3YC6Q40GetvSo+cqdaAT0L68ivf9sPs/K8Q=;
+        b=44c7AKpxFYlPu29UIm0/tkLWMYAjRyJ4G8rq2VJWNmb2CaT6jbAlRl5J23zQOmUvik
+         kk+y83cmxZ1hRutFHauwT0XMinHFhvxGlnFy/SgLOJORtwx6GeiWl14FE9wIJUrNes/L
+         oatT/wMpXx7sB+5EsxV8TqLKu8aJ5mkPu5+k8rveHY5CUjXxzb+PxCkAC5nrQfy7ZU8I
+         +1Lb/E1TUsMxcvLV+uJt/za6OzKlnJdjPvpgabcvk3DELUjp7mjYS7nDuKXz9fbd9VM1
+         +dqVp8b8OCMXAVfyh/eF98rsFRnQv5/IjZUIttaLN0+9Q3ypkxi+5u7KwfCU7aB4BISl
+         bq8A==
+X-Gm-Message-State: AOAM531PhPQTIN9u1Ug4SaaqecSDVMfFfDKZ3Gm+FUL8UPJnk+obnnna
+        m3tzF/liMSCZzQXT6MFl2k4Zj1IewVIM9GSGdmQ=
+X-Google-Smtp-Source: ABdhPJz/5GVv0Jc1fW6Af1E7s8iF0un/k2ZX3rLG5cEAum2D2zhCnqeEMRYTO6D1GV6CZwFQWFxbLpDEovkL/Cmpe5U=
+X-Received: by 2002:a92:c567:: with SMTP id b7mr5367192ilj.24.1643368165717;
+ Fri, 28 Jan 2022 03:09:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20220128074731.1623738-1-hch@lst.de> <918225.1643364739@warthog.procyon.org.uk>
+In-Reply-To: <918225.1643364739@warthog.procyon.org.uk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 28 Jan 2022 13:09:14 +0200
+Message-ID: <CAOQ4uxhRS3MGEnCUDcsB1RL0d1Oy0g0Rzm75hVFAJw2dJ7uKSA@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: rename S_KERNEL_FILE
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-01-27 at 16:01 +0000, David Howells wrote:
-> Hi Steve,
-> 
-> Here are some patches to make cifs actually do I/O to the cache after it
-> got disabled in the fscache rewrite[1] plus a warning fix that you might
-> want to detach and take separately:
-> 
->  (1) Fix a kernel doc warning.
-> 
->  (2) Change cifs from using ->readpages() to using ->readahead().
-> 
->  (3) Provide a netfs cache op to query for the presence of data in the
->      cache.[*]
-> 
->  (4) Make ->readahead() call
-> 
-> The patches can be found here also:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-rewrite
-> 
-> David
-> 
-> [*] Ideally, we would use the netfslib read helpers, but it's probably better
->     to roll iterators down into cifs's I/O layer before doing that[2].
-> 
-> Link: https://lore.kernel.org/r/164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk/ [1]
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-experimental [2]
-> 
-> ---
-> David Howells (4):
->       Fix a warning about a malformed kernel doc comment in cifs by removing the
->       cifs: Transition from ->readpages() to ->readahead()
->       netfs, cachefiles: Add a method to query presence of data in the cache
->       cifs: Implement cache I/O by accessing the cache directly
-> 
-> 
->  Documentation/filesystems/netfs_library.rst |  16 ++
->  fs/cachefiles/io.c                          |  59 ++++++
->  fs/cifs/connect.c                           |   2 +-
->  fs/cifs/file.c                              | 221 ++++++++------------
->  fs/cifs/fscache.c                           | 126 +++++++++--
->  fs/cifs/fscache.h                           |  79 ++++---
->  include/linux/netfs.h                       |   7 +
->  7 files changed, 322 insertions(+), 188 deletions(-)
-> 
-> 
+On Fri, Jan 28, 2022 at 12:12 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Christoph Hellwig <hch@lst.de> wrote:
+>
+> > S_KERNEL_FILE is grossly misnamed.  We have plenty of files hold
+>
+> "held".
+>
+> > open by the kernel kernel using filp_open.
+>
+> You said "kernel" twice.
+>
+> And so what?  Cachefiles holds files open by filp_open - but it can only do so
+> temporarily otherwise EMFILE/ENFILE and OOMs start to become a serious problem
+> because it could end up holding thousands of files open (one or two of the
+> xfstests cause this to happen).
+>
+> Further, holding the file open *doesn't* prevent cachefilesd from trying to
+> cull the file to make space whilst it's "in use".
+>
+> Yet further, I'm not holding the directories that form the cache layout open
+> with filp_open at all - I'm not reading them, so that would just be a waste of
+> resources - but I really don't want cachefilesd culling them because it sees
+> they're empty but cachefiles is holding them ready.
+>
+> > This flag OTOH signals the inode as being a special snowflake that
+> > cachefiles holds onto that can't be unlinked because of ..., erm, pixie
+> > dust.
+>
+> Really?  I presume you read the explanation I gave of the races that are a
+> consequence of splitting the driver between the kernel and userspace?  I could
+> avoid them - or at least mitigate them - by keeping my own list of all the
+> inodes in use by cachefiles so that cachefilesd can query it.  I did, in fact,
+> use to have such a list, but the core kernel already has such lists and the
+> facilities to translate pathnames into internal objects, so my stuff ought to
+> be redundant - all I need is one inode flag.
+>
+> Further, that inode flag can be shared with anyone else who wants to do
+> something similar.  It's just an "I'm using this" lock.  There's no particular
+> reason to limit its use to cachefiles.  In fact, it is better if it is then
+> shared so that in the unlikely event that two drivers try to use the same
+> file, an error will occur.
+>
 
-Acked-by: Jeff Layton <jlayton@kernel.org>
+Good idea, but then the helpers to set the flag should not be internal
+to cachefiles and the locking semantics should be clear.
+FYI, overlayfs already takes an "exclusive lock" on upper/work dir
+among all ovl instances.
+
+How do you feel about hoisting ovl_inuse_* helpers to fs.h
+and rename s/I_OVL_INUSE/I_EXCL_INUSE?
+
+Whether deny rmdir should have its own flag or not I don't know,
+but from ovl POV I *think* it should not be a problem to deny rmdir
+for the ovl upper/work dirs as long as ovl is mounted(?).
+
+From our experience, adding the exclusive lock caused regressions
+in setups with container runtimes that had mount leaks bugs.
+I am hoping that all those mount leaks bugs were fixed, but one never
+knows what sort of regressions deny rmdir of upper/work may cause.
+
+Another problem with generic deny of rmdir is that users getting
+EBUSY have no way to figure out the reason.
+At least for a specific subsystem (i.e. cachefiles) users should be able
+to check if the denied dir is in the subsystem's inventory(?)
+
+Thanks,
+Amir.
