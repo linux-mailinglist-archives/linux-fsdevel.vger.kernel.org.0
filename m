@@ -2,211 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4824A03A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 23:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C881E4A044F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jan 2022 00:40:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350536AbiA1WaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 17:30:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40512 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351283AbiA1WaO (ORCPT
+        id S1351786AbiA1XkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 18:40:04 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:47478 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351773AbiA1XkD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 17:30:14 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA80C06173B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jan 2022 14:30:13 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id v3so6498956pgc.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jan 2022 14:30:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=UQU/zzOIGiyUM8/XLeItcnOhkfwjpiwMD0bTk1M1h+c=;
-        b=jT2/6eWTnRxYOlLDgGUVm6GoKxvh3ihMwsjZsge72KQr5rO94AiWzyRB9S/F8+nezH
-         6GNP+mG2ncB+2c9SeTf952+m26365xklIWFgbK0QJs4L9rcSCV3zREErS/hnjU+ESu6o
-         zs9dPkuxEA4/h44VByiEciXRGX+0o6P4CHv1M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=UQU/zzOIGiyUM8/XLeItcnOhkfwjpiwMD0bTk1M1h+c=;
-        b=Z0SgDx2Jw/zbCMBVLep9Cw2gAzE2NlSlb583iz27t857Bs2J7Rcap5NrB+Kjx0Y5Kk
-         S1TFgnQn5epuLUsTC5ifhNKriGIWcvR0eRFwOx+/yFTtCn77rHyxjDDRqPM2ppWoK8VI
-         om/twmVY4J8qNjgrTZcJYp8Yb2RlMO9VLlkdGeB+qeDIsNXPjetscR+P3aWmq/zFcprN
-         3ozt3ss3YLDSryoLn+5BmxrqINO/fmmFZMRImVv6EjDdvfGPgRR3eLZGgGhK9ho5mXK0
-         hTHxIRccN4NhNqTcNGAuJX0IEtfrjWnh4zvi1Ohx69KnWP5qIDPMHTGGYpnF42l/ifqQ
-         vrUQ==
-X-Gm-Message-State: AOAM5326vdQR5KvT8U2YaVWH0WLPE/CsYRZ9gPRDA9Ppe/XubREbqN4E
-        Tm1JDCODYwQId9XDmnfvKG+Sgw==
-X-Google-Smtp-Source: ABdhPJyUHOWf/aLPEpgdmUJXWIEYc1ZsCgRh+fo8EE0lsoiW4r9GmsIXssoGzqEE853Xkwa5k4vN8g==
-X-Received: by 2002:a63:4e58:: with SMTP id o24mr8147584pgl.374.1643409013479;
-        Fri, 28 Jan 2022 14:30:13 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g18sm3251898pju.7.2022.01.28.14.30.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jan 2022 14:30:13 -0800 (PST)
-Date:   Fri, 28 Jan 2022 14:30:12 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Magnus =?iso-8859-1?Q?Gro=DF?= <magnus.gross@rwth-aachen.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] elf: Relax assumptions about vaddr ordering
-Message-ID: <202201281347.F36AEA5B61@keescook>
-References: <YfF18Dy85mCntXrx@fractal.localdomain>
- <202201260845.FCBC0B5A06@keescook>
- <202201262230.E16DF58B@keescook>
- <YfOooXQ2ScpZLhmD@fractal.localdomain>
+        Fri, 28 Jan 2022 18:40:03 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6AB4B61AB2;
+        Fri, 28 Jan 2022 23:40:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D88C340E7;
+        Fri, 28 Jan 2022 23:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643413201;
+        bh=A+dIr2ya4MfZD/2VpyiH8hHHsI4LewYXA+Fa5Nd6nXE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oQ4bHp0cWtAcolXJh+d8nqrKSLLjskoIRBUKOWvODAPFP7wcQ9jurmCAhgcPofhLY
+         zFY2HkXWsOpdPkoUpUy3IirMcDmt6/V7JxtzYTAPQqEYV/dUjp13waVjBFGQauCiDG
+         SHe4xAaSKUlMwcN5ZdDbp+YNrLzxbGkCISz2YOnaBbGKhuiGC4k0VV/RBWXDXLH8IB
+         F+Ejz6t7SEW55Zz9Mtms+95THWoeO/SHlpBwDQTEU15LE689E8KpzwGJbOomnzWKjx
+         GCHhSOZwWPch1yat38XkIeOAS8nUd3SsHWV44H04hT6Ewhcbe1GVNzxt9ZkertSoSm
+         A+fig0YaH6efw==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Subject: [PATCH v11 0/5] add support for direct I/O with fscrypt using blk-crypto
+Date:   Fri, 28 Jan 2022 15:39:35 -0800
+Message-Id: <20220128233940.79464-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.35.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <YfOooXQ2ScpZLhmD@fractal.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 28, 2022 at 09:26:09AM +0100, Magnus Groﬂ wrote:
-> On Wed, Jan 26, 2022 at 10:31:42PM -0800 Kees Cook wrote:
-> > On Wed, Jan 26, 2022 at 08:50:15AM -0800, Kees Cook wrote:
-> > > On Wed, Jan 26, 2022 at 05:25:20PM +0100, Magnus Groﬂ wrote:
-> > > > From ff4dde97e82727727bda711f2367c05663498b24 Mon Sep 17 00:00:00 2001
-> > > > From: =?UTF-8?q?Magnus=20Gro=C3=9F?= <magnus.gross@rwth-aachen.de>
-> > > > Date: Wed, 26 Jan 2022 16:35:07 +0100
-> > > > Subject: [PATCH] elf: Relax assumptions about vaddr ordering
-> > > > MIME-Version: 1.0
-> > > > Content-Type: text/plain; charset=UTF-8
-> > > > Content-Transfer-Encoding: 8bit
-> > > > 
-> > > > Commit 5f501d555653 ("binfmt_elf: reintroduce using
-> > > > MAP_FIXED_NOREPLACE") introduced a regression, where the kernel now
-> > > > assumes that PT_LOAD segments are ordered by vaddr in load_elf_binary().
-> > > > 
-> > > > Specifically consider an ELF binary with the following PT_LOAD segments:
-> > > > 
-> > > > Type  Offset   VirtAddr   PhysAddr   FileSiz  MemSiz    Flg Align
-> > > > LOAD  0x000000 0x08000000 0x08000000 0x474585 0x474585  R E 0x1000
-> > > > LOAD  0x475000 0x08475000 0x08475000 0x090a4  0xc6c10   RW  0x1000
-> > > > LOAD  0x47f000 0x00010000 0x00010000 0x00000  0x7ff0000     0x1000
-> > > > 
-> > > > Note how the last segment is actually the first segment and vice versa.
-> > > > 
-> > > > Since total_mapping_size() only computes the difference between the
-> > > > first and the last segment in the order that they appear, it will return
-> > > > a size of 0 in this case, thus causing load_elf_binary() to fail, which
-> > > > did not happen before that change.
-> > > > 
-> > > > Strictly speaking total_mapping_size() made that assumption already
-> > > > before that patch, but the issue did not appear because the old
-> > > > load_addr_set guards never allowed this call to total_mapping_size().
-> > > > 
-> > > > Instead of fixing this by reverting to the old load_addr_set logic, we
-> > > > fix this by comparing the correct first and last segments in
-> > > > total_mapping_size().
-> > > 
-> > > Ah, nice. Yeah, this is good.
-> > > 
-> > > > Signed-off-by: Magnus Groﬂ <magnus.gross@rwth-aachen.de>
-> > > 
-> > > Fixes: 5f501d555653 ("binfmt_elf: reintroduce using MAP_FIXED_NOREPLACE")
-> > > Cc: stable@vger.kernel.org
-> > > Acked-by: Kees Cook <keescook@chromium.org>
-> > 
-> > Andrew, can you pick this up too?
-> > 
-> > -Kees
-> > 
-> 
-> May I also propose to include this patch in whatever mailing-list
-> corresponds to the 5.16.x bugfix series?
-> It turns out that almost all native Linux games published by the Virtual
-> Programming company have this kind of weird PT_LOAD ordering including
-> the famous Bioshock Infinite, so right now those games are all
-> completely broken since Linux 5.16.
-> 
-> P.S.: Someone should probably ask Virtual Programming, what kind of
-> tooling they use to create such convoluted ELF binaries.
+[Note: I'm planning to send a patchset adding STATX_DIRECTIO as was
+discussed on v10, but that will be a separate patchset.]
 
-Oh, actually, this was independently fixed:
-https://lore.kernel.org/all/YVmd7D0M6G/DcP4O@localhost.localdomain/
+Encrypted files traditionally haven't supported DIO, due to the need to
+encrypt/decrypt the data.  However, when the encryption is implemented
+using inline encryption (blk-crypto) instead of the traditional
+filesystem-layer encryption, it is straightforward to support DIO.
 
-Alexey, you never answered by question about why we can't use a proper
-type and leave the ELF_PAGESTART() macros alone:
-https://lore.kernel.org/all/202110071038.B589687@keescook/
+This series adds support for this.  There are multiple use cases for DIO
+on encrypted files, but avoiding double caching on loopback devices
+located in an encrypted directory is the main one currently.
 
-I still don't like the use of "int" in ELF_PAGESTART(), but I agree
-it shouldn't cause a problem. I just really don't like mixing a signed
-type with address calculations, from a robustness perspective.
+v1 through v9 of this series were sent out by Satya Tangirala.  I've
+cleaned up a few things since Satya's last version
+(https://lore.kernel.org/all/20210604210908.2105870-1-satyat@google.com/T/#u).
+But more notably, I've made a couple simplifications.
 
-Andrew, can you update elf-fix-overflow-in-total-mapping-size-calculation.patch
-to include:
+First, since f2fs has now been converted to use iomap for DIO, I've
+dropped the patch which added fscrypt support to fs/direct-io.c.
 
-Fixes: 5f501d555653 ("binfmt_elf: reintroduce using MAP_FIXED_NOREPLACE")
-Cc: stable@vger.kernel.org
-Acked-by: Kees Cook <keescook@chromium.org>
+Second, I've returned to the original design where DIO requests must be
+fully aligned to the FS block size in terms of file position, length,
+and memory buffers.  Satya previously was pursuing a slightly different
+design, where the memory buffers (but not the file position and length)
+were allowed to be aligned to just the block device logical block size.
+This was at the request of Dave Chinner on v4 and v6 of the patchset
+(https://lore.kernel.org/linux-fscrypt/20200720233739.824943-1-satyat@google.com/T/#u
+and
+https://lore.kernel.org/linux-fscrypt/20200724184501.1651378-1-satyat@google.com/T/#u).
 
-Thanks!
+I believe that approach is a dead end, for two reasons.  First, it
+necessarily causes it to be possible that crypto data units span bvecs.
+Splits cannot occur at such locations; however the block layer currently
+assumes that bios can be split at any bvec boundary.  Changing that is
+quite difficult, as Satya's v9 patchset demonstrated.  This is not an
+issue if we require FS block aligned buffers instead.  Second, it
+doesn't change the fact that FS block alignment is still required for
+the file position and I/O length; this is unavoidable due to the
+granularity of encryption being the FS block size.  So, it seems that
+relaxing the memory buffer alignment requirement wouldn't make things
+meaningfully easier for applications, which raises the question of why
+we would bother with it in the first place.
 
--Kees
+Christoph Hellwig also said that he much prefers that fscrypt DIO be
+supported without sector-only alignment to start:
+https://lore.kernel.org/r/YPu+88KReGlt94o3@infradead.org
 
-> 
-> > > 
-> > > -Kees
-> > > 
-> > > > ---
-> > > >  fs/binfmt_elf.c | 18 ++++++++++++++----
-> > > >  1 file changed, 14 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > > > index f8c7f26f1fbb..0caaad9eddd1 100644
-> > > > --- a/fs/binfmt_elf.c
-> > > > +++ b/fs/binfmt_elf.c
-> > > > @@ -402,19 +402,29 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
-> > > >  static unsigned long total_mapping_size(const struct elf_phdr *cmds, int nr)
-> > > >  {
-> > > >  	int i, first_idx = -1, last_idx = -1;
-> > > > +	unsigned long min_vaddr = ULONG_MAX, max_vaddr = 0;
-> > > >  
-> > > >  	for (i = 0; i < nr; i++) {
-> > > >  		if (cmds[i].p_type == PT_LOAD) {
-> > > > -			last_idx = i;
-> > > > -			if (first_idx == -1)
-> > > > +			/*
-> > > > +			 * The PT_LOAD segments are not necessarily ordered
-> > > > +			 * by vaddr. Make sure that we get the segment with
-> > > > +			 * minimum vaddr (maximum vaddr respectively)
-> > > > +			 */
-> > > > +			if (cmds[i].p_vaddr <= min_vaddr) {
-> > > >  				first_idx = i;
-> > > > +				min_vaddr = cmds[i].p_vaddr;
-> > > > +			}
-> > > > +			if (cmds[i].p_vaddr >= max_vaddr) {
-> > > > +				last_idx = i;
-> > > > +				max_vaddr = cmds[i].p_vaddr;
-> > > > +			}
-> > > >  		}
-> > > >  	}
-> > > >  	if (first_idx == -1)
-> > > >  		return 0;
-> > > >  
-> > > > -	return cmds[last_idx].p_vaddr + cmds[last_idx].p_memsz -
-> > > > -				ELF_PAGESTART(cmds[first_idx].p_vaddr);
-> > > > +	return max_vaddr + cmds[last_idx].p_memsz - ELF_PAGESTART(min_vaddr);
-> > > >  }
-> > > >  
-> > > >  static int elf_read(struct file *file, void *buf, size_t len, loff_t pos)
-> > > > -- 
-> > > > 2.34.1
-> > > 
-> > > -- 
-> > > Kees Cook
-> > 
-> > -- 
-> > Kees Cook
+Given the above, as far as I know the only remaining objection to this
+patchset would be that DIO constraints aren't sufficiently discoverable
+by userspace.  Now, to put this in context, this is a longstanding issue
+with all Linux filesystems, except XFS which has XFS_IOC_DIOINFO.  It's
+not specific to this feature, and it doesn't actually seem to be too
+important in practice; many other filesystem features place constraints
+on DIO, and f2fs even *only* allows fully FS block size aligned DIO.
+(And for better or worse, many systems using fscrypt already have
+out-of-tree patches that enable DIO support, and people don't seem to
+have trouble with the FS block size alignment requirement.)
 
+To address the issue of DIO constraints being insufficiently
+discoverable, I plan to make statx() expose this information.
+
+This series applies to v5.17-rc1.
+
+Changed v10 => v11:
+  * Changed fscrypt_dio_unsupported() back to fscrypt_dio_supported().
+  * Removed a mention of f2fs from fscrypt_dio_supported().
+  * Added Reviewed-by and Acked-by tags, including a couple from earlier
+    I had dropped due to the renaming of fscrypt_dio_supported().
+  * In fscrypt_limit_io_blocks(), don't load i_crypt_info until it's
+    known to be valid, to avoid confusion as is done elsewhere.
+
+Eric Biggers (5):
+  fscrypt: add functions for direct I/O support
+  iomap: support direct I/O with fscrypt using blk-crypto
+  ext4: support direct I/O with fscrypt using blk-crypto
+  f2fs: support direct I/O with fscrypt using blk-crypto
+  fscrypt: update documentation for direct I/O support
+
+ Documentation/filesystems/fscrypt.rst | 25 ++++++-
+ fs/crypto/crypto.c                    |  8 +++
+ fs/crypto/inline_crypt.c              | 93 +++++++++++++++++++++++++++
+ fs/ext4/file.c                        | 10 +--
+ fs/ext4/inode.c                       |  7 ++
+ fs/f2fs/data.c                        |  7 ++
+ fs/f2fs/f2fs.h                        |  6 +-
+ fs/iomap/direct-io.c                  |  6 ++
+ include/linux/fscrypt.h               | 18 ++++++
+ 9 files changed, 173 insertions(+), 7 deletions(-)
+
+
+base-commit: e783362eb54cd99b2cac8b3a9aeac942e6f6ac07
 -- 
-Kees Cook
+2.35.0
+
