@@ -2,84 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E00C49EE33
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jan 2022 23:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCE349EFDB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 01:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238808AbiA0Wmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 17:42:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52076 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231520AbiA0Wmg (ORCPT
+        id S241256AbiA1Ago (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 19:36:44 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:40146 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229812AbiA1Ago (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 17:42:36 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B954CC061714;
-        Thu, 27 Jan 2022 14:42:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BF2ADB818E6;
-        Thu, 27 Jan 2022 22:42:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93342C340E4;
-        Thu, 27 Jan 2022 22:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1643323352;
-        bh=ybh+vNa1e2zVCBIHmgIav4rSBCIa4tEXBrjj/Zvd9DM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lD8DNYdSP5VgdUVvLTzLs87NT6X2RUv/tVO0wVWZV57Mo8tiF+Cy9CVqnSr4Mr28N
-         /4z/vln9zP3ZnibjoeX42f/bT+EANd4Y6/PvlZ8IiaLj4IayJe8a69r3sno42DD5jQ
-         fiofeE7oSvVhmRsxcbaFoTER4oAWLDgl8zvqXutM=
-Date:   Thu, 27 Jan 2022 14:42:29 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-nilfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 0/9] Remove remaining parts of congestions tracking
- code.
-Message-Id: <20220127144229.a7109a508521db5e8ddda09c@linux-foundation.org>
-In-Reply-To: <164325106958.29787.4865219843242892726.stgit@noble.brown>
-References: <164325106958.29787.4865219843242892726.stgit@noble.brown>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 27 Jan 2022 19:36:44 -0500
+Received: from dread.disaster.area (pa49-179-45-11.pa.nsw.optusnet.com.au [49.179.45.11])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B288D10C5191;
+        Fri, 28 Jan 2022 11:36:42 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nDFFp-0051pf-5M; Fri, 28 Jan 2022 11:36:41 +1100
+Date:   Fri, 28 Jan 2022 11:36:41 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/6] NFSD: Fix NFSv4 SETATTR's handling of large file
+ sizes
+Message-ID: <20220128003641.GK59715@dread.disaster.area>
+References: <164329914731.5879.7791856151631542523.stgit@bazille.1015granger.net>
+ <164329971128.5879.15718457509790221509.stgit@bazille.1015granger.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <164329971128.5879.15718457509790221509.stgit@bazille.1015granger.net>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=61f33a9a
+        a=Eslsx4mF8WGvnV49LKizaA==:117 a=Eslsx4mF8WGvnV49LKizaA==:17
+        a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
+        a=evYJbCMsSUYqYQwoNxoA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 27 Jan 2022 13:46:29 +1100 NeilBrown <neilb@suse.de> wrote:
-
-> Congestion hasn't been reliably tracked for quite some time.
-> Most MM uses of it for guiding writeback decisions were removed in 5.16.
-> Some other uses were removed in 17-rc1.
+On Thu, Jan 27, 2022 at 11:08:31AM -0500, Chuck Lever wrote:
+> iattr::ia_size is a loff_t. decode_fattr4() dumps a full u64 value
+> in there. If that value is larger than S64_MAX, then ia_size has
+> underflowed.
 > 
-> This series removes the remaining places that test for congestion, and
-> the few places which still set it.
-> 
-> The second patch touches a few filesystems.  I didn't think there was
-> much value in splitting this out by filesystems, but if maintainers
-> would rather I did that, I will.
-> 
-> The f2fs, cephfs, fuse, NFS, and block patches can go through the
-> respective trees proving the final patch doesn't land until after they
-> all do - so maybe it should be held for 5.18-rc2 if all the rest lands
-> by 5.18-rc1.
+> In this case the negative size is passed through to the VFS and
+> underlying filesystems. I've observed XFS behavior: it returns
+> EIO but still attempts to access past the end of the device.
 
-Plan B: I'll just take everything.  While collecting tested-bys and
-acked-bys from filesystem maintainers (please).
+What attempts to access beyond the end of the device? A file offset
+is not a disk offset, and the filesystem cannot allocate blocks for
+IO that are outside the device boundaries. So I don't understand how
+setting an inode size of >LLONGMAX can cause the filesystem to
+access blocks outside the range it can allocate and map IO to. If
+this falls through to trying to access data outside the range the
+filesystem is allowed to access then we've got a bug that needs to
+be fixed.
 
+Can you please clarify the behaviour that is occurring here (stack
+traces demonstrating the IO path that leads to access past the end
+of device would be useful) so we can look into this further?
+
+> IOW it assumes the caller has already sanity-checked the value.
+
+Every filesystem assumes that the iattr that is passed to ->setattr
+by notify_change() has been sanity checked and the parameters are
+within the valid VFS supported ranges, not just XFS. Perhaps this
+check should be in notify_change, not in the callers?
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
