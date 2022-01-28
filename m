@@ -2,142 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 979644A0391
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 23:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C4824A03A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 23:30:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239780AbiA1WXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 17:23:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38780 "EHLO
+        id S1350536AbiA1WaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 17:30:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350036AbiA1WXE (ORCPT
+        with ESMTP id S1351283AbiA1WaO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 17:23:04 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D41C06173B;
-        Fri, 28 Jan 2022 14:23:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4AF4CB80D50;
-        Fri, 28 Jan 2022 22:23:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0194C340E7;
-        Fri, 28 Jan 2022 22:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643408581;
-        bh=Y8FxnAdX9n8TxRkQk5LvtXGKosxm4BS7eqBiMD65ByQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZTfM2zWOLRYFEH25Aw9j8R4WbZsZabZ5sjIueAaAyaJcKZPArpQPQxsnZcl8AeCgm
-         HE/saeGpzbtoKawDale/41m9c4PaNrgZSXOn8VpkpGccgYkV3deFnbrJkaUKkVYCnL
-         u3tDTUtNgkrWnifL/9+PMuBTGwP16kcDPRuis2e6A0nX7WtTBAraPBgdM9SrP8krgk
-         +LvjFDZki1L7u0Ooy3hrykCIg/zzIXAm61cG6aNvJPxKgoP413OhLynWT7hE85Y2PJ
-         Km97SuJkut8rSMQFLVOy7oDw3d9oovHeKTxjHudOqAECqziPmTtF/p08wlXZ3pQGXL
-         8S2mnU+3NfMzw==
-Date:   Fri, 28 Jan 2022 14:23:00 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Chandan Babu R <chandan.babu@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] xfs: use vfs helper to update file attributes after
- fallocate
-Message-ID: <20220128222300.GO13563@magnolia>
-References: <164316352410.2600373.17669839881121774801.stgit@magnolia>
- <164316352961.2600373.9191916389107843284.stgit@magnolia>
- <87k0ekciiv.fsf@debian-BULLSEYE-live-builder-AMD64>
+        Fri, 28 Jan 2022 17:30:14 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA80C06173B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jan 2022 14:30:13 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id v3so6498956pgc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jan 2022 14:30:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=UQU/zzOIGiyUM8/XLeItcnOhkfwjpiwMD0bTk1M1h+c=;
+        b=jT2/6eWTnRxYOlLDgGUVm6GoKxvh3ihMwsjZsge72KQr5rO94AiWzyRB9S/F8+nezH
+         6GNP+mG2ncB+2c9SeTf952+m26365xklIWFgbK0QJs4L9rcSCV3zREErS/hnjU+ESu6o
+         zs9dPkuxEA4/h44VByiEciXRGX+0o6P4CHv1M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=UQU/zzOIGiyUM8/XLeItcnOhkfwjpiwMD0bTk1M1h+c=;
+        b=Z0SgDx2Jw/zbCMBVLep9Cw2gAzE2NlSlb583iz27t857Bs2J7Rcap5NrB+Kjx0Y5Kk
+         S1TFgnQn5epuLUsTC5ifhNKriGIWcvR0eRFwOx+/yFTtCn77rHyxjDDRqPM2ppWoK8VI
+         om/twmVY4J8qNjgrTZcJYp8Yb2RlMO9VLlkdGeB+qeDIsNXPjetscR+P3aWmq/zFcprN
+         3ozt3ss3YLDSryoLn+5BmxrqINO/fmmFZMRImVv6EjDdvfGPgRR3eLZGgGhK9ho5mXK0
+         hTHxIRccN4NhNqTcNGAuJX0IEtfrjWnh4zvi1Ohx69KnWP5qIDPMHTGGYpnF42l/ifqQ
+         vrUQ==
+X-Gm-Message-State: AOAM5326vdQR5KvT8U2YaVWH0WLPE/CsYRZ9gPRDA9Ppe/XubREbqN4E
+        Tm1JDCODYwQId9XDmnfvKG+Sgw==
+X-Google-Smtp-Source: ABdhPJyUHOWf/aLPEpgdmUJXWIEYc1ZsCgRh+fo8EE0lsoiW4r9GmsIXssoGzqEE853Xkwa5k4vN8g==
+X-Received: by 2002:a63:4e58:: with SMTP id o24mr8147584pgl.374.1643409013479;
+        Fri, 28 Jan 2022 14:30:13 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id g18sm3251898pju.7.2022.01.28.14.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jan 2022 14:30:13 -0800 (PST)
+Date:   Fri, 28 Jan 2022 14:30:12 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Magnus =?iso-8859-1?Q?Gro=DF?= <magnus.gross@rwth-aachen.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] elf: Relax assumptions about vaddr ordering
+Message-ID: <202201281347.F36AEA5B61@keescook>
+References: <YfF18Dy85mCntXrx@fractal.localdomain>
+ <202201260845.FCBC0B5A06@keescook>
+ <202201262230.E16DF58B@keescook>
+ <YfOooXQ2ScpZLhmD@fractal.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <87k0ekciiv.fsf@debian-BULLSEYE-live-builder-AMD64>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YfOooXQ2ScpZLhmD@fractal.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 28, 2022 at 03:02:40PM +0530, Chandan Babu R wrote:
-> On 26 Jan 2022 at 07:48, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > In XFS, we always update the inode change and modification time when any
-> > preallocation operation succeeds.  Furthermore, as various fallocate
-> > modes can change the file contents (extending EOF, punching holes,
-> > zeroing things, shifting extents), we should drop file privileges like
-> > suid just like we do for a regular write().  There's already a VFS
-> > helper that figures all this out for us, so use that.
-> >
-> > The net effect of this is that we no longer drop suid/sgid if the caller
-> > is root, but we also now drop file capabilities.
-> >
-> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > ---
-> >  fs/xfs/xfs_file.c |   23 +++++++++++++++++++----
-> >  1 file changed, 19 insertions(+), 4 deletions(-)
-> >
-> >
-> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > index 22ad207bedf4..eee5fb20cf8d 100644
-> > --- a/fs/xfs/xfs_file.c
-> > +++ b/fs/xfs/xfs_file.c
-> > @@ -1057,13 +1057,28 @@ xfs_file_fallocate(
-> >  		}
-> >  	}
-> >  
-> > -	if (file->f_flags & O_DSYNC)
-> > -		flags |= XFS_PREALLOC_SYNC;
-> > -
+On Fri, Jan 28, 2022 at 09:26:09AM +0100, Magnus Groﬂ wrote:
+> On Wed, Jan 26, 2022 at 10:31:42PM -0800 Kees Cook wrote:
+> > On Wed, Jan 26, 2022 at 08:50:15AM -0800, Kees Cook wrote:
+> > > On Wed, Jan 26, 2022 at 05:25:20PM +0100, Magnus Groﬂ wrote:
+> > > > From ff4dde97e82727727bda711f2367c05663498b24 Mon Sep 17 00:00:00 2001
+> > > > From: =?UTF-8?q?Magnus=20Gro=C3=9F?= <magnus.gross@rwth-aachen.de>
+> > > > Date: Wed, 26 Jan 2022 16:35:07 +0100
+> > > > Subject: [PATCH] elf: Relax assumptions about vaddr ordering
+> > > > MIME-Version: 1.0
+> > > > Content-Type: text/plain; charset=UTF-8
+> > > > Content-Transfer-Encoding: 8bit
+> > > > 
+> > > > Commit 5f501d555653 ("binfmt_elf: reintroduce using
+> > > > MAP_FIXED_NOREPLACE") introduced a regression, where the kernel now
+> > > > assumes that PT_LOAD segments are ordered by vaddr in load_elf_binary().
+> > > > 
+> > > > Specifically consider an ELF binary with the following PT_LOAD segments:
+> > > > 
+> > > > Type  Offset   VirtAddr   PhysAddr   FileSiz  MemSiz    Flg Align
+> > > > LOAD  0x000000 0x08000000 0x08000000 0x474585 0x474585  R E 0x1000
+> > > > LOAD  0x475000 0x08475000 0x08475000 0x090a4  0xc6c10   RW  0x1000
+> > > > LOAD  0x47f000 0x00010000 0x00010000 0x00000  0x7ff0000     0x1000
+> > > > 
+> > > > Note how the last segment is actually the first segment and vice versa.
+> > > > 
+> > > > Since total_mapping_size() only computes the difference between the
+> > > > first and the last segment in the order that they appear, it will return
+> > > > a size of 0 in this case, thus causing load_elf_binary() to fail, which
+> > > > did not happen before that change.
+> > > > 
+> > > > Strictly speaking total_mapping_size() made that assumption already
+> > > > before that patch, but the issue did not appear because the old
+> > > > load_addr_set guards never allowed this call to total_mapping_size().
+> > > > 
+> > > > Instead of fixing this by reverting to the old load_addr_set logic, we
+> > > > fix this by comparing the correct first and last segments in
+> > > > total_mapping_size().
+> > > 
+> > > Ah, nice. Yeah, this is good.
+> > > 
+> > > > Signed-off-by: Magnus Groﬂ <magnus.gross@rwth-aachen.de>
+> > > 
+> > > Fixes: 5f501d555653 ("binfmt_elf: reintroduce using MAP_FIXED_NOREPLACE")
+> > > Cc: stable@vger.kernel.org
+> > > Acked-by: Kees Cook <keescook@chromium.org>
+> > 
+> > Andrew, can you pick this up too?
+> > 
+> > -Kees
+> > 
 > 
-> Without the above change, if fallocate() is invoked with FALLOC_FL_PUNCH_HOLE,
-> FALLOC_FL_COLLAPSE_RANGE or FALLOC_FL_INSERT_RANGE, we used to update inode's
-> timestamp, remove setuid/setgid bits and then perform a synchronous
-> transaction commit if O_DSYNC flag is set.
+> May I also propose to include this patch in whatever mailing-list
+> corresponds to the 5.16.x bugfix series?
+> It turns out that almost all native Linux games published by the Virtual
+> Programming company have this kind of weird PT_LOAD ordering including
+> the famous Bioshock Infinite, so right now those games are all
+> completely broken since Linux 5.16.
 > 
-> However, with this patch applied, the transaction (inside
-> xfs_vn_update_time()) that updates file's inode contents (i.e. timestamps and
-> setuid/setgid bits) is not synchronous and hence the O_DSYNC flag is not
-> honored if the fallocate operation is one of FALLOC_FL_PUNCH_HOLE,
-> FALLOC_FL_COLLAPSE_RANGE or FALLOC_FL_INSERT_RANGE.
+> P.S.: Someone should probably ask Virtual Programming, what kind of
+> tooling they use to create such convoluted ELF binaries.
 
-Ah, right.  This bug is covered up by the changes in the last patch, but
-it would break bisection, so I'll clean that up and resubmit.  Thanks
-for the comments!
+Oh, actually, this was independently fixed:
+https://lore.kernel.org/all/YVmd7D0M6G/DcP4O@localhost.localdomain/
 
-> > -	error = xfs_update_prealloc_flags(ip, flags);
-> > +	/* Update [cm]time and drop file privileges like a regular write. */
-> > +	error = file_modified(file);
-> >  	if (error)
-> >  		goto out_unlock;
-> >  
-> > +	/*
-> > +	 * If we need to change the PREALLOC flag, do so.  We already updated
-> > +	 * the timestamps and cleared the suid flags, so we don't need to do
-> > +	 * that again.  This must be committed before the size change so that
-> > +	 * we don't trim post-EOF preallocations.
-> > +	 */
+Alexey, you never answered by question about why we can't use a proper
+type and leave the ELF_PAGESTART() macros alone:
+https://lore.kernel.org/all/202110071038.B589687@keescook/
 
-So the code ends up looking like:
+I still don't like the use of "int" in ELF_PAGESTART(), but I agree
+it shouldn't cause a problem. I just really don't like mixing a signed
+type with address calculations, from a robustness perspective.
 
-	if (file->f_flags & O_DSYNC)
-		flags |= XFS_PREALLOC_SYNC;
-	if (flags) {
-		flags |= XFS_PREALLOC_INVISIBLE;
+Andrew, can you update elf-fix-overflow-in-total-mapping-size-calculation.patch
+to include:
 
-		error = xfs_update_prealloc_flags(ip, flags);
-		if (error)
-			goto out_unlock;
-	}
+Fixes: 5f501d555653 ("binfmt_elf: reintroduce using MAP_FIXED_NOREPLACE")
+Cc: stable@vger.kernel.org
+Acked-by: Kees Cook <keescook@chromium.org>
 
---D
+Thanks!
 
-> > +	if (flags) {
-> > +		flags |= XFS_PREALLOC_INVISIBLE;
-> > +
-> > +		if (file->f_flags & O_DSYNC)
-> > +			flags |= XFS_PREALLOC_SYNC;
-> > +
-> > +		error = xfs_update_prealloc_flags(ip, flags);
-> > +		if (error)
-> > +			goto out_unlock;
-> > +	}
-> > +
-> >  	/* Change file size if needed */
-> >  	if (new_size) {
-> >  		struct iattr iattr;
+-Kees
+
 > 
-> -- 
-> chandan
+> > > 
+> > > -Kees
+> > > 
+> > > > ---
+> > > >  fs/binfmt_elf.c | 18 ++++++++++++++----
+> > > >  1 file changed, 14 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > > > index f8c7f26f1fbb..0caaad9eddd1 100644
+> > > > --- a/fs/binfmt_elf.c
+> > > > +++ b/fs/binfmt_elf.c
+> > > > @@ -402,19 +402,29 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+> > > >  static unsigned long total_mapping_size(const struct elf_phdr *cmds, int nr)
+> > > >  {
+> > > >  	int i, first_idx = -1, last_idx = -1;
+> > > > +	unsigned long min_vaddr = ULONG_MAX, max_vaddr = 0;
+> > > >  
+> > > >  	for (i = 0; i < nr; i++) {
+> > > >  		if (cmds[i].p_type == PT_LOAD) {
+> > > > -			last_idx = i;
+> > > > -			if (first_idx == -1)
+> > > > +			/*
+> > > > +			 * The PT_LOAD segments are not necessarily ordered
+> > > > +			 * by vaddr. Make sure that we get the segment with
+> > > > +			 * minimum vaddr (maximum vaddr respectively)
+> > > > +			 */
+> > > > +			if (cmds[i].p_vaddr <= min_vaddr) {
+> > > >  				first_idx = i;
+> > > > +				min_vaddr = cmds[i].p_vaddr;
+> > > > +			}
+> > > > +			if (cmds[i].p_vaddr >= max_vaddr) {
+> > > > +				last_idx = i;
+> > > > +				max_vaddr = cmds[i].p_vaddr;
+> > > > +			}
+> > > >  		}
+> > > >  	}
+> > > >  	if (first_idx == -1)
+> > > >  		return 0;
+> > > >  
+> > > > -	return cmds[last_idx].p_vaddr + cmds[last_idx].p_memsz -
+> > > > -				ELF_PAGESTART(cmds[first_idx].p_vaddr);
+> > > > +	return max_vaddr + cmds[last_idx].p_memsz - ELF_PAGESTART(min_vaddr);
+> > > >  }
+> > > >  
+> > > >  static int elf_read(struct file *file, void *buf, size_t len, loff_t pos)
+> > > > -- 
+> > > > 2.34.1
+> > > 
+> > > -- 
+> > > Kees Cook
+> > 
+> > -- 
+> > Kees Cook
+
+-- 
+Kees Cook
