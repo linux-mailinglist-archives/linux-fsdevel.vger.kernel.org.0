@@ -2,102 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8EA49F684
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 10:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAA3D49F6AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 10:51:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347675AbiA1JiN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 04:38:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59470 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243717AbiA1JiI (ORCPT
+        id S1347739AbiA1JvI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 04:51:08 -0500
+Received: from smtpbguseast3.qq.com ([54.243.244.52]:46186 "EHLO
+        smtpbguseast3.qq.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234467AbiA1JvI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 04:38:08 -0500
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363D4C061747
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jan 2022 01:38:08 -0800 (PST)
-Received: by mail-vs1-xe2e.google.com with SMTP id t20so2279522vsq.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jan 2022 01:38:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E/VIyc5JpK2Sy5loT9a2HcHWg2TrorJJxRaogeKP25w=;
-        b=EibPllimp8WZIwxJdUGUIFAlIuZdyznPvrXJ7caP5EDkiBNUVM4ihiUoIfNxC6TVSx
-         YE207qfvpl7N/VHWz1SefuMcAFD5mqGieRSegzXNyYGWfyIdkPkwWByrIvqWimbKQ8Un
-         /lbUGxvPlDX06Jf/32nPUu5Q90vZSrQ0/ovfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E/VIyc5JpK2Sy5loT9a2HcHWg2TrorJJxRaogeKP25w=;
-        b=I9d5zVP4cbZpSOt8VeR9S7jq/CDwgBcJfKaBMncjndJfYLlrc4YbYoVT4pTIV+7Kai
-         gZcAnFuWyEvg7YW+1Smv7G/jgEAkmmTJ3S3H7i4EugN9blWrPA8Xo8pZXAOB1RcdlC5r
-         gfixlC35SKm23j6ORnP8tFeeUlHigBAQn/th54Obyd++E6qPsSwuRxa2qdxk/w8PBpJW
-         122bKuLsTtOl/Z0JdKToE1hSlb+3x1RvIXOJUgRbpModdIuEJZ0o1dJXA6NjlEpeDzCb
-         aPeMrxOPii8tu8ABZRa9CBvsN7eHZH5zmFjOMZdKtzOcKx+sJWwNBTtj54m7SkAoQ6pX
-         gatg==
-X-Gm-Message-State: AOAM530K7zcTr5MRlZt4vF+HONL4poVg4e/dFsWPiz92zzSAI8vlqeRo
-        fr7hRi6FxF9HopoY++00n+rJ84DgV2uThqizNGQuNw==
-X-Google-Smtp-Source: ABdhPJwGf3F8vVWMx/hAPOM/tzuC6mlnTkkNvV3zFtYKADK7sTRpnxjvKNE9DMzHauL+NEVwnl4j38I6/K9jRDhQk7E=
-X-Received: by 2002:a67:c390:: with SMTP id s16mr3769368vsj.61.1643362687362;
- Fri, 28 Jan 2022 01:38:07 -0800 (PST)
+        Fri, 28 Jan 2022 04:51:08 -0500
+X-QQ-mid: bizesmtp16t1643363449tqcolhvo
+Received: from localhost.localdomain (unknown [58.240.82.166])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Fri, 28 Jan 2022 17:50:29 +0800 (CST)
+X-QQ-SSF: 0140000000200000B000B00A0000000
+X-QQ-FEAT: dpyQmELDBxH9OJnSTX2OZ9jR1M94PHaAk870PQvL60zkQ6X7Dy7qLmCAK4wVQ
+        GLtkEl1gmLr+BvpdbZ1+imPzzhV7w62ToKPFmYz9l/hwf8MPaIMvYfINdHtArZPDUxf4sFp
+        kF/YvsbQ0zeHcc3Z7xSyJnUmGG0is1nYxjuLPj9fsyxh0F6MlNOUTS+EHAh9Fs+Hnu/XGZU
+        QLeMGccBGx4Io9DsD53edTMaVnPdDfPAZ0BhZvvqmXmBP66SgCu5UlZru7V6lZSOKQl5WAv
+        Ew5Os30G7cDlXe3iXdULYpUE4NAh6cNosFp2D6pHW2PaupM30Xjh+lGxUzn3/DiFSx3oqXm
+        S/2yq94LEp3kmTIuW4=
+X-QQ-GoodBg: 2
+From:   Zhen Ni <nizhen@uniontech.com>
+To:     mingo@redhat.com
+Cc:     peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Zhen Ni <nizhen@uniontech.com>
+Subject: [PATCH] sched: move autogroup sysctls into its own file
+Date:   Fri, 28 Jan 2022 17:50:25 +0800
+Message-Id: <20220128095025.8745-1-nizhen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <164325106958.29787.4865219843242892726.stgit@noble.brown> <164325158954.29787.7856652136298668100.stgit@noble.brown>
-In-Reply-To: <164325158954.29787.7856652136298668100.stgit@noble.brown>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 28 Jan 2022 10:37:56 +0100
-Message-ID: <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-Subject: Re: [PATCH 1/9] Remove inode_congested()
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm <linux-mm@kvack.org>,
-        linux-nilfs@vger.kernel.org,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Ext4 <linux-ext4@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign5
+X-QQ-Bgrelay: 1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 27 Jan 2022 at 03:47, NeilBrown <neilb@suse.de> wrote:
->
-> inode_congested() reports if the backing-device for the inode is
-> congested.  Few bdi report congestion any more, only ceph, fuse, and
-> nfs.  Having support just for those is unlikely to be useful.
->
-> The places which test inode_congested() or it variants like
-> inode_write_congested(), avoid initiating IO if congestion is present.
-> We now have to rely on other places in the stack to back off, or abort
-> requests - we already do for everything except these 3 filesystems.
->
-> So remove inode_congested() and related functions, and remove the call
-> sites, assuming that inode_congested() always returns 'false'.
+move autogroup sysctls to autogroup.c and use the new
+register_sysctl_init() to register the sysctl interface.
 
-Looks to me this is going to "break" fuse; e.g. readahead path will go
-ahead and try to submit more requests, even if the queue is getting
-congested.   In this case the readahead submission will eventually
-block, which is counterproductive.
+Signed-off-by: Zhen Ni <nizhen@uniontech.com>
+---
+ include/linux/sched/sysctl.h |  4 ----
+ kernel/sched/autogroup.c     | 23 +++++++++++++++++++++++
+ kernel/sched/autogroup.h     |  1 +
+ kernel/sysctl.c              | 11 -----------
+ 4 files changed, 24 insertions(+), 15 deletions(-)
 
-I think we should *first* make sure all call sites are substituted
-with appropriate mechanisms in the affected filesystems and as a last
-step remove the superfluous bdi congestion mechanism.
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index c19dd5a2c05c..3f2b70f8d32c 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -45,10 +45,6 @@ extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+ extern unsigned int sysctl_sched_cfs_bandwidth_slice;
+ #endif
+ 
+-#ifdef CONFIG_SCHED_AUTOGROUP
+-extern unsigned int sysctl_sched_autogroup_enabled;
+-#endif
+-
+ extern int sysctl_sched_rr_timeslice;
+ extern int sched_rr_timeslice;
+ 
+diff --git a/kernel/sched/autogroup.c b/kernel/sched/autogroup.c
+index 8629b37d118e..31dd2593145e 100644
+--- a/kernel/sched/autogroup.c
++++ b/kernel/sched/autogroup.c
+@@ -9,6 +9,28 @@ unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
+ static struct autogroup autogroup_default;
+ static atomic_t autogroup_seq_nr;
+ 
++#ifdef CONFIG_SYSCTL
++static struct ctl_table sched_autogroup_sysctls[] = {
++	{
++		.procname       = "sched_autogroup_enabled",
++		.data           = &sysctl_sched_autogroup_enabled,
++		.maxlen         = sizeof(unsigned int),
++		.mode           = 0644,
++		.proc_handler   = proc_dointvec_minmax,
++		.extra1         = SYSCTL_ZERO,
++		.extra2         = SYSCTL_ONE,
++	},
++	{}
++};
++
++static void __init sched_autogroup_sysctl_init(void)
++{
++	register_sysctl_init("kernel", sched_autogroup_sysctls);
++}
++#else
++#define sched_autogroup_sysctl_init() do { } while (0)
++#endif
++
+ void __init autogroup_init(struct task_struct *init_task)
+ {
+ 	autogroup_default.tg = &root_task_group;
+@@ -198,6 +220,7 @@ void sched_autogroup_exit(struct signal_struct *sig)
+ static int __init setup_autogroup(char *str)
+ {
+ 	sysctl_sched_autogroup_enabled = 0;
++	sched_autogroup_sysctl_init();
+ 
+ 	return 1;
+ }
+diff --git a/kernel/sched/autogroup.h b/kernel/sched/autogroup.h
+index b96419974a1f..90fcbfdd70c3 100644
+--- a/kernel/sched/autogroup.h
++++ b/kernel/sched/autogroup.h
+@@ -27,6 +27,7 @@ extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+ static inline struct task_group *
+ autogroup_task_group(struct task_struct *p, struct task_group *tg)
+ {
++	extern unsigned int sysctl_sched_autogroup_enabled;
+ 	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+ 
+ 	if (enabled && task_wants_autogroup(p, tg))
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 5ae443b2882e..1cb7ca68cd4e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1750,17 +1750,6 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= sysctl_sched_uclamp_handler,
+ 	},
+ #endif
+-#ifdef CONFIG_SCHED_AUTOGROUP
+-	{
+-		.procname	= "sched_autogroup_enabled",
+-		.data		= &sysctl_sched_autogroup_enabled,
+-		.maxlen		= sizeof(unsigned int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+-#endif
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 	{
+ 		.procname	= "sched_cfs_bandwidth_slice_us",
+-- 
+2.20.1
 
-You are saying that all fs except these three already have such
-mechanisms in place, right?  Can you elaborate on that?
 
-Thanks,
-Miklos
+
