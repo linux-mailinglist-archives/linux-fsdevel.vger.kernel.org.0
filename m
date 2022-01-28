@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB444A0457
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jan 2022 00:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 433974A045E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jan 2022 00:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351780AbiA1XkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 18:40:07 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:47534 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235971AbiA1XkE (ORCPT
+        id S1351820AbiA1XkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 18:40:10 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:43464 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243675AbiA1XkH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 18:40:04 -0500
+        Fri, 28 Jan 2022 18:40:07 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DBF6B61DD5;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 028A0B82722;
+        Fri, 28 Jan 2022 23:40:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C0AC340F2;
         Fri, 28 Jan 2022 23:40:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01578C340FA;
-        Fri, 28 Jan 2022 23:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1643413203;
-        bh=oM29BnV9ToRiA87Xa8vy8Ps9akFPyNK8+ftmkwPDABQ=;
+        bh=LuDFDhqfRMf5XNrJxODhsKvMEoMr5mmsePqMCFxBMwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ByH2OKYnBLJShtun1wY2/hje/k3qpSBktCbkbBFhJt+I1eDSwYZWhncN+2YEBotgp
-         UieLA//E4zlEzUBKKNk1wboM8vHakppCj1SxDrPiZJ8gaxbWvhjA3Ir/ks+dpkFEqF
-         VdiJpDiUSsdUlzylaZgoSJc4u0Km2ZB7ynv7ytUoeRp5HGW9d39cp7+t0VStVRxLdM
-         R5g4Hel17nV1LzVP9xq+LXqrArP2ONxbnIefYXlqmhwLrGa4FkAF8wmYalUlyoLPnH
-         uimhJD1dOK94KVt8Zhj1wwvVIozrMrt/b5kACue/LgRmkRRy9yn2Z3AbOd+wQ5t4uX
-         MNMGudgBTVO+g==
+        b=m4mBSoJ6eUvtHyPrP4gwPfdZRKUbE5cORinvPjBDH3fLCbfPpOsgdEK9mfPgXiatk
+         +IOvMbz45hpLUufIIFh591vHBZKCWrpJr6UVb2daSwOfq6apsXEeZdxG1AM2sTCrSD
+         9jMU34IAOJrl/oVzg1IVzS+ZgXp+7Wfrjx6lerJYkN9y/1oC1KuG2EZPkYv9nbaRX1
+         Ao4IFDkkteu8DugSNoKhIX75sxHXmlyKyu2+Um1GKfCjVsBSPAWo4PRkUtJkaXuRBK
+         R8xzXV6+/s/aGrLoVLdGbQXKayJ0i+z2ZnFcHcRTisC6ds2XE64tcwMP5ZqMQP/OxO
+         Gk7gN9UpoWejA==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         "Darrick J . Wong" <djwong@kernel.org>,
         Dave Chinner <david@fromorbit.com>,
         Satya Tangirala <satyat@google.com>
-Subject: [PATCH v11 3/5] ext4: support direct I/O with fscrypt using blk-crypto
-Date:   Fri, 28 Jan 2022 15:39:38 -0800
-Message-Id: <20220128233940.79464-4-ebiggers@kernel.org>
+Subject: [PATCH v11 4/5] f2fs: support direct I/O with fscrypt using blk-crypto
+Date:   Fri, 28 Jan 2022 15:39:39 -0800
+Message-Id: <20220128233940.79464-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.35.0
 In-Reply-To: <20220128233940.79464-1-ebiggers@kernel.org>
 References: <20220128233940.79464-1-ebiggers@kernel.org>
@@ -58,14 +58,14 @@ encrypt/decrypt the data.  However, when the encryption is implemented
 using inline encryption (blk-crypto) instead of the traditional
 filesystem-layer encryption, it is straightforward to support DIO.
 
-Therefore, make ext4 support DIO on files that are using inline
-encryption.  Since ext4 uses iomap for DIO, and fscrypt support was
+Therefore, make f2fs support DIO on files that are using inline
+encryption.  Since f2fs uses iomap for DIO, and fscrypt support was
 already added to iomap DIO, this just requires two small changes:
 
 - Let DIO proceed when supported, by checking fscrypt_dio_supported()
   instead of assuming that encrypted files never support DIO.
 
-- In ext4_iomap_begin(), use fscrypt_limit_io_blocks() to limit the
+- In f2fs_iomap_begin(), use fscrypt_limit_io_blocks() to limit the
   length of the mapping in the rare case where a DUN discontiguity
   occurs in the middle of an extent.  The iomap DIO implementation
   requires this, since it assumes that it can submit a bio covering (up
@@ -73,58 +73,20 @@ already added to iomap DIO, this just requires two small changes:
 
 Co-developed-by: Satya Tangirala <satyat@google.com>
 Signed-off-by: Satya Tangirala <satyat@google.com>
-Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Acked-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/file.c  | 10 ++++++----
- fs/ext4/inode.c |  7 +++++++
- 2 files changed, 13 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c | 7 +++++++
+ fs/f2fs/f2fs.h | 6 +++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 8cc11715518ac..8bd66cdc41be2 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -36,9 +36,11 @@
- #include "acl.h"
- #include "truncate.h"
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8c417864c66ae..020d47f97969c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -4044,6 +4044,13 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
  
--static bool ext4_dio_supported(struct inode *inode)
-+static bool ext4_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
- {
--	if (IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode))
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+
-+	if (!fscrypt_dio_supported(iocb, iter))
- 		return false;
- 	if (fsverity_active(inode))
- 		return false;
-@@ -61,7 +63,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		inode_lock_shared(inode);
- 	}
+ 	iomap->offset = blks_to_bytes(inode, map.m_lblk);
  
--	if (!ext4_dio_supported(inode)) {
-+	if (!ext4_dio_supported(iocb, to)) {
- 		inode_unlock_shared(inode);
- 		/*
- 		 * Fallback to buffered I/O if the operation being performed on
-@@ -509,7 +511,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	/* Fallback to buffered I/O if the inode does not support direct I/O. */
--	if (!ext4_dio_supported(inode)) {
-+	if (!ext4_dio_supported(iocb, from)) {
- 		if (ilock_shared)
- 			inode_unlock_shared(inode);
- 		else
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5f79d265d06a0..7af1bba34b8b8 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3409,6 +3409,13 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	if (ret < 0)
- 		return ret;
- out:
 +	/*
 +	 * When inline encryption is enabled, sometimes I/O to an encrypted file
 +	 * has to be broken up to guarantee DUN contiguity.  Handle this by
@@ -132,9 +94,26 @@ index 5f79d265d06a0..7af1bba34b8b8 100644
 +	 */
 +	map.m_len = fscrypt_limit_io_blocks(inode, map.m_lblk, map.m_len);
 +
- 	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
+ 	if (map.m_flags & (F2FS_MAP_MAPPED | F2FS_MAP_UNWRITTEN)) {
+ 		iomap->length = blks_to_bytes(inode, map.m_len);
+ 		if (map.m_flags & F2FS_MAP_MAPPED) {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index eb22fa91c2b26..db46f3cf0885d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4371,7 +4371,11 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	int rw = iov_iter_rw(iter);
  
- 	return 0;
+-	if (f2fs_post_read_required(inode))
++	if (!fscrypt_dio_supported(iocb, iter))
++		return true;
++	if (fsverity_active(inode))
++		return true;
++	if (f2fs_compressed_file(inode))
+ 		return true;
+ 
+ 	/* disallow direct IO if any of devices has unaligned blksize */
 -- 
 2.35.0
 
