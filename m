@@ -2,151 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAA3D49F6AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 10:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B5349F6E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 11:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347739AbiA1JvI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 04:51:08 -0500
-Received: from smtpbguseast3.qq.com ([54.243.244.52]:46186 "EHLO
-        smtpbguseast3.qq.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234467AbiA1JvI (ORCPT
+        id S243733AbiA1KM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 05:12:26 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:41290 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243644AbiA1KMZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 04:51:08 -0500
-X-QQ-mid: bizesmtp16t1643363449tqcolhvo
-Received: from localhost.localdomain (unknown [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 28 Jan 2022 17:50:29 +0800 (CST)
-X-QQ-SSF: 0140000000200000B000B00A0000000
-X-QQ-FEAT: dpyQmELDBxH9OJnSTX2OZ9jR1M94PHaAk870PQvL60zkQ6X7Dy7qLmCAK4wVQ
-        GLtkEl1gmLr+BvpdbZ1+imPzzhV7w62ToKPFmYz9l/hwf8MPaIMvYfINdHtArZPDUxf4sFp
-        kF/YvsbQ0zeHcc3Z7xSyJnUmGG0is1nYxjuLPj9fsyxh0F6MlNOUTS+EHAh9Fs+Hnu/XGZU
-        QLeMGccBGx4Io9DsD53edTMaVnPdDfPAZ0BhZvvqmXmBP66SgCu5UlZru7V6lZSOKQl5WAv
-        Ew5Os30G7cDlXe3iXdULYpUE4NAh6cNosFp2D6pHW2PaupM30Xjh+lGxUzn3/DiFSx3oqXm
-        S/2yq94LEp3kmTIuW4=
-X-QQ-GoodBg: 2
-From:   Zhen Ni <nizhen@uniontech.com>
-To:     mingo@redhat.com
-Cc:     peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Zhen Ni <nizhen@uniontech.com>
-Subject: [PATCH] sched: move autogroup sysctls into its own file
-Date:   Fri, 28 Jan 2022 17:50:25 +0800
-Message-Id: <20220128095025.8745-1-nizhen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 28 Jan 2022 05:12:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643364745;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vrB8wKd/YuQDRzVLBwG4KgSFnRULjzQXEtQgJ4S5oNc=;
+        b=Qoby7Kd9/U2srQ68zXwxKgMV3xzHwrqfNlCVYfV97AuhqsceU3avi6JF/+c+QCxgN8qfTD
+        kLkwJ+WlIdfDsYck//XLJJ9xFfkiixAEemTU4vuKdLT/HZ3mSS7SopJgIrdz9ziHxLR0in
+        e3nv7FVQtuG7SoTD7p3w4G9E5Um40wU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-339-O80TzOU3MMC2GBxfNuzNFA-1; Fri, 28 Jan 2022 05:12:24 -0500
+X-MC-Unique: O80TzOU3MMC2GBxfNuzNFA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84E102F45;
+        Fri, 28 Jan 2022 10:12:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DBEC260C41;
+        Fri, 28 Jan 2022 10:12:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20220128074731.1623738-1-hch@lst.de>
+References: <20220128074731.1623738-1-hch@lst.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Subject: Re: [PATCH v2] fs: rename S_KERNEL_FILE
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign5
-X-QQ-Bgrelay: 1
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <918224.1643364739.1@warthog.procyon.org.uk>
+Date:   Fri, 28 Jan 2022 10:12:19 +0000
+Message-ID: <918225.1643364739@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-move autogroup sysctls to autogroup.c and use the new
-register_sysctl_init() to register the sysctl interface.
+Christoph Hellwig <hch@lst.de> wrote:
 
-Signed-off-by: Zhen Ni <nizhen@uniontech.com>
----
- include/linux/sched/sysctl.h |  4 ----
- kernel/sched/autogroup.c     | 23 +++++++++++++++++++++++
- kernel/sched/autogroup.h     |  1 +
- kernel/sysctl.c              | 11 -----------
- 4 files changed, 24 insertions(+), 15 deletions(-)
+> S_KERNEL_FILE is grossly misnamed.  We have plenty of files hold
 
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index c19dd5a2c05c..3f2b70f8d32c 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -45,10 +45,6 @@ extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
- extern unsigned int sysctl_sched_cfs_bandwidth_slice;
- #endif
- 
--#ifdef CONFIG_SCHED_AUTOGROUP
--extern unsigned int sysctl_sched_autogroup_enabled;
--#endif
--
- extern int sysctl_sched_rr_timeslice;
- extern int sched_rr_timeslice;
- 
-diff --git a/kernel/sched/autogroup.c b/kernel/sched/autogroup.c
-index 8629b37d118e..31dd2593145e 100644
---- a/kernel/sched/autogroup.c
-+++ b/kernel/sched/autogroup.c
-@@ -9,6 +9,28 @@ unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
- static struct autogroup autogroup_default;
- static atomic_t autogroup_seq_nr;
- 
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table sched_autogroup_sysctls[] = {
-+	{
-+		.procname       = "sched_autogroup_enabled",
-+		.data           = &sysctl_sched_autogroup_enabled,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec_minmax,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = SYSCTL_ONE,
-+	},
-+	{}
-+};
-+
-+static void __init sched_autogroup_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", sched_autogroup_sysctls);
-+}
-+#else
-+#define sched_autogroup_sysctl_init() do { } while (0)
-+#endif
-+
- void __init autogroup_init(struct task_struct *init_task)
- {
- 	autogroup_default.tg = &root_task_group;
-@@ -198,6 +220,7 @@ void sched_autogroup_exit(struct signal_struct *sig)
- static int __init setup_autogroup(char *str)
- {
- 	sysctl_sched_autogroup_enabled = 0;
-+	sched_autogroup_sysctl_init();
- 
- 	return 1;
- }
-diff --git a/kernel/sched/autogroup.h b/kernel/sched/autogroup.h
-index b96419974a1f..90fcbfdd70c3 100644
---- a/kernel/sched/autogroup.h
-+++ b/kernel/sched/autogroup.h
-@@ -27,6 +27,7 @@ extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
- static inline struct task_group *
- autogroup_task_group(struct task_struct *p, struct task_group *tg)
- {
-+	extern unsigned int sysctl_sched_autogroup_enabled;
- 	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
- 
- 	if (enabled && task_wants_autogroup(p, tg))
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5ae443b2882e..1cb7ca68cd4e 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1750,17 +1750,6 @@ static struct ctl_table kern_table[] = {
- 		.proc_handler	= sysctl_sched_uclamp_handler,
- 	},
- #endif
--#ifdef CONFIG_SCHED_AUTOGROUP
--	{
--		.procname	= "sched_autogroup_enabled",
--		.data		= &sysctl_sched_autogroup_enabled,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif
- #ifdef CONFIG_CFS_BANDWIDTH
- 	{
- 		.procname	= "sched_cfs_bandwidth_slice_us",
--- 
-2.20.1
+"held".
 
+> open by the kernel kernel using filp_open.
 
+You said "kernel" twice.
+
+And so what?  Cachefiles holds files open by filp_open - but it can only do so
+temporarily otherwise EMFILE/ENFILE and OOMs start to become a serious problem
+because it could end up holding thousands of files open (one or two of the
+xfstests cause this to happen).
+
+Further, holding the file open *doesn't* prevent cachefilesd from trying to
+cull the file to make space whilst it's "in use".
+
+Yet further, I'm not holding the directories that form the cache layout open
+with filp_open at all - I'm not reading them, so that would just be a waste of
+resources - but I really don't want cachefilesd culling them because it sees
+they're empty but cachefiles is holding them ready.
+
+> This flag OTOH signals the inode as being a special snowflake that
+> cachefiles holds onto that can't be unlinked because of ..., erm, pixie
+> dust.
+
+Really?  I presume you read the explanation I gave of the races that are a
+consequence of splitting the driver between the kernel and userspace?  I could
+avoid them - or at least mitigate them - by keeping my own list of all the
+inodes in use by cachefiles so that cachefilesd can query it.  I did, in fact,
+use to have such a list, but the core kernel already has such lists and the
+facilities to translate pathnames into internal objects, so my stuff ought to
+be redundant - all I need is one inode flag.
+
+Further, that inode flag can be shared with anyone else who wants to do
+something similar.  It's just an "I'm using this" lock.  There's no particular
+reason to limit its use to cachefiles.  In fact, it is better if it is then
+shared so that in the unlikely event that two drivers try to use the same
+file, an error will occur.
+
+I do use it to defend cachefiles against itself also.  In the event that
+there's a bug or a race and it tries to reuse its own cache - particularly
+with something like NFS that can have multiple superblocks for the same
+source, just with different I/O parameters, for example - this can lead to
+data corruption.  I try to defend against it in fscache also, but there can be
+delayed effects due to object finalisation being done in the background after
+fscache has returned to the netfs.
+
+Now, I do think there's an argument to be made for splitting the flag into
+two, as I advanced in a proposed patch.  One piece would just be an "I'm using
+this", the other would be a "don't delete this" flag.  Both are of potential
+use to other drivers.
+
+I take it you'd prefer this to be done a different way?
+
+David
 
