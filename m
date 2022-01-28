@@ -2,65 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8295949F3F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 08:05:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D9B49F499
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 08:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346630AbiA1HFU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 02:05:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52172 "EHLO
+        id S1346972AbiA1Hrj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 02:47:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbiA1HFU (ORCPT
+        with ESMTP id S1346853AbiA1Hrh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 02:05:20 -0500
+        Fri, 28 Jan 2022 02:47:37 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F5BC061714;
-        Thu, 27 Jan 2022 23:05:19 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78217C06173B;
+        Thu, 27 Jan 2022 23:47:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jf2E0pUG3GOZxihUHfPlYjorrQluw3AZrzDbcNera34=; b=bSrIeDjXe0kg3MTDdcQumiTEIp
-        IksleX6eyErXVnT1iLyg1ZCBmqioCp3PbXMjc4sPeR6DRewgGFgE2ZVEcAtuYigTyTrHP7MGldcHY
-        DK1hD72+iajXZTdIOh8pl9YauMSILSaOKfTXVGdHUpl7eLvRA/R3fTs3EtACH/zV3wM6ElH3axvdr
-        jntQAzojiTkRqldKzjaW7gL0vWEVXNzSaAHifzk/8BLge541m44TJeD/r/QHhvwsv5sfOnh1a5gKd
-        IdvOl27Th9lgeKoP5kDcX7tZhRBeVpUIcOgw9ncKRTrfCBQFbTM9b8lK+y5YiDzJoaaeXfF95lTBg
-        iW3L+a/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nDLJg-000iLD-EQ; Fri, 28 Jan 2022 07:05:04 +0000
-Date:   Thu, 27 Jan 2022 23:05:04 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        JeffleXu <jefflexu@linux.alibaba.com>, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] cachefiles: Split and rename S_KERNEL_FILE and
- extend effects
-Message-ID: <YfOVoIQqaXkzDju5@infradead.org>
-References: <1079106.1642772886@warthog.procyon.org.uk>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=u8U0/Ai5mbQzGHpMhOzTxk2dLwnQvDLgWPnPvMcwTlA=; b=oqnQD992oMMsoVP2DYTG8sHVk/
+        Oxf214lSUukxCU1DjtlMOsUsh31Aa9sSIsDtcfKE+tmzK8XSWJof8Yyy+4ZwKhEejcqae1CDROjqA
+        zxdNl6BSBmyiL8rgq7NfvH6ZyN2nJDWnDA+ftM5ULiS+AKfPMACXuw+anwE4HfJDJlx6w9NTad0VR
+        zR2fqiOYed9wlHBKzycsbnYzTOOYxEVJ5QMEmgUe8922Re7d+4LK4KqEhJKuChAPM8OaNSR/9DktO
+        McB1DnXCbPyZ+GQM5J4Jsc5MAFqqzMfhyj2gUFu8EWb0rXtmZsXk61IfjF7ePZJzrXcxsZGuSU/nN
+        +Ns0bUMA==;
+Received: from [2001:4bb8:180:4c4c:73e:e8c7:4199:32d7] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nDLyn-000rEN-TG; Fri, 28 Jan 2022 07:47:34 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
+        dhowells@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH v2] fs: rename S_KERNEL_FILE
+Date:   Fri, 28 Jan 2022 08:47:31 +0100
+Message-Id: <20220128074731.1623738-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1079106.1642772886@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 21, 2022 at 01:48:06PM +0000, David Howells wrote:
-> Split S_KERNEL_FILE into two separate flags to do two separate jobs and give
-> them new names[1][2]:
+S_KERNEL_FILE is grossly misnamed.  We have plenty of files hold open by
+the kernel kernel using filp_open.  This flag OTOH signals the inode as
+being a special snowflake that cachefiles holds onto that can't be
+unlinked because of ..., erm, pixie dust.  So clearly mark it as such.
 
-I strong disagreewith this.  The flag is a horrible hack that does not
-have any business to exist to start with.  Splitting it an potentially
-proliferating the use is not a good.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-The proper fix would be to fix the cachefiles design to not rely on it
-at all.
+Changes since v1:
+ - fix commit message typos
+
+ fs/cachefiles/namei.c | 12 ++++++------
+ fs/namei.c            |  2 +-
+ include/linux/fs.h    |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index 9bd692870617c..599dc13a7d9ab 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -20,8 +20,8 @@ static bool __cachefiles_mark_inode_in_use(struct cachefiles_object *object,
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	bool can_use = false;
+ 
+-	if (!(inode->i_flags & S_KERNEL_FILE)) {
+-		inode->i_flags |= S_KERNEL_FILE;
++	if (!(inode->i_flags & S_CACHEFILE)) {
++		inode->i_flags |= S_CACHEFILE;
+ 		trace_cachefiles_mark_active(object, inode);
+ 		can_use = true;
+ 	} else {
+@@ -51,7 +51,7 @@ static void __cachefiles_unmark_inode_in_use(struct cachefiles_object *object,
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+ 
+-	inode->i_flags &= ~S_KERNEL_FILE;
++	inode->i_flags &= ~S_CACHEFILE;
+ 	trace_cachefiles_mark_inactive(object, inode);
+ }
+ 
+@@ -742,7 +742,7 @@ static struct dentry *cachefiles_lookup_for_cull(struct cachefiles_cache *cache,
+ 		goto lookup_error;
+ 	if (d_is_negative(victim))
+ 		goto lookup_put;
+-	if (d_inode(victim)->i_flags & S_KERNEL_FILE)
++	if (d_inode(victim)->i_flags & S_CACHEFILE)
+ 		goto lookup_busy;
+ 	return victim;
+ 
+@@ -789,11 +789,11 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
+ 	/* check to see if someone is using this object */
+ 	inode = d_inode(victim);
+ 	inode_lock(inode);
+-	if (inode->i_flags & S_KERNEL_FILE) {
++	if (inode->i_flags & S_CACHEFILE) {
+ 		ret = -EBUSY;
+ 	} else {
+ 		/* Stop the cache from picking it back up */
+-		inode->i_flags |= S_KERNEL_FILE;
++		inode->i_flags |= S_CACHEFILE;
+ 		ret = 0;
+ 	}
+ 	inode_unlock(inode);
+diff --git a/fs/namei.c b/fs/namei.c
+index d81f04f8d8188..7402277ecc1f5 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3959,7 +3959,7 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	error = -EBUSY;
+ 	if (is_local_mountpoint(dentry) ||
+-	    (dentry->d_inode->i_flags & S_KERNEL_FILE))
++	    (dentry->d_inode->i_flags & S_CACHEFILE))
+ 		goto out;
+ 
+ 	error = security_inode_rmdir(dir, dentry);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c8510da6cc6dc..099d7e03d46e6 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2173,7 +2173,7 @@ struct super_operations {
+ #define S_ENCRYPTED	(1 << 14) /* Encrypted file (using fs/crypto/) */
+ #define S_CASEFOLD	(1 << 15) /* Casefolded file */
+ #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
+-#define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
++#define S_CACHEFILE	(1 << 17) /* In use as cachefile, can't be unlinked */
+ 
+ /*
+  * Note that nosuid etc flags are inode-specific: setting some file-system
+-- 
+2.30.2
+
