@@ -2,154 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A1B249F59C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 09:51:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B0549F5CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 09:59:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243447AbiA1Ivd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 03:51:33 -0500
-Received: from smtpbg701.qq.com ([203.205.195.86]:45692 "EHLO
-        smtpproxy21.qq.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S243427AbiA1Ivc (ORCPT
+        id S231295AbiA1I7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 03:59:23 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:37208 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229783AbiA1I7W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 03:51:32 -0500
-X-QQ-mid: bizesmtp7t1643359874tehmffseu
-Received: from localhost.localdomain (unknown [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 28 Jan 2022 16:51:08 +0800 (CST)
-X-QQ-SSF: 01400000002000B0E000B00A0000000
-X-QQ-FEAT: ddlUhmC0HYv/elwp/+QPGZxz4jGz15Y1XN3GwEBF4ubyMgVrtyD5gOWH+PuDE
-        l4+D6DZ6B+LcL1RZKO6j0xjPoKJSLjizYF8bDjBeWBHU/8mLXYGOS+6ANIdNYzNGy/jUBjQ
-        5A9LeEiI87cfLpn2dydwDG0u/4AUkkGL3JHbMZAeH1FWtFFpDNerUI9EAEGPUqGk5jHVUjg
-        dU8T/viSCAx7apwqCNGfgi7xJ7HoLzZxapZqNIePvrgRFKdWgCq2K9fOTVVEZhejX66TlPx
-        FybT4rA32tFnCtn22G91aEThDERmYtGVpwbCpgs3LEMUNtTwVZ37y2v0qSMWti0spU7znDi
-        nfeUoc5sgSM0TnJ8apfs6zjiLf/uWVcFtANxCaM
-X-QQ-GoodBg: 2
-From:   tangmeng <tangmeng@uniontech.com>
-To:     tglx@linutronix.de, mcgrof@kernel.org, keescook@chromium.org,
-        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH v2] kernel/time: move timer sysctls to its own file
-Date:   Fri, 28 Jan 2022 16:51:06 +0800
-Message-Id: <20220128085106.27031-1-tangmeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 28 Jan 2022 03:59:22 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 33B0DB81FAF;
+        Fri, 28 Jan 2022 08:59:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB77C340E0;
+        Fri, 28 Jan 2022 08:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643360360;
+        bh=4yoIqw9LowZS2I5hqAuu9FXS3iDVuLfMLkYxabIfN3s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V9O3Rw6Yi9ioAukX1sLBaj5znyUeQor8eTFi7o6GL2cFW6MW3hxhqWsYdgsC8PTSt
+         CMEYdsrVzS+4LGHxIU0nVIx/JKQ61qH8YHJ7a984Y98o9VG+0pOH7FK9YemnRXJ/0s
+         iC3nwD7w2xeZTszhKGsrEErR9nGbzuY/HGeKTS950N+8EuooBuU+PIiuIWdFneULnw
+         z29XSKB19Do4wg/EgF0Ca9uWKQTRzI9AcD4oGuTjTnVWsJiHHqPyLgBcUc2dsQr2NO
+         zTIUubnlDiv7gobh9x80n2m/pIEZtpkeahYEGg2RflVIvSr/yvQKWe0Um83W0MFRs4
+         gEgozztsrO0HQ==
+Date:   Fri, 28 Jan 2022 09:59:14 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH v2] LSM: general protection fault in legacy_parse_param
+Message-ID: <20220128085914.rxrz7qt3uk7fp67d@wittgenstein>
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
+ <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com>
+ <20211012103243.xumzerhvhklqrovj@wittgenstein>
+ <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
+ <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
+ <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
-X-QQ-Bgrelay: 1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This moves the kernel/timer/timer.c respective sysctls to its own file.
+On Thu, Jan 27, 2022 at 08:51:44AM -0800, Casey Schaufler wrote:
+> The usual LSM hook "bail on fail" scheme doesn't work for cases where
+> a security module may return an error code indicating that it does not
+> recognize an input.  In this particular case Smack sees a mount option
+> that it recognizes, and returns 0. A call to a BPF hook follows, which
+> returns -ENOPARAM, which confuses the caller because Smack has processed
+> its data.
+> 
+> The SELinux hook incorrectly returns 1 on success. There was a time
+> when this was correct, however the current expectation is that it
+> return 0 on success. This is repaired.
+> 
+> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
 
-Signed-off-by: tangmeng <tangmeng@uniontech.com>
----
- include/linux/timer.h |  4 ----
- kernel/sysctl.c       | 11 -----------
- kernel/time/timer.c   | 27 +++++++++++++++++++++++++--
- 3 files changed, 25 insertions(+), 17 deletions(-)
-
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index fda13c9d1256..793b6b7c5a3e 100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -198,10 +198,6 @@ extern enum hrtimer_restart it_real_fn(struct hrtimer *);
- 
- #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
- struct ctl_table;
--
--extern unsigned int sysctl_timer_migration;
--int timer_migration_handler(struct ctl_table *table, int write,
--			    void *buffer, size_t *lenp, loff_t *ppos);
- #endif
- 
- unsigned long __round_jiffies(unsigned long j, int cpu);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5ae443b2882e..d6d133423e5d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2292,17 +2292,6 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
- 	},
--#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
--	{
--		.procname	= "timer_migration",
--		.data		= &sysctl_timer_migration,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= timer_migration_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif
- #ifdef CONFIG_BPF_SYSCALL
- 	{
- 		.procname	= "unprivileged_bpf_disabled",
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 85f1021ad459..ee462673f638 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -223,7 +223,7 @@ static void timer_update_keys(struct work_struct *work);
- static DECLARE_WORK(timer_update_work, timer_update_keys);
- 
- #ifdef CONFIG_SMP
--unsigned int sysctl_timer_migration = 1;
-+static unsigned int sysctl_timer_migration = 1;
- 
- DEFINE_STATIC_KEY_FALSE(timers_migration_enabled);
- 
-@@ -251,7 +251,8 @@ void timers_update_nohz(void)
- 	schedule_work(&timer_update_work);
- }
- 
--int timer_migration_handler(struct ctl_table *table, int write,
-+#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-+static int timer_migration_handler(struct ctl_table *table, int write,
- 			    void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret;
-@@ -264,6 +265,27 @@ int timer_migration_handler(struct ctl_table *table, int write,
- 	return ret;
- }
- 
-+static struct ctl_table timer_sysctl[] = {
-+	{
-+		.procname       = "timer_migration",
-+		.data           = &sysctl_timer_migration,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = timer_migration_handler,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = SYSCTL_ONE,
-+	},
-+	{}
-+};
-+
-+static int __init timer_sysctl_init(void)
-+{
-+	register_sysctl_init("kerneli/timer", timer_sysctl);
-+	return 0;
-+}
-+#else
-+#define timer_sysctl_init() do { } while (0)
-+#endif
- static inline bool is_timers_nohz_active(void)
- {
- 	return static_branch_unlikely(&timers_nohz_active);
-@@ -2022,6 +2044,7 @@ void __init init_timers(void)
- 	init_timer_cpus();
- 	posix_cputimers_init_work();
- 	open_softirq(TIMER_SOFTIRQ, run_timer_softirq);
-+	timer_sysctl_init();
- }
- 
- /**
--- 
-2.20.1
-
-
-
-
+Looks good,
+Acked-by: Christian Brauner <brauner@kernel.org>
