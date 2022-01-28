@@ -2,127 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9EBC4A02ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 22:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 979644A0391
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 23:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351420AbiA1VgT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 16:36:19 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:32826 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351431AbiA1VgS (ORCPT
+        id S239780AbiA1WXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 17:23:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38780 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350036AbiA1WXE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 16:36:18 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Fri, 28 Jan 2022 17:23:04 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D41C06173B;
+        Fri, 28 Jan 2022 14:23:03 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E19E31F385;
-        Fri, 28 Jan 2022 21:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1643405774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=;
-        b=taayjmIQ/dw3pRt7LXMXgV+h3N2iGR9k6iWV1POVgUTfQy7v0b53WKl6W7epBEuQeWPNId
-        2nS5W8Zz+JDvOI2H2O325FIcHt7vLtCdfAuhacvrf751M2nGilH84Y1DtEW6P5pWfmkFXk
-        3R+tAum3D39BD7myqsYNPl0uf7Iudaw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1643405774;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=;
-        b=24PK3VAQmVA51Rx99IGbDGj51tJod8UX27xeq8Emd3IiwsHonr+XB9p01yVh4lqGGFRKKK
-        qudbZz9CfGjnNuAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1BAB613AA1;
-        Fri, 28 Jan 2022 21:36:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id fu7bMcdh9GHRawAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 28 Jan 2022 21:36:07 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4AF4CB80D50;
+        Fri, 28 Jan 2022 22:23:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0194C340E7;
+        Fri, 28 Jan 2022 22:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643408581;
+        bh=Y8FxnAdX9n8TxRkQk5LvtXGKosxm4BS7eqBiMD65ByQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZTfM2zWOLRYFEH25Aw9j8R4WbZsZabZ5sjIueAaAyaJcKZPArpQPQxsnZcl8AeCgm
+         HE/saeGpzbtoKawDale/41m9c4PaNrgZSXOn8VpkpGccgYkV3deFnbrJkaUKkVYCnL
+         u3tDTUtNgkrWnifL/9+PMuBTGwP16kcDPRuis2e6A0nX7WtTBAraPBgdM9SrP8krgk
+         +LvjFDZki1L7u0Ooy3hrykCIg/zzIXAm61cG6aNvJPxKgoP413OhLynWT7hE85Y2PJ
+         Km97SuJkut8rSMQFLVOy7oDw3d9oovHeKTxjHudOqAECqziPmTtF/p08wlXZ3pQGXL
+         8S2mnU+3NfMzw==
+Date:   Fri, 28 Jan 2022 14:23:00 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Chandan Babu R <chandan.babu@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] xfs: use vfs helper to update file attributes after
+ fallocate
+Message-ID: <20220128222300.GO13563@magnolia>
+References: <164316352410.2600373.17669839881121774801.stgit@magnolia>
+ <164316352961.2600373.9191916389107843284.stgit@magnolia>
+ <87k0ekciiv.fsf@debian-BULLSEYE-live-builder-AMD64>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Miklos Szeredi" <miklos@szeredi.hu>
-Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Ilya Dryomov" <idryomov@gmail.com>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        "Anna Schumaker" <anna.schumaker@netapp.com>,
-        "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Philipp Reisner" <philipp.reisner@linbit.com>,
-        "Lars Ellenberg" <lars.ellenberg@linbit.com>,
-        "Paolo Valente" <paolo.valente@linaro.org>,
-        "Jens Axboe" <axboe@kernel.dk>, "linux-mm" <linux-mm@kvack.org>,
-        linux-nilfs@vger.kernel.org,
-        "Linux NFS list" <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        "Ext4" <linux-ext4@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 1/9] Remove inode_congested()
-In-reply-to: <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-References: <164325106958.29787.4865219843242892726.stgit@noble.brown>,
- <164325158954.29787.7856652136298668100.stgit@noble.brown>,
- <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-Date:   Sat, 29 Jan 2022 08:36:02 +1100
-Message-id: <164340576289.5493.5784848964540459557@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k0ekciiv.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 28 Jan 2022, Miklos Szeredi wrote:
-> On Thu, 27 Jan 2022 at 03:47, NeilBrown <neilb@suse.de> wrote:
+On Fri, Jan 28, 2022 at 03:02:40PM +0530, Chandan Babu R wrote:
+> On 26 Jan 2022 at 07:48, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
 > >
-> > inode_congested() reports if the backing-device for the inode is
-> > congested.  Few bdi report congestion any more, only ceph, fuse, and
-> > nfs.  Having support just for those is unlikely to be useful.
+> > In XFS, we always update the inode change and modification time when any
+> > preallocation operation succeeds.  Furthermore, as various fallocate
+> > modes can change the file contents (extending EOF, punching holes,
+> > zeroing things, shifting extents), we should drop file privileges like
+> > suid just like we do for a regular write().  There's already a VFS
+> > helper that figures all this out for us, so use that.
 > >
-> > The places which test inode_congested() or it variants like
-> > inode_write_congested(), avoid initiating IO if congestion is present.
-> > We now have to rely on other places in the stack to back off, or abort
-> > requests - we already do for everything except these 3 filesystems.
+> > The net effect of this is that we no longer drop suid/sgid if the caller
+> > is root, but we also now drop file capabilities.
 > >
-> > So remove inode_congested() and related functions, and remove the call
-> > sites, assuming that inode_congested() always returns 'false'.
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  fs/xfs/xfs_file.c |   23 +++++++++++++++++++----
+> >  1 file changed, 19 insertions(+), 4 deletions(-)
+> >
+> >
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index 22ad207bedf4..eee5fb20cf8d 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -1057,13 +1057,28 @@ xfs_file_fallocate(
+> >  		}
+> >  	}
+> >  
+> > -	if (file->f_flags & O_DSYNC)
+> > -		flags |= XFS_PREALLOC_SYNC;
+> > -
 > 
-> Looks to me this is going to "break" fuse; e.g. readahead path will go
-> ahead and try to submit more requests, even if the queue is getting
-> congested.   In this case the readahead submission will eventually
-> block, which is counterproductive.
+> Without the above change, if fallocate() is invoked with FALLOC_FL_PUNCH_HOLE,
+> FALLOC_FL_COLLAPSE_RANGE or FALLOC_FL_INSERT_RANGE, we used to update inode's
+> timestamp, remove setuid/setgid bits and then perform a synchronous
+> transaction commit if O_DSYNC flag is set.
 > 
-> I think we should *first* make sure all call sites are substituted
-> with appropriate mechanisms in the affected filesystems and as a last
-> step remove the superfluous bdi congestion mechanism.
+> However, with this patch applied, the transaction (inside
+> xfs_vn_update_time()) that updates file's inode contents (i.e. timestamps and
+> setuid/setgid bits) is not synchronous and hence the O_DSYNC flag is not
+> honored if the fallocate operation is one of FALLOC_FL_PUNCH_HOLE,
+> FALLOC_FL_COLLAPSE_RANGE or FALLOC_FL_INSERT_RANGE.
+
+Ah, right.  This bug is covered up by the changes in the last patch, but
+it would break bisection, so I'll clean that up and resubmit.  Thanks
+for the comments!
+
+> > -	error = xfs_update_prealloc_flags(ip, flags);
+> > +	/* Update [cm]time and drop file privileges like a regular write. */
+> > +	error = file_modified(file);
+> >  	if (error)
+> >  		goto out_unlock;
+> >  
+> > +	/*
+> > +	 * If we need to change the PREALLOC flag, do so.  We already updated
+> > +	 * the timestamps and cleared the suid flags, so we don't need to do
+> > +	 * that again.  This must be committed before the size change so that
+> > +	 * we don't trim post-EOF preallocations.
+> > +	 */
+
+So the code ends up looking like:
+
+	if (file->f_flags & O_DSYNC)
+		flags |= XFS_PREALLOC_SYNC;
+	if (flags) {
+		flags |= XFS_PREALLOC_INVISIBLE;
+
+		error = xfs_update_prealloc_flags(ip, flags);
+		if (error)
+			goto out_unlock;
+	}
+
+--D
+
+> > +	if (flags) {
+> > +		flags |= XFS_PREALLOC_INVISIBLE;
+> > +
+> > +		if (file->f_flags & O_DSYNC)
+> > +			flags |= XFS_PREALLOC_SYNC;
+> > +
+> > +		error = xfs_update_prealloc_flags(ip, flags);
+> > +		if (error)
+> > +			goto out_unlock;
+> > +	}
+> > +
+> >  	/* Change file size if needed */
+> >  	if (new_size) {
+> >  		struct iattr iattr;
 > 
-> You are saying that all fs except these three already have such
-> mechanisms in place, right?  Can you elaborate on that?
-
-Not much.  I haven't looked into how other filesystems cope, I just know
-that they must because no other filesystem ever has a congested bdi
-(with one or two minor exceptions, like filesystems over drbd).
-
-Surely read-ahead should never block.  If it hits congestion, the
-read-ahead request should simply fail.  block-based filesystems seem to
-set REQ_RAHEAD which might get mapped to REQ_FAILFAST_MASK, though I
-don't know how that is ultimately used.
-
-Maybe fuse and others should continue to track 'congestion' and reject
-read-ahead requests when congested.
-Maybe also skip WB_SYNC_NONE writes..
-
-Or maybe this doesn't really matter in practice...  I wonder if we can
-measure the usefulness of congestion.
-
-Thanks,
-NeilBrown
+> -- 
+> chandan
