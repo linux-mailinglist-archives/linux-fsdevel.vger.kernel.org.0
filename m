@@ -2,133 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4741549F7ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 12:09:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9280549F7F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 12:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348019AbiA1LJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 06:09:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52224 "EHLO
+        id S1348063AbiA1LKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 06:10:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348074AbiA1LJ0 (ORCPT
+        with ESMTP id S244239AbiA1LKl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 06:09:26 -0500
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1BDC061749;
-        Fri, 28 Jan 2022 03:09:26 -0800 (PST)
-Received: by mail-il1-x12d.google.com with SMTP id e8so5034631ilm.13;
-        Fri, 28 Jan 2022 03:09:26 -0800 (PST)
+        Fri, 28 Jan 2022 06:10:41 -0500
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 189C6C061714;
+        Fri, 28 Jan 2022 03:10:41 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id d18so5608715plg.2;
+        Fri, 28 Jan 2022 03:10:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wDt4jv4w3YC6Q40GetvSo+cqdaAT0L68ivf9sPs/K8Q=;
-        b=EJ4fNl8jGpwOF+l7mYmqwnMdwQaU7ijAZyfJ0sMP9w1lOujGb+aadfBn078cU/LVXQ
-         CIjZFd2s8/1wcIz/IAfucniv59I5ug6C1Wdfc4DmVqaGXWPlVnXX7KfoI2I8zkuY9qlP
-         slYslrq1aeQhKYeGIWKYTvFuoORRrgA2yZSefrae4Ke3pluEiuMI7Dxy/N72sYXzYXx7
-         Fr+7EpWiyElnfqtE0K2vQhHIsB3XjL8vEbzhId/UQ5TsdvG+J8gcQUD25CwxTorFlFOy
-         5OjZ4v7itBoShKaf4qwlumgWCxZW6/wuL1AbNbZbaJQHo00QFfeTgUAUvJl5/SQ3uTFN
-         KTLw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lpTrB1w23BF+6DdwaMHxzpTYFKzu4pd5U9VeSzFiuIk=;
+        b=TEa5rKjcEAzmYaI8wm9Q8shd5d//zVYo+GOFi0bjEUmFAQQk5c4kszeX+FiVZ6U8lT
+         HOvbO3+0T+Etk2lWwVJYdu8+4UGtManVzfTlNIA2vq/4qIUWFq37I0+gw8Ahi4xNI1sM
+         +uOfNU2at/xQdgTxhQcV3eZNh5iePI1ZHqAr8lBGP8ZkqzWpoZ/DRTePHWW+t1wWEQB7
+         CQLWg/RbpT6QMvbwH69fNtTFdki4k+FVq5iYOQkx+NJVJQJiYVsIIi00GuYz95apJIXy
+         LL1chaId7hbhoPXE1iyV1ytsMqMbGXLm3xppAJ8W/9yIdtZoVm2f0lkqrRxTwVwAvGO/
+         kajw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wDt4jv4w3YC6Q40GetvSo+cqdaAT0L68ivf9sPs/K8Q=;
-        b=44c7AKpxFYlPu29UIm0/tkLWMYAjRyJ4G8rq2VJWNmb2CaT6jbAlRl5J23zQOmUvik
-         kk+y83cmxZ1hRutFHauwT0XMinHFhvxGlnFy/SgLOJORtwx6GeiWl14FE9wIJUrNes/L
-         oatT/wMpXx7sB+5EsxV8TqLKu8aJ5mkPu5+k8rveHY5CUjXxzb+PxCkAC5nrQfy7ZU8I
-         +1Lb/E1TUsMxcvLV+uJt/za6OzKlnJdjPvpgabcvk3DELUjp7mjYS7nDuKXz9fbd9VM1
-         +dqVp8b8OCMXAVfyh/eF98rsFRnQv5/IjZUIttaLN0+9Q3ypkxi+5u7KwfCU7aB4BISl
-         bq8A==
-X-Gm-Message-State: AOAM531PhPQTIN9u1Ug4SaaqecSDVMfFfDKZ3Gm+FUL8UPJnk+obnnna
-        m3tzF/liMSCZzQXT6MFl2k4Zj1IewVIM9GSGdmQ=
-X-Google-Smtp-Source: ABdhPJz/5GVv0Jc1fW6Af1E7s8iF0un/k2ZX3rLG5cEAum2D2zhCnqeEMRYTO6D1GV6CZwFQWFxbLpDEovkL/Cmpe5U=
-X-Received: by 2002:a92:c567:: with SMTP id b7mr5367192ilj.24.1643368165717;
- Fri, 28 Jan 2022 03:09:25 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lpTrB1w23BF+6DdwaMHxzpTYFKzu4pd5U9VeSzFiuIk=;
+        b=7JbuqkCY9azNrzGnp24sUVECC8jiIOmUKnDa6Q0DPGDV8jzSSvc7v5vIYuevOm3w7Q
+         tIgSU/SPgr71yk4DEvUfsGHaNfb1ohhYTysj6n20Za/ijep54dWnsU0QyokRRNf7SJbZ
+         sGKvpJTdJkaH4vp5CXRNwMkKcXtZ727lrBHbFxgTFb7zGaMY7UfdWcMSWDEt1BYABaQ/
+         xCxHwK9a0rg6lOrwTJXFacViJ2m7gXhDmpVH1aFr9QYbybEvCAWnTHCTjwPawPZBh64J
+         djvQzCdMxYGRF7Ah0CBOUwrOSNCxnRR6lirudodjsJAfmiaSddzJAZ0zCWaz6I+Iy6A/
+         14cg==
+X-Gm-Message-State: AOAM531ssg//eXRUkFANGlV3PYnmi9sOhTtMx+bSnH6Zl4E9LIDB2SC7
+        fqFm7RVYD+aR3/ayprasecw=
+X-Google-Smtp-Source: ABdhPJyOvOGiB3YatvCcD4+nTrrJ7xiYRe6nG5qS1A/UKHW4RWfqd58+hQ1Bs8dyF7NHZLQohQoILg==
+X-Received: by 2002:a17:90b:1e45:: with SMTP id pi5mr7409150pjb.237.1643368240594;
+        Fri, 28 Jan 2022 03:10:40 -0800 (PST)
+Received: from gmail.com ([2400:2410:93a3:bc00:7019:fa7:ccfe:b136])
+        by smtp.gmail.com with ESMTPSA id g9sm5566280pgi.84.2022.01.28.03.10.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jan 2022 03:10:39 -0800 (PST)
+Date:   Fri, 28 Jan 2022 20:10:34 +0900
+From:   Akira Kawata <akirakawata1@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     akpm@linux-foundation.org, adobriyan@gmail.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        lukas.bulwahn@gmail.com, kernel test robot <lkp@intel.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
+Message-ID: <20220128111034.jf3i4arhahfwwd6n@gmail.com>
+References: <20211212232414.1402199-1-akirakawata1@gmail.com>
+ <20211212232414.1402199-2-akirakawata1@gmail.com>
+ <202201261955.F86F391@keescook>
+ <20220127125643.cifk2ihnbnxo5wcl@gmail.com>
+ <202201270816.5030A2A4B5@keescook>
 MIME-Version: 1.0
-References: <20220128074731.1623738-1-hch@lst.de> <918225.1643364739@warthog.procyon.org.uk>
-In-Reply-To: <918225.1643364739@warthog.procyon.org.uk>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 28 Jan 2022 13:09:14 +0200
-Message-ID: <CAOQ4uxhRS3MGEnCUDcsB1RL0d1Oy0g0Rzm75hVFAJw2dJ7uKSA@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: rename S_KERNEL_FILE
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202201270816.5030A2A4B5@keescook>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 28, 2022 at 12:12 PM David Howells <dhowells@redhat.com> wrote:
->
-> Christoph Hellwig <hch@lst.de> wrote:
->
-> > S_KERNEL_FILE is grossly misnamed.  We have plenty of files hold
->
-> "held".
->
-> > open by the kernel kernel using filp_open.
->
-> You said "kernel" twice.
->
-> And so what?  Cachefiles holds files open by filp_open - but it can only do so
-> temporarily otherwise EMFILE/ENFILE and OOMs start to become a serious problem
-> because it could end up holding thousands of files open (one or two of the
-> xfstests cause this to happen).
->
-> Further, holding the file open *doesn't* prevent cachefilesd from trying to
-> cull the file to make space whilst it's "in use".
->
-> Yet further, I'm not holding the directories that form the cache layout open
-> with filp_open at all - I'm not reading them, so that would just be a waste of
-> resources - but I really don't want cachefilesd culling them because it sees
-> they're empty but cachefiles is holding them ready.
->
-> > This flag OTOH signals the inode as being a special snowflake that
-> > cachefiles holds onto that can't be unlinked because of ..., erm, pixie
-> > dust.
->
-> Really?  I presume you read the explanation I gave of the races that are a
-> consequence of splitting the driver between the kernel and userspace?  I could
-> avoid them - or at least mitigate them - by keeping my own list of all the
-> inodes in use by cachefiles so that cachefilesd can query it.  I did, in fact,
-> use to have such a list, but the core kernel already has such lists and the
-> facilities to translate pathnames into internal objects, so my stuff ought to
-> be redundant - all I need is one inode flag.
->
-> Further, that inode flag can be shared with anyone else who wants to do
-> something similar.  It's just an "I'm using this" lock.  There's no particular
-> reason to limit its use to cachefiles.  In fact, it is better if it is then
-> shared so that in the unlikely event that two drivers try to use the same
-> file, an error will occur.
->
+On Thu, Jan 27, 2022 at 08:23:51AM -0800, Kees Cook wrote:
+> On Thu, Jan 27, 2022 at 09:56:43PM +0900, Akira Kawata wrote:
+> > On Wed, Jan 26, 2022 at 09:01:30PM -0800, Kees Cook wrote:
+> > > [...]
+> > > 1) The ELF spec says e_phoff is 0 if there's no program header table.
+> > > 
+> > > The old code would just pass the load_addr as a result. This patch will
+> > > now retain the same result (phdr_addr defaults to 0). I wonder if there
+> > > is a bug in this behavior, though? (To be addressed in a different patch
+> > > if needed...)
+> > >
+> > 
+> > It is better to return NULL from load_elf_phdrs when e_phoff == 0, I
+> > think.
+> 
+> Yeah, right now it just returns a pointer to file offset 0.
+> 
+> I also wonder if we should sanity-check e_phoff vs PT_PHDR? Right now
+> Linux ignores PT_PHDR. Should we reject loading when e_phoff != PT_PHDR
+> file offset? (And I wonder if there are "broken" binaries right now that
+> have bad PT_PHDR segments that have gone unnoticed...)
 
-Good idea, but then the helpers to set the flag should not be internal
-to cachefiles and the locking semantics should be clear.
-FYI, overlayfs already takes an "exclusive lock" on upper/work dir
-among all ovl instances.
+I agree that unnoticed broken binaries exist. I checked glibc rtld and
+there is no check of e_phoff != PT_PHDR file offset.
 
-How do you feel about hoisting ovl_inuse_* helpers to fs.h
-and rename s/I_OVL_INUSE/I_EXCL_INUSE?
+> 
+> And now I'm thinking about the excellent ELF loading analysis at:
+> https://nathanotterness.com/2021/10/tiny_elf_modernized.html
+> 
+> ;)
 
-Whether deny rmdir should have its own flag or not I don't know,
-but from ovl POV I *think* it should not be a problem to deny rmdir
-for the ovl upper/work dirs as long as ovl is mounted(?).
+I think you have interested in https://shinh.skr.jp/obf/bingolf.html
+also.
 
-From our experience, adding the exclusive lock caused regressions
-in setups with container runtimes that had mount leaks bugs.
-I am hoping that all those mount leaks bugs were fixed, but one never
-knows what sort of regressions deny rmdir of upper/work may cause.
+> 
+> -- 
+> Kees Cook
 
-Another problem with generic deny of rmdir is that users getting
-EBUSY have no way to figure out the reason.
-At least for a specific subsystem (i.e. cachefiles) users should be able
-to check if the denied dir is in the subsystem's inventory(?)
-
-Thanks,
-Amir.
+Akira Kawata
