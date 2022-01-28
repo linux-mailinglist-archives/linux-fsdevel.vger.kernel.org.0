@@ -2,58 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14C7149F03D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 01:59:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9F549F088
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 02:27:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241607AbiA1A7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jan 2022 19:59:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241402AbiA1A67 (ORCPT
+        id S1345049AbiA1B1r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jan 2022 20:27:47 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:58702 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345081AbiA1B1q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jan 2022 19:58:59 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E27C061749
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 16:58:59 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id c188so5870991iof.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jan 2022 16:58:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OnqrK1B7nE7jhPSJbx7uJGsFsnzMH0p8PmdMrmsnx7c=;
-        b=eiqFDzffYRJHxrlhdAhplyWNbDu7+9XCywnSXd70CEjIhMS+QILhU1gn2PxLfmnCZT
-         bNJ9Uu6Wc0dwdvneqYk7j+Gx1rRovjfECn7zCQ0xWiL4H6hvX9A8b5oKYyqce02E7DCW
-         NTzQ49F7FCqba9EG78FvWG2FJ0q8GVrQIyWy2fIDxxDCLv3njcQzyLih4s1aXLOz0i+/
-         5sSTGgzeA0gu4w3dPuF1jSpGKYFT3eqFqlPbp/g33aBBagrayGA8ak+IubpG+AiehtbE
-         3dsYzg7w2/MbCg9ctg4WDF1ndwIhh6gr6Vd+Zl57wcQBRUaLrzVSaK25RiFiy+diDvja
-         JVRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OnqrK1B7nE7jhPSJbx7uJGsFsnzMH0p8PmdMrmsnx7c=;
-        b=8MnTtSMOh2KM9xF0XIgRWJKO+pk+GBykZtL/9CgRjaC11SgtqRy+H7aobcHIwH8uLh
-         o1wr/FwWY0b3uBZEAEuLR0uYncKySqyNBu8KGbdgbyOaIIT81WoxyZM/1GWkRsBFsfek
-         pEqX7NSKTZpFE0LiwfsIyROWSfwDSdupb/8hUc4Wgy5raIqKJqjRMreF08h23d+GiDKM
-         fd9I+qzVuKPytkPFiOwsQRaljhy4qBnPCSjNuVNdCFYhnO0wYleE6wQ3gx4u7qNRk8kz
-         rlkO5NhY3DKvPOfeN3LuWATp9tnQWm1mJRgvK9iUkaJIT8dV9Jjy1yVRCR02h+kJJ5ry
-         n9xw==
-X-Gm-Message-State: AOAM530A1xCy0eUtgJeV+RefA3Uxt3RbmtX8jORu1oZnUpVuZSE18lxv
-        GIu7T17T89Ypp1IcGVV1Axa9Kw==
-X-Google-Smtp-Source: ABdhPJwV/AEHiSXVQGFEZXPZwOlZ61Jpa3Td0l0CjC3IrFA3/SuJ9toHc9iJFAxn2WQdRiu2+bdIdQ==
-X-Received: by 2002:a02:84ef:: with SMTP id f102mr3301483jai.25.1643331538286;
-        Thu, 27 Jan 2022 16:58:58 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id m4sm12789023iln.48.2022.01.27.16.58.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jan 2022 16:58:57 -0800 (PST)
-Subject: Re: [PATCH 0/9] Remove remaining parts of congestions tracking code.
-To:     NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
+        Thu, 27 Jan 2022 20:27:46 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4E777B82403;
+        Fri, 28 Jan 2022 01:27:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E36C340E4;
+        Fri, 28 Jan 2022 01:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643333263;
+        bh=1DLj8KHTHp8d5WdiUPuZOplV4Q5vuq4iZQ+JC0nHJ2k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sifa83s71AP+NEqGPXQ/5S92TYI3+oItVpDEaB/zM4U7IG/Phqxl7cKbkNTJMCcdM
+         bf///GlSxnROcERpWqOJnBvLcEP8+e3lzDeKQqcmZ/oJD1Qb71s+egXTZ208pOABI/
+         1ISVx27fNyNNEZ9DW/iPyLY1kzgw+HmRiGu0SsshajEzgLlW4n7gBCh+2fg9TR31Iy
+         COwN/6oumyYRY/WJcIb1/4aEMsCAekeXJa2V806YdfIaZOgwmVd2vQ6VivQad+AtRE
+         oOcOafl34matWgXYicLVuS/pcR46n+6v3OMDvqbEl6vWVFuCfyIfLi+xNUmB50k+at
+         Mloh98egdQ82Q==
+Date:   Thu, 27 Jan 2022 17:27:40 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Chao Yu <chao@kernel.org>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
@@ -62,48 +42,150 @@ To:     NeilBrown <neilb@suse.de>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Philipp Reisner <philipp.reisner@linbit.com>,
         Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+        linux-nilfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
         ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
         linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 4/9] f2f2: replace some congestion_wait() calls with
+ io_schedule_timeout()
+Message-ID: <YfNGjMZWrlJURRuR@google.com>
 References: <164325106958.29787.4865219843242892726.stgit@noble.brown>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2e721a70-bc57-0894-9d76-34a9d58c0cb7@kernel.dk>
-Date:   Thu, 27 Jan 2022 17:58:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <164325158957.29787.2116312603613564596.stgit@noble.brown>
 MIME-Version: 1.0
-In-Reply-To: <164325106958.29787.4865219843242892726.stgit@noble.brown>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <164325158957.29787.2116312603613564596.stgit@noble.brown>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/26/22 7:46 PM, NeilBrown wrote:
-> Congestion hasn't been reliably tracked for quite some time.
-> Most MM uses of it for guiding writeback decisions were removed in 5.16.
-> Some other uses were removed in 17-rc1.
-> 
-> This series removes the remaining places that test for congestion, and
-> the few places which still set it.
-> 
-> The second patch touches a few filesystems.  I didn't think there was
-> much value in splitting this out by filesystems, but if maintainers
-> would rather I did that, I will.
-> 
-> The f2fs, cephfs, fuse, NFS, and block patches can go through the
-> respective trees proving the final patch doesn't land until after they
-> all do - so maybe it should be held for 5.18-rc2 if all the rest lands
-> by 5.18-rc1.
+I saw some missing cases. Could you please consider this instead?
+And, please fix "f2f2:" to "f2fs:".
 
-For the series:
+---
+ fs/f2fs/compress.c |  4 +---
+ fs/f2fs/data.c     | 13 ++++++-------
+ fs/f2fs/f2fs.h     |  6 ++++++
+ fs/f2fs/segment.c  |  8 +++-----
+ fs/f2fs/super.c    |  6 ++----
+ 5 files changed, 18 insertions(+), 19 deletions(-)
 
-Acked-by: Jens Axboe <axboe@kernel.dk>
-
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 67bac2792e57..6b22d407a4a4 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1505,9 +1505,7 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 				if (IS_NOQUOTA(cc->inode))
+ 					return 0;
+ 				ret = 0;
+-				cond_resched();
+-				congestion_wait(BLK_RW_ASYNC,
+-						DEFAULT_IO_TIMEOUT);
++				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 				goto retry_write;
+ 			}
+ 			return ret;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0f124e8de1d4..c9285c88cb85 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3046,13 +3046,12 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 					goto next;
+ 				} else if (ret == -EAGAIN) {
+ 					ret = 0;
+-					if (wbc->sync_mode == WB_SYNC_ALL) {
+-						cond_resched();
+-						congestion_wait(BLK_RW_ASYNC,
+-							DEFAULT_IO_TIMEOUT);
+-						goto retry_write;
+-					}
+-					goto next;
++					if (wbc->sync_mode != WB_SYNC_ALL)
++						goto next;
++
++					f2fs_io_schedule_timeout(
++						DEFAULT_IO_TIMEOUT);
++					goto retry_write;
+ 				}
+ 				done_index = page->index + 1;
+ 				done = 1;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6ddb98ff0b7c..dbd650a5a8fc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4501,6 +4501,12 @@ static inline bool f2fs_block_unit_discard(struct f2fs_sb_info *sbi)
+ 	return F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_BLOCK;
+ }
+ 
++static inline void f2fs_io_schedule_timeout(long timeout)
++{
++	set_current_state(TASK_UNINTERRUPTIBLE);
++	io_schedule_timeout(timeout);
++}
++
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+ #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 56211e201d51..885b27d7e491 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -313,8 +313,7 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+ skip:
+ 		iput(inode);
+ 	}
+-	congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
+-	cond_resched();
++	f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 	if (gc_failure) {
+ 		if (++looped >= count)
+ 			return;
+@@ -803,8 +802,7 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi)
+ 		do {
+ 			ret = __submit_flush_wait(sbi, FDEV(i).bdev);
+ 			if (ret)
+-				congestion_wait(BLK_RW_ASYNC,
+-						DEFAULT_IO_TIMEOUT);
++				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 		} while (ret && --count);
+ 
+ 		if (ret) {
+@@ -3137,7 +3135,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+ 			blk_finish_plug(&plug);
+ 			mutex_unlock(&dcc->cmd_lock);
+ 			trimmed += __wait_all_discard_cmd(sbi, NULL);
+-			congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
++			f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 			goto next;
+ 		}
+ skip:
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9af6c20532ec..f484a839fc52 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2135,8 +2135,7 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ 	/* we should flush all the data to keep data consistency */
+ 	do {
+ 		sync_inodes_sb(sbi->sb);
+-		cond_resched();
+-		congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
++		f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 	} while (get_pages(sbi, F2FS_DIRTY_DATA) && retry--);
+ 
+ 	if (unlikely(retry < 0))
+@@ -2504,8 +2503,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+ 							&page, &fsdata);
+ 		if (unlikely(err)) {
+ 			if (err == -ENOMEM) {
+-				congestion_wait(BLK_RW_ASYNC,
+-						DEFAULT_IO_TIMEOUT);
++				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 				goto retry;
+ 			}
+ 			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
 -- 
-Jens Axboe
+2.35.0.rc0.227.g00780c9af4-goog
 
