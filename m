@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A41D349F80A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 12:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0551849F842
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 12:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348052AbiA1LSN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 06:18:13 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:54686 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231681AbiA1LSM (ORCPT
+        id S233745AbiA1LZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 06:25:33 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:33794 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233812AbiA1LZd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 06:18:12 -0500
+        Fri, 28 Jan 2022 06:25:33 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C5036212BB;
-        Fri, 28 Jan 2022 11:18:11 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 2426F1F385;
+        Fri, 28 Jan 2022 11:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1643368691; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1643369132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type;
-        bh=PDtEXS06NbGGxrlBVb11B6XOIP1bsf6Uiis30lGb1Bs=;
-        b=EYLv5hzbg1dxTJSqzPJLhgTyYkVNG9zAJ3bFRiFWZpQalEK9RukOLz5V+BU9HZSfm9yhI+
-        0LwWHGSwdscZKXRT8WZGN43KV/I3IG5M6lVEuK5rR13YFLpR7Eu8BGKjzJf55fYOGWdrro
-        m5TPopaczSi7/11Ch0w7MCVGjJZ1oPM=
+        bh=5kGe5CphpsWJXgZPv4os2MQYEQQqXxBik5J4pkmgKJM=;
+        b=ry5Ynt/MIyS/7SBaU0reMDIpKdeQ4uvyFtTDZ+DAjQHdfSbCoNK0lbSmJLw2nG/ToVF8Nz
+        0L5EcYXFM2wMgzzWfVAKzbcd4Jr0ADA7EHzSv5akgo/N5VJauXIpFmlSS3YxCi0geHGpjW
+        TmaHN3KjoE3fn+JRA0dK9gWb8CaED30=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1643368691;
+        s=susede2_ed25519; t=1643369132;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type;
-        bh=PDtEXS06NbGGxrlBVb11B6XOIP1bsf6Uiis30lGb1Bs=;
-        b=rW7toKAKHgVehOR7gQY0ifG8wWuYtIJbI8eV/CuBwS7QkAaNeFKTc6Gt8pbkDKZJTVfDjb
-        e/E0x1l2iam/IDDw==
+        bh=5kGe5CphpsWJXgZPv4os2MQYEQQqXxBik5J4pkmgKJM=;
+        b=A1XhPeYxybaag6zzFPS4pCETTrQ13ZDcWeiGPSSXOVPpPMkHpOxCa9Y2vl1Ekzt315g5DY
+        +hpyByryTtDDQ7Bg==
 Received: from quack3.suse.cz (unknown [10.100.224.230])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id B9D63A3B85;
-        Fri, 28 Jan 2022 11:18:11 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id 1BB35A3B84;
+        Fri, 28 Jan 2022 11:25:32 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7FA84A05E6; Fri, 28 Jan 2022 12:18:11 +0100 (CET)
-Date:   Fri, 28 Jan 2022 12:18:11 +0100
+        id D3C95A05E6; Fri, 28 Jan 2022 12:25:31 +0100 (CET)
+Date:   Fri, 28 Jan 2022 12:25:31 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] udf and quota fixes for 5.17-rc2
-Message-ID: <20220128111811.ijyqfq6fckxutuoi@quack3.lan>
+Subject: [GIT PULL] fsnotify fixes for 5.17-rc2
+Message-ID: <20220128112531.pgttgwgavqxk7xwq@quack3.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -53,25 +53,31 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
   could you please pull from
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.17-rc2
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.17-rc2
 
-to get fixes for crashes in UDF when inode expansion fails and one quota
-cleanup.
+to get fixes for userspace breakage caused by fsnotify changes ~3 years ago
+and one fanotify cleanup.
 
-Top of the tree is 9daf0a4d32d6. The full shortlog is:
+Top of the tree is 29044dae2e74. The full shortlog is:
 
-Jan Kara (2):
-      udf: Fix NULL ptr deref when converting from inline format
-      udf: Restore i_lenAlloc when inode expansion fails
+Amir Goldstein (2):
+      fsnotify: invalidate dcache before IN_DELETE event
+      fsnotify: fix fsnotify hooks in pseudo filesystems
 
-Tom Rix (1):
-      quota: cleanup double word in comment
+Yang Li (1):
+      fanotify: remove variable set but not used
 
 The diffstat is
 
- fs/udf/inode.c        | 9 ++++-----
- include/linux/quota.h | 2 +-
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ fs/btrfs/ioctl.c                   |  6 ++---
+ fs/configfs/dir.c                  |  6 ++---
+ fs/devpts/inode.c                  |  2 +-
+ fs/namei.c                         | 10 ++++----
+ fs/nfsd/nfsctl.c                   |  5 ++--
+ fs/notify/fanotify/fanotify_user.c |  3 ---
+ include/linux/fsnotify.h           | 49 +++++++++++++++++++++++++++++++++-----
+ net/sunrpc/rpc_pipe.c              |  4 ++--
+ 8 files changed, 59 insertions(+), 26 deletions(-)
 
 							Thanks
 								Honza
