@@ -2,116 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B5349F6E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 11:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7178249F7B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 11:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243733AbiA1KM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 05:12:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:41290 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243644AbiA1KMZ (ORCPT
+        id S1347954AbiA1K6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 05:58:24 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:49924 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242852AbiA1K6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 05:12:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643364745;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vrB8wKd/YuQDRzVLBwG4KgSFnRULjzQXEtQgJ4S5oNc=;
-        b=Qoby7Kd9/U2srQ68zXwxKgMV3xzHwrqfNlCVYfV97AuhqsceU3avi6JF/+c+QCxgN8qfTD
-        kLkwJ+WlIdfDsYck//XLJJ9xFfkiixAEemTU4vuKdLT/HZ3mSS7SopJgIrdz9ziHxLR0in
-        e3nv7FVQtuG7SoTD7p3w4G9E5Um40wU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-339-O80TzOU3MMC2GBxfNuzNFA-1; Fri, 28 Jan 2022 05:12:24 -0500
-X-MC-Unique: O80TzOU3MMC2GBxfNuzNFA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 28 Jan 2022 05:58:23 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84E102F45;
-        Fri, 28 Jan 2022 10:12:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DBEC260C41;
-        Fri, 28 Jan 2022 10:12:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20220128074731.1623738-1-hch@lst.de>
-References: <20220128074731.1623738-1-hch@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Subject: Re: [PATCH v2] fs: rename S_KERNEL_FILE
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1FCF561DFF;
+        Fri, 28 Jan 2022 10:58:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF14CC340E0;
+        Fri, 28 Jan 2022 10:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643367502;
+        bh=+zWMkFDrZZM+qbNwpezGJFJ66XZ2aI38VXsj6i5zjVc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=n2GH3c7VO+JatCdg0jYNo1RcnnnE6Tof8QDipRbmPk+HfcvlbFNLW3SMyMW3v9xDR
+         XvcyPjQ+zoBMaFiIKbF/tqUDjVspc1G6LJwMKY4DtoSJ2KXnm/6PcxgIbMDlaMVZXi
+         pb2+obmFd/8+yM0m5/GQrVyAKczJMz9xx29t4vVYf6gfmpiVY+kpqH13W7lmOVz5VY
+         VW19GXitDz+VslMV9LqEoIE2wjWWnUmWV9G550P5RpLY/K7VmgePVtnpx7ceTzmX/J
+         pQfwOpWyooISOPvAVxAcrCNdf/ZYURJx1w+rki4YAv7LBw6X1mzp5ceEXPFVJWonmp
+         lNnYMldKZd+6A==
+Message-ID: <e5bee4a3e8a7c860d447fe74d5cf2d1846e8600d.camel@kernel.org>
+Subject: Re: [PATCH 0/4] cifs: Use fscache I/O again after the rewrite
+ disabled it
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>,
+        Steve French <smfrench@gmail.com>
+Cc:     Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, linux-cachefs@redhat.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 28 Jan 2022 05:58:20 -0500
+In-Reply-To: <164329930161.843658.7387773437540491743.stgit@warthog.procyon.org.uk>
+References: <164329930161.843658.7387773437540491743.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <918224.1643364739.1@warthog.procyon.org.uk>
-Date:   Fri, 28 Jan 2022 10:12:19 +0000
-Message-ID: <918225.1643364739@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
+On Thu, 2022-01-27 at 16:01 +0000, David Howells wrote:
+> Hi Steve,
+> 
+> Here are some patches to make cifs actually do I/O to the cache after it
+> got disabled in the fscache rewrite[1] plus a warning fix that you might
+> want to detach and take separately:
+> 
+>  (1) Fix a kernel doc warning.
+> 
+>  (2) Change cifs from using ->readpages() to using ->readahead().
+> 
+>  (3) Provide a netfs cache op to query for the presence of data in the
+>      cache.[*]
+> 
+>  (4) Make ->readahead() call
+> 
+> The patches can be found here also:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-rewrite
+> 
+> David
+> 
+> [*] Ideally, we would use the netfslib read helpers, but it's probably better
+>     to roll iterators down into cifs's I/O layer before doing that[2].
+> 
+> Link: https://lore.kernel.org/r/164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk/ [1]
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-experimental [2]
+> 
+> ---
+> David Howells (4):
+>       Fix a warning about a malformed kernel doc comment in cifs by removing the
+>       cifs: Transition from ->readpages() to ->readahead()
+>       netfs, cachefiles: Add a method to query presence of data in the cache
+>       cifs: Implement cache I/O by accessing the cache directly
+> 
+> 
+>  Documentation/filesystems/netfs_library.rst |  16 ++
+>  fs/cachefiles/io.c                          |  59 ++++++
+>  fs/cifs/connect.c                           |   2 +-
+>  fs/cifs/file.c                              | 221 ++++++++------------
+>  fs/cifs/fscache.c                           | 126 +++++++++--
+>  fs/cifs/fscache.h                           |  79 ++++---
+>  include/linux/netfs.h                       |   7 +
+>  7 files changed, 322 insertions(+), 188 deletions(-)
+> 
+> 
 
-> S_KERNEL_FILE is grossly misnamed.  We have plenty of files hold
-
-"held".
-
-> open by the kernel kernel using filp_open.
-
-You said "kernel" twice.
-
-And so what?  Cachefiles holds files open by filp_open - but it can only do so
-temporarily otherwise EMFILE/ENFILE and OOMs start to become a serious problem
-because it could end up holding thousands of files open (one or two of the
-xfstests cause this to happen).
-
-Further, holding the file open *doesn't* prevent cachefilesd from trying to
-cull the file to make space whilst it's "in use".
-
-Yet further, I'm not holding the directories that form the cache layout open
-with filp_open at all - I'm not reading them, so that would just be a waste of
-resources - but I really don't want cachefilesd culling them because it sees
-they're empty but cachefiles is holding them ready.
-
-> This flag OTOH signals the inode as being a special snowflake that
-> cachefiles holds onto that can't be unlinked because of ..., erm, pixie
-> dust.
-
-Really?  I presume you read the explanation I gave of the races that are a
-consequence of splitting the driver between the kernel and userspace?  I could
-avoid them - or at least mitigate them - by keeping my own list of all the
-inodes in use by cachefiles so that cachefilesd can query it.  I did, in fact,
-use to have such a list, but the core kernel already has such lists and the
-facilities to translate pathnames into internal objects, so my stuff ought to
-be redundant - all I need is one inode flag.
-
-Further, that inode flag can be shared with anyone else who wants to do
-something similar.  It's just an "I'm using this" lock.  There's no particular
-reason to limit its use to cachefiles.  In fact, it is better if it is then
-shared so that in the unlikely event that two drivers try to use the same
-file, an error will occur.
-
-I do use it to defend cachefiles against itself also.  In the event that
-there's a bug or a race and it tries to reuse its own cache - particularly
-with something like NFS that can have multiple superblocks for the same
-source, just with different I/O parameters, for example - this can lead to
-data corruption.  I try to defend against it in fscache also, but there can be
-delayed effects due to object finalisation being done in the background after
-fscache has returned to the netfs.
-
-Now, I do think there's an argument to be made for splitting the flag into
-two, as I advanced in a proposed patch.  One piece would just be an "I'm using
-this", the other would be a "don't delete this" flag.  Both are of potential
-use to other drivers.
-
-I take it you'd prefer this to be done a different way?
-
-David
-
+Acked-by: Jeff Layton <jlayton@kernel.org>
