@@ -2,64 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 723BE49F591
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 09:48:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1B249F59C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jan 2022 09:51:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243304AbiA1IsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 03:48:18 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:48743 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240484AbiA1IsR (ORCPT
+        id S243447AbiA1Ivd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 03:51:33 -0500
+Received: from smtpbg701.qq.com ([203.205.195.86]:45692 "EHLO
+        smtpproxy21.qq.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S243427AbiA1Ivc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 03:48:17 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0V31Qcf-_1643359694;
-Received: from 30.240.99.245(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0V31Qcf-_1643359694)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 28 Jan 2022 16:48:15 +0800
-Message-ID: <16ac38b7-6a3a-9f18-b8fa-ca3bfe053504@linux.alibaba.com>
-Date:   Fri, 28 Jan 2022 16:48:07 +0800
+        Fri, 28 Jan 2022 03:51:32 -0500
+X-QQ-mid: bizesmtp7t1643359874tehmffseu
+Received: from localhost.localdomain (unknown [58.240.82.166])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Fri, 28 Jan 2022 16:51:08 +0800 (CST)
+X-QQ-SSF: 01400000002000B0E000B00A0000000
+X-QQ-FEAT: ddlUhmC0HYv/elwp/+QPGZxz4jGz15Y1XN3GwEBF4ubyMgVrtyD5gOWH+PuDE
+        l4+D6DZ6B+LcL1RZKO6j0xjPoKJSLjizYF8bDjBeWBHU/8mLXYGOS+6ANIdNYzNGy/jUBjQ
+        5A9LeEiI87cfLpn2dydwDG0u/4AUkkGL3JHbMZAeH1FWtFFpDNerUI9EAEGPUqGk5jHVUjg
+        dU8T/viSCAx7apwqCNGfgi7xJ7HoLzZxapZqNIePvrgRFKdWgCq2K9fOTVVEZhejX66TlPx
+        FybT4rA32tFnCtn22G91aEThDERmYtGVpwbCpgs3LEMUNtTwVZ37y2v0qSMWti0spU7znDi
+        nfeUoc5sgSM0TnJ8apfs6zjiLf/uWVcFtANxCaM
+X-QQ-GoodBg: 2
+From:   tangmeng <tangmeng@uniontech.com>
+To:     tglx@linutronix.de, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tangmeng <tangmeng@uniontech.com>
+Subject: [PATCH v2] kernel/time: move timer sysctls to its own file
+Date:   Fri, 28 Jan 2022 16:51:06 +0800
+Message-Id: <20220128085106.27031-1-tangmeng@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.5.0
-Subject: Re: [PATCH] fs: remove duplicate permission checks in do_sendfile()
-Content-Language: en-US
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211130080218.22517-1-tianjia.zhang@linux.alibaba.com>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <20211130080218.22517-1-tianjia.zhang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
+X-QQ-Bgrelay: 1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ping.
+This moves the kernel/timer/timer.c respective sysctls to its own file.
 
-Thanks.
+Signed-off-by: tangmeng <tangmeng@uniontech.com>
+---
+ include/linux/timer.h |  4 ----
+ kernel/sysctl.c       | 11 -----------
+ kernel/time/timer.c   | 27 +++++++++++++++++++++++++--
+ 3 files changed, 25 insertions(+), 17 deletions(-)
 
-On 11/30/21 4:02 PM, Tianjia Zhang wrote:
-> The permission check for out.file is mainly performed in the function
-> rw_verify_area(), and this check is called twice in the function
-> do_splice_direct() and before calling do_splice_direct(). This is a
-> redundant check and it is necessary to remove.
-> 
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> ---
->   fs/read_write.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 0074afa7ecb3..bc7c3fcc3400 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1238,9 +1238,6 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
->   #endif
->   	opipe = get_pipe_info(out.file, true);
->   	if (!opipe) {
-> -		retval = rw_verify_area(WRITE, out.file, &out_pos, count);
-> -		if (retval < 0)
-> -			goto fput_out;
->   		file_start_write(out.file);
->   		retval = do_splice_direct(in.file, &pos, out.file, &out_pos,
->   					  count, fl);
+diff --git a/include/linux/timer.h b/include/linux/timer.h
+index fda13c9d1256..793b6b7c5a3e 100644
+--- a/include/linux/timer.h
++++ b/include/linux/timer.h
+@@ -198,10 +198,6 @@ extern enum hrtimer_restart it_real_fn(struct hrtimer *);
+ 
+ #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+ struct ctl_table;
+-
+-extern unsigned int sysctl_timer_migration;
+-int timer_migration_handler(struct ctl_table *table, int write,
+-			    void *buffer, size_t *lenp, loff_t *ppos);
+ #endif
+ 
+ unsigned long __round_jiffies(unsigned long j, int cpu);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 5ae443b2882e..d6d133423e5d 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2292,17 +2292,6 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+-#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+-	{
+-		.procname	= "timer_migration",
+-		.data		= &sysctl_timer_migration,
+-		.maxlen		= sizeof(unsigned int),
+-		.mode		= 0644,
+-		.proc_handler	= timer_migration_handler,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+-#endif
+ #ifdef CONFIG_BPF_SYSCALL
+ 	{
+ 		.procname	= "unprivileged_bpf_disabled",
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 85f1021ad459..ee462673f638 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -223,7 +223,7 @@ static void timer_update_keys(struct work_struct *work);
+ static DECLARE_WORK(timer_update_work, timer_update_keys);
+ 
+ #ifdef CONFIG_SMP
+-unsigned int sysctl_timer_migration = 1;
++static unsigned int sysctl_timer_migration = 1;
+ 
+ DEFINE_STATIC_KEY_FALSE(timers_migration_enabled);
+ 
+@@ -251,7 +251,8 @@ void timers_update_nohz(void)
+ 	schedule_work(&timer_update_work);
+ }
+ 
+-int timer_migration_handler(struct ctl_table *table, int write,
++#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
++static int timer_migration_handler(struct ctl_table *table, int write,
+ 			    void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int ret;
+@@ -264,6 +265,27 @@ int timer_migration_handler(struct ctl_table *table, int write,
+ 	return ret;
+ }
+ 
++static struct ctl_table timer_sysctl[] = {
++	{
++		.procname       = "timer_migration",
++		.data           = &sysctl_timer_migration,
++		.maxlen         = sizeof(unsigned int),
++		.mode           = 0644,
++		.proc_handler   = timer_migration_handler,
++		.extra1         = SYSCTL_ZERO,
++		.extra2         = SYSCTL_ONE,
++	},
++	{}
++};
++
++static int __init timer_sysctl_init(void)
++{
++	register_sysctl_init("kerneli/timer", timer_sysctl);
++	return 0;
++}
++#else
++#define timer_sysctl_init() do { } while (0)
++#endif
+ static inline bool is_timers_nohz_active(void)
+ {
+ 	return static_branch_unlikely(&timers_nohz_active);
+@@ -2022,6 +2044,7 @@ void __init init_timers(void)
+ 	init_timer_cpus();
+ 	posix_cputimers_init_work();
+ 	open_softirq(TIMER_SOFTIRQ, run_timer_softirq);
++	timer_sysctl_init();
+ }
+ 
+ /**
+-- 
+2.20.1
+
+
+
+
