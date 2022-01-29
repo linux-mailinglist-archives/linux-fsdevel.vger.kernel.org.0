@@ -2,140 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DE3C4A2AFF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jan 2022 02:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE39C4A2B0B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jan 2022 02:47:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352044AbiA2Be3 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jan 2022 20:34:29 -0500
-Received: from mail-bn8nam11olkn2018.outbound.protection.outlook.com ([40.92.20.18]:35035
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        id S1352062AbiA2Brz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jan 2022 20:47:55 -0500
+Received: from mail-bn8nam08on2089.outbound.protection.outlook.com ([40.107.100.89]:41345
+        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1352031AbiA2Be1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jan 2022 20:34:27 -0500
+        id S1344830AbiA2Brw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Jan 2022 20:47:52 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BKRS9CtEX8rGEMND/Ht3l5MjXoB3gDQirJflWdKnC5WajYUBOfYm+QgJd4p9p/FO1kBMyFTZG676tDsh+AhjJooVTpDZ1XCxTlKue1P982o8/bB0BxyVkYOEcGwDUm7jDelp7IpAZ0ieQQH/VtCfsG7WSuP4Ria/z3z2vihL26XinMUFwLYjWNQR/PUSxC1Z32XgZgBhvUyIBfhcmoPafX5KKfOnTAxL0g6EpZfZzM+/j8VoqGqEfUlkeZAk1tknHPUPycdejpIgjB0svDc8Jh30+11PwqsAfz5v8L9SctNLM733BO47J7fTbJuBNaRoP4TI3xR15UDO7uSLquBk/w==
+ b=FaQvDY41ZkJOErtocNz5WvWSF1CRu+QB6AmYr3CGAGG+igd7eY9bNkIWQIVmRAda7yyHnBRG7/kV54u2azjFgDcL4asAFl+Jq6XxDZJaP/XPoaMBizgpbeY1qcPYjSwZm5HllyDFpxZP7pjrxLBpvB1HegVLVm6EJ+Q3P2B9zZT7HDEshHGXdmmQtUH0eSmdp2WkQnrZFObeN+yRYbHlBntNBfHKfktPArn7+ECvpasaU21CZjfx3ZwziTp0cV/+8A/7Hsy8SaYVFYYORLkOcf5+LCruGNutwEjbgX4FEXFReee5yRP66xNRP7+wbSocQYbj0Iavn5xHcLsN4b65dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C5jaAtmQjZ/Kn0Og3XV159mm+f+g2LUhrb9k1hhXQkQ=;
- b=PNByYE416WkRDGb4FuZRmzvaIlwHxq8DrnkDOVQ+psgootz1EwYgmExePNCnZJ88IRrreKyFdGrjTBPlmiEw6lbtG8Rng499dohgAb2Zl75oxJTZfD12cMh1EckqHBXFO7jA0IJ1KPhFhzD+t6Gkok2CJmZVR74doM9EnNT/nPtSs0/6J2dWtJdsyaP9rqOlbdmbbnwLxJR04PuyB6KG9lJXSiFCFdG/mTCk9feTwp0Pxny3M4M3kealpavDyNJ2sObqd0ebAOJlUqFiqmYg7igHhedAXxWW+35zASjTqt1h7tfhvJgBvTLyw0bTkm40fsTVxZ17AnUGB3Rm3222/w==
+ bh=hbqSoTeYxV7jPqlFn6ijrE9aPAUzRh9uKQKHfXBPpWg=;
+ b=O6CRnPPRl+4zfhv9ALHfD8A8KjZx3TRMy6XQgon9NTmQlIIvDpFw6Gzlevk+4yV+38le/HvtVIOc4HTfHSdiHBRBv0PbfgFcekiz2ZTEOegMOJFbMlsyCLAB2oSR5oPPmeW7WVAIgmXXTT1OBRXvj3EjJlZD2xVmO2NfvoFP7PSRwzo5kzLODwbEVuHj/DSg92l7XHarEIw1zuBF+k5zGEmXQ8b7RUqQxX9fefigkFqxePAvJHYBrwjrIgWRyO6mlPY+iYv82HRbC/LYYkdQm/xtwSayXeRBxuDZ+ZqBK5Irm1iDY61ShyXcqG6RzCdUwH/+fghiaZCRfMx9hj3X8w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
-Received: from MN2PR20MB2512.namprd20.prod.outlook.com (2603:10b6:208:130::24)
- by BYAPR20MB2261.namprd20.prod.outlook.com (2603:10b6:a03:157::10) with
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hbqSoTeYxV7jPqlFn6ijrE9aPAUzRh9uKQKHfXBPpWg=;
+ b=Bj7/SxBvONbUBmORZxBHVDreTLyxut6UoyPLjgBvP6K8X6kr0zJkPH3tfE7GsYvMYvONX4F/z/CGGwH+WC9mpdkmywmVgG8SrRJ6nftUhHlMniN9I77i3RTWtLbPbcmbkvPKDVqTup+sAVqrLbTvHaMW5lFGs77wMcKRD80wEMzhTzbB0/m0L57z6ekBXbQ2lAiUOvfhbsf+mrv3m+AGz5i2eJZVnhAfWa1aPB/wepcZrICUWCpUSNzAiVeXm0HNiD7XH5h1Ev/BXgddfYue1esQld4b28G6uLH4p4rLTg2CpnFjlKZSgKAlXJMkLqTwZBrK+1ELih024AEmGz6j8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB4140.namprd12.prod.outlook.com (2603:10b6:5:221::13)
+ by MN2PR12MB3488.namprd12.prod.outlook.com (2603:10b6:208:ca::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.19; Sat, 29 Jan
- 2022 01:34:25 +0000
-Received: from MN2PR20MB2512.namprd20.prod.outlook.com
- ([fe80::3401:d907:2f5a:1ef]) by MN2PR20MB2512.namprd20.prod.outlook.com
- ([fe80::3401:d907:2f5a:1ef%6]) with mapi id 15.20.4930.019; Sat, 29 Jan 2022
- 01:34:25 +0000
-From:   Bruno Damasceno Freire <bdamasceno@hotmail.com.br>
-To:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: [regression] 5.15 kernel triggering 100x more inode evictions
-Thread-Topic: [regression] 5.15 kernel triggering 100x more inode evictions
-Thread-Index: AQHYFK62qktZ5+857UCjjik6g1f/Dw==
-Date:   Sat, 29 Jan 2022 01:34:25 +0000
-Message-ID: <MN2PR20MB25127C2E50B7C7102B2A2E91D2239@MN2PR20MB2512.namprd20.prod.outlook.com>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Sat, 29 Jan
+ 2022 01:47:50 +0000
+Received: from DM6PR12MB4140.namprd12.prod.outlook.com
+ ([fe80::ede5:7f12:c1:b25]) by DM6PR12MB4140.namprd12.prod.outlook.com
+ ([fe80::ede5:7f12:c1:b25%6]) with mapi id 15.20.4930.019; Sat, 29 Jan 2022
+ 01:47:50 +0000
+Message-ID: <c6e152ad-2b31-48cd-3d5e-c109d24a0e79@nvidia.com>
+Date:   Fri, 28 Jan 2022 17:47:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-suggested_attachment_session_id: f3fd9804-6885-b2e4-6559-22c71d7c7ea2
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [XME6zyP0I7Bm6db7+o9L7ctznfpNIQen]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bc7f22d5-c91c-431e-c828-08d9e2c77c01
-x-ms-traffictypediagnostic: BYAPR20MB2261:EE_
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 7iROfcssJ43wuhD3PxSu98feF29414em0g4G5xF509aWm+C2398wXIZcXFMBnRODunyaMOOUkEAOUsUmr4TbljWELXw/pX91luc2V9Pl8iQyT0L2PiHnCud8qkC4v3e87loTrUaXggPklHX5r7c4kezzYiVgOyDRMlrgjzxlNT3THPwgR68VU+oIIq51TlPm/58V/F+lnVX3XJLm1tKiQ+vduCjJtH0tP79SiQEyFJxpFW7j2W/rDrhTvhCWMwTrvZGgrMnK84VFHIQb6FYpF1PtJZOO8X535oSvQ1xXblOQhl41Ub8zsJsIjtbST+t/lEXpX/cAL8gHG55g10eFXfbDkABtyAFL+l7ScW60mi7RBewrAkZuo9ghpG4BHw58mISAGIbyBclMDH0wDeeByqx22BgXaNv+zUam7v7gGpf5eidCcbovRpaQkwqP6KAK8Uiq59u2tGAbsQHf2YVODQgrEYB8ApJU8dIGwanGRP4dbeJecg12G71dX2ouwc510gp6jslcSyM63tc5PrafQgezkIOJsLjT21pqlK3zevnZkLYNqwvq/Xu6ncpYGL1jhewGYp1KQkfFs7dahkraszkAN6qM0GDp4DmJX1WOL/jH9zmS+I6bjDZurRzkJFlB
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: HkmXcrBAJ++cK+G1OKkYHAc392IRdHT38XhyMQMdRM/ptciAokhzq91AIHLMIt8OyyyEb/HRWSSX37JtKT9KOzrGAz5kgyyOvAq8z98LXdOhMjxhumPdQmItw329/d06XSaeSVJWztS7pdo+XAdrRz9t0xzfBBAJYZbOD/v2wivz9c4SlhW+xPyTdMDIM4wkdZeOBSotxSQqlcw6F6TJIdd2ltReczA31B3HqaBk9hQNUipTdiBuCB/YnvUJPi3WtE/RgYOPi7L/FVFeTB3nQ3mIYVkoUjl/nWYY01X9XjjyTEvSkFBJ+bLRsnccestGj5Wb7aKthzuzLCIYsJJLT1+7GJlAYSUbLJ+uxG8AxNAXovQAukIJ1IeZ3ER/SG8yHYhm1/zmxS8eqnSbcFIP9BUjziyGjlZ15U8r14aBVfaRHfzzGeNbtUflMiv8wuKvPeLbWbesSh+nYHenYQZL319nMv02tMZlsn1GVYy/eh+HdkNJWed73zSHLADE3T1jQL4iF/v4vuRsButhu0c0cDHKxrRW56SPoMjYAe8NLOvJY/ZA5E2eN7FYqzx5xv0DKLnq35NNMFRQU8YXTVED2ndOToxFZodnNM6G+GGh3l7tlJcQ5GA7B/1Wj/s6RrDs+2l/lxcyHnttfOQeRYIBwL0LsVqJycn39K6eCSlou0rUZjjcDCULjVgMGxmk3IxHcw/bMSv3JcW48Qzt76bbC21IEG/Qdl0DNbmLVadtSFp5B0Mnuv50CzI/+cso/k46zGsQpb70v0O2JA01Af6l/G8DufsaJBe1Vc2TGNDMtNAFafzyHPsTWYGRmquIrZqqmrkaQ9IFLmwI4gP7yCN4/Ygz+CnBTcaDEqgfT0+lnSAjsf9E3Ajma2RcIMYCDypvTHZjvNOcZ1DPZGrHp/szao4UNNS6WX3IvcfX7IJY19BB9YVUpbM649/djqey5cOr
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+To:     lsf-pc@lists.linux-foundation.org,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        Jason Gary Gunthorpe <jgg@nvidia.com>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+Subject: [LSF/MM/BPF TOPIC] FOLL_PIN + file systems
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR04CA0004.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::9) To DM6PR12MB4140.namprd12.prod.outlook.com
+ (2603:10b6:5:221::13)
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-9803a.templateTenant
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e59b7e1b-62bd-4b38-860f-08d9e2c95ba6
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3488:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB3488542EED410FFACE516891A8239@MN2PR12MB3488.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: k0BnBFBmB604Do3reug4VWSQPtmp+hf0b+IaQpeXXJLkvGnYTmd4EYo/5nnkDAKUqvPCGednXasiS9VzeG+ofaos9WDZAQSZjHS3tf0Ui9Nd6Z85HFrHpIqri6IhZxhLfJtOXxnm6Tw328zdG0Llk7q40pybGOFDQFLL/xeXzjLZhh1pFCexCFLoFez8MJ723WBf/k7Zk1PTPBU3R3bVNvFOEINpuTT0ug+2wj/kwkCiX0VipNNTsgqolnQwZCvH9mXPDFwlMN110B97h4Eblo39syPl1NOGBaayn/ZYbaWLxDZSg69EjD2XAnPMCTU9XAlIQ2WyP6qh/tUbGTZp9504z3rxeeYOM0aej2TAlW17WPdxww177JP9Obf13mfEwkyUqCS4Qur7sQRvo3nbX0D9RZlS+ukyC9c3eO8v4xvI193VcsMI/5ake0Q7dlugzkZRe1/SQlLTL8Q02qgC7pbceauJS9H2f6DedznzbiE2gqcDZ93F2xANQgxHm6ApQ8GQPhiHUmMdq2FG1aO7MOXnkcC49F41o/6mOan6r3mSD+ENooVNrkKUZ7EMShqsjTGN4TGLxm60a8b6oxtpAPIYFwzu/hmaSh+vWqpucnTgmRLJyoA6reKXGJCbkdGrPw/4zkcDCBOKuckyUfy+VIFCY9IjJvWYUnP0suKweQ8mUER2KxDtrKgVsfftOiGjueZEGOpYTqAm8g+cVu2qSO/zfsSktcPjMUNR+NDG40egpfc1H6+4VjaESZ5x9baB9GC5DDznw3ikG1t8SzEOv0++eHczSQr981Anq+dwvW1MaNIlxrkqLmHHZjF3C/4xYjmN9dfGumattFaAT4CX/eGDjp7UU1TtfitBtcyhBbw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4140.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(36756003)(38100700002)(66476007)(66556008)(31686004)(2906002)(66946007)(26005)(186003)(2616005)(83380400001)(110136005)(6486002)(966005)(5660300002)(54906003)(316002)(6666004)(6506007)(31696002)(4326008)(86362001)(508600001)(8936002)(8676002)(6512007)(45980500001)(43740500002)(20210929001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q3loK24wb29kZlVROFViRkVwR2pja2laZ0VjNi9ad3l5L1V3MlR2WnpMNjhx?=
+ =?utf-8?B?cndMT2V6NG8rZzFTa2RTNGN4WWhyMW9LbmxTeGd2aDRadnhQeDZ3K01NZU1G?=
+ =?utf-8?B?SzlxbVJwKzkxblZJaEJKM2dNZExsWS9TTUNnazZKK0c1UU1WR0VpQzRDU0xl?=
+ =?utf-8?B?S0krOEFyTnVvVDRReHQ3RGNxVG9vc2RLYmVIN01oMFpFMno5N014ZEVGQXMv?=
+ =?utf-8?B?ZXFxZUNwclB5R2ZRRUExMUxzQ1hScXRMU2gxR0tCL21FMmZacTVhWGZBRExK?=
+ =?utf-8?B?MXRNU0NiM3lWMDBXbnAxT25NN2FMNXVZeENoRGJFTmFlYzBkNk90OHh5WitC?=
+ =?utf-8?B?cGNKdVBab1ByREpxZ0o0dnFObC9FYXR0b0tpaGxRdXp0SDR2ZUprSUx0bm5T?=
+ =?utf-8?B?cHNldGRlenFTNWlCa25NRHNXTWQrQVd2MERKazhjZWlKdTZNZS9nTDZvckxB?=
+ =?utf-8?B?VDdYLzhjSDBSNkc0Qk9JeGh0VkJiOHV3aTFsWUFmc2ZFZXpkVTd2am9HVWJP?=
+ =?utf-8?B?VC9YNlBTTzIwUXhPa0g2UXBBZzNic2dOSUR3OWpNWUxvOXJwaktXZmgxWmxN?=
+ =?utf-8?B?MUNGMWs5K2U1ZW9yTlFtcSszQ0o3QVRSQlJBYlZEWGluUFNwSGV3d1FsK2Y1?=
+ =?utf-8?B?MG9QM2Z2RlhWSHY1bmJURytzZUJHbit6SHZuZ1pJa0Mrdko2WkNpT253QjR0?=
+ =?utf-8?B?V3dsOFY0T0FYQTc0c3dPSTIyeHEyOXZQVUY0R2xUTnFXYVBDTzN2RFMrUHBr?=
+ =?utf-8?B?RXplR0VlY1Z0UkpITXdkb0xTdzZkR25oRWNWQ0tEYTFERjY5d2NFMWpPUVY0?=
+ =?utf-8?B?YWhyM2I0Y1JGdTIrbUUwRTArbjNsS3ZubVIyRytQbEViOE1NcGZLNGRORGRs?=
+ =?utf-8?B?R1lXNzAvbFVmZHJqN2tac0puT3ZUY3dJb2FXMEdqc3ZzMnVheFd1b0RQREpx?=
+ =?utf-8?B?SlFpdXhoMWVFUEVldDZXK2N5Z0lVKzBXOC82VS9FbGFUbUdCVlI1clNTMmF4?=
+ =?utf-8?B?RjdPellGWklMTXl1dzJGd3hyUHVQMlZjQTlpNXoxQXc2RkpmSitacHc4eTRm?=
+ =?utf-8?B?ZXdDV0M4dnc3N0dyZXBraDdrbzJYcGlwN25lTy9UY2drSzJjc3pmU3NqU2Jq?=
+ =?utf-8?B?NTRxN2hERWlPMEhyRWZqaDdhYTR1Y2xsekZEcGNkdkhIVVhrSDlMbEJXbi9L?=
+ =?utf-8?B?RDVmZFkwNWhMS1Z5RWoyUGdXVWs0MCt0L3JLZC9xckJjQ3NGbG9aNGlxc0NW?=
+ =?utf-8?B?cG1wa0ZRY2p4TEhRbWFsa1FXbDk0M3U4N2dOVzRkZUF2N0ppY2NTQ1VFYjRT?=
+ =?utf-8?B?R2VPMTY4TzdmWmZ1RElzWmNyMmVFM3lKNzZORC9Jd3J6U2d3UXlPdjZvYitl?=
+ =?utf-8?B?bWc3ZUc3S2FVdkNWY21wWndwNEEvS1lMY2ZYZ0NjL1c0SG9rSWZTL1ZMdTcw?=
+ =?utf-8?B?VGExOEdhLzMrNTQramx5U1E4c0tTb0Q1OG5qWEoxODh5cjdWNHVlWTlKb0hV?=
+ =?utf-8?B?RCtZSXBjQVg1WUtTcXRIVVJ4bkJZSkRESGpBS3ZEc3JoSDF2MUNMNlcyQkJl?=
+ =?utf-8?B?VkhZUzFIOStkd1VoVlczQWRMczFsbS8rRm1HRTlVWnNpT0pxdHpXa2RVZGt1?=
+ =?utf-8?B?Zld0T1RUYUE4bGFZbFEwYXc5SmMrKzBPRElDT3cyOVVmY1E0d2VrekxVS1ow?=
+ =?utf-8?B?Z2tRN1p3WFNEaENqdVljZTJKTnV6eWVLV0Q5L1hUZWJTTG1lWEpFcnBUakRZ?=
+ =?utf-8?B?TjlnWU0zMXlVVTg3T1pKdEp1NHczYnh6N0JmVjFQZUVCNjZ1NVN2Y1RGQ0tv?=
+ =?utf-8?B?N2NodFBlVmFtUittcktPNXlpVC9WTXpZSlBzbGFQQzU0ekZqR2wyL0FNcG9B?=
+ =?utf-8?B?b0E3QUZyV2N2SEZNMnhJd0VGNnhaZUlRUnAzamVqLzZreitLeG9Pc2xQbld0?=
+ =?utf-8?B?MlI3THphNmJXTDJodzRNMzcvR2xuSDQ5TmxnR1FaYUEvVHFPU08vZ2dLMFhV?=
+ =?utf-8?B?b3k2ZE5POEQ1UTBaM1p3RFd3LzJmZGZ1TzVXZE0xU0dxYnd2cUwvcThyR050?=
+ =?utf-8?B?aUI4N1ZLOVY0TUxoa0NVcjF2UytMRDgxSEVwcDlqWnZ2d2tyQ3ZCTUxKZjNa?=
+ =?utf-8?B?OVNrYVdmcngwZnZQU001bnphZzl3c0FSeWZBU2h6a0I5dmlKTXFpakZUZ3Mz?=
+ =?utf-8?Q?IqFgZYZ56yBTwo9+KT17Mok=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e59b7e1b-62bd-4b38-860f-08d9e2c95ba6
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4140.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR20MB2512.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc7f22d5-c91c-431e-c828-08d9e2c77c01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2022 01:34:25.5404
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2022 01:47:50.5454
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR20MB2261
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6I/3AP9gTKZ9V9UMOCQByfRh/xbneuxMgUiqc/UdEmT0eCE3qfq8Bbq05F2ag/n7ok2prRh5+9jsec6jdHFdBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3488
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello everybody;
+Hi,
 
-I'd like to publicize again [1] the following bug that I reported for opensuse:
-https://bugzilla.opensuse.org/show_bug.cgi?id=1193549
+By the time we meet for LSF/MM/BPF in May, the Direct IO layer will
+likely be converted to use FOLL_PIN page pinning (that is, changed from
+using get_user_pages_fast(), to pin_user_pages_fast()).
 
+Direct IO conversion to FOLL_PIN was the last missing piece, and so the
+time is right to discuss how to use the output of all of this work
+(which is: the ability to call page_maybe_dma_pinned()), in order to fix
+one of the original problems that prompted FOLL_PIN's creation.
 
-TLDR:
-comment #46
-Filipe Manana 2022-01-05 10:54:16 UTC
-(In reply to Bruno Damasceno Freire from comment #45)
-> k5.14.14-3 : @inode_evictions: 1715
-> k5.15.12-1 : @inode_evictions: 166106
-> k5.16~rc8  : @inode_evictions: 1715
-That confirms the hypothesis. Somehow a 5.15 is triggering ~100x inode evictions, which will result in renames doing unnecessary inode logging.
-As to why that is happening, I have no idea if anything in mm or vfs changed in some 5.15 release that results in triggering a lot more evictions.
+That problem is: file systems do not currently tolerate having their
+pages pinned and DMA'd to/from. See [1] for an extensive background of
+some 11 LWN articles since 2018.
 
+In order to fix that problem, now that FOLL_PIN is available and wired
+up, we should revisit some of the leading proposals. For example, using
+file leases to mark out areas that are safe for FOLL_PIN page pins, is
+probably about right--with enough caveats to avoid breaking things for
+existing users...this is worth discussing at the conference. This topic
+has been contentious in past sessions, but with the recent progress, it
+should be a little easier to make progress, because there are fewer
+"variables".
 
-Why am I doing this?
-I got support from the btrfs developer Filipe Manana.
-He saw some improvements opportunities and they are on the way for future releases of this filesystem.
-The problem is that the regression is outside the btrfs code and the root cause wasn't found.
-Filipe was guessing that the regression could be in the MM or VFS kernel subsystems.
-I'm sending this to the linux-fsdevel mailing list first.
-Tumbleweed isn't using the 5.15 kernel anymore but lots of distros are [2].
-Until this issue is further evaluated, anyone using the combination of a 5.15 kernel + btrfs compression property can be caught by this regression.
-Please tell if you think this subject would be of interest of another kernel subsystem.
+I'll volunteer to present a few slides to provide the background and get
+the discussion started. It's critical to have filesystem people in
+attendance for this, such as Jan Kara, Dave Chinner, Christoph Hellwig,
+and many more that I won't try to list explicitly here. RDMA
+representation (Jason Gunthorpe, Leon Romanovsky, Chaitanya Kulkarni,
+and others) will help keep the file system folks from creating rules
+that break them "too much". And of course -mm folks. There are many
+people who have contributed to this project, so again, apologies for not
+listing everyone explicitly.
 
-
-How to reproduce:
-I am an opensuse user, so I'm not sure on how to reproduce the issue on other distros.
-Here are some updated instructions to reproduce it on tumbleweed:
-
---SETUP--------------------------------------------
-1 get the installation image
-  wget http://download.opensuse.org/tumbleweed/iso/openSUSE-Tumbleweed-NET-x86_64-Current.iso
-2 create a basic VM
-  11GB storage should be enought for the tumbleweed installer
-3 install a server or a desktop version with btrfs
-  no btrfs snapshots needed
-4 downgrade the kernel (5.15.12-1.3 is the last version built for tumbleweed)
-  wget http://download.opensuse.org/history/20220114/tumbleweed/repo/oss/x86_64/kernel-default-5.15.12-1.3.x86_64.rpm
-  wget http://opensuse.zq1.de/history/20220107/tumbleweed/repo/oss/x86_64/kernel-default-5.15.12-1.3.x86_64.rpm
-  zypper in --force ./kernel-default-5.15.12-1.3.x86_64.rpm
-  boot the 5.15 kernel
-5 get the affected package: libKF5Emoticons5 (4 minutes), gutenprint (32 minutes)...
-  env LANGUAGE=eng zypper info libKF5Emoticons5 | grep Version
-  wget http://download.opensuse.org/tumbleweed/repo/oss/x86_64/libKF5Emoticons5-(version).x86_64.rpm
-
---TEST---------------------------------------------
-6 install the package: it should take a few seconds
-  rpm --force -U -nodeps ./libKF5Emoticons5-(version).x86_64.rpm
-7 enable any compression (zlib, lzo, zstd) on the package's destination folder with most files
-  optional: rpm -ql libKF5Emoticons5 | less
-  btrfs property set /usr/share/emoticons/EmojiOne compression zstd:1
-8 retry to install: it should take much longer now !!!
-  rpm --force -U -nodeps ./libKF5Emoticons5-(version).x86_64.rpm
-9 disable compression
-  btrfs property set /usr/share/emoticons/EmojiOne compression ""
-10 retry to install: it should take a few secons again
-   rpm --force -U -nodeps ./libKF5Emoticons5-(version).x86_64.rpm
+Worth mentioning: in addition to the Direct IO work, FOLL_PIN has been
+used to help improve the accuracy of copy-on-write (COW) behavior [2].
+And that eventually led to some speculation on Linus' part [3], that
+"legacy gup" (wow, someone already said those words!) might eventually
+be rare, and that most callers of the mm/gup.c functions would actually
+want access to the pages' contents for DMA or Direct IO. Those cases
+require calling the FOLL_PIN (pin_user_pages*) variants.
 
 
-TIA, Bruno
+[1] https://lwn.net/Kernel/Index/#Memory_management-get_user_pages
+
+[2] https://lwn.net/Articles/849876/ Patching until the COWs come home
+     (part 2)
+
+[3] https://lore.kernel.org/r/CAHk-=whUEZC2skXPUWy93DpNmC0VF=t2EwmEgWGx8aPstTmWYA@mail.gmail.com
 
 
-[1] https://lore.kernel.org/linux-fsdevel/MN2PR20MB251235DDB741CD46A9DD5FAAD24E9@MN2PR20MB2512.namprd20.prod.outlook.com/T/#u
-
-[2] http://distrowatch.org/search.php?pkg=linux&relation=similar&pkgver=5.15&distrorange=InAny#pkgsearch
-EndeavourOS (2), Manjaro Linux (3), Pop!_OS (5), Ubuntu (6), Debian (7), Garuda Linux (8), Slackware Linux (15), PCLinuxOS (18), ArcoLinux (21), SparkyLinux (24), Alpine Linux (30), Bluestar Linux (40), Mageia (43), Linux Kodachi (47), Gentoo Linux (48), deepin (49), Kaisen Linux (52), Mabox Linux (55), Absolute Linux (56), GeckoLinux (67), siduction (75), Snal Linux (78), SystemRescue (85), NuTyX (88), Calculate Linux (101), IPFire (110), Clonezilla Live (114), Linux From Scratch (121), Slackel (123), Regata OS (129), Parted Magic (143), paldo GNU/Linux (255), AUSTRUMI (not active).
+thanks,
+-- 
+John Hubbard
+NVIDIA
