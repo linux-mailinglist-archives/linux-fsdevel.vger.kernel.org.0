@@ -2,161 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D14E4A372F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jan 2022 16:14:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E6774A3742
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jan 2022 16:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355396AbiA3POq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jan 2022 10:14:46 -0500
-Received: from smtpbg701.qq.com ([203.205.195.86]:46351 "EHLO
-        smtpproxy21.qq.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1355399AbiA3POo (ORCPT
+        id S1355421AbiA3P1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jan 2022 10:27:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1355438AbiA3P1H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jan 2022 10:14:44 -0500
-X-QQ-mid: bizesmtp42t1643555661tvf2j5vv
-Received: from localhost.localdomain (unknown [180.105.58.61])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Sun, 30 Jan 2022 23:14:12 +0800 (CST)
-X-QQ-SSF: 01400000002000B0E000B00A0000000
-X-QQ-FEAT: awo/irkzQ9x7uCJ7hJ2L2ByOwJx57RTcgS8GnflcG+562cie6+uqZolaa1riz
-        5XSqAxZU5rcs2SjiB0xEVGQ91FJfTnyXaQO4KhzVPv/w9eVaN538WHS3+OhRNPyPcMozUax
-        DEhT2g9jT3A+ep+/QY+t+8D9aCd2Nm5YJ1MG7wRhoio+3qjC16fQPQ1JYdsQ/lH70ZGntuJ
-        F90/Jlt+ejtHdbKs8CZmyTVDtIm41pIiNOo4SB0qSYK12BvuGp8U5z/hDgMzxBeFTKPmFzm
-        roCxLMoy/+15Txxc3G10vwxmQCg8Yq1pUN+3MlB7e8yl6YbiJUTV9tHbRdlb9LjlyGbQRVr
-        BVnkto3wPVy9Xnr6dbZgBAmw0ENAw==
-X-QQ-GoodBg: 2
-From:   tangmeng <tangmeng@uniontech.com>
-To:     tglx@linutronix.de, mcgrof@kernel.org, keescook@chromium.org,
-        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org
+        Sun, 30 Jan 2022 10:27:07 -0500
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2A52C061714
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jan 2022 07:27:06 -0800 (PST)
+Received: by mail-vs1-xe29.google.com with SMTP id az20so8864062vsb.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jan 2022 07:27:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=usp.br; s=usp-google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=QX+g1hCOW91cXXnSggcw6gj04u3NWBZ31aKJT4qy8z4=;
+        b=HD/4qz2z/NdjjLU1lR4H3U15s5msIFLg7DBqWhui4lujSGMlzrXXW637fmJHyj7rJg
+         9ZSLBqe0C+Gv5VtDiUFNtMoyYHNHXkH1NpFo+NqijUSbm0XwOJGMaZ5h+0pmGbWRKG28
+         QnPjy7wB8St3ENbSz7Gx/BOgxWyQ04LuBZggu9IcCAiI3HQNAYvlPeZ8tTB9kxKwOZxb
+         E4HRukFXNvmbOGDV1Vgfj7yxjC6SEy1wIsQ8jtKL4zdIx4x9GJP+TTiN2ONPMM9M0tYf
+         zIqUquFg4g0eiezyCtsEWtknBXBlTPEUfphOElqsiWhlniImPrlSNO89ou/k6U1S+FFZ
+         ShwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=QX+g1hCOW91cXXnSggcw6gj04u3NWBZ31aKJT4qy8z4=;
+        b=FE8qQmzc8WGSxyJ9tJgebLNOpWYFxtWxBHZfcOOr+2QhaYSYggRqLDZFotHdNShd3M
+         guereg7N02xE0f9G3BZH9YWFFNYZZztqbfJEMeFp17FKpX0UuC1G9qvJ9HKBm2bQH3CF
+         q0Z9UVr3qoP1u9V2euQEluJQmemhdeqQzafw1liayyg2IveRB3NWkqIApXczSeTcc+Q9
+         IukCc48EBKpRfh5LhCZgkR3PtBS+wZjaray6BRdjxWZXoiH/5PZUj2vB0XPANAKNN0u7
+         Su4QjAw1G2Q6kwBlKHfp3JjRFZm8gL/GakGWKjouuBgMTpZ9Zn0nofg55gUdsvLkW0El
+         A4UQ==
+X-Gm-Message-State: AOAM531c2aakeLx/TY8b5qDNVJcJObz5Z+25ZSn+o5au60vymM8be8Cq
+        PgrZtmQbPlA2BkBX60JEEI7nerslRqIHBGgXye0=
+X-Google-Smtp-Source: ABdhPJxkGrsc+o2xJu08YhAkeRNFOz6+5hhYb5WDUPUWhPpwgPKwhiHccgAA6hO+d1qRqqhfQPS+dQ==
+X-Received: by 2002:a05:6102:5490:: with SMTP id bk16mr6607320vsb.33.1643556425648;
+        Sun, 30 Jan 2022 07:27:05 -0800 (PST)
+Received: from fedora ([187.36.236.204])
+        by smtp.gmail.com with ESMTPSA id w5sm3139815vkf.12.2022.01.30.07.27.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jan 2022 07:27:05 -0800 (PST)
+Date:   Sun, 30 Jan 2022 12:27:00 -0300
+From:   =?iso-8859-1?Q?Ma=EDra?= Canal <maira.canal@usp.br>
+To:     gregkh@linuxfoundation.org, tj@kernel.org, viro@zeniv.linux.org.uk,
+        nathan@kernel.org, ndesaulniers@google.com
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH v3] kernel/time: move timer sysctls to its own file
-Date:   Sun, 30 Jan 2022 23:13:38 +0800
-Message-Id: <20220130151338.6533-1-tangmeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+        llvm@lists.linux.dev
+Subject: [PATCH] seq_file: fix NULL pointer arithmetic warning
+Message-ID: <YfauRJpYiAT3yEnK@fedora>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
-X-QQ-Bgrelay: 1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This moves the kernel/timer/timer.c respective sysctls to its own file.
+Implement conditional logic in order to replace NULL pointer arithmetic.
 
-Signed-off-by: tangmeng <tangmeng@uniontech.com>
+The use of NULL pointer arithmetic was pointed out by clang with the
+following warning:
+
+fs/kernfs/file.c:128:15: warning: performing pointer arithmetic on a
+null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+                return NULL + !*ppos;
+                       ~~~~ ^
+fs/seq_file.c:559:14: warning: performing pointer arithmetic on a
+null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+        return NULL + (*pos == 0);
+
+Signed-off-by: Maíra Canal <maira.canal@usp.br>
 ---
- include/linux/timer.h |  4 ----
- kernel/sysctl.c       | 11 -----------
- kernel/time/timer.c   | 28 ++++++++++++++++++++++++++--
- 3 files changed, 26 insertions(+), 17 deletions(-)
+ fs/kernfs/file.c | 6 ++++--
+ fs/seq_file.c    | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index fda13c9d1256..793b6b7c5a3e 100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -198,10 +198,6 @@ extern enum hrtimer_restart it_real_fn(struct hrtimer *);
- 
- #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
- struct ctl_table;
--
--extern unsigned int sysctl_timer_migration;
--int timer_migration_handler(struct ctl_table *table, int write,
--			    void *buffer, size_t *lenp, loff_t *ppos);
- #endif
- 
- unsigned long __round_jiffies(unsigned long j, int cpu);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5ae443b2882e..d6d133423e5d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2292,17 +2292,6 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
- 	},
--#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
--	{
--		.procname	= "timer_migration",
--		.data		= &sysctl_timer_migration,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= timer_migration_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif
- #ifdef CONFIG_BPF_SYSCALL
- 	{
- 		.procname	= "unprivileged_bpf_disabled",
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 85f1021ad459..f9ae2b4f6326 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -44,6 +44,7 @@
- #include <linux/slab.h>
- #include <linux/compat.h>
- #include <linux/random.h>
-+#include <linux/sysctl.h>
- 
- #include <linux/uaccess.h>
- #include <asm/unistd.h>
-@@ -223,7 +224,7 @@ static void timer_update_keys(struct work_struct *work);
- static DECLARE_WORK(timer_update_work, timer_update_keys);
- 
- #ifdef CONFIG_SMP
--unsigned int sysctl_timer_migration = 1;
-+static unsigned int sysctl_timer_migration = 1;
- 
- DEFINE_STATIC_KEY_FALSE(timers_migration_enabled);
- 
-@@ -251,7 +252,8 @@ void timers_update_nohz(void)
- 	schedule_work(&timer_update_work);
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index 9414a7a60a9f..3a6990c7fe8e 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -120,12 +120,14 @@ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
+ 		if (next == ERR_PTR(-ENODEV))
+ 			kernfs_seq_stop_active(sf, next);
+ 		return next;
+-	} else {
++	} else if (*ppos) {
+ 		/*
+ 		 * The same behavior and code as single_open().  Returns
+ 		 * !NULL if pos is at the beginning; otherwise, NULL.
+ 		 */
+-		return NULL + !*ppos;
++		return NULL;
++	} else {
++		return (void *) 1;
+ 	}
  }
  
--int timer_migration_handler(struct ctl_table *table, int write,
-+#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-+static int timer_migration_handler(struct ctl_table *table, int write,
- 			    void *buffer, size_t *lenp, loff_t *ppos)
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index f8e1f4ee87ff..7b6165d5d829 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -556,7 +556,7 @@ EXPORT_SYMBOL(seq_dentry);
+ 
+ static void *single_start(struct seq_file *p, loff_t *pos)
  {
- 	int ret;
-@@ -264,6 +266,27 @@ int timer_migration_handler(struct ctl_table *table, int write,
- 	return ret;
+-	return NULL + (*pos == 0);
++	return *pos ? NULL : (void *) 1;
  }
  
-+static struct ctl_table timer_sysctl[] = {
-+	{
-+		.procname       = "timer_migration",
-+		.data           = &sysctl_timer_migration,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = timer_migration_handler,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = SYSCTL_ONE,
-+	},
-+	{}
-+};
-+
-+static int __init timer_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", timer_sysctl);
-+	return 0;
-+}
-+#else
-+#define timer_sysctl_init() do { } while (0)
-+#endif
- static inline bool is_timers_nohz_active(void)
- {
- 	return static_branch_unlikely(&timers_nohz_active);
-@@ -2022,6 +2045,7 @@ void __init init_timers(void)
- 	init_timer_cpus();
- 	posix_cputimers_init_work();
- 	open_softirq(TIMER_SOFTIRQ, run_timer_softirq);
-+	timer_sysctl_init();
- }
- 
- /**
+ static void *single_next(struct seq_file *p, void *v, loff_t *pos)
 -- 
-2.20.1
-
-
+2.34.1
 
