@@ -2,146 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 015A94A3673
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jan 2022 14:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D14E4A372F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jan 2022 16:14:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347090AbiA3NHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jan 2022 08:07:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37482 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347045AbiA3NHK (ORCPT
+        id S1355396AbiA3POq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jan 2022 10:14:46 -0500
+Received: from smtpbg701.qq.com ([203.205.195.86]:46351 "EHLO
+        smtpproxy21.qq.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1355399AbiA3POo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jan 2022 08:07:10 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0974C061714;
-        Sun, 30 Jan 2022 05:07:09 -0800 (PST)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 2C4C9C01E; Sun, 30 Jan 2022 14:07:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1643548025; bh=WzIC+v4+UrPRQhCkj2dIOPEwY3tXxjMgRe2rgwvMEZY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=A/eTCDAYeVJIxX5tbvB12/4/652HP6a+M3FpLRcse+Sc/SEjEpfTDPYqr1LDWJh1v
-         mKGkEQeNIvKnL7zXo0of38hdfHCmurruuAq1RVuh/WRkZ29Azka74FfWZ2FMPKPa7E
-         OFzMujNAmlWwYryiv62a1n0xCvaQolZw3yZ4TE8ZNDfbF1x4cKDIA1DmHKvN902c1R
-         CHdTs98gR/dogx6TZ8YrpA42dOjVmuR57wwsv/Oe8z1gb3TAn8r2u07I6qF7QdICHx
-         wkg7Bzw9y1kIem4Y6uVmScgtSqVubnftN4Gv2MpiYgmAfNmiW/4DcWSBnHarALyF7n
-         aXKrUoaYdnxKQ==
-X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
-X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
-        autolearn=unavailable version=3.3.2
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id C0393C01B;
-        Sun, 30 Jan 2022 14:07:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1643548024; bh=WzIC+v4+UrPRQhCkj2dIOPEwY3tXxjMgRe2rgwvMEZY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=f92Lnoe7HN1ufdYJSbNXcyVI/iMnA8btHbNuPezzvvhOQa41J/nJcEc7dibLwCS/G
-         YeXUlLJlorVVVAc8ayShvappXCEwRTXw5F+AqipPbYGKmZx4rMs4qqDYrNN1VLfrGX
-         7MXSoeDVhEvNk6X/KUVxjalJXF/G5wdlvkpC3qhwkzyNBfkbF27SOy5jmqhZXFgqxK
-         vFqD7IzAAuFQw0AF9Xnm5zcLo+PSxECkbrsiGK3GQGuYfpKbXdVW+/cyBgRvLoly8V
-         I8r1O5bdT9amTUA81wljgpkQ72J2meQt5rJNlmxiy2rkVPoTm+p1o/tP2m6WtYBamU
-         fmdHqvKGboAbA==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id b42ff00b;
-        Sun, 30 Jan 2022 13:06:57 +0000 (UTC)
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     v9fs-developer@lists.sourceforge.net, ericvh@gmail.com,
-        lucho@ionkov.net
+        Sun, 30 Jan 2022 10:14:44 -0500
+X-QQ-mid: bizesmtp42t1643555661tvf2j5vv
+Received: from localhost.localdomain (unknown [180.105.58.61])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Sun, 30 Jan 2022 23:14:12 +0800 (CST)
+X-QQ-SSF: 01400000002000B0E000B00A0000000
+X-QQ-FEAT: awo/irkzQ9x7uCJ7hJ2L2ByOwJx57RTcgS8GnflcG+562cie6+uqZolaa1riz
+        5XSqAxZU5rcs2SjiB0xEVGQ91FJfTnyXaQO4KhzVPv/w9eVaN538WHS3+OhRNPyPcMozUax
+        DEhT2g9jT3A+ep+/QY+t+8D9aCd2Nm5YJ1MG7wRhoio+3qjC16fQPQ1JYdsQ/lH70ZGntuJ
+        F90/Jlt+ejtHdbKs8CZmyTVDtIm41pIiNOo4SB0qSYK12BvuGp8U5z/hDgMzxBeFTKPmFzm
+        roCxLMoy/+15Txxc3G10vwxmQCg8Yq1pUN+3MlB7e8yl6YbiJUTV9tHbRdlb9LjlyGbQRVr
+        BVnkto3wPVy9Xnr6dbZgBAmw0ENAw==
+X-QQ-GoodBg: 2
+From:   tangmeng <tangmeng@uniontech.com>
+To:     tglx@linutronix.de, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        stable@vger.kernel.org, ron minnich <rminnich@gmail.com>,
-        ng@0x80.stream
-Subject: [PATCH] Revert "fs/9p: search open fids first"
-Date:   Sun, 30 Jan 2022 22:06:51 +0900
-Message-Id: <20220130130651.712293-1-asmadeus@codewreck.org>
-X-Mailer: git-send-email 2.33.1
+        tangmeng <tangmeng@uniontech.com>
+Subject: [PATCH v3] kernel/time: move timer sysctls to its own file
+Date:   Sun, 30 Jan 2022 23:13:38 +0800
+Message-Id: <20220130151338.6533-1-tangmeng@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
+X-QQ-Bgrelay: 1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This reverts commit 478ba09edc1f2f2ee27180a06150cb2d1a686f9c.
+This moves the kernel/timer/timer.c respective sysctls to its own file.
 
-That commit was meant as a fix for setattrs with by fd (e.g. ftruncate)
-to use an open fid instead of the first fid it found on lookup.
-The proper fix for that is to use the fid associated with the open file
-struct, available in iattr->ia_file for such operations, and was
-actually done just before in 66246641609b ("9p: retrieve fid from file
-when file instance exist.")
-As such, this commit is no longer required.
-
-Furthermore, changing lookup to return open fids first had unwanted side
-effects, as it turns out the protocol forbids the use of open fids for
-further walks (e.g. clone_fid) and we broke mounts for some servers
-enforcing this rule.
-
-Note this only reverts to the old working behaviour, but it's still
-possible for lookup to return open fids if dentry->d_fsdata is not set,
-so more work is needed to make sure we respect this rule in the future,
-for example by adding a flag to the lookup functions to only match
-certain fid open modes depending on caller requirements.
-
-Fixes: 478ba09edc1f ("fs/9p: search open fids first")
-Cc: stable@vger.kernel.org # v5.11+
-Reported-by: ron minnich <rminnich@gmail.com>
-Reported-by: ng@0x80.stream
-Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+Signed-off-by: tangmeng <tangmeng@uniontech.com>
 ---
+ include/linux/timer.h |  4 ----
+ kernel/sysctl.c       | 11 -----------
+ kernel/time/timer.c   | 28 ++++++++++++++++++++++++++--
+ 3 files changed, 26 insertions(+), 17 deletions(-)
 
-I'm sorry I didn't find time to check this properly fixes the clone
-open fid issues, but Ron reported it did so I'll assume it did for now.
-I'll try to find time to either implement the check in ganesha or use
-another server -- if you have a suggestion that'd run either a ramfs or
-export a local filesystem from linux I'm all ears, I couldn't get go9p
-to work in the very little time I tried.
-
-I did however check that Greg's original open/chmod 0/ftruncate pattern
-works (while truncate was refused).
-Also, before revert the truncate by path wasn't refused, and now is
-again, so that's definitely good.
-
-I've also tested open-unlink-ftruncate and it works properly with
-ganesha, but not with qemu -- it looks like qemu tries to access the
-file by path in setattr even if the fid has an associated fd, so that'd
-be a qemu bug, but it's unrelated to this patch anyway.
-
-
-Unless there are issues with this patch I'll send it to Linus around
-Friday
-
- fs/9p/fid.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/fs/9p/fid.c b/fs/9p/fid.c
-index 6aab046c98e2..79df61fe0e59 100644
---- a/fs/9p/fid.c
-+++ b/fs/9p/fid.c
-@@ -96,12 +96,8 @@ static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
- 		 dentry, dentry, from_kuid(&init_user_ns, uid),
- 		 any);
- 	ret = NULL;
--
--	if (d_inode(dentry))
--		ret = v9fs_fid_find_inode(d_inode(dentry), uid);
--
- 	/* we'll recheck under lock if there's anything to look in */
--	if (!ret && dentry->d_fsdata) {
-+	if (dentry->d_fsdata) {
- 		struct hlist_head *h = (struct hlist_head *)&dentry->d_fsdata;
+diff --git a/include/linux/timer.h b/include/linux/timer.h
+index fda13c9d1256..793b6b7c5a3e 100644
+--- a/include/linux/timer.h
++++ b/include/linux/timer.h
+@@ -198,10 +198,6 @@ extern enum hrtimer_restart it_real_fn(struct hrtimer *);
  
- 		spin_lock(&dentry->d_lock);
-@@ -113,6 +109,9 @@ static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
- 			}
- 		}
- 		spin_unlock(&dentry->d_lock);
-+	} else {
-+		if (dentry->d_inode)
-+			ret = v9fs_fid_find_inode(dentry->d_inode, uid);
- 	}
+ #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+ struct ctl_table;
+-
+-extern unsigned int sysctl_timer_migration;
+-int timer_migration_handler(struct ctl_table *table, int write,
+-			    void *buffer, size_t *lenp, loff_t *ppos);
+ #endif
  
+ unsigned long __round_jiffies(unsigned long j, int cpu);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 5ae443b2882e..d6d133423e5d 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2292,17 +2292,6 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+-#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+-	{
+-		.procname	= "timer_migration",
+-		.data		= &sysctl_timer_migration,
+-		.maxlen		= sizeof(unsigned int),
+-		.mode		= 0644,
+-		.proc_handler	= timer_migration_handler,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+-#endif
+ #ifdef CONFIG_BPF_SYSCALL
+ 	{
+ 		.procname	= "unprivileged_bpf_disabled",
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 85f1021ad459..f9ae2b4f6326 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -44,6 +44,7 @@
+ #include <linux/slab.h>
+ #include <linux/compat.h>
+ #include <linux/random.h>
++#include <linux/sysctl.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
+@@ -223,7 +224,7 @@ static void timer_update_keys(struct work_struct *work);
+ static DECLARE_WORK(timer_update_work, timer_update_keys);
+ 
+ #ifdef CONFIG_SMP
+-unsigned int sysctl_timer_migration = 1;
++static unsigned int sysctl_timer_migration = 1;
+ 
+ DEFINE_STATIC_KEY_FALSE(timers_migration_enabled);
+ 
+@@ -251,7 +252,8 @@ void timers_update_nohz(void)
+ 	schedule_work(&timer_update_work);
+ }
+ 
+-int timer_migration_handler(struct ctl_table *table, int write,
++#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
++static int timer_migration_handler(struct ctl_table *table, int write,
+ 			    void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int ret;
+@@ -264,6 +266,27 @@ int timer_migration_handler(struct ctl_table *table, int write,
  	return ret;
+ }
+ 
++static struct ctl_table timer_sysctl[] = {
++	{
++		.procname       = "timer_migration",
++		.data           = &sysctl_timer_migration,
++		.maxlen         = sizeof(unsigned int),
++		.mode           = 0644,
++		.proc_handler   = timer_migration_handler,
++		.extra1         = SYSCTL_ZERO,
++		.extra2         = SYSCTL_ONE,
++	},
++	{}
++};
++
++static int __init timer_sysctl_init(void)
++{
++	register_sysctl_init("kernel", timer_sysctl);
++	return 0;
++}
++#else
++#define timer_sysctl_init() do { } while (0)
++#endif
+ static inline bool is_timers_nohz_active(void)
+ {
+ 	return static_branch_unlikely(&timers_nohz_active);
+@@ -2022,6 +2045,7 @@ void __init init_timers(void)
+ 	init_timer_cpus();
+ 	posix_cputimers_init_work();
+ 	open_softirq(TIMER_SOFTIRQ, run_timer_softirq);
++	timer_sysctl_init();
+ }
+ 
+ /**
 -- 
-2.34.1
+2.20.1
+
+
 
