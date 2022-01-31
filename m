@@ -2,95 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A814A4AB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 16:37:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 825074A4AB9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 16:38:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379700AbiAaPhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jan 2022 10:37:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52320 "EHLO
+        id S1379726AbiAaPiK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jan 2022 10:38:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376980AbiAaPhP (ORCPT
+        with ESMTP id S1379378AbiAaPiJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jan 2022 10:37:15 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70E0C061714;
-        Mon, 31 Jan 2022 07:37:15 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 52F27B82B51;
-        Mon, 31 Jan 2022 15:37:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 125E3C340E8;
-        Mon, 31 Jan 2022 15:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643643433;
-        bh=n4pF0WTD8mzI8jApP59+6mO09uKqNqOupqmX+4f7jRk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QO8bd6YwcVynrWLeUHJiup6FETqxBrt5l8FJYwCvJs/JayrA0saN0XoC2+Yi4iOeb
-         DnE+nmh6kh0XRjoqhy7B/yMAkmIZRcODgKjW2wcsOluZkn0tPXFfMePt1lZAMke6NL
-         Kp9NuRE7JWzvN9/n6wSEZAOTfXcfsUZrDmTqwJidpsWC4365LQzisynhfF2+0bjd9X
-         wdGeyI5gtwiMDs+jRdPq/DBG4vRKcN1JSHQRalDJcmVshoYq0d1uKiZtnLC9RtJdXq
-         CgTYbUbzZI1e677E4tEko0HGJHCR856BNRlgglATA6+ZBd4SC2GWyTchpzPy7W+30T
-         SpEc1n09nuJTw==
-Date:   Mon, 31 Jan 2022 16:37:07 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     kernel test robot <oliver.sang@intel.com>,
+        Mon, 31 Jan 2022 10:38:09 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF7CC061714;
+        Mon, 31 Jan 2022 07:38:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=UfqBL4TG7ayNTZqiM/UFFRcaqGRyJgYgZDocc/keuXE=; b=pdxY7lVkV8i5XKsTRwTPih2xVR
+        hObQ4k8GZnvA9aH9H3Pn+0RqHhyKh6DAceJsmQjgJ2GVLbxoIbS70X6CS92wecZCbQ4sVKusW4TvU
+        XBVZy9hIY5BWrPKNM06g5FZLjrA1KDwOnik4QohwjI0ZJQdG4paX29rMbX2CIP0ObGzJlkRxDj1Km
+        JH7C/ZdArHnrdpKMD2+Sl+S9BuPgWTnEr6GDl7v2nQTM8Fc7o6rev3eyjDflH92ACCi89hVVlepu4
+        rigJgTP5Qax+B3//Dykv+R1Kcwud292QXpIQY14glJkQzjb/7ursNJmLZZADVepxSd0yu4rw5EyC9
+        gseOXp3Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nEYkl-00A3gb-I7; Mon, 31 Jan 2022 15:38:03 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Denys Vlasenko <vda.linux@googlemail.com>,
         Kees Cook <keescook@chromium.org>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        0day robot <lkp@intel.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Rich Felker <dalias@libc.org>,
         Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: Re: [fs/exec]  80bd5afdd8: xfstests.generic.633.fail
-Message-ID: <20220131153707.oe45h7tuci2cbfuv@wittgenstein>
-References: <20220127000724.15106-1-ariadne@dereferenced.org>
- <20220131144352.GE16385@xsang-OptiPlex-9020>
- <20220131150819.iuqlz3rz6q7cheap@wittgenstein>
- <Yff9+tIDAvYM5EO/@casper.infradead.org>
+        Jann Horn <jannh@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@Oracle.com>
+Subject: [PATCH] binfmt_elf: Take the mmap lock when walking the VMA list
+Date:   Mon, 31 Jan 2022 15:37:40 +0000
+Message-Id: <20220131153740.2396974-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Yff9+tIDAvYM5EO/@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 31, 2022 at 03:19:22PM +0000, Matthew Wilcox wrote:
-> On Mon, Jan 31, 2022 at 04:08:19PM +0100, Christian Brauner wrote:
-> > On Mon, Jan 31, 2022 at 10:43:52PM +0800, kernel test robot wrote:
-> > I can fix this rather simply in our upstream fstests with:
-> > 
-> > static char *argv[] = {
-> > 	"",
-> > };
-> > 
-> > I guess.
-> > 
-> > But doesn't
-> > 
-> > static char *argv[] = {
-> > 	NULL,
-> > };
-> > 
-> > seem something that should work especially with execveat()?
-> 
-> The problem is that the exec'ed program sees an argc of 0, which is the
-> problem we're trying to work around in the kernel (instead of leaving
-> it to ld.so to fix for suid programs).
+I'm not sure if the VMA list can change under us, but dump_vma_snapshot()
+is very careful to take the mmap_lock in write mode.  We only need to
+take it in read mode here as we do not care if the size of the stack
+VMA changes underneath us.
 
-Ok, just seems a bit more intuitive for path-based exec than for
-fd-based execveat().
+If it can be changed underneath us, this is a potential use-after-free
+for a multithreaded process which is dumping core.
 
-What's argv[0] supposed to contain in these cases?
+Fixes: 2aa362c49c31 ("coredump: extend core dump note section to contain file names of mapped files")
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+---
+ fs/binfmt_elf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-1. execveat(fd, NULL, ..., AT_EMPTY_PATH)
-2. execveat(fd, "my-file", ..., )
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 605017eb9349..dc2318355762 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1651,6 +1651,7 @@ static int fill_files_note(struct memelfnote *note)
+ 	name_base = name_curpos = ((char *)data) + names_ofs;
+ 	remaining = size - names_ofs;
+ 	count = 0;
++	mmap_read_lock(mm);
+ 	for (vma = mm->mmap; vma != NULL; vma = vma->vm_next) {
+ 		struct file *file;
+ 		const char *filename;
+@@ -1661,6 +1662,7 @@ static int fill_files_note(struct memelfnote *note)
+ 		filename = file_path(file, name_curpos, remaining);
+ 		if (IS_ERR(filename)) {
+ 			if (PTR_ERR(filename) == -ENAMETOOLONG) {
++				mmap_read_unlock(mm);
+ 				kvfree(data);
+ 				size = size * 5 / 4;
+ 				goto alloc;
+@@ -1680,6 +1682,7 @@ static int fill_files_note(struct memelfnote *note)
+ 		*start_end_ofs++ = vma->vm_pgoff;
+ 		count++;
+ 	}
++	mmap_read_unlock(mm);
+ 
+ 	/* Now we know exact count of files, can store it */
+ 	data[0] = count;
+-- 
+2.34.1
 
-"" in both 1. and 2.?
-"" in 1. and "my-file" in 2.?
