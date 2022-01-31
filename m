@@ -2,29 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EC8C4A4E27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 19:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B5F64A4E2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 19:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355738AbiAaSZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jan 2022 13:25:04 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:49214 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355749AbiAaSYy (ORCPT
+        id S1356139AbiAaSZT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jan 2022 13:25:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1356211AbiAaSZC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jan 2022 13:24:54 -0500
+        Mon, 31 Jan 2022 13:25:02 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CF79C061741;
+        Mon, 31 Jan 2022 10:25:02 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B21661113;
-        Mon, 31 Jan 2022 18:24:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C02F3C36AF6;
-        Mon, 31 Jan 2022 18:24:53 +0000 (UTC)
-Subject: [PATCH v2 2/5] NFSD: Fix NFSv3 SETATTR/CREATE's handling of large
- file sizes
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5AE0DB82BEA;
+        Mon, 31 Jan 2022 18:25:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A3A2C340E8;
+        Mon, 31 Jan 2022 18:24:59 +0000 (UTC)
+Subject: [PATCH v2 3/5] NFSD: Clamp WRITE offsets
 From:   Chuck Lever <chuck.lever@oracle.com>
 To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 31 Jan 2022 13:24:53 -0500
-Message-ID: <164365349299.3304.4161554101383665486.stgit@bazille.1015granger.net>
+Date:   Mon, 31 Jan 2022 13:24:59 -0500
+Message-ID: <164365349911.3304.17078054234185583698.stgit@bazille.1015granger.net>
 In-Reply-To: <164365324981.3304.4571955521912946906.stgit@bazille.1015granger.net>
 References: <164365324981.3304.4571955521912946906.stgit@bazille.1015granger.net>
 User-Agent: StGit/1.4
@@ -35,77 +37,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iattr::ia_size is a loff_t, so these NFSv3 procedures must be
-careful to deal with incoming client size values that are larger
-than s64_max without corrupting the value.
-
-Silently capping the value results in storing a different value
-than the client passed in which is unexpected behavior, so remove
-the min_t() check in decode_sattr3().
-
-Moreover, a large file size is not an XDR error, since anything up
-to U64_MAX is permitted for NFSv3 file size values. So it has to be
-dealt with in nfs3proc.c, not in the XDR decoder.
-
-Size comparisons like in inode_newsize_ok should now work as
-expected -- the VFS returns -EFBIG if the new size is larger than
-the underlying filesystem's s_maxbytes.
-
-However, RFC 1813 permits only the WRITE procedure to return
-NFS3ERR_FBIG. Extra checks are needed to prevent NFSv3 SETATTR and
-CREATE from returning FBIG. Unfortunately RFC 1813 does not provide
-a specific status code for either procedure to indicate this
-specific failure, so I've chosen NFS3ERR_INVAL for SETATTR and
-NFS3ERR_IO for CREATE.
-
-Applications and NFS clients might be better served if the server
-stuck with NFS3ERR_FBIG despite what RFC 1813 says.
+Ensure that a client cannot specify a WRITE range that falls in a
+byte range outside what the kernel's internal types (such as loff_t,
+which is signed) can represent. The kiocb iterators, invoked in
+nfsd_vfs_write(), should properly limit write operations to within
+the underlying file system's s_maxbytes.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfsd/nfs3proc.c |    9 +++++++++
- fs/nfsd/nfs3xdr.c  |    2 +-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ fs/nfsd/nfs3proc.c |    6 ++++++
+ fs/nfsd/nfs4proc.c |    5 +++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
-index 8ef53f6726ec..02edc7074d06 100644
+index 02edc7074d06..4e939ebba5d5 100644
 --- a/fs/nfsd/nfs3proc.c
 +++ b/fs/nfsd/nfs3proc.c
-@@ -73,6 +73,10 @@ nfsd3_proc_setattr(struct svc_rqst *rqstp)
+@@ -203,6 +203,11 @@ nfsd3_proc_write(struct svc_rqst *rqstp)
+ 				(unsigned long long) argp->offset,
+ 				argp->stable? " stable" : "");
+ 
++	resp->status = nfserr_fbig;
++	if (argp->offset >= OFFSET_MAX ||
++	    argp->offset + argp->len >= OFFSET_MAX)
++		goto out;
++
  	fh_copy(&resp->fh, &argp->fh);
- 	resp->status = nfsd_setattr(rqstp, &resp->fh, &argp->attrs,
- 				    argp->check_guard, argp->guardtime);
-+
-+	if (resp->status == nfserr_fbig)
-+		resp->status = nfserr_inval;
-+
+ 	resp->committed = argp->stable;
+ 	nvecs = svc_fill_write_vector(rqstp, &argp->payload);
+@@ -211,6 +216,7 @@ nfsd3_proc_write(struct svc_rqst *rqstp)
+ 				  rqstp->rq_vec, nvecs, &cnt,
+ 				  resp->committed, resp->verf);
+ 	resp->count = cnt;
++out:
  	return rpc_success;
  }
  
-@@ -245,6 +249,11 @@ nfsd3_proc_create(struct svc_rqst *rqstp)
- 	resp->status = do_nfsd_create(rqstp, dirfhp, argp->name, argp->len,
- 				      attr, newfhp, argp->createmode,
- 				      (u32 *)argp->verf, NULL, NULL);
-+
-+	/* CREATE must not return NFS3ERR_FBIG */
-+	if (resp->status == nfserr_fbig)
-+		resp->status = nfserr_io;
-+
- 	return rpc_success;
- }
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index ed1ee25647be..807f41380e77 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1018,8 +1018,9 @@ nfsd4_write(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	unsigned long cnt;
+ 	int nvecs;
  
-diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
-index 7c45ba4db61b..2e47a07029f1 100644
---- a/fs/nfsd/nfs3xdr.c
-+++ b/fs/nfsd/nfs3xdr.c
-@@ -254,7 +254,7 @@ svcxdr_decode_sattr3(struct svc_rqst *rqstp, struct xdr_stream *xdr,
- 		if (xdr_stream_decode_u64(xdr, &newsize) < 0)
- 			return false;
- 		iap->ia_valid |= ATTR_SIZE;
--		iap->ia_size = min_t(u64, newsize, NFS_OFFSET_MAX);
-+		iap->ia_size = newsize;
- 	}
- 	if (xdr_stream_decode_u32(xdr, &set_it) < 0)
- 		return false;
+-	if (write->wr_offset >= OFFSET_MAX)
+-		return nfserr_inval;
++	if (write->wr_offset >= OFFSET_MAX ||
++	    write->wr_offset + write->wr_buflen >= OFFSET_MAX)
++		return nfserr_fbig;
+ 
+ 	cnt = write->wr_buflen;
+ 	trace_nfsd_write_start(rqstp, &cstate->current_fh,
 
 
