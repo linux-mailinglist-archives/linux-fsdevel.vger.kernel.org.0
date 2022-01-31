@@ -2,132 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10ED24A4B93
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 17:14:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0510D4A4BB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 17:20:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380116AbiAaQOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jan 2022 11:14:36 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:32988 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244114AbiAaQOW (ORCPT
+        id S1380116AbiAaQU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jan 2022 11:20:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34286 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232764AbiAaQU1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jan 2022 11:14:22 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ED6446149E;
-        Mon, 31 Jan 2022 16:14:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2C5C340E8;
-        Mon, 31 Jan 2022 16:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643645661;
-        bh=Yvsx7evK35eNpN0sVeiSMgT9bC+KI8aBrOulVEWuUyg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ajPQF5B9ScrdUEL30QTR543MJCm3m/1Js2EOp4+OP4H3LnRpu8xpOUeC1ILd6qmZf
-         22k28akAMUkeJLBN5OGT1W/OKZZ8ivBgeFDCP7WlQiY1Lpxv7O1HGl8zUmSrKTg10N
-         bOjgn72QrbhdeVu7+5INs36cVLZS+o+0fCRBbtgZzqDT3VQN0ISAAblKei5E5Osvvh
-         q5Bbwy6ulQR4RLDKF8U+knXigYy0CfF//utgGE7+5f/+6ISUIL2LMKJZvH75NglGRc
-         23IC1ARREs6ghCZAorFMxPpF5uaRBc+WUBt/J0WXL1jNzY9KypVzCAu7INvYwHKVr1
-         eDb+ptBXUf+Cg==
-Date:   Mon, 31 Jan 2022 17:14:15 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     kernel test robot <oliver.sang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        0day robot <lkp@intel.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Rich Felker <dalias@libc.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: Re: [fs/exec]  80bd5afdd8: xfstests.generic.633.fail
-Message-ID: <20220131161415.wlvtsd4ecehyg3x5@wittgenstein>
-References: <20220127000724.15106-1-ariadne@dereferenced.org>
- <20220131144352.GE16385@xsang-OptiPlex-9020>
- <20220131150819.iuqlz3rz6q7cheap@wittgenstein>
- <Yff9+tIDAvYM5EO/@casper.infradead.org>
- <20220131153707.oe45h7tuci2cbfuv@wittgenstein>
- <YfgFeWbZPl+gAUYE@casper.infradead.org>
+        Mon, 31 Jan 2022 11:20:27 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD4C6C061714;
+        Mon, 31 Jan 2022 08:20:25 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id y17so11861025ilm.1;
+        Mon, 31 Jan 2022 08:20:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UbFm592rz0IKfu+VnJFNxz1Msppocc460xkpKheRmIo=;
+        b=Yxn7d+6bC1PpKoxj3bEfo/bKYHYGd/coL4bL/5DRdCZnqKeOEWBSLDWXaqTuyV6MaI
+         VAq8BE8FbR6wJAoRY2DoD1HTZtpChDHnMxdQdflAntYc3ameSzQ3a2UuJgtqqVNHX+iO
+         82SDHSTqJftpRpK0T1kmeFOGDJMlCXJ7XLIASs6AzAB2bWrGWc261DsD3rI9UOT8kj2N
+         9UpIWI+qEFaaU8v2BNdLbjiKderpfJW6irGth+NlniaP/v/J6mVqlWe9drCJmmxMoHkc
+         AzxlFuXr7ZCXp3ieVLYyrH4DN1e4/wHkDwGVv3X2Se8jxNELDEEX8LYIMQxauKhVQU8A
+         tn0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UbFm592rz0IKfu+VnJFNxz1Msppocc460xkpKheRmIo=;
+        b=JXOFjMPQB6uKJlZh7stgmiIrNPCFEYfKBqI51QqWhxFiWxf9PGNtx2vMq6i/0I8Fbq
+         8Bea91JcqBAYb2a3IcKjpRax26MR/wdMv7A93xBs/YivETqlGoCBKGn0/g0fWj/G62op
+         avzrJR9BROlrAS6ihcGdAI7FF3CqU0YjYXHfzGcB0pTHJ5ieCg3s5lAD1iRo9BHgVa2n
+         FYUoxwPFYF1ZOR9lGxZk6FYAb5bOO0X61m92vCq51B0r5VKAhjxKGzz+hVe+jgcXM+rZ
+         4xrG/lUzGYj91IT0eEyiubq85eoOW0zXI+ofa2fKWwZuaeO+GnfcKfNUegue/q2f27KS
+         f3jA==
+X-Gm-Message-State: AOAM533sdkoV7FPhjEjSRpzxToCzZMX/YkCz/GWmClmAgSDEOuwQPIZB
+        vLSCC0TZy/Mwq7bBoBI6kxyuwCLy+m5u2M5dYUI=
+X-Google-Smtp-Source: ABdhPJyRorRaMlWkkgIN9K2SnqW/g5GLCJG6D2tuEyorWa6Y39EQqCnR0aSGdXlSeCoGJkW+S6ipBxaQeGvq99bLJmk=
+X-Received: by 2002:a05:6e02:1708:: with SMTP id u8mr5000825ill.319.1643646025247;
+ Mon, 31 Jan 2022 08:20:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YfgFeWbZPl+gAUYE@casper.infradead.org>
+References: <164364196407.1476539.8450117784231043601.stgit@warthog.procyon.org.uk>
+ <164364197646.1476539.3635698398603811895.stgit@warthog.procyon.org.uk>
+ <CAOQ4uxiorvXhhJbCsGo-B7aBX0BbSYp7wUHmYS1e1xxJ4dpF3w@mail.gmail.com> <1531209.1643643128@warthog.procyon.org.uk>
+In-Reply-To: <1531209.1643643128@warthog.procyon.org.uk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 31 Jan 2022 18:20:14 +0200
+Message-ID: <CAOQ4uxhc6FW-io5mC=FN=vFawEAwjXZO7kCcGt5gzqq3ON1Y7w@mail.gmail.com>
+Subject: Re: [PATCH 1/5] vfs, overlayfs, cachefiles: Turn I_OVL_INUSE into
+ something generic
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-cachefs@redhat.com, Christoph Hellwig <hch@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 31, 2022 at 03:51:21PM +0000, Matthew Wilcox wrote:
-> On Mon, Jan 31, 2022 at 04:37:07PM +0100, Christian Brauner wrote:
-> > On Mon, Jan 31, 2022 at 03:19:22PM +0000, Matthew Wilcox wrote:
-> > > On Mon, Jan 31, 2022 at 04:08:19PM +0100, Christian Brauner wrote:
-> > > > On Mon, Jan 31, 2022 at 10:43:52PM +0800, kernel test robot wrote:
-> > > > I can fix this rather simply in our upstream fstests with:
-> > > > 
-> > > > static char *argv[] = {
-> > > > 	"",
-> > > > };
-> > > > 
-> > > > I guess.
-> > > > 
-> > > > But doesn't
-> > > > 
-> > > > static char *argv[] = {
-> > > > 	NULL,
-> > > > };
-> > > > 
-> > > > seem something that should work especially with execveat()?
-> > > 
-> > > The problem is that the exec'ed program sees an argc of 0, which is the
-> > > problem we're trying to work around in the kernel (instead of leaving
-> > > it to ld.so to fix for suid programs).
-> > 
-> > Ok, just seems a bit more intuitive for path-based exec than for
-> > fd-based execveat().
-> > 
-> > What's argv[0] supposed to contain in these cases?
-> > 
-> > 1. execveat(fd, NULL, ..., AT_EMPTY_PATH)
-> > 2. execveat(fd, "my-file", ..., )
-> > 
-> > "" in both 1. and 2.?
-> > "" in 1. and "my-file" in 2.?
-> 
-> You didn't specify argv for either of those, so I have no idea.
-> Programs shouldn't be assuming anything about argv[0]; it's purely
-> advisory.  Unfortunately, some of them do.  And some of them are suid.
+On Mon, Jan 31, 2022 at 5:32 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > Please leave ovl_* as wrappers instead of changing super.c.
+>
+> Do you want them turning into inline functions?
+>
 
-Yes, programs shouldn't assume anything about argv[0]. But a lot of
-programs are used to setting argv[0] to the name of the executed binary.
-The exec* manpages examples do this. Just looking at a random selftest, e.g.
+inline would be fine.
 
-bpf/prog_tests/test_lsm.c
+But I just noticed something that may wreck this party.
 
-where we find:
+The assumption, when I proposed this merger, was that an inode for
+upper/work and is exclusively owned by ovl driver, so there should be no
+conflicts with other drivers setting inuse flag.
 
-	char *CMD_ARGS[] = {"true", NULL};
-	execvp(CMD_ARGS[0], CMD_ARGS);
+However, in ovl_check_layer(), we walk back to root to verify that an ovl
+layer of a new instance is not a descendant of another ovl upper/work inuse.
+So the meaning of I_OVL_INUSE is somewhat stronger than an exclusive inode lock.
+It implies ownership on the entire subtree.
 
-I'm just wondering how common this is for execveat() because it is not
-as clear what the actual name of the binary is in these two examples
+I guess there is no conflict with cachefiles since ovl upper/work should not be
+intersecting with any cachefiles storage, but that complicates the
+semantics when
+it comes to a generic flag.
 
-	1.
-	fd = open("/bin/true", );
-	char *CMD_ARGS[] = {"", NULL};
-	execveat(fd, NULL, ..., AT_EMPTY_PATH)
-	
-	2.
-	fd = open("/bin", );
-	char *CMD_ARGS[] = {"true", NULL};
-	execveat(fd, CMD_ARGS[0], CMD_ARGS 0)
+OTOH, I am not sure if this check on ovl mount is so smart to begin with.
+This check was added (after the exclusive ownership meaning) to silence syzbot
+that kept mutating to weird overlapping ovl setups.
+I think that a better approach would be to fail a lookup in the upper layer
+that results with a d_mountpoint() - those are not expected inside the overlay
+upper layer AFAICT.
 
-in other words, the changes that you see CMD_ARGS[0] == NULL for
-execveat() seem higher than for path-based exec.
+Anyway, I can make those changes if Miklos agrees with them, but I don't
+want to complicate your work on this, so maybe for now, create the I_EXCL_INUSE
+generic flag without changing overlayfs and I can make the cleanup to get rid of
+I_OVL_INUSE later.
 
-To counter that we should probably at least update the execveat()
-manpage with a recommendation what CMD_ARGS[0] should be set to if it
-isn't allowed to be set to NULL anymore. This is why was asking what
-argv[0] is supposed to be if the binary doesn't take any arguments.
+Thanks,
+Amir.
