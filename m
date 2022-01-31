@@ -2,70 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DFD34A4A97
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 16:32:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A814A4AB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 16:37:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379575AbiAaPcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jan 2022 10:32:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:60350 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1379557AbiAaPcQ (ORCPT
+        id S1379700AbiAaPhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jan 2022 10:37:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52320 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1376980AbiAaPhP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jan 2022 10:32:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643643136;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=53Ps9beOdW2O+7ZMJWjK1Iq0DgZCvoa89wIZJ4nk1Uc=;
-        b=OkAy2gLt0p+AcvebYLSATiR+wwDgfFXNttbGZUlPN9/pYSDoNrroHvbrr25TBtSO5qMj4k
-        qS6rqIAY8Sc4vUBOY+onjtD1X6zSnb/Mn1/BUknj29DJEhObFoK7OhtcZMutgcSzYMz9uS
-        bc/k8Ev+vdPBoqQBsstZc0oYZT+NlyM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-49-ZDuH1LTJPAGm6Oy8JssAUw-1; Mon, 31 Jan 2022 10:32:13 -0500
-X-MC-Unique: ZDuH1LTJPAGm6Oy8JssAUw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 31 Jan 2022 10:37:15 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70E0C061714;
+        Mon, 31 Jan 2022 07:37:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55F485108E;
-        Mon, 31 Jan 2022 15:32:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 53D2884D04;
-        Mon, 31 Jan 2022 15:32:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOQ4uxiorvXhhJbCsGo-B7aBX0BbSYp7wUHmYS1e1xxJ4dpF3w@mail.gmail.com>
-References: <CAOQ4uxiorvXhhJbCsGo-B7aBX0BbSYp7wUHmYS1e1xxJ4dpF3w@mail.gmail.com> <164364196407.1476539.8450117784231043601.stgit@warthog.procyon.org.uk> <164364197646.1476539.3635698398603811895.stgit@warthog.procyon.org.uk>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-cachefs@redhat.com, Christoph Hellwig <hch@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 52F27B82B51;
+        Mon, 31 Jan 2022 15:37:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 125E3C340E8;
+        Mon, 31 Jan 2022 15:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643643433;
+        bh=n4pF0WTD8mzI8jApP59+6mO09uKqNqOupqmX+4f7jRk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QO8bd6YwcVynrWLeUHJiup6FETqxBrt5l8FJYwCvJs/JayrA0saN0XoC2+Yi4iOeb
+         DnE+nmh6kh0XRjoqhy7B/yMAkmIZRcODgKjW2wcsOluZkn0tPXFfMePt1lZAMke6NL
+         Kp9NuRE7JWzvN9/n6wSEZAOTfXcfsUZrDmTqwJidpsWC4365LQzisynhfF2+0bjd9X
+         wdGeyI5gtwiMDs+jRdPq/DBG4vRKcN1JSHQRalDJcmVshoYq0d1uKiZtnLC9RtJdXq
+         CgTYbUbzZI1e677E4tEko0HGJHCR856BNRlgglATA6+ZBd4SC2GWyTchpzPy7W+30T
+         SpEc1n09nuJTw==
+Date:   Mon, 31 Jan 2022 16:37:07 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     kernel test robot <oliver.sang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ariadne Conill <ariadne@dereferenced.org>,
+        0day robot <lkp@intel.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        Eric Biederman <ebiederm@xmission.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] vfs, overlayfs, cachefiles: Turn I_OVL_INUSE into something generic
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        stable@vger.kernel.org
+Subject: Re: [fs/exec]  80bd5afdd8: xfstests.generic.633.fail
+Message-ID: <20220131153707.oe45h7tuci2cbfuv@wittgenstein>
+References: <20220127000724.15106-1-ariadne@dereferenced.org>
+ <20220131144352.GE16385@xsang-OptiPlex-9020>
+ <20220131150819.iuqlz3rz6q7cheap@wittgenstein>
+ <Yff9+tIDAvYM5EO/@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1531205.1643643128.1@warthog.procyon.org.uk>
-Date:   Mon, 31 Jan 2022 15:32:08 +0000
-Message-ID: <1531209.1643643128@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Yff9+tIDAvYM5EO/@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Amir Goldstein <amir73il@gmail.com> wrote:
+On Mon, Jan 31, 2022 at 03:19:22PM +0000, Matthew Wilcox wrote:
+> On Mon, Jan 31, 2022 at 04:08:19PM +0100, Christian Brauner wrote:
+> > On Mon, Jan 31, 2022 at 10:43:52PM +0800, kernel test robot wrote:
+> > I can fix this rather simply in our upstream fstests with:
+> > 
+> > static char *argv[] = {
+> > 	"",
+> > };
+> > 
+> > I guess.
+> > 
+> > But doesn't
+> > 
+> > static char *argv[] = {
+> > 	NULL,
+> > };
+> > 
+> > seem something that should work especially with execveat()?
+> 
+> The problem is that the exec'ed program sees an argc of 0, which is the
+> problem we're trying to work around in the kernel (instead of leaving
+> it to ld.so to fix for suid programs).
 
-> Please leave ovl_* as wrappers instead of changing super.c.
+Ok, just seems a bit more intuitive for path-based exec than for
+fd-based execveat().
 
-Do you want them turning into inline functions?
+What's argv[0] supposed to contain in these cases?
 
-David
+1. execveat(fd, NULL, ..., AT_EMPTY_PATH)
+2. execveat(fd, "my-file", ..., )
 
+"" in both 1. and 2.?
+"" in 1. and "my-file" in 2.?
