@@ -2,49 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4974A3CC7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 05:04:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B977B4A3CD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 05:04:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357515AbiAaEEI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jan 2022 23:04:08 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:38096 "EHLO
+        id S1357575AbiAaEEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jan 2022 23:04:38 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:38156 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237371AbiAaEEH (ORCPT
+        with ESMTP id S1357588AbiAaEE2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jan 2022 23:04:07 -0500
+        Sun, 30 Jan 2022 23:04:28 -0500
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id F2A5D1F37B;
-        Mon, 31 Jan 2022 04:04:05 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 435991F380;
+        Mon, 31 Jan 2022 04:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1643601846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1643601867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=a1hKKv4tQs0IkB2xFQLDfa5QVFGb4OvJBNqopkGrr6k=;
-        b=fiVkEAwxRDflObUldBuKWNJQJVCMu9eTTko+720oBoKH20RkmraMDCjs0Iy00tjy/uphUk
-        128iAjXpmRCycvT2drQM/OATXxz69rsiprFbeB2pPwa9L9eR8aiP2KJRgd4bmESc8+RqhM
-        0lrloqgzFrVvw8R08CSdyUMX4lq4gLg=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eBfA0J1VAN4vDciFet8kyITCSUUXphOKJM0dbNgQDlg=;
+        b=Ofj5AEGA0fxxWQPfqW7x0jLel3xWl8XT6L5fetgIF/2zgvKWRovZIPYb4YSKIXDP+PGHPG
+        UngLYZnASIj/Qz5rz62dxrd5f4fbDfByyvJbDIDy3thpDGhQ2Itksmpg6Qvdypf2EbsmG9
+        EusHYq42IUHL7aS/3q9Jmgr8INeiYUI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1643601846;
+        s=susede2_ed25519; t=1643601867;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=a1hKKv4tQs0IkB2xFQLDfa5QVFGb4OvJBNqopkGrr6k=;
-        b=uob4sOy+PK8E9TZ09Wj6Bhv0xAVwnyLeFUUFdeVvKXtH0q63G8ED3ptWJSVL4uJG3uhlu4
-        DO1m665lXtn3d/Cw==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eBfA0J1VAN4vDciFet8kyITCSUUXphOKJM0dbNgQDlg=;
+        b=ROmts99OvVVAZHj8yfkpJgXn9fzfmP7rcXgJgqzmaUVof4cKw4M5pOuMwuG61ib9oi3dvS
+        tRPQVeyFRV5zV5Aw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B1220133A4;
-        Mon, 31 Jan 2022 04:04:02 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2CA6A133A4;
+        Mon, 31 Jan 2022 04:04:22 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id B7tCG7Jf92GMCQAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 31 Jan 2022 04:04:02 +0000
-Subject: [PATCH 0/3] remove dependence of inode_congested()
+        id /XIbN8Zf92GpCQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 31 Jan 2022 04:04:22 +0000
+Subject: [PATCH 3/3] ceph: remove reliance on bdi congestion
 From:   NeilBrown <neilb@suse.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Jeff Layton <jlayton@kernel.org>,
@@ -56,7 +58,9 @@ Cc:     linux-mm@kvack.org, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Date:   Mon, 31 Jan 2022 15:03:53 +1100
-Message-ID: <164360127045.4233.2606812444285122570.stgit@noble.brown>
+Message-ID: <164360183350.4233.6414417882019645917.stgit@noble.brown>
+In-Reply-To: <164360127045.4233.2606812444285122570.stgit@noble.brown>
+References: <164360127045.4233.2606812444285122570.stgit@noble.brown>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,48 +69,123 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos pointed out that the filesystems which set the bdi congestion
-flags do gain some value from that, and simply removing the code is not
-appropriate.
+The bdi congestion tracking in not widely used and will be removed.
 
-Specifically, readahead and/or writeback are skipped when the congestion
-flags are set.
+CEPHfs is one of a small number of filesystems that uses it, setting
+just the async (write) congestion flags at what it determines are
+appropriate times.
 
-We can mostly move this skipping into the filesystem.
-->readahead can do nothing if reads are congested.
-->writepage and ->wrtepages can do nothing for WB_SYNC_NONE if writes
-  are congested.
+The only remaining effect of the async flag is to cause (some)
+WB_SYNC_NONE writes to be skipped.
 
-Currently only *some* WB_SYNC_NONE writes are skipped due to congestion.
-Those from sync_file_range() and those used for page migration are not.
-Also, shrink_page_list() will now cause PageActive to be set if
-->writepage skips due to congestion.
+So instead of setting the flag, set an internal flag and change:
+ - .writepages to do nothing if WB_SYNC_NONE and the flag is set
+ - .writepage to return AOP_WRITEPAGE_ACTIVATE if WB_SYNC_NONE
+    and the flag is set.
 
-I don't expect these changes to be a problem, but I have no experience
-to base that on.
+The writepages change causes a behavioural change in that pageout() can
+now return PAGE_ACTIVATE instead of PAGE_KEEP, so SetPageActive() will
+be called on the page which (I think) wil further delay the next attempt
+at writeout.  This might be a good thing.
 
-Review/comments most welcome,
-
-Thanks,
-NeilBrown
-
-
-
+Signed-off-by: NeilBrown <neilb@suse.de>
 ---
+ fs/ceph/addr.c  |   22 +++++++++++++---------
+ fs/ceph/super.c |    1 +
+ fs/ceph/super.h |    1 +
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-NeilBrown (3):
-      fuse: remove reliance on bdi congestion
-      nfs: remove reliance on bdi congestion
-      ceph: remove reliance on bdi congestion
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index c98e5238a1b6..dc7af34640dd 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -563,7 +563,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 
+ 	if (atomic_long_inc_return(&fsc->writeback_count) >
+ 	    CONGESTION_ON_THRESH(fsc->mount_options->congestion_kb))
+-		set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
++		fsc->write_congested = true;
+ 
+ 	req = ceph_osdc_new_request(osdc, &ci->i_layout, ceph_vino(inode), page_off, &len, 0, 1,
+ 				    CEPH_OSD_OP_WRITE, CEPH_OSD_FLAG_WRITE, snapc,
+@@ -623,7 +623,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 
+ 	if (atomic_long_dec_return(&fsc->writeback_count) <
+ 	    CONGESTION_OFF_THRESH(fsc->mount_options->congestion_kb))
+-		clear_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
++		fsc->write_congested = false;
+ 
+ 	return err;
+ }
+@@ -635,6 +635,10 @@ static int ceph_writepage(struct page *page, struct writeback_control *wbc)
+ 	BUG_ON(!inode);
+ 	ihold(inode);
+ 
++	if (wbc->sync_mode == WB_SYNC_NONE &&
++	    ceph_inode_to_client(inode)->write_congested)
++		return AOP_WRITEPAGE_ACTIVATE;
++
+ 	wait_on_page_fscache(page);
+ 
+ 	err = writepage_nounlock(page, wbc);
+@@ -707,8 +711,7 @@ static void writepages_finish(struct ceph_osd_request *req)
+ 			if (atomic_long_dec_return(&fsc->writeback_count) <
+ 			     CONGESTION_OFF_THRESH(
+ 					fsc->mount_options->congestion_kb))
+-				clear_bdi_congested(inode_to_bdi(inode),
+-						    BLK_RW_ASYNC);
++				fsc->write_congested = false;
+ 
+ 			ceph_put_snap_context(detach_page_private(page));
+ 			end_page_writeback(page);
+@@ -760,6 +763,10 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 	bool done = false;
+ 	bool caching = ceph_is_cache_enabled(inode);
+ 
++	if (wbc->sync_mode == WB_SYNC_NONE &&
++	    fsc->write_congested)
++		return 0;
++
+ 	dout("writepages_start %p (mode=%s)\n", inode,
+ 	     wbc->sync_mode == WB_SYNC_NONE ? "NONE" :
+ 	     (wbc->sync_mode == WB_SYNC_ALL ? "ALL" : "HOLD"));
+@@ -954,11 +961,8 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 
+ 			if (atomic_long_inc_return(&fsc->writeback_count) >
+ 			    CONGESTION_ON_THRESH(
+-				    fsc->mount_options->congestion_kb)) {
+-				set_bdi_congested(inode_to_bdi(inode),
+-						  BLK_RW_ASYNC);
+-			}
+-
++				    fsc->mount_options->congestion_kb))
++				fsc->write_congested = true;
+ 
+ 			pages[locked_pages++] = page;
+ 			pvec.pages[i] = NULL;
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index bf79f369aec6..4a3b77d049c7 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -802,6 +802,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+ 	fsc->have_copy_from2 = true;
+ 
+ 	atomic_long_set(&fsc->writeback_count, 0);
++	fsc->write_congested = false;
+ 
+ 	err = -ENOMEM;
+ 	/*
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 67f145e1ae7a..0bd97aea2319 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -121,6 +121,7 @@ struct ceph_fs_client {
+ 	struct ceph_mds_client *mdsc;
+ 
+ 	atomic_long_t writeback_count;
++	bool write_congested;
+ 
+ 	struct workqueue_struct *inode_wq;
+ 	struct workqueue_struct *cap_wq;
 
-
- fs/ceph/addr.c            | 22 +++++++++++++---------
- fs/ceph/super.c           |  1 +
- fs/ceph/super.h           |  1 +
- fs/nfs/write.c            | 12 ++++++++++--
- include/linux/nfs_fs_sb.h |  1 +
- 5 files changed, 26 insertions(+), 11 deletions(-)
-
---
-Signature
 
