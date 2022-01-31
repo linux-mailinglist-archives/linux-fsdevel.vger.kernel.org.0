@@ -2,51 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C91504A3C98
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 03:53:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8EF4A3CAE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 04:12:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357385AbiAaCxE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jan 2022 21:53:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48056 "EHLO
+        id S1357480AbiAaDMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jan 2022 22:12:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236472AbiAaCw6 (ORCPT
+        with ESMTP id S236781AbiAaDMB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jan 2022 21:52:58 -0500
+        Sun, 30 Jan 2022 22:12:01 -0500
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9395C061714;
-        Sun, 30 Jan 2022 18:52:57 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D450C061714;
+        Sun, 30 Jan 2022 19:12:01 -0800 (PST)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nEMoH-005z7n-8s; Mon, 31 Jan 2022 02:52:53 +0000
-Date:   Mon, 31 Jan 2022 02:52:53 +0000
+        id 1nEN6l-005zHw-Ce; Mon, 31 Jan 2022 03:11:59 +0000
+Date:   Mon, 31 Jan 2022 03:11:59 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Anthony Iliopoulos <ailiop@suse.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] mount: warn only once about timestamp range
- expiration
-Message-ID: <YfdPBUYno5f0bTVk@zeniv-ca.linux.org.uk>
-References: <20220119202934.26495-1-ailiop@suse.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2] vfs: Pre-allocate superblock in sget_fc() if !test
+Message-ID: <YfdTfxtUIpKp0mUR@zeniv-ca.linux.org.uk>
+References: <20220124161006.141323-1-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119202934.26495-1-ailiop@suse.com>
+In-Reply-To: <20220124161006.141323-1-longman@redhat.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 09:29:34PM +0100, Anthony Iliopoulos wrote:
-> Commit f8b92ba67c5d ("mount: Add mount warning for impending timestamp
-> expiry") introduced a mount warning regarding filesystem timestamp
-> limits, that is printed upon each writable mount or remount.
-> 
-> This can result in a lot of unnecessary messages in the kernel log in
-> setups where filesystems are being frequently remounted (or mounted
-> multiple times).
-> 
-> Avoid this by setting a superblock flag which indicates that the warning
-> has been emitted at least once for any particular mount, as suggested in
-> [1].
+On Mon, Jan 24, 2022 at 11:10:06AM -0500, Waiman Long wrote:
+> When the test function is not defined in sget_fc(), we always need
+> to allocate a new superblock. So there is no point in acquiring the
+> sb_lock twice in this case. Optimize the !test case by pre-allocating
+> the superblock first before acquring the lock.
 
-Looks sane, except for the locking rules for ->s_iflags stores...
+Umm...  Do you really see the contention on that sucker?  Because if you
+do, I'd expect sget_fc() to be the least of your problems.
+
+TBH, I'd be very surprised if that had caused measurable improvement in
+any setup.  Seriously, take a look at alloc_super().  If spin_lock() +
+spin_unlock() + branch is noticable among all that...  And it's not
+as if you were not going to dirty that cacheline shortly afterwards
+anyway, so cacheline pingpong is not an issue either...
+
+I'm not saying that the patch is broken, I'm just wondering if it's worth
+bothering with.
