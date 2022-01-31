@@ -2,160 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F24034A4013
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 11:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C574A40E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jan 2022 12:01:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358190AbiAaKYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jan 2022 05:24:19 -0500
-Received: from smtpbgsg2.qq.com ([54.254.200.128]:51026 "EHLO smtpbgsg2.qq.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1358146AbiAaKYG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jan 2022 05:24:06 -0500
-X-Greylist: delayed 68961 seconds by postgrey-1.27 at vger.kernel.org; Mon, 31 Jan 2022 05:24:05 EST
-X-QQ-mid: bizesmtp11t1643624627tmhf9c2q
-Received: from localhost.localdomain (unknown [180.105.58.61])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Mon, 31 Jan 2022 18:22:47 +0800 (CST)
-X-QQ-SSF: 01400000002000B0E000B00A0000000
-X-QQ-FEAT: YSwSv5UBo8jqRMsFPvrPuKGE1HHFTE5HH6gTbBe1i0Gh8eAUIPWPPhTYKcMqY
-        sFlA1wslD7Xu5go8t4ZC0LBMYLw2PBtAxWoYpFf8waY1logbhaZrinkuOu0LvOMUYwDA383
-        FuE4V9ikrDLJ7/w9J9hO2ZZpcGDNxMV2v0U7FPZNdvfRUlxN4T/Jm9duQ84hjNnonQYL45x
-        LGYnzc9ai/bhc4Vtv7sjseXdXbTrN6XRquSnbwa8yxb32VM73BfeEUZ2Tf6X9VW16KCsSeV
-        fDbX2SGJQGbqKGBVuapHW5Xd6B6Lc0UEIUNhwGyx2vTcryA29UhQS0fQ5uSOnL+IaI1NcE3
-        4NKUO1gcdhjSQGIdf1/dTk1cSLuIyBAfAlJOaWH
-X-QQ-GoodBg: 2
-From:   tangmeng <tangmeng@uniontech.com>
-To:     tglx@linutronix.de, mcgrof@kernel.org, keescook@chromium.org,
-        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH v5] kernel/time: move timer sysctls to its own file
-Date:   Mon, 31 Jan 2022 18:22:14 +0800
-Message-Id: <20220131102214.2284-1-tangmeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+        id S1348679AbiAaLBE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jan 2022 06:01:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42966 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358318AbiAaLAT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 31 Jan 2022 06:00:19 -0500
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB3C0C061778
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jan 2022 02:59:31 -0800 (PST)
+Received: by mail-io1-xd41.google.com with SMTP id i62so16362203ioa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jan 2022 02:59:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=FANIUiWvB3mdY3zLX2DODg2pUIL5eGT5wlydl6jYk40=;
+        b=Hy4QzdJnSxdg5GIgw0nCwmi0gjML3n5cny2gld+5/rI5196yLd12xvP6N7LBmx65/n
+         qILZMxYOlb+VBzjZrCg896+CVlR2SLc6f+WpN6lyRLTkfyWxlYA63cI2QUMsEgTIYq1c
+         VRL4HNNC2kIyU16xAe6VyoHlNhIHv9mczE1zssIxdDBygn6D2BPwo/XAWJNqRMASZ2Dq
+         yZxWrv8DUbv+uMJverpu1MhsgcV4b3vRNoXa2uyn5bo25Pb/5p2hQlMsoWmYebCBDCJD
+         GjDhDoBcmmXgZL74zftZAkr0Rw6FLwL0/jzp5kj/UR37sO8Js0t8mGwGyrpI2mLOPNpu
+         0GuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=FANIUiWvB3mdY3zLX2DODg2pUIL5eGT5wlydl6jYk40=;
+        b=J0vob/EQmjTndRUrXkVa26P20A8rpPByj7vGWJagj4gN4h4V/SvFk+ZGGNCc1yFZaR
+         0pV7aLOIpn7SSW8nJyHQxJgy2PZGn3ijEY1XxMYXQUCxH9Vg9L4PDqu0WXbeG6bGSr5u
+         zUCGW9T7+D6AsZpj1tB4R/LdiojbLhX2BVgzx8S6xqjVQT4TdCVC3pmOHQtLppfOsnZV
+         kuOsYzKiRsLqOEJYaizXYojBac5Gxe5xQs+lS9Kgaryt/AZetOKTuhfCm20n9PwD6vPy
+         0GXXh1/wrpl3W+ICPkeatoTVc7HApeUR8o34OYaEEuKTBO9MMzHQntWFEKyWLypWlT2/
+         9RwA==
+X-Gm-Message-State: AOAM531uNDNi+3AvhLv8w7q2DovHIei3ASO8TR0IcDwAkNUKW/JH8r1L
+        zLIcHNfQIqp0QH+XQVCzQyc5qZf6idPDU2Q0Ho0=
+X-Google-Smtp-Source: ABdhPJyia9VIjicXafubC2VjGdU01tny+88l0Ycxe3DKaKeOyUTFlA4LLKTxDKWWNigVvRhiFi9kYx5K7cHHm0s8/hs=
+X-Received: by 2002:a02:aa09:: with SMTP id r9mr10286804jam.199.1643626771044;
+ Mon, 31 Jan 2022 02:59:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
-X-QQ-Bgrelay: 1
+Reply-To: daniellakyle60@gmail.com
+Sender: drdanielmorris11111@gmail.com
+Received: by 2002:a05:6638:1248:0:0:0:0 with HTTP; Mon, 31 Jan 2022 02:59:30
+ -0800 (PST)
+From:   Mrs daniell akyle <daniellakyle60@gmail.com>
+Date:   Mon, 31 Jan 2022 11:59:30 +0100
+X-Google-Sender-Auth: 5pmMZCS9vXWmOwBoU1Dt2uIUmsw
+Message-ID: <CAKFcj-MtTareGvTX3Yo749sS2d4H56Fxx0cF0uKGPGQc=0xqUA@mail.gmail.com>
+Subject: Ahoj
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
-dishes, this makes it very difficult to maintain.
-
-To help with this maintenance let's start by moving sysctls to places
-where they actually belong.  The proc sysctl maintainers do not want to
-know what sysctl knobs you wish to add for your own piece of code, we
-just care about the core logic.
-
-So move the timer_migration sysctls to its own file.
-
-Signed-off-by: tangmeng <tangmeng@uniontech.com>
----
- include/linux/timer.h |  4 ----
- kernel/sysctl.c       | 11 -----------
- kernel/time/timer.c   | 26 ++++++++++++++++++++++++--
- 3 files changed, 24 insertions(+), 17 deletions(-)
-
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index fda13c9d1256..793b6b7c5a3e 100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -198,10 +198,6 @@ extern enum hrtimer_restart it_real_fn(struct hrtimer *);
- 
- #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
- struct ctl_table;
--
--extern unsigned int sysctl_timer_migration;
--int timer_migration_handler(struct ctl_table *table, int write,
--			    void *buffer, size_t *lenp, loff_t *ppos);
- #endif
- 
- unsigned long __round_jiffies(unsigned long j, int cpu);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5ae443b2882e..d6d133423e5d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2292,17 +2292,6 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
- 	},
--#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
--	{
--		.procname	= "timer_migration",
--		.data		= &sysctl_timer_migration,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= timer_migration_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif
- #ifdef CONFIG_BPF_SYSCALL
- 	{
- 		.procname	= "unprivileged_bpf_disabled",
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 85f1021ad459..2d3f4295614b 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -44,6 +44,7 @@
- #include <linux/slab.h>
- #include <linux/compat.h>
- #include <linux/random.h>
-+#include <linux/sysctl.h>
- 
- #include <linux/uaccess.h>
- #include <asm/unistd.h>
-@@ -223,7 +224,7 @@ static void timer_update_keys(struct work_struct *work);
- static DECLARE_WORK(timer_update_work, timer_update_keys);
- 
- #ifdef CONFIG_SMP
--unsigned int sysctl_timer_migration = 1;
-+static unsigned int sysctl_timer_migration = 1;
- 
- DEFINE_STATIC_KEY_FALSE(timers_migration_enabled);
- 
-@@ -251,7 +252,8 @@ void timers_update_nohz(void)
- 	schedule_work(&timer_update_work);
- }
- 
--int timer_migration_handler(struct ctl_table *table, int write,
-+#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-+static int timer_migration_handler(struct ctl_table *table, int write,
- 			    void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret;
-@@ -264,6 +266,26 @@ int timer_migration_handler(struct ctl_table *table, int write,
- 	return ret;
- }
- 
-+static struct ctl_table timer_sysctl[] = {
-+	{
-+		.procname       = "timer_migration",
-+		.data           = &sysctl_timer_migration,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = timer_migration_handler,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = SYSCTL_ONE,
-+	},
-+	{}
-+};
-+
-+static int __init timer_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", timer_sysctl);
-+	return 0;
-+}
-+__initcall(timer_sysctl_init);
-+#endif
- static inline bool is_timers_nohz_active(void)
- {
- 	return static_branch_unlikely(&timers_nohz_active);
--- 
-2.20.1
-
-
-
+Pozdravy
+Jmenuji se pan=C3=AD Daniella Kyleov=C3=A1, je mi 58 let
+Filip=C3=ADny. V sou=C4=8Dasn=C3=A9 dob=C4=9B jsem hospitalizov=C3=A1n na F=
+ilip=C3=ADn=C3=A1ch, kde jsem
+podstupuje l=C3=A9=C4=8Dbu akutn=C3=ADho karcinomu j=C3=ADcnu. jsem um=C3=
+=ADraj=C3=ADc=C3=AD,
+vdova, kter=C3=A1 se rozhodla darovat =C4=8D=C3=A1st sv=C3=A9ho majetku spo=
+lehliv=C3=A9 osob=C4=9B
+kter=C3=A1 tyto pen=C3=ADze pou=C5=BEije na pomoc chud=C3=BDm a m=C3=A9n=C4=
+=9B privilegovan=C3=BDm. Chci
+poskytnout dar ve v=C3=BD=C5=A1i 3 700 000 =C2=A3 na sirotky nebo charitati=
+vn=C3=AD organizace
+ve va=C5=A1=C3=AD oblasti. Zvl=C3=A1dne=C5=A1 to? Pokud jste ochotni tuto n=
+ab=C3=ADdku p=C5=99ijmout
+a ud=C4=9Blejte p=C5=99esn=C4=9B tak, jak v=C3=A1m =C5=99=C3=ADk=C3=A1m, pa=
+k se mi vra=C5=A5te pro dal=C5=A1=C3=AD vysv=C4=9Btlen=C3=AD.
+pozdravy
+Pan=C3=AD Daniella Kyleov=C3=A1
