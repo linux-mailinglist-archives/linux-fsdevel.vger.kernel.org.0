@@ -2,98 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3CD44A5B6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 12:47:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 629C94A5BA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 12:57:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237417AbiBALrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Feb 2022 06:47:22 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:52084 "EHLO
+        id S237500AbiBAL5F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Feb 2022 06:57:05 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:52668 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237141AbiBALrV (ORCPT
+        with ESMTP id S237302AbiBAL5E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Feb 2022 06:47:21 -0500
+        Tue, 1 Feb 2022 06:57:04 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id F26081F3AC;
-        Tue,  1 Feb 2022 11:47:19 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 030421F3A5;
+        Tue,  1 Feb 2022 11:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1643716039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1643716623; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=n7iNcT51hZ1Z3NxjkQY5xHCeIRSxzR75ruYUzUbMRxg=;
-        b=cpgdqNr9XjsW/lL0T47hms//3hNKTRprkg+XwRD6+ZAVL/l43UvDlIOZt+9LqrmuKoVhna
-        F5q7SdFGq0g2rlLgEpX1tgPGuNeYKtx/sFsQVmhB8zp4Wj9vnHs3U9Hi3qNBYQ9Q4ELFwI
-        By+2veHZ3YLCftTFb2u7zm9VV8Pd/qY=
+        bh=T6S1ZfmJRkfd5YMTv7fcsXGlYQuGJkJu4gyAaW0w/4Y=;
+        b=vDBo1yOixkTVjEBDHkjtu6y/AbbMRuc7uGXCV3ewgskwOT0RpO+4v0Mvsmt85YZJVO8DLx
+        o4LU00D38bpxwthPDFvIRXYvaxHkc5oQyYQUSP8R16bqnCFESQQeo90rWhWuYoq9wzFcgE
+        9iKQXwvZGOKPayKTbsvaeyL5B6wOlU0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1643716039;
+        s=susede2_ed25519; t=1643716623;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=n7iNcT51hZ1Z3NxjkQY5xHCeIRSxzR75ruYUzUbMRxg=;
-        b=z3yEEocq/H1Ni33Uv4SMliROfzI+346W9JYtl7LOyx23F+vmaRwQGHYV3Fts+zv8etB1IT
-        KiPfff6357jyFYBA==
+        bh=T6S1ZfmJRkfd5YMTv7fcsXGlYQuGJkJu4gyAaW0w/4Y=;
+        b=2ACnZg8Ma3EzEWs9PgkQQDQyXWMRTzceeG2y4/dUcjBpnSyzZn94Vxgp5cIGqop6KGPrQu
+        Z3I5/+fcRI8N19Cw==
 Received: from quack3.suse.cz (unknown [10.163.28.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id E4528A3B81;
-        Tue,  1 Feb 2022 11:47:19 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id E4453A3B84;
+        Tue,  1 Feb 2022 11:57:02 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9C38DA05B1; Tue,  1 Feb 2022 12:47:19 +0100 (CET)
-Date:   Tue, 1 Feb 2022 12:47:19 +0100
+        id 8823AA05B1; Tue,  1 Feb 2022 12:57:02 +0100 (CET)
+Date:   Tue, 1 Feb 2022 12:57:02 +0100
 From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Subject: Re: [RFC 6/6] ext4: Add extra check in ext4_mb_mark_bb() to prevent
- against possible corruption
-Message-ID: <20220201114719.dzyeitz26kpde5zf@quack3.lan>
-References: <cover.1643642105.git.riteshh@linux.ibm.com>
- <fa6d3adad7e1a4691c4c38b6b670d9330757ce82.1643642105.git.riteshh@linux.ibm.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fanotify: Fix stale file descriptor in
+ copy_event_to_user()
+Message-ID: <20220201115702.3m3curnkpk7jld2o@quack3.lan>
+References: <20220128195656.GA26981@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fa6d3adad7e1a4691c4c38b6b670d9330757ce82.1643642105.git.riteshh@linux.ibm.com>
+In-Reply-To: <20220128195656.GA26981@kili>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 31-01-22 20:46:55, Ritesh Harjani wrote:
-> This patch adds an extra checks in ext4_mb_mark_bb() function
-> to make sure we mark & report error if we were to mark/clear any
-> of the critical FS metadata specific bitmaps (&bail out) to prevent
-> from any accidental corruption.
+On Fri 28-01-22 22:57:01, Dan Carpenter wrote:
+> This code calls fd_install() which gives the userspace access to the fd.
+> Then if copy_info_records_to_user() fails it calls put_unused_fd(fd) but
+> that will not release it and leads to a stale entry in the file
+> descriptor table.
 > 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> Generally you can't trust the fd after a call to fd_install().  The fix
+> is to delay the fd_install() until everything else has succeeded.
+> 
+> Fortunately it requires CAP_SYS_ADMIN to reach this code so the security
+> impact is less.
+> 
+> Fixes: f644bc449b37 ("fanotify: fix copy_event_to_user() fid error clean up")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Mathias Krause <minipli@grsecurity.net>
 
-Again please rather use ext4_inode_block_valid() here. All the callers of
-ext4_mb_mark_bb() have the information available.
+Thanks. I've added the patch to my tree and will push it to Linus.
 
 								Honza
 
 > ---
->  fs/ext4/mballoc.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  fs/notify/fanotify/fanotify_user.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 5f20e355d08c..c94888534caa 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -3920,6 +3920,13 @@ void ext4_mb_mark_bb(struct super_block *sb, ext4_fsblk_t block,
->  		len -= overflow;
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 1026f67b1d1e..2ff6bd85ba8f 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -701,9 +701,6 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  	if (fanotify_is_perm_event(event->mask))
+>  		FANOTIFY_PERM(event)->fd = fd;
+>  
+> -	if (f)
+> -		fd_install(fd, f);
+> -
+>  	if (info_mode) {
+>  		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
+>  						buf, count);
+> @@ -711,6 +708,9 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  			goto out_close_fd;
 >  	}
 >  
-> +	if (!ext4_group_block_valid(sb, group, block, len)) {
-> +		ext4_error(sb, "Marking blocks in system zone - "
-> +			   "Block = %llu, len = %d", block, len);
-> +		bitmap_bh = NULL;
-> +		goto out_err;
-> +	}
+> +	if (f)
+> +		fd_install(fd, f);
 > +
->  	clen = EXT4_NUM_B2C(sbi, len);
+>  	return metadata.event_len;
 >  
->  	bitmap_bh = ext4_read_block_bitmap(sb, group);
+>  out_close_fd:
 > -- 
-> 2.31.1
+> 2.20.1
 > 
 -- 
 Jan Kara <jack@suse.com>
