@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 574874A583C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 09:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 481824A5844
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 09:07:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235241AbiBAIGV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Feb 2022 03:06:21 -0500
-Received: from verein.lst.de ([213.95.11.211]:57899 "EHLO verein.lst.de"
+        id S235312AbiBAIH1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Feb 2022 03:07:27 -0500
+Received: from verein.lst.de ([213.95.11.211]:57904 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229895AbiBAIGU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Feb 2022 03:06:20 -0500
+        id S229895AbiBAIH0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Feb 2022 03:07:26 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6726D68BEB; Tue,  1 Feb 2022 09:06:17 +0100 (CET)
-Date:   Tue, 1 Feb 2022 09:06:17 +0100
+        id 00A0368BEB; Tue,  1 Feb 2022 09:07:23 +0100 (CET)
+Date:   Tue, 1 Feb 2022 09:07:23 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -22,20 +22,20 @@ Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         "Darrick J . Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Satya Tangirala <satyat@google.com>
-Subject: Re: [PATCH v11 1/5] fscrypt: add functions for direct I/O support
-Message-ID: <20220201080617.GA29730@lst.de>
-References: <20220128233940.79464-1-ebiggers@kernel.org> <20220128233940.79464-2-ebiggers@kernel.org>
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v11 5/5] fscrypt: update documentation for direct I/O
+ support
+Message-ID: <20220201080723.GB29730@lst.de>
+References: <20220128233940.79464-1-ebiggers@kernel.org> <20220128233940.79464-6-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220128233940.79464-2-ebiggers@kernel.org>
+In-Reply-To: <20220128233940.79464-6-ebiggers@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+Looks good:
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
