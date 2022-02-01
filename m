@@ -2,123 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7D004A648B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 20:03:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F02514A649D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 20:08:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242017AbiBATDY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Feb 2022 14:03:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33140 "EHLO
+        id S242307AbiBATHE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Feb 2022 14:07:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240803AbiBATDX (ORCPT
+        with ESMTP id S242299AbiBATHD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Feb 2022 14:03:23 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E00C061714
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Feb 2022 11:03:23 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id a28so35815622lfl.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Feb 2022 11:03:22 -0800 (PST)
+        Tue, 1 Feb 2022 14:07:03 -0500
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7BEC06173D
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Feb 2022 11:07:03 -0800 (PST)
+Received: by mail-pf1-x431.google.com with SMTP id a19so10742000pfx.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Feb 2022 11:07:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zCbdSgGi68nDz/yve/bgX706hkshLjqkzBpzirTtK9w=;
-        b=MW124t1ty/PYVAfbe0OIa6o8AMt7xGPQIsZZzlRt4hpIprOWPju7hLciOPYhTNQMOa
-         Y+VDTi9VyjLfREYI5M97fsVW1HHR9wMcXAjgUJ8o0uNZfZGKRpAS6/BHfxCneaHgqrdS
-         GCAcRBcqCQHjOJ8HpZTyGwXj3J8G7anBJcepOBQeVC/pAU5X2rEAZlM6sOL2Ukp6u5y4
-         FGBW5s8R1rEqOuuqtSTGPxILigghO5WtQosS1wS/TjazRF9rhmUDrKUKPfCQ2+gjLP+k
-         gw1TOiBssrztSf0izbpMs9GI3I79UEK/jM2mZ0XW7Kfy09qEW/D8xH30NSQJsPOL5LY7
-         icug==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vWJtc/jz3NoYF9uCthXFk67SqjsIB7RJSbGEFvTN/iM=;
+        b=iSJDkJ5OdDeFbxyOzdLekrR3/0rd6TUS2SxZz0WxjzfyJ94UgxhHoPvQJpGVCTtcdH
+         s4biQFpPJRStBBHkAjwh/5vF6XXyRe8YFOtvSRhYOwfsQLjsntoTM4O+MnVZSkzSnVWt
+         UKB2j9qLI0kmTsN3HaBBD0AO7GEeyk79bF/ko=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zCbdSgGi68nDz/yve/bgX706hkshLjqkzBpzirTtK9w=;
-        b=Yejfl5XCwRMipvqVHx/b//mpKyzMEejF1LpqBIc2K1h/CtgsCdg3GtRANUUljDaco8
-         KaSNWfc5UfRqzGt0rnaUBG38w/jb5K9WQuE0XuKDqg0uFun/2njVXjZjrl2o2iT8jjw2
-         yuAKeQ/VtYxultEyEIkuictrYFOH6jn/7rGd5tsZVnA8HAS/Px2K6gpiTTeFCJltvtsl
-         6176ZGNvb1SIScECCBiapgEVxG+a4mB1bb3iMc2At6HU5Cb2bVPKHYNpnCPoTs2oWCoq
-         Elw3i8Cw5PxwUfjSsxnMq/LJjp7v6nhoPj1+a4xU4ebEC/sQp+v+PsNz5ORPs3DQL2Hs
-         Bckg==
-X-Gm-Message-State: AOAM533uhnkYIQucCIxuBRSZEgmQbC+eKkErgJTn78Y2ydo9ufvVr8xc
-        cB8HfkjdLXiSEIV4mxxTmk+oMYEj+02hTnyeGEF6Ng==
-X-Google-Smtp-Source: ABdhPJySu9ztXRn884TXwSJLBO6N5cPj7d5jaLn6+jX40z+AkgZ34ljS32dL/oRqbl4fjUcRCHnHPVaTGbIQua0Wt/8=
-X-Received: by 2002:a05:6512:441:: with SMTP id y1mr19860532lfk.315.1643742201155;
- Tue, 01 Feb 2022 11:03:21 -0800 (PST)
-MIME-Version: 1.0
-References: <20220131153740.2396974-1-willy@infradead.org> <871r0nriy4.fsf@email.froward.int.ebiederm.org>
- <YfgKw5z2uswzMVRQ@casper.infradead.org> <877dafq3bw.fsf@email.froward.int.ebiederm.org>
- <YfgPwPvopO1aqcVC@casper.infradead.org> <CAG48ez3MCs8d8hjBfRSQxwUTW3o64iaSwxF=UEVtk+SEme0chQ@mail.gmail.com>
- <87bkzroica.fsf_-_@email.froward.int.ebiederm.org> <87iltzn3nd.fsf_-_@email.froward.int.ebiederm.org>
-In-Reply-To: <87iltzn3nd.fsf_-_@email.froward.int.ebiederm.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 1 Feb 2022 20:02:54 +0100
-Message-ID: <CAG48ez3zfi1eHAgGPPEC=pB3oMUBif28Ns4qncUbxpCbMPYdgA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] coredump: Use the vma snapshot in fill_files_note
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vWJtc/jz3NoYF9uCthXFk67SqjsIB7RJSbGEFvTN/iM=;
+        b=IPi3dMrGd7EaPlfiGSoLnSIXTXVs0CLJkFFhLaa11DZvTnNObRjWqK5r7U6RLk4g1d
+         hNDcMZuSYcHL970aITYO5caFd18UJ5PDA7d0aEFDqFqJ6TLwuh4v5ahugqNIvtm7YGis
+         MN0ErAeKOl1WIRQB+8DkegmNJbZykf5vQU9qAL1/Q4W1FsR/P+dRsxYGgHG9YdbjWzA6
+         Xr9L5pCBGzFzTlPWaYPY5BN1Z4bEBS+fbxhZK9wQFxe30CXvrGr9pgsp4DAiaFsy5P59
+         b7T2bM8YNWStnU2e5KN9dRC74lo3BZ1MPLxICR7BUNszHQFAM3j768cps/4MXKojGpgV
+         Rr+w==
+X-Gm-Message-State: AOAM532vUd+qymzCr8WwcHrPJ4tk8jwbTCQ/LLBoWUXoGhBfURiBXmem
+        Ui+UMg8xxp8TLTdZL02yo9tpBg==
+X-Google-Smtp-Source: ABdhPJzi1szkx68ooZCj+rN//sH6e7I3nmqujxk9Bk4xfgJGsNuh6IWI1ON2C8vwZ1OHES4iTJHhoA==
+X-Received: by 2002:a63:496:: with SMTP id 144mr22280682pge.380.1643742422709;
+        Tue, 01 Feb 2022 11:07:02 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 30sm393263pgq.39.2022.02.01.11.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Feb 2022 11:07:02 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Ariadne Conill <ariadne@dereferenced.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Rich Felker <dalias@libc.org>,
+        Eric Biederman <ebiederm@xmission.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Denys Vlasenko <vda.linux@googlemail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <liam.howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH] exec: Fix min/max typo in stack space calculation
+Date:   Tue,  1 Feb 2022 11:07:00 -0800
+Message-Id: <20220201190700.3147041-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=893; h=from:subject; bh=AyfN0zm5xZ0Db6oIPqup3ab4ouMbc0RRClkxyP2qBeg=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBh+YTTKrxw/Oaf72PaFCDQWBpcuw+xIFQ/0i2ikcAr 2xFRrmCJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYfmE0wAKCRCJcvTf3G3AJhseD/ 9zYuF7jyAPi2L0v81MP3RDf7VIrJ4xgGyoaLiTYxpwk+qOAW9CkBkCV9WopgBo1vMsSCOfN+W2RLnO Pimv6mvRjgSDzwChg9PLzh42NrShTKqoPtkkdjHvVDJ2wOzwcIGcv6qP1KuvRw4ay3slqiVYTt4zPv Mt6H4rml8ElelCkMo1WiqbAugm2gcwOuLxXfEAPCQxTCSz5ajAUH7n/Iqgolu5wzKQP6uRDx/j4y/r rXLERVtMJBcmAVab+49RBXKRmpwcAIv5yYXZQaqEzlt872qcf3UijCEse7hN08365czgY4gpoX5+7P mEjRbZRG+HIU4oupbKJoPgrSIILQxJCID9/7L4L/KtDCs7ENGw27QFtuCI2X6ArtGhFPNvaIbYsU8P CkLa0JmjY1MPJulCQWS8Y6MhrPAc7Sk+VNH/tTrIoSDY+5DwKFczRXckh6jERSLUdAX5aaHTyX/nFk Tb2kLrgqwus7rdlx62zYCGPdJ+nyhGb5W01UVRY9VsrorM/mkOQDqoClWlfmDKirHE4lyEdoHHO4z4 Pz1H4fLS9psYmGX4VjQE0gUJfRTt1qogXkvsTO5TnuhCP91I6jGXl4JFJPRxBA/Gkgh8dpOTpfMgoT fn5FGSVh2Zq+SDEVeK0URl2AKzSH5vsa8I7fi4SspI/OLR0oxOYaAwnGqHFA==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 31, 2022 at 7:47 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Matthew Wilcox reported that there is a missing mmap_lock in
-> file_files_note that could possibly lead to a user after free.
->
-> Solve this by using the existing vma snapshot for consistency
-> and to avoid the need to take the mmap_lock anywhere in the
-> coredump code except for dump_vma_snapshot.
->
-> Update the dump_vma_snapshot to capture vm_pgoff and vm_file
-> that are neeeded by fill_files_note.
->
-> Add free_vma_snapshot to free the captured values of vm_file.
->
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Link: https://lkml.kernel.org/r/20220131153740.2396974-1-willy@infradead.org
-> Cc: stable@vger.kernel.org
-> Fixes: a07279c9a8cd ("binfmt_elf, binfmt_elf_fdpic: use a VMA list snapshot")
-> Fixes: 2aa362c49c31 ("coredump: extend core dump note section to contain file names of mapped files")
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-[...]
-> +static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm)
->  {
->         struct mm_struct *mm = current->mm;
-> -       struct vm_area_struct *vma;
->         unsigned count, size, names_ofs, remaining, n;
->         user_long_t *data;
->         user_long_t *start_end_ofs;
->         char *name_base, *name_curpos;
-> +       int i;
->
->         /* *Estimated* file count and total data size needed */
->         count = mm->map_count;
+When handling the argc == 0 case, the stack space calculation should be
+using max() not min().
 
-This function is still looking at mm->map_count in two spots, please
-change those spots to also look at cprm->vma_count. In particular the
-second one looks like it can cause memory corruption if the map_count
-changed since we created the snapshot.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+This is a fix for exec-force-single-empty-string-when-argv-is-empty.patch
+https://lore.kernel.org/mm-commits/20220201004100.BF6D6C340E8@smtp.kernel.org/
+---
+ fs/exec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[...]
-> +static void free_vma_snapshot(struct coredump_params *cprm)
-> +{
-> +       if (cprm->vma_meta) {
-> +               int i;
-> +               for (i = 0; i < cprm->vma_count; i++) {
-> +                       struct file *file = cprm->vma_meta[i].file;
-> +                       if (file)
-> +                               fput(file);
-> +               }
-> +               kvfree(cprm->vma_meta);
-> +               cprm->vma_meta = NULL;
+diff --git a/fs/exec.c b/fs/exec.c
+index bbf3aadf7ce1..40b1008fb0f7 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -502,7 +502,7 @@ static int bprm_stack_limits(struct linux_binprm *bprm)
+ 	 * argc can never be 0, to keep them from walking envp by accident.
+ 	 * See do_execveat_common().
+ 	 */
+-	ptr_size = (min(bprm->argc, 1) + bprm->envc) * sizeof(void *);
++	ptr_size = (max(bprm->argc, 1) + bprm->envc) * sizeof(void *);
+ 	if (limit <= ptr_size)
+ 		return -E2BIG;
+ 	limit -= ptr_size;
+-- 
+2.30.2
 
-(this NULL write is superfluous, but it also doesn't hurt)
-
-> +       }
-> +}
