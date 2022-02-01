@@ -2,69 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2884A5DFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 15:13:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 583344A5E8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 15:48:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239067AbiBAONU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Feb 2022 09:13:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:30786 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238761AbiBAONT (ORCPT
+        id S239444AbiBAOso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Feb 2022 09:48:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57754 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232540AbiBAOsn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Feb 2022 09:13:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643724799;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nrT/5L5qYMHdiH1OYbxOA/3ZZSuEj0xzzYPB+L6+4q8=;
-        b=U+9eBju1EQWfBLZPMT2TmOuwXuveZhSOFgkbQz/4ubN9RIYpaGCR1+z3ZAuZ14EgXPqEKl
-        eEuxu6r2Ei1BcJvvcwedZlOZEZq4Pf91NnQWLp9Bl+ahbLIOzJCr/jRSy3JaJMoIUU5YSW
-        jmwHgN3rZtC9OOnIKW4snhutH1T+vwU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-79-wAukSB2EMM-ZNA2E0nQePQ-1; Tue, 01 Feb 2022 09:13:18 -0500
-X-MC-Unique: wAukSB2EMM-ZNA2E0nQePQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EDB784DA41;
-        Tue,  1 Feb 2022 14:13:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CCA9277D52;
-        Tue,  1 Feb 2022 14:13:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
-References: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     dhowells@redhat.com, lsf-pc@lists.linux-foundation.org,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] configfd as a replacement for both ioctls and fsconfig
+        Tue, 1 Feb 2022 09:48:43 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D64C061714;
+        Tue,  1 Feb 2022 06:48:43 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id k6-20020a05600c1c8600b003524656034cso1791872wms.2;
+        Tue, 01 Feb 2022 06:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Yr6l4WAzs/sh+j2DdHdIhNo/8cVO2SAzpYdunNPosVc=;
+        b=UqxGerTkLW0ev9zk1s/oTb44FweAceLPyY1tL195DfAbjFPCNKV53FRDAqGGTNGwzk
+         ptVJsRECcN7LfW4UIBibL0WvXPsha34fNtHCC6cF23LJQRfFMScPFMNP5CInzesO6tAk
+         DFPl5oiqXXK6sC0kfy3HqJf8oJ20dQm3VFAmuBzAWbkQtH5co6t/JPmC2iWg6ZUojzpv
+         jM7uGup8vtJUHkDJ5OYXfk3yLayBD10reHN8sGXYCWXfcN/TnjXD9CgBk9NWzzYdf1hW
+         ihFDJ7etGs9GABuE5vEAvwRI4fRY2UHGqi6bopK3Ys1AFTz0/Xt2cHsCp5gDt+1CTTgY
+         qzyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Yr6l4WAzs/sh+j2DdHdIhNo/8cVO2SAzpYdunNPosVc=;
+        b=Acz9kkZQYOyvzLqgoSh8iqNOaqYQrz1WMryCntGiL2mbc1j12dCKLZaqejygHuiyzJ
+         chVCYfBCwH9S3lqcjF91YyBjI2RQml+eB0llkScyl3LHbFV+GqsRGZEC5rP4kagjm3+t
+         5X34Oh54Wm+WMYMZcwtXqrMpEbO9ZK7ZfgbbhVU8gIODwB79odC5loufPsTXTj2rbwcr
+         mUIcB8lw0tMpQfvks0nysF0OjEWT/Vav3GoWK8ZwDppn569mJ52M92sGSGR6bE4swE8e
+         t6QMPJA0uiS0E0TUD3WuAZK31a/jMlYzXdaO4riokq9r80C0kAiTcGyp6qjDCjWLfww7
+         Mz9w==
+X-Gm-Message-State: AOAM530qmD3hGW1HSQsLHkhVOBDs4/uOQL9L1olqI7D9GB7YKAUSBs7d
+        D4Aqn6M0ZzRkHdXh7Q5/MTI=
+X-Google-Smtp-Source: ABdhPJzhxsxGMeWGGKxk5J7ePZW5h1PEBqm+UcDM3TmzAvhGBz6SVXmtQKsBid+Vw/LycV5xd+/VCw==
+X-Received: by 2002:a05:600c:3514:: with SMTP id h20mr2080315wmq.164.1643726921970;
+        Tue, 01 Feb 2022 06:48:41 -0800 (PST)
+Received: from [192.168.0.160] ([170.253.36.171])
+        by smtp.gmail.com with ESMTPSA id a15sm14804160wrp.41.2022.02.01.06.48.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Feb 2022 06:48:41 -0800 (PST)
+Message-ID: <a01a4f9a-da28-1135-080d-568de19e3d85@gmail.com>
+Date:   Tue, 1 Feb 2022 15:48:40 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1476916.1643724793.1@warthog.procyon.org.uk>
-Date:   Tue, 01 Feb 2022 14:13:13 +0000
-Message-ID: <1476917.1643724793@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: EINTR for fsync(2)
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mathnerd314 <mathnerd314.gph@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-man@vger.kernel.org, mtk.manpages@gmail.com,
+        linux-fsdevel@vger.kernel.org
+References: <CADVL9rE70DK+gWn-pbHXy6a+5sdkHzFg_xJ9phhQkRapTUJ_zg@mail.gmail.com>
+ <55d40a53-ad40-0bbf-0aed-e57419408796@gmail.com>
+ <Yfh/E5i/oqhe6KsQ@casper.infradead.org>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+In-Reply-To: <Yfh/E5i/oqhe6KsQ@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+Hi Mathnerd314, Matthew,
 
+On 2/1/22 01:30, Matthew Wilcox wrote:
+[...]
+> So while it's worth adding EINTR to the man page, I don't think it's
+> worth going through an exercise of trying to add every possible
+> errno to every syscall.
 > 
-> If the ioctl debate goes against ioctls, I think configfd would present
-> a more palatable alternative to netlink everywhere.
 
-It'd be nice to be able to set up a 'configuration transaction' and then do a
-commit to apply it all in one go.
+Okay.  I documented this error.
 
-David
+Thanks,
 
+Alex
+
+---
+    fsync.2: ERRORS: Document EINTR
+
+    Reported-by: Mathnerd314 <mathnerd314.gph@gmail.com>
+    Signed-off-by: Alejandro Colomar <alx.manpages@gmail.com>
+    Cc: <linux-fsdevel@vger.kernel.org>
+    Cc: Matthew Wilcox <willy@infradead.org>
+    Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+
+
+diff --git a/man2/fsync.2 b/man2/fsync.2
+index 0f070ed2c..c79723ed8 100644
+--- a/man2/fsync.2
++++ b/man2/fsync.2
+@@ -126,6 +126,10 @@ is set to indicate the error.
+ .I fd
+ is not a valid open file descriptor.
+ .TP
++.B EINTR
++The function was interrupted by a signal; see
++.BR signal (7).
++.TP
+ .B EIO
+ An error occurred during synchronization.
+ This error may relate to data written to some other file descriptor
+
+
+-- 
+Alejandro Colomar
+Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
+http://www.alejandro-colomar.es/
