@@ -2,87 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 883664A546F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 02:06:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B0994A5484
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 02:11:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231415AbiBABGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jan 2022 20:06:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42536 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbiBABGg (ORCPT
+        id S231680AbiBABLE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jan 2022 20:11:04 -0500
+Received: from mail-pf1-f180.google.com ([209.85.210.180]:36742 "EHLO
+        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231628AbiBABLD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jan 2022 20:06:36 -0500
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DDD8C061714
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jan 2022 17:06:36 -0800 (PST)
-Received: by mail-vs1-xe32.google.com with SMTP id x13so14190296vsl.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jan 2022 17:06:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=5gp9PmRzu/IxyYft6SYlBpTpSszCTP5U4t3M+O26jr4=;
-        b=oYrmSccieJoHejsdL3dhesRd3YtHVcK6gdB6d04sjmTNI0huiMpJD6DR1CvIFeuTSZ
-         N093m/y6cJ/sx03PZTatY6RvPyTGRVeF0WX3aPJxUKS4O61UOyBrpxiKMEHto0xUUS5Q
-         +f+lxIyGNNsjz8OEi+GpiPVevZY35ohs0KJnNfQGHxcinnJd3IyQHJtpEk3FHBo8W9Jn
-         FrArnubxuNakhlaWvK3AZp7RMXgnpMY5FR+a2sk0nt9Wq5zMxLXB3p0ptnXoP3dFA/DR
-         TjOfVQd5DeNQW8nkPHt2GjGvz0V7KykPCzPLetm78mOjZtimkEPIJ7iGlUy/j/2Sfalu
-         9v7w==
+        Mon, 31 Jan 2022 20:11:03 -0500
+Received: by mail-pf1-f180.google.com with SMTP id 192so14417382pfz.3;
+        Mon, 31 Jan 2022 17:11:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=5gp9PmRzu/IxyYft6SYlBpTpSszCTP5U4t3M+O26jr4=;
-        b=KPbkX61vfcLZ1iQJuwQ0iENlmIbvhd+XgW5F/p7h5xvFzk0C69Z7rhMikDb7e5oAXB
-         JNCKqPUadXw+6RxsSCUEUkuMZEz9O1cUNiXdIdI8PGz2/DZIAht25HPy72y/EdnI8aLz
-         wUJiloqyBvUrDe5rq5gzE3nTDj65LRTJZCf3atC1MfALYkEnYhZp5G7dUfggg1cx7fQZ
-         DR6PBV+DDpYUT3u/7qvpgQ4J/kW4l32gq2njBePK4hV+5aBF2gLjN/MVOYp6WdnZFlYa
-         oL6UlDrZG9R8i7BhOeizgYrPXOLSk7BCvlD9SeTMbwWkc8AhpYwj8B95hERccNpNb3dT
-         Lb7g==
-X-Gm-Message-State: AOAM533J03ktIjQPTbS741JRtaUBNbVcQUM9mKYBr7K0Vhlic39uij46
-        O8shxsZpvL0d/ubg4ydHJb0JaxRMQ8KY5Up2c1s=
-X-Google-Smtp-Source: ABdhPJygTpO1I2vaVJ9OwGkpENjp32jUGhSCLuSIJDymTcP/bQEwUCpMx7tfT2fj82Mq7omESH4HqSArFOeCDq6ONRA=
-X-Received: by 2002:a67:d98e:: with SMTP id u14mr9648973vsj.2.1643677594973;
- Mon, 31 Jan 2022 17:06:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=jOdu8BK0aHwVRtofXibmBugDwe7ABt+3hwddEIBt+RU=;
+        b=dBOs7jFJx3Rv3vqGZCOQOqDkF0RdddT0EbHgguPeUpdUbTeQ8n59IhxKJ2b9jzAP+g
+         1CarPeJGsZmqahOlyhWKc8gRCVKVmNxuA3LnVgZaM7W0E1O8gqGUVFVgs9uWI7oa56yq
+         JD79J5pjTyuK1FUuwlTfSYEnp0kIeOnoR6u1goxrqv4e+Nz4OnYxnCjDzThdmlcqqN/5
+         dtjrP9uGt1Jw2vJAIlquEilu6Cfx93y8dab7JR2lz5nTTTQpoNUH6PfeAJvOENRk5MX1
+         Zdeu5VEgGqmdvgxgOaznmHttodJN/xkEKFMuRWuOTHp5wmxGeasXpSzjw77/MhhKZR+E
+         +Wxw==
+X-Gm-Message-State: AOAM533XS70SMJ6B2blm31tTje+1V66+Ow4tpewRWPhlwKiWw05EDZEh
+        fvIIBrjTMpNNjgYvNOmi9BU=
+X-Google-Smtp-Source: ABdhPJzSvSQJaT10CRpVEE50uSgPZwPQaff/3Q20sHiKgbPqQE7HP8Wb3nAjllSdyEPxhP3qt26IHw==
+X-Received: by 2002:a05:6a00:b42:: with SMTP id p2mr22813636pfo.50.1643677863000;
+        Mon, 31 Jan 2022 17:11:03 -0800 (PST)
+Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
+        by smtp.gmail.com with ESMTPSA id lb7sm503889pjb.56.2022.01.31.17.11.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 17:11:02 -0800 (PST)
+Date:   Mon, 31 Jan 2022 17:10:59 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Josef Bacik <josef@toxicpanda.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Eryu Guan <guaneryu@gmail.com>, Omar Sandoval <osandov@fb.com>,
+        mcgrof@kernel.org
+Subject: [LSF/MM/BPF TOPIC] scaling error injection for block / fs
+Message-ID: <20220201011059.kqyrftg2hpgtjtpp@garbanzo>
 MIME-Version: 1.0
-Received: by 2002:a05:612c:2814:b0:281:5ab6:d8fe with HTTP; Mon, 31 Jan 2022
- 17:06:34 -0800 (PST)
-Reply-To: pastor.johnvincent11@gmail.com
-From:   Mr Johnson Robert <location.westernunion2@gmail.com>
-Date:   Mon, 31 Jan 2022 17:06:34 -0800
-Message-ID: <CABXgaoJeYKchNR4mnkU8YQyD3xv0z2kYfVi5erwmBYa5WM9pkA@mail.gmail.com>
-Subject: Contact my Secretary Pastor John
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Dear Partner
+We *used* to not any error handling as part of the block layer's
+*add_disk() paths since the code's inception. Fortunately that's now
+history, but the only piece of code changes that were dropped from
+that effort was error injection [0], this was since Hannes noted that
+we may want to discuss if the approach is the best we can do.
 
-It is my pleasure to reach you after our unsuccessful attempt on our
-business transaction, Well i just want to use this medium to thank you
-very much for your earlier assistance to help me in receiving the
-funds without any positive outcome.
+I looked into this and indeed the BFP method to do error injection
+is a viable alternative [1]. However this was even further generalized
+from kprobes and all one now needs is to sprinkle ALLOW_ERROR_INJECTION()
+on calls we went to enable error injection for. This makes things much
+easier, instead of having to have a kernel bpf program to load
+load_bpf_file() and then to run that and specify the comands you want
+on the shell you can now just use something as simple as just shell:
 
-Contact Reverend Pastor John /e-mail: (  pastor.johnvincent11@gmail.com  )
-Call and What's App Phone Number: +229-53812455
+-------------------------------------------------------------------
+#!/bin/bash
 
-I have kept the ATM VISA CARD  with Him at amount worth of US$ 1.5
-million for your compensation and you are expecting to send him your
-full address via mail to deliver your card to you. you are required to
-send him the following infromation as listed ,so that he will direct
-you how you Atm Visa Card can been deliver to your destination.
+rm -f testfile.img
+dd if=/dev/zero of=testfile.img bs=1M seek=1000 count=1
+DEVICE=$(losetup --show -f testfile.img)
+mkfs.btrfs -f $DEVICE
+mkdir -p tmpmnt
 
-1. Your full name....................
-2. Your Occupation................
-3. Your address......................
-4. Your phone number...........
-5. Age:..................
-6. Nationality:.........
-7. whatsapp Number.......
+FAILTYPE=fail_function
+FAILFUNC=open_ctree
+echo $FAILFUNC > /sys/kernel/debug/$FAILTYPE/inject
+echo -12 > /sys/kernel/debug/$FAILTYPE/$FAILFUNC/retval
+echo N > /sys/kernel/debug/$FAILTYPE/task-filter
+echo 100 > /sys/kernel/debug/$FAILTYPE/probability
+echo 0 > /sys/kernel/debug/$FAILTYPE/interval
+echo -1 > /sys/kernel/debug/$FAILTYPE/times
+echo 0 > /sys/kernel/debug/$FAILTYPE/space
+echo 1 > /sys/kernel/debug/$FAILTYPE/verbose
 
-Kind Regards
+mount -t btrfs $DEVICE tmpmnt
+if [ $? -ne 0 ]
+then
+       echo "SUCCESS!"
+else
+       echo "FAILED!"
+       umount tmpmnt
+fi
 
-Yours Sincerely,
+echo > /sys/kernel/debug/$FAILTYPE/inject
 
-Mr Johnson Robert
+rmdir tmpmnt
+losetup -d $DEVICE
+rm testfile.img
+-------------------------------------------------------------------
+
+This seems to be much more adaptable to what we do in blktests and
+fstests. So before I go forward with adding error injection for the
+block layer (only one user) or fs (only btrfs uses this so far), I think
+it would be prudent for us to socialize if this *is* the scalable
+strategy we'd like to see moving forward. If not then LSFMM seems like a
+good place to iron out any possible kinks or concerns folks might have.
+
+If we already have consensus and this is *the* way to go then I'll just
+go forward and start adding some knobs / tests for this.
+
+Perhaps the only issue I can think of is that you need a kernel
+which enables error injection, and so production kernels would not
+cut it.
+
+Thoughts?
+
+[0] https://lkml.kernel.org/r/20210512064629.13899-9-mcgrof@kernel.org
+[1] https://lwn.net/Articles/740146/
+[2] https://patchwork.ozlabs.org/project/netdev/patch/151563182380.628.2420967932180154822.stgit@devbox/
+
+  Luis
