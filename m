@@ -2,119 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 583344A5E8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 15:48:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A624A5E9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 15:53:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239444AbiBAOso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Feb 2022 09:48:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232540AbiBAOsn (ORCPT
+        id S239524AbiBAOxi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Feb 2022 09:53:38 -0500
+Received: from brightrain.aerifal.cx ([216.12.86.13]:58242 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239510AbiBAOx2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Feb 2022 09:48:43 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D64C061714;
-        Tue,  1 Feb 2022 06:48:43 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id k6-20020a05600c1c8600b003524656034cso1791872wms.2;
-        Tue, 01 Feb 2022 06:48:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Yr6l4WAzs/sh+j2DdHdIhNo/8cVO2SAzpYdunNPosVc=;
-        b=UqxGerTkLW0ev9zk1s/oTb44FweAceLPyY1tL195DfAbjFPCNKV53FRDAqGGTNGwzk
-         ptVJsRECcN7LfW4UIBibL0WvXPsha34fNtHCC6cF23LJQRfFMScPFMNP5CInzesO6tAk
-         DFPl5oiqXXK6sC0kfy3HqJf8oJ20dQm3VFAmuBzAWbkQtH5co6t/JPmC2iWg6ZUojzpv
-         jM7uGup8vtJUHkDJ5OYXfk3yLayBD10reHN8sGXYCWXfcN/TnjXD9CgBk9NWzzYdf1hW
-         ihFDJ7etGs9GABuE5vEAvwRI4fRY2UHGqi6bopK3Ys1AFTz0/Xt2cHsCp5gDt+1CTTgY
-         qzyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Yr6l4WAzs/sh+j2DdHdIhNo/8cVO2SAzpYdunNPosVc=;
-        b=Acz9kkZQYOyvzLqgoSh8iqNOaqYQrz1WMryCntGiL2mbc1j12dCKLZaqejygHuiyzJ
-         chVCYfBCwH9S3lqcjF91YyBjI2RQml+eB0llkScyl3LHbFV+GqsRGZEC5rP4kagjm3+t
-         5X34Oh54Wm+WMYMZcwtXqrMpEbO9ZK7ZfgbbhVU8gIODwB79odC5loufPsTXTj2rbwcr
-         mUIcB8lw0tMpQfvks0nysF0OjEWT/Vav3GoWK8ZwDppn569mJ52M92sGSGR6bE4swE8e
-         t6QMPJA0uiS0E0TUD3WuAZK31a/jMlYzXdaO4riokq9r80C0kAiTcGyp6qjDCjWLfww7
-         Mz9w==
-X-Gm-Message-State: AOAM530qmD3hGW1HSQsLHkhVOBDs4/uOQL9L1olqI7D9GB7YKAUSBs7d
-        D4Aqn6M0ZzRkHdXh7Q5/MTI=
-X-Google-Smtp-Source: ABdhPJzhxsxGMeWGGKxk5J7ePZW5h1PEBqm+UcDM3TmzAvhGBz6SVXmtQKsBid+Vw/LycV5xd+/VCw==
-X-Received: by 2002:a05:600c:3514:: with SMTP id h20mr2080315wmq.164.1643726921970;
-        Tue, 01 Feb 2022 06:48:41 -0800 (PST)
-Received: from [192.168.0.160] ([170.253.36.171])
-        by smtp.gmail.com with ESMTPSA id a15sm14804160wrp.41.2022.02.01.06.48.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Feb 2022 06:48:41 -0800 (PST)
-Message-ID: <a01a4f9a-da28-1135-080d-568de19e3d85@gmail.com>
-Date:   Tue, 1 Feb 2022 15:48:40 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: EINTR for fsync(2)
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Mathnerd314 <mathnerd314.gph@gmail.com>,
+        Tue, 1 Feb 2022 09:53:28 -0500
+Date:   Tue, 1 Feb 2022 09:53:25 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Ariadne Conill <ariadne@dereferenced.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-man@vger.kernel.org, mtk.manpages@gmail.com,
-        linux-fsdevel@vger.kernel.org
-References: <CADVL9rE70DK+gWn-pbHXy6a+5sdkHzFg_xJ9phhQkRapTUJ_zg@mail.gmail.com>
- <55d40a53-ad40-0bbf-0aed-e57419408796@gmail.com>
- <Yfh/E5i/oqhe6KsQ@casper.infradead.org>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-In-Reply-To: <Yfh/E5i/oqhe6KsQ@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: Force single empty string when argv is empty
+Message-ID: <20220201145324.GA29634@brightrain.aerifal.cx>
+References: <20220201000947.2453721-1-keescook@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220201000947.2453721-1-keescook@chromium.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Mathnerd314, Matthew,
-
-On 2/1/22 01:30, Matthew Wilcox wrote:
-[...]
-> So while it's worth adding EINTR to the man page, I don't think it's
-> worth going through an exercise of trying to add every possible
-> errno to every syscall.
+On Mon, Jan 31, 2022 at 04:09:47PM -0800, Kees Cook wrote:
+> Quoting[1] Ariadne Conill:
 > 
+> "In several other operating systems, it is a hard requirement that the
+> second argument to execve(2) be the name of a program, thus prohibiting
+> a scenario where argc < 1. POSIX 2017 also recommends this behaviour,
+> but it is not an explicit requirement[2]:
+> 
+>     The argument arg0 should point to a filename string that is
+>     associated with the process being started by one of the exec
+>     functions.
+> ....
+> Interestingly, Michael Kerrisk opened an issue about this in 2008[3],
+> but there was no consensus to support fixing this issue then.
+> Hopefully now that CVE-2021-4034 shows practical exploitative use[4]
+> of this bug in a shellcode, we can reconsider.
+> 
+> This issue is being tracked in the KSPP issue tracker[5]."
+> 
+> While the initial code searches[6][7] turned up what appeared to be
+> mostly corner case tests, trying to that just reject argv == NULL
+> (or an immediately terminated pointer list) quickly started tripping[8]
+> existing userspace programs.
+> 
+> The next best approach is forcing a single empty string into argv and
+> adjusting argc to match. The number of programs depending on argc == 0
+> seems a smaller set than those calling execve with a NULL argv.
+> 
+> Account for the additional stack space in bprm_stack_limits(). Inject an
+> empty string when argc == 0 (and set argc = 1). Warn about the case so
+> userspace has some notice about the change:
+> 
+>     process './argc0' launched './argc0' with NULL argv: empty string added
+> 
+> Additionally WARN() and reject NULL argv usage for kernel threads.
+> 
+> [1] https://lore.kernel.org/lkml/20220127000724.15106-1-ariadne@dereferenced.org/
+> [2] https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
+> [3] https://bugzilla.kernel.org/show_bug.cgi?id=8408
+> [4] https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt
+> [5] https://github.com/KSPP/linux/issues/176
+> [6] https://codesearch.debian.net/search?q=execve%5C+*%5C%28%5B%5E%2C%5D%2B%2C+*NULL&literal=0
+> [7] https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
+> [8] https://lore.kernel.org/lkml/20220131144352.GE16385@xsang-OptiPlex-9020/
+> 
+> Reported-by: Ariadne Conill <ariadne@dereferenced.org>
+> Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Rich Felker <dalias@libc.org>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/exec.c | 26 +++++++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 79f2c9483302..bbf3aadf7ce1 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -495,8 +495,14 @@ static int bprm_stack_limits(struct linux_binprm *bprm)
+>  	 * the stack. They aren't stored until much later when we can't
+>  	 * signal to the parent that the child has run out of stack space.
+>  	 * Instead, calculate it here so it's possible to fail gracefully.
+> +	 *
+> +	 * In the case of argc = 0, make sure there is space for adding a
+> +	 * empty string (which will bump argc to 1), to ensure confused
+> +	 * userspace programs don't start processing from argv[1], thinking
+> +	 * argc can never be 0, to keep them from walking envp by accident.
+> +	 * See do_execveat_common().
+>  	 */
+> -	ptr_size = (bprm->argc + bprm->envc) * sizeof(void *);
+> +	ptr_size = (min(bprm->argc, 1) + bprm->envc) * sizeof(void *);
 
-Okay.  I documented this error.
+From #musl:
 
-Thanks,
+<mixi> kees: shouldn't the min(bprm->argc, 1) be max(...) in your patch?
 
-Alex
+I'm pretty sure without fixing that, you're introducing a giant vuln
+here. I believe this is the second time a patch attempting to fix this
+non-vuln has proposed adding a new vuln...
 
----
-    fsync.2: ERRORS: Document EINTR
-
-    Reported-by: Mathnerd314 <mathnerd314.gph@gmail.com>
-    Signed-off-by: Alejandro Colomar <alx.manpages@gmail.com>
-    Cc: <linux-fsdevel@vger.kernel.org>
-    Cc: Matthew Wilcox <willy@infradead.org>
-    Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-
-
-diff --git a/man2/fsync.2 b/man2/fsync.2
-index 0f070ed2c..c79723ed8 100644
---- a/man2/fsync.2
-+++ b/man2/fsync.2
-@@ -126,6 +126,10 @@ is set to indicate the error.
- .I fd
- is not a valid open file descriptor.
- .TP
-+.B EINTR
-+The function was interrupted by a signal; see
-+.BR signal (7).
-+.TP
- .B EIO
- An error occurred during synchronization.
- This error may relate to data written to some other file descriptor
-
-
--- 
-Alejandro Colomar
-Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
+Rich
