@@ -2,76 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4EE14A64E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 20:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C710F4A64F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 20:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240893AbiBATWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Feb 2022 14:22:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242245AbiBATWO (ORCPT
+        id S242278AbiBAT0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Feb 2022 14:26:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:36922 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234151AbiBAT0R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Feb 2022 14:22:14 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DADF2C06173E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Feb 2022 11:22:13 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id ah7so57101457ejc.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Feb 2022 11:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tE/R9yvWA3Atyfb/JucqCUJU8G/DgubFOZDhk5Lo/ew=;
-        b=XId/LPiTasBZmFrfoW21pxoJPIg+5+IY4ExAd2xTeXcpnBZedpcqKEDIvB/hHwHc0I
-         WbSayqRMIlMgSbTwqIHUwMDXFCHiDwOZDP6ZtanGpRE63HQcOiOU53CK8pWHwGUOOk6g
-         rAbF/CKE/TzqH+hhEUF0iZR61axOWuOj/9EvE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tE/R9yvWA3Atyfb/JucqCUJU8G/DgubFOZDhk5Lo/ew=;
-        b=GyuYkTEG0ALYo8mnGEoh/aH3GghZ9QKxNTywHafMl5bsMGxPyKj7i/WGULapMNE+XT
-         fCdlBpPOgnZw8Aw5V2U1HLZqSgqHN7GJHCubZhH9V9Dx/h1usdenSu7W5ugE2ReOhUgW
-         4mb9NK/iN1SyBQdGaDe7FSP8xxEnRSN3zj4sKGtfsG5ZZ+oBU12k1MjAyYIyMuXwNcBb
-         65Z+O4q079vZ0hc14LQKwEu22G+VNGQbRwAaK/spHOBCQ1Heob6qdZ9nq4SyIYaUbsxa
-         zEbI0mVgV5JUYCDXPeU4N6ZDt/jiKn6FmspOVchyINvEdRKNvh52QpV8BpnqE/MzMxix
-         tEgg==
-X-Gm-Message-State: AOAM532jpKRdw++QfZZNGqSNDrZXPSVOln1q9iJSA3IRGW+lFJ0icJWq
-        y0dLuH10be7Jo83gO13gkN/XSBzwLywkHZG0
-X-Google-Smtp-Source: ABdhPJz1X9LPBvTsavIVgN8PgDkCN+CZoCkBCRDOSDKIHGZieYqgOyg7AOF3mKXm3Gj3YPWoIM+QuQ==
-X-Received: by 2002:a17:906:dc50:: with SMTP id yz16mr67903ejb.633.1643743332238;
-        Tue, 01 Feb 2022 11:22:12 -0800 (PST)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id c8sm19790529edr.70.2022.02.01.11.22.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Feb 2022 11:22:11 -0800 (PST)
-Received: by mail-wr1-f53.google.com with SMTP id h21so33980479wrb.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Feb 2022 11:22:11 -0800 (PST)
-X-Received: by 2002:adf:d1c8:: with SMTP id b8mr472549wrd.442.1643743329676;
- Tue, 01 Feb 2022 11:22:09 -0800 (PST)
+        Tue, 1 Feb 2022 14:26:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643743576;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=V6LHo6un10Hww5UkITIYZqx0hJ95mxjwPuv4ZEQNJOo=;
+        b=dYtVQIwWn4wlVyacLRuZbiwUkk21jpRpRETCjo/fwYHQcUh6n9uTV7DmEepW+jpppkKuzw
+        PXg7KRGlE4xyYuRRNskW5l7foKswYvdyH32tAep9XSdkxrZqgZs7+UibS1IebKh5zUOtkO
+        1kmz9xt8rtvl5hdW2V9LhUz2YbBAIyg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-619-M3lC_SoeOUSu4g4fX1B8yw-1; Tue, 01 Feb 2022 14:26:13 -0500
+X-MC-Unique: M3lC_SoeOUSu4g4fX1B8yw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 06EAD1091DA0;
+        Tue,  1 Feb 2022 19:26:12 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 73DEA5D6BA;
+        Tue,  1 Feb 2022 19:25:59 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 211JPwaE023932;
+        Tue, 1 Feb 2022 14:25:58 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 211JPwim023928;
+        Tue, 1 Feb 2022 14:25:58 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Tue, 1 Feb 2022 14:25:58 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Bart Van Assche <bvanassche@acm.org>
+cc:     Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/3] nvme: add copy offload support
+In-Reply-To: <1380d0e4-032d-133b-4ebb-f10d85e39800@acm.org>
+Message-ID: <alpine.LRH.2.02.2202011421320.21843@file01.intranet.prod.int.rdu2.redhat.com>
+References: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com> <20220201102122.4okwj2gipjbvuyux@mpHalley-2> <alpine.LRH.2.02.2202011327350.22481@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2202011332330.22481@file01.intranet.prod.int.rdu2.redhat.com>
+ <1380d0e4-032d-133b-4ebb-f10d85e39800@acm.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-References: <20220131144854.2771101-1-brauner@kernel.org>
-In-Reply-To: <20220131144854.2771101-1-brauner@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 1 Feb 2022 11:21:53 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjpA4T2-Z8Dg2HYP=3LSbT99kLjhJ1g1nPMObihrHpnjg@mail.gmail.com>
-Message-ID: <CAHk-=wjpA4T2-Z8Dg2HYP=3LSbT99kLjhJ1g1nPMObihrHpnjg@mail.gmail.com>
-Subject: Re: [PATCH] mailmap: update Christian Brauner's email address
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 31, 2022 at 6:49 AM Christian Brauner <brauner@kernel.org> wrote:
->
-> I need to update my mail addresses. A pull-request doesn't seem
-> warranted for this. Would you please apply this directly? It doesn't
-> contain any functional changes.
 
-Applied,
 
-                Linus
+On Tue, 1 Feb 2022, Bart Van Assche wrote:
+
+> On 2/1/22 10:33, Mikulas Patocka wrote:
+> > +static inline blk_status_t nvme_setup_read_token(struct nvme_ns *ns, struct
+> > request *req)
+> > +{
+> > +	struct bio *bio = req->bio;
+> > +	struct nvme_copy_token *token =
+> > page_to_virt(bio->bi_io_vec[0].bv_page) + bio->bi_io_vec[0].bv_offset;
+> 
+> Hmm ... shouldn't this function use bvec_kmap_local() instead of
+> page_to_virt()?
+> 
+> Thanks,
+> 
+> Bart.
+
+.bv_page is allocated only in blkdev_issue_copy with alloc_page. So, 
+page_to_virt works.
+
+But you are right that bvec_kmap_local may be nicer.
+
+Mikulas
+
