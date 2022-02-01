@@ -2,81 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BD1C4A5DF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 15:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F2884A5DFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Feb 2022 15:13:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239002AbiBAONB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Feb 2022 09:13:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49512 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238761AbiBAONB (ORCPT
+        id S239067AbiBAONU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Feb 2022 09:13:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:30786 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238761AbiBAONT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Feb 2022 09:13:01 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACADBC06173D
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Feb 2022 06:13:00 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id w14so34664007edd.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Feb 2022 06:13:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=XyLAKYKv+36v1cINNVMgxYGEEzdg72jpxZMeKa5/b0s=;
-        b=m4QMQeazYsI+lIDAQho/G/Vmu17g+Ws1+rWmwV9GxXnD6Cdkjz2hJwz00ruQRU6cY0
-         6qV4Pjy9OeWupBONX1cBibejcobvXI3USWZov1EJr2X62vTbsL0np2ojN2ylrwc+uja4
-         SB661pV66hpB1PTsyDFWxIFDVilKpmZz1+sds=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=XyLAKYKv+36v1cINNVMgxYGEEzdg72jpxZMeKa5/b0s=;
-        b=KG35cfcK6ddh0hWa5vdB+rqM3t3rqCjwqJABQ/n7rAjiVTGYGf+05bn8HFPzX2Dr6a
-         WAOsmhF3mst/Qbi1kzmSEwjKz4z0abJlMEaT4jc1B1QHUT9KwCzxoC7qfpZpMWqDMKkr
-         qPPN2kYK6myy3cqXXLwXw4bKq9vR2Dw1Fzx3Q1pWuXBwAN0h2xPyJRslqRdUVtcApqcA
-         ZIjos+Q1O8EqiAC/7eo/jBd/Rcpzq0uinH4/GM3ao2kcj192nzYdTwnzEydRx8Ezqg3v
-         QGGxv/bA53ipNXfWtKCafp3w9O/X5X7O41BnPyMcrItUeSKafYr5otm5fJ/9egavt08w
-         lcMA==
-X-Gm-Message-State: AOAM5324uvRftKJFNX1gKeaRKFhiBgPv59Se3ooXzX9S5IUkWCUTj7cI
-        6cyAFQe69+cy96SUaJc/OtfmAo3T9GQFfTc3
-X-Google-Smtp-Source: ABdhPJxs8fIY+5a2IIeuav3WjdrGS/bZJ4rtcK1Jjck7TOBkHDNvl4RDgUfkvyXuc0npEJngiWNpHw==
-X-Received: by 2002:a05:6402:1601:: with SMTP id f1mr25269020edv.165.1643724779166;
-        Tue, 01 Feb 2022 06:12:59 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.fixed.vodafone.hu. [178.48.189.3])
-        by smtp.gmail.com with ESMTPSA id s9sm19503596edj.48.2022.02.01.06.12.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Feb 2022 06:12:57 -0800 (PST)
-Date:   Tue, 1 Feb 2022 15:12:55 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs fixes for 5.17-rc3
-Message-ID: <Yfk/5lIpC2jC9P7F@miu.piliscsaba.redhat.com>
+        Tue, 1 Feb 2022 09:13:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643724799;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nrT/5L5qYMHdiH1OYbxOA/3ZZSuEj0xzzYPB+L6+4q8=;
+        b=U+9eBju1EQWfBLZPMT2TmOuwXuveZhSOFgkbQz/4ubN9RIYpaGCR1+z3ZAuZ14EgXPqEKl
+        eEuxu6r2Ei1BcJvvcwedZlOZEZq4Pf91NnQWLp9Bl+ahbLIOzJCr/jRSy3JaJMoIUU5YSW
+        jmwHgN3rZtC9OOnIKW4snhutH1T+vwU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-79-wAukSB2EMM-ZNA2E0nQePQ-1; Tue, 01 Feb 2022 09:13:18 -0500
+X-MC-Unique: wAukSB2EMM-ZNA2E0nQePQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EDB784DA41;
+        Tue,  1 Feb 2022 14:13:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCA9277D52;
+        Tue,  1 Feb 2022 14:13:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
+References: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     dhowells@redhat.com, lsf-pc@lists.linux-foundation.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] configfd as a replacement for both ioctls and fsconfig
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1476916.1643724793.1@warthog.procyon.org.uk>
+Date:   Tue, 01 Feb 2022 14:13:13 +0000
+Message-ID: <1476917.1643724793@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 
-Please pull from:
+> 
+> If the ioctl debate goes against ioctls, I think configfd would present
+> a more palatable alternative to netlink everywhere.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.17-rc3
+It'd be nice to be able to set up a 'configuration transaction' and then do a
+commit to apply it all in one go.
 
-Fix a regression introduced in v5.15, affecting copy up of files with
-'noatime' or 'sync' attributes to a tmpfs upper layer.
+David
 
-Thanks,
-Miklos
-
----
-Christoph Fritz (1):
-      ovl: fix NULL pointer dereference in copy up warning
-
-Miklos Szeredi (1):
-      ovl: don't fail copy up if no fileattr support on upper
-
----
- fs/overlayfs/copy_up.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
