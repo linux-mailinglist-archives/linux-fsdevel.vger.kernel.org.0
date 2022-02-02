@@ -2,184 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 402AA4A74F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 16:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE404A75AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 17:21:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345575AbiBBPup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 10:50:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60798 "EHLO
+        id S1345803AbiBBQV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 11:21:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345571AbiBBPuo (ORCPT
+        with ESMTP id S237479AbiBBQVz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 10:50:44 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD07C06173B
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Feb 2022 07:50:44 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id s61-20020a17090a69c300b001b4d0427ea2so7217993pjj.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Feb 2022 07:50:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:user-agent:in-reply-to:references
-         :message-id:mime-version:content-transfer-encoding;
-        bh=n2Bdj/sV7I9YYST/a6Ee+uQKpWStxnhqS6FCuPodXGI=;
-        b=F3ZMKUgp1tN25A8goPns7uiIg6+q4JCdBIfHNcLOjskWhHLztZ3IOsMjBPb9EYpP41
-         NlKix/zibD64RhL0/Gff9y2zuBiSFX5dVLWUOokhFGNetNeRL8JA3E8Ch2D5samJ+RdJ
-         MQaWo7gjXWDOd3F40H32FV3yLyI+ehlw4QRy0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:user-agent:in-reply-to
-         :references:message-id:mime-version:content-transfer-encoding;
-        bh=n2Bdj/sV7I9YYST/a6Ee+uQKpWStxnhqS6FCuPodXGI=;
-        b=BP/QsziEGO1XMc+c0AXG7QLbJzLQWSgdsz3QJiH36+UJX502mhijjMVPQG7lYQF4QP
-         UsxxXY22vDGSgV9ZwC7O624chGkSlYSGinTO2bq+ABWPvzN2PXgdxC5l52vmz8h7FkEr
-         GAePwaHyov3IvGrylN0H/oa70S1tuZ5xDy4xVZYe4YnNhxIuVNt99Sgd62NftyHxYjaL
-         6kzT3OnWP53fL1/kpWNrQsiXPWcb9+QSR7E3vGsBXK+wYs71esGa7sk1vHLd1eLl0Zlj
-         twHkTOa/xVfW/DpVzXBGT9FIo2eYnV53mQYfWw4LhEwJiRRgRz7ws/f6dhQueYOJrrC6
-         yCAQ==
-X-Gm-Message-State: AOAM530tWW6BP64UA6SfuSHgQDILHzawDB0zmM2TmSxH9/CzMlBytLwD
-        H4D4rvsTuUisnlGvNaNTLmDBTQ==
-X-Google-Smtp-Source: ABdhPJzOAbgWypiDTkn1zBlB8teQw5RfDJocPB4d/hP/ydQr3CtMkR74WzhAsep9R8qH82gACMoSuw==
-X-Received: by 2002:a17:902:eacc:: with SMTP id p12mr31311692pld.123.1643817043774;
-        Wed, 02 Feb 2022 07:50:43 -0800 (PST)
-Received: from [127.0.0.1] (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h11sm14933953pfe.214.2022.02.02.07.50.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Feb 2022 07:50:43 -0800 (PST)
-Date:   Wed, 02 Feb 2022 07:50:42 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Rich Felker <dalias@libc.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] exec: Force single empty string when argv is empty
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20220201145324.GA29634@brightrain.aerifal.cx>
-References: <20220201000947.2453721-1-keescook@chromium.org> <20220201145324.GA29634@brightrain.aerifal.cx>
-Message-ID: <1A24DA4E-2B15-4A95-B2A1-F5F963E0CD6F@chromium.org>
+        Wed, 2 Feb 2022 11:21:55 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C73AC061714;
+        Wed,  2 Feb 2022 08:21:55 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E301EB831A5;
+        Wed,  2 Feb 2022 16:21:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA674C340EB;
+        Wed,  2 Feb 2022 16:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643818912;
+        bh=aprhBNqV/yFavedqX4mLmND+1zJ0/xnjL0T01FTR7FQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HT12BqX8WuaY6JoH1taO7b/LCdLfxiSE+hPWLRvgT/CX2DLVBW/uckAJw1dLj6jRf
+         U3wsftOUOQU8wUoWQuUURO7I+tUF+Wl9eQgipUfNZD3e9/O8UlAN8waqMJWbZvCKDi
+         XUqaD852mzgPMfvB9JL0NoBjz9OL2l+7+6nYrmsjMZemEiqFfQuFLJ7etadp38euIP
+         ZFURUM805EuRpRYW/9L24emVSXNycbI7wgV6NMzNJ/8E1nk0dNQpX1fArUV9ym5LiY
+         ajri4+R/B6gU7JPFg9AaC0z6e0Gg2Vgv17QrxiKRJXJJ19pEWvj+WumReSroCP9kr/
+         HMIXOam+C3+sg==
+Date:   Wed, 2 Feb 2022 08:21:47 -0800
+From:   Keith Busch <kbusch@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "msnitzer@redhat.com >> msnitzer@redhat.com" <msnitzer@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "martin.petersen@oracle.com >> Martin K. Petersen" 
+        <martin.petersen@oracle.com>,
+        "roland@purestorage.com" <roland@purestorage.com>,
+        Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>,
+        "Frederick.Knight@netapp.com" <Frederick.Knight@netapp.com>,
+        "zach.brown@ni.com" <zach.brown@ni.com>,
+        "osandov@fb.com" <osandov@fb.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
+        "tytso@mit.edu" <tytso@mit.edu>, "jack@suse.com" <jack@suse.com>,
+        Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [RFC PATCH 1/3] block: add copy offload support
+Message-ID: <20220202162147.GC3077632@dhcp-10-100-145-180.wdc.com>
+References: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com>
+ <20220201102122.4okwj2gipjbvuyux@mpHalley-2>
+ <alpine.LRH.2.02.2202011327350.22481@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2202011331570.22481@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.2202011331570.22481@file01.intranet.prod.int.rdu2.redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Feb 01, 2022 at 01:32:29PM -0500, Mikulas Patocka wrote:
+> +int blkdev_issue_copy(struct block_device *bdev1, sector_t sector1,
+> +		      struct block_device *bdev2, sector_t sector2,
+> +		      sector_t nr_sects, sector_t *copied, gfp_t gfp_mask)
+> +{
+> +	struct page *token;
+> +	sector_t m;
+> +	int r = 0;
+> +	struct completion comp;
+> +
+> +	*copied = 0;
+> +
+> +	m = min(bdev_max_copy_sectors(bdev1), bdev_max_copy_sectors(bdev2));
+> +	if (!m)
+> +		return -EOPNOTSUPP;
+> +	m = min(m, (sector_t)round_down(UINT_MAX, PAGE_SIZE) >> 9);
+> +
+> +	if (unlikely(bdev_read_only(bdev2)))
+> +		return -EPERM;
+> +
+> +	token = alloc_page(gfp_mask);
+> +	if (unlikely(!token))
+> +		return -ENOMEM;
+> +
+> +	while (nr_sects) {
+> +		struct bio *read_bio, *write_bio;
+> +		sector_t this_step = min(nr_sects, m);
+> +
+> +		read_bio = bio_alloc(gfp_mask, 1);
+> +		if (unlikely(!read_bio)) {
+> +			r = -ENOMEM;
+> +			break;
+> +		}
+> +		bio_set_op_attrs(read_bio, REQ_OP_COPY_READ_TOKEN, REQ_NOMERGE);
+> +		bio_set_dev(read_bio, bdev1);
+> +		__bio_add_page(read_bio, token, PAGE_SIZE, 0);
 
+You have this "token" payload as driver specific data, but there's no
+check that bdev1 and bdev2 subscribe to the same driver specific format.
 
-On February 1, 2022 6:53:25 AM PST, Rich Felker <dalias@libc=2Eorg> wrote:
->On Mon, Jan 31, 2022 at 04:09:47PM -0800, Kees Cook wrote:
->> Quoting[1] Ariadne Conill:
->>=20
->> "In several other operating systems, it is a hard requirement that the
->> second argument to execve(2) be the name of a program, thus prohibiting
->> a scenario where argc < 1=2E POSIX 2017 also recommends this behaviour,
->> but it is not an explicit requirement[2]:
->>=20
->>     The argument arg0 should point to a filename string that is
->>     associated with the process being started by one of the exec
->>     functions=2E
->> =2E=2E=2E=2E
->> Interestingly, Michael Kerrisk opened an issue about this in 2008[3],
->> but there was no consensus to support fixing this issue then=2E
->> Hopefully now that CVE-2021-4034 shows practical exploitative use[4]
->> of this bug in a shellcode, we can reconsider=2E
->>=20
->> This issue is being tracked in the KSPP issue tracker[5]=2E"
->>=20
->> While the initial code searches[6][7] turned up what appeared to be
->> mostly corner case tests, trying to that just reject argv =3D=3D NULL
->> (or an immediately terminated pointer list) quickly started tripping[8]
->> existing userspace programs=2E
->>=20
->> The next best approach is forcing a single empty string into argv and
->> adjusting argc to match=2E The number of programs depending on argc =3D=
-=3D 0
->> seems a smaller set than those calling execve with a NULL argv=2E
->>=20
->> Account for the additional stack space in bprm_stack_limits()=2E Inject=
- an
->> empty string when argc =3D=3D 0 (and set argc =3D 1)=2E Warn about the =
-case so
->> userspace has some notice about the change:
->>=20
->>     process '=2E/argc0' launched '=2E/argc0' with NULL argv: empty stri=
-ng added
->>=20
->> Additionally WARN() and reject NULL argv usage for kernel threads=2E
->>=20
->> [1] https://lore=2Ekernel=2Eorg/lkml/20220127000724=2E15106-1-ariadne@d=
-ereferenced=2Eorg/
->> [2] https://pubs=2Eopengroup=2Eorg/onlinepubs/9699919799/functions/exec=
-=2Ehtml
->> [3] https://bugzilla=2Ekernel=2Eorg/show_bug=2Ecgi?id=3D8408
->> [4] https://www=2Equalys=2Ecom/2022/01/25/cve-2021-4034/pwnkit=2Etxt
->> [5] https://github=2Ecom/KSPP/linux/issues/176
->> [6] https://codesearch=2Edebian=2Enet/search?q=3Dexecve%5C+*%5C%28%5B%5=
-E%2C%5D%2B%2C+*NULL&literal=3D0
->> [7] https://codesearch=2Edebian=2Enet/search?q=3Dexeclp%3F%5Cs*%5C%28%5=
-B%5E%2C%5D%2B%2C%5Cs*NULL&literal=3D0
->> [8] https://lore=2Ekernel=2Eorg/lkml/20220131144352=2EGE16385@xsang-Opt=
-iPlex-9020/
->>=20
->> Reported-by: Ariadne Conill <ariadne@dereferenced=2Eorg>
->> Reported-by: Michael Kerrisk <mtk=2Emanpages@gmail=2Ecom>
->> Cc: Matthew Wilcox <willy@infradead=2Eorg>
->> Cc: Christian Brauner <brauner@kernel=2Eorg>
->> Cc: Rich Felker <dalias@libc=2Eorg>
->> Cc: Eric Biederman <ebiederm@xmission=2Ecom>
->> Cc: Alexander Viro <viro@zeniv=2Elinux=2Eorg=2Euk>
->> Cc: linux-fsdevel@vger=2Ekernel=2Eorg
->> Cc: stable@vger=2Ekernel=2Eorg
->> Signed-off-by: Kees Cook <keescook@chromium=2Eorg>
->> ---
->>  fs/exec=2Ec | 26 +++++++++++++++++++++++++-
->>  1 file changed, 25 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/fs/exec=2Ec b/fs/exec=2Ec
->> index 79f2c9483302=2E=2Ebbf3aadf7ce1 100644
->> --- a/fs/exec=2Ec
->> +++ b/fs/exec=2Ec
->> @@ -495,8 +495,14 @@ static int bprm_stack_limits(struct linux_binprm *=
-bprm)
->>  	 * the stack=2E They aren't stored until much later when we can't
->>  	 * signal to the parent that the child has run out of stack space=2E
->>  	 * Instead, calculate it here so it's possible to fail gracefully=2E
->> +	 *
->> +	 * In the case of argc =3D 0, make sure there is space for adding a
->> +	 * empty string (which will bump argc to 1), to ensure confused
->> +	 * userspace programs don't start processing from argv[1], thinking
->> +	 * argc can never be 0, to keep them from walking envp by accident=2E
->> +	 * See do_execveat_common()=2E
->>  	 */
->> -	ptr_size =3D (bprm->argc + bprm->envc) * sizeof(void *);
->> +	ptr_size =3D (min(bprm->argc, 1) + bprm->envc) * sizeof(void *);
->
->From #musl:
->
-><mixi> kees: shouldn't the min(bprm->argc, 1) be max(=2E=2E=2E) in your p=
-atch?
-
-Fix has already been sent, yup=2E
-
->I'm pretty sure without fixing that, you're introducing a giant vuln
->here=2E
-
-I wouldn't say "giant", but yes, it weakened a defense in depth for avoidi=
-ng high stack utilization=2E
-
-> I believe this is the second time a patch attempting to fix this
->non-vuln has proposed adding a new vuln=2E=2E=2E
-
-Mistakes happen, and that's why there is review and testing=2E Thank you f=
-or being part of the review process! :)
-
--Kees
-
---=20
-Kees Cook
+I thought we discussed defining something like a "copy domain" that
+establishes which block devices can offload copy operations to/from each
+other, and that should be checked before proceeding with the copy
+operation.
