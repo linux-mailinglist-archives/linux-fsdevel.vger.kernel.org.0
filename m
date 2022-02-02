@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E00B24A733D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 15:34:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6140E4A733E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 15:34:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345026AbiBBOet (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 09:34:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43048 "EHLO
+        id S1345041AbiBBOez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 09:34:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345044AbiBBOer (ORCPT
+        with ESMTP id S1345039AbiBBOey (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 09:34:47 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29B7CC06173D
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Feb 2022 06:34:47 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id h125so1510790pgc.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Feb 2022 06:34:47 -0800 (PST)
+        Wed, 2 Feb 2022 09:34:54 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113EBC061714
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Feb 2022 06:34:54 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id z5so18412548plg.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Feb 2022 06:34:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mmPXIembDYUQZdiojpjRF6icQ2WPRb2Yss79vxHhOMc=;
-        b=w0K0g72cMCrNdP/NHtVjGHimcUtWez4Q0dbbJwob2g29Qm+MKRkXJKsAMPMbvPgiw+
-         1YbaDoKvlgrKcV/gNFOt3KX2lNiiWw25pDlU8mCVcAWxtAMLpRxMy8NP4E38IpJl8FSg
-         TUtczFKyIKLmpq6xL9Etr29Cyvfj+GoPMjs7AlkoEOTKC+ArBaIROC/64ZODgijemBWU
-         xRHE63dtPn+HU71VPAlFooNZcCNJ43alHiCHXv5BXrakTtEXbJv9pWijrQIGmbUJ7pSV
-         MRuJPgs/gXVmZkIWpm/BkfpG2RSz5s2MNXzkSHG+fZycTFIEVeTTW6IyU9ny2eL2OoGf
-         vL5Q==
+        bh=uplRDMf9P3k9aUR6OrL9VGZsCccO7/3RG36fBhJFyME=;
+        b=kSLOTeQhvBFw7fsL96na0cRlWcVjElWVvAoseaINB/pZHqA7KWxP3av/18pkL1aF+0
+         MKOQJZSHRAd5a5PwAiR1h2yWe05lQOOjIoyguZQ6FRdfPhWOhYS2Q2cmjxo/HRQGt/Jy
+         BLny0ZANjrtCry2BJhLKzk1uwsIbJqH7I0w5IgRmX7/Xh8uBWszfMynYBEc3fqos21Qu
+         CxFcpkYtSGBHbUPVu/D5nyQUIrxpb/JUykO56+48bAqzUjS16agFbbk3P3Z3QbATWhrM
+         WyboLCUgxUOu26c9aIeOzVgtlweBJ8PzLJ1+xwkL63Hi5ucGoWjq0bEicpnPVjxdUrpG
+         lkKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mmPXIembDYUQZdiojpjRF6icQ2WPRb2Yss79vxHhOMc=;
-        b=29+9YGxMqehOJnH1qatuf2aX8Mz6IOXjtRwV8lEFyKAQ97V2AWgmkTldBoLhN4Tfkr
-         79iFcii525TDH50YSo+/s08muw+mGdXdsRjoiO4NzmQE/rK8RB83tFAHZJNA/Z+/sviX
-         sHvND6JyG45+Ln6mEEO1v3G43yshb4xz6TlVgk61p4kbUnc7I09LfLzJOQZ1oTmF7QIk
-         n8QvWSAivUjKnkcmtAlW5Ek3mk1NzlaACt+l1nflpqJ5VfZ2stvhp6nduq+hl831I6QY
-         kKFv7GjnvYi1o9H8blCHAdlZ7FnyBpM1NeJINfI4JDWym1Esft1m5Nq1O75yBobtd4VA
-         stYw==
-X-Gm-Message-State: AOAM531SL8yq4tNFu7oK7HrxWh+JWDMLWqkAIsRQvVZHiXnFv5qWo1eo
-        B89K7BhqErt7M7GYFFhExzDhQg==
-X-Google-Smtp-Source: ABdhPJwtEKR0kboEHhouJDRLQjjqdXwqy8VsDDw7NR+0RyLEXV/5vfpSBnHEVq3onHxjnGD5YWze7Q==
-X-Received: by 2002:a63:496:: with SMTP id 144mr25240840pge.380.1643812486551;
-        Wed, 02 Feb 2022 06:34:46 -0800 (PST)
+        bh=uplRDMf9P3k9aUR6OrL9VGZsCccO7/3RG36fBhJFyME=;
+        b=vc+v2KYvU83OQ7LaQzXO/aXYK2/JuVshfaPDrQ4mJneYRcFXtAl0jHPHtDsIMx8OEW
+         qUkyv4xLEZEvyLqXUVHenkJhxL2NXGhBEysrU4QJket686c+iOJspVi+JytAeeUGxwDJ
+         mppoNpIsK8V2NcXn0X+XcVhrrLlbpMeptO6FM9T2VPrlkFGL35gzyIfcRncob+FRoC28
+         uHDAiF+GfY0pezGoOIgRGBZtBJcyCG0W/apWOtriUea8rSp9pKulnODvCTZhCq2aGXfz
+         8Zhb0v7WZ/wXkDga5R0X5r3qd4weBYkch3gC+Ni8ZgEdB2IY86ECT8uob4cRSUB/Uall
+         MNCQ==
+X-Gm-Message-State: AOAM5306p4nTF5ogzUhDE1P/++b5lR18Crn3w/GMDifxrgB09MEKAwpV
+        xi7c5Rqk3d2k4jQ0Yj/YSr5ggw==
+X-Google-Smtp-Source: ABdhPJxYVhkrB3EfA0Rf/jBLdL6J+MWAJGy/3N8zt0fObDKgb6hfYJaRk8Ro75dji+V85rbzZGD4sA==
+X-Received: by 2002:a17:902:e851:: with SMTP id t17mr30063915plg.102.1643812493488;
+        Wed, 02 Feb 2022 06:34:53 -0800 (PST)
 Received: from FVFYT0MHHV2J.tiktokcdn.com ([139.177.225.241])
-        by smtp.gmail.com with ESMTPSA id s9sm29079268pgm.76.2022.02.02.06.34.39
+        by smtp.gmail.com with ESMTPSA id s9sm29079268pgm.76.2022.02.02.06.34.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Feb 2022 06:34:46 -0800 (PST)
+        Wed, 02 Feb 2022 06:34:53 -0800 (PST)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
@@ -58,9 +58,9 @@ To:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
 Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         duanxiongchun@bytedance.com, Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v2 4/6] mm: rmap: introduce pfn_mkclean_range() to cleans PTEs
-Date:   Wed,  2 Feb 2022 22:33:05 +0800
-Message-Id: <20220202143307.96282-5-songmuchun@bytedance.com>
+Subject: [PATCH v2 5/6] dax: fix missing writeprotect the pte entry
+Date:   Wed,  2 Feb 2022 22:33:06 +0800
+Message-Id: <20220202143307.96282-6-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.32.0 (Apple Git-132)
 In-Reply-To: <20220202143307.96282-1-songmuchun@bytedance.com>
 References: <20220202143307.96282-1-songmuchun@bytedance.com>
@@ -70,221 +70,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The page_mkclean_one() is supposed to be used with the pfn that has a
-associated struct page, but not all the pfns (e.g. DAX) have a struct
-page. Introduce a new function pfn_mkclean_range() to cleans the PTEs
-(including PMDs) mapped with range of pfns which has no struct page
-associated with them. This helper will be used by DAX device in the
-next patch to make pfns clean.
+Currently dax_mapping_entry_mkclean() fails to clean and write protect
+the pte entry within a DAX PMD entry during an *sync operation. This
+can result in data loss in the following sequence:
 
+  1) process A mmap write to DAX PMD, dirtying PMD radix tree entry and
+     making the pmd entry dirty and writeable.
+  2) process B mmap with the @offset (e.g. 4K) and @length (e.g. 4K)
+     write to the same file, dirtying PMD radix tree entry (already
+     done in 1)) and making the pte entry dirty and writeable.
+  3) fsync, flushing out PMD data and cleaning the radix tree entry. We
+     currently fail to mark the pte entry as clean and write protected
+     since the vma of process B is not covered in dax_entry_mkclean().
+  4) process B writes to the pte. These don't cause any page faults since
+     the pte entry is dirty and writeable. The radix tree entry remains
+     clean.
+  5) fsync, which fails to flush the dirty PMD data because the radix tree
+     entry was clean.
+  6) crash - dirty data that should have been fsync'd as part of 5) could
+     still have been in the processor cache, and is lost.
+
+Just to use pfn_mkclean_range() to clean the pfns to fix this issue.
+
+Fixes: 4b4bb46d00b3 ("dax: clear dirty entry tags on cache flush")
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- include/linux/rmap.h |  3 ++
- mm/internal.h        | 26 ++++++++++------
- mm/rmap.c            | 84 +++++++++++++++++++++++++++++++++++++++++-----------
- 3 files changed, 86 insertions(+), 27 deletions(-)
+ fs/dax.c | 83 ++++++----------------------------------------------------------
+ 1 file changed, 7 insertions(+), 76 deletions(-)
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 78373935ad49..668a1e81b442 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -241,6 +241,9 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw);
-  */
- unsigned long page_address_in_vma(struct page *, struct vm_area_struct *);
+diff --git a/fs/dax.c b/fs/dax.c
+index e031e4b6c13c..b64ac02d55d7 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -25,6 +25,7 @@
+ #include <linux/sizes.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/iomap.h>
++#include <linux/rmap.h>
+ #include <asm/pgalloc.h>
  
-+int pfn_mkclean_range(unsigned long pfn, int npfn, pgoff_t pgoff,
-+		      struct vm_area_struct *vma);
-+
- /*
-  * Cleans the PTEs of shared mappings.
-  * (and since clean PTEs should also be readonly, write protects them too)
-diff --git a/mm/internal.h b/mm/internal.h
-index 5458cd08df33..dc71256e568f 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -449,26 +449,22 @@ extern void clear_page_mlock(struct page *page);
- extern pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma);
- 
- /*
-- * At what user virtual address is page expected in vma?
-- * Returns -EFAULT if all of the page is outside the range of vma.
-- * If page is a compound head, the entire compound page is considered.
-+ * Return the start of user virtual address at the specific offset within
-+ * a vma.
-  */
- static inline unsigned long
--vma_address(struct page *page, struct vm_area_struct *vma)
-+vma_pgoff_address(pgoff_t pgoff, unsigned long nr_pages,
-+		  struct vm_area_struct *vma)
- {
--	pgoff_t pgoff;
- 	unsigned long address;
- 
--	VM_BUG_ON_PAGE(PageKsm(page), page);	/* KSM page->index unusable */
--	pgoff = page_to_pgoff(page);
- 	if (pgoff >= vma->vm_pgoff) {
- 		address = vma->vm_start +
- 			((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
- 		/* Check for address beyond vma (or wrapped through 0?) */
- 		if (address < vma->vm_start || address >= vma->vm_end)
- 			address = -EFAULT;
--	} else if (PageHead(page) &&
--		   pgoff + compound_nr(page) - 1 >= vma->vm_pgoff) {
-+	} else if (pgoff + nr_pages - 1 >= vma->vm_pgoff) {
- 		/* Test above avoids possibility of wrap to 0 on 32-bit */
- 		address = vma->vm_start;
- 	} else {
-@@ -478,6 +474,18 @@ vma_address(struct page *page, struct vm_area_struct *vma)
+ #define CREATE_TRACE_POINTS
+@@ -801,87 +802,17 @@ static void *dax_insert_entry(struct xa_state *xas,
+ 	return entry;
  }
  
- /*
-+ * Return the start of user virtual address of a page within a vma.
-+ * Returns -EFAULT if all of the page is outside the range of vma.
-+ * If page is a compound head, the entire compound page is considered.
-+ */
-+static inline unsigned long
-+vma_address(struct page *page, struct vm_area_struct *vma)
-+{
-+	VM_BUG_ON_PAGE(PageKsm(page), page);	/* KSM page->index unusable */
-+	return vma_pgoff_address(page_to_pgoff(page), compound_nr(page), vma);
-+}
-+
-+/*
-  * Return the end of user virtual address at the specific offset within
-  * a vma.
-  */
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 0ba12dc9fae3..8f1860dc22bc 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -928,34 +928,33 @@ int page_referenced(struct page *page,
- 	return pra.referenced;
- }
- 
--static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
--			    unsigned long address, void *arg)
-+static int page_vma_mkclean_one(struct page_vma_mapped_walk *pvmw)
+-static inline
+-unsigned long pgoff_address(pgoff_t pgoff, struct vm_area_struct *vma)
+-{
+-	unsigned long address;
+-
+-	address = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
+-	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
+-	return address;
+-}
+-
+ /* Walk all mappings of a given index of a file and writeprotect them */
+-static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
+-		unsigned long pfn)
++static void dax_entry_mkclean(struct address_space *mapping, unsigned long pfn,
++			      unsigned long npfn, pgoff_t start)
  {
--	struct page_vma_mapped_walk pvmw = {
--		.page = page,
--		.vma = vma,
--		.address = address,
--		.flags = PVMW_SYNC,
--	};
-+	int cleaned = 0;
-+	struct vm_area_struct *vma = pvmw->vma;
- 	struct mmu_notifier_range range;
--	int *cleaned = arg;
-+	unsigned long end;
-+
-+	if (pvmw->flags & PVMW_PFN_WALK)
-+		end = vma_pgoff_address_end(pvmw->index, pvmw->nr, vma);
-+	else
-+		end = vma_address_end(pvmw->page, vma);
+ 	struct vm_area_struct *vma;
+-	pte_t pte, *ptep = NULL;
+-	pmd_t *pmdp = NULL;
+-	spinlock_t *ptl;
++	pgoff_t end = start + npfn - 1;
  
- 	/*
- 	 * We have to assume the worse case ie pmd for invalidation. Note that
- 	 * the page can not be free from this function.
- 	 */
--	mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_PAGE,
--				0, vma, vma->vm_mm, address,
--				vma_address_end(page, vma));
-+	mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_PAGE, 0, vma,
-+				vma->vm_mm, pvmw->address, end);
- 	mmu_notifier_invalidate_range_start(&range);
- 
--	while (page_vma_mapped_walk(&pvmw)) {
-+	while (page_vma_mapped_walk(pvmw)) {
- 		int ret = 0;
-+		unsigned long address = pvmw->address;
- 
--		address = pvmw.address;
--		if (pvmw.pte) {
-+		if (pvmw->pte) {
- 			pte_t entry;
--			pte_t *pte = pvmw.pte;
-+			pte_t *pte = pvmw->pte;
- 
- 			if (!pte_dirty(*pte) && !pte_write(*pte))
- 				continue;
-@@ -968,7 +967,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
- 			ret = 1;
- 		} else {
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--			pmd_t *pmd = pvmw.pmd;
-+			pmd_t *pmd = pvmw->pmd;
- 			pmd_t entry;
- 
- 			if (!pmd_dirty(*pmd) && !pmd_write(*pmd))
-@@ -995,11 +994,27 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
- 		 * See Documentation/vm/mmu_notifier.rst
- 		 */
- 		if (ret)
--			(*cleaned)++;
-+			cleaned++;
+ 	i_mmap_lock_read(mapping);
+-	vma_interval_tree_foreach(vma, &mapping->i_mmap, index, index) {
+-		struct mmu_notifier_range range;
+-		unsigned long address;
+-
++	vma_interval_tree_foreach(vma, &mapping->i_mmap, start, end) {
++		pfn_mkclean_range(pfn, npfn, start, vma);
+ 		cond_resched();
+-
+-		if (!(vma->vm_flags & VM_SHARED))
+-			continue;
+-
+-		address = pgoff_address(index, vma);
+-
+-		/*
+-		 * follow_invalidate_pte() will use the range to call
+-		 * mmu_notifier_invalidate_range_start() on our behalf before
+-		 * taking any lock.
+-		 */
+-		if (follow_invalidate_pte(vma->vm_mm, address, &range, &ptep,
+-					  &pmdp, &ptl))
+-			continue;
+-
+-		/*
+-		 * No need to call mmu_notifier_invalidate_range() as we are
+-		 * downgrading page table protection not changing it to point
+-		 * to a new page.
+-		 *
+-		 * See Documentation/vm/mmu_notifier.rst
+-		 */
+-		if (pmdp) {
+-#ifdef CONFIG_FS_DAX_PMD
+-			pmd_t pmd;
+-
+-			if (pfn != pmd_pfn(*pmdp))
+-				goto unlock_pmd;
+-			if (!pmd_dirty(*pmdp) && !pmd_write(*pmdp))
+-				goto unlock_pmd;
+-
+-			flush_cache_range(vma, address,
+-					  address + HPAGE_PMD_SIZE);
+-			pmd = pmdp_invalidate(vma, address, pmdp);
+-			pmd = pmd_wrprotect(pmd);
+-			pmd = pmd_mkclean(pmd);
+-			set_pmd_at(vma->vm_mm, address, pmdp, pmd);
+-unlock_pmd:
+-#endif
+-			spin_unlock(ptl);
+-		} else {
+-			if (pfn != pte_pfn(*ptep))
+-				goto unlock_pte;
+-			if (!pte_dirty(*ptep) && !pte_write(*ptep))
+-				goto unlock_pte;
+-
+-			flush_cache_page(vma, address, pfn);
+-			pte = ptep_clear_flush(vma, address, ptep);
+-			pte = pte_wrprotect(pte);
+-			pte = pte_mkclean(pte);
+-			set_pte_at(vma->vm_mm, address, ptep, pte);
+-unlock_pte:
+-			pte_unmap_unlock(ptep, ptl);
+-		}
+-
+-		mmu_notifier_invalidate_range_end(&range);
  	}
- 
- 	mmu_notifier_invalidate_range_end(&range);
- 
-+	return cleaned;
-+}
-+
-+static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
-+			    unsigned long address, void *arg)
-+{
-+	struct page_vma_mapped_walk pvmw = {
-+		.page		= page,
-+		.vma		= vma,
-+		.address	= address,
-+		.flags		= PVMW_SYNC,
-+	};
-+	int *cleaned = arg;
-+
-+	*cleaned += page_vma_mkclean_one(&pvmw);
-+
- 	return true;
+ 	i_mmap_unlock_read(mapping);
  }
+@@ -949,7 +880,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+ 	count = 1UL << dax_entry_order(entry);
+ 	index = xas->xa_index & ~(count - 1);
  
-@@ -1037,6 +1052,39 @@ int folio_mkclean(struct folio *folio)
- EXPORT_SYMBOL_GPL(folio_mkclean);
- 
- /**
-+ * pfn_mkclean_range - Cleans the PTEs (including PMDs) mapped with range of
-+ *                     [@pfn, @pfn + @npfn) at the specific offset (@pgoff)
-+ *                     within the @vma of shared mappings. And since clean PTEs
-+ *                     should also be readonly, write protects them too.
-+ * @pfn: start pfn.
-+ * @npfn: number of physically contiguous pfns srarting with @pfn.
-+ * @pgoff: page offset that the @pfn mapped with.
-+ * @vma: vma that @pfn mapped within.
-+ *
-+ * Returns the number of cleaned PTEs (including PMDs).
-+ */
-+int pfn_mkclean_range(unsigned long pfn, int npfn, pgoff_t pgoff,
-+		      struct vm_area_struct *vma)
-+{
-+	unsigned long address = vma_pgoff_address(pgoff, npfn, vma);
-+	struct page_vma_mapped_walk pvmw = {
-+		.pfn		= pfn,
-+		.nr		= npfn,
-+		.index		= pgoff,
-+		.vma		= vma,
-+		.address	= address,
-+		.flags		= PVMW_SYNC | PVMW_PFN_WALK,
-+	};
-+
-+	if (invalid_mkclean_vma(vma, NULL))
-+		return 0;
-+
-+	VM_BUG_ON_VMA(address == -EFAULT, vma);
-+
-+	return page_vma_mkclean_one(&pvmw);
-+}
-+
-+/**
-  * page_move_anon_rmap - move a page to our anon_vma
-  * @page:	the page to move to our anon_vma
-  * @vma:	the vma the page belongs to
+-	dax_entry_mkclean(mapping, index, pfn);
++	dax_entry_mkclean(mapping, pfn, count, index);
+ 	dax_flush(dax_dev, page_address(pfn_to_page(pfn)), count * PAGE_SIZE);
+ 	/*
+ 	 * After we have flushed the cache, we can clear the dirty tag. There
 -- 
 2.11.0
 
