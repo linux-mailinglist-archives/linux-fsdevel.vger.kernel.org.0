@@ -2,101 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA394A74E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 16:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 402AA4A74F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 16:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345158AbiBBPos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 10:44:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59434 "EHLO
+        id S1345575AbiBBPup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 10:50:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233239AbiBBPor (ORCPT
+        with ESMTP id S1345571AbiBBPuo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 10:44:47 -0500
-Received: from mail-out-4.itc.rwth-aachen.de (mail-out-4.itc.rwth-aachen.de [IPv6:2a00:8a60:1:e501::5:49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE5EC061714;
-        Wed,  2 Feb 2022 07:44:46 -0800 (PST)
-X-IPAS-Result: =?us-ascii?q?A2AEAABmpvph/6QagoZaGgEBAQEBAQEBAQEDAQEBARIBA?=
- =?us-ascii?q?QEBAgIBAQEBQIFGBQEBAQELAYFRgixqhEmII4hznFOBfAsBAQEBAQEBAQEIA?=
- =?us-ascii?q?T8CBAEBhQUCg1sCJTQJDgECBAEBAQEDAgMBAQEBAQEDAQEGAQEBAQEBBQSBH?=
- =?us-ascii?q?IUvRoZDAQUjVhALDgoCAiYCAhAEMxYOBYYbAa5qgTGBAYhWgScJAYEGKgGHK?=
- =?us-ascii?q?4cugimEPz6HXYJlBJJDhDKRWoMvRpdAkmEHghBUZaARg3KSQAKRVJZKgkeje?=
- =?us-ascii?q?wIEAgQFAhaBYYIVMz6DOFEXAg+ccEEyOAIGCwEBAwmCOoMKJhOHTwEB?=
-IronPort-Data: A9a23:uKBOEaBAp+D6WxVW//ziw5YqxClBgxIJ4kV8jS/XYbTApDoggjIDn
- WtNWj+Gaf2PM2b3fdxzPNjn9BhXvpOAnINqOVdlrnsFo1CmCCbmLYnDch2gb3v6wunrFh8PA
- xA2M4GYRCwMZiaA4E/ra9ANlFEkvU2ybuOU5NXsZ2YhFWeIdA970Ug5w7Rh2NYy6TSEK1rlV
- e3a8pW31GCNhmYc3lI8s8pvfzs24ZweEBtB1rAPTagjUG32zhH5P7pDTU2FFEYUd6EPdgKMb
- 7uZkOvprjuxEyAFUbtJmp6jGqEDryW70QKm0hK6UID66vROS7BbPqsTbJIhhUlrZzqhlfc21
- vBtuI6MEBoLL/2diPkRWAdZKnQrVUFG0OevzXmXq9OPz0DWNmCwhvwoFl4qPcgR9qB7DAmi9
- 9RBc2xLN0vbwbjohuvlFoGAhex6RCXvFIYWtXd91nfWF/E9WrjZXLnKoNZR1zc9gIZCEJ4yY
- uJAMmY/PUSdM0In1lE/LJR5gb7voUPGTCxihleqtLMIwTjs9VkkuFTqGJ+PEjCQfu1ckkGSv
- GPX9mLRDRQTNdjZwj2AmlqlhffKtSf6Xp8CUbO/6/hmiUGSwWpVDwcZPXO4rPSigUm5WPpUK
- 1YT/yszqO417kPDZsf8RRqQsnOCvwBaX9tWDv187xuCjLfXiy6UDGkJQjNbbfQ2sc4tXj0t0
- BmCmNaBLThutqCFDHyG+rqKoDeaJycYNykBaDUCQA9D5MPsyKk3jxTSXpNmFYa2kNT+Gnf32
- T/ihCw/gagDyM4Czam2+1HBjBqyqZXTCA04/APaWiSi9AwRWWK+T5a39VjW/bNbcMOQCEOeo
- HhBksTY4O1m4YyxqRFhid4lRNmBj8tp+hWF6bKzN/HNLwiQxkM=
-IronPort-HdrOrdr: A9a23:V2VN5KBGBMWHopDlHemx55DYdb4zR+YMi2TDGXoedfUzSL38qy
- nOpoV46faaslsssR0b9exoW5PwIk80l6QV3WB5B97LN2PbUQCTTL2Kg7GM/wHd
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="5.88,337,1635199200"; 
-   d="scan'208";a="134898587"
-Received: from rwthex-s4-a.rwth-ad.de ([134.130.26.164])
-  by mail-in-4.itc.rwth-aachen.de with ESMTP; 02 Feb 2022 16:44:45 +0100
-Received: from localhost (2a02:908:1069:d8e0:9e36:ff87:655a:5f05) by
- rwthex-s4-a.rwth-ad.de (2a00:8a60:1:e500::26:164) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Wed, 2 Feb 2022 16:44:44 +0100
-Date:   Wed, 2 Feb 2022 16:44:44 +0100
-From:   Magnus =?utf-8?B?R3Jvw58=?= <magnus.gross@rwth-aachen.de>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
+        Wed, 2 Feb 2022 10:50:44 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD07C06173B
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Feb 2022 07:50:44 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id s61-20020a17090a69c300b001b4d0427ea2so7217993pjj.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Feb 2022 07:50:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:user-agent:in-reply-to:references
+         :message-id:mime-version:content-transfer-encoding;
+        bh=n2Bdj/sV7I9YYST/a6Ee+uQKpWStxnhqS6FCuPodXGI=;
+        b=F3ZMKUgp1tN25A8goPns7uiIg6+q4JCdBIfHNcLOjskWhHLztZ3IOsMjBPb9EYpP41
+         NlKix/zibD64RhL0/Gff9y2zuBiSFX5dVLWUOokhFGNetNeRL8JA3E8Ch2D5samJ+RdJ
+         MQaWo7gjXWDOd3F40H32FV3yLyI+ehlw4QRy0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:user-agent:in-reply-to
+         :references:message-id:mime-version:content-transfer-encoding;
+        bh=n2Bdj/sV7I9YYST/a6Ee+uQKpWStxnhqS6FCuPodXGI=;
+        b=BP/QsziEGO1XMc+c0AXG7QLbJzLQWSgdsz3QJiH36+UJX502mhijjMVPQG7lYQF4QP
+         UsxxXY22vDGSgV9ZwC7O624chGkSlYSGinTO2bq+ABWPvzN2PXgdxC5l52vmz8h7FkEr
+         GAePwaHyov3IvGrylN0H/oa70S1tuZ5xDy4xVZYe4YnNhxIuVNt99Sgd62NftyHxYjaL
+         6kzT3OnWP53fL1/kpWNrQsiXPWcb9+QSR7E3vGsBXK+wYs71esGa7sk1vHLd1eLl0Zlj
+         twHkTOa/xVfW/DpVzXBGT9FIo2eYnV53mQYfWw4LhEwJiRRgRz7ws/f6dhQueYOJrrC6
+         yCAQ==
+X-Gm-Message-State: AOAM530tWW6BP64UA6SfuSHgQDILHzawDB0zmM2TmSxH9/CzMlBytLwD
+        H4D4rvsTuUisnlGvNaNTLmDBTQ==
+X-Google-Smtp-Source: ABdhPJzOAbgWypiDTkn1zBlB8teQw5RfDJocPB4d/hP/ydQr3CtMkR74WzhAsep9R8qH82gACMoSuw==
+X-Received: by 2002:a17:902:eacc:: with SMTP id p12mr31311692pld.123.1643817043774;
+        Wed, 02 Feb 2022 07:50:43 -0800 (PST)
+Received: from [127.0.0.1] (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h11sm14933953pfe.214.2022.02.02.07.50.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Feb 2022 07:50:43 -0800 (PST)
+Date:   Wed, 02 Feb 2022 07:50:42 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Rich Felker <dalias@libc.org>
 CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ariadne Conill <ariadne@dereferenced.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
         Eric Biederman <ebiederm@xmission.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH] elf: Relax assumptions about vaddr ordering
-Message-ID: <Yfqm7HbucDjPbES+@fractal.localdomain>
-References: <YfF18Dy85mCntXrx@fractal.localdomain>
- <202201260845.FCBC0B5A06@keescook>
- <202201262230.E16DF58B@keescook>
- <YfOooXQ2ScpZLhmD@fractal.localdomain>
- <202201281347.F36AEA5B61@keescook>
- <20220201144816.f84bafcf45c21d01fbc3880a@linux-foundation.org>
- <YfqgLmk9+4W50EEB@localhost.localdomain>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: Force single empty string when argv is empty
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20220201145324.GA29634@brightrain.aerifal.cx>
+References: <20220201000947.2453721-1-keescook@chromium.org> <20220201145324.GA29634@brightrain.aerifal.cx>
+Message-ID: <1A24DA4E-2B15-4A95-B2A1-F5F963E0CD6F@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <YfqgLmk9+4W50EEB@localhost.localdomain>
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
-X-Originating-IP: [2a02:908:1069:d8e0:9e36:ff87:655a:5f05]
-X-ClientProxiedBy: RWTHEX-S2-B.rwth-ad.de (2a00:8a60:1:e500::26:155) To
- rwthex-s4-a.rwth-ad.de (2a00:8a60:1:e500::26:164)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Wed, Feb 02, 2022 at 06:15:58PM +0300 schrieb Alexey Dobriyan:
-> On Tue, Feb 01, 2022 at 02:48:16PM -0800, Andrew Morton wrote:
-> > On Fri, 28 Jan 2022 14:30:12 -0800 Kees Cook <keescook@chromium.org> wrote:
-> > 
-> > > Andrew, can you update elf-fix-overflow-in-total-mapping-size-calculation.patch
-> > > to include:
-> > > 
-> > > Fixes: 5f501d555653 ("binfmt_elf: reintroduce using MAP_FIXED_NOREPLACE")
-> > > Cc: stable@vger.kernel.org
-> > > Acked-by: Kees Cook <keescook@chromium.org>
-> > 
-> > Done.
-> > 
-> > I'm taking it that we can omit this patch ("elf: Relax assumptions
-> > about vaddr ordering") and that Alexey's "ELF: fix overflow in total
-> > mapping size calculation" will suffice?
-> 
-> Yes, it is same patch conceptually.
-> It should work, but those who can't play Bioshock are better test it.
 
-Yes it works.
 
-Although the change from unsigned int to int is not necessary in the
-first place, as you can avoid the -1 initialization for min_addr by
-simply using ULONG_MAX, as can be seen in my patch.
+On February 1, 2022 6:53:25 AM PST, Rich Felker <dalias@libc=2Eorg> wrote:
+>On Mon, Jan 31, 2022 at 04:09:47PM -0800, Kees Cook wrote:
+>> Quoting[1] Ariadne Conill:
+>>=20
+>> "In several other operating systems, it is a hard requirement that the
+>> second argument to execve(2) be the name of a program, thus prohibiting
+>> a scenario where argc < 1=2E POSIX 2017 also recommends this behaviour,
+>> but it is not an explicit requirement[2]:
+>>=20
+>>     The argument arg0 should point to a filename string that is
+>>     associated with the process being started by one of the exec
+>>     functions=2E
+>> =2E=2E=2E=2E
+>> Interestingly, Michael Kerrisk opened an issue about this in 2008[3],
+>> but there was no consensus to support fixing this issue then=2E
+>> Hopefully now that CVE-2021-4034 shows practical exploitative use[4]
+>> of this bug in a shellcode, we can reconsider=2E
+>>=20
+>> This issue is being tracked in the KSPP issue tracker[5]=2E"
+>>=20
+>> While the initial code searches[6][7] turned up what appeared to be
+>> mostly corner case tests, trying to that just reject argv =3D=3D NULL
+>> (or an immediately terminated pointer list) quickly started tripping[8]
+>> existing userspace programs=2E
+>>=20
+>> The next best approach is forcing a single empty string into argv and
+>> adjusting argc to match=2E The number of programs depending on argc =3D=
+=3D 0
+>> seems a smaller set than those calling execve with a NULL argv=2E
+>>=20
+>> Account for the additional stack space in bprm_stack_limits()=2E Inject=
+ an
+>> empty string when argc =3D=3D 0 (and set argc =3D 1)=2E Warn about the =
+case so
+>> userspace has some notice about the change:
+>>=20
+>>     process '=2E/argc0' launched '=2E/argc0' with NULL argv: empty stri=
+ng added
+>>=20
+>> Additionally WARN() and reject NULL argv usage for kernel threads=2E
+>>=20
+>> [1] https://lore=2Ekernel=2Eorg/lkml/20220127000724=2E15106-1-ariadne@d=
+ereferenced=2Eorg/
+>> [2] https://pubs=2Eopengroup=2Eorg/onlinepubs/9699919799/functions/exec=
+=2Ehtml
+>> [3] https://bugzilla=2Ekernel=2Eorg/show_bug=2Ecgi?id=3D8408
+>> [4] https://www=2Equalys=2Ecom/2022/01/25/cve-2021-4034/pwnkit=2Etxt
+>> [5] https://github=2Ecom/KSPP/linux/issues/176
+>> [6] https://codesearch=2Edebian=2Enet/search?q=3Dexecve%5C+*%5C%28%5B%5=
+E%2C%5D%2B%2C+*NULL&literal=3D0
+>> [7] https://codesearch=2Edebian=2Enet/search?q=3Dexeclp%3F%5Cs*%5C%28%5=
+B%5E%2C%5D%2B%2C%5Cs*NULL&literal=3D0
+>> [8] https://lore=2Ekernel=2Eorg/lkml/20220131144352=2EGE16385@xsang-Opt=
+iPlex-9020/
+>>=20
+>> Reported-by: Ariadne Conill <ariadne@dereferenced=2Eorg>
+>> Reported-by: Michael Kerrisk <mtk=2Emanpages@gmail=2Ecom>
+>> Cc: Matthew Wilcox <willy@infradead=2Eorg>
+>> Cc: Christian Brauner <brauner@kernel=2Eorg>
+>> Cc: Rich Felker <dalias@libc=2Eorg>
+>> Cc: Eric Biederman <ebiederm@xmission=2Ecom>
+>> Cc: Alexander Viro <viro@zeniv=2Elinux=2Eorg=2Euk>
+>> Cc: linux-fsdevel@vger=2Ekernel=2Eorg
+>> Cc: stable@vger=2Ekernel=2Eorg
+>> Signed-off-by: Kees Cook <keescook@chromium=2Eorg>
+>> ---
+>>  fs/exec=2Ec | 26 +++++++++++++++++++++++++-
+>>  1 file changed, 25 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/fs/exec=2Ec b/fs/exec=2Ec
+>> index 79f2c9483302=2E=2Ebbf3aadf7ce1 100644
+>> --- a/fs/exec=2Ec
+>> +++ b/fs/exec=2Ec
+>> @@ -495,8 +495,14 @@ static int bprm_stack_limits(struct linux_binprm *=
+bprm)
+>>  	 * the stack=2E They aren't stored until much later when we can't
+>>  	 * signal to the parent that the child has run out of stack space=2E
+>>  	 * Instead, calculate it here so it's possible to fail gracefully=2E
+>> +	 *
+>> +	 * In the case of argc =3D 0, make sure there is space for adding a
+>> +	 * empty string (which will bump argc to 1), to ensure confused
+>> +	 * userspace programs don't start processing from argv[1], thinking
+>> +	 * argc can never be 0, to keep them from walking envp by accident=2E
+>> +	 * See do_execveat_common()=2E
+>>  	 */
+>> -	ptr_size =3D (bprm->argc + bprm->envc) * sizeof(void *);
+>> +	ptr_size =3D (min(bprm->argc, 1) + bprm->envc) * sizeof(void *);
+>
+>From #musl:
+>
+><mixi> kees: shouldn't the min(bprm->argc, 1) be max(=2E=2E=2E) in your p=
+atch?
+
+Fix has already been sent, yup=2E
+
+>I'm pretty sure without fixing that, you're introducing a giant vuln
+>here=2E
+
+I wouldn't say "giant", but yes, it weakened a defense in depth for avoidi=
+ng high stack utilization=2E
+
+> I believe this is the second time a patch attempting to fix this
+>non-vuln has proposed adding a new vuln=2E=2E=2E
+
+Mistakes happen, and that's why there is review and testing=2E Thank you f=
+or being part of the review process! :)
+
+-Kees
+
+--=20
+Kees Cook
