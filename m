@@ -2,111 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5E84A723D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 14:52:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C2F4A72C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 15:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344510AbiBBNwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 08:52:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344541AbiBBNwo (ORCPT
+        id S1344789AbiBBOMF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 09:12:05 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:33554 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237388AbiBBOMF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 08:52:44 -0500
-Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DE9CC06173D;
-        Wed,  2 Feb 2022 05:52:43 -0800 (PST)
-Received: by mail-vk1-xa2a.google.com with SMTP id z15so12618252vkp.13;
-        Wed, 02 Feb 2022 05:52:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BrtQqWd/LgMqmSVv1/9+8qzI7p+FENvHBb0XUxBtq6w=;
-        b=XfFSyenWWCOxiPR7sd8wyA4pPwSRw8+E3dLJJih/ci/kin16nIYX+qoRIvVq+m910L
-         YQ9g0+GU/sLeb4iDfoNnTBULoRsUsqi5h5DOBZHD7HfKjv0V2uyTgCl9pzn8Y/8jpOG1
-         a0R3nwg8UBr0etMbL46X29gJKRlJfwOSq/cbttOu5NZez03qZDnsjAd0nnYQr3qsMbYG
-         GsFGVfqPH8EhgjW/IsNMTNJbBUGMdF1al9YWZC5KR6N1Qh2DMJfzfbDU6hPuQv4unqY2
-         B6Sh83rbXkx7jGG8QJbS5oKyIed94fQ90muJbMRbznowqLqI6oeSt83PQYscys0hCIn3
-         uMHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BrtQqWd/LgMqmSVv1/9+8qzI7p+FENvHBb0XUxBtq6w=;
-        b=AYNUgoc6Omn/StoDT/pik2BWVopOYzKg6Txf75baa/Wegbv3xtYlG4GJa79v9ovl+n
-         jvSHuZMdhWwzRjgJCxk2wCA0/sENdEykHJ9vCweT5c7sjAbg/3jViNUgg+0L6yBgjSbj
-         StiZuMJihTXbQ0vc+aP4ffIAQrN1VIsf7QKOY6fJc+NaRmuvkCsfllHjXf/Hxc9cyUJz
-         Tgwfvtj2ztk0a87VlPnWkEw2X7f0P2NvP0BkXFosqAiVCl1chAgMATOhSecS0cpPfaOx
-         bIeu8Eo4y6f8giMLnPpYL+ueOAVESjWq3Sk2uFy0PRbLAeRKUlO1SGavblwerYm5uB1k
-         l7uw==
-X-Gm-Message-State: AOAM530Zp5ijXLsPPq7InSi95hsEpNR+UfiSdx6R7cCuW5mgc3UVhBFe
-        /iJXW+cTk8wz7A/JjUE6W+WGrJDDyaS/NefAJg==
-X-Google-Smtp-Source: ABdhPJxaKYpd6bp0XEgE4Lw/o/AGJQ7X8tYz0IBqU2gzTTaQ6Qdf2jLZ9HyPic3+C6dbllXnvjhL1NWc9/H08T3U4YY=
-X-Received: by 2002:a1f:aace:: with SMTP id t197mr12740476vke.36.1643809962517;
- Wed, 02 Feb 2022 05:52:42 -0800 (PST)
+        Wed, 2 Feb 2022 09:12:05 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 392351F397;
+        Wed,  2 Feb 2022 14:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1643811124; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+RcZpPqtnfLAwgIFAjYhXtgjx/0Wde9g5JtAXXXQ3Hk=;
+        b=IoEmeC7b6SCa2pEE4x4Dcr5x3ja8fY7Iqi+JIo1sSpTPS9vz1jOYEZfrgpFXp6/Q2PP9bG
+        EPo2LhvuC2c+jfaRIFc10W1Xuk2tVMkfXQEqszO9RIQ8vdszRnsmWfVKgfthMuG51OAxdv
+        kXNtBvBnJ8Ky7zs95rRLzHyvl7UZ+w4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1643811124;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+RcZpPqtnfLAwgIFAjYhXtgjx/0Wde9g5JtAXXXQ3Hk=;
+        b=Ji9+WRMhtXbsUd8Nw/4DI0m71QiyLu0cugknNcqTwZpD2vPhslTP08V1vm03RHgLG0L6Ni
+        TX9Morl3HlHdH3Ag==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2C5F613BBC;
+        Wed,  2 Feb 2022 14:12:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id +glHCjSR+mGGYgAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 02 Feb 2022 14:12:04 +0000
+Message-ID: <3a066f81-a53d-4d39-5efb-bd957443e7e2@suse.de>
+Date:   Wed, 2 Feb 2022 15:12:03 +0100
 MIME-Version: 1.0
-References: <20220202121433.3697146-1-rppt@kernel.org>
-In-Reply-To: <20220202121433.3697146-1-rppt@kernel.org>
-From:   Rui Salvaterra <rsalvaterra@gmail.com>
-Date:   Wed, 2 Feb 2022 13:52:31 +0000
-Message-ID: <CALjTZvZiEOtVcpTm+fgAvCB6T88GzbGEZcdrQ77MLD7hJnnJ9w@mail.gmail.com>
-Subject: Re: [PATCH] fs/binfmt_elf: fix PT_LOAD p_align values for loaders
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Content-Language: en-US
+To:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>
+From:   Hannes Reinecke <hare@suse.de>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        Chuck Lever III <chuck.lever@oracle.com>
+Subject: [LSF/MM/BPF TOPIC][LSF/MM/BPF ATTEND] TLS handshake for in-kernel
+ consumers
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Mike,
+Hi all,
 
-On Wed, 2 Feb 2022 at 12:14, Mike Rapoport <rppt@kernel.org> wrote:
->
-> From: Mike Rapoport <rppt@linux.ibm.com>
->
-> Rui Salvaterra reported that Aisleroit solitaire crashes with "Wrong
-> __data_start/_end pair" assertion from libgc after update to v5.17-rc1.
->
-> Bisection pointed to commit 9630f0d60fec ("fs/binfmt_elf: use PT_LOAD
-> p_align values for static PIE") that fixed handling of static PIEs, but
-> made the condition that guards load_bias calculation to exclude loader
-> binaries.
->
-> Restoring the check for presence of interpreter fixes the problem.
->
-> Fixes: 9630f0d60fec ("fs/binfmt_elf: use PT_LOAD p_align values for static PIE")
-> Reported-by: Rui Salvaterra <rsalvaterra@gmail.com>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->  fs/binfmt_elf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 605017eb9349..9e11e6f13e83 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1117,7 +1117,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->                          * without MAP_FIXED nor MAP_FIXED_NOREPLACE).
->                          */
->                         alignment = maximum_alignment(elf_phdata, elf_ex->e_phnum);
-> -                       if (alignment > ELF_MIN_ALIGN) {
-> +                       if (interpreter || alignment > ELF_MIN_ALIGN) {
->                                 load_bias = ELF_ET_DYN_BASE;
->                                 if (current->flags & PF_RANDOMIZE)
->                                         load_bias += arch_mmap_rnd();
-> --
-> 2.34.1
->
+nvme-over-tcp has the option to utilize TLS for encrypted traffic, but 
+due to the internal design of the nvme-over-fabrics stack we cannot 
+initiate the TLS connection from userspace (as the current in-kernel TLS 
+implementation is designed).
 
-The patch does fix the problem for me, and is thus
+This leaves us with two options:
+1) Put TLS handshake into the kernel (which will be quite some
+   discussion as it's arguably a userspace configuration)
+2) Pass an in-kernel socket to userspace and have a userspace
+   application to run the TLS handshake.
 
-Tested-by: Rui Salvaterra <rsalvaterra@gmail.com>
+None of these options are quiet clear cut, as we will be have to put
+quite some complexity into the kernel to do full TLS handshake (if we
+were to go with option 1) or will have to design a mechanism to pass
+an in-kernel socket to userspace as we don't do that currently (if we 
+were going with option 2).
 
-Thanks,
-Rui
+We have been discussing some ideas on how to implement option 2 
+(together with Chuck Lever and the NFS crowd), but so far haven't been 
+able to come up with a decent design.
+
+So I would like to discuss with interested parties on how TLS handshake 
+could be facilitated, and what would be the best design options here.
+
+The proposed configd would be an option, but then we don't have that, 
+either :-)
+
+Required attendees:
+
+Chuck Lever
+James Bottomley
+Sagi Grimberg
+Keith Busch
+Christoph Hellwig
+David Howells
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke		           Kernel Storage Architect
+hare@suse.de			                  +49 911 74053 688
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
