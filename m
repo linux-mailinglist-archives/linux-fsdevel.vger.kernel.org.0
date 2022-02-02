@@ -2,90 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5486C4A6E2C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 10:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A40BF4A6E44
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 10:58:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230256AbiBBJyH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 04:54:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35306 "EHLO
+        id S245683AbiBBJ6B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 04:58:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiBBJyG (ORCPT
+        with ESMTP id S230295AbiBBJ6A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 04:54:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAE86C061714;
-        Wed,  2 Feb 2022 01:54:06 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 79CC761347;
-        Wed,  2 Feb 2022 09:54:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EBC3C004E1;
-        Wed,  2 Feb 2022 09:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643795645;
-        bh=ymx4fVg2b8Cf9MLrfn/D1ufiCS9ewfVqV7L5onrPKoM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D3WXDw3ey3xl3Pf4AwGt9UQDfHPDqlMuMHtsmtuXCRX7uouPZtnpEOnH7Q2cvlcCz
-         CmNocV4fVh9rVZxjqApwffQMvmQyBT0pH+MHMfYwjowKJTu/3fdN0QAk1Wz6h/yet9
-         w0exBriYqTLG8CQcJITmBk0YRjooL27xnUoYrYsL4/89zjICrykFuR8F+1b0cIfVca
-         JBfi9csOgUYIYFjrI1p1Usoo8n5lDRWPfzf6VaLZkeAxg3ZS+GvB06spxcVkNWbKGJ
-         7o6SyQoi88f27fS5Gkw0+TVqDzrj1yFuDbhvi/Y8+l56Yc/w7jXtAlcfCvX7Rhg6ed
-         I3g5+x4f+lmog==
-Date:   Wed, 2 Feb 2022 10:53:58 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Eryu Guan <guan@eryu.me>,
-        "fstests@vger.kernel.org" <fstests@vger.kernel.org>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        Kees Cook <keescook@chromium.org>,
-        Rich Felker <dalias@libc.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eryu Guan <guaneryu@gmail.com>
-Subject: Re: [PATCH] generic/633: adapt execveat() invocations
-Message-ID: <20220202095358.gz6pjczalzpluxvh@wittgenstein>
-References: <20220131171023.2836753-1-brauner@kernel.org>
- <08ff2c7dd57449a7ae9de70ba007c5fd@AcuMS.aculab.com>
+        Wed, 2 Feb 2022 04:58:00 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FF3C061714;
+        Wed,  2 Feb 2022 01:57:59 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id p7so40649318edc.12;
+        Wed, 02 Feb 2022 01:57:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ey2z3i7QHrRTnQBlHi6Kalzf4a0PXCzJe1Kfeyo/MCQ=;
+        b=RPidongy5qJOr/SrqmoszypGyzGA4K/PnD0/WQS7Y0ux6ophINPE3tX9q/5OgOqvek
+         i1uf8Br4NTeUBf3GezletEwFFIT7V4/aHvzkxOAdWFPeKU8rcXbysTowx6xc+gUY7pUb
+         2BGc0jYa/2E5Wb5vOcg+F2R6NWYp7i8dIC7uQLF27TcMDBKJeq2r1dL8Xz/8wfHH0wzc
+         Ux0ihtyOS+k+bMMZEph040GH4ZMdWYKzPe+uD6t3RMM83MsIPkpE4C8DgZ9PQHm/raPh
+         Lq1jLZZqNhR062h+DvaVdzZxkPHfvp5Lt0J/lc3tPcC+DdnVhzaw6sYM/LGH+QGZxjOw
+         298w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ey2z3i7QHrRTnQBlHi6Kalzf4a0PXCzJe1Kfeyo/MCQ=;
+        b=OR0I7BA7KrcTvdktt2KXRL+pdf8Ep4MfyK1IyM5Si14PB1naDhs7nqlGDoj5zX/66L
+         d8D/UIuwr8bKQECF9nWVIOSP+L3Ex72yzEnJO6PrUO45jnE1Ac3GhO9DEl9PtfRNcelH
+         sMikyE0qAQ7QbIzH3wQhZ5eFdRV1sOvopN3TTONvn6oMc+zdOnOoCP/2Ao0A3acjkJFB
+         9Yl5KCrckn1p4q4ZjuM2f0YrQ7wXDFKVmBYy3LTHVq5g5K3u+ObWZoTYMe3aVXCk6XIi
+         vFcV2mjBfbV1bk+H21fTXQNEOIlcB8I/bkf8Z1+w17zVymjo1As+e6xFTmT84I6bV7nr
+         0aRQ==
+X-Gm-Message-State: AOAM5336sMOQgII8Jvr/Shm4Xb/+ISD3mVpBBVfDScoCy81QTOEBAuWs
+        ikWiF8QBk9qaKynfo1orAzjAe6ub3dIjznrvyaFACfsiK/l8ug==
+X-Google-Smtp-Source: ABdhPJwvui5ZLz6UQOpsNpdYF2nOoANYChNKQAwx1JpetcJ/luF/01Pn+6rdyzfs852oX9Q/V260qkGOSE9fhDFb0Fg=
+X-Received: by 2002:a50:cccb:: with SMTP id b11mr29474435edj.57.1643795878282;
+ Wed, 02 Feb 2022 01:57:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <08ff2c7dd57449a7ae9de70ba007c5fd@AcuMS.aculab.com>
+References: <20220131151432.mfk62bwskotc6w64@ws.net.home> <20220131192337.lzpofr4pz3lhgtl3@zeha.at>
+In-Reply-To: <20220131192337.lzpofr4pz3lhgtl3@zeha.at>
+From:   Anatoly Pugachev <matorola@gmail.com>
+Date:   Wed, 2 Feb 2022 12:57:47 +0300
+Message-ID: <CADxRZqwq=XmXZnnENU+vD7_2oC_VtqhG40P-xg=QAzKchT-3Ng@mail.gmail.com>
+Subject: Re: [ANNOUNCE] util-linux v2.38-rc1
+To:     Chris Hofstaedtler <zeha@debian.org>
+Cc:     Karel Zak <kzak@redhat.com>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        util-linux <util-linux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 02, 2022 at 08:36:05AM +0000, David Laight wrote:
-> From: Christian Brauner
-> > Sent: 31 January 2022 17:10
-> > 
-> > There's a push by Ariadne to enforce that argv[0] cannot be NULL. So far
-> > we've allowed this. Fix the execveat() invocations to set argv[0] to the
-> > name of the file we're about to execute.
-> > 
-> ...
-> >  src/idmapped-mounts/idmapped-mounts.c | 16 ++++++++--------
-> >  1 file changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/src/idmapped-mounts/idmapped-mounts.c b/src/idmapped-mounts/idmapped-mounts.c
-> > index 4cf6c3bb..76b559ae 100644
-> > --- a/src/idmapped-mounts/idmapped-mounts.c
-> > +++ b/src/idmapped-mounts/idmapped-mounts.c
-> > @@ -3598,7 +3598,7 @@ static int setid_binaries(void)
-> >  			NULL,
-> >  		};
-> >  		static char *argv[] = {
-> > -			NULL,
-> > +			"",
-> >  		};
-> 
-> Isn't that just plain wrong?
-> argv[] needs to be terminated by a NULL so you need to add the ""
-> before the NULL not replace the NULL by it.
-> 
-> Quite how this matches the patch description is another matter...
+On Tue, Feb 1, 2022 at 11:48 PM Chris Hofstaedtler <zeha@debian.org> wrote:
+>
+> Hello,
+>
+> * Karel Zak <kzak@redhat.com> [220131 16:15]:
+> >
+> > The util-linux release v2.38-rc1 is available at
+> >
+> >   http://www.kernel.org/pub/linux/utils/util-linux/v2.38/
+> >
+> > Feedback and bug reports, as always, are welcomed.
+>
+> Thanks.
+>
+> Some lsfd tests appear to fail in a Debian sbuild build environment,
+> in that they differ in the expected/actual values of DEV[STR] (see
+> below). I did not find time to investigate this closer, but thought
+> it would be best to report it sooner than later.
+>
+> Best,
+> Chris
+>
+> ---snip---
+>
+>          lsfd: read-only regular file         ... FAILED (lsfd/mkfds-ro-regular-file)
+> ========= script: /<<PKGBUILDDIR>>/tests/ts/lsfd/mkfds-ro-regular-file =================
+> ================= OUTPUT =====================
+>      1  ABC         3  r--  REG /etc/passwd   1
+>      2  COMMAND,ASSOC,MODE,TYPE,NAME,POS: 0
+>      3  PID[RUN]: 0
+>      4  PID[STR]: 0
+>      5  INODE[RUN]: 0
+>      6  INODE[STR]: 0
+>      7  UID[RUN]: 0
+>      8  UID[STR]: 0
+>      9  USER[RUN]: 0
+>     10  USER[STR]: 0
+>     11  SIZE[RUN]: 0
+>     12  SIZE[STR]: 0
+>     13  MNTID[RUN]: 0
+>     14  DEV[RUN]: 0
+>     15  FINDMNT[RUN]: 0
+>     16  DEV[STR]: 1
+> ================= EXPECTED ===================
+>      1  ABC         3  r--  REG /etc/passwd   1
+>      2  COMMAND,ASSOC,MODE,TYPE,NAME,POS: 0
+>      3  PID[RUN]: 0
+>      4  PID[STR]: 0
+>      5  INODE[RUN]: 0
+>      6  INODE[STR]: 0
+>      7  UID[RUN]: 0
+>      8  UID[STR]: 0
+>      9  USER[RUN]: 0
+>     10  USER[STR]: 0
+>     11  SIZE[RUN]: 0
+>     12  SIZE[STR]: 0
+>     13  MNTID[RUN]: 0
+>     14  DEV[RUN]: 0
+>     15  FINDMNT[RUN]: 0
+>     16  DEV[STR]: 0
+> ================= O/E diff ===================
+> --- /<<PKGBUILDDIR>>/tests/output/lsfd/mkfds-ro-regular-file    2022-01-31 19:12:43.802603811 +0000
+> +++ /<<PKGBUILDDIR>>/tests/expected/lsfd/mkfds-ro-regular-file  2022-01-31 14:57:47.000000000 +0000
+> @@ -13,4 +13,4 @@
+>  MNTID[RUN]: 0
+>  DEV[RUN]: 0
+>  FINDMNT[RUN]: 0
+> -DEV[STR]: 1
+> +DEV[STR]: 0
+> ==============================================
 
-Bah, braino. I fired that too quickly.
+Chris,
+
+i had this error on my test system
+
+https://github.com/util-linux/util-linux/issues/1511
+
+but i can't reliably reproduce it now (on my current kernel 5.17.0-rc2
+and on debian kernel 5.15.0-3-sparc64-smp )
+Tested with the following command line (for current git util-linux sources):
+$ for i in {1..100}; do tests/run.sh lsfd; done  | grep FAILED
+
+^^ no failed output
+
+I can reopen the issue above, so we could try to reproduce it.
