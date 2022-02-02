@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6E684A71C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 14:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A2A4A71C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 14:44:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344366AbiBBNny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 08:43:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59222 "EHLO
+        id S1344394AbiBBNoH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 08:44:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbiBBNnx (ORCPT
+        with ESMTP id S229640AbiBBNoH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 08:43:53 -0500
+        Wed, 2 Feb 2022 08:44:07 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E926C061714;
-        Wed,  2 Feb 2022 05:43:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43376C061714;
+        Wed,  2 Feb 2022 05:44:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=N6XNpq0FwsPZbJN5qSf1QDu//6lOqVafqdV/nNfMwPs=; b=P9ssVHu92H395D9dqlvAQrFmVu
-        zKIl0C7d+Txpf8iBrIzXx/dzU+g5VJHkZwUxKJbZGY5U2XKYdyQUyUDMuWLOnolX+Z6pU5eQXPSK6
-        InvGInZPS2GjMZ1G+YA7vRJ4RBc1XvocjEaZ9AqVN03zK304M7dY6pesian6URx3SQPbe3Tw/BC8I
-        nuKX6723VVs1siOOtPIS7hpOEwZlKXO1WFqmm6MsOSXZvMBRbAiytZ7k+C/VPyXQO3MDDqS6Kkdk/
-        XIVB5yi2oAhPk1Dhl6rhpm8c6bBF3hS27kmmdxwNG0+Rd1Qp7whtxegvQGan1C9Eo4W6AogSh3sKI
-        9eEXGwAA==;
+        bh=g4vUH6EzyLT2vaGYwlen5+OHvw9Zb7oDiztQ44k8gOY=; b=taz5SADOs9Pfi14hGDnEcDNHDC
+        qPdeN8oYaj1zKm1GTA8AvbbszJ99pctasgAt+q64guHYT/RAxDVg1543f4Fkgb64xN1y7CYxxfR/z
+        X/WEwPUQmi/0ZWKYb9iSzDz2OHM1dxmGFYDQ+67c8IZ4ZNdPTQ/t7zhx5KrHrFPEgk4YqIbmeITIG
+        /iNDlc2pDVeJXerurYMgHnhflHW1/wZRcXuX5c8LGZjufWsrG593L6XNNCwmawN2pdoQ3EvjXD+j+
+        5rliuRKcexGGJexwyWQz4oDlGocfsFbHyFPEijUawPGjyE8Oe0G5Vyg07U4/rmtLwKJA1TDwAC+6l
+        mQE48Q3Q==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nFFvE-00FNjc-Ie; Wed, 02 Feb 2022 13:43:44 +0000
-Date:   Wed, 2 Feb 2022 05:43:44 -0800
+        id 1nFFvW-00FNmE-0j; Wed, 02 Feb 2022 13:44:02 +0000
+Date:   Wed, 2 Feb 2022 05:44:01 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Jane Chu <jane.chu@oracle.com>
 Cc:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
@@ -36,46 +36,56 @@ Cc:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
         ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
         linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v5 5/7] pmem: add pmem_recovery_write() dax op
-Message-ID: <YfqKkEB3gBsiuMZt@infradead.org>
+Subject: Re: [PATCH v5 6/7] dax: add recovery_write to dax_iomap_iter in
+ failure path
+Message-ID: <YfqKoZ79CqvW8eLq@infradead.org>
 References: <20220128213150.1333552-1-jane.chu@oracle.com>
- <20220128213150.1333552-6-jane.chu@oracle.com>
+ <20220128213150.1333552-7-jane.chu@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220128213150.1333552-6-jane.chu@oracle.com>
+In-Reply-To: <20220128213150.1333552-7-jane.chu@oracle.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> @@ -257,10 +263,15 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
->  __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
->  		long nr_pages, void **kaddr, pfn_t *pfn)
+On Fri, Jan 28, 2022 at 02:31:49PM -0700, Jane Chu wrote:
+> +typedef size_t (*iter_func_t)(struct dax_device *dax_dev, pgoff_t pgoff,
+> +		void *addr, size_t bytes, struct iov_iter *i);
+>  static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+>  		struct iov_iter *iter)
 >  {
-> +	bool bad_pmem;
-> +	bool do_recovery = false;
->  	resource_size_t offset = PFN_PHYS(pgoff) + pmem->data_offset;
->  
-> -	if (unlikely(is_bad_pmem(&pmem->bb, PFN_PHYS(pgoff) / 512,
-> -					PFN_PHYS(nr_pages))))
-> +	bad_pmem = is_bad_pmem(&pmem->bb, PFN_PHYS(pgoff) / 512,
-> +				PFN_PHYS(nr_pages));
-> +	if (bad_pmem && kaddr)
-> +		do_recovery = dax_recovery_started(pmem->dax_dev, kaddr);
-> +	if (bad_pmem && !do_recovery)
->  		return -EIO;
+> @@ -1210,6 +1212,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+>  	ssize_t ret = 0;
+>  	size_t xfer;
+>  	int id;
+> +	iter_func_t write_func = dax_copy_from_iter;
 
-I find the passing of the recovery flag through the address very
-cumbersome.  I remember there was some kind of discussion, but this looks
-pretty ugly.
+This use of a function pointer causes indirect call overhead.  A simple
+"bool in_recovery" or do_recovery does the trick in a way that is
+both more readable and generates faster code.
 
-Also no need for the bad_pmem variable:
+> +		if ((map_len == -EIO) && (iov_iter_rw(iter) == WRITE)) {
 
-	if (is_bad_pmem(&pmem->bb, PFN_PHYS(pgoff) / 512, PFN_PHYS(nr_pages)) &&
-	    (!kaddr | !dax_recovery_started(pmem->dax_dev, kaddr)))
-		return -EIO;
+No need for the braces.
 
-Also:  the !kaddr check could go into dax_recovery_started.  That way
-even if we stick with the overloading kaddr could also be used just for
-the flag if needed.
+>  		if (iov_iter_rw(iter) == WRITE)
+> -			xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
+> -					map_len, iter);
+> +			xfer = write_func(dax_dev, pgoff, kaddr, map_len, iter);
+>  		else
+>  			xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
+>  					map_len, iter);
+
+i.e.
+
+		if (iov_iter_rw(iter) == READ)
+			xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
+					map_len, iter);
+		else if (unlikely(do_recovery))
+			xfer = dax_recovery_write(dax_dev, pgoff, kaddr,
+					map_len, iter);
+		else
+			xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
+					map_len, iter);
