@@ -2,90 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0A2A4A71C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 14:44:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5E84A723D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Feb 2022 14:52:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344394AbiBBNoH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 08:44:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59278 "EHLO
+        id S1344510AbiBBNwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 08:52:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbiBBNoH (ORCPT
+        with ESMTP id S1344541AbiBBNwo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 08:44:07 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43376C061714;
-        Wed,  2 Feb 2022 05:44:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=g4vUH6EzyLT2vaGYwlen5+OHvw9Zb7oDiztQ44k8gOY=; b=taz5SADOs9Pfi14hGDnEcDNHDC
-        qPdeN8oYaj1zKm1GTA8AvbbszJ99pctasgAt+q64guHYT/RAxDVg1543f4Fkgb64xN1y7CYxxfR/z
-        X/WEwPUQmi/0ZWKYb9iSzDz2OHM1dxmGFYDQ+67c8IZ4ZNdPTQ/t7zhx5KrHrFPEgk4YqIbmeITIG
-        /iNDlc2pDVeJXerurYMgHnhflHW1/wZRcXuX5c8LGZjufWsrG593L6XNNCwmawN2pdoQ3EvjXD+j+
-        5rliuRKcexGGJexwyWQz4oDlGocfsFbHyFPEijUawPGjyE8Oe0G5Vyg07U4/rmtLwKJA1TDwAC+6l
-        mQE48Q3Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nFFvW-00FNmE-0j; Wed, 02 Feb 2022 13:44:02 +0000
-Date:   Wed, 2 Feb 2022 05:44:01 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] dax: add recovery_write to dax_iomap_iter in
- failure path
-Message-ID: <YfqKoZ79CqvW8eLq@infradead.org>
-References: <20220128213150.1333552-1-jane.chu@oracle.com>
- <20220128213150.1333552-7-jane.chu@oracle.com>
+        Wed, 2 Feb 2022 08:52:44 -0500
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DE9CC06173D;
+        Wed,  2 Feb 2022 05:52:43 -0800 (PST)
+Received: by mail-vk1-xa2a.google.com with SMTP id z15so12618252vkp.13;
+        Wed, 02 Feb 2022 05:52:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BrtQqWd/LgMqmSVv1/9+8qzI7p+FENvHBb0XUxBtq6w=;
+        b=XfFSyenWWCOxiPR7sd8wyA4pPwSRw8+E3dLJJih/ci/kin16nIYX+qoRIvVq+m910L
+         YQ9g0+GU/sLeb4iDfoNnTBULoRsUsqi5h5DOBZHD7HfKjv0V2uyTgCl9pzn8Y/8jpOG1
+         a0R3nwg8UBr0etMbL46X29gJKRlJfwOSq/cbttOu5NZez03qZDnsjAd0nnYQr3qsMbYG
+         GsFGVfqPH8EhgjW/IsNMTNJbBUGMdF1al9YWZC5KR6N1Qh2DMJfzfbDU6hPuQv4unqY2
+         B6Sh83rbXkx7jGG8QJbS5oKyIed94fQ90muJbMRbznowqLqI6oeSt83PQYscys0hCIn3
+         uMHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BrtQqWd/LgMqmSVv1/9+8qzI7p+FENvHBb0XUxBtq6w=;
+        b=AYNUgoc6Omn/StoDT/pik2BWVopOYzKg6Txf75baa/Wegbv3xtYlG4GJa79v9ovl+n
+         jvSHuZMdhWwzRjgJCxk2wCA0/sENdEykHJ9vCweT5c7sjAbg/3jViNUgg+0L6yBgjSbj
+         StiZuMJihTXbQ0vc+aP4ffIAQrN1VIsf7QKOY6fJc+NaRmuvkCsfllHjXf/Hxc9cyUJz
+         Tgwfvtj2ztk0a87VlPnWkEw2X7f0P2NvP0BkXFosqAiVCl1chAgMATOhSecS0cpPfaOx
+         bIeu8Eo4y6f8giMLnPpYL+ueOAVESjWq3Sk2uFy0PRbLAeRKUlO1SGavblwerYm5uB1k
+         l7uw==
+X-Gm-Message-State: AOAM530Zp5ijXLsPPq7InSi95hsEpNR+UfiSdx6R7cCuW5mgc3UVhBFe
+        /iJXW+cTk8wz7A/JjUE6W+WGrJDDyaS/NefAJg==
+X-Google-Smtp-Source: ABdhPJxaKYpd6bp0XEgE4Lw/o/AGJQ7X8tYz0IBqU2gzTTaQ6Qdf2jLZ9HyPic3+C6dbllXnvjhL1NWc9/H08T3U4YY=
+X-Received: by 2002:a1f:aace:: with SMTP id t197mr12740476vke.36.1643809962517;
+ Wed, 02 Feb 2022 05:52:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220128213150.1333552-7-jane.chu@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20220202121433.3697146-1-rppt@kernel.org>
+In-Reply-To: <20220202121433.3697146-1-rppt@kernel.org>
+From:   Rui Salvaterra <rsalvaterra@gmail.com>
+Date:   Wed, 2 Feb 2022 13:52:31 +0000
+Message-ID: <CALjTZvZiEOtVcpTm+fgAvCB6T88GzbGEZcdrQ77MLD7hJnnJ9w@mail.gmail.com>
+Subject: Re: [PATCH] fs/binfmt_elf: fix PT_LOAD p_align values for loaders
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 28, 2022 at 02:31:49PM -0700, Jane Chu wrote:
-> +typedef size_t (*iter_func_t)(struct dax_device *dax_dev, pgoff_t pgoff,
-> +		void *addr, size_t bytes, struct iov_iter *i);
->  static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->  		struct iov_iter *iter)
->  {
-> @@ -1210,6 +1212,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->  	ssize_t ret = 0;
->  	size_t xfer;
->  	int id;
-> +	iter_func_t write_func = dax_copy_from_iter;
+Hi, Mike,
 
-This use of a function pointer causes indirect call overhead.  A simple
-"bool in_recovery" or do_recovery does the trick in a way that is
-both more readable and generates faster code.
+On Wed, 2 Feb 2022 at 12:14, Mike Rapoport <rppt@kernel.org> wrote:
+>
+> From: Mike Rapoport <rppt@linux.ibm.com>
+>
+> Rui Salvaterra reported that Aisleroit solitaire crashes with "Wrong
+> __data_start/_end pair" assertion from libgc after update to v5.17-rc1.
+>
+> Bisection pointed to commit 9630f0d60fec ("fs/binfmt_elf: use PT_LOAD
+> p_align values for static PIE") that fixed handling of static PIEs, but
+> made the condition that guards load_bias calculation to exclude loader
+> binaries.
+>
+> Restoring the check for presence of interpreter fixes the problem.
+>
+> Fixes: 9630f0d60fec ("fs/binfmt_elf: use PT_LOAD p_align values for static PIE")
+> Reported-by: Rui Salvaterra <rsalvaterra@gmail.com>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>  fs/binfmt_elf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 605017eb9349..9e11e6f13e83 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -1117,7 +1117,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>                          * without MAP_FIXED nor MAP_FIXED_NOREPLACE).
+>                          */
+>                         alignment = maximum_alignment(elf_phdata, elf_ex->e_phnum);
+> -                       if (alignment > ELF_MIN_ALIGN) {
+> +                       if (interpreter || alignment > ELF_MIN_ALIGN) {
+>                                 load_bias = ELF_ET_DYN_BASE;
+>                                 if (current->flags & PF_RANDOMIZE)
+>                                         load_bias += arch_mmap_rnd();
+> --
+> 2.34.1
+>
 
-> +		if ((map_len == -EIO) && (iov_iter_rw(iter) == WRITE)) {
+The patch does fix the problem for me, and is thus
 
-No need for the braces.
+Tested-by: Rui Salvaterra <rsalvaterra@gmail.com>
 
->  		if (iov_iter_rw(iter) == WRITE)
-> -			xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
-> -					map_len, iter);
-> +			xfer = write_func(dax_dev, pgoff, kaddr, map_len, iter);
->  		else
->  			xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
->  					map_len, iter);
-
-i.e.
-
-		if (iov_iter_rw(iter) == READ)
-			xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
-					map_len, iter);
-		else if (unlikely(do_recovery))
-			xfer = dax_recovery_write(dax_dev, pgoff, kaddr,
-					map_len, iter);
-		else
-			xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
-					map_len, iter);
+Thanks,
+Rui
