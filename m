@@ -2,71 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7433F4A8571
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 14:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E815D4A87CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 16:38:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350888AbiBCNnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Feb 2022 08:43:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46778 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350887AbiBCNnS (ORCPT
+        id S1351926AbiBCPit (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Feb 2022 10:38:49 -0500
+Received: from mail-pf1-f179.google.com ([209.85.210.179]:37476 "EHLO
+        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351905AbiBCPis (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Feb 2022 08:43:18 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A4CC061714;
-        Thu,  3 Feb 2022 05:43:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=L9MWc8UYxZnjnohmZnAuC5FiqjE2vmDPkIzVES+QO4s=; b=NvNnFAQXNhVp4BKwlT1g9pXVlX
-        i++xG4vlBUFNHxnL4GjhrzQveqhT1mAiSRmm5iK5SvqJF/c0HLndoNz2WHwAGPHCxoi2KKGCe2MpD
-        axH1YG3ygbSCv8eVb5ahb+RY6+Bu/jfle+dYzF3DUhoxJs3Lqm1TDr56/Rn4OhQYstWEt/H5G7BX9
-        QZVlChvvAWkTxENz9Tu8zXfoZovZZ8DSmpbF5xplo5xbiT71v7zrMrEzVFcuXBiF3YL+PgrLs879Y
-        7PLWZUFiI+zdGr8+0Ndi0m2NDmPpqKNRYfAA0yKMK5IGaKxlUuN0GEWwqr1LgNOQL13CE2fonU9fV
-        YJVOLC0g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nFcOA-001Sld-Su; Thu, 03 Feb 2022 13:43:06 +0000
-Date:   Thu, 3 Feb 2022 05:43:06 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
+        Thu, 3 Feb 2022 10:38:48 -0500
+Received: by mail-pf1-f179.google.com with SMTP id y5so1603301pfe.4;
+        Thu, 03 Feb 2022 07:38:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hJc80QrxeNpdYK/bKJzdbQZVP7dPgDgH6+/SL6BaJLA=;
+        b=doU45sIK+CSec063wF0MiToitTNSaakQmJ9w4k/ShF5SmY6NH+n3Q/9rT59IZLyXK2
+         5lf1kZqpIVnQgIRFH5twfJTXc9IgB4rHHCq8ilKrW3kb8HOAnSoZ3025pcLHO3f2EsrN
+         /1uNBpV4FHgqnsgbTs6v/TZcDq7Ixtbc1or142TmMy+9d/RExvWvsMvZQbLvMfQNAUXf
+         R6bCdJ9Q4MckZJAJ8z0DKE9ad0wlwQg0rDbDtLeGOf3y7w4IFK2SSedS7o+VaksAIMnT
+         6e6RfVtt3FfRERL8pKeO+vjPuLqZzpfESeRgnMzW1S7bfJuaxOuzOfYNl9ZdG6H+wjvK
+         ysdA==
+X-Gm-Message-State: AOAM530AglalReux9/ieAPVUL++rJI1U7w6m78ZSWiTy7sGV5RegGGJV
+        CqaMWRHTQQHu8FoHCqXx+0A=
+X-Google-Smtp-Source: ABdhPJyK53iWqvFX2Vqq2e4bGH4TKRnnEI6Nef430vI4MXHRwAQ64yyEJcJ63nBPtWhhnkJ6Y3aDlw==
+X-Received: by 2002:a63:68c4:: with SMTP id d187mr15183399pgc.603.1643902727819;
+        Thu, 03 Feb 2022 07:38:47 -0800 (PST)
+Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
+        by smtp.gmail.com with ESMTPSA id b12sm12465462pfm.154.2022.02.03.07.38.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Feb 2022 07:38:46 -0800 (PST)
+Date:   Thu, 3 Feb 2022 07:38:43 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
         "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vgoyal@redhat.com" <vgoyal@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v5 2/7] dax: introduce dax device flag DAXDEV_RECOVERY
-Message-ID: <Yfvb6l/8AJJhRXKs@infradead.org>
-References: <20220128213150.1333552-1-jane.chu@oracle.com>
- <20220128213150.1333552-3-jane.chu@oracle.com>
- <YfqFuUsvuUUUWKfu@infradead.org>
- <45b4a944-1fb1-73e2-b1f8-213e60e27a72@oracle.com>
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        Javier =?utf-8?B?R29uesOhbGV6?= <javier@javigon.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "msnitzer@redhat.com >> msnitzer@redhat.com" <msnitzer@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "martin.petersen@oracle.com >> Martin K. Petersen" 
+        <martin.petersen@oracle.com>,
+        "roland@purestorage.com" <roland@purestorage.com>,
+        Hannes Reinecke <hare@suse.de>,
+        "kbus @imap.gmail.com>> Keith Busch" <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Frederick.Knight@netapp.com" <Frederick.Knight@netapp.com>,
+        "zach.brown@ni.com" <zach.brown@ni.com>,
+        "osandov@fb.com" <osandov@fb.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
+        "tytso@mit.edu" <tytso@mit.edu>, "jack@suse.com" <jack@suse.com>,
+        Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [RFC PATCH 3/3] nvme: add the "debug" host driver
+Message-ID: <20220203153843.szbd4n65ru4fx5hx@garbanzo>
+References: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com>
+ <20220201102122.4okwj2gipjbvuyux@mpHalley-2>
+ <alpine.LRH.2.02.2202011327350.22481@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2202011333160.22481@file01.intranet.prod.int.rdu2.redhat.com>
+ <270f30df-f14c-b9e4-253f-bff047d32ff0@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45b4a944-1fb1-73e2-b1f8-213e60e27a72@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <270f30df-f14c-b9e4-253f-bff047d32ff0@nvidia.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 02, 2022 at 09:27:42PM +0000, Jane Chu wrote:
-> Yeah, I see.  Would you suggest a way to pass the indication from
-> dax_iomap_iter to dax_direct_access that the caller intends the
-> callee to ignore poison in the range because the caller intends
-> to do recovery_write? We tried adding a flag to dax_direct_access, and 
-> that wasn't liked if I recall.
+On Wed, Feb 02, 2022 at 08:00:12AM +0000, Chaitanya Kulkarni wrote:
+> Mikulas,
+> 
+> On 2/1/22 10:33 AM, Mikulas Patocka wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > This patch adds a new driver "nvme-debug". It uses memory as a backing
+> > store and it is used to test the copy offload functionality.
+> > 
+> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > 
+> 
+> 
+> NVMe Controller specific memory backed features needs to go into
+> QEMU which are targeted for testing and debugging, just like what
+> we have done for NVMe ZNS QEMU support and not in kernel.
+> 
+> I don't see any special reason to make copy offload an exception.
 
-To me a flag seems cleaner than this magic, but let's wait for Dan to
-chime in.
+One can instantiate scsi devices with qemu by using fake scsi devices,
+but one can also just use scsi_debug to do the same. I see both efforts
+as desirable, so long as someone mantains this.
+
+For instance, blktests uses scsi_debug for simplicity.
+
+In the end you decide what you want to use.
+
+  Luis
