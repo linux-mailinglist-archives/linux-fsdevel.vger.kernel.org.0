@@ -2,100 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EDF14A818A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 10:35:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8014A8227
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 11:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238921AbiBCJfJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Feb 2022 04:35:09 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:51924 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232797AbiBCJfI (ORCPT
+        id S239307AbiBCKQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Feb 2022 05:16:41 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:53972 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233561AbiBCKQl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Feb 2022 04:35:08 -0500
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1643880907;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Thu, 3 Feb 2022 05:16:41 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2247F210F5;
+        Thu,  3 Feb 2022 10:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1643883400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=b4niGU0MsRpZHoaPG3ycpTgf3GT1iqYBqPQhEgMj1fg=;
-        b=0deUg20vq2mbgKBr4VvIlYVyP9ZU64oP5pRbhlEBMCFP1y4uPecyB7KplTDbjGIZB/nUrm
-        Qfc7AwsRnnmQ05lFrKmfoVkjHeEW+qKtp7MaLfJQ2DvHqqrN5NechgPuN/MNkhDVEvEjzR
-        BxwVyg9DT9brSWUROBc5DJ/oxKQxceHRujWRgE3Ri1Ua3p65BxJlthNrQZxw1YXPJGeeEz
-        Q32X91IIR4GTy9MWODnpt+tPjQWZmVwo/C/1xWfYnX1tkp0CG5cr/lVOQNNU7eXX2ZZp2a
-        e8Cwj1ek67ZJMcYHND+fdo0fl+XOFMCXQJSvwXDO6ePuaDRrDj5ucqwiIQuWIQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1643880907;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        bh=nMtUiTADLXvATyPy55s5v2jIbp3M1SDdfjBzYLxVQaY=;
+        b=uy2A4dJPId5ZjWCWAB7xzjfv13TBL3uksbYhtD+kKBZhrAucoFYo7wWTV4GGe0bSvNLiZg
+        /TASBHNd2GhHxG8IXnxdCpSOmo6tXKy/zRv5lEnzQFTGOlVqJYjcu5NXWm80JkNcmnW25s
+        2wbAYsBhMPGEqliDZhIuMJnb1yi8F+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1643883400;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=b4niGU0MsRpZHoaPG3ycpTgf3GT1iqYBqPQhEgMj1fg=;
-        b=MAxLSLRBTTV0ilKIuy2fIp3BpvJN7QHQoa7UpaqG/hhe/eeJST2DfcPH9NakwnNhWjh+8d
-        J2vJY5ocA6QZjhCA==
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     tangmeng <tangmeng@uniontech.com>, keescook@chromium.org,
-        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v5] kernel/time: move timer sysctls to its own file
-In-Reply-To: <YfstQeOpZuQzBmZJ@bombadil.infradead.org>
-References: <20220131102214.2284-1-tangmeng@uniontech.com>
- <87wnicssth.ffs@tglx> <YfstQeOpZuQzBmZJ@bombadil.infradead.org>
-Date:   Thu, 03 Feb 2022 10:35:06 +0100
-Message-ID: <87r18ks379.ffs@tglx>
+        bh=nMtUiTADLXvATyPy55s5v2jIbp3M1SDdfjBzYLxVQaY=;
+        b=vcVcbh2mnYakFOI5KUfh516xdmKnxbolVU4Edct5Wyh+ucnXTTj5p+shSiuZgqtlRy2NAd
+        0gSKvXRm2L/1iWDw==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 7694EA3B88;
+        Thu,  3 Feb 2022 10:16:39 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E2601A05B6; Thu,  3 Feb 2022 11:16:38 +0100 (CET)
+Date:   Thu, 3 Feb 2022 11:16:38 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        apopple@nvidia.com, shy828301@gmail.com, rcampbell@nvidia.com,
+        hughd@google.com, xiyuyang19@fudan.edu.cn,
+        kirill.shutemov@linux.intel.com, zwisler@kernel.org,
+        hch@infradead.org, linux-fsdevel@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, duanxiongchun@bytedance.com
+Subject: Re: [PATCH v2 1/6] mm: rmap: fix cache flush on THP pages
+Message-ID: <20220203101638.5sibdhu4owokhfex@quack3.lan>
+References: <20220202143307.96282-1-songmuchun@bytedance.com>
+ <20220202143307.96282-2-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220202143307.96282-2-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 02 2022 at 17:17, Luis Chamberlain wrote:
-> On Thu, Feb 03, 2022 at 01:21:46AM +0100, Thomas Gleixner wrote:
-> *Today* all filesystem syctls now get reviewed by fs folks. They are
-> all tidied up there.
->
-> In the future x86 folks can review their sysctls. But for no reason
-> should I have to review every single knob. That's not scalable.
+On Wed 02-02-22 22:33:02, Muchun Song wrote:
+> The flush_cache_page() only remove a PAGE_SIZE sized range from the cache.
+> However, it does not cover the full pages in a THP except a head page.
+> Replace it with flush_cache_range() to fix this issue. At least, no
+> problems were found due to this. Maybe because the architectures that
+> have virtual indexed caches is less.
+> 
+> Fixes: f27176cfc363 ("mm: convert page_mkclean_one() to use page_vma_mapped_walk()")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-Fair enough, but can we please have a changelog which explains the
-rationale to the people who have not been part of that discussion and
-decision.
+Looks good. Feel free to add:
 
->> That aside, I'm tired of this because this is now at V5 and you still
->> failed to fix the fallout reported by the 0-day infrastructure vs. this
->> part of the patch:
->> 
->> > +static int __init timer_sysctl_init(void)
->> > +{
->> > +	register_sysctl_init("kernel", timer_sysctl);
->> > +	return 0;
->> > +}
->> 
->>     kernel/time/timer.c: In function 'timer_sysctl_init':
->>  >> kernel/time/timer.c:284:9: error: implicit declaration of function 'register_sysctl_init'; did you mean 'timer_sysctl_init'? [-Werror=implicit-function-declaration]
->>       284 |         register_sysctl_init("kernel", timer_sysctl);
->> 	  |         ^~~~~~~~~~~~~~~~~~~~
->> 
->
-> That's an issue with the patch being tested on a tree where that
-> routine is not present?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-From the report:
+								Honza
 
-  ...
-  [also build test ERROR on linus/master
-
-Linus tree has this interface. So that's not the problem.
-
-Hint #1: The interfaxce is not available unconditionally
-
-Hint #2: The 0-day reports provide the config file which exposes the
-         fail
-
-Let me know if you need more hints. :)
-
-Thanks,
-
-        tglx
-
+> ---
+>  mm/rmap.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index b0fd9dc19eba..0ba12dc9fae3 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -974,7 +974,8 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
+>  			if (!pmd_dirty(*pmd) && !pmd_write(*pmd))
+>  				continue;
+>  
+> -			flush_cache_page(vma, address, page_to_pfn(page));
+> +			flush_cache_range(vma, address,
+> +					  address + HPAGE_PMD_SIZE);
+>  			entry = pmdp_invalidate(vma, address, pmd);
+>  			entry = pmd_wrprotect(entry);
+>  			entry = pmd_mkclean(entry);
+> -- 
+> 2.11.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
