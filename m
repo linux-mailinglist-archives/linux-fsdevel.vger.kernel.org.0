@@ -2,151 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 354EF4A7B91
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 00:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E2C4A7CBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 01:22:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347992AbiBBXQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Feb 2022 18:16:26 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:47518 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347982AbiBBXQZ (ORCPT
+        id S1348483AbiBCAVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Feb 2022 19:21:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37446 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232227AbiBCAVw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Feb 2022 18:16:25 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 34C65B832AC;
-        Wed,  2 Feb 2022 23:16:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFEF7C340EB;
-        Wed,  2 Feb 2022 23:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643843782;
-        bh=GfEwU6uYg771bgA3f9CiI67zPmMXrskYblsTIUztBfg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=YuuIAXwEF/7MHugB8GjsVCMOdsNOwdwdZ9gG6yzwavhQGdoNPXEsPwi3aB/NdnKpE
-         Vxfz1N+eDt34Dhtj18DdTyyiGzAC3HjLKBkypk2BDPBa7X7h0LiNjVy6kKtLfoTi0s
-         ZYoR66XzJqC62Z4f29+6LcM4Vamx2nkaypLiYMn4zzEYX+89DQB444RcIZD4A12Zc5
-         2WiSg9sFsaylBu/nZwP7kmufBfQHzioOgD6Zq7bxPCSXQc7CAlFcmpb8eGnCrY9Ke3
-         l6docqOiHFxJGkIFMij6p7hgL2HDjt1w78PVxxoVGKjD3ECPffngiiEu3P93zuxsxm
-         HJfc5TVxSviFw==
-Received: by mail-yb1-f176.google.com with SMTP id k31so3439357ybj.4;
-        Wed, 02 Feb 2022 15:16:22 -0800 (PST)
-X-Gm-Message-State: AOAM533tBIWQKgXCxhRcFKNmwSUXNnKs/AoHDimD//g2YmcbNFUW3ynX
-        CxKLXkCjMBe/Sp0sebGtn5AHhgwrggLOdI7iptk=
-X-Google-Smtp-Source: ABdhPJyqnkjSpCfTwycqtpnJGQcUFvpXCn2RkCP8NV+uz1BDIwW0ntf6KrGq7wQZhvj3Co4Bv30GU06o2oKq6MOpHV8=
-X-Received: by 2002:a25:b217:: with SMTP id i23mr48951849ybj.722.1643843781926;
- Wed, 02 Feb 2022 15:16:21 -0800 (PST)
+        Wed, 2 Feb 2022 19:21:52 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5810BC061714;
+        Wed,  2 Feb 2022 16:21:52 -0800 (PST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1643847707;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tEbNuUaeESsbucNNxWCSNAVotbkzKzn/eOuBs8ycKg0=;
+        b=IMnepHfdalRiGysYHX7LfnKshsG5zdFcG6DYWr7nwEuByFG9qxqYnv7rrSDQFRC54UiNUt
+        mvd1AXERhe64nvhyFI+ahmenkr9hK0A0S8+64Raq7PQDtsjPIROFK0lYgqfFvbW9XkwbzQ
+        BhMSpdcO3/6IcqzlF0u28L2YwIuOYeqxpK6ahSaibD9qPADHldgwKjahrWIVFR2gSuKLiV
+        WT1GHAPXrzjgax1zfOLrqLJxECVk8jjtqTisPcy8vhXZQcCkyvJ150+KipQMIf82n8rtN/
+        CpmCj07Ipp4wybFpiwExkRYBNlKQzP+Dnq1YMagiIQFi75Ml3NqU33WnO8wYnw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1643847707;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tEbNuUaeESsbucNNxWCSNAVotbkzKzn/eOuBs8ycKg0=;
+        b=ttdkmFz2pO6CB9U65vVYu3aA5mjj/UcMMXrDKsiJED0oOMRdTFbbHgc+Cs8YeGKvx0hHgw
+        z/cTrL+kqOiYo5Aw==
+To:     tangmeng <tangmeng@uniontech.com>, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, john.stultz@linaro.org,
+        sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v5] kernel/time: move timer sysctls to its own file
+In-Reply-To: <20220131102214.2284-1-tangmeng@uniontech.com>
+References: <20220131102214.2284-1-tangmeng@uniontech.com>
+Date:   Thu, 03 Feb 2022 01:21:46 +0100
+Message-ID: <87wnicssth.ffs@tglx>
 MIME-Version: 1.0
-Received: by 2002:a05:7110:b08e:b0:127:3295:9956 with HTTP; Wed, 2 Feb 2022
- 15:16:21 -0800 (PST)
-In-Reply-To: <YfdCElWBOdOnsH5b@zeniv-ca.linux.org.uk>
-References: <YfdCElWBOdOnsH5b@zeniv-ca.linux.org.uk>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Thu, 3 Feb 2022 08:16:21 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-k=AvMcxsJg1rVsY2PPhsZuRUegqAhEFB2r-qXH3+5-w@mail.gmail.com>
-Message-ID: <CAKYAXd-k=AvMcxsJg1rVsY2PPhsZuRUegqAhEFB2r-qXH3+5-w@mail.gmail.com>
-Subject: Re: [ksmbd] racy uses of ->d_parent and ->d_name
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-01-31 10:57 GMT+09:00, Al Viro <viro@zeniv.linux.org.uk>:
-> 	Folks, ->d_name and ->d_parent are *NOT* stable unless the
-> appropriate locks are held.  In particular, locking a directory that
-> might not be our parent is obviously not going to prevent anything.
-> Even if it had been our parent at some earlier point.
-Hi Al,
+Tangmeng,
 
-First, Thanks for pointing that out!
->
-> 	->d_lock would suffice, but it can't be held over blocking
-> operation and it can't be held over dcache lookups anyway (instant
-> deadlocks).  IOW, the following is racy:
->
-> int ksmbd_vfs_lock_parent(struct user_namespace *user_ns, struct dentry
-> *parent,
->                           struct dentry *child)
-> {
->         struct dentry *dentry;
->         int ret = 0;
->
->         inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
->         dentry = lookup_one(user_ns, child->d_name.name, parent,
->                             child->d_name.len);
->         if (IS_ERR(dentry)) {
->                 ret = PTR_ERR(dentry);
->                 goto out_err;
->         }
->
->         if (dentry != child) {
->                 ret = -ESTALE;
->                 dput(dentry);
->                 goto out_err;
->         }
->
->         dput(dentry);
->         return 0;
-> out_err:
->         inode_unlock(d_inode(parent));
->         return ret;
-> }
->
->
-> 	Some of that might be fixable - verifying that ->d_parent points
-> to parent immediately after inode_lock would stabilize ->d_name in case
-> of match.  However, a quick look through the callers shows e.g. this:
->                 write_lock(&ci->m_lock);
->                 if (ci->m_flags & (S_DEL_ON_CLS | S_DEL_PENDING)) {
->                         dentry = filp->f_path.dentry;
->                         dir = dentry->d_parent;
->                         ci->m_flags &= ~(S_DEL_ON_CLS | S_DEL_PENDING);
->                         write_unlock(&ci->m_lock);
->                         ksmbd_vfs_unlink(file_mnt_user_ns(filp), dir,
-> dentry);
->                         write_lock(&ci->m_lock);
->                 }
->                 write_unlock(&ci->m_lock);
->
-> 	What's to keep dir from getting freed right under us, just as
-> ksmbd_vfs_lock_parent() (from ksmbd_vfs_unlink()) tries to grab ->i_rwsem
-> on its inode?
-Right. We need to get parent using dget_parent().
->
-> 	Have the file moved to other directory and apply memory pressure.
-> What's to prevent dir from being evicted, its memory recycled, etc.?
-Let me check it.
->
-> 	For another fun example, consider e.g. smb2_rename():
->                 if (file_present &&
->                     strncmp(old_name, path.dentry->d_name.name,
-> strlen(old_name))) {
->                         rc = -EEXIST;
->                         ksmbd_debug(SMB,
->                                     "cannot rename already existing
-> file\n");
->                         goto out;
->                 }
->
-> Suppose path.dentry has a name longer than 32 bytes (i.e. too large to
-> fit into ->d_iname and thus allocated separately).  At this point you
-> are not holding any locks (otherwise ksmbd_vfs_fp_rename() immediately
-> downstream would deadlock).  So what's to prevent rename(2) on host
-> ending up with path.dentry getting renamed and old name getting freed?
->
-> 	More of the same: ksmbd_vfs_fp_rename().  In this one
-> dget_parent() will at least avoid parent getting freed.  It won't do
-> a damn thing to stabilize src_dent->d_name after lock_rename(),
-> though, since we are not guaranteed that the thing we locked is
-> still the parent...
-Okay, I will check it.
->
-> 	Why is so much tied to "open, then figure out where it is" model?
-> Is it a legacy of userland implementation, or a network fs protocol that
-> manages to outsuck NFS, or...?
-It need to use absolute based path given from request.
+On Mon, Jan 31 2022 at 18:22, tangmeng wrote:
+> kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
+> dishes, this makes it very difficult to maintain.
 
-Thanks!
->
+Sorry. That's just a lame argument. What exactly is hard to maintain on
+that file? A large table of ifdeffed sysctl entries which changes once
+in a blue moon is hardly a maintenance problem.
+
+Aside of that, sysctl.c is a very conveniant way to look up the zoo of
+sysctls which you now spread out all over the source tree.
+
+So you really need to come up with a technical and sensical explanation
+for this change.
+
+> To help with this maintenance let's start by moving sysctls to places
+> where they actually belong.  The proc sysctl maintainers do not want to
+> know what sysctl knobs you wish to add for your own piece of code, we
+> just care about the core logic.
+
+In other words, invite everyone to add random sysctls as they see fit
+w/o a central review authority. That's not an improvement at all. Quite
+the contrary.
+
+That aside, I'm tired of this because this is now at V5 and you still
+failed to fix the fallout reported by the 0-day infrastructure vs. this
+part of the patch:
+
+> +static int __init timer_sysctl_init(void)
+> +{
+> +	register_sysctl_init("kernel", timer_sysctl);
+> +	return 0;
+> +}
+
+    kernel/time/timer.c: In function 'timer_sysctl_init':
+ >> kernel/time/timer.c:284:9: error: implicit declaration of function 'register_sysctl_init'; did you mean 'timer_sysctl_init'? [-Werror=implicit-function-declaration]
+      284 |         register_sysctl_init("kernel", timer_sysctl);
+	  |         ^~~~~~~~~~~~~~~~~~~~
+
+It's pretty damned obvious why this fails to compile and the 0-day
+reports have all the information you need to reproduce and address this,
+but you prefer to ignore it and just resend yet another incarnation.
+
+Feel free to ignore these reports, but then please do not be surprised
+when I ignore your patches. Our development process is well documented
+and it's not subject to your personal interpretation.
+
+Thanks,
+
+        tglx
