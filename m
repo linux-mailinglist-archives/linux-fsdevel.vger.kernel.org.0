@@ -2,100 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B79D64A8CBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 20:53:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D74694A8CFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 21:11:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353874AbiBCTxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Feb 2022 14:53:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233153AbiBCTxp (ORCPT
+        id S1353953AbiBCULQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Feb 2022 15:11:16 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:54350 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231693AbiBCULQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Feb 2022 14:53:45 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA69C061714;
-        Thu,  3 Feb 2022 11:53:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=U4C4OCa1Nvs01R45W3Ay9R6lIjYfrb4U7/RUPw787LQ=; b=3L3r68S46ebKK9cqWNZF8HkI54
-        J8mtXyCYmYNlqaERNHO5V1F29b+IU8JPO4OgbpQDQSUVZXoAw2dAMkUBoa9XyXol+ivw4/4XVfKJn
-        XiBn8mxCoN9vC87Sh2qzN/ikL3VP+ahD3YA+4cSBe3rR57wfXAlYK9CrRARUTS7ciL77+0ZjZKhOO
-        FJzSgm4EXqP6C9vEDj1QifOmMqIEzkclS9YfowjfchaY5zWe+fvWsolVY9NbXQo6wp3Mss2bw3dfb
-        +49iFDJVMH0PZDwbThqWOvc2y8eavytlwbUBp6zUA0htlPJW5DZmbQcSfPRGWBlXVwskwgdX3Hct7
-        ITvV0tIg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nFiAd-002eDE-49; Thu, 03 Feb 2022 19:53:31 +0000
-Date:   Thu, 3 Feb 2022 11:53:31 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        tangmeng <tangmeng@uniontech.com>, keescook@chromium.org,
-        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v5] kernel/time: move timer sysctls to its own file
-Message-ID: <Yfwyu0N4+f51J9OU@bombadil.infradead.org>
-References: <20220131102214.2284-1-tangmeng@uniontech.com>
- <87wnicssth.ffs@tglx>
- <YfstQeOpZuQzBmZJ@bombadil.infradead.org>
- <87r18ks379.ffs@tglx>
+        Thu, 3 Feb 2022 15:11:16 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BC127619EB;
+        Thu,  3 Feb 2022 20:11:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F600C340E8;
+        Thu,  3 Feb 2022 20:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643919075;
+        bh=4BSXxY3IonSFV0/jTnsSKEp9cBSpVvVKAZx5Z73OKBs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a1sA23OOTGBzQUsW0WgiQ1AgpsibE0HLS/PRC17y19bQAlaqYDCzSp8gHd/CCb/D6
+         nX0UBLUb9gsYhH7R/b5IMiCzWNsapQCa2rVGJtWNVtojtGetuRJo/PHomVV1S8tV2K
+         h+aOdjUh9/3aprBno5KlhAn9F0HYgBxtCjPFP9vVllDAesYm+asCe4WhOq1YPDRzkW
+         HD1GNrEQ5qlNdJUlNdQc4KVj4wDO2d0+g5rbQQC3TURttI83Z5bTUIDGO99lQEog/9
+         8dPLuF5/MxdZhpFyDKG3uqSlCmSm1WEblCRut/gyqaLZdp8t63tzKxnmubDgkc01yv
+         REvLg1kFMBKiA==
+Date:   Thu, 3 Feb 2022 12:11:12 -0800
+From:   Keith Busch <kbusch@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/3] block: add copy offload support
+Message-ID: <20220203201112.GC142129@dhcp-10-100-145-180.wdc.com>
+References: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com>
+ <20220201102122.4okwj2gipjbvuyux@mpHalley-2>
+ <alpine.LRH.2.02.2202011327350.22481@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2202011331570.22481@file01.intranet.prod.int.rdu2.redhat.com>
+ <efd2e976-4d2d-178e-890d-9bde1a89c47f@acm.org>
+ <alpine.LRH.2.02.2202031310530.28604@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87r18ks379.ffs@tglx>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <alpine.LRH.2.02.2202031310530.28604@file01.intranet.prod.int.rdu2.redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 03, 2022 at 10:35:06AM +0100, Thomas Gleixner wrote:
-> On Wed, Feb 02 2022 at 17:17, Luis Chamberlain wrote:
-> > On Thu, Feb 03, 2022 at 01:21:46AM +0100, Thomas Gleixner wrote:
-> > *Today* all filesystem syctls now get reviewed by fs folks. They are
-> > all tidied up there.
-> >
-> > In the future x86 folks can review their sysctls. But for no reason
-> > should I have to review every single knob. That's not scalable.
+On Thu, Feb 03, 2022 at 01:50:06PM -0500, Mikulas Patocka wrote:
+> On Tue, 1 Feb 2022, Bart Van Assche wrote:
+> > Only supporting copying between contiguous LBA ranges seems restrictive to me.
+> > I expect garbage collection by filesystems for UFS devices to perform better
+> > if multiple LBA ranges are submitted as a single SCSI XCOPY command.
 > 
-> Fair enough, but can we please have a changelog which explains the
-> rationale to the people who have not been part of that discussion and
-> decision.
+> NVMe has a possibility to copy multiple source ranges into one destination 
+> range. But I think that leveraging this capability would just make the 
+> code excessively complex.
 
-Sure thing, tangmeng please update the commit log a bit better.
-
-> >> That aside, I'm tired of this because this is now at V5 and you still
-> >> failed to fix the fallout reported by the 0-day infrastructure vs. this
-> >> part of the patch:
-> >> 
-> >> > +static int __init timer_sysctl_init(void)
-> >> > +{
-> >> > +	register_sysctl_init("kernel", timer_sysctl);
-> >> > +	return 0;
-> >> > +}
-> >> 
-> >>     kernel/time/timer.c: In function 'timer_sysctl_init':
-> >>  >> kernel/time/timer.c:284:9: error: implicit declaration of function 'register_sysctl_init'; did you mean 'timer_sysctl_init'? [-Werror=implicit-function-declaration]
-> >>       284 |         register_sysctl_init("kernel", timer_sysctl);
-> >> 	  |         ^~~~~~~~~~~~~~~~~~~~
-> >> 
-> >
-> > That's an issue with the patch being tested on a tree where that
-> > routine is not present?
-> 
-> From the report:
-> 
->   ...
->   [also build test ERROR on linus/master
-> 
-> Linus tree has this interface. So that's not the problem.
-> 
-> Hint #1: The interfaxce is not available unconditionally
-> 
-> Hint #2: The 0-day reports provide the config file which exposes the
->          fail
-
-tangmeng, please fix.
-
-  Luis
+The point is to defrag discontiguous blocks into a single range. The
+capability loses a major value proposition without multiple sources.
