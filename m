@@ -2,124 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 667814A8F74
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 21:59:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69DCF4A8F79
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 22:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241377AbiBCU6o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Feb 2022 15:58:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:32291 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241310AbiBCU6j (ORCPT
+        id S241914AbiBCVAJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Feb 2022 16:00:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235108AbiBCVAJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Feb 2022 15:58:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643921919;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AYBprK6Yoe2/EUwuhU7qvIGmdVdAlaSjpJ2H1aJGkRk=;
-        b=d4q6Sv3z/OENqqOk8RRTAd1tyb+6Ld0WS6iSHsNMqIjCSG+bOvQAMAyVmbay701KGpSCAq
-        hcfMST1ISVNUVH/l14KmZH78lFtY/m9Gf/84E5nJ0XEateNq6uFWiarrwLzlj7MOONub9D
-        FwB7wr68zBmVxtqFULEUrIZTMWSE4rw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-577-P1Eoj9VZNiO8RNAFIWFfjw-1; Thu, 03 Feb 2022 15:58:33 -0500
-X-MC-Unique: P1Eoj9VZNiO8RNAFIWFfjw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5F80F1091DA2;
-        Thu,  3 Feb 2022 20:58:30 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E196B61093;
-        Thu,  3 Feb 2022 20:57:56 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 213Kvu4n017456;
-        Thu, 3 Feb 2022 15:57:56 -0500
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 213KvtMP017452;
-        Thu, 3 Feb 2022 15:57:55 -0500
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Thu, 3 Feb 2022 15:57:55 -0500 (EST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Luis Chamberlain <mcgrof@kernel.org>
-cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Vincent Fu <vincent.fu@samsung.com>,
-        =?ISO-8859-15?Q?Javier_Gonz=E1lez?= <javier@javigon.com>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "msnitzer@redhat.com >> msnitzer@redhat.com" <msnitzer@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "martin.petersen@oracle.com >> Martin K. Petersen" 
-        <martin.petersen@oracle.com>,
-        "roland@purestorage.com" <roland@purestorage.com>,
-        Hannes Reinecke <hare@suse.de>,
-        "Frederick.Knight@netapp.com" <Frederick.Knight@netapp.com>,
-        "zach.brown@ni.com" <zach.brown@ni.com>,
-        "osandov@fb.com" <osandov@fb.com>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
-        "tytso@mit.edu" <tytso@mit.edu>, "jack@suse.com" <jack@suse.com>,
-        Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [RFC PATCH 3/3] nvme: add the "debug" host driver
-In-Reply-To: <YfwuQxS79wl8l/a0@bombadil.infradead.org>
-Message-ID: <alpine.LRH.2.02.2202031532410.12071@file01.intranet.prod.int.rdu2.redhat.com>
-References: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com> <20220201102122.4okwj2gipjbvuyux@mpHalley-2> <alpine.LRH.2.02.2202011327350.22481@file01.intranet.prod.int.rdu2.redhat.com> <CGME20220201183359uscas1p2d7e48dc4cafed3df60c304a06f2323cd@uscas1p2.samsung.com>
- <alpine.LRH.2.02.2202011333160.22481@file01.intranet.prod.int.rdu2.redhat.com> <20220202060154.GA120951@bgt-140510-bm01> <20220203160633.rdwovqoxlbr3nu5u@garbanzo> <20220203161534.GA15366@lst.de> <YfwuQxS79wl8l/a0@bombadil.infradead.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Thu, 3 Feb 2022 16:00:09 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDBFEC061714
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Feb 2022 13:00:08 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id u6so8523769lfm.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Feb 2022 13:00:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4N7PqfjG8NYTd1JxGKAWQKYfepZMkhiCoUV9uFDaNoQ=;
+        b=AqwXByWd9Dqbfvq0EYeqmMFuomK7Z7qnVcWvOwo+3jkHTBHlUNo9vNE2pvXBo5kJDA
+         MAcwE1NE14aZkP/ksQN3BHPrBHVSZlsvwnBTJi7QoRDEZiZ3X3LsQZTzuB2CiMomnSe7
+         NJmrFTzUIFwnJCDqqOulyb4uy+fVi/E08UY3XN4SF1OO+ES43XV73XbEuvtosh5UvjuV
+         QCPrATlmibYpHEorJDDmiuaeBh3V2ntWs0uc4q7qs/F7Ed+Ico0zfImVPAMCQt50lvvP
+         8TYe+my9PViKxVYrvCEEjNJCS1Rc+94FUe8X9EJeRlmoMherUf7r/F1As1MInt+8olpP
+         TuRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4N7PqfjG8NYTd1JxGKAWQKYfepZMkhiCoUV9uFDaNoQ=;
+        b=rV+pRTvXiA/LEQiXrIso7NyqHmBphkTuR4qa4qSXhfaajp4uwwxCIR9/AY44KaNiM6
+         s6ablFDobcbRHkut+1lPdTtPDlp4hp5h0VpqqF3Qba5pYw3OB4y2trxuPSWFYMOaP418
+         JkRdU3Xbn97CU/jtJg74eAGV9tEbpdx0jmavMxaDuF5bII/Qag5tDc2EAO+9hdhfVq5l
+         9Es4ZIW4JMJwxpLPPBjLegOvxwLZs99lE5UfaKJl4P47S2on+54/4tlxvN6x1MRbRcFu
+         yZn2e0/f5rHT+1SqyI3LWX727j1x3Z0DmWVPNorDP/XWrbxYAUQrggKD1NxA9tYwWRKD
+         hrPQ==
+X-Gm-Message-State: AOAM530oMDmBq89Hrwh2CI/U+rTDwdFtEnKXAfUzxe5IuHfvfW3sZnPV
+        Vt5paTdNB20O9il+kCwVNSUHYIYZp0BMYgGuWMs=
+X-Google-Smtp-Source: ABdhPJwTqEfJBRhr2r8U4P42fKqLcQcUTud109X4kZ0GcF+M6zZxmfc9goZMjCBVTxfL0puyVUCkzVxygAw13nI5SP8=
+X-Received: by 2002:ac2:5c4d:: with SMTP id s13mr28579813lfp.320.1643922006944;
+ Thu, 03 Feb 2022 13:00:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <2571706.1643663173@warthog.procyon.org.uk>
+In-Reply-To: <2571706.1643663173@warthog.procyon.org.uk>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 3 Feb 2022 14:59:56 -0600
+Message-ID: <CAH2r5mvwzYsymq0qJWhkHsDbZYpNzvY8J6OFQVbQh4jRkhrtEA@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Netfs support library
+To:     David Howells <dhowells@redhat.com>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This discussion of netfs, folios and loosely related fscache changes
+is important for multiple filesystems, and I would be very interested
+in participating.   I think a BoF on the network fs related parts of
+it makes sense, but the folios topic is broad enough to for an FS
+track session.
+
+On Tue, Feb 1, 2022 at 2:50 PM David Howells <dhowells@redhat.com> wrote:
+>
+> I've been working on a library (in fs/netfs/) to provide network filesystem
+> support services, with help particularly from Jeff Layton.  The idea is to
+> move the common features of the VM interface, including request splitting,
+> operation retrying, local caching, content encryption, bounce buffering and
+> compression into one place so that various filesystems can share it.
+>
+> This also intersects with the folios topic as one of the reasons for this now
+> is to hide as much of the existence of folios/pages from the filesystem,
+> instead giving it persistent iov iterators to describe the buffers available
+> to it.
+>
+> It could be useful to get various network filesystem maintainers together to
+> discuss it and how to do parts of it and how to roll it out into more
+> filesystems if it suits them.  This might qualify more for a BoF session than
+> a full FS track session.
+>
+> Further, discussion of designing a more effective cache backend could be
+> useful.  I'm thinking along the lines of something that can store its data on
+> a single file (or a raw blockdev) with indexing along the lines of what
+> filesystem drivers such as openafs do.
+>
+> David
+>
 
 
-On Thu, 3 Feb 2022, Luis Chamberlain wrote:
+-- 
+Thanks,
 
-> On Thu, Feb 03, 2022 at 05:15:34PM +0100, Christoph Hellwig wrote:
-> > On Thu, Feb 03, 2022 at 08:06:33AM -0800, Luis Chamberlain wrote:
-> > > On Wed, Feb 02, 2022 at 06:01:13AM +0000, Adam Manzanares wrote:
-> > > > BTW I think having the target code be able to implement simple copy without 
-> > > > moving data over the fabric would be a great way of showing off the command.
-> > > 
-> > > Do you mean this should be implemented instead as a fabrics backend
-> > > instead because fabrics already instantiates and creates a virtual
-> > > nvme device? And so this would mean less code?
-> > 
-> > It would be a lot less code.  In fact I don't think we need any new code
-> > at all.  Just using nvme-loop on top of null_blk or brd should be all
-> > that is needed.
-> 
-> Mikulas,
-> 
-> That begs the question why add this instead of using null_blk with
-> nvme-loop?
-> 
->   Luis
-
-I think that nvme-debug (the patch 3) doesn't have to be added to the 
-kernel.
-
-Nvme-debug was an old student project that was canceled. I used it because 
-it was very easy to add copy offload functionality to it - adding this 
-capability took just one function with 43 lines of code (nvme_debug_copy).
-
-I don't know if someone is interested in continuing the development of 
-nvme-debug. If yes, I can continue the development, if not, we can just 
-drop it.
-
-Mikulas
-
+Steve
