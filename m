@@ -2,100 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D36B4A8237
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 11:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C0554A83CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 13:26:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350036AbiBCKRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Feb 2022 05:17:05 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:54326 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349918AbiBCKRF (ORCPT
+        id S242583AbiBCM0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Feb 2022 07:26:01 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:49486 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229653AbiBCM0B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Feb 2022 05:17:05 -0500
+        Thu, 3 Feb 2022 07:26:01 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 2DA36210F5;
-        Thu,  3 Feb 2022 10:17:04 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1AA4D1F440;
+        Thu,  3 Feb 2022 12:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1643883424; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1643891160; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=kuei1RsrZ1XayODHiwABNR6bsWtBgImk04EOWC1VWlw=;
-        b=cn0dkVNM6a8g6Q5J0snibEzl61eXoeHCLqGgnEDSLadhko8wMC5ZdfG9sqC5Qx59j09VjU
-        vzmmLMmpf1iH834oQmWBLtJiO13ekk281MzWcZcWLrgNGWIJ6F24AQwbdC3bC0o2v3ZpIe
-        KNKr4s2a3KK+AGsxswUdZzLFa17FqyY=
+        bh=juIxieDbjH1PYuli4PdRWdOgnr2+ISrjEig2JKm3Nhw=;
+        b=XRutn9JxZG1/CR+daZ9dX6VBrpfujr27BvSJHISIc7aQIUoY/1OVCAkrjIIMfKuO5nzrNl
+        v6MKFX670X7rQ9eH7i+f7O3L6/xqZvzztaDSGeyMKpJse/4gQCQBTjxMzIrPMqTzQOXpsr
+        JJ8Om10d4JOgfmJXTOJqvWv6ya6qiWU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1643883424;
+        s=susede2_ed25519; t=1643891160;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=kuei1RsrZ1XayODHiwABNR6bsWtBgImk04EOWC1VWlw=;
-        b=ZMfqE1Cx+GaUDCKmrFbxZ4gEbxAzrQ4RwUrkbNizGFVSQBh0KEBOj6liQLr5mwDS0cloIY
-        FzOCiBf/grZyuEAA==
+        bh=juIxieDbjH1PYuli4PdRWdOgnr2+ISrjEig2JKm3Nhw=;
+        b=69IWpUmIPWALn+S9hK/GM+swpuSPnZJOkt9BkL3zKdSeoFgO41EWh6rJei/aajbtPLMkZH
+        0zagUBsl5Ly2u2CA==
 Received: from quack3.suse.cz (unknown [10.100.200.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 1B315A3B8F;
-        Thu,  3 Feb 2022 10:17:04 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id 90C1DA3B84;
+        Thu,  3 Feb 2022 12:25:59 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id D489AA05B6; Thu,  3 Feb 2022 11:17:03 +0100 (CET)
-Date:   Thu, 3 Feb 2022 11:17:03 +0100
+        id DCEA8A05B6; Thu,  3 Feb 2022 13:25:55 +0100 (CET)
+Date:   Thu, 3 Feb 2022 13:25:55 +0100
 From:   Jan Kara <jack@suse.cz>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        apopple@nvidia.com, shy828301@gmail.com, rcampbell@nvidia.com,
-        hughd@google.com, xiyuyang19@fudan.edu.cn,
-        kirill.shutemov@linux.intel.com, zwisler@kernel.org,
-        hch@infradead.org, linux-fsdevel@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, duanxiongchun@bytedance.com
-Subject: Re: [PATCH v2 2/6] dax: fix cache flush on PMD-mapped pages
-Message-ID: <20220203101703.a7ixac6h7kit4wng@quack3.lan>
-References: <20220202143307.96282-1-songmuchun@bytedance.com>
- <20220202143307.96282-3-songmuchun@bytedance.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Samuel Cabrero <scabrero@suse.de>,
+        David Teigland <teigland@redhat.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [LSF/MM/BPF TOPIC] are we going to use ioctls forever?
+Message-ID: <20220203122555.cqnvnbur43zrfqfa@quack3.lan>
+References: <20220201013329.ofxhm4qingvddqhu@garbanzo>
+ <YfiXkk9HJpatFxnd@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220202143307.96282-3-songmuchun@bytedance.com>
+In-Reply-To: <YfiXkk9HJpatFxnd@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 02-02-22 22:33:03, Muchun Song wrote:
-> The flush_cache_page() only remove a PAGE_SIZE sized range from the cache.
-> However, it does not cover the full pages in a THP except a head page.
-> Replace it with flush_cache_range() to fix this issue.
+On Tue 01-02-22 02:14:42, Matthew Wilcox wrote:
+> On Mon, Jan 31, 2022 at 05:33:29PM -0800, Luis Chamberlain wrote:
+> > Possible issues? Kernels without CONFIG_NET. Is that a deal breaker?
+> > We already have a few filesystems with their own generic netlink
+> > families, so not sure if this is a good argument against this.
+> > 
+> > mcgrof@fulton ~/linux-next (git::master)$ git grep genl_register_family fs
+> > fs/cifs/netlink.c:      ret = genl_register_family(&cifs_genl_family);
+> > fs/dlm/netlink.c:       return genl_register_family(&family);
+> > fs/ksmbd/transport_ipc.c:       ret = genl_register_family(&ksmbd_genl_family);
+> > fs/quota/netlink.c:     if (genl_register_family(&quota_genl_family) != 0)
 > 
-> Fixes: f729c8c9b24f ("dax: wrprotect pmd_t in dax_mapping_entry_mkclean")
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> I'm not sure these are good arguments in favour ... other than quota,
+> these are all network filesystems, which aren't much use without
+> CONFIG_NET.
+> 
+> > mcgrof@fulton ~/linux-next (git::master)$ git grep genl_register_family drivers/block
+> > drivers/block/nbd.c:    if (genl_register_family(&nbd_genl_family)) {
+> 
+> The, er, _network_ block device, right?
 
-Looks good. Feel free to add:
+Yep, and even for the quota what you'll lose with the netlink family are
+the fancy out-of-band notifications about users going over their quotas.
+Not a big loss. So I don't by this argument.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+OTOH these days when even a lightbulb is connected to a network, I don't
+personally think CONFIG_NET dependency is a real problem...
 
 								Honza
-
-> ---
->  fs/dax.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 88be1c02a151..e031e4b6c13c 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -857,7 +857,8 @@ static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
->  			if (!pmd_dirty(*pmdp) && !pmd_write(*pmdp))
->  				goto unlock_pmd;
->  
-> -			flush_cache_page(vma, address, pfn);
-> +			flush_cache_range(vma, address,
-> +					  address + HPAGE_PMD_SIZE);
->  			pmd = pmdp_invalidate(vma, address, pmdp);
->  			pmd = pmd_wrprotect(pmd);
->  			pmd = pmd_mkclean(pmd);
-> -- 
-> 2.11.0
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
