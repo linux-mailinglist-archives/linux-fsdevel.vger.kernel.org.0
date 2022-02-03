@@ -2,95 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0554A83CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 13:26:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2815B4A84E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 14:14:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242583AbiBCM0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Feb 2022 07:26:01 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:49486 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbiBCM0B (ORCPT
+        id S1350538AbiBCNOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Feb 2022 08:14:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347799AbiBCNOk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Feb 2022 07:26:01 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 1AA4D1F440;
-        Thu,  3 Feb 2022 12:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1643891160; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=juIxieDbjH1PYuli4PdRWdOgnr2+ISrjEig2JKm3Nhw=;
-        b=XRutn9JxZG1/CR+daZ9dX6VBrpfujr27BvSJHISIc7aQIUoY/1OVCAkrjIIMfKuO5nzrNl
-        v6MKFX670X7rQ9eH7i+f7O3L6/xqZvzztaDSGeyMKpJse/4gQCQBTjxMzIrPMqTzQOXpsr
-        JJ8Om10d4JOgfmJXTOJqvWv6ya6qiWU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1643891160;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=juIxieDbjH1PYuli4PdRWdOgnr2+ISrjEig2JKm3Nhw=;
-        b=69IWpUmIPWALn+S9hK/GM+swpuSPnZJOkt9BkL3zKdSeoFgO41EWh6rJei/aajbtPLMkZH
-        0zagUBsl5Ly2u2CA==
-Received: from quack3.suse.cz (unknown [10.100.200.198])
+        Thu, 3 Feb 2022 08:14:40 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A16C061714
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Feb 2022 05:14:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 90C1DA3B84;
-        Thu,  3 Feb 2022 12:25:59 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id DCEA8A05B6; Thu,  3 Feb 2022 13:25:55 +0100 (CET)
-Date:   Thu, 3 Feb 2022 13:25:55 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Samuel Cabrero <scabrero@suse.de>,
-        David Teigland <teigland@redhat.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [LSF/MM/BPF TOPIC] are we going to use ioctls forever?
-Message-ID: <20220203122555.cqnvnbur43zrfqfa@quack3.lan>
-References: <20220201013329.ofxhm4qingvddqhu@garbanzo>
- <YfiXkk9HJpatFxnd@casper.infradead.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1467461807
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Feb 2022 13:14:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 170C4C340E4;
+        Thu,  3 Feb 2022 13:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643894079;
+        bh=rpu8ah0DCEBiXfpRHm8MCEl29MJDi3Q6DxQPVF72DUc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gHf5dCnvWHJeB2Hfsfc2DK+JbWunCXGH9dlLTARa50sQR8AKGnblLJqYWpQfUSOn0
+         GAArjyceenYgMBZzMISXrwxnxAkyYVuJaNv/EPMvMxpzhGIIIJ/xgmteyJ2F5ZZD8Y
+         A91WOA+3w9hFUTpnDoL2vP8D3cy4fjSvunt5H7U6I5JsR10CPWSCGl610PcRBHcVKO
+         ggcvOT9XH4RAXSCiLFwZZTymFtZY4TPBu3kqLm2tvuRVdpEYCtgrwCPJopsrpvuMSh
+         0r8XplhivlW+4K0GBR42OGql+4I6TzyrRzrOINKZdIZD0cqENaFGnvEePHhTes5bv6
+         BJl+5CsmO1jVQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Seth Forshee <seth.forshee@digitalocean.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/7] mount_setattr fixes
+Date:   Thu,  3 Feb 2022 14:14:04 +0100
+Message-Id: <20220203131411.3093040-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YfiXkk9HJpatFxnd@casper.infradead.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1399; h=from:subject; bh=rpu8ah0DCEBiXfpRHm8MCEl29MJDi3Q6DxQPVF72DUc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST+vsp4TOfKBOkwQfeHul5W28Q7/dktds8rs3w50/KSf8Ob 6UHbOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyu5nhf5SC5coTqyd5XPh/Sfb684 tGVo83cRzwedLdUZlemtnMzcLI0C84Zan/pa37ueZvmXn+WHh0KNt7w/UXPYV2y+UK3571kBMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 01-02-22 02:14:42, Matthew Wilcox wrote:
-> On Mon, Jan 31, 2022 at 05:33:29PM -0800, Luis Chamberlain wrote:
-> > Possible issues? Kernels without CONFIG_NET. Is that a deal breaker?
-> > We already have a few filesystems with their own generic netlink
-> > families, so not sure if this is a good argument against this.
-> > 
-> > mcgrof@fulton ~/linux-next (git::master)$ git grep genl_register_family fs
-> > fs/cifs/netlink.c:      ret = genl_register_family(&cifs_genl_family);
-> > fs/dlm/netlink.c:       return genl_register_family(&family);
-> > fs/ksmbd/transport_ipc.c:       ret = genl_register_family(&ksmbd_genl_family);
-> > fs/quota/netlink.c:     if (genl_register_family(&quota_genl_family) != 0)
-> 
-> I'm not sure these are good arguments in favour ... other than quota,
-> these are all network filesystems, which aren't much use without
-> CONFIG_NET.
-> 
-> > mcgrof@fulton ~/linux-next (git::master)$ git grep genl_register_family drivers/block
-> > drivers/block/nbd.c:    if (genl_register_family(&nbd_genl_family)) {
-> 
-> The, er, _network_ block device, right?
+Hey,
 
-Yep, and even for the quota what you'll lose with the netlink family are
-the fancy out-of-band notifications about users going over their quotas.
-Not a big loss. So I don't by this argument.
+This contains a couple of minor fixes for the mount_setattr() code I
+didn't get around to sending so far. Apart from making the control flow
+a little easier to follow there's a fix for a long-standing braino in
+one of the idmapped mount kernel selftests. The kernel selftests are
+separate from the large fstests suite and are only concerned with
+testing the syscall itself whereas the fstests test all related vfs and
+filesystem specific functionality for idmapped mounts. I would also like
+to add a maintenance entry for idmapped mounts for the few files and
+documentation that I've written.
+I'll be gone for ~10 days starting next week but I'll try to check-in
+regularly.
 
-OTOH these days when even a lightbulb is connected to a network, I don't
-personally think CONFIG_NET dependency is a real problem...
+Thanks!
+Christian
 
-								Honza
+Christian Brauner (7):
+  tests: fix idmapped mount_setattr test
+  MAINTAINERS: add entry for idmapped mounts
+  fs: add kernel doc for mnt_{hold,unhold}_writers()
+  fs: add mnt_allow_writers() and simplify mount_setattr_prepare()
+  fs: simplify check in mount_setattr_commit()
+  fs: don't open-code mnt_hold_writers()
+  fs: clean up mount_setattr control flow
+
+ MAINTAINERS                                   |   9 ++
+ fs/namespace.c                                | 148 +++++++++++-------
+ .../mount_setattr/mount_setattr_test.c        |   4 +-
+ 3 files changed, 105 insertions(+), 56 deletions(-)
+
+
+base-commit: 26291c54e111ff6ba87a164d85d4a4e134b7315c
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.32.0
+
