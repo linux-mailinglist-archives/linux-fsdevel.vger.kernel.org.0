@@ -2,52 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21E9E4A8139
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 10:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EDF14A818A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Feb 2022 10:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238028AbiBCJMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Feb 2022 04:12:47 -0500
-Received: from mail.olerise.pl ([46.183.184.59]:53958 "EHLO mail.olerise.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231503AbiBCJMr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Feb 2022 04:12:47 -0500
-Received: by mail.olerise.pl (Postfix, from userid 1001)
-        id DE926433E1; Thu,  3 Feb 2022 10:11:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=olerise.pl; s=mail;
-        t=1643879502; bh=ZNYiuZLXlxCdAPtstEG/gwJieB5RBwA/cHj1SZ3Mpl0=;
-        h=Date:From:To:Subject:From;
-        b=3vQ9OnVGSNWQ1H9vPIwK4P57rfZTCG6bAVdaV0IHL7bJ/AioJGG+tVQztkdkGPBjh
-         KQqeHSyD/QRYDX0QGP7FzoxOcc/eAi+mBJBqmbMDBWqj9TZKCaeuISDDAsgRDzcsAN
-         TwUHcma36ji0pfgO78f6EIUPwQrA4/kfHiZ6CMRCuSlvSdpierqwnvRjQIA20K8iQ5
-         sLGl9rYXVLSLNWnNBERVizRDp3hJXnpyEYnPJ68Kee+Mq7xLmTR7KkVV5muFmX/wjU
-         sjftcRiIyrv3vXcFypSHRyiBR/7UXEG6042S0EcNwwGQFX1uLHmMAkFtQ3n7UBlUZx
-         zOAozSWHidoHg==
-Received: by mail.olerise.pl for <linux-fsdevel@vger.kernel.org>; Thu,  3 Feb 2022 09:11:25 GMT
-Message-ID: <20220203084500-0.1.1i.7qkt.0.g1mkeekskq@olerise.pl>
-Date:   Thu,  3 Feb 2022 09:11:25 GMT
-From:   =?UTF-8?Q? "Miko=C5=82aj_Rudzik" ?= <mikolaj.rudzik@olerise.pl>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
-X-Mailer: mail.olerise.pl
+        id S238921AbiBCJfJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Feb 2022 04:35:09 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:51924 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232797AbiBCJfI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Feb 2022 04:35:08 -0500
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1643880907;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=b4niGU0MsRpZHoaPG3ycpTgf3GT1iqYBqPQhEgMj1fg=;
+        b=0deUg20vq2mbgKBr4VvIlYVyP9ZU64oP5pRbhlEBMCFP1y4uPecyB7KplTDbjGIZB/nUrm
+        Qfc7AwsRnnmQ05lFrKmfoVkjHeEW+qKtp7MaLfJQ2DvHqqrN5NechgPuN/MNkhDVEvEjzR
+        BxwVyg9DT9brSWUROBc5DJ/oxKQxceHRujWRgE3Ri1Ua3p65BxJlthNrQZxw1YXPJGeeEz
+        Q32X91IIR4GTy9MWODnpt+tPjQWZmVwo/C/1xWfYnX1tkp0CG5cr/lVOQNNU7eXX2ZZp2a
+        e8Cwj1ek67ZJMcYHND+fdo0fl+XOFMCXQJSvwXDO6ePuaDRrDj5ucqwiIQuWIQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1643880907;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=b4niGU0MsRpZHoaPG3ycpTgf3GT1iqYBqPQhEgMj1fg=;
+        b=MAxLSLRBTTV0ilKIuy2fIp3BpvJN7QHQoa7UpaqG/hhe/eeJST2DfcPH9NakwnNhWjh+8d
+        J2vJY5ocA6QZjhCA==
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     tangmeng <tangmeng@uniontech.com>, keescook@chromium.org,
+        yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v5] kernel/time: move timer sysctls to its own file
+In-Reply-To: <YfstQeOpZuQzBmZJ@bombadil.infradead.org>
+References: <20220131102214.2284-1-tangmeng@uniontech.com>
+ <87wnicssth.ffs@tglx> <YfstQeOpZuQzBmZJ@bombadil.infradead.org>
+Date:   Thu, 03 Feb 2022 10:35:06 +0100
+Message-ID: <87r18ks379.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Wed, Feb 02 2022 at 17:17, Luis Chamberlain wrote:
+> On Thu, Feb 03, 2022 at 01:21:46AM +0100, Thomas Gleixner wrote:
+> *Today* all filesystem syctls now get reviewed by fs folks. They are
+> all tidied up there.
+>
+> In the future x86 folks can review their sysctls. But for no reason
+> should I have to review every single knob. That's not scalable.
 
-chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
-skania nowych zlece=C5=84 ze strony www.
+Fair enough, but can we please have a changelog which explains the
+rationale to the people who have not been part of that discussion and
+decision.
 
-Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
-, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
-=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
-jonowania strony w Google.
+>> That aside, I'm tired of this because this is now at V5 and you still
+>> failed to fix the fallout reported by the 0-day infrastructure vs. this
+>> part of the patch:
+>> 
+>> > +static int __init timer_sysctl_init(void)
+>> > +{
+>> > +	register_sysctl_init("kernel", timer_sysctl);
+>> > +	return 0;
+>> > +}
+>> 
+>>     kernel/time/timer.c: In function 'timer_sysctl_init':
+>>  >> kernel/time/timer.c:284:9: error: implicit declaration of function 'register_sysctl_init'; did you mean 'timer_sysctl_init'? [-Werror=implicit-function-declaration]
+>>       284 |         register_sysctl_init("kernel", timer_sysctl);
+>> 	  |         ^~~~~~~~~~~~~~~~~~~~
+>> 
+>
+> That's an issue with the patch being tested on a tree where that
+> routine is not present?
 
-Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
+From the report:
 
+  ...
+  [also build test ERROR on linus/master
 
-Pozdrawiam
-Miko=C5=82aj Rudzik
+Linus tree has this interface. So that's not the problem.
+
+Hint #1: The interfaxce is not available unconditionally
+
+Hint #2: The 0-day reports provide the config file which exposes the
+         fail
+
+Let me know if you need more hints. :)
+
+Thanks,
+
+        tglx
+
