@@ -2,188 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0EC94AAA09
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Feb 2022 17:24:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED504AAA54
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Feb 2022 18:04:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380457AbiBEQXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Feb 2022 11:23:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38528 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380470AbiBEQXv (ORCPT
+        id S1380519AbiBEREM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Feb 2022 12:04:12 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:39814 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239376AbiBEREM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Feb 2022 11:23:51 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7691CC06109E;
-        Sat,  5 Feb 2022 08:23:44 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id d188so11276636iof.7;
-        Sat, 05 Feb 2022 08:23:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RfBe7PiUhZZZ9tC02Jrs6j53as/5fNuS6e0YaWMCwVA=;
-        b=PbedcvFZpzOc0rOWVShfgcd9b2D+xBpWmTdj7dsmZDMP7Do7KtVlNUyL4yAtIwAxjW
-         B49d6wq7QF7H2l0IswaNq7CVjiTUEicZxG03jW75mL+ChFlsnZB3bz4vISxUFKrFHx7f
-         uHlFIhRVvHqm9ZxcNnKCXavYOG/Wg4e3cU5TORGQON6VVxfPkVzNmfKfbGae250U+IJu
-         UMxZwui61z/hDx//wKaveQwPXzjaGhZtfT6rQRpdnCDPtQb0gzo37gmJzdnRxI1+NSZJ
-         GrpOtG+IPVbIWNaZ5Tnjh+TZ8Fjn4hLoqAHBtgmolmM9geUD07QSTwehDxK67CLjYBFw
-         zAyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RfBe7PiUhZZZ9tC02Jrs6j53as/5fNuS6e0YaWMCwVA=;
-        b=G4XF7N+7S5Bu41DrB6qux3XDacdOQK5azSpTAo0EVSMNFXsm4BgAy5L4vcWotwQSyc
-         C9CAnyRdyq0i0XWYcvzFPdLDuKgC1uu1wBY4V7K0i30O3WbD44HaUBSnStS2edT4rWJ8
-         hfxy8VCph5JG+xq43Lnwlk3a8k9vEbIr+70ZbXk+5Iv/WEbsGmr0VIQ1jw6/mcoz5Yvw
-         WENNSnA4towhqPPkjwOy9Zo9PWVyq4F7nozT8l/7zoQkPeSl0BUM9Lkb1uWdq9MVyt6P
-         nd9n3XmR0IRezt+6Qhddu3PKoM2uGJ6p7xbSqlK9LIdL2AUdG6ZlFl4Kc7Umwy1py6N0
-         IGGQ==
-X-Gm-Message-State: AOAM531QxunvxGrg2Cy3s6yG7ZzIYa/i/ZtBx5L3seHMy6ZUq1OpidiY
-        v/P7/1FDkMjcUN0QjZMQA4K4opUb8X/aBw0jY6ppaaUVXfA=
-X-Google-Smtp-Source: ABdhPJxBB+z98BrVcmhEHGZM8qgEP0tTfWFGQts8qdWZAy4sbl4WrZed7UOmPGqkLgL+n6nPptWUtqutrRZXzYqrRyw=
-X-Received: by 2002:a05:6638:14d2:: with SMTP id l18mr1999749jak.69.1644078223888;
- Sat, 05 Feb 2022 08:23:43 -0800 (PST)
+        Sat, 5 Feb 2022 12:04:12 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E5C9B61113;
+        Sat,  5 Feb 2022 17:04:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213FCC340E8;
+        Sat,  5 Feb 2022 17:04:11 +0000 (UTC)
+From:   Chuck Lever <chuck.lever@oracle.com>
+To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 0/7] NFSD size, offset, and count sanity
+Date:   Sat,  5 Feb 2022 12:04:09 -0500
+Message-Id:  <164408013367.3707.1739092698555505020.stgit@bazille.1015granger.net>
+X-Mailer: git-send-email 2.35.0
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-References: <20211118112315.GD13047@quack2.suse.cz> <17d32ecf46e.124314f8f672.8832559275193368959@mykernel.net>
- <20211118164349.GB8267@quack2.suse.cz> <17d36d37022.1227b6f102736.1047689367927335302@mykernel.net>
- <20211130112206.GE7174@quack2.suse.cz> <17d719b79f9.d89bf95117881.5882353172682156775@mykernel.net>
- <CAOQ4uxidK-yDMZoZtoRwTZLgSTr1o2Mu2L55vJRNJDLV0-Sb1w@mail.gmail.com>
- <17d73da701b.e571c37220081.6904057835107693340@mykernel.net>
- <17d74b08dcd.c0e94e6320632.9167792887632811518@mykernel.net>
- <CAOQ4uxiCYFeeH8oUUNG+rDCru_1XcwB6fR2keS1C6=d_yD9XzA@mail.gmail.com>
- <20211201134610.GA1815@quack2.suse.cz> <17d76cf59ee.12f4517f122167.2687299278423224602@mykernel.net>
- <CAOQ4uxiEjGms-sKhrVDtDHSEk97Wku5oPxnmy4vVB=6yRE_Hdg@mail.gmail.com>
- <17d8aeb19ac.f22523af26365.6531629287230366441@mykernel.net>
- <CAOQ4uxgwZoB5GQJZvpPLzRqrQA-+JSowD+brUwMSYWf9zZjiRQ@mail.gmail.com> <362c02fa-2625-30c4-17a1-1a95753b6065@mykernel.net>
-In-Reply-To: <362c02fa-2625-30c4-17a1-1a95753b6065@mykernel.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 5 Feb 2022 18:23:32 +0200
-Message-ID: <CAOQ4uxgBBiEiUtbNhcY-H_6+m9JZM_-D+dX0tMGT2oYxc3BSVw@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode operation
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ronyjin <ronyjin@tencent.com>,
-        charliecgxu <charliecgxu@tencent.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1721; h=from:subject:message-id; bh=DM1QaHmRpjPy6Ign/hGvQt5Y1V/sN/MDR2BRy4REImk=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBh/q4EQW+QVrEseeWFhB4GY0Hc+ulwA1eHB8gt2I4l qy2V7teJAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCYf6uBAAKCRAzarMzb2Z/l08PEA Ca9J2QCvDEx03z/N5affl3PfU5YfFgm4u5NSYldmORBvsvi7gEFHfF8UBaSq25vyFWS6QiXzpwvTnw r7bHO3DFFiWIBtHmC5hozm27C2iRWjgbm2++Ntc+0BvXpwAK7wF7AjR2JPwx7A2sqNO1fOgu3O8qM7 I1dK5ibBnqddMALcnESG9+lH1fomlslXEW/w6JwI9e4D5Osd0uU4vrWaf+bsRubRrwarQ9IvO0Gda+ xO+x3xFKshI8qQ39AGmid9B5wqv1JKX58u+gcTxZBSRTNxNi2BHRtCaIlnUEM1zBCI+FK4l5KuoBG5 51KgZBN7bAOHuVWT0pXZQNLdKa6M9KHaWOxY7xiq3sssQaDthN+XUhsXWV+hs/vmFV+dCftouaaCqi q51Qtl0VGD87wD6I2lW+Efw3BgEYPOZdFA8fNSm9LML2lsEsKcvf+NFF5JcK9aPCaN6/i/pqW6PUt+ vO5HDLuy/1YB1WQbYprTaS5k6TcGjnJdM4LkMQA7UyyWeVd/xrG+cghmt+ZNsw7zB9N3wjI7CS/HxI dEXwUPceyXVjVlCpzUP4rn2Ys1jWQP5j5WnyNVNYIIza6I/aSdR16dnIKgJYkz9nXUJ3hfWvhk43GA T/IzFdGIo7/GIgZoZmDgFxw2bOMbR0x7XiX7NNOa/GbyTewnzJpzQA0g3WFQ==
+X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 5, 2022 at 6:10 PM Chengguang Xu <cgxu519@mykernel.net> wrote:
->
-> =E5=9C=A8 2021/12/7 13:33, Amir Goldstein =E5=86=99=E9=81=93:
-> > On Sun, Dec 5, 2021 at 4:07 PM Chengguang Xu <cgxu519@mykernel.net> wro=
-te:
-> >>   ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2021-12-02 06:47:25 Amir=
- Goldstein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
-> >>   > On Wed, Dec 1, 2021 at 6:24 PM Chengguang Xu <cgxu519@mykernel.net=
-> wrote:
-> >>   > >
-> >>   > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-12-01 21:46:10=
- Jan Kara <jack@suse.cz> =E6=92=B0=E5=86=99 ----
-> >>   > >  > On Wed 01-12-21 09:19:17, Amir Goldstein wrote:
-> >>   > >  > > On Wed, Dec 1, 2021 at 8:31 AM Chengguang Xu <cgxu519@myker=
-nel.net> wrote:
-> >>   > >  > > > So the final solution to handle all the concerns looks li=
-ke accurately
-> >>   > >  > > > mark overlay inode diry on modification and re-mark dirty=
- only for
-> >>   > >  > > > mmaped file in ->write_inode().
-> >>   > >  > > >
-> >>   > >  > > > Hi Miklos, Jan
-> >>   > >  > > >
-> >>   > >  > > > Will you agree with new proposal above?
-> >>   > >  > > >
-> >>   > >  > >
-> >>   > >  > > Maybe you can still pull off a simpler version by remarking=
- dirty only
-> >>   > >  > > writably mmapped upper AND inode_is_open_for_write(upper)?
-> >>   > >  >
-> >>   > >  > Well, if inode is writeably mapped, it must be also open for =
-write, doesn't
-> >>   > >  > it? The VMA of the mapping will hold file open. So remarking =
-overlay inode
-> >>   > >  > dirty during writeback while inode_is_open_for_write(upper) l=
-ooks like
-> >>   > >  > reasonably easy and presumably there won't be that many inode=
-s open for
-> >>   > >  > writing for this to become big overhead?
-> >>   >
-> >>   > I think it should be ok and a good tradeoff of complexity vs. perf=
-ormance.
-> >>
-> >> IMO, mark dirtiness on write is relatively simple, so I think we can m=
-ark the
-> >> overlayfs inode dirty during real write behavior and only remark writa=
-ble mmap
-> >> unconditionally in ->write_inode().
-> >>
-> > If by "on write" you mean on write/copy_file_range/splice_write/...
-> > then yes I agree
-> > since we have to cover all other mnt_want_write() cases anyway.
-> >
-> >>   >
-> >>   > >  >
-> >>   > >  > > If I am not mistaken, if you always mark overlay inode dirt=
-y on ovl_flush()
-> >>   > >  > > of FMODE_WRITE file, there is nothing that can make upper i=
-node dirty
-> >>   > >  > > after last close (if upper is not mmaped), so one more inod=
-e sync should
-> >>   > >  > > be enough. No?
-> >>   > >  >
-> >>   > >  > But we still need to catch other dirtying events like timesta=
-mp updates,
-> >>   > >  > truncate(2) etc. to mark overlay inode dirty. Not sure how re=
-liably that
-> >>   > >  > can be done...
-> >>   > >  >
-> >>   >
-> >>   > Oh yeh, we have those as well :)
-> >>   > All those cases should be covered by ovl_copyattr() that updates t=
-he
-> >>   > ovl inode ctime/mtime, so always dirty in ovl_copyattr() should be=
- good.
-> >>
-> >> Currently ovl_copyattr() does not cover all the cases, so I think we s=
-till need to carefully
-> >> check all the places of calling mnt_want_write().
-> >>
-> > Careful audit is always good, but if we do not have ovl_copyattr() in
-> > a call site
-> > that should mark inode dirty, then it sounds like a bug, because ovl in=
-ode ctime
-> > will not get updated. Do you know of any such cases?
->
-> Sorry for my late response, I've been very busy lately.
-> For your question, for example, there is a case of calling
-> ovl_want_write() in ovl_cache_get_impure() and caller does not call
-> ovl_copyattr()
-> so I think we should explicitly mark ovl inode dirty in that case. Is
-> that probably a bug?
->
->
+Dan Aloni reported a problem with the way NFSD's READ implementation
+deals with the very upper end of file sizes, and I got interested in
+how some of the other operations handled it. I found some issues,
+and have started a (growing) pile of patches to deal with them.
 
-The correct behavior would be similar to that of setting impure xattr
-in ovl_link_up().
-We would want to snapshot the upperdir attrs before removing xattr
-and restore them after (best effort).
-Not that this case is so important, but if you have an opportunity
-to mark inode dirty in ovl_copyattr() I think that would be the best
-way to go.
+Since at least the SETATTR case appears to cause a crash on some
+filesystems, I think several of these are 5.17-rc fodder (i.e.,
+priority bug fixes).
 
-Thanks,
-Amir.
+I've already posted an update to the pynfs CMT4 test. A similar
+pynfs test for out-of-range READ is forthcoming.
+
+Changes since v2:
+- Addressed concerns with "Fix NFSv3 SETATTR/CREATE's handling of
+  large file sizes"
+- Added fix for READ underflow, as initially reported; series is now
+  complete
+- Trace points now report wire input values before type cast
+
+Changes since RFC:
+- Series reordered so priority fixes come first
+- Setattr size check is now in a common function
+- Patch descriptions clarified
+
+---
+
+Chuck Lever (7):
+      NFSD: Fix the behavior of READ near OFFSET_MAX
+      NFSD: Fix ia_size underflow
+      NFSD: Fix NFSv3 SETATTR/CREATE's handling of large file sizes
+      NFSD: Clamp WRITE offsets
+      NFSD: COMMIT operations must not return NFS?ERR_INVAL
+      NFSD: Fix offset type in I/O trace points
+      NFSD: Deprecate NFS_OFFSET_MAX
+
+
+ fs/nfsd/nfs3proc.c  | 19 ++++++++-------
+ fs/nfsd/nfs3xdr.c   |  4 ++--
+ fs/nfsd/nfs4proc.c  | 13 +++++++----
+ fs/nfsd/nfs4xdr.c   | 10 +++-----
+ fs/nfsd/trace.h     | 14 +++++------
+ fs/nfsd/vfs.c       | 57 +++++++++++++++++++++++++++++++--------------
+ fs/nfsd/vfs.h       |  4 ++--
+ include/linux/nfs.h |  8 -------
+ 8 files changed, 74 insertions(+), 55 deletions(-)
+
+--
+Chuck Lever
