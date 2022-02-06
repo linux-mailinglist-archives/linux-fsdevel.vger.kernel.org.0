@@ -2,114 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B094AB0CC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Feb 2022 18:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 201F34AB211
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Feb 2022 21:28:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343525AbiBFRD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Feb 2022 12:03:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53098 "EHLO
+        id S244777AbiBFU2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Feb 2022 15:28:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237377AbiBFRD3 (ORCPT
+        with ESMTP id S229983AbiBFU2K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Feb 2022 12:03:29 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DF69C06173B;
-        Sun,  6 Feb 2022 09:03:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2484D611BE;
-        Sun,  6 Feb 2022 17:03:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACE4C340E9;
-        Sun,  6 Feb 2022 17:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1644167007;
-        bh=CxNZhf0Rj0X+y+VCbMTPfy1hriBWerZmKT41tTRAYzk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sDoAKbPGicUgOwtqu8mIQK6uUNLfBO9/kmCWiamx3/iJ1TyJmOZRiTgR9u9ausvhA
-         AI5midU3xIJ9Iuvrv+STI+6/9rYA2X2w6QKMHaU2E5LgGK+5cv+f6Kr4yQfVx1GS4v
-         E889lgGqdYzvQBDKQ/rOfdjTJmnzBPCjaHjfCcd4=
-Date:   Sun, 6 Feb 2022 18:03:15 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Xu Yu <xuyu@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        arnd@arndb.de, viro@zeniv.linux.org.uk, dhowells@redhat.com
-Subject: Re: [PATCH] chardev: call tty_init() in real chrdev_init()
-Message-ID: <Yf//U1s3DbTuSqo2@kroah.com>
-References: <4e753e51d0516413fbf557cf861d654ca73486cc.1644164597.git.xuyu@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e753e51d0516413fbf557cf861d654ca73486cc.1644164597.git.xuyu@linux.alibaba.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Sun, 6 Feb 2022 15:28:10 -0500
+X-Greylist: delayed 5006 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 06 Feb 2022 12:28:09 PST
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A280C06173B;
+        Sun,  6 Feb 2022 12:28:08 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 216EWqD1007379;
+        Sun, 6 Feb 2022 19:04:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2021-07-09;
+ bh=9jTqfFCwE4fGNtzJpi+OgSR++seou8hgWkB3ESLqqdE=;
+ b=I+BM3AuQoSFd7O0ek1bEb+Ko2+brnbKs3c+FJXA7UPbwKvtl1uDBqti/qvCciBD/y5Z3
+ adXFIqXlu4aDG/iTlnQX1US1cc59I3jctd3EfzjQs6TDQ/CMqZtM3Y88RM1L0odwI04d
+ ItgRkCv+CeKgPVL/AuhOeLj4Hpn4+z7zU86ifI7Rdb/9/tu0D9dSfQx7FqgDy3ydAuD1
+ aLQCiYCcAvGFNr5SyKguCqQ9eXuUGgvkVigXQkz3RWZzVskLMpjuvQ1/sKjE0EhunPeD
+ c4hCDmlyT0ZFgZwPMbdYhXy0hwzRaWHsj3/bz1Xq/wQ9vRNrUh3hyvghYYn/YdwIF174 6A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3e1gusutpr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 06 Feb 2022 19:04:41 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 216J1w0l035741;
+        Sun, 6 Feb 2022 19:04:40 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 3e1f9cedug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 06 Feb 2022 19:04:40 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 216J4dFR044049;
+        Sun, 6 Feb 2022 19:04:39 GMT
+Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
+        by aserp3030.oracle.com with ESMTP id 3e1f9cedtx-1;
+        Sun, 06 Feb 2022 19:04:39 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     chuck.lever@oracle.com, bfields@fieldses.org
+Cc:     jlayton@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC v10 0/3] nfsd: Initial implementation of NFSv4 Courteous Server
+Date:   Sun,  6 Feb 2022 11:04:27 -0800
+Message-Id: <1644174270-20681-1-git-send-email-dai.ngo@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-ORIG-GUID: gcuyH-yIGKusRvgEqGrcmLWAV67NCWzB
+X-Proofpoint-GUID: gcuyH-yIGKusRvgEqGrcmLWAV67NCWzB
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 07, 2022 at 12:27:31AM +0800, Xu Yu wrote:
-> It is confusing that tty_init() in called in the initialization of
-> memdev, i.e., static chr_dev_init().
-> 
-> Through blame, it is introduced by commit 31d1d48e199e ("Fix init
-> ordering of /dev/console vs callers of modprobe"), which fixes the
-> initialization order of /dev/console driver. However, there seems
-> to be a typo in the patch, i.e., chrdev_init, instead of chr_dev_init.
-> 
-> This fixes the typo, IIUC.
-> 
-> Note that the return value of tty_init() is always 0, and thus no error
-> handling is provided in chrdev_init().
-> 
-> Fixes: 31d1d48e199e ("Fix init ordering of /dev/console vs callers of modprobe")
-> Signed-off-by: Xu Yu <xuyu@linux.alibaba.com>
-> ---
->  drivers/char/mem.c | 2 +-
->  fs/char_dev.c      | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> index cc296f0823bd..8c90881f8115 100644
-> --- a/drivers/char/mem.c
-> +++ b/drivers/char/mem.c
-> @@ -775,7 +775,7 @@ static int __init chr_dev_init(void)
->  			      NULL, devlist[minor].name);
->  	}
->  
-> -	return tty_init();
-> +	return 0;
->  }
->  
->  fs_initcall(chr_dev_init);
-> diff --git a/fs/char_dev.c b/fs/char_dev.c
-> index ba0ded7842a7..fc042a0a098f 100644
-> --- a/fs/char_dev.c
-> +++ b/fs/char_dev.c
-> @@ -667,6 +667,7 @@ static struct kobject *base_probe(dev_t dev, int *part, void *data)
->  void __init chrdev_init(void)
->  {
->  	cdev_map = kobj_map_init(base_probe, &chrdevs_lock);
-> +	tty_init();
->  }
->  
 
-You just changed the ordering sequence here, are you SURE this is
-correct?
+Hi Chuck, Bruce
 
-How was this tested?  Did you verify that the problem that the original
-commit here was fixing is now not happening again?
+This series of patches implement the NFSv4 Courteous Server.
 
-And what real problem is this solving?  How did you hit the issue that
-this solves?
+A server which does not immediately expunge the state on lease expiration
+is known as a Courteous Server.  A Courteous Server continues to recognize
+previously generated state tokens as valid until conflict arises between
+the expired state and the requests from another client, or the server
+reboots.
 
-And finally, yes, it is not good to throw away the return value of
-tty_init().  If it really can not return anything but 0, then let us
-make it a void function first.
+v2 patch includes:
 
-thanks,
+. add new callback, lm_expire_lock, to lock_manager_operations to
+  allow the lock manager to take appropriate action with conflict lock.
 
-greg k-h
+. handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
+
+. expire courtesy client after 24hr if client has not reconnected.
+
+. do not allow expired client to become courtesy client if there are
+  waiters for client's locks.
+
+. modify client_info_show to show courtesy client and seconds from
+  last renew.
+
+. fix a problem with NFSv4.1 server where the it keeps returning
+  SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+  the courtesy client reconnects, causing the client to keep sending
+  BCTS requests to server.
+
+v3 patch includes:
+
+. modified posix_test_lock to check and resolve conflict locks
+  to handle NLM TEST and NFSv4 LOCKT requests.
+
+. separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+v4 patch includes:
+
+. rework nfsd_check_courtesy to avoid dead lock of fl_lock and client_lock
+  by asking the laudromat thread to destroy the courtesy client.
+
+. handle NFSv4 share reservation conflicts with courtesy client. This
+  includes conflicts between access mode and deny mode and vice versa.
+
+. drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+v5 patch includes:
+
+. fix recursive locking of file_rwsem from posix_lock_file. 
+
+. retest with LOCKDEP enabled.
+
+v6 patch includes:
+
+. merge witn 5.15-rc7
+
+. fix a bug in nfs4_check_deny_bmap that did not check for matched
+  nfs4_file before checking for access/deny conflict. This bug causes
+  pynfs OPEN18 to fail since the server taking too long to release
+  lots of un-conflict clients' state.
+
+. enhance share reservation conflict handler to handle case where
+  a large number of conflict courtesy clients need to be expired.
+  The 1st 100 clients are expired synchronously and the rest are
+  expired in the background by the laundromat and NFS4ERR_DELAY
+  is returned to the NFS client. This is needed to prevent the
+  NFS client from timing out waiting got the reply.
+
+v7 patch includes:
+
+. Fix race condition in posix_test_lock and posix_lock_inode after
+  dropping spinlock.
+
+. Enhance nfsd4_fl_expire_lock to work with with new lm_expire_lock
+  callback
+
+. Always resolve share reservation conflicts asynchrously.
+
+. Fix bug in nfs4_laundromat where spinlock is not used when
+  scanning cl_ownerstr_hashtbl.
+
+. Fix bug in nfs4_laundromat where idr_get_next was called
+  with incorrect 'id'. 
+
+. Merge nfs4_destroy_courtesy_client into nfsd4_fl_expire_lock.
+
+v8 patch includes:
+
+. Fix warning in nfsd4_fl_expire_lock reported by test robot.
+
+v9 patch includes:
+
+. Simplify lm_expire_lock API by (1) remove the 'testonly' flag
+  and (2) specifying return value as true/false to indicate
+  whether conflict was succesfully resolved.
+
+. Rework nfsd4_fl_expire_lock to mark client with
+  NFSD4_DESTROY_COURTESY_CLIENT then tell the laundromat to expire
+  the client in the background.
+
+. Add a spinlock in nfs4_client to synchronize access to the
+  NFSD4_COURTESY_CLIENT and NFSD4_DESTROY_COURTESY_CLIENT flag to
+  handle race conditions when resolving lock and share reservation
+  conflict.
+
+. Courtesy client that was marked as NFSD4_DESTROY_COURTESY_CLIENT
+  are now consisdered 'dead', waiting for the laundromat to expire
+  it. This client is no longer allowed to use its states if it
+  reconnects before the laundromat finishes expiring the client.
+
+  For v4.1 client, the detection is done in the processing of the
+  SEQUENCE op and returns NFS4ERR_BAD_SESSION to force the client
+  to re-establish new clientid and session.
+  For v4.0 client, the detection is done in the processing of the
+  RENEW and state-related ops and return NFS4ERR_EXPIRE to force
+  the client to re-establish new clientid.
+
+v10 patch includes:
+
+  Resolve deadlock in v9 by avoiding getting cl_client and
+  cl_cs_lock together. The laundromat needs to determine whether
+  the expired client has any state and also has no blockers on
+  its locks. Both of these conditions are allowed to change after
+  the laundromat transits an expired client to courtesy client.
+  When this happens, the laundromat will detect it on the next
+  run and and expire the courtesy client.
+
+  Remove client persistent record before marking it as COURTESY_CLIENT
+  and add client persistent record before clearing the COURTESY_CLIENT
+  flag to allow the courtesy client to transist to normal client to
+  continue to use its state.
+
+  Lock/delegation/share reversation conflict with courtesy client is
+  resolved by marking the courtesy client as DESTROY_COURTESY_CLIENT,
+  effectively disable it, then allow the current request to proceed
+  immediately.
+  
+  Courtesy client marked as DESTROY_COURTESY_CLIENT is not allowed
+  to reconnect to reuse itsstate. It is expired by the laundromat
+  asynchronously in the background.
+
+  Move processing of expired clients from nfs4_laudromat to a
+  separate function, nfs4_get_client_reaplist, that creates the
+  reaplist and also to process courtesy clients.
+
+  Update Documentation/filesystems/locking.rst to include new
+  lm_lock_conflict call.
+
+  Modify leases_conflict to call lm_breaker_owns_lease only if
+  there is real conflict.  This is to allow the lock manager to
+  resolve the delegation conflict if possible.
+
+v11 patch includes:
+
+  Add comment for lm_lock_conflict callback.
+
+  Replace static const courtesy_client_expiry with macro.
+
+  Remove courtesy_clnt argument from find_in_sessionid_hashtbl.
+  Caller uses nfs4_client->cl_cs_client boolean to determined if
+  it's the courtesy client and takes appropriate actions.
+
+  Rename NFSD4_COURTESY_CLIENT and NFSD4_DESTROY_COURTESY_CLIENT
+  with NFSD4_CLIENT_COURTESY and NFSD4_CLIENT_DESTROY_COURTESY.
