@@ -2,79 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC3B4AAF71
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Feb 2022 14:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43DFE4AAF89
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Feb 2022 14:47:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239604AbiBFN2d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Feb 2022 08:28:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42178 "EHLO
+        id S240066AbiBFNru (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Feb 2022 08:47:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239584AbiBFN2d (ORCPT
+        with ESMTP id S239883AbiBFNrt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Feb 2022 08:28:33 -0500
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E3BC06173B;
-        Sun,  6 Feb 2022 05:28:31 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V3h9.oE_1644154108;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V3h9.oE_1644154108)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 06 Feb 2022 21:28:28 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] fs: Remove two excess function parameters in kernel-doc comment
-Date:   Sun,  6 Feb 2022 21:28:26 +0800
-Message-Id: <20220206132826.1523-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Sun, 6 Feb 2022 08:47:49 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DD5C06173B;
+        Sun,  6 Feb 2022 05:47:48 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CBFDC61014;
+        Sun,  6 Feb 2022 13:47:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B58C340E9;
+        Sun,  6 Feb 2022 13:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644155267;
+        bh=LZnVpND4TW3EHGCa7Bt7E3If2oojjj22Tn2/52XBPWk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E1qW8ITUFwf/4dD8xfL6W4dli7he4xICS2fT/MdB/6tJEcaA70T/dYcYtwDTnq2uk
+         oAXe6wB6eF86RKy5yWv+qSeCmNmZmOZHDRoTlhjpUPKE5m87Bhqfdm0rfdmjUYls2T
+         B79dM9UwHBqXG67B+euhaPL8jtPv3VCbdOUDMArafxSz9yNecXuB7P59vwEcCOe+Q0
+         doHGn8ocBdGFwZJhaVUz29Owl0WzhS5Snt3AI2izgjlTQg/6t/kTdfwV/8tHN0UYVx
+         kcSRny6koAdIsxsRYumo6sL+/F4Gwhs5hYEVW0rbERA5tN9W/JS7e/whyiGhdSZ5vT
+         2+VPkEHMYtT9Q==
+Date:   Sun, 6 Feb 2022 14:47:41 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     "Anton V. Boyarshinov" <boyarsh@altlinux.org>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        ebiederm@xmission.com, legion@kernel.org, ldv@altlinux.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] Add ability to disallow idmapped mounts
+Message-ID: <20220206134741.ze3e4ndzxrckdiz5@wittgenstein>
+References: <20220204065338.251469-1-boyarsh@altlinux.org>
+ <20220204094515.6vvxhzcyemvrb2yy@wittgenstein>
+ <20220204132616.28de9c4a@tower>
+ <20220204151032.7q22hgzcil4hqvkl@wittgenstein>
+ <20220205105758.1623e78d@tower>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220205105758.1623e78d@tower>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove the excess @opened in finish_open() and @cred in vfs_open()
-kernel-doc comment to remove warnings found by running scripts/kernel-doc,
-which is caused by using 'make W=1'.
+On Sat, Feb 05, 2022 at 10:57:58AM +0300, Anton V. Boyarshinov wrote:
+> В Fri, 4 Feb 2022 16:10:32 +0100
+> Christian Brauner <brauner@kernel.org> пишет:
+> 
+> 
+> > > It turns off much more than idmapped mounts only. More fine grained
+> > > control seems better for me.  
+> > 
+> > If you allow user namespaces and not idmapped mounts you haven't reduced
+> > your attack surface.
+> 
+> I have. And many other people have. People who have creating user
+> namespaces by unpriviliged user disabled. I find it sad that we have no
+> tool in mainline kernel to limit users access to creating user
+> namespaces except complete disabling them. But many distros have that
+> tools. Different tools with different interfaces and semantics :(
+> 
+> And at least one major GNU/Linux distro disabled idmapped mounts
+> unconditionally. If I were the author of this functionality, I would
+> prefer to have a knob then have it unavailible for for so many users. But as you wish.
+ 
+You're talking about the author of the allegations being involved in
+disabling idmapped mounts for rhel under [2] as I was told.
+ 
+If a downstream distro wants to disable this feature based on
+allegations we've refuted multiple times then we can't stop them from
+doing so.
 
-fs/open.c:1048: warning: Excess function parameter 'opened' description
-in 'finish_open'
-fs/open.c:1090: warning: Excess function parameter 'cred' description in
-'vfs_open'
+The only disconcerting thing is that this helps spreads misinformation
+as evidenced by this patch. The allegations and refutation around them
+are all visible and I've linked to them in the initial reply.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- fs/open.c | 2 --
- 1 file changed, 2 deletions(-)
+This is a root-only accessible feature with a massive testsuite and
+being used for 2 years. Each bug fixed gets its own regression test
+right away. We will of course take and upstream patches that fix actual
+clearly reported bugs.
+ 
+In the end it is not different from say Archlinux [1] having had user
+namespaces disabled for 5+ years from their introduction in 2013
+onwards and many other examples. Downstream distros can make whatever
+choice they want and diverge from upstream.
+ 
+In any case, I'll be on vacation for about 2 weeks with very limited
+access to internet going forward.
+ 
+[1]: https://bugs.archlinux.org/task/36969
+[2]: https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/merge_requests/131
 
-diff --git a/fs/open.c b/fs/open.c
-index cf4cddc4e3f5..dbfb99a95ec0 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1030,7 +1030,6 @@ static int do_dentry_open(struct file *f,
-  * @file: file pointer
-  * @dentry: pointer to dentry
-  * @open: open callback
-- * @opened: state of open
-  *
-  * This can be used to finish opening a file passed to i_op->atomic_open().
-  *
-@@ -1084,7 +1083,6 @@ EXPORT_SYMBOL(file_path);
-  * vfs_open - open the file at the given path
-  * @path: path to open
-  * @file: newly allocated file with f_flag initialized
-- * @cred: credentials to use
-  */
- int vfs_open(const struct path *path, struct file *file)
- {
--- 
-2.20.1.7.g153144c
-
+> 
+> > An unprivileged user can reach much more
+> > exploitable code simply via unshare -user --map-root -mount which we
+> > still allow upstream without a second thought even with all the past and
+> > present exploits (see
+> > https://www.openwall.com/lists/oss-security/2022/01/29/1 for a current
+> > one from this January).
+> > 
+> > >   
+> > > > They can neither
+> > > > be created as an unprivileged user nor can they be created inside user
+> > > > namespaces.  
+> > > 
+> > > But actions of fully privileged user can open non-obvious ways to
+> > > privilege escalation.  
+> > 
+> > A fully privileged user potentially being able to cause issues is really
+> > not an argument; especially not for a new sysctl.
+> > You need root to create idmapped mounts and you need root to turn off
+> > the new knob.
+> > 
+> > It also trivially applies to a whole slew of even basic kernel tunables
+> > basically everything that can be reached by unprivileged users after a
+> > privileged user has turned it on or configured it.
+> > 
+> > After 2 years we haven't seen any issue with this code and while I'm not
+> > promising that there won't ever be issues - nobody can do that - the
+> > pure suspicion that there could be some is not a justification for
+> > anything.
+> 
+> 
