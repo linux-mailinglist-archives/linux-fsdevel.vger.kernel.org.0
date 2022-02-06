@@ -2,73 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D284AACA3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Feb 2022 22:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FA124AAD81
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Feb 2022 03:23:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381396AbiBEVMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Feb 2022 16:12:01 -0500
-Received: from [194.99.46.237] ([194.99.46.237]:57138 "EHLO
-        slot0.bluewaterleisure.com" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S233073AbiBEVMA (ORCPT
+        id S1381602AbiBFCXo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Feb 2022 21:23:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244398AbiBFCXn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Feb 2022 16:12:00 -0500
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=bluewaterleisure.com;
- h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding; i=ker.mon@bluewaterleisure.com;
- bh=ZLzu6AEHEnaoWCR6d4s4qGwnBEo=;
- b=uwj3AcfTIztG45zF2db4gDRAWrQ51KOgPq6cchUdPLvILKn/NXZBE6HBsSCl5N5hVfSr8gR4Oc8d
-   J159LSWuHRz3ma3J/K1riV4eGHc9E6lcvJ//NmxQ6mBU97cX/uZGvlxMLav9W8KJNiOj6Z9Q0mJr
-   chjUGK4gPVDqpPBzcvn1XOWVGe/Sy/qEOyHksQFY6o9rtwwQxTttXsK06KAJPItNebrZscEpcQ+k
-   cxRKGCj5JUWamI+DQLgFtr50LUNyy5whXRAUfVS+BROB3Od4gkhQheg1T+okLGGN/KRVogZptj4b
-   GiZvcuKCjfanW8TELVaXPiv0FZFiSfR7GiCARw==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=bluewaterleisure.com;
- b=JUgRsjQ6PjfP9XHRL5ghzrwC1ozlHA3TBeeQpStfP9WDEFgFNtRZlkkDOTUkeeaYeIKXIGF1F+0x
-   T5KGJt13qdCZEDxczm26l4wUyhXBrIR8D7A6/HXH/CKYibcE5zbTaPTEsj5Tx5x6jqetdS3SUsA0
-   BUslN2mpxy1qvlXZXSEh/QYxwo5Zalcin3tTR/xNTwZTBDsEa0F1GbAxhLiHQWtXK/B+US1V+rp1
-   yuxoDcOL2NxzMZMuJUfTnlNWX/ay8i928GX/xntafcxzhqbb+ifKg9ITwdPvb1YN7yjutR/L1clE
-   oxHPBxilRoZ9QwW2eOs85/+ZmYgZGlXok/6HDw==;
-Reply-To: tomander231@gmail.com
-From:   "Barrister Mustafa" <ker.mon@bluewaterleisure.com>
-To:     linux-fsdevel@vger.kernel.org
-Subject: Aufmerksamkeit:
-Date:   5 Feb 2022 22:04:22 +0100
-Message-ID: <20220205220422.99AAA39769697220@bluewaterleisure.com>
+        Sat, 5 Feb 2022 21:23:43 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE3BC043186;
+        Sat,  5 Feb 2022 18:23:42 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id z20so14457492ljo.6;
+        Sat, 05 Feb 2022 18:23:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B1E6bVK8AHUmw4iabxx8MHLpQ1jAgmwOt/Bl6uj/XOE=;
+        b=Hva+uqwHSlQvGLAnTK95lIoVWsYCCaIXmeP9M9F/K6qkI/GjxxCiFYiZoDxmvbhjSt
+         wFrNcyfBjJyNKSanRTr6V4v0jxDKjHMJe/+wcwcqQRxaHmi4lHtHEG34Na/k//Wucb5S
+         Y2/H/xUGghO5Wa7c9sj1i26ApDYQU+wPv1HtS76dLsi3Da4nNQfL9hkt7O0dB21C5QEx
+         nH62yeCYLHEVzy0twChXimUzTI+kobVTUABoiBRXvSQViIg1cUDVGZcdGqXUSaeDFQyU
+         IdnnWA406aBuORLi3DimswmAeIlt6HRqDlMsZl3/uc3xZJkags2uXB7M5jUlcF2L3Igz
+         Ku2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B1E6bVK8AHUmw4iabxx8MHLpQ1jAgmwOt/Bl6uj/XOE=;
+        b=F8T2X2K+TpCRUxR+cdnun08lTkoau7ksawCqaIiTJVYLP6j8cw3SbTFoknFEQ6H4B7
+         1VISGT0Q9cWGZCAHr1xexHvreZbQQGNo7EUnlGKG/qWUVzzB/YY8otnxj63N0gJMm1hR
+         4TojK2TPjXiKLWtFYf9ERw61T+2eXUIzbFwuunfAhFQA2CZZXfDPLCZoWjv2tQlJxmNK
+         39R6JiIM5YRG70nCIw5lFTiETCXFMF1bYCY1/k18yU1m0/Zfq5X+TDWbbrwkKc1cOU17
+         g+yqBPRVQKtt3QxJrmCk9Cx3XyH5ey0m3j1QH9s/SAfo+7QPbgRiTHCIX6jjHPmGpgq/
+         pmAw==
+X-Gm-Message-State: AOAM530j4I3X0XoLItIjGBpZ4dwIJ4GIz/6HOSnY8BSLgFHY1F8E65mH
+        CurXRyAATTvnLsnzVaynm4mdrg3+mh1WwhvVHKAUn494
+X-Google-Smtp-Source: ABdhPJzUVRwpCGA1/qPUbSEMKThqgsdM9cosL6EJ5qtQdJ84l8myWVlTLU3OlpeWT/nkXdqqIAZEphddm+AlO6EprwI=
+X-Received: by 2002:a2e:9c04:: with SMTP id s4mr4399755lji.229.1644114220293;
+ Sat, 05 Feb 2022 18:23:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+References: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
+In-Reply-To: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sat, 5 Feb 2022 20:23:29 -0600
+Message-ID: <CAH2r5mvgm30Dr8P=Ah8Hq0dZ6w=++amLg98TJgtfdOL+Tdjdzg@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] configfd as a replacement for both ioctls and fsconfig
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Lieb linux-fsdevel,
+This is a good discussion to have
 
-Ich bin Barrister Mustafa Ayvaz, hoffe, diese E-Mail findet Sie=20
-gut. Ich bin Anwalt des verstorbenen Herrn Robert, der aufgrund=20
-des Coronavirus sein Leben verlor, kontaktierte er w=C3=A4hrend seiner=20
-Gesch=C3=A4ftsreise in China. Ich kontaktiere Sie, um mit mir=20
-zusammenzuarbeiten, um die =C3=9Cberweisung eines Fonds von vier=20
-Millionen vierhundertzwanzigtausend Dollar zu sichern, verlie=C3=9F=20
-er.
+On Sat, Feb 5, 2022 at 6:02 AM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> A shortened version of this topic was originally sent for LSF/MM 2020
+> which didn't happen due to the pandemic:
+>
+> https://lore.kernel.org/all/1581781497.3847.5.camel@HansenPartnership.com/
+>
+> However, now replacing ioctls is on the table:
+>
+> https://lore.kernel.org/all/20220201013329.ofxhm4qingvddqhu@garbanzo/
+>
+> as I've already stated in that thread, I think, used sparingly, ioctls
+> are fit for purpose and shouldn't be replaced and I'd definitely like
+> to argue for that position.
+>
+> However, assuming that people would like to consider alternatives, I'd
+> like to propose configfd.  It was originally proposed as a
+> configuration mechanism for bind mounts that was a more general
+> replacement for fsconfig (which can only configure filesystems with
+> superblocks) and was going to be used by shiftfs.  However, since
+> shiftfs functionality was done a different way, configfd has
+> languished, although the patches are here:
+>
+> https://lore.kernel.org/all/20200215153609.23797-1-James.Bottomley@HansenPartnership.com/
+>
+> The point, though, is that configfd can configure pretty much anything;
+> it wouldn't just be limited to filesystem objects.  It takes the
+> fsconfig idea of using a file descriptor to carry configuration
+> information, which could be built up over many config calls and makes
+> it general enough to apply to anything.  One of the ideas of configfd
+> is that the data could be made fully introspectable ... as in not just
+> per item description, but the ability to get from the receiver what it
+> is expecting in terms of configuration options (this part was an idea
+> not present in the above patch series).
+>
+> If the ioctl debate goes against ioctls, I think configfd would present
+> a more palatable alternative to netlink everywhere.
+>
+> James
+>
+>
 
-Ich habe nach dem n=C3=A4chsten Angeh=C3=B6rigen meines verstorbenen Kunden=
-=20
-gesucht, ohne Erfolg, da ich seinen aktuellen Wohnsitz und seine=20
-Kontaktdaten nicht habe. Als ich suchte, stie=C3=9F ich auf Ihr Profil=20
-mit dem gleichen Nachnamen und am selben Ort mit den N=C3=A4chsten=20
-Angeh=C3=B6rigen. Ich beschloss, dich zu kontaktieren und dich als=20
-Bonafide Next Of Kin zu benutzen.
 
-Ich bitte Sie um Ihre Zustimmung, Sie als Next Of Kin meines=20
-verstorbenen Kunden zu pr=C3=A4sentieren, da Sie beide den gleichen=20
-Nachnamen tragen. Die Gelder werden dann an Sie als Beg=C3=BCnstigten=20
-in Ihrem Land =C3=BCberwiesen und im Verh=C3=A4ltnis 60:40 geteilt, das=20
-sind 60% f=C3=BCr mich und 40% f=C3=BCr Sie. F=C3=BCr weitere Details=20
-kontaktieren Sie mich bitte sofort f=C3=BCr weitere Informationen =C3=BCber=
-=20
-diese meine E-Mail. 
+-- 
+Thanks,
 
-Danach sende ich Ihnen die Details, wie die Transaktion beginnen=20
-wird
-
-Gr=C3=BC=C3=9Fe
-Mustafa Ayvaz
+Steve
