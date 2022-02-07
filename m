@@ -2,181 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA8264AB914
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 11:52:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 813F94ABEF1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 14:23:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238677AbiBGKui (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Feb 2022 05:50:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36780 "EHLO
+        id S1377072AbiBGNBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Feb 2022 08:01:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352740AbiBGKp6 (ORCPT
+        with ESMTP id S1388518AbiBGLnw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Feb 2022 05:45:58 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944E0C043181;
-        Mon,  7 Feb 2022 02:45:57 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 04D37210E6;
-        Mon,  7 Feb 2022 10:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1644230756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=H/A6g4q5wX9FPq/iPkChx0DcndBL8m1J1RaDIQAqdgA=;
-        b=IDyj5XKM5yuLYff3rASEV70DXQju7YYUpSSIVgOtw+/uNmuZy+2F6kro7M23//P4zY0jd1
-        NYMCpdIwanKhyY8eSyZ8bZeOlq911YkWXfDvdM5OS0Py9FiKgbGtzSCpbJCqv4az/Jkp2J
-        3X9kcad57THLdmJuLGs5Cn8ih0z9qgI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1644230756;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=H/A6g4q5wX9FPq/iPkChx0DcndBL8m1J1RaDIQAqdgA=;
-        b=XXjJ0TI1gcuFsZ4vftzaqKuyrxYN+U1YvYnrNhEyAqjjaRYcJq+lI2DK/ByVKIqPpKBb3v
-        y9pWIAzPK8IxN1Cg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 42E3213B53;
-        Mon,  7 Feb 2022 10:45:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 1Eq0DmP4AGJsRwAAMHmgww
-        (envelope-from <ddiss@suse.de>); Mon, 07 Feb 2022 10:45:55 +0000
-Date:   Mon, 7 Feb 2022 11:45:54 +0100
-From:   David Disseldorp <ddiss@suse.de>
-To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "msnitzer@redhat.com >> msnitzer@redhat.com" <msnitzer@redhat.com>,
-        <lsf-pc@lists.linux-foundation.org>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
-        "tytso@mit.edu" <tytso@mit.edu>, "jack@suse.com" <jack@suse.com>
-Subject: Re: [LSF/MM/BFP ATTEND] [LSF/MM/BFP TOPIC] Storage: Copy Offload
-Message-ID: <20220207114554.7a739042@suse.de>
-In-Reply-To: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com>
-References: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com>
+        Mon, 7 Feb 2022 06:43:52 -0500
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9A9BC043181
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Feb 2022 03:43:51 -0800 (PST)
+Received: by mail-yb1-xb32.google.com with SMTP id g14so38924747ybs.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Feb 2022 03:43:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=DqWgmzwxtL264zlQQi/aWGo5dgkPVyz0CHwO9F0ARvI=;
+        b=ZAikxu6W0Tse6pSUT3PJpXsbcq5ghw55uIWE0umxyXZEov02vMAXWebaGqeBOBgn56
+         1Ha7T/JXuYFUlO62olgXb4gI02cv2zI720VybXH7rTrhWTBUAWHZ0eqruQ/fT3laLs2m
+         8xgr98g8CCxRpqF6yQM70NsJIvRyh0tiu4PzuAhMG1fQ5TnCE+K2YpSjIv0HSRPbvolC
+         dSL5QjqZ7/EKycgejQkK04Ol4o2V9r0x1MBrSnexX4x/L5LxY2olpuQHEfhCNnPBek5c
+         gnOQ/9kW1rge0Fii1i9jjtMDIhLyhKfNm83PewOARZF4Q4wlL7RCg02SEhj8UL1HBC/S
+         e25g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=DqWgmzwxtL264zlQQi/aWGo5dgkPVyz0CHwO9F0ARvI=;
+        b=xAQ1pATl2/lZCOT8g6SSLREL5IJlCXW75PyV/Tb9fDsxYMDwvKyYJmh1tgEXF4OoCP
+         2bqfbyaqlI/EMR2x2OfopnJfTiJRx79g1SLuuWqK4Udt8B4A6xDgkO8IuPnEFUTPyLle
+         NQpyzpwQC3tAqu6uDjA3Aqk+DIqG3uzxrKsOl/zKpTKLg/wh5PYw4I+hB5X+nJBLsjmi
+         vNNRFC8z9tCywNx3VVNWQHOLMjRaTM/xrMgnp4ePDgTfRtt89bqtp8U6KXN8SO88eZ7R
+         qADp0m1kYQ+svi2g1zPtUSlfTuIgVcbOO20wPvQ2YvShPLDptyWKWztFY/fzKqXff1hG
+         omBQ==
+X-Gm-Message-State: AOAM533i3feO3KwLuiSZo1pi9GOhe9tds99TBtmYqIrvw3lSpY67AygM
+        fLnqBXkfhfyZsG0+rAixZXR7Hb6pLg3tCi4D6D1oDQ==
+X-Google-Smtp-Source: ABdhPJw/wYJhy6Xitu0IqzKj85on6zJBb6VfDZyyxSheyccof0ONf81+HJUrXnY2Ll7yMc9fC0rcJahUmQTUQMqcTTA=
+X-Received: by 2002:a81:b662:: with SMTP id h34mr10605194ywk.366.1644234230804;
+ Mon, 07 Feb 2022 03:43:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 7 Feb 2022 17:13:39 +0530
+Message-ID: <CA+G9fYsZuC=36zJoj2UPNhF3hQTf-osgs-m59Zey3TB_E0wZUg@mail.gmail.com>
+Subject: [next] fs/proc/task_mmu.c:1444:14: warning: unused variable 'migration'
+To:     open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Yang Shi <shy828301@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Hildenbrand <david@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 27 Jan 2022 07:14:13 +0000, Chaitanya Kulkarni wrote:
+While building Linux next-20220207 for arm architecture the following
+error was noticed.
 
-> Hi,
-> 
-> * Background :-
-> -----------------------------------------------------------------------
-> 
-> Copy offload is a feature that allows file-systems or storage devices
-> to be instructed to copy files/logical blocks without requiring
-> involvement of the local CPU.
-> 
-> With reference to the RISC-V summit keynote [1] single threaded
-> performance is limiting due to Denard scaling and multi-threaded
-> performance is slowing down due Moore's law limitations. With the rise
-> of SNIA Computation Technical Storage Working Group (TWG) [2],
-> offloading computations to the device or over the fabrics is becoming
-> popular as there are several solutions available [2]. One of the common
-> operation which is popular in the kernel and is not merged yet is Copy
-> offload over the fabrics or on to the device.
-> 
-> * Problem :-
-> -----------------------------------------------------------------------
-> 
-> The original work which is done by Martin is present here [3]. The
-> latest work which is posted by Mikulas [4] is not merged yet. These two
-> approaches are totally different from each other. Several storage
-> vendors discourage mixing copy offload requests with regular READ/WRITE
-> I/O. Also, the fact that the operation fails if a copy request ever
-> needs to be split as it traverses the stack it has the unfortunate
-> side-effect of preventing copy offload from working in pretty much
-> every common deployment configuration out there.
-> 
-> * Current state of the work :-
-> -----------------------------------------------------------------------
-> 
-> With [3] being hard to handle arbitrary DM/MD stacking without
-> splitting the command in two, one for copying IN and one for copying
-> OUT. Which is then demonstrated by the [4] why [3] it is not a suitable
-> candidate. Also, with [4] there is an unresolved problem with the
-> two-command approach about how to handle changes to the DM layout
-> between an IN and OUT operations.
-> 
-> We have conducted a call with interested people late last year since 
-> lack of LSFMMM and we would like to share the details with broader
-> community members.
-> 
-> * Why Linux Kernel Storage System needs Copy Offload support now ?
-> -----------------------------------------------------------------------
-> 
-> With the rise of the SNIA Computational Storage TWG and solutions [2],
-> existing SCSI XCopy support in the protocol, recent advancement in the
-> Linux Kernel File System for Zoned devices (Zonefs [5]), Peer to Peer
-> DMA support in the Linux Kernel mainly for NVMe devices [7] and
-> eventually NVMe Devices and subsystem (NVMe PCIe/NVMeOF) will benefit
-> from Copy offload operation.
-> 
-> With this background we have significant number of use-cases which are
-> strong candidates waiting for outstanding Linux Kernel Block Layer Copy
-> Offload support, so that Linux Kernel Storage subsystem can to address
-> previously mentioned problems [1] and allow efficient offloading of the
-> data related operations. (Such as move/copy etc.)
-> 
-> For reference following is the list of the use-cases/candidates waiting
-> for Copy Offload support :-
-> 
-> 1. SCSI-attached storage arrays.
-> 2. Stacking drivers supporting XCopy DM/MD.
-> 3. Computational Storage solutions.
-> 7. File systems :- Local, NFS and Zonefs.
-> 4. Block devices :- Distributed, local, and Zoned devices.
-> 5. Peer to Peer DMA support solutions.
-> 6. Potentially NVMe subsystem both NVMe PCIe and NVMeOF.
-> 
-> * What we will discuss in the proposed session ?
-> -----------------------------------------------------------------------
-> 
-> I'd like to propose a session to go over this topic to understand :-
-> 
-> 1. What are the blockers for Copy Offload implementation ?
-> 2. Discussion about having a file system interface.
-> 3. Discussion about having right system call for user-space.
-> 4. What is the right way to move this work forward ?
-> 5. How can we help to contribute and move this work forward ?
-> 
-> * Required Participants :-
-> -----------------------------------------------------------------------
-> 
-> I'd like to invite file system, block layer, and device drivers
-> developers to:-
-> 
-> 1. Share their opinion on the topic.
-> 2. Share their experience and any other issues with [4].
-> 3. Uncover additional details that are missing from this proposal.
+make --silent --keep-going --jobs=8  \
+     ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- \
+     'CC=sccache arm-linux-gnueabihf-gcc' \
+     'HOSTCC=sccache gcc' \
+     vexpress_defconfig
 
-I'd like to attend this discussion. I've worked on the LIO XCOPY
-implementation in drivers/target/target_core_xcopy.c and added Samba's
-FSCTL_SRV_COPYCHUNK/FSCTL_DUPLICATE_EXTENTS_TO_FILE support.
+fs/proc/task_mmu.c: In function 'pagemap_pmd_range':
+fs/proc/task_mmu.c:1444:14: warning: unused variable 'migration'
+[-Wunused-variable]
+ 1444 |         bool migration = false;
+      |              ^~~~~~~~~
 
-Cheers, David
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build log:
+https://builds.tuxbuild.com/24lg0EnsbEf6deWnMXwXiwh8oVi/
+
+metadata:
+    git_describe: next-20220207
+    git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+    git_short_log: b3c0a155ef77 (\"Add linux-next specific files for 20220207\")
+    target_arch: arm
+    toolchain: gcc-10
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
