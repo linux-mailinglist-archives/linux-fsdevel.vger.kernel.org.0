@@ -2,65 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4432F4AC867
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 19:21:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E751E4AC8EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 19:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233668AbiBGSTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Feb 2022 13:19:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46068 "EHLO
+        id S237463AbiBGSy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Feb 2022 13:54:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344353AbiBGSMy (ORCPT
+        with ESMTP id S235935AbiBGSvm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Feb 2022 13:12:54 -0500
-X-Greylist: delayed 62 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 10:12:53 PST
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CDC2C0401D9;
-        Mon,  7 Feb 2022 10:12:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644257573; x=1675793573;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9jtlciL9JDhXsZpBNGevebG0Pcet92BqXyuEzYTIPU8=;
-  b=ML8cvVpRs8VbVgMGfU63I3TOLbvIr8lzXHWAhbHSoYtT8InWInmrvzuy
-   ktzJsbvE9okzMhc9wuO8IK/UyhCkmzkDhKL9Ry4S58GBiGzuwM0yqJGV2
-   JXziBwJt4T/fBv7HZ1G4N5Bj4UIxDJaj/TZ3wH/oM6B/zyhIr5deiJo0s
-   m1UA5pOlgQfqxIlyeevJfaFMcoLDMJiDpQ342U6paKdWgdduCbAcLqkE8
-   3wzEIzZDDAmZ9zv7uC8uku77+PYW+14JwTWuAsP4K4UjOot48GX7cYNN6
-   LivZbhcyBW+assdP6tOGs78FZlYuDCigWf01x6Xf+dHgHOvrC6ygBhpLk
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10250"; a="248725038"
-X-IronPort-AV: E=Sophos;i="5.88,350,1635231600"; 
-   d="scan'208";a="248725038"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 10:11:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,350,1635231600"; 
-   d="scan'208";a="481665736"
-Received: from lkp-server01.sh.intel.com (HELO 9dd77a123018) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 07 Feb 2022 10:11:47 -0800
-Received: from kbuild by 9dd77a123018 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nH8UN-0000qN-4m; Mon, 07 Feb 2022 18:11:47 +0000
-Date:   Tue, 8 Feb 2022 02:10:49 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Nitesh Shetty <nj.shetty@samsung.com>, mpatocka@redhat.com
-Cc:     kbuild-all@lists.01.org, javier@javigon.com, chaitanyak@nvidia.com,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk, msnitzer@redhat.com
-Subject: Re: [PATCH v2 07/10] nvmet: add copy command support for bdev and
- file ns
-Message-ID: <202202080206.J6kilCeY-lkp@intel.com>
-References: <20220207141348.4235-8-nj.shetty@samsung.com>
+        Mon, 7 Feb 2022 13:51:42 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D3AC0401DA;
+        Mon,  7 Feb 2022 10:51:40 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 19927210FA;
+        Mon,  7 Feb 2022 18:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1644259899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NOYjLS4N8vwfd3h4Lp9C/Ennm3oWf0c+XTehS9bJX24=;
+        b=xD7Cr2cOpWyJFdqWLn+fwhofVahSVhXmdPo56idG5sEwFbYiClzqPVLWBWRcb1Mu2tmNuU
+        eBlcaQcoZFvNCxqIn5ekPjrKgkKAvDwbsoby5+RH2Ym3YX23LrAYAMQLPTyjl3j3RNg7Ur
+        5j0MxhHbXCsgoNKv88jfUOZwq7fbAWg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1644259899;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NOYjLS4N8vwfd3h4Lp9C/Ennm3oWf0c+XTehS9bJX24=;
+        b=XZ9d5JbQDs73N70sW61CO6zONLOYVpxPeUzOGcKXyNDBTFPsCbLl+dOc0vH286Yw3W8e+S
+        55xDWRh3IpqtqrCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9974513C61;
+        Mon,  7 Feb 2022 18:51:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id ZIAMJDpqAWI0QAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 07 Feb 2022 18:51:38 +0000
+Message-ID: <25166513-3074-f3b9-12cc-420ba74f153e@suse.cz>
+Date:   Mon, 7 Feb 2022 19:51:38 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220207141348.4235-8-nj.shetty@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH v4 02/12] mm/memfd: Introduce MFD_INACCESSIBLE flag
+Content-Language: en-US
+To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com,
+        Mike Rapoport <rppt@linux.ibm.com>
+References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
+ <20220118132121.31388-3-chao.p.peng@linux.intel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20220118132121.31388-3-chao.p.peng@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,97 +94,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Nitesh,
+On 1/18/22 14:21, Chao Peng wrote:
+> Introduce a new memfd_create() flag indicating the content of the
+> created memfd is inaccessible from userspace. It does this by force
+> setting F_SEAL_INACCESSIBLE seal when the file is created. It also set
+> F_SEAL_SEAL to prevent future sealing, which means, it can not coexist
+> with MFD_ALLOW_SEALING.
+> 
+> The pages backed by such memfd will be used as guest private memory in
+> confidential computing environments such as Intel TDX/AMD SEV. Since
+> page migration/swapping is not yet supported for such usages so these
+> pages are currently marked as UNMOVABLE and UNEVICTABLE which makes
+> them behave like long-term pinned pages.
 
-Thank you for the patch! Perhaps something to improve:
+Shouldn't the amount of such memory allocations be restricted? E.g. similar
+to secretmem_mmap() doing mlock_future_check().
 
-[auto build test WARNING on axboe-block/for-next]
-[also build test WARNING on linus/master v5.17-rc3 next-20220207]
-[cannot apply to device-mapper-dm/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>  include/uapi/linux/memfd.h |  1 +
+>  mm/memfd.c                 | 20 +++++++++++++++++++-
+>  2 files changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/memfd.h b/include/uapi/linux/memfd.h
+> index 7a8a26751c23..48750474b904 100644
+> --- a/include/uapi/linux/memfd.h
+> +++ b/include/uapi/linux/memfd.h
+> @@ -8,6 +8,7 @@
+>  #define MFD_CLOEXEC		0x0001U
+>  #define MFD_ALLOW_SEALING	0x0002U
+>  #define MFD_HUGETLB		0x0004U
+> +#define MFD_INACCESSIBLE	0x0008U
+>  
+>  /*
+>   * Huge page size encoding when MFD_HUGETLB is specified, and a huge page
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index 9f80f162791a..26998d96dc11 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -245,16 +245,19 @@ long memfd_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
+>  #define MFD_NAME_PREFIX_LEN (sizeof(MFD_NAME_PREFIX) - 1)
+>  #define MFD_NAME_MAX_LEN (NAME_MAX - MFD_NAME_PREFIX_LEN)
+>  
+> -#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB)
+> +#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB | \
+> +		       MFD_INACCESSIBLE)
+>  
+>  SYSCALL_DEFINE2(memfd_create,
+>  		const char __user *, uname,
+>  		unsigned int, flags)
+>  {
+> +	struct address_space *mapping;
+>  	unsigned int *file_seals;
+>  	struct file *file;
+>  	int fd, error;
+>  	char *name;
+> +	gfp_t gfp;
+>  	long len;
+>  
+>  	if (!(flags & MFD_HUGETLB)) {
+> @@ -267,6 +270,10 @@ SYSCALL_DEFINE2(memfd_create,
+>  			return -EINVAL;
+>  	}
+>  
+> +	/* Disallow sealing when MFD_INACCESSIBLE is set. */
+> +	if (flags & MFD_INACCESSIBLE && flags & MFD_ALLOW_SEALING)
+> +		return -EINVAL;
+> +
+>  	/* length includes terminating zero */
+>  	len = strnlen_user(uname, MFD_NAME_MAX_LEN + 1);
+>  	if (len <= 0)
+> @@ -315,6 +322,17 @@ SYSCALL_DEFINE2(memfd_create,
+>  		*file_seals &= ~F_SEAL_SEAL;
+>  	}
+>  
+> +	if (flags & MFD_INACCESSIBLE) {
+> +		mapping = file_inode(file)->i_mapping;
+> +		gfp = mapping_gfp_mask(mapping);
+> +		gfp &= ~__GFP_MOVABLE;
+> +		mapping_set_gfp_mask(mapping, gfp);
+> +		mapping_set_unevictable(mapping);
+> +
+> +		file_seals = memfd_file_seals_ptr(file);
+> +		*file_seals &= F_SEAL_SEAL | F_SEAL_INACCESSIBLE;
+> +	}
+> +
+>  	fd_install(fd, file);
+>  	kfree(name);
+>  	return fd;
 
-url:    https://github.com/0day-ci/linux/commits/Nitesh-Shetty/block-make-bio_map_kern-non-static/20220207-231407
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-config: microblaze-buildonly-randconfig-r003-20220207 (https://download.01.org/0day-ci/archive/20220208/202202080206.J6kilCeY-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/6bb6ea64499e1ac27975e79bb2eee89f07861893
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Nitesh-Shetty/block-make-bio_map_kern-non-static/20220207-231407
-        git checkout 6bb6ea64499e1ac27975e79bb2eee89f07861893
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=microblaze SHELL=/bin/bash drivers/nvme/target/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/byteorder/big_endian.h:5,
-                    from arch/microblaze/include/uapi/asm/byteorder.h:8,
-                    from include/asm-generic/bitops/le.h:6,
-                    from include/asm-generic/bitops.h:35,
-                    from ./arch/microblaze/include/generated/asm/bitops.h:1,
-                    from include/linux/bitops.h:33,
-                    from include/linux/log2.h:12,
-                    from include/asm-generic/div64.h:55,
-                    from ./arch/microblaze/include/generated/asm/div64.h:1,
-                    from include/linux/math.h:5,
-                    from include/linux/math64.h:6,
-                    from include/linux/time.h:6,
-                    from include/linux/stat.h:19,
-                    from include/linux/module.h:13,
-                    from drivers/nvme/target/admin-cmd.c:7:
-   drivers/nvme/target/admin-cmd.c: In function 'nvmet_execute_identify_ns':
->> include/uapi/linux/byteorder/big_endian.h:34:26: warning: conversion from 'unsigned int' to '__le16' {aka 'short unsigned int'} changes value from '524288' to '0' [-Woverflow]
-      34 | #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
-         |                          ^
-   include/linux/byteorder/generic.h:88:21: note: in expansion of macro '__cpu_to_le32'
-      88 | #define cpu_to_le32 __cpu_to_le32
-         |                     ^~~~~~~~~~~~~
-   drivers/nvme/target/admin-cmd.c:534:29: note: in expansion of macro 'cpu_to_le32'
-     534 |                 id->mssrl = cpu_to_le32(BIO_MAX_VECS << (PAGE_SHIFT - SECTOR_SHIFT));
-         |                             ^~~~~~~~~~~
-
-
-vim +34 include/uapi/linux/byteorder/big_endian.h
-
-5921e6f8809b161 David Howells 2012-10-13  15  
-5921e6f8809b161 David Howells 2012-10-13  16  #define __constant_htonl(x) ((__force __be32)(__u32)(x))
-5921e6f8809b161 David Howells 2012-10-13  17  #define __constant_ntohl(x) ((__force __u32)(__be32)(x))
-5921e6f8809b161 David Howells 2012-10-13  18  #define __constant_htons(x) ((__force __be16)(__u16)(x))
-5921e6f8809b161 David Howells 2012-10-13  19  #define __constant_ntohs(x) ((__force __u16)(__be16)(x))
-5921e6f8809b161 David Howells 2012-10-13  20  #define __constant_cpu_to_le64(x) ((__force __le64)___constant_swab64((x)))
-5921e6f8809b161 David Howells 2012-10-13  21  #define __constant_le64_to_cpu(x) ___constant_swab64((__force __u64)(__le64)(x))
-5921e6f8809b161 David Howells 2012-10-13  22  #define __constant_cpu_to_le32(x) ((__force __le32)___constant_swab32((x)))
-5921e6f8809b161 David Howells 2012-10-13  23  #define __constant_le32_to_cpu(x) ___constant_swab32((__force __u32)(__le32)(x))
-5921e6f8809b161 David Howells 2012-10-13  24  #define __constant_cpu_to_le16(x) ((__force __le16)___constant_swab16((x)))
-5921e6f8809b161 David Howells 2012-10-13  25  #define __constant_le16_to_cpu(x) ___constant_swab16((__force __u16)(__le16)(x))
-5921e6f8809b161 David Howells 2012-10-13  26  #define __constant_cpu_to_be64(x) ((__force __be64)(__u64)(x))
-5921e6f8809b161 David Howells 2012-10-13  27  #define __constant_be64_to_cpu(x) ((__force __u64)(__be64)(x))
-5921e6f8809b161 David Howells 2012-10-13  28  #define __constant_cpu_to_be32(x) ((__force __be32)(__u32)(x))
-5921e6f8809b161 David Howells 2012-10-13  29  #define __constant_be32_to_cpu(x) ((__force __u32)(__be32)(x))
-5921e6f8809b161 David Howells 2012-10-13  30  #define __constant_cpu_to_be16(x) ((__force __be16)(__u16)(x))
-5921e6f8809b161 David Howells 2012-10-13  31  #define __constant_be16_to_cpu(x) ((__force __u16)(__be16)(x))
-5921e6f8809b161 David Howells 2012-10-13  32  #define __cpu_to_le64(x) ((__force __le64)__swab64((x)))
-5921e6f8809b161 David Howells 2012-10-13  33  #define __le64_to_cpu(x) __swab64((__force __u64)(__le64)(x))
-5921e6f8809b161 David Howells 2012-10-13 @34  #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
-5921e6f8809b161 David Howells 2012-10-13  35  #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-5921e6f8809b161 David Howells 2012-10-13  36  #define __cpu_to_le16(x) ((__force __le16)__swab16((x)))
-5921e6f8809b161 David Howells 2012-10-13  37  #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-5921e6f8809b161 David Howells 2012-10-13  38  #define __cpu_to_be64(x) ((__force __be64)(__u64)(x))
-5921e6f8809b161 David Howells 2012-10-13  39  #define __be64_to_cpu(x) ((__force __u64)(__be64)(x))
-5921e6f8809b161 David Howells 2012-10-13  40  #define __cpu_to_be32(x) ((__force __be32)(__u32)(x))
-5921e6f8809b161 David Howells 2012-10-13  41  #define __be32_to_cpu(x) ((__force __u32)(__be32)(x))
-5921e6f8809b161 David Howells 2012-10-13  42  #define __cpu_to_be16(x) ((__force __be16)(__u16)(x))
-5921e6f8809b161 David Howells 2012-10-13  43  #define __be16_to_cpu(x) ((__force __u16)(__be16)(x))
-5921e6f8809b161 David Howells 2012-10-13  44  
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
