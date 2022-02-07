@@ -2,134 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83AEB4AC679
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 17:53:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DD14AC677
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 17:53:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245039AbiBGQxM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S238474AbiBGQxM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 7 Feb 2022 11:53:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46826 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385752AbiBGQoc (ORCPT
+        with ESMTP id S1386797AbiBGQpI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Feb 2022 11:44:32 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAA0C0401D1;
-        Mon,  7 Feb 2022 08:44:32 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 39DAC210FC;
-        Mon,  7 Feb 2022 16:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1644252271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=X2qfQ85F6qBmLLZXRvS29YBDakkQ4Y2OXaCE1kHP8c0=;
-        b=in42Be8MVnU/2nXcW8a29H9Gs4NZaTq+A4mpXFsiPWkVA0OJm6kP6Xr+SyoySeETwuaAm2
-        I8Fbxk/UJzX1EQT7yYzaPG9zrk1qF15OWUy4FvT7ar4Tk5UwU0LDlVE3t5nqbFV+WDFHhd
-        zCFp3pC+u0nYN3J483nZvF1diLeJ+Ag=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1644252271;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=X2qfQ85F6qBmLLZXRvS29YBDakkQ4Y2OXaCE1kHP8c0=;
-        b=D4v6q1rFPFSYP886Axaft6uRpB3Un4GnftS7UsyUxoEEDeNUtvSoVkRBb0JokZv3Mif/Oq
-        ddOvUIZCFdmhn5CQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 29E3FA3B89;
-        Mon,  7 Feb 2022 16:44:31 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 924EAA05BB; Mon,  7 Feb 2022 17:44:30 +0100 (CET)
-Date:   Mon, 7 Feb 2022 17:44:30 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Subject: Re: [PATCHv1 8/9] ext4: Add strict range checks while freeing blocks
-Message-ID: <20220207164430.pakzk7ycsmqovohh@quack3.lan>
-References: <cover.1644062450.git.riteshh@linux.ibm.com>
- <7d16dee931f42fa415ffe86fc3968b4b3d7269c8.1644062450.git.riteshh@linux.ibm.com>
+        Mon, 7 Feb 2022 11:45:08 -0500
+Received: from mgw-02.mpynet.fi (mgw-02.mpynet.fi [82.197.21.91])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BF7C0401DD;
+        Mon,  7 Feb 2022 08:45:05 -0800 (PST)
+Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
+        by mgw-02.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 217GeCDA090121;
+        Mon, 7 Feb 2022 18:44:58 +0200
+Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
+        by mgw-02.mpynet.fi with ESMTP id 3e1dtn18jr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 07 Feb 2022 18:44:58 +0200
+Received: from [192.168.0.129] (62.78.240.173) by tuxera-exch.ad.tuxera.com
+ (10.20.48.11) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 7 Feb
+ 2022 18:44:57 +0200
+Message-ID: <cd346b72-1899-8f2d-5ff6-65c4ac93308c@tuxera.com>
+Date:   Mon, 7 Feb 2022 18:44:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d16dee931f42fa415ffe86fc3968b4b3d7269c8.1644062450.git.riteshh@linux.ibm.com>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] fs/read_write.c: Fix a broken signed integer overflow
+ check.
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Anton Altaparmakov <anton@tuxera.com>
+References: <20220207120711.4070403-1-ari@tuxera.com>
+ <YgEzs2Hp0LrdDmJu@zeniv-ca.linux.org.uk>
+From:   Ari Sundholm <ari@tuxera.com>
+In-Reply-To: <YgEzs2Hp0LrdDmJu@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [62.78.240.173]
+X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
+ tuxera-exch.ad.tuxera.com (10.20.48.11)
+X-Proofpoint-GUID: Da0sQN7Knu4Px4pte8UxgNfRYtot2MB1
+X-Proofpoint-ORIG-GUID: Da0sQN7Knu4Px4pte8UxgNfRYtot2MB1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.425,18.0.816
+ definitions=2022-02-07_06:2022-02-07,2022-02-07 signatures=0
+X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 phishscore=0 suspectscore=0
+ malwarescore=0 adultscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202070103
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 05-02-22 19:39:57, Ritesh Harjani wrote:
-> Currently ext4_mb_clear_bb() & ext4_group_add_blocks() only checks
-> whether the given block ranges (which is to be freed) belongs to any FS
-> metadata blocks or not, of the block's respective block group.
-> But to detect any FS error early, it is better to add more strict
-> checkings in those functions which checks whether the given blocks
-> belongs to any critical FS metadata or not within system-zone.
+Hello, Al,
+
+On 2/7/22 16:58, Al Viro wrote:
+> On Mon, Feb 07, 2022 at 02:07:11PM +0200, Ari Sundholm wrote:
+>> The function generic_copy_file_checks() checks that the ends of the
+>> input and output file ranges do not overflow. Unfortunately, there is
+>> an issue with the check itself.
+>>
+>> Due to the integer promotion rules in C, the expressions
+>> (pos_in + count) and (pos_out + count) have an unsigned type because
+>> the count variable has the type uint64_t. Thus, in many cases where we
+>> should detect signed integer overflow to have occurred (and thus one or
+>> more of the ranges being invalid), the expressions will instead be
+>> interpreted as large unsigned integers. This means the check is broken.
 > 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/mballoc.c | 16 +++-------------
->  1 file changed, 3 insertions(+), 13 deletions(-)
+> I must be slow this morning, but... which values of pos_in and count are
+> caught by your check, but not by the original?
 > 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 23313963bb56..9f2b3a057918 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -5930,13 +5930,7 @@ static void ext4_mb_clear_bb(handle_t *handle, struct inode *inode,
->  		goto error_return;
->  	}
->  
-> -	if (in_range(ext4_block_bitmap(sb, gdp), block, count) ||
-> -	    in_range(ext4_inode_bitmap(sb, gdp), block, count) ||
-> -	    in_range(block, ext4_inode_table(sb, gdp),
-> -		     sbi->s_itb_per_group) ||
-> -	    in_range(block + count - 1, ext4_inode_table(sb, gdp),
-> -		     sbi->s_itb_per_group)) {
-> -
-> +	if (!ext4_inode_block_valid(inode, block, count)) {
->  		ext4_error(sb, "Freeing blocks in system zone - "
->  			   "Block = %llu, count = %lu", block, count);
->  		/* err = 0. ext4_std_error should be a no op */
-> @@ -6007,7 +6001,7 @@ static void ext4_mb_clear_bb(handle_t *handle, struct inode *inode,
->  						 NULL);
->  			if (err && err != -EOPNOTSUPP)
->  				ext4_msg(sb, KERN_WARNING, "discard request in"
-> -					 " group:%d block:%d count:%lu failed"
-> +					 " group:%u block:%d count:%lu failed"
->  					 " with %d", block_group, bit, count,
->  					 err);
->  		} else
-> @@ -6220,11 +6214,7 @@ int ext4_group_add_blocks(handle_t *handle, struct super_block *sb,
->  		goto error_return;
->  	}
->  
-> -	if (in_range(ext4_block_bitmap(sb, desc), block, count) ||
-> -	    in_range(ext4_inode_bitmap(sb, desc), block, count) ||
-> -	    in_range(block, ext4_inode_table(sb, desc), sbi->s_itb_per_group) ||
-> -	    in_range(block + count - 1, ext4_inode_table(sb, desc),
-> -		     sbi->s_itb_per_group)) {
-> +	if (!ext4_sb_block_valid(sb, NULL, block, count)) {
->  		ext4_error(sb, "Adding blocks in system zones - "
->  			   "Block = %llu, count = %lu",
->  			   block, count);
-> -- 
-> 2.31.1
+
+Thank you for your response and questions.
+
+Assuming an x86-64 target platform, please consider:
+
+loff_t pos_out = 0x7FFFFFFFFFFEFFFFLL;
+and
+uint64_t count = 65537;
+
+The type of the expression (pos_out + count) is a 64-bit unsigned type, 
+by C's integer promotion rules. Its value is 0x8000000000000000ULL, that 
+is, bit 63 is set.
+
+The comparison (pos_out + count) < pos_out, again due to C's integer 
+promotion rules, is unsigned. Thus, the comparison, in this case, is 
+equivalent to:
+
+0x8000000000000000ULL < 0x7FFFFFFFFFFEFFFFULL,
+
+which is false. Please note that the LHS is not expressible as a 
+positive integer of type loff_t. With larger values for count, the 
+problem should become quite obvious, as some the offsets within the file 
+would not be expressible as positive integers of type loff_t. But I 
+digress. As we can see above, the overflow is missed.
+
+With the LHS explicitly cast to loff_t, the comparison is equivalent to:
+
+0x8000000000000000LL < 0x7FFFFFFFFFFEFFFFLL,
+
+which is true, as the LHS is negative.
+
+This has also been verified in practice, and was detected when running 
+tests on special cases of the copy_file_range syscall on different 
+filesystems.
+
+>> -	if (pos_in + count < pos_in || pos_out + count < pos_out)
+>> +	if ((loff_t)(pos_in + count) < pos_in ||
+>> +			(loff_t)(pos_out + count) < pos_out)
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Example, please.  Why do you need that comparison to be signed?
+
+Please see the above.
+
+I also created a small test program one can try on Compiler Explorer: 
+https://godbolt.org/z/e76rb3Ec9
+
+Please let me know if there are any further concerns.
+
+Best regards,
+Ari Sundholm
+ari@tuxera.com
