@@ -2,63 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0912C4AC4A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 17:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A48254AC59E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Feb 2022 17:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345559AbiBGP7m convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 7 Feb 2022 10:59:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34006 "EHLO
+        id S241606AbiBGQbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Feb 2022 11:31:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382617AbiBGPvr (ORCPT
+        with ESMTP id S1378450AbiBGQSQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Feb 2022 10:51:47 -0500
-X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 07:51:32 PST
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0493AC0401D5
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Feb 2022 07:51:31 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-108-njvjn7dXMv-LfAVryvNBVg-1; Mon, 07 Feb 2022 15:50:25 +0000
-X-MC-Unique: njvjn7dXMv-LfAVryvNBVg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Mon, 7 Feb 2022 15:50:16 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Mon, 7 Feb 2022 15:50:16 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Ari Sundholm' <ari@tuxera.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>
-Subject: RE: [PATCH] fs/read_write.c: Fix a broken signed integer overflow
- check.
-Thread-Topic: [PATCH] fs/read_write.c: Fix a broken signed integer overflow
- check.
-Thread-Index: AQHYHCmhrNPdt8nHtECGo27UFYwbXqyIOyHw
-Date:   Mon, 7 Feb 2022 15:50:16 +0000
-Message-ID: <051a5e4621344301a2c4f84c3de57ec3@AcuMS.aculab.com>
-References: <20220207120711.4070403-1-ari@tuxera.com>
-In-Reply-To: <20220207120711.4070403-1-ari@tuxera.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 7 Feb 2022 11:18:16 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B73C0401CE;
+        Mon,  7 Feb 2022 08:18:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=yoSKJ9Y5PsjWBGSNI/TFMdwBItW1u5exmmTOYSxThD8=; b=dh+OOMmjPt34uB61r8w1fBywg9
+        ctC5sqpN9WwEJcrz+fZs6kj1ze5ztZdXG78tnFIZeNLQ7FAH+L5EAlBUCA89YTxqfH0SWHxSjTEh1
+        ij4WtSU9jqteVHI1i8q6+pSepCm8tJ+LZ/7I+9TJYmk2M2ZTmDCrsY4fLKoOtsIdZBdfyouAiWwFg
+        YMyqcCzMCka8EHbSavKgrZcHM/Imo3+LjADQJFL1TcqG+PrAayIV3ECReVIaxWgivzy9WoBKwaKC9
+        RiKS/anY6Cx0d4ISIZ9r78djct1yKOO5VM+N6Tezqn7j4WrzGbrWwSKGtCdiWPJCpW1kA7WbiGmyz
+        8kUjFGeQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nH6iQ-001SOE-SQ; Mon, 07 Feb 2022 16:18:10 +0000
+Date:   Mon, 7 Feb 2022 16:18:10 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH 1/2] Convert NFS from readpages to readahead
+Message-ID: <YgFGQi/1RRPSSQpA@casper.infradead.org>
+References: <20220122205453.3958181-1-willy@infradead.org>
+ <Yff0la2VAOewGrhI@casper.infradead.org>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yff0la2VAOewGrhI@casper.infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,50 +51,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ari Sundholm
-> Sent: 07 February 2022 12:07
+On Mon, Jan 31, 2022 at 02:39:17PM +0000, Matthew Wilcox wrote:
+> On Sat, Jan 22, 2022 at 08:54:52PM +0000, Matthew Wilcox (Oracle) wrote:
+> > NFS is one of the last two users of the deprecated ->readpages aop.
+> > This conversion looks straightforward, but I have only compile-tested
+> > it.
 > 
-> The function generic_copy_file_checks() checks that the ends of the
-> input and output file ranges do not overflow. Unfortunately, there is
-> an issue with the check itself.
-> 
-> Due to the integer promotion rules in C, the expressions
-> (pos_in + count) and (pos_out + count) have an unsigned type because
-> the count variable has the type uint64_t. Thus, in many cases where we
-> should detect signed integer overflow to have occurred (and thus one or
-> more of the ranges being invalid), the expressions will instead be
-> interpreted as large unsigned integers. This means the check is broken.
-> 
-> Fix this by explicitly casting the expressions to loff_t.
-...
-> ---
->  fs/read_write.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 0074afa7ecb3..64166e74adc5 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1431,7 +1431,8 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
->  		return -ETXTBSY;
-> 
->  	/* Ensure offsets don't wrap. */
-> -	if (pos_in + count < pos_in || pos_out + count < pos_out)
-> +	if ((loff_t)(pos_in + count) < pos_in ||
-> +			(loff_t)(pos_out + count) < pos_out)
->  		return -EOVERFLOW;
+> These patches still apply to -rc2.
 
-Hard to convince myself that is right.
-The old code is the standard check for unsigned addition overflow.
-The new one is just odd.
+And they still apply to rc3.
 
-If pos_in is guaranteed to be +ve in a signed variable you can check:
-	count < (1ull << 63) - pos_in
-since the RHS is then guaranteed not to wrap.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+I'm just going to send them to Linus as part of the general fs-folio
+work I'm doing during the next merge window.  If anybody would like to
+test them, I'm happy to stick a Tested-by on them.
