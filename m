@@ -2,147 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B910E4ACFDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Feb 2022 04:46:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7CB4AD047
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Feb 2022 05:18:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344131AbiBHDq5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Feb 2022 22:46:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60116 "EHLO
+        id S1346863AbiBHESC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Feb 2022 23:18:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbiBHDqz (ORCPT
+        with ESMTP id S244191AbiBHESB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Feb 2022 22:46:55 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D20DC0401DC
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Feb 2022 19:46:55 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id y18so3156418plb.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Feb 2022 19:46:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=a/iY+LYCIITobxV+U+gryLnkcw30JcLX+QDe3StT71U=;
-        b=Cu6tSzvdr3yyYqAV76D+Y74xDnkWul7CsRpMnMutOz8e+8VYQMvVcJH+A170U72vZH
-         zj/g2rjBg0t9e/dg5i8cF/3xQHRRdO5TXCJnaA5DJYoQEZwoxZFi8GE3zeecFrE4rJSz
-         F3l+erY+2uVOyLur97/KP72wIS4yoL8Y4j7U7b3ipc3xw/iFtKSv926FtSOBRzWqs1BN
-         Uk/jQBNcqc4gXe54CgSZn54/1Xok42N9zuY5LGJpakyLp2Y/10LcRGYhM8Mf9F4+Oy/K
-         L8lYSIxzHGo8vu+ba/qqBS8wYPbq5YkFlrjJVQAvz22D3cKe1mm+nx+BNgXlbDiwBtQ0
-         BH9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=a/iY+LYCIITobxV+U+gryLnkcw30JcLX+QDe3StT71U=;
-        b=vGc8HTOzc5A/+Lv6jeJm7zvfEcynBhasgLAz46CgRFSWj9yaKNXOy46+41Eh0MhW/+
-         Hktgt/R8OMb+s6YlsD0CDssoYWceQzAw7Y0yp4d8qCBpIZfTdCS78A5ZFz+2VeWK9Cyr
-         45Ds4jycEQygonQKCHk69Xn1RpzIzJigKva8Ev9qj4gc3T0qzRMfBHykru1/rGjnTAz5
-         /gBehJgfAsEjD6fEHXdMzf/zj6X3kL3q/oVfM2F3PrablGReb/Rs/bxWSaZtmgZPNsFW
-         +R147d2YOveCtGsiH3oGJaRe0qHheO1zbkiiLIlhRe+RPib/C8GfneCKa0qo4JHMWQGE
-         vQOw==
-X-Gm-Message-State: AOAM532vbLL5/R34VRQxnaF6wXflMmZri3UurJjhMsPofQV5pHbxZ6je
-        lhDFnLct39pcc8Yprr5swoa3FA==
-X-Google-Smtp-Source: ABdhPJwqUMxAa6iHs4gBOdkeC8g/8E2NUBCfcixF/w3JXosdm7T9AnMKwOu/33hwyTZoc1D9flcrAQ==
-X-Received: by 2002:a17:902:a9c2:: with SMTP id b2mr2696201plr.168.1644292014639;
-        Mon, 07 Feb 2022 19:46:54 -0800 (PST)
-Received: from [10.76.43.192] ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id d12sm9379702pgk.29.2022.02.07.19.46.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 19:46:54 -0800 (PST)
-Message-ID: <43428234-93e3-806a-b0ff-0f1c2d7b7cb9@bytedance.com>
-Date:   Tue, 8 Feb 2022 11:46:45 +0800
+        Mon, 7 Feb 2022 23:18:01 -0500
+X-Greylist: delayed 195 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 20:18:00 PST
+Received: from condef-03.nifty.com (condef-03.nifty.com [202.248.20.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71F1AC0401DC;
+        Mon,  7 Feb 2022 20:18:00 -0800 (PST)
+Received: from conssluserg-03.nifty.com ([10.126.8.82])by condef-03.nifty.com with ESMTP id 2184BomB007335;
+        Tue, 8 Feb 2022 13:11:50 +0900
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 2184BHd9013266;
+        Tue, 8 Feb 2022 13:11:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 2184BHd9013266
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1644293478;
+        bh=j+aPXdq2sicmNcexcHQA/oJ6M8by9veF/5qbR5FdEAM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rVvdXfg38TArY3w3QYhn1Uw2hhDdN5Q+UFPtxx+zqe7FFMjw60XeWxqYl/jhsH6Td
+         EpytE8eF0T4lDLkue7Df/JP/Ku/x6xfFejGNjJCv2/1GMKcvLbplFLAE1iB3IrLACv
+         b9qaTVnlKugwrFoBGsmzS/4xv6ksUkFpm5JJ8rGUAt1IS+1Pdvot7IXojMYqsargrp
+         OxHZHRRvbDCpHWIoQhcDrmFWCQ1iHrgA/dtMJOkN8pIW6jlLwU9AYVxwVOg1LpRfhq
+         KNkJUkxYZ8U4d083XxnYc7BNegV0EugcJpQF0aUN6eBbfRDU9HTM9TGfyEUC+0j4Uy
+         26HiHcqm0MJnw==
+X-Nifty-SrcIP: [209.85.216.52]
+Received: by mail-pj1-f52.google.com with SMTP id om7so1827244pjb.5;
+        Mon, 07 Feb 2022 20:11:17 -0800 (PST)
+X-Gm-Message-State: AOAM532ZYqPmMVPTAoC75lm8n0vvgfIGp8LG17v0fSusYJaJEUlLANnW
+        bCc7hLz3QD59P1i6UyzGsYOxDchkmzYvMsVfU14=
+X-Google-Smtp-Source: ABdhPJy4Kyyql8eQlLfvhsuGVW6htuxsp20B0z3n+90WIg7ccLHI9OZNKuoLNUKr/MQH0Ozr2+TR7zD0OI+oVCQGWkE=
+X-Received: by 2002:a17:903:22cd:: with SMTP id y13mr2749421plg.99.1644293476950;
+ Mon, 07 Feb 2022 20:11:16 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.5.1
-Subject: Re: Re: [PATCH v3] sched/numa: add per-process numa_balancing
-Content-Language: en-US
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        songmuchun@bytedance.com, zhengqi.arch@bytedance.com
-References: <20211206024530.11336-1-ligang.bdlg@bytedance.com>
- <Yd7pKuvjayH4q14L@hirez.programming.kicks-ass.net>
-From:   Gang Li <ligang.bdlg@bytedance.com>
-In-Reply-To: <Yd7pKuvjayH4q14L@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220125064027.873131-1-masahiroy@kernel.org> <CAKwvOdm=-x1EP_xu2V_OZNdPid=gacVzCTx+=uSYqzCv+1Rbfw@mail.gmail.com>
+ <87h79rsbxe.fsf@collabora.com> <CAK7LNARSDZUyt_JXhQLKW++9p0NqM1FHncqGMqXPqfU7m3tizA@mail.gmail.com>
+In-Reply-To: <CAK7LNARSDZUyt_JXhQLKW++9p0NqM1FHncqGMqXPqfU7m3tizA@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 8 Feb 2022 13:10:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASU=FeOjkZKB=mM-UnfH-hCY0y64y5h3b0qgDDXs1faHA@mail.gmail.com>
+Message-ID: <CAK7LNASU=FeOjkZKB=mM-UnfH-hCY0y64y5h3b0qgDDXs1faHA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: unify cmd_copy and cmd_shipped
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Michal Simek <monstr@monstr.eu>,
+        Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_SOFTFAIL,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/1/12 22:43, Peter Zijlstra wrote:
-> On Mon, Dec 06, 2021 at 10:45:28AM +0800, Gang Li wrote:
->> This patch add a new api PR_NUMA_BALANCING in prctl.
->>
->> A large number of page faults will cause performance loss when numa
->> balancing is performing. Thus those processes which care about worst-case
->> performance need numa balancing disabled. Others, on the contrary, allow a
->> temporary performance loss in exchange for higher average performance, so
->> enable numa balancing is better for them.
->>
->> Numa balancing can only be controlled globally by
->> /proc/sys/kernel/numa_balancing. Due to the above case, we want to
->> disable/enable numa_balancing per-process instead.
->>
->> Add numa_balancing under mm_struct. Then use it in task_tick_fair.
->>
->> Set per-process numa balancing:
->> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DISABLE); //disable
->> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
->> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DEFAULT); //follow global
-> 
-> This seems to imply you can prctl(ENABLE) even if the global is
-> disabled, IOW sched_numa_balancing is off.
-> 
+On Wed, Jan 26, 2022 at 11:19 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Wed, Jan 26, 2022 at 7:11 AM Gabriel Krisman Bertazi
+> <krisman@collabora.com> wrote:
+> >
+> > Nick Desaulniers <ndesaulniers@google.com> writes:
+> >
+> > > On Mon, Jan 24, 2022 at 10:41 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >>
+> > >> cmd_copy and cmd_shipped have similar functionality. The difference is
+> > >> that cmd_copy uses 'cp' while cmd_shipped 'cat'.
+> > >>
+> > >> Unify them into cmd_copy because this macro name is more intuitive.
+> > >>
+> > >> Going forward, cmd_copy will use 'cat' to avoid the permission issue.
+> > >> I also thought of 'cp --no-preserve=mode' but this option is not
+> > >> mentioned in the POSIX spec [1], so I am keeping the 'cat' command.
+> > >>
+> > >> [1]: https://pubs.opengroup.org/onlinepubs/009695299/utilities/cp.html
+> > >> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Of course, this semantic has been discussed here FYI.
-  https://lore.kernel.org/all/20211118085819.GD3301@suse.de/
-
-On 11/18/21 4:58 PM, Mel Gorman wrote:
- > On Thu, Nov 18, 2021 at 11:26:30AM +0800, Gang Li wrote:
- >> 3. prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
- >
- > If PR_SET_NUMAB_ENABLE enables numa balancing for a task when
- > kernel.numa_balancing == 0 instead of returning an error then sure.
+Applied to linux-kbuild.
 
 
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 884f29d07963..2980f33ac61f 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -11169,8 +11169,12 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
->>   		entity_tick(cfs_rq, se, queued);
->>   	}
->>   
->> -	if (static_branch_unlikely(&sched_numa_balancing))
->> +#ifdef CONFIG_NUMA_BALANCING
->> +	if (curr->mm && (curr->mm->numab_enabled == NUMAB_ENABLED
->> +	    || (static_branch_unlikely(&sched_numa_balancing)
->> +	    && curr->mm->numab_enabled == NUMAB_DEFAULT)))
->>   		task_tick_numa(rq, curr);
->> +#endif
->>   
->>   	update_misfit_status(curr, rq);
->>   	update_overutilized_status(task_rq(curr));
-> 
-> There's just about everything wrong there... not least of all the
-> horrific coding style.
 
-horrible code, yes.
-I'll do some code clean.
+> > >> ---
+> > >>
+> > >>  arch/microblaze/boot/Makefile     |  2 +-
+> > >>  arch/microblaze/boot/dts/Makefile |  2 +-
+> > >>  fs/unicode/Makefile               |  2 +-
+> > >>  scripts/Makefile.lib              | 12 ++++--------
+> > >>  usr/Makefile                      |  4 ++--
+> > >>  5 files changed, 9 insertions(+), 13 deletions(-)
+> > >>
+> > >> diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
+> > >> index cff570a71946..2b42c370d574 100644
+> > >> --- a/arch/microblaze/boot/Makefile
+> > >> +++ b/arch/microblaze/boot/Makefile
+> > >> @@ -29,7 +29,7 @@ $(obj)/simpleImage.$(DTB).ub: $(obj)/simpleImage.$(DTB) FORCE
+> > >>         $(call if_changed,uimage)
+> > >>
+> > >>  $(obj)/simpleImage.$(DTB).unstrip: vmlinux FORCE
+> > >> -       $(call if_changed,shipped)
+> > >> +       $(call if_changed,copy)
+> > >>
+> > >>  $(obj)/simpleImage.$(DTB).strip: vmlinux FORCE
+> > >>         $(call if_changed,strip)
+> > >> diff --git a/arch/microblaze/boot/dts/Makefile b/arch/microblaze/boot/dts/Makefile
+> > >> index ef00dd30d19a..b84e2cbb20ee 100644
+> > >> --- a/arch/microblaze/boot/dts/Makefile
+> > >> +++ b/arch/microblaze/boot/dts/Makefile
+> > >> @@ -12,7 +12,7 @@ $(obj)/linked_dtb.o: $(obj)/system.dtb
+> > >>  # Generate system.dtb from $(DTB).dtb
+> > >>  ifneq ($(DTB),system)
+> > >>  $(obj)/system.dtb: $(obj)/$(DTB).dtb
+> > >> -       $(call if_changed,shipped)
+> > >> +       $(call if_changed,copy)
+> > >>  endif
+> > >>  endif
+> > >>
+> > >> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
+> > >> index 2f9d9188852b..74ae80fc3a36 100644
+> > >> --- a/fs/unicode/Makefile
+> > >> +++ b/fs/unicode/Makefile
+> > >> @@ -31,7 +31,7 @@ $(obj)/utf8data.c: $(obj)/mkutf8data $(filter %.txt, $(cmd_utf8data)) FORCE
+> > >>  else
+> > >>
+> > >>  $(obj)/utf8data.c: $(src)/utf8data.c_shipped FORCE
+> > >
+> > > do we want to retitle the _shipped suffix for this file to _copy now, too?
+> > > fs/unicode/Makefile:11
+> > > fs/unicode/Makefile:33
+> > > fs/unicode/Makefile:34
+> >
+> > I think _copy doesn't convey the sense that this is distributed with the
+> > kernel tree, even though it is also generated from in-tree sources.
+> > Even if that is not the original sense of _shipped (is it?), it makes
+> > sense to me that way, but _copy doesn't.
+> >
+> > The patch looks good to me, though.
+> >
+> > Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >
+> >
+> > >
+>
+> I only renamed the action part (cmd_shipped -> cmd_copy)
+> because I thought it was clearer.
+>
+> Actually I do not get the sense of _shipped pretty much, but
+> I think we can keep the file suffix part (utf8data.c_shipped) as is.
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
+
+
+
 -- 
-Thanks
-Gang Li
-
+Best Regards
+Masahiro Yamada
