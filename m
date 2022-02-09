@@ -2,311 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A22A74B04B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 05:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 128924B0623
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 07:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233784AbiBJE7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 23:59:13 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39098 "EHLO
+        id S235159AbiBJGNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Feb 2022 01:13:14 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233648AbiBJE7M (ORCPT
+        with ESMTP id S232667AbiBJGNN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 23:59:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 382101FD;
-        Wed,  9 Feb 2022 20:59:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D8D0261BC2;
-        Thu, 10 Feb 2022 04:59:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32187C004E1;
-        Thu, 10 Feb 2022 04:59:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644469152;
-        bh=xpSvsZo9uIV0gv5kg5afu2dn4W4prSq2494jXFlLryk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LGAaT2n8o/rRfG0ba+hSPaCFMYinhEO78KexL2r1ZHN7vSdXzms4x++Lx/P6wtxBL
-         wyFLiDCkCbwyoOeFY1uD8QPOrfQOPd7m0g6bi71JspfBODLOv9vizoz104odfTXcAB
-         MIZ0FblxbGnpmoig7yPFQjto1AUJX8RAOxyvzrSubxIFKdQdqt5j566bnOXIRqhB6Q
-         eWk4odKOgFJ3uUXizEipo8c1I6j1Y8pBL5GRMSFrkzmMjj5kuIckd4igTOwRz/qE9G
-         Jgm4Jac8haD9fzqT3BS2/jAMHdpM58RQnhNopOhBnd5XNxAW5E1gRG155e3Rnm9IPr
-         gkH3M1Tlruyxw==
-Date:   Wed, 9 Feb 2022 20:59:11 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com,
-        syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/1] Revert "iomap: fall back to buffered writes for
- invalidation failures"
-Message-ID: <20220210045911.GF8338@magnolia>
-References: <20220209085243.3136536-1-lee.jones@linaro.org>
+        Thu, 10 Feb 2022 01:13:13 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9829258
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 22:13:13 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220210061311epoutp01308bc34ead1341ebf54a2ebf96f9a024~SWATWtHDZ2548925489epoutp01B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Feb 2022 06:13:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220210061311epoutp01308bc34ead1341ebf54a2ebf96f9a024~SWATWtHDZ2548925489epoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1644473591;
+        bh=4zqH9MciNS5AP5+T3I3tflkXROekxxekqh86V9Nm4EE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YIQMSLW+QM4lOiRYBJkdkcyjVFO5vrnZEgH8YTRZsr6IkmWtwe221r6z+054xafLo
+         jzQGwpK4FLhlk6GEil4rP5bjn/3D0RfG24ve3eFf7/Qi+DqqX6VMa5ZsukcamgmK94
+         fOXbpEtQGXh7v4EdLTc9jrgSA+qp+IjSoMq3Jek0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220210061310epcas5p49faab99a9c416fc1551e406cd5be718a~SWASoKd0C0469004690epcas5p42;
+        Thu, 10 Feb 2022 06:13:10 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4JvRHz28K8z4x9QT; Thu, 10 Feb
+        2022 06:13:03 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        17.51.06423.FECA4026; Thu, 10 Feb 2022 15:13:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220209103706epcas5p491553ba70337e2d38b889e8b99e8fbd5~SF9cz5JM33189431894epcas5p4z;
+        Wed,  9 Feb 2022 10:37:06 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220209103706epsmtrp23a16fa5d1250fd3d330dbe7396c87c82~SF9cwr3wB2288022880epsmtrp2C;
+        Wed,  9 Feb 2022 10:37:06 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-a6-6204acef2a62
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        54.1F.08738.25993026; Wed,  9 Feb 2022 19:37:06 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220209103701epsmtip273f8ca5a5569b854667e3d2cf52c30ee~SF9XmcAEB1539015390epsmtip2d;
+        Wed,  9 Feb 2022 10:37:01 +0000 (GMT)
+Date:   Wed, 9 Feb 2022 16:02:06 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kbuild@lists.01.org, mpatocka@redhat.com, kbuild-all@lists.01.org,
+        javier@javigon.com, chaitanyak@nvidia.com,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+        msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
+        hch@lst.de, Frederick.Knight@netapp.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        nitheshshetty@gmail.com
+Subject: Re: [PATCH v2 03/10] block: Add copy offload support infrastructure
+Message-ID: <20220209103206.GD7698@test-zns>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220209085243.3136536-1-lee.jones@linaro.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <202202090703.U5riBMIn-lkp@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te1BUZRSf7967d3dplrnxqI8tgi5OhjzcJRY/VCwU8xJkGE0yTIgr3BYG
+        2N3ZXbKoGXmIJgjCIorQCJGAPAwGyUFgLXmEyEOIR4hgyENUAgzMWCVol4XG/37n9/ud75zv
+        nDk83KKFK+RFyjWsSi6Npkkz4kqTo6PLXAVxSFRQy0UNtxc4qHzkFInOPNbjaO76OAdpT+Vw
+        0fTyWQL1Tpgj3WweB3UvJmBovHoFQw2FWgyVlrdgaKrkB4BOtHdjaOmeGLWszJCoM3UAoPL4
+        KgxpGw1IN+SEGnRtBMovnuSi1N9rSXRtWoejktZlDGV+24+hrtwlEtVOJADUdLefQNOLbSRK
+        PqnnvmfH9Pb5MZlJs1zmau4Il0kqGCaY3s5YprrsBMmk5i0TzOULR5iswRLA1N+OJ5nEjhac
+        yZl/QjJpSbMk89fkEMHMXesnmfSaMhBgFRy1PYKVhrMqe1YepgiPlMu8aL/A0F2hEg+R2EXs
+        ibbQ9nJpDOtF+/gHuLwfGW0YGG3/hTQ61kAFSNVqevOO7SpFrIa1j1CoNV40qwyPVrorXdXS
+        GHWsXOYqZzVbxSKRm8RgPBgVkdH1G1dZ4/PlYFUFGQ9Oe6YAPg9S7vBO5V08BZjxLKh6AG/o
+        qjCjYEHNAzg0ttckLACYWDjKXc8YKNQTJqEOwJ8nv+OagvsANk0lr6YT1AZ4YzwdpAAej6Sc
+        YPsKz0hbUc6w98Tiqh+najlQpy3mGAVLyh+2n72EG/0Cg+l4j7WRFlAvw7ZzE4QR8yk3eFE7
+        uPq8NeUAf7nSipkaesaH+myJCftA7fGuNd4SPmqtWWtaCBdmdaSxLqRSAVzs+AMzBTkAJmUk
+        kSbXu7Cn4d/VbJyKgM1l5zkm3hZm3/xxjTeHac8n1ioIYO35dewAKyoL1t6xgQP/JKxhBs7l
+        9RGmmSYDOJz4dgawy33hc7kvlDNhZ1hQP0/mGmaBU6/BkmWeCTrCyrrNBYBTBmxYpTpGxqol
+        SrGcPfz/wsMUMdVg9Z42+daCkdHHro0A44FGAHk4bSW4eQQ/ZCEIl34Vx6oUoarYaFbdCCSG
+        XWXiQuswheEg5ZpQsbunyN3Dw8Pd8x0PMf2qoF1WJbWgZFING8WySla1nofx+MJ4LNHfflE9
+        tmVH/56jF8ee4gfZiufOxMjoyQM1h20fdvrmo5nljjd7juVjfX/bxIX0eBd92qHp9fzAqT3w
+        Wd4rQUJB/DczIztlLqVkXGCQ0Pno4N5tsZf6Extnrhd1yxMyHCuzfLx/2uNvpo3z3cZvpM5g
+        heFPhiVJn6BWzkJbsGzXiCTL4qP0pxs9P743HrQva6Kw9cL0GyEvudodcFB8SD869pYohDYX
+        Tu+f6n8947OlO1ODRRNbg3xOe3+fwk97sIArg5ut/vw816003G/fuQez9mLu1/tv/bqzM6TI
+        pW63V7f+alhb8UZan92QYglqBrM2WNuGhtxafnjZv6+z2UGkWYy6TxPqCKl4E65SS/8DDQZo
+        DtgEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZdlhJXjdoJnOSwaU3BhZ7bn5mtVh9t5/N
+        YtqHn8wW7w8+ZrWY1D+D3eL1v+ksFpef8FnsfTeb1eLCj0Ymi8eb/jNZ7Fk0icli5eqjTBbP
+        ly9mtOg8fYHJ4s9DQ4uj/9+yWZztvsZosbphA5PFpENA1t5b2hZ79p5ksZi/7Cm7Rff1HWwW
+        +17vZbZYfvwfk8XEjqtMFudm/WGz2PGkkdHi8L2rLBavf5xks2jt+cnuIO9x+Yq3x8Tmd+we
+        O2fdZfdoXnCHxePy2VKPTas62Ty6Z/9j8di8pN5j8o3ljB67bzaweTSdOcrsMePTFzaP3uZ3
+        bB4fn95i8Xi/7yqbR9+WVYwBIlFcNimpOZllqUX6dglcGRc/9rMWfHGsWPF2LXsD41uzLkZO
+        DgkBE4lri36ydDFycQgJ7GCUuLXnBgtEQlJi2d8jzBC2sMTKf8/ZIYqeMEosPnWODSTBIqAi
+        ceJxH2MXIwcHm4C2xOn/HCBhEQEdicudP8DqmQV2sUq8vt/FCpIQFvCROD19LTNIPS9QUftF
+        UYiZrYwSWzd+AavhFRCUODnzCdgRzAJaEjf+vWQCqWcWkJZY/g9sPqeAkcSKSTeYQGxRAWWJ
+        A9uOM01gFJyFpHsWku5ZCN0LGJlXMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIEpxUt
+        rR2Me1Z90DvEyMTBeIhRgoNZSYT3VD1zkhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE
+        0hNLUrNTUwtSi2CyTBycUg1Mq7Y5Pt0yz3sBs+zGIxccjpeuaLHfrGfhVSWqofpQL2rG0ZLz
+        ll2PXpzXnpn3Zk7G9utSal+Wsk6YUar9uT7Ke0fscvHCzoQHCYH1JheXfvsqmrZ564egk5eE
+        xHPqVD5xTZ5Ufkau3iD4zcpUrupZMTY9HzSXLZ1///G6VaV/93zkeaafev3y+5TWVX8dlpQm
+        Bz4/uUvJSzduSqjLDa6FEZvZKzv71rjZKXtY53OVqp5Qf5fgsjS//O0b7lMyn5/PefBE+N+j
+        vf/1lTIstu58LBM7jbk4L2Oj9LeDGvzZ88UMvoWsjT20JuhAubOFrXvCPuXqeN9ltgueXtzG
+        H1HEZnHzpsuOqge55y8k2DZtVmIpzkg01GIuKk4EADQupw6aAwAA
+X-CMS-MailID: 20220209103706epcas5p491553ba70337e2d38b889e8b99e8fbd5
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_5fb74_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220209075901epcas5p3cff468deadd8ef836522f032bd4ed36c
+References: <CGME20220209075901epcas5p3cff468deadd8ef836522f032bd4ed36c@epcas5p3.samsung.com>
+        <202202090703.U5riBMIn-lkp@intel.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 09, 2022 at 08:52:43AM +0000, Lee Jones wrote:
-> This reverts commit 60263d5889e6dc5987dc51b801be4955ff2e4aa7.
+------8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_5fb74_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+
+On Wed, Feb 09, 2022 at 10:48:44AM +0300, Dan Carpenter wrote:
+> Hi Nitesh,
 > 
-> Reverting since this commit opens a potential avenue for abuse.
-
-What kind of abuse?  Did you conclude there's an avenue solely because
-some combination of userspace rigging produced a BUG warning?  Or is
-this a real problem that someone found?
-
-> The C-reproducer and more information can be found at the link below.
-
-No.  Post the information and your analysis here.  I'm not going to dig
-into some Google site to find out what happened, and I'm not going to
-assume that future developers will be able to access that URL to learn
-why this patch was created.
-
-I am not convinced that this revert is a proper fix for ... whatever is
-the problem, because you never explained what happened.
-
-> With this patch applied, I can no longer get the repro to trigger.
-
-With ext4 completely reverted, I can no longer get the repro to trigger
-either.
-
->   kernel BUG at fs/ext4/inode.c:2647!
->   invalid opcode: 0000 [#1] PREEMPT SMP KASAN
->   CPU: 0 PID: 459 Comm: syz-executor359 Tainted: G        W         5.10.93-syzkaller-01028-g0347b1658399 #0
-
-What BUG on fs/ext4/inode.c:2647?
-
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/fs/ext4/inode.c?h=v5.10.93#n2647
-
-All I see is a call to pagevec_release()?  There's a BUG_ON further up
-if we wait for page writeback but then it still has Writeback set.  But
-I don't see anything in pagevec_release that would actually result in a
-BUG warning.
-
-Oh, right, this is one of those inscrutable syzkaller things, where a
-person can spend hours figuring out what the hell it set up.
-
-Yeah...no, you don't get to submit patches to core kernel code, claim
-it's not your responsibility to know anything about a subsystem that you
-want to patch, and then expect us to do the work for you.  If you pick
-up a syzkaller report, you get to figure out what broke, why, and how to
-fix it in a reasonable manner.
-
-You're a maintainer, would you accept a patch like this?
-
-NAK.
-
---D
-
-OH WAIT, you're running this on the Android 5.10 kernel, aren't you?
-The BUG report came from page_buffers failing to find any buffer heads
-attached to the page.
-https://android.googlesource.com/kernel/common/+/refs/heads/android12-5.10-2022-02/fs/ext4/inode.c#2647
-
-Yeah, don't care.
-
->   Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->   RIP: 0010:mpage_prepare_extent_to_map+0xbe9/0xc00 fs/ext4/inode.c:2647
->   Code: e8 fc bd c3 ff e9 80 f6 ff ff 44 89 e9 80 e1 07 38 c1 0f 8c a6 fe ff ff 4c 89 ef e8 e1 bd c3 ff e9 99 fe ff ff e8 87 c9 89 ff <0f> 0b e8 80 c9 89 ff 0f 0b e8 79 1e b8 02 66 0f 1f 84 00 00 00 00
->   RSP: 0018:ffffc90000e2e9c0 EFLAGS: 00010293
->   RAX: ffffffff81e321f9 RBX: 0000000000000000 RCX: ffff88810c12cf00
->   RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
->   RBP: ffffc90000e2eb90 R08: ffffffff81e31e71 R09: fffff940008d68b1
->   R10: fffff940008d68b1 R11: 0000000000000000 R12: ffffea00046b4580
->   R13: ffffc90000e2ea80 R14: 000000000000011e R15: dffffc0000000000
->   FS:  00007fcfd0717700(0000) GS:ffff8881f7000000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00007fcfd07d5520 CR3: 000000010a142000 CR4: 00000000003506b0
->   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->   Call Trace:
->    ext4_writepages+0xcbb/0x3950 fs/ext4/inode.c:2776
->    do_writepages+0x13a/0x280 mm/page-writeback.c:2358
->    __filemap_fdatawrite_range+0x356/0x420 mm/filemap.c:427
->    filemap_write_and_wait_range+0x64/0xe0 mm/filemap.c:660
->    __iomap_dio_rw+0x621/0x10c0 fs/iomap/direct-io.c:495
->    iomap_dio_rw+0x35/0x80 fs/iomap/direct-io.c:611
->    ext4_dio_write_iter fs/ext4/file.c:571 [inline]
->    ext4_file_write_iter+0xfc5/0x1b70 fs/ext4/file.c:681
->    do_iter_readv_writev+0x548/0x740 include/linux/fs.h:1941
->    do_iter_write+0x182/0x660 fs/read_write.c:866
->    vfs_iter_write+0x7c/0xa0 fs/read_write.c:907
->    iter_file_splice_write+0x7fb/0xf70 fs/splice.c:686
->    do_splice_from fs/splice.c:764 [inline]
->    direct_splice_actor+0xfe/0x130 fs/splice.c:933
->    splice_direct_to_actor+0x4f4/0xbc0 fs/splice.c:888
->    do_splice_direct+0x28b/0x3e0 fs/splice.c:976
->    do_sendfile+0x914/0x1390 fs/read_write.c:1257
+> url:    https://protect2.fireeye.com/v1/url?k=483798a4-17aca1b5-483613eb-0cc47a31cdbc-db5fd22936f47f46&q=1&e=e5a0c082-878d-4bbf-be36-3c8e34773475&u=https%3A%2F%2Fgithub.com%2F0day-ci%2Flinux%2Fcommits%2FNitesh-Shetty%2Fblock-make-bio_map_kern-non-static%2F20220207-231407
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+> config: i386-randconfig-m021-20220207 (https://protect2.fireeye.com/v1/url?k=24e309ba-7b7830ab-24e282f5-0cc47a31cdbc-9cc4e76aaefa8c0d&q=1&e=e5a0c082-878d-4bbf-be36-3c8e34773475&u=https%3A%2F%2Fdownload.01.org%2F0day-ci%2Farchive%2F20220209%2F202202090703.U5riBMIn-lkp%40intel.com%2Fconfig)
+> compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
 > 
-> Link: https://syzkaller.appspot.com/bug?extid=41c966bf0729a530bd8d
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> From the patch:
-> Cc: Stable <stable@vger.kernel.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: Bob Peterson <rpeterso@redhat.com>
-> Cc: Damien Le Moal <damien.lemoal@wdc.com>
-> Cc: Theodore Ts'o <tytso@mit.edu> # for ext4
-> Cc: Andreas Gruenbacher <agruenba@redhat.com>
-> Cc: Ritesh Harjani <riteshh@linux.ibm.com>
+> smatch warnings:
+> block/blk-lib.c:272 blk_copy_offload() warn: possible memory leak of 'ctx'
 > 
-> Others:
-> Cc: Johannes Thumshirn <jth@kernel.org>
-> Cc: linux-xfs@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-ext4@vger.kernel.org
-> Cc: cluster-devel@redhat.com
+> vim +/ctx +272 block/blk-lib.c
+>
+
+acked
+
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  185  int blk_copy_offload(struct block_device *src_bdev, int nr_srcs,
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  186  		struct range_entry *rlist, struct block_device *dst_bdev, gfp_t gfp_mask)
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  187  {
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  188  	struct request_queue *sq = bdev_get_queue(src_bdev);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  189  	struct request_queue *dq = bdev_get_queue(dst_bdev);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  190  	struct bio *read_bio, *write_bio;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  191  	struct copy_ctx *ctx;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  192  	struct cio *cio;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  193  	struct page *token;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  194  	sector_t src_blk, copy_len, dst_blk;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  195  	sector_t remaining, max_copy_len = LONG_MAX;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  196  	int ri = 0, ret = 0;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  197  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  198  	cio = kzalloc(sizeof(struct cio), GFP_KERNEL);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  199  	if (!cio)
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  200  		return -ENOMEM;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  201  	atomic_set(&cio->refcount, 0);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  202  	cio->rlist = rlist;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  203  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  204  	max_copy_len = min3(max_copy_len, (sector_t)sq->limits.max_copy_sectors,
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  205  			(sector_t)dq->limits.max_copy_sectors);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  206  	max_copy_len = min3(max_copy_len, (sector_t)sq->limits.max_copy_range_sectors,
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  207  			(sector_t)dq->limits.max_copy_range_sectors) << SECTOR_SHIFT;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  208  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  209  	for (ri = 0; ri < nr_srcs; ri++) {
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  210  		cio->rlist[ri].comp_len = rlist[ri].len;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  211  		for (remaining = rlist[ri].len, src_blk = rlist[ri].src, dst_blk = rlist[ri].dst;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  212  			remaining > 0;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  213  			remaining -= copy_len, src_blk += copy_len, dst_blk += copy_len) {
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  214  			copy_len = min(remaining, max_copy_len);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  215  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  216  			token = alloc_page(gfp_mask);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  217  			if (unlikely(!token)) {
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  218  				ret = -ENOMEM;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  219  				goto err_token;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  220  			}
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  221  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  222  			read_bio = bio_alloc(src_bdev, 1, REQ_OP_READ | REQ_COPY | REQ_NOMERGE,
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  223  					gfp_mask);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  224  			if (!read_bio) {
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  225  				ret = -ENOMEM;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  226  				goto err_read_bio;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  227  			}
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  228  			read_bio->bi_iter.bi_sector = src_blk >> SECTOR_SHIFT;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  229  			read_bio->bi_iter.bi_size = copy_len;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  230  			__bio_add_page(read_bio, token, PAGE_SIZE, 0);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  231  			ret = submit_bio_wait(read_bio);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  232  			if (ret) {
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  233  				bio_put(read_bio);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  234  				goto err_read_bio;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  235  			}
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  236  			bio_put(read_bio);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  237  			ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  238  			if (!ctx) {
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  239  				ret = -ENOMEM;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  240  				goto err_read_bio;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  241  			}
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  242  			ctx->cio = cio;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  243  			ctx->range_idx = ri;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  244  			ctx->start_sec = rlist[ri].src;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  245  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  246  			write_bio = bio_alloc(dst_bdev, 1, REQ_OP_WRITE | REQ_COPY | REQ_NOMERGE,
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  247  					gfp_mask);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  248  			if (!write_bio) {
 > 
-> Fixes: 60263d5889e6d ("iomap: fall back to buffered writes for invalidation failures")
-> Reported-by: syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Please call kfree(ctx) before the goto.
+> 
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  249  				ret = -ENOMEM;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  250  				goto err_read_bio;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  251  			}
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  252  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  253  			write_bio->bi_iter.bi_sector = dst_blk >> SECTOR_SHIFT;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  254  			write_bio->bi_iter.bi_size = copy_len;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  255  			__bio_add_page(write_bio, token, PAGE_SIZE, 0);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  256  			write_bio->bi_end_io = bio_copy_end_io;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  257  			write_bio->bi_private = ctx;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  258  			atomic_inc(&cio->refcount);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  259  			submit_bio(write_bio);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  260  		}
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  261  	}
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  262  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  263  	/* Wait for completion of all IO's*/
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  264  	return cio_await_completion(cio);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  265  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  266  err_read_bio:
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  267  	__free_page(token);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  268  err_token:
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  269  	rlist[ri].comp_len = min_t(sector_t, rlist[ri].comp_len, (rlist[ri].len - remaining));
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  270  
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  271  	cio->io_err = ret;
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07 @272  	return cio_await_completion(cio);
+> 12a9801a7301f1 Nitesh Shetty 2022-02-07  273  }
+> 
 > ---
->  fs/ext4/file.c       |  2 --
->  fs/gfs2/file.c       |  3 +--
->  fs/iomap/direct-io.c | 16 +++++-----------
->  fs/iomap/trace.h     |  1 -
->  fs/xfs/xfs_file.c    |  4 ++--
->  fs/zonefs/super.c    |  7 ++-----
->  6 files changed, 10 insertions(+), 23 deletions(-)
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://protect2.fireeye.com/v1/url?k=4cd82b59-13431248-4cd9a016-0cc47a31cdbc-7ef30a0abcb321a3&q=1&e=e5a0c082-878d-4bbf-be36-3c8e34773475&u=https%3A%2F%2Flists.01.org%2Fhyperkitty%2Flist%2Fkbuild-all%40lists.01.org
 > 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 3ed8c048fb12c..cb347c3b35535 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -551,8 +551,6 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		iomap_ops = &ext4_iomap_overwrite_ops;
->  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
->  			   is_sync_kiocb(iocb) || unaligned_io || extend);
-> -	if (ret == -ENOTBLK)
-> -		ret = 0;
->  
->  	if (extend)
->  		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index b39b339feddc9..847adb97380d3 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -835,8 +835,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
->  
->  	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
->  			   is_sync_kiocb(iocb));
-> -	if (ret == -ENOTBLK)
-> -		ret = 0;
-> +
->  out:
->  	gfs2_glock_dq(gh);
->  out_uninit:
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 933f234d5becd..ddcd06c0c452d 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -10,7 +10,6 @@
->  #include <linux/backing-dev.h>
->  #include <linux/uio.h>
->  #include <linux/task_io_accounting_ops.h>
-> -#include "trace.h"
->  
->  #include "../internal.h"
->  
-> @@ -413,9 +412,6 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
->   * can be mapped into multiple disjoint IOs and only a subset of the IOs issued
->   * may be pure data writes. In that case, we still need to do a full data sync
->   * completion.
-> - *
-> - * Returns -ENOTBLK In case of a page invalidation invalidation failure for
-> - * writes.  The callers needs to fall back to buffered I/O in this case.
->   */
->  struct iomap_dio *
->  __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> @@ -493,15 +489,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (iov_iter_rw(iter) == WRITE) {
->  		/*
->  		 * Try to invalidate cache pages for the range we are writing.
-> -		 * If this invalidation fails, let the caller fall back to
-> -		 * buffered I/O.
-> +		 * If this invalidation fails, tough, the write will still work,
-> +		 * but racing two incompatible write paths is a pretty crazy
-> +		 * thing to do, so we don't support it 100%.
->  		 */
->  		if (invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
-> -				end >> PAGE_SHIFT)) {
-> -			trace_iomap_dio_invalidate_fail(inode, pos, count);
-> -			ret = -ENOTBLK;
-> -			goto out_free_dio;
-> -		}
-> +				end >> PAGE_SHIFT))
-> +			dio_warn_stale_pagecache(iocb->ki_filp);
->  
->  		if (!wait_for_completion && !inode->i_sb->s_dio_done_wq) {
->  			ret = sb_init_dio_done_wq(inode->i_sb);
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> index fdc7ae388476f..5693a39d52fb6 100644
-> --- a/fs/iomap/trace.h
-> +++ b/fs/iomap/trace.h
-> @@ -74,7 +74,6 @@ DEFINE_EVENT(iomap_range_class, name,	\
->  DEFINE_RANGE_EVENT(iomap_writepage);
->  DEFINE_RANGE_EVENT(iomap_releasepage);
->  DEFINE_RANGE_EVENT(iomap_invalidatepage);
-> -DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
->  
->  #define IOMAP_TYPE_STRINGS \
->  	{ IOMAP_HOLE,		"HOLE" }, \
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 5b0f93f738372..43e2c057214d9 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -589,8 +589,8 @@ xfs_file_dio_aio_write(
->  	xfs_iunlock(ip, iolock);
->  
->  	/*
-> -	 * No fallback to buffered IO after short writes for XFS, direct I/O
-> -	 * will either complete fully or return an error.
-> +	 * No fallback to buffered IO on errors for XFS, direct IO will either
-> +	 * complete fully or fail.
->  	 */
->  	ASSERT(ret < 0 || ret == count);
->  	return ret;
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index bec47f2d074be..d54fbef3db4df 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -851,11 +851,8 @@ static ssize_t zonefs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	if (iocb->ki_pos >= ZONEFS_I(inode)->i_max_size)
->  		return -EFBIG;
->  
-> -	if (iocb->ki_flags & IOCB_DIRECT) {
-> -		ssize_t ret = zonefs_file_dio_write(iocb, from);
-> -		if (ret != -ENOTBLK)
-> -			return ret;
-> -	}
-> +	if (iocb->ki_flags & IOCB_DIRECT)
-> +		return zonefs_file_dio_write(iocb, from);
->  
->  	return zonefs_file_buffered_write(iocb, from);
->  }
-> -- 
-> 2.35.0.263.gb82422642f-goog
 > 
+> 
+
+--
+Thank you
+Nitesh
+
+------8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_5fb74_
+Content-Type: text/plain; charset="utf-8"
+
+
+------8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_5fb74_--
