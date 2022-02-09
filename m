@@ -1,158 +1,80 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC2D94AE6B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 03:40:53 +0100 (CET)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.lfdr.de (Postfix) with ESMTP id A23064AE76A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 04:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343890AbiBICk3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Feb 2022 21:40:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56374 "EHLO
+        id S244952AbiBIDDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Feb 2022 22:03:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239778AbiBIBhK (ORCPT
+        with ESMTP id S1350283AbiBICtf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Feb 2022 20:37:10 -0500
-X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 17:37:07 PST
-Received: from qq.com (smtpbg407.qq.com [113.96.223.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7757C061576
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Feb 2022 17:37:07 -0800 (PST)
-X-QQ-mid: bizesmtp15t1644370492t7reyjc6
-Received: from localhost.localdomain (unknown [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Wed, 09 Feb 2022 09:34:46 +0800 (CST)
-X-QQ-SSF: 0140000000200010C000B00B0000000
-X-QQ-FEAT: B0D4DPF8NcT3//ST4v23tCQDQKKmBlflQxqxGxV6GBo9FaC2qaTUURrPUlaSm
-        kA2Gp1pQiHxPlUxAtFVkDAFJDvxfcxr6289vFk+NpjSaQjXo3Hf6x9u/NOf4SU4U8Ft7NEc
-        zY/2wXdIRm6hbGTPD7VgH820PfYUGUonuDb7bUHc5D2eVa6IwjdtneVbrUohuVT8CenMRsQ
-        tyHWO+AoQvWFNX11s2GaCCxsfYoqTUz5ydmxhXlCozPBMYZYHBKF0dGn6X1b/86ZwQK7VAw
-        Wgy1P7tfCgHThCCPUPK6i34IupUoe7ROVdgIdk3dX/ba66TYdGrxf75o8FtZXAB2WkFJkZQ
-        U/VdPHngRXXRfPVrHe8qBWm3AlAXvw2HkpQLZj+
-X-QQ-GoodBg: 2
-From:   Zhen Ni <nizhen@uniontech.com>
-To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, mcgrof@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Zhen Ni <nizhen@uniontech.com>
-Subject: [PATCH] sched: move energy_aware sysctls to topology.c
-Date:   Wed,  9 Feb 2022 09:34:44 +0800
-Message-Id: <20220209013444.9522-1-nizhen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 8 Feb 2022 21:49:35 -0500
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2AFDC0613CC;
+        Tue,  8 Feb 2022 18:36:44 -0800 (PST)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1644374202;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=JhaRiHxNGMaWK3YKZvBkBs+xYo59cXloX0HvpTiAB2I=;
+        b=XnW+pZHOYqYOKhHfiGql7fIwcVeqACsYAl7tZjX02IBYJaQTLBb3yY4b0bGn0+3IZaBMrK
+        8d8+hwoWd6deui7/X70eiWnnBYoPyBo1VgIGOw8Q+hqRDdofu5PW3PhVhEBiOQ1aDuTC6D
+        kv0L/n/u7SACrZCBjUDxxZ67nbvjPdE=
+From:   Cai Huoqing <cai.huoqing@linux.dev>
+To:     cai.huoqing@linux.dev
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Colin Cross <ccross@google.com>,
+        Alistair Popple <apopple@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs/proc: task_mmu.c: Fix the error-unused variable 'migration'
+Date:   Wed,  9 Feb 2022 10:35:59 +0800
+Message-Id: <20220209023602.21929-1-cai.huoqing@linux.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
-X-QQ-Bgrelay: 1
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        TO_EQ_FM_DIRECT_MX,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-move energy_aware sysctls to topology.c and use the new
-register_sysctl_init() to register the sysctl interface.
+Avoid the error-unused variable 'migration' when
+CONFIG_TRANSPARENT_HUGEPAGE and CONFIG_ARCH_ENABLE_THP_MIGRATION
+are not enabled.
 
-Signed-off-by: Zhen Ni <nizhen@uniontech.com>
+Signed-off-by: Cai Huoqing <cai.huoqing@linux.dev>
 ---
- include/linux/sched/sysctl.h |  6 ------
- kernel/sched/topology.c      | 26 ++++++++++++++++++++++++--
- kernel/sysctl.c              | 11 -----------
- 3 files changed, 24 insertions(+), 19 deletions(-)
+ fs/proc/task_mmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index d416d8f45186..2af92e71b027 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -59,10 +59,4 @@ int sysctl_numa_balancing(struct ctl_table *table, int write, void *buffer,
- int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos);
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index bc2f46033231..b055ff29204d 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1441,7 +1441,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 	spinlock_t *ptl;
+ 	pte_t *pte, *orig_pte;
+ 	int err = 0;
+-	bool migration = false;
++	bool migration __maybe_unused = false;
  
--#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
--extern unsigned int sysctl_sched_energy_aware;
--int sched_energy_aware_handler(struct ctl_table *table, int write,
--		void *buffer, size_t *lenp, loff_t *ppos);
--#endif
--
- #endif /* _LINUX_SCHED_SYSCTL_H */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index d201a7052a29..af7ce40f1486 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -207,7 +207,7 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
- 
- #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
- DEFINE_STATIC_KEY_FALSE(sched_energy_present);
--unsigned int sysctl_sched_energy_aware = 1;
-+static unsigned int sysctl_sched_energy_aware = 1;
- DEFINE_MUTEX(sched_energy_mutex);
- bool sched_energy_update;
- 
-@@ -221,7 +221,7 @@ void rebuild_sched_domains_energy(void)
- }
- 
- #ifdef CONFIG_PROC_SYSCTL
--int sched_energy_aware_handler(struct ctl_table *table, int write,
-+static int sched_energy_aware_handler(struct ctl_table *table, int write,
- 		void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret, state;
-@@ -240,6 +240,28 @@ int sched_energy_aware_handler(struct ctl_table *table, int write,
- }
- #endif
- 
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table sched_energy_aware_sysctls[] = {
-+	{
-+		.procname       = "sched_energy_aware",
-+		.data           = &sysctl_sched_energy_aware,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = sched_energy_aware_handler,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = SYSCTL_ONE,
-+	},
-+	{}
-+};
-+
-+static int __init sched_energy_aware_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", sched_energy_aware_sysctls);
-+	return 0;
-+}
-+late_initcall(sched_energy_aware_sysctl_init);
-+#endif /* CONFIG_SYSCTL */
-+
- static void free_pd(struct perf_domain *pd)
- {
- 	struct perf_domain *tmp;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 981a1902d7a4..81bb5901635b 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1761,17 +1761,6 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_ONE,
- 	},
- #endif
--#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
--	{
--		.procname	= "sched_energy_aware",
--		.data		= &sysctl_sched_energy_aware,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= sched_energy_aware_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif
- #ifdef CONFIG_PROVE_LOCKING
- 	{
- 		.procname	= "prove_locking",
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	ptl = pmd_trans_huge_lock(pmdp, vma);
 -- 
-2.20.1
-
-
+2.25.1
 
