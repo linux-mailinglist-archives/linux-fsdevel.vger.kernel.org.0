@@ -2,120 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF4AB4AE787
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 04:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 289924AE847
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 05:08:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245267AbiBIDDX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Feb 2022 22:03:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56216 "EHLO
+        id S1346132AbiBIEIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Feb 2022 23:08:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344407AbiBICxm (ORCPT
+        with ESMTP id S1347094AbiBIDjb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Feb 2022 21:53:42 -0500
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E4CC0613CC;
-        Tue,  8 Feb 2022 18:53:41 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JtkwH2kS8z4xcp;
-        Wed,  9 Feb 2022 13:53:35 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1644375217;
-        bh=IhVwFVJZTPguna2PmdUzRBNG0sppu5V6lowxE+6pGgI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KW4UqPzoR5ny9Kp9n31arzSuUqPsZM/i/VB8F2eZjzctKcKxPz+aN2TnCPaJTXzJk
-         NO7/1roj73VCajqiXXETQLweurcaM9yh3g3x/MrsoWbYduqRpnGXygqsuoRDlqlcco
-         d3GIz/3qv1+rdm8OQFtGiwV5pUie7WxQCRZSWW/1H6D5zO7EPS1He+cZMkjHdz3UAS
-         8m5M3u7NOiT8G8HkBu3TgbwDIl3C6ADS7zPGOkkAWDDyRaoT1Y6qXXuxENdoQ1QK0R
-         Wrm8MYrzN41CRCJykKR+WNPd0h8EgVxWX5eJbbULRW4fnPejXVqzLr7299dkypYgGf
-         Y08OGre6UNnbg==
-Date:   Wed, 9 Feb 2022 13:53:33 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Cai Huoqing <cai.huoqing@linux.dev>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Colin Cross <ccross@google.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/proc: task_mmu.c: Fix the error-unused variable
- 'migration'
-Message-ID: <20220209135333.7975a407@canb.auug.org.au>
-In-Reply-To: <20220209023602.21929-1-cai.huoqing@linux.dev>
-References: <20220209023602.21929-1-cai.huoqing@linux.dev>
+        Tue, 8 Feb 2022 22:39:31 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2058DC06174F;
+        Tue,  8 Feb 2022 19:39:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1644377970; x=1675913970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UUr2oeyzfQDDRtI6hlTLxPqoP/+EpMIGE8+TwWUBk0o=;
+  b=ez4stKHhDDVl6yT1xk5D8g+3iUmg6vrCg8TAcWNDTtW/xjyZoVHkRtZ5
+   AkML9UxVY1ZAhD/aTHvD0/3HXMB2dpsSCRydZH82ctlxsBCTB2U96Xgky
+   6CE1Ffq0Udon1BOWvX0OHPNOF3GER6T7MJTggDfsPXGg+ZBoP1ivFgiWr
+   9Lnn0vGK9LR2fXDionZhp+FoMQGhojvuhSQgfNXqQzgFyAM2aPkT8ECtb
+   6PukQzvp23a5vkpBXcCI7xCABAid6MlSUqkj0wlwHZfUEVnV2FJnnBTCw
+   xpNL6Zk1jhro343tWtHiX6vAKur/bWm7Bstd/yrOxlOjFHfvU46ZNM2g1
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10252"; a="335513823"
+X-IronPort-AV: E=Sophos;i="5.88,354,1635231600"; 
+   d="scan'208";a="335513823"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 19:39:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,354,1635231600"; 
+   d="scan'208";a="771204809"
+Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Feb 2022 19:39:23 -0800
+Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nHdpD-0001Al-6Z; Wed, 09 Feb 2022 03:39:23 +0000
+Date:   Wed, 9 Feb 2022 11:39:03 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nitesh Shetty <nj.shetty@samsung.com>, mpatocka@redhat.com
+Cc:     kbuild-all@lists.01.org, javier@javigon.com, chaitanyak@nvidia.com,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+        msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, roland@purestorage.com, hare@suse.de,
+        kbusch@kernel.org, hch@lst.de, Frederick.Knight@netapp.com,
+        zach.brown@ni.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com,
+        nj.shetty@samsung.com
+Subject: Re: [PATCH v2 04/10] block: Introduce a new ioctl for copy
+Message-ID: <202202091048.qDQvi6ab-lkp@intel.com>
+References: <20220207141348.4235-5-nj.shetty@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ct2dtmhrD2S_HM39xGlFpg/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220207141348.4235-5-nj.shetty@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/ct2dtmhrD2S_HM39xGlFpg/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Nitesh,
 
-Hi Cai,
+Thank you for the patch! Perhaps something to improve:
 
-On Wed,  9 Feb 2022 10:35:59 +0800 Cai Huoqing <cai.huoqing@linux.dev> wrot=
-e:
->
-> Avoid the error-unused variable 'migration' when
-> CONFIG_TRANSPARENT_HUGEPAGE and CONFIG_ARCH_ENABLE_THP_MIGRATION
-> are not enabled.
->=20
-> Signed-off-by: Cai Huoqing <cai.huoqing@linux.dev>
-> ---
->  fs/proc/task_mmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index bc2f46033231..b055ff29204d 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1441,7 +1441,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned =
-long addr, unsigned long end,
->  	spinlock_t *ptl;
->  	pte_t *pte, *orig_pte;
->  	int err =3D 0;
-> -	bool migration =3D false;
-> +	bool migration __maybe_unused =3D false;
-> =20
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  	ptl =3D pmd_trans_huge_lock(pmdp, vma);
-> --=20
-> 2.25.1
->=20
+[auto build test WARNING on axboe-block/for-next]
+[also build test WARNING on next-20220208]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-This has already been fixed in Andrew's patch set by moving the "#ifdef
-CONFIG_TRANSPARENT_HUGEPAGE" above the "migration" declaration.
+url:    https://github.com/0day-ci/linux/commits/Nitesh-Shetty/block-make-bio_map_kern-non-static/20220207-231407
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+config: i386-randconfig-c001 (https://download.01.org/0day-ci/archive/20220209/202202091048.qDQvi6ab-lkp@intel.com/config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
 
---=20
-Cheers,
-Stephen Rothwell
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
---Sig_/ct2dtmhrD2S_HM39xGlFpg/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+cocci warnings: (new ones prefixed by >>)
+>> block/ioctl.c:145:10-17: WARNING opportunity for memdup_user
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIDLK0ACgkQAVBC80lX
-0Gzc1Qf+KFKl4xD6pf9RgHcnKZv9WZMpWCxraz+jBHwPdu6UeGwT+kKOoF3xQECD
-j75xvG8h5nYScNPmNH5k6rY0h8eCMqGvydOp4sy6geBhSwrNG6PqnjYLFg1aeIuG
-rQ2Y11Bss4R307M8TVs6ESYzYEMVpLjfy6lI58j78eYZ8gfIrWabm+bNYLjfaJIx
-FO3wrQnUaBkewfWzt0u+0HrEYlX6X0cjryxV9V3B0KOT16N9kAbv7mOsiBqh+SyC
-Mi+fDLw4bz3xqwE+Y75KBKG6UPdPCiFNM4MW7Tsjc8vXwSGqZcSRF9eEzORWE+wY
-xZMJU4HlYP101pXZOKHnxpamk561xg==
-=XpWC
------END PGP SIGNATURE-----
+vim +145 block/ioctl.c
 
---Sig_/ct2dtmhrD2S_HM39xGlFpg/--
+   126	
+   127	static int blk_ioctl_copy(struct block_device *bdev, fmode_t mode,
+   128			unsigned long arg)
+   129	{
+   130		struct copy_range crange, *ranges;
+   131		size_t payload_size = 0;
+   132		int ret;
+   133	
+   134		if (!(mode & FMODE_WRITE))
+   135			return -EBADF;
+   136	
+   137		if (copy_from_user(&crange, (void __user *)arg, sizeof(crange)))
+   138			return -EFAULT;
+   139	
+   140		if (unlikely(!crange.nr_range || crange.reserved || crange.nr_range >= MAX_COPY_NR_RANGE))
+   141			return -EINVAL;
+   142	
+   143		payload_size = (crange.nr_range * sizeof(struct range_entry)) + sizeof(crange);
+   144	
+ > 145		ranges = kmalloc(payload_size, GFP_KERNEL);
+   146		if (!ranges)
+   147			return -ENOMEM;
+   148	
+   149		if (copy_from_user(ranges, (void __user *)arg, payload_size)) {
+   150			ret = -EFAULT;
+   151			goto out;
+   152		}
+   153	
+   154		ret = blkdev_issue_copy(bdev, ranges->nr_range, ranges->range_list, bdev, GFP_KERNEL, 0);
+   155		if (copy_to_user((void __user *)arg, ranges, payload_size))
+   156			ret = -EFAULT;
+   157	out:
+   158		kfree(ranges);
+   159		return ret;
+   160	}
+   161	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
