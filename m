@@ -2,123 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE7F4AFF7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 22:52:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22AC94AFF80
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 22:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234057AbiBIVwC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 16:52:02 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:41990 "EHLO
+        id S234060AbiBIVyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 16:54:14 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:47206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234036AbiBIVwA (ORCPT
+        with ESMTP id S234052AbiBIVyN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 16:52:00 -0500
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 009BCDF48F23
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 13:52:00 -0800 (PST)
-Received: by mail-qv1-xf33.google.com with SMTP id h9so3075652qvm.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Feb 2022 13:52:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :cc:to;
-        bh=+KQV3KMSnnUOCfI2fkELTlqbV6pIH87B8EpZ9AiDcXo=;
-        b=qy+icEr6KJhCohC425kW8gmaTjZ0ATgSiQzfjVUzvB+4E92YSb7gqUYEuvdO0gtGYU
-         nW19DPlzilGzji2/wTnVu65KrVpJ2euZHOAjp9Nxt1SaF14HrYA9C+juWI9q24b58osU
-         MFBGthlpfbNIHYx7T6j3DW14SR4CB70E+1KGNU7bvpxA4jU+aI6M2HWRmqO96YQ7f49P
-         KadBoUIFca7+RRqrEZnKkYS3WXNaPpLHyDSO2/dKNa+j+pGOnx8BcxEknDdaj5sWFvGx
-         dh02QQiJ9+vWbCgA4YBwucly5EAlArMQbLy4t+xybnSNC/PF8dGukX0WuR8WGvQL0ZfB
-         aoWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=+KQV3KMSnnUOCfI2fkELTlqbV6pIH87B8EpZ9AiDcXo=;
-        b=P6umEx23Gm2XweZMUL8BonogpH6c0xGipgHA0X12OkMZEuFtWwBYA2LWHIo5l+mgXX
-         g5YiPTGuBm1uFu1MGqFOBPgt/pkgvw5GhOlov5pz3jZE9f2lIXlD5YYFurDHWJ4dmyAX
-         X3yiioN6ThYc85xueLzmztXY5HxR+hTWO5jWAmiG+LpDT1ptCYKx4xiinZXozreCW4Ic
-         VHVWHy/nKcRqLbHxeKQZn6suxo1KVXpxSuAgAQmfkNaqOH97pPibOKUGNAG0NeEcZ0HE
-         WelT9/Rd/3V9BHYtUOXF4V2GBVIqqM+u2i8cZjMZ7SXqMcHtc3X20lNN13DbDd/MJtoA
-         GNXg==
-X-Gm-Message-State: AOAM532qQEWcvxFFQZBXFwAqU+ikm0kvVUY9EibcvA6MaVLITH//yLkY
-        mNy6i1bFojFJHqZcR7Tz4NT+tQ==
-X-Google-Smtp-Source: ABdhPJyoMbI85IYVAWwegUJeGiQZ8AcYZmQuxyLdjq00t9sKA24p2TopQ232ctEQFtAHwVPwXJRPeg==
-X-Received: by 2002:a05:6214:2306:: with SMTP id gc6mr3009292qvb.131.1644443520168;
-        Wed, 09 Feb 2022 13:52:00 -0800 (PST)
-Received: from smtpclient.apple ([2600:1700:42f0:6600:cd8a:8634:7b18:da1e])
-        by smtp.gmail.com with ESMTPSA id bl1sm8887446qkb.16.2022.02.09.13.51.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Feb 2022 13:51:59 -0800 (PST)
-From:   "Viacheslav A.Dubeyko" <viacheslav.dubeyko@bytedance.com>
-Content-Type: text/plain;
-        charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.40.0.1.81\))
-Subject: [LSF/MM/BPF TOPIC] File system techniques for computational storage
- and heterogeneous memory pool
-Message-Id: <E0E49215-1C61-48ED-8A89-889C2E65A53B@bytedance.com>
-Date:   Wed, 9 Feb 2022 13:51:57 -0800
-Cc:     Viacheslav Dubeyko <slava@dubeyko.com>,
-        Cong Wang <cong.wang@bytedance.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-To:     lsf-pc@lists.linux-foundation.org
-X-Mailer: Apple Mail (2.3693.40.0.1.81)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 9 Feb 2022 16:54:13 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F01C0F8692
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 13:54:15 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 3CDA51F386;
+        Wed,  9 Feb 2022 21:54:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1644443654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type;
+        bh=zMm3pfRsYZ+DVGCUf3CG6egjZc7b7/JzTf7Ck8DjvE0=;
+        b=1qdjJeNP6S0FbkRHd6MeRL/iu/zT9YX8DcqJZug/Wi5Mu+HYbamonXTkI3rHYJgsGAXuTD
+        Kq+c2XOU86evVzcs/pwsF8mWsjycjiz5PE5NlputMW8DhRx4J8Yd7uFu+m8sgm/BHOeth+
+        wcOCeTclL3oeO4FbUjdgS3DKPBav4KU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1644443654;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type;
+        bh=zMm3pfRsYZ+DVGCUf3CG6egjZc7b7/JzTf7Ck8DjvE0=;
+        b=EFwPc2L+D60LRC+Ma9aJZZKYpBPGkN5eFmVkznAC/fPeAei+OgbBdLcUMI40SsVNSXEU3C
+        EV9i0zTF2xJQsXCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B028613AD9;
+        Wed,  9 Feb 2022 21:54:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id h7vELwQ4BGK+LwAAMHmgww
+        (envelope-from <rgoldwyn@suse.de>); Wed, 09 Feb 2022 21:54:12 +0000
+Date:   Wed, 9 Feb 2022 15:54:10 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org
+Cc:     dchinner@redhat.com, willy@infradead.org
+Subject: [LSF/MM/BPF Topic] Shared memory for shared file extents
+Message-ID: <20220209215410.vl5777f7g6utgipt@fiona>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Copy-on-write filesystem such as btrfs (or reflinks in XFS/OCFS2) have
+files which share extents on disk. Multiple files can have extents
+pointing to same physical disk location. When mutliple files share a
+common extent and these files are read(), each file will have it's own
+copy of the content in the page cache.
 
-I would like to discuss potential file system techniques that could =
-employ the computational storage=E2=80=99s capabilities and how =
-computational storage would collaborate with the file system. File =
-system plays the role of mediator between application and storage device =
-by means of creating the file/folder abstraction. So, the file system =
-still is capable of creating a good abstraction for the case of a =
-computational storage device. What could such an abstraction look like? =
-The responsibility of the file system would be to offload (send an =
-algorithm on storage device side) or to initiate the existing algorithm =
-execution on storage device side.
+The problem is this leads to wastage of memory since multiple
+copies of the same content is in memory. The proposal is to have a
+common cache which would be used *for reads only* (excluding read before
+writes for non page aligned writes).
 
-If we consider any algorithm then, usually, an algorithm is a sequence =
-of actions that needs to be applied to some set of items or objects of =
-some type. So, it is possible to see the necessity to consider: (1) data =
-object, (2) algorithm object, (3) object type. Data and algorithm =
-objects can still be represented by files. However, there is a tricky =
-point of sharing file system knowledge about file=E2=80=99s content =
-placement with computational storage. So, finally, what could be a basic =
-item to represent an object inside of computational storage? Would it =
-be: (1) logical block (LBA), (2) LBA range, (3) stream managed by =
-storage device, (4) file system=E2=80=99s allocation group, (5) =
-segment/zone? Technically, a folder could still be a namespace that =
-groups a set of objects. And algorithm object can be applied by =
-computational storage on a folder (set of objects) or file (one object). =
-Or, maybe, a file/stream needs to be considered like a set of items?
+I would like to discuss the problems which will arise to implement this:
+ - strategies to maintain such a shared cache
+   - location of the shared cache: device inode or separate inode?
+   - all reads go through shared cache OR only shared extents 
+     should be in shared cache
+ - actions to perform if write occurs at offsets of shared extents
+   - should it be CoW'd in memory? OR
+   - move the pages from shared cache to inode's cache?
+ - what should be done to the pages after writeback. Should they be
+   dropped, so further reads are read into shared cache?
+ - Shrinking in case of system memory pressure
 
-The next question is when an algorithm execution can be initiated? One =
-of the possible way is to execute such an algorithm at the moment of =
-delivering the code from the host on the storage device side (eBPF =
-way?). However, if the code is already inside of computational storage =
-then a trigger model can be used (when some event could initiate the =
-code execution). So, the file system could play the role of algorithm =
-execution initiator and to define objects that should be processed. The =
-trigger model implies that computational storage could register an =
-action (algorithm) needed to apply on some object or data type in the =
-case of an event. What potential events can be considered: (1) read =
-operation, (2) write operation, (3) update operation, (4) GC operation, =
-(5) copy operation, (6) metadata operation, and so on?
+An initial RFC patch was posted here:
+https://lore.kernel.org/all/YXNoxZqKPkxZvr3E@casper.infradead.org/t/
 
-What potential mechanisms of function/algorithm delivering in =
-computational storage? It is possible to consider: (1) SCSI/NVMe packet, =
-(2) file/folder extended attribute, (3) DMA exchange, (4) special =
-partition.
-
-Any opinions, ideas?
-
-Thanks,
-Slava.
-
+-- 
+Goldwyn
