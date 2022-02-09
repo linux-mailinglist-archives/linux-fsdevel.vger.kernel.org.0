@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 597064AFE50
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A8C04AFE55
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231703AbiBIUXH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:23:07 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50758 "EHLO
+        id S231719AbiBIUXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:23:13 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231492AbiBIUWa (ORCPT
+        with ESMTP id S231506AbiBIUWa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:30 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C9EE040DC4
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA290E040DC5
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Y+DtiLkCyZdYasu76utFATrFxKI5/Wwzoyk8RsH4DE8=; b=uIJ/gpHlw7WxRJFb1kxAM5m2Xw
-        xiLKV4zNfyiO/EbIuIPWNc7ShwuuYCHRWRVS6W1yc/sqb/Fe58pnOt2rWtdri6stTQzu35y27fqny
-        jeXiAZv2ufaPnlC7bLy8ebnkjDiW7moYqvIrscA3OxTCN/T9s78BsAzs0FtOfPw58ZPPdgcBnMrEZ
-        DRXy6n8kJGHBjNqvg0mKvce5KU5bX4ujA/m8pc5Tky5XsMtLhemLha6rqHJPUVV7Q2JaHt90qB614
-        Fo5I0qwA8DXnNQHZmruO7vUNVzW2DT+CbXViZK1TcC9didVrM2dbeWETTBQwbrTF3fWqLUawB9q7a
-        vm2+KUYQ==;
+        bh=EaMSg+nuqe3EvOXpkJZI00cuVVsVnTlon718LD+DS7Q=; b=OD/f55XvZZQasQZNQ2g1SDv5Rk
+        rvnBTpALjyMvUQWLaFaRkGI4865NrPzrd4jBFJUf2xHBpMo0cYfeXbdf5/t1+TnR2QvOVpo2dgYqJ
+        uewtSuculwP/cNhNObhXDv1AX3t0gvoBKTFcgipdKPcXsUeg7jNW2oyXb9yqD1p8OnKE9UTtkkbaT
+        Yu9HnkcUSDjABEvPbw7dr8aVWbzkd5cTa/YA5NUW+Q+5Tk3KB5K375AS61dM0cA4ppP/w/epY1BFA
+        aJ1fqJneGDpi3HOAfLCSKucPr4lMN65OoZjxZsEPl+eOWDFKxDef3JHjpU2WZVUUaNIIKv4iv2SZv
+        LQmcuUww==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTv-008cs1-5O; Wed, 09 Feb 2022 20:22:27 +0000
+        id 1nHtTv-008cs7-A7; Wed, 09 Feb 2022 20:22:27 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 36/56] cifs: Convert from launder_page to launder_folio
-Date:   Wed,  9 Feb 2022 20:21:55 +0000
-Message-Id: <20220209202215.2055748-37-willy@infradead.org>
+Subject: [PATCH 37/56] fuse: Convert from launder_page to launder_folio
+Date:   Wed,  9 Feb 2022 20:21:56 +0000
+Message-Id: <20220209202215.2055748-38-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -48,65 +48,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Straightforward conversion.
+Straightforward conversion although the helper functions still assume
+a single page.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/cifs/file.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/fuse/dir.c  |  2 +-
+ fs/fuse/file.c | 14 +++++++-------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 076094e79170..3fe3c5552b39 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -4760,11 +4760,11 @@ static void cifs_invalidate_folio(struct folio *folio, size_t offset,
- 	folio_wait_fscache(folio);
- }
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 656e921f3506..9ff27b8a9782 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1773,7 +1773,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
  
--static int cifs_launder_page(struct page *page)
-+static int cifs_launder_folio(struct folio *folio)
- {
- 	int rc = 0;
--	loff_t range_start = page_offset(page);
--	loff_t range_end = range_start + (loff_t)(PAGE_SIZE - 1);
-+	loff_t range_start = folio_pos(folio);
-+	loff_t range_end = range_start + folio_size(folio);
- 	struct writeback_control wbc = {
- 		.sync_mode = WB_SYNC_ALL,
- 		.nr_to_write = 0,
-@@ -4772,12 +4772,12 @@ static int cifs_launder_page(struct page *page)
- 		.range_end = range_end,
- 	};
- 
--	cifs_dbg(FYI, "Launder page: %p\n", page);
-+	cifs_dbg(FYI, "Launder page: %lu\n", folio->index);
- 
--	if (clear_page_dirty_for_io(page))
--		rc = cifs_writepage_locked(page, &wbc);
-+	if (folio_clear_dirty_for_io(folio))
-+		rc = cifs_writepage_locked(&folio->page, &wbc);
- 
--	wait_on_page_fscache(page);
-+	folio_wait_fscache(folio);
- 	return rc;
- }
- 
-@@ -4958,7 +4958,7 @@ const struct address_space_operations cifs_addr_ops = {
- 	.releasepage = cifs_release_page,
- 	.direct_IO = cifs_direct_io,
- 	.invalidate_folio = cifs_invalidate_folio,
--	.launder_page = cifs_launder_page,
-+	.launder_folio = cifs_launder_folio,
  	/*
- 	 * TODO: investigate and if useful we could add an cifs_migratePage
- 	 * helper (under an CONFIG_MIGRATION) in the future, and also
-@@ -4982,5 +4982,5 @@ const struct address_space_operations cifs_addr_ops_smallbuf = {
- 	.set_page_dirty = cifs_set_page_dirty,
- 	.releasepage = cifs_release_page,
- 	.invalidate_folio = cifs_invalidate_folio,
--	.launder_page = cifs_launder_page,
-+	.launder_folio = cifs_launder_folio,
- };
+ 	 * Only call invalidate_inode_pages2() after removing
+-	 * FUSE_NOWRITE, otherwise fuse_launder_page() would deadlock.
++	 * FUSE_NOWRITE, otherwise fuse_launder_folio() would deadlock.
+ 	 */
+ 	if ((is_truncate || !is_wb) &&
+ 	    S_ISREG(inode->i_mode) && oldsize != outarg.attr.size) {
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 829094451774..aed0d5dcd022 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2330,17 +2330,17 @@ static int fuse_write_end(struct file *file, struct address_space *mapping,
+ 	return copied;
+ }
+ 
+-static int fuse_launder_page(struct page *page)
++static int fuse_launder_folio(struct folio *folio)
+ {
+ 	int err = 0;
+-	if (clear_page_dirty_for_io(page)) {
+-		struct inode *inode = page->mapping->host;
++	if (folio_clear_dirty_for_io(folio)) {
++		struct inode *inode = folio->mapping->host;
+ 
+ 		/* Serialize with pending writeback for the same page */
+-		fuse_wait_on_page_writeback(inode, page->index);
+-		err = fuse_writepage_locked(page);
++		fuse_wait_on_page_writeback(inode, folio->index);
++		err = fuse_writepage_locked(&folio->page);
+ 		if (!err)
+-			fuse_wait_on_page_writeback(inode, page->index);
++			fuse_wait_on_page_writeback(inode, folio->index);
+ 	}
+ 	return err;
+ }
+@@ -3161,7 +3161,7 @@ static const struct address_space_operations fuse_file_aops  = {
+ 	.readahead	= fuse_readahead,
+ 	.writepage	= fuse_writepage,
+ 	.writepages	= fuse_writepages,
+-	.launder_page	= fuse_launder_page,
++	.launder_folio	= fuse_launder_folio,
+ 	.set_page_dirty	= __set_page_dirty_nobuffers,
+ 	.bmap		= fuse_bmap,
+ 	.direct_IO	= fuse_direct_IO,
 -- 
 2.34.1
 
