@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B81FA4AE9FD
+	by mail.lfdr.de (Postfix) with ESMTP id 6E8514AE9FC
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 07:06:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234784AbiBIGFX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S234879AbiBIGFX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 9 Feb 2022 01:05:23 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:53322 "EHLO
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:53366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235969AbiBIGBy (ORCPT
+        with ESMTP id S236072AbiBIGB4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 01:01:54 -0500
-Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA09C05CB99;
-        Tue,  8 Feb 2022 22:01:57 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V3zd5nv_1644386493;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V3zd5nv_1644386493)
+        Wed, 9 Feb 2022 01:01:56 -0500
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71709C05CBA6;
+        Tue,  8 Feb 2022 22:01:59 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R631e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V3zaQVI_1644386495;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V3zaQVI_1644386495)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 09 Feb 2022 14:01:34 +0800
+          Wed, 09 Feb 2022 14:01:35 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         chao@kernel.org, linux-erofs@lists.ozlabs.org
@@ -27,9 +27,9 @@ Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
         joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
         tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
         eguan@linux.alibaba.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 19/22] erofs: implement fscache-based data readahead for hole
-Date:   Wed,  9 Feb 2022 14:01:05 +0800
-Message-Id: <20220209060108.43051-20-jefflexu@linux.alibaba.com>
+Subject: [PATCH v3 20/22] erofs: implement fscache-based data readahead for non-inline layout
+Date:   Wed,  9 Feb 2022 14:01:06 +0800
+Message-Id: <20220209060108.43051-21-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220209060108.43051-1-jefflexu@linux.alibaba.com>
 References: <20220209060108.43051-1-jefflexu@linux.alibaba.com>
@@ -45,133 +45,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement fscache-based data readahead. This patch only supports
-readahead for hole, while the following patches will handle other cases.
-
-Besides this patch also registers an individual bdi for each erofs
-instance, so that readahead can be enabled.
-
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- fs/erofs/fscache.c | 83 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/erofs/super.c   |  4 +++
- 2 files changed, 87 insertions(+)
+ fs/erofs/fscache.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
 diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index c7762e154064..c8a0851230e5 100644
+index c8a0851230e5..ef5eef33e3d5 100644
 --- a/fs/erofs/fscache.c
 +++ b/fs/erofs/fscache.c
-@@ -195,12 +195,95 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
- 	return ret;
- }
+@@ -197,6 +197,7 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
  
-+enum erofs_fscache_readahead_type {
-+	EROFS_FSCACHE_READAHEAD_TYPE_HOLE,
-+};
-+
-+static int erofs_fscache_do_readahead(struct readahead_control *rac,
-+				      struct erofs_fscache_map *fsmap,
-+				      enum erofs_fscache_readahead_type type)
-+{
-+	size_t offset, length, done;
-+	struct page *page;
-+
-+	/*
-+	 * 1) For CHUNK_BASED (HOLE), the output map.m_la is rounded down to
-+	 *    the nearest chunk boundary, and thus offset will be non-zero.
-+	 */
-+	offset = fsmap->o_la - fsmap->m_la;
-+	length = fsmap->m_llen - offset;
-+
-+	for (done = 0; done < length; done += PAGE_SIZE) {
-+		page = readahead_page(rac);
-+		if (!page)
+ enum erofs_fscache_readahead_type {
+ 	EROFS_FSCACHE_READAHEAD_TYPE_HOLE,
++	EROFS_FSCACHE_READAHEAD_TYPE_NOINLINE,
+ };
+ 
+ static int erofs_fscache_do_readahead(struct readahead_control *rac,
+@@ -205,10 +206,14 @@ static int erofs_fscache_do_readahead(struct readahead_control *rac,
+ {
+ 	size_t offset, length, done;
+ 	struct page *page;
++	int ret = 0;
+ 
+ 	/*
+-	 * 1) For CHUNK_BASED (HOLE), the output map.m_la is rounded down to
+-	 *    the nearest chunk boundary, and thus offset will be non-zero.
++	 * 1) For CHUNK_BASED (HOLE/NOINLINE), the output map.m_la is rounded
++	 *    down to the nearest chunk boundary, and thus offset will be
++	 *    non-zero.
++	 * 2) For the other cases, the output map.m_la shall be equal to o_la,
++	 *    and thus offset will be zero.
+ 	 */
+ 	offset = fsmap->o_la - fsmap->m_la;
+ 	length = fsmap->m_llen - offset;
+@@ -222,11 +227,18 @@ static int erofs_fscache_do_readahead(struct readahead_control *rac,
+ 		case EROFS_FSCACHE_READAHEAD_TYPE_HOLE:
+ 			zero_user(page, 0, PAGE_SIZE);
+ 			break;
++		case EROFS_FSCACHE_READAHEAD_TYPE_NOINLINE:
++			ret = erofs_fscache_readpage_noinline(page, fsmap);
++			fsmap->m_pa += EROFS_BLKSIZ;
 +			break;
-+
-+		switch (type) {
-+		case EROFS_FSCACHE_READAHEAD_TYPE_HOLE:
-+			zero_user(page, 0, PAGE_SIZE);
-+			break;
-+		default:
-+			DBG_BUGON(1);
-+			return -EINVAL;
-+		}
-+
-+		SetPageUptodate(page);
-+		unlock_page(page);
-+	}
-+
-+	return done;
-+}
-+
-+static void erofs_fscache_readahead(struct readahead_control *rac)
-+{
-+	struct inode *inode = rac->mapping->host;
-+	struct erofs_inode *vi = EROFS_I(inode);
-+	struct super_block *sb = inode->i_sb;
-+	size_t length = readahead_length(rac);
-+	struct erofs_map_blocks map;
-+	struct erofs_fscache_map fsmap;
-+	int ret;
-+
-+	if (erofs_inode_is_data_compressed(vi->datalayout)) {
-+		erofs_info(sb, "compressed layout not supported yet");
-+		return;
-+	}
-+
-+	while (length) {
-+		map.m_la = fsmap.o_la = readahead_pos(rac);
-+
-+		ret = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
+ 		default:
+ 			DBG_BUGON(1);
+ 			return -EINVAL;
+ 		}
+ 
 +		if (ret)
-+			return;
++			return ret;
 +
-+		if (!(map.m_flags & EROFS_MAP_MAPPED)) {
-+			/* Only CHUNK_BASED layout supports hole. */
-+			fsmap.m_la   = map.m_la;
-+			fsmap.m_llen = map.m_llen;
-+			ret = erofs_fscache_do_readahead(rac, &fsmap,
-+					EROFS_FSCACHE_READAHEAD_TYPE_HOLE);
-+		} else {
-+			switch (vi->datalayout) {
-+			default:
-+				DBG_BUGON(1);
-+				return;
-+			}
-+		}
-+
-+		if (ret <= 0)
-+			return;
-+
-+		length -= ret;
-+	}
-+}
-+
- static const struct address_space_operations erofs_fscache_blob_aops = {
- 	.readpage = erofs_fscache_readpage_blob,
- };
- 
- const struct address_space_operations erofs_fscache_access_aops = {
- 	.readpage = erofs_fscache_readpage,
-+	.readahead = erofs_fscache_readahead,
- };
- 
- struct page *erofs_fscache_read_cache_page(struct erofs_fscache_context *ctx,
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index f058a04a00c7..2942029a7049 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -616,6 +616,10 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 			return PTR_ERR(bootstrap);
- 
- 		sbi->bootstrap = bootstrap;
-+
-+		err = super_setup_bdi(sb);
-+		if (err)
-+			return err;
+ 		SetPageUptodate(page);
+ 		unlock_page(page);
  	}
- 
- 	err = erofs_read_superblock(sb);
+@@ -263,7 +275,16 @@ static void erofs_fscache_readahead(struct readahead_control *rac)
+ 			ret = erofs_fscache_do_readahead(rac, &fsmap,
+ 					EROFS_FSCACHE_READAHEAD_TYPE_HOLE);
+ 		} else {
++			ret = erofs_fscache_get_map(&fsmap, &map, sb);
++			if (ret)
++				return;
++
+ 			switch (vi->datalayout) {
++			case EROFS_INODE_FLAT_PLAIN:
++			case EROFS_INODE_CHUNK_BASED:
++				ret = erofs_fscache_do_readahead(rac, &fsmap,
++					EROFS_FSCACHE_READAHEAD_TYPE_NOINLINE);
++				break;
+ 			default:
+ 				DBG_BUGON(1);
+ 				return;
 -- 
 2.27.0
 
