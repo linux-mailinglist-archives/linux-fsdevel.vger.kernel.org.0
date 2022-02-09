@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65D834AFE64
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB5B4AFE66
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231856AbiBIUXo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:23:44 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50334 "EHLO
+        id S231738AbiBIUX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:23:28 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231311AbiBIUWb (ORCPT
+        with ESMTP id S231574AbiBIUWb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:31 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6770E046F02
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E09E046F09
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=TrhzrI6l1CteZYMwO3WiLejLQyjybQaTA3AA2dGAD0E=; b=MHus4pX2XBITL5bX8OF6fIc846
-        dOXetK347nsVsCDN1GkelnZT/9uqVU3JXx23/WnlugXnWMkN3X3s8cr6HLyBVGqjc/DDISRYzP7eY
-        r2kTAAcelkccAZWVxJP7Q8EBVvyk5KKxww9+xdZR4lpv0Jx/wBO1XbIROFv+rNgE7jMnqe8pJc6KH
-        zyH5VZl6rK5ffXH3FIB0HawoX3vlgkvUulQ0h/0gl9hruenil+I03FnzYBm7enN55x6PXF1+aTup+
-        B4yZ7AceLgFmY4Omov+DAb1ni6r3gmaGZxlrrfi2t9DT3oNcGdE7NZ2Y7tTp8yuHimTPLH5FfV6Jl
-        uWsSBa3A==;
+        bh=tabz2EPYNpIhM2JHkCH8pT0MOKvv+F909vgH+3Fvqqs=; b=FFghEMyoZ+7a2uaCLXKVvDC7Xs
+        56pYZpm5vFMpGjVgB2z5i3uRjh/AY65ROmmirKCEUpinth1fN2usHlBtvsDZqeRp2/ZC59c06uKoX
+        lHFhvkzSwh1p9AAFRW1eDjEuK+fMzXNoDdZFhBRYP0nuPxRm7Wwh9MTKqwLTwPuIKgU+bdaOb1nXu
+        nVTmOnbYg/4WZjRLQ9ZbvgqipqY1NlLeWnVSVJGhz6Hzy6GSUfWCXXmIfBQITN1Sike3Kd7XobtXX
+        MvWG/Kh3gfAOGJkCvbMR6ZnuYsuvtzKZAP9EHIZ4GdBOsw2iFN8ATFESAz/bbwpkkVWp9gElEjvA0
+        yATGJdbA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTx-008ctX-4v; Wed, 09 Feb 2022 20:22:29 +0000
+        id 1nHtTx-008ctc-8m; Wed, 09 Feb 2022 20:22:29 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 51/56] mm: Convert swap_set_page_dirty() to swap_dirty_folio()
-Date:   Wed,  9 Feb 2022 20:22:10 +0000
-Message-Id: <20220209202215.2055748-52-willy@infradead.org>
+Subject: [PATCH 52/56] nilfs: Convert nilfs_set_page_dirty() to nilfs_dirty_folio()
+Date:   Wed,  9 Feb 2022 20:22:11 +0000
+Message-Id: <20220209202215.2055748-53-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -48,75 +48,88 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Straightforward conversion.
+The comment about the page always being locked is wrong, so copy
+the locking protection from __set_page_dirty_buffers().  That
+means moving the call to nilfs_set_file_dirty() down the
+function so as to not acquire a new dependency between the
+mapping->private_lock and the ns_inode_lock.  That might be a
+harmless dependency to add, but it's not necessary.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/swap.h |  2 +-
- mm/page_io.c         | 18 ++++++++++--------
- mm/swap_state.c      |  2 +-
- 3 files changed, 12 insertions(+), 10 deletions(-)
+ fs/nilfs2/inode.c | 39 +++++++++++++++++++--------------------
+ 1 file changed, 19 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 1d38d9475c4d..65a37e555124 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -427,7 +427,7 @@ extern int swap_writepage(struct page *page, struct writeback_control *wbc);
- extern void end_swap_bio_write(struct bio *bio);
- extern int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 	bio_end_io_t end_write_func);
--extern int swap_set_page_dirty(struct page *page);
-+bool swap_dirty_folio(struct address_space *mapping, struct folio *folio);
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index 153f0569dcf2..c1219c0678a5 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -199,23 +199,23 @@ static int nilfs_writepage(struct page *page, struct writeback_control *wbc)
+ 	return 0;
+ }
  
- int add_swap_extent(struct swap_info_struct *sis, unsigned long start_page,
- 		unsigned long nr_pages, sector_t start_block);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 24c975fb4e21..8f20f4dad289 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -438,19 +438,21 @@ int swap_readpage(struct page *page, bool synchronous)
+-static int nilfs_set_page_dirty(struct page *page)
++static bool nilfs_dirty_folio(struct address_space *mapping,
++		struct folio *folio)
+ {
+-	struct inode *inode = page->mapping->host;
+-	int ret = __set_page_dirty_nobuffers(page);
++	struct inode *inode = mapping->host;
++	struct buffer_head *head;
++	unsigned int nr_dirty;
++	bool ret = filemap_dirty_folio(mapping, folio);
+ 
+-	if (page_has_buffers(page)) {
+-		unsigned int nr_dirty = 0;
+-		struct buffer_head *bh, *head;
++	/*
++	 * The page may not be locked, eg if called from try_to_unmap_one()
++	 */
++	spin_lock(&mapping->private_lock);
++	head = folio_buffers(folio);
++	if (head) {
++		struct buffer_head *bh = head;
+ 
+-		/*
+-		 * This page is locked by callers, and no other thread
+-		 * concurrently marks its buffers dirty since they are
+-		 * only dirtied through routines in fs/buffer.c in
+-		 * which call sites of mark_buffer_dirty are protected
+-		 * by page lock.
+-		 */
+-		bh = head = page_buffers(page);
++		nr_dirty = 0;
+ 		do {
+ 			/* Do not mark hole blocks dirty */
+ 			if (buffer_dirty(bh) || !buffer_mapped(bh))
+@@ -224,14 +224,13 @@ static int nilfs_set_page_dirty(struct page *page)
+ 			set_buffer_dirty(bh);
+ 			nr_dirty++;
+ 		} while (bh = bh->b_this_page, bh != head);
+-
+-		if (nr_dirty)
+-			nilfs_set_file_dirty(inode, nr_dirty);
+ 	} else if (ret) {
+-		unsigned int nr_dirty = 1 << (PAGE_SHIFT - inode->i_blkbits);
++		nr_dirty = 1 << (PAGE_SHIFT - inode->i_blkbits);
++	}
++	spin_unlock(&mapping->private_lock);
+ 
++	if (nr_dirty)
+ 		nilfs_set_file_dirty(inode, nr_dirty);
+-	}
  	return ret;
  }
  
--int swap_set_page_dirty(struct page *page)
-+bool swap_dirty_folio(struct address_space *mapping, struct folio *folio)
- {
--	struct swap_info_struct *sis = page_swap_info(page);
-+	struct swap_info_struct *sis = swp_swap_info(folio_swap_entry(folio));
- 
- 	if (data_race(sis->flags & SWP_FS_OPS)) {
--		struct address_space *mapping = sis->swap_file->f_mapping;
--		const struct address_space_operations *aops = mapping->a_ops;
-+		const struct address_space_operations *aops;
-+
-+		mapping = sis->swap_file->f_mapping;
-+		aops = mapping->a_ops;
- 
--		VM_BUG_ON_PAGE(!PageSwapCache(page), page);
-+		VM_BUG_ON_FOLIO(!folio_test_swapcache(folio), folio);
- 		if (aops->dirty_folio)
--			return aops->dirty_folio(mapping, page_folio(page));
--		return aops->set_page_dirty(page);
-+			return aops->dirty_folio(mapping, folio);
-+		return aops->set_page_dirty(&folio->page);
- 	} else {
--		return __set_page_dirty_no_writeback(page);
-+		return __set_page_dirty_no_writeback(&folio->page);
- 	}
- }
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 8d4104242100..4772afd08101 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -30,7 +30,7 @@
-  */
- static const struct address_space_operations swap_aops = {
- 	.writepage	= swap_writepage,
--	.set_page_dirty	= swap_set_page_dirty,
-+	.dirty_folio	= swap_dirty_folio,
- #ifdef CONFIG_MIGRATION
- 	.migratepage	= migrate_page,
- #endif
+@@ -299,7 +298,7 @@ const struct address_space_operations nilfs_aops = {
+ 	.writepage		= nilfs_writepage,
+ 	.readpage		= nilfs_readpage,
+ 	.writepages		= nilfs_writepages,
+-	.set_page_dirty		= nilfs_set_page_dirty,
++	.dirty_folio		= nilfs_dirty_folio,
+ 	.readahead		= nilfs_readahead,
+ 	.write_begin		= nilfs_write_begin,
+ 	.write_end		= nilfs_write_end,
 -- 
 2.34.1
 
