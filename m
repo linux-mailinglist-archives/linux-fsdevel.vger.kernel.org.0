@@ -2,38 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE474AFE3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 154E44AFE4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231503AbiBIUWa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:22:30 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49912 "EHLO
+        id S231433AbiBIUW0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:22:26 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231280AbiBIUWW (ORCPT
+        with ESMTP id S231287AbiBIUWW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:22 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A16E036C12
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3341AE039C4D
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=IdfdJx2aU2YqQCEDc2CwfkIoIjETBjiGZBPO+Z2zGgM=; b=a/qX/1WPQtO4Wr6H5LjKTTgpyj
-        8nKtnsM0uwoGxgtowI9eAgRQLt+4/0ZBHn8ez7LZVP/XyiC4Xr5Pb12lQSV9aa2P+1qwaff9raEr0
-        ZCP0qf5mNw9Xz4nIa2y9125zyalHwXBE85fVkBMgWWiQyp2PsPjVPRQPYwONSn1/BQf6NUaRjIxz6
-        zHhRbscTuFiY0FnTLXU1NDCPU/Afe3QHQDd3dDRM0oZnm+laM24llUhrkIxMzDqwptqK66wVFdRhI
-        F2JjvWyTPfq5VZD2rvYsaFGwyGFmif0T4wIzZlOh0f+1xSKr0ObsCfwCIi/Zaeszcrc0mAWx2fGO3
-        UY4dXl3w==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=5Lx9eTJYF8jKW3Ku6Mz80PugNV7NR6WorJ19ZSo/QjA=; b=oXBruR5m9Kt+rQS6/Ibp487wW6
+        pZ9KMcNojGmD/kK7L+OnxGLMT9T8T6chOzEHz13UnrG5D7ZXSzaPwqna6jpCCck4umop/ljBm4UHU
+        moN8p2mq2+/d/YZVg407GcoPwZfEa+p0p51qRddAcPlugeULRLEDgRCtkCqc3fieo65UjoOrpl+6a
+        gIam7jhEjIdD6CB1Mndnl+9S6ST3jCvdy6WqDDJECcrEtMbuvcY431qLGaPj5Rvmky7GV86WscPOe
+        FXtznrqEV/DLvqyZzj1wujt6ivuGpZKRZSOLrxRoQyX68kJ1g10pHLJtE58dqOi6XvssuyalhtABn
+        iqKvVxyw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTq-008coo-BY; Wed, 09 Feb 2022 20:22:22 +0000
+        id 1nHtTq-008coq-Dt; Wed, 09 Feb 2022 20:22:22 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 00/56] Filesystem folio conversions for 5.18
-Date:   Wed,  9 Feb 2022 20:21:19 +0000
-Message-Id: <20220209202215.2055748-1-willy@infradead.org>
+Subject: [PATCH 01/56] Convert NFS from readpages to readahead
+Date:   Wed,  9 Feb 2022 20:21:20 +0000
+Message-Id: <20220209202215.2055748-2-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
+References: <20220209202215.2055748-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -46,175 +48,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As I threatened ;-) previously, here are a number of filesystem changes
-that I'm going to try to push into 5.18.
+NFS is one of the last two users of the deprecated ->readpages aop.
+This conversion looks straightforward, but I have only compile-tested
+it.
 
-Trond's going to take the first two through the NFS tree, so I'll drop
-them as soon as they appear in -next.  I should probably send patches 3
-and 6 as bugfixes before 5.18.  Review & testing appreciated.  This is
-all against current Linus tree as of today.  xfstests running now against
-xfs, with a root of ext4, so that's at least partially tested.  I probably
-shan't do detailed testing of any of the filesystems I modified here since
-it's pretty much all mechanical.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/nfs/file.c          |  2 +-
+ fs/nfs/nfstrace.h      |  6 +++---
+ fs/nfs/read.c          | 21 +++++++++++++--------
+ include/linux/nfs_fs.h |  3 +--
+ 4 files changed, 18 insertions(+), 14 deletions(-)
 
-Matthew Wilcox (Oracle) (56):
-  Convert NFS from readpages to readahead
-  readahead: Remove read_cache_pages()
-  iomap: Fix iomap_invalidatepage tracepoint
-  fs: read_mapping_page() should take a struct file argument
-  fs/remap_range: Pass the file pointer to read_mapping_folio()
-  scsicam: Fix use of page cache
-  buffer: Add folio_buffers()
-  fs: Convert is_partially_uptodate to folios
-  fs: Turn do_invalidatepage() into folio_invalidate()
-  btrfs: Use folio_invalidate()
-  ceph: Use folio_invalidate()
-  ext4: Use folio_invalidate()
-  fs: Add invalidate_folio() aops method
-  iomap: Remove iomap_invalidatepage()
-  fs: Turn block_invalidatepage into block_invalidate_folio
-  fs: Remove noop_invalidatepage()
-  9p: Convert to invalidate_folio
-  afs: Convert directory aops to invalidate_folio
-  afs: Convert invalidatepage to invalidate_folio
-  btrfs: Convert from invalidatepage to invalidate_folio
-  ceph: Convert from invalidatepage to invalidate_folio
-  cifs: Convert from invalidatepage to invalidate_folio
-  erofs: Convert from invalidatepage to invalidate_folio
-  ext4: Convert invalidatepage to invalidate_folio
-  f2fs: Convert invalidatepage to invalidate_folio
-  gfs2: Convert invalidatepage to invalidate_folio
-  jfs: Convert from invalidatepage to invalidate_folio
-  nfs: Convert from invalidatepage to invalidate_folio
-  orangefs: Convert from invalidatepage to invalidate_folio
-  reiserfs: Convert from invalidatepage to invalidate_folio
-  ubifs: Convert from invalidatepage to invalidate_folio
-  fs: Remove aops->invalidatepage
-  fs: Add aops->launder_folio
-  9p: Convert from launder_page to launder_folio
-  afs: Convert from launder_page to launder_folio
-  cifs: Convert from launder_page to launder_folio
-  fuse: Convert from launder_page to launder_folio
-  nfs: Convert from launder_page to launder_folio
-  orangefs: Convert launder_page to launder_folio
-  fs: Remove aops->launder_page
-  fs: Add aops->dirty_folio
-  fscache: Convert fscache_set_page_dirty() to fscache_dirty_folio()
-  btrfs: Convert from set_page_dirty to dirty_folio
-  fs: Convert trivial uses of __set_page_dirty_nobuffers to
-    filemap_dirty_folio
-  btrfs: Convert extent_range_redirty_for_io() to use folios
-  afs: Convert afs_dir_set_page_dirty() to afs_dir_dirty_folio()
-  f2fs: Convert f2fs_set_meta_page_dirty to f2fs_dirty_meta_folio
-  f2fs: Convert f2fs_set_data_page_dirty to f2fs_dirty_data_folio
-  f2fs: Convert f2fs_set_node_page_dirty to f2fs_dirty_node_folio
-  ubifs: Convert ubifs_set_page_dirty to ubifs_dirty_folio
-  mm: Convert swap_set_page_dirty() to swap_dirty_folio()
-  nilfs: Convert nilfs_set_page_dirty() to nilfs_dirty_folio()
-  fs: Convert __set_page_dirty_buffers to block_dirty_folio
-  fs: Convert __set_page_dirty_no_writeback to noop_dirty_folio
-  fb_defio: Use noop_dirty_folio()
-  fs: Remove aops ->set_page_dirty
-
- .../filesystems/caching/netfs-api.rst         |   7 +-
- Documentation/filesystems/locking.rst         |  42 +++---
- Documentation/filesystems/vfs.rst             |  46 +++----
- block/fops.c                                  |   3 +-
- drivers/dax/device.c                          |   3 +-
- drivers/scsi/scsicam.c                        |   8 +-
- drivers/video/fbdev/core/fb_defio.c           |   9 +-
- fs/9p/vfs_addr.c                              |  37 ++---
- fs/adfs/inode.c                               |   3 +-
- fs/affs/file.c                                |   6 +-
- fs/afs/dir.c                                  |  18 +--
- fs/afs/file.c                                 |  28 ++--
- fs/afs/internal.h                             |   6 +-
- fs/afs/write.c                                |  10 +-
- fs/aio.c                                      |   2 +-
- fs/bfs/file.c                                 |   3 +-
- fs/btrfs/ctree.h                              |   3 +
- fs/btrfs/disk-io.c                            |  47 +++----
- fs/btrfs/extent-io-tree.h                     |   4 +-
- fs/btrfs/extent_io.c                          |  35 ++---
- fs/btrfs/inode.c                              |  84 ++++++------
- fs/buffer.c                                   |  96 +++++++------
- fs/ceph/addr.c                                |  83 ++++++------
- fs/ceph/cache.h                               |  13 +-
- fs/cifs/file.c                                |  39 +++---
- fs/ecryptfs/mmap.c                            |   5 +-
- fs/erofs/super.c                              |  17 ++-
- fs/exfat/inode.c                              |   3 +-
- fs/ext2/inode.c                               |   9 +-
- fs/ext4/inode.c                               | 127 +++++++++---------
- fs/f2fs/checkpoint.c                          |  31 ++---
- fs/f2fs/compress.c                            |   2 +-
- fs/f2fs/data.c                                |  56 ++++----
- fs/f2fs/f2fs.h                                |   5 +-
- fs/f2fs/node.c                                |  29 ++--
- fs/fat/inode.c                                |   3 +-
- fs/fscache/io.c                               |  28 ++--
- fs/fuse/dax.c                                 |   3 +-
- fs/fuse/dir.c                                 |   2 +-
- fs/fuse/file.c                                |  16 +--
- fs/gfs2/aops.c                                |  43 +++---
- fs/gfs2/meta_io.c                             |   6 +-
- fs/hfs/inode.c                                |   6 +-
- fs/hfsplus/inode.c                            |   6 +-
- fs/hostfs/hostfs_kern.c                       |   2 +-
- fs/hpfs/file.c                                |   3 +-
- fs/hugetlbfs/inode.c                          |   2 +-
- fs/iomap/buffered-io.c                        |  46 +++----
- fs/iomap/trace.h                              |   2 +-
- fs/jbd2/journal.c                             |   2 +-
- fs/jbd2/transaction.c                         |  31 +++--
- fs/jfs/inode.c                                |   3 +-
- fs/jfs/jfs_metapage.c                         |  14 +-
- fs/libfs.c                                    |  15 +--
- fs/minix/inode.c                              |   3 +-
- fs/mpage.c                                    |   2 +-
- fs/nfs/file.c                                 |  34 ++---
- fs/nfs/nfstrace.h                             |   6 +-
- fs/nfs/read.c                                 |  21 +--
- fs/nfs/write.c                                |   8 +-
- fs/nilfs2/inode.c                             |  41 +++---
- fs/nilfs2/mdt.c                               |   3 +-
- fs/ntfs/aops.c                                |  21 ++-
- fs/ntfs3/inode.c                              |   2 +-
- fs/ocfs2/aops.c                               |   4 +-
- fs/omfs/file.c                                |   3 +-
- fs/orangefs/inode.c                           | 121 ++++++++---------
- fs/reiserfs/inode.c                           |  40 +++---
- fs/reiserfs/journal.c                         |   4 +-
- fs/remap_range.c                              |  16 +--
- fs/sysv/itree.c                               |   3 +-
- fs/ubifs/file.c                               |  34 ++---
- fs/udf/file.c                                 |   3 +-
- fs/udf/inode.c                                |   3 +-
- fs/ufs/inode.c                                |   3 +-
- fs/vboxsf/file.c                              |   2 +-
- fs/xfs/xfs_aops.c                             |   7 +-
- fs/zonefs/super.c                             |   4 +-
- include/linux/buffer_head.h                   |   9 +-
- include/linux/fs.h                            |  14 +-
- include/linux/fscache.h                       |   8 +-
- include/linux/iomap.h                         |   5 +-
- include/linux/jbd2.h                          |   4 +-
- include/linux/mm.h                            |   3 -
- include/linux/nfs_fs.h                        |   5 +-
- include/linux/pagemap.h                       |  31 ++++-
- include/linux/swap.h                          |   2 +-
- include/trace/events/ext4.h                   |  30 ++---
- mm/filemap.c                                  |   8 +-
- mm/page-writeback.c                           |  36 +++--
- mm/page_io.c                                  |  15 ++-
- mm/readahead.c                                |  76 -----------
- mm/rmap.c                                     |   4 +-
- mm/secretmem.c                                |   2 +-
- mm/shmem.c                                    |   2 +-
- mm/swap_state.c                               |   2 +-
- mm/truncate.c                                 |  42 +++---
- 97 files changed, 871 insertions(+), 967 deletions(-)
-
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 76d76acbc594..4d681683d13c 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -514,7 +514,7 @@ static void nfs_swap_deactivate(struct file *file)
+ 
+ const struct address_space_operations nfs_file_aops = {
+ 	.readpage = nfs_readpage,
+-	.readpages = nfs_readpages,
++	.readahead = nfs_readahead,
+ 	.set_page_dirty = __set_page_dirty_nobuffers,
+ 	.writepage = nfs_writepage,
+ 	.writepages = nfs_writepages,
+diff --git a/fs/nfs/nfstrace.h b/fs/nfs/nfstrace.h
+index 317ce27bdc4b..4611aa3a21a4 100644
+--- a/fs/nfs/nfstrace.h
++++ b/fs/nfs/nfstrace.h
+@@ -889,11 +889,11 @@ TRACE_EVENT(nfs_aop_readpage_done,
+ TRACE_EVENT(nfs_aop_readahead,
+ 		TP_PROTO(
+ 			const struct inode *inode,
+-			struct page *page,
++			loff_t pos,
+ 			unsigned int nr_pages
+ 		),
+ 
+-		TP_ARGS(inode, page, nr_pages),
++		TP_ARGS(inode, pos, nr_pages),
+ 
+ 		TP_STRUCT__entry(
+ 			__field(dev_t, dev)
+@@ -911,7 +911,7 @@ TRACE_EVENT(nfs_aop_readahead,
+ 			__entry->fileid = nfsi->fileid;
+ 			__entry->fhandle = nfs_fhandle_hash(&nfsi->fh);
+ 			__entry->version = inode_peek_iversion_raw(inode);
+-			__entry->offset = page_index(page) << PAGE_SHIFT;
++			__entry->offset = pos;
+ 			__entry->nr_pages = nr_pages;
+ 		),
+ 
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index eb00229c1a50..2472f962a9a2 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -290,9 +290,8 @@ static void nfs_readpage_result(struct rpc_task *task,
+ }
+ 
+ static int
+-readpage_async_filler(void *data, struct page *page)
++readpage_async_filler(struct nfs_readdesc *desc, struct page *page)
+ {
+-	struct nfs_readdesc *desc = data;
+ 	struct inode *inode = page_file_mapping(page)->host;
+ 	unsigned int rsize = NFS_SERVER(inode)->rsize;
+ 	struct nfs_page *new;
+@@ -397,14 +396,16 @@ int nfs_readpage(struct file *file, struct page *page)
+ 	return ret;
+ }
+ 
+-int nfs_readpages(struct file *file, struct address_space *mapping,
+-		struct list_head *pages, unsigned nr_pages)
++void nfs_readahead(struct readahead_control *ractl)
+ {
++	unsigned int nr_pages = readahead_count(ractl);
++	struct file *file = ractl->file;
+ 	struct nfs_readdesc desc;
+-	struct inode *inode = mapping->host;
++	struct inode *inode = ractl->mapping->host;
++	struct page *page;
+ 	int ret;
+ 
+-	trace_nfs_aop_readahead(inode, lru_to_page(pages), nr_pages);
++	trace_nfs_aop_readahead(inode, readahead_pos(ractl), nr_pages);
+ 	nfs_inc_stats(inode, NFSIOS_VFSREADPAGES);
+ 
+ 	ret = -ESTALE;
+@@ -422,14 +423,18 @@ int nfs_readpages(struct file *file, struct address_space *mapping,
+ 	nfs_pageio_init_read(&desc.pgio, inode, false,
+ 			     &nfs_async_read_completion_ops);
+ 
+-	ret = read_cache_pages(mapping, pages, readpage_async_filler, &desc);
++	while ((page = readahead_page(ractl)) != NULL) {
++		ret = readpage_async_filler(&desc, page);
++		put_page(page);
++		if (ret)
++			break;
++	}
+ 
+ 	nfs_pageio_complete_read(&desc.pgio);
+ 
+ 	put_nfs_open_context(desc.ctx);
+ out:
+ 	trace_nfs_aop_readahead_done(inode, nr_pages, ret);
+-	return ret;
+ }
+ 
+ int __init nfs_init_readpagecache(void)
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index 68f81d8d36de..333ea05e2531 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -601,8 +601,7 @@ nfs_have_writebacks(struct inode *inode)
+  * linux/fs/nfs/read.c
+  */
+ extern int  nfs_readpage(struct file *, struct page *);
+-extern int  nfs_readpages(struct file *, struct address_space *,
+-		struct list_head *, unsigned);
++void nfs_readahead(struct readahead_control *);
+ 
+ /*
+  * inline functions
 -- 
 2.34.1
 
