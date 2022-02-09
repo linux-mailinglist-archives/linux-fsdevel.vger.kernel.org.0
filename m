@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F254AFE38
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20C394AFE47
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231322AbiBIUWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:22:23 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49906 "EHLO
+        id S231477AbiBIUW3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:22:29 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231258AbiBIUWW (ORCPT
+        with ESMTP id S230167AbiBIUWW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:22 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335D6E039C4E
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54198E039C4F
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=iXm/SEnRj/IstqLKJF/I7hjBxEi6Cnt+RUd9JyetrNA=; b=fAHiaPCR7BfjqFgNLWPD9sR0zq
-        mmbvNWOUY/tRrrxqA3q8y0HxUAIiFLEZyU9UNH4HfpG0+RSJ7mSVj+m81odO7s6zxBd+FakBfdBEj
-        f1qs+sD5LyvBFRadQulyHrrxS6mM3p/KpFsXYvTU/a1Eb8LU0uMo6+dQTruJTmmykaA9rVfczmiFS
-        cpNqBilwa0QpSk/JpcpcigjwdmcaBLelHjwU6+oLFvfu21O4uDINv6/5YQgpT5JWbaN8NUyymBZvy
-        lYgQhA//pHVqGjmPOl/Rb5r2X173CtNNDlBTXmyPr7feViKcpLMcfBviTe4jX1OwWN9GykzXiL4mg
-        kIY55maA==;
+        bh=i6Ccmmii5fiKaaUJVDta0DOiHEuUbCyGzZu4XnEK0Ho=; b=lDMSyWNz5YUkGtSLE0iPdHRYMr
+        9LDV3Bwqs1Y1lO260rPZl4JphR5HlNeNIX9Oi/w8Ek2lAYJ3xJKlMevWDARSCO67bdUkXItFBiEuH
+        aOVIZDdZieY56ANVbMU2uZkn/b805ttwZa4mge+8MxHbGd4GYoCaN5OaLSPCohQiEb+SAyWPE/uIP
+        KhiekV+RZi04GpzQTf2SREVuV1kZA6UjBr4i5Abbo+AIQoDCm/hYohZNmMaxaFsDDZ9nmqqZF4OHZ
+        tAISdpNNlBg8e6WNd+Sn6ZL2LMbnnjJQuHdGgayPbPvVv4zSpo/9RRJB6dA71U60VzsE2bPDxmCx5
+        R2cQmkIQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTq-008cov-In; Wed, 09 Feb 2022 20:22:22 +0000
+        id 1nHtTq-008cp0-MI; Wed, 09 Feb 2022 20:22:22 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 02/56] readahead: Remove read_cache_pages()
-Date:   Wed,  9 Feb 2022 20:21:21 +0000
-Message-Id: <20220209202215.2055748-3-willy@infradead.org>
+Subject: [PATCH 03/56] iomap: Fix iomap_invalidatepage tracepoint
+Date:   Wed,  9 Feb 2022 20:21:22 +0000
+Message-Id: <20220209202215.2055748-4-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -48,115 +48,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With no remaining users, remove this function and the related
-infrastructure.
+This tracepoint is defined to take an offset in the file, not an
+offset in the folio.
 
+Fixes: 1ac994525b9d ("iomap: Remove pgoff from tracepoints")
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h |  2 --
- mm/readahead.c          | 76 -----------------------------------------
- 2 files changed, 78 deletions(-)
+ fs/iomap/buffered-io.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 270bf5136c34..34682f001344 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -632,8 +632,6 @@ struct page *read_cache_page(struct address_space *, pgoff_t index,
- 		filler_t *filler, void *data);
- extern struct page * read_cache_page_gfp(struct address_space *mapping,
- 				pgoff_t index, gfp_t gfp_mask);
--extern int read_cache_pages(struct address_space *mapping,
--		struct list_head *pages, filler_t *filler, void *data);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 6c51a75d0be6..d020a2e81a24 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -480,7 +480,8 @@ EXPORT_SYMBOL_GPL(iomap_releasepage);
  
- static inline struct page *read_mapping_page(struct address_space *mapping,
- 				pgoff_t index, void *data)
-diff --git a/mm/readahead.c b/mm/readahead.c
-index cf0dcf89eb69..7ba979bf8af3 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -37,82 +37,6 @@ file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
- }
- EXPORT_SYMBOL_GPL(file_ra_state_init);
- 
--/*
-- * see if a page needs releasing upon read_cache_pages() failure
-- * - the caller of read_cache_pages() may have set PG_private or PG_fscache
-- *   before calling, such as the NFS fs marking pages that are cached locally
-- *   on disk, thus we need to give the fs a chance to clean up in the event of
-- *   an error
-- */
--static void read_cache_pages_invalidate_page(struct address_space *mapping,
--					     struct page *page)
--{
--	if (page_has_private(page)) {
--		if (!trylock_page(page))
--			BUG();
--		page->mapping = mapping;
--		do_invalidatepage(page, 0, PAGE_SIZE);
--		page->mapping = NULL;
--		unlock_page(page);
--	}
--	put_page(page);
--}
--
--/*
-- * release a list of pages, invalidating them first if need be
-- */
--static void read_cache_pages_invalidate_pages(struct address_space *mapping,
--					      struct list_head *pages)
--{
--	struct page *victim;
--
--	while (!list_empty(pages)) {
--		victim = lru_to_page(pages);
--		list_del(&victim->lru);
--		read_cache_pages_invalidate_page(mapping, victim);
--	}
--}
--
--/**
-- * read_cache_pages - populate an address space with some pages & start reads against them
-- * @mapping: the address_space
-- * @pages: The address of a list_head which contains the target pages.  These
-- *   pages have their ->index populated and are otherwise uninitialised.
-- * @filler: callback routine for filling a single page.
-- * @data: private data for the callback routine.
-- *
-- * Hides the details of the LRU cache etc from the filesystems.
-- *
-- * Returns: %0 on success, error return by @filler otherwise
-- */
--int read_cache_pages(struct address_space *mapping, struct list_head *pages,
--			int (*filler)(void *, struct page *), void *data)
--{
--	struct page *page;
--	int ret = 0;
--
--	while (!list_empty(pages)) {
--		page = lru_to_page(pages);
--		list_del(&page->lru);
--		if (add_to_page_cache_lru(page, mapping, page->index,
--				readahead_gfp_mask(mapping))) {
--			read_cache_pages_invalidate_page(mapping, page);
--			continue;
--		}
--		put_page(page);
--
--		ret = filler(data, page);
--		if (unlikely(ret)) {
--			read_cache_pages_invalidate_pages(mapping, pages);
--			break;
--		}
--		task_io_account_read(PAGE_SIZE);
--	}
--	return ret;
--}
--
--EXPORT_SYMBOL(read_cache_pages);
--
- static void read_pages(struct readahead_control *rac, struct list_head *pages,
- 		bool skip_page)
+ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
  {
+-	trace_iomap_invalidatepage(folio->mapping->host, offset, len);
++	trace_iomap_invalidatepage(folio->mapping->host,
++					folio_pos(folio) + offset, len);
+ 
+ 	/*
+ 	 * If we're invalidating the entire folio, clear the dirty state
 -- 
 2.34.1
 
