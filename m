@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F08464AFE33
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA804AFE2F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231591AbiBIUWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:22:34 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50028 "EHLO
+        id S231588AbiBIUWc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:22:32 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbiBIUWX (ORCPT
+        with ESMTP id S231339AbiBIUWX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:23 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A95D6E03AE4C
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA9CBE040C8D
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=2aR8CUpJB9aZOBGHaTvwYsHklV4ennjk8houMF4jkgo=; b=bRZsxuc7UOj43CpGRQMAO0FNT9
-        CJK7KItEWAMV6umUraP/47b1f/ucGNXBLrqxZw3FU+E33dO1kdXvcgYrmbEOc3nr26gGSDFh4GQGu
-        ozR4iANCwytNhnh0XpbIhAdTVTAdZvAqFRlsl7uX6fBBkrUCj6KujS9t2znt124dgqXEwXZ+8Q7xC
-        2k3yRHCrVBuf9THEN7UP2uFW2U+qHGe84a9RPS/pbftajlEP7FUhBx55eS69ZkNIRE1GAljBaWXjv
-        8TUOezdZ/5up0Tj8rwUzed1OBWjM+Oy9gF8NHwcv2jFjPJfMJlsIrZAg08QWio/U9GdFNx9bs89+q
-        i0NK2yIA==;
+        bh=HF9ECbktFFKlSJ23iiBMfzV6AiY73hTRqLYxZkzOm+0=; b=ndV40fmAXQGHVXu3oydmfKWxl2
+        ErGHsbM9Bm0ohbL/mEBojRsC4IDPXO6qPqOJNQHonUbMWZTp1n2NcFJR7no5Rdkr7Ow3frRWE9VnD
+        ZMiOzCMDWWkOKKeW0Y3u0gpMWBnIFQItuMO5qscJ9cLGASp9DWIeATuBUyB1sfCRYcBIGYyC9/ZzW
+        lI+s2o2Jwf15yYzsTJECit9WmVH3qaSptkyCaYUl/Iod7DOZcoyTU07YA8OnlKTRi75R4KMjBzqqD
+        p1O83ytSiy/viQsBBekE7lB8/dFQQUWhssLrPN7IpJT8FhOetYM8uy/dmEVhn12EfFMh0YjDd4+LY
+        cMdzvH7g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTs-008cpj-0q; Wed, 09 Feb 2022 20:22:24 +0000
+        id 1nHtTs-008cpo-4f; Wed, 09 Feb 2022 20:22:24 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 11/56] ceph: Use folio_invalidate()
-Date:   Wed,  9 Feb 2022 20:21:30 +0000
-Message-Id: <20220209202215.2055748-12-willy@infradead.org>
+Subject: [PATCH 12/56] ext4: Use folio_invalidate()
+Date:   Wed,  9 Feb 2022 20:21:31 +0000
+Message-Id: <20220209202215.2055748-13-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -52,57 +52,32 @@ Instead of calling ->invalidatepage directly, use folio_invalidate().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ceph/addr.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ fs/ext4/inode.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index c98e5238a1b6..852ee161e8a4 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -516,6 +516,7 @@ static u64 get_writepages_data_length(struct inode *inode,
-  */
- static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 01c9e4f743ba..57800ecbe466 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1971,6 +1971,7 @@ static int __ext4_journalled_writepage(struct page *page,
+ static int ext4_writepage(struct page *page,
+ 			  struct writeback_control *wbc)
  {
 +	struct folio *folio = page_folio(page);
- 	struct inode *inode = page->mapping->host;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-@@ -550,8 +551,9 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 	int ret = 0;
+ 	loff_t size;
+ 	unsigned int len;
+@@ -1980,8 +1981,8 @@ static int ext4_writepage(struct page *page,
+ 	bool keep_towrite = false;
  
- 	/* is this a partial page at end of file? */
- 	if (page_off >= ceph_wbc.i_size) {
--		dout("%p page eof %llu\n", page, ceph_wbc.i_size);
--		page->mapping->a_ops->invalidatepage(page, 0, thp_size(page));
-+		dout("folio at %lu beyond eof %llu\n", folio->index,
-+				ceph_wbc.i_size);
+ 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb)))) {
+-		inode->i_mapping->a_ops->invalidatepage(page, 0, PAGE_SIZE);
+-		unlock_page(page);
 +		folio_invalidate(folio, 0, folio_size(folio));
- 		return 0;
++		folio_unlock(folio);
+ 		return -EIO;
  	}
  
-@@ -867,14 +869,16 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				continue;
- 			}
- 			if (page_offset(page) >= ceph_wbc.i_size) {
--				dout("%p page eof %llu\n",
--				     page, ceph_wbc.i_size);
-+				struct folio *folio = page_folio(page);
-+
-+				dout("folio at %lu beyond eof %llu\n",
-+				     folio->index, ceph_wbc.i_size);
- 				if ((ceph_wbc.size_stable ||
--				    page_offset(page) >= i_size_read(inode)) &&
--				    clear_page_dirty_for_io(page))
--					mapping->a_ops->invalidatepage(page,
--								0, thp_size(page));
--				unlock_page(page);
-+				    folio_pos(folio) >= i_size_read(inode)) &&
-+				    folio_clear_dirty_for_io(folio))
-+					folio_invalidate(folio, 0,
-+							folio_size(folio));
-+				folio_unlock(folio);
- 				continue;
- 			}
- 			if (strip_unit_end && (page->index > strip_unit_end)) {
 -- 
 2.34.1
 
