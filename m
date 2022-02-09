@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 633D04AFE4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B07C4AFE4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbiBIUXE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:23:04 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50140 "EHLO
+        id S231654AbiBIUXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:23:06 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231481AbiBIUWa (ORCPT
+        with ESMTP id S231488AbiBIUWa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:30 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A2AFE040CBB
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D74FE040CBE
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Sh+3Y7aWFUPzzb3iJpZHLeUaRSTKPG9IGjdOEs+Uz5k=; b=ORKXy5qdY1TjocH8IEVhn1IR3g
-        xJXT30SPtgcRj1O6MEZZz9ACAnA1naUYTQHzfK79ihECCkmr6bzAbJ+VVQGroowZEneqSdZGXzLrB
-        +y0TfKcPucqa1GYsG4hYOOWMuIbzU6YlZPOeNEgk8uNaE9AEwadUE6upMFukLSa5LObPScYPF/yht
-        RAOfOv5P7yiwBtsKvhgwEpWm0HMJUVc1Vh94umG8Ra6/j3zMGKO39K5HLyX6qXRu76NkBHUsti9Jp
-        RrYTJfjumdK4gwpq15cdcWGSlCtB2d+2q0+MVx2SGh0HXmWKkvGJ8sTvCusb5ibmy3iayk9VOC9j1
-        toVEYCrg==;
+        bh=wnSFsM6jEKXUTZCjqZ7h+5gdV8z+9GybpOw6JV2wacs=; b=q1sL077Z4S2SPuDUwYS1fnRtNn
+        FXkM+/DDG2MqK+1HF6ziTuWIntIWaXU9ykMj4mm8bd8S2HRlyIHU6jdei5shrWwPpaSEZMcth3N4u
+        nCVlZQpUP2y+JKO4cpeHT3pqjTa/d2ONeo/ldksVryV8lxRrlWWJrp3K7IQ371FjF3+xieyloKRVA
+        V4zFA8A42u9kSInwS1OE4jUzwmqEM8kDz66YomNmWqz5EOttL79qf8tk+OB/He9EYgMTpQXWWXljn
+        qr/MMgP/mKpg2FI85fqu2gmY3ld0HN2vUggGI9dzsbCw+XTB79bekzkDfHaxBZ4Zg4Y2yB7kR8zTn
+        6SowtL+g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTu-008crg-KY; Wed, 09 Feb 2022 20:22:26 +0000
+        id 1nHtTu-008crl-OL; Wed, 09 Feb 2022 20:22:26 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 32/56] fs: Remove aops->invalidatepage
-Date:   Wed,  9 Feb 2022 20:21:51 +0000
-Message-Id: <20220209202215.2055748-33-willy@infradead.org>
+Subject: [PATCH 33/56] fs: Add aops->launder_folio
+Date:   Wed,  9 Feb 2022 20:21:52 +0000
+Message-Id: <20220209202215.2055748-34-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -48,101 +48,125 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With all users migrated to ->invalidate_folio, remove the old operation.
+Since the only difference between ->launder_page and ->launder_folio
+is the type of the pointer, these can safely use a union without
+affecting bisectability.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- Documentation/filesystems/locking.rst |  2 --
- Documentation/filesystems/vfs.rst     |  1 -
- include/linux/fs.h                    |  1 -
- mm/truncate.c                         | 14 +++-----------
- 4 files changed, 3 insertions(+), 15 deletions(-)
+ Documentation/filesystems/locking.rst | 10 +++++-----
+ Documentation/filesystems/vfs.rst     |  8 ++++----
+ include/linux/fs.h                    |  5 ++++-
+ mm/truncate.c                         |  8 ++++----
+ 4 files changed, 17 insertions(+), 14 deletions(-)
 
 diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 29a045fd3860..8e9cbc0fb70f 100644
+index 8e9cbc0fb70f..dee512efb458 100644
 --- a/Documentation/filesystems/locking.rst
 +++ b/Documentation/filesystems/locking.rst
-@@ -251,7 +251,6 @@ prototypes::
- 				struct page *page, void *fsdata);
- 	sector_t (*bmap)(struct address_space *, sector_t);
- 	void (*invalidate_folio) (struct folio *, size_t start, size_t len);
--	void (*invalidatepage) (struct page *, unsigned int, unsigned int);
- 	int (*releasepage) (struct page *, int);
- 	void (*freepage)(struct page *);
- 	int (*direct_IO)(struct kiocb *, struct iov_iter *iter);
-@@ -280,7 +279,6 @@ write_begin:		locks the page		 exclusive
- write_end:		yes, unlocks		 exclusive
- bmap:
- invalidate_folio:	yes					exclusive
--invalidatepage:		yes					exclusive
- releasepage:		yes
- freepage:		yes
- direct_IO:
+@@ -257,7 +257,7 @@ prototypes::
+ 	bool (*isolate_page) (struct page *, isolate_mode_t);
+ 	int (*migratepage)(struct address_space *, struct page *, struct page *);
+ 	void (*putback_page) (struct page *);
+-	int (*launder_page)(struct page *);
++	int (*launder_folio)(struct folio *);
+ 	bool (*is_partially_uptodate)(struct folio *, size_t from, size_t count);
+ 	int (*error_remove_page)(struct address_space *, struct page *);
+ 	int (*swap_activate)(struct file *);
+@@ -285,7 +285,7 @@ direct_IO:
+ isolate_page:		yes
+ migratepage:		yes (both)
+ putback_page:		yes
+-launder_page:		yes
++launder_folio:		yes
+ is_partially_uptodate:	yes
+ error_remove_page:	yes
+ swap_activate:		no
+@@ -385,9 +385,9 @@ the kernel assumes that the fs has no private interest in the buffers.
+ ->freepage() is called when the kernel is done dropping the page
+ from the page cache.
+ 
+-->launder_page() may be called prior to releasing a page if
+-it is still found to be dirty. It returns zero if the page was successfully
+-cleaned, or an error value if not. Note that in order to prevent the page
++->launder_folio() may be called prior to releasing a folio if
++it is still found to be dirty. It returns zero if the folio was successfully
++cleaned, or an error value if not. Note that in order to prevent the folio
+ getting mapped back in and redirtied, it needs to be kept locked
+ across the entire operation.
+ 
 diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 26c090cd8cf5..28704831652c 100644
+index 28704831652c..c54ca4d88ed6 100644
 --- a/Documentation/filesystems/vfs.rst
 +++ b/Documentation/filesystems/vfs.rst
-@@ -736,7 +736,6 @@ cache in your filesystem.  The following members are defined:
- 				 struct page *page, void *fsdata);
- 		sector_t (*bmap)(struct address_space *, sector_t);
- 		void (*invalidate_folio) (struct folio *, size_t start, size_t len);
--		void (*invalidatepage) (struct page *, unsigned int, unsigned int);
- 		int (*releasepage) (struct page *, int);
- 		void (*freepage)(struct page *);
- 		ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+@@ -745,7 +745,7 @@ cache in your filesystem.  The following members are defined:
+ 		int (*migratepage) (struct page *, struct page *);
+ 		/* put migration-failed page back to right list */
+ 		void (*putback_page) (struct page *);
+-		int (*launder_page) (struct page *);
++		int (*launder_folio) (struct folio *);
+ 
+ 		bool (*is_partially_uptodate) (struct folio *, size_t from,
+ 					       size_t count);
+@@ -930,9 +930,9 @@ cache in your filesystem.  The following members are defined:
+ ``putback_page``
+ 	Called by the VM when isolated page's migration fails.
+ 
+-``launder_page``
+-	Called before freeing a page - it writes back the dirty page.
+-	To prevent redirtying the page, it is kept locked during the
++``launder_folio``
++	Called before freeing a folio - it writes back the dirty folio.
++	To prevent redirtying the folio, it is kept locked during the
+ 	whole operation.
+ 
+ ``is_partially_uptodate``
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a40ea82248da..af9ae091bd82 100644
+index af9ae091bd82..0af3075cdff2 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -388,7 +388,6 @@ struct address_space_operations {
- 	/* Unfortunately this kludge is needed for FIBMAP. Don't use it */
- 	sector_t (*bmap)(struct address_space *, sector_t);
- 	void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
--	void (*invalidatepage) (struct page *, unsigned int, unsigned int);
- 	int (*releasepage) (struct page *, gfp_t);
- 	void (*freepage)(struct page *);
- 	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+@@ -399,7 +399,10 @@ struct address_space_operations {
+ 			struct page *, struct page *, enum migrate_mode);
+ 	bool (*isolate_page)(struct page *, isolate_mode_t);
+ 	void (*putback_page)(struct page *);
+-	int (*launder_page) (struct page *);
++	union {
++		int (*launder_page) (struct page *);
++		int (*launder_folio) (struct folio *);
++	};
+ 	bool (*is_partially_uptodate) (struct folio *, size_t from,
+ 			size_t count);
+ 	void (*is_dirty_writeback) (struct page *, bool *, bool *);
 diff --git a/mm/truncate.c b/mm/truncate.c
-index 28650151091a..8010461a59bd 100644
+index 8010461a59bd..6ad44b546dff 100644
 --- a/mm/truncate.c
 +++ b/mm/truncate.c
-@@ -19,8 +19,7 @@
- #include <linux/highmem.h>
- #include <linux/pagevec.h>
- #include <linux/task_io_accounting_ops.h>
--#include <linux/buffer_head.h>	/* grr. try_to_release_page,
--				   do_invalidatepage */
-+#include <linux/buffer_head.h>	/* grr. try_to_release_page */
- #include <linux/shmem_fs.h>
- #include <linux/rmap.h>
- #include "internal.h"
-@@ -155,16 +154,9 @@ static int invalidate_exceptional_entry2(struct address_space *mapping,
- void folio_invalidate(struct folio *folio, size_t offset, size_t length)
- {
- 	const struct address_space_operations *aops = folio->mapping->a_ops;
--	void (*invalidatepage)(struct page *, unsigned int, unsigned int);
- 
--	if (aops->invalidate_folio) {
-+	if (aops->invalidate_folio)
- 		aops->invalidate_folio(folio, offset, length);
--		return;
--	}
--
--	invalidatepage = aops->invalidatepage;
--	if (invalidatepage)
--		(*invalidatepage)(&folio->page, offset, length);
+@@ -614,13 +614,13 @@ static int invalidate_complete_folio2(struct address_space *mapping,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(folio_invalidate);
  
-@@ -334,7 +326,7 @@ int invalidate_inode_page(struct page *page)
-  * mapping is large, it is probably the case that the final pages are the most
-  * recently touched, and freeing happens in ascending file offset order.
-  *
-- * Note that since ->invalidatepage() accepts range to invalidate
-+ * Note that since ->invalidate_folio() accepts range to invalidate
-  * truncate_inode_pages_range is able to handle cases where lend + 1 is not
-  * page aligned properly.
-  */
+-static int do_launder_folio(struct address_space *mapping, struct folio *folio)
++static int folio_launder(struct address_space *mapping, struct folio *folio)
+ {
+ 	if (!folio_test_dirty(folio))
+ 		return 0;
+-	if (folio->mapping != mapping || mapping->a_ops->launder_page == NULL)
++	if (folio->mapping != mapping || mapping->a_ops->launder_folio == NULL)
+ 		return 0;
+-	return mapping->a_ops->launder_page(&folio->page);
++	return mapping->a_ops->launder_folio(folio);
+ }
+ 
+ /**
+@@ -686,7 +686,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 				unmap_mapping_folio(folio);
+ 			BUG_ON(folio_mapped(folio));
+ 
+-			ret2 = do_launder_folio(mapping, folio);
++			ret2 = folio_launder(mapping, folio);
+ 			if (ret2 == 0) {
+ 				if (!invalidate_complete_folio2(mapping, folio))
+ 					ret2 = -EBUSY;
 -- 
 2.34.1
 
