@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E344AFBB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 19:48:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 791FF4AFBD7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 19:51:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240573AbiBISsj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 13:48:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43660 "EHLO
+        id S241098AbiBISuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 13:50:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240916AbiBISsN (ORCPT
+        with ESMTP id S241009AbiBISuc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 13:48:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF5BC1DC2EF;
-        Wed,  9 Feb 2022 10:44:50 -0800 (PST)
+        Wed, 9 Feb 2022 13:50:32 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2601C1DF836;
+        Wed,  9 Feb 2022 10:45:40 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8126FB82215;
-        Wed,  9 Feb 2022 18:44:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D49C340E9;
-        Wed,  9 Feb 2022 18:44:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4ED2C61646;
+        Wed,  9 Feb 2022 18:45:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C555CC340E7;
+        Wed,  9 Feb 2022 18:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644432288;
-        bh=b6qJaMjuW9zm4270wMZjhrKkRhDYcNnrGvqOZcnmNO8=;
+        s=k20201202; t=1644432339;
+        bh=MW5zCr35jjjCwoLSVdDs3v27C68FiiHFGa1KowrDEQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TeNaIjqmLq0tbd+cw41LtC6RvmskjCG1CTlDBc0gMCeE2pl4FTf4jlaY08r+2pmSM
-         Eqa9T6eDOSeZPHau5eSDeKI2cM0jmZiNmlbbNu2NMJ7d+FO86sARulXuEijUZYvn3k
-         LrfNOBBbrTYPN9AGAtSEf+2WpQJY4xuScWQSPGxYlI2IlPHEohrz9LzeM0PosMpz1n
-         3edfokqywTpNBmpdUYQzRb9+0NV7/jjlizlA7peYbO/VGWraPfSAcM39btUaXdEmyY
-         DXMAQ0KGMWCouEV6pADE+MPLPKJFDC6DCJWE9+riuwL6KfqAXiKNhd3sy0BdzWNK6K
-         j4aCBxhlmwpKg==
+        b=BOnMLB9QAEMO/jgLhjKFokxRkTWct1w6LK6xS4pLb9KZv8AqbemSzS4voZqS3gWtz
+         zrJPTc6Z5wjudolO1r+lb8e46JDmgOtuqN0TdKkGGYlrdylR/x6F+flGWylgJSix0k
+         JU6kw3M+2EdsDkpqLbdLLeqyKN+RS5eSlfp1yf0U6nWLRMt1a9Gu6W/CDwUL6UF63A
+         At7S7SDR6NebJ41iBTsIEqEzi97XKGvySJUzT7hB9Evf6VAPM+V+oy/BOkFwp4zH9Y
+         0qhwVm7Yb5RLvdLE7cF5P3aUrk5iIq30RFF2CgLwsLpFPkHgsNX4CSv8EQz9qBlUDB
+         05Jjue1szofEg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
@@ -39,12 +39,12 @@ Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
         Christian Brauner <brauner@kernel.org>,
         Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 06/10] vfs: make freeze_super abort when sync_filesystem returns error
-Date:   Wed,  9 Feb 2022 13:44:05 -0500
-Message-Id: <20220209184410.48223-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 6/8] vfs: make freeze_super abort when sync_filesystem returns error
+Date:   Wed,  9 Feb 2022 13:44:59 -0500
+Message-Id: <20220209184502.48363-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220209184410.48223-1-sashal@kernel.org>
-References: <20220209184410.48223-1-sashal@kernel.org>
+In-Reply-To: <20220209184502.48363-1-sashal@kernel.org>
+References: <20220209184502.48363-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 12 insertions(+), 7 deletions(-)
 
 diff --git a/fs/super.c b/fs/super.c
-index 9fb4553c46e63..8dc26e23f1a35 100644
+index 1d7461bca1600..819a33e79a011 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -1404,11 +1404,9 @@ static void lockdep_sb_freeze_acquire(struct super_block *sb)
+@@ -1380,11 +1380,9 @@ static void lockdep_sb_freeze_acquire(struct super_block *sb)
  		percpu_rwsem_acquire(sb->s_writers.rw_sem + level, 0, _THIS_IP_);
  }
  
@@ -93,7 +93,7 @@ index 9fb4553c46e63..8dc26e23f1a35 100644
  		percpu_up_write(sb->s_writers.rw_sem + level);
  }
  
-@@ -1479,7 +1477,14 @@ int freeze_super(struct super_block *sb)
+@@ -1455,7 +1453,14 @@ int freeze_super(struct super_block *sb)
  	sb_wait_write(sb, SB_FREEZE_PAGEFAULT);
  
  	/* All writers are done so after syncing there won't be dirty data */
@@ -109,7 +109,7 @@ index 9fb4553c46e63..8dc26e23f1a35 100644
  
  	/* Now wait for internal filesystem counter */
  	sb->s_writers.frozen = SB_FREEZE_FS;
-@@ -1491,7 +1496,7 @@ int freeze_super(struct super_block *sb)
+@@ -1467,7 +1472,7 @@ int freeze_super(struct super_block *sb)
  			printk(KERN_ERR
  				"VFS:Filesystem freeze failed\n");
  			sb->s_writers.frozen = SB_UNFROZEN;
@@ -118,7 +118,7 @@ index 9fb4553c46e63..8dc26e23f1a35 100644
  			wake_up(&sb->s_writers.wait_unfrozen);
  			deactivate_locked_super(sb);
  			return ret;
-@@ -1542,7 +1547,7 @@ static int thaw_super_locked(struct super_block *sb)
+@@ -1519,7 +1524,7 @@ int thaw_super(struct super_block *sb)
  	}
  
  	sb->s_writers.frozen = SB_UNFROZEN;
