@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB8E94AFE4B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D004AFE45
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231551AbiBIUWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S231577AbiBIUWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 9 Feb 2022 15:22:31 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49942 "EHLO
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231311AbiBIUWW (ORCPT
+        with ESMTP id S231315AbiBIUWW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:22 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8DFAE011172
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45CEE039C65
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=0yZv7fDtGjq1jEJd1QA34PNzKOGQFSPyil/6oZoj2ew=; b=H5mzUwEbJXLc3+pEl1S/tGwHCI
-        npoM5hgK/KYRKuDdOqWsV44M3csH0C9sX03MowU70iQNz/E0k9fCHmFy6PB+9vcjIgMW15TYcNvM1
-        Vs/kBP8x1HTK2jN7xOgTqUrAPvN3vJtijNsQVqfJY4uq8AW2um48yL6FA5uxJTPCoZFVYe5UVp7eX
-        K/08EXtqXCMo2HJb5j9hWkb5jIn8j8olk9PA/3n0YD0fO9FAj8fYUylB/5r/TSD8RmGeWPJnPLCmD
-        nOnL4gWTFQHudXw4ruGRVyOziDbRra9XbvpApavIp/+1H8C8kj+ZrEgBfH2X8tCjIkH1JO+n90/QY
-        8pc9fZrQ==;
+        bh=+e3plOK/9AG7k4sZHKr4xjvY4pza4uqMoRO32/OLmLo=; b=HLw8vbAlsfHJkC0OmNOjDS9nqr
+        zIbyjpyNoYRdEjDxeHV6fF6mO8uRh7FcgMfn34Kf9+92lxgqO9Q7ITOUvJSnxemdgxKO2dR+F1NgS
+        cCVNhCDGPF+N8X1ItI3TDhN9T190mJKpYkBNt/i6+7oW/+9gUwvF8MFzsWwm4/WXPq5YFFAfF1VHE
+        99GZJ983MRzw9XPBThGeO7VRf3wAuo+GNagU3p1IXE/R+3YbU6YRR0cFMP74Aj8iPTNDtj4hoqB+L
+        TiJg3RcMPCS9h7Sl1nTlCkRWOw/84Z7i4SNS1vdVdjiJArOb1LXu8/0Jjss1OM1RuOm5aU3wuqbPQ
+        sVj00Xbw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTr-008cpB-2q; Wed, 09 Feb 2022 20:22:23 +0000
+        id 1nHtTr-008cpG-6I; Wed, 09 Feb 2022 20:22:23 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 05/56] fs/remap_range: Pass the file pointer to read_mapping_folio()
-Date:   Wed,  9 Feb 2022 20:21:24 +0000
-Message-Id: <20220209202215.2055748-6-willy@infradead.org>
+Subject: [PATCH 06/56] scsicam: Fix use of page cache
+Date:   Wed,  9 Feb 2022 20:21:25 +0000
+Message-Id: <20220209202215.2055748-7-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -48,65 +48,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have the struct file in generic_remap_file_range_prep() already;
-we just need to pass it around instead of the inode.
+Filesystems do not necessarily set PageError; instead they will leave
+PageUptodate clear on errors.  We should also kmap() the page before
+accessing it in case the page is allocated from HIGHMEM.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/remap_range.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/scsi/scsicam.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 231159682907..45e032713839 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -146,11 +146,11 @@ static int generic_remap_check_len(struct inode *inode_in,
+diff --git a/drivers/scsi/scsicam.c b/drivers/scsi/scsicam.c
+index 0ffdb8f2995f..cfa86348d868 100644
+--- a/drivers/scsi/scsicam.c
++++ b/drivers/scsi/scsicam.c
+@@ -41,8 +41,12 @@ unsigned char *scsi_bios_ptable(struct block_device *dev)
+ 	if (IS_ERR(page))
+ 		return NULL;
+ 
+-	if (!PageError(page))
+-		res = kmemdup(page_address(page) + 0x1be, 66, GFP_KERNEL);
++	if (PageUptodate(page)) {
++		char *addr = kmap_local_page(page);
++
++		res = kmemdup(addr + 0x1be, 66, GFP_KERNEL);
++		kunmap_local(addr);
++	}
+ 	put_page(page);
+ 	return res;
  }
- 
- /* Read a page's worth of file data into the page cache. */
--static struct folio *vfs_dedupe_get_folio(struct inode *inode, loff_t pos)
-+static struct folio *vfs_dedupe_get_folio(struct file *file, loff_t pos)
- {
- 	struct folio *folio;
- 
--	folio = read_mapping_folio(inode->i_mapping, pos >> PAGE_SHIFT, NULL);
-+	folio = read_mapping_folio(file->f_mapping, pos >> PAGE_SHIFT, file);
- 	if (IS_ERR(folio))
- 		return folio;
- 	if (!folio_test_uptodate(folio)) {
-@@ -187,8 +187,8 @@ static void vfs_unlock_two_folios(struct folio *folio1, struct folio *folio2)
-  * Compare extents of two files to see if they are the same.
-  * Caller must have locked both inodes to prevent write races.
-  */
--static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
--					 struct inode *dest, loff_t dstoff,
-+static int vfs_dedupe_file_range_compare(struct file *src, loff_t srcoff,
-+					 struct file *dest, loff_t dstoff,
- 					 loff_t len, bool *is_same)
- {
- 	bool same = true;
-@@ -224,8 +224,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- 		 * someone is invalidating pages on us and we lose.
- 		 */
- 		if (!folio_test_uptodate(src_folio) || !folio_test_uptodate(dst_folio) ||
--		    src_folio->mapping != src->i_mapping ||
--		    dst_folio->mapping != dest->i_mapping) {
-+		    src_folio->mapping != src->f_mapping ||
-+		    dst_folio->mapping != dest->f_mapping) {
- 			same = false;
- 			goto unlock;
- 		}
-@@ -333,8 +333,8 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
- 	if (remap_flags & REMAP_FILE_DEDUP) {
- 		bool		is_same = false;
- 
--		ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
--				inode_out, pos_out, *len, &is_same);
-+		ret = vfs_dedupe_file_range_compare(file_in, pos_in,
-+				file_out, pos_out, *len, &is_same);
- 		if (ret)
- 			return ret;
- 		if (!is_same)
 -- 
 2.34.1
 
