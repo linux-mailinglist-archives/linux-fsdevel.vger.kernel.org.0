@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5074AFE41
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14154AFE4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231468AbiBIUXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:23:02 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50206 "EHLO
+        id S231645AbiBIUXE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:23:04 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:50190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231478AbiBIUW3 (ORCPT
+        with ESMTP id S231483AbiBIUWa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 15:22:29 -0500
+        Wed, 9 Feb 2022 15:22:30 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F13E015649
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A183E03AE44
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Bd3sC5yc8k3R1SWGFbX9Uzk1LCsJQ4cpM4t6tybLNUg=; b=fIT2d5g+aJ1FyPYrewmVPTU0fj
-        cliKAqL8dAPOIfFmQ+gj7R3aJePTTTg+Ez0bkopBJd0kBVvbYvFWkL5FQMxsCkNPuaazOn6xfMAxx
-        D1LYK4t0YmZC6nuBvzU1IxfVH5C4fICOWscEIHBgdbt3zquzfn+Fc9iiQdRA4WgP0r1Iu4r4eHqev
-        UuK/0pG656WSG9JUcE7yvcv4pNYSoZUCUbBN3JOtDRgMIQtQ4h5mRdwuocjtfmlPJ0l/3pkgusNrD
-        1f65yjxGc4X0wu+fOUsRwFDqAC1tdpClfknPt0jiv/qUfq2roCV6dlrZgxLgcNmXDkc+jj34lduYY
-        AZp9V6XQ==;
+        bh=1yi1dBtithx2lWpfj5efn1pgy/4YfJlEAfPlQnCxF2w=; b=dPeGyipIgnzXCUo1suMpXK9eVy
+        kkYNFC/Gc3XcW+323Hubb0pHbW7015jLFe/lOn5F9OOrolCGZE5x0ha2gY0uATkKGNZUEWVO83Nic
+        fUIGy4i0hklvP1LKQGkk6OIfiwORHfQJAJj8hd0D8KQbbrK0q3M7Ru/rCkxun27S/gL9fGy+UfpAh
+        wVj3npbhoyTYX/BcOPa/x9nMWSDA5nhbRdDRGPek4G2wtqnz77gR7EPHIeA1H3p2QnBo4nNPuGBCs
+        b3FFa6tUFJuB38kpTPjhKAgLL30Br1EZz+xrgllcjIf1xBrkOyMDfNV69CzvX8/JGMHtS8dORJx1u
+        kHUL+HZw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTu-008crN-8s; Wed, 09 Feb 2022 20:22:26 +0000
+        id 1nHtTu-008crU-DR; Wed, 09 Feb 2022 20:22:26 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 29/56] orangefs: Convert from invalidatepage to invalidate_folio
-Date:   Wed,  9 Feb 2022 20:21:48 +0000
-Message-Id: <20220209202215.2055748-30-willy@infradead.org>
+Subject: [PATCH 30/56] reiserfs: Convert from invalidatepage to invalidate_folio
+Date:   Wed,  9 Feb 2022 20:21:49 +0000
+Message-Id: <20220209202215.2055748-31-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -52,122 +52,101 @@ This is a straightforward conversion.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/orangefs/inode.c | 52 ++++++++++++++++++++++-----------------------
- 1 file changed, 25 insertions(+), 27 deletions(-)
+ fs/reiserfs/inode.c   | 26 +++++++++++++-------------
+ fs/reiserfs/journal.c |  4 ++--
+ 2 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index e5e3e500ed46..26f163b13b16 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -46,7 +46,7 @@ static int orangefs_writepage_locked(struct page *page,
- 		else
- 			wlen = PAGE_SIZE;
- 	}
--	/* Should've been handled in orangefs_invalidatepage. */
-+	/* Should've been handled in orangefs_invalidate_folio. */
- 	WARN_ON(off == len || off + wlen > len);
- 
- 	bv.bv_page = page;
-@@ -415,47 +415,45 @@ static int orangefs_write_end(struct file *file, struct address_space *mapping,
- 	return copied;
- }
- 
--static void orangefs_invalidatepage(struct page *page,
--				 unsigned int offset,
--				 unsigned int length)
-+static void orangefs_invalidate_folio(struct folio *folio,
-+				 size_t offset, size_t length)
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index f49b72ccac4c..f7fa70b419d2 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -3094,7 +3094,7 @@ void sd_attrs_to_i_attrs(__u16 sd_attrs, struct inode *inode)
+  * decide if this buffer needs to stay around for data logging or ordered
+  * write purposes
+  */
+-static int invalidatepage_can_drop(struct inode *inode, struct buffer_head *bh)
++static int invalidate_folio_can_drop(struct inode *inode, struct buffer_head *bh)
  {
--	struct orangefs_write_range *wr;
--	wr = (struct orangefs_write_range *)page_private(page);
-+	struct orangefs_write_range *wr = folio_get_private(folio);
- 
- 	if (offset == 0 && length == PAGE_SIZE) {
--		kfree(detach_page_private(page));
-+		kfree(folio_detach_private(folio));
- 		return;
- 	/* write range entirely within invalidate range (or equal) */
--	} else if (page_offset(page) + offset <= wr->pos &&
--	    wr->pos + wr->len <= page_offset(page) + offset + length) {
--		kfree(detach_page_private(page));
-+	} else if (folio_pos(folio) + offset <= wr->pos &&
-+	    wr->pos + wr->len <= folio_pos(folio) + offset + length) {
-+		kfree(folio_detach_private(folio));
- 		/* XXX is this right? only caller in fs */
--		cancel_dirty_page(page);
-+		folio_cancel_dirty(folio);
- 		return;
- 	/* invalidate range chops off end of write range */
--	} else if (wr->pos < page_offset(page) + offset &&
--	    wr->pos + wr->len <= page_offset(page) + offset + length &&
--	     page_offset(page) + offset < wr->pos + wr->len) {
-+	} else if (wr->pos < folio_pos(folio) + offset &&
-+	    wr->pos + wr->len <= folio_pos(folio) + offset + length &&
-+	     folio_pos(folio) + offset < wr->pos + wr->len) {
- 		size_t x;
--		x = wr->pos + wr->len - (page_offset(page) + offset);
-+		x = wr->pos + wr->len - (folio_pos(folio) + offset);
- 		WARN_ON(x > wr->len);
- 		wr->len -= x;
- 		wr->uid = current_fsuid();
- 		wr->gid = current_fsgid();
- 	/* invalidate range chops off beginning of write range */
--	} else if (page_offset(page) + offset <= wr->pos &&
--	    page_offset(page) + offset + length < wr->pos + wr->len &&
--	    wr->pos < page_offset(page) + offset + length) {
-+	} else if (folio_pos(folio) + offset <= wr->pos &&
-+	    folio_pos(folio) + offset + length < wr->pos + wr->len &&
-+	    wr->pos < folio_pos(folio) + offset + length) {
- 		size_t x;
--		x = page_offset(page) + offset + length - wr->pos;
-+		x = folio_pos(folio) + offset + length - wr->pos;
- 		WARN_ON(x > wr->len);
- 		wr->pos += x;
- 		wr->len -= x;
- 		wr->uid = current_fsuid();
- 		wr->gid = current_fsgid();
- 	/* invalidate range entirely within write range (punch hole) */
--	} else if (wr->pos < page_offset(page) + offset &&
--	    page_offset(page) + offset + length < wr->pos + wr->len) {
-+	} else if (wr->pos < folio_pos(folio) + offset &&
-+	    folio_pos(folio) + offset + length < wr->pos + wr->len) {
- 		/* XXX what do we do here... should not WARN_ON */
- 		WARN_ON(1);
- 		/* punch hole */
-@@ -467,11 +465,11 @@ static void orangefs_invalidatepage(struct page *page,
- 	/* non-overlapping ranges */
- 	} else {
- 		/* WARN if they do overlap */
--		if (!((page_offset(page) + offset + length <= wr->pos) ^
--		    (wr->pos + wr->len <= page_offset(page) + offset))) {
-+		if (!((folio_pos(folio) + offset + length <= wr->pos) ^
-+		    (wr->pos + wr->len <= folio_pos(folio) + offset))) {
- 			WARN_ON(1);
--			printk("invalidate range offset %llu length %u\n",
--			    page_offset(page) + offset, length);
-+			printk("invalidate range offset %llu length %zu\n",
-+			    folio_pos(folio) + offset, length);
- 			printk("write range offset %llu length %zu\n",
- 			    wr->pos, wr->len);
- 		}
-@@ -483,7 +481,7 @@ static void orangefs_invalidatepage(struct page *page,
- 	 * Thus the following runs if wr was modified above.
- 	 */
- 
--	orangefs_launder_page(page);
-+	orangefs_launder_page(&folio->page);
+ 	int ret = 1;
+ 	struct reiserfs_journal *j = SB_JOURNAL(inode->i_sb);
+@@ -3147,26 +3147,26 @@ static int invalidatepage_can_drop(struct inode *inode, struct buffer_head *bh)
+ 	return ret;
  }
  
- static int orangefs_releasepage(struct page *page, gfp_t foo)
-@@ -636,7 +634,7 @@ static const struct address_space_operations orangefs_address_operations = {
- 	.set_page_dirty = __set_page_dirty_nobuffers,
- 	.write_begin = orangefs_write_begin,
- 	.write_end = orangefs_write_end,
--	.invalidatepage = orangefs_invalidatepage,
-+	.invalidate_folio = orangefs_invalidate_folio,
- 	.releasepage = orangefs_releasepage,
- 	.freepage = orangefs_freepage,
- 	.launder_page = orangefs_launder_page,
+-/* clm -- taken from fs/buffer.c:block_invalidate_page */
+-static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
+-				    unsigned int length)
++/* clm -- taken from fs/buffer.c:block_invalidate_folio */
++static void reiserfs_invalidate_folio(struct folio *folio, size_t offset,
++				    size_t length)
+ {
+ 	struct buffer_head *head, *bh, *next;
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
+ 	unsigned int curr_off = 0;
+ 	unsigned int stop = offset + length;
+-	int partial_page = (offset || length < PAGE_SIZE);
++	int partial_page = (offset || length < folio_size(folio));
+ 	int ret = 1;
+ 
+-	BUG_ON(!PageLocked(page));
++	BUG_ON(!folio_test_locked(folio));
+ 
+ 	if (!partial_page)
+-		ClearPageChecked(page);
++		folio_clear_checked(folio);
+ 
+-	if (!page_has_buffers(page))
++	head = folio_buffers(folio);
++	if (!head)
+ 		goto out;
+ 
+-	head = page_buffers(page);
+ 	bh = head;
+ 	do {
+ 		unsigned int next_off = curr_off + bh->b_size;
+@@ -3179,7 +3179,7 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
+ 		 * is this block fully invalidated?
+ 		 */
+ 		if (offset <= curr_off) {
+-			if (invalidatepage_can_drop(inode, bh))
++			if (invalidate_folio_can_drop(inode, bh))
+ 				reiserfs_unmap_buffer(bh);
+ 			else
+ 				ret = 0;
+@@ -3194,7 +3194,7 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
+ 	 * so real IO is not possible anymore.
+ 	 */
+ 	if (!partial_page && ret) {
+-		ret = try_to_release_page(page, 0);
++		ret = filemap_release_folio(folio, 0);
+ 		/* maybe should BUG_ON(!ret); - neilb */
+ 	}
+ out:
+@@ -3430,7 +3430,7 @@ const struct address_space_operations reiserfs_address_space_operations = {
+ 	.readpage = reiserfs_readpage,
+ 	.readahead = reiserfs_readahead,
+ 	.releasepage = reiserfs_releasepage,
+-	.invalidatepage = reiserfs_invalidatepage,
++	.invalidate_folio = reiserfs_invalidate_folio,
+ 	.write_begin = reiserfs_write_begin,
+ 	.write_end = reiserfs_write_end,
+ 	.bmap = reiserfs_aop_bmap,
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index a3e21160b634..b5b6f6201bed 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -858,8 +858,8 @@ static int write_ordered_buffers(spinlock_t * lock,
+ 			ret = -EIO;
+ 		}
+ 		/*
+-		 * ugly interaction with invalidatepage here.
+-		 * reiserfs_invalidate_page will pin any buffer that has a
++		 * ugly interaction with invalidate_folio here.
++		 * reiserfs_invalidate_folio will pin any buffer that has a
+ 		 * valid journal head from an older transaction.  If someone
+ 		 * else sets our buffer dirty after we write it in the first
+ 		 * loop, and then someone truncates the page away, nobody
 -- 
 2.34.1
 
