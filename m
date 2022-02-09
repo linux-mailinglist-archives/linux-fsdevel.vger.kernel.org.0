@@ -2,104 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 263F24AF509
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 16:20:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C57A4AF5DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 16:57:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235701AbiBIPUX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 10:20:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60040 "EHLO
+        id S236366AbiBIP50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 10:57:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235687AbiBIPUW (ORCPT
+        with ESMTP id S235686AbiBIP50 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 10:20:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 39B5AC05CB82
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 07:20:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644420024;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HWJxSwYp7jtZ92shaLhTfEcqyJ4FcqxLKxSHScXMFmA=;
-        b=PyuTenbJ41dM5debF7w6Co+TKiLJfVBr8cyhYPUt4fu3dF08QvMM59PBa3YU3t17p2HsxK
-        vFbAgD2o6GVPyf86BefZ69if5ZvtmMZtWxa+4YzYM7zZJ2bIKSBLAgApQUAnrwC0eJKzGU
-        BY9JrygxUlbsn/uIpnzLeMZNAbu1B18=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-587-3cYyOJHuMyejTQH3t43s9Q-1; Wed, 09 Feb 2022 10:20:22 -0500
-X-MC-Unique: 3cYyOJHuMyejTQH3t43s9Q-1
-Received: by mail-wm1-f70.google.com with SMTP id p24-20020a05600c1d9800b0037be98d03a1so2228778wms.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Feb 2022 07:20:22 -0800 (PST)
+        Wed, 9 Feb 2022 10:57:26 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577C7C0613C9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 07:57:28 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id p15so8604725ejc.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Feb 2022 07:57:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CKTbfzAbzSzuDBlSqgffZBElxZWF6Y4ApMmrhfDad+k=;
+        b=UwZU2yX6C2SsnLLgkzFuPVjHpXnuQ8gKHC30WzB0bO2tQYjKEaylb181yB1/Em0ROB
+         pItD5MnneoScrwrsEBOaT2k5TGzV/ENvQpbMyBmy7yff5//ixlOTJEBTD9GEhkv07Fbf
+         M6rT8diPRvG5jvfCOBHZP906B7CHbWHZt8zGbb87JelO3htRp2NoU8orygwREoDBDXJ1
+         GzF+oplcNz5ZsRBlvd+DMh98HTZa/zkP0lhkLVhZ1kS0SqsWMAqgvGnauZJOkgBaPvfx
+         XpptjCYrd8LwTOiFAtA22j0vtA2jkfPywan2arAzG6Hq0L6bxdPoWPuQ26+wrEeUqIWK
+         zjfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HWJxSwYp7jtZ92shaLhTfEcqyJ4FcqxLKxSHScXMFmA=;
-        b=Iu/iaYpU5F/d7rNPO8zWc+3disgbTGtiFx+IF7TKexri+7vtJ6UhYVYYrZk4NcqbyO
-         C86VS0033i6nzLSbdlSDeGKcgt0WAvwG7L8lTS98hakdvXmblzd+qx/uD0GMBW8KOJx1
-         Jc+4FW9yuL2g62r3985NMWCKt6jAPMj4D6B63IPqglABBH9v59/PbpNkW5WOCBTbW8Ya
-         QAgFN09REqlritEzQrWdNbUMw5AFHDXUAfKQy6f3VUThguZEHKjy/wYldC7MYx0SRPkE
-         vMKCQKP0BZ/v3qzXd97BAot3sxXJJIEKSAC/7fT4AXrpffNFUvaG7oXRBmb7HR5nhgQo
-         JpBQ==
-X-Gm-Message-State: AOAM532SbuIe0JIdUUvQNVh0fD+6fOAeijh2BVA+K1IbrWVv5+OoM0jU
-        7FQS5ghFA+IT4rxIbQLS0Qu+gwfhsOT5gjoJX/ffEPeS0S69bn6aTDC89nguvkMTJvPqpdGss5/
-        KqK/pxLbKvuLG1kHfelvhAhJ0tYel3UZ7Ubq3TV8WAw==
-X-Received: by 2002:a1c:2942:: with SMTP id p63mr2494649wmp.75.1644420021707;
-        Wed, 09 Feb 2022 07:20:21 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzBIOqCE7cDbpGvT5TmCSizl7rrPw18L3EY0Uy8onixaMONTzYS0XvUHUkxcZEdMAG886y96+4xK4BB/NuuR5w=
-X-Received: by 2002:a1c:2942:: with SMTP id p63mr2494623wmp.75.1644420021540;
- Wed, 09 Feb 2022 07:20:21 -0800 (PST)
+        bh=CKTbfzAbzSzuDBlSqgffZBElxZWF6Y4ApMmrhfDad+k=;
+        b=6eSF5Gu9evXLDmQH7pVtdV/8Q9AnmAIYrCLGRKTpCi7Jbs4JR1f96v6C8zihShU4xX
+         zs/g9f+w3+rXpOKLJzKewj5WgHQMgdZnjPDOdDNoeAdnoby5vkRPkVdDXf+3cKWKJnxv
+         CIAXh16woGE5+J6S/yRv2AfplQtYA3cy4ub0fBxsH3ubephXW0wwesRtRjZiAcFbI30T
+         +kmSShe8xLvskclyiAlZsGLs3qrXKqzjm4jwI1kAB58WO1bAOb/uEJ7899NCDPkM62OX
+         HefRs8L5RljNmB9q+lbvBs5ZKGBkU8FB2ILLzKaW8gJ8O3Wk0yV49ak4IQIUioRuqcOA
+         GUIA==
+X-Gm-Message-State: AOAM531/WP46rLT2ThuojbRs9kbDNI7MtBT4InWBCqg2BxdAN48+uSYG
+        ZfJ3+dCpm5Ks+J5gLGr9sWo6/s1LtUGXhrHxp+vu
+X-Google-Smtp-Source: ABdhPJwsBg1ILC6THJFrorYkqgUKYo/VidnQyrFDlbP40NcFypY9Nzf+28UM/+wjzXuqX1NUtVpcPR4JXhLdPSiP/EY=
+X-Received: by 2002:a17:907:2d93:: with SMTP id gt19mr2521032ejc.610.1644422246743;
+ Wed, 09 Feb 2022 07:57:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20220209085243.3136536-1-lee.jones@linaro.org> <20220209150904.GA22025@lst.de>
-In-Reply-To: <20220209150904.GA22025@lst.de>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 9 Feb 2022 16:20:10 +0100
-Message-ID: <CAHc6FU5e4GaQTfh6Z2_2vhcgxY+dbwUBOgazrXB3XW4=DRpLHQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] Revert "iomap: fall back to buffered writes for
- invalidation failures"
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Lee Jones <lee.jones@linaro.org>,
+References: <cover.1621363275.git.rgb@redhat.com> <f5f1a4d8699613f8c02ce762807228c841c2e26f.1621363275.git.rgb@redhat.com>
+ <c96031b4-b76d-d82c-e232-1cccbbf71946@suse.com>
+In-Reply-To: <c96031b4-b76d-d82c-e232-1cccbbf71946@suse.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 9 Feb 2022 10:57:15 -0500
+Message-ID: <CAHC9VhSHJwwG_3yy4bqNUuFAz87wFU8W-dGYfsoGBG786heTNg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] audit: add support for the openat2 syscall
+To:     Jeff Mahoney <jeffm@suse.com>, Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Paris <eparis@redhat.com>, Tony Jones <tonyj@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 9, 2022 at 4:09 PM Christoph Hellwig <hch@lst.de> wrote:
-> On Wed, Feb 09, 2022 at 08:52:43AM +0000, Lee Jones wrote:
-> > This reverts commit 60263d5889e6dc5987dc51b801be4955ff2e4aa7.
-> >
-> > Reverting since this commit opens a potential avenue for abuse.
-> >
-> > The C-reproducer and more information can be found at the link below.
-
-This reproducer seems to be working fine on gfs2, but the locking in
-gfs2 differs hugely from that of other filesystems.
-
-> > With this patch applied, I can no longer get the repro to trigger.
+On Tue, Feb 8, 2022 at 10:44 PM Jeff Mahoney <jeffm@suse.com> wrote:
 >
-> Well, maybe you should actually debug and try to understand what is
-> going on before blindly reverting random commits.
+> Hi Richard -
+>
+> On 5/19/21 16:00, Richard Guy Briggs wrote:
+> > The openat2(2) syscall was added in kernel v5.6 with commit fddb5d430ad9
+> > ("open: introduce openat2(2) syscall")
+> >
+> > Add the openat2(2) syscall to the audit syscall classifier.
+> >
+> > Link: https://github.com/linux-audit/audit-kernel/issues/67
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > Link: https://lore.kernel.org/r/f5f1a4d8699613f8c02ce762807228c841c2e26f.1621363275.git.rgb@redhat.com
+> > ---
+>
+> [...]
+>
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index d775ea16505b..3f59ab209dfd 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -76,6 +76,7 @@
+> >  #include <linux/fsnotify_backend.h>
+> >  #include <uapi/linux/limits.h>
+> >  #include <uapi/linux/netfilter/nf_tables.h>
+> > +#include <uapi/linux/openat2.h>
+> >
+> >  #include "audit.h"
+> >
+> > @@ -196,6 +197,8 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
+> >               return ((mask & AUDIT_PERM_WRITE) && ctx->argv[0] == SYS_BIND);
+> >       case AUDITSC_EXECVE:
+> >               return mask & AUDIT_PERM_EXEC;
+> > +     case AUDITSC_OPENAT2:
+> > +             return mask & ACC_MODE((u32)((struct open_how *)ctx->argv[2])->flags);
+> >       default:
+> >               return 0;
+> >       }
+>
+> ctx->argv[2] holds a userspace pointer and can't be dereferenced like this.
+>
+> I'm getting oopses, like so:
+> BUG: unable to handle page fault for address: 00007fff961bbe70
 
-Andreas
+Thanks Jeff.
 
+Yes, this is obviously the wrong thing to being doing; I remember
+checking to make sure we placed the audit_openat2_how() hook after the
+open_how was copied from userspace, but I missed the argv dereference
+in the syscall exit path when reviewing the code.
+
+Richard, as we are already copying the open_how info into
+audit_context::openat2 safely, the obvious fix is to convert
+audit_match_perm() to use the previously copied value instead of argv.
+If you can't submit a patch for this today please let me know.
+
+-- 
+paul-moore.com
