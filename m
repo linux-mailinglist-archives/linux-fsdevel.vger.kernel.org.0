@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20C394AFE47
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BC9B4AFE3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Feb 2022 21:23:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231477AbiBIUW3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 15:22:29 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49908 "EHLO
+        id S231287AbiBIUW1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 15:22:27 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbiBIUWW (ORCPT
+        with ESMTP id S231268AbiBIUWW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Feb 2022 15:22:22 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54198E039C4F
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E0BE01CC92
         for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 12:22:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=i6Ccmmii5fiKaaUJVDta0DOiHEuUbCyGzZu4XnEK0Ho=; b=lDMSyWNz5YUkGtSLE0iPdHRYMr
-        9LDV3Bwqs1Y1lO260rPZl4JphR5HlNeNIX9Oi/w8Ek2lAYJ3xJKlMevWDARSCO67bdUkXItFBiEuH
-        aOVIZDdZieY56ANVbMU2uZkn/b805ttwZa4mge+8MxHbGd4GYoCaN5OaLSPCohQiEb+SAyWPE/uIP
-        KhiekV+RZi04GpzQTf2SREVuV1kZA6UjBr4i5Abbo+AIQoDCm/hYohZNmMaxaFsDDZ9nmqqZF4OHZ
-        tAISdpNNlBg8e6WNd+Sn6ZL2LMbnnjJQuHdGgayPbPvVv4zSpo/9RRJB6dA71U60VzsE2bPDxmCx5
-        R2cQmkIQ==;
+        bh=pevXkBlxMwx1c4FoZDsYjg5V3nLbnqnFPWu3WqRHTlI=; b=qfQqmOpjLlz94H9BIPzIUJToDj
+        9lwP4zCrTAUromzWQgIR6yL9kdND9/A9uBDj1scEBabD4xgcx7Rn/ZQik+V8qpcOVeHGR/H8WV8BT
+        kwr0J+ukyY5CZWSYSn27IRznH2EBCmecNWj5+NrMNGnhmmV1fVtsHAe5Ez45DeRnyY19pfg1AT4zT
+        Ly7FxS2/O3aMpHt2bqqLYECbaSVpHKSFlhYir1DBeHdMy5O+Xq+iluxKmQmm1JtYNGV1TIVKdv4/t
+        9QhrB6+rIjRkK9Lxja3D9ytgCRi2aahxEeuKMulZuiW8Q9WMLsRg0AoGdIDaTdYg0ey7rfZiDajAm
+        7emUYPzg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nHtTq-008cp0-MI; Wed, 09 Feb 2022 20:22:22 +0000
+        id 1nHtTq-008cp6-Pq; Wed, 09 Feb 2022 20:22:22 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 03/56] iomap: Fix iomap_invalidatepage tracepoint
-Date:   Wed,  9 Feb 2022 20:21:22 +0000
-Message-Id: <20220209202215.2055748-4-willy@infradead.org>
+Subject: [PATCH 04/56] fs: read_mapping_page() should take a struct file argument
+Date:   Wed,  9 Feb 2022 20:21:23 +0000
+Message-Id: <20220209202215.2055748-5-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
 References: <20220209202215.2055748-1-willy@infradead.org>
@@ -48,29 +48,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This tracepoint is defined to take an offset in the file, not an
-offset in the folio.
+While read_cache_page() takes a void *, because you can pass a
+pointer to anything as the first argument of filler_t, if we
+are calling read_mapping_page(), it will be passed as the first
+argument of ->readpage, so we know this must be a struct file
+pointer, and we should let the compiler enforce that for us.
 
-Fixes: 1ac994525b9d ("iomap: Remove pgoff from tracepoints")
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/pagemap.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 6c51a75d0be6..d020a2e81a24 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -480,7 +480,8 @@ EXPORT_SYMBOL_GPL(iomap_releasepage);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 34682f001344..2a4a46ff890c 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -634,15 +634,15 @@ extern struct page * read_cache_page_gfp(struct address_space *mapping,
+ 				pgoff_t index, gfp_t gfp_mask);
  
- void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
+ static inline struct page *read_mapping_page(struct address_space *mapping,
+-				pgoff_t index, void *data)
++				pgoff_t index, struct file *file)
  {
--	trace_iomap_invalidatepage(folio->mapping->host, offset, len);
-+	trace_iomap_invalidatepage(folio->mapping->host,
-+					folio_pos(folio) + offset, len);
+-	return read_cache_page(mapping, index, NULL, data);
++	return read_cache_page(mapping, index, NULL, file);
+ }
  
- 	/*
- 	 * If we're invalidating the entire folio, clear the dirty state
+ static inline struct folio *read_mapping_folio(struct address_space *mapping,
+-				pgoff_t index, void *data)
++				pgoff_t index, struct file *file)
+ {
+-	return read_cache_folio(mapping, index, NULL, data);
++	return read_cache_folio(mapping, index, NULL, file);
+ }
+ 
+ /*
 -- 
 2.34.1
 
