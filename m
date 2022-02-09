@@ -2,140 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 495C54B0103
+	by mail.lfdr.de (Postfix) with ESMTP id BE3C44B0104
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 00:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237027AbiBIXOW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 18:14:22 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:46058 "EHLO
+        id S237062AbiBIXOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 18:14:23 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:46064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236982AbiBIXOV (ORCPT
+        with ESMTP id S237000AbiBIXOW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 18:14:21 -0500
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E844AE00D0E1;
-        Wed,  9 Feb 2022 15:14:23 -0800 (PST)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 219KXZvF013346;
-        Wed, 9 Feb 2022 23:14:13 GMT
+        Wed, 9 Feb 2022 18:14:22 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F0CE00FA52;
+        Wed,  9 Feb 2022 15:14:24 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 219KHRkH013515;
+        Wed, 9 Feb 2022 23:14:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-transfer-encoding : content-type :
- mime-version; s=corp-2021-07-09;
- bh=bpeYHvOJuUKnD8/LQm3J7tZfnWqoei/xTnK6oZFPZ8M=;
- b=QELSGKIwiknzIffv5H0Xt46x7Dt+Q+XJXCL9h3xB17PcZ+oAjfROXU6qnROt0sW/NNl4
- dM3vS2bfzh60GlaN48UFYadsdD+ewlJ+BNMce1bPvxs0pemeduQ2xu4tRJsOU1UQyIRa
- 4JYXcs2xEE8hGzWnfNEiRpU7Tweyy6CrlNF8ojxd4ua28O7lUMF5NAyjKmWoYEZmCamu
- HcYJRdiwLi5oPV7XFBnZSqrNOoiRUFQrDROSUd2cbYSmNe8vonV18lLdzbCs/KrC+aNC
- pHanw+oHGMf2ApaJwgVUiTT0ayl6nVIV3BEDCaPoEx9hVFppeGENfpVOLE/B2GJ8btHC wA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3e368ty83v-1
+ subject : date : message-id : in-reply-to : references :
+ content-transfer-encoding : content-type : mime-version;
+ s=corp-2021-07-09; bh=MDaJPMYx1J2RPymtQvDWDIW7V7lnUSXVpeOxhsEcfEI=;
+ b=Pz/Aiy3MIGjyn2Av7NGUvrPBarpYziSp/7Q7uzz6IzGhLjLuP5nxWYAbL8YeL9FHIPAo
+ NynsxsossNMIzqeBuMlcdG0IdZoadAtPPkzM9rbQUb0FqV8VsSMBujeNUmSlGQtiPIWW
+ cs1NajTBNaUuUetfZbR45ggUoVILIxCiKlV58ZVV4IVv+3usLDMLhkXNPn7aFYLvPOvp
+ cyY76l80CWoSFRKoc8bwyP4KS7AZJscD2N4s+br7HivrUPIfps9aB1Z7Uvt2xTapC908
+ /hMhL+Vlp+QMbCdviMk3zI71M4kTltmuEWao2CvTNgE0VEBueqAeZwIQ2Ghq6iqKry3Y 0Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3e345sr034-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Feb 2022 23:14:12 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 219NAQHP039290;
-        Wed, 9 Feb 2022 23:14:11 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
-        by userp3020.oracle.com with ESMTP id 3e1jptxqpk-1
+        Wed, 09 Feb 2022 23:14:14 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 219NAAZ4141612;
+        Wed, 9 Feb 2022 23:14:13 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2048.outbound.protection.outlook.com [104.47.66.48])
+        by aserp3030.oracle.com with ESMTP id 3e1f9j6spa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Feb 2022 23:14:11 +0000
+        Wed, 09 Feb 2022 23:14:13 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PLOXeM+Z1PZ736we88QJEPPZ9PHKjnh9ZhNJ7af+hpQbGT57Ri9dEo2lruIPqdoyuBMXoXpXKYRYDedNEm3BeGjXKZTzqibHipHPIe87UPduAjlLvUkOvkizD7X+A/5CYU5iS+qB9m12AuvbMI0imCvve1ffAQ9SjOElv7OhAanZvlSy6UIiWWw/Iugb3uwP6bCY4fY2kuvVUt2PKyqRZM4l3dW+NtuurqSJpyQdS3p8JI0OvLIsVRRy8Ucly+STh8ho4GX3vFO3gGmSISiSZmz5feWe9G8fmpDJA9pvrz7vPkX6YPMvdhydmOyRjE9JT2NnvCUF7KfXTUZi4RtnLQ==
+ b=OKns04JMu1qUcSHZyG0OGCSGvW7YRhSnXYeIjk4nyMKp2HiuSzvg3K9qRt32QgpYhkFJxVrzrEDq8LjqMO0AhU3W6jDuQ7pwBPQWgxZBCmOjqC0jGtVQ4Ixq7YdV9FhaM32iH9NREwN1dRTyt5nUzcuLJuc9Mkwqfakwj8ArfI9gELdiZKBK0alPiJT7iK/m8b5QkhTOVYHHBQVuq0Rzr+Pooqwg0cK9pyyKhG6Iyaelv55R4+FysVoS9YyvRjq93YQh9hABm4Bsblh1WUOjQRBQlH4khsWMAGy63Ongc7Ahi8DYMQ6F6Wh5n8a4oOvhVDO4cYMmG8vT4+tssCOLfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bpeYHvOJuUKnD8/LQm3J7tZfnWqoei/xTnK6oZFPZ8M=;
- b=AVKOV2EMxBa6HLlNAETzKXAhH8QJtcyWg3NA9Q3cyEu+y9On5Hg3egGuQIRTvPunEJ76FZr/yPybfKbF7bdFC4rlBJk1TsP5GasYaG1toX3j5NPR8UDZW4e+pm0QVSTc3dFIBwE48361oIuhZL2lsgnBvX/ZlEcxkHTpJHK8OHKjYgb+8lJwKCHsPIJ/hN0hoXcjYUJ8ZRYcuHdYlSWWiljw7kiKYW5nv6etYXBhWrgfwq1l4eq2D+r/0NNnTMrmQ3QDkzf5kJGiuwLJ+re4ErW2RIsdqkgK3rcELS9rDiHCFEpcO+XecM3t35PXe6WEblQjP7Q1urHoyuHYLJfEEw==
+ bh=MDaJPMYx1J2RPymtQvDWDIW7V7lnUSXVpeOxhsEcfEI=;
+ b=isGndDwYvw02uyVDsKD1jtqazWUFWJSwtHJvksqriflTav4H1PdFtfZTp3t6OCcX1Vw89M9STvLXd9PDcwkTYH9Rq+GOT9vjA6Hb4VTUDoWtCts2ZxOtQGhuyHG7FGUJzSwDFAUeqbbBi3+4oaAHfOpG/Zu9IVIm4W6G4wz49/+fJlwrwh38YFSej9slIYB8pRKqNZHHcvk/eb3Cm/7nvKlxcHRIHxrOMF2xZXh68QR9YSdWB5VC5yc3Ndy35m82CTKctomCj0hWOeOwHlC5geEj2ztLk1JnZB2Lkq3mBxM5cFewFduUWvcN+uN/n11viKtNpCkXh9c7pYQChlV/SQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bpeYHvOJuUKnD8/LQm3J7tZfnWqoei/xTnK6oZFPZ8M=;
- b=FvFFsCvh57k3pG0YJNzNKx9U0raQpx8bbAnozGQksRyDTpmr9vg1RTYOo1mE8goH+GXIzDkZnYZbf9bThDwMAJ1DZSqyRGm+t+SuwuiuVg41Yn3hlYviKzoVKgJn9vB82BrVtN836t2s85ia++i6LJI63Q5X2Cw1Bx3sl4sg34A=
+ bh=MDaJPMYx1J2RPymtQvDWDIW7V7lnUSXVpeOxhsEcfEI=;
+ b=COta/DC+0WL2/7TTQ27Gp5XQEqoJgIWemhM/2fvvL5pcDQ+NmwJZG4zTDjBQOpXtdIdir/DPoVJw/ojJUxBxnNNWfdn10uaLocUg2lEJAmNrxr4UTsG0HMFSbrbq9wKsOWcRqANWhQ+ET6sQw0VFzEooVCMixoXYl/HrzzHw15E=
 Received: from CH2PR10MB4166.namprd10.prod.outlook.com (2603:10b6:610:78::20)
  by BLAPR10MB4884.namprd10.prod.outlook.com (2603:10b6:208:30c::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.11; Wed, 9 Feb
- 2022 23:14:09 +0000
+ 2022 23:14:11 +0000
 Received: from CH2PR10MB4166.namprd10.prod.outlook.com
  ([fe80::f4d7:8817:4bf5:8f2a]) by CH2PR10MB4166.namprd10.prod.outlook.com
  ([fe80::f4d7:8817:4bf5:8f2a%4]) with mapi id 15.20.4951.018; Wed, 9 Feb 2022
- 23:14:08 +0000
+ 23:14:11 +0000
 From:   Stephen Brennan <stephen.s.brennan@oracle.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
         Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH v2 0/4] Fix softlockup when adding inotify watch
-Date:   Wed,  9 Feb 2022 15:14:02 -0800
-Message-Id: <20220209231406.187668-1-stephen.s.brennan@oracle.com>
+Subject: [PATCH v2 1/4] dcache: sweep cached negative dentries to the end of list of siblings
+Date:   Wed,  9 Feb 2022 15:14:03 -0800
+Message-Id: <20220209231406.187668-2-stephen.s.brennan@oracle.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220209231406.187668-1-stephen.s.brennan@oracle.com>
+References: <20220209231406.187668-1-stephen.s.brennan@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SA9PR03CA0029.namprd03.prod.outlook.com
- (2603:10b6:806:20::34) To CH2PR10MB4166.namprd10.prod.outlook.com
+X-ClientProxiedBy: SA9PR03CA0013.namprd03.prod.outlook.com
+ (2603:10b6:806:20::18) To CH2PR10MB4166.namprd10.prod.outlook.com
  (2603:10b6:610:78::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7c289e84-994b-44de-2540-08d9ec21dffe
+X-MS-Office365-Filtering-Correlation-Id: 6e61368a-705c-4b0a-821b-08d9ec21e178
 X-MS-TrafficTypeDiagnostic: BLAPR10MB4884:EE_
-X-Microsoft-Antispam-PRVS: <BLAPR10MB48845F935CCD598733BBF201DB2E9@BLAPR10MB4884.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:156;
+X-Microsoft-Antispam-PRVS: <BLAPR10MB4884E163DD03517593586E71DB2E9@BLAPR10MB4884.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ux+/7vEFQ3dzKk5wnuDCoTch7VysPZq4rpkI8rrA+x9ug33RXAoDa3TMYCw4Ogke7DPBK+R7AESwT6k8noRJeu6M7ShmHhIbgcTerRD65dkAul5WPgFgopW/UtvCVEgSeqPVa8WeDesSd0sJJ3HN5pSDPKrI5+rCs3y6pqI5PwjWlCKjFjLR2ICiTotI/jPGEy56OrefD0ZIVGwcVmZkmG73cM8Q65ogADY8UqGS//Dg/i8I6K/8mUGEoii1S/LYQUkOGpJZr4pnAaXNvFd4v29cOXfr5LWHUsg+W1BtxNnxBzRWZfNYzLp7sxGW3cUsegdtUEmH4zqLek49k19VAzSaX2faHHD8LAHVPEVm2yZ8KduUPNYk0BDgoedG1Xc09KtjAUJgEnyxnTn6DpxuWhgv4qdml756p5LztSidjeAWGWu467Dc/AEfK0z4UOfKkimW2CCSiCqBzsx8Gw+7rB/t0Aw1LB9RKmpa1fJMKSAP4yTipPcZ62V8B7Ylh4OjtfhK4xJxEHJsFKt5egdXRBm+Za/45yiqJpGnvVHhfNQE8qmzicGZbQg9U5ecCYAZPBgD4zWTQXd3/CcbPOZPaOZunelyzDY0faARvaqH/9bLCCCfoqgDnLMnFF8Vk9z8PScK/7VyXhz6p1ahEG6/RSOaaESVFyV6mSZuL50dnakJ6cDnmwxyXb40xWE+eeVAwy+8xUHk2Y/GthO6Ek9CGIJIXt4sk+F18mClY6nTGAbVsdtvwlo7EieSyaeCoLar3x1fIghUwnXOl47AheKUEBxXZj3Qw+IYXYT7new1ahfkVocAYWH+iOTvbevAlSBwV++1qlZVJCwXdb4yuEha0g==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4166.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(66476007)(86362001)(52116002)(8676002)(6666004)(6506007)(8936002)(103116003)(66946007)(83380400001)(66556008)(508600001)(4326008)(2616005)(38100700002)(1076003)(186003)(26005)(54906003)(2906002)(110136005)(5660300002)(6486002)(966005)(38350700002)(36756003)(316002)(6512007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: zGEdAStFCuRmpZkvlJeQUPWx8LbHVsJuQi9oRCpFwd4So3674qvzLFTKZ33puxzJXHN34mrRW2yhRX2LUENLISYyLGvbeCGqerY3Dmxb236+Zs8vJcdOeNdduSpTtjUreKEN5FwhC5XvcCgTNuH7y/ungrDzgbu8xt9TpUMybFXT5H4/o4zThHR8EYAzdCGj7YE/xu0cd00koDCEOTO3TDZn/iSBLm6111QX+IQHf9laLkbXnNIL1KPJtHDO0w4TmTGS/C5czciEJu3eLl7GvygCfFbN0KJzj0IBmqZZ7+9PhA4DUQgVTxONMwNy6P0Y++9n+hvmU4ZIe3ojIH9ezKq8uD0MhHqJm6xmZScnkrjisgOOOaEg6nKldOwzCkmvutTZFjvek2YZCKpttT8TJb4m9An7KIiD7dZgXTFm9U4eUX5Hfdt9fg6zgKSFUqGdwN0gQoYy7ujTPllpY5ZaoiBJ4wEuyi9eZ+R6DQVhHzamoG8Af7rQs2/CIYvmKqw6V1sA2FvpkxQQFidwljyf+ZPRqR5gB5giKOgI+wFWLFzD3gu9GnPa41dbHdN7PsJOsvmlTNM1bdGW9IeiI/A2kaG6N0MjGmBtdBs/6Rp0Qh8qDQXdwQkvAOxQFGUm4tvxz4oWM+Kvr6bry9mXhrAGXOTcXM81GDqfIJ6hZtNt4VkYUFh87SddInY8GLJkwJvNx1OPzpzsXnuUa2g4P+NpUQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4166.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(66476007)(86362001)(52116002)(8676002)(6666004)(6506007)(8936002)(103116003)(66946007)(83380400001)(66556008)(508600001)(4326008)(2616005)(38100700002)(1076003)(186003)(26005)(54906003)(2906002)(5660300002)(6486002)(38350700002)(6916009)(36756003)(316002)(6512007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KHjjDlKv61GihOmcZqZ4glA4/CdcqwdUZfaBpAyiUwxuPwuLBRjsq2D0hzNP?=
- =?us-ascii?Q?MhivBAG588ZxZn+rwLSsvjEQm9we6gH6AzNfLDni5JCjqzxYA5qxlIWzR7wS?=
- =?us-ascii?Q?f+ktiIBAyYBe8jnbuai1QCVOl9FCJ7bA9QcCB4pS11mpO3bUoz0mpCSWvDfU?=
- =?us-ascii?Q?WI9HOVlBS7ZXz4Rg1+SOgmM2nzUAYTmap69J274lpxIsII1syFYmC0k6hbUk?=
- =?us-ascii?Q?iqnf0I4HyBTmNFUFSQZkXmTSIVHi2mJgee+UW9pidkyR+x/Lk0rxWEQ0xxWl?=
- =?us-ascii?Q?1Y0DgtUnLah/vR1yX96gaUwZnm7qJrHPEDz8n8LFE0mc/WKymVpIm8hpQ+nm?=
- =?us-ascii?Q?3bLDFm9ItYFKU2YzmflQe4bChq0LsEtk23oI8UhV3cYt4gIRp3Oi21lVNP5m?=
- =?us-ascii?Q?1jzLdWLQFf+8DxMEmZX5QdQl6PcHQ4uhkdDDJtMld29B75LpocFP41xl968h?=
- =?us-ascii?Q?GExdEEd/OCqcyBz+p2uDPUy6TS2HA/eeRcVV1boAmMBwbrajBcrK+UDtPDyE?=
- =?us-ascii?Q?bGupEiD2ATBMem0NnYKtZnJhmR53DpqlFsOjtvh9L9NOTnT9SkhnbceyMYXt?=
- =?us-ascii?Q?h2wx7AMIfPre9j0b/D1hdFL023jXkPeiXYKKt/Qvt9StOF/5FKaokcgcIRwR?=
- =?us-ascii?Q?mo/Bjo83O+kP+2z52EQT82/rbW8MTtKEuG1Stfx0px3gYsdbk20lkLD37LpB?=
- =?us-ascii?Q?28XbQWlHGAYbi2diHafYYVcBPdTEV1AUngt1ne33eAgW4vXOpst0iwnhOpHQ?=
- =?us-ascii?Q?mhUoc45fvkc6P68TimzHXlZTS/s9/8HwDqEBE0Gzp13qCZrNfWgNAYAqtQtf?=
- =?us-ascii?Q?/u6ByzgfEsMiyad21W5M8qFMQLD/f0CeBSQp2EVCUyGMTFli+sLmK5iilkwt?=
- =?us-ascii?Q?hTIeGUDn4jqebESm7qY7MWbWbsoMLhG548SzCuxykr8neIqDTMqSm1EUOSpO?=
- =?us-ascii?Q?L8C8Ay16kDVmMg3Mt/knHVciwHavYa/6GgmUDFI6OfmZqlD9ioZc1lyDWVnp?=
- =?us-ascii?Q?uD1q6/ZtqEq+Tf/0q4meYYOUjXBwhi+ds4sYiAPLDcAxu/uOFZGKjC+XcyZ9?=
- =?us-ascii?Q?p0ePC6geW9UIQUd/wBAWOIGQ4HgbfiOJ2d1nUhsZVmjLqPoC8TZGTmRqgoq/?=
- =?us-ascii?Q?12rx+UIr7XcUwwuPvqRhyQL1uctt67bB5r5aS1Lebq1VT2IQxuMhKNcG/tqz?=
- =?us-ascii?Q?uaYwieIgahh2f8E/yXLJhbO/dw7BqPMHNKkXPIvw/76tpbL5fOeFKSDmtWXs?=
- =?us-ascii?Q?iwksgNJM+VTjNq2fBpktyvouxiMiSSaoo1v9cFBYZXC2QBC3P59CA+DqgYHy?=
- =?us-ascii?Q?8lPtRKbkmKOB3qLz/CROEfjm4rTpPI4+6STsGxgaVQif/tlXYE7ll+94v1a7?=
- =?us-ascii?Q?LBrWvEKwUkiej9o1F0QkkzMPJLASKVLqRcDxXZryBg6NnACog/0DaJ5Sz6uB?=
- =?us-ascii?Q?5IbhIR9c+DWc/hOoazg8UwQlzb9cgdp6jEfiS6AW5p2KeGr7EQ9HAhFMGs6L?=
- =?us-ascii?Q?HdpGA4/9LMiZ90q+WmTdFDZt43+W1xhpzViXTn522MYeDuKYOK8EWhsNZQGe?=
- =?us-ascii?Q?STDhaspvcSVEbYVr/y9LdUGx4817qb9J4xL4L5Rc6dThMdeyNqhF8d3EveBH?=
- =?us-ascii?Q?dXx+KK3xFJd1HzI8jhhB03AGQa+VRiHqjUfnD9OLLzy0LY4bRta9KiexLdFg?=
- =?us-ascii?Q?tbAggA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Q6LdJAB+YrcusCmKhLYPE/B6yHmcK9dwL1f7YphdJeexY+njyPu6al3ZjPG0?=
+ =?us-ascii?Q?uaTFdqSghEbjUlbA2coJ1DuCwhs/HgVDqqEkDQVFvNFBeTTndKLOWnc5ZkA3?=
+ =?us-ascii?Q?GYCl4qeb2lsgsr0VK20zP6wPD3bdum4gbguw9bKvGT7AiL25pW9BmP/NC8Gl?=
+ =?us-ascii?Q?8SWaWy43ibY0gKMkHnffxumORr+9A01kOgUU70FfCTihzm7EMpbgSWMjtzDD?=
+ =?us-ascii?Q?+T6/Fs1il37XOg8i4CbtrhfxcLn8gpfpUVTiil4toNli96LKVJAb0UJ5/Bvx?=
+ =?us-ascii?Q?FtlxlhGHlL/vt0dTAcCh4Y/HzDxxyO0JOqIbr2gXzbIVy47EhCuu0x/gK5ON?=
+ =?us-ascii?Q?7eNckSQ1uU7cuLZO+tJRUAmP/mKFvaBzIz+iw7z0an2lTBUwBhJEdKMGuVn7?=
+ =?us-ascii?Q?Ao7r4kkgXhza5HbYTSJr7v86SoY/hvtRfdllV/AMkbGJMCPKVGGIybFncHB4?=
+ =?us-ascii?Q?N+I5hEhTlCW2gSWPoTiAOYHy1JBalglht/BXnCsxQ3SRbMSdBAp0ox4tXjt/?=
+ =?us-ascii?Q?yUyR4RojtVyJoJZnhJtnMKuftg/jKn8CRAl9zPYBV6eUtOK7T4HAfeNsld91?=
+ =?us-ascii?Q?ybwlGByeESzo10sqzp4s5B5lnfbdbVWJmp0pXgyyKo0C7gqGbTVBSIwuqn75?=
+ =?us-ascii?Q?77O9gulOeB/wBEIUaMYFVjvoPcmxSpp08r9MjTpl5Dm7JNgrPrguj/0ZD6Co?=
+ =?us-ascii?Q?mxTndmktzr+JkDwHCAm3tFKlWPDAZpKJTXvWCLm11ElyR6QCbXCMLa2SCKhx?=
+ =?us-ascii?Q?mYAnRMABfDKrWirs2Ru0tTCNFBMefOxoFtyLSl41TL9+URvdF45EkwgtsD7h?=
+ =?us-ascii?Q?565QeU3ntz/KhHDjjOfAPFxkfAZgyIaiahhGiFb8LGf7a4rCeGbK8FjugX4M?=
+ =?us-ascii?Q?5vheTdGQZgsUHyB2gB+uJNQglcczPwMzlbR+JSxidG7cYGDwVQ64cgk84gMS?=
+ =?us-ascii?Q?aKW1D85P5pDRizpU1OWPl45TD5tCsOY5zPCrfFucotcvv+4G/kqvCbr8DdZ1?=
+ =?us-ascii?Q?ORFpNd98AgBGVsD0rEEiSkzKyGae8Bdf3CnG2X97zNFtzJ8euh+940kM6RAP?=
+ =?us-ascii?Q?25CusZcjMN6v6qmo8Q7ylBgUYsAI2b0IHcLyWhvZiqhSUTdQDRlXo9XOuh/R?=
+ =?us-ascii?Q?4aes3ctbMut1KFHWeLKTJlZCo+KHbB5M+tYbTLOQFZqlqYmii3J/XW9d+bfR?=
+ =?us-ascii?Q?5E4w4b31ywaEizQfS/GHjcw6JBMS/IHXNJsFMu5V+5BkD3WUkRG6CHXXnu+r?=
+ =?us-ascii?Q?6ygldMdHiTw+VVzE0w2s/hTBDTTjsOTbNNJQ9cLINW6cLlWThSUyfhYUnfNE?=
+ =?us-ascii?Q?fa2yXomZgmYcrzLhqFuETUPfqHe9V+lF49s6OlAef2/s8AQBe7ORVBKMuj8a?=
+ =?us-ascii?Q?DFfTWqE5wNBegRXNKdMu6GSAcIXQ8ulT3q5LdCSVajjSDDy9dmTKka+XJ7LI?=
+ =?us-ascii?Q?XijupIXEPzr9f8HmoTgMDaHbbH5so2iD3zRcFplFKuYnvefSwaV/bwBiYXiG?=
+ =?us-ascii?Q?cnqv8JXUBrp1kytjUfUIvwzbTsm9va5brMA5NK+gNMcS9zDw6nMZB6TwhuE3?=
+ =?us-ascii?Q?aNQY850PtJOx+Qc1p6MUk/D4s23fFoRoO0pCklwS6lVVq714lve9VMp6ey7F?=
+ =?us-ascii?Q?ECgudvs11v0aN/1mc5+a7j9nUJDEp1ukbDkU8fs8XKibH7CJkku8waQnMSye?=
+ =?us-ascii?Q?Dw6ahA=3D=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c289e84-994b-44de-2540-08d9ec21dffe
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e61368a-705c-4b0a-821b-08d9ec21e178
 X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4166.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2022 23:14:08.7717
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2022 23:14:11.2201
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /Yr4aajQZPU87QIDZJ9sulIphrT+p50CoAN+i/IKLA07L4NLKu0abOClXF6vCo+dgJYn4nc7ou3qPavUZ0bTEiMlo4TfNDPv6jc349R8118=
+X-MS-Exchange-CrossTenant-UserPrincipalName: iGi78ykHEDxhJhm554VqHGQDewRxbM1XbtasB9QD11oZ/nHk9bctOAHSeJ7tOsPnBWdt7sfX29ogLWNT77TxaiZcNYTe5vPzcnJOmQZYawc=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4884
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10253 signatures=673431
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- malwarescore=0 suspectscore=0 phishscore=0 adultscore=0 spamscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
+ mlxlogscore=783 suspectscore=0 mlxscore=0 phishscore=0 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
  definitions=main-2202090121
-X-Proofpoint-ORIG-GUID: bTReoCX5ernxfBYeYrH7sOqheQYwhkF_
-X-Proofpoint-GUID: bTReoCX5ernxfBYeYrH7sOqheQYwhkF_
+X-Proofpoint-GUID: MKfrETwLELtsFyA-ZRthyh_WxSJ-PWhB
+X-Proofpoint-ORIG-GUID: MKfrETwLELtsFyA-ZRthyh_WxSJ-PWhB
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
@@ -146,78 +149,205 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al et al,
+For disk filesystems result of every negative lookup is cached, content
+of directories is usually cached too. Production of negative dentries
+isn't limited with disk speed. It's really easy to generate millions of
+them if system has enough memory. Negative dentries are linked into
+siblings list along with normal positive dentries. Some operations walks
+dcache tree but looks only for positive dentries: most important is
+fsnotify/inotify.
 
-When a system with large amounts of memory has several millions of
-negative dentries in a single directory, a softlockup can occur while
-adding an inotify watch:
+This patch sweeps negative dentries to the end of list at final dput()
+and marks with flag which tells that all following dentries are negative
+too. We do this carefully to avoid corruption in case the dentry is
+killed when we try to lock its parent. Reverse operation (recycle) is
+required before instantiating tail negative dentry, or calling d_add()
+with non-NULL inode.
 
- watchdog: BUG: soft lockup - CPU#20 stuck for 9s! [inotifywait:9528]
- CPU: 20 PID: 9528 Comm: inotifywait Kdump: loaded Not tainted 5.16.0-rc4.20211208.el8uek.rc1.x86_64 #1
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.4.1 12/03/2020
- RIP: 0010:__fsnotify_update_child_dentry_flags+0xad/0x120
- Call Trace:
-  <TASK>
-  fsnotify_add_mark_locked+0x113/0x160
-  inotify_new_watch+0x130/0x190
-  inotify_update_watch+0x11a/0x140
-  __x64_sys_inotify_add_watch+0xef/0x140
-  do_syscall_64+0x3b/0x90
-  entry_SYSCALL_64_after_hwframe+0x44/0xae
+Co-authored-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Co-authored-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+---
 
-This patch series is a modified version of the following:
-https://lore.kernel.org/linux-fsdevel/1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com/
+Notes:
+    v2: Remove the sweep_negative() call in __d_add() when inode is NULL.
 
-The strategy employed by this series is to move negative dentries to the
-end of the d_subdirs list, and mark them with a flag as "tail negative".
-Then, readers of the d_subdirs list, which are only interested in
-positive dentries, can stop reading once they reach the first tail
-negative dentry. By applying this patch, I'm able to avoid the above
-softlockup caused by 200 million negative dentries on my test system.
-Inotify watches are set up nearly instantly.
+ fs/dcache.c            | 85 +++++++++++++++++++++++++++++++++++++++---
+ include/linux/dcache.h |  6 +++
+ 2 files changed, 86 insertions(+), 5 deletions(-)
 
-Previously, Al expressed concern for:
-
-1. Possible memory corruption due to use of lock_parent() in
-sweep_negative(), see patch 01 for fix.
-2. The previous patch didn't catch all ways a negative dentry could
-become positive (d_add, d_instantiate_new), see patch 01.
-3. The previous series contained a new negative dentry limit, which
-capped the negative dentry count at around 3 per hash bucket. I've
-dropped this patch from the series.
-
-Patches 2-4 are unmodified from the previous posting.
-
-In v1 of the patch, a warning was triggered by patch 1:
-https://lore.kernel.org/linux-fsdevel/20211218081736.GA1071@xsang-OptiPlex-9020/
-
-I reproduced this warning, and verified it no longer occurs with my patch on
-5.17 rc kernels. In particular, commit 29044dae2e74 ("fsnotify: fix fsnotify
-hooks in pseudo filesystems") resolves the warning, which I verified on the
-5.16 branch that the 0day bot tested. It seems that nfsdfs was using d_delete
-to remove some pseudo-filesystem dentries, rather than d_drop, but it
-expected there to never be negative dentries. I don't believe that
-warning reflected an error in this patch series.
-
-v2:
-- explain the nfsd warning
-- remove sweep_negative() call from __d_add - rely on dput() for that
-
-
-Konstantin Khlebnikov (2):
-  dcache: add action D_WALK_SKIP_SIBLINGS to d_walk()
-  dcache: stop walking siblings if remaining dentries all negative
-
-Stephen Brennan (2):
-  dcache: sweep cached negative dentries to the end of list of siblings
-  fsnotify: stop walking child dentries if remaining tail is negative
-
- fs/dcache.c            | 101 +++++++++++++++++++++++++++++++++++++++--
- fs/libfs.c             |   3 ++
- fs/notify/fsnotify.c   |   6 ++-
- include/linux/dcache.h |   6 +++
- 4 files changed, 110 insertions(+), 6 deletions(-)
-
+diff --git a/fs/dcache.c b/fs/dcache.c
+index c84269c6e8bf..0960de9b9c36 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -660,6 +660,58 @@ static inline struct dentry *lock_parent(struct dentry *dentry)
+ 	return __lock_parent(dentry);
+ }
+ 
++/*
++ * Move cached negative dentry to the tail of parent->d_subdirs.
++ * This lets walkers skip them all together at first sight.
++ * Must be called at dput of negative dentry with d_lock held.
++ * Releases d_lock.
++ */
++static void sweep_negative(struct dentry *dentry)
++{
++	struct dentry *parent;
++
++	rcu_read_lock();
++	parent = lock_parent(dentry);
++	if (!parent) {
++		rcu_read_unlock();
++		return;
++	}
++
++	/*
++	 * If we did not hold a reference to dentry (as in the case of dput),
++	 * and dentry->d_lock was dropped in lock_parent(), then we could now be
++	 * holding onto a dead dentry. Be careful to check d_count and unlock
++	 * before dropping RCU lock, otherwise we could corrupt freed memory.
++	 */
++	if (!d_count(dentry) && d_is_negative(dentry) &&
++		!d_is_tail_negative(dentry)) {
++		dentry->d_flags |= DCACHE_TAIL_NEGATIVE;
++		list_move_tail(&dentry->d_child, &parent->d_subdirs);
++	}
++
++	spin_unlock(&parent->d_lock);
++	spin_unlock(&dentry->d_lock);
++	rcu_read_unlock();
++}
++
++/*
++ * Undo sweep_negative() and move to the head of parent->d_subdirs.
++ * Must be called before converting negative dentry into positive.
++ * Must hold dentry->d_lock, we may drop and re-grab it via lock_parent().
++ * Must be hold a reference or be otherwise sure the dentry cannot be killed.
++ */
++static void recycle_negative(struct dentry *dentry)
++{
++	struct dentry *parent;
++
++	parent = lock_parent(dentry);
++	dentry->d_flags &= ~DCACHE_TAIL_NEGATIVE;
++	if (parent) {
++		list_move(&dentry->d_child, &parent->d_subdirs);
++		spin_unlock(&parent->d_lock);
++	}
++}
++
+ static inline bool retain_dentry(struct dentry *dentry)
+ {
+ 	WARN_ON(d_in_lookup(dentry));
+@@ -765,7 +817,7 @@ static struct dentry *dentry_kill(struct dentry *dentry)
+ static inline bool fast_dput(struct dentry *dentry)
+ {
+ 	int ret;
+-	unsigned int d_flags;
++	unsigned int d_flags, required;
+ 
+ 	/*
+ 	 * If we have a d_op->d_delete() operation, we sould not
+@@ -813,6 +865,8 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 * a 'delete' op, and it's referenced and already on
+ 	 * the LRU list.
+ 	 *
++	 * Cached negative dentry must be swept to the tail.
++	 *
+ 	 * NOTE! Since we aren't locked, these values are
+ 	 * not "stable". However, it is sufficient that at
+ 	 * some point after we dropped the reference the
+@@ -830,11 +884,16 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 */
+ 	smp_rmb();
+ 	d_flags = READ_ONCE(dentry->d_flags);
++
++	required = DCACHE_REFERENCED | DCACHE_LRU_LIST |
++		(d_flags_negative(d_flags) ? DCACHE_TAIL_NEGATIVE : 0);
++
+ 	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST |
+-			DCACHE_DISCONNECTED | DCACHE_DONTCACHE;
++			DCACHE_DISCONNECTED | DCACHE_DONTCACHE |
++			DCACHE_TAIL_NEGATIVE;
+ 
+ 	/* Nothing to do? Dropping the reference was all we needed? */
+-	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
++	if (d_flags == required && !d_unhashed(dentry))
+ 		return true;
+ 
+ 	/*
+@@ -906,7 +965,10 @@ void dput(struct dentry *dentry)
+ 		rcu_read_unlock();
+ 
+ 		if (likely(retain_dentry(dentry))) {
+-			spin_unlock(&dentry->d_lock);
++			if (d_is_negative(dentry) && !d_is_tail_negative(dentry))
++				sweep_negative(dentry); /* drops d_lock */
++			else
++				spin_unlock(&dentry->d_lock);
+ 			return;
+ 		}
+ 
+@@ -1998,6 +2060,8 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
+ 	WARN_ON(d_in_lookup(dentry));
+ 
+ 	spin_lock(&dentry->d_lock);
++	if (d_is_tail_negative(dentry))
++		recycle_negative(dentry);
+ 	/*
+ 	 * Decrement negative dentry count if it was in the LRU list.
+ 	 */
+@@ -2722,6 +2786,13 @@ static inline void __d_add(struct dentry *dentry, struct inode *inode)
+ 	struct inode *dir = NULL;
+ 	unsigned n;
+ 	spin_lock(&dentry->d_lock);
++	/*
++	 * Tail negative dentries must become positive before associating an
++	 * inode. recycle_negative() is safe to use because we hold a reference
++	 * to dentry.
++	 */
++	if (inode && d_is_tail_negative(dentry))
++		recycle_negative(dentry);
+ 	if (unlikely(d_in_lookup(dentry))) {
+ 		dir = dentry->d_parent->d_inode;
+ 		n = start_dir_add(dir);
+@@ -2738,7 +2809,11 @@ static inline void __d_add(struct dentry *dentry, struct inode *inode)
+ 	__d_rehash(dentry);
+ 	if (dir)
+ 		end_dir_add(dir, n);
+-	spin_unlock(&dentry->d_lock);
++
++	if (!inode && !d_is_tail_negative(dentry))
++		sweep_negative(dentry); /* drops d_lock */
++	else
++		spin_unlock(&dentry->d_lock);
+ 	if (inode)
+ 		spin_unlock(&inode->i_lock);
+ }
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index f5bba51480b2..7cc1bd384912 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -211,6 +211,7 @@ struct dentry_operations {
+ #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
+ #define DCACHE_DENTRY_CURSOR		0x20000000
+ #define DCACHE_NORCU			0x40000000 /* No RCU delay for freeing */
++#define DCACHE_TAIL_NEGATIVE		0x80000000 /* All following siblings are negative */
+ 
+ extern seqlock_t rename_lock;
+ 
+@@ -489,6 +490,11 @@ static inline int simple_positive(const struct dentry *dentry)
+ 	return d_really_is_positive(dentry) && !d_unhashed(dentry);
+ }
+ 
++static inline bool d_is_tail_negative(const struct dentry *dentry)
++{
++	return unlikely(dentry->d_flags & DCACHE_TAIL_NEGATIVE);
++}
++
+ extern void d_set_fallthru(struct dentry *dentry);
+ 
+ static inline bool d_is_fallthru(const struct dentry *dentry)
 -- 
 2.30.2
 
