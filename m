@@ -2,116 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E72B74B17F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 23:11:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF624B1991
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Feb 2022 00:35:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344555AbiBJWKf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Feb 2022 17:10:35 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45176 "EHLO
+        id S1345714AbiBJXfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Feb 2022 18:35:31 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239239AbiBJWKe (ORCPT
+        with ESMTP id S231627AbiBJXfa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Feb 2022 17:10:34 -0500
-Received: from zaphod.cobb.me.uk (zaphod.cobb.me.uk [213.138.97.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB70E7B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Feb 2022 14:10:34 -0800 (PST)
-Received: by zaphod.cobb.me.uk (Postfix, from userid 107)
-        id 168E89BC8E; Thu, 10 Feb 2022 22:10:33 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
-        s=201703; t=1644531033;
-        bh=kS+RYdB1/3NqdQFZ0araP/Sckt/G1/ebiyGT3H5suYo=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=WlEf+xJ0o7XKsjxpo25fPv1MwPeyoA1+8yXx07IL0p+czuFRCRskBVnCAQTew+Lj8
-         IewJOLpI7taH6RZ3hCAhZ0abBB0GLhM9AE+64Xi8PCs/zOa6z2cARgtkGT+8GIRjgV
-         rgy1BNCIOiqeeNj568QfEMned0B1IO3033wqPlQ7iJiaHo0uMfE1Tuw30PEaRrHXi7
-         R2EgGFXF/nFelZYJZklh/Rk97s6etUn0mzuPrN0uA6Tz5qLmLiv5xXZ+mEXuKaH9l/
-         kve/Zv/aF2R8OkUkWOMyFqrn7js7m1Bm+dtgulcxGE0kR4l7ac/yOW1gUZnI63Yo5i
-         xREJZZTCj0riQ==
+        Thu, 10 Feb 2022 18:35:30 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADAF5F64;
+        Thu, 10 Feb 2022 15:35:30 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CEFCF21126;
+        Thu, 10 Feb 2022 23:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1644536128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=o2Yicem2YyHeYev4jh35sFR/3S6yxP16YJIZJw/2u2E=;
+        b=IRejTp/lbCDisc33iEc4E7PVz/okwunBODuHyI/b85cHeu50KxfVz4Lm1ulBn16HHIvtlA
+        ybEwfsOogFOgpBDauYwGb+Akw4qrm8puoflgsBEzORq8jfHdN6f4ykyJ3bj8AO7gbIdRoY
+        JxHa2lsbMPUq7RCvp7L2aTnG70bRko0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1644536128;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=o2Yicem2YyHeYev4jh35sFR/3S6yxP16YJIZJw/2u2E=;
+        b=akwWvp114tx/QzY8BBRxePKACalrKHFoVw/bZPcO2rBeEBJtdQRh+pMHD3FVXfuxr+1IuH
+        CB/Fb6z1JJ/iymCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4AE5C13C55;
+        Thu, 10 Feb 2022 23:35:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id eHQaAjihBWKSUAAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 10 Feb 2022 23:35:20 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jan Kara" <jack@suse.cz>
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Jan Kara" <jack@suse.cz>, "Wu Fengguang" <fengguang.wu@intel.com>,
+        "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Ilya Dryomov" <idryomov@gmail.com>,
+        "Miklos Szeredi" <miklos@szeredi.hu>,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        "Anna Schumaker" <anna.schumaker@netapp.com>,
+        "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        "Philipp Reisner" <philipp.reisner@linbit.com>,
+        "Lars Ellenberg" <lars.ellenberg@linbit.com>,
+        "Paolo Valente" <paolo.valente@linaro.org>,
+        "Jens Axboe" <axboe@kernel.dk>, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 02/11] MM: document and polish read-ahead code.
+In-reply-to: <20220210122440.vqth5mwsqtv6vjpq@quack3.lan>
+References: <164447124918.23354.17858831070003318849.stgit@noble.brown>,
+ <164447147257.23354.2801426518649016278.stgit@noble.brown>,
+ <20220210122440.vqth5mwsqtv6vjpq@quack3.lan>
+Date:   Fri, 11 Feb 2022 10:35:17 +1100
+Message-id: <164453611721.27779.1299851963795418722@noble.neil.brown.name>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
-X-Spam-Level: 
-X-Spam-Bar: 
-Received: from black.home.cobb.me.uk (unknown [192.168.0.205])
-        by zaphod.cobb.me.uk (Postfix) with ESMTP id 53A0C9B7DE;
-        Thu, 10 Feb 2022 22:09:37 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
-        s=201703; t=1644530977;
-        bh=kS+RYdB1/3NqdQFZ0araP/Sckt/G1/ebiyGT3H5suYo=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=x63Zbjx9QRDGq5xpZAxA29wYVqGda8rhzOzxNHE/sii+h/u0MC/pwxe/eMDI+aKzy
-         PB2RMJ3hcw/Dxm+iEqK+e/qLjFl/1j4I/8A3asza+knJ07KQMX4hETW6NLuceOM1ai
-         JvfPOmOx+niQCCHmyOutiKHa4objXxOEiUnFht80QW5bHeJfaqbK/U7TBbzrFiDfM8
-         98s7XDhXpUD3WDi5mBJzAIYEsNpVa1aBTGzqkhLD9tO9vQO/2KKLw5hYBLEHWHGszX
-         84SET1m5/hOXCDmEbKrIARSOJQ2erQPzuG0ky9Lf/uUpHaA/ENIrFIix1ibc6OX50u
-         pYc0tfnVHnsnQ==
-Received: from [192.168.0.202] (ryzen.home.cobb.me.uk [192.168.0.202])
-        by black.home.cobb.me.uk (Postfix) with ESMTP id 1B92A11EFDF;
-        Thu, 10 Feb 2022 22:09:37 +0000 (GMT)
-Message-ID: <e0ffd0ce-d86e-1d30-dbdc-5b0f0b7cc131@cobb.uk.net>
-Date:   Thu, 10 Feb 2022 22:09:36 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-From:   Graham Cobb <g.btrfs@cobb.uk.net>
-Subject: Re: [PATCH] Fix read-only superblock in case of subvol RO remount
-Content-Language: en-US
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dhowells@redhat.com, fvogt@suse.com
-References: <20220210165142.7zfgotun5qdtx4rq@fiona>
- <2db10c6d-513a-3b73-c694-0ef112baa389@cobb.uk.net>
- <20220210213058.m7kukfryrk4cgsye@fiona>
- <938de929-d63f-2f04-ec0a-9005ba013a2f@cobb.uk.net>
-In-Reply-To: <938de929-d63f-2f04-ec0a-9005ba013a2f@cobb.uk.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/02/2022 22:03, Graham Cobb wrote:
-> On 10/02/2022 21:30, Goldwyn Rodrigues wrote:
->> On 19:54 10/02, Graham Cobb wrote:
->>> On 10/02/2022 16:51, Goldwyn Rodrigues wrote:
->>>> If a read-write root mount is remounted as read-only, the subvolume
->>>> is also set to read-only.
->>>
->>> Errrr... Isn't that exactly what I want?
->>>
->>> If I have a btrfs filesystem with hundreds of subvols, some of which may
->>> be mounted into various places in my filesystem, I would expect that if
->>> I remount the main mountpoint as RO, that all the subvols become RO as
->>> well. I actually don't mind if the behaviour went further and remounting
->>> ANY of the mount points as RO would make them all RO.
->>>
->>> My mental model is that mounting a subvol somewhere is rather like a
->>> bind mount. And a bind mount goes RO if the underlying fs goes RO -
->>> doesn't it?
->>>
->>
->> If we want bind mount, we would use bind mount. subvolume mounts and bind
->> mounts are different and should be treated as different features.
+On Thu, 10 Feb 2022, Jan Kara wrote:
+> Hi Neil!
 > 
-> Yes that's a good point. However, I am still not convinced that this is
-> a change in behaviour that is obvious enough to justify the risk of
-> disruption to existing systems, admin scripts or system managers.
-> 
->>
->>> Or am I just confused about what this patch is discussing?
->>
->> Root can also be considered as a unique subvolume with a unique
->> subvolume id and a unique name=/
-> 
-> But with an important special property that is different from all other
-> subvolumes: all other subvolumes are reachable from it.
+> On Thu 10-02-22 16:37:52, NeilBrown wrote:
+> > Add some "big-picture" documentation for read-ahead and polish the code
+> > to make it fit this documentation.
+> > 
+> > The meaning of ->async_size is clarified to match its name.
+> > i.e. Any request to ->readahead() has a sync part and an async part.
+> > The caller will wait for the sync pages to complete, but will not wait
+> > for the async pages.  The first async page is still marked PG_readahead
 
-I should be a bit clearer. Imagine you create a filesystem and then
-create two subvolumes within it: a and a/b. You are suggesting that the
-result of remounting the top level of the filesystem as RO causes
-different effect on whether subvolume b goes RO depending on whether
-subvolume a has also been mounted somewhere?
+Thanks for the review!
 
+> 
+> So I don't think this is how the code was meant. My understanding of
+> readahead comes from a comment:
+
+I can't be sure what was "meant" but what I described is very close to
+what the code actually does.
+
+> 
+> /*
+>  * On-demand readahead design.
+>  *
+> ....
+> 
+> in mm/readahead.c. The ra->size is how many pages should be read.
+> ra->async_size is the "lookahead size" meaning that we should place a
+> marker (PageReadahead) at "ra->size - ra->async_size" to trigger next
+> readahead.
+
+This description of PageReadahead and ->async_size focuses on *what*
+happens, not *why*.  Importantly it doesn't help answer the question "What
+should I set ->async_size to?"
+
+The implication in the code is that when we sequentially access a page
+that was read-ahead (read before it was explicitly requested), we trigger
+more read ahead.  So ->async_size should refer to that part of the
+readahead request which was not explicitly requested.  With that
+understanding, it becomes possible to audit all the places that
+->async_size are set and to see if they make sense.
+
+> 
+> > 
+> > - in try_context_readahead(), the async_sync is set correctly rather
+> >   than being set to 1.  Prior to Commit 2cad40180197 ("readahead: make
+> >   context readahead more conservative") it was set to ra->size which
+> >   is not correct (that implies no sync component).  As this was too
+> >   high and caused problems it was reduced to 1, again incorrect but less
+> >   problematic.  The setting provided with this patch does not restore
+> >   those problems, and is now not arbitrary.
+> 
+> I agree the 1 there looks strange as it effectively discards all the logic
+> handling the lookahead size. I agree with the tweak there but I would do
+> this behavioral change as a separate commit since it can have performance
+> implications.
+> 
+> > - The calculation of ->async_size in the initial_readahead section of
+> >   ondemand_readahead() now makes sense - it is zero if the chosen
+> >   size does not exceed the requested size.  This means that we will not
+> >   set the PG_readahead flag in this case, but as the requested size
+> >   has not been satisfied we can expect a subsequent read ahead request
+> >   any way.
+> 
+> So I agree that setting of ->async_size to ->size in initial_readahead
+> section does not make great sence but if you look a bit below into readit
+> section, you will notice the ->async_size is overwritten there to something
+> meaninful. So I think the code actually does something sensible, maybe it
+> could be written in a more readable way.
+
+I'm certainly focusing on making the code look sensible and be
+consistent with the documentation, rather than fixing actual faults in
+behaviour.  Code that makes sense is easier to maintain.
+
+I came very close to removing that code after readit: but I agree it
+needs a separate patch and needs more thought.  It looks like a bandaid
+that addressed some specific problem which was probably caused by one of
+the size fields being set "wrongly" earlier.
+
+>  
+> > Note that the current function names page_cache_sync_ra() and
+> > page_cache_async_ra() are misleading.  All ra request are partly sync
+> > and partly async, so either part can be empty.
+> 
+> The meaning of these names IMO is:
+> page_cache_sync_ra() - tell readahead that we currently need a page
+> ractl->_index and would prefer req_count pages fetched ahead.
+
+I don't think that is what req_count means.  req_count is the number of
+pages that are needed *now* to satisfy the current read request.
+page_cache_sync_ra() has the job of determining how many more pages (if
+any) to read-ahead to satisfy future requests.  Sometimes it reads
+another req_count - sometimes not.
+
+> 
+> page_cache_async_ra() - called when we hit the lookahead marker to give
+> opportunity to readahead code to prefetch more pages.
+
+Yes, but page_cache_async_ra() is given a req_count which, as above, is
+the number of pages needed to satisfy *this* request.  That wouldn't
+make sense if it was a pure future-readahead request.
+
+In practice, the word "sync" is used to mean "page was missing" and
+"async" here means "PG_readahead was found".  But that isn't what those
+words usually mean.
+
+They both call ondemand_readahead() passing False or True respectively
+to hit_readahead_marker - which makes that meaning clear in the code...
+but it still isn't clear in the name.
+
+> 
+> > A page_cache_sync_ra() request will usually set ->async_size non-zero,
+> > implying it is not all synchronous.
+> > When a non-zero req_count is passed to page_cache_async_ra(), the
+> > implication is that some prefix of the request is synchronous, though
+> > the calculation made there is incorrect - I haven't tried to fix it.
+> > 
+> > Signed-off-by: NeilBrown <neilb@suse.de>
+> 
+> 								Honza
+
+
+Thanks,
+NeilBrown
