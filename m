@@ -2,91 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 384CB4B170A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 21:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D6E44B1767
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 22:05:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344279AbiBJUkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Feb 2022 15:40:07 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54918 "EHLO
+        id S1344511AbiBJVFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Feb 2022 16:05:45 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230430AbiBJUkG (ORCPT
+        with ESMTP id S238999AbiBJVFp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Feb 2022 15:40:06 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1F7A1034;
-        Thu, 10 Feb 2022 12:40:06 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 9A96E1F3A1;
-        Thu, 10 Feb 2022 20:40:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1644525605; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ydogXdpeXhtIqARiomSkF3gPYPozhq0C4V8ZqquuleY=;
-        b=x4IFSCQkO053Twtz2nEXX/gtaTI6cI04prqKFQEAAuSXNjUM9qq+ZS1hCPD0/ry8oiOwUo
-        7QZ1oBUz1y+q6063oLyXTSEZx+o5rUNA6uTZakHNA98Q0v3w0i6xjwkKMSpeWBAd9oy9Dd
-        WMujvYPcYtciyit6J104ZHRTkxr1K9g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1644525605;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ydogXdpeXhtIqARiomSkF3gPYPozhq0C4V8ZqquuleY=;
-        b=ANjfm9yJclbFSlkudXveZUVob20wD/M/eYWpuypC/uuRopK419S+VBOBPPv2ZfQEUae30G
-        v3535fICpG5Bq5Dg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4ADA713C4A;
-        Thu, 10 Feb 2022 20:40:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id YUlDBCV4BWJQFQAAMHmgww
-        (envelope-from <rgoldwyn@suse.de>); Thu, 10 Feb 2022 20:40:05 +0000
-Date:   Thu, 10 Feb 2022 14:40:03 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dhowells@redhat.com, fvogt@suse.com
-Subject: Re: [PATCH] Fix read-only superblock in case of subvol RO remount
-Message-ID: <20220210204003.nn4z7zanxmkfqgs6@fiona>
-References: <20220210165142.7zfgotun5qdtx4rq@fiona>
- <YgVnL//Q7gMCfxFN@casper.infradead.org>
+        Thu, 10 Feb 2022 16:05:45 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0139C2655;
+        Thu, 10 Feb 2022 13:05:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2Z9d73V1Hk3TZ+5A0nBSljOJ2hSUrKCy4MxgW8Jd6pE=; b=mWmITOP9ohmcC/iELjKVP0aY/U
+        0JXuv3fvinanZVg4Ju0L2+K5L1UQEAkY6Zv+zDpGUds6eL17GzEtWb0f2y2T8Q9nJmkuKxCl1dQoE
+        SuXHE+q8GVXMOLXlDVnybMCb8U1gY9YLmjlg6yvXXRxfQojfsqgJ/qtIrQaU/0AL5rgnsZf8HY9PZ
+        hlCRoBOvQnYhVbcQ5o2dVhbctpbANN6nv99wTnJ6Zid86d9wVF2/4/7BHluvsKaiyJpBSFMjJl6uM
+        aLajiUxbihdXfOaqLt2W97FU/gAMfLsLulO3DUYEWO74t7fEAGWesiYDvJSritf+N7S9Mtpo27F8q
+        LP5lWLNg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nIGd8-004w6Y-Hm; Thu, 10 Feb 2022 21:05:30 +0000
+Date:   Thu, 10 Feb 2022 13:05:30 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Zhen Ni <nizhen@uniontech.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, keescook@chromium.org, yzaikin@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] sched: move cfs_bandwidth_slice sysctls to fair.c
+Message-ID: <YgV+GqGXYUl1ZTj9@bombadil.infradead.org>
+References: <20220210054028.3062-1-nizhen@uniontech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YgVnL//Q7gMCfxFN@casper.infradead.org>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220210054028.3062-1-nizhen@uniontech.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19:27 10/02, Matthew Wilcox wrote:
-> On Thu, Feb 10, 2022 at 10:51:42AM -0600, Goldwyn Rodrigues wrote:
-> >  	WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
-> > -				 (fc->sb_flags & fc->sb_flags_mask)));
-> > +				 (sb->s_flags & fc->sb_flags_mask)));
-> > +
+On Thu, Feb 10, 2022 at 01:40:28PM +0800, Zhen Ni wrote:
+> move cfs_bandwidth_slice sysctls to fair.c and use the
+> new register_sysctl_init() to register the sysctl interface.
 > 
-> what?
+> Signed-off-by: Zhen Ni <nizhen@uniontech.com>
+> ---
+
+Your description of what has changed in your v2 should go here.
+If a v3, then your v2 notes and v3 notes should be here as well.
+
+>  include/linux/sched/sysctl.h |  4 ----
+>  kernel/sched/fair.c          | 25 +++++++++++++++++++++++--
+>  kernel/sysctl.c              | 10 ----------
+>  3 files changed, 23 insertions(+), 16 deletions(-)
 > 
-> (a & ~b) | (a & b) == a, no?
+> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+> index c19dd5a2c05c..d416d8f45186 100644
+> --- a/include/linux/sched/sysctl.h
+> +++ b/include/linux/sched/sysctl.h
+> @@ -41,10 +41,6 @@ extern unsigned int sysctl_sched_uclamp_util_max;
+>  extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+>  #endif
+>  
+> -#ifdef CONFIG_CFS_BANDWIDTH
+> -extern unsigned int sysctl_sched_cfs_bandwidth_slice;
+> -#endif
+> -
+>  #ifdef CONFIG_SCHED_AUTOGROUP
+>  extern unsigned int sysctl_sched_autogroup_enabled;
+>  #endif
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 5146163bfabb..354ebf938567 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -141,8 +141,26 @@ int __weak arch_asym_cpu_priority(int cpu)
+>   *
+>   * (default: 5 msec, units: microseconds)
+>   */
+> -unsigned int sysctl_sched_cfs_bandwidth_slice		= 5000UL;
+> -#endif
+> +static unsigned int sysctl_sched_cfs_bandwidth_slice		= 5000UL;
+> +#ifdef CONFIG_SYSCTL
+> +static struct ctl_table sched_cfs_bandwidth_sysctls[] = {
+> +	{
+> +		.procname       = "sched_cfs_bandwidth_slice_us",
+> +		.data           = &sysctl_sched_cfs_bandwidth_slice,
+> +		.maxlen         = sizeof(unsigned int),
+> +		.mode           = 0644,
+> +		.proc_handler   = proc_dointvec_minmax,
+> +		.extra1         = SYSCTL_ONE,
+> +	},
+> +	{}
+> +};
+> +
+> +static void __init sched_cfs_bandwidth_sysctl_init(void)
+> +{
+> +	register_sysctl_init("kernel", sched_cfs_bandwidth_sysctls);
+> +}
+> +#endif /* CONFIG_SYSCTL */
 
-Yup! I am re-enrolling into middle school to learn bit-arithmetic.
+Maybe an #else which then adds a no-op sched_cfs_bandwidth_sysctl_init
 
-Apparently, I don't need this change at all and can be done in btrfs
-code by changing the flags parameter.
+> +#endif /* CONFIG_CFS_BANDWIDTH */
 
-Will post a patch to btrfs ML with the updated patch.
+Likewise, if disabled, then have a no-op sched_cfs_bandwidth_sysctl_init()
 
--- 
-Goldwyn
+>  static inline void update_load_add(struct load_weight *lw, unsigned long inc)
+>  {
+> @@ -207,6 +225,9 @@ static void update_sysctl(void)
+>  void __init sched_init_granularity(void)
+>  {
+>  	update_sysctl();
+> +#if defined(CONFIG_CFS_BANDWIDTH) && defined(CONFIG_SYSCTL)
+> +	sched_cfs_bandwidth_sysctl_init();
+> +#endif
+
+Then you can get remove the #ifdef mess from this code.
+
+But this is a style issue nothing major.
+
+  Luis
