@@ -2,93 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF9E4B05F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 07:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D194B05FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 07:00:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234906AbiBJF6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Feb 2022 00:58:21 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48704 "EHLO
+        id S234888AbiBJGA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Feb 2022 01:00:26 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbiBJF6T (ORCPT
+        with ESMTP id S234843AbiBJGAZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Feb 2022 00:58:19 -0500
-Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4391C5;
-        Wed,  9 Feb 2022 21:58:20 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0V42eJYQ_1644472693;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V42eJYQ_1644472693)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 10 Feb 2022 13:58:15 +0800
-Date:   Thu, 10 Feb 2022 13:58:13 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>, linux-cachefs@redhat.com,
-        xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        gregkh@linuxfoundation.org, tao.peng@linux.alibaba.com,
-        willy@infradead.org, linux-kernel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        linux-fsdevel@vger.kernel.org, eguan@linux.alibaba.com,
-        gerry@linux.alibaba.com, torvalds@linux-foundation.org
-Subject: Re: [Linux-cachefs] [PATCH v3 00/22] fscache,  erofs: fscache-based
- demand-read semantics
-Message-ID: <YgSpdW1LjK2901ix@B-P7TQMD6M-0146.local>
-Mail-Followup-To: David Howells <dhowells@redhat.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>, linux-cachefs@redhat.com,
-        xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        gregkh@linuxfoundation.org, tao.peng@linux.alibaba.com,
-        willy@infradead.org, linux-kernel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        linux-fsdevel@vger.kernel.org, eguan@linux.alibaba.com,
-        gerry@linux.alibaba.com, torvalds@linux-foundation.org
-References: <20220209060108.43051-1-jefflexu@linux.alibaba.com>
+        Thu, 10 Feb 2022 01:00:25 -0500
+X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Feb 2022 22:00:25 PST
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BCC1C5;
+        Wed,  9 Feb 2022 22:00:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1644472825; x=1676008825;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nLWO0zv5ga8JDIL415WS0zp/IX26NowD/xpo/Z6wKSs=;
+  b=JScJ6SkbjGeAvzJ4CUmkbAIKD23QOXu0ZfcJjpvK2EPKGqqG1TiDQdfg
+   E9iakvE3NGRrjzDKbKvCt8T/BQ++xIWU3If3RuKTunoxi+WoHFr/9GaIl
+   r2rROJigDf1T6HVqYux/Kd0chchRzvXCkG672sLAgWetm3VMNkhoRmbwY
+   ssXJ5BDISI2Q9B5YHvnh4Nuh6r0jL1N45EgkqwOY5QpxAdq6ywsvyljBF
+   oyDCLzLI0ta31gDip5SqovgDZ1UC0UcNCnISsgR3+efo/cQ+CMmkf/bAi
+   6sWKKFvOxpdiYLtJQA6WsFc11M2zVaLMseeD4/jIlsalKNESNcjDNOGt2
+   w==;
+X-IronPort-AV: E=Sophos;i="5.88,357,1635177600"; 
+   d="scan'208";a="191512594"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Feb 2022 13:59:21 +0800
+IronPort-SDR: utELQluCya6K90Jg+z4CiH19//ZR8X4qQ8ANhRsFvAgCXdWpBot0FLbh/hGg+dbZ6/lI+pvdQE
+ +pkICr97qlziE8NpJm5KgkWoSGPL6LDgqGObh3JL+Ez4LFOR6+lu+dK0KboitnkxRRrPiEhXrS
+ 3llTwGbFYtSbsPGDuxgKBQxYeEm7yhurhpfWQAHK0FJAqodNCUN6lOW5ArdCvQH1eJjqm9Xx1F
+ enx8NYeXnUHLOcWv69GMEOCD8F6f9twKlfq8rdYBCD6IgZXoqLhSiikyBe9MEqqYVmGeErQf84
+ DZJBLkAlphrdrJEz91HDWXrF
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2022 21:32:19 -0800
+IronPort-SDR: Gd/TcRlfOTUXdswlqWg6qaT/NtNiJ2Ap7U4tPiSSZWtq/jvFd+ltEckxcP2c+kLbyXbfB6O2c+
+ xp5JP5PO5d2pUBajg3p84tjHyUD4ao9a9+etFbE9AgDyVKflvBc/3c/JrIE5JOwpbtWNwURqww
+ gcFKM7y9bWuIS15YY1g1pHz28ddcZ2j7oJchTgDCS9NTBQp8zSClMNLWuTdkZpFX/o5IaVuXQA
+ ZzsSv+zyDXctAxl1/GyPEWGKwUBe+H6EleADr8e5o68m7MX87fRhLi2ZSKtLeqTisY+cGybnOS
+ DiE=
+WDCIronportException: Internal
+Received: from chmc3h2.ad.shared (HELO naota-xeon.wdc.com) ([10.225.51.94])
+  by uls-op-cesaip02.wdc.com with ESMTP; 09 Feb 2022 21:59:22 -0800
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     linux-btrfs@vger.kernel.org
+Cc:     johannes.thumshirn@wdc.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, Naohiro Aota <naohiro.aota@wdc.com>
+Subject: [PATCH v2 0/2] btrfs: zoned: mark relocation as writing
+Date:   Thu, 10 Feb 2022 14:59:03 +0900
+Message-Id: <cover.1644469146.git.naohiro.aota@wdc.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220209060108.43051-1-jefflexu@linux.alibaba.com>
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+There is a hung_task issue with running generic/068 on an SMR
+device. The hang occurs while a process is trying to thaw the
+filesystem. The process is trying to take sb->s_umount to thaw the
+FS. The lock is held by fsstress, which calls btrfs_sync_fs() and is
+waiting for an ordered extent to finish. However, as the FS is frozen,
+the ordered extent never finish.
 
-On Wed, Feb 09, 2022 at 02:00:46PM +0800, Jeffle Xu wrote:
+Having an ordered extent while the FS is frozen is the root cause of
+the hang. The ordered extent is initiated from btrfs_relocate_chunk()
+which is called from btrfs_reclaim_bgs_work().
 
-...
+The first patch is a preparation patch to add asserting functions to
+check if sb_start_{write,pagefault,intwrite} is called.
 
-> 
-> 
-> Jeffle Xu (22):
->   fscache: export fscache_end_operation()
->   fscache: add a method to support on-demand read semantics
->   cachefiles: extract generic function for daemon methods
->   cachefiles: detect backing file size in on-demand read mode
->   cachefiles: introduce new devnode for on-demand read mode
+The second patch adds sb_{start,end}_write and the assert function at
+proper places.
 
-...
+Changelog:
+v2:
+  - Implement asserting functions not to directly touch the internal
+    implementation
 
-> 
->  Documentation/filesystems/netfs_library.rst |  18 +
->  fs/cachefiles/Kconfig                       |  13 +
->  fs/cachefiles/daemon.c                      | 243 +++++++++--
->  fs/cachefiles/internal.h                    |  12 +
->  fs/cachefiles/io.c                          |  60 +++
->  fs/cachefiles/main.c                        |  27 ++
->  fs/cachefiles/namei.c                       |  60 ++-
+Naohiro Aota (2):
+  fs: add asserting functions for sb_start_{write,pagefault,intwrite}
+  btrfs: zoned: mark relocation as writing
 
-Would you mind taking a review at this version? We follow your previous
-advices written in v2 and it reuses almost all cachefiles code except
-that it has slightly different implication of cachefile file size and
-a new daemon node.
+ fs/btrfs/block-group.c |  8 +++++++-
+ fs/btrfs/volumes.c     |  6 ++++++
+ include/linux/fs.h     | 20 ++++++++++++++++++++
+ 3 files changed, 33 insertions(+), 1 deletion(-)
 
-I think it could be as the first step to implement fscache-based
-on-demand read.
-
-Thanks,
-Gao Xiang
+-- 
+2.35.1
 
