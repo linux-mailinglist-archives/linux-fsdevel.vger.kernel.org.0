@@ -2,196 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B9AC4B09CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 10:45:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 762174B0A2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 11:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238959AbiBJJpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Feb 2022 04:45:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34462 "EHLO
+        id S239294AbiBJKCY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Feb 2022 05:02:24 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238956AbiBJJpA (ORCPT
+        with ESMTP id S234215AbiBJKCY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Feb 2022 04:45:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BE41B1B3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Feb 2022 01:45:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644486300;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=qGHq6WJL5h3ZNW1AqFzIiMK1BGfq6MuaHa+gD/xwRss=;
-        b=ZtFDUmpzTq3eHA2/itai3qFksogphxcZqENTgTWjlAQLbVTDHYVG6Cv7yz3E8Pk/MVhVKP
-        c0BtPi6BGcNTUrTH+dfUlp352jPPpL9XPWL9FsyREMLNhWuwz0ksiqs/lNIG8eNxw/5vqt
-        gVpdAvKmz7Yx2RC0GXYkU7ncda30o+s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-595-KvZOVrNHPniPvYFJG49HyA-1; Thu, 10 Feb 2022 04:44:57 -0500
-X-MC-Unique: KvZOVrNHPniPvYFJG49HyA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 10 Feb 2022 05:02:24 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB28BE0;
+        Thu, 10 Feb 2022 02:02:25 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 775E721115;
+        Thu, 10 Feb 2022 10:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1644487344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lcBtRTov0U4scR5M2Iy2myhqZeOwAIyV54RcClAbhV4=;
+        b=UVJHxaJMKmE/DO/JZe3iVbVw3GQe2kQmip1zYFYiRYyI1pZTASyk8ODPUH85ZCuqzCIWsi
+        rV6USU5SNQRHNVVtN7czjs/tg9jgYBrlYPUuVDHO/aShUUH/4xIgSIpkWiWmMUD14J4lqn
+        gHBmV7fgdq0Mk5zS8kvpWhMAHojnEdM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1644487344;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lcBtRTov0U4scR5M2Iy2myhqZeOwAIyV54RcClAbhV4=;
+        b=3uOBgMN4Wr+d5mCyhO6cp6IQhYZtOH8ULuhOgZdIotrLORbzqWHkWV4veZpJWP42oTgmJG
+        NOB6bjhLKtWqFVCQ==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B4CB8190B2A0;
-        Thu, 10 Feb 2022 09:44:56 +0000 (UTC)
-Received: from idlethread.redhat.com (unknown [10.33.36.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5AA2F7D712;
-        Thu, 10 Feb 2022 09:44:55 +0000 (UTC)
-From:   Roberto Bergantinos Corpas <rbergant@redhat.com>
-To:     dhowells@redhat.com
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] vfs: parse sloppy mount option in correct order
-Date:   Thu, 10 Feb 2022 10:44:54 +0100
-Message-Id: <20220210094454.826716-1-rbergant@redhat.com>
+        by relay2.suse.de (Postfix) with ESMTPS id 0BE01A3B97;
+        Thu, 10 Feb 2022 10:02:23 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id BEB02A05BC; Thu, 10 Feb 2022 11:02:22 +0100 (CET)
+Date:   Thu, 10 Feb 2022 11:02:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 10/11] block/bfq-iosched.c: use "false" rather than
+ "BLK_RW_ASYNC"
+Message-ID: <20220210100222.f2nmwwb5pcfmejvw@quack3.lan>
+References: <164447124918.23354.17858831070003318849.stgit@noble.brown>
+ <164447147264.23354.2763356897218946255.stgit@noble.brown>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <164447147264.23354.2763356897218946255.stgit@noble.brown>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With addition of fs_context support, options string is parsed
-sequentially, if 'sloppy' option is not leftmost one, we may
-return ENOPARAM to userland if a non-valid option preceeds sloopy
-and mount will fail :
+On Thu 10-02-22 16:37:52, NeilBrown wrote:
+> bfq_get_queue() expects a "bool" for the third arg, so pass "false"
+> rather than "BLK_RW_ASYNC" which will soon be removed.
+> 
+> Acked-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: NeilBrown <neilb@suse.de>
 
-host# mount -o quota,sloppy 172.23.1.225:/share /mnt
-mount.nfs: an incorrect mount option was specified
-host# mount -o sloppy,quota 172.23.1.225:/share /mnt
-host#
+Looks good. Feel free to add:
 
-This patch correct that behaviour so that sloppy takes precedence
-if specified anywhere on the string
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
----
- fs/cifs/fs_context.c       |  4 ++--
- fs/cifs/fs_context.h       |  1 -
- fs/fs_context.c            | 14 ++++++++++++--
- fs/nfs/fs_context.c        |  4 ++--
- fs/nfs/internal.h          |  1 -
- include/linux/fs_context.h |  2 ++
- 6 files changed, 18 insertions(+), 8 deletions(-)
+								Honza
 
-diff --git a/fs/cifs/fs_context.c b/fs/cifs/fs_context.c
-index 7ec35f3f0a5f..5a8c074df74a 100644
---- a/fs/cifs/fs_context.c
-+++ b/fs/cifs/fs_context.c
-@@ -866,7 +866,7 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
- 	if (!skip_parsing) {
- 		opt = fs_parse(fc, smb3_fs_parameters, param, &result);
- 		if (opt < 0)
--			return ctx->sloppy ? 1 : opt;
-+			return fc->sloppy ? 1 : opt;
- 	}
- 
- 	switch (opt) {
-@@ -1412,7 +1412,7 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
- 		ctx->multiuser = true;
- 		break;
- 	case Opt_sloppy:
--		ctx->sloppy = true;
-+		fc->sloppy = true;
- 		break;
- 	case Opt_nosharesock:
- 		ctx->nosharesock = true;
-diff --git a/fs/cifs/fs_context.h b/fs/cifs/fs_context.h
-index e54090d9ef36..52a67a96fb67 100644
---- a/fs/cifs/fs_context.h
-+++ b/fs/cifs/fs_context.h
-@@ -155,7 +155,6 @@ struct smb3_fs_context {
- 	bool uid_specified;
- 	bool cruid_specified;
- 	bool gid_specified;
--	bool sloppy;
- 	bool got_ip;
- 	bool got_version;
- 	bool got_rsize;
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 24ce12f0db32..2f9284e53589 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -155,8 +155,15 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
- 	if (ret != -ENOPARAM)
- 		return ret;
- 
--	return invalf(fc, "%s: Unknown parameter '%s'",
--		      fc->fs_type->name, param->key);
-+	/* We got an invalid parameter, but sloppy may have been specified
-+	 * later on param string.
-+	 * Let's wait to process whole params to return EINVAL.
-+	 */
-+
-+	fc->param_inval = true;
-+	errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name, param->key);
-+
-+	return 0;
- }
- EXPORT_SYMBOL(vfs_parse_fs_param);
- 
-@@ -227,6 +234,9 @@ int generic_parse_monolithic(struct fs_context *fc, void *data)
- 		}
- 	}
- 
-+	if (!fc->sloppy && fc->param_inval)
-+		ret = -EINVAL;
-+
- 	return ret;
- }
- EXPORT_SYMBOL(generic_parse_monolithic);
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index ea17fa1f31ec..c9ff68e17b68 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -482,7 +482,7 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 
- 	opt = fs_parse(fc, nfs_fs_parameters, param, &result);
- 	if (opt < 0)
--		return ctx->sloppy ? 1 : opt;
-+		return fc->sloppy ? 1 : opt;
- 
- 	if (fc->security)
- 		ctx->has_sec_mnt_opts = 1;
-@@ -837,7 +837,7 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 		 * Special options
- 		 */
- 	case Opt_sloppy:
--		ctx->sloppy = true;
-+		fc->sloppy = true;
- 		dfprintk(MOUNT, "NFS:   relaxing parsing rules\n");
- 		break;
- 	}
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 12f6acb483bb..9febdc95b4d0 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -80,7 +80,6 @@ struct nfs_fs_context {
- 	bool			internal;
- 	bool			skip_reconfig_option_check;
- 	bool			need_mount;
--	bool			sloppy;
- 	unsigned int		flags;		/* NFS{,4}_MOUNT_* flags */
- 	unsigned int		rsize, wsize;
- 	unsigned int		timeo, retrans;
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 13fa6f3df8e4..06a4b72a0f98 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -110,6 +110,8 @@ struct fs_context {
- 	bool			need_free:1;	/* Need to call ops->free() */
- 	bool			global:1;	/* Goes into &init_user_ns */
- 	bool			oldapi:1;	/* Coming from mount(2) */
-+	bool                    sloppy:1;       /* If fs support it and was specified */
-+	bool                    param_inval:1;  /* If set, check sloppy value */
- };
- 
- struct fs_context_operations {
+> ---
+>  block/bfq-iosched.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index 0c612a911696..4e645ae1e066 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -5448,7 +5448,7 @@ static void bfq_check_ioprio_change(struct bfq_io_cq *bic, struct bio *bio)
+>  	bfqq = bic_to_bfqq(bic, false);
+>  	if (bfqq) {
+>  		bfq_release_process_ref(bfqd, bfqq);
+> -		bfqq = bfq_get_queue(bfqd, bio, BLK_RW_ASYNC, bic, true);
+> +		bfqq = bfq_get_queue(bfqd, bio, false, bic, true);
+>  		bic_set_bfqq(bic, bfqq, false);
+>  	}
+>  
+> 
+> 
 -- 
-2.31.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
