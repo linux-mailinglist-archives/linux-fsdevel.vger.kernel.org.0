@@ -2,48 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E614B01E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 02:21:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92F824B0423
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 05:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231344AbiBJBVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Feb 2022 20:21:05 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:38226 "EHLO
+        id S232404AbiBJEDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Feb 2022 23:03:07 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231247AbiBJBVC (ORCPT
+        with ESMTP id S229530AbiBJEDG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Feb 2022 20:21:02 -0500
-Received: from smtpproxy21.qq.com (smtpbg701.qq.com [203.205.195.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 043F61EC76
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Feb 2022 17:21:02 -0800 (PST)
-X-QQ-mid: bizesmtp40t1644456039t9nh99gn
-Received: from localhost.localdomain (unknown [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Thu, 10 Feb 2022 09:20:34 +0800 (CST)
-X-QQ-SSF: 0140000000200010C000B00A0000000
-X-QQ-FEAT: Mx1dxJbW4IUnI3y2SrIKQ5MSdeobh2lcs2b75Si5IgzgCw7r9y38BqfW4vBA9
-        xk/kJQG3oS0EvLCXEVA/nZEskyBd5PkZlC2sGH4Qeu7pq02CiBtDFKPxqCPAyreZ983hXP5
-        SuIbS70XcvIsmXnX+tCEVcOYj8HUoCeJ05TmUdNmrgKgqPxAjCVnskHdx1Bpg6xB4tVwo+j
-        ef3S0f4JYv8YklAsA5X1srsGORy5DbieueM6g9APVE4OIxh5PRL2CAyy/n4Sfk5DGlhkATC
-        dqGLQY4/u2XR/vG3A3+Xvmk3CG9qfkZYbNOEdiEv/5OYJWxhSBIkrNYFbSYf7SKiK+eDCs0
-        HPJG4xZA67E82VLzHM=
-X-QQ-GoodBg: 2
-From:   Zhen Ni <nizhen@uniontech.com>
-To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, mcgrof@kernel.org,
-        keescook@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Zhen Ni <nizhen@uniontech.com>
-Subject: [PATCH] sched: move rt_period/runtime sysctls to rt.c
-Date:   Thu, 10 Feb 2022 09:20:30 +0800
-Message-Id: <20220210012030.8813-1-nizhen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 9 Feb 2022 23:03:06 -0500
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 66C817643;
+        Wed,  9 Feb 2022 20:03:06 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-69-7.pa.nsw.optusnet.com.au [49.180.69.7])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C995852CBBA;
+        Thu, 10 Feb 2022 15:03:05 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nI0fg-00ACyj-Bx; Thu, 10 Feb 2022 15:03:04 +1100
+Date:   Thu, 10 Feb 2022 15:03:04 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v10 0/5] add support for direct I/O with fscrypt using
+ blk-crypto
+Message-ID: <20220210040304.GM59729@dread.disaster.area>
+References: <YekdnxpeunTGfXqX@infradead.org>
+ <20220120171027.GL13540@magnolia>
+ <YenIcshA706d/ziV@sol.localdomain>
+ <20220120210027.GQ13540@magnolia>
+ <20220120220414.GH59729@dread.disaster.area>
+ <Yenm1Ipx87JAlyXg@sol.localdomain>
+ <20220120235755.GI59729@dread.disaster.area>
+ <20220121023603.GH13563@magnolia>
+ <20220123230332.GL59729@dread.disaster.area>
+ <YgMUa2Cdr/QoMTPh@sol.localdomain>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
-X-QQ-Bgrelay: 1
+In-Reply-To: <YgMUa2Cdr/QoMTPh@sol.localdomain>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62048e7a
+        a=NB+Ng1P8A7U24Uo7qoRq4Q==:117 a=NB+Ng1P8A7U24Uo7qoRq4Q==:17
+        a=IkcTkHD0fZMA:10 a=oGFeUVbbRNcA:10 a=7-415B0cAAAA:8
+        a=txpYLRzjzDLeYr1fpcUA:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,189 +62,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-move rt_period/runtime sysctls to rt.c and use the new
-register_sysctl_init() to register the sysctl interface.
+On Tue, Feb 08, 2022 at 05:10:03PM -0800, Eric Biggers wrote:
+> On Mon, Jan 24, 2022 at 10:03:32AM +1100, Dave Chinner wrote:
+> > > 
+> > > 	/* 0xa0 */
+> > > 
+> > > 	/* File range alignment needed for best performance, in bytes. */
+> > > 	__u32	stx_dio_fpos_align_opt;
+> > 
+> > This is a common property of both DIO and buffered IO, so no need
+> > for it to be dio-only property.
+> > 
+> > 	__u32	stx_offset_align_optimal;
+> > 
+> 
+> Looking at this more closely: will stx_offset_align_optimal actually be useful,
+> given that st[x]_blksize already exists?
 
-Signed-off-by: Zhen Ni <nizhen@uniontech.com>
----
- include/linux/sched/sysctl.h | 11 ---------
- kernel/sched/core.c          | 13 -----------
- kernel/sched/rt.c            | 44 +++++++++++++++++++++++++++++++++++-
- kernel/sched/sched.h         |  4 ++++
- kernel/sysctl.c              | 14 ------------
- 5 files changed, 47 insertions(+), 39 deletions(-)
+Yes, because....
 
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index 1f07d14cf9fc..e18ce60d6c8c 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -23,15 +23,6 @@ enum sched_tunable_scaling {
- 	SCHED_TUNABLESCALING_END,
- };
- 
--/*
-- *  control realtime throttling:
-- *
-- *  /proc/sys/kernel/sched_rt_period_us
-- *  /proc/sys/kernel/sched_rt_runtime_us
-- */
--extern unsigned int sysctl_sched_rt_period;
--extern int sysctl_sched_rt_runtime;
--
- extern unsigned int sysctl_sched_dl_period_max;
- extern unsigned int sysctl_sched_dl_period_min;
- 
-@@ -48,8 +39,6 @@ extern int sched_rr_timeslice;
- 
- int sched_rr_handler(struct ctl_table *table, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos);
--int sched_rt_handler(struct ctl_table *table, int write, void *buffer,
--		size_t *lenp, loff_t *ppos);
- int sysctl_numa_balancing(struct ctl_table *table, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos);
- int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 1962111416e4..9742ad1276b0 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -80,12 +80,6 @@ const_debug unsigned int sysctl_sched_nr_migrate = 8;
- const_debug unsigned int sysctl_sched_nr_migrate = 32;
- #endif
- 
--/*
-- * period over which we measure -rt task CPU usage in us.
-- * default: 1s
-- */
--unsigned int sysctl_sched_rt_period = 1000000;
--
- __read_mostly int scheduler_running;
- 
- #ifdef CONFIG_SCHED_CORE
-@@ -379,13 +373,6 @@ sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags) { }
- 
- #endif /* CONFIG_SCHED_CORE */
- 
--/*
-- * part of the period that we allow rt tasks to run in us.
-- * default: 0.95s
-- */
--int sysctl_sched_rt_runtime = 950000;
--
--
- /*
-  * Serialization rules:
-  *
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 7b4f4fbbb404..5f23778c80b4 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -16,6 +16,47 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun);
- 
- struct rt_bandwidth def_rt_bandwidth;
- 
-+/*
-+ * period over which we measure -rt task CPU usage in us.
-+ * default: 1s
-+ */
-+unsigned int sysctl_sched_rt_period = 1000000;
-+
-+/*
-+ * part of the period that we allow rt tasks to run in us.
-+ * default: 0.95s
-+ */
-+int sysctl_sched_rt_runtime = 950000;
-+
-+static int sched_rt_handler(struct ctl_table *table, int write, void *buffer,
-+		size_t *lenp, loff_t *ppos);
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table sched_rt_sysctls[] = {
-+	{
-+		.procname       = "sched_rt_period_us",
-+		.data           = &sysctl_sched_rt_period,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = sched_rt_handler,
-+	},
-+	{
-+		.procname       = "sched_rt_runtime_us",
-+		.data           = &sysctl_sched_rt_runtime,
-+		.maxlen         = sizeof(int),
-+		.mode           = 0644,
-+		.proc_handler   = sched_rt_handler,
-+	},
-+	{}
-+};
-+
-+static void __init sched_rt_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", sched_rt_sysctls);
-+}
-+#else
-+#define sched_rt_sysctl_init() do { } while (0)
-+#endif
-+
- static enum hrtimer_restart sched_rt_period_timer(struct hrtimer *timer)
- {
- 	struct rt_bandwidth *rt_b =
-@@ -2471,6 +2512,7 @@ void __init init_sched_rt_class(void)
- 		zalloc_cpumask_var_node(&per_cpu(local_cpu_mask, i),
- 					GFP_KERNEL, cpu_to_node(i));
- 	}
-+	sched_rt_sysctl_init();
- }
- #endif /* CONFIG_SMP */
- 
-@@ -2928,7 +2970,7 @@ static void sched_rt_do_global(void)
- 	raw_spin_unlock_irqrestore(&def_rt_bandwidth.rt_runtime_lock, flags);
- }
- 
--int sched_rt_handler(struct ctl_table *table, int write, void *buffer,
-+static int sched_rt_handler(struct ctl_table *table, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos)
- {
- 	int old_period, old_runtime;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index de53be905739..695e280b063f 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -100,6 +100,10 @@ extern void calc_global_load_tick(struct rq *this_rq);
- extern long calc_load_fold_active(struct rq *this_rq, long adjust);
- 
- extern void call_trace_sched_update_nr_running(struct rq *rq, int count);
-+
-+extern unsigned int sysctl_sched_rt_period;
-+extern int sysctl_sched_rt_runtime;
-+
- /*
-  * Helpers for converting nanosecond timing to jiffy resolution
-  */
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 78996c0c8852..88264300ce69 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1692,20 +1692,6 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_ONE,
- 	},
- #endif /* CONFIG_NUMA_BALANCING */
--	{
--		.procname	= "sched_rt_period_us",
--		.data		= &sysctl_sched_rt_period,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= sched_rt_handler,
--	},
--	{
--		.procname	= "sched_rt_runtime_us",
--		.data		= &sysctl_sched_rt_runtime,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= sched_rt_handler,
--	},
- 	{
- 		.procname	= "sched_deadline_period_max_us",
- 		.data		= &sysctl_sched_dl_period_max,
+> From the stat(2) and statx(2) man pages:
+> 
+> 	st_blksize
+> 		This field  gives  the  "preferred"  block  size  for  efficient
+> 		filesystem I/O.
+> 
+> 	stx_blksize
+> 		The "preferred" block size for efficient filesystem I/O.  (Writ‐
+> 		ing  to  a file in smaller chunks may cause an inefficient read-
+> 		modify-rewrite.)
+
+... historically speaking, this is intended to avoid RMW cycles for
+sub-block and/or sub-PAGE_SIZE write() IOs. i.e. the practical
+definition of st_blksize is the *minimum* IO size the needed to
+avoid page cache RMW cycles.
+
+However, XFS has a "-o largeio" mount option, that sets this value
+to internal optimal filesytsem alignment values such as stripe unit
+or even stripe width (-o largeio,swalloc). THis means it can be up
+to 2GB (maybe larger?) in size.
+
+THe problem with this is that many applications are not prepared to
+see a value of, say, 16MB in st_blksize rather than 4096 bytes. An
+example of such problems are applications sizing their IO buffers as
+a multiple of st_blksize - we've had applications fail because they
+try to use multi-GB sized IO buffers as a result of setting
+st_blksize to the filesystem/storage idea of optimal IO size rather
+than PAGE_SIZE.
+
+Hence, we can't really change the value of st_blksize without
+risking random breakage in userspace. hence the practical definition
+of st_blksize is the *minimum* IO size that avoids RMW cycles for an
+individual write() syscall, not the most efficient IO size.
+
+> File offsets aren't explicitly mentioned, but I think it's implied they should
+> be a multiple of st[x]_blksize, just like the I/O size.  Otherwise, the I/O
+> would obviously require reading/writing partial blocks.
+
+Of course it implies aligned file offsets - block aligned IO is
+absolutely necessary for effcient filesystem IO. It has for pretty
+much the entire of unix history...
+
+> So, the proposed stx_offset_align_optimal field sounds like the same thing to
+> me.  Is there anything I'm misunderstanding?
+>
+> Putting stx_offset_align_optimal behind the STATX_DIRECTIO flag would also be
+> confusing if it would apply to both direct and buffered I/O.
+
+So just name the flag STATX_IOALIGN so that it can cover generic,
+buffered specific and DIO specific parameters in one hit. Simple,
+yes?
+
+Cheers,
+
+Dave.
 -- 
-2.20.1
-
-
-
+Dave Chinner
+david@fromorbit.com
