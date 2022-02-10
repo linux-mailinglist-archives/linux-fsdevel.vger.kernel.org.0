@@ -2,55 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E2C4B0596
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 06:44:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C334B0565
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Feb 2022 06:41:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234354AbiBJFmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Feb 2022 00:42:49 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37282 "EHLO
+        id S234483AbiBJFk2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Feb 2022 00:40:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234248AbiBJFmU (ORCPT
+        with ESMTP id S234474AbiBJFjr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Feb 2022 00:42:20 -0500
+        Thu, 10 Feb 2022 00:39:47 -0500
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1798D2605;
-        Wed,  9 Feb 2022 21:41:27 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D354310C7;
+        Wed,  9 Feb 2022 21:39:20 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C3A7D1F441;
-        Thu, 10 Feb 2022 05:41:25 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8E8711F43D;
+        Thu, 10 Feb 2022 05:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1644471685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1644471559; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QxH/65m79qvzBGSCwVr/N2GJs7ZD/rte4Udz5IqpfIY=;
-        b=YlngNwM4KJ2lCrfzQTHN/A+kGQDElPDMkLDocNPY7oQ5eLtEVmlsbIk/oygnihNW7FrwoJ
-        OmyikymLamTwFDO2ckBNa2bT8juNRxuUtWfpjZIuevpV3ajlt5aWF4ONgPW2kwJOCPqQh4
-        lyIR4s2Uvt8OOUVHuPtfhMrLcUxrb7E=
+        bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=;
+        b=uKgETFLiX7EG3eRXPuLaRXJzGwKmI41Y099K5XW1KSBpIkvAtu7aaGjeLAQGXG8TUQFaYO
+        OMbK9eXz4PZqR02yAAtlGS6TlPoP/iTMR8GqWOZjaexFnysfcGLyRc7rr/3yf9JBO9+gKt
+        oZC/hm6/xktjcHUh7EOUlnr9KfhiLHA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1644471685;
+        s=susede2_ed25519; t=1644471559;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QxH/65m79qvzBGSCwVr/N2GJs7ZD/rte4Udz5IqpfIY=;
-        b=6n0i9ic8w1i2aZJ9N2rX+fVNb4ZqLqNFRFiTjK1N/idKrQahO5XYfaUQ4n8fWkZ2pi7f30
-        fq+mOgq70ftta4BQ==
+        bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=;
+        b=tFH7OafqVWs9TyFo1hmlUCp9XAM4aJZnlfF1apQOnbWq4IG7Y1nuHRPilxWK+gi9ecSy8b
+        ySE9dRcAQmytzwCw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0457313519;
-        Thu, 10 Feb 2022 05:41:17 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3C0FA13519;
+        Thu, 10 Feb 2022 05:39:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id z0pPLH2lBGKxOQAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 10 Feb 2022 05:41:17 +0000
-Subject: [PATCH 09/11] f2fs: replace congestion_wait() calls with
- io_schedule_timeout()
+        id KeDlOv+kBGLuOAAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 10 Feb 2022 05:39:11 +0000
+Subject: [PATCH 04/11] fuse: remove reliance on bdi congestion
 From:   NeilBrown <neilb@suse.de>
 To:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
         Wu Fengguang <fengguang.wu@intel.com>,
@@ -73,7 +72,7 @@ Cc:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
         ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
         linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
 Date:   Thu, 10 Feb 2022 16:37:52 +1100
-Message-ID: <164447147263.23354.4653093481289339536.stgit@noble.brown>
+Message-ID: <164447147258.23354.13665933242616399479.stgit@noble.brown>
 In-Reply-To: <164447124918.23354.17858831070003318849.stgit@noble.brown>
 References: <164447124918.23354.17858831070003318849.stgit@noble.brown>
 User-Agent: StGit/0.23
@@ -90,122 +89,145 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As congestion is no longer tracked, congestion_wait() is effectively
-equivalent to io_schedule_timeout().
-So introduce f2fs_io_schedule_timeout() which sets TASK_UNINTERRUPTIBLE
-and call that instead.
+The bdi congestion tracking in not widely used and will be removed.
+
+Fuse is one of a small number of filesystems that uses it, setting both
+the sync (read) and async (write) congestion flags at what it determines
+are appropriate times.
+
+The only remaining effect of the sync flag is to cause read-ahead to be
+skipped.
+The only remaining effect of the async flag is to cause (some)
+WB_SYNC_NONE writes to be skipped.
+
+So instead of setting the flags, change:
+ - .readahead to stop when it has submitted all non-async pages
+    for read.
+ - .writepages to do nothing if WB_SYNC_NONE and the flag would be set
+ - .writepage to return AOP_WRITEPAGE_ACTIVATE if WB_SYNC_NONE
+    and the flag would be set.
+
+The writepages change causes a behavioural change in that pageout() can
+now return PAGE_ACTIVATE instead of PAGE_KEEP, so SetPageActive() will
+be called on the page which (I think) will further delay the next attempt
+at writeout.  This might be a good thing.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/f2fs/compress.c |    4 +---
- fs/f2fs/data.c     |    3 +--
- fs/f2fs/f2fs.h     |    6 ++++++
- fs/f2fs/segment.c  |    8 +++-----
- fs/f2fs/super.c    |    6 ++----
- 5 files changed, 13 insertions(+), 14 deletions(-)
+ fs/fuse/control.c |   17 -----------------
+ fs/fuse/dev.c     |    8 --------
+ fs/fuse/file.c    |   17 +++++++++++++++++
+ 3 files changed, 17 insertions(+), 25 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index d0c3aeba5945..2f95559025ad 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1505,9 +1505,7 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
- 				if (IS_NOQUOTA(cc->inode))
- 					return 0;
- 				ret = 0;
--				cond_resched();
--				congestion_wait(BLK_RW_ASYNC,
--						DEFAULT_IO_TIMEOUT);
-+				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
- 				goto retry_write;
- 			}
- 			return ret;
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8c417864c66a..d428ddfd42ee 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3047,8 +3047,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				} else if (ret == -EAGAIN) {
- 					ret = 0;
- 					if (wbc->sync_mode == WB_SYNC_ALL) {
--						cond_resched();
--						congestion_wait(BLK_RW_ASYNC,
-+						f2fs_io_schedule_timeout(
- 							DEFAULT_IO_TIMEOUT);
- 						goto retry_write;
- 					}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 68b44015514f..467f5dbdc7d1 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4426,6 +4426,12 @@ static inline bool f2fs_block_unit_discard(struct f2fs_sb_info *sbi)
- 	return F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_BLOCK;
- }
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 000d2e5627e9..7cede9a3bc96 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -164,7 +164,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+ {
+ 	unsigned val;
+ 	struct fuse_conn *fc;
+-	struct fuse_mount *fm;
+ 	ssize_t ret;
  
-+static inline void f2fs_io_schedule_timeout(long timeout)
-+{
-+	set_current_state(TASK_UNINTERRUPTIBLE);
-+	io_schedule_timeout(timeout);
-+}
-+
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
- #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1dabc8244083..6ff20da44ad7 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -313,8 +313,7 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
- skip:
- 		iput(inode);
- 	}
--	congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
--	cond_resched();
-+	f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
- 	if (gc_failure) {
- 		if (++looped >= count)
- 			return;
-@@ -803,8 +802,7 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi)
- 		do {
- 			ret = __submit_flush_wait(sbi, FDEV(i).bdev);
- 			if (ret)
--				congestion_wait(BLK_RW_ASYNC,
--						DEFAULT_IO_TIMEOUT);
-+				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
- 		} while (ret && --count);
- 
- 		if (ret) {
-@@ -3133,7 +3131,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 			blk_finish_plug(&plug);
- 			mutex_unlock(&dcc->cmd_lock);
- 			trimmed += __wait_all_discard_cmd(sbi, NULL);
--			congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
-+			f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
- 			goto next;
+ 	ret = fuse_conn_limit_write(file, buf, count, ppos, &val,
+@@ -178,22 +177,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+ 	down_read(&fc->killsb);
+ 	spin_lock(&fc->bg_lock);
+ 	fc->congestion_threshold = val;
+-
+-	/*
+-	 * Get any fuse_mount belonging to this fuse_conn; s_bdi is
+-	 * shared between all of them
+-	 */
+-
+-	if (!list_empty(&fc->mounts)) {
+-		fm = list_first_entry(&fc->mounts, struct fuse_mount, fc_entry);
+-		if (fc->num_background < fc->congestion_threshold) {
+-			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+-			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+-		} else {
+-			set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+-			set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+-		}
+-	}
+ 	spin_unlock(&fc->bg_lock);
+ 	up_read(&fc->killsb);
+ 	fuse_conn_put(fc);
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index cd54a529460d..e1b4a846c90d 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -315,10 +315,6 @@ void fuse_request_end(struct fuse_req *req)
+ 				wake_up(&fc->blocked_waitq);
  		}
- skip:
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index baefd398ec1a..ebd32daf052c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2135,8 +2135,7 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
- 	/* we should flush all the data to keep data consistency */
- 	do {
- 		sync_inodes_sb(sbi->sb);
--		cond_resched();
--		congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
-+		f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
- 	} while (get_pages(sbi, F2FS_DIRTY_DATA) && retry--);
  
- 	if (unlikely(retry < 0))
-@@ -2504,8 +2503,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 							&page, &fsdata);
- 		if (unlikely(err)) {
- 			if (err == -ENOMEM) {
--				congestion_wait(BLK_RW_ASYNC,
--						DEFAULT_IO_TIMEOUT);
-+				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
- 				goto retry;
- 			}
- 			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+-		if (fc->num_background == fc->congestion_threshold && fm->sb) {
+-			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+-			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+-		}
+ 		fc->num_background--;
+ 		fc->active_background--;
+ 		flush_bg_queue(fc);
+@@ -540,10 +536,6 @@ static bool fuse_request_queue_background(struct fuse_req *req)
+ 		fc->num_background++;
+ 		if (fc->num_background == fc->max_background)
+ 			fc->blocked = 1;
+-		if (fc->num_background == fc->congestion_threshold && fm->sb) {
+-			set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+-			set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+-		}
+ 		list_add_tail(&req->list, &fc->bg_queue);
+ 		flush_bg_queue(fc);
+ 		queued = true;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 829094451774..94747bac3489 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -966,6 +966,14 @@ static void fuse_readahead(struct readahead_control *rac)
+ 		struct fuse_io_args *ia;
+ 		struct fuse_args_pages *ap;
+ 
++		if (fc->num_background >= fc->congestion_threshold &&
++		    rac->ra->async_size >= readahead_count(rac))
++			/*
++			 * Congested and only async pages left, so skip the
++			 * rest.
++			 */
++			break;
++
+ 		nr_pages = readahead_count(rac) - nr_pages;
+ 		if (nr_pages > max_pages)
+ 			nr_pages = max_pages;
+@@ -1958,6 +1966,7 @@ static int fuse_writepage_locked(struct page *page)
+ 
+ static int fuse_writepage(struct page *page, struct writeback_control *wbc)
+ {
++	struct fuse_conn *fc = get_fuse_conn(page->mapping->host);
+ 	int err;
+ 
+ 	if (fuse_page_is_writeback(page->mapping->host, page->index)) {
+@@ -1973,6 +1982,10 @@ static int fuse_writepage(struct page *page, struct writeback_control *wbc)
+ 		return 0;
+ 	}
+ 
++	if (wbc->sync_mode == WB_SYNC_NONE &&
++	    fc->num_background >= fc->congestion_threshold)
++		return AOP_WRITEPAGE_ACTIVATE;
++
+ 	err = fuse_writepage_locked(page);
+ 	unlock_page(page);
+ 
+@@ -2226,6 +2239,10 @@ static int fuse_writepages(struct address_space *mapping,
+ 	if (fuse_is_bad(inode))
+ 		goto out;
+ 
++	if (wbc->sync_mode == WB_SYNC_NONE &&
++	    fc->num_background >= fc->congestion_threshold)
++		return 0;
++
+ 	data.inode = inode;
+ 	data.wpa = NULL;
+ 	data.ff = NULL;
 
 
