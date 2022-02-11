@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB354B1E3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Feb 2022 07:13:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 102344B1E40
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Feb 2022 07:13:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243174AbiBKGNa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Feb 2022 01:13:30 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54948 "EHLO
+        id S1344721AbiBKGNb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Feb 2022 01:13:31 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344098AbiBKGN2 (ORCPT
+        with ESMTP id S1344170AbiBKGN2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 11 Feb 2022 01:13:28 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ACF2264F;
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704BB2734;
         Thu, 10 Feb 2022 22:13:28 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ACD31618D9;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0BD39619F3;
+        Fri, 11 Feb 2022 06:13:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F43FC340EF;
         Fri, 11 Feb 2022 06:13:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D64EDC340EE;
-        Fri, 11 Feb 2022 06:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1644560007;
-        bh=v4Z7/3ccLV9l9/A9iCzRYflRcpiHdNFtsFH/Xy/He20=;
+        bh=FIHWezd3fvmONOXa9xnTNVjLxV3p2CjqCatFL/RCbxY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bV2HNQTYvNKD2d8C1h1tjhxxYn7oWtmG1QmA1eotxR7m9SehdeQRKf/NPoFtMFLFe
-         Gd/i2PLmnI99H85dqGcG3uJHhZj61X6sZx3dWZQnshj71RrwqhjWESUDGXrY2zZqjX
-         BUdu20XZuNz+g14WmApg8e8rAblQhBCWKXjNqkbqTT0Mgnf/URI9iUeANetbZG72pb
-         CcstUxvrFgPqzGDWCc1/NvcCm8NEbHrQzu+Rqf/WYgxXwNBX2aLRefeMhsxypsfC0k
-         39ALiuDziez8HgKNDbH2i7JjyoxO428h7ja700sf80XU+6QGy85/dzdTEq09AvIAzm
-         Qbxa67AT3EqaA==
+        b=u23HDUTZIpmoQRaMCJWFwEf1n+V3hYrCi5taMcVdrtU4mYf1rM3m4usMn+DAy6o0D
+         QunLT+uw8BQ6VuQDiig4RgaWE67+fCYPVa9AKDhuZv3PzEWjAzTdy4Ozy10ECzDZEI
+         VPuuc4TiikKykv095zDSqpRrrRntpXK7tMYJVs9We1Ulv87BQpGK/d0lEVT/BIjlF6
+         HTkFjnxVC94zKylV8qZpdsg9H7vLl6Xbzi/T5tqkw67sp/NaVMnmpbVPC6HPhzBe36
+         54bB3mAYKFwRAIF6d9rjb7HxEXrdbbAjUdU8Jjiix/+N4ThtFEBwMa+eqIJdcbRun4
+         4cFcecN2cIGeA==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/7] statx: add I/O alignment information
-Date:   Thu, 10 Feb 2022 22:11:52 -0800
-Message-Id: <20220211061158.227688-2-ebiggers@kernel.org>
+Subject: [RFC PATCH 2/7] fscrypt: change fscrypt_dio_supported() to prepare for STATX_IOALIGN
+Date:   Thu, 10 Feb 2022 22:11:53 -0800
+Message-Id: <20220211061158.227688-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220211061158.227688-1-ebiggers@kernel.org>
 References: <20220211061158.227688-1-ebiggers@kernel.org>
@@ -57,123 +57,160 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Traditionally, the conditions for when DIO (direct I/O) is supported
-were fairly simple: filesystems either supported DIO aligned to the
-block device's logical block size, or didn't support DIO at all.
+To prepare for STATX_IOALIGN support, make two changes to
+fscrypt_dio_supported().
 
-However, due to filesystem features that have been added over time (e.g,
-data journalling, inline data, encryption, verity, compression,
-checkpoint disabling, log-structured mode), the conditions for when DIO
-is allowed on a file have gotten increasingly complex.  Whether a
-particular file supports DIO, and with what alignment, can depend on
-various file attributes and filesystem mount options, as well as which
-block device(s) the file's data is located on.
+First, remove the filesystem-block-alignment check and make the
+filesystems handle it instead.  It previously made sense to have it in
+fs/crypto/; however, to support STATX_IOALIGN the alignment requirement
+would have to be returned to filesystems.  It ends up being simpler if
+filesystems handle this part themselves, especially for f2fs which only
+allows fs-block-aligned DIO in the first place.
 
-XFS has an ioctl XFS_IOC_DIOINFO which exposes this information to
-applications.  However, as discussed
-(https://lore.kernel.org/linux-fsdevel/20220120071215.123274-1-ebiggers@kernel.org/T/#u),
-this ioctl is rarely used and not known to be used outside of
-XFS-specific code.  It also was never intended to indicate when a file
-doesn't support DIO at all, and it only exposes the minimum I/O
-alignment, not the optimal I/O alignment which has been requested too.
-
-Therefore, let's expose this information via statx().  Add the
-STATX_IOALIGN flag and three fields associated with it:
-
-* stx_mem_align_dio: the alignment (in bytes) required for user memory
-  buffers for DIO, or 0 if DIO is not supported on the file.
-
-* stx_offset_align_dio: the alignment (in bytes) required for file
-  offsets and I/O segment lengths for DIO, or 0 if DIO is not supported
-  on the file.  This will only be nonzero if stx_mem_align_dio is
-  nonzero, and vice versa.
-
-* stx_offset_align_optimal: the alignment (in bytes) suggested for file
-  offsets and I/O segment lengths to get optimal performance.  This
-  applies to both DIO and buffered I/O.  It differs from stx_blocksize
-  in that stx_offset_align_optimal will contain the real optimum I/O
-  size, which may be a large value.  In contrast, for compatibility
-  reasons stx_blocksize is the minimum size needed to avoid page cache
-  read/write/modify cycles, which may be much smaller than the optimum
-  I/O size.  For more details about the motivation for this field, see
-  https://lore.kernel.org/r/20220210040304.GM59729@dread.disaster.area
-
-Note that as with other statx() extensions, if STATX_IOALIGN isn't set
-in the returned statx struct, then these new fields won't be filled in.
-This will happen if the filesystem doesn't support STATX_IOALIGN, or if
-the file isn't a regular file.  (It might be supported on block device
-files in the future.)  It might also happen if the caller didn't include
-STATX_IOALIGN in the request mask, since statx() isn't required to
-return information that wasn't requested.
-
-This commit adds the VFS-level plumbing for STATX_IOALIGN.  Individual
-filesystems will still need to add code to support it.
+Second, make fscrypt_dio_supported() work on inodes whose encryption key
+hasn't been set up yet, by making it set up the key if needed.  This is
+required for statx(), since statx() doesn't require a file descriptor.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/stat.c                 | 3 +++
- include/linux/stat.h      | 3 +++
- include/uapi/linux/stat.h | 9 +++++++--
- 3 files changed, 13 insertions(+), 2 deletions(-)
+ fs/crypto/inline_crypt.c | 48 +++++++++++++++++++++-------------------
+ fs/ext4/file.c           |  9 ++++++--
+ fs/f2fs/f2fs.h           |  2 +-
+ include/linux/fscrypt.h  |  7 ++----
+ 4 files changed, 35 insertions(+), 31 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 28d2020ba1f42..093c506e69c7b 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -598,6 +598,9 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
- 	tmp.stx_dev_major = MAJOR(stat->dev);
- 	tmp.stx_dev_minor = MINOR(stat->dev);
- 	tmp.stx_mnt_id = stat->mnt_id;
-+	tmp.stx_mem_align_dio = stat->mem_align_dio;
-+	tmp.stx_offset_align_dio = stat->offset_align_dio;
-+	tmp.stx_offset_align_optimal = stat->offset_align_optimal;
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index 93c2ca8580923..82df4c0b9903c 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -370,43 +370,45 @@ bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ EXPORT_SYMBOL_GPL(fscrypt_mergeable_bio_bh);
  
- 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
+ /**
+- * fscrypt_dio_supported() - check whether a DIO (direct I/O) request is
+- *			     supported as far as encryption is concerned
+- * @iocb: the file and position the I/O is targeting
+- * @iter: the I/O data segment(s)
++ * fscrypt_dio_supported() - check whether DIO (direct I/O) is supported on an
++ *			     inode, as far as encryption is concerned
++ * @inode: the inode in question
+  *
+  * Return: %true if there are no encryption constraints that prevent DIO from
+  *	   being supported; %false if DIO is unsupported.  (Note that in the
+  *	   %true case, the filesystem might have other, non-encryption-related
+- *	   constraints that prevent DIO from actually being supported.)
++ *	   constraints that prevent DIO from actually being supported.  Also, on
++ *	   encrypted files the filesystem is still responsible for only allowing
++ *	   DIO when requests are filesystem-block-aligned.)
+  */
+-bool fscrypt_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
++bool fscrypt_dio_supported(struct inode *inode)
+ {
+-	const struct inode *inode = file_inode(iocb->ki_filp);
+-	const unsigned int blocksize = i_blocksize(inode);
++	int err;
+ 
+ 	/* If the file is unencrypted, no veto from us. */
+ 	if (!fscrypt_needs_contents_encryption(inode))
+ 		return true;
+ 
+-	/* We only support DIO with inline crypto, not fs-layer crypto. */
+-	if (!fscrypt_inode_uses_inline_crypto(inode))
+-		return false;
+-
+ 	/*
+-	 * Since the granularity of encryption is filesystem blocks, the file
+-	 * position and total I/O length must be aligned to the filesystem block
+-	 * size -- not just to the block device's logical block size as is
+-	 * traditionally the case for DIO on many filesystems.
++	 * We only support DIO with inline crypto, not fs-layer crypto.
+ 	 *
+-	 * We require that the user-provided memory buffers be filesystem block
+-	 * aligned too.  It is simpler to have a single alignment value required
+-	 * for all properties of the I/O, as is normally the case for DIO.
+-	 * Also, allowing less aligned buffers would imply that data units could
+-	 * cross bvecs, which would greatly complicate the I/O stack, which
+-	 * assumes that bios can be split at any bvec boundary.
++	 * To determine whether the inode is using inline crypto, we have to set
++	 * up the key if it wasn't already done.  This is because in the current
++	 * design of fscrypt, the decision of whether to use inline crypto or
++	 * not isn't made until the inode's encryption key is being set up.  In
++	 * the DIO read/write case, the key will always be set up already, since
++	 * the file will be open.  But in the case of statx(), the key might not
++	 * be set up yet, as the file might not have been opened yet.
+ 	 */
+-	if (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter), blocksize))
++	err = fscrypt_require_key(inode);
++	if (err) {
++		/*
++		 * Key unavailable or couldn't be set up.  This edge case isn't
++		 * worth worrying about; just report that DIO is unsupported.
++		 */
++		return false;
++	}
++	if (!fscrypt_inode_uses_inline_crypto(inode))
+ 		return false;
+ 
+ 	return true;
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 8bd66cdc41be2..b68706f7db439 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -40,8 +40,13 @@ static bool ext4_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 
+-	if (!fscrypt_dio_supported(iocb, iter))
+-		return false;
++	if (IS_ENCRYPTED(inode)) {
++		if (!fscrypt_dio_supported(inode))
++			return false;
++		if (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter),
++				i_blocksize(inode)))
++			return false;
++	}
+ 	if (fsverity_active(inode))
+ 		return false;
+ 	if (ext4_should_journal_data(inode))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8130b092e5432..1739a0eec6432 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4371,7 +4371,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	int rw = iov_iter_rw(iter);
+ 
+-	if (!fscrypt_dio_supported(iocb, iter))
++	if (!fscrypt_dio_supported(inode))
+ 		return true;
+ 	if (fsverity_active(inode))
+ 		return true;
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 50d92d805bd8c..6ca89461d48dc 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -714,7 +714,7 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+ bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ 			      const struct buffer_head *next_bh);
+ 
+-bool fscrypt_dio_supported(struct kiocb *iocb, struct iov_iter *iter);
++bool fscrypt_dio_supported(struct inode *inode);
+ 
+ u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks);
+ 
+@@ -747,11 +747,8 @@ static inline bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ 	return true;
  }
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 7df06931f25d8..48b8b1ad1567c 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -50,6 +50,9 @@ struct kstat {
- 	struct timespec64 btime;			/* File creation time */
- 	u64		blocks;
- 	u64		mnt_id;
-+	u32		mem_align_dio;
-+	u32		offset_align_dio;
-+	u32		offset_align_optimal;
- };
  
- #endif
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 1500a0f58041a..f822b23e81091 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -124,9 +124,13 @@ struct statx {
- 	__u32	stx_dev_minor;
- 	/* 0x90 */
- 	__u64	stx_mnt_id;
--	__u64	__spare2;
-+	__u32	stx_mem_align_dio;	/* Memory buffer alignment for direct I/O */
-+	__u32	stx_offset_align_dio;	/* File offset alignment for direct I/O */
- 	/* 0xa0 */
--	__u64	__spare3[12];	/* Spare space for future expansion */
-+	__u32	stx_offset_align_optimal; /* Optimal file offset alignment for I/O */
-+	__u32	__spare2;
-+	/* 0xa8 */
-+	__u64	__spare3[11];	/* Spare space for future expansion */
- 	/* 0x100 */
- };
+-static inline bool fscrypt_dio_supported(struct kiocb *iocb,
+-					 struct iov_iter *iter)
++static inline bool fscrypt_dio_supported(struct inode *inode)
+ {
+-	const struct inode *inode = file_inode(iocb->ki_filp);
+-
+ 	return !fscrypt_needs_contents_encryption(inode);
+ }
  
-@@ -152,6 +156,7 @@ struct statx {
- #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
- #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
- #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
-+#define STATX_IOALIGN		0x00002000U	/* Want/got IO alignment info */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-
-base-commit: cdaa1b1941f667814300799ddb74f3079517cd5a
 -- 
 2.35.1
 
