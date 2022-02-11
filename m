@@ -2,156 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37EFD4B2772
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Feb 2022 14:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE914B2810
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Feb 2022 15:38:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350677AbiBKNzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Feb 2022 08:55:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35784 "EHLO
+        id S1350948AbiBKOhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Feb 2022 09:37:21 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345700AbiBKNzV (ORCPT
+        with ESMTP id S242516AbiBKOhU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Feb 2022 08:55:21 -0500
-Received: from m13112.mail.163.com (m13112.mail.163.com [220.181.13.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CDBFE198
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Feb 2022 05:55:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=1ZD1z
-        FpyCQO/dZT+WwLsswuuRpyMTNTjRE11kQ5Lu5g=; b=QVw6IDFx7PvsDoEAsfspV
-        h6Ensj5SpJ/YlRlHPEn9Nj4t1YpWLLmk09SNq3bfY+TkTcbosWmCdVXhw5YohIOk
-        Td6yXUJ7yC1rwREuvjGN9myKf8htvtS2sWXjlsDlENwd5X8HfTO7/kpVItz99+is
-        aEX9k95Kft2w6cPPpvo1o4=
-Received: from clx428$163.com ( [117.143.103.61] ) by ajax-webmail-wmsvr112
- (Coremail) ; Fri, 11 Feb 2022 21:54:49 +0800 (CST)
-X-Originating-IP: [117.143.103.61]
-Date:   Fri, 11 Feb 2022 21:54:49 +0800 (CST)
-From:   =?GBK?B?s8LBotDC?= <clx428@163.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Report a fuse deadlock scenario issue
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20210622(1d4788a8)
- Copyright (c) 2002-2022 www.mailtech.cn 163com
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        Fri, 11 Feb 2022 09:37:20 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347CC188;
+        Fri, 11 Feb 2022 06:37:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xDS2cI/G7I7Pz1FO/b0GGCLA/neDA3CUGtTdIi3Kxmw=; b=DiwyC2U1oICQI8XH4WIMg6OoP1
+        da2zROQJylJHR/am2VUi7ytvDHVJrPRl4sNIbRymv3jjuN55pqSKvmP3kqaGmCnr/1wOP5Vq2tlmq
+        6tRpYF8Xekva5k0MKJRwl6L4nDPgOG3VIzFlIq0ExyRpChMgkKHFVgshddkUjWGNxDByZMsX9xZBn
+        V2viILZgRTn1yFTHZPFymlzptBy68x8h0PeGfQcKxODbBo83AYxG5Cr0oxdkYLaMz9QCtVWzsNQ5V
+        KU8wCsZHrkHfW3+rCRJ96XL5PuFqPhKNVNjSi8dxC42ECSAVzPXyrXx8lxmupOj/bvr7sRMP4ihEq
+        aHCs6y1A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nIX2t-00AThU-BS; Fri, 11 Feb 2022 14:37:11 +0000
+Date:   Fri, 11 Feb 2022 14:37:11 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <dchinner@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com,
+        syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/1] Revert "iomap: fall back to buffered writes for
+ invalidation failures"
+Message-ID: <YgZ0lyr91jw6JaHg@casper.infradead.org>
+References: <20220209085243.3136536-1-lee.jones@linaro.org>
+ <20220210045911.GF8338@magnolia>
+ <YgTl2Lm9Vk50WNSj@google.com>
 MIME-Version: 1.0
-Message-ID: <6da4c709.5385.17ee910a7fd.Coremail.clx428@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: cMGowADHhdaqagZiKmYcAA--.50758W
-X-CM-SenderInfo: hfo0kjqy6rljoofrz/1tbiVgqk-lqzoTBN0wAAsg
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YgTl2Lm9Vk50WNSj@google.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGkgTWlrbG9zOgpJIG1lZXQgYSBkZWFsb2NrIHNjZW5hcmlvIG9uIGZ1c2UuIGhlcmUgYXJlIHRo
-ZSA0IGJhY2t0cmFjZXM6ClBJRDogMzAxODUyICBUQVNLOiBmZmZmODBkYjc4MjI2YzgwICBDUFU6
-IDkzICBDT01NQU5EOiAiVGhyZWFkLTg1NCIKIzAgW2ZmZmYwMDBjMWQ4OGI5ZTBdIF9fc3dpdGNo
-X3RvIGF0IGZmZmYwMDAwODAwODg3MzgKIzEgW2ZmZmYwMDBjMWQ4OGJhMDBdIF9fc2NoZWR1bGUg
-YXQgZmZmZjAwMDA4MGEwNmY0OAojMiBbZmZmZjAwMGMxZDg4YmE5MF0gc2NoZWR1bGUgYXQgZmZm
-ZjAwMDA4MGEwNzYyMAojMyBbZmZmZjAwMGMxZDg4YmFhMF0gZnVzZV93YWl0X29uX3BhZ2Vfd3Jp
-dGViYWNrIGF0IGZmZmYwMDAwMDEwNDc0MTggW2Z1c2VdCiM0IFtmZmZmMDAwYzFkODhiYjAwXSBm
-dXNlX3BhZ2VfbWt3cml0ZSBhdCBmZmZmMDAwMDAxMDQ3NTM4IFtmdXNlXQojNSBbZmZmZjAwMGMx
-ZDg4YmI0MF0gZG9fcGFnZV9ta3dyaXRlIGF0IGZmZmYwMDAwODAyY2I3N2MKIzYgW2ZmZmYwMDBj
-MWQ4OGJiOTBdIGRvX2ZhdWx0IGF0IGZmZmYwMDAwODAyZDE4NDAKIzcgW2ZmZmYwMDBjMWQ4OGJi
-ZDBdIF9faGFuZGxlX21tX2ZhdWx0IGF0IGZmZmYwMDAwODAyZDM1NzQKIzggW2ZmZmYwMDBjMWQ4
-OGJjOTBdIGhhbmRsZV9tbV9mYXVsdCBhdCBmZmZmMDAwMDgwMmQzN2MwCiM5IFtmZmZmMDAwYzFk
-ODhiY2MwXSBkb19wYWdlX2ZhdWx0IGF0IGZmZmYwMDAwODBhMGVmOTQKIzEwIFtmZmZmMDAwYzFk
-ODhiZGMwXSBkb190cmFuc2xhdGlvbl9mYXVsdCBhdCBmZmZmMDAwMDgwYTBmMzJjCiMxMSBbZmZm
-ZjAwMGMxZDg4YmRmMF0gZG9fbWVtX2Fib3J0IGF0IGZmZmYwMDAwODAwODEyY2MKIzEyIFtmZmZm
-MDAwYzFkODhiZmYwXSBlbDBfZGEgYXQgZmZmZjAwMDA4MDA4M2IyMAoKUElEOiA0MDAxMjcgIFRB
-U0s6IGZmZmY4MGQxYTFjNTFmMDAgIENQVTogOTEgIENPTU1BTkQ6ICJUaHJlYWQtNjc3IgojMCBb
-ZmZmZjAwMGJlYjVlM2EwMF0gX19zd2l0Y2hfdG8gYXQgZmZmZjAwMDA4MDA4ODczOAojMSBbZmZm
-ZjAwMGJlYjVlM2EyMF0gX19zY2hlZHVsZSBhdCBmZmZmMDAwMDgwYTA2ZjQ4CiMyIFtmZmZmMDAw
-YmViNWUzYWIwXSBzY2hlZHVsZSBhdCBmZmZmMDAwMDgwYTA3NjIwCiMzIFtmZmZmMDAwYmViNWUz
-YWMwXSBmdXNlX3dhaXRfb25fcGFnZV93cml0ZWJhY2sgYXQgZmZmZjAwMDAwMTA0NzQxOCBbZnVz
-ZV0KIzQgW2ZmZmYwMDBiZWI1ZTNiMjBdIGZ1c2VfcGFnZV9ta3dyaXRlIGF0IGZmZmYwMDAwMDEw
-NDc1MzggW2Z1c2VdCiM1IFtmZmZmMDAwYmViNWUzYjYwXSBkb19wYWdlX21rd3JpdGUgYXQgZmZm
-ZjAwMDA4MDJjYjc3YwojNiBbZmZmZjAwMGJlYjVlM2JiMF0gZG9fd3BfcGFnZSBhdCBmZmZmMDAw
-MDgwMmQwMjY0CiM3IFtmZmZmMDAwYmViNWUzYzAwXSBfX2hhbmRsZV9tbV9mYXVsdCBhdCBmZmZm
-MDAwMDgwMmQzNjNjCiM4IFtmZmZmMDAwYmViNWUzY2MwXSBoYW5kbGVfbW1fZmF1bHQgYXQgZmZm
-ZjAwMDA4MDJkMzdjMAojOSBbZmZmZjAwMGJlYjVlM2NmMF0gZG9fcGFnZV9mYXVsdCBhdCBmZmZm
-MDAwMDgwYTBlZjk0CiMxMCBbZmZmZjAwMGJlYjVlM2RmMF0gZG9fbWVtX2Fib3J0IGF0IGZmZmYw
-MDAwODAwODEyY2MKIzExIFtmZmZmMDAwYmViNWUzZmYwXSBlbDBfZGEgYXQgZmZmZjAwMDA4MDA4
-M2IyMAoKUElEOiAxNzg4MzAgIFRBU0s6IGZmZmY4MGRjMTcwNGNkODAgIENQVTogNjQgIENPTU1B
-TkQ6ICJrd29ya2VyL3UyNTk6MTEiCiMwIFtmZmZmMDAwMGFhYjZiNmYwXSBfX3N3aXRjaF90byBh
-dCBmZmZmMDAwMDgwMDg4NzM4CiMxIFtmZmZmMDAwMGFhYjZiNzEwXSBfX3NjaGVkdWxlIGF0IGZm
-ZmYwMDAwODBhMDZmNDgKIzIgW2ZmZmYwMDAwYWFiNmI3YTBdIHNjaGVkdWxlIGF0IGZmZmYwMDAw
-ODBhMDc2MjAKIzMgW2ZmZmYwMDAwYWFiNmI3YjBdIGlvX3NjaGVkdWxlIGF0IGZmZmYwMDAwODAx
-MmRiYzQKIzQgW2ZmZmYwMDAwYWFiNmI3ZDBdIF9fbG9ja19wYWdlIGF0IGZmZmYwMDAwODAyODU0
-ZTAKIzUgW2ZmZmYwMDAwYWFiNmI4NzBdIHdyaXRlX2NhY2hlX3BhZ2VzIGF0IGZmZmYwMDAwODAy
-OTg3ZTgKIzYgW2ZmZmYwMDAwYWFiNmI5OTBdIGZ1c2Vfd3JpdGVwYWdlcyBhdCBmZmZmMDAwMDAx
-MDRhYjZjIFtmdXNlXQojNyBbZmZmZjAwMDBhYWI2YjlmMF0gZG9fd3JpdGVwYWdlcyBhdCBmZmZm
-MDAwMDgwMjliMmUwCiM4IFtmZmZmMDAwMGFhYjZiYTcwXSBfX3dyaXRlYmFja19zaW5nbGVfaW5v
-ZGUgYXQgZmZmZjAwMDA4MDM3ZjhiNAojOSBbZmZmZjAwMDBhYWI2YmFjMF0gd3JpdGViYWNrX3Ni
-X2lub2RlcyBhdCBmZmZmMDAwMDgwMzgwMTUwCiMxMCBbZmZmZjAwMDBhYWI2YmJkMF0gX193cml0
-ZWJhY2tfaW5vZGVzX3diIGF0IGZmZmYwMDAwODAzODA0YzAKIzExIFtmZmZmMDAwMGFhYjZiYzIw
-XSB3Yl93cml0ZWJhY2sgYXQgZmZmZjAwMDA4MDM4MDg4MAojMTIgW2ZmZmYwMDAwYWFiNmJjZDBd
-IHdiX3dvcmtmbiBhdCBmZmZmMDAwMDgwMzgxNDcwCiMxMyBbZmZmZjAwMDBhYWI2YmRiMF0gcHJv
-Y2Vzc19vbmVfd29yayBhdCBmZmZmMDAwMDgwMTEzNDI4CiMxNCBbZmZmZjAwMDBhYWI2YmUwMF0g
-d29ya2VyX3RocmVhZCBhdCBmZmZmMDAwMDgwMTEzNmMwCiMxNSBbZmZmZjAwMDBhYWI2YmU3MF0g
-a3RocmVhZCBhdCBmZmZmMDAwMDgwMTFhYjYwCgpQSUQ6IDQ3MzI0ICBUQVNLOiBmZmZmODBkYjVh
-MDM4MDAwICBDUFU6IDg4ICBDT01NQU5EOiAiVGhyZWFkLTIwNjQiCiMwIFtmZmZmMDAwYzIxMTRi
-ODIwXSBfX3N3aXRjaF90byBhdCBmZmZmMDAwMDgwMDg4NzM4CiMxIFtmZmZmMDAwYzIxMTRiODQw
-XSBfX3NjaGVkdWxlIGF0IGZmZmYwMDAwODBhMDZmNDgKIzIgW2ZmZmYwMDBjMjExNGI4ZDBdIHNj
-aGVkdWxlIGF0IGZmZmYwMDAwODBhMDc2MjAKIzMgW2ZmZmYwMDBjMjExNGI4ZTBdIGlvX3NjaGVk
-dWxlIGF0IGZmZmYwMDAwODAxMmRiYzQKIzQgW2ZmZmYwMDBjMjExNGI5MDBdIF9fbG9ja19wYWdl
-IGF0IGZmZmYwMDAwODAyODU0ZTAKIzUgW2ZmZmYwMDBjMjExNGI5YTBdIHdyaXRlX2NhY2hlX3Bh
-Z2VzIGF0IGZmZmYwMDAwODAyOTg3ZTgKIzYgW2ZmZmYwMDBjMjExNGJhYzBdIGZ1c2Vfd3JpdGVw
-YWdlcyBhdCBmZmZmMDAwMDAxMDRhYjZjIFtmdXNlXQojNyBbZmZmZjAwMGMyMTE0YmIyMF0gZG9f
-d3JpdGVwYWdlcyBhdCBmZmZmMDAwMDgwMjliMmUwCiM4IFtmZmZmMDAwYzIxMTRiYmEwXSBfX2Zp
-bGVtYXBfZmRhdGF3cml0ZV9yYW5nZSBhdCBmZmZmMDAwMDgwMjg4M2Y4CiM5IFtmZmZmMDAwYzIx
-MTRiYzYwXSBmaWxlX3dyaXRlX2FuZF93YWl0X3JhbmdlIGF0IGZmZmYwMDAwODAyODg2ZjAKIzEw
-IFtmZmZmMDAwYzIxMTRiY2EwXSBmdXNlX2ZzeW5jX2NvbW1vbiBhdCBmZmZmMDAwMDAxMDQ5MWQ4
-IFtmdXNlXQojMTEgW2ZmZmYwMDBjMjExNGJkOTBdIGZ1c2VfZnN5bmMgYXQgZmZmZjAwMDAwMTA0
-OTM4YyBbZnVzZV0KIzEyIFtmZmZmMDAwYzIxMTRiZGMwXSB2ZnNfZnN5bmNfcmFuZ2UgYXQgZmZm
-ZjAwMDA4MDM4NTkzOAojMTMgW2ZmZmYwMDBjMjExNGJkZjBdIF9fYXJtNjRfc3lzX21zeW5jIGF0
-IGZmZmYwMDAwODAyZGNmOGMKIzE0IFtmZmZmMDAwYzIxMTRiZTYwXSBlbDBfc3ZjX2NvbW1vbiBh
-dCBmZmZmMDAwMDgwMDk3Y2JjCiMxNSBbZmZmZjAwMGMyMTE0YmVhMF0gZWwwX3N2Y19oYW5kbGVy
-IGF0IGZmZmYwMDAwODAwOTdkZjAKIzE2IFtmZmZmMDAwYzIxMTRiZmYwXSBlbDBfc3ZjIGF0IGZm
-ZmYwMDAwODAwODQxNDQKClRoZSA0IHRocmVhZHMgd3JpdGUgdGhlIHNhbWUgZmlsZSwgYW5kIGRl
-YWRsb2NrZWQ6CiAgVGhyZWFkIDMwMTg1MiBnZXRzIHRoZSBwYWdlIDUgbG9jaywgYW5kIHdhaXRp
-bmcgb24gcGFnZSA1IHdyaXRlYmFjayBpcyBjb21wbGV0ZWQ7CiAgVGhyZWFkIDQwMDEyNyBnZXRz
-IHRoZSBwYWdlIDAgbG9jaywgYW5kIHdhaXRpbmcgb24gcGFnZSAwIHdyaXRlYmFjayBpcyBjb21w
-bGV0ZWQ7CiAgVGhyZWFkIDQ3MzI0IGlzIHdhaXRpbmcgcGFnZSA1IGxvY2ssIGFuZCBhbHJlYWR5
-IHNldCBwYWdlIDAgLSA0IHRvIHdyaXRlYmFjazsKICBUaHJlYWQgMTc4ODMwIGlzIHdhaXRpbmcg
-cGFnZSAwIGxvY2ssIGFuZCBhbHJlYWR5IHNldCBwYWdlIDUgLSA2IHRvIHdyaXRlYmFjazsKClRo
-ZSBkZWFkbG9jayByZWFzb24gaXMgdGhyZWFkIDE3ODgzMCBibG9ja2VkIGJ5IHRocmVhZCA0MDAx
-MjcsIHRocmVhZCA0MDAxMjcgYmxvY2tlZCBieSB0aHJlYWQgNDczMjQsIHRocmVhZCA0NzMyNCBi
-bG9ja2VkIGJ5IHRocmVhZCAzMDE4NTIsIGFuZCB0aHJlYWQgMzAxODUyIGJsb2NrZWQgYnkgdGhy
-ZWFkIDE3ODgzMC4gCk1vcmUgZGV0YWlsIG9uIHRocmVhZCA0NzMyNDoKVGhyZWFkIDQ3MzI0IGlz
-IHdyaXRpbmcgcGFnZSAwIC0gNi4gSXQncyBzdHJ1Y3Qgd3JpdGViYWNrX2NvbnRyb2wgKndiYyBw
-YXJhbWV0ZXIgaW4gd3JpdGVfY2FjaGVfcGFnZXMoKSBpcwogICBzdHJ1Y3Qgd3JpdGViYWNrX2Nv
-bnRyb2wgewogICAgbnJfdG9fd3JpdGUgPSAweDdmZmZmZmZmZmZmZmZmZmEsCiAgICBwYWdlc19z
-a2lwcGVkID0gMHgwLAogICAgcmFuZ2Vfc3RhcnQgPSAweDAsCiAgICByYW5nZV9lbmQgPSAweDZm
-ZmYsIC8vIHBhZ2UgMCAtIDYKICAgIHN5bmNfbW9kZSA9IFdCX1NZTkNfQUxMLAogICAgZm9yX2t1
-cGRhdGUgPSAweDAsCiAgICBmb3JfYmFja2dyb3VuZCA9IDB4MCwKICAgIHRhZ2dlZF93cml0ZXBh
-Z2VzID0gMHgwLAogICAgZm9yX3JlY2xhaW0gPSAweDAsCiAgICByYW5nZV9jeWNsaWMgPSAweDAs
-CiAgICBmb3Jfc3luYyA9IDB4MCwKICAgIHdiID0gMHgwLAogICAgaW5vZGUgPSAweDAsCiAgICB3
-Yl9pZCA9IDB4MCwKICAgIHdiX2xjYW5kX2lkID0gMHgwLAogICAgd2JfdGNhbmRfaWQgPSAweDAs
-CiAgICB3Yl9ieXRlcyA9IDB4MCwKICAgIHdiX2xjYW5kX2J5dGVzID0gMHgwLAogICAgd2JfdGNh
-bmRfYnl0ZXMgPSAweDAsCiAgICBrYWJpX3Jlc2VydmVkMSA9IDB4MCwKICAgIGthYmlfcmVzZXJ2
-ZWQyID0gMHgwCiAgIH0KSXQncyBzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGluZyBwYXJhbWV0
-ZXIgaW4gd3JpdGVfY2FjaGVfcGFnZXMoKSBpcwogICBhZGRyZXNzX3NwYWNlLndyaXRlYmFja19p
-bmRleCA9IDUKCk1vcmUgZGV0YWlsIG9uIHRocmVhZCAxNzg4MzA6ClRocmVhZCAxNzg4MzAgaXMg
-d3JpdGluZyB0aGUgd2hvbGUgZmlsZS4gSXQncyBzdHJ1Y3Qgd3JpdGViYWNrX2NvbnRyb2wgKndi
-YyBwYXJhbWV0ZXIgaW4gd3JpdGVfY2FjaGVfcGFnZXMoKSBpcwogICBzdHJ1Y3Qgd3JpdGViYWNr
-X2NvbnRyb2wgewogICAgbnJfdG9fd3JpdGUgPSAweDNmZSwKICAgIHBhZ2VzX3NraXBwZWQgPSAw
-eDAsCiAgICByYW5nZV9zdGFydCA9IDB4MCwKICAgIHJhbmdlX2VuZCA9IDB4N2ZmZmZmZmZmZmZm
-ZmZmZiwKICAgIHN5bmNfbW9kZSA9IFdCX1NZTkNfTk9ORSwKICAgIGZvcl9rdXBkYXRlID0gMHgw
-LAogICAgZm9yX2JhY2tncm91bmQgPSAweDEsCiAgICB0YWdnZWRfd3JpdGVwYWdlcyA9IDB4MCwK
-ICAgIGZvcl9yZWNsYWltID0gMHgwLAogICAgcmFuZ2VfY3ljbGljID0gMHgxLAogICAgZm9yX3N5
-bmMgPSAweDAsCiAgICB3YiA9IDB4MCwKICAgIGlub2RlID0gMHgwLAogICAgd2JfaWQgPSAweDAs
-CiAgICB3Yl9sY2FuZF9pZCA9IDB4MCwKICAgIHdiX3RjYW5kX2lkID0gMHgwLAogICAgd2JfYnl0
-ZXMgPSAweDAsCiAgICB3Yl9sY2FuZF9ieXRlcyA9IDB4MCwKICAgIHdiX3RjYW5kX2J5dGVzID0g
-MHgwLAogICAga2FiaV9yZXNlcnZlZDEgPSAweDAsCiAgICBrYWJpX3Jlc2VydmVkMiA9IDB4MAog
-ICB9Ckl0J3Mgc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcgcGFyYW1ldGVyIGluIHdyaXRl
-X2NhY2hlX3BhZ2VzKCkgaXMKICAgYWRkcmVzc19zcGFjZS53cml0ZWJhY2tfaW5kZXggPSA1Ckl0
-IGJlZ2luIHdyaXRlIHBhZ2VzIGZyb20gcGFnZSA1IHRvIDYsIGFuZCB0aGVuIHJlLWJlZ2luIGZy
-b20gMCB0byA0LgoKCi0tCgpDaGVuIExpWGlu
+On Thu, Feb 10, 2022 at 10:15:52AM +0000, Lee Jones wrote:
+> On Wed, 09 Feb 2022, Darrick J. Wong wrote:
+> 
+> > On Wed, Feb 09, 2022 at 08:52:43AM +0000, Lee Jones wrote:
+> > > This reverts commit 60263d5889e6dc5987dc51b801be4955ff2e4aa7.
+> > > 
+> > > Reverting since this commit opens a potential avenue for abuse.
+> > 
+> > What kind of abuse?  Did you conclude there's an avenue solely because
+> > some combination of userspace rigging produced a BUG warning?  Or is
+> > this a real problem that someone found?
+> 
+> Genuine question: Is the ability for userspace to crash the kernel
+> not enough to cause concern?  I would have thought that we'd want to
+> prevent this.
+
+The kernel doesn't crash.  It's a BUG().  That means it kills the
+task which caused the BUG().  If you've specified that the kernel should
+crash on seeing a BUG(), well, you made that decision, and you get to
+live with the consequences.
+
+> The link provided doesn't contain any further analysis.  Only the
+> reproducer and kernel configuration used, which are both too large to
+> enter into a Git commit.
+
+But not too large to put in an email.  Which you should have sent to
+begin with, not a stupid reversion commit.
+
+> > OH WAIT, you're running this on the Android 5.10 kernel, aren't you?
+> > The BUG report came from page_buffers failing to find any buffer heads
+> > attached to the page.
+> > https://android.googlesource.com/kernel/common/+/refs/heads/android12-5.10-2022-02/fs/ext4/inode.c#2647
+> 
+> Yes, the H/W I have to prototype these on is a phone and the report
+> that came in was specifically built against the aforementioned
+> kernel.
+> 
+> > Yeah, don't care.
+> 
+> "There is nothing to worry about, as it's intended behaviour"?
+
+No.  You've come in like a fucking meteorite full of arrogance and
+ignorance.  Nobody's reacting well to you right now.  Start again,
+write a good bug report in a new thread.
