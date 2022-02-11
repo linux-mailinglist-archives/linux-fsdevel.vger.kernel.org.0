@@ -2,30 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE7A44B1EF1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Feb 2022 08:03:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6B74B1EF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Feb 2022 08:04:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347371AbiBKHCI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Feb 2022 02:02:08 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48900 "EHLO
+        id S1347546AbiBKHEM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Feb 2022 02:04:12 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233024AbiBKHCF (ORCPT
+        with ESMTP id S233024AbiBKHEM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Feb 2022 02:02:05 -0500
-Received: from smtpproxy21.qq.com (smtpbg701.qq.com [203.205.195.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF992634
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Feb 2022 23:02:04 -0800 (PST)
-X-QQ-mid: bizesmtp52t1644562897t6ei7ucv
+        Fri, 11 Feb 2022 02:04:12 -0500
+X-Greylist: delayed 135 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Feb 2022 23:04:11 PST
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5186F4B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Feb 2022 23:04:11 -0800 (PST)
+X-QQ-mid: bizesmtp54t1644563004t30oz7ix
 Received: from localhost.localdomain (unknown [58.240.82.166])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 11 Feb 2022 15:01:33 +0800 (CST)
+        id ; Fri, 11 Feb 2022 15:03:20 +0800 (CST)
 X-QQ-SSF: 0140000000200020C000B00A0000000
-X-QQ-FEAT: Or3swkal8d2ySEZ5gfcMSGkkSLzZHQP2dpRbj9/tXSDL1jL9N+lIbbCM25LUG
-        fgvEdHXw/PaghwO+Z28OYA8XEAo9eZUJWvcYlFtBUr+wJ9oQmoq/o+g7TSzHSRwllAe8b+4
-        0F7wM8qWqsdHkajURx6w1D2992GdNDmRgYjVxNI2NrxevBb7bQAvp9ONrUo8jdvGQJcVZVI
-        fcsucHSm8Jd60Wk1SH6B8EQVSE7bIxIyBdbjpqfYHDMrMKwy/Kphl5D0rTmga02rm4kceto
-        LiiVNIFt0bRXvHXwSreaZYSxwxaptLlppM0YPFXVq7VT8EB1uDanFib9+8nV3AiaX5/uVCy
-        VJJJPY7TvGZDnJMmFQ=
+X-QQ-FEAT: ZKIyA7viXp3R0aWkRtuN4d+xvpiOtMB90G7oXLuG9o5syXqwm9hjF/wrsOo1Z
+        cp5fDKr/8+XqA1QWIdmlQOxK738pklJLj7dvC5G2ChUBJ+JZZpQV8asjbAoatwiYAzk037u
+        AFTbc1p/A7QqNqVA/JJMJ262fWbBAzSpraU1MCICk12Uz0YUkODklTBWiwMZWpA5LyeCJpa
+        Rl8z5UtktziCt7y3seaoA3DRwWwFsBaqvYuppb8DqjON6Iu74h6wIX0e8rsd2X/Qmv4mkTu
+        rj9pfnmuLH4uurKoYiMtSCFGQgFfzOTTwUhwPvW8BndPbF1+rQDGKlD/8033EPsKAdZ7OkD
+        Chot7GXLwmKzXJ3ouH93jw2acQoI/qC6aV9aSi/
 X-QQ-GoodBg: 2
 From:   Zhen Ni <nizhen@uniontech.com>
 To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
@@ -33,141 +34,109 @@ To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         keescook@chromium.org
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Zhen Ni <nizhen@uniontech.com>
-Subject: [PATCH] sched: move deadline_period sysctls to deadline.c
-Date:   Fri, 11 Feb 2022 15:00:14 +0800
-Message-Id: <20220211070014.30764-1-nizhen@uniontech.com>
+Subject: [PATCH] sched: move schedstats sysctls to core.c
+Date:   Fri, 11 Feb 2022 15:03:18 +0800
+Message-Id: <20220211070318.5331-1-nizhen@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign7
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
 X-QQ-Bgrelay: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-move deadline_period sysctls to deadline.c and use the new
+move schedstats sysctls to core.c and use the new
 register_sysctl_init() to register the sysctl interface.
 
 Signed-off-by: Zhen Ni <nizhen@uniontech.com>
 ---
- include/linux/sched/sysctl.h |  3 ---
- kernel/sched/deadline.c      | 43 +++++++++++++++++++++++++++++-------
- kernel/sysctl.c              | 14 ------------
- 3 files changed, 35 insertions(+), 25 deletions(-)
+ include/linux/sched/sysctl.h |  2 --
+ kernel/sched/core.c          | 22 +++++++++++++++++++++-
+ kernel/sysctl.c              | 11 -----------
+ 3 files changed, 21 insertions(+), 14 deletions(-)
 
 diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index c19dd5a2c05c..facdf2dbc83a 100644
+index c19dd5a2c05c..e3555a1bc013 100644
 --- a/include/linux/sched/sysctl.h
 +++ b/include/linux/sched/sysctl.h
-@@ -32,9 +32,6 @@ enum sched_tunable_scaling {
- extern unsigned int sysctl_sched_rt_period;
- extern int sysctl_sched_rt_runtime;
+@@ -60,8 +60,6 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+ 		void *buffer, size_t *lenp, loff_t *ppos);
+ int sysctl_numa_balancing(struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos);
+-int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
+-		size_t *lenp, loff_t *ppos);
  
--extern unsigned int sysctl_sched_dl_period_max;
--extern unsigned int sysctl_sched_dl_period_min;
--
- #ifdef CONFIG_UCLAMP_TASK
- extern unsigned int sysctl_sched_uclamp_util_min;
- extern unsigned int sysctl_sched_uclamp_util_max;
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index d2c072b0ef01..8f094ed8e8db 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -20,6 +20,40 @@
+ #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ extern unsigned int sysctl_sched_energy_aware;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 848eaa0efe0e..024e09875472 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4352,7 +4352,7 @@ static int __init setup_schedstats(char *str)
+ __setup("schedstats=", setup_schedstats);
  
- struct dl_bandwidth def_dl_bandwidth;
- 
-+/*
-+ * Default limits for DL period; on the top end we guard against small util
-+ * tasks still getting ridiculously long effective runtimes, on the bottom end we
-+ * guard against timer DoS.
-+ */
-+static unsigned int sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
-+static unsigned int sysctl_sched_dl_period_min = 100;     /* 100 us */
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table sched_dl_sysctls[] = {
+ #ifdef CONFIG_PROC_SYSCTL
+-int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
++static int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos)
+ {
+ 	struct ctl_table t;
+@@ -4371,6 +4371,26 @@ int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
+ 		set_schedstats(state);
+ 	return err;
+ }
++
++static struct ctl_table sched_schedstats_sysctls[] = {
 +	{
-+		.procname       = "sched_deadline_period_max_us",
-+		.data           = &sysctl_sched_dl_period_max,
++		.procname       = "sched_schedstats",
++		.data           = NULL,
 +		.maxlen         = sizeof(unsigned int),
 +		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
-+	},
-+	{
-+		.procname       = "sched_deadline_period_min_us",
-+		.data           = &sysctl_sched_dl_period_min,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
++		.proc_handler   = sysctl_schedstats,
++		.extra1         = SYSCTL_ZERO,
++		.extra2         = SYSCTL_ONE,
 +	},
 +	{}
 +};
 +
-+static void __init sched_dl_sysctl_init(void)
++static int __init sched_schedstats_sysctl_init(void)
 +{
-+	register_sysctl_init("kernel", sched_dl_sysctls);
++	register_sysctl_init("kernel", sched_schedstats_sysctls);
++	return 0;
 +}
-+#else
-+#define sched_dl_sysctl_init() do { } while (0)
-+#endif
-+
- static inline struct task_struct *dl_task_of(struct sched_dl_entity *dl_se)
- {
- 	return container_of(dl_se, struct task_struct, dl);
-@@ -2487,6 +2521,7 @@ void __init init_sched_dl_class(void)
- 	for_each_possible_cpu(i)
- 		zalloc_cpumask_var_node(&per_cpu(local_cpu_mask_dl, i),
- 					GFP_KERNEL, cpu_to_node(i));
-+	sched_dl_sysctl_init();
- }
++late_initcall(sched_schedstats_sysctl_init);
+ #endif /* CONFIG_PROC_SYSCTL */
+ #endif /* CONFIG_SCHEDSTATS */
  
- void dl_add_task_root_domain(struct task_struct *p)
-@@ -2854,14 +2889,6 @@ void __getparam_dl(struct task_struct *p, struct sched_attr *attr)
- 	attr->sched_flags |= dl_se->flags;
- }
- 
--/*
-- * Default limits for DL period; on the top end we guard against small util
-- * tasks still getting ridiculously long effective runtimes, on the bottom end we
-- * guard against timer DoS.
-- */
--unsigned int sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
--unsigned int sysctl_sched_dl_period_min = 100;     /* 100 us */
--
- /*
-  * This function validates the new parameters of a -deadline task.
-  * We ask for the deadline not being zero, and greater or equal
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5ae443b2882e..d880a78598a1 100644
+index 5ae443b2882e..4b2716387e35 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -1706,20 +1706,6 @@ static struct ctl_table kern_table[] = {
+@@ -1659,17 +1659,6 @@ static struct ctl_table kern_table[] = {
  		.mode		= 0644,
- 		.proc_handler	= sched_rt_handler,
+ 		.proc_handler	= proc_dointvec,
  	},
+-#ifdef CONFIG_SCHEDSTATS
 -	{
--		.procname	= "sched_deadline_period_max_us",
--		.data		= &sysctl_sched_dl_period_max,
+-		.procname	= "sched_schedstats",
+-		.data		= NULL,
 -		.maxlen		= sizeof(unsigned int),
 -		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
+-		.proc_handler	= sysctl_schedstats,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
 -	},
--	{
--		.procname	= "sched_deadline_period_min_us",
--		.data		= &sysctl_sched_dl_period_min,
--		.maxlen		= sizeof(unsigned int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
+-#endif /* CONFIG_SCHEDSTATS */
+ #ifdef CONFIG_TASK_DELAY_ACCT
  	{
- 		.procname	= "sched_rr_timeslice_ms",
- 		.data		= &sysctl_sched_rr_timeslice,
+ 		.procname	= "task_delayacct",
 -- 
 2.20.1
 
