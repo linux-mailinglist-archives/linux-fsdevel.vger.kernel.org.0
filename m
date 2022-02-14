@@ -2,42 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B217F4B5312
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 15:19:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CF914B5338
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 15:25:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241060AbiBNOTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 09:19:50 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55250 "EHLO
+        id S1355098AbiBNOZP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 09:25:15 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234161AbiBNOTt (ORCPT
+        with ESMTP id S230516AbiBNOZN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 09:19:49 -0500
+        Mon, 14 Feb 2022 09:25:13 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D854A3FC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 06:19:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC8544A906;
+        Mon, 14 Feb 2022 06:25:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oh0ZC90dzkWCQb6fWiZ/kAtd8RuZemK2R35rRg8rykc=; b=rN3UNF2JUblJostcOW11pY/Ups
-        42o6cWhJVRqhli7rBwmuGO2NAddfmk3G5Gk2mAGMNNC8/+/taduuehAn/CDFbZz6wy7YE5W6l/7hd
-        kLNwmyibZhqf/NElt2HMEe/ysYndXGQoeYThWUEJXE/7paL+oRxDluG6FQIXTZ5/bEl3W8SwmFQWT
-        swOUg9wn6hxKTIWxz8GMABhAERxJXQAmKSjiH+v+ZI9o6A27tzriuxIpOLUeth0UBMFFaWVz29viQ
-        xj02OkMIXGCnGOZxCOE9Iy36JL8s8ZeI9/CUJ9FyqpXO8uNspReFBQqe21hgotOpELaCm4MxLGOTk
-        jlb9iUgQ==;
+        bh=+N8sYBj1l7vLV3pVXWOrmvpsGB19dwrA9moQCEYQRTc=; b=QKy0CmMZ9kzH7RdLpCDCfGY5yT
+        CL4Fph5u5q/b66wYVhjJdVymYcoPCZ8e34fwwdKMTNjC7bothgyt+vmNEcKlOsErLkD3sRoZQdFUJ
+        +ibISaQLqrjOxca0/SPrFSXdeJYTuoFK2DhOj3wowqfr8alXlxSHdTS8vEpq7r2kUWtJACpTa4ZDz
+        W+9rpYCnD0TNjXyiZFzerm8s6KUS+pxL5+RneuqnjXakcKLkqBJQGhx+v6SOt47COQgJqxN602pij
+        86CTpkFihVRil2YEvju6MlX5W1FM59DmcIE0AX6xJkY/alXqETno1oTeBdJwy9nmMGgninjKl14zO
+        VUjZ79bQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nJcCZ-00Cyhr-Uz
-        for linux-fsdevel@vger.kernel.org; Mon, 14 Feb 2022 14:19:39 +0000
-Date:   Mon, 14 Feb 2022 14:19:39 +0000
+        id 1nJcHf-00Cyyq-By; Mon, 14 Feb 2022 14:24:55 +0000
+Date:   Mon, 14 Feb 2022 14:24:55 +0000
 From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 00/56] Filesystem folio conversions for 5.18
-Message-ID: <Ygpk+ys4SOu6uTrN@casper.infradead.org>
-References: <20220209202215.2055748-1-willy@infradead.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com,
+        syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/1] Revert "iomap: fall back to buffered writes for
+ invalidation failures"
+Message-ID: <YgpmN/R7jAf97PBU@casper.infradead.org>
+References: <20220209085243.3136536-1-lee.jones@linaro.org>
+ <20220210045911.GF8338@magnolia>
+ <YgTl2Lm9Vk50WNSj@google.com>
+ <YgZ0lyr91jw6JaHg@casper.infradead.org>
+ <YgowAl01rq5A8Sil@google.com>
+ <20220214134206.GA29930@lst.de>
+ <YgpjIustbUeRqvR2@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220209202215.2055748-1-willy@infradead.org>
+In-Reply-To: <YgpjIustbUeRqvR2@google.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -48,22 +69,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 09, 2022 at 08:21:19PM +0000, Matthew Wilcox (Oracle) wrote:
-> As I threatened ;-) previously, here are a number of filesystem changes
-> that I'm going to try to push into 5.18.
+On Mon, Feb 14, 2022 at 02:11:46PM +0000, Lee Jones wrote:
+> On Mon, 14 Feb 2022, Christoph Hellwig wrote:
 > 
-> Trond's going to take the first two through the NFS tree, so I'll drop
-> them as soon as they appear in -next.  I should probably send patches 3
-> and 6 as bugfixes before 5.18.  Review & testing appreciated.  This is
-> all against current Linus tree as of today.  xfstests running now against
-> xfs, with a root of ext4, so that's at least partially tested.  I probably
-> shan't do detailed testing of any of the filesystems I modified here since
-> it's pretty much all mechanical.
+> > Let me repeat myself:  Please send a proper bug report to the linux-ext4
+> > list.  Thanks!
+> 
+> Okay, so it is valid.  Question answered, thanks.
+> 
+> I still believe that I am unqualified to attempt to debug this myself.
 
-I've been asked if I pushed this to git anywhere; I hadn't, but
-here it is:
-
-git://git.infradead.org/users/willy/pagecache.git fs-folio
-or on the web:
-https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/fs-folio
-
+Nobody's asking you to debug it yourself.  We're asking you to
+file a clear bug report instead of wasting everybody's time.
