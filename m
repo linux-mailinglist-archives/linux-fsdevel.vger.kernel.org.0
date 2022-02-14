@@ -2,156 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87BE84B5E3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 00:28:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E484B5E4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 00:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbiBNX2e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 18:28:34 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50566 "EHLO
+        id S229880AbiBNXcx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 18:32:53 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232136AbiBNX2d (ORCPT
+        with ESMTP id S232163AbiBNXcw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 18:28:33 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE21013C9F3;
-        Mon, 14 Feb 2022 15:28:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644881304; x=1676417304;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W5UIWR8IMeyiFdF3gjE6OW8Sj3dciI4kypY/RklK8Aw=;
-  b=eu9y2CXkIQpD+I1WI4cmR9QQ3dOu4o+6AGRpt1egt8Aj3WvW+NW9Cr8L
-   tHvxbKxall0TRKbZCr9QTeQeaXyXJnBYsRarlhRgqWbE09ssgLFHtRoui
-   +ZTktBt9XiMxsYhEcpsjcQz48L7ho40J7bDVCBY+LmqbPMJu49OMPNWy4
-   63w+Od5ELSjiBUqHMnfKmxBjyFbajH39TZryx7nYk5Pr19raQR3RK+sQL
-   qwklrM+KwERgF3vzOcOWRvUwZEs26tW0/ju1OcSQzzA6WOKmlTw5nxb6T
-   wpOB8wXBS7GfbzN/UHLW0QkVYwAR/CNOZ80RiIFrHge8JvKpI7BygwI+o
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="247801910"
-X-IronPort-AV: E=Sophos;i="5.88,368,1635231600"; 
-   d="scan'208";a="247801910"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 15:28:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,368,1635231600"; 
-   d="scan'208";a="603507168"
-Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Feb 2022 15:28:22 -0800
-Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nJklZ-00091z-Tr; Mon, 14 Feb 2022 23:28:21 +0000
-Date:   Tue, 15 Feb 2022 07:27:25 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
-Subject: Re: [PATCH v1 05/14] fs: split off __alloc_page_buffers function
-Message-ID: <202202150743.R5ymlf5z-lkp@intel.com>
-References: <20220214174403.4147994-6-shr@fb.com>
+        Mon, 14 Feb 2022 18:32:52 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA3C10AEFF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 15:32:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=eWlSu+1yEMZxgs6DAl2lTEtG63DuTn18CmEDUAxtQ2g=; b=vsUo4kKE0QMDlOtG2OD2St7Kc6
+        VIUNnhjac+vNRtA/M8hHCy39wOsHMCXd921sh1f1haptuacJ8902FVXt6pO0aHcJvJ0M7Zi/0RXCY
+        4n6hKXtpLnRjKK49F8UEA95M4XysidrRXwhJgpaixAWMj+FLTEEmF6TlSakb1lxyegZMtBTP3ZhXi
+        Q1rpFW0MM+a0j9ATpPlyH8vhf4CrgBZ79ApFcABwxiIGyQ9FXecWTXLqkZppXB7cida9Rz8+yi74f
+        WLP/j7s99hJ6gPYxIU4u3ERstZ8dOzchYCS5pXGDyiUpjeh5vFYROVOirlvGqj2qHktyumkC4Bt7k
+        bznXFMiA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nJkpj-00DLRD-0T; Mon, 14 Feb 2022 23:32:39 +0000
+Date:   Mon, 14 Feb 2022 23:32:38 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 02/10] mm/truncate: Inline invalidate_complete_page()
+ into its one caller
+Message-ID: <YgrmllRrkImmBL/g@casper.infradead.org>
+References: <20220214200017.3150590-1-willy@infradead.org>
+ <20220214200017.3150590-3-willy@infradead.org>
+ <f711b39b-aea9-b514-1483-76fb128a2319@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220214174403.4147994-6-shr@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <f711b39b-aea9-b514-1483-76fb128a2319@nvidia.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stefan,
+On Mon, Feb 14, 2022 at 03:09:09PM -0800, John Hubbard wrote:
+> > @@ -309,7 +288,10 @@ int invalidate_inode_page(struct page *page)
+> 
+> It would be nice to retain some of the original comments. May I suggest
+> this (it has an additional paragraph) for an updated version of comments
+> above invalidate_inode_page():
+> 
+> /*
+>  * Safely invalidate one page from its pagecache mapping.
+>  * It only drops clean, unused pages. The page must be locked.
+>  *
+>  * This function can be called at any time, and is not supposed to throw away
+>  * dirty pages.  But pages can be marked dirty at any time too, so use
+>  * remove_mapping(), which safely discards clean, unused pages.
+>  *
+>  * Returns 1 if the page is successfully invalidated, otherwise 0.
+>  */
 
-Thank you for the patch! Perhaps something to improve:
+By the end of this series, it becomes:
 
-[auto build test WARNING on f1baf68e1383f6ed93eb9cff2866d46562607a43]
+/**
+ * invalidate_inode_page() - Remove an unused page from the pagecache.
+ * @page: The page to remove.
+ *
+ * Safely invalidate one page from its pagecache mapping.
+ * It only drops clean, unused pages.
+ *
+ * Context: Page must be locked.
+ * Return: The number of pages successfully removed.
+ */
 
-url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
-base:   f1baf68e1383f6ed93eb9cff2866d46562607a43
-config: arm-s5pv210_defconfig (https://download.01.org/0day-ci/archive/20220215/202202150743.R5ymlf5z-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project ea071884b0cc7210b3cc5fe858f0e892a779a23b)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
-        # https://github.com/0day-ci/linux/commit/e8b24c1ab111c127cbe1daaac3b607c626fb03a8
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
-        git checkout e8b24c1ab111c127cbe1daaac3b607c626fb03a8
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+> Also, as long as you're there, a newline after the mapping declaration
+> would bring this routine into compliance with that convention.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Again, by the end, we're at:
 
-All warnings (new ones prefixed by >>):
+        struct folio *folio = page_folio(page);
+        struct address_space *mapping = folio_mapping(folio);
 
->> fs/buffer.c:805:21: warning: no previous prototype for function '__alloc_page_buffers' [-Wmissing-prototypes]
-   struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
-                       ^
-   fs/buffer.c:805:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
-   ^
-   static 
-   1 warning generated.
+        /* The page may have been truncated before it was locked */
+        if (!mapping)
+                return 0;
+        return mapping_shrink_folio(mapping, folio);
 
+> hmmm, now I wonder why this isn't a boolean function. And I think the
+> reason is that it's quite old.
 
-vim +/__alloc_page_buffers +805 fs/buffer.c
+We could make this return a bool and have the one user that cares
+call folio_nr_pages().  I don't have a strong preference.
 
-   804	
- > 805	struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
-   806			gfp_t gfp)
-   807	{
-   808		struct buffer_head *bh, *head;
-   809		long offset;
-   810		struct mem_cgroup *memcg, *old_memcg;
-   811	
-   812		/* The page lock pins the memcg */
-   813		memcg = page_memcg(page);
-   814		old_memcg = set_active_memcg(memcg);
-   815	
-   816		head = NULL;
-   817		offset = PAGE_SIZE;
-   818		while ((offset -= size) >= 0) {
-   819			bh = alloc_buffer_head(gfp);
-   820			if (!bh)
-   821				goto no_grow;
-   822	
-   823			bh->b_this_page = head;
-   824			bh->b_blocknr = -1;
-   825			head = bh;
-   826	
-   827			bh->b_size = size;
-   828	
-   829			/* Link the buffer to its page */
-   830			set_bh_page(bh, page, offset);
-   831		}
-   832	out:
-   833		set_active_memcg(old_memcg);
-   834		return head;
-   835	/*
-   836	 * In case anything failed, we just free everything we got.
-   837	 */
-   838	no_grow:
-   839		if (head) {
-   840			do {
-   841				bh = head;
-   842				head = head->b_this_page;
-   843				free_buffer_head(bh);
-   844			} while (head);
-   845		}
-   846	
-   847		goto out;
-   848	}
-   849	
+> Either way, looks good:
+> 
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Thanks!
