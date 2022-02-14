@@ -2,126 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A2F04B5396
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 15:43:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A294B545D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 16:17:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355278AbiBNOni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 09:43:38 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48424 "EHLO
+        id S1355681AbiBNPPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 10:15:23 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231236AbiBNOne (ORCPT
+        with ESMTP id S235450AbiBNPPW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 09:43:34 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42284AE3A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 06:43:24 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id h6so27227632wrb.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 06:43:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=8k2aplyYI1OYSbtp/sgTQSaIuXBRyilQhTxzdkcz5oM=;
-        b=Kc2NhjEECM3Ike+mng8fkAJ0mNxNc5SBRyB1PT/O3H3V73wWQu3kwBEGUi5ElHSAO6
-         q/catBw7mYZcPXvpUSNGnDCmFkfOprjpwGMz6wSXWiaoqXAACWp7PtLen87Y+bonxIN1
-         43L0PWcSripPNaWQR0fPqEBkHOT6yEI9uerxrKLq7QvgKav7FpvSEmgITr/+K7GNiY7B
-         iGv1xfjWwKDDpaeAFwxKWhda453SESLLxjeVVCBBsqVXsGNJhNOf5ctlwJ+geYh8BJzm
-         +M1D4w1q9VU+f7mXbY+O6oCCD3RJ0jSdWtuGak4JKBjXo3YRHbJI8Le+vdXU7RVyZi3f
-         3Vdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=8k2aplyYI1OYSbtp/sgTQSaIuXBRyilQhTxzdkcz5oM=;
-        b=dfCfXl2KNKxP1rDZVu61wqa8Ptu088Oz1KKhrpdZIi/QSzyopvXvl1xYt4Oeh9aAVV
-         F9xF3Uo8O0Y/c+gKZzYlsEN+wGLNVwEhzjbSopKKfaODXoNg8YN1RquN1FsETgECIwPB
-         vnaPV8hLJzU+WyWaVoIMOM8PSNzNoGHvGn4r2wJuLlbde/66DJj5yC739Ky1/9eTGIdf
-         T61x2g7ssinMJW5A+hNM9RPM0lLtdqp3TUjN4L+BzZ0gMQgYiXoRPmBqCVX0ugWnSFMO
-         DiR/cPvPpbH1UuxMQR+joHC/aOVd++2RFwqi+JIHeDfeCkjOfivUlvnOInibxSlu5Y18
-         ua9Q==
-X-Gm-Message-State: AOAM533egSjcdEG807OaopSJKQHNhpEehIouwh7pOGyJEkCOz5+r6HGn
-        m5dWF+I++CHH05ISwLQV2fJADA==
-X-Google-Smtp-Source: ABdhPJw7yRUYoEyGu9ey4dIfTWZqAtG97B1/NFiN85MQVuWJ6su5QCeF3PBi//ZfG99hTeOE+wDSOA==
-X-Received: by 2002:a5d:52c9:: with SMTP id r9mr11422010wrv.449.1644849803276;
-        Mon, 14 Feb 2022 06:43:23 -0800 (PST)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id o16sm12358972wmc.25.2022.02.14.06.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Feb 2022 06:43:22 -0800 (PST)
-Date:   Mon, 14 Feb 2022 14:43:20 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com,
-        syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/1] Revert "iomap: fall back to buffered writes for
- invalidation failures"
-Message-ID: <YgpqiG7fvX7pHEHO@google.com>
-References: <20220209085243.3136536-1-lee.jones@linaro.org>
- <20220210045911.GF8338@magnolia>
- <YgTl2Lm9Vk50WNSj@google.com>
- <YgZ0lyr91jw6JaHg@casper.infradead.org>
- <YgowAl01rq5A8Sil@google.com>
- <20220214134206.GA29930@lst.de>
- <YgpjIustbUeRqvR2@google.com>
- <YgpmN/R7jAf97PBU@casper.infradead.org>
+        Mon, 14 Feb 2022 10:15:22 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 992AB488B7;
+        Mon, 14 Feb 2022 07:15:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id EB5BECE1824;
+        Mon, 14 Feb 2022 15:15:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B4F4C340E9;
+        Mon, 14 Feb 2022 15:15:08 +0000 (UTC)
+Date:   Mon, 14 Feb 2022 10:15:06 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: mmotm 2022-02-11-15-07 uploaded (objtool: ftrace_likely_update)
+Message-ID: <20220214101506.3e69ea97@gandalf.local.home>
+In-Reply-To: <YgdqmbK7Irwa2Ryh@hirez.programming.kicks-ass.net>
+References: <20220211230819.191B1C340E9@smtp.kernel.org>
+        <8074da01-7aa3-9913-1a1e-2ce307ccdbbd@infradead.org>
+        <YgdqmbK7Irwa2Ryh@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YgpmN/R7jAf97PBU@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 14 Feb 2022, Matthew Wilcox wrote:
-> On Mon, Feb 14, 2022 at 02:11:46PM +0000, Lee Jones wrote:
-> > On Mon, 14 Feb 2022, Christoph Hellwig wrote:
-> > 
-> > > Let me repeat myself:  Please send a proper bug report to the linux-ext4
-> > > list.  Thanks!
-> > 
-> > Okay, so it is valid.  Question answered, thanks.
-> > 
-> > I still believe that I am unqualified to attempt to debug this myself.
+On Sat, 12 Feb 2022 09:06:49 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> Yes, TRACE_BRANCH_PROFILING and PROFILE_ALL_BRANCHES are fundamentally
+> broken and I have no intention of trying to fix them.
 > 
-> Nobody's asking you to debug it yourself.
+> The moment we pull PTI into noinstr C code this will result in insta
+> boot fail.
 
-Not meaning to drag this out any longer than is absolutely necessary,
-but that's exactly what I was asked to do.
+Actually, I don't think anyone has every used the "tracers" for this, and I
+will be happy to get rid of it:
 
-I fully appreciate how complex this subsystem is and am aware of my
-inadequacy in the area.
+void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+			  int expect, int is_constant)
+{
+	unsigned long flags = user_access_save();
 
-> instead of wasting everybody's time.
+	/* A constant is always correct */
+	if (is_constant) {
+		f->constant++;
+		val = expect;
+	}
 
-That was never the intention.
 
-> We're asking you to file a clear bug report
+------8<------
+	/*
+	 * I would love to have a trace point here instead, but the
+	 * trace point code is so inundated with unlikely and likely
+	 * conditions that the recursive nightmare that exists is too
+	 * much to try to get working. At least for now.
+	 */
+	trace_likely_condition(f, val, expect);
+----->8-------
 
-No problem.  Will comply.
+	/* FIXME: Make this atomic! */
+	if (val == expect)
+		f->data.correct++;
+	else
+		f->data.incorrect++;
 
--- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+	user_access_restore(flags);
+}
+EXPORT_SYMBOL(ftrace_likely_update);
+
+The above with the cut lines I added.
+
+I still use the likely and unlikely counters. Would it be possible to mark
+that function as "noinstr" and still record them (I don't care if there's
+races where we miss a few or add a few too many). But they have been really
+affective in finding bad locations of likely and unlikely callers.
+
+As I said. I have no problem with removing the trace portion of that code.
+It was more of an academic exercise than a useful one, but the counters
+are still very useful to have.
+
+-- Steve
