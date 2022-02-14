@@ -2,107 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A294B545D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 16:17:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 647194B5596
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 17:07:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355681AbiBNPPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 10:15:23 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42860 "EHLO
+        id S236422AbiBNQHI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 11:07:08 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235450AbiBNPPW (ORCPT
+        with ESMTP id S1348509AbiBNQHH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 10:15:22 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 992AB488B7;
-        Mon, 14 Feb 2022 07:15:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 14 Feb 2022 11:07:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9A6ADC73
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 08:06:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1644854818;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RdoFPo0Y+0ZyN4NwJHVlPBv+GbPGBiBUAekBTnm7+8g=;
+        b=BFRCnIuQJdH8WO4fCi2hZ0+232xaoW/Ud78zbWwXh1QUfyYkHqt16BDduO4yU5Mb+rG5Qe
+        roJ41L5F6Fj0RfukcuyT4hJpdegBvOQLcLK+LLL8+P6l/amCu63MlP9jABQEYIqeyAt6gP
+        ceLH6CgQkOlJpKH7ITF1NKsZpv8WYkQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-623-9D-eZ2x3OjqcshVtQhwlIg-1; Mon, 14 Feb 2022 11:06:55 -0500
+X-MC-Unique: 9D-eZ2x3OjqcshVtQhwlIg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id EB5BECE1824;
-        Mon, 14 Feb 2022 15:15:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B4F4C340E9;
-        Mon, 14 Feb 2022 15:15:08 +0000 (UTC)
-Date:   Mon, 14 Feb 2022 10:15:06 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: mmotm 2022-02-11-15-07 uploaded (objtool: ftrace_likely_update)
-Message-ID: <20220214101506.3e69ea97@gandalf.local.home>
-In-Reply-To: <YgdqmbK7Irwa2Ryh@hirez.programming.kicks-ass.net>
-References: <20220211230819.191B1C340E9@smtp.kernel.org>
-        <8074da01-7aa3-9913-1a1e-2ce307ccdbbd@infradead.org>
-        <YgdqmbK7Irwa2Ryh@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D1B71006AA0;
+        Mon, 14 Feb 2022 16:06:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0DBC475746;
+        Mon, 14 Feb 2022 16:06:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CACdtm0bi4O36cif-iwarBb2oNOj-qjECr0iPAHK821E07u7p8A@mail.gmail.com>
+References: <CACdtm0bi4O36cif-iwarBb2oNOj-qjECr0iPAHK821E07u7p8A@mail.gmail.com> <164311902471.2806745.10187041199819525677.stgit@warthog.procyon.org.uk> <164311907995.2806745.400147335497304099.stgit@warthog.procyon.org.uk>
+To:     Rohith Surabattula <rohiths.msft@gmail.com>
+Cc:     dhowells@redhat.com, smfrench@gmail.com, nspmangalore@gmail.com,
+        jlayton@kernel.org, linux-cifs@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/7] cifs: Change the I/O paths to use an iterator rather than a page list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2976357.1644854775.1@warthog.procyon.org.uk>
+Date:   Mon, 14 Feb 2022 16:06:15 +0000
+Message-ID: <2976358.1644854775@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 12 Feb 2022 09:06:49 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+Rohith Surabattula <rohiths.msft@gmail.com> wrote:
 
-> Yes, TRACE_BRANCH_PROFILING and PROFILE_ALL_BRANCHES are fundamentally
-> broken and I have no intention of trying to fix them.
-> 
-> The moment we pull PTI into noinstr C code this will result in insta
-> boot fail.
+> After copying the buf to the XArray iterator, "got_bytes" field is not
+> updated. As a result, the read of data which is less than page size
+> failed.
+> Below is the patch to fix the above issue.
 
-Actually, I don't think anyone has every used the "tracers" for this, and I
-will be happy to get rid of it:
+Okay, I've folded that in, thanks.
 
-void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-			  int expect, int is_constant)
-{
-	unsigned long flags = user_access_save();
+David
 
-	/* A constant is always correct */
-	if (is_constant) {
-		f->constant++;
-		val = expect;
-	}
-
-
-------8<------
-	/*
-	 * I would love to have a trace point here instead, but the
-	 * trace point code is so inundated with unlikely and likely
-	 * conditions that the recursive nightmare that exists is too
-	 * much to try to get working. At least for now.
-	 */
-	trace_likely_condition(f, val, expect);
------>8-------
-
-	/* FIXME: Make this atomic! */
-	if (val == expect)
-		f->data.correct++;
-	else
-		f->data.incorrect++;
-
-	user_access_restore(flags);
-}
-EXPORT_SYMBOL(ftrace_likely_update);
-
-The above with the cut lines I added.
-
-I still use the likely and unlikely counters. Would it be possible to mark
-that function as "noinstr" and still record them (I don't care if there's
-races where we miss a few or add a few too many). But they have been really
-affective in finding bad locations of likely and unlikely callers.
-
-As I said. I have no problem with removing the trace portion of that code.
-It was more of an academic exercise than a useful one, but the counters
-are still very useful to have.
-
--- Steve
