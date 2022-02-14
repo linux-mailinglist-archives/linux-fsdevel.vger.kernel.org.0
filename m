@@ -2,87 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DFCFA4B5CB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 22:27:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E59D4B5BCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 22:01:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbiBNVYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 16:24:51 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58332 "EHLO
+        id S229707AbiBNUzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 15:55:15 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230473AbiBNVYu (ORCPT
+        with ESMTP id S229827AbiBNUzM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 16:24:50 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81253B1501
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 13:24:41 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id j20so6551446vsg.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 13:24:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZUA5XLVzUwl5PsPpBT4GOMiYMi4Ipd6X1OagX6wrzqc=;
-        b=Ri2IA/U4wrZN62NwG1Q3k8sTvxHXPtOqj+KOMSwLllDqeSg6aSU4ryXBDWs6Z8K7Qr
-         Y9bR8gwyC83dLv1ouPA0/Jo5V3yQfMvvD4fSAxa5AhxfItw1mko0fhMjwGCXYkf591vr
-         6Zw0ICoctwU3ZVnVTVLHebfXhWTM0NNbrHGyk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZUA5XLVzUwl5PsPpBT4GOMiYMi4Ipd6X1OagX6wrzqc=;
-        b=G4qTUfCY4zo/3NrM8Bv0QyhMV4ZZ9bPClM1ld/kMh3MdQpkBnSGUyj24/iZrc3PmZs
-         qVsE6j5DkZRFMfQMyjkcQeyEnLCBihAEaM4faaCUJ3LTYG3sIjRPOz0s5Q0R94YUC/wi
-         Ke2PjaPPHzzSw/ZycPButa6yWccbUPJex2Frx6IBk6y/M/SkkZcYr6AtXq4t/maWxryC
-         WFvhoPLrL5d11S+Y8N1xLJDRKw1x7tqILJDI731Pd+tuIE97qulaY8cwcpoXUg+mtgCe
-         4JNylc5cRnOgOj7na/Reu/4oEb5j1TB2gT3SdXVeQeb2O9b4rAdXzEn5mlxhemncAXfk
-         LOJw==
-X-Gm-Message-State: AOAM530COge3s9yW0aPY1B8EZQJblBBq/bItXdhAeURpqHBfra8fT8D1
-        oPKSjL/WnGePSPAzHCtdy3HhvpKioZM4OA==
-X-Google-Smtp-Source: ABdhPJyTNUqLjr0QN/j055iQchlM/5AM3dl2qg42GOgBLXoTvD0Xm0NeQedaV23se5OBGDWW2Cmu+Q==
-X-Received: by 2002:a05:6a00:2183:: with SMTP id h3mr422183pfi.12.1644867117937;
-        Mon, 14 Feb 2022 11:31:57 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e8sm20515052pfv.168.2022.02.14.11.31.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Feb 2022 11:31:57 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     viro@zeniv.linux.org.uk, trix@redhat.com, ebiederm@xmission.com
-Cc:     Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] exec: cleanup comments
-Date:   Mon, 14 Feb 2022 11:31:49 -0800
-Message-Id: <164486710836.287496.5467210321357577186.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220211160940.2516243-1-trix@redhat.com>
-References: <20220211160940.2516243-1-trix@redhat.com>
+        Mon, 14 Feb 2022 15:55:12 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF6E106CB8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 12:54:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=/rveRtCAVtTxS7QANg2AkZ7UaZV55OMKQy2uRCLWACE=; b=Ldh5T3N6zurDGcPZAcsvYHoW0k
+        ZWWwFmsBr4iLkOxqgETxhe2SfLp7aVqkGuF1KyvddCoj/SJRy4eamVgzMH4BaGPiGYI2uOqJay3nv
+        L3DVCWEKDTQelw9McfH995jGX/ZywY3MYqrQN0IUHz1bQ1NSQL5z7BpKyNx08ZnpotDnoeNSEncEs
+        jav2MecNNr2ez09MXh4pGmRWdlAqUav1AEIDJBy5TS7UQ5NQtZcgeNyvp9eKYsrIVk/jyJMvdtkch
+        98dAZO6eiyKnfzzKBdHHMPRjix0j8eOfEZPcsgMP4UG4/OofHJ1s9QzNvAOzftKGmnyKsPsDNGO8A
+        wdlBlz7A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nJhWF-00DDdS-5f; Mon, 14 Feb 2022 20:00:19 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 00/10] Various fixes around invalidate_page()
+Date:   Mon, 14 Feb 2022 20:00:07 +0000
+Message-Id: <20220214200017.3150590-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 11 Feb 2022 08:09:40 -0800, trix@redhat.com wrote:
-> From: Tom Rix <trix@redhat.com>
-> 
-> Remove the second 'from'.
-> Replace 'backwords' with 'backwards'.
-> Replace 'visibile' with 'visible'.
-> 
-> 
-> [...]
+Blame Rik for this.  His "clean up hwpoison page cache page in fault path"
+patch on Friday made me look at how invalidate_inode_page() handled tail
+pages.  It's not buggy, but __invalidate_mapping_pages() has a minor
+accounting bug, and all of this related code could be done a little
+more efficiently by using folios instead of pages.
 
-Applied to for-next/execve, thanks!
+I don't _love_ the name mapping_shrink_folio(), but I'm having a hard
+time coming up with a verb that means "remove from cache if unused".
+Maybe mapping_evict_folio()?  Or filemap_evict_folio()?
 
-[1/1] exec: cleanup comments
-      https://git.kernel.org/kees/c/92eec5b2f7b8
+The last two patches are just cleanup that should be done at some point,
+and since this patchset already conflicts with everything else, why not?
+I've stashed these in my for-next tree immediately after converting
+__remove_mapping() to take a folio because it seems to fit best there.
+The bots may complain about build problems as a result, but this is
+really a patch series for humans to review.
+
+Matthew Wilcox (Oracle) (10):
+  splice: Use a folio in page_cache_pipe_buf_try_steal()
+  mm/truncate: Inline invalidate_complete_page() into its one caller
+  mm/truncate: Convert invalidate_inode_page() to use a folio
+  mm/truncate: Replace page_mapped() call in invalidate_inode_page()
+  mm: Convert remove_mapping() to take a folio
+  mm/truncate: Split invalidate_inode_page() into mapping_shrink_folio()
+  mm/truncate: Convert __invalidate_mapping_pages() to use a folio
+  mm: Turn deactivate_file_page() into deactivate_file_folio()
+  mm/truncate: Combine invalidate_mapping_pagevec() and
+    __invalidate_mapping_pages()
+  fs: Move many prototypes to pagemap.h
+
+ drivers/block/xen-blkback/xenbus.c           |   1 +
+ drivers/usb/gadget/function/f_mass_storage.c |   1 +
+ fs/coda/file.c                               |   1 +
+ fs/iomap/fiemap.c                            |   1 +
+ fs/nfsd/filecache.c                          |   1 +
+ fs/nfsd/vfs.c                                |   1 +
+ fs/splice.c                                  |  24 ++--
+ fs/vboxsf/utils.c                            |   1 +
+ include/linux/fs.h                           | 120 -------------------
+ include/linux/mm.h                           |   1 -
+ include/linux/pagemap.h                      | 114 ++++++++++++++++++
+ include/linux/swap.h                         |   3 +-
+ mm/internal.h                                |   4 +
+ mm/memory-failure.c                          |   4 +-
+ mm/swap.c                                    |  33 +++--
+ mm/truncate.c                                | 109 ++++++++---------
+ mm/vmscan.c                                  |  23 ++--
+ 17 files changed, 219 insertions(+), 223 deletions(-)
 
 -- 
-Kees Cook
+2.34.1
 
