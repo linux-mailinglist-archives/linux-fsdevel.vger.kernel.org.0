@@ -2,75 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4993F4B4BEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 11:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 462114B4D23
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 12:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344445AbiBNKHx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 05:07:53 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35988 "EHLO
+        id S1349681AbiBNLFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 06:05:48 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345987AbiBNKHW (ORCPT
+        with ESMTP id S1349985AbiBNLFg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 05:07:22 -0500
-Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC5FD74DF2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 01:49:54 -0800 (PST)
-Received: by mail-vk1-xa2e.google.com with SMTP id j201so1401443vke.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 01:49:54 -0800 (PST)
+        Mon, 14 Feb 2022 06:05:36 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85CED2BCA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 02:33:42 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id l123-20020a1c2581000000b0037b9d960079so11376106wml.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 02:33:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7lP7KkY7WglFp6yGiwkOhLiozvfB0ZH/G4CrcK1Rg68=;
-        b=ia3Vn1awKDyQXk3Bh1iKVHm4m12nuETI44kPapMGK7Aomo/gwj6mW2N7Ruwe4b0m2d
-         IO/Rb9P7X1u6xgepVWmVvr0gPhPGeJOBOmsxTBZFgzgv8Ue0SXJUWGECV2BPJgcqPQu+
-         Bi9B8CUJYyeaUz56iYDCb4s7F2Ri5xL3Kwm/Y=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Y2dQkZtEBm/fDqJ75Y4aAkTg3U+ZJI5VXSRDEIIFY/0=;
+        b=jJ+OdxsyUYtXOF2bOUMhdzXGlmvvihgc5HolIejHGvoHZ4zG8+/ui8gXzwJwcDtplt
+         Hu78Df+kUVUCnuzN3sBNlqLYOUEfoKbjDbxHVAWTdUZxeX9QO58peZrdx+jo+z4mmqee
+         DAsHVXGBTyN79BLjNfRkgj5Okzu6Hz5K4p0/cAoXbLBm9bpeualDYoCutpGL1OBCXTBb
+         O/9WsGLmXrnprKOLukEVfG8gVeIfHORKI4enIzVrcmtkeas4TpM+zGt4ZoUyW+gNt9r1
+         hMsBgDlTeQS1iD+SSCoUZDub8fDK5mgrougrFwMOHFRbApurG5LmM3N4fzuiF4MhIct9
+         QQHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7lP7KkY7WglFp6yGiwkOhLiozvfB0ZH/G4CrcK1Rg68=;
-        b=4czJNrt+HEm87sUGUVFtK+MZjnRtvel8YPjuTFTSvUQ/SHWLwWkXzZkp2UgEQyOmC3
-         wbl9R5ehCIOYnFQX8iCq2e6B6VOvPSZY1MboskcoP3DQvbnsYeZ/aH7FdUU0/+z7DBs3
-         5c8zjTDKKBmAV5Xm0D2aMCNKY04ZfMHfLLPPnAoEg2o4Y/bkygByygOl+7QqCkqUiSx1
-         iFKCqnBN7qNW/yMS3WyKSGq9UU/TQVkkwiEK5PIvCT65uEk/64eTmejjbyL8TI+I+QoY
-         jCuyzsWgAOZah8Wrk0y5TelPh25QhY9DmzHOA7bNGVzfcR7YR7LTaKp0qIem0s2L05MK
-         q/vA==
-X-Gm-Message-State: AOAM531KKoY+hr887mvdRtLaK1Y/2cTSazG+o8kOQChaVc9nFJMe0Eci
-        ElO7Rqx0X0n8SjZRADqyA91CaL/eygMZT9GqpkjROkjpgaUeYw==
-X-Google-Smtp-Source: ABdhPJybCGG43KBQZBGj3xKfxePsERUvO/AeYSMIO7uCVd9WU7Iag1BzeXAtVevcGIRqN1509xH0fGk2PLDc4VIv2AA=
-X-Received: by 2002:a05:6122:550:: with SMTP id y16mr3706750vko.31.1644832193888;
- Mon, 14 Feb 2022 01:49:53 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Y2dQkZtEBm/fDqJ75Y4aAkTg3U+ZJI5VXSRDEIIFY/0=;
+        b=LrDHEYQv1xItknO/yQuokLtBBBqWIVuzAhRzBG9koi+DM7d9MCwtZX/zXc8hIQg2y7
+         nP8GFENs9rJmU/jSMhpdTKpvZx1F/JK6HSakF3LYzul42+Jg4HLpD3THmp6RbpinVzgl
+         BjQTmm061F0Vf4eDsNLKRw+aP6LEriuReXHo0ObVXcx7KsGZwl3E5m+zqNl1+ZIQnC9m
+         +3hrLszPT06Dys+2IzCS5fuch3orAlav29iuolW0vFm+yyNnauv8KLS7FJVK/q2pxi/B
+         CgPm/drxJdGUwKuM0VW+6EsXagU7esAJMgDmZFF17Nq8zYUh0ZFpqV/fvm8DD3ItbTFI
+         LUew==
+X-Gm-Message-State: AOAM532nXOHPr9o9dv7rC/EMPYidAekzIdcz2w3FAinFBSTNyKcgoC8c
+        8rT+dMrv9v2FDgph0DYBUSPfrw==
+X-Google-Smtp-Source: ABdhPJyQCmvkhGvcGJSPK0iuX2InSha335cVaRamyENYW1Z/K2WQPdYt8MDHDpiU9vBHs4mik5e1qA==
+X-Received: by 2002:a05:600c:3552:: with SMTP id i18mr10585774wmq.90.1644834821019;
+        Mon, 14 Feb 2022 02:33:41 -0800 (PST)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id h17sm9479387wrx.58.2022.02.14.02.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Feb 2022 02:33:40 -0800 (PST)
+Date:   Mon, 14 Feb 2022 10:33:38 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <dchinner@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com,
+        syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/1] Revert "iomap: fall back to buffered writes for
+ invalidation failures"
+Message-ID: <YgowAl01rq5A8Sil@google.com>
+References: <20220209085243.3136536-1-lee.jones@linaro.org>
+ <20220210045911.GF8338@magnolia>
+ <YgTl2Lm9Vk50WNSj@google.com>
+ <YgZ0lyr91jw6JaHg@casper.infradead.org>
 MIME-Version: 1.0
-References: <6da4c709.5385.17ee910a7fd.Coremail.clx428@163.com>
-In-Reply-To: <6da4c709.5385.17ee910a7fd.Coremail.clx428@163.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 14 Feb 2022 10:49:43 +0100
-Message-ID: <CAJfpegtQHk887yMDXU9s2Rm+iO1sR0-hq=abW3TJg43t_aE-5w@mail.gmail.com>
-Subject: Re: Report a fuse deadlock scenario issue
-To:     =?UTF-8?B?6ZmI56uL5paw?= <clx428@163.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YgZ0lyr91jw6JaHg@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 11 Feb 2022 at 14:55, =E9=99=88=E7=AB=8B=E6=96=B0 <clx428@163.com> =
-wrote:
->
-> Hi Miklos:
-> I meet a dealock scenario on fuse. here are the 4 backtraces:
+Let's attempt to seek beyond the mud slinging, swearing and the whiny
+amateur dramatics for just a brief moment and concentrate solely on
+the technicals please.
 
-Which kernel is this?
+On Fri, 11 Feb 2022, Matthew Wilcox wrote:
+> On Thu, Feb 10, 2022 at 10:15:52AM +0000, Lee Jones wrote:
+> > On Wed, 09 Feb 2022, Darrick J. Wong wrote:
+> > 
+> > > On Wed, Feb 09, 2022 at 08:52:43AM +0000, Lee Jones wrote:
+> > > > This reverts commit 60263d5889e6dc5987dc51b801be4955ff2e4aa7.
+> > > > 
+> > > > Reverting since this commit opens a potential avenue for abuse.
+> > > 
+> > > What kind of abuse?  Did you conclude there's an avenue solely because
+> > > some combination of userspace rigging produced a BUG warning?  Or is
+> > > this a real problem that someone found?
+> > 
+> > Genuine question: Is the ability for userspace to crash the kernel
+> > not enough to cause concern?  I would have thought that we'd want to
+> > prevent this.
+> 
+> The kernel doesn't crash.  It's a BUG().  That means it kills the
+> task which caused the BUG().  If you've specified that the kernel should
+> crash on seeing a BUG(), well, you made that decision, and you get to
+> live with the consequences.
 
-Commit 4f06dd92b5d0 ("fuse: fix write deadlock") was added in 5.13 and
-backported to some (but not all) affected stable trees.
+BUG() calls are architecture specific.  If no override is provided,
+the default appears to panic ("crash") the kernel:
 
-Thanks,
-Miklos
+ /*
+  * Don't use BUG() or BUG_ON() unless there's really no way out; one
+  * example might be detecting data structure corruption in the middle
+  * of an operation that can't be backed out of.  If the (sub)system
+  * can somehow continue operating, perhaps with reduced functionality,
+  * it's probably not BUG-worthy.
+  *
+  * If you're tempted to BUG(), think again:  is completely giving up
+  * really the *only* solution?  There are usually better options, where
+  * users don't need to reboot ASAP and can mostly shut down cleanly.
+  */
+ #ifndef HAVE_ARCH_BUG
+ #define BUG() do { \
+         printk("BUG: failure at %s:%d/%s()!\n", __FILE__, __LINE__, __func__); \
+         barrier_before_unreachable(); \
+         panic("BUG!"); \
+ } while (0)
+ #endif
+
+The kernel I tested with panics and reboots:
+
+ Kernel panic - not syncing: Fatal exception
+
+Here are the BUG related kernel configs I have set:
+
+ CONFIG_BUG=y                          
+ CONFIG_GENERIC_BUG=y                  
+ CONFIG_GENERIC_BUG_RELATIVE_POINTERS=y
+ # CONFIG_INPUT_EVBUG is not set       
+ CONFIG_BUG_ON_DATA_CORRUPTION=y       
+
+Not seeing a "CONFIG_PANIC_ON_BUG" equivalent.  What is missing?
+
+Unless of course you mean disabling BUG support entirely.  In which
+case, this is strongly advised against in the help section and I'm not
+sure of many development or production kernels that do this.
+
+ config BUG
+        bool "BUG() support" if EXPERT
+        default y
+        help
+          Disabling this option eliminates support for BUG and WARN, reducing
+          the size of your kernel image and potentially quietly ignoring
+          numerous fatal conditions. You should only consider disabling this
+          option for embedded systems with no facilities for reporting errors.
+          Just say Y.
+
+I've always been under the impression that a BUG() call should never
+be triggerable from userspace.  However, I'm always happy to be
+incorrect and subsequently reeducated.
+
+In other words ...
+
+Is this a valid issue that you want me to report (in a different way):
+
+> Start again, write a good bug report in a new thread.
+
+Or is this expected behaviour and therefore not a concern:
+
+> > > The BUG report came from page_buffers failing to find any buffer heads
+> > > attached to the page.
+> > 
+> > > Yeah, don't care.
+
+-- 
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
