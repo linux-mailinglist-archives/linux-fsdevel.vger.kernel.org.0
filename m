@@ -2,86 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 462114B4D23
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 12:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4D14B4E9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Feb 2022 12:34:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349681AbiBNLFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 06:05:48 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34356 "EHLO
+        id S1344932AbiBNL27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 06:28:59 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349985AbiBNLFg (ORCPT
+        with ESMTP id S1351236AbiBNL2a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 06:05:36 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85CED2BCA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 02:33:42 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id l123-20020a1c2581000000b0037b9d960079so11376106wml.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 02:33:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Y2dQkZtEBm/fDqJ75Y4aAkTg3U+ZJI5VXSRDEIIFY/0=;
-        b=jJ+OdxsyUYtXOF2bOUMhdzXGlmvvihgc5HolIejHGvoHZ4zG8+/ui8gXzwJwcDtplt
-         Hu78Df+kUVUCnuzN3sBNlqLYOUEfoKbjDbxHVAWTdUZxeX9QO58peZrdx+jo+z4mmqee
-         DAsHVXGBTyN79BLjNfRkgj5Okzu6Hz5K4p0/cAoXbLBm9bpeualDYoCutpGL1OBCXTBb
-         O/9WsGLmXrnprKOLukEVfG8gVeIfHORKI4enIzVrcmtkeas4TpM+zGt4ZoUyW+gNt9r1
-         hMsBgDlTeQS1iD+SSCoUZDub8fDK5mgrougrFwMOHFRbApurG5LmM3N4fzuiF4MhIct9
-         QQHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Y2dQkZtEBm/fDqJ75Y4aAkTg3U+ZJI5VXSRDEIIFY/0=;
-        b=LrDHEYQv1xItknO/yQuokLtBBBqWIVuzAhRzBG9koi+DM7d9MCwtZX/zXc8hIQg2y7
-         nP8GFENs9rJmU/jSMhpdTKpvZx1F/JK6HSakF3LYzul42+Jg4HLpD3THmp6RbpinVzgl
-         BjQTmm061F0Vf4eDsNLKRw+aP6LEriuReXHo0ObVXcx7KsGZwl3E5m+zqNl1+ZIQnC9m
-         +3hrLszPT06Dys+2IzCS5fuch3orAlav29iuolW0vFm+yyNnauv8KLS7FJVK/q2pxi/B
-         CgPm/drxJdGUwKuM0VW+6EsXagU7esAJMgDmZFF17Nq8zYUh0ZFpqV/fvm8DD3ItbTFI
-         LUew==
-X-Gm-Message-State: AOAM532nXOHPr9o9dv7rC/EMPYidAekzIdcz2w3FAinFBSTNyKcgoC8c
-        8rT+dMrv9v2FDgph0DYBUSPfrw==
-X-Google-Smtp-Source: ABdhPJyQCmvkhGvcGJSPK0iuX2InSha335cVaRamyENYW1Z/K2WQPdYt8MDHDpiU9vBHs4mik5e1qA==
-X-Received: by 2002:a05:600c:3552:: with SMTP id i18mr10585774wmq.90.1644834821019;
-        Mon, 14 Feb 2022 02:33:41 -0800 (PST)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id h17sm9479387wrx.58.2022.02.14.02.33.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Feb 2022 02:33:40 -0800 (PST)
-Date:   Mon, 14 Feb 2022 10:33:38 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com,
-        syzbot+0ed9f769264276638893@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/1] Revert "iomap: fall back to buffered writes for
- invalidation failures"
-Message-ID: <YgowAl01rq5A8Sil@google.com>
-References: <20220209085243.3136536-1-lee.jones@linaro.org>
- <20220210045911.GF8338@magnolia>
- <YgTl2Lm9Vk50WNSj@google.com>
- <YgZ0lyr91jw6JaHg@casper.infradead.org>
+        Mon, 14 Feb 2022 06:28:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D06FACC6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 03:06:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1644836777;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=E/YpHuLzrUWFj5TanGTnC9HK9BdBVrDfvGFNAraLJPY=;
+        b=Xyggv5UjSygDatRP5oPCnv4j3mZq1wIFX1+65h25lZu+BcZm+DNkDUPIuovMEBcltyT6su
+        d1R9vdXwZLHj3NuaDvUcGVM6T+x1VhWINQTO3wYxFc7k2p6coSEXCOG9RxOiBqUxLhOrUX
+        e7q1K3Mvc7re/4BooDcUotBDt5+ukbI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-404-IGc_LG5PMPiiz7KszaeE2A-1; Mon, 14 Feb 2022 06:06:13 -0500
+X-MC-Unique: IGc_LG5PMPiiz7KszaeE2A-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C186C1091DA1;
+        Mon, 14 Feb 2022 11:06:12 +0000 (UTC)
+Received: from ws.net.home (unknown [10.36.112.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E81B66E1F8;
+        Mon, 14 Feb 2022 11:06:11 +0000 (UTC)
+Date:   Mon, 14 Feb 2022 12:06:09 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.37.4
+Message-ID: <20220214110609.msiwlm457ngoic6w@ws.net.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YgZ0lyr91jw6JaHg@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -89,101 +56,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let's attempt to seek beyond the mud slinging, swearing and the whiny
-amateur dramatics for just a brief moment and concentrate solely on
-the technicals please.
 
-On Fri, 11 Feb 2022, Matthew Wilcox wrote:
-> On Thu, Feb 10, 2022 at 10:15:52AM +0000, Lee Jones wrote:
-> > On Wed, 09 Feb 2022, Darrick J. Wong wrote:
-> > 
-> > > On Wed, Feb 09, 2022 at 08:52:43AM +0000, Lee Jones wrote:
-> > > > This reverts commit 60263d5889e6dc5987dc51b801be4955ff2e4aa7.
-> > > > 
-> > > > Reverting since this commit opens a potential avenue for abuse.
-> > > 
-> > > What kind of abuse?  Did you conclude there's an avenue solely because
-> > > some combination of userspace rigging produced a BUG warning?  Or is
-> > > this a real problem that someone found?
-> > 
-> > Genuine question: Is the ability for userspace to crash the kernel
-> > not enough to cause concern?  I would have thought that we'd want to
-> > prevent this.
-> 
-> The kernel doesn't crash.  It's a BUG().  That means it kills the
-> task which caused the BUG().  If you've specified that the kernel should
-> crash on seeing a BUG(), well, you made that decision, and you get to
-> live with the consequences.
+The util-linux release v2.37.4 is available at
+            
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.37/
+ 
+Feedback and bug reports, as always, are welcomed.
 
-BUG() calls are architecture specific.  If no override is provided,
-the default appears to panic ("crash") the kernel:
 
- /*
-  * Don't use BUG() or BUG_ON() unless there's really no way out; one
-  * example might be detecting data structure corruption in the middle
-  * of an operation that can't be backed out of.  If the (sub)system
-  * can somehow continue operating, perhaps with reduced functionality,
-  * it's probably not BUG-worthy.
-  *
-  * If you're tempted to BUG(), think again:  is completely giving up
-  * really the *only* solution?  There are usually better options, where
-  * users don't need to reboot ASAP and can mostly shut down cleanly.
-  */
- #ifndef HAVE_ARCH_BUG
- #define BUG() do { \
-         printk("BUG: failure at %s:%d/%s()!\n", __FILE__, __LINE__, __func__); \
-         barrier_before_unreachable(); \
-         panic("BUG!"); \
- } while (0)
- #endif
+This release fixes security issue in chsh(1) and chfn(8) when
+util-linux compiled with libreadline.
 
-The kernel I tested with panics and reboots:
+CVE-2022-0563
 
- Kernel panic - not syncing: Fatal exception
+  The readline library uses INPUTRC= environment variable to get a path
+  to the library config file. When the library cannot parse the
+  specified file, it prints an error message containing data from the
+  file.
 
-Here are the BUG related kernel configs I have set:
+  Unfortunately, the library does not use secure_getenv() (or a similar
+  concept), or sanitize the config file path to avoid vulnerabilities that
+  could occur if set-user-ID or set-group-ID programs.
 
- CONFIG_BUG=y                          
- CONFIG_GENERIC_BUG=y                  
- CONFIG_GENERIC_BUG_RELATIVE_POINTERS=y
- # CONFIG_INPUT_EVBUG is not set       
- CONFIG_BUG_ON_DATA_CORRUPTION=y       
 
-Not seeing a "CONFIG_PANIC_ON_BUG" equivalent.  What is missing?
+Note, this vulnerability has been reproduced on chfn(8), but this command
+requires enabled CHFN_RESTRICT setting in /etc/login.defs. This setting 
+may be disabled by default.
 
-Unless of course you mean disabling BUG support entirely.  In which
-case, this is strongly advised against in the help section and I'm not
-sure of many development or production kernels that do this.
-
- config BUG
-        bool "BUG() support" if EXPERT
-        default y
-        help
-          Disabling this option eliminates support for BUG and WARN, reducing
-          the size of your kernel image and potentially quietly ignoring
-          numerous fatal conditions. You should only consider disabling this
-          option for embedded systems with no facilities for reporting errors.
-          Just say Y.
-
-I've always been under the impression that a BUG() call should never
-be triggerable from userspace.  However, I'm always happy to be
-incorrect and subsequently reeducated.
-
-In other words ...
-
-Is this a valid issue that you want me to report (in a different way):
-
-> Start again, write a good bug report in a new thread.
-
-Or is this expected behaviour and therefore not a concern:
-
-> > > The BUG report came from page_buffers failing to find any buffer heads
-> > > attached to the page.
-> > 
-> > > Yeah, don't care.
 
 -- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
