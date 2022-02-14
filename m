@@ -2,194 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E954B5E0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 00:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87BE84B5E3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 00:28:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbiBNXJY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 18:09:24 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48810 "EHLO
+        id S232139AbiBNX2e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 18:28:34 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbiBNXJY (ORCPT
+        with ESMTP id S232136AbiBNX2d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 18:09:24 -0500
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749651AE714
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 15:09:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UnHf3WNIZL9Dg9c8fwFJ3xQYSLTDA761dohNvxK4AmXYljsJuSKa0v+Cp3RRdV9VzXWLcxSGHSXyVee9vO7sVNu7FUccksnE/ZR6SjpvjqNWtpxcET1cNqotObmwy7chXRVEEI/79PpdhSWD5DxDfiMVi4pqIxnjjSLRp3jVsQBKvBFricvp0qEMq1WOF8VdNuhGUO6IGhRVpQjFVZ8CmpD0Rnz6j8dWFBi36bkm2PmVlf3X+UDj5WOmqzLm3COqTVfjpKjrNtv95+oTKaPUtrshve81U0AyhxMARzt5KIYJSRVZrroinafKjKBZt4roF5qePctRviIVo4qD+Jj6tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gHttrzvdOOkeUO0lKNUrFkOTeL6ev1SMvPBSUGlNN2Y=;
- b=ddhaBb6QBuBoIyIUFW1myNSNIrSGWTzL9v1vEmpAZhP4ArAk1NAmvXm0JNztPHsxmmOS/w1dT0jITnCR5eW27qOlApszOzqmc5hjNCNwIWtxOLNYPGHbjBDXjNj0Jq50JoWMGCFHm28G3XEqI6gzlh+tOKPwaVcPOFrNDtFcOQDQ8Z8DIoW44lG7KWFtIQEpbMvzxyiM3rdYym6jAdppvyT5ESflbKwcFvcdYya8gYSGXjm+O9YkrYmX5yLv2OuNz/STieVEi99evl9cYnhV/Wfk+nt0I3kkyrQY5nAv1hjlydvULvhuZTr+xuW/dT2zYsaCrBl7vz7aM1i6njCaCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gHttrzvdOOkeUO0lKNUrFkOTeL6ev1SMvPBSUGlNN2Y=;
- b=cfLB1I6RsIpCC3OTjfCA7cfhpULPtG/+3sFoykIM79j7pu9rjlaCw2FZyuMq2oF+u1ykFQNbFJtiKjQAQ3I8hQ5WYRk5tQeaQ7mHIPJULnyRTlzL1yNrmmxzBwxXp2iY1k87vIO+UM4vb5Wv8PugGdVTWPvhF+nGftSgxbuZeFLX0zdEXPaJA07Q96ItEcg9F/iT58RkFzdu0nJtaysundpDams7oTsxGgTaDo5cVpHLmQkV/ERtHVpHbeNHJWwHHi9ChA8yMrGXjgIQksftXkNTgceNeLY4yFiGkxbxzvpmsF2+rGNHRQ+l4vDSHbT6Fxge4WYk/hTAGnoUyZaMnA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by SN1PR12MB2574.namprd12.prod.outlook.com (2603:10b6:802:26::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.17; Mon, 14 Feb
- 2022 23:09:13 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::498:6469:148a:49c7]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::498:6469:148a:49c7%5]) with mapi id 15.20.4975.014; Mon, 14 Feb 2022
- 23:09:13 +0000
-Message-ID: <f711b39b-aea9-b514-1483-76fb128a2319@nvidia.com>
-Date:   Mon, 14 Feb 2022 15:09:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 02/10] mm/truncate: Inline invalidate_complete_page() into
- its one caller
-Content-Language: en-US
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20220214200017.3150590-1-willy@infradead.org>
- <20220214200017.3150590-3-willy@infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20220214200017.3150590-3-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0232.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::27) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+        Mon, 14 Feb 2022 18:28:33 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE21013C9F3;
+        Mon, 14 Feb 2022 15:28:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1644881304; x=1676417304;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W5UIWR8IMeyiFdF3gjE6OW8Sj3dciI4kypY/RklK8Aw=;
+  b=eu9y2CXkIQpD+I1WI4cmR9QQ3dOu4o+6AGRpt1egt8Aj3WvW+NW9Cr8L
+   tHvxbKxall0TRKbZCr9QTeQeaXyXJnBYsRarlhRgqWbE09ssgLFHtRoui
+   +ZTktBt9XiMxsYhEcpsjcQz48L7ho40J7bDVCBY+LmqbPMJu49OMPNWy4
+   63w+Od5ELSjiBUqHMnfKmxBjyFbajH39TZryx7nYk5Pr19raQR3RK+sQL
+   qwklrM+KwERgF3vzOcOWRvUwZEs26tW0/ju1OcSQzzA6WOKmlTw5nxb6T
+   wpOB8wXBS7GfbzN/UHLW0QkVYwAR/CNOZ80RiIFrHge8JvKpI7BygwI+o
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="247801910"
+X-IronPort-AV: E=Sophos;i="5.88,368,1635231600"; 
+   d="scan'208";a="247801910"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 15:28:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,368,1635231600"; 
+   d="scan'208";a="603507168"
+Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 14 Feb 2022 15:28:22 -0800
+Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nJklZ-00091z-Tr; Mon, 14 Feb 2022 23:28:21 +0000
+Date:   Tue, 15 Feb 2022 07:27:25 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-team@fb.com
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, shr@fb.com
+Subject: Re: [PATCH v1 05/14] fs: split off __alloc_page_buffers function
+Message-ID: <202202150743.R5ymlf5z-lkp@intel.com>
+References: <20220214174403.4147994-6-shr@fb.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 06c08c00-d9ac-4dbe-a126-08d9f00f0421
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2574:EE_
-X-Microsoft-Antispam-PRVS: <SN1PR12MB2574390912693E29B4313ACAA8339@SN1PR12MB2574.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zTCp+akPTIhjmFyG3l9D6F3bAUlfnmyU4ggRR/wHEuq3oPmJRGjvB7DVzeR0ijCqeIv7Oh86C/MqzId7lnkH911JR4GqTxxw3PCjWKRD11k2apJ0uCvvXm9DrCWJoRG8crQxQbM3LThi8ZWHOKA9XiIA/2kDohAL079uQgcfGErDcEbf/3s2fR9ae1EYPdm0sBptpITDpm7kRotwUEMcXBI7Gh+YGVAmQpPomGRxaBPDJhx0tQFDN127uEV5yZoWbmeQnEgq7FvbS3B10Z6ChpAkJqVSvWdd4fZElus78uKGh4DFBzgBLVTEUPg4YuqeG5xoJ3LJ/K65AeHHpy5f/TrSGMugzgbmv+DeUscc0M79rwzgbY55Mi+ExFVGZWkuNIRy0vA0GaSC34EVPRo6gFRHvaI9hq8keHPIsx4cvSZgN7Uninthq2Vp9Sn3nNd5C6U0x53FQ6qj5YMdjwlpc/OKDscI/tw4wZ5FMkLbTKNXc0KT7IgcsVPwQ5a7FhwGZoAj1ighX/++3IKbdcN3tUwsqeKPTv3sPOm8TKiT3G8kSTMZA43rNKIqdi0nk4OBm4xdSsikS6hCZkbrWxRaO+Lor2yIUxrI8q+DlkzYMWFP/aZElzPCU8iXwEtufNzrQPjzS1tc/aBm94JkTCU4JNcpM37IFTfOdQXOfDoXNVUaO9OqBoBPMgJb+t1X8jq6yahOe169vq+cp10rIZzF0TAgrlPiSCxGsi5ZOhXo6h8TyJy4nWHY5ybzHjhq6bfj
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(31686004)(31696002)(6506007)(6666004)(38100700002)(8936002)(36756003)(86362001)(2616005)(83380400001)(6512007)(8676002)(26005)(5660300002)(2906002)(508600001)(6486002)(53546011)(186003)(316002)(66556008)(66946007)(66476007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K2R3ekpRcGl2aStZRWZKNnZiTk1GaFJsbFBNRE5PSG1oM0t3eWVhWHdaOXRy?=
- =?utf-8?B?RjRYc00xUytmQndyeHlLb0ZIb3RSaXdIeGJoWmx0RWR4SXdEU3VlV0dXNkFD?=
- =?utf-8?B?b2JueURSaFYyMEJKYlJIbC9CNTd2Q0tJWUErdGs1anQyakYyZE1wcWtTc1JM?=
- =?utf-8?B?d1hKTkJlT1ZtWnh3SnE4Q2o5Uk9LT3BjRFI4djRnWWJDVDhmN0VEQjVUSUoy?=
- =?utf-8?B?L2NRRHpNV05DRkJBWUh3bkdrY3N0VGtPRWxsYXBLeXN4bEJlVWszNnBJZ2xI?=
- =?utf-8?B?NkV6MVFCUVB0SkdZcEtYcC9PekNYeU5sc1JFVUpTcTZYdnluWVZzZjd0QnFp?=
- =?utf-8?B?RDVBVzZ2OTR5K3duMEV2enVocWpYajBiTHhlNkRJdjY5clpBZ0xsSWJKYW9D?=
- =?utf-8?B?bDRuYjdXRXdlRHQ0VytBQllTekgyOEhhVUVsMEdWQm40cVVmK3l0Q05CYTI2?=
- =?utf-8?B?UVVCMFpmNDl3VlJBU1NYWTZvWUxldzM1RWNJYjVWVzQ0bzZjcjFTKzFHRDRV?=
- =?utf-8?B?Rng1d0VHejZqU2tOMHFJSFVoYWMzSWN4UFFJUzdPdStFbFZFMFhZQTltbTlT?=
- =?utf-8?B?ZXZjekROTVljMWpua21SYXR2NnUwQnVtaDZHRjFoY1RvT0lCL3gyQzcyZkYz?=
- =?utf-8?B?b2pvbkdaRktuM201MnNRVnF2WXNpbDYvbno4ajVOcjFPaXgzT2lKU2c4c0Vs?=
- =?utf-8?B?MER6WitFOS9wUGZJSEVkQy9wTHFDL0FReWJoNS8zbm9oS1phNjNqTVo0cDhj?=
- =?utf-8?B?Tmo0TUtsK1YrRWhBMnRGU0hSN05qVHRjSVZPUC8rOGx2YTFGYmpFbEt6RWlX?=
- =?utf-8?B?SlE3TXUwWWxBd21DUXk3RFFVL2UvZmh2T3hIM25SQm90ektPb01TSU9GYnNz?=
- =?utf-8?B?NTFUUzA3Vmlvbmh0TzlMS3ROamhtTC9FTXExeGFRRS9YTUQzSWFYQ3B5cUxK?=
- =?utf-8?B?dDJHcG1UcklMb1MrS3U1NDNjZ3BOaERqYWYzYUdnMk1IQmhRSldaaUd6RnU4?=
- =?utf-8?B?LzM4Q1hEbTNzMUxORXpBYkJPdHpxYmQvUUY1U3JEZFZPZktnZlFkcnJrNGkw?=
- =?utf-8?B?Z2o1V1RNclZDUS9kbUNoczdROGQyWGU5M2FsOFZycGZHRVN6UC8xQnNLREJT?=
- =?utf-8?B?cThONEU0Sk9TRTVPMzJWOGI3TGs3RndBc2U1WWZyeGRyMUpjSmJIRWd5RHI5?=
- =?utf-8?B?eVkySEhISGNGakNTZDF0eFB6S0x4ZVl5QzhPMS9YNTRrRGY5MVY3R2VOUms2?=
- =?utf-8?B?aGhBK0JlOWdxdW4zNjVHZTQ1TTIvWTBzVk9nK01pQkRkNmZWbDJXV09zbnlY?=
- =?utf-8?B?V2JGWEJISG1tMS84ZndPTW1tc1pLWUdjSVJ4R2VLaDJ1cy83bTVtYXp0dWxo?=
- =?utf-8?B?Z00yWkR4NTJiRmZGODFydmszRzd3VGF0ZGdHUm12TFVjcE11M0xqT29YSDV0?=
- =?utf-8?B?cFVrbVBCcVpseTg2V2xuRFdHcFBIQkxKeEdHU3FQMGJ5SkQwcXBLUDU5Q214?=
- =?utf-8?B?ZmRtVWJ1Z2VkdjAvcksxUmhKMmVwWktwQysxZDNMeElEb1d5S00rem5hc1ZM?=
- =?utf-8?B?cWxVRTQwZ2dMc1VncHhIMG9mYXpvN0RyNnFVaHhPVS9LZ01TRnVVZ1QxMGUz?=
- =?utf-8?B?dGFDR2xQUlYxOHFkNzhiaEFFZlVUbysxRG1yRUlXVVQrOHhGVXBXQ3FBK0lu?=
- =?utf-8?B?Yy80UkI0Si9STllpKzBzd1FnQVBiQWgrUk5BSjlrNTNGVXZNWG94TWtBUnUz?=
- =?utf-8?B?ZGhGWUhoVFEzcUdKa0IyWUl4WHBYWGtmckNRdzEyeWdWUUpHby94alFhTUtr?=
- =?utf-8?B?a1EvTFdKQnQ1RDJacEN4M1dHenlHY3A1UzZGeFd3R3AvV0g3RyswbS9Ba1JY?=
- =?utf-8?B?cCtacnhmZ01zSkFEVXRmSVNOUGQwRDN1WURhd3N0TytCTWVZcDVwWERTYWwx?=
- =?utf-8?B?cmlEMjlRb3Z5YjBqQ2sybiszVEJ0SEg3U0RScFZuTiswZmk3T2RrVnhRRkhX?=
- =?utf-8?B?TFdpQ2l0Qk1zbVVnS05oSnZxMHBOekJHRmY0ZURCZjErT2wvN3lIbHZzSTg1?=
- =?utf-8?B?K2tyR0R1c2d0RUFERTRPMWY5N1NwVVVoeW5vK2c0Z3kyN2ZGZGw3eHRXY0hq?=
- =?utf-8?B?Y29Ib1VsUFRiWlhSeW5aK0JPek9pWnFjQW5NS2JtUVpPNzdWaTBTWGxLcGty?=
- =?utf-8?Q?8BV9OJUf4yy/FDfmU+jF5uU=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06c08c00-d9ac-4dbe-a126-08d9f00f0421
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2022 23:09:13.6780
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cb7YfNv250cGZ6u2r22YbMsWYEieeej2qzZgp/k9b67I+dzJjpA5rd4CZEE0Hpg2eHGRd+dr9EVR8FliETXLXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2574
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220214174403.4147994-6-shr@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/14/22 12:00, Matthew Wilcox (Oracle) wrote:
-> invalidate_inode_page() is the only caller of invalidate_complete_page()
-> and inlining it reveals that the first check is unnecessary (because we
-> hold the page locked, and we just retrieved the mapping from the page).
+Hi Stefan,
 
-I just noticed this yesterday, when reviewing Rik's page poisoning fix.
-I had a patch for it squirreled away, but I missed the point about
-removing that extraneous mapping check. Glad you spotted it.
+Thank you for the patch! Perhaps something to improve:
 
-...
-> @@ -309,7 +288,10 @@ int invalidate_inode_page(struct page *page)
+[auto build test WARNING on f1baf68e1383f6ed93eb9cff2866d46562607a43]
 
-It would be nice to retain some of the original comments. May I suggest
-this (it has an additional paragraph) for an updated version of comments
-above invalidate_inode_page():
+url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
+base:   f1baf68e1383f6ed93eb9cff2866d46562607a43
+config: arm-s5pv210_defconfig (https://download.01.org/0day-ci/archive/20220215/202202150743.R5ymlf5z-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project ea071884b0cc7210b3cc5fe858f0e892a779a23b)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm cross compiling tool for clang build
+        # apt-get install binutils-arm-linux-gnueabi
+        # https://github.com/0day-ci/linux/commit/e8b24c1ab111c127cbe1daaac3b607c626fb03a8
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
+        git checkout e8b24c1ab111c127cbe1daaac3b607c626fb03a8
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
 
-/*
-  * Safely invalidate one page from its pagecache mapping.
-  * It only drops clean, unused pages. The page must be locked.
-  *
-  * This function can be called at any time, and is not supposed to throw away
-  * dirty pages.  But pages can be marked dirty at any time too, so use
-  * remove_mapping(), which safely discards clean, unused pages.
-  *
-  * Returns 1 if the page is successfully invalidated, otherwise 0.
-  */
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> fs/buffer.c:805:21: warning: no previous prototype for function '__alloc_page_buffers' [-Wmissing-prototypes]
+   struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
+                       ^
+   fs/buffer.c:805:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
+   ^
+   static 
+   1 warning generated.
 
 
-Also, as long as you're there, a newline after the mapping declaration
-would bring this routine into compliance with that convention.
+vim +/__alloc_page_buffers +805 fs/buffer.c
 
-hmmm, now I wonder why this isn't a boolean function. And I think the
-reason is that it's quite old.
+   804	
+ > 805	struct buffer_head *__alloc_page_buffers(struct page *page, unsigned long size,
+   806			gfp_t gfp)
+   807	{
+   808		struct buffer_head *bh, *head;
+   809		long offset;
+   810		struct mem_cgroup *memcg, *old_memcg;
+   811	
+   812		/* The page lock pins the memcg */
+   813		memcg = page_memcg(page);
+   814		old_memcg = set_active_memcg(memcg);
+   815	
+   816		head = NULL;
+   817		offset = PAGE_SIZE;
+   818		while ((offset -= size) >= 0) {
+   819			bh = alloc_buffer_head(gfp);
+   820			if (!bh)
+   821				goto no_grow;
+   822	
+   823			bh->b_this_page = head;
+   824			bh->b_blocknr = -1;
+   825			head = bh;
+   826	
+   827			bh->b_size = size;
+   828	
+   829			/* Link the buffer to its page */
+   830			set_bh_page(bh, page, offset);
+   831		}
+   832	out:
+   833		set_active_memcg(old_memcg);
+   834		return head;
+   835	/*
+   836	 * In case anything failed, we just free everything we got.
+   837	 */
+   838	no_grow:
+   839		if (head) {
+   840			do {
+   841				bh = head;
+   842				head = head->b_this_page;
+   843				free_buffer_head(bh);
+   844			} while (head);
+   845		}
+   846	
+   847		goto out;
+   848	}
+   849	
 
-Either way, looks good:
-
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
->   		return 0;
->   	if (page_mapped(page))
->   		return 0;
-> -	return invalidate_complete_page(mapping, page);
-> +	if (page_has_private(page) && !try_to_release_page(page, 0))
-> +		return 0;
-> +
-> +	return remove_mapping(mapping, page);
->   }
->   
->   /**
-> @@ -584,7 +566,7 @@ void invalidate_mapping_pagevec(struct address_space *mapping,
->   }
->   
->   /*
-> - * This is like invalidate_complete_page(), except it ignores the page's
-> + * This is like invalidate_inode_page(), except it ignores the page's
->    * refcount.  We do this because invalidate_inode_pages2() needs stronger
->    * invalidation guarantees, and cannot afford to leave pages behind because
->    * shrink_page_list() has a temp ref on them, or because they're transiently
-
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
