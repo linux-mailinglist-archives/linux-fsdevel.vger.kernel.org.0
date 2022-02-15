@@ -2,44 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC294B6426
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 08:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E9E54B6439
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 08:21:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232766AbiBOHTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Feb 2022 02:19:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33836 "EHLO
+        id S233270AbiBOHVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Feb 2022 02:21:45 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230419AbiBOHTc (ORCPT
+        with ESMTP id S229585AbiBOHVn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Feb 2022 02:19:32 -0500
+        Tue, 15 Feb 2022 02:21:43 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B79EBDE4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 23:19:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4027626100
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 23:21:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vsvPeaqbWAUL4QGK7CM5RVivmBescAdGUwdMQ3Q2U6c=; b=TS0uS0b1yENg5Dbq7pS942lnrK
-        bpjQjMtVZZEuPtj06ePwsMUTIp6BDXhIevsW+5wrjw/ANDGKtitW99nQYE5OHzhMB1zKjwvo9TjEJ
-        RmAb6S5a5rrBZxZdQw8aRXhXvGrYQTCB1N9u4NhNDZs5otcfFQe+RHT36ANT43QOwiYBHQJ9J6XKN
-        kGPQnfXFNm+RFBIcArnXxQVSLlJ/TsHM8h1unfKnwgBjVzoTxLK2WEOoD67+Sii4oaLTQz0q0KAKR
-        LRVHfIpeqmSglPGqkAbrdRnpcXsdTQ9J0ReQVYVmAzkE4vQyVO7zXlJarA8R9ZlQLvv+9wOcvAjH0
-        HUzWKZNA==;
+        bh=5GBqs2dxH93tUrV8iWp6FEaXTBcRZoxMtE6RrsNXYvU=; b=xhPyqGFL1zQdLcs4OmwcO8ddDg
+        IrBWX3noQEC1ENWI6mU4ny7oIUC0m8ATneVMK4cnCsEiSnGcQb8nfTdu3o2TT1p50nR55XXu9PwAW
+        gEJwozRl+MHhZ5vcVYu0YZpHgbvwNBVZLS+/mcc0vnUAgx48Ad4hpTZjwEKu9x831hwR+FGbFKKR9
+        fZCBMkQqa89y2os1ttrU22anZDFx278Ga/+8TNiFWE2/nImzvRffATy6YFc7XoKgohkNfspNRclY2
+        U8jb8l+D48Zidj7+kPWecquLk/gCUapMyqWTeGrDSOlcxTUTV1meUBOHEGi/NR10MeZiO7GDsjnlT
+        CoSH90zA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nJs7P-0017MR-0p; Tue, 15 Feb 2022 07:19:23 +0000
-Date:   Mon, 14 Feb 2022 23:19:22 -0800
+        id 1nJs9U-0018cY-Tm; Tue, 15 Feb 2022 07:21:32 +0000
+Date:   Mon, 14 Feb 2022 23:21:32 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 04/10] mm/truncate: Replace page_mapped() call in
- invalidate_inode_page()
-Message-ID: <YgtT+hpds6ViIeEE@infradead.org>
+Subject: Re: [PATCH 05/10] mm: Convert remove_mapping() to take a folio
+Message-ID: <YgtUfL0jf1aPECqF@infradead.org>
 References: <20220214200017.3150590-1-willy@infradead.org>
- <20220214200017.3150590-5-willy@infradead.org>
+ <20220214200017.3150590-6-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220214200017.3150590-5-willy@infradead.org>
+In-Reply-To: <20220214200017.3150590-6-willy@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -51,12 +50,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 14, 2022 at 08:00:11PM +0000, Matthew Wilcox (Oracle) wrote:
-> folio_mapped() is expensive because it has to check each page's mapcount
-> field.  A cheaper check is whether there are any extra references to
-> the page, other than the one we own and the ones held by the page cache.
-> The call to remove_mapping() will fail in any case if it cannot freeze
-> the refcount, but failing here avoids cycling the i_pages spinlock.
+On Mon, Feb 14, 2022 at 08:00:12PM +0000, Matthew Wilcox (Oracle) wrote:
+> Add kernel-doc and return the number of pages removed in order to
+> get the statistics right in __invalidate_mapping_pages().
 
-I wonder if something like this should also be in a comment near
-the check in the code.
+Looks good,
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
