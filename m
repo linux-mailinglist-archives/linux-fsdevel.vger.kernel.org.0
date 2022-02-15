@@ -2,99 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A72CB4B6127
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 03:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 637F14B6154
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 04:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232388AbiBOCmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 21:42:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48706 "EHLO
+        id S233325AbiBODFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 22:05:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233669AbiBOCmk (ORCPT
+        with ESMTP id S229734AbiBODFi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 21:42:40 -0500
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82104111DC3;
-        Mon, 14 Feb 2022 18:42:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644892951; x=1676428951;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ymUxp0XdwB1tSymGwsMVGCDGKJ7qTLE+FJH01P7W150=;
-  b=KJAv0J+KAUd1KZ0201BS1bvTymtZYvxxnMsY1LsyYb0DFSMi/ukfAPZa
-   G8OsHUkEhR/IT4trBxjx2wMluZ37cC4KlgnsOy42Ewqo6Z/mCs1MB7a2Q
-   WvNEFyl4T5UR3vHxrU/QYScXuGs4cyRDlyIXgnzunG7InLvl81t+TZgIU
-   d+3ZBmxhTUQtRnVLCVH6gYga7BZpAnkDBOvddFrQnSK42He0xX2nUpGgE
-   Gr1JUzSWmjanGI0KNpZ5N9nMnkrrjq1nPCL2TntsWVCfu6ssaPbhOJrzI
-   G6hwzsKVsO4CO7ZtDFEFI13id2eiI6i9oWBqRq1Xhffhni0Kvl/oOSTMf
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="313507870"
-X-IronPort-AV: E=Sophos;i="5.88,369,1635231600"; 
-   d="scan'208";a="313507870"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 18:42:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,369,1635231600"; 
-   d="scan'208";a="775564613"
-Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Feb 2022 18:42:29 -0800
-Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nJnnQ-0009C6-P1; Tue, 15 Feb 2022 02:42:28 +0000
-Date:   Tue, 15 Feb 2022 10:41:47 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     kbuild-all@lists.01.org, shr@fb.com
-Subject: Re: [PATCH v1 05/14] fs: split off __alloc_page_buffers function
-Message-ID: <202202151030.Z3rVrN17-lkp@intel.com>
-References: <20220214174403.4147994-6-shr@fb.com>
+        Mon, 14 Feb 2022 22:05:38 -0500
+X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Feb 2022 19:05:27 PST
+Received: from qq.com (smtpbg409.qq.com [113.96.223.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B59BDE62;
+        Mon, 14 Feb 2022 19:05:27 -0800 (PST)
+X-QQ-mid: bizesmtp9t1644894208tiionbskv
+Received: from localhost.localdomain (unknown [58.240.82.166])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Tue, 15 Feb 2022 11:03:00 +0800 (CST)
+X-QQ-SSF: 0140000000000080F000B00A0000000
+X-QQ-FEAT: jaWQEnoziVEUFUcA33dfgmTiwLw8MbNPBILov2MQ4JKYsJ6wIWQzKRMbg8xV6
+        eJRtvw8z5vIpSwcFqa0JUw141zSmlzCFz5eX/Cxo6LP9/lCBhB0G1rOkYicOv2enldJj92W
+        f0Utccb31SsGTS5fhIkPPBT8u/6JHM/63xQURrKzdBe0HKd+s1Ohe5dezrJGyGjSIVQjxAb
+        w/IN7YF7mt3eLTa1WJSKxOOWHDl3ZpyHsHJECnvGMS9NFmVYlvuHx+s9hoNpvwXmaa2ppi5
+        I22i0C+VjPBxRTVP2Vn3SlBMfHpKZuO6wYzpaJ14mIrMXaW1YKn2bfy8qsWUTbflQtVZ68q
+        XbYqjZLRTO55uRCYwI=
+X-QQ-GoodBg: 2
+From:   sujiaxun <sujiaxun@uniontech.com>
+To:     mcgrof@kernel.org
+Cc:     keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        sujiaxun <sujiaxun@uniontech.com>
+Subject: [PATCH] mm: move oom_kill sysctls to their own file
+Date:   Tue, 15 Feb 2022 11:02:57 +0800
+Message-Id: <20220215030257.11150-1-sujiaxun@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220214174403.4147994-6-shr@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
+X-QQ-Bgrelay: 1
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stefan,
+kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
+dishes, this makes it very difficult to maintain.
 
-Thank you for the patch! Perhaps something to improve:
+To help with this maintenance let's start by moving sysctls to places
+where they actually belong.  The proc sysctl maintainers do not want to
+know what sysctl knobs you wish to add for your own piece of code, we just
+care about the core logic.
 
-[auto build test WARNING on f1baf68e1383f6ed93eb9cff2866d46562607a43]
+So move the oom_kill sysctls to its own file.
 
-url:    https://github.com/0day-ci/linux/commits/Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
-base:   f1baf68e1383f6ed93eb9cff2866d46562607a43
-config: i386-randconfig-s002-20220214 (https://download.01.org/0day-ci/archive/20220215/202202151030.Z3rVrN17-lkp@intel.com/config)
-compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/0day-ci/linux/commit/e8b24c1ab111c127cbe1daaac3b607c626fb03a8
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Stefan-Roesch/Support-sync-buffered-writes-for-io-uring/20220215-014908
-        git checkout e8b24c1ab111c127cbe1daaac3b607c626fb03a8
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=i386 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
->> fs/buffer.c:805:20: sparse: sparse: symbol '__alloc_page_buffers' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: sujiaxun <sujiaxun@uniontech.com>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ include/linux/oom.h |  4 ----
+ kernel/sysctl.c     | 23 -----------------------
+ mm/oom_kill.c       | 37 ++++++++++++++++++++++++++++++++++---
+ 3 files changed, 34 insertions(+), 30 deletions(-)
+
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 2db9a1432511..02d1e7bbd8cd 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -123,8 +123,4 @@ extern void oom_killer_enable(void);
+
+ extern struct task_struct *find_lock_task_mm(struct task_struct *p);
+
+-/* sysctls */
+-extern int sysctl_oom_dump_tasks;
+-extern int sysctl_oom_kill_allocating_task;
+-extern int sysctl_panic_on_oom;
+ #endif /* _INCLUDE_LINUX_OOM_H */
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 788b9a34d5ab..40d822fbb6d5 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2352,29 +2352,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_TWO,
+ 	},
+-	{
+-		.procname	= "panic_on_oom",
+-		.data		= &sysctl_panic_on_oom,
+-		.maxlen		= sizeof(sysctl_panic_on_oom),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_TWO,
+-	},
+-	{
+-		.procname	= "oom_kill_allocating_task",
+-		.data		= &sysctl_oom_kill_allocating_task,
+-		.maxlen		= sizeof(sysctl_oom_kill_allocating_task),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+-	{
+-		.procname	= "oom_dump_tasks",
+-		.data		= &sysctl_oom_dump_tasks,
+-		.maxlen		= sizeof(sysctl_oom_dump_tasks),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+ 	{
+ 		.procname	= "overcommit_ratio",
+ 		.data		= &sysctl_overcommit_ratio,
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 6b875acabd1e..c720c0710911 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -52,9 +52,35 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/oom.h>
+
+-int sysctl_panic_on_oom;
+-int sysctl_oom_kill_allocating_task;
+-int sysctl_oom_dump_tasks = 1;
++static int sysctl_panic_on_oom;
++static int sysctl_oom_kill_allocating_task;
++static int sysctl_oom_dump_tasks = 1;
++
++static struct ctl_table vm_oom_kill_table[] = {
++	{
++		.procname	= "panic_on_oom",
++		.data		= &sysctl_panic_on_oom,
++		.maxlen		= sizeof(sysctl_panic_on_oom),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_TWO,
++	},
++	{
++		.procname	= "oom_kill_allocating_task",
++		.data		= &sysctl_oom_kill_allocating_task,
++		.maxlen		= sizeof(sysctl_oom_kill_allocating_task),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++	{
++		.procname	= "oom_dump_tasks",
++		.data		= &sysctl_oom_dump_tasks,
++		.maxlen		= sizeof(sysctl_oom_dump_tasks),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	}
++};
+
+ /*
+  * Serializes oom killer invocations (out_of_memory()) from all contexts to
+@@ -680,6 +706,11 @@ static void wake_oom_reaper(struct task_struct *tsk)
+ static int __init oom_init(void)
+ {
+ 	oom_reaper_th = kthread_run(oom_reaper, NULL, "oom_reaper");
++
++	#ifdef CONFIG_SYSCTL
++		register_sysctl_init("vm", vm_oom_kill_table);
++	#endif
++
+ 	return 0;
+ }
+ subsys_initcall(oom_init)
+--
+2.20.1
+
+
+
