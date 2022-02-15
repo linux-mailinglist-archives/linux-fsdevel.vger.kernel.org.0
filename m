@@ -2,49 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 637F14B6154
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 04:05:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87C894B61E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 04:59:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233325AbiBODFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Feb 2022 22:05:39 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60286 "EHLO
+        id S232999AbiBOD7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Feb 2022 22:59:23 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbiBODFi (ORCPT
+        with ESMTP id S230088AbiBOD7X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Feb 2022 22:05:38 -0500
-X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Feb 2022 19:05:27 PST
-Received: from qq.com (smtpbg409.qq.com [113.96.223.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B59BDE62;
-        Mon, 14 Feb 2022 19:05:27 -0800 (PST)
-X-QQ-mid: bizesmtp9t1644894208tiionbskv
-Received: from localhost.localdomain (unknown [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Tue, 15 Feb 2022 11:03:00 +0800 (CST)
-X-QQ-SSF: 0140000000000080F000B00A0000000
-X-QQ-FEAT: jaWQEnoziVEUFUcA33dfgmTiwLw8MbNPBILov2MQ4JKYsJ6wIWQzKRMbg8xV6
-        eJRtvw8z5vIpSwcFqa0JUw141zSmlzCFz5eX/Cxo6LP9/lCBhB0G1rOkYicOv2enldJj92W
-        f0Utccb31SsGTS5fhIkPPBT8u/6JHM/63xQURrKzdBe0HKd+s1Ohe5dezrJGyGjSIVQjxAb
-        w/IN7YF7mt3eLTa1WJSKxOOWHDl3ZpyHsHJECnvGMS9NFmVYlvuHx+s9hoNpvwXmaa2ppi5
-        I22i0C+VjPBxRTVP2Vn3SlBMfHpKZuO6wYzpaJ14mIrMXaW1YKn2bfy8qsWUTbflQtVZ68q
-        XbYqjZLRTO55uRCYwI=
-X-QQ-GoodBg: 2
-From:   sujiaxun <sujiaxun@uniontech.com>
-To:     mcgrof@kernel.org
-Cc:     keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        sujiaxun <sujiaxun@uniontech.com>
-Subject: [PATCH] mm: move oom_kill sysctls to their own file
-Date:   Tue, 15 Feb 2022 11:02:57 +0800
-Message-Id: <20220215030257.11150-1-sujiaxun@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 14 Feb 2022 22:59:23 -0500
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0963137009;
+        Mon, 14 Feb 2022 19:59:12 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V4WYNGT_1644897549;
+Received: from 30.225.24.82(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0V4WYNGT_1644897549)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 15 Feb 2022 11:59:10 +0800
+Message-ID: <fe10885d-78b7-a90a-01a0-60ac58d64357@linux.alibaba.com>
+Date:   Tue, 15 Feb 2022 11:59:09 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: [PATCH v1 00/14] Support sync buffered writes for io-uring
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-team@fb.com
+References: <20220214174403.4147994-1-shr@fb.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+In-Reply-To: <20220214174403.4147994-1-shr@fb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
-X-QQ-Bgrelay: 1
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,127 +43,154 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
-dishes, this makes it very difficult to maintain.
-
-To help with this maintenance let's start by moving sysctls to places
-where they actually belong.  The proc sysctl maintainers do not want to
-know what sysctl knobs you wish to add for your own piece of code, we just
-care about the core logic.
-
-So move the oom_kill sysctls to its own file.
-
-Signed-off-by: sujiaxun <sujiaxun@uniontech.com>
----
- include/linux/oom.h |  4 ----
- kernel/sysctl.c     | 23 -----------------------
- mm/oom_kill.c       | 37 ++++++++++++++++++++++++++++++++++---
- 3 files changed, 34 insertions(+), 30 deletions(-)
-
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index 2db9a1432511..02d1e7bbd8cd 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -123,8 +123,4 @@ extern void oom_killer_enable(void);
-
- extern struct task_struct *find_lock_task_mm(struct task_struct *p);
-
--/* sysctls */
--extern int sysctl_oom_dump_tasks;
--extern int sysctl_oom_kill_allocating_task;
--extern int sysctl_panic_on_oom;
- #endif /* _INCLUDE_LINUX_OOM_H */
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 788b9a34d5ab..40d822fbb6d5 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2352,29 +2352,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_TWO,
- 	},
--	{
--		.procname	= "panic_on_oom",
--		.data		= &sysctl_panic_on_oom,
--		.maxlen		= sizeof(sysctl_panic_on_oom),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_TWO,
--	},
--	{
--		.procname	= "oom_kill_allocating_task",
--		.data		= &sysctl_oom_kill_allocating_task,
--		.maxlen		= sizeof(sysctl_oom_kill_allocating_task),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "oom_dump_tasks",
--		.data		= &sysctl_oom_dump_tasks,
--		.maxlen		= sizeof(sysctl_oom_dump_tasks),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
- 	{
- 		.procname	= "overcommit_ratio",
- 		.data		= &sysctl_overcommit_ratio,
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 6b875acabd1e..c720c0710911 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -52,9 +52,35 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/oom.h>
-
--int sysctl_panic_on_oom;
--int sysctl_oom_kill_allocating_task;
--int sysctl_oom_dump_tasks = 1;
-+static int sysctl_panic_on_oom;
-+static int sysctl_oom_kill_allocating_task;
-+static int sysctl_oom_dump_tasks = 1;
-+
-+static struct ctl_table vm_oom_kill_table[] = {
-+	{
-+		.procname	= "panic_on_oom",
-+		.data		= &sysctl_panic_on_oom,
-+		.maxlen		= sizeof(sysctl_panic_on_oom),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_TWO,
-+	},
-+	{
-+		.procname	= "oom_kill_allocating_task",
-+		.data		= &sysctl_oom_kill_allocating_task,
-+		.maxlen		= sizeof(sysctl_oom_kill_allocating_task),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "oom_dump_tasks",
-+		.data		= &sysctl_oom_dump_tasks,
-+		.maxlen		= sizeof(sysctl_oom_dump_tasks),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	}
-+};
-
- /*
-  * Serializes oom killer invocations (out_of_memory()) from all contexts to
-@@ -680,6 +706,11 @@ static void wake_oom_reaper(struct task_struct *tsk)
- static int __init oom_init(void)
- {
- 	oom_reaper_th = kthread_run(oom_reaper, NULL, "oom_reaper");
-+
-+	#ifdef CONFIG_SYSCTL
-+		register_sysctl_init("vm", vm_oom_kill_table);
-+	#endif
-+
- 	return 0;
- }
- subsys_initcall(oom_init)
---
-2.20.1
-
-
+在 2022/2/15 上午1:43, Stefan Roesch 写道:
+> This patch series adds support for async buffered writes. Currently
+> io-uring only supports buffered writes in the slow path, by processing
+> them in the io workers. With this patch series it is now possible to
+> support buffered writes in the fast path. To be able to use the fast
+> path the required pages must be in the page cache or they can be loaded
+> with noio. Otherwise they still get punted to the slow path.
+> 
+> If a buffered write request requires more than one page, it is possible
+> that only part of the request can use the fast path, the resst will be
+> completed by the io workers.
+> 
+> Support for async buffered writes:
+>    Patch 1: fs: Add flags parameter to __block_write_begin_int
+>      Add a flag parameter to the function __block_write_begin_int
+>      to allow specifying a nowait parameter.
+>      
+>    Patch 2: mm: Introduce do_generic_perform_write
+>      Introduce a new do_generic_perform_write function. The function
+>      is split off from the existing generic_perform_write() function.
+>      It allows to specify an additional flag parameter. This parameter
+>      is used to specify the nowait flag.
+>      
+>    Patch 3: mm: add noio support in filemap_get_pages
+>      This allows to allocate pages with noio, if a page for async
+>      buffered writes is not yet loaded in the page cache.
+>      
+>    Patch 4: mm: Add support for async buffered writes
+>      For async buffered writes allocate pages without blocking on the
+>      allocation.
+> 
+>    Patch 5: fs: split off __alloc_page_buffers function
+>      Split off __alloc_page_buffers() function with new gfp_t parameter.
+> 
+>    Patch 6: fs: split off __create_empty_buffers function
+>      Split off __create_empty_buffers() function with new gfp_t parameter.
+> 
+>    Patch 7: fs: Add aop_flags parameter to create_page_buffers()
+>      Add aop_flags to create_page_buffers() function. Use atomic allocation
+>      for async buffered writes.
+> 
+>    Patch 8: fs: add support for async buffered writes
+>      Return -EAGAIN instead of -ENOMEM for async buffered writes. This
+>      will cause the write request to be processed by an io worker.
+> 
+>    Patch 9: io_uring: add support for async buffered writes
+>      This enables the async buffered writes for block devices in io_uring.
+>      Buffered writes are enabled for blocks that are already in the page
+>      cache or can be acquired with noio.
+> 
+>    Patch 10: io_uring: Add tracepoint for short writes
+> 
+> Support for write throttling of async buffered writes:
+>    Patch 11: sched: add new fields to task_struct
+>      Add two new fields to the task_struct. These fields store the
+>      deadline after which writes are no longer throttled.
+> 
+>    Patch 12: mm: support write throttling for async buffered writes
+>      This changes the balance_dirty_pages function to take an additonal
+>      parameter. When nowait is specified the write throttling code no
+>      longer waits synchronously for the deadline to expire. Instead
+>      it sets the fields in task_struct. Once the deadline expires the
+>      fields are reset.
+>      
+>    Patch 13: io_uring: support write throttling for async buffered writes
+>      Adds support to io_uring for write throttling. When the writes
+>      are throttled, the write requests are added to the pending io list.
+>      Once the write throttling deadline expires, the writes are submitted.
+>      
+> Enable async buffered write support
+>    Patch 14: fs: add flag to support async buffered writes
+>      This sets the flags that enables async buffered writes for block
+>      devices.
+> 
+> 
+> Testing:
+>    This patch has been tested with xfstests and fio.
+> 
+> 
+> Peformance results:
+>    For fio the following results have been obtained with a queue depth of
+>    1 and 4k block size (runtime 600 secs):
+> 
+>                   sequential writes:
+>                   without patch                 with patch
+>    throughput:       329 Mib/s                    1032Mib/s
+>    iops:              82k                          264k
+>    slat (nsec)      2332                          3340
+>    clat (nsec)      9017                            60
+>                     
+>    CPU util%:         37%                          78%
+> 
+> 
+> 
+>                   random writes:
+>                   without patch                 with patch
+>    throughput:       307 Mib/s                    909Mib/s
+>    iops:              76k                         227k
+>    slat (nsec)      2419                         3780
+>    clat (nsec)      9934                           59
+> 
+>    CPU util%:         57%                          88%
+> 
+> For an io depth of 1, the new patch improves throughput by close to 3
+> times and also the latency is considerably reduced. To achieve the same
+> or better performance with the exisiting code an io depth of 4 is required.
+> 
+> Especially for mixed workloads this is a considerable improvement.
+> 
+> 
+> 
+> 
+> Stefan Roesch (14):
+>    fs: Add flags parameter to __block_write_begin_int
+>    mm: Introduce do_generic_perform_write
+>    mm: add noio support in filemap_get_pages
+>    mm: Add support for async buffered writes
+>    fs: split off __alloc_page_buffers function
+>    fs: split off __create_empty_buffers function
+>    fs: Add aop_flags parameter to create_page_buffers()
+>    fs: add support for async buffered writes
+>    io_uring: add support for async buffered writes
+>    io_uring: Add tracepoint for short writes
+>    sched: add new fields to task_struct
+>    mm: support write throttling for async buffered writes
+>    io_uring: support write throttling for async buffered writes
+>    block: enable async buffered writes for block devices.
+> 
+>   block/fops.c                    |   5 +-
+>   fs/buffer.c                     | 103 ++++++++++++++++---------
+>   fs/internal.h                   |   3 +-
+>   fs/io_uring.c                   | 130 +++++++++++++++++++++++++++++---
+>   fs/iomap/buffered-io.c          |   4 +-
+>   fs/read_write.c                 |   3 +-
+>   include/linux/fs.h              |   4 +
+>   include/linux/sched.h           |   3 +
+>   include/linux/writeback.h       |   1 +
+>   include/trace/events/io_uring.h |  25 ++++++
+>   kernel/fork.c                   |   1 +
+>   mm/filemap.c                    |  34 +++++++--
+>   mm/folio-compat.c               |   4 +
+>   mm/page-writeback.c             |  54 +++++++++----
+>   14 files changed, 298 insertions(+), 76 deletions(-)
+> 
+> 
+> base-commit: f1baf68e1383f6ed93eb9cff2866d46562607a43
+> 
+It's a little bit different between buffered read and buffered write,
+there may be block points in detail filesystems due to journal
+operations for the latter.
 
