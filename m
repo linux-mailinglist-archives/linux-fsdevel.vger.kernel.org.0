@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 484904B63BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 07:46:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A944B63C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Feb 2022 07:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234611AbiBOGqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Feb 2022 01:46:12 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54260 "EHLO
+        id S234626AbiBOGvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Feb 2022 01:51:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234610AbiBOGqM (ORCPT
+        with ESMTP id S229938AbiBOGvK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Feb 2022 01:46:12 -0500
-X-Greylist: delayed 1431 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Feb 2022 22:46:02 PST
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F65AC3C33
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 22:46:01 -0800 (PST)
-X-QQ-mid: bizesmtp44t1644907530twnjvw9f
+        Tue, 15 Feb 2022 01:51:10 -0500
+X-Greylist: delayed 305 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Feb 2022 22:51:00 PST
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49AEC13F06
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Feb 2022 22:51:00 -0800 (PST)
+X-QQ-mid: bizesmtp49t1644907828t7oku463
 Received: from localhost.localdomain (unknown [58.240.82.166])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Tue, 15 Feb 2022 14:45:24 +0800 (CST)
+        id ; Tue, 15 Feb 2022 14:50:20 +0800 (CST)
 X-QQ-SSF: 01400000002000B0E000B00A0000000
-X-QQ-FEAT: SAUrQiVpIXGIL5g7/NqIvJwpdoFW7wYZScAUFA/QFcoU1fbTkyDLEpCNrmc1X
-        oO3SrOYY48t7wRrlQzy/yoTv43z3vqOujfSfspKvJMPCSGPfevYoFhjOal9meYjt/3n0KJJ
-        QkPakhaFrzFpwtZcVe5Z6YaeV+yeDleye6dmMFOWyWAhbhkkiM1hrAtXUsjleNkGiqUNr6K
-        VV2vw9Nr69o/6Wldox/s+9nuXbjMYXPKEK72v+cxKGGtesXh6rJtksh7boX7BehAiE6VxTI
-        /hXI33OLbx84faXI3yCrLaWf78JEiezzOHZZROYlxkZKBPi7KzxM79DyGqIlqDBJmQgscUt
-        9Cqxk8cSakiNaw9wJudMm2hYXgQApd+woQaUfoM
+X-QQ-FEAT: jfdGVjI73+QZRc8n97Vk+dmb1OAapcIclMz9KOpJT1KpOf9FJxT2g22wkHgLi
+        VG2PqvpMuMV0fymu2vwBb1of1qz1vCxcfNhlU9y5CMOJnVUrCon4mpd0C5C4jnwonGLlxea
+        j5XfkgoI+QR+qNf3VW21KHMUbdUh+6yEMygmiHYoazR8+i1LzTSKQ+uMPvHrk+dDgam6U8A
+        cXijWspGIGzY5/bAW7WiIpJvHJ/OzaH2BNXoaHqx+/7fscbgSaDiS7tyrDkxa32VCI4KgLt
+        1d6/V9YLAvqx24E/TkNF6WXcUCpUM5nWx1ZwO10OxZ1YqdEqDMqGzjxkJ57mFfqLkabjkkW
+        ZinJfeGo2/KYy6nWVwKJSAEwPhouVhOu92pjPgM
 X-QQ-GoodBg: 2
 From:   tangmeng <tangmeng@uniontech.com>
 To:     tglx@linutronix.de, mcgrof@kernel.org, keescook@chromium.org,
         yzaikin@google.com, john.stultz@linaro.org, sboyd@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH v6] kernel/time: move timer sysctls to its own file
-Date:   Tue, 15 Feb 2022 14:45:22 +0800
-Message-Id: <20220215064522.5905-1-tangmeng@uniontech.com>
+Subject: [PATCH v7] kernel/time: move timer sysctls to its own file
+Date:   Tue, 15 Feb 2022 14:50:19 +0800
+Message-Id: <20220215065019.7520-1-tangmeng@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign2
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign5
 X-QQ-Bgrelay: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
@@ -58,6 +58,9 @@ To help with this maintenance let's start by moving sysctls to places
 where they actually belong.  The proc sysctl maintainers do not want to
 know what sysctl knobs you wish to add for your own piece of code, we
 just care about the core logic.
+
+Now, all filesystem syctls now get reviewed by fs folks. This commit
+follows the commit of fs.
 
 So move the timer_migration sysctls to its own file.
 
