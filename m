@@ -2,104 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A704B7C83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 02:37:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00B014B7C7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 02:37:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237460AbiBPBcv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Feb 2022 20:32:51 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56522 "EHLO
+        id S245495AbiBPBee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Feb 2022 20:34:34 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234468AbiBPBcu (ORCPT
+        with ESMTP id S245490AbiBPBec (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Feb 2022 20:32:50 -0500
-Received: from out199-1.us.a.mail.aliyun.com (out199-1.us.a.mail.aliyun.com [47.90.199.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DD541A3B0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:32:37 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0V4akZcN_1644975153;
-Received: from 30.225.24.51(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V4akZcN_1644975153)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 16 Feb 2022 09:32:34 +0800
-Message-ID: <8343b195-b9d4-0501-d312-6ffdf382ff83@linux.alibaba.com>
-Date:   Wed, 16 Feb 2022 09:32:33 +0800
+        Tue, 15 Feb 2022 20:34:32 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195AEF955C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:34:20 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id v22so96883pgb.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:34:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vvTayVguxhrumT3w+R+Kjfmd3diECndIkorPQyxblp0=;
+        b=NFjoQ+hOdtNnkcduj0LnOAfr0t13qJU0g+H3qDYhxHXNY2kSOBhjJ57id3nggkZ63z
+         bd+0no5Sz1hfOpOM7FqU7/lcj3mw/zA9iIJGXn1/3gABVkhTJwDuVFXiLCiF+AoiAuvP
+         xzHa0AMAlBDyRB3g8rVKOe7JL6peWAms2JmtnTljT+4i1CykaarkkcY2Phufrs+l4f98
+         tIBmQaYCJwnUN4p1EvcyxZr3Y2TIDezPhrxlygMSyqcqJutwde5Wmrbzs8FUsbjeBtAE
+         KAXJkvUlQ4SnUi7Ml0QZWal8mO29LLZbB5qS5ZaYGR1b1d2ZM10qVKD8leaATzhRe6MQ
+         OvXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vvTayVguxhrumT3w+R+Kjfmd3diECndIkorPQyxblp0=;
+        b=wFyRFoDXEZxQ/+i43aLjT+G+xHmuBJF3L02m82YDH9nF1C4fpkEx14o0WfAB8vfeFz
+         H0mqcqNC3eqUn9I4Hl9avev7e7WfPhpophOPVth4b0e+wRhoYzVbURnkgab8mJy7ltbI
+         XcDMnvyLjOoxzMZOWLIuhe52T0anRS4VRb5dyl/LnrVubqr0ElXF9x+tSAhI+k+YG9de
+         qZWkLzRVlFkQ2Ke3bKKKZ9MvKWUjlvAI4THo/5Gp3LS2nuzbVPUI0ilfoozXPIG2LXmW
+         nyi7dOIouDEwFWOlIfToO7s6gAxWsVmvbGDcj6Y3vGCTU+zBR/OxE//pnTqglAVExZtE
+         x0pA==
+X-Gm-Message-State: AOAM5308wRDwXP4+rQIhf2Ko7UDWs1fcukif5n2ZWoP44AMg6yu2pmgq
+        agvcj7jY/kWH0xJHnb95uTSCi7Z7T1OfXmRKjYbGTJhJf17zVg==
+X-Google-Smtp-Source: ABdhPJzAqkHS4nuPDQC4F8eXmkoN7S6evLhsGsn+9OiK2Onw6wqEebsZdEzEmmlrTDiHX9fR4bL6Yj1AYLHUkW1bqes=
+X-Received: by 2002:a05:6a02:283:b0:342:703e:1434 with SMTP id
+ bk3-20020a056a02028300b00342703e1434mr370669pgb.74.1644975259581; Tue, 15 Feb
+ 2022 17:34:19 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.0
-Subject: Re: [PATCH] init: remove unused names parameter of split_fs_names()
-Content-Language: en-US
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, hch@lst.de
-References: <20220215070610.108967-1-jefflexu@linux.alibaba.com>
- <Ygv9qt4CEQ7P8/lD@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <Ygv9qt4CEQ7P8/lD@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com> <20220127124058.1172422-6-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20220127124058.1172422-6-ruansy.fnst@fujitsu.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 15 Feb 2022 17:34:12 -0800
+Message-ID: <CAPcyv4jWuWWWBAEesMorK+LL6GVyqf-=VSChdw6P8txtckC=aw@mail.gmail.com>
+Subject: Re: [PATCH v10 5/9] fsdax: Introduce dax_load_page()
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jan 27, 2022 at 4:41 AM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+>
+> The current dax_lock_page() locks dax entry by obtaining mapping and
+> index in page.  To support 1-to-N RMAP in NVDIMM, we need a new function
+> to lock a specific dax entry
 
-
-On 2/16/22 3:23 AM, Vivek Goyal wrote:
-> On Tue, Feb 15, 2022 at 03:06:10PM +0800, Jeffle Xu wrote:
->> It is a trivial cleanup.
->>
-> 
-> Would it be better to modify split_fs_names() instead and use
-> parameter "names" insted of directly using "root_fs_names".
-
-Yes it can do. But currently split_fs_names() is only called by
-mount_block_root() and mount_nodev_root(), in which names argument is
-always root_fs_names. And split_fs_names() is declared as a static
-function in init/do_mounts.c.
-
-> 
->> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->> ---
->>  init/do_mounts.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/init/do_mounts.c b/init/do_mounts.c
->> index 762b534978d9..15502d4ef249 100644
->> --- a/init/do_mounts.c
->> +++ b/init/do_mounts.c
->> @@ -339,7 +339,7 @@ __setup("rootfstype=", fs_names_setup);
->>  __setup("rootdelay=", root_delay_setup);
->>  
->>  /* This can return zero length strings. Caller should check */
->> -static int __init split_fs_names(char *page, size_t size, char *names)
->> +static int __init split_fs_names(char *page, size_t size)
->>  {
->>  	int count = 1;
->>  	char *p = page;
->> @@ -403,7 +403,7 @@ void __init mount_block_root(char *name, int flags)
->>  	scnprintf(b, BDEVNAME_SIZE, "unknown-block(%u,%u)",
->>  		  MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
->>  	if (root_fs_names)
->> -		num_fs = split_fs_names(fs_names, PAGE_SIZE, root_fs_names);
->> +		num_fs = split_fs_names(fs_names, PAGE_SIZE);
->>  	else
->>  		num_fs = list_bdev_fs_names(fs_names, PAGE_SIZE);
->>  retry:
->> @@ -546,7 +546,7 @@ static int __init mount_nodev_root(void)
->>  	fs_names = (void *)__get_free_page(GFP_KERNEL);
->>  	if (!fs_names)
->>  		return -EINVAL;
->> -	num_fs = split_fs_names(fs_names, PAGE_SIZE, root_fs_names);
->> +	num_fs = split_fs_names(fs_names, PAGE_SIZE);
->>  
->>  	for (i = 0, fstype = fs_names; i < num_fs;
->>  	     i++, fstype += strlen(fstype) + 1) {
->> -- 
->> 2.27.0
->>
-
--- 
-Thanks,
-Jeffle
+I do not see a call to dax_lock_entry() in this function, what keeps
+this lookup valid after xas_unlock_irq()?
