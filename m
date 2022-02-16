@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B014B7C7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 02:37:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2AD4B7CDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 02:56:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245495AbiBPBee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Feb 2022 20:34:34 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60920 "EHLO
+        id S245547AbiBPBiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Feb 2022 20:38:01 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245490AbiBPBec (ORCPT
+        with ESMTP id S245543AbiBPBiA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Feb 2022 20:34:32 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195AEF955C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:34:20 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id v22so96883pgb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:34:20 -0800 (PST)
+        Tue, 15 Feb 2022 20:38:00 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB0219C30
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:37:46 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id y9so1103500pjf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:37:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vvTayVguxhrumT3w+R+Kjfmd3diECndIkorPQyxblp0=;
-        b=NFjoQ+hOdtNnkcduj0LnOAfr0t13qJU0g+H3qDYhxHXNY2kSOBhjJ57id3nggkZ63z
-         bd+0no5Sz1hfOpOM7FqU7/lcj3mw/zA9iIJGXn1/3gABVkhTJwDuVFXiLCiF+AoiAuvP
-         xzHa0AMAlBDyRB3g8rVKOe7JL6peWAms2JmtnTljT+4i1CykaarkkcY2Phufrs+l4f98
-         tIBmQaYCJwnUN4p1EvcyxZr3Y2TIDezPhrxlygMSyqcqJutwde5Wmrbzs8FUsbjeBtAE
-         KAXJkvUlQ4SnUi7Ml0QZWal8mO29LLZbB5qS5ZaYGR1b1d2ZM10qVKD8leaATzhRe6MQ
-         OvXg==
+        bh=7vZVv1ogxeGB/tMAdmK5at+J4W8ez8n3jP7SjDQ5qgg=;
+        b=cMc473ICFpscrz6Kg2TEINUfuiiCr7n79NNtBniP8KGkOAF9b9J6ETkih1Hf2OjAaY
+         zra7/J1LRD1WVCT266kbSOhNePQTQlSfBQLJZxrHOBeKJGQTbkktK4afhTx62f9qaxUt
+         M3bS42hVoqOTo+uWBcluZdMV2jxZLwDujKeQj034WXVqpgt0IyZn1+CxFAH7VvntEie7
+         NERFRXNHElKR54xfwdMvbtorHfsJcITMYqzhJ/9/IL3SNbXXflV/aIJBKhjKQFEFApQ7
+         RGyj8lNGy2O9KfPT9ksA0Nr0Xxft2xo3mbl4FQaPh8pNq66yD3XEDCxjjKAu4dHCbhFh
+         ZxHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vvTayVguxhrumT3w+R+Kjfmd3diECndIkorPQyxblp0=;
-        b=wFyRFoDXEZxQ/+i43aLjT+G+xHmuBJF3L02m82YDH9nF1C4fpkEx14o0WfAB8vfeFz
-         H0mqcqNC3eqUn9I4Hl9avev7e7WfPhpophOPVth4b0e+wRhoYzVbURnkgab8mJy7ltbI
-         XcDMnvyLjOoxzMZOWLIuhe52T0anRS4VRb5dyl/LnrVubqr0ElXF9x+tSAhI+k+YG9de
-         qZWkLzRVlFkQ2Ke3bKKKZ9MvKWUjlvAI4THo/5Gp3LS2nuzbVPUI0ilfoozXPIG2LXmW
-         nyi7dOIouDEwFWOlIfToO7s6gAxWsVmvbGDcj6Y3vGCTU+zBR/OxE//pnTqglAVExZtE
-         x0pA==
-X-Gm-Message-State: AOAM5308wRDwXP4+rQIhf2Ko7UDWs1fcukif5n2ZWoP44AMg6yu2pmgq
-        agvcj7jY/kWH0xJHnb95uTSCi7Z7T1OfXmRKjYbGTJhJf17zVg==
-X-Google-Smtp-Source: ABdhPJzAqkHS4nuPDQC4F8eXmkoN7S6evLhsGsn+9OiK2Onw6wqEebsZdEzEmmlrTDiHX9fR4bL6Yj1AYLHUkW1bqes=
-X-Received: by 2002:a05:6a02:283:b0:342:703e:1434 with SMTP id
- bk3-20020a056a02028300b00342703e1434mr370669pgb.74.1644975259581; Tue, 15 Feb
- 2022 17:34:19 -0800 (PST)
+        bh=7vZVv1ogxeGB/tMAdmK5at+J4W8ez8n3jP7SjDQ5qgg=;
+        b=qx6dVlAJhrlhQulrAWAkUsCT+QK2iNzxpWCIsK8w9jQfgI54G7hxTn4X2pjunTJifS
+         PLkOcdWPGLBQA/rpI/jccRzYoxxLyyYWhzCztSVt91LwH9xDQRxcswyEpq0HxgS/JGrn
+         ThLfdsz8FxV6EtLq/skl8pVXRsKrWgOjxMrJbsCkmNCQwHYJ1ynYhoBuH6gBviTsd0xZ
+         IkwN+f9z2JeprQtbu70c1Gs8F2a2WuvfZTYsW99sqnnzMqJxb4tz3OE/NCbsKdc0m99R
+         hoaWye8Dw8BPdK/TOA69Npyv7KHXpwHv8IgfbIzahTLMtGkseaBIvEaIm/roTpPk75SS
+         STfQ==
+X-Gm-Message-State: AOAM531/SYCs70Vv9ZlOq/8i8NsZhq5RDcJ+Cz3DXFAGHgboy+xQCYaJ
+        dLwAhjAfo8N5+7invw3CiRmMVzV6yeorJwNqG7e18ZCjYeE=
+X-Google-Smtp-Source: ABdhPJyfbGOj2LEZYcd2Uhpx0um1C9tckAPR54JZv8aduFLaOPEJOttLOkO5/aF3ENQOMFJJx594Yf87mhQv1RvvLQI=
+X-Received: by 2002:a17:90a:f28d:b0:1b9:975f:1a9f with SMTP id
+ fs13-20020a17090af28d00b001b9975f1a9fmr265331pjb.220.1644975466504; Tue, 15
+ Feb 2022 17:37:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com> <20220127124058.1172422-6-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20220127124058.1172422-6-ruansy.fnst@fujitsu.com>
+References: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com> <20220127124058.1172422-7-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20220127124058.1172422-7-ruansy.fnst@fujitsu.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 15 Feb 2022 17:34:12 -0800
-Message-ID: <CAPcyv4jWuWWWBAEesMorK+LL6GVyqf-=VSChdw6P8txtckC=aw@mail.gmail.com>
-Subject: Re: [PATCH v10 5/9] fsdax: Introduce dax_load_page()
+Date:   Tue, 15 Feb 2022 17:37:40 -0800
+Message-ID: <CAPcyv4iJnOYfdc41nNtteidMtvt0fLS5RxZkRfk4Y=9vx_pf4A@mail.gmail.com>
+Subject: Re: [PATCH v10 6/9] mm: move pgoff_address() to vma_pgoff_address()
 To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-xfs <linux-xfs@vger.kernel.org>,
@@ -74,9 +74,12 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, Jan 27, 2022 at 4:41 AM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
 >
-> The current dax_lock_page() locks dax entry by obtaining mapping and
-> index in page.  To support 1-to-N RMAP in NVDIMM, we need a new function
-> to lock a specific dax entry
+> Since it is not a DAX-specific function, move it into mm and rename it
+> to be a generic helper.
+>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-I do not see a call to dax_lock_entry() in this function, what keeps
-this lookup valid after xas_unlock_irq()?
+Looks ok to me.
+
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
