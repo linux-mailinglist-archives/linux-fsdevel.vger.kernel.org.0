@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D5714B7CBA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 02:56:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C93294B7D4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 03:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245640AbiBPBtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Feb 2022 20:49:52 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45436 "EHLO
+        id S245726AbiBPB5Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Feb 2022 20:57:24 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245616AbiBPBtw (ORCPT
+        with ESMTP id S243224AbiBPB5N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Feb 2022 20:49:52 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89CFC60055
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:49:41 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id l73so771505pge.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:49:41 -0800 (PST)
+        Tue, 15 Feb 2022 20:57:13 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6510674DD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:56:58 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id i10so848430plr.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 17:56:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JqjP6+knVxmjPk+6TmXifMsYagmkY7dGlbu+Cp4tVhU=;
-        b=bqoqzVAheRcyp+ejCrtXym4Z2mkOqeEcWbPXTP4OrhtoSvFe6qeX8Z+qPcG8we/1WU
-         6vbAyx7hqOvrJBnqbsp1sqSNf3F5Sh0/8KdLZhBDYN+20l/T4GsRKpeDia0wfTPIn6h8
-         tAcUGMCYG7vXuKkQnHZAv8O0VoFaWE7ZhzTDN26+PdBRy2vEI0dd6kyetaKcI9xcwcOZ
-         EHP8wxlTGOhAUvtsP7NY3Th5mcnzS+6y2h696Ho+CKjG6t2zUnbt27OQo5fpX0o6+oQW
-         DarJKZu/sVNRGQqf04WmgOdeeT/+QOnl2oPtPQCo18HBMl/o7HhW9fz1Vs0mkfLOXX+D
-         Ig/w==
+        bh=g9VpagkCm3Zq8LHRqp7Sd8KVDdtAi+2psByAzPmlH8Q=;
+        b=OX5SPjLuavnTkCLr8WtH3fiuGK0vgZnKvfHC7cRdadYwiOyeALa1XWHTRabLHUZJW5
+         qbWl6P2YJrGtFL9FyOWN5Q8/Iuj4eJ/9N47Bp2ZbP0qM15gEQw3Phwvn8mbuL6WndWyr
+         u9bG5FiHgVL8Z8hMzXVXvb+lwGxykG0/A8P6KouONu8qckocXRqSodoctz/ma5dmgYh9
+         PprRZnDuU4424cFU0gqM0O2Rz7fFjd6S2vU/MIW9y7DfnzLyWv/1Ia9n/oYnjN6CI47G
+         ngOmaOL+OMF/Q/2x2MNCDRlW+elI0NF9oo9C7q3fpcbrZkmKV2eb5Q/gbnyghR6mr1xi
+         sPEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JqjP6+knVxmjPk+6TmXifMsYagmkY7dGlbu+Cp4tVhU=;
-        b=aM9k734DCEFG6hBt+CBMq7FRc/kPV/alhsWv8xBTKm41sutwMTSo2P6IYAIjIA8yt6
-         ljDyxdHmnbbJtM9hbv0ts2g2Gnr9tffqAeH8j/piQVnn/MhSumYACjwt2AoQJmqUlaF5
-         sMJmP35QCGaMBZyMnrF9YMgILnR5f8xjG84EbbZdr3W0aAvLmRS5n+NP2W8F2s7Jsq8Q
-         y/Y1tznLo+EzkXDTJtGIA7lE4TVMeYudJwoeTo1tFepeixMz9qSZrXq989ELky56/e1w
-         AUdSteaNkeuKmrJzFLZ/Or+c1VcE50WNwvhpeqYK9O/LvBXeFBo3IdlAsTZhpzqT+Jj5
-         al4Q==
-X-Gm-Message-State: AOAM530guWcbzwYauYNM+szXvTOeHf9iplAg09JLpddzlJk99kH/+eIu
-        Rs/ipQK+50RYEHZJjzDNpr6C/z39jzGzKsPpB1lzFA==
-X-Google-Smtp-Source: ABdhPJzBpx1jse2xbj8mriAE5IRH5N45DhXrywujvPaUi9rvoKWGSdtDsmmftwEW/BKqPOTy/zsrvgbsO0oqrb+xe0E=
-X-Received: by 2002:a05:6a02:283:b0:342:703e:1434 with SMTP id
- bk3-20020a056a02028300b00342703e1434mr411493pgb.74.1644976179422; Tue, 15 Feb
- 2022 17:49:39 -0800 (PST)
+        bh=g9VpagkCm3Zq8LHRqp7Sd8KVDdtAi+2psByAzPmlH8Q=;
+        b=elT4j8i7Yb1dhJQ5wx4yN32yk3tCUkSV7k3pJgbRfwTBqbqjckouNV5SdAZ2iCgumV
+         lNwbReQjT8jqgKcOVcvptqcRcXnLDW7Ee9a/OPPetTOQ9L5UYPc4zZurl3PEvZBNXplb
+         AlNyw5yuy9vd336Q9j6a0r61dXaUi7gzjh5F+9vXOTgKmLAt6SYcIKcSWA9Ljdj0olyY
+         Gr9DWJJ2heudVf3s8ACaA5dMWTACbobiMKxYTUrQnOzTqi9Kl7y7Z/iyv4/CNQrCu4ac
+         wvozuLjCz1N+o2n3W5pla8TZLLC4KlpyNWc6nk2WvMb+BG0ZdnFDmPY2vNYGIugfXK1C
+         6bug==
+X-Gm-Message-State: AOAM532hmeJYMvmneWfVLJWq9oepL+dliq/3u4mi4SEUtetEmBL9KqMA
+        /qVl2dEdMOvjPvNr2oDXqnHH3VPkx7bF9ulY66Br6w==
+X-Google-Smtp-Source: ABdhPJw2yis7sUqbyWLoCMEwA+ho+yJ8iYuYSPqma/sk1aZPvQf+EuskChvI0MgRYeFBLEk/VweW6nLWdLkGdIj4/0k=
+X-Received: by 2002:a17:902:f68a:b0:14f:308f:ed3b with SMTP id
+ l10-20020a170902f68a00b0014f308fed3bmr304005plg.147.1644976617803; Tue, 15
+ Feb 2022 17:56:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com> <20220127124058.1172422-8-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20220127124058.1172422-8-ruansy.fnst@fujitsu.com>
+References: <20220127124058.1172422-1-ruansy.fnst@fujitsu.com> <20220127124058.1172422-9-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20220127124058.1172422-9-ruansy.fnst@fujitsu.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 15 Feb 2022 17:49:33 -0800
-Message-ID: <CAPcyv4h+jQcwSo-CHUhy98xVvjJzvK74-s4uH+Qu-jCr1+zKjw@mail.gmail.com>
-Subject: Re: [PATCH v10 7/9] mm: Introduce mf_dax_kill_procs() for fsdax case
+Date:   Tue, 15 Feb 2022 17:56:51 -0800
+Message-ID: <CAPcyv4hBpHsPRXZKtHtN0hVQhjZspZBz9egO=wn+54KDJokStw@mail.gmail.com>
+Subject: Re: [PATCH v10 8/9] xfs: Implement ->notify_failure() for XFS
 To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-xfs <linux-xfs@vger.kernel.org>,
@@ -74,168 +74,369 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, Jan 27, 2022 at 4:41 AM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
 >
-> This function is called at the end of RMAP routine, i.e. filesystem
-> recovery function, to collect and kill processes using a shared page of
-> DAX file.  The difference with mf_generic_kill_procs() is, it accepts
-> file's (mapping,offset) instead of struct page because different files'
-> mappings and offsets may share the same page in fsdax mode.
-> It will be called when filesystem's RMAP results are found.
+> Introduce xfs_notify_failure.c to handle failure related works, such as
+> implement ->notify_failure(), register/unregister dax holder in xfs, and
+> so on.
+>
+> If the rmap feature of XFS enabled, we can query it to find files and
+> metadata which are associated with the corrupt data.  For now all we do
+> is kill processes with that file mapped into their address spaces, but
+> future patches could actually do something about corrupt metadata.
+>
+> After that, the memory failure needs to notify the processes who are
+> using those files.
 >
 > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 > ---
->  include/linux/mm.h  |  4 ++
->  mm/memory-failure.c | 91 +++++++++++++++++++++++++++++++++++++++------
->  2 files changed, 84 insertions(+), 11 deletions(-)
+>  fs/xfs/Makefile             |   1 +
+>  fs/xfs/xfs_buf.c            |  12 ++
+>  fs/xfs/xfs_fsops.c          |   3 +
+>  fs/xfs/xfs_mount.h          |   1 +
+>  fs/xfs/xfs_notify_failure.c | 222 ++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_notify_failure.h |  10 ++
+>  6 files changed, 249 insertions(+)
+>  create mode 100644 fs/xfs/xfs_notify_failure.c
+>  create mode 100644 fs/xfs/xfs_notify_failure.h
 >
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 9b1d56c5c224..0420189e4788 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3195,6 +3195,10 @@ enum mf_flags {
->         MF_SOFT_OFFLINE = 1 << 3,
->         MF_UNPOISON = 1 << 4,
->  };
-> +#if IS_ENABLED(CONFIG_FS_DAX)
-> +int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
-> +                     unsigned long count, int mf_flags);
-> +#endif /* CONFIG_FS_DAX */
->  extern int memory_failure(unsigned long pfn, int flags);
->  extern void memory_failure_queue(unsigned long pfn, int flags);
->  extern void memory_failure_queue_kick(int cpu);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index b2d13eba1071..8d123cc4102e 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -304,10 +304,9 @@ void shake_page(struct page *p)
->  }
->  EXPORT_SYMBOL_GPL(shake_page);
+> diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+> index 04611a1068b4..389970b3e13b 100644
+> --- a/fs/xfs/Makefile
+> +++ b/fs/xfs/Makefile
+> @@ -84,6 +84,7 @@ xfs-y                         += xfs_aops.o \
+>                                    xfs_message.o \
+>                                    xfs_mount.o \
+>                                    xfs_mru_cache.o \
+> +                                  xfs_notify_failure.o \
+>                                    xfs_pwork.o \
+>                                    xfs_reflink.o \
+>                                    xfs_stats.o \
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index b45e0d50a405..017010b3d601 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -19,6 +19,7 @@
+>  #include "xfs_errortag.h"
+>  #include "xfs_error.h"
+>  #include "xfs_ag.h"
+> +#include "xfs_notify_failure.h"
 >
-> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
-> -               struct vm_area_struct *vma)
-> +static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
-> +               unsigned long address)
->  {
-> -       unsigned long address = vma_address(page, vma);
->         unsigned long ret = 0;
->         pgd_t *pgd;
->         p4d_t *p4d;
-> @@ -347,9 +346,8 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
->   * Schedule a process for later kill.
->   * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
->   */
-> -static void add_to_kill(struct task_struct *tsk, struct page *p,
-> -                      struct vm_area_struct *vma,
-> -                      struct list_head *to_kill)
-> +static void add_to_kill(struct task_struct *tsk, struct page *p, pgoff_t pgoff,
-> +                       struct vm_area_struct *vma, struct list_head *to_kill)
->  {
->         struct to_kill *tk;
+>  static struct kmem_cache *xfs_buf_cache;
 >
-> @@ -360,9 +358,15 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
->         }
+> @@ -1892,6 +1893,8 @@ xfs_free_buftarg(
+>         list_lru_destroy(&btp->bt_lru);
 >
->         tk->addr = page_address_in_vma(p, vma);
-> -       if (is_zone_device_page(p))
-> -               tk->size_shift = dev_pagemap_mapping_shift(p, vma);
-> -       else
-> +       if (is_zone_device_page(p)) {
-> +               /*
-> +                * Since page->mapping is not used for fsdax, we need
-> +                * calculate the address based on the vma.
-> +                */
-> +               if (p->pgmap->type == MEMORY_DEVICE_FS_DAX)
-> +                       tk->addr = vma_pgoff_address(vma, pgoff);
-> +               tk->size_shift = dev_pagemap_mapping_shift(vma, tk->addr);
-> +       } else
->                 tk->size_shift = page_shift(compound_head(p));
+>         blkdev_issue_flush(btp->bt_bdev);
+> +       if (btp->bt_daxdev)
+> +               dax_unregister_holder(btp->bt_daxdev);
+>         fs_put_dax(btp->bt_daxdev);
+>
+>         kmem_free(btp);
+> @@ -1946,6 +1949,15 @@ xfs_alloc_buftarg(
+>         btp->bt_dev =  bdev->bd_dev;
+>         btp->bt_bdev = bdev;
+>         btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off);
+> +       if (btp->bt_daxdev) {
+> +               if (dax_get_holder(btp->bt_daxdev)) {
+> +                       xfs_err(mp, "DAX device already in use?!");
+
+Per the earlier feedback this can be checked atomically inside of
+dax_register_holder() with cmpxchg().
+
+> +                       goto error_free;
+> +               }
+> +
+> +               dax_register_holder(btp->bt_daxdev, mp,
+> +                               &xfs_dax_holder_operations);
+> +       }
 >
 >         /*
-> @@ -510,7 +514,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->                         if (!page_mapped_in_vma(page, vma))
->                                 continue;
->                         if (vma->vm_mm == t->mm)
-> -                               add_to_kill(t, page, vma, to_kill);
-> +                               add_to_kill(t, page, 0, vma, to_kill);
->                 }
->         }
->         read_unlock(&tasklist_lock);
-> @@ -546,12 +550,40 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
->                          * to be informed of all such data corruptions.
->                          */
->                         if (vma->vm_mm == t->mm)
-> -                               add_to_kill(t, page, vma, to_kill);
-> +                               add_to_kill(t, page, 0, vma, to_kill);
-> +               }
-> +       }
-> +       read_unlock(&tasklist_lock);
-> +       i_mmap_unlock_read(mapping);
+>          * Buffer IO error rate limiting. Limit it to no more than 10 messages
+> diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
+> index 33e26690a8c4..d4d36c5bef11 100644
+> --- a/fs/xfs/xfs_fsops.c
+> +++ b/fs/xfs/xfs_fsops.c
+> @@ -542,6 +542,9 @@ xfs_do_force_shutdown(
+>         } else if (flags & SHUTDOWN_CORRUPT_INCORE) {
+>                 tag = XFS_PTAG_SHUTDOWN_CORRUPT;
+>                 why = "Corruption of in-memory data";
+> +       } else if (flags & SHUTDOWN_CORRUPT_ONDISK) {
+> +               tag = XFS_PTAG_SHUTDOWN_CORRUPT;
+> +               why = "Corruption of on-disk metadata";
+>         } else {
+>                 tag = XFS_PTAG_SHUTDOWN_IOERROR;
+>                 why = "Metadata I/O Error";
+> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+> index 00720a02e761..47ff4ac53c4c 100644
+> --- a/fs/xfs/xfs_mount.h
+> +++ b/fs/xfs/xfs_mount.h
+> @@ -435,6 +435,7 @@ void xfs_do_force_shutdown(struct xfs_mount *mp, int flags, char *fname,
+>  #define SHUTDOWN_LOG_IO_ERROR  0x0002  /* write attempt to the log failed */
+>  #define SHUTDOWN_FORCE_UMOUNT  0x0004  /* shutdown from a forced unmount */
+>  #define SHUTDOWN_CORRUPT_INCORE        0x0008  /* corrupt in-memory data structures */
+> +#define SHUTDOWN_CORRUPT_ONDISK        0x0010  /* corrupt metadata on device */
+>
+>  #define XFS_SHUTDOWN_STRINGS \
+>         { SHUTDOWN_META_IO_ERROR,       "metadata_io" }, \
+> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+> new file mode 100644
+> index 000000000000..6abaa043f4bc
+> --- /dev/null
+> +++ b/fs/xfs/xfs_notify_failure.c
+> @@ -0,0 +1,222 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2021 Fujitsu.  All Rights Reserved.
+> + */
+> +
+> +#include "xfs.h"
+> +#include "xfs_shared.h"
+> +#include "xfs_format.h"
+> +#include "xfs_log_format.h"
+> +#include "xfs_trans_resv.h"
+> +#include "xfs_mount.h"
+> +#include "xfs_alloc.h"
+> +#include "xfs_bit.h"
+> +#include "xfs_btree.h"
+> +#include "xfs_inode.h"
+> +#include "xfs_icache.h"
+> +#include "xfs_rmap.h"
+> +#include "xfs_rmap_btree.h"
+> +#include "xfs_rtalloc.h"
+> +#include "xfs_trans.h"
+> +
+> +#include <linux/mm.h>
+> +#include <linux/dax.h>
+> +
+> +struct failure_info {
+> +       xfs_agblock_t           startblock;
+> +       xfs_extlen_t            blockcount;
+> +       int                     mf_flags;
+> +};
+> +
+> +#if IS_ENABLED(CONFIG_MEMORY_FAILURE) && IS_ENABLED(CONFIG_FS_DAX)
+> +static pgoff_t
+> +xfs_failure_pgoff(
+> +       struct xfs_mount                *mp,
+> +       const struct xfs_rmap_irec      *rec,
+> +       const struct failure_info       *notify)
+> +{
+> +       uint64_t                        pos = rec->rm_offset;
+> +
+> +       if (notify->startblock > rec->rm_startblock)
+> +               pos += XFS_FSB_TO_B(mp,
+> +                               notify->startblock - rec->rm_startblock);
+> +       return pos >> PAGE_SHIFT;
 > +}
 > +
-> +#if IS_ENABLED(CONFIG_FS_DAX)
-> +/*
-> + * Collect processes when the error hit a fsdax page.
-> + */
-> +static void collect_procs_fsdax(struct page *page,
-> +               struct address_space *mapping, pgoff_t pgoff,
-> +               struct list_head *to_kill)
+> +static unsigned long
+> +xfs_failure_pgcnt(
+> +       struct xfs_mount                *mp,
+> +       const struct xfs_rmap_irec      *rec,
+> +       const struct failure_info       *notify)
 > +{
-> +       struct vm_area_struct *vma;
-> +       struct task_struct *tsk;
+> +       xfs_agblock_t                   end_rec;
+> +       xfs_agblock_t                   end_notify;
+> +       xfs_agblock_t                   start_cross;
+> +       xfs_agblock_t                   end_cross;
 > +
-> +       i_mmap_lock_read(mapping);
-> +       read_lock(&tasklist_lock);
-> +       for_each_process(tsk) {
-> +               struct task_struct *t = task_early_kill(tsk, true);
+> +       start_cross = max(rec->rm_startblock, notify->startblock);
 > +
-> +               if (!t)
-> +                       continue;
-> +               vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
-> +                       if (vma->vm_mm == t->mm)
-> +                               add_to_kill(t, page, pgoff, vma, to_kill);
->                 }
->         }
->         read_unlock(&tasklist_lock);
->         i_mmap_unlock_read(mapping);
->  }
-> +#endif /* CONFIG_FS_DAX */
->
->  /*
->   * Collect the processes who have the corrupted page mapped to kill.
-> @@ -1574,6 +1606,43 @@ static int mf_generic_kill_procs(unsigned long long pfn, int flags,
->         return 0;
->  }
->
-> +#if IS_ENABLED(CONFIG_FS_DAX)
-> +/**
-> + * mf_dax_kill_procs - Collect and kill processes who are using this file range
-> + * @mapping:   the file in use
-> + * @index:     start pgoff of the range within the file
-> + * @count:     length of the range, in unit of PAGE_SIZE
-> + * @mf_flags:  memory failure flags
-> + */
-> +int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
-> +               unsigned long count, int mf_flags)
+> +       end_rec = rec->rm_startblock + rec->rm_blockcount;
+> +       end_notify = notify->startblock + notify->blockcount;
+> +       end_cross = min(end_rec, end_notify);
+> +
+> +       return XFS_FSB_TO_B(mp, end_cross - start_cross) >> PAGE_SHIFT;
+> +}
+> +
+> +static int
+> +xfs_dax_failure_fn(
+> +       struct xfs_btree_cur            *cur,
+> +       const struct xfs_rmap_irec      *rec,
+> +       void                            *data)
 > +{
-> +       LIST_HEAD(to_kill);
-> +       int rc;
-> +       struct page *page;
-> +       size_t end = index + count;
+> +       struct xfs_mount                *mp = cur->bc_mp;
+> +       struct xfs_inode                *ip;
+> +       struct failure_info             *notify = data;
+> +       int                             error = 0;
 > +
-> +       mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+> +       if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+> +           (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+> +               xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+> +               return -EFSCORRUPTED;
+> +       }
 > +
-> +       for (; index < end; index++) {
-> +               page = NULL;
-> +               rc = dax_load_page(mapping, index, &page);
-> +               if (rc)
-> +                       return rc;
-> +               if (!page)
-> +                       continue;
+> +       /* Get files that incore, filter out others that are not in use. */
+> +       error = xfs_iget(mp, cur->bc_tp, rec->rm_owner, XFS_IGET_INCORE,
+> +                        0, &ip);
+> +       /* Continue the rmap query if the inode isn't incore */
+> +       if (error == -ENODATA)
+> +               return 0;
+> +       if (error)
+> +               return error;
 > +
-> +               SetPageHWPoison(page);
+> +       error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
+> +                                 xfs_failure_pgoff(mp, rec, notify),
+> +                                 xfs_failure_pgcnt(mp, rec, notify),
+> +                                 notify->mf_flags);
+> +       xfs_irele(ip);
+> +       return error;
+> +}
+> +#else
+> +static int
+> +xfs_dax_failure_fn(
+> +       struct xfs_btree_cur            *cur,
+> +       const struct xfs_rmap_irec      *rec,
+> +       void                            *data)
+> +{
+> +       struct xfs_mount                *mp = cur->bc_mp;
 > +
-> +               collect_procs_fsdax(page, mapping, index, &to_kill);
-> +               unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
-> +                               index, mf_flags);
+> +       /* No other option besides shutting down the fs. */
+> +       xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+> +       return -EFSCORRUPTED;
+> +}
+> +#endif /* CONFIG_MEMORY_FAILURE && CONFIG_FS_DAX */
+> +
+> +static int
+> +xfs_dax_notify_ddev_failure(
+> +       struct xfs_mount        *mp,
+> +       xfs_daddr_t             daddr,
+> +       xfs_daddr_t             bblen,
+> +       int                     mf_flags)
+> +{
+> +       struct xfs_trans        *tp = NULL;
+> +       struct xfs_btree_cur    *cur = NULL;
+> +       struct xfs_buf          *agf_bp = NULL;
+> +       struct failure_info     notify;
+> +       int                     error = 0;
+> +       xfs_fsblock_t           fsbno = XFS_DADDR_TO_FSB(mp, daddr);
+> +       xfs_agnumber_t          agno = XFS_FSB_TO_AGNO(mp, fsbno);
+> +       xfs_fsblock_t           end_fsbno = XFS_DADDR_TO_FSB(mp, daddr + bblen);
+> +       xfs_agnumber_t          end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
+> +
+> +       /*
+> +        * Once a file is found by rmap, we take the intersection of two ranges:
+> +        * notification range and file extent range, to make sure we won't go
+> +        * out of scope.
+> +        */
+> +       notify.mf_flags = mf_flags;
+> +       notify.startblock = XFS_FSB_TO_AGBNO(mp, fsbno);
+> +       notify.blockcount = XFS_BB_TO_FSB(mp, bblen);
+> +
+> +       error = xfs_trans_alloc_empty(mp, &tp);
+> +       if (error)
+> +               return error;
+> +
+> +       for (; agno <= end_agno; agno++) {
+> +               struct xfs_rmap_irec    ri_low = { };
+> +               struct xfs_rmap_irec    ri_high;
+> +
+> +               error = xfs_alloc_read_agf(mp, tp, agno, 0, &agf_bp);
+> +               if (error)
+> +                       break;
+> +
+> +               cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, agf_bp->b_pag);
+> +
+> +               /*
+> +                * Set the rmap range from ri_low to ri_high, which represents
+> +                * a [start, end] where we looking for the files or metadata.
+> +                * The part of range out of a AG will be ignored.  So, it's fine
+> +                * to set ri_low to "startblock" in all loops.  When it reaches
+> +                * the last AG, set the ri_high to "endblock" to make sure we
+> +                * actually end at the end.
+> +                */
+> +               memset(&ri_high, 0xFF, sizeof(ri_high));
+> +               ri_low.rm_startblock = XFS_FSB_TO_AGBNO(mp, fsbno);
+> +               if (agno == end_agno)
+> +                       ri_high.rm_startblock = XFS_FSB_TO_AGBNO(mp, end_fsbno);
+> +
+> +               error = xfs_rmap_query_range(cur, &ri_low, &ri_high,
+> +                               xfs_dax_failure_fn, &notify);
+> +               xfs_btree_del_cursor(cur, error);
+> +               xfs_trans_brelse(tp, agf_bp);
+> +               if (error)
+> +                       break;
+> +
+> +               fsbno = XFS_AGB_TO_FSB(mp, agno + 1, 0);
+> +       }
+> +
+> +       xfs_trans_cancel(tp);
+> +       return error;
+> +}
+> +
+> +static int
+> +xfs_dax_notify_failure(
+> +       struct dax_device       *dax_dev,
+> +       u64                     offset,
+> +       u64                     len,
+> +       int                     mf_flags)
+> +{
+> +       struct xfs_mount        *mp = dax_get_holder(dax_dev);
+> +
+> +       if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_daxdev == dax_dev) {
+> +               xfs_warn(mp,
+> +                        "notify_failure() not supported on realtime device!");
+> +               return -EOPNOTSUPP;
+> +       }
+> +
+> +       if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+> +           mp->m_logdev_targp != mp->m_ddev_targp) {
+> +               xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+> +               xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+> +               return -EFSCORRUPTED;
+> +       }
+> +
+> +       if (!xfs_has_rmapbt(mp)) {
+> +               xfs_warn(mp, "notify_failure() needs rmapbt enabled!");
 
-Depending on the answer to the question in patch5 there may need to be
-a put_page() or dax_unlock_page() here.
+Doesn't this need to be resolved at mount time?
+
+> +               return -EOPNOTSUPP;
+> +       }
+> +
+> +       if (offset < mp->m_ddev_targp->bt_dax_part_off ||
+> +           ((offset + len) > mp->m_ddev_targp->bt_bdev->bd_nr_sectors <<
+> +                               SECTOR_SHIFT)) {
+
+With the removal of partition support bt_dax_part_off can never be
+non-zero and the offset / len validation should be done against the
+boundaries of the dax device in terms of physical page offset and
+nr_pages.
+
+> +               xfs_warn(mp, "notify_failure() goes out of the scope.");
+> +               return -ENXIO;
+> +       }
+> +
+> +       offset -= mp->m_ddev_targp->bt_dax_part_off;
+> +       return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
+> +                       mf_flags);
+
+Same here, all offset adjustment code can be dropped because failure
+notification should be disabled at mount time if the mount point is
+not associated with a whole disk device.
+
+> +}
+> +
+> +const struct dax_holder_operations xfs_dax_holder_operations = {
+> +       .notify_failure         = xfs_dax_notify_failure,
+> +};
+> diff --git a/fs/xfs/xfs_notify_failure.h b/fs/xfs/xfs_notify_failure.h
+> new file mode 100644
+> index 000000000000..f40cb315e7ce
+> --- /dev/null
+> +++ b/fs/xfs/xfs_notify_failure.h
+> @@ -0,0 +1,10 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2021 Fujitsu.  All Rights Reserved.
+> + */
+> +#ifndef __XFS_NOTIFY_FAILURE_H__
+> +#define __XFS_NOTIFY_FAILURE_H__
+> +
+> +extern const struct dax_holder_operations xfs_dax_holder_operations;
+> +
+> +#endif  /* __XFS_NOTIFY_FAILURE_H__ */
+> --
+> 2.34.1
+>
+>
+>
