@@ -2,179 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA624B8A62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 14:38:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C1404B8ACA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 14:51:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234605AbiBPNiK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Feb 2022 08:38:10 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35958 "EHLO
+        id S234065AbiBPNvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Feb 2022 08:51:41 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbiBPNiJ (ORCPT
+        with ESMTP id S232685AbiBPNvk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Feb 2022 08:38:09 -0500
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF132A39D3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Feb 2022 05:37:56 -0800 (PST)
-Received: by mail-vs1-xe29.google.com with SMTP id g20so2435661vsb.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Feb 2022 05:37:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rpeVDWXHMTDc+cpXQL9k9Xn0bqj82ewZzqV/e9KI54k=;
-        b=eBP91KuyrWCunQKewYuQ566BwtLHTGen0u7EidMaMnjpn6RJcOvYD/ds1ffBpa6fKR
-         dSgD63hLMBcJkJc440HlL+SqPdlaGd7v1sIVB7aaDNPa5wCTNPkIGhFSgQORgkbSxYKl
-         kcPKHTbf4Zce4lrT8J6L5usvIUb336Bq2PmOg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rpeVDWXHMTDc+cpXQL9k9Xn0bqj82ewZzqV/e9KI54k=;
-        b=LzEbEr72iiDDGJu6HwfGSmAgCsEazIYP+iYNtw4UoNxkWjSBaC7wC08kMF7CVGHvUy
-         TFnYMchVozhy0Z+KsZJ3d4zr/hAEfiRjU2g568ccRa5nDlIF0Nk8yI6c+tLUzWyLa1IV
-         0w14dtL+NoPdTYSyJiiw6p6G9zGwLLrFMpA1E6CnC4i+8SjewBYcgIXReGpB76CRvSVU
-         XH67aMQa8CF+r0jyMlFu+yjdAgCD+rlSVpHrTB8CWhgUmrm6bh5SKb/wRCDDA/efMCT3
-         cvvZsGEa1xuuI1n32M72lri70Jyw1rSy/PEV+xKhMVsfQ5xLG2Q377RkUvNbEaqf8IJI
-         R1bg==
-X-Gm-Message-State: AOAM530sZ017gI+vZWEAVjqGq+4A8aPJ4SDKFfjUqLFJM/f0sVzFp2aL
-        8/fmIlo8PzT8CgFv/sdD425uSWiIh5Dw14BTfjoQuw==
-X-Google-Smtp-Source: ABdhPJx0ME4NtqTHyYhVWQLW19f8lbHkntNGob5sMRy/fhsm1HUPUGe5BQQVLyXtNsfHMp29I0F0DmFm5pfkPVz/CtA=
-X-Received: by 2002:a05:6102:32c7:b0:31b:8f98:5fd with SMTP id
- o7-20020a05610232c700b0031b8f9805fdmr982294vss.24.1645018675428; Wed, 16 Feb
- 2022 05:37:55 -0800 (PST)
+        Wed, 16 Feb 2022 08:51:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F1D5413E24
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Feb 2022 05:51:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645019486;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=K5DTI//Qha4u3Kat+ZKKMYxR5CxUYu7QEiiyD50iVw8=;
+        b=IaL7JHopY0TqBMLF8wifvnwK/ArCz0ghOkWNMECh+MwZxT3p7bxDydwXVqXAjIy+1CRL4U
+        AXbqOJB2E0P9GTT8/HlAJZEMPj8xRiDKe1mPS+oFkMOY2nIWm+ARhYAYsx9SeB0B3dpyKe
+        5VBBcrggxQkDR+WG+s/l0Cr1iaafufU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-494-kBhArUV3NEOq_YS-Pwd6oA-1; Wed, 16 Feb 2022 08:51:21 -0500
+X-MC-Unique: kBhArUV3NEOq_YS-Pwd6oA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CAF6B1898291;
+        Wed, 16 Feb 2022 13:51:17 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 23DD17C127;
+        Wed, 16 Feb 2022 13:51:08 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 21GDp8ZA023716;
+        Wed, 16 Feb 2022 08:51:08 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 21GDp8bV023712;
+        Wed, 16 Feb 2022 08:51:08 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 16 Feb 2022 08:51:08 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Nitesh Shetty <nj.shetty@samsung.com>
+cc:     javier@javigon.com, chaitanyak@nvidia.com,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+        msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, roland@purestorage.com, hare@suse.de,
+        kbusch@kernel.org, hch@lst.de, Frederick.Knight@netapp.com,
+        zach.brown@ni.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com
+Subject: Re: [PATCH v2 08/10] dm: Add support for copy offload.
+In-Reply-To: <20220207141348.4235-9-nj.shetty@samsung.com>
+Message-ID: <alpine.LRH.2.02.2202160845210.22021@file01.intranet.prod.int.rdu2.redhat.com>
+References: <CAOSviJ0HmT9iwdHdNtuZ8vHETCosRMpR33NcYGVWOV0ki3EYgw@mail.gmail.com> <20220207141348.4235-1-nj.shetty@samsung.com> <CGME20220207141948epcas5p4534f6bdc5a1e2e676d7d09c04f8b4a5b@epcas5p4.samsung.com> <20220207141348.4235-9-nj.shetty@samsung.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-References: <20220214210708.GA2167841@xavier-xps> <CAJfpegvVKWHhhXwOi9jDUOJi2BnYSDxZQrp1_RRrpVjjZ3Rs2w@mail.gmail.com>
- <YguspMvu6M6NJ1hL@zeniv-ca.linux.org.uk> <YgvPbljmJXsR7ESt@zeniv-ca.linux.org.uk>
- <YgvSB6CKAhF5IXFj@casper.infradead.org> <YgvS1XOJMn5CjQyw@zeniv-ca.linux.org.uk>
- <CAJfpegv03YpTPiDnLwbaewQX_KZws5nutays+vso2BVJ1v1+TA@mail.gmail.com>
- <YgzRwhavapo69CAn@miu.piliscsaba.redhat.com> <20220216131814.GA2463301@xavier-xps>
-In-Reply-To: <20220216131814.GA2463301@xavier-xps>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 16 Feb 2022 14:37:44 +0100
-Message-ID: <CAJfpegsQO-35p6uoG2ZfuCOLPFwnkbTcLc3K8r+HiS2un9au_w@mail.gmail.com>
-Subject: Re: race between vfs_rename and do_linkat (mv and link)
-To:     Xavier Roche <xavier.roche@algolia.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 16 Feb 2022 at 14:18, Xavier Roche <xavier.roche@algolia.com> wrote:
->
-> On Wed, Feb 16, 2022 at 11:28:18AM +0100, Miklos Szeredi wrote:
-> > Something like this:
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 3f1829b3ab5b..dd6908cee49d 100644
->
-> Tested-by: Xavier Roche <xavier.roche@algolia.com>
->
-> I confirm this completely fixes at least the specific race. Tested on a
-> unpatched and then patched 5.16.5, with the trivial bash test, and then
-> with a C++ torture test.
 
-Thanks for testing.
 
-One issue with the patch is nesting of lock_rename() calls in stacked
-fs (rwsem is not allowed to recurse even for read locks).
+On Mon, 7 Feb 2022, Nitesh Shetty wrote:
 
-So the lock needs to be per-sb, but then do_linkat() becomes more
-complex due to not being able to use the filename_create() helper.
-But it's still much simpler than the special lookup loop described by
-Al.
+> Before enabling copy for dm target, check if underlaying devices and
+> dm target support copy. Avoid split happening inside dm target.
+> Fail early if the request needs split, currently spliting copy
+> request is not supported
+> 
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
 
-Thanks,
-Miklos
->
-> Before:
-> -------
->
-> $ time ./linkbug
-> Failed after 4 with No such file or directory
->
-> real    0m0,004s
-> user    0m0,000s
-> sys     0m0,004s
->
-> After:
-> ------
->
-> (no error after ten minutes of running the program)
->
-> Torture test program:
-> ---------------------
->
-> /* Linux rename vs. linkat race condition.
->  * Rationale: both (1) moving a file to a target and (2) linking the target to a file in parallel leads to a race
->  * on Linux kernel.
->  * Sample file courtesy of Xavier Grand at Algolia
->  * g++ -pthread linkbug.c -o linkbug
->  */
->
-> #include <thread>
-> #include <unistd.h>
-> #include <assert.h>
-> #include <sys/types.h>
-> #include <sys/stat.h>
-> #include <fcntl.h>
-> #include <iostream>
-> #include <string.h>
->
-> static const char* producedDir = "/tmp";
-> static const char* producedFile = "/tmp/file.txt";
-> static const char* producedTmpFile = "/tmp/file.txt.tmp";
-> static const char* producedThreadDir = "/tmp/tmp";
-> static const char* producedThreadFile = "/tmp/file.txt.tmp.2";
->
-> bool createFile(const char* path)
-> {
->     const int fdOut = open(path,
->                            O_WRONLY | O_CREAT | O_TRUNC | O_EXCL | O_CLOEXEC,
->                            S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
->     assert(fdOut != -1);
->     assert(write(fdOut, "Foo", 4) == 4);
->     assert(close(fdOut) == 0);
->     return true;
-> }
->
-> void func()
-> {
->     int nbSuccess = 0;
->     // Loop producedThread a hardlink of the file
->     while (true) {
->         if (link(producedFile, producedThreadFile) != 0) {
->             std::cout << "Failed after " << nbSuccess << " with " << strerror(errno) << std::endl;
->             exit(EXIT_FAILURE);
->         } else {
->             nbSuccess++;
->         }
->         assert(unlink(producedThreadFile) == 0);
->     }
-> }
->
-> int main()
-> {
->     // Setup env
->     unlink(producedTmpFile);
->     unlink(producedFile);
->     unlink(producedThreadFile);
->     createFile(producedFile);
->     mkdir(producedThreadDir, 0777);
->
->     // Async thread doing a hardlink and moving it
->     std::thread t(func);
->     // Loop creating a .tmp and moving it
->     while (true) {
->         assert(createFile(producedTmpFile));
->         assert(rename(producedTmpFile, producedFile) == 0);
->     }
->     return 0;
-> }
+If a dm device is reconfigured, you must invalidate all the copy tokens 
+that are in flight, otherwise they would copy stale data.
+
+I suggest that you create a global variable "atomic64_t dm_changed".
+In nvme_setup_copy_read you copy this variable to the token.
+In nvme_setup_copy_write you compare the variable with the value in the 
+token and fail if there is mismatch.
+In dm.c:__bind you increase the variable, so that all the tokens will be 
+invalidated if a dm table is changed.
+
+Mikulas
+
