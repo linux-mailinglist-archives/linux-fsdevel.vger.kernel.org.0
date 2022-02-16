@@ -2,118 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6FB74B7EDE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 04:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A87E4B7F97
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 05:43:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238409AbiBPDuJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Feb 2022 22:50:09 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39748 "EHLO
+        id S1344470AbiBPEmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Feb 2022 23:42:17 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiBPDuJ (ORCPT
+        with ESMTP id S244620AbiBPEmQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Feb 2022 22:50:09 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B4B1FA6F;
-        Tue, 15 Feb 2022 19:49:58 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nKBKG-002AeZ-O2; Wed, 16 Feb 2022 03:49:56 +0000
-Date:   Wed, 16 Feb 2022 03:49:56 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v2 1/4] dcache: sweep cached negative dentries to the end
- of list of siblings
-Message-ID: <Ygx0ZJbn3cdUwnQ1@zeniv-ca.linux.org.uk>
-References: <20220209231406.187668-1-stephen.s.brennan@oracle.com>
- <20220209231406.187668-2-stephen.s.brennan@oracle.com>
- <YgSjo5wascR9mfnA@zeniv-ca.linux.org.uk>
- <875ypf8s5m.fsf@stepbren-lnx.us.oracle.com>
- <YgxvK03Q3wBVfLYS@zeniv-ca.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YgxvK03Q3wBVfLYS@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Tue, 15 Feb 2022 23:42:16 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 84B4EC24BB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 20:42:01 -0800 (PST)
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.51 with ESMTP; 16 Feb 2022 13:11:56 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.126 with ESMTP; 16 Feb 2022 13:11:56 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org, axboe@kernel.dk,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: [REPORT] ext4 deadlock possibilities by DEPT
+Date:   Wed, 16 Feb 2022 13:11:51 +0900
+Message-Id: <1644984711-26423-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 16, 2022 at 03:27:39AM +0000, Al Viro wrote:
-> On Tue, Feb 15, 2022 at 06:24:53PM -0800, Stephen Brennan wrote:
-> 
-> > It seems to me that, if we had taken a reference on child by
-> > incrementing the reference count prior to unlocking it, then
-> > dentry_unlist could never have been called, since we would never have
-> > made it into __dentry_kill. child would still be on the list, and any
-> > cursor (or sweep_negative) list updates would now be reflected in
-> > child->d_child.next. But dput is definitely not safe while holding a
-> > lock on a parent dentry (even more so now thanks to my patch), so that
-> > is out of the question.
-> > 
-> > Would dput_to_list be an appropriate solution to that issue? We can
-> > maintain a dispose list in d_walk and then for any dput which really
-> > drops the refcount to 0, we can handle them after d_walk is done. It
-> > shouldn't be that many dentries anyway.
-> 
-> 	Interesting idea, but... what happens to behaviour of e.g.
-> shrink_dcache_parent()?  You'd obviously need to modify the test in
-> select_collect(), but then the selected dentries become likely candidates
-> for d_walk() itself wanting to move them over to its internal shrink list.
-> OTOH, __dput_to_list() will just decrement the count and skip the sucker
-> if it's already on a shrink list...
-> 
-> 	It might work, but it really needs a careful analysis wrt.
-> parallel d_walk().  What happens when you have two threads hitting
-> shrink_dcache_parent() on two different places, one being an ancestor
-> of another?  That can happen in parallel, and currently it does work
-> correctly, but that's fairly delicate and there are places where a minor
-> change could turn O(n) into O(n^2), etc.
-> 
-> 	Let me think about that - I'm not saying it's hopeless, and it
-> would be nice to avoid that subtlety in dentry_unlist(), but there
-> might be dragons.
+Hi Theodore, Andreas and ext4 folks,
 
-PS: another obvious change is that d_walk() would become blocking.
-So e.g.
+I've been developing a tool for detecting deadlock possibilities by
+tracking wait/event rather than lock(?) acquisition order to try to
+cover all synchonization machanisms. It's done on v5.17-rc1 tag.
 
-int path_has_submounts(const struct path *parent)
-{
-        struct check_mount data = { .mnt = parent->mnt, .mounted = 0 };
+https://github.com/lgebyungchulpark/linux-dept/commits/dept1.11_on_v5.17-rc1
 
-	read_seqlock_excl(&mount_lock);
-	d_walk(parent->dentry, &data, path_check_mount);
-	read_sequnlock_excl(&mount_lock);
+Benifit:
 
-	return data.mounted;
-} 
+	0. Works with all lock primitives.
+	1. Works with wait_for_completion()/complete().
+	2. Works with 'wait' on PG_locked.
+	3. Works with 'wait' on PG_writeback.
+	4. Works with swait/wakeup.
+	5. Works with waitqueue.
+	6. Multiple reports are allowed.
+	7. Deduplication control on multiple reports.
+	8. Withstand false positives thanks to 6.
+	9. Easy to tag any wait/event.
 
-would need a rework - d_walk() is under a spinlock here.  Another
-potential headache in that respect is d_genocide() - currently non-blocking,
-with this change extremely likely to do evictions.  That, however, is
-not a problem for current in-tree callers - they are all shortly followed
-by shrink_dcache_parent() or equivalents.
+Future work:
 
-path_has_submounts(), though...  I'd really hate to reintroduce the
-"call this on entry/call this on exit" callbacks.  Perhaps it would
-be better to pass the dispose list to d_walk() and have the callers
-deal with evictions?  For that matter, shrink_dcache_parent() and
-friends would be just fine passing the same list they are collecting
-into.
+	0. To make it more stable.
+	1. To separates Dept from Lockdep.
+	2. To improves performance in terms of time and space.
+	3. To use Dept as a dependency engine for Lockdep.
+	4. To add any missing tags of wait/event in the kernel.
+	5. To deduplicate stack trace.
 
-<looks at path_has_submounts() callers>
-*growl*
-autofs_d_automount() has it called under sbi->fs_lock.  So we'd need
-to take the disposal all the way out there, and export shrink_dentry_list()
-while we are at it.  Not pretty ;-/
+I've got several reports from the tool. Some of them look like false
+alarms caused by Lockdep's fake annotations added for better detection.
+However, some others look like real deadlock possibility. Because of my
+unfamiliarity of the domain, it's hard to confirm if it's a real one.
+I'd like to ask for your opinion on it and it'd be appreciated.
 
-And no, we can't make the disposal async, so offloading it to a worker or
-thread is not feasible...
+How to interpret the report is:
+
+	1. E(event) in each context cannot be triggered because of the
+	   W(wait) that cannot be woken.
+	2. The stack trace helping find the problematic code is located
+	   in each conext's detail.
+
+Let me add the reports on this email thread.
+
+---
+Thanks,
+Byungchul
+
