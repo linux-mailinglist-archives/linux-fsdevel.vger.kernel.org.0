@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B1644B7F51
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 05:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A991C4B7F55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 05:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240321AbiBPERa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Feb 2022 23:17:30 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48488 "EHLO
+        id S1344406AbiBPER3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Feb 2022 23:17:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343883AbiBPERO (ORCPT
+        with ESMTP id S1343781AbiBPERR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Feb 2022 23:17:14 -0500
+        Tue, 15 Feb 2022 23:17:17 -0500
 Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 007E4104599
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5D30D104A48
         for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 20:16:09 -0800 (PST)
 Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.53 with ESMTP; 16 Feb 2022 13:16:08 +0900
+        by 156.147.23.53 with ESMTP; 16 Feb 2022 13:16:09 +0900
 X-Original-SENDERIP: 156.147.1.151
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.151 with ESMTP; 16 Feb 2022 13:16:08 +0900
+        by 156.147.1.151 with ESMTP; 16 Feb 2022 13:16:09 +0900
 X-Original-SENDERIP: 10.177.244.38
 X-Original-MAILFROM: byungchul.park@lge.com
 From:   Byungchul Park <byungchul.park@lge.com>
@@ -46,12 +46,13 @@ Cc:     torvalds@linux-foundation.org, mingo@redhat.com,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: Report 2 in ata_scsi_port_error_handler()
-Date:   Wed, 16 Feb 2022 13:16:02 +0900
-Message-Id: <1644984964-28300-1-git-send-email-byungchul.park@lge.com>
+Subject: Report 3 in ata_scsi_port_error_handler()
+Date:   Wed, 16 Feb 2022 13:16:03 +0900
+Message-Id: <1644984964-28300-2-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1644984747-26706-1-git-send-email-byungchul.park@lge.com>
+In-Reply-To: <1644984964-28300-1-git-send-email-byungchul.park@lge.com>
 References: <1644984747-26706-1-git-send-email-byungchul.park@lge.com>
+ <1644984964-28300-1-git-send-email-byungchul.park@lge.com>
 X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
@@ -72,7 +73,7 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 [    2.051991] 
 [    2.051991] context A
 [    2.051991]     [S] (unknown)(&(&ap->eh_wait_q)->dmap:0)
-[    2.051991]     [W] wait_for_completion_timeout(&wait:0)
+[    2.051991]     [W] __mutex_lock_common(&host->eh_mutex:0)
 [    2.051991]     [E] event(&(&ap->eh_wait_q)->dmap:0)
 [    2.051991] 
 [    2.051991] context B
@@ -81,9 +82,9 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 [    2.051991]     [E] spin_unlock(&host->lock:0)
 [    2.051991] 
 [    2.051991] context C
-[    2.051991]     [S] (unknown)(&wait:0)
-[    2.051991]     [W] __raw_spin_lock_irq(&host->lock:0)
-[    2.051991]     [E] complete(&wait:0)
+[    2.051991]     [S] __mutex_lock_common(&host->eh_mutex:0)
+[    2.051991]     [W] __raw_spin_lock_irqsave(&host->lock:0)
+[    2.051991]     [E] mutex_unlock(&host->eh_mutex:0)
 [    2.051991] 
 [    2.051991] [S]: start of the event context
 [    2.051991] [W]: the wait blocked
@@ -93,17 +94,18 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 [    2.051991] ---------------------------------------------------
 [    2.051991] context A
 [    2.051991]     [S] (unknown)(&(&ap->eh_wait_q)->dmap:0)
-[    2.051991]     [W] wait_for_completion_timeout(&wait:0)
+[    2.051991]     [W] __mutex_lock_common(&host->eh_mutex:0)
 [    2.051991]     [E] event(&(&ap->eh_wait_q)->dmap:0)
 [    2.051991] 
 [    2.051991] [S] (unknown)(&(&ap->eh_wait_q)->dmap:0):
 [    2.051991] (N/A)
 [    2.051991] 
-[    2.051991] [W] wait_for_completion_timeout(&wait:0):
-[    2.051991] [<ffffffff817763b1>] ata_exec_internal_sg+0x401/0x690
+[    2.051991] [W] __mutex_lock_common(&host->eh_mutex:0):
+[    2.051991] [<ffffffff81780ad9>] ata_eh_acquire+0x19/0x40
 [    2.051991] stacktrace:
-[    2.051991]       wait_for_completion_timeout+0x40/0xf0
-[    2.051991]       ata_exec_internal_sg+0x401/0x690
+[    2.051991]       __mutex_lock+0x52c/0x900
+[    2.051991]       ata_eh_acquire+0x19/0x40
+[    2.051991]       ata_exec_internal_sg+0x41a/0x690
 [    2.051991]       ata_exec_internal+0x4a/0x70
 [    2.051991]       ata_dev_read_id+0x2ce/0x540
 [    2.051991]       ata_dev_reread_id+0x33/0xc0
@@ -178,32 +180,44 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 [    2.051991] context C's detail
 [    2.051991] ---------------------------------------------------
 [    2.051991] context C
-[    2.051991]     [S] (unknown)(&wait:0)
-[    2.051991]     [W] __raw_spin_lock_irq(&host->lock:0)
-[    2.051991]     [E] complete(&wait:0)
+[    2.051991]     [S] __mutex_lock_common(&host->eh_mutex:0)
+[    2.051991]     [W] __raw_spin_lock_irqsave(&host->lock:0)
+[    2.051991]     [E] mutex_unlock(&host->eh_mutex:0)
 [    2.051991] 
-[    2.051991] [S] (unknown)(&wait:0):
-[    2.051991] (N/A)
-[    2.051991] 
-[    2.051991] [W] __raw_spin_lock_irq(&host->lock:0):
-[    2.051991] [<ffffffff8178c51b>] ata_sff_pio_task+0x1b/0x1b0
+[    2.051991] [S] __mutex_lock_common(&host->eh_mutex:0):
+[    2.051991] [<ffffffff81780ad9>] ata_eh_acquire+0x19/0x40
 [    2.051991] stacktrace:
-[    2.051991]       _raw_spin_lock_irq+0x58/0x90
-[    2.051991]       ata_sff_pio_task+0x1b/0x1b0
-[    2.051991]       process_one_work+0x317/0x640
-[    2.051991]       worker_thread+0x44/0x410
+[    2.051991]       __mutex_lock+0x54d/0x900
+[    2.051991]       ata_eh_acquire+0x19/0x40
+[    2.051991]       ata_scsi_port_error_handler+0x32/0x740
+[    2.051991]       ata_scsi_error+0x94/0xc0
+[    2.051991]       scsi_error_handler+0x8d/0x3a0
 [    2.051991]       kthread+0xe3/0x110
 [    2.051991]       ret_from_fork+0x22/0x30
 [    2.051991] 
-[    2.051991] [E] complete(&wait:0):
-[    2.051991] [<ffffffff81780569>] ata_do_link_abort+0x99/0xd0
+[    2.051991] [W] __raw_spin_lock_irqsave(&host->lock:0):
+[    2.051991] [<ffffffff817853df>] ata_scsi_port_error_handler+0x4f/0x740
 [    2.051991] stacktrace:
-[    2.051991]       complete+0x28/0x60
-[    2.051991]       ata_do_link_abort+0x99/0xd0
-[    2.051991]       ata_sff_hsm_move+0xfc/0xad0
-[    2.051991]       ata_sff_pio_task+0x177/0x1b0
-[    2.051991]       process_one_work+0x317/0x640
-[    2.051991]       worker_thread+0x44/0x410
+[    2.051991]       _raw_spin_lock_irqsave+0x5f/0xa0
+[    2.051991]       ata_scsi_port_error_handler+0x4f/0x740
+[    2.051991]       ata_scsi_error+0x94/0xc0
+[    2.051991]       scsi_error_handler+0x8d/0x3a0
+[    2.051991]       kthread+0xe3/0x110
+[    2.051991]       ret_from_fork+0x22/0x30
+[    2.051991] 
+[    2.051991] [E] mutex_unlock(&host->eh_mutex:0):
+[    2.051991] [<ffffffff81773cd7>] ata_msleep+0x77/0x80
+[    2.051991] stacktrace:
+[    2.051991]       __mutex_unlock_slowpath+0x49/0x2a0
+[    2.051991]       ata_msleep+0x77/0x80
+[    2.051991]       ata_sff_wait_after_reset+0x27/0x150
+[    2.051991]       ata_sff_softreset+0xc8/0x1a0
+[    2.051991]       ata_eh_reset+0x3dc/0x1390
+[    2.051991]       ata_eh_recover+0x257/0x1360
+[    2.051991]       ata_do_eh+0x3f/0xa0
+[    2.051991]       ata_scsi_port_error_handler+0x432/0x740
+[    2.051991]       ata_scsi_error+0x94/0xc0
+[    2.051991]       scsi_error_handler+0x8d/0x3a0
 [    2.051991]       kthread+0xe3/0x110
 [    2.051991]       ret_from_fork+0x22/0x30
 [    2.051991] ---------------------------------------------------
@@ -235,3 +249,4 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 [    2.051991]  ? kthread_complete_and_exit+0x20/0x20
 [    2.051991]  ret_from_fork+0x22/0x30
 [    2.051991]  </TASK>
+
