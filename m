@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EDD64B8171
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 08:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3E154B817A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Feb 2022 08:27:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbiBPHXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Feb 2022 02:23:02 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:39146 "EHLO
+        id S230024AbiBPHX5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Feb 2022 02:23:57 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:43914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbiBPHXB (ORCPT
+        with ESMTP id S230014AbiBPHXz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Feb 2022 02:23:01 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 838D4DF3D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 23:22:35 -0800 (PST)
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.52 with ESMTP; 16 Feb 2022 15:52:34 +0900
-X-Original-SENDERIP: 156.147.1.125
+        Wed, 16 Feb 2022 02:23:55 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F32B212ABB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Feb 2022 23:23:43 -0800 (PST)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.51 with ESMTP; 16 Feb 2022 15:53:43 +0900
+X-Original-SENDERIP: 156.147.1.151
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.125 with ESMTP; 16 Feb 2022 15:52:34 +0900
+        by 156.147.1.151 with ESMTP; 16 Feb 2022 15:53:43 +0900
 X-Original-SENDERIP: 10.177.244.38
 X-Original-MAILFROM: byungchul.park@lge.com
 From:   Byungchul Park <byungchul.park@lge.com>
-To:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org
+To:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, mingo@redhat.com,
         linux-kernel@vger.kernel.org, peterz@infradead.org,
         will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
@@ -46,15 +46,16 @@ Cc:     torvalds@linux-foundation.org, mingo@redhat.com,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: RE: [REPORT] libata deadlock possibilities by DEPT
-Date:   Wed, 16 Feb 2022 15:52:29 +0900
-Message-Id: <1644994349-1459-1-git-send-email-byungchul.park@lge.com>
+Subject: RE: [REPORT] net deadlock possibilities by DEPT
+Date:   Wed, 16 Feb 2022 15:53:38 +0900
+Message-Id: <1644994418-2049-1-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1644984747-26706-1-git-send-email-byungchul.park@lge.com>
-References: <1644984747-26706-1-git-send-email-byungchul.park@lge.com>
+In-Reply-To: <1644984767-26886-1-git-send-email-byungchul.park@lge.com>
+References: <1644984767-26886-1-git-send-email-byungchul.park@lge.com>
 X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
