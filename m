@@ -2,87 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B41CF4B95A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 02:49:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A833D4B9627
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 03:57:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbiBQBtu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Feb 2022 20:49:50 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46392 "EHLO
+        id S232055AbiBQC5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Feb 2022 21:57:52 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229714AbiBQBtt (ORCPT
+        with ESMTP id S232045AbiBQC5v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Feb 2022 20:49:49 -0500
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266B2DB48C;
-        Wed, 16 Feb 2022 17:49:30 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V4fQwYM_1645062566;
-Received: from 30.225.24.49(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V4fQwYM_1645062566)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 17 Feb 2022 09:49:27 +0800
-Message-ID: <a3da9289-665d-ea37-5ab9-b97b883f694f@linux.alibaba.com>
-Date:   Thu, 17 Feb 2022 09:49:26 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.0
-Subject: Re: [PATCH v4 05/23] cachefiles: introduce new devnode for on-demand
- read mode
-Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        torvalds@linux-foundation.org, willy@infradead.org,
-        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
-        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
-        linux-kernel@vger.kernel.org
-References: <bd9cb3bb-e29c-d4b3-e9bf-915b9771b553@linux.alibaba.com>
- <20220215111335.123528-1-jefflexu@linux.alibaba.com>
- <YgzWkhXCnlNDADvb@kroah.com>
- <becd656c-701c-747e-f063-2b9867cbd3d2@linux.alibaba.com>
- <Yg0421B10PPwunI+@kroah.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <Yg0421B10PPwunI+@kroah.com>
-Content-Type: text/plain; charset=UTF-8
+        Wed, 16 Feb 2022 21:57:51 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA886B12F3;
+        Wed, 16 Feb 2022 18:57:37 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4134D1F383;
+        Thu, 17 Feb 2022 02:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1645066656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=z6eRmy0xNlN2fdKPLYv2w1ctFFL+lJF1HVKt4VFf25I=;
+        b=y+Vz5nmTyJNuiQEeFMHKyZ7LDH8M+5jd2outxvMTt0Pq7fjTBQ7JJ/9Cq0VhNLFILStZIV
+        X4D6G+5sKivNtkFgRADy3rH8tu3qAjeowmKAC7vX0fCJB2ggVYe7zus+iTYkYomZ5KLFdN
+        88K8z4qHbpqb/jCoDu40UrASh3eluQ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1645066656;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=z6eRmy0xNlN2fdKPLYv2w1ctFFL+lJF1HVKt4VFf25I=;
+        b=77MwZlgfpUOMcqYFWIWY2ePHl3tmJhJLc/klj49UTzzu+N9w2cvbBxZAuNjMYyWLXWSKih
+        zb+t6zs3/WQNDDBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9DE6013B3A;
+        Thu, 17 Feb 2022 02:57:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id AtNqFp65DWIuKgAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 17 Feb 2022 02:57:34 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Stanislav Levin" <slev@altlinux.org>
+Cc:     "Ian Kent" <raven@themaw.net>, autofs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [ANNOUNCE] autofs 5.1.8 release
+In-reply-to: <c1c21e74-85b0-0040-deb7-811a6fa7b312@altlinux.org>
+References: <b54fb31652a4ba76b39db66b8ae795ee3af6f025.camel@themaw.net>,
+ <164444398868.27779.4643380819577932837@noble.neil.brown.name>,
+ <c1c21e74-85b0-0040-deb7-811a6fa7b312@altlinux.org>
+Date:   Thu, 17 Feb 2022 13:57:26 +1100
+Message-id: <164506664650.10228.15450975168088794628@noble.neil.brown.name>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2/17/22 1:48 AM, Greg KH wrote:
-> On Wed, Feb 16, 2022 at 08:49:35PM +0800, JeffleXu wrote:
->>>> +struct cachefiles_req_in {
->>>> +	uint64_t id;
->>>> +	uint64_t off;
->>>> +	uint64_t len;
->>>
->>> For structures that cross the user/kernel boundry, you have to use the
->>> correct types.  For this it would be __u64.
->>
->> OK I will change to __xx style in the next version.
->>
->> By the way, I can't understand the disadvantage of uintxx_t style.
+On Tue, 15 Feb 2022, Stanislav Levin wrote:
 > 
-> The "uint*" types are not valid kernel types.  They are userspace types
-> and do not transfer properly in all arches and situations when crossing
-> the user/kernel boundry.  They are also in a different C "namespace", so
-> should not even be used in kernel code, although a lot of people do
-> because they are used to writing userspace C code :(
+> 
+> This seems duplicate of https://www.spinics.net/lists/autofs/msg02389.html
+> 
 
-OK. "uint*" types are defined in ISO C library, while it seems that
-linux kernel doesn't expect any C library [1].
+Yes it is - thanks for the link.
+I wonder why the proposed fix isn't in git ....
 
-[1] https://kernelnewbies.org/FAQ/LibraryFunctionsInKernel
+Also, I cannot see that the new NS4_ONLY_REQUESTED is different from the
+existing NFS4_VERS_MASK.
+They are both set/cleared at exactly the same places.
 
-Thanks for explaining it.
-
--- 
 Thanks,
-Jeffle
+NeilBrown
