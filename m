@@ -2,39 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BF9F4B997C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 07:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 486614B99FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 08:44:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235800AbiBQGym (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 01:54:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47834 "EHLO
+        id S236481AbiBQHok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Feb 2022 02:44:40 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234450AbiBQGyk (ORCPT
+        with ESMTP id S230237AbiBQHoj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 01:54:40 -0500
-Received: from out20-109.mail.aliyun.com (out20-109.mail.aliyun.com [115.124.20.109])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C23FA27F295;
-        Wed, 16 Feb 2022 22:54:25 -0800 (PST)
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.04747014|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_social|0.00194993-0.00333106-0.994719;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047187;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.MrHN41i_1645080860;
-Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.MrHN41i_1645080860)
-          by smtp.aliyun-inc.com(33.18.97.150);
-          Thu, 17 Feb 2022 14:54:21 +0800
-Date:   Thu, 17 Feb 2022 14:54:23 +0800
-From:   Wang Yugui <wangyugui@e16-tech.com>
-To:     "NeilBrown" <neilb@suse.de>
-Subject: Re: [PATCH] fs: allow cross-vfsmount reflink/dedupe
-Cc:     "Josef Bacik" <josef@toxicpanda.com>, viro@ZenIV.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        kernel-team@fb.com
-In-Reply-To: <164507395131.10228.17031212675231968127@noble.neil.brown.name>
-References: <20220217125253.0F07.409509F4@e16-tech.com> <164507395131.10228.17031212675231968127@noble.neil.brown.name>
-Message-Id: <20220217145422.C7EC.409509F4@e16-tech.com>
+        Thu, 17 Feb 2022 02:44:39 -0500
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E63423A1A7;
+        Wed, 16 Feb 2022 23:44:24 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V4gpSp6_1645083855;
+Received: from rsjd01523.et2sqa(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0V4gpSp6_1645083855)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 17 Feb 2022 15:44:20 +0800
+Date:   Thu, 17 Feb 2022 15:44:15 +0800
+From:   Liu Bo <bo.liu@linux.alibaba.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/22] fscache: export fscache_end_operation()
+Message-ID: <20220217074414.GA85627@rsjd01523.et2sqa>
+Reply-To: bo.liu@linux.alibaba.com
+References: <20220209060108.43051-1-jefflexu@linux.alibaba.com>
+ <20220209060108.43051-2-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.75.04 [en]
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220209060108.43051-2-jefflexu@linux.alibaba.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -42,33 +49,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-> On Thu, 17 Feb 2022, Wang Yugui wrote:
-> > Hi,
-> > Cc: NeilBrown
-> > 
-> > btrfs cross-vfsmount reflink works well now with these 2 patches.
-> > 
-> > [PATCH] fs: allow cross-vfsmount reflink/dedupe
-> > [PATCH] btrfs: remove the cross file system checks from remap
-> > 
-> > But nfs over btrfs still fail to do cross-vfsmount reflink.
-> > need some patch for nfs too?
+On Wed, Feb 09, 2022 at 02:00:47PM +0800, Jeffle Xu wrote:
+> Export fscache_end_operation() to avoid code duplication.
 > 
-> NFS doesn't support reflinks at all, does it?
+> Besides, considering the paired fscache_begin_read_operation() is
+> already exported, it shall make sense to also export
+> fscache_end_operation().
+>
 
-NFS support reflinks now.
+Looks reasonable to me.
 
-# df -h /ssd
-Filesystem              Type  Size  Used Avail Use% Mounted on
-T640:/ssd               nfs4   17T  5.5T   12T  34% /ssd
-# /bin/cp --reflink=always /ssd/1.txt /ssd/2.txt
-# uname -a
-Linux T7610 5.15.24-3.el7.x86_64 #1 SMP Thu Feb 17 12:13:25 CST 2022 x86_64 x86_64 x86_64 GNU/Linux
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 
-
-Best Regards
-Wang Yugui (wangyugui@e16-tech.com)
-2022/02/17
-
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  fs/fscache/internal.h   | 11 -----------
+>  fs/nfs/fscache.c        |  8 --------
+>  include/linux/fscache.h | 14 ++++++++++++++
+>  3 files changed, 14 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
+> index f121c21590dc..ed1c9ed737f2 100644
+> --- a/fs/fscache/internal.h
+> +++ b/fs/fscache/internal.h
+> @@ -70,17 +70,6 @@ static inline void fscache_see_cookie(struct fscache_cookie *cookie,
+>  			     where);
+>  }
+>  
+> -/*
+> - * io.c
+> - */
+> -static inline void fscache_end_operation(struct netfs_cache_resources *cres)
+> -{
+> -	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
+> -
+> -	if (ops)
+> -		ops->end_operation(cres);
+> -}
+> -
+>  /*
+>   * main.c
+>   */
+> diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+> index cfe901650ab0..39654ca72d3d 100644
+> --- a/fs/nfs/fscache.c
+> +++ b/fs/nfs/fscache.c
+> @@ -249,14 +249,6 @@ void nfs_fscache_release_file(struct inode *inode, struct file *filp)
+>  	}
+>  }
+>  
+> -static inline void fscache_end_operation(struct netfs_cache_resources *cres)
+> -{
+> -	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
+> -
+> -	if (ops)
+> -		ops->end_operation(cres);
+> -}
+> -
+>  /*
+>   * Fallback page reading interface.
+>   */
+> diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+> index 296c5f1d9f35..d2430da8aa67 100644
+> --- a/include/linux/fscache.h
+> +++ b/include/linux/fscache.h
+> @@ -456,6 +456,20 @@ int fscache_begin_read_operation(struct netfs_cache_resources *cres,
+>  	return -ENOBUFS;
+>  }
+>  
+> +/**
+> + * fscache_end_operation - End the read operation for the netfs lib
+> + * @cres: The cache resources for the read operation
+> + *
+> + * Clean up the resources at the end of the read request.
+> + */
+> +static inline void fscache_end_operation(struct netfs_cache_resources *cres)
+> +{
+> +	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
+> +
+> +	if (ops)
+> +		ops->end_operation(cres);
+> +}
+> +
+>  /**
+>   * fscache_read - Start a read from the cache.
+>   * @cres: The cache resources to use
+> -- 
+> 2.27.0
