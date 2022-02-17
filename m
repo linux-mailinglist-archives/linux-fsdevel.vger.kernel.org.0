@@ -2,46 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 486614B99FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 08:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA8F4B9A20
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 08:52:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236481AbiBQHok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 02:44:40 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35322 "EHLO
+        id S236708AbiBQHvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Feb 2022 02:51:32 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbiBQHoj (ORCPT
+        with ESMTP id S233057AbiBQHvb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 02:44:39 -0500
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E63423A1A7;
-        Wed, 16 Feb 2022 23:44:24 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V4gpSp6_1645083855;
-Received: from rsjd01523.et2sqa(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0V4gpSp6_1645083855)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 17 Feb 2022 15:44:20 +0800
-Date:   Thu, 17 Feb 2022 15:44:15 +0800
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, tao.peng@linux.alibaba.com,
-        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/22] fscache: export fscache_end_operation()
-Message-ID: <20220217074414.GA85627@rsjd01523.et2sqa>
-Reply-To: bo.liu@linux.alibaba.com
-References: <20220209060108.43051-1-jefflexu@linux.alibaba.com>
- <20220209060108.43051-2-jefflexu@linux.alibaba.com>
+        Thu, 17 Feb 2022 02:51:31 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7772A39DC;
+        Wed, 16 Feb 2022 23:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=u1UboIw5kGkVdPuUhtG8b4T+LJ8PQWL40XhaSlt14m4=; b=pNOfS7XsMhXEaBeAwnafjh5qsU
+        JlN5Qe8tsXihYVnxPMYIAr3y6MKoCWQ4EWPGuJSxmVxc0zPwTiQLD9m9pAZogLBXbcs8HsFZ/r6Gv
+        wxdYHrQ3QWM/VTK7CF0FFu9uFc+gX5SF0kto5pJllOistfG7YwrEluKs/SFz5TUWMK5Wv6vMEQDNO
+        sTOkjFz4B02Ib2PfAr9V9c5GSswKJxWUcDKVgdr65lh1Kn+g8QvOZ6AcYOcq1D1/l4QTW/hPUZ8zv
+        NCFmpvdMHO86sYCflSeFHa9R56ZF/CI/G1Ntp7UKjJ/RBVfjsVo9GMeaDSJTYudElSjbY+G8Uohd1
+        AQiqKc5A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nKbZE-009GtV-Ss; Thu, 17 Feb 2022 07:51:08 +0000
+Date:   Wed, 16 Feb 2022 23:51:08 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Zhen Ni <nizhen@uniontech.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tangmeng <tangmeng@uniontech.com>
+Subject: Re: [PATCH v3 0/8] sched: Move a series of sysctls starting with
+ sys/kernel/sched_*
+Message-ID: <Yg3+bAQKVX+Dj317@bombadil.infradead.org>
+References: <20220215114604.25772-1-nizhen@uniontech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220209060108.43051-2-jefflexu@linux.alibaba.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+In-Reply-To: <20220215114604.25772-1-nizhen@uniontech.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,90 +55,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 09, 2022 at 02:00:47PM +0800, Jeffle Xu wrote:
-> Export fscache_end_operation() to avoid code duplication.
-> 
-> Besides, considering the paired fscache_begin_read_operation() is
-> already exported, it shall make sense to also export
-> fscache_end_operation().
->
+On Tue, Feb 15, 2022 at 07:45:56PM +0800, Zhen Ni wrote:
+> move a series of sysctls starting with sys/kernel/sched_* and use the
+> new register_sysctl_init() to register the sysctl interface.
 
-Looks reasonable to me.
+Peter, Andrew,
 
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+I'm starting to get more sysctl patches under kernel/ other than the
+scheduler. To avoid low quality patches, try to see proactively what
+conflicts may lie ahead, ensure everything is applies on linux-next,
+and to ensure all this gets baked through 0-day for a while, I'm
+going to shove all pending patches into a sysctl-next branch based on
+Linus' tree.
 
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> ---
->  fs/fscache/internal.h   | 11 -----------
->  fs/nfs/fscache.c        |  8 --------
->  include/linux/fscache.h | 14 ++++++++++++++
->  3 files changed, 14 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-> index f121c21590dc..ed1c9ed737f2 100644
-> --- a/fs/fscache/internal.h
-> +++ b/fs/fscache/internal.h
-> @@ -70,17 +70,6 @@ static inline void fscache_see_cookie(struct fscache_cookie *cookie,
->  			     where);
->  }
->  
-> -/*
-> - * io.c
-> - */
-> -static inline void fscache_end_operation(struct netfs_cache_resources *cres)
-> -{
-> -	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
-> -
-> -	if (ops)
-> -		ops->end_operation(cres);
-> -}
-> -
->  /*
->   * main.c
->   */
-> diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-> index cfe901650ab0..39654ca72d3d 100644
-> --- a/fs/nfs/fscache.c
-> +++ b/fs/nfs/fscache.c
-> @@ -249,14 +249,6 @@ void nfs_fscache_release_file(struct inode *inode, struct file *filp)
->  	}
->  }
->  
-> -static inline void fscache_end_operation(struct netfs_cache_resources *cres)
-> -{
-> -	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
-> -
-> -	if (ops)
-> -		ops->end_operation(cres);
-> -}
-> -
->  /*
->   * Fallback page reading interface.
->   */
-> diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-> index 296c5f1d9f35..d2430da8aa67 100644
-> --- a/include/linux/fscache.h
-> +++ b/include/linux/fscache.h
-> @@ -456,6 +456,20 @@ int fscache_begin_read_operation(struct netfs_cache_resources *cres,
->  	return -ENOBUFS;
->  }
->  
-> +/**
-> + * fscache_end_operation - End the read operation for the netfs lib
-> + * @cres: The cache resources for the read operation
-> + *
-> + * Clean up the resources at the end of the read request.
-> + */
-> +static inline void fscache_end_operation(struct netfs_cache_resources *cres)
-> +{
-> +	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
-> +
-> +	if (ops)
-> +		ops->end_operation(cres);
-> +}
-> +
->  /**
->   * fscache_read - Start a read from the cache.
->   * @cres: The cache resources to use
-> -- 
-> 2.27.0
+I think it doesn't make sense now to just say, do this for sched for one
+release. I think we need to get these more widely tested in a faster
+way, and to get conflicts ironed out faster too.
+
+Are you folks OK if say Stephen adds a sysctl-next for linux-next so
+we can beat on these there too?
+
+FWIW queued on sysctl-next [0].
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-next
+
+  Luis
