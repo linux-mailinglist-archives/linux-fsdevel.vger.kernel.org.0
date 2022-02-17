@@ -2,51 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 702954B9652
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 04:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CCB84B97A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 05:24:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232371AbiBQDGM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Feb 2022 22:06:12 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53142 "EHLO
+        id S233817AbiBQEYL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Feb 2022 23:24:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbiBQDGM (ORCPT
+        with ESMTP id S233814AbiBQEYK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Feb 2022 22:06:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D7B23D5D6;
-        Wed, 16 Feb 2022 19:05:58 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A5F0CB81FC8;
-        Thu, 17 Feb 2022 03:05:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E241C004E1;
-        Thu, 17 Feb 2022 03:05:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645067156;
-        bh=pC5tlqzsTwhwxJ/F2dJWVL0yWJY+RD+MVytDuM7sOJ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JzG5UcQ55xQ8W1CLPcAuhildAz8A1BLffvZCQ57ckcog+mE/AI8J+M5UvRuZxP/hm
-         ktBSWlvbWNDHmF1/R8dRPg3uDhZ4n38z+PVDyJ95WtleOMZ6e6fExeqiKr7v1TFE87
-         gZ6zwsTdrfoVOTefknfnsnST5pzsm3eARRrYdtNBoHtdmYwr6Wa6+tKtl4HbiKLGwq
-         9ELbCuqm4Vj6TuAWTYv3OIqvkWUSXUXCPYtU6It2Hzb9Zt6ly3TmAVi/rbP5dUKha+
-         MOE3WXO7W2RLdIXIpouEeNi7a8m+2IkCjLJDJrbWC1iZX15bfB0kXqUxrQgVFW9Mda
-         gzZo7ApUKLz/g==
-Date:   Wed, 16 Feb 2022 19:05:55 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     viro@ZenIV.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] fs: allow cross-vfsmount reflink/dedupe
-Message-ID: <20220217030555.GA8253@magnolia>
-References: <67ae4c62a4749ae6870c452d1b458cc5f48b8263.1645042835.git.josef@toxicpanda.com>
+        Wed, 16 Feb 2022 23:24:10 -0500
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F97113296B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Feb 2022 20:23:56 -0800 (PST)
+X-QQ-mid: bizesmtp91t1645071811tig2sadn
+Received: from localhost.localdomain (unknown [58.240.82.166])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Thu, 17 Feb 2022 12:23:23 +0800 (CST)
+X-QQ-SSF: 01400000002000B0E000B00A0000000
+X-QQ-FEAT: lC5HeAtE+ybbExCBMKHCcf5/KOTEY3bGUZZ0Clp34iLJDKjDP29NqoGYqnSVI
+        aAJ2Y+OiGoZ2a7hQEn3RWrP+UtQARJhx5Zp8kA/3+VhPNHAQ3yhlbu9tgMIoGeWC1HX/ABI
+        rCv/7du8Kr9h8PCZXGUlVg+IQ5Ca2mWvyxwDE08cFn66Yj7fn36nSBheQAbWp5qj2YYjODM
+        +bvpSgK4C5KQCUQJubke0uV9lPkaP60OzM/WAc/qAbwUVDDbOoO0KTNSH0EzISPJk9wONm+
+        PJl93l6WOYnVsw8uJ4MwzwwqEBPd58UUyCznm2TfUTU2Qa9JkTBbIV8Y/9lZpGsdyUWpf8/
+        9LLG39SA/RoFRmZ84qLqtLHyy0hWg==
+X-QQ-GoodBg: 2
+From:   tangmeng <tangmeng@uniontech.com>
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tangmeng <tangmeng@uniontech.com>
+Subject: [PATCH] kernel/reboot: move reboot sysctls to its own file
+Date:   Thu, 17 Feb 2022 12:23:21 +0800
+Message-Id: <20220217042321.10291-1-tangmeng@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67ae4c62a4749ae6870c452d1b458cc5f48b8263.1645042835.git.josef@toxicpanda.com>
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign7
+X-QQ-Bgrelay: 1
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,75 +49,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 16, 2022 at 03:21:23PM -0500, Josef Bacik wrote:
-> Currently we disallow reflink and dedupe if the two files aren't on the
-> same vfsmount.  However we really only need to disallow it if they're
-> not on the same super block.  It is very common for btrfs to have a main
-> subvolume that is mounted and then different subvolumes mounted at
-> different locations.  It's allowed to reflink between these volumes, but
-> the vfsmount check disallows this.  Instead fix dedupe to check for the
-> same superblock, and simply remove the vfsmount check for reflink as it
-> already does the superblock check.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
+dishes, this makes it very difficult to maintain.
 
-Seems pretty spiffy to /me/... ;)
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+To help with this maintenance let's start by moving sysctls to places
+where they actually belong.  The proc sysctl maintainers do not want to
+know what sysctl knobs you wish to add for your own piece of code, we
+just care about the core logic.
 
---D
+All filesystem syctls now get reviewed by fs folks. This commit
+follows the commit of fs, move the poweroff_cmd and ctrl-alt-del
+sysctls to its own file, kernel/reboot.c.
 
-> ---
->  fs/ioctl.c       | 4 ----
->  fs/remap_range.c | 7 +------
->  2 files changed, 1 insertion(+), 10 deletions(-)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 1ed097e94af2..090bf47606ab 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -236,9 +236,6 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
->  
->  	if (!src_file.file)
->  		return -EBADF;
-> -	ret = -EXDEV;
-> -	if (src_file.file->f_path.mnt != dst_file->f_path.mnt)
-> -		goto fdput;
->  	cloned = vfs_clone_file_range(src_file.file, off, dst_file, destoff,
->  				      olen, 0);
->  	if (cloned < 0)
-> @@ -247,7 +244,6 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
->  		ret = -EINVAL;
->  	else
->  		ret = 0;
-> -fdput:
->  	fdput(src_file);
->  	return ret;
->  }
-> diff --git a/fs/remap_range.c b/fs/remap_range.c
-> index 231159682907..bc5fb006dc79 100644
-> --- a/fs/remap_range.c
-> +++ b/fs/remap_range.c
-> @@ -362,11 +362,6 @@ loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
->  
->  	WARN_ON_ONCE(remap_flags & REMAP_FILE_DEDUP);
->  
-> -	/*
-> -	 * FICLONE/FICLONERANGE ioctls enforce that src and dest files are on
-> -	 * the same mount. Practically, they only need to be on the same file
-> -	 * system.
-> -	 */
->  	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
->  		return -EXDEV;
->  
-> @@ -458,7 +453,7 @@ loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
->  		goto out_drop_write;
->  
->  	ret = -EXDEV;
-> -	if (src_file->f_path.mnt != dst_file->f_path.mnt)
-> +	if (file_inode(src_file)->i_sb != file_inode(dst_file)->i_sb)
->  		goto out_drop_write;
->  
->  	ret = -EISDIR;
-> -- 
-> 2.26.3
-> 
+Signed-off-by: tangmeng <tangmeng@uniontech.com>
+---
+ include/linux/reboot.h |  4 ----
+ kernel/reboot.c        | 34 ++++++++++++++++++++++++++++++++--
+ kernel/sysctl.c        | 14 --------------
+ 3 files changed, 32 insertions(+), 20 deletions(-)
+
+diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+index af907a3d68d1..a2429648d831 100644
+--- a/include/linux/reboot.h
++++ b/include/linux/reboot.h
+@@ -71,12 +71,8 @@ extern void kernel_restart(char *cmd);
+ extern void kernel_halt(void);
+ extern void kernel_power_off(void);
+ 
+-extern int C_A_D; /* for sysctl */
+ void ctrl_alt_del(void);
+ 
+-#define POWEROFF_CMD_PATH_LEN	256
+-extern char poweroff_cmd[POWEROFF_CMD_PATH_LEN];
+-
+ extern void orderly_poweroff(bool force);
+ extern void orderly_reboot(void);
+ void hw_protection_shutdown(const char *reason, int ms_until_forced);
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index 6bcc5d6a6572..ed4e6dfb7d44 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -23,7 +23,7 @@
+  * this indicates whether you can reboot with ctrl-alt-del: the default is yes
+  */
+ 
+-int C_A_D = 1;
++static int C_A_D = 1;
+ struct pid *cad_pid;
+ EXPORT_SYMBOL(cad_pid);
+ 
+@@ -417,9 +417,37 @@ void ctrl_alt_del(void)
+ 		kill_cad_pid(SIGINT, 1);
+ }
+ 
+-char poweroff_cmd[POWEROFF_CMD_PATH_LEN] = "/sbin/poweroff";
++#define POWEROFF_CMD_PATH_LEN  256
++static char poweroff_cmd[POWEROFF_CMD_PATH_LEN] = "/sbin/poweroff";
+ static const char reboot_cmd[] = "/sbin/reboot";
+ 
++#ifdef CONFIG_SYSCTL
++static struct ctl_table kern_reboot_table[] = {
++	{
++		.procname       = "poweroff_cmd",
++		.data           = &poweroff_cmd,
++		.maxlen         = POWEROFF_CMD_PATH_LEN,
++		.mode           = 0644,
++		.proc_handler   = proc_dostring,
++	},
++	{
++		.procname       = "ctrl-alt-del",
++		.data           = &C_A_D,
++		.maxlen         = sizeof(int),
++		.mode           = 0644,
++		.proc_handler   = proc_dointvec,
++	},
++	{ }
++};
++
++static void __init kernel_reboot_sysctls_init(void)
++{
++	register_sysctl_init("kernel", kern_reboot_table);
++}
++#else
++#define kernel_reboot_sysctls_init() do { } while (0)
++#endif /* CONFIG_SYSCTL */
++
+ static int run_cmd(const char *cmd)
+ {
+ 	char **argv;
+@@ -886,6 +914,8 @@ static int __init reboot_ksysfs_init(void)
+ 		return ret;
+ 	}
+ 
++	kernel_reboot_sysctls_init();
++
+ 	return 0;
+ }
+ late_initcall(reboot_ksysfs_init);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 40d822fbb6d5..38ef895355a7 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1895,13 +1895,6 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif
+-	{
+-		.procname	= "ctrl-alt-del",
+-		.data		= &C_A_D,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+ #ifdef CONFIG_FUNCTION_TRACER
+ 	{
+ 		.procname	= "ftrace_enabled",
+@@ -2208,13 +2201,6 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif
+-	{
+-		.procname	= "poweroff_cmd",
+-		.data		= &poweroff_cmd,
+-		.maxlen		= POWEROFF_CMD_PATH_LEN,
+-		.mode		= 0644,
+-		.proc_handler	= proc_dostring,
+-	},
+ #ifdef CONFIG_KEYS
+ 	{
+ 		.procname	= "keys",
+-- 
+2.20.1
+
+
+
