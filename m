@@ -2,361 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BE6F4BA39D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 15:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAE0E4BA48F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 16:39:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242177AbiBQOux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 09:50:53 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44672 "EHLO
+        id S242613AbiBQPjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Feb 2022 10:39:47 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242126AbiBQOut (ORCPT
+        with ESMTP id S242609AbiBQPjq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 09:50:49 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192CB29E957;
-        Thu, 17 Feb 2022 06:50:34 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id u18so10074738edt.6;
-        Thu, 17 Feb 2022 06:50:34 -0800 (PST)
+        Thu, 17 Feb 2022 10:39:46 -0500
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0732B2E28
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Feb 2022 07:39:29 -0800 (PST)
+Received: by mail-ua1-x935.google.com with SMTP id v5so2858434uam.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Feb 2022 07:39:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8I41jwLvAiCSwd4V/781omnso87v01pI1AY+lB5wImk=;
-        b=Iupq1Tbr6TrNZdw13BJ6EY0qW3jW8QcWqrMnVX0DfbwV9HN8X6F1VFaQ/Vt4JiwKuI
-         PKHeDAsE5jQo2oYFRH3qKrMg7Y7K10m0OisK4CQxgccvztoWVvEOVDbmSPyb1raXFLY6
-         o5nxC5aZSnG5edIofcjlhWKe4xkKLff54dudYJjGhfUtiRMhvaGqVm1r7MGHEDAXKahY
-         1G7DcLlAh6UPp9o/BEWcfQFzwTlY37PC9K7Ys9nIHgd5QmoP2TMvEHAReyoA4+aHzG4q
-         Y5jTggvJqH2wT2nDtKj7XpD5BO7aSbyi7sWvheo/WNRORQls+Wg9QAN+r091a++WqKJr
-         GsTg==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=yHxgvVsxpthEVmLiai5gF7vNFYIGmARiH/7C2ZcyhIo=;
+        b=Ry5+yXHj5O9DMYA4MK8SiKG5WSKqJul/uFABmLOR70Rd3PuqCyAFnGwXSUDRNCWv9u
+         N+Dtm9W44csPcTCeWRLHyJ1qkKySMPXNUrNhMobS33zIz0mFkh+343n1AcQ45q4aIX9N
+         35MfohTX7WY+hZyVTR7Svi4DoJkgXoXVfGh6o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8I41jwLvAiCSwd4V/781omnso87v01pI1AY+lB5wImk=;
-        b=ErvFcyuwCsaPWx3bnJD7oYy3GjZztkdKVGXba/4EFvyj3cVqGax/FTJ4UoorsFQrsQ
-         jLBTOcqnDDs2wfsUxoH7yKOHV/MZkoa8iduo/OLH1MmXtmbTxFOdzXUwC2DDLMW+5H71
-         0GwUvGy0NtWhVhQd5/xzVGXwy7uwO9D98WCTEGVMYMk1FAdrGFZ2ZNdsENK2ZOmnv22E
-         1twA4uPtXa+QtchCxVLAlyAYF7EJtGqKBQdpfkG1RdmFoP1uaONP0zt2/pLzAFUOh15u
-         7AQtsMCT9ONv5Db2zq11PUG/0v1mAZf1cZpn7/8iney9aXwYxwuokcQugTu1uThGTQw+
-         WMAA==
-X-Gm-Message-State: AOAM5311NsIe0WE6YovXlMRa7Wv17gEvvscPAg6iNqv78H8F/1KY8tyU
-        ULJauEKV57mxfgEUEIuGRRNeI7JvJ6QPHg==
-X-Google-Smtp-Source: ABdhPJxHWUoGbeHOtiGY24KhCoWJUu2GzbvuQ9rdb+BqJdqLvOi+M7qBX+pMk1LL7YH8WekmXc7HTw==
-X-Received: by 2002:a05:6402:168e:b0:410:d2a4:b0dd with SMTP id a14-20020a056402168e00b00410d2a4b0ddmr2908446edv.403.1645109432560;
-        Thu, 17 Feb 2022 06:50:32 -0800 (PST)
-Received: from debianHome.localdomain (dynamic-077-001-066-240.77.1.pool.telefonica.de. [77.1.66.240])
-        by smtp.gmail.com with ESMTPSA id c11sm3580270edx.42.2022.02.17.06.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 06:50:32 -0800 (PST)
-From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-To:     selinux@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Serge Hallyn <serge@hallyn.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Zhen Lei <thunder.leizhen@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Pavel Skripkin <paskripkin@gmail.com>,
-        Du Cheng <ducheng2@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexey Gladkov <legion@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Rolf Eike Beer <eb@emlix.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Colin Cross <ccross@google.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Xiaofeng Cao <cxfcosmos@gmail.com>,
-        Nikolay Aleksandrov <nikolay@nvidia.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ziyang Xuan <william.xuanziyang@huawei.com>,
-        Alexander Aring <aahringo@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Alistair Delva <adelva@google.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Subject: [RFC PATCH 2/2] capability: use new capable_or functionality
-Date:   Thu, 17 Feb 2022 15:49:54 +0100
-Message-Id: <20220217145003.78982-1-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.35.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=yHxgvVsxpthEVmLiai5gF7vNFYIGmARiH/7C2ZcyhIo=;
+        b=PS36xOkxrfxVSCIfCzRxq1W2DS8xLCK6MfTUCOYbccqQXJvRo8WOTsPsbtwVEjr76o
+         LUDVjTHsbbKyQfAPqiMppJm3xYG69M9xSu5SuFfkUBihG1dAYk/dsD96uFPikx5ovEOl
+         p9OtP6J5Jt9KPxOPrkyNKSnyZAMk4u4yhqF0CMH/iO8nmEWjJy4GAfMay1kP4fajTYf1
+         /TjupcbZF1GTW1rRtxEzkM8JRb99EIn8tqMsevuF+fad4LB61GVYtHh7Gan59yq1YLWv
+         ap/PksHBpzjIYgfrmBuftkS+aVNgYB1m4DPiFRTy4mmImZZFP/6M1n+P7haEDBjgXzoX
+         kbJg==
+X-Gm-Message-State: AOAM533FHW+GO2Z7ujIzyjRQJUo74OAe8KwbBDet6bkN5qhGxPmMH2fD
+        jrEeR6StvgcMI4SueRAZ+9riTdGbFmEWc1uZupKRmMCWHMk5kQ==
+X-Google-Smtp-Source: ABdhPJww6HTWn5f6qN0PY4Zep2x6qLC9j1ZjYRENKQS09yezP66HlU1jQIXqFVu5UJRlea206kncKuQ7VWPTgiBjFzI=
+X-Received: by 2002:a9f:3f8c:0:b0:33d:c02:c938 with SMTP id
+ k12-20020a9f3f8c000000b0033d0c02c938mr1487587uaj.13.1645112368005; Thu, 17
+ Feb 2022 07:39:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <6da4c709.5385.17ee910a7fd.Coremail.clx428@163.com>
+In-Reply-To: <6da4c709.5385.17ee910a7fd.Coremail.clx428@163.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 17 Feb 2022 16:39:17 +0100
+Message-ID: <CAJfpeguvqro7SUmve_dyMiPHn4_dzQR4MMJRwZyfq61k17N-jg@mail.gmail.com>
+Subject: Re: Report a fuse deadlock scenario issue
+To:     =?UTF-8?B?6ZmI56uL5paw?= <clx428@163.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the new added capable_or macro in appropriate cases, where a task
-is required to have any of two capabilities.
+On Fri, 11 Feb 2022 at 14:55, =E9=99=88=E7=AB=8B=E6=96=B0 <clx428@163.com> =
+wrote:
+>
+> Hi Miklos:
+> I meet a dealock scenario on fuse. here are the 4 backtraces:
+> PID: 301852  TASK: ffff80db78226c80  CPU: 93  COMMAND: "Thread-854"
+> #0 [ffff000c1d88b9e0] __switch_to at ffff000080088738
+> #1 [ffff000c1d88ba00] __schedule at ffff000080a06f48
+> #2 [ffff000c1d88ba90] schedule at ffff000080a07620
+> #3 [ffff000c1d88baa0] fuse_wait_on_page_writeback at ffff000001047418 [fu=
+se]
+> #4 [ffff000c1d88bb00] fuse_page_mkwrite at ffff000001047538 [fuse]
+> #5 [ffff000c1d88bb40] do_page_mkwrite at ffff0000802cb77c
+> #6 [ffff000c1d88bb90] do_fault at ffff0000802d1840
+> #7 [ffff000c1d88bbd0] __handle_mm_fault at ffff0000802d3574
+> #8 [ffff000c1d88bc90] handle_mm_fault at ffff0000802d37c0
+> #9 [ffff000c1d88bcc0] do_page_fault at ffff000080a0ef94
+> #10 [ffff000c1d88bdc0] do_translation_fault at ffff000080a0f32c
+> #11 [ffff000c1d88bdf0] do_mem_abort at ffff0000800812cc
+> #12 [ffff000c1d88bff0] el0_da at ffff000080083b20
+>
+> PID: 400127  TASK: ffff80d1a1c51f00  CPU: 91  COMMAND: "Thread-677"
+> #0 [ffff000beb5e3a00] __switch_to at ffff000080088738
+> #1 [ffff000beb5e3a20] __schedule at ffff000080a06f48
+> #2 [ffff000beb5e3ab0] schedule at ffff000080a07620
+> #3 [ffff000beb5e3ac0] fuse_wait_on_page_writeback at ffff000001047418 [fu=
+se]
+> #4 [ffff000beb5e3b20] fuse_page_mkwrite at ffff000001047538 [fuse]
+> #5 [ffff000beb5e3b60] do_page_mkwrite at ffff0000802cb77c
+> #6 [ffff000beb5e3bb0] do_wp_page at ffff0000802d0264
+> #7 [ffff000beb5e3c00] __handle_mm_fault at ffff0000802d363c
+> #8 [ffff000beb5e3cc0] handle_mm_fault at ffff0000802d37c0
+> #9 [ffff000beb5e3cf0] do_page_fault at ffff000080a0ef94
+> #10 [ffff000beb5e3df0] do_mem_abort at ffff0000800812cc
+> #11 [ffff000beb5e3ff0] el0_da at ffff000080083b20
+>
+> PID: 178830  TASK: ffff80dc1704cd80  CPU: 64  COMMAND: "kworker/u259:11"
+> #0 [ffff0000aab6b6f0] __switch_to at ffff000080088738
+> #1 [ffff0000aab6b710] __schedule at ffff000080a06f48
+> #2 [ffff0000aab6b7a0] schedule at ffff000080a07620
+> #3 [ffff0000aab6b7b0] io_schedule at ffff00008012dbc4
+> #4 [ffff0000aab6b7d0] __lock_page at ffff0000802854e0
+> #5 [ffff0000aab6b870] write_cache_pages at ffff0000802987e8
+> #6 [ffff0000aab6b990] fuse_writepages at ffff00000104ab6c [fuse]
+> #7 [ffff0000aab6b9f0] do_writepages at ffff00008029b2e0
+> #8 [ffff0000aab6ba70] __writeback_single_inode at ffff00008037f8b4
+> #9 [ffff0000aab6bac0] writeback_sb_inodes at ffff000080380150
+> #10 [ffff0000aab6bbd0] __writeback_inodes_wb at ffff0000803804c0
+> #11 [ffff0000aab6bc20] wb_writeback at ffff000080380880
+> #12 [ffff0000aab6bcd0] wb_workfn at ffff000080381470
+> #13 [ffff0000aab6bdb0] process_one_work at ffff000080113428
+> #14 [ffff0000aab6be00] worker_thread at ffff0000801136c0
+> #15 [ffff0000aab6be70] kthread at ffff00008011ab60
+>
+> PID: 47324  TASK: ffff80db5a038000  CPU: 88  COMMAND: "Thread-2064"
+> #0 [ffff000c2114b820] __switch_to at ffff000080088738
+> #1 [ffff000c2114b840] __schedule at ffff000080a06f48
+> #2 [ffff000c2114b8d0] schedule at ffff000080a07620
+> #3 [ffff000c2114b8e0] io_schedule at ffff00008012dbc4
+> #4 [ffff000c2114b900] __lock_page at ffff0000802854e0
+> #5 [ffff000c2114b9a0] write_cache_pages at ffff0000802987e8
+> #6 [ffff000c2114bac0] fuse_writepages at ffff00000104ab6c [fuse]
+> #7 [ffff000c2114bb20] do_writepages at ffff00008029b2e0
+> #8 [ffff000c2114bba0] __filemap_fdatawrite_range at ffff0000802883f8
+> #9 [ffff000c2114bc60] file_write_and_wait_range at ffff0000802886f0
+> #10 [ffff000c2114bca0] fuse_fsync_common at ffff0000010491d8 [fuse]
+> #11 [ffff000c2114bd90] fuse_fsync at ffff00000104938c [fuse]
+> #12 [ffff000c2114bdc0] vfs_fsync_range at ffff000080385938
+> #13 [ffff000c2114bdf0] __arm64_sys_msync at ffff0000802dcf8c
+> #14 [ffff000c2114be60] el0_svc_common at ffff000080097cbc
+> #15 [ffff000c2114bea0] el0_svc_handler at ffff000080097df0
+> #16 [ffff000c2114bff0] el0_svc at ffff000080084144
+>
+> The 4 threads write the same file, and deadlocked:
+>   Thread 301852 gets the page 5 lock, and waiting on page 5 writeback is =
+completed;
+>   Thread 400127 gets the page 0 lock, and waiting on page 0 writeback is =
+completed;
+>   Thread 47324 is waiting page 5 lock, and already set page 0 - 4 to writ=
+eback;
+>   Thread 178830 is waiting page 0 lock, and already set page 5 - 6 to wri=
+teback;
 
-Reorder CAP_SYS_ADMIN last.
+This last is not possible, because write_cache_pages() will always
+return when it reached the end of the range and only the next
+invocation will wrap around to the zero index page.  See this at the
+end of write_cache_pages():
 
-TODO: split into subsystem patches.
+    if (wbc->range_cyclic && !done)
+        done_index =3D 0;
 
-Fixes: 94c4b4fd25e6 ("block: Check ADMIN before NICE for IOPRIO_CLASS_RT")
+Otherwise index will be monotonic increasing throughout a single
+write_cache_pages() call.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- block/ioprio.c                                   | 9 +--------
- drivers/media/common/saa7146/saa7146_video.c     | 2 +-
- drivers/media/pci/bt8xx/bttv-driver.c            | 3 +--
- drivers/media/pci/saa7134/saa7134-video.c        | 3 +--
- drivers/media/platform/fsl-viu.c                 | 2 +-
- drivers/media/test-drivers/vivid/vivid-vid-cap.c | 2 +-
- drivers/net/caif/caif_serial.c                   | 2 +-
- drivers/s390/block/dasd_eckd.c                   | 2 +-
- fs/pipe.c                                        | 2 +-
- include/linux/capability.h                       | 4 ++--
- kernel/bpf/syscall.c                             | 2 +-
- kernel/fork.c                                    | 2 +-
- kernel/sys.c                                     | 2 +-
- net/caif/caif_socket.c                           | 2 +-
- net/unix/scm.c                                   | 2 +-
- 15 files changed, 16 insertions(+), 25 deletions(-)
+That doesn't mean that there's no deadlock, this is pretty complex,
+but there must be some other explanation.
 
-diff --git a/block/ioprio.c b/block/ioprio.c
-index 2fe068fcaad5..52d5da286323 100644
---- a/block/ioprio.c
-+++ b/block/ioprio.c
-@@ -37,14 +37,7 @@ int ioprio_check_cap(int ioprio)
- 
- 	switch (class) {
- 		case IOPRIO_CLASS_RT:
--			/*
--			 * Originally this only checked for CAP_SYS_ADMIN,
--			 * which was implicitly allowed for pid 0 by security
--			 * modules such as SELinux. Make sure we check
--			 * CAP_SYS_ADMIN first to avoid a denial/avc for
--			 * possibly missing CAP_SYS_NICE permission.
--			 */
--			if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
-+			if (!capable_or(CAP_SYS_NICE, CAP_SYS_ADMIN))
- 				return -EPERM;
- 			fallthrough;
- 			/* rt has prio field too */
-diff --git a/drivers/media/common/saa7146/saa7146_video.c b/drivers/media/common/saa7146/saa7146_video.c
-index 66215d9106a4..5eabc2e77cc2 100644
---- a/drivers/media/common/saa7146/saa7146_video.c
-+++ b/drivers/media/common/saa7146/saa7146_video.c
-@@ -470,7 +470,7 @@ static int vidioc_s_fbuf(struct file *file, void *fh, const struct v4l2_framebuf
- 
- 	DEB_EE("VIDIOC_S_FBUF\n");
- 
--	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
-+	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* check args */
-diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
-index 8cc9bec43688..c2437ff07246 100644
---- a/drivers/media/pci/bt8xx/bttv-driver.c
-+++ b/drivers/media/pci/bt8xx/bttv-driver.c
-@@ -2569,8 +2569,7 @@ static int bttv_s_fbuf(struct file *file, void *f,
- 	const struct bttv_format *fmt;
- 	int retval;
- 
--	if (!capable(CAP_SYS_ADMIN) &&
--		!capable(CAP_SYS_RAWIO))
-+	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* check args */
-diff --git a/drivers/media/pci/saa7134/saa7134-video.c b/drivers/media/pci/saa7134/saa7134-video.c
-index 374c8e1087de..356b77c16f87 100644
---- a/drivers/media/pci/saa7134/saa7134-video.c
-+++ b/drivers/media/pci/saa7134/saa7134-video.c
-@@ -1803,8 +1803,7 @@ static int saa7134_s_fbuf(struct file *file, void *f,
- 	struct saa7134_dev *dev = video_drvdata(file);
- 	struct saa7134_format *fmt;
- 
--	if (!capable(CAP_SYS_ADMIN) &&
--	   !capable(CAP_SYS_RAWIO))
-+	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* check args */
-diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-index a4bfa70b49b2..925c34c2b1b3 100644
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -803,7 +803,7 @@ static int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_frameb
- 	const struct v4l2_framebuffer *fb = arg;
- 	struct viu_fmt *fmt;
- 
--	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
-+	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* check args */
-diff --git a/drivers/media/test-drivers/vivid/vivid-vid-cap.c b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-index b9caa4b26209..a0cfcf6c22c4 100644
---- a/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-+++ b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-@@ -1253,7 +1253,7 @@ int vivid_vid_cap_s_fbuf(struct file *file, void *fh,
- 	if (dev->multiplanar)
- 		return -ENOTTY;
- 
--	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
-+	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	if (dev->overlay_cap_owner)
-diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_serial.c
-index 2a7af611d43a..245c30c469c2 100644
---- a/drivers/net/caif/caif_serial.c
-+++ b/drivers/net/caif/caif_serial.c
-@@ -326,7 +326,7 @@ static int ldisc_open(struct tty_struct *tty)
- 	/* No write no play */
- 	if (tty->ops->write == NULL)
- 		return -EOPNOTSUPP;
--	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_TTY_CONFIG))
-+	if (!capable_or(CAP_SYS_TTY_CONFIG, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* release devices to avoid name collision */
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index 8410a25a65c1..9b5d22dd3e7b 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -5319,7 +5319,7 @@ static int dasd_symm_io(struct dasd_device *device, void __user *argp)
- 	char psf0, psf1;
- 	int rc;
- 
--	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
-+	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
- 		return -EACCES;
- 	psf0 = psf1 = 0;
- 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index cc28623a67b6..47dc9b59b7a5 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -775,7 +775,7 @@ bool too_many_pipe_buffers_hard(unsigned long user_bufs)
- 
- bool pipe_is_unprivileged_user(void)
- {
--	return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
-+	return !capable_or(CAP_SYS_RESOURCE, CAP_SYS_ADMIN);
- }
- 
- struct pipe_inode_info *alloc_pipe_info(void)
-diff --git a/include/linux/capability.h b/include/linux/capability.h
-index 5c55687a9a05..5ed55b73cb62 100644
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -262,12 +262,12 @@ extern bool file_ns_capable(const struct file *file, struct user_namespace *ns,
- extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
- static inline bool perfmon_capable(void)
- {
--	return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
-+	return capable_or(CAP_PERFMON, CAP_SYS_ADMIN);
- }
- 
- static inline bool bpf_capable(void)
- {
--	return capable(CAP_BPF) || capable(CAP_SYS_ADMIN);
-+	return capable_or(CAP_BPF, CAP_SYS_ADMIN);
- }
- 
- static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index fa4505f9b611..108dd09f978a 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2243,7 +2243,7 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr)
- 	    !bpf_capable())
- 		return -EPERM;
- 
--	if (is_net_admin_prog_type(type) && !capable(CAP_NET_ADMIN) && !capable(CAP_SYS_ADMIN))
-+	if (is_net_admin_prog_type(type) && !capable_or(CAP_NET_ADMIN, CAP_SYS_ADMIN))
- 		return -EPERM;
- 	if (is_perfmon_prog_type(type) && !perfmon_capable())
- 		return -EPERM;
-diff --git a/kernel/fork.c b/kernel/fork.c
-index d75a528f7b21..067702f2eb15 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2024,7 +2024,7 @@ static __latent_entropy struct task_struct *copy_process(
- 	retval = -EAGAIN;
- 	if (is_ucounts_overlimit(task_ucounts(p), UCOUNT_RLIMIT_NPROC, rlimit(RLIMIT_NPROC))) {
- 		if (p->real_cred->user != INIT_USER &&
--		    !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN))
-+		    !capable_or(CAP_SYS_RESOURCE, CAP_SYS_ADMIN))
- 			goto bad_fork_free;
- 	}
- 	current->flags &= ~PF_NPROC_EXCEEDED;
-diff --git a/kernel/sys.c b/kernel/sys.c
-index ecc4cf019242..9df6c5e77620 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -481,7 +481,7 @@ static int set_user(struct cred *new)
- 	 */
- 	if (is_ucounts_overlimit(new->ucounts, UCOUNT_RLIMIT_NPROC, rlimit(RLIMIT_NPROC)) &&
- 			new_user != INIT_USER &&
--			!capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN))
-+			!capable_or(CAP_SYS_RESOURCE, CAP_SYS_ADMIN))
- 		current->flags |= PF_NPROC_EXCEEDED;
- 	else
- 		current->flags &= ~PF_NPROC_EXCEEDED;
-diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
-index 2b8892d502f7..60498148126c 100644
---- a/net/caif/caif_socket.c
-+++ b/net/caif/caif_socket.c
-@@ -1036,7 +1036,7 @@ static int caif_create(struct net *net, struct socket *sock, int protocol,
- 		.usersize = sizeof_field(struct caifsock, conn_req.param)
- 	};
- 
--	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_NET_ADMIN))
-+	if (!capable_or(CAP_NET_ADMIN, CAP_SYS_ADMIN))
- 		return -EPERM;
- 	/*
- 	 * The sock->type specifies the socket type to use.
-diff --git a/net/unix/scm.c b/net/unix/scm.c
-index aa27a02478dc..821be80e6c85 100644
---- a/net/unix/scm.c
-+++ b/net/unix/scm.c
-@@ -99,7 +99,7 @@ static inline bool too_many_unix_fds(struct task_struct *p)
- 	struct user_struct *user = current_user();
- 
- 	if (unlikely(user->unix_inflight > task_rlimit(p, RLIMIT_NOFILE)))
--		return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
-+		return !capable_or(CAP_SYS_RESOURCE, CAP_SYS_ADMIN);
- 	return false;
- }
- 
--- 
-2.35.1
-
+Thanks,
+Miklos
