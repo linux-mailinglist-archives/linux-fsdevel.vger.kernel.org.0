@@ -2,125 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8E3F4BA773
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 18:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 704094BA94E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 20:11:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241530AbiBQRuK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 12:50:10 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48586 "EHLO
+        id S245013AbiBQTKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Feb 2022 14:10:17 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237904AbiBQRuJ (ORCPT
+        with ESMTP id S243867AbiBQTKQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 12:50:09 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74152291FBF;
-        Thu, 17 Feb 2022 09:49:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1zFqRS7lGsUI9447tPjr+UyxcPBpVVJrIYKaMONuEZQ=; b=ewn0IO8WBPwCjs00l2ERqN87rx
-        TnPixZQ79w+f2vyXxPD272rHyYhd4n34SnMTkkaAc1lF2qb29ZnhRYcjDLxXkLbhjovlJEeY+ptmq
-        VZUqXNYiMoayFdyqZ/ViOfBwX7Ox/aNAhjSrXbYukmlqJacF3N2uVBdv8r09orglvU0dCQa0Fr+A5
-        lO8Uwv4d3zVKyGthoyN2N4Yn+Atj0F6UAmYuAIFISPxnEbFrbqkak4B3h38opGuCzUCHTOSZyxk1d
-        W6UpYIhwPlgCj9UIURHoiqFAuVPN48BRGsOQljMpo9QxPUnxEq/a6tFKqKHXjgBsK0pmxFKtl2UFC
-        vJAM1VDw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nKkua-00BdTP-0U; Thu, 17 Feb 2022 17:49:48 +0000
-Date:   Thu, 17 Feb 2022 09:49:47 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "javier@javigon.com" <javier@javigon.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "msnitzer@redhat.com" <msnitzer@redhat.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "hare@suse.de" <hare@suse.de>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "Frederick.Knight@netapp.com" <Frederick.Knight@netapp.com>,
-        "osandov@fb.com" <osandov@fb.com>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
-        "tytso@mit.edu" <tytso@mit.edu>, "jack@suse.com" <jack@suse.com>,
-        "joshi.k@samsung.com" <joshi.k@samsung.com>,
-        "arnav.dawn@samsung.com" <arnav.dawn@samsung.com>,
-        "nitheshshetty@gmail.com" <nitheshshetty@gmail.com>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [PATCH v3 02/10] block: Introduce queue limits for copy-offload
- support
-Message-ID: <Yg6Ku8XqnTjvNCrC@bombadil.infradead.org>
-References: <20220214080002.18381-1-nj.shetty@samsung.com>
- <CGME20220214080605epcas5p16868dae515a6355cf9fecf22df4f3c3d@epcas5p1.samsung.com>
- <20220214080002.18381-3-nj.shetty@samsung.com>
- <20220217090700.b7n33vbkx5s4qbfq@garbanzo>
- <f0f9317f-839e-2be2-dec6-c5b94d7022b7@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f0f9317f-839e-2be2-dec6-c5b94d7022b7@nvidia.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 17 Feb 2022 14:10:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5ED385678;
+        Thu, 17 Feb 2022 11:10:01 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 431D761C7B;
+        Thu, 17 Feb 2022 19:10:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A45C340EB;
+        Thu, 17 Feb 2022 19:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645125000;
+        bh=ak4f1IR3JDauRmqw+Ocnj7LciaJgX2pj5SekEDDFUWI=;
+        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+        b=lvU0WOO7K9Hu3jpQEoQdykFWOeJkwK5YSzfr3pjVbg1el5417PRg02Pick+MlEGpN
+         MEpDmxkNmZrSTji+4ogBj2o2IbCelGEu036iVOdZXEkPdHdZ2glKe6ogosYUm5F9HT
+         gDM/BdAuWREwPXQ95pWYd4GdFZ3+k/DOUtEbXcTSSBRj9CrZcC43BdffBWtNxM8YeC
+         6yq8iOdFwmjojXKG9BCONmQDeR8kW5H9TOY63x2JbOZ3SsxVOEuNlnbFSzLO8rRtJ9
+         B6NnTxNVZnUWBrpO7D/xkCA/CAbXn4aQruPnMT1/fPRsSMe7g5lExjyihShVILWY7G
+         jcgxVgwJMEg+g==
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 22D2E27C0054;
+        Thu, 17 Feb 2022 14:09:57 -0500 (EST)
+Received: from imap48 ([10.202.2.98])
+  by compute5.internal (MEProxy); Thu, 17 Feb 2022 14:09:58 -0500
+X-ME-Sender: <xms:hJ0OYhfhcmP29_Nr736Rf_VR4Xx9AacSXN14ybFA7qE5VnfQw2k6UQ>
+    <xme:hJ0OYvOcTkmAsvXFyzQM7abAFdGjOKqUwdKUufgnJTzNWmIqVnsewZPeBu9zKKj7i
+    UP8-svOYeSuuoTfYFo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrjeekgdduudelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    hicunfhuthhomhhirhhskhhifdcuoehluhhtoheskhgvrhhnvghlrdhorhhgqeenucggtf
+    frrghtthgvrhhnpedthfehtedtvdetvdetudfgueeuhfdtudegvdelveelfedvteelfffg
+    fedvkeegfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudduiedukeeh
+    ieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghrnhgvlhdrohhrgheslhhinhhugi
+    drlhhuthhordhush
+X-ME-Proxy: <xmx:hJ0OYqh93zilhV36T3x1IBn9k-SuRB2m7ja01WV-VG3usyRPRUjl4w>
+    <xmx:hJ0OYq_c0M0zS_-AqS7M6zHUbF53D4l6HsGQ7ZYCK1rxjXgarQM5bw>
+    <xmx:hJ0OYtv0yrfYhSsvcFG55K3UtDbwJrTNB47JETg155Pixxqq5yvUJg>
+    <xmx:hZ0OYhDilIaXT5yqAtBRSRwJg78QQdEAKf1oXJTOOymblLEqORlaWM_YpTY>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 3BF2F21E006E; Thu, 17 Feb 2022 14:09:56 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-4778-g14fba9972e-fm-20220217.001-g14fba997
+Mime-Version: 1.0
+Message-Id: <2ca78dcb-61d9-4c9d-baa9-955b6f4298bb@www.fastmail.com>
+In-Reply-To: <20220217130631.GB32679@chaop.bj.intel.com>
+References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
+ <20220118132121.31388-2-chao.p.peng@linux.intel.com>
+ <619547ad-de96-1be9-036b-a7b4e99b09a6@kernel.org>
+ <20220217130631.GB32679@chaop.bj.intel.com>
+Date:   Thu, 17 Feb 2022 11:09:35 -0800
+From:   "Andy Lutomirski" <luto@kernel.org>
+To:     "Chao Peng" <chao.p.peng@linux.intel.com>
+Cc:     "kvm list" <kvm@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, "Linux API" <linux-api@vger.kernel.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        "Sean Christopherson" <seanjc@google.com>,
+        "Vitaly Kuznetsov" <vkuznets@redhat.com>,
+        "Wanpeng Li" <wanpengli@tencent.com>,
+        "Jim Mattson" <jmattson@google.com>,
+        "Joerg Roedel" <joro@8bytes.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Hugh Dickins" <hughd@google.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Yu Zhang" <yu.c.zhang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "David Hildenbrand" <david@redhat.com>
+Subject: Re: [PATCH v4 01/12] mm/shmem: Introduce F_SEAL_INACCESSIBLE
+Content-Type: text/plain
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 17, 2022 at 10:16:21AM +0000, Chaitanya Kulkarni wrote:
-> On 2/17/22 1:07 AM, Luis Chamberlain wrote:
-> >> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> >> index efed3820cbf7..792e6d556589 100644
-> >> --- a/include/linux/blkdev.h
-> >> +++ b/include/linux/blkdev.h
-> >> @@ -254,6 +254,13 @@ struct queue_limits {
-> >>   	unsigned int		discard_alignment;
-> >>   	unsigned int		zone_write_granularity;
-> >>   
-> >> +	unsigned long		max_hw_copy_sectors;
-> >> +	unsigned long		max_copy_sectors;
-> >> +	unsigned int		max_hw_copy_range_sectors;
-> >> +	unsigned int		max_copy_range_sectors;
-> >> +	unsigned short		max_hw_copy_nr_ranges;
-> >> +	unsigned short		max_copy_nr_ranges;
-> > 
-> > Before limits start growing more.. I wonder if we should just
-> > stuff hw offload stuff to its own struct within queue_limits.
-> > 
-> > Christoph?
-> > 
-> 
-> Potentially use a pointer to structure and maybe make it configurable,
+On Thu, Feb 17, 2022, at 5:06 AM, Chao Peng wrote:
+> On Fri, Feb 11, 2022 at 03:33:35PM -0800, Andy Lutomirski wrote:
+>> On 1/18/22 05:21, Chao Peng wrote:
+>> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>> > 
+>> > Introduce a new seal F_SEAL_INACCESSIBLE indicating the content of
+>> > the file is inaccessible from userspace through ordinary MMU access
+>> > (e.g., read/write/mmap). However, the file content can be accessed
+>> > via a different mechanism (e.g. KVM MMU) indirectly.
+>> > 
+>> > It provides semantics required for KVM guest private memory support
+>> > that a file descriptor with this seal set is going to be used as the
+>> > source of guest memory in confidential computing environments such
+>> > as Intel TDX/AMD SEV but may not be accessible from host userspace.
+>> > 
+>> > At this time only shmem implements this seal.
+>> > 
+>> 
+>> I don't dislike this *that* much, but I do dislike this. F_SEAL_INACCESSIBLE
+>> essentially transmutes a memfd into a different type of object.  While this
+>> can apparently be done successfully and without races (as in this code),
+>> it's at least awkward.  I think that either creating a special inaccessible
+>> memfd should be a single operation that create the correct type of object or
+>> there should be a clear justification for why it's a two-step process.
+>
+> Now one justification maybe from Stever's comment to patch-00: for ARM
+> usage it can be used with creating a normal memfd, (partially)populate
+> it with initial guest memory content (e.g. firmware), and then
+> F_SEAL_INACCESSIBLE it just before the first time lunch of the guest in
+> KVM (definitely the current code needs to be changed to support that).
 
-Did you mean to make queue limits local or for hw offload and make that
-a pointer? If so that seems odd because even for hw copy offload we
-still need the other limits no?
+Except we don't allow F_SEAL_INACCESSIBLE on a non-empty file, right?  So this won't work.
 
-So what I meant was that struct queue_limits seems to be getting large,
-and that hw copy offload seems like an example use case where we should
-probably use a separate struct for it. And while at it, well, start
-adding kdocs for these things, because, there's tons of things which
-could use kdoc love.
+In any case, the whole confidential VM initialization story is a bit buddy.  From the earlier emails, it sounds like ARM expects the host to fill in guest memory and measure it.  From my recollection of Intel's scheme (which may well be wrong, and I could easily be confusing it with SGX), TDX instead measures what is essentially a transcript of the series of operations that initializes the VM.  These are fundamentally not the same thing even if they accomplish the same end goal.  For TDX, we unavoidably need an operation (ioctl or similar) that initializes things according to the VM's instructions, and ARM ought to be able to use roughly the same mechanism.
 
-> although I'm not sure about the later part, I'll let Christoph decide
-> that.
-
-  Luis
+Also, if we ever get fancy and teach the page allocator about memory with reduced directmap permissions, it may well be more efficient for userspace to shove data into a memfd via ioctl than it is to mmap it and write the data.
