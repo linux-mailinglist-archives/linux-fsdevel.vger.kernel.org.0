@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C464B9E1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 12:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7AA94B9E58
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 12:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239679AbiBQK7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 05:59:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35764 "EHLO
+        id S239502AbiBQLK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Feb 2022 06:10:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239599AbiBQK6t (ORCPT
+        with ESMTP id S236623AbiBQLK2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 05:58:49 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C277F295FEA
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Feb 2022 02:58:02 -0800 (PST)
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.51 with ESMTP; 17 Feb 2022 19:58:01 +0900
-X-Original-SENDERIP: 156.147.1.125
+        Thu, 17 Feb 2022 06:10:28 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9B110295FD5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Feb 2022 03:10:12 -0800 (PST)
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.52 with ESMTP; 17 Feb 2022 20:10:10 +0900
+X-Original-SENDERIP: 156.147.1.121
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.125 with ESMTP; 17 Feb 2022 19:58:01 +0900
+        by 156.147.1.121 with ESMTP; 17 Feb 2022 20:10:10 +0900
 X-Original-SENDERIP: 10.177.244.38
 X-Original-MAILFROM: byungchul.park@lge.com
 From:   Byungchul Park <byungchul.park@lge.com>
@@ -47,9 +47,9 @@ Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: [PATCH 16/16] dept: Distinguish each syscall context from another
-Date:   Thu, 17 Feb 2022 19:57:52 +0900
-Message-Id: <1645095472-26530-17-git-send-email-byungchul.park@lge.com>
+Subject: Report 1 in ext4 and journal based on v5.17-rc1
+Date:   Thu, 17 Feb 2022 20:10:03 +0900
+Message-Id: <1645096204-31670-1-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1645095472-26530-1-git-send-email-byungchul.park@lge.com>
 References: <1645095472-26530-1-git-send-email-byungchul.park@lge.com>
@@ -62,378 +62,210 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It enters kernel mode on each syscall and each syscall handling should
-be considered independently from the point of view of Dept. Otherwise,
-Dept may wrongly track dependencies across different syscalls.
+[    7.009608] ===================================================
+[    7.009613] DEPT: Circular dependency has been detected.
+[    7.009614] 5.17.0-rc1-00014-g8a599299c0cb-dirty #30 Tainted: G        W
+[    7.009616] ---------------------------------------------------
+[    7.009617] summary
+[    7.009618] ---------------------------------------------------
+[    7.009618] *** DEADLOCK ***
+[    7.009618]
+[    7.009619] context A
+[    7.009619]     [S] (unknown)(&(bit_wait_table + i)->dmap:0)
+[    7.009621]     [W] down_write(&ei->i_data_sem:0)
+[    7.009623]     [E] event(&(bit_wait_table + i)->dmap:0)
+[    7.009624]
+[    7.009625] context B
+[    7.009625]     [S] down_read(&ei->i_data_sem:0)
+[    7.009626]     [W] wait(&(bit_wait_table + i)->dmap:0)
+[    7.009627]     [E] up_read(&ei->i_data_sem:0)
+[    7.009628]
+[    7.009629] [S]: start of the event context
+[    7.009629] [W]: the wait blocked
+[    7.009630] [E]: the event not reachable
+[    7.009631] ---------------------------------------------------
+[    7.009631] context A's detail
+[    7.009632] ---------------------------------------------------
+[    7.009632] context A
+[    7.009633]     [S] (unknown)(&(bit_wait_table + i)->dmap:0)
+[    7.009634]     [W] down_write(&ei->i_data_sem:0)
+[    7.009635]     [E] event(&(bit_wait_table + i)->dmap:0)
+[    7.009636]
+[    7.009636] [S] (unknown)(&(bit_wait_table + i)->dmap:0):
+[    7.009638] (N/A)
+[    7.009638]
+[    7.009639] [W] down_write(&ei->i_data_sem:0):
+[    7.009639] ext4_truncate (fs/ext4/inode.c:4187) 
+[    7.009645] stacktrace:
+[    7.009646] down_write (kernel/locking/rwsem.c:1514) 
+[    7.009648] ext4_truncate (fs/ext4/inode.c:4187) 
+[    7.009650] ext4_da_write_begin (./include/linux/fs.h:827 fs/ext4/truncate.h:23 fs/ext4/inode.c:2963) 
+[    7.009652] generic_perform_write (mm/filemap.c:3784) 
+[    7.009654] ext4_buffered_write_iter (fs/ext4/file.c:269) 
+[    7.009657] ext4_file_write_iter (fs/ext4/file.c:677) 
+[    7.009659] new_sync_write (fs/read_write.c:504 (discriminator 1)) 
+[    7.009662] vfs_write (fs/read_write.c:590) 
+[    7.009663] ksys_write (fs/read_write.c:644) 
+[    7.009664] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80) 
+[    7.009667] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:113) 
+[    7.009669]
+[    7.009670] [E] event(&(bit_wait_table + i)->dmap:0):
+[    7.009671] __wake_up_common (kernel/sched/wait.c:108) 
+[    7.009673] stacktrace:
+[    7.009674] dept_event (kernel/dependency/dept.c:2337) 
+[    7.009677] __wake_up_common (kernel/sched/wait.c:109) 
+[    7.009678] __wake_up_common_lock (./include/linux/spinlock.h:428 (discriminator 1) kernel/sched/wait.c:141 (discriminator 1)) 
+[    7.009679] __wake_up_bit (kernel/sched/wait_bit.c:127) 
+[    7.009681] ext4_orphan_del (fs/ext4/orphan.c:282) 
+[    7.009683] ext4_truncate (fs/ext4/inode.c:4212) 
+[    7.009685] ext4_da_write_begin (./include/linux/fs.h:827 fs/ext4/truncate.h:23 fs/ext4/inode.c:2963) 
+[    7.009687] generic_perform_write (mm/filemap.c:3784) 
+[    7.009688] ext4_buffered_write_iter (fs/ext4/file.c:269) 
+[    7.009690] ext4_file_write_iter (fs/ext4/file.c:677) 
+[    7.009692] new_sync_write (fs/read_write.c:504 (discriminator 1)) 
+[    7.009694] vfs_write (fs/read_write.c:590) 
+[    7.009695] ksys_write (fs/read_write.c:644) 
+[    7.009696] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80) 
+[    7.009698] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:113) 
+[    7.009700] ---------------------------------------------------
+[    7.009700] context B's detail
+[    7.009701] ---------------------------------------------------
+[    7.009702] context B
+[    7.009702]     [S] down_read(&ei->i_data_sem:0)
+[    7.009703]     [W] wait(&(bit_wait_table + i)->dmap:0)
+[    7.009704]     [E] up_read(&ei->i_data_sem:0)
+[    7.009705]
+[    7.009706] [S] down_read(&ei->i_data_sem:0):
+[    7.009707] ext4_map_blocks (./arch/x86/include/asm/bitops.h:207 ./include/asm-generic/bitops/instrumented-non-atomic.h:135 fs/ext4/ext4.h:1918 fs/ext4/inode.c:562) 
+[    7.009709] stacktrace:
+[    7.009709] down_read (kernel/locking/rwsem.c:1461) 
+[    7.009711] ext4_map_blocks (./arch/x86/include/asm/bitops.h:207 ./include/asm-generic/bitops/instrumented-non-atomic.h:135 fs/ext4/ext4.h:1918 fs/ext4/inode.c:562) 
+[    7.009712] ext4_getblk (fs/ext4/inode.c:851) 
+[    7.009714] ext4_bread (fs/ext4/inode.c:903) 
+[    7.009715] __ext4_read_dirblock (fs/ext4/namei.c:117) 
+[    7.009718] dx_probe (fs/ext4/namei.c:789) 
+[    7.009720] ext4_dx_find_entry (fs/ext4/namei.c:1721) 
+[    7.009722] __ext4_find_entry (fs/ext4/namei.c:1571) 
+[    7.009723] ext4_lookup (fs/ext4/namei.c:1770) 
+[    7.009725] lookup_open (./include/linux/dcache.h:361 fs/namei.c:3310) 
+[    7.009727] path_openat (fs/namei.c:3401 fs/namei.c:3605) 
+[    7.009729] do_filp_open (fs/namei.c:3637) 
+[    7.009731] do_sys_openat2 (fs/open.c:1215) 
+[    7.009732] do_sys_open (fs/open.c:1231) 
+[    7.009734] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80) 
+[    7.009736] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:113) 
+[    7.009738]
+[    7.009738] [W] wait(&(bit_wait_table + i)->dmap:0):
+[    7.009739] prepare_to_wait (kernel/sched/wait.c:275) 
+[    7.009741] stacktrace:
+[    7.009741] __schedule (kernel/sched/sched.h:1318 kernel/sched/sched.h:1616 kernel/sched/core.c:6213) 
+[    7.009743] schedule (kernel/sched/core.c:6373 (discriminator 1)) 
+[    7.009744] io_schedule (./arch/x86/include/asm/current.h:15 kernel/sched/core.c:8392 kernel/sched/core.c:8418) 
+[    7.009745] bit_wait_io (./arch/x86/include/asm/current.h:15 kernel/sched/wait_bit.c:210) 
+[    7.009746] __wait_on_bit (kernel/sched/wait_bit.c:49) 
+[    7.009748] out_of_line_wait_on_bit (kernel/sched/wait_bit.c:65) 
+[    7.009749] ext4_read_bh (./arch/x86/include/asm/bitops.h:207 ./include/asm-generic/bitops/instrumented-non-atomic.h:135 ./include/linux/buffer_head.h:120 fs/ext4/super.c:201) 
+[    7.009752] __read_extent_tree_block (fs/ext4/extents.c:545) 
+[    7.009754] ext4_find_extent (fs/ext4/extents.c:928) 
+[    7.009756] ext4_ext_map_blocks (fs/ext4/extents.c:4099) 
+[    7.009757] ext4_map_blocks (fs/ext4/inode.c:563) 
+[    7.009759] ext4_getblk (fs/ext4/inode.c:851) 
+[    7.009760] ext4_bread (fs/ext4/inode.c:903) 
+[    7.009762] __ext4_read_dirblock (fs/ext4/namei.c:117) 
+[    7.009764] dx_probe (fs/ext4/namei.c:789) 
+[    7.009765] ext4_dx_find_entry (fs/ext4/namei.c:1721) 
+[    7.009767]
+[    7.009768] [E] up_read(&ei->i_data_sem:0):
+[    7.009769] ext4_map_blocks (fs/ext4/inode.c:593) 
+[    7.009771] stacktrace:
+[    7.009771] up_read (kernel/locking/rwsem.c:1556) 
+[    7.009774] ext4_map_blocks (fs/ext4/inode.c:593) 
+[    7.009775] ext4_getblk (fs/ext4/inode.c:851) 
+[    7.009777] ext4_bread (fs/ext4/inode.c:903) 
+[    7.009778] __ext4_read_dirblock (fs/ext4/namei.c:117) 
+[    7.009780] dx_probe (fs/ext4/namei.c:789) 
+[    7.009782] ext4_dx_find_entry (fs/ext4/namei.c:1721) 
+[    7.009784] __ext4_find_entry (fs/ext4/namei.c:1571) 
+[    7.009786] ext4_lookup (fs/ext4/namei.c:1770) 
+[    7.009788] lookup_open (./include/linux/dcache.h:361 fs/namei.c:3310) 
+[    7.009789] path_openat (fs/namei.c:3401 fs/namei.c:3605) 
+[    7.009791] do_filp_open (fs/namei.c:3637) 
+[    7.009792] do_sys_openat2 (fs/open.c:1215) 
+[    7.009794] do_sys_open (fs/open.c:1231) 
+[    7.009795] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80) 
+[    7.009797] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:113) 
+[    7.009799] ---------------------------------------------------
+[    7.009800] information that might be helpful
+[    7.009800] ---------------------------------------------------
+[    7.009801] CPU: 0 PID: 611 Comm: rs:main Q:Reg Tainted: G        W         5.17.0-rc1-00014-g8a599299c0cb-dirty #30
+[    7.009804] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+[    7.009805] Call Trace:
+[    7.009806]  <TASK>
+[    7.009807] dump_stack_lvl (lib/dump_stack.c:107) 
+[    7.009809] print_circle (./arch/x86/include/asm/atomic.h:108 ./include/linux/atomic/atomic-instrumented.h:258 kernel/dependency/dept.c:157 kernel/dependency/dept.c:762) 
+[    7.009812] ? print_circle (kernel/dependency/dept.c:1086) 
+[    7.009814] cb_check_dl (kernel/dependency/dept.c:1104) 
+[    7.009815] bfs (kernel/dependency/dept.c:860) 
+[    7.009818] add_dep (kernel/dependency/dept.c:1423) 
+[    7.009820] do_event.isra.25 (kernel/dependency/dept.c:1650) 
+[    7.009822] ? __wake_up_common (kernel/sched/wait.c:108) 
+[    7.009824] dept_event (kernel/dependency/dept.c:2337) 
+[    7.009826] __wake_up_common (kernel/sched/wait.c:109) 
+[    7.009828] __wake_up_common_lock (./include/linux/spinlock.h:428 (discriminator 1) kernel/sched/wait.c:141 (discriminator 1)) 
+[    7.009830] __wake_up_bit (kernel/sched/wait_bit.c:127) 
+[    7.009832] ext4_orphan_del (fs/ext4/orphan.c:282) 
+[    7.009835] ? dept_ecxt_exit (./arch/x86/include/asm/current.h:15 kernel/dependency/dept.c:241 kernel/dependency/dept.c:999 kernel/dependency/dept.c:1043 kernel/dependency/dept.c:2478) 
+[    7.009837] ext4_truncate (fs/ext4/inode.c:4212) 
+[    7.009839] ext4_da_write_begin (./include/linux/fs.h:827 fs/ext4/truncate.h:23 fs/ext4/inode.c:2963) 
+[    7.009842] generic_perform_write (mm/filemap.c:3784) 
+[    7.009845] ext4_buffered_write_iter (fs/ext4/file.c:269) 
+[    7.009848] ext4_file_write_iter (fs/ext4/file.c:677) 
+[    7.009851] new_sync_write (fs/read_write.c:504 (discriminator 1)) 
+[    7.009854] vfs_write (fs/read_write.c:590) 
+[    7.009856] ksys_write (fs/read_write.c:644) 
+[    7.009857] ? trace_hardirqs_on (kernel/trace/trace_preemptirq.c:65) 
+[    7.009860] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80) 
+[    7.009862] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:113) 
+[    7.009865] RIP: 0033:0x7f3b160b335d
+[ 7.009867] Code: e1 20 00 00 75 10 b8 01 00 00 00 0f 05 48 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 ce fa ff ff 48 89 04 24 b8 01 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 17 fb ff ff 48 89 d0 48 83 c4 08 48 3d 01
+All code
+========
+   0:	e1 20                	loope  0x22
+   2:	00 00                	add    %al,(%rax)
+   4:	75 10                	jne    0x16
+   6:	b8 01 00 00 00       	mov    $0x1,%eax
+   b:	0f 05                	syscall 
+   d:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
+  13:	73 31                	jae    0x46
+  15:	c3                   	retq   
+  16:	48 83 ec 08          	sub    $0x8,%rsp
+  1a:	e8 ce fa ff ff       	callq  0xfffffffffffffaed
+  1f:	48 89 04 24          	mov    %rax,(%rsp)
+  23:	b8 01 00 00 00       	mov    $0x1,%eax
+  28:	0f 05                	syscall 
+  2a:*	48 8b 3c 24          	mov    (%rsp),%rdi		<-- trapping instruction
+  2e:	48 89 c2             	mov    %rax,%rdx
+  31:	e8 17 fb ff ff       	callq  0xfffffffffffffb4d
+  36:	48 89 d0             	mov    %rdx,%rax
+  39:	48 83 c4 08          	add    $0x8,%rsp
+  3d:	48                   	rex.W
+  3e:	3d                   	.byte 0x3d
+  3f:	01                   	.byte 0x1
 
-That might be a real dependency from user mode. However, now that Dept
-just started to work, conservatively let Dept not track dependencies
-across different syscalls.
-
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
----
- include/linux/dept.h     | 39 ++++++++++++++++------------
- kernel/dependency/dept.c | 67 ++++++++++++++++++++++++------------------------
- kernel/entry/common.c    |  3 +++
- 3 files changed, 60 insertions(+), 49 deletions(-)
-
-diff --git a/include/linux/dept.h b/include/linux/dept.h
-index 531065a..acf4db0 100644
---- a/include/linux/dept.h
-+++ b/include/linux/dept.h
-@@ -25,11 +25,16 @@
- #define DEPT_MAX_SUBCLASSES_USR		(DEPT_MAX_SUBCLASSES / DEPT_MAX_SUBCLASSES_EVT)
- #define DEPT_MAX_SUBCLASSES_CACHE	2
- 
--#define DEPT_SIRQ			0
--#define DEPT_HIRQ			1
--#define DEPT_IRQS_NR			2
--#define DEPT_SIRQF			(1UL << DEPT_SIRQ)
--#define DEPT_HIRQF			(1UL << DEPT_HIRQ)
-+enum {
-+	DEPT_CXT_SIRQ = 0,
-+	DEPT_CXT_HIRQ,
-+	DEPT_CXT_IRQS_NR,
-+	DEPT_CXT_PROCESS = DEPT_CXT_IRQS_NR,
-+	DEPT_CXTS_NR
-+};
-+
-+#define DEPT_SIRQF			(1UL << DEPT_CXT_SIRQ)
-+#define DEPT_HIRQF			(1UL << DEPT_CXT_HIRQ)
- 
- struct dept_ecxt;
- struct dept_iecxt {
-@@ -89,8 +94,8 @@ struct dept_class {
- 	/*
- 	 * for tracking IRQ dependencies
- 	 */
--	struct dept_iecxt iecxt[DEPT_IRQS_NR];
--	struct dept_iwait iwait[DEPT_IRQS_NR];
-+	struct dept_iecxt iecxt[DEPT_CXT_IRQS_NR];
-+	struct dept_iwait iwait[DEPT_CXT_IRQS_NR];
- };
- 
- struct dept_stack {
-@@ -144,8 +149,8 @@ struct dept_ecxt {
- 	/*
- 	 * where the IRQ-enabled happened
- 	 */
--	unsigned long enirq_ip[DEPT_IRQS_NR];
--	struct dept_stack *enirq_stack[DEPT_IRQS_NR];
-+	unsigned long enirq_ip[DEPT_CXT_IRQS_NR];
-+	struct dept_stack *enirq_stack[DEPT_CXT_IRQS_NR];
- 
- 	/*
- 	 * where the event context started
-@@ -188,8 +193,8 @@ struct dept_wait {
- 	/*
- 	 * where the IRQ wait happened
- 	 */
--	unsigned long irq_ip[DEPT_IRQS_NR];
--	struct dept_stack *irq_stack[DEPT_IRQS_NR];
-+	unsigned long irq_ip[DEPT_CXT_IRQS_NR];
-+	struct dept_stack *irq_stack[DEPT_CXT_IRQS_NR];
- 
- 	/*
- 	 * where the wait happened
-@@ -389,19 +394,19 @@ struct dept_task {
- 	int wait_hist_pos;
- 
- 	/*
--	 * sequential id to identify each IRQ context
-+	 * sequential id to identify each context
- 	 */
--	unsigned int irq_id[DEPT_IRQS_NR];
-+	unsigned int cxt_id[DEPT_CXTS_NR];
- 
- 	/*
- 	 * for tracking IRQ-enabled points with cross-event
- 	 */
--	unsigned int wgen_enirq[DEPT_IRQS_NR];
-+	unsigned int wgen_enirq[DEPT_CXT_IRQS_NR];
- 
- 	/*
- 	 * for keeping up-to-date IRQ-enabled points
- 	 */
--	unsigned long enirq_ip[DEPT_IRQS_NR];
-+	unsigned long enirq_ip[DEPT_CXT_IRQS_NR];
- 
- 	/*
- 	 * current effective IRQ-enabled flag
-@@ -438,7 +443,7 @@ struct dept_task {
- 	.dept_task.wait_hist = { { .wait = NULL, } },			\
- 	.dept_task.ecxt_held_pos = 0,					\
- 	.dept_task.wait_hist_pos = 0,					\
--	.dept_task.irq_id = { 0 },					\
-+	.dept_task.cxt_id = { 0 },					\
- 	.dept_task.wgen_enirq = { 0 },					\
- 	.dept_task.enirq_ip = { 0 },					\
- 	.dept_task.recursive = 0,					\
-@@ -470,6 +475,7 @@ struct dept_task {
- extern void dept_wait_split_map(struct dept_map_each *me, struct dept_map_common *mc, unsigned long ip, const char *w_fn, int ne);
- extern void dept_event_split_map(struct dept_map_each *me, struct dept_map_common *mc, unsigned long ip, const char *e_fn);
- extern void dept_ask_event_split_map(struct dept_map_each *me, struct dept_map_common *mc);
-+extern void dept_kernel_enter(void);
- 
- /*
-  * for users who want to manage external keys
-@@ -510,6 +516,7 @@ struct dept_task {
- #define dept_wait_split_map(me, mc, ip, w_fn, ne)	do { } while (0)
- #define dept_event_split_map(me, mc, ip, e_fn)		do { } while (0)
- #define dept_ask_event_split_map(me, mc)		do { } while (0)
-+#define dept_kernel_enter()				do { } while (0)
- #define dept_key_init(k)				do { (void)(k); } while (0)
- #define dept_key_destroy(k)				do { (void)(k); } while (0)
- #endif
-diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index 4510dbb..f728500 100644
---- a/kernel/dependency/dept.c
-+++ b/kernel/dependency/dept.c
-@@ -229,9 +229,9 @@ static inline struct dept_class *dep_tc(struct dept_dep *d)
- 
- static inline const char *irq_str(int irq)
- {
--	if (irq == DEPT_SIRQ)
-+	if (irq == DEPT_CXT_SIRQ)
- 		return "softirq";
--	if (irq == DEPT_HIRQ)
-+	if (irq == DEPT_CXT_HIRQ)
- 		return "hardirq";
- 	return "(unknown)";
- }
-@@ -389,7 +389,7 @@ static void initialize_class(struct dept_class *c)
- {
- 	int i;
- 
--	for (i = 0; i < DEPT_IRQS_NR; i++) {
-+	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
- 		struct dept_iecxt *ie = &c->iecxt[i];
- 		struct dept_iwait *iw = &c->iwait[i];
- 
-@@ -414,7 +414,7 @@ static void initialize_ecxt(struct dept_ecxt *e)
- {
- 	int i;
- 
--	for (i = 0; i < DEPT_IRQS_NR; i++) {
-+	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
- 		e->enirq_stack[i] = NULL;
- 		e->enirq_ip[i] = 0UL;
- 	}
-@@ -429,7 +429,7 @@ static void initialize_wait(struct dept_wait *w)
- {
- 	int i;
- 
--	for (i = 0; i < DEPT_IRQS_NR; i++) {
-+	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
- 		w->irq_stack[i] = NULL;
- 		w->irq_ip[i] = 0UL;
- 	}
-@@ -468,7 +468,7 @@ static void destroy_ecxt(struct dept_ecxt *e)
- {
- 	int i;
- 
--	for (i = 0; i < DEPT_IRQS_NR; i++)
-+	for (i = 0; i < DEPT_CXT_IRQS_NR; i++)
- 		if (e->enirq_stack[i])
- 			put_stack(e->enirq_stack[i]);
- 	if (e->class)
-@@ -484,7 +484,7 @@ static void destroy_wait(struct dept_wait *w)
- {
- 	int i;
- 
--	for (i = 0; i < DEPT_IRQS_NR; i++)
-+	for (i = 0; i < DEPT_CXT_IRQS_NR; i++)
- 		if (w->irq_stack[i])
- 			put_stack(w->irq_stack[i]);
- 	if (w->class)
-@@ -628,7 +628,7 @@ static void print_diagram(struct dept_dep *d)
- 	const char *c_fn = e->ecxt_fn ?: "(unknown)";
- 
- 	irqf = e->enirqf & w->irqf;
--	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR) {
-+	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR) {
- 		if (!firstline)
- 			pr_warn("\nor\n\n");
- 		firstline = false;
-@@ -659,7 +659,7 @@ static void print_dep(struct dept_dep *d)
- 	const char *c_fn = e->ecxt_fn ?: "(unknown)";
- 
- 	irqf = e->enirqf & w->irqf;
--	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR) {
-+	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR) {
- 		pr_warn("%s has been enabled:\n", irq_str(irq));
- 		print_ip_stack(e->enirq_ip[irq], e->enirq_stack[irq]);
- 		pr_warn("\n");
-@@ -885,7 +885,7 @@ static void bfs(struct dept_class *c, bfs_f *cb, void *in, void **out)
-  */
- 
- static inline unsigned long cur_enirqf(void);
--static inline int cur_irq(void);
-+static inline int cur_cxt(void);
- static inline unsigned int cur_ctxt_id(void);
- 
- static inline struct dept_iecxt *iecxt(struct dept_class *c, int irq)
-@@ -1411,7 +1411,7 @@ static void add_dep(struct dept_ecxt *e, struct dept_wait *w)
- 	if (d) {
- 		check_dl_bfs(d);
- 
--		for (i = 0; i < DEPT_IRQS_NR; i++) {
-+		for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
- 			struct dept_iwait *fiw = iwait(fc, i);
- 			struct dept_iecxt *found_ie;
- 			struct dept_iwait *found_iw;
-@@ -1447,7 +1447,7 @@ static void add_wait(struct dept_class *c, unsigned long ip,
- 	struct dept_task *dt = dept_task();
- 	struct dept_wait *w;
- 	unsigned int wg = 0U;
--	int irq;
-+	int cxt;
- 	int i;
- 
- 	w = new_wait();
-@@ -1459,9 +1459,9 @@ static void add_wait(struct dept_class *c, unsigned long ip,
- 	w->wait_fn = w_fn;
- 	w->wait_stack = get_current_stack();
- 
--	irq = cur_irq();
--	if (irq < DEPT_IRQS_NR)
--		add_iwait(c, irq, w);
-+	cxt = cur_cxt();
-+	if (cxt == DEPT_CXT_HIRQ || cxt == DEPT_CXT_SIRQ)
-+		add_iwait(c, cxt, w);
- 
- 	/*
- 	 * Avoid adding dependency between user aware nested ecxt and
-@@ -1526,7 +1526,7 @@ static void add_ecxt(void *obj, struct dept_class *c, unsigned long ip,
- 	eh->nest = ne;
- 
- 	irqf = cur_enirqf();
--	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR)
-+	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR)
- 		add_iecxt(c, irq, e, false);
- 
- 	del_ecxt(e);
-@@ -1653,7 +1653,7 @@ static void do_event(void *obj, struct dept_class *c, unsigned int wg,
- 			break;
- 	}
- 
--	for (i = 0; i < DEPT_IRQS_NR; i++) {
-+	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
- 		struct dept_ecxt *e;
- 
- 		if (before(dt->wgen_enirq[i], wg))
-@@ -1695,7 +1695,7 @@ static void disconnect_class(struct dept_class *c)
- 		call_rcu(&d->rh, del_dep_rcu);
- 	}
- 
--	for (i = 0; i < DEPT_IRQS_NR; i++) {
-+	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
- 		stale_iecxt(iecxt(c, i));
- 		stale_iwait(iwait(c, i));
- 	}
-@@ -1720,27 +1720,21 @@ static inline unsigned long cur_enirqf(void)
- 	return 0UL;
- }
- 
--static inline int cur_irq(void)
-+static inline int cur_cxt(void)
- {
- 	if (lockdep_softirq_context(current))
--		return DEPT_SIRQ;
-+		return DEPT_CXT_SIRQ;
- 	if (lockdep_hardirq_context())
--		return DEPT_HIRQ;
--	return DEPT_IRQS_NR;
-+		return DEPT_CXT_HIRQ;
-+	return DEPT_CXT_PROCESS;
- }
- 
- static inline unsigned int cur_ctxt_id(void)
- {
- 	struct dept_task *dt = dept_task();
--	int irq = cur_irq();
-+	int cxt = cur_cxt();
- 
--	/*
--	 * Normal process context
--	 */
--	if (irq == DEPT_IRQS_NR)
--		return 0U;
--
--	return dt->irq_id[irq] | (1UL << irq);
-+	return dt->cxt_id[cxt] | (1UL << cxt);
- }
- 
- static void enirq_transition(int irq)
-@@ -1790,7 +1784,7 @@ static void enirq_update(unsigned long ip)
- 	/*
- 	 * Do enirq_transition() only on an OFF -> ON transition.
- 	 */
--	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR) {
-+	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR) {
- 		if (prev & (1UL << irq))
- 			continue;
- 
-@@ -1893,6 +1887,13 @@ void dept_disable_hardirq(unsigned long ip)
- 	dept_exit(flags);
- }
- 
-+void dept_kernel_enter(void)
-+{
-+	struct dept_task *dt = dept_task();
-+
-+	dt->cxt_id[DEPT_CXT_PROCESS] += (1UL << DEPT_CXTS_NR);
-+}
-+
- /*
-  * Ensure it's the outmost softirq context.
-  */
-@@ -1900,7 +1901,7 @@ void dept_softirq_enter(void)
- {
- 	struct dept_task *dt = dept_task();
- 
--	dt->irq_id[DEPT_SIRQ] += (1UL << DEPT_IRQS_NR);
-+	dt->cxt_id[DEPT_CXT_SIRQ] += (1UL << DEPT_CXTS_NR);
- }
- 
- /*
-@@ -1910,7 +1911,7 @@ void dept_hardirq_enter(void)
- {
- 	struct dept_task *dt = dept_task();
- 
--	dt->irq_id[DEPT_HIRQ] += (1UL << DEPT_IRQS_NR);
-+	dt->cxt_id[DEPT_CXT_HIRQ] += (1UL << DEPT_CXTS_NR);
- }
- 
- /*
-diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-index bad7136..1826508 100644
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -6,6 +6,7 @@
- #include <linux/livepatch.h>
- #include <linux/audit.h>
- #include <linux/tick.h>
-+#include <linux/dept.h>
- 
- #include "common.h"
- 
-@@ -102,6 +103,7 @@ noinstr long syscall_enter_from_user_mode(struct pt_regs *regs, long syscall)
- 	long ret;
- 
- 	__enter_from_user_mode(regs);
-+	dept_kernel_enter();
- 
- 	instrumentation_begin();
- 	local_irq_enable();
-@@ -114,6 +116,7 @@ noinstr long syscall_enter_from_user_mode(struct pt_regs *regs, long syscall)
- noinstr void syscall_enter_from_user_mode_prepare(struct pt_regs *regs)
- {
- 	__enter_from_user_mode(regs);
-+	dept_kernel_enter();
- 	instrumentation_begin();
- 	local_irq_enable();
- 	instrumentation_end();
--- 
-1.9.1
-
+Code starting with the faulting instruction
+===========================================
+   0:	48 8b 3c 24          	mov    (%rsp),%rdi
+   4:	48 89 c2             	mov    %rax,%rdx
+   7:	e8 17 fb ff ff       	callq  0xfffffffffffffb23
+   c:	48 89 d0             	mov    %rdx,%rax
+   f:	48 83 c4 08          	add    $0x8,%rsp
+  13:	48                   	rex.W
+  14:	3d                   	.byte 0x3d
+  15:	01                   	.byte 0x1
+[    7.009869] RSP: 002b:00007f3b1340f180 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+[    7.009871] RAX: ffffffffffffffda RBX: 00007f3b040010a0 RCX: 00007f3b160b335d
+[    7.009873] RDX: 0000000000000300 RSI: 00007f3b040010a0 RDI: 0000000000000001
+[    7.009874] RBP: 0000000000000000 R08: fffffffffffffa15 R09: fffffffffffffa05
+[    7.009875] R10: 0000000000000000 R11: 0000000000000293 R12: 00007f3b04000df0
+[    7.009876] R13: 00007f3b1340f1a0 R14: 0000000000000220 R15: 0000000000000300
+[    7.009879]  </TASK>
