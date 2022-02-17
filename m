@@ -2,155 +2,335 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1764BAFE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 03:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8CB04BB11B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 06:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231748AbiBRCzJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 21:55:09 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:60546 "EHLO
+        id S229889AbiBRFB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Feb 2022 00:01:58 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231715AbiBRCzJ (ORCPT
+        with ESMTP id S230339AbiBRFBO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 21:55:09 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7D05580F9;
-        Thu, 17 Feb 2022 18:54:52 -0800 (PST)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 21I2sUcx031678
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Feb 2022 21:54:31 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 8A76415C34C8; Thu, 17 Feb 2022 21:54:30 -0500 (EST)
-Date:   Thu, 17 Feb 2022 21:54:30 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        Fri, 18 Feb 2022 00:01:14 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711852BCA83;
+        Thu, 17 Feb 2022 21:00:54 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220218050052epoutp03d91cfa16b6fa4a5938cf3c95b83c923c~UyLb-sZkN1838918389epoutp03_;
+        Fri, 18 Feb 2022 05:00:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220218050052epoutp03d91cfa16b6fa4a5938cf3c95b83c923c~UyLb-sZkN1838918389epoutp03_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1645160452;
+        bh=qK0Db7DE4FPkYkFTizqzCYGIigvy1nkNn6Hr9Lykvoc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gOtFxKEQVPkzhX30rY5YgMnbj5s/xh7CiVZTaDACsNpphU8HeO5VxX9LNWxhgH+2o
+         I4X1EYctLQqIfI8zqzDxBf+EXro33sPKB5nQq8Qc3gTC5YOeG5i8QYxP4XPuataa/x
+         Uynud4WA7A5EfX8UUOQAZxhYJ8CSHbwSrNJqfbT0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220218050051epcas5p1364c8f46134da12ab9f98c6e135615f5~UyLbWQtpz0935609356epcas5p15;
+        Fri, 18 Feb 2022 05:00:51 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4K0KJr1m5Dz4x9Q8; Fri, 18 Feb
+        2022 05:00:44 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3C.F7.05590.BF72F026; Fri, 18 Feb 2022 14:00:43 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220217130401epcas5p1c671c22f1b3d8ff7c662763f0cdb9bb5~UlIATE4D-3210232102epcas5p1K;
+        Thu, 17 Feb 2022 13:04:01 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220217130401epsmtrp23758e5a1d5a2620ddbd620ec4d9c6a90~UlIARikU73066630666epsmtrp2C;
+        Thu, 17 Feb 2022 13:04:01 +0000 (GMT)
+X-AuditID: b6c32a4b-739ff700000015d6-59-620f27fb9e31
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9E.BD.08738.1C74E026; Thu, 17 Feb 2022 22:04:01 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220217130356epsmtip28c51f7f8d8b35afe7c013782e59c1ca4~UlH7t34aT1085610856epsmtip2R;
+        Thu, 17 Feb 2022 13:03:56 +0000 (GMT)
+Date:   Thu, 17 Feb 2022 18:29:01 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     hch@lst.de, javier@javigon.com, chaitanyak@nvidia.com,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+        msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
+        Frederick.Knight@netapp.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com,
+        nitheshshetty@gmail.com, SelvaKumar S <selvakuma.s1@samsung.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org
-Subject: Re: [REPORT] kernel BUG at fs/ext4/inode.c:2620 - page_buffers()
-Message-ID: <Yg8KZvDVFJgTXm4C@mit.edu>
-References: <Yg0m6IjcNmfaSokM@google.com>
+Subject: Re: [PATCH v3 02/10] block: Introduce queue limits for copy-offload
+ support
+Message-ID: <20220217125901.GA3781@test-zns>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yg0m6IjcNmfaSokM@google.com>
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220217090700.b7n33vbkx5s4qbfq@garbanzo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BTRxTG3ZvkJtAGrwFhhYmmYWxEXglCWCpYx1p7W+wIQ1tHWwevcAsM
+        kGTysK11FEQ6Gh4CFguxYGo7BdHyKlrkJSCY4SUoBUEEoTxkCgKCKChKEwJt//vtN9939uye
+        ORwGr5Ntz4mQqWmljIoS4pbMazedRK4vRasPiRcTeaig8RYDVXTPsNDl3jM4Ojc1z0CTNYMs
+        lHYmg43ah6xQ5cR5Fmqbi8XQYPEihioupmHo0uV6DD3K+Rmg8p+eYOh0UxuGFgYkqH7xMY7S
+        ajsBGu7QYajyvjOqqGxgovayH3F04ddhNkq4V4qjqrFKBsoxvMZQV8owQLd1CzgqHYoF6GZf
+        BxPlj00y0dhcA46+K5oFKD5xno1aXxlY2x3J9j/9Sd3DFpxMjZtgk9d1vWyyta+IScbpHzDJ
+        9hYNWZx3Gid//+U4ebYrB5Dl3TE4eaK5nkFmTD/FyaS4CZx8MnyfSU5WdeABtvsjfcNpKpRW
+        CmhZiDw0QhbmJ/QPCn4v2EsqlrhKfJC3UCCjomk/4c7dAa67IqKMnygUHKaiNEYpgFKphO7b
+        fJVyjZoWhMtVaj8hrQiNUngq3FRUtEojC3OT0ep3JGKxh5fReDAyPLa0i6WYl36dmyuKAQMu
+        WmDBgYQnLGtux7TAksMjygGsKTnBMh+mAUwZHWKbXDxiBsDY+K0riZFzXcumMmOiu5BtPowA
+        mPXi0VKCSWyEj7XFRheHgxPOsGmRY5JtiE2wKiUJMzGDmMVh6u39Jos18Rlsq95okrmEC0w4
+        1coy8xrYkDnENLEF4Q0vzOmXeC3hCKuvGZa6hkSmJXxW1QNMdSCxE/b0K8x9WsO/DSVsM9vD
+        mYlK3OxPAHCu+eFyOAPAuJQ43Ox6F96peIWZCjGIcJiWKTHLfJjemL/csxVMejmEmXUuLM1e
+        YUd4pUC/XGYd7Hweu8wkNLSP4ub/GQdwNruOkQI26P73ON1/1+mWrnCB+vJp3Cw7wJzXHDM6
+        wYIydz1g5YF1tEIVHUarvBRbZPRX/047RB5dDJYWbLN/Kfirf8qtFmAcUAsghyG04U7VcA/x
+        uKHUN0dopTxYqYmiVbXAyzipVIb92hC5cUNl6mCJp4/YUyqVevpskUqEdtzGsEKKR4RRajqS
+        phW0ciWHcSzsYzAHOUMXZLshN8l2MOb5bqtsjy+aHAzrA6n4T3yo+sQHQRcTUA+6Uey4V5v8
+        VpDdVkrcm2+b47tNfooe44ssQjfta5G6p2YSvgenkoOqpCibVfqtI8RffPl+wXgg2Pub93HF
+        gFPwQmHWScK6rqQ/dp6trY7u2CVL/jSR5ydade8pP/7OpZqrJ9UOoyU5zw4fE+h7q2yyk99c
+        nZXhXEsdW1M7uP2uRvuh2vUqNXj3ut/nctLJ/sCemFseuG4wqUCXLg4+u35iqC49u+vtP66c
+        1+0I4H8kEhzt49/oXdUTaKn6QYNxM/OU+yaOWB/4+IM3+NQeN2LmqJ3vCFkYOf590ZjYVshU
+        hVOSzQylivoHaFGXcekEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH87v39vZSU70Udb9qmFsVMMXhYEzO2Nh8BW9i2EhmjNscWuUO
+        HBRYCwImizw2JwUGQyVSZVQhNmK2hfpYhZa0ddAhryqipYgLQjXa8dxkEAtshS3zv2/O9/M5
+        55/DkJIzglXMobRMXpWmSJXRIuraDdma16w7lh54fbY3EH662UqCqe8PAVwaKKOhcnyGhDHr
+        kAAqyk4LoWd4KZhHzwjAMZ1PwJBhngDT+QoCLl5qIeCxvhZB07kJAoraHQR4B8OhZX6Ehgrb
+        XQTuXi0BZlcomMxtFPQ0nqWh5oJbCMX3jDQ0e8wk6O1zBDjL3Qi6tF4ajMP5CG486KXgR88Y
+        BZ7pNhqONTxD8HXJjBC6Z+2CzWu5njs7Oe1vnTT3XeGokLuuHRBy3Q8aKK5Qd5/iejqzOEN9
+        Ec1drjvKnXDqEdfUl0dzBR0tJHd68k+aKy0cpbkJt4vixpp76fiVH4veSeRTDx3mVRvf3S9K
+        vmstEGYYI3MmS2oEeahRrkF+DGYj8aNKp0CDRIyENSJ8snZSuFhI8YXZX8jFHIAvzj0WLkLD
+        CFssEwsFxQbhEY3hH5thaDYUt88zvvFydj1uLi8lfDzJPqdxQ7WV9DEB7G7ssAT5GDG7ARcf
+        7/738O8Ie+2d9GLhj9uqhilfJlk5ds49IXwuya7G+rmF/X5sFK6Z1i0gK9i12HLNTpQjf+0L
+        tvYFW/u/rUNkPZLyGWplklIdnhGRxmeHqRVKdVZaUtjBdKUBLfyPXG5EpvrxMBsiGGRDmCFl
+        y8XjVvEBiThRkXuEV6XvU2Wl8mobWs1QspfEDk3bPgmbpMjkU3g+g1f91xKM36o84lxK/hNl
+        wrcrX9WnTyXXuY4/fTOFehTctbu0f2f/kuxcictRUOTwblsz9srllCF3wlbviabnsRtGt3UW
+        Sb98pgs5teuWq/HkN+uKq0gzGbFpy9tv1YKl6haeGahcEhP11GNadzS+qvUvSegXtz9ICEne
+        DpaOwIaHgVNXdB1xnzZvvBI7G3A1Zj9Xqv9c53ffHt1yJDImOI79eZnhs9hl328aTAwZeLn+
+        vS0a6UfVhfKuuDvXSzyi1K/WO+h4zp/8xBrlX5YZXIanf90hzK0jm+Jvtr5RfXvPZoPn/IcH
+        D2fuehjdbuH3KM72B72/IsJzT2rL7hsk8qci9v6wFeVEu0Yo57EcGaVOVoTLSZVa8TfrqJgv
+        rgMAAA==
+X-CMS-MailID: 20220217130401epcas5p1c671c22f1b3d8ff7c662763f0cdb9bb5
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_8e144_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220214080605epcas5p16868dae515a6355cf9fecf22df4f3c3d
+References: <20220214080002.18381-1-nj.shetty@samsung.com>
+        <CGME20220214080605epcas5p16868dae515a6355cf9fecf22df4f3c3d@epcas5p1.samsung.com>
+        <20220214080002.18381-3-nj.shetty@samsung.com>
+        <20220217090700.b7n33vbkx5s4qbfq@garbanzo>
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 16, 2022 at 04:31:36PM +0000, Lee Jones wrote:
+------8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_8e144_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+
+ Thu, Feb 17, 2022 at 01:07:00AM -0800, Luis Chamberlain wrote:
+> The subject says limits for copy-offload...
 > 
-> After recently receiving a bug report from Syzbot [0] which was raised
-> specifically against the Android v5.10 kernel, I spent some time
-> trying to get to the crux.  Firstly I reproduced the issue on the
-> reported kernel, then did the same using the latest release kernel
-> v5.16.
+> On Mon, Feb 14, 2022 at 01:29:52PM +0530, Nitesh Shetty wrote:
+> > Add device limits as sysfs entries,
+> >         - copy_offload (RW)
+> >         - copy_max_bytes (RW)
+> >         - copy_max_hw_bytes (RO)
+> >         - copy_max_range_bytes (RW)
+> >         - copy_max_range_hw_bytes (RO)
+> >         - copy_max_nr_ranges (RW)
+> >         - copy_max_nr_ranges_hw (RO)
 > 
-> The full kernel trace can be seen below at [1].
+> Some of these seem like generic... and also I see a few more max_hw ones
+> not listed above...
+>
+queue_limits and sysfs entries are differently named.
+All sysfs entries start with copy_* prefix. Also it makes easy to lookup
+all copy sysfs.
+For queue limits naming, I tried to following existing queue limit
+convention (like discard).
+
+> > --- a/block/blk-settings.c
+> > +++ b/block/blk-settings.c
+> > +/**
+> > + * blk_queue_max_copy_sectors - set max sectors for a single copy payload
+> > + * @q:  the request queue for the device
+> > + * @max_copy_sectors: maximum number of sectors to copy
+> > + **/
+> > +void blk_queue_max_copy_sectors(struct request_queue *q,
+> > +		unsigned int max_copy_sectors)
+> > +{
+> > +	q->limits.max_hw_copy_sectors = max_copy_sectors;
+> > +	q->limits.max_copy_sectors = max_copy_sectors;
+> > +}
+> > +EXPORT_SYMBOL(blk_queue_max_copy_sectors);
 > 
+> Please use EXPORT_SYMBOL_GPL() for all new things.
+> 
+acked.
 
-Lee, thanks for your work in trimming down the syzkaller reproducer.
-The moral equivalent of what it is doing (except each system call is
-done in a separate thread, with synchronization so each gets executed
-in order, but perhaps on a different CPU) is:
+> Why is this setting both? The documentation does't seem to say.
+> What's the point?
+>
 
-        int dest_fd, src_fd, truncate_fd, mmap_fd;
-        pid_t tid;
-        struct iovec local_iov, remote_iov;
+This function is used only by driver, while intializing request queue.
+I will put this as part of description next time.
 
-        dest_fd = open("./bus", O_RDWR|O_CREAT|O_NONBLOCK|O_SYNC|
-                       O_DIRECT|O_LARGEFILE|O_NOATIME, 0);
-        src_fd = openat(AT_FDCWD, "/bin/bash", O_RDONLY);
-        truncate_fd = syscall(__NR_open, "./bus", O_RDWR|O_CREAT|O_SYNC|O_NOATIME|O_ASYNC);
-        ftruncate(truncate_fd, 0x2008002ul);
-        mmap((void *) 0x20000000ul /* addr */, 0x600000ul /* length */,
-             PROT_WRITE|PROT_EXEC|PROT_SEM||0x7ffff0, MAP_FIXED|MAP_SHARED, mmap_fd, 0);
-        sendfile(dest_fd, src_fd, 0 /* offset */, 0x80000005ul /* count */);
-        local_iov.iov_base = (void *) 0x2034afa4;
-        local_iov.iov_len = 0x1f80;
-        remote_iov.iov_base = (void *) 0x20000080;
-        remote_iov.iov_len = 0x2034afa5;
-        process_vm_writev(gettid(), &local_iov, 1, &remote_iov, 1, 0);
-        sendfile(dest_fd, src_fd, 0 /* offset */, 0x1f000005ul /* count */);
+> > +
+> > +/**
+> > + * blk_queue_max_copy_range_sectors - set max sectors for a single range, in a copy payload
+> > + * @q:  the request queue for the device
+> > + * @max_copy_range_sectors: maximum number of sectors to copy in a single range
+> > + **/
+> > +void blk_queue_max_copy_range_sectors(struct request_queue *q,
+> > +		unsigned int max_copy_range_sectors)
+> > +{
+> > +	q->limits.max_hw_copy_range_sectors = max_copy_range_sectors;
+> > +	q->limits.max_copy_range_sectors = max_copy_range_sectors;
+> > +}
+> > +EXPORT_SYMBOL(blk_queue_max_copy_range_sectors);
+> 
+> Same here.
+> 
+> > +/**
+> > + * blk_queue_max_copy_nr_ranges - set max number of ranges, in a copy payload
+> > + * @q:  the request queue for the device
+> > + * @max_copy_nr_ranges: maximum number of ranges
+> > + **/
+> > +void blk_queue_max_copy_nr_ranges(struct request_queue *q,
+> > +		unsigned int max_copy_nr_ranges)
+> > +{
+> > +	q->limits.max_hw_copy_nr_ranges = max_copy_nr_ranges;
+> > +	q->limits.max_copy_nr_ranges = max_copy_nr_ranges;
+> > +}
+> > +EXPORT_SYMBOL(blk_queue_max_copy_nr_ranges);
+> 
+> Same.
+> 
+> > +
+> >  /**
+> >   * blk_queue_max_write_same_sectors - set max sectors for a single write same
+> >   * @q:  the request queue for the device
+> > @@ -541,6 +592,14 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+> >  	t->max_segment_size = min_not_zero(t->max_segment_size,
+> >  					   b->max_segment_size);
+> >  
+> > +	t->max_copy_sectors = min(t->max_copy_sectors, b->max_copy_sectors);
+> > +	t->max_hw_copy_sectors = min(t->max_hw_copy_sectors, b->max_hw_copy_sectors);
+> > +	t->max_copy_range_sectors = min(t->max_copy_range_sectors, b->max_copy_range_sectors);
+> > +	t->max_hw_copy_range_sectors = min(t->max_hw_copy_range_sectors,
+> > +						b->max_hw_copy_range_sectors);
+> > +	t->max_copy_nr_ranges = min(t->max_copy_nr_ranges, b->max_copy_nr_ranges);
+> > +	t->max_hw_copy_nr_ranges = min(t->max_hw_copy_nr_ranges, b->max_hw_copy_nr_ranges);
+> > +
+> >  	t->misaligned |= b->misaligned;
+> >  
+> >  	alignment = queue_limit_alignment_offset(b, start);
+> > diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> > index 9f32882ceb2f..9ddd07f142d9 100644
+> > --- a/block/blk-sysfs.c
+> > +++ b/block/blk-sysfs.c
+> > @@ -212,6 +212,129 @@ static ssize_t queue_discard_zeroes_data_show(struct request_queue *q, char *pag
+> >  	return queue_var_show(0, page);
+> >  }
+> >  
+> > +static ssize_t queue_copy_offload_show(struct request_queue *q, char *page)
+> > +{
+> > +	return queue_var_show(blk_queue_copy(q), page);
+> > +}
+> > +
+> > +static ssize_t queue_copy_offload_store(struct request_queue *q,
+> > +				       const char *page, size_t count)
+> > +{
+> > +	unsigned long copy_offload;
+> > +	ssize_t ret = queue_var_store(&copy_offload, page, count);
+> > +
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (copy_offload && !q->limits.max_hw_copy_sectors)
+> > +		return -EINVAL;
+> 
+> 
+> If the kernel schedules, copy_offload may still be true and
+> max_hw_copy_sectors may be set to 0. Is that an issue?
+>
 
-Which is then executed repeataedly over and over again.  (With the
-file descriptors closed at each loop, so the file is reopened each time.)
+This check ensures that, we dont enable offload if device doesnt support
+offload. I feel it shouldn't be an issue.
 
-So basically, we have a scratch file which is initialized using an
-sendfile using O_DIRECT.  The scratch file is also mmap'ed into the
-process's address space, and we then *modify* that an mmap'ed reagion
-using process_vm_writev() --- and this is where the problem starts.
+> > +
+> > +	if (copy_offload)
+> > +		blk_queue_flag_set(QUEUE_FLAG_COPY, q);
+> > +	else
+> > +		blk_queue_flag_clear(QUEUE_FLAG_COPY, q);
+> 
+> The flag may be set but the queue flag could be set. Is that an issue?
+> 
+> > @@ -597,6 +720,14 @@ QUEUE_RO_ENTRY(queue_nr_zones, "nr_zones");
+> >  QUEUE_RO_ENTRY(queue_max_open_zones, "max_open_zones");
+> >  QUEUE_RO_ENTRY(queue_max_active_zones, "max_active_zones");
+> >  
+> > +QUEUE_RW_ENTRY(queue_copy_offload, "copy_offload");
+> > +QUEUE_RO_ENTRY(queue_copy_max_hw, "copy_max_hw_bytes");
+> > +QUEUE_RW_ENTRY(queue_copy_max, "copy_max_bytes");
+> > +QUEUE_RO_ENTRY(queue_copy_range_max_hw, "copy_max_range_hw_bytes");
+> > +QUEUE_RW_ENTRY(queue_copy_range_max, "copy_max_range_bytes");
+> > +QUEUE_RO_ENTRY(queue_copy_nr_ranges_max_hw, "copy_max_nr_ranges_hw");
+> > +QUEUE_RW_ENTRY(queue_copy_nr_ranges_max, "copy_max_nr_ranges");
+> 
+> Seems like you need to update Documentation/ABI/stable/sysfs-block.
+>
 
-process_vm_writev() uses [un]pin_user_pages_remote() which is the same
-interface uses for RDMA.  But it's not clear this is ever supposed to
-work for memory which is mmap'ed region backed by a file.
-pin_user_pages_remote() appears to assume that it is an anonymous
-region, since the get_user_pages functions in mm/gup.c don't call
-read_page() to read data into any pages that might not be mmaped in.
+acked. 
 
-They also don't follow the mm / file system protocol of calling the
-file system's write_begin() or page_mkwrite() before modifying a page,
-and so when when process_vm_writev() calls unpin_user_pages_remote(),
-this tries to dirty the page, but since page_mkwrite() or
-write_begin() hasn't been called, buffers haven't been attached to the
-page, and so that triggers the following ext4 WARN_ON:
+> > diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> > index efed3820cbf7..792e6d556589 100644
+> > --- a/include/linux/blkdev.h
+> > +++ b/include/linux/blkdev.h
+> > @@ -254,6 +254,13 @@ struct queue_limits {
+> >  	unsigned int		discard_alignment;
+> >  	unsigned int		zone_write_granularity;
+> >  
+> > +	unsigned long		max_hw_copy_sectors;
+> > +	unsigned long		max_copy_sectors;
+> > +	unsigned int		max_hw_copy_range_sectors;
+> > +	unsigned int		max_copy_range_sectors;
+> > +	unsigned short		max_hw_copy_nr_ranges;
+> > +	unsigned short		max_copy_nr_ranges;
+> 
+> Before limits start growing more.. I wonder if we should just
+> stuff hw offload stuff to its own struct within queue_limits.
+> 
+> Christoph?
+> 
+>   Luis
+>
+Yeah, would like to know community opinion on this.
 
-[ 1451.095939] WARNING: CPU: 1 PID: 449 at fs/ext4/inode.c:3565 ext4_set_page_dirty+0x48/0x50
-  ...
-[ 1451.139877] Call Trace:
-[ 1451.140833]  <TASK>
-[ 1451.141889]  folio_mark_dirty+0x2f/0x60
-[ 1451.143408]  set_page_dirty_lock+0x3e/0x60
-[ 1451.145130]  unpin_user_pages_dirty_lock+0x108/0x130
-[ 1451.147405]  process_vm_rw_single_vec.constprop.0+0x1b9/0x260
-[ 1451.150135]  process_vm_rw_core.constprop.0+0x156/0x280
-[ 1451.159576]  process_vm_rw+0xc4/0x110
+
+-- Nitesh
+
+------8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_8e144_
+Content-Type: text/plain; charset="utf-8"
 
 
-Then when ext4_writepages() gets called, we trigger the BUG because
-buffers haven't been attached to the page.  We can certainly avoid the
-BUG by checking to see if buffers are attached first, and if not, skip
-writing the page trigger a WARN_ON, and then forcibly clear the page
-dirty flag so don't permanently leak memory and allow the file system
-to be unmounted.  (Note: we can't fix the problem by attaching the
-buffers in set_page_dirty(), since is occasionally called under
-spinlocks and without the page being locked, so we can't do any kind
-of allocation, so ix-nay on calling create_empty_buffers() which calls
-alloc_buffer_head().)
-
-BUT, that is really papering over the problem, since it's not clear
-it's valid to try to use get_user_pages() and friends (including
-[un]pin_user_pages_remote() on file-backed memory.
-
-And if it is supposed to be valid, then mm/gup.c needs to first call
-readpage() if the page is not present, so that if process_vm_writev()
-is only modifying a few bytes in the mmap'ed region, we need to fault
-in the page first, and then mm/gup.c needs to inform the file system
-to make sure that if pinned memory region is not yet allocated, than
-whatever needs to happen to allocate space, via page_mkwrite() has
-taken place.  (And by the way, that means that pin_user_pages_remote()
-may need to return ENOSPC if there is not free space in the file
-system, and hence ENOSPC may need to reflected all the way back to
-process_vm_writev().
-
-Alternatively, if we don't expect process_vm_writev() to work on
-file-backed memory, perhaps it and pin_user_pages_remote() should
-return some kind of error?
-
-	    	      	     	    	      - Ted
+------8TtN9ZnHmYbjupaEpeShJ04PQlBV3ZvePY_ZWnFgjSBPeLtG=_8e144_--
