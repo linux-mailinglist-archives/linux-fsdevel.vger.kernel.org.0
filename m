@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 956414B9F8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 13:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5E84B9F91
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Feb 2022 13:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240198AbiBQMCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 07:02:19 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51718 "EHLO
+        id S240215AbiBQMC0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Feb 2022 07:02:26 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240190AbiBQMCR (ORCPT
+        with ESMTP id S240189AbiBQMCS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 07:02:17 -0500
-Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFAC60F4;
-        Thu, 17 Feb 2022 04:02:02 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V4kVs6e_1645099318;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V4kVs6e_1645099318)
+        Thu, 17 Feb 2022 07:02:18 -0500
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F121C62D1;
+        Thu, 17 Feb 2022 04:02:03 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R361e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0V4keWL7_1645099319;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V4keWL7_1645099319)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 17 Feb 2022 20:01:59 +0800
+          Thu, 17 Feb 2022 20:02:00 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com
 Cc:     xiang@kernel.org, torvalds@linux-foundation.org,
@@ -27,9 +27,9 @@ Cc:     xiang@kernel.org, torvalds@linux-foundation.org,
         bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
         gerry@linux.alibaba.com, eguan@linux.alibaba.com,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v3 3/4] cachefiles: extract generic function for daemon methods
-Date:   Thu, 17 Feb 2022 20:01:53 +0800
-Message-Id: <20220217120154.16658-4-jefflexu@linux.alibaba.com>
+Subject: [RESEND PATCH v3 4/4] cachefiles: detect backing file size in on-demand read mode
+Date:   Thu, 17 Feb 2022 20:01:54 +0800
+Message-Id: <20220217120154.16658-5-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220217120154.16658-1-jefflexu@linux.alibaba.com>
 References: <20220217120154.16658-1-jefflexu@linux.alibaba.com>
@@ -45,129 +45,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-... so that the following new devnode can reuse most of the code when
-implementing its own methods.
+Fscache/cachefiles used to serve as a local cache for remote fs. The
+following patches will introduce a new use case, in which local
+read-only fs could implement on-demand reading with fscache. Then in
+this case, the upper read-only fs may has no idea on the size of the
+backed file.
+
+It is worth nothing that, in this scenario, user daemon is responsible
+for preparing all backing files with correct file size in the first
+beginning. (Backing files are all sparse files in this case). And since
+it's read-only, we can get the backing file size at runtime as the
+object size.
+
+This patch also adds one flag bit to distinguish the new introduced
+on-demand read mode from the original mode. The following patch will
+introduce a user configures it.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 ---
- fs/cachefiles/daemon.c | 70 +++++++++++++++++++++++++++---------------
- 1 file changed, 45 insertions(+), 25 deletions(-)
+ fs/cachefiles/Kconfig    | 13 +++++++++
+ fs/cachefiles/internal.h |  1 +
+ fs/cachefiles/namei.c    | 60 +++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 73 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
-index 7ac04ee2c0a0..6b8d7c5bbe5d 100644
---- a/fs/cachefiles/daemon.c
-+++ b/fs/cachefiles/daemon.c
-@@ -78,6 +78,34 @@ static const struct cachefiles_daemon_cmd cachefiles_daemon_cmds[] = {
- 	{ "",		NULL				}
- };
- 
-+static struct cachefiles_cache *cachefiles_daemon_open_cache(void)
-+{
-+	struct cachefiles_cache *cache;
+diff --git a/fs/cachefiles/Kconfig b/fs/cachefiles/Kconfig
+index 719faeeda168..cef412cfd127 100644
+--- a/fs/cachefiles/Kconfig
++++ b/fs/cachefiles/Kconfig
+@@ -26,3 +26,16 @@ config CACHEFILES_ERROR_INJECTION
+ 	help
+ 	  This permits error injection to be enabled in cachefiles whilst a
+ 	  cache is in service.
 +
-+	/* allocate a cache record */
-+	cache = kzalloc(sizeof(struct cachefiles_cache), GFP_KERNEL);
-+	if (cache) {
-+		mutex_init(&cache->daemon_mutex);
-+		init_waitqueue_head(&cache->daemon_pollwq);
-+		INIT_LIST_HEAD(&cache->volumes);
-+		INIT_LIST_HEAD(&cache->object_list);
-+		spin_lock_init(&cache->object_list_lock);
++config CACHEFILES_ONDEMAND
++	bool "Support for on-demand reading"
++	depends on CACHEFILES
++	default n
++	help
++	  This permits on-demand read mode of cachefiles. In this mode, when
++	  cache miss, the cachefiles backend instead of the upper fs using
++	  fscache is responsible for fetching data, e.g. through user daemon.
++	  Then after the data's ready, upper fs can reinitiate a read from the
++	  cache.
 +
-+		/* set default caching limits
-+		 * - limit at 1% free space and/or free files
-+		 * - cull below 5% free space and/or free files
-+		 * - cease culling above 7% free space and/or free files
-+		 */
-+		cache->frun_percent = 7;
-+		cache->fcull_percent = 5;
-+		cache->fstop_percent = 1;
-+		cache->brun_percent = 7;
-+		cache->bcull_percent = 5;
-+		cache->bstop_percent = 1;
-+	}
-+
-+	return cache;
-+}
- 
- /*
-  * Prepare a cache for caching.
-@@ -96,31 +124,13 @@ static int cachefiles_daemon_open(struct inode *inode, struct file *file)
- 	if (xchg(&cachefiles_open, 1) == 1)
- 		return -EBUSY;
- 
--	/* allocate a cache record */
--	cache = kzalloc(sizeof(struct cachefiles_cache), GFP_KERNEL);
-+
-+	cache = cachefiles_daemon_open_cache();
- 	if (!cache) {
- 		cachefiles_open = 0;
- 		return -ENOMEM;
- 	}
- 
--	mutex_init(&cache->daemon_mutex);
--	init_waitqueue_head(&cache->daemon_pollwq);
--	INIT_LIST_HEAD(&cache->volumes);
--	INIT_LIST_HEAD(&cache->object_list);
--	spin_lock_init(&cache->object_list_lock);
--
--	/* set default caching limits
--	 * - limit at 1% free space and/or free files
--	 * - cull below 5% free space and/or free files
--	 * - cease culling above 7% free space and/or free files
--	 */
--	cache->frun_percent = 7;
--	cache->fcull_percent = 5;
--	cache->fstop_percent = 1;
--	cache->brun_percent = 7;
--	cache->bcull_percent = 5;
--	cache->bstop_percent = 1;
--
- 	file->private_data = cache;
- 	cache->cachefilesd = file;
- 	return 0;
-@@ -209,10 +219,11 @@ static ssize_t cachefiles_daemon_read(struct file *file, char __user *_buffer,
- /*
-  * Take a command from cachefilesd, parse it and act on it.
-  */
--static ssize_t cachefiles_daemon_write(struct file *file,
--				       const char __user *_data,
--				       size_t datalen,
--				       loff_t *pos)
-+static ssize_t cachefiles_daemon_do_write(struct file *file,
-+					  const char __user *_data,
-+					  size_t datalen,
-+					  loff_t *pos,
-+			const struct cachefiles_daemon_cmd *cmds)
- {
- 	const struct cachefiles_daemon_cmd *cmd;
- 	struct cachefiles_cache *cache = file->private_data;
-@@ -261,7 +272,7 @@ static ssize_t cachefiles_daemon_write(struct file *file,
- 	}
- 
- 	/* run the appropriate command handler */
--	for (cmd = cachefiles_daemon_cmds; cmd->name[0]; cmd++)
-+	for (cmd = cmds; cmd->name[0]; cmd++)
- 		if (strcmp(cmd->name, data) == 0)
- 			goto found_command;
- 
-@@ -284,6 +295,15 @@ static ssize_t cachefiles_daemon_write(struct file *file,
- 	goto error;
++	  If unsure, say N.
+diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+index c793d33b0224..6473634c41a9 100644
+--- a/fs/cachefiles/internal.h
++++ b/fs/cachefiles/internal.h
+@@ -98,6 +98,7 @@ struct cachefiles_cache {
+ #define CACHEFILES_DEAD			1	/* T if cache dead */
+ #define CACHEFILES_CULLING		2	/* T if cull engaged */
+ #define CACHEFILES_STATE_CHANGED	3	/* T if state changed (poll trigger) */
++#define CACHEFILES_ONDEMAND_MODE	4	/* T if in on-demand read mode */
+ 	char				*rootdirname;	/* name of cache root directory */
+ 	char				*secctx;	/* LSM security context */
+ 	char				*tag;		/* cache binding tag */
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index f256c8aff7bb..abe75b4b955f 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -510,15 +510,69 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
+ 	return file;
  }
  
-+static ssize_t cachefiles_daemon_write(struct file *file,
-+				       const char __user *_data,
-+				       size_t datalen,
-+				       loff_t *pos)
++#ifdef CONFIG_CACHEFILES_ONDEMAND
++static inline bool cachefiles_can_create_file(struct cachefiles_cache *cache)
 +{
-+	return cachefiles_daemon_do_write(file, _data, datalen, pos,
-+					  cachefiles_daemon_cmds);
++	/*
++	 * On-demand read mode requires that backing files have been prepared
++	 * with correct file size under corresponding directory in the very
++	 * first begginning. We can get here when the backing file doesn't exist
++	 * under corresponding directory, or the file size is unexpected 0.
++	 */
++	return !test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags);
++
 +}
 +
++/*
++ * Fs using fscache for on-demand reading may have no idea of the file size of
++ * backing files. Thus the on-demand read mode requires that backing files shall
++ * be prepared with correct file size under corresponding directory by the user
++ * daemon in the first beginning. Then the backend is responsible for taking the
++ * file size of the backing file as the object size at runtime.
++ */
++static int cachefiles_recheck_size(struct cachefiles_object *object,
++				   struct file *file)
++{
++	loff_t size;
++	struct cachefiles_cache *cache = object->volume->cache;
++
++	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
++		return 0;
++
++	size = i_size_read(file_inode(file));
++	if (!size)
++		return -EINVAL;
++
++	object->cookie->object_size = size;
++	return 0;
++}
++#else
++static inline bool cachefiles_can_create_file(struct cachefiles_cache *cache)
++{
++	return true;
++}
++
++static inline int cachefiles_recheck_size(struct cachefiles_object *object,
++					  struct file *file)
++{
++	return 0;
++}
++#endif
++
++
  /*
-  * Poll for culling state
-  * - use EPOLLOUT to indicate culling state
+  * Create a new file.
+  */
+ static bool cachefiles_create_file(struct cachefiles_object *object)
+ {
++	struct cachefiles_cache *cache = object->volume->cache;
+ 	struct file *file;
+ 	int ret;
+ 
+-	ret = cachefiles_has_space(object->volume->cache, 1, 0,
++	if (!cachefiles_can_create_file(cache))
++		return false;
++
++	ret = cachefiles_has_space(cache, 1, 0,
+ 				   cachefiles_has_space_for_create);
+ 	if (ret < 0)
+ 		return false;
+@@ -573,6 +627,10 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
+ 	}
+ 	_debug("file -> %pd positive", dentry);
+ 
++	ret = cachefiles_recheck_size(object, file);
++	if (ret < 0)
++		goto check_failed;
++
+ 	ret = cachefiles_check_auxdata(object, file);
+ 	if (ret < 0)
+ 		goto check_failed;
 -- 
 2.27.0
 
