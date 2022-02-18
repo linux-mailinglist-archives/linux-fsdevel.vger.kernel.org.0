@@ -2,70 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD6F74BC062
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 20:43:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7DD94BC0C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 20:58:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237656AbiBRToC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Feb 2022 14:44:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57990 "EHLO
+        id S238797AbiBRT6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Feb 2022 14:58:23 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232313AbiBRToC (ORCPT
+        with ESMTP id S238504AbiBRT6U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Feb 2022 14:44:02 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F811074D8;
-        Fri, 18 Feb 2022 11:43:45 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nL9AO-002oME-0T; Fri, 18 Feb 2022 19:43:44 +0000
-Date:   Fri, 18 Feb 2022 19:43:43 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        linux-fsdevel@vger.kernel.org, paulmck@kernel.org,
-        gscrivan@redhat.com, Eric Biederman <ebiederm@xmission.com>,
-        Chris Mason <clm@fb.com>
-Subject: Re: [PATCH 1/2] vfs: free vfsmount through rcu work from kern_unmount
-Message-ID: <Yg/273dWmTKDW5Mu@zeniv-ca.linux.org.uk>
-References: <20220218183114.2867528-1-riel@surriel.com>
- <20220218183114.2867528-2-riel@surriel.com>
- <Yg/y6qv6dZ2fc5z1@zeniv-ca.linux.org.uk>
- <5f442a7770fe4ac06b2837e4f937d559f5d17b8b.camel@surriel.com>
+        Fri, 18 Feb 2022 14:58:20 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B900F13E10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Feb 2022 11:58:03 -0800 (PST)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21IFMKlg023918
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Feb 2022 11:58:03 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=xSLuOeBPvZ/ONaKzCljuDfPXUA6PK81pXc78puK8xUM=;
+ b=j+lPxpMQTHqsGvpRU8TUldF3FbRAOK++k7ZVzQJ1ASAU0GI5cCoxSPdBGfMZhxRb5MlB
+ GejPO5BpKcS/T4+EkxvmkXb1+JSsXFSlQnkqvsu4OSzgWWkdclpKLys3HUuKSDwcdy6L
+ VGgXHNS1lLp3uYtcrR1lBk8pG1VVnLNjeCM= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ea1mp5ny3-20
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Feb 2022 11:58:03 -0800
+Received: from twshared6457.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Fri, 18 Feb 2022 11:58:02 -0800
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 8708BAEB65FD; Fri, 18 Feb 2022 11:57:50 -0800 (PST)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <kernel-team@fb.com>
+CC:     <shr@fb.com>
+Subject: [PATCH v2 00/13] Support sync buffered writes for io-uring
+Date:   Fri, 18 Feb 2022 11:57:26 -0800
+Message-ID: <20220218195739.585044-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5f442a7770fe4ac06b2837e4f937d559f5d17b8b.camel@surriel.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: hF5iJreBlDWl3oRgKLNTXS-iMfbxXlR9
+X-Proofpoint-ORIG-GUID: hF5iJreBlDWl3oRgKLNTXS-iMfbxXlR9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-18_09,2022-02-18_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 clxscore=1015
+ suspectscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 phishscore=0
+ spamscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202180122
+X-FB-Internal: deliver
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 18, 2022 at 02:33:31PM -0500, Rik van Riel wrote:
-> On Fri, 2022-02-18 at 19:26 +0000, Al Viro wrote:
-> > On Fri, Feb 18, 2022 at 01:31:13PM -0500, Rik van Riel wrote:
-> > > After kern_unmount returns, callers can no longer access the
-> > > vfsmount structure. However, the vfsmount structure does need
-> > > to be kept around until the end of the RCU grace period, to
-> > > make sure other accesses have all gone away too.
-> > > 
-> > > This can be accomplished by either gating each kern_unmount
-> > > on synchronize_rcu (the comment in the code says it all), or
-> > > by deferring the freeing until the next grace period, where
-> > > it needs to be handled in a workqueue due to the locking in
-> > > mntput_no_expire().
-> > 
-> > NAK.  There's code that relies upon kern_unmount() being
-> > synchronous.  That's precisely the reason why MNT_INTERNAL
-> > is treated that way in mntput_no_expire().
-> 
-> Fair enough. Should I make a kern_unmount_rcu() version
-> that gets called just from mq_put_mnt()?
+This patch series adds support for async buffered writes. Currently
+io-uring only supports buffered writes in the slow path, by processing
+them in the io workers. With this patch series it is now possible to
+support buffered writes in the fast path. To be able to use the fast
+path the required pages must be in the page cache or they can be loaded
+with noio. Otherwise they still get punted to the slow path.
 
-Umm...  I'm not sure you can afford having struct ipc_namespace
-freed and reused before the mqueue superblock gets at least to
-deactivate_locked_super().
+If a buffered write request requires more than one page, it is possible
+that only part of the request can use the fast path, the resst will be
+completed by the io workers.
+
+Support for async buffered writes:
+
+  Patch 1: fs: Add flags parameter to __block_write_begin_int
+    Add a flag parameter to the function __block_write_begin_int
+    to allow specifying a nowait parameter.
+   =20
+  Patch 2: mm: Introduce do_generic_perform_write
+    Introduce a new do_generic_perform_write function. The function
+    is split off from the existing generic_perform_write() function.
+    It allows to specify an additional flag parameter. This parameter
+    is used to specify the nowait flag.
+   =20
+  Patch 3: mm: Add support for async buffered writes
+    For async buffered writes allocate pages without blocking on the
+    allocation.
+
+  Patch 4: fs: split off __alloc_page_buffers function
+    Split off __alloc_page_buffers() function with new gfp_t parameter.
+
+  Patch 5: fs: split off __create_empty_buffers function
+    Split off __create_empty_buffers() function with new gfp_t parameter.
+
+  Patch 6: fs: Add gfp_t parameter to create_page_buffers()
+    Add gfp_t parameter to create_page_buffers() function. Use atomic
+    allocation for async buffered writes.
+
+  Patch 7: fs: add support for async buffered writes
+    Return -EAGAIN instead of -ENOMEM for async buffered writes. This
+    will cause the write request to be processed by an io worker.
+
+  Patch 8: io_uring: add support for async buffered writes
+    This enables the async buffered writes for block devices in io_uring.
+    Buffered writes are enabled for blocks that are already in the page
+    cache or can be acquired with noio.
+
+  Patch 9: io_uring: Add tracepoint for short writes
+
+Support for write throttling of async buffered writes:
+
+  Patch 10: sched: add new fields to task_struct
+    Add two new fields to the task_struct. These fields store the
+    deadline after which writes are no longer throttled.
+
+  Patch 11: mm: support write throttling for async buffered writes
+    This changes the balance_dirty_pages function to take an additonal
+    parameter. When nowait is specified the write throttling code no
+    longer waits synchronously for the deadline to expire. Instead
+    it sets the fields in task_struct. Once the deadline expires the
+    fields are reset.
+   =20
+  Patch 12: io_uring: support write throttling for async buffered writes
+    Adds support to io_uring for write throttling. When the writes
+    are throttled, the write requests are added to the pending io list.
+    Once the write throttling deadline expires, the writes are submitted.
+   =20
+Enable async buffered write support
+  Patch 13: fs: add flag to support async buffered writes
+    This sets the flags that enables async buffered writes for block
+    devices.
+
+
+Testing:
+  This patch has been tested with xfstests and fio.
+
+
+Peformance results:
+  For fio the following results have been obtained with a queue depth of
+  1 and 4k block size (runtime 600 secs):
+
+                 sequential writes:
+                 without patch                 with patch
+  throughput:       329 Mib/s                    1032Mib/s
+  iops:              82k                          264k
+  slat (nsec)      2332                          3340=20
+  clat (nsec)      9017                            60
+                  =20
+  CPU util%:         37%                          78%
+
+
+
+                 random writes:
+                 without patch                 with patch
+  throughput:       307 Mib/s                    909Mib/s
+  iops:              76k                         227k
+  slat (nsec)      2419                         3780=20
+  clat (nsec)      9934                           59
+
+  CPU util%:         57%                          88%
+
+For an io depth of 1, the new patch improves throughput by close to 3
+times and also the latency is considerably reduced. To achieve the same
+or better performance with the exisiting code an io depth of 4 is require=
+d.
+
+Especially for mixed workloads this is a considerable improvement.
+
+
+Changes:
+V2: - removed patch 3 from patch series 1
+    - replaced parameter aop_flags with with gfp_t in create_page_buffers=
+()
+    - Moved gfp flags to callers of create_page_buffers()
+    - Removed changing of FGP_NOWAIT in __filemap_get_folio() and moved g=
+fp
+      flags to caller of __filemap_get_folio()
+    - Renamed AOP_FLAGS_NOWAIT to AOP_FLAG_NOWAIT
+
+
+
+Stefan Roesch (13):
+  fs: Add flags parameter to __block_write_begin_int
+  mm: Introduce do_generic_perform_write
+  mm: Add support for async buffered writes
+  fs: split off __alloc_page_buffers function
+  fs: split off __create_empty_buffers function
+  fs: Add gfp_t parameter to create_page_buffers()
+  fs: add support for async buffered writes
+  io_uring: add support for async buffered writes
+  io_uring: Add tracepoint for short writes
+  sched: add new fields to task_struct
+  mm: support write throttling for async buffered writes
+  io_uring: support write throttling for async buffered writes
+  block: enable async buffered writes for block devices.
+
+ block/fops.c                    |   5 +-
+ fs/buffer.c                     |  98 +++++++++++++++---------
+ fs/internal.h                   |   3 +-
+ fs/io_uring.c                   | 130 +++++++++++++++++++++++++++++---
+ fs/iomap/buffered-io.c          |   4 +-
+ fs/read_write.c                 |   3 +-
+ include/linux/fs.h              |   4 +
+ include/linux/sched.h           |   3 +
+ include/linux/writeback.h       |   1 +
+ include/trace/events/io_uring.h |  25 ++++++
+ kernel/fork.c                   |   1 +
+ mm/filemap.c                    |  23 ++++--
+ mm/folio-compat.c               |  12 ++-
+ mm/page-writeback.c             |  54 +++++++++----
+ 14 files changed, 289 insertions(+), 77 deletions(-)
+
+
+base-commit: 9195e5e0adbb8a9a5ee9ef0f9dedf6340d827405
+--=20
+2.30.2
+
