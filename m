@@ -2,33 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 850374BBF94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 19:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A89554BBF91
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 19:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239283AbiBRSfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Feb 2022 13:35:55 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33738 "EHLO
+        id S239270AbiBRSfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Feb 2022 13:35:31 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236890AbiBRSfy (ORCPT
+        with ESMTP id S237385AbiBRSfb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Feb 2022 13:35:54 -0500
+        Fri, 18 Feb 2022 13:35:31 -0500
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD47254A40;
-        Fri, 18 Feb 2022 10:35:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 198E3251E75;
+        Fri, 18 Feb 2022 10:35:14 -0800 (PST)
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1nL82Z-0004OI-B3; Fri, 18 Feb 2022 13:31:35 -0500
+        id 1nL82Z-0004OI-C5; Fri, 18 Feb 2022 13:31:35 -0500
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
         paulmck@kernel.org, gscrivan@redhat.com, viro@zeniv.linux.org.uk,
-        Rik van Riel <riel@surriel.com>
-Subject: [PATCH 0/2] fix rate limited ipc_namespace freeing
-Date:   Fri, 18 Feb 2022 13:31:12 -0500
-Message-Id: <20220218183114.2867528-1-riel@surriel.com>
+        Rik van Riel <riel@surriel.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Chris Mason <clm@fb.com>
+Subject: [PATCH 1/2] vfs: free vfsmount through rcu work from kern_unmount
+Date:   Fri, 18 Feb 2022 13:31:13 -0500
+Message-Id: <20220218183114.2867528-2-riel@surriel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220218183114.2867528-1-riel@surriel.com>
+References: <20220218183114.2867528-1-riel@surriel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: riel@shelob.surriel.com
@@ -41,49 +45,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The test case below fails on 5.17 (and a bunch of older kernels)
-with unshare getting -ENOSPC, because the rate at which ipc_namespace
-structures can be freed is limited by each item on the to-free list
-waiting in synchronize_rcu.
+After kern_unmount returns, callers can no longer access the
+vfsmount structure. However, the vfsmount structure does need
+to be kept around until the end of the RCU grace period, to
+make sure other accesses have all gone away too.
 
-Making kern_unmount use queue_rcu_work gets rid of that slowdown,
-allowing a batch of vfsmount structures to be freed after each
-RCU grace period has expired.
+This can be accomplished by either gating each kern_unmount
+on synchronize_rcu (the comment in the code says it all), or
+by deferring the freeing until the next grace period, where
+it needs to be handled in a workqueue due to the locking in
+mntput_no_expire().
 
-That, in turn, allows us to just get rid of the workqueue in
-ipc/namespace.c completely.
+Suggested-by: Eric Biederman <ebiederm@xmission.com>
+Reported-by: Chris Mason <clm@fb.com>
+---
+ fs/namespace.c        | 11 +++++++++--
+ include/linux/mount.h |  2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-With these two changes the test case reliably succeeds at
-calling unshare a million times, even with max_ipc_namespaces
-reduced to 1000 :)
-
-#define _GNU_SOURCE
-#include <sched.h>
-#include <error.h>
-#include <errno.h>
-#include <stdlib.h>
-
-int main()
-{
-	int i;
-
-	for (i = 0; i < 1000000; i++) {
-		if (unshare(CLONE_NEWIPC) < 0)
-			error(EXIT_FAILURE, errno, "unshare");
-	}
-}
-
-
-Rik van Riel (2):
-  vfs: free vfsmount through rcu work from kern_unmount
-  ipc: get rid of free_ipc_work workqueue
-
- fs/namespace.c                | 11 +++++++++--
- include/linux/ipc_namespace.h |  2 --
- include/linux/mount.h         |  2 ++
- ipc/namespace.c               | 21 +--------------------
- 4 files changed, 12 insertions(+), 24 deletions(-)
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 40b994a29e90..9f62cf6c69de 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4384,13 +4384,20 @@ struct vfsmount *kern_mount(struct file_system_type *type)
+ }
+ EXPORT_SYMBOL_GPL(kern_mount);
+ 
++static void mntput_rcu_work(struct work_struct *work)
++{
++	struct vfsmount *mnt = container_of(to_rcu_work(work),
++			       struct vfsmount, free_rwork);
++	mntput(mnt);
++}
++
+ void kern_unmount(struct vfsmount *mnt)
+ {
+ 	/* release long term mount so mount point can be released */
+ 	if (!IS_ERR_OR_NULL(mnt)) {
+ 		real_mount(mnt)->mnt_ns = NULL;
+-		synchronize_rcu();	/* yecchhh... */
+-		mntput(mnt);
++		INIT_RCU_WORK(&mnt->free_rwork, mntput_rcu_work);
++		queue_rcu_work(system_wq, &mnt->free_rwork);
+ 	}
+ }
+ EXPORT_SYMBOL(kern_unmount);
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index 7f18a7555dff..cd007cb70d57 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -16,6 +16,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/seqlock.h>
+ #include <linux/atomic.h>
++#include <linux/workqueue.h>
+ 
+ struct super_block;
+ struct vfsmount;
+@@ -73,6 +74,7 @@ struct vfsmount {
+ 	struct super_block *mnt_sb;	/* pointer to superblock */
+ 	int mnt_flags;
+ 	struct user_namespace *mnt_userns;
++	struct rcu_work free_rwork;
+ } __randomize_layout;
+ 
+ static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
 -- 
 2.34.1
 
