@@ -2,126 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ACD64BB0F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 05:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA2CA4BB172
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 06:31:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230075AbiBRE4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Feb 2022 23:56:10 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60648 "EHLO
+        id S230026AbiBRFbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Feb 2022 00:31:40 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbiBRE4H (ORCPT
+        with ESMTP id S229719AbiBRFbi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Feb 2022 23:56:07 -0500
-X-Greylist: delayed 481 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Feb 2022 20:55:50 PST
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE0A84130F;
-        Thu, 17 Feb 2022 20:55:50 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id C7AF15C021B;
-        Thu, 17 Feb 2022 23:47:46 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 17 Feb 2022 23:47:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; bh=MAx0LbiRQY2/4y
-        fvblXz5g/u+zDEUYP5tuDrUJ8qmwQ=; b=I7ZRQ1BmgnsxTccEzquz5498MFjt54
-        0dJYI+ugMMV8NaSvSuz2sbYtS5IYKRAgu6jR1lQ0Y7Gv/2F8L+ZJHdo0TrYxnNqR
-        GZkfW2HosNfWFjLrcLNbttXIKNOyc5xjL0DbS/I3WJ19aOwaQZ3r2Sv9Ftlrg+SK
-        h+ohCUMKkH9RJQ/AGwPg4SA9prbbV2zQavd6h5YbiRGJ0mTTUe9YCmdWD+xEPQ9A
-        RxSIvFQsG8WVTYhst2AqnUgNweB0wmVr7cF2uEwMGKrCrq4ig1hcsGlDfPyJ6SUZ
-        0oVzXob/M7eQHESEy2LTyFL79o7R4UZwbq0Km7dYjaBrV5D2BAGnFolg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=MAx0LbiRQY2/4yfvblXz5g/u+zDEUYP5tuDrUJ8qm
-        wQ=; b=KAUf4Dx8X7/lwkY78oioZj07RZWfgPCG54ojKLPgb3qHP51tvq/Z/fX34
-        +tCzRQ/vq3J5KJrjqoX1B9vyY/a7C950qWZKZFvjt3Bze2iiZ5K7IitiODqX1/bp
-        ZIz8k6vzor19SGtrTXNZ6F4Zl9QD++ZRMAZmRhrKjk7xCjHEvqZnYbjwKM/tcbis
-        NG0JBvwn62H2WSJNascgg1o2wodJMWlA5RvogzYKElOJ45GawtWgGHPU0AEG71M+
-        iduFCShz2qkyak82rYpq41v5jBmvnWMbsweuLGx8jVnvzF21/bLvW7Kb03rYXkPN
-        B9gE0RpInvEKqrPvrBTk3jjZ7inyg==
-X-ME-Sender: <xms:8SQPYlJjs6whUac1XfFfY3iKqagmwTQ4VIV0543opSBFTHPogf56hg>
-    <xme:8SQPYhISK6fUF14TWPotQhEeAoxxWgvJlHHaBx55sMDoRq5ZErgPNmqirW9g9xCjg
-    fA_9whkszep>
-X-ME-Received: <xmr:8SQPYts1ixs12d6uS7BoyWyAXKrEXZ03NLpm3N2B3lntbb9wcFt4lOZiEm4DT1LNNyeDVqaDCNtgJMRy7i294EM1t8ykX5xGEfVHWPxXXc882DVzj-Nd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrjeelgdejgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepve
-    egfeekgfeiueeujeeigefgueffjeeuvddtheetfeegtdevtdetgedutefhtdfgnecuffho
-    mhgrihhnpehsphhinhhitghsrdhnvghtnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:8iQPYmYccKG7iujCzCjDt_WdVh3vETEXUMx_w_ULFmQvE5br-xJjJQ>
-    <xmx:8iQPYsZ_i1QJGDSrDCw_8EI-Y6NpuFJMEGkozygc6QTzPN9C2ATPSw>
-    <xmx:8iQPYqDnn1OEYNLO_D8YIOH_X85TGw5vnxwMRF6GrqrOmLxiq40ceQ>
-    <xmx:8iQPYrl_wLhzA2F0KG3QokhVasTWQsJuMurFv5x207Q28W6vDWZw_g>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 17 Feb 2022 23:47:43 -0500 (EST)
-Message-ID: <480248c2fdd2a098fd016aea832f297d711dfdff.camel@themaw.net>
-Subject: Re: [ANNOUNCE] autofs 5.1.8 release
-From:   Ian Kent <raven@themaw.net>
-To:     NeilBrown <neilb@suse.de>, Stanislav Levin <slev@altlinux.org>
-Cc:     autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 18 Feb 2022 12:47:37 +0800
-In-Reply-To: <164506664650.10228.15450975168088794628@noble.neil.brown.name>
-References: <b54fb31652a4ba76b39db66b8ae795ee3af6f025.camel@themaw.net>
-        , <164444398868.27779.4643380819577932837@noble.neil.brown.name>
-        , <c1c21e74-85b0-0040-deb7-811a6fa7b312@altlinux.org>
-         <164506664650.10228.15450975168088794628@noble.neil.brown.name>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        Fri, 18 Feb 2022 00:31:38 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7395079C63;
+        Thu, 17 Feb 2022 21:31:22 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0E4E861E9A;
+        Fri, 18 Feb 2022 05:31:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664A7C340E9;
+        Fri, 18 Feb 2022 05:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645162281;
+        bh=lyKt5YoIwrlI8Prw+lFo2isAq5Rr39stn2K/Eebeiu4=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=osv5OaEV+RyyN6/6QKJvV+rFrS3Av585sT+jh4/JzWwo4eYpMU0eswXzRsYecBO5/
+         v3qJSrq5pW/LP7jpMC2j8oDyISjfquhP8DEvxDKcw7M56pdLUowztgM3NBUaJ7HFgk
+         4VLd6oZZDAYnzxfxL85TxlTHVOJ7v/pQoZ7+lRsNUZQMyjyB3GhRfIGaCDHZbzmSTw
+         Y1ANNhumXO+JFL3rQ7xXuClcmHa1y4c4q0mtljErniiASH5RzOAv8WJUZpGBasq1Xc
+         IJz4ZH1fGLo8I3tMq3pMHCSKop55gzYcnhdCbvtvqNT3u1yOVEdnHTk9jD/dfapAKJ
+         /WW+tfZdxGvZw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id F13EB5C1AC1; Thu, 17 Feb 2022 21:31:20 -0800 (PST)
+Date:   Thu, 17 Feb 2022 21:31:20 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Chris Mason <clm@fb.com>,
+        linux-fsdevel@vger.kernel.org,
+        Giuseppe Scrivano <gscrivan@redhat.com>
+Subject: Re: [PATCH][RFC] ipc,fs: use rcu_work to free struct ipc_namespace
+Message-ID: <20220218053120.GV4285@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <20220217153620.4607bc28@imladris.surriel.com>
+ <Yg8StKzTWh+7FLuA@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yg8StKzTWh+7FLuA@zeniv-ca.linux.org.uk>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-02-17 at 13:57 +1100, NeilBrown wrote:
-> On Tue, 15 Feb 2022, Stanislav Levin wrote:
+On Fri, Feb 18, 2022 at 03:29:56AM +0000, Al Viro wrote:
+> On Thu, Feb 17, 2022 at 03:36:20PM -0500, Rik van Riel wrote:
+> > The patch works, but a cleanup question for Al Viro:
 > > 
-> > 
-> > This seems duplicate of
-> > https://www.spinics.net/lists/autofs/msg02389.html
-> > 
+> > How do we get rid of #include "../fs/mount.h" and the raw ->mnt_ns = NULL thing
+> > in the cleanest way?
 > 
-> Yes it is - thanks for the link.
-> I wonder why the proposed fix isn't in git ....
+> Hell knows...  mnt_make_shortterm(mnt) with big, fat warning along the lines of
+> "YOU MUST HAVE AN RCU GRACE PERIOD BEFORE YOU DROP THAT REFERENCE!!!", perhaps?
 
-I think we are refering to commits:
-fc4c067b53f7 autofs-5.1.7 - make NFS version check flags consistent
-26fb6b5408be autofs-5.1.7 - refactor get_nfs_info()
-606795ecfaa1 autofs-5.1.7 - also require TCP_REQUESTED when setting NFS
-port
+Rik's patch uses queue_rcu_work(), which always uses a normal grace
+period.  Therefore, one way of checking that an RCU grace period has
+elapsed is as follows:
 
-> 
-> Also, I cannot see that the new NS4_ONLY_REQUESTED is different from
-> the
-> existing NFS4_VERS_MASK.
-> They are both set/cleared at exactly the same places.
+Step 1: Get a snapshot of the normal grace-period state:
 
-Yes they are at the moment.
+	rcuseq = get_state_synchronize_rcu(); // In mainline
 
-The aim there is, at some point, to have two seperate cases for NFSv4
-mounts, one that may use rpcbind and one that does not such as when
-traversing a firewall. Although I'm not clear on it myself the RFC
-says, more or less, should (although that might have been must) not
-need to use other than the NFS port, so no rpcbind should need to be
-used.
+Step 2: Verify that a normal grace period has elapsed since step 1:
 
-Clearly the case seperation hasn't happened yet but I'm pretty sure
-the current code did avoid the rpcbind usage for fstype=nfs4 which
-is what was asked for at the time and what had been broken somewhere
-along the line.
+	WARN_ON_ONCE(!poll_state_synchronize_rcu(rcuseq));
 
-Ian
+These functions are both in mainline.
+
+And apologies for my answer on IRC being unhelpful.  Here is hoping that
+this is more to the point.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+PS.  Just in case it ever becomes relevant, if Rik's patch were instead
+     to use synchronize_rcu() or synchronize_rcu_expedited() to wait for
+     the grace period, it would be necessary to capture both the normal
+     and expedited grace-period state:
+
+Step 1: Get a snapshot of both the normal and the expedited state:
+
+	rcuseq = get_state_synchronize_rcu();
+	rcuxseq = get_state_synchronize_rcu_expedited();
+
+Step 2: Verify that either a normal or expedited grace period has
+	elapsed since step 1:
+
+	WARN_ON_ONCE(!poll_state_synchronize_rcu(rcuseq) &&
+		     !poll_state_synchronize_rcu_expedited(rcuxseq));
+
+The reason for doing both is that synchronize_rcu_expedited() and
+synchronize_rcu() can both be switched between using normal and expedited
+grace periods.  Not just at boot time, but also at runtime.  Fun.
+
+The two expedited functions are in -rcu rather than mainline, so if
+someone does ever need them, please let me know.
