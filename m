@@ -2,40 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E063B4BBF8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 19:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BED4BBF87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 19:33:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239268AbiBRSfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Feb 2022 13:35:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33134 "EHLO
+        id S235443AbiBRSdk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Feb 2022 13:33:40 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239263AbiBRSfU (ORCPT
+        with ESMTP id S233264AbiBRSdj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Feb 2022 13:35:20 -0500
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C79224943;
-        Fri, 18 Feb 2022 10:35:03 -0800 (PST)
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1nL82Z-0004OI-D8; Fri, 18 Feb 2022 13:31:35 -0500
-From:   Rik van Riel <riel@surriel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-        paulmck@kernel.org, gscrivan@redhat.com, viro@zeniv.linux.org.uk,
-        Rik van Riel <riel@surriel.com>
-Subject: [PATCH 2/2] ipc: get rid of free_ipc_work workqueue
-Date:   Fri, 18 Feb 2022 13:31:14 -0500
-Message-Id: <20220218183114.2867528-3-riel@surriel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220218183114.2867528-1-riel@surriel.com>
-References: <20220218183114.2867528-1-riel@surriel.com>
+        Fri, 18 Feb 2022 13:33:39 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8BD101F10;
+        Fri, 18 Feb 2022 10:33:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PrWz5qtwHqdsRw/blxCb36c0OKYX0eyItRlrI1nvhYw=; b=fg/RX55EvbqAh4EIcEZKIZHAgd
+        wZokEp23P5OtG3/qxuaVZuB1CKe9ivzibiisyFrMCsVvyXZHyofFgrLX+AJD9P+V7IqFl5XcrVDJW
+        3VuyeQ+odtBJtSQ1zxt2C8yQr0yougjcyfQ2Nn/TWUtcQnIemLmbrzAUrouL7i3V25YJWSzE4JSTn
+        W71rFO46xDp5fbkKSGv+Knq4mvYGoWBwLDLfZhVb4LowRK8cI90w2QN4ZrDPpOUnuwuNrAxasYfBq
+        birY9cRmAmJXZOpQY0BSh83O1o5ZEDFfN7ghHpYFsey+iLI0L+vsKt75H5L1Zp6vGVE3R3dXPNwF5
+        fxRTge8g==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nL841-00FVaa-Of; Fri, 18 Feb 2022 18:33:05 +0000
+Date:   Fri, 18 Feb 2022 10:33:05 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     tangmeng <tangmeng@uniontech.com>,
+        zhanglianjie <zhanglianjie@uniontech.com>, nizhen@uniontech.com,
+        Xiaoming Ni <nixiaoming@huawei.com>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        yzaikin@google.com, peterz@infradead.org, mingo@redhat.com,
+        will@kernel.org, longman@redhat.com, boqun.feng@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/5] kernel/lockdep: move lockdep sysctls to its own file
+Message-ID: <Yg/mYW8mnWBmrY9G@bombadil.infradead.org>
+References: <20220218105857.12559-1-tangmeng@uniontech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: riel@shelob.surriel.com
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220218105857.12559-1-tangmeng@uniontech.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -43,75 +54,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With kern_unmount deferring the freeing of the vfsmount structure
-through queue_rcu_work, we no longer need a separate workqueue for
-freeing up ipc_namespace structures.
+On Fri, Feb 18, 2022 at 06:58:57PM +0800, tangmeng wrote:
+> kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
+> dishes, this makes it very difficult to maintain.
+> 
+> To help with this maintenance let's start by moving sysctls to places
+> where they actually belong.  The proc sysctl maintainers do not want to
+> know what sysctl knobs you wish to add for your own piece of code, we
+> just care about the core logic.
+> 
+> All filesystem syctls now get reviewed by fs folks. This commit
+> follows the commit of fs, move the prove_locking and lock_stat sysctls
+> to its own file, kernel/lockdep.c.
+> 
+> Signed-off-by: tangmeng <tangmeng@uniontech.com>
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
----
- include/linux/ipc_namespace.h |  2 --
- ipc/namespace.c               | 21 +--------------------
- 2 files changed, 1 insertion(+), 22 deletions(-)
+Thanks!
 
-diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
-index b75395ec8d52..5a3debde2f3d 100644
---- a/include/linux/ipc_namespace.h
-+++ b/include/linux/ipc_namespace.h
-@@ -67,8 +67,6 @@ struct ipc_namespace {
- 	struct user_namespace *user_ns;
- 	struct ucounts *ucounts;
- 
--	struct llist_node mnt_llist;
--
- 	struct ns_common ns;
- } __randomize_layout;
- 
-diff --git a/ipc/namespace.c b/ipc/namespace.c
-index ae83f0f2651b..090a08b17710 100644
---- a/ipc/namespace.c
-+++ b/ipc/namespace.c
-@@ -117,9 +117,6 @@ void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
- 
- static void free_ipc_ns(struct ipc_namespace *ns)
- {
--	/* mq_put_mnt() waits for a grace period as kern_unmount()
--	 * uses synchronize_rcu().
--	 */
- 	mq_put_mnt(ns);
- 	sem_exit_ns(ns);
- 	msg_exit_ns(ns);
-@@ -131,21 +128,6 @@ static void free_ipc_ns(struct ipc_namespace *ns)
- 	kfree(ns);
- }
- 
--static LLIST_HEAD(free_ipc_list);
--static void free_ipc(struct work_struct *unused)
--{
--	struct llist_node *node = llist_del_all(&free_ipc_list);
--	struct ipc_namespace *n, *t;
--
--	llist_for_each_entry_safe(n, t, node, mnt_llist)
--		free_ipc_ns(n);
--}
--
--/*
-- * The work queue is used to avoid the cost of synchronize_rcu in kern_unmount.
-- */
--static DECLARE_WORK(free_ipc_work, free_ipc);
--
- /*
-  * put_ipc_ns - drop a reference to an ipc namespace.
-  * @ns: the namespace to put
-@@ -168,8 +150,7 @@ void put_ipc_ns(struct ipc_namespace *ns)
- 		mq_clear_sbinfo(ns);
- 		spin_unlock(&mq_lock);
- 
--		if (llist_add(&ns->mnt_llist, &free_ipc_list))
--			schedule_work(&free_ipc_work);
-+		free_ipc_ns(ns);
- 	}
- }
- 
--- 
-2.34.1
+Queued on to the new sysctl-next [0] please use that tree for further sysctl
+changes. And please Cc zhanglianjie and nizhen and Xiaoming Ni on future
+changes as well.
 
+[0] git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git sysctl-next
+
+  Luis
