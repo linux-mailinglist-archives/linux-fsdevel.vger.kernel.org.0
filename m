@@ -2,49 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12A3D4BB76F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 12:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32B614BB76D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 12:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233911AbiBRLAx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Feb 2022 06:00:53 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234261AbiBRLAo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S234259AbiBRLAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 18 Feb 2022 06:00:44 -0500
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE9B31ED621
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Feb 2022 03:00:27 -0800 (PST)
-X-QQ-mid: bizesmtp72t1645181987tje8w7kl
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234262AbiBRLAc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Feb 2022 06:00:32 -0500
+Received: from smtpproxy21.qq.com (smtpbg701.qq.com [203.205.195.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2F2238901
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Feb 2022 03:00:15 -0800 (PST)
+X-QQ-mid: bizesmtp67t1645181999tkqrwa4u
 Received: from localhost.localdomain (unknown [58.240.82.166])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 18 Feb 2022 18:59:40 +0800 (CST)
+        id ; Fri, 18 Feb 2022 18:59:53 +0800 (CST)
 X-QQ-SSF: 01400000002000B0E000B00M0000000
-X-QQ-FEAT: TskX/GkkryDxQTL5bYbxQxyGxxhZmalWfqYD3hiq7XxS9JkXU+o+s7Sugz1Wf
-        IfB3ZJAaDSAj/8vsOVduyoWjAF3d+ox27F2CoK5dPXFTQOjwE36qKhf9ElSn7+dFYhsLty3
-        SkabkqvbZR0HdjfLvT6HyD7Bhm0nMoT96ar9Bf/sKqU2FqwoMAVQTpUc3/OO/eBzLPkAPTc
-        qtTxcYUgvSozWRmW4ZFAmvVYylhC0cxJDqauKWIiCscgnOcsOUlbUTUkvpA6XlnNnB8LalO
-        P6XfD97s6bZs4rpXPZB44fiydd0OhHnunDaVzz5DmuhNIA+q+Wr8Vt/IpXTtG1EkgNYnQx5
-        QYP/bhY7J6jLIN/w0dftUmFL63DgE+18FPA/UderX5kxmqS9IU=
+X-QQ-FEAT: Lrjk7Ti9kjiycnf/HJB03UJzBsueqWUhUXioFSdAl8z5DeJyXcGEgbTEWkY8Z
+        tlSY2FaakRoz9rxks4ej69Dr5xLalOMJjc9Cp/HothRGQOPZ9KH4sygP3ietuFRK9YQzkUE
+        CfPvhl+SxQ7OZe7hSJlZSvwNJPIixEaAXB9kTW9mbACkWlU/TgM1iE6dBjCs3Lt+rMewEoD
+        z1BeFW4mkjpb/rYmXknsPh6ncO0R6pL7+xY1opKDZvJuTKzgHCKEpJ+xBCT9UpbG9SaF+Kq
+        IENOVLHeq9kM3OHPVDm6LEmGRkHpDwBj9xYxJnOIHVuQ9DMKRvdzz571Wv8Jhlt2f7X845l
+        KJ1PRox6Qj2jQVeeMVLZA7L1PLIsFKcQfd9tDsDuqK/sc8ZgvI=
 X-QQ-GoodBg: 2
 From:   tangmeng <tangmeng@uniontech.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        bsingharora@gmail.com
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH 4/5] kernel/delayacct: move delayacct sysctls to its own file
-Date:   Fri, 18 Feb 2022 18:59:36 +0800
-Message-Id: <20220218105936.12968-1-tangmeng@uniontech.com>
+Subject: [PATCH 5/5] kernel/do_mount_initrd: move real_root_dev sysctls to its own file
+Date:   Fri, 18 Feb 2022 18:59:49 +0800
+Message-Id: <20220218105949.13125-1-tangmeng@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign7
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
 X-QQ-Bgrelay: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -60,100 +58,87 @@ know what sysctl knobs you wish to add for your own piece of code, we
 just care about the core logic.
 
 All filesystem syctls now get reviewed by fs folks. This commit
-follows the commit of fs, move the delayacct sysctl to its own file,
-kernel/delayacct.c.
+follows the commit of fs, move the real_root_dev sysctl to its own file,
+kernel/do_mount_initrd.c.
 
 Signed-off-by: tangmeng <tangmeng@uniontech.com>
 ---
- include/linux/delayacct.h |  3 ---
- kernel/delayacct.c        | 22 +++++++++++++++++++++-
- kernel/sysctl.c           | 12 ------------
- 3 files changed, 21 insertions(+), 16 deletions(-)
+ include/linux/initrd.h  |  2 --
+ init/do_mounts_initrd.c | 22 +++++++++++++++++++++-
+ kernel/sysctl.c         |  9 ---------
+ 3 files changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/delayacct.h b/include/linux/delayacct.h
-index 3e03d010bd2e..6b16a6930a19 100644
---- a/include/linux/delayacct.h
-+++ b/include/linux/delayacct.h
-@@ -61,9 +61,6 @@ extern int delayacct_on;	/* Delay accounting turned on/off */
- extern struct kmem_cache *delayacct_cache;
- extern void delayacct_init(void);
+diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+index 1bbe9af48dc3..f1a1f4c92ded 100644
+--- a/include/linux/initrd.h
++++ b/include/linux/initrd.h
+@@ -29,8 +29,6 @@ static inline void wait_for_initramfs(void) {}
+ extern phys_addr_t phys_initrd_start;
+ extern unsigned long phys_initrd_size;
  
--extern int sysctl_delayacct(struct ctl_table *table, int write, void *buffer,
--			    size_t *lenp, loff_t *ppos);
+-extern unsigned int real_root_dev;
 -
- extern void __delayacct_tsk_init(struct task_struct *);
- extern void __delayacct_tsk_exit(struct task_struct *);
- extern void __delayacct_blkio_start(void);
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index c5e8cea9e05f..2c1e18f7c5cf 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -44,7 +44,7 @@ void delayacct_init(void)
- }
+ extern char __initramfs_start[];
+ extern unsigned long __initramfs_size;
  
- #ifdef CONFIG_PROC_SYSCTL
--int sysctl_delayacct(struct ctl_table *table, int write, void *buffer,
-+static int sysctl_delayacct(struct ctl_table *table, int write, void *buffer,
- 		     size_t *lenp, loff_t *ppos)
- {
- 	int state = delayacct_on;
-@@ -63,6 +63,26 @@ int sysctl_delayacct(struct ctl_table *table, int write, void *buffer,
- 		set_delayacct(state);
- 	return err;
- }
-+
-+static struct ctl_table kern_delayacct_table[] = {
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 533d81ed74d4..327962ea354c 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -14,12 +14,32 @@
+ 
+ unsigned long initrd_start, initrd_end;
+ int initrd_below_start_ok;
+-unsigned int real_root_dev;	/* do_proc_dointvec cannot handle kdev_t */
++static unsigned int real_root_dev;	/* do_proc_dointvec cannot handle kdev_t */
+ static int __initdata mount_initrd = 1;
+ 
+ phys_addr_t phys_initrd_start __initdata;
+ unsigned long phys_initrd_size __initdata;
+ 
++#ifdef CONFIG_SYSCTL
++static struct ctl_table kern_do_mounts_initrd_table[] = {
 +	{
-+		.procname       = "task_delayacct",
-+		.data           = NULL,
-+		.maxlen         = sizeof(unsigned int),
++		.procname       = "real-root-dev",
++		.data           = &real_root_dev,
++		.maxlen         = sizeof(int),
 +		.mode           = 0644,
-+		.proc_handler   = sysctl_delayacct,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = SYSCTL_ONE,
++		.proc_handler   = proc_dointvec,
 +	},
 +	{ }
 +};
 +
-+static __init int kernel_delayacct_sysctls_init(void)
++static __init int kernel_do_mounts_initrd_sysctls_init(void)
 +{
-+	register_sysctl_init("kernel", kern_delayacct_table);
++	register_sysctl_init("kernel", kern_do_mounts_initrd_table);
 +	return 0;
 +}
-+late_initcall(kernel_delayacct_sysctls_init);
- #endif
- 
- void __delayacct_tsk_init(struct task_struct *tsk)
++late_initcall(kernel_do_mounts_initrd_sysctls_init);
++#endif /* CONFIG_SYSCTL */
++
+ static int __init no_initrd(char *str)
+ {
+ 	mount_initrd = 0;
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 781b0fbb2575..e448f43a8988 100644
+index e448f43a8988..64d368d59a58 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -67,7 +67,6 @@
- #include <linux/userfaultfd_k.h>
- #include <linux/latencytop.h>
- #include <linux/pid.h>
--#include <linux/delayacct.h>
- 
- #include "../lib/kstrtox.h"
- 
-@@ -1646,17 +1645,6 @@ int proc_do_static_key(struct ctl_table *table, int write,
- }
- 
- static struct ctl_table kern_table[] = {
--#ifdef CONFIG_TASK_DELAY_ACCT
+@@ -1699,15 +1699,6 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= sysctl_latencytop,
+ 	},
+-#endif
+-#ifdef CONFIG_BLK_DEV_INITRD
 -	{
--		.procname	= "task_delayacct",
--		.data		= NULL,
--		.maxlen		= sizeof(unsigned int),
+-		.procname	= "real-root-dev",
+-		.data		= &real_root_dev,
+-		.maxlen		= sizeof(int),
 -		.mode		= 0644,
--		.proc_handler	= sysctl_delayacct,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
+-		.proc_handler	= proc_dointvec,
 -	},
--#endif /* CONFIG_TASK_DELAY_ACCT */
- #ifdef CONFIG_NUMA_BALANCING
+ #endif
  	{
- 		.procname	= "numa_balancing",
+ 		.procname	= "print-fatal-signals",
 -- 
 2.20.1
 
