@@ -2,40 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D7064BB768
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 11:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4583B4BB766
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Feb 2022 11:59:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234229AbiBRK74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Feb 2022 05:59:56 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52452 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234217AbiBRK7w (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S234212AbiBRK7w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 18 Feb 2022 05:59:52 -0500
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240C91B7634
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234189AbiBRK7u (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Feb 2022 05:59:50 -0500
+Received: from smtpproxy21.qq.com (smtpbg703.qq.com [203.205.195.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3571CEB00
         for <linux-fsdevel@vger.kernel.org>; Fri, 18 Feb 2022 02:59:34 -0800 (PST)
-X-QQ-mid: bizesmtp75t1645181950tezeyhil
+X-QQ-mid: bizesmtp71t1645181962tz70e2vo
 Received: from localhost.localdomain (unknown [58.240.82.166])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 18 Feb 2022 18:59:03 +0800 (CST)
+        id ; Fri, 18 Feb 2022 18:59:14 +0800 (CST)
 X-QQ-SSF: 01400000002000B0E000B00M0000000
-X-QQ-FEAT: JRmPfD6HWhykTEiQFDHsYliCQGMuGr/p1wXKShUhdXWhhe3xUHuf/+kdHbKS4
-        fp0hpVZZdSjOEGOhbT63p3zTTegZ+OP93BGy/PPgZ0yWELIEkvkrUYUIidhz0RVFG7uwlN7
-        RJMS0UndbhACo5/9cPDiXztSPScuGImCE/duiZV7sWy0XdpFToH1P57mMeynGT2CcJdSroc
-        Bhx86Dgn4SjqSgtLJlPvtl2pmEUkhZkvHWOHmD7PIozVcX7keee3pGlGxznlXsmdcDoEjO8
-        PhvHP2xlQL18e82Yy9ma6/RAIvr9lILW3f+93uyvvIc14q0B14X6RGdLjlh2zY9pfUTXfAr
-        9GzHYC/s2zZzMhh2lk8cB8k4NhMdOr04mlQGhHR
+X-QQ-FEAT: 0Eq+cbWb7RxKR0yuzkJjHbcehYXoBUOTOljkRKZHdRjnLsDcsdAzo5euxiRnl
+        tzKP8w0VVpgIEWQtV0J5tEar9WZ7P7nn4gMf2UOJwBVQZYrOM8jo/E+SbqCZZwvWB3cmcGk
+        w18QmJGvqyF8Ag86KjKeYnHf4SzOVfx95YntYQnZfwwHbjH3NcPbVVTYZSupAxz11XgXwcA
+        yxY2KBFn5+drQNlYIlMKIX8d7JG+sNTJcTHlawvgWjN+kP6Dx+BfK+7RDO9pQjU+2qHhDJv
+        kkP3/2iykNeWYT/6EH0eMrg4z/Afkj0kh3Swt0FD2qRh+EpvsPL6nLxudtFR+4Vn5DGtu0z
+        ftjxIzGo9e502bfYoPquztA6ouXT2pn+ebxHSHe
 X-QQ-GoodBg: 2
 From:   tangmeng <tangmeng@uniontech.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-        longman@redhat.com, boqun.feng@gmail.com
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH 1/5] kernel/lockdep: move lockdep sysctls to its own file
-Date:   Fri, 18 Feb 2022 18:58:57 +0800
-Message-Id: <20220218105857.12559-1-tangmeng@uniontech.com>
+Subject: [PATCH 2/5] kernel/panic: move panic sysctls to its own file
+Date:   Fri, 18 Feb 2022 18:59:12 +0800
+Message-Id: <20220218105912.12696-1-tangmeng@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,9 +41,8 @@ X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
 X-QQ-Bgrelay: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -61,127 +58,99 @@ know what sysctl knobs you wish to add for your own piece of code, we
 just care about the core logic.
 
 All filesystem syctls now get reviewed by fs folks. This commit
-follows the commit of fs, move the prove_locking and lock_stat sysctls
-to its own file, kernel/lockdep.c.
+follows the commit of fs, move the oops_all_cpu_backtrace sysctl to
+its own file, kernel/panic.c.
 
 Signed-off-by: tangmeng <tangmeng@uniontech.com>
 ---
- include/linux/lockdep.h  |  4 ----
- kernel/locking/lockdep.c | 35 +++++++++++++++++++++++++++++++++--
- kernel/sysctl.c          | 21 ---------------------
- 3 files changed, 33 insertions(+), 27 deletions(-)
+ include/linux/panic.h |  6 ------
+ kernel/panic.c        | 26 +++++++++++++++++++++++++-
+ kernel/sysctl.c       | 11 -----------
+ 3 files changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 467b94257105..37951c17908e 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -16,10 +16,6 @@
+diff --git a/include/linux/panic.h b/include/linux/panic.h
+index f5844908a089..e71161da69c4 100644
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -15,12 +15,6 @@ extern void oops_enter(void);
+ extern void oops_exit(void);
+ extern bool oops_may_print(void);
  
- struct task_struct;
- 
--/* for sysctl */
--extern int prove_locking;
--extern int lock_stat;
+-#ifdef CONFIG_SMP
+-extern unsigned int sysctl_oops_all_cpu_backtrace;
+-#else
+-#define sysctl_oops_all_cpu_backtrace 0
+-#endif /* CONFIG_SMP */
 -
- #ifdef CONFIG_LOCKDEP
+ extern int panic_timeout;
+ extern unsigned long panic_print;
+ extern int panic_on_oops;
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 55b50e052ec3..8aa5c01b41b6 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -43,7 +43,9 @@
+  * Should we dump all CPUs backtraces in an oops event?
+  * Defaults to 0, can be changed via sysctl.
+  */
+-unsigned int __read_mostly sysctl_oops_all_cpu_backtrace;
++static unsigned int __read_mostly sysctl_oops_all_cpu_backtrace;
++#else
++#define sysctl_oops_all_cpu_backtrace 0
+ #endif /* CONFIG_SMP */
  
- #include <linux/linkage.h>
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 4a882f83aeb9..d36c55c3101c 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -64,19 +64,50 @@
- #include <trace/events/lock.h>
+ int panic_on_oops = CONFIG_PANIC_ON_OOPS_VALUE;
+@@ -72,6 +74,28 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
  
- #ifdef CONFIG_PROVE_LOCKING
--int prove_locking = 1;
-+static int prove_locking = 1;
- module_param(prove_locking, int, 0644);
- #else
- #define prove_locking 0
- #endif
+ EXPORT_SYMBOL(panic_notifier_list);
  
- #ifdef CONFIG_LOCK_STAT
--int lock_stat = 1;
-+static int lock_stat = 1;
- module_param(lock_stat, int, 0644);
- #else
- #define lock_stat 0
- #endif
- 
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table kern_lockdep_table[] = {
-+#ifdef CONFIG_PROVE_LOCKING
++#if defined(CONFIG_SMP) && defined(CONFIG_SYSCTL)
++static struct ctl_table kern_panic_table[] = {
 +	{
-+		.procname       = "prove_locking",
-+		.data           = &prove_locking,
++		.procname       = "oops_all_cpu_backtrace",
++		.data           = &sysctl_oops_all_cpu_backtrace,
 +		.maxlen         = sizeof(int),
 +		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
++		.proc_handler   = proc_dointvec_minmax,
++		.extra1         = SYSCTL_ZERO,
++		.extra2         = SYSCTL_ONE,
 +	},
-+#endif /* CONFIG_PROVE_LOCKING */
-+#ifdef CONFIG_LOCK_STAT
-+	{
-+		.procname       = "lock_stat",
-+		.data           = &lock_stat,
-+		.maxlen         = sizeof(int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
-+	},
-+#endif /* CONFIG_LOCK_STAT */
 +	{ }
 +};
 +
-+static __init int kernel_lockdep_sysctls_init(void)
++static __init int kernel_panic_sysctls_init(void)
 +{
-+	register_sysctl_init("kernel", kern_lockdep_table);
++	register_sysctl_init("kernel", kern_panic_table);
 +	return 0;
 +}
-+late_initcall(kernel_lockdep_sysctls_init);
-+#endif /* CONFIG_SYSCTL */
++late_initcall(kernel_panic_sysctls_init);
++#endif
 +
- DEFINE_PER_CPU(unsigned int, lockdep_recursion);
- EXPORT_PER_CPU_SYMBOL_GPL(lockdep_recursion);
- 
+ static long no_blink(int state)
+ {
+ 	return 0;
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 3cd3478b815d..682b3b3f2924 100644
+index 682b3b3f2924..fa79967d4b87 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -88,9 +88,6 @@
- #ifdef CONFIG_RT_MUTEXES
- #include <linux/rtmutex.h>
- #endif
--#if defined(CONFIG_PROVE_LOCKING) || defined(CONFIG_LOCK_STAT)
--#include <linux/lockdep.h>
--#endif
- 
- #if defined(CONFIG_SYSCTL)
- 
-@@ -1684,24 +1681,6 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
+@@ -1928,17 +1928,6 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
  	},
--#endif
--#ifdef CONFIG_PROVE_LOCKING
--	{
--		.procname	= "prove_locking",
--		.data		= &prove_locking,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
--#ifdef CONFIG_LOCK_STAT
--	{
--		.procname	= "lock_stat",
--		.data		= &lock_stat,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
  #endif
+-#ifdef CONFIG_SMP
+-	{
+-		.procname	= "oops_all_cpu_backtrace",
+-		.data		= &sysctl_oops_all_cpu_backtrace,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+-#endif /* CONFIG_SMP */
  	{
- 		.procname	= "panic",
+ 		.procname	= "pid_max",
+ 		.data		= &pid_max,
 -- 
 2.20.1
 
