@@ -2,134 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE4354BC6E7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Feb 2022 09:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BBE24BC741
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Feb 2022 10:56:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241725AbiBSIKA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Feb 2022 03:10:00 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50552 "EHLO
+        id S231863AbiBSJyj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Feb 2022 04:54:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234840AbiBSIJ6 (ORCPT
+        with ESMTP id S240555AbiBSJyh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Feb 2022 03:09:58 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7663C5C346;
-        Sat, 19 Feb 2022 00:09:40 -0800 (PST)
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21J66vXE026801;
-        Sat, 19 Feb 2022 08:09:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=cYs92ukqP6Kc1Qt0PRBoSN4oMZR6wMODxe+0lCpjYxo=;
- b=okO4ujBgKp4szNB2CGpEBkn338UnBnH4JRIHShxR/p8H+0La1Jxn+TTroTmCeN1XtNkH
- uVHrNkgMG/4Wht3CQpl8Zt4EeGt3UDqib1GuMNBH4M1hjtJ/QpxmrwlGRlcZC8NE5lx8
- 4hgvBr6qcs30TKvKlhGw7LYU+0clVMuno8mdFM7ZBxSyhZO85BBTFjuL+APd9Z+Bna4m
- nPxKEVagKq3q6NW65B3VjkrdnDi6jR8ZdL6virlXdc+2LST2uzdSuugZ08w23Mb32gbt
- r2BqTAEfRSgD4A6PfkroMxUPk7Qy+1BC8hCb92q9twfLwlZzJGAkiMDzOjeQCwND4Bym ng== 
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3earxmauc0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 19 Feb 2022 08:09:39 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21J88072004910;
-        Sat, 19 Feb 2022 08:09:37 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 3eaqthh077-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 19 Feb 2022 08:09:37 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21J89ZrW56099092
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Feb 2022 08:09:35 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4638AA4054;
-        Sat, 19 Feb 2022 08:09:35 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C8667A405C;
-        Sat, 19 Feb 2022 08:09:33 +0000 (GMT)
-Received: from localhost (unknown [9.43.86.157])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat, 19 Feb 2022 08:09:33 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [PATCHv2 REBASED] bad_inode: add missing i_op initializers for fileattr_get/_set
-Date:   Sat, 19 Feb 2022 13:39:17 +0530
-Message-Id: <456975d5d84b1098d5edc49619cfd9a736fc8594.1645257680.git.riteshh@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3Wa0HFIGiUoQbEYHsSa99hd7EmJB-XGX
-X-Proofpoint-ORIG-GUID: 3Wa0HFIGiUoQbEYHsSa99hd7EmJB-XGX
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Sat, 19 Feb 2022 04:54:37 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BC1FB6EB37
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 01:54:17 -0800 (PST)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.52 with ESMTP; 19 Feb 2022 18:54:15 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
+        by 156.147.1.151 with ESMTP; 19 Feb 2022 18:54:15 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Sat, 19 Feb 2022 18:54:07 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org, axboe@kernel.dk,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: [PATCH 00/16] DEPT(Dependency Tracker)
+Message-ID: <20220219095407.GA10342@X58A-UD3R>
+References: <1645095472-26530-1-git-send-email-byungchul.park@lge.com>
+ <Yg5u7dzUxL3Vkncg@mit.edu>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-19_02,2022-02-18_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 phishscore=0
- malwarescore=0 mlxlogscore=999 spamscore=0 clxscore=1011 adultscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202190051
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yg5u7dzUxL3Vkncg@mit.edu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let's bring inode_operations in sync for bad_inode_ops.
-Some of the reasons for doing this are listed here [1].
-But mostly it is just for completeness sake.
+On Thu, Feb 17, 2022 at 10:51:09AM -0500, Theodore Ts'o wrote:
+> On Thu, Feb 17, 2022 at 07:57:36PM +0900, Byungchul Park wrote:
+> > 
+> > I've got several reports from the tool. Some of them look like false
+> > alarms and some others look like real deadlock possibility. Because of
+> > my unfamiliarity of the domain, it's hard to confirm if it's a real one.
+> > Let me add the reports on this email thread.
+> 
+> The problem is we have so many potentially invalid, or
+> so-rare-as-to-be-not-worth-the-time-to-investigate-in-the-
+> grand-scheme-of-all-of-the-fires-burning-on-maintainers laps that it's
+> really not reasonable to ask maintainers to determine whether
 
-[1]: https://lore.kernel.org/lkml/1473708559-12714-2-git-send-email-mszeredi@redhat.com/
+Even though I might have been wrong and might be gonna be wrong, you
+look so arrogant. You were hasty to judge and trying to walk over me.
 
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
-v1 -> v2
-1. Rebased.
-2. Removed end of line whitespace fixes as it could quickly give conflicts
-   while applying.
+I reported it because I thought it was a real problem but couldn't
+confirm it. For the other reports that I thought was not real, I didn't
+even mention it. If you are talking about the previous report, then I
+felt so sorry as I told you. I skimmed through the part of the waits...
 
- fs/bad_inode.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Basically, I respect you and appreciate your feedback. Hope you not get
+me wrong.
 
-diff --git a/fs/bad_inode.c b/fs/bad_inode.c
-index 12b8fdcc445b..cefd4ed8d5b2 100644
---- a/fs/bad_inode.c
-+++ b/fs/bad_inode.c
-@@ -160,6 +160,17 @@ static int bad_inode_set_acl(struct user_namespace *mnt_userns,
- 	return -EIO;
- }
+> Looking at the second ext4 report, it doesn't make any sense.  Context
+> A is the kjournald thread.  We don't do a commit until (a) the timeout
+> expires, or (b) someone explicitly requests that a commit happen
+> waking up j_wait_commit.  I'm guessing that complaint here is that
+> DEPT thinks nothing is explicitly requesting a wake up.  But note that
+> after 5 seconds (or whatever journal->j_commit_interval) is configured
+> to be we *will* always start a commit.  So ergo, there can't be a deadlock.
 
-+static int bad_inode_fileattr_set(struct user_namespace *mnt_userns,
-+			struct dentry *dentry, struct fileattr *fa)
-+{
-+	return -EIO;
-+}
-+
-+static int bad_inode_fileattr_get(struct dentry *dentry, struct fileattr *fa)
-+{
-+	return -EIO;
-+}
-+
- static const struct inode_operations bad_inode_ops =
- {
- 	.create		= bad_inode_create,
-@@ -183,6 +194,8 @@ static const struct inode_operations bad_inode_ops =
- 	.atomic_open	= bad_inode_atomic_open,
- 	.tmpfile	= bad_inode_tmpfile,
- 	.set_acl	= bad_inode_set_acl,
-+	.fileattr_set	= bad_inode_fileattr_set,
-+	.fileattr_get	= bad_inode_fileattr_get,
- };
+Yeah, it might not be a *deadlock deadlock* because the wait will be
+anyway woken up by one of the wake up points you mentioned. However, the
+dependency looks problematic because the three contexts participating in
+the dependency chain would be stuck for a while until one eventually
+wakes it up. I bet it would not be what you meant.
 
+Again. It's not critical but problematic. Or am I missing something?
 
---
-2.25.1
+> At a higher level of discussion, it's an unfair tax on maintainer's
+> times to ask maintainers to help you debug DEPT for you.  Tools like
+> Syzkaller and DEPT are useful insofar as they save us time in making
+> our subsystems better.  But until you can prove that it's not going to
+> be a massive denial of service attack on maintainer's time, at the
 
+Partially I agree. I would understand you even if you don't support Dept
+until you think it's valuable enough. However, let me keep asking things
+to fs folks, not you, even though I would cc you on it.
+
+> If you know there there "appear to be false positives", you need to
+> make sure you've tracked them all down before trying to ask that this
+> be merged.
+
+To track them all down, I need to ask LKML because Dept works perfectly
+with my system. I don't want it to be merged with a lot of false
+positive still in there, either.
+
+> You may also want to add some documentation about why we should trust
+> this; in particular for wait channels, when a process calls schedule()
+> there may be multiple reasons why the thread will wake up --- in the
+> worst case, such as in the select(2) or epoll(2) system call, there
+> may be literally thousands of reasons (one for every file desriptor
+> the select is waiting on) --- why the process will wake up and thus
+> resolve the potential "deadlock" that DEPT is worrying about.  How is
+> DEPT going to handle those cases?  If the answer is that things need
+
+Thank you for the information but I don't get it which case you are
+concerning. I'd like to ask you a specific senario of that so that we
+can discuss it more - maybe I guess I could answer to it tho, but I
+won't ask you. Just give me an instance only if you think it's worthy.
+
+You look like a guy who unconditionally blames on new things before
+understanding it rather than asking and discussing. Again. I also think
+anyone doesn't have to spend his or her time for what he or she think is
+not worthy enough.
+
+> I know that you're trying to help us, but this tool needs to be far
+> better than Lockdep before we should think about merging it.  Even if
+> it finds 5% more potential deadlocks, if it creates 95% more false
+
+It should not get merged for sure if so, but it sounds too sarcastic.
+Let's see if it creates 95% false positives for real. If it's true and
+I can't control it, I will give up. That's what I should do.
+
+There are a lot of factors to judge how valuable Dept is. Dept would be
+useful especially in the middle of development, rather than in the final
+state in the tree. It'd be appreciated if you think that sides more, too.
+
+Thanks,
+Byungchul
