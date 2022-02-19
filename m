@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2719B4BC7D0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Feb 2022 12:20:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E61704BC7FE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Feb 2022 12:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242034AbiBSK7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Feb 2022 05:59:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41494 "EHLO
+        id S240215AbiBSK7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Feb 2022 05:59:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242027AbiBSK7E (ORCPT
+        with ESMTP id S242034AbiBSK7E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sat, 19 Feb 2022 05:59:04 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B97B469280
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 02:58:41 -0800 (PST)
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E183D69298
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 02:58:42 -0800 (PST)
 Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.53 with ESMTP; 19 Feb 2022 19:58:41 +0900
+        by 156.147.23.51 with ESMTP; 19 Feb 2022 19:58:41 +0900
 X-Original-SENDERIP: 156.147.1.151
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -47,9 +47,9 @@ Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: [PATCH v2 03/18] dept: Embed Dept data in Lockdep
-Date:   Sat, 19 Feb 2022 19:58:16 +0900
-Message-Id: <1645268311-24222-4-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH v2 04/18] dept: Add a API for skipping dependency check temporarily
+Date:   Sat, 19 Feb 2022 19:58:17 +0900
+Message-Id: <1645268311-24222-5-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1645268311-24222-1-git-send-email-byungchul.park@lge.com>
 References: <1645268311-24222-1-git-send-email-byungchul.park@lge.com>
@@ -63,220 +63,158 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dept should work independently from Lockdep. However, there's no choise
-but to rely on Lockdep code and its instances for now.
+Dept would skip check for dmaps marked by dept_map_nocheck() permanently.
+However, sometimes it needs to skip check for some dmaps temporarily and
+back to normal, for instance, lock acquisition with a nest lock.
+
+Lock usage check with regard to nest lock could be performed by Lockdep,
+however, dependency check is not necessary for that case. So prepared
+for it by adding two new APIs, dept_skip() and dept_unskip_if_skipped().
 
 Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 ---
- include/linux/lockdep.h       | 71 ++++++++++++++++++++++++++++++++++++++++---
- include/linux/lockdep_types.h |  3 ++
- kernel/locking/lockdep.c      | 12 ++++----
- 3 files changed, 76 insertions(+), 10 deletions(-)
+ include/linux/dept.h     |  9 +++++++++
+ include/linux/dept_sdt.h |  2 +-
+ include/linux/lockdep.h  |  4 +++-
+ kernel/dependency/dept.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 467b942..c56f6b6 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -20,6 +20,33 @@
- extern int prove_locking;
- extern int lock_stat;
+diff --git a/include/linux/dept.h b/include/linux/dept.h
+index c3fb3cf..c0bbb8e 100644
+--- a/include/linux/dept.h
++++ b/include/linux/dept.h
+@@ -352,6 +352,11 @@ struct dept_map {
+ 	unsigned int			wgen;
  
-+#ifdef CONFIG_DEPT
-+static inline void dept_after_copy_map(struct dept_map *to,
-+				       struct dept_map *from)
-+{
-+	int i;
-+
-+	if (from->keys == &from->keys_local)
-+		to->keys = &to->keys_local;
-+
-+	if (!to->keys)
-+		return;
+ 	/*
++	 * for skipping dependency check temporarily
++	 */
++	atomic_t			skip_cnt;
 +
 +	/*
-+	 * Since the class cache can be modified concurrently we could observe
-+	 * half pointers (64bit arch using 32bit copy insns). Therefore clear
-+	 * the caches and take the performance hit.
-+	 *
-+	 * XXX it doesn't work well with lockdep_set_class_and_subclass(), since
-+	 *     that relies on cache abuse.
-+	 */
-+	for (i = 0; i < DEPT_MAX_SUBCLASSES_CACHE; i++)
-+		to->keys->classes[i] = NULL;
-+}
-+#else
-+#define dept_after_copy_map(t, f)	do { } while (0)
-+#endif
-+
- #ifdef CONFIG_LOCKDEP
- 
- #include <linux/linkage.h>
-@@ -43,6 +70,8 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
+ 	 * whether this map should be going to be checked or not
  	 */
- 	for (i = 0; i < NR_LOCKDEP_CACHING_CLASSES; i++)
- 		to->class_cache[i] = NULL;
-+
-+	dept_after_copy_map(&to->dmap, &from->dmap);
- }
+ 	bool				nocheck;
+@@ -444,6 +449,8 @@ struct dept_task {
+ extern void dept_ask_event(struct dept_map *m);
+ extern void dept_event(struct dept_map *m, unsigned long e_f, unsigned long ip, const char *e_fn);
+ extern void dept_ecxt_exit(struct dept_map *m, unsigned long ip);
++extern void dept_skip(struct dept_map *m);
++extern bool dept_unskip_if_skipped(struct dept_map *m);
  
  /*
-@@ -176,8 +205,19 @@ struct held_lock {
- 	current->lockdep_recursion -= LOCKDEP_OFF;	\
- } while (0)
- 
--extern void lockdep_register_key(struct lock_class_key *key);
--extern void lockdep_unregister_key(struct lock_class_key *key);
-+extern void __lockdep_register_key(struct lock_class_key *key);
-+extern void __lockdep_unregister_key(struct lock_class_key *key);
-+
-+#define lockdep_register_key(k)				\
-+do {							\
-+	__lockdep_register_key(k);			\
-+	dept_key_init(&(k)->dkey);			\
-+} while (0)
-+#define lockdep_unregister_key(k)			\
-+do {							\
-+	__lockdep_unregister_key(k);			\
-+	dept_key_destroy(&(k)->dkey);			\
-+} while (0)
- 
- /*
-  * These methods are used by specific locking variants (spinlocks,
-@@ -185,9 +225,18 @@ struct held_lock {
-  * to lockdep:
-  */
- 
--extern void lockdep_init_map_type(struct lockdep_map *lock, const char *name,
-+extern void __lockdep_init_map_type(struct lockdep_map *lock, const char *name,
- 	struct lock_class_key *key, int subclass, u8 inner, u8 outer, u8 lock_type);
- 
-+#define lockdep_init_map_type(l, n, k, s, i, o, t)		\
-+do {								\
-+	__lockdep_init_map_type(l, n, k, s, i, o, t);		\
-+	if ((k) == &__lockdep_no_validate__)			\
-+		dept_map_nocheck(&(l)->dmap);			\
-+	else							\
-+		dept_map_init(&(l)->dmap, &(k)->dkey, s, n);	\
-+} while (0)
-+
- static inline void
- lockdep_init_map_waits(struct lockdep_map *lock, const char *name,
- 		       struct lock_class_key *key, int subclass, u8 inner, u8 outer)
-@@ -431,13 +480,27 @@ enum xhlock_context_t {
- 	XHLOCK_CTX_NR,
- };
- 
-+#ifdef CONFIG_DEPT
-+/*
-+ * TODO: I found the case to use an address of other than a real key as
-+ * _key, for instance, in workqueue. So for now, we cannot use the
-+ * assignment like '.dmap.keys = &(_key)->dkey' unless it's fixed.
-+ */
-+#define STATIC_DEPT_MAP_INIT(_name, _key) .dmap = {		\
-+	.name = (_name),					\
-+	.keys = NULL },
-+#else
-+#define STATIC_DEPT_MAP_INIT(_name, _key)
-+#endif
-+
- #define lockdep_init_map_crosslock(m, n, k, s) do {} while (0)
- /*
-  * To initialize a lockdep_map statically use this macro.
-  * Note that _name must not be NULL.
-  */
- #define STATIC_LOCKDEP_MAP_INIT(_name, _key) \
--	{ .name = (_name), .key = (void *)(_key), }
-+	{ .name = (_name), .key = (void *)(_key), \
-+	STATIC_DEPT_MAP_INIT(_name, _key) }
- 
- static inline void lockdep_invariant_state(bool force) {}
- static inline void lockdep_free_task(struct task_struct *task) {}
-diff --git a/include/linux/lockdep_types.h b/include/linux/lockdep_types.h
-index d224308..50c8879 100644
---- a/include/linux/lockdep_types.h
-+++ b/include/linux/lockdep_types.h
-@@ -11,6 +11,7 @@
- #define __LINUX_LOCKDEP_TYPES_H
- 
- #include <linux/types.h>
-+#include <linux/dept.h>
- 
- #define MAX_LOCKDEP_SUBCLASSES		8UL
- 
-@@ -76,6 +77,7 @@ struct lock_class_key {
- 		struct hlist_node		hash_entry;
- 		struct lockdep_subclass_key	subkeys[MAX_LOCKDEP_SUBCLASSES];
- 	};
-+	struct dept_key				dkey;
- };
- 
- extern struct lock_class_key __lockdep_no_validate__;
-@@ -185,6 +187,7 @@ struct lockdep_map {
- 	int				cpu;
- 	unsigned long			ip;
+  * for users who want to manage external keys
+@@ -475,6 +482,8 @@ struct dept_task {
+ #define dept_ask_event(m)			do { } while (0)
+ #define dept_event(m, e_f, ip, e_fn)		do { (void)(e_fn); } while (0)
+ #define dept_ecxt_exit(m, ip)			do { } while (0)
++#define dept_skip(m)				do { } while (0)
++#define dept_unskip_if_skipped(m)		(false)
+ #define dept_key_init(k)			do { (void)(k); } while (0)
+ #define dept_key_destroy(k)			do { (void)(k); } while (0)
  #endif
-+	struct dept_map			dmap;
- };
+diff --git a/include/linux/dept_sdt.h b/include/linux/dept_sdt.h
+index 375c4c3..e9d558d 100644
+--- a/include/linux/dept_sdt.h
++++ b/include/linux/dept_sdt.h
+@@ -13,7 +13,7 @@
+ #include <linux/dept.h>
  
- struct pin_cookie { unsigned int val; };
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 4a882f8..a85468d 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -1184,7 +1184,7 @@ static inline struct hlist_head *keyhashentry(const struct lock_class_key *key)
- }
+ #ifdef CONFIG_DEPT
+-#define DEPT_SDT_MAP_INIT(dname)	{ .name = #dname }
++#define DEPT_SDT_MAP_INIT(dname)	{ .name = #dname, .skip_cnt = ATOMIC_INIT(0) }
  
- /* Register a dynamically allocated key. */
--void lockdep_register_key(struct lock_class_key *key)
-+void __lockdep_register_key(struct lock_class_key *key)
- {
- 	struct hlist_head *hash_head;
- 	struct lock_class_key *k;
-@@ -1207,7 +1207,7 @@ void lockdep_register_key(struct lock_class_key *key)
- restore_irqs:
- 	raw_local_irq_restore(flags);
- }
--EXPORT_SYMBOL_GPL(lockdep_register_key);
-+EXPORT_SYMBOL_GPL(__lockdep_register_key);
- 
- /* Check whether a key has been registered as a dynamic key. */
- static bool is_dynamic_key(const struct lock_class_key *key)
-@@ -4771,7 +4771,7 @@ static inline int check_wait_context(struct task_struct *curr,
  /*
-  * Initialize a lock instance's lock-class mapping info:
+  * SDT(Single-event Dependency Tracker) APIs
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index c56f6b6..c1a56fe 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -488,7 +488,9 @@ enum xhlock_context_t {
   */
--void lockdep_init_map_type(struct lockdep_map *lock, const char *name,
-+void __lockdep_init_map_type(struct lockdep_map *lock, const char *name,
- 			    struct lock_class_key *key, int subclass,
- 			    u8 inner, u8 outer, u8 lock_type)
- {
-@@ -4831,7 +4831,7 @@ void lockdep_init_map_type(struct lockdep_map *lock, const char *name,
- 		raw_local_irq_restore(flags);
- 	}
+ #define STATIC_DEPT_MAP_INIT(_name, _key) .dmap = {		\
+ 	.name = (_name),					\
+-	.keys = NULL },
++	.keys = NULL,						\
++	.skip_cnt = ATOMIC_INIT(0),				\
++	},
+ #else
+ #define STATIC_DEPT_MAP_INIT(_name, _key)
+ #endif
+diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
+index 8e0effd..69d91ca 100644
+--- a/kernel/dependency/dept.c
++++ b/kernel/dependency/dept.c
+@@ -1943,6 +1943,7 @@ void dept_map_init(struct dept_map *m, struct dept_key *k, int sub,
+ 	m->name = n;
+ 	m->wgen = 0U;
+ 	m->nocheck = false;
++	atomic_set(&m->skip_cnt, 0);
+ exit:
+ 	dept_exit(flags);
  }
--EXPORT_SYMBOL_GPL(lockdep_init_map_type);
-+EXPORT_SYMBOL_GPL(__lockdep_init_map_type);
+@@ -1961,6 +1962,7 @@ void dept_map_reinit(struct dept_map *m)
+ 	clean_classes_cache(&m->keys_local);
+ 	m->wgen = 0U;
+ 	m->nocheck = false;
++	atomic_set(&m->skip_cnt, 0);
  
- struct lock_class_key __lockdep_no_validate__;
- EXPORT_SYMBOL_GPL(__lockdep_no_validate__);
-@@ -6291,7 +6291,7 @@ void lockdep_reset_lock(struct lockdep_map *lock)
+ 	dept_exit(flags);
  }
- 
- /* Unregister a dynamically allocated key. */
--void lockdep_unregister_key(struct lock_class_key *key)
-+void __lockdep_unregister_key(struct lock_class_key *key)
- {
- 	struct hlist_head *hash_head = keyhashentry(key);
- 	struct lock_class_key *k;
-@@ -6326,7 +6326,7 @@ void lockdep_unregister_key(struct lock_class_key *key)
- 	/* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
- 	synchronize_rcu();
+@@ -2344,6 +2346,53 @@ void dept_ecxt_exit(struct dept_map *m, unsigned long ip)
  }
--EXPORT_SYMBOL_GPL(lockdep_unregister_key);
-+EXPORT_SYMBOL_GPL(__lockdep_unregister_key);
+ EXPORT_SYMBOL_GPL(dept_ecxt_exit);
  
- void __init lockdep_init(void)
++void dept_skip(struct dept_map *m)
++{
++	struct dept_task *dt = dept_task();
++	unsigned long flags;
++
++	if (READ_ONCE(dept_stop) || dt->recursive)
++		return;
++
++	if (m->nocheck)
++		return;
++
++	flags = dept_enter();
++
++	atomic_inc(&m->skip_cnt);
++
++	dept_exit(flags);
++}
++EXPORT_SYMBOL_GPL(dept_skip);
++
++/*
++ * Return true if successfully unskip, otherwise false.
++ */
++bool dept_unskip_if_skipped(struct dept_map *m)
++{
++	struct dept_task *dt = dept_task();
++	unsigned long flags;
++	bool ret = false;
++
++	if (READ_ONCE(dept_stop) || dt->recursive)
++		return false;
++
++	if (m->nocheck)
++		return false;
++
++	flags = dept_enter();
++
++	if (!atomic_read(&m->skip_cnt))
++		goto exit;
++
++	atomic_dec(&m->skip_cnt);
++	ret = true;
++exit:
++	dept_exit(flags);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(dept_unskip_if_skipped);
++
+ void dept_task_exit(struct task_struct *t)
  {
+ 	struct dept_task *dt = &t->dept_task;
 -- 
 1.9.1
 
