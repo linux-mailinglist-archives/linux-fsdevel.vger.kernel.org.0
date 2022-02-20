@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E2764BCCD7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 07:02:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7824BCCDF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 07:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243252AbiBTGCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Feb 2022 01:02:44 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50882 "EHLO
+        id S238071AbiBTGEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Feb 2022 01:04:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242920AbiBTGCm (ORCPT
+        with ESMTP id S235740AbiBTGEl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Feb 2022 01:02:42 -0500
-X-Greylist: delayed 154965 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 19 Feb 2022 22:02:18 PST
-Received: from smtpbg506.qq.com (smtpbg506.qq.com [203.205.250.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB9EF15
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 22:02:18 -0800 (PST)
-X-QQ-mid: bizesmtp84t1645336928t0ofvhkx
+        Sun, 20 Feb 2022 01:04:41 -0500
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3AFF50E2D
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 22:04:20 -0800 (PST)
+X-QQ-mid: bizesmtp73t1645337042tx5jm81h
 Received: from localhost.localdomain (unknown [180.102.102.45])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Sun, 20 Feb 2022 14:02:02 +0800 (CST)
+        id ; Sun, 20 Feb 2022 14:03:56 +0800 (CST)
 X-QQ-SSF: 01400000002000B0F000B00A0000000
-X-QQ-FEAT: kG8stifNu8WQBk7A83W6qIcMVm8Uzj/tIiyGnpzPr0BaZqh144QpaVH6xBmhJ
-        7j2rDZ7XAii72Gwg1slHxFTYdOvGB+Nvw2vRAbIqHvJvII+KfGE03Un+Vd7e9ha0RqSVReK
-        y7PnyOWuHlgPWVaTrMO+Hj5VGSzEE+Em+Y+IXjAsKOidPXfPBsSBxwaDfOMqZA56FJpCiLI
-        hNxpbQMfYMWP5U54mCKyuivSWBc+Mj9jArgx7TyL9vlew0wA7UTQfkRBhBTh86bbCmelyPq
-        3iTMmr+Le1k0xxWhWx/djkks4lfWI900u3znx8zkz9PpgaQMXyykYfLvnR0bN/CZkAbZjAO
-        2U83kRirBqx5ReTBebJK6AJM6vXerZsN1oLNqHB
+X-QQ-FEAT: sOJWOW+s0sNKLHe1yAEwsqM1eezK/EuD2TDgyv2R5vlMpJ9Uf6gjfmFJEsxEh
+        0iv8+aBY3+ksXEqt0xYx2eecVRTxBbDFQmOWgJviZzsC4qTPGOXUYecmEjLU1HO/zTd//kN
+        2bmXaMJ9AnhX2GkcgKVMcyFCHSC+I+ynqu4NCGMXeA0Q+qX9gEV9V6+XYW+XbNGbZu4oSEE
+        kOtMpq9IrEKh+IFCL4MaQSxwQi1LCXZlk31mBp11L/jSBYyvAXToaWHAK2YS4BYSrIk1Y5Y
+        zNUsQKuyX81ReBnb/JGC1KmL4xSN4Jq0nmBL+kdZRNIKZQVqMqrEJsPv3la/ztadYilwKnC
+        /oMI+/VDgMxphyFFrhQFrX8DzXT7iZGje8fBkqh
 X-QQ-GoodBg: 2
 From:   tangmeng <tangmeng@uniontech.com>
-To:     viro@zeniv.linux.org.uk, mcgrof@kernel.org, keescook@chromium.org,
-        yzaikin@google.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        nizhen@uniontech.com, zhanglianjie@uniontech.com,
-        nixiaoming@huawei.com, tangmeng <tangmeng@uniontech.com>
+To:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, nizhen@uniontech.com,
+        zhanglianjie@uniontech.com, nixiaoming@huawei.com,
+        tangmeng <tangmeng@uniontech.com>
 Subject: [PATCH 11/11] fs/userfaultfd: move userfaultfd sysctls to its own file
-Date:   Sun, 20 Feb 2022 14:02:00 +0800
-Message-Id: <20220220060200.14205-1-tangmeng@uniontech.com>
+Date:   Sun, 20 Feb 2022 14:03:54 +0800
+Message-Id: <20220220060354.14961-1-tangmeng@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,8 +44,8 @@ X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign2
 X-QQ-Bgrelay: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        T_SPF_HELO_TEMPERROR autolearn=unavailable autolearn_force=no
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
