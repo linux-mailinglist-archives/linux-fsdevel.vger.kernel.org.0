@@ -2,73 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF154BCF85
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 16:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 893864BD01B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 18:10:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244183AbiBTPiq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Feb 2022 10:38:46 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42142 "EHLO
+        id S244297AbiBTRGE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Feb 2022 12:06:04 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239707AbiBTPil (ORCPT
+        with ESMTP id S229808AbiBTRGC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Feb 2022 10:38:41 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F92140A2E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Feb 2022 07:38:17 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id z22so24480346edd.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Feb 2022 07:38:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=ymEpgIXl54yuSlZg88NLeYK1RJf0YDtYgXWD/9J1GQ0=;
-        b=degv64KeFtdi2zbjsMqCg99XUBwRsWWRsat8pVSE1dsJMyLEQebzW+u8gL6CBfEQQn
-         TR573CG7WA+9vnEdvbzyisLdqVfd2L7tW255YjXAv70Nz6z7oKmPah1XlxlqBd5nDgXH
-         ePUhHpcz6Nz3MIgpiiVSbZwwadbd4mnHSGmsNzIMifS2uWsr5SlJ5m2rsNUPByoI5zhb
-         SR83azGcCTW//SbmgQ0y+vLGSla0uKvjbMIVO2C3U/MToeM9d3wUPHwP8BDBVACmWkyb
-         mbrrj1iz1ehyoQ1IJSYmVaPjfehHwDHBxgq0J/uzM167cyMcPy58BK3LuVjr98uUFJPh
-         U0VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=ymEpgIXl54yuSlZg88NLeYK1RJf0YDtYgXWD/9J1GQ0=;
-        b=h9BZhynvmC7jzWrgCa3VlGC6JIqo++c1M6c9MwNWc6gWAzM5sWMnYDqzAl0SfZmol/
-         Vqs5SgFB3oLWW77eDNXPbr/9+gjESI0reYCtO3vh+j/TJ5Cvn5+IgbJjXvQCgXN8p1Ms
-         0ck7Ut3NZg48fcDnLDpAefTjzT3SuGqGnPoUEYH8JnrK5HCsE83OSmTDdnrng58UiEFW
-         2f1TEkWgDSm0yZn5INOfF76iHSVM4z2lHMn3GqrsudHJK/HejXtqpF+Z99XWWa9yLIKC
-         Cjp1ziMawY5P69tAPHgtns1EVSRx95nEWLyLzxLH5BND7Wp38sXbPM12MG9+7DyDANjL
-         zfyg==
-X-Gm-Message-State: AOAM530CiP5TVbYIKoN6CKromFXFyudX1pVP6oxRC+YMtffwyUFabqxI
-        cM5uGg031e55TY8ip50Op2nc9PsjZ9AbdQSICUA=
-X-Google-Smtp-Source: ABdhPJz0AN7o9No0fhs6xZEm8hzyX6WOZhNi8B3U8PCYdBi3itNU8MBgMEdAbbMqhnsTf7H9NACa5LH5MJlqKIgsin0=
-X-Received: by 2002:aa7:ce92:0:b0:40f:b89c:18fe with SMTP id
- y18-20020aa7ce92000000b0040fb89c18femr17517323edv.67.1645371495858; Sun, 20
- Feb 2022 07:38:15 -0800 (PST)
+        Sun, 20 Feb 2022 12:06:02 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD10E3CA65;
+        Sun, 20 Feb 2022 09:05:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 70DFCB80D2C;
+        Sun, 20 Feb 2022 17:05:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09452C340EB;
+        Sun, 20 Feb 2022 17:05:36 +0000 (UTC)
+Date:   Sun, 20 Feb 2022 12:05:35 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     tangmeng <tangmeng@uniontech.com>
+Cc:     mingo@redhat.com, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, nizhen@uniontech.com,
+        zhanglianjie@uniontech.com, nixiaoming@huawei.com
+Subject: Re: [PATCH 02/11] kernel/trace: move stack_tracer_enabled sysctl to
+ its own file
+Message-ID: <20220220120535.50380537@gandalf.local.home>
+In-Reply-To: <20220220060017.13285-1-tangmeng@uniontech.com>
+References: <20220220060017.13285-1-tangmeng@uniontech.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a54:38c1:0:0:0:0:0 with HTTP; Sun, 20 Feb 2022 07:38:15
- -0800 (PST)
-Reply-To: fatibaro01@yahoo.com
-From:   Fatimah Baro <imanosose@gmail.com>
-Date:   Sun, 20 Feb 2022 16:38:15 +0100
-Message-ID: <CAFEyOE7M=ZUrSROmPGAE3yrv-g10xHU=UARo1h+trJF7vepfMA@mail.gmail.com>
-Subject: Business invitation
-To:     imanosose <imanosose@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=2.8 required=5.0 tests=ADVANCE_FEE_3_NEW,BAYES_50,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: **
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greetings from Burkina Faso,
-Please pardon me if my request offend your person; I need you to stand
-as my foreign partner for investment in your country. Please reply
-immediately if you are interested, so that I can give you more
-information.
-Fatimah Baro
+On Sun, 20 Feb 2022 14:00:17 +0800
+tangmeng <tangmeng@uniontech.com> wrote:
+
+> kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
+> dishes, this makes it very difficult to maintain.
+> 
+> To help with this maintenance let's start by moving sysctls to places
+> where they actually belong.  The proc sysctl maintainers do not want to
+> know what sysctl knobs you wish to add for your own piece of code, we
+> just care about the core logic.
+> 
+> All filesystem syctls now get reviewed by fs folks. This commit
+> follows the commit of fs, move the stack_tracer_enabled sysctl to its
+> own file, kernel/trace/trace_stack.c.
+> 
+> Signed-off-by: tangmeng <tangmeng@uniontech.com>
+
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+-- Steve
