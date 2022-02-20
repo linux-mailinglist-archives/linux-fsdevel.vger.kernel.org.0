@@ -2,47 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C5D84BCCD8
+	by mail.lfdr.de (Postfix) with ESMTP id 2E2764BCCD7
 	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 07:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243315AbiBTGCq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Feb 2022 01:02:46 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50942 "EHLO
+        id S243252AbiBTGCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Feb 2022 01:02:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243381AbiBTGCn (ORCPT
+        with ESMTP id S242920AbiBTGCm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Feb 2022 01:02:43 -0500
-X-Greylist: delayed 74 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 19 Feb 2022 22:02:19 PST
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5179AF1B
+        Sun, 20 Feb 2022 01:02:42 -0500
+X-Greylist: delayed 154965 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 19 Feb 2022 22:02:18 PST
+Received: from smtpbg506.qq.com (smtpbg506.qq.com [203.205.250.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB9EF15
         for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 22:02:18 -0800 (PST)
-X-QQ-mid: bizesmtp83t1645336917tfkame2n
+X-QQ-mid: bizesmtp84t1645336928t0ofvhkx
 Received: from localhost.localdomain (unknown [180.102.102.45])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Sun, 20 Feb 2022 14:01:51 +0800 (CST)
+        id ; Sun, 20 Feb 2022 14:02:02 +0800 (CST)
 X-QQ-SSF: 01400000002000B0F000B00A0000000
-X-QQ-FEAT: 4LFlwc+MlXkQ8gqbBA0q6azNy4FS1Wp5//1Uq4m3wJCqupGWBCLm4SAGWY39E
-        d+iIj+Wv2qwxluAPiItIHm2vHTu9tlW2cYh9/+NYMgheyjVewkcP5Ia8AQ6oKZPoBm8OCrn
-        XGx+2RzTo0DYxdemrR2ynLPwTWRgT3E7ZwgvFoZUzkT8uKT5sm61ndzj4FVNF4ww1PlRxeW
-        XjKH4OQRKd4bh6wTqC4MwRkMZOSBpycSD7ou4QzwsFSgPnPPgF43ILh/iij7P5hxrgiDKsG
-        VfSYnxCDrK3098yCmiAhwujlQx8XSn2FdMIYs2o2auaA91PQr7gofumlnImAAAXWDShmI6n
-        b3S9MB2w68SHzCsrEQ4wPaebW5diY714Dx+mjye
+X-QQ-FEAT: kG8stifNu8WQBk7A83W6qIcMVm8Uzj/tIiyGnpzPr0BaZqh144QpaVH6xBmhJ
+        7j2rDZ7XAii72Gwg1slHxFTYdOvGB+Nvw2vRAbIqHvJvII+KfGE03Un+Vd7e9ha0RqSVReK
+        y7PnyOWuHlgPWVaTrMO+Hj5VGSzEE+Em+Y+IXjAsKOidPXfPBsSBxwaDfOMqZA56FJpCiLI
+        hNxpbQMfYMWP5U54mCKyuivSWBc+Mj9jArgx7TyL9vlew0wA7UTQfkRBhBTh86bbCmelyPq
+        3iTMmr+Le1k0xxWhWx/djkks4lfWI900u3znx8zkz9PpgaQMXyykYfLvnR0bN/CZkAbZjAO
+        2U83kRirBqx5ReTBebJK6AJM6vXerZsN1oLNqHB
 X-QQ-GoodBg: 2
 From:   tangmeng <tangmeng@uniontech.com>
-To:     akpm@linux-foundation.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, nizhen@uniontech.com,
-        zhanglianjie@uniontech.com, nixiaoming@huawei.com,
-        tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH 09/11] mm/filemap: move filemap sysctls to its own file
-Date:   Sun, 20 Feb 2022 14:01:49 +0800
-Message-Id: <20220220060149.14110-1-tangmeng@uniontech.com>
+To:     viro@zeniv.linux.org.uk, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        nizhen@uniontech.com, zhanglianjie@uniontech.com,
+        nixiaoming@huawei.com, tangmeng <tangmeng@uniontech.com>
+Subject: [PATCH 11/11] fs/userfaultfd: move userfaultfd sysctls to its own file
+Date:   Sun, 20 Feb 2022 14:02:00 +0800
+Message-Id: <20220220060200.14205-1-tangmeng@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign2
 X-QQ-Bgrelay: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_PASS,T_SCC_BODY_TEXT_LINE,
@@ -63,83 +62,85 @@ know what sysctl knobs you wish to add for your own piece of code, we
 just care about the core logic.
 
 All filesystem syctls now get reviewed by fs folks. This commit
-follows the commit of fs, move the filemap sysctls to its own file,
-mm/filemap.c.
+follows the commit of fs, move the userfaultfd sysctls to its own file,
+fs/userfdfault.c.
 
 Signed-off-by: tangmeng <tangmeng@uniontech.com>
 ---
- include/linux/mm.h |  2 --
- kernel/sysctl.c    |  8 --------
- mm/filemap.c       | 24 +++++++++++++++++++++++-
- 3 files changed, 23 insertions(+), 11 deletions(-)
+ fs/userfaultfd.c              | 23 ++++++++++++++++++++++-
+ include/linux/userfaultfd_k.h |  2 --
+ kernel/sysctl.c               | 11 -----------
+ 3 files changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 213cc569b192..c3c7cb58c847 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -39,8 +39,6 @@ struct anon_vma_chain;
- struct user_struct;
- struct pt_regs;
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index e26b10132d47..796d828dd2bb 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -30,7 +30,28 @@
+ #include <linux/security.h>
+ #include <linux/hugetlb.h>
  
--extern int sysctl_page_lock_unfairness;
--
- void init_mm_internals(void);
- 
- #ifndef CONFIG_NUMA		/* Don't use mapnrs, do it properly */
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 1a1504862f4f..b51b0b92fdc1 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2261,14 +2261,6 @@ static struct ctl_table vm_table[] = {
- 		.proc_handler	= percpu_pagelist_high_fraction_sysctl_handler,
- 		.extra1		= SYSCTL_ZERO,
- 	},
--	{
--		.procname	= "page_lock_unfairness",
--		.data		= &sysctl_page_lock_unfairness,
--		.maxlen		= sizeof(sysctl_page_lock_unfairness),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--	},
- #ifdef CONFIG_MMU
- 	{
- 		.procname	= "max_map_count",
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ad8c39d90bf9..f264e7e12f59 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1235,7 +1235,29 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- }
- 
- /* How many times do we accept lock stealing from under a waiter? */
--int sysctl_page_lock_unfairness = 5;
-+static int sysctl_page_lock_unfairness = 5;
-+
+-int sysctl_unprivileged_userfaultfd __read_mostly;
++static int sysctl_unprivileged_userfaultfd __read_mostly;
 +#ifdef CONFIG_SYSCTL
-+static struct ctl_table vm_filemap_table[] = {
++static struct ctl_table vm_userfaultfd_table[] = {
 +	{
-+
-+		.procname       = "page_lock_unfairness",
-+		.data           = &sysctl_page_lock_unfairness,
-+		.maxlen         = sizeof(sysctl_page_lock_unfairness),
++		.procname       = "unprivileged_userfaultfd",
++		.data           = &sysctl_unprivileged_userfaultfd,
++		.maxlen         = sizeof(sysctl_unprivileged_userfaultfd),
 +		.mode           = 0644,
 +		.proc_handler   = proc_dointvec_minmax,
 +		.extra1         = SYSCTL_ZERO,
++		.extra2         = SYSCTL_ONE,
 +	},
 +	{ }
 +};
 +
-+static __init int vm_filemap_sysctls_init(void)
++static __init int vm_userfaultfd_sysctls_init(void)
 +{
-+	register_sysctl_init("vm", vm_filemap_table);
++	register_sysctl_init("vm", vm_userfaultfd_table);
 +	return 0;
 +}
-+late_initcall(vm_filemap_sysctls_init);
++late_initcall(vm_userfaultfd_sysctls_init);
 +#endif /* CONFIG_SYSCTL */
  
- static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 		int state, enum behavior behavior)
+ static struct kmem_cache *userfaultfd_ctx_cachep __read_mostly;
+ 
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 33cea484d1ad..0ece3026203f 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -33,8 +33,6 @@
+ #define UFFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+ #define UFFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS)
+ 
+-extern int sysctl_unprivileged_userfaultfd;
+-
+ extern vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason);
+ 
+ /*
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 657b7bfe38f6..bc74f2bdaa52 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2407,17 +2407,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= (void *)&mmap_rnd_compat_bits_min,
+ 		.extra2		= (void *)&mmap_rnd_compat_bits_max,
+ 	},
+-#endif
+-#ifdef CONFIG_USERFAULTFD
+-	{
+-		.procname	= "unprivileged_userfaultfd",
+-		.data		= &sysctl_unprivileged_userfaultfd,
+-		.maxlen		= sizeof(sysctl_unprivileged_userfaultfd),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+ #endif
+ 	{ }
+ };
 -- 
 2.20.1
 
