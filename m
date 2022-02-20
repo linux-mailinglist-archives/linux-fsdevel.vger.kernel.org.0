@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22ABB4BCCCC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 07:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 565A54BCCC8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 07:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239784AbiBTGBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Feb 2022 01:01:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47680 "EHLO
+        id S234315AbiBTGBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Feb 2022 01:01:08 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239384AbiBTGBb (ORCPT
+        with ESMTP id S234317AbiBTGBH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Feb 2022 01:01:31 -0500
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70C464E398
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 22:01:10 -0800 (PST)
-X-QQ-mid: bizesmtp71t1645336814toup6w7g
+        Sun, 20 Feb 2022 01:01:07 -0500
+Received: from smtpbg153.qq.com (smtpbg153.qq.com [13.245.218.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817DF4E391
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 22:00:45 -0800 (PST)
+X-QQ-mid: bizesmtp67t1645336826t02la2ki
 Received: from localhost.localdomain (unknown [180.102.102.45])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Sun, 20 Feb 2022 14:00:06 +0800 (CST)
+        id ; Sun, 20 Feb 2022 14:00:20 +0800 (CST)
 X-QQ-SSF: 01400000002000B0F000B00A0000000
-X-QQ-FEAT: DjV0wquoRWbFbMhTh/aiK/+4vF3oTrbzwjW7Ob/10jesuFazuUecCwYqC5XvK
-        Tew27FVHThUVjkWVIjlh9CMfNPNVjApeRa9kJ4qhIgB6phrxrsryM2LmykVnoTt+cLmFaGB
-        WAjl7CIdfGOHuToR2s7P5x9/JNp5JZEaEOsndqIvOb3VrNyvRFNNU/O4IFPEFf8jeMISz2c
-        2snBphFkZ4VcxKm7Y8oYt+eWesd9c02oWGMFGv5KckZVuOWfmfGiruJrYHis6fi18zRoPyO
-        03yhjr6bHBRBM/W1EmFVFL7ZS4zP3eG0AVywskqfz8vKcEnQ1pDL3f0I7F8ka0i2hjPr7je
-        1aH1sh6
+X-QQ-FEAT: Mzskoac49OhGvxpJRUZvZbOVIB6zL6XZ5GzlSuFgGhGks3zBTi6Ww2WccQD+E
+        KpQ8suHUKwp2NxsEx6UrQf8MXOkZCxaFdFGoRnMFiiYpSz3vvgSIWLJlLRP8nAYcZYbkXRo
+        0hs36nv9bzYTodyVIgr7Pb8zxqojhpYv5zn1Nxc18p6dxIEM9ChF2BWfG+XSP3MQXe9szW3
+        zWoy+4cXt52aEbP9ktUOejwE4UYcZdXSQ9mC9fRsl8fTlQr9LpeBeZnFcFjRHKVaZ8y7PhL
+        L47eFc2IdjfZQoK6I3r5w6SM8BJJuv/CJjfetuIzUNVHdByvMb95OY911UJOtOBUBjOcWxB
+        rLSHGJyC2bPftg/Rk02SnxfAHKzQh19Z52lstfT
 X-QQ-GoodBg: 2
 From:   tangmeng <tangmeng@uniontech.com>
-To:     James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
-Cc:     linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, nizhen@uniontech.com,
-        zhanglianjie@uniontech.com, nixiaoming@huawei.com,
-        tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH 01/11] kernel/parisc: move soft-power sysctl to its own file
-Date:   Sun, 20 Feb 2022 14:00:00 +0800
-Message-Id: <20220220060000.13079-1-tangmeng@uniontech.com>
+To:     rostedt@goodmis.org, mingo@redhat.com, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        nizhen@uniontech.com, zhanglianjie@uniontech.com,
+        nixiaoming@huawei.com, tangmeng <tangmeng@uniontech.com>
+Subject: [PATCH 02/11] kernel/trace: move stack_tracer_enabled sysctl to its own file
+Date:   Sun, 20 Feb 2022 14:00:17 +0800
+Message-Id: <20220220060017.13285-1-tangmeng@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign2
 X-QQ-Bgrelay: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -61,88 +61,111 @@ know what sysctl knobs you wish to add for your own piece of code, we
 just care about the core logic.
 
 All filesystem syctls now get reviewed by fs folks. This commit
-follows the commit of fs, move the soft-power sysctl to its own file,
-kernel/parisc/power.c.
+follows the commit of fs, move the stack_tracer_enabled sysctl to its
+own file, kernel/trace/trace_stack.c.
 
 Signed-off-by: tangmeng <tangmeng@uniontech.com>
 ---
- drivers/parisc/power.c | 22 ++++++++++++++++++++++
- include/linux/sysctl.h |  1 -
- kernel/sysctl.c        |  9 ---------
- 3 files changed, 22 insertions(+), 10 deletions(-)
+ include/linux/ftrace.h     |  6 ------
+ kernel/sysctl.c            |  9 ---------
+ kernel/trace/trace_stack.c | 26 ++++++++++++++++++++++++--
+ 3 files changed, 24 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/parisc/power.c b/drivers/parisc/power.c
-index 456776bd8ee6..24e0ffbe460a 100644
---- a/drivers/parisc/power.c
-+++ b/drivers/parisc/power.c
-@@ -193,6 +193,26 @@ static struct notifier_block parisc_panic_block = {
- 	.priority	= INT_MAX,
- };
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 9999e29187de..cc6f7532e038 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -392,12 +392,6 @@ static inline void arch_ftrace_set_direct_caller(struct pt_regs *regs,
+ #endif /* CONFIG_HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS */
  
-+static int pwrsw_enabled;
+ #ifdef CONFIG_STACK_TRACER
+-
+-extern int stack_tracer_enabled;
+-
+-int stack_trace_sysctl(struct ctl_table *table, int write, void *buffer,
+-		       size_t *lenp, loff_t *ppos);
+-
+ /* DO NOT MODIFY THIS VARIABLE DIRECTLY! */
+ DECLARE_PER_CPU(int, disable_stack_tracer);
+ 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index d11390634321..b41138d64e5e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1755,15 +1755,6 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= ftrace_enable_sysctl,
+ 	},
+ #endif
+-#ifdef CONFIG_STACK_TRACER
+-	{
+-		.procname	= "stack_tracer_enabled",
+-		.data		= &stack_tracer_enabled,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= stack_trace_sysctl,
+-	},
+-#endif
+ #ifdef CONFIG_TRACING
+ 	{
+ 		.procname	= "ftrace_dump_on_oops",
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 5a48dba912ea..b871499cf7e6 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -32,7 +32,7 @@ static arch_spinlock_t stack_trace_max_lock =
+ DEFINE_PER_CPU(int, disable_stack_tracer);
+ static DEFINE_MUTEX(stack_sysctl_mutex);
+ 
+-int stack_tracer_enabled;
++static int stack_tracer_enabled;
+ 
+ static void print_max_stack(void)
+ {
+@@ -513,7 +513,8 @@ static const struct file_operations stack_trace_filter_fops = {
+ 
+ #endif /* CONFIG_DYNAMIC_FTRACE */
+ 
+-int
 +#ifdef CONFIG_SYSCTL
-+static struct ctl_table kern_parisc_power_table[] = {
++static int
+ stack_trace_sysctl(struct ctl_table *table, int write, void *buffer,
+ 		   size_t *lenp, loff_t *ppos)
+ {
+@@ -537,6 +538,25 @@ stack_trace_sysctl(struct ctl_table *table, int write, void *buffer,
+ 	return ret;
+ }
+ 
++static struct ctl_table kern_trace_stack_table[] = {
 +	{
-+		.procname       = "soft-power",
-+		.data           = &pwrsw_enabled,
++		.procname       = "stack_tracer_enabled",
++		.data           = &stack_tracer_enabled,
 +		.maxlen         = sizeof(int),
 +		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
++		.proc_handler   = stack_trace_sysctl,
 +	},
 +	{ }
 +};
 +
-+static void __init kernel_parisc_power_sysctls_init(void)
++static void __init kernel_trace_stack_sysctls_init(void)
 +{
-+	register_sysctl_init("kernel", kern_parisc_power_table);
++	register_sysctl_init("kernel", kern_trace_stack_table);
 +}
 +#else
-+#define kernel_parisc_power_sysctls_init() do { } while (0)
++#define kernel_trace_stack_sysctls_init() do { } while (0)
 +#endif /* CONFIG_SYSCTL */
++
+ static char stack_trace_filter_buf[COMMAND_LINE_SIZE+1] __initdata;
  
- static int __init power_init(void)
- {
-@@ -233,6 +253,8 @@ static int __init power_init(void)
- 	atomic_notifier_chain_register(&panic_notifier_list,
- 			&parisc_panic_block);
+ static __init int enable_stacktrace(char *str)
+@@ -576,6 +596,8 @@ static __init int stack_trace_init(void)
+ 	if (stack_tracer_enabled)
+ 		register_ftrace_function(&trace_ops);
  
-+	kernel_parisc_power_sysctls_init();
++	kernel_trace_stack_sysctls_init();
 +
  	return 0;
  }
  
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 6353d6db69b2..e00bf436d63b 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -242,7 +242,6 @@ int do_proc_douintvec(struct ctl_table *table, int write,
- 				  int write, void *data),
- 		      void *data);
- 
--extern int pwrsw_enabled;
- extern int unaligned_enabled;
- extern int unaligned_dump_stack;
- extern int no_unaligned_warning;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 22037f03cd2b..d11390634321 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1737,15 +1737,6 @@ static struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- #endif
--#ifdef CONFIG_PARISC
--	{
--		.procname	= "soft-power",
--		.data		= &pwrsw_enabled,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- #ifdef CONFIG_SYSCTL_ARCH_UNALIGN_ALLOW
- 	{
- 		.procname	= "unaligned-trap",
 -- 
 2.20.1
 
