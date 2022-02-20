@@ -2,88 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C7A94BD257
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 23:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C83354BD2A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 00:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244484AbiBTWid (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Feb 2022 17:38:33 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43656 "EHLO
+        id S245251AbiBTXVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Feb 2022 18:21:38 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbiBTWic (ORCPT
+        with ESMTP id S236754AbiBTXVg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Feb 2022 17:38:32 -0500
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 12C9040A2D;
-        Sun, 20 Feb 2022 14:38:09 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2A65810C9283;
-        Mon, 21 Feb 2022 09:38:06 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nLuqD-00ERtO-Bj; Mon, 21 Feb 2022 09:38:05 +1100
-Date:   Mon, 21 Feb 2022 09:38:05 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH v2 00/13] Support sync buffered writes for io-uring
-Message-ID: <20220220223805.GA3061737@dread.disaster.area>
-References: <20220218195739.585044-1-shr@fb.com>
+        Sun, 20 Feb 2022 18:21:36 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EEAB11C09;
+        Sun, 20 Feb 2022 15:21:15 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id cm8so16177859edb.3;
+        Sun, 20 Feb 2022 15:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=fDq3b+MqL0QmT25AsPMDwBUjZnQZoBnhIAME0gjmEdI=;
+        b=g9Du09O+dLFuuHvdk9LB2JKidh3SK7T2Oe20hax9r1/HkZ41KDv8RlJhjAoywW4SUs
+         QhHsqBOz6o53QqVhWJJU5F2YDRBYqgtSW+Lgw4p0STbx1aYWMwK/idwVT14XUHq296iD
+         bcJMD9ITPQ9F1EMSJ0XZZ8p+dPvw1OY1OZH7l4cx7YWCdP3Y6yjaPwKmxEzkrqofzHVP
+         iRnhntTn66gNBprvmxoB8sZDoOtQwDFhk42AEUqsEjv69lQkSyFxPaUEX1ejRVMiKkUZ
+         U6dH2Bhr+Zp+sbiwObmeRp/TmGVyU/eOOesbvl3PV/BnJqfGyEAbdYdNVbmLeYVTbTqh
+         aQ+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fDq3b+MqL0QmT25AsPMDwBUjZnQZoBnhIAME0gjmEdI=;
+        b=UL0xWUlu/lZ6fRt/UP23i2bEPwUFdhMZ6bV6hZMx3hOiMXKMHWPw2izqwHwY2ampvG
+         HvVIg2kfZ3qBIGkNCbUU74/hW/YnEKyJNO4fbGnbhK/2wRrZsVpCa3XMpMTMC7/FLDdy
+         ffDPESjfuufl3OhJiektAQdApLqNbEoUJXTeTdSKiS1d/PsGj4ejDxUHrmigFXC31UQS
+         l+ciuGD5WoELVFpiXlspTZwA5fwJFi2r+nWLiF1TPci1I6LqcKGOqZiPc/nWcpCIbGzB
+         q4qtuFZngP9+crOwvekXDTrPZKmqx65ZNxYrR3406YNXz8elZP2/8+uxxLwEjOruB0rC
+         rVEg==
+X-Gm-Message-State: AOAM530kkvM6ZPA1EeRbAflCUieI8N/B+ZfnzA3DOa9tkFrWknt67uYM
+        X2h5DadcGwv/QXTzf6ZQeQE=
+X-Google-Smtp-Source: ABdhPJz7G3T995hFgbk0UZASONQra2YDixjNdDbsxLZhhCVewurdtkPB5CR3YNWY455EpDmoqqpDCA==
+X-Received: by 2002:aa7:d648:0:b0:412:b567:3664 with SMTP id v8-20020aa7d648000000b00412b5673664mr15172392edr.296.1645399273777;
+        Sun, 20 Feb 2022 15:21:13 -0800 (PST)
+Received: from [192.168.0.48] (ip-046-005-230-144.um12.pools.vodafone-ip.de. [46.5.230.144])
+        by smtp.gmail.com with ESMTPSA id s10sm4577721ejm.0.2022.02.20.15.21.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Feb 2022 15:21:13 -0800 (PST)
+Subject: Re: Is it time to remove reiserfs?
+To:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+References: <YhIwUEpymVzmytdp@casper.infradead.org>
+From:   Edward Shishkin <edward.shishkin@gmail.com>
+Message-ID: <fbc744c9-e22f-138c-2da3-f76c3edfcc3d@gmail.com>
+Date:   Mon, 21 Feb 2022 00:21:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220218195739.585044-1-shr@fb.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6212c2cf
-        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=kj9zAlcOel0A:10 a=oGFeUVbbRNcA:10 a=7-415B0cAAAA:8
-        a=GGqh16oi515Bfc_p9agA:9 a=CjuIK1q_8ugA:10 a=igBNqPyMv6gA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <YhIwUEpymVzmytdp@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 18, 2022 at 11:57:26AM -0800, Stefan Roesch wrote:
-> This patch series adds support for async buffered writes. Currently
-> io-uring only supports buffered writes in the slow path, by processing
-> them in the io workers. With this patch series it is now possible to
-> support buffered writes in the fast path. To be able to use the fast
-> path the required pages must be in the page cache or they can be loaded
-> with noio. Otherwise they still get punted to the slow path.
+On 02/20/2022 01:13 PM, Matthew Wilcox wrote:
+> Keeping reiserfs in the tree has certain costs.  For example, I would
+> very much like to remove the 'flags' argument to ->write_begin.  We have
+> the infrastructure in place to handle AOP_FLAG_NOFS differently, but
+> AOP_FLAG_CONT_EXPAND is still around, used only by reiserfs.
 
-Where's the filesystem support? You need to plumb in ext4 to this
-bufferhead support, and add iomap/xfs support as well so we can
-shake out all the problems with APIs and fallback paths that are
-needed for full support of buffered writes via io_uring.
 
-> If a buffered write request requires more than one page, it is possible
-> that only part of the request can use the fast path, the resst will be
-> completed by the io workers.
+Please, consider the patch (next email in the thread) which drops that
+flag from reiserfs.
 
-That's ugly, especially at the filesystem/iomap layer where we are
-doing delayed allocation and so partial writes like this could have
-significant extra impact. It opens up the possibility of things like
-ENOSPC/EDQUOT mid-way through the write instead of being an up-front
-error, and so there's lots more complexity in the failure/fallback
-paths that the io_uring infrastructure will have to handle
-correctly...
-
-Also, it breaks the "atomic buffered write" design of iomap/XFS
-where other readers and writers will only see whole completed writes
-and not intermediate partial writes. This is where a lot of the bugs
-in the DIO io_uring support were found (deadlocks, data corruptions,
-etc), so there's a bunch of semantic and API issues that filesystems
-require from io_uring that need to be sorted out before we think
-about merge buffered write support...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Edward.
