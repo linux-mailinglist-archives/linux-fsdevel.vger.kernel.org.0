@@ -2,103 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 243ED4BCC32
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 05:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22ABB4BCCCC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Feb 2022 07:01:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241057AbiBTEwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Feb 2022 23:52:12 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52414 "EHLO
+        id S239784AbiBTGBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Feb 2022 01:01:32 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231397AbiBTEwL (ORCPT
+        with ESMTP id S239384AbiBTGBb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Feb 2022 23:52:11 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CF5FCF
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 20:51:51 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id w20so10277692plq.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 20:51:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=8aktvyxTQfTz4T7zUl9YR5ZozBlNK0rAs4FgR7Rn+Hk=;
-        b=G5Dl3oXw5N7CxSFPuvPT550hpUL85OVJ5Hx/Mw+2zEIsyjsO7JYsVNKl8ydNUOLkff
-         9y4mT00lWJUrKUe5nTcSoUo5vLsMsHEHImCS0O7l8QduwEJ5pEP44TIRFBZ6vJfAsEYu
-         HrfosRAZknQ5Jj1I9cZF+g4hb/v61tjA4+2JfVPDPwdLhmqFdQUlEWy/9eMFiFywwJiu
-         nSJ81e2tK1crRfwrXqaM0SSLw7QpU1CvtQ8USx1njTi8TqC0GvRk8XlQkZcEkyp3FqqF
-         gG/i5PL/zQSmPqxDFXXPq5QAPt6LcT6i/BJnpfY98qoLF3xaQcYR3c8iYg856onyTLkz
-         6UNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=8aktvyxTQfTz4T7zUl9YR5ZozBlNK0rAs4FgR7Rn+Hk=;
-        b=LxhAfoHspSLchft6hQ1o/sIUE1KefAmFlrR4QodbuJnTsHjDnQjrg9DYLi4rht0n0d
-         ZcmLBMFwirLZ4CPOAUOECHT4t42SyEBH5dworNnP7kdLXdVu3XtnhVWqbvfliFp7xh6+
-         CRMU7rfLvPlSu09jpRzmHr/PWcVCqiJ+FxAjocHhu+3J4AEsL/2X+6LblaleL92shxd5
-         w06kv7sJLyxL6UOIvXgy/a28XsJ7LiorSQoogZyr8MKfbMpzOKf8bsNkg9QihA3d0CQt
-         p5oLRCHR55SxurHwLsCA4PINtZ9tVi8YVD+oR0J5OHRAiIEz/nfGaEn6F2C3yczuhWSs
-         JJBg==
-X-Gm-Message-State: AOAM5311rKCRtxsFUQQsWKY5nhZVD+2kgUQ3dekXv1cG07IMPhUt3Yaw
-        pLGAdYOQQh8dn3QOgFnYT096eg==
-X-Google-Smtp-Source: ABdhPJzFTJBv82Y7i+9gRClL8+UG/fJQNgYFunbOQVJPAG6tktW5XWf1iy8xJxxLnBlYI1WhORHpUg==
-X-Received: by 2002:a17:90a:d243:b0:1b9:e73b:5c07 with SMTP id o3-20020a17090ad24300b001b9e73b5c07mr15492240pjw.198.1645332710829;
-        Sat, 19 Feb 2022 20:51:50 -0800 (PST)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id r72sm4679701pgr.80.2022.02.19.20.51.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Feb 2022 20:51:50 -0800 (PST)
-Message-ID: <ef90c7c0-7b5a-2c73-ca1c-5188646d4310@kernel.dk>
-Date:   Sat, 19 Feb 2022 21:51:48 -0700
+        Sun, 20 Feb 2022 01:01:31 -0500
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70C464E398
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Feb 2022 22:01:10 -0800 (PST)
+X-QQ-mid: bizesmtp71t1645336814toup6w7g
+Received: from localhost.localdomain (unknown [180.102.102.45])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Sun, 20 Feb 2022 14:00:06 +0800 (CST)
+X-QQ-SSF: 01400000002000B0F000B00A0000000
+X-QQ-FEAT: DjV0wquoRWbFbMhTh/aiK/+4vF3oTrbzwjW7Ob/10jesuFazuUecCwYqC5XvK
+        Tew27FVHThUVjkWVIjlh9CMfNPNVjApeRa9kJ4qhIgB6phrxrsryM2LmykVnoTt+cLmFaGB
+        WAjl7CIdfGOHuToR2s7P5x9/JNp5JZEaEOsndqIvOb3VrNyvRFNNU/O4IFPEFf8jeMISz2c
+        2snBphFkZ4VcxKm7Y8oYt+eWesd9c02oWGMFGv5KckZVuOWfmfGiruJrYHis6fi18zRoPyO
+        03yhjr6bHBRBM/W1EmFVFL7ZS4zP3eG0AVywskqfz8vKcEnQ1pDL3f0I7F8ka0i2hjPr7je
+        1aH1sh6
+X-QQ-GoodBg: 2
+From:   tangmeng <tangmeng@uniontech.com>
+To:     James.Bottomley@HansenPartnership.com, deller@gmx.de,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Cc:     linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, nizhen@uniontech.com,
+        zhanglianjie@uniontech.com, nixiaoming@huawei.com,
+        tangmeng <tangmeng@uniontech.com>
+Subject: [PATCH 01/11] kernel/parisc: move soft-power sysctl to its own file
+Date:   Sun, 20 Feb 2022 14:00:00 +0800
+Message-Id: <20220220060000.13079-1-tangmeng@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH v2 04/13] fs: split off __alloc_page_buffers function
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-References: <20220218195739.585044-1-shr@fb.com>
- <20220218195739.585044-5-shr@fb.com> <YhCdruAyTmLyVp8z@infradead.org>
- <YhHCVnTYNPrtbu08@casper.infradead.org>
- <7b2b2a34-601a-e62e-3e89-e19954dc965c@kernel.dk>
-In-Reply-To: <7b2b2a34-601a-e62e-3e89-e19954dc965c@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
+X-QQ-Bgrelay: 1
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/19/22 9:38 PM, Jens Axboe wrote:
-> On 2/19/22 9:23 PM, Matthew Wilcox wrote:
->> On Fri, Feb 18, 2022 at 11:35:10PM -0800, Christoph Hellwig wrote:
->>> Err, hell no.  Please do not add any new functionality to the legacy
->>> buffer head code.  If you want new features do that on the
->>> non-bufferhead iomap code path only please.
->>
->> I think "first convert the block device code from buffer_heads to
->> iomap" might be a bit much of a prerequisite.  I think running ext4 on
->> top of a
-> 
-> Yes, that's exactly what Christoph was trying to say, but failing to
-> state in an appropriate manner. And we did actually discuss that, I'm
-> not against doing something like that.
+kernel/sysctl.c is a kitchen sink where everyone leaves their dirty
+dishes, this makes it very difficult to maintain.
 
-Just to be clear, I do agree with you that it's an unfair ask for this
-change. And as you mentioned, ext4 would require the buffer_head code
-to be touched anyway, just layering on top of the necessary changes
-for the bdev code.
+To help with this maintenance let's start by moving sysctls to places
+where they actually belong.  The proc sysctl maintainers do not want to
+know what sysctl knobs you wish to add for your own piece of code, we
+just care about the core logic.
 
+All filesystem syctls now get reviewed by fs folks. This commit
+follows the commit of fs, move the soft-power sysctl to its own file,
+kernel/parisc/power.c.
+
+Signed-off-by: tangmeng <tangmeng@uniontech.com>
+---
+ drivers/parisc/power.c | 22 ++++++++++++++++++++++
+ include/linux/sysctl.h |  1 -
+ kernel/sysctl.c        |  9 ---------
+ 3 files changed, 22 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/parisc/power.c b/drivers/parisc/power.c
+index 456776bd8ee6..24e0ffbe460a 100644
+--- a/drivers/parisc/power.c
++++ b/drivers/parisc/power.c
+@@ -193,6 +193,26 @@ static struct notifier_block parisc_panic_block = {
+ 	.priority	= INT_MAX,
+ };
+ 
++static int pwrsw_enabled;
++#ifdef CONFIG_SYSCTL
++static struct ctl_table kern_parisc_power_table[] = {
++	{
++		.procname       = "soft-power",
++		.data           = &pwrsw_enabled,
++		.maxlen         = sizeof(int),
++		.mode           = 0644,
++		.proc_handler   = proc_dointvec,
++	},
++	{ }
++};
++
++static void __init kernel_parisc_power_sysctls_init(void)
++{
++	register_sysctl_init("kernel", kern_parisc_power_table);
++}
++#else
++#define kernel_parisc_power_sysctls_init() do { } while (0)
++#endif /* CONFIG_SYSCTL */
+ 
+ static int __init power_init(void)
+ {
+@@ -233,6 +253,8 @@ static int __init power_init(void)
+ 	atomic_notifier_chain_register(&panic_notifier_list,
+ 			&parisc_panic_block);
+ 
++	kernel_parisc_power_sysctls_init();
++
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 6353d6db69b2..e00bf436d63b 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -242,7 +242,6 @@ int do_proc_douintvec(struct ctl_table *table, int write,
+ 				  int write, void *data),
+ 		      void *data);
+ 
+-extern int pwrsw_enabled;
+ extern int unaligned_enabled;
+ extern int unaligned_dump_stack;
+ extern int no_unaligned_warning;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 22037f03cd2b..d11390634321 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1737,15 +1737,6 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif
+-#ifdef CONFIG_PARISC
+-	{
+-		.procname	= "soft-power",
+-		.data		= &pwrsw_enabled,
+-		.maxlen		= sizeof (int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+-#endif
+ #ifdef CONFIG_SYSCTL_ARCH_UNALIGN_ALLOW
+ 	{
+ 		.procname	= "unaligned-trap",
 -- 
-Jens Axboe
+2.20.1
+
+
 
