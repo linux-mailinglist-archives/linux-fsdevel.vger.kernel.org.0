@@ -2,82 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A98CE4BDC99
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 18:42:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69AB14BDE74
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 18:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377408AbiBUOPW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Feb 2022 09:15:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50740 "EHLO
+        id S1377502AbiBUORW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Feb 2022 09:17:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243903AbiBUOPV (ORCPT
+        with ESMTP id S1377495AbiBUORU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Feb 2022 09:15:21 -0500
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BEC412754
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Feb 2022 06:14:56 -0800 (PST)
-Received: by mail-vk1-xa30.google.com with SMTP id j12so8742541vkr.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Feb 2022 06:14:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jukHAxX1a8gs5R7NWrZYvZKQNQvQvJQkqxNSYa7JTb8=;
-        b=ZNUhWFbjKY3UwWffoXU16mP6h9wjYYBwYzR549uKv8CNan90Sy6B/G0d/xvHkOJ8D+
-         0gDxpUPeqUbTXamz1bzTrd9YkW+b8n3EZ0zqrNl+KCmRzSoPCRJZSNSYLPVWPOAOKOKV
-         Oqp4pjfsBKe65koFUeQ3zL8OT7D8RjlwrVBG4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jukHAxX1a8gs5R7NWrZYvZKQNQvQvJQkqxNSYa7JTb8=;
-        b=cJfS9JkNFtJJIqwK2pKwsdRuvtGyxdRnQTjn6DzXUO13/Er8iN/QJth4OhNLyfMZp0
-         /e7S6RF4ZQZcIDyKtGKiFiIX8OXzPnyjyNHbvW3nH7RFEZqEHcNY3i22PU28HfDbgcAB
-         D2sYh4bZLl4WLlvXunUX77OBROpKeEclNgB8L/zZqg+X1BWBu2cUQLPnJYmG86vnWWel
-         9Z/Eht9vuk95Nl/TwCsZFurQdpKR5Rlg9xG5ma5204vO82sFmyKf6fZvARssATl8OpD8
-         fjZwkX0ZKx9oFGgH+RK+wzvqcWUyGfSitXeoatMCKu8pO5AFU5b9cGvv/j6oKRCDxHuN
-         QaIA==
-X-Gm-Message-State: AOAM5301eQ7QNv5bZGoDnbLu20ZYa0QeNc13HqH8fJ8aLpag1A2TweSp
-        gkGPN4ibKkYF99pldQprpSFj8Mto4Sm4LzgOWH5VF60eI6I=
-X-Google-Smtp-Source: ABdhPJzgh30SdAuZg65SfZ6LMo/zCX5/82fHSJif+hrIe13qdb5Rx8HQf0bbvBW2vAbkJxbgD/JjN4lMj5OWE/9ekyw=
-X-Received: by 2002:a05:6122:134f:b0:330:f4d8:22c5 with SMTP id
- f15-20020a056122134f00b00330f4d822c5mr8279107vkp.1.1645452894298; Mon, 21 Feb
- 2022 06:14:54 -0800 (PST)
-MIME-Version: 1.0
-References: <6da4c709.5385.17ee910a7fd.Coremail.clx428@163.com>
- <CAJfpeguvqro7SUmve_dyMiPHn4_dzQR4MMJRwZyfq61k17N-jg@mail.gmail.com> <4cc380c8.51f5.17f1c9f84fd.Coremail.clx428@163.com>
-In-Reply-To: <4cc380c8.51f5.17f1c9f84fd.Coremail.clx428@163.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 21 Feb 2022 15:14:43 +0100
-Message-ID: <CAJfpegtEJCrxuR0jUsCo0zT3j3jS_AdgspGYp65-RK-rhSnRLw@mail.gmail.com>
-Subject: Re: Re: Report a fuse deadlock scenario issue
-To:     =?UTF-8?B?6ZmI56uL5paw?= <clx428@163.com>
+        Mon, 21 Feb 2022 09:17:20 -0500
+Received: from m138.mail.163.com (m138.mail.163.com [220.181.13.8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C307912AF2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Feb 2022 06:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=Ifs68
+        N4xtD1pnrKugksb6e8Z/FnN2pXL3Wb/S3iuZYM=; b=CDniKrLhzI/+GOxQ96lLj
+        pFYOCBUmJqoTszLYjGsv/gvDInb8AFUv4QFwuJ2r4rQ5S9KIKmCbgRA1dWO60Y72
+        FZxyCCTMyDpzYjWdmh6xmBKQIHGpJ/redEcqsygIWDjkycx+/isyeURsNJsPawhd
+        RnPC8Ao8e//a/pa21ufH8c=
+Received: from clx428$163.com ( [116.237.122.6] ) by ajax-webmail-wmsvr8
+ (Coremail) ; Mon, 21 Feb 2022 22:16:49 +0800 (CST)
+X-Originating-IP: [116.237.122.6]
+Date:   Mon, 21 Feb 2022 22:16:49 +0800 (CST)
+From:   =?GBK?B?s8LBotDC?= <clx428@163.com>
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
 Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Subject: Re:Re: Report a fuse deadlock scenario issue
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20210622(1d4788a8)
+ Copyright (c) 2002-2022 www.mailtech.cn 163com
+In-Reply-To: <CAJfpeguvqro7SUmve_dyMiPHn4_dzQR4MMJRwZyfq61k17N-jg@mail.gmail.com>
+References: <6da4c709.5385.17ee910a7fd.Coremail.clx428@163.com>
+ <CAJfpeguvqro7SUmve_dyMiPHn4_dzQR4MMJRwZyfq61k17N-jg@mail.gmail.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
+MIME-Version: 1.0
+Message-ID: <20645a14.5220.17f1ca46398.Coremail.clx428@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: CMGowACHl0vRnhNiQxMYAA--.43734W
+X-CM-SenderInfo: hfo0kjqy6rljoofrz/1tbiYx6u-laEHN56IwABsl
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 21 Feb 2022 at 15:11, =E9=99=88=E7=AB=8B=E6=96=B0 <clx428@163.com> =
-wrote:
-
-> >This last is not possible, because write_cache_pages() will always
-> >return when it reached the end of the range and only the next
-> >invocation will wrap around to the zero index page.  See this at the
-> >end of write_cache_pages():
-> >
-> >    if (wbc->range_cyclic && !done)
-> >        done_index =3D 0;
-> I use the kernel version is 4.19.36, which it has no 64081362e8ff4587b455=
-4087f3cfc73d3e0a4cd7 mm/page-writeback.c: fix range_cyclic writeback vs wri=
-tepages deadlock patch.
-> I think this patch can fix this deadlock.
-
-Yes, that explains it.  Thanks for investigating.
-
-Miklos
+CkF0IDIwMjItMDItMTcgMjM6Mzk6MTcsICJNaWtsb3MgU3plcmVkaSIgPG1pa2xvc0BzemVyZWRp
+Lmh1PiB3cm90ZToKPk9uIEZyaSwgMTEgRmViIDIwMjIgYXQgMTQ6NTUsILPCwaLQwiA8Y2x4NDI4
+QDE2My5jb20+IHdyb3RlOgo+Pgo+PiBIaSBNaWtsb3M6Cj4+IEkgbWVldCBhIGRlYWxvY2sgc2Nl
+bmFyaW8gb24gZnVzZS4gaGVyZSBhcmUgdGhlIDQgYmFja3RyYWNlczoKPj4gUElEOiAzMDE4NTIg
+IFRBU0s6IGZmZmY4MGRiNzgyMjZjODAgIENQVTogOTMgIENPTU1BTkQ6ICJUaHJlYWQtODU0Igo+
+PiAjMCBbZmZmZjAwMGMxZDg4YjllMF0gX19zd2l0Y2hfdG8gYXQgZmZmZjAwMDA4MDA4ODczOAo+
+PiAjMSBbZmZmZjAwMGMxZDg4YmEwMF0gX19zY2hlZHVsZSBhdCBmZmZmMDAwMDgwYTA2ZjQ4Cj4+
+ICMyIFtmZmZmMDAwYzFkODhiYTkwXSBzY2hlZHVsZSBhdCBmZmZmMDAwMDgwYTA3NjIwCj4+ICMz
+IFtmZmZmMDAwYzFkODhiYWEwXSBmdXNlX3dhaXRfb25fcGFnZV93cml0ZWJhY2sgYXQgZmZmZjAw
+MDAwMTA0NzQxOCBbZnVzZV0KPj4gIzQgW2ZmZmYwMDBjMWQ4OGJiMDBdIGZ1c2VfcGFnZV9ta3dy
+aXRlIGF0IGZmZmYwMDAwMDEwNDc1MzggW2Z1c2VdCj4+ICM1IFtmZmZmMDAwYzFkODhiYjQwXSBk
+b19wYWdlX21rd3JpdGUgYXQgZmZmZjAwMDA4MDJjYjc3Ywo+PiAjNiBbZmZmZjAwMGMxZDg4YmI5
+MF0gZG9fZmF1bHQgYXQgZmZmZjAwMDA4MDJkMTg0MAo+PiAjNyBbZmZmZjAwMGMxZDg4YmJkMF0g
+X19oYW5kbGVfbW1fZmF1bHQgYXQgZmZmZjAwMDA4MDJkMzU3NAo+PiAjOCBbZmZmZjAwMGMxZDg4
+YmM5MF0gaGFuZGxlX21tX2ZhdWx0IGF0IGZmZmYwMDAwODAyZDM3YzAKPj4gIzkgW2ZmZmYwMDBj
+MWQ4OGJjYzBdIGRvX3BhZ2VfZmF1bHQgYXQgZmZmZjAwMDA4MGEwZWY5NAo+PiAjMTAgW2ZmZmYw
+MDBjMWQ4OGJkYzBdIGRvX3RyYW5zbGF0aW9uX2ZhdWx0IGF0IGZmZmYwMDAwODBhMGYzMmMKPj4g
+IzExIFtmZmZmMDAwYzFkODhiZGYwXSBkb19tZW1fYWJvcnQgYXQgZmZmZjAwMDA4MDA4MTJjYwo+
+PiAjMTIgW2ZmZmYwMDBjMWQ4OGJmZjBdIGVsMF9kYSBhdCBmZmZmMDAwMDgwMDgzYjIwCj4+Cj4+
+IFBJRDogNDAwMTI3ICBUQVNLOiBmZmZmODBkMWExYzUxZjAwICBDUFU6IDkxICBDT01NQU5EOiAi
+VGhyZWFkLTY3NyIKPj4gIzAgW2ZmZmYwMDBiZWI1ZTNhMDBdIF9fc3dpdGNoX3RvIGF0IGZmZmYw
+MDAwODAwODg3MzgKPj4gIzEgW2ZmZmYwMDBiZWI1ZTNhMjBdIF9fc2NoZWR1bGUgYXQgZmZmZjAw
+MDA4MGEwNmY0OAo+PiAjMiBbZmZmZjAwMGJlYjVlM2FiMF0gc2NoZWR1bGUgYXQgZmZmZjAwMDA4
+MGEwNzYyMAo+PiAjMyBbZmZmZjAwMGJlYjVlM2FjMF0gZnVzZV93YWl0X29uX3BhZ2Vfd3JpdGVi
+YWNrIGF0IGZmZmYwMDAwMDEwNDc0MTggW2Z1c2VdCj4+ICM0IFtmZmZmMDAwYmViNWUzYjIwXSBm
+dXNlX3BhZ2VfbWt3cml0ZSBhdCBmZmZmMDAwMDAxMDQ3NTM4IFtmdXNlXQo+PiAjNSBbZmZmZjAw
+MGJlYjVlM2I2MF0gZG9fcGFnZV9ta3dyaXRlIGF0IGZmZmYwMDAwODAyY2I3N2MKPj4gIzYgW2Zm
+ZmYwMDBiZWI1ZTNiYjBdIGRvX3dwX3BhZ2UgYXQgZmZmZjAwMDA4MDJkMDI2NAo+PiAjNyBbZmZm
+ZjAwMGJlYjVlM2MwMF0gX19oYW5kbGVfbW1fZmF1bHQgYXQgZmZmZjAwMDA4MDJkMzYzYwo+PiAj
+OCBbZmZmZjAwMGJlYjVlM2NjMF0gaGFuZGxlX21tX2ZhdWx0IGF0IGZmZmYwMDAwODAyZDM3YzAK
+Pj4gIzkgW2ZmZmYwMDBiZWI1ZTNjZjBdIGRvX3BhZ2VfZmF1bHQgYXQgZmZmZjAwMDA4MGEwZWY5
+NAo+PiAjMTAgW2ZmZmYwMDBiZWI1ZTNkZjBdIGRvX21lbV9hYm9ydCBhdCBmZmZmMDAwMDgwMDgx
+MmNjCj4+ICMxMSBbZmZmZjAwMGJlYjVlM2ZmMF0gZWwwX2RhIGF0IGZmZmYwMDAwODAwODNiMjAK
+Pj4KPj4gUElEOiAxNzg4MzAgIFRBU0s6IGZmZmY4MGRjMTcwNGNkODAgIENQVTogNjQgIENPTU1B
+TkQ6ICJrd29ya2VyL3UyNTk6MTEiCj4+ICMwIFtmZmZmMDAwMGFhYjZiNmYwXSBfX3N3aXRjaF90
+byBhdCBmZmZmMDAwMDgwMDg4NzM4Cj4+ICMxIFtmZmZmMDAwMGFhYjZiNzEwXSBfX3NjaGVkdWxl
+IGF0IGZmZmYwMDAwODBhMDZmNDgKPj4gIzIgW2ZmZmYwMDAwYWFiNmI3YTBdIHNjaGVkdWxlIGF0
+IGZmZmYwMDAwODBhMDc2MjAKPj4gIzMgW2ZmZmYwMDAwYWFiNmI3YjBdIGlvX3NjaGVkdWxlIGF0
+IGZmZmYwMDAwODAxMmRiYzQKPj4gIzQgW2ZmZmYwMDAwYWFiNmI3ZDBdIF9fbG9ja19wYWdlIGF0
+IGZmZmYwMDAwODAyODU0ZTAKPj4gIzUgW2ZmZmYwMDAwYWFiNmI4NzBdIHdyaXRlX2NhY2hlX3Bh
+Z2VzIGF0IGZmZmYwMDAwODAyOTg3ZTgKPj4gIzYgW2ZmZmYwMDAwYWFiNmI5OTBdIGZ1c2Vfd3Jp
+dGVwYWdlcyBhdCBmZmZmMDAwMDAxMDRhYjZjIFtmdXNlXQo+PiAjNyBbZmZmZjAwMDBhYWI2Yjlm
+MF0gZG9fd3JpdGVwYWdlcyBhdCBmZmZmMDAwMDgwMjliMmUwCj4+ICM4IFtmZmZmMDAwMGFhYjZi
+YTcwXSBfX3dyaXRlYmFja19zaW5nbGVfaW5vZGUgYXQgZmZmZjAwMDA4MDM3ZjhiNAo+PiAjOSBb
+ZmZmZjAwMDBhYWI2YmFjMF0gd3JpdGViYWNrX3NiX2lub2RlcyBhdCBmZmZmMDAwMDgwMzgwMTUw
+Cj4+ICMxMCBbZmZmZjAwMDBhYWI2YmJkMF0gX193cml0ZWJhY2tfaW5vZGVzX3diIGF0IGZmZmYw
+MDAwODAzODA0YzAKPj4gIzExIFtmZmZmMDAwMGFhYjZiYzIwXSB3Yl93cml0ZWJhY2sgYXQgZmZm
+ZjAwMDA4MDM4MDg4MAo+PiAjMTIgW2ZmZmYwMDAwYWFiNmJjZDBdIHdiX3dvcmtmbiBhdCBmZmZm
+MDAwMDgwMzgxNDcwCj4+ICMxMyBbZmZmZjAwMDBhYWI2YmRiMF0gcHJvY2Vzc19vbmVfd29yayBh
+dCBmZmZmMDAwMDgwMTEzNDI4Cj4+ICMxNCBbZmZmZjAwMDBhYWI2YmUwMF0gd29ya2VyX3RocmVh
+ZCBhdCBmZmZmMDAwMDgwMTEzNmMwCj4+ICMxNSBbZmZmZjAwMDBhYWI2YmU3MF0ga3RocmVhZCBh
+dCBmZmZmMDAwMDgwMTFhYjYwCj4+Cj4+IFBJRDogNDczMjQgIFRBU0s6IGZmZmY4MGRiNWEwMzgw
+MDAgIENQVTogODggIENPTU1BTkQ6ICJUaHJlYWQtMjA2NCIKPj4gIzAgW2ZmZmYwMDBjMjExNGI4
+MjBdIF9fc3dpdGNoX3RvIGF0IGZmZmYwMDAwODAwODg3MzgKPj4gIzEgW2ZmZmYwMDBjMjExNGI4
+NDBdIF9fc2NoZWR1bGUgYXQgZmZmZjAwMDA4MGEwNmY0OAo+PiAjMiBbZmZmZjAwMGMyMTE0Yjhk
+MF0gc2NoZWR1bGUgYXQgZmZmZjAwMDA4MGEwNzYyMAo+PiAjMyBbZmZmZjAwMGMyMTE0YjhlMF0g
+aW9fc2NoZWR1bGUgYXQgZmZmZjAwMDA4MDEyZGJjNAo+PiAjNCBbZmZmZjAwMGMyMTE0YjkwMF0g
+X19sb2NrX3BhZ2UgYXQgZmZmZjAwMDA4MDI4NTRlMAo+PiAjNSBbZmZmZjAwMGMyMTE0YjlhMF0g
+d3JpdGVfY2FjaGVfcGFnZXMgYXQgZmZmZjAwMDA4MDI5ODdlOAo+PiAjNiBbZmZmZjAwMGMyMTE0
+YmFjMF0gZnVzZV93cml0ZXBhZ2VzIGF0IGZmZmYwMDAwMDEwNGFiNmMgW2Z1c2VdCj4+ICM3IFtm
+ZmZmMDAwYzIxMTRiYjIwXSBkb193cml0ZXBhZ2VzIGF0IGZmZmYwMDAwODAyOWIyZTAKPj4gIzgg
+W2ZmZmYwMDBjMjExNGJiYTBdIF9fZmlsZW1hcF9mZGF0YXdyaXRlX3JhbmdlIGF0IGZmZmYwMDAw
+ODAyODgzZjgKPj4gIzkgW2ZmZmYwMDBjMjExNGJjNjBdIGZpbGVfd3JpdGVfYW5kX3dhaXRfcmFu
+Z2UgYXQgZmZmZjAwMDA4MDI4ODZmMAo+PiAjMTAgW2ZmZmYwMDBjMjExNGJjYTBdIGZ1c2VfZnN5
+bmNfY29tbW9uIGF0IGZmZmYwMDAwMDEwNDkxZDggW2Z1c2VdCj4+ICMxMSBbZmZmZjAwMGMyMTE0
+YmQ5MF0gZnVzZV9mc3luYyBhdCBmZmZmMDAwMDAxMDQ5MzhjIFtmdXNlXQo+PiAjMTIgW2ZmZmYw
+MDBjMjExNGJkYzBdIHZmc19mc3luY19yYW5nZSBhdCBmZmZmMDAwMDgwMzg1OTM4Cj4+ICMxMyBb
+ZmZmZjAwMGMyMTE0YmRmMF0gX19hcm02NF9zeXNfbXN5bmMgYXQgZmZmZjAwMDA4MDJkY2Y4Ywo+
+PiAjMTQgW2ZmZmYwMDBjMjExNGJlNjBdIGVsMF9zdmNfY29tbW9uIGF0IGZmZmYwMDAwODAwOTdj
+YmMKPj4gIzE1IFtmZmZmMDAwYzIxMTRiZWEwXSBlbDBfc3ZjX2hhbmRsZXIgYXQgZmZmZjAwMDA4
+MDA5N2RmMAo+PiAjMTYgW2ZmZmYwMDBjMjExNGJmZjBdIGVsMF9zdmMgYXQgZmZmZjAwMDA4MDA4
+NDE0NAo+Pgo+PiBUaGUgNCB0aHJlYWRzIHdyaXRlIHRoZSBzYW1lIGZpbGUsIGFuZCBkZWFkbG9j
+a2VkOgo+PiAgIFRocmVhZCAzMDE4NTIgZ2V0cyB0aGUgcGFnZSA1IGxvY2ssIGFuZCB3YWl0aW5n
+IG9uIHBhZ2UgNSB3cml0ZWJhY2sgaXMgY29tcGxldGVkOwo+PiAgIFRocmVhZCA0MDAxMjcgZ2V0
+cyB0aGUgcGFnZSAwIGxvY2ssIGFuZCB3YWl0aW5nIG9uIHBhZ2UgMCB3cml0ZWJhY2sgaXMgY29t
+cGxldGVkOwo+PiAgIFRocmVhZCA0NzMyNCBpcyB3YWl0aW5nIHBhZ2UgNSBsb2NrLCBhbmQgYWxy
+ZWFkeSBzZXQgcGFnZSAwIC0gNCB0byB3cml0ZWJhY2s7Cj4+ICAgVGhyZWFkIDE3ODgzMCBpcyB3
+YWl0aW5nIHBhZ2UgMCBsb2NrLCBhbmQgYWxyZWFkeSBzZXQgcGFnZSA1IC0gNiB0byB3cml0ZWJh
+Y2s7Cj4KPlRoaXMgbGFzdCBpcyBub3QgcG9zc2libGUsIGJlY2F1c2Ugd3JpdGVfY2FjaGVfcGFn
+ZXMoKSB3aWxsIGFsd2F5cwo+cmV0dXJuIHdoZW4gaXQgcmVhY2hlZCB0aGUgZW5kIG9mIHRoZSBy
+YW5nZSBhbmQgb25seSB0aGUgbmV4dAo+aW52b2NhdGlvbiB3aWxsIHdyYXAgYXJvdW5kIHRvIHRo
+ZSB6ZXJvIGluZGV4IHBhZ2UuICBTZWUgdGhpcyBhdCB0aGUKPmVuZCBvZiB3cml0ZV9jYWNoZV9w
+YWdlcygpOgo+Cj4gICAgaWYgKHdiYy0+cmFuZ2VfY3ljbGljICYmICFkb25lKQo+ICAgICAgICBk
+b25lX2luZGV4ID0gMDsKSSB1c2UgdGhlIGtlcm5lbCB2ZXJzaW9uIGlzIDQuMTkuMzYsIHdoaWNo
+IGl0IGhhcyBubyA2NDA4MTM2MmU4ZmY0NTg3YjQ1NTQwODdmM2NmYzczZDNlMGE0Y2Q3IG1tL3Bh
+Z2Utd3JpdGViYWNrLmM6IGZpeCByYW5nZV9jeWNsaWMgd3JpdGViYWNrIHZzIHdyaXRlcGFnZXMg
+ZGVhZGxvY2sgcGF0Y2guCkkgdGhpbmsgdGhpcyBwYXRjaCBjYW4gZml4IHRoaXMgZGVhZGxvY2su
+CnRoYW5rcy4KPgo+T3RoZXJ3aXNlIGluZGV4IHdpbGwgYmUgbW9ub3RvbmljIGluY3JlYXNpbmcg
+dGhyb3VnaG91dCBhIHNpbmdsZQo+d3JpdGVfY2FjaGVfcGFnZXMoKSBjYWxsLgo+Cj5UaGF0IGRv
+ZXNuJ3QgbWVhbiB0aGF0IHRoZXJlJ3Mgbm8gZGVhZGxvY2ssIHRoaXMgaXMgcHJldHR5IGNvbXBs
+ZXgsCj5idXQgdGhlcmUgbXVzdCBiZSBzb21lIG90aGVyIGV4cGxhbmF0aW9uLgo+Cj5UaGFua3Ms
+Cj5NaWtsb3MK
