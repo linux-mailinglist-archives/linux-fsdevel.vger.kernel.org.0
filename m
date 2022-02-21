@@ -2,106 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AAE84BE851
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 19:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 174D24BE604
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 19:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350619AbiBUJel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Feb 2022 04:34:41 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36326 "EHLO
+        id S243192AbiBUKDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Feb 2022 05:03:34 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350603AbiBUJea (ORCPT
+        with ESMTP id S1353478AbiBUJ53 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Feb 2022 04:34:30 -0500
-X-Greylist: delayed 1838 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 21 Feb 2022 01:14:21 PST
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F2D0329CA6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Feb 2022 01:14:21 -0800 (PST)
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.52 with ESMTP; 21 Feb 2022 17:43:40 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: kyeongdon.kim@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.159.40.99)
-        by 156.147.1.126 with ESMTP; 21 Feb 2022 17:43:40 +0900
-X-Original-SENDERIP: 10.159.40.99
-X-Original-MAILFROM: kyeongdon.kim@lge.com
-From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kyeongdon.kim@lge.com
-Subject: [PATCH] pipe: use kmem_cache for pipe_inode_info
-Date:   Mon, 21 Feb 2022 17:43:37 +0900
-Message-Id: <20220221084337.207414-1-kyeongdon.kim@lge.com>
-X-Mailer: git-send-email 2.10.2
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 21 Feb 2022 04:57:29 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7459E39694;
+        Mon, 21 Feb 2022 01:26:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 23A13B80EB8;
+        Mon, 21 Feb 2022 09:26:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379ADC340E9;
+        Mon, 21 Feb 2022 09:26:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1645435568;
+        bh=CGKZKpHdtpHjqx8nLIub2ekK7SpErawCOlzQRha/BlY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=f3HNBXose7IfmENmIunnE5iGkcAE8MKnjtca9xMVrLb/uIdBA5EjGG4zHpX2eabJ1
+         lLbnK9hd+DMVfU/mfVHMjbj4GU3VKPTrkhoDATWtJitWTQbb6PmmDmc8oGGRFy+i5s
+         ESg6JhbG7O50NlGCX3cOBWO5KQcFAzSPJku4qzQ4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Seth Forshee <seth.forshee@digitalocean.com>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 5.16 182/227] tests: fix idmapped mount_setattr test
+Date:   Mon, 21 Feb 2022 09:50:01 +0100
+Message-Id: <20220221084940.869374838@linuxfoundation.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220221084934.836145070@linuxfoundation.org>
+References: <20220221084934.836145070@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Because kzalloc() is used,
-the allocation size of pipe_inode_info is fixex at 192bytes,
-but it's only use 144bytes per each.
-We can use kmem_cache_zalloc() to reduce some dynamic allocation size.
+From: Christian Brauner <brauner@kernel.org>
 
-Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+commit d1c56bfdaca465bd1d0e913053a9c5cafe8b6a6c upstream.
+
+The test treated zero as a successful run when it really should treat
+non-zero as a successful run. A mount's idmapping can't change once it
+has been attached to the filesystem.
+
+Link: https://lore.kernel.org/r/20220203131411.3093040-2-brauner@kernel.org
+Fixes: 01eadc8dd96d ("tests: add mount_setattr() selftests")
+Cc: Seth Forshee <seth.forshee@digitalocean.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/pipe.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 7194683..3054816 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -47,6 +47,9 @@
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -1236,7 +1236,7 @@ static int get_userns_fd(unsigned long n
+ }
+ 
+ /**
+- * Validate that an attached mount in our mount namespace can be idmapped.
++ * Validate that an attached mount in our mount namespace cannot be idmapped.
+  * (The kernel enforces that the mount's mount namespace and the caller's mount
+  *  namespace match.)
   */
- #define PIPE_MIN_DEF_BUFFERS 2
+@@ -1259,7 +1259,7 @@ TEST_F(mount_setattr_idmapped, attached_
  
-+/* SLAB cache for pipe inode */
-+static struct kmem_cache *pipe_inode_cachep;
-+
- /*
-  * The max size that a non-root user is allowed to grow the pipe. Can
-  * be set by root in /proc/sys/fs/pipe-max-size
-@@ -786,7 +789,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
- 	unsigned long user_bufs;
- 	unsigned int max_size = READ_ONCE(pipe_max_size);
- 
--	pipe = kzalloc(sizeof(struct pipe_inode_info), GFP_KERNEL_ACCOUNT);
-+	pipe = kmem_cache_zalloc(pipe_inode_cachep, GFP_KERNEL_ACCOUNT);
- 	if (pipe == NULL)
- 		goto out_free_uid;
- 
-@@ -820,7 +823,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
- 
- out_revert_acct:
- 	(void) account_pipe_buffers(user, pipe_bufs, 0);
--	kfree(pipe);
-+	kmem_cache_free(pipe_inode_cachep, pipe);
- out_free_uid:
- 	free_uid(user);
- 	return NULL;
-@@ -847,7 +850,7 @@ void free_pipe_info(struct pipe_inode_info *pipe)
- 	if (pipe->tmp_page)
- 		__free_page(pipe->tmp_page);
- 	kvfree(pipe->bufs);
--	kfree(pipe);
-+	kmem_cache_free(pipe_inode_cachep, pipe);
+ 	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
+ 	ASSERT_GE(attr.userns_fd, 0);
+-	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
+ 	ASSERT_EQ(close(attr.userns_fd), 0);
+ 	ASSERT_EQ(close(open_tree_fd), 0);
  }
- 
- static struct vfsmount *pipe_mnt __read_mostly;
-@@ -1496,6 +1499,9 @@ static int __init init_pipe_fs(void)
- #ifdef CONFIG_SYSCTL
- 	register_sysctl_init("fs", fs_pipe_sysctls);
- #endif
-+	pipe_inode_cachep = kmem_cache_create("pipe_inode",
-+					sizeof(struct pipe_inode_info),
-+					0, SLAB_PANIC, NULL);
- 	return err;
- }
- 
--- 
-2.10.2
+
 
