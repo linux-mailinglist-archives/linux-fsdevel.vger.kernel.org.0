@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D1B604BD5F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 07:23:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DC64BD5FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 07:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344903AbiBUGJw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Feb 2022 01:09:52 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39036 "EHLO
+        id S1344915AbiBUGLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Feb 2022 01:11:19 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231645AbiBUGJu (ORCPT
+        with ESMTP id S243297AbiBUGLS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Feb 2022 01:09:50 -0500
+        Mon, 21 Feb 2022 01:11:18 -0500
 Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB48EB42
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Feb 2022 22:09:27 -0800 (PST)
-X-QQ-mid: bizesmtp85t1645423744tm9q9x8g
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972AEB90
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Feb 2022 22:10:55 -0800 (PST)
+X-QQ-mid: bizesmtp73t1645423837tkkosvs0
 Received: from localhost.localdomain (unknown [49.93.178.145])
         by bizesmtp.qq.com (ESMTP) with 
-        id ; Mon, 21 Feb 2022 14:08:57 +0800 (CST)
+        id ; Mon, 21 Feb 2022 14:10:30 +0800 (CST)
 X-QQ-SSF: 01400000002000B0F000000A0000000
-X-QQ-FEAT: 1CJnxdOjzOnht1ipS2+wNCQ6Ym2RPp0krCe5+nsnDX21mh57cqVU+OckU5q1n
-        klxdhyzumpbURgjvdHwotciZt4MjLKCm6dJ+ZWbgAFLLCBZDlVRi9E7rnkET687B2YFY7aa
-        LiFAjy4tau6Vc7zVidj6lUf2uYuJ1gW11MrIfWUHyzqJYBpgTfdyRjAVLbKR6kNnkc72eWe
-        zfQJ6UlbLiDWki1fIAKOuVhb0XCAdA9jCNei04SY4Mk7HlS1c3c8FWB9nwipNJaQu4xFKcs
-        lz6SKxNTHS7QjTdeiidvlGoyuztGQENDjgXKuY6fEDmKpDZUN7AZo4UTpu6f882VO5mlE1N
-        uGZU/h/9E8uMPCKDVxvJJiG66oXFw==
+X-QQ-FEAT: Mzskoac49Oga6mWqGP2ryQuTJrcG2WY/Vo+No46qhrSPLWn5pnT1993SsPCFO
+        QnjoRdKt2DZGlAjKy2PSvP5JqgfAeJHiKheX+i05yD4tdRmh0yZB4dDqGRFW//K1dy6MKx1
+        9t12PQcqQggf8FBeDUDwC3s+IbNRY4h42QBdY/GBpUkZIJH66DMAmiBAWnGb9n8vOXE6NbL
+        TZPj+mttyBksu16hLRgUSJ1+TUXabDIJ6h6ZHquzayPfaRBITd892SgmcypLFwWJBGpZK+S
+        if5SF50Qr3hlD1NMWZHsauoPMZ6eKYPs2k9B6QlhNcwpqH8SN5c9jtnl+xipzXUnadLroSt
+        3vCZzSbnnyjp7UeiImi3PpqFcqtQKpK286yWcex
 X-QQ-GoodBg: 1
 From:   tangmeng <tangmeng@uniontech.com>
-To:     James.Bottomley@HansenPartnership.com, deller@gmx.de,
+To:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
         mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
-Cc:     linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, nizhen@uniontech.com,
         zhanglianjie@uniontech.com, nixiaoming@huawei.com,
         tangmeng <tangmeng@uniontech.com>
-Subject: [PATCH v2 01/11] kernel/parisc: move soft-power sysctl to its own file
-Date:   Mon, 21 Feb 2022 14:08:47 +0800
-Message-Id: <20220221060847.9917-1-tangmeng@uniontech.com>
+Subject: [PATCH v2 10/11] fs/drop_caches: move drop_caches sysctls to its own file
+Date:   Mon, 21 Feb 2022 14:10:18 +0800
+Message-Id: <20220221061018.10472-1-tangmeng@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -61,97 +61,99 @@ know what sysctl knobs you wish to add for your own piece of code, we
 just care about the core logic.
 
 All filesystem syctls now get reviewed by fs folks. This commit
-follows the commit of fs, move the soft-power sysctl to its own file,
-kernel/parisc/power.c.
+follows the commit of fs, move the drop_caches sysctls to its own file,
+fs/drop_caches.c.
 
 Signed-off-by: tangmeng <tangmeng@uniontech.com>
 ---
- drivers/parisc/power.c | 24 ++++++++++++++++++++++--
- include/linux/sysctl.h |  1 -
- kernel/sysctl.c        |  9 ---------
- 3 files changed, 22 insertions(+), 12 deletions(-)
+ fs/drop_caches.c   | 24 ++++++++++++++++++++++--
+ include/linux/mm.h |  6 ------
+ kernel/sysctl.c    |  9 ---------
+ 3 files changed, 22 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/parisc/power.c b/drivers/parisc/power.c
-index 456776bd8ee6..2426b6868a5a 100644
---- a/drivers/parisc/power.c
-+++ b/drivers/parisc/power.c
-@@ -109,7 +109,26 @@ static struct task_struct *power_task;
- #define SYSCTL_FILENAME	"sys/kernel/power"
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index e619c31b6bd9..44f5539dd217 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -13,7 +13,7 @@
+ #include "internal.h"
  
- /* soft power switch enabled/disabled */
--int pwrsw_enabled __read_mostly = 1;
-+static int pwrsw_enabled __read_mostly = 1;
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table kern_parisc_power_table[] = {
+ /* A global variable is a bit ugly, but it keeps the code simple */
+-int sysctl_drop_caches;
++static int sysctl_drop_caches;
+ 
+ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ {
+@@ -47,7 +47,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 	iput(toput_inode);
+ }
+ 
+-int drop_caches_sysctl_handler(struct ctl_table *table, int write,
++static int drop_caches_sysctl_handler(struct ctl_table *table, int write,
+ 		void *buffer, size_t *length, loff_t *ppos)
+ {
+ 	int ret;
+@@ -75,3 +75,23 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
+ 	}
+ 	return 0;
+ }
++
++static struct ctl_table vm_drop_caches_table[] = {
 +	{
-+		.procname       = "soft-power",
-+		.data           = &pwrsw_enabled,
++		.procname       = "drop_caches",
++		.data           = &sysctl_drop_caches,
 +		.maxlen         = sizeof(int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
++		.mode           = 0200,
++		.proc_handler   = drop_caches_sysctl_handler,
++		.extra1         = SYSCTL_ONE,
++		.extra2         = SYSCTL_FOUR,
 +	},
 +	{ }
 +};
 +
-+static void __init kernel_parisc_power_sysctls_init(void)
++static __init int vm_drop_caches_sysctls_init(void)
 +{
-+	register_sysctl_init("kernel", kern_parisc_power_table);
++	register_sysctl_init("vm", vm_drop_caches_table);
++	return 0;
 +}
-+#else
-+#define kernel_parisc_power_sysctls_init() do { } while (0)
-+#endif /* CONFIG_SYSCTL */
++late_initcall(vm_drop_caches_sysctls_init);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c3c7cb58c847..775befb2786b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3126,12 +3126,6 @@ static inline int in_gate_area(struct mm_struct *mm, unsigned long addr)
  
- /* main kernel thread worker. It polls the button state */
- static int kpowerswd(void *param)
-@@ -193,7 +212,6 @@ static struct notifier_block parisc_panic_block = {
- 	.priority	= INT_MAX,
- };
+ extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
  
+-#ifdef CONFIG_SYSCTL
+-extern int sysctl_drop_caches;
+-int drop_caches_sysctl_handler(struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-#endif
 -
- static int __init power_init(void)
- {
- 	unsigned long ret;
-@@ -233,6 +251,8 @@ static int __init power_init(void)
- 	atomic_notifier_chain_register(&panic_notifier_list,
- 			&parisc_panic_block);
+ void drop_slab(void);
  
-+	kernel_parisc_power_sysctls_init();
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 6353d6db69b2..e00bf436d63b 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -242,7 +242,6 @@ int do_proc_douintvec(struct ctl_table *table, int write,
- 				  int write, void *data),
- 		      void *data);
- 
--extern int pwrsw_enabled;
- extern int unaligned_enabled;
- extern int unaligned_dump_stack;
- extern int no_unaligned_warning;
+ #ifndef CONFIG_MMU
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 22037f03cd2b..d11390634321 100644
+index b51b0b92fdc1..657b7bfe38f6 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -1737,15 +1737,6 @@ static struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dointvec,
+@@ -2182,15 +2182,6 @@ static struct ctl_table vm_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= lowmem_reserve_ratio_sysctl_handler,
  	},
- #endif
--#ifdef CONFIG_PARISC
 -	{
--		.procname	= "soft-power",
--		.data		= &pwrsw_enabled,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
+-		.procname	= "drop_caches",
+-		.data		= &sysctl_drop_caches,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0200,
+-		.proc_handler	= drop_caches_sysctl_handler,
+-		.extra1		= SYSCTL_ONE,
+-		.extra2		= SYSCTL_FOUR,
 -	},
--#endif
- #ifdef CONFIG_SYSCTL_ARCH_UNALIGN_ALLOW
+ #ifdef CONFIG_COMPACTION
  	{
- 		.procname	= "unaligned-trap",
+ 		.procname	= "compact_memory",
 -- 
 2.20.1
 
