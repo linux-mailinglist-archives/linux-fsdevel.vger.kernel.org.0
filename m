@@ -2,52 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A41484BDE82
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 18:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 744114BDCDB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Feb 2022 18:43:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345528AbiBUJil (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Feb 2022 04:38:41 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46410 "EHLO
+        id S1347008AbiBUJDP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Feb 2022 04:03:15 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:32912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351652AbiBUJhd (ORCPT
+        with ESMTP id S1347380AbiBUJBS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Feb 2022 04:37:33 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 513C53A5FD;
-        Mon, 21 Feb 2022 01:16:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id BCCFECE0E66;
-        Mon, 21 Feb 2022 09:16:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACBFC340E9;
-        Mon, 21 Feb 2022 09:16:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1645434979;
-        bh=CGKZKpHdtpHjqx8nLIub2ekK7SpErawCOlzQRha/BlY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I0NrBd1+rJBec55+7LsX6SuM0K46lq2wSUVfAraKQmy6Ub+7o6zMcXkHWYqmgxrqo
-         Z7r2+4QtHeK8Uheb41y13l4QBiCTzBZMGdHZDqrB9qpoUhVzZe/CzFlNFa/a/Ok/jk
-         LdyvbaHTisx45E9jkiM2xSNDQh5E9Z1EVPx57V7k=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Seth Forshee <seth.forshee@digitalocean.com>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 5.15 188/196] tests: fix idmapped mount_setattr test
-Date:   Mon, 21 Feb 2022 09:50:20 +0100
-Message-Id: <20220221084937.235971073@linuxfoundation.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220221084930.872957717@linuxfoundation.org>
-References: <20220221084930.872957717@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Mon, 21 Feb 2022 04:01:18 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B7D727FDF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Feb 2022 00:56:24 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id p9so25706129wra.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Feb 2022 00:56:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=algolia.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=t4j70Shc7XavmIU28ZXBZ9YZLZ3H8F9NgtPdi+WU9Pg=;
+        b=Ppn5EDMv7pYT8ehjg4mnj9/VIrvBAAOOL1nIM3N+UEN0qDpZsfeWTx2i/0p9JL1cjD
+         M37IK5hH8QhrRRh+yNghRtLijtjAvbyWZ9AapuVTC+5fHBqZNbI84GkKROwWzGgwO8Xr
+         Obai8J2YeoujiXGzEDCkxDjvC/7CWnxlFkq10=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=t4j70Shc7XavmIU28ZXBZ9YZLZ3H8F9NgtPdi+WU9Pg=;
+        b=19rXiPTD4EXMnqEZVqpqTacaTAH2+Dzg+7CvnzbO6WwWVbROTodfH0yNEcMNhnzm3E
+         Z8462jY1KIWvsDehrZ0xHkQ2LE8/EK2f69mrE/+vMY7DKknnD6SyHf7UzRvTaNaJnCVE
+         iwZDFS1NRkDO+xWG/cW5KwyX9CFJ/PQGSI17C/8rEgCB4pXxCMYGPns9MyrrKCfm/Xwp
+         0Hrd2pajULhxH2xeJJgDBky7XQwBzXifcB/gtPn8vQSZ4g+KCyuqeKC/8CrCxezRVwS6
+         XjtU8Q/wIFWyyYRtrOnFR/mBae1XEHaBQsP6SKyuXBKLTjdQJguZFLFReiNH8HBgYlZb
+         WcKA==
+X-Gm-Message-State: AOAM530ib2yeAKJNJ6rX7X8bYgkD1QG51MTy22TfCJ548/VyYBn7DfcD
+        xvq5o75HRMZj+CCvwl2RN73K5AtOYrlppg==
+X-Google-Smtp-Source: ABdhPJwqYYgR9mHtDuZeuOTLDgUT8fgAJB8uagLZRIA3DRk3n7OpAxMVCFHOR6HflCfNNfz1zyJKmw==
+X-Received: by 2002:adf:ef4b:0:b0:1e4:acd7:92da with SMTP id c11-20020adfef4b000000b001e4acd792damr15041648wrp.293.1645433772388;
+        Mon, 21 Feb 2022 00:56:12 -0800 (PST)
+Received: from xavier-xps ([2a01:e0a:830:d971:a8a3:7a18:7fc0:8070])
+        by smtp.gmail.com with ESMTPSA id d2sm21156964wro.49.2022.02.21.00.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Feb 2022 00:56:11 -0800 (PST)
+Date:   Mon, 21 Feb 2022 09:56:10 +0100
+From:   Xavier Roche <xavier.roche@algolia.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: fix link vs. rename race
+Message-ID: <20220221085610.GA332661@xavier-xps>
+References: <20220221082002.508392-1-mszeredi@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220221082002.508392-1-mszeredi@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -56,45 +66,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <brauner@kernel.org>
+On Mon, Feb 21, 2022 at 09:20:02AM +0100, Miklos Szeredi wrote:
+> This patch introduces a global rw_semaphore that is locked for read in
+> rename and for write in link.  To prevent excessive contention, do not take
+> the lock in link on the first try.  If the source of the link was found to
+> be unlinked, then retry with the lock held.
 
-commit d1c56bfdaca465bd1d0e913053a9c5cafe8b6a6c upstream.
+Tested-by: Xavier Roche <xavier.roche@algolia.com>
 
-The test treated zero as a successful run when it really should treat
-non-zero as a successful run. A mount's idmapping can't change once it
-has been attached to the filesystem.
-
-Link: https://lore.kernel.org/r/20220203131411.3093040-2-brauner@kernel.org
-Fixes: 01eadc8dd96d ("tests: add mount_setattr() selftests")
-Cc: Seth Forshee <seth.forshee@digitalocean.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/mount_setattr/mount_setattr_test.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-+++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-@@ -1236,7 +1236,7 @@ static int get_userns_fd(unsigned long n
- }
- 
- /**
-- * Validate that an attached mount in our mount namespace can be idmapped.
-+ * Validate that an attached mount in our mount namespace cannot be idmapped.
-  * (The kernel enforces that the mount's mount namespace and the caller's mount
-  *  namespace match.)
-  */
-@@ -1259,7 +1259,7 @@ TEST_F(mount_setattr_idmapped, attached_
- 
- 	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
- 	ASSERT_GE(attr.userns_fd, 0);
--	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
-+	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
- 	ASSERT_EQ(close(attr.userns_fd), 0);
- 	ASSERT_EQ(close(open_tree_fd), 0);
- }
-
-
+Revalidated patch (on a 5.16.5) using previous torture test;
+- on ext4 filesystem
+- on a cryptfs volume
