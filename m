@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A43644BFD5D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 16:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A9DE4BFD61
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 16:46:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233509AbiBVPrQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Feb 2022 10:47:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52872 "EHLO
+        id S232565AbiBVPrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Feb 2022 10:47:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231670AbiBVPrK (ORCPT
+        with ESMTP id S233416AbiBVPrO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Feb 2022 10:47:10 -0500
+        Tue, 22 Feb 2022 10:47:14 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B82E520184;
-        Tue, 22 Feb 2022 07:46:44 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BADAF2A711;
+        Tue, 22 Feb 2022 07:46:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=sd9RxJShPGiAFRICO73ZkjFAfnS+ztcq1MfxJ2y9BeM=; b=eiFrWaVPt5ZxRL5mRXxJlrXxZN
-        AtUo1z+jidH2+odsHyo1urmrJ6GQPMjkJ0fn4aDuvs883+kOmYRsRxwUdQuQvOwCIgkXPP23LWCNT
-        TwwAXu6Pdk2xIzqIH5Bjejr4s6wdBp5w4Fk6sBTE0AvP+1zmbyUfk6UJnZE2ReTvQfjZz7Hf4wCuL
-        6gbDDg8JUYora+UTNAYZSvU89KaMrj2LIFtbGZi242pXwbAllNPTiLx5Up7fGExDpdMoNvpVNfx2/
-        5JV+EJve3iRsb7qYfv1Y6/sQcEX1tX2I/jaSUhlVbQVtafSFZ+4WB26VFnAnqsdSfXsYA0k77IE3J
-        NDqPrulw==;
+        bh=+U8cxPvWKrvxpKekOCC5dqw8suy2lTzpNt0Z4iXLejo=; b=mQLRZJy2Jqv/KuVeCdT4HHJA2U
+        LzZMFpfze3cdBygMl4Y+GIuFDPE9conHrq+1Z67JdBTeJj7tbFMFHwQBw02hHjZNk2R2w+IBOjxLV
+        mDcJGmbFGfRqceK5/HLSqQEhbj07Vd3QDvMYzJcI/7hJaC6ftH6nJOQlsViYOp9x/4YdDgWEliOpw
+        z2mY5ccVq7YrV1/UHe+ZHKWRYa92h5bPSz65+tl2q49fTAEsM+VebGcYK+oP6oi9fCFvjUOKFmSuL
+        0bn4Ine/T86sqivRxd7n6ifRuO0eeMbVVn2BsO53n2b/01OqxIpBN50r5w9eOTHvyf1KA6kBYYEP0
+        mVB0lqOQ==;
 Received: from [2001:4bb8:198:f8fc:c22a:ebfc:be8d:63c2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMXNB-00ANZd-Uv; Tue, 22 Feb 2022 15:46:42 +0000
+        id 1nMXNE-00ANbH-Lr; Tue, 22 Feb 2022 15:46:45 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>, "Theodore Ts'o" <tytso@mit.edu>,
         Ryusuke Konishi <konishi.ryusuke@gmail.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org
-Subject: [PATCH 2/3] ext4: pass the operation to bio_alloc
-Date:   Tue, 22 Feb 2022 16:46:33 +0100
-Message-Id: <20220222154634.597067-3-hch@lst.de>
+Subject: [PATCH 3/3] nilfs2: pass the operation to bio_alloc
+Date:   Tue, 22 Feb 2022 16:46:34 +0100
+Message-Id: <20220222154634.597067-4-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220222154634.597067-1-hch@lst.de>
 References: <20220222154634.597067-1-hch@lst.de>
@@ -53,40 +53,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Refactor the readpage code to pass the op to bio_alloc instead of setting
-it just before the submission.
+Refactor the segbuf write code to pass the op to bio_alloc instead of
+setting it just before the submission.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext4/page-io.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/nilfs2/segbuf.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 1253982268730..35ada7baf41e5 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -372,10 +372,9 @@ void ext4_io_submit(struct ext4_io_submit *io)
- 	struct bio *bio = io->io_bio;
+diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
+index 4f71faacd8253..a3bb0c856ec80 100644
+--- a/fs/nilfs2/segbuf.c
++++ b/fs/nilfs2/segbuf.c
+@@ -337,8 +337,7 @@ static void nilfs_end_bio_write(struct bio *bio)
+ }
  
- 	if (bio) {
--		int io_op_flags = io->io_wbc->sync_mode == WB_SYNC_ALL ?
--				  REQ_SYNC : 0;
-+		if (io->io_wbc->sync_mode == WB_SYNC_ALL)
-+			io->io_bio->bi_opf |= REQ_SYNC;
- 		io->io_bio->bi_write_hint = io->io_end->inode->i_write_hint;
--		bio_set_op_attrs(io->io_bio, REQ_OP_WRITE, io_op_flags);
- 		submit_bio(io->io_bio);
+ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
+-				   struct nilfs_write_info *wi, int mode,
+-				   int mode_flags)
++				   struct nilfs_write_info *wi)
+ {
+ 	struct bio *bio = wi->bio;
+ 	int err;
+@@ -356,7 +355,6 @@ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
+ 
+ 	bio->bi_end_io = nilfs_end_bio_write;
+ 	bio->bi_private = segbuf;
+-	bio_set_op_attrs(bio, mode, mode_flags);
+ 	submit_bio(bio);
+ 	segbuf->sb_nbio++;
+ 
+@@ -384,15 +382,15 @@ static void nilfs_segbuf_prepare_write(struct nilfs_segment_buffer *segbuf,
+ 
+ static int nilfs_segbuf_submit_bh(struct nilfs_segment_buffer *segbuf,
+ 				  struct nilfs_write_info *wi,
+-				  struct buffer_head *bh, int mode)
++				  struct buffer_head *bh)
+ {
+ 	int len, err;
+ 
+ 	BUG_ON(wi->nr_vecs <= 0);
+  repeat:
+ 	if (!wi->bio) {
+-		wi->bio = bio_alloc(wi->nilfs->ns_bdev, wi->nr_vecs, 0,
+-				    GFP_NOIO);
++		wi->bio = bio_alloc(wi->nilfs->ns_bdev, wi->nr_vecs,
++				    REQ_OP_WRITE, GFP_NOIO);
+ 		wi->bio->bi_iter.bi_sector = (wi->blocknr + wi->end) <<
+ 			(wi->nilfs->ns_blocksize_bits - 9);
  	}
- 	io->io_bio = NULL;
-@@ -398,7 +397,7 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
- 	 * bio_alloc will _always_ be able to allocate a bio if
- 	 * __GFP_DIRECT_RECLAIM is set, see comments for bio_alloc_bioset().
- 	 */
--	bio = bio_alloc(bh->b_bdev, BIO_MAX_VECS, 0, GFP_NOIO);
-+	bio = bio_alloc(bh->b_bdev, BIO_MAX_VECS, REQ_OP_WRITE, GFP_NOIO);
- 	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio->bi_end_io = ext4_end_bio;
+@@ -403,7 +401,7 @@ static int nilfs_segbuf_submit_bh(struct nilfs_segment_buffer *segbuf,
+ 		return 0;
+ 	}
+ 	/* bio is FULL */
+-	err = nilfs_segbuf_submit_bio(segbuf, wi, mode, 0);
++	err = nilfs_segbuf_submit_bio(segbuf, wi);
+ 	/* never submit current bh */
+ 	if (likely(!err))
+ 		goto repeat;
+@@ -433,13 +431,13 @@ static int nilfs_segbuf_write(struct nilfs_segment_buffer *segbuf,
+ 	nilfs_segbuf_prepare_write(segbuf, &wi);
+ 
+ 	list_for_each_entry(bh, &segbuf->sb_segsum_buffers, b_assoc_buffers) {
+-		res = nilfs_segbuf_submit_bh(segbuf, &wi, bh, REQ_OP_WRITE);
++		res = nilfs_segbuf_submit_bh(segbuf, &wi, bh);
+ 		if (unlikely(res))
+ 			goto failed_bio;
+ 	}
+ 
+ 	list_for_each_entry(bh, &segbuf->sb_payload_buffers, b_assoc_buffers) {
+-		res = nilfs_segbuf_submit_bh(segbuf, &wi, bh, REQ_OP_WRITE);
++		res = nilfs_segbuf_submit_bh(segbuf, &wi, bh);
+ 		if (unlikely(res))
+ 			goto failed_bio;
+ 	}
+@@ -449,8 +447,8 @@ static int nilfs_segbuf_write(struct nilfs_segment_buffer *segbuf,
+ 		 * Last BIO is always sent through the following
+ 		 * submission.
+ 		 */
+-		res = nilfs_segbuf_submit_bio(segbuf, &wi, REQ_OP_WRITE,
+-					      REQ_SYNC);
++		wi.bio->bi_opf |= REQ_SYNC;
++		res = nilfs_segbuf_submit_bio(segbuf, &wi);
+ 	}
+ 
+  failed_bio:
 -- 
 2.30.2
 
