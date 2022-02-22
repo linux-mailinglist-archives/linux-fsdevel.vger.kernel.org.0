@@ -2,134 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5AAF4BEF3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 02:53:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C2C4BEF4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 03:22:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230521AbiBVBpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Feb 2022 20:45:15 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35508 "EHLO
+        id S238802AbiBVB4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Feb 2022 20:56:51 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbiBVBpM (ORCPT
+        with ESMTP id S233004AbiBVB4t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Feb 2022 20:45:12 -0500
-X-Greylist: delayed 1652 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 21 Feb 2022 17:44:47 PST
-Received: from vps-vb.mhejs.net (vps-vb.mhejs.net [37.28.154.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD905255AD
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Feb 2022 17:44:47 -0800 (PST)
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1nMJnQ-0005kk-S3; Tue, 22 Feb 2022 02:16:52 +0100
-Message-ID: <45148f5f-fe79-b452-f3b2-482c5c3291c4@maciej.szmigiero.name>
-Date:   Tue, 22 Feb 2022 02:16:46 +0100
+        Mon, 21 Feb 2022 20:56:49 -0500
+Received: from out20-39.mail.aliyun.com (out20-39.mail.aliyun.com [115.124.20.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D917425C4E;
+        Mon, 21 Feb 2022 17:56:22 -0800 (PST)
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.04438479|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.178653-0.00896939-0.812378;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047198;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.Mth-WDF_1645494979;
+Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.Mth-WDF_1645494979)
+          by smtp.aliyun-inc.com(33.45.47.205);
+          Tue, 22 Feb 2022 09:56:20 +0800
+Date:   Tue, 22 Feb 2022 09:56:22 +0800
+From:   Wang Yugui <wangyugui@e16-tech.com>
+To:     "NeilBrown" <neilb@suse.de>
+Subject: Re: [PATCH] fs: allow cross-vfsmount reflink/dedupe
+Cc:     "Josef Bacik" <josef@toxicpanda.com>, viro@ZenIV.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        kernel-team@fb.com
+In-Reply-To: <164548762019.8827.10420692800919301859@noble.neil.brown.name>
+References: <164548078112.17923.854375583220948734@noble.neil.brown.name> <164548762019.8827.10420692800919301859@noble.neil.brown.name>
+Message-Id: <20220222095622.1F0C.409509F4@e16-tech.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, kvm@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, qemu-devel@nongnu.org
-References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
- <20220118132121.31388-13-chao.p.peng@linux.intel.com>
- <a121e766-900d-2135-1516-e1d3ba716834@maciej.szmigiero.name>
- <20220217134548.GA33836@chaop.bj.intel.com>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: Re: [PATCH v4 12/12] KVM: Expose KVM_MEM_PRIVATE
-In-Reply-To: <20220217134548.GA33836@chaop.bj.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Mailer: Becky! ver. 2.75.04 [en]
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17.02.2022 14:45, Chao Peng wrote:
-> On Tue, Jan 25, 2022 at 09:20:39PM +0100, Maciej S. Szmigiero wrote:
->> On 18.01.2022 14:21, Chao Peng wrote:
->>> KVM_MEM_PRIVATE is not exposed by default but architecture code can turn
->>> on it by implementing kvm_arch_private_memory_supported().
->>>
->>> Also private memslot cannot be movable and the same file+offset can not
->>> be mapped into different GFNs.
->>>
->>> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
->>> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
->>> ---
->> (..)
->>>    static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
->>> -				      gfn_t start, gfn_t end)
->>> +				      struct file *file,
->>> +				      gfn_t start, gfn_t end,
->>> +				      loff_t start_off, loff_t end_off)
->>>    {
->>>    	struct kvm_memslot_iter iter;
->>> +	struct kvm_memory_slot *slot;
->>> +	struct inode *inode;
->>> +	int bkt;
->>>    	kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
->>>    		if (iter.slot->id != id)
->>>    			return true;
->>>    	}
->>> +	/* Disallow mapping the same file+offset into multiple gfns. */
->>> +	if (file) {
->>> +		inode = file_inode(file);
->>> +		kvm_for_each_memslot(slot, bkt, slots) {
->>> +			if (slot->private_file &&
->>> +			     file_inode(slot->private_file) == inode &&
->>> +			     !(end_off <= slot->private_offset ||
->>> +			       start_off >= slot->private_offset
->>> +					     + (slot->npages >> PAGE_SHIFT)))
->>> +				return true;
->>> +		}
->>> +	}
->>
->> That's a linear scan of all memslots on each CREATE (and MOVE) operation
->> with a fd - we just spent more than a year rewriting similar linear scans
->> into more efficient operations in KVM.
+Hi,
+
+> On Tue, 22 Feb 2022, NeilBrown wrote:
+> > On Thu, 17 Feb 2022, Wang Yugui wrote:
+> > > Hi,
+> > > 
+> > > > On Thu, 17 Feb 2022, Wang Yugui wrote:
+> > > > > Hi,
+> > > > > Cc: NeilBrown
+> > > > > 
+> > > > > btrfs cross-vfsmount reflink works well now with these 2 patches.
+> > > > > 
+> > > > > [PATCH] fs: allow cross-vfsmount reflink/dedupe
+> > > > > [PATCH] btrfs: remove the cross file system checks from remap
+> > > > > 
+> > > > > But nfs over btrfs still fail to do cross-vfsmount reflink.
+> > > > > need some patch for nfs too?
+> > > > 
+> > > > NFS doesn't support reflinks at all, does it?
+> > > 
+> > > NFS support reflinks now.
+> > > 
+> > > # df -h /ssd
+> > > Filesystem              Type  Size  Used Avail Use% Mounted on
+> > > T640:/ssd               nfs4   17T  5.5T   12T  34% /ssd
+> > > # /bin/cp --reflink=always /ssd/1.txt /ssd/2.txt
+> > > # uname -a
+> > > Linux T7610 5.15.24-3.el7.x86_64 #1 SMP Thu Feb 17 12:13:25 CST 2022 x86_64 x86_64 x86_64 GNU/Linux
+> > > 
+> > 
+> > So it does ..... ahhh, the CLONE command in NFSv4.2.....
+> > This is used by the .remap_file_range file operation.  That operation
+> > only gets called when the "from" and "to" files have the same
+> > superblock.
+> > btrfs has an ....  interesting concept of filesystem identity.  While
+> > different "subvols" have the same superblock locally, when they are
+> > exported over NFS they appear to be different filesystems and so have
+> > different superblocks.  This is in part because btrfs cannot create
+> > properly unique inode numbers across the whole filesystem.
+> > Until btrfs sorts itself out, it will not be able to work with NFS
+> > properly.
 > 
-> In the last version I tried to solve this problem by using interval tree
-> (just like existing hva_tree), but finally we realized that in one VM we
-> can have multiple fds with overlapped offsets so that approach is
-> incorrect. See https://lkml.org/lkml/2021/12/28/480 for the discussion.
+> Actually, that might be a little bit simplistic...
+> 
+> How are you exporting the btfs filesystem on the server.
+> If you are exporting each subvolume separately, then they probably look
+> like different filesystems to NFS.  If you export just the top level and
+> allow the subvolumes to be accessed by name, then they should have the
+> same superblock and reflink should work.
+> 
+> NeilBrown
 
-That's right, in this case a two-level structure would be necessary:
-the first level matching a file, then the second level matching that
-file ranges.
-However, if such data is going to be used just for checking possible
-overlap at memslot add or move time it is almost certainly an overkill.
+struct vfsmount {
+	struct dentry *mnt_root;	/* root of the mounted tree */
+	struct super_block *mnt_sb;	/* pointer to superblock */
+	int mnt_flags;
+	struct user_namespace *mnt_userns;
+} __randomize_layout;
 
-> So linear scan is used before I can find a better way.
+for local mount of btrfs different subvols, there are 1 same attr and 2
+different attr.
+same attr:
+	struct super_block *mnt_sb
+different:
+	struct dentry *mnt_root;
+	subvol attr; to save it in struct user_namespace?
 
-Another option would be to simply not check for overlap at add or move
-time, declare such configuration undefined behavior under KVM API and
-make sure in MMU notifiers that nothing bad happens to the host kernel
-if it turns out somebody actually set up a VM this way (it could be
-inefficient in this case, since it's not supposed to ever happen
-unless there is a bug somewhere in the userspace part).
+for nfs mount of btrfs different subvols, there maybe similar way?
 
-> Chao
+Best Regards
+Wang Yugui (wangyugui@e16-tech.com)
+2022/02/22
 
-Thanks,
-Maciej
+
