@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B98A24C0252
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 20:48:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 113124C0253
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 20:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235302AbiBVTtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Feb 2022 14:49:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49892 "EHLO
+        id S235301AbiBVTtE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Feb 2022 14:49:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232760AbiBVTs4 (ORCPT
+        with ESMTP id S235282AbiBVTs4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 22 Feb 2022 14:48:56 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5EDB8B5E
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29EC9B91CB
         for <linux-fsdevel@vger.kernel.org>; Tue, 22 Feb 2022 11:48:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=NLyfw9XRP7mCIsK0aneOF9LAO3oySuVS05HR9uD3IPc=; b=CXx/Y/pjiW9BEvXtSdTPYjfByy
-        vNVuUkfY9bDpcHK7Xb1ThoKtVbA5ZnLQ5MyLFuXs6su2BOtS2mVHvKTGauZT8IgBN+igW91CUI86X
-        1H6xuO6MAJv1ZwwDSHq+4CTWiG0YIPY/hJv1iTk2h+3q9dt11MKOL82KHTaVwm9kH02UA9qDNEfxw
-        mZRGgHNmcYWvnvrHgLlQ5L3/GcMAAiZhuEucYszbHd0/ReifS1Bj8tR72/qgZULJk6khLTMnGkTrk
-        4Fc+K1oxEOn6rT96rEIJYC2A3uNugxk9+8eugoOOFVSuVidPIJp9TQ5HA9omYeZlQrlsBnn6m+xXw
-        dVL3VhEw==;
+        bh=UvenU1U/B9rNQrri+7fhmzUQHmssqNc9MTSEhGn5COU=; b=Dt0t1FVokjx7GV2/hMZpSgyLUI
+        EL/Yl31aS6VGyUc9o3vFVJkzFpueZ1uR2zo62LeV/eDAvqfeQk3/nXB4eZyjVc4bbxZaogRu+PghD
+        0Z8Mdnr8XPh7xUu6ESqHdHO1b4MJdO+y20DChymjTb7uKG8wVGSUehM2aLf2av+g3JPVx2uJ8xJow
+        qWjBKQistprFG9aqBRD70IwlScjgFQAynwSj9haRqPFuYVsjt0DOa4XWddHNTB6B2VY0AzWd56m+8
+        OaYj4yLWiDSBYydRduxqAZCllWkgm8d2qeyIH23Qlu+cjB5VDTXwRwC/QvVkph3zYQ6F/rXnXx60w
+        nujkAdDA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMb96-00360K-Ac; Tue, 22 Feb 2022 19:48:24 +0000
+        id 1nMb96-00360P-G9; Tue, 22 Feb 2022 19:48:24 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 12/22] ext4: Use scoped memory APIs in ext4_write_begin()
-Date:   Tue, 22 Feb 2022 19:48:10 +0000
-Message-Id: <20220222194820.737755-13-willy@infradead.org>
+Subject: [PATCH 13/22] fs: Remove AOP_FLAG_NOFS
+Date:   Tue, 22 Feb 2022 19:48:11 +0000
+Message-Id: <20220222194820.737755-14-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220222194820.737755-1-willy@infradead.org>
 References: <20220222194820.737755-1-willy@infradead.org>
@@ -48,111 +48,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead of setting AOP_FLAG_NOFS, use memalloc_nofs_save() and
-memalloc_nofs_restore() to prevent GFP_FS allocations recursing
-into the filesystem with a journal already started.
+With all users of this flag gone, we can stop testing whether it's set.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/ext4.h   |  1 -
- fs/ext4/inline.c | 21 ++++++++++-----------
- fs/ext4/inode.c  |  2 +-
- 3 files changed, 11 insertions(+), 13 deletions(-)
+ fs/ceph/addr.c         | 2 --
+ fs/netfs/read_helper.c | 2 --
+ include/linux/fs.h     | 4 ----
+ mm/folio-compat.c      | 2 --
+ 4 files changed, 10 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index d291a0d47993..fe06d4aace09 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3584,7 +3584,6 @@ extern int ext4_readpage_inline(struct inode *inode, struct page *page);
- extern int ext4_try_to_write_inline_data(struct address_space *mapping,
- 					 struct inode *inode,
- 					 loff_t pos, unsigned len,
--					 unsigned flags,
- 					 struct page **pagep);
- extern int ext4_write_inline_data_end(struct inode *inode,
- 				      loff_t pos, unsigned len,
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index f9eeb36bc9f6..eae94228a143 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -527,13 +527,13 @@ int ext4_readpage_inline(struct inode *inode, struct page *page)
- }
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index f40c34f4f526..3a2b98efebf5 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1288,8 +1288,6 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+ 	 */
+ 	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+ 		unsigned int fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
+-		if (aop_flags & AOP_FLAG_NOFS)
+-			fgp_flags |= FGP_NOFS;
+ 		folio = __filemap_get_folio(mapping, index, fgp_flags,
+ 					    mapping_gfp_mask(mapping));
+ 		if (!folio)
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 501da990c259..de0dfb37746b 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -1090,8 +1090,6 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
  
- static int ext4_convert_inline_data_to_extent(struct address_space *mapping,
--					      struct inode *inode,
--					      unsigned flags)
-+					      struct inode *inode)
- {
- 	int ret, needed_blocks, no_expand;
- 	handle_t *handle = NULL;
- 	int retries = 0, sem_held = 0;
- 	struct page *page = NULL;
-+	unsigned int flags;
- 	unsigned from, to;
- 	struct ext4_iloc iloc;
+ retry:
+ 	fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
+-	if (aop_flags & AOP_FLAG_NOFS)
+-		fgp_flags |= FGP_NOFS;
+ 	folio = __filemap_get_folio(mapping, index, fgp_flags,
+ 				    mapping_gfp_mask(mapping));
+ 	if (!folio)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 4db0893750aa..bdbf5dcdb272 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -274,10 +274,6 @@ enum positive_aop_returns {
+ 	AOP_TRUNCATED_PAGE	= 0x80001,
+ };
  
-@@ -562,9 +562,9 @@ static int ext4_convert_inline_data_to_extent(struct address_space *mapping,
- 
- 	/* We cannot recurse into the filesystem as the transaction is already
- 	 * started */
--	flags |= AOP_FLAG_NOFS;
+-#define AOP_FLAG_NOFS			0x0002 /* used by filesystem to direct
+-						* helper code (eg buffer layer)
+-						* to clear GFP_FS from alloc */
 -
--	page = grab_cache_page_write_begin(mapping, 0, flags);
-+	flags = memalloc_nofs_save();
-+	page = grab_cache_page_write_begin(mapping, 0, 0);
-+	memalloc_nofs_restore(flags);
- 	if (!page) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -649,11 +649,11 @@ static int ext4_convert_inline_data_to_extent(struct address_space *mapping,
- int ext4_try_to_write_inline_data(struct address_space *mapping,
- 				  struct inode *inode,
- 				  loff_t pos, unsigned len,
--				  unsigned flags,
- 				  struct page **pagep)
+ /*
+  * oh the beauties of C type declarations.
+  */
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 749555a232a8..540c4949e9a1 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -134,8 +134,6 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
  {
- 	int ret;
- 	handle_t *handle;
-+	unsigned int flags;
- 	struct page *page;
- 	struct ext4_iloc iloc;
+ 	unsigned fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
  
-@@ -691,9 +691,9 @@ int ext4_try_to_write_inline_data(struct address_space *mapping,
- 	if (ret)
- 		goto out;
- 
--	flags |= AOP_FLAG_NOFS;
--
--	page = grab_cache_page_write_begin(mapping, 0, flags);
-+	flags = memalloc_nofs_save();
-+	page = grab_cache_page_write_begin(mapping, 0, 0);
-+	memalloc_nofs_restore(flags);
- 	if (!page) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -727,8 +727,7 @@ int ext4_try_to_write_inline_data(struct address_space *mapping,
- 	brelse(iloc.bh);
- 	return ret;
- convert:
--	return ext4_convert_inline_data_to_extent(mapping,
--						  inode, flags);
-+	return ext4_convert_inline_data_to_extent(mapping, inode);
+-	if (flags & AOP_FLAG_NOFS)
+-		fgp_flags |= FGP_NOFS;
+ 	return pagecache_get_page(mapping, index, fgp_flags,
+ 			mapping_gfp_mask(mapping));
  }
- 
- int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index bffcdefb0ffa..c203183859c9 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1156,7 +1156,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
- 
- 	if (ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA)) {
- 		ret = ext4_try_to_write_inline_data(mapping, inode, pos, len,
--						    flags, pagep);
-+						    pagep);
- 		if (ret < 0)
- 			return ret;
- 		if (ret == 1)
 -- 
 2.34.1
 
