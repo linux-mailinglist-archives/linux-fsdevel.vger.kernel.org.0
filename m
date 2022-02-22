@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 867EB4BF03B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 05:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68A904BF0D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Feb 2022 05:11:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240076AbiBVDTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Feb 2022 22:19:14 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43900 "EHLO
+        id S241485AbiBVDVW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Feb 2022 22:21:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233775AbiBVDTN (ORCPT
+        with ESMTP id S241468AbiBVDVP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Feb 2022 22:19:13 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1552F73;
-        Mon, 21 Feb 2022 19:18:48 -0800 (PST)
+        Mon, 21 Feb 2022 22:21:15 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5541193E3;
+        Mon, 21 Feb 2022 19:20:48 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 562ED1F396;
-        Tue, 22 Feb 2022 03:18:47 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 756FA210FF;
+        Tue, 22 Feb 2022 03:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1645499927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1645500047; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=;
-        b=0+g51AMGEI3r9A8ASMpz3wY3CyKSJDeDWn0AKqsQTwh9NMem16Yu3oX327mnvhNj8U+DA9
-        33oY/yjrsDIe2YUWn2bZG7jQOA+4FUB3X9JdnoOXaU38SgqeQ9WEuMqtv61aD05pH60kr9
-        62rxLcOCo92AZ73iiwrb3gpP+RZqT9c=
+        bh=OVO5L5oh76QqfW3n1oDvBos2Yawv0E43OsrqMmz97u8=;
+        b=Cx4lOcCSZ4xZdlO/0dt8OvOiHYMvfFgE8dneyy4gx9SAbx/jm5IA5BhEiUt8c8MGgChw8S
+        lV0AvwUZ9O2angScciMT5S/cugRbdvDnpm+SMpxcXp1h2pdra88SQyfZY9lVnTX5Tr8Dg4
+        oB5Wo4vGigfE2skk7MCoyKNYLxDuocs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1645499927;
+        s=susede2_ed25519; t=1645500047;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=;
-        b=RQ5ZNUEdexnmqLSqD8rTQIgSPwQRUQeUCQajOzdhoZRnXzxb5C8Ud6kKPvOlourkGfZFR4
-        QB7vKbrUxbKosNBQ==
+        bh=OVO5L5oh76QqfW3n1oDvBos2Yawv0E43OsrqMmz97u8=;
+        b=SRC+OazRSNJPy370sTVlIzOM0il7qZEAvTNiLN6R//xLWhOCX5g8q6QwhVzoewi3VDD6wO
+        l60QJmE012FgycCQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A183013BA7;
-        Tue, 22 Feb 2022 03:18:36 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0E23613BA7;
+        Tue, 22 Feb 2022 03:20:35 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Pv19FwxWFGKWWgAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 22 Feb 2022 03:18:36 +0000
-Subject: [PATCH 04/11] fuse: remove reliance on bdi congestion
+        id m6yZK4NWFGJLWwAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 22 Feb 2022 03:20:35 +0000
+Subject: [PATCH 11/11] Remove congestion tracking framework.
 From:   NeilBrown <neilb@suse.de>
 To:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
         Wu Fengguang <fengguang.wu@intel.com>,
@@ -72,7 +72,7 @@ Cc:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
         ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
         linux-kernel@vger.kernel.org
 Date:   Tue, 22 Feb 2022 14:17:17 +1100
-Message-ID: <164549983737.9187.2627117501000365074.stgit@noble.brown>
+Message-ID: <164549983747.9187.6171768583526866601.stgit@noble.brown>
 In-Reply-To: <164549971112.9187.16871723439770288255.stgit@noble.brown>
 References: <164549971112.9187.16871723439770288255.stgit@noble.brown>
 User-Agent: StGit/0.23
@@ -89,145 +89,151 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The bdi congestion tracking in not widely used and will be removed.
-
-Fuse is one of a small number of filesystems that uses it, setting both
-the sync (read) and async (write) congestion flags at what it determines
-are appropriate times.
-
-The only remaining effect of the sync flag is to cause read-ahead to be
-skipped.
-The only remaining effect of the async flag is to cause (some)
-WB_SYNC_NONE writes to be skipped.
-
-So instead of setting the flags, change:
- - .readahead to stop when it has submitted all non-async pages
-    for read.
- - .writepages to do nothing if WB_SYNC_NONE and the flag would be set
- - .writepage to return AOP_WRITEPAGE_ACTIVATE if WB_SYNC_NONE
-    and the flag would be set.
-
-The writepages change causes a behavioural change in that pageout() can
-now return PAGE_ACTIVATE instead of PAGE_KEEP, so SetPageActive() will
-be called on the page which (I think) will further delay the next attempt
-at writeout.  This might be a good thing.
+This framework is no longer used - so discard it.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/fuse/control.c |   17 -----------------
- fs/fuse/dev.c     |    8 --------
- fs/fuse/file.c    |   17 +++++++++++++++++
- 3 files changed, 17 insertions(+), 25 deletions(-)
+ include/linux/backing-dev-defs.h |    8 -----
+ include/linux/backing-dev.h      |    2 -
+ include/trace/events/writeback.h |   28 -------------------
+ mm/backing-dev.c                 |   57 --------------------------------------
+ 4 files changed, 95 deletions(-)
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index 000d2e5627e9..7cede9a3bc96 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -164,7 +164,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
- {
- 	unsigned val;
- 	struct fuse_conn *fc;
--	struct fuse_mount *fm;
- 	ssize_t ret;
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 993c5628a726..e863c88df95f 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -207,14 +207,6 @@ struct backing_dev_info {
+ #endif
+ };
  
- 	ret = fuse_conn_limit_write(file, buf, count, ppos, &val,
-@@ -178,22 +177,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
- 	down_read(&fc->killsb);
- 	spin_lock(&fc->bg_lock);
- 	fc->congestion_threshold = val;
+-enum {
+-	BLK_RW_ASYNC	= 0,
+-	BLK_RW_SYNC	= 1,
+-};
 -
--	/*
--	 * Get any fuse_mount belonging to this fuse_conn; s_bdi is
--	 * shared between all of them
--	 */
+-void clear_bdi_congested(struct backing_dev_info *bdi, int sync);
+-void set_bdi_congested(struct backing_dev_info *bdi, int sync);
 -
--	if (!list_empty(&fc->mounts)) {
--		fm = list_first_entry(&fc->mounts, struct fuse_mount, fc_entry);
--		if (fc->num_background < fc->congestion_threshold) {
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		} else {
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		}
--	}
- 	spin_unlock(&fc->bg_lock);
- 	up_read(&fc->killsb);
- 	fuse_conn_put(fc);
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index cd54a529460d..e1b4a846c90d 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -315,10 +315,6 @@ void fuse_request_end(struct fuse_req *req)
- 				wake_up(&fc->blocked_waitq);
- 		}
+ struct wb_lock_cookie {
+ 	bool locked;
+ 	unsigned long flags;
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index 2d764566280c..87ce24d238f3 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -135,8 +135,6 @@ static inline bool writeback_in_progress(struct bdi_writeback *wb)
  
--		if (fc->num_background == fc->congestion_threshold && fm->sb) {
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		}
- 		fc->num_background--;
- 		fc->active_background--;
- 		flush_bg_queue(fc);
-@@ -540,10 +536,6 @@ static bool fuse_request_queue_background(struct fuse_req *req)
- 		fc->num_background++;
- 		if (fc->num_background == fc->max_background)
- 			fc->blocked = 1;
--		if (fc->num_background == fc->congestion_threshold && fm->sb) {
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		}
- 		list_add_tail(&req->list, &fc->bg_queue);
- 		flush_bg_queue(fc);
- 		queued = true;
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 829094451774..94747bac3489 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -966,6 +966,14 @@ static void fuse_readahead(struct readahead_control *rac)
- 		struct fuse_io_args *ia;
- 		struct fuse_args_pages *ap;
+ struct backing_dev_info *inode_to_bdi(struct inode *inode);
  
-+		if (fc->num_background >= fc->congestion_threshold &&
-+		    rac->ra->async_size >= readahead_count(rac))
-+			/*
-+			 * Congested and only async pages left, so skip the
-+			 * rest.
-+			 */
-+			break;
-+
- 		nr_pages = readahead_count(rac) - nr_pages;
- 		if (nr_pages > max_pages)
- 			nr_pages = max_pages;
-@@ -1958,6 +1966,7 @@ static int fuse_writepage_locked(struct page *page)
- 
- static int fuse_writepage(struct page *page, struct writeback_control *wbc)
+-long congestion_wait(int sync, long timeout);
+-
+ static inline bool mapping_can_writeback(struct address_space *mapping)
  {
-+	struct fuse_conn *fc = get_fuse_conn(page->mapping->host);
- 	int err;
+ 	return inode_to_bdi(mapping->host)->capabilities & BDI_CAP_WRITEBACK;
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index a345b1e12daf..86b2a82da546 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -735,34 +735,6 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
+ 	)
+ );
  
- 	if (fuse_page_is_writeback(page->mapping->host, page->index)) {
-@@ -1973,6 +1982,10 @@ static int fuse_writepage(struct page *page, struct writeback_control *wbc)
- 		return 0;
- 	}
+-DECLARE_EVENT_CLASS(writeback_congest_waited_template,
+-
+-	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
+-
+-	TP_ARGS(usec_timeout, usec_delayed),
+-
+-	TP_STRUCT__entry(
+-		__field(	unsigned int,	usec_timeout	)
+-		__field(	unsigned int,	usec_delayed	)
+-	),
+-
+-	TP_fast_assign(
+-		__entry->usec_timeout	= usec_timeout;
+-		__entry->usec_delayed	= usec_delayed;
+-	),
+-
+-	TP_printk("usec_timeout=%u usec_delayed=%u",
+-			__entry->usec_timeout,
+-			__entry->usec_delayed)
+-);
+-
+-DEFINE_EVENT(writeback_congest_waited_template, writeback_congestion_wait,
+-
+-	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
+-
+-	TP_ARGS(usec_timeout, usec_delayed)
+-);
+-
+ DECLARE_EVENT_CLASS(writeback_single_inode_template,
  
-+	if (wbc->sync_mode == WB_SYNC_NONE &&
-+	    fc->num_background >= fc->congestion_threshold)
-+		return AOP_WRITEPAGE_ACTIVATE;
-+
- 	err = fuse_writepage_locked(page);
- 	unlock_page(page);
- 
-@@ -2226,6 +2239,10 @@ static int fuse_writepages(struct address_space *mapping,
- 	if (fuse_is_bad(inode))
- 		goto out;
- 
-+	if (wbc->sync_mode == WB_SYNC_NONE &&
-+	    fc->num_background >= fc->congestion_threshold)
-+		return 0;
-+
- 	data.inode = inode;
- 	data.wpa = NULL;
- 	data.ff = NULL;
+ 	TP_PROTO(struct inode *inode,
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index eae96dfe0261..7176af65b103 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -1005,60 +1005,3 @@ const char *bdi_dev_name(struct backing_dev_info *bdi)
+ 	return bdi->dev_name;
+ }
+ EXPORT_SYMBOL_GPL(bdi_dev_name);
+-
+-static wait_queue_head_t congestion_wqh[2] = {
+-		__WAIT_QUEUE_HEAD_INITIALIZER(congestion_wqh[0]),
+-		__WAIT_QUEUE_HEAD_INITIALIZER(congestion_wqh[1])
+-	};
+-static atomic_t nr_wb_congested[2];
+-
+-void clear_bdi_congested(struct backing_dev_info *bdi, int sync)
+-{
+-	wait_queue_head_t *wqh = &congestion_wqh[sync];
+-	enum wb_congested_state bit;
+-
+-	bit = sync ? WB_sync_congested : WB_async_congested;
+-	if (test_and_clear_bit(bit, &bdi->wb.congested))
+-		atomic_dec(&nr_wb_congested[sync]);
+-	smp_mb__after_atomic();
+-	if (waitqueue_active(wqh))
+-		wake_up(wqh);
+-}
+-EXPORT_SYMBOL(clear_bdi_congested);
+-
+-void set_bdi_congested(struct backing_dev_info *bdi, int sync)
+-{
+-	enum wb_congested_state bit;
+-
+-	bit = sync ? WB_sync_congested : WB_async_congested;
+-	if (!test_and_set_bit(bit, &bdi->wb.congested))
+-		atomic_inc(&nr_wb_congested[sync]);
+-}
+-EXPORT_SYMBOL(set_bdi_congested);
+-
+-/**
+- * congestion_wait - wait for a backing_dev to become uncongested
+- * @sync: SYNC or ASYNC IO
+- * @timeout: timeout in jiffies
+- *
+- * Waits for up to @timeout jiffies for a backing_dev (any backing_dev) to exit
+- * write congestion.  If no backing_devs are congested then just wait for the
+- * next write to be completed.
+- */
+-long congestion_wait(int sync, long timeout)
+-{
+-	long ret;
+-	unsigned long start = jiffies;
+-	DEFINE_WAIT(wait);
+-	wait_queue_head_t *wqh = &congestion_wqh[sync];
+-
+-	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
+-	ret = io_schedule_timeout(timeout);
+-	finish_wait(wqh, &wait);
+-
+-	trace_writeback_congestion_wait(jiffies_to_usecs(timeout),
+-					jiffies_to_usecs(jiffies - start));
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(congestion_wait);
 
 
