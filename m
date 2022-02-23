@@ -2,128 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86FCA4C1DC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 22:31:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 599CF4C1F84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 00:18:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242601AbiBWVb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 16:31:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59526 "EHLO
+        id S244796AbiBWXS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 18:18:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234865AbiBWVb6 (ORCPT
+        with ESMTP id S244783AbiBWXS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 16:31:58 -0500
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EEA554EF74;
-        Wed, 23 Feb 2022 13:31:29 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2889E10E245E;
-        Thu, 24 Feb 2022 08:31:28 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nMzEN-00Fc9U-Tf; Thu, 24 Feb 2022 08:31:27 +1100
-Date:   Thu, 24 Feb 2022 08:31:27 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH] reiserfs: Deprecate reiserfs
-Message-ID: <20220223213127.GI3061737@dread.disaster.area>
-References: <20220223142653.22388-1-jack@suse.cz>
+        Wed, 23 Feb 2022 18:18:27 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224D854190;
+        Wed, 23 Feb 2022 15:17:59 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id nh8-20020a17090b364800b001bc023c6f34so4075764pjb.3;
+        Wed, 23 Feb 2022 15:17:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X4Hc3H6C7uhRqzAyT0iw9Lo49T1Lu66SQ9hcyKWnV4o=;
+        b=qYlvMCjBaD2BuPwXnC5wsAO5zGYaLTug/Sxsrj6VSV0cOPcWfwBG3BlcdvowvjRAkk
+         W9RqhXM1NX0rPUgMTjTpNKijxEs/colOSmZ9ENaSk4KJUaROd93sai4xGcyovWU4obTV
+         iuP2kQJfIDxIe0HdIPxycOiMWG6qtWsHEKeurldznNwob6CMyDxFavzEIu4VS/ClG4Yc
+         DAqMCpt7YNumPzpcEt5V+Taj8hhdr8VUtIgGSyhfmAfena+AUcI1DWCR8xAeQlSSzXkV
+         iKyVC6CvCUe0xcRY+Eayd4cx9yNT0gSuitv3dfYBW2M+PW012K0PZuSSzeiCZc95bSd/
+         Ggsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X4Hc3H6C7uhRqzAyT0iw9Lo49T1Lu66SQ9hcyKWnV4o=;
+        b=GrwS8XGljl+BPf9bmcZxfw5KrFoEbdqcDIRhEK3lXWonUtT3WtqYKRgCIGCBA0vfpC
+         e6ZlH38I57+pTr8MgO8Nowew7ActMRnNoG541UoYUe+JWfo9AZj+99pfGKAOJSm+7Y7e
+         6WlGWpQhdVfOQZ059+ae+BUkv2s41LELB+f8ry5TijWV2AxRZUl+GgyPzh3cJnztOeyk
+         5fINkjmV99tBB08Q02b2lF4r/SBkadajJ8kHw75o3P6rq9IVcnoGg1VGm7y6sTAKleqO
+         sJuoKjUjoFqPUCgGUwrN0cOFYGBDf+TSrh0GEkD1YDpuJ9Vvc1NVeY6h0xbPvf1lLRbD
+         Wixw==
+X-Gm-Message-State: AOAM532DM4CVGMK8FIJtC+x7ExrI4orwgfiUeSVTBd6SyGHTr4EiDGv4
+        kbP1DFFB1bL3cRAayMqj6KCPsHbwlK8sPg==
+X-Google-Smtp-Source: ABdhPJyoy5coDRQfUY9K5shvH1Tf8ZSDzoEUYocrjA/1PHekvfuJT3S81cM5jXWZ8f+HBez0BbgXsg==
+X-Received: by 2002:a17:90a:4306:b0:1b9:80b3:7a3d with SMTP id q6-20020a17090a430600b001b980b37a3dmr11387497pjg.66.1645658278439;
+        Wed, 23 Feb 2022 15:17:58 -0800 (PST)
+Received: from localhost.localdomain ([211.226.85.205])
+        by smtp.gmail.com with ESMTPSA id x3-20020a17090ad68300b001b8bcd47c35sm4056074pju.6.2022.02.23.15.17.56
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 23 Feb 2022 15:17:58 -0800 (PST)
+From:   Levi Yun <ppbuk5246@gmail.com>
+To:     keescook@chromium.org, ebiederm@xmission.com,
+        viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Levi Yun <ppbuk5246@gmail.com>
+Subject: [PATCH] fs/exec.c: Avoid a race in formats
+Date:   Thu, 24 Feb 2022 08:17:52 +0900
+Message-Id: <20220223231752.52241-1-ppbuk5246@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220223142653.22388-1-jack@suse.cz>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=6216a7b1
-        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=kj9zAlcOel0A:10 a=oGFeUVbbRNcA:10 a=7-415B0cAAAA:8
-        a=QrCbJ4dQJB4WbGYf2mcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 03:26:53PM +0100, Jan Kara wrote:
-> Reiserfs is relatively old filesystem and its development has ceased
-> quite some years ago. Linux distributions moved away from it towards
-> other filesystems such as btrfs, xfs, or ext4. To reduce maintenance
-> burden on cross filesystem changes (such as new mount API, iomap, folios
-> ...) let's add a deprecation notice when the filesystem is mounted and
-> schedule its removal to 2024.
+Suppose a module registers its own binfmt (custom) and formats is like:
 
-Two years might be considered "short notice" for a filesystem, but I
-guess that people running it because it is stable will most likely
-also linger on stable kernels where it will live "maintained" for
-many years after it has been removed from the upstream code base.
++---------+    +----------+    +---------+
+| custom  | -> |  format1 | -> | format2 |
++---------+    +----------+    +---------+
 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/reiserfs/Kconfig | 10 +++++++---
->  fs/reiserfs/super.c |  2 ++
->  2 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> Here's my suggestion for deprecating reiserfs. If nobody has reasons against
-> this, I'll send the patch to Linus during the next merge window.
+and try to call unregister_binfmt with custom NOT in __exit stage.
 
-Is there a deprecation/removal schedule somewhere that documents
-stuff like this? We documented in the XFS section of the kernel
-admin guide (where we also document mount option and
-sysctl deprecation and removal schedules), but I don't think
-anything like that exists for reiserfs or for filesystems in
-general.
+In that situation, below race scenario can happen.
 
-Other than that, the patch looks good.
+CPU 0						CPU1
+search_binary_handler				...
+	read_lock				unregister_binfmt(custom)
+	list_for_each_entry			< wait >
+	(get custom binfmt)			...
+	read_unlock				...
+	...					list_del
+	custom binfmt return -ENOEXEC
+	get next fmt entry (LIST_POISON1)
 
-Cheers,
+Because CPU1 set the fmt->lh.next as LIST_POISON1,
+CPU 0 get next binfmt as LIST_POISON1.
+In that situation, CPU0 try to dereference LIST_POISON1 address and
+makes PANIC.
 
-Dave.
+To avoid this situation, check the fmt is valid.
+And if it isn't valid, return -EAGAIN.
 
-> 
-> diff --git a/fs/reiserfs/Kconfig b/fs/reiserfs/Kconfig
-> index 8fd54ed8f844..eafee53ddabc 100644
-> --- a/fs/reiserfs/Kconfig
-> +++ b/fs/reiserfs/Kconfig
-> @@ -1,10 +1,14 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config REISERFS_FS
-> -	tristate "Reiserfs support"
-> +	tristate "Reiserfs support (deprecated)"
->  	select CRC32
->  	help
-> -	  Stores not just filenames but the files themselves in a balanced
-> -	  tree.  Uses journalling.
-> +	  Reiserfs is deprecated and scheduled to be removed from the kernel
-> +	  in 2024. If you are still using it, please migrate to another
-> +	  filesystem or tell us your usecase for reiserfs.
-> +
-> +	  Reiserfs stores not just filenames but the files themselves in a
-> +	  balanced tree.  Uses journalling.
->  
->  	  Balanced trees are more efficient than traditional file system
->  	  architectural foundations.
-> diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-> index 82e09901462e..74c1cda3bc3e 100644
-> --- a/fs/reiserfs/super.c
-> +++ b/fs/reiserfs/super.c
-> @@ -1652,6 +1652,8 @@ static int read_super_block(struct super_block *s, int offset)
->  		return 1;
->  	}
->  
-> +	reiserfs_warning(NULL, "", "reiserfs filesystem is deprecated and "
-> +		"scheduled to be removed from the kernel in 2024");
->  	SB_BUFFER_WITH_SB(s) = bh;
->  	SB_DISK_SUPER_BLOCK(s) = rs;
->  
-> -- 
-> 2.31.1
-> 
-> 
+Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
+---
+ fs/exec.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/fs/exec.c b/fs/exec.c
+index 79f2c9483302..2042a1232656 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1720,6 +1720,12 @@ static int search_binary_handler(struct linux_binprm *bprm)
+  retry:
+ 	read_lock(&binfmt_lock);
+ 	list_for_each_entry(fmt, &formats, lh) {
++		if (fmt == LIST_POISON1) {
++			read_unlock(&binfmt_lock);
++			retval = -EAGAIN;
++			break;
++		}
++
+ 		if (!try_module_get(fmt->module))
+ 			continue;
+ 		read_unlock(&binfmt_lock);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
