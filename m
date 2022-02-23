@@ -2,139 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AFFD4C11E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 12:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB2A44C11F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 12:53:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240132AbiBWLuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 06:50:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52578 "EHLO
+        id S240187AbiBWLxs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 06:53:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240101AbiBWLua (ORCPT
+        with ESMTP id S235966AbiBWLxs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 06:50:30 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30FA1AF0E;
-        Wed, 23 Feb 2022 03:50:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645617002; x=1677153002;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=h059MTs1GCpelszK6wn0Y7AYm7QzLTn2WIrQltgpYTY=;
-  b=nRRHW7f03jxQyNdvkoUZh5f8aLof2IJfkPM3Gi1QJoyN2RDvBK/HO2Qj
-   vVuK3qlBD5KhKq4NfK9bwruNXAohTAfX4eWqfz/ko1TTVt0bjobwaVx+K
-   hDmJYTV2qO0aB5hZLX9nASNJO/0yHrnluqRNLmrUITUewsktX3ncG9XHG
-   Koj2TPTskERaZTku8Yc9Ry31LMmUMpCaGNlUDqjHIL9+hEqEl9pJ9J3OS
-   eplZZIdYBIciiHLrpYBmC4sYjpvRwcNHw8Fuv40a+4RTA3pFD0pDoeRF5
-   oWAhpvP41unbXK3PwmVqRUBldnphL2sXAvfmPh/ZvfzwlXixxdQqHJWwh
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="239335570"
-X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
-   d="scan'208";a="239335570"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2022 03:50:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
-   d="scan'208";a="532650031"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 23 Feb 2022 03:49:55 -0800
-Date:   Wed, 23 Feb 2022 19:49:35 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Linux API <linux-api@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH v4 01/12] mm/shmem: Introduce F_SEAL_INACCESSIBLE
-Message-ID: <20220223114935.GA53733@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
- <20220118132121.31388-2-chao.p.peng@linux.intel.com>
- <619547ad-de96-1be9-036b-a7b4e99b09a6@kernel.org>
- <20220217130631.GB32679@chaop.bj.intel.com>
- <2ca78dcb-61d9-4c9d-baa9-955b6f4298bb@www.fastmail.com>
+        Wed, 23 Feb 2022 06:53:48 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84C3E57B1A;
+        Wed, 23 Feb 2022 03:53:20 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 40A3F1F43D;
+        Wed, 23 Feb 2022 11:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1645617199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lHKLDcXaApTqsl2KQS4V+/Sm+LIozq5sgKx8GXifXUE=;
+        b=egv/jm8RvovquqsfWcuJRwBtKBVUu7OVZoV08A97BI/bojJrZKRGrPOawsaSoFdwUgRrJ1
+        Y8yOK1HZXCJlxhkg+3ItPW4f4Y7L7OGxC1fDYlJbmwORfiSY2i+owYRWiMkGiTWKBIJNSz
+        GYOIjG7+B3d4gYXjP41jiRgKBHjUWo8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1645617199;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lHKLDcXaApTqsl2KQS4V+/Sm+LIozq5sgKx8GXifXUE=;
+        b=DjQTeQ5j1zEB52lzsMsHmvZJjvTFizTsSZHs11jPamrSA1NDxfM+1XbJwJl372CHKtWIq6
+        AgOLK5j3rK2xnAAA==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 308D7A3B81;
+        Wed, 23 Feb 2022 11:53:19 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 67980A0605; Wed, 23 Feb 2022 12:53:13 +0100 (CET)
+Date:   Wed, 23 Feb 2022 12:53:13 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC 3/9] ext4: Add couple of more fast_commit tracepoints
+Message-ID: <20220223115313.3s73bu7p454bodvl@quack3.lan>
+References: <cover.1645558375.git.riteshh@linux.ibm.com>
+ <90608d31b7ad8500c33d875d3a7fa50e3456dc1a.1645558375.git.riteshh@linux.ibm.com>
+ <20220223094057.53zcovnazrqwbngw@quack3.lan>
+ <20220223101159.ekwbylvbmec5v35q@riteshh-domain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ca78dcb-61d9-4c9d-baa9-955b6f4298bb@www.fastmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220223101159.ekwbylvbmec5v35q@riteshh-domain>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 17, 2022 at 11:09:35AM -0800, Andy Lutomirski wrote:
-> On Thu, Feb 17, 2022, at 5:06 AM, Chao Peng wrote:
-> > On Fri, Feb 11, 2022 at 03:33:35PM -0800, Andy Lutomirski wrote:
-> >> On 1/18/22 05:21, Chao Peng wrote:
-> >> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> >> > 
-> >> > Introduce a new seal F_SEAL_INACCESSIBLE indicating the content of
-> >> > the file is inaccessible from userspace through ordinary MMU access
-> >> > (e.g., read/write/mmap). However, the file content can be accessed
-> >> > via a different mechanism (e.g. KVM MMU) indirectly.
-> >> > 
-> >> > It provides semantics required for KVM guest private memory support
-> >> > that a file descriptor with this seal set is going to be used as the
-> >> > source of guest memory in confidential computing environments such
-> >> > as Intel TDX/AMD SEV but may not be accessible from host userspace.
-> >> > 
-> >> > At this time only shmem implements this seal.
-> >> > 
-> >> 
-> >> I don't dislike this *that* much, but I do dislike this. F_SEAL_INACCESSIBLE
-> >> essentially transmutes a memfd into a different type of object.  While this
-> >> can apparently be done successfully and without races (as in this code),
-> >> it's at least awkward.  I think that either creating a special inaccessible
-> >> memfd should be a single operation that create the correct type of object or
-> >> there should be a clear justification for why it's a two-step process.
+On Wed 23-02-22 15:41:59, Ritesh Harjani wrote:
+> On 22/02/23 10:40AM, Jan Kara wrote:
+> > On Wed 23-02-22 02:04:11, Ritesh Harjani wrote:
+> > > This adds two more tracepoints for ext4_fc_track_template() &
+> > > ext4_fc_cleanup() which are helpful in debugging some fast_commit issues.
+> > >
+> > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 > >
-> > Now one justification maybe from Stever's comment to patch-00: for ARM
-> > usage it can be used with creating a normal memfd, (partially)populate
-> > it with initial guest memory content (e.g. firmware), and then
-> > F_SEAL_INACCESSIBLE it just before the first time lunch of the guest in
-> > KVM (definitely the current code needs to be changed to support that).
+> > So why is this more useful than trace_ext4_fc_track_range() and other
+> > tracepoints? I don't think it provides any more information? What am I
+> > missing?
 > 
-> Except we don't allow F_SEAL_INACCESSIBLE on a non-empty file, right?  So this won't work.
-
-Hmm, right, if we set F_SEAL_INACCESSIBLE on a non-empty file, we will 
-need to make sure access to existing mmap-ed area should be prevented,
-but that is hard.
-
+> Thanks Jan for all the reviews.
 > 
-> In any case, the whole confidential VM initialization story is a bit buddy.  From the earlier emails, it sounds like ARM expects the host to fill in guest memory and measure it.  From my recollection of Intel's scheme (which may well be wrong, and I could easily be confusing it with SGX), TDX instead measures what is essentially a transcript of the series of operations that initializes the VM.  These are fundamentally not the same thing even if they accomplish the same end goal.  For TDX, we unavoidably need an operation (ioctl or similar) that initializes things according to the VM's instructions, and ARM ought to be able to use roughly the same mechanism.
-
-Yes, TDX requires a ioctl. Steven may comment on the ARM part.
-
-Chao
+> So ext4_fc_track_template() adds almost all required information
+> (including the caller info) in this one trace point along with transaction tid
+> which is useful for tracking issue similar to what is mentioned in Patch-9.
 > 
-> Also, if we ever get fancy and teach the page allocator about memory with reduced directmap permissions, it may well be more efficient for userspace to shove data into a memfd via ioctl than it is to mmap it and write the data.
+> (race with if inode is part of two transactions tid where jbd2 full commit
+> may begin for txn n-1 while inode is still in sbi->s_fc_q[MAIN])
+ 
+I understand commit tid is interesting but cannot we just add it to
+tracepoints like trace_ext4_fc_track_range() directly? It would seem useful
+to have it there and when it is there, the need for
+ext4_fc_track_template() is not really big. I don't care too much but
+this tracepoint looked a bit superfluous to me.
 
+> And similarly ext4_fc_cleanup() helps with that information about which tid
+> completed and whether it was called from jbd2 full commit or from fast_commit.
 
+Yeah, that one is clear.
 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
