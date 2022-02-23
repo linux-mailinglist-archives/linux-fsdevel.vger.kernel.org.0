@@ -2,128 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0744C09E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 04:04:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEAB84C0A42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 04:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235190AbiBWDEa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Feb 2022 22:04:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43368 "EHLO
+        id S237903AbiBWDaz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Feb 2022 22:30:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235946AbiBWDE3 (ORCPT
+        with ESMTP id S237892AbiBWDay (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Feb 2022 22:04:29 -0500
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70DB94B403;
-        Tue, 22 Feb 2022 19:04:02 -0800 (PST)
-Received: from dggpeml500020.china.huawei.com (unknown [172.30.72.53])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4K3LNf3clCz1FDVN;
-        Wed, 23 Feb 2022 10:59:30 +0800 (CST)
-Received: from dggpeml100012.china.huawei.com (7.185.36.121) by
- dggpeml500020.china.huawei.com (7.185.36.88) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 23 Feb 2022 11:04:00 +0800
-Received: from Linux-SUSE12SP5.huawei.com (10.67.189.3) by
- dggpeml100012.china.huawei.com (7.185.36.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 23 Feb 2022 11:04:00 +0800
-From:   yingelin <yingelin@huawei.com>
-To:     <ebiederm@xmission.com>, <mcgrof@kernel.org>,
-        <keescook@chromium.org>, <yzaikin@google.com>
-CC:     <kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <zengweilin@huawei.com>,
-        <chenjianguo3@huawei.com>, <nixiaoming@huawei.com>,
-        <qiuguorui1@huawei.com>, <yingelin@huawei.com>,
-        <young.liuyang@huawei.com>
-Subject: [PATCH sysctl-next] kernel/kexec_core: move kexec_core sysctls into its own file
-Date:   Wed, 23 Feb 2022 11:03:18 +0800
-Message-ID: <20220223030318.213093-1-yingelin@huawei.com>
-X-Mailer: git-send-email 2.26.2
+        Tue, 22 Feb 2022 22:30:54 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC9704EA12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Feb 2022 19:30:26 -0800 (PST)
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.51 with ESMTP; 23 Feb 2022 12:30:24 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
+        by 156.147.1.125 with ESMTP; 23 Feb 2022 12:30:24 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Wed, 23 Feb 2022 12:30:12 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        bfields@fieldses.org, gregkh@linuxfoundation.org,
+        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
+        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.com, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: Report 1 in ext4 and journal based on v5.17-rc1
+Message-ID: <20220223033012.GC26277@X58A-UD3R>
+References: <1645095472-26530-1-git-send-email-byungchul.park@lge.com>
+ <1645096204-31670-1-git-send-email-byungchul.park@lge.com>
+ <20220222082723.rddf4typah3wegrc@quack3.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.189.3]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml100012.china.huawei.com (7.185.36.121)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220222082723.rddf4typah3wegrc@quack3.lan>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This move the kernel/kexec_core.c respective sysctls to its own file.
+On Tue, Feb 22, 2022 at 09:27:23AM +0100, Jan Kara wrote:
+> On Thu 17-02-22 20:10:03, Byungchul Park wrote:
+> > [    7.009608] ===================================================
+> > [    7.009613] DEPT: Circular dependency has been detected.
+> > [    7.009614] 5.17.0-rc1-00014-g8a599299c0cb-dirty #30 Tainted: G        W
+> > [    7.009616] ---------------------------------------------------
+> > [    7.009617] summary
+> > [    7.009618] ---------------------------------------------------
+> > [    7.009618] *** DEADLOCK ***
+> > [    7.009618]
+> > [    7.009619] context A
+> > [    7.009619]     [S] (unknown)(&(bit_wait_table + i)->dmap:0)
+> > [    7.009621]     [W] down_write(&ei->i_data_sem:0)
+> > [    7.009623]     [E] event(&(bit_wait_table + i)->dmap:0)
+> > [    7.009624]
+> > [    7.009625] context B
+> > [    7.009625]     [S] down_read(&ei->i_data_sem:0)
+> > [    7.009626]     [W] wait(&(bit_wait_table + i)->dmap:0)
+> > [    7.009627]     [E] up_read(&ei->i_data_sem:0)
+> > [    7.009628]
+> 
+> Looking into this I have noticed that Dept here tracks bitlocks (buffer
+> locks in particular) but it apparently treats locks on all buffers as one
+> locking class so it conflates lock on superblock buffer with a lock on
+> extent tree block buffer. These are wastly different locks with different
+> locking constraints. So to avoid false positives in filesystems we will
+> need to add annotations to differentiate locks on different buffers (based
+> on what the block is used for). Similarly how we e.g. annotate i_rwsem for
+> different inodes.
 
-Signed-off-by: yingelin <yingelin@huawei.com>
----
- kernel/kexec_core.c | 20 ++++++++++++++++++++
- kernel/sysctl.c     | 13 -------------
- 2 files changed, 20 insertions(+), 13 deletions(-)
+Hi Jan Kara,
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 68480f731192..e57339d49439 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -936,6 +936,26 @@ int kimage_load_segment(struct kimage *image,
- struct kimage *kexec_image;
- struct kimage *kexec_crash_image;
- int kexec_load_disabled;
-+static struct ctl_table kexec_core_sysctls[] = {
-+	{
-+		.procname	= "kexec_load_disabled",
-+		.data		= &kexec_load_disabled,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		/* only handle a transition from default "0" to "1" */
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ONE,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{ }
-+};
-+
-+static int __init kexec_core_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", kexec_core_sysctls);
-+	return 0;
-+}
-+late_initcall(kexec_core_sysctl_init);
- 
- /*
-  * No panic_cpu check version of crash_kexec().  This function is called
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ae5e59396b5d..00e97c6d6576 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -61,7 +61,6 @@
- #include <linux/capability.h>
- #include <linux/binfmts.h>
- #include <linux/sched/sysctl.h>
--#include <linux/kexec.h>
- #include <linux/bpf.h>
- #include <linux/mount.h>
- #include <linux/userfaultfd_k.h>
-@@ -1839,18 +1838,6 @@ static struct ctl_table kern_table[] = {
- 		.proc_handler	= tracepoint_printk_sysctl,
- 	},
- #endif
--#ifdef CONFIG_KEXEC_CORE
--	{
--		.procname	= "kexec_load_disabled",
--		.data		= &kexec_load_disabled,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		/* only handle a transition from default "0" to "1" */
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ONE,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif
- #ifdef CONFIG_MODULES
- 	{
- 		.procname	= "modprobe",
--- 
-2.26.2
+I just understood why some guys in this space got mad at Dept reports.
+I barely got reports from the lock you mentioned with my system -
+precisely speaking only one, even though I've been rebooting my system
+many times. But another report that someone gave for me showed there
+were a lot of reports from the lock.
 
+Your comment and the report are so much helpful. I need to assign
+each's own class first for the buffer locks. Thank you very much.
+
+Thanks,
+Byungchul
+
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
