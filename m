@@ -2,114 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7BB94C06FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 02:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5BD4C0702
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 02:42:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230483AbiBWBl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Feb 2022 20:41:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35750 "EHLO
+        id S236613AbiBWBnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Feb 2022 20:43:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236592AbiBWBl0 (ORCPT
+        with ESMTP id S232087AbiBWBnA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Feb 2022 20:41:26 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9C4BF4E3B6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Feb 2022 17:40:58 -0800 (PST)
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.52 with ESMTP; 23 Feb 2022 10:40:56 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
-        by 156.147.1.126 with ESMTP; 23 Feb 2022 10:40:56 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Wed, 23 Feb 2022 10:40:44 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        bfields@fieldses.org, gregkh@linuxfoundation.org,
-        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
-        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
-        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
-        linux-block@vger.kernel.org, axboe@kernel.dk,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.com, jlayton@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com
-Subject: Re: Report 1 in ext4 and journal based on v5.17-rc1
-Message-ID: <20220223014044.GB26277@X58A-UD3R>
-References: <1645095472-26530-1-git-send-email-byungchul.park@lge.com>
- <1645096204-31670-1-git-send-email-byungchul.park@lge.com>
- <20220222082723.rddf4typah3wegrc@quack3.lan>
+        Tue, 22 Feb 2022 20:43:00 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B3F506D7;
+        Tue, 22 Feb 2022 17:42:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ffcgj6PnfV+M4dz8TXbmYxJQqYgM/0KYmfMhVlUwUgY=; b=Z1vaisi3Aham/6C/t+iH1xp0YY
+        437zJDe/FjItXhy9Q86HR1G005qohaLmQJHI0WCDmpCCnHZ80kh27hi6u1ImMjmCgliHBVb8So6/Q
+        VuYLdPUADGADnDgm/kdHkifGKPMh+rp5HyQ2FFoC/oIHCubCH+pxKN2/lluzR0sA4uRVuA8u83rbV
+        +S+XWee5Morh4t9GbUfr3ZGWsLK822F+GiWjaX17eNy4zvfUm1dvAS4gG/x9MfG+DZlc2l3ju0BL/
+        qI5H47QmeJ3KfSVbMx2JEGRV4euh17I+nWH65KWqqIMNbh9e/UhH5BoxxYrAxBHNGeDyGjwG6g2bp
+        NpHxA2Bw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nMgfb-00C950-Dn; Wed, 23 Feb 2022 01:42:19 +0000
+Date:   Tue, 22 Feb 2022 17:42:19 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Yan Zhu <zhuyan34@huawei.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, zengweilin@huawei.com,
+        liucheng32@huawei.com, nixiaoming@huawei.com,
+        xiechengliang1@huawei.com
+Subject: Re: [PATCH] bpf: move the bpf syscall sysctl table to its own module
+Message-ID: <YhWQ+0qPorcJ/Z8l@bombadil.infradead.org>
+References: <20220223013529.67335-1-zhuyan34@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220222082723.rddf4typah3wegrc@quack3.lan>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220223013529.67335-1-zhuyan34@huawei.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 09:27:23AM +0100, Jan Kara wrote:
-> On Thu 17-02-22 20:10:03, Byungchul Park wrote:
-> > [    7.009608] ===================================================
-> > [    7.009613] DEPT: Circular dependency has been detected.
-> > [    7.009614] 5.17.0-rc1-00014-g8a599299c0cb-dirty #30 Tainted: G        W
-> > [    7.009616] ---------------------------------------------------
-> > [    7.009617] summary
-> > [    7.009618] ---------------------------------------------------
-> > [    7.009618] *** DEADLOCK ***
-> > [    7.009618]
-> > [    7.009619] context A
-> > [    7.009619]     [S] (unknown)(&(bit_wait_table + i)->dmap:0)
-> > [    7.009621]     [W] down_write(&ei->i_data_sem:0)
-> > [    7.009623]     [E] event(&(bit_wait_table + i)->dmap:0)
-> > [    7.009624]
-> > [    7.009625] context B
-> > [    7.009625]     [S] down_read(&ei->i_data_sem:0)
-> > [    7.009626]     [W] wait(&(bit_wait_table + i)->dmap:0)
-> > [    7.009627]     [E] up_read(&ei->i_data_sem:0)
-> > [    7.009628]
-> 
-> Looking into this I have noticed that Dept here tracks bitlocks (buffer
-> locks in particular) but it apparently treats locks on all buffers as one
-> locking class so it conflates lock on superblock buffer with a lock on
-> extent tree block buffer. These are wastly different locks with different
-> locking constraints. So to avoid false positives in filesystems we will
-> need to add annotations to differentiate locks on different buffers (based
-> on what the block is used for). Similarly how we e.g. annotate i_rwsem for
+On Wed, Feb 23, 2022 at 09:35:29AM +0800, Yan Zhu wrote:
+> Sysctl table is easier to read under its own module.
 
-Exactly yes. All synchronization objects should be classfied by what it
-is used for. Even though it's already classified by the location of the
-code initializing the object - roughly and normally saying we can expect
-those have the same constraint, we are actually assigning different
-constraints according to the subtle design esp. in file systems.
+Hey Yan, thanks for you patch!
 
-It would also help the code have better documentation ;-) I'm willing to
-add annotations for that to fs.
+This does not explain how this is being to help with maitenance as
+otherwise this makes kernel/sysctl.c hard to maintain and we also
+tend to get many conflicts. It also does not explain how all the
+filesystem sysctls are not gone and that this is just the next step,
+moving slowly the rest of the sysctls. Explaining this in the commit
+log will help patch review and subsystem maintainers understand the
+conext / logic behind the move.
 
-> different inodes.
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> Signed-off-by: Yan Zhu <zhuyan34@huawei.com>
+
+I'd be more than happy to take this if bpf folks Ack. To avoid conflicts
+I can route this through sysctl-next which is put forward in particular
+to avoid conflicts across trees for this effort. Let me know.
+
+ Luis
