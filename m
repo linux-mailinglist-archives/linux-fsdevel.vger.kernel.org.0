@@ -2,83 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D704C1B13
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 19:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86FCA4C1DC0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 22:31:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238009AbiBWSnR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 13:43:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33252 "EHLO
+        id S242601AbiBWVb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 16:31:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235517AbiBWSnQ (ORCPT
+        with ESMTP id S234865AbiBWVb6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 13:43:16 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88FBA4DF62
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 10:42:48 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id w7so25619230ioj.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 10:42:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=jG8sZlYxngHtNBZ75RsZxyPK1eULwK2f1OlrVMJXaLU=;
-        b=A2FTLspMmLYRzjdPaUfuvH5ApNRb/zkm3zjNattb70Yyn431q+KFU2Igg3zWspt9NI
-         Hc+txAVnl3wZuFZ1pwo3lV7F8LE3Tkb2H5alj4mkF+DZq2mVISNlhkHzTVZq84aYIXi6
-         Q00gdgn0eJCoABk9z39ndHq68RqhjO+bWHYa1yFePbo293o3SRh8fHCpAef3NCrWRVci
-         mS/edKVHpBunzvef1nND/eOD32BJrdOmyPVkdQ6lUbOEzu5WY0pitKp/DvOCFs/FckOJ
-         p1RQEXlTJaiDXbegTekBHNZ7kHLfHYku/ORRm8Fjb6m29zDoqGMPK58b7FfwM6FsE6d1
-         wW1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=jG8sZlYxngHtNBZ75RsZxyPK1eULwK2f1OlrVMJXaLU=;
-        b=Xk8zRtP28gJUAWvY7cVx3N5gT7Hl5h4tdMrYhAe3pi+YD1MAmobwEWvjwSLVxJYC6A
-         CY0DCH2sIMriEhoDczUYidjd9CCYDtb+Gq4Q2UB0Dp9VS97QkWy4aVfuLjO5ZBBbW2xM
-         Lv9hx3PkJJ9UF2qMD++umncuu9liVu1FeW/8zsjqhKFKEM9ddABhyjtWw61Ex/mp2LoI
-         m5bbeUyOkeQxGMkVuAWSchQv7cIEYoyabVyglkrJfxh2tvH1Gbqn7wUBW/KVaStdOFPm
-         wWFQEUoVK7mBwYZUrR7SWOo1zSOg8AfaW0TWizW8s347kGViYtTjS7UnrUyeG5Te1+J5
-         QN4g==
-X-Gm-Message-State: AOAM531BE7gJEdhn0RXZlr5v3YRczzq5jOJAFbA/Bq2eYYGyZNioPEg0
-        4GxsJTQn0RaNlmam0LOIgHQ5lolOWqfN9FENWEu2JA804P4=
-X-Google-Smtp-Source: ABdhPJxTkcUKwaWzOiiMQLWpivxnFlEbfnOU5xdR5DpvMve3QPwzxVhxx+4NU4MDuCIk6k/6RiPhlC4ibXf64FY4tfI=
-X-Received: by 2002:a6b:e901:0:b0:640:7bf8:f61d with SMTP id
- u1-20020a6be901000000b006407bf8f61dmr565177iof.112.1645641768009; Wed, 23 Feb
- 2022 10:42:48 -0800 (PST)
-MIME-Version: 1.0
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 23 Feb 2022 20:42:37 +0200
-Message-ID: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
-Subject: [RFC] Volatile fanotify marks
+        Wed, 23 Feb 2022 16:31:58 -0500
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EEA554EF74;
+        Wed, 23 Feb 2022 13:31:29 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2889E10E245E;
+        Thu, 24 Feb 2022 08:31:28 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nMzEN-00Fc9U-Tf; Thu, 24 Feb 2022 08:31:27 +1100
+Date:   Thu, 24 Feb 2022 08:31:27 +1100
+From:   Dave Chinner <david@fromorbit.com>
 To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Cc:     reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [PATCH] reiserfs: Deprecate reiserfs
+Message-ID: <20220223213127.GI3061737@dread.disaster.area>
+References: <20220223142653.22388-1-jack@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220223142653.22388-1-jack@suse.cz>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=6216a7b1
+        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
+        a=kj9zAlcOel0A:10 a=oGFeUVbbRNcA:10 a=7-415B0cAAAA:8
+        a=QrCbJ4dQJB4WbGYf2mcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+On Wed, Feb 23, 2022 at 03:26:53PM +0100, Jan Kara wrote:
+> Reiserfs is relatively old filesystem and its development has ceased
+> quite some years ago. Linux distributions moved away from it towards
+> other filesystems such as btrfs, xfs, or ext4. To reduce maintenance
+> burden on cross filesystem changes (such as new mount API, iomap, folios
+> ...) let's add a deprecation notice when the filesystem is mounted and
+> schedule its removal to 2024.
 
-I wanted to get your feedback on an idea I have been playing with.
-It started as a poor man's alternative to the old subtree watch problem.
-For my employer's use case, we are watching the entire filesystem using
-a filesystem mark, but would like to exclude events on a subtree
-(i.e. all files underneath .private/).
+Two years might be considered "short notice" for a filesystem, but I
+guess that people running it because it is stable will most likely
+also linger on stable kernels where it will live "maintained" for
+many years after it has been removed from the upstream code base.
 
-At the moment, those events are filtered in userspace.
-I had considered adding directory marks with an ignored mask on every
-event that is received for a directory path under .private/, but that has the
-undesired side effect of pinning those directory inodes to cache.
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/reiserfs/Kconfig | 10 +++++++---
+>  fs/reiserfs/super.c |  2 ++
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> Here's my suggestion for deprecating reiserfs. If nobody has reasons against
+> this, I'll send the patch to Linus during the next merge window.
 
-I have this old fsnotify-volatile branch [1] that I am using for an overlayfs
-kernel internal fsnotify backend. I wonder what are your thoughts on
-exposing this functionally to fanotify UAPI (i.e. FAN_MARK_VOLATILE).
+Is there a deprecation/removal schedule somewhere that documents
+stuff like this? We documented in the XFS section of the kernel
+admin guide (where we also document mount option and
+sysctl deprecation and removal schedules), but I don't think
+anything like that exists for reiserfs or for filesystems in
+general.
 
-Thanks,
-Amir.
+Other than that, the patch looks good.
 
-[1] https://github.com/amir73il/linux/commits/fsnotify-volatile
+Cheers,
+
+Dave.
+
+> 
+> diff --git a/fs/reiserfs/Kconfig b/fs/reiserfs/Kconfig
+> index 8fd54ed8f844..eafee53ddabc 100644
+> --- a/fs/reiserfs/Kconfig
+> +++ b/fs/reiserfs/Kconfig
+> @@ -1,10 +1,14 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config REISERFS_FS
+> -	tristate "Reiserfs support"
+> +	tristate "Reiserfs support (deprecated)"
+>  	select CRC32
+>  	help
+> -	  Stores not just filenames but the files themselves in a balanced
+> -	  tree.  Uses journalling.
+> +	  Reiserfs is deprecated and scheduled to be removed from the kernel
+> +	  in 2024. If you are still using it, please migrate to another
+> +	  filesystem or tell us your usecase for reiserfs.
+> +
+> +	  Reiserfs stores not just filenames but the files themselves in a
+> +	  balanced tree.  Uses journalling.
+>  
+>  	  Balanced trees are more efficient than traditional file system
+>  	  architectural foundations.
+> diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+> index 82e09901462e..74c1cda3bc3e 100644
+> --- a/fs/reiserfs/super.c
+> +++ b/fs/reiserfs/super.c
+> @@ -1652,6 +1652,8 @@ static int read_super_block(struct super_block *s, int offset)
+>  		return 1;
+>  	}
+>  
+> +	reiserfs_warning(NULL, "", "reiserfs filesystem is deprecated and "
+> +		"scheduled to be removed from the kernel in 2024");
+>  	SB_BUFFER_WITH_SB(s) = bh;
+>  	SB_DISK_SUPER_BLOCK(s) = rs;
+>  
+> -- 
+> 2.31.1
+> 
+> 
+
+-- 
+Dave Chinner
+david@fromorbit.com
