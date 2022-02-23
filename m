@@ -2,97 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D796F4C1AF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 19:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2380C4C1AFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 19:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238009AbiBWSdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 13:33:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40220 "EHLO
+        id S243934AbiBWSde (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 13:33:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244047AbiBWScx (ORCPT
+        with ESMTP id S243922AbiBWSdc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 13:32:53 -0500
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6EE941999
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 10:32:16 -0800 (PST)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-2d07ae0b1c0so221573117b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 10:32:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=yNqoekfvML3w8SudVZAHNr3LBOzKBJK9Mn0jVBnOSJ8=;
-        b=mVX0Up4THZLuo7Y2Pv6z3UB2AfLXLmkHp0ZEPfxh9Tc9qHPBbyigYvhB/5sydqwc/l
-         SsWDiOs6nnmec+1bwtIonhNPJ8EPBaAXjcnG+9bc1byoSev/UEX0yWW86tdpTip73z2c
-         ck8AHswGx7R1ExcOh+nMVeCXYWNoG4ufXheWWTgc1R4X7UtsSbq+UKTDKlsQQsRphTWV
-         LPfwKKNKKzDXbYgtAaSq5ON3OL6MSNaTsHiW9bjBXOW3sTdhi7uOh3KvFNYbr8mh/v7K
-         XBAmOTQ4/LwuigErqE6sGJ4M2xAswVyqX2eD+pViCyoWX3SO9YTQDauiX0hVGWqx46DF
-         mwLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=yNqoekfvML3w8SudVZAHNr3LBOzKBJK9Mn0jVBnOSJ8=;
-        b=rjzFgB9D1QFUGJ6n3lm8ashNT/gnsEi1owIOIvc0SmsNnsZ2v1F7TgHjmQZi+WG00L
-         eJzQc++S9aDJdtAqFccqzQTcDZ8xXdHFq0Xjq0ipdaHo6w99354BciU10lHdlCFCzTf9
-         6+gWnPVGx6/O0qCf6036dWa77TneSJlm275zTaEkN02xAQD2WO80vjT5hkHDET0IMU8B
-         IASaseR5coHthzyKQi5HWly7LL1Bxk0daQE4eQ/QqEq/jJVbzqbrdUOLXztTe0X0PluQ
-         /eGSFLVe16FmlzMfVXK1J/tTKWAI+9kcqOfIyTH2jjzzA4xZTgvmmtPQT10NDyvXJ/g2
-         Su6Q==
-X-Gm-Message-State: AOAM531vmRoApWqyHTcGn/d1Qz0WxTweURsOrW+QWCqcSRo8duSJ1wzy
-        DEyMPspELu8dXQWh12G+QM/QP7uvHBYexSb4WI0=
-X-Google-Smtp-Source: ABdhPJzhBoHjW+cbx/pX/tqi4MVUglNrQkC1sijeStSsutZEU4aEpUqo3HyJG7o/WNqmC9LU98G5WILWR/BX+G2pNqY=
-X-Received: by 2002:a81:f611:0:b0:2cf:aa3c:ab17 with SMTP id
- w17-20020a81f611000000b002cfaa3cab17mr886179ywm.410.1645641135904; Wed, 23
- Feb 2022 10:32:15 -0800 (PST)
+        Wed, 23 Feb 2022 13:33:32 -0500
+Received: from vps-vb.mhejs.net (vps-vb.mhejs.net [37.28.154.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5F0F123;
+        Wed, 23 Feb 2022 10:33:02 -0800 (PST)
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1nMwRP-0003AV-QA; Wed, 23 Feb 2022 19:32:43 +0100
+Message-ID: <7822c00f-5a2d-b6a2-2f81-cf3330801ad3@maciej.szmigiero.name>
+Date:   Wed, 23 Feb 2022 19:32:37 +0100
 MIME-Version: 1.0
-Received: by 2002:a05:7010:3e19:b0:20e:6caa:bb5d with HTTP; Wed, 23 Feb 2022
- 10:32:15 -0800 (PST)
-Reply-To: gisabelanv@gmail.com
-From:   Isabel Guerrero <ayikaekue1@gmail.com>
-Date:   Wed, 23 Feb 2022 18:32:15 +0000
-Message-ID: <CADeH0Hsc0azsc5013JCELFpxwjt2MEdZJBe8xB0XHvL_pKO+iw@mail.gmail.com>
-Subject: URGENT CONTACT
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_20,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,SUBJ_ALL_CAPS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Content-Language: en-US
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, kvm@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, qemu-devel@nongnu.org
+References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
+ <20220118132121.31388-13-chao.p.peng@linux.intel.com>
+ <a121e766-900d-2135-1516-e1d3ba716834@maciej.szmigiero.name>
+ <20220217134548.GA33836@chaop.bj.intel.com>
+ <45148f5f-fe79-b452-f3b2-482c5c3291c4@maciej.szmigiero.name>
+ <20220223120047.GB53733@chaop.bj.intel.com>
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: Re: [PATCH v4 12/12] KVM: Expose KVM_MEM_PRIVATE
+In-Reply-To: <20220223120047.GB53733@chaop.bj.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:112a listed in]
-        [list.dnswl.org]
-        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
-        *      [score: 0.0677]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [ayikaekue1[at]gmail.com]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [ayikaekue1[at]gmail.com]
-        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.5 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, Good day. I=E2=80=99ve not yet received your response to my previous=
- mail.
+On 23.02.2022 13:00, Chao Peng wrote:
+> On Tue, Feb 22, 2022 at 02:16:46AM +0100, Maciej S. Szmigiero wrote:
+>> On 17.02.2022 14:45, Chao Peng wrote:
+>>> On Tue, Jan 25, 2022 at 09:20:39PM +0100, Maciej S. Szmigiero wrote:
+>>>> On 18.01.2022 14:21, Chao Peng wrote:
+>>>>> KVM_MEM_PRIVATE is not exposed by default but architecture code can turn
+>>>>> on it by implementing kvm_arch_private_memory_supported().
+>>>>>
+>>>>> Also private memslot cannot be movable and the same file+offset can not
+>>>>> be mapped into different GFNs.
+>>>>>
+>>>>> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+>>>>> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+>>>>> ---
+>>>> (..)
+>>>>>     static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+>>>>> -				      gfn_t start, gfn_t end)
+>>>>> +				      struct file *file,
+>>>>> +				      gfn_t start, gfn_t end,
+>>>>> +				      loff_t start_off, loff_t end_off)
+>>>>>     {
+>>>>>     	struct kvm_memslot_iter iter;
+>>>>> +	struct kvm_memory_slot *slot;
+>>>>> +	struct inode *inode;
+>>>>> +	int bkt;
+>>>>>     	kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
+>>>>>     		if (iter.slot->id != id)
+>>>>>     			return true;
+>>>>>     	}
+>>>>> +	/* Disallow mapping the same file+offset into multiple gfns. */
+>>>>> +	if (file) {
+>>>>> +		inode = file_inode(file);
+>>>>> +		kvm_for_each_memslot(slot, bkt, slots) {
+>>>>> +			if (slot->private_file &&
+>>>>> +			     file_inode(slot->private_file) == inode &&
+>>>>> +			     !(end_off <= slot->private_offset ||
+>>>>> +			       start_off >= slot->private_offset
+>>>>> +					     + (slot->npages >> PAGE_SHIFT)))
+>>>>> +				return true;
+>>>>> +		}
+>>>>> +	}
+>>>>
+>>>> That's a linear scan of all memslots on each CREATE (and MOVE) operation
+>>>> with a fd - we just spent more than a year rewriting similar linear scans
+>>>> into more efficient operations in KVM.
+>>>
+(..)
+>>> So linear scan is used before I can find a better way.
+>>
+>> Another option would be to simply not check for overlap at add or move
+>> time, declare such configuration undefined behavior under KVM API and
+>> make sure in MMU notifiers that nothing bad happens to the host kernel
+>> if it turns out somebody actually set up a VM this way (it could be
+>> inefficient in this case, since it's not supposed to ever happen
+>> unless there is a bug somewhere in the userspace part).
+> 
+> Specific to TDX case, SEAMMODULE will fail the overlapping case and then
+> KVM prints a message to the kernel log. It will not cause any other side
+> effect, it does look weird however. Yes warn that in the API document
+> can help to some extent.
+
+So for the functionality you are adding this code for (TDX) this scan
+isn't necessary and the overlapping case (not supported anyway) is safely
+handled by the hardware (or firmware)?
+Then I would simply remove the scan and, maybe, add a comment instead
+that the overlap check is done by the hardware.
+
+By the way, if a kernel log message could be triggered by (misbehaving)
+userspace then it should be rate limited (if it isn't already).
+
+> Thanks,
+> Chao
+
+Thanks,
+Maciej
