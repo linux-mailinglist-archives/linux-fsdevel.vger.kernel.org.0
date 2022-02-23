@@ -2,50 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 374714C0645
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 01:39:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 526A24C0677
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 01:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236416AbiBWAkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Feb 2022 19:40:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47274 "EHLO
+        id S236460AbiBWA4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Feb 2022 19:56:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbiBWAj7 (ORCPT
+        with ESMTP id S234184AbiBWA4O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Feb 2022 19:39:59 -0500
+        Tue, 22 Feb 2022 19:56:14 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24455F8DE;
-        Tue, 22 Feb 2022 16:39:32 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3067742494;
+        Tue, 22 Feb 2022 16:55:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mnwTyMbUz81PkB25DhATLqknf9GX0qBtMJyqNEVfajI=; b=sxwmKsmhM6USGd256+56DlZH+0
-        xC8pp6lboBFRP88VnMkxrclwWkXe3f2XdwnKpvH+z8J4H/tQ5x09ss4WJqJVkAM/8uRMxpiUAzY8k
-        AyeS04RXX0DgxaYuiz9AMQfFekUAfGn/iTMQFKj6mny1N2cySd/sYp/Ki4dS7xSO3WZksKlieMjvx
-        DNPaYNbEj+CcHY464j7QkeJ9ifx4c671M2xsWMsvgHx7sB9b423IBlZMCQOxcQEwU0tGEZ0dGx3P3
-        2kjSKJ5KuCAEaG/rKPAQyKhlJjEtajugqivMXbR8raOSTL32LBDvaM+SIc4F07HFxDxmg8TLp4gEI
-        aIA/+iPg==;
+        bh=UHKUXaQs83hzUDt8v+U00kEJvR6ZOsIIGcwG7EVaZYM=; b=ZZ8XaVHr7DtXsF4mq/JhD+5e19
+        PTQkrxYd2u/tKyqslo/SH7ec5rFaZ4v251YwFUYA4y1psL20VLIJ3+gxLLpZ7KaaOy8EIwgg16Urb
+        o7cyMzQa6dLO9oLH4usZX17Z4/TP3HAUiVQXi5ZK5jrNaIwWFywVM8LCGcsSlR1Ouao5988oG8pJ6
+        fMnQLJYRyyCbUT4M2ag1lWIhqdUuu8oQylCt9m6iMM4oDa1NwxKH2Cq+PYQGORzHbZvXh7BIYGcPT
+        OoQQLhBr4cW8bmu7IwxukZ+cYv3EPK4sVSKCaIHulOY2QHYiLI6nVQOsFhzg4cuQxeMIEADaX/rcY
+        PdsLQGqA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMfge-00C1fi-Tq; Wed, 23 Feb 2022 00:39:20 +0000
-Date:   Tue, 22 Feb 2022 16:39:20 -0800
+        id 1nMfwT-00C2dS-Pt; Wed, 23 Feb 2022 00:55:41 +0000
+Date:   Tue, 22 Feb 2022 16:55:41 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     tangmeng <tangmeng@uniontech.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, keescook@chromium.org,
-        yzaikin@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        nizhen@uniontech.com, zhanglianjie@uniontech.com,
-        nixiaoming@huawei.com, sujiaxun@uniontech.com
-Subject: Re: [PATCH 10/11] fs/drop_caches: move drop_caches sysctls to its
- own file
-Message-ID: <YhWCOBqKc8xIylmT@bombadil.infradead.org>
-References: <20220220060626.15885-1-tangmeng@uniontech.com>
- <YhIokWPShGOYh9LK@casper.infradead.org>
- <cbc60b32-d69c-d848-ca4c-650016da65d3@uniontech.com>
+To:     Nitesh Shetty <nj.shetty@samsung.com>
+Cc:     hch@lst.de, javier@javigon.com, chaitanyak@nvidia.com,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+        msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
+        Frederick.Knight@netapp.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com,
+        nitheshshetty@gmail.com, SelvaKumar S <selvakuma.s1@samsung.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/10] block: Introduce queue limits for copy-offload
+ support
+Message-ID: <YhWGDUyQkUcE6itt@bombadil.infradead.org>
+References: <20220214080002.18381-1-nj.shetty@samsung.com>
+ <CGME20220214080605epcas5p16868dae515a6355cf9fecf22df4f3c3d@epcas5p1.samsung.com>
+ <20220214080002.18381-3-nj.shetty@samsung.com>
+ <20220217090700.b7n33vbkx5s4qbfq@garbanzo>
+ <20220217125901.GA3781@test-zns>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cbc60b32-d69c-d848-ca4c-650016da65d3@uniontech.com>
+In-Reply-To: <20220217125901.GA3781@test-zns>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -57,18 +71,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 21, 2022 at 09:55:18AM +0800, tangmeng wrote:
-> I think it is obviously the right thing that we need to do.
+On Thu, Feb 17, 2022 at 06:29:01PM +0530, Nitesh Shetty wrote:
+>  Thu, Feb 17, 2022 at 01:07:00AM -0800, Luis Chamberlain wrote:
+> > The subject says limits for copy-offload...
+> > 
+> > On Mon, Feb 14, 2022 at 01:29:52PM +0530, Nitesh Shetty wrote:
+> > > Add device limits as sysfs entries,
+> > >         - copy_offload (RW)
+> > >         - copy_max_bytes (RW)
+> > >         - copy_max_hw_bytes (RO)
+> > >         - copy_max_range_bytes (RW)
+> > >         - copy_max_range_hw_bytes (RO)
+> > >         - copy_max_nr_ranges (RW)
+> > >         - copy_max_nr_ranges_hw (RO)
+> > 
+> > Some of these seem like generic... and also I see a few more max_hw ones
+> > not listed above...
+> >
+> queue_limits and sysfs entries are differently named.
+> All sysfs entries start with copy_* prefix. Also it makes easy to lookup
+> all copy sysfs.
+> For queue limits naming, I tried to following existing queue limit
+> convention (like discard).
 
-Since you are following up on more changes, can you work on this?
-Brownie points if you show size results to refelct no size difference
-based on a new build with an example new user.
+My point was that your subject seems to indicate the changes are just
+for copy-offload, but you seem to be adding generic queue limits as
+well. Is that correct? If so then perhaps the subject should be changed
+or the patch split up.
 
-> However, many submissions have been commited which registers an array
-> before, I think that having a register_sysctl_one() which registers exactly
-> one ctl_table should submit in a separate submission, rather than modify it
-> this time.
+> > > +static ssize_t queue_copy_offload_store(struct request_queue *q,
+> > > +				       const char *page, size_t count)
+> > > +{
+> > > +	unsigned long copy_offload;
+> > > +	ssize_t ret = queue_var_store(&copy_offload, page, count);
+> > > +
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	if (copy_offload && !q->limits.max_hw_copy_sectors)
+> > > +		return -EINVAL;
+> > 
+> > 
+> > If the kernel schedules, copy_offload may still be true and
+> > max_hw_copy_sectors may be set to 0. Is that an issue?
+> >
+> 
+> This check ensures that, we dont enable offload if device doesnt support
+> offload. I feel it shouldn't be an issue.
 
-We can optimize this later and fix those.
+My point was this:
 
-  Luis
+CPU1                                       CPU2
+Time
+1) if (copy_offload 
+2)    ---> preemption so it schedules      
+3)    ---> some other high priority task  Sets q->limits.max_hw_copy_sectors to 0
+4) && !q->limits.max_hw_copy_sectors)
+
+Can something bad happen if we allow for this?
+
