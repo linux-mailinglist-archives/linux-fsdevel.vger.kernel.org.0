@@ -2,45 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96A854C110D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 12:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFFD4C11E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 12:50:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239764AbiBWLMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 06:12:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
+        id S240132AbiBWLuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 06:50:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbiBWLMX (ORCPT
+        with ESMTP id S240101AbiBWLua (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 06:12:23 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 458FA60A89;
-        Wed, 23 Feb 2022 03:11:56 -0800 (PST)
-Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4K3YHP6pc4zdZWM;
-        Wed, 23 Feb 2022 19:10:41 +0800 (CST)
-Received: from Linux-SUSE12SP5.huawei.com (10.67.132.207) by
- dggpeml500024.china.huawei.com (7.185.36.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 23 Feb 2022 19:11:53 +0800
-From:   Wei Xiao <xiaowei66@huawei.com>
-To:     <rostedt@goodmis.org>, <mingo@redhat.com>, <mcgrof@kernel.org>,
-        <keescook@chromium.org>, <yzaikin@google.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <young.liuyang@huawei.com>, <zengweilin@huawei.com>,
-        <nixiaoming@huawei.com>, <xiaowei66@huawei.com>
-Subject: [PATCH v2 sysctl-next] ftrace: move sysctl_ftrace_enabled to ftrace.c
-Date:   Wed, 23 Feb 2022 19:11:53 +0800
-Message-ID: <20220223111153.234411-1-xiaowei66@huawei.com>
-X-Mailer: git-send-email 2.22.0
+        Wed, 23 Feb 2022 06:50:30 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30FA1AF0E;
+        Wed, 23 Feb 2022 03:50:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645617002; x=1677153002;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=h059MTs1GCpelszK6wn0Y7AYm7QzLTn2WIrQltgpYTY=;
+  b=nRRHW7f03jxQyNdvkoUZh5f8aLof2IJfkPM3Gi1QJoyN2RDvBK/HO2Qj
+   vVuK3qlBD5KhKq4NfK9bwruNXAohTAfX4eWqfz/ko1TTVt0bjobwaVx+K
+   hDmJYTV2qO0aB5hZLX9nASNJO/0yHrnluqRNLmrUITUewsktX3ncG9XHG
+   Koj2TPTskERaZTku8Yc9Ry31LMmUMpCaGNlUDqjHIL9+hEqEl9pJ9J3OS
+   eplZZIdYBIciiHLrpYBmC4sYjpvRwcNHw8Fuv40a+4RTA3pFD0pDoeRF5
+   oWAhpvP41unbXK3PwmVqRUBldnphL2sXAvfmPh/ZvfzwlXixxdQqHJWwh
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="239335570"
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="239335570"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2022 03:50:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="532650031"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 23 Feb 2022 03:49:55 -0800
+Date:   Wed, 23 Feb 2022 19:49:35 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Linux API <linux-api@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Steven Price <steven.price@arm.com>
+Subject: Re: [PATCH v4 01/12] mm/shmem: Introduce F_SEAL_INACCESSIBLE
+Message-ID: <20220223114935.GA53733@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
+ <20220118132121.31388-2-chao.p.peng@linux.intel.com>
+ <619547ad-de96-1be9-036b-a7b4e99b09a6@kernel.org>
+ <20220217130631.GB32679@chaop.bj.intel.com>
+ <2ca78dcb-61d9-4c9d-baa9-955b6f4298bb@www.fastmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.132.207]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500024.china.huawei.com (7.185.36.10)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ca78dcb-61d9-4c9d-baa9-955b6f4298bb@www.fastmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -48,102 +89,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This moves ftrace_enabled to trace/ftrace.c.
+On Thu, Feb 17, 2022 at 11:09:35AM -0800, Andy Lutomirski wrote:
+> On Thu, Feb 17, 2022, at 5:06 AM, Chao Peng wrote:
+> > On Fri, Feb 11, 2022 at 03:33:35PM -0800, Andy Lutomirski wrote:
+> >> On 1/18/22 05:21, Chao Peng wrote:
+> >> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> >> > 
+> >> > Introduce a new seal F_SEAL_INACCESSIBLE indicating the content of
+> >> > the file is inaccessible from userspace through ordinary MMU access
+> >> > (e.g., read/write/mmap). However, the file content can be accessed
+> >> > via a different mechanism (e.g. KVM MMU) indirectly.
+> >> > 
+> >> > It provides semantics required for KVM guest private memory support
+> >> > that a file descriptor with this seal set is going to be used as the
+> >> > source of guest memory in confidential computing environments such
+> >> > as Intel TDX/AMD SEV but may not be accessible from host userspace.
+> >> > 
+> >> > At this time only shmem implements this seal.
+> >> > 
+> >> 
+> >> I don't dislike this *that* much, but I do dislike this. F_SEAL_INACCESSIBLE
+> >> essentially transmutes a memfd into a different type of object.  While this
+> >> can apparently be done successfully and without races (as in this code),
+> >> it's at least awkward.  I think that either creating a special inaccessible
+> >> memfd should be a single operation that create the correct type of object or
+> >> there should be a clear justification for why it's a two-step process.
+> >
+> > Now one justification maybe from Stever's comment to patch-00: for ARM
+> > usage it can be used with creating a normal memfd, (partially)populate
+> > it with initial guest memory content (e.g. firmware), and then
+> > F_SEAL_INACCESSIBLE it just before the first time lunch of the guest in
+> > KVM (definitely the current code needs to be changed to support that).
+> 
+> Except we don't allow F_SEAL_INACCESSIBLE on a non-empty file, right?  So this won't work.
 
-We move sysctls to places where features actually belong to improve
-the readability of the code and reduce the risk of code merge conflicts.
-At the same time, the proc-sysctl maintainers do not want to know what
-sysctl knobs you wish to add for your owner piece of code, we just care
-about the core logic.
+Hmm, right, if we set F_SEAL_INACCESSIBLE on a non-empty file, we will 
+need to make sure access to existing mmap-ed area should be prevented,
+but that is hard.
 
-Signed-off-by: Wei Xiao <xiaowei66@huawei.com>
+> 
+> In any case, the whole confidential VM initialization story is a bit buddy.  From the earlier emails, it sounds like ARM expects the host to fill in guest memory and measure it.  From my recollection of Intel's scheme (which may well be wrong, and I could easily be confusing it with SGX), TDX instead measures what is essentially a transcript of the series of operations that initializes the VM.  These are fundamentally not the same thing even if they accomplish the same end goal.  For TDX, we unavoidably need an operation (ioctl or similar) that initializes things according to the VM's instructions, and ARM ought to be able to use roughly the same mechanism.
 
----
-v2:
-Add subject-prefix of sysctl-next and add the explanation to the commit log 
-to help patch review and subsystem maintainers better understand the context/logic 
-behind the migration.
+Yes, TDX requires a ioctl. Steven may comment on the ARM part.
 
-v1: https://lore.kernel.org/lkml/20220223012311.134314-1-xiaowei66@huawei.com/
-1. Lack subject-prefix of sysctl-next to avoid conflicts better.
-2. Lack more informations in the commit log to help patch review better.
----
- include/linux/ftrace.h |  3 ---
- kernel/sysctl.c        |  9 ---------
- kernel/trace/ftrace.c  | 22 +++++++++++++++++++++-
- 3 files changed, 21 insertions(+), 13 deletions(-)
+Chao
+> 
+> Also, if we ever get fancy and teach the page allocator about memory with reduced directmap permissions, it may well be more efficient for userspace to shove data into a memfd via ioctl than it is to mmap it and write the data.
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 9999e29187de..659b2840563a 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -94,9 +94,6 @@ static inline int ftrace_mod_get_kallsym(unsigned int symnum, unsigned long *val
- #ifdef CONFIG_FUNCTION_TRACER
- 
- extern int ftrace_enabled;
--extern int
--ftrace_enable_sysctl(struct ctl_table *table, int write,
--		     void *buffer, size_t *lenp, loff_t *ppos);
- 
- #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 5ae443b2882e..55279ec66b28 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1906,15 +1906,6 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
--#ifdef CONFIG_FUNCTION_TRACER
--	{
--		.procname	= "ftrace_enabled",
--		.data		= &ftrace_enabled,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= ftrace_enable_sysctl,
--	},
--#endif
- #ifdef CONFIG_STACK_TRACER
- 	{
- 		.procname	= "stack_tracer_enabled",
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index f9feb197b2da..4a5b4d6996a4 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -7846,7 +7846,8 @@ static bool is_permanent_ops_registered(void)
- 	return false;
- }
- 
--int
-+#ifdef CONFIG_SYSCTL
-+static int
- ftrace_enable_sysctl(struct ctl_table *table, int write,
- 		     void *buffer, size_t *lenp, loff_t *ppos)
- {
-@@ -7889,3 +7890,22 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
- 	mutex_unlock(&ftrace_lock);
- 	return ret;
- }
-+
-+static struct ctl_table ftrace_sysctls[] = {
-+	{
-+		.procname       = "ftrace_enabled",
-+		.data           = &ftrace_enabled,
-+		.maxlen         = sizeof(int),
-+		.mode           = 0644,
-+		.proc_handler   = ftrace_enable_sysctl,
-+	},
-+	{}
-+};
-+
-+static int __init ftrace_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", ftrace_sysctls);
-+	return 0;
-+}
-+late_initcall(ftrace_sysctl_init);
-+#endif
--- 
-2.19.1
+
 
