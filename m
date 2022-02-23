@@ -2,156 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 737544C1253
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 13:05:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BCC14C129A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 13:18:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237349AbiBWMGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 07:06:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38120 "EHLO
+        id S240411AbiBWMSM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 07:18:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232761AbiBWMGC (ORCPT
+        with ESMTP id S237095AbiBWMSM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 07:06:02 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 032E09A981;
-        Wed, 23 Feb 2022 04:05:34 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9AA7ED1;
-        Wed, 23 Feb 2022 04:05:33 -0800 (PST)
-Received: from [10.57.37.225] (unknown [10.57.37.225])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 960A63F70D;
-        Wed, 23 Feb 2022 04:05:29 -0800 (PST)
-Message-ID: <71a06402-6743-bfd2-bbd4-997f8e256554@arm.com>
-Date:   Wed, 23 Feb 2022 12:05:28 +0000
+        Wed, 23 Feb 2022 07:18:12 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B7D9E57D;
+        Wed, 23 Feb 2022 04:17:44 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id AF7AD212B8;
+        Wed, 23 Feb 2022 12:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1645618663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=z25zmfa1BH9FbZAkPcAjAOIvBZxhio/HEtOcbGxkK2s=;
+        b=iBLlmwQKBfdGXCAAeg3wvlnrV4J7/udoMQQsDdu2Cee3a60Gai9m9bpGPUSAITEkoMaU8s
+        1//GkQuJVdkXZW2F3rLTgCANQjuKMwtQWqcfgugd/zWATYwJ3OL5tTae/rSTpI2MgrUQn2
+        85bOgy9hMuJpJjjUpIHA/9zHbWWnRZ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1645618663;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=z25zmfa1BH9FbZAkPcAjAOIvBZxhio/HEtOcbGxkK2s=;
+        b=XIUgtLKy3brznIghNde4scldLLjKyFNVYfgKgSPS1OgKLfn3fJyCKSDJsMuABr1N7A2HJi
+        gggIq5wSLuuz1jCw==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id A0D3BA3B83;
+        Wed, 23 Feb 2022 12:17:43 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E6B50A0605; Wed, 23 Feb 2022 13:17:37 +0100 (CET)
+Date:   Wed, 23 Feb 2022 13:17:37 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        Edward Shishkin <edward.shishkin@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org
+Subject: Re: [PATCH] reiserfs: get rid of AOP_FLAG_CONT_EXPAND flag
+Message-ID: <20220223121737.bsyoih6rt63pev54@quack3.lan>
+References: <fbc744c9-e22f-138c-2da3-f76c3edfcc3d@gmail.com>
+ <20220220232219.1235-1-edward.shishkin@gmail.com>
+ <20220222102727.2sqf4wfdtjaxrqat@quack3.lan>
+ <YhTnSwmHVRe5AzJQ@casper.infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v4 01/12] mm/shmem: Introduce F_SEAL_INACCESSIBLE
-Content-Language: en-GB
-To:     Chao Peng <chao.p.peng@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Linux API <linux-api@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>
-References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
- <20220118132121.31388-2-chao.p.peng@linux.intel.com>
- <619547ad-de96-1be9-036b-a7b4e99b09a6@kernel.org>
- <20220217130631.GB32679@chaop.bj.intel.com>
- <2ca78dcb-61d9-4c9d-baa9-955b6f4298bb@www.fastmail.com>
- <20220223114935.GA53733@chaop.bj.intel.com>
-From:   Steven Price <steven.price@arm.com>
-In-Reply-To: <20220223114935.GA53733@chaop.bj.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YhTnSwmHVRe5AzJQ@casper.infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 23/02/2022 11:49, Chao Peng wrote:
-> On Thu, Feb 17, 2022 at 11:09:35AM -0800, Andy Lutomirski wrote:
->> On Thu, Feb 17, 2022, at 5:06 AM, Chao Peng wrote:
->>> On Fri, Feb 11, 2022 at 03:33:35PM -0800, Andy Lutomirski wrote:
->>>> On 1/18/22 05:21, Chao Peng wrote:
->>>>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->>>>>
->>>>> Introduce a new seal F_SEAL_INACCESSIBLE indicating the content of
->>>>> the file is inaccessible from userspace through ordinary MMU access
->>>>> (e.g., read/write/mmap). However, the file content can be accessed
->>>>> via a different mechanism (e.g. KVM MMU) indirectly.
->>>>>
->>>>> It provides semantics required for KVM guest private memory support
->>>>> that a file descriptor with this seal set is going to be used as the
->>>>> source of guest memory in confidential computing environments such
->>>>> as Intel TDX/AMD SEV but may not be accessible from host userspace.
->>>>>
->>>>> At this time only shmem implements this seal.
->>>>>
->>>>
->>>> I don't dislike this *that* much, but I do dislike this. F_SEAL_INACCESSIBLE
->>>> essentially transmutes a memfd into a different type of object.  While this
->>>> can apparently be done successfully and without races (as in this code),
->>>> it's at least awkward.  I think that either creating a special inaccessible
->>>> memfd should be a single operation that create the correct type of object or
->>>> there should be a clear justification for why it's a two-step process.
->>>
->>> Now one justification maybe from Stever's comment to patch-00: for ARM
->>> usage it can be used with creating a normal memfd, (partially)populate
->>> it with initial guest memory content (e.g. firmware), and then
->>> F_SEAL_INACCESSIBLE it just before the first time lunch of the guest in
->>> KVM (definitely the current code needs to be changed to support that).
->>
->> Except we don't allow F_SEAL_INACCESSIBLE on a non-empty file, right?  So this won't work.
+On Tue 22-02-22 13:38:19, Matthew Wilcox wrote:
+> On Tue, Feb 22, 2022 at 11:27:27AM +0100, Jan Kara wrote:
+> > On Mon 21-02-22 00:22:19, Edward Shishkin wrote:
+> > > Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+> > > ---
+> > >  fs/reiserfs/inode.c | 16 +++++-----------
+> > >  1 file changed, 5 insertions(+), 11 deletions(-)
+> > 
+> > Thanks! I have queued this patch into my tree.
 > 
-> Hmm, right, if we set F_SEAL_INACCESSIBLE on a non-empty file, we will 
-> need to make sure access to existing mmap-ed area should be prevented,
-> but that is hard.
+> I added the following commit message to it for my tree:
 > 
->>
->> In any case, the whole confidential VM initialization story is a bit buddy.  From the earlier emails, it sounds like ARM expects the host to fill in guest memory and measure it.  From my recollection of Intel's scheme (which may well be wrong, and I could easily be confusing it with SGX), TDX instead measures what is essentially a transcript of the series of operations that initializes the VM.  These are fundamentally not the same thing even if they accomplish the same end goal.  For TDX, we unavoidably need an operation (ioctl or similar) that initializes things according to the VM's instructions, and ARM ought to be able to use roughly the same mechanism.
+> Author: Edward Shishkin <edward.shishkin@gmail.com>
+> Date:   Mon Feb 21 00:22:19 2022 +0100
 > 
-> Yes, TDX requires a ioctl. Steven may comment on the ARM part.
-
-The Arm story is evolving so I can't give a definite answer yet. Our
-current prototyping works by creating the initial VM content in a
-memslot as with a normal VM and then calling an ioctl which throws the
-big switch and converts all the (populated) pages to be protected. At
-this point the RMM performs a measurement of the data that the VM is
-being populated with.
-
-The above (in our prototype) suffers from all the expected problems with
-a malicious VMM being able to trick the host kernel into accessing those
-pages after they have been protected (causing a fault detected by the
-hardware).
-
-The ideal (from our perspective) approach would be to follow the same
-flow but where the VMM populates a memfd rather than normal anonymous
-pages. The memfd could then be sealed and the pages converted to
-protected ones (with the RMM measuring them in the process).
-
-The question becomes how is that memfd populated? It would be nice if
-that could be done using normal operations on a memfd (i.e. using
-mmap()) and therefore this code could be (relatively) portable. This
-would mean that any pages mapped from the memfd would either need to
-block the sealing or be revoked at the time of sealing.
-
-The other approach is we could of course implement a special ioctl which
-effectively does a memcpy into the (created empty and sealed) memfd and
-does the necessary dance with the RMM to measure the contents. This
-would match the "transcript of the series of operations" described above
-- but seems much less ideal from the viewpoint of the VMM.
-
-Steve
-
-> Chao
->>
->> Also, if we ever get fancy and teach the page allocator about memory with reduced directmap permissions, it may well be more efficient for userspace to shove data into a memfd via ioctl than it is to mmap it and write the data.
+>     reiserfs: Stop using AOP_FLAG_CONT_EXPAND flag
 > 
+>     We can simplify write_begin() and write_end() by handling the
+>     cont_expand case in reiserfs_setattr().
 > 
-> 
+>     Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+>     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
+Yeah, I have written some changelog as well :) Something like:
+
+    reiserfs: get rid of AOP_FLAG_CONT_EXPAND flag
+    
+    Remove usage of AOP_FLAG_CONT_EXPAND flag. Reiserfs is the only user of
+    it and it is easy to avoid.
+    
+    Link: https://lore.kernel.org/r/20220220232219.1235-1-edward.shishkin@gmail.com
+    Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+    Signed-off-by: Jan Kara <jack@suse.cz>
+
+> I don't object if it goes via your tree; I doubt I'll get the AOP_FLAG
+> removal finished in time for the next merge window.
+
+OK, I'll keep it in my tree then and push it to Linus for the merge window.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
