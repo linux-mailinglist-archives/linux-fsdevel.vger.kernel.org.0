@@ -2,65 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB2A44C11F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 12:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10E324C1216
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 13:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240187AbiBWLxs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 06:53:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55798 "EHLO
+        id S240210AbiBWMBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 07:01:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235966AbiBWLxs (ORCPT
+        with ESMTP id S232651AbiBWMBx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 06:53:48 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84C3E57B1A;
-        Wed, 23 Feb 2022 03:53:20 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 40A3F1F43D;
-        Wed, 23 Feb 2022 11:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645617199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lHKLDcXaApTqsl2KQS4V+/Sm+LIozq5sgKx8GXifXUE=;
-        b=egv/jm8RvovquqsfWcuJRwBtKBVUu7OVZoV08A97BI/bojJrZKRGrPOawsaSoFdwUgRrJ1
-        Y8yOK1HZXCJlxhkg+3ItPW4f4Y7L7OGxC1fDYlJbmwORfiSY2i+owYRWiMkGiTWKBIJNSz
-        GYOIjG7+B3d4gYXjP41jiRgKBHjUWo8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645617199;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lHKLDcXaApTqsl2KQS4V+/Sm+LIozq5sgKx8GXifXUE=;
-        b=DjQTeQ5j1zEB52lzsMsHmvZJjvTFizTsSZHs11jPamrSA1NDxfM+1XbJwJl372CHKtWIq6
-        AgOLK5j3rK2xnAAA==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 308D7A3B81;
-        Wed, 23 Feb 2022 11:53:19 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 67980A0605; Wed, 23 Feb 2022 12:53:13 +0100 (CET)
-Date:   Wed, 23 Feb 2022 12:53:13 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC 3/9] ext4: Add couple of more fast_commit tracepoints
-Message-ID: <20220223115313.3s73bu7p454bodvl@quack3.lan>
-References: <cover.1645558375.git.riteshh@linux.ibm.com>
- <90608d31b7ad8500c33d875d3a7fa50e3456dc1a.1645558375.git.riteshh@linux.ibm.com>
- <20220223094057.53zcovnazrqwbngw@quack3.lan>
- <20220223101159.ekwbylvbmec5v35q@riteshh-domain>
+        Wed, 23 Feb 2022 07:01:53 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF0C99A4ED;
+        Wed, 23 Feb 2022 04:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645617685; x=1677153685;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=eoV+NoqJpfdApzLIf0eBSfJu/vs2jcIFT1WCrSXOtdw=;
+  b=iLngOzGH4PoTbIKFUazf5Mawfw5oC0OcT19HQOliRJfnJoHK0URhdOT+
+   g0I39UdUdSjrNYqZEiAcHRd655lGVokoHuSIXxx8orKo6g6m1ugFQXqmY
+   ARMtJ2Yic+VfKTouKjnt7hdfegfJPXOtA4mm4OeD0OIqMDLwwn86h2JD8
+   AFOnLTRJr7LGWJJkVQqJuvmig6MGEoWW/3BVVQhqaJeX6Rcz/byP1eyYQ
+   RAJLOhCTQm1E5Ru/cdwg+6VnmRISnPjZMNDzl8sNvenWYhMBYqOrV/mIP
+   TwKzExSnP/R0/Ss5Y476vSGMsth41ecruomSOUJAJ+L5aLROsguehz0yb
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="338384365"
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="338384365"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2022 04:01:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="532653565"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 23 Feb 2022 04:01:07 -0800
+Date:   Wed, 23 Feb 2022 20:00:47 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, kvm@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, qemu-devel@nongnu.org
+Subject: Re: [PATCH v4 12/12] KVM: Expose KVM_MEM_PRIVATE
+Message-ID: <20220223120047.GB53733@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
+ <20220118132121.31388-13-chao.p.peng@linux.intel.com>
+ <a121e766-900d-2135-1516-e1d3ba716834@maciej.szmigiero.name>
+ <20220217134548.GA33836@chaop.bj.intel.com>
+ <45148f5f-fe79-b452-f3b2-482c5c3291c4@maciej.szmigiero.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220223101159.ekwbylvbmec5v35q@riteshh-domain>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <45148f5f-fe79-b452-f3b2-482c5c3291c4@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,39 +83,83 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 23-02-22 15:41:59, Ritesh Harjani wrote:
-> On 22/02/23 10:40AM, Jan Kara wrote:
-> > On Wed 23-02-22 02:04:11, Ritesh Harjani wrote:
-> > > This adds two more tracepoints for ext4_fc_track_template() &
-> > > ext4_fc_cleanup() which are helpful in debugging some fast_commit issues.
-> > >
-> > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> >
-> > So why is this more useful than trace_ext4_fc_track_range() and other
-> > tracepoints? I don't think it provides any more information? What am I
-> > missing?
+On Tue, Feb 22, 2022 at 02:16:46AM +0100, Maciej S. Szmigiero wrote:
+> On 17.02.2022 14:45, Chao Peng wrote:
+> > On Tue, Jan 25, 2022 at 09:20:39PM +0100, Maciej S. Szmigiero wrote:
+> > > On 18.01.2022 14:21, Chao Peng wrote:
+> > > > KVM_MEM_PRIVATE is not exposed by default but architecture code can turn
+> > > > on it by implementing kvm_arch_private_memory_supported().
+> > > > 
+> > > > Also private memslot cannot be movable and the same file+offset can not
+> > > > be mapped into different GFNs.
+> > > > 
+> > > > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > > > ---
+> > > (..)
+> > > >    static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+> > > > -				      gfn_t start, gfn_t end)
+> > > > +				      struct file *file,
+> > > > +				      gfn_t start, gfn_t end,
+> > > > +				      loff_t start_off, loff_t end_off)
+> > > >    {
+> > > >    	struct kvm_memslot_iter iter;
+> > > > +	struct kvm_memory_slot *slot;
+> > > > +	struct inode *inode;
+> > > > +	int bkt;
+> > > >    	kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
+> > > >    		if (iter.slot->id != id)
+> > > >    			return true;
+> > > >    	}
+> > > > +	/* Disallow mapping the same file+offset into multiple gfns. */
+> > > > +	if (file) {
+> > > > +		inode = file_inode(file);
+> > > > +		kvm_for_each_memslot(slot, bkt, slots) {
+> > > > +			if (slot->private_file &&
+> > > > +			     file_inode(slot->private_file) == inode &&
+> > > > +			     !(end_off <= slot->private_offset ||
+> > > > +			       start_off >= slot->private_offset
+> > > > +					     + (slot->npages >> PAGE_SHIFT)))
+> > > > +				return true;
+> > > > +		}
+> > > > +	}
+> > > 
+> > > That's a linear scan of all memslots on each CREATE (and MOVE) operation
+> > > with a fd - we just spent more than a year rewriting similar linear scans
+> > > into more efficient operations in KVM.
+> > 
+> > In the last version I tried to solve this problem by using interval tree
+> > (just like existing hva_tree), but finally we realized that in one VM we
+> > can have multiple fds with overlapped offsets so that approach is
+> > incorrect. See https://lkml.org/lkml/2021/12/28/480 for the discussion.
 > 
-> Thanks Jan for all the reviews.
+> That's right, in this case a two-level structure would be necessary:
+> the first level matching a file, then the second level matching that
+> file ranges.
+> However, if such data is going to be used just for checking possible
+> overlap at memslot add or move time it is almost certainly an overkill.
+
+Yes, that is also what I'm seeing.
+
 > 
-> So ext4_fc_track_template() adds almost all required information
-> (including the caller info) in this one trace point along with transaction tid
-> which is useful for tracking issue similar to what is mentioned in Patch-9.
+> > So linear scan is used before I can find a better way.
 > 
-> (race with if inode is part of two transactions tid where jbd2 full commit
-> may begin for txn n-1 while inode is still in sbi->s_fc_q[MAIN])
- 
-I understand commit tid is interesting but cannot we just add it to
-tracepoints like trace_ext4_fc_track_range() directly? It would seem useful
-to have it there and when it is there, the need for
-ext4_fc_track_template() is not really big. I don't care too much but
-this tracepoint looked a bit superfluous to me.
+> Another option would be to simply not check for overlap at add or move
+> time, declare such configuration undefined behavior under KVM API and
+> make sure in MMU notifiers that nothing bad happens to the host kernel
+> if it turns out somebody actually set up a VM this way (it could be
+> inefficient in this case, since it's not supposed to ever happen
+> unless there is a bug somewhere in the userspace part).
 
-> And similarly ext4_fc_cleanup() helps with that information about which tid
-> completed and whether it was called from jbd2 full commit or from fast_commit.
+Specific to TDX case, SEAMMODULE will fail the overlapping case and then
+KVM prints a message to the kernel log. It will not cause any other side
+effect, it does look weird however. Yes warn that in the API document
+can help to some extent.
 
-Yeah, that one is clear.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Chao
+> 
+> > Chao
+> 
+> Thanks,
+> Maciej
