@@ -2,197 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E42494C15BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 15:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ECA94C1645
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 16:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241783AbiBWOtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 09:49:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41036 "EHLO
+        id S241148AbiBWPPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 10:15:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241786AbiBWOth (ORCPT
+        with ESMTP id S241147AbiBWPPN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 09:49:37 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2CDB715B;
-        Wed, 23 Feb 2022 06:49:01 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 792EC210FA;
-        Wed, 23 Feb 2022 14:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645627740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FK9sEqjfjXY5LitlS8xP8QxizShsUv7zVJcMSguuQsI=;
-        b=Tk2CjgZxXq9scsobDc7T0IE8j69fBv5oYo0j3SprpnwipqdH1e05ijG3ppRVnvj9ajcx0m
-        8dVZCeyNUWJwVds4B0pGKj/goPeyZwV0aYGsTK2pehyuDpIhJDE2I7uA0ettmJEHCGNcoZ
-        KJmeZzigTmasqi+IjZeoiOCACKRgeMI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645627740;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FK9sEqjfjXY5LitlS8xP8QxizShsUv7zVJcMSguuQsI=;
-        b=ea1wLDQMhfNJsERaMMn0yrMF8Gd3nmirnS6yKtTzzWUn9tSe6Ic6pkXSOxazPL99wYG7nU
-        s6X8OdP1Q7JKn5Dg==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 57AB1A3B8E;
-        Wed, 23 Feb 2022 14:49:00 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 03F62A0605; Wed, 23 Feb 2022 15:48:59 +0100 (CET)
-Date:   Wed, 23 Feb 2022 15:48:59 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Jan Kara <jack@suse.cz>, torvalds@linux-foundation.org,
-        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
-        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
-        duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-        tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-        amir73il@gmail.com, bfields@fieldses.org,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org, axboe@kernel.dk,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.com, jlayton@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com
-Subject: Re: Report 2 in ext4 and journal based on v5.17-rc1
-Message-ID: <20220223144859.na2gjgl5efgw5zhn@quack3.lan>
-References: <1645095472-26530-1-git-send-email-byungchul.park@lge.com>
- <1645096204-31670-1-git-send-email-byungchul.park@lge.com>
- <1645096204-31670-2-git-send-email-byungchul.park@lge.com>
- <20220221190204.q675gtsb6qhylywa@quack3.lan>
- <20220223003534.GA26277@X58A-UD3R>
+        Wed, 23 Feb 2022 10:15:13 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62990B8B43
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 07:14:45 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id j17so13460519wrc.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 07:14:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ykq5ak7LwB0ZRmdfcGspsY+0zkbLKncbUW2qn8AKANE=;
+        b=h0Jr/0QKVekBgu2adOVNDXwBCnLnUq2zwuJDg5oITly2ZLrkOohwPTWSgMbROtZy4p
+         aGxwftBLr/k8vwvhQtZ7Jti4qFv5cAK+KjyRS/S7l9lANWG5cZHfm3A84ByO+hoNrmEn
+         DdPLzNtCPP+CGcdstIVGok9Y2UfZao9wirq+i8ro6tNvsHdusGMgd9o0KI/yFmFsfQRp
+         NgHVegiMpzYloFNFZ/UfThAzcx9uBEvgVA7wyKoskE7yGvMEYkmz27Xkm+0l1Mm0Tsr3
+         gLVXxZdPgfp7tguXmZE/Mom2RLeQG8xVkkcN56w1XxIhkkeSgdHyG26qqU2P+9GdGBX8
+         9b5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ykq5ak7LwB0ZRmdfcGspsY+0zkbLKncbUW2qn8AKANE=;
+        b=NNmUqP5kplqLpLk8V7Mc9O6sfUBvvi8HiLeXg1uOEl8tkApyv56FlpbZeFhu2UBuAu
+         bD/JZPo32eNMsdIcAYut3EqrPjcJ4rBG8NTlGEmAhqacr+/TXpJexzH1g/MKLkX6xyr6
+         1DjoiNj0obfGeG81RZYotOM5gJNDApo3FyqCbgojMGlfDPhKAxD3scY+7JAzzuixs+1U
+         kEUADYQd18p8Mfq8Nybb1pnYkx9Jzzv6fzBeyOmgMDo/sqjeLPlFScNI3QMhQ8hCBcgd
+         C8J7/uC6d8J8bssStbMNQXOC6Wmhn5ReSfGrsOfwBvL2O/7nxRhgzm4xUUTAAbKMrprr
+         MsyQ==
+X-Gm-Message-State: AOAM530pyDhG8/DiX+7vyPuBO5T9RBqr8wlaX5c8XRwYP2I/w36raZYs
+        6V5LAO+VV4/ygwxITyMscukGNEN0HLk=
+X-Google-Smtp-Source: ABdhPJzGwp8SUGUOMzPR0cHXPqDwdz5nNd9EN88hwZswXETAa6wIlVoDJJakn1ESi4jpQqbOKNx6Nw==
+X-Received: by 2002:a5d:6e8e:0:b0:1e6:754b:47de with SMTP id k14-20020a5d6e8e000000b001e6754b47demr92061wrz.208.1645629283793;
+        Wed, 23 Feb 2022 07:14:43 -0800 (PST)
+Received: from localhost.localdomain ([77.137.71.153])
+        by smtp.gmail.com with ESMTPSA id 3sm57488548wrz.86.2022.02.23.07.14.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Feb 2022 07:14:43 -0800 (PST)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/2] Fsnotify ignored mask related fixes
+Date:   Wed, 23 Feb 2022 17:14:36 +0200
+Message-Id: <20220223151438.790268-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220223003534.GA26277@X58A-UD3R>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 23-02-22 09:35:34, Byungchul Park wrote:
-> On Mon, Feb 21, 2022 at 08:02:04PM +0100, Jan Kara wrote:
-> > On Thu 17-02-22 20:10:04, Byungchul Park wrote:
-> > > [    9.008161] ===================================================
-> > > [    9.008163] DEPT: Circular dependency has been detected.
-> > > [    9.008164] 5.17.0-rc1-00015-gb94f67143867-dirty #2 Tainted: G        W
-> > > [    9.008166] ---------------------------------------------------
-> > > [    9.008167] summary
-> > > [    9.008167] ---------------------------------------------------
-> > > [    9.008168] *** DEADLOCK ***
-> > > [    9.008168]
-> > > [    9.008168] context A
-> > > [    9.008169]     [S] (unknown)(&(&journal->j_wait_transaction_locked)->dmap:0)
-> > > [    9.008171]     [W] wait(&(&journal->j_wait_commit)->dmap:0)
-> > > [    9.008172]     [E] event(&(&journal->j_wait_transaction_locked)->dmap:0)
-> > > [    9.008173]
-> > > [    9.008173] context B
-> > > [    9.008174]     [S] down_write(mapping.invalidate_lock:0)
-> > > [    9.008175]     [W] wait(&(&journal->j_wait_transaction_locked)->dmap:0)
-> > > [    9.008176]     [E] up_write(mapping.invalidate_lock:0)
-> > > [    9.008177]
-> > > [    9.008178] context C
-> > > [    9.008179]     [S] (unknown)(&(&journal->j_wait_commit)->dmap:0)
-> > > [    9.008180]     [W] down_write(mapping.invalidate_lock:0)
-> > > [    9.008181]     [E] event(&(&journal->j_wait_commit)->dmap:0)
-> > > [    9.008181]
-> > > [    9.008182] [S]: start of the event context
-> > > [    9.008183] [W]: the wait blocked
-> > > [    9.008183] [E]: the event not reachable
-> > 
-> > So what situation is your tool complaining about here? Can you perhaps show
-> > it here in more common visualization like:
-> 
-> Sure.
-> 
-> > TASK1				TASK2
-> > 				does foo, grabs Z
-> > does X, grabs lock Y
-> > blocks on Z
-> > 				blocks on Y
-> > 
-> > or something like that? Because I was not able to decipher this from the
-> > report even after trying for some time...
-> 
-> KJOURNALD2(kthread)	TASK1(ksys_write)	TASK2(ksys_write)
-> 
-> wait A
-> --- stuck
-> 			wait B
-> 			--- stuck
-> 						wait C
-> 						--- stuck
-> 
-> wake up B		wake up C		wake up A
-> 
-> where:
-> A is a wait_queue, j_wait_commit
-> B is a wait_queue, j_wait_transaction_locked
-> C is a rwsem, mapping.invalidate_lock
+Jan,
 
-I see. But a situation like this is not necessarily a guarantee of a
-deadlock, is it? I mean there can be task D that will eventually call say
-'wake up B' and unblock everything and this is how things were designed to
-work? Multiple sources of wakeups are quite common I'd say... What does
-Dept do to prevent false reports in cases like this?
+The two patches are functionally unrelated, but they both incorporate
+information from the ignored mask into the object's interest mask.
 
-> The above is the simplest form. And it's worth noting that Dept focuses
-> on wait and event itself rather than grabing and releasing things like
-> lock. The following is the more descriptive form of it.
-> 
-> KJOURNALD2(kthread)	TASK1(ksys_write)	TASK2(ksys_write)
-> 
-> wait @j_wait_commit
-> 			ext4_truncate_failed_write()
-> 			   down_write(mapping.invalidate_lock)
-> 
-> 			   ext4_truncate()
-> 			      ...
-> 			      wait @j_wait_transaction_locked
-> 
-> 						ext_truncate_failed_write()
-> 						   down_write(mapping.invalidate_lock)
-> 
-> 						ext4_should_retry_alloc()
-> 						   ...
-> 						   __jbd2_log_start_commit()
-> 						      wake_up(j_wait_commit)
-> jbd2_journal_commit_transaction()
->    wake_up(j_wait_transaction_locked)
-> 			   up_write(mapping.invalidate_lock)
-> 
-> I hope this would help you understand the report.
+The 1st patch is a fix for a minor functional bug.
+LTP test fanotify10 has a workaround for this bug, see comment:
+  /* XXX: temporary hack may be removed in the future */
+The test is to remove the hack and see that fanotify10 passes.
 
-I see, thanks for explanation! So the above scenario is impossible because
-for anyone to block on @j_wait_transaction_locked the transaction must be
-committing, which is done only by kjournald2 kthread and so that thread
-cannot be waiting at @j_wait_commit. Essentially blocking on
-@j_wait_transaction_locked means @j_wait_commit wakeup was already done.
+The 2nd patch is a performance optimization that you suggested.
+Last time I posted it, you asked for performance numbers [1], so I ran
+some micro benchmarks (see results below [3]).
 
-I guess this shows there can be non-trivial dependencies between wait
-queues which are difficult to track in an automated way and without such
-tracking we are going to see false positives...
+Note that the other patch from that first posting ("optimize merging of
+marks with no ignored masks") did not demonstrate any visible
+improvements with the benchmarks that I ran so I left it out.
 
-								Honza
+The micro benchmark is a simple program [2] that writes 1 byte at a time
+in a loop. I ran it on tmpfs once without any mark and once with a mark
+with a mask for DELETE_SELF event.
+
+On upstream kernel, runtime with a mark is always ~25% longer.
+With the optimization patch applied, runtime with a mark is most of the
+time (but not always) very close to the runtime without a mark.
+
+[1] https://lore.kernel.org/linux-fsdevel/20201203145220.GH11854@quack2.suse.cz/
+[2] https://github.com/amir73il/fsnotify-utils/blob/master/src/test/ioloop.c
+[3] Performance test results:
+
+$ time ./ioloop /tmp/foo 10000000 w
+$ inotifywait -e delete_self /tmp/foo &
+$ time ./ioloop /tmp/foo 10000000 w
+$ rm /tmp/foo
+
+5.17.0-rc2 #1
+-------------
+ioloop count=10000000 op=write
+
+real	0m24.264s
+user	0m3.977s
+sys	0m20.278s
+
+Setting up watches.
+Watches established.
+ioloop count=10000000 op=write
+
+real	0m29.914s
+user	0m3.929s
+sys	0m25.974s
+
+/tmp/foo DELETE_SELF
+
+5.17.0-rc2 #2
+-------------
+ioloop count=10000000 op=write
+
+real	0m26.836s
+user	0m4.212s
+sys	0m22.615s
+
+Setting up watches.
+Watches established.
+ioloop count=10000000 op=write
+
+real	0m30.206s
+user	0m4.110s
+sys	0m26.090s
+
+/tmp/foo DELETE_SELF
+
+5.17.0-rc2 #3
+-------------
+ioloop count=10000000 op=write
+
+real	0m25.359s
+user	0m4.386s
+sys	0m20.945s
+
+Setting up watches.
+Watches established.
+ioloop count=10000000 op=write
+
+real	0m30.213s
+user	0m4.187s
+sys	0m26.020s
+
+/tmp/foo DELETE_SELF
+
+fsnotify-ignored #1
+-------------------
+ioloop count=10000000 op=write
+
+real	0m25.020s
+user	0m3.982s
+sys	0m21.028s
+
+Setting up watches.
+Watches established.
+ioloop count=10000000 op=write
+
+real	0m26.084s
+user	0m4.266s
+sys	0m21.812s
+
+/tmp/foo DELETE_SELF
+
+fsnotify-ignored #2
+-------------------
+ioloop count=10000000 op=write
+
+real	0m24.642s
+user	0m3.945s
+sys	0m20.677s
+
+Setting up watches.
+Watches established.
+ioloop count=10000000 op=write
+
+real	0m25.790s
+user	0m4.209s
+sys	0m21.572s
+
+/tmp/foo DELETE_SELF
+
+fsnotify-ignored #3
+-------------------
+ioloop count=10000000 op=write
+
+real	0m25.233s
+user	0m4.315s
+sys	0m20.906s
+
+Setting up watches.
+Watches established.
+ioloop count=10000000 op=write
+
+real	0m28.800s
+user	0m4.329s
+sys	0m24.462s
+
+/tmp/foo DELETE_SELF
+
+Amir Goldstein (2):
+  fsnotify: fix merge with parent's ignored mask
+  fsnotify: optimize FS_MODIFY events with no ignored masks
+
+ fs/notify/fanotify/fanotify_user.c | 47 +++++++++++++++++++++---------
+ fs/notify/fsnotify.c               |  8 +++--
+ fs/notify/mark.c                   |  4 +--
+ include/linux/fsnotify_backend.h   | 19 ++++++++++++
+ 4 files changed, 59 insertions(+), 19 deletions(-)
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
