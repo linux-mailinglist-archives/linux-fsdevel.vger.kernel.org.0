@@ -2,38 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF0E4C15D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 15:54:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E42494C15BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 15:49:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241765AbiBWOyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 09:54:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46720 "EHLO
+        id S241783AbiBWOtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 09:49:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232632AbiBWOyg (ORCPT
+        with ESMTP id S241786AbiBWOth (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 09:54:36 -0500
-X-Greylist: delayed 340 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 23 Feb 2022 06:54:08 PST
-Received: from winds.org (winds.org [68.75.195.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8E5EEB4592;
-        Wed, 23 Feb 2022 06:54:08 -0800 (PST)
-Received: by winds.org (Postfix, from userid 100)
-        id D3E1E1CA58FE; Wed, 23 Feb 2022 09:48:26 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by winds.org (Postfix) with ESMTP id D13481CA589C;
-        Wed, 23 Feb 2022 09:48:26 -0500 (EST)
-Date:   Wed, 23 Feb 2022 09:48:26 -0500 (EST)
-From:   Byron Stanoszek <gandalf@winds.org>
-To:     Dave Chinner <david@fromorbit.com>
-cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org
-Subject: Re: Is it time to remove reiserfs?
-In-Reply-To: <20220222221614.GC3061737@dread.disaster.area>
-Message-ID: <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
-References: <YhIwUEpymVzmytdp@casper.infradead.org> <20220222100408.cyrdjsv5eun5pzij@quack3.lan> <20220222221614.GC3061737@dread.disaster.area>
+        Wed, 23 Feb 2022 09:49:37 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2CDB715B;
+        Wed, 23 Feb 2022 06:49:01 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 792EC210FA;
+        Wed, 23 Feb 2022 14:49:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1645627740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FK9sEqjfjXY5LitlS8xP8QxizShsUv7zVJcMSguuQsI=;
+        b=Tk2CjgZxXq9scsobDc7T0IE8j69fBv5oYo0j3SprpnwipqdH1e05ijG3ppRVnvj9ajcx0m
+        8dVZCeyNUWJwVds4B0pGKj/goPeyZwV0aYGsTK2pehyuDpIhJDE2I7uA0ettmJEHCGNcoZ
+        KJmeZzigTmasqi+IjZeoiOCACKRgeMI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1645627740;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FK9sEqjfjXY5LitlS8xP8QxizShsUv7zVJcMSguuQsI=;
+        b=ea1wLDQMhfNJsERaMMn0yrMF8Gd3nmirnS6yKtTzzWUn9tSe6Ic6pkXSOxazPL99wYG7nU
+        s6X8OdP1Q7JKn5Dg==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 57AB1A3B8E;
+        Wed, 23 Feb 2022 14:49:00 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 03F62A0605; Wed, 23 Feb 2022 15:48:59 +0100 (CET)
+Date:   Wed, 23 Feb 2022 15:48:59 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     Jan Kara <jack@suse.cz>, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
+        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
+        duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+        tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+        amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org, axboe@kernel.dk,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.com, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: Report 2 in ext4 and journal based on v5.17-rc1
+Message-ID: <20220223144859.na2gjgl5efgw5zhn@quack3.lan>
+References: <1645095472-26530-1-git-send-email-byungchul.park@lge.com>
+ <1645096204-31670-1-git-send-email-byungchul.park@lge.com>
+ <1645096204-31670-2-git-send-email-byungchul.park@lge.com>
+ <20220221190204.q675gtsb6qhylywa@quack3.lan>
+ <20220223003534.GA26277@X58A-UD3R>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220223003534.GA26277@X58A-UD3R>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -42,89 +88,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 23 Feb 2022, Dave Chinner wrote:
-> On Tue, Feb 22, 2022 at 11:04:08AM +0100, Jan Kara wrote:
->> Hello!
->>
->> On Sun 20-02-22 12:13:04, Matthew Wilcox wrote:
->>> Keeping reiserfs in the tree has certain costs.  For example, I would
->>> very much like to remove the 'flags' argument to ->write_begin.  We have
->>> the infrastructure in place to handle AOP_FLAG_NOFS differently, but
->>> AOP_FLAG_CONT_EXPAND is still around, used only by reiserfs.
->>>
->>> Looking over the patches to reiserfs over the past couple of years, there
->>> are fixes for a few syzbot reports and treewide changes.  There don't
->>> seem to be any fixes for user-spotted bugs since 2019.  Does reiserfs
->>> still have a large install base that is just very happy with an old
->>> stable filesystem?  Or have all its users migrated to new and exciting
->>> filesystems with active feature development?
->>>
->>> We've removed support for senescent filesystems before (ext, xiafs), so
->>> it's not unprecedented.  But while I have a clear idea of the benefits to
->>> other developers of removing reiserfs, I don't have enough information to
->>> weigh the costs to users.  Maybe they're happy with having 5.15 support
->>> for their reiserfs filesystems and can migrate to another filesystem
->>> before they upgrade their kernel after 5.15.
->>>
->>> Another possibility beyond outright removal would be to trim the kernel
->>> code down to read-only support for reiserfs.  Most of the quirks of
->>> reiserfs have to do with write support, so this could be a useful way
->>> forward.  Again, I don't have a clear picture of how people actually
->>> use reiserfs, so I don't know whether it is useful or not.
->>>
->>> NB: Please don't discuss the personalities involved.  This is purely a
->>> "we have old code using old APIs" discussion.
->>
->> So from my distro experience installed userbase of reiserfs is pretty small
->> and shrinking. We still do build reiserfs in openSUSE / SLES kernels but
->> for enterprise offerings it is unsupported (for like 3-4 years) and the module
->> is not in the default kernel rpm anymore.
->>
->> So clearly the filesystem is on the deprecation path, the question is
->> whether it is far enough to remove it from the kernel completely. Maybe
->> time to start deprecation by printing warnings when reiserfs gets mounted
->> and then if nobody yells for year or two, we'll go ahead and remove it?
->
-> Yup, I'd say we should deprecate it and add it to the removal
-> schedule. The less poorly tested legacy filesystem code we have to
-> maintain the better.
->
-> Along those lines, I think we really need to be more aggressive
-> about deprecating and removing filesystems that cannot (or will not)
-> be made y2038k compliant in the new future. We're getting to close
-> to the point where long term distro and/or product development life
-> cycles will overlap with y2038k, so we should be thinking of
-> deprecating and removing such filesystems before they end up in
-> products that will still be in use in 15 years time.
->
-> And just so everyone in the discussion is aware: XFS already has a
-> deprecation and removal schedule for the non-y2038k-compliant v4
-> filesystem format. It's officially deprecated right now, we'll stop
-> building kernels with v4 support enabled by default in 2025, and
-> we're removing the code that supports the v4 format entirely in
-> 2030.
+On Wed 23-02-22 09:35:34, Byungchul Park wrote:
+> On Mon, Feb 21, 2022 at 08:02:04PM +0100, Jan Kara wrote:
+> > On Thu 17-02-22 20:10:04, Byungchul Park wrote:
+> > > [    9.008161] ===================================================
+> > > [    9.008163] DEPT: Circular dependency has been detected.
+> > > [    9.008164] 5.17.0-rc1-00015-gb94f67143867-dirty #2 Tainted: G        W
+> > > [    9.008166] ---------------------------------------------------
+> > > [    9.008167] summary
+> > > [    9.008167] ---------------------------------------------------
+> > > [    9.008168] *** DEADLOCK ***
+> > > [    9.008168]
+> > > [    9.008168] context A
+> > > [    9.008169]     [S] (unknown)(&(&journal->j_wait_transaction_locked)->dmap:0)
+> > > [    9.008171]     [W] wait(&(&journal->j_wait_commit)->dmap:0)
+> > > [    9.008172]     [E] event(&(&journal->j_wait_transaction_locked)->dmap:0)
+> > > [    9.008173]
+> > > [    9.008173] context B
+> > > [    9.008174]     [S] down_write(mapping.invalidate_lock:0)
+> > > [    9.008175]     [W] wait(&(&journal->j_wait_transaction_locked)->dmap:0)
+> > > [    9.008176]     [E] up_write(mapping.invalidate_lock:0)
+> > > [    9.008177]
+> > > [    9.008178] context C
+> > > [    9.008179]     [S] (unknown)(&(&journal->j_wait_commit)->dmap:0)
+> > > [    9.008180]     [W] down_write(mapping.invalidate_lock:0)
+> > > [    9.008181]     [E] event(&(&journal->j_wait_commit)->dmap:0)
+> > > [    9.008181]
+> > > [    9.008182] [S]: start of the event context
+> > > [    9.008183] [W]: the wait blocked
+> > > [    9.008183] [E]: the event not reachable
+> > 
+> > So what situation is your tool complaining about here? Can you perhaps show
+> > it here in more common visualization like:
+> 
+> Sure.
+> 
+> > TASK1				TASK2
+> > 				does foo, grabs Z
+> > does X, grabs lock Y
+> > blocks on Z
+> > 				blocks on Y
+> > 
+> > or something like that? Because I was not able to decipher this from the
+> > report even after trying for some time...
+> 
+> KJOURNALD2(kthread)	TASK1(ksys_write)	TASK2(ksys_write)
+> 
+> wait A
+> --- stuck
+> 			wait B
+> 			--- stuck
+> 						wait C
+> 						--- stuck
+> 
+> wake up B		wake up C		wake up A
+> 
+> where:
+> A is a wait_queue, j_wait_commit
+> B is a wait_queue, j_wait_transaction_locked
+> C is a rwsem, mapping.invalidate_lock
 
-For what it's worth, I have a number of production servers still using
-Reiserfs, which I regularly maintain by upgrading to the latest Linux kernel
-annually (mostly to apply security patches). I figured this filesystem would
-still be available for several more years, since it's not quite y2038k yet.
+I see. But a situation like this is not necessarily a guarantee of a
+deadlock, is it? I mean there can be task D that will eventually call say
+'wake up B' and unblock everything and this is how things were designed to
+work? Multiple sources of wakeups are quite common I'd say... What does
+Dept do to prevent false reports in cases like this?
 
-I originally installed Reiserfs on these systems as early as 2005 due to the
-tail-packing feature, which saved space with many small files on older
-harddrives. Since then, I witnessed the development of ext4, and then btrfs.
-For a long time, these newer filesystems had occasional reports of instabilities
-and lost data, and so I shied away from using them. Meanwhile, Reiserfs reached
-a level of maturity and no longer had active development on it, except for the
-occasional bugfix. I felt this was a filesystem I could trust going forward
-(despite its relative slowness), even after popular Linux distributions
-eventually dropped it from being installed by default.
+> The above is the simplest form. And it's worth noting that Dept focuses
+> on wait and event itself rather than grabing and releasing things like
+> lock. The following is the more descriptive form of it.
+> 
+> KJOURNALD2(kthread)	TASK1(ksys_write)	TASK2(ksys_write)
+> 
+> wait @j_wait_commit
+> 			ext4_truncate_failed_write()
+> 			   down_write(mapping.invalidate_lock)
+> 
+> 			   ext4_truncate()
+> 			      ...
+> 			      wait @j_wait_transaction_locked
+> 
+> 						ext_truncate_failed_write()
+> 						   down_write(mapping.invalidate_lock)
+> 
+> 						ext4_should_retry_alloc()
+> 						   ...
+> 						   __jbd2_log_start_commit()
+> 						      wake_up(j_wait_commit)
+> jbd2_journal_commit_transaction()
+>    wake_up(j_wait_transaction_locked)
+> 			   up_write(mapping.invalidate_lock)
+> 
+> I hope this would help you understand the report.
 
-I have only recently begun to use XFS on newer installs, only since the XFS
-developers added bigtime support for y2038k. But for existing installs, I ask
-that we keep Reiserfs supported in the kernel a little longer. Perhaps use the
-same deprecation schedule that was picked for XFS v4 (roughly 10 years of
-deprecation before eventual removal)?
+I see, thanks for explanation! So the above scenario is impossible because
+for anyone to block on @j_wait_transaction_locked the transaction must be
+committing, which is done only by kjournald2 kthread and so that thread
+cannot be waiting at @j_wait_commit. Essentially blocking on
+@j_wait_transaction_locked means @j_wait_commit wakeup was already done.
 
-Thanks,
-  -Byron
+I guess this shows there can be non-trivial dependencies between wait
+queues which are difficult to track in an automated way and without such
+tracking we are going to see false positives...
 
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
