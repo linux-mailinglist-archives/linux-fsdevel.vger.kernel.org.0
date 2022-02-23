@@ -2,131 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 526A24C0677
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 01:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 997BE4C06D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Feb 2022 02:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236460AbiBWA4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Feb 2022 19:56:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41370 "EHLO
+        id S235476AbiBWBXm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Feb 2022 20:23:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234184AbiBWA4O (ORCPT
+        with ESMTP id S231136AbiBWBXl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Feb 2022 19:56:14 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3067742494;
-        Tue, 22 Feb 2022 16:55:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UHKUXaQs83hzUDt8v+U00kEJvR6ZOsIIGcwG7EVaZYM=; b=ZZ8XaVHr7DtXsF4mq/JhD+5e19
-        PTQkrxYd2u/tKyqslo/SH7ec5rFaZ4v251YwFUYA4y1psL20VLIJ3+gxLLpZ7KaaOy8EIwgg16Urb
-        o7cyMzQa6dLO9oLH4usZX17Z4/TP3HAUiVQXi5ZK5jrNaIwWFywVM8LCGcsSlR1Ouao5988oG8pJ6
-        fMnQLJYRyyCbUT4M2ag1lWIhqdUuu8oQylCt9m6iMM4oDa1NwxKH2Cq+PYQGORzHbZvXh7BIYGcPT
-        OoQQLhBr4cW8bmu7IwxukZ+cYv3EPK4sVSKCaIHulOY2QHYiLI6nVQOsFhzg4cuQxeMIEADaX/rcY
-        PdsLQGqA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMfwT-00C2dS-Pt; Wed, 23 Feb 2022 00:55:41 +0000
-Date:   Tue, 22 Feb 2022 16:55:41 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     hch@lst.de, javier@javigon.com, chaitanyak@nvidia.com,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        msnitzer@redhat.com, bvanassche@acm.org,
-        martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
-        Frederick.Knight@netapp.com, osandov@fb.com,
-        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
-        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
-        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com,
-        nitheshshetty@gmail.com, SelvaKumar S <selvakuma.s1@samsung.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] block: Introduce queue limits for copy-offload
- support
-Message-ID: <YhWGDUyQkUcE6itt@bombadil.infradead.org>
-References: <20220214080002.18381-1-nj.shetty@samsung.com>
- <CGME20220214080605epcas5p16868dae515a6355cf9fecf22df4f3c3d@epcas5p1.samsung.com>
- <20220214080002.18381-3-nj.shetty@samsung.com>
- <20220217090700.b7n33vbkx5s4qbfq@garbanzo>
- <20220217125901.GA3781@test-zns>
+        Tue, 22 Feb 2022 20:23:41 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A3548336;
+        Tue, 22 Feb 2022 17:23:13 -0800 (PST)
+Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4K3JD82YczzdZPj;
+        Wed, 23 Feb 2022 09:22:00 +0800 (CST)
+Received: from Linux-SUSE12SP5.huawei.com (10.67.132.207) by
+ dggpeml500024.china.huawei.com (7.185.36.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Wed, 23 Feb 2022 09:23:11 +0800
+From:   Wei Xiao <xiaowei66@huawei.com>
+To:     <rostedt@goodmis.org>, <mingo@redhat.com>, <mcgrof@kernel.org>,
+        <keescook@chromium.org>, <yzaikin@google.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <young.liuyang@huawei.com>, <zengweilin@huawei.com>,
+        <nixiaoming@huawei.com>, <xiaowei66@huawei.com>
+Subject: [PATCH] ftrace: move sysctl_ftrace_enabled to ftrace.c
+Date:   Wed, 23 Feb 2022 09:23:11 +0800
+Message-ID: <20220223012311.134314-1-xiaowei66@huawei.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220217125901.GA3781@test-zns>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.132.207]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500024.china.huawei.com (7.185.36.10)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 17, 2022 at 06:29:01PM +0530, Nitesh Shetty wrote:
->  Thu, Feb 17, 2022 at 01:07:00AM -0800, Luis Chamberlain wrote:
-> > The subject says limits for copy-offload...
-> > 
-> > On Mon, Feb 14, 2022 at 01:29:52PM +0530, Nitesh Shetty wrote:
-> > > Add device limits as sysfs entries,
-> > >         - copy_offload (RW)
-> > >         - copy_max_bytes (RW)
-> > >         - copy_max_hw_bytes (RO)
-> > >         - copy_max_range_bytes (RW)
-> > >         - copy_max_range_hw_bytes (RO)
-> > >         - copy_max_nr_ranges (RW)
-> > >         - copy_max_nr_ranges_hw (RO)
-> > 
-> > Some of these seem like generic... and also I see a few more max_hw ones
-> > not listed above...
-> >
-> queue_limits and sysfs entries are differently named.
-> All sysfs entries start with copy_* prefix. Also it makes easy to lookup
-> all copy sysfs.
-> For queue limits naming, I tried to following existing queue limit
-> convention (like discard).
+This moves ftrace_enabled to trace/ftrace.c.
 
-My point was that your subject seems to indicate the changes are just
-for copy-offload, but you seem to be adding generic queue limits as
-well. Is that correct? If so then perhaps the subject should be changed
-or the patch split up.
+Signed-off-by: Wei Xiao <xiaowei66@huawei.com>
+---
+ include/linux/ftrace.h |  3 ---
+ kernel/sysctl.c        |  9 ---------
+ kernel/trace/ftrace.c  | 22 +++++++++++++++++++++-
+ 3 files changed, 21 insertions(+), 13 deletions(-)
 
-> > > +static ssize_t queue_copy_offload_store(struct request_queue *q,
-> > > +				       const char *page, size_t count)
-> > > +{
-> > > +	unsigned long copy_offload;
-> > > +	ssize_t ret = queue_var_store(&copy_offload, page, count);
-> > > +
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +
-> > > +	if (copy_offload && !q->limits.max_hw_copy_sectors)
-> > > +		return -EINVAL;
-> > 
-> > 
-> > If the kernel schedules, copy_offload may still be true and
-> > max_hw_copy_sectors may be set to 0. Is that an issue?
-> >
-> 
-> This check ensures that, we dont enable offload if device doesnt support
-> offload. I feel it shouldn't be an issue.
-
-My point was this:
-
-CPU1                                       CPU2
-Time
-1) if (copy_offload 
-2)    ---> preemption so it schedules      
-3)    ---> some other high priority task  Sets q->limits.max_hw_copy_sectors to 0
-4) && !q->limits.max_hw_copy_sectors)
-
-Can something bad happen if we allow for this?
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 9999e29187de..659b2840563a 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -94,9 +94,6 @@ static inline int ftrace_mod_get_kallsym(unsigned int symnum, unsigned long *val
+ #ifdef CONFIG_FUNCTION_TRACER
+ 
+ extern int ftrace_enabled;
+-extern int
+-ftrace_enable_sysctl(struct ctl_table *table, int write,
+-		     void *buffer, size_t *lenp, loff_t *ppos);
+ 
+ #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+ 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 5ae443b2882e..55279ec66b28 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1906,15 +1906,6 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
+-#ifdef CONFIG_FUNCTION_TRACER
+-	{
+-		.procname	= "ftrace_enabled",
+-		.data		= &ftrace_enabled,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= ftrace_enable_sysctl,
+-	},
+-#endif
+ #ifdef CONFIG_STACK_TRACER
+ 	{
+ 		.procname	= "stack_tracer_enabled",
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index f9feb197b2da..4a5b4d6996a4 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -7846,7 +7846,8 @@ static bool is_permanent_ops_registered(void)
+ 	return false;
+ }
+ 
+-int
++#ifdef CONFIG_SYSCTL
++static int
+ ftrace_enable_sysctl(struct ctl_table *table, int write,
+ 		     void *buffer, size_t *lenp, loff_t *ppos)
+ {
+@@ -7889,3 +7890,22 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
+ 	mutex_unlock(&ftrace_lock);
+ 	return ret;
+ }
++
++static struct ctl_table ftrace_sysctls[] = {
++	{
++		.procname       = "ftrace_enabled",
++		.data           = &ftrace_enabled,
++		.maxlen         = sizeof(int),
++		.mode           = 0644,
++		.proc_handler   = ftrace_enable_sysctl,
++	},
++	{}
++};
++
++static int __init ftrace_sysctl_init(void)
++{
++	register_sysctl_init("kernel", ftrace_sysctls);
++	return 0;
++}
++late_initcall(ftrace_sysctl_init);
++#endif
+-- 
+2.19.1
 
