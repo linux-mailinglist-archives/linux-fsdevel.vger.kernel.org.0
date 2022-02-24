@@ -2,73 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EEF8E4C3758
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 22:07:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFF4D4C378A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 22:23:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234347AbiBXVG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 16:06:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56270 "EHLO
+        id S234663AbiBXVYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 16:24:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiBXVG6 (ORCPT
+        with ESMTP id S234681AbiBXVYK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 16:06:58 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6903D24FA27;
-        Thu, 24 Feb 2022 13:06:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gqwsfxNL/6u6rNbdgXApLMLgt2yxqOUUOtWYMHIjK/s=; b=TIctb2fI/Th0lTWb0MsVMD/mze
-        ygDbG+qwvvYChpgzeugUgvWAh1UnWeb+BBL4nWUOLBYTLF1WDKe4XaRG+RZGIH0gFFGxo6L/JClJa
-        W9mwKicf+pRvoyYIJRjMJ9WwEvCr8yxmoKVlb6mtFvGHqlF4Qof/J+JJuna1JWC1wUHIQAXacYgRe
-        Z+3OjnWf/3pC1oAJXDqzTpfvRMF9n1o/LqiyljVjemJYY5d5stQe9rJFFHkjWHAl2Bfwp4i+rUpfE
-        PM5zdL1+Gs7HXhVFVDvA6MFrXjw0o7szFHgmJxI52cUFFdKBtjzigj2IEaEY8SfBHUBGOJ/2ImjHw
-        viPH3q1w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nNLJh-0058qy-3b; Thu, 24 Feb 2022 21:06:25 +0000
-Date:   Thu, 24 Feb 2022 21:06:25 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Byron Stanoszek <gandalf@winds.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org
-Subject: Re: Is it time to remove reiserfs?
-Message-ID: <YhfzUc8afuoQkx/U@casper.infradead.org>
-References: <YhIwUEpymVzmytdp@casper.infradead.org>
- <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
- <20220222221614.GC3061737@dread.disaster.area>
- <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
+        Thu, 24 Feb 2022 16:24:10 -0500
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35989184626;
+        Thu, 24 Feb 2022 13:23:35 -0800 (PST)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 57D0C72F9; Thu, 24 Feb 2022 16:23:34 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 57D0C72F9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1645737814;
+        bh=OkVG8HhEKCzBDMlS68Ne4qJf64Q9ibr4f7QoJtnKZBQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q3lRwZHs04vSExkB+AR4Cj6i+T8amI3WBtE7BQV//KHaX9D9tmAAtNYi7kXGcqw4v
+         gxlS0urkwsmqndbPb0jpGcvMdL0HvvJzWGV+WlV/PuWyj6Ukh+9CDMVTGUWzBxfZ/4
+         jrqQQmPv/3TigWBEo87OM0kJuUxTJipmmjMrBqVY=
+Date:   Thu, 24 Feb 2022 16:23:34 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Daire Byrne <daire@dneg.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Subject: Re: [PATCH/RFC] VFS: support parallel updates in the one directory.
+Message-ID: <20220224212334.GB29410@fieldses.org>
+References: <164549669043.5153.2021348013072574365@noble.neil.brown.name>
+ <20220222190751.GA7766@fieldses.org>
+ <164567931673.25116.15009501732764258663@noble.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <164567931673.25116.15009501732764258663@noble.neil.brown.name>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 09:48:26AM -0500, Byron Stanoszek wrote:
-> For what it's worth, I have a number of production servers still using
-> Reiserfs, which I regularly maintain by upgrading to the latest Linux kernel
-> annually (mostly to apply security patches). I figured this filesystem would
-> still be available for several more years, since it's not quite y2038k yet.
+On Thu, Feb 24, 2022 at 04:08:36PM +1100, NeilBrown wrote:
+> On Wed, 23 Feb 2022, J. Bruce Fields wrote:
+> > For what it's worth, I applied this to recent upstream (038101e6b2cd)
+> > and fed it through my usual scripts--tests all passed, but I did see
+> > this lockdep warning.
+> > 
+> > I'm not actually sure what was running at the time--probably just cthon.
+> > 
+> > --b.
+> > 
+> > [  142.679891] ======================================================
+> > [  142.680883] WARNING: possible circular locking dependency detected
+> > [  142.681999] 5.17.0-rc5-00005-g64e79f877311 #1778 Not tainted
+> > [  142.682970] ------------------------------------------------------
+> > [  142.684059] test1/4557 is trying to acquire lock:
+> > [  142.684881] ffff888023d85398 (DENTRY_PAR_UPDATE){+.+.}-{0:0}, at: d_lock_update_nested+0x5/0x6a0
+> > [  142.686421] 
+> >                but task is already holding lock:
+> > [  142.687171] ffff88801f618bd0 (&type->i_mutex_dir_key#6){++++}-{3:3}, at: path_openat+0x7cb/0x24a0
+> > [  142.689098] 
+> >                which lock already depends on the new lock.
+> > 
+> > [  142.690045] 
+> >                the existing dependency chain (in reverse order) is:
+> > [  142.691171] 
+> >                -> #1 (&type->i_mutex_dir_key#6){++++}-{3:3}:
+> > [  142.692285]        down_write+0x82/0x130
+> > [  142.692844]        vfs_rmdir+0xbd/0x560
+> > [  142.693351]        do_rmdir+0x33d/0x400
+> 
+> Thanks.  I hadn't tested rmdir :-)
 
-Hey Byron, thanks for sharing your usage.
+OK.  I tested with this applied and didn't see any issues.
 
-It's not entirely clear to me from your message whether you're aware
-that our annual LTS release actually puts out new kernels every week (or
-sometimes twice a week), and upgrades to the latest version are always
-recommended.  Those LTS kernels typically get five years of support in
-total; indeed we just retired the v4.4 series earlier this month which
-was originally released in January 2016, so it got six years of support.
+--b.
 
-If we dropped reiserfs from the kernel today (and thanks to Edward, we
-don't have to), you'd still be able to use a v5.15 based kernel with
-regular updates until 2028.  If we drop it in two years, that should
-take you through to 2030.  Is that enough for your usage?
+> 
+> "rmdir" and "open(O_CREATE)" take these locks in the opposite order.
+> 
+> I think the simplest fix might be to change the inode_lock(_shared) taken
+> on the dir in open_last_Lookups() to use I_MUTEX_PARENT.  That is
+> consistent with unlink and rmdir etc which use I_MUTEX_PARENT on the
+> parent.
+> 
+> open() doesn't currently use I_MUTEX_PARENT because it never needs to
+> lock the child.  But as it *is* a parent that is being locked, using
+> I_MUTEX_PARENT probably make more sense.
+> 
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3513,9 +3513,9 @@ static const char *open_last_lookups(struct nameidata *nd,
+>  	}
+>  	shared = !!(dir->d_inode->i_flags & S_PAR_UPDATE);
+>  	if ((open_flag & O_CREAT) && !shared)
+> -		inode_lock(dir->d_inode);
+> +		inode_lock_nested(dir->d_inode, I_MUTEX_PARENT);
+>  	else
+> -		inode_lock_shared(dir->d_inode);
+> +		inode_lock_shared_nested(dir->d_inode, I_MUTEX_PARENT);
+>  	dentry = lookup_open(nd, file, op, got_write);
+>  	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+>  		fsnotify_create(dir->d_inode, dentry);
+> 
+> Thanks,
+> NeilBrown
