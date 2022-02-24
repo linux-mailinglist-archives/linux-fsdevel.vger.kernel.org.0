@@ -2,91 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5E94C2810
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 10:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 444004C281E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 10:33:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232738AbiBXJ2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 04:28:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54476 "EHLO
+        id S232774AbiBXJd1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 04:33:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232127AbiBXJ2l (ORCPT
+        with ESMTP id S232731AbiBXJdX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 04:28:41 -0500
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0B922A24C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 01:28:11 -0800 (PST)
-Received: by mail-yb1-xb34.google.com with SMTP id e140so2556789ybh.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 01:28:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=ygp7HmSMQP3Q+rbTx5g2DkVDCEdl+SFVfMjp/BmaoiI=;
-        b=cepL0hdCN9UbyCzkOyV9cQEdxhgUijKh9zmmcDO5ikU473yp2AMOZcJXilqLRa0sFX
-         zfJ9F6q5gR/6iBDSs/MWKl5HIY9yjtZF5m5sa1Ox3N3Gu4/ncdRBYcD3fvzUBnuQqtrM
-         nAUWwm6kL8VdrogYpBrNw18wLKWFmZd6DDEvOI6D4H+mHJGqcA8phVZheJzRPgN7lv64
-         eRe0E1LIuKHztxG7hg2oe7Qf66pC89aNTF/Ig8zlbtlXZZhzOOy4WbazNK2qNpt4Zstb
-         gznQQkwisI3iIEeReJZnQLwDvvvJDXee/MNMui+50vNhX2zNwhqzm+l5ZvFAoJxzA9Pw
-         B3iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=ygp7HmSMQP3Q+rbTx5g2DkVDCEdl+SFVfMjp/BmaoiI=;
-        b=ayEoQhpojgZMxipNYlPYoHDpF3ZCl+wxLKSzFRx8IG6stbLbsGqTN59vPgJj4g27x4
-         OjeYbcEHWLldYWey4s5/DpzA6z4ZbVUN8F5Px2ml+a249zsaIU3mD445hS3y7lbTXXtA
-         cgHU6AiAiYpdX7BKGSLDJHniNsqk799m9XeJCVrRZFKXQIOAk9EkzCAxjQvujjTekT96
-         Hawdstf1SdGbDR47b7KU5WGyS23hBazboaoXtzB9XCNT+UsFeCDU5mZ0ngqHeHc5+tvx
-         69ws9nQqNZ7uuZH56oyJSSS0jAXmtZAVFyRODi4+ZxCF1B3vKq39CQIHBpteyiKMpgco
-         x9aw==
-X-Gm-Message-State: AOAM532v41SkvzpPFO3AAcz2HhKe1YAjd/TFTHjaIG9vAKXxafMyDqkW
-        rEL3QYw7lCj3dL2TE/JG5ksj5PD5ze3UyWvxJaCSuw==
-X-Google-Smtp-Source: ABdhPJxscph16DkI7QPkYWvFXGKPAB18KesE5yybvpBkL5Qinq23VhWYa9sR4nWUBegylDrScVJnGI8fPsI6IwGs7nc=
-X-Received: by 2002:a25:6993:0:b0:624:55af:336c with SMTP id
- e141-20020a256993000000b0062455af336cmr1603707ybc.412.1645694890926; Thu, 24
- Feb 2022 01:28:10 -0800 (PST)
+        Thu, 24 Feb 2022 04:33:23 -0500
+Received: from smtpproxy21.qq.com (smtpbg701.qq.com [203.205.195.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50EAC20DB13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 01:32:53 -0800 (PST)
+X-QQ-mid: bizesmtp88t1645695147tgwdwkrk
+Received: from localhost.localdomain (unknown [58.240.82.166])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Thu, 24 Feb 2022 17:32:03 +0800 (CST)
+X-QQ-SSF: 01400000000000B0F000B00A0000000
+X-QQ-FEAT: ZHWZeLXy+8esjqh9jW/ic4y9x7g7V3PVFwHyCbsFjWvtnbyYVlEAO51fszt3T
+        bHxSjNJkqhDKUPW3TEdys3rX/ZjRS2WriSEw7szpdmFr/wjNCZ3jy56t5N8eNio1rzwavz9
+        g+NrNE0rkbkIglNhcKQPmsFNTM+I/Moj/xIV9pAImVgNztfggHlOmlPsCsIIOZSZVhkpkNL
+        izzDMA51RSzItJVneHxc9/MQE6Z+LIbwQD3tSUqbIjj2t/VxU3jZiT3G/JepSwPApydef8p
+        cl4EL/QX0ywPwrDkNQ+JHzuetTFGg1Qvi/emVHK++mxW5+pUkJqzmjBufyCtfjCv6vAJLzb
+        KDYE1h3DWLL2Qa5JaX4/pPWb0yLeg==
+X-QQ-GoodBg: 2
+From:   Meng Tang <tangmeng@uniontech.com>
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Cc:     nixiaoming@huawei.com, nizhen@uniontech.com,
+        zhanglianjie@uniontech.com, sujiaxun@uniontech.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Meng Tang <tangmeng@uniontech.com>
+Subject: [PATCH] fs/proc: optimize exactly register one ctl_table
+Date:   Thu, 24 Feb 2022 17:32:01 +0800
+Message-Id: <20220224093201.12440-1-tangmeng@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 24 Feb 2022 14:57:59 +0530
-Message-ID: <CA+G9fYs_8ww=Mi4o4XXjQxL2XJiTiAUbMd1WF08zL+FoiA7GRw@mail.gmail.com>
-Subject: [next] LTP: readahead02.c:295: TFAIL: readahead failed to save any I/O
-To:     LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev,
-        lkft-triage@lists.linaro.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Peter Xu <peterx@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
+X-QQ-Bgrelay: 1
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Linux next 20220222 tag LTP syscalls test case readahead02 failed.
-Please find detail test output on below link [1]
+Currently, sysctl is being moved to its own file. But ctl_table
+is quite large(64 bytes per entry) and every array is terminated
+with an empty one. This leads to thar when register exactly one
+ctl_table, we've gone from 64 bytes to 128 bytes.
 
-test failed log:
---------------------
-readahead02.c:181: TPASS: offset is still at 0 as expected
-readahead02.c:285: TINFO: read_testfile(0) took: 37567 usec
-readahead02.c:286: TINFO: read_testfile(1) took: 37263 usec
-readahead02.c:288: TINFO: read_testfile(0) read: 0 bytes
-readahead02.c:290: TINFO: read_testfile(1) read: 0 bytes
-readahead02.c:295: TFAIL: readahead failed to save any I/O
+So, it is obviously the right thing that we need to fix.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+In order to avoid compatibility problems, and to be compatible
+with array terminated with an empty one and register exactly one
+ctl_table, add the register_one variable in the ctl_table
+structure to fix it.
 
---
-Linaro LKFT
-https://lkft.linaro.org
+When we register exactly one table, we only need to add
+"table->register = true" to avoid gone from 64 bytes to 128 bytes.
 
-[1] https://lkft.validation.linaro.org/scheduler/job/4607403#L16941
+Signed-off-by: Meng Tang <tangmeng@uniontech.com>
+---
+ fs/proc/proc_sysctl.c  | 58 +++++++++++++++++++++++++++++++++++++++---
+ include/linux/sysctl.h |  1 +
+ 2 files changed, 56 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 7d9cfc730bd4..9ecd5c87e8dd 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -215,16 +215,24 @@ static void init_header(struct ctl_table_header *head,
+ 	INIT_HLIST_HEAD(&head->inodes);
+ 	if (node) {
+ 		struct ctl_table *entry;
+-		for (entry = table; entry->procname; entry++, node++)
++		for (entry = table; entry->procname; entry++, node++) {
+ 			node->header = head;
++
++			if (entry->register_one)
++				break;
++		}
+ 	}
+ }
+ 
+ static void erase_header(struct ctl_table_header *head)
+ {
+ 	struct ctl_table *entry;
+-	for (entry = head->ctl_table; entry->procname; entry++)
++	for (entry = head->ctl_table; entry->procname; entry++) {
+ 		erase_entry(head, entry);
++
++		if (entry->register_one)
++			break;
++	}
+ }
+ 
+ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
+@@ -252,6 +260,9 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
+ 		err = insert_entry(header, entry);
+ 		if (err)
+ 			goto fail;
++
++		if (entry->register_one)
++			break;
+ 	}
+ 	return 0;
+ fail:
+@@ -1159,6 +1170,9 @@ static int sysctl_check_table(const char *path, struct ctl_table *table)
+ 		if ((table->mode & (S_IRUGO|S_IWUGO)) != table->mode)
+ 			err |= sysctl_err(path, table, "bogus .mode 0%o",
+ 				table->mode);
++
++		if (table->register_one)
++			break;
+ 	}
+ 	return err;
+ }
+@@ -1177,6 +1191,9 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table
+ 	for (entry = table; entry->procname; entry++) {
+ 		nr_entries++;
+ 		name_bytes += strlen(entry->procname) + 1;
++
++		if (entry->register_one)
++			break;
+ 	}
+ 
+ 	links = kzalloc(sizeof(struct ctl_table_header) +
+@@ -1199,6 +1216,9 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table
+ 		link->mode = S_IFLNK|S_IRWXUGO;
+ 		link->data = link_root;
+ 		link_name += len;
++
++		if (entry->register_one)
++			break;
+ 	}
+ 	init_header(links, dir->header.root, dir->header.set, node, link_table);
+ 	links->nreg = nr_entries;
+@@ -1218,6 +1238,15 @@ static bool get_links(struct ctl_dir *dir,
+ 		link = find_entry(&head, dir, procname, strlen(procname));
+ 		if (!link)
+ 			return false;
++
++		if (entry->register_one) {
++			if (S_ISDIR(link->mode) && S_ISDIR(entry->mode))
++				break;
++			if (S_ISLNK(link->mode) && (link->data == link_root))
++				break;
++			return false;
++		}
++
+ 		if (S_ISDIR(link->mode) && S_ISDIR(entry->mode))
+ 			continue;
+ 		if (S_ISLNK(link->mode) && (link->data == link_root))
+@@ -1230,6 +1259,8 @@ static bool get_links(struct ctl_dir *dir,
+ 		const char *procname = entry->procname;
+ 		link = find_entry(&head, dir, procname, strlen(procname));
+ 		head->nreg++;
++		if (entry->register_one)
++			break;
+ 	}
+ 	return true;
+ }
+@@ -1295,6 +1326,8 @@ static int insert_links(struct ctl_table_header *head)
+  *
+  * mode - the file permissions for the /proc/sys file
+  *
++ * register_one - set to true when exactly register one ctl_table
++ *
+  * child - must be %NULL.
+  *
+  * proc_handler - the text handler routine (described below)
+@@ -1329,9 +1362,13 @@ struct ctl_table_header *__register_sysctl_table(
+ 	struct ctl_node *node;
+ 	int nr_entries = 0;
+ 
+-	for (entry = table; entry->procname; entry++)
++	for (entry = table; entry->procname; entry++) {
+ 		nr_entries++;
+ 
++		if (entry->register_one)
++			break;
++	}
++
+ 	header = kzalloc(sizeof(struct ctl_table_header) +
+ 			 sizeof(struct ctl_node)*nr_entries, GFP_KERNEL);
+ 	if (!header)
+@@ -1461,6 +1498,9 @@ static int count_subheaders(struct ctl_table *table)
+ 			nr_subheaders += count_subheaders(entry->child);
+ 		else
+ 			has_files = 1;
++
++		if (entry->register_one)
++			break;
+ 	}
+ 	return nr_subheaders + has_files;
+ }
+@@ -1480,6 +1520,9 @@ static int register_leaf_sysctl_tables(const char *path, char *pos,
+ 			nr_dirs++;
+ 		else
+ 			nr_files++;
++
++		if (entry->register_one)
++			break;
+ 	}
+ 
+ 	files = table;
+@@ -1497,6 +1540,9 @@ static int register_leaf_sysctl_tables(const char *path, char *pos,
+ 				continue;
+ 			*new = *entry;
+ 			new++;
++
++			if (entry->register_one)
++				break;
+ 		}
+ 	}
+ 
+@@ -1532,6 +1578,9 @@ static int register_leaf_sysctl_tables(const char *path, char *pos,
+ 		pos[0] = '\0';
+ 		if (err)
+ 			goto out;
++
++		if (entry->register_one)
++			break;
+ 	}
+ 	err = 0;
+ out:
+@@ -1686,6 +1735,9 @@ static void put_links(struct ctl_table_header *header)
+ 			sysctl_print_dir(parent);
+ 			pr_cont("%s\n", name);
+ 		}
++
++		if (entry->register_one)
++			break;
+ 	}
+ }
+ 
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 6353d6db69b2..889c995d8a08 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -134,6 +134,7 @@ struct ctl_table {
+ 	void *data;
+ 	int maxlen;
+ 	umode_t mode;
++	bool register_one;		/* Exactly register one ctl_table*/
+ 	struct ctl_table *child;	/* Deprecated */
+ 	proc_handler *proc_handler;	/* Callback for text formatting */
+ 	struct ctl_table_poll *poll;
+-- 
+2.20.1
+
+
+
