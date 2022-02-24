@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4744C3414
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 18:54:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BE44C3449
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 19:05:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbiBXRyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 12:54:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48136 "EHLO
+        id S232476AbiBXSF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 13:05:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230094AbiBXRyK (ORCPT
+        with ESMTP id S229662AbiBXSF2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 12:54:10 -0500
+        Thu, 24 Feb 2022 13:05:28 -0500
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96BB5105AB0;
-        Thu, 24 Feb 2022 09:53:40 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45FC674C7;
+        Thu, 24 Feb 2022 10:04:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
         :In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
         Reply-To:Cc:Content-ID:Content-Description;
-        bh=kQHeo2nASnd3RHKQkdJ+lrEtvFNIHRGWegfOM2KZ9Mg=; b=BXrpOGxevX81BeDpHiVA2YwzTS
-        XPfQz/uJW0Tk1l4sbm2j+vfRxZL9ywOYv9iQk1ls7Cnpgi5xMTeAlR3M7C1kXpHfz7R4CHlWtnFgh
-        BPt/ll6UNu6FMRcD46y13e1Zc5bJrLShphZtUdgaZaABvJiDp7oE/+CfHPoCFV5GwS7z5h/H+1IUf
-        QjYKnLEX8aW0OuxuB6zh6AbetdMf4XgzrBkt39MBPLBJn7FFVre/RRQgV0xm0wj8Ey8mwbo0Z9d9C
-        EKCLRAJjF4Ta2bExtkNMV8XXufNmSwxYNqPX1df32FwIA9mtw+jPQeD65A4zQMQiIQ/S8T4MMm++g
-        NB+5SGlA==;
+        bh=cJwoEaVvvYLAlik9YwBxkUiII/mzymj+DJDxr+/UFjI=; b=kaoXWa9/LCvq/dsK7GYIHAVRqj
+        t6h6MjOTEfYdrxdtvSuX4dAQS79bV95Y9zFfRDQolYgeq38GznJTO27YdmEQ6CUs0pQx1NGBfvZ01
+        q9G6ESlFU28pbqEmlS/csaNof3P44yXN8KrsmwYSnIIRjpWVlnBws3eO+kYS7QMPjMahm8JLEptdM
+        qF93cfb8cmSq1yrMF/Rd5B2XRIqmumgyIx62nupruebgcYIe9tNnBX0mQ4A8CcXKAU6MPlXLzoeyd
+        7Qudpxmr8qnqLceKGlRi1nvcChnRPWX5SfoavOvL77x0Lv/OC1Zu2s4D2AClLJjxAlM+H5JIL6KBE
+        by19IE4Q==;
 Received: from [2601:1c0:6280:3f0::aa0b]
         by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nNIJ0-00CgaS-NO; Thu, 24 Feb 2022 17:53:31 +0000
-Message-ID: <fbfc360c-d68f-d83b-5124-d6d930235b8c@infradead.org>
-Date:   Thu, 24 Feb 2022 09:53:25 -0800
+        id 1nNITw-00Cgl5-K1; Thu, 24 Feb 2022 18:04:48 +0000
+Message-ID: <52f0922c-143a-8a40-b1e1-23d562ca6f80@infradead.org>
+Date:   Thu, 24 Feb 2022 10:04:42 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.1
-Subject: Re: mmotm 2022-02-23-21-20 uploaded (kernel/sched/rt.c)
+Subject: Re: mmotm 2022-02-23-21-20 uploaded
+ [drivers/scsi/hisi_sas/hisi_sas_main.ko]
 Content-Language: en-US
 To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
         mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        Zhen Ni <nizhen@uniontech.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
+        linux-scsi@vger.kernel.org, John Garry <john.garry@huawei.com>
 References: <20220224052137.BFB10C340E9@smtp.kernel.org>
 From:   Randy Dunlap <rdunlap@infradead.org>
 In-Reply-To: <20220224052137.BFB10C340E9@smtp.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -76,17 +76,15 @@ On 2/23/22 21:21, Andrew Morton wrote:
 > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
 > https://ozlabs.org/~akpm/mmotm/series
 
-on x86_64:
+on  i386:
 
-# CONFIG_SYSCTL is not set
-# CONFIG_PROC_SYSCTL is not set
+ERROR: modpost: "sas_execute_ata_cmd" [drivers/scsi/hisi_sas/hisi_sas_main.ko] undefined!
 
-../kernel/sched/rt.c:3020:12: warning: ‘sched_rr_handler’ defined but not used [-Wunused-function]
- static int sched_rr_handler(struct ctl_table *table, int write, void *buffer,
-            ^~~~~~~~~~~~~~~~
-../kernel/sched/rt.c:2981:12: warning: ‘sched_rt_handler’ defined but not used [-Wunused-function]
- static int sched_rt_handler(struct ctl_table *table, int write, void *buffer,
-            ^~~~~~~~~~~~~~~~
+CONFIG_SCSI_SAS_ATTRS=y
+CONFIG_SCSI_SAS_LIBSAS=y
+# CONFIG_SCSI_SAS_ATA is not set
+CONFIG_SCSI_SAS_HOST_SMP=y
+
 
 -- 
 ~Randy
