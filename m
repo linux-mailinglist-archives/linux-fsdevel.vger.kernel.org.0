@@ -2,141 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 916B64C2336
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 06:08:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE4A34C233E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 06:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbiBXFJN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 00:09:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
+        id S229974AbiBXFQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 00:16:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbiBXFJN (ORCPT
+        with ESMTP id S230095AbiBXFQh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 00:09:13 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B78E9165C26;
-        Wed, 23 Feb 2022 21:08:43 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3A53A212B8;
-        Thu, 24 Feb 2022 05:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1645679322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fvie5WjINF2XGuRYy4JLCTZ9z0jDxYZyBje3chiMYAU=;
-        b=1l/5mEs+6B3/VXgYICSwyNHJ7RHI1SknXQ/8jjpB7rdKIdJugA4IqQsyOM1TCV9QVONhfH
-        Xyc1z/4fiv56fsMF5dVoEqrD2GG/IRZDdTugEgqLsIgtG+XQrfzewvJpGDqUUpMuBZFC2d
-        lHl0Q/7b06PtV/VUSuswlJ2wm6M8vtU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1645679322;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fvie5WjINF2XGuRYy4JLCTZ9z0jDxYZyBje3chiMYAU=;
-        b=PgnnkBfPxMfuL4hmd2LHwGDkf7ie5M5so/ATJb1QG4DdwCINRTFMhTZKevWqG4kJTmgScR
-        2ggPnpttKn2uIrBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1B63813343;
-        Thu, 24 Feb 2022 05:08:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 90EwMtcSF2JTBQAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 24 Feb 2022 05:08:39 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 24 Feb 2022 00:16:37 -0500
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8281816923E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 21:16:07 -0800 (PST)
+Received: by mail-pg1-x52e.google.com with SMTP id 75so826915pgb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 21:16:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=srYPL04OWay1dcY8e70dNGhHS9ZwVWkaxq0mw17kle0=;
+        b=E+AaIZP0v7bVUhbtnlfQdm0GewhlDSLyFsa4Gc9ttCYc4Wugq3ehabUEmagg6S/HG5
+         ZIBO/6RSxYufDXorILKqvIXx/WRBvOtOllmU7CIO+HDmGlm+E2pJTWQQR9ntIuP4IqTi
+         SE2nH8yGt6EOujARktNsaPIbSukKsuSizLpvc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=srYPL04OWay1dcY8e70dNGhHS9ZwVWkaxq0mw17kle0=;
+        b=8EubFWupN7BofYnMlUWRINnrQpCTnP+niex4LLZosAgVJKSpcXQbiKddKor11Mko8L
+         NkYXGImhb2veE3dVeXSc4C3ciojn0RCZ6ZRIosKZsNFoXDLpKFn2Ok+CpPEAkl+RO2pY
+         vsZFl6xMbLo98RX6LX4iFbYZMkZkHKcPAoc3v4ooA0gBBDXVcUCeQDk4Nvus2ZE739R5
+         r2py6SlJQiJc9TEXLt4l0TcWtdEU5wbFpIGEb+feCEDFZfkxRxHCZqwBPmTX6G1RUSTZ
+         NVCdB8NNUP3rEjsIcrotK5BIDTbhPQzLfZ2PlYxN/MgCjUxmyQn3AGdWQRryjX9I5Aj9
+         etGg==
+X-Gm-Message-State: AOAM530lxePnVOVn9an4//cuv6eHo9SeLZHYZmkWB0T++xvD4AbHCs4c
+        PD4tVEEBjD8us1ZkT6s0mkOwVw==
+X-Google-Smtp-Source: ABdhPJyY08KTJaKQ5zKGQ1yFLiRI1Pv8/UxZIiAHPJqb0gnMTYA9nhd/ZhDBm4UZolLnsVTN1dDpkA==
+X-Received: by 2002:a05:6a00:23c6:b0:4cf:1e1e:ff4f with SMTP id g6-20020a056a0023c600b004cf1e1eff4fmr1200901pfc.80.1645679767050;
+        Wed, 23 Feb 2022 21:16:07 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m11-20020a17090a3f8b00b001bc299e0aefsm4595800pjc.56.2022.02.23.21.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Feb 2022 21:16:06 -0800 (PST)
+Date:   Wed, 23 Feb 2022 21:16:05 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Thorsten Leemhuis <regressions@leemhuis.info>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        matoro_bugzilla_kernel@matoro.tk,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
+        linux-ia64@vger.kernel.org,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: regression: Bug 215601 - gcc segv at startup on ia64
+Message-ID: <202202232030.B408F0E895@keescook>
+References: <a3edd529-c42d-3b09-135c-7e98a15b150f@leemhuis.info>
+ <823f70be-7661-0195-7c97-65673dc7c12a@leemhuis.info>
+ <03497313-A472-4152-BD28-41C35E4E824E@chromium.org>
+ <94c3be49-0262-c613-e5f5-49b536985dde@physik.fu-berlin.de>
+ <9A1F30F8-3DE2-4075-B103-81D891773246@chromium.org>
+ <4e42e754-d87e-5f6b-90db-39b4700ee0f1@physik.fu-berlin.de>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        "LKML" <linux-kernel@vger.kernel.org>,
-        "Daire Byrne" <daire@dneg.com>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>
-Subject: Re: [PATCH/RFC] VFS: support parallel updates in the one directory.
-In-reply-to: <20220222190751.GA7766@fieldses.org>
-References: <164549669043.5153.2021348013072574365@noble.neil.brown.name>,
- <20220222190751.GA7766@fieldses.org>
-Date:   Thu, 24 Feb 2022 16:08:36 +1100
-Message-id: <164567931673.25116.15009501732764258663@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e42e754-d87e-5f6b-90db-39b4700ee0f1@physik.fu-berlin.de>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 23 Feb 2022, J. Bruce Fields wrote:
-> For what it's worth, I applied this to recent upstream (038101e6b2cd)
-> and fed it through my usual scripts--tests all passed, but I did see
-> this lockdep warning.
->=20
-> I'm not actually sure what was running at the time--probably just cthon.
->=20
-> --b.
->=20
-> [  142.679891] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [  142.680883] WARNING: possible circular locking dependency detected
-> [  142.681999] 5.17.0-rc5-00005-g64e79f877311 #1778 Not tainted
-> [  142.682970] ------------------------------------------------------
-> [  142.684059] test1/4557 is trying to acquire lock:
-> [  142.684881] ffff888023d85398 (DENTRY_PAR_UPDATE){+.+.}-{0:0}, at: d_lock=
-_update_nested+0x5/0x6a0
-> [  142.686421]=20
->                but task is already holding lock:
-> [  142.687171] ffff88801f618bd0 (&type->i_mutex_dir_key#6){++++}-{3:3}, at:=
- path_openat+0x7cb/0x24a0
-> [  142.689098]=20
->                which lock already depends on the new lock.
->=20
-> [  142.690045]=20
->                the existing dependency chain (in reverse order) is:
-> [  142.691171]=20
->                -> #1 (&type->i_mutex_dir_key#6){++++}-{3:3}:
-> [  142.692285]        down_write+0x82/0x130
-> [  142.692844]        vfs_rmdir+0xbd/0x560
-> [  142.693351]        do_rmdir+0x33d/0x400
+On Mon, Feb 21, 2022 at 10:57:01PM +0100, John Paul Adrian Glaubitz wrote:
+> Hi Kees!
+> 
+> On 2/21/22 21:58, Kees Cook wrote:
+> >> I have applied this patch on top of 038101e6b2cd5c55f888f85db42ea2ad3aecb4b6 and it doesn't
+> >> fix the problem for me. Reverting 5f501d555653f8968011a1e65ebb121c8b43c144, however, fixes
+> >> the problem.
+> >>
+> >> FWIW, this problem doesn't just affect GCC but systemd keeps segfaulting with this change as well.
+> > 
+> > Very weird! Can you attached either of those binaries to bugzilla (or a URL I can fetch it from)? I can try to figure out where it is going weird...
+> 
+> Here's the initrd of that particular machine:
+> 
+> > https://people.debian.org/~glaubitz/initrd.img-5.17.0-rc5+
+> 
+> You should be able to extract the binaries from this initrd image and the "mount" command,
+> for example, should be one of the affected binaries.
 
-Thanks.  I hadn't tested rmdir :-)
+In dmesg, do you see any of these reports?
 
-"rmdir" and "open(O_CREATE)" take these locks in the opposite order.
+                pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
+                        task_pid_nr(current), current->comm, (void *)addr);
 
-I think the simplest fix might be to change the inode_lock(_shared) taken
-on the dir in open_last_Lookups() to use I_MUTEX_PARENT.  That is
-consistent with unlink and rmdir etc which use I_MUTEX_PARENT on the
-parent.
+I don't see anything out of order in the "mount" binary from the above
+initrd. What does "readelf -lW" show for the GCC you're seeing failures
+on?
 
-open() doesn't currently use I_MUTEX_PARENT because it never needs to
-lock the child.  But as it *is* a parent that is being locked, using
-I_MUTEX_PARENT probably make more sense.
-
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3513,9 +3513,9 @@ static const char *open_last_lookups(struct nameidata *=
-nd,
- 	}
- 	shared =3D !!(dir->d_inode->i_flags & S_PAR_UPDATE);
- 	if ((open_flag & O_CREAT) && !shared)
--		inode_lock(dir->d_inode);
-+		inode_lock_nested(dir->d_inode, I_MUTEX_PARENT);
- 	else
--		inode_lock_shared(dir->d_inode);
-+		inode_lock_shared_nested(dir->d_inode, I_MUTEX_PARENT);
- 	dentry =3D lookup_open(nd, file, op, got_write);
- 	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
- 		fsnotify_create(dir->d_inode, dentry);
-
-Thanks,
-NeilBrown
+-- 
+Kees Cook
