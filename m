@@ -2,57 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 180DF4C22DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 05:05:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFF14C231C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 05:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbiBXEFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Feb 2022 23:05:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46598 "EHLO
+        id S230025AbiBXEoD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Feb 2022 23:44:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbiBXEFY (ORCPT
+        with ESMTP id S229476AbiBXEoB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Feb 2022 23:05:24 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F28EC1693BE;
-        Wed, 23 Feb 2022 20:04:55 -0800 (PST)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 21O44Yce006899
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Feb 2022 23:04:34 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 0A71A15C0036; Wed, 23 Feb 2022 23:04:34 -0500 (EST)
-Date:   Wed, 23 Feb 2022 23:04:34 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-ext4@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [REPORT] kernel BUG at fs/ext4/inode.c:2620 - page_buffers()
-Message-ID: <YhcD0ugEyDMi4wXO@mit.edu>
-References: <Yg0m6IjcNmfaSokM@google.com>
- <82d0f4e4-c911-a245-4701-4712453592d9@nvidia.com>
- <Yg8bxiz02WBGf6qO@mit.edu>
- <7bd88058-2a9a-92a6-2280-43c805b516c3@nvidia.com>
- <YhbD1T7qhgnz4myM@mit.edu>
- <d75891d6-4c2e-57bc-f840-9d8d5449628a@nvidia.com>
+        Wed, 23 Feb 2022 23:44:01 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FAFA1693BE;
+        Wed, 23 Feb 2022 20:43:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CFF5BB8235F;
+        Thu, 24 Feb 2022 04:43:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B43C340E9;
+        Thu, 24 Feb 2022 04:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645677809;
+        bh=8cBvGxy3VCDC4OF7i4i8LxGFxNOh0EKujiWm61cvBMc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cxjdsRzCYulrgUkeSKx3sL8S4jycxmZ4TVM645J/BpwMagmGDXb6YZj8JtSQstxUm
+         rGJG+TvotHPMjvAyZ8QooXLSuro64qjgePDtD4Ucu8tg+d55YFZNClSyHqZ2JK6jUn
+         uSM/awR0ZROE4s13kyPVUPCv6Kb+PkfKboHOy/P3Ms4EvvE9ER0c5EnPthn9MRjv18
+         J875b+aFclm4DzoPRYpGykRxOAhLLAmS1AoVNVW+3tnmwNpjA4CkwcJivciY5WEDfv
+         T/IYjTrkvJnzBtkqhozw1YcCspaV8VBxL4vg/ET4D1x3tnRFYqvmnh6nH+W+HXcRbZ
+         yTE8ApBlTeqOQ==
+Date:   Wed, 23 Feb 2022 20:43:28 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Daire Byrne <daire@dneg.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Subject: Re: [PATCH/RFC] VFS: support parallel updates in the one directory.
+Message-ID: <20220224044328.GB8269@magnolia>
+References: <164549669043.5153.2021348013072574365@noble.neil.brown.name>
+ <20220222224546.GE3061737@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d75891d6-4c2e-57bc-f840-9d8d5449628a@nvidia.com>
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20220222224546.GE3061737@dread.disaster.area>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,18 +58,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 04:44:07PM -0800, John Hubbard wrote:
+On Wed, Feb 23, 2022 at 09:45:46AM +1100, Dave Chinner wrote:
+> On Tue, Feb 22, 2022 at 01:24:50PM +1100, NeilBrown wrote:
+> > 
+> > Hi Al,
+> >  I wonder if you might find time to have a look at this patch.  It
+> >  allows concurrent updates to a single directory.  This can result in
+> >  substantial throughput improvements when the application uses multiple
+> >  threads to create lots of files in the one directory, and there is
+> >  noticeable per-create latency, as there can be with NFS to a remote
+> >  server.
+> > Thanks,
+> > NeilBrown
+> > 
+> > Some filesystems can support parallel modifications to a directory,
+> > either because the modification happen on a remote server which does its
+> > own locking (e.g.  NFS) or because they can internally lock just a part
+> > of a directory (e.g.  many local filesystems, with a bit of work - the
+> > lustre project has patches for ext4 to support concurrent updates).
+> > 
+> > To allow this, we introduce VFS support for parallel modification:
+> > unlink (including rmdir) and create.  Parallel rename is not (yet)
+> > supported.
 > 
-> Actually...I can confirm that real customers really are doing *exactly* 
-> that! Despite the kernel crashes--because the crashes don't always 
-> happen unless you have a large (supercomputer-sized) installation. And 
-> even then it is not always root-caused properly.
+> Yay!
+> 
+> > If a filesystem supports parallel modification in a given directory, it
+> > sets S_PAR_UNLINK on the inode for that directory.  lookup_open() and
+> > the new lookup_hash_modify() (similar to __lookup_hash()) notice the
+> > flag and take a shared lock on the directory, and rely on a lock-bit in
+> > d_flags, much like parallel lookup relies on DCACHE_PAR_LOOKUP.
+> 
+> I suspect that you could enable this for XFS right now. XFS has internal
+> directory inode locking that should serialise all reads and writes
+> correctly regardless of what the VFS does. So while the VFS might
+> use concurrent updates (e.g. inode_lock_shared() instead of
+> inode_lock() on the dir inode), XFS has an internal metadata lock
+> that will then serialise the concurrent VFS directory modifications
+> correctly....
 
-Interesting.  The syzbot reproducer triggers *reliably* on ext4 using
-a 2 CPU qemu kernel running on a laptop, and it doesn't require root,
-so it's reasonable that Lee is pushing for a fix --- even if for the
-Android O or newer, Seccomp can probably prohibit trap
-process_vm_writev(2), but it seems unfortunate if say, someone running
-a Docker container could take down the entire host OS.
+I don't think that will work because xfs_readdir doesn't hold the
+directory ILOCK while it runs, which means that readdir will see garbage
+if other threads now only hold inode_lock_shared while they update the
+directory.
 
-  	 	   	      	       	      - Ted
+--D
+
+> Yeah, I know, this isn't true concurrent dir updates, but it should
+> allow multiple implementations of the concurrent dir update VFS APIs
+> across multiple filesystems and shake out any assumptions that might
+> arise from a single implementation target (e.g. silly rename
+> quirks).
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
