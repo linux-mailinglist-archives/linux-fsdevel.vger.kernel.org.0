@@ -2,49 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF4D4C378A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 22:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4811E4C3835
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 22:54:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234663AbiBXVYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 16:24:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35236 "EHLO
+        id S231537AbiBXVxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 16:53:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234681AbiBXVYK (ORCPT
+        with ESMTP id S235211AbiBXVw4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 16:24:10 -0500
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35989184626;
-        Thu, 24 Feb 2022 13:23:35 -0800 (PST)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 57D0C72F9; Thu, 24 Feb 2022 16:23:34 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 57D0C72F9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1645737814;
-        bh=OkVG8HhEKCzBDMlS68Ne4qJf64Q9ibr4f7QoJtnKZBQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q3lRwZHs04vSExkB+AR4Cj6i+T8amI3WBtE7BQV//KHaX9D9tmAAtNYi7kXGcqw4v
-         gxlS0urkwsmqndbPb0jpGcvMdL0HvvJzWGV+WlV/PuWyj6Ukh+9CDMVTGUWzBxfZ/4
-         jrqQQmPv/3TigWBEo87OM0kJuUxTJipmmjMrBqVY=
-Date:   Thu, 24 Feb 2022 16:23:34 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Daire Byrne <daire@dneg.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Subject: Re: [PATCH/RFC] VFS: support parallel updates in the one directory.
-Message-ID: <20220224212334.GB29410@fieldses.org>
-References: <164549669043.5153.2021348013072574365@noble.neil.brown.name>
- <20220222190751.GA7766@fieldses.org>
- <164567931673.25116.15009501732764258663@noble.neil.brown.name>
+        Thu, 24 Feb 2022 16:52:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 15E7011B5F7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 13:52:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645739544;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7C/VNCLxi2m6BpK/5znlmSIklDnXHXKYOG0purixHNw=;
+        b=LArYO9/zQ+aEI9w8I1m0B/kMCLc5P8va8IF7BbOLbcFSrb/72owYNVShfEZthegRRwpDSA
+        VuVKse6+bw1pPhg4Uz+vJsbCHZ9+mOHIAA6OAQ1X2qWrOhJ/N+pBXm8viabShv28lUzdt/
+        GUH9Ucjv9yJb6aNisFcttv3caHnMvb8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-663-rXgXQ81VOvCJtuyblKFViQ-1; Thu, 24 Feb 2022 16:52:23 -0500
+X-MC-Unique: rXgXQ81VOvCJtuyblKFViQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 035A4800482;
+        Thu, 24 Feb 2022 21:52:22 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.9.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D85E44CEFB;
+        Thu, 24 Feb 2022 21:52:21 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 5FF872237E9; Thu, 24 Feb 2022 16:52:21 -0500 (EST)
+Date:   Thu, 24 Feb 2022 16:52:21 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Steve French <smfrench@gmail.com>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ioannis Angelakopoulos <jaggel@bu.edu>
+Subject: Re: [LSF/MM/BPF TOPIC] Enabling change notification for network and
+ cluster fs
+Message-ID: <Yhf+FemcQQToB5x+@redhat.com>
+References: <CAH2r5mt9OfU+8PoKsmv_7aszhbw-dOuDCL6BOxb_2yRwc4HHCw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <164567931673.25116.15009501732764258663@noble.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+In-Reply-To: <CAH2r5mt9OfU+8PoKsmv_7aszhbw-dOuDCL6BOxb_2yRwc4HHCw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,68 +65,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 24, 2022 at 04:08:36PM +1100, NeilBrown wrote:
-> On Wed, 23 Feb 2022, J. Bruce Fields wrote:
-> > For what it's worth, I applied this to recent upstream (038101e6b2cd)
-> > and fed it through my usual scripts--tests all passed, but I did see
-> > this lockdep warning.
-> > 
-> > I'm not actually sure what was running at the time--probably just cthon.
-> > 
-> > --b.
-> > 
-> > [  142.679891] ======================================================
-> > [  142.680883] WARNING: possible circular locking dependency detected
-> > [  142.681999] 5.17.0-rc5-00005-g64e79f877311 #1778 Not tainted
-> > [  142.682970] ------------------------------------------------------
-> > [  142.684059] test1/4557 is trying to acquire lock:
-> > [  142.684881] ffff888023d85398 (DENTRY_PAR_UPDATE){+.+.}-{0:0}, at: d_lock_update_nested+0x5/0x6a0
-> > [  142.686421] 
-> >                but task is already holding lock:
-> > [  142.687171] ffff88801f618bd0 (&type->i_mutex_dir_key#6){++++}-{3:3}, at: path_openat+0x7cb/0x24a0
-> > [  142.689098] 
-> >                which lock already depends on the new lock.
-> > 
-> > [  142.690045] 
-> >                the existing dependency chain (in reverse order) is:
-> > [  142.691171] 
-> >                -> #1 (&type->i_mutex_dir_key#6){++++}-{3:3}:
-> > [  142.692285]        down_write+0x82/0x130
-> > [  142.692844]        vfs_rmdir+0xbd/0x560
-> > [  142.693351]        do_rmdir+0x33d/0x400
+On Wed, Feb 23, 2022 at 11:16:33PM -0600, Steve French wrote:
+> Currently only local events can be waited on with the current notify
+> kernel API since the requests to wait on these events is not passed to
+> the filesystem.   Especially for network and cluster filesystems it is
+> important that they be told that applications want to be notified of
+> these file or directory change events.
 > 
-> Thanks.  I hadn't tested rmdir :-)
+> A few years ago, discussions began on the changes needed to enable
+> support for this.   Would be timely to finish those discussions, as
+> waiting on file and directory change events to network mounts is very
+> common for other OS, and would be valuable for Linux to fix.
+> 
 
-OK.  I tested with this applied and didn't see any issues.
+This sounds like which might have some overlap with what we are trying
+to do.
 
---b.
+Currently inotify/fanotify only work for local filesystems. We were
+thinking is it possible to extend it for remote filesystems as well. My
+interest primarily was to make notifications work on virtiofs. So I
+asked Ioannis (an intern with us) to try to prototype it and see what are
+the challenges and roadblocks.
 
-> 
-> "rmdir" and "open(O_CREATE)" take these locks in the opposite order.
-> 
-> I think the simplest fix might be to change the inode_lock(_shared) taken
-> on the dir in open_last_Lookups() to use I_MUTEX_PARENT.  That is
-> consistent with unlink and rmdir etc which use I_MUTEX_PARENT on the
-> parent.
-> 
-> open() doesn't currently use I_MUTEX_PARENT because it never needs to
-> lock the child.  But as it *is* a parent that is being locked, using
-> I_MUTEX_PARENT probably make more sense.
-> 
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3513,9 +3513,9 @@ static const char *open_last_lookups(struct nameidata *nd,
->  	}
->  	shared = !!(dir->d_inode->i_flags & S_PAR_UPDATE);
->  	if ((open_flag & O_CREAT) && !shared)
-> -		inode_lock(dir->d_inode);
-> +		inode_lock_nested(dir->d_inode, I_MUTEX_PARENT);
->  	else
-> -		inode_lock_shared(dir->d_inode);
-> +		inode_lock_shared_nested(dir->d_inode, I_MUTEX_PARENT);
->  	dentry = lookup_open(nd, file, op, got_write);
->  	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
->  		fsnotify_create(dir->d_inode, dentry);
-> 
+He posted one version of patches just as proof of concept and only tried
+to make remote inotify work. One primary feedback from Amir was that
+this is too specific to inotify and if you are extending fsnotify, then
+it should have some support for fanotify as well. There is bunch of
+other feedback too. So Ioannis is trying to rework his patches now.
+
+https://lore.kernel.org/linux-fsdevel/20211025204634.2517-1-iangelak@redhat.com/
+
+Anyway, you had pointed to following commit.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/cifs/ioctl.c?id=d26c2ddd33569667e3eeb577c4c1d966ca9192e2
+
+So looks like application calls this cifs specific ioctl and blocks and
+unblocks when notifications comes, IIUC.
+
+I don't know about SMB and what kind of other notifications does it
+support. With this proposal, you are trying to move away from cifs
+specific ioctl? What will user use to either block or poll for the
+said notification.
+
+Sorry, I might be just completely off the mark. Just trying to find out
+if there is any overlap in what you are looking for and what we are
+trying to do. 
+
+Thanks
+Vivek
+
+> -- 
 > Thanks,
-> NeilBrown
+> 
+> Steve
+> 
+
