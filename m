@@ -2,135 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C7B04C315C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 17:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B39F4C3170
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 17:34:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229564AbiBXQcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 11:32:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56296 "EHLO
+        id S229774AbiBXQeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 11:34:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbiBXQcQ (ORCPT
+        with ESMTP id S229760AbiBXQeQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 11:32:16 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8AF737AA8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 08:31:35 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id bd1so2162302plb.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 08:31:35 -0800 (PST)
+        Thu, 24 Feb 2022 11:34:16 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 408BD1B6E25
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 08:33:45 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id iq13-20020a17090afb4d00b001bc4437df2cso2494703pjb.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Feb 2022 08:33:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=9pdKVdGgOkMZj/rMe0H1g8Nx4C5EJ0FhYBuM26imb1w=;
-        b=RokpOp5tbzamDEc+IKS6EfAUSHKYkP5CI6pboSoD08qSmxmma+dcwV1tswSkN+4n2w
-         uOSZ/9U2QLvB8//W85pnEoGufJRlNlckAFEVFzEXD0MUhoGvM144zrB0qfcQ6lhOtn8u
-         OgttKsVEopodeiI+MVS4q6SHBHhaILRnO4DRzKDQyEHU9gxSqRDYMx+PR8xLduJPdr2c
-         juiIZjRSUk5GXMajZQ+nTASvGG8GB/VFkJwMpRuNVloqBfOULKs9NB51jSHzFnCp1JHU
-         tZLyF72L5f8td6h+6Vv6cdUNGHLGHh14H0KrORCtXNSvVaeyXo0PRahbivmXEYwp2KWA
-         sEew==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=hicd0tEo/b5LFaXhDInEJPUGfqEVOu+qbFlSudecvJ0=;
+        b=fS9MOKL7PnyGYGUrEHm1W+CpwJy2baJ8/5LJyKMcAWjsJZogmHWVaUfDGQuZCkd8vP
+         VK4ExEycU276xQ5S+kmUK8IVGZL9LtAPjVeyyI9yS6uqvs2uoRZiC/eOJqe8Vq9b+uvP
+         xc4ZlO8+so2JceflzyF2iPU8/gIQZX3lFz5Ts=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=9pdKVdGgOkMZj/rMe0H1g8Nx4C5EJ0FhYBuM26imb1w=;
-        b=i0Yx+bIOSNpslXyXk2QE188g4uCD/LQLOnGhWldRP8VbtYFtPOTGFB6lVZVxMJSdvb
-         zbsyI7vTIUpuZ5fBQOBZgAJ54xR1fxtilx7lk1z6gE6IDbdIGBlDnJuKt8cg4P+7I00p
-         /dHPrNum4LLEFoljoo7pNNj4tNOy+xVMEjO/AMpDZYAUodsJaTOIti9w8NE5Li9ESLx/
-         sIpkcQVCdSaj+H/Av6o1LqP+eILab/UWakb/7H5krF+5xK9EcIUsqOsdLTaDd01Wnk7N
-         tzyOjMCThUioQeQ7ezgeVSfkfmHJYhgjXmRALE6zHmlKWr2Vcinpe3JfqP5a3ojqMJ8Q
-         vbaA==
-X-Gm-Message-State: AOAM532RIcin8sIKJzAQgg+IqfJiRja5xAzbrsyQdatHEJaM8wVx+Ekw
-        //IF8CYFJh50/lzlZ1VdWpMBHA==
-X-Google-Smtp-Source: ABdhPJwILxIiNBIe4uwvcJI4yA/KJvZUHTS4irgP1DwajEiSVZK6yJaUb60LC3vEkaTiOVWpKW+eog==
-X-Received: by 2002:a17:902:bb93:b0:14f:3c15:566f with SMTP id m19-20020a170902bb9300b0014f3c15566fmr3393981pls.6.1645720291048;
-        Thu, 24 Feb 2022 08:31:31 -0800 (PST)
-Received: from smtpclient.apple (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id lp1sm118634pjb.17.2022.02.24.08.31.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Feb 2022 08:31:30 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hicd0tEo/b5LFaXhDInEJPUGfqEVOu+qbFlSudecvJ0=;
+        b=1aBIqFbtm4/LhtH/aYPk8AiHMOBvHFYrX1oYL2FO/spXF2WPM7I89lAp3nn64fHlyy
+         MotTLDAfnk1SoSQ6MdFVOv6YfB9pP8KCixhQ6pboXEFDhrNj1cRiVbtLhOMiWlAuP+s0
+         GKudZBZdESCO78uMPRjm3cLUuDBWsJQln3KTdQlcZgcXh+5BlvcXmrAZ3nmtCjZi7LtD
+         CTY3CLDhiwJLsMJbwwXGfMLSfIv9nJ8GCkGSa77dYPtkzdCwU82Y9Qm4iAUdrTyeimg0
+         KCQic75TZp5HopjcoMbPFaw1wtl/8jX9A+Fe29PFAZaN6iXyzbIg0sIgploPzqzy39OV
+         EvjQ==
+X-Gm-Message-State: AOAM5321XNcswGtu4dV/RZN5HfC9NojxZ073P2vBmOl9p87NwedXB3TP
+        hucKKVdiDYqXEHhY09Piw3kyfw==
+X-Google-Smtp-Source: ABdhPJyWX2X03NpVP7OG9tb3/bOJYzu9SCAwlXij7cTFtfwKtKMcQhac3eTOvjUxx32AVPETPTB7Vw==
+X-Received: by 2002:a17:902:e80c:b0:14f:f95c:41ee with SMTP id u12-20020a170902e80c00b0014ff95c41eemr3140315plg.31.1645720424809;
+        Thu, 24 Feb 2022 08:33:44 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 19sm3998951pfz.153.2022.02.24.08.33.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 08:33:44 -0800 (PST)
+Date:   Thu, 24 Feb 2022 08:33:43 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     matoro <matoro_mailinglist_kernel@matoro.tk>
+Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        matoro_bugzilla_kernel@matoro.tk,
+        Andrew Morton <akpm@linux-foundation.org>,
+        regressions@lists.linux.dev, linux-ia64@vger.kernel.org,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: regression: Bug 215601 - gcc segv at startup on ia64
+Message-ID: <202202240832.F40AEB20@keescook>
+References: <a3edd529-c42d-3b09-135c-7e98a15b150f@leemhuis.info>
+ <823f70be-7661-0195-7c97-65673dc7c12a@leemhuis.info>
+ <03497313-A472-4152-BD28-41C35E4E824E@chromium.org>
+ <94c3be49-0262-c613-e5f5-49b536985dde@physik.fu-berlin.de>
+ <9A1F30F8-3DE2-4075-B103-81D891773246@chromium.org>
+ <4e42e754-d87e-5f6b-90db-39b4700ee0f1@physik.fu-berlin.de>
+ <202202232030.B408F0E895@keescook>
+ <7e3a93e7-1300-8460-30fb-789180a745eb@physik.fu-berlin.de>
+ <65ed8ab4fad779fadf572fb737dfb789@matoro.tk>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Andreas Dilger <adilger@dilger.ca>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH/RFC] VFS: support parallel updates in the one directory.
-Date:   Thu, 24 Feb 2022 09:31:28 -0700
-Message-Id: <893053D7-E5DD-43DB-941A-05C10FF5F396@dilger.ca>
-References: <164568221518.25116.18139840533197037520@noble.neil.brown.name>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Daire Byrne <daire@dneg.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-In-Reply-To: <164568221518.25116.18139840533197037520@noble.neil.brown.name>
-To:     NeilBrown <neilb@suse.de>
-X-Mailer: iPhone Mail (19D52)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Disposition: inline
+In-Reply-To: <65ed8ab4fad779fadf572fb737dfb789@matoro.tk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Feb 23, 2022, at 22:57, NeilBrown <neilb@suse.de> wrote:
->=20
->=20
-> I added this:
-> --- a/fs/xfs/xfs_icache.c
-> +++ b/fs/xfs/xfs_icache.c
-> @@ -87,6 +87,7 @@ xfs_inode_alloc(
->    /* VFS doesn't initialise i_mode or i_state! */
->    VFS_I(ip)->i_mode =3D 0;
->    VFS_I(ip)->i_state =3D 0;
-> +    VFS_I(ip)->i_flags |=3D S_PAR_UPDATE;
->    mapping_set_large_folios(VFS_I(ip)->i_mapping);
->=20
->    XFS_STATS_INC(mp, vn_active);
->=20
-> and ran my highly sophisticated test in an XFS directory:
->=20
-> for i in {1..70}; do ( for j in {1000..8000}; do touch $j; rm -f $j ; done=
- ) & done
->=20
-> This doesn't crash - which is a good sign.
-> While that was going I tried
-> while : ; do ls -l ; done
->=20
-> it sometimes reports garbage for the stat info:
->=20
-> total 0
-> -????????? ? ?    ?    ?            ? 1749
-> -????????? ? ?    ?    ?            ? 1764
-> -????????? ? ?    ?    ?            ? 1765
-> -rw-r--r-- 1 root root 0 Feb 24 16:47 1768
-> -rw-r--r-- 1 root root 0 Feb 24 16:47 1770
-> -rw-r--r-- 1 root root 0 Feb 24 16:47 1772
-> ....
->=20
-> I *think* that is bad - probably the "garbage" that you referred to?
->=20
-> Obviously I gets lots of=20
-> ls: cannot access '1764': No such file or directory
-> ls: cannot access '1749': No such file or directory
-> ls: cannot access '1780': No such file or directory
-> ls: cannot access '1765': No such file or directory
->=20
-> but that is normal and expected when you are creating and deleting
-> files during the ls.
+On Thu, Feb 24, 2022 at 09:22:04AM -0500, matoro wrote:
+> Hi Kees, I can provide live ssh access to my system exhibiting the issue.
+> My system is a lot more stable due to using openrc rather than systemd, for
+> me GCC seems to be the only binary affected.  Would that be helpful?
 
-The "ls -l" output with "???" is exactly the case where the filename is
-in readdir() but stat() on a file fails due to an unavoidable userspace=20
-race between the two syscalls and the concurrent unlink(). This is
-probably visible even without the concurrent dirops patch.=20
+Yeah, that might be helpful. I have access to a Debian ia64 porter box,
+but it's not running the broken kernel, so I can only examine "normal"
+behavior.
 
-The list of affected filenames even correlates with the reported errors:
-1764, 1765, 1769
+I'll switch to off-list email...
 
-It looks like everything is working as expected.=20
+-Kees
 
-Cheers, Andreas
-
+-- 
+Kees Cook
