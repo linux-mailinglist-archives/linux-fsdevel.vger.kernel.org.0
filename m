@@ -2,82 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C82364C24DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 09:08:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15BE34C2695
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 09:48:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231556AbiBXIIg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 03:08:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56730 "EHLO
+        id S232118AbiBXIrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 03:47:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbiBXIIf (ORCPT
+        with ESMTP id S230419AbiBXIrL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 03:08:35 -0500
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166111B988A;
-        Thu, 24 Feb 2022 00:08:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645690086; x=1677226086;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=zEoJWzKmpcYe9rSTl+BlseiX6qsVqXPhxybFv18kU3Y=;
-  b=YmXVklXWeL5w30rG/hRcjNLdX8WWQVkkme0P4DW7eUh3yPHii0CrJU0E
-   BXClZehcmm9xlnMr6xxiw6djBiS8pHNdhJX+4HAsjaXjz8hNrDs5c2uiJ
-   TnNyJvVpOx/7GqUAW3go9UiTOCyw6jbMNLul4GOTuYQRfLlDC0EQy11Dq
-   EMkjBydr4sn+mybv/Rb97UgHaeCT8ZnKVrcQD0e6c3uv4ViR5W93wMptF
-   LNnb9IuGb34vbTHJtZTaupOHnLI1PBB0PBYMkK4boP/X937bSTydQ/eLP
-   AZTYtfVRygMRXPDobTS/9QfFQY3bamfZ16ZO+RCaPmc89ofqQA4llys2e
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10267"; a="251004744"
-X-IronPort-AV: E=Sophos;i="5.88,393,1635231600"; 
-   d="scan'208";a="251004744"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2022 00:08:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,393,1635231600"; 
-   d="scan'208";a="637745308"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by fmsmga002.fm.intel.com with ESMTP; 24 Feb 2022 00:07:58 -0800
-Date:   Thu, 24 Feb 2022 16:07:39 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc:     Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, kvm@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, qemu-devel@nongnu.org
-Subject: Re: [PATCH v4 12/12] KVM: Expose KVM_MEM_PRIVATE
-Message-ID: <20220224080739.GA6672@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
- <20220118132121.31388-13-chao.p.peng@linux.intel.com>
- <a121e766-900d-2135-1516-e1d3ba716834@maciej.szmigiero.name>
- <20220217134548.GA33836@chaop.bj.intel.com>
- <45148f5f-fe79-b452-f3b2-482c5c3291c4@maciej.szmigiero.name>
- <20220223120047.GB53733@chaop.bj.intel.com>
- <7822c00f-5a2d-b6a2-2f81-cf3330801ad3@maciej.szmigiero.name>
+        Thu, 24 Feb 2022 03:47:11 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A7910D1;
+        Thu, 24 Feb 2022 00:46:38 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1A6FB1F43D;
+        Thu, 24 Feb 2022 08:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1645692397; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jAilycsPN76chkdODgEF2EyORWTyYxCWDyunuPh5Xuw=;
+        b=fxRpkl9EGJrTa9+eShrYpM6pHqVaip2qsiwb/PRylR9bgPKllIcfkMmVYU5yfi7rXWcBiJ
+        jRKCLzWoWIfGSohzUbYhOAHAp5IKwQanRVA3TJgfAl+l8Mr+Gafel3VDGDSgVJvx/aX6MS
+        tLK0zhF+06qs7tLYmK5HT6e5v0O2Og4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1645692397;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jAilycsPN76chkdODgEF2EyORWTyYxCWDyunuPh5Xuw=;
+        b=qpbbDj0k5A+m8JrnSThPZiUvxPX1X+IH715hWrA0E6POXGAdxg22Emf4MsgGSjLDJtLmzB
+        P418lKovsvuXyhBg==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id E0937A3B8C;
+        Thu, 24 Feb 2022 08:46:32 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B4531A0605; Thu, 24 Feb 2022 09:46:36 +0100 (CET)
+Date:   Thu, 24 Feb 2022 09:46:36 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Byron Stanoszek <gandalf@winds.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org
+Subject: Re: Is it time to remove reiserfs?
+Message-ID: <20220224084636.tdobyxoql5xtxkx7@quack3.lan>
+References: <YhIwUEpymVzmytdp@casper.infradead.org>
+ <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
+ <20220222221614.GC3061737@dread.disaster.area>
+ <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7822c00f-5a2d-b6a2-2f81-cf3330801ad3@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,89 +68,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 07:32:37PM +0100, Maciej S. Szmigiero wrote:
-> On 23.02.2022 13:00, Chao Peng wrote:
-> > On Tue, Feb 22, 2022 at 02:16:46AM +0100, Maciej S. Szmigiero wrote:
-> > > On 17.02.2022 14:45, Chao Peng wrote:
-> > > > On Tue, Jan 25, 2022 at 09:20:39PM +0100, Maciej S. Szmigiero wrote:
-> > > > > On 18.01.2022 14:21, Chao Peng wrote:
-> > > > > > KVM_MEM_PRIVATE is not exposed by default but architecture code can turn
-> > > > > > on it by implementing kvm_arch_private_memory_supported().
-> > > > > > 
-> > > > > > Also private memslot cannot be movable and the same file+offset can not
-> > > > > > be mapped into different GFNs.
-> > > > > > 
-> > > > > > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> > > > > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > > > > > ---
-> > > > > (..)
-> > > > > >     static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
-> > > > > > -				      gfn_t start, gfn_t end)
-> > > > > > +				      struct file *file,
-> > > > > > +				      gfn_t start, gfn_t end,
-> > > > > > +				      loff_t start_off, loff_t end_off)
-> > > > > >     {
-> > > > > >     	struct kvm_memslot_iter iter;
-> > > > > > +	struct kvm_memory_slot *slot;
-> > > > > > +	struct inode *inode;
-> > > > > > +	int bkt;
-> > > > > >     	kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-> > > > > >     		if (iter.slot->id != id)
-> > > > > >     			return true;
-> > > > > >     	}
-> > > > > > +	/* Disallow mapping the same file+offset into multiple gfns. */
-> > > > > > +	if (file) {
-> > > > > > +		inode = file_inode(file);
-> > > > > > +		kvm_for_each_memslot(slot, bkt, slots) {
-> > > > > > +			if (slot->private_file &&
-> > > > > > +			     file_inode(slot->private_file) == inode &&
-> > > > > > +			     !(end_off <= slot->private_offset ||
-> > > > > > +			       start_off >= slot->private_offset
-> > > > > > +					     + (slot->npages >> PAGE_SHIFT)))
-> > > > > > +				return true;
-> > > > > > +		}
-> > > > > > +	}
-> > > > > 
-> > > > > That's a linear scan of all memslots on each CREATE (and MOVE) operation
-> > > > > with a fd - we just spent more than a year rewriting similar linear scans
-> > > > > into more efficient operations in KVM.
-> > > > 
-> (..)
-> > > > So linear scan is used before I can find a better way.
+On Wed 23-02-22 09:48:26, Byron Stanoszek wrote:
+> On Wed, 23 Feb 2022, Dave Chinner wrote:
+> > On Tue, Feb 22, 2022 at 11:04:08AM +0100, Jan Kara wrote:
+> > > Hello!
 > > > 
-> > > Another option would be to simply not check for overlap at add or move
-> > > time, declare such configuration undefined behavior under KVM API and
-> > > make sure in MMU notifiers that nothing bad happens to the host kernel
-> > > if it turns out somebody actually set up a VM this way (it could be
-> > > inefficient in this case, since it's not supposed to ever happen
-> > > unless there is a bug somewhere in the userspace part).
+> > > On Sun 20-02-22 12:13:04, Matthew Wilcox wrote:
+> > > > Keeping reiserfs in the tree has certain costs.  For example, I would
+> > > > very much like to remove the 'flags' argument to ->write_begin.  We have
+> > > > the infrastructure in place to handle AOP_FLAG_NOFS differently, but
+> > > > AOP_FLAG_CONT_EXPAND is still around, used only by reiserfs.
+> > > > 
+> > > > Looking over the patches to reiserfs over the past couple of years, there
+> > > > are fixes for a few syzbot reports and treewide changes.  There don't
+> > > > seem to be any fixes for user-spotted bugs since 2019.  Does reiserfs
+> > > > still have a large install base that is just very happy with an old
+> > > > stable filesystem?  Or have all its users migrated to new and exciting
+> > > > filesystems with active feature development?
+> > > > 
+> > > > We've removed support for senescent filesystems before (ext, xiafs), so
+> > > > it's not unprecedented.  But while I have a clear idea of the benefits to
+> > > > other developers of removing reiserfs, I don't have enough information to
+> > > > weigh the costs to users.  Maybe they're happy with having 5.15 support
+> > > > for their reiserfs filesystems and can migrate to another filesystem
+> > > > before they upgrade their kernel after 5.15.
+> > > > 
+> > > > Another possibility beyond outright removal would be to trim the kernel
+> > > > code down to read-only support for reiserfs.  Most of the quirks of
+> > > > reiserfs have to do with write support, so this could be a useful way
+> > > > forward.  Again, I don't have a clear picture of how people actually
+> > > > use reiserfs, so I don't know whether it is useful or not.
+> > > > 
+> > > > NB: Please don't discuss the personalities involved.  This is purely a
+> > > > "we have old code using old APIs" discussion.
+> > > 
+> > > So from my distro experience installed userbase of reiserfs is pretty small
+> > > and shrinking. We still do build reiserfs in openSUSE / SLES kernels but
+> > > for enterprise offerings it is unsupported (for like 3-4 years) and the module
+> > > is not in the default kernel rpm anymore.
+> > > 
+> > > So clearly the filesystem is on the deprecation path, the question is
+> > > whether it is far enough to remove it from the kernel completely. Maybe
+> > > time to start deprecation by printing warnings when reiserfs gets mounted
+> > > and then if nobody yells for year or two, we'll go ahead and remove it?
 > > 
-> > Specific to TDX case, SEAMMODULE will fail the overlapping case and then
-> > KVM prints a message to the kernel log. It will not cause any other side
-> > effect, it does look weird however. Yes warn that in the API document
-> > can help to some extent.
+> > Yup, I'd say we should deprecate it and add it to the removal
+> > schedule. The less poorly tested legacy filesystem code we have to
+> > maintain the better.
+> > 
+> > Along those lines, I think we really need to be more aggressive
+> > about deprecating and removing filesystems that cannot (or will not)
+> > be made y2038k compliant in the new future. We're getting to close
+> > to the point where long term distro and/or product development life
+> > cycles will overlap with y2038k, so we should be thinking of
+> > deprecating and removing such filesystems before they end up in
+> > products that will still be in use in 15 years time.
+> > 
+> > And just so everyone in the discussion is aware: XFS already has a
+> > deprecation and removal schedule for the non-y2038k-compliant v4
+> > filesystem format. It's officially deprecated right now, we'll stop
+> > building kernels with v4 support enabled by default in 2025, and
+> > we're removing the code that supports the v4 format entirely in
+> > 2030.
 > 
-> So for the functionality you are adding this code for (TDX) this scan
-> isn't necessary and the overlapping case (not supported anyway) is safely
-> handled by the hardware (or firmware)?
-
-Yes, it will be handled by the firmware.
-
-> Then I would simply remove the scan and, maybe, add a comment instead
-> that the overlap check is done by the hardware.
-
-Sure.
-
+> For what it's worth, I have a number of production servers still using
+> Reiserfs, which I regularly maintain by upgrading to the latest Linux kernel
+> annually (mostly to apply security patches). I figured this filesystem would
+> still be available for several more years, since it's not quite y2038k yet.
 > 
-> By the way, if a kernel log message could be triggered by (misbehaving)
-> userspace then it should be rate limited (if it isn't already).
-
-Thanks for mention.
-
-Chao
+> I originally installed Reiserfs on these systems as early as 2005 due to the
+> tail-packing feature, which saved space with many small files on older
+> harddrives. Since then, I witnessed the development of ext4, and then btrfs.
+> For a long time, these newer filesystems had occasional reports of instabilities
+> and lost data, and so I shied away from using them. Meanwhile, Reiserfs reached
+> a level of maturity and no longer had active development on it, except for the
+> occasional bugfix. I felt this was a filesystem I could trust going forward
+> (despite its relative slowness), even after popular Linux distributions
+> eventually dropped it from being installed by default.
 > 
-> > Thanks,
-> > Chao
-> 
-> Thanks,
-> Maciej
+> I have only recently begun to use XFS on newer installs, only since the XFS
+> developers added bigtime support for y2038k. But for existing installs, I ask
+> that we keep Reiserfs supported in the kernel a little longer. Perhaps use the
+> same deprecation schedule that was picked for XFS v4 (roughly 10 years of
+> deprecation before eventual removal)?
+
+Thanks for letting us know about your usage! Frankly the reality of
+reiserfs is that it gets practically no development time and little
+testing. Now this would not be a big problem on its own because what used
+to work should keep working but the rest of the common filesystem
+infrastructure keeps moving (e.g. with Matthew's page cache changes, new
+mount API, ...) and so it can happen that with a lack of testing &
+development reiserfs will break without us noticing. So I would not
+consider reiserfs a particularly safe choice these days and rather consider
+migration to some other filesystem. Originally I thought about 2 years
+deprecation period but if 5 years make things significantly easier for you
+(here I have to admit I don't have experience with maintaining larger fleet
+of servers and how much effort it takes to move it to a different fs) we can
+live with that I guess.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
