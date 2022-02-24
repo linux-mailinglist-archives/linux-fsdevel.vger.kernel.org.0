@@ -2,139 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D1134C3C94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 04:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43CDE4C3C90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 04:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237152AbiBYDpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 22:45:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49046 "EHLO
+        id S237161AbiBYDp1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 22:45:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237102AbiBYDpP (ORCPT
+        with ESMTP id S236474AbiBYDpX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 22:45:15 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7E2254550;
-        Thu, 24 Feb 2022 19:44:44 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220225034442epoutp031d962e134e1ec9dd086e76561e17b0d3~W6p8ClBT02904429044epoutp03c;
-        Fri, 25 Feb 2022 03:44:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220225034442epoutp031d962e134e1ec9dd086e76561e17b0d3~W6p8ClBT02904429044epoutp03c
+        Thu, 24 Feb 2022 22:45:23 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E592692A8;
+        Thu, 24 Feb 2022 19:44:51 -0800 (PST)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220225034449epoutp0454529f6363f3f2f29cbc69367439caa4~W6qCj06eN1072710727epoutp04C;
+        Fri, 25 Feb 2022 03:44:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220225034449epoutp0454529f6363f3f2f29cbc69367439caa4~W6qCj06eN1072710727epoutp04C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1645760682;
-        bh=1iZdpCXEAZbRsOLrr9lAy8grQtrN6NFqPn/cdQ9GwG4=;
+        s=mail20170921; t=1645760689;
+        bh=NG/IL88Cl8lqgSuGQ/Apf7wtDtAM8jMj2OGLyD5YvRk=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=e2oCbxBfpoW0Fx3WrxnvQNXCG9X/Tlz1p5CwVlTgqA53pqoDUKjS0UER3oZz1JBqg
-         4aj3LblE3NhjsnCi8awDhDMEfMG0z1usr+rCnoWroRiQffHk1wWpxJZpKuE5uEVaQh
-         8Wlaj7I6hadXCn3SCw/XJ1rAr+jSnR2wKUgTm2Ss=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220225034441epcas5p1eadca5356fef15af328f1804164ef447~W6p7j0Aax1918519185epcas5p1k;
-        Fri, 25 Feb 2022 03:44:41 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4K4bHW4tD4z4x9QT; Fri, 25 Feb
-        2022 03:44:23 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C5.DC.05590.79058126; Fri, 25 Feb 2022 12:44:23 +0900 (KST)
+        b=exg/X1NZIStEiXXmgsH5fAmzrlm0DU/L4RoRtn0Hh5NeZ6pQ0wxfvazrJh67/M6xR
+         ZKIFIl21UhuS650BDjq3prjbbUxwdNp0uoIqt4BlHKVahns0Yp6rNBm7m2sgqs5fhj
+         osXqrQ1oUJW2mwSLFbkngvukdcjOfQt8qStiHkAE=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220225034449epcas5p4465c2410a24e7f56ea2b18353c2c9e03~W6qCLdBa62547825478epcas5p4P;
+        Fri, 25 Feb 2022 03:44:49 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4K4bHr2T2rz4x9QC; Fri, 25 Feb
+        2022 03:44:40 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B0.1D.46822.DBF48126; Fri, 25 Feb 2022 12:40:45 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220224121800epcas5p2bdfb52a9ae9e52068b73128cbe1895b7~WuA0NSwEI1060910609epcas5p2f;
-        Thu, 24 Feb 2022 12:18:00 +0000 (GMT)
+        20220224123104epcas5p2dcd648165a43bbcc9374d61d27a8cca6~WuMO1sqah2860728607epcas5p2e;
+        Thu, 24 Feb 2022 12:31:04 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220224121800epsmtrp2f24affef1a1e089cb16436d2e30fb89c~WuA0Ko9xd2135121351epsmtrp25;
-        Thu, 24 Feb 2022 12:18:00 +0000 (GMT)
-X-AuditID: b6c32a4b-739ff700000015d6-de-621850971644
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20220224123104epsmtrp2bfc11f91c4849ed260cdf4934818c183~WuMOzjhY33101731017epsmtrp24;
+        Thu, 24 Feb 2022 12:31:04 +0000 (GMT)
+X-AuditID: b6c32a4a-dfbff7000000b6e6-39-62184fbda365
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        66.01.29871.77777126; Thu, 24 Feb 2022 21:17:59 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        D4.22.29871.88A77126; Thu, 24 Feb 2022 21:31:04 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220224121755epsmtip18a16fa986ab7cb514bc61b630525edd0~WuAvrUana1457514575epsmtip18;
-        Thu, 24 Feb 2022 12:17:55 +0000 (GMT)
-Date:   Thu, 24 Feb 2022 17:42:58 +0530
+        20220224123100epsmtip27e025628a07ecd9ca8cb4f0f0113b5fc~WuMKmUXOJ3190931909epsmtip2X;
+        Thu, 24 Feb 2022 12:30:59 +0000 (GMT)
+Date:   Thu, 24 Feb 2022 17:56:03 +0530
 From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, hch@lst.de,
-        javier@javigon.com, chaitanyak@nvidia.com,
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     javier@javigon.com, chaitanyak@nvidia.com,
         linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         dm-devel@redhat.com, linux-nvme@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
         msnitzer@redhat.com, bvanassche@acm.org,
         martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
-        Frederick.Knight@netapp.com, osandov@fb.com,
+        hch@lst.de, Frederick.Knight@netapp.com, osandov@fb.com,
         lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
         josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
         jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com,
-        nitheshshetty@gmail.com, SelvaKumar S <selvakuma.s1@samsung.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+        nitheshshetty@gmail.com, Alasdair Kergon <agk@redhat.com>,
         Sagi Grimberg <sagi@grimberg.me>,
         James Smart <james.smart@broadcom.com>,
         Chaitanya Kulkarni <kch@nvidia.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] block: Introduce queue limits for copy-offload
- support
-Message-ID: <20220224121258.GB9117@test-zns>
+Subject: Re: [PATCH v3 08/10] dm: Add support for copy offload.
+Message-ID: <20220224122603.GC9117@test-zns>
 MIME-Version: 1.0
-In-Reply-To: <98ddab1b-6702-f121-9fef-0ce185888a1a@opensource.wdc.com>
+In-Reply-To: <YhUIny/Huielcit9@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUVRzH59x79+7CDHQDjQPmQAtOyntjlw4glRPD3AZqSGbQ6A+6wp2F
-        gN1td0FtJgKJHF7y0AQuJhgVICS6KMNjUQSBeFOLxEuJlzGiyysMUiBgl8b/Pr/v+f5+53d+
-        Z34C3GKCbyOIkqlZpYyJEZKmRE3LIUeXvCB4wj2xwBZVdbbhSDu8zEMVD7JIdHFhDUfzd6d4
-        KDcrn4+e9/ThSDdtjhr1hTzUv5qEoSnNJoa0P+RiqLyiFUN/lZYA1HBlEUOpXf0YejEhQq2b
-        T0mU2zwI0Mx9DkONI05I29hBIF39JRIV/TzDR+l/1JLo9lwjjkrbNzA0lD0DUC/3gkS100kA
-        tTy8T6Brc/MEmlvtING3N1YASslY46O+9Xbeew60biCA5sZ7SDonWc+n67gHfLrv4Q2CTi4e
-        I2hdTxytuZpK0tU/fk2fHyoFdMNwIkmf6W7F6fylv0k6M1lP0nUp4zx6cWaECLIKjT4cyTIR
-        rNKOlYXLI6JkUl9hQHDY+2EST3eRi8gLvS20kzGxrK/QLzDIxT8qZmuSQrt4JiZuSwpiVCqh
-        2zuHlfI4NWsXKVepfYWsIiJGIVa4qphYVZxM6ipj1d4id/e3JFvGz6Ij51fP8RVFtqfacp7w
-        EoEGpgETAaTEMGW0BEsDpgILqgHAmd47hCFYArBlNMkYPAMwK6mUv5uysnAXNxw0AjiWnM43
-        BI8A5KZ68W0XQR2AdxI7eGlAICApJ9i1KdiW91AS+DQjZacqTn3PhxebKnY8llQI7G86sO0x
-        o5xhRkUe38Cvwo6CaWKbTSh/qG/L4m3zXsoeNtW07/QNqQJTmPf7vzxDd37wl8wyI1vCx+03
-        jV3bwGV9I2lISAdwtXvcmJ0PYHJ2MmlwvQt/065j24xTkVB3+yww6Pvhd53XjLo5zHw+jRl0
-        M1h7eZftYWVVsbGONRz8J8nINGzXzZKGEa1gUPNNGcgGttxLz+Neus/AzrC4YYnktiaDU/tg
-        6YbAgIdgVb1bMeBdBdasQhUrZVUShYeMPfn/n4fLYzVgZ9ccA2rB5J8Lrs0AE4BmAAW4cI/Z
-        1FdWJyzMIpjTX7JKeZgyLoZVNQPJ1m/l4DZ7w+VbyypTh4nEXu5iT09PsZeHp0hoZdYpvc5Y
-        UFJGzUazrIJV7uZhAhObREwyUXlv4eM5qbeoX/MoEZa+7jN0ruZXiw0TiS2YDV4sMP/ow8uY
-        j/iUFx3qExX4zMEWpxI+De4qcrt1OsE8yJmTbjT0lw/xwuzXRkdwO31LuYuUse38AA/pPmrh
-        f3PZ4WDKdOG9ifpX+ruG/S7UWVZCG9PRN2ZZPNR6g3pyvEgekXZJYjc2StkvO03HfnHm8fhR
-        gpxwOnLsrLOj7M14cUpgdfHYrf1WS+0Hucn4iNHr7hc++dx0XU2knkwo8eF8B0byxtLVm9wG
-        r0wnqZ7Uk0de02hr20ISjvukHxO7UlPIXD7vXeh4pWPfT2kDtdqYcOsmG9whDBuc5HyRxoMR
-        EqpIRuSIK1XMfxKftK/0BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxiG856vHtBuh+rgRYmZ3cwiuEIV5M2yLGoydhLcNMuyH8syV+QM
-        CFBZj4jOqAXGjAUGFrBwUNfqIqF1bmJSwLabVPkoyOhWEVCBbm2Hs2uhE4KEr6WwZf6781zX
-        ff96aFyiJzfQOcrDnEqpyJNSkYT5tnTT60VFMRlJA/0p6PveLhxZR56SyDRaRaFzU3M4muzw
-        kEhbVS9C8/0DOHJ5X0C2YCOJnM+KMeRpWcaQ9ZIWQ82mTgxNNF0GyGIIYehMnxNDC7/JUedy
-        gEJa+32AfIMChmwPEpDV5iCQ6+Z5Cn1zxSdC5UNtFPrRb8NRU/cShoarfQD9LCxQqM1bDNDt
-        sUECXfNPEsj/zEGhr67PAFRWMSdCA4vd5K5XWde9dFYY76fYs6VBEdsujIrYgbHrBFuqf0Sw
-        rv5CtsV4hmJvfHuKrRluAqxlRE2xJXc7cbb+72mKrSwNUmx72TjJhnwPiP0xH0W+mcnl5Rzh
-        VIlvfRqZfXrxPFUwHnd0+us+XA3KozUggoZMMpyZ6sA1IJKWMBYAJ2zNYBXEwiuLd/DVvA42
-        L02IViUvgIE/qrEwIJgt8Ce1g9QAmqaYBNi3TIfP65kUGKgoI8I+zlwWQfdj94qzjvkQOm9t
-        CTtiZhusMOn+3ZzFoN44g62CKOho8BLhjDPxcHjpTyzcxZmNsGlpZT+CSYPBrioynF9iXoG3
-        zN1YNYgSnmsLz7WF/9t6gBtBLFfA52fl8/ICuZIrkvGKfL5QmSU7eCi/Baw8UfzWNtBqnJLZ
-        AUYDO4A0Ll0vTvk8OkMizlQc+4JTHTqgKszjeDvYSBPSGLFT4zggYbIUh7lcjivgVP9RjI7Y
-        oMb2JJpr6oxHRSfeP3kTDMH9Tw5+ssfXe+L3BPmYT1axbGnbLpgbfsn91XVPR16a3trs36kJ
-        lbzxV50sOzXZ4iOrY0Px31E/1JZH7UMX3W7tNvPQx9bi0K7PYgYbPan++853ZtY2THpU14b5
-        9+5cvfo4oyjV+bKmK/f4qDJd1qqoh5sbFtYeGzGUzJb2AMAk9doyK6fqTs8lXZwfyUl87Uic
-        YcdZfvFLXavYoI59atVvbpSkZdRXcjV77z7xqgN99p4bhC9ZVxs3bUqrkjvmtec+KK5NcIzv
-        vtCxV4BwzQVdi+mRITUiOOl+O+AvF8r2tXvenU3f5LQWvmiNfri7R0rw2Qp5PK7iFf8AKN0B
-        x7MDAAA=
-X-CMS-MailID: 20220224121800epcas5p2bdfb52a9ae9e52068b73128cbe1895b7
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUVRzHPffu3l1s1i4L6BGGoHV0cFlwl1cHBiEndG7oDFRWWBYucIdl
+        WHZ39mFARiBhKRCCRrY+QHlsQDwEIQSWURwgHgbxChkeKpAMJi8xwVDa5WL13+f3Pd/v+f3O
+        OXO4OL+LY8uNUmhptUIqFxAbWTW3djq5GINgmPjJ8VdQeXsLjhruPGajkpEMAmXPLeNo9uY4
+        G2VlnOOg3olNyDhzno26l5IwNF65iqGGK1kYKippxtADQx5A9ZfnMXSyoxtDK/ckqHn1EYGy
+        mgYAmuzXY8g45IwajG0s1Ft3gUA5hZMclPp7LYEaHxpxZGh9gaFf9SsEqp1IAujWaD8LlT2c
+        ZaETV58AlJK2zEFdz1vZb75O9fbtp/RjtwkqM3mGQ13Xj3CortGrLCo5d5hF9d7WUZXFJwmq
+        Kv9L6sygAVD1dxIJ6nhnM06dW1gkqPTkGYKanxxiUbON/UTw5o+ifWW0NIJWO9KKcGVElCJy
+        t2D/e6FvhXp6iSUuEm/0hsBRIY2hdwsCDgS77IuSm65O4HhUKteZpGCpRiPY5eerVuq0tKNM
+        qdHuFtCqCLnKQ+WqkcZodIpIVwWt9ZGIxW6eJuORaJl+7gKhMm6PnTDexxNBj/0pYMGFpAds
+        r8lhnQIbuXyyHsDzPzYAplgAMNuQyGGKvwDsO1mKv4wkp39LMAtGAO/qv2YzxR8A6iufsc0u
+        FrkdZnWOmJjLJUhn2LHKNaO1SR7KDjDbcdJAwGe95YTZbkX6w/qfL61FeaQIlhuGWQxbwrYf
+        JtbYghTC4s5sjpltyG3wRk0rZt4Ikic2wtqpasBMFwCrBrsIhq3gdOs1DsO28PGMkWACqQAu
+        dY6tp88BmHw6eT3hD39reI6ZR8VJGZweDmdke/hdexlmZpzcBNP/nsAYnQdrL73kbfCn8tz1
+        bbbCgadJ60zBG18tr10dnxwBsHHM7zRw0P/vcPr/uunXOohgbv0Cwch20PCCy+BOWF63Kxew
+        i8FWWqWJiaQ1nio3Bf3Zvw8eroypBGs/SxhYC+7dnXNtAhgXNAHIxQXWvPEvtoTxeRHSuHha
+        rQxV6+S0pgl4mp4qE7e1CVeavqZCGyrx8BZ7eHl5eXi7e0kEW3gdkRVSPhkp1dLRNK2i1S9z
+        GNfCNhHTHXIL2Xd0Q3d7S6VDW7OooGKxefFiXcGOlnyRw5HM14qqRU7pwskdHdpjG9TLvp+k
+        9GXGxkd/CO2qWoKsgs/0ZCxesKp+mp7zS+G8dUKo0wj3VF31gQfD6qAI3tm0j8NbFf5eF7U2
+        e5LkzwLibrrLUnh+zVP89kfzYl31Qbt32XFNpTfi92TWJHxe9adbbIjPN9Fh3c5t9DHLQwdX
+        SjqHbcrd7V0T5PlX0FwoZ/Or2Xml9NsH0j4N/CClsUy4rf9wEev766p57eXBvIwpYZfMfq94
+        rq94PqdbmdtVcHi6wi4vovC+j4Wq5lrK+RDq/aXAs8KwJ6J34ntaJBusRlMt7QaCAgUsjUwq
+        EeJqjfQfWeKdzeIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjH977n9PS0SZdDqfJSootdzCJOBLPF94MXDDBP4pZIpotZZqCV
+        E0Apdr14IduEtSyCA6FNCOtGxVsbyrwARsBSVKQ2SBGQIZdQqrMdcUagoE5SCrM2y/z2y/+W
+        58NDE+JqnpTOL9Ry6kJ5gYwSktfvyD7YcLIoTpFcXyXBV+7dJXDH2DwPN3pPU7hmdoHAM7ef
+        8LDxdC0fD/nfx87pX3l44HUJxE+alyHuOGeEuKHRBfGU7TzAjrNBiMt6ByBefJyCXcvPKWzs
+        eghwYNgMsXN8Pe5w9pB46MZvFD5jDfDxqZE2Cnc+cxLY5l6C+L55kcJt/hKA70wOk/jysxkS
+        /9T0EuDSnxf4uD/s5qWuYYf+2MWafX0UW62f5rPtZi+f7Z9sIll9/QTJDvXp2GZ7GcW2XDjB
+        mkZtgHWMFVPsjx4XwdbOvaDYCv00xQYD4yQ70zlM7V75tXBLDleQf4RTb9yWLcx72TQIVWHZ
+        scFX9bAYNCaUAwGNmE+QvqKSKgdCWsw4ALJ0e6moEY+s4W4iyrGoYWmKHw35AZo3PeJHDJJZ
+        i4weL68c0DTFrEe9y3QEJW/k8Zr0SJxgLlFoqqUfRuKxzHbkaLXwIixiPkZXbBNkdNMHUPCi
+        i4oaMajnFz8ZYYJJRKNLT2FklGASkG2JjsiCN7LdU/P2hBXMh+jWdTesAjHmd9rmd9rm/9v1
+        gLCDeE6lUeYqNSmqlELuaJJGrtToCnOTDhxWNoO3X5O4rg202meTugCkQRdANCGTiD79dqVC
+        LMqRHy/i1Iez1LoCTtMFEmhSFicaKO/JEjO5ci13iONUnPo/F9ICaTFMtx9sMX7vfv3nCq0l
+        UJT8e15syFO1GKOfE94aTGuVju38fE2Jdh+8OXwXooc7H5VKb2ccyDgjST4/nf/3kQe+0qf3
+        rAvZlqtlvYKg68IE3eezjPyQeVGwa/V4RdwOb/zGB8KQ40SSQWDPNKaWjVSK2p9f0xukx8He
+        r/rqNryK/WZ1xY6t1hcKxWAw1P3FDb/pviML1nk2T3Wf/K5FsT10yWQwdkpGi0GNKjSXU3dz
+        LjXz8ar9PtFR2SnTqC4u37k1rXTTMUu1dkvlnr2Q2/ZleoCoXvVX5eZr7wmtZ2N42WkfzQ5M
+        hg3hq8r2zAZxrTtw+Z/Pzun2y0cKDmbM9+82yEhNnjwlkVBr5P8C+UQeB6QDAAA=
+X-CMS-MailID: 20220224123104epcas5p2dcd648165a43bbcc9374d61d27a8cca6
 X-Msg-Generator: CA
 Content-Type: multipart/mixed;
-        boundary="----.rW42XXn7_Ji6OxwuAF4RAMbP.qed.OeqKlvEhSLhB3noATS=_b2509_"
+        boundary="----w44XasAgibz0dH83sqZUwD2VszzvD0Z8603isFAMQ6N2NX8f=_b24cc_"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220214080605epcas5p16868dae515a6355cf9fecf22df4f3c3d
+X-CMS-RootMailID: 20220214080649epcas5p36ab21e7d33b99eac1963e637389c8be4
 References: <20220214080002.18381-1-nj.shetty@samsung.com>
-        <CGME20220214080605epcas5p16868dae515a6355cf9fecf22df4f3c3d@epcas5p1.samsung.com>
-        <20220214080002.18381-3-nj.shetty@samsung.com>
-        <20220217090700.b7n33vbkx5s4qbfq@garbanzo> <20220217125901.GA3781@test-zns>
-        <YhWGDUyQkUcE6itt@bombadil.infradead.org>
-        <98ddab1b-6702-f121-9fef-0ce185888a1a@opensource.wdc.com>
+        <CGME20220214080649epcas5p36ab21e7d33b99eac1963e637389c8be4@epcas5p3.samsung.com>
+        <20220214080002.18381-9-nj.shetty@samsung.com> <YhUIny/Huielcit9@redhat.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
@@ -145,102 +137,147 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------.rW42XXn7_Ji6OxwuAF4RAMbP.qed.OeqKlvEhSLhB3noATS=_b2509_
+------w44XasAgibz0dH83sqZUwD2VszzvD0Z8603isFAMQ6N2NX8f=_b24cc_
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 
-On Wed, Feb 23, 2022 at 10:29:18AM +0900, Damien Le Moal wrote:
-> On 2/23/22 09:55, Luis Chamberlain wrote:
-> > On Thu, Feb 17, 2022 at 06:29:01PM +0530, Nitesh Shetty wrote:
-> >>  Thu, Feb 17, 2022 at 01:07:00AM -0800, Luis Chamberlain wrote:
-> >>> The subject says limits for copy-offload...
-> >>>
-> >>> On Mon, Feb 14, 2022 at 01:29:52PM +0530, Nitesh Shetty wrote:
-> >>>> Add device limits as sysfs entries,
-> >>>>         - copy_offload (RW)
-> >>>>         - copy_max_bytes (RW)
-> >>>>         - copy_max_hw_bytes (RO)
-> >>>>         - copy_max_range_bytes (RW)
-> >>>>         - copy_max_range_hw_bytes (RO)
-> >>>>         - copy_max_nr_ranges (RW)
-> >>>>         - copy_max_nr_ranges_hw (RO)
-> >>>
-> >>> Some of these seem like generic... and also I see a few more max_hw ones
-> >>> not listed above...
-> >>>
-> >> queue_limits and sysfs entries are differently named.
-> >> All sysfs entries start with copy_* prefix. Also it makes easy to lookup
-> >> all copy sysfs.
-> >> For queue limits naming, I tried to following existing queue limit
-> >> convention (like discard).
-> > 
-> > My point was that your subject seems to indicate the changes are just
-> > for copy-offload, but you seem to be adding generic queue limits as
-> > well. Is that correct? If so then perhaps the subject should be changed
-> > or the patch split up.
-> > 
-> >>>> +static ssize_t queue_copy_offload_store(struct request_queue *q,
-> >>>> +				       const char *page, size_t count)
-> >>>> +{
-> >>>> +	unsigned long copy_offload;
-> >>>> +	ssize_t ret = queue_var_store(&copy_offload, page, count);
-> >>>> +
-> >>>> +	if (ret < 0)
-> >>>> +		return ret;
-> >>>> +
-> >>>> +	if (copy_offload && !q->limits.max_hw_copy_sectors)
-> >>>> +		return -EINVAL;
-> >>>
-> >>>
-> >>> If the kernel schedules, copy_offload may still be true and
-> >>> max_hw_copy_sectors may be set to 0. Is that an issue?
-> >>>
-> >>
-> >> This check ensures that, we dont enable offload if device doesnt support
-> >> offload. I feel it shouldn't be an issue.
-> > 
-> > My point was this:
-> > 
-> > CPU1                                       CPU2
-> > Time
-> > 1) if (copy_offload 
-> > 2)    ---> preemption so it schedules      
-> > 3)    ---> some other high priority task  Sets q->limits.max_hw_copy_sectors to 0
-> > 4) && !q->limits.max_hw_copy_sectors)
-> > 
-> > Can something bad happen if we allow for this?
+On Tue, Feb 22, 2022 at 11:00:31AM -0500, Mike Snitzer wrote:
+> On Mon, Feb 14 2022 at  2:59P -0500,
+> Nitesh Shetty <nj.shetty@samsung.com> wrote:
 > 
-> max_hw_copy_sectors describes the device capability to offload copy. So
-> this is read-only and "max_hw_copy_sectors != 0" means that the device
-> supports copy offload (this attribute should really be named
-> max_hw_copy_offload_sectors).
+> > Before enabling copy for dm target, check if underlying devices and
+> > dm target support copy. Avoid split happening inside dm target.
+> > Fail early if the request needs split, currently splitting copy
+> > request is not supported.
+> > 
+> > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> > ---
+> >  drivers/md/dm-table.c         | 45 +++++++++++++++++++++++++++++++++++
+> >  drivers/md/dm.c               |  6 +++++
+> >  include/linux/device-mapper.h |  5 ++++
+> >  3 files changed, 56 insertions(+)
+> > 
+> > diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+> > index e43096cfe9e2..8dc9ae6a6a86 100644
+> > --- a/drivers/md/dm-table.c
+> > +++ b/drivers/md/dm-table.c
+> > @@ -1903,6 +1903,38 @@ static bool dm_table_supports_nowait(struct dm_table *t)
+> >  	return true;
+> >  }
+> >  
+> > +static int device_not_copy_capable(struct dm_target *ti, struct dm_dev *dev,
+> > +				      sector_t start, sector_t len, void *data)
+> > +{
+> > +	struct request_queue *q = bdev_get_queue(dev->bdev);
+> > +
+> > +	return !blk_queue_copy(q);
+> > +}
+> > +
+> > +static bool dm_table_supports_copy(struct dm_table *t)
+> > +{
+> > +	struct dm_target *ti;
+> > +	unsigned int i;
+> > +
+> > +	for (i = 0; i < dm_table_get_num_targets(t); i++) {
+> > +		ti = dm_table_get_target(t, i);
+> > +
+> > +		if (!ti->copy_supported)
+> > +			return false;
+> > +
+> > +		/*
+> > +		 * target provides copy support (as implied by setting
+> > +		 * 'copy_supported') and it relies on _all_ data devices having copy support.
+> > +		 */
+> > +		if (ti->copy_supported &&
+> > +		    (!ti->type->iterate_devices ||
+> > +		     ti->type->iterate_devices(ti, device_not_copy_capable, NULL)))
+> > +			return false;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> >  static int device_not_discard_capable(struct dm_target *ti, struct dm_dev *dev,
+> >  				      sector_t start, sector_t len, void *data)
+> >  {
+> > @@ -2000,6 +2032,19 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+> >  	} else
+> >  		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+> >  
+> > +	if (!dm_table_supports_copy(t)) {
+> > +		blk_queue_flag_clear(QUEUE_FLAG_COPY, q);
+> > +		/* Must also clear discard limits... */
+> 
+> copy-and-paste mistake: s/discard/copy/ ^
 >
-Yes, it does make sense to change prefix to copy_offload_*, but downside
-being sysfs attributes becomes too long.
 
-> The actual loop to issue copy offload BIOs, however, must use the soft
-> version of the attribute: max_copy_sectors, which defaults to
-> max_hw_copy_sectors if copy offload is truned on and I guess to
-> max_sectors for the emulation case.
-> 
-> Now, with this in mind, I do not see how allowing max_copy_sectors to be
-> 0 makes sense. I fail to see why that should be allowed since:
-> 1) If copy_offload is true, we will rely on the device and chunk copy
-> offload BIOs up to max_copy_sectors
-> 2) If copy_offload is false (or device does not support it), emulation
-> will be used by issuing read/write BIOs of up to max_copy_sectors.
-> 
-> Thus max_copy_sectors must always be at least equal to the device
-> minimum IO size, that is, the logical block size.
+acked
 
-Agreed, if device doesn't suppport offload, soft limit should be based on
-limits of READ/WRITE IOs.
+> > +		q->limits.max_copy_sectors = 0;
+> > +		q->limits.max_hw_copy_sectors = 0;
+> > +		q->limits.max_copy_range_sectors = 0;
+> > +		q->limits.max_hw_copy_range_sectors = 0;
+> > +		q->limits.max_copy_nr_ranges = 0;
+> > +		q->limits.max_hw_copy_nr_ranges = 0;
+> > +	} else {
+> > +		blk_queue_flag_set(QUEUE_FLAG_COPY, q);
+> > +	}
+> > +
+> >  	if (dm_table_supports_secure_erase(t))
+> >  		blk_queue_flag_set(QUEUE_FLAG_SECERASE, q);
+> >  
+> > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > index ab9cc91931f9..3b4cd49c489d 100644
+> > --- a/drivers/md/dm.c
+> > +++ b/drivers/md/dm.c
+> > @@ -1372,6 +1372,12 @@ static int __split_and_process_non_flush(struct clone_info *ci)
+> >  	if (__process_abnormal_io(ci, ti, &r))
+> >  		return r;
+> >  
+> > +	if ((unlikely(op_is_copy(ci->bio->bi_opf)) &&
+> > +				max_io_len(ti, ci->sector) < ci->sector_count)) {
+> > +		DMERR("%s: Error IO size(%u) is greater than maximum target size(%llu)\n",
+> > +				__func__, ci->sector_count, max_io_len(ti, ci->sector));
+> > +		return -EIO;
+> > +	}
+> >  	len = min_t(sector_t, max_io_len(ti, ci->sector), ci->sector_count);
+> >  
+> >  	r = __clone_and_map_data_bio(ci, ti, ci->sector, &len);
+> 
+> There isn't a need for __func__ prefix here.
+> 
+> You'll also need to rebase on latest dm-5.18 (or wait until 5.18 merge
+> window opens) because there has been some conflicting changes since
+> you posted.
+>
+
+acked
+
+> > diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+> > index b26fecf6c8e8..acfd4018125a 100644
+> > --- a/include/linux/device-mapper.h
+> > +++ b/include/linux/device-mapper.h
+> > @@ -362,6 +362,11 @@ struct dm_target {
+> >  	 * zone append operations using regular writes.
+> >  	 */
+> >  	bool emulate_zone_append:1;
+> > +
+> > +	/*
+> > +	 * copy offload is supported
+> > +	 */
+> > +	bool copy_supported:1;
+> >  };
+> 
+> Would prefer this be "copy_offload_supported".
+> 
+
+acked, will update in next series.
 
 --
 Nitesh Shetty
 
-------.rW42XXn7_Ji6OxwuAF4RAMbP.qed.OeqKlvEhSLhB3noATS=_b2509_
+------w44XasAgibz0dH83sqZUwD2VszzvD0Z8603isFAMQ6N2NX8f=_b24cc_
 Content-Type: text/plain; charset="utf-8"
 
 
-------.rW42XXn7_Ji6OxwuAF4RAMbP.qed.OeqKlvEhSLhB3noATS=_b2509_--
+------w44XasAgibz0dH83sqZUwD2VszzvD0Z8603isFAMQ6N2NX8f=_b24cc_--
