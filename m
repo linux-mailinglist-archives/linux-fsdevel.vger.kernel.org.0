@@ -2,54 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 525904C3604
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 20:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEF8E4C3758
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 22:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233105AbiBXTl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 14:41:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51118 "EHLO
+        id S234347AbiBXVG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 16:06:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233043AbiBXTl2 (ORCPT
+        with ESMTP id S229542AbiBXVG6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 14:41:28 -0500
+        Thu, 24 Feb 2022 16:06:58 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AD332763D9;
-        Thu, 24 Feb 2022 11:40:58 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6903D24FA27;
+        Thu, 24 Feb 2022 13:06:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GrbBLAbtvC4chaYdzgUK1w1hf9+xtC4k6cVzY/iVx3U=; b=pUaNsZxVGnEHGlDh9Mk+nY4Puc
-        WDK2PKuOlt4p0TsbO6ETD2kRFFIDMPq93CdkJa9Iab0H00mjKKQLei1dPnXOHapqa58yCw72eYM4E
-        jlgrtc0l94HKpO/qSd6rRHBtIBI62VoEfbYdqDPC3hfIVl7cAWxyarEfP5GMPxxrivrWd2tj/QTtX
-        vMrA9PdF5ZHtwmXXUbcDoAk3PZumDSG6NW/yIway8XVyvJu28V5/hlFS4SmLWB4bDAglam6GIOtPg
-        EIakVt52CXxk2k40RN34UYCk8ko1gF5NiN2m5ieGbD1Qldb3mOTj2Ip+6w3fCOaQJD8L54/o+c8zk
-        OLAW9wCw==;
+        bh=gqwsfxNL/6u6rNbdgXApLMLgt2yxqOUUOtWYMHIjK/s=; b=TIctb2fI/Th0lTWb0MsVMD/mze
+        ygDbG+qwvvYChpgzeugUgvWAh1UnWeb+BBL4nWUOLBYTLF1WDKe4XaRG+RZGIH0gFFGxo6L/JClJa
+        W9mwKicf+pRvoyYIJRjMJ9WwEvCr8yxmoKVlb6mtFvGHqlF4Qof/J+JJuna1JWC1wUHIQAXacYgRe
+        Z+3OjnWf/3pC1oAJXDqzTpfvRMF9n1o/LqiyljVjemJYY5d5stQe9rJFFHkjWHAl2Bfwp4i+rUpfE
+        PM5zdL1+Gs7HXhVFVDvA6MFrXjw0o7szFHgmJxI52cUFFdKBtjzigj2IEaEY8SfBHUBGOJ/2ImjHw
+        viPH3q1w==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nNJyt-0054y2-Hj; Thu, 24 Feb 2022 19:40:51 +0000
-Date:   Thu, 24 Feb 2022 19:40:51 +0000
+        id 1nNLJh-0058qy-3b; Thu, 24 Feb 2022 21:06:25 +0000
+Date:   Thu, 24 Feb 2022 21:06:25 +0000
 From:   Matthew Wilcox <willy@infradead.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev,
-        lkft-triage@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Peter Xu <peterx@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [next] LTP: readahead02.c:295: TFAIL: readahead failed to save
- any I/O
-Message-ID: <YhffQ6XStJycOmK1@casper.infradead.org>
-References: <CA+G9fYs_8ww=Mi4o4XXjQxL2XJiTiAUbMd1WF08zL+FoiA7GRw@mail.gmail.com>
+To:     Byron Stanoszek <gandalf@winds.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org
+Subject: Re: Is it time to remove reiserfs?
+Message-ID: <YhfzUc8afuoQkx/U@casper.infradead.org>
+References: <YhIwUEpymVzmytdp@casper.infradead.org>
+ <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
+ <20220222221614.GC3061737@dread.disaster.area>
+ <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYs_8ww=Mi4o4XXjQxL2XJiTiAUbMd1WF08zL+FoiA7GRw@mail.gmail.com>
+In-Reply-To: <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -60,18 +53,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 24, 2022 at 02:57:59PM +0530, Naresh Kamboju wrote:
-> On Linux next 20220222 tag LTP syscalls test case readahead02 failed.
-> Please find detail test output on below link [1]
-> 
-> test failed log:
-> --------------------
-> readahead02.c:181: TPASS: offset is still at 0 as expected
-> readahead02.c:285: TINFO: read_testfile(0) took: 37567 usec
-> readahead02.c:286: TINFO: read_testfile(1) took: 37263 usec
-> readahead02.c:288: TINFO: read_testfile(0) read: 0 bytes
-> readahead02.c:290: TINFO: read_testfile(1) read: 0 bytes
-> readahead02.c:295: TFAIL: readahead failed to save any I/O
+On Wed, Feb 23, 2022 at 09:48:26AM -0500, Byron Stanoszek wrote:
+> For what it's worth, I have a number of production servers still using
+> Reiserfs, which I regularly maintain by upgrading to the latest Linux kernel
+> annually (mostly to apply security patches). I figured this filesystem would
+> still be available for several more years, since it's not quite y2038k yet.
 
-Confirmed, I can reproduce this with the folio tree.  Will work on
-this once I've disposed of the other bug I'm looking at right now.
+Hey Byron, thanks for sharing your usage.
+
+It's not entirely clear to me from your message whether you're aware
+that our annual LTS release actually puts out new kernels every week (or
+sometimes twice a week), and upgrades to the latest version are always
+recommended.  Those LTS kernels typically get five years of support in
+total; indeed we just retired the v4.4 series earlier this month which
+was originally released in January 2016, so it got six years of support.
+
+If we dropped reiserfs from the kernel today (and thanks to Edward, we
+don't have to), you'd still be able to use a v5.15 based kernel with
+regular updates until 2028.  If we drop it in two years, that should
+take you through to 2030.  Is that enough for your usage?
