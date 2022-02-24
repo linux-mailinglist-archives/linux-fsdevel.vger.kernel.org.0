@@ -2,472 +2,369 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 371B94C24C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 08:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B914C24D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Feb 2022 08:58:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbiBXHxM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Feb 2022 02:53:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
+        id S231486AbiBXH6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Feb 2022 02:58:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbiBXHxL (ORCPT
+        with ESMTP id S231160AbiBXH6c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Feb 2022 02:53:11 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4736C192E39
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 23:52:41 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id 195so1087485pgc.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 23:52:41 -0800 (PST)
+        Thu, 24 Feb 2022 02:58:32 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C892919E0B0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 23:58:01 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id r10so463629wma.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Feb 2022 23:58:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZJyuo8HW0lgEwQiaSel5I2dm34XpPXh2hRkNyXXESgk=;
-        b=1+Al6T7d8JaIDCsSMmZoAtJwuloPstMDy7VUT2a1ijuiOAp+mK3KPuYJPIrQogNe5E
-         tnqY1bWMAMN0FQ/U01Ta/EJbWnC8xYGp9e2yb+QgC1bGuH/BweVUJUz0ZDZTn8HznZey
-         /FisA4GbvwOBE7yXGO5a0z6tuhrFwgULI4pjYxmwU8HnQBX+a8IHrAATTu0lLVnUnOXx
-         jpvsmWAQGE7mBHUOXXq0vBckSSwV0I/siStfSVuS40Ev2dEwOOl51q08Q7DklfXbbWY6
-         Tk+eWh39vwUTJA8FaNJtTWm1dxfpg1ABniXjWFDBLSUwpQdLIdHy8AxIFR6V//49wk27
-         p4aA==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jtzSwTIySprFheuwZwGUu3DRqfq3ROnIz/hEw/VyeOs=;
+        b=PlvEKJ6U6dNbAZoPtYjyOPPdpGW28Nt7e224dPSAh+Vl1g+XQfE0cYtHoSzX80+r7d
+         5+gwXjjL7ryHv9T/RcZwu99pAyvpvpV2aPyZczkF2mD0Bby3CVeB4sDTtPXd8Nf8Ft5u
+         /DwHvSbUbnom3LEaNXlFD20K+OyOrf4DNRKb9cfFyuCTY7qq6RFw9NKz987Ps84iXdgD
+         lTymQD0ajyeFkp6BBr+58ydf6xvlkay935tpt8g6AVbYCoykMQ8WvGcb3a5Z7rriZFw8
+         XzWjdJhWhRr392Asz4f4X8tassSGBY7ddCzmUz3Bd4LEwXTI/ngByTvJTlZfr+b5FxLo
+         aAsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZJyuo8HW0lgEwQiaSel5I2dm34XpPXh2hRkNyXXESgk=;
-        b=S/wEyOx7VrtVmNxisNlpg3LsAZdlAD+2mBETaUBtSuU2hLROF66LR/KkoDt3/n3CZk
-         PsUKHFZs+BxQ6YaXi20dn2EyEKEMouEobMQLR1P5qlw+znJP+pnx6wLXnLZ43sU9Dkn1
-         601AVg5PDWP/xLgF1FakudIMk+vJmu+mXDWLKJDZb2vab57iOHyRHLQ6MmwaXA437kcG
-         h8Yt/ZEGA69cpm+ePCW+Hugz7YWiBfDkiI9LCUIV8vwbnz+fPkoCNl6yYJhkBdd1mQ/N
-         2lM9+J3faBsxPamkQr+InPPxvgdNXQc+FB8Vupr/gXPhuv4aD17Wp2IOOgWEUpqdXqaW
-         7aMg==
-X-Gm-Message-State: AOAM532r6kO+nXOGJ1CdVD/gtWiorjPnK+KPdX29FWkoCgUOI7sKsepV
-        Rk7BI1DHSPn8m34tYQnzxj9HzQ==
-X-Google-Smtp-Source: ABdhPJxYRU8+dpxknEz41BQHzlG1JTyRKzw8MJMPIV02iy2tOa7mG2eF9X+xwSDvPyIotLAHoaRNQg==
-X-Received: by 2002:a05:6a00:2296:b0:4e1:3029:ee2 with SMTP id f22-20020a056a00229600b004e130290ee2mr1434080pfe.22.1645689160684;
-        Wed, 23 Feb 2022 23:52:40 -0800 (PST)
-Received: from C02FT5A6MD6R.bytedance.net ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id t9sm1752969pgp.5.2022.02.23.23.52.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Feb 2022 23:52:39 -0800 (PST)
-From:   Gang Li <ligang.bdlg@bytedance.com>
-To:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     songmuchun@bytedance.com, zhengqi.arch@bytedance.com,
-        Gang Li <ligang.bdlg@bytedance.com>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH] sched/numa: add per-process numa_balancing
-Date:   Thu, 24 Feb 2022 15:52:25 +0800
-Message-Id: <20220224075227.27127-1-ligang.bdlg@bytedance.com>
-X-Mailer: git-send-email 2.32.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jtzSwTIySprFheuwZwGUu3DRqfq3ROnIz/hEw/VyeOs=;
+        b=WgVCDrViVkYMV5P3OtRAERCgjRcKNca0VI5QZHN2WeEVCfY7GpdmJymxRPkIpBoCqy
+         qyQH5mQJcD+jE/86nQAI10Tnld55J7p6gg0AiAVvrFXKYFIuMFZ9Q2WcFauGRg19hbt8
+         HHdSFaTi8GJPfOX8VkGJ4FDEMwoU0KVy+9O5q8SZOU8x5AcQZyZvRMg6kDj2GLUAPFtQ
+         EfjQZCjueeC+mMQUjbMtg1Nneh/ctrGIsk/H83T9q0AiiiGzcz2UGQrjpHtcMr/Xlpqy
+         4dRf8vSH+ot9iBejOZkqAW5KUDU1kEZQlX3OWKxWYohX0rRTM/jocTnvjveN2nbK+q8c
+         vR/g==
+X-Gm-Message-State: AOAM531q9cZOa6mC6jQHQKn28X2RPK9GIVeA1F17lrdY8gjGPIvi8aik
+        vYsWGUR1NhA2A5sgJDSyt93csC0rXBTSeP92+U6xfw==
+X-Google-Smtp-Source: ABdhPJwstWV6h+t5B7WVOea3jws4B9FQilLbjX0xjgg+LYQw2wLhUJRT9vLXtuqh4rgUop6VzHO+MPL/WZwAFTP7Vk4=
+X-Received: by 2002:a05:600c:4e8a:b0:37d:1c28:20fc with SMTP id
+ f10-20020a05600c4e8a00b0037d1c2820fcmr1206743wmq.166.1645689480009; Wed, 23
+ Feb 2022 23:58:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220224054332.1852813-1-keescook@chromium.org>
+ <CAGS_qxp8cjG5jCX-7ziqHcy2gq_MqL8kU01-joFD_W9iPG08EA@mail.gmail.com> <202202232208.B416701@keescook>
+In-Reply-To: <202202232208.B416701@keescook>
+From:   David Gow <davidgow@google.com>
+Date:   Thu, 24 Feb 2022 15:57:48 +0800
+Message-ID: <CABVgOS=3-as5VqOP=5fKTQhyYwEv0ZFM=ykHkW-wU8_WEEZW4g@mail.gmail.com>
+Subject: Re: [PATCH] binfmt_elf: Introduce KUnit test
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Daniel Latypov <dlatypov@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?B?TWFnbnVzIEdyb8Of?= <magnus.gross@rwth-aachen.de>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-hardening@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000e3e55e05d8bef0bd"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch add a new api PR_PROCESS_NUMAB in prctl.
+--000000000000e3e55e05d8bef0bd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A large number of page faults will cause performance loss when numa
-balancing is performing. Thus those processes which care about worst-case
-performance need numa balancing disabled. Others, on the contrary, allow a
-temporary performance loss in exchange for higher average performance, so
-enable numa balancing is better for them.
+On Thu, Feb 24, 2022 at 2:13 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Wed, Feb 23, 2022 at 10:07:04PM -0800, Daniel Latypov wrote:
+> > On Wed, Feb 23, 2022 at 9:43 PM Kees Cook <keescook@chromium.org> wrote=
+:
+> > >
+> > > Adds simple KUnit test for some binfmt_elf internals: specifically a
+> > > regression test for the problem fixed by commit 8904d9cd90ee ("ELF:
+> > > fix overflow in total mapping size calculation").
+> > >
+> > > Cc: Eric Biederman <ebiederm@xmission.com>
+> > > Cc: David Gow <davidgow@google.com>
+> > > Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> > > Cc: "Magnus Gro=C3=9F" <magnus.gross@rwth-aachen.de>
+> > > Cc: kunit-dev@googlegroups.com
+> > > Cc: linux-fsdevel@vger.kernel.org
+> > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > ---
+> > > I'm exploring ways to mock copy_to_user() for more tests in here.
+> > > kprobes doesn't seem to let me easily hijack a function...
+> >
+> > Yeah, there doesn't seem to be a good way to do so. It seems more
+> > feasible if one is willing to write arch-specific code, but I'm not
+> > quite sure if that works either.
+>
+> Yeah, I'm hoping maybe Steven has some ideas.
+>
+> Steven, I want to do fancy live-patch kind or things to replace functions=
+,
+> but it doesn't need to be particularly fancy because KUnit tests (usually=
+)
+> run single-threaded, etc. It looks like kprobes could almost do it, but
+> I don't see a way to have it _avoid_ making a function call.
+>
+> > https://kunit.dev/mocking.html has some thoughts on this.
+> > Not sure if there's anything there that would be useful to you, but
+> > perhaps it can give you some ideas.
+>
+> Yeah, I figure a small refactoring to use a passed task_struct can avoid
+> the "current" uses in load_elf_binary(), etc, but the copy_to_user() is
+> more of a problem. I have considered inverting the Makefile logic,
+> though, and having binfmt_elf_test.c include binfmt_elf.c and have it
+> just use a #define to redirect copy_to_user, kind of how all the compat
+> handling is already done. But it'd be nice to have a "cleaner" mocking
+> solution...
+>
 
-Numa balancing can only be controlled globally by
-/proc/sys/kernel/numa_balancing. Due to the above case, we want to
-disable/enable numa_balancing per-process instead.
+I think inverting the Makefile makes some sense here, even if it leads
+to some code-duplication #define ugliness. Unfortunately, there just
+doesn't seem to be a "clean" way of mocking out functions which is
+also safe (particularly for something like copy_to_user(), which might
+be running in a different thread concurrently with a test) and
+performant. If there is a way to refactor the code to avoid the need
+for mocking, that's always nice, but can lead to a lot of extraneous
+exported functions / interfaces and other code churn.
 
-Add numa_balancing under mm_struct. Then use it in task_tick_fair.
+> >
+> > > ---
+> > >  fs/Kconfig.binfmt      | 17 +++++++++++
+> > >  fs/binfmt_elf.c        |  4 +++
+> > >  fs/binfmt_elf_test.c   | 64 ++++++++++++++++++++++++++++++++++++++++=
+++
+> > >  fs/compat_binfmt_elf.c |  2 ++
+> > >  4 files changed, 87 insertions(+)
+> > >  create mode 100644 fs/binfmt_elf_test.c
+> > >
+> > > diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+> > > index 4d5ae61580aa..8e14589ee9cc 100644
+> > > --- a/fs/Kconfig.binfmt
+> > > +++ b/fs/Kconfig.binfmt
+> > > @@ -28,6 +28,23 @@ config BINFMT_ELF
+> > >           ld.so (check the file <file:Documentation/Changes> for loca=
+tion and
+> > >           latest version).
+> > >
+> > > +config BINFMT_ELF_KUNIT_TEST
+> > > +       bool "Build KUnit tests for ELF binary support" if !KUNIT_ALL=
+_TESTS
+> > > +       depends on KUNIT=3Dy && BINFMT_ELF=3Dy
+> > > +       default KUNIT_ALL_TESTS
+> > > +       help
+> > > +         This builds the ELF loader KUnit tests.
+> > > +
+> > > +         KUnit tests run during boot and output the results to the d=
+ebug log
+> > > +         in TAP format (https://testanything.org/). Only useful for =
+kernel devs
+> >
+> > Tangent: should we update the kunit style guide to not refer to TAP
+> > anymore as it's not accurate?
+> > The KTAP spec is live on kernel.org at
+> > https://www.kernel.org/doc/html/latest/dev-tools/ktap.html
+> >
+> > We can leave this patch as-is and update later, or have it be the
+> > guinea pig for the new proposed wording.
+>
+> Oops, good point. I was actually thinking it doesn't make too much sense
+> to keep repeating the same long boilerplate generally.
+>
 
-Set per-process numa balancing:
-	prctl(PR_PROCESS_NUMAB, PR_SET_PROCESS_NUMAB_DISABLED);
-	prctl(PR_PROCESS_NUMAB, PR_SET_PROCESS_NUMAB_ENABLED);
-	prctl(PR_PROCESS_NUMAB, PR_SET_PROCESS_NUMAB_DEFAULT);
-Get numa_balancing state:
-	prctl(PR_PROCESS_NUMAB, PR_GET_PROCESS_NUMAB, &ret);
-	cat /proc/<pid>/status | grep NumaB_enabled
+The KUnit style guide actually never referred to TAP in its example
+Kconfig entry, though a number of existing tests did:
+https://www.kernel.org/doc/html/latest/dev-tools/kunit/style.html#test-kcon=
+fig-entries
 
-Cc: linux-api@vger.kernel.org
-Signed-off-by: Gang Li <ligang.bdlg@bytedance.com>
----
+> > (I'm personally in favor of people not copy-pasting these paragraphs
+> > in the first place, but that is what the style-guide currently
+> > recommends)
+>
+> Let's change the guide? :)
+>
 
-Changes in v4:
-- Adaptation of new feature: optimize page placement for memory tiering system.
-  https://lore.kernel.org/all/20220128082751.593478-3-ying.huang@intel.com/
-- warp sched_numa_balancing and mm->numab_enabled with process_sched_numab_enabled().
+I don't think the actual text recommended in the guide is a problem:
+it basically just points to the KUnit documentation, but I can send a
+patch to soften the wording from "you MUST describe KUnit in the help
+text" (or remove it entirely) if people really don't like it.
 
-Changes in v3:
-- Fix compile error.
+> >
+> > > +         running KUnit test harness and are not for inclusion into a
+> > > +         production build.
+> > > +
+> > > +         For more information on KUnit and unit tests in general ple=
+ase refer
+> > > +         to the KUnit documentation in Documentation/dev-tools/kunit=
+/.
+> > > +
+> > > +         If unsure, say N.
+> > > +
+> > >  config COMPAT_BINFMT_ELF
+> > >         def_bool y
+> > >         depends on COMPAT && BINFMT_ELF
+> > > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > > index 76ff2af15ba5..9bea703ed1c2 100644
+> > > --- a/fs/binfmt_elf.c
+> > > +++ b/fs/binfmt_elf.c
+> > > @@ -2335,3 +2335,7 @@ static void __exit exit_elf_binfmt(void)
+> > >  core_initcall(init_elf_binfmt);
+> > >  module_exit(exit_elf_binfmt);
+> > >  MODULE_LICENSE("GPL");
+> > > +
+> > > +#ifdef CONFIG_BINFMT_ELF_KUNIT_TEST
+> > > +#include "binfmt_elf_test.c"
+> > > +#endif
+> > > diff --git a/fs/binfmt_elf_test.c b/fs/binfmt_elf_test.c
+> > > new file mode 100644
+> > > index 000000000000..486ad419f763
+> > > --- /dev/null
+> > > +++ b/fs/binfmt_elf_test.c
+> > > @@ -0,0 +1,64 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +#include <kunit/test.h>
+> > > +
+> > > +static void total_mapping_size_test(struct kunit *test)
+> > > +{
+> > > +       struct elf_phdr empty[] =3D {
+> > > +               { .p_type =3D PT_LOAD, .p_vaddr =3D 0, .p_memsz =3D 0=
+, },
+> > > +               { .p_type =3D PT_INTERP, .p_vaddr =3D 10, .p_memsz =
+=3D 999999, },
+> > > +       };
+> > > +       /*
+> > > +        * readelf -lW /bin/mount | grep '^  .*0x0' | awk '{print "\t=
+\t{ .p_type =3D PT_" \
+> > > +        *                              $1 ", .p_vaddr =3D " $3 ", .p=
+_memsz =3D " $6 ", },"}'
+> > > +        */
+> > > +       struct elf_phdr mount[] =3D {
+> > > +               { .p_type =3D PT_PHDR, .p_vaddr =3D 0x00000040, .p_me=
+msz =3D 0x0002d8, },
+> > > +               { .p_type =3D PT_INTERP, .p_vaddr =3D 0x00000318, .p_=
+memsz =3D 0x00001c, },
+> > > +               { .p_type =3D PT_LOAD, .p_vaddr =3D 0x00000000, .p_me=
+msz =3D 0x0033a8, },
+> > > +               { .p_type =3D PT_LOAD, .p_vaddr =3D 0x00004000, .p_me=
+msz =3D 0x005c91, },
+> > > +               { .p_type =3D PT_LOAD, .p_vaddr =3D 0x0000a000, .p_me=
+msz =3D 0x0022f8, },
+> > > +               { .p_type =3D PT_LOAD, .p_vaddr =3D 0x0000d330, .p_me=
+msz =3D 0x000d40, },
+> > > +               { .p_type =3D PT_DYNAMIC, .p_vaddr =3D 0x0000d928, .p=
+_memsz =3D 0x000200, },
+> > > +               { .p_type =3D PT_NOTE, .p_vaddr =3D 0x00000338, .p_me=
+msz =3D 0x000030, },
+> > > +               { .p_type =3D PT_NOTE, .p_vaddr =3D 0x00000368, .p_me=
+msz =3D 0x000044, },
+> > > +               { .p_type =3D PT_GNU_PROPERTY, .p_vaddr =3D 0x0000033=
+8, .p_memsz =3D 0x000030, },
+> > > +               { .p_type =3D PT_GNU_EH_FRAME, .p_vaddr =3D 0x0000b49=
+0, .p_memsz =3D 0x0001ec, },
+> > > +               { .p_type =3D PT_GNU_STACK, .p_vaddr =3D 0x00000000, =
+.p_memsz =3D 0x000000, },
+> > > +               { .p_type =3D PT_GNU_RELRO, .p_vaddr =3D 0x0000d330, =
+.p_memsz =3D 0x000cd0, },
+> > > +       };
+> > > +       size_t mount_size =3D 0xE070;
+> > > +       /* https://lore.kernel.org/lkml/YfF18Dy85mCntXrx@fractal.loca=
+ldomain */
+> >
+> > Slight nit, it looks like that message wasn't sent to lkml.
+> > lore gives a suggestion to change to
+> > https://lore.kernel.org/linux-fsdevel/YfF18Dy85mCntXrx@fractal.localdom=
+ain/
+>
+> Ah, thank you. I was replacing the /r/ that used to be in that URL, and
+> got lost. :)
+>
+> --
+> Kees Cook
 
-Changes in v2:
-- Now PR_NUMA_BALANCING support three states: enabled, disabled, default.
-  enabled and disabled will ignore global setting, and default will follow
-  global setting.
+--000000000000e3e55e05d8bef0bd
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
----
- Documentation/filesystems/proc.rst   |  2 ++
- fs/proc/task_mmu.c                   | 19 +++++++++++++++
- include/linux/mm_types.h             |  3 +++
- include/linux/sched/numa_balancing.h |  6 +++++
- include/linux/sched/sysctl.h         | 19 +++++++++++++++
- include/uapi/linux/prctl.h           |  7 ++++++
- kernel/fork.c                        |  3 +++
- kernel/sched/fair.c                  | 34 ++++++++++++++++++++++-----
- kernel/sys.c                         | 35 ++++++++++++++++++++++++++++
- mm/huge_memory.c                     |  2 +-
- mm/mprotect.c                        |  6 ++---
- 11 files changed, 126 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 061744c436d9..00f6503f0793 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -192,6 +192,7 @@ read the file /proc/PID/status::
-   VmLib:      1412 kB
-   VmPTE:        20 kb
-   VmSwap:        0 kB
-+  NumaB_enabled:  default
-   HugetlbPages:          0 kB
-   CoreDumping:    0
-   THP_enabled:	  1
-@@ -273,6 +274,7 @@ It's slow but very precise.
-  VmPTE                       size of page table entries
-  VmSwap                      amount of swap used by anonymous private data
-                              (shmem swap usage is not included)
-+ NumaB_enabled               numa balancing state, set by prctl(PR_PROCESS_NUMAB, ...)
-  HugetlbPages                size of hugetlb memory portions
-  CoreDumping                 process's memory is currently being dumped
-                              (killing the process may lead to a corrupted core)
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 6e97ed775074..b1aa100b8711 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -20,6 +20,7 @@
- #include <linux/shmem_fs.h>
- #include <linux/uaccess.h>
- #include <linux/pkeys.h>
-+#include <linux/sched/numa_balancing.h>
- 
- #include <asm/elf.h>
- #include <asm/tlb.h>
-@@ -76,6 +77,24 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
- 		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
- 	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
- 	seq_puts(m, " kB\n");
-+#ifdef CONFIG_NUMA_BALANCING
-+	seq_puts(m, "NumaB_enabled:\t");
-+	switch (mm->numab_enabled) {
-+	case PROCESS_NUMAB_DEFAULT:
-+		seq_puts(m, "default");
-+		break;
-+	case PROCESS_NUMAB_DISABLED:
-+		seq_puts(m, "disabled");
-+		break;
-+	case PROCESS_NUMAB_ENABLED:
-+		seq_puts(m, "enabled");
-+		break;
-+	default:
-+		seq_puts(m, "unknown");
-+		break;
-+	}
-+	seq_putc(m, '\n');
-+#endif
- 	hugetlb_report_usage(m, mm);
- }
- #undef SEQ_PUT_DEC
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 9f05ffa12265..5a42aba3b17f 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -626,6 +626,9 @@ struct mm_struct {
- 
- 		/* numa_scan_seq prevents two threads setting pte_numa */
- 		int numa_scan_seq;
-+
-+		/* Controls whether NUMA balancing is active for this mm. */
-+		int numab_enabled;
- #endif
- 		/*
- 		 * An operation with batched TLB flushing is going on. Anything
-diff --git a/include/linux/sched/numa_balancing.h b/include/linux/sched/numa_balancing.h
-index 3988762efe15..c7dc08d6ba6a 100644
---- a/include/linux/sched/numa_balancing.h
-+++ b/include/linux/sched/numa_balancing.h
-@@ -16,6 +16,12 @@
- #define TNF_MIGRATE_FAIL 0x10
- 
- #ifdef CONFIG_NUMA_BALANCING
-+enum {
-+	PROCESS_NUMAB_DISABLED,
-+	PROCESS_NUMAB_ENABLED,
-+	PROCESS_NUMAB_DEFAULT
-+};
-+DECLARE_STATIC_KEY_FALSE(sched_numa_balancing);
- extern void task_numa_fault(int last_node, int node, int pages, int flags);
- extern pid_t task_numa_group_id(struct task_struct *p);
- extern void set_numabalancing_state(bool enabled);
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index c1076b5e17fb..77d010942481 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -3,6 +3,7 @@
- #define _LINUX_SCHED_SYSCTL_H
- 
- #include <linux/types.h>
-+#include <linux/sched/numa_balancing.h>
- 
- struct ctl_table;
- 
-@@ -29,8 +30,26 @@ enum sched_tunable_scaling {
- 
- #ifdef CONFIG_NUMA_BALANCING
- extern int sysctl_numa_balancing_mode;
-+static inline int process_sysctl_numab_mode(struct mm_struct *mm)
-+{
-+	int numab = mm->numab_enabled;
-+
-+	switch (numab) {
-+	case PROCESS_NUMAB_ENABLED:
-+		return NUMA_BALANCING_NORMAL;
-+	case PROCESS_NUMAB_DISABLED:
-+		return NUMA_BALANCING_DISABLED;
-+	case PROCESS_NUMAB_DEFAULT:
-+	default:
-+		return sysctl_numa_balancing_mode;
-+	}
-+}
- #else
- #define sysctl_numa_balancing_mode	0
-+static inline int process_sysctl_numab_mode(struct mm_struct *mm)
-+{
-+	return NUMA_BALANCING_DISABLED;
-+}
- #endif
- 
- /*
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index e998764f0262..d06a904c35c1 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -275,4 +275,11 @@ struct prctl_mm_map {
- #define PR_SET_VMA		0x53564d41
- # define PR_SET_VMA_ANON_NAME		0
- 
-+/* Set/get enabled per-process numa_balancing */
-+#define PR_PROCESS_NUMAB		63
-+# define PR_SET_PROCESS_NUMAB_DISABLED	PROCESS_NUMAB_DISABLED
-+# define PR_SET_PROCESS_NUMAB_ENABLED	PROCESS_NUMAB_ENABLED
-+# define PR_SET_PROCESS_NUMAB_DEFAULT	PROCESS_NUMAB_DEFAULT
-+# define PR_GET_PROCESS_NUMAB		3
-+
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 64dbfb9426fd..2f93b240ebab 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1059,6 +1059,9 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	init_tlb_flush_pending(mm);
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
- 	mm->pmd_huge_pte = NULL;
-+#endif
-+#ifdef CONFIG_NUMA_BALANCING
-+	mm->numab_enabled = PROCESS_NUMAB_DEFAULT;
- #endif
- 	mm_init_uprobes_state(mm);
- 	hugetlb_count_init(mm);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 28b91f11b618..7ff5831c5b33 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2575,6 +2575,23 @@ void task_numa_free(struct task_struct *p, bool final)
- 	}
- }
- 
-+static inline bool process_sched_numab_enabled(struct task_struct *p)
-+{
-+	if (p->mm) {
-+		int numab = p->mm->numab_enabled;
-+
-+		switch (numab) {
-+		case PROCESS_NUMAB_ENABLED:
-+			return true;
-+		case PROCESS_NUMAB_DISABLED:
-+			return false;
-+		case PROCESS_NUMAB_DEFAULT:
-+			break;
-+		}
-+	}
-+	return static_branch_unlikely(&sched_numa_balancing);
-+}
-+
- /*
-  * Got a PROT_NONE fault for a page on @node.
-  */
-@@ -2587,13 +2604,13 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
- 	struct numa_group *ng;
- 	int priv;
- 
--	if (!static_branch_likely(&sched_numa_balancing))
--		return;
--
- 	/* for example, ksmd faulting in a user's mm */
- 	if (!p->mm)
- 		return;
- 
-+	if (!process_sched_numab_enabled(p))
-+		return;
-+
- 	/* Allocate buffer to track faults on a per-node basis */
- 	if (unlikely(!p->numa_faults)) {
- 		int size = sizeof(*p->numa_faults) *
-@@ -2894,7 +2911,7 @@ static void update_scan_period(struct task_struct *p, int new_cpu)
- 	int src_nid = cpu_to_node(task_cpu(p));
- 	int dst_nid = cpu_to_node(new_cpu);
- 
--	if (!static_branch_likely(&sched_numa_balancing))
-+	if (!process_sched_numab_enabled(p))
- 		return;
- 
- 	if (!p->mm || !p->numa_faults || (p->flags & PF_EXITING))
-@@ -2928,6 +2945,11 @@ static void task_tick_numa(struct rq *rq, struct task_struct *curr)
- {
- }
- 
-+static inline bool process_sched_numab_enabled(struct task_struct *p)
-+{
-+	return false;
-+}
-+
- static inline void account_numa_enqueue(struct rq *rq, struct task_struct *p)
- {
- }
-@@ -7687,7 +7709,7 @@ static int migrate_degrades_locality(struct task_struct *p, struct lb_env *env)
- 	unsigned long src_weight, dst_weight;
- 	int src_nid, dst_nid, dist;
- 
--	if (!static_branch_likely(&sched_numa_balancing))
-+	if (!process_sched_numab_enabled(p))
- 		return -1;
- 
- 	if (!p->numa_faults || !(env->sd->flags & SD_NUMA))
-@@ -11164,7 +11186,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
- 		entity_tick(cfs_rq, se, queued);
- 	}
- 
--	if (static_branch_unlikely(&sched_numa_balancing))
-+	if (process_sched_numab_enabled(curr))
- 		task_tick_numa(rq, curr);
- 
- 	update_misfit_status(curr, rq);
-diff --git a/kernel/sys.c b/kernel/sys.c
-index ecc4cf019242..04cb73e39926 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -58,6 +58,7 @@
- #include <linux/sched/coredump.h>
- #include <linux/sched/task.h>
- #include <linux/sched/cputime.h>
-+#include <linux/sched/numa_balancing.h>
- #include <linux/rcupdate.h>
- #include <linux/uidgid.h>
- #include <linux/cred.h>
-@@ -2081,6 +2082,23 @@ static int prctl_set_auxv(struct mm_struct *mm, unsigned long addr,
- 	return 0;
- }
- 
-+#ifdef CONFIG_NUMA_BALANCING
-+static int prctl_pid_numa_balancing_write(int numa_balancing)
-+{
-+	if (numa_balancing != PR_SET_PROCESS_NUMAB_DEFAULT
-+	    && numa_balancing != PR_SET_PROCESS_NUMAB_DISABLED
-+	    && numa_balancing != PR_SET_PROCESS_NUMAB_ENABLED)
-+		return -EINVAL;
-+	current->mm->numab_enabled = numa_balancing;
-+	return 0;
-+}
-+
-+static int prctl_pid_numa_balancing_read(void)
-+{
-+	return current->mm->numab_enabled;
-+}
-+#endif
-+
- static int prctl_set_mm(int opt, unsigned long addr,
- 			unsigned long arg4, unsigned long arg5)
- {
-@@ -2585,6 +2603,23 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 		error = set_syscall_user_dispatch(arg2, arg3, arg4,
- 						  (char __user *) arg5);
- 		break;
-+#ifdef CONFIG_NUMA_BALANCING
-+	case PR_PROCESS_NUMAB:
-+		switch (arg2) {
-+		case PR_SET_PROCESS_NUMAB_DEFAULT:
-+		case PR_SET_PROCESS_NUMAB_DISABLED:
-+		case PR_SET_PROCESS_NUMAB_ENABLED:
-+			error = prctl_pid_numa_balancing_write((int)arg2);
-+			break;
-+		case PR_GET_PROCESS_NUMAB:
-+			error = put_user(prctl_pid_numa_balancing_read(), (int __user *)arg3);
-+			break;
-+		default:
-+			error = -EINVAL;
-+			break;
-+		}
-+		break;
-+#endif
- #ifdef CONFIG_SCHED_CORE
- 	case PR_SCHED_CORE:
- 		error = sched_core_share_pid(arg2, arg3, arg4, arg5);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 09fb65a80e63..25a660065af1 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1760,7 +1760,7 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 		 * Skip scanning top tier node if normal numa
- 		 * balancing is disabled
- 		 */
--		if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
-+		if (!(process_sysctl_numab_mode(vma->vm_mm) & NUMA_BALANCING_NORMAL) &&
- 		    node_is_toptier(page_to_nid(page)))
- 			goto unlock;
- 	}
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 2fe03e695c81..2ae0127f46e8 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -33,7 +33,7 @@
- #include <asm/cacheflush.h>
- #include <asm/mmu_context.h>
- #include <asm/tlbflush.h>
--
-+#include <linux/sched/numa_balancing.h>
- #include "internal.h"
- 
- static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
-@@ -119,8 +119,8 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
- 				 * Skip scanning top tier node if normal numa
- 				 * balancing is disabled
- 				 */
--				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
--				    node_is_toptier(nid))
-+				if (!(process_sysctl_numab_mode(vma->vm_mm) & NUMA_BALANCING_NORMAL)
-+				    && node_is_toptier(nid))
- 					continue;
- 			}
- 
--- 
-2.20.1
-
+MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+G7p3AiuB2sgfq6cOpbO5MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
+AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
+c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
+LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
+Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQBsL34EJkCtu9Nu
+2+R6l1Qzno5Gl+N2Cm6/YLujukDGYa1JW27txXiilR9dGP7yl60HYyG2Exd5i6fiLDlaNEw0SqzE
+dw9ZSIak3Qvm2UybR8zcnB0deCUiwahqh7ZncEPlhnPpB08ETEUtwBEqCEnndNEkIN67yz4kniCZ
+jZstNF/BUnI3864fATiXSbnNqBwlJS3YkoaCTpbI9qNTrf5VIvnbryT69xJ6f25yfmxrXNJJe5OG
+ncB34Cwnb7xQyk+uRLZ465yUBkbjk9pC/yamL0O7SOGYUclrQl2c5zzGuVBD84YcQGDOK6gSPj6w
+QuBfOooZPOyZZZ8AMih7J980MYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
+R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
+MDIwAhABQeVybOOpR4bOOXZYL5T3MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCs
+WFw6IjlTP+oNmws6QGvsZCR3WRZk9iW7sazkpiADeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMjAyMjQwNzU4MDBaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAVnV+QiayILcefI+u3Qkz
+2M621RV+SUXznv/oagA/5XZKfVig+/9Z4DHa8uxNOvsbzcNdZd4f7VtdibIb2QTZt6G6oYZZGq+z
+M0LZOQs2SWN3P+0A2tqsimwp3CSt+G5d0zCHIhkQRHN1XoAhWOcNCZIk5CmkyShfx6jCTjP1SpWV
+3e51WwPEqCsYHMpR9PNfG4LswP+HbzLovRlJV7SgWryyTUjDuRWuj6x6SAsk9HQJZoM2UA4e7FjF
+PE3Ab7OEtaCNWxo1bBTWq69um+bDNHLAUzdsZdOW+N6w/+OaayNek76T9IReftmyvRzLfrdbvTXB
+6ii3Hhg9BcvI6vNLxQ==
+--000000000000e3e55e05d8bef0bd--
