@@ -2,52 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B0504C5203
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 00:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3448A4C524C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 00:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239295AbiBYXXO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 18:23:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39708 "EHLO
+        id S239693AbiBYXya (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 18:54:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbiBYXXN (ORCPT
+        with ESMTP id S237233AbiBYXya (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 18:23:13 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46D7132070;
-        Fri, 25 Feb 2022 15:22:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=epmPQ6RPq2hr9/8Tsc2gmOVU08RZyji5PoYx0QfoMwI=; b=hGOP3S6AbwD61QDjWjel5TI5Uj
-        QIzDnIdKHOf+ddi/1iIsPvRAHOJ73XTVuPFKd2pUjKFthBN0qnUwRsGZqlhAwTtaZK1KaY3CE4B/e
-        1qaLc4M3tgwTnbqtA91KT8ZJQtWfuEwhMKnEvYyev8eRjbbBdQYMBhbhFtZ/sNvC+T40dbAWBgnMf
-        M8EuIgo8t8paJkNhWehzCwChBTWP7oWUu8fLQQn5/4IRX9tJFJQascGhM/44sJPINprl+DcwX4Hco
-        ak5rySApzoDTbPlbxDmxnQkP0aZQph9AkpMrrCUcl+ilyBDF3Nn7nNj4XIRtgrsl0JTpu3no6gDMm
-        kzSKMsrg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nNjv1-006De6-Pb; Fri, 25 Feb 2022 23:22:35 +0000
-Date:   Fri, 25 Feb 2022 23:22:35 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-Subject: Re: [PATCH 1/2] Convert NFS from readpages to readahead
-Message-ID: <Yhlku5//fKl1cCiG@casper.infradead.org>
-References: <20220122205453.3958181-1-willy@infradead.org>
- <Yff0la2VAOewGrhI@casper.infradead.org>
- <YgFGQi/1RRPSSQpA@casper.infradead.org>
- <a9384b776cc3ef23fc937f70a9cc4ca9be8d89e0.camel@hammerspace.com>
+        Fri, 25 Feb 2022 18:54:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F2A862118D7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 15:53:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645833235;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=GrI8ebRYRbXaMx78aEKS9TwwZap85Vbp7OV2dX4WbXo=;
+        b=LtmtKArmEBtUhFYM386XOuvf4a3ZwWKF98UsHGMxkN/4EvyWwBJf+x5bzJkQUS/KsW/WGg
+        pFT/4htjTd/8LKmTruOfVNoeWMXCjGI6h3Bzggs68/yqW4tbU/qWPt6bjvpnbXKhcP3g0v
+        IqqZIOR60oaaBPhhxBuvToQ/ogc/vDk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-219-3-pF4w_JMh6873ybvnYtww-1; Fri, 25 Feb 2022 18:53:52 -0500
+X-MC-Unique: 3-pF4w_JMh6873ybvnYtww-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 12C3D801AAD;
+        Fri, 25 Feb 2022 23:53:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B44E34B5D;
+        Fri, 25 Feb 2022 23:53:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     dhowells@redhat.com, jlayton@kernel.org,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Enable multipage folio support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9384b776cc3ef23fc937f70a9cc4ca9be8d89e0.camel@hammerspace.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2274527.1645833226.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 25 Feb 2022 23:53:46 +0000
+Message-ID: <2274528.1645833226@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,14 +66,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 07, 2022 at 07:47:08PM +0000, Trond Myklebust wrote:
-> I already have them applied to my 'testing' branch, but I can't move
-> that into linux-next until Anna's pull request against -rc3 comes
-> through.
+Enable multipage folio support for the afs filesystem.  This is on top of
+Matthew Wilcox's for-next branch.
 
-Hey Trond,
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+---
+ fs/afs/inode.c |    2 ++
+ fs/afs/write.c |    2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-I'm not seeing any patches in linux-next to fs/nfs/ other than those
-that have gone through Andrew Morton, Jens Axboe and Chuck Lever.
-Has the linux-nfs tree dropped out of linux-next?
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 5964f8aee090..7dc7eb5f8e63 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -96,12 +96,14 @@ static int afs_inode_init_from_status(struct afs_opera=
+tion *op,
+ 		inode->i_op	=3D &afs_file_inode_operations;
+ 		inode->i_fop	=3D &afs_file_operations;
+ 		inode->i_mapping->a_ops	=3D &afs_file_aops;
++		mapping_set_large_folios(inode->i_mapping);
+ 		break;
+ 	case AFS_FTYPE_DIR:
+ 		inode->i_mode	=3D S_IFDIR |  (status->mode & S_IALLUGO);
+ 		inode->i_op	=3D &afs_dir_inode_operations;
+ 		inode->i_fop	=3D &afs_dir_file_operations;
+ 		inode->i_mapping->a_ops	=3D &afs_dir_aops;
++		mapping_set_large_folios(inode->i_mapping);
+ 		break;
+ 	case AFS_FTYPE_SYMLINK:
+ 		/* Symlinks with a mode of 0644 are actually mountpoints. */
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 5e9157d0da29..d6cc0fa44316 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -91,7 +91,7 @@ int afs_write_begin(struct file *file, struct address_sp=
+ace *mapping,
+ 			goto flush_conflicting_write;
+ 	}
+ =
+
+-	*_page =3D &folio->page;
++	*_page =3D folio_file_page(folio, pos / PAGE_SIZE);
+ 	_leave(" =3D 0");
+ 	return 0;
+ =
 
