@@ -2,74 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 233074C4B0A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 17:41:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BFAD4C4B2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 17:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243130AbiBYQk4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 11:40:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35722 "EHLO
+        id S243183AbiBYQqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 11:46:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235766AbiBYQkz (ORCPT
+        with ESMTP id S240744AbiBYQqp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 11:40:55 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F41218CCD;
-        Fri, 25 Feb 2022 08:40:23 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 239732114D;
-        Fri, 25 Feb 2022 16:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645807222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tWMIUHa0fBAb1sjWcQulU95T21ZKZnSq9Doda166V14=;
-        b=JuAs0dtW2wKpx+bssg4WCSeHc5mfMUwNAAGWi8XDNYurKR3sLARj4hsjyn2H0iFs+IYOr6
-        RFR2U763fOXe3DBAGG27SkFLlNUyTw0ZQJN4ojIxuCk7xv0Cl25kk01aNJG63nm+W/Rft1
-        v+t0yk988AO+naiNi2oLsRFYna6Eo4s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645807222;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tWMIUHa0fBAb1sjWcQulU95T21ZKZnSq9Doda166V14=;
-        b=fpmsJkUoh+jPBaKF+/CqprBoDi2xs0cypb+JYPL6ZNxz8ceCCtHITK0r9Kk6gHWNGae0/z
-        1mCd7CFTzPJSPHBA==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id E1463A3B83;
-        Fri, 25 Feb 2022 16:40:21 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0352FA05D9; Fri, 25 Feb 2022 17:40:15 +0100 (CET)
-Date:   Fri, 25 Feb 2022 17:40:15 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/7] block, fs: convert Direct IO to FOLL_PIN
-Message-ID: <20220225164015.sriu6rz4hnqz25s5@quack3.lan>
-References: <20220225085025.3052894-1-jhubbard@nvidia.com>
- <20220225120522.6qctxigvowpnehxl@quack3.lan>
- <1d31ce1f-d307-fef0-8fce-84d6d96c6968@nvidia.com>
+        Fri, 25 Feb 2022 11:46:45 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E64A22D648
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 08:46:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645807572; x=1677343572;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MCgw0LWT1+2QvtoTlKlxzXXA4QkTFgfXGwz78fZbxIk=;
+  b=dMykKfp4O68B3Mglq+bSSrEi7GbGO7JCBjvF9m5P5arPAkrzzI2kfix2
+   7L5DDWtH3MNMT7yNdawvBR+MzUGb4fWniSmZbFNnneaERf/rOYcEteTWv
+   X6epEejkCybr2VWfoxYJEC48KvwzgQcq0iMZgCETvi7qbyEdFbcvmjoiV
+   25Sgy1QSOXTbWEcaO804MzDe0rBCgQlpBWQC1X8d6e1mqdJePpUoidqRO
+   4tmauxKM1/8NlblA1nMSpRyKClfqYl/aYE9XC854Beh7QmFUOk3gnFdVr
+   Q0j45IkfFh3b/wsnH7jUdtcbZvvWRThzsO7PPSI5PGSdotrhhhkObQvT2
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10268"; a="236038244"
+X-IronPort-AV: E=Sophos;i="5.90,136,1643702400"; 
+   d="scan'208";a="236038244"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2022 08:45:56 -0800
+X-IronPort-AV: E=Sophos;i="5.90,136,1643702400"; 
+   d="scan'208";a="506742962"
+Received: from skannan1-mobl1.amr.corp.intel.com (HELO localhost) ([10.209.142.223])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2022 08:45:52 -0800
+Date:   Fri, 25 Feb 2022 08:45:51 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        ira.weiny@intel.com
+Subject: [LSF/MM/BPF TOPIC] PKS for the page cache and beyond
+Message-ID: <YhkHvxrEeiIMNQm8@iweiny-desk3>
+References: <Yhj/dsW1IiU9PgzI@iweiny-desk3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1d31ce1f-d307-fef0-8fce-84d6d96c6968@nvidia.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <Yhj/dsW1IiU9PgzI@iweiny-desk3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,85 +59,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 25-02-22 16:14:14, Chaitanya Kulkarni wrote:
-> On 2/25/22 04:05, Jan Kara wrote:
-> > On Fri 25-02-22 00:50:18, John Hubbard wrote:
-> >> Hi,
-> >>
-> >> Summary:
-> >>
-> >> This puts some prerequisites in place, including a CONFIG parameter,
-> >> making it possible to start converting and testing the Direct IO part of
-> >> each filesystem, from get_user_pages_fast(), to pin_user_pages_fast().
-> >>
-> >> It will take "a few" kernel releases to get the whole thing done.
-> >>
-> >> Details:
-> >>
-> >> As part of fixing the "get_user_pages() + file-backed memory" problem
-> >> [1], and to support various COW-related fixes as well [2], we need to
-> >> convert the Direct IO code from get_user_pages_fast(), to
-> >> pin_user_pages_fast(). Because pin_user_pages*() calls require a
-> >> corresponding call to unpin_user_page(), the conversion is more
-> >> elaborate than just substitution.
-> >>
-> >> Further complicating the conversion, the block/bio layers get their
-> >> Direct IO pages via iov_iter_get_pages() and iov_iter_get_pages_alloc(),
-> >> each of which has a large number of callers. All of those callers need
-> >> to be audited and changed so that they call unpin_user_page(), rather
-> >> than put_page().
-> >>
-> >> After quite some time exploring and consulting with people as well, it
-> >> is clear that this cannot be done in just one patchset. That's because,
-> >> not only is this large and time-consuming (for example, Chaitanya
-> >> Kulkarni's first reaction, after looking into the details, was, "convert
-> >> the remaining filesystems to use iomap, *then* convert to FOLL_PIN..."),
-> >> but it is also spread across many filesystems.
-> > 
-> > With having modified fs/direct-io.c and fs/iomap/direct-io.c which
-> > filesystems do you know are missing conversion? Or is it that you just want
-> > to make sure with audit everything is fine? The only fs I could find
-> > unconverted by your changes is ceph. Am I missing something?
-> 
-> if I understand your comment correctly file systems which are listed in
-> the list see [1] (all the credit goes to John to have a complete list)
-> that are not using iomap but use XXX_XXX_direct_IO() should be fine,
-> since in the callchain going from :-
-> 
-> XXX_XXX_direct_io()
->   __blkdev_direct_io()
->    do_direct_io()
-> 
->    ...
-> 
->      submit_page_selection()
->       get/put_page() <---
-> 
-> will take care of itself ?
+Resend due to typo in tag. s/PPF/BPF/
 
-Yes, John's changes to fs/direct-io.c should take care of these
-filesystems using __blkdev_direct_io().
+However, I also realized one should fill out the google form now.  I'll do that
+straight away.
 
-								Honza
+Thanks,
+Ira
 
-> [1]
+On Fri, Feb 25, 2022 at 08:10:30AM -0800, Ira Weiny wrote:
+> Hello,
 > 
-> jfs_direct_IO()
-> nilfs_direct_IO()
-> ntfs_dirct_IO()
-> reiserfs_direct_IO()
-> udf_direct_IO()
-> ocfs2_dirct_IO()
-> affs_direct_IO()
-> exfat_direct_IO()
-> ext2_direct_IO()
-> fat_direct_IO()
-> hfs_direct_IO()
-> hfs_plus_direct_IO()
+> Protection Key Supervisor (PKS) presents a way to control access to a large
+> domain of memory quickly, without a page table walk or TLB flush, as well as
+> with finer granularity; allowing protection control on individual threads.
 > 
-> -ck
+> Multiple areas of memory have been identified as candidates to be protected
+> with PKS.  These include the initial use case persistent memory (PMEM), page
+> tables[1], kernel secret keys[2], and the page cache.[3]  Like PMEM the page
+> cache presents a significant surface area where stray writes, or other bugs,
+> could corrupt data permanently.
 > 
+> I would like to discuss the ramifications of being able to change memory
+> permissions in this new way.  While PKS has a lot to offer it does not come for
+> free.  One trade off is the loss of direct access via page_address() in
+> !HIGHMEM builds.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Already PMEM's faced challenges in the leverage of kmap/kunmap.  While the page
+> cache should be able to leverage this work, this is driving a redefinition of
+> what kmap means.  Especially since the HIGHMEM use case is increasingly
+> meaningless on modern machines.
+> 
+> Ira Weiny
+> 
+> [1] https://lore.kernel.org/lkml/20210830235927.6443-2-rick.p.edgecombe@intel.com/
+> [2] https://lore.kernel.org/lkml/20201009201410.3209180-3-ira.weiny@intel.com/
+> [3] https://lwn.net/Articles/883352/
