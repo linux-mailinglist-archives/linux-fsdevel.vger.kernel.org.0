@@ -2,76 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E6D4C4105
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 10:13:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D144C415D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 10:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238923AbiBYJNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 04:13:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47112 "EHLO
+        id S239077AbiBYJZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 04:25:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238921AbiBYJNf (ORCPT
+        with ESMTP id S239114AbiBYJZS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 04:13:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 54FD417FD04
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 01:13:03 -0800 (PST)
+        Fri, 25 Feb 2022 04:25:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B7ADE26F4EF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 01:24:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645780382;
+        s=mimecast20190719; t=1645781074;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5x1l60kOJzalIbidbr6kbs5D9dFUyUJTKOBS5WSBmqI=;
-        b=UCIilkMNxW3EDdwxJAh6UH+7GNK0Wye+jYHdK0krGQ2aLN7LZofuebGHuJNfaEUxESETTx
-        dZgX7cWmy36s8E6zHEzMN4vLe7Nmqe/tjML65zMaaMzRK3dBCQMhlbyNZtMqkqcglo3M/u
-        EJl+KK6vVo+7fx1G7Ncp74KNhucElA0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=g96ZVNvLrOLa+/sOTt4MsYn0WW+lDjtbFUs1A2su27M=;
+        b=AIarqR4SaNeeJjrHTQMhSZqU1VJ2yNQg5dLjoMisGbuYc52nMqROp/X96tBToW3AEi+3om
+        t0n6YmICCDaaE5pdZLSmcBD2j91XwYWDCdBDWWONW5CsVRRhY8iF5o5xEOqdEAFGTQYc9w
+        baZ1dOwO1R4pPOEqEiZuByDChygLBKg=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-90-TNa3oj-LMGKC9XopOpGK-Q-1; Fri, 25 Feb 2022 04:12:56 -0500
-X-MC-Unique: TNa3oj-LMGKC9XopOpGK-Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1E561854E27;
-        Fri, 25 Feb 2022 09:12:52 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3D26B1006870;
-        Fri, 25 Feb 2022 09:12:33 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 21P9CW8f021225;
-        Fri, 25 Feb 2022 04:12:32 -0500
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 21P9CVVN021221;
-        Fri, 25 Feb 2022 04:12:31 -0500
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 25 Feb 2022 04:12:31 -0500 (EST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-cc:     javier@javigon.com, chaitanyak@nvidia.com,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        msnitzer@redhat.com, bvanassche@acm.org,
-        martin.petersen@oracle.com, roland@purestorage.com, hare@suse.de,
-        kbusch@kernel.org, hch@lst.de, Frederick.Knight@netapp.com,
-        zach.brown@ni.com, osandov@fb.com,
-        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
-        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
-        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com
-Subject: Re: [PATCH v2 08/10] dm: Add support for copy offload.
-In-Reply-To: <20220224124213.GD9117@test-zns>
-Message-ID: <alpine.LRH.2.02.2202250410210.20694@file01.intranet.prod.int.rdu2.redhat.com>
-References: <CAOSviJ0HmT9iwdHdNtuZ8vHETCosRMpR33NcYGVWOV0ki3EYgw@mail.gmail.com> <20220207141348.4235-1-nj.shetty@samsung.com> <CGME20220207141948epcas5p4534f6bdc5a1e2e676d7d09c04f8b4a5b@epcas5p4.samsung.com> <20220207141348.4235-9-nj.shetty@samsung.com>
- <alpine.LRH.2.02.2202160845210.22021@file01.intranet.prod.int.rdu2.redhat.com> <20220224124213.GD9117@test-zns>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+ us-mta-659-OGOphgPmOTqs8mbfeVV0Vw-1; Fri, 25 Feb 2022 04:24:33 -0500
+X-MC-Unique: OGOphgPmOTqs8mbfeVV0Vw-1
+Received: by mail-ed1-f70.google.com with SMTP id bq19-20020a056402215300b0040f276105a4so2058610edb.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 01:24:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=g96ZVNvLrOLa+/sOTt4MsYn0WW+lDjtbFUs1A2su27M=;
+        b=mSyqFNmCOdKecUyuhNZMKE4WXTJ3eBMi8OCLH0qc1j2Kl8wIljvb3X0jIihmy57HnX
+         hUBFdCEMFEb8cxeJ+/YZI/MYEljQs3KAd9HqfF86Eq1IwjqXluc4kvlYa/OGD9guOxwq
+         VsJ3duSm+2DeA3gdesK6j7iUqjlkVwk8rUrgKdcKezdyUIjA0l5iHAWT6AmGtG/sg4Ap
+         I8s/0ts5tjLPIR+yAk4kQvTBnQ9CkKcXsH4KNbBZfwu87ngqcFAlxcxUDk4lg8AmKNca
+         YZv91bK/11n61MUp5i53a7EmOsM78C52d7MSqYExffyAxI3wGXMdaxNBKJsa3zqmON3v
+         yzhQ==
+X-Gm-Message-State: AOAM53059VO+O0E/uEiKkOGGOKN89CLKtStwTdff1/UBQ09Yh0JGebi9
+        rtjcmQe8+icds10F80sJOxtY6wu9r0KqCQhFVaI/Tm9WcZFFAzQZNmMMwweIZfGkHxpIcMNfYFb
+        OwLlnuMfPjQa5Em2iFgPCnod52g==
+X-Received: by 2002:a05:6402:4495:b0:410:a171:4444 with SMTP id er21-20020a056402449500b00410a1714444mr6216767edb.20.1645781072035;
+        Fri, 25 Feb 2022 01:24:32 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJy0eYLNyrWUAkPpwNRuhHc6bulLWQnInGVAT//ekRVG8G32hyLnRX9/+ykMmoIWE+zm2NAjdw==
+X-Received: by 2002:a05:6402:4495:b0:410:a171:4444 with SMTP id er21-20020a056402449500b00410a1714444mr6216756edb.20.1645781071846;
+        Fri, 25 Feb 2022 01:24:31 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
+        by smtp.gmail.com with ESMTPSA id y18-20020a056402271200b0041110d6b80asm1075169edd.39.2022.02.25.01.24.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Feb 2022 01:24:31 -0800 (PST)
+Message-ID: <f54a44e7-1ae5-1e09-9e62-2039dd5639dc@redhat.com>
+Date:   Fri, 25 Feb 2022 10:24:30 +0100
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v2] vboxsf: Remove redundant assignment to out_len
+Content-Language: en-US
+To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abaci Robot <abaci@linux.alibaba.com>
+References: <20220225074838.553-1-jiapeng.chong@linux.alibaba.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220225074838.553-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,46 +82,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
-
-On Thu, 24 Feb 2022, Nitesh Shetty wrote:
-
-> On Wed, Feb 16, 2022 at 08:51:08AM -0500, Mikulas Patocka wrote:
-> > 
-> > 
-> > On Mon, 7 Feb 2022, Nitesh Shetty wrote:
-> > 
-> > > Before enabling copy for dm target, check if underlaying devices and
-> > > dm target support copy. Avoid split happening inside dm target.
-> > > Fail early if the request needs split, currently spliting copy
-> > > request is not supported
-> > > 
-> > > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> > 
-> > If a dm device is reconfigured, you must invalidate all the copy tokens 
-> > that are in flight, otherwise they would copy stale data.
-> > 
-> > I suggest that you create a global variable "atomic64_t dm_changed".
-> > In nvme_setup_copy_read you copy this variable to the token.
-> > In nvme_setup_copy_write you compare the variable with the value in the 
-> > token and fail if there is mismatch.
-> > In dm.c:__bind you increase the variable, so that all the tokens will be 
-> > invalidated if a dm table is changed.
-> > 
-> > Mikulas
-> > 
-> >
-> Yes, you are right about the reconfiguration of dm device. But wouldn't having a
-> single global counter(dm_changed), will invalidate for all in-flight copy IO's
-> across all dm devices. Is my understanding correct?
+On 2/25/22 08:48, Jiapeng Chong wrote:
+> Clean up the following clang-w1 warning:
 > 
-> --
-> Nitesh Shetty
+> fs/vboxsf/utils.c:442:9: warning: variable 'out_len' set but not used
+> [-Wunused-but-set-variable].
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-Yes, changing it will invalidate all the copy IO's.
+Thanks, patch looks good to me:
 
-But invalidating only IO's affected by the table reload would be hard to 
-achieve.
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Mikulas
+Regards,
+
+Hans
+
+
+> ---
+> Changes in v2:
+>   -Delete " out_len += nb;".
+> 
+>  fs/vboxsf/utils.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
+> index e1db0f3f7e5e..7f2838c42dcc 100644
+> --- a/fs/vboxsf/utils.c
+> +++ b/fs/vboxsf/utils.c
+> @@ -439,7 +439,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+>  {
+>  	const char *in;
+>  	char *out;
+> -	size_t out_len;
+>  	size_t out_bound_len;
+>  	size_t in_bound_len;
+>  
+> @@ -447,7 +446,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+>  	in_bound_len = utf8_len;
+>  
+>  	out = name;
+> -	out_len = 0;
+>  	/* Reserve space for terminating 0 */
+>  	out_bound_len = name_bound_len - 1;
+>  
+> @@ -468,7 +466,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+>  
+>  		out += nb;
+>  		out_bound_len -= nb;
+> -		out_len += nb;
+>  	}
+>  
+>  	*out = 0;
 
