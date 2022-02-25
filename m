@@ -2,116 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EAA444C4AE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 17:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 233074C4B0A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 17:41:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243068AbiBYQg2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 11:36:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49192 "EHLO
+        id S243130AbiBYQk4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 11:40:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243070AbiBYQg0 (ORCPT
+        with ESMTP id S235766AbiBYQkz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 11:36:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DCDB11FEDB4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 08:35:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645806954;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Fri, 25 Feb 2022 11:40:55 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F41218CCD;
+        Fri, 25 Feb 2022 08:40:23 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 239732114D;
+        Fri, 25 Feb 2022 16:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1645807222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=fqYY7w88iLzBzKsxm+iVgsvPAyDnq+ffNP0ORFfBhSI=;
-        b=I7qqpsCJXIWLWDoN5f3tnXIYgZcgQxCnZ5+TjpVUuguJ4RfzrN/ce9GwTgKjy9AzmnVDpk
-        56DUdSI51yQUMIXlkY79Ekj71WcFx+87Xjyf96cNJ0pejitbIeALJq1aOw/UpqjFN5XDhu
-        dv2vlX1L6+OuYOjMPu27EB3AaLaQHJ8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-648--e9CF4UpMz-0XyEgup1qLg-1; Fri, 25 Feb 2022 11:35:50 -0500
-X-MC-Unique: -e9CF4UpMz-0XyEgup1qLg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=tWMIUHa0fBAb1sjWcQulU95T21ZKZnSq9Doda166V14=;
+        b=JuAs0dtW2wKpx+bssg4WCSeHc5mfMUwNAAGWi8XDNYurKR3sLARj4hsjyn2H0iFs+IYOr6
+        RFR2U763fOXe3DBAGG27SkFLlNUyTw0ZQJN4ojIxuCk7xv0Cl25kk01aNJG63nm+W/Rft1
+        v+t0yk988AO+naiNi2oLsRFYna6Eo4s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1645807222;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tWMIUHa0fBAb1sjWcQulU95T21ZKZnSq9Doda166V14=;
+        b=fpmsJkUoh+jPBaKF+/CqprBoDi2xs0cypb+JYPL6ZNxz8ceCCtHITK0r9Kk6gHWNGae0/z
+        1mCd7CFTzPJSPHBA==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3967F51A8;
-        Fri, 25 Feb 2022 16:35:49 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D730A7C04A;
-        Fri, 25 Feb 2022 16:35:48 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 446602237E9; Fri, 25 Feb 2022 11:35:48 -0500 (EST)
-Date:   Fri, 25 Feb 2022 11:35:48 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Steve French <smfrench@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ioannis Angelakopoulos <jaggel@bu.edu>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Enabling change notification for network and
- cluster fs
-Message-ID: <YhkFZE8wUWhycwX2@redhat.com>
-References: <CAH2r5mt9OfU+8PoKsmv_7aszhbw-dOuDCL6BOxb_2yRwc4HHCw@mail.gmail.com>
- <Yhf+FemcQQToB5x+@redhat.com>
- <CAH2r5mt6Sh7qorfCHWnZzc6LUDd-s_NzGB=sa-UDM2-ivzpmAQ@mail.gmail.com>
- <YhjYSMIE2NBZ/dGr@redhat.com>
- <YhjeX0HvXbED65IM@casper.infradead.org>
- <CAH2r5mt9EtTEJCKsHkvRctfhMv7LnT6XT_JEvAb7ji6-oYnTPg@mail.gmail.com>
+        by relay2.suse.de (Postfix) with ESMTPS id E1463A3B83;
+        Fri, 25 Feb 2022 16:40:21 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 0352FA05D9; Fri, 25 Feb 2022 17:40:15 +0100 (CET)
+Date:   Fri, 25 Feb 2022 17:40:15 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/7] block, fs: convert Direct IO to FOLL_PIN
+Message-ID: <20220225164015.sriu6rz4hnqz25s5@quack3.lan>
+References: <20220225085025.3052894-1-jhubbard@nvidia.com>
+ <20220225120522.6qctxigvowpnehxl@quack3.lan>
+ <1d31ce1f-d307-fef0-8fce-84d6d96c6968@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH2r5mt9EtTEJCKsHkvRctfhMv7LnT6XT_JEvAb7ji6-oYnTPg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <1d31ce1f-d307-fef0-8fce-84d6d96c6968@nvidia.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 09:27:55AM -0600, Steve French wrote:
-> On Fri, Feb 25, 2022 at 7:49 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Fri, Feb 25, 2022 at 08:23:20AM -0500, Vivek Goyal wrote:
-> > > What about local events. I am assuming you want to supress local events
-> > > and only deliver remote events. Because having both local and remote
-> > > events delivered at the same time will be just confusing at best.
-> >
-> > This paragraph confuses me.  If I'm writing, for example, a file manager
-> > and I want it to update its display automatically when another task alters
-> > the contents of a directory, I don't care whether the modification was
-> > done locally or remotely.
-> >
-> > If I understand the SMB protocol correctly, it allows the client to take
-> > out a lease on a directory and not send its modifications back to the
-> > server until the client chooses to (or the server breaks the lease).
-> > So you wouldn't get any remote notifications because the client hasn't
-> > told the server.
+On Fri 25-02-22 16:14:14, Chaitanya Kulkarni wrote:
+> On 2/25/22 04:05, Jan Kara wrote:
+> > On Fri 25-02-22 00:50:18, John Hubbard wrote:
+> >> Hi,
+> >>
+> >> Summary:
+> >>
+> >> This puts some prerequisites in place, including a CONFIG parameter,
+> >> making it possible to start converting and testing the Direct IO part of
+> >> each filesystem, from get_user_pages_fast(), to pin_user_pages_fast().
+> >>
+> >> It will take "a few" kernel releases to get the whole thing done.
+> >>
+> >> Details:
+> >>
+> >> As part of fixing the "get_user_pages() + file-backed memory" problem
+> >> [1], and to support various COW-related fixes as well [2], we need to
+> >> convert the Direct IO code from get_user_pages_fast(), to
+> >> pin_user_pages_fast(). Because pin_user_pages*() calls require a
+> >> corresponding call to unpin_user_page(), the conversion is more
+> >> elaborate than just substitution.
+> >>
+> >> Further complicating the conversion, the block/bio layers get their
+> >> Direct IO pages via iov_iter_get_pages() and iov_iter_get_pages_alloc(),
+> >> each of which has a large number of callers. All of those callers need
+> >> to be audited and changed so that they call unpin_user_page(), rather
+> >> than put_page().
+> >>
+> >> After quite some time exploring and consulting with people as well, it
+> >> is clear that this cannot be done in just one patchset. That's because,
+> >> not only is this large and time-consuming (for example, Chaitanya
+> >> Kulkarni's first reaction, after looking into the details, was, "convert
+> >> the remaining filesystems to use iomap, *then* convert to FOLL_PIN..."),
+> >> but it is also spread across many filesystems.
+> > 
+> > With having modified fs/direct-io.c and fs/iomap/direct-io.c which
+> > filesystems do you know are missing conversion? Or is it that you just want
+> > to make sure with audit everything is fine? The only fs I could find
+> > unconverted by your changes is ceph. Am I missing something?
 > 
-> Directory leases would be broken by file create so the more important
-> question is what happens when client 1 has a change notification on writes
-> to files in a directory then client 2 opens a file in the same directory and is
-> granted a file lease and starts writing to the file (which means the
-> writes could get cached).   This is probably a minor point because when
-> writes get flushed from client 2, client 1 (and any others with notifications
-> requested) will get notified of the event (changes to files in a directory
-> that they are watching).
+> if I understand your comment correctly file systems which are listed in
+> the list see [1] (all the credit goes to John to have a complete list)
+> that are not using iomap but use XXX_XXX_direct_IO() should be fine,
+> since in the callchain going from :-
 > 
-> Local applications watching a file on a network or cluster mount in Linux
-> (just as is the case with Windows, Macs etc.) should be able to be notified of
-> local (cached) writes to a remote file or remote writes to the file from another
-> client.  I don't think the change is large, and there was an earlier version of
-> a patch circulated for this
+> XXX_XXX_direct_io()
+>   __blkdev_direct_io()
+>    do_direct_io()
+> 
+>    ...
+> 
+>      submit_page_selection()
+>       get/put_page() <---
+> 
+> will take care of itself ?
 
-So local notifications are generated by filesystem code as needed?
+Yes, John's changes to fs/direct-io.c should take care of these
+filesystems using __blkdev_direct_io().
 
-IOW, in general disable all local events and let filesystems decide which
-local events to generate? And locally cached write is one such example?
+								Honza
 
-Thanks
-Vivek
-
+> [1]
+> 
+> jfs_direct_IO()
+> nilfs_direct_IO()
+> ntfs_dirct_IO()
+> reiserfs_direct_IO()
+> udf_direct_IO()
+> ocfs2_dirct_IO()
+> affs_direct_IO()
+> exfat_direct_IO()
+> ext2_direct_IO()
+> fat_direct_IO()
+> hfs_direct_IO()
+> hfs_plus_direct_IO()
+> 
+> -ck
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
