@@ -2,552 +2,474 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F8C4C3E75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 07:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56AC44C3E7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 07:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237877AbiBYGhj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 01:37:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48884 "EHLO
+        id S237897AbiBYGkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 01:40:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237873AbiBYGhh (ORCPT
+        with ESMTP id S237896AbiBYGkD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 01:37:37 -0500
+        Fri, 25 Feb 2022 01:40:03 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5131CB7149;
-        Thu, 24 Feb 2022 22:37:05 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3E7270249;
+        Thu, 24 Feb 2022 22:39:30 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B5EDFB82B1F;
-        Fri, 25 Feb 2022 06:37:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE40FC340E7;
-        Fri, 25 Feb 2022 06:37:01 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 90B55B82B98;
+        Fri, 25 Feb 2022 06:39:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B1CC340E7;
+        Fri, 25 Feb 2022 06:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1645771022;
-        bh=4MmorLgF84ZySrVFNvm9JGkl40hv/866KGjpYHRoaMk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IZG561ZvYZp17yt4j7BwPoeb2TjCCIhYV6yKxnNGceyAZKiGp1Bf4LA9SVj1teF16
-         3qtw+HaD4VAokkiWXFMoM7qdvOy+VEk8jqFEnAToYdgiKH4vrAh9l+fWRvlvJZd07p
-         4b7m1EYjQFU2TDWiafDyEEy8sJSAsKz8ka5LLKxM=
-Date:   Thu, 24 Feb 2022 22:37:01 -0800
+        s=korg; t=1645771167;
+        bh=Siy/hbKqPfq6Jap+LFd/pm2qO+qSKwiIaP2Iawl1sZc=;
+        h=Date:To:From:Subject:From;
+        b=0QnTHvwmNtjYuTK28Fx7plvBZqzpIR6EH3G+3TG9zI2IrCa5Ek70ez+Y4HV4RK46v
+         HbJimj9rJBiE0XYG/aMBr6ObLflcKok4PhV6xPR3hw060dIU5oS0I5hjg6k8ECjcOm
+         o7UakCzN8jQt7kyycFg59w3yHmryuajxlGB52epY=
+Date:   Thu, 24 Feb 2022 22:39:26 -0800
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org, akpm@linux-foundation.org
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Liam Howlett <liam.howlett@oracle.com>
-Subject: Re: mmotm 2022-02-23-21-20 uploaded
-Message-Id: <20220224223701.4dd5245b08feb3e85a1be718@linux-foundation.org>
-In-Reply-To: <Yhg60P06ksKTjddP@sirena.org.uk>
-References: <20220224052137.BFB10C340E9@smtp.kernel.org>
-        <20220223212416.c957b713f5f8823f9b8e0a8d@linux-foundation.org>
-        <Yhg60P06ksKTjddP@sirena.org.uk>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: mmotm 2022-02-24-22-38 uploaded
+Message-Id: <20220225063927.29B1CC340E7@smtp.kernel.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 25 Feb 2022 02:11:28 +0000 Mark Brown <broonie@kernel.org> wrote:
+The mm-of-the-moment snapshot 2022-02-24-22-38 has been uploaded to
 
-> On Wed, Feb 23, 2022 at 09:24:16PM -0800, Andrew Morton wrote:
-> > On Wed, 23 Feb 2022 21:21:36 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
-> > 
-> > > The mm-of-the-moment snapshot 2022-02-23-21-20 has been uploaded to
-> > > 
-> > >    https://www.ozlabs.org/~akpm/mmotm/
-> > > 
-> > 
-> > Below is how I resolved the fallout from jamming today's linux-next
-> > back on top of the MM queue.
-> 
-> Thanks, this was enormously helpful
+   https://www.ozlabs.org/~akpm/mmotm/
 
-Cool.
+mmotm-readme.txt says
 
-> (there's a bunch of embarrassing
-> merge fixups in the tree today, but they're all driver error with me fat
-> fingering the scripts).
+README for mm-of-the-moment:
 
-Things got worse with the appearance of Maple tree.  Mainly in
-kernel/fork.c.
+https://www.ozlabs.org/~akpm/mmotm/
 
-Conflict with Andrey's big "kasan, vmalloc, arm64: add vmalloc tagging
-support for SW/HW_TAGS" series.  I moved this series to be staged
-behind linux-next and fixed things up.
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-My alloc_thread_stack_node) needs checking please (below).
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+https://ozlabs.org/~akpm/mmotm/series
 
-And today's fix-all-the-rejects patch is below that.
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-I'll upload all this in 2 secs...
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
 
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
+	https://github.com/hnaz/linux-mm
 
-static int alloc_thread_stack_node(struct task_struct *tsk, int node)
-{
-	struct vm_struct *vm;
-	void *stack;
-	int i;
+The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
 
-	for (i = 0; i < NR_CACHED_STACKS; i++) {
-		struct vm_struct *s;
+A git copy of this tree is also available at
 
-		s = this_cpu_xchg(cached_stacks[i], NULL);
-
-		if (!s)
-			continue;
-
-		/* Reset stack metadata. */
-		kasan_unpoison_range(s->addr, THREAD_SIZE);
-
-		stack = kasan_reset_tag(s->addr);
-
-		/* Clear stale pointers from reused stack. */
-		memset(stack, 0, THREAD_SIZE);
-
-		if (memcg_charge_kernel_stack(s)) {
-			vfree(s->addr);
-			return -ENOMEM;
-		}
-
-		tsk->stack_vm_area = s;
-		tsk->stack = stack;
-		return 0;
-	}
-
-	/*
-	 * Allocated stacks are cached and later reused by new threads,
-	 * so memcg accounting is performed manually on assigning/releasing
-	 * stacks to tasks. Drop __GFP_ACCOUNT.
-	 */
-	stack = __vmalloc_node_range(THREAD_SIZE, THREAD_ALIGN,
-				     VMALLOC_START, VMALLOC_END,
-				     THREADINFO_GFP & ~__GFP_ACCOUNT,
-				     PAGE_KERNEL,
-				     0, node, __builtin_return_address(0));
-	if (!stack)
-		return -ENOMEM;
-
-	vm = find_vm_area(stack);
-	if (memcg_charge_kernel_stack(vm)) {
-		vfree(stack);
-		return -ENOMEM;
-	}
-	/*
-	 * We can't call find_vm_area() in interrupt context, and
-	 * free_thread_stack() can be called in interrupt context,
-	 * so cache the vm_struct.
-	 */
-	tsk->stack_vm_area = vm;
-	if (stack)
-		stack = kasan_reset_tag(stack);
-	tsk->stack = stack;
-	return 0;
-}
+	https://github.com/hnaz/linux-mm
 
 
 
- Documentation/admin-guide/sysctl/kernel.rst |   50 ------------------
- kernel/fork.c                               |    1 
- lib/Kconfig.debug                           |    1 
- mm/huge_memory.c                            |    4 -
- mm/memcontrol.c                             |    2 
- mm/memory-failure.c                         |    4 -
- mm/memory.c                                 |    2 
- mm/memremap.c                               |   11 ---
- mm/mmap.c                                   |   26 ++++++---
- mm/rmap.c                                   |   30 +++++-----
- mm/vmscan.c                                 |    8 +-
- tools/include/linux/gfp.h                   |    3 -
- tools/testing/radix-tree/linux/gfp.h        |   32 -----------
- 13 files changed, 45 insertions(+), 129 deletions(-)
+This mmotm tree contains the following patches against 5.17-rc5:
+(patches marked "*" will be included in linux-next)
 
---- a/Documentation/admin-guide/sysctl/kernel.rst~linux-next-rejects
-+++ a/Documentation/admin-guide/sysctl/kernel.rst
-@@ -616,55 +616,7 @@ being accessed should be migrated to a l
- The unmapping of pages and trapping faults incur additional overhead that
- ideally is offset by improved memory locality but there is no universal
- guarantee. If the target workload is already bound to NUMA nodes then this
--feature should be disabled. Otherwise, if the system overhead from the
--feature is too high then the rate the kernel samples for NUMA hinting
--faults may be controlled by the `numa_balancing_scan_period_min_ms,
--numa_balancing_scan_delay_ms, numa_balancing_scan_period_max_ms,
--numa_balancing_scan_size_mb`_, and numa_balancing_settle_count sysctls.
--
--Or NUMA_BALANCING_MEMORY_TIERING to optimize page placement among
--different types of memory (represented as different NUMA nodes) to
--place the hot pages in the fast memory.  This is implemented based on
--unmapping and page fault too.
--
--numa_balancing_scan_period_min_ms, numa_balancing_scan_delay_ms, numa_balancing_scan_period_max_ms, numa_balancing_scan_size_mb
--===============================================================================================================================
--
--
--Automatic NUMA balancing scans tasks address space and unmaps pages to
--detect if pages are properly placed or if the data should be migrated to a
--memory node local to where the task is running.  Every "scan delay" the task
--scans the next "scan size" number of pages in its address space. When the
--end of the address space is reached the scanner restarts from the beginning.
--
--In combination, the "scan delay" and "scan size" determine the scan rate.
--When "scan delay" decreases, the scan rate increases.  The scan delay and
--hence the scan rate of every task is adaptive and depends on historical
--behaviour. If pages are properly placed then the scan delay increases,
--otherwise the scan delay decreases.  The "scan size" is not adaptive but
--the higher the "scan size", the higher the scan rate.
--
--Higher scan rates incur higher system overhead as page faults must be
--trapped and potentially data must be migrated. However, the higher the scan
--rate, the more quickly a tasks memory is migrated to a local node if the
--workload pattern changes and minimises performance impact due to remote
--memory accesses. These sysctls control the thresholds for scan delays and
--the number of pages scanned.
--
--``numa_balancing_scan_period_min_ms`` is the minimum time in milliseconds to
--scan a tasks virtual memory. It effectively controls the maximum scanning
--rate for each task.
--
--``numa_balancing_scan_delay_ms`` is the starting "scan delay" used for a task
--when it initially forks.
--
--``numa_balancing_scan_period_max_ms`` is the maximum time in milliseconds to
--scan a tasks virtual memory. It effectively controls the minimum scanning
--rate for each task.
--
--``numa_balancing_scan_size_mb`` is how many megabytes worth of pages are
--scanned for a given scan.
--
-+feature should be disabled.
- 
- oops_all_cpu_backtrace
- ======================
---- a/lib/Kconfig.debug~linux-next-rejects
-+++ a/lib/Kconfig.debug
-@@ -275,6 +275,7 @@ config DEBUG_INFO_DWARF5
- 	bool "Generate DWARF Version 5 debuginfo"
- 	select DEBUG_INFO
- 	depends on !CC_IS_CLANG || (CC_IS_CLANG && (AS_IS_LLVM || (AS_IS_GNU && AS_VERSION >= 23502)))
-+	depends on PAHOLE_VERSION >= 121
- 	help
- 	  Generate DWARF v5 debug info. Requires binutils 2.35.2, gcc 5.0+ (gcc
- 	  5.0+ accepts the -gdwarf-5 flag but only had partial support for some
---- a/mm/huge_memory.c~linux-next-rejects
-+++ a/mm/huge_memory.c
-@@ -3164,10 +3164,8 @@ void remove_migration_pmd(struct page_vm
- 	if (PageAnon(new))
- 		page_add_anon_rmap(new, vma, mmun_start, true);
- 	else
--		page_add_file_rmap(new, true);
-+		page_add_file_rmap(new, vma, true);
- 	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
--	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
--		mlock_vma_page(new);
- 
- 	/* No need to invalidate - it was non-present before */
- 	update_mmu_cache_pmd(vma, address, pvmw->pmd);
---- a/mm/memcontrol.c~linux-next-rejects
-+++ a/mm/memcontrol.c
-@@ -7210,7 +7210,7 @@ void mem_cgroup_swapout(struct folio *fo
- 	memcg_stats_lock();
- 	mem_cgroup_charge_statistics(memcg, -nr_entries);
- 	memcg_stats_unlock();
--	memcg_check_events(memcg, page_to_nid(page));
-+	memcg_check_events(memcg, folio_nid(folio));
- 
- 	css_put(&memcg->css);
- }
---- a/mm/memory.c~linux-next-rejects
-+++ a/mm/memory.c
-@@ -1414,7 +1414,7 @@ again:
- 				continue;
- 			rss[mm_counter(page)]--;
- 			if (is_device_private_entry(entry))
--				page_remove_rmap(page, false);
-+				page_remove_rmap(page, vma, false);
- 			put_page(page);
- 		} else if (!non_swap_entry(entry)) {
- 			/* Genuine swap entry, hence a private anon page */
---- a/mm/memory-failure.c~linux-next-rejects
-+++ a/mm/memory-failure.c
-@@ -1416,12 +1416,12 @@ static bool hwpoison_user_mappings(struc
- 		 */
- 		mapping = hugetlb_page_mapping_lock_write(hpage);
- 		if (mapping) {
--				try_to_unmap(folio, ttu|TTU_RMAP_LOCKED);
-+			try_to_unmap(folio, ttu|TTU_RMAP_LOCKED);
- 			i_mmap_unlock_write(mapping);
- 		} else
- 			pr_info("Memory failure: %#lx: could not lock mapping for mapped huge page\n", pfn);
- 	} else {
--			try_to_unmap(folio, ttu);
-+		try_to_unmap(folio, ttu);
- 	}
- 
- 	unmap_success = !page_mapped(hpage);
---- a/mm/memremap.c~linux-next-rejects
-+++ a/mm/memremap.c
-@@ -101,13 +101,6 @@ static unsigned long pfn_end(struct dev_
- 	return (range->start + range_len(range)) >> PAGE_SHIFT;
- }
- 
--static unsigned long pfn_next(struct dev_pagemap *pgmap, unsigned long pfn)
--{
--	if (pfn % (1024 << pgmap->vmemmap_shift))
--		cond_resched();
--	return pfn + pgmap_vmemmap_nr(pgmap);
--}
--
- static unsigned long pfn_len(struct dev_pagemap *pgmap, unsigned long range_id)
- {
- 	return (pfn_end(pgmap, range_id) -
-@@ -134,10 +127,6 @@ bool pfn_zone_device_reserved(unsigned l
- 	return ret;
- }
- 
--#define for_each_device_pfn(pfn, map, i) \
--	for (pfn = pfn_first(map, i); pfn < pfn_end(map, i); \
--	     pfn = pfn_next(map, pfn))
--
- static void pageunmap_range(struct dev_pagemap *pgmap, int range_id)
- {
- 	struct range *range = &pgmap->ranges[range_id];
---- a/mm/rmap.c~linux-next-rejects
-+++ a/mm/rmap.c
-@@ -1526,22 +1526,22 @@ static bool try_to_unmap_one(struct foli
- 			pteval = ptep_clear_flush(vma, address, pvmw.pte);
- 		}
- 
--		/* Move the dirty bit to the page. Now the pte is gone. */
-+		/* Set the dirty flag on the folio now the pte is gone. */
- 		if (pte_dirty(pteval))
--			set_page_dirty(page);
-+			folio_mark_dirty(folio);
- 
- 		/* Update high watermark before we lower rss */
- 		update_hiwater_rss(mm);
- 
- 		if (PageHWPoison(subpage) && !(flags & TTU_IGNORE_HWPOISON)) {
- 			pteval = swp_entry_to_pte(make_hwpoison_entry(subpage));
--			if (PageHuge(page)) {
--				hugetlb_count_sub(compound_nr(page), mm);
-+			if (folio_test_hugetlb(folio)) {
-+				hugetlb_count_sub(folio_nr_pages(folio), mm);
- 				set_huge_swap_pte_at(mm, address,
- 						     pvmw.pte, pteval,
- 						     vma_mmu_pagesize(vma));
- 			} else {
--				dec_mm_counter(mm, mm_counter(page));
-+				dec_mm_counter(mm, mm_counter(&folio->page));
- 				set_pte_at(mm, address, pvmw.pte, pteval);
- 			}
- 
-@@ -1579,7 +1579,7 @@ static bool try_to_unmap_one(struct foli
- 			}
- 
- 			/* MADV_FREE page check */
--			if (!PageSwapBacked(page)) {
-+			if (!folio_test_swapbacked(folio)) {
- 				int ref_count, map_count;
- 
- 				/*
-@@ -1589,8 +1589,8 @@ static bool try_to_unmap_one(struct foli
- 				 */
- 				smp_mb();
- 
--				ref_count = page_count(page);
--				map_count = page_mapcount(page);
-+				ref_count = folio_ref_count(folio);
-+				map_count = folio_mapcount(folio);
- 
- 				/*
- 				 * Order reads for page refcount and dirty flag;
-@@ -1603,7 +1603,7 @@ static bool try_to_unmap_one(struct foli
- 				 * plus one or more rmap's (dropped by discard:).
- 				 */
- 				if ((ref_count == 1 + map_count) &&
--				    !PageDirty(page)) {
-+				    !folio_test_dirty(folio)) {
- 					/* Invalidate as we cleared the pte */
- 					mmu_notifier_invalidate_range(mm,
- 						address, address + PAGE_SIZE);
-@@ -1867,7 +1867,7 @@ static bool try_to_migrate_one(struct fo
- 				swp_pte = pte_swp_mkuffd_wp(swp_pte);
- 			set_pte_at(mm, pvmw.address, pvmw.pte, swp_pte);
- 			trace_set_migration_pte(pvmw.address, pte_val(swp_pte),
--						compound_order(page));
-+						folio_order(folio));
- 			/*
- 			 * No need to invalidate here it will synchronize on
- 			 * against the special swap migration pte.
-@@ -1879,16 +1879,16 @@ static bool try_to_migrate_one(struct fo
- 			 * changed when hugepage migrations to device private
- 			 * memory are supported.
- 			 */
--			subpage = page;
-+			subpage = &folio->page;
- 		} else if (PageHWPoison(subpage)) {
- 			pteval = swp_entry_to_pte(make_hwpoison_entry(subpage));
--			if (PageHuge(page)) {
--				hugetlb_count_sub(compound_nr(page), mm);
-+			if (folio_test_hugetlb(folio)) {
-+				hugetlb_count_sub(folio_nr_pages(folio), mm);
- 				set_huge_swap_pte_at(mm, address,
- 						     pvmw.pte, pteval,
- 						     vma_mmu_pagesize(vma));
- 			} else {
--				dec_mm_counter(mm, mm_counter(page));
-+				dec_mm_counter(mm, mm_counter(&folio->page));
- 				set_pte_at(mm, address, pvmw.pte, pteval);
- 			}
- 
-@@ -1937,7 +1937,7 @@ static bool try_to_migrate_one(struct fo
- 				swp_pte = pte_swp_mkuffd_wp(swp_pte);
- 			set_pte_at(mm, address, pvmw.pte, swp_pte);
- 			trace_set_migration_pte(address, pte_val(swp_pte),
--						compound_order(page));
-+						folio_order(folio));
- 			/*
- 			 * No need to invalidate here it will synchronize on
- 			 * against the special swap migration pte.
---- a/mm/vmscan.c~linux-next-rejects
-+++ a/mm/vmscan.c
-@@ -1575,7 +1575,7 @@ retry:
- 		 */
- 		mapping = page_mapping(page);
- 		if (writeback && PageReclaim(page))
--			stat->nr_congested++;
-+			stat->nr_congested += nr_pages;
- 
- 		/*
- 		 * If a page at the tail of the LRU is under writeback, there
-@@ -1724,9 +1724,9 @@ retry:
- 				/* Adding to swap updated mapping */
- 				mapping = page_mapping(page);
- 			}
--		} else if (unlikely(PageTransHuge(page))) {
--			/* Split file/lazyfree THP */
--			if (split_huge_page_to_list(page, page_list))
-+		} else if (PageSwapBacked(page) && PageTransHuge(page)) {
-+			/* Split shmem THP */
-+			if (split_folio_to_list(folio, page_list))
- 				goto keep_locked;
- 		}
- 
---- a/tools/include/linux/gfp.h~linux-next-rejects
-+++ a/tools/include/linux/gfp.h
-@@ -12,7 +12,6 @@
- #define __GFP_FS		0x80u
- #define __GFP_NOWARN		0x200u
- #define __GFP_ZERO		0x8000u
--#define __GFP_ATOMIC		0x80000u
- #define __GFP_ACCOUNT		0x100000u
- #define __GFP_DIRECT_RECLAIM	0x400000u
- #define __GFP_KSWAPD_RECLAIM	0x2000000u
-@@ -20,7 +19,7 @@
- #define __GFP_RECLAIM	(__GFP_DIRECT_RECLAIM | __GFP_KSWAPD_RECLAIM)
- 
- #define GFP_ZONEMASK	0x0fu
--#define GFP_ATOMIC	(__GFP_HIGH | __GFP_ATOMIC | __GFP_KSWAPD_RECLAIM)
-+#define GFP_ATOMIC	(__GFP_HIGH | __GFP_KSWAPD_RECLAIM)
- #define GFP_KERNEL	(__GFP_RECLAIM | __GFP_IO | __GFP_FS)
- #define GFP_NOWAIT	(__GFP_KSWAPD_RECLAIM)
- 
---- a/tools/testing/radix-tree/linux/gfp.h
-+++ /dev/null
-@@ -1,32 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _GFP_H
--#define _GFP_H
--
--#include <linux/types.h>
--
--#define __GFP_BITS_SHIFT 26
--#define __GFP_BITS_MASK ((gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
--
--#define __GFP_HIGH		0x20u
--#define __GFP_IO		0x40u
--#define __GFP_FS		0x80u
--#define __GFP_NOWARN		0x200u
--#define __GFP_ZERO		0x8000u
--#define __GFP_ACCOUNT		0x100000u
--#define __GFP_DIRECT_RECLAIM	0x400000u
--#define __GFP_KSWAPD_RECLAIM	0x2000000u
--
--#define __GFP_RECLAIM	(__GFP_DIRECT_RECLAIM|__GFP_KSWAPD_RECLAIM)
--
--#define GFP_ZONEMASK	0x0fu
--#define GFP_ATOMIC	(__GFP_HIGH|__GFP_KSWAPD_RECLAIM)
--#define GFP_KERNEL	(__GFP_RECLAIM | __GFP_IO | __GFP_FS)
--#define GFP_NOWAIT	(__GFP_KSWAPD_RECLAIM)
--
--
--static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
--{
--	return !!(gfp_flags & __GFP_DIRECT_RECLAIM);
--}
--
--#endif
---- a/kernel/fork.c~linux-next-rejects
-+++ a/kernel/fork.c
-@@ -471,7 +471,6 @@ struct vm_area_struct *vm_area_dup(struc
- 		 */
- 		*new = data_race(*orig);
- 		INIT_LIST_HEAD(&new->anon_vma_chain);
--		new->vm_next = new->vm_prev = NULL;
- 		dup_anon_vma_name(orig, new);
- 	}
- 	return new;
---- a/mm/mmap.c~linux-next-rejects
-+++ a/mm/mmap.c
-@@ -3104,19 +3104,29 @@ void exit_mmap(struct mm_struct *mm)
- 	tlb_gather_mmu_fullmm(&tlb, mm);
- 	/* update_hiwater_rss(mm) here? but nobody should be looking */
- 	/* Use -1 here to ensure all VMAs in the mm are unmapped */
--	unmap_vmas(&tlb, vma, 0, -1);
--	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
-+	unmap_vmas(&tlb, &mm->mm_mt, vma, 0, ULONG_MAX);
-+	free_pgtables(&tlb, &mm->mm_mt, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
- 	tlb_finish_mmu(&tlb);
- 
--	/* Walk the list again, actually closing and freeing it. */
--	while (vma) {
-+	/*
-+	 * Walk the list again, actually closing and freeing it, with preemption
-+	 * enabled, without holding any MM locks besides the unreachable
-+	 * mmap_write_lock.
-+	 */
-+	do {
- 		if (vma->vm_flags & VM_ACCOUNT)
- 			nr_accounted += vma_pages(vma);
--		vma = remove_vma(vma);
-+		remove_vma(vma);
-+		count++;
- 		cond_resched();
--	}
--	mm->mmap = NULL;
--	mmap_write_unlock(mm);
-+	} while ((vma = mas_find(&mas, ULONG_MAX)) != NULL);
-+
-+	BUG_ON(count != mm->map_count);
-+
-+	trace_exit_mmap(mm);
-+	__mt_destroy(&mm->mm_mt);
-+	rwsem_release(&mm->mmap_lock.dep_map, _THIS_IP_);
-+
- 	vm_unacct_memory(nr_accounted);
- }
- 
-_
-
+  origin.patch
+* maintainers-add-sysctl-next-git-tree.patch
+* mm-hugetlb-fix-kernel-crash-with-hugetlb-mremap.patch
+* kasan-test-prevent-cache-merging-in-kmem_cache_double_destroy.patch
+* hugetlbfs-fix-a-truncation-issue-in-hugepages-parameter.patch
+* mm-fix-use-after-free-bug-when-mm-mmap-is-reused-after-being-freed.patch
+* selftest-vm-fix-map_fixed_noreplace-test-failure.patch
+* maintainers-add-myself-as-a-memcg-co-maintainer.patch
+* maintainers-remove-myself-from-memcg-maintainers.patch
+* maintainers-slab-add-roman-as-reviewer-git-tree.patch
+* mailmap-update-roman-gushchins-email.patch
+* selftests-memfd-clean-up-mapping-in-mfd_fail_write.patch
+* coredump-also-dump-first-pages-of-non-executable-elf-libraries.patch
+* mm-fix-panic-in-__alloc_pages.patch
+* selftests-vm-cleanup-hugetlb-file-after-mremap-test.patch
+* mm-refactor-vm_area_struct-anon_vma_name-usage-code.patch
+* mm-prevent-vm_area_struct-anon_name-refcount-saturation.patch
+* mm-fix-use-after-free-when-anon-vma-name-is-used-after-vma-is-freed.patch
+* userfaultfd-mark-uffd_wp-regardless-of-vm_write-flag.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* procfs-prevent-unpriveleged-processes-accessing-fdinfo-dir.patch
+* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
+* ntfs-add-sanity-check-on-allocation-size.patch
+* ocfs2-cleanup-some-return-variables.patch
+* fs-ocfs2-fix-comments-mentioning-i_mutex.patch
+* ocfs2-reflink-deadlock-when-clone-file-to-the-same-directory-simultaneously.patch
+* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
+* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
+* doc-convert-subsection-to-section-in-gfph.patch
+* mm-document-and-polish-read-ahead-code.patch
+* mm-improve-cleanup-when-readpages-doesnt-process-all-pages.patch
+* fuse-remove-reliance-on-bdi-congestion.patch
+* nfs-remove-reliance-on-bdi-congestion.patch
+* ceph-remove-reliance-on-bdi-congestion.patch
+* remove-inode_congested.patch
+* remove-bdi_congested-and-wb_congested-and-related-functions.patch
+* remove-bdi_congested-and-wb_congested-and-related-functions-fix.patch
+* f2fs-replace-congestion_wait-calls-with-io_schedule_timeout.patch
+* block-bfq-ioschedc-use-false-rather-than-blk_rw_async.patch
+* remove-congestion-tracking-framework.patch
+* mount-warn-only-once-about-timestamp-range-expiration.patch
+  mm.patch
+* mm-sparse-vmemmap-add-a-pgmap-argument-to-section-activation.patch
+* mm-sparse-vmemmap-refactor-core-of-vmemmap_populate_basepages-to-helper.patch
+* mm-hugetlb_vmemmap-move-comment-block-to-documentation-vm.patch
+* mm-sparse-vmemmap-improve-memory-savings-for-compound-devmaps.patch
+* mm-page_alloc-reuse-tail-struct-pages-for-compound-devmaps.patch
+* mm-memremap-avoid-calling-kasan_remove_zero_shadow-for-device-private-memory.patch
+* tools-vm-page_owner_sortc-sort-by-stacktrace-before-culling.patch
+* tools-vm-page_owner_sortc-sort-by-stacktrace-before-culling-fix.patch
+* tools-vm-page_owner_sortc-support-sorting-by-stack-trace.patch
+* tools-vm-page_owner_sortc-add-switch-between-culling-by-stacktrace-and-txt.patch
+* tools-vm-page_owner_sortc-support-sorting-pid-and-time.patch
+* tools-vm-page_owner_sortc-two-trivial-fixes.patch
+* tools-vm-page_owner_sortc-delete-invalid-duplicate-code.patch
+* documentation-vm-page_ownerrst-update-the-documentation.patch
+* documentation-vm-page_ownerrst-update-the-documentation-fix.patch
+* docs-vm-fix-unexpected-indentation-warns-in-page_owner.patch
+* documentation-vm-page_ownerrst-fix-commends.patch
+* lib-vsprintf-avoid-redundant-work-with-0-size.patch
+* mm-page_owner-use-scnprintf-to-avoid-excessive-buffer-overrun-check.patch
+* mm-page_owner-print-memcg-information.patch
+* mm-page_owner-record-task-command-name.patch
+* mm-page_ownerc-record-tgid.patch
+* tools-vm-page_owner_sortc-fix-the-instructions-for-use.patch
+* mm-unexport-page_init_poison.patch
+* filemap-remove-find_get_pages.patch
+* mm-fix-invalid-page-pointer-returned-with-foll_pin-gups.patch
+* mm-gup-follow_pfn_pte-eexist-cleanup.patch
+* mm-gup-remove-unused-pin_user_pages_locked.patch
+* mm-change-lookup_node-to-use-get_user_pages_fast.patch
+* mm-gup-remove-unused-get_user_pages_locked.patch
+* tmpfs-support-for-file-creation-time.patch
+* memcg-replace-in_interrupt-with-in_task.patch
+* memcg-add-per-memcg-total-kernel-memory-stat.patch
+* mm-memcg-mem_cgroup_per_node-is-already-set-to-0-on-allocation.patch
+* mm-memcg-retrieve-parent-memcg-from-cssparent.patch
+* memcg-refactor-mem_cgroup_oom.patch
+* memcg-unify-force-charging-conditions.patch
+* selftests-memcg-test-high-limit-for-single-entry-allocation.patch
+* memcg-synchronously-enforce-memoryhigh-for-large-overcharges.patch
+* mm-memcg-revert-mm-memcg-optimize-user-context-object-stock-access.patch
+* mm-memcg-disable-threshold-event-handlers-on-preempt_rt.patch
+* mm-memcg-protect-per-cpu-counter-by-disabling-preemption-on-preempt_rt-where-needed.patch
+* mm-memcg-opencode-the-inner-part-of-obj_cgroup_uncharge_pages-in-drain_obj_stock.patch
+* mm-memcg-protect-memcg_stock-with-a-local_lock_t.patch
+* mm-memcg-disable-migration-instead-of-preemption-in-drain_all_stock.patch
+* mm-memcontrol-return-1-from-cgroupmemory-__setup-handler.patch
+* mm-memcg-set-memcg-after-css-verified-and-got-reference.patch
+* mm-memcg-set-pos-to-prev-unconditionally.patch
+* mm-memcg-move-generation-assignment-and-comparison-together.patch
+* mm-generalize-arch_has_filter_pgprot.patch
+* mm-merge-pte_mkhuge-call-into-arch_make_huge_pte.patch
+* mm-remove-mmu_gathers-storage-from-remaining-architectures.patch
+* mm-thp-fix-wrong-cache-flush-in-remove_migration_pmd.patch
+* mm-fix-missing-cache-flush-for-all-tail-pages-of-compound-page.patch
+* mm-hugetlb-fix-missing-cache-flush-in-copy_huge_page_from_user.patch
+* mm-hugetlb-fix-missing-cache-flush-in-hugetlb_mcopy_atomic_pte.patch
+* mm-shmem-fix-missing-cache-flush-in-shmem_mfill_atomic_pte.patch
+* mm-userfaultfd-fix-missing-cache-flush-in-mcopy_atomic_pte-and-__mcopy_atomic.patch
+* mm-replace-multiple-dcache-flush-with-flush_dcache_folio.patch
+* mm-dont-skip-swap-entry-even-if-zap_details-specified.patch
+* mm-dont-skip-swap-entry-even-if-zap_details-specified-v5.patch
+* mm-rename-zap_skip_check_mapping-to-should_zap_page.patch
+* mm-change-zap_detailszap_mapping-into-even_cows.patch
+* mm-rework-swap-handling-of-zap_pte_range.patch
+* mm-mmap-return-1-from-stack_guard_gap-__setup-handler.patch
+* mm-debug_vm_pgtable-drop-protection_map-usage.patch
+* mm-mmap-clarify-protection_map-indices.patch
+* mm-mmap-add-new-config-arch_has_vm_get_page_prot.patch
+* powerpc-mm-enable-arch_has_vm_get_page_prot.patch
+* arm64-mm-enable-arch_has_vm_get_page_prot.patch
+* sparc-mm-enable-arch_has_vm_get_page_prot.patch
+* mips-mm-enable-arch_has_vm_get_page_prot.patch
+* m68k-mm-enable-arch_has_vm_get_page_prot.patch
+* arm-mm-enable-arch_has_vm_get_page_prot.patch
+* x86-mm-enable-arch_has_vm_get_page_prot.patch
+* x86-mm-enable-arch_has_vm_get_page_prot-fix.patch
+* mm-mmap-drop-protection_map.patch
+* mm-mmap-drop-arch_filter_pgprot.patch
+* mm-mmap-drop-arch_vm_get_page_pgprot.patch
+* s390-mm-enable-arch_has_vm_get_page_prot.patch
+* riscv-mm-enable-arch_has_vm_get_page_prot.patch
+* alpha-mm-enable-arch_has_vm_get_page_prot.patch
+* sh-mm-enable-arch_has_vm_get_page_prot.patch
+* arc-mm-enable-arch_has_vm_get_page_prot.patch
+* csky-mm-enable-arch_has_vm_get_page_prot.patch
+* extensa-mm-enable-arch_has_vm_get_page_prot.patch
+* parisc-mm-enable-arch_has_vm_get_page_prot.patch
+* openrisc-mm-enable-arch_has_vm_get_page_prot.patch
+* um-mm-enable-arch_has_vm_get_page_prot.patch
+* microblaze-mm-enable-arch_has_vm_get_page_prot.patch
+* nios2-mm-enable-arch_has_vm_get_page_prot.patch
+* hexagon-mm-enable-arch_has_vm_get_page_prot.patch
+* nds32-mm-enable-arch_has_vm_get_page_prot.patch
+* ia64-mm-enable-arch_has_vm_get_page_prot.patch
+* mm-mmap-drop-generic-vm_get_page_prot.patch
+* mm-mmap-drop-arch_has_vm_get_page_prot.patch
+* mm-use-helper-function-range_in_vma.patch
+* fix-shmem-huge-page-failed-to-set-f_seal_write-attribute-problem.patch
+* mm-sparse-make-mminit_validate_memmodel_limits-static.patch
+* mm-vmalloc-remove-unneeded-function-forward-declaration.patch
+* mm-vmalloc-move-draining-areas-out-of-caller-context.patch
+* mm-vmalloc-add-adjust_search_size-parameter.patch
+* mm-vmalloc-eliminate-an-extra-orig_gfp_mask.patch
+* mm-vmallocc-fix-unused-function-warning.patch
+* vmap-dont-allow-invalid-pages.patch
+* mm-page_alloc-avoid-merging-non-fallbackable-pageblocks-with-others.patch
+* mm-page_alloc-add-same-penalty-is-enough-to-get-round-robin-order.patch
+* mm-page_alloc-add-penalty-to-local_node.patch
+* mm-mmzonec-use-try_cmpxchg-in-page_cpupid_xchg_last.patch
+* mm-discard-__gfp_atomic.patch
+* mm-mmzoneh-remove-unused-macros.patch
+* mm-page_alloc-dont-pass-pfn-to-free_unref_page_commit.patch
+* cma-factor-out-minimum-alignment-requirement.patch
+* mm-enforce-pageblock_order-max_order.patch
+* mm-page_alloc-mark-pagesets-as-__maybe_unused.patch
+* mm-pages_allocc-dont-create-zone_movable-beyond-the-end-of-a-node.patch
+* mm-page_alloc-fetch-the-correct-pcp-buddy-during-bulk-free.patch
+* mm-page_alloc-track-range-of-active-pcp-lists-during-bulk-free.patch
+* mm-page_alloc-simplify-how-many-pages-are-selected-per-pcp-list-during-bulk-free.patch
+* mm-page_alloc-drain-the-requested-list-first-during-bulk-free.patch
+* mm-page_alloc-free-pages-in-a-single-pass-during-bulk-free.patch
+* mm-page_alloc-limit-number-of-high-order-pages-on-pcp-during-bulk-free.patch
+* mm-page_alloc-do-not-prefetch-buddies-during-bulk-free.patch
+* arch-x86-mm-numa-do-not-initialize-nodes-twice.patch
+* arch-x86-mm-numa-do-not-initialize-nodes-twice-v2.patch
+* mm-count-time-in-drain_all_pages-during-direct-reclaim-as-memory-pressure.patch
+* mm-hwpoison-remove-obsolete-comment.patch
+* mm-hwpoison-fix-error-page-recovered-but-reported-not-recovered.patch
+* mm-clean-up-hwpoison-page-cache-page-in-fault-path.patch
+* mm-memory-failurec-minor-clean-up-for-memory_failure_dev_pagemap.patch
+* mm-memory-failurec-catch-unexpected-efault-from-vma_address.patch
+* mm-memory-failurec-rework-the-signaling-logic-in-kill_proc.patch
+* mm-memory-failurec-fix-race-with-changing-page-more-robustly.patch
+* mm-memory-failurec-remove-pageslab-check-in-hwpoison_filter_dev.patch
+* mm-memory-failurec-rework-the-try_to_unmap-logic-in-hwpoison_user_mappings.patch
+* mm-memory-failurec-remove-obsolete-comment-in-__soft_offline_page.patch
+* mm-memory-failurec-remove-unnecessary-pagetranstail-check.patch
+* mm-hwpoison-inject-support-injecting-hwpoison-to-free-page.patch
+* mm-hwpoison-inject-support-injecting-hwpoison-to-free-page-fix.patch
+* mm-hwpoison-avoid-the-impact-of-hwpoison_filter-return-value-on-mce-handler.patch
+* mm-hwpoison-add-in-use-hugepage-hwpoison-filter-judgement.patch
+* mm-hugetlb-free-the-2nd-vmemmap-page-associated-with-each-hugetlb-page.patch
+* mm-hugetlb-replace-hugetlb_free_vmemmap_enabled-with-a-static_key.patch
+* mm-sparsemem-use-page-table-lock-to-protect-kernel-pmd-operations.patch
+* selftests-vm-add-a-hugetlb-test-case.patch
+* mm-sparsemem-move-vmemmap-related-to-hugetlb-to-config_hugetlb_page_free_vmemmap.patch
+* mm-hugetlb-generalize-arch_want_general_hugetlb.patch
+* hugetlb-clean-up-potential-spectre-issue-warnings.patch
+* hugetlb-clean-up-potential-spectre-issue-warnings-v2.patch
+* mm-hugetlb-use-helper-macro-__attr_rw.patch
+* userfaultfd-provide-unmasked-address-on-page-fault.patch
+* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt.patch
+* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt-fix.patch
+* mm-migration-add-trace-events-for-thp-migrations.patch
+* mm-migration-add-trace-events-for-base-page-and-hugetlb-migrations.patch
+* mmmigrate-fix-establishing-demotion-target.patch
+* mm-cma-provide-option-to-opt-out-from-exposing-pages-on-activation-failure.patch
+* powerpc-fadump-opt-out-from-freeing-pages-on-cma-activation-failure.patch
+* numa-balancing-add-page-promotion-counter.patch
+* numa-balancing-optimize-page-placement-for-memory-tiering-system.patch
+* memory-tiering-skip-to-scan-fast-memory.patch
+* mm-page_io-fix-psi-memory-pressure-error-on-cold-swapins.patch
+* mm-vmstat-add-event-for-ksm-swapping-in-copy.patch
+* mm-ksm-use-helper-macro-__attr_rw.patch
+* mm-hwpoison-check-the-subpage-not-the-head-page.patch
+* mm-balloon_compaction-make-balloon-page-compaction-callbacks-static.patch
+* mm-fix-race-between-madv_free-reclaim-and-blkdev-direct-io-read.patch
+* mm-memory_hotplug-make-arch_alloc_nodedata-independent-on-config_memory_hotplug.patch
+* mm-handle-uninitialized-numa-nodes-gracefully.patch
+* mm-handle-uninitialized-numa-nodes-gracefully-fix.patch
+* mm-memory_hotplug-drop-arch_free_nodedata.patch
+* mm-memory_hotplug-reorganize-new-pgdat-initialization.patch
+* mm-make-free_area_init_node-aware-of-memory-less-nodes.patch
+* memcg-do-not-tweak-node-in-alloc_mem_cgroup_per_node_info.patch
+* drivers-base-memory-add-memory-block-to-memory-group-after-registration-succeeded.patch
+* drivers-base-node-consolidate-node-device-subsystem-initialization-in-node_dev_init.patch
+* mm-memory_hotplug-remove-obsolete-comment-of-__add_pages.patch
+* mm-memory_hotplug-remove-obsolete-comment-of-__add_pages-fix.patch
+* mm-memory_hotplug-avoid-calling-zone_intersects-for-zone_normal.patch
+* mm-memory_hotplug-clean-up-try_offline_node.patch
+* mm-memory_hotplug-fix-misplaced-comment-in-offline_pages.patch
+* drivers-base-node-rename-link_mem_sections-to-register_memory_block_under_node.patch
+* drivers-base-memory-determine-and-store-zone-for-single-zone-memory-blocks.patch
+* drivers-base-memory-clarify-adding-and-removing-of-memory-blocks.patch
+* mm-rmap-convert-from-atomic_t-to-refcount_t-on-anon_vma-refcount.patch
+* mm-zswapc-allow-handling-just-same-value-filled-pages.patch
+* mm-remove-usercopy_warn.patch
+* mm-uninline-copy_overflow.patch
+* mm-usercopy-return-1-from-hardened_usercopy-__setup-handler.patch
+* highmem-document-kunmap_local.patch
+* highmem-document-kunmap_local-v2.patch
+* mm-highmem-remove-unnecessary-done-label.patch
+* mm-kfence-remove-unnecessary-config_kfence-option.patch
+* mm-hmmc-remove-unneeded-local-variable-ret.patch
+* mm-damon-dbgfs-init_regions-use-target-index-instead-of-target-id.patch
+* docs-admin-guide-mm-damon-usage-update-for-changed-initail_regions-file-input.patch
+* mm-damon-core-move-damon_set_targets-into-dbgfs.patch
+* mm-damon-remove-the-target-id-concept.patch
+* mm-damon-remove-redundant-page-validation.patch
+* mm-damon-rename-damon_primitives-to-damon_operations.patch
+* mm-damon-let-monitoring-operations-can-be-registered-and-selected.patch
+* mm-damon-paddrvaddr-register-themselves-to-damon-in-subsys_initcall.patch
+* mm-damon-reclaim-use-damon_select_ops-instead-of-damon_vpa_set_operations.patch
+* mm-damon-dbgfs-use-damon_select_ops-instead-of-damon_vpa_set_operations.patch
+* mm-damon-dbgfs-use-operations-id-for-knowing-if-the-target-has-pid.patch
+* mm-damon-dbgfs-test-fix-is_target_id-change.patch
+* mm-damon-paddrvaddr-remove-damon_pva_target_validset_operations.patch
+* mm-damon-remove-unnecessary-config_damon-option.patch
+* docs-vm-damon-call-low-level-monitoring-primitives-the-operations.patch
+* docs-vm-damon-design-update-damon-idle-page-tracking-interference-handling.patch
+* docs-damon-update-outdated-term-regions-update-interval.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* proc-alloc-path_max-bytes-for-proc-pid-fd-symlinks.patch
+* proc-alloc-path_max-bytes-for-proc-pid-fd-symlinks-fix.patch
+* proc-vmcore-fix-possible-deadlock-on-concurrent-mmap-and-read.patch
+* proc-vmcore-fix-vmcore_alloc_buf-kernel-doc-comment.patch
+* proc-sysctl-make-protected_-world-readable.patch
+* kernel-ksysfsc-use-helper-macro-__attr_rw.patch
+* kconfigdebug-make-debug_info-selectable-from-a-choice.patch
+* kconfigdebug-make-debug_info-selectable-from-a-choice-fix.patch
+* include-drop-pointless-__compiler_offsetof-indirection.patch
+* ilog2-force-inlining-of-__ilog2_u32-and-__ilog2_u64.patch
+* bitfield-add-explicit-inclusions-to-the-example.patch
+* lz4-fix-lz4_decompress_safe_partial-read-out-of-bound.patch
+* checkpatch-prefer-module_licensegpl-over-module_licensegpl-v2.patch
+* checkpatch-add-fix-option-for-some-trailing_statements.patch
+* checkpatch-add-early_param-exception-to-blank-line-after-struct-function-test.patch
+* fs-binfmt_elf-fix-at_phdr-for-unusual-elf-files.patch
+* fs-binfmt_elf-fix-at_phdr-for-unusual-elf-files-v5.patch
+* fs-binfmt_elf-refactor-load_elf_binary-function.patch
+* elf-fix-overflow-in-total-mapping-size-calculation.patch
+* binfmt-move-more-stuff-undef-config_coredump.patch
+* kallsyms-print-module-name-in-%ps-s-case-when-kallsyms-is-disabled.patch
+* init-use-ktime_us_delta-to-make-initcall_debug-log-more-precise.patch
+* inith-improve-__setup-and-early_param-documentation.patch
+* init-mainc-return-1-from-handled-__setup-functions.patch
+* init-mainc-silence-some-wunused-parameter-warnings.patch
+* fs-pipe-use-kvcalloc-to-allocate-a-pipe_buffer-array.patch
+* fs-pipe-local-vars-has-to-match-types-of-proper-pipe_inode_info-fields.patch
+* minix-fix-bug-when-opening-a-file-with-o_direct.patch
+* fat-use-pointer-to-simple-type-in-put_user.patch
+* exec-force-single-empty-string-when-argv-is-empty.patch
+* exec-force-single-empty-string-when-argv-is-empty-fix.patch
+* selftests-exec-test-for-empty-string-on-null-argv.patch
+* kexec-make-crashk_res-crashk_low_res-and-crash_notes-symbols-always-visible.patch
+* riscv-mm-init-use-is_enabledconfig_kexec_core-instead-of-ifdef.patch
+* x86-setup-use-is_enabledconfig_kexec_core-instead-of-ifdef.patch
+* arm64-mm-use-is_enabledconfig_kexec_core-instead-of-ifdef.patch
+* docs-kdump-update-description-about-sysfs-file-system-support.patch
+* docs-kdump-add-scp-example-to-write-out-the-dump-file.patch
+* panic-unset-panic_on_warn-inside-panic.patch
+* ubsan-no-need-to-unset-panic_on_warn-in-ubsan_epilogue.patch
+* kasan-no-need-to-unset-panic_on_warn-in-end_report.patch
+* docs-sysctl-kernel-add-missing-bit-to-panic_print.patch
+* docs-sysctl-kernel-add-missing-bit-to-panic_print-fix.patch
+* panic-add-option-to-dump-all-cpus-backtraces-in-panic_print.patch
+* kcov-split-ioctl-handling-into-locked-and-unlocked-parts.patch
+* kcov-properly-handle-subsequent-mmap-calls.patch
+* kernel-resource-fix-kfree-of-bootmem-memory-again.patch
+* revert-ubsan-kcsan-dont-combine-sanitizer-with-kcov-on-clang.patch
+* ipc-mqueue-use-get_tree_nodev-in-mqueue_get_tree.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-git-rejects.patch
+  drivers-gpu-drm-dp-drm_dpc-fix-build.patch
+* kasan-page_alloc-deduplicate-should_skip_kasan_poison.patch
+* kasan-page_alloc-move-tag_clear_highpage-out-of-kernel_init_free_pages.patch
+* kasan-page_alloc-merge-kasan_free_pages-into-free_pages_prepare.patch
+* kasan-page_alloc-simplify-kasan_poison_pages-call-site.patch
+* kasan-page_alloc-init-memory-of-skipped-pages-on-free.patch
+* kasan-drop-skip_kasan_poison-variable-in-free_pages_prepare.patch
+* mm-clarify-__gfp_zerotags-comment.patch
+* kasan-only-apply-__gfp_zerotags-when-memory-is-zeroed.patch
+* kasan-page_alloc-refactor-init-checks-in-post_alloc_hook.patch
+* kasan-page_alloc-merge-kasan_alloc_pages-into-post_alloc_hook.patch
+* kasan-page_alloc-combine-tag_clear_highpage-calls-in-post_alloc_hook.patch
+* kasan-page_alloc-move-setpageskipkasanpoison-in-post_alloc_hook.patch
+* kasan-page_alloc-move-kernel_init_free_pages-in-post_alloc_hook.patch
+* kasan-page_alloc-rework-kasan_unpoison_pages-call-site.patch
+* kasan-clean-up-metadata-byte-definitions.patch
+* kasan-define-kasan_vmalloc_invalid-for-sw_tags.patch
+* kasan-x86-arm64-s390-rename-functions-for-modules-shadow.patch
+* kasan-vmalloc-drop-outdated-vm_kasan-comment.patch
+* kasan-reorder-vmalloc-hooks.patch
+* kasan-add-wrappers-for-vmalloc-hooks.patch
+* kasan-vmalloc-reset-tags-in-vmalloc-functions.patch
+* kasan-fork-reset-pointer-tags-of-vmapped-stacks.patch
+* kasan-arm64-reset-pointer-tags-of-vmapped-stacks.patch
+* kasan-fork-reset-pointer-tags-of-vmapped-stacks-fix.patch
+* kasan-vmalloc-add-vmalloc-tagging-for-sw_tags.patch
+* kasan-vmalloc-arm64-mark-vmalloc-mappings-as-pgprot_tagged.patch
+* kasan-vmalloc-unpoison-vm_alloc-pages-after-mapping.patch
+* kasan-mm-only-define-___gfp_skip_kasan_poison-with-hw_tags.patch
+* kasan-page_alloc-allow-skipping-unpoisoning-for-hw_tags.patch
+* kasan-page_alloc-allow-skipping-memory-init-for-hw_tags.patch
+* kasan-vmalloc-add-vmalloc-tagging-for-hw_tags.patch
+* kasan-vmalloc-only-tag-normal-vmalloc-allocations.patch
+* kasan-arm64-dont-tag-executable-vmalloc-allocations.patch
+* kasan-mark-kasan_arg_stacktrace-as-__initdata.patch
+* kasan-clean-up-feature-flags-for-hw_tags-mode.patch
+* kasan-add-kasanvmalloc-command-line-flag.patch
+* kasan-allow-enabling-kasan_vmalloc-and-sw-hw_tags.patch
+* arm64-select-kasan_vmalloc-for-sw-hw_tags-modes.patch
+* kasan-documentation-updates.patch
+* kasan-improve-vmalloc-tests.patch
+* kasan-improve-vmalloc-tests-fix.patch
+* kasan-improve-vmalloc-tests-fix-2.patch
+* kasan-improve-vmalloc-tests-fix-3.patch
+* kasan-improve-vmalloc-tests-fix-3-fix.patch
+* kasan-test-support-async-again-and-asymm-modes-for-hw_tags.patch
+* mm-kasan-remove-unnecessary-config_kasan-option.patch
+* kasan-update-function-name-in-comments.patch
+* kasan-print-virtual-mapping-info-in-reports.patch
+* mm-rmap-fix-argument-list-that-the-kdoc-format-and-script-verified.patch
+* mm-enable-madv_dontneed-for-hugetlb-mappings.patch
+* selftests-vm-add-hugetlb-madvise-madv_dontneed-madv_remove-test.patch
+* userfaultfd-selftests-enable-hugetlb-remap-and-remove-event-testing.patch
+* mm-optimize-do_wp_page-for-exclusive-pages-in-the-swapcache.patch
+* mm-optimize-do_wp_page-for-fresh-pages-in-local-lru-pagevecs.patch
+* mm-slightly-clarify-ksm-logic-in-do_swap_page.patch
+* mm-streamline-cow-logic-in-do_swap_page.patch
+* mm-huge_memory-streamline-cow-logic-in-do_huge_pmd_wp_page.patch
+* mm-khugepaged-remove-reuse_swap_page-usage.patch
+* mm-swapfile-remove-stale-reuse_swap_page.patch
+* mm-huge_memory-remove-stale-page_trans_huge_mapcount.patch
+* selftests-vm-remove-dependecy-from-internal-kernel-macros.patch
+* selftests-kselftest-framework-provide-finished-helper.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  mutex-subsystem-synchro-test-module-fix.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
