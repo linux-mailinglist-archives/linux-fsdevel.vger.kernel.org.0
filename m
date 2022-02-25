@@ -2,188 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D644C4096
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 09:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E6D4C4105
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 10:13:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238692AbiBYIvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 03:51:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46078 "EHLO
+        id S238923AbiBYJNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 04:13:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238687AbiBYIvV (ORCPT
+        with ESMTP id S238921AbiBYJNf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 03:51:21 -0500
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2052.outbound.protection.outlook.com [40.107.94.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB60E177D3F;
-        Fri, 25 Feb 2022 00:50:49 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EzODPZatyn9W0Fjj7PNYZPtgjou+HfkkWOMOk915RdLejpI39ZqHGopKxsWvfWFf7q6veCcuj8Apyg+4UQonViQSe/m4G7A+jImdlNIW/9moN4gGGT7EIe+yvI1Py37VD9nG6tt9wgi+ri3S0GBykg+Hrk0y4U/pn59YW+++Te/KKHAd3QQ6KuByYfbiu9lU0/oFWeQNlyVpm7zWxkFh+HPLUyHw/3oDOEX+SR5RBJ2yGBpCOzPeT/D2rEe7ws2NicDbrzXzKYOg+x6J8ub90dFMrYqtdCDWgKFsSsdllC6Djp4D9v3Rkwq8ob3BW7Hm0V6dfmrBy2aj1j00vbYkbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mVjachwLZOJaasM1HxAYAlh+fxfrxwqQnXama3fFC5A=;
- b=ZvvE3gAjRZD6lkDf6bp/VvilesY74JFtFJVK8lP4sJf5cHb1ISF/3bgejS8VwMNP2QeQa39wUl/ZK9maOvC+e3Psgpxk7T6I/6T5Bd5Fw6PxyypwH56xxoN1KKIB4j/e1L/2VDSlSgSYnPJXWAbr0r2NiaYjVT5aklWwUt+1C4wpylkPofOLcFwCHgpNmW+D6Z4j60vrWC17zvplbX62/lLIzkmRgEVuPgHYUNO2bg3Yf2orHzWKEhyvTszx5ouJv8uTSrKctIzgyryhH4RYorsrFMRz212az+eaG1zEsC5gpY8bZ7jlIhcOhnVhhk6w1+u03jlRJHwvlQrqZ4E3yQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mVjachwLZOJaasM1HxAYAlh+fxfrxwqQnXama3fFC5A=;
- b=Zve+2qknEQaTEYfdwjqqoB7LB8CZjjmFxrhuc3oz3egNKcdqFqHa7Wixckcz4FMkeKnTuihuK9Ow/bhYkFCWtp1csu+piBVAdlXPzIloOZmXuf5TptO/xUtIyJPj2yN9k/7j9DTrcyAM1ZoNgH0RQc4DErdFhbUN5lP/KknK1lPgVZZa2EZWDf6X0FAn9Qyl7ztQ2V3NvnpVWbaqN0JW92GKUXndT7PaMDhMDLk0Dq9+1rMjgf2qSQ+ODj5lBRpLnplNVEQFinAYoYfGCQXtDyWYzYh2QI0r2nIs+iKuAWNUHRz8zpbQM9IgDtD7XkTon4zN5ym55dQe6+6AjYqktg==
-Received: from BN9PR03CA0806.namprd03.prod.outlook.com (2603:10b6:408:13f::31)
- by BN6PR1201MB0180.namprd12.prod.outlook.com (2603:10b6:405:56::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.22; Fri, 25 Feb
- 2022 08:50:48 +0000
-Received: from BN8NAM11FT054.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:13f:cafe::43) by BN9PR03CA0806.outlook.office365.com
- (2603:10b6:408:13f::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.24 via Frontend
- Transport; Fri, 25 Feb 2022 08:50:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- BN8NAM11FT054.mail.protection.outlook.com (10.13.177.102) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5017.22 via Frontend Transport; Fri, 25 Feb 2022 08:50:47 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 25 Feb
- 2022 08:50:46 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Fri, 25 Feb 2022
- 00:50:45 -0800
-Received: from sandstorm.attlocal.net (10.127.8.10) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.9 via Frontend
- Transport; Fri, 25 Feb 2022 00:50:44 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chaitanya Kulkarni <kch@nvidia.com>
-CC:     <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [RFC PATCH 7/7] block, direct-io: flip the switch: use pin_user_pages_fast()
-Date:   Fri, 25 Feb 2022 00:50:25 -0800
-Message-ID: <20220225085025.3052894-8-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220225085025.3052894-1-jhubbard@nvidia.com>
-References: <20220225085025.3052894-1-jhubbard@nvidia.com>
+        Fri, 25 Feb 2022 04:13:35 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 54FD417FD04
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 01:13:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645780382;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5x1l60kOJzalIbidbr6kbs5D9dFUyUJTKOBS5WSBmqI=;
+        b=UCIilkMNxW3EDdwxJAh6UH+7GNK0Wye+jYHdK0krGQ2aLN7LZofuebGHuJNfaEUxESETTx
+        dZgX7cWmy36s8E6zHEzMN4vLe7Nmqe/tjML65zMaaMzRK3dBCQMhlbyNZtMqkqcglo3M/u
+        EJl+KK6vVo+7fx1G7Ncp74KNhucElA0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-90-TNa3oj-LMGKC9XopOpGK-Q-1; Fri, 25 Feb 2022 04:12:56 -0500
+X-MC-Unique: TNa3oj-LMGKC9XopOpGK-Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1E561854E27;
+        Fri, 25 Feb 2022 09:12:52 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3D26B1006870;
+        Fri, 25 Feb 2022 09:12:33 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 21P9CW8f021225;
+        Fri, 25 Feb 2022 04:12:32 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 21P9CVVN021221;
+        Fri, 25 Feb 2022 04:12:31 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Fri, 25 Feb 2022 04:12:31 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Nitesh Shetty <nj.shetty@samsung.com>
+cc:     javier@javigon.com, chaitanyak@nvidia.com,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+        msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, roland@purestorage.com, hare@suse.de,
+        kbusch@kernel.org, hch@lst.de, Frederick.Knight@netapp.com,
+        zach.brown@ni.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, joshi.k@samsung.com, arnav.dawn@samsung.com
+Subject: Re: [PATCH v2 08/10] dm: Add support for copy offload.
+In-Reply-To: <20220224124213.GD9117@test-zns>
+Message-ID: <alpine.LRH.2.02.2202250410210.20694@file01.intranet.prod.int.rdu2.redhat.com>
+References: <CAOSviJ0HmT9iwdHdNtuZ8vHETCosRMpR33NcYGVWOV0ki3EYgw@mail.gmail.com> <20220207141348.4235-1-nj.shetty@samsung.com> <CGME20220207141948epcas5p4534f6bdc5a1e2e676d7d09c04f8b4a5b@epcas5p4.samsung.com> <20220207141348.4235-9-nj.shetty@samsung.com>
+ <alpine.LRH.2.02.2202160845210.22021@file01.intranet.prod.int.rdu2.redhat.com> <20220224124213.GD9117@test-zns>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6480806c-cca4-4a7c-20ec-08d9f83beb12
-X-MS-TrafficTypeDiagnostic: BN6PR1201MB0180:EE_
-X-Microsoft-Antispam-PRVS: <BN6PR1201MB018028CD70BE9A65D9042189A83E9@BN6PR1201MB0180.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Lv1rCmizZyWkMNp8GC3k5HyeJ/MMauJ+khLsMeeEYr3My1wa3QL0fdCQFQ23HHqE7WbShOdxgO3/+QGrSOZ+YdeRCRKuDx18PQpVt6QwRqvlYR8TIA82pe0sqJXXgoW49SMM190IM8YZlMTa0ue/j4PXBr7v5D6StzTIjIPHxf9u+PibqrvSkOOZm+QwKwdd/DKQs9mYPLoR4ao5fgz2treiO9ZYnCSEz7f4GokGtu17y0OGMtLAjba2JEncRfcxtwcr2txPuiCSK/XlDUs7C7e+Fa3BmiWwbZ2ZMwtdYFxFAUcRCCxUJglPlbbz+pj4YFnwibpAR1lktacjqpr/X+LPzHxqWteir+V4HAbHYufxqPMvBxyw9lBTvlqxOKQlMZI6e9NiWUkvEFhK1ibu0fwVEnEBPdoFxiWjRRZ0SF+clBeWOSgLhiXI5bbBM29IJTCuzm8BwDov1MO4oxicQa1Nd64HxuNMjGOtzwjZcuRxzzGyvZJGdqvY+oazJoVeizRu8HPSxXd/xqgjyKJgK2a3EvDw9c3YzTOPmAh5+9oXTGQSHpUS4194VBy24VALZO/CeGHuVD4S5uilFwZLjwH+xmuD0fZjIXXx7vSKgAxwA51n4KkinxTtqpxKbwelRdtbgOe+XvUkrm9AibGNBsvW/OFUGCg33qb9VIcyw8+iizU15/sdzHLefCKDp0RB/sSxiU4XngatORUXOErV89OB1FVyj7MhCmMiiPUs2RM=
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(83380400001)(82310400004)(336012)(6666004)(40460700003)(110136005)(6636002)(316002)(54906003)(36860700001)(2616005)(1076003)(426003)(47076005)(186003)(81166007)(7416002)(2906002)(36756003)(508600001)(70586007)(356005)(921005)(70206006)(8676002)(86362001)(4326008)(107886003)(26005)(8936002)(5660300002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2022 08:50:47.8353
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6480806c-cca4-4a7c-20ec-08d9f83beb12
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT054.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB0180
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO, but leave the dio_w_*()
-wrapper functions in place, with the pin_user_pages_fast() defines as
-the only choice.
 
-A subsequent patch is now possible, to rename all dio_w_*() functions so
-as to remove the dio_w_ prefix.
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- block/Kconfig        | 25 -------------------------
- include/linux/bvec.h |  7 -------
- 2 files changed, 32 deletions(-)
+On Thu, 24 Feb 2022, Nitesh Shetty wrote:
 
-diff --git a/block/Kconfig b/block/Kconfig
-index f6ca5e9597e4..168b873eb666 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -50,31 +50,6 @@ config BLK_DEV_BSG_COMMON
- config BLK_ICQ
- 	bool
- 
--config BLK_USE_PIN_USER_PAGES_FOR_DIO
--	bool "DEVELOPERS ONLY: Enable pin_user_pages() for Direct IO" if EXPERT
--	default n
--	help
--	  For Direct IO code, retain the pages via calls to
--	  pin_user_pages_fast(), instead of via get_user_pages_fast().
--	  Likewise, use pin_user_page() instead of get_page(). And then
--	  release such pages via unpin_user_page(), instead of
--	  put_page().
--
--	  This is a temporary setting, which will be deleted once the
--	  conversion is completed, reviewed, and tested. In the meantime,
--	  developers can enable this in order to try out each filesystem.
--	  For that, it's best to monitor these /proc/vmstat items:
--
--		nr_foll_pin_acquired
--		nr_foll_pin_released
--
--	  ...to ensure that they remain equal, when "at rest".
--
--	  Say yes here ONLY if are actively developing or testing the
--	  block layer or filesystems with pin_user_pages_fast().
--	  Otherwise, this is just a way to throw off the refcounting of
--	  pages in the system.
--
- config BLK_DEV_BSGLIB
- 	bool "Block layer SG support v4 helper lib"
- 	select BLK_DEV_BSG_COMMON
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index a96a68c687f6..5bc98b334efe 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -241,15 +241,8 @@ static inline void *bvec_virt(struct bio_vec *bvec)
- 	return page_address(bvec->bv_page) + bvec->bv_offset;
- }
- 
--#ifdef CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO
- #define dio_w_pin_user_pages_fast(s, n, p, f)	pin_user_pages_fast(s, n, p, f)
- #define dio_w_pin_user_page(p)			pin_user_page(p)
- #define dio_w_unpin_user_page(p)		unpin_user_page(p)
- 
--#else
--#define dio_w_pin_user_pages_fast(s, n, p, f)	get_user_pages_fast(s, n, p, f)
--#define dio_w_pin_user_page(p)			get_page(p)
--#define dio_w_unpin_user_page(p)		put_page(p)
--#endif
--
- #endif /* __LINUX_BVEC_H */
--- 
-2.35.1
+> On Wed, Feb 16, 2022 at 08:51:08AM -0500, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Mon, 7 Feb 2022, Nitesh Shetty wrote:
+> > 
+> > > Before enabling copy for dm target, check if underlaying devices and
+> > > dm target support copy. Avoid split happening inside dm target.
+> > > Fail early if the request needs split, currently spliting copy
+> > > request is not supported
+> > > 
+> > > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> > 
+> > If a dm device is reconfigured, you must invalidate all the copy tokens 
+> > that are in flight, otherwise they would copy stale data.
+> > 
+> > I suggest that you create a global variable "atomic64_t dm_changed".
+> > In nvme_setup_copy_read you copy this variable to the token.
+> > In nvme_setup_copy_write you compare the variable with the value in the 
+> > token and fail if there is mismatch.
+> > In dm.c:__bind you increase the variable, so that all the tokens will be 
+> > invalidated if a dm table is changed.
+> > 
+> > Mikulas
+> > 
+> >
+> Yes, you are right about the reconfiguration of dm device. But wouldn't having a
+> single global counter(dm_changed), will invalidate for all in-flight copy IO's
+> across all dm devices. Is my understanding correct?
+> 
+> --
+> Nitesh Shetty
+
+Yes, changing it will invalidate all the copy IO's.
+
+But invalidating only IO's affected by the table reload would be hard to 
+achieve.
+
+Mikulas
 
