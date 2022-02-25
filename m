@@ -2,282 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6839C4C4E16
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 19:53:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED624C4E18
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 19:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233511AbiBYSyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 13:54:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42332 "EHLO
+        id S233533AbiBYSzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 13:55:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233513AbiBYSyT (ORCPT
+        with ESMTP id S233513AbiBYSzW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 13:54:19 -0500
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC91188867
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 10:53:45 -0800 (PST)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21PIanDv015155
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 10:53:44 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=EGZu11JSKSJ42boAazYwLmSpG05t42IvO0g8PC1STYM=;
- b=qJYtFn+ea3E2wOLDIoHGWtMVNqF64cd5Wro/ZjF49tTZovGaXiM90HMealpx9Ls353MU
- TlVIbnYLYrztjHqYsQbP3SEi54ibdlGerRYXgCqQN7fu5pcxYe4S4C28fe61HjLYxBhA
- XPf+VdET0CiHTS7oWq5DtmenFF8RMIUpr1A= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3eesktm9s9-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 10:53:44 -0800
-Received: from twshared1433.06.ash8.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 25 Feb 2022 10:53:36 -0800
-Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 560F4B52F88D; Fri, 25 Feb 2022 10:53:28 -0800 (PST)
-From:   Stefan Roesch <shr@fb.com>
-To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <kernel-team@fb.com>
-CC:     <viro@zeniv.linux.org.uk>, <shr@fb.com>, <rostedt@goodmis.org>,
-        <m.szyprowski@samsung.com>
-Subject: [PATCH v4 1/1] io-uring: Make statx API stable
-Date:   Fri, 25 Feb 2022 10:53:26 -0800
-Message-ID: <20220225185326.1373304-2-shr@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220225185326.1373304-1-shr@fb.com>
-References: <20220225185326.1373304-1-shr@fb.com>
+        Fri, 25 Feb 2022 13:55:22 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDBBC1CABC7;
+        Fri, 25 Feb 2022 10:54:49 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id hw13so12574245ejc.9;
+        Fri, 25 Feb 2022 10:54:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FR9eFid3X2JFCac30thoddSUcXVjWfM7VVCjlcAvVos=;
+        b=UpUedE542p5XufpmCZXLrUgJaQoAeOV/LJuTynfFCVjDNp9wMd3x7oktyBaUsEw3q+
+         1G30QXSto77jg7E1SvpM8n67KBjQH2GM37iAnUovzwiEYDu3Flj6TlOq4tjbSw9hpsZc
+         aX6j10pd6ZsVS4j6XCGv09+xkkRBVvOlmjcoEKWFzE7X9P7ul51QIPxXzookZ+sPl0x1
+         l4ZDdAf4U3U+QULIgzs7PxGZM8PLjEvP9eOl657MC7TIUMCvn7dogg/M0bN/YmhXlqnC
+         5lCyMo0+Dm7bFf6NSyU04FQwfYM+LfsDk4EbNoMdWrEtt8IaPOLNSXTu956VfWcNIn1j
+         0bUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FR9eFid3X2JFCac30thoddSUcXVjWfM7VVCjlcAvVos=;
+        b=Ui3GgGH5KDjYIiU0cmHfK1/Vm9gHgQaeX3Q5kvDA9B7RtDkz2YsWc+EfrrqLISYG9c
+         7nSaTLHIepA56MNYZ8T9l/vzJ/T6kGlkdoZyjtDqsPtPDpINa/j1X2w4rX0QzLZyKciN
+         GSgkhvm5w4fiOHvgy17+TLDkTyzI3fNqn7Kg/fTLD1KP34UHTwRnImPziyXOKbiab3zI
+         K9GYGk0cuCWcA5Dl91XYnDwsoHnFhSLc6ck7qq17iuA4vQzUOkUDw1csyfWNj+TbpAoc
+         2QSaZiiREwE/xVgZzw3AI9KeTnmlwfODs3vh6hNGEY19fTxsii8CyI0oN2aIrDs+GenT
+         t7SA==
+X-Gm-Message-State: AOAM530ZYC4eedOVLo2jgMHUQXSKScBe2gQZqNHJMSX8bUTVJl5Xq7TY
+        MRsOED6x3ixY7qmXGjHs0Dg=
+X-Google-Smtp-Source: ABdhPJx2dFzBtkXGAJI/WDmBibn4QWH/IQMXnly8GvOa19/V+Cbp36yzpGrzizCJr6wAoai4egqIgQ==
+X-Received: by 2002:a17:906:4987:b0:6c9:e16a:b5bf with SMTP id p7-20020a170906498700b006c9e16ab5bfmr6953533eju.247.1645815288284;
+        Fri, 25 Feb 2022 10:54:48 -0800 (PST)
+Received: from heron.intern.cm-ag (p200300dc6f1cbe000000000000000fd2.dip0.t-ipconnect.de. [2003:dc:6f1c:be00::fd2])
+        by smtp.gmail.com with ESMTPSA id u19-20020a170906125300b006ceb043c8e1sm1328508eja.91.2022.02.25.10.54.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Feb 2022 10:54:47 -0800 (PST)
+From:   Max Kellermann <max.kellermann@gmail.com>
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Max Kellermann <max.kellermann@gmail.com>
+Subject: [PATCH 1/4] include/pipe_fs_i.h: add missing #includes
+Date:   Fri, 25 Feb 2022 19:54:28 +0100
+Message-Id: <20220225185431.2617232-1-max.kellermann@gmail.com>
+X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: P-1NhLytO8wPP6mR-RjMPYalmUN4JsmU
-X-Proofpoint-GUID: P-1NhLytO8wPP6mR-RjMPYalmUN4JsmU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-25_10,2022-02-25_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=fb_outbound_notspam policy=fb_outbound score=0 adultscore=0
- priorityscore=1501 impostorscore=0 spamscore=0 bulkscore=0 phishscore=0
- mlxscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=903
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2201110000 definitions=main-2202250107
-X-FB-Internal: deliver
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-One of the key architectual tenets is to keep the parameters for
-io-uring stable. After the call has been submitted, its value can
-be changed. Unfortunaltely this is not the case for the current statx
-implementation.
+To verify that this header's #includes are correct, include it first
+in fs/pipe.c.
 
-IO-Uring change:
-This changes replaces the const char * filename pointer in the io_statx
-structure with a struct filename *. In addition it also creates the
-filename object during the prepare phase.
-
-With this change, the opcode also needs to invoke cleanup, so the
-filename object gets freed after processing the request.
-
-fs change:
-This replaces the const char* __user filename parameter in the two
-functions do_statx and vfs_statx with a struct filename *. In addition
-to be able to correctly construct a filename object a new helper
-function getname_statx_lookup_flags is introduced. The function makes
-sure that do_statx and vfs_statx is invoked with the correct lookup flags=
-.
-
-Signed-off-by: Stefan Roesch <shr@fb.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@gmail.com>
 ---
- fs/internal.h |  4 +++-
- fs/io_uring.c | 22 ++++++++++++++++++++--
- fs/stat.c     | 49 +++++++++++++++++++++++++++++++++++--------------
- 3 files changed, 58 insertions(+), 17 deletions(-)
+ fs/pipe.c                 | 2 +-
+ include/linux/pipe_fs_i.h | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 8590c973c2f4..56c0477f4215 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -184,7 +184,9 @@ int sb_init_dio_done_wq(struct super_block *sb);
- /*
-  * fs/stat.c:
+diff --git a/fs/pipe.c b/fs/pipe.c
+index cc28623a67b6..da842d13029d 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -5,6 +5,7 @@
+  *  Copyright (C) 1991, 1992, 1999  Linus Torvalds
   */
--int do_statx(int dfd, const char __user *filename, unsigned flags,
+ 
++#include <linux/pipe_fs_i.h>
+ #include <linux/mm.h>
+ #include <linux/file.h>
+ #include <linux/poll.h>
+@@ -16,7 +17,6 @@
+ #include <linux/mount.h>
+ #include <linux/pseudo_fs.h>
+ #include <linux/magic.h>
+-#include <linux/pipe_fs_i.h>
+ #include <linux/uio.h>
+ #include <linux/highmem.h>
+ #include <linux/pagemap.h>
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index c00c618ef290..0e36a58adf0e 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -2,6 +2,9 @@
+ #ifndef _LINUX_PIPE_FS_I_H
+ #define _LINUX_PIPE_FS_I_H
+ 
++#include <linux/mutex.h>
++#include <linux/wait.h>
 +
-+int getname_statx_lookup_flags(int flags);
-+int do_statx(int dfd, struct filename *filename, unsigned int flags,
- 	     unsigned int mask, struct statx __user *buffer);
-=20
- /*
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 77b9c7e4793b..28b09b163df1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -642,7 +642,7 @@ struct io_statx {
- 	int				dfd;
- 	unsigned int			mask;
- 	unsigned int			flags;
--	const char __user		*filename;
-+	struct filename			*filename;
- 	struct statx __user		*buffer;
- };
-=20
-@@ -4721,6 +4721,8 @@ static int io_fadvise(struct io_kiocb *req, unsigne=
-d int issue_flags)
-=20
- static int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe=
- *sqe)
- {
-+	const char __user *path;
-+
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 	if (sqe->ioprio || sqe->buf_index || sqe->splice_fd_in)
-@@ -4730,10 +4732,22 @@ static int io_statx_prep(struct io_kiocb *req, co=
-nst struct io_uring_sqe *sqe)
-=20
- 	req->statx.dfd =3D READ_ONCE(sqe->fd);
- 	req->statx.mask =3D READ_ONCE(sqe->len);
--	req->statx.filename =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	path =3D u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	req->statx.buffer =3D u64_to_user_ptr(READ_ONCE(sqe->addr2));
- 	req->statx.flags =3D READ_ONCE(sqe->statx_flags);
-=20
-+	req->statx.filename =3D getname_flags(path,
-+					getname_statx_lookup_flags(req->statx.flags),
-+					NULL);
-+
-+	if (IS_ERR(req->statx.filename)) {
-+		int ret =3D PTR_ERR(req->statx.filename);
-+
-+		req->statx.filename =3D NULL;
-+		return ret;
-+	}
-+
-+	req->flags |=3D REQ_F_NEED_CLEANUP;
- 	return 0;
- }
-=20
-@@ -6708,6 +6722,10 @@ static void io_clean_op(struct io_kiocb *req)
- 			putname(req->hardlink.oldpath);
- 			putname(req->hardlink.newpath);
- 			break;
-+		case IORING_OP_STATX:
-+			if (req->statx.filename)
-+				putname(req->statx.filename);
-+			break;
- 		}
- 	}
- 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
-diff --git a/fs/stat.c b/fs/stat.c
-index 28d2020ba1f4..7f734be0e57e 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -184,6 +184,20 @@ int vfs_fstat(int fd, struct kstat *stat)
- 	return error;
- }
-=20
-+int getname_statx_lookup_flags(int flags)
-+{
-+	int lookup_flags =3D 0;
-+
-+	if (!(flags & AT_SYMLINK_NOFOLLOW))
-+		lookup_flags |=3D LOOKUP_FOLLOW;
-+	if (!(flags & AT_NO_AUTOMOUNT))
-+		lookup_flags |=3D LOOKUP_AUTOMOUNT;
-+	if (flags & AT_EMPTY_PATH)
-+		lookup_flags |=3D LOOKUP_EMPTY;
-+
-+	return lookup_flags;
-+}
-+
- /**
-  * vfs_statx - Get basic and extra attributes by filename
-  * @dfd: A file descriptor representing the base dir for a relative file=
-name
-@@ -199,26 +213,19 @@ int vfs_fstat(int fd, struct kstat *stat)
-  *
-  * 0 will be returned on success, and a -ve error code if unsuccessful.
-  */
--static int vfs_statx(int dfd, const char __user *filename, int flags,
-+static int vfs_statx(int dfd, struct filename *filename, int flags,
- 	      struct kstat *stat, u32 request_mask)
- {
- 	struct path path;
--	unsigned lookup_flags =3D 0;
-+	unsigned int lookup_flags =3D getname_statx_lookup_flags(flags);
- 	int error;
-=20
- 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
- 		      AT_STATX_SYNC_TYPE))
- 		return -EINVAL;
-=20
--	if (!(flags & AT_SYMLINK_NOFOLLOW))
--		lookup_flags |=3D LOOKUP_FOLLOW;
--	if (!(flags & AT_NO_AUTOMOUNT))
--		lookup_flags |=3D LOOKUP_AUTOMOUNT;
--	if (flags & AT_EMPTY_PATH)
--		lookup_flags |=3D LOOKUP_EMPTY;
--
- retry:
--	error =3D user_path_at(dfd, filename, lookup_flags, &path);
-+	error =3D filename_lookup(dfd, filename, lookup_flags, &path, NULL);
- 	if (error)
- 		goto out;
-=20
-@@ -240,8 +247,15 @@ static int vfs_statx(int dfd, const char __user *fil=
-ename, int flags,
- int vfs_fstatat(int dfd, const char __user *filename,
- 			      struct kstat *stat, int flags)
- {
--	return vfs_statx(dfd, filename, flags | AT_NO_AUTOMOUNT,
--			 stat, STATX_BASIC_STATS);
-+	int ret;
-+	int statx_flags =3D flags | AT_NO_AUTOMOUNT;
-+	struct filename *name;
-+
-+	name =3D getname_flags(filename, getname_statx_lookup_flags(statx_flags=
-), NULL);
-+	ret =3D vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
-+	putname(name);
-+
-+	return ret;
- }
-=20
- #ifdef __ARCH_WANT_OLD_STAT
-@@ -602,7 +616,7 @@ cp_statx(const struct kstat *stat, struct statx __use=
-r *buffer)
- 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
- }
-=20
--int do_statx(int dfd, const char __user *filename, unsigned flags,
-+int do_statx(int dfd, struct filename *filename, unsigned int flags,
- 	     unsigned int mask, struct statx __user *buffer)
- {
- 	struct kstat stat;
-@@ -636,7 +650,14 @@ SYSCALL_DEFINE5(statx,
- 		unsigned int, mask,
- 		struct statx __user *, buffer)
- {
--	return do_statx(dfd, filename, flags, mask, buffer);
-+	int ret;
-+	struct filename *name;
-+
-+	name =3D getname_flags(filename, getname_statx_lookup_flags(flags), NUL=
-L);
-+	ret =3D do_statx(dfd, name, flags, mask, buffer);
-+	putname(name);
-+
-+	return ret;
- }
-=20
- #ifdef CONFIG_COMPAT
---=20
-2.30.2
+ #define PIPE_DEF_BUFFERS	16
+ 
+ #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
+-- 
+2.34.0
 
