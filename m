@@ -2,67 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C58124C4776
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 15:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D6104C47E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 15:52:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241737AbiBYObF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 09:31:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49208 "EHLO
+        id S241875AbiBYOxT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 09:53:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239129AbiBYObD (ORCPT
+        with ESMTP id S241692AbiBYOxR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 09:31:03 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8132E233E6E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 06:30:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645799429;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=31ddj2FGbLXm1jpn+KxL0nZeHBs+QByAvpjKBS8rBxM=;
-        b=LbMo89p1fGx7MpfNEALmrCYMpIRTF7hkTEo/w2U+grHv37eFSH0G+6P9PAHkhrASM5EU5Q
-        xWlxeCLJOTgYLirh5izL2WIpHxlA0N3WjQzj3TFZzcyptdaeYGBjWMFAU+AlD+DH/IPbwW
-        sInqOnXihv4fMSOOzlthS6x+CRa6ccU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-475-sviDcEc-OXO9S9jHIznklg-1; Fri, 25 Feb 2022 09:30:25 -0500
-X-MC-Unique: sviDcEc-OXO9S9jHIznklg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 25E061006AA6;
-        Fri, 25 Feb 2022 14:30:24 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 010EF7C5B8;
-        Fri, 25 Feb 2022 14:30:23 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 73F492237E9; Fri, 25 Feb 2022 09:30:23 -0500 (EST)
-Date:   Fri, 25 Feb 2022 09:30:23 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Steve French <smfrench@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ioannis Angelakopoulos <jaggel@bu.edu>
-Subject: Re: [LSF/MM/BPF TOPIC] Enabling change notification for network and
- cluster fs
-Message-ID: <Yhjn/zmdlAFtvRR0@redhat.com>
-References: <CAH2r5mt9OfU+8PoKsmv_7aszhbw-dOuDCL6BOxb_2yRwc4HHCw@mail.gmail.com>
- <Yhf+FemcQQToB5x+@redhat.com>
- <CAH2r5mt6Sh7qorfCHWnZzc6LUDd-s_NzGB=sa-UDM2-ivzpmAQ@mail.gmail.com>
- <YhjYSMIE2NBZ/dGr@redhat.com>
- <YhjeX0HvXbED65IM@casper.infradead.org>
+        Fri, 25 Feb 2022 09:53:17 -0500
+Received: from mail-oo1-xc32.google.com (mail-oo1-xc32.google.com [IPv6:2607:f8b0:4864:20::c32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51AE115C19B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 06:52:43 -0800 (PST)
+Received: by mail-oo1-xc32.google.com with SMTP id y15-20020a4a650f000000b0031c19e9fe9dso6420008ooc.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Feb 2022 06:52:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C2d2A3E72PD4ZnjabW+/j5KRYHuTUGB4Rh6qEh1bQ3A=;
+        b=ur2Nfp90lT1ydsXWMkenY5yHfHVTztxJufFT1E+koLOkEssCbmJ06s7vYDP5a1+p2C
+         JDHLdR2LENeUqO6Vine8jrH6I/tOS9mtl/Cw8hlGp58OIcixbS2i5UFL4lnxfIDAVfTP
+         OtCkc+ZQHyxHaQDjuFLXlKE0NBHxoSfTVuh9KYZWoaCXDgJdEMCxqO7vtHhLoaaf1sFh
+         qNi4120K4kcIUV2t9KjXsqz1fC123Z1+48QMzHUpiH1UM8wDeeYkyF0qP55H39MpUflM
+         G3ZJK2/FWuLzlk43043E7JFWCpSKTM9z5JdPdd/U+0MG9UTx8yhSY+zYbIoJ9LhMRKMp
+         CMvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C2d2A3E72PD4ZnjabW+/j5KRYHuTUGB4Rh6qEh1bQ3A=;
+        b=Q/dS8ZtoA1QGWxHUz3TnVKmzqpXF5e2JIB9oQeEsn5peOuHrghvbzBX29vAl8czblh
+         saC9PNGemupva6Le5MzmhiUWPj7r7TWAUKB2voOAbu0IG61ehlGhziN7hJSlXNhsIX1F
+         wez3wK26y2Emuh79NZZiuI7sA6tLYheP/U7ldjFj8H503PHmLdjjI6b9Uww/bepp/qG8
+         UgcxcNDsV5lygW9NeyDjY4U0kd1kMS2AngpwFEF8hfCfBBJIhNbEo6N6Yn/31CsjVZ4u
+         TXOqCKcCQvgpTR8MnDuFe2VrLvmlIbuHD/DoH6jrc+lJZLY8qXJSI2uD6KdRQR+xrEXR
+         Ri/g==
+X-Gm-Message-State: AOAM532MQocQXph9HlFPn9eNdXsWSOsolAvko1guBFA1YinwPGFSJSTo
+        2nr0ORv0nKnOnbxLn1TttXO0PZ1Sua8e1GXWPGJj4jyN4VKqrw==
+X-Google-Smtp-Source: ABdhPJzc5dvcEURQPm0a1Ibexp5oDfoNr4t66Ygj1rEyK50ERTcjVz6Usb1B/GLRuwGhvsG8vdGASGuyKPAqPfIjLW4=
+X-Received: by 2002:a05:6870:e2d5:b0:d6:d26e:855e with SMTP id
+ w21-20020a056870e2d500b000d6d26e855emr1430549oad.269.1645800762694; Fri, 25
+ Feb 2022 06:52:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YhjeX0HvXbED65IM@casper.infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+References: <20220209202215.2055748-1-willy@infradead.org> <Ygpk+ys4SOu6uTrN@casper.infradead.org>
+In-Reply-To: <Ygpk+ys4SOu6uTrN@casper.infradead.org>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Fri, 25 Feb 2022 09:52:31 -0500
+Message-ID: <CAOg9mSRzb_7Juse=-rAs1Pxqtvfi5o-LOdzOwu9BAQPHwoo=NQ@mail.gmail.com>
+Subject: Re: [PATCH 00/56] Filesystem folio conversions for 5.18
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,54 +64,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 01:49:19PM +0000, Matthew Wilcox wrote:
-> On Fri, Feb 25, 2022 at 08:23:20AM -0500, Vivek Goyal wrote:
-> > What about local events. I am assuming you want to supress local events
-> > and only deliver remote events. Because having both local and remote
-> > events delivered at the same time will be just confusing at best.
-> 
-> This paragraph confuses me.  If I'm writing, for example, a file manager
-> and I want it to update its display automatically when another task alters
-> the contents of a directory, I don't care whether the modification was
-> done locally or remotely.
-> 
-> If I understand the SMB protocol correctly, it allows the client to take
-> out a lease on a directory and not send its modifications back to the
-> server until the client chooses to (or the server breaks the lease).
-> So you wouldn't get any remote notifications because the client hasn't
-> told the server.
+I tested for orangefs on top of Linux 5.17-rc4 and found it to be good...
 
-So we will get remote notifications when client flushes changes to server,
-IIUC. But in this case, given changes are happening on same client, local
-events will make sense because we will come to know about changes much
-sooner.
+I did my testing inside of gcloud instead of on my wimpy VMs for the
+first time, it was interesting and fast :-) ...
 
-But if another client was watching for changes too, it will not come to
-know about these events till first client flushes these changes to
-server.
+-Mike
 
-Anyway, it is a good point. This is a good example of where we might want
-local events too. 
-
-This raises question how applications will handle the situation, if we allow
-both local and remote events, then there will be too many duplicate events.
-One event for local change and another will be sent by server when server
-notices the change.
-
-May be there needs to be a way to supress remote event if we already
-generated local event. But not sure how would one figure that out. If
-server can somehow not send remote events to the client which triggered
-the event (and send remote events to all other clients), may be that will
-help.
-
-Havid said that, it might not be easy for server to figure out which
-client triggered the event and not send remote event back to that client.
-
-May be we should allow both local and remote events. And probably event
-should carry additional property which says whether event was local or
-remote. And then let application deal with it?  I am not sure, just
-thinking loud. 
-
-Thanks
-Vivek
-
+On Mon, Feb 14, 2022 at 9:19 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Wed, Feb 09, 2022 at 08:21:19PM +0000, Matthew Wilcox (Oracle) wrote:
+> > As I threatened ;-) previously, here are a number of filesystem changes
+> > that I'm going to try to push into 5.18.
+> >
+> > Trond's going to take the first two through the NFS tree, so I'll drop
+> > them as soon as they appear in -next.  I should probably send patches 3
+> > and 6 as bugfixes before 5.18.  Review & testing appreciated.  This is
+> > all against current Linus tree as of today.  xfstests running now against
+> > xfs, with a root of ext4, so that's at least partially tested.  I probably
+> > shan't do detailed testing of any of the filesystems I modified here since
+> > it's pretty much all mechanical.
+>
+> I've been asked if I pushed this to git anywhere; I hadn't, but
+> here it is:
+>
+> git://git.infradead.org/users/willy/pagecache.git fs-folio
+> or on the web:
+> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/fs-folio
+>
