@@ -2,184 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E38B64C5171
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 23:20:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A96E44C51C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Feb 2022 23:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237705AbiBYWVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Feb 2022 17:21:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44834 "EHLO
+        id S238911AbiBYW4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Feb 2022 17:56:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229927AbiBYWVF (ORCPT
+        with ESMTP id S229885AbiBYW4j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Feb 2022 17:21:05 -0500
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AE41A58C9;
-        Fri, 25 Feb 2022 14:20:32 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PbgL8uecXCytHcWAde/kneVzg98q0GF6063QZBcTzCgO5Mmi6Jc+Jt6FsmbHunNW2Ihh1Dvjc9pD8APDKNK+DS0tE4VM/4Fpqa2akrEJpad0N3Aw0+WUXJdunOk/AOB9n0zeMueLQ4C9YT4cRTO2I3Pxt9hzSviK90vbNQgfrzC8TxzLfPlRvjYEIY8A/REHGQ22fXlZNJEfYij0QOLg5NJ/g7ElzdGfbatqlSDt/YthLM1tjptkMafZmcNp5jkbPbcaUbAmXJn3QNtdNeBj9G0Hk2r5ryeg4xlxGEpNjBGzg1kKMA6eV4bLvgnb8FHtYedYquwHDehvqlQi/MBJ/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9c8TcnhAR7GENlu0oKJ0qHTw1exP4AbiHErVgkTWaOU=;
- b=U/SaQRbQsHuw6r60y34AuRuObrh/1uWsCO9TqZ3ni7Ek8aAVwZ/U1Mjhyt0GEAQZbObB/m93AkY/u/VIt5A2uM1WJBqg/FNE7OSPfJVFAKPqrzrTZ0bVGG4xSgMkPD+9KgrDJrB3jqdObPMn0uTJ8vJtjddGtbjt0qO0kljzNMJrY9mCl305+QhllkCpjBgnnD22iIsP38RSsi7WaDp8YsWd/8rB0F997N1ek2PNOaINcm132o7uO/n145wU7z2AQbBm99u3ohQO76/Tb8PWgVfu5UQlwiv0TWyRDl4lX0kU4bWMjveNVQtEqndVk5bj6yjl3rw1yfjSRLHGjAq6DA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9c8TcnhAR7GENlu0oKJ0qHTw1exP4AbiHErVgkTWaOU=;
- b=AKBDdyi3xAsg5OMoZpdy1yaGwXC4zbqufB3bm/4WBm62wxDKQikvGLKt0nPT/SJjep0hpkLY42OFbBhzE6n368Jnb/wSoQqDSorZE0TiZlpnf1OuOPEIm+4Nlnr7OQicLIkQOUkv2utplsi023xwtYF8/fnbzMBWOsfftWAfZEMceKA/w5JIOxsF1saJRUpTP/lWZpg/BuhqVEpCSBRsEBUT2mZq0hjhY5EZPiBRTWjk3STVXeFjMaBU9WMo8jhwrw9OnMinNWSjCYwnQaa4GZtlXtbwnoXHwawuWoqdumZuBvg+WBkRf70dl+wghmsGiQig74Ve3rIFBug8BoJ5Jw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by BN8PR12MB3217.namprd12.prod.outlook.com (2603:10b6:408:6e::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.22; Fri, 25 Feb
- 2022 22:20:28 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::498:6469:148a:49c7]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::498:6469:148a:49c7%7]) with mapi id 15.20.5017.026; Fri, 25 Feb 2022
- 22:20:28 +0000
-Message-ID: <a23c8d6f-6311-f74f-b0fe-26682e16ee98@nvidia.com>
-Date:   Fri, 25 Feb 2022 14:20:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [RFC PATCH 0/7] block, fs: convert Direct IO to FOLL_PIN
-Content-Language: en-US
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20220225085025.3052894-1-jhubbard@nvidia.com>
- <20220225120522.6qctxigvowpnehxl@quack3.lan>
- <d2b87357-baf9-ef1f-6e6a-18aab8e6d2fd@nvidia.com>
-In-Reply-To: <d2b87357-baf9-ef1f-6e6a-18aab8e6d2fd@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR02CA0064.namprd02.prod.outlook.com
- (2603:10b6:a03:54::41) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+        Fri, 25 Feb 2022 17:56:39 -0500
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A45881EF354;
+        Fri, 25 Feb 2022 14:56:04 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 73FEF10E20E2;
+        Sat, 26 Feb 2022 09:56:01 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nNjVI-00GQUL-9I; Sat, 26 Feb 2022 09:56:00 +1100
+Date:   Sat, 26 Feb 2022 09:56:00 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     Byron Stanoszek <gandalf@winds.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org
+Subject: Re: Is it time to remove reiserfs?
+Message-ID: <20220225225600.GO3061737@dread.disaster.area>
+References: <YhIwUEpymVzmytdp@casper.infradead.org>
+ <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
+ <20220222221614.GC3061737@dread.disaster.area>
+ <3ce45c23-2721-af6e-6cd7-648dc399597@winds.org>
+ <YhfzUc8afuoQkx/U@casper.infradead.org>
+ <257dc4a9-dfa0-327e-f05a-71c0d9742e98@winds.org>
+ <20220225132300.GC18720@1wt.eu>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dac4101a-8dd3-4947-bb1b-08d9f8ad0741
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3217:EE_
-X-Microsoft-Antispam-PRVS: <BN8PR12MB32179A76D954B23E0DC7DD71A83E9@BN8PR12MB3217.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +j9sqMzzaWXVSlE1MvqWGQtgOaPSjI9t8DD4Uy/8EJqQf/NOWvhAD1SlRt71HXdRR3ARwKRCoB4y+2ED4M4DONbgdgD2h9sBVUqxEBENAGLZkRtl1p+C9gD2Nwhl2dzxmaeOn2HxjpsxBXNFm25nUBBTHYmCzJ0OmgNrjl4nvMjSvFNh74kys22mpKaVsVtJv0PTMAJO2OhRYaQhxQVzenYTnUoF6pP897OgK/4vOceojMtpimrh+j+2+6RcAWgE4SvPKJrFLsV9w9IRXkn55vVJc0PiBYZeNG8kHux2DkGwdbRfXZd8PBAZJ60A8c+NnLnkuhxM62W9S60/pg3jWAPh1TfwWoBWxUKxcMweE6mEmZukpc0nVJKtNWTppgNj6peuMQZ1AO+7GPvFNDvxV3dgwGCJW4xAaiMdtIvUN+gF/hO7vRMKyxodU0BDHEVDFLcjhWTrkd7VdW24fLos7Lz9uTbtAxYp+LrIy7Go/VNbBEjuOSfaMFhxoJizlVmsrzf8nrVu0HnNkbBI2wMQ3mkF3/MeU+yEyx7jNLYho3Hc+if7H4d2UGk3/3vvpOMTYnTC3fdIAUc2tufTC/EzGtIl1Mpl0wWV0j80x5RKbjFHjvp5QrIs0dmSpIPL+8XwSQLNWEeiYjzV1KjK3eDmZYx/jEd0//GJo6Xc9T/DQivyYAjhwHyvBXfCEQ6OkrGDe1YbEnm0JQGX/LOE0Z6HZC9iw4cFpiNwKSn0hG636YsAD3T21jgZdw6Jk1e+Q021
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6512007)(8936002)(31686004)(86362001)(26005)(53546011)(6506007)(36756003)(31696002)(6486002)(508600001)(7416002)(6916009)(54906003)(66556008)(66476007)(38100700002)(5660300002)(2906002)(8676002)(2616005)(6666004)(186003)(66946007)(316002)(4326008)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bFE2eU5EZTgxV25ndVJjRFdmNkxzQmYwMWYvTmJiNzZvcDNiRC9GNmlEWXFO?=
- =?utf-8?B?Q3hQQXh5QTMwRTRXL3RFd3lmdDkwVG9jeEcvMGwzSkU4aklsVmlXQ2RPWmJm?=
- =?utf-8?B?SnFpelcvRGc1ZnF0Z0NuRlJkaFdUMkNUOHBocllSLzV2ZHZMNnEyd2hnUVlj?=
- =?utf-8?B?Q0dVazdqMXVGR1VGN1Y4bkR4RWZvOEJVRndqSkttU0ROYjBJU2I3Mm5tSW5u?=
- =?utf-8?B?QkY2ZTRKajhYQzI1V09lUGV2SmkzT0VRVkZsa01jOFNBR0toenNTNDllMmtF?=
- =?utf-8?B?MEEwWnRhd1V6TVQ0SGpBbE5nTENXMDZhZDEwRURmRjdka3hTUWw5bE5leXR0?=
- =?utf-8?B?UlAzRlFKRTZVbmpudXB1MjRoUHpnWHVPeGpydFU2TUxQbWxsc0d5Z2d6RHhv?=
- =?utf-8?B?dElOdUxaWnJ6OWZhYjFRV2NpeVc1cGRoU0lIZ2xtQnlYWE5GNzlNM0sxN0JN?=
- =?utf-8?B?eUxVWTU5eExoOVJhQUFwd3dTMktoVlNqb2p0NU4zTUFaaXFucnl5L0FUYTFV?=
- =?utf-8?B?MnllSHJ4SWllQm9RSzFpVkZHbG5HTzIrYlBEZ0xOdS82WlBVNTN1Sm5hUTVz?=
- =?utf-8?B?TUZSTHNZN21kWC80NVNvOC9xc0NNWU1RaStwa3BHaGwrOHA2c2preTJGa1Jp?=
- =?utf-8?B?OHhZRWFLSkhnMG02MmRBWFhYTmJmTW9SNEs3S3h1Q1ptM3RGbVJOcXoxeURW?=
- =?utf-8?B?NlAreFJLQXN0NkRQcTgvcXZ4T3RpMUpyd1R6U0dWWE43N1NEMCtpbkM3REpq?=
- =?utf-8?B?R09TNGdFQm9URVJPazlxbXZVNUcrNjNoYXRaVDh3ODFmQnp2Q2RSc2lOS0dv?=
- =?utf-8?B?S1lySkl6Y1cva2Z5Q05kV3Y1SW1IZnhVWDlvTk5tVldtNFVocHozMzJ3Q0t3?=
- =?utf-8?B?c29OeU8wL0duZXNjblJHVldGWTVxVjJCNEUxZ3FxbW15Ritwd3VId3pjdGJZ?=
- =?utf-8?B?eEx3dWNBcG5DTElWa04wQmg1TE1jcldBL0lWdUJYdDVEdHM4VXFpRzNkZ2Jl?=
- =?utf-8?B?TldXd0k5LzJtNXkyUXF3MWJ6RE0vM2FXUkhlQ2I4WGtDa3g1aEVMWjI4S3or?=
- =?utf-8?B?S0tZaExlbzk5LytOQ1I0eHB2clcwYVRzZlJyNmtaVkd3SkJld2xJNExjSDI4?=
- =?utf-8?B?RjhVaWxEejYvZ3lvMWV6SjF4UHVXTmZ4MzBYWTUxbGhURTBacTdnMHZsY0JM?=
- =?utf-8?B?bWpIN09qTXlXSDV4NXVRRDVFcXU4azhiNGE1ZWF1bVZLYk14TmhEZWFadExh?=
- =?utf-8?B?eHJHNGRPc3RqOVhPcm5HS3hDVnhjWXZZMHFKUlNYT09GMVRTRWhCdGpZZWZr?=
- =?utf-8?B?NGJPdXV0YnFCWXpudWxMcHhwZlhCa0FNMmdLdXpEVDN1d1NhSEdqbkJUMFFM?=
- =?utf-8?B?blR4dmtMTFNJUGVZWm9iT1pJZkljTDVHUTFoblQzSVRnZ1RMV1FZVUU1V2NK?=
- =?utf-8?B?TFlvM2plUjRkNGxJWDNrTGNlbSsyQ2R2bnh5MlI1bjk2T2xxS3k0VFZVSi9y?=
- =?utf-8?B?bElYbTNUa1dsSW1lRjNyUHVsbjJiczdtTnRtb1RSSHdWcEwxaFUxbXc0TTFO?=
- =?utf-8?B?YXQ5VG5lVUhvaU91UnZocldzd2tXNlFBcUIvQzY4YzJKc2RkNFJpSE8yOFRJ?=
- =?utf-8?B?K0xteVFUY3BRMU9Ud0lkYUVXYW9RVFc5MEY2RGdDd0ZTbDUyQ3VpTFNsZmd0?=
- =?utf-8?B?RnpHUEU3Y3Fyb3QwOG9nakRIWjZYYk4ycGl2VFdhUWZ6dnd1aW91M2Znd3Jx?=
- =?utf-8?B?dFIzVDdmRVR0eHorVVBvTzBaWThTUTdUWGhIUC81bDU3T0tLNk54WWpqaVJL?=
- =?utf-8?B?Z1plZUtqZmVjTU13Yk5vTEppNjB4eEllc29kdFhBSlQ2YUN2cmZGOC9BN1RX?=
- =?utf-8?B?Z2N3VHpzYWpuMlRndEp3UnFDVXVGeDZmZkIwTUNoVHhiYUpOMWlFVVJjY2Vz?=
- =?utf-8?B?UEdwajVOdjlNOVA3UVM1Umx6aWRtYzNuU3JxUlhzMG9sQTFEaXFXQ0FmVFdp?=
- =?utf-8?B?eC9UVmp1WjkzK1NhQ2JTMnVCTm9DZFlXeGFnczc1M0txSXlvbnNwRldqSDBW?=
- =?utf-8?B?WGZoT2g0Yy9OMzg2QUFlOWFaWExKMU9aSVh1djlPWmh4dWJDTXNiRjVpVVVC?=
- =?utf-8?B?Y243cEF6UHV4STI2TmZUalUwVFlHSU5UelhPSXRXK0s4U1hhV0pNM2MrdEZ6?=
- =?utf-8?Q?oLhYCLqBpePyupp14hw81Ko=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dac4101a-8dd3-4947-bb1b-08d9f8ad0741
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2022 22:20:28.6758
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9tsroRTmQfhzZezlm8B9tndp3PWK8Z304VlD3vqC8UIL5yKnQxDuu8ddMzW2Pat3Apd4LgJ0jwD1avUFGV9rFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3217
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220225132300.GC18720@1wt.eu>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62195e83
+        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
+        a=_MjYSGqaCGpKE7YW:21 a=kj9zAlcOel0A:10 a=oGFeUVbbRNcA:10 a=7-415B0cAAAA:8
+        a=i9EhDj85i3cWi9GefWwA:9 a=CjuIK1q_8ugA:10 a=aebnku51ZD03SSuSuSm5:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/25/22 11:36, John Hubbard wrote:
-> On 2/25/22 04:05, Jan Kara wrote:
-> ...
->> With having modified fs/direct-io.c and fs/iomap/direct-io.c which
->> filesystems do you know are missing conversion? Or is it that you just want
->> to make sure with audit everything is fine? The only fs I could find
->> unconverted by your changes is ceph. Am I missing something?
->>
->>                                 Honza
+On Fri, Feb 25, 2022 at 02:23:00PM +0100, Willy Tarreau wrote:
+> On Fri, Feb 25, 2022 at 08:10:22AM -0500, Byron Stanoszek wrote:
+> > On Thu, 24 Feb 2022, Matthew Wilcox wrote:
+> > > On Wed, Feb 23, 2022 at 09:48:26AM -0500, Byron Stanoszek wrote:
+> > > > For what it's worth, I have a number of production servers still using
+> > > > Reiserfs, which I regularly maintain by upgrading to the latest Linux kernel
+> > > > annually (mostly to apply security patches). I figured this filesystem would
+> > > > still be available for several more years, since it's not quite y2038k yet.
+> > > 
+> > > Hey Byron, thanks for sharing your usage.
+> > > 
+> > > It's not entirely clear to me from your message whether you're aware
+> > > that our annual LTS release actually puts out new kernels every week (or
+> > > sometimes twice a week), and upgrades to the latest version are always
+> > > recommended.  Those LTS kernels typically get five years of support in
+> > > total; indeed we just retired the v4.4 series earlier this month which
+> > > was originally released in January 2016, so it got six years of support.
+> > > 
+> > > If we dropped reiserfs from the kernel today (and thanks to Edward, we
+> > > don't have to), you'd still be able to use a v5.15 based kernel with
+> > > regular updates until 2028.  If we drop it in two years, that should
+> > > take you through to 2030.  Is that enough for your usage?
+> > 
+> > I'm aware of the LTS releases, but I hadn't thought about them in relation to
+> > this issue. That's a good point, and so it sounds like I have nothing to worry
+> > about.
 > 
-> There are a few more filesystems that call iov_iter_get_pages() or
-> iov_iter_get_pages_alloc(), plus networking things as well, plus some
-> others that are hard to categorize, such as vhost. So we have:
-> 
-> * ceph
-> * rds
-> * cifs
-> * p9
-> * net: __zerocopy_sg_from_iter(), tls_setup_from_iter(),
-> * crypto: af_alg_make_sg() (maybe N/A)
-> * vmsplice() (as David Hildenbrand mentioned)
-> * vhost: vhost_scsi_map_to_sgl()
+> This just makes me think that instead of speaking about deprecation in
+> terms of version, speaking in terms of dates might be more suitable, as
+> it should help discouraging distros or products shipping LTS kernels
+> from enabling such deprecated features: when you're told the features
+> will disappear after, say, 5.20, some might think "OK 5.20 is the last
+> one and it happens to be LTS so I get the feature for 6 extra years
+> after it's EOL".
 
-...although...if each filesystem does *not* require custom attention,
-then there is another, maybe better approach, which is: factor out an
-iovec-only pair of allocators, and transition each subsystem when it's
-ready. So:
+This is exactly why the XFS deprecation schedules are dated while
+the actual removals record kernel releases. If it gets released in
+a kernel, then it technically is supported for the life of that
+kernel, even if it is a LTS kernel and the functionality no long
+exists upstream.
 
-     dio_iov_iter_get_pages()
-     dio_iov_iter_get_pages_alloc()
+That is, we know that once we've removed something from upstream,
+it's still going to be actively used in LTS kernels based on kernels
+that still have that functionality. Same goes for enterprise
+kernels. Hence deprecation policies need to first acknowledge the
+typical "no regressions" policies for LTS kernels...
 
-That would allow doing this a bit at a time, and without the horrible
-CONFIG parameter that is switched over all at once.
+With that in mind, this is why we've already deprecated non-y2038k
+compliant functionality in XFS so that enterprise kernels can mark
+it deprecated in their next major (N + 1) release which will be
+supported for 10 years. They can then remove that support it in the
+N+2 major release after that (which is probably at least 5 years
+down the track) so that the support window for non-compliant
+functionality does not run past y2038k.
 
-The bio_release_pages() still calls unpin_user_page(), though, so that
-means that all Direct IO callers would still have to change over at
-once.
+We chose this specifically because most of the XFS developers are
+also responsible for maintaining enterprise distro kernels, and so
+we always thinking about how we are going to maintain the upstream
+code we release today because it will have a 10-15 year active
+support life.  This is also why the deprecation notice in
+Documentation/admin-guide/xfs.rst has this caveat:
 
+	Note: Distributors may choose to withdraw V4 format support earlier than
+	the dates listed above.
 
-thanks,
+Distros might chose to remove deprecated functionality immediately
+rather than rely on, say, LTS kernel support for functionality that
+upstream developers are clearly not focussing their efforts on
+developing further.
+
+Hence we have to acknowledge that fact that once upstream has
+deprecated a feature, it's up to distros to decide how they want to
+handle long term support for that feature. The upstream LTS kernel
+maintainers are going to have to decide on their own policy, too,
+because we cannot bind upstream maintenance decisions on random
+individual downstream support constraints. Downstream has to choose
+for itself how it handles upstream deprecation notices but, that
+said, upstream developers also need to listen to downstream distro
+support and deprecation requirements...
+
+Cheers,
+
+Dave.
 -- 
-John Hubbard
-NVIDIA
+Dave Chinner
+david@fromorbit.com
