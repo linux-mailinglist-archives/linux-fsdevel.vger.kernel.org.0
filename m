@@ -2,100 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE484C5526
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 11:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A0BF4C55B5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 12:52:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbiBZKXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Feb 2022 05:23:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59092 "EHLO
+        id S231520AbiBZLxF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Feb 2022 06:53:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbiBZKXP (ORCPT
+        with ESMTP id S230151AbiBZLxE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Feb 2022 05:23:15 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A54210450;
-        Sat, 26 Feb 2022 02:22:41 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id t11so9376210ioi.7;
-        Sat, 26 Feb 2022 02:22:41 -0800 (PST)
+        Sat, 26 Feb 2022 06:53:04 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CA527FD3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Feb 2022 03:52:29 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id l9so6475733pls.6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Feb 2022 03:52:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7jsdZ9DhlS+cuBn5e0nl64bHzF3fsXAHgkXh5/R5ncc=;
-        b=Pk/5G1ltlqkex9Y+38e0ALpLwIfmXwSdGhfyk3KPmYg7jA8caCJ5ptjHVJ8qkrApBN
-         PNsT6YFchzjpfgqUDntNayFb7qHshC7M4cynt2wDG3w+qRcIzmjT4A123luLgdFYZZyS
-         cfl3zIwmajvZby33ZoWHTOS7wjzJuwU9rc/p/psW6U9qElutFiMDXtaStoHn4VAIWJxw
-         ccZNKUp3cfUMQjAfMaTlYk9sZSlPgpRDqIFTEPIHlUdaY8Vc4uecClBtQmeTHpV2GhcN
-         qk3uBpZ7ZrG11i2NUPBf1rSerH/IpgTqx7BhceHzb94piiA5AWXht/y/hOcWWVVaBLUr
-         VF+Q==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Ea3QXOZbjOPzaxGsgfBM/mqvgonT3tPPaz+lhJkrk24=;
+        b=dDjYm27p2iHctpRQWBncoiN/lzoby+WoFLXLLz+T89Azj+MrhaJOEVvy++LKcdoCcF
+         9lx1OHwjGH4NPU5N8+aOKyoDf0nZXkmfkP84HVkgFkdtUg+Atyb9qjeizEPRutokbicS
+         ohi0uKx9whk6V3ICv1k/rP8NZq8rPBeLtcv30=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7jsdZ9DhlS+cuBn5e0nl64bHzF3fsXAHgkXh5/R5ncc=;
-        b=smss3/zdVsBBpcb/6UipHbZ7LvuK7YUcX6FGSw0F0XgP8D8Ac3Oju4qGox1aSSIpYo
-         vaJINX4v2cRXeoixg088luVXGYT/rz28PqO9p/2kc8TbOnvNZKH6Oh8PHN+p1Poxqdfd
-         sMLq5xs2VwpfGTSi8M2oJ4mmxhBJPcNlERPEA2XaC1O2Uowr9YscNkB1ejfyXEKjyaoS
-         /1m08TwpFIZ1mMhnam+xYOVVZxx2iJGN4nqUJkUQVVm2y3dYoDKqyAfiGOWCnVJYtFsv
-         IXKGKGrX4a7BsIh4Rx4lbB+Xix2m+Zo56honvcM3IfW/ZzHASJa+20aaEcvfCSrOUFvm
-         xKHA==
-X-Gm-Message-State: AOAM532P8eA1jr/oQhsG0QKoNq+Lf81a/tAdgDLR9UysESV44AkQ8Lqu
-        aCUZYzlXH5pnkN0dXcNpem64Uck8c+SdTkm9pGQ=
-X-Google-Smtp-Source: ABdhPJwz8AsXgVV4L2PxrAIHcbkuaegZX2IWrny5SGALDuwN9dFZuBKCYJAaU1OIMy4FNI+KTaHOiybD2TFeolYhkIo=
-X-Received: by 2002:a05:6638:4905:b0:317:1dda:b116 with SMTP id
- cx5-20020a056638490500b003171ddab116mr985704jab.188.1645870961399; Sat, 26
- Feb 2022 02:22:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Ea3QXOZbjOPzaxGsgfBM/mqvgonT3tPPaz+lhJkrk24=;
+        b=gZKyqkvVgHp0JvkBQwTHsJ7TdW9wawOu1KmMDDWe7rcZN1+dAObJkiluff8kswXavs
+         vkbqVVSW1z+4Kq4CdFLnvKkOvUm9gtjHcdB4M0lTGDUIDv0969KT/WtzoSvR/i/LHL4n
+         /W6BShV9c/zqGtijY6BkZRxZ3SwEO1IS2/v9liAHb1aH8vyw3M9ms3WWp6ieNghSvwha
+         6OCA+B1fxaVh/MR8OgwxXM+8yfPHawRhe/zPf5qgff6AxeG6tyJci9No1/RJne+Z9mkN
+         +k6oUUJowXnYrGkQTCkCo00eCexwk5Cyn2D+fExlGOSK10dcg/KS/5M7PUxj3OnHHtxM
+         K86w==
+X-Gm-Message-State: AOAM533Jcj5YkU+sxNjvuZ92RTTDv6lsZm95BovFDI081aluNRNFgFXd
+        ZecHUmrc5D3oRyb1J1WJsyubHQ==
+X-Google-Smtp-Source: ABdhPJw2XLKnFy89w02qNG9y5DyM0OT5B3soxq7XFIM2db/DXxS2nhBst3JBTbw2/wKSZniCT3SIdA==
+X-Received: by 2002:a17:902:6942:b0:14c:b20e:2b1a with SMTP id k2-20020a170902694200b0014cb20e2b1amr11954656plt.112.1645876349209;
+        Sat, 26 Feb 2022 03:52:29 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z7-20020a056a00240700b004e1cde37bc1sm6757095pfh.84.2022.02.26.03.52.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Feb 2022 03:52:28 -0800 (PST)
+Date:   Sat, 26 Feb 2022 03:52:27 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     matoro <matoro_mailinglist_kernel@matoro.tk>
+Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        matoro_bugzilla_kernel@matoro.tk,
+        Andrew Morton <akpm@linux-foundation.org>,
+        regressions@lists.linux.dev, linux-ia64@vger.kernel.org,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: regression: Bug 215601 - gcc segv at startup on ia64
+Message-ID: <202202260344.63C15C3356@keescook>
+References: <a3edd529-c42d-3b09-135c-7e98a15b150f@leemhuis.info>
+ <823f70be-7661-0195-7c97-65673dc7c12a@leemhuis.info>
+ <03497313-A472-4152-BD28-41C35E4E824E@chromium.org>
+ <94c3be49-0262-c613-e5f5-49b536985dde@physik.fu-berlin.de>
+ <9A1F30F8-3DE2-4075-B103-81D891773246@chromium.org>
+ <4e42e754-d87e-5f6b-90db-39b4700ee0f1@physik.fu-berlin.de>
+ <202202232030.B408F0E895@keescook>
+ <7e3a93e7-1300-8460-30fb-789180a745eb@physik.fu-berlin.de>
+ <65ed8ab4fad779fadf572fb737dfb789@matoro.tk>
 MIME-Version: 1.0
-References: <CAH2r5mt9OfU+8PoKsmv_7aszhbw-dOuDCL6BOxb_2yRwc4HHCw@mail.gmail.com>
- <Yhf+FemcQQToB5x+@redhat.com> <CAH2r5mt6Sh7qorfCHWnZzc6LUDd-s_NzGB=sa-UDM2-ivzpmAQ@mail.gmail.com>
- <YhjYSMIE2NBZ/dGr@redhat.com> <YhjeX0HvXbED65IM@casper.infradead.org>
- <CAH2r5mt9EtTEJCKsHkvRctfhMv7LnT6XT_JEvAb7ji6-oYnTPg@mail.gmail.com>
- <YhkFZE8wUWhycwX2@redhat.com> <CAH2r5msPz1JZK4OWX_=+2HTzKTZE07ACxbEv3xM-1T0HTnVWMw@mail.gmail.com>
-In-Reply-To: <CAH2r5msPz1JZK4OWX_=+2HTzKTZE07ACxbEv3xM-1T0HTnVWMw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 26 Feb 2022 12:22:26 +0200
-Message-ID: <CAOQ4uxi+VJG56TPvcpOqoVAGgbb8gZQJEfvhXyGyB5VboRE2wA@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Enabling change notification for
- network and cluster fs
-To:     Steve French <smfrench@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ioannis Angelakopoulos <jaggel@bu.edu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <65ed8ab4fad779fadf572fb737dfb789@matoro.tk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 8:11 PM Steve French <smfrench@gmail.com> wrote:
->
-> > IOW, in general disable all local events and let filesystems decide which
-> local events to generate? And locally cached write is one such example?
->
-> The fs doesn't see cached writes so probably best to still use the common
-> existing code for notification on local writes
->
+On Thu, Feb 24, 2022 at 09:22:04AM -0500, matoro wrote:
+> Hi Kees, I can provide live ssh access to my system exhibiting the issue.
+> My system is a lot more stable due to using openrc rather than systemd, for
+> me GCC seems to be the only binary affected.  Would that be helpful?
 
-I guess SMB protocol does not allow client B to request a NOTIFY on change
-when client A has a directory lease, because requesting NOTIFY requires
-getting a read file handle on the dir?
+Thanks for this access! I think I see the problem. Non-PIE (i.e. normal
+ET_EXEC) ia64 binaries appear to have two very non-contiguous virtual
+memory PT_LOAD segments that are file-offset adjacent. As seen in
+readelf -lW:
 
-Effectively, smb client needs to open the remote directory for read in order
-to prove that the client has read access to the directory, which is the
-prerequisite for getting directory change notifications.
+  LOAD           0x000000 0x4000000000000000 0x4000000000000000 0x00b5a0 0x00b5a0 R E 0x10000
+  LOAD           0x00b5a0 0x600000000000b5a0 0x600000000000b5a0 0x0005ac 0x000710 RW  0x10000
+                 ^^^^^^^^ ^^^^^^^^^^^^^^^^^^
 
-The local check for permissions is not enough for remote notifications:
-        /* you can only watch an inode if you have read permissions on it */
-        error = path_permission(path, MAY_READ);
+When the kernel tries to map these with a combined allocation, it asks
+for a giant mmap of the file, but the file is, of course, not at all
+that large, and the mapping is rejected.
 
-Thanks,
-Amir.
+So... I'm trying to think about how best to deal with this. If I or
+anyone else can't think of an elegant solution, I'll send a revert for
+the offending patch next week.
+
+In the meantime now I've got another dimension to regression test. ;)
+
+-- 
+Kees Cook
