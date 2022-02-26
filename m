@@ -2,90 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F3204C57E2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 21:01:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07C644C57F2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 21:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229513AbiBZUBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Feb 2022 15:01:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54434 "EHLO
+        id S229480AbiBZUOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Feb 2022 15:14:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiBZUBz (ORCPT
+        with ESMTP id S229436AbiBZUOf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Feb 2022 15:01:55 -0500
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831B01FEDA9;
-        Sat, 26 Feb 2022 12:01:20 -0800 (PST)
-Received: by mail-pg1-f175.google.com with SMTP id e6so6510208pgn.2;
-        Sat, 26 Feb 2022 12:01:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ASY7hqm9B5n/GIX+j2xNOyev7bD6a1d/S/a6NvKTtHI=;
-        b=fbP7wI5iTydfA7l1/ZyDPz1YS47pcCUs+Paeu2eACpCZq5VN9R+rwAKf8493OYqLH+
-         sjoAJImyxmhT+Er5NaYQUBoGbDtyRw8NJkSz7RzhimntCzAJJ7dDaF4rnQ9/4s57c4MW
-         nS0/OKdk11cR2xoggYCy9nAZfUYhqVTt4eAmhDADstqYocrnUgjevX3ObG8muUrTCZcK
-         PhvKcEJ3TbPppwrZJ+iZ4MRKpxhQ92rxOu0EBVWDMeDvGkyjwuxs5PlSx52IxJ0T/7sO
-         Ln9dqCxyHjdYCkWml9urLHE2n5EoDsLIseeppsJ3I+uMXIyOdqseU3zsER3g5mIHFeJF
-         cC9A==
-X-Gm-Message-State: AOAM531MsPyvt0cnTJbJctOjSUrILrtm5hbZxDPc0bAz7jNaWt8ZUJgX
-        pyP66cbwmuZNSxAtv6JrXMU=
-X-Google-Smtp-Source: ABdhPJzgSI6+JZg+wKkfXVw+XFmcfQ8SfMsQlxPfETGtTsrP5EiTXucsWPCI0ZCc+vG8v3RfUOo//Q==
-X-Received: by 2002:aa7:9f5b:0:b0:4cc:964c:99dd with SMTP id h27-20020aa79f5b000000b004cc964c99ddmr13919819pfr.42.1645905679789;
-        Sat, 26 Feb 2022 12:01:19 -0800 (PST)
-Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
-        by smtp.gmail.com with ESMTPSA id y16-20020a056a00191000b004e155b2623bsm8066314pfi.178.2022.02.26.12.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Feb 2022 12:01:18 -0800 (PST)
-Date:   Sat, 26 Feb 2022 12:01:16 -0800
+        Sat, 26 Feb 2022 15:14:35 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 496BF55BC6;
+        Sat, 26 Feb 2022 12:14:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=jxSlVaBmXz/dVNo8icv8AU6oobDK34V/whJUepgdojM=; b=aW03886MhAt0oh4a2AME0c7m5U
+        QWT37fnD7HG/48pZXDm6TSh+J/O2AFiZxqmsNgHN+GUYLsNwmIq1iAsshrpdcP/On6qXjX2SwjVYn
+        CYYr5dFJzsH5onQ7aV9YzCgOoKx/rKqSQTeHiHVPjInbSkBUjuAIP1DBD7VvITIAYkty7UckNCKpn
+        8pqy+DQ1rIi6w7Dka+0C8tgEDq8G33N9oRcAUjuf7+s+BH/b0otja3bWgII5qrGAlxtRf1JfHzcyk
+        7hkRlsl660Q/7RqS6rZpyfiYZMGofaIB7oSTWWYfTCNU68t1Pw1DG2Pohr/PMrNc8/R7W+NhP464p
+        V0Zqq9SQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nO3Rj-008Tvl-BV; Sat, 26 Feb 2022 20:13:39 +0000
+Date:   Sat, 26 Feb 2022 12:13:39 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v4 1/1] io-uring: Make statx API stable
-Message-ID: <20220226200116.mlirionrzr3ujvx4@garbanzo>
-References: <20220225185326.1373304-1-shr@fb.com>
- <20220225185326.1373304-2-shr@fb.com>
+To:     Meng Tang <tangmeng@uniontech.com>
+Cc:     keescook@chromium.org, yzaikin@google.com, guoren@kernel.org,
+        nickhu@andestech.com, green.hu@gmail.com, deanbo422@gmail.com,
+        ebiggers@kernel.org, tytso@mit.edu, wad@chromium.org,
+        john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
+        linux-csky@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] fs/proc: Optimize arrays defined by struct
+ ctl_path
+Message-ID: <YhqJ8yqcjKJqHfcR@bombadil.infradead.org>
+References: <20220224133217.1755-1-tangmeng@uniontech.com>
+ <20220224133217.1755-2-tangmeng@uniontech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220225185326.1373304-2-shr@fb.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20220224133217.1755-2-tangmeng@uniontech.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 10:53:26AM -0800, Stefan Roesch wrote:
-> One of the key architectual tenets is to keep the parameters for
-> io-uring stable. After the call has been submitted, its value can
-> be changed. Unfortunaltely this is not the case for the current statx
-> implementation.
+On Thu, Feb 24, 2022 at 09:32:17PM +0800, Meng Tang wrote:
+> Previously, arrays defined by struct ctl_path is terminated
+> with an empty one. When we actually only register one ctl_path,
+> we've gone from 8 bytes to 16 bytes.
 > 
-> IO-Uring change:
-> This changes replaces the const char * filename pointer in the io_statx
-> structure with a struct filename *. In addition it also creates the
-> filename object during the prepare phase.
+> The optimization has been implemented in the previous patch,
+> here to remove unnecessary terminate ctl_path with an empty one.
 > 
-> With this change, the opcode also needs to invoke cleanup, so the
-> filename object gets freed after processing the request.
-> 
-> fs change:
-> This replaces the const char* __user filename parameter in the two
-> functions do_statx and vfs_statx with a struct filename *. In addition
-> to be able to correctly construct a filename object a new helper
-> function getname_statx_lookup_flags is introduced. The function makes
-> sure that do_statx and vfs_statx is invoked with the correct lookup flags.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
+> Signed-off-by: Meng Tang <tangmeng@uniontech.com>
 
-At least it doesn't break my KVM boots anymore:
+If these things are built-in, can you verify you're saving bytes
+with size before and after the patch?
 
-Tested-by: Luis Chamberlain <mcgrof@kernel.org>
+I wonder if having something like DECLARE_SYSCTL_PATH_ONE() would make
+this nicer on the eyes, and also useful for the other changes you
+are making. Do you have many other single path entries you are changing
+later?
 
   Luis
