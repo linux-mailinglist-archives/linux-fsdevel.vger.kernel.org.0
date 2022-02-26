@@ -2,329 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8AAD4C560C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 14:09:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B96E24C5676
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Feb 2022 15:19:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231779AbiBZNKN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Feb 2022 08:10:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46560 "EHLO
+        id S231659AbiBZOTd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Feb 2022 09:19:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231145AbiBZNKN (ORCPT
+        with ESMTP id S231360AbiBZOTb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Feb 2022 08:10:13 -0500
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 649E428D3BE;
-        Sat, 26 Feb 2022 05:09:38 -0800 (PST)
-Received: by mail-vs1-xe2c.google.com with SMTP id g21so8329354vsp.6;
-        Sat, 26 Feb 2022 05:09:38 -0800 (PST)
+        Sat, 26 Feb 2022 09:19:31 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC6C28BE80
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Feb 2022 06:18:56 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id ev16-20020a17090aead000b001bc3835fea8so7422709pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Feb 2022 06:18:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6mMH+g8JjJF6YXpdjy8a0QxVcZM5KBTzRXmny8JcnVc=;
-        b=LlAaDGrjHbL3NSeXPo/tbi8/HxikWLoqUTS3ZTdpkSeJoY3W4guLK13IB01ViQHIzc
-         1lsgGpiuuCBvxllSj3JY+uvDuX5cTqnGupDzqsZgu15SAK6Zn0lP4WWBva5/J/TzdWM/
-         f+nKgRzUkQp+qITb/M+F4cNZMq6qYLkFhY3hEexltlxsSfnOds/9z4+pz1hjDynLKx3j
-         ZC2OTz29C4hXekx4IxR2cmBsfaGt3EjDbV+6Jrs0CSkHwEjoXOKNXqXx84FYp54crlqQ
-         rA0v3lo9rVHTO7D41lRMu+q/wh0gbN2/VN274HViYOpgCGp6obDfcXacQRi+YgwcJUns
-         9T+g==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=YLa//Mj+DxSVB6ps7DGXFT54Z3VfJ89NQIGANWGG0d8=;
+        b=4ZL0rPQtivoPekslBbHbwd4MefOSslZozUIbdtrwySGfwrmJgBc+4NYFds5wDTHm4t
+         2becxLEhcY0AudOFZ4Leuds9nQWinUKLxN6SxVY8v/DeIiB7zFc+sge2xTZt7HZ22E4c
+         wI8SYLYmz84xi4a9xzyzJHo9eCJMOD1cjl7Bb1Nv4I02Ks91P50Txh6GFwxAX+nN/N2O
+         4a3u/5VfFZioKhCo+T586yBD3Fo6GXnd1mbYw8bBPJ4/YmkfAFihTXT5w4NyzBoo6HyQ
+         98T2uukeyBcSTCwQEyXQsaWbpdGz1EsLyNLehoM9MUUXu2vWcjMBduc3+jxZEqlAQhXS
+         njbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6mMH+g8JjJF6YXpdjy8a0QxVcZM5KBTzRXmny8JcnVc=;
-        b=tex1yjYQx+XNnpOVqamsGIdRKBKhhmU32yA9TKqYm+sV31lz7C18SAK8QrBoxDyPqg
-         vAwD0Irx3k1N9eO7q2KdMIfS8KzBeiQeEF4zVvrEdunObeMwVUtPIkcluMEYKXsPcrEk
-         3kOdZkMUTUtGAArL6YDidVo3y+szKfgY2/1na2UZ2Rgo/04ZEaF+lc9ZeoXXTuv6QiV6
-         6+kLyayUN5gO9qiHq/3lCSg/khF5cj+3mQyOPJAqFgivZgnvOZZg/QnAJYywkw29oLfN
-         lUEAAx4EvkHNURSde03KLRvpoPDXas+pDSl0U1sMNXfNH0jsSPeoQeuR0yfaCevtkTRb
-         QtvQ==
-X-Gm-Message-State: AOAM530EkSn8mIHkAZ/VviYHrVO5DYvKdl7ylnBpTy8SQolh97D9fHVg
-        7eF4jDOoV4p4+eAkgEFmi2+hShAXydkZHr/8waM=
-X-Google-Smtp-Source: ABdhPJzIi0XMX8hEWOr9DenUDWsZbRspjq/qs/JDGWdN0nvxgczGsswnyfs3EfIZL5NaQ191VTcjSL66cmhk45QB4zI=
-X-Received: by 2002:a67:a204:0:b0:300:d105:c98c with SMTP id
- l4-20020a67a204000000b00300d105c98cmr5222327vse.24.1645880977433; Sat, 26 Feb
- 2022 05:09:37 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=YLa//Mj+DxSVB6ps7DGXFT54Z3VfJ89NQIGANWGG0d8=;
+        b=Rgtw0KjHOC1wUib0KkmXJP7kItLGNoyEo+K6Pq7TmzflCtD+wG+f5q4owknGOZAmkT
+         Oopqal+rw2HLZ2RcW6n8Lo8PjtsIKpVjdMar39DtG1JxtCi+KlGrp7SQhBXekFrenUre
+         222p8R8eKYJ/pBXMhgpvR5qI2gnxbku2AgSH70+tAdTC7wBWIg76SUTfVDjkGWmzSFb8
+         1ucXJ3j4esqhI2RmFDut9yrKq3ot/OxYzkB/sYK7WS0/0PKsfxdg4RDfgljNpXBjbACr
+         JbH3TlStiUz6K/9UtDZdKP9WXrXipEruYjquqMal2PAYWx/Ykfgb+j+4zjAE7TCp3He5
+         Equw==
+X-Gm-Message-State: AOAM53038NJtkQNYuTGO3ClFHQfWdemiHdkIEt5ge6FTGE/xE4CKlGZZ
+        vT2LX3lfJQ774Q7PbGC6yARGBA==
+X-Google-Smtp-Source: ABdhPJyJKVuE7IehtiPL55TmKVwMJ1sfKAPOT8bfarpBPlYkibZZVH3H7ViDApTvLOtrG+Q1QJrxKA==
+X-Received: by 2002:a17:902:b60b:b0:150:c60:28d0 with SMTP id b11-20020a170902b60b00b001500c6028d0mr12147643pls.116.1645885136312;
+        Sat, 26 Feb 2022 06:18:56 -0800 (PST)
+Received: from [127.0.1.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id x23-20020a63fe57000000b0036490068f12sm5767222pgj.90.2022.02.26.06.18.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Feb 2022 06:18:55 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org
+In-Reply-To: <20220222154634.597067-1-hch@lst.de>
+References: <20220222154634.597067-1-hch@lst.de>
+Subject: Re: simple file system cleanups for the new bio_alloc calling conventions
+Message-Id: <164588513511.8353.16195805858154505642.b4-ty@kernel.dk>
+Date:   Sat, 26 Feb 2022 07:18:55 -0700
 MIME-Version: 1.0
-References: <20220216230319.6436-1-linkinjeon@kernel.org> <Yg7dMwEebkITEMI+@zeniv-ca.linux.org.uk>
- <CAKYAXd9CEDqfwNsVU=DkfBhmL2zmiRaTfALeDRt8KHqMVnQ=1w@mail.gmail.com>
-In-Reply-To: <CAKYAXd9CEDqfwNsVU=DkfBhmL2zmiRaTfALeDRt8KHqMVnQ=1w@mail.gmail.com>
-From:   Hyunchul Lee <hyc.lee@gmail.com>
-Date:   Sat, 26 Feb 2022 22:09:26 +0900
-Message-ID: <CANFS6bbZffBk_OccvFEi4zE8+0LJcRPdpV9kNkm85YsPg_EUgQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ksmbd: fix racy issue from using ->d_parent and ->d_name
-To:     Namjae Jeon <linkinjeon@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-cifs <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Steve French <smfrench@gmail.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022=EB=85=84 2=EC=9B=94 18=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 5:02, N=
-amjae Jeon <linkinjeon@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Hi Al,
-> 2022-02-18 8:41 GMT+09:00, Al Viro <viro@zeniv.linux.org.uk>:
-> > On Thu, Feb 17, 2022 at 08:03:19AM +0900, Namjae Jeon wrote:
-> >> Al pointed out that ksmbd has racy issue from using ->d_parent and
-> >> ->d_name
-> >> in ksmbd_vfs_unlink and smb2_vfs_rename(). and he suggested changing f=
-rom
-> >> the way it start with dget_parent(), which can cause retry loop and
-> >> unexpected errors, to find the parent of child, lock it and then look =
-for
-> >> a child in locked directory.
-> >>
-> >> This patch introduce a new helper(vfs_path_parent_lookup()) to avoid
-> >> out of share access and export vfs functions like the following ones t=
-o
-> >> use
-> >> vfs_path_parent_lookup() and filename_parentat().
-> >>  - __lookup_hash().
-> >>  - getname_kernel() and putname().
-> >>  - filename_parentat()
-> >
-> > First of all, your vfs_path_parent_lookup() calling conventions are wro=
-ng.
-> > You have 3 callers:
-> >       err =3D vfs_path_parent_lookup(share->vfs_path.dentry,
-> >                                    share->vfs_path.mnt, filename_struct=
-,
-> >                                    LOOKUP_NO_SYMLINKS | LOOKUP_BENEATH,
-> >                                    &path, &last, &type);
-> >       err =3D vfs_path_parent_lookup(share_conf->vfs_path.dentry,
-> >                                    share_conf->vfs_path.mnt, to,
-> >                                    lookup_flags | LOOKUP_BENEATH,
-> >                                    &new_path, &new_last, &new_type);
-> >       err =3D vfs_path_parent_lookup(share->vfs_path.dentry,
-> >                                    share->vfs_path.mnt, filename_struct=
-,
-> >                                    LOOKUP_NO_SYMLINKS | LOOKUP_BENEATH,
-> >                                    &path, &last, &type);
-> > Note that in all of them the first two arguments come from ->dentry and
-> > ->mnt of the same struct path instance.  Now, look at the function itse=
-lf:
-> >
-> > int vfs_path_parent_lookup(struct dentry *dentry, struct vfsmount *mnt,
-> >                          struct filename *filename, unsigned int flags,
-> >                          struct path *parent, struct qstr *last, int *t=
-ype)
-> > {
-> >       struct path root =3D {.mnt =3D mnt, .dentry =3D dentry};
-> >
-> >       return  __filename_parentat(AT_FDCWD, filename, flags, parent, la=
-st,
-> >                                   type, &root);
-> > }
-> >
-> > What about the __filename_parentat() last argument?  It's declared as
-> > struct path *root and passed to set_nameidata().  No other uses.  And
-> > set_nameidata() gets it via const struct path *root argument.  IOW,
-> > it's not going to modify the contents of that struct path.  Since
-> > you __filename_parentat() doesn't do anything else with its root
-> > argument, there's no reason not to make _that_ const struct path *,
-> > is there?
-> Yep, No reason.
->
-> >
-> > Now, if you do that, you can safely turn vfs_path_parent_lookup()
-> > take const struct path * instead of dentry/vfsmount pair of arguments
-> > and drop the local struct path instance in the vfs_path_parent_lookup()
-> > itself.
-> Yes. I will change it.
->
-> >
-> > The fact that vfs_path_lookup() passes vfsmount and dentry separately
-> > doesn't mean you need to do the same - look at the existing callers
-> > of vfs_path_lookup() (outside of ksmbd itself) and you'll see the
-> > difference.  Incidentally, this
-> > fs/ksmbd/vfs.c:22:#include "../internal.h"      /* for vfs_path_lookup =
-*/
-> > had been a really bad idea.  And no, nfsd doing the same is not a good
-> > thing either...
-> >
-> > General rule: if it's exported, it's *NOT* internal.
-> Okay. Then as another patch, I will move vfs_path_lookup prototype in
-> internal.h to linux/namei.h.
->
-> >
-> >
-> > Next:
-> >
-> >> index 077b8761d099..b094cd1d4951 100644
-> >> --- a/fs/ksmbd/oplock.c
-> >> +++ b/fs/ksmbd/oplock.c
-> >> @@ -1713,11 +1713,14 @@ int smb2_check_durable_oplock(struct ksmbd_fil=
-e
-> >> *fp,
-> >>                      ret =3D -EBADF;
-> >>                      goto out;
-> >>              }
-> >> +            down_read(&fp->filename_lock);
-> >>              if (name && strcmp(fp->filename, name)) {
-> >> +                    up_read(&fp->filename_lock);
-> >>                      pr_err("invalid name reconnect %s\n", name);
-> >>                      ret =3D -EINVAL;
-> >>                      goto out;
-> >>              }
-> >> +            up_read(&fp->filename_lock);
-> >
-> > What assumptions do you make about those strings?  Note that opened fil=
-e
-> > is *NOT* guaranteed to have its pathname remain unchanged - having
-> > /tmp/foo/bar/baz/blah opened will not prevent mv /tmp/foo /tmp/barf
-> > and the file will remain opened (and working just fine).  AFAICS, you
-> > only update it in smb2_rename(), which is not going to be called by
-> > mv(1) called by admin on server.
-> Whenever a FILE_ALL_INFORMATION request is received from a client,
-> ksmbd need to call d_path(then, removing the share path in pathname is
-> required) to obtain pathname for windows. To avoid the issue you
-> mentioned, we can remove the all uses of ->filename and calling
-> d_path() whenever pathname is need.
->
-> >
-> > BTW, while grepping through the related code, convert_to_nt_pathname()
-> > is Not Nice(tm).  Seriously, strlen(s) =3D=3D 0 is not an idiomatic way=
- to
-> > check that s is an empty string.  What's more, return value of that
-> > function ends up passed to kfree().  Which is not a good thing to do
-> > to a string constant.  That can be recovered by use of kfree_const() in
-> > get_file_all_info(), but.. ouch.
-> Okay.
->
-> >
-> > ksmbd_vfs_rename(): UGH.
-> >       * you allocate a buffer
-> >       * do d_path() into it
-> >       * then use getname_kernel() to allocate another one and copy the =
-contents
-> > into it.  By that point the string might have nothing to do with the ac=
-tual
-> > location of object, BTW (see above)
-> Can we use dget_parent() and take_dentry_name_snapshot() for source
-> file instead of d_path(), getname_kernel() and filename_parentat()?
-> Because ksmbd receive fileid(ksmbd_file) for source file from client.
-> [See control flow the below]
->
+On Tue, 22 Feb 2022 16:46:31 +0100, Christoph Hellwig wrote:
+> this fixes up the remaining fairly trivial file system bio alloctions to
+> directly pass the bdev to bio_alloc.  f2fs and btrfs will need more work and
+> will be handled separately.
+> 
+> This is against Jens' for-5.18/block branch.  It would probably make sense to
+> also merge it through that.
+> 
+> [...]
 
-As Namjae said, for the rename, a client sends FileId of a source file and
-an absolute path of a destination file. ksmbd can only get a dentry of
-the source file from FileId.
-So I think we can use dget_parent() to get a parent dentry. And we
-have to verify the parent dentry by locking the parent inode, and
-calling take_dentry_name_snapshot() and lookup_one().
+Applied, thanks!
 
-> >       * then you use filename_parentat() (BTW, the need to export both =
-it and
-> > vfs_path_parent_lookup() is an artefact of bad calling conventions -
-> > passing
-> > NULL as const struct path * would do the right thing, if not for the fa=
-ct
-> > that
-> > with your calling conventions you have to pass a non-NULL pointer - tha=
-t to
-> > a local struct path in your vfs_path_parent_lookup()).
-> Okay.
->
-> >       * then you use vfs_path_parent_lookup() to find the new parent.  =
-OK,
-> > but...
-> > you proceed to check if it has somehow returned you a symlink.  Huh?  H=
-ow
-> > does
-> > one get a symlink from path_parentat() or anything that would use it?
-> As security issues, We made it not to allow symlinks.
->
-> > I would very much appreciate a reproducer for that.
-> >       * you use lock_rename() to lock both parents.  Which relies upon =
-the
-> > caller having checked that they live on the same filesystem.  Neither o=
-ld
-> > nor
-> > new version do that, which means relatively easy deadlocks.
-> Okay. will add the check for this.
->
-> >       * look the last components up.  NB: the old one might very well h=
-ave
-> > nothing to do with the path.dentry.
-> Okay.
->
-> >       * do usual checks re loop prevention (with slightly unusual error
-> > values, but whatever)
-> I understood that you pointed out to add retry_estale() check and retry.
->
-> >       * call ksmbd_lookup_fd_inode() on the old parent.  Then dereferen=
-ce
-> > the return value (if non-NULL)... and never do anything else to it.  Ho=
-w
-> > can
-> > that possibly work?  What's there to prevent freeing of that struct
-> > ksmbd_file
-> > just as ksmbd_lookup_fd_inode() returns it?  Looks like it's either a l=
-eak
-> > or
-> > use-after-free, and looking at ksmbd_lookup_fd_inode() it's probably th=
-e
-> > latter.
-> Right. Need to increase reference count of ksmbd_file. I will fix it.
->
-> >       * proceed with vfs_rename(), drop the stuff you'd acquired and go
-> > away.
-> Okay.
->
-> >
-> > ksmbd_vfs_unlink():
-> >       * const char *filename, please, unless you really modify it there=
-.
-> Okay.
-> >       * what the hell is that ihold/iput pair for?
-> I refered codes in do_unlinkat() for this. If this pair is not needed,
-> I'll delete it,
-> but could you please tell me why it's needed in unlinkat() ?
->
-> >
-> > I'm not sure that the set you'd exported is the right one, but that's
-> > secondary - I'd really like to understand what assumptions are you
-> > making about the ->filename contents, as well as the control flow
-> > from protocol request that demands rename to the actual call of
-> > vfs_rename().  Could you elaborate on that?  I am not familiar with
-> > the protocol, other than bits and pieces I'd observed in fs/cifs
-> > code.
-> As I said above, the uses of ->filename can be replaced with d_path().
-> control flow for rename is the following.
->
->  a. Receiving smb2 create(open) request from client.
->      - Getting struct file after calling vfs_path_lookup() and
-> dentry_open() using pathname from client.
->      - create ksmbd_file and add struct file to fp->filp and generate
-> fileid for struct ksmbd_file.
->      - send smb2 create response included fileid of ksmbd_file to client.
->  b. Receiving smb2_set_info file(FILE_RENAME_INFORMATION) request from cl=
-ient.
->      - lookup ksmbd_file using fileid of request. This will source
-> file for rename.
->      - get absolute pathname for destination fille in smb2 set info
-> file for rename.
->      - find both parents of source and destination and lock and do rename=
-...
->  c. Receiving smb2 close.
->
-> Thanks for your review!
-> >
+[1/3] mpage: pass the operation to bio_alloc
+      commit: 8020990b8e1be0b4e325371ccb45a427acbabf9e
+[2/3] ext4: pass the operation to bio_alloc
+      commit: 6a9856721a18208a50c826ed84b3665c4851dfe8
+[3/3] nilfs2: pass the operation to bio_alloc
+      commit: 91f6bd2d4d0aa91abf11b5780221d776f30cbac1
+
+Best regards,
+-- 
+Jens Axboe
 
 
-
---=20
-Thanks,
-Hyunchul
