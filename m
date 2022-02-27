@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2309A4C5E29
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 19:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 023954C5E2C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 19:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiB0Scp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Feb 2022 13:32:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47044 "EHLO
+        id S231153AbiB0SdU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Feb 2022 13:33:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiB0Sco (ORCPT
+        with ESMTP id S230409AbiB0SdT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Feb 2022 13:32:44 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 789536CA58;
-        Sun, 27 Feb 2022 10:32:07 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id a23so20639299eju.3;
-        Sun, 27 Feb 2022 10:32:07 -0800 (PST)
+        Sun, 27 Feb 2022 13:33:19 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16EB75FC9;
+        Sun, 27 Feb 2022 10:32:42 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id bq11so14569258edb.2;
+        Sun, 27 Feb 2022 10:32:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=uc546s013azn+7de9UVtVeYuLtnBedUZuHFVYaEkNtY=;
-        b=C9ZeTTOe7I52JXzYBm9c2AwAZoK6dNPseT9uDXc4gFqaBsFalBA2MI/TWREbSEeymj
-         o9XO9HkdKRKL4I2vcbDqvCKNM6J0Uy95uvLlX7VyIEOZVtmRuD3N/+qwmaAuq21lBAHz
-         agAPXqEhXMSPl8tx1msjFS1EDIkgJZw/3IhMesUHHyNGM7wIScK6YI/tR+gV9I6Z+Mv+
-         nTmNsXOox7ZMzypWJ0ptRdCVoSbDoEh7cqYKHezyAK/tvVCj5+BQsITtOBVMV3ynLrDE
-         xVSTaXwKvyz0Vs/2te1oCvV3pQToPr6H44f3ZGunuOWROp1JOubXA+rEwNIRFtt91Abq
-         q7Gg==
+        bh=/TZp34KgRQjyVlG9WRiwZuTYoOOo5zR7Yrl4AzfTbuY=;
+        b=LLK3kHkYFU4RecBw2W0N/+jGvQv5W1YQGaP0temkCwFNAcqlUVEThTeYukFXPYoQDE
+         jr0WYP0yPYhBfHDDUESI4xUrC9OcGhBQnvv0PjnEK5wtOWXMl4+fX2sEIjg+aappUjBS
+         3Y30KXdOeaFA4ppb4lJFZiJcZfcOwqXRuIQcBiOOnHay7REtX1pQUBfjhOYgJ/75xXdT
+         OYJ1Q5i2NyCKzRbhlDvF8V+wN1Qf7iVuHLVAlSDKIzG9IbiKcQs+W3QuxENwchwji/rN
+         CCAxn/45Flie7GiipjmoQyeFVHT4J8c0iGn/KCRe45z4kuNYV4kdi7NRccVGFU//A3TY
+         hq4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uc546s013azn+7de9UVtVeYuLtnBedUZuHFVYaEkNtY=;
-        b=Ih+6pZMoMztEP0PkLcnvNNoruwXYCU8pBKmzWxG7WO1Ljh0pm1vM1yP9qQeVAxqiWH
-         XPPZCer7n4LLrYIAqYeacIRO0RJ7ENwB7Gy/CIns0dT72uxbhKr7dukP0AOf1x5MqmY/
-         2g00iJYxEyaJtF60Ix2EjpmJDBhugiFlP8u8uR3D3eP8Ly6KkqZKPVuLXLYhajTwS0TS
-         +sAuRVR+YdaRfsh6mNYfYN1DAKaXug8PhyHU0W7zD3DIMziTy412DwYQFosJlqBLRsI1
-         jmhzhC+CuifDVFDXfBEJJRZzwQ5tIK4Lw4mQpOAiZ8Cjb0RxTupltjH5wjTNRxp0KH8o
-         1xlA==
-X-Gm-Message-State: AOAM531QgCCW4rUucCk7K7QpDohXK22x1CswoNkwC5cVUFutBur7+YLV
-        y4KoxPlrLEK/3dHbSzxkhuS9JasZXUf1lz9G0uflegZa9I4=
-X-Google-Smtp-Source: ABdhPJwIBMCv7Q1kaGz+yXfPm0don/sgGlvr6KYXBQgaRRGdcXz/Xen27EF66tIcX55qUbwtAtj8hhSgoJrl/gtbEoc=
-X-Received: by 2002:a17:906:3650:b0:6ce:a6e0:3e97 with SMTP id
- r16-20020a170906365000b006cea6e03e97mr13365711ejb.15.1645986725938; Sun, 27
- Feb 2022 10:32:05 -0800 (PST)
+        bh=/TZp34KgRQjyVlG9WRiwZuTYoOOo5zR7Yrl4AzfTbuY=;
+        b=OK04V/0s+4QvemfLPr6jsPaUzR7iedPRSktakbNmGuBYxMeP3eximEzpsuWageJHnX
+         OHwTU5sJeWQ+JjJOUn7bU+wmgOZruCy7+BveDeCRGGEZA5daO1ftSWC0r8cC/30JRYx/
+         lTzrx+0dlX8dviIphS6HnkcNbTQgpm/kfXzkCar6fvK/SY23jgkgCjfQRMBbMaPMVQ/k
+         y/UlvcF7Zed+pVF+nEe/6FXHbMDJ+CoSbuAfiJhNmYtaoSo89kRRMoV2dnB0RMwpa7Wx
+         tdQUPLauAKLfdDBPb7QQmm0+FBQkOD+6Ds3Fe3dH1BskUYbJt0D1G26YPYj5ZE40fmZ4
+         BXYg==
+X-Gm-Message-State: AOAM531Sx5/Ww0UArZ8fVcieMnTcyhPO6vRA7S3a5lTjPxr2YR7iUGoz
+        RcD+nEaD3nbbiAH8S/LB3m00GCFqB5JrX6eg7Ew=
+X-Google-Smtp-Source: ABdhPJyHUNfpwOsKi0aeKxcTx+/bopy6WwoASD8Tb/1xc3wyuuUiVdE2nPEFSzUYMnWatsebuBvzL6lZke9z+ZvjEsE=
+X-Received: by 2002:aa7:daca:0:b0:410:d02a:1bf3 with SMTP id
+ x10-20020aa7daca000000b00410d02a1bf3mr16547217eds.455.1645986760526; Sun, 27
+ Feb 2022 10:32:40 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1645558375.git.riteshh@linux.ibm.com> <dbc43257b4039b4bdba5613cd31fe65528721f3a.1645558375.git.riteshh@linux.ibm.com>
- <20220223094420.de6yx7dvgbux327o@quack3.lan>
-In-Reply-To: <20220223094420.de6yx7dvgbux327o@quack3.lan>
+References: <cover.1645558375.git.riteshh@linux.ibm.com> <9cc1f9ac12ff3dca6b0c18d0bda2245a1264595e.1645558375.git.riteshh@linux.ibm.com>
+ <20220223094509.asn3e4dcgs5fokeo@quack3.lan>
+In-Reply-To: <20220223094509.asn3e4dcgs5fokeo@quack3.lan>
 From:   harshad shirwadkar <harshadshirwadkar@gmail.com>
-Date:   Sun, 27 Feb 2022 10:31:54 -0800
-Message-ID: <CAD+ocbza2KHZX1PYHEC7qZ1GJz+HW0JqOtU=Fb-NzJ-fXn1y=A@mail.gmail.com>
-Subject: Re: [RFC 6/9] ext4: Add commit tid info in ext4_fc_commit_start/stop
- trace events
+Date:   Sun, 27 Feb 2022 10:32:29 -0800
+Message-ID: <CAD+ocbwL6jCtUgqjp5VzLkyab6wZurF=cCB9ZJOawJaejJv32A@mail.gmail.com>
+Subject: Re: [RFC 7/9] ext4: Fix remaining two trace events to use same printk convention
 To:     Jan Kara <jack@suse.cz>
 Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
@@ -76,118 +75,48 @@ Reviewed-by: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
 
 - Harshad
 
-On Wed, 23 Feb 2022 at 01:44, Jan Kara <jack@suse.cz> wrote:
+On Wed, 23 Feb 2022 at 01:45, Jan Kara <jack@suse.cz> wrote:
 >
-> On Wed 23-02-22 02:04:14, Ritesh Harjani wrote:
-> > This adds commit_tid info in ext4_fc_commit_start/stop which is helpful
-> > in debugging fast_commit issues.
-> >
-> > For e.g. issues where due to jbd2 journal full commit, FC miss to commit
-> > updates to a file.
-> >
-> > Also improves TP_prink format string i.e. all ext4 and jbd2 trace events
-> > starts with "dev MAjOR,MINOR". Let's follow the same convention while we
-> > are still at it.
+> On Wed 23-02-22 02:04:15, Ritesh Harjani wrote:
+> > All ext4 & jbd2 trace events starts with "dev Major:Minor".
+> > While we are still improving/adding the ftrace events for FC,
+> > let's fix last two remaining trace events to follow the same
+> > convention.
 > >
 > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 >
-> Looks good. Feel free to add:
+> OK. Feel free to add:
 >
 > Reviewed-by: Jan Kara <jack@suse.cz>
 >
 >                                                                 Honza
 >
 > > ---
-> >  fs/ext4/fast_commit.c       |  4 ++--
-> >  include/trace/events/ext4.h | 21 +++++++++++++--------
-> >  2 files changed, 15 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-> > index ee32aac0cbbf..8803ba087b07 100644
-> > --- a/fs/ext4/fast_commit.c
-> > +++ b/fs/ext4/fast_commit.c
-> > @@ -1150,7 +1150,7 @@ static void ext4_fc_update_stats(struct super_block *sb, int status,
-> >       } else {
-> >               stats->fc_skipped_commits++;
-> >       }
-> > -     trace_ext4_fc_commit_stop(sb, nblks, status);
-> > +     trace_ext4_fc_commit_stop(sb, nblks, status, commit_tid);
-> >  }
-> >
-> >  /*
-> > @@ -1171,7 +1171,7 @@ int ext4_fc_commit(journal_t *journal, tid_t commit_tid)
-> >       if (!test_opt2(sb, JOURNAL_FAST_COMMIT))
-> >               return jbd2_complete_transaction(journal, commit_tid);
-> >
-> > -     trace_ext4_fc_commit_start(sb);
-> > +     trace_ext4_fc_commit_start(sb, commit_tid);
-> >
-> >       start_time = ktime_get();
+> >  include/trace/events/ext4.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
 > >
 > > diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> > index cd09dccea502..6e66cb7ce624 100644
+> > index 6e66cb7ce624..233dbffa5ceb 100644
 > > --- a/include/trace/events/ext4.h
 > > +++ b/include/trace/events/ext4.h
-> > @@ -2685,26 +2685,29 @@ TRACE_EVENT(ext4_fc_replay,
-> >  );
-> >
-> >  TRACE_EVENT(ext4_fc_commit_start,
-> > -     TP_PROTO(struct super_block *sb),
-> > +     TP_PROTO(struct super_block *sb, tid_t commit_tid),
-> >
-> > -     TP_ARGS(sb),
-> > +     TP_ARGS(sb, commit_tid),
-> >
-> >       TP_STRUCT__entry(
-> >               __field(dev_t, dev)
-> > +             __field(tid_t, tid)
+> > @@ -2653,7 +2653,7 @@ TRACE_EVENT(ext4_fc_replay_scan,
+> >               __entry->off = off;
 > >       ),
 > >
-> >       TP_fast_assign(
-> >               __entry->dev = sb->s_dev;
-> > +             __entry->tid = commit_tid;
-> >       ),
-> >
-> > -     TP_printk("fast_commit started on dev %d,%d",
-> > -               MAJOR(__entry->dev), MINOR(__entry->dev))
-> > +     TP_printk("dev %d,%d tid %u", MAJOR(__entry->dev), MINOR(__entry->dev),
-> > +               __entry->tid)
-> >  );
-> >
-> >  TRACE_EVENT(ext4_fc_commit_stop,
-> > -         TP_PROTO(struct super_block *sb, int nblks, int reason),
-> > +         TP_PROTO(struct super_block *sb, int nblks, int reason,
-> > +                  tid_t commit_tid),
-> >
-> > -     TP_ARGS(sb, nblks, reason),
-> > +     TP_ARGS(sb, nblks, reason, commit_tid),
-> >
-> >       TP_STRUCT__entry(
-> >               __field(dev_t, dev)
-> > @@ -2713,6 +2716,7 @@ TRACE_EVENT(ext4_fc_commit_stop,
-> >               __field(int, num_fc)
-> >               __field(int, num_fc_ineligible)
-> >               __field(int, nblks_agg)
-> > +             __field(tid_t, tid)
-> >       ),
-> >
-> >       TP_fast_assign(
-> > @@ -2723,12 +2727,13 @@ TRACE_EVENT(ext4_fc_commit_stop,
-> >               __entry->num_fc_ineligible =
-> >                       EXT4_SB(sb)->s_fc_stats.fc_ineligible_commits;
-> >               __entry->nblks_agg = EXT4_SB(sb)->s_fc_stats.fc_numblks;
-> > +             __entry->tid = commit_tid;
-> >       ),
-> >
-> > -     TP_printk("fc on [%d,%d] nblks %d, reason %d, fc = %d, ineligible = %d, agg_nblks %d",
-> > +     TP_printk("dev %d,%d nblks %d, reason %d, fc = %d, ineligible = %d, agg_nblks %d, tid %u",
+> > -     TP_printk("FC scan pass on dev %d,%d: error %d, off %d",
+> > +     TP_printk("dev %d,%d error %d, off %d",
 > >                 MAJOR(__entry->dev), MINOR(__entry->dev),
-> >                 __entry->nblks, __entry->reason, __entry->num_fc,
-> > -               __entry->num_fc_ineligible, __entry->nblks_agg)
-> > +               __entry->num_fc_ineligible, __entry->nblks_agg, __entry->tid)
+> >                 __entry->error, __entry->off)
 > >  );
+> > @@ -2679,7 +2679,7 @@ TRACE_EVENT(ext4_fc_replay,
+> >               __entry->priv2 = priv2;
+> >       ),
 > >
-> >  #define FC_REASON_NAME_STAT(reason)                                  \
+> > -     TP_printk("FC Replay %d,%d: tag %d, ino %d, data1 %d, data2 %d",
+> > +     TP_printk("dev %d,%d: tag %d, ino %d, data1 %d, data2 %d",
+> >                 MAJOR(__entry->dev), MINOR(__entry->dev),
+> >                 __entry->tag, __entry->ino, __entry->priv1, __entry->priv2)
+> >  );
 > > --
 > > 2.31.1
 > >
