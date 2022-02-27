@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D804C5A2D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 10:34:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F394C5A42
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 10:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229609AbiB0JfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Feb 2022 04:35:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34270 "EHLO
+        id S229656AbiB0Jf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Feb 2022 04:35:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiB0JfU (ORCPT
+        with ESMTP id S229620AbiB0JfV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Feb 2022 04:35:20 -0500
+        Sun, 27 Feb 2022 04:35:21 -0500
 Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A6B13AA66;
-        Sun, 27 Feb 2022 01:34:44 -0800 (PST)
-Received: by mail-qv1-xf2f.google.com with SMTP id h13so10137210qvk.12;
-        Sun, 27 Feb 2022 01:34:44 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C968D3AA66;
+        Sun, 27 Feb 2022 01:34:45 -0800 (PST)
+Received: by mail-qv1-xf2f.google.com with SMTP id j5so10129760qvs.13;
+        Sun, 27 Feb 2022 01:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mni5yEHGP1qoaz/6hLvUm/V5F3W7L/m3Wwp7WeQHDBs=;
-        b=i/DtVk9P1DTHcuWOXDH9pwmZG/a6m++cXjyfgszKxoJCGq61z0Vh9V6VT7598xqiMi
-         EF1aHesjRXqFVb1MLfCyfjVLdKDjxStOIQgcFf5sdUVfVFVSgj5nzuRpk39ZssABWyKh
-         a5V1wQVAoDRNzC9Dl1gk7AqHG50JPjaqkE16unCe75SAiAEMS+WC4cVBEtbtkF7Dem5C
-         uPnBaKWJ7OQhiSUrqoI9Da0PZrEndqPQmR1OX4KId4mTUcIqvmNuHTnvKYBBLBjkQG9b
-         zfm9wn/aSeqIz2OuKsGS5Jxx5jqmvvBDJl5gDl+K45QxzWErwVzB3/emB9ggfzRG4X0z
-         Zzmw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8zKcW8+9Hpd8/WTuKX6kJj19EN0eRYxV6CdPpWTMmWo=;
+        b=WOpg9gTO+cqDSlxgj/J7GtxzOfHFwviptZSNq675orbTb9EQJUNbTVROPdbRthWEoM
+         Va3EvQ4DJDb8avmBXaWeHbUlEPC25Ikg0lkKu5AE0MNDJypAR4SCaVcamSLf0CSBEZUp
+         uRAT1yERfWo6RlRtiepDJN/F0I5lbFwz1pnWyJSNvJiZIxKftwJ4Dk2YRqzR74Cx1VTa
+         OOPvCVOfubSkaSQxAMpXLQTkJHqnRTVy5v5WaMXw1JK/rQbwW1Zng1Mc8rVNmfyYSnfz
+         1BhBRQ9Xvbb1dVXccO7+B31VNQ4ZWU6knxSwFOWUT2PnH+jL/APNRaedSB05aG1fxw9H
+         /kgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mni5yEHGP1qoaz/6hLvUm/V5F3W7L/m3Wwp7WeQHDBs=;
-        b=z7gfc4HX5nXy1chSEyqmSlX1X47whTIgem/EfSk3ZBe0cD4aMk1vBlMnPGbejdoaIf
-         iq6NfBZ0RhxMgfM3VvOJdTk/BWWsojD18e3t10N7mlqDkNZrrNuK4h610LKpVoMG4/uc
-         WU8WUqzLxO24LSSV2cDcZWQF3e13drDQYnAbuQqfIwqs+rvnSVLELjfvCWT9g3ilDHMI
-         aKsA46ULKw5wUys6ArsBgKoN5+5C0ICxP3GsLc3V6FqjzjbCYWTkxC3EoF3srJgvJB2L
-         i6fgf1bQlh0sJLSPqIx1KCTqtI0QfjT73TcyDXgF6yQq9ANO04zJVxBhdoltgU7f3NZK
-         Jzmw==
-X-Gm-Message-State: AOAM5331l3AuHqqfNBB9b75j/Wz/NFgvy/wRQR1CucQzOBdQF8E1RpcS
-        Vpaynl4Wnoc9AaSkVjtp9/A=
-X-Google-Smtp-Source: ABdhPJzlq9Z9ay7IQGmu5husNkkRN/qKFoSudupKCgD7SFi/psSCUSPiOgMXvH9tuYollM3Gca/QcA==
-X-Received: by 2002:a05:6214:ca3:b0:42d:129a:5ac6 with SMTP id s3-20020a0562140ca300b0042d129a5ac6mr11161514qvs.86.1645954483191;
-        Sun, 27 Feb 2022 01:34:43 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8zKcW8+9Hpd8/WTuKX6kJj19EN0eRYxV6CdPpWTMmWo=;
+        b=zQ9xPjdpUhfuqwgD/rp0wGJzG539NeVf5/92K5JQlPPtMYYOHjlmLG8S8cuPQZbObe
+         GlQtcN2sXr1fbQUc/Y3o3Yz+ZHn9wwhqiBIvg1BDrV6GM7XdOJoi0CBpE6q2X8Vg8sc6
+         yhIi7F62jeuav42uUODO4ZswB5QugPPNFDEkD6BxefNjKW3TiJzHZMj3nh6zbE46dVDL
+         tAZo9aDipc+XhrcJsrU9rUZAEE7pUFqaOXaHQGWalLUSS0t+UxLuE89rll+iz/8lZiyF
+         wmb4817iCsN9NL2VEOBbh2358QMNJGSSaq88Iq9mjQlFlXFoREky+SH+t0ubQMXFE6wb
+         Pf3Q==
+X-Gm-Message-State: AOAM530tr1rtMryMvqo1OZGlyXyN/0fa3DpqiDJ0dhyFBWxP0asGo3/A
+        kUGgNodTS3mqaJv6U89WE/A=
+X-Google-Smtp-Source: ABdhPJwxsNO0VkI2Q6Rc/EsJGY48OCvFsl8Tm4nrId2YTjceZIBaohJzw61Max1v1+ry2LTsRNF0rw==
+X-Received: by 2002:ad4:5561:0:b0:432:bbc0:8d5d with SMTP id w1-20020ad45561000000b00432bbc08d5dmr8783186qvy.105.1645954484945;
+        Sun, 27 Feb 2022 01:34:44 -0800 (PST)
 Received: from sandstorm.attlocal.net (76-242-90-12.lightspeed.sntcca.sbcglobal.net. [76.242.90.12])
-        by smtp.gmail.com with ESMTPSA id h3-20020a05622a170300b002e008a93f8fsm469815qtk.91.2022.02.27.01.34.41
+        by smtp.gmail.com with ESMTPSA id h3-20020a05622a170300b002e008a93f8fsm469815qtk.91.2022.02.27.01.34.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Feb 2022 01:34:42 -0800 (PST)
+        Sun, 27 Feb 2022 01:34:44 -0800 (PST)
 From:   jhubbard.send.patches@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
@@ -63,10 +63,12 @@ Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-mm@kvack.org,
         LKML <linux-kernel@vger.kernel.org>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 0/6] block, fs: convert most Direct IO cases to FOLL_PIN
-Date:   Sun, 27 Feb 2022 01:34:28 -0800
-Message-Id: <20220227093434.2889464-1-jhubbard@nvidia.com>
+Subject: [PATCH 1/6] mm/gup: introduce pin_user_page()
+Date:   Sun, 27 Feb 2022 01:34:29 -0800
+Message-Id: <20220227093434.2889464-2-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220227093434.2889464-1-jhubbard@nvidia.com>
+References: <20220227093434.2889464-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
@@ -82,95 +84,77 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: John Hubbard <jhubbard@nvidia.com>
 
-Hi,
+pin_user_page() is an externally-usable version of try_grab_page(), but
+with semantics that match get_page(), so that it can act as a drop-in
+replacement for get_page(). Specifically, pin_user_page() has a void
+return type.
 
-The feedback on the RFC [1] prompted me to convert the core Direct IO
-subsystem all at once. The key differences here, as compared to the RFC,
-are:
+pin_user_page() elevates a page's refcount is using FOLL_PIN rules. This
+means that the caller must release the page via unpin_user_page().
 
-    * no dio_w_*() wrapper routines,
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ include/linux/mm.h |  1 +
+ mm/gup.c           | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-    * no CONFIG parameter; and
-
-    * new iov_iter_pin_pages*() routines that pin pages without
-      affecting other callers of iov_iter_get_pages*(). Those other
-      callers (ceph, rds, net, ...) can be converted separately.
-
-Also, many pre-existing callers of unpin_user_pages_dirty_lock() are
-wrong, and this series adds a few more callers. So readers may naturally
-wonder about that. I recently had a very productive discussion with Ted
-Ts'o, who suggested a way to fix the problem, and I'm going to implement
-it, next. However, I think it's best to do that fix separately from
-this, probably layered on top, although it could go either before or
-after.
-
-As part of fixing the "get_user_pages() + file-backed memory" problem
-[2], and to support various COW-related fixes as well [3], we need to
-convert the Direct IO code from get_user_pages_fast(), to
-pin_user_pages_fast(). Because pin_user_pages*() calls require a
-corresponding call to unpin_user_page(), the conversion is more
-elaborate than just substitution.
-
-In the main patch (patch 4) I'm a little concerned about the
-bio_map_user_iov() changes, because the sole caller,
-blk_rq_map_user_iov(), has either a direct mapped case or a copy from
-user case, and I'm still not sure that these are properly kept separate,
-from an unpin pages point of view. So a close look there by reviewers
-would be welcome.
-
-Testing: this needs lots of filesystem testing.
-
-In this patchset:
-
-Patches 1, 2: provide a few new routines that will be used by
-conversion: pin_user_page(), iov_iter_pin_pages(),
-iov_iter_pin_pages_alloc().
-
-Patch 3: provide a few asserts that only user space pages are being
-passed in for Direct IO. (This patch could be folded into another
-patch.)
-
-Patch 4: Convert all Direct IO callers that use iomap, or
-blockdev_direct_IO(), or bio_iov_iter_get_pages().
-
-Patch 5, 6: convert a few other callers to the new system: NFS-Direct,
-and fuse.
-
-This is based on linux-next (next-20220225). I've also stashed it here:
-
-    https://github.com/johnhubbard/linux bio_pup_next_20220225
-
-
-[1] https://lore.kernel.org/r/20220225085025.3052894-1-jhubbard@nvidia.com
-
-[2] https://lwn.net/Articles/753027/ "The trouble with get_user_pages()"
-
-[3] https://lore.kernel.org/all/20211217113049.23850-1-david@redhat.com/T/#u
-    (David Hildenbrand's mm/COW fixes)
-
-John Hubbard (6):
-  mm/gup: introduce pin_user_page()
-  iov_iter: new iov_iter_pin_pages*(), for FOLL_PIN pages
-  block, fs: assert that key paths use iovecs, and nothing else
-  block, bio, fs: convert most filesystems to pin_user_pages_fast()
-  NFS: direct-io: convert to FOLL_PIN pages
-  fuse: convert direct IO paths to use FOLL_PIN
-
- block/bio.c          | 29 ++++++++--------
- block/blk-map.c      |  6 ++--
- fs/direct-io.c       | 28 ++++++++--------
- fs/fuse/dev.c        |  7 ++--
- fs/fuse/file.c       | 38 +++++----------------
- fs/iomap/direct-io.c |  2 +-
- fs/nfs/direct.c      | 15 +++------
- include/linux/mm.h   |  1 +
- include/linux/uio.h  |  4 +++
- lib/iov_iter.c       | 78 ++++++++++++++++++++++++++++++++++++++++++++
- mm/gup.c             | 34 +++++++++++++++++++
- 11 files changed, 170 insertions(+), 72 deletions(-)
-
-
-base-commit: 06aeb1495c39c86ccfaf1adadc1d2200179f16eb
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c9bada4096ac..367d7fd28fd0 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1946,6 +1946,7 @@ long pin_user_pages_remote(struct mm_struct *mm,
+ long get_user_pages(unsigned long start, unsigned long nr_pages,
+ 			    unsigned int gup_flags, struct page **pages,
+ 			    struct vm_area_struct **vmas);
++void pin_user_page(struct page *page);
+ long pin_user_pages(unsigned long start, unsigned long nr_pages,
+ 		    unsigned int gup_flags, struct page **pages,
+ 		    struct vm_area_struct **vmas);
+diff --git a/mm/gup.c b/mm/gup.c
+index 428c587acfa2..13c0dced2aee 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -3035,6 +3035,40 @@ long pin_user_pages(unsigned long start, unsigned long nr_pages,
+ }
+ EXPORT_SYMBOL(pin_user_pages);
+ 
++/**
++ * pin_user_page() - apply a FOLL_PIN reference to a page ()
++ *
++ * @page: the page to be pinned.
++ *
++ * Similar to get_user_pages(), in that the page's refcount is elevated using
++ * FOLL_PIN rules.
++ *
++ * IMPORTANT: That means that the caller must release the page via
++ * unpin_user_page().
++ *
++ */
++void pin_user_page(struct page *page)
++{
++	struct folio *folio = page_folio(page);
++
++	WARN_ON_ONCE(folio_ref_count(folio) <= 0);
++
++	/*
++	 * Similar to try_grab_page(): be sure to *also*
++	 * increment the normal page refcount field at least once,
++	 * so that the page really is pinned.
++	 */
++	if (folio_test_large(folio)) {
++		folio_ref_add(folio, 1);
++		atomic_add(1, folio_pincount_ptr(folio));
++	} else {
++		folio_ref_add(folio, GUP_PIN_COUNTING_BIAS);
++	}
++
++	node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, 1);
++}
++EXPORT_SYMBOL(pin_user_page);
++
+ /*
+  * pin_user_pages_unlocked() is the FOLL_PIN variant of
+  * get_user_pages_unlocked(). Behavior is the same, except that this one sets
 -- 
 2.35.1
 
