@@ -2,205 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 501224C5A41
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 10:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F1C4C5ADD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 13:08:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbiB0Jfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Feb 2022 04:35:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35486 "EHLO
+        id S230382AbiB0MIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Feb 2022 07:08:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbiB0Jfa (ORCPT
+        with ESMTP id S230289AbiB0MIc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Feb 2022 04:35:30 -0500
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD82B3B00A;
-        Sun, 27 Feb 2022 01:34:54 -0800 (PST)
-Received: by mail-qk1-x72e.google.com with SMTP id c7so8186936qka.7;
-        Sun, 27 Feb 2022 01:34:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3ydXRxafX1EOKVAeUm3spAkjR9HLvDHZhsiMVOXC7pM=;
-        b=Ry/pcRhCOPtr1BHLw6EHtZnD+ABBqojtwAXfsBmfqclWrxUkX6MSl4hET36Zct4AbT
-         4uOAlghzb+c72+v2pSSvRm9khxVGZyzADyCaA/2p864tFi9InGHoLV0kZrMm87/zxJVh
-         VSq5O3bnrSjGRHZCSfSHEs5jlLPJrKFDBq1EveU6WRvxDlNB/p5VOKzVXfQ629fxPNIr
-         qawBh26DurhQt+kvkGKMpZaWMscQKuOJlDFAwqqL6UrQyJ9vSzYS3uQG5AL7kRhVM2jS
-         wIj427P9ZAnm1FzBk73O1UcZn8Qg1HgpjyUioAIyoz4lhqRQZQr0yTULOXil6Kri7OeG
-         NslQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3ydXRxafX1EOKVAeUm3spAkjR9HLvDHZhsiMVOXC7pM=;
-        b=RBxDqXomR6rJ3gjI0kdDutTwO3UiVItGXQolGym3ibmsqmFpB3s2iHHaIG3fhoU+UE
-         tbb4XLXWYySI2eEUEgLgVTQmsd2WhwQtdnh35yYxMcFeXffyDnbcT4HLTLoHdLQpQyGM
-         uMp1Wdly8GSw/jWijdQa2JF6+iecO/69HB0ghGYZh8ytA58BEFpq82ihEYbFMoFnrqLU
-         kYe/iOtlgOOguID81mPla9JEGNy1OwAUfQ0uF2RoAqpjZn1tzKkBzNkjVqO6DrruD0VS
-         /rU0sf4sjLF7u1jnUirFpnM/vgb0AMCON7hp3o/pMYVDadrsYtoAfKu+VLIkj15d00rv
-         HZgQ==
-X-Gm-Message-State: AOAM531cRkW5/f+cqkpiZRqfHyXMSC7TYukbKt/P2InqzCHWfk06gMP5
-        eBmln+MbIYDgLgrywzazeN0=
-X-Google-Smtp-Source: ABdhPJxMxpMStJYT/anaXMiOzH0PUmpS5c44ybggs8kRB3SW3X4/9Ls7JKzoSQwP278gUHwekI7TMA==
-X-Received: by 2002:a05:620a:469f:b0:648:f460:333c with SMTP id bq31-20020a05620a469f00b00648f460333cmr8758089qkb.36.1645954494005;
-        Sun, 27 Feb 2022 01:34:54 -0800 (PST)
-Received: from sandstorm.attlocal.net (76-242-90-12.lightspeed.sntcca.sbcglobal.net. [76.242.90.12])
-        by smtp.gmail.com with ESMTPSA id h3-20020a05622a170300b002e008a93f8fsm469815qtk.91.2022.02.27.01.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Feb 2022 01:34:53 -0800 (PST)
-From:   jhubbard.send.patches@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chaitanya Kulkarni <kch@nvidia.com>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 6/6] fuse: convert direct IO paths to use FOLL_PIN
-Date:   Sun, 27 Feb 2022 01:34:34 -0800
-Message-Id: <20220227093434.2889464-7-jhubbard@nvidia.com>
+        Sun, 27 Feb 2022 07:08:32 -0500
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 262D725EA7;
+        Sun, 27 Feb 2022 04:07:55 -0800 (PST)
+IronPort-Data: =?us-ascii?q?A9a23=3AhfpkI6gn03LpJm5iP9LzOcBWX161CxEKZh0ujC4?=
+ =?us-ascii?q?5NGQNrF6WrkUHyjYWX2yHa/feMGenc410PIrk/EIP7JPUn9JnG1RtqHw8FHgiR?=
+ =?us-ascii?q?ejtX4rAdhiqV8+xwmwvdGo+toNGLICowPkcFhcwnT/wdOixxZVA/fvQHOCkUra?=
+ =?us-ascii?q?dYnkZqTJME0/NtzoywobVvaY42bBVMyvV0T/Di5W31G2NglaYAUpIg063ky6Di?=
+ =?us-ascii?q?dyp0N8uUvPSUtgQ1LPWvyF94JvyvshdJVOgKmVfNrbSq+ouUNiEEm3lExcFUrt?=
+ =?us-ascii?q?Jk57wdAsEX7zTIROTzHFRXsBOgDAb/mprjPl9b6FaNC+7iB3Q9zx14M9QvJqrW?=
+ =?us-ascii?q?EEnOLbQsOoAURhECDw4NqpDkFPCCSHl65TIkBOWLRMAxN0rVinaJ7Yw9u9pAG1?=
+ =?us-ascii?q?m++YfLTcXZBGfwemxxdqTSuJsrsUlItPiMI4Wtjdn1z6xJfovR9bBBbrL4dtZ1?=
+ =?us-ascii?q?TIrrsFIAfvaIcEebFJHYBbfZBtAElQaEpQzmKGvnHaXWzlZrk+F4K8yy2vNxQd?=
+ =?us-ascii?q?ylr/3P7L9fMKGRMBQtkKZvX7duWD4BAwKctCS11Kt8Huqi6nEnT7TX5gbH7m1s?=
+ =?us-ascii?q?PVthTW7wm0VFQ1TW0C3rOe0jmagVN9FbU8Z4Cwjqe417kPDZt38WQCo5X2JpBg?=
+ =?us-ascii?q?RX/JOHOAgrgKA0KzZ50CeHGdsZjpAbsE28d84XhQ02VKT2dDkHzpitPuSU331y?=
+ =?us-ascii?q?1s+hVteIgBMdSlbO3BCFlBDvrHeTEgIpkqnZr5e/GSd07UZwQ3N/g0=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AqTB5vKvWqXOeuAG9rVpcKm5Y7skCW4Mji2hC?=
+ =?us-ascii?q?6mlwRA09TyXGra2TdaUgvyMc1gx7ZJhBo7+90ci7MBfhHPtOjbX5Uo3SOTUO1F?=
+ =?us-ascii?q?HYTr2KjrGSuwEIeReOj9K1vJ0IG8YeNDSZNykdsS+Q2mmF+rgbsbq6GPfCv5a4?=
+ =?us-ascii?q?854hd3AbV4hQqyNCTiqLGEx/QwdLQbI/CZqn/8JC4x6tY24eYMiXDmQMG7Grna?=
+ =?us-ascii?q?y4qLvWJTo9QzI34giHij2lrJb8Dhijxx8bFxdC260r/2TpmxHwoo+jr/a44BnB?=
+ =?us-ascii?q?0HK71eUkpPLRjv94QOCcgMkcLTvhziyyYp56ZrGEtDcp5Mmy9VcDirD30mEdFv?=
+ =?us-ascii?q?U2z0mUUnC+oBPr1QWl+i0p8WXexViRhmamidDlRQg9F9FKietiA2zkAnIbzZlB?=
+ =?us-ascii?q?OZ9wrimkX8I9N2KLoM293am9a/hSrDv8nZJ4+tRjwkC2UuMlGcBsRMIkjQ9o+a?=
+ =?us-ascii?q?w7bVjHAbAcYZJT5f7nlYtrmHOhHg7kVzpUsa2RtkpaJGb7fqFFgL3h7wRr?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="122037686"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 27 Feb 2022 20:07:51 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id D5A014D169EF;
+        Sun, 27 Feb 2022 20:07:48 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Sun, 27 Feb 2022 20:07:48 +0800
+Received: from irides.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Sun, 27 Feb 2022 20:07:48 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
+Subject: [PATCH v11 0/8] fsdax: introduce fs query to support reflink
+Date:   Sun, 27 Feb 2022 20:07:39 +0800
+Message-ID: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220227093434.2889464-1-jhubbard@nvidia.com>
-References: <20220227093434.2889464-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FROM_FMBLA_NEWDOM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: D5A014D169EF.A274D
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+This patchset is aimed to support shared pages tracking for fsdax.
 
-Convert the fuse filesystem to support the new iov_iter_get_pages()
-behavior. That routine now invokes pin_user_pages_fast(), which means
-that such pages must be released via unpin_user_page(), rather than via
-put_page().
+Changes since V10:
+  - Use cmpxchg() to prevent concurrent registration/unregistration
+  - Use phys_addr_t for ->memory_failure()
+  - Add dax_entry_lock() for dax_lock_mapping_entry()
+  - Fix offset and length calculation at the boundary of a filesystem
 
-This commit also removes any possibility of kernel pages being handled,
-in the fuse_get_user_pages() call. Although this may seem like a steep
-price to pay, Christoph Hellwig actually recommended it a few years ago
-for nearly the same situation [1].
+This patchset moves owner tracking from dax_assocaite_entry() to pmem
+device driver, by introducing an interface ->memory_failure() for struct
+pagemap.  This interface is called by memory_failure() in mm, and
+implemented by pmem device.
 
-[1] https://lore.kernel.org/kvm/20190724061750.GA19397@infradead.org/
+Then call holder operations to find the filesystem which the corrupted
+data located in, and call filesystem handler to track files or metadata
+associated with this page.
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- fs/fuse/dev.c  |  7 +++++--
- fs/fuse/file.c | 38 +++++++++-----------------------------
- 2 files changed, 14 insertions(+), 31 deletions(-)
+Finally we are able to try to fix the corrupted data in filesystem and
+do other necessary processing, such as killing processes who are using
+the files affected.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index e1b4a846c90d..9db85c4d549a 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -675,7 +675,10 @@ static void fuse_copy_finish(struct fuse_copy_state *cs)
- 			flush_dcache_page(cs->pg);
- 			set_page_dirty_lock(cs->pg);
- 		}
--		put_page(cs->pg);
-+		if (cs->pipebufs)
-+			put_page(cs->pg);
-+		else
-+			unpin_user_page(cs->pg);
- 	}
- 	cs->pg = NULL;
- }
-@@ -730,7 +733,7 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
- 		}
- 	} else {
- 		size_t off;
--		err = iov_iter_get_pages(cs->iter, &page, PAGE_SIZE, 1, &off);
-+		err = iov_iter_pin_pages(cs->iter, &page, PAGE_SIZE, 1, &off);
- 		if (err < 0)
- 			return err;
- 		BUG_ON(!err);
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 94747bac3489..ecfa5bdde919 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -611,18 +611,6 @@ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
- 	args->out_args[0].size = count;
- }
- 
--static void fuse_release_user_pages(struct fuse_args_pages *ap,
--				    bool should_dirty)
--{
--	unsigned int i;
--
--	for (i = 0; i < ap->num_pages; i++) {
--		if (should_dirty)
--			set_page_dirty_lock(ap->pages[i]);
--		put_page(ap->pages[i]);
--	}
--}
--
- static void fuse_io_release(struct kref *kref)
- {
- 	kfree(container_of(kref, struct fuse_io_priv, refcnt));
-@@ -720,7 +708,8 @@ static void fuse_aio_complete_req(struct fuse_mount *fm, struct fuse_args *args,
- 	struct fuse_io_priv *io = ia->io;
- 	ssize_t pos = -1;
- 
--	fuse_release_user_pages(&ia->ap, io->should_dirty);
-+	unpin_user_pages_dirty_lock(ia->ap.pages, ia->ap.num_pages,
-+				    io->should_dirty);
- 
- 	if (err) {
- 		/* Nothing */
-@@ -1382,25 +1371,14 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
- 	size_t nbytes = 0;  /* # bytes already packed in req */
- 	ssize_t ret = 0;
- 
--	/* Special case for kernel I/O: can copy directly into the buffer */
--	if (iov_iter_is_kvec(ii)) {
--		unsigned long user_addr = fuse_get_user_addr(ii);
--		size_t frag_size = fuse_get_frag_size(ii, *nbytesp);
--
--		if (write)
--			ap->args.in_args[1].value = (void *) user_addr;
--		else
--			ap->args.out_args[0].value = (void *) user_addr;
--
--		iov_iter_advance(ii, frag_size);
--		*nbytesp = frag_size;
--		return 0;
--	}
-+	/* Only user space buffers are allowed with fuse Direct IO. */
-+	if (WARN_ON_ONCE(!iter_is_iovec(ii)))
-+		return -EOPNOTSUPP;
- 
- 	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
- 		unsigned npages;
- 		size_t start;
--		ret = iov_iter_get_pages(ii, &ap->pages[ap->num_pages],
-+		ret = iov_iter_pin_pages(ii, &ap->pages[ap->num_pages],
- 					*nbytesp - nbytes,
- 					max_pages - ap->num_pages,
- 					&start);
-@@ -1484,7 +1462,9 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 		}
- 
- 		if (!io->async || nres < 0) {
--			fuse_release_user_pages(&ia->ap, io->should_dirty);
-+			unpin_user_pages_dirty_lock(ia->ap.pages,
-+						    ia->ap.num_pages,
-+						    io->should_dirty);
- 			fuse_io_free(ia);
- 		}
- 		ia = NULL;
+The call trace is like this:
+memory_failure()
+|* fsdax case
+|------------
+|pgmap->ops->memory_failure()      => pmem_pgmap_memory_failure()
+| dax_holder_notify_failure()      =>
+|  dax_device->holder_ops->notify_failure() =>
+|                                     - xfs_dax_notify_failure()
+|  |* xfs_dax_notify_failure()
+|  |--------------------------
+|  |   xfs_rmap_query_range()
+|  |    xfs_dax_failure_fn()
+|  |    * corrupted on metadata
+|  |       try to recover data, call xfs_force_shutdown()
+|  |    * corrupted on file data
+|  |       try to recover data, call mf_dax_kill_procs()
+|* normal case
+|-------------
+|mf_generic_kill_procs()
+
+==
+Shiyang Ruan (8):
+  dax: Introduce holder for dax_device
+  mm: factor helpers for memory_failure_dev_pagemap
+  pagemap,pmem: Introduce ->memory_failure()
+  fsdax: Introduce dax_lock_mapping_entry()
+  mm: move pgoff_address() to vma_pgoff_address()
+  mm: Introduce mf_dax_kill_procs() for fsdax case
+  xfs: Implement ->notify_failure() for XFS
+  fsdax: set a CoW flag when associate reflink mappings
+
+ drivers/dax/super.c         |  89 +++++++++++++
+ drivers/nvdimm/pmem.c       |  16 +++
+ fs/dax.c                    | 140 ++++++++++++++++++---
+ fs/xfs/Makefile             |   1 +
+ fs/xfs/xfs_buf.c            |  12 ++
+ fs/xfs/xfs_fsops.c          |   3 +
+ fs/xfs/xfs_mount.h          |   1 +
+ fs/xfs/xfs_notify_failure.c | 235 +++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_notify_failure.h |  10 ++
+ fs/xfs/xfs_super.c          |   6 +
+ include/linux/dax.h         |  47 +++++++
+ include/linux/memremap.h    |  12 ++
+ include/linux/mm.h          |  17 +++
+ include/linux/page-flags.h  |   6 +
+ mm/memory-failure.c         | 240 ++++++++++++++++++++++++++----------
+ 15 files changed, 747 insertions(+), 88 deletions(-)
+ create mode 100644 fs/xfs/xfs_notify_failure.c
+ create mode 100644 fs/xfs/xfs_notify_failure.h
+
 -- 
 2.35.1
+
+
 
