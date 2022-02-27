@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 023954C5E2C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 19:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4205B4C5E30
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Feb 2022 19:35:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbiB0SdU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Feb 2022 13:33:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48106 "EHLO
+        id S230491AbiB0SgX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Feb 2022 13:36:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbiB0SdT (ORCPT
+        with ESMTP id S229644AbiB0SgV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Feb 2022 13:33:19 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16EB75FC9;
-        Sun, 27 Feb 2022 10:32:42 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id bq11so14569258edb.2;
-        Sun, 27 Feb 2022 10:32:42 -0800 (PST)
+        Sun, 27 Feb 2022 13:36:21 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 428FA46669;
+        Sun, 27 Feb 2022 10:35:44 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id qx21so20605688ejb.13;
+        Sun, 27 Feb 2022 10:35:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/TZp34KgRQjyVlG9WRiwZuTYoOOo5zR7Yrl4AzfTbuY=;
-        b=LLK3kHkYFU4RecBw2W0N/+jGvQv5W1YQGaP0temkCwFNAcqlUVEThTeYukFXPYoQDE
-         jr0WYP0yPYhBfHDDUESI4xUrC9OcGhBQnvv0PjnEK5wtOWXMl4+fX2sEIjg+aappUjBS
-         3Y30KXdOeaFA4ppb4lJFZiJcZfcOwqXRuIQcBiOOnHay7REtX1pQUBfjhOYgJ/75xXdT
-         OYJ1Q5i2NyCKzRbhlDvF8V+wN1Qf7iVuHLVAlSDKIzG9IbiKcQs+W3QuxENwchwji/rN
-         CCAxn/45Flie7GiipjmoQyeFVHT4J8c0iGn/KCRe45z4kuNYV4kdi7NRccVGFU//A3TY
-         hq4A==
+        bh=u2d9/4dkN8Ga7N6Pg0fsTvmJzid5qlHgPkrPf48UlKY=;
+        b=Wmr2cbckQqdefsbRJsktXOSqq8FlkTJ/sMC0h0wnW5b6u+6Bx667jFs9vPQQ/FnroI
+         Mavd03H1FibbboUqF/1x3n3KQ+86ak6wVioJjJ9BrPW/MnYk3Fms4gtnh5cvM1ZPkl9x
+         9CO5A3rYqxircLPWCzaLDYwUXVP6VxdgmeLYoZ+sw2VI4+GHy7nsZc12oKjkIOsvFmzp
+         8R5q3yxx8IjnWpbVdkh17/rXYSjC5SN5g22/5G2/RpcIDjlvOyQMhLuNXbjb5DWgMhm8
+         zCqt1sACj1kPh8BEuulDNCYcRnIhWxWniZq/VS4WDx4ngIjGgePx1EgsWtBkOht8wMLz
+         VXDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/TZp34KgRQjyVlG9WRiwZuTYoOOo5zR7Yrl4AzfTbuY=;
-        b=OK04V/0s+4QvemfLPr6jsPaUzR7iedPRSktakbNmGuBYxMeP3eximEzpsuWageJHnX
-         OHwTU5sJeWQ+JjJOUn7bU+wmgOZruCy7+BveDeCRGGEZA5daO1ftSWC0r8cC/30JRYx/
-         lTzrx+0dlX8dviIphS6HnkcNbTQgpm/kfXzkCar6fvK/SY23jgkgCjfQRMBbMaPMVQ/k
-         y/UlvcF7Zed+pVF+nEe/6FXHbMDJ+CoSbuAfiJhNmYtaoSo89kRRMoV2dnB0RMwpa7Wx
-         tdQUPLauAKLfdDBPb7QQmm0+FBQkOD+6Ds3Fe3dH1BskUYbJt0D1G26YPYj5ZE40fmZ4
-         BXYg==
-X-Gm-Message-State: AOAM531Sx5/Ww0UArZ8fVcieMnTcyhPO6vRA7S3a5lTjPxr2YR7iUGoz
-        RcD+nEaD3nbbiAH8S/LB3m00GCFqB5JrX6eg7Ew=
-X-Google-Smtp-Source: ABdhPJyHUNfpwOsKi0aeKxcTx+/bopy6WwoASD8Tb/1xc3wyuuUiVdE2nPEFSzUYMnWatsebuBvzL6lZke9z+ZvjEsE=
-X-Received: by 2002:aa7:daca:0:b0:410:d02a:1bf3 with SMTP id
- x10-20020aa7daca000000b00410d02a1bf3mr16547217eds.455.1645986760526; Sun, 27
- Feb 2022 10:32:40 -0800 (PST)
+        bh=u2d9/4dkN8Ga7N6Pg0fsTvmJzid5qlHgPkrPf48UlKY=;
+        b=eA5PkKHzU85Tly/9e/pcOGclGTFmbb0kRUaNyzt8g+FKEbyDkod2VeKg3M2ydO3t96
+         61LLz1dUZynY6LViWqMJGgV/ihQQ02tmM0Tc4JfYd0mJ604Of4+Iwu7TcXr4WNA7CbYe
+         w0QvPVU2gUHTnzXbwWtQE9mGNiMgF6l8xbw+hcdzJmqRwWo+XnNWshDTmU7kE2aUIn8N
+         4LcYTxekPH0NhAebyRMCgZUk51syN5TX54OktWpjlyN5GjWnrwah9NzcpEz/zVp2Uojz
+         O8Tqelh4LBmi/vvndX7DoUL0ApvTzGOsUkRXGCKJ3keLH0PGo515h/bCeG3br3gtUZ0K
+         A2Og==
+X-Gm-Message-State: AOAM5334c0I6cj8p9ehJF9nPQSnG8jLpol2+rnFBa/ot/+tZRawT7Q2h
+        R4VtfX7tMg1BsGpgu79LEnscd2Q0Tf3lEYPNZ7Q=
+X-Google-Smtp-Source: ABdhPJyZWdawHC1sy9+qyy/et2qc3Bynu89CH87D3JYSeqvZ5yLOMSjVwR4o/N9Vl/7I4wE/8/CA3TUlzL0O8H7q63U=
+X-Received: by 2002:a17:907:b590:b0:6c1:c061:d945 with SMTP id
+ qx16-20020a170907b59000b006c1c061d945mr12462095ejc.768.1645986942749; Sun, 27
+ Feb 2022 10:35:42 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1645558375.git.riteshh@linux.ibm.com> <9cc1f9ac12ff3dca6b0c18d0bda2245a1264595e.1645558375.git.riteshh@linux.ibm.com>
- <20220223094509.asn3e4dcgs5fokeo@quack3.lan>
-In-Reply-To: <20220223094509.asn3e4dcgs5fokeo@quack3.lan>
+References: <cover.1645558375.git.riteshh@linux.ibm.com> <bf55f9a22a67f8619ffe5f1af47bebb43f5ed372.1645558375.git.riteshh@linux.ibm.com>
+ <20220223094934.wfcmceilhjtnbxjq@quack3.lan>
+In-Reply-To: <20220223094934.wfcmceilhjtnbxjq@quack3.lan>
 From:   harshad shirwadkar <harshadshirwadkar@gmail.com>
-Date:   Sun, 27 Feb 2022 10:32:29 -0800
-Message-ID: <CAD+ocbwL6jCtUgqjp5VzLkyab6wZurF=cCB9ZJOawJaejJv32A@mail.gmail.com>
-Subject: Re: [RFC 7/9] ext4: Fix remaining two trace events to use same printk convention
+Date:   Sun, 27 Feb 2022 10:35:31 -0800
+Message-ID: <CAD+ocby2Z7AS+5x_AKswpzeSezpoQBp9DHLu+n9jR5P7ZRBWWg@mail.gmail.com>
+Subject: Re: [RFC 8/9] ext4: Convert ext4_fc_track_dentry type events to use
+ event class
 To:     Jan Kara <jack@suse.cz>
 Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
@@ -69,54 +70,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good.
+Nice! Thanks for fixing this.
 
 Reviewed-by: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
 
+
 - Harshad
 
-On Wed, 23 Feb 2022 at 01:45, Jan Kara <jack@suse.cz> wrote:
+On Wed, 23 Feb 2022 at 01:49, Jan Kara <jack@suse.cz> wrote:
 >
-> On Wed 23-02-22 02:04:15, Ritesh Harjani wrote:
-> > All ext4 & jbd2 trace events starts with "dev Major:Minor".
-> > While we are still improving/adding the ftrace events for FC,
-> > let's fix last two remaining trace events to follow the same
-> > convention.
+> On Wed 23-02-22 02:04:16, Ritesh Harjani wrote:
+> > One should use DECLARE_EVENT_CLASS for similar event types instead of
+> > defining TRACE_EVENT for each event type. This is helpful in reducing
+> > the text section footprint for e.g. [1]
+> >
+> > [1]: https://lwn.net/Articles/381064/
 > >
 > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 >
-> OK. Feel free to add:
+> Looks good. Feel free to add:
 >
 > Reviewed-by: Jan Kara <jack@suse.cz>
 >
 >                                                                 Honza
 >
 > > ---
-> >  include/trace/events/ext4.h | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >  include/trace/events/ext4.h | 57 +++++++++++++++++++++----------------
+> >  1 file changed, 32 insertions(+), 25 deletions(-)
 > >
 > > diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> > index 6e66cb7ce624..233dbffa5ceb 100644
+> > index 233dbffa5ceb..33a059d845d6 100644
 > > --- a/include/trace/events/ext4.h
 > > +++ b/include/trace/events/ext4.h
-> > @@ -2653,7 +2653,7 @@ TRACE_EVENT(ext4_fc_replay_scan,
-> >               __entry->off = off;
-> >       ),
-> >
-> > -     TP_printk("FC scan pass on dev %d,%d: error %d, off %d",
-> > +     TP_printk("dev %d,%d error %d, off %d",
-> >                 MAJOR(__entry->dev), MINOR(__entry->dev),
-> >                 __entry->error, __entry->off)
+> > @@ -2783,33 +2783,40 @@ TRACE_EVENT(ext4_fc_stats,
+> >                 __entry->fc_numblks)
 > >  );
-> > @@ -2679,7 +2679,7 @@ TRACE_EVENT(ext4_fc_replay,
-> >               __entry->priv2 = priv2;
-> >       ),
 > >
-> > -     TP_printk("FC Replay %d,%d: tag %d, ino %d, data1 %d, data2 %d",
-> > +     TP_printk("dev %d,%d: tag %d, ino %d, data1 %d, data2 %d",
-> >                 MAJOR(__entry->dev), MINOR(__entry->dev),
-> >                 __entry->tag, __entry->ino, __entry->priv1, __entry->priv2)
-> >  );
+> > -#define DEFINE_TRACE_DENTRY_EVENT(__type)                            \
+> > -     TRACE_EVENT(ext4_fc_track_##__type,                             \
+> > -         TP_PROTO(struct inode *inode, struct dentry *dentry, int ret), \
+> > -                                                                     \
+> > -         TP_ARGS(inode, dentry, ret),                                \
+> > -                                                                     \
+> > -         TP_STRUCT__entry(                                           \
+> > -                 __field(dev_t, dev)                                 \
+> > -                 __field(int, ino)                                   \
+> > -                 __field(int, error)                                 \
+> > -                 ),                                                  \
+> > -                                                                     \
+> > -         TP_fast_assign(                                             \
+> > -                 __entry->dev = inode->i_sb->s_dev;                  \
+> > -                 __entry->ino = inode->i_ino;                        \
+> > -                 __entry->error = ret;                               \
+> > -                 ),                                                  \
+> > -                                                                     \
+> > -         TP_printk("dev %d:%d, inode %d, error %d, fc_%s",           \
+> > -                   MAJOR(__entry->dev), MINOR(__entry->dev),         \
+> > -                   __entry->ino, __entry->error,                     \
+> > -                   #__type)                                          \
+> > +DECLARE_EVENT_CLASS(ext4_fc_track_dentry,
+> > +
+> > +     TP_PROTO(struct inode *inode, struct dentry *dentry, int ret),
+> > +
+> > +     TP_ARGS(inode, dentry, ret),
+> > +
+> > +     TP_STRUCT__entry(
+> > +             __field(dev_t, dev)
+> > +             __field(int, ino)
+> > +             __field(int, error)
+> > +     ),
+> > +
+> > +     TP_fast_assign(
+> > +             __entry->dev = inode->i_sb->s_dev;
+> > +             __entry->ino = inode->i_ino;
+> > +             __entry->error = ret;
+> > +     ),
+> > +
+> > +     TP_printk("dev %d,%d, inode %d, error %d",
+> > +               MAJOR(__entry->dev), MINOR(__entry->dev),
+> > +               __entry->ino, __entry->error
+> >       )
+> > +);
+> > +
+> > +#define DEFINE_EVENT_CLASS_TYPE(__type)                                      \
+> > +DEFINE_EVENT(ext4_fc_track_dentry, ext4_fc_track_##__type,           \
+> > +     TP_PROTO(struct inode *inode, struct dentry *dentry, int ret),  \
+> > +     TP_ARGS(inode, dentry, ret)                                     \
+> > +)
+> > +
+> >
+> > -DEFINE_TRACE_DENTRY_EVENT(create);
+> > -DEFINE_TRACE_DENTRY_EVENT(link);
+> > -DEFINE_TRACE_DENTRY_EVENT(unlink);
+> > +DEFINE_EVENT_CLASS_TYPE(create);
+> > +DEFINE_EVENT_CLASS_TYPE(link);
+> > +DEFINE_EVENT_CLASS_TYPE(unlink);
+> >
+> >  TRACE_EVENT(ext4_fc_track_inode,
+> >           TP_PROTO(struct inode *inode, int ret),
 > > --
 > > 2.31.1
 > >
