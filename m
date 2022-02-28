@@ -2,184 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDADC4C68FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 11:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75CA44C6967
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 12:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235323AbiB1K4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 05:56:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
+        id S235453AbiB1LJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 06:09:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235318AbiB1Ky6 (ORCPT
+        with ESMTP id S231282AbiB1LJf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 05:54:58 -0500
-Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601D919C02;
-        Mon, 28 Feb 2022 02:53:22 -0800 (PST)
-Received: from pps.filterd (m0209324.ppops.net [127.0.0.1])
-        by mx08-001d1705.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21S6rZ4H001223;
-        Mon, 28 Feb 2022 10:53:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=S1;
- bh=zB+lZCeGR9GxazSq5uhX56nbMsCg+RM8thPPcY4Me+8=;
- b=WL5NV2jX+5Kqb2Q5wbHGqTgRlEDYLb+QaA9BUv36NXFeH0MFQOctPFPabxnPiT6Ocn7f
- X7ySatZ1GfQALJvVpuJ0xcf6VPm3MVBoNv08D2NV6RiugQA8CRyvfHnBL5DV/oDJ/wj5
- m1qZ9hbpHIPXxeC/lN1wyPTe21DgzbB9nRgBf08Vxupxmsq0LyNzz0TM4HSzV1DiBAF6
- k4Y5c/5bN7YFSq1fjgoVhf1GvbtdlWNjMmilyWeTXRWNVoFbasjPOzU9DolJYKJGm6pP
- JSEXSSPUe+H2XSVSpWGyPVVyZNGnP0r6zHIRbXBZpxLGbkp3dUKsIJL9Y52Nhe0zhfAH Bg== 
-Received: from apc01-psa-obe.outbound.protection.outlook.com (mail-psaapc01lp2043.outbound.protection.outlook.com [104.47.26.43])
-        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3efefrshn8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Feb 2022 10:53:09 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OB7RZ5ZdQHERvEleyZcfWgiWGDXnlj3OcT3DTN0Em/lcLqu5VLu6AKIoLIwq/4ZmMeqe1qlypuIxRQbhdohIE3wmxLfrcXsEw3eIkRJA8ksLvLKtYY4YmqESG6akTzKy7/UWyzcB0cJ9W7SOd4V+FUiuGyYzIz0922F9Bp4j2isSXNLqeUZwf7m1fwn51NLXhJ/pBnugo3hnqiin7XHPM8hH2YVadB9rqhJnzLL417U9ZgcKtC3VZe6fa9rHvYf19jaeAi497hyv/RSE8c3GvDeSEdekcPmboqRDK2kRh+5DtAqgIy0dMAQlyl2x4fYAsdomsxokLBBm5T67iAJ1+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zB+lZCeGR9GxazSq5uhX56nbMsCg+RM8thPPcY4Me+8=;
- b=n4X517jOXP7YYNkdlSa4pFBcoxN7+6d5SLoaqos93+Q9D3ZfJyzdcXtJw2NgwCjjiPQ5Dupkz9rz3c3ACGmxjgGqPrj4lqPdZoIpZsVpIrR+clEavoql9ve/7ULvitmo8swQ/2tW+aN/shxry9QQYTYswHQe/9fP3+ws8JeTguiOmF3ar7HHnkJkVDjq80BEjnkHyqhLU1dKSUBvREEEO0oZ1qW7e8b5yS47ozZNUxNtMNcHnxeqtLNkKM5SIvLikPA2JQAsVK/e2nyq6pH+2i4jciczg7wEgSWg1W9BOciRJVWs01Wje+uNhdQB+mCwqFKh8MtBZNsDjWV4Px55IA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from HK2PR04MB3891.apcprd04.prod.outlook.com (2603:1096:202:35::13)
- by TYZPR04MB4511.apcprd04.prod.outlook.com (2603:1096:400:5a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.22; Mon, 28 Feb
- 2022 10:51:54 +0000
-Received: from HK2PR04MB3891.apcprd04.prod.outlook.com
- ([fe80::98b0:9ef4:57f2:c045]) by HK2PR04MB3891.apcprd04.prod.outlook.com
- ([fe80::98b0:9ef4:57f2:c045%4]) with mapi id 15.20.5017.026; Mon, 28 Feb 2022
- 10:51:54 +0000
-From:   "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To:     "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>,
-        "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] exfat: do not clear VolumeDirty in writeback
-Thread-Topic: [PATCH] exfat: do not clear VolumeDirty in writeback
-Thread-Index: AQHYHKozeVmted1T5UKvjQCq+AaGCayoqY+AgAA/KGA=
-Date:   Mon, 28 Feb 2022 10:51:54 +0000
-Message-ID: <HK2PR04MB3891B4F1C2BC707582E81C0C81019@HK2PR04MB3891.apcprd04.prod.outlook.com>
-References: <HK2PR04MB38914869B1FEE326CFE11779812D9@HK2PR04MB3891.apcprd04.prod.outlook.com>
- <TYAPR01MB5353E089F4843C6CE6A0BA1E90019@TYAPR01MB5353.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYAPR01MB5353E089F4843C6CE6A0BA1E90019@TYAPR01MB5353.jpnprd01.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 72fb6db1-379b-454b-76ab-08d9faa85585
-x-ms-traffictypediagnostic: TYZPR04MB4511:EE_
-x-microsoft-antispam-prvs: <TYZPR04MB4511B9DFCA7634A2083E973781019@TYZPR04MB4511.apcprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: uXRArqCwMTkOZHimMEdhYRHRPh9oKkHiVlxhu3kzYd9+DnsIylZQjn6hnBwjNCWJyOB9Q/x419slb1755DE+9WXbJbW/h8tHliuWKG5SI3aK2hQ+HPIT2e0aTYFzqRJWYNYlGQlxTo+g/w1lm+qf7eHPO5aPiaqCZU6rGfQJwMKOLXPez2TRRxqWIUw2hlUBFC/vRY+5U/IbuR89PqwO+/nisix3i/Vj3e+BO0HAqoKxzP2J2EZUlUB5n4O2tvRRFHhrOnX/VIV40OrYggzOpV10EC8GZYAv4EKIq2+ZdXV3pEVr2ByGtpWta4sj2XJvst9GinonADPBFv+5pSSG+o5kAhG7rOCU4KHOkQgS89srvPvxbzxoo3yQ3ND3CGU2huE8zc+YL5PCxXiFZmcQjs+7AkaEO7pG87E/epQ8mADGnz334iAqm5bd40TR5GOTrlDnBSz9DyFC3wMTdhN8/XfuTQmEPzsTbTZX+Q30MfK2kdfBx5XOeeuSdakEIQiT3ko90gP6FyWGpVft+C34QIxoBLE9iS/aTwnB4GKrrUHhens3QU7f+TJ5TP5UjAah/sltvNrsvUt8wPlPL4HJyoa1jU3gNNCmE6a6aQDmWr69Y8jJtnuXkBQICE6Bg6zZX2QAYn2jr7OtTIPGJZTnrPmtdMEQQmpdNi1H0qoZlc5Iln4M9WsP0s+2Z+WsEdzqrvmE7v3RSAIF/CckkGkWRg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK2PR04MB3891.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(5660300002)(33656002)(122000001)(38070700005)(82960400001)(86362001)(38100700002)(2906002)(76116006)(66946007)(64756008)(8676002)(66446008)(8936002)(66476007)(52536014)(4326008)(66556008)(186003)(26005)(110136005)(83380400001)(54906003)(71200400001)(508600001)(9686003)(7696005)(6506007)(316002)(55016003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dFNjcXZ1bUcxMmY1OWJJaWU3R0U1Z0tFTXkwY0E4MG1QNHluMkdrU0dSa0VX?=
- =?utf-8?B?c1piM1lKVzZSQkNrSTYrYlBCRjQvTEVUZGVtTWd5TDlPOGppWlhVSlo1aWVx?=
- =?utf-8?B?N1ZVWEI4S1FDTTlmdnpLLzRBdVZ5eHN2cXphY1krTG0xUzdZZEQxTmdmci9n?=
- =?utf-8?B?ZmRva3crcFFjb0ZXUnB2Nk1CK1JoUXVCMXFjbUlZZ1M4OEZnV0ZxeDBsZVEw?=
- =?utf-8?B?TWRyM1d2MEZQNFBJa1ZBWmFlTnFPUWxQQ1ZtNEc3S0M0Vy83R1dzRlBRRHlQ?=
- =?utf-8?B?U1RpLy9sRHVGQTZvbWJibnB0RVZXWkxobDk5TmJLREEzQVJsR3JqeHY1Y3ls?=
- =?utf-8?B?YjJCTXJ6VEhlUHIrZXNuQXdyc0lJRmdFN3d6S24zNHNTWlJFOTN4SnZIMnov?=
- =?utf-8?B?SnRMYUk2L2NEcHMzSGlOckwyeXJ1OFFUMFJKd3A1RnZVZ1JGdWZ2WnU3bUZU?=
- =?utf-8?B?QVpRaStLTHd1djdNVDNLWDJyTVBiVTFyNjNITWRWN0RteHdTMHFTVFZORmdI?=
- =?utf-8?B?cjhjS0xjdTRvLzRLYjVLRDA5cElMQzJIT1NTcy9tcGFBK3hHdEtERmdmZEVm?=
- =?utf-8?B?blVKUjVLTU5XbDB3TjkzMFpWeDJYKzFHcEd2bWZqQ3g4eXBDc09mSmZmRFVD?=
- =?utf-8?B?TW9rK3dKSC9SM2FXZ2ZQSGJjU25vZmlUNEJMazdIa2llbDNuUHVlT21pQUJX?=
- =?utf-8?B?N01hYWlJQXFWVjVMVEloODhHdCtUZXdNOEtnbHI3MGxnTlU4VU8rcU9WZndB?=
- =?utf-8?B?bXZEaXRYRzZHT3p4YmRQV2JxTVhSL0I1U1Znckt1b1NxNjNKVHFJazZyVmFV?=
- =?utf-8?B?eWo4QW52M255UW5Zb3pQZlhrUUpWS2hmYkhQMTIxSFIrY3V3QUFjQTF6aVNl?=
- =?utf-8?B?KzdaTzVrdzJyV0xlUW5OYVdqRlUzUDJXcEcwUVNXZTQ3QStienRvSUZacjY2?=
- =?utf-8?B?Qlk2a2FwOWFrZk5DbVRKVVhBV1JlaFVZNnVucitzamVMbFdEUkZuaXRBcEt1?=
- =?utf-8?B?Umc0WUo2MTVVd2hYeWwvRFhKVW1vaUlpc3A1bkIrVHFSRnZvK2t2cCt0dEU0?=
- =?utf-8?B?OUdXZTZ6dm5TNmhyVTQ3ZTRVWWVkN0VpRVlSZkpId3FXTStCalVtV2JDdHZG?=
- =?utf-8?B?MTdyRDBNbVAwNWk5S1dJUmpJcWQvdTlVTVVZQ0VmMHQyc2lnZXJKUGVTVzF1?=
- =?utf-8?B?dFp4OE9Pbk1VbHNjM002Q21CVXNIYXdUSVB3WE9pMVpUejVwditVOWd2RlAw?=
- =?utf-8?B?Q3lzaTd2SFlQNjV0MGN0V2c0Z0dSd0I1YURZZ1RFSTZ3SllkTnVvd1YraUpn?=
- =?utf-8?B?dmVOYW4vUE1JV3dZMXRmVlVVYTFkRFUzMkdYQmpic2JmYmJTQWZLbnZvR0o1?=
- =?utf-8?B?T3g4dkN0WVM1NFByTnozdnlYTmNKRi9IQW5QRkI5S2grVzJjV2pZdXlSNHBU?=
- =?utf-8?B?QUVGNFQ5dkkzTi9MN1gzMHJwZVpUUkx4blFWeXFEUU9oejIwNllDV0VMaGow?=
- =?utf-8?B?Ly9yWWc2aGUrYkJYVDVLamZ3aVN3WnJQNmNCQm8wQnQrbU0zN1BFQTFNa1ZP?=
- =?utf-8?B?YXFwbFR5ZkpFSVpYdk9rSWdPL2Qxbm1CdVlXMWFnc0p4VzFrY09iWjJqNVZx?=
- =?utf-8?B?L2dITnB1OWVIU2xZbi9sN3RwK0RIV0wrN3o1ZE9XbENZbytTQ3J3RFRrOUdF?=
- =?utf-8?B?aGcvSXI1aTJyYVVlSHRWOTZEM2EveDQ3UHBDdDkrSXpicHIra1c3MzVicGh6?=
- =?utf-8?B?UkNRNTk1dDVHU3BSTTU3TFBOdDljamJrZFVwbHNRWGNLVVhFMXpxWERhemdE?=
- =?utf-8?B?WVZQWG45Z29IaXVMTzNyczdpMW1ydjVXS25yYlZidEZMMDNCRmt4TmVXeXVT?=
- =?utf-8?B?UGlxSlNoVno3VWRFL21sRkZ5clVmSHBPZEVOdnhwMVBicEVnS3puSHEweGFF?=
- =?utf-8?B?OXFrZzZRS0V3S2FIWVNaaDAzMnVuVkd4MGYzZXpqNDYzemJHbFhtRVRSVEhv?=
- =?utf-8?B?STBScGNhL2srLzZ1OWRZdVd3d1lUN2E2KzNGVG95NTAwU01sVU13NjE4Vlk1?=
- =?utf-8?B?aW90a0lRcTAxelMzTSsyZEpTMHFlN05KNnJBQ1hBYW5mS0h3TWlRSk81OUNo?=
- =?utf-8?B?R1NJcUtTZE9oY1QrNHd1MEZFUzZyczdVWnJCSWR3d1gxbkhHbnJHYkQwQ2ZC?=
- =?utf-8?Q?BSRjO6gR12Dz9zvHk7dDZJQ=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 28 Feb 2022 06:09:35 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 773B76621A;
+        Mon, 28 Feb 2022 03:08:54 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id p15so23995782ejc.7;
+        Mon, 28 Feb 2022 03:08:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DGHuYFjchXbmgUIZ1SnPPgINXW2r1tGfV7LKxanZ5rw=;
+        b=mx6+xil8F/OwTucWDkjx4s8oWe9qKYEvq+lRSteVfL7qHoHjMYzOaON1c2kL9OYiTX
+         db1Mykp/ffS9il6Fqi76pAlN/G5rXNdswBXj/5Gig3gkxoatbBHPRDADsVd/P2bKgern
+         FiNaHDXHNfiQkUQdDT0QxGTuel99Vo9xYQqWbNfVZEfqWt3+vAZeTOc1QbByn6ecNGa6
+         S2BlhLxmBqy/aCRkfkMxvBR+4RMiFfh+//eOhtERGL+8TdWCfHba+zdrYCDUyKUpjEKv
+         GoJF4WvvVQmT7fMcDismFLp5shdM79FKyOLpnEpulQji7R6fg8Aw9kXLsIi9eJ28dAK+
+         e6Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DGHuYFjchXbmgUIZ1SnPPgINXW2r1tGfV7LKxanZ5rw=;
+        b=1bNDt9DZ9vdL6IeovAr4FC27FUvFi4jnZQZYMMlul2Q01UKNzlHm1z3FwigGBlBL1a
+         espESZaRqFGQyOLnZlQ2VIxqXxwmKG9rNZS5OL8UTCCD2L3zqxeo/o6ooY+au4yLNoUQ
+         xbQ67jdWOaxSIAf/9gXcrfXoHmHrzU9nctvDiuVM2E0MqwD5Uc8e0s/Znij6esRwHHsr
+         tQgLndisNG3XjKntWxlZFqx4/XoJZG0o4ZDlswQwsb9TwRtqiFjX7Ac4hj+yOAY8qDAh
+         EDPMcDy/3thVOQRqa7C/ZVY2quKjLEYSvnTUPxXBZYSZoX3EPTADSk3rkwnlHxo6TpE1
+         LQow==
+X-Gm-Message-State: AOAM532nrmuiJjF1PUmL8f3Xz/7nH2iwYgIfMWvD8fXRM1QYRO2KP3N/
+        5/JZGLThCH30fo87HakgtPA=
+X-Google-Smtp-Source: ABdhPJzNctGRxtGORumk8xJxhLEhhYPBXw3MCY4PM4mZEwTJgQgzAy87Z2fgE8nw5jOtXDmEFeeNlg==
+X-Received: by 2002:a17:906:32d8:b0:6ce:d850:f79 with SMTP id k24-20020a17090632d800b006ced8500f79mr14260258ejk.414.1646046532887;
+        Mon, 28 Feb 2022 03:08:52 -0800 (PST)
+Received: from localhost.localdomain (dhcp-077-250-038-153.chello.nl. [77.250.38.153])
+        by smtp.googlemail.com with ESMTPSA id z22-20020a17090655d600b006d229436793sm4209049ejp.223.2022.02.28.03.08.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Feb 2022 03:08:52 -0800 (PST)
+From:   Jakob Koschel <jakobkoschel@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jakob Koschel <jakobkoschel@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergman <arnd@arndb.de>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Brian Johannesmeyer" <bjohannesmeyer@gmail.com>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sgx@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-usb@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, kvm@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        v9fs-developer@lists.sourceforge.net,
+        tipc-discussion@lists.sourceforge.net, alsa-devel@alsa-project.org
+Subject: [PATCH 0/6] Remove usage of list iterator past the loop body
+Date:   Mon, 28 Feb 2022 12:08:16 +0100
+Message-Id: <20220228110822.491923-1-jakobkoschel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: HK2PR04MB3891.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72fb6db1-379b-454b-76ab-08d9faa85585
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2022 10:51:54.4801
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Vb0qUPmVfEFqjZFTMv38D0GFOXCT0mCBY18fVXVO1dgJZyalVaWuXkIChnmkElOS6mkNMWGO7yD8CMZuEqm+WQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB4511
-X-Proofpoint-ORIG-GUID: 7_UOlu37D2ZVFKwGuJw89ekhHGBFeGng
-X-Proofpoint-GUID: 7_UOlu37D2ZVFKwGuJw89ekhHGBFeGng
-X-Sony-Outbound-GUID: 7_UOlu37D2ZVFKwGuJw89ekhHGBFeGng
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-28_04,2022-02-26_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011
- adultscore=0 mlxlogscore=989 mlxscore=0 phishscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202280062
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGksIEtvaGFkYS5UZXRzdWhpcm8uDQoNClRoYW5rIGZvciB5b3VyIGNvbW1lbnRzLg0KDQo+PiBB
-bmQgVm9sdW1lRGlydHkgd2lsbCBiZSBzZXQgYWdhaW4gd2hlbiB1cGRhdGluZyB0aGUgcGFyZW50
-IGRpcmVjdG9yeS4gDQo+PiBJdCBtZWFucyB0aGF0IEJvb3RTZWN0b3Igd2lsbCBiZSB3cml0dGVu
-IHR3aWNlIGluIGVhY2ggd3JpdGViYWNrLCB0aGF0IHdpbGwgc2hvcnRlbiB0aGUgbGlmZSBvZiB0
-aGUgZGV2aWNlLg0KPiANCj4gSSBoYXZlIHRoZSBzYW1lIGNvbmNlcm4uDQo+IEZyb20gYSBsaWZl
-c3BhbiBwb2ludCBvZiB2aWV3LCB3ZSBzaG91bGQgcHJvYmFibHkgY2xlYXIgZGlydHkgd2l0aCBq
-dXN0IHN5bmNfZnMoKS4NCg0KSWYgaXQgaXMgYWNjZXB0YWJsZSBmb3IgVm9sdW1lRGlydHkgdG8g
-cmVtYWluIGRpcnR5IGFmdGVyIGFsbCB1cGRhdGVzIGFyZSBjb21wbGV0ZSwgSSB0aGluayBpdCBp
-cyBhIGdvb2QgaWRlYS4NCihQUzogVGhlIG9yaWdpbmFsIGxvZ2ljIGlzIHRvIGNsZWFyIFZvbHVt
-ZURpcnR5IGFmdGVyIEJpdE1hcCwgRkFUIGFuZCBkaXJlY3RvcnkgZW50cmllcyBhcmUgdXBkYXRl
-ZC4pDQoNCj4+ICAJc3luY19ibG9ja2RldihzYi0+c19iZGV2KTsNCj4+IC0JaWYgKGV4ZmF0X2Ns
-ZWFyX3ZvbHVtZV9kaXJ0eShzYikpDQo+PiArCWlmIChfX2V4ZmF0X2NsZWFyX3ZvbHVtZV9kaXJ0
-eShzYikpDQo+IA0KPiBJZiBTQl9TWU5DSFJPTk9VUyBvciBTQl9ESVJTWU5DIGlzIG5vdCBwcmVz
-ZW50LCBpc24ndCBkaXJ0eSBjbGVhcmVkPw0KDQpXaXRoIHRoaXMgcGF0Y2gsIGV4ZmF0X2NsZWFy
-X3ZvbHVtZV9kaXJ0eSgpIHdpbGwgbm90IGNsZWFyIFZvbHVtZURpcnR5IGlmIFNCX1NZTkNIUk9O
-T1VTIG9yIFNCX0RJUlNZTkMgaXMgbm90IHByZXNlbnQsIGFuZCBfX2V4ZmF0X2NsZWFyX3ZvbHVt
-ZV9kaXJ0eSgpIHdpbGwgY2xlYXIgVm9sdW1lRGlydHkgdW5jb25kaXRpb25hbGx5Lg0KDQo+PiAr
-aW50IGV4ZmF0X2NsZWFyX3ZvbHVtZV9kaXJ0eShzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiKSB7DQo+
-PiArCWlmIChzYi0+c19mbGFncyAmIChTQl9TWU5DSFJPTk9VUyB8IFNCX0RJUlNZTkMpKQ0KPj4g
-KwkJcmV0dXJuIF9fZXhmYXRfY2xlYXJfdm9sdW1lX2RpcnR5KHNiKTsNCj4gDQo+IEV2ZW4gd2hl
-biBvbmx5IG9uZSBvZiBTQiBvciBESVIgaXMgc3luY2VkLCBkaXJ0eSB3aWxsIGJlIGNsZWFyZWQu
-DQo+IElzbid0IGl0IG5lY2Vzc2FyeSB0byBoYXZlIGJvdGggU0JfU1lOQ0hST05PVVMgYW5kIFNC
-X0RJUlNZTkM/DQoNClZvbHVtZURpcnR5IHdpbGwgYmUgY2xlYXJlZCBpZiBvbmUgb2YgU0JfU1lO
-Q0hST05PVVMgYW5kIFNCX0RJUlNZTkMgaXMgc2V0Lg0KVGhlIGNvbmRpdGlvbiBvZiAoc2ItPnNf
-ZmxhZ3MgJiAoU0JfU1lOQ0hST05PVVMgfCBTQl9ESVJTWU5DKSkgaXMgZXhhY3RseSB0aGF0Lg0K
-DQo+IEFuZCwgSSB0aGluayBpdCB3b3VsZCBiZSBiZXR0ZXIgdG8gdXNlIElTX1NZTkMgb3IgSVNf
-RElSU1lOQyBtYWNybyBoZXJlLg0KDQpJZiB1c2UgSVNfU1lOQyBvciBJU19ESVJTWU5DLCB3ZSBz
-aG91bGQgcGFzcyBgaW5vZGVgIGFzIGFuIGFyZ3VtZW50LCBpdCB3aWxsIGJlIGEgYmlnIGNoYW5n
-ZSBmb3IgY29kZS4NCkFuZCBpZiBvcGVuIGEgZmlsZSB3aXRoIE9fU1lOQywgSVNfRElSU1lOQyBh
-bmQgSVNfU1lOQyB3aWxsIGJlIHRydWUsIFZvbHVtZURpcnR5IHdpbGwgYmUgY2xlYXJlZC4gDQpT
-byBJIHRoaW5rIGl0IGlzIG5vdCBuZWNlc3NhcnkgdG8gdXNlIElTX0RJUlNZTkMgYW5kIElTX1NZ
-TkMuDQoNCkJlc3QgUmVnYXJkcywNCll1ZXpoYW5nLE1vDQo=
+This is the first patch removing several categories of use cases of
+the list iterator variable past the loop.
+This is follow up to the discussion in:
+https://lore.kernel.org/all/20220217184829.1991035-1-jakobkoschel@gmail.com/
+
+As concluded in:
+https://lore.kernel.org/all/YhdfEIwI4EdtHdym@kroah.com/
+the correct use should be using a separate variable after the loop
+and using a 'tmp' variable as the list iterator.
+The list iterator will not point to a valid structure after the loop
+if no break/goto was hit. Invalid uses of the list iterator variable
+can be avoided altogether by simply using a separate pointer to
+iterate the list.
+
+Linus and Greg agreed on the following pattern:
+
+-	struct gr_request *req;
++	struct gr_request *req = NULL;
++	struct gr_request *tmp;
+	struct gr_ep *ep;
+	int ret = 0;
+
+-	list_for_each_entry(req, &ep->queue, queue) {
+-		if (&req->req == _req)
++	list_for_each_entry(tmp, &ep->queue, queue) {
++		if (&tmp->req == _req) {
++			req = tmp;
+			break;
++		}
+	}
+-	if (&req->req != _req) {
++	if (!req) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+
+With gnu89 the list iterator variable cannot yet be declared
+within the for loop of the list iterator.
+Moving to a more modern version of C would allow defining
+the list iterator variable within the macro, limiting
+the scope to the loop.
+This avoids any incorrect usage past the loop altogether.
+
+This are around 30% of the cases where the iterator
+variable is used past the loop (identified with a slightly
+modified version of use_after_iter.cocci).
+I've decided to split it into at a few patches separated
+by similar use cases.
+
+Because the output of get_maintainer.pl was too big,
+I included all the found lists and everyone from the
+previous discussion.
+
+Jakob Koschel (6):
+  drivers: usb: remove usage of list iterator past the loop body
+  treewide: remove using list iterator after loop body as a ptr
+  treewide: fix incorrect use to determine if list is empty
+  drivers: remove unnecessary use of list iterator variable
+  treewide: remove dereference of list iterator after loop body
+  treewide: remove check of list iterator against head past the loop
+    body
+
+ arch/arm/mach-mmp/sram.c                      |  9 ++--
+ arch/arm/plat-pxa/ssp.c                       | 28 +++++-------
+ arch/powerpc/sysdev/fsl_gtm.c                 |  4 +-
+ arch/x86/kernel/cpu/sgx/encl.c                |  6 ++-
+ drivers/block/drbd/drbd_req.c                 | 45 ++++++++++++-------
+ drivers/counter/counter-chrdev.c              | 26 ++++++-----
+ drivers/crypto/cavium/nitrox/nitrox_main.c    | 11 +++--
+ drivers/dma/dw-edma/dw-edma-core.c            |  4 +-
+ drivers/dma/ppc4xx/adma.c                     | 11 +++--
+ drivers/firewire/core-transaction.c           | 32 +++++++------
+ drivers/firewire/sbp2.c                       | 14 +++---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c        | 19 +++++---
+ drivers/gpu/drm/drm_memory.c                  | 15 ++++---
+ drivers/gpu/drm/drm_mm.c                      | 17 ++++---
+ drivers/gpu/drm/drm_vm.c                      | 13 +++---
+ drivers/gpu/drm/gma500/oaktrail_lvds.c        |  9 ++--
+ drivers/gpu/drm/i915/gem/i915_gem_context.c   | 14 +++---
+ .../gpu/drm/i915/gem/i915_gem_execbuffer.c    | 15 ++++---
+ drivers/gpu/drm/i915/gt/intel_ring.c          | 15 ++++---
+ .../gpu/drm/nouveau/nvkm/subdev/clk/base.c    | 11 +++--
+ .../gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c | 13 +++---
+ drivers/gpu/drm/scheduler/sched_main.c        | 14 +++---
+ drivers/gpu/drm/ttm/ttm_bo.c                  | 19 ++++----
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c           | 22 +++++----
+ drivers/infiniband/hw/hfi1/tid_rdma.c         | 16 ++++---
+ drivers/infiniband/hw/mlx4/main.c             | 12 ++---
+ drivers/media/dvb-frontends/mxl5xx.c          | 11 +++--
+ drivers/media/pci/saa7134/saa7134-alsa.c      |  4 +-
+ drivers/media/v4l2-core/v4l2-ctrls-api.c      | 31 +++++++------
+ drivers/misc/mei/interrupt.c                  | 12 ++---
+ .../net/ethernet/intel/i40e/i40e_ethtool.c    |  3 +-
+ .../net/ethernet/qlogic/qede/qede_filter.c    | 11 +++--
+ drivers/net/wireless/ath/ath6kl/htc_mbox.c    |  2 +-
+ .../net/wireless/intel/ipw2x00/libipw_rx.c    | 15 ++++---
+ drivers/perf/xgene_pmu.c                      | 13 +++---
+ drivers/power/supply/cpcap-battery.c          | 11 +++--
+ drivers/scsi/lpfc/lpfc_bsg.c                  | 16 ++++---
+ drivers/scsi/scsi_transport_sas.c             | 17 ++++---
+ drivers/scsi/wd719x.c                         | 12 +++--
+ drivers/staging/rtl8192e/rtl819x_TSProc.c     | 17 +++----
+ drivers/staging/rtl8192e/rtllib_rx.c          | 17 ++++---
+ .../staging/rtl8192u/ieee80211/ieee80211_rx.c | 15 ++++---
+ .../rtl8192u/ieee80211/rtl819x_TSProc.c       | 19 ++++----
+ drivers/thermal/thermal_core.c                | 38 ++++++++++------
+ drivers/usb/gadget/composite.c                |  9 ++--
+ drivers/usb/gadget/configfs.c                 | 22 +++++----
+ drivers/usb/gadget/udc/aspeed-vhub/epn.c      | 11 +++--
+ drivers/usb/gadget/udc/at91_udc.c             | 26 ++++++-----
+ drivers/usb/gadget/udc/atmel_usba_udc.c       | 11 +++--
+ drivers/usb/gadget/udc/bdc/bdc_ep.c           | 11 +++--
+ drivers/usb/gadget/udc/fsl_qe_udc.c           | 11 +++--
+ drivers/usb/gadget/udc/fsl_udc_core.c         | 11 +++--
+ drivers/usb/gadget/udc/goku_udc.c             | 11 +++--
+ drivers/usb/gadget/udc/gr_udc.c               | 11 +++--
+ drivers/usb/gadget/udc/lpc32xx_udc.c          | 11 +++--
+ drivers/usb/gadget/udc/max3420_udc.c          | 11 +++--
+ drivers/usb/gadget/udc/mv_u3d_core.c          | 11 +++--
+ drivers/usb/gadget/udc/mv_udc_core.c          | 11 +++--
+ drivers/usb/gadget/udc/net2272.c              | 12 ++---
+ drivers/usb/gadget/udc/net2280.c              | 11 +++--
+ drivers/usb/gadget/udc/omap_udc.c             | 11 +++--
+ drivers/usb/gadget/udc/pxa25x_udc.c           | 11 +++--
+ drivers/usb/gadget/udc/s3c-hsudc.c            | 11 +++--
+ drivers/usb/gadget/udc/tegra-xudc.c           | 11 +++--
+ drivers/usb/gadget/udc/udc-xilinx.c           | 11 +++--
+ drivers/usb/mtu3/mtu3_gadget.c                | 11 +++--
+ drivers/usb/musb/musb_gadget.c                | 11 +++--
+ drivers/vfio/mdev/mdev_core.c                 | 11 +++--
+ fs/cifs/smb2misc.c                            | 10 +++--
+ fs/f2fs/segment.c                             |  9 ++--
+ fs/proc/kcore.c                               | 13 +++---
+ kernel/debug/kdb/kdb_main.c                   | 36 +++++++++------
+ kernel/power/snapshot.c                       | 10 +++--
+ kernel/trace/ftrace.c                         | 22 +++++----
+ kernel/trace/trace_eprobe.c                   | 15 ++++---
+ kernel/trace/trace_events.c                   | 11 ++---
+ net/9p/trans_xen.c                            | 11 +++--
+ net/ipv4/udp_tunnel_nic.c                     | 10 +++--
+ net/tipc/name_table.c                         | 11 +++--
+ net/tipc/socket.c                             | 11 +++--
+ net/xfrm/xfrm_ipcomp.c                        | 11 +++--
+ sound/soc/intel/catpt/pcm.c                   | 13 +++---
+ sound/soc/sprd/sprd-mcdt.c                    | 13 +++---
+ 83 files changed, 708 insertions(+), 465 deletions(-)
+
+
+base-commit: 7ee022567bf9e2e0b3cd92461a2f4986ecc99673
+--
+2.25.1
