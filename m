@@ -2,148 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F5384C7465
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 18:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7AEF4C75C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 18:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbiB1RpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 12:45:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
+        id S239445AbiB1R4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 12:56:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238907AbiB1Rnb (ORCPT
+        with ESMTP id S239441AbiB1RxD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 12:43:31 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D2F9A985;
-        Mon, 28 Feb 2022 09:35:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646069720; x=1677605720;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4h1YWtV6F2Q6sNCl+7xob39bvg1TMmI6b4u3dRROqA4=;
-  b=CVnpusEK/Eramn9TgpeNNSwap1EzIugiOMh0a14eYIcR7T8XB9T3G5bC
-   BLrrMcv9yH7GRS4Snie/X7+jLqyJJBSZD9oXvqTsuB0ewSyzMuPQ9g6Vs
-   pK+4uFkJ7rGXyZq7zGk4UYA6w4ajELA9VPczbcCqijOpbW4/S387l7cQZ
-   P0bwzo4fJV1gFb8Wp8XXPDOJgmjvtJQaGwI+gNo2BQPiF1GsPvPXY6BVC
-   k6dTHxkV2KaZgVknKrzCNamLde4rwHMtVVJuL7DYzq3altgmM7xzsox0y
-   m0KzGHZG0BhZeSUlpgruL/hhO8ntbl+e8unSjvSoO8BwOhEhBnS1Wgxgu
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10272"; a="277599710"
-X-IronPort-AV: E=Sophos;i="5.90,144,1643702400"; 
-   d="scan'208";a="277599710"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2022 09:35:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,144,1643702400"; 
-   d="scan'208";a="608524532"
-Received: from lkp-server01.sh.intel.com (HELO 788b1cd46f0d) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Feb 2022 09:35:14 -0800
-Received: from kbuild by 788b1cd46f0d with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nOjvW-0007ZL-5q; Mon, 28 Feb 2022 17:35:14 +0000
-Date:   Tue, 1 Mar 2022 01:35:10 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Muchun Song <songmuchun@bytedance.com>, dan.j.williams@intel.com,
-        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, apopple@nvidia.com, shy828301@gmail.com,
-        rcampbell@nvidia.com, hughd@google.com, xiyuyang19@fudan.edu.cn,
-        kirill.shutemov@linux.intel.com, zwisler@kernel.org,
-        hch@infradead.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        duanxiongchun@bytedance.com, smuchun@gmail.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v3 4/6] mm: pvmw: add support for walking devmap pages
-Message-ID: <202202281913.ZakSkynK-lkp@intel.com>
-References: <20220228063536.24911-5-songmuchun@bytedance.com>
+        Mon, 28 Feb 2022 12:53:03 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0F3A9953
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 09:40:19 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id d19so15543627ioc.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 09:40:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AdiW19ZcNBMuyo0m1nA5bgyTAUsMudn2S3W3z/639JM=;
+        b=XjK4oZ1QQgfAoSBUdQd7VkP1oPindkQo21LJDhjA/ZKSAf9rg+VvTqaYXLc/adYXO2
+         OEStyHtuDJCD3Zal6+CHLCv4OWiXCM8YTrGddxwVCUKPyYtt8JXkCvIdwmF6ECOaiP0q
+         BDrSkMTm5vGilDW+f9AtLvRB5XZ2AB7yNEz+apHDgq8yMSNQNGuAV27qjxc3cpiP47xN
+         a7t951Tvb0i6JDA1NDBMIhZr2LJ77J4fKZN8+zMbOrk+K06MdAXholsi4mp45eS6EQyv
+         KchZMc+a/Rt+IKxYgmMfycM5HwcDV/g4qInKmstvhpqmPZfcGB4ZUaPhl4goXIWP9dtB
+         EAlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AdiW19ZcNBMuyo0m1nA5bgyTAUsMudn2S3W3z/639JM=;
+        b=0LwTkGjrdXn0wvE1iBVhiNpjg+nowEiQpNk4DhUL4Qz4hJxPb/2Bb2GnnUVrIeUryy
+         ZZcFod23b8OX0u+W9JZpnogeG1V7x9yB7qIxb4NQq/bqOJ7xPWu+0HlEyi06hdLHmsDl
+         rcljp/PJXwdeZMAl+BxOLvA/pdq4cpryp4bbHgneV9/aXrJgwbi93vNKcEh4XCORyRHg
+         IZIaoObvZ+fDcWTGVPAjXCXeEffVydLT6MP6Pog6ka/yAg7UnVSFbh+YN0V3WfdpY+jK
+         Q/Lk+OnW1ipJKd//Ys8KcLJs4stCveBDEiyfkZmTdcy2CIebBDgvXWSkUtjHKesAfcU8
+         lYDQ==
+X-Gm-Message-State: AOAM533aX4s+eBLQo67JIr8lLxpDiaSCOR78LcXRJouxItjwCOM0F+I3
+        zyHeCkR2InsrJY8DcCn9KVL0NJKFc5xhWxho2Rm+Om5S
+X-Google-Smtp-Source: ABdhPJxq7eVJyaJwyE0rzRVO3d3QURitj2Pu6ufDuj71VdfWusPg4CHDYFfuB5+CNVQ1l+7FHylGh9lDENNZBi19Fl8=
+X-Received: by 2002:a02:a411:0:b0:314:b51c:3b74 with SMTP id
+ c17-20020a02a411000000b00314b51c3b74mr17557177jal.69.1646070018822; Mon, 28
+ Feb 2022 09:40:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220228063536.24911-5-songmuchun@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
+ <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
+In-Reply-To: <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 28 Feb 2022 19:40:07 +0200
+Message-ID: <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
+Subject: Re: [RFC] Volatile fanotify marks
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Tycho Kirchner <tychokirchner@mail.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Muchun,
+On Mon, Feb 28, 2022 at 4:06 PM Jan Kara <jack@suse.cz> wrote:
+>
+> Hi Amir!
+>
+> On Wed 23-02-22 20:42:37, Amir Goldstein wrote:
+> > I wanted to get your feedback on an idea I have been playing with.
+> > It started as a poor man's alternative to the old subtree watch problem.
+> > For my employer's use case, we are watching the entire filesystem using
+> > a filesystem mark, but would like to exclude events on a subtree
+> > (i.e. all files underneath .private/).
+> >
+> > At the moment, those events are filtered in userspace.
+> > I had considered adding directory marks with an ignored mask on every
+> > event that is received for a directory path under .private/, but that has the
+> > undesired side effect of pinning those directory inodes to cache.
+> >
+> > I have this old fsnotify-volatile branch [1] that I am using for an overlayfs
+> > kernel internal fsnotify backend. I wonder what are your thoughts on
+> > exposing this functionally to fanotify UAPI (i.e. FAN_MARK_VOLATILE).
+>
+> Interesting idea. I have some reservations wrt to the implementation (e.g.
+> fsnotify_add_mark_list() convention of returning EEXIST when it updated
+> mark's mask, or the fact that inode reclaim should now handle freeing of
+> mark connector and attached marks - which may get interesting locking wise)
+> but they are all fixable.
 
-Thank you for the patch! Yet something to improve:
+Can you give me a hint as to how to implement the freeing of marks?
 
-[auto build test ERROR on hnaz-mm/master]
-[also build test ERROR on next-20220225]
-[cannot apply to linus/master v5.17-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+>
+> I'm wondering a bit whether this is really useful enough (and consequently
+> whether we will not get another request to extend fanotify API in some
+> other way to cater better to some other usecase related to subtree watches
+> in the near future). I understand ignore marks are mainly a performance
+> optimization and as such allowing inodes to be reclaimed (which means they
+> are not used much and hence ignored mark is not very useful anyway) makes
 
-url:    https://github.com/0day-ci/linux/commits/Muchun-Song/Fix-some-bugs-related-to-ramp-and-dax/20220228-143753
-base:   https://github.com/hnaz/linux-mm master
-config: riscv-randconfig-r012-20220227 (https://download.01.org/0day-ci/archive/20220228/202202281913.ZakSkynK-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project d271fc04d5b97b12e6b797c6067d3c96a8d7470e)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install riscv cross compiling tool for clang build
-        # apt-get install binutils-riscv64-linux-gnu
-        # https://github.com/0day-ci/linux/commit/4b08af172f30c61ae5f43ec23642e2767371247e
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Muchun-Song/Fix-some-bugs-related-to-ramp-and-dax/20220228-143753
-        git checkout 4b08af172f30c61ae5f43ec23642e2767371247e
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash
+The problem is that we do not know in advance which of the many dirs in
+the subtree are accessed often and which are accessed rarely (and that may
+change over time), so volatile ignore marks are a way to set up ignore marks
+on the most accessed dirs dynamically.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+> sense. Thinking about this more, I guess it is useful to improve efficiency
+> when you want to implement any userspace event-filtering scheme.
+>
+> The only remaining pending question I have is whether we should not go
+> further and allow event filtering to happen using an eBPF program. That
+> would be even more efficient (both in terms of memory and CPU). What do you
+> think?
+>
 
-All errors (new ones prefixed by >>):
+I think that is an unrelated question.
 
->> mm/page_vma_mapped.c:113:13: error: call to __compiletime_assert_258 declared with 'error' attribute: BUILD_BUG failed
-           if ((pfn + HPAGE_PMD_NR - 1) < pvmw->pfn)
-                      ^
-   include/linux/huge_mm.h:105:26: note: expanded from macro 'HPAGE_PMD_NR'
-   #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
-                            ^
-   include/linux/huge_mm.h:104:26: note: expanded from macro 'HPAGE_PMD_ORDER'
-   #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
-                            ^
-   include/linux/huge_mm.h:307:28: note: expanded from macro 'HPAGE_PMD_SHIFT'
-   #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-                              ^
-   note: (skipping 3 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/compiler_types.h:335:2: note: expanded from macro '_compiletime_assert'
-           __compiletime_assert(condition, msg, prefix, suffix)
-           ^
-   include/linux/compiler_types.h:328:4: note: expanded from macro '__compiletime_assert'
-                           prefix ## suffix();                             \
-                           ^
-   <scratch space>:73:1: note: expanded from here
-   __compiletime_assert_258
-   ^
-   1 error generated.
+I do agree that we should NOT add "subtree filter" functionality to fanotify
+(or any other filter) and that instead, we should add support for attaching an
+eBPF program that implements is_subdir().
+I found this [1] convection with Tycho where you had suggested this idea.
+I wonder if Tycho got to explore this path further?
 
+But I think that it is one thing to recommend users to implement their
+filters as
+eBPF programs and another thing to stand in the way of users that prefer to
+implement userspace event filtering. It could be that the filter
+cannot be easily
+described by static rules to an eBPF program (e.g. need to query a database).
 
-vim +/error +113 mm/page_vma_mapped.c
+In my POV, FAN_MARK_VOLATILE does not add any new logic/filtering rule.
+It adds resource control by stating that the ignore mark is "best effort".
 
-9188af981d385d Andrew Morton      2022-02-25  109  
-9188af981d385d Andrew Morton      2022-02-25  110  /* Returns true if the two ranges overlap.  Careful to not overflow. */
-9188af981d385d Andrew Morton      2022-02-25  111  static bool check_pmd(unsigned long pfn, struct page_vma_mapped_walk *pvmw)
-9188af981d385d Andrew Morton      2022-02-25  112  {
-9188af981d385d Andrew Morton      2022-02-25 @113  	if ((pfn + HPAGE_PMD_NR - 1) < pvmw->pfn)
-9188af981d385d Andrew Morton      2022-02-25  114  		return false;
-9188af981d385d Andrew Morton      2022-02-25  115  	if (pfn > pvmw->pfn + pvmw->nr_pages - 1)
-9188af981d385d Andrew Morton      2022-02-25  116  		return false;
-9188af981d385d Andrew Morton      2022-02-25  117  	return true;
-ace71a19cec5eb Kirill A. Shutemov 2017-02-24  118  }
-ace71a19cec5eb Kirill A. Shutemov 2017-02-24  119  
+Does it make sense?
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.suse.cz/
