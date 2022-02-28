@@ -2,135 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AB0F4C7C90
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 22:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 470A64C7C9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 23:01:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231236AbiB1WA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 17:00:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60930 "EHLO
+        id S230098AbiB1WBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 17:01:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbiB1WA1 (ORCPT
+        with ESMTP id S229872AbiB1WBp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 17:00:27 -0500
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [IPv6:2001:1600:3:17::42a9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24382B25B;
-        Mon, 28 Feb 2022 13:59:46 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K6vS06NrPzMprMT;
-        Mon, 28 Feb 2022 22:59:44 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K6vRy3MsRzlhNts;
-        Mon, 28 Feb 2022 22:59:42 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v1] fs: Fix inconsistent f_mode
-Date:   Mon, 28 Feb 2022 22:59:35 +0100
-Message-Id: <20220228215935.748017-1-mic@digikod.net>
-X-Mailer: git-send-email 2.35.1
+        Mon, 28 Feb 2022 17:01:45 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECBB7541AF;
+        Mon, 28 Feb 2022 14:00:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5WUeW4akqS5GfHg5EOz3T8yMoCMl6xSGODw81Gr0/2w=; b=jkwtCgC2cyOmTmxmqjDeGU1+07
+        PYxbFMG8kM4rLHikKA9m1OYv8Br9HfL2zv/4LntsntqijfkLDfnawEcDN4oS/cUBqIDyOkjyOeZUm
+        1Y0ylJLHNjKhrZS7lQHwKgArsGsowEIMa4nUYTFz/istL/aYVAVFBH1Gb837xZiWPvbbVAXaq5uzW
+        FLRiWGEpwQsOXKR3h2373GOKQoJn0EozL1zO/sm43d5accjXV6MnE3Sr3eQJaAzA1sa+ERvqcyyqi
+        e/Kc7G5FBSFYfNrhK/l1Fa6FuAHA1eK9d6TGy96Mj2KYxQDQ/245wHEi+GAMPwnNP1zGtoGv2SJu3
+        V750nciA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nOo4g-00EFC6-Nw; Mon, 28 Feb 2022 22:00:58 +0000
+Date:   Mon, 28 Feb 2022 14:00:58 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Samuel Cabrero <scabrero@suse.de>,
+        David Teigland <teigland@redhat.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [LSF/MM/BPF TOPIC] are we going to use ioctls forever?
+Message-ID: <Yh1GGnn3avI3cjYH@bombadil.infradead.org>
+References: <20220201013329.ofxhm4qingvddqhu@garbanzo>
+ <f4f86a3e1ab20a1d7d32c7f5ae74419c8d780e82.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4f86a3e1ab20a1d7d32c7f5ae74419c8d780e82.camel@HansenPartnership.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On Tue, Feb 01, 2022 at 07:56:19AM -0500, James Bottomley wrote:
+> On Mon, 2022-01-31 at 17:33 -0800, Luis Chamberlain wrote:
+> > It would seem we keep tacking on things with ioctls for the block
+> > layer and filesystems. Even for new trendy things like io_uring [0].
+> 
+> And many systems besides ... we're also adding new ioctls for things
+> like containers.
+> 
+> However, could I just ask why you object to ioctls?  I agree, like any
+> drug, overuse leads to huge problems.  However, there are medicinal use
+> cases where they actually save a huge amount of pain.  So I think as
+> long as we're careful we can still continue using them.
 
-While transitionning to ACC_MODE() with commit 5300990c0370 ("Sanitize
-f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
-ACC_MODE() for real"), we lost an open flags consistency check.  Opening
-a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_READ |
-MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
-Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to 0.
+Getting to the point we are comparing use of ioctls with drugs is a good
+indication we probably haven't given much thought to our sloppy dependency on
+them.
 
-Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, or
-respectively FMODE_WRITE, and return an EBADF error if it is absent.
-Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a file
-with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this safe
-behavior.
+> What is the issue?  Just the non-introspectability of the data from the
+> perspective of tools like seccomp?
 
-To make it consistent with ACC_MODE(), this patch also changes
-OPEN_FMODE() to return FMODE_READ | FMODE_WRITE for O_WRONLY | O_RDWR.
-This may help protect from potential spurious issues.
+That's one. The opaque nature is silly. I can run blktrace on tons of
+my /dev/ files and do *interesting* stupid things. This just seems
+plain wrong...
 
-This issue could result in inconsistencies with AppArmor, Landlock and
-SELinux, but the VFS checks would still forbid read and write accesses.
-Tomoyo uses the ACC_MODE() transformation which is correct, and Smack
-doesn't check the file mode.  Filesystems using OPEN_FMODE() should also
-be protected by the VFS checks.
+> > For a few years I have found this odd, and have slowly started
+> > asking folks why we don't consider alternatives like a generic
+> > netlink family. I've at least been told that this is desirable
+> > but no one has worked on it. *If* we do want this I think we just
+> > not only need to commit to do this, but also provide a target. LSFMM
+> > seems like a good place to do this.
+> 
+> It's not just netlink.  We have a huge plethora of interfaces claiming
+> to replace the need for ioctl as a means for exchanging information
+> between a multiplexor and an in-kernel set of receivers.
 
-Fixes: 5300990c0370 ("Sanitize f_flags helpers")
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Darrick J. Wong <djwong@kernel.org>
-Cc: Eric Paris <eparis@parisplace.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Steve French <sfrench@samba.org>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220228215935.748017-1-mic@digikod.net
----
- fs/file_table.c    | 3 +++
- include/linux/fs.h | 5 +++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+Yes and with io-uring cmd coming into my radar, and folks wanting to
+do things like io-uring for ioctls get's me thinking this is just
+going to get sloppier. I admit I like the idea of io-uring cmd for
+ioctls but I would have to think that's our future.
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 7d2e692b66a9..b936f69525d0 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -135,6 +135,9 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
- 	struct file *f;
- 	int error;
- 
-+	if ((flags & O_ACCMODE) == O_ACCMODE)
-+		return ERR_PTR(-EINVAL);
-+
- 	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
- 	if (unlikely(!f))
- 		return ERR_PTR(-ENOMEM);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e2d892b201b0..83bc5aaf1c41 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3527,8 +3527,9 @@ int __init list_bdev_fs_names(char *buf, size_t size);
- #define __FMODE_NONOTIFY	((__force int) FMODE_NONOTIFY)
- 
- #define ACC_MODE(x) ("\004\002\006\006"[(x)&O_ACCMODE])
--#define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE) | \
--					    (flag & __FMODE_NONOTIFY)))
-+#define OPEN_FMODE(flag) ((__force fmode_t)( \
-+			(((flag + 1) & O_ACCMODE) ?: O_ACCMODE) | \
-+			(flag & __FMODE_NONOTIFY)))
- 
- static inline bool is_sxid(umode_t mode)
- {
+> The latest
+> one I noticed would be fsconfig, although that is filesystem specific
+> (but could be made more generic).
 
-base-commit: 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3
--- 
-2.35.1
+Thanks I'll check that out.
 
+> And, of course, configfs was
+> supposed to be another generic but introspectable configuration
+> exchange system.  We're quite good at coming up with ioctl replacement,
+> however when we do they don't seem to be as durable.  I think we should
+> really examine what we think the problem is in detail before even
+> starting to propose a solution.
+
+Sure, and evaluate what solutions already exist.
+
+Alrighty, so as an example... I recall when we were working on trying to
+avoid doing the stupid ioctl mess with wireless. Yes it made sense to
+use generic netlink, but the results are quite impressive if you ask me
+in terms of clarify and documentation:
+
+include/uapi/linux/nl80211.h
+
+So I can't be doing stupid things like sending a NL80211_CMD_GET_BEACON
+command to an ethernet device, for instance. But that's not just it. The
+clear specification of data types is great.
+
+ioctls for new features for fileystems / the block layer just makes
+them seem almost cavemen like. And that we don't stop and seem to have
+a clear north star for an alternative does get me to ask do we really
+want an alternative and if so so well let's get to it.
+
+  Luis
