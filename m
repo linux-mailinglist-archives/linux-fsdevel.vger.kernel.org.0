@@ -2,196 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A13844C7ABB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 21:44:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF3D34C7AF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 21:48:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229869AbiB1Unm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 15:43:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40250 "EHLO
+        id S229923AbiB1Uqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 15:46:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbiB1Unj (ORCPT
+        with ESMTP id S229696AbiB1Uqw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 15:43:39 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F2E024593;
-        Mon, 28 Feb 2022 12:42:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1646080979;
-        bh=syYpb/xpUEM74XaWkn+xK6Z1vfQJZQo/NwVp9EVw5rs=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=ujxiIgy0T+0bXa5l/GTOdjcngh6b85JmDA0WyHri0Bbh2a93S9iJ0SxWyDfl/MyPo
-         LfSkwtJLqYe+MRa0ZrGntCtSGoW1hjohSGvPcqjksKBYaUrg8Aw3UwyQBazEu7CyPQ
-         sHqUpBIAmzvzOB+1XNyd+aN4TkXOB/egoLerum4w=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4748C1280EAE;
-        Mon, 28 Feb 2022 15:42:59 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id i-njNjm3Pi4q; Mon, 28 Feb 2022 15:42:59 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1646080979;
-        bh=syYpb/xpUEM74XaWkn+xK6Z1vfQJZQo/NwVp9EVw5rs=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=ujxiIgy0T+0bXa5l/GTOdjcngh6b85JmDA0WyHri0Bbh2a93S9iJ0SxWyDfl/MyPo
-         LfSkwtJLqYe+MRa0ZrGntCtSGoW1hjohSGvPcqjksKBYaUrg8Aw3UwyQBazEu7CyPQ
-         sHqUpBIAmzvzOB+1XNyd+aN4TkXOB/egoLerum4w=
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::527])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DDA6D12806A6;
-        Mon, 28 Feb 2022 15:42:54 -0500 (EST)
-Message-ID: <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop
- body as a ptr
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jakob Koschel <jakobkoschel@gmail.com>,
-        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        samba-technical@lists.samba.org,
-        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sgx@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
+        Mon, 28 Feb 2022 15:46:52 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B4F27FC6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 12:46:11 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id z11so3355026pla.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 12:46:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=L8JEIwHbnjfnbrHGB8HmORKlRcamD72tkThVNtNE5+Q=;
+        b=lcLDVxs4gvDGJ3MA+LlTyrgLXFoKqIzED2gFMdbiZxTKoxgSQMlaANWuHLUF0GV1xF
+         0sTgCIgahg/w9yHHKLxjqThKXd52M3zhIzrALVLlH0WZuNYjY7hjpi1WshuF8gN64VWI
+         lMtTCqa0TH7m/bdC4rLf9cZP9NnA44nIFyWXs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=L8JEIwHbnjfnbrHGB8HmORKlRcamD72tkThVNtNE5+Q=;
+        b=oDZcIvxDdPWlmX6fg+KxDUGtOvt0r8dhS+aO5dozFcuAqnYhXOLP4wtC/IUWyxK9B8
+         nvH8OAnRYvrLXyEuhevWuDyWjQZjxSPN5I4TCMj1lFaVytWv4ZEJ+nqtPUvJ6bZu/8z0
+         PSLarGPG3QX3x92x9r4t9hIlXuncP9eLbdvbQhrpG1wOSbP7Kbs8SuK5oSvcW2G7yLv+
+         8C4wEfrZXoBssC+8UsL8pQF34NZfJHFH0rrwEMkeZ8Q+1CSdOzs0xD1RGsKOvUS1O3F1
+         nQqcGQ5I+WrtkeiK6x2YnBL3K6SYX9ckdTjHlTyi5DEFp6WwMZCNFSBCD/fWuyUdDa1r
+         5fmg==
+X-Gm-Message-State: AOAM530bxL7VWFHka6BDfHV4tLHAvpl8CZgW2yPLvNwxWMXDGlzvY1Yf
+        B5iTw0ifrjw6E5EDXDeUMlirYw==
+X-Google-Smtp-Source: ABdhPJxwzHoZn8pFzNDQnpmFvA1UslmJRrpff/i6ocs8O6PtPqf/AReIoLelwIe0jA7xJtLLu9tJww==
+X-Received: by 2002:a17:902:9041:b0:14f:1c23:1eb1 with SMTP id w1-20020a170902904100b0014f1c231eb1mr21788975plz.173.1646081170908;
+        Mon, 28 Feb 2022 12:46:10 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id me10-20020a17090b17ca00b001b9e6f62045sm208940pjb.41.2022.02.28.12.46.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Feb 2022 12:46:10 -0800 (PST)
+Date:   Mon, 28 Feb 2022 12:46:09 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     matoro <matoro_mailinglist_kernel@matoro.tk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        stable@vger.kernel.org,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
-Date:   Mon, 28 Feb 2022 15:42:53 -0500
-In-Reply-To: <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
-         <20220228110822.491923-3-jakobkoschel@gmail.com>
-         <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
-         <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
-         <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        regressions@lists.linux.dev, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] binfmt_elf: Avoid total_mapping_size for ET_EXEC
+Message-ID: <202202281245.DF46393@keescook>
+References: <20220228194613.1149432-1-keescook@chromium.org>
+ <5d44f028b2d739395c92e4b3036e2bbf@matoro.tk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d44f028b2d739395c92e4b3036e2bbf@matoro.tk>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-02-28 at 21:07 +0100, Christian König wrote:
-> Am 28.02.22 um 20:56 schrieb Linus Torvalds:
-> > On Mon, Feb 28, 2022 at 4:19 AM Christian König
-> > <christian.koenig@amd.com> wrote:
-> > > I don't think that using the extra variable makes the code in any
-> > > way
-> > > more reliable or easier to read.
-> > So I think the next step is to do the attached patch (which
-> > requires
-> > that "-std=gnu11" that was discussed in the original thread).
+On Mon, Feb 28, 2022 at 03:31:00PM -0500, matoro wrote:
+> On 2022-02-28 14:46, Kees Cook wrote:
+> > Partially revert commit 5f501d555653 ("binfmt_elf: reintroduce using
+> > MAP_FIXED_NOREPLACE").
 > > 
-> > That will guarantee that the 'pos' parameter of
-> > list_for_each_entry()
-> > is only updated INSIDE the for_each_list_entry() loop, and can
-> > never
-> > point to the (wrongly typed) head entry.
+> > At least ia64 has ET_EXEC PT_LOAD segments that are not virtual-address
+> > contiguous (but _are_ file-offset contiguous). This would result in
+> > giant mapping attempts to cover the entire span, including the virtual
+> > address range hole. Disable total_mapping_size for ET_EXEC, which
+> > reduces the MAP_FIXED_NOREPLACE coverage to only the first PT_LOAD:
 > > 
-> > And I would actually hope that it should actually cause compiler
-> > warnings about possibly uninitialized variables if people then use
-> > the
-> > 'pos' pointer outside the loop. Except
+> > $ readelf -lW /usr/bin/gcc
+> > ...
+> > Program Headers:
+> >   Type Offset   VirtAddr           PhysAddr           FileSiz  MemSiz
+> > ...
+> > ...
+> >   LOAD 0x000000 0x4000000000000000 0x4000000000000000 0x00b5a0 0x00b5a0
+> > ...
+> >   LOAD 0x00b5a0 0x600000000000b5a0 0x600000000000b5a0 0x0005ac 0x000710
+> > ...
+> > ...
+> >        ^^^^^^^^ ^^^^^^^^^^^^^^^^^^                    ^^^^^^^^ ^^^^^^^^
 > > 
-> >   (a) that code in sgx/encl.c currently initializes 'tmp' to NULL
-> > for
-> > inexplicable reasons - possibly because it already expected this
-> > behavior
+> > File offset range     : 0x000000-0x00bb4c
+> > 			0x00bb4c bytes
 > > 
-> >   (b) when I remove that NULL initializer, I still don't get a
-> > warning,
-> > because we've disabled -Wno-maybe-uninitialized since it results in
-> > so
-> > many false positives.
+> > Virtual address range : 0x4000000000000000-0x600000000000bcb0
+> > 			0x200000000000bcb0 bytes
 > > 
-> > Oh well.
+> > Ironically, this is the reverse of the problem that originally caused
+> > problems with ET_EXEC and MAP_FIXED_NOREPLACE: overlaps. This problem is
+> > with holes. Future work could restore full coverage if load_elf_binary()
+> > were to perform mappings in a separate phase from the loading (where
+> > it could resolve both overlaps and holes).
 > > 
-> > Anyway, give this patch a look, and at least if it's expanded to do
-> > "(pos) = NULL" in the entry statement for the for-loop, it will
-> > avoid the HEAD type confusion that Jakob is working on. And I think
-> > in a cleaner way than the horrid games he plays.
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Eric Biederman <ebiederm@xmission.com>
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: linux-mm@kvack.org
+> > Reported-by: matoro <matoro_mailinglist_kernel@matoro.tk>
+> > Reported-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> > Fixes: 5f501d555653 ("binfmt_elf: reintroduce using
+> > MAP_FIXED_NOREPLACE")
+> > Link:
+> > https://lore.kernel.org/r/a3edd529-c42d-3b09-135c-7e98a15b150f@leemhuis.info
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> > matoro (or anyone else) can you please test this?
+> > ---
+> >  fs/binfmt_elf.c | 25 ++++++++++++++++++-------
+> >  1 file changed, 18 insertions(+), 7 deletions(-)
 > > 
-> > (But it won't avoid possible CPU speculation of such type
-> > confusion. That, in my opinion, is a completely different issue)
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 9bea703ed1c2..474b44032c65 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -1136,14 +1136,25 @@ static int load_elf_binary(struct linux_binprm
+> > *bprm)
+> >  			 * is then page aligned.
+> >  			 */
+> >  			load_bias = ELF_PAGESTART(load_bias - vaddr);
+> > -		}
+> > 
+> > -		/*
+> > -		 * Calculate the entire size of the ELF mapping (total_size).
+> > -		 * (Note that first_pt_load is set to false later once the
+> > -		 * initial mapping is performed.)
+> > -		 */
+> > -		if (first_pt_load) {
+> > +			/*
+> > +			 * Calculate the entire size of the ELF mapping
+> > +			 * (total_size), used for the initial mapping,
+> > +			 * due to first_pt_load which is set to false later
+> > +			 * once the initial mapping is performed.
+> > +			 *
+> > +			 * Note that this is only sensible when the LOAD
+> > +			 * segments are contiguous (or overlapping). If
+> > +			 * used for LOADs that are far apart, this would
+> > +			 * cause the holes between LOADs to be mapped,
+> > +			 * running the risk of having the mapping fail,
+> > +			 * as it would be larger than the ELF file itself.
+> > +			 *
+> > +			 * As a result, only ET_DYN does this, since
+> > +			 * some ET_EXEC (e.g. ia64) may have virtual
+> > +			 * memory holes between LOADs.
+> > +			 *
+> > +			 */
+> >  			total_size = total_mapping_size(elf_phdata,
+> >  							elf_ex->e_phnum);
+> >  			if (!total_size) {
 > 
-> Yes, completely agree.
-> 
-> > I do wish we could actually poison the 'pos' value after the loop
-> > somehow - but clearly the "might be uninitialized" I was hoping for
-> > isn't the way to do it.
-> > 
-> > Anybody have any ideas?
-> 
-> I think we should look at the use cases why code is touching (pos)
-> after the loop.
-> 
-> Just from skimming over the patches to change this and experience
-> with the drivers/subsystems I help to maintain I think the primary
-> pattern looks something like this:
-> 
-> list_for_each_entry(entry, head, member) {
->      if (some_condition_checking(entry))
->          break;
-> }
-> do_something_with(entry);
+> This does not apply for me, I'm looking around and can't find any reference
+> to the first_pt_load variable you're removing there?  What commit/tag are
+> you applying this on top of?
 
+Ah, yeah, this is against linux-next. Let me send a backport, one sec...
 
-Actually, we usually have a check to see if the loop found anything,
-but in that case it should something like
-
-if (list_entry_is_head(entry, head, member)) {
-    return with error;
-}
-do_somethin_with(entry);
-
-Suffice?  The list_entry_is_head() macro is designed to cope with the
-bogus entry on head problem.
-
-James
-
-
+-- 
+Kees Cook
