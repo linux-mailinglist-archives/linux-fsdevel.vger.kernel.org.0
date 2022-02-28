@@ -2,138 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 031F84C7CFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 23:08:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB124C7B64
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 22:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231375AbiB1WHr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 17:07:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
+        id S230034AbiB1VL7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 16:11:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230402AbiB1WHq (ORCPT
+        with ESMTP id S229582AbiB1VL6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 17:07:46 -0500
-X-Greylist: delayed 3241 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Feb 2022 14:07:01 PST
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E7D3C4E3A;
-        Mon, 28 Feb 2022 14:07:01 -0800 (PST)
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 21SKr95E005627;
-        Mon, 28 Feb 2022 14:53:09 -0600
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id 21SKr7Xe005624;
-        Mon, 28 Feb 2022 14:53:07 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Mon, 28 Feb 2022 14:53:07 -0600
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        alsa-devel@alsa-project.org, KVM list <kvm@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        "Bos, H.J." <h.j.bos@vu.nl>, linux1394-devel@lists.sourceforge.net,
-        drbd-dev@lists.linbit.com, linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, linux-aspeed@lists.ozlabs.org,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-staging@lists.linux.dev,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jakob Koschel <jakobkoschel@gmail.com>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sgx@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
-Message-ID: <20220228205307.GD614@gate.crashing.org>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com> <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com> <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com> <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com> <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com> <CAHk-=wj27SZQ3kPTesBzkiGhe-mA3gOQqr_adt_bMFzmg1VNaA@mail.gmail.com>
-Mime-Version: 1.0
+        Mon, 28 Feb 2022 16:11:58 -0500
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 95B4F54FA0;
+        Mon, 28 Feb 2022 13:11:18 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2D35A531600;
+        Tue,  1 Mar 2022 08:11:14 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nOnIX-00HZt1-Rw; Tue, 01 Mar 2022 08:11:13 +1100
+Date:   Tue, 1 Mar 2022 08:11:13 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-unionfs@vger.kernel.org, containers@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] fs: report per-mount io stats
+Message-ID: <20220228211113.GB3927073@dread.disaster.area>
+References: <20220228113910.1727819-1-amir73il@gmail.com>
+ <20220228113910.1727819-5-amir73il@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wj27SZQ3kPTesBzkiGhe-mA3gOQqr_adt_bMFzmg1VNaA@mail.gmail.com>
-User-Agent: Mutt/1.4.2.3i
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220228113910.1727819-5-amir73il@gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=621d3a74
+        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
+        a=IM8i16zBH4Qyx9iLlMQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 12:14:44PM -0800, Linus Torvalds wrote:
-> On Mon, Feb 28, 2022 at 12:10 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > We can do
-> >
-> >         typeof(pos) pos
-> >
-> > in the 'for ()' loop, and never use __iter at all.
-> >
-> > That means that inside the for-loop, we use a _different_ 'pos' than outside.
+On Mon, Feb 28, 2022 at 01:39:08PM +0200, Amir Goldstein wrote:
+> Show optional collected per-mount io stats in /proc/<pid>/mountstats
+> for filesystems that do not implement their own show_stats() method
+> and opted-in to generic per-mount stats with FS_MOUNT_STATS flag.
 > 
-> The thing that makes me throw up in my mouth a bit is that in that
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/mount.h          |  1 +
+>  fs/namespace.c      |  2 ++
+>  fs/proc_namespace.c | 13 +++++++++++++
+>  3 files changed, 16 insertions(+)
 > 
->         typeof(pos) pos
-> 
-> the first 'pos' (that we use for just the typeof) is that outer-level
-> 'pos', IOW it's a *different* 'pos' than the second 'pos' in that same
-> declaration that declares the inner level shadowing new 'pos'
-> variable.
+> diff --git a/fs/mount.h b/fs/mount.h
+> index f98bf4cd5b1a..2ab6308af78b 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -91,6 +91,7 @@ struct mount {
+>  	int mnt_id;			/* mount identifier */
+>  	int mnt_group_id;		/* peer group identifier */
+>  	int mnt_expiry_mark;		/* true if marked for expiry */
+> +	time64_t mnt_time;		/* time of mount */
+>  	struct hlist_head mnt_pins;
+>  	struct hlist_head mnt_stuck_children;
+>  } __randomize_layout;
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 3fb8f11a42a1..546f07ed44c5 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -220,6 +220,8 @@ static struct mount *alloc_vfsmnt(const char *name)
+>  		mnt->mnt_count = 1;
+>  		mnt->mnt_writers = 0;
+>  #endif
+> +		/* For proc/<pid>/mountstats */
+> +		mnt->mnt_time = ktime_get_seconds();
+>  
+>  		INIT_HLIST_NODE(&mnt->mnt_hash);
+>  		INIT_LIST_HEAD(&mnt->mnt_child);
+> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+> index 49650e54d2f8..d744fb8543f5 100644
+> --- a/fs/proc_namespace.c
+> +++ b/fs/proc_namespace.c
+> @@ -232,6 +232,19 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+>  	if (sb->s_op->show_stats) {
+>  		seq_putc(m, ' ');
+>  		err = sb->s_op->show_stats(m, mnt_path.dentry);
+> +	} else if (mnt_has_stats(mnt)) {
+> +		/* Similar to /proc/<pid>/io */
+> +		seq_printf(m, "\n"
+> +			   "\ttimes: %lld %lld\n"
+> +			   "\trchar: %lld\n"
+> +			   "\twchar: %lld\n"
+> +			   "\tsyscr: %lld\n"
+> +			   "\tsyscw: %lld\n",
+> +			   r->mnt_time, ktime_get_seconds(),
+> +			   mnt_iostats_counter_read(r, MNTIOS_CHARS_RD),
+> +			   mnt_iostats_counter_read(r, MNTIOS_CHARS_WR),
+> +			   mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_RD),
+> +			   mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_WR));
 
-The new "pos" has not yet been declared, so this has to refer to the
-outer "pos", it cannot be the inner one.  Because it hasn't been
-declared yet :-)
+This doesn't scale as {cpus, mounts, counters, read frequency}
+matrix explodes.  Please iterate the per-mount per cpu counters
+once, adding up all counters in one pass to an array on stack, then
+print them all from the array.
 
-Compare this to
-  typeof (pos) pos = pos;
-where that last "pos" *does* refer to the newly declared one: that
-declaration has already been done!  (So this code is UB btw, 6.3.2.1/2).
+Cheers,
 
-> If I was a compiler person, I would say "Linus, that thing is too ugly
-> to live", and I would hate it. I'm just hoping that even compiler
-> people say "that's *so* ugly it's almost beautiful".
-
-It is perfectly well-defined.  Well, it would be good if we (GCC) would
-document it does work, and if someone tested it on LLVM as well.  But it
-is really hard to implement it to *not* work :-)
-
-> Because it does seem to work. It's not pretty, but hey, it's not like
-> our headers are really ever be winning any beauty contests...
-
-It is very pretty!  Needs a comment though :-)
-
-
-Segher
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
