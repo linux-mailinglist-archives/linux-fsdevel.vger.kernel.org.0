@@ -2,121 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CB124C7B64
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 22:11:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFDEF4C7B90
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 22:13:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbiB1VL7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 16:11:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58110 "EHLO
+        id S230146AbiB1VOA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 16:14:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbiB1VL6 (ORCPT
+        with ESMTP id S230104AbiB1VN5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 16:11:58 -0500
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 95B4F54FA0;
-        Mon, 28 Feb 2022 13:11:18 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2D35A531600;
-        Tue,  1 Mar 2022 08:11:14 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nOnIX-00HZt1-Rw; Tue, 01 Mar 2022 08:11:13 +1100
-Date:   Tue, 1 Mar 2022 08:11:13 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-unionfs@vger.kernel.org, containers@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] fs: report per-mount io stats
-Message-ID: <20220228211113.GB3927073@dread.disaster.area>
-References: <20220228113910.1727819-1-amir73il@gmail.com>
- <20220228113910.1727819-5-amir73il@gmail.com>
+        Mon, 28 Feb 2022 16:13:57 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6021ECC41;
+        Mon, 28 Feb 2022 13:13:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1646082795;
+        bh=b0jOc0WDOwLaR9eob939Fu/T9iRVE4QNy1gcUuEgORI=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=fTQp+HhEyDWfdTRw9MD74D4dNoy4lJbDD6ufhn8pOCgDG9LKN5I5E2XfQsXuEnTyE
+         o41BjR/wB9Zx796mcVO5HItpPdbUBqFA5gZFvpxw0W0+8SaIBYecaW0t63X4w0ysYd
+         Uxmzs2O4chqjQ5mD0m0R9/q9wYnJ2eru8WGs04Zw=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EE6F612811CE;
+        Mon, 28 Feb 2022 16:13:15 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fdilm1jMyJ2v; Mon, 28 Feb 2022 16:13:15 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1646082795;
+        bh=b0jOc0WDOwLaR9eob939Fu/T9iRVE4QNy1gcUuEgORI=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=fTQp+HhEyDWfdTRw9MD74D4dNoy4lJbDD6ufhn8pOCgDG9LKN5I5E2XfQsXuEnTyE
+         o41BjR/wB9Zx796mcVO5HItpPdbUBqFA5gZFvpxw0W0+8SaIBYecaW0t63X4w0ysYd
+         Uxmzs2O4chqjQ5mD0m0R9/q9wYnJ2eru8WGs04Zw=
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::527])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 980CE1280320;
+        Mon, 28 Feb 2022 16:13:11 -0500 (EST)
+Message-ID: <ade13f419519350e460e7ef1e64477ec72e828ed.camel@HansenPartnership.com>
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop
+ body as a ptr
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jakob Koschel <jakobkoschel@gmail.com>,
+        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        samba-technical@lists.samba.org,
+        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        intel-wired-lan@lists.osuosl.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sgx@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        tipc-discussion@lists.sourceforge.net,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Mike Rapoport <rppt@kernel.org>
+Date:   Mon, 28 Feb 2022 16:13:09 -0500
+In-Reply-To: <0b65541a-3da7-dc35-690a-0ada75b0adae@amd.com>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+         <20220228110822.491923-3-jakobkoschel@gmail.com>
+         <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+         <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+         <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
+         <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+         <0b65541a-3da7-dc35-690a-0ada75b0adae@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220228113910.1727819-5-amir73il@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=621d3a74
-        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
-        a=IM8i16zBH4Qyx9iLlMQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 01:39:08PM +0200, Amir Goldstein wrote:
-> Show optional collected per-mount io stats in /proc/<pid>/mountstats
-> for filesystems that do not implement their own show_stats() method
-> and opted-in to generic per-mount stats with FS_MOUNT_STATS flag.
+On Mon, 2022-02-28 at 21:56 +0100, Christian König wrote:
 > 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/mount.h          |  1 +
->  fs/namespace.c      |  2 ++
->  fs/proc_namespace.c | 13 +++++++++++++
->  3 files changed, 16 insertions(+)
+> Am 28.02.22 um 21:42 schrieb James Bottomley:
+> > On Mon, 2022-02-28 at 21:07 +0100, Christian König wrote:
+> > > Am 28.02.22 um 20:56 schrieb Linus Torvalds:
+> > > > On Mon, Feb 28, 2022 at 4:19 AM Christian König
+> > > > <christian.koenig@amd.com> wrote:
+> > > > [SNIP]
+> > > > Anybody have any ideas?
+> > > I think we should look at the use cases why code is touching
+> > > (pos)
+> > > after the loop.
+> > > 
+> > > Just from skimming over the patches to change this and experience
+> > > with the drivers/subsystems I help to maintain I think the
+> > > primary pattern looks something like this:
+> > > 
+> > > list_for_each_entry(entry, head, member) {
+> > >       if (some_condition_checking(entry))
+> > >           break;
+> > > }
+> > > do_something_with(entry);
+> > 
+> > Actually, we usually have a check to see if the loop found
+> > anything, but in that case it should something like
+> > 
+> > if (list_entry_is_head(entry, head, member)) {
+> >      return with error;
+> > }
+> > do_somethin_with(entry);
+> > 
+> > Suffice?  The list_entry_is_head() macro is designed to cope with
+> > the bogus entry on head problem.
 > 
-> diff --git a/fs/mount.h b/fs/mount.h
-> index f98bf4cd5b1a..2ab6308af78b 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -91,6 +91,7 @@ struct mount {
->  	int mnt_id;			/* mount identifier */
->  	int mnt_group_id;		/* peer group identifier */
->  	int mnt_expiry_mark;		/* true if marked for expiry */
-> +	time64_t mnt_time;		/* time of mount */
->  	struct hlist_head mnt_pins;
->  	struct hlist_head mnt_stuck_children;
->  } __randomize_layout;
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 3fb8f11a42a1..546f07ed44c5 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -220,6 +220,8 @@ static struct mount *alloc_vfsmnt(const char *name)
->  		mnt->mnt_count = 1;
->  		mnt->mnt_writers = 0;
->  #endif
-> +		/* For proc/<pid>/mountstats */
-> +		mnt->mnt_time = ktime_get_seconds();
->  
->  		INIT_HLIST_NODE(&mnt->mnt_hash);
->  		INIT_LIST_HEAD(&mnt->mnt_child);
-> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-> index 49650e54d2f8..d744fb8543f5 100644
-> --- a/fs/proc_namespace.c
-> +++ b/fs/proc_namespace.c
-> @@ -232,6 +232,19 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
->  	if (sb->s_op->show_stats) {
->  		seq_putc(m, ' ');
->  		err = sb->s_op->show_stats(m, mnt_path.dentry);
-> +	} else if (mnt_has_stats(mnt)) {
-> +		/* Similar to /proc/<pid>/io */
-> +		seq_printf(m, "\n"
-> +			   "\ttimes: %lld %lld\n"
-> +			   "\trchar: %lld\n"
-> +			   "\twchar: %lld\n"
-> +			   "\tsyscr: %lld\n"
-> +			   "\tsyscw: %lld\n",
-> +			   r->mnt_time, ktime_get_seconds(),
-> +			   mnt_iostats_counter_read(r, MNTIOS_CHARS_RD),
-> +			   mnt_iostats_counter_read(r, MNTIOS_CHARS_WR),
-> +			   mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_RD),
-> +			   mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_WR));
+> That will work and is also what people already do.
+> 
+> The key problem is that we let people do the same thing over and
+> over again with slightly different implementations.
+> 
+> Out in the wild I've seen at least using a separate variable, using
+> a bool to indicate that something was found and just assuming that
+> the list has an entry.
+> 
+> The last case is bogus and basically what can break badly.
 
-This doesn't scale as {cpus, mounts, counters, read frequency}
-matrix explodes.  Please iterate the per-mount per cpu counters
-once, adding up all counters in one pass to an array on stack, then
-print them all from the array.
+Yes, I understand that.  I'm saying we should replace that bogus checks
+of entry->something against some_value loop termination condition with
+the list_entry_is_head() macro.  That should be a one line and fairly
+mechanical change rather than the explosion of code changes we seem to
+have in the patch series.
 
-Cheers,
+James
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+
