@@ -2,119 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 632E94C7C65
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 22:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F754C7C8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 22:57:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231195AbiB1Vrt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 16:47:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55978 "EHLO
+        id S230291AbiB1V6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 16:58:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbiB1Vrr (ORCPT
+        with ESMTP id S229518AbiB1V6L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 16:47:47 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DED714ACB4;
-        Mon, 28 Feb 2022 13:47:05 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id s1so19458109edd.13;
-        Mon, 28 Feb 2022 13:47:05 -0800 (PST)
+        Mon, 28 Feb 2022 16:58:11 -0500
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFBF1E3D0;
+        Mon, 28 Feb 2022 13:57:31 -0800 (PST)
+Received: by mail-io1-xd35.google.com with SMTP id h16so16338755iol.11;
+        Mon, 28 Feb 2022 13:57:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=U6qUODqKVLrC7qZqs553HfNOTdovwKFxE93drAu/Dlk=;
-        b=DcAOXNn/ViLnmA/Pl4xJfWkhBybquVghVb27ULjvzphMd1cBlP8EnT2avc3nlq8Ncp
-         XU0OlwqVPcxmpQGfXIX8cDSYeDqzQFDIjUJw6vYkNcJJHsbpQaotozEaUyIGD250VuoD
-         60I5wOFshLHgsaHS54p/JatmHLrrllGTo/egDJjxoeGmck3vK6ZaE0ldZN4szqLK845U
-         BQNwjpOC8zhohOQR/VOEr6j/DtNOqZN6I6F48XJrq+10cNhH40s7WdjZ8f4gJpCeR9JY
-         suF4D0bui+heOiMd0XjHUkKuJX/fj0a+j8l22tTUgDxT9LwW7gkDbHU26uOV2JCB+l1v
-         aZYw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xf4uBhhIfQHVx53ho/xTmpxUaDsjAI9m8Hj30e+skGc=;
+        b=Y6+Logc2zBCIyJE3KzDomF2MV4Dbe7WAM4QvT08NJcqXn1pY0wWBEheV5ZMmpSVDPO
+         nNZBVl1vXboi+78HGHlm2axbj58NbOly1YGVP3P7TmKzE9Eg0iyqzejsCPWDqhK7FPIo
+         I+C4CfBNQTGLx99L2GphGQ0GkiCJQYbDQoIyLlEv8Nvm2tZgRnoKUPmUYbg0zGnGAEdp
+         DKGDXF2cFUijgy7Hprghpao6D3abP1HWsfn4sDKU5vrFGeQlIoSZqVf0dN2scCunPEK/
+         P+3OXAQNiSj3pRPW7WKxXdvZN/N0KBhT+78sUTDUy29O2YDaoGNlcMkSVXg0W/tBOK1t
+         Nelw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=U6qUODqKVLrC7qZqs553HfNOTdovwKFxE93drAu/Dlk=;
-        b=iCiPdpgZCzz3yvJVrexxRCxhLpbHJio56HauB3jk0HOQJrmGA979tsWxPybrFVLGzC
-         rviOdWUGVAfG+SxRFv/OuGvdSCUQk7uF7WuGesOA/C81a/oR1K1Jm3CJszK4ejJYgZAo
-         x2mEVzUwr+4RgfbqKWz6AmZyWjaTRFjzUTjU7bRuHv8ZcadMZrk/teLe0Mtuub6nLp0L
-         a7ZyIBr8F4GE8Uu0Jc+2tXxHlIC2Imv0rNwyvD6j1LRvY9jgGT3tWdWldyGGrRH24vzG
-         nTzMwelCz91AtXEN39znf/7FQEvWlm13iKgxl7UOZY+IIOZsvmK0VqOyef47GdhW5Tmt
-         iBIg==
-X-Gm-Message-State: AOAM530/V9VOK6m4lb/4m2jbnFlZmK2daPDjc3i4TV7YGStA93vU4/Xt
-        eBbhRjdLtbgu479sDO5yQ04=
-X-Google-Smtp-Source: ABdhPJxKG2ff16tCWsK6Ck3Y2a57p3q44AgnQUgUMRZ3ajKrFkwS/Wlp6PHXO9g9MP9OhOujc97TPw==
-X-Received: by 2002:a05:6402:40d0:b0:412:f86a:efd1 with SMTP id z16-20020a05640240d000b00412f86aefd1mr21791110edb.194.1646084823834;
-        Mon, 28 Feb 2022 13:47:03 -0800 (PST)
-Received: from smtpclient.apple ([2a02:8109:9d80:3f6c:957a:1d13:c949:d1f3])
-        by smtp.gmail.com with ESMTPSA id ce7-20020a170906b24700b006cf095c2f5bsm4701847ejb.83.2022.02.28.13.47.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Feb 2022 13:47:03 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.60.0.1.1\))
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-From:   Jakob Koschel <jakobkoschel@gmail.com>
-In-Reply-To: <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
-Date:   Mon, 28 Feb 2022 22:47:00 +0100
-Cc:     =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        samba-technical@lists.samba.org,
-        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sgx@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220228110822.491923-3-jakobkoschel@gmail.com>
- <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
- <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: Apple Mail (2.3693.60.0.1.1)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xf4uBhhIfQHVx53ho/xTmpxUaDsjAI9m8Hj30e+skGc=;
+        b=ZYHhWuPcrSIMyaDaQnLwahreIMMRH1tWahDqRNt0NS6VLRkr6HsTHdhatof7uBl53q
+         8oGiY1iW5dztJrqRCfXWPpPf2cXJ9luAwkpLZ2s7m99ZQIjzLSMeIPfF7/vyav89cMNI
+         HzIgjW4L1Uratx300YPJByZ2JU/cLdXbSGXplbxeibZ/AymgWYGnwWm0St4Woo7zeF6C
+         pArVyBtyMVswzsKMXDRrtwrIv//+mPVv9HvfShX3THxyiooMAaJ5mg1Ohzt5iByOXQ2A
+         LHJmKuGa4NoKuc/YdfSKyCke7HPhoVLfCnNZL3eIGiPk5TXh6bvsglF+wRnxXM2h+zNk
+         Pzww==
+X-Gm-Message-State: AOAM53170wEoPaPXRyWgIyX7GWLdgmKQ5GuVUyVnfHEnhQKuH3wlSsTE
+        9YXo4q73rIC2LUsfPYbS/FN5kVHhNv4r2AIXiMFpWUEpQdI=
+X-Google-Smtp-Source: ABdhPJym/U0tkp+DoUcf2t/SPX3ZBBoSc4j+hwaUEIMi00iKKzffQT96aocNZlp5TKUfUzWxWpHKGlQYvc+OsO0ofiU=
+X-Received: by 2002:a5d:8f98:0:b0:640:dedf:63ed with SMTP id
+ l24-20020a5d8f98000000b00640dedf63edmr16776426iol.52.1646085450109; Mon, 28
+ Feb 2022 13:57:30 -0800 (PST)
+MIME-Version: 1.0
+References: <20220228113910.1727819-1-amir73il@gmail.com> <20220228113910.1727819-5-amir73il@gmail.com>
+ <20220228211113.GB3927073@dread.disaster.area>
+In-Reply-To: <20220228211113.GB3927073@dread.disaster.area>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 28 Feb 2022 23:57:19 +0200
+Message-ID: <CAOQ4uxjPHxO+S3tOarO5w_rBwyFTgd7oMcC4f5xW7opCWb4LVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] fs: report per-mount io stats
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        containers@lists.linux.dev,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -125,64 +70,83 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Feb 28, 2022 at 11:11 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Mon, Feb 28, 2022 at 01:39:08PM +0200, Amir Goldstein wrote:
+> > Show optional collected per-mount io stats in /proc/<pid>/mountstats
+> > for filesystems that do not implement their own show_stats() method
+> > and opted-in to generic per-mount stats with FS_MOUNT_STATS flag.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/mount.h          |  1 +
+> >  fs/namespace.c      |  2 ++
+> >  fs/proc_namespace.c | 13 +++++++++++++
+> >  3 files changed, 16 insertions(+)
+> >
+> > diff --git a/fs/mount.h b/fs/mount.h
+> > index f98bf4cd5b1a..2ab6308af78b 100644
+> > --- a/fs/mount.h
+> > +++ b/fs/mount.h
+> > @@ -91,6 +91,7 @@ struct mount {
+> >       int mnt_id;                     /* mount identifier */
+> >       int mnt_group_id;               /* peer group identifier */
+> >       int mnt_expiry_mark;            /* true if marked for expiry */
+> > +     time64_t mnt_time;              /* time of mount */
+> >       struct hlist_head mnt_pins;
+> >       struct hlist_head mnt_stuck_children;
+> >  } __randomize_layout;
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index 3fb8f11a42a1..546f07ed44c5 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -220,6 +220,8 @@ static struct mount *alloc_vfsmnt(const char *name)
+> >               mnt->mnt_count = 1;
+> >               mnt->mnt_writers = 0;
+> >  #endif
+> > +             /* For proc/<pid>/mountstats */
+> > +             mnt->mnt_time = ktime_get_seconds();
+> >
+> >               INIT_HLIST_NODE(&mnt->mnt_hash);
+> >               INIT_LIST_HEAD(&mnt->mnt_child);
+> > diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+> > index 49650e54d2f8..d744fb8543f5 100644
+> > --- a/fs/proc_namespace.c
+> > +++ b/fs/proc_namespace.c
+> > @@ -232,6 +232,19 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+> >       if (sb->s_op->show_stats) {
+> >               seq_putc(m, ' ');
+> >               err = sb->s_op->show_stats(m, mnt_path.dentry);
+> > +     } else if (mnt_has_stats(mnt)) {
+> > +             /* Similar to /proc/<pid>/io */
+> > +             seq_printf(m, "\n"
+> > +                        "\ttimes: %lld %lld\n"
+> > +                        "\trchar: %lld\n"
+> > +                        "\twchar: %lld\n"
+> > +                        "\tsyscr: %lld\n"
+> > +                        "\tsyscw: %lld\n",
+> > +                        r->mnt_time, ktime_get_seconds(),
+> > +                        mnt_iostats_counter_read(r, MNTIOS_CHARS_RD),
+> > +                        mnt_iostats_counter_read(r, MNTIOS_CHARS_WR),
+> > +                        mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_RD),
+> > +                        mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_WR));
+>
+> This doesn't scale as {cpus, mounts, counters, read frequency}
+> matrix explodes.  Please iterate the per-mount per cpu counters
+> once, adding up all counters in one pass to an array on stack, then
+> print them all from the array.
 
+I am planning to move to per-sb iostats and was thinking of using
+an array of 4 struct percpu_counter. That will make this sort of iteration
+more challenging.
 
-> On 28. Feb 2022, at 21:10, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
->=20
-> On Mon, Feb 28, 2022 at 12:03 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>=20
->> Side note: we do need *some* way to do it.
->=20
-> Ooh.
->=20
-> This patch is a work of art.
->=20
-> And I mean that in the worst possible way.
->=20
-> We can do
->=20
->        typeof(pos) pos
->=20
-> in the 'for ()' loop, and never use __iter at all.
->=20
-> That means that inside the for-loop, we use a _different_ 'pos' than =
-outside.
->=20
-> And then the compiler will not see some "might be uninitialized", but
-> the outer 'pos' *will* be uninitialized.
->=20
-> Unless, of course, the outer 'pos' had that pointless explicit =
-initializer.
+Do you really think the read frequency of /proc/self/mountstats
+warrants such performance optimization?
 
-The goal of this is to get compiler warnings right? This would indeed be =
-great.
+It's not like the case of the mighty struct xfsstats.
+It is only going to fold 4 per cpu iterations into 1.
+This doesn't look like a game changer to me.
+Am I missing something?
 
-Changing the list_for_each_entry() macro first will break all of those =
-cases
-(e.g. the ones using 'list_entry_is_head()).
-I assumed it is better to fix those cases first and then have a simple
-coccinelle script changing the macro + moving the iterator into the =
-scope
-of the macro.
-
->=20
-> Here - can somebody poke holes in this "work of art" patch?
-
-With this you are no longer able to set the 'outer' pos within the list
-iterator loop body or am I missing something? Like this it stays
-uninitialized but you'll probably want to set it from within the loop.
-
-You would then yet again need a variable with another name to use
-after the loop.
-
-I fail to see how this will make most of the changes in this
-patch obsolete (if that was the intention).
-
->=20
->                     Linus
-> <patch.diff>
-
-- Jakob
-
+Thanks,
+Amir.
