@@ -2,220 +2,301 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B62624C6BFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 13:19:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6AEE4C6C17
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 13:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234267AbiB1MUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 07:20:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38500 "EHLO
+        id S236238AbiB1MWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 07:22:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbiB1MUM (ORCPT
+        with ESMTP id S233988AbiB1MWy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 07:20:12 -0500
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2077.outbound.protection.outlook.com [40.107.93.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACBB70849;
-        Mon, 28 Feb 2022 04:19:33 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Gak+0VG7f2cK1qGBIYboMz3Rmo1e2+a3Qadt70yr+SXalhPkhKa3w30ibrppZy7J9X0U+bYR1DEsjxK7vkl+BudKRh2xhxnGWokUrtqa9Ya7IfUQlH57vxKDpZGaToSEDW9l7aFNG3sxll4z7Cw3o6ihXkNwnjdKSc8q1j7cNYGZijzB+GOgJtLQlm3hrumQbSSOfCPjerllCYNa+Y6byoisv/EQrCAg39Paj09WWowL67ZuiWACgQOClzLerq7E1FeC0W9wdN7gFQiQmga03SsKY43ILsXZUa9Mucd961jBDV7QKl9s8tl1ErdLe8FWGo3uTdaFMixnDJB0vZmePQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dFAhmo3JBYJdhOBKzHNL9AJtIawE+V/fgYNxajT2ljI=;
- b=SzZWjd1fmgSJStHirEOCRnkAmcu3OmudpoaEyqknhomm8RjYXkMjnw1ABFAQ2dq8DbNrpQGxXY9ZQCiz+GnKJJqoOOTTXEuSJttXUAE7tqLVwj72QyYBoUE01Ym1R2ysVx8qf1JEPCuK12Olclw0Hna1trvdCt7Ic2GSai4vecGnv3uFeBp1cenwkYIGQD/CdiTDXQhMTXAYac+GdgHxinfvyCaI+nKqXhAaeYMEQJpqURd4/Dsaya54VHucuv6Zoch9wWHfqV2fB2v0eT2viWGd7XTwAYkc5qGDRx9T7ETYzGx6t8awxL24AQJ31xn8GI8ufl45Byu3EOXIQm4IMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dFAhmo3JBYJdhOBKzHNL9AJtIawE+V/fgYNxajT2ljI=;
- b=AlIDg5tMzU18Zc+t9R+CoEaHA+AOb1jz/Nyu5OM7D+/2O/6lpB0dewE1ku3pJKeEoY8BydetUnPZUqFvCh2ilwJroT6ut+CA2XOTHnKRtbmsCQfR7AAIyWnBiCUAjqsHtIoqImAU9HMv8ZrZaEvOJGpDXNmlwxNnn4UlV4i6ZuQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
- by MWHPR12MB1295.namprd12.prod.outlook.com (2603:10b6:300:11::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.23; Mon, 28 Feb
- 2022 12:19:30 +0000
-Received: from BN8PR12MB3587.namprd12.prod.outlook.com
- ([fe80::e03f:901a:be6c:b581]) by BN8PR12MB3587.namprd12.prod.outlook.com
- ([fe80::e03f:901a:be6c:b581%6]) with mapi id 15.20.5017.027; Mon, 28 Feb 2022
- 12:19:30 +0000
-Message-ID: <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
-Date:   Mon, 28 Feb 2022 13:19:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-Content-Language: en-US
-To:     Jakob Koschel <jakobkoschel@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel@lists.freedesktop.org,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx@lists.freedesktop.org, samba-technical@lists.samba.org,
-        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-cifs@vger.kernel.org, kvm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-media@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>, linux-pm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net, linux-tegra@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-sgx@vger.kernel.org,
-        linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        tipc-discussion@lists.sourceforge.net,
-        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, Mike Rapoport <rppt@kernel.org>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220228110822.491923-3-jakobkoschel@gmail.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20220228110822.491923-3-jakobkoschel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM6P193CA0051.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:209:8e::28) To BN8PR12MB3587.namprd12.prod.outlook.com
- (2603:10b6:408:43::13)
+        Mon, 28 Feb 2022 07:22:54 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2345070868
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 04:22:14 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id i1so10557914plr.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 04:22:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iCFerXiCPxcpKLyNdx6afs6aHROa19DCxH4ZSTwVEss=;
+        b=lAVHuKfps4dVgtNu+f/E9fvH0TxJ+nuX5cPLAM6rQJRwDD5sqOn8q6qdp/uwxBiBQN
+         zJ3GqG+p6+iTXMPjRhL1uYpSA8Vb+t+gQG8BJLHH736MxOCU/mEZgh1KB3spCvPIJ6kV
+         DtCAxFqQhw/ngttbKDuITF9zu0rgskOQr0h0aX7Qa3WjQ5XRckmcAGuaN1nJIceONSyc
+         2mKL8bRK/yyLOmyBks+8BGNNQUSTo7+ledWxwSiZ/EFwv7VF9iUXFx9Jr1jL4sRzNNT0
+         oLj0YfsGmAo6M31zQx3iodummLbuQhtliTq+YUzm2cQgk5rLGcxthP5fOLrEUwb0Ad2a
+         LM6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iCFerXiCPxcpKLyNdx6afs6aHROa19DCxH4ZSTwVEss=;
+        b=HtQ/tcXvktCzXfdvKtC2B5QvdoZ4LncyXHzV+SKKnbtnrn6gmoUbJiHf16bNXYiSdZ
+         Hw4MTNL7raN015FJCShj82DQy3DkQ+bQz8KMVcd2byC5EFJ0cyxfXfGKgBXI50d5zCMD
+         HvWmGksgs6jHxyuqtEfcYIVCjuvW0qDibcBkhRRszex/g1yZ/L+CGzHDraObo5es6BYn
+         Bjm3/gDDkYM13SACkLHIbAcQrL/0+JLKYyJWn4KR0BXlL/uK+IW+W8exO0pn+qX+xpqm
+         ZrtYhLmLhF/z9aHkmOMQKaxu/lLrEo61iHttWYf6KONDJWLXCAeO/nWXzZikgiChun0m
+         MGag==
+X-Gm-Message-State: AOAM530DK1IUl/8Se7Yc4qXTKTPCPtaMFHbCb4jfgFMu/T+Q1vLegjpO
+        8mHPhAG1TntnbT2XtEQo777e1w==
+X-Google-Smtp-Source: ABdhPJy0UNWl2R15dNupeH455A7bg7D94HM1445CiSwf49TsplmM/Vjq5kfgEKp1eWPtJ6EdWTEwRg==
+X-Received: by 2002:a17:903:1246:b0:14f:e51e:baa7 with SMTP id u6-20020a170903124600b0014fe51ebaa7mr20311477plh.159.1646050933556;
+        Mon, 28 Feb 2022 04:22:13 -0800 (PST)
+Received: from FVFYT0MHHV2J.tiktokcdn.com ([139.177.225.227])
+        by smtp.gmail.com with ESMTPSA id ep22-20020a17090ae65600b001b92477db10sm10466753pjb.29.2022.02.28.04.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Feb 2022 04:22:13 -0800 (PST)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        roman.gushchin@linux.dev, shy828301@gmail.com, alexs@kernel.org,
+        richard.weiyang@gmail.com, david@fromorbit.com,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        jaegeuk@kernel.org, chao@kernel.org, kari.argillander@gmail.com,
+        vbabka@suse.cz
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
+        fam.zheng@bytedance.com, smuchun@gmail.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v6 00/16] Optimize list lru memory consumption
+Date:   Mon, 28 Feb 2022 20:21:10 +0800
+Message-Id: <20220228122126.37293-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.32.0 (Apple Git-132)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 927c171a-822c-407a-0fdb-08d9fab491db
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1295:EE_
-X-Microsoft-Antispam-PRVS: <MWHPR12MB1295A5EA7DAABF83602189E383019@MWHPR12MB1295.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qxyezJsmPy26yjbJiE7nsfiUmF0CrlIboTAwmgzX+NACMNF0P25qUQTowXZYFwLnL07ApfYLgfmlTTlbgnXiRNw3HipcQ8YR9n20WGUM4qVXClwvgS2U+5fbxmfiL1YJ3b4dKP58UnnBLEPlJ59UilT4fZs46PS1fW/z09P1pFxsFPxnfyjzXR4SKtzdPjD8pdLQ8Kuy+2l0dAgEnArYv3uj5znNa1rQ1Hoq/K9GX8bP7u3bYhwZ3G7tvOtwzFR8Ta2MGzOk18aOUbCOKf9+NPI1BAokmmASt6vuYyQl9d6diYO5nnGHvlTt8B97TsJduPfAWtmOXc4pGnhEnGvVkJzJ9Q5UoXw6MGsLnQFAvjCFOS5HUttb3W5KQYRHVWSwfogIFAGfvtFO+lDHC+zygYhcr4vKIF5NwmlrjZe/eYf8EP+TvHA9+tl3ASpRWWdauBP0CwG4cAkCxjiJR/bBkhVEPuvZl3gldzU8eZLh6J409seJbpIj1B3mXQakZi/ADxm0gFDuRFrSFkrLksAlJNLnP2ba8pyWbR8sZiD7/xv+btdb9URSvZP51q7+HLGr+O6HkKjfWrXmkHOpnHpQ0HDh1kufULkKjdiTyUbvjlsAcLox6Kv+USztKXk8wsuMfL7cp8xrU8lMEmEm4ojd6a9DhZsM9Wdu+UjIl4m5D/tT+6dGUe98wGH7LMWEEawZ3jSOjYoFYkV7E4/D5zrhIvYMsvhiVWs/D7ffpMq0AfurcvoBBzJjFVjkZdegPoSo
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3587.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(7406005)(6512007)(5660300002)(7366002)(7416002)(6506007)(31686004)(36756003)(6486002)(2906002)(83380400001)(2616005)(54906003)(508600001)(110136005)(31696002)(8936002)(86362001)(186003)(38100700002)(6666004)(316002)(4326008)(66476007)(66946007)(66556008)(8676002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QnVEZUhHVmdLQlRDREtha0hYNEd6bWZuNDJmWmFJc2I4MHI3amtWSVdaSTNv?=
- =?utf-8?B?VkxUUUMxWU5QSzNpSHU3QzdicVZ0RWFpcTc2NHk5aVJLaUF6S2EreTNldTd2?=
- =?utf-8?B?Y1ZDZEcwakpzV0VORi9yNmt5YktCVWVlaWVSTmlQWjNUZDAyQ0NBOFlKV1R0?=
- =?utf-8?B?K3VIQnZ3N1k2ajl6WURIOTVYRmdkbzFBUlFQY1ZIVDl5ZVVNZE04WWY3RzdI?=
- =?utf-8?B?NFBENGxZMVh3KzdYSmVKYzB2MlY1YytOZ3pQdjZ1NHdiRmtNSlQwYjYrSGJS?=
- =?utf-8?B?S0lmS3RRUVU1TGh2Ym0yQkdmWWFzN1VwSmNzQW1IR0RmMmU4SjZ5Mm0ydXVP?=
- =?utf-8?B?UEN6a3N0aGJVQkQrTG5nWTVYTzVDQkI1dGxlMURwN0N2Rk1FN0g1VnNKZWVW?=
- =?utf-8?B?S1VoamV3L1BKLzBnaEdCWUhEN2I3ZERSM21LVXBEcVo1M011QmVuQXZMS05Z?=
- =?utf-8?B?NFNEV2tydTR2VlFkMlNESjdzVGhaNW1PNjlBNDA0bEthUnBJc3F3UkhvaE9o?=
- =?utf-8?B?M2ZyVVcvMTNvSU13ZTl0UTRUTXZFY3IzZmxlcnlnZ2FudWM3dXZOZ3IvNEVD?=
- =?utf-8?B?cS96alNTbmFWNzZrcUVJdUgzeGM5MCs0c2JKWUZMRnkzR3E2TVUycTB2RVFy?=
- =?utf-8?B?MzE4QUtkUmQ4bCtqcmI0QktyYVVmd3k5eXZ0Z1R4ejZwekhIUFYyUjRYVkQ0?=
- =?utf-8?B?Z1JiUWpWbzRITWtSc1FTV2lIY0ZlTzhKampXVVhwbk1qbTE4NXNobDNUdWdo?=
- =?utf-8?B?dngxTjRLTGlpYmVtYzBaZWJPNEs0Nkg0Q05ERDY1RjBzZVlZMks1UVhlYTNT?=
- =?utf-8?B?LytTbGxaV29uWFpiYmRlVjc4QUh1OEYwT3FUbHpXZDNkbnNZVkJWZHArZ0Zx?=
- =?utf-8?B?bFFMV2FTUHhtZ3BJSTNzeEd1QnpZS21nWiszbEpxWXNSOU4wb3FWUEd6WUN6?=
- =?utf-8?B?bmc4OEZ4RGY3N2tsdFdhRVZhR1E5YU1QUFJFSnAxb2s1SjI0YkRYeW1ybDI5?=
- =?utf-8?B?YzQ2c0lJZ3ZSQXVZNVVYWHFMTENXclNua3lORlhuM3Bac2pLUVQ1aFdQYldQ?=
- =?utf-8?B?Qm5iVnM2RTBoYVV6eWlVWDdFTG1NaGdZeDVVeG5HdmxGOW9oVkIxMk5GanRC?=
- =?utf-8?B?L1RxOVNMOHduYUNLM0VYbzg3TTd1TmxPQjZOV2ZzZjRScjRoejlaTURnVHJj?=
- =?utf-8?B?V3E5MHZyS0FNc0VRSmg2aGM1MVhUeFppdnBjbWtSQjUxY3hjTW9sVytKY0tl?=
- =?utf-8?B?bXI2MjJNMFZRTzZSajQyMEpHMnBqZThxK2ljY0pIN2NkemdCazdMYWZTZXhO?=
- =?utf-8?B?THpWZE9iVG16UkZvNENTUkpzdkI4eFNvMGxTWi96Q214R20xeWQ2Q3ZhZEN4?=
- =?utf-8?B?ZmZJb1N2WXc0NUsreUM5ekFOc1dlQTJQVkN5TW1QSy82WmZLTkorNE1aNzNE?=
- =?utf-8?B?dFhzdnk2dys4RmtUVytnZk9Zdlhrb1ptMFk3SWlCYmpUS1JxcGRLdWNkZTV5?=
- =?utf-8?B?K3h1SFcrOFliSWhzZWt5eGFINWpaWEFXL0FpNWRRelJOd0JMS3lpdDFEMUdP?=
- =?utf-8?B?eDhPQjhjVm9MS2xoYTgvdTlGbFd5WnZ4cW9uNjRHWWdueXlwZUJRWVBGN1Bm?=
- =?utf-8?B?b2tlcmh3Tm5pU0drcVBTVVltN2w2OXpPZS9tSjd6YTY1dTJMY1MzQnB5eUQ1?=
- =?utf-8?B?c2VHME0zd3N4dVIrUVlKeE4xcVJ0QWI2dW9vaEpkelNsVXM3cWZqRGlEZTJP?=
- =?utf-8?B?MUY2RHR3MWZ0Yk82NSthdy9FTG1CQ3J4YnFMakU5UUtlZWJlN1NXazR5a1NZ?=
- =?utf-8?B?d09rUmV5QXpwTjMzK2F6SVRZNFNMTGtlUCtTNS9qc3Byc3ZaRUJFQUtJTW5y?=
- =?utf-8?B?NUNYck1SckJLTnpOR1d4L3Rpb21OSHlSR1JkVDdZZlVGUjVXWGxlRTA2bmg5?=
- =?utf-8?B?U1JDZXdQUjd0WkVjajE4dFY0QWpYNkN1cGVxdFR1OVkxUFlGUjRaUzhEQWlp?=
- =?utf-8?B?cjYwaWc1L2Y0NTVzd3lrMlBodGMybWZLb2VUWWx2US9EclJjR29OaEZ1ZjZ4?=
- =?utf-8?B?UFdYck5CMlA2UytrZUdob1Z6YjdnTEh6cElLT0lLMjByVGJJOTBZRWE1Um5h?=
- =?utf-8?B?QmZ2OFNhNXBNU1lwVGI5YkNoRnRSdFdqeGRSbmFkL1I2anJyRXZ0bW5IeVI4?=
- =?utf-8?Q?R6iIn8pdIonNpLAFjDShZ1w=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 927c171a-822c-407a-0fdb-08d9fab491db
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2022 12:19:30.0401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Yz+/jU3IY5U41ZTP4nxROOoIIb/zKsZboh12RZsNA0NdemZ8rLgm5wIEvLhrWIBd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1295
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am 28.02.22 um 12:08 schrieb Jakob Koschel:
-> If the list does not contain the expected element, the value of
-> list_for_each_entry() iterator will not point to a valid structure.
-> To avoid type confusion in such case, the list iterator
-> scope will be limited to list_for_each_entry() loop.
+This series is based on Linux v5.17-rc5. And I have replaced Roman's email
+in Acked-by and Reviewed-by tags to roman.gushchin@linux.dev.
 
-We explicitly have the list_entry_is_head() macro to test after a loop 
-if the element pointer points to the head of the list instead of a valid 
-list entry.
+In our server, we found a suspected memory leak problem. The kmalloc-32
+consumes more than 6GB of memory. Other kmem_caches consume less than 2GB
+memory.
 
-So at least from my side I absolutely don't think that this is a good idea.
+After our in-depth analysis, the memory consumption of kmalloc-32 slab
+cache is the cause of list_lru_one allocation.
 
-> In preparation to limiting scope of a list iterator to the list traversal
-> loop, use a dedicated pointer to point to the found element.
-> Determining if an element was found is then simply checking if
-> the pointer is != NULL.
+  crash> p memcg_nr_cache_ids
+  memcg_nr_cache_ids = $2 = 24574
 
-Since when do we actually want to do this?
+memcg_nr_cache_ids is very large and memory consumption of each list_lru
+can be calculated with the following formula.
 
-Take this code here as an example:
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index 48afe96ae0f0..6c916416decc 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -450,7 +450,8 @@ static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
->   				     struct mm_struct *mm)
->   {
->   	struct sgx_encl_mm *encl_mm = container_of(mn, struct sgx_encl_mm, mmu_notifier);
-> -	struct sgx_encl_mm *tmp = NULL;
-> +	struct sgx_encl_mm *found_encl_mm = NULL;
-> +	struct sgx_encl_mm *tmp;
->
->   	/*
->   	 * The enclave itself can remove encl_mm.  Note, objects can't be moved
-> @@ -460,12 +461,13 @@ static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
->   	list_for_each_entry(tmp, &encl_mm->encl->mm_list, list) {
->   		if (tmp == encl_mm) {
->   			list_del_rcu(&encl_mm->list);
-> +			found_encl_mm = tmp;
->   			break;
->   		}
->   	}
->   	spin_unlock(&encl_mm->encl->mm_lock);
->
-> -	if (tmp == encl_mm) {
-> +	if (found_encl_mm) {
->   		synchronize_srcu(&encl_mm->encl->srcu);
->   		mmu_notifier_put(mn);
->   	}
+  num_numa_node * memcg_nr_cache_ids * 32 (kmalloc-32)
 
-I don't think that using the extra variable makes the code in any way 
-more reliable or easier to read.
+There are 4 numa nodes in our system, so each list_lru consumes ~3MB.
 
-Regards,
-Christian.
+  crash> list super_blocks | wc -l
+  952
+
+Every mount will register 2 list lrus, one is for inode, another is for
+dentry. There are 952 super_blocks. So the total memory is 952 * 2 * 3
+MB (~5.6GB). But now the number of memory cgroups is less than 500. So I
+guess more than 12286 memory cgroups have been created on this machine (I
+do not know why there are so many cgroups, it may be a user's bug or
+the user really want to do that). Because memcg_nr_cache_ids has not been
+reduced to a suitable value. It leads to waste a lot of memory. If we want
+to reduce memcg_nr_cache_ids, we have to *reboot* the server. This is not
+what we want.
+
+In order to reduce memcg_nr_cache_ids, I had posted a patchset [1] to do
+this. But this did not fundamentally solve the problem.
+
+We currently allocate scope for every memcg to be able to tracked on every
+superblock instantiated in the system, regardless of whether that superblock
+is even accessible to that memcg.
+
+These huge memcg counts come from container hosts where memcgs are confined
+to just a small subset of the total number of superblocks that instantiated
+at any given point in time.
+
+For these systems with huge container counts, list_lru does not need the
+capability of tracking every memcg on every superblock.
+
+What it comes down to is that the list_lru is only needed for a given memcg
+if that memcg is instatiating and freeing objects on a given list_lru.
+
+As Dave said, "Which makes me think we should be moving more towards 'add the
+memcg to the list_lru at the first insert' model rather than 'instantiate
+all at memcg init time just in case'."
+
+This patchset aims to optimize the list lru memory consumption from different
+aspects.
+
+I had done a easy test to show the optimization. I create 10k memory cgroups
+and mount 10k filesystems in the systems. We use free command to show how many
+memory does the systems comsumes after this operation (There are 2 numa nodes
+in the system).
+
+        +-----------------------+------------------------+
+        |      condition        |   memory consumption   |
+        +-----------------------+------------------------+
+        | without this patchset |        24464 MB        |
+        +-----------------------+------------------------+
+        |     after patch 1     |        21957 MB        | <--------+
+        +-----------------------+------------------------+          |
+        |     after patch 10    |         6895 MB        |          |
+        +-----------------------+------------------------+          |
+        |     after patch 12    |         4367 MB        |          |
+        +-----------------------+------------------------+          |
+                                                                    |
+        The more the number of nodes, the more obvious the effect---+
+
+BTW, there was a recent discussion [2] on the same issue.
+
+[1] https://lore.kernel.org/all/20210428094949.43579-1-songmuchun@bytedance.com/
+[2] https://lore.kernel.org/all/20210405054848.GA1077931@in.ibm.com/
+
+This series not only optimizes the memory usage of list_lru but also
+simplifies the code.
+
+v5: https://lore.kernel.org/all/20211220085649.8196-1-songmuchun@bytedance.com/
+v4: https://lore.kernel.org/all/20211213165342.74704-1-songmuchun@bytedance.com/
+v3: https://lore.kernel.org/all/20210914072938.6440-1-songmuchun@bytedance.com/
+v2: https://lore.kernel.org/all/20210527062148.9361-1-songmuchun@bytedance.com/
+v1: https://lore.kernel.org/all/20210511104647.604-1-songmuchun@bytedance.com/
+
+v6:
+  - Collect Acked-by from Roman and replace his old email with
+    roman.gushchin@linux.dev.
+  - Rework patch 1's commit log suggested by Roman.
+  - Reuse memory cgroup ID for kmem ID directly suggested by Mika Penttilä.
+  - Add a couple of words to Documentation/filesystems/porting.rst suggested
+    by Roman.
+
+  Thanks for your review.
+
+v5:
+  - Fix sleeping from atomic context reported by kernel test robot.
+  - Add a figure to patch 1 suggested by Johannes.
+  - Squash patch 9 into patch 8 suggested by Johannes.
+  - Remove LRUS_CLEAR_MASK and use GFP_RECLAIM_MASK directly suggested
+    by Johannes.
+  - Collect Acked-by from Johannes.
+
+v4:
+  - Remove some code cleanup patches since they are already merged.
+  - Collect Acked-by from Theodore.
+
+v3:
+  - Fix mixing advanced and normal XArray concepts (Thanks to Matthew).
+  - Split one patch into per-filesystem patches.
+
+v2:
+  - Update Documentation/filesystems/porting.rst suggested by Dave.
+  - Add a comment above alloc_inode_sb() suggested by Dave.
+  - Rework some patch's commit log.
+  - Add patch 18-21.
+
+Muchun Song (16):
+  mm: list_lru: transpose the array of per-node per-memcg lru lists
+  mm: introduce kmem_cache_alloc_lru
+  fs: introduce alloc_inode_sb() to allocate filesystems specific inode
+  fs: allocate inode by using alloc_inode_sb()
+  f2fs: allocate inode by using alloc_inode_sb()
+  nfs42: use a specific kmem_cache to allocate nfs4_xattr_entry
+  mm: dcache: use kmem_cache_alloc_lru() to allocate dentry
+  xarray: use kmem_cache_alloc_lru to allocate xa_node
+  mm: memcontrol: move memcg_online_kmem() to mem_cgroup_css_online()
+  mm: list_lru: allocate list_lru_one only when needed
+  mm: list_lru: rename memcg_drain_all_list_lrus to
+    memcg_reparent_list_lrus
+  mm: list_lru: replace linear array with xarray
+  mm: memcontrol: reuse memory cgroup ID for kmem ID
+  mm: memcontrol: fix cannot alloc the maximum memcg ID
+  mm: list_lru: rename list_lru_per_memcg to list_lru_memcg
+  mm: memcontrol: rename memcg_cache_id to memcg_kmem_id
+
+ Documentation/filesystems/porting.rst |   6 +
+ block/bdev.c                          |   2 +-
+ drivers/dax/super.c                   |   2 +-
+ fs/9p/vfs_inode.c                     |   2 +-
+ fs/adfs/super.c                       |   2 +-
+ fs/affs/super.c                       |   2 +-
+ fs/afs/super.c                        |   2 +-
+ fs/befs/linuxvfs.c                    |   2 +-
+ fs/bfs/inode.c                        |   2 +-
+ fs/btrfs/inode.c                      |   2 +-
+ fs/ceph/inode.c                       |   2 +-
+ fs/cifs/cifsfs.c                      |   2 +-
+ fs/coda/inode.c                       |   2 +-
+ fs/dcache.c                           |   3 +-
+ fs/ecryptfs/super.c                   |   2 +-
+ fs/efs/super.c                        |   2 +-
+ fs/erofs/super.c                      |   2 +-
+ fs/exfat/super.c                      |   2 +-
+ fs/ext2/super.c                       |   2 +-
+ fs/ext4/super.c                       |   2 +-
+ fs/f2fs/super.c                       |   8 +-
+ fs/fat/inode.c                        |   2 +-
+ fs/freevxfs/vxfs_super.c              |   2 +-
+ fs/fuse/inode.c                       |   2 +-
+ fs/gfs2/super.c                       |   2 +-
+ fs/hfs/super.c                        |   2 +-
+ fs/hfsplus/super.c                    |   2 +-
+ fs/hostfs/hostfs_kern.c               |   2 +-
+ fs/hpfs/super.c                       |   2 +-
+ fs/hugetlbfs/inode.c                  |   2 +-
+ fs/inode.c                            |   2 +-
+ fs/isofs/inode.c                      |   2 +-
+ fs/jffs2/super.c                      |   2 +-
+ fs/jfs/super.c                        |   2 +-
+ fs/minix/inode.c                      |   2 +-
+ fs/nfs/inode.c                        |   2 +-
+ fs/nfs/nfs42xattr.c                   |  95 ++++----
+ fs/nilfs2/super.c                     |   2 +-
+ fs/ntfs/inode.c                       |   2 +-
+ fs/ntfs3/super.c                      |   2 +-
+ fs/ocfs2/dlmfs/dlmfs.c                |   2 +-
+ fs/ocfs2/super.c                      |   2 +-
+ fs/openpromfs/inode.c                 |   2 +-
+ fs/orangefs/super.c                   |   2 +-
+ fs/overlayfs/super.c                  |   2 +-
+ fs/proc/inode.c                       |   2 +-
+ fs/qnx4/inode.c                       |   2 +-
+ fs/qnx6/inode.c                       |   2 +-
+ fs/reiserfs/super.c                   |   2 +-
+ fs/romfs/super.c                      |   2 +-
+ fs/squashfs/super.c                   |   2 +-
+ fs/sysv/inode.c                       |   2 +-
+ fs/ubifs/super.c                      |   2 +-
+ fs/udf/super.c                        |   2 +-
+ fs/ufs/super.c                        |   2 +-
+ fs/vboxsf/super.c                     |   2 +-
+ fs/xfs/xfs_icache.c                   |   2 +-
+ fs/zonefs/super.c                     |   2 +-
+ include/linux/fs.h                    |  11 +
+ include/linux/list_lru.h              |  17 +-
+ include/linux/memcontrol.h            |  41 ++--
+ include/linux/slab.h                  |   3 +
+ include/linux/swap.h                  |   5 +-
+ include/linux/xarray.h                |   9 +-
+ ipc/mqueue.c                          |   2 +-
+ lib/xarray.c                          |  10 +-
+ mm/list_lru.c                         | 417 ++++++++++++++++------------------
+ mm/memcontrol.c                       | 160 ++-----------
+ mm/shmem.c                            |   2 +-
+ mm/slab.c                             |  39 +++-
+ mm/slab.h                             |  25 +-
+ mm/slob.c                             |   6 +
+ mm/slub.c                             |  42 ++--
+ mm/workingset.c                       |   2 +-
+ net/socket.c                          |   2 +-
+ net/sunrpc/rpc_pipe.c                 |   2 +-
+ 76 files changed, 476 insertions(+), 539 deletions(-)
+
+-- 
+2.11.0
+
