@@ -2,151 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F754C7C8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 22:57:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 821C54C7CAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 23:01:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbiB1V6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 16:58:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55020 "EHLO
+        id S231285AbiB1WCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 17:02:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbiB1V6L (ORCPT
+        with ESMTP id S230464AbiB1WCL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 16:58:11 -0500
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFBF1E3D0;
-        Mon, 28 Feb 2022 13:57:31 -0800 (PST)
-Received: by mail-io1-xd35.google.com with SMTP id h16so16338755iol.11;
-        Mon, 28 Feb 2022 13:57:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xf4uBhhIfQHVx53ho/xTmpxUaDsjAI9m8Hj30e+skGc=;
-        b=Y6+Logc2zBCIyJE3KzDomF2MV4Dbe7WAM4QvT08NJcqXn1pY0wWBEheV5ZMmpSVDPO
-         nNZBVl1vXboi+78HGHlm2axbj58NbOly1YGVP3P7TmKzE9Eg0iyqzejsCPWDqhK7FPIo
-         I+C4CfBNQTGLx99L2GphGQ0GkiCJQYbDQoIyLlEv8Nvm2tZgRnoKUPmUYbg0zGnGAEdp
-         DKGDXF2cFUijgy7Hprghpao6D3abP1HWsfn4sDKU5vrFGeQlIoSZqVf0dN2scCunPEK/
-         P+3OXAQNiSj3pRPW7WKxXdvZN/N0KBhT+78sUTDUy29O2YDaoGNlcMkSVXg0W/tBOK1t
-         Nelw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xf4uBhhIfQHVx53ho/xTmpxUaDsjAI9m8Hj30e+skGc=;
-        b=ZYHhWuPcrSIMyaDaQnLwahreIMMRH1tWahDqRNt0NS6VLRkr6HsTHdhatof7uBl53q
-         8oGiY1iW5dztJrqRCfXWPpPf2cXJ9luAwkpLZ2s7m99ZQIjzLSMeIPfF7/vyav89cMNI
-         HzIgjW4L1Uratx300YPJByZ2JU/cLdXbSGXplbxeibZ/AymgWYGnwWm0St4Woo7zeF6C
-         pArVyBtyMVswzsKMXDRrtwrIv//+mPVv9HvfShX3THxyiooMAaJ5mg1Ohzt5iByOXQ2A
-         LHJmKuGa4NoKuc/YdfSKyCke7HPhoVLfCnNZL3eIGiPk5TXh6bvsglF+wRnxXM2h+zNk
-         Pzww==
-X-Gm-Message-State: AOAM53170wEoPaPXRyWgIyX7GWLdgmKQ5GuVUyVnfHEnhQKuH3wlSsTE
-        9YXo4q73rIC2LUsfPYbS/FN5kVHhNv4r2AIXiMFpWUEpQdI=
-X-Google-Smtp-Source: ABdhPJym/U0tkp+DoUcf2t/SPX3ZBBoSc4j+hwaUEIMi00iKKzffQT96aocNZlp5TKUfUzWxWpHKGlQYvc+OsO0ofiU=
-X-Received: by 2002:a5d:8f98:0:b0:640:dedf:63ed with SMTP id
- l24-20020a5d8f98000000b00640dedf63edmr16776426iol.52.1646085450109; Mon, 28
- Feb 2022 13:57:30 -0800 (PST)
+        Mon, 28 Feb 2022 17:02:11 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98CAF9EBB6;
+        Mon, 28 Feb 2022 14:01:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 29AD1B81698;
+        Mon, 28 Feb 2022 22:01:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 677EEC340F1;
+        Mon, 28 Feb 2022 22:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646085677;
+        bh=bmzYeqH+wd1Y/i05gxZoeqc9TywPR9wpt0imv9Fx7Nw=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=lb9MoeFhEeGqaET4WoooJnliR/Aftbuf2qgeJWcsJRMUD7lxaPDCkpbBw1fltPmKc
+         jIEBu8SnVjgO3Aaf+8FYuXvVgG5MgAciJgva3R/8WVNn/ktDFk3hANDz2GKUoZWtxI
+         SvipV/Wo2m8Yu0T44/FsB9ncJWS6zqb8Cis19xBBpG1gsQAhwdKCM2xymmzy1B6vAh
+         NLgpj3CkfoCj7XXB9+t8bZHUSaMtCcXi/0/BYE3ppk5zRyoiwaHoQXmDsDHRdh2g9L
+         BKDOg0IEHzQ+qInzyklcGdLSrMWPhR+ZxEuCQewyXU3mL+4cdRVVpWMroWAhmtcL3w
+         /5xJdekiDQkIw==
+Date:   Mon, 28 Feb 2022 23:59:07 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        =?ISO-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Jakob Koschel <jakobkoschel@gmail.com>,
+        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        samba-technical@lists.samba.org,
+        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        intel-wired-lan@lists.osuosl.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sgx@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        tipc-discussion@lists.sourceforge.net,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/6=5D_treewide=3A_remove_using?= =?US-ASCII?Q?_list_iterator_after_loop_body_as_a_ptr?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com> <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com> <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com> <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com> <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+Message-ID: <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
 MIME-Version: 1.0
-References: <20220228113910.1727819-1-amir73il@gmail.com> <20220228113910.1727819-5-amir73il@gmail.com>
- <20220228211113.GB3927073@dread.disaster.area>
-In-Reply-To: <20220228211113.GB3927073@dread.disaster.area>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 28 Feb 2022 23:57:19 +0200
-Message-ID: <CAOQ4uxjPHxO+S3tOarO5w_rBwyFTgd7oMcC4f5xW7opCWb4LVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] fs: report per-mount io stats
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        containers@lists.linux.dev,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 11:11 PM Dave Chinner <david@fromorbit.com> wrote:
+
+
+On February 28, 2022 10:42:53 PM GMT+02:00, James Bottomley <James=2EBotto=
+mley@HansenPartnership=2Ecom> wrote:
+>On Mon, 2022-02-28 at 21:07 +0100, Christian K=C3=B6nig wrote:
+>> Am 28=2E02=2E22 um 20:56 schrieb Linus Torvalds:
+>> > On Mon, Feb 28, 2022 at 4:19 AM Christian K=C3=B6nig
+>> > <christian=2Ekoenig@amd=2Ecom> wrote:
+>> > > I don't think that using the extra variable makes the code in any
+>> > > way
+>> > > more reliable or easier to read=2E
+>> > So I think the next step is to do the attached patch (which
+>> > requires
+>> > that "-std=3Dgnu11" that was discussed in the original thread)=2E
+>> >=20
+>> > That will guarantee that the 'pos' parameter of
+>> > list_for_each_entry()
+>> > is only updated INSIDE the for_each_list_entry() loop, and can
+>> > never
+>> > point to the (wrongly typed) head entry=2E
+>> >=20
+>> > And I would actually hope that it should actually cause compiler
+>> > warnings about possibly uninitialized variables if people then use
+>> > the
+>> > 'pos' pointer outside the loop=2E Except
+>> >=20
+>> >   (a) that code in sgx/encl=2Ec currently initializes 'tmp' to NULL
+>> > for
+>> > inexplicable reasons - possibly because it already expected this
+>> > behavior
+>> >=20
+>> >   (b) when I remove that NULL initializer, I still don't get a
+>> > warning,
+>> > because we've disabled -Wno-maybe-uninitialized since it results in
+>> > so
+>> > many false positives=2E
+>> >=20
+>> > Oh well=2E
+>> >=20
+>> > Anyway, give this patch a look, and at least if it's expanded to do
+>> > "(pos) =3D NULL" in the entry statement for the for-loop, it will
+>> > avoid the HEAD type confusion that Jakob is working on=2E And I think
+>> > in a cleaner way than the horrid games he plays=2E
+>> >=20
+>> > (But it won't avoid possible CPU speculation of such type
+>> > confusion=2E That, in my opinion, is a completely different issue)
+>>=20
+>> Yes, completely agree=2E
+>>=20
+>> > I do wish we could actually poison the 'pos' value after the loop
+>> > somehow - but clearly the "might be uninitialized" I was hoping for
+>> > isn't the way to do it=2E
+>> >=20
+>> > Anybody have any ideas?
+>>=20
+>> I think we should look at the use cases why code is touching (pos)
+>> after the loop=2E
+>>=20
+>> Just from skimming over the patches to change this and experience
+>> with the drivers/subsystems I help to maintain I think the primary
+>> pattern looks something like this:
+>>=20
+>> list_for_each_entry(entry, head, member) {
+>>      if (some_condition_checking(entry))
+>>          break;
+>> }
+>> do_something_with(entry);
 >
-> On Mon, Feb 28, 2022 at 01:39:08PM +0200, Amir Goldstein wrote:
-> > Show optional collected per-mount io stats in /proc/<pid>/mountstats
-> > for filesystems that do not implement their own show_stats() method
-> > and opted-in to generic per-mount stats with FS_MOUNT_STATS flag.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/mount.h          |  1 +
-> >  fs/namespace.c      |  2 ++
-> >  fs/proc_namespace.c | 13 +++++++++++++
-> >  3 files changed, 16 insertions(+)
-> >
-> > diff --git a/fs/mount.h b/fs/mount.h
-> > index f98bf4cd5b1a..2ab6308af78b 100644
-> > --- a/fs/mount.h
-> > +++ b/fs/mount.h
-> > @@ -91,6 +91,7 @@ struct mount {
-> >       int mnt_id;                     /* mount identifier */
-> >       int mnt_group_id;               /* peer group identifier */
-> >       int mnt_expiry_mark;            /* true if marked for expiry */
-> > +     time64_t mnt_time;              /* time of mount */
-> >       struct hlist_head mnt_pins;
-> >       struct hlist_head mnt_stuck_children;
-> >  } __randomize_layout;
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 3fb8f11a42a1..546f07ed44c5 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -220,6 +220,8 @@ static struct mount *alloc_vfsmnt(const char *name)
-> >               mnt->mnt_count = 1;
-> >               mnt->mnt_writers = 0;
-> >  #endif
-> > +             /* For proc/<pid>/mountstats */
-> > +             mnt->mnt_time = ktime_get_seconds();
-> >
-> >               INIT_HLIST_NODE(&mnt->mnt_hash);
-> >               INIT_LIST_HEAD(&mnt->mnt_child);
-> > diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-> > index 49650e54d2f8..d744fb8543f5 100644
-> > --- a/fs/proc_namespace.c
-> > +++ b/fs/proc_namespace.c
-> > @@ -232,6 +232,19 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
-> >       if (sb->s_op->show_stats) {
-> >               seq_putc(m, ' ');
-> >               err = sb->s_op->show_stats(m, mnt_path.dentry);
-> > +     } else if (mnt_has_stats(mnt)) {
-> > +             /* Similar to /proc/<pid>/io */
-> > +             seq_printf(m, "\n"
-> > +                        "\ttimes: %lld %lld\n"
-> > +                        "\trchar: %lld\n"
-> > +                        "\twchar: %lld\n"
-> > +                        "\tsyscr: %lld\n"
-> > +                        "\tsyscw: %lld\n",
-> > +                        r->mnt_time, ktime_get_seconds(),
-> > +                        mnt_iostats_counter_read(r, MNTIOS_CHARS_RD),
-> > +                        mnt_iostats_counter_read(r, MNTIOS_CHARS_WR),
-> > +                        mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_RD),
-> > +                        mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_WR));
 >
-> This doesn't scale as {cpus, mounts, counters, read frequency}
-> matrix explodes.  Please iterate the per-mount per cpu counters
-> once, adding up all counters in one pass to an array on stack, then
-> print them all from the array.
+>Actually, we usually have a check to see if the loop found anything,
+>but in that case it should something like
+>
+>if (list_entry_is_head(entry, head, member)) {
+>    return with error;
+>}
+>do_somethin_with(entry);
+>
+>Suffice?  The list_entry_is_head() macro is designed to cope with the
+>bogus entry on head problem=2E
 
-I am planning to move to per-sb iostats and was thinking of using
-an array of 4 struct percpu_counter. That will make this sort of iteration
-more challenging.
+Won't suffice because the end goal of this work is to limit scope of entry=
+ only to loop=2E Hence the need for additional variable=2E
 
-Do you really think the read frequency of /proc/self/mountstats
-warrants such performance optimization?
+Besides, there are no guarantees that people won't do_something_with(entry=
+) without the check or won't compare entry to NULL to check if the loop fin=
+ished with break or not=2E
 
-It's not like the case of the mighty struct xfsstats.
-It is only going to fold 4 per cpu iterations into 1.
-This doesn't look like a game changer to me.
-Am I missing something?
+>James
 
-Thanks,
-Amir.
+
+--=20
+Sincerely yours,
+Mike
