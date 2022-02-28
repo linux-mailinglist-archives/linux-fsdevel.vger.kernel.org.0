@@ -2,187 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06E754C7D50
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 23:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BDBA4C7D81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Feb 2022 23:38:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231448AbiB1W3q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 17:29:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59560 "EHLO
+        id S231510AbiB1WjQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 17:39:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbiB1W3o (ORCPT
+        with ESMTP id S231506AbiB1WjO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 17:29:44 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECE9EDF1A;
-        Mon, 28 Feb 2022 14:29:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1646087344;
-        bh=gnitHaDoKtFYFmdfHx7ZmUK+2K99mC4OdMWiGF3yqts=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=aDv+zUJMVLbpHnTobs88HMeKXt8e/Fsm3NyltqbtXmut8dDpKPmgZQHvU7CQAhpxT
-         x8yyOH8cKkqI9wCCVd7mWgGGPtOdFvurEvTcoJzgoG8F+eqVyUcxI30U1Z3UyKmv+s
-         JFRv6cmaJ/MAgdj571KO+Pve8Zec5bTLqNmzMPjU=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2FE4A1281036;
-        Mon, 28 Feb 2022 17:29:04 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id UdsLtl38GfVe; Mon, 28 Feb 2022 17:29:04 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1646087343;
-        bh=gnitHaDoKtFYFmdfHx7ZmUK+2K99mC4OdMWiGF3yqts=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=u33hwQnb0VqdOXP8ulufSc5IRuZCZipVBGZNcGF9+k1EE0TmKFXpcGOMGd4fMwEgO
-         9syQhDBoNk9Z7GUqfbwA47rALQtXFHUxFeSSP/G0sxjEsJWs9EMuAmppU6twhzQzk+
-         fAgT3F3AJIbVTwM2ufsCoBYKhhHBSRhleqdyR2l4=
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::527])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C21DB1280D34;
-        Mon, 28 Feb 2022 17:28:59 -0500 (EST)
-Message-ID: <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop
- body as a ptr
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Mike Rapoport <rppt@kernel.org>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jakob Koschel <jakobkoschel@gmail.com>,
-        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        samba-technical@lists.samba.org,
-        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sgx@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Date:   Mon, 28 Feb 2022 17:28:58 -0500
-In-Reply-To: <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
-         <20220228110822.491923-3-jakobkoschel@gmail.com>
-         <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
-         <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
-         <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
-         <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
-         <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Mon, 28 Feb 2022 17:39:14 -0500
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 823654A906;
+        Mon, 28 Feb 2022 14:38:34 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9453F10E0F6C;
+        Tue,  1 Mar 2022 09:38:31 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nOof0-0000NZ-C4; Tue, 01 Mar 2022 09:38:30 +1100
+Date:   Tue, 1 Mar 2022 09:38:30 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     fdmanana@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+        cluster-devel@redhat.com, agruenba@redhat.com,
+        josef@toxicpanda.com, Filipe Manana <fdmanana@suse.com>
+Subject: Re: [PATCH] iomap: fix incomplete async dio reads when using
+ IOMAP_DIO_PARTIAL
+Message-ID: <20220228223830.GR59715@dread.disaster.area>
+References: <1f34c8435fed21e9583492661ceb20d642a75699.1646058596.git.fdmanana@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f34c8435fed21e9583492661ceb20d642a75699.1646058596.git.fdmanana@suse.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=621d4ee8
+        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
+        a=7-415B0cAAAA:8 a=snENK0uE5OOyzlFrYM4A:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-02-28 at 23:59 +0200, Mike Rapoport wrote:
+On Mon, Feb 28, 2022 at 02:32:03PM +0000, fdmanana@kernel.org wrote:
+> From: Filipe Manana <fdmanana@suse.com>
 > 
-> On February 28, 2022 10:42:53 PM GMT+02:00, James Bottomley <
-> James.Bottomley@HansenPartnership.com> wrote:
-> > On Mon, 2022-02-28 at 21:07 +0100, Christian König wrote:
-[...]
-> > > > I do wish we could actually poison the 'pos' value after the
-> > > > loop somehow - but clearly the "might be uninitialized" I was
-> > > > hoping for isn't the way to do it.
-> > > > 
-> > > > Anybody have any ideas?
-> > > 
-> > > I think we should look at the use cases why code is touching
-> > > (pos) after the loop.
-> > > 
-> > > Just from skimming over the patches to change this and experience
-> > > with the drivers/subsystems I help to maintain I think the
-> > > primary pattern looks something like this:
-> > > 
-> > > list_for_each_entry(entry, head, member) {
-> > >      if (some_condition_checking(entry))
-> > >          break;
-> > > }
-> > > do_something_with(entry);
-> > 
-> > Actually, we usually have a check to see if the loop found
-> > anything, but in that case it should something like
-> > 
-> > if (list_entry_is_head(entry, head, member)) {
-> >    return with error;
-> > }
-> > do_somethin_with(entry);
-> > 
-> > Suffice?  The list_entry_is_head() macro is designed to cope with
-> > the bogus entry on head problem.
+> Some users recently reported that MariaDB was getting a read corruption
+> when using io_uring on top of btrfs. This started to happen in 5.16,
+> after commit 51bd9563b6783d ("btrfs: fix deadlock due to page faults
+> during direct IO reads and writes"). That changed btrfs to use the new
+> iomap flag IOMAP_DIO_PARTIAL and to disable page faults before calling
+> iomap_dio_rw(). This was necessary to fix deadlocks when the iovector
+> corresponds to a memory mapped file region. That type of scenario is
+> exercised by test case generic/647 from fstests, and it also affected
+> gfs2, which, besides btrfs, is the only user of IOMAP_DIO_PARTIAL.
 > 
-> Won't suffice because the end goal of this work is to limit scope of
-> entry only to loop. Hence the need for additional variable.
+> For this MariaDB scenario, we attempt to read 16K from file offset X
+> using IOCB_NOWAIT and io_uring. In that range we have 4 extents, each
+> with a size of 4K, and what happens is the following:
+> 
+> 1) btrfs_direct_read() disables page faults and calls iomap_dio_rw();
+> 
+> 2) iomap creates a struct iomap_dio object, its reference count is
+>    initialized to 1 and its ->size field is initialized to 0;
+> 
+> 3) iomap calls btrfs_iomap_begin() with file offset X, which finds the
 
-Well, yes, but my objection is more to the size of churn than the
-desire to do loop local.  I'm not even sure loop local is possible,
-because it's always annoyed me that for (int i = 0; ...  in C++ defines
-i in the outer scope not the loop scope, which is why I never use it.
+You mean btrfs_dio_iomap_begin()?
 
-However, if the desire is really to poison the loop variable then we
-can do
+>    first 4K extent, and setups an iomap for this extent consisting of
+>    a single page;
 
-#define list_for_each_entry(pos, head, member)				\
-	for (pos = list_first_entry(head, typeof(*pos), member);	\
-	     !list_entry_is_head(pos, head, member) && ((pos = NULL) == NULL;			\
-	     pos = list_next_entry(pos, member))
+So we have IOCB_NOWAIT, which means btrfs_dio_iomap_begin() is being
+passed IOMAP_NOWAIT and so knows it is being asked
+to map an extent for an IO that is on a non-blocking path.
 
-Which would at least set pos to NULL when the loop completes.
+btrfs_dio_iomap_begin() doesn't appear to support NOWAIT semantics
+at all - it will block doing writeback IO, memory allocation, extent
+locking, transaction reservations, extent allocation, etc....
 
-> Besides, there are no guarantees that people won't
-> do_something_with(entry) without the check or won't compare entry to
-> NULL to check if the loop finished with break or not.
+That, to me, looks like the root cause of the problem here -
+btrfs_dio_iomap_begin() is not guaranteeing non-blocking atomic IO
+semantics for IOCB_NOWAIT IO.
 
-I get the wider goal, but we have to patch the problem cases now and a
-simple one-liner is better than a larger patch that may or may not work
-if we ever achieve the local definition or value poisoning idea.  I'm
-also fairly certain coccinelle can come up with a use without checking
-for loop completion semantic patch which we can add to 0day.
+In the case above, given that the extent lookup only found a 4kB
+extent, we know that it doesn't span the entire requested IO range.
+We also known that we cannot tell if we'll block on subsequent
+mappings of the IO range, and hence no guarantee can be given that
+IOCB_NOWAIT IO will not block when it is too late to back out with a
+-EAGAIN error.
 
-James
+Hence this whole set of problems could be avoided if
+btrfs_dio_iomap_begin() returns -EAGAIN if it can't map the entire
+IO into a single extent without blocking when IOMAP_NOWAIT is set?
+That's exactly what XFS does in xfs_direct_iomap_write_begin():
 
+        /*
+         * NOWAIT and OVERWRITE I/O needs to span the entire requested I/O with
+         * a single map so that we avoid partial IO failures due to the rest of
+         * the I/O range not covered by this map triggering an EAGAIN condition
+         * when it is subsequently mapped and aborting the I/O.
+         */
+        if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY)) {
+                error = -EAGAIN;
+                if (!imap_spans_range(&imap, offset_fsb, end_fsb))
+                        goto out_unlock;
+        }
 
+Basically, I'm thinking that IOMAP_NOWAIT and IOMAP_DIO_PARTIAL
+should be exclusive functionality - if you are doing IOMAP_NOWAIT
+then the entire IO must succeed without blocking, and if it doesn't
+then we return -EAGAIN and the caller retries without IOCB_NOWAIT
+set and so then we run with IOMAP_DIO_PARTIAL semantics in a thread
+that can actually block....
+
+.....
+
+> 11) At iomap_dio_complete() we adjust the iocb->ki_pos from X to X + 4K
+>     and return 4K (the amount of io done) to iomap_dio_complete_work();
+> 
+> 12) iomap_dio_complete_work() calls the iocb completion callback,
+>     iocb->ki_complete() with a second argument value of 4K (total io
+>     done) and the iocb with the adjust ki_pos of X + 4K. This results
+>     in completing the read request for io_uring, leaving it with a
+>     result of 4K bytes read, and only the first page of the buffer
+>     filled in, while the remaining 3 pages, corresponding to the other
+>     3 extents, were not filled;
+> 
+> 13) For the application, the result is unexpected because if we ask
+>     to read N bytes, it expects to get N bytes read as long as those
+>     N bytes don't cross the EOF (i_size).
+
+Yeah, that's exactly the sort of problem we were having with XFS
+with partial DIO completions due to needing multiple iomap iteration
+loops to complete a single IO. Hence IOMAP_NOWAIT now triggers the
+above range check and aborts before we start...
+
+> 
+> So fix this by making __iomap_dio_rw() assign true to the boolean variable
+> 'wait_for_completion' when we have IOMAP_DIO_PARTIAL set, we did some
+> progress for a read and we have not crossed the EOF boundary. Do this even
+> if the read has IOCB_NOWAIT set, as it's the only way to avoid providing
+> an unexpected result to an application.
+
+That's highly specific and ultimately will be fragile, IMO. I'd much
+prefer that *_iomap_begin_write() implementations simply follow
+IOMAP_NOWAIT requirements to ensure that any DIO that needs multiple
+mappings if punted to a context that can block...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
