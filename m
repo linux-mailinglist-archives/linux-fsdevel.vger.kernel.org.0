@@ -2,164 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F17924C817A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 04:04:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3AF4C818F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 04:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232063AbiCADEn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 22:04:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36536 "EHLO
+        id S231425AbiCADQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 22:16:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232087AbiCADEi (ORCPT
+        with ESMTP id S231130AbiCADQO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 22:04:38 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D3FFA5BD11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 19:03:56 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-267-9MSeLLg1PRGi9Q5Mk98pjw-1; Tue, 01 Mar 2022 03:03:54 +0000
-X-MC-Unique: 9MSeLLg1PRGi9Q5Mk98pjw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Tue, 1 Mar 2022 03:03:52 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Tue, 1 Mar 2022 03:03:52 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Matthew Wilcox' <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     =?iso-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>,
-        "Jakob Koschel" <jakobkoschel@gmail.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux1394-devel@lists.sourceforge.net" 
-        <linux1394-devel@lists.sourceforge.net>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-        "Bos, H.J." <h.j.bos@vu.nl>, Jason Gunthorpe <jgg@ziepe.ca>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "kgdb-bugreport@lists.sourceforge.net" 
-        <kgdb-bugreport@lists.sourceforge.net>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Arnd Bergman" <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "v9fs-developer@lists.sourceforge.net" 
-        <v9fs-developer@lists.sourceforge.net>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Linux F2FS Dev Mailing List" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
-Subject: RE: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-Thread-Topic: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-Thread-Index: AQHYLOAn+DU/OogLf0+tiSFmjztyUKyp1n9A
-Date:   Tue, 1 Mar 2022 03:03:52 +0000
-Message-ID: <198022f201814cdc9384ef083741185e@AcuMS.aculab.com>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220228110822.491923-3-jakobkoschel@gmail.com>
- <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
- <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
- <Yh0tl3Lni4weIMkl@casper.infradead.org>
-In-Reply-To: <Yh0tl3Lni4weIMkl@casper.infradead.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 28 Feb 2022 22:16:14 -0500
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E93A45AEF3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 19:15:33 -0800 (PST)
+Received: by mail-yb1-xb2c.google.com with SMTP id y189so24630168ybe.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 19:15:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T0AjxvjFrHR6fu2oGFLcKZSFRRlXKq1Dcqtae0GYicM=;
+        b=zI7OFwma/V9whbuWLP6/dekw2Ef4XO1BHT/odjfXiqqBSBN3wNRSaGlW2e5S3DMHh7
+         6nafsyPBh4XZpyLf2y8+bx1wiOP4m/XVyOhznsE0nDLtBWURJEZWY5eN+FSlXebfO/aq
+         MwUsslVUGDBvCplLbj0DodURsvuHlZKfRKRtG0HI9/Ohu/g8Fmg0lYEl7PCIAzTcnaWE
+         Up6KvQB5PLEdim8+dqyWUZVrTMjwU+YF2tRj6Iur3Wzj7yuugcJee25X7gymnZVLr5Q2
+         EiswuU88iHSTSH58Nu6p49kDjlzAq1dGIhw6LjEOdmlf7xGuc1AM4V3PFzyIodKR2Uzv
+         nGpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T0AjxvjFrHR6fu2oGFLcKZSFRRlXKq1Dcqtae0GYicM=;
+        b=j5aZ/OA/p9hBhfMTobQJs2j/nGN0aHx8mKXJr0MN5DDeCYC9EWFZyJpmz4rIqlfY8S
+         kPQ3N4satbyzVbm/JCYIlWrWScXJMfSV2zpS4unfhTrL1PNcEvAOVzJ8KvCXuuu+eaxa
+         aVVcsK4Bf3/Gf3KqRlmU6loMXTEDR20z8j4FwgI8NX+lj3s/ZxBV0Fe8QSRObAKkSLC0
+         2CncPpfHEKulYsJgPKxDgB2MGoz5OBTPd5SlRKMaO+hId4VBdJ7n2SwGDDbE/kiFCEW0
+         6AlsaER6k+X1K6D76AbnwSvElhmXb6qsXCZD0ycwp3EhWyDbFMBzOZXsSwTHZypsDja6
+         YmaQ==
+X-Gm-Message-State: AOAM530DMWgwuFcsSsOAEr/QGyipBJmGh6PuKgPmU3S3uXYLBneE/Jrm
+        11dCgXF+t2hpcH5yr9zTp8suClvufILiSKh5ayIS6A==
+X-Google-Smtp-Source: ABdhPJyLlgGIyou+wAfEaWXmEmFOpM1Brk7yD9bDbyrwHm7wvg19Gmdb28Sqk2YKeULEgdNtRu+P34JXz4ZnYeV1Fww=
+X-Received: by 2002:a25:3d87:0:b0:61e:170c:aa9 with SMTP id
+ k129-20020a253d87000000b0061e170c0aa9mr21333575yba.89.1646104533214; Mon, 28
+ Feb 2022 19:15:33 -0800 (PST)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20220228063536.24911-1-songmuchun@bytedance.com>
+ <20220228063536.24911-5-songmuchun@bytedance.com> <20220228132606.7a9c2bc2d38c70604da98275@linux-foundation.org>
+In-Reply-To: <20220228132606.7a9c2bc2d38c70604da98275@linux-foundation.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 1 Mar 2022 11:14:53 +0800
+Message-ID: <CAMZfGtWrHCdE9PfUK2MGHfujBU=o1Dxv=ztdFwhXpjcTPCxnPw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] mm: pvmw: add support for walking devmap pages
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alistair Popple <apopple@nvidia.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Hugh Dickins <hughd@google.com>,
+        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        zwisler@kernel.org, Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        nvdimm@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        Muchun Song <smuchun@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Matthew Wilcox
-> Sent: 28 February 2022 20:16
-> 
-> On Mon, Feb 28, 2022 at 12:10:24PM -0800, Linus Torvalds wrote:
-> > We can do
+On Tue, Mar 1, 2022 at 5:26 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Mon, 28 Feb 2022 14:35:34 +0800 Muchun Song <songmuchun@bytedance.com> wrote:
+>
+> > The devmap pages can not use page_vma_mapped_walk() to check if a huge
+> > devmap page is mapped into a vma.  Add support for walking huge devmap
+> > pages so that DAX can use it in the next patch.
 > >
-> >         typeof(pos) pos
-> >
-> > in the 'for ()' loop, and never use __iter at all.
-> >
-> > That means that inside the for-loop, we use a _different_ 'pos' than outside.
-> 
-> Then we can never use -Wshadow ;-(  I'd love to be able to turn it on;
-> it catches real bugs.
-> 
-> > +#define list_for_each_entry(pos, head, member)					\
-> > +	for (typeof(pos) pos = list_first_entry(head, typeof(*pos), member);	\
-> > +	     !list_entry_is_head(pos, head, member);	\
-> >  	     pos = list_next_entry(pos, member))
+>
+> x86_64 allnoconfig:
+>
+> In file included from <command-line>:
+> In function 'check_pmd',
+>     inlined from 'page_vma_mapped_walk' at mm/page_vma_mapped.c:219:10:
+> ././include/linux/compiler_types.h:347:45: error: call to '__compiletime_assert_232' declared with attribute error: BUILD_BUG failed
+>   347 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>       |                                             ^
+> ././include/linux/compiler_types.h:328:25: note: in definition of macro '__compiletime_assert'
+>   328 |                         prefix ## suffix();                             \
+>       |                         ^~~~~~
+> ././include/linux/compiler_types.h:347:9: note: in expansion of macro '_compiletime_assert'
+>   347 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+>    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:59:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+>    59 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+>       |                     ^~~~~~~~~~~~~~~~
+> ./include/linux/huge_mm.h:307:28: note: in expansion of macro 'BUILD_BUG'
+>   307 | #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+>       |                            ^~~~~~~~~
+> ./include/linux/huge_mm.h:104:26: note: in expansion of macro 'HPAGE_PMD_SHIFT'
+>   104 | #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
+>       |                          ^~~~~~~~~~~~~~~
+> ./include/linux/huge_mm.h:105:26: note: in expansion of macro 'HPAGE_PMD_ORDER'
+>   105 | #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
+>       |                          ^~~~~~~~~~~~~~~
+> mm/page_vma_mapped.c:113:20: note: in expansion of macro 'HPAGE_PMD_NR'
+>   113 |         if ((pfn + HPAGE_PMD_NR - 1) < pvmw->pfn)
+>       |                    ^~~~~~~~~~~~
+> make[1]: *** [scripts/Makefile.build:288: mm/page_vma_mapped.o] Error 1
+> make: *** [Makefile:1971: mm] Error 2
+>
+>
+> because check_pmd() uses HPAGE_PMD_NR and
+>
+> #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+> #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+>
+> I don't immediately see why this patch triggers it...
 
-Actually can't you use 'pos' to temporarily hold the address of 'member'.
-Something like:
-	for (pos = (void *)head; \
-		pos ? ((pos = (void *)pos - offsetof(member)), 1) : 0; \
-		pos = (void *)pos->next)
-So that 'pos' is NULL if the loop terminates.
-No pointers outside structures are generated.
-Probably need to kill list_entry_is_head() - or it just checks for NULL.
+Maybe the reason is as follows.
 
-	David
+The first check_pmd() is wrapped inside `if (pmd_trans_huge(pmde))`
+block, since pmd_trans_huge() just returns 0, check_pmd() will be
+optimized out.  There is a `if (!thp_migration_supported()) return;` block
+before the second check_pmd(), however, thp_migration_supported()
+returns 0 on riscv. So the second check_pmd() can be optimized out as
+well.  I think I should replace `pmd_leaf` with `pmd_trans_huge() ||
+pmd_devmap()`
+to fix it.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Thanks.
