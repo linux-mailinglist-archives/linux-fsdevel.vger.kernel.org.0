@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 200E74C936F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 19:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF53D4C9371
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 19:42:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235646AbiCASnY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 13:43:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51036 "EHLO
+        id S236937AbiCASn3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 13:43:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235033AbiCASnX (ORCPT
+        with ESMTP id S235417AbiCASnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 13:43:23 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C333C4C;
-        Tue,  1 Mar 2022 10:42:40 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id bg16-20020a05600c3c9000b00380f6f473b0so1790444wmb.1;
-        Tue, 01 Mar 2022 10:42:40 -0800 (PST)
+        Tue, 1 Mar 2022 13:43:24 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34235F9F;
+        Tue,  1 Mar 2022 10:42:41 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id u1so21918417wrg.11;
+        Tue, 01 Mar 2022 10:42:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gW0TtYSb+PHaz8KelaV23eMZzDm2Da2Jf842/OEtA9g=;
-        b=dygrXPZTlKNM/lw3TV8UvA0wPnu2PMqRQHEExj25GEPMl7sqFvkeccQvcDPjW2yznJ
-         PS+KL9G3fDxe9t1fk2wRwYNKAoSWEeNAsHhXxRgt6EZHZFBtbXE/JkZowmwKDUtOHjDr
-         hwcJBWYm6S9naTTJZU8Z9NhghTr4skvIAZmtaZtMSLPwm3+S1pZXyksDeEEAs6R5vDjd
-         /4QIH6GZocctQh3zTkMD3sHEqqCdr/+kYpSfabHnJ1gKvCqRKzH6sP3WzwwoOaFVwQcO
-         X/aNZ+7OqHFvECxdDB5sl03APXn4gKXrFDytB5wonmprum5F98/wZJObxhqwi6XUMhPg
-         hdpQ==
+        bh=xzuvULgXIUX/WiyolQQEQyHGFyJpowTtJUHjSYjdBuM=;
+        b=eqNJUVfZ+IINido+jqvZ7OrioxEfn447b0g67gVVH/qjsXX6Eolo63N4RTgk1rG5d6
+         ToAvEE3eIar9AK1Aoy8sxQHYjiW/HnDCFdfLGcbiw7QfxhACaLKbLUoIjtcmnvrZI59b
+         H5p+ztfcdgaVWGz7f+Iv/1LzMxf/81avht0QWDtq17nNhtc7aFQFCeE/Vc9zBu4O3Q4u
+         2I5CgOoRK5pYQisg4aBr983H0EAgvOylX2lUI8jOhpKEFeh6vtKhYJPJOZ6uciiqZKsV
+         tDowkPQnBbrzmVokZBhK0SAIDFSSZp6ZDZydTEcpWMx+1Sj0tExTCOTB+dVyWalQJjoQ
+         35Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gW0TtYSb+PHaz8KelaV23eMZzDm2Da2Jf842/OEtA9g=;
-        b=PvsP8lPibW5FSAhGTtqGSg9pRQGdCamJbrtGFFn0oUbNqBariIEqbGZy9LbWIzCYKk
-         NIoFee2iEN+qodzF38SLQ0TRrtmTuxWd/UvzSNQX3OjEMF4uAXYxAS9pzrAcB1QgIDSR
-         8xfD9UHtCiz8AD9HpcszwaBplf4hths07+/YoTOyqNEKS1aO660Lv0BXoKc0TUqa2K44
-         ff3RKJbL0xwPPVnE+f094jPd54eYXByBVInSxz1homE5bNbzIjMT/U2YWQgKTv4tjA7d
-         wl6z1ahLJYexDNfaoQHTbvcng5Pb09k6ST045eyKFR2CfWQClx3WyQCk5d82a5aKp7iC
-         6s/Q==
-X-Gm-Message-State: AOAM532MvI7TCRv1T2jluQEZwimyuKZX2dz+rkWRVSZv+jTv/rp5Rj9/
-        s2GgwbnCieVlV7W0NvMtEt8=
-X-Google-Smtp-Source: ABdhPJwsMVccL1RUs1zTxOwNYHxJcvEClzSQY2UjsMCh28ZAObi7BhM4PclFLLPNgaRRftQUG8Nhyw==
-X-Received: by 2002:a05:600c:1c05:b0:382:255f:4b9c with SMTP id j5-20020a05600c1c0500b00382255f4b9cmr2528631wms.66.1646160159051;
-        Tue, 01 Mar 2022 10:42:39 -0800 (PST)
+        bh=xzuvULgXIUX/WiyolQQEQyHGFyJpowTtJUHjSYjdBuM=;
+        b=kCZ9YNc3SwAm8cwvOlmQytDNHmIVdzOQs4SJUSjQElBM8TZNF+wyMU0fZsRa41QaEY
+         CF2nHpoXHh/aBU0VJHiJLD1Ngl1iNB/HcoJ5MYm357L++QoInvp4jxaK0M5+D0cO8Pxf
+         V8yuRrtr8hsS2ItBvouK5gilk0DGSrEIu7OVxiHw5l1ymB9/U7DpY5A1OGwqqfrEhV/I
+         SKVp7XyNvYRDVK1D3mryq2kW/F8SrBTbtIeTp6OqtrZrX8bFgwt74BV37WTCPrU/z22s
+         W79Cc5ij/ZcAlfP0k7j+AHUktznxPo2KZSspy9pD0BZr98r5h92+Y9B/YZTkX9UAc4Ka
+         csXw==
+X-Gm-Message-State: AOAM533t62aVvutSUNDo/gyOTfjpRSWWw3gBUL9T+xPpr+K1qW8bN0Mb
+        IgFa4RKZByqrgtwTW9pI73k=
+X-Google-Smtp-Source: ABdhPJwXsG2Vj5ZgFFqDK7P+AYOaMsTefX0KdS8oKpmCpErm+7NZARmNNtwTmTdv8OK6NZpQqaM23w==
+X-Received: by 2002:adf:e343:0:b0:1f0:7a2:99f2 with SMTP id n3-20020adfe343000000b001f007a299f2mr3845166wrj.96.1646160160404;
+        Tue, 01 Mar 2022 10:42:40 -0800 (PST)
 Received: from localhost.localdomain ([77.137.71.203])
-        by smtp.gmail.com with ESMTPSA id f1-20020a5d4dc1000000b001eeadc98c0csm14020381wru.101.2022.03.01.10.42.37
+        by smtp.gmail.com with ESMTPSA id f1-20020a5d4dc1000000b001eeadc98c0csm14020381wru.101.2022.03.01.10.42.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Mar 2022 10:42:38 -0800 (PST)
+        Tue, 01 Mar 2022 10:42:40 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Dave Chinner <david@fromorbit.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 2/6] fs: add optional iostats counters to struct super_block
-Date:   Tue,  1 Mar 2022 20:42:17 +0200
-Message-Id: <20220301184221.371853-3-amir73il@gmail.com>
+Subject: [PATCH v3 3/6] fs: collect per-sb io stats
+Date:   Tue,  1 Mar 2022 20:42:18 +0200
+Message-Id: <20220301184221.371853-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220301184221.371853-1-amir73il@gmail.com>
 References: <20220301184221.371853-1-amir73il@gmail.com>
@@ -71,221 +71,207 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With CONFIG_FS_IOSTATS, filesystem can attach an array of counters to
-struct super_block by calling sb_iostats_init().
+Replace task io account helpers with wrappers that may also collect
+per-sb io stats.
 
-These counters will be used to collect per-sb I/O statistics and display
-them in /proc/<pid>/mountstats.
+Filesystems that want these per-sb io stats collected need to opt-in
+with sb_iostats_init().
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/Kconfig                 |   8 +++
- fs/super.c                 |   2 +
- include/linux/fs.h         |  10 ++-
- include/linux/fs_iostats.h | 127 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 145 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/fs_iostats.h
+ fs/read_write.c | 88 +++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 64 insertions(+), 24 deletions(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 6c7dc1387beb..394d9da6bda9 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -15,6 +15,14 @@ config VALIDATE_FS_PARSER
- 	  Enable this to perform validation of the parameter description for a
- 	  filesystem when it is registered.
- 
-+config FS_IOSTATS
-+	bool "Enable generic filesystem I/O statistics"
-+	help
-+	  Enable this to allow collecting filesystem I/O statistics and display
-+	  them in /proc/<pid>/mountstats.
-+
-+	  Say N if unsure.
-+
- config FS_IOMAP
- 	bool
- 
-diff --git a/fs/super.c b/fs/super.c
-index f1d4a193602d..c447cadb402b 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -36,6 +36,7 @@
- #include <linux/lockdep.h>
- #include <linux/user_namespace.h>
- #include <linux/fs_context.h>
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 0074afa7ecb3..8c599bf2dd78 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -20,6 +20,7 @@
+ #include <linux/compat.h>
+ #include <linux/mount.h>
+ #include <linux/fs.h>
 +#include <linux/fs_iostats.h>
- #include <uapi/linux/mount.h>
  #include "internal.h"
  
-@@ -290,6 +291,7 @@ static void __put_super(struct super_block *s)
- 		WARN_ON(s->s_dentry_lru.node);
- 		WARN_ON(s->s_inode_lru.node);
- 		WARN_ON(!list_empty(&s->s_mounts));
-+		sb_iostats_destroy(s);
- 		security_sb_free(s);
- 		fscrypt_sb_free(s);
- 		put_user_ns(s->s_user_ns);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e2d892b201b0..a71c94cbb6c1 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1454,6 +1454,8 @@ struct sb_writers {
- 	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
- };
+ #include <linux/uaccess.h>
+@@ -34,6 +35,45 @@ const struct file_operations generic_ro_fops = {
  
-+struct sb_iostats;
-+
- struct super_block {
- 	struct list_head	s_list;		/* Keep this first */
- 	dev_t			s_dev;		/* search index; _not_ kdev_t */
-@@ -1508,8 +1510,12 @@ struct super_block {
- 	/* Granularity of c/m/atime in ns (cannot be worse than a second) */
- 	u32			s_time_gran;
- 	/* Time limits for c/m/atime in seconds */
--	time64_t		   s_time_min;
--	time64_t		   s_time_max;
-+	time64_t		s_time_min;
-+	time64_t		s_time_max;
-+#ifdef CONFIG_FS_IOSTATS
-+	/* Optional per-sb I/O stats */
-+	struct sb_iostats	*s_iostats;
-+#endif
- #ifdef CONFIG_FSNOTIFY
- 	__u32			s_fsnotify_mask;
- 	struct fsnotify_mark_connector __rcu	*s_fsnotify_marks;
-diff --git a/include/linux/fs_iostats.h b/include/linux/fs_iostats.h
-new file mode 100644
-index 000000000000..60d1efbea7d9
---- /dev/null
-+++ b/include/linux/fs_iostats.h
-@@ -0,0 +1,127 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_FS_IOSTATS_H
-+#define _LINUX_FS_IOSTATS_H
-+
-+#include <linux/fs.h>
-+#include <linux/percpu_counter.h>
-+#include <linux/slab.h>
-+
-+/* Similar to task_io_accounting members */
-+enum {
-+	SB_IOSTATS_CHARS_RD,	/* bytes read via syscalls */
-+	SB_IOSTATS_CHARS_WR,	/* bytes written via syscalls */
-+	SB_IOSTATS_SYSCALLS_RD,	/* # of read syscalls */
-+	SB_IOSTATS_SYSCALLS_WR,	/* # of write syscalls */
-+	SB_IOSTATS_COUNTERS_NUM
-+};
-+
-+struct sb_iostats {
-+	time64_t		start_time;
-+	struct percpu_counter	counter[SB_IOSTATS_COUNTERS_NUM];
-+};
-+
-+#ifdef CONFIG_FS_IOSTATS
-+static inline struct sb_iostats *sb_iostats(struct super_block *sb)
+ EXPORT_SYMBOL(generic_ro_fops);
+ 
++static inline void file_iostats_counter_inc(struct file *file, int id)
 +{
-+	return sb->s_iostats;
++	if (file)
++		sb_iostats_counter_inc(file->f_path.mnt->mnt_sb, id);
 +}
 +
-+static inline bool sb_has_iostats(struct super_block *sb)
++static inline void file_iostats_counter_add(struct file *file, int id,
++					    ssize_t amt)
 +{
-+	return !!sb->s_iostats;
++	if (file)
++		sb_iostats_counter_add(file->f_path.mnt->mnt_sb, id, amt);
 +}
 +
-+static inline void sb_iostats_destroy(struct super_block *sb)
++static void file_add_rchar(struct file *file, struct task_struct *tsk,
++			   ssize_t amt)
 +{
-+	if (!sb->s_iostats)
-+		return;
-+
-+	percpu_counters_destroy(sb->s_iostats->counter,
-+				SB_IOSTATS_COUNTERS_NUM);
-+	kfree(sb->s_iostats);
-+	sb->s_iostats = NULL;
++	file_iostats_counter_add(file, SB_IOSTATS_CHARS_RD, amt);
++	add_rchar(tsk, amt);
 +}
 +
-+/* Initialize per-sb I/O stats */
-+static inline int sb_iostats_init(struct super_block *sb)
++static void file_add_wchar(struct file *file, struct task_struct *tsk,
++			   ssize_t amt)
 +{
-+	int err;
-+
-+	sb->s_iostats = kmalloc(sizeof(struct sb_iostats), GFP_KERNEL);
-+	if (!sb->s_iostats)
-+		return -ENOMEM;
-+
-+	err = percpu_counters_init(sb->s_iostats->counter,
-+				   SB_IOSTATS_COUNTERS_NUM, 0, GFP_KERNEL);
-+	if (err) {
-+		kfree(sb->s_iostats);
-+		sb->s_iostats = NULL;
-+		return err;
-+	}
-+
-+	sb->s_iostats->start_time = ktime_get_seconds();
-+	return 0;
++	file_iostats_counter_add(file, SB_IOSTATS_CHARS_WR, amt);
++	add_wchar(tsk, amt);
 +}
 +
-+static inline void sb_iostats_counter_inc(struct super_block *sb, int id)
++static void file_inc_syscr(struct file *file, struct task_struct *tsk)
 +{
-+	if (!sb->s_iostats)
-+		return;
-+
-+	percpu_counter_inc(&sb->s_iostats->counter[id]);
++	file_iostats_counter_inc(file, SB_IOSTATS_SYSCALLS_RD);
++	inc_syscr(current);
 +}
 +
-+static inline void sb_iostats_counter_add(struct super_block *sb, int id,
-+					  s64 amt)
++static void file_inc_syscw(struct file *file, struct task_struct *tsk)
 +{
-+	if (!sb->s_iostats)
-+		return;
-+
-+	percpu_counter_add(&sb->s_iostats->counter[id], amt);
++	file_iostats_counter_inc(file, SB_IOSTATS_SYSCALLS_WR);
++	inc_syscw(current);
 +}
 +
-+static inline s64 sb_iostats_counter_read(struct super_block *sb, int id)
-+{
-+	if (!sb->s_iostats)
-+		return 0;
-+
-+	return percpu_counter_read_positive(&sb->s_iostats->counter[id]);
-+}
-+
-+#else /* !CONFIG_FS_IOSTATS */
-+
-+static inline struct sb_iostats *sb_iostats(struct super_block *sb)
-+{
-+	return NULL;
-+}
-+
-+static inline bool sb_has_iostats(struct super_block *sb)
-+{
-+	return false;
-+}
-+
-+static inline int sb_iostats_init(struct super_block *sb)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline void sb_iostats_destroy(struct super_block *sb)
-+{
-+}
-+
-+static inline void sb_iostats_counter_inc(struct super_block *sb, int id)
-+{
-+}
-+
-+static inline void sb_iostats_counter_add(struct super_block *sb, int id,
-+					  s64 amt)
-+{
-+}
-+
-+static inline s64 sb_iostats_counter_read(struct super_block *sb, int id)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#endif /* _LINUX_FS_IOSTATS_H */
+ static inline bool unsigned_offsets(struct file *file)
+ {
+ 	return file->f_mode & FMODE_UNSIGNED_OFFSET;
+@@ -441,9 +481,9 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+ 		if (pos)
+ 			*pos = kiocb.ki_pos;
+ 		fsnotify_access(file);
+-		add_rchar(current, ret);
++		file_add_rchar(file, current, ret);
+ 	}
+-	inc_syscr(current);
++	file_inc_syscr(file, current);
+ 	return ret;
+ }
+ 
+@@ -483,9 +523,9 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
+ 		ret = -EINVAL;
+ 	if (ret > 0) {
+ 		fsnotify_access(file);
+-		add_rchar(current, ret);
++		file_add_rchar(file, current, ret);
+ 	}
+-	inc_syscr(current);
++	file_inc_syscr(file, current);
+ 	return ret;
+ }
+ 
+@@ -537,9 +577,9 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t
+ 		if (pos)
+ 			*pos = kiocb.ki_pos;
+ 		fsnotify_modify(file);
+-		add_wchar(current, ret);
++		file_add_wchar(file, current, ret);
+ 	}
+-	inc_syscw(current);
++	file_inc_syscw(file, current);
+ 	return ret;
+ }
+ /*
+@@ -592,9 +632,9 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
+ 		ret = -EINVAL;
+ 	if (ret > 0) {
+ 		fsnotify_modify(file);
+-		add_wchar(current, ret);
++		file_add_wchar(file, current, ret);
+ 	}
+-	inc_syscw(current);
++	file_inc_syscw(file, current);
+ 	file_end_write(file);
+ 	return ret;
+ }
+@@ -947,8 +987,8 @@ static ssize_t do_readv(unsigned long fd, const struct iovec __user *vec,
+ 	}
+ 
+ 	if (ret > 0)
+-		add_rchar(current, ret);
+-	inc_syscr(current);
++		file_add_rchar(f.file, current, ret);
++	file_inc_syscr(f.file, current);
+ 	return ret;
+ }
+ 
+@@ -971,8 +1011,8 @@ static ssize_t do_writev(unsigned long fd, const struct iovec __user *vec,
+ 	}
+ 
+ 	if (ret > 0)
+-		add_wchar(current, ret);
+-	inc_syscw(current);
++		file_add_wchar(f.file, current, ret);
++	file_inc_syscw(f.file, current);
+ 	return ret;
+ }
+ 
+@@ -1000,8 +1040,8 @@ static ssize_t do_preadv(unsigned long fd, const struct iovec __user *vec,
+ 	}
+ 
+ 	if (ret > 0)
+-		add_rchar(current, ret);
+-	inc_syscr(current);
++		file_add_rchar(f.file, current, ret);
++	file_inc_syscr(f.file, current);
+ 	return ret;
+ }
+ 
+@@ -1023,8 +1063,8 @@ static ssize_t do_pwritev(unsigned long fd, const struct iovec __user *vec,
+ 	}
+ 
+ 	if (ret > 0)
+-		add_wchar(current, ret);
+-	inc_syscw(current);
++		file_add_wchar(f.file, current, ret);
++	file_inc_syscw(f.file, current);
+ 	return ret;
+ }
+ 
+@@ -1250,8 +1290,8 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 	}
+ 
+ 	if (retval > 0) {
+-		add_rchar(current, retval);
+-		add_wchar(current, retval);
++		file_add_rchar(in.file, current, retval);
++		file_add_wchar(out.file, current, retval);
+ 		fsnotify_access(in.file);
+ 		fsnotify_modify(out.file);
+ 		out.file->f_pos = out_pos;
+@@ -1261,8 +1301,8 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 			in.file->f_pos = pos;
+ 	}
+ 
+-	inc_syscr(current);
+-	inc_syscw(current);
++	file_inc_syscr(in.file, current);
++	file_inc_syscw(out.file, current);
+ 	if (pos > max)
+ 		retval = -EOVERFLOW;
+ 
+@@ -1511,13 +1551,13 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+ done:
+ 	if (ret > 0) {
+ 		fsnotify_access(file_in);
+-		add_rchar(current, ret);
++		file_add_rchar(file_in, current, ret);
+ 		fsnotify_modify(file_out);
+-		add_wchar(current, ret);
++		file_add_wchar(file_out, current, ret);
+ 	}
+ 
+-	inc_syscr(current);
+-	inc_syscw(current);
++	file_inc_syscr(file_in, current);
++	file_inc_syscw(file_out, current);
+ 
+ 	file_end_write(file_out);
+ 
 -- 
 2.25.1
 
