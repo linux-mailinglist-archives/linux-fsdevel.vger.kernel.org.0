@@ -2,102 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C137E4C7FC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 01:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3724C7FCF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 01:55:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231496AbiCAAyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 19:54:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42844 "EHLO
+        id S231818AbiCAAz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 19:55:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbiCAAyg (ORCPT
+        with ESMTP id S231496AbiCAAz4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 19:54:36 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703E3F70;
-        Mon, 28 Feb 2022 16:53:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:References:To:From:Subject:MIME-Version:Date:Message-ID:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=NZ91IYeIblNdDBut8MLpWdnA9o4cCrnTYppf7PU1ers=; b=H7pOJZasUim98q+EC7q64TPboV
-        6lvIwmzxOyQqh4fWhPFUSlFXc1wm7Wc+PsoRyU27Z5LbRF0TZzx6a/wfh2GmXLDz1si+K+yS5H5Uf
-        cMRbY7DeT4cV8Du4l/9uBzfPIRGskTowCD+EtZWNUpurwoB8vkxQ5lwgySfz7+nHjJvbdnqv8exnn
-        XwDACrsks/9xXHLoNqEg5asUjT5RvoHp58sK9sbEyoCQqFi4kANgwWa4vcYLYEyg1IeEvHQ3mZxfV
-        oTzl6ANrfzWCnxVF8bvjC8gODSyj38Dsk5vD58SCARnhJ2jQiL5kCxsEMQA8O8pxXrXf/yNmIEErE
-        nKibrs0g==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nOqlx-0095DT-UI; Tue, 01 Mar 2022 00:53:50 +0000
-Message-ID: <c35bb2e5-0538-1247-a5a4-7eb34836947a@infradead.org>
-Date:   Mon, 28 Feb 2022 16:53:44 -0800
+        Mon, 28 Feb 2022 19:55:56 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5F894DF51
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 16:55:16 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id cm8so19974906edb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 16:55:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ud5/y/EBwvp8QN7vw5ZxaiWuDsWQaCGba2UHh4N4mec=;
+        b=QDNLH8KOj2N5elfQIiFc9ZMVPG667ughU6MItd4VPmNt6fV069Cvzy3GNDu1LboIOU
+         /ukem7qn980/nnuqsEKTwz+sJAAGQSBr/OuNtNkm7jqBwkXZFdDq4KuXeUYSVdjS5Ygf
+         UbLkNglYiw3uAvK1jhMlolPsp6Bm5sW2kE0eY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ud5/y/EBwvp8QN7vw5ZxaiWuDsWQaCGba2UHh4N4mec=;
+        b=VSPS5iYO3zmONAeNPbhyDZkbZq3+GwCT7B7RUrSQJBwQ6O9xGPq282PpbUmMy2ZAvr
+         4YaUSZ7Ze8/imVnNrONPzvz0M+JeMrqelwzDKxTKtfFTiGSaJHOqEhA4yDUp0fq2a2xc
+         Gdxq7reVFwzAQwvKryOo5Q4YOQBcJw9lHbB16K/vhk55FASIjlYnB5qf5Zbexk3AMGml
+         2LljW2EhCAWxphHC2ql7Rfo8taNSyaLkqi+Ff02Ywsj9GvoC/c8ml1+gnQSP6fADsjz3
+         bIE3bOTfn8Ga9gQjX6s17wV6P6tGaGYiwruiJqYWtf/bdyDC/S0cb8CNaVSQiu9/q5F4
+         VWlg==
+X-Gm-Message-State: AOAM5321gSMl5ntVe4V4r2xiF1KIxwUm15kkGVw7ZsnV3IubGiKL9cJ5
+        loNPy0xTCpRitqKBe5r4sdcRBrFArFpwj0VchKo=
+X-Google-Smtp-Source: ABdhPJyqTaq2lbF0hXuqroWQfsG5eK1RJh1borxxUUpon5bZIvv9VqoiOrqWlyd55tppqKg2ZSG+Aw==
+X-Received: by 2002:a05:6402:17c8:b0:406:80a3:5cad with SMTP id s8-20020a05640217c800b0040680a35cadmr21719875edy.388.1646096115330;
+        Mon, 28 Feb 2022 16:55:15 -0800 (PST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id z11-20020a170906814b00b006a6be1e0f86sm4780946ejw.132.2022.02.28.16.55.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Feb 2022 16:55:13 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id d17so17971081wrc.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 16:55:12 -0800 (PST)
+X-Received: by 2002:a2e:aaa2:0:b0:244:bf42:3e6e with SMTP id
+ bj34-20020a2eaaa2000000b00244bf423e6emr16240083ljb.176.1646096101617; Mon, 28
+ Feb 2022 16:55:01 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: mmotm 2022-02-28-14-45 uploaded
- (drivers/tty/serial/sunplus-uart.c:)
-Content-Language: en-US
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hammer Hsieh <hammerh0314@gmail.com>
-References: <20220228224600.44415C340EE@smtp.kernel.org>
- <1e91ecfb-0432-8c0c-e537-49954313abff@infradead.org>
-In-Reply-To: <1e91ecfb-0432-8c0c-e537-49954313abff@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+ <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com> <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+ <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org> <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
+ <20220301003059.GE614@gate.crashing.org>
+In-Reply-To: <20220301003059.GE614@gate.crashing.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 28 Feb 2022 16:54:45 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgLYqYcw0xv65xrLSR7KDpS_6M+S9737m6NQorHGWsXYQ@mail.gmail.com>
+Message-ID: <CAHk-=wgLYqYcw0xv65xrLSR7KDpS_6M+S9737m6NQorHGWsXYQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        alsa-devel@alsa-project.org, KVM list <kvm@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>, linux1394-devel@lists.sourceforge.net,
+        drbd-dev@lists.linbit.com, linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>, linux-aspeed@lists.ozlabs.org,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        intel-wired-lan@lists.osuosl.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sgx@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
+        samba-technical@lists.samba.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        tipc-discussion@lists.sourceforge.net,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Feb 28, 2022 at 4:38 PM Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
+>
+> In C its scope is the rest of the declaration and the entire loop, not
+> anything after it.  This was the same in C++98 already, btw (but in
+> pre-standard versions of C++ things were like you remember, yes, and it
+> was painful).
 
+Yeah, the original C++ model was just unadulterated garbage, with no
+excuse for it, and the scope was not the loop, but the block the loop
+existed in.
 
-On 2/28/22 16:46, Randy Dunlap wrote:
-> 
-> 
-> On 2/28/22 14:45, Andrew Morton wrote:
->> The mm-of-the-moment snapshot 2022-02-28-14-45 has been uploaded to
->>
->>    https://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> https://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>
->> You will need quilt to apply these patches to the latest Linus release (5.x
->> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->> https://ozlabs.org/~akpm/mmotm/series
-> 
-> on x86_64 or i386:
-> 
-> when CONFIG_SERIAL_SUNPLUS_CONSOLE is not set:
-> 
-> ../drivers/tty/serial/sunplus-uart.c:574:12: error: ‘sunplus_uart_console’ undeclared here (not in a function); did you mean ‘sunplus_uart_ops’?
->   .cons  = &sunplus_uart_console,
->             ^~~~~~~~~~~~~~~~~~~~
+That would never have been acceptable for the kernel - it's basically
+just an even uglier version of "put variable declarations in the
+middle of code" (and we use "-Wdeclaration-after-statement" to
+disallow that for kernel code, although apparently some of our user
+space tooling code doesn't enforce or follow that rule).
 
-Huh. On a different build, another build error was found,
-also with CONFIG_SERIAL_SUNPLUS_CONSOLE not set:
+The actual C99 version is the sane one which actually makes it easier
+and clearer to have loop iterators that are clearly just in loop
+scope.
 
-../drivers/tty/serial/sunplus-uart.c: In function ‘sunplus_poll_put_char’:
-../drivers/tty/serial/sunplus-uart.c:464:2: error: implicit declaration of function ‘wait_for_xmitr’; did you mean ‘wait_on_bit’? [-Werror=implicit-function-declaration]
-  wait_for_xmitr(port);
-  ^~~~~~~~~~~~~~
+That's a good idea in general, and I have wanted to start using that
+in the kernel even aside from some of the loop construct macros.
+Because putting variables in natural minimal scope is a GoodThing(tm).
 
+Of course, we shouldn't go crazy with it. Even after we do that
+-std=gnu11 thing, we'll have backports to worry about. And it's not
+clear that we necessarily want to backport that gnu11 thing - since
+people who run old stable kernels also may be still using those really
+old compilers...
 
--- 
-~Randy
+            Linus
