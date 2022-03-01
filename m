@@ -2,97 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E434C90EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 17:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 093664C90F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 17:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234488AbiCAQxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 11:53:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38704 "EHLO
+        id S235688AbiCAQ46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 11:56:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234294AbiCAQxw (ORCPT
+        with ESMTP id S235211AbiCAQ45 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 11:53:52 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B1AE45042;
-        Tue,  1 Mar 2022 08:53:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XvdDnpf7vdy2hpW1NYECaNHggy+FOtZ7HAq1aN/zD6Q=; b=Pm/mug0K31YdaE7cJWNIg7eChN
-        JwHAGr57sfjK4YVGPV62SRqR1p3FYalAzySCo+oCKfavqfvT8sReD/6V8Bhi3/+8KYMY19QRleDqn
-        d6rHLRs0ujznZfg06u91cHgMgED4giyVE/8yhgd/wtsiBxFc/hJLEEeMdl1oiMviDH+bAAENEizAl
-        AF+bQ2F35So7sdsHEypbaCfTcEzfbaiSptvfqKXwYyjc4UNZJn3XCjS2a+r0oE4VdiEGrWOdjC9Ws
-        A8pv4W1iJ918Y0V+lm5QiQPoSxuKnhqvyb3bhjK4MrHuRfbjhjzHmZtgvWIk+KmKeNupFSxcXMxFx
-        ZZ8xE9lA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nP5kK-0000UV-Fl; Tue, 01 Mar 2022 16:53:08 +0000
-Date:   Tue, 1 Mar 2022 08:53:08 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] configfd as a replacement for both ioctls and
- fsconfig
-Message-ID: <Yh5PdGxnnVru2/go@bombadil.infradead.org>
-References: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
- <1476917.1643724793@warthog.procyon.org.uk>
- <Yh1swsJLXvLLIQ0e@bombadil.infradead.org>
- <3136665a674acd1c1cc18f12802684bf82fc8e36.camel@HansenPartnership.com>
+        Tue, 1 Mar 2022 11:56:57 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0AB62EA;
+        Tue,  1 Mar 2022 08:56:13 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a23so32736856eju.3;
+        Tue, 01 Mar 2022 08:56:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:from:mime-version:content-transfer-encoding
+         :content-description:subject:to:date:reply-to;
+        bh=GDnZ8hNkIvcq50bCWCBGSUGNF9aGLbOlF2BISXEvTIc=;
+        b=XZHXrDVIuoc9YBQu969pl25pwdzYDhxDjORc66mDlrDLxp3p/E7LROWrLoiFlLJj+W
+         KOzYnunNATLurMoRb8PL0SM9JQcH8CP4gb63oZ2VGjuhqwXNt0ZxZMZCiWxbPA/vTiWV
+         hgNVZMi9xxZ9GHNW/BmuHMLBcUmarYuLSytvHPhvgHXuW4vYA48CnaO7dZBSpverGdTm
+         T+0CjLk9uGVoR0TQamqSQKjjDPZHdKxiopJydVu559lgSSC4Nv+NHu64xVEeqS6naHxG
+         Pa5hjsrsFoVH4FqA3jj1XG2hRHivAFy6MXohghx53w3fIyxzm4CTy8vkIy3/aXvLNXs+
+         JFmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:from:mime-version
+         :content-transfer-encoding:content-description:subject:to:date
+         :reply-to;
+        bh=GDnZ8hNkIvcq50bCWCBGSUGNF9aGLbOlF2BISXEvTIc=;
+        b=GpdocEH5Li0JAlUTZnquzhrB7yopHsPYQC6lS/TZgO2PDpbNP9cNnd3JQ1XAKUjw22
+         lXQ6ymnS0emzExMqsbRftATRXePftdaKx1P+6+Jj/arkJ1lwtP6qeLfd2c/BDpZazBQX
+         2JsxoKjGmPNld7D/F7mZ6RiGaLI4MM5qRjIsZb3HD8mV/I/KhrwkrhSoWVEw8vBu8xuX
+         /p23NbQ5JXbRajHxDUQtUntW5aNMAI7BuKhBhzZEe9FxPelvczZdPeAlTgc6j9y4zB7A
+         tpiWzinhH/GzOW60IPI24QGtUbD0iuiAFmJ8LwJSzTqGtCrqfra5YI8ufBRuokzZxNyg
+         shwg==
+X-Gm-Message-State: AOAM532TVGS0WHzhhVFI1HKssvNTYy/CGt1SA1/oSqhLRQAUjUVLPm0K
+        5Cqc/+mUrjRgmbseWIvve3s=
+X-Google-Smtp-Source: ABdhPJzA4fcwHjzfdODfd5XwBOCEAq7WKV2kGsde3uQyxlrmsT+bMEhidcy2gAFaCIFJM0aaK8yIOQ==
+X-Received: by 2002:a17:906:7c42:b0:6d6:da70:dfa with SMTP id g2-20020a1709067c4200b006d6da700dfamr5198300ejp.3.1646153772393;
+        Tue, 01 Mar 2022 08:56:12 -0800 (PST)
+Received: from [192.168.1.103] ([129.205.124.14])
+        by smtp.gmail.com with ESMTPSA id ee21-20020a056402291500b00410d4261313sm7303840edb.24.2022.03.01.08.56.05
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Tue, 01 Mar 2022 08:56:08 -0800 (PST)
+Message-ID: <621e5028.1c69fb81.cf6a6.9235@mx.google.com>
+From:   Phillip Chippewa <katatimar552@gmail.com>
+X-Google-Original-From: Phillip Chippewa" <info@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3136665a674acd1c1cc18f12802684bf82fc8e36.camel@HansenPartnership.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Ahoj
+To:     Recipients <Phillip@vger.kernel.org>
+Date:   Tue, 01 Mar 2022 17:55:55 +0100
+Reply-To: chippewap887@gmail.com
+X-Antivirus: Avast (VPS 220301-2, 3/1/2022), Outbound message
+X-Antivirus-Status: Clean
+X-Spam-Status: No, score=2.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL,
+        SPF_HELO_NONE,SPF_PASS,TO_MALFORMED,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 01, 2022 at 11:47:56AM -0500, James Bottomley wrote:
-> On Mon, 2022-02-28 at 16:45 -0800, Luis Chamberlain wrote:
-> > On Tue, Feb 01, 2022 at 02:13:13PM +0000, David Howells wrote:
-> > > James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> > > 
-> > > > If the ioctl debate goes against ioctls, I think configfd would
-> > > > present
-> > > > a more palatable alternative to netlink everywhere.
-> > > 
-> > > It'd be nice to be able to set up a 'configuration transaction' and
-> > > then do a
-> > > commit to apply it all in one go.
-> > 
-> > Can't io-uring cmd effort help here?
-> 
-> What io-uring cmd effort? 
+Ahoj,Som Phillip Chippewa, mal som to =C5=A1tastie, =C5=BEe som z turnaja v=
+yhral jackpot Powerball v hodnote 80 mili=C3=B3nov eurMichigan Lottery, Gra=
+tulujeme, v=C3=A1=C5=A1 e-mail z=C3=ADskal dar vo v=C3=BD=C5=A1ke 2 500 000=
+,00 EUR. Kontaktujte ma kv=C3=B4li reklam=C3=A1cii.
 
-The file operations version is the latest posted effort:
+-- 
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
 
-https://lore.kernel.org/linux-nvme/20210317221027.366780-1-axboe@kernel.dk/
-
-> The one to add nvme completions?
-
-Um, I would not call it that at all, but rather nvme passthrough. But
-yes that is possible. But so are many other things, not just ioctls,
-which is why I've been suggesting I think it does a disservice to the
-efforto just say its useful for ioctl over io-uring. Anything with
-a file_operations can tackle on cmd suport using io-uring as a
-train.
-
-> If it's
-> the completions one, then the configfs interface currently doesn't have
-> an event notifier, which is what the completions patch set seems to
-> require.  On the other hand configfd is key/value for get/set with an
-> atomic activate using an fd, so it stands to reason epoll support could
-> be added for events on the fd ... we'd just have to define a retrieval
-> key for an indicator to say which events are ready.
-
-It sounds like it could use it.
-
-  Luis
