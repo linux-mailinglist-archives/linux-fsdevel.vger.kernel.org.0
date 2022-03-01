@@ -2,57 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4106C4C8914
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 11:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA6C4C8956
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 11:32:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234119AbiCAKQA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 05:16:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46434 "EHLO
+        id S234175AbiCAKdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 05:33:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233864AbiCAKP6 (ORCPT
+        with ESMTP id S230073AbiCAKdB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 05:15:58 -0500
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E882C8CDB1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 02:15:17 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K7Cmd6DjQzMq5kH;
-        Tue,  1 Mar 2022 11:15:13 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K7CmZ5H8YzljTgL;
-        Tue,  1 Mar 2022 11:15:10 +0100 (CET)
-Message-ID: <f6b63133-d555-a77c-0847-de15a9302283@digikod.net>
-Date:   Tue, 1 Mar 2022 11:15:09 +0100
+        Tue, 1 Mar 2022 05:33:01 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 787E2654A1;
+        Tue,  1 Mar 2022 02:32:20 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2FF4121637;
+        Tue,  1 Mar 2022 10:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1646130739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=La5buFbnjrPhn2o1sUWwzQOTEyfMerZi3ZYeAU8/Uv0=;
+        b=ir6wKv7+9TEqXDAv3qmydQ5wBbusxZq25vcTSERRcfsYAthVuwyzGudcKtcu5nR7eD8N9w
+        Xf1dhJfFABjK3gR6RVu2WwBtXG7aTJA9ivU3pX+9IyTxtrODSdDHmoGMphU/lnLO+kWTuX
+        xskgcZyntzbQGHPrndLL+oVBRDjnBFo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1646130739;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=La5buFbnjrPhn2o1sUWwzQOTEyfMerZi3ZYeAU8/Uv0=;
+        b=tKcMBac1PgJGoG8rsYC6c4tom0Ydqe9lf86KLgjfVmM5zQc0oUPxg2PqqyEdGUi7u05yLw
+        yje4esCKuBhlKoAA==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 19928A3B89;
+        Tue,  1 Mar 2022 10:32:19 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 8B603A0608; Tue,  1 Mar 2022 11:32:18 +0100 (CET)
+Date:   Tue, 1 Mar 2022 11:32:18 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     wuchi.zero@gmail.com,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        jack@suse.cz, tj@kernel.org, mszeredi@redhat.com,
+        sedat.dilek@gmail.com, axboe@fb.com, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, linux-mm <linux-mm@kvack.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Different writeback timing since v5.14
+Message-ID: <20220301103218.ulbmakdy4gbw2fso@quack3.lan>
+References: <2104629126.100059.1646129517209.JavaMail.zimbra@nod.at>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220228215935.748017-1-mic@digikod.net>
- <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
-In-Reply-To: <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <2104629126.100059.1646129517209.JavaMail.zimbra@nod.at>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,102 +72,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi!
 
-On 01/03/2022 10:22, Christian Brauner wrote:
-> On Mon, Feb 28, 2022 at 10:59:35PM +0100, Mickaël Salaün wrote:
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> While transitionning to ACC_MODE() with commit 5300990c0370 ("Sanitize
->> f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
->> ACC_MODE() for real"), we lost an open flags consistency check.  Opening
->> a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_READ |
->> MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
->> Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to 0.
->>
->> Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, or
->> respectively FMODE_WRITE, and return an EBADF error if it is absent.
->> Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a file
->> with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this safe
->> behavior.
+On Tue 01-03-22 11:11:57, Richard Weinberger wrote:
+> Rafał and I discovered that page writeback on UBIFS behaves different since v5.14.
+> When a simple write, such as "echo foo > /mnt/ubibfs/bar.txt", happens it takes
+> a few seconds until writeback calls ubifs_writepage().
 > 
-> That specific part seems a bit risky at first glance. Given that the
-> patch referenced is from 2009 this means we've been allowing O_WRONLY |
-> O_RDWR to succeed for almost 13 years now.
-
-Yeah, it's an old bug, but we should keep in mind that a file descriptor 
-created with such flags cannot be used to read nor write. However, 
-unfortunately, it can be used for things like ioctl, fstat, chdir… I 
-don't know if there is any user of this trick.
-
-Either way, there is an inconsistency between those using ACC_MODE() and 
-those using OPEN_FMODE(). If we decide to take a side for the behavior 
-of one or the other, without denying to create such FD, it could also 
-break security policies. We have to choose what to potentially break…
-
-
+> Before commit ab19939a6a50 ("mm/page-writeback: Fix performance when BDI's share of ratio is 0.")
+> it was 30 seconds (vm.dirty_expire_centisecs), after this change it happens after 5 seconds
+> (vm.dirty_writeback_centisecs).
 > 
->>
->> To make it consistent with ACC_MODE(), this patch also changes
->> OPEN_FMODE() to return FMODE_READ | FMODE_WRITE for O_WRONLY | O_RDWR.
->> This may help protect from potential spurious issues.
->>
->> This issue could result in inconsistencies with AppArmor, Landlock and
->> SELinux, but the VFS checks would still forbid read and write accesses.
->> Tomoyo uses the ACC_MODE() transformation which is correct, and Smack
->> doesn't check the file mode.  Filesystems using OPEN_FMODE() should also
->> be protected by the VFS checks.
->>
->> Fixes: 5300990c0370 ("Sanitize f_flags helpers")
->> Cc: Al Viro <viro@zeniv.linux.org.uk>
->> Cc: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: Darrick J. Wong <djwong@kernel.org>
->> Cc: Eric Paris <eparis@parisplace.org>
->> Cc: John Johansen <john.johansen@canonical.com>
->> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
->> Cc: Miklos Szeredi <miklos@szeredi.hu>
->> Cc: Paul Moore <paul@paul-moore.com>
->> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
->> Cc: Steve French <sfrench@samba.org>
->> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->> Link: https://lore.kernel.org/r/20220228215935.748017-1-mic@digikod.net
->> ---
->>   fs/file_table.c    | 3 +++
->>   include/linux/fs.h | 5 +++--
->>   2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/file_table.c b/fs/file_table.c
->> index 7d2e692b66a9..b936f69525d0 100644
->> --- a/fs/file_table.c
->> +++ b/fs/file_table.c
->> @@ -135,6 +135,9 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
->>   	struct file *f;
->>   	int error;
->>   
->> +	if ((flags & O_ACCMODE) == O_ACCMODE)
->> +		return ERR_PTR(-EINVAL);
->> +
->>   	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
->>   	if (unlikely(!f))
->>   		return ERR_PTR(-ENOMEM);
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index e2d892b201b0..83bc5aaf1c41 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -3527,8 +3527,9 @@ int __init list_bdev_fs_names(char *buf, size_t size);
->>   #define __FMODE_NONOTIFY	((__force int) FMODE_NONOTIFY)
->>   
->>   #define ACC_MODE(x) ("\004\002\006\006"[(x)&O_ACCMODE])
->> -#define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE) | \
->> -					    (flag & __FMODE_NONOTIFY)))
->> +#define OPEN_FMODE(flag) ((__force fmode_t)( \
->> +			(((flag + 1) & O_ACCMODE) ?: O_ACCMODE) | \
->> +			(flag & __FMODE_NONOTIFY)))
->>   
->>   static inline bool is_sxid(umode_t mode)
->>   {
->>
->> base-commit: 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3
->> -- 
->> 2.35.1
->>
+> Is this expected?
+> Just want to make sure that the said commit didn't uncover an UBIFS issue.
+
+Yes, I think it is expected. Likely the background threshold for UBIFS bdi
+is very small (probably UBIFS is not used much for writeback compared to
+other filesystems). Previously, we just used wb_stat() which returned 0
+(PCP counter inexact value) and so background writeback didn't trigger. Now
+we use wb_stat_sum() when threshold is small, get exact value of dirty
+pages and decide to start background writeback.
+
+The only thing is, whether it is really expected that the threshold for
+UBIFS bdi is so small. You can check the values in
+/sys/kernel/debug/bdi/<bdi>/stats.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
