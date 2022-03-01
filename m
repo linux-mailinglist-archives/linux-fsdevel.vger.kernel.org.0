@@ -2,172 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B24C94C8A24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 11:57:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 452FE4C8A26
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 11:57:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234486AbiCAK6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 05:58:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47466 "EHLO
+        id S233165AbiCAK6Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 05:58:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234462AbiCAK5u (ORCPT
+        with ESMTP id S229607AbiCAK6O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 05:57:50 -0500
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279E890CFE;
-        Tue,  1 Mar 2022 02:57:10 -0800 (PST)
-Received: by mail-io1-xd35.google.com with SMTP id m185so17964603iof.10;
-        Tue, 01 Mar 2022 02:57:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Loh7bdYNX/I5LM6DgutE9O2JeFz/enkY0xHKKq5rGk0=;
-        b=f6ajJnJOJgM/5JcG5ttKjr34OgR0RfRHsBfbeVF1+Dj5GC8XhpoulPztYtebksjlIX
-         r0XcZe410mOeHsOrHo7jkFAJZzQ/hKKJOR8QjND1Q2FotxQkn4RGi76zQ4tf5kJdFDDu
-         +RxKrbatqxPpwpBVv87rafKxRImXdcAp+DwSdcZvE/UEtOXOjR7djhUoCSNQudSgKMUv
-         VBLfZq+nXGUQAya1B0iVkSDUP/gmA5sw1Ctx+dq2ueK2y9AOpEeZGGmotaK5psD16X2O
-         QBVux4lhoL1C0xifpZ9Ahn3pThTKE/sJOut84+IOMowOs3njn5M7Ry4BHFQOeAExZN0P
-         t/XQ==
+        Tue, 1 Mar 2022 05:58:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 311E52E695
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 02:57:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646132252;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rTDnVPnfohntA6gS3N1Dq6PzjjBXnod4G2YetN69TLc=;
+        b=AzAce2a0QJNK9Vk5K5rvmM0zzB7UyVvdrbNW9U/G9P0o+S63tvcGE+tyQ4LI+2p2WJpYjy
+        GpW8T4bq0kDjWjm1+vFsXNOmJs6KxisLKwAZPW7pvlCcV6O731b+XWL8mQ8UuKyLMJL4zX
+        xLNEuozRLrkEuAdbESI7B9iI3OeBjNM=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-668-i7gsbdPzMAGWuxMNhFDVmA-1; Tue, 01 Mar 2022 05:57:31 -0500
+X-MC-Unique: i7gsbdPzMAGWuxMNhFDVmA-1
+Received: by mail-pg1-f197.google.com with SMTP id t18-20020a63dd12000000b00342725203b5so8336370pgg.16
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 02:57:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Loh7bdYNX/I5LM6DgutE9O2JeFz/enkY0xHKKq5rGk0=;
-        b=zi66aDNYnBWrQ5MUxXm3wadGo861NqSLmommt+IWTM4jlOt9de7q+/iSjNch4AQTs2
-         XZCirgp43PyjFDCsQi/LM9ePHrjp2TwvX633HNxwxmLPNP5XvE2mZ/gyWC76vfeC10K+
-         2GW6B29ZHtpv2W/8Z5hXbsi6xL+rIqid4kUCWUX+MXt0dq2npFDPMecUhcdVhf1z9sQ9
-         PwnJlA7hsBDx2n/UrEBib0UaEci9UX0lw9MInhsBRXZ5cDQ/iqEothrfxcQtp0zofDI2
-         2ipFZ/dg7jrD5W56cKPtCEzi+YF0CibHHvF4QZroffSSGRgfzHemSkvMugeXQ1YCNB+G
-         o8xA==
-X-Gm-Message-State: AOAM530wj7i8Ja175AI73Cp+qkB5WGAGF1GxgoH3xRpcCtnaIR6x28q6
-        3C3ZWr4iyyEIBAk5yyLbcRgijAnsISgXDh/T7YDG2XpiVJg=
-X-Google-Smtp-Source: ABdhPJzcozKmQtDtbv3zVoWlNydsST/3QVj++U3+KcR8jnzg5AFKVL+304v4XrYxw1o9HuSCeWHWLpdu0A0fqr4KHYE=
-X-Received: by 2002:a02:a1c7:0:b0:314:cc99:3c4f with SMTP id
- o7-20020a02a1c7000000b00314cc993c4fmr20338776jah.53.1646132229437; Tue, 01
- Mar 2022 02:57:09 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=rTDnVPnfohntA6gS3N1Dq6PzjjBXnod4G2YetN69TLc=;
+        b=SJgp19IRPJN8Tp2SxbI6qHX2p+nrPWztm+MrWjEY6gKZpHamzWEETQhsezc55qHPD6
+         EK/DmoFYGPPPDHK5UM1xiReQcM0mQz1e62HRCxKIzgIZH3Lc2GarbJ2J+tmD6r85t95r
+         Qv9rmvWdcnuAdqU43AwMb0kvLAgi/cCwv+55DigIvUUrOA6xyhsi6uwEFFPT08/oD+Gp
+         Olql5UKmcjeqX/G8fsn4HLDA08c1XFnSJgR/YzSCXIj4JhvQPsnaOPikN2QegDNmuf0c
+         gExcedv2hTJrw/I27c2tVCAoq+IOLeaDaMUl3QsNGLsjcUzpzTYqkFhz/RGjro/PLuRY
+         nYAg==
+X-Gm-Message-State: AOAM5314zSWjnVNYNOVYWuc6UUotKjztImc5c5w32SFMxcv/FVN71/0I
+        HIj6NGTzin3teYECrw4ZkcpQmWr+JqB7PSBoszA/GILYN7n1BtaBIkj72iGSMI992K+FAMxTdL6
+        Me6ifUS+hdQviRVdbUR17WFCP9w==
+X-Received: by 2002:a17:902:f652:b0:150:1af4:85e7 with SMTP id m18-20020a170902f65200b001501af485e7mr23592768plg.105.1646132250199;
+        Tue, 01 Mar 2022 02:57:30 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzryXxvJgntpsPT5nxhAuMq2U6pQNdWfv0XUA5kqCkRICBd7VtJc5RNqg7xCc3bRT7Fez4AKg==
+X-Received: by 2002:a17:902:f652:b0:150:1af4:85e7 with SMTP id m18-20020a170902f65200b001501af485e7mr23592746plg.105.1646132249803;
+        Tue, 01 Mar 2022 02:57:29 -0800 (PST)
+Received: from [10.72.12.114] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id m6-20020a62f206000000b004e152bc0527sm16454963pfh.153.2022.03.01.02.57.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Mar 2022 02:57:28 -0800 (PST)
+Subject: Re: [RFC PATCH v10 11/48] ceph: decode alternate_name in lease info
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com
+References: <20220111191608.88762-1-jlayton@kernel.org>
+ <20220111191608.88762-12-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <ae096a5b-2f2e-c392-e598-59fd82b44734@redhat.com>
+Date:   Tue, 1 Mar 2022 18:57:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <20220228113910.1727819-1-amir73il@gmail.com> <20220228113910.1727819-5-amir73il@gmail.com>
- <20220228211113.GB3927073@dread.disaster.area> <CAOQ4uxjPHxO+S3tOarO5w_rBwyFTgd7oMcC4f5xW7opCWb4LVQ@mail.gmail.com>
- <20220301094640.GD3927073@dread.disaster.area>
-In-Reply-To: <20220301094640.GD3927073@dread.disaster.area>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 1 Mar 2022 12:56:58 +0200
-Message-ID: <CAOQ4uxi_J3xfJfpCXSG0g3PhiMQgAwP6dxLD18O-UJD0mMGjHg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] fs: report per-mount io stats
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        containers@lists.linux.dev,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220111191608.88762-12-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 1, 2022 at 11:46 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Feb 28, 2022 at 11:57:19PM +0200, Amir Goldstein wrote:
-> > On Mon, Feb 28, 2022 at 11:11 PM Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > On Mon, Feb 28, 2022 at 01:39:08PM +0200, Amir Goldstein wrote:
-> > > > Show optional collected per-mount io stats in /proc/<pid>/mountstats
-> > > > for filesystems that do not implement their own show_stats() method
-> > > > and opted-in to generic per-mount stats with FS_MOUNT_STATS flag.
-> > > >
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > ---
-> > > >  fs/mount.h          |  1 +
-> > > >  fs/namespace.c      |  2 ++
-> > > >  fs/proc_namespace.c | 13 +++++++++++++
-> > > >  3 files changed, 16 insertions(+)
-> > > >
-> > > > diff --git a/fs/mount.h b/fs/mount.h
-> > > > index f98bf4cd5b1a..2ab6308af78b 100644
-> > > > --- a/fs/mount.h
-> > > > +++ b/fs/mount.h
-> > > > @@ -91,6 +91,7 @@ struct mount {
-> > > >       int mnt_id;                     /* mount identifier */
-> > > >       int mnt_group_id;               /* peer group identifier */
-> > > >       int mnt_expiry_mark;            /* true if marked for expiry */
-> > > > +     time64_t mnt_time;              /* time of mount */
-> > > >       struct hlist_head mnt_pins;
-> > > >       struct hlist_head mnt_stuck_children;
-> > > >  } __randomize_layout;
-> > > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > > index 3fb8f11a42a1..546f07ed44c5 100644
-> > > > --- a/fs/namespace.c
-> > > > +++ b/fs/namespace.c
-> > > > @@ -220,6 +220,8 @@ static struct mount *alloc_vfsmnt(const char *name)
-> > > >               mnt->mnt_count = 1;
-> > > >               mnt->mnt_writers = 0;
-> > > >  #endif
-> > > > +             /* For proc/<pid>/mountstats */
-> > > > +             mnt->mnt_time = ktime_get_seconds();
-> > > >
-> > > >               INIT_HLIST_NODE(&mnt->mnt_hash);
-> > > >               INIT_LIST_HEAD(&mnt->mnt_child);
-> > > > diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-> > > > index 49650e54d2f8..d744fb8543f5 100644
-> > > > --- a/fs/proc_namespace.c
-> > > > +++ b/fs/proc_namespace.c
-> > > > @@ -232,6 +232,19 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
-> > > >       if (sb->s_op->show_stats) {
-> > > >               seq_putc(m, ' ');
-> > > >               err = sb->s_op->show_stats(m, mnt_path.dentry);
-> > > > +     } else if (mnt_has_stats(mnt)) {
-> > > > +             /* Similar to /proc/<pid>/io */
-> > > > +             seq_printf(m, "\n"
-> > > > +                        "\ttimes: %lld %lld\n"
-> > > > +                        "\trchar: %lld\n"
-> > > > +                        "\twchar: %lld\n"
-> > > > +                        "\tsyscr: %lld\n"
-> > > > +                        "\tsyscw: %lld\n",
-> > > > +                        r->mnt_time, ktime_get_seconds(),
-> > > > +                        mnt_iostats_counter_read(r, MNTIOS_CHARS_RD),
-> > > > +                        mnt_iostats_counter_read(r, MNTIOS_CHARS_WR),
-> > > > +                        mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_RD),
-> > > > +                        mnt_iostats_counter_read(r, MNTIOS_SYSCALLS_WR));
-> > >
-> > > This doesn't scale as {cpus, mounts, counters, read frequency}
-> > > matrix explodes.  Please iterate the per-mount per cpu counters
-> > > once, adding up all counters in one pass to an array on stack, then
-> > > print them all from the array.
-> >
-> > I am planning to move to per-sb iostats and was thinking of using
-> > an array of 4 struct percpu_counter. That will make this sort of iteration
-> > more challenging.
->
-> No, it would get rid of it entirely. percpu_counter_read_positive()
-> does not require any summing at all - that's a much better solution
-> than a hand rolled set of percpu counters. Please do this.
->
-> > Do you really think the read frequency of /proc/self/mountstats
-> > warrants such performance optimization?
->
-> We get bug reports every so often about the overhead of frequently
-> summing per-cpu stats on large systems. Nothing ratelimits or
-> restricts access to /proc/self/mountstats, so when you have a
-> thousand CPUs and a million monkeys...
->
-> Rule of thumb: don't do computationally expensive things to generate
-> data for globally accessible sysfs files.
->
-> > It's not like the case of the mighty struct xfsstats.
-> > It is only going to fold 4 per cpu iterations into 1.
-> > This doesn't look like a game changer to me.
-> > Am I missing something?
->
-> I'm just pointing out something we've had problems with in
-> the past and are trying to help you avoid making the same mistakes.
-> That's what reviewers are supposed to do, yes?
 
-Yes, thank you :)
+On 1/12/22 3:15 AM, Jeff Layton wrote:
+> Ceph is a bit different from local filesystems, in that we don't want
+> to store filenames as raw binary data, since we may also be dealing
+> with clients that don't support fscrypt.
+>
+> We could just base64-encode the encrypted filenames, but that could
+> leave us with filenames longer than NAME_MAX. It turns out that the
+> MDS doesn't care much about filename length, but the clients do.
+>
+> To manage this, we've added a new "alternate name" field that can be
+> optionally added to any dentry that we'll use to store the binary
+> crypttext of the filename if its base64-encoded value will be longer
+> than NAME_MAX. When a dentry has one of these names attached, the MDS
+> will send it along in the lease info, which we can then store for
+> later usage.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/mds_client.c | 40 ++++++++++++++++++++++++++++++----------
+>   fs/ceph/mds_client.h | 11 +++++++----
+>   2 files changed, 37 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 34a4f6dbac9d..709f3f654555 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -306,27 +306,44 @@ static int parse_reply_info_dir(void **p, void *end,
+>   
+>   static int parse_reply_info_lease(void **p, void *end,
+>   				  struct ceph_mds_reply_lease **lease,
+> -				  u64 features)
+> +				  u64 features, u32 *altname_len, u8 **altname)
+>   {
+> +	u8 struct_v;
+> +	u32 struct_len;
+> +
+>   	if (features == (u64)-1) {
+> -		u8 struct_v, struct_compat;
+> -		u32 struct_len;
+> +		u8 struct_compat;
+> +
+>   		ceph_decode_8_safe(p, end, struct_v, bad);
+>   		ceph_decode_8_safe(p, end, struct_compat, bad);
+> +
+>   		/* struct_v is expected to be >= 1. we only understand
+>   		 * encoding whose struct_compat == 1. */
+>   		if (!struct_v || struct_compat != 1)
+>   			goto bad;
+> +
+>   		ceph_decode_32_safe(p, end, struct_len, bad);
+> -		ceph_decode_need(p, end, struct_len, bad);
+> -		end = *p + struct_len;
 
-Amir.
+Hi Jeff,
+
+This is buggy, more detail please see https://tracker.ceph.com/issues/54430.
+
+The following patch will fix it. We should skip the extra memories anyway.
+
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 94b4c6508044..3dea96df4769 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -326,6 +326,7 @@ static int parse_reply_info_lease(void **p, void *end,
+                         goto bad;
+
+                 ceph_decode_32_safe(p, end, struct_len, bad);
++               end = *p + struct_len;
+         } else {
+                 struct_len = sizeof(**lease);
+                 *altname_len = 0;
+@@ -346,6 +347,7 @@ static int parse_reply_info_lease(void **p, void *end,
+                         *altname = NULL;
+                         *altname_len = 0;
+                 }
++               *p = end;
+         }
+         return 0;
+  bad:
+
+
+
+> +	} else {
+> +		struct_len = sizeof(**lease);
+> +		*altname_len = 0;
+> +		*altname = NULL;
+>   	}
+>   
+> -	ceph_decode_need(p, end, sizeof(**lease), bad);
+> +	ceph_decode_need(p, end, struct_len, bad);
+>   	*lease = *p;
+>   	*p += sizeof(**lease);
+> -	if (features == (u64)-1)
+> -		*p = end;
+> +
+> +	if (features == (u64)-1) {
+> +		if (struct_v >= 2) {
+> +			ceph_decode_32_safe(p, end, *altname_len, bad);
+> +			ceph_decode_need(p, end, *altname_len, bad);
+> +			*altname = *p;
+> +			*p += *altname_len;
+> +		} else {
+> +			*altname = NULL;
+> +			*altname_len = 0;
+> +		}
+> +	}
+>   	return 0;
+>   bad:
+>   	return -EIO;
+> @@ -356,7 +373,8 @@ static int parse_reply_info_trace(void **p, void *end,
+>   		info->dname = *p;
+>   		*p += info->dname_len;
+>   
+> -		err = parse_reply_info_lease(p, end, &info->dlease, features);
+> +		err = parse_reply_info_lease(p, end, &info->dlease, features,
+> +					     &info->altname_len, &info->altname);
+>   		if (err < 0)
+>   			goto out_bad;
+>   	}
+> @@ -423,9 +441,11 @@ static int parse_reply_info_readdir(void **p, void *end,
+>   		dout("parsed dir dname '%.*s'\n", rde->name_len, rde->name);
+>   
+>   		/* dentry lease */
+> -		err = parse_reply_info_lease(p, end, &rde->lease, features);
+> +		err = parse_reply_info_lease(p, end, &rde->lease, features,
+> +					     &rde->altname_len, &rde->altname);
+>   		if (err)
+>   			goto out_bad;
+> +
+>   		/* inode */
+>   		err = parse_reply_info_in(p, end, &rde->inode, features);
+>   		if (err < 0)
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index e7d2c8a1b9c1..128901a847af 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -29,8 +29,8 @@ enum ceph_feature_type {
+>   	CEPHFS_FEATURE_MULTI_RECONNECT,
+>   	CEPHFS_FEATURE_DELEG_INO,
+>   	CEPHFS_FEATURE_METRIC_COLLECT,
+> -
+> -	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
+> +	CEPHFS_FEATURE_ALTERNATE_NAME,
+> +	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_ALTERNATE_NAME,
+>   };
+>   
+>   /*
+> @@ -45,8 +45,7 @@ enum ceph_feature_type {
+>   	CEPHFS_FEATURE_MULTI_RECONNECT,		\
+>   	CEPHFS_FEATURE_DELEG_INO,		\
+>   	CEPHFS_FEATURE_METRIC_COLLECT,		\
+> -						\
+> -	CEPHFS_FEATURE_MAX,			\
+> +	CEPHFS_FEATURE_ALTERNATE_NAME,		\
+>   }
+>   #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
+>   
+> @@ -98,7 +97,9 @@ struct ceph_mds_reply_info_in {
+>   
+>   struct ceph_mds_reply_dir_entry {
+>   	char                          *name;
+> +	u8			      *altname;
+>   	u32                           name_len;
+> +	u32			      altname_len;
+>   	struct ceph_mds_reply_lease   *lease;
+>   	struct ceph_mds_reply_info_in inode;
+>   	loff_t			      offset;
+> @@ -117,7 +118,9 @@ struct ceph_mds_reply_info_parsed {
+>   	struct ceph_mds_reply_info_in diri, targeti;
+>   	struct ceph_mds_reply_dirfrag *dirfrag;
+>   	char                          *dname;
+> +	u8			      *altname;
+>   	u32                           dname_len;
+> +	u32                           altname_len;
+>   	struct ceph_mds_reply_lease   *dlease;
+>   
+>   	/* extra */
+
