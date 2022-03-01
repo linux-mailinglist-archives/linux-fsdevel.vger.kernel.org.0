@@ -2,141 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25E6C4C7FFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 02:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 887454C801B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 02:09:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231496AbiCABEy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Feb 2022 20:04:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
+        id S230412AbiCABKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Feb 2022 20:10:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbiCABEx (ORCPT
+        with ESMTP id S230118AbiCABKC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Feb 2022 20:04:53 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 782B529D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 17:04:13 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id a8so28320350ejc.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 17:04:13 -0800 (PST)
+        Mon, 28 Feb 2022 20:10:02 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F6AF6140
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 17:09:22 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id q17so19980514edd.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 17:09:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+UrwimTIhzKiU9pJv3o5X6bf+6FXMWBGxz+Z+GIIGDc=;
-        b=avIYh8aQ2dDobwKAVUmxzj/7dS14/rGtEVGY0pMiaJUsHbP3qIU6kno3XMfBz/RlQM
-         DBr9tOtZ8iqO/uKNwSujAwo9mle8zBl2HT1HDuvvvRH+Bqr8BYPzCJojUUOk2VYbR5wW
-         hMzIeM3di7snjNNfrAaBZvtX47IfluwYB/RPY=
+        bh=XQU+v0ncJKQsq8KVJD+e40cIco7m2GBd4rHARca/WR4=;
+        b=0jmzKwCWF4tyUOMYPO79E8fZ5IPNMaa8ViRAkdhJVQ+rpvYnB807H9RFMUbcIp7BZU
+         gZHQ1rDBx3PK62BLmbBlNNAT3jyzYaL4Q2y1jktn63TwPT5ab7vdpiN4MQeP1MOCyfW/
+         1hrpDZVGloDoRW/S3YgB7ZGNi+EX7JpeqF+27/Xd6NI08vCg4fnWr5/UMmQ3YP+rWN2q
+         yIGHsrbeKMCBBBgIhh1S5ZwIKqOb+wr4/4iLEbQ7SulNvHeNpE2lVCx7J+vfXvAVBYuU
+         4/QobemQ3yboRwLVKSLl98uQ/+1XfxEHp6My70akJWohmiB80lkECn8ozqFNVuNZKksq
+         Vmzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+UrwimTIhzKiU9pJv3o5X6bf+6FXMWBGxz+Z+GIIGDc=;
-        b=vi5nvtzxUEgIvg8TOJfOh6u/DoRVYTM85jBdHRggPS7OOg6hTcxS5z15Citquf3n7q
-         Xye8l5XFFtVaB3A3O/IyuZLqh9Jmfm55vDHmVczvVkn4Ilmn7aXZ6YmsSVauSrixAxRo
-         P/hgB5f3fsvfoicsn41ZmyFHC7n1VPCfyJ1f6j9UHdE8Fl5/1uw5pMABzcF3M+6wcqBu
-         SScbUMTcmJs+tTFx+YLQbkkxyDKjGB0MPo23gCTshWKUmGlUEr/n+tU+okQtSt1MewJf
-         vl1Ef+x+xk8g9p6v73ojyYquX1AMjfTw4Lp8DKIUtVIOxfoiU/+umm/7CadofpA6fdSh
-         VoHA==
-X-Gm-Message-State: AOAM5325J2tp3frudxq99Lppfu0k4+LEZhvxl86VxRI9EV2uJ4kqVilb
-        XKg10pTucItjShXis8A9AgibaoLgkwTWu7aTpv4=
-X-Google-Smtp-Source: ABdhPJyefLWs0miMckYmt2MwWmVx5I361ZDKxuaHrfbgfxvGPIU5AvxuR6+AQ4bAyb7qWXow/25YJg==
-X-Received: by 2002:a17:907:3f8d:b0:6d5:bb03:c4c6 with SMTP id hr13-20020a1709073f8d00b006d5bb03c4c6mr17453620ejc.680.1646096651915;
-        Mon, 28 Feb 2022 17:04:11 -0800 (PST)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id u9-20020aa7db89000000b0041372781e69sm6014376edt.52.2022.02.28.17.04.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Feb 2022 17:04:11 -0800 (PST)
-Received: by mail-ej1-f54.google.com with SMTP id vz16so28417712ejb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Feb 2022 17:04:11 -0800 (PST)
-X-Received: by 2002:a05:6512:3042:b0:437:96f5:e68a with SMTP id
- b2-20020a056512304200b0043796f5e68amr14803965lfb.449.1646096282839; Mon, 28
- Feb 2022 16:58:02 -0800 (PST)
+        bh=XQU+v0ncJKQsq8KVJD+e40cIco7m2GBd4rHARca/WR4=;
+        b=oucWfdA6i8MlsQIbSTSTC6kWpw6bx4513iHjxGiez5VpJeJAB4hNQ+GzUkP55q8Pn6
+         sLqXlUaugT2wtHTtdEHHiakc9ZPRXvg6YwoI6nxWSF2I3EL8yQI7By5/ijgw0ryZVX/2
+         6XaWInJHYjnwBjnzp5MHtXoAiryJ9J4UjRrNx1kQw7OZSrsiNP0Hc4rUff9pe9jQVEM3
+         vE6NS1cpLEsGQGSBIhV9DHTcNeS7fglY9OLpw/guQralZIaWI+VfQt1QcG7pGM4mDDiT
+         dWX4rKUmeHF8j5KYOifchMhURXCX9tWLYV+zwIvVyf1WlaapB0AN3GvISB3d17aMxGOB
+         bIEw==
+X-Gm-Message-State: AOAM5307rl3vGH2hxVxNtcoDFVMSsQZOZ+qBj+ar/7tfYCtaMRdWSTMw
+        dMZS/8HiPXdyFCJz6sdpKED7usQVzpAex1RxRE8c
+X-Google-Smtp-Source: ABdhPJyMYQib71KmGDawe2Sa6f6s4SJDfyMQRJedtkVd+Ib0jlueXrtB/26onK1/CMnUCdwxIX5WHVCU4U1exe/oGNQ=
+X-Received: by 2002:a05:6402:1e8e:b0:412:cfd8:4d12 with SMTP id
+ f14-20020a0564021e8e00b00412cfd84d12mr21942842edf.343.1646096960582; Mon, 28
+ Feb 2022 17:09:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
- <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
- <Yh0tl3Lni4weIMkl@casper.infradead.org> <CAHk-=wgBfJ1-cPA2LTvFyyy8owpfmtCuyiZi4+um8DhFNe+CyA@mail.gmail.com>
- <Yh1aMm3hFe/j9ZbI@casper.infradead.org> <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
-In-Reply-To: <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 28 Feb 2022 16:57:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whqJmCZ+VHTJPwsHYc1YNNEvWS7=ukqGKfBxcBYAToAkw@mail.gmail.com>
-Message-ID: <CAHk-=whqJmCZ+VHTJPwsHYc1YNNEvWS7=ukqGKfBxcBYAToAkw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jakob Koschel <jakobkoschel@gmail.com>,
-        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        samba-technical@lists.samba.org,
-        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
+References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com>
+In-Reply-To: <YapjNRrjpDu2a5qQ@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 28 Feb 2022 20:09:09 -0500
+Message-ID: <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Vivek Goyal <vgoyal@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Anderson <dvander@google.com>
+Cc:     Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sgx@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, Luca.Boccassi@microsoft.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 4:45 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+I wanted to try and bring this thread back from the dead (?) as I
+believe the use-case is still valid and worth supporting.  Some more
+brief comments below ...
+
+On Fri, Dec 3, 2021 at 1:34 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> I am not sure. In the early version of patches I think argument was
+> that do not switch to mounter's creds and use caller's creds on
+> underlying filesystem as well. And each caller will be privileged
+> enough to be able to perform the operation.
+
+The basic idea is that we can now build Linux systems with enough
+access control granularity such that a given process can have the
+necessary privileges to mount a filesystem, but not necessarily access
+all of the data on the filesystem, while other processes, with
+different access rights, are allowed to read and write data on the
+mounted filesystem.  Granted, this is a bit different from how things
+are usually done, but in my opinion it's a valid and interesting use
+case in that it allows us to remove unneeded access rights from
+historically very privileged system startup services/scripts: the
+service that runs to mount my homedir shouldn't be allowed to access
+my files just to mount the directory.
+
+Unfortunately, this idea falls apart when we attempt to use overlayfs
+due to the clever/usual way it caches the mounting processes
+credentials and uses that in place of the current process' credentials
+when accessing certain parts of the underlying filesystems.  The
+current overlayfs implementation assumes that the mounter will always
+be more privileged than the processes accessing the filesystem, it
+would be nice if we could build a mechanism that didn't have this
+assumption baked into the implementation.
+
+This patchset may not have been The Answer, but surely there is
+something we can do to support this use-case.
+
+> Our take was that how is this model better because in current model
+> only mounter needs to be privileged while in this new model each
+> caller will have to be privileged. But Android guys seemed to be ok
+> with that. So has this assumption changed since early days. If callers
+> are privileged, then vfs_getxattr() on underlying filesystem for
+> overaly internal xattrs should succeed and there is no need for this
+> change.
 >
-> Yeah, except that's ugly beyond belief, plus it's literally not what
-> we do in the kernel.
+> I suspect patches have evolved since then and callers are not as
+> privileged as we expect them to and that's why we are bypassing this
+> check on all overlayfs internal trusted xattrs? This definitely requires
+> much close scrutiny. My initial reaction is that this sounds very scary.
+>
+> In general I would think overlayfs should not bypass the check on
+> underlying fs. Either checks should be done in mounter's context or
+> caller's context (depending on override_creds=on/off).
+>
+> Thanks
+> Vivek
 
-(Of course, I probably shouldn't have used 'min()' as an example,
-because that is actually one of the few places where we do exactly
-that, using our __UNIQUE_ID() macros. Exactly because people _have_
-tried to do -Wshadow when doing W=2).
-
-                 Linus
+-- 
+paul-moore.com
