@@ -2,85 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 093664C90F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 17:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03C334C90FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 17:58:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235688AbiCAQ46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 11:56:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
+        id S235236AbiCAQ7h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 11:59:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235211AbiCAQ45 (ORCPT
+        with ESMTP id S232217AbiCAQ7g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 11:56:57 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0AB62EA;
-        Tue,  1 Mar 2022 08:56:13 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id a23so32736856eju.3;
-        Tue, 01 Mar 2022 08:56:13 -0800 (PST)
+        Tue, 1 Mar 2022 11:59:36 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4E43FBFC
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 08:58:54 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id f2so13034337ilq.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 08:58:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:from:mime-version:content-transfer-encoding
-         :content-description:subject:to:date:reply-to;
-        bh=GDnZ8hNkIvcq50bCWCBGSUGNF9aGLbOlF2BISXEvTIc=;
-        b=XZHXrDVIuoc9YBQu969pl25pwdzYDhxDjORc66mDlrDLxp3p/E7LROWrLoiFlLJj+W
-         KOzYnunNATLurMoRb8PL0SM9JQcH8CP4gb63oZ2VGjuhqwXNt0ZxZMZCiWxbPA/vTiWV
-         hgNVZMi9xxZ9GHNW/BmuHMLBcUmarYuLSytvHPhvgHXuW4vYA48CnaO7dZBSpverGdTm
-         T+0CjLk9uGVoR0TQamqSQKjjDPZHdKxiopJydVu559lgSSC4Nv+NHu64xVEeqS6naHxG
-         Pa5hjsrsFoVH4FqA3jj1XG2hRHivAFy6MXohghx53w3fIyxzm4CTy8vkIy3/aXvLNXs+
-         JFmg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Rrdrf816RXJ2Uv+fMk4XopvA8+CQ2r9+4YLd/dtc7LM=;
+        b=f+00ZwSyEDFKjyi7SCKlSKGHQzKm4jmw4RwhrY9ohLeg8/7WtIiZi/furEaxd5xO6X
+         K0erknikw0xcaudx6hVmaKUSs0HO0CGX4Xx4kCXO4cHdsAru/v+MVYEFm7mYKNmS+m9J
+         5hoAWMiTkHFh6+LHSqWY9v/oz9x9FqIkEGIbj0sx4FLCNaNLZWiv4oLk/Hsa9YMucZfb
+         h5xBqbLdruJXuyJHLfeqYhAMfgz0ewrjICF7SckiwD4YLvORfzU8Mk9i0k8aNXyH4col
+         QdB1xV96qyaV80q4ugxVhEEQOSCkQ7NgBJEPercfJUwpdqHAJckVbptncea2C1Mr+sUk
+         inBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:from:mime-version
-         :content-transfer-encoding:content-description:subject:to:date
-         :reply-to;
-        bh=GDnZ8hNkIvcq50bCWCBGSUGNF9aGLbOlF2BISXEvTIc=;
-        b=GpdocEH5Li0JAlUTZnquzhrB7yopHsPYQC6lS/TZgO2PDpbNP9cNnd3JQ1XAKUjw22
-         lXQ6ymnS0emzExMqsbRftATRXePftdaKx1P+6+Jj/arkJ1lwtP6qeLfd2c/BDpZazBQX
-         2JsxoKjGmPNld7D/F7mZ6RiGaLI4MM5qRjIsZb3HD8mV/I/KhrwkrhSoWVEw8vBu8xuX
-         /p23NbQ5JXbRajHxDUQtUntW5aNMAI7BuKhBhzZEe9FxPelvczZdPeAlTgc6j9y4zB7A
-         tpiWzinhH/GzOW60IPI24QGtUbD0iuiAFmJ8LwJSzTqGtCrqfra5YI8ufBRuokzZxNyg
-         shwg==
-X-Gm-Message-State: AOAM532TVGS0WHzhhVFI1HKssvNTYy/CGt1SA1/oSqhLRQAUjUVLPm0K
-        5Cqc/+mUrjRgmbseWIvve3s=
-X-Google-Smtp-Source: ABdhPJzA4fcwHjzfdODfd5XwBOCEAq7WKV2kGsde3uQyxlrmsT+bMEhidcy2gAFaCIFJM0aaK8yIOQ==
-X-Received: by 2002:a17:906:7c42:b0:6d6:da70:dfa with SMTP id g2-20020a1709067c4200b006d6da700dfamr5198300ejp.3.1646153772393;
-        Tue, 01 Mar 2022 08:56:12 -0800 (PST)
-Received: from [192.168.1.103] ([129.205.124.14])
-        by smtp.gmail.com with ESMTPSA id ee21-20020a056402291500b00410d4261313sm7303840edb.24.2022.03.01.08.56.05
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Tue, 01 Mar 2022 08:56:08 -0800 (PST)
-Message-ID: <621e5028.1c69fb81.cf6a6.9235@mx.google.com>
-From:   Phillip Chippewa <katatimar552@gmail.com>
-X-Google-Original-From: Phillip Chippewa" <info@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Rrdrf816RXJ2Uv+fMk4XopvA8+CQ2r9+4YLd/dtc7LM=;
+        b=0e4xngxn+mPKtXNG8hOceswNsrQM5HftdWhG2pWLoeSC7w4yvPOdQan6Y6tvSFMa8l
+         A4ynzyZjcUhUAhvYYXE/mPPnBT1uumJOuJgnoya3MSOFQPY/1W9cPoY+aXh6Jd4wFrkP
+         Aax88cRu2NacsK/1s4J1R7guR8R5XUWufJt7AhwYB02gfpoqk3noEkynF5dzPUvpAlib
+         vcY+k0uGzbzTOQ3vKOxfOuc8CMS+XwvJm6LwKCvCsoCGzrlNo7BCmKkmVlkpxjKs+2n4
+         7U9YcHrqo/fyveHdTOEwI/h3HDTLNqqCV01es5IgNDca75RdzJQKOZdKS/sWizaBmtyn
+         pI9w==
+X-Gm-Message-State: AOAM530v/6V2MWAmGLbYXXHGUkbyNmX+UGHZpQUDXByCBCkB48IU1uTy
+        A4l5hUXj/2QdODSoXXMofT4PTgeuoCvvKBIi8SA=
+X-Google-Smtp-Source: ABdhPJwp+RVhx/LbIVZbLIF3IfkRO1H08oCYC6kldGbNokhb/NSiT9PRdFgQTEwBqNVxMtPkhVlXTKfpe8DXIufKfzg=
+X-Received: by 2002:a05:6e02:1785:b0:2c2:cd72:9c0 with SMTP id
+ y5-20020a056e02178500b002c2cd7209c0mr14758833ilu.254.1646153934233; Tue, 01
+ Mar 2022 08:58:54 -0800 (PST)
 MIME-Version: 1.0
+References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
+ <20220228140556.ae5rhgqsyzm5djbp@quack3.lan> <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
+ <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de>
+In-Reply-To: <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 1 Mar 2022 18:58:43 +0200
+Message-ID: <CAOQ4uxhry1_tW9NPC4X3q3YUQ86Ecg+G6A2Fvs5vKQTDB0ctHQ@mail.gmail.com>
+Subject: Re: [RFC] Volatile fanotify marks
+To:     Tycho Kirchner <tychokirchner@mail.de>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Ahoj
-To:     Recipients <Phillip@vger.kernel.org>
-Date:   Tue, 01 Mar 2022 17:55:55 +0100
-Reply-To: chippewap887@gmail.com
-X-Antivirus: Avast (VPS 220301-2, 3/1/2022), Outbound message
-X-Antivirus-Status: Clean
-X-Spam-Status: No, score=2.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL,
-        SPF_HELO_NONE,SPF_PASS,TO_MALFORMED,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: **
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ahoj,Som Phillip Chippewa, mal som to =C5=A1tastie, =C5=BEe som z turnaja v=
-yhral jackpot Powerball v hodnote 80 mili=C3=B3nov eurMichigan Lottery, Gra=
-tulujeme, v=C3=A1=C5=A1 e-mail z=C3=ADskal dar vo v=C3=BD=C5=A1ke 2 500 000=
-,00 EUR. Kontaktujte ma kv=C3=B4li reklam=C3=A1cii.
+On Tue, Mar 1, 2022 at 2:26 PM Tycho Kirchner <tychokirchner@mail.de> wrote=
+:
+>
+>
+>
+> >>> I wanted to get your feedback on an idea I have been playing with.
+> >>> It started as a poor man's alternative to the old subtree watch probl=
+em.
+>
+>
+> > I do agree that we should NOT add "subtree filter" functionality to fan=
+otify
+> > (or any other filter) and that instead, we should add support for attac=
+hing an
+> > eBPF program that implements is_subdir().
+> > I found this [1] convection with Tycho where you had suggested this ide=
+a.
+> > I wonder if Tycho got to explore this path further?
+> >
+> > [1] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.=
+suse.cz/
+>
+> Hi Amir, Hi Jan,
+> Thanks for pinging back on me. Indeed I did "explore this path further".
+> In my project
+> https://github.com/tycho-kirchner/shournal
+>
+> the goal is to track read/written files of a process tree and all it's ch=
+ild-processes and connect this data to a given shell-command. In fact after=
+ Amir's and mine last correspondence I implemented a kernel module which in=
+struments ftrace and tracepoints to trace fput-events (kernel/event_handler=
+.c:event_handler_fput) of specific tasks, which are then further processed =
+in a dedicated kernel thread. I considered eBPF for this task but found no =
+satisfying approach to have dynamic, different filter-rules (e.g. include-p=
+aths) for each process tree of each user.
+>
+>
+> Regarding improvement of fanotify let's discriminate two cases: system-mo=
+nitoring and tracing.
+> Regarding system-monitoring: I'm not sure how exactly FAN_MARK_VOLATILE w=
+ould work (Amir, could you please elaborate?)
 
--- 
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+FAN_MARK_VOLATILE is not a solution for "include" filters.
+It is a solution for "exclude" filters implemented in userspace.
+If monitoring program gets an event and decides that its path should be exc=
+luded
+it may set a "volatile" exclude mark on that directory that will
+suppress further
+events from that directory for as long as the directory inode remains
+in inode cache.
+After directory inode has not been accessed for a while and evicted
+from inode cache
+the monitoring program can get an event in that directory again and then it=
+ can
+re-install the volatile ignore mark if it wants to.
 
+> but what do you think about the following approach, in order to solve the=
+ subtree watch problem:
+> - Store the include/exlude-paths of interest as *strings* in a hashset.
+> - on fsevent, lookup the path by calling d_path() only once and cache, wh=
+ether events for the given path are of interest. This
+>    can either happen with a reference on the path (clear older paths peri=
+odically in a work queue)
+>    or with a timelimit in which potentially wrong paths are accepted (pat=
+h pointer freed and address reused).
+>    The second approach I use myself in kernel/event_consumer_cache.c. See=
+ also kpathtree.c for a somewhat efficient
+>    subpath-lookup.
+
+I would implement filtering with is_subdir() and not with d_path(),
+but there are
+advantages to either approach.
+In any case, I see there is BPF_FUNC_d_path, so why can't your approach be
+implemented using an eBPF program?
+
+>
+> Regarding tracing I think fanotify would really benefit from a FAN_MARK_P=
+ID (with optional follow fork-mode). That way one of the first filter-steps=
+ would be whether events for the given task are of interest, so we have no =
+performance problem for all other tasks. The possibility to mark specific p=
+rocesses would also have another substantial benefit: fanotify could be use=
+d without root privileges by only allowing the user to mark his/her own pro=
+cesses.
+> That way existing inotify-users could finally switch to the cleaner/more =
+powerful fanotify.
+
+We already have partial support for unprivileged fanotify.
+Which features are you missing with unprivileged fanotify?
+and why do you think that filtering by process tree will allow those
+features to be enabled?
+A child process may well have more privileges to read directories than
+its parent.
+
+Thanks,
+Amir.
