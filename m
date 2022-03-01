@@ -2,50 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 808384C9210
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 18:41:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1124C921C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 18:44:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236643AbiCARlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 12:41:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
+        id S235766AbiCARpd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 12:45:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236719AbiCARlU (ORCPT
+        with ESMTP id S232482AbiCARpc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 12:41:20 -0500
+        Tue, 1 Mar 2022 12:45:32 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39D9E48338;
-        Tue,  1 Mar 2022 09:40:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 042032BD6;
+        Tue,  1 Mar 2022 09:44:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CBxj1BkjQUCaP73DP+hxiU/eYRNf4EfoIsH9x0KIu0g=; b=3mqo/obC4/6t+GgoQN5XECWrnL
-        npLAfe/TUHHwrEKwj0oAzlv3iWXKAvzRdCMhL7OicR+jST7uTRan13xIRYJgusLH1q1b2CSLoAa4r
-        SxF4CyIYtzviOZft1GCM2Yt7PKykIdMGn2KRkhOz7Nx0F2h4E1lIiTKc1DJd+IUVqUkSCUKy7mITJ
-        CxvSR0EJ4ddAoDV2Bfg0SuzamVxCCVcWN5TFgoRmJJmfltuUbGpqIbVkVqQyJaz+DcizB0nS8zmfc
-        y5+DlK3wJcfBCMjRhvRNiH9WK524OYu1csC1zRh2mwA/+TJL9FSDyD+qi1oWJ9OmP11dmQxFecu1D
-        M2XPXSvw==;
+        bh=x8QboE68qufGVCeh7eGFRudjtwH2eRrn2yzIYOD5Vgw=; b=c+eqLUh4cgb5zqr11iFm9AZnmi
+        Az+zXe+HI8JwYuwddDIEUrK+6pj89VqZ1zXyDWCxMXCqgukYtTSbZ6vZcSYc+w5pTSSfcBc+jAZYF
+        VkjhXX3c63bV892yWwICRDsLtO8mae1whZyrP+gdP7PklZzVviEmf+ux3H8d0KQ20ptp+nC7VKXVu
+        OAt2wpQdQ0ce47qSwj54FTZ7C5udFJ8usFEcEO59Uu8WCY2ZKg4lUW8gYEDh783WnEmNftT6npfTD
+        6eyqy94I8K5j3NL75Ayjji3npsZ0p29/YReuXtVRXgcJH72TbDwrbCrK6Q/tB6YA0pyC41bS3dj2z
+        O9JxlSrQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nP6Tt-0005t2-VB; Tue, 01 Mar 2022 17:40:13 +0000
-Date:   Tue, 1 Mar 2022 09:40:13 -0800
+        id 1nP6Y5-0006Vm-SA; Tue, 01 Mar 2022 17:44:33 +0000
+Date:   Tue, 1 Mar 2022 09:44:33 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] configfd as a replacement for both ioctls and
- fsconfig
-Message-ID: <Yh5afaKFt0bmIs96@bombadil.infradead.org>
-References: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
- <1476917.1643724793@warthog.procyon.org.uk>
- <Yh1swsJLXvLLIQ0e@bombadil.infradead.org>
- <3136665a674acd1c1cc18f12802684bf82fc8e36.camel@HansenPartnership.com>
- <Yh5PdGxnnVru2/go@bombadil.infradead.org>
- <9735af01b28f73762a947a0794da63ae35bc06e0.camel@HansenPartnership.com>
+To:     Meng Tang <tangmeng@uniontech.com>
+Cc:     keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
+        willy@infradead.org, nixiaoming@huawei.com, nizhen@uniontech.com,
+        zhanglianjie@uniontech.com, sujiaxun@uniontech.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] fs/proc: optimize exactly register one ctl_table
+Message-ID: <Yh5bgYQM9a0ox95a@bombadil.infradead.org>
+References: <20220301115341.30101-1-tangmeng@uniontech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9735af01b28f73762a947a0794da63ae35bc06e0.camel@HansenPartnership.com>
+In-Reply-To: <20220301115341.30101-1-tangmeng@uniontech.com>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -57,17 +52,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 01, 2022 at 12:14:49PM -0500, James Bottomley wrote:
-> It looks fairly similar given the iouring syscalls are on an fd except
-> that the structure above hash to be defined and becomes an ABI.  Since
-> they configfd uses typed key value pairs, i'd argue it's more generic
-> and introspectable.
+On Tue, Mar 01, 2022 at 07:53:40PM +0800, Meng Tang wrote:
+> Sysctls are being moved out of kernel/sysctl.c and out to
+> their own respective subsystems / users to help with easier
+> maintance and avoid merge conflicts. But when we move just
+> one entry and to its own new file the last entry for this
+> new file must be empty, so we are essentialy bloating the
+> kernel one extra empty entry per each newly moved sysctl.
+> 
+> To help with this, this adds support for registering just
+> one ctl_table, therefore not bloating the kernel when we
+> move a single ctl_table to its own file.
+> 
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Meng Tang <tangmeng@uniontech.com>
 
-I'm not suggesting using io-uring cmd as a configuration alternative
-to configfd, I'm suggesting it can be an async *vehicle* for a bunch
-of configurations one might need to make in the kernel. If we want
-to reduce system call uses, we may want to allow something like configfd
-to accept a batch of configuration options as well, as a batcha, and a
-final commit to process them.
+Please extend the commit log to justify why we have to add
+so much code, you mentioned it to me before, now just please
+write that in the commit log.
+
+Can you really not add helpers first so that these helpers
+are used by both paths?
 
   Luis
