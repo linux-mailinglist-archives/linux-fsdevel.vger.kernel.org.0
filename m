@@ -2,67 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F7E4C8FAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 17:06:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5442B4C8FAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 17:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235955AbiCAQH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 11:07:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46080 "EHLO
+        id S235985AbiCAQHh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 11:07:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235918AbiCAQH1 (ORCPT
+        with ESMTP id S235973AbiCAQHd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 11:07:27 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93BA19F6EA;
-        Tue,  1 Mar 2022 08:06:46 -0800 (PST)
+        Tue, 1 Mar 2022 11:07:33 -0500
+Received: from mga06.intel.com (mga06.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C847AA1BE6;
+        Tue,  1 Mar 2022 08:06:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646150806; x=1677686806;
+  t=1646150811; x=1677686811;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=j7+mghICr3KLO5uiQDA8PUTR39Oz0pF35skb9c2hCA0=;
-  b=kT7GSvHqM3RkT5sOASozHsVu3VvxSWg5zST9fA5pq39EYBARcUKp8teZ
-   yi4LNrJ8ufOU8XQnS/bcB60t4r0nV0rnbhpNCxJ+fRiW3oDtZWkuGO/Uq
-   xjz5uM6RLtnbTzuROMpu0jKwAj3wHK/0iu9DLXo4MUrYD3mzmleSmHEk3
-   kCCOSm+azF437XJR0z29ee/zbbh7weKIMJy/BFVIxjtnd74p1MSyqAz/D
-   dXn1NcJrKYUw6cyaeARt6r0TuYwAx55sL4h//4XYiH+J3S+gtpiEyWbYc
-   aXKPwkzZZNuEXzoSVu4Df2bDKs7353EhsJBFADcQdki3RXYy+FDAwAu36
+  bh=EDeLj7g5kIXPl1C5YsiICem8wH4k1axrRuEnaTGCSNY=;
+  b=AOm3jD237oRGag/YzfLQsDfLPLGYenMQicpBFsBjHyEoo3MksdLh8vwd
+   z6xG3Pzg1rgdkfHiV5pobifB8Fi5cPL6Ol9iANFsUgW7p05d99/gz4JDc
+   FLEvCqqJ5oOz33sv8db2JYgoRc2//Njy2QCnjKDc/eVqIOvIYgHoYfuNi
+   3yrST/139Qlrrxhu8W7h04oP/hZBMizFLUJhlXMlVdhfMqpVHF1gmbiK5
+   hMn1mJPPc7OdLYP3cQrrlG/ZnhEKsnTAb35vfIZGwuh1guvUmUKFgs+Be
+   YkGYpD0N3l4UvMShrtwXgPieVia/TpXuRaVY84WNKK5Qi5q0R/de398q1
    g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10272"; a="236672239"
+X-IronPort-AV: E=McAfee;i="6200,9189,10272"; a="313882991"
 X-IronPort-AV: E=Sophos;i="5.90,146,1643702400"; 
-   d="scan'208";a="236672239"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2022 08:06:36 -0800
+   d="scan'208";a="313882991"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2022 08:06:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,146,1643702400"; 
-   d="scan'208";a="630063751"
+   d="scan'208";a="709111607"
 Received: from lkp-server01.sh.intel.com (HELO 2146afe809fb) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 01 Mar 2022 08:06:32 -0800
+  by orsmga005.jf.intel.com with ESMTP; 01 Mar 2022 08:06:31 -0800
 Received: from kbuild by 2146afe809fb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nP51D-0000fk-8r; Tue, 01 Mar 2022 16:06:31 +0000
-Date:   Wed, 2 Mar 2022 00:06:12 +0800
+        id 1nP51D-0000ff-7e; Tue, 01 Mar 2022 16:06:31 +0000
+Date:   Wed, 2 Mar 2022 00:06:25 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Meng Tang <tangmeng@uniontech.com>, mcgrof@kernel.org,
         keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
         willy@infradead.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        nixiaoming@huawei.com, nizhen@uniontech.com,
-        zhanglianjie@uniontech.com, sujiaxun@uniontech.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Meng Tang <tangmeng@uniontech.com>
+Cc:     kbuild-all@lists.01.org, nixiaoming@huawei.com,
+        nizhen@uniontech.com, zhanglianjie@uniontech.com,
+        sujiaxun@uniontech.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Meng Tang <tangmeng@uniontech.com>
 Subject: Re: [PATCH v2 1/2] fs/proc: optimize exactly register one ctl_table
-Message-ID: <202203012340.8d5kZylK-lkp@intel.com>
+Message-ID: <202203020000.IeIVyxMv-lkp@intel.com>
 References: <20220301115341.30101-1-tangmeng@uniontech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20220301115341.30101-1-tangmeng@uniontech.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -82,8 +81,8 @@ https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/0day-ci/linux/commits/Meng-Tang/fs-proc-optimize-exactly-register-one-ctl_table/20220301-195515
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git sysctl-next
-config: hexagon-randconfig-r045-20220301 (https://download.01.org/0day-ci/archive/20220301/202203012340.8d5kZylK-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project d271fc04d5b97b12e6b797c6067d3c96a8d7470e)
+config: alpha-buildonly-randconfig-r001-20220301 (https://download.01.org/0day-ci/archive/20220302/202203020000.IeIVyxMv-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 11.2.0
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
@@ -93,27 +92,25 @@ reproduce (this is a W=1 build):
         git checkout d9e9a410cf46b383390d668770fff70540e27528
         # save the config file to linux build tree
         mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/proc/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=alpha SHELL=/bin/bash fs/proc/
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
->> fs/proc/proc_sysctl.c:1281:6: warning: mixing declarations and code is a C99 extension [-Wdeclaration-after-statement]
-           int len = strlen(table->procname) + 1;
-               ^
-   fs/proc/proc_sysctl.c:1638:26: warning: no previous prototype for function '__register_sysctl_table_single' [-Wmissing-prototypes]
-   struct ctl_table_header *__register_sysctl_table_single(
-                            ^
-   fs/proc/proc_sysctl.c:1638:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   struct ctl_table_header *__register_sysctl_table_single(
-   ^
-   static 
-   fs/proc/proc_sysctl.c:1988:27: warning: mixing declarations and code is a C99 extension [-Wdeclaration-after-statement]
-           struct ctl_table_header *link_head;
-                                    ^
-   3 warnings generated.
+   fs/proc/proc_sysctl.c: In function 'new_links_single':
+>> fs/proc/proc_sysctl.c:1281:9: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+    1281 |         int len = strlen(table->procname) + 1;
+         |         ^~~
+   fs/proc/proc_sysctl.c: At top level:
+>> fs/proc/proc_sysctl.c:1638:26: warning: no previous prototype for '__register_sysctl_table_single' [-Wmissing-prototypes]
+    1638 | struct ctl_table_header *__register_sysctl_table_single(
+         |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/proc/proc_sysctl.c: In function 'put_links_single':
+   fs/proc/proc_sysctl.c:1988:9: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+    1988 |         struct ctl_table_header *link_head;
+         |         ^~~~~~
 
 
 vim +1281 fs/proc/proc_sysctl.c
