@@ -2,165 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F014C8BBF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 13:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 947964C8C22
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 14:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbiCAMhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 07:37:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33290 "EHLO
+        id S234898AbiCANBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 08:01:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232437AbiCAMhR (ORCPT
+        with ESMTP id S231449AbiCANBR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 07:37:17 -0500
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 983B697BBF;
-        Tue,  1 Mar 2022 04:36:36 -0800 (PST)
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.94)
-          with esmtps (TLS1.2)
-          tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1nP1jk-003IcG-9v; Tue, 01 Mar 2022 13:36:16 +0100
-Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
-          by inpost2.zedat.fu-berlin.de (Exim 4.94)
-          with esmtpsa (TLS1.2)
-          tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1nP1jk-001HI7-3q; Tue, 01 Mar 2022 13:36:16 +0100
-Message-ID: <49182d0d-708b-4029-da5f-bc18603440a6@physik.fu-berlin.de>
-Date:   Tue, 1 Mar 2022 13:36:15 +0100
+        Tue, 1 Mar 2022 08:01:17 -0500
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC28F9A4DC
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 05:00:35 -0800 (PST)
+Received: by mail-il1-x132.google.com with SMTP id f2so12476421ilq.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 05:00:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QG2k2eItwE4VAk3PGGex6QHZy3T0xaD3lTCoY/HpYco=;
+        b=ZQjeLrdHbWEck4K6RpeBY4QI1uE5CcoVwO5sZTKvbH0jCtE/epL+AV1J2T6nTvQB7B
+         /yPS0KVOUZAhUGfHU54H1jmlgYJUgdfLLmM3xmB3rY9RzzFoWNFI2Zci83Jzu2Okp0E4
+         AJRAtv/WKjpa/XnIsui/qXUZ2c4GyPza8OAZk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QG2k2eItwE4VAk3PGGex6QHZy3T0xaD3lTCoY/HpYco=;
+        b=GfDJBqOY37zsjwZ/5gyZJp8qYpnb0YBAcrmEOU1J/icoJ/QHVCtsGweGUQIZv49R5o
+         iDSRAIX/G+Yx1Apwt2loxbkmpxx5Ft3GzhLaf4MS3sY9pPYgdQb1PYDNX2khyHpsvdi3
+         2V3wG++qMQ8Ldhuy8aXK2WbJLiLIHA0wJJAz75GtH6hkDr4fVPsKLBtcgMlXJxRsObzx
+         I41zzns7ymFS7dRRRhkVm3CCbFOAObU2jsY2RZiFJ3lw3xpufOdNg6JA0NpSDjlg8Mnd
+         W2XwL2ENAT4ihrRMrLlt1BP7Yh0g1XWHcrE2bsooQ8NCUxin2mMSOiUn47hQ3PnmOqHS
+         Z1Nw==
+X-Gm-Message-State: AOAM533ZV5jJ59FR9GL5/1TFfmd6k2suxaDrdhTdKh+XhgO6bM8inAVg
+        xen2L7choAdrEW7d8YiOHJn5NcrPB4mv9V9oo1uB1A==
+X-Google-Smtp-Source: ABdhPJygTkLKJoxpKoMnQComCB9wJUKiAgXMWJlY4Oqe0COwyi0CYb7/OKDFQvAmbtgocYjrHTjH3LgZXlKpwAjqw/Q=
+X-Received: by 2002:a92:cf12:0:b0:2be:3a27:67c7 with SMTP id
+ c18-20020a92cf12000000b002be3a2767c7mr23363367ilo.187.1646139635155; Tue, 01
+ Mar 2022 05:00:35 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 5.16 v2] binfmt_elf: Avoid total_mapping_size for ET_EXEC
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>,
-        matoro <matoro_mailinglist_kernel@matoro.tk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org,
-        =?UTF-8?Q?Magnus_Gro=c3=9f?= <magnus.gross@rwth-aachen.de>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        regressions@lists.linux.dev, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20220228205518.1265798-1-keescook@chromium.org>
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-In-Reply-To: <20220228205518.1265798-1-keescook@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-Originating-IP: 160.45.32.140
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <164549971112.9187.16871723439770288255.stgit@noble.brown> <164549983736.9187.16755913785880819183.stgit@noble.brown>
+In-Reply-To: <164549983736.9187.16755913785880819183.stgit@noble.brown>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 1 Mar 2022 14:00:24 +0100
+Message-ID: <CAJfpegs=DhCO62EFV0Q_i2fmqJnziJy1t4itP9deS=FuWEA=TQ@mail.gmail.com>
+Subject: Re: [PATCH 03/11] MM: improve cleanup when ->readpages doesn't
+ process all pages.
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>, linux-nilfs@vger.kernel.org,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Ext4 <linux-ext4@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
-
-On 2/28/22 21:55, Kees Cook wrote:
-> Partially revert commit 5f501d555653 ("binfmt_elf: reintroduce using
-> MAP_FIXED_NOREPLACE").
-> 
-> At least ia64 has ET_EXEC PT_LOAD segments that are not virtual-address
-> contiguous (but _are_ file-offset contiguous). This would result in
-> giant mapping attempts to cover the entire span, including the virtual
-> address range hole. Disable total_mapping_size for ET_EXEC, which
-> reduces the MAP_FIXED_NOREPLACE coverage to only the first PT_LOAD:
-> 
-> $ readelf -lW /usr/bin/gcc
-> ...
-> Program Headers:
->   Type Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   ...
-> ...
->   LOAD 0x000000 0x4000000000000000 0x4000000000000000 0x00b5a0 0x00b5a0 ...
->   LOAD 0x00b5a0 0x600000000000b5a0 0x600000000000b5a0 0x0005ac 0x000710 ...
-> ...
->        ^^^^^^^^ ^^^^^^^^^^^^^^^^^^                    ^^^^^^^^ ^^^^^^^^
-> 
-> File offset range     : 0x000000-0x00bb4c
-> 			0x00bb4c bytes
-> 
-> Virtual address range : 0x4000000000000000-0x600000000000bcb0
-> 			0x200000000000bcb0 bytes
-> 
-> Ironically, this is the reverse of the problem that originally caused
-> problems with ET_EXEC and MAP_FIXED_NOREPLACE: overlaps. This problem is
-> with holes. Future work could restore full coverage if load_elf_binary()
-> were to perform mappings in a separate phase from the loading (where
-> it could resolve both overlaps and holes).
-> 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Reported-by: matoro <matoro_mailinglist_kernel@matoro.tk>
-> Reported-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> Fixes: 5f501d555653 ("binfmt_elf: reintroduce using MAP_FIXED_NOREPLACE")
-> Link: https://lore.kernel.org/r/a3edd529-c42d-3b09-135c-7e98a15b150f@leemhuis.info
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Tue, 22 Feb 2022 at 04:18, NeilBrown <neilb@suse.de> wrote:
+>
+> If ->readpages doesn't process all the pages, then it is best to act as
+> though they weren't requested so that a subsequent readahead can try
+> again.
+> So:
+>   - remove any 'ahead' pages from the page cache so they can be loaded
+>     with ->readahead() rather then multiple ->read()s
+>   - update the file_ra_state to reflect the reads that were actually
+>     submitted.
+>
+> This allows ->readpages() to abort early due e.g.  to congestion, which
+> will then allow us to remove the inode_read_congested() test from
+> page_Cache_async_ra().
+>
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
-> Here's the v5.16 backport.
-> ---
->  fs/binfmt_elf.c | 25 ++++++++++++++++++-------
->  1 file changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index f8c7f26f1fbb..911a9e7044f4 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1135,14 +1135,25 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  			 * is then page aligned.
->  			 */
->  			load_bias = ELF_PAGESTART(load_bias - vaddr);
-> -		}
->  
-> -		/*
-> -		 * Calculate the entire size of the ELF mapping (total_size).
-> -		 * (Note that load_addr_set is set to true later once the
-> -		 * initial mapping is performed.)
-> -		 */
-> -		if (!load_addr_set) {
-> +			/*
-> +			 * Calculate the entire size of the ELF mapping
-> +			 * (total_size), used for the initial mapping,
-> +			 * due to first_pt_load which is set to false later
-> +			 * once the initial mapping is performed.
-> +			 *
-> +			 * Note that this is only sensible when the LOAD
-> +			 * segments are contiguous (or overlapping). If
-> +			 * used for LOADs that are far apart, this would
-> +			 * cause the holes between LOADs to be mapped,
-> +			 * running the risk of having the mapping fail,
-> +			 * as it would be larger than the ELF file itself.
-> +			 *
-> +			 * As a result, only ET_DYN does this, since
-> +			 * some ET_EXEC (e.g. ia64) may have virtual
-> +			 * memory holes between LOADs.
-> +			 *
-> +			 */
->  			total_size = total_mapping_size(elf_phdata,
->  							elf_ex->e_phnum);
->  			if (!total_size) {
+>  mm/readahead.c |   19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 73b2bc5302e0..8a97bd408cf6 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -104,7 +104,13 @@
+>   * for necessary resources (e.g.  memory or indexing information) to
+>   * become available.  Pages in the final ``async_size`` may be
+>   * considered less urgent and failure to read them is more acceptable.
+> - * They will eventually be read individually using ->readpage().
+> + * In this case it is best to use delete_from_page_cache() to remove the
+> + * pages from the page cache as is automatically done for pages that
+> + * were not fetched with readahead_page().  This will allow a
+> + * subsequent synchronous read ahead request to try them again.  If they
+> + * are left in the page cache, then they will be read individually using
+> + * ->readpage().
+> + *
+>   */
+>
+>  #include <linux/kernel.h>
+> @@ -226,8 +232,17 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages,
+>
+>         if (aops->readahead) {
+>                 aops->readahead(rac);
+> -               /* Clean up the remaining pages */
+> +               /*
+> +                * Clean up the remaining pages.  The sizes in ->ra
+> +                * maybe be used to size next read-ahead, so make sure
+> +                * they accurately reflect what happened.
+> +                */
+>                 while ((page = readahead_page(rac))) {
+> +                       rac->ra->size -= 1;
+> +                       if (rac->ra->async_size > 0) {
+> +                               rac->ra->async_size -= 1;
+> +                               delete_from_page_cache(page);
+> +                       }
 
-I can confirm that this patch fixes the issue for me.
-
-Tested-By: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Does the  above imply that filesystem should submit at least ra->size
+pages, regardless of congestion?
 
 Thanks,
-Adrian
-
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
-
+Miklos
