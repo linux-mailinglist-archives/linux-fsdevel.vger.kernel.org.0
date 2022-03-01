@@ -2,119 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA1DB4C92C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 19:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5176E4C92DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 19:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235912AbiCASR7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 13:17:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47360 "EHLO
+        id S236910AbiCASWL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 13:22:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236908AbiCASRy (ORCPT
+        with ESMTP id S235601AbiCASWI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 13:17:54 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C3665142;
-        Tue,  1 Mar 2022 10:17:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bA9soa2t3bqmlFiCD2VB2VxGAWJt0UkP7z5XDZp5tGM=; b=La7FI/vT2Te+gJy2TKKu57IPkT
-        i7V+hA0DSsBVKi/ZyJ83T+qXHuOPtmiSUhSCxI0rGzgQbHeZYay0F5/VyunJMBuBY9A9CZ1ODUNQO
-        t/y2CK4KkT0eGZ+FWweE9u/wG4d9C/jxhAarbZ6gDhRQbJlvubvI4UXcp5G7Dbb+IUE5Tpfxrsopa
-        Z9RCAtpp3D8LYg6/QhONP0p+M2k0m14IBOhvCKK2bmuPivmHERdXyB2VIDospdJph6guYOLCgASBX
-        6Mu953bgE2fo4JFdK6IgdytGFDdQdJoTQ6ZABtP8jSqifjfbmnNLeDAXr7yP8QMLSU+JUckP8D/sH
-        0Y5mSzgg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nP73d-0009pB-CE; Tue, 01 Mar 2022 18:17:09 +0000
-Date:   Tue, 1 Mar 2022 10:17:09 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Kanchan Joshi <joshi.k@samsung.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] configfd as a replacement for both ioctls and
- fsconfig
-Message-ID: <Yh5jJWAeTVzBx1YB@bombadil.infradead.org>
-References: <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com>
- <1476917.1643724793@warthog.procyon.org.uk>
- <Yh1swsJLXvLLIQ0e@bombadil.infradead.org>
- <3136665a674acd1c1cc18f12802684bf82fc8e36.camel@HansenPartnership.com>
- <Yh5PdGxnnVru2/go@bombadil.infradead.org>
- <9735af01b28f73762a947a0794da63ae35bc06e0.camel@HansenPartnership.com>
- <Yh5afaKFt0bmIs96@bombadil.infradead.org>
- <e05606aeeec6b46762596035d1933e8f8fd23406.camel@HansenPartnership.com>
+        Tue, 1 Mar 2022 13:22:08 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5DC0652C9
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 10:21:25 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id iq13-20020a17090afb4d00b001bc4437df2cso2953367pjb.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 10:21:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fds8Vu27HO3VizdZYZX37G2L0kdPjlGJwjydpAC62lk=;
+        b=kbDptrdu0f26KgjbD0o2z38w3lkKGDPgX1iTHeFHCTnyp8GdCq5qMftyKUSBh6duUj
+         WfNj/A6u5i3SYTvNHtilrjGbJ7XPB9BN5cThiWBPQtUhCrDH1721OqL04qTC03fUauzy
+         3YHA9gzqSMuaks5H7GdDPribo7C8kJL0W2A2s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fds8Vu27HO3VizdZYZX37G2L0kdPjlGJwjydpAC62lk=;
+        b=DQH51YT9aS6dwRZCSGEmes01Gz2mLU4LsbsDQXEKnUXejIUp6xbr33uqIjh7RrHU6A
+         o1Iv3eATXulzhI/1deHjEFpgt+c/74AjlkGOz3QCYgsJFgqJqRgvhlgtihSao6hbw0UG
+         xN4ZIC0rvWTvPe8vu3zAn31DxNpfx315TveTeu0uJhREGbmqC2IpOkgLSXkesTGBdOn2
+         1jCAvfBn5l2ChIIQW7HgesXT8diky+3/Yx+c8hxkAlyHPOzkObZl5uJ/zYZf/aVqVU/n
+         jVIMo+xjtg+QGMsd8eMWyc703fVvYMVmzuGZUyAgtmgcPVyjwyvnPi3tR1jH8c3GIMG7
+         D89Q==
+X-Gm-Message-State: AOAM531UCf5esGx/ixVQAOMCko0EWmsd17CQmGyTWZKwMUG1VH15paAi
+        Ef6QUhLbgo8W3U0oTyz6vyxC6g==
+X-Google-Smtp-Source: ABdhPJxFvMPIFzTXAIIVPlg/eGuYakalp78L+LNg6VrEL06CzJLvdAz6UlqMRKRHGibjFN8E9JB6yg==
+X-Received: by 2002:a17:90b:4d86:b0:1bd:223f:6cb5 with SMTP id oj6-20020a17090b4d8600b001bd223f6cb5mr16669777pjb.151.1646158885116;
+        Tue, 01 Mar 2022 10:21:25 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id oa2-20020a17090b1bc200b001bcff056f09sm2678996pjb.13.2022.03.01.10.21.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Mar 2022 10:21:24 -0800 (PST)
+Date:   Tue, 1 Mar 2022 10:21:24 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Jakob Koschel <jakobkoschel@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        samba-technical@lists.samba.org,
+        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        intel-wired-lan@lists.osuosl.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sgx@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        tipc-discussion@lists.sourceforge.net,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+Message-ID: <202203011016.48A181EE50@keescook>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-3-jakobkoschel@gmail.com>
+ <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+ <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+ <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
+ <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
+ <CEDAD0D9-56EE-4105-9107-72C2EAD940B0@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e05606aeeec6b46762596035d1933e8f8fd23406.camel@HansenPartnership.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CEDAD0D9-56EE-4105-9107-72C2EAD940B0@gmail.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 01, 2022 at 01:08:34PM -0500, James Bottomley wrote:
-> On Tue, 2022-03-01 at 09:40 -0800, Luis Chamberlain wrote:
-> > On Tue, Mar 01, 2022 at 12:14:49PM -0500, James Bottomley wrote:
-> > > It looks fairly similar given the iouring syscalls are on an fd
-> > > except
-> > > that the structure above hash to be defined and becomes an
-> > > ABI.  Since
-> > > they configfd uses typed key value pairs, i'd argue it's more
-> > > generic
-> > > and introspectable.
-> > 
-> > I'm not suggesting using io-uring cmd as a configuration alternative
-> > to configfd, I'm suggesting it can be an async *vehicle* for a bunch
-> > of configurations one might need to make in the kernel. If we want
-> > to reduce system call uses, we may want to allow something like
-> > configfd to accept a batch of configuration options as well, as a
-> > batcha, and a final commit to process them.
-> 
-> Well, that's effectively how it does operate.  Configfd like configfs
-> is a dedicated fd you open exclusively for the purpose of
-> configuration.  You send it the key/value pairs via the action system
-> call.  Although the patch sent used "basic" types as values, nothing
-> prevents them being composite types that are aggregated, which would be
-> an easy mechanism for batching.
-> 
-> However, I'd like to add a note of caution: just because we *can* do
-> batching with the interface doesn't mean we should.  One of the
-> benefits of using simple basic types is easy interpretation by things
-> like seccomp; the more complex you make the type, the more internal
-> knowledge the seccomp/ebpf script needs.
+On Tue, Mar 01, 2022 at 12:28:15PM +0100, Jakob Koschel wrote:
+> Based on the coccinelle script there are ~480 cases that need fixing
+> in total. I'll now finish all of them and then split them by
+> submodules as Greg suggested and repost a patch set per submodule.
+> Sounds good?
 
-This alone makes a good argument against ioctls.
+To help with this splitting, see:
+https://github.com/kees/kernel-tools/blob/trunk/split-on-maintainer
 
-> So can I ask just how important batching for configuration changes is?
+It's not perfect, but it'll get you really close. For example, if you
+had a single big tree-wide patch applied to your tree:
 
-A great question.
+$ rm 0*.patch
+$ git format-patch -1 HEAD
+$ mv 0*.patch treewide.patch
+$ split-on-maintainer treewide.patch
+$ ls 0*.patch
 
-I can't personally think of use cases unless you want batch configuration with
-IO operations. io-uring stuff does have some link where in this regard,
-given some IO ops also may expose new fds for instance, which you may
-later want to use for further IO processing... but that seems very
-different than just the question of batching for configuration.
+If you have a build log before the patch that spits out warnings, the
+--build-log argument can extract those warnings on a per-file basis, too
+(though this can be fragile).
 
-> I get that there's some overhead for doing effectively one syscall per
-> k/v pair, but configuration operations aren't usually that time
-> critical. 
-
-Agreed and I'd like to hear arguments which would suggest otherwise.
-
-> If you're sending passthrough, then I can see you don't want
-> a load of syscalls per op, but equally a passthrough is just an opaque
-> packet that's likely not introspectable anyway, so it's a single k/v
-> pair.
-
-I think it might be fair to detach config / IO calls. Joshi however
-might have more to say about if we really would need to mesh the two.
-
-  Luis
+-- 
+Kees Cook
