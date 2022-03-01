@@ -2,155 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A19284C87C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 10:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 610014C87E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 10:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233593AbiCAJXY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 04:23:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44624 "EHLO
+        id S233778AbiCAJbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 04:31:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232384AbiCAJXX (ORCPT
+        with ESMTP id S233775AbiCAJbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 04:23:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF47AE7B;
-        Tue,  1 Mar 2022 01:22:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 15785B81855;
-        Tue,  1 Mar 2022 09:22:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0972C340EE;
-        Tue,  1 Mar 2022 09:22:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646126559;
-        bh=ZpG11DD4kp9h4/beH993WEeMr4LguyKwWCvtJOaP/8Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AnDeyLB9EgfvQl+AhT8DrwEAFMRcAPKHtHDA+fV+HVqwv7K95N7zFGRi+C02gLXXw
-         s5r1eCRjv7MhkHR4z/ahqeB4jJXrLfkNGguy50QZ/En2FgqadneXBA/W5x/T5mJGUK
-         gqzit1E5G3zEbf4tWBZE6EuDHtjxx4Bqvr8hMJLK4eTzgfIPTERMFMriwGyEHBL4hM
-         kA0sp8o7K59oEvKW5QRUZoDcuIpYLoKYoNwfP7S8LvVV3vaxjZ9JZX05FD4O8oeJ5U
-         oMQUkxOfqnivmB4BXGvg8TLkEcLrCa9882/+SJGvQewS9fD6KBH/lWHDiRbD1BqHN2
-         nb4eVLfQxbbEQ==
-Date:   Tue, 1 Mar 2022 10:22:32 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
-Message-ID: <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
-References: <20220228215935.748017-1-mic@digikod.net>
+        Tue, 1 Mar 2022 04:31:43 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8F24086E2B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 01:31:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646127060;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QBY88ztZKva4Dfvhre7a4FFaoq99+j707lGLFNj1qsE=;
+        b=Iv1IHO/9xYq7AvjWjVZyuiHeTYislxYXWGovJYa6ngEYYX7k1jxMaDRCcr151iGwY1BRP0
+        LhTs57+PA0ANZkZmL1zWk6ZsdjrlXuza9d98quzlY5Bp66eWCWcvR7mz0ArJ6eXoxIYMfH
+        yInWyj+S2L9AT80kMyH6i5t1Z3S9y20=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-661-JsYE0UXBOueOPC2p_g7k-Q-1; Tue, 01 Mar 2022 04:30:58 -0500
+X-MC-Unique: JsYE0UXBOueOPC2p_g7k-Q-1
+Received: by mail-wm1-f72.google.com with SMTP id 187-20020a1c19c4000000b0037cc0d56524so742761wmz.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 01:30:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=QBY88ztZKva4Dfvhre7a4FFaoq99+j707lGLFNj1qsE=;
+        b=pL4+XHN7V+kZso4GgtenC3AoKFX46JTn/8zFEC+r3HWyEDvyo5V3PNk3RBeiQv6ZRU
+         O0dhPYGmRLuRvm7Z94b+fdBvEa2Fxd/lmCXAL7RgSnQCYEraeYPxj1ofrtKBAeFYDITR
+         MhxX6ICYVcsr3Y6tdbEBaMLqNN3uZpSMllTAjwsAu97v2NyFmE5G9xQ9ou2kFSAldCVS
+         +1pLj5T1unHLWe5o2hQbG69EBQTLudDOP6HMD2OdUlsx9UZNqtiiWYsxy5WFc0nuuvHN
+         9FQ5CJIl5W1EqL0+Ypb46g+ANkPt+1uuLCjtPrEn27M4HnaKd/I/jGlel19l64KEVYm/
+         LJQg==
+X-Gm-Message-State: AOAM532plsRA9xq/fJZscTAuBe18KE219NH76TWz0tbPllNAjJ3/RlIS
+        2tyqBLW1Nv/PI0YceOM1n00a/pVrcJNgYhLGUMOfdFZgfAwY7OhBmYOLLzt3yqHUmCvtJdwT8Nx
+        CXcKP5tU4MP40Ct40ROle06sZLw==
+X-Received: by 2002:a1c:a382:0:b0:381:cfd:5564 with SMTP id m124-20020a1ca382000000b003810cfd5564mr16055530wme.103.1646127057607;
+        Tue, 01 Mar 2022 01:30:57 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxxZ01JTKa85lEAtW7rkRzMrJlA0XsQxMME6SiPZ1SwraatSqHyEOf6kIqynfEITUDTCDJILg==
+X-Received: by 2002:a1c:a382:0:b0:381:cfd:5564 with SMTP id m124-20020a1ca382000000b003810cfd5564mr16055505wme.103.1646127057353;
+        Tue, 01 Mar 2022 01:30:57 -0800 (PST)
+Received: from ?IPV6:2a09:80c0:192:0:20af:34be:985b:b6c8? ([2a09:80c0:192:0:20af:34be:985b:b6c8])
+        by smtp.gmail.com with ESMTPSA id j7-20020adfd207000000b001edc209e70asm12630321wrh.71.2022.03.01.01.30.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Mar 2022 01:30:56 -0800 (PST)
+Message-ID: <e0ff6c64-7ab0-6300-7427-5a3e4364661e@redhat.com>
+Date:   Tue, 1 Mar 2022 10:30:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220228215935.748017-1-mic@digikod.net>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [RFC PATCH 1/7] mm/gup: introduce pin_user_page()
+Content-Language: en-US
+To:     John Hubbard <jhubbard@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20220225085025.3052894-1-jhubbard@nvidia.com>
+ <20220225085025.3052894-2-jhubbard@nvidia.com>
+ <6ba088ae-4f84-6cd9-cbcc-bbc6b9547f04@redhat.com>
+ <36300717-48b2-79ec-a97b-386e36bbd2a6@nvidia.com>
+ <d3973adb-9403-5b64-23ec-d6800d67e538@redhat.com>
+ <f531a5be-9698-eb08-f10d-75adc2028483@nvidia.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <f531a5be-9698-eb08-f10d-75adc2028483@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 10:59:35PM +0100, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
-> 
-> While transitionning to ACC_MODE() with commit 5300990c0370 ("Sanitize
-> f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
-> ACC_MODE() for real"), we lost an open flags consistency check.  Opening
-> a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_READ |
-> MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
-> Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to 0.
-> 
-> Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, or
-> respectively FMODE_WRITE, and return an EBADF error if it is absent.
-> Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a file
-> with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this safe
-> behavior.
 
-That specific part seems a bit risky at first glance. Given that the
-patch referenced is from 2009 this means we've been allowing O_WRONLY |
-O_RDWR to succeed for almost 13 years now.
+>>>> That might be problematic and possibly the wrong approach, depending on
+>> *what* we're actually pinning and what we're intending to do with that.
+>>
+>> My assumption would have been that this interface is to duplicate a pin
+> 
+> I see that I need to put more documentation here, so people don't have
+> to assume things... :)
+> 
+
+Yes, please :)
+
+>> on a page, which would be perfectly fine, because the page actually saw
+>> a FOLL_PIN previously.
+>>
+>> We're taking a pin on a page that we haven't obtained via FOLL_PIN if I
+>> understand correctly. Which raises the questions, how do we end up with
+>> the pages here, and what are we doing to do with them (use them like we
+>> obtained them via FOLL_PIN?)?
+>>
+>>
+>> If it's converting FOLL_GET -> FOLL_PIN manually, then we're bypassing
+>> FOLL_PIN special handling in GUP code:
+>>
+>> page = get_user_pages(FOLL_GET)
+>> pin_user_page(page)
+>> put_page(page)
+> 
+> No, that's not where this is going at all. The idea, which  I now see
+> needs better documentation, is to handle file-backed pages. Only.
+> 
+> We're not converting from one type to another, nor are we doubling up.
+> We're just keeping the pin type consistent so that the vast block-
+> processing machinery can take pages in and handle them, then release
+> them at the end with bio_release_pages(), which will call
+> unpin_user_pages().
+> 
+
+Ah, okay, that makes sense. Glad to hear that we're intending to use
+this with !anon pages only.
+
+>>
+>>
+>> For anonymous pages, we'll bail out for example once we have
+>>
+>> https://lkml.kernel.org/r/20220224122614.94921-14-david@redhat.com
+>>
+>> Because the conditions for pinned anonymous pages might no longer hold.
+>>
+>> If we won't call pin_user_page() on anonymous pages, it would be fine.
+> 
+> We won't, and in fact, I should add WARN_ON_ONCE(PageAnon(page)) to
+> this function.
+
+Exactly what I would have suggested,
 
 > 
-> To make it consistent with ACC_MODE(), this patch also changes
-> OPEN_FMODE() to return FMODE_READ | FMODE_WRITE for O_WRONLY | O_RDWR.
-> This may help protect from potential spurious issues.
+>> But then, I still wonder how we come up the "struct page" here.
+>>
 > 
-> This issue could result in inconsistencies with AppArmor, Landlock and
-> SELinux, but the VFS checks would still forbid read and write accesses.
-> Tomoyo uses the ACC_MODE() transformation which is correct, and Smack
-> doesn't check the file mode.  Filesystems using OPEN_FMODE() should also
-> be protected by the VFS checks.
+>  From the file system. For example, the NFS-direct and fuse conversions
+> in the last patches show how that works.
 > 
-> Fixes: 5300990c0370 ("Sanitize f_flags helpers")
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: Darrick J. Wong <djwong@kernel.org>
-> Cc: Eric Paris <eparis@parisplace.org>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Cc: Steve French <sfrench@samba.org>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220228215935.748017-1-mic@digikod.net
-> ---
->  fs/file_table.c    | 3 +++
->  include/linux/fs.h | 5 +++--
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 7d2e692b66a9..b936f69525d0 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -135,6 +135,9 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
->  	struct file *f;
->  	int error;
->  
-> +	if ((flags & O_ACCMODE) == O_ACCMODE)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
->  	if (unlikely(!f))
->  		return ERR_PTR(-ENOMEM);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e2d892b201b0..83bc5aaf1c41 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3527,8 +3527,9 @@ int __init list_bdev_fs_names(char *buf, size_t size);
->  #define __FMODE_NONOTIFY	((__force int) FMODE_NONOTIFY)
->  
->  #define ACC_MODE(x) ("\004\002\006\006"[(x)&O_ACCMODE])
-> -#define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE) | \
-> -					    (flag & __FMODE_NONOTIFY)))
-> +#define OPEN_FMODE(flag) ((__force fmode_t)( \
-> +			(((flag + 1) & O_ACCMODE) ?: O_ACCMODE) | \
-> +			(flag & __FMODE_NONOTIFY)))
->  
->  static inline bool is_sxid(umode_t mode)
->  {
-> 
-> base-commit: 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3
-> -- 
-> 2.35.1
-> 
+> Thanks for this feedback, this is very helpful.
+
+Thanks for clarifying, John!
+
+-- 
+Thanks,
+
+David / dhildenb
+
