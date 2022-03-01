@@ -2,51 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 52FF54C8B29
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 12:54:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24F454C8BAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 13:33:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234686AbiCALzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 06:55:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52206 "EHLO
+        id S234693AbiCAMeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 07:34:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234667AbiCALyy (ORCPT
+        with ESMTP id S233214AbiCAMeS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 06:54:54 -0500
-Received: from smtpproxy21.qq.com (smtpbg703.qq.com [203.205.195.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 593C78D685
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 03:54:13 -0800 (PST)
-X-QQ-mid: bizesmtp74t1646135634tl2iodvi
-Received: from localhost.localdomain ( [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Tue, 01 Mar 2022 19:53:52 +0800 (CST)
-X-QQ-SSF: 01400000002000C0G000B00B0000000
-X-QQ-FEAT: P0DaXoo1QzjcMAhnK4u/yQYMF3zXBXRrn0JQ1SpLLeqEqnYuApefM8hFxxdnf
-        8NQ//F8ooD5ibQr8xHxCd8D3ttwb7A2i8HMMcgJUGJPKOvgGc1ry3juXG5/VyoRg3Bf4ek2
-        mkpLuL1HBw5FdppUvjmb8HSOQszXGWiZx5uF2MhvkyRu/115m0ZyDnuc5VOq+28FOcXPf95
-        R/H85R+2NO6Eg8r09JPeZ6bJbGqxaiLY9gM+GfZBsMtgH2VtkyRs+W4lbOQeeqP9K12NKCL
-        UzCffxsHZ7GEKIcOJYne3nHRAO5Bk4QMP0qTXSHBNXzdzryo79wT/EBRxIekdPnZDBEeBKw
-        Yo87KeoxnwQsk1C5zH4Ni1k69XHXsZY4h2YUZUL6DMOQxgKR/A=
-X-QQ-GoodBg: 2
-From:   Meng Tang <tangmeng@uniontech.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        ebiederm@xmission.com, willy@infradead.org
-Cc:     nixiaoming@huawei.com, nizhen@uniontech.com,
-        zhanglianjie@uniontech.com, sujiaxun@uniontech.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Meng Tang <tangmeng@uniontech.com>
-Subject: [PATCH v2 2/2] fs/proc: sysctl: optimize register single one ctl_table
-Date:   Tue,  1 Mar 2022 19:53:41 +0800
-Message-Id: <20220301115341.30101-2-tangmeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220301115341.30101-1-tangmeng@uniontech.com>
-References: <20220301115341.30101-1-tangmeng@uniontech.com>
+        Tue, 1 Mar 2022 07:34:18 -0500
+X-Greylist: delayed 405 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 01 Mar 2022 04:33:37 PST
+Received: from shout01.mail.de (shout01.mail.de [IPv6:2001:868:100:600::216])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 698CD91370
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 04:33:37 -0800 (PST)
+Received: from postfix01.mail.de (postfix03.bt.mail.de [10.0.121.127])
+        by shout01.mail.de (Postfix) with ESMTP id 06466A0C15;
+        Tue,  1 Mar 2022 13:26:50 +0100 (CET)
+Received: from smtp03.mail.de (smtp03.bt.mail.de [10.0.121.213])
+        by postfix01.mail.de (Postfix) with ESMTP id DE0AC8025A;
+        Tue,  1 Mar 2022 13:26:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
+        s=mailde202009; t=1646137609;
+        bh=9IhNcsjktZaluDWO29BPA544rSNSFw/0PVnAkOMQfPY=;
+        h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
+        b=lx2HuPxYFAajh6SC822U1OvTOjfcI7/CRyprys6t6K1erV3zbFJnVnA8WKT9/E8cv
+         FjrXYRMrR/sf0oroPDjuwuBGq4qvnun3VP+sLp0+7vHO9q8X9R/6mJLZjwO78O+f8u
+         +cnVeenpWq2WYtWfKLoVMPFFSknMZVM7eJ3zw0PE35jYqHHde0aeSIesbdyxyXQ6bC
+         6pGqhgCl1s4EvEBVgEjs8CELn/LmLCe8aoKMNIdDZNIci2Y9PwXRPXmne8ey0qXRx1
+         EMVWZINqd2S8tAX/qPuYlE9qjS5MDaUo9Z2o+WSjW3GO1DnPfU7ahGTtqCL+6X/F5k
+         GVvFqUex/CCvg==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp03.mail.de (Postfix) with ESMTPSA id 60BACA01D3;
+        Tue,  1 Mar 2022 13:26:49 +0100 (CET)
+Message-ID: <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de>
+Date:   Tue, 1 Mar 2022 13:26:48 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign2
-X-QQ-Bgrelay: 1
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Subject: Re: [RFC] Volatile fanotify marks
+Content-Language: en-US
+To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
+ <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
+ <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
+From:   Tycho Kirchner <tychokirchner@mail.de>
+In-Reply-To: <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 2761
+X-purgate-ID: 154282::1646137609-000006A2-AE1655BD/0/0
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,243 +69,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sysctls are being moved out of kernel/sysctl.c and out to
-their own respective subsystems / users to help with easier
-maintance and avoid merge conflicts. But when we move just
-one entry and to its own new file the last entry for this
-new file must be empty, so we are essentialy bloating the
-kernel one extra empty entry per each newly moved sysctl.
-
-To help with this, I have added support for registering just
-one ctl_table, therefore not bloating the kernel when we
-move a single ctl_table to its own file.
-
-The optimization has been implemented in the previous patch,
-here use register_sysctl_single() to register single one
-ctl_table.
-
-In this modification, I counted the size changes of each
-object file during the compilation process.
-
-When there is no strip, size changes are as follows:
- 			    before    now    save space
-fs/dcache.o                  904936  904760   176bytes
-fs/exec.o                    883584  883440   144bytes
-fs/namespace.o              1614776 1614616   160bytes
-fs/notify/dnotify/dnotify.o  255992  255872   120bytes
-init/do_mounts_initrd.o      296552  296392   160bytes
-kernel/acct.o                459184  459032   152bytes
-kernel/delayacct.o           208680  208536   144bytes
-kernel/kprobes.o             794968  794936    32bytes
-kernel/panic.o               367696  367560   136bytes
-
-When there is exec with 'strip -d', size changes are as follows:
-     			    before    now    save space
-fs/dcache.o                  79040   78952     88bytes
-fs/exec.o                    57960   57864     96bytes
-fs/namespace.o              111904  111824     80bytes
-fs/notify/dnotify/dnotify.o   8816    8736     80bytes
-init/do_mounts_initrd.o       4872    4760    112bytes
-kernel/acct.o                18104   18000    104bytes
-kernel/delayacct.o            8768    8664    104bytes
-kernel/kprobes.o             63192   63104     88bytes
-kernel/panic.o               26760   26672     88bytes
-
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Meng Tang <tangmeng@uniontech.com>
----
- fs/dcache.c                 | 5 ++---
- fs/exec.c                   | 5 ++---
- fs/namespace.c              | 5 ++---
- fs/notify/dnotify/dnotify.c | 5 ++---
- init/do_mounts_initrd.c     | 5 ++---
- kernel/acct.c               | 5 ++---
- kernel/delayacct.c          | 5 ++---
- kernel/kprobes.c            | 5 ++---
- kernel/panic.c              | 5 ++---
- 9 files changed, 18 insertions(+), 27 deletions(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index c84269c6e8bf..29fed2df79d1 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -190,13 +190,12 @@ static struct ctl_table fs_dcache_sysctls[] = {
- 		.maxlen		= 6*sizeof(long),
- 		.mode		= 0444,
- 		.proc_handler	= proc_nr_dentry,
--	},
--	{ }
-+	}
- };
- 
- static int __init init_fs_dcache_sysctls(void)
- {
--	register_sysctl_init("fs", fs_dcache_sysctls);
-+	register_sysctl_single("fs", fs_dcache_sysctls);
- 	return 0;
- }
- fs_initcall(init_fs_dcache_sysctls);
-diff --git a/fs/exec.c b/fs/exec.c
-index c2586b791b87..58e9e50b9d98 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -2140,13 +2140,12 @@ static struct ctl_table fs_exec_sysctls[] = {
- 		.proc_handler	= proc_dointvec_minmax_coredump,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_TWO,
--	},
--	{ }
-+	}
- };
- 
- static int __init init_fs_exec_sysctls(void)
- {
--	register_sysctl_init("fs", fs_exec_sysctls);
-+	register_sysctl_single("fs", fs_exec_sysctls);
- 	return 0;
- }
- 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index df172818e1f8..1384fa7f8c79 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4673,13 +4673,12 @@ static struct ctl_table fs_namespace_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ONE,
--	},
--	{ }
-+	}
- };
- 
- static int __init init_fs_namespace_sysctls(void)
- {
--	register_sysctl_init("fs", fs_namespace_sysctls);
-+	register_sysctl_single("fs", fs_namespace_sysctls);
- 	return 0;
- }
- fs_initcall(init_fs_namespace_sysctls);
-diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-index 829dd4a61b66..813a22825be5 100644
---- a/fs/notify/dnotify/dnotify.c
-+++ b/fs/notify/dnotify/dnotify.c
-@@ -28,12 +28,11 @@ static struct ctl_table dnotify_sysctls[] = {
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
--	},
--	{}
-+	}
- };
- static void __init dnotify_sysctl_init(void)
- {
--	register_sysctl_init("fs", dnotify_sysctls);
-+	register_sysctl_single("fs", dnotify_sysctls);
- }
- #else
- #define dnotify_sysctl_init() do { } while (0)
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index 327962ea354c..d37f24959aa3 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -28,13 +28,12 @@ static struct ctl_table kern_do_mounts_initrd_table[] = {
- 		.maxlen         = sizeof(int),
- 		.mode           = 0644,
- 		.proc_handler   = proc_dointvec,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_do_mounts_initrd_sysctls_init(void)
- {
--	register_sysctl_init("kernel", kern_do_mounts_initrd_table);
-+	register_sysctl_single("kernel", kern_do_mounts_initrd_table);
- 	return 0;
- }
- late_initcall(kernel_do_mounts_initrd_sysctls_init);
-diff --git a/kernel/acct.c b/kernel/acct.c
-index 62200d799b9b..c628808c9213 100644
---- a/kernel/acct.c
-+++ b/kernel/acct.c
-@@ -83,13 +83,12 @@ static struct ctl_table kern_acct_table[] = {
- 		.maxlen         = 3*sizeof(int),
- 		.mode           = 0644,
- 		.proc_handler   = proc_dointvec,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_acct_sysctls_init(void)
- {
--	register_sysctl_init("kernel", kern_acct_table);
-+	register_sysctl_single("kernel", kern_acct_table);
- 	return 0;
- }
- late_initcall(kernel_acct_sysctls_init);
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index 2c1e18f7c5cf..6b776cbcb559 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -73,13 +73,12 @@ static struct ctl_table kern_delayacct_table[] = {
- 		.proc_handler   = sysctl_delayacct,
- 		.extra1         = SYSCTL_ZERO,
- 		.extra2         = SYSCTL_ONE,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_delayacct_sysctls_init(void)
- {
--	register_sysctl_init("kernel", kern_delayacct_table);
-+	register_sysctl_single("kernel", kern_delayacct_table);
- 	return 0;
- }
- late_initcall(kernel_delayacct_sysctls_init);
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 94cab8c9ce56..1cf54662e2ed 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -970,13 +970,12 @@ static struct ctl_table kprobe_sysctls[] = {
- 		.proc_handler	= proc_kprobes_optimization_handler,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
--	},
--	{}
-+	}
- };
- 
- static void __init kprobe_sysctls_init(void)
- {
--	register_sysctl_init("debug", kprobe_sysctls);
-+	register_sysctl_single("debug", kprobe_sysctls);
- }
- #endif /* CONFIG_SYSCTL */
- 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index ae5c0ca86016..90f1a0f25139 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -85,13 +85,12 @@ static struct ctl_table kern_panic_table[] = {
- 		.proc_handler   = proc_dointvec_minmax,
- 		.extra1         = SYSCTL_ZERO,
- 		.extra2         = SYSCTL_ONE,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_panic_sysctls_init(void)
- {
--	register_sysctl_init("kernel", kern_panic_table);
-+	register_sysctl_single("kernel", kern_panic_table);
- 	return 0;
- }
- late_initcall(kernel_panic_sysctls_init);
--- 
-2.20.1
 
 
+>>> I wanted to get your feedback on an idea I have been playing with.
+>>> It started as a poor man's alternative to the old subtree watch problem.
 
+
+> I do agree that we should NOT add "subtree filter" functionality to fanotify
+> (or any other filter) and that instead, we should add support for attaching an
+> eBPF program that implements is_subdir().
+> I found this [1] convection with Tycho where you had suggested this idea.
+> I wonder if Tycho got to explore this path further?
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.suse.cz/
+
+Hi Amir, Hi Jan,
+Thanks for pinging back on me. Indeed I did "explore this path further".
+In my project
+https://github.com/tycho-kirchner/shournal
+
+the goal is to track read/written files of a process tree and all it's child-processes and connect this data to a given shell-command. In fact after Amir's and mine last correspondence I implemented a kernel module which instruments ftrace and tracepoints to trace fput-events (kernel/event_handler.c:event_handler_fput) of specific tasks, which are then further processed in a dedicated kernel thread. I considered eBPF for this task but found no satisfying approach to have dynamic, different filter-rules (e.g. include-paths) for each process tree of each user.
+
+
+Regarding improvement of fanotify let's discriminate two cases: system-monitoring and tracing.
+Regarding system-monitoring: I'm not sure how exactly FAN_MARK_VOLATILE would work (Amir, could you please elaborate?) but what do you think about the following approach, in order to solve the subtree watch problem:
+- Store the include/exlude-paths of interest as *strings* in a hashset.
+- on fsevent, lookup the path by calling d_path() only once and cache, whether events for the given path are of interest. This
+   can either happen with a reference on the path (clear older paths periodically in a work queue)
+   or with a timelimit in which potentially wrong paths are accepted (path pointer freed and address reused).
+   The second approach I use myself in kernel/event_consumer_cache.c. See also kpathtree.c for a somewhat efficient
+   subpath-lookup.
+
+
+Regarding tracing I think fanotify would really benefit from a FAN_MARK_PID (with optional follow fork-mode). That way one of the first filter-steps would be whether events for the given task are of interest, so we have no performance problem for all other tasks. The possibility to mark specific processes would also have another substantial benefit: fanotify could be used without root privileges by only allowing the user to mark his/her own processes.
+That way existing inotify-users could finally switch to the cleaner/more powerful fanotify.
+
+
+Thanks and kind regards
+Tycho
