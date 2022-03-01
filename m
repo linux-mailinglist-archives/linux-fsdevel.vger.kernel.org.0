@@ -2,108 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24F454C8BAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 13:33:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F014C8BBF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 13:36:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234693AbiCAMeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 07:34:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53772 "EHLO
+        id S229518AbiCAMhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 07:37:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233214AbiCAMeS (ORCPT
+        with ESMTP id S232437AbiCAMhR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 07:34:18 -0500
-X-Greylist: delayed 405 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 01 Mar 2022 04:33:37 PST
-Received: from shout01.mail.de (shout01.mail.de [IPv6:2001:868:100:600::216])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 698CD91370
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 04:33:37 -0800 (PST)
-Received: from postfix01.mail.de (postfix03.bt.mail.de [10.0.121.127])
-        by shout01.mail.de (Postfix) with ESMTP id 06466A0C15;
-        Tue,  1 Mar 2022 13:26:50 +0100 (CET)
-Received: from smtp03.mail.de (smtp03.bt.mail.de [10.0.121.213])
-        by postfix01.mail.de (Postfix) with ESMTP id DE0AC8025A;
-        Tue,  1 Mar 2022 13:26:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
-        s=mailde202009; t=1646137609;
-        bh=9IhNcsjktZaluDWO29BPA544rSNSFw/0PVnAkOMQfPY=;
-        h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
-        b=lx2HuPxYFAajh6SC822U1OvTOjfcI7/CRyprys6t6K1erV3zbFJnVnA8WKT9/E8cv
-         FjrXYRMrR/sf0oroPDjuwuBGq4qvnun3VP+sLp0+7vHO9q8X9R/6mJLZjwO78O+f8u
-         +cnVeenpWq2WYtWfKLoVMPFFSknMZVM7eJ3zw0PE35jYqHHde0aeSIesbdyxyXQ6bC
-         6pGqhgCl1s4EvEBVgEjs8CELn/LmLCe8aoKMNIdDZNIci2Y9PwXRPXmne8ey0qXRx1
-         EMVWZINqd2S8tAX/qPuYlE9qjS5MDaUo9Z2o+WSjW3GO1DnPfU7ahGTtqCL+6X/F5k
-         GVvFqUex/CCvg==
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp03.mail.de (Postfix) with ESMTPSA id 60BACA01D3;
-        Tue,  1 Mar 2022 13:26:49 +0100 (CET)
-Message-ID: <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de>
-Date:   Tue, 1 Mar 2022 13:26:48 +0100
+        Tue, 1 Mar 2022 07:37:17 -0500
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 983B697BBF;
+        Tue,  1 Mar 2022 04:36:36 -0800 (PST)
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.94)
+          with esmtps (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1nP1jk-003IcG-9v; Tue, 01 Mar 2022 13:36:16 +0100
+Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
+          by inpost2.zedat.fu-berlin.de (Exim 4.94)
+          with esmtpsa (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1nP1jk-001HI7-3q; Tue, 01 Mar 2022 13:36:16 +0100
+Message-ID: <49182d0d-708b-4029-da5f-bc18603440a6@physik.fu-berlin.de>
+Date:   Tue, 1 Mar 2022 13:36:15 +0100
 MIME-Version: 1.0
-Subject: Re: [RFC] Volatile fanotify marks
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 5.16 v2] binfmt_elf: Avoid total_mapping_size for ET_EXEC
 Content-Language: en-US
-To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
- <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
- <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
-From:   Tycho Kirchner <tychokirchner@mail.de>
-In-Reply-To: <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Kees Cook <keescook@chromium.org>,
+        matoro <matoro_mailinglist_kernel@matoro.tk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        stable@vger.kernel.org,
+        =?UTF-8?Q?Magnus_Gro=c3=9f?= <magnus.gross@rwth-aachen.de>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        regressions@lists.linux.dev, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20220228205518.1265798-1-keescook@chromium.org>
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+In-Reply-To: <20220228205518.1265798-1-keescook@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-purgate: clean
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate-type: clean
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
-X-purgate-size: 2761
-X-purgate-ID: 154282::1646137609-000006A2-AE1655BD/0/0
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-Originating-IP: 160.45.32.140
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello!
 
-
->>> I wanted to get your feedback on an idea I have been playing with.
->>> It started as a poor man's alternative to the old subtree watch problem.
-
-
-> I do agree that we should NOT add "subtree filter" functionality to fanotify
-> (or any other filter) and that instead, we should add support for attaching an
-> eBPF program that implements is_subdir().
-> I found this [1] convection with Tycho where you had suggested this idea.
-> I wonder if Tycho got to explore this path further?
+On 2/28/22 21:55, Kees Cook wrote:
+> Partially revert commit 5f501d555653 ("binfmt_elf: reintroduce using
+> MAP_FIXED_NOREPLACE").
 > 
-> [1] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.suse.cz/
+> At least ia64 has ET_EXEC PT_LOAD segments that are not virtual-address
+> contiguous (but _are_ file-offset contiguous). This would result in
+> giant mapping attempts to cover the entire span, including the virtual
+> address range hole. Disable total_mapping_size for ET_EXEC, which
+> reduces the MAP_FIXED_NOREPLACE coverage to only the first PT_LOAD:
+> 
+> $ readelf -lW /usr/bin/gcc
+> ...
+> Program Headers:
+>   Type Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   ...
+> ...
+>   LOAD 0x000000 0x4000000000000000 0x4000000000000000 0x00b5a0 0x00b5a0 ...
+>   LOAD 0x00b5a0 0x600000000000b5a0 0x600000000000b5a0 0x0005ac 0x000710 ...
+> ...
+>        ^^^^^^^^ ^^^^^^^^^^^^^^^^^^                    ^^^^^^^^ ^^^^^^^^
+> 
+> File offset range     : 0x000000-0x00bb4c
+> 			0x00bb4c bytes
+> 
+> Virtual address range : 0x4000000000000000-0x600000000000bcb0
+> 			0x200000000000bcb0 bytes
+> 
+> Ironically, this is the reverse of the problem that originally caused
+> problems with ET_EXEC and MAP_FIXED_NOREPLACE: overlaps. This problem is
+> with holes. Future work could restore full coverage if load_elf_binary()
+> were to perform mappings in a separate phase from the loading (where
+> it could resolve both overlaps and holes).
+> 
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Reported-by: matoro <matoro_mailinglist_kernel@matoro.tk>
+> Reported-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Fixes: 5f501d555653 ("binfmt_elf: reintroduce using MAP_FIXED_NOREPLACE")
+> Link: https://lore.kernel.org/r/a3edd529-c42d-3b09-135c-7e98a15b150f@leemhuis.info
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> Here's the v5.16 backport.
+> ---
+>  fs/binfmt_elf.c | 25 ++++++++++++++++++-------
+>  1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index f8c7f26f1fbb..911a9e7044f4 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -1135,14 +1135,25 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  			 * is then page aligned.
+>  			 */
+>  			load_bias = ELF_PAGESTART(load_bias - vaddr);
+> -		}
+>  
+> -		/*
+> -		 * Calculate the entire size of the ELF mapping (total_size).
+> -		 * (Note that load_addr_set is set to true later once the
+> -		 * initial mapping is performed.)
+> -		 */
+> -		if (!load_addr_set) {
+> +			/*
+> +			 * Calculate the entire size of the ELF mapping
+> +			 * (total_size), used for the initial mapping,
+> +			 * due to first_pt_load which is set to false later
+> +			 * once the initial mapping is performed.
+> +			 *
+> +			 * Note that this is only sensible when the LOAD
+> +			 * segments are contiguous (or overlapping). If
+> +			 * used for LOADs that are far apart, this would
+> +			 * cause the holes between LOADs to be mapped,
+> +			 * running the risk of having the mapping fail,
+> +			 * as it would be larger than the ELF file itself.
+> +			 *
+> +			 * As a result, only ET_DYN does this, since
+> +			 * some ET_EXEC (e.g. ia64) may have virtual
+> +			 * memory holes between LOADs.
+> +			 *
+> +			 */
+>  			total_size = total_mapping_size(elf_phdata,
+>  							elf_ex->e_phnum);
+>  			if (!total_size) {
 
-Hi Amir, Hi Jan,
-Thanks for pinging back on me. Indeed I did "explore this path further".
-In my project
-https://github.com/tycho-kirchner/shournal
+I can confirm that this patch fixes the issue for me.
 
-the goal is to track read/written files of a process tree and all it's child-processes and connect this data to a given shell-command. In fact after Amir's and mine last correspondence I implemented a kernel module which instruments ftrace and tracepoints to trace fput-events (kernel/event_handler.c:event_handler_fput) of specific tasks, which are then further processed in a dedicated kernel thread. I considered eBPF for this task but found no satisfying approach to have dynamic, different filter-rules (e.g. include-paths) for each process tree of each user.
+Tested-By: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
+Thanks,
+Adrian
 
-Regarding improvement of fanotify let's discriminate two cases: system-monitoring and tracing.
-Regarding system-monitoring: I'm not sure how exactly FAN_MARK_VOLATILE would work (Amir, could you please elaborate?) but what do you think about the following approach, in order to solve the subtree watch problem:
-- Store the include/exlude-paths of interest as *strings* in a hashset.
-- on fsevent, lookup the path by calling d_path() only once and cache, whether events for the given path are of interest. This
-   can either happen with a reference on the path (clear older paths periodically in a work queue)
-   or with a timelimit in which potentially wrong paths are accepted (path pointer freed and address reused).
-   The second approach I use myself in kernel/event_consumer_cache.c. See also kpathtree.c for a somewhat efficient
-   subpath-lookup.
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
-
-Regarding tracing I think fanotify would really benefit from a FAN_MARK_PID (with optional follow fork-mode). That way one of the first filter-steps would be whether events for the given task are of interest, so we have no performance problem for all other tasks. The possibility to mark specific processes would also have another substantial benefit: fanotify could be used without root privileges by only allowing the user to mark his/her own processes.
-That way existing inotify-users could finally switch to the cleaner/more powerful fanotify.
-
-
-Thanks and kind regards
-Tycho
