@@ -2,66 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CEF94C93EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 20:07:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5388C4C94FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Mar 2022 20:49:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbiCATID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Mar 2022 14:08:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55038 "EHLO
+        id S233672AbiCATuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Mar 2022 14:50:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbiCATIC (ORCPT
+        with ESMTP id S236472AbiCATty (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Mar 2022 14:08:02 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C09943E0FB
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 11:07:19 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id p20so23224414ljo.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 11:07:19 -0800 (PST)
+        Tue, 1 Mar 2022 14:49:54 -0500
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6744B5AED5
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Mar 2022 11:48:30 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id bn33so23324226ljb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 11:48:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+FYbGAw6yxU17iUDUp61Ry7f+ZSO9wN0ehJ+hGfk2DQ=;
-        b=NEmpYuhxkY3jphhiKwB9rL7CFHETV0OarciDwH/Y25b8gogpFDGLbcsm2Hp5JlhbRM
-         fgLdNaX0z1k1bpDTdAa2T+xhPoQGBlkWInAyVtxomjmoWydKKz6S1Vw5P8QyPxUNcXPG
-         O8s4ZVUjpR1ZVkG2oqZOMI9ApgRXI/RsyC5iE=
+        bh=PzY8tILS7/J5BzJfiKLdBDXy8/s4RAHqODI+UdY57jc=;
+        b=MSgmT6lRet0jPev3NhT8poLSNE2IuVKHhTmnMdindDPsxNrbDdzPrkBSaT4BauMeD+
+         LWq3ALR2NImH9IAbyg/9Mpz0DLX1H3V94a1gLKACC1HvSqM9EwtH2Km4ZUYlkqLoZgsQ
+         ZV7jqWBOB7cCGsim0JopuTtvt6tgng/ReKRwg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+FYbGAw6yxU17iUDUp61Ry7f+ZSO9wN0ehJ+hGfk2DQ=;
-        b=Wbc6ZprE4QdLwBOUO9Upxt6ALA3ZIWKxGdGk/EVth+odSjpgZgE4B767bVhP99mtJP
-         0BPzcN9o+I4JHrFDpiCkwj6G+vuF0XwB8fRxURQne9Xkp3li7eEs5eu4CL3fqVXbJ0Xe
-         adUtl+e4CcV3UhsohWVQo6Nf9UuucVHoMJipqcVDBOSI2oafSr6jJGiPNewuoTiOO84H
-         OtxjXfa432q02lQK4lODwNa0EmKcw3dO7GSUY/xSeKuYv/NNHNWdPE6DyCenbbs30NQW
-         O4clpx4+PaLN3xsK3wZbcrqeTWAMtjx816kYvEDE2ZyAWPp6dUftlsF6x0/UdNVMbaZp
-         d8yw==
-X-Gm-Message-State: AOAM5328gn0swd4yIcDSRPMpHxTO5KFpmKAhrmLzvykTTT1F8QQDm1/h
-        oZZVXFLX8riRFxQAr9/tGfuRfTNPMSvY891AKLk=
-X-Google-Smtp-Source: ABdhPJzrZnH2ecoW43RNHW6Hiwfkoz8ja3boxh4P7kVTrSDQzgvBQRa06lDWuWZLXxsEnanf8dDnzw==
-X-Received: by 2002:a2e:b985:0:b0:246:2904:209f with SMTP id p5-20020a2eb985000000b002462904209fmr18125955ljp.278.1646161637198;
-        Tue, 01 Mar 2022 11:07:17 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id o21-20020a05651205d500b004457562b26csm589318lfo.193.2022.03.01.11.07.13
+        bh=PzY8tILS7/J5BzJfiKLdBDXy8/s4RAHqODI+UdY57jc=;
+        b=dXZ9kfSRIZoG9ciFDZ4ZSyoWawmLFIQrxD+v51T6nlycNMQZY4w94umYM/I6SBu1qD
+         5w6jUSk0i4wN2ORNV5qpB4CQR3gtWY5Zoo+KLVNuINhbWdBi70AD+o+rMg13OsgFvPn+
+         DQ8owz6hcI+dEu1HTFSrGDhDU0NKvjDhI7Ztxuvu6MkGG0NGZmECo+A81xM78iaPkMoU
+         r7coF346N/m5xxj7UP+JIAs72wlawmQ0eXmKS04LCdKoVd0rV7ZxBQu8qr8i49DbmYtk
+         JWmRmrAt2TKKA3+nz/fM35rPXsq7Sj3s3DErz74DZBioyL/IcbUI/jElv6W2gYy8UIno
+         QmGg==
+X-Gm-Message-State: AOAM532S8soGY5ewmMHYzMizzGiehL+HMjT2Qrq3VmYDyWGsgeHuyO4e
+        HYu6RmZrrfOSralp8qX2uScU0Zc5X9047mBDQaw=
+X-Google-Smtp-Source: ABdhPJyZ19mDEFTttSbit9o9EOsFCw+qlWBNIDECtM8xL6jcG7gDRzz57c8SOvqNL4LnXYXL76oBXw==
+X-Received: by 2002:a2e:5c88:0:b0:246:3ec2:2f6a with SMTP id q130-20020a2e5c88000000b002463ec22f6amr18613943ljb.419.1646164097842;
+        Tue, 01 Mar 2022 11:48:17 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id k1-20020a2ea281000000b00244bc2ecfe9sm2071038lja.66.2022.03.01.11.48.17
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Mar 2022 11:07:15 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id d23so28457491lfv.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 11:07:13 -0800 (PST)
+        Tue, 01 Mar 2022 11:48:17 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id l12so11428885ljh.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Mar 2022 11:48:17 -0800 (PST)
 X-Received: by 2002:a2e:3013:0:b0:246:2ca9:365e with SMTP id
- w19-20020a2e3013000000b002462ca9365emr17902580ljw.291.1646161622598; Tue, 01
- Mar 2022 11:07:02 -0800 (PST)
+ w19-20020a2e3013000000b002462ca9365emr17983151ljw.291.1646163763108; Tue, 01
+ Mar 2022 11:42:43 -0800 (PST)
 MIME-Version: 1.0
 References: <20220228110822.491923-1-jakobkoschel@gmail.com>
  <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
  <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
  <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com> <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
  <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org> <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
-In-Reply-To: <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
+ <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
+In-Reply-To: <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 1 Mar 2022 11:06:45 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
-Message-ID: <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
+Date:   Tue, 1 Mar 2022 11:42:26 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wghQygmASNUWj=LZn5FR5wsce2osyR6EXcfEB_FaX_6Og@mail.gmail.com>
+Message-ID: <CAHk-=wghQygmASNUWj=LZn5FR5wsce2osyR6EXcfEB_FaX_6Og@mail.gmail.com>
 Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
  as a ptr
 To:     James Bottomley <James.Bottomley@hansenpartnership.com>
@@ -126,54 +127,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 2:29 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On Tue, Mar 1, 2022 at 11:06 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> However, if the desire is really to poison the loop variable then we
-> can do
->
-> #define list_for_each_entry(pos, head, member)                          \
->         for (pos = list_first_entry(head, typeof(*pos), member);        \
->              !list_entry_is_head(pos, head, member) && ((pos = NULL) == NULL;                   \
->              pos = list_next_entry(pos, member))
->
-> Which would at least set pos to NULL when the loop completes.
+> So instead of that simple "if (!entry)", we'd effectively have to
+> continue to use something that still works with the old world order
+> (ie that "if (list_entry_is_head())" model).
 
-That would actually have been excellent if we had done that
-originally. It would not only avoid the stale and incorrectly typed
-head entry left-over turd, it would also have made it very easy to
-test for "did I find an entry in the loop".
+Just to prove my point about how this is painful, that doesn't work at all.
 
-But I don't much like it in the situation we are now.
+If the loop iterator at the end is NULL (good, in theory), we can't
+use "list_entry_is_head()" to check whether we ended. We'd have to use
+a new thing entirely, to handle the "list_for_each_entry() has the
+old/new semantics" cases.
 
-Why? Mainly because it basically changes the semantics of the loop
-_without_ any warnings about it.  And we don't actually get the
-advantage of the nicer semantics, because we can't actually make code
-do
+That's largely why I was pushing for the "let's make it impossible to
+use the loop iterator at all outside the loop". It avoids the
+confusing case, and the patches to move to that stricter semantic can
+be merged independently (and before) doing the actual semantic change.
 
-        list_for_each_entry(entry, ....) {
-                ..
-        }
-        if (!entry)
-                return -ESRCH;
-        .. use the entry we found ..
+I'm not saying my suggested approach is wonderful either. Honestly,
+it's painful that we have so nasty semantics for the end-of-loop case
+for list_for_each_entry().
 
-because that would be a disaster for back-porting, plus it would be a
-flag-day issue (ie we'd have to change the semantics of the loop at
-the same time we change every single user).
+The minimal patch would clearly be to keep those broken semantics, and
+just force everybody to use the list_entry_is_head() case. That's the
+"we know we messed up, we are too lazy to fix it, we'll just work
+around it and people need to be careful" approach.
 
-So instead of that simple "if (!entry)", we'd effectively have to
-continue to use something that still works with the old world order
-(ie that "if (list_entry_is_head())" model).
+And laziness is a virtue. But bad semantics are bad semantics. So it's
+a question of balancing those two issues.
 
-So we couldn't really take _advantage_ of the nicer semantics, and
-we'd not even get a warning if somebody does it wrong - the code would
-just silently do the wrong thing.
-
-IOW: I don't think you are wrong about that patch: it would solve the
-problem that Jakob wants to solve, and it would have absolutely been
-much better if we had done this from the beginning. But I think that
-in our current situation, it's actually a really fragile solution to
-the "don't do that then" problem we have.
-
-              Linus
+               Linus
