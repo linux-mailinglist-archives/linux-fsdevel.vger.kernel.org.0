@@ -2,115 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 541AA4CB04C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 21:52:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 275EF4CB071
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 21:59:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238450AbiCBUwl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 15:52:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56848 "EHLO
+        id S245004AbiCBVAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 16:00:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233970AbiCBUwk (ORCPT
+        with ESMTP id S244838AbiCBVAP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 15:52:40 -0500
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B536005E;
-        Wed,  2 Mar 2022 12:51:56 -0800 (PST)
-Received: by mail-pj1-f43.google.com with SMTP id g7-20020a17090a708700b001bb78857ccdso5871373pjk.1;
-        Wed, 02 Mar 2022 12:51:56 -0800 (PST)
+        Wed, 2 Mar 2022 16:00:15 -0500
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32481D2058
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 12:59:30 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id w37so2656041pga.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Mar 2022 12:59:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=R/oQqieG0aXWXHs93Td97reRxAIjZoSgBmUtDJFVhjU=;
+        b=d2ZFN7FzXJICmnX4Tyt0wAx0nHny3V7g7RBF7BzoFi4JqvMjvTlFe6r9CSmtZHYpfY
+         sI7cCbacBhQSn0c2nYjk/wWGRSWn9quhJSSynH9lMYRKPPdVW/LYlF+HQ4F3tfS4GoN+
+         rfxT6gA9HHGJJFfNnOWheyqKpysRyPxkd0f8U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=dPwpOA3dlf+QjLGZg4hJmQgB+HaIen/E3co4VabBIO0=;
-        b=0cJ93QzI+mxJq7HD74Tmvm0MtzGHWh4rWBJcf7JyDmnqxGh2YISXTHLN0ZJfSwWnzc
-         hAJVtssSyYA9PEtIj6nM0SXnx56jQVe0n0lK8gcyEXVC9xBvFaaUVX4xkNrI2/eyBq5T
-         ZRqFMeieluevNJqZTbBlzOI0thWw9rSgltxPnbE+uBChl2vyRVkxv4mbhc+7Z6QeNjSH
-         fL2AhW4yMjglUtyqSFVMxJVloEKQpVsTV7JBzvj0Dw9N0rIooxlwjH3T69W42azfDFAd
-         tLPWMUmlPSR66ynD/8iR19Xm3cvqGMAvYFfWWiiNYiAj1OzBFNi5bdWiKdkHVTZ21c6E
-         j2pA==
-X-Gm-Message-State: AOAM530dnmxti3+tvm5MwomXXIHsUc/qAnsslDIo6xzQeHHorNf292XT
-        BTPsZjlm+MRuIsGhtl1bFEM=
-X-Google-Smtp-Source: ABdhPJwzgpXKdWzWCPNEiMTVvwvSfu+YBTWnIewxSzHltR/uF+7LfUo5oePNVku1wMQwhNQb/c88KQ==
-X-Received: by 2002:a17:90a:2e0a:b0:1be:d5a0:cc5a with SMTP id q10-20020a17090a2e0a00b001bed5a0cc5amr1688125pjd.120.1646254315591;
-        Wed, 02 Mar 2022 12:51:55 -0800 (PST)
-Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
-        by smtp.gmail.com with ESMTPSA id w17-20020a056a0014d100b004f1063290basm77192pfu.15.2022.03.02.12.51.53
+        bh=R/oQqieG0aXWXHs93Td97reRxAIjZoSgBmUtDJFVhjU=;
+        b=bn9IB/J+0+t7z9gtz+bfQ9cIiup4gOGAnv+TV3CZaSTg2NL52YgyzZQzGmSopxAsJ2
+         dyOcaEsnlGNQsEKp4W6qXnQ5B7y1EcpfGumoqfi1XWc9LiUPL6ADc4CnyTae+/uHObP3
+         Q+RN3es0piRpl1NHMnV5PbEMIF8zymvl6Y3BcMK3gt12mZL7WEagXnTQSRWjt/iMxKe4
+         POTUjtT/V4bC6o5tK+gVFnCvDQhJBC4C3m4u+xKQmKEW4LdeNzjtpI3zZ+cw5z5Qjtfp
+         kCI8FxhZ6+TCgVliaju0kzFH1lAiYl6AGDMth8RZhSwxr3AhOq3Crz6vbDdbWoJ5XMa0
+         INhg==
+X-Gm-Message-State: AOAM530DXn/8bwYaHogn2BBzbZ5MHASgqe4kb0m0DCMwr0tVntT35pwR
+        GhEEeTLOKH8fZsN65PC3zcJX4Q==
+X-Google-Smtp-Source: ABdhPJwV5Vftpu3BNFYOd1YAI3xcgBfQbmCq2DPnKYT59xnVma61vCMoUamoUdgwMbiUWTPibOctJw==
+X-Received: by 2002:a63:595e:0:b0:378:b203:a74e with SMTP id j30-20020a63595e000000b00378b203a74emr13280856pgm.328.1646254769698;
+        Wed, 02 Mar 2022 12:59:29 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z9-20020a655a49000000b00373459df190sm58337pgs.35.2022.03.02.12.59.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 12:51:54 -0800 (PST)
-Date:   Wed, 2 Mar 2022 12:51:51 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "hch@infradead.org" <hch@infradead.org>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Kanchan Joshi <joshiiitr@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        "Remzi H. Arpaci-Dusseau" <remzi@cs.wisc.edu>
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-Message-ID: <20220302205151.76f6wfqb2t3llnvf@garbanzo>
-References: <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
- <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk>
- <da4baa8c-76b0-7255-365c-d8b58e322fd0@gmail.com>
- <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk>
- <d4f9a5d3-1df2-1060-94fa-f77441a89299@gmail.com>
- <CA+1E3rJ3SoLU9aYcugAQgJnSPnJtcCwjZdMREXS3FTmXgy3yow@mail.gmail.com>
- <f030a338-cd52-2e83-e1da-bdbca910d49e@kernel.dk>
- <CA+1E3rKxZk2CatTuPcQq5d14vXL9_9LVb2_+AfR2m9xn2WTZdg@mail.gmail.com>
- <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731064526.GA25674@infradead.org>
+        Wed, 02 Mar 2022 12:59:29 -0800 (PST)
+Date:   Wed, 2 Mar 2022 12:59:28 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Laight <David.Laight@aculab.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        KVM list <kvm@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>,
+        "linux1394-devel@lists.sourceforge.net" 
+        <linux1394-devel@lists.sourceforge.net>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "kgdb-bugreport@lists.sourceforge.net" 
+        <kgdb-bugreport@lists.sourceforge.net>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
+        "v9fs-developer@lists.sourceforge.net" 
+        <v9fs-developer@lists.sourceforge.net>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "tipc-discussion@lists.sourceforge.net" 
+        <tipc-discussion@lists.sourceforge.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+Message-ID: <202203021256.69D7C4BCA6@keescook>
+References: <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
+ <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
+ <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
+ <7dc860874d434d2288f36730d8ea3312@AcuMS.aculab.com>
+ <CAHk-=whKqg89zu4T95+ctY-hocR6kDArpo2qO14-kV40Ga7ufw@mail.gmail.com>
+ <0ced2b155b984882b39e895f0211037c@AcuMS.aculab.com>
+ <CAHk-=wix0HLCBs5sxAeW3uckg0YncXbTjMsE-Tv8WzmkOgLAXQ@mail.gmail.com>
+ <78ccb184-405e-da93-1e02-078f90d2b9bc@rasmusvillemoes.dk>
+ <202203021158.DB5204A0@keescook>
+ <CAHk-=wikKPC0LUqZ8++EC5JOvGdBqVH9uUaTX=DvBioDoReYww@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200731064526.GA25674@infradead.org>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+In-Reply-To: <CAHk-=wikKPC0LUqZ8++EC5JOvGdBqVH9uUaTX=DvBioDoReYww@mail.gmail.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 31, 2020 at 07:45:26AM +0100, hch@infradead.org wrote:
-> On Fri, Jul 31, 2020 at 06:42:10AM +0000, Damien Le Moal wrote:
-> > > - We may not be able to use RWF_APPEND, and need exposing a new
-> > > type/flag (RWF_INDIRECT_OFFSET etc.) user-space. Not sure if this
-> > > sounds outrageous, but is it OK to have uring-only flag which can be
-> > > combined with RWF_APPEND?
-> > 
-> > Why ? Where is the problem ? O_APPEND/RWF_APPEND is currently meaningless for
-> > raw block device accesses. We could certainly define a meaning for these in the
-> > context of zoned block devices.
+On Wed, Mar 02, 2022 at 12:18:45PM -0800, Linus Torvalds wrote:
+> On Wed, Mar 2, 2022 at 12:07 PM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > I've long wanted to change kfree() to explicitly set pointers to NULL on
+> > free. https://github.com/KSPP/linux/issues/87
 > 
-> We can't just add a meaning for O_APPEND on block devices now,
+> We've had this discussion with the gcc people in the past, and gcc
+> actually has some support for it, but it's sadly tied to the actual
+> function name (ie gcc has some special-casing for "free()")
+> 
+> See
+> 
+>     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94527
+> 
+> for some of that discussion.
+> 
+> Oh, and I see some patch actually got merged since I looked there last
+> so that you can mark "deallocator" functions, but I think it's only
+> for the context matching, not for actually killing accesses to the
+> pointer afterwards.
 
-Make sense.
+Ah! I missed that getting added in GCC 11. But yes, there it is:
 
-Is a new call system call for nameless writes called for instead then?
-Then there is no baggage. Or is this completely stupid?
+https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute
 
-> as it was previously silently ignored.  I also really don't think any
-> of these semantics even fit the block device to start with.  If you
-> want to work on raw zones use zonefs, that's what is exists for.
+Hah, now we may need to split __malloc from __alloc_size. ;)
 
-Using zonefs adds a slight VFS overhead. Fine if we want to live with
-that, but I have a feeling if we want to do something like just testing
-hot paths alone to compare apples to apples we'd want something more
-fine grained.
+I'd still like the NULL assignment behavior, though, since some things
+can easily avoid static analysis.
 
-  Luis
+-- 
+Kees Cook
