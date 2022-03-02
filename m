@@ -2,170 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B8D04C9F3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 09:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 402B44C9F4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 09:34:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240238AbiCBIa5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 03:30:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47280 "EHLO
+        id S234325AbiCBIfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 03:35:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240175AbiCBIaq (ORCPT
+        with ESMTP id S229808AbiCBIfV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 03:30:46 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B340B91F3
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 00:29:55 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id b8so1132962pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Mar 2022 00:29:55 -0800 (PST)
+        Wed, 2 Mar 2022 03:35:21 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB246A0BE0;
+        Wed,  2 Mar 2022 00:34:38 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id i1so836868ila.7;
+        Wed, 02 Mar 2022 00:34:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4hzepAOQTsZTnVcr4QPZkWOiCoYklQmYHIbKFxu1/40=;
-        b=BHUW+N1Ur7UISy6INaVLWByZSyogvV+wzA1z7v+CiybCHBc+N8nc1LoUx9B/gbMwk8
-         HIxbxIEXNDbK6hfHZimmn14xUJYqq3yIVmG70INxE2KYfLl4KmUNNh9XfTB7LkU3YpoV
-         FG8rJke6cX1AZ2UNkxOr9wCCg9VWLMfZ5ewsd/xbWM2tDR4yezKnqBpsuxXvnOn7EZIa
-         cGtrTwXg+9wcFTsu2uis6l8DW1Civ6IoXbVOGDJpqxQ+17Wz2WPYDrgF6vrr7l0UtmwZ
-         3063ZCy+GqpkS/YiXnDcw0ssHDJXt9k86JVDTmf2n/tlC+Ntv50DXrHDr7skXOtprb2j
-         vqOg==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BO30jB7mXVgV0Gpsy/VhmBKi6MdrW6p/eZpi+7Kl5hA=;
+        b=pHnXFZaN7mOFIwtIE6+3giPnTuu9p6K/U8Tgf+XTa957bxUPj1APa719hsSQT1aJZU
+         Ux7RJyiu5lwmTMmS5dNny1lefo7YlbmfLZ+iUpb34ZMU5/Mc2fxi7hNi/OFWzrJcE2pB
+         BOvtlMpAf4HYypcU+8wrsd7Kppi2D8BUbCxXwyRGabwweGNn0WdvwzB9SY0lBr1Djf/X
+         OiMaXtJJxQ2t0g6cfsY+lA47HdU6EMNojT6W56YrYOaFWPxDQG/6Ct60/tRTQpFui8YV
+         JqDz7tIrRN4mb+cSjbeTsaQWWBQrEG2bf4KytnZtqJNSvi+dz6sq53TifCvcgXHPRRYo
+         EiTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4hzepAOQTsZTnVcr4QPZkWOiCoYklQmYHIbKFxu1/40=;
-        b=wMHwwzMVUtb9kTEz11lPlV/jDOh7AXoxsk9Eic0y4yvvmBQO7ApM+URTj1qJHF8Q9C
-         dM8Xk4Ja48Z2562jRXrMlNR96fjUvIKHVFZmCi/h/wv+zTZAXquU/7aMZw0+h5RZOAe4
-         Du/i4Uk15w9B0vnbrGEa0qyoqjVym7pbMKQM92RukX+nkKFFxaH3vkFdZ3kAWNOgI5K0
-         b+JHPMFNrCLgEj1EueXN92TCAZBMH+nNHAmWLesSs6uu0zos6upwhfDwlm5W9iGZh+5n
-         ZZAm1T2oF+z0MA+yTZGrej6ViCowvOmNwXROPdZgf0VDZgsR+Cxz18ZZvTT4gGJdpfc6
-         nKSQ==
-X-Gm-Message-State: AOAM531t2ZIupLUqJVFS/1b1kGKplenSJzgCaR84SW8/4yo+7Wcnd4Oc
-        UTvgwWnSd1mVqhLzAtfr3cq0pw==
-X-Google-Smtp-Source: ABdhPJyz4uqOwKQjoCqmWeCnPA8FTI71YHNESq0Oi6Zb6fkSHMg74TLKOucvxJxvZaZ9ZDbR40TJ5g==
-X-Received: by 2002:a17:90a:c901:b0:1be:ce4d:7cee with SMTP id v1-20020a17090ac90100b001bece4d7ceemr9400545pjt.213.1646209794788;
-        Wed, 02 Mar 2022 00:29:54 -0800 (PST)
-Received: from FVFYT0MHHV2J.bytedance.net ([61.120.150.70])
-        by smtp.gmail.com with ESMTPSA id a20-20020a056a000c9400b004f396b965a9sm20922228pfv.49.2022.03.02.00.29.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 00:29:54 -0800 (PST)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        apopple@nvidia.com, shy828301@gmail.com, rcampbell@nvidia.com,
-        hughd@google.com, xiyuyang19@fudan.edu.cn,
-        kirill.shutemov@linux.intel.com, zwisler@kernel.org,
-        hch@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        duanxiongchun@bytedance.com, smuchun@gmail.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v4 6/6] mm: remove range parameter from follow_invalidate_pte()
-Date:   Wed,  2 Mar 2022 16:27:18 +0800
-Message-Id: <20220302082718.32268-7-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.32.0 (Apple Git-132)
-In-Reply-To: <20220302082718.32268-1-songmuchun@bytedance.com>
-References: <20220302082718.32268-1-songmuchun@bytedance.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BO30jB7mXVgV0Gpsy/VhmBKi6MdrW6p/eZpi+7Kl5hA=;
+        b=BLI/iaz3K9JH6j1DtQodCQsPb9pVTN+5hdcWpPKwdA4hHlWMGuyw6ZDVyc6+JrXSeG
+         N22gLbM8evqpioo8llH0eCcLRe5jkBnqDIaMRUuPJbjHZxVIVx/SH4bWt/9xPHaLUOKh
+         GCqLalFDvic6GdvxjCeXancKt06yckaHrNQf3EoEtAFZiiaKqBBwJVHrthrExcSNe3Ap
+         HWcdVL00ztdpX2nbdeMEVUvsn83Yq/hDuUsCF+TLRw69YwDaPAByl5UjOVWvKdxnS7Q6
+         5BR8m8LMxePCva3AtM/xmWhleYvYMkKg8YdI0rSPYPcmxPZSyM15+tYRWwqiTjkv8V1Z
+         HubQ==
+X-Gm-Message-State: AOAM533/M01T69ndm82+Y7GKmqePJtww+4x64NhoqldafMeOxFGCrWHh
+        +0jbsX9WYyFP06xWM2Bnwu55fTP/bpJuI/fQ5k0=
+X-Google-Smtp-Source: ABdhPJwfnt8kEyXGyEkCaDVFsCCMASA12/FWOsuZ4Qm/qWNvzRmVxrI/k/bxv14UMZ9gSIxqGngh1Fr6kc/7JfQxGas=
+X-Received: by 2002:a05:6e02:16cf:b0:2c2:b29f:9399 with SMTP id
+ 15-20020a056e0216cf00b002c2b29f9399mr21094884ilx.24.1646210078231; Wed, 02
+ Mar 2022 00:34:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220301184221.371853-1-amir73il@gmail.com> <20220302065952.GE3927073@dread.disaster.area>
+ <CAOQ4uxgU7cYAO+KMd=Yb8Fo4AwScQ2J0eqkYn3xWjzBWKtUziQ@mail.gmail.com> <20220302082658.GF3927073@dread.disaster.area>
+In-Reply-To: <20220302082658.GF3927073@dread.disaster.area>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 2 Mar 2022 10:34:27 +0200
+Message-ID: <CAOQ4uxguQ8GE2U0QCKeFj8Bs7+u=8ULMWnUAP9K9YmAO4dFswQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Generic per-sb io stats
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The only user (DAX) of range parameter of follow_invalidate_pte()
-is gone, it safe to remove the range paramter and make it static
-to simlify the code.
+On Wed, Mar 2, 2022 at 10:27 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Wed, Mar 02, 2022 at 09:43:50AM +0200, Amir Goldstein wrote:
+> > On Wed, Mar 2, 2022 at 8:59 AM Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Tue, Mar 01, 2022 at 08:42:15PM +0200, Amir Goldstein wrote:
+> > > > Miklos,
+> > > >
+> > > > Following your feedback on v2 [1], I moved the iostats to per-sb.
+> > > >
+> > > > Thanks,
+> > > > Amir.
+> > > >
+> > > > [1] https://lore.kernel.org/linux-unionfs/20220228113910.1727819-1-amir73il@gmail.com/
+> > > >
+> > > > Changes since v2:
+> > > > - Change from per-mount to per-sb io stats (szeredi)
+> > > > - Avoid percpu loop when reading mountstats (dchinner)
+> > > >
+> > > > Changes since v1:
+> > > > - Opt-in for per-mount io stats for overlayfs and fuse
+> > >
+> > > Why make it optional only for specific filesystem types? Shouldn't
+> > > every superblock capture these stats and export them in exactly the
+> > > same place?
+> > >
+> >
+> > I am not sure what you are asking.
+> >
+> > Any filesystem can opt-in to get those generic io stats.
+>
+> Yes, but why even make it opt-in? Why not just set these up
+> unconditionally in alloc_super() for all filesystems? Either this is
+> useful information for userspace montioring and diagnostics, or it's
+> not useful at all. If it is useful, then all superblocks should
+> export this stuff rather than just some special subset of
+> filesystems where individual maintainers have noticed it and thought
+> "that might be useful".
+>
+> Just enable it for every superblock....
+>
+> > This is exactly the same as any filesystem can already opt-in for
+> > fs specific io stats using the s_op->show_stats() vfs op.
+> >
+> > All I did was to provide a generic implementation.
+> > The generic io stats are collected and displayed for all filesystems the
+> > same way.
+> >
+> > I only included patches for overlayfs and fuse to opt-in for generic io stats,
+> > because I think those stats should be reported unconditionally (to
+> > mount options)
+> > for fuse/overlayfs and I hope that Miklos agrees with me.
+>
+> Yup, and I'm asking you why it should be optional - no filesystem
+> ever sees this information - it's totally generic VFS level code
+> except for the structure allocation. What's the point of *not*
+> enabling it for every superblock unconditionally?
+>
+> > If there is wide consensus that all filesystems should have those stats
+> > unconditionally (to mount options), then I can post another patch to make
+> > the behavior not opt-in, but I have a feeling that this discussion
+>
+> That's exactly what I want you to do. We're already having this
+> discussion, so let's get it over and done with right now.
+>
+> > How would you prefer the io stats behavior for xfs (or any fs) to be?
+> > Unconditional to mount options?
+> > Opt-in with mount option? (suggest name please)
+> > Opt-in/out with mount options and default with Kconfig/sysfs tunable?
+> > Anything else?
+>
+> Unconditional, for all filesystems, so they all display the same
+> stats in exactly same place without any filesystem having to
+> implement a single line of code anywhere. A single kconfig option
+> like you already hav is just fine to turn it off for those that
+> don't want to use it.
+>
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- include/linux/mm.h |  3 ---
- mm/memory.c        | 23 +++--------------------
- 2 files changed, 3 insertions(+), 23 deletions(-)
+Very well then. I'll post this version with your Suggested-by ;-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c9bada4096ac..be7ec4c37ebe 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1871,9 +1871,6 @@ void free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
- 		unsigned long end, unsigned long floor, unsigned long ceiling);
- int
- copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
--int follow_invalidate_pte(struct mm_struct *mm, unsigned long address,
--			  struct mmu_notifier_range *range, pte_t **ptepp,
--			  pmd_t **pmdpp, spinlock_t **ptlp);
- int follow_pte(struct mm_struct *mm, unsigned long address,
- 	       pte_t **ptepp, spinlock_t **ptlp);
- int follow_pfn(struct vm_area_struct *vma, unsigned long address,
-diff --git a/mm/memory.c b/mm/memory.c
-index cc6968dc8e4e..278ab6d62b54 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4964,9 +4964,8 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
- }
- #endif /* __PAGETABLE_PMD_FOLDED */
- 
--int follow_invalidate_pte(struct mm_struct *mm, unsigned long address,
--			  struct mmu_notifier_range *range, pte_t **ptepp,
--			  pmd_t **pmdpp, spinlock_t **ptlp)
-+static int follow_invalidate_pte(struct mm_struct *mm, unsigned long address,
-+				 pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
- {
- 	pgd_t *pgd;
- 	p4d_t *p4d;
-@@ -4993,31 +4992,17 @@ int follow_invalidate_pte(struct mm_struct *mm, unsigned long address,
- 		if (!pmdpp)
- 			goto out;
- 
--		if (range) {
--			mmu_notifier_range_init(range, MMU_NOTIFY_CLEAR, 0,
--						NULL, mm, address & PMD_MASK,
--						(address & PMD_MASK) + PMD_SIZE);
--			mmu_notifier_invalidate_range_start(range);
--		}
- 		*ptlp = pmd_lock(mm, pmd);
- 		if (pmd_huge(*pmd)) {
- 			*pmdpp = pmd;
- 			return 0;
- 		}
- 		spin_unlock(*ptlp);
--		if (range)
--			mmu_notifier_invalidate_range_end(range);
- 	}
- 
- 	if (pmd_none(*pmd) || unlikely(pmd_bad(*pmd)))
- 		goto out;
- 
--	if (range) {
--		mmu_notifier_range_init(range, MMU_NOTIFY_CLEAR, 0, NULL, mm,
--					address & PAGE_MASK,
--					(address & PAGE_MASK) + PAGE_SIZE);
--		mmu_notifier_invalidate_range_start(range);
--	}
- 	ptep = pte_offset_map_lock(mm, pmd, address, ptlp);
- 	if (!pte_present(*ptep))
- 		goto unlock;
-@@ -5025,8 +5010,6 @@ int follow_invalidate_pte(struct mm_struct *mm, unsigned long address,
- 	return 0;
- unlock:
- 	pte_unmap_unlock(ptep, *ptlp);
--	if (range)
--		mmu_notifier_invalidate_range_end(range);
- out:
- 	return -EINVAL;
- }
-@@ -5055,7 +5038,7 @@ int follow_invalidate_pte(struct mm_struct *mm, unsigned long address,
- int follow_pte(struct mm_struct *mm, unsigned long address,
- 	       pte_t **ptepp, spinlock_t **ptlp)
- {
--	return follow_invalidate_pte(mm, address, NULL, ptepp, NULL, ptlp);
-+	return follow_invalidate_pte(mm, address, ptepp, NULL, ptlp);
- }
- EXPORT_SYMBOL_GPL(follow_pte);
- 
--- 
-2.11.0
-
+Thanks,
+Amir.
