@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F454CA76C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 15:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDBB34CA774
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 15:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242778AbiCBOI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 09:08:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45524 "EHLO
+        id S242772AbiCBOJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 09:09:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241670AbiCBOIs (ORCPT
+        with ESMTP id S242773AbiCBOI5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 09:08:48 -0500
+        Wed, 2 Mar 2022 09:08:57 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A0A2938BF9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 06:07:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80CBD3152F
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 06:07:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646230055;
+        s=mimecast20190719; t=1646230071;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=sUVtMW7d6l40UWSY4IvFwCkFg+1Oe4SVsKPpt57tUXM=;
-        b=Mx/iPEUbFdFjdfeUHFqHtvz0iyrLlinsbULP74F8pF2bLdJmVg7IPZorl3igoxHey0/WNx
-        KRhbaMV1nuxA/0MiJadC8oXI53UwdHH9y9knY0kuLnpQM01G/wPqXLzQsRzszHAMQ+eaV4
-        jBmeU1/JuOdtlPLmhq0JzVpjLlUnxjQ=
+        bh=DX7ey7N1KNpM5HlW1gbi3WHBo/tfb9AsWxgKsAa2/c4=;
+        b=LFNSU0ud65I7cAbC5nRvNoPfiBjPnvkiFvNYsNWul6jqcA0hoLiMU5lUEmdPPMjQNrD76G
+        kag3nYlWFivUDM6l+zlG21EvFse6GUYeBl9OMKUseKphTUG51F4YEYn1kRb+ERAq64HtDI
+        eBLxNB03f3RK3hPBXcDi+e6no8xjr2o=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-65-M5979wKvPU2Sx3YICIN4lw-1; Wed, 02 Mar 2022 09:07:32 -0500
-X-MC-Unique: M5979wKvPU2Sx3YICIN4lw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-201-np1-8M4hMl21yCWbSD2Xxw-1; Wed, 02 Mar 2022 09:07:46 -0500
+X-MC-Unique: np1-8M4hMl21yCWbSD2Xxw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9C4AF2D4;
-        Wed,  2 Mar 2022 14:07:30 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1CA20801AFE;
+        Wed,  2 Mar 2022 14:07:44 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BCC78359B;
-        Wed,  2 Mar 2022 14:07:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B1C8A797D3;
+        Wed,  2 Mar 2022 14:07:36 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 13/19] netfs: Add a function to consolidate beginning a read
+Subject: [PATCH 14/19] netfs: Split fs/netfs/read_helper.c
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
@@ -57,15 +57,15 @@ Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 02 Mar 2022 14:07:23 +0000
-Message-ID: <164623004355.3564931.7275693529042495641.stgit@warthog.procyon.org.uk>
+Date:   Wed, 02 Mar 2022 14:07:35 +0000
+Message-ID: <164623005586.3564931.6149556072728481767.stgit@warthog.procyon.org.uk>
 In-Reply-To: <164622970143.3564931.3656393397237724303.stgit@warthog.procyon.org.uk>
 References: <164622970143.3564931.3656393397237724303.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
@@ -77,311 +77,893 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a function to do the steps needed to begin a read request, allowing this
-code to be removed from several other functions and consolidated.
+Split fs/netfs/read_helper.c into two pieces, one to deal with buffered
+writes and one to deal with the I/O mechanism.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-cachefs@redhat.com
 ---
 
- fs/netfs/internal.h          |    5 -
- fs/netfs/objects.c           |    2 -
- fs/netfs/read_helper.c       |  152 +++++++++++++++++++++---------------------
- include/trace/events/netfs.h |    5 +
- 4 files changed, 81 insertions(+), 83 deletions(-)
+ fs/netfs/Makefile        |    1 
+ fs/netfs/buffered_read.c |  426 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/netfs/read_helper.c   |  416 ---------------------------------------------
+ 3 files changed, 427 insertions(+), 416 deletions(-)
+ create mode 100644 fs/netfs/buffered_read.c
 
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index 3970528955be..7d8e83deaf81 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -44,10 +44,7 @@ static inline void netfs_see_request(struct netfs_io_request *rreq,
-  */
- extern unsigned int netfs_debug;
+diff --git a/fs/netfs/Makefile b/fs/netfs/Makefile
+index 939fd00a1fc9..0466159b8222 100644
+--- a/fs/netfs/Makefile
++++ b/fs/netfs/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
  
--void netfs_rreq_work(struct work_struct *work);
--void netfs_rreq_assess(struct netfs_io_request *rreq, bool was_async);
--bool netfs_rreq_submit_slice(struct netfs_io_request *rreq,
--			     unsigned int *_debug_index);
-+int netfs_begin_read(struct netfs_io_request *rreq, bool sync);
+ netfs-y := \
++	buffered_read.o \
+ 	objects.o \
+ 	read_helper.o
  
- /*
-  * stats.c
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index c46d027c1692..8f99269c5344 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -32,7 +32,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- 		rreq->i_size	= i_size_read(inode);
- 		rreq->debug_id	= atomic_inc_return(&debug_ids);
- 		INIT_LIST_HEAD(&rreq->subrequests);
--		INIT_WORK(&rreq->work, netfs_rreq_work);
-+		INIT_WORK(&rreq->work, NULL);
- 		refcount_set(&rreq->ref, 1);
- 		__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
- 		if (ctx->ops->init_request)
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index e666f9cccc95..df73e276decd 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -418,7 +418,7 @@ static void netfs_rreq_is_still_valid(struct netfs_io_request *rreq)
-  * Note that we could be in an ordinary kernel thread, on a workqueue or in
-  * softirq context at this point.  We inherit a ref from the caller.
-  */
--void netfs_rreq_assess(struct netfs_io_request *rreq, bool was_async)
-+static void netfs_rreq_assess(struct netfs_io_request *rreq, bool was_async)
- {
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_assess);
- 
-@@ -443,7 +443,7 @@ void netfs_rreq_assess(struct netfs_io_request *rreq, bool was_async)
- 	netfs_rreq_completed(rreq, was_async);
- }
- 
--void netfs_rreq_work(struct work_struct *work)
-+static void netfs_rreq_work(struct work_struct *work)
- {
- 	struct netfs_io_request *rreq =
- 		container_of(work, struct netfs_io_request, work);
-@@ -632,8 +632,8 @@ netfs_rreq_prepare_read(struct netfs_io_request *rreq,
- /*
-  * Slice off a piece of a read request and submit an I/O request for it.
-  */
--bool netfs_rreq_submit_slice(struct netfs_io_request *rreq,
--			     unsigned int *_debug_index)
-+static bool netfs_rreq_submit_slice(struct netfs_io_request *rreq,
-+				    unsigned int *_debug_index)
- {
- 	struct netfs_io_subrequest *subreq;
- 	enum netfs_io_source source;
-@@ -688,6 +688,68 @@ bool netfs_rreq_submit_slice(struct netfs_io_request *rreq,
- 	return false;
- }
- 
-+/*
-+ * Begin the process of reading in a chunk of data, where that data may be
-+ * stitched together from multiple sources, including multiple servers and the
-+ * local cache.
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+new file mode 100644
+index 000000000000..343c0957ae27
+--- /dev/null
++++ b/fs/netfs/buffered_read.c
+@@ -0,0 +1,426 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Network filesystem high-level buffered read support.
++ *
++ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
 + */
-+int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
++
++#include <linux/export.h>
++#include <linux/task_io_accounting_ops.h>
++#include "internal.h"
++
++/*
++ * Unlock the folios in a read operation.  We need to set PG_fscache on any
++ * folios we're going to write back before we unlock them.
++ */
++void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
 +{
-+	unsigned int debug_index = 0;
-+	int ret;
++	struct netfs_io_subrequest *subreq;
++	struct folio *folio;
++	unsigned int iopos, account = 0;
++	pgoff_t start_page = rreq->start / PAGE_SIZE;
++	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
++	bool subreq_failed = false;
 +
-+	_enter("R=%x %llx-%llx",
-+	       rreq->debug_id, rreq->start, rreq->start + rreq->len - 1);
++	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
 +
-+	if (rreq->len == 0) {
-+		pr_err("Zero-sized read [R=%x]\n", rreq->debug_id);
-+		netfs_put_request(rreq, false, netfs_rreq_trace_put_zero_len);
-+		return -EIO;
++	if (test_bit(NETFS_RREQ_FAILED, &rreq->flags)) {
++		__clear_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags);
++		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
++			__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
++		}
 +	}
 +
-+	rreq->work.func = netfs_rreq_work;
-+
-+	if (sync)
-+		netfs_get_request(rreq, netfs_rreq_trace_get_hold);
-+
-+	/* Chop the read into slices according to what the cache and the netfs
-+	 * want and submit each one.
++	/* Walk through the pagecache and the I/O request lists simultaneously.
++	 * We may have a mixture of cached and uncached sections and we only
++	 * really want to write out the uncached sections.  This is slightly
++	 * complicated by the possibility that we might have huge pages with a
++	 * mixture inside.
 +	 */
-+	atomic_set(&rreq->nr_outstanding, 1);
-+	do {
-+		if (!netfs_rreq_submit_slice(rreq, &debug_index))
-+			break;
++	subreq = list_first_entry(&rreq->subrequests,
++				  struct netfs_io_subrequest, rreq_link);
++	iopos = 0;
++	subreq_failed = (subreq->error < 0);
 +
-+	} while (rreq->submitted < rreq->len);
++	trace_netfs_rreq(rreq, netfs_rreq_trace_unlock);
 +
-+	if (sync) {
-+		/* Keep nr_outstanding incremented so that the ref always belongs to
-+		 * us, and the service code isn't punted off to a random thread pool to
-+		 * process.
-+		 */
++	rcu_read_lock();
++	xas_for_each(&xas, folio, last_page) {
++		unsigned int pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
++		unsigned int pgend = pgpos + folio_size(folio);
++		bool pg_failed = false;
++
 +		for (;;) {
-+			wait_var_event(&rreq->nr_outstanding,
-+				       atomic_read(&rreq->nr_outstanding) == 1);
-+			netfs_rreq_assess(rreq, false);
-+			if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
++			if (!subreq) {
++				pg_failed = true;
 +				break;
-+			cond_resched();
++			}
++			if (test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags))
++				folio_start_fscache(folio);
++			pg_failed |= subreq_failed;
++			if (pgend < iopos + subreq->len)
++				break;
++
++			account += subreq->transferred;
++			iopos += subreq->len;
++			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
++				subreq = list_next_entry(subreq, rreq_link);
++				subreq_failed = (subreq->error < 0);
++			} else {
++				subreq = NULL;
++				subreq_failed = false;
++			}
++			if (pgend == iopos)
++				break;
 +		}
 +
-+		ret = rreq->error;
-+		if (ret == 0 && rreq->submitted < rreq->len) {
-+			trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
-+			ret = -EIO;
++		if (!pg_failed) {
++			flush_dcache_folio(folio);
++			folio_mark_uptodate(folio);
 +		}
-+		netfs_put_request(rreq, false, netfs_rreq_trace_put_hold);
-+	} else {
-+		/* If we decrement nr_outstanding to 0, the ref belongs to us. */
-+		if (atomic_dec_and_test(&rreq->nr_outstanding))
-+			netfs_rreq_assess(rreq, false);
++
++		if (!test_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags)) {
++			if (folio_index(folio) == rreq->no_unlock_folio &&
++			    test_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags))
++				_debug("no unlock");
++			else
++				folio_unlock(folio);
++		}
 +	}
-+	return ret;
++	rcu_read_unlock();
++
++	task_io_account_read(account);
++	if (rreq->netfs_ops->done)
++		rreq->netfs_ops->done(rreq);
 +}
 +
- static void netfs_cache_expand_readahead(struct netfs_io_request *rreq,
- 					 loff_t *_start, size_t *_len, loff_t i_size)
- {
-@@ -750,7 +812,6 @@ void netfs_readahead(struct readahead_control *ractl)
- {
- 	struct netfs_io_request *rreq;
- 	struct netfs_i_context *ctx = netfs_i_context(ractl->mapping->host);
--	unsigned int debug_index = 0;
- 	int ret;
- 
- 	_enter("%lx,%x", readahead_index(ractl), readahead_count(ractl));
-@@ -777,22 +838,13 @@ void netfs_readahead(struct readahead_control *ractl)
- 
- 	netfs_rreq_expand(rreq, ractl);
- 
--	atomic_set(&rreq->nr_outstanding, 1);
--	do {
--		if (!netfs_rreq_submit_slice(rreq, &debug_index))
--			break;
--
--	} while (rreq->submitted < rreq->len);
--
- 	/* Drop the refs on the folios here rather than in the cache or
- 	 * filesystem.  The locks will be dropped in netfs_rreq_unlock().
- 	 */
- 	while (readahead_folio(ractl))
- 		;
- 
--	/* If we decrement nr_outstanding to 0, the ref belongs to us. */
--	if (atomic_dec_and_test(&rreq->nr_outstanding))
--		netfs_rreq_assess(rreq, false);
++static void netfs_cache_expand_readahead(struct netfs_io_request *rreq,
++					 loff_t *_start, size_t *_len, loff_t i_size)
++{
++	struct netfs_cache_resources *cres = &rreq->cache_resources;
++
++	if (cres->ops && cres->ops->expand_readahead)
++		cres->ops->expand_readahead(cres, _start, _len, i_size);
++}
++
++static void netfs_rreq_expand(struct netfs_io_request *rreq,
++			      struct readahead_control *ractl)
++{
++	/* Give the cache a chance to change the request parameters.  The
++	 * resultant request must contain the original region.
++	 */
++	netfs_cache_expand_readahead(rreq, &rreq->start, &rreq->len, rreq->i_size);
++
++	/* Give the netfs a chance to change the request parameters.  The
++	 * resultant request must contain the original region.
++	 */
++	if (rreq->netfs_ops->expand_readahead)
++		rreq->netfs_ops->expand_readahead(rreq);
++
++	/* Expand the request if the cache wants it to start earlier.  Note
++	 * that the expansion may get further extended if the VM wishes to
++	 * insert THPs and the preferred start and/or end wind up in the middle
++	 * of THPs.
++	 *
++	 * If this is the case, however, the THP size should be an integer
++	 * multiple of the cache granule size, so we get a whole number of
++	 * granules to deal with.
++	 */
++	if (rreq->start  != readahead_pos(ractl) ||
++	    rreq->len != readahead_length(ractl)) {
++		readahead_expand(ractl, rreq->start, rreq->len);
++		rreq->start  = readahead_pos(ractl);
++		rreq->len = readahead_length(ractl);
++
++		trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
++				 netfs_read_trace_expanded);
++	}
++}
++
++/**
++ * netfs_readahead - Helper to manage a read request
++ * @ractl: The description of the readahead request
++ *
++ * Fulfil a readahead request by drawing data from the cache if possible, or
++ * the netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O
++ * requests from different sources will get munged together.  If necessary, the
++ * readahead window can be expanded in either direction to a more convenient
++ * alighment for RPC efficiency or to make storage in the cache feasible.
++ *
++ * The calling netfs must initialise a netfs context contiguous to the vfs
++ * inode before calling this.
++ *
++ * This is usable whether or not caching is enabled.
++ */
++void netfs_readahead(struct readahead_control *ractl)
++{
++	struct netfs_io_request *rreq;
++	struct netfs_i_context *ctx = netfs_i_context(ractl->mapping->host);
++	int ret;
++
++	_enter("%lx,%x", readahead_index(ractl), readahead_count(ractl));
++
++	if (readahead_count(ractl) == 0)
++		return;
++
++	rreq = netfs_alloc_request(ractl->mapping, ractl->file,
++				   readahead_pos(ractl),
++				   readahead_length(ractl),
++				   NETFS_READAHEAD);
++	if (!rreq)
++		return;
++
++	if (ctx->ops->begin_cache_operation) {
++		ret = ctx->ops->begin_cache_operation(rreq);
++		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
++			goto cleanup_free;
++	}
++
++	netfs_stat(&netfs_n_rh_readahead);
++	trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
++			 netfs_read_trace_readahead);
++
++	netfs_rreq_expand(rreq, ractl);
++
++	/* Drop the refs on the folios here rather than in the cache or
++	 * filesystem.  The locks will be dropped in netfs_rreq_unlock().
++	 */
++	while (readahead_folio(ractl))
++		;
++
 +	netfs_begin_read(rreq, false);
- 	return;
- 
- cleanup_free:
-@@ -821,8 +873,7 @@ int netfs_readpage(struct file *file, struct page *subpage)
- 	struct address_space *mapping = folio_file_mapping(folio);
- 	struct netfs_io_request *rreq;
- 	struct netfs_i_context *ctx = netfs_i_context(mapping->host);
--	unsigned int debug_index = 0;
--	int ret;
++	return;
++
++cleanup_free:
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
++	return;
++}
++EXPORT_SYMBOL(netfs_readahead);
++
++/**
++ * netfs_readpage - Helper to manage a readpage request
++ * @file: The file to read from
++ * @subpage: A subpage of the folio to read
++ *
++ * Fulfil a readpage request by drawing data from the cache if possible, or the
++ * netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O requests
++ * from different sources will get munged together.
++ *
++ * The calling netfs must initialise a netfs context contiguous to the vfs
++ * inode before calling this.
++ *
++ * This is usable whether or not caching is enabled.
++ */
++int netfs_readpage(struct file *file, struct page *subpage)
++{
++	struct folio *folio = page_folio(subpage);
++	struct address_space *mapping = folio_file_mapping(folio);
++	struct netfs_io_request *rreq;
++	struct netfs_i_context *ctx = netfs_i_context(mapping->host);
 +	int ret = -ENOMEM;
- 
- 	_enter("%lx", folio_index(folio));
- 
-@@ -833,45 +884,19 @@ int netfs_readpage(struct file *file, struct page *subpage)
- 
- 	if (ctx->ops->begin_cache_operation) {
- 		ret = ctx->ops->begin_cache_operation(rreq);
--		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS) {
--			folio_unlock(folio);
--			goto out;
--		}
++
++	_enter("%lx", folio_index(folio));
++
++	rreq = netfs_alloc_request(mapping, file, folio_file_pos(folio),
++				   folio_size(folio), NETFS_READPAGE);
++	if (!rreq)
++		goto nomem;
++
++	if (ctx->ops->begin_cache_operation) {
++		ret = ctx->ops->begin_cache_operation(rreq);
 +		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
 +			goto discard;
- 	}
- 
- 	netfs_stat(&netfs_n_rh_readpage);
- 	trace_netfs_read(rreq, rreq->start, rreq->len, netfs_read_trace_readpage);
++	}
++
++	netfs_stat(&netfs_n_rh_readpage);
++	trace_netfs_read(rreq, rreq->start, rreq->len, netfs_read_trace_readpage);
 +	return netfs_begin_read(rreq, true);
- 
--	netfs_get_request(rreq, netfs_rreq_trace_get_hold);
--
--	atomic_set(&rreq->nr_outstanding, 1);
--	do {
--		if (!netfs_rreq_submit_slice(rreq, &debug_index))
--			break;
--
--	} while (rreq->submitted < rreq->len);
--
--	/* Keep nr_outstanding incremented so that the ref always belongs to us, and
--	 * the service code isn't punted off to a random thread pool to
--	 * process.
--	 */
--	do {
--		wait_var_event(&rreq->nr_outstanding,
--			       atomic_read(&rreq->nr_outstanding) == 1);
--		netfs_rreq_assess(rreq, false);
--	} while (test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags));
--
--	ret = rreq->error;
--	if (ret == 0 && rreq->submitted < rreq->len) {
--		trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_readpage);
--		ret = -EIO;
--	}
--out:
--	netfs_put_request(rreq, false, netfs_rreq_trace_put_hold);
--	return ret;
++
 +discard:
 +	netfs_put_request(rreq, false, netfs_rreq_trace_put_discard);
- nomem:
- 	folio_unlock(folio);
--	return -ENOMEM;
++nomem:
++	folio_unlock(folio);
 +	return ret;
- }
- EXPORT_SYMBOL(netfs_readpage);
- 
-@@ -963,7 +988,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
- 	struct netfs_io_request *rreq;
- 	struct netfs_i_context *ctx = netfs_i_context(file_inode(file ));
- 	struct folio *folio;
--	unsigned int debug_index = 0, fgp_flags;
++}
++EXPORT_SYMBOL(netfs_readpage);
++
++/*
++ * Prepare a folio for writing without reading first
++ * @folio: The folio being prepared
++ * @pos: starting position for the write
++ * @len: length of write
++ * @always_fill: T if the folio should always be completely filled/cleared
++ *
++ * In some cases, write_begin doesn't need to read at all:
++ * - full folio write
++ * - write that lies in a folio that is completely beyond EOF
++ * - write that covers the folio from start to EOF or beyond it
++ *
++ * If any of these criteria are met, then zero out the unwritten parts
++ * of the folio and return true. Otherwise, return false.
++ */
++static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
++				 bool always_fill)
++{
++	struct inode *inode = folio_inode(folio);
++	loff_t i_size = i_size_read(inode);
++	size_t offset = offset_in_folio(folio, pos);
++	size_t plen = folio_size(folio);
++
++	if (unlikely(always_fill)) {
++		if (pos - offset + len <= i_size)
++			return false; /* Page entirely before EOF */
++		zero_user_segment(&folio->page, 0, plen);
++		folio_mark_uptodate(folio);
++		return true;
++	}
++
++	/* Full folio write */
++	if (offset == 0 && len >= plen)
++		return true;
++
++	/* Page entirely beyond the end of the file */
++	if (pos - offset >= i_size)
++		goto zero_out;
++
++	/* Write that covers from the start of the folio to EOF or beyond */
++	if (offset == 0 && (pos + len) >= i_size)
++		goto zero_out;
++
++	return false;
++zero_out:
++	zero_user_segments(&folio->page, 0, offset, offset + len, len);
++	return true;
++}
++
++/**
++ * netfs_write_begin - Helper to prepare for writing
++ * @file: The file to read from
++ * @mapping: The mapping to read from
++ * @pos: File position at which the write will begin
++ * @len: The length of the write (may extend beyond the end of the folio chosen)
++ * @aop_flags: AOP_* flags
++ * @_folio: Where to put the resultant folio
++ * @_fsdata: Place for the netfs to store a cookie
++ *
++ * Pre-read data for a write-begin request by drawing data from the cache if
++ * possible, or the netfs if not.  Space beyond the EOF is zero-filled.
++ * Multiple I/O requests from different sources will get munged together.  If
++ * necessary, the readahead window can be expanded in either direction to a
++ * more convenient alighment for RPC efficiency or to make storage in the cache
++ * feasible.
++ *
++ * The calling netfs must provide a table of operations, only one of which,
++ * issue_op, is mandatory.
++ *
++ * The check_write_begin() operation can be provided to check for and flush
++ * conflicting writes once the folio is grabbed and locked.  It is passed a
++ * pointer to the fsdata cookie that gets returned to the VM to be passed to
++ * write_end.  It is permitted to sleep.  It should return 0 if the request
++ * should go ahead; unlock the folio and return -EAGAIN to cause the folio to
++ * be regot; or return an error.
++ *
++ * The calling netfs must initialise a netfs context contiguous to the vfs
++ * inode before calling this.
++ *
++ * This is usable whether or not caching is enabled.
++ */
++int netfs_write_begin(struct file *file, struct address_space *mapping,
++		      loff_t pos, unsigned int len, unsigned int aop_flags,
++		      struct folio **_folio, void **_fsdata)
++{
++	struct netfs_io_request *rreq;
++	struct netfs_i_context *ctx = netfs_i_context(file_inode(file ));
++	struct folio *folio;
 +	unsigned int fgp_flags;
- 	pgoff_t index = pos >> PAGE_SHIFT;
- 	int ret;
- 
-@@ -1033,32 +1058,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
- 	while (readahead_folio(&ractl))
- 		;
- 
--	atomic_set(&rreq->nr_outstanding, 1);
--	do {
--		if (!netfs_rreq_submit_slice(rreq, &debug_index))
--			break;
--
--	} while (rreq->submitted < rreq->len);
--
--	/* Keep nr_outstanding incremented so that the ref always belongs to
--	 * us, and the service code isn't punted off to a random thread pool to
--	 * process.
--	 */
--	for (;;) {
--		wait_var_event(&rreq->nr_outstanding,
--			       atomic_read(&rreq->nr_outstanding) == 1);
--		netfs_rreq_assess(rreq, false);
--		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
--			break;
--		cond_resched();
--	}
--
--	ret = rreq->error;
--	if (ret == 0 && rreq->submitted < rreq->len) {
--		trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_write_begin);
--		ret = -EIO;
--	}
--	netfs_put_request(rreq, false, netfs_rreq_trace_put_hold);
++	pgoff_t index = pos >> PAGE_SHIFT;
++	int ret;
++
++	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
++
++retry:
++	fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
++	if (aop_flags & AOP_FLAG_NOFS)
++		fgp_flags |= FGP_NOFS;
++	folio = __filemap_get_folio(mapping, index, fgp_flags,
++				    mapping_gfp_mask(mapping));
++	if (!folio)
++		return -ENOMEM;
++
++	if (ctx->ops->check_write_begin) {
++		/* Allow the netfs (eg. ceph) to flush conflicts. */
++		ret = ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
++		if (ret < 0) {
++			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
++			if (ret == -EAGAIN)
++				goto retry;
++			goto error;
++		}
++	}
++
++	if (folio_test_uptodate(folio))
++		goto have_folio;
++
++	/* If the page is beyond the EOF, we want to clear it - unless it's
++	 * within the cache granule containing the EOF, in which case we need
++	 * to preload the granule.
++	 */
++	if (!netfs_is_cache_enabled(ctx) &&
++	    netfs_skip_folio_read(folio, pos, len, false)) {
++		netfs_stat(&netfs_n_rh_write_zskip);
++		goto have_folio_no_wait;
++	}
++
++	ret = -ENOMEM;
++	rreq = netfs_alloc_request(mapping, file, folio_file_pos(folio),
++				   folio_size(folio), NETFS_READ_FOR_WRITE);
++	if (!rreq)
++		goto error;
++	rreq->start		= folio_file_pos(folio);
++	rreq->len		= folio_size(folio);
++	rreq->no_unlock_folio	= folio_index(folio);
++	__set_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags);
++
++	if (ctx->ops->begin_cache_operation) {
++		ret = ctx->ops->begin_cache_operation(rreq);
++		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
++			goto error_put;
++	}
++
++	netfs_stat(&netfs_n_rh_write_begin);
++	trace_netfs_read(rreq, pos, len, netfs_read_trace_write_begin);
++
++	/* Expand the request to meet caching requirements and download
++	 * preferences.
++	 */
++	ractl._nr_pages = folio_nr_pages(folio);
++	netfs_rreq_expand(rreq, &ractl);
++	netfs_get_request(rreq, netfs_rreq_trace_get_hold);
++
++	/* We hold the folio locks, so we can drop the references */
++	folio_get(folio);
++	while (readahead_folio(&ractl))
++		;
++
 +	ret = netfs_begin_read(rreq, true);
- 	if (ret < 0)
- 		goto error;
++	if (ret < 0)
++		goto error;
++
++have_folio:
++	ret = folio_wait_fscache_killable(folio);
++	if (ret < 0)
++		goto error;
++have_folio_no_wait:
++	*_folio = folio;
++	_leave(" = 0");
++	return 0;
++
++error_put:
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
++error:
++	folio_unlock(folio);
++	folio_put(folio);
++	_leave(" = %d", ret);
++	return ret;
++}
++EXPORT_SYMBOL(netfs_write_begin);
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index df73e276decd..78843820d9f1 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -246,91 +246,6 @@ static void netfs_rreq_write_to_cache(struct netfs_io_request *rreq)
+ 		BUG();
+ }
  
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 685b07573394..55501d044bbc 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -56,17 +56,18 @@
- 	EM(netfs_fail_check_write_begin,	"check-write-begin")	\
- 	EM(netfs_fail_copy_to_cache,		"copy-to-cache")	\
- 	EM(netfs_fail_read,			"read")			\
--	EM(netfs_fail_short_readpage,		"short-readpage")	\
--	EM(netfs_fail_short_write_begin,	"short-write-begin")	\
-+	EM(netfs_fail_short_read,		"short-read")		\
- 	E_(netfs_fail_prepare_write,		"prep-write")
- 
- #define netfs_rreq_ref_traces					\
- 	EM(netfs_rreq_trace_get_hold,		"GET HOLD   ")	\
- 	EM(netfs_rreq_trace_get_subreq,		"GET SUBREQ ")	\
- 	EM(netfs_rreq_trace_put_complete,	"PUT COMPLT ")	\
-+	EM(netfs_rreq_trace_put_discard,	"PUT DISCARD")	\
- 	EM(netfs_rreq_trace_put_failed,		"PUT FAILED ")	\
- 	EM(netfs_rreq_trace_put_hold,		"PUT HOLD   ")	\
- 	EM(netfs_rreq_trace_put_subreq,		"PUT SUBREQ ")	\
-+	EM(netfs_rreq_trace_put_zero_len,	"PUT ZEROLEN")	\
- 	E_(netfs_rreq_trace_new,		"NEW        ")
- 
- #define netfs_sreq_ref_traces					\
+-/*
+- * Unlock the folios in a read operation.  We need to set PG_fscache on any
+- * folios we're going to write back before we unlock them.
+- */
+-void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+-{
+-	struct netfs_io_subrequest *subreq;
+-	struct folio *folio;
+-	unsigned int iopos, account = 0;
+-	pgoff_t start_page = rreq->start / PAGE_SIZE;
+-	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
+-	bool subreq_failed = false;
+-
+-	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
+-
+-	if (test_bit(NETFS_RREQ_FAILED, &rreq->flags)) {
+-		__clear_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags);
+-		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+-			__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
+-		}
+-	}
+-
+-	/* Walk through the pagecache and the I/O request lists simultaneously.
+-	 * We may have a mixture of cached and uncached sections and we only
+-	 * really want to write out the uncached sections.  This is slightly
+-	 * complicated by the possibility that we might have huge pages with a
+-	 * mixture inside.
+-	 */
+-	subreq = list_first_entry(&rreq->subrequests,
+-				  struct netfs_io_subrequest, rreq_link);
+-	iopos = 0;
+-	subreq_failed = (subreq->error < 0);
+-
+-	trace_netfs_rreq(rreq, netfs_rreq_trace_unlock);
+-
+-	rcu_read_lock();
+-	xas_for_each(&xas, folio, last_page) {
+-		unsigned int pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
+-		unsigned int pgend = pgpos + folio_size(folio);
+-		bool pg_failed = false;
+-
+-		for (;;) {
+-			if (!subreq) {
+-				pg_failed = true;
+-				break;
+-			}
+-			if (test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags))
+-				folio_start_fscache(folio);
+-			pg_failed |= subreq_failed;
+-			if (pgend < iopos + subreq->len)
+-				break;
+-
+-			account += subreq->transferred;
+-			iopos += subreq->len;
+-			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
+-				subreq = list_next_entry(subreq, rreq_link);
+-				subreq_failed = (subreq->error < 0);
+-			} else {
+-				subreq = NULL;
+-				subreq_failed = false;
+-			}
+-			if (pgend == iopos)
+-				break;
+-		}
+-
+-		if (!pg_failed) {
+-			flush_dcache_folio(folio);
+-			folio_mark_uptodate(folio);
+-		}
+-
+-		if (!test_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags)) {
+-			if (folio_index(folio) == rreq->no_unlock_folio &&
+-			    test_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags))
+-				_debug("no unlock");
+-			else
+-				folio_unlock(folio);
+-		}
+-	}
+-	rcu_read_unlock();
+-
+-	task_io_account_read(account);
+-	if (rreq->netfs_ops->done)
+-		rreq->netfs_ops->done(rreq);
+-}
+-
+ /*
+  * Handle a short read.
+  */
+@@ -749,334 +664,3 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
+ 	}
+ 	return ret;
+ }
+-
+-static void netfs_cache_expand_readahead(struct netfs_io_request *rreq,
+-					 loff_t *_start, size_t *_len, loff_t i_size)
+-{
+-	struct netfs_cache_resources *cres = &rreq->cache_resources;
+-
+-	if (cres->ops && cres->ops->expand_readahead)
+-		cres->ops->expand_readahead(cres, _start, _len, i_size);
+-}
+-
+-static void netfs_rreq_expand(struct netfs_io_request *rreq,
+-			      struct readahead_control *ractl)
+-{
+-	/* Give the cache a chance to change the request parameters.  The
+-	 * resultant request must contain the original region.
+-	 */
+-	netfs_cache_expand_readahead(rreq, &rreq->start, &rreq->len, rreq->i_size);
+-
+-	/* Give the netfs a chance to change the request parameters.  The
+-	 * resultant request must contain the original region.
+-	 */
+-	if (rreq->netfs_ops->expand_readahead)
+-		rreq->netfs_ops->expand_readahead(rreq);
+-
+-	/* Expand the request if the cache wants it to start earlier.  Note
+-	 * that the expansion may get further extended if the VM wishes to
+-	 * insert THPs and the preferred start and/or end wind up in the middle
+-	 * of THPs.
+-	 *
+-	 * If this is the case, however, the THP size should be an integer
+-	 * multiple of the cache granule size, so we get a whole number of
+-	 * granules to deal with.
+-	 */
+-	if (rreq->start  != readahead_pos(ractl) ||
+-	    rreq->len != readahead_length(ractl)) {
+-		readahead_expand(ractl, rreq->start, rreq->len);
+-		rreq->start  = readahead_pos(ractl);
+-		rreq->len = readahead_length(ractl);
+-
+-		trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
+-				 netfs_read_trace_expanded);
+-	}
+-}
+-
+-/**
+- * netfs_readahead - Helper to manage a read request
+- * @ractl: The description of the readahead request
+- *
+- * Fulfil a readahead request by drawing data from the cache if possible, or
+- * the netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O
+- * requests from different sources will get munged together.  If necessary, the
+- * readahead window can be expanded in either direction to a more convenient
+- * alighment for RPC efficiency or to make storage in the cache feasible.
+- *
+- * The calling netfs must initialise a netfs context contiguous to the vfs
+- * inode before calling this.
+- *
+- * This is usable whether or not caching is enabled.
+- */
+-void netfs_readahead(struct readahead_control *ractl)
+-{
+-	struct netfs_io_request *rreq;
+-	struct netfs_i_context *ctx = netfs_i_context(ractl->mapping->host);
+-	int ret;
+-
+-	_enter("%lx,%x", readahead_index(ractl), readahead_count(ractl));
+-
+-	if (readahead_count(ractl) == 0)
+-		return;
+-
+-	rreq = netfs_alloc_request(ractl->mapping, ractl->file,
+-				   readahead_pos(ractl),
+-				   readahead_length(ractl),
+-				   NETFS_READAHEAD);
+-	if (!rreq)
+-		return;
+-
+-	if (ctx->ops->begin_cache_operation) {
+-		ret = ctx->ops->begin_cache_operation(rreq);
+-		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+-			goto cleanup_free;
+-	}
+-
+-	netfs_stat(&netfs_n_rh_readahead);
+-	trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
+-			 netfs_read_trace_readahead);
+-
+-	netfs_rreq_expand(rreq, ractl);
+-
+-	/* Drop the refs on the folios here rather than in the cache or
+-	 * filesystem.  The locks will be dropped in netfs_rreq_unlock().
+-	 */
+-	while (readahead_folio(ractl))
+-		;
+-
+-	netfs_begin_read(rreq, false);
+-	return;
+-
+-cleanup_free:
+-	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+-	return;
+-}
+-EXPORT_SYMBOL(netfs_readahead);
+-
+-/**
+- * netfs_readpage - Helper to manage a readpage request
+- * @file: The file to read from
+- * @subpage: A subpage of the folio to read
+- *
+- * Fulfil a readpage request by drawing data from the cache if possible, or the
+- * netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O requests
+- * from different sources will get munged together.
+- *
+- * The calling netfs must initialise a netfs context contiguous to the vfs
+- * inode before calling this.
+- *
+- * This is usable whether or not caching is enabled.
+- */
+-int netfs_readpage(struct file *file, struct page *subpage)
+-{
+-	struct folio *folio = page_folio(subpage);
+-	struct address_space *mapping = folio_file_mapping(folio);
+-	struct netfs_io_request *rreq;
+-	struct netfs_i_context *ctx = netfs_i_context(mapping->host);
+-	int ret = -ENOMEM;
+-
+-	_enter("%lx", folio_index(folio));
+-
+-	rreq = netfs_alloc_request(mapping, file, folio_file_pos(folio),
+-				   folio_size(folio), NETFS_READPAGE);
+-	if (!rreq)
+-		goto nomem;
+-
+-	if (ctx->ops->begin_cache_operation) {
+-		ret = ctx->ops->begin_cache_operation(rreq);
+-		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+-			goto discard;
+-	}
+-
+-	netfs_stat(&netfs_n_rh_readpage);
+-	trace_netfs_read(rreq, rreq->start, rreq->len, netfs_read_trace_readpage);
+-	return netfs_begin_read(rreq, true);
+-
+-discard:
+-	netfs_put_request(rreq, false, netfs_rreq_trace_put_discard);
+-nomem:
+-	folio_unlock(folio);
+-	return ret;
+-}
+-EXPORT_SYMBOL(netfs_readpage);
+-
+-/*
+- * Prepare a folio for writing without reading first
+- * @folio: The folio being prepared
+- * @pos: starting position for the write
+- * @len: length of write
+- * @always_fill: T if the folio should always be completely filled/cleared
+- *
+- * In some cases, write_begin doesn't need to read at all:
+- * - full folio write
+- * - write that lies in a folio that is completely beyond EOF
+- * - write that covers the folio from start to EOF or beyond it
+- *
+- * If any of these criteria are met, then zero out the unwritten parts
+- * of the folio and return true. Otherwise, return false.
+- */
+-static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
+-				 bool always_fill)
+-{
+-	struct inode *inode = folio_inode(folio);
+-	loff_t i_size = i_size_read(inode);
+-	size_t offset = offset_in_folio(folio, pos);
+-	size_t plen = folio_size(folio);
+-
+-	if (unlikely(always_fill)) {
+-		if (pos - offset + len <= i_size)
+-			return false; /* Page entirely before EOF */
+-		zero_user_segment(&folio->page, 0, plen);
+-		folio_mark_uptodate(folio);
+-		return true;
+-	}
+-
+-	/* Full folio write */
+-	if (offset == 0 && len >= plen)
+-		return true;
+-
+-	/* Page entirely beyond the end of the file */
+-	if (pos - offset >= i_size)
+-		goto zero_out;
+-
+-	/* Write that covers from the start of the folio to EOF or beyond */
+-	if (offset == 0 && (pos + len) >= i_size)
+-		goto zero_out;
+-
+-	return false;
+-zero_out:
+-	zero_user_segments(&folio->page, 0, offset, offset + len, len);
+-	return true;
+-}
+-
+-/**
+- * netfs_write_begin - Helper to prepare for writing
+- * @file: The file to read from
+- * @mapping: The mapping to read from
+- * @pos: File position at which the write will begin
+- * @len: The length of the write (may extend beyond the end of the folio chosen)
+- * @aop_flags: AOP_* flags
+- * @_folio: Where to put the resultant folio
+- * @_fsdata: Place for the netfs to store a cookie
+- *
+- * Pre-read data for a write-begin request by drawing data from the cache if
+- * possible, or the netfs if not.  Space beyond the EOF is zero-filled.
+- * Multiple I/O requests from different sources will get munged together.  If
+- * necessary, the readahead window can be expanded in either direction to a
+- * more convenient alighment for RPC efficiency or to make storage in the cache
+- * feasible.
+- *
+- * The calling netfs must provide a table of operations, only one of which,
+- * issue_op, is mandatory.
+- *
+- * The check_write_begin() operation can be provided to check for and flush
+- * conflicting writes once the folio is grabbed and locked.  It is passed a
+- * pointer to the fsdata cookie that gets returned to the VM to be passed to
+- * write_end.  It is permitted to sleep.  It should return 0 if the request
+- * should go ahead; unlock the folio and return -EAGAIN to cause the folio to
+- * be regot; or return an error.
+- *
+- * The calling netfs must initialise a netfs context contiguous to the vfs
+- * inode before calling this.
+- *
+- * This is usable whether or not caching is enabled.
+- */
+-int netfs_write_begin(struct file *file, struct address_space *mapping,
+-		      loff_t pos, unsigned int len, unsigned int aop_flags,
+-		      struct folio **_folio, void **_fsdata)
+-{
+-	struct netfs_io_request *rreq;
+-	struct netfs_i_context *ctx = netfs_i_context(file_inode(file ));
+-	struct folio *folio;
+-	unsigned int fgp_flags;
+-	pgoff_t index = pos >> PAGE_SHIFT;
+-	int ret;
+-
+-	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
+-
+-retry:
+-	fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
+-	if (aop_flags & AOP_FLAG_NOFS)
+-		fgp_flags |= FGP_NOFS;
+-	folio = __filemap_get_folio(mapping, index, fgp_flags,
+-				    mapping_gfp_mask(mapping));
+-	if (!folio)
+-		return -ENOMEM;
+-
+-	if (ctx->ops->check_write_begin) {
+-		/* Allow the netfs (eg. ceph) to flush conflicts. */
+-		ret = ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
+-		if (ret < 0) {
+-			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+-			if (ret == -EAGAIN)
+-				goto retry;
+-			goto error;
+-		}
+-	}
+-
+-	if (folio_test_uptodate(folio))
+-		goto have_folio;
+-
+-	/* If the page is beyond the EOF, we want to clear it - unless it's
+-	 * within the cache granule containing the EOF, in which case we need
+-	 * to preload the granule.
+-	 */
+-	if (!netfs_is_cache_enabled(ctx) &&
+-	    netfs_skip_folio_read(folio, pos, len, false)) {
+-		netfs_stat(&netfs_n_rh_write_zskip);
+-		goto have_folio_no_wait;
+-	}
+-
+-	ret = -ENOMEM;
+-	rreq = netfs_alloc_request(mapping, file, folio_file_pos(folio),
+-				   folio_size(folio), NETFS_READ_FOR_WRITE);
+-	if (!rreq)
+-		goto error;
+-	rreq->start		= folio_file_pos(folio);
+-	rreq->len		= folio_size(folio);
+-	rreq->no_unlock_folio	= folio_index(folio);
+-	__set_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags);
+-
+-	if (ctx->ops->begin_cache_operation) {
+-		ret = ctx->ops->begin_cache_operation(rreq);
+-		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+-			goto error_put;
+-	}
+-
+-	netfs_stat(&netfs_n_rh_write_begin);
+-	trace_netfs_read(rreq, pos, len, netfs_read_trace_write_begin);
+-
+-	/* Expand the request to meet caching requirements and download
+-	 * preferences.
+-	 */
+-	ractl._nr_pages = folio_nr_pages(folio);
+-	netfs_rreq_expand(rreq, &ractl);
+-	netfs_get_request(rreq, netfs_rreq_trace_get_hold);
+-
+-	/* We hold the folio locks, so we can drop the references */
+-	folio_get(folio);
+-	while (readahead_folio(&ractl))
+-		;
+-
+-	ret = netfs_begin_read(rreq, true);
+-	if (ret < 0)
+-		goto error;
+-
+-have_folio:
+-	ret = folio_wait_fscache_killable(folio);
+-	if (ret < 0)
+-		goto error;
+-have_folio_no_wait:
+-	*_folio = folio;
+-	_leave(" = 0");
+-	return 0;
+-
+-error_put:
+-	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+-error:
+-	folio_unlock(folio);
+-	folio_put(folio);
+-	_leave(" = %d", ret);
+-	return ret;
+-}
+-EXPORT_SYMBOL(netfs_write_begin);
 
 
