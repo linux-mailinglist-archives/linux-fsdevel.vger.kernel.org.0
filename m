@@ -2,121 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 760484CA09A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 10:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 165074CA0C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 10:29:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240430AbiCBJZB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 04:25:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55336 "EHLO
+        id S240497AbiCBJaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 04:30:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238686AbiCBJZA (ORCPT
+        with ESMTP id S240423AbiCBJaW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 04:25:00 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA48F3FDBB;
-        Wed,  2 Mar 2022 01:24:17 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 696FD1F39D;
-        Wed,  2 Mar 2022 09:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1646213056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=clM0yYlLqEX7Y5ui9U1ErugOMUrW/ceVhGC6xR2tAew=;
-        b=GxV9t9jA8UzFp10mgfTYqscDn3mqAyjQkUDkNOZ6WudDgkD7fZ24C2xIm1J1lwjPWv5Hqx
-        KAwG4h+6/IKc3x4mcMJTcacF5wckqSBifZjASvkwxdtNedohTlXsBSH6VACa8L07DZFfwg
-        JNMv0pJ3iN3bsv52RjAy+hn8LSMzPpg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1646213056;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=clM0yYlLqEX7Y5ui9U1ErugOMUrW/ceVhGC6xR2tAew=;
-        b=//kv8L4NT9j55yEeAww5drvSB7x88AZTHCxd6ugQ9HVtKzCBWy2rLFVIP1Y5dDzFAPITnN
-        yxItsAQPEssSgTCg==
-Received: from quack3.suse.cz (unknown [10.100.200.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 48383A3B87;
-        Wed,  2 Mar 2022 09:24:16 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id EBD45A0608; Wed,  2 Mar 2022 10:24:15 +0100 (CET)
-Date:   Wed, 2 Mar 2022 10:24:15 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Jan Kara <jack@suse.cz>, wuchi zero <wuchi.zero@gmail.com>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        tj <tj@kernel.org>, mszeredi <mszeredi@redhat.com>,
-        sedat dilek <sedat.dilek@gmail.com>, axboe <axboe@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Different writeback timing since v5.14
-Message-ID: <20220302092415.4sikhzup7sorhxgy@quack3.lan>
-References: <2104629126.100059.1646129517209.JavaMail.zimbra@nod.at>
- <20220301103218.ulbmakdy4gbw2fso@quack3.lan>
- <719960584.100772.1646147154879.JavaMail.zimbra@nod.at>
+        Wed, 2 Mar 2022 04:30:22 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DB9B8222
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 01:29:36 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id r20so1407169ljj.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Mar 2022 01:29:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=XH8CYV/Z50iBLZ27uSo3DlVY0KhJ8ZO+RiecWTcYel0=;
+        b=IQg4uBejV+wOE9gbvRPz3nvi4LkiiVw4YSIjC8NPteocLXX0uLpiZyGXJ60leACu72
+         E2mMgbaj2BDeYnhoOw0DKPRcT2bjIlB4yRTWQZ65OcYRTHhlWzgeq8LyFprIEpiij6N8
+         YNaymndxJaFKphqyYHlKdyPolm4uaJOX+WJuI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=XH8CYV/Z50iBLZ27uSo3DlVY0KhJ8ZO+RiecWTcYel0=;
+        b=108ivFpB/1wXmdkfT1MBHBYoXUW221/80dW0FjxOQ4g963yC1BLfAHU16reeNJG5cc
+         V9jzbAF2ETPlGN1Z3M9r4ep3PiqLAAoc227Dt1jcuTNjubDq+j439Ty050TWK/m48cvA
+         gm39VB7ez8bYf459wpscigBJE+D5XhL4Xr8y84nXeTWCIN/2cPz7MwRr0tobei5TCyuO
+         h0cnUMqiskpKxAIeSnvj/H9+w41or3+9HJaXic5QC8206r7PG9iqAtk4A0nZqCzDjWHR
+         bGqd77eVguYbueejNXllvXK7mlAvtIGXVi+rdCxpOzMSeKCuuOdz+x387rzEQDPi8I79
+         ESdg==
+X-Gm-Message-State: AOAM533sna0g2qnJnjuJtu5gt/WWd08QQdx9aV1OIDLepAkdd8vSejjk
+        WUCc79eJffUiSNmrI0pNIpd4Aw==
+X-Google-Smtp-Source: ABdhPJxPRWTwhfDKGEWi/HTZUmtnN6xoKL1T2KNwEAF9KgB2sMMXSt6lke7BfBVtPRIEaNMyntkyzw==
+X-Received: by 2002:a2e:3c0d:0:b0:246:3c52:7ada with SMTP id j13-20020a2e3c0d000000b002463c527adamr19885072lja.459.1646213374808;
+        Wed, 02 Mar 2022 01:29:34 -0800 (PST)
+Received: from [172.16.11.74] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id f36-20020a0565123b2400b0043795432e87sm1960430lfv.150.2022.03.02.01.29.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Mar 2022 01:29:33 -0800 (PST)
+Message-ID: <78ccb184-405e-da93-1e02-078f90d2b9bc@rasmusvillemoes.dk>
+Date:   Wed, 2 Mar 2022 10:29:31 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <719960584.100772.1646147154879.JavaMail.zimbra@nod.at>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        KVM list <kvm@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>,
+        "linux1394-devel@lists.sourceforge.net" 
+        <linux1394-devel@lists.sourceforge.net>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "kgdb-bugreport@lists.sourceforge.net" 
+        <kgdb-bugreport@lists.sourceforge.net>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
+        "v9fs-developer@lists.sourceforge.net" 
+        <v9fs-developer@lists.sourceforge.net>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "tipc-discussion@lists.sourceforge.net" 
+        <tipc-discussion@lists.sourceforge.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Mike Rapoport <rppt@kernel.org>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-3-jakobkoschel@gmail.com>
+ <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+ <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
+ <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+ <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
+ <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
+ <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
+ <7dc860874d434d2288f36730d8ea3312@AcuMS.aculab.com>
+ <CAHk-=whKqg89zu4T95+ctY-hocR6kDArpo2qO14-kV40Ga7ufw@mail.gmail.com>
+ <0ced2b155b984882b39e895f0211037c@AcuMS.aculab.com>
+ <CAHk-=wix0HLCBs5sxAeW3uckg0YncXbTjMsE-Tv8WzmkOgLAXQ@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+In-Reply-To: <CAHk-=wix0HLCBs5sxAeW3uckg0YncXbTjMsE-Tv8WzmkOgLAXQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 01-03-22 16:05:54, Richard Weinberger wrote:
-> Jan,
-> 
-> ----- Ursprüngliche Mail -----
-> > Von: "Jan Kara" <jack@suse.cz>
-> >> Is this expected?
-> >> Just want to make sure that the said commit didn't uncover an UBIFS issue.
-> > 
-> > Yes, I think it is expected. Likely the background threshold for UBIFS bdi
-> > is very small (probably UBIFS is not used much for writeback compared to
-> > other filesystems). Previously, we just used wb_stat() which returned 0
-> > (PCP counter inexact value) and so background writeback didn't trigger. Now
-> > we use wb_stat_sum() when threshold is small, get exact value of dirty
-> > pages and decide to start background writeback.
-> 
-> Thanks for the prompt reply!
-> 
-> > The only thing is, whether it is really expected that the threshold for
-> > UBIFS bdi is so small. You can check the values in
-> > /sys/kernel/debug/bdi/<bdi>/stats.
-> 
-> BdiDirtyThresh is indeed 0.
-> 
-> BdiWriteback:                0 kB
-> BdiReclaimable:              0 kB
-> BdiDirtyThresh:              0 kB
-> DirtyThresh:            772620 kB
-> BackgroundThresh:       385836 kB
-> BdiDirtied:                  0 kB
-> BdiWritten:                  0 kB
-> BdiWriteBandwidth:      102400 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
+On 02/03/2022 00.55, Linus Torvalds wrote:
+> On Tue, Mar 1, 2022 at 3:19 PM David Laight <David.Laight@aculab.com> wrote:
+>>
 
-Yes, so this looks expected given the BDI wasn't active yet at all...
+> With the "don't use iterator outside the loop" approach, the exact
+> same code works in both the old world order and the new world order,
+> and you don't have the semantic confusion. And *if* you try to use the
+> iterator outside the loop, you'll _mostly_ (*) get a compiler warning
+> about it not being initialized.
+> 
+>              Linus
+> 
+> (*) Unless somebody initializes the iterator pointer pointlessly.
+> Which clearly does happen. Thus the "mostly". It's not perfect, and
+> that's most definitely not nice - but it should at least hopefully
+> make it that much harder to mess up.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This won't help the current issue (because it doesn't exist and might
+never), but just in case some compiler people are listening, I'd like to
+have some sort of way to tell the compiler "treat this variable as
+uninitialized from here on". So one could do
+
+#define kfree(p) do { __kfree(p); __magic_uninit(p); } while (0)
+
+with __magic_uninit being a magic no-op that doesn't affect the
+semantics of the code, but could be used by the compiler's "[is/may be]
+used uninitialized" machinery to flag e.g. double frees on some odd
+error path etc. It would probably only work for local automatic
+variables, but it should be possible to just ignore the hint if p is
+some expression like foo->bar or has side effects. If we had that, the
+end-of-loop test could include that to "uninitialize" the iterator.
+
+Maybe sparse/smatch or some other static analyzer could implement such a
+magic thing? Maybe it's better as a function attribute
+[__attribute__((uninitializes(1)))] to avoid having to macrofy all
+functions that release resources.
+
+Rasmus
