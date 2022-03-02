@@ -2,239 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D74364CAAF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 18:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F31984CAB48
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 18:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238913AbiCBRAs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 12:00:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53862 "EHLO
+        id S243683AbiCBRPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 12:15:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232657AbiCBRAr (ORCPT
+        with ESMTP id S237817AbiCBRPu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 12:00:47 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9572190CE1;
-        Wed,  2 Mar 2022 09:00:03 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id t11so2602113ioi.7;
-        Wed, 02 Mar 2022 09:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fNjcipdV9YowT1QO5QMWP0JgYaGZ3Z13BMTAL5fgvAw=;
-        b=Xtjf5OLITutKOukVGPA84IsHJWBk4yqp7GtRwBWK4avdj/o7n7+dEWuLj5+LIDilg4
-         V5QnL+HVVqXgxa363Yjm7ls9fOu6BQ8oVxX5dFmcHEJnbTlRrJ4TqQJpsPtQoz+jyMy2
-         pnzhPoZTzJpFUq3m3tjBwK6J2ebIcHmL4PY+/UIIhja3w4pi62a3fywuHUgkFHZPQWGD
-         S0wjbFthsIYSiNxgA7VEeHgT6+ZUQ447vD4JA518e3I0Z8eTHVB/zehS9hlmB2PisMEZ
-         Vir3ofzbZjkmDyMpE6HlFd8R9Q/VkBMH4erW8Rh7DdvwZHLrMc1V6j5+LxzB5ZZVjw+V
-         UfTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fNjcipdV9YowT1QO5QMWP0JgYaGZ3Z13BMTAL5fgvAw=;
-        b=mDeYO+ytCCMnfP5wPtUUojZXRpH/86iQUV3NeGPEe5sGmi6OAMxtHzaJvZ5BM8/kVf
-         xcvPIusig1Dfu8nSYL+wJW1E+vz7zd7aOgQ+cdQCLbrwEO5u2kstKZtvqymXwfoXHoDc
-         +WZvbPk6PpZ72S7OFEsSp8N0nxxTDPS5SpcXKegORS/LjnCzNPLdwL0L2dmMapCB3jle
-         9NdyFla4WeipmNabUmP6r8y8auBAqi1ZvbACOZ7C/xvP7RarOfKEIehzTAJZdVEdLyCf
-         gzwFRicZfSbn2oHxZzFZQ42OoZLN++WzsIbzWgZrLb5ixGqQeL5WwJGtdb7VH1zWnWWN
-         OPsA==
-X-Gm-Message-State: AOAM5336kCqJ3fOPK7so+oWmF+wYbxVfLGrGwT1/Ka/oUEhuRHQb7W4p
-        YCBu+fwFc3zExjRjp3QDY2cUroFMlYrOGqjcE7dPta4W
-X-Google-Smtp-Source: ABdhPJwMwQ7B4JfzldvMXdmu86K4DqhvpTY8uMXZq2AapFxY4XTPMcIXv08ppV3jeqfM/7o9kfYVqR8fyj1xyWcy2Mg=
-X-Received: by 2002:a02:ccac:0:b0:314:2074:fec4 with SMTP id
- t12-20020a02ccac000000b003142074fec4mr26294851jap.41.1646240402961; Wed, 02
- Mar 2022 09:00:02 -0800 (PST)
+        Wed, 2 Mar 2022 12:15:50 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19AA58E45;
+        Wed,  2 Mar 2022 09:15:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646241306; x=1677777306;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=quZJORXDoBJnmtXWeY1UEG0LMErZNbKWG4uR8GxuM8A=;
+  b=EgFtrQTE2RuXhvw9sRIr3IT+pA0Ncb8f9tiCc0SC60P5NxN5IIJ1lIbG
+   qRXhfI2wJDlspyrIGC0iL/9/1vb/Lqq8nOVou0CScelNSeM2zFz5ZYwQd
+   vRCxbYiuOYMHLgn2p868GOLIzIRhmd1d7Ftp+C+uIAO1rF5yphwxH1nTK
+   BZo8QGgTZGobcAwOhtAkimiecLreyGJPEymFRGwK29ytkPQQTUw1YAXwn
+   7s74MTXIjfdUqEKiu1QGwymv12Ru01fVqM/H0rIJHbiNJzFQB0n0mysA7
+   4izUGN7Nj88HSoNqykEmQlZt68TbXwAcpy2jJWkt8gcliob3VHMqMtNgg
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10274"; a="339886271"
+X-IronPort-AV: E=Sophos;i="5.90,149,1643702400"; 
+   d="scan'208";a="339886271"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 09:15:05 -0800
+X-IronPort-AV: E=Sophos;i="5.90,149,1643702400"; 
+   d="scan'208";a="551343768"
+Received: from jbuller-mobl1.ger.corp.intel.com (HELO [10.213.194.231]) ([10.213.194.231])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 09:14:53 -0800
+Message-ID: <ed52ce3c-0f4a-a1e8-4176-543657d6228d@linux.intel.com>
+Date:   Wed, 2 Mar 2022 17:14:50 +0000
 MIME-Version: 1.0
-References: <20220301184221.371853-1-amir73il@gmail.com> <20220302065952.GE3927073@dread.disaster.area>
- <CAOQ4uxgU7cYAO+KMd=Yb8Fo4AwScQ2J0eqkYn3xWjzBWKtUziQ@mail.gmail.com> <20220302082658.GF3927073@dread.disaster.area>
-In-Reply-To: <20220302082658.GF3927073@dread.disaster.area>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 2 Mar 2022 18:59:51 +0200
-Message-ID: <CAOQ4uxgiL2eqx-kad+dddXvXPREKT-w3_BnLzdoJaJqGm=H=vA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Generic per-sb io stats
-To:     Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000006f20d005d93f364d"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [Intel-gfx] [PATCH 6/6] treewide: remove check of list iterator
+ against head past the loop body
+Content-Language: en-US
+To:     Jakob Koschel <jakobkoschel@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel@lists.freedesktop.org,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        amd-gfx@lists.freedesktop.org, samba-technical@lists.samba.org,
+        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-cifs@vger.kernel.org, kvm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        intel-wired-lan@lists.osuosl.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-media@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>, linux-pm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        v9fs-developer@lists.sourceforge.net, linux-tegra@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-sgx@vger.kernel.org,
+        linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        tipc-discussion@lists.sourceforge.net,
+        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, Mike Rapoport <rppt@kernel.org>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-7-jakobkoschel@gmail.com>
+From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Organization: Intel Corporation UK Plc
+In-Reply-To: <20220228110822.491923-7-jakobkoschel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HK_RANDOM_ENVFROM,HK_RANDOM_FROM,
+        NICE_REPLY_A,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000006f20d005d93f364d
-Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Mar 2, 2022 at 10:27 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Wed, Mar 02, 2022 at 09:43:50AM +0200, Amir Goldstein wrote:
-> > On Wed, Mar 2, 2022 at 8:59 AM Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > On Tue, Mar 01, 2022 at 08:42:15PM +0200, Amir Goldstein wrote:
-> > > > Miklos,
-> > > >
-> > > > Following your feedback on v2 [1], I moved the iostats to per-sb.
-> > > >
-> > > > Thanks,
-> > > > Amir.
-> > > >
-> > > > [1] https://lore.kernel.org/linux-unionfs/20220228113910.1727819-1-amir73il@gmail.com/
-> > > >
-> > > > Changes since v2:
-> > > > - Change from per-mount to per-sb io stats (szeredi)
-> > > > - Avoid percpu loop when reading mountstats (dchinner)
-> > > >
-> > > > Changes since v1:
-> > > > - Opt-in for per-mount io stats for overlayfs and fuse
-> > >
-> > > Why make it optional only for specific filesystem types? Shouldn't
-> > > every superblock capture these stats and export them in exactly the
-> > > same place?
-> > >
-> >
-> > I am not sure what you are asking.
-> >
-> > Any filesystem can opt-in to get those generic io stats.
->
-> Yes, but why even make it opt-in? Why not just set these up
-> unconditionally in alloc_super() for all filesystems? Either this is
-> useful information for userspace montioring and diagnostics, or it's
-> not useful at all. If it is useful, then all superblocks should
-> export this stuff rather than just some special subset of
-> filesystems where individual maintainers have noticed it and thought
-> "that might be useful".
->
-> Just enable it for every superblock....
->
+On 28/02/2022 11:08, Jakob Koschel wrote:
+> When list_for_each_entry() completes the iteration over the whole list
+> without breaking the loop, the iterator value will be a bogus pointer
+> computed based on the head element.
+> 
+> While it is safe to use the pointer to determine if it was computed
+> based on the head element, either with list_entry_is_head() or
+> &pos->member == head, using the iterator variable after the loop should
+> be avoided.
+> 
+> In preparation to limiting the scope of a list iterator to the list
+> traversal loop, use a dedicated pointer to point to the found element.
+> 
+> Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
 
-Not that simple.
-First of all alloc_super() is used for all sorts of internal kernel sb
-(e.g. pipes) that really don't need those stats.
+[snip until i915 parts]
 
-Second, counters can have performance impact.
-Depending on the fs, overhead may or may not be significant.
-I used the attached patch for testing and ran some micro benchmarks
-on tmpfs (10M small read/writes).
-The patch hacks -omand for enabling iostats [*]
+>   drivers/gpu/drm/i915/gem/i915_gem_context.c   | 14 +++---
+>   .../gpu/drm/i915/gem/i915_gem_execbuffer.c    | 15 ++++---
+>   drivers/gpu/drm/i915/gt/intel_ring.c          | 15 ++++---
 
-The results were not great. up to 20% slower when io size > default
-batch size (32).
-Increasing the counter batch size for rchar/wchar to 1K fixed this
-micro benchmark,
-but it may not be a one size fits all situation.
-So I'd rather be cautious and not enable the feature unconditionally.
+[snip]
 
-Miklos,
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_context.c b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+> index 00327b750fbb..80c79028901a 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_context.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+> @@ -107,25 +107,27 @@ static void lut_close(struct i915_gem_context *ctx)
+>   	radix_tree_for_each_slot(slot, &ctx->handles_vma, &iter, 0) {
+>   		struct i915_vma *vma = rcu_dereference_raw(*slot);
+>   		struct drm_i915_gem_object *obj = vma->obj;
+> -		struct i915_lut_handle *lut;
+> +		struct i915_lut_handle *lut = NULL;
+> +		struct i915_lut_handle *tmp;
+> 
+>   		if (!kref_get_unless_zero(&obj->base.refcount))
+>   			continue;
+> 
+>   		spin_lock(&obj->lut_lock);
+> -		list_for_each_entry(lut, &obj->lut_list, obj_link) {
+> -			if (lut->ctx != ctx)
+> +		list_for_each_entry(tmp, &obj->lut_list, obj_link) {
+> +			if (tmp->ctx != ctx)
+>   				continue;
+> 
+> -			if (lut->handle != iter.index)
+> +			if (tmp->handle != iter.index)
+>   				continue;
+> 
+> -			list_del(&lut->obj_link);
+> +			list_del(&tmp->obj_link);
+> +			lut = tmp;
+>   			break;
+>   		}
+>   		spin_unlock(&obj->lut_lock);
+> 
+> -		if (&lut->obj_link != &obj->lut_list) {
+> +		if (lut) {
+>   			i915_lut_handle_free(lut);
+>   			radix_tree_iter_delete(&ctx->handles_vma, &iter, slot);
 
-In the patches to enable per-sb iostats for fuse and overlayfs I argued why
-I think that iostats are more important for fuse/overlayfs than for
-other local fs.
+Looks okay although personally I would have left lut as is for a smaller 
+diff and introduced a new local like 'found' or 'unlinked'.
 
-Do you agree with my arguments for either fuse/overlayfs or both?
-If so, would you rather that per-sb iostats be enabled unconditionally for
-fuse/overlayfs or via an opt-in mount option?
+>   			i915_vma_close(vma);
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> index 1736efa43339..fda9e3685ad2 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> @@ -2444,7 +2444,8 @@ static struct i915_request *eb_throttle(struct i915_execbuffer *eb, struct intel
+>   {
+>   	struct intel_ring *ring = ce->ring;
+>   	struct intel_timeline *tl = ce->timeline;
+> -	struct i915_request *rq;
+> +	struct i915_request *rq = NULL;
+> +	struct i915_request *tmp;
+> 
+>   	/*
+>   	 * Completely unscientific finger-in-the-air estimates for suitable
+> @@ -2460,15 +2461,17 @@ static struct i915_request *eb_throttle(struct i915_execbuffer *eb, struct intel
+>   	 * claiming our resources, but not so long that the ring completely
+>   	 * drains before we can submit our next request.
+>   	 */
+> -	list_for_each_entry(rq, &tl->requests, link) {
+> -		if (rq->ring != ring)
+> +	list_for_each_entry(tmp, &tl->requests, link) {
+> +		if (tmp->ring != ring)
+>   			continue;
+> 
+> -		if (__intel_ring_space(rq->postfix,
+> -				       ring->emit, ring->size) > ring->size / 2)
+> +		if (__intel_ring_space(tmp->postfix,
+> +				       ring->emit, ring->size) > ring->size / 2) {
+> +			rq = tmp;
+>   			break;
+> +		}
+>   	}
+> -	if (&rq->link == &tl->requests)
+> +	if (!rq)
+>   		return NULL; /* weird, we will check again later for real */
 
-Thanks,
-Amir.
+Alternatively, instead of break could simply do "return 
+i915_request_get(rq);" and replace the end of the function after the 
+loop with "return NULL;". A bit smaller diff, or at least less "spread 
+out" over the function, so might be easier to backport stuff touching 
+this area in the future. But looks correct as is.
 
-[*] I tried to figure out how fsconfig() could be used to implement a new
-generic sb property (i.e. SB_IOSTATS), but I failed to understand if and how
-the new mount API design is intended to address new generic properties, so
-I resorted to the SB_MANDLOCK hack.
+> 
+>   	return i915_request_get(rq);
+> diff --git a/drivers/gpu/drm/i915/gt/intel_ring.c b/drivers/gpu/drm/i915/gt/intel_ring.c
+> index 2fdd52b62092..4881c4e0c407 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_ring.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_ring.c
+> @@ -191,24 +191,27 @@ wait_for_space(struct intel_ring *ring,
+>   	       struct intel_timeline *tl,
+>   	       unsigned int bytes)
+>   {
+> -	struct i915_request *target;
+> +	struct i915_request *target = NULL;
+> +	struct i915_request *tmp;
+>   	long timeout;
+> 
+>   	if (intel_ring_update_space(ring) >= bytes)
+>   		return 0;
+> 
+>   	GEM_BUG_ON(list_empty(&tl->requests));
+> -	list_for_each_entry(target, &tl->requests, link) {
+> -		if (target->ring != ring)
+> +	list_for_each_entry(tmp, &tl->requests, link) {
+> +		if (tmp->ring != ring)
+>   			continue;
+> 
+>   		/* Would completion of this request free enough space? */
+> -		if (bytes <= __intel_ring_space(target->postfix,
+> -						ring->emit, ring->size))
+> +		if (bytes <= __intel_ring_space(tmp->postfix,
+> +						ring->emit, ring->size)) {
+> +			target = tmp;
+>   			break;
+> +		}
+>   	}
+> 
+> -	if (GEM_WARN_ON(&target->link == &tl->requests))
+> +	if (GEM_WARN_ON(!target))
+>   		return -ENOSPC;
+> 
+>   	timeout = i915_request_wait(target,
 
---0000000000006f20d005d93f364d
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="v3-0004-fs-enable-per-sb-I-O-stats-for-any-filesystem.patch"
-Content-Disposition: attachment; 
-	filename="v3-0004-fs-enable-per-sb-I-O-stats-for-any-filesystem.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l09rvyvi0>
-X-Attachment-Id: f_l09rvyvi0
+Looks okay as well. Less clear here if there is a clean solution to make 
+the diff smaller so no suggestions. I mean do I dare mention "goto 
+found;" from inside the loop, where the break is, instead of the 
+variable renames.. risky.. :) (And ofc "return -ENOSPC" immediately 
+after the loop.)
 
-RnJvbSA2NjlkODk5YTllNDBjMmM1MTlhODUwYTY1ZTUwMDFmMmIwM2IwNWE4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
-YXRlOiBXZWQsIDIgTWFyIDIwMjIgMTE6MDM6MjkgKzAyMDAKU3ViamVjdDogW1BBVENIIHYzIDcv
-Nl0gZnM6IGVuYWJsZSBwZXItc2IgSS9PIHN0YXRzIGZvciBhbnkgZmlsZXN5c3RlbQoKT3ZlcnJp
-ZGUgU0JfTUFORExPQ0sgZm9yIHRlc3RpbmcuCgpTaWduZWQtb2ZmLWJ5OiBBbWlyIEdvbGRzdGVp
-biA8YW1pcjczaWxAZ21haWwuY29tPgotLS0KIGZzL2Z1c2UvaW5vZGUuYyAgICAgICAgICAgIHwg
-IDggKysrKy0tLS0KIGZzL25hbWVzcGFjZS5jICAgICAgICAgICAgIHwgIDIgKysKIGZzL292ZXJs
-YXlmcy9zdXBlci5jICAgICAgIHwgIDQgLS0tLQogZnMvc3VwZXIuYyAgICAgICAgICAgICAgICAg
-fCAgMyArKysKIGluY2x1ZGUvbGludXgvZnNfaW9zdGF0cy5oIHwgMzAgKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrCiA1IGZpbGVzIGNoYW5nZWQsIDM5IGluc2VydGlvbnMoKyksIDggZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvZnVzZS9pbm9kZS5jIGIvZnMvZnVzZS9pbm9kZS5j
-CmluZGV4IGYxOWM2NjZiOWFjMy4uNGYwMzE2NzA5ZGYwIDEwMDY0NAotLS0gYS9mcy9mdXNlL2lu
-b2RlLmMKKysrIGIvZnMvZnVzZS9pbm9kZS5jCkBAIC0xNDUsOCArMTQ1LDEwIEBAIHN0YXRpYyBp
-bnQgZnVzZV9yZWNvbmZpZ3VyZShzdHJ1Y3QgZnNfY29udGV4dCAqZnNjKQogCXN0cnVjdCBzdXBl
-cl9ibG9jayAqc2IgPSBmc2MtPnJvb3QtPmRfc2I7CiAKIAlzeW5jX2ZpbGVzeXN0ZW0oc2IpOwor
-I2lmbmRlZiBDT05GSUdfRlNfSU9TVEFUUwogCWlmIChmc2MtPnNiX2ZsYWdzICYgU0JfTUFORExP
-Q0spCiAJCXJldHVybiAtRUlOVkFMOworI2VuZGlmCiAKIAlyZXR1cm4gMDsKIH0KQEAgLTE1MTQs
-MTMgKzE1MTYsMTEgQEAgaW50IGZ1c2VfZmlsbF9zdXBlcl9jb21tb24oc3RydWN0IHN1cGVyX2Js
-b2NrICpzYiwgc3RydWN0IGZ1c2VfZnNfY29udGV4dCAqY3R4KQogCXN0cnVjdCBkZW50cnkgKnJv
-b3RfZGVudHJ5OwogCWludCBlcnI7CiAKKyNpZm5kZWYgQ09ORklHX0ZTX0lPU1RBVFMKIAllcnIg
-PSAtRUlOVkFMOwogCWlmIChzYi0+c19mbGFncyAmIFNCX01BTkRMT0NLKQogCQlnb3RvIGVycjsK
-LQotCWVyciA9IHNiX2lvc3RhdHNfaW5pdChzYik7Ci0JaWYgKGVyciAmJiBlcnIgIT0gLUVPUE5P
-VFNVUFApCi0JCWdvdG8gZXJyOworI2VuZGlmCiAKIAlyY3VfYXNzaWduX3BvaW50ZXIoZmMtPmN1
-cnJfYnVja2V0LCBmdXNlX3N5bmNfYnVja2V0X2FsbG9jKCkpOwogCWZ1c2Vfc2JfZGVmYXVsdHMo
-c2IpOwpkaWZmIC0tZ2l0IGEvZnMvbmFtZXNwYWNlLmMgYi9mcy9uYW1lc3BhY2UuYwppbmRleCBk
-ZTZmYWU4NGYxYTEuLmViNGViYjUwODFkOSAxMDA2NDQKLS0tIGEvZnMvbmFtZXNwYWNlLmMKKysr
-IGIvZnMvbmFtZXNwYWNlLmMKQEAgLTMyOTgsOCArMzI5OCwxMCBAQCBpbnQgcGF0aF9tb3VudChj
-b25zdCBjaGFyICpkZXZfbmFtZSwgc3RydWN0IHBhdGggKnBhdGgsCiAJCXJldHVybiByZXQ7CiAJ
-aWYgKCFtYXlfbW91bnQoKSkKIAkJcmV0dXJuIC1FUEVSTTsKKyNpZm5kZWYgQ09ORklHX0ZTX0lP
-U1RBVFMKIAlpZiAoZmxhZ3MgJiBTQl9NQU5ETE9DSykKIAkJd2Fybl9tYW5kbG9jaygpOworI2Vu
-ZGlmCiAKIAkvKiBEZWZhdWx0IHRvIHJlbGF0aW1lIHVubGVzcyBvdmVycmlkZW4gKi8KIAlpZiAo
-IShmbGFncyAmIE1TX05PQVRJTUUpKQpkaWZmIC0tZ2l0IGEvZnMvb3ZlcmxheWZzL3N1cGVyLmMg
-Yi9mcy9vdmVybGF5ZnMvc3VwZXIuYwppbmRleCA5NGFiNmFkZWJlMDcuLmQyZjU2OTI2MGVkYyAx
-MDA2NDQKLS0tIGEvZnMvb3ZlcmxheWZzL3N1cGVyLmMKKysrIGIvZnMvb3ZlcmxheWZzL3N1cGVy
-LmMKQEAgLTE5ODAsMTAgKzE5ODAsNiBAQCBzdGF0aWMgaW50IG92bF9maWxsX3N1cGVyKHN0cnVj
-dCBzdXBlcl9ibG9jayAqc2IsIHZvaWQgKmRhdGEsIGludCBzaWxlbnQpCiAKIAlzYi0+c19kX29w
-ID0gJm92bF9kZW50cnlfb3BlcmF0aW9uczsKIAotCWVyciA9IHNiX2lvc3RhdHNfaW5pdChzYik7
-Ci0JaWYgKGVyciAmJiBlcnIgIT0gLUVPUE5PVFNVUFApCi0JCWdvdG8gb3V0OwotCiAJZXJyID0g
-LUVOT01FTTsKIAlvZnMgPSBremFsbG9jKHNpemVvZihzdHJ1Y3Qgb3ZsX2ZzKSwgR0ZQX0tFUk5F
-TCk7CiAJaWYgKCFvZnMpCmRpZmYgLS1naXQgYS9mcy9zdXBlci5jIGIvZnMvc3VwZXIuYwppbmRl
-eCBjNDQ3Y2FkYjQwMmIuLmViYWY2NTBmNzJiZiAxMDA2NDQKLS0tIGEvZnMvc3VwZXIuYworKysg
-Yi9mcy9zdXBlci5jCkBAIC0xODAsNiArMTgwLDcgQEAgc3RhdGljIHZvaWQgZGVzdHJveV91bnVz
-ZWRfc3VwZXIoc3RydWN0IHN1cGVyX2Jsb2NrICpzKQogCXVwX3dyaXRlKCZzLT5zX3Vtb3VudCk7
-CiAJbGlzdF9scnVfZGVzdHJveSgmcy0+c19kZW50cnlfbHJ1KTsKIAlsaXN0X2xydV9kZXN0cm95
-KCZzLT5zX2lub2RlX2xydSk7CisJc2JfaW9zdGF0c19kZXN0cm95KHMpOwogCXNlY3VyaXR5X3Ni
-X2ZyZWUocyk7CiAJcHV0X3VzZXJfbnMocy0+c191c2VyX25zKTsKIAlrZnJlZShzLT5zX3N1YnR5
-cGUpOwpAQCAtMTUyMiw2ICsxNTIzLDggQEAgaW50IHZmc19nZXRfdHJlZShzdHJ1Y3QgZnNfY29u
-dGV4dCAqZmMpCiAJc2ItPnNfZmxhZ3MgfD0gU0JfQk9STjsKIAogCWVycm9yID0gc2VjdXJpdHlf
-c2Jfc2V0X21udF9vcHRzKHNiLCBmYy0+c2VjdXJpdHksIDAsIE5VTEwpOworCWlmICghZXJyb3Ip
-CisJCWVycm9yID0gc2JfaW9zdGF0c19jb25maWd1cmUoc2IpOwogCWlmICh1bmxpa2VseShlcnJv
-cikpIHsKIAkJZmNfZHJvcF9sb2NrZWQoZmMpOwogCQlyZXR1cm4gZXJyb3I7CmRpZmYgLS1naXQg
-YS9pbmNsdWRlL2xpbnV4L2ZzX2lvc3RhdHMuaCBiL2luY2x1ZGUvbGludXgvZnNfaW9zdGF0cy5o
-CmluZGV4IDYwZDFlZmJlYTdkOS4uYWY1YjVmZjIwMWFhIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xp
-bnV4L2ZzX2lvc3RhdHMuaAorKysgYi9pbmNsdWRlL2xpbnV4L2ZzX2lvc3RhdHMuaApAQCAtNiw2
-ICs2LDEzIEBACiAjaW5jbHVkZSA8bGludXgvcGVyY3B1X2NvdW50ZXIuaD4KICNpbmNsdWRlIDxs
-aW51eC9zbGFiLmg+CiAKKy8qCisgKiBPdmVycmlkZSBTQl9NQU5ETE9DSyBmb3IgdGVzdGluZy4K
-KyAqCisgKiBUT0RPOiB1c2UgZnNvcGVuKCkvZnNjb25maWcoKSBmbGFnIHBhcmFtZXRlcnM/Cisg
-Ki8KKyNkZWZpbmUgU0JfSU9TVEFUUwlTQl9NQU5ETE9DSworCiAvKiBTaW1pbGFyIHRvIHRhc2tf
-aW9fYWNjb3VudGluZyBtZW1iZXJzICovCiBlbnVtIHsKIAlTQl9JT1NUQVRTX0NIQVJTX1JELAkv
-KiBieXRlcyByZWFkIHZpYSBzeXNjYWxscyAqLwpAQCAtNDcsNiArNTQsMTAgQEAgc3RhdGljIGlu
-bGluZSBpbnQgc2JfaW9zdGF0c19pbml0KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IpCiB7CiAJaW50
-IGVycjsKIAorCS8qIEFscmVhZHkgaW5pdGlhbGl6ZWQ/ICovCisJaWYgKHNiLT5zX2lvc3RhdHMp
-CisJCXJldHVybiAwOworCiAJc2ItPnNfaW9zdGF0cyA9IGttYWxsb2Moc2l6ZW9mKHN0cnVjdCBz
-Yl9pb3N0YXRzKSwgR0ZQX0tFUk5FTCk7CiAJaWYgKCFzYi0+c19pb3N0YXRzKQogCQlyZXR1cm4g
-LUVOT01FTTsKQEAgLTYwLDYgKzcxLDE5IEBAIHN0YXRpYyBpbmxpbmUgaW50IHNiX2lvc3RhdHNf
-aW5pdChzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiKQogCX0KIAogCXNiLT5zX2lvc3RhdHMtPnN0YXJ0
-X3RpbWUgPSBrdGltZV9nZXRfc2Vjb25kcygpOworCXNiLT5zX2ZsYWdzIHw9IFNCX0lPU1RBVFM7
-CisJcmV0dXJuIDA7Cit9CisKKy8qIEVuYWJsZS9kaXNhYmxlIGFjY29yZGluZyB0byBTQl9JT1NU
-QVRTIGZsYWcgKi8KK3N0YXRpYyBpbmxpbmUgaW50IHNiX2lvc3RhdHNfY29uZmlndXJlKHN0cnVj
-dCBzdXBlcl9ibG9jayAqc2IpCit7CisJYm9vbCB3YW50X2lvc3RhdHMgPSAoc2ItPnNfZmxhZ3Mg
-JiBTQl9JT1NUQVRTKTsKKworCWlmICh3YW50X2lvc3RhdHMgJiYgIXNiLT5zX2lvc3RhdHMpCisJ
-CXJldHVybiBzYl9pb3N0YXRzX2luaXQoc2IpOworCWVsc2UgaWYgKCF3YW50X2lvc3RhdHMgJiYg
-c2ItPnNfaW9zdGF0cykKKwkJc2JfaW9zdGF0c19kZXN0cm95KHNiKTsKIAlyZXR1cm4gMDsKIH0K
-IApAQCAtMTA5LDYgKzEzMywxMiBAQCBzdGF0aWMgaW5saW5lIHZvaWQgc2JfaW9zdGF0c19kZXN0
-cm95KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IpCiB7CiB9CiAKK3N0YXRpYyBpbmxpbmUgaW50IHNi
-X2lvc3RhdHNfY29uZmlndXJlKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IpCit7CisJc2ItPnNfZmxh
-Z3MgJj0gflNCX0lPU1RBVFM7CisJcmV0dXJuIDA7Cit9CisKIHN0YXRpYyBpbmxpbmUgdm9pZCBz
-Yl9pb3N0YXRzX2NvdW50ZXJfaW5jKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIGludCBpZCkKIHsK
-IH0KLS0gCjIuMjUuMQoK
---0000000000006f20d005d93f364d--
+As a summary changes looks okay, up to you if you want to try to make 
+the diffs smaller or not. It doesn't matter hugely really, all I have is 
+a vague and uncertain "maybe it makes backporting of something, someday 
+easier". So for i915 it is good either way.
+
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com> # i915 bits only
+
+Regards,
+
+Tvrtko
