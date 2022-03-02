@@ -2,184 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D60C54CA0D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 10:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7030D4CA1B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 11:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240516AbiCBJcQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 04:32:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42232 "EHLO
+        id S240845AbiCBKFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 05:05:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234241AbiCBJcO (ORCPT
+        with ESMTP id S240827AbiCBKFC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 04:32:14 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC44B82C6;
-        Wed,  2 Mar 2022 01:31:31 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id g21so1381278pfj.11;
-        Wed, 02 Mar 2022 01:31:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yRnvPGVK9XQdKYPg/H0ecgdZJeSxpiKw/X1pv37GC+w=;
-        b=FSwFYVuD0cAwR74FpWh/UVnJlZEuhHuzmEJF2CmWuTU5VQk08y1iQ6Cm+4Kk/IHZ7f
-         ykn4dSn+LtVJ/QNPcAOF0Kr9OP0uyQbpGUjZhyE2BsGEuIYzlTgMZwHl/BYpjMpkMG0+
-         P9mnuSE0YONb1xqLwPVeO/elgzKWhvv7I7OGEBThyQYghI00EIr5RS9MGp7GsCYrqLUi
-         wR7dcG4fdae3Ke7WyU9tBlNyUPSMcC8RmnmBsmKYAmxRcsIUhLqhpYW4uCJTlnf3AogC
-         YxEVbABh4/fwCz1Lhf2xi5Cnii6w5cwNjqEkAadiEwyP0C/cLXPnnAaLLll6ns+CdAHq
-         Ceuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yRnvPGVK9XQdKYPg/H0ecgdZJeSxpiKw/X1pv37GC+w=;
-        b=25yx3bE7Tdrh/FIfqtXGWF61WwqDjC5WxWRj3uOQy+xFnOnfSJl4gpSITPKOL6ppvz
-         xr1P/lP+YEIjzKBbNpn03p1MRiNHMFQej41PCQiM7ZYsONScWzARDV9MTLbKYCaJYJKQ
-         0PMbmVDfkgxq+NGUQ/4L1sjWJCqawtx0WZc8uvOruTsaRxv/JHUoXdW3juEItsMZijYe
-         x2y+YeZzcxjNVO2IQiv/vTcoq57n/NERNBTqppUmx/bB0aCArn2Ue28JJCF3twXdYp3U
-         vU+mkukYaeKpIEfnGoPctJjIVuyPhmzcWRY3JAuBB5C9SBIozZ19ogGvwbwxCHlWpuG7
-         k/Jw==
-X-Gm-Message-State: AOAM531WtYP64z3jF1qFTFjDxv9zG3DFlHc4cRXPthGe4IdA63Ho0KnG
-        GBKdtpGAym33H9R0xGshBiw=
-X-Google-Smtp-Source: ABdhPJxxYDNcbSMxl56+YduSTiv9ULKN3/PKEO9PEtlxvCfSyuhc7esxotc8paaSBF6ReGk5V/MJxQ==
-X-Received: by 2002:a05:6a00:244b:b0:4c9:319e:ecb7 with SMTP id d11-20020a056a00244b00b004c9319eecb7mr31990006pfj.58.1646213490674;
-        Wed, 02 Mar 2022 01:31:30 -0800 (PST)
-Received: from ubuntu.huawei.com ([119.3.119.20])
-        by smtp.googlemail.com with ESMTPSA id y74-20020a62644d000000b004f129e94f40sm19496506pfb.131.2022.03.02.01.31.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 01:31:30 -0800 (PST)
-From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
-To:     torvalds@linux-foundation.org
-Cc:     akpm@linux-foundation.org, alsa-devel@alsa-project.org,
-        amd-gfx@lists.freedesktop.org, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bcm-kernel-feedback-list@broadcom.com,
-        bjohannesmeyer@gmail.com, c.giuffrida@vu.nl,
-        christian.koenig@amd.com, christophe.jaillet@wanadoo.fr,
-        dan.carpenter@oracle.com, dmaengine@vger.kernel.org,
-        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
-        gustavo@embeddedor.com, h.j.bos@vu.nl,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        jakobkoschel@gmail.com, jgg@ziepe.ca, keescook@chromium.org,
-        kgdb-bugreport@lists.sourceforge.net, kvm@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux@rasmusvillemoes.dk,
-        linuxppc-dev@lists.ozlabs.org, nathan@kernel.org,
-        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
-        rppt@kernel.org, samba-technical@lists.samba.org,
-        tglx@linutronix.de, tipc-discussion@lists.sourceforge.net,
-        v9fs-developer@lists.sourceforge.net
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
-Date:   Wed,  2 Mar 2022 17:31:06 +0800
-Message-Id: <20220302093106.8402-1-xiam0nd.tong@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
-References: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 2 Mar 2022 05:05:02 -0500
+Received: from shout01.mail.de (shout01.mail.de [IPv6:2001:868:100:600::216])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E4060068
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 02:04:17 -0800 (PST)
+Received: from postfix01.mail.de (postfix03.bt.mail.de [10.0.121.127])
+        by shout01.mail.de (Postfix) with ESMTP id C1783A0B3A;
+        Wed,  2 Mar 2022 11:04:15 +0100 (CET)
+Received: from smtp04.mail.de (smtp04.bt.mail.de [10.0.121.214])
+        by postfix01.mail.de (Postfix) with ESMTP id A3CEE8025A;
+        Wed,  2 Mar 2022 11:04:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
+        s=mailde202009; t=1646215455;
+        bh=367/FEzu9XEgRAr099UUd4GOSEEbqaMyUtHIPx7CitM=;
+        h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
+        b=n9+2NWNhYV9rCeCEZsWZow+hWY3kRn2SJ1Gr+hRx8cKOtNbPGaJ5n0EQUvVFGlxzX
+         GjgJIXdPbQ8rqjJ11iQon/4n4UEvME0ohCRr8ExabKw6SplOiYyXEIuow/JlT0kRUO
+         0R5Q6Y3y5NDvB7jL2QHwBJ1Df6b/BuBYgQiVJAnE7OYEAwjJtucejHzfHhKjG8ITQK
+         gWOkGACz9R6C40FOGnvTx6TVOTQjgHn+qKAvGzwB2VmujOj/gzjqE5iOj6y+9son2J
+         J8UyJR8K1LAMtsJu2/H19O4LG3eS9jmTxEAsI+Dn+eX4Eo/WNtIC940cmmeE7AA4Wd
+         oTCWXlSf+yjxg==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp04.mail.de (Postfix) with ESMTPSA id 1FC14C0067;
+        Wed,  2 Mar 2022 11:04:15 +0100 (CET)
+Message-ID: <8c636384-8db6-d7d1-b89b-424ef1accfe8@mail.de>
+Date:   Wed, 2 Mar 2022 11:04:14 +0100
+MIME-Version: 1.0
+Subject: Re: [RFC] Volatile fanotify marks
+Content-Language: en-US
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
+ <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
+ <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
+ <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de>
+ <CAOQ4uxhry1_tW9NPC4X3q3YUQ86Ecg+G6A2Fvs5vKQTDB0ctHQ@mail.gmail.com>
+From:   Tycho Kirchner <tychokirchner@mail.de>
+In-Reply-To: <CAOQ4uxhry1_tW9NPC4X3q3YUQ86Ecg+G6A2Fvs5vKQTDB0ctHQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 6863
+X-purgate-ID: 154282::1646215455-00000607-8A21346D/0/0
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 28 Feb 2022 16:41:04 -0800, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> But basically to _me_, the important part is that the end result is
-> maintainable longer-term.
 
-I couldn't agree more. And because of that, I stick with the following
-approach because it's maintainable longer-term than "type(pos) pos" one:
- Implements a new macro for each list_for_each_entry* with _inside suffix.
-  #define list_for_each_entry_inside(pos, type, head, member)
 
-I have posted a patch series here to demonstrate this approach:
-https://lore.kernel.org/lkml/20220301075839.4156-3-xiam0nd.tong@gmail.com/
+Am 01.03.22 um 17:58 schrieb Amir Goldstein:
+> On Tue, Mar 1, 2022 at 2:26 PM Tycho Kirchner <tychokirchner@mail.de> wrote:
+>>
+>>
+>>
+>>>>> I wanted to get your feedback on an idea I have been playing with.
+>>>>> It started as a poor man's alternative to the old subtree watch problem.
+>>
+>>
+>>> I do agree that we should NOT add "subtree filter" functionality to fanotify
+>>> (or any other filter) and that instead, we should add support for attaching an
+>>> eBPF program that implements is_subdir().
+>>> I found this [1] convection with Tycho where you had suggested this idea.
+>>> I wonder if Tycho got to explore this path further?
+>>>
+>>> [1] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.suse.cz/
+>>
+>> Hi Amir, Hi Jan,
+>> Thanks for pinging back on me. Indeed I did "explore this path further".
+>> In my project
+>> https://github.com/tycho-kirchner/shournal
+>>
+>> the goal is to track read/written files of a process tree and all it's child-processes and connect this data to a given shell-command. In fact after Amir's and mine last correspondence I implemented a kernel module which instruments ftrace and tracepoints to trace fput-events (kernel/event_handler.c:event_handler_fput) of specific tasks, which are then further processed in a dedicated kernel thread. I considered eBPF for this task but found no satisfying approach to have dynamic, different filter-rules (e.g. include-paths) for each process tree of each user.
+>>
+>>
+>> Regarding improvement of fanotify let's discriminate two cases: system-monitoring and tracing.
+>> Regarding system-monitoring: I'm not sure how exactly FAN_MARK_VOLATILE would work (Amir, could you please elaborate?)
+> 
+> FAN_MARK_VOLATILE is not a solution for "include" filters.
+> It is a solution for "exclude" filters implemented in userspace.
+> If monitoring program gets an event and decides that its path should be excluded
+> it may set a "volatile" exclude mark on that directory that will
+> suppress further
+> events from that directory for as long as the directory inode remains
+> in inode cache.
+> After directory inode has not been accessed for a while and evicted
+> from inode cache
+> the monitoring program can get an event in that directory again and then it can
+> re-install the volatile ignore mark if it wants to.
+> 
+Thanks for this explanation. Regarding few exclude-directories this sounds useful. However, if a whole directory-tree of filesystem events shall be excluded I guess the performance benefit will be rather small. A benchmark may clarify this ( I have some yet unpublished code ready, in case you are interested). If an efficient algorithm can be found I would rather vote for "include" dirs with unlimited depth. Btw. similar to the process-filter approach by unshared mount namespaces about which I wrote in our last correspondence, you may be able to exclude your .private/ directory by bind-mounting over it and otherwise only marking only those mounts of interest instead of the entire filesystem. But yeah, this is kinda messy.
 
-Although we need replace all the use of list_for_each_entry* (15000+)
-with list_for_each_entry*_inside, the work can be done gradually rather
-than all at once. We can incrementally replace these callers until
-all these in the kernel are completely updated with *_inside* one. At
-that time, we can just remove the implements of origin macros and rename
-the *_inside* macro back to the origin name just in one single patch.
+>> but what do you think about the following approach, in order to solve the subtree watch problem:
+>> - Store the include/exlude-paths of interest as *strings* in a hashset.
+>> - on fsevent, lookup the path by calling d_path() only once and cache, whether events for the given path are of interest. This
+>>     can either happen with a reference on the path (clear older paths periodically in a work queue)
+>>     or with a timelimit in which potentially wrong paths are accepted (path pointer freed and address reused).
+>>     The second approach I use myself in kernel/event_consumer_cache.c. See also kpathtree.c for a somewhat efficient
+>>     subpath-lookup.
+> 
+> I would implement filtering with is_subdir() and not with d_path(),
+> but there are
+> advantages to either approach.
+> In any case, I see there is BPF_FUNC_d_path, so why can't your approach be
+> implemented using an eBPF program?
+>It seems that bpf_d_path was introduced with v5.10 (6e22ab9da79343532cd3cde39df25e5a5478c692), however, shournal must still run on older kernels (e.g. openSUSE Leap v5.3.18). Further, as far as I remember, at least in Linux 4.19 there was quite some overhead to just install the fd into the eBPF user-space process, but I have to re-check that once that functionality is more widespread.
 
-And the "type(pos) pos" approach need teach developers to "not initialize
-the iterator variable, otherwise the use-after-loop will not be reported by
-compiler", which is unreasonable and impossible for all developers. 
 
-And it will mess up the following code logic and no warnning reported by
-compiler, even without initializing "ext" at the beginning:
-void foo(struct mem_extent *arg) {
-  struct mem_extent *ext;  // used both for iterator and normal ptr
-  ...
-  ext = arg;  // this assignment can alse be done in another bar() func
-  ...
-  list_for_each_entry(ext, head, member) {
-    if (found(ext))
-       break;
-  }
-  ...
-  // use ext after the loop
-  ret = ext;
-}
-If the loop hit the break, the last "ret" will be the found ext iterator.
-However, if the "type(pos) pos" approach applied, the last "ret" will be
-"arg" which is not the intention of the developers, because the "ext" is
-two different variables inside and outside the loop.
+>>
+>> Regarding tracing I think fanotify would really benefit from a FAN_MARK_PID (with optional follow fork-mode). That way one of the first filter-steps would be whether events for the given task are of interest, so we have no performance problem for all other tasks. The possibility to mark specific processes would also have another substantial benefit: fanotify could be used without root privileges by only allowing the user to mark his/her own processes.
+>> That way existing inotify-users could finally switch to the cleaner/more powerful fanotify.
+> 
+> We already have partial support for unprivileged fanotify.
+> Which features are you missing with unprivileged fanotify?
+> and why do you think that filtering by process tree will allow those
+> features to be enabled?
 
-Thus, my idea is *better a finger off than always aching*, let's choose
-the "list_for_each_entry_inside(pos, type, head, member)" approach.
 
-> It turns out that just syntactically, it's really nice to give the
-> type of the iterator from outside the way we do now. Yeah, it may be a
-> bit odd, and maybe it's partly because I'm so used to the
-> "list_for_each_list_entry()" syntax, but moving the type into the loop
-> construct really made it nasty - either one very complex line, or
-> having to split it over two lines which was even worse.
->
-> Maybe the place I looked at just happened to have a long typename, but
-> it's basically always going to be a struct, so it's never a _simple_
-> type. And it just looked very odd adn unnatural to have the type as
-> one of the "arguments" to that list_for_each_entry() macro.
+I am missing the ability to filter for (close-)events of large directory trees in a race-free manner, so that no events are lost on newly created dirs. Even without the race, monitoring my home-directory is impossible (without privileges) as I have far more than 8192 directories (393941 as of writing (; ).
+Monitoring mounts solves these problems but introduces two others:
+First it requires privileges, second a potentially large number of events *not of interest* have to be copied to user-space (except unshared mount namespaces are used). Allowing a user to only monitor his/her own processes would make mark_mount privileges unnecessary (please correct me if I'm wrong). While still events above the directory of interest are reported, at least events from other users are filtered beforehand.
 
-we can pass a shorter type name to list_for_each_entry_inside, thus no
-need to split it over two lines. Actually it is not a big problem.
-+ #define t struct sram_bank_info
-- list_for_each_entry(pos, head, member) {
-+ list_for_each_entry_inside(pos, t, head, member) {
+> A child process may well have more privileges to read directories than
+> its parent.
+> 
+Similar to ptrace fanotiy should then not follow suid-programs, so this case should not occur.
 
-I put the type at the second argument not the first to avoid messing up
-the pattern match in some coccinelle scripts.
+After all I totally understand that you do not want to feature-bloat fanotify and maybe my use-case is already too far from the one casual users have. On the other hand, pid- or path-filtering is maybe basic enough and fanotify does offer the ability to filter for paths - it is just quite limited due to the mark-concept. I think it should not be necessary in order to monitor a directory tree, to touch every single directory inside beforehand. Maybe a hybrid-solution fits best here: hard-code pid-filtering as a security feature into fanotify, allow marking of mounts for the user's own processes and allow for eBPF filter rules afterwards.
 
->  (b) gives us a nice warning for any normal use-after-loop case
-> (unless you explicitly initialized it like that
-> sgx_mmu_notifier_release() function did for no good reason
+Thanks and kind regards
+Tycho
 
-sometimes developers can be confused by the reported warnning:
-"used without having been initialized", and can not figure out immediately
-that "oh, now i am using another different variable but with the same name
-of the loop iterator variable", which has changed the programming habits
-of developers.
 
->  (c) also guarantees that even if you don't get a warning,
-> non-converted (or newly written) bad code won't actually _work_
->
-> so you end up getting the new rules without any ambiguity or mistaken
 
-It will lead to a wrong/NULL pointer dereference if the pointer is used
-anywhere else, depend on which value is used to initialized with.
 
-Best regard,
---
-Xiaomeng Tong
+
