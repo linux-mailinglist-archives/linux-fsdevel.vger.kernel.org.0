@@ -2,83 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 709504CA8EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 16:19:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F22AF4CA9E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 17:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243426AbiCBPUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 10:20:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48620 "EHLO
+        id S240976AbiCBQMj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 11:12:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233839AbiCBPUY (ORCPT
+        with ESMTP id S239458AbiCBQMi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 10:20:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B40E0C6258
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 07:19:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646234380;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ss+f+RADfTVm1TaAGMxnunJihZ0Q5aGV0Ws8tGhjrZI=;
-        b=KB3F8j9p64yW2wXc/Y+Y7mHP2b3Mse0Yn+Sur6eIVtUNvdeqVmZP0QIDVLYdyLlBFmX7zU
-        Kato0asBGuydphIia1GsZ+8czdUda5dmBCLc4XxdKi3mOJ/cBLEr+F30t8QUl5vDzlkCW8
-        VN1UBqjNBvNYPf0ICEUgcp2ajFgJsMM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-320-AbUz4eUSNw6ECWZ2gnLwqg-1; Wed, 02 Mar 2022 10:19:35 -0500
-X-MC-Unique: AbUz4eUSNw6ECWZ2gnLwqg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59AC8100B3AC;
-        Wed,  2 Mar 2022 15:19:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F319583BFA;
-        Wed,  2 Mar 2022 15:19:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Yh1swsJLXvLLIQ0e@bombadil.infradead.org>
-References: <Yh1swsJLXvLLIQ0e@bombadil.infradead.org> <2ee1eb2b46a3bbdbde4244634586655247f5c676.camel@HansenPartnership.com> <1476917.1643724793@warthog.procyon.org.uk>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     dhowells@redhat.com,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] configfd as a replacement for both ioctls and fsconfig
+        Wed, 2 Mar 2022 11:12:38 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5973CB92E;
+        Wed,  2 Mar 2022 08:11:54 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id p8so2328355pfh.8;
+        Wed, 02 Mar 2022 08:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rqjAwReHv4OR7mYsT5etlrN8Eh3Kjp+z7Ky+T2IUaEg=;
+        b=eFhR3U14smputqGxx6Caa7v19Ws9oHUcSIJYzxmxeUkughMnuMY5MxwjDBrj4nmzlR
+         gWkLzliBfmD3/bTvWXpsYcGf6kOMAzwWfXP85Wzr0djP+cHhqed3T6bm0iK74phKn2ZU
+         cwJpSmNmuYZST/IC6kmCYOdt8J+3AHapMOF7VApCf6YM/lIQQYeIgnfLLLe+ZcoDYQOO
+         U/9TG8Z0xs/I7F04jZwN9lS5QORQuJBgQl9K6ZN0aUQ/bd1MNK6IIc/jWW+JDNCsuofW
+         3hsYzsMRUcqZ5c5IYQqNp5mq0P9LnKl67wh0Ba2s9gcP0xqg7hEZdYw51yo706zqlw9y
+         cn0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rqjAwReHv4OR7mYsT5etlrN8Eh3Kjp+z7Ky+T2IUaEg=;
+        b=Q1ROz57ryXt5UYREaAdI+qJg6sPI3eGC+muU0EtgJaCKfnRVc1yZZA5sw53JzknHIP
+         Prve+gehNUPLJic0WFWOF6nZxISiWpQj3d0+9rSxf0ilgkS8M5F1FUXH/D2yS3zL5A8B
+         dEHpAoYb2lDmc+ZgxiEYB6MKLYBVoqQOTvaySLtl9pvYQoEuL/q3byMq7UFWDVsVYay7
+         MTIz4BOrBg3lxn+L8TRE7tCLm4ZRjxqCJaQCgleG7hRkWRU+lT5WC8wgCgnovphtdtt4
+         Ubf8xqnPPW/nA+SLygPJvfzfa80RUpUM1ij3bEc2xN9y3YoDwCeKTSaOXFk5zpJVfvVt
+         P7kA==
+X-Gm-Message-State: AOAM531xi7trdFnedRvNJd40k7fNcvOKPBbniVHpx7L5KXl4R0k6EhJP
+        p7vDaLadPRZ+gKJO5rg8ZDo=
+X-Google-Smtp-Source: ABdhPJxXfOvebzgkOzuyHmiHPzOUEp4mLCS8w+BcalJev3JX+XHkm9xHho5WVyg6E0fyjGmUtHvu2w==
+X-Received: by 2002:a63:1113:0:b0:378:deae:5840 with SMTP id g19-20020a631113000000b00378deae5840mr8381753pgl.87.1646237514175;
+        Wed, 02 Mar 2022 08:11:54 -0800 (PST)
+Received: from jxt.. ([103.150.185.227])
+        by smtp.gmail.com with ESMTPSA id d10-20020a63360a000000b0037947abe4bbsm2809382pga.34.2022.03.02.08.11.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Mar 2022 08:11:53 -0800 (PST)
+From:   YI <afctgo@gmail.com>
+X-Google-Original-From: YI <uuuuuu@protonmail.com>
+To:     trivial@kernel.org
+Cc:     YI <afctgo@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Colin Cross <ccross@google.com>,
+        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH] docs: proc.rst: fix wrong time unit
+Date:   Thu,  3 Mar 2022 00:11:16 +0800
+Message-Id: <20220302161122.3984304-1-uuuuuu@protonmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3570400.1646234372.1@warthog.procyon.org.uk>
-Date:   Wed, 02 Mar 2022 15:19:32 +0000
-Message-ID: <3570401.1646234372@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Luis Chamberlain <mcgrof@kernel.org> wrote:
+From: YI <afctgo@gmail.com>
 
-> > It'd be nice to be able to set up a 'configuration transaction' and then
-> > do a commit to apply it all in one go.
-> 
-> Can't io-uring cmd effort help here?
+Dear Trivial Patch Monkey, 
 
-I don't know.  Wouldn't that want to apply each element as a separate thing?
+This commit fixes a small documentaion problem reported in
+https://bugzilla.kernel.org/show_bug.cgi?id=194593.
 
-But you might want to do something more akin to a db transaction, where you
-start a transaction, read stuff, consider your changes, propose your changes
-and then commit - which would mean io_uring wouldn't help.
+Some fields in the file /proc/$pid/stat represent time.
+Their units are clock_t, not jiffies as stated in the documentation.
+This commit fixes https://bugzilla.kernel.org/show_bug.cgi?id=194593.
 
-David
+Reported-by: hujunjie
+Signed-off-by: YI <afctgo@gmail.com>
+---
+ Documentation/filesystems/proc.rst | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 061744c436d9..433ad4623630 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -340,10 +340,10 @@ It's slow but very precise.
+   cmin_flt      number of minor faults with child's
+   maj_flt       number of major faults
+   cmaj_flt      number of major faults with child's
+-  utime         user mode jiffies
+-  stime         kernel mode jiffies
+-  cutime        user mode jiffies with child's
+-  cstime        kernel mode jiffies with child's
++  utime         user mode processor time (clock_t)
++  stime         kernel mode processor time (clock_t)
++  cutime        user mode processor time (clock_t) with child's
++  cstime        kernel mode processor time (clock_t) with child's
+   priority      priority level
+   nice          nice level
+   num_threads   number of threads
+@@ -370,8 +370,8 @@ It's slow but very precise.
+   rt_priority   realtime priority
+   policy        scheduling policy (man sched_setscheduler)
+   blkio_ticks   time spent waiting for block IO
+-  gtime         guest time of the task in jiffies
+-  cgtime        guest time of the task children in jiffies
++  gtime         guest time of the task in processor time (clock_t)
++  cgtime        guest time of the task children in processor time (clock_t)
+   start_data    address above which program data+bss is placed
+   end_data      address below which program data+bss is placed
+   start_brk     address above which program heap can be expanded with brk()
+-- 
+2.34.1
 
