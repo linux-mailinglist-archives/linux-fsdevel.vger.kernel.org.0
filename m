@@ -2,134 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8A54C9F1F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 09:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 684BE4C9F25
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Mar 2022 09:29:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240103AbiCBI1x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 03:27:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37466 "EHLO
+        id S240117AbiCBI3v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 03:29:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235447AbiCBI1q (ORCPT
+        with ESMTP id S234951AbiCBI3s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 03:27:46 -0500
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 49CF9B82D7;
-        Wed,  2 Mar 2022 00:27:03 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D9C7810E7AA7;
-        Wed,  2 Mar 2022 19:26:59 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nPKK2-000Yvk-TL; Wed, 02 Mar 2022 19:26:58 +1100
-Date:   Wed, 2 Mar 2022 19:26:58 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/6] Generic per-sb io stats
-Message-ID: <20220302082658.GF3927073@dread.disaster.area>
-References: <20220301184221.371853-1-amir73il@gmail.com>
- <20220302065952.GE3927073@dread.disaster.area>
- <CAOQ4uxgU7cYAO+KMd=Yb8Fo4AwScQ2J0eqkYn3xWjzBWKtUziQ@mail.gmail.com>
+        Wed, 2 Mar 2022 03:29:48 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 970BD38DA7
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 00:29:05 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id 15-20020a17090a098f00b001bef0376d5cso1139885pjo.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Mar 2022 00:29:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nhj2UYDv6lhlSNPLYeAs8t7voAVPXKimrviFdjCHzWM=;
+        b=DApuqsEmjJNLujancfXfCthOkTnRIUPq28/r6tOxkHmRYgOlkugPPK0h8zAh8enpIU
+         HfkQBBHhLbFz8qxRq7E2RLuHrElDGGUHS9Y244UdqIirJhWbIHaCrn4YF7xafhgTecpu
+         x6OH95W7ts5LUCdSkrPRN+VLxTqzK7oKM7OtnhOIOVkuakDHhP+07oAY8HWOUrVKWwpS
+         DnRwLDlUAcWgA1CnWdFtO0QOL8kLiRQ+vjGLe4BEgo4v9XJAX76t8Q0sNmUSx1tdL1/b
+         w7Y2MRd1la+tiYmu/lVxcH6LXEof0W4BIhpWEx+hwGiQJUbmqWHEmQaFjYs8VD1Hu04i
+         l7tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nhj2UYDv6lhlSNPLYeAs8t7voAVPXKimrviFdjCHzWM=;
+        b=QogVHgZo3r5cf3C0RqgahznKK2928lsF0uJQuo61ax95J4mmK1fITy36s7Rlry43w3
+         p9qDdbnVm4NeczxQtrTIZrnZzlqlGq34gaHS6xD43YVXpMEWCCiqLceBZmMS+J4FzfJG
+         ueoeRoLLukoLAPRcoFD7Jgcf1MuvEMTOUfZd9q+pzCEInaaBIT52mogK9ygvHGj5+7Co
+         Le7ot7SYtjzu44cRcq8kXYLu00KnzU2cShLHiAxJCxGspKuHIG2qldUP9Ldc8L6qcPAb
+         Msysaq9sAQBLgKVaKoSRaj75CcaMa1BwxNqd7HzXKLwWZzzbKJUBjsx8BN7bKFz/eKZQ
+         MkXA==
+X-Gm-Message-State: AOAM5337KztmTHzlzQdkAIM3SWWCisKBBQ6EMJLxNM1mr3MukVdnsASD
+        bAOeXwEhnAyfkr/AQmChdcKz9A==
+X-Google-Smtp-Source: ABdhPJw2Snc+gQoBgYJzFskUkuKAvbAT2RF7i6kPMEQuXqdEKU1ZjuWSi3E8iJ7UVQPqE+7d8aedhQ==
+X-Received: by 2002:a17:902:e5c4:b0:151:9bf6:f47f with SMTP id u4-20020a170902e5c400b001519bf6f47fmr635388plf.110.1646209745090;
+        Wed, 02 Mar 2022 00:29:05 -0800 (PST)
+Received: from FVFYT0MHHV2J.bytedance.net ([61.120.150.70])
+        by smtp.gmail.com with ESMTPSA id a20-20020a056a000c9400b004f396b965a9sm20922228pfv.49.2022.03.02.00.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Mar 2022 00:29:04 -0800 (PST)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        apopple@nvidia.com, shy828301@gmail.com, rcampbell@nvidia.com,
+        hughd@google.com, xiyuyang19@fudan.edu.cn,
+        kirill.shutemov@linux.intel.com, zwisler@kernel.org,
+        hch@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        duanxiongchun@bytedance.com, smuchun@gmail.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v4 0/6] Fix some bugs related to ramp and dax
+Date:   Wed,  2 Mar 2022 16:27:12 +0800
+Message-Id: <20220302082718.32268-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.32.0 (Apple Git-132)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgU7cYAO+KMd=Yb8Fo4AwScQ2J0eqkYn3xWjzBWKtUziQ@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=621f2a55
-        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=7-415B0cAAAA:8 a=VwQbUJbxAAAA:8
-        a=pGLkceISAAAA:8 a=hrpbfNtiAHGPJjzkeMIA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22 a=AjGcO6oz07-iQ99wixmX:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 02, 2022 at 09:43:50AM +0200, Amir Goldstein wrote:
-> On Wed, Mar 2, 2022 at 8:59 AM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > On Tue, Mar 01, 2022 at 08:42:15PM +0200, Amir Goldstein wrote:
-> > > Miklos,
-> > >
-> > > Following your feedback on v2 [1], I moved the iostats to per-sb.
-> > >
-> > > Thanks,
-> > > Amir.
-> > >
-> > > [1] https://lore.kernel.org/linux-unionfs/20220228113910.1727819-1-amir73il@gmail.com/
-> > >
-> > > Changes since v2:
-> > > - Change from per-mount to per-sb io stats (szeredi)
-> > > - Avoid percpu loop when reading mountstats (dchinner)
-> > >
-> > > Changes since v1:
-> > > - Opt-in for per-mount io stats for overlayfs and fuse
-> >
-> > Why make it optional only for specific filesystem types? Shouldn't
-> > every superblock capture these stats and export them in exactly the
-> > same place?
-> >
-> 
-> I am not sure what you are asking.
-> 
-> Any filesystem can opt-in to get those generic io stats.
+This series is based on next-20220225.
 
-Yes, but why even make it opt-in? Why not just set these up
-unconditionally in alloc_super() for all filesystems? Either this is
-useful information for userspace montioring and diagnostics, or it's
-not useful at all. If it is useful, then all superblocks should
-export this stuff rather than just some special subset of
-filesystems where individual maintainers have noticed it and thought
-"that might be useful".
+Patch 1-2 fix a cache flush bug, because subsequent patches depend on
+those on those changes, there are placed in this series.  Patch 3-4
+are preparation for fixing a dax bug in patch 5.  Patch 6 is code cleanup
+since the previous patch remove the usage of follow_invalidate_pte().
 
-Just enable it for every superblock....
+v4:
+- Fix compilation error on riscv.
 
-> This is exactly the same as any filesystem can already opt-in for
-> fs specific io stats using the s_op->show_stats() vfs op.
-> 
-> All I did was to provide a generic implementation.
-> The generic io stats are collected and displayed for all filesystems the
-> same way.
-> 
-> I only included patches for overlayfs and fuse to opt-in for generic io stats,
-> because I think those stats should be reported unconditionally (to
-> mount options)
-> for fuse/overlayfs and I hope that Miklos agrees with me.
+v3:
+- Based on next-20220225.
 
-Yup, and I'm asking you why it should be optional - no filesystem
-ever sees this information - it's totally generic VFS level code
-except for the structure allocation. What's the point of *not*
-enabling it for every superblock unconditionally?
+v2:
+- Avoid the overly long line in lots of places suggested by Christoph.
+- Fix a compiler warning reported by kernel test robot since pmd_pfn()
+  is not defined when !CONFIG_TRANSPARENT_HUGEPAGE on powerpc architecture.
+- Split a new patch 4 for preparation of fixing the dax bug.
 
-> If there is wide consensus that all filesystems should have those stats
-> unconditionally (to mount options), then I can post another patch to make
-> the behavior not opt-in, but I have a feeling that this discussion
+Muchun Song (6):
+  mm: rmap: fix cache flush on THP pages
+  dax: fix cache flush on PMD-mapped pages
+  mm: rmap: introduce pfn_mkclean_range() to cleans PTEs
+  mm: pvmw: add support for walking devmap pages
+  dax: fix missing writeprotect the pte entry
+  mm: remove range parameter from follow_invalidate_pte()
 
-That's exactly what I want you to do. We're already having this
-discussion, so let's get it over and done with right now.
+ fs/dax.c             | 82 +++++-----------------------------------------------
+ include/linux/mm.h   |  3 --
+ include/linux/rmap.h |  3 ++
+ mm/internal.h        | 26 +++++++++++------
+ mm/memory.c          | 23 ++-------------
+ mm/page_vma_mapped.c |  5 ++--
+ mm/rmap.c            | 68 +++++++++++++++++++++++++++++++++++--------
+ 7 files changed, 89 insertions(+), 121 deletions(-)
 
-> How would you prefer the io stats behavior for xfs (or any fs) to be?
-> Unconditional to mount options?
-> Opt-in with mount option? (suggest name please)
-> Opt-in/out with mount options and default with Kconfig/sysfs tunable?
-> Anything else?
-
-Unconditional, for all filesystems, so they all display the same
-stats in exactly same place without any filesystem having to
-implement a single line of code anywhere. A single kconfig option
-like you already hav is just fine to turn it off for those that
-don't want to use it.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.11.0
+
