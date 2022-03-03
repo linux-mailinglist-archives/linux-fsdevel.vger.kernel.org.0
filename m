@@ -2,99 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C36A4CBD2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 12:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D183C4CBD93
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 13:18:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232917AbiCCL4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 06:56:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34164 "EHLO
+        id S233171AbiCCMTa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 07:19:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231193AbiCCL4k (ORCPT
+        with ESMTP id S233167AbiCCMTY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 06:56:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9AED3D0048
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Mar 2022 03:55:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646308554;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=IY8lWVSOV3bu6U2dVFxqTE5k4e4xoGosytCtjhB+xz0=;
-        b=LDXTi+fhQtka05QdD1C+WPQouBVhSiAHwpZjWZsdBZCg+LEWyIepaEurp4zpGSoOwZ9quh
-        qjTwXO3H/hAk0Tc9e5hfPfp83ilb27fnQVaROkoAAfQd/ceA3LqkrrJspdvFjWsnxzNNx3
-        DpRwdh3eLpHr9xqZPzAGVT/RtB5Ujr0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-247-gl5wym27Ng2KQYmErdbzSQ-1; Thu, 03 Mar 2022 06:55:51 -0500
-X-MC-Unique: gl5wym27Ng2KQYmErdbzSQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A43E91091DA0;
-        Thu,  3 Mar 2022 11:55:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 76C0F842D4;
-        Thu,  3 Mar 2022 11:55:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] cachefiles: Fix incorrect length to fallocate()
-From:   David Howells <dhowells@redhat.com>
-To:     jlayton@kernel.org
-Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>, linux-cachefs@redhat.com,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 03 Mar 2022 11:55:48 +0000
-Message-ID: <164630854858.3665356.17419701804248490708.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        Thu, 3 Mar 2022 07:19:24 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F195DF4B0
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Mar 2022 04:18:30 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id p9so7518196wra.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Mar 2022 04:18:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=W95klwG+EWnuJlXqfneyIPG4bMJIpYFCGfgCPBAo/s4=;
+        b=BVoUYAMy6igzOx7YCxgmD2obGVeA4FBbFy39UaDXpcyotfQj1WSs4cD2dBmZ3jehpH
+         Xv0H27JfD7LtNc3KTOYt5JsPQaESLbVZdrRIjVdCS/EqEN+LtHV3OI92ZhbhaxnOPsMB
+         zwIbvmQMtvcWtqQz/AOpNYfJzkMTFsv4hojr0PuJEFUbZHgxYNi3BKpDV1mgkUzm+fR0
+         4lMaaRE5yh5PGutSdpreHiYAqhMDl6KUHTvi2q6aV5S93rhbYz2wGWOzwPq3hB3YVbYG
+         uAhL64o8wkOM/gpLUr2Hb7oB/DraMZLkoBj2jGHmKGFPjyxdoWyrLbd/6WyXGtmMO48w
+         vp2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=W95klwG+EWnuJlXqfneyIPG4bMJIpYFCGfgCPBAo/s4=;
+        b=45GxoioKukv5MurhJb2FER4+WlhuESyFwUYxWA8PBEB+eTrLDMZjLY/qdL53fYvtyA
+         eVs9jI8PAI3OhXIv2oZztIAELtolywurcolzFrlvcNLsGTbayI/aMbS/M2iqT+Q1uwp2
+         GMGSd697PyX9oS72510cLap9JAyomovWTfaXQEcXIeYpxN3B7eaxP1IOJqhMAiBhUVwD
+         cALftWehb/GvH+VhzrHMOyD9UqWf/krmQiymuOeoGph5pJcMLF10KGUGzIuM3JpAiFAL
+         +bu6/8lAukeIxe4A8Mv9aOnVVc7JW1IP7GHcPmpioRA/4McBDi5YhVTsyY4ZzEiz+Vgv
+         gz4Q==
+X-Gm-Message-State: AOAM532fKk7m2vkmONJHr6K4Qlw17hPgO3+cRHZ4f1gCRv9oy8kycf2y
+        9N5D5m0iIooUEEm2B3f5kGzy2g==
+X-Google-Smtp-Source: ABdhPJwgYeUN7RS9hQRShRziePljKQd/1cMutSSEkk4MeQ2QRRtTjZSLz5QSndDd2pML49XlqkHAqw==
+X-Received: by 2002:a5d:6d0d:0:b0:1e8:7b6a:38e7 with SMTP id e13-20020a5d6d0d000000b001e87b6a38e7mr26568054wrq.625.1646309908722;
+        Thu, 03 Mar 2022 04:18:28 -0800 (PST)
+Received: from maple.lan (cpc141216-aztw34-2-0-cust174.18-1.cable.virginm.net. [80.7.220.175])
+        by smtp.gmail.com with ESMTPSA id p6-20020a5d4586000000b001f0436cb325sm1774600wrq.52.2022.03.03.04.18.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Mar 2022 04:18:28 -0800 (PST)
+Date:   Thu, 3 Mar 2022 12:18:24 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Xiaomeng Tong <xiam0nd.tong@gmail.com>
+Cc:     david.laight@aculab.com, alsa-devel@alsa-project.org,
+        kvm@vger.kernel.org, gustavo@embeddedor.com,
+        linux-iio@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+        linux@rasmusvillemoes.dk, dri-devel@lists.freedesktop.org,
+        c.giuffrida@vu.nl, amd-gfx@lists.freedesktop.org,
+        torvalds@linux-foundation.org, samba-technical@lists.samba.org,
+        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
+        linux-arch@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-scsi@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-staging@lists.linux.dev,
+        h.j.bos@vu.nl, jgg@ziepe.ca, intel-wired-lan@lists.osuosl.org,
+        nouveau@lists.freedesktop.org,
+        bcm-kernel-feedback-list@broadcom.com, dan.carpenter@oracle.com,
+        linux-media@vger.kernel.org, keescook@chromium.org, arnd@arndb.de,
+        linux-pm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        bjohannesmeyer@gmail.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, christophe.jaillet@wanadoo.fr,
+        jakobkoschel@gmail.com, v9fs-developer@lists.sourceforge.net,
+        linux-tegra@vger.kernel.org, tglx@linutronix.de,
+        andriy.shevchenko@linux.intel.com,
+        linux-arm-kernel@lists.infradead.org, linux-sgx@vger.kernel.org,
+        nathan@kernel.org, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        tipc-discussion@lists.sourceforge.net,
+        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, christian.koenig@amd.com,
+        rppt@kernel.org
+Subject: Re: [Kgdb-bugreport] [PATCH 2/6] treewide: remove using list
+ iterator after loop body as a ptr
+Message-ID: <20220303121824.qdyrognluik74iph@maple.lan>
+References: <39404befad5b44b385698ff65465abe5@AcuMS.aculab.com>
+ <20220303072657.11124-1-xiam0nd.tong@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220303072657.11124-1-xiam0nd.tong@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When cachefiles_shorten_object() calls fallocate() to shape the cache file
-to match the DIO size, it passes the total file size it wants to achieve,
-not the amount of zeros that should be inserted.  Since this is meant to
-preallocate that amount of storage for the file, it can cause the cache to
-fill up the disk and hit ENOSPC.
+On Thu, Mar 03, 2022 at 03:26:57PM +0800, Xiaomeng Tong wrote:
+> On Thu, 3 Mar 2022 04:58:23 +0000, David Laight wrote:
+> > on 3 Mar 2022 10:27:29 +0800, Xiaomeng Tong wrote:
+> > > The problem is the mis-use of iterator outside the loop on exit, and
+> > > the iterator will be the HEAD's container_of pointer which pointers
+> > > to a type-confused struct. Sidenote: The *mis-use* here refers to
+> > > mistakely access to other members of the struct, instead of the
+> > > list_head member which acutally is the valid HEAD.
+> >
+> > The problem is that the HEAD's container_of pointer should never
+> > be calculated at all.
+> > This is what is fundamentally broken about the current definition.
+> 
+> Yes, the rule is "the HEAD's container_of pointer should never be
+> calculated at all outside the loop", but how do you make sure everyone
+> follows this rule?
 
-Fix this by passing the length actually required to go from the current EOF
-to the desired EOF.
+Your formulation of the rule is correct: never run container_of() on HEAD
+pointer.
 
-Fixes: 7623ed6772de ("cachefiles: Implement cookie resize for truncate")
-Reported-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-cachefs@redhat.com
----
+However the rule that is introduced by list_for_each_entry_inside() is
+*not* this rule. The rule it introduces is: never access the iterator
+variable outside the loop.
 
- fs/cachefiles/interface.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index 51c968cd00a6..ae93cee9d25d 100644
---- a/fs/cachefiles/interface.c
-+++ b/fs/cachefiles/interface.c
-@@ -254,7 +254,7 @@ static bool cachefiles_shorten_object(struct cachefiles_object *object,
- 		ret = cachefiles_inject_write_error();
- 		if (ret == 0)
- 			ret = vfs_fallocate(file, FALLOC_FL_ZERO_RANGE,
--					    new_size, dio_size);
-+					    new_size, dio_size - new_size);
- 		if (ret < 0) {
- 			trace_cachefiles_io_error(object, file_inode(file), ret,
- 						  cachefiles_trace_fallocate_error);
+Making the iterator NULL on loop exit does follow the rule you proposed
+but using a different technique: do not allow HEAD to be stored in the
+iterator variable after loop exit. This also makes it impossible to run
+container_of() on the HEAD pointer.
 
 
+> Everyone makes mistakes, but we can eliminate them all from the beginning
+> with the help of compiler which can catch such use-after-loop things.
+
+Indeed but if we introduce new interfaces then we don't have to worry
+about existing usages and silent regressions. Code will have been
+written knowing the loop can exit with the iterator set to NULL.
+
+Sure it is still possible for programmers to make mistakes and
+dereference the NULL pointer but C programmers are well training w.r.t.
+NULL pointer checking so such mistakes are much less likely than with
+the current list_for_each_entry() macro. This risk must be offset
+against the way a NULLify approach can lead to more elegant code when we
+are doing a list search.
+
+
+Daniel.
