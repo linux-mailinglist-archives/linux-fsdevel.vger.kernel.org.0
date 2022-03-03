@@ -2,111 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7702C4CB801
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 08:38:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E36044CB82F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 08:54:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbiCCHjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 02:39:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49914 "EHLO
+        id S230420AbiCCHz2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 02:55:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbiCCHjO (ORCPT
+        with ESMTP id S230374AbiCCHz2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 02:39:14 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9732955210;
-        Wed,  2 Mar 2022 23:38:29 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id mg21-20020a17090b371500b001bef9e4657cso3616674pjb.0;
-        Wed, 02 Mar 2022 23:38:29 -0800 (PST)
+        Thu, 3 Mar 2022 02:55:28 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E55D16FDE0;
+        Wed,  2 Mar 2022 23:54:43 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id b11so6945092lfb.12;
+        Wed, 02 Mar 2022 23:54:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X4PtnP3K3zaO67GevWuv4V5LSWib25XqjvFapj0F6Bg=;
-        b=I9cL01ZpjtBtK2lgplU5gULgz9S4d79BJRTWrmTf0UrluMNfBGMUX5iBJK4ZHbSfbn
-         W/xR2FzGE1X69QzdF7LKnmiHGVn79gvlZLW3ekBacVtHRKllfZlPw0rdh9vf8cxmsRqa
-         FQpy8OyfMpUfRgW3TC6PDH3PVsylEdgl3+EHN8wZdJ5V0ZfZCToO/6lTXMciFuhoPZRq
-         keQYkHPEEZa9XEiRYvfwc712G8HEAI2Sdk5x3CBz34b8mmDqTlIZYHCm+5i/B5F9Pvyz
-         QJff81ljsSD5SIMee/z1ueu2OAtBu3qY3W4EKe+9Y4HCP9ksnGOjXH2YB6WbKP0LFxlf
-         Tv0g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=sJcJ2tPfuoTnVjGIh4PB1r1QQf3pEDkYuAb0fPURAbc=;
+        b=Vc4iPmbPVEDBtxd3OG7NCebjtdAKbiy6CKpFxBIB1ew7Mlwg262GmDFvp5McKnofmd
+         ej2WwXHeLciUm+4Zqoi67TkPgcLcmdnnc775j37JDraV+bmomYh3mq274UR5c6BG/ZSv
+         Zc+Q5PXDEdXsRHgs9Lh85tpIaBSgyb75QV3GGRno9U3q5GI9+KByhnuOle+Z6PNCf6Vq
+         f5MtSBCTkeBWvd5l0zmNX9wn2DyCuF238Wg3Xf8kAPjSYPw5smtD7D2WA+GtMykR/9kD
+         xEmB+9I+tbT6GoFtNXSHjbVc8BzpVLQ+V0XXXKw25Mm21Jov9h50AoADeZti1tvFaR2l
+         cKMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X4PtnP3K3zaO67GevWuv4V5LSWib25XqjvFapj0F6Bg=;
-        b=FjAl46Zg9azn5LJRsLZ/0sgfIHVUoYDGwXsAFkNUEaZEdmb/fwhujPqTkjCJ9t1wF6
-         i6n3QyW2Uzst1j9ZfDov9NqOmNwktH14YZeJIfTRoB/bUE1GIipVKeaRdQ4LMSGanw91
-         dnbCIkFttO1/tFur+CZiP681ZnYCgo5CiApqEQv8p+V99huG6oeKftKh1ZBXIvl6jTEj
-         ubzRQaFPYMRtzglQ/kAX9n8nmd7vcsGA7pC7+C9RHJ0WENmiByN9rGxgE7QLpCDvz8v5
-         B3yIW+EM9bp+hIKNePa681N4GNNQvGe6JP7iJ/JAc50uwjeLDWFeSrK5hXfO2+IqxJ6H
-         swGg==
-X-Gm-Message-State: AOAM532unhz0CqTvVJ8DU3ciOoBlj/qZ/hFM9tHF96ZcH5kBHOZrDjjg
-        tKnQmoKEyLVn947zzodvydVZaLaqy2RzWhXQoFg=
-X-Google-Smtp-Source: ABdhPJxGmzHg1K953e3nuM/0U22oTreligsoNwsyLrjrfOH7fgth0exeYrmVqUpIcyycBlnBV4GiELbpZSUcnjnV57Q=
-X-Received: by 2002:a17:90a:b396:b0:1bc:588a:c130 with SMTP id
- e22-20020a17090ab39600b001bc588ac130mr3885270pjr.97.1646293109074; Wed, 02
- Mar 2022 23:38:29 -0800 (PST)
-MIME-Version: 1.0
-References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
-In-Reply-To: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Thu, 3 Mar 2022 13:08:03 +0530
-Message-ID: <CA+1E3rLP8-0xr0n6jcHaCPiNTj-WDL+tFPC9Y=WvKaKj_M2fdw@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-block@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
-        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <Matias.Bjorling@wdc.com>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier.gonz@samsung.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=sJcJ2tPfuoTnVjGIh4PB1r1QQf3pEDkYuAb0fPURAbc=;
+        b=pDd/jpC00yCIMsSt2Oc6HtjNc+RAMeSleEvZCyVnKDyRxfxAIxzCsm4oft3rc/0He6
+         zjhO2hAZ/R9CJ21ezuQAKm3duxP6MnI8qqe2vKKo0xtraus3lVZOiNI1RKHw8luBTuTv
+         hw8I0l8NjZtYlmROX7Ow1L/qaHLYvsmcCa8nBLs1sh/LKow/ipIe9rrvXYgHpmUZsP0E
+         STTWQ97HnQ9txIIWrFNi06MDEnJXMyFnk/0IQpm2hdNzoJ9zfx9IGUJB3R1+GeUvBA31
+         CpQ4j5TFjo+sHQH6zbeRSkzJunzAIMFl4+i6S1b1zTVk5FnKBXiRqqiFuNcAwKp8y1T3
+         Llzg==
+X-Gm-Message-State: AOAM5334YM6WTkO19oN00d/wUH3+jnZ2w6NPNIw/BriCzD+zFFuEJ+b4
+        BF6N+yNaY8ESYOvpkQs5rlA=
+X-Google-Smtp-Source: ABdhPJzzQmjU9+fV6wRvONbx7uOu822PW/5BTF8bp74D0T9xef8moRVDIYOmN40Xz5mPqc0UjElJxQ==
+X-Received: by 2002:ac2:50ca:0:b0:43e:550a:4457 with SMTP id h10-20020ac250ca000000b0043e550a4457mr21143568lfm.614.1646294081525;
+        Wed, 02 Mar 2022 23:54:41 -0800 (PST)
+Received: from localhost (87-49-146-27-mobile.dk.customer.tdc.net. [87.49.146.27])
+        by smtp.gmail.com with ESMTPSA id y16-20020ac24470000000b00445a97a7928sm278389lfl.290.2022.03.02.23.54.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Mar 2022 23:54:41 -0800 (PST)
+Date:   Thu, 3 Mar 2022 08:54:40 +0100
+From:   Pankaj Raghav <pankydev8@gmail.com>
+To:     Javier =?utf-8?B?R29uesOhbGV6?= <javier@javigon.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
+        Matias =?utf-8?B?QmrDuHJsaW5n?= <matias.bjorling@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
         Bart Van Assche <bvanassche@acm.org>,
         Adam Manzanares <a.manzanares@samsung.com>,
-        Keith Busch <Keith.Busch@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
+        Keith Busch <keith.busch@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
         Kanchan Joshi <joshi.k@samsung.com>,
         Nitesh Shetty <nj.shetty@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Message-ID: <20220303075440.zj5yzmrpp6jkpmsw@quentin>
+References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+ <B3F227F7-4BF0-4735-9D0F-786B68871963@javigon.com>
+ <20220303062950.srhm5bn3mcjlwbca@ArmHalley.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220303062950.srhm5bn3mcjlwbca@ArmHalley.localdomain>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 3, 2022 at 6:51 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> Thinking proactively about LSFMM, regarding just Zone storage..
->
-> I'd like to propose a BoF for Zoned Storage. The point of it is
-> to address the existing point points we have and take advantage of
-> having folks in the room we can likely settle on things faster which
-> otherwise would take years.
->
-> I'll throw at least one topic out:
->
->   * Raw access for zone append for microbenchmarks:
->         - are we really happy with the status quo?
->         - if not what outlets do we have?
+Thanks Luis and Javier for the proposal.
+On Thu, Mar 03, 2022 at 07:29:50AM +0100, Javier González wrote:
+> On 03.03.2022 06:32, Javier González wrote:
+> Let me expand a bit on this. There is one topic that I would like to
+> cover in this session:
+> 
+>   - PO2 zone sizes
+As I am working on this topic, I would like to join as well.
 
-Many choices were discussed/implemented in my last attempt to do
-append via io_uring/aio.
-Without consensus though. Perhaps F2F can help reaching it. I'd like
-to join this discussion.
+It could be tricky for me to be present there physically due to some
+constraints so will there be a possibility to also join also virtually?
 
-> I think the nvme passthrogh stuff deserves it's own shared
-> discussion though and should not make it part of the BoF.
-
-Yes indeed, there is more to it.
-We may anyway have to forgo append (and other-commands requiring extra
-result) in the first drop of uring-passthru at least. For good
-reasons. But let's discuss that in a separate thread along with some
-code.
-
-Thanks,
--- 
-Kanchan
+--
+Pankaj
