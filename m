@@ -2,208 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3664CB513
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 03:40:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83FCC4CB525
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 03:52:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbiCCCdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 21:33:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60882 "EHLO
+        id S231812AbiCCClk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 21:41:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231800AbiCCCd3 (ORCPT
+        with ESMTP id S231786AbiCCClj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 21:33:29 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87AD636C;
-        Wed,  2 Mar 2022 18:32:40 -0800 (PST)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2232WZQO020612
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 2 Mar 2022 21:32:36 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 7634315C0038; Wed,  2 Mar 2022 21:32:35 -0500 (EST)
-Date:   Wed, 2 Mar 2022 21:32:35 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Jan Kara <jack@suse.cz>, torvalds@linux-foundation.org,
-        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
-        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
-        duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        bfields@fieldses.org, gregkh@linuxfoundation.org,
-        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
-        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
-        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
-        linux-block@vger.kernel.org, axboe@kernel.dk,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.com, jlayton@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com
-Subject: Re: Report 2 in ext4 and journal based on v5.17-rc1
-Message-ID: <YiAow5gi21zwUT54@mit.edu>
-References: <1645096204-31670-1-git-send-email-byungchul.park@lge.com>
- <1645096204-31670-2-git-send-email-byungchul.park@lge.com>
- <20220221190204.q675gtsb6qhylywa@quack3.lan>
- <20220223003534.GA26277@X58A-UD3R>
- <20220223144859.na2gjgl5efgw5zhn@quack3.lan>
- <20220224011102.GA29726@X58A-UD3R>
- <20220224102239.n7nzyyekuacgpnzg@quack3.lan>
- <20220228092826.GA5201@X58A-UD3R>
- <20220228101444.6frl63dn5vmgycbp@quack3.lan>
- <20220303010033.GB20752@X58A-UD3R>
+        Wed, 2 Mar 2022 21:41:39 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B6910FCE
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 18:40:55 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id m11-20020a17090a7f8b00b001beef6143a8so3572758pjl.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Mar 2022 18:40:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:cc
+         :references:from:to:in-reply-to:content-transfer-encoding;
+        bh=WKpgUKvbgmgS/+XZIYcGoureDOsojTAGGMqwpMVSdx0=;
+        b=WkDu5aHPpmG3JoGrcKXOSVtPyVZqVsnK9TfxUoj9Yj3PEpa6J+V/9fQwamFkioHzpi
+         GfDxjNVajhLweHzfHllvGWROpleV0ERKGRiDG21o9iU9qu1YjprDnWiFRcatw9XQC1rM
+         7sg4g4v4ucriVtTOi9A7iZ1PpUOhOET1ALx40wMhkt9JLGx1rqA7RfYuNcLxag7aq98/
+         KcLZKC4flRjOBeebXDCRsK5wGicPYjIg80LIBmi25TK/xcQQqYjtNnSuK6ls/CWInWJ2
+         a+AM1y8HzMvC5pKjQmwpWGBoprOZm5xBsply77UPufQIJWTVWaNIU4DMAjALn8ot1XPS
+         ShKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:cc:references:from:to:in-reply-to
+         :content-transfer-encoding;
+        bh=WKpgUKvbgmgS/+XZIYcGoureDOsojTAGGMqwpMVSdx0=;
+        b=Ljb9MuRUflLotiyPORZP26Bph6LosL95vLc6zJ5qCea24xopfprjjCfmDWy34c33ic
+         869htx3oT1Opd7mNuBkCQZHJttX8sqlftp6MqmTAvG02q3U9jHiCR4wIelKs2jCZzjsa
+         q2KqcbimWUf47+C7K9TXmX5iujevRSE79e1GK7XJGo7qsUwk4q5PQPndCtoCTtWGv7H+
+         Jddv+kndzekTaimo1Cd8jukhyLJk7d1C2Vwk7GTP4ME4Cj61/y3+qYSJ87VoHFL6uKeA
+         qaRzP5mhoSaHAe7GDz5NKhwVt6mCHdReIEtB2Gf2opTY4J3E/Ca5d/ALGfLnvETK63Rv
+         aboQ==
+X-Gm-Message-State: AOAM532Zpeu3ykihCdsLFSDCuuN5dgS3L9P3ZulQMCAefKUQny8Q0cNa
+        MhDp+i2buPXfPsfrqtDLussmeA==
+X-Google-Smtp-Source: ABdhPJxOdMLArkpmLe9NJIzj5q5ePqZMNN5SzGfTtRGy/eUE2Cok/FhJL8qVgYMzK4uz3BqAkLF3Xg==
+X-Received: by 2002:a17:902:7fc5:b0:151:863e:44ee with SMTP id t5-20020a1709027fc500b00151863e44eemr10350330plb.163.1646275254888;
+        Wed, 02 Mar 2022 18:40:54 -0800 (PST)
+Received: from [10.76.43.192] ([61.120.150.76])
+        by smtp.gmail.com with ESMTPSA id q7-20020a056a0002a700b004f357e3e42fsm546095pfs.36.2022.03.02.18.40.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Mar 2022 18:40:54 -0800 (PST)
+Message-ID: <b31b0c6b-4a97-e03a-0bc0-4bf17d2ed946@bytedance.com>
+Date:   Thu, 3 Mar 2022 10:40:48 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220303010033.GB20752@X58A-UD3R>
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.1
+Subject: Re: [PATCH] sched/numa: add per-process numa_balancing
+Content-Language: en-US
+Cc:     songmuchun@bytedance.com, zhengqi.arch@bytedance.com,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20220224075227.27127-1-ligang.bdlg@bytedance.com>
+From:   Gang Li <ligang.bdlg@bytedance.com>
+To:     Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
+In-Reply-To: <20220224075227.27127-1-ligang.bdlg@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 03, 2022 at 10:00:33AM +0900, Byungchul Park wrote:
-> 
-> Unfortunately, it's neither perfect nor safe without another wakeup
-> source - rescue wakeup source.
-> 
->    consumer			producer
-> 
-> 				lock L
-> 				(too much work queued == true)
-> 				unlock L
-> 				--- preempted
->    lock L
->    unlock L
->    do work
->    lock L
->    unlock L
->    do work
->    ...
->    (no work == true)
->    sleep
-> 				--- scheduled in
-> 				sleep
+Hi Peter Zijlstra,
 
-That's not how things work in ext4.  It's **way** more complicated
-than that.  We have multiple wait channels, one wake up the consumer
-(read: the commit thread), and one which wakes up any processes
-waiting for commit thread to have made forward progress.  We also have
-two spin-lock protected sequence number, one which indicates the
-current commited transaction #, and one indicating the transaction #
-that needs to be committed.
+On 2022/1/12 22:43, Peter Zijlstra wrote:
+ >> Set per-process numa balancing:
+ >> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DISABLE); //disable
+ >> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
+ >> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DEFAULT); //follow global
+ >
+ > This seems to imply you can prctl(ENABLE) even if the global is
+ > disabled, IOW sched_numa_balancing is off.
 
-On the commit thread, it will sleep on j_wait_commit, and when it is
-woken up, it will check to see if there is work to be done
-(j_commit_sequence != j_commit_request), and if so, do the work, and
-then wake up processes waiting on the wait_queue j_wait_done_commit.
-(Again, all of this uses the pattern, "prepare to wait", then check to
-see if we should sleep, if we do need to sleep, unlock j_state_lock,
-then sleep.   So this prevents any races leading to lost wakeups.
+I have discussed the semantics of this API with Mel Gorman, we both
+agree that we can prctl(ENABLE) even if the global is disabled.
 
-On the start_this_handle() thread, if we current transaction is too
-full, we set j_commit_request to its transaction id to indicate that
-we want the current transaction to be committed, and then we wake up
-the j_wait_commit wait queue and then we enter a loop where do a
-prepare_to_wait in j_wait_done_commit, check to see if
-j_commit_sequence == the transaction id that we want to be completed,
-and if it's not done yet, we unlock the j_state_lock spinlock, and go
-to sleep.  Again, because of the prepare_to_wait, there is no chance
-of a lost wakeup.
+On 2021/11/10 00:26, Mel Gorman wrote: [1]
+ > For symmetry and consistency of the tuning. Either there is per-process
+ > control or there is not. Right now, there is only the ability to turn
+ > off NUMA balancing via prctl if globally enabled. There is no option to
+ > turn NUMA balancing on for a single task if globally disabled.
 
-So there really is no "consumer" and "producer" here.  If you really
-insist on using this model, which really doesn't apply, for one
-thread, it's the consumer with respect to one wait queue, and the
-producer with respect to the *other* wait queue.  For the other
-thread, the consumer and producer roles are reversed.
+On 11/18/21 4:58 PM, Mel Gorman wrote: [2]
+ > On Thu, Nov 18, 2021 at 11:26:30AM +0800, Gang Li wrote:
+ >> 3. prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
+ >
+ > If PR_SET_NUMAB_ENABLE enables numa balancing for a task when
+ > kernel.numa_balancing == 0 instead of returning an error then sure.
 
-And of course, this is a highly simplified model, since we also have a
-wait queue used by the commit thread to wait for the number of active
-handles on a particular transaction to go to zero, and
-stop_this_handle() will wake up commit thread via this wait queue when
-the last active handle on a particular transaction is retired.  (And
-yes, that parameter is also protected by a different spin lock which
-is per-transaction).
+[1] Link: https://lore.kernel.org/lkml/20211109162647.GY3891@suse.de/
+[2] Link: https://lore.kernel.org/lkml/20211118085819.GD3301@suse.de/
+-- 
+Thanks
+Gang Li
 
-So it seems to me that a fundamental flaw in DEPT's model is assuming
-that the only waiting paradigm that can be used is consumer/producer,
-and that's simply not true.  The fact that you use the term "lock" is
-also going to lead a misleading line of reasoning, because properly
-speaking, they aren't really locks.  We are simply using wait channels
-to wake up processes as necessary, and then they will check other
-variables to decide whether or not they need to sleep or not, and we
-have an invariant that when these variables change indicating forward
-progress, the associated wait channel will be woken up.
-
-Cheers,
-
-						- Ted
-
-
-P.S.  This model is also highly simplified since there are other
-reasons why the commit thread can be woken up, some which might be via
-a timeout, and some which is via the j_wait_commit wait channel but
-not because j_commit_request has been changed, but because file system
-is being unmounted, or the file system is being frozen in preparation
-of a snapshot, etc.  These are *not* necessary to prevent a deadlock,
-because under normal circumstances the two wake channels are
-sufficient of themselves.  So please don't think of them as "rescue
-wakeup sources"; again, that's highly misleading and the wrong way to
-think of them.
-
-And to make things even more complicated, we have more than 2 wait
-channel --- we have *five*:
-
-	/**
-	 * @j_wait_transaction_locked:
-	 *
-	 * Wait queue for waiting for a locked transaction to start committing,
-	 * or for a barrier lock to be released.
-	 */
-	wait_queue_head_t	j_wait_transaction_locked;
-
-	/**
-	 * @j_wait_done_commit: Wait queue for waiting for commit to complete.
-	 */
-	wait_queue_head_t	j_wait_done_commit;
-
-	/**
-	 * @j_wait_commit: Wait queue to trigger commit.
-	 */
-	wait_queue_head_t	j_wait_commit;
-
-	/**
-	 * @j_wait_updates: Wait queue to wait for updates to complete.
-	 */
-	wait_queue_head_t	j_wait_updates;
-
-	/**
-	 * @j_wait_reserved:
-	 *
-	 * Wait queue to wait for reserved buffer credits to drop.
-	 */
-	wait_queue_head_t	j_wait_reserved;
-
-	/**
-	 * @j_fc_wait:
-	 *
-	 * Wait queue to wait for completion of async fast commits.
-	 */
-	wait_queue_head_t	j_fc_wait;
-
-
-"There are more things in heaven and Earth, Horatio,
- Than are dreamt of in your philosophy."
-      	  	    - William Shakespeare, Hamlet
