@@ -2,81 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A79114CC690
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 20:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5685B4CC6FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 21:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231573AbiCCTwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 14:52:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35942 "EHLO
+        id S232306AbiCCUT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 15:19:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbiCCTwc (ORCPT
+        with ESMTP id S229801AbiCCUT1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 14:52:32 -0500
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD601A3629;
-        Thu,  3 Mar 2022 11:51:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1646337103; x=1677873103;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=J4mFKrKLe521XNwU66a+a3FOvtuEuR/pABc2dgzJVd8=;
-  b=Sdcwf06vwpfrJpDSbGB6k1743M81DzR1pTbVm7HbXqsMKH2foil8KdqH
-   65zmGPGFpiHs1rfeLflYoUuWEClSez+/XQZ0ex0UhMfjPjX2Rpx3P14Zb
-   aPG9lZ/YHvSEdnw9uTxuDtlX4mNPQcY74uaUoNMWpRCIdNSPbl7IGZcv0
-   WZj9QrkWHUkSCGS3tqZNf29u5A4kOV21YERln6b2Reqg9FYFxhusWYWWK
-   10bELk8BzLE6oSkIOr5i/MaA3bTJuBveQQ+j8ZazcMgPybFfw1bVOa7g7
-   XpUFOCOI7ny+GtyHey94v38l1u9/F8TlqMCMTo3UjRA2BXNcJSj9UZxQj
-   g==;
-X-IronPort-AV: E=Sophos;i="5.90,153,1643644800"; 
-   d="scan'208";a="199263378"
-Received: from mail-dm6nam10lp2106.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.106])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Mar 2022 03:51:37 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cJxo1OoWuRedbmoiwEej8PQIsiQCbpj8gPBjXhJJbsmhDjmal9RWe+gKObSEdAZpvHzJ89UZLedQSrU3M3zsDgq2EdemtBgpuAiyR+h3RU+Yc9xmsBRScz5y6bOwRCI4jWs3T1MeBK3F/im+ZCOs2dCwxxk7lJElmr3kgV41OHF0Irjgy9UCT+BzWsPGd6+8j7XfzUjF9uBsCIl24/A0kO+t8vlNVEC127cGl8Ou2sgWCuoCYwDOoA7YN9Fth+knETfTYaBY+fWjfOY4xDfBMTC+Lo9kuubUq6VTH4pnmnUXmhR/yv4PB7Yb0M+c8k/Q2ZUmHOdc8wq2zUfr4qKGWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J4mFKrKLe521XNwU66a+a3FOvtuEuR/pABc2dgzJVd8=;
- b=gkOo4cwkZd51qoHeSX5e020FuO24nzfnoHJkHiJqNy7M915VRBxXKFDElS9bP9MhMKTuhGCacI/theuZE11sh1xz+rS/9SULwTLrmfk0smZhoxiVHZSFJWlOYHQ6/5bbEWCT82SuV7Hhb3wcYpCNZoGcfc+/ITf/qNDmbo5W9kqQa5wx5gon7f8Dr0pNqiEsSZ7bP7GRnyPfCQ8X/tOPu4MFfmbhSLkSxY+upsnwWIkwlLZvdJkrxzrn26IhG0BMUA3zCi3s8MfHyJ5KoCjaY0xTHcURnaRWl4u90l+pnBhfyZdalezQ4vqSSa7gapDOpu0EBQBpt3a+zdFdlj7Zvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J4mFKrKLe521XNwU66a+a3FOvtuEuR/pABc2dgzJVd8=;
- b=ulqZecRpBgXyajJVlqzdMLwZaahBTTnYHuRIw58Y3vAZ6eU4bSQuboABE0RU4TaX0Rf5dW5nOQfENAsWlfbIdqtw59f86S7k63wxGDhtq9W1lA69H1gN5y2Dx4wc8Kl2ftIbAxEmFahIoEkSO7tg96BFulXQA3nLMs8t3C+DNkg=
-Received: from BYAPR04MB4968.namprd04.prod.outlook.com (2603:10b6:a03:42::29)
- by PH0PR04MB7640.namprd04.prod.outlook.com (2603:10b6:510:5b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Thu, 3 Mar
- 2022 19:51:37 +0000
-Received: from BYAPR04MB4968.namprd04.prod.outlook.com
- ([fe80::5cb9:fb30:fba:1e1c]) by BYAPR04MB4968.namprd04.prod.outlook.com
- ([fe80::5cb9:fb30:fba:1e1c%4]) with mapi id 15.20.5038.016; Thu, 3 Mar 2022
- 19:51:37 +0000
-From:   =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <Matias.Bjorling@wdc.com>
-To:     Adam Manzanares <a.manzanares@samsung.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-CC:     =?utf-8?B?SmF2aWVyIEdvbnrDoWxleg==?= <javier@javigon.com>,
+        Thu, 3 Mar 2022 15:19:27 -0500
+Received: from mailout1.w2.samsung.com (mailout1.w2.samsung.com [211.189.100.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A871201BE;
+        Thu,  3 Mar 2022 12:18:37 -0800 (PST)
+Received: from uscas1p1.samsung.com (unknown [182.198.245.206])
+        by mailout1.w2.samsung.com (KnoxPortal) with ESMTP id 20220303201833usoutp0185167bd6c1eed7d8b8a9897a40e7d1b8~Y_FZAstZT2748127481usoutp01w;
+        Thu,  3 Mar 2022 20:18:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w2.samsung.com 20220303201833usoutp0185167bd6c1eed7d8b8a9897a40e7d1b8~Y_FZAstZT2748127481usoutp01w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1646338713;
+        bh=XNs9o3PiVj/v+GQmw9HUamQ2I4NZjfWYZFfmyjQDoeU=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=lylRfP2L+G3r7WhrtnQOkXEPTWmb6jnXJtvL0QH3zrfMs+ZqEn4unROmRfL/u0Zjb
+         P64wiE6QwHU8G2SG8zV7SN9xKphtn1FPmWTWaeaLeti70S2iaHv1NCDG3yvfiY27a/
+         ak9J4nBTwGsECX4goEsQI8BpLb1i8j+vjZxGMCdE=
+Received: from ussmges3new.samsung.com (u112.gpu85.samsung.co.kr
+        [203.254.195.112]) by uscas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220303201832uscas1p119c3cb347257ff94a0772fd4acdfa8dc~Y_FYqrzS52940229402uscas1p1v;
+        Thu,  3 Mar 2022 20:18:32 +0000 (GMT)
+Received: from uscas1p2.samsung.com ( [182.198.245.207]) by
+        ussmges3new.samsung.com (USCPEMTA) with SMTP id 7D.6C.09687.89221226; Thu, 
+        3 Mar 2022 15:18:32 -0500 (EST)
+Received: from ussmgxs1new.samsung.com (u89.gpu85.samsung.co.kr
+        [203.254.195.89]) by uscas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220303201832uscas1p133de0a86878ca99bdde0c1d59a3b9708~Y_FYWIY7C2940229402uscas1p1u;
+        Thu,  3 Mar 2022 20:18:32 +0000 (GMT)
+X-AuditID: cbfec370-9ddff700000025d7-6d-6221229894c4
+Received: from SSI-EX3.ssi.samsung.com ( [105.128.2.145]) by
+        ussmgxs1new.samsung.com (USCPEXMTA) with SMTP id 84.28.09671.89221226; Thu, 
+        3 Mar 2022 15:18:32 -0500 (EST)
+Received: from SSI-EX3.ssi.samsung.com (105.128.2.228) by
+        SSI-EX3.ssi.samsung.com (105.128.2.228) with Microsoft SMTP Server
+        (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+        15.1.2242.4; Thu, 3 Mar 2022 12:18:31 -0800
+Received: from SSI-EX3.ssi.samsung.com ([fe80::8d80:5816:c578:8c36]) by
+        SSI-EX3.ssi.samsung.com ([fe80::8d80:5816:c578:8c36%3]) with mapi id
+        15.01.2242.008; Thu, 3 Mar 2022 12:18:31 -0800
+From:   Adam Manzanares <a.manzanares@samsung.com>
+To:     =?iso-8859-1?Q?Matias_Bj=F8rling?= <Matias.Bjorling@wdc.com>
+CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        =?iso-8859-1?Q?Javier_Gonz=E1lez?= <javier@javigon.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "lsf-pc@lists.linux-foundation.org" 
         <lsf-pc@lists.linux-foundation.org>,
-        Bart Van Assche <bvanassche@acm.org>,
+        "Bart Van Assche" <bvanassche@acm.org>,
         Keith Busch <Keith.Busch@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "Johannes Thumshirn" <Johannes.Thumshirn@wdc.com>,
         Naohiro Aota <Naohiro.Aota@wdc.com>,
         Pankaj Raghav <pankydev8@gmail.com>,
         Kanchan Joshi <joshi.k@samsung.com>,
         Nitesh Shetty <nj.shetty@samsung.com>
-Subject: RE: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
 Thread-Topic: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Thread-Index: AQHYLpmotDjh/nK/9UCnXW/KPy7zfqytIu+AgAAQCQCAADesAIAAVbsAgAAHhgCAAB4NgIAAIsKQ
-Date:   Thu, 3 Mar 2022 19:51:36 +0000
-Message-ID: <BYAPR04MB4968506D0A8CAB26AC266F8DF1049@BYAPR04MB4968.namprd04.prod.outlook.com>
+Thread-Index: AQHYLpmb9dDgbycJL0eB2NODtYgLP6ytqQyAgAAQCACAADetAIAAVbuAgAAHhQCAAB4RAIAALQUAgAAHhYA=
+Date:   Thu, 3 Mar 2022 20:18:31 +0000
+Message-ID: <20220303201831.GC11082@bgt-140510-bm01>
+In-Reply-To: <BYAPR04MB4968506D0A8CAB26AC266F8DF1049@BYAPR04MB4968.namprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [105.128.2.176]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <37E6E00FD8E83D4181B716A5803952FC@ssi.samsung.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURRG82amM9Nq41gXnoIL1dQgiCISxqjYRBMbiVESN1yirY6AUqgd
+        cd8rCFRjETC1TRQhwVItaBEiamURRFwRFwqluLUiVhONAiqKUgaT/jtf3ndvzk0eiYoaeWPJ
+        hKQdjDpJnijGBVj53a4n0/TiQMWMV6+D6DNffqJ06vFuhM540IjQfzLbEbq8shqnba3B9C1b
+        A0bf9thQWpfWhdJ2nRvQWfWlPPpyixuTDpU9ex4tqzA4CZkmrw2TWc0ZuCzbfhHIvlnHy45X
+        aZFlxBrB3M1MYsJORj09aqMg3q11YqpLo3aX/NYSh8F3KhPwSUjNgqeyHoNMICBFVBGAltMm
+        nAupCDQfvYL+b1mqfw22LACarmt4XPgCoCM/D+NCJYDXjrVh3hGcmgF7668OjI+kpLA0uxzx
+        llCqG4O69qr+EkmOoMLhh7JDXGcWfOSpwzlWwCKTZ2AWoybD7zojz8vC/k7Zh46B/XxqPSwu
+        yCa8DKjRsOf+ZcTLKOUHW13nEU57OMw33ho8YTTsu/EG5zgQvurpJLh+KLTn5uAcR8HX7lqU
+        42BYeIFzEPbvaTjrwrjZMbDaZB84GFJaPmxrqOBxDwuh80UH4NgfvmjORbmSGcCc7jSCC6UA
+        6n81DurNgX0ZLwkdmGzwMTf4WBl8rAw+VgYfqzzAMwO/FJZVxjFseBKzK5SVK9mUpLjQTclK
+        K+j/dA/67qiug9bWr6E1ACFBDYAkKh4pnB00USESbpbv2cuokzeoUxIZtgb4k5jYT1iYcEUu
+        ouLkO5htDKNi1P9fEZI/9jBisuozmujmYx5FBfi7yOSoXzm9x/jRyF/03lUzUZGyJCzmZ2Fg
+        0IHw9NWR8wrG/QgBnWujb6ouNN33Z/RNASLhyXWaiNjZubaXmpCn2rsS92Ks7rk0xP9d5FYp
+        3m5b73qbK8Vj9Cvq9u1qmd+77sZ+R69rzENVp3bVvWKrMrb20oblkvrgLs3ctpyjQqTAcaQq
+        rWTE1Gh2/JbmBfkd51aeNU8qCun549mXntySXtHrtC9HPs+njcvc7u0ThhTHD7NME6SlZlpE
+        xEHlNYcsXSpJjThhi4wNa/lb7nw0pbZq1aeZxRIpvzKAjRj1fkHUb4n4REnZmpgnErMha2nA
+        QqJUjLHx8rCpqJqV/wOgHzJV4wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsWS2cA0UXeGkmKSwZtnwhbTPvxktmht/8Zk
+        0Xn6ApPF3657TBbb9h9ks9h7S9tiz96TLBb7Xu9ltpjQ9pXZ4saEp4wWE49vZrVYc/MpiwOP
+        x+Ur3h47Z91l92hecIfFY9OqTjaPyTeWM3p83iTn0X6gmymAPYrLJiU1J7MstUjfLoEr42n3
+        XZaC1aIV6/90szcwfhHoYuTkkBAwkVh78BdjFyMXh5DAakaJf0dnsEI4HxglPu5/yATh7GeU
+        2L7lBTtIC5uAgcTv4xuZQWwRAQeJzZO3gRUxC3xhkdj6ew1QOweHsICxxIut9RA1JhJnXx9l
+        g7CTJFaueA3WyyKgIvFlwmxWEJsXqGbri+csEMuaWCRmLL0BtoxTIFZi3eLJYDajgJjE91Nr
+        mEBsZgFxiVtP5jNB/CAgsWTPeWYIW1Ti5eN/rBC2osT97y/ZIer1JG5MncIGYdtJPHh6hBnC
+        1pZYthDiIF4BQYmTM5+wQPRKShxccYNlAqPELCTrZiEZNQvJqFlIRs1CMmoBI+sqRvHS4uLc
+        9Ipiw7zUcr3ixNzi0rx0veT83E2MwARx+t/hyB2MR2991DvEyMTBeIhRgoNZSYTXUlMhSYg3
+        JbGyKrUoP76oNCe1+BCjNAeLkjivkOvEeCGB9MSS1OzU1ILUIpgsEwenVAMTp6iYyOJkLeO/
+        ZzfuFZuxd1bOeY7DFWKnin9MKnLdMklW8PSZbzuPlhrLMhk9YFwmPeXgA0aDfwfa502MOJEf
+        uOHuLJ7zR3R5DsRblp1KupBfuHz184LD0Ta3XH35VtS/mFBc9ka8s2ebc/rGKwnlVxtMQh49
+        E7HQmlLuuPPutu4PcZJVsySM4q/ahAR/PXTztPsfvWMK9rocf6wtHRR+TlE9zHPdxOJ4yn0u
+        Oe7GXQrya4T49BrVPx+IifkeZhniW39y25IS7lM7ViX6sjlsdf1z+//3/Rc2XrrUd/LLIt2/
+        kYfPnjeZcjG2vTaI+8rGasGV84q/VvQyi4mIZ3yY9qLH/YqNYlDBIvacftdWJZbijERDLeai
+        4kQAXi5OfH8DAAA=
+X-CMS-MailID: 20220303201832uscas1p133de0a86878ca99bdde0c1d59a3b9708
+CMS-TYPE: 301P
+X-CMS-RootMailID: 20220303094915uscas1p20491e1e17088cfe8acda899a77dce98b
 References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
         <B3F227F7-4BF0-4735-9D0F-786B68871963@javigon.com>
         <20220303062950.srhm5bn3mcjlwbca@ArmHalley.localdomain>
@@ -84,78 +123,11 @@ References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
         <8386a6b9-3f06-0963-a132-5562b9c93283@wdc.com>
         <20220303145551.GA7057@bgt-140510-bm01>
         <4526a529-4faa-388a-a873-3dfe92b0279b@wdc.com>
- <20220303171025.GA11082@bgt-140510-bm01>
-In-Reply-To: <20220303171025.GA11082@bgt-140510-bm01>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bd9360b2-a154-4839-473a-08d9fd4f3a39
-x-ms-traffictypediagnostic: PH0PR04MB7640:EE_
-x-microsoft-antispam-prvs: <PH0PR04MB764079ACAB0C2C8D1E60AADAF1049@PH0PR04MB7640.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: KgrRzafRLNg2Ly7oK9bsjAwTt2XjQsh/qk7b6fjxFvNECKscTY3CizcSg7L80B/up7IDy2vA0lNpEGi36jCFDk35xkdj5mk2p6cY/E5JmLjVrh5cPBIzvUze0wzSAxe63WK3PcYdcuijEez2jo6HHW53e68eGOYz22+5yON/TCDiLQJxYFxL4zOFPhQRGnBI+oplsZfD2efUQAZSLxT96IDB7gEXvRxyQzCaWSgB+Jvqgn71XC1dQR4d4qGHbYiPb/sKR2zMlaqRuJHuNS2WJgFo3oRqmGEuTibSLTKB80KZfSiEfA4Ui30xmY74hVHt2yIJvqvLCgc7eW8wUfJCVfrkfRL4Ju+A9yHx4G2P2AgfrNUztIbZ4Xndngwkfu6pU5sUvhT5sPQ7pTxHJ/wqxJs3FaRNwvXPjyjw+tKSaoo25KrDZ/D/ZP0VTkQGLCZ9z9+YTsNxeWaj9gqQ6tknAJafXC9TbgzqdIuqUqPqcH9H/syKcarz9+zDSvEF/cucC77zRZZqlMYsa2CpHwFZHQ/NZOamCnUF4ua61kPrwXK6APeMLuGPbKuEooNdj72B0pdiusfYOz0C6x9fqIS2i6rTHvyJizYWmRPI/qTNh2Wv+c+Y0TkWIui3B3Qk9XkwQ9cuIwynyLx4FBOSM4EHc7oyEL9hM9NbJzM0ZMxQRefvXIL4mxAfRCqvsOffUv68tUsRi52ULPGmCoMPeJAIWQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4968.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(7696005)(6506007)(4326008)(38100700002)(8676002)(66946007)(66556008)(64756008)(66446008)(66476007)(122000001)(83380400001)(33656002)(26005)(2906002)(52536014)(186003)(5660300002)(7416002)(82960400001)(9686003)(8936002)(55016003)(85182001)(110136005)(6636002)(54906003)(85202003)(86362001)(76116006)(71200400001)(38070700005)(508600001)(316002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OGMrNlY1ZHJVWkFPTEFCZFNVdHJ0ZFBJUGpHWHFVS05RQ3ZIck9VUnRqdzZB?=
- =?utf-8?B?a21pb2ZtMEF4NWZEVmJNRzhzbHRKMndVYWlkZElLSm9UU3ZsYVZuZm9PT2ZW?=
- =?utf-8?B?dmhyRmwvaGIwZjBaUDB5MkpTWUp5cWMvL0pETnB6K0pjcnRaY0F5SlZXcWVV?=
- =?utf-8?B?anNVVTAyR3ZDV05PdzdUV2NtZFJzUG1VdE1DT0c4MFRkblNIYUdQdUNjNEtz?=
- =?utf-8?B?WHJ6R3FrbjNyOVYxbUZBWmcyZnpDMThJenk1V1gvSTdZcE9JNFU2Nm5JOWcz?=
- =?utf-8?B?c0NPbEFGd1ZUMm9xUTBvcHNDWVFnRE43R2RSQXN3bU1VTlN0aUVja29EWHps?=
- =?utf-8?B?ZVhlN0lSbFdFYVU4dDFxaWxzbDBUR2ZOYU5kc2FVS2s4QnZ6NzVrdUlhaWRJ?=
- =?utf-8?B?MFdZNnBuSHF5aEtMNzJQUFVMQ2xhblBwMTN1VkYxbFVFdjNDa0ZHMi82SHpw?=
- =?utf-8?B?blNKTC9IaDk0KzIvSzZzUkRVd1pRMVU1ajVsZmY1SG9oYmdmRUFrckxDZlR6?=
- =?utf-8?B?bzExcjhxdm94ZUZ2cjlxdCtVRGtjZkpOVjRHaHFOeE05RWZvK3dkOEVnYlBB?=
- =?utf-8?B?bDlDWGRGbVNkekZBd2xZQmJEMTBYSlhUUlVMTHN1TWhJbmJRTGxBUE1xVHMx?=
- =?utf-8?B?cXlNRjRLMnFhUGVqT2lGSSt5ZUZlTEQvMXQ2cUl6M01SbzhpbEpCWUt1bDBR?=
- =?utf-8?B?bU90ZVhJVU9ZVURzMWxGS0EyTjdGUjNjeHgxU3A5aUFtV01nMkZoM3ZwTmIv?=
- =?utf-8?B?NWZtOTRuUnRoTzlCcExQeHJLcmREdEZUZm5TSEVZc28vZFNiZ1ZzcW9CQStm?=
- =?utf-8?B?bzBkV1liN2IzL2RVT2JiSWNTMGh6d2NwNDRmUXUrU1N3SUhHNW4rR0RPQjNU?=
- =?utf-8?B?cVlkWnAyMWFlQ0cxSkNMZ3ZzU2pRY2JmZDR4c3RUdmpNdUYyVDlXL2xXVVJ5?=
- =?utf-8?B?dlZyS2kyVHZtc1I5WDhlMVFDK0FvRForK2xpNlRuUXBaQS9vTm5VRUVDRXQ0?=
- =?utf-8?B?S0RmeXNjaEFIc0FwMFdXODdSMXdiUnFZV3RUcVdEYS96cmlzWFlYaHhGN2FC?=
- =?utf-8?B?MldMeWluZjBWNHZveFZZbnNpd0d1c1hIdlJDOCtOU1d5VnFWaURqUlFZMVVo?=
- =?utf-8?B?TmFzMVZyQi9vNXJvbUdaSlhaNFBvSS9WZ2V5bmtscStaQTNvYTBiWWNrZlI3?=
- =?utf-8?B?dCtCWERqM1FOYVBTdURsYmkyUXYvdEdvSGVWY3p3VXlGZlZubnRDM2VhaWVS?=
- =?utf-8?B?VEtoZnYzSklPdFNzczhWbzVQSGNITGVwNzgzVWZGMzdkdUNoSjNFd3hCVmpD?=
- =?utf-8?B?MWdZaDZOVHMzc29naUVxMTFvc1dHTnJHSkUyaUUwL2JvdzQ1KzRaMXA4UW9S?=
- =?utf-8?B?M0Frazh6dWRTbERUSDgwMnJwQWhZS3lKVVJYUVhZS2F1elVDemFRaCs5TlJz?=
- =?utf-8?B?Z3lsMVdWRko4WGpQZVIvMDB3YmZoZWJZLzlJNlVPRHpqZCtodHVWVk9WMXBU?=
- =?utf-8?B?b2N3bmt2LzFKZzZLZ2grZVp5MlBOZ3hVV3VidzB6ZG9BbUw1Vm9palhVaFNL?=
- =?utf-8?B?SVRMWHhaWDI4NTZkbXRpOWJxNHZxU2Z2TmFlZzUvdDJzNWYydTM0QVJRb2JP?=
- =?utf-8?B?akpPV1FuK3k0cnRoOFAyRlJKdDJJNlp0ZFZNVXRMajU1Wi9DencwMmg5NHp2?=
- =?utf-8?B?TEJReHVNUGlwdkIrL2FsOE9pektzK2JXNXBuVUtJTFpyZVQxNU9ncXJ5clFF?=
- =?utf-8?B?d3ZNc3Z1VXJTbmpCbTZnNmErZkh3RktsRy9keFU4Uko5OGt4TEM2VlU3N3di?=
- =?utf-8?B?WTdEN2xzczB4Z2hiZjFmUHVUT2ZNQzFwalVXRlVFRHV3QXE0bWZsR1ViMGU0?=
- =?utf-8?B?UkcxUTVvQ2ZrclJ3bEx0WG9wa0ZQTFAybjhFNEpub2tMS0Z4M3pMM2t0Rm1n?=
- =?utf-8?B?K00yNDE1cHgzVXdMU0pFN1Q4Y2grelREZWVhT2lvUmczc2wyZmNhQiszc1JG?=
- =?utf-8?B?VmpWOW0xN2VhYk5mSG1xakk1bWxIanMvWlFiK2hPbTNJem5RaDBHVmM5enZQ?=
- =?utf-8?B?RnptWDlLNnNHM0ZRUE9SUlduVzNlRnRTMXAzREdpaEF0ODdGR0h1cHB3Nnpr?=
- =?utf-8?B?bTNmRUpsVmtaLzdsL0cyQmRUblBrUmlOTXFlYmQwUHNuZW1vR0NzYVRmQWRL?=
- =?utf-8?Q?AaIrbh3vCwxs9/NEOUMcK50=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR04MB4968.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd9360b2-a154-4839-473a-08d9fd4f3a39
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2022 19:51:36.9149
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: h5KKxqK8VQsXGIT5Akax9BVqrit3R7bAmobMxCjmDBhitiJP92tmGlg+oYgIvybffRSgqOl0UYdBLemQC0dkig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR04MB7640
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE,
+        <20220303171025.GA11082@bgt-140510-bm01>
+        <BYAPR04MB4968506D0A8CAB26AC266F8DF1049@BYAPR04MB4968.namprd04.prod.outlook.com>
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -163,40 +135,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBTb3VuZHMgbGlrZSB5b3Ugdm9sdW50ZXJlZCB0byB0ZWFjaCB6b25lZCBzdG9yYWdlIHVzZSAx
-MDEuIENhbiB5b3UgdGVhY2ggbWUNCj4gaG93IHRvIGNhbGN1bGF0ZSBhbiBMQkEgb2Zmc2V0IGdp
-dmVuIGEgem9uZSBudW1iZXIgd2hlbiB6b25lIGNhcGFjaXR5IGlzIG5vdA0KPiBlcXVhbCB0byB6
-b25lIHNpemU/DQoNCnpvbmVzaXplX3BvdyA9IHg7IC8vIGUuZy4sIHggPSAzMiBpZiAyR2lCIFpv
-bmUgc2l6ZSAvdyA1MTJCIGJsb2NrIHNpemUNCnpvbmVfaWQgPSB5OyAvLyB2YWxpZCB6b25lIGlk
-DQoNCnN0cnVjdCBibGtfem9uZSB6b25lID0gem9uZXNbem9uZV9pZF07IC8vIHpvbmVzIGlzIGEg
-bGluZWFyIGFycmF5IG9mIGJsa196b25lIHN0cnVjdHMgdGhhdCBob2xkcyBwZXIgem9uZSBpbmZv
-cm1hdGlvbi4NCg0KV2l0aCB0aGF0LCBvbmUgY2FuIGRvIHRoZSBmb2xsb3dpbmcNCjFhKSBmaXJz
-dF9sYmFfb2Zfem9uZSA9ICB6b25lX2lkIDw8IHpvbmVzaXplX3BvdzsNCjFiKSBmaXJzdF9sYmFf
-b2Zfem9uZSA9IHpvbmUuc3RhcnQ7DQoyYSkgbmV4dF93cml0ZWFibGVfbGJhID0gKHpvbmVpZCA8
-PCB6b25lc2l6ZV9wb3cpICsgem9uZS53cDsNCjJiKSBuZXh0X3dyaXRlYWJsZV9sYmEgPSB6b25l
-LnN0YXJ0ICsgem9uZS53cDsNCjMpICAgd3JpdGVhYmxlX2xiYXNfbGVmdCA9IHpvbmUubGVuIC0g
-em9uZS53cDsNCjQpICAgbGJhc193cml0dGVuID0gem9uZS53cCAtIDE7DQoNCj4gVGhlIHNlY29u
-ZCB0aGluZyBJIHdvdWxkIGxpa2UgdG8ga25vdyBpcyB3aGF0IGhhcHBlbnMgd2hlbiBhbiBhcHBs
-aWNhdGlvbg0KPiB3YW50cyB0byBtYXAgYW4gb2JqZWN0IHRoYXQgc3BhbnMgbXVsdGlwbGUgY29u
-c2VjdXRpdmUgem9uZXMuIERvZXMgdGhlDQo+IGFwcGxpY2F0aW9uIGhhdmUgdG8gYmUgYXdhcmUg
-b2YgdGhlIGRpZmZlcmVuY2UgaW4gem9uZSBjYXBhY2l0eSBhbmQgem9uZSBzaXplPw0KDQpUaGUg
-em9uZWQgbmFtZXNwYWNlIGNvbW1hbmQgc2V0IHNwZWNpZmljYXRpb24gZG9lcyBub3QgYWxsb3cg
-dmFyaWFibGUgem9uZSBzaXplLiBUaGUgem9uZSBzaXplIGlzIGZpeGVkIGZvciBhbGwgem9uZXMg
-aW4gYSBuYW1lc3BhY2UuIE9ubHkgdGhlIHpvbmUgY2FwYWNpdHkgaGFzIHRoZSBjYXBhYmlsaXR5
-IHRvIGJlIHZhcmlhYmxlLiBVc3VhbGx5LCB0aGUgem9uZSBjYXBhY2l0eSBpcyBmaXhlZCwgSSBo
-YXZlIG5vdCB5ZXQgc2VlbiBpbXBsZW1lbnRhdGlvbnMgdGhhdCBoYXZlIHZhcmlhYmxlIHpvbmUg
-Y2FwYWNpdGllcy4NCg0KQW4gYXBwbGljYXRpb24gdGhhdCB3YW50cyB0byBwbGFjZSBhIHNpbmds
-ZSBvYmplY3QgYWNyb3NzIGEgc2V0IG9mIHpvbmVzIHdvdWxkIGhhdmUgdG8gYmUgZXhwbGljaXRs
-eSBoYW5kbGVkIGJ5IHRoZSBhcHBsaWNhdGlvbi4gRS5nLiwgYXMgd2VsbCBhcyB0aGUgYXBwbGlj
-YXRpb24sIHNob3VsZCBiZSBhd2FyZSBvZiBhIHpvbmUncyBjYXBhY2l0eSwgaXQgc2hvdWxkIGFs
-c28gYmUgYXdhcmUgdGhhdCBpdCBzaG91bGQgcmVzZXQgdGhlIHNldCBvZiB6b25lcyBhbmQgbm90
-IGEgc2luZ2xlIHpvbmUuIEkuZS4sIHRoZSBhcHBsaWNhdGlvbiBtdXN0IGFsd2F5cyBiZSBhd2Fy
-ZSBvZiB0aGUgem9uZXMgaXQgdXNlcy4NCg0KSG93ZXZlciwgYW4gZW5kLXVzZXIgYXBwbGljYXRp
-b24gc2hvdWxkIG5vdCAoaW4gbXkgb3BpbmlvbikgaGF2ZSB0byBkZWFsIHdpdGggdGhpcy4gSXQg
-c2hvdWxkIHVzZSBoZWxwZXIgZnVuY3Rpb25zIGZyb20gYSBsaWJyYXJ5IHRoYXQgcHJvdmlkZXMg
-dGhlIGFwcHJvcHJpYXRlIGFic3RyYWN0aW9uIHRvIHRoZSBhcHBsaWNhdGlvbiwgc3VjaCB0aGF0
-IHRoZSBhcHBsaWNhdGlvbnMgZG9uJ3QgaGF2ZSB0byBjYXJlIGFib3V0IGVpdGhlciBzcGVjaWZp
-YyB6b25lIGNhcGFjaXR5L3NpemUsIG9yIG11bHRpcGxlIHJlc2V0cy4gVGhpcyBpcyBzaW1pbGFy
-IHRvIGhvdyBmaWxlIHN5c3RlbXMgd29yayB3aXRoIGZpbGUgc3lzdGVtIHNlbWFudGljcy4gRm9y
-IGV4YW1wbGUsIGEgZmlsZSBjYW4gc3BhbiBtdWx0aXBsZSBleHRlbnRzIG9uIGRpc2ssIGJ1dCBh
-bGwgYW4gYXBwbGljYXRpb24gc2VlcyBpcyB0aGUgZmlsZSBzZW1hbnRpY3MuIA0KDQo=
+On Thu, Mar 03, 2022 at 07:51:36PM +0000, Matias Bj=F8rling wrote:
+> > Sounds like you voluntered to teach zoned storage use 101. Can you teac=
+h me
+> > how to calculate an LBA offset given a zone number when zone capacity i=
+s not
+> > equal to zone size?
+>=20
+> zonesize_pow =3D x; // e.g., x =3D 32 if 2GiB Zone size /w 512B block siz=
+e
+> zone_id =3D y; // valid zone id
+>=20
+> struct blk_zone zone =3D zones[zone_id]; // zones is a linear array of bl=
+k_zone structs that holds per zone information.
+>=20
+> With that, one can do the following
+> 1a) first_lba_of_zone =3D  zone_id << zonesize_pow;
+> 1b) first_lba_of_zone =3D zone.start;
+
+1b is interesting. What happens if i don't have struct blk_zone and zone si=
+ze=20
+is not equal to zone capacity?
+
+> 2a) next_writeable_lba =3D (zoneid << zonesize_pow) + zone.wp;
+> 2b) next_writeable_lba =3D zone.start + zone.wp;
+
+Can we modify 2b to not use zone.start?
+
+> 3)   writeable_lbas_left =3D zone.len - zone.wp;
+> 4)   lbas_written =3D zone.wp - 1;
+>=20
+> > The second thing I would like to know is what happens when an applicati=
+on
+> > wants to map an object that spans multiple consecutive zones. Does the
+> > application have to be aware of the difference in zone capacity and zon=
+e size?
+>=20
+> The zoned namespace command set specification does not allow variable zon=
+e size. The zone size is fixed for all zones in a namespace. Only the zone =
+capacity has the capability to be variable. Usually, the zone capacity is f=
+ixed, I have not yet seen implementations that have variable zone capacitie=
+s.
+>=20
+
+IDK where variable zone size came from. I am talking about the fact that th=
+e=20
+zone size does not have to equal zone capacity.=20
+
+> An application that wants to place a single object across a set of zones =
+would have to be explicitly handled by the application. E.g., as well as th=
+e application, should be aware of a zone's capacity, it should also be awar=
+e that it should reset the set of zones and not a single zone. I.e., the ap=
+plication must always be aware of the zones it uses.
+>=20
+> However, an end-user application should not (in my opinion) have to deal =
+with this. It should use helper functions from a library that provides the =
+appropriate abstraction to the application, such that the applications don'=
+t have to care about either specific zone capacity/size, or multiple resets=
+. This is similar to how file systems work with file system semantics. For =
+example, a file can span multiple extents on disk, but all an application s=
+ees is the file semantics.=20
+>=20
+
+I don't want to go so far as to say what the end user application should an=
+d=20
+should not do.=
