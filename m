@@ -2,380 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2204CBAA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 10:48:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15F524CBAAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 10:49:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232007AbiCCJtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 04:49:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57398 "EHLO
+        id S231989AbiCCJt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 04:49:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231820AbiCCJtf (ORCPT
+        with ESMTP id S231246AbiCCJtz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 04:49:35 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 879EE148922
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Mar 2022 01:48:47 -0800 (PST)
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.52 with ESMTP; 3 Mar 2022 18:48:45 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
-        by 156.147.1.151 with ESMTP; 3 Mar 2022 18:48:45 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Thu, 3 Mar 2022 18:48:24 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        bfields@fieldses.org, gregkh@linuxfoundation.org,
-        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
-        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
-        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
-        linux-block@vger.kernel.org, paolo.valente@linaro.org,
-        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
-        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-        djwong@kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
-        melissa.srw@gmail.com, hamohammed.sa@gmail.com
-Subject: Re: [PATCH v3 00/21] DEPT(Dependency Tracker)
-Message-ID: <20220303094824.GA24977@X58A-UD3R>
-References: <1646042220-28952-1-git-send-email-byungchul.park@lge.com>
- <Yh70VkRkUfwIjPWv@ip-172-31-19-208.ap-northeast-1.compute.internal>
- <Yh74VbNZZt35wHZD@ip-172-31-19-208.ap-northeast-1.compute.internal>
- <20220303001812.GA20752@X58A-UD3R>
- <YiB2SZFzgBEcywgg@ip-172-31-19-208.ap-northeast-1.compute.internal>
+        Thu, 3 Mar 2022 04:49:55 -0500
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBCE7151C63;
+        Thu,  3 Mar 2022 01:49:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1646300948; x=1677836948;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=z/QK7ba546peGsvWZ025YZ/ldAxIOYcBHhzN2gS3e2Q=;
+  b=aw9cukKrk7p9dTVpyTUTv6izrSDF6oYOwpezZyae2Fx9wj1FEkUD35/O
+   j24Wm1K+hw/GFhAZ+VLn9U6T8pn73AGxCrBcugwVaN5TMHIGObd2+mPbH
+   iu35iKGTgtm4ZXS49df8zJqG34N044NxTFRpml1gr7kjCTV7pKo5542LH
+   gUA20/zmkNf3XIndUxLFMt2uZt0rUMeHgoNbWay8o4a6VJsQ2/La7AuHH
+   su7dZl64qGhab+7mupUSJDoSxoFD8dv9VnYe8TENRFx1BO18BNlm38XKZ
+   walgBu3mQgEGg8EHEbGJPkXvvlK+Rb3S0oqSHEo1NDHFD7g59Na5A9EwD
+   g==;
+X-IronPort-AV: E=Sophos;i="5.90,151,1643644800"; 
+   d="scan'208";a="194374434"
+Received: from mail-bn1nam07lp2045.outbound.protection.outlook.com (HELO NAM02-BN1-obe.outbound.protection.outlook.com) ([104.47.51.45])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Mar 2022 17:49:07 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VTt/6eseSErlR+7CNzOCGSavcvdKd+GAeqGCR6znVItIKt/Cdr1nHyaYysT5fagnz+mvVlMg+OAYew5SOSwd/gq/8PgLoZElDvk7q3Mo2sFMmvm2GFle3L7EtL80zpD3wvIpRVY/6RXJjmH7Lzj+/5VBSKXKfZLGTnnai78jjI0ZkTOjHgIuJuTuCF64Jg294ngu0HuC+h7q9lv4oHEXY7+pEXEEfvuibKbBGneOh6aWmbHVzJBsEbBjpIoBH8e3jHxMAp1ChtrWFQeeVzXD7b+Z44dUd9lZnmIHAGzh3JHsKeUsvtgOr9Gb0PuQDQQytph0oOKiLPjhH+aRP5CNKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z/QK7ba546peGsvWZ025YZ/ldAxIOYcBHhzN2gS3e2Q=;
+ b=YiFZAa/Flq/mf/EJ5WRmIqAuCYsDkwHm0IG7ZkeemU3IpxJBxs2Sqi9PqjCw4Atn9hHRYaeMrqxGWk3m9ChSFaoblAzM7JQ+SMg5plSgX/GOvvvsXoxQ0qOnfeKMl5jwavQMlAsoODrNZzZlhsmHXcCb0yHxRWjiMMlbEEscQYHA86I3K5DxFATwluSQVFVfDIv3x3bQHwEeselukds4gzFiKS/eF5w+0s3G2F6Ad6eRYVAz72GPQMTOAB2jxfpvawub8Mw0sWHRJ/i5fZKRdn1db2nU946rMAWEyBSKNVIKhnrZpup20S0Qs0IjDlglAzkueJBmzJYAm4xaKIrQjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z/QK7ba546peGsvWZ025YZ/ldAxIOYcBHhzN2gS3e2Q=;
+ b=Zz+/gQGo92pXn+xx/tXUDwQG9uK0e883fC9QHe8tWWOBbE3KxJ7mXQhgRJNrgIszMDUJ29539a5xgV6BdNx49/lVQWimmD/DNjuNO8ljO3hKdy5hsU//s+qD+3iXOoc4r9iyL6bY1LXcyUjKgW8GHll6JVB4lSd5wmmNe4FU7NQ=
+Received: from DM6PR04MB7081.namprd04.prod.outlook.com (2603:10b6:5:244::21)
+ by BN6PR04MB0948.namprd04.prod.outlook.com (2603:10b6:405:43::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Thu, 3 Mar
+ 2022 09:49:06 +0000
+Received: from DM6PR04MB7081.namprd04.prod.outlook.com
+ ([fe80::c8f4:8499:a5fc:1835]) by DM6PR04MB7081.namprd04.prod.outlook.com
+ ([fe80::c8f4:8499:a5fc:1835%3]) with mapi id 15.20.5038.015; Thu, 3 Mar 2022
+ 09:49:06 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     =?utf-8?B?SmF2aWVyIEdvbnrDoWxleg==?= <javier@javigon.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <Matias.Bjorling@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Keith Busch <Keith.Busch@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Thread-Topic: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Thread-Index: AQHYLpmd1Ny4qtE3bUeyZ6TIm7TKKqytIu+AgAAQCQCAADergA==
+Date:   Thu, 3 Mar 2022 09:49:06 +0000
+Message-ID: <8386a6b9-3f06-0963-a132-5562b9c93283@wdc.com>
+References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+ <B3F227F7-4BF0-4735-9D0F-786B68871963@javigon.com>
+ <20220303062950.srhm5bn3mcjlwbca@ArmHalley.localdomain>
+In-Reply-To: <20220303062950.srhm5bn3mcjlwbca@ArmHalley.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.1
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b71d2ec6-acb6-414b-6739-08d9fcfb0ef7
+x-ms-traffictypediagnostic: BN6PR04MB0948:EE_
+x-microsoft-antispam-prvs: <BN6PR04MB094847802E7A9ACACFD16970E7049@BN6PR04MB0948.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XiLnjVJ3FsQeEYqSqg5itgwR0wEl69B701TTzncrzVgJKqx+AIhI6/Fm/8k+Lq8ojs7NLXivNBLrD5LHlbxUZhePOEIPhwlnEIH7Z9ojIAL+Qzo1lSsozmysd4Qcdr8U2Ly5Y9xG+cpYxDcc3E8tOMOr1jsuzvxQWJoLsMBFTMUjEeiSAnZcbSkHEHax8p+lVYJjiM4t6lxqIPoRvPCSbGYuTk7F6TvxHTP5ianxJBBfMHblrEMsaLb/Fh5hPUbNHx2mY2UK8I/2GYWndeuqVBYLk5VGxiVHKtclPUoLyHYiNLsIg2EAcobybNVik2KqPeCFI5ntjYfdmN47C9T3PmzvWH7Po7n1UtWw59Z3vDccmDP3fDC9Y8j5Dg1KozV16dChDTyvVK7Mj3D7TW8qv0eYz6ICq8RLybd+UrHSxSbXg/sBMAuGNYKLpf5IPzkF8Hx0k3VM+ZknbE7w9IO+P+dNcKgSzCjgN6fnwYSNX0rd4BJ6ai4shSRI8UwrPU0DsjusxqsFHqP1W7DgrzZqn9V52vNw0f1/iKPmszUNbYlCCKZhYe55tW+4yGZPcmHkJZhDD26pOGmRDS06YeV+0zQsNdAXA06fzNCaie8mf/0i2CLyZuqnuE270uPROx2oDj3K4oASuTjPTBAnZtGmpS7F8C6B24gib+p4CdzeEGfFzsgvoq7yXbzvhTx6G3xshC+2/Txj7zJnWFLgimBgL3GATxk1YxS+drAWHrwCE65Dp02ccyxYtgB7nEzBdzgWpjxCMFopsOFt7sRbI2qOVQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB7081.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(31686004)(38070700005)(2616005)(36756003)(8936002)(6512007)(316002)(186003)(26005)(76116006)(8676002)(6506007)(122000001)(66946007)(91956017)(7416002)(2906002)(5660300002)(66556008)(66476007)(66446008)(82960400001)(64756008)(66574015)(4326008)(53546011)(54906003)(71200400001)(86362001)(508600001)(31696002)(83380400001)(110136005)(6486002)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cDh0elhzUmxqZThEUnQwUE9CclJHK1l1YTJKTEFmUk5iQ3N6b0pqWDMzeEQz?=
+ =?utf-8?B?S2tPUWhucFFiUDdrN2syeWhwQ3BvTkFDOWQ4RnZvOVluR25TbkxmT1MrZ2pM?=
+ =?utf-8?B?TWZkbFFxbzVWWVdXWHI0YVJrU1RXTlVKVFRKdVl4Qk1OZjA1SHdJL0hJWWp5?=
+ =?utf-8?B?K2ZPVURaTGpKelk4WElSVWc3U08wdkZrUUZHVWNmY2NTb2NZZkpIenBCaHE3?=
+ =?utf-8?B?LzdrRUp3VTk0ZUFXenZIekZTOUh3akRNWDhDUzRMcXVrcnBQQyszYzNtd01j?=
+ =?utf-8?B?anFuTkZqM2hjcDhVTEhGQ0lJZHB5K2VRUVBxelJyc1p5NTlNSXVQNmltNFdz?=
+ =?utf-8?B?ZFI5U2RhTHhRVTlmZUY0K2V1ZkEvazJkb2xrWnFPTHJCR0d6YWQyaDlBa2Nj?=
+ =?utf-8?B?bDRmY1VqdnFQTFFXSjBDWFdrd0N5OVBDaXZmaWJCVGNSY2tqTEdUL3p0Sklp?=
+ =?utf-8?B?RXhyZzJzeERVcDQ0VVdLb0RSeEo5NUZER2xMaHVPa3dGUWpUeGozOWRUc1ZV?=
+ =?utf-8?B?QWpZRmRyenZuaTRJVHdpekhHR1RCbzBUYjc1anQvZ0M3Y2d4MkF3LzErckFN?=
+ =?utf-8?B?VVprdklyQkFrUmlGcm5MQVN2U0d1OGpkQ2NKeEFPczhLZmIyd3FaMVRXU0VC?=
+ =?utf-8?B?ZVVvYVRFUm55SzR0Y3Y0cXA5T25sRXB1Qk5EVmlWaWVsZFJPaVBaa09xSnhS?=
+ =?utf-8?B?ZVhsbVRMTW52VDBHSUF1ZXNlSzVDWWREN1B5ditHd0tMQzZ3dnhZVEJoZkE2?=
+ =?utf-8?B?bE0wbUlWV25kQW05S0lWamwwVVVIc3JrS1pYc3NxVWEraHNKdTlRcDZOdmdN?=
+ =?utf-8?B?TktOOTVhZElVeklmY2xEelBaakNrYXZwaFdVWUdQVktBeVY3Zm84MktkVDFt?=
+ =?utf-8?B?QjVjNWJtbTNackJJdlU4YnN5VThrWEVVOTNwamdnalhtT0VneTFTais3akEw?=
+ =?utf-8?B?QVdQY1JRSHcvT09vbnZoeTZ2cWNFTS9QRktyZEtwZ2ZKMVRxaWI2YWdoSEp5?=
+ =?utf-8?B?NUVqREo5UW11RUFzZXdFMlljTXZNOE9WblJxN1FDVWcxbSsxMXZ0dXlOUGQ2?=
+ =?utf-8?B?TjdiMjlPd0dRNHNydU8wdFc1VzJiN2JMN3BJcE14NXo3N1UxYlhza0RqMnNF?=
+ =?utf-8?B?bkxqWWtVU2VXQWhJZFgxU1NBUDQxK2NMbCs2Z1A4eThRNkpWQjZPM0xpYUhW?=
+ =?utf-8?B?aUhYMW1oVVVZSzQ0akFIRmNlSFdObW9BK2djQ3ZUVmdTekxPd0ltTXByRFZP?=
+ =?utf-8?B?VHRPdStwVUgxQnRmVzMyRHVCa05WU2dkdWtuc1hVck9PdVk0enYxMzVnS1pJ?=
+ =?utf-8?B?dmY3dmJqN0VMVEhLWitndldWWmExbVVpMnhGVzlkNGU4VVZsVlBvTEpkWS91?=
+ =?utf-8?B?UkNDdXBUdFhxbC9pempiRG9ZSzVzNUp3QWNSQVh5UmwrcG10bUFONWNCbHRk?=
+ =?utf-8?B?OGNjSFozV2JLTE11RmVNM09aTEdoQVRCN2hYNUtHN0lCRUZkYzFjU0FOeS9r?=
+ =?utf-8?B?aFFxOTY3YU1OcUNtMGh3TDhBcWc0S2ZKTitKT09HSmMzcDNPL1dwS09mQnds?=
+ =?utf-8?B?eXZiZmNEc09XUUQ5WjdDMHN6ME5NZUQvUitMWHpIdXZZajRvWG1md24yOThX?=
+ =?utf-8?B?ZzNCNW96Vnp1UGllRWJxS3YrZHFqcUc1dWlyRmpHODkxTllUbW8vRWd5L1lR?=
+ =?utf-8?B?d3ptUmFock15WkJ2dmtvV1d6U2R6RmZpMFozK3I5eGlHSStrYUl5RE02SEJr?=
+ =?utf-8?B?eUQyN0RmZFY4MG1JQmc5czI3b3NTZ1ZyNFJNcytvVVVEYnZ4UjFKNTBaWXZ4?=
+ =?utf-8?B?RFdDYlErbWhVcUZ4Z1h6eFRMcGJ5aW1Ra0lLeHZyMHlEM1ZMMXlrUHZNeTZP?=
+ =?utf-8?B?enhiVEoycWd0K0hJc05TUEd4R0l4QSs0RnJzS05OQm9ZdURobzhaZkJqVmlK?=
+ =?utf-8?B?Q2RLSVZHMTh3ZklhVStnOWI3RkRXYkNIZC9yRjN4NFB5ekhvYnFFTUJkU1lr?=
+ =?utf-8?B?SHVaWmp0SG9aR3MwcjBicGpLSzZPdUVBRldZVVE0QmxPRVQ1UlcrRnh4N0lC?=
+ =?utf-8?B?T1EzVzhEQkhTV052R0ZZT3B3b21VSDNXcFByamNaNG9heVFHV05mMVBZdXI1?=
+ =?utf-8?B?NVZqWGZnRzF0RUdGRTRMMzVGK1NwazJ1Vm9KOUxIQVdId25WYlU0UUlpdXhs?=
+ =?utf-8?Q?2vaOE98qznL8oZoI5Ycza22QtLft8qy0RGIO752o3jxx?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0CC174F2DC46DB429D6BA74C4EA74835@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YiB2SZFzgBEcywgg@ip-172-31-19-208.ap-northeast-1.compute.internal>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB7081.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b71d2ec6-acb6-414b-6739-08d9fcfb0ef7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2022 09:49:06.5847
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GBtoeJ/WhlPr3ih+IDze08nd6/NJdLBTVxfMvazSYr0Ne8bzwJiZULRSF1hbGceQzXu3CDYAMhaFdgwJQCipWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR04MB0948
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 03, 2022 at 08:03:21AM +0000, Hyeonggon Yoo wrote:
-> On Thu, Mar 03, 2022 at 09:18:13AM +0900, Byungchul Park wrote:
-> > Hi Hyeonggon,
-> > 
-> > Dept also allows the following scenario when an user guarantees that
-> > each lock instance is different from another at a different depth:
-> >
-> >    lock A0 with depth
-> >    lock A1 with depth + 1
-> >    lock A2 with depth + 2
-> >    lock A3 with depth + 3
-> >    (and so on)
-> >    ..
-> >    unlock A3
-> >    unlock A2
-> >    unlock A1
-> >    unlock A0
-
-Look at this. Dept allows object->lock -> other_object->lock (with a
-different depth using *_lock_nested()) so won't report it.
-
-> > However, Dept does not allow the following scenario where another lock
-> > class cuts in the dependency chain:
-> > 
-> >    lock A0 with depth
-> >    lock B
-> >    lock A1 with depth + 1
-> >    lock A2 with depth + 2
-> >    lock A3 with depth + 3
-> >    (and so on)
-> >    ..
-> >    unlock A3
-> >    unlock A2
-> >    unlock A1
-> >    unlock B
-> >    unlock A0
-> > 
-> > This scenario is clearly problematic. What do you think is going to
-> > happen with another context running the following?
-> >
-> 
-> First of all, I want to say I'm not expert at locking primitives.
-> I may be wrong.
-
-It's okay. Thanks anyway for your feedback.
-
-> > >   45  *   scan_mutex [-> object->lock] -> kmemleak_lock -> other_object->lock (SINGLE_DEPTH_NESTING)
-> > >   46  *
-> > >   47  * No kmemleak_lock and object->lock nesting is allowed outside scan_mutex
-> > >   48  * regions.
-> 
-> lock order in kmemleak is described above.
-> 
-> and DEPT detects two cases as deadlock:
-> 
-> 1) object->lock -> other_object->lock
-
-It's not a deadlock *IF* two have different depth using *_lock_nested().
-Dept also allows this case. So Dept wouldn't report it.
-
-> 2) object->lock -> kmemleak_lock, kmemleak_lock -> other_object->lock
-
-But this usage is risky. I already explained it in the mail you replied
-to. I copied it. See the below.
-
-context A
-> >    lock A0 with depth
-> >    lock B
-> >    lock A1 with depth + 1
-> >    lock A2 with depth + 2
-> >    lock A3 with depth + 3
-> >    (and so on)
-> >    ..
-> >    unlock A3
-> >    unlock A2
-> >    unlock A1
-> >    unlock B
-> >    unlock A0
-
-...
-
-context B
-> >    lock A1 with depth
-> >    lock B
-> >    lock A2 with depth + 1
-> >    lock A3 with depth + 2
-> >    (and so on)
-> >    ..
-> >    unlock A3
-> >    unlock A2
-> >    unlock B
-> >    unlock A1
-
-where Ax : object->lock, B : kmemleak_lock.
-
-A deadlock might occur if the two contexts run at the same time.
-
-> And in kmemleak case, 1) and 2) is not possible because it must hold
-> scan_mutex first.
-
-This is another issue. Let's focus on whether the order is okay for now.
-
-> I think the author of kmemleak intended lockdep to treat object->lock
-> and other_object->lock as different class, using raw_spin_lock_nested().
-
-Yes. The author meant to assign a different class according to its depth
-using a Lockdep API. Strictly speaking, those are the same class anyway
-but we assign a different class to each depth to avoid Lockdep splats
-*IF* the user guarantees the nesting lock usage is safe, IOW, guarantees
-each lock instance is different at a different depth.
-
-I was fundamentally asking you... so... is the nesting lock usage safe
-for real? I hope you distinguish between the safe case and the risky
-case when *_lock_nested() is involved. Thoughts?
-
-Thanks,
-Byungchul
-
-> Am I missing something?
-> 
-> Thanks.
-> 
-> >    lock A1 with depth
-> >    lock B
-> >    lock A2 with depth + 1
-> >    lock A3 with depth + 2
-> >    (and so on)
-> >    ..
-> >    unlock A3
-> >    unlock A2
-> >    unlock B
-> >    unlock A1
-> > 
-> > It's a deadlock. That's why Dept reports this case as a problem. Or am I
-> > missing something?
-> > 
-> > Thanks,
-> > Byungchul
-> > 
-> > > ---------------------------------------------------
-> > > context A's detail
-> > > ---------------------------------------------------
-> > > context A
-> > >     [S] __raw_spin_lock_irqsave(&object->lock:0)
-> > >     [W] __raw_spin_lock_irqsave(kmemleak_lock:0)
-> > >     [E] spin_unlock(&object->lock:0)
-> > > 
-> > > [S] __raw_spin_lock_irqsave(&object->lock:0):
-> > > [<ffffffc00810302c>] scan_gray_list+0x84/0x13c
-> > > stacktrace:
-> > >       dept_ecxt_enter+0x88/0xf4
-> > >       _raw_spin_lock_irqsave+0xf0/0x1c4
-> > >       scan_gray_list+0x84/0x13c
-> > >       kmemleak_scan+0x2d8/0x54c
-> > >       kmemleak_scan_thread+0xac/0xd4
-> > >       kthread+0xd4/0xe4
-> > >       ret_from_fork+0x10/0x20
-> > > 
-> > > [W] __raw_spin_lock_irqsave(kmemleak_lock:0):
-> > > [<ffffffc008102ebc>] scan_block+0x3c/0x128
-> > > stacktrace:
-> > >       __dept_wait+0x8c/0xa4
-> > >       dept_wait+0x6c/0x88
-> > >       _raw_spin_lock_irqsave+0xb8/0x1c4
-> > >       scan_block+0x3c/0x128
-> > >       scan_gray_list+0xc4/0x13c
-> > >       kmemleak_scan+0x2d8/0x54c
-> > >       kmemleak_scan_thread+0xac/0xd4
-> > >       kthread+0xd4/0xe4
-> > >       ret_from_fork+0x10/0x20
-> > > 
-> > > [E] spin_unlock(&object->lock:0):
-> > > [<ffffffc008102ee0>] scan_block+0x60/0x128
-> > > 
-> > > ---------------------------------------------------
-> > > context B's detail
-> > > ---------------------------------------------------
-> > > context B
-> > >     [S] __raw_spin_lock_irqsave(kmemleak_lock:0)
-> > >     [W] _raw_spin_lock_nested(&object->lock:0)
-> > >     [E] spin_unlock(kmemleak_lock:0)
-> > > 
-> > > [S] __raw_spin_lock_irqsave(kmemleak_lock:0):
-> > > [<ffffffc008102ebc>] scan_block+0x3c/0x128
-> > > stacktrace:
-> > >       dept_ecxt_enter+0x88/0xf4
-> > >       _raw_spin_lock_irqsave+0xf0/0x1c4
-> > >       scan_block+0x3c/0x128
-> > >       kmemleak_scan+0x19c/0x54c
-> > >       kmemleak_scan_thread+0xac/0xd4
-> > >       kthread+0xd4/0xe4
-> > >       ret_from_fork+0x10/0x20
-> > > 
-> > > [W] _raw_spin_lock_nested(&object->lock:0):
-> > > [<ffffffc008102f34>] scan_block+0xb4/0x128
-> > > stacktrace:
-> > >       dept_wait+0x74/0x88
-> > >       _raw_spin_lock_nested+0xa8/0x1b0
-> > >       scan_block+0xb4/0x128
-> > >       kmemleak_scan+0x19c/0x54c
-> > >       kmemleak_scan_thread+0xac/0xd4
-> > >       kthread+0xd4/0xe4
-> > >       ret_from_fork+0x10/0x20
-> > > [E] spin_unlock(kmemleak_lock:0):
-> > > [<ffffffc008102ee0>] scan_block+0x60/0x128
-> > > stacktrace:
-> > >       dept_event+0x7c/0xfc
-> > >       _raw_spin_unlock_irqrestore+0x8c/0x120
-> > >       scan_block+0x60/0x128
-> > >       kmemleak_scan+0x19c/0x54c
-> > >       kmemleak_scan_thread+0xac/0xd4
-> > >       kthread+0xd4/0xe4
-> > >       ret_from_fork+0x10/0x20
-> > > ---------------------------------------------------
-> > > information that might be helpful
-> > > ---------------------------------------------------
-> > > CPU: 1 PID: 38 Comm: kmemleak Tainted: G        W         5.17.0-rc1+ #1
-> > > Hardware name: linux,dummy-virt (DT)
-> > > Call trace:
-> > >  dump_backtrace.part.0+0x9c/0xc4
-> > >  show_stack+0x14/0x28
-> > >  dump_stack_lvl+0x9c/0xcc
-> > >  dump_stack+0x14/0x2c
-> > >  print_circle+0x2d4/0x438
-> > >  cb_check_dl+0x6c/0x70
-> > >  bfs+0xc0/0x168
-> > >  add_dep+0x88/0x11c
-> > >  add_wait+0x2d0/0x2dc
-> > >  __dept_wait+0x8c/0xa4
-> > >  dept_wait+0x6c/0x88
-> > >  _raw_spin_lock_irqsave+0xb8/0x1c4
-> > >  scan_block+0x3c/0x128
-> > >  scan_gray_list+0xc4/0x13c
-> > >  kmemleak_scan+0x2d8/0x54c
-> > >  kmemleak_scan_thread+0xac/0xd4
-> > >  kthread+0xd4/0xe4
-> > >  ret_from_fork+0x10/0x20
-> > > 
-> > > > ===================================================
-> > > > DEPT: Circular dependency has been detected.
-> > > > 5.17.0-rc1+ #1 Tainted: G        W
-> > > > ---------------------------------------------------
-> > > > summary
-> > > > ---------------------------------------------------
-> > > > *** AA DEADLOCK ***
-> > > > 
-> > > > context A
-> > > >     [S] __raw_spin_lock_irqsave(&object->lock:0)
-> > > >     [W] _raw_spin_lock_nested(&object->lock:0)
-> > > >     [E] spin_unlock(&object->lock:0)
-> > > > 
-> > > > [S]: start of the event context
-> > > > [W]: the wait blocked
-> > > > [E]: the event not reachable
-> > > > ---------------------------------------------------
-> > > > context A's detail
-> > > > ---------------------------------------------------
-> > > > context A
-> > > >     [S] __raw_spin_lock_irqsave(&object->lock:0)
-> > > >     [W] _raw_spin_lock_nested(&object->lock:0)
-> > > >     [E] spin_unlock(&object->lock:0)
-> > > > 
-> > > > [S] __raw_spin_lock_irqsave(&object->lock:0):
-> > > > [<ffffffc00810302c>] scan_gray_list+0x84/0x13c
-> > > > stacktrace:
-> > > >       dept_ecxt_enter+0x88/0xf4
-> > > >       _raw_spin_lock_irqsave+0xf0/0x1c4
-> > > >       scan_gray_list+0x84/0x13c
-> > > >       kmemleak_scan+0x2d8/0x54c
-> > > >       kmemleak_scan_thread+0xac/0xd4
-> > > >       kthread+0xd4/0xe4
-> > > >       ret_from_fork+0x10/0x20
-> > > > 
-> > > > [E] spin_unlock(&object->lock:0):
-> > > > [<ffffffc008102ee0>] scan_block+0x60/0x128
-> > > > ---------------------------------------------------
-> > > > information that might be helpful
-> > > > ---------------------------------------------------
-> > > > CPU: 1 PID: 38 Comm: kmemleak Tainted: G        W         5.17.0-rc1+ #1
-> > > > Hardware name: linux,dummy-virt (DT)
-> > > > Call trace:
-> > > >  dump_backtrace.part.0+0x9c/0xc4
-> > > >  show_stack+0x14/0x28
-> > > >  dump_stack_lvl+0x9c/0xcc
-> > > >  dump_stack+0x14/0x2c
-> > > >  print_circle+0x2d4/0x438
-> > > >  cb_check_dl+0x44/0x70
-> > > >  bfs+0x60/0x168
-> > > >  add_dep+0x88/0x11c
-> > > >  add_wait+0x2d0/0x2dc
-> > > >  __dept_wait+0x8c/0xa4
-> > > >  dept_wait+0x6c/0x88
-> > > >  _raw_spin_lock_nested+0xa8/0x1b0
-> > > >  scan_block+0xb4/0x128
-> > > >  scan_gray_list+0xc4/0x13c
-> > > >  kmemleak_scan+0x2d8/0x54c
-> > > >  kmemleak_scan_thread+0xac/0xd4
-> > > >  kthread+0xd4/0xe4
-> > > >  ret_from_fork+0x10/0x20
-> > > >
-> > > [...]
-> > > 
-> > > --
-> > > Thank you, You are awesome!
-> > > Hyeonggon :-)
-> 
-> -- 
-> Thank you, You are awesome!
-> Hyeonggon :-)
+T24gMjAyMi8wMy8wMyA4OjI5LCBKYXZpZXIgR29uesOhbGV6IHdyb3RlOg0KPiBPbiAwMy4wMy4y
+MDIyIDA2OjMyLCBKYXZpZXIgR29uesOhbGV6IHdyb3RlOg0KPj4NCj4+PiBPbiAzIE1hciAyMDIy
+LCBhdCAwNC4yNCwgTHVpcyBDaGFtYmVybGFpbiA8bWNncm9mQGtlcm5lbC5vcmc+IHdyb3RlOg0K
+Pj4+DQo+Pj4g77u/VGhpbmtpbmcgcHJvYWN0aXZlbHkgYWJvdXQgTFNGTU0sIHJlZ2FyZGluZyBq
+dXN0IFpvbmUgc3RvcmFnZS4uDQo+Pj4NCj4+PiBJJ2QgbGlrZSB0byBwcm9wb3NlIGEgQm9GIGZv
+ciBab25lZCBTdG9yYWdlLiBUaGUgcG9pbnQgb2YgaXQgaXMNCj4+PiB0byBhZGRyZXNzIHRoZSBl
+eGlzdGluZyBwb2ludCBwb2ludHMgd2UgaGF2ZSBhbmQgdGFrZSBhZHZhbnRhZ2Ugb2YNCj4+PiBo
+YXZpbmcgZm9sa3MgaW4gdGhlIHJvb20gd2UgY2FuIGxpa2VseSBzZXR0bGUgb24gdGhpbmdzIGZh
+c3RlciB3aGljaA0KPj4+IG90aGVyd2lzZSB3b3VsZCB0YWtlIHllYXJzLg0KPj4+DQo+Pj4gSSds
+bCB0aHJvdyBhdCBsZWFzdCBvbmUgdG9waWMgb3V0Og0KPj4+DQo+Pj4gICogUmF3IGFjY2VzcyBm
+b3Igem9uZSBhcHBlbmQgZm9yIG1pY3JvYmVuY2htYXJrczoNCj4+PiAgICAgIC0gYXJlIHdlIHJl
+YWxseSBoYXBweSB3aXRoIHRoZSBzdGF0dXMgcXVvPw0KPj4+ICAgIC0gaWYgbm90IHdoYXQgb3V0
+bGV0cyBkbyB3ZSBoYXZlPw0KPj4+DQo+Pj4gSSB0aGluayB0aGUgbnZtZSBwYXNzdGhyb2doIHN0
+dWZmIGRlc2VydmVzIGl0J3Mgb3duIHNoYXJlZA0KPj4+IGRpc2N1c3Npb24gdGhvdWdoIGFuZCBz
+aG91bGQgbm90IG1ha2UgaXQgcGFydCBvZiB0aGUgQm9GLg0KPj4+DQo+Pj4gIEx1aXMNCj4+DQo+
+PiBUaGFua3MgZm9yIHByb3Bvc2luZyB0aGlzLCBMdWlzLg0KPj4NCj4+IEnigJlkIGxpa2UgdG8g
+am9pbiB0aGlzIGRpc2N1c3Npb24gdG9vLg0KPj4NCj4+IFRoYW5rcywNCj4+IEphdmllcg0KPiAN
+Cj4gTGV0IG1lIGV4cGFuZCBhIGJpdCBvbiB0aGlzLiBUaGVyZSBpcyBvbmUgdG9waWMgdGhhdCBJ
+IHdvdWxkIGxpa2UgdG8NCj4gY292ZXIgaW4gdGhpcyBzZXNzaW9uOg0KPiANCj4gICAgLSBQTzIg
+em9uZSBzaXplcw0KPiAgICAgICAgSW4gdGhlIHBhc3Qgd2Vla3Mgd2UgaGF2ZSBiZWVuIHRhbGtp
+bmcgdG8gRGFtaWVuIGFuZCBNYXRpYXMgYXJvdW5kDQo+ICAgICAgICB0aGUgY29uc3RyYWludCB0
+aGF0IHdlIGN1cnJlbnRseSBoYXZlIGZvciBQTzIgem9uZSBzaXplcy4gV2hpbGUNCj4gICAgICAg
+IHRoaXMgaGFzIG5vdCBiZWVuIGFuIGlzc3VlIGZvciBTTVIgSEREcywgdGhlIGdhcCB0aGF0IFpO
+Uw0KPiAgICAgICAgaW50cm9kdWNlcyBiZXR3ZWVuIHpvbmUgY2FwYWNpdHkgYW5kIHpvbmUgc2l6
+ZSBjYXVzZXMgaG9sZXMgaW4gdGhlDQo+ICAgICAgICBhZGRyZXNzIHNwYWNlLiBUaGlzIHVubWFw
+cGVkIExCQSBzcGFjZSBoYXMgYmVlbiB0aGUgdG9waWMgb2YNCj4gICAgICAgIGRpc2N1c3Npb24g
+d2l0aCBzZXZlcmFsIFpOUyBhZG9wdGVycy4NCj4gDQo+ICAgICAgICBPbmUgb2YgdGhlIHRoaW5n
+cyB0byBub3RlIGhlcmUgaXMgdGhhdCBldmVuIGlmIHRoZSB6b25lIHNpemUgaXMgYQ0KPiAgICAg
+ICAgUE8yLCB0aGUgem9uZSBjYXBhY2l0eSBpcyB0eXBpY2FsbHkgbm90LiBUaGlzIG1lYW5zIHRo
+YXQgZXZlbiB3aGVuDQo+ICAgICAgICB3ZSBjYW4gdXNlIHNoaWZ0cyB0byBtb3ZlIGFyb3VuZCB6
+b25lcywgdGhlIGFjdHVhbCBkYXRhIHBsYWNlbWVudA0KPiAgICAgICAgYWxnb3JpdGhtcyBuZWVk
+IHRvIGRlYWwgd2l0aCBhcmJpdHJhcnkgc2l6ZXMuIFNvIGF0IHRoZSBlbmQgb2YgdGhlDQo+ICAg
+ICAgICBkYXkgYXBwbGljYXRpb25zIHRoYXQgdXNlIGEgY29udGlndW91cyBhZGRyZXNzIHNwYWNl
+IC0gbGlrZSBpbiBhDQo+ICAgICAgICBjb252ZW50aW9uYWwgYmxvY2sgZGV2aWNlIC0sIHdpbGwg
+aGF2ZSB0byBkZWFsIHdpdGggdGhpcy4NCg0KInRoZSBhY3R1YWwgZGF0YSBwbGFjZW1lbnQgYWxn
+b3JpdGhtcyBuZWVkIHRvIGRlYWwgd2l0aCBhcmJpdHJhcnkgc2l6ZXMiDQoNCj8/Pw0KDQpObyBp
+dCBkb2VzIG5vdC4gV2l0aCB6b25lIGNhcCA8IHpvbmUgc2l6ZSwgdGhlIGFtb3VudCBvZiBzZWN0
+b3JzIHRoYXQgY2FuIGJlDQp1c2VkIHdpdGhpbiBhIHpvbmUgbWF5IGJlIHNtYWxsZXIgdGhhbiB0
+aGUgem9uZSBzaXplLCBidXQ6DQoxKSBXcml0ZXMgc3RpbGwgbXVzdCBiZSBpc3N1ZWQgYXQgdGhl
+IFdQIGxvY2F0aW9uIHNvIGNob29zaW5nIGEgem9uZSBmb3Igd3JpdGluZw0KZGF0YSBoYXMgdGhl
+IHNhbWUgY29uc3RyYWludCByZWdhcmRsZXNzIG9mIHRoZSB6b25lIGNhcGFjaXR5OiBEbyBJIGhh
+dmUgZW5vdWdoDQp1c2FibGUgc2VjdG9ycyBsZWZ0IGluIHRoZSB6b25lID8NCjIpIFJlYWRpbmcg
+YWZ0ZXIgdGhlIFdQIGlzIG5vdCB1c2VmdWwgKGlmIG5vdCBvdXRyaWdodCBzdHVwaWQpLCByZWdh
+cmRsZXNzIG9mDQp3aGVyZSB0aGUgbGFzdCB1c2FibGUgc2VjdG9yIGluIHRoZSB6b25lIGlzIChh
+dCB6b25lIHN0YXJ0ICsgem9uZSBzaXplIG9yIGF0DQp6b25lIHN0YXJ0ICsgem9uZSBjYXApLg0K
+DQpBbmQgdGFsa2luZyBhYm91dCAidXNlIGEgY29udGlndW91cyBhZGRyZXNzIHNwYWNlIiBpcyBp
+biBteSBvcGluaW9uIG5vbnNlbnNlIGluDQp0aGUgY29udGV4dCBvZiB6b25lZCBzdG9yYWdlIHNp
+bmNlIGJ5IGRlZmluaXRpb24sIGV2ZXJ5dGhpbmcgaGFzIHRvIGJlIG1hbmFnZWQNCnVzaW5nIHpv
+bmVzIGFzIHVuaXRzLiBUaGUgb25seSBzZW5zaWJsZSByYW5nZSBmb3IgYSAiY29udGlndW91cyBh
+ZGRyZXNzIHNwYWNlIg0KaXMgInpvbmUgc3RhcnQgKyBtaW4oem9uZSBjYXAsIHpvbmUgc2l6ZSki
+Lg0KDQo+ICAgICAgICBTaW5jZSBjaHVua19zZWN0b3JzIGlzIG5vIGxvbmdlciByZXF1aXJlZCB0
+byBiZSBhIFBPMiwgd2UgaGF2ZQ0KPiAgICAgICAgc3RhcnRlZCB0aGUgd29yayBpbiByZW1vdmlu
+ZyB0aGlzIGNvbnN0cmFpbnQuIFdlIGFyZSB3b3JraW5nIGluIDINCj4gICAgICAgIHBoYXNlczoN
+Cj4gDQo+ICAgICAgICAgIDEuIEFkZCBhbiBlbXVsYXRpb24gbGF5ZXIgaW4gTlZNZSBkcml2ZXIg
+dG8gc2ltdWxhdGUgUE8yIGRldmljZXMNCj4gCXdoZW4gdGhlIEhXIHByZXNlbnRzIGEgem9uZV9j
+YXBhY2l0eSA9IHpvbmVfc2l6ZS4gVGhpcyBpcyBhDQo+IAlwcm9kdWN0IG9mIG9uZSBvZiBEYW1p
+ZW4ncyBlYXJseSBjb25jZXJucyBhYm91dCBzdXBwb3J0aW5nDQo+IAlleGlzdGluZyBhcHBsaWNh
+dGlvbnMgYW5kIEZTcyB0aGF0IHdvcmsgdW5kZXIgdGhlIFBPMg0KPiAJYXNzdW1wdGlvbi4gV2Ug
+d2lsbCBwb3N0IHRoZXNlIHBhdGNoZXMgaW4gdGhlIG5leHQgZmV3IGRheXMuDQo+IA0KPiAgICAg
+ICAgICAyLiBSZW1vdmUgdGhlIFBPMiBjb25zdHJhaW50IGZyb20gdGhlIGJsb2NrIGxheWVyIGFu
+ZCBhZGQNCj4gCXN1cHBvcnQgZm9yIGFyYml0cmFyeSB6b25lIHN1cHBvcnQgaW4gYnRyZnMuIFRo
+aXMgd2lsbCBhbGxvdyB0aGUNCj4gCXJhdyBibG9jayBkZXZpY2UgdG8gYmUgcHJlc2VudCBmb3Ig
+YXJiaXRyYXJ5IHpvbmUgc2l6ZXMgKGFuZA0KPiAJY2FwYWNpdGllcykgYW5kIGJ0cmZzIHdpbGwg
+YmUgYWJsZSB0byB1c2UgaXQgbmF0aXZlbHkuDQoNClpvbmUgc2l6ZXMgY2Fubm90IGJlIGFyYml0
+cmFyeSBpbiBidHJmcyBzaW5jZSBibG9jayBncm91cHMgbXVzdCBiZSBhIG11bHRpcGxlIG9mDQo2
+NEsuIFNvIGNvbnN0cmFpbnRzIHJlbWFpbiBhbmQgc2hvdWxkIGJlIGVuZm9yY2VkLCBhdCBsZWFz
+dCBieSBidHJmcy4NCg0KPiANCj4gCUZvciBjb21wbGV0ZW5lc3MsIEYyRlMgd29ya3MgbmF0aXZl
+bHkgaW4gUE8yIHpvbmUgc2l6ZXMsIHNvIHdlDQo+IAl3aWxsIG5vdCBkbyB3b3JrIGhlcmUgZm9y
+IG5vdywgYXMgdGhlIGNoYW5nZXMgd2lsbCBub3QgYnJpbmcgYW55DQo+IAliZW5lZml0LiBGb3Ig
+RjJGUywgdGhlIGVtdWxhdGlvbiBsYXllciB3aWxsIGhlbHAgdXNlIGRldmljZXMNCj4gCXRoYXQg
+ZG8gbm90IGhhdmUgUE8yIHpvbmUgc2l6ZXMuDQo+IA0KPiAgICAgICBXZSBhcmUgd29ya2luZyB0
+b3dhcmRzIGhhdmluZyBhdCBsZWFzdCBhIFJGQyBvZiAoMikgYmVmb3JlIExTRi9NTS4NCj4gICAg
+ICAgU2luY2UgdGhpcyBpcyBhIHRvcGljIHRoYXQgaW52b2x2ZXMgc2V2ZXJhbCBwYXJ0aWVzIGFj
+cm9zcyB0aGUNCj4gICAgICAgc3RhY2ssIEkgYmVsaWV2ZSB0aGF0IGEgRjJGIGNvbnZlcnNhdGlv
+biB3aWxsIGhlbHAgbGF5aW5nIHRoZSBwYXRoDQo+ICAgICAgIGZvcndhcmQuDQo+IA0KPiBUaGFu
+a3MsDQo+IEphdmllcg0KPiANCg0KDQotLSANCkRhbWllbiBMZSBNb2FsDQpXZXN0ZXJuIERpZ2l0
+YWwgUmVzZWFyY2g=
