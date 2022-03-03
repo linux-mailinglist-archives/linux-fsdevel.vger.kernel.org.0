@@ -2,109 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FCC4CB525
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 03:52:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CB124CB5DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 05:27:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231812AbiCCClk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 21:41:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36624 "EHLO
+        id S229543AbiCCE1q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 23:27:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231786AbiCCClj (ORCPT
+        with ESMTP id S229509AbiCCE1q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 21:41:39 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B6910FCE
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 18:40:55 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id m11-20020a17090a7f8b00b001beef6143a8so3572758pjl.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Mar 2022 18:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:cc
-         :references:from:to:in-reply-to:content-transfer-encoding;
-        bh=WKpgUKvbgmgS/+XZIYcGoureDOsojTAGGMqwpMVSdx0=;
-        b=WkDu5aHPpmG3JoGrcKXOSVtPyVZqVsnK9TfxUoj9Yj3PEpa6J+V/9fQwamFkioHzpi
-         GfDxjNVajhLweHzfHllvGWROpleV0ERKGRiDG21o9iU9qu1YjprDnWiFRcatw9XQC1rM
-         7sg4g4v4ucriVtTOi9A7iZ1PpUOhOET1ALx40wMhkt9JLGx1rqA7RfYuNcLxag7aq98/
-         KcLZKC4flRjOBeebXDCRsK5wGicPYjIg80LIBmi25TK/xcQQqYjtNnSuK6ls/CWInWJ2
-         a+AM1y8HzMvC5pKjQmwpWGBoprOZm5xBsply77UPufQIJWTVWaNIU4DMAjALn8ot1XPS
-         ShKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:cc:references:from:to:in-reply-to
-         :content-transfer-encoding;
-        bh=WKpgUKvbgmgS/+XZIYcGoureDOsojTAGGMqwpMVSdx0=;
-        b=Ljb9MuRUflLotiyPORZP26Bph6LosL95vLc6zJ5qCea24xopfprjjCfmDWy34c33ic
-         869htx3oT1Opd7mNuBkCQZHJttX8sqlftp6MqmTAvG02q3U9jHiCR4wIelKs2jCZzjsa
-         q2KqcbimWUf47+C7K9TXmX5iujevRSE79e1GK7XJGo7qsUwk4q5PQPndCtoCTtWGv7H+
-         Jddv+kndzekTaimo1Cd8jukhyLJk7d1C2Vwk7GTP4ME4Cj61/y3+qYSJ87VoHFL6uKeA
-         qaRzP5mhoSaHAe7GDz5NKhwVt6mCHdReIEtB2Gf2opTY4J3E/Ca5d/ALGfLnvETK63Rv
-         aboQ==
-X-Gm-Message-State: AOAM532Zpeu3ykihCdsLFSDCuuN5dgS3L9P3ZulQMCAefKUQny8Q0cNa
-        MhDp+i2buPXfPsfrqtDLussmeA==
-X-Google-Smtp-Source: ABdhPJxOdMLArkpmLe9NJIzj5q5ePqZMNN5SzGfTtRGy/eUE2Cok/FhJL8qVgYMzK4uz3BqAkLF3Xg==
-X-Received: by 2002:a17:902:7fc5:b0:151:863e:44ee with SMTP id t5-20020a1709027fc500b00151863e44eemr10350330plb.163.1646275254888;
-        Wed, 02 Mar 2022 18:40:54 -0800 (PST)
-Received: from [10.76.43.192] ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id q7-20020a056a0002a700b004f357e3e42fsm546095pfs.36.2022.03.02.18.40.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Mar 2022 18:40:54 -0800 (PST)
-Message-ID: <b31b0c6b-4a97-e03a-0bc0-4bf17d2ed946@bytedance.com>
-Date:   Thu, 3 Mar 2022 10:40:48 +0800
+        Wed, 2 Mar 2022 23:27:46 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F4F61A391;
+        Wed,  2 Mar 2022 20:27:00 -0800 (PST)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2234Qdxv022243
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 2 Mar 2022 23:26:39 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 3139015C0038; Wed,  2 Mar 2022 23:26:39 -0500 (EST)
+Date:   Wed, 2 Mar 2022 23:26:39 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-ext4@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <dchinner@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -v4] ext4: don't BUG if kernel subsystems dirty pages
+ without asking ext4 first
+Message-ID: <YiBDf7XLnTe4Gwis@mit.edu>
+References: <Yg0m6IjcNmfaSokM@google.com>
+ <Yhks88tO3Em/G370@mit.edu>
+ <YhlBUCi9O30szf6l@sol.localdomain>
+ <YhlFRoJ3OdYMIh44@mit.edu>
+ <YhlIvw00Y4MkAgxX@mit.edu>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.1
-Subject: Re: [PATCH] sched/numa: add per-process numa_balancing
-Content-Language: en-US
-Cc:     songmuchun@bytedance.com, zhengqi.arch@bytedance.com,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20220224075227.27127-1-ligang.bdlg@bytedance.com>
-From:   Gang Li <ligang.bdlg@bytedance.com>
-To:     Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
-In-Reply-To: <20220224075227.27127-1-ligang.bdlg@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YhlIvw00Y4MkAgxX@mit.edu>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Peter Zijlstra,
+[un]pin_user_pages_remote is dirtying pages without properly warning
+the file system in advance.  A related race was noted by Jan Kara in
+2018[1]; however, more recently instead of it being a very hard-to-hit
+race, it could be reliably triggered by process_vm_writev(2) which was
+discovered by Syzbot[2].
 
-On 2022/1/12 22:43, Peter Zijlstra wrote:
- >> Set per-process numa balancing:
- >> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DISABLE); //disable
- >> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
- >> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_DEFAULT); //follow global
- >
- > This seems to imply you can prctl(ENABLE) even if the global is
- > disabled, IOW sched_numa_balancing is off.
+This is technically a bug in mm/gup.c, but arguably ext4 is fragile in
+that if some other kernel subsystem dirty pages without properly
+notifying the file system using page_mkwrite(), ext4 will BUG, while
+other file systems will not BUG (although data will still be lost).
 
-I have discussed the semantics of this API with Mel Gorman, we both
-agree that we can prctl(ENABLE) even if the global is disabled.
+So instead of crashing with a BUG, issue a warning (since there may be
+potential data loss) and just mark the page as clean to avoid
+unprivileged denial of service attacks until the problem can be
+properly fixed.  More discussion and background can be found in the
+thread starting at [2].
 
-On 2021/11/10 00:26, Mel Gorman wrote: [1]
- > For symmetry and consistency of the tuning. Either there is per-process
- > control or there is not. Right now, there is only the ability to turn
- > off NUMA balancing via prctl if globally enabled. There is no option to
- > turn NUMA balancing on for a single task if globally disabled.
+[1] https://lore.kernel.org/linux-mm/20180103100430.GE4911@quack2.suse.cz
+[2] https://lore.kernel.org/r/Yg0m6IjcNmfaSokM@google.com
 
-On 11/18/21 4:58 PM, Mel Gorman wrote: [2]
- > On Thu, Nov 18, 2021 at 11:26:30AM +0800, Gang Li wrote:
- >> 3. prctl(PR_NUMA_BALANCING, PR_SET_NUMAB_ENABLE);  //enable
- >
- > If PR_SET_NUMAB_ENABLE enables numa balancing for a task when
- > kernel.numa_balancing == 0 instead of returning an error then sure.
+Reported-by: syzbot+d59332e2db681cf18f0318a06e994ebbb529a8db@syzkaller.appspotmail.com
+Reported-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+---
+v4 - only changes to the commit description to eliminate some inaccuracies
+     and clarify the text.
 
-[1] Link: https://lore.kernel.org/lkml/20211109162647.GY3891@suse.de/
-[2] Link: https://lore.kernel.org/lkml/20211118085819.GD3301@suse.de/
+ fs/ext4/inode.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 01c9e4f743ba..008fe8750109 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1993,6 +1993,15 @@ static int ext4_writepage(struct page *page,
+ 	else
+ 		len = PAGE_SIZE;
+ 
++	/* Should never happen but for bugs in other kernel subsystems */
++	if (!page_has_buffers(page)) {
++		ext4_warning_inode(inode,
++		   "page %lu does not have buffers attached", page->index);
++		ClearPageDirty(page);
++		unlock_page(page);
++		return 0;
++	}
++
+ 	page_bufs = page_buffers(page);
+ 	/*
+ 	 * We cannot do block allocation or other extent handling in this
+@@ -2588,12 +2597,28 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+ 			     (mpd->wbc->sync_mode == WB_SYNC_NONE)) ||
+ 			    unlikely(page->mapping != mapping)) {
+ 				unlock_page(page);
+-				continue;
++				goto out;
+ 			}
+ 
+ 			wait_on_page_writeback(page);
+ 			BUG_ON(PageWriteback(page));
+ 
++			/*
++			 * Should never happen but for buggy code in
++			 * other subsystems that call
++			 * set_page_dirty() without properly warning
++			 * the file system first.  See [1] for more
++			 * information.
++			 *
++			 * [1] https://lore.kernel.org/linux-mm/20180103100430.GE4911@quack2.suse.cz
++			 */
++			if (!page_has_buffers(page)) {
++				ext4_warning_inode(mpd->inode, "page %lu does not have buffers attached", page->index);
++				ClearPageDirty(page);
++				unlock_page(page);
++				continue;
++			}
++
+ 			if (mpd->map.m_len == 0)
+ 				mpd->first_page = page->index;
+ 			mpd->next_page = page->index + 1;
 -- 
-Thanks
-Gang Li
+2.31.0
 
