@@ -2,175 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9C684CB3AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 01:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42AC04CB3EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 02:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbiCCAaW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Mar 2022 19:30:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39034 "EHLO
+        id S230463AbiCCAmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Mar 2022 19:42:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbiCCAaV (ORCPT
+        with ESMTP id S230450AbiCCAmW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Mar 2022 19:30:21 -0500
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA8AE4FC6F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 16:29:36 -0800 (PST)
-Received: by mail-qk1-x72c.google.com with SMTP id c7so2747705qka.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Mar 2022 16:29:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ETM+Zu622nDqVa3wz+osL6CiDEUlv57g1pg0q6yBmFs=;
-        b=1cVjwE4vryVzO1VUWJHcv42VskLLZjk0RsqPoeURS2jD7Uxvwz6pQIVXxlwysIk2P+
-         sKDKbeU4gOZm6AIwCT15S8A1zrNeXV9ouyjHz2tRsR6cvr5B1ntLqqCAwNv6ERiQWFCT
-         /islPG8S+hCZ7lvveaZjL1vC57gnghbBzl4DznRjFFxzj2RYpY9Pk6PFNIrZQcF7uMsj
-         HT3UXTbP/ECCPSy65z1SiWUO2YA9z/UHYL6b39AyEFcVwIqgDV9Hq+8c2gPCKfSQ4rnk
-         LeYWPKQm78CCvfcVL9x3QYyseJIuxjvtATbEH3nYeaM2LOC9We3f9Veek/QeZ0+piUFL
-         3s1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ETM+Zu622nDqVa3wz+osL6CiDEUlv57g1pg0q6yBmFs=;
-        b=ZNI6AyoWUOQi7A8BUViRHL7BaJ7WXOMfcqSyMLi9MsjTJJUt2ba/BoSnkEo2g10Ppu
-         lTNhoOzLCGxjiu8BCxj/h/GU28r3LKWlMKtyms4VrBxl/ixzHBaxTPvWm42oWMbe1R2G
-         ea3Xo/+U4PdsUUEn2pjl+XlLngGew6NO5354Pl2X68SC8Cbw9mSsZhGEnLWuNanwiICB
-         61dES1AO8rMV3MY1PgxhhZwc/3Uhpupv/a65La6wpW9ad/0pmpakD+AAqETufYEgtpnq
-         liKMYrn/nbmKbsZdPOEtZVk3zdyeWqt71VwCHq6YgaYUgy/251ct7RZ07Ki/N/8abD1B
-         0tzQ==
-X-Gm-Message-State: AOAM530t4yMPCcAAeTQwE8cmyuGVJY3tXuAFVebYVozBBjAP6gjahjhC
-        2tbB8v36xuiNqv2vu4Q/wf/WSFnfAj7EhFaA
-X-Google-Smtp-Source: ABdhPJzoVMhT8D0gM/0LXP1xare2z7FtUCv+HsdrSWtLb6mAt893AwDDw4kA6s1FROaqoFOw8sWC/Q==
-X-Received: by 2002:a37:9c92:0:b0:60d:d77e:e643 with SMTP id f140-20020a379c92000000b0060dd77ee643mr18108824qke.252.1646267375830;
-        Wed, 02 Mar 2022 16:29:35 -0800 (PST)
-Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id c16-20020a05622a059000b002dc93dc92d1sm403829qtb.48.2022.03.02.16.29.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 16:29:35 -0800 (PST)
-Date:   Wed, 2 Mar 2022 19:29:34 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: nfs generic/373 failure after "fs: allow cross-vfsmount
- reflink/dedupe"
-Message-ID: <YiAL7uNA3ZiaBCE6@localhost.localdomain>
-References: <20220302065952.GE3927073@dread.disaster.area>
- <CAOQ4uxgU7cYAO+KMd=Yb8Fo4AwScQ2J0eqkYn3xWjzBWKtUziQ@mail.gmail.com>
- <20220302082658.GF3927073@dread.disaster.area>
- <CAOQ4uxgiL2eqx-kad+dddXvXPREKT-w3_BnLzdoJaJqGm=H=vA@mail.gmail.com>
- <20220302211226.GG3927073@dread.disaster.area>
- <20220302220450.GD10757@fieldses.org>
- <Yh/vADRGuPFGIEc+@localhost.localdomain>
- <20220302224250.GF10757@fieldses.org>
- <YiABiLtH/4nMJE+u@localhost.localdomain>
- <20220303000735.GA21944@fieldses.org>
+        Wed, 2 Mar 2022 19:42:22 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21DC2018A;
+        Wed,  2 Mar 2022 16:41:37 -0800 (PST)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2230fTBg019238
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 2 Mar 2022 19:41:30 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id A194615C3444; Wed,  2 Mar 2022 19:41:29 -0500 (EST)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>, linux-ext4@vger.kernel.org
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+Subject: Re: [PATCHv2 0/9] ext4: fast_commit fixes, stricter block checking & cleanups
+Date:   Wed,  2 Mar 2022 19:41:25 -0500
+Message-Id: <164626805478.621144.4983790124922912795.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <cover.1644992609.git.riteshh@linux.ibm.com>
+References: <cover.1644992609.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220303000735.GA21944@fieldses.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 02, 2022 at 07:07:35PM -0500, J. Bruce Fields wrote:
-> On Wed, Mar 02, 2022 at 06:45:12PM -0500, Josef Bacik wrote:
-> > On Wed, Mar 02, 2022 at 05:42:50PM -0500, J. Bruce Fields wrote:
-> > > On Wed, Mar 02, 2022 at 05:26:08PM -0500, Josef Bacik wrote:
-> > > > On Wed, Mar 02, 2022 at 05:04:50PM -0500, J. Bruce Fields wrote:
-> > > > > I started seeing generic/373 fail on recent linux-next in NFS testing.
-> > > > > 
-> > > > > Bisect lands it on aaf40970b1d0 "fs: allow cross-vfsmount
-> > > > > reflink/dedupe".
-> > > > > 
-> > > > > The test fails because a clone between two mounts is expected to fail,
-> > > > > and no longer does.
-> > > > > 
-> > > > > In my setup both mounts are nfs mounts.  They are mounts of different
-> > > > > exports, and the exports are exports of different filesystems.  So it
-> > > > > does make sense that the clone should fail.
-> > > > > 
-> > > > > I see the NFS client send a CLONE rpc to the server, and the server
-> > > > > return success.  That seems wrong.
-> > > > > 
-> > > > > Both exported filesystems are xfs, and from the code it looks like the
-> > > > > server calls vfs_clone_file_range(), which ends up calling
-> > > > > xfs_file_remap_range().
-> > > > > 
-> > > > > Are we missing a check now in that xfs case?
-> > > > > 
-> > > > > I haven't looked any more closely at what's going on, so I could be
-> > > > > missing something.
-> > > > > 
-> > > > 
-> > > > Yeah there's a few fstests that test this functionality that need to be removed,
-> > > > I have patches pending for this in our fstests staging tree (since we run
-> > > > fstests nightly on our tree)
-> > > > 
-> > > > https://github.com/btrfs/fstests/tree/staging
-> > > > 
-> > > > Right now the patches just remove the tests from auto since that's what we run,
-> > > > I'll remove them properly once the patch lands in linus.  Thanks,
-> > > 
-> > > So, out of curiosity, what is xfs doing in this case?  These are two
-> > > filesystems on separate partitions, is it falling back on a read/write
-> > > loop or something?
-> > 
-> > I don't think so?  I'm actually kind of confused, because nfsd does
-> > vfs_clone_file_range, and the only place I messed with for CLONE was
-> > ioctl_clone_file, so the patch changed literally nothing, unless you aren't
-> > using nfsd for the server?
-> > 
-> > And if they are in fact two different file systems the i_sb != i_sb of the
-> > files, so there's something pretty strange going on here, my patch shouldn't
-> > affect your setup.  Thanks,
+On Wed, 16 Feb 2022 12:32:42 +0530, Ritesh Harjani wrote:
+> Please find the v2 of this patch series which addresses the review comments from
+> Jan on PATCH-2 & PATCH-7. No changes other than that.
 > 
-> Sorry, took me a minute to understand, myself:
+> Summary
+> ========
+> This patch series aimes at fixing some of the issues identified in fast_commit
+> with flex_bg. This also adds some stricter checking of blocks to be freed in
+> ext4_mb_clear_bb(), ext4_group_add_blocks() & ext4_mb_mark_bb()
 > 
-> It's actually only the client behavior that changed.  Previously the
-> client would reject an attempt to clone across filesystems, so the
-> server never saw such a request.  After this patch, the client will go
-> ahead and send the CLONE.  (Which, come to think of it, is probably the
-> right thing for the client to do.)
-> 
-> So the server's probably always had a bug, and this just uncovered it.
-> 
-> I'd be curious what the consequences are.  And where the check should be
-> (above or below vfs_clone_file_range()?).
-> 
+> [...]
 
-This is where I'm confused, this really shouldn't succeed
+Applied, thanks!
 
-loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
-                           struct file *file_out, loff_t pos_out,
-                           loff_t len, unsigned int remap_flags)
-{
-        loff_t ret;
+[1/9] ext4: Correct cluster len and clusters changed accounting in ext4_mb_mark_bb
+      commit: a5c0e2fdf7cea535ba03259894dc184e5a4c2800
+[2/9] ext4: Fixes ext4_mb_mark_bb() with flex_bg with fast_commit
+      commit: bfdc502a4a4c058bf4cbb1df0c297761d528f54d
+[3/9] ext4: Refactor ext4_free_blocks() to pull out ext4_mb_clear_bb()
+      commit: 8ac3939db99f99667b8eb670cf4baf292896e72d
+[4/9] ext4: Use in_range() for range checking in ext4_fc_replay_check_excluded
+      commit: dbaafbadc5c3dad4010099d0ff135204a8dbff49
+[5/9] ext4: Rename ext4_set_bits to mb_set_bits
+      commit: 123e3016ee9b3674a819537bc4c3174e25cd48fc
+[6/9] ext4: No need to test for block bitmap bits in ext4_mb_mark_bb()
+      commit: bd8247eee1a2b22e2270b3933ab8dca9316b3718
+[7/9] ext4: Add ext4_sb_block_valid() refactored out of ext4_inode_block_valid()
+      commit: 6bc6c2bdf1baca6522b8d9ba976257d722423085
+[8/9] ext4: Add strict range checks while freeing blocks
+      commit: a00b482b82fb098956a5bed22bd7873e56f152f1
+[9/9] ext4: Add extra check in ext4_mb_mark_bb() to prevent against possible corruption
+      commit: 8c91c57907d3ad8f88a12097213bb0920eb453b8
 
-        WARN_ON_ONCE(remap_flags & REMAP_FILE_DEDUP);
-
-        if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-                return -EXDEV;
-
-
-loff_t vfs_clone_file_range(struct file *file_in, loff_t pos_in,
-                            struct file *file_out, loff_t pos_out,
-                            loff_t len, unsigned int remap_flags)
-{
-        loff_t ret;
-
-        file_start_write(file_out);
-        ret = do_clone_file_range(file_in, pos_in, file_out, pos_out, len,
-                                  remap_flags);
-
-And even if we get past here, I imagine XFS would freak out because it can't
-find the extents (unless you're getting lucky and everything is lining up?).
-I'm super confused...
-
-Josef
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
