@@ -2,128 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B0D84CB665
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 06:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D1A64CB62E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 06:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiCCF3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 00:29:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54288 "EHLO
+        id S229706AbiCCFYo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 00:24:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiCCF3v (ORCPT
+        with ESMTP id S229668AbiCCFYn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 00:29:51 -0500
-X-Greylist: delayed 422 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 02 Mar 2022 21:29:02 PST
-Received: from mailout2.w2.samsung.com (mailout2.w2.samsung.com [211.189.100.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F4029CAE
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 21:29:02 -0800 (PST)
-Received: from uscas1p1.samsung.com (unknown [182.198.245.206])
-        by mailout2.w2.samsung.com (KnoxPortal) with ESMTP id 20220303052157usoutp02320a7e99e12621b2796bc1359eac2373~Yx2jdRdFb0227002270usoutp02h;
-        Thu,  3 Mar 2022 05:21:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w2.samsung.com 20220303052157usoutp02320a7e99e12621b2796bc1359eac2373~Yx2jdRdFb0227002270usoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1646284917;
-        bh=3ME7q8n9o+nFdKHrORE1LKg82DkguanQX25wTsKO31c=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=TSHq/G9jvfUrTze3dMcvZnig6qkECsP8H0HlpI8yVjKMw/2xVUXaVhYNX44e48QiY
-         gmLjGDlA4VHHXmn0vNQ3EmdZ40xLg4t0O9hdGKLUwJ4geJPGYJY5RzxychYBlATpLB
-         XXELmCBVuHuGWmTgc2YA80IbclOORiETRid6YRb8=
-Received: from ussmges3new.samsung.com (u112.gpu85.samsung.co.kr
-        [203.254.195.112]) by uscas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220303052156uscas1p25a7aa999de9ba6402e9d323dc79f001f~Yx2ikwuMk3082830828uscas1p25;
-        Thu,  3 Mar 2022 05:21:56 +0000 (GMT)
-Received: from uscas1p1.samsung.com ( [182.198.245.206]) by
-        ussmges3new.samsung.com (USCPEMTA) with SMTP id 01.07.09687.37050226; Thu, 
-        3 Mar 2022 00:21:55 -0500 (EST)
-Received: from ussmgxs2new.samsung.com (u91.gpu85.samsung.co.kr
-        [203.254.195.91]) by uscas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220303052155uscas1p195fd9fea8e8de3896234a0699937a6be~Yx2iLwv201979019790uscas1p1l;
-        Thu,  3 Mar 2022 05:21:55 +0000 (GMT)
-X-AuditID: cbfec370-9c5ff700000025d7-1b-622050734b1e
-Received: from SSI-EX4.ssi.samsung.com ( [105.128.2.146]) by
-        ussmgxs2new.samsung.com (USCPEXMTA) with SMTP id AA.6E.10042.37050226; Thu, 
-        3 Mar 2022 00:21:55 -0500 (EST)
-Received: from SSI-EX3.ssi.samsung.com (105.128.2.228) by
-        SSI-EX4.ssi.samsung.com (105.128.2.229) with Microsoft SMTP Server
-        (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
-        15.1.2242.4; Wed, 2 Mar 2022 21:21:54 -0800
-Received: from SSI-EX3.ssi.samsung.com ([fe80::8d80:5816:c578:8c36]) by
-        SSI-EX3.ssi.samsung.com ([fe80::8d80:5816:c578:8c36%3]) with mapi id
-        15.01.2242.008; Wed, 2 Mar 2022 21:21:51 -0800
-From:   Adam Manzanares <a.manzanares@samsung.com>
-To:     =?iso-8859-1?Q?Matias_Bj=F8rling?= <Matias.Bjorling@wdc.com>
-CC:     Bart Van Assche <bvanassche@acm.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        =?iso-8859-1?Q?Javier_Gonz=E1lez?= <javier.gonz@samsung.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "Keith Busch" <Keith.Busch@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Thread-Topic: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Thread-Index: AQHYLpmb9dDgbycJL0eB2NODtYgLP6ytZjoAgAAx7ACAAA3tgA==
-Date:   Thu, 3 Mar 2022 05:21:51 +0000
-Message-ID: <20220303052146.GA4578@bgt-140510-bm01>
-In-Reply-To: <BYAPR04MB496825C09F9428D725E9F712F1049@BYAPR04MB4968.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [105.128.2.176]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <1590AFAC29E35E49A5A8B5E3D8377B51@ssi.samsung.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7djXc7rFAQpJBlN3WlpM+/CT2aK1/RuT
-        xd+ue0wW2/YfZLPYe0vbYs/ekywW+17vZbaY0PaV2eLGhKeMFhOPb2a1WHPzKYsDt8flK94e
-        O2fdZffYtKqTzWPyjeWMHp83yXm0H+hmCmCL4rJJSc3JLEst0rdL4MrYdfkQc8E8voolW6ay
-        NzBe5O5i5OSQEDCROPuxh7mLkYtDSGAlo8Tx9U/ZIJxWJom56z+wwFQtff8UzBYSWMsocX6e
-        BIT9gVHixGEfCHs/o8Sku2IgNpuAgcTv4xuZQWwRAQeJzZO3MYEMZRb4ySJx90gDUIKDQ1jA
-        WOLF1nqIGqArXh9lg7CdJFbNncQEYrMIqEj8eruBEaScF6j8wkV5kDCnQKzEtju9YOWMAmIS
-        30+tAStnFhCXuPVkPhPEyYISi2bvYYawxST+7XrIBmErStz//pIdol5P4sbUKWwQtp3Elwuf
-        oGxtiWULX4P18gLNOTnzCTQYJCUOrrjBAvKKhMB/Dom23+8ZIRIuEr9PXIAqkpb4e3cZE0TR
-        KkaJKd/a2CGczYwSM35dgDrPWuJf5zX2CYwqs5BcPgvJVbOQXDULyVWzkFy1gJF1FaN4aXFx
-        bnpqsXFearlecWJucWleul5yfu4mRmAyO/3vcMEOxlu3PuodYmTiYDzEKMHBrCTCa6mpkCTE
-        m5JYWZValB9fVJqTWnyIUZqDRUmcd1nmhkQhgfTEktTs1NSC1CKYLBMHp1QDk23ekdS4e7zv
-        Vu5Y2bE6yG6VkblRztwS1sT6hPCCOhlB/iZ7jUZWJoXfCgdEfWu+XhM4oKTysu/5sxJ5ncgv
-        BV8F1GYd2nLGe8tTa4f0onNXDuy6ea7h//ztoWt8EvzLmOe9aLg6+f8WpYPazKIzft/7Ga6m
-        zLAhWzW/6nzRJg6BmpuLBDusdlreLLL+vHf6+aJXnc3ThDWKr7pNyiy/84Bj+4w5T5v+ym0z
-        u9eVYOnbKc+mZ/I98uwXrT23vvmd57Ny1Eh1DVy7X4Q1zUW35Oz7oLfF19Zv5/b9f+e7/3n1
-        cLGpl9dezlGY/yDtqIuo67XrliwSDr9rDfmWs3x6VSIS/pVpxsGYmLYoa/lqJZbijERDLeai
-        4kQAZZpGXtUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsWS2cA0Sbc4QCHJYNVlPYtpH34yW7S2f2Oy
-        +Nt1j8li2/6DbBZ7b2lb7Nl7ksVi3+u9zBYT2r4yW9yY8JTRYuLxzawWa24+ZXHg9rh8xdtj
-        56y77B6bVnWyeUy+sZzR4/MmOY/2A91MAWxRXDYpqTmZZalF+nYJXBm7Lh9iLpjHV7Fky1T2
-        BsaL3F2MnBwSAiYSS98/Zeli5OIQEljNKPFnwxwmkISQwAdGiR2LnCAS+xkl7v1pYAFJsAkY
-        SPw+vpEZxBYRcJDYPHkbE0gRs8BPFokVr2azdTFycAgLGEu82FoPUWMicfb1UTYI20li1dxJ
-        YAtYBFQkfr3dwAhSzgtUfuGiPMSuXiaJTzfXgtVwCsRKbLvTC9bLKCAm8f3UGrA4s4C4xK0n
-        85kgPhCQWLLnPDOELSrx8vE/VghbUeL+95fsEPV6EjemTmGDsO0kvlz4BGVrSyxb+Bqsl1dA
-        UOLkzCcsEL2SEgdX3GCZwCgxC8m6WUhGzUIyahaSUbOQjFrAyLqKUby0uDg3vaLYKC+1XK84
-        Mbe4NC9dLzk/dxMjMBGc/nc4egfj7Vsf9Q4xMnEwHmKU4GBWEuG11FRIEuJNSaysSi3Kjy8q
-        zUktPsQozcGiJM77MmpivJBAemJJanZqakFqEUyWiYNTqoFp4sYtfs/umxydIZ17p6u4L0sg
-        5ZDPH4uG5JnxWl9+6C5/0tWWl3FbRHzqhoIQtxqe27pPpjKUfn6yxrT20eNn83bHurSUnNO6
-        Ly4ZF2tnkr432HBlvsYmk6yIa1//1AUs28TO7PS1U+rFGoFwhp+Mwur293Orp9e0NCaL3dj2
-        MLL74r/XP9Pmc1+UMVavLcrxntdfFrnvmv+m1B+TfZ1sn1fv1vZWESr2S1XMZC/VeOlvq3d3
-        0WW2Fas5+3ZMvvFA8ovZpEe7H8517VnDbth4+ZH1Xl5v/uU9L4+mWXY+bj+htUN2YrnkvYS2
-        LIuESW9UZ7KufOgeZxy3rq9E7cUKi4m9KeYrbV5ezop+/USJpTgj0VCLuag4EQByghNdcwMA
-        AA==
-X-CMS-MailID: 20220303052155uscas1p195fd9fea8e8de3896234a0699937a6be
-CMS-TYPE: 301P
-X-CMS-RootMailID: 20220303043207uscas1p1dc256d10ab8581a900dfc1b2fcf0bd13
-References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
-        <a1efd5b0-f64a-9170-61e3-e723d44aa04f@acm.org>
-        <CGME20220303043207uscas1p1dc256d10ab8581a900dfc1b2fcf0bd13@uscas1p1.samsung.com>
-        <BYAPR04MB496825C09F9428D725E9F712F1049@BYAPR04MB4968.namprd04.prod.outlook.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        Thu, 3 Mar 2022 00:24:43 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A4CC0F4D1C
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Mar 2022 21:23:57 -0800 (PST)
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.52 with ESMTP; 3 Mar 2022 14:23:55 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.125 with ESMTP; 3 Mar 2022 14:23:55 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     tytso@mit.edu
+Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        torvalds@linux-foundation.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: Report 2 in ext4 and journal based on v5.17-rc1
+Date:   Thu,  3 Mar 2022 14:23:33 +0900
+Message-Id: <1646285013-3934-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <YiAow5gi21zwUT54@mit.edu>
+References: <YiAow5gi21zwUT54@mit.edu>
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -132,48 +63,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 03, 2022 at 04:31:58AM +0000, Matias Bj=F8rling wrote:
-> Good idea to bring up zoned storage topics. I'd like to participate as we=
-ll.
->=20
-> Best, Matias
+Ted wrote:
+> On Thu, Mar 03, 2022 at 10:00:33AM +0900, Byungchul Park wrote:
+> > 
+> > Unfortunately, it's neither perfect nor safe without another wakeup
+> > source - rescue wakeup source.
+> > 
+> >    consumer			producer
+> > 
+> >				lock L
+> >				(too much work queued == true)
+> >				unlock L
+> >				--- preempted
+> >    lock L
+> >    unlock L
+> >    do work
+> >    lock L
+> >    unlock L
+> >    do work
+> >    ...
+> >    (no work == true)
+> >    sleep
+> >				--- scheduled in
+> >				sleep
+> 
+> That's not how things work in ext4.  It's **way** more complicated
 
-I'm also working on zoned storage ATM so count me in as well.
+You seem to get it wrong. This example is what Jan Kara gave me. I just
+tried to explain things based on Jan Kara's example so leaving all
+statements that Jan Kara wrote. Plus the example was so helpful. Thanks,
+Jan Kara.
 
->=20
-> -----Original Message-----
-> From: Bart Van Assche <bvanassche@acm.org>=20
-> Sent: Thursday, 3 March 2022 02.33
-> To: Luis Chamberlain <mcgrof@kernel.org>; linux-block@vger.kernel.org; li=
-nux-fsdevel@vger.kernel.org; lsf-pc@lists.linux-foundation.org
-> Cc: Matias Bj=F8rling <Matias.Bjorling@wdc.com>; Javier Gonz=E1lez <javie=
-r.gonz@samsung.com>; Damien Le Moal <Damien.LeMoal@wdc.com>; Adam Manzanare=
-s <a.manzanares@samsung.com>; Keith Busch <Keith.Busch@wdc.com>; Johannes T=
-humshirn <Johannes.Thumshirn@wdc.com>; Naohiro Aota <Naohiro.Aota@wdc.com>;=
- Pankaj Raghav <pankydev8@gmail.com>; Kanchan Joshi <joshi.k@samsung.com>; =
-Nitesh Shetty <nj.shetty@samsung.com>
-> Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
->=20
-> On 3/2/22 16:56, Luis Chamberlain wrote:
-> > Thinking proactively about LSFMM, regarding just Zone storage..
-> >=20
-> > I'd like to propose a BoF for Zoned Storage. The point of it is to=20
-> > address the existing point points we have and take advantage of having=
-=20
-> > folks in the room we can likely settle on things faster which=20
-> > otherwise would take years.
-> >=20
-> > I'll throw at least one topic out:
-> >=20
-> >    * Raw access for zone append for microbenchmarks:
-> >    	- are we really happy with the status quo?
-> > 	- if not what outlets do we have?
-> >=20
-> > I think the nvme passthrogh stuff deserves it's own shared discussion=20
-> > though and should not make it part of the BoF.
->=20
-> Since I'm working on zoned storage I'd like to participate.
->=20
-> Thanks,
->=20
-> Bart.=
+> than that.  We have multiple wait channels, one wake up the consumer
+> (read: the commit thread), and one which wakes up any processes
+> waiting for commit thread to have made forward progress.  We also have
+> two spin-lock protected sequence number, one which indicates the
+> current commited transaction #, and one indicating the transaction #
+> that needs to be committed.
+> 
+> On the commit thread, it will sleep on j_wait_commit, and when it is
+> woken up, it will check to see if there is work to be done
+> (j_commit_sequence != j_commit_request), and if so, do the work, and
+> then wake up processes waiting on the wait_queue j_wait_done_commit.
+> (Again, all of this uses the pattern, "prepare to wait", then check to
+> see if we should sleep, if we do need to sleep, unlock j_state_lock,
+> then sleep.   So this prevents any races leading to lost wakeups.
+> 
+> On the start_this_handle() thread, if we current transaction is too
+> full, we set j_commit_request to its transaction id to indicate that
+> we want the current transaction to be committed, and then we wake up
+> the j_wait_commit wait queue and then we enter a loop where do a
+> prepare_to_wait in j_wait_done_commit, check to see if
+> j_commit_sequence == the transaction id that we want to be completed,
+> and if it's not done yet, we unlock the j_state_lock spinlock, and go
+> to sleep.  Again, because of the prepare_to_wait, there is no chance
+> of a lost wakeup.
+
+The above explantion gives me a clear view about synchronization of
+journal things. I appreciate it.
+
+> So there really is no "consumer" and "producer" here.  If you really
+> insist on using this model, which really doesn't apply, for one
+
+Dept does not assume "consumer" and "producer" model at all, but Dept
+works with general waits and events. *That model is just one of them.*
+
+> thread, it's the consumer with respect to one wait queue, and the
+> producer with respect to the *other* wait queue.  For the other
+> thread, the consumer and producer roles are reversed.
+> 
+> And of course, this is a highly simplified model, since we also have a
+> wait queue used by the commit thread to wait for the number of active
+> handles on a particular transaction to go to zero, and
+> stop_this_handle() will wake up commit thread via this wait queue when
+> the last active handle on a particular transaction is retired.  (And
+> yes, that parameter is also protected by a different spin lock which
+> is per-transaction).
+
+This one also gives me a clear view. Thanks a lot.
+
+> So it seems to me that a fundamental flaw in DEPT's model is assuming
+> that the only waiting paradigm that can be used is consumer/producer,
+
+No, Dept does not.
+
+> and that's simply not true.  The fact that you use the term "lock" is
+> also going to lead a misleading line of reasoning, because properly
+
+"lock/unlock L" comes from the Jan Kara's example. It has almost nothing
+to do with the explanation. I just left "lock/unlock L" as a statement
+that comes from the Jan Kara's example.
+
+> speaking, they aren't really locks.  We are simply using wait channels
+
+I totally agree with you. *They aren't really locks but it's just waits
+and wakeups.* That's exactly why I decided to develop Dept. Dept is not
+interested in locks unlike Lockdep, but fouces on waits and wakeup
+sources itself. I think you get Dept wrong a lot. Please ask me more if
+you have things you doubt about Dept.
+
+Thanks,
+Byungchul
