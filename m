@@ -2,196 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 181F44CBC12
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 12:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 586DE4CBD08
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Mar 2022 12:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232601AbiCCLEa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 06:04:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44340 "EHLO
+        id S232868AbiCCLpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 06:45:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232597AbiCCLE3 (ORCPT
+        with ESMTP id S232956AbiCCLps (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 06:04:29 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30DC2154D14
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Mar 2022 03:03:43 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id d10so9776277eje.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Mar 2022 03:03:42 -0800 (PST)
+        Thu, 3 Mar 2022 06:45:48 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E82C23EF2D;
+        Thu,  3 Mar 2022 03:44:59 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2238ZIDB003629;
+        Thu, 3 Mar 2022 11:44:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : in-reply-to : mime-version;
+ s=corp-2021-07-09; bh=sYYeJ1k9niXYGD7+ZSmy0+2xLMsq/d5AfM8m41QBrAU=;
+ b=kfEooVRHnF9JNYbuTdMXm7BDeEq2py8qktyPIX3L9gpW2qWI1oAMlS3nWwiEK1hHwPP4
+ XMzyMTXWHVVW5oKPiifS/YSNzSPXdb3jFj88ibUAMx9QQtiOejOEcFWiCcT9c+5qXnHW
+ xBHySV/eCPX0cB6+0qp2mWwPYSz/5yG81RkuwjW2WvfJGYl3MtsVXU5BL0qyacAVbQM5
+ BzxOVv7CD2tcdl+QL6A1QpfbtGWs3jA9FI1/EDU57nA1BUcOZEx6FZ/X3RmmfomLIxDE
+ VZrSHqJkdI7hgtes12ZiP22QDvij1hZItQYr4Wv00MO8+duubU3YAlH3PIJFEJA83gRH +w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ehh2epfh1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 03 Mar 2022 11:44:34 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 223BfbhQ154294;
+        Thu, 3 Mar 2022 11:44:33 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2102.outbound.protection.outlook.com [104.47.55.102])
+        by aserp3030.oracle.com with ESMTP id 3efa8hxh7t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 03 Mar 2022 11:44:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZfNA8CBdT0Sp/kVNXM6seCaK1smUR3CyrDNAEu8H2MpmM0DVDY35/kTbIbmgV7+o+kz+S/vAM+/3Sv1YMa7vR11LYgSaTg/JSNVPFzFYGQgQk6fDoMpp3ZOMB5IC+9f/ZyVOD3D/1qn1d6iXSbrrb3Dp9VNSc54ZoH8bcmKuTkO29SJ54UJe92kTShtY8PhUaM6yccIhv+xr3/eCNaUK4rF607RU7qfvO0HkCNfk5KKb9OLxh0HY6mpEzjfmRJoFkJd/Pvp9tJTF0eM8z9k7snCy5MRog9nVXKnOm7kfUX8aA9INQ79oaUmZa+ClncnMY0gVO8kho0RwbxXisOqriA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sYYeJ1k9niXYGD7+ZSmy0+2xLMsq/d5AfM8m41QBrAU=;
+ b=LnYjyCgDNOz4R3/zh12FKNj0pMDD9SHiqp/G2+M7KEm+HZQ8oltYgVkOQeuLh75WlgZGctifwNefpL1Y0Tn+bYNXoqk9TktmADrPFyt+XrxX679l9fCgY+OVXRQZtzZRTXGUL4eYbJOu2QGs7DJKCvpCvqMc6BR9Dq2P82wlwTRbnVoqvvRsAkrTyI65x8jULi0PFEFDiv8zEK1J+tvVe0UK0GlReQCQXzcaMG7+RU8AJWr5gwSDWCFaWXpyzTW2XlKwsx3FRjS0OVgIHlljYk+JTT7aGeF2shnkd6rgRH4dhive0ePBII0uf+9Crc9inXj6RHAC+7UyUIOVy65jxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mariadb.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=JP/5uSjkLq/yFEMifGx/fbtdRx9JBfu0ueprxmJ/NVU=;
-        b=mr+93qGs2e1J7v5eo1ZL7pqBkSTXeakra9/8t/VnENhk3e7PONqHQ5F1CzP2JoHW9l
-         zechgCx5MznFkPWFZCdqKXbr2ywGwU1Mw91dxPu/t0EymUYalWNjv1gvYkFjebHjTNzf
-         B7vYFzTdi5kvC0yRUF1E9ZHldY+tycuFU1Vs3uEoPFgY2ZGgyT1jJ0GyE8xoFcZZNSpc
-         /dMoLW1Zoe1U83Rh8o+sUY2t2PpbeFDGytrdKsCicjU6FFaukePKnnbJVrtcL3vdMf85
-         F96ta0vA/KAbDE7aSOqvR8xv3/091BAYPOxstmHlnUEcnFflSC9h8x0SsCrd3R7hQdpa
-         i5uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=JP/5uSjkLq/yFEMifGx/fbtdRx9JBfu0ueprxmJ/NVU=;
-        b=skf67NmRKDLL7nv4dose5iIGeP17IFQTdBbLE2CuzGjbQm7+3mOpAl8froII8G+YYK
-         FUfFajjNL9T+aRnGJENML7xNTbmuZG7+tYZkTl/GbzXjtrInoSm2rQL4Y4voLfprQHn9
-         zUsmarKKDjB5dUxj8XPowtn4O14cepqdz/xOsESI/lbjfTMfECYftVT0ZMmO7t4pYaBm
-         lYaRYqvIXONNlVVw2nWSFnZ6iAW/Fb8N/HlrZloaQKcj/A5c8tvV5Arl1rV0bGRF795v
-         UTWsu0KvY6w7MoupgJRk/mizakcfuvMENJfH1KDh+InZSKWexk8olD7txU63RgvP7OCZ
-         CQJQ==
-X-Gm-Message-State: AOAM5318efAbHRR/ettNozRodjUqsibMVYOZlkc4dQC3F03edyxtFvpk
-        1EYbjC9oWknz7UqijbhOXCjTPJkcXym7wJyKtHxTIrHLJ7l5YQ==
-X-Google-Smtp-Source: ABdhPJyX5Mbaw77wPx9sQxNt0zvFy0mFwV8vSweSxQ6PvyeM76+wtGYHsRZEaHM86IGVAnuSfF90VDg9fsiTe4vB+H0=
-X-Received: by 2002:a17:906:8299:b0:6cf:3847:284b with SMTP id
- h25-20020a170906829900b006cf3847284bmr26462228ejx.682.1646305421325; Thu, 03
- Mar 2022 03:03:41 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sYYeJ1k9niXYGD7+ZSmy0+2xLMsq/d5AfM8m41QBrAU=;
+ b=aIA95doZqsyV4H7OlD2wj0AYnTykEbSkqotnlPT4nauynC5q5y8DRVFb/vahSqVGszwC9oaysN0TKGtIzoOQS8dG/GU3mLVD58P5g1RMqYpRoE4JI52S+xpumlkpsgHcbwjXIicoAn3iMzsGoKWXSTuXSN2eeUziy+t9CW2uKxE=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by BYAPR10MB2646.namprd10.prod.outlook.com
+ (2603:10b6:a02:aa::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.24; Thu, 3 Mar
+ 2022 11:44:30 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::2c3d:92b5:42b3:c1c5]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::2c3d:92b5:42b3:c1c5%4]) with mapi id 15.20.5017.027; Thu, 3 Mar 2022
+ 11:44:29 +0000
+Date:   Thu, 3 Mar 2022 14:43:53 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org, Yang Shi <shy828301@gmail.com>,
+        vbabka@suse.cz, kirill.shutemov@linux.intel.com,
+        songliubraving@fb.com, linmiaohe@huawei.com, riel@surriel.com,
+        willy@infradead.org, ziy@nvidia.com, akpm@linux-foundation.org,
+        tytso@mit.edu, adilger.kernel@dilger.ca, darrick.wong@oracle.com
+Cc:     lkp@intel.com, kbuild-all@lists.01.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] mm: thp: only regular file could be THP eligible
+Message-ID: <202203020034.2Ii9kTrs-lkp@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220228235741.102941-5-shy828301@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: MR2P264CA0049.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:500:31::13) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-From:   Daniel Black <daniel@mariadb.org>
-Date:   Thu, 3 Mar 2022 22:03:30 +1100
-Message-ID: <CABVffEO-29wjA=TKO66nA5JmA-ZnyyLi4VA7BU+B3VoxD8X9DA@mail.gmail.com>
-Subject: ECANCELED returned from io_uring_wait_cqe
-To:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,WEIRD_PORT autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 99673b18-0f42-43c2-8075-08d9fd0b2d31
+X-MS-TrafficTypeDiagnostic: BYAPR10MB2646:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR10MB264600CE43EF4D1563CD746E8E049@BYAPR10MB2646.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wg85Y2ztwpjkdUXgDGnQo0h7aUN4MiiOxdAJSSaMJSrgBwjsSzlr3rZUQBUh61O+TacJJR9pX1yYC3drSNQWw3596jd/wiWYIuS2vjWP/cdWqIOHlwp6tjGkoah6dPQ1ON+dUa9jE81/tTmgtAvaIQStkyxQYJVMPfvxC29Pa3ZumE8lAgb7Z7l+fUFvhJ2yfO/Z1RyVO5yzgoeguMGkinfctlHuguiC4ujIDFz1oq9uezLyHeE+ZBfnuQIpfzBhPYnKVQXuL50ecfFG8XHnLuVez54E3DFl9FlatfxvIdDvx8zAZmay4reY+qYbxFyAFa+wCIzYCq4wDLY2+HKkiUXrG+UC5iuvVlU0SL9VPrPCtQ+1HyPJDKQyoJfC25sSzWtb397dVQ49HTu78u3Vx5on0w5E8cS3Mc+U6dwy4Ld785UGENj0nOX6r7mRiRvbuNpS9DCbZRgpHr1Oo1I1pi04GxnjBYzfb5xP82aUquOz/pXu0EJYvXYsJSJLjycDbgAVMhBRP2256klLhiXBPwd2QZC5sptO065RQ6jVtYhOFDrUM/u6eDBwz/wLXTWgmqpxUfM1sp7iWLgP6IMS/sKNq74kcy2AQZM9VCu/rabGjywN2RXf6qbHTaQdxBmug2tycX5ZpMwbLdEvvM833JOMHK6kTUv1g8WVje3jpAJB+0UkeUjybKJOFefmHwyh6dhp/t9CFUwQ/6QsmtZSTYkAaL8hEJUeKIwlrwFxpRercPLtYDmcIMareGzCiQzidJFii5zh/gCRMoGViCIInT1NdYBoEK9M96POyf2buT2rbRAO+s/m8BAKJTbpegyKdMBiMXWIUsa1hvfo7i0ARJFotPnucYCK4VmA/p52f0k=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(9686003)(6512007)(2906002)(5660300002)(8936002)(1076003)(8676002)(7416002)(66946007)(66476007)(44832011)(26005)(4326008)(186003)(86362001)(6666004)(38350700002)(38100700002)(921005)(6506007)(6486002)(316002)(66556008)(966005)(508600001)(83380400001)(52116002)(6636002)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?u/8pcs106ir03pneBq/9XzuVSSClg6ZjojxWxi32wml7lzZI48xOvo6at7Yw?=
+ =?us-ascii?Q?vz1HlSWYyMeNNp9MSQ+p2mOLNzkGl5AbwKyFLMgDxug5tbDaUSeQ/V/SmmGc?=
+ =?us-ascii?Q?dXQd8QiROoNt+ST4VTJ5+5omQ0K9E6YFqNdY8dKJVxKTbM23+SCgJjTygZRM?=
+ =?us-ascii?Q?1YU1NRKnGIOIaj5msKLmWConfflWZG3C87VP6KPeO798ZYi++DGFDQLoJA3f?=
+ =?us-ascii?Q?mYtgJOwrVQ1Lq2Vx5qKL5uaKqWuTuf5X1NGO+BSR2TtJxp2q4UpxXjs2hZTl?=
+ =?us-ascii?Q?KWzPwGcoszgwYT1UrbQVBP98Ye5NprUSNlxzaMTal/TnDMG7E3YpOYeLveQL?=
+ =?us-ascii?Q?cB4ixONdhkz7r0k4bcc5cYeXFhuGpO9j2HZDUQvCchMX7oIBDMUezgrO6fXL?=
+ =?us-ascii?Q?CleJ4CGlQNqQZ/gXIz0MxyPE4IiBFROAmYj4K4YOUHJqT7WprFoNEUFYojLJ?=
+ =?us-ascii?Q?gN9/Z5uWJhPJ1EJrwQmjzQH0p2FW0Xa/6k+WjtDjXPu5tPMJoU4xYPavSviv?=
+ =?us-ascii?Q?lIcHnj2T8aBsVZ1tJBIFM8Eh8LDd9UauuZVvJoYb75OLgMQ6S7NSfBmYixfY?=
+ =?us-ascii?Q?Ksm3S5PpO4AasZqAE51Y/DuqPKwl083xpyZPfifYJQy5B2Ra6mkJpFx4I5TC?=
+ =?us-ascii?Q?l9uE4D8EPiotIP8HddqebjVGRVLuc03NlW8U7ZUxULKcAB/FqPcyvFbp28Ee?=
+ =?us-ascii?Q?29iU7KPhUuYfQ9klfGK51nqg9vURSL+uaQ1W8tkZLezemylqN3z4h3GU74eD?=
+ =?us-ascii?Q?14bfUyVBBGq+5at6WUPZ+70DaZgZ3kv/i09RZwzOqhIk8VeIcJTAnrlVOfkv?=
+ =?us-ascii?Q?cL4MeIYs+af9zjeHuYmaolKXSA4sq89QvLtCXzioe2DQi4UQbhlm39L8wqEQ?=
+ =?us-ascii?Q?YnHgSGacXGIvFPS/kTkr6Tv6ZvY01eqE64MBByz88OuoPvueQeXWwI2dQGk9?=
+ =?us-ascii?Q?9eT6of+9IjqByhlZNV2q7V2S89GvuqHcrk5AR3EekMdQMO3bi1p5baxFp6GN?=
+ =?us-ascii?Q?eo0zQIQNM6pyLKOpxoqBJ/274YhsHJXwCIf9a/2gvKG/3JOYlktWE2wBSFnc?=
+ =?us-ascii?Q?bXZYRjSD9OdFO/bVtMZ38TmSJy2vvEJFtgb9S817pARMf661IqSJjGqd2ni0?=
+ =?us-ascii?Q?mnwrQlwoMqcmRctwbL5JyDxzMISTNZsuMv9r9wnAC2u5M9VuJS5TSRV4m+uM?=
+ =?us-ascii?Q?Mmtv3UEja36wpUc5Vh0ec/JQzaK+HtTbhTvbRP4QlLX0TITDb2OBlE0rPyri?=
+ =?us-ascii?Q?D35j+PEK/EtAh/yvxFKi2NH+Hg92lfcdb6gLwqfEpzR4OElxR7Ebz1Rx3DB+?=
+ =?us-ascii?Q?CKMm+JGWNYPifXlF7LjA72k4CkYck3XGqUsNGk4/qlNyXCSwnAwasfQRbeqc?=
+ =?us-ascii?Q?lAxtPrg+VnBVQpK+7ccTUbEcxpIP4pdO/nHcfFTZdfWT9XADILKyrrrj0w+C?=
+ =?us-ascii?Q?7Un/iA1dCfzJAhGFARaHb9GVftCQSuALumEKvL0DbDgwPPDXL9dBKRii+1/Z?=
+ =?us-ascii?Q?lk4YfIL1LW2ihTjGz7nKdReVc4mXPTlfU92NqQ8NJt+fS8LRJlHJv9jWLSnx?=
+ =?us-ascii?Q?GSbE7dpxOUJIGyRF6A1PtfkJiubKJKG8xId/hW2CA3kpNdlttzug2wQtihCp?=
+ =?us-ascii?Q?Zo5Snci/SMBuzJ2QBtrs0icjl19lJ8tiyFsZQ4kR5ZKG4UQiR/8T59TmxAa3?=
+ =?us-ascii?Q?3wtMZA=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99673b18-0f42-43c2-8075-08d9fd0b2d31
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2022 11:44:29.8696
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QGYM8wR0lzQLy9wf+WCWZEFddc9jKfEa8T2qRL6lCnJ9WqDLe/bVYEdoURNh/j1Ai62HfqmyOLelY9+hKeNOWEhDV5p4tI9mI/k3HQkCWOQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2646
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10274 signatures=686787
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0 mlxlogscore=862
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2203030056
+X-Proofpoint-ORIG-GUID: oJ3hnQwkr4hx2gm-2r0yhZwe6poyy6pz
+X-Proofpoint-GUID: oJ3hnQwkr4hx2gm-2r0yhZwe6poyy6pz
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FAKE_REPLY_C,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While working on improving error handling for MariaDB, (and should
-have been checking read sizes too apparently), I'm seeing ECANCELED
-returned from io_uring_wait_cqe. The stack trace to me shows MariaDB
-still running at this point, and not shutting down (signal handler
-variable abort_loop not set, and we put a io_uring_prep_nop on
-shutdown to know when all are finished).
+Hi Yang,
 
-The code is not using linked operations, timeouts or explicit
-cancelling of queued items.
+url:    https://github.com/0day-ci/linux/commits/Yang-Shi/Make-khugepaged-collapse-readonly-FS-THP-more-consistent/20220301-075903
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+config: arm64-randconfig-m031-20220227 (https://download.01.org/0day-ci/archive/20220302/202203020034.2Ii9kTrs-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 11.2.0
 
-This has been observed in tmpfs (usually quicker to exhibit) and ext4.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-$ uname -r
-5.17.0-0.rc6.109.fc37.x86_64
+smatch warnings:
+include/linux/huge_mm.h:179 file_thp_enabled() warn: variable dereferenced before check 'vma->vm_file' (see line 177)
+mm/khugepaged.c:468 hugepage_vma_check() error: we previously assumed 'vma->vm_file' could be null (see line 455)
+include/linux/huge_mm.h:179 file_thp_enabled() warn: variable dereferenced before check 'vma->vm_file' (see line 177)
 
-To reproduce
+vim +179 include/linux/huge_mm.h
 
-$ mdir ~/here
-$ podman run --workdir  /usr/share/mysql/mysql-test  --privileged  -v
-$HOME/here:/test:Z  --rm
-quay.io/danielgblack/mariadb-test:10.6-impish-sysbench
-./mysql-test-run --vardir=/test --repeat 8 --parallel=8
-encryption.innodb-checksum-algorithm{,,,,}{,,,,}
+2224ed1155c07b Yang Shi     2022-02-28  175  static inline bool file_thp_enabled(struct vm_area_struct *vma)
+2224ed1155c07b Yang Shi     2022-02-28  176  {
+2224ed1155c07b Yang Shi     2022-02-28 @177  	struct inode *inode = vma->vm_file->f_inode;
+                                                                      ^^^^^^^^^^^^^^
+Dereference.
 
-will eventually assert and core dump crash after 20-2000 tests.
+2224ed1155c07b Yang Shi     2022-02-28  178  
+2224ed1155c07b Yang Shi     2022-02-28 @179  	return (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) && vma->vm_file &&
+                                                                                                    ^^^^^^^^^^^^
+Checked too late.
 
-While the core dumps from a container require fiddly extraction, what
-it looks like is:
+2224ed1155c07b Yang Shi     2022-02-28  180  	       (vma->vm_flags & VM_EXEC) &&
+2224ed1155c07b Yang Shi     2022-02-28  181  	       !inode_is_open_for_write(inode) && S_ISREG(inode->i_mode);
+2224ed1155c07b Yang Shi     2022-02-28  182  }
 
-A user space stack trace looks like:
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
-(gdb) bt full
-#0  0x00007fa894db488c in __pthread_kill_implementation () from /lib64/libc.so.6
-No symbol table info available.
-#1  0x000055c908b5b0a8 in handle_fatal_signal (sig=<optimized out>) at
-/home/dan/repos/mariadb-server-10.9/sql/signal_handler.cc:345
-        curr_time = 1646302386
-        tm = {tm_sec = 6, tm_min = 13, tm_hour = 21, tm_mday = 3,
-tm_mon = 2, tm_year = 122, tm_wday = 4, tm_yday = 61, tm_isdst = 1,
-tm_gmtoff = 39600, tm_zone = 0x55c90a3f2b70 "AEDT"}
-        thd = 0x0
-        print_invalid_query_pointer = false
-#2  <signal handler called>
-No symbol table info available.
-#3  0x00007fa894db488c in __pthread_kill_implementation () from /lib64/libc.so.6
-No symbol table info available.
-#4  0x00007fa894d676a6 in raise () from /lib64/libc.so.6
-No symbol table info available.
-#5  0x00007fa894d517d3 in abort () from /lib64/libc.so.6
-No symbol table info available.
-#6  0x000055c9087e7214 in ut_dbg_assertion_failed
-(expr=expr@entry=0x55c90923843b "cb->m_err == DB_SUCCESS",
-file=file@entry=0x55c909237c50
-"/home/dan/repos/mariadb-server-10.9/storage/innobase/os/os0file.cc",
-line=line@entry=3557) at
-/home/dan/repos/mariadb-server-10.9/storage/innobase/ut/ut0dbg.cc:60
-No locals.
-#7  0x000055c9087d0869 in io_callback (cb=<optimized out>) at
-/home/dan/repos/mariadb-server-10.9/storage/innobase/os/os0file.cc:3557
-        request = <optimized out>
-        req = <optimized out>
-#8  0x000055c908f9108e in tpool::task_group::execute
-(this=0x55c90a62b1e0, t=0x55c90a639808) at
-/home/dan/repos/mariadb-server-10.9/tpool/task_group.cc:55
-        lk = {_M_device = <optimized out>, _M_owns = false}
-#9  0x000055c908f8ffcf in tpool::thread_pool_generic::worker_main
-(this=0x55c90a5d3f80, thread_var=0x55c90a5e37a0) at
-/home/dan/repos/mariadb-server-10.9/tpool/tpool_generic.cc:549
-        task = 0x55c90a639808
-#10 0x00007fa8950ff5c4 in execute_native_thread_routine () from
-/lib64/libstdc++.so.6
-No symbol table info available.
-#11 0x00007fa894db2b1a in start_thread () from /lib64/libc.so.6
-No symbol table info available.
-#12 0x00007fa894e37650 in clone3 () from /lib64/libc.so.6
-No symbol table info available.
-(gdb) up
-#1  0x000055c908b5b0a8 in handle_fatal_signal (sig=<optimized out>) at
-/home/dan/repos/mariadb-server-10.9/sql/signal_handler.cc:345
-345        my_write_core(sig);
-(gdb)
-#2  <signal handler called>
-(gdb)
-#3  0x00007fa894db488c in __pthread_kill_implementation () from /lib64/libc.so.6
-(gdb)
-#4  0x00007fa894d676a6 in raise () from /lib64/libc.so.6
-(gdb)
-#5  0x00007fa894d517d3 in abort () from /lib64/libc.so.6
-(gdb)
-#6  0x000055c9087e7214 in ut_dbg_assertion_failed
-(expr=expr@entry=0x55c90923843b "cb->m_err == DB_SUCCESS",
-file=file@entry=0x55c909237c50
-"/home/dan/repos/mariadb-server-10.9/storage/innobase/os/os0file.cc",
-line=line@entry=3557) at
-/home/dan/repos/mariadb-server-10.9/storage/innobase/ut/ut0dbg.cc:60
-60        abort();
-(gdb)
-#7  0x000055c9087d0869 in io_callback (cb=<optimized out>) at
-/home/dan/repos/mariadb-server-10.9/storage/innobase/os/os0file.cc:3557
-3557      ut_a(cb->m_err == DB_SUCCESS);
-(gdb)
-#8  0x000055c908f9108e in tpool::task_group::execute
-(this=0x55c90a62b1e0, t=0x55c90a639808) at
-/home/dan/repos/mariadb-server-10.9/tpool/task_group.cc:55
-55            t->m_func(t->m_arg);
-(gdb) p *((tpool::aiocb *) t->m_arg)
-$1 = {<iovec> = {iov_base = 0x7fa889124000, iov_len = 40960}, m_fh =
-11, m_opcode = tpool::aio_opcode::AIO_PWRITE, m_offset = 1048576,
-m_buffer = 0x7fa889124000, m_len = 40960, m_callback = 0x55c908e48130
-<io_callback(tpool::aiocb*)>, m_group = 0x55c90a62b1e0, m_ret_len = 0,
-m_err = 125, m_internal = 0x0, m_internal_task = {_vptr.task =
-0x55c9097a8038 <vtable for tpool::task+16>, m_func = 0x55c908e48130
-<io_callback(tpool::aiocb*)>, m_arg = 0x55c90a6397b0, m_group =
-0x55c90a62b1e0}, m_userdata = '\000' <repeats 16 times>,
-"\250\257j\n\311U\000\000\031\000\000\000\000\000\000"}
-
-So the error 125 is corresponding to a write, explicitly a io_uring_prep_writev
-
-$ git grep io_uring_prep tpool/
-tpool/aio_liburing.cc:      io_uring_prep_nop(sqe);
-tpool/aio_liburing.cc:      io_uring_prep_readv(sqe, cb->m_fh,
-static_cast<struct iovec *>(cb), 1,
-tpool/aio_liburing.cc:      io_uring_prep_writev(sqe, cb->m_fh,
-static_cast<struct iovec *>(cb), 1,
-
-The error codes
-https://www.gnu.org/software/libc/manual/html_node/Error-Codes.html
-document seems to indicate that when you get ECANCELED it should be
-expected.
-
-Should I expect it? Is it possible to tell why?
-
-
-
-ref: https://jira.mariadb.org/browse/MDEV-27593
