@@ -2,105 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D66B4CDE7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 21:26:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7394CDE3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 21:25:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230328AbiCDUQp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Mar 2022 15:16:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59360 "EHLO
+        id S230476AbiCDUKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Mar 2022 15:10:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231435AbiCDUQi (ORCPT
+        with ESMTP id S232434AbiCDUJP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Mar 2022 15:16:38 -0500
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1F327403C
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Mar 2022 12:12:33 -0800 (PST)
-Received: by mail-pf1-x432.google.com with SMTP id p8so8483004pfh.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Mar 2022 12:12:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=LeProy8izTno1wkWKHkWuLWt5O2FYK3xOmB4Mvc3iFk=;
-        b=4sRPfiYpeKlkerSVQ2gBXlQ7rspcFwPmF/tIH9oXKImY3M7j6/0vu+EzhCplFbZNe/
-         gCGjToArVZWQMdXwTbLXTRJz5jiG7YIg17ks+HDdLmhMXqzWD2+GFQycgjOJ9aVotwvR
-         9CYfJEKdt+XGQLpWRCYv+0bzWJWGpx07RzbBF8JsK+lprONQ7JWCBPzLsQ4ZkGfYl/p5
-         Y7obbGIkT/ltHimuxLpwdzH5nE9Bjd4wjj2Rt1jEo/ZWYb73qNNWU8GkEwoOup/JZh3m
-         05GZyHmMJMDHTdAPleMUGDKK9MitOyXF9R0KpApLCtl/F9ctjcvqSStUObEXrip7YF0L
-         gkvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=LeProy8izTno1wkWKHkWuLWt5O2FYK3xOmB4Mvc3iFk=;
-        b=nslFFi0hcYJxoe0M6NBnIHWowZmLQ/K3uYhs4cdUNRE64pkI+Bd/8eJ/hbLxRwUnQy
-         ERPjjmxi47UUvdEaIu/VNO/1vcFKb35ScM8wa1l6Z9Cn9kVenXGa3sULU7GTta4a59Vh
-         AlphKOZkUNjyNvBvyp+9qgkQSAHlOhtFw+i7u4kp4a1/+4mWtW0CzM16KgxScT8oS56g
-         ZhSpVFNJH+j9wiJIBgs5gTZ2yas7uYZTjeh7kACqiFnLL+6hgF5lyX28ZVkhzbAG8wTj
-         j9ivDN1o8HgsPzpyO3YbiOhfNqIWwsAOjK633hzuByd8Jg2J0xO73StfNbnb1NvODDUy
-         AKxA==
-X-Gm-Message-State: AOAM5312w1SLlGp1OS/u5wVvBFrbI/XN6LScaFRupxJ/jJK5IF2kL9vv
-        KUk0jsMvz8zgVh0T141Ea7Mo25kmLQVroA==
-X-Google-Smtp-Source: ABdhPJzdC0Wzazqv5+3vyps6GODMy9xRLdDK4eSu1NPgcSZAabY2LxK6kKGr9BkLQlzdDCqQzUcyIg==
-X-Received: by 2002:a63:5c0f:0:b0:374:4a37:48f9 with SMTP id q15-20020a635c0f000000b003744a3748f9mr14228pgb.470.1646422686812;
-        Fri, 04 Mar 2022 11:38:06 -0800 (PST)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id t11-20020a056a00138b00b004f1343f915dsm6902723pfg.33.2022.03.04.11.38.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Mar 2022 11:38:06 -0800 (PST)
-Message-ID: <e04da66f-3f72-5d8a-479b-f413222c3646@kernel.dk>
-Date:   Fri, 4 Mar 2022 12:38:04 -0700
+        Fri, 4 Mar 2022 15:09:15 -0500
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D889120C2E0;
+        Fri,  4 Mar 2022 12:03:28 -0800 (PST)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 19F587253; Fri,  4 Mar 2022 15:03:20 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 19F587253
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1646424200;
+        bh=ZNPhSxtZN/ks7FEtwW3By9jmrYTGNVzKwe2BPkQyF4I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uiZeXZiYMk5gm68OPikmt9bu1yk4SYuezouW0NySj87i/JWnGAQkQD/NzwmMUz8R1
+         pcuHEPjP1jxU/DRaRwlqtqOR75p/mOyztxxBU7tI/0YwQ9RaQtsY3NWuqlCRGmCPXz
+         hianw1bXIv4o3k2ME/zn4ZliHSWUMLfS4epyE3UE=
+Date:   Fri, 4 Mar 2022 15:03:20 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: nfs generic/373 failure after "fs: allow cross-vfsmount
+ reflink/dedupe"
+Message-ID: <20220304200320.GB5037@fieldses.org>
+References: <20220302082658.GF3927073@dread.disaster.area>
+ <CAOQ4uxgiL2eqx-kad+dddXvXPREKT-w3_BnLzdoJaJqGm=H=vA@mail.gmail.com>
+ <20220302211226.GG3927073@dread.disaster.area>
+ <20220302220450.GD10757@fieldses.org>
+ <Yh/vADRGuPFGIEc+@localhost.localdomain>
+ <20220302224250.GF10757@fieldses.org>
+ <YiABiLtH/4nMJE+u@localhost.localdomain>
+ <20220303000735.GA21944@fieldses.org>
+ <YiAL7uNA3ZiaBCE6@localhost.localdomain>
+ <20220303005001.GB21944@fieldses.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 1/2] nvme: remove support or stream based temperature hint
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
-Cc:     sagi@grimberg.me, song@kernel.org, linux-block@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org
-References: <20220304175556.407719-1-hch@lst.de>
- <20220304193439.GA3256926@dhcp-10-100-145-180.wdc.com>
- <20220304193600.GA15474@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220304193600.GA15474@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220303005001.GB21944@fieldses.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/4/22 12:36 PM, Christoph Hellwig wrote:
-> On Fri, Mar 04, 2022 at 11:34:39AM -0800, Keith Busch wrote:
->> On Fri, Mar 04, 2022 at 06:55:55PM +0100, Christoph Hellwig wrote:
->>> -	ctrl->nssa = le16_to_cpu(s.nssa);
->>> -	if (ctrl->nssa < BLK_MAX_WRITE_HINTS - 1) {
->>> -		dev_info(ctrl->device, "too few streams (%u) available\n",
->>> -					ctrl->nssa);
->>> -		goto out_disable_stream;
->>> -	}
->>
->> Just fyi, looks like the patch was built against an older version of the
->> driver, so it doesn't apply cleanly to nvme-5.18 at the above part.
->>
->> Also please consider folding the following in this patch since it removes all
->> nr_streams use:
+On Wed, Mar 02, 2022 at 07:50:01PM -0500, J. Bruce Fields wrote:
+> On Wed, Mar 02, 2022 at 07:29:34PM -0500, Josef Bacik wrote:
+> > On Wed, Mar 02, 2022 at 07:07:35PM -0500, J. Bruce Fields wrote:
+> > > Sorry, took me a minute to understand, myself:
+> > > 
+> > > It's actually only the client behavior that changed.  Previously the
+> > > client would reject an attempt to clone across filesystems, so the
+> > > server never saw such a request.  After this patch, the client will go
+> > > ahead and send the CLONE.  (Which, come to think of it, is probably the
+> > > right thing for the client to do.)
+> > > 
+> > > So the server's probably always had a bug, and this just uncovered it.
+> > > 
+> > > I'd be curious what the consequences are.  And where the check should be
+> > > (above or below vfs_clone_file_range()?).
+> > > 
+> > 
+> > This is where I'm confused, this really shouldn't succeed
+> > 
+> > loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
+> >                            struct file *file_out, loff_t pos_out,
+> >                            loff_t len, unsigned int remap_flags)
+> > {
+> >         loff_t ret;
+> > 
+> >         WARN_ON_ONCE(remap_flags & REMAP_FILE_DEDUP);
+> > 
+> >         if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+> >                 return -EXDEV;
+> > 
+> > 
+> > loff_t vfs_clone_file_range(struct file *file_in, loff_t pos_in,
+> >                             struct file *file_out, loff_t pos_out,
+> >                             loff_t len, unsigned int remap_flags)
+> > {
+> >         loff_t ret;
+> > 
+> >         file_start_write(file_out);
+> >         ret = do_clone_file_range(file_in, pos_in, file_out, pos_out, len,
+> >                                   remap_flags);
+> > 
+> > And even if we get past here, I imagine XFS would freak out because it can't
+> > find the extents (unless you're getting lucky and everything is lining up?).
+> > I'm super confused...
 > 
-> This was against Jens' for-5.18/block tree.  I'm a bit lost what tree
-> to best send it against as there will always be some conflicts.
+> Bah, I see what you mean.  Maybe there's something wrong with my setup.
+> I'll try some more stuff and report back....
 
-It's always a bit of a problem when patches touch both drivers and core.
-I actually put this one in a special branch just because of that. I'll
-fold in Keith's incremental.
+Sorry for the noise, you're right, generic/373 is just being dumb.
 
--- 
-Jens Axboe
+I assumed it was mounting different exports for some reason.  But in
+fact it's just doing a bind mount and then "cp --reflink=always" between
+two mounts of the same filesystem.  Previously that got rejected out of
+hand, now the client sends a CLONE and the server handles it.
 
+Which is an improvement.  So it's only generic/373 that needs fixing.
+
+--b.
