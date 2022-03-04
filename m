@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A60604CCEC8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 08:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F934CCEC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 08:08:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238961AbiCDHJe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Mar 2022 02:09:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39114 "EHLO
+        id S238732AbiCDHJc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Mar 2022 02:09:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238713AbiCDHIt (ORCPT
+        with ESMTP id S238725AbiCDHIt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 4 Mar 2022 02:08:49 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 02A1119140C
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3EBA9191424
         for <linux-fsdevel@vger.kernel.org>; Thu,  3 Mar 2022 23:07:10 -0800 (PST)
 Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.53 with ESMTP; 4 Mar 2022 16:07:08 +0900
+        by 156.147.23.51 with ESMTP; 4 Mar 2022 16:07:09 +0900
 X-Original-SENDERIP: 156.147.1.121
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -47,9 +47,9 @@ Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: [PATCH v4 18/24] dept: Distinguish each work from another
-Date:   Fri,  4 Mar 2022 16:06:37 +0900
-Message-Id: <1646377603-19730-19-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH v4 19/24] dept: Disable Dept within the wait_bit layer by default
+Date:   Fri,  4 Mar 2022 16:06:38 +0900
+Message-Id: <1646377603-19730-20-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1646377603-19730-1-git-send-email-byungchul.park@lge.com>
 References: <1646377603-19730-1-git-send-email-byungchul.park@lge.com>
@@ -62,81 +62,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Workqueue already provides concurrency control. By that, any wait in a
-work doesn't prevents events in other works with the control enabled.
-Thus, each work would better be considered a different context.
+The struct wait_queue_head array, bit_wait_table[] in sched/wait_bit.c
+are shared by all its users, which unfortunately vary in terms of class.
+So each should've been assigned its own class to avoid false positives.
 
-So let Dept assign a different context id to each work.
+It'd better let Dept work at a higher layer than wait_bit. So disabled
+Dept within the wait_bit layer by default.
+
+It's worth noting that Dept is still working with the other struct
+wait_queue_head ones that are mostly well-classified.
 
 Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 ---
- include/linux/dept.h     |  2 ++
- kernel/dependency/dept.c | 10 ++++++++++
- kernel/workqueue.c       |  3 +++
- 3 files changed, 15 insertions(+)
+ kernel/sched/wait_bit.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/dept.h b/include/linux/dept.h
-index 1a1c307..55c5ed5 100644
---- a/include/linux/dept.h
-+++ b/include/linux/dept.h
-@@ -486,6 +486,7 @@ struct dept_task {
- extern void dept_event_split_map(struct dept_map_each *me, struct dept_map_common *mc, unsigned long ip, const char *e_fn);
- extern void dept_ask_event_split_map(struct dept_map_each *me, struct dept_map_common *mc);
- extern void dept_kernel_enter(void);
-+extern void dept_work_enter(void);
- 
- /*
-  * for users who want to manage external keys
-@@ -527,6 +528,7 @@ struct dept_task {
- #define dept_event_split_map(me, mc, ip, e_fn)		do { } while (0)
- #define dept_ask_event_split_map(me, mc)		do { } while (0)
- #define dept_kernel_enter()				do { } while (0)
-+#define dept_work_enter()				do { } while (0)
- #define dept_key_init(k)				do { (void)(k); } while (0)
- #define dept_key_destroy(k)				do { (void)(k); } while (0)
- #endif
-diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index 8f962ae..5d4efc3 100644
---- a/kernel/dependency/dept.c
-+++ b/kernel/dependency/dept.c
-@@ -1873,6 +1873,16 @@ void dept_disable_hardirq(unsigned long ip)
- 	dept_exit(flags);
- }
- 
-+/*
-+ * Assign a different context id to each work.
-+ */
-+void dept_work_enter(void)
-+{
-+	struct dept_task *dt = dept_task();
-+
-+	dt->cxt_id[DEPT_CXT_PROCESS] += (1UL << DEPT_CXTS_NR);
-+}
-+
- void dept_kernel_enter(void)
- {
- 	struct dept_task *dt = dept_task();
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 33f1106..f5d762c 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -51,6 +51,7 @@
- #include <linux/sched/isolation.h>
- #include <linux/nmi.h>
- #include <linux/kvm_para.h>
+diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
+index 02ce292..3e5a3eb 100644
+--- a/kernel/sched/wait_bit.c
++++ b/kernel/sched/wait_bit.c
+@@ -3,6 +3,7 @@
+  * The implementation of the wait_bit*() and related waiting APIs:
+  */
+ #include "sched.h"
 +#include <linux/dept.h>
  
- #include "workqueue_internal.h"
+ #define WAIT_TABLE_BITS 8
+ #define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
+@@ -246,6 +247,8 @@ void __init wait_bit_init(void)
+ {
+ 	int i;
  
-@@ -2217,6 +2218,8 @@ static void process_one_work(struct worker *worker, struct work_struct *work)
- 
- 	lockdep_copy_map(&lockdep_map, &work->lockdep_map);
- #endif
-+	dept_work_enter();
-+
- 	/* ensure we're on the correct CPU */
- 	WARN_ON_ONCE(!(pool->flags & POOL_DISASSOCIATED) &&
- 		     raw_smp_processor_id() != pool->cpu);
+-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
++	for (i = 0; i < WAIT_TABLE_SIZE; i++) {
+ 		init_waitqueue_head(bit_wait_table + i);
++		dept_map_nocheck(&(bit_wait_table + i)->dmap);
++	}
+ }
 -- 
 1.9.1
 
