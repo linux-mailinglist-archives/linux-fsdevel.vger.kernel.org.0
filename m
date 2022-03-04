@@ -2,88 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2804CCA95
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 01:10:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9F14CCAB3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 01:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234287AbiCDALM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 19:11:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38326 "EHLO
+        id S236850AbiCDAY0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 19:24:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230003AbiCDALL (ORCPT
+        with ESMTP id S230224AbiCDAY0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 19:11:11 -0500
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B95F63EABB;
-        Thu,  3 Mar 2022 16:10:24 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 8644C52FF57;
-        Fri,  4 Mar 2022 11:10:23 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nPvWY-001DQh-CJ; Fri, 04 Mar 2022 11:10:22 +1100
-Date:   Fri, 4 Mar 2022 11:10:22 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        lsf-pc@lists.linux-foundation.org,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Keith Busch <Keith.Busch@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Message-ID: <20220304001022.GJ3927073@dread.disaster.area>
-References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+        Thu, 3 Mar 2022 19:24:26 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D52F10529C;
+        Thu,  3 Mar 2022 16:23:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/6Asc1kuXCqlyUyBpJVWR3WYcUaPQlxeHwanFGxnWUA=; b=pwc7auhdwTjfEryudBhNUHhadZ
+        j817TFuFaVCkRG4K02eM6NN3V9hpbDyxLiKmcnKqcLWmnGZT8/+sfsZ3qXVga3V/hixH0FwwN1QmA
+        rjpJao3Slt8sVmFtSttFGEmk5ww+zx4r7pcfcwe05wBFOTYJEVQid6TaQoxWV5qfWNYzufIJAthME
+        yZaLJIUPToWR3f8LiTcfZbADAGZIEYRfRKJRDZy2/jfkgJj4yc2hfIuawzldgw/SrnZdzfpsnlC7r
+        M6rMZEdN61VHcgpJePGd+HuVt6VTAAJEVUYtkjwA49AgjGLJQiMnrFKSCPBBjuoeI3Zd0hTJcMEDM
+        r4TXb6LQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nPvjC-0089dk-PG; Fri, 04 Mar 2022 00:23:26 +0000
+Date:   Thu, 3 Mar 2022 16:23:26 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Yan Zhu <zhuyan34@huawei.com>, andrii@kernel.org, ast@kernel.org,
+        bpf@vger.kernel.org, john.fastabend@gmail.com, kafai@fb.com,
+        keescook@chromium.org, kpsingh@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liucheng32@huawei.com, netdev@vger.kernel.org,
+        nixiaoming@huawei.com, songliubraving@fb.com,
+        xiechengliang1@huawei.com, yhs@fb.com, yzaikin@google.com,
+        zengweilin@huawei.com
+Subject: Re: [PATCH v3 sysctl-next] bpf: move bpf sysctls from
+ kernel/sysctl.c to bpf module
+Message-ID: <YiFb/lZzPDIIf2rC@bombadil.infradead.org>
+References: <Yh1dtBTeRtjD0eGp@bombadil.infradead.org>
+ <20220302020412.128772-1-zhuyan34@huawei.com>
+ <Yh/V5QN1OhN9IKsI@bombadil.infradead.org>
+ <d8843ebe-b8df-8aa0-a930-c0742af98157@iogearbox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=622158f0
-        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=7-415B0cAAAA:8
-        a=mipNJKbUkk14TSCTfyQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <d8843ebe-b8df-8aa0-a930-c0742af98157@iogearbox.net>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 02, 2022 at 04:56:54PM -0800, Luis Chamberlain wrote:
-> Thinking proactively about LSFMM, regarding just Zone storage..
+On Fri, Mar 04, 2022 at 12:44:48AM +0100, Daniel Borkmann wrote:
+> On 3/2/22 9:39 PM, Luis Chamberlain wrote:
+> > On Wed, Mar 02, 2022 at 10:04:12AM +0800, Yan Zhu wrote:
+> > > We're moving sysctls out of kernel/sysctl.c as its a mess. We
+> > > already moved all filesystem sysctls out. And with time the goal is
+> > > to move all sysctls out to their own susbsystem/actual user.
+> > > 
+> > > kernel/sysctl.c has grown to an insane mess and its easy to run
+> > > into conflicts with it. The effort to move them out is part of this.
+> > > 
+> > > Signed-off-by: Yan Zhu <zhuyan34@huawei.com>
+> > 
+> > Daniel, let me know if this makes more sense now, and if so I can
+> > offer take it through sysctl-next to avoid conflicts more sysctl knobs
+> > get moved out from kernel/sysctl.c.
 > 
-> I'd like to propose a BoF for Zoned Storage. The point of it is
-> to address the existing point points we have and take advantage of
-> having folks in the room we can likely settle on things faster which
-> otherwise would take years.
-> 
-> I'll throw at least one topic out:
-> 
->   * Raw access for zone append for microbenchmarks:
->   	- are we really happy with the status quo?
-> 	- if not what outlets do we have?
-> 
-> I think the nvme passthrogh stuff deserves it's own shared
-> discussion though and should not make it part of the BoF.
+> If this is a whole ongoing effort rather than drive-by patch,
 
-Reading through the discussion on this thread, perhaps this session
-should be used to educate application developers about how to use
-ZoneFS so they never need to manage low level details of zone
-storage such as enumerating zones, controlling write pointers
-safely for concurrent IO, performing zone resets, etc.
+It is ongoing effort, but it will take many releases before we tidy
+this whole thing up.
 
-Cheers,
+> then it's
+> fine with me. 
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+OK great. Thanks for understanding the mess.
+
+> Btw, the patch itself should also drop the linux/bpf.h
+> include from kernel/sysctl.c since nothing else is using it after the
+> patch.
+
+I'll let Yan deal with that.
+
+> Btw, related to cleanups.. historically, we have a bunch of other knobs
+> for BPF under net (in net_core_table), that is:
+> 
+>   /proc/sys/net/core/bpf_jit_enable
+>   /proc/sys/net/core/bpf_jit_harden
+>   /proc/sys/net/core/bpf_jit_kallsyms
+>   /proc/sys/net/core/bpf_jit_limit
+> 
+> Would be nice to consolidate all under e.g. /proc/sys/kernel/bpf_* for
+
+Oh the actual "name" / directory location is not changing.
+What changes is just where in code you declare them.
+
+> future going forward, and technically, they should be usable also w/o
+> net configured into kernel.
+
+That's up to you, and just consider if you have scrupts using these
+already. You may need backward compatibility. You don't need networking
+to create the net directory for sysctls too. The first sysctl to create
+the directory creates it, if its not created, it will be created.
+
+> Is there infra to point the sysctl knobs
+> e.g. under net/core/ to kernel/, or best way would be to have single
+> struct ctl_table and register for both?
+
+Try proc_symlink().
+
+  Luis
