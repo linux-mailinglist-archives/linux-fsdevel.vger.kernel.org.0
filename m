@@ -2,91 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C524CDE13
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 21:25:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1E964CE011
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 23:10:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbiCDUU7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Mar 2022 15:20:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        id S229680AbiCDWLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Mar 2022 17:11:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbiCDUU7 (ORCPT
+        with ESMTP id S229495AbiCDWK7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Mar 2022 15:20:59 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD2BE12D227
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Mar 2022 12:20:10 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id mg21-20020a17090b371500b001bef9e4657cso8126962pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Mar 2022 12:20:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=MzIVLFYgbIHKi0WfmGy/b7PPLkLPtlBjK1VwtmfcCaA=;
-        b=2xgKttVdE+/3e73yVrW7xAHaDB3kKqtj49qJHIQnLCF0m/Opwy1KSuE9in16hG+ho5
-         4pncR48ceZqaBfGLvTX53Sn2ScC1bZ6IsUHeELUi3rPOasHA0Xq8YIAJ4WOEq7PMYR5x
-         OZcZaSdaQeFi70GWxawnI2Qy0xZE4Ltqs0zEZeMIBBIFT31oDwKMNHfE7Hfd4iFuqtU1
-         QIlBlYTLi0Q++xOVL4tXESTdjUyZPOUAvjuufrwIQ6DKdOVG9Q6xK7pOCnZmRPvD5ifH
-         /KkHUjNb5CadrWEaCLx4pT8+ljYKkchUVh3UvokT/F0ByHWSmvTVXZ3rLMg5LGBADHpa
-         dk9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=MzIVLFYgbIHKi0WfmGy/b7PPLkLPtlBjK1VwtmfcCaA=;
-        b=pKAWN/SlAtB3NVQrWAOqvfRq0TI6OKzmtFELuO1G+vmVWtjQZqE9UzXmI2anLI+0jc
-         4o6kVK2u8PPMLQsATdNSyd/XCqLdocZQXT3V4HXlwFlyy9FbHvRtbgDpoV/keT5R6iHM
-         G8++Gr5G/aehFi3FNusA83QBUpjvTKjA4+NeY96qX2XJvj1OPn/KqD8Qn/Q/DAFZo5eP
-         7oysFNH058ZImoWlapyvuM7UYvBRIfyUvlkY/fNgktdCZSQIKDHmJYnCLtrTJkr0SOJU
-         5ZLt0s2gDebuSps0b8BMXsy8i7WIIXc3mIuotcNXHaOkhUmWcD8Z/2hcmzIAaOro5qoP
-         GelA==
-X-Gm-Message-State: AOAM530Xya+aZn+zDMH1rpNeN8SvxwfU1/iBZ7lgNOdFj/brICyzc0Hr
-        rc8x1mq9qMi5fRHmpgI0LFBioUONrGVmgnFm
-X-Google-Smtp-Source: ABdhPJxzNrjaHLQHQLD/BhExavFf9aVSlD7kGy6+cUzSlMmSh60/B/1lked5Soafp5AjkDLXFnEiCg==
-X-Received: by 2002:a17:902:7404:b0:151:c3f9:e43a with SMTP id g4-20020a170902740400b00151c3f9e43amr105492pll.12.1646425210378;
-        Fri, 04 Mar 2022 12:20:10 -0800 (PST)
-Received: from [127.0.1.1] ([2600:380:777a:c32a:5fa9:a654:f35:71f6])
-        by smtp.gmail.com with ESMTPSA id mu9-20020a17090b388900b001bef86b7d92sm8488608pjb.24.2022.03.04.12.20.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Mar 2022 12:20:09 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christoph Hellwig <hch@lst.de>
+        Fri, 4 Mar 2022 17:10:59 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF348CE925;
+        Fri,  4 Mar 2022 14:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HuyErcKtu69AHqki1H1pbEavQ4LL5YiG7O6LJZgqirM=; b=e272eZzJJ1BoHlixvu8OcAt5FO
+        s5dArlh7ggGL4rdUafaCgGhUm4gKNcrMoz3fsgSxphw/IlOiPOEoKqsAd6Dr4gDFiiArKGgWYmIqb
+        iVsVSupitJabKuN11ocZLLN2iPqHQ3vwhSEpQ+DGr8j2Ym/ZmnrAJKpO9U1MT2gTjgb6EnRaxu2ZL
+        IUJwkb1PB5x3/Sht4SrOJCLikPieCGC8I880YpTTPW1m7InktonJP+OKJUS8GueiWxpvktHzdeOFY
+        OnkNdQVi41ivVG84eTf/6ojPhDnBvlqjNHaU6tDuBUAigjp56Rxg6aD/laNpvGPXlhlOmKh9xLg1H
+        bO9KPsiQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nQG7k-00CBQJ-2m; Fri, 04 Mar 2022 22:10:08 +0000
+Date:   Fri, 4 Mar 2022 14:10:08 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, sagi@grimberg.me,
-        kbusch@kernel.org, linux-raid@vger.kernel.org, song@kernel.org
-In-Reply-To: <20220304175556.407719-1-hch@lst.de>
-References: <20220304175556.407719-1-hch@lst.de>
-Subject: Re: [PATCH 1/2] nvme: remove support or stream based temperature hint
-Message-Id: <164642520857.251407.3488369238595834309.b4-ty@kernel.dk>
-Date:   Fri, 04 Mar 2022 13:20:08 -0700
+        lsf-pc@lists.linux-foundation.org,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Keith Busch <Keith.Busch@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Message-ID: <YiKOQM+HMZXnArKT@bombadil.infradead.org>
+References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+ <20220304001022.GJ3927073@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220304001022.GJ3927073@dread.disaster.area>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 4 Mar 2022 18:55:55 +0100, Christoph Hellwig wrote:
-> This support was added for RocksDB, but RocksDB ended up not using it.
-> At the same time drives on the open marked (vs those build for OEMs
-> for non-Linux support) that actually support streams are extremly
-> rare.  Don't bloat the nvme driver for it.
+On Fri, Mar 04, 2022 at 11:10:22AM +1100, Dave Chinner wrote:
+> On Wed, Mar 02, 2022 at 04:56:54PM -0800, Luis Chamberlain wrote:
+> > Thinking proactively about LSFMM, regarding just Zone storage..
+> > 
+> > I'd like to propose a BoF for Zoned Storage. The point of it is
+> > to address the existing point points we have and take advantage of
+> > having folks in the room we can likely settle on things faster which
+> > otherwise would take years.
+> > 
+> > I'll throw at least one topic out:
+> > 
+> >   * Raw access for zone append for microbenchmarks:
+> >   	- are we really happy with the status quo?
+> > 	- if not what outlets do we have?
+> > 
+> > I think the nvme passthrogh stuff deserves it's own shared
+> > discussion though and should not make it part of the BoF.
 > 
-> 
+> Reading through the discussion on this thread, perhaps this session
+> should be used to educate application developers about how to use
+> ZoneFS so they never need to manage low level details of zone
+> storage such as enumerating zones, controlling write pointers
+> safely for concurrent IO, performing zone resets, etc.
 
-Applied, thanks!
+I'm not even sure users are really aware that given cap can be different
+than zone size and btrfs uses zone size to compute size, the size is a
+flat out lie.
 
-[1/2] nvme: remove support or stream based temperature hint
-      commit: 86cc47f6c199a71fdb28fe781174d9974ee14304
-[2/2] block: remove the per-bio/request write hint
-      commit: 6928b8f7eafaec1f0ea318fec71b537a165e552b
+modprobe null_blk nr_devices=0
+mkdir /sys/kernel/config/nullb/nullb0
+echo 0 > /sys/kernel/config/nullb/nullb0/completion_nsec
+echo 0 > /sys/kernel/config/nullb/nullb0/irqmode
+echo 2 > /sys/kernel/config/nullb/nullb0/queue_mode
+echo 1024 > /sys/kernel/config/nullb/nullb0/hw_queue_depth
+echo 1 > /sys/kernel/config/nullb/nullb0/memory_backed
+echo 1 > /sys/kernel/config/nullb/nullb0/zoned
 
-Best regards,
--- 
-Jens Axboe
+echo 128 > /sys/kernel/config/nullb/nullb0/zone_size
+# 6 zones are implied, we are saying 768 for the full storage size..
+# but...
+echo 768 > /sys/kernel/config/nullb/nullb0/size
 
+# If we force capacity to be way less than the zone sizes, btrfs still
+# uses the zone size to do its data / metadata size computation...
+echo 32 > /sys/kernel/config/nullb/nullb0/zone_capacity
 
+# No conventional zones
+echo 0 > /sys/kernel/config/nullb/nullb0/zone_nr_conv
+
+echo 1 > /sys/kernel/config/nullb/nullb0/power
+echo mq-deadline > /sys/block/nullb0/queue/scheduler
+
+# mkfs.btrfs -f -d single -m single /dev/nullb0
+Label:              (null)
+UUID:               e725782a-d2d3-4c02-97fd-0501de117323
+Node size:          16384
+Sector size:        4096
+Filesystem size:    768.00MiB
+Block group profiles:
+  Data:             single          128.00MiB
+    Metadata:         single          128.00MiB
+      System:           single          128.00MiB
+      SSD detected:       yes
+      Zoned device:       yes
+        Zone size:        128.00MiB
+	Incompat features:  extref, skinny-metadata, no-holes, zoned
+	Runtime features:   free-space-tree
+	Checksum:           crc32c
+	Number of devices:  1
+	Devices:
+	   ID        SIZE  PATH
+	       1   768.00MiB  /dev/nullb0
+
+# mount /dev/nullb0 /mnt
+# btrfs fi show
+Label: none  uuid: e725782a-d2d3-4c02-97fd-0501de117323
+        Total devices 1 FS bytes used 144.00KiB
+	        devid    1 size 768.00MiB used 384.00MiB path
+		/dev/nullb0
+
+# btrfs fi df /mnt
+Data, single: total=128.00MiB, used=0.00B
+System, single: total=128.00MiB, used=16.00KiB
+Metadata, single: total=128.00MiB, used=128.00KiB
+GlobalReserve, single: total=3.50MiB, used=0.00B
+
+Since btrfs already has "real size" problems this existing
+design takes this a bit further without a fix either. I suspect
+quite a bit of puzzled users will be unhappy that even though
+ZNS claims to kill overprovisioning we're now somehow lying
+about size. I'm not even sure this might be good for the
+filesystem / metadata.
+
+  Luis
