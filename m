@@ -2,97 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 305BA4CCAE2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 01:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4247F4CCB41
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 02:21:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234460AbiCDAnv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Mar 2022 19:43:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38198 "EHLO
+        id S237540AbiCDBWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Mar 2022 20:22:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232482AbiCDAnv (ORCPT
+        with ESMTP id S232623AbiCDBWK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Mar 2022 19:43:51 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 49C834926C
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Mar 2022 16:43:01 -0800 (PST)
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.52 with ESMTP; 4 Mar 2022 09:42:59 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
-        by 156.147.1.126 with ESMTP; 4 Mar 2022 09:42:59 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Fri, 4 Mar 2022 09:42:37 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        torvalds@linux-foundation.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
-        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
-        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com
-Subject: Re: Report 2 in ext4 and journal based on v5.17-rc1
-Message-ID: <20220304004237.GB6112@X58A-UD3R>
-References: <YiAow5gi21zwUT54@mit.edu>
- <1646285013-3934-1-git-send-email-byungchul.park@lge.com>
- <YiDSabde88HJ/aTt@mit.edu>
+        Thu, 3 Mar 2022 20:22:10 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E33A17B0F9;
+        Thu,  3 Mar 2022 17:21:22 -0800 (PST)
+Received: from canpemm500006.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4K8ql5442CzBrJg;
+        Fri,  4 Mar 2022 09:19:29 +0800 (CST)
+Received: from [10.67.110.83] (10.67.110.83) by canpemm500006.china.huawei.com
+ (7.192.105.130) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Fri, 4 Mar
+ 2022 09:21:20 +0800
+Subject: Re: [PATCH v4 1/2] fs/proc: optimize exactly register one ctl_table
+To:     Meng Tang <tangmeng@uniontech.com>, <mcgrof@kernel.org>,
+        <keescook@chromium.org>, <yzaikin@google.com>,
+        <ebiederm@xmission.com>, <willy@infradead.org>
+CC:     <nizhen@uniontech.com>, <zhanglianjie@uniontech.com>,
+        <sujiaxun@uniontech.com>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20220303070847.28684-1-tangmeng@uniontech.com>
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+Message-ID: <624f92f0-c2a1-c7d9-a4ed-6d72c48d3ab3@huawei.com>
+Date:   Fri, 4 Mar 2022 09:21:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YiDSabde88HJ/aTt@mit.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220303070847.28684-1-tangmeng@uniontech.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.83]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ canpemm500006.china.huawei.com (7.192.105.130)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 03, 2022 at 09:36:25AM -0500, Theodore Ts'o wrote:
-> On Thu, Mar 03, 2022 at 02:23:33PM +0900, Byungchul Park wrote:
-> > I totally agree with you. *They aren't really locks but it's just waits
-> > and wakeups.* That's exactly why I decided to develop Dept. Dept is not
-> > interested in locks unlike Lockdep, but fouces on waits and wakeup
-> > sources itself. I think you get Dept wrong a lot. Please ask me more if
-> > you have things you doubt about Dept.
+On 2022/3/3 15:08, Meng Tang wrote:
+> Sysctls are being moved out of kernel/sysctl.c and out to
+> their own respective subsystems / users to help with easier
+> maintance and avoid merge conflicts. But when we move just
+> one entry and to its own new file the last entry for this
+> new file must be empty, so we are essentialy bloating the
+> kernel one extra empty entry per each newly moved sysctl.
 > 
-> So the question is this --- do you now understand why, even though
-> there is a circular dependency, nothing gets stalled in the
-> interactions between the two wait channels?
+> To help with this, this adds support for registering just
+> one ctl_table, therefore not bloating the kernel when we
+> move a single ctl_table to its own file.
+> 
+> Since the process of registering just one single table is the
+> same as that of registering an array table, so the code is
+> similar to registering an array table. The difference between
+> registering just one table and registering an array table is
+> that we no longer traversal through pointers when registering
+> a single table. These lead to that we have to add a complete
+> implementation process for register just one ctl_table, so we
+> have to add so much code.
+> 
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Meng Tang <tangmeng@uniontech.com>
+> ---
+>   fs/proc/proc_sysctl.c  | 159 +++++++++++++++++++++++++++++------------
+>   include/linux/sysctl.h |   9 ++-
+>   2 files changed, 121 insertions(+), 47 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index 6c87c99f0856..e06d2094457a 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -19,6 +19,8 @@
+>   #include <linux/kmemleak.h>
+>   #include "internal.h"
+>   
+> +#define REGISTER_SINGLE_ONE (register_single_one ? true : false)
+> +
+>   static const struct dentry_operations proc_sys_dentry_operations;
+>   static const struct file_operations proc_sys_file_operations;
+>   static const struct inode_operations proc_sys_inode_operations;
+> @@ -100,8 +102,8 @@ static DEFINE_SPINLOCK(sysctl_lock);
+>   static void drop_sysctl_table(struct ctl_table_header *header);
+>   static int sysctl_follow_link(struct ctl_table_header **phead,
+>   	struct ctl_table **pentry);
+> -static int insert_links(struct ctl_table_header *head);
+> -static void put_links(struct ctl_table_header *header);
+> +static int insert_links(struct ctl_table_header *head, bool register_single_one);
+> +static void put_links(struct ctl_table_header *header, bool register_single_one);
+>   
+>   static void sysctl_print_dir(struct ctl_dir *dir)
+>   {
+> @@ -200,7 +202,7 @@ static void erase_entry(struct ctl_table_header *head, struct ctl_table *entry)
+>   
+>   static void init_header(struct ctl_table_header *head,
+>   	struct ctl_table_root *root, struct ctl_table_set *set,
+> -	struct ctl_node *node, struct ctl_table *table)
+> +	struct ctl_node *node, struct ctl_table *table, bool register_single_one)
+>   {
+>   	head->ctl_table = table;
+>   	head->ctl_table_arg = table;
+> @@ -215,19 +217,26 @@ static void init_header(struct ctl_table_header *head,
+>   	INIT_HLIST_HEAD(&head->inodes);
+>   	if (node) {
+>   		struct ctl_table *entry;
+> -		for (entry = table; entry->procname; entry++, node++)
+> +		for (entry = table; entry->procname; entry++, node++) {
+>   			node->header = head;
+> +			if (register_single_one)
+The scalability is reduced.
+If you add a file interface in the future, you need to make at least two 
+code changes.
 
-??? I'm afraid I don't get you.
+Instead of having each consumer keep the current table size in mind, you 
+can obtain the table size by ARRAY_SIZE() in the API interface.
 
-All contexts waiting for any of the events in the circular dependency
-chain will be definitely stuck if there is a circular dependency as I
-explained. So we need another wakeup source to break the circle. In
-ext4 code, you might have the wakeup source for breaking the circle.
+For example,
 
-What I agreed with is:
++ #define register_sysctl_init(path, table) 
+__register_sysctl_init(path, table, ARRAY_SIZE(table))
+...
+-		for (entry = table; entry->procname; entry++, node++)
++		for (entry = table; entry->procname && num > 0; entry++, node++, num--) {
 
-   The case that 1) the circular dependency is unevitable 2) there are
-   another wakeup source for breadking the circle and 3) the duration
-   in sleep is short enough, should be acceptable.
 
-Sounds good?
-
-Thanks,
-Byungchul
+Xiaoming Ni
+thanks
