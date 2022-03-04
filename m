@@ -2,243 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC3424CD355
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 12:24:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A9B4CD3A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 12:39:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239477AbiCDLZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Mar 2022 06:25:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60456 "EHLO
+        id S232156AbiCDLkb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Mar 2022 06:40:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238290AbiCDLY5 (ORCPT
+        with ESMTP id S231373AbiCDLk3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Mar 2022 06:24:57 -0500
-Received: from smtpproxy21.qq.com (smtpbg703.qq.com [203.205.195.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38EA18A780
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Mar 2022 03:24:09 -0800 (PST)
-X-QQ-mid: bizesmtp91t1646393034trr618up
-Received: from localhost.localdomain ( [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Fri, 04 Mar 2022 19:23:51 +0800 (CST)
-X-QQ-SSF: 01400000002000C0G000000A0000000
-X-QQ-FEAT: 4LFlwc+MlXkMhAcYm9dTNjI4L4eE39tcRdAGJ54+CcXfR2aXINChCvNNquT9X
-        qAJDTN0kc5iAm2GHnNYKZGXU02eHXa4F1gZ+A+gNPDO528q8Yw2dRxDFpyaE/tn6fVubcPN
-        rmtcJyqghdEk0aMaq2R0eoExNzqAe3/Pk1VEJu1sNXM2uUqmH26/bVgbvIMQHJwV8+AWd0d
-        OwqilXMxOQVO/n3/KeS1eYxPQz+4qnHJ5TBnOtvuaYBRtQAZIUw3Wvzs0ic+EHs5Em5+I3p
-        QbFqdScvOmnJx15BietccbLRRFga2cp9P6681tKUicXgMiUGJKRqYEfkSkhv1iIaXQCKlbj
-        C8jd0ANRTaU8Intt9i2EvTGgWVR6LT3fEFijpCg9ZX3031I0D0=
-X-QQ-GoodBg: 1
-From:   Meng Tang <tangmeng@uniontech.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        ebiederm@xmission.com, willy@infradead.org
-Cc:     nixiaoming@huawei.com, nizhen@uniontech.com,
-        zhanglianjie@uniontech.com, sujiaxun@uniontech.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Meng Tang <tangmeng@uniontech.com>
-Subject: [PATCH v5 2/2] fs/proc: sysctl: remove register ctl_table end with empty
-Date:   Fri,  4 Mar 2022 19:23:41 +0800
-Message-Id: <20220304112341.19528-2-tangmeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220304112341.19528-1-tangmeng@uniontech.com>
-References: <20220304112341.19528-1-tangmeng@uniontech.com>
+        Fri, 4 Mar 2022 06:40:29 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E2A145E12;
+        Fri,  4 Mar 2022 03:39:42 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id p3-20020a17090a680300b001bbfb9d760eso10390429pjj.2;
+        Fri, 04 Mar 2022 03:39:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=T0KWcfrVhfRiQuPhzFUu+oUHR0+0iQuCKbqqyufUMXA=;
+        b=BS4C5Y1tL4r8PWIRqTmC6gS0HaL1ikR+470ZGcTaIa4wFQYparRJpFgi8byBxYfS+3
+         h+/0V9Om3+A1FxjtUhzi8xUX8SQHq+v8HkFoG+J6SemhINeDJSnxowDMKlAz8H8duGxN
+         dQUqq+1LAnYBfNHP7SN7AA2Kj/WI0bj5UMk5D1tTDQS+yqA1Cfs9LXdRBoRhuywGMkHh
+         uxofCQJrdhXypoU+Kck6or68lCBk3WDfd06ViBAREudViDBHavC9dOljVk6YKVx+g6tI
+         ywHzdC7NPv1PVpGFaSAGB5AQ+PPtoXYZIHynTx/iBcL2C16vxnOubx0fFVbm7AZnrUe7
+         ko/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=T0KWcfrVhfRiQuPhzFUu+oUHR0+0iQuCKbqqyufUMXA=;
+        b=SUm9pOojNamHPikMlB/n+EFKQFn3Rg0DDWlrp1hfpRaXk/NQJfqcUDmbqOM68K6PLg
+         REBrtim79cDhhEAvhxvgisnVKhxdhi5kd02XyaEn8XKxBPEK4miUimkxL9LGOc/KxF36
+         n7Hhld7eU2PY/2XhEZHd/z0sYBiz275zgtvo+8oB3gL9oUvRNa/2WHwtz3chcWisFZZr
+         Shj2psy3XglQEgff2yELmuVfH/oU7e/nw4XQDa8jI2RPSf92kNizoaEegxxttEIEX7oM
+         LY/J7qWjSF58EkFxVKzXZ0rrwRXr/LHmQvgcLSdwDiDMgd4FKa9nXQjqh7lPFzvFY2i2
+         w6tA==
+X-Gm-Message-State: AOAM533fUHX1ynobtTFmoTJgqDlhesmnWPAFZTwUKLyiIKr9Xk5n8mYL
+        /hBBGJytElepF23W2/dANNA=
+X-Google-Smtp-Source: ABdhPJwUeGy/HJBpt8MjGZ13EzUfgfohEC7mxxbk5v1dgWi77zTAJpDwQo+/X8i3EoW7ntQ/oQ2ZNw==
+X-Received: by 2002:a17:90b:390c:b0:1bf:2d83:c70c with SMTP id ob12-20020a17090b390c00b001bf2d83c70cmr1346393pjb.217.1646393982299;
+        Fri, 04 Mar 2022 03:39:42 -0800 (PST)
+Received: from ip-172-31-19-208.ap-northeast-1.compute.internal (ec2-18-181-137-102.ap-northeast-1.compute.amazonaws.com. [18.181.137.102])
+        by smtp.gmail.com with ESMTPSA id e18-20020a63d952000000b00372a1295210sm4394691pgj.51.2022.03.04.03.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Mar 2022 03:39:41 -0800 (PST)
+Date:   Fri, 4 Mar 2022 11:39:29 +0000
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        bfields@fieldses.org, gregkh@linuxfoundation.org,
+        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
+        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
+        linux-block@vger.kernel.org, paolo.valente@linaro.org,
+        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
+        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+        djwong@kernel.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com
+Subject: Re: [PATCH v4 22/24] dept: Don't create dependencies between
+ different depths in any case
+Message-ID: <YiH6cXo1qThA1X6B@ip-172-31-19-208.ap-northeast-1.compute.internal>
+References: <1646377603-19730-1-git-send-email-byungchul.park@lge.com>
+ <1646377603-19730-23-git-send-email-byungchul.park@lge.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
-X-QQ-Bgrelay: 1
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1646377603-19730-23-git-send-email-byungchul.park@lge.com>
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sysctls are being moved out of kernel/sysctl.c and out to
-their own respective subsystems / users to help with easier
-maintance and avoid merge conflicts. But when we move just
-one entry and to its own new file the last entry for this
-new file must be empty, so we are essentialy bloating the
-kernel one extra empty entry per each newly moved sysctl.
+On Fri, Mar 04, 2022 at 04:06:41PM +0900, Byungchul Park wrote:
+> Dept already prevents creating dependencies between different depths of
+> the class indicated by *_lock_nested() when the lock acquisitions happen
+> consecutively.
+> 
+>    lock A0 with depth
+>    lock_nested A1 with depth + 1
+>    ...
+>    unlock A1
+>    unlock A0
+> 
+> Dept does not create A0 -> A1 dependency in this case, either.
+> 
+> However, once another class cut in, the code becomes problematic. When
+> Dept tries to create real dependencies, it does not only create real
+> ones but also wrong ones between different depths of the class.
+> 
+>    lock A0 with depth
+>    lock B
+>    lock_nested A1 with depth + 1
+>    ...
+>    unlock A1
+>    unlock B
+>    unlock A0
+> 
+> Even in this case, Dept should not create A0 -> A1 dependency.
+> 
+> So let Dept not create wrong dependencies between different depths of
+> the class in any case.
+> 
+> Reported-by: 42.hyeyoo@gmail.com
+> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> ---
+>  kernel/dependency/dept.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
+> index 5d4efc3..cc1b3a3 100644
+> --- a/kernel/dependency/dept.c
+> +++ b/kernel/dependency/dept.c
+> @@ -1458,14 +1458,7 @@ static void add_wait(struct dept_class *c, unsigned long ip,
+>  
+>  		eh = dt->ecxt_held + i;
+>  		if (eh->ecxt->class != c || eh->nest == ne)
+> -			break;
+> -	}
+> -
+> -	for (; i >= 0; i--) {
+> -		struct dept_ecxt_held *eh;
+> -
+> -		eh = dt->ecxt_held + i;
+> -		add_dep(eh->ecxt, w);
+> +			add_dep(eh->ecxt, w);
+>  	}
+>  
+>  	if (!wait_consumed(w) && !rich_stack) {
+> -- 
+> 1.9.1
+> 
+> 
 
-To help with this, I have added support for registering just
-one ctl_table, therefore not bloating the kernel when we
-move a single ctl_table to its own file.
+Works as expected, Thanks!
+I would report if there is anything else interesting.
 
-The optimization has been implemented in the previous patch,
-here use register_sysctl_single() to register single one
-ctl_table.
+Tested-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-In this modification, I counted the size changes of each
-object file during the compilation process.
-
-When there is no strip, size changes are as follows:
-                            before    now    save space
-fs/dcache.o                  904936  904760   176bytes
-fs/exec.o                    883584  883440   144bytes
-fs/namespace.o              1614776 1614616   160bytes
-fs/notify/dnotify/dnotify.o  255992  255872   120bytes
-init/do_mounts_initrd.o      296552  296392   160bytes
-kernel/acct.o                459184  459032   152bytes
-kernel/delayacct.o           208680  208536   144bytes
-kernel/kprobes.o             794968  794936    32bytes
-kernel/panic.o               367696  367560   136bytes
-
-When there is exec with 'strip -d', size changes are as follows:
-                            before    now    save space
-fs/dcache.o                  79040   78952     88bytes
-fs/exec.o                    57960   57864     96bytes
-fs/namespace.o              111904  111824     80bytes
-fs/notify/dnotify/dnotify.o   8816    8736     80bytes
-init/do_mounts_initrd.o       4872    4760    112bytes
-kernel/acct.o                18104   18000    104bytes
-kernel/delayacct.o            8768    8664    104bytes
-kernel/kprobes.o             63192   63104     88bytes
-kernel/panic.o               26760   26672     88bytes
-
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Suggested-by: Xiaoming Ni <nixiaoming@huawei.com>
-Signed-off-by: Meng Tang <tangmeng@uniontech.com>
----
- fs/dcache.c                 | 3 +--
- fs/exec.c                   | 3 +--
- fs/namespace.c              | 3 +--
- fs/notify/dnotify/dnotify.c | 3 +--
- init/do_mounts_initrd.c     | 3 +--
- kernel/acct.c               | 3 +--
- kernel/delayacct.c          | 3 +--
- kernel/kprobes.c            | 3 +--
- kernel/panic.c              | 3 +--
- 9 files changed, 9 insertions(+), 18 deletions(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index c84269c6e8bf..b8bccc151e37 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -190,8 +190,7 @@ static struct ctl_table fs_dcache_sysctls[] = {
- 		.maxlen		= 6*sizeof(long),
- 		.mode		= 0444,
- 		.proc_handler	= proc_nr_dentry,
--	},
--	{ }
-+	}
- };
- 
- static int __init init_fs_dcache_sysctls(void)
-diff --git a/fs/exec.c b/fs/exec.c
-index c2586b791b87..afb19eacacec 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -2140,8 +2140,7 @@ static struct ctl_table fs_exec_sysctls[] = {
- 		.proc_handler	= proc_dointvec_minmax_coredump,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_TWO,
--	},
--	{ }
-+	}
- };
- 
- static int __init init_fs_exec_sysctls(void)
-diff --git a/fs/namespace.c b/fs/namespace.c
-index df172818e1f8..c4800f2044c5 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4673,8 +4673,7 @@ static struct ctl_table fs_namespace_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ONE,
--	},
--	{ }
-+	}
- };
- 
- static int __init init_fs_namespace_sysctls(void)
-diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-index 829dd4a61b66..961ef4af6a09 100644
---- a/fs/notify/dnotify/dnotify.c
-+++ b/fs/notify/dnotify/dnotify.c
-@@ -28,8 +28,7 @@ static struct ctl_table dnotify_sysctls[] = {
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
--	},
--	{}
-+	}
- };
- static void __init dnotify_sysctl_init(void)
- {
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index 327962ea354c..dbda262e30f2 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -28,8 +28,7 @@ static struct ctl_table kern_do_mounts_initrd_table[] = {
- 		.maxlen         = sizeof(int),
- 		.mode           = 0644,
- 		.proc_handler   = proc_dointvec,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_do_mounts_initrd_sysctls_init(void)
-diff --git a/kernel/acct.c b/kernel/acct.c
-index 62200d799b9b..72d571cf090d 100644
---- a/kernel/acct.c
-+++ b/kernel/acct.c
-@@ -83,8 +83,7 @@ static struct ctl_table kern_acct_table[] = {
- 		.maxlen         = 3*sizeof(int),
- 		.mode           = 0644,
- 		.proc_handler   = proc_dointvec,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_acct_sysctls_init(void)
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index 2c1e18f7c5cf..1ee1397de9c3 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -73,8 +73,7 @@ static struct ctl_table kern_delayacct_table[] = {
- 		.proc_handler   = sysctl_delayacct,
- 		.extra1         = SYSCTL_ZERO,
- 		.extra2         = SYSCTL_ONE,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_delayacct_sysctls_init(void)
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 94cab8c9ce56..1eb18d73e4ae 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -970,8 +970,7 @@ static struct ctl_table kprobe_sysctls[] = {
- 		.proc_handler	= proc_kprobes_optimization_handler,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
--	},
--	{}
-+	}
- };
- 
- static void __init kprobe_sysctls_init(void)
-diff --git a/kernel/panic.c b/kernel/panic.c
-index ae5c0ca86016..830d55e59ee3 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -85,8 +85,7 @@ static struct ctl_table kern_panic_table[] = {
- 		.proc_handler   = proc_dointvec_minmax,
- 		.extra1         = SYSCTL_ZERO,
- 		.extra2         = SYSCTL_ONE,
--	},
--	{ }
-+	}
- };
- 
- static __init int kernel_panic_sysctls_init(void)
 -- 
-2.20.1
-
-
-
+Thank you, You are awesome!
+Hyeonggon :-)
