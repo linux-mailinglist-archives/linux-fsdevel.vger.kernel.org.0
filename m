@@ -2,110 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA7BF4CD85F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 16:55:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA504CD9CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 18:10:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240536AbiCDP4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Mar 2022 10:56:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59072 "EHLO
+        id S238743AbiCDRLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Mar 2022 12:11:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237323AbiCDP4c (ORCPT
+        with ESMTP id S231630AbiCDRLK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Mar 2022 10:56:32 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9781C1C57F7
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Mar 2022 07:55:43 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id w7so1231660lfd.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Mar 2022 07:55:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=+e6DxsGRSH2mhsXI7GeLvIZXX1m4MD4Ab6z6xzst2ho=;
-        b=cQmN4vglxTabDg7a6n33BOXnhcnyKD1WMlTxaTWiaspcPdjwkiI+djzZpZImPFVja/
-         JCPzZ5hgjTl2i9NHQWdzzkkSeSmgiHUr65ANmnoFhDA9L1T2l7WPP7tMFrm9Rd5TMa8Q
-         Q7r1J5okm8TQdp2Ycf5Q3o1ztT4jXUHtETNV2cqGG7I0Cy4i1OXeklUAJ8a1ZS+YJv7r
-         VHNdE6Pg+y+PSSLmLk0BycOsNwo5EJf6+9taZFjpcB3SfeDF8K2S5PgdZsHqbsCFBNG/
-         +w3IQdnbiS9ujOVI3D/rwxPcSiRJGWgr8s5ykp36lZg31lrPHukfRzY1wrt+3h6hpWzK
-         /R3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=+e6DxsGRSH2mhsXI7GeLvIZXX1m4MD4Ab6z6xzst2ho=;
-        b=hn0uiAj+UUSBcjCBfC3ShPv6bxuscplBSe4TxjATE4of8C9srYY/QcysFQlPPzk8Bq
-         +4pnmtb0qk9ctLDMHfisP/4bK/ExVPwKQSCSHq2M6rYiT1V1r0gDUL5wBA/QT49OBsja
-         CVwgBQ1cFL1CdSufipnwFKYZEswG4AEt/mBbt+42Q4zR8KrS7AyaECNok2or4veS7VtD
-         bN2eGnepg+PCcwQw8vHa5rSYjTaNOq+tvU18/p8r+lK1L1VUdXLCOfZ73pe4lijKWxL9
-         3f6diTPN3Dcsa/wung2cUR6SuOOW94AmSW+gck+Ty96ut0eJywkaGY11sPjzwoJBPtD/
-         OWMA==
-X-Gm-Message-State: AOAM531Da4ka1s6Z4wZefxIFcMQMjpcSmtloQF2AkMDeJlh5T0ecpedb
-        bHkCOLc5aOFI4eQe+rn9HEiZF1viagKRG002Umc=
-X-Google-Smtp-Source: ABdhPJxYrKdTMvIvJjLNlVlqXd18b6idtbEq5pMQ6kZE1vUCSG5a5NNEyzr3pkBI55qtplR2y5056YobJk2UAPbQjcA=
-X-Received: by 2002:a05:6512:33d5:b0:446:41b9:7256 with SMTP id
- d21-20020a05651233d500b0044641b97256mr4472420lfg.659.1646409338778; Fri, 04
- Mar 2022 07:55:38 -0800 (PST)
+        Fri, 4 Mar 2022 12:11:10 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97CE91CBA97;
+        Fri,  4 Mar 2022 09:10:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=WbFFgJ3TOElNmD+ADc11e8q9EbVb53G89PRSG/O0iSU=; b=HABnBLdjCuVOVOvY7g92QYd3LH
+        wL06Bw1jB1JQ0fhcGnX9IeNAMOKhbYyKMn74p8qAX1S9CnfsPzk8tWDPTR1RwhmdoHcn3zabgqNIS
+        kZIbAumkfljep8Cw1F2aHRJd/q1z4FV+86aIq/QhJ4uTFO6hJWDhT5FplV7UQ2EFf37eIjz9/yfRK
+        dwLUdLUtlOamhoIx/CZJMOi3+TI3nCfdH6qqP8bAAD8oZ6YYwZ4X6JuvmisnBDPMqk5VU5e3uJRju
+        7XWGaHiJOEssEykkqemoPAI7vu+tTUJEjdokwmJPf3vHSS6yEpdOd66k/NiJrCQJULU6WGlo941Wl
+        8SRcBXzg==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nQBRP-00CoTk-7I; Fri, 04 Mar 2022 17:10:07 +0000
+Message-ID: <e1a5f3ad-c33d-46f1-48c6-9c6b377ea211@infradead.org>
+Date:   Fri, 4 Mar 2022 09:10:02 -0800
 MIME-Version: 1.0
-Sender: jenniferoscar85@gmail.com
-Received: by 2002:ab3:7546:0:0:0:0:0 with HTTP; Fri, 4 Mar 2022 07:55:38 -0800 (PST)
-From:   Aisha Al-Qaddafi <aisha.gdaff21@gmail.com>
-Date:   Fri, 4 Mar 2022 07:55:38 -0800
-X-Google-Sender-Auth: gTjQpU_QLjqvQW_xXtlP_XogGew
-Message-ID: <CADQEMHTBe2_71wvrekVbndz=vhDRFRMwdPGQeCdYKoY+vzKepQ@mail.gmail.com>
-Subject: Your Urgent Reply Will Be Appreciated
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,LOTS_OF_MONEY,MILLION_HUNDRED,MONEY_FRAUD_5,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_MONEY,URG_BIZ autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:132 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [jenniferoscar85[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [aisha.gdaff21[at]gmail.com]
-        *  0.0 MILLION_HUNDRED BODY: Million "One to Nine" Hundred
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        *  0.6 URG_BIZ Contains urgent matter
-        *  0.0 LOTS_OF_MONEY Huge... sums of money
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.6 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-        *  0.6 MONEY_FRAUD_5 Lots of money and many fraud phrases
-X-Spam-Level: *****
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: mmotm 2022-03-03-21-24 uploaded
+ [drivers/platform/x86/x86-android-tablets.ko]
+Content-Language: en-US
+To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org
+References: <20220304052444.C157EC340E9@smtp.kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20220304052444.C157EC340E9@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Assalamu Alaikum Wa Rahmatullahi Wa Barakatuh
-I came across your e-mail contact prior a private search while in need
-of your assistance. I am Aisha Al-Qaddafi, the only biological
-Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
-single Mother and a Widow with three Children.
-I have investment funds worth Twenty Seven Million Five Hundred
-Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
-investment Manager/Partner because of my current refugee status,
-however, I am interested in you for investment project assistance in
-your country, may be from there, we can build business relationship in
-the nearest future. I am willing to negotiate investment/business
-profit sharing ratio
-with you base on the future investment earning profits.
-If you are willing to handle this project on my behalf kindly reply
-urgent to enable me provide you more information about the investment
-funds.
+Hi Hans,
+
+On 3/3/22 21:24, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2022-03-03-21-24 has been uploaded to
+> 
+>    https://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> https://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> https://ozlabs.org/~akpm/mmotm/series
+
+on i386:
+when CONFIG_SPI is not set/enabled:
+
+ERROR: modpost: "spi_bus_type" [drivers/platform/x86/x86-android-tablets.ko] undefined!
+
+-- 
+~Randy
