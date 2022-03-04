@@ -2,115 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C63084CDBBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 19:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CCEF4CDE66
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 21:26:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbiCDSFc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Mar 2022 13:05:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40062 "EHLO
+        id S230351AbiCDUOE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Mar 2022 15:14:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241495AbiCDSF0 (ORCPT
+        with ESMTP id S231222AbiCDUMl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Mar 2022 13:05:26 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3B13B002;
-        Fri,  4 Mar 2022 10:04:38 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ACC1C60C77;
-        Fri,  4 Mar 2022 18:04:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033D5C340EF;
-        Fri,  4 Mar 2022 18:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646417077;
-        bh=425WNeNRrB56ZehLPxE5ZW7E9I6KVwqgV1Gf1LwYGgU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VfNnOKYkOxwckoxihS5Rta454esEJDsTkWgg9wJWLJVLhOVDynvrbtVzlU0YBZov/
-         zGz8K9qJr4ix5z++KXTQPeRFY/+AK03Ks++ginvyjzH+j2IenDsU7WcTnMqE3s3MSw
-         CMbhtzkgi+YrcJ2X28HyeMO0/HIQuTPSpRu8f/hjsFvHA5TkNtoNpR6lSSznJEShXo
-         /WfW3wFIoBXrpAGRZFYuNm7T9lKowvITbuWjBH56Porp703MrASmRKLxx65wUOrdRl
-         aDEV7eNzX3SZGv41egNvXofXb/gMQ9pQuLyPSp01QXmalMUlbiMO+Xc/7dzjfgrzhx
-         jXsOtehfpCZjg==
-Date:   Fri, 4 Mar 2022 10:04:35 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: do not try to evict inode when super is frozen
-Message-ID: <YiJUsxjoHNiqEaFG@google.com>
-References: <20220304022104.2525009-1-jaegeuk@kernel.org>
- <20220304024843.GK3927073@dread.disaster.area>
- <YiGgSmEOZUvgmSto@google.com>
+        Fri, 4 Mar 2022 15:12:41 -0500
+Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D10EC25EA0
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Mar 2022 12:05:20 -0800 (PST)
+Received: by mail-oo1-xc34.google.com with SMTP id o7-20020a056820040700b003205d5eae6eso10133244oou.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Mar 2022 12:05:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=cD1ZoJibPx8a6ZYW0ir6GwlMwbk0v99dWXm7GlqXJtc=;
+        b=yzTBVOHnh2/lw1WEi4Ftyjn9MmKcO9GR999iIl8QDIZ8f473bfhyN+JaqsqzCf6i8+
+         KfnqV8aXwP3PhTehm3xjxJL0WmXoo80zbuwPhuaD00i9czLxTl8fFoQmI6ceYGlJB3JU
+         uuI51gvQCE0Q916NvdJ4VvdTe8ukIxYdkEG2gUrn7dr94mWE+WPc6+k6Xiz64DyxZFyQ
+         20ui0jlVJi8XEJpnblrxChpqSRsV9XHvbxv8F7PpND2WsXtGXeL4CJtb4oszPVY8TSaR
+         4nJdXt7Q1nL3y0Iy+yZTxfMtychsLFmirQVMdDLaNAuJMadAednHVU0vTGCUWqK2H2BX
+         NMcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=cD1ZoJibPx8a6ZYW0ir6GwlMwbk0v99dWXm7GlqXJtc=;
+        b=CO6vSqnD3MDhAhAMcdjc+ZRyagOcvAuyxrm+7dh1OLtM4rHPe7GNNrZAiuOygVTDg2
+         oSJfa1EpUIuEmxGuX149hSBkSI2XGBn/GZwwELinp6h3zfImOFH7lUPHem/vzXOw96B8
+         Wi8trUYD2TBQMAW4iQjfXFfzn0q5f+3i4ygwYoPjWXY75q/tVTUVzoX0yut4fiIX5N1g
+         UdsdafB3gDbdgNpMzAXEUoxUTLho63hQ6ky/ajEgtDAOZ4Xx3XWHWVvXIZZ79yRKX46W
+         gwpPmxnkjJ5ofE666XG4uzKNn62YEHtqg/Sfc7t4KHuOmTnTEgaXZxXL8fs/3eTme4RI
+         DfLA==
+X-Gm-Message-State: AOAM5314yTmbvhwsOmtFZncHj13Qe+lSNkM9BtvRsSkE7agnvszn+oos
+        9FV8vZl0SA34sxye3Ryi28/2W2TKJ+HvsQ==
+X-Google-Smtp-Source: ABdhPJxaPNpPdHGtkzBqxR/AbybSNjglxB1qWnG9jsxe0tCA2gjxU9n2s98hohxcBA0drNnu+IBOcw==
+X-Received: by 2002:a17:90b:3802:b0:1be:f687:7875 with SMTP id mq2-20020a17090b380200b001bef6877875mr161792pjb.109.1646421866217;
+        Fri, 04 Mar 2022 11:24:26 -0800 (PST)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id q9-20020a056a00088900b004e03b051040sm6813168pfj.112.2022.03.04.11.24.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Mar 2022 11:24:25 -0800 (PST)
+Message-ID: <62cc1a9e-6259-d409-1bcb-11c760b0c691@kernel.dk>
+Date:   Fri, 4 Mar 2022 12:24:24 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YiGgSmEOZUvgmSto@google.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 2/2] block: remove the per-bio/request write hint
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     sagi@grimberg.me, kbusch@kernel.org, song@kernel.org,
+        linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20220304175556.407719-1-hch@lst.de>
+ <20220304175556.407719-2-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220304175556.407719-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03/03, Jaegeuk Kim wrote:
-> On 03/04, Dave Chinner wrote:
-> > On Thu, Mar 03, 2022 at 06:21:04PM -0800, Jaegeuk Kim wrote:
-> > > Otherwise, we will get a deadlock.
-> > 
-> > NACK.
-> > 
-> > We have to be able to evict clean inodes from memory on frozen
-> > inodes because we can still instantiate inodes while the filesytem
-> > is frozen. e.g. there's a find running when the filesystem is
-> > frozen. What happens if we can't evict clean cached inodes from
-> > memory when we run out of memory trying to instantiate new inodes?
-> 
-> Ok, that makes sense.
-> 
-> > 
-> > > 
-> > > [freeze test]                         shrinkder
-> > > freeze_super
-> > >  - pwercpu_down_write(SB_FREEZE_FS)
-> > >                                        - super_cache_scan
-> > >                                          - down_read(&sb->s_umount)
-> > >                                            - prune_icache_sb
-> > >                                             - dispose_list
-> > >                                              - evict
-> > >                                               - f2fs_evict_inode
-> > > thaw_super
-> > >  - down_write(&sb->s_umount);
-> > >                                               - __percpu_down_read(SB_FREEZE_FS)
-> > 
-> > That seems like a f2fs bug, not a generic problem.
-> > 
-> > Filesystems already have to handle stuff like this if an unlinked
-> > file is closed while the fs is frozen - we have to handle inode
-> > eviction needing to modify the file, and different filesystems
-> > handle this differently. Most filesystems simply block in
-> > ->evict_inode in this case, but this never occurs from the shrinker
-> > context.
-> > 
-> > IOWs, the shrinker should never be evicting inodes that require the
-> > filesystem to immediately block on frozen filesystems. If you have
-> > such inodes in cache at the time the filesystem is frozen, then they
-> > should be purged from the cache as part of the freeze process so the
-> > shrinker won't ever find inodes that it could deadlock on.
-> 
-> If so, is this a bug in drop_caches_sysctl_handler? Or, I shouldn't have
-> used "echo 3 > sysfs/drop_caches" with freezefs in xfstests?
+On 3/4/22 10:55 AM, Christoph Hellwig wrote:
+> With the NVMe support for this gone, there are no consumers of these hints
+> left, so remove them.
 
-My bad. I totally misunderstood. I'm testing a patch to call evict_inodes()
-in f2fs_freeze(). Thank you for the comment. :)
+Looks good to me, didn't find any missed spots.
 
-> 
-> > 
-> > Cheers,
-> > 
-> > Dave.
-> > -- 
-> > Dave Chinner
-> > david@fromorbit.com
+-- 
+Jens Axboe
+
