@@ -2,44 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA13D4CE029
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 23:18:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 213894CE050
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Mar 2022 23:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbiCDWTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Mar 2022 17:19:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36516 "EHLO
+        id S229997AbiCDWnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Mar 2022 17:43:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiCDWTQ (ORCPT
+        with ESMTP id S229532AbiCDWns (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Mar 2022 17:19:16 -0500
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B9C31BEB7;
-        Fri,  4 Mar 2022 14:18:27 -0800 (PST)
+        Fri, 4 Mar 2022 17:43:48 -0500
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BB9F221E01;
+        Fri,  4 Mar 2022 14:42:59 -0800 (PST)
 Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 6B2FC10E1C43;
-        Sat,  5 Mar 2022 09:18:26 +1100 (AEDT)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 5F4BA52FB90;
+        Sat,  5 Mar 2022 09:42:58 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1nQGFl-001Zzq-Nx; Sat, 05 Mar 2022 09:18:25 +1100
-Date:   Sat, 5 Mar 2022 09:18:25 +1100
+        id 1nQGdV-001aSG-Ou; Sat, 05 Mar 2022 09:42:57 +1100
+Date:   Sat, 5 Mar 2022 09:42:57 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: do not try to evict inode when super is frozen
-Message-ID: <20220304221825.GM3927073@dread.disaster.area>
-References: <20220304022104.2525009-1-jaegeuk@kernel.org>
- <20220304024843.GK3927073@dread.disaster.area>
- <YiGgSmEOZUvgmSto@google.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        lsf-pc@lists.linux-foundation.org,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Keith Busch <Keith.Busch@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Message-ID: <20220304224257.GN3927073@dread.disaster.area>
+References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+ <20220304001022.GJ3927073@dread.disaster.area>
+ <YiKOQM+HMZXnArKT@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YiGgSmEOZUvgmSto@google.com>
+In-Reply-To: <YiKOQM+HMZXnArKT@bombadil.infradead.org>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=62229032
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=622295f3
         a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=FCBBoiUPZGnDA3Uh:21 a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=7-415B0cAAAA:8
-        a=kobbvlOx0iqVO4J9MBYA:9 a=CjuIK1q_8ugA:10 a=ZXjPKerQ9QDAtgzuyCT9:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=7-415B0cAAAA:8
+        a=npNClS7MiuqHlMapsjAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
@@ -49,64 +60,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 03, 2022 at 09:14:50PM -0800, Jaegeuk Kim wrote:
-> On 03/04, Dave Chinner wrote:
-> > On Thu, Mar 03, 2022 at 06:21:04PM -0800, Jaegeuk Kim wrote:
-> > > Otherwise, we will get a deadlock.
-> > 
-> > NACK.
-> > 
-> > We have to be able to evict clean inodes from memory on frozen
-> > inodes because we can still instantiate inodes while the filesytem
-> > is frozen. e.g. there's a find running when the filesystem is
-> > frozen. What happens if we can't evict clean cached inodes from
-> > memory when we run out of memory trying to instantiate new inodes?
-> 
-> Ok, that makes sense.
-> 
-> > 
+On Fri, Mar 04, 2022 at 02:10:08PM -0800, Luis Chamberlain wrote:
+> On Fri, Mar 04, 2022 at 11:10:22AM +1100, Dave Chinner wrote:
+> > On Wed, Mar 02, 2022 at 04:56:54PM -0800, Luis Chamberlain wrote:
+> > > Thinking proactively about LSFMM, regarding just Zone storage..
 > > > 
-> > > [freeze test]                         shrinkder
-> > > freeze_super
-> > >  - pwercpu_down_write(SB_FREEZE_FS)
-> > >                                        - super_cache_scan
-> > >                                          - down_read(&sb->s_umount)
-> > >                                            - prune_icache_sb
-> > >                                             - dispose_list
-> > >                                              - evict
-> > >                                               - f2fs_evict_inode
-> > > thaw_super
-> > >  - down_write(&sb->s_umount);
-> > >                                               - __percpu_down_read(SB_FREEZE_FS)
+> > > I'd like to propose a BoF for Zoned Storage. The point of it is
+> > > to address the existing point points we have and take advantage of
+> > > having folks in the room we can likely settle on things faster which
+> > > otherwise would take years.
+> > > 
+> > > I'll throw at least one topic out:
+> > > 
+> > >   * Raw access for zone append for microbenchmarks:
+> > >   	- are we really happy with the status quo?
+> > > 	- if not what outlets do we have?
+> > > 
+> > > I think the nvme passthrogh stuff deserves it's own shared
+> > > discussion though and should not make it part of the BoF.
 > > 
-> > That seems like a f2fs bug, not a generic problem.
-> > 
-> > Filesystems already have to handle stuff like this if an unlinked
-> > file is closed while the fs is frozen - we have to handle inode
-> > eviction needing to modify the file, and different filesystems
-> > handle this differently. Most filesystems simply block in
-> > ->evict_inode in this case, but this never occurs from the shrinker
-> > context.
-> > 
-> > IOWs, the shrinker should never be evicting inodes that require the
-> > filesystem to immediately block on frozen filesystems. If you have
-> > such inodes in cache at the time the filesystem is frozen, then they
-> > should be purged from the cache as part of the freeze process so the
-> > shrinker won't ever find inodes that it could deadlock on.
+> > Reading through the discussion on this thread, perhaps this session
+> > should be used to educate application developers about how to use
+> > ZoneFS so they never need to manage low level details of zone
+> > storage such as enumerating zones, controlling write pointers
+> > safely for concurrent IO, performing zone resets, etc.
 > 
-> If so, is this a bug in drop_caches_sysctl_handler?
+> I'm not even sure users are really aware that given cap can be different
+> than zone size and btrfs uses zone size to compute size, the size is a
+> flat out lie.
 
-IMO, no.
+Sorry, I don't get what btrfs does with zone management has anything
+to do with using Zonefs to get direct, raw IO access to individual
+zones. Direct IO on open zone fds is likely more efficient than
+doing IO through the standard LBA based block device because ZoneFS
+uses iomap_dio_rw() so it only needs to do one mapping operation per
+IO instead of one per page in the IO. Nor does it have to manage
+buffer heads or other "generic blockdev" functionality that direct
+IO access to zoned storage doesn't require.
 
-> Or, I shouldn't have
-> used "echo 3 > sysfs/drop_caches" with freezefs in xfstests?
+So whatever you're complaining about that btrfs lies about, does or
+doesn't do is irrelevant - Zonefs was written with the express
+purpose of getting user applications away from needing to directly
+manage zone storage. SO if you have special zone IO management
+requirements, work out how they can be supported by zonefs - we
+don't need yet another special purpose direct hardware access API
+for zone storage when we already have a solid solution to the
+problem already.
 
-That should just work.
+> modprobe null_blk nr_devices=0
+> mkdir /sys/kernel/config/nullb/nullb0
+> echo 0 > /sys/kernel/config/nullb/nullb0/completion_nsec
+> echo 0 > /sys/kernel/config/nullb/nullb0/irqmode
+> echo 2 > /sys/kernel/config/nullb/nullb0/queue_mode
+> echo 1024 > /sys/kernel/config/nullb/nullb0/hw_queue_depth
+> echo 1 > /sys/kernel/config/nullb/nullb0/memory_backed
+> echo 1 > /sys/kernel/config/nullb/nullb0/zoned
+> 
+> echo 128 > /sys/kernel/config/nullb/nullb0/zone_size
+> # 6 zones are implied, we are saying 768 for the full storage size..
+> # but...
+> echo 768 > /sys/kernel/config/nullb/nullb0/size
+> 
+> # If we force capacity to be way less than the zone sizes, btrfs still
+> # uses the zone size to do its data / metadata size computation...
+> echo 32 > /sys/kernel/config/nullb/nullb0/zone_capacity
 
-As I said above - if the filesystem cannot process eviction of
-certain types of inodes when the filesystem is frozen, it needs to
-take steps during the freeze process to ensure they can't be evicted
-when the fs is frozen....
+Then that's just a btrfs zone support bug where it's used the
+wrong information to size it's zones. Why not just send a patch to
+fix it?
 
 Cheers,
 
