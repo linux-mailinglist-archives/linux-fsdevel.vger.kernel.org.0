@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 726384CE5C3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Mar 2022 17:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7C994CE5C9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Mar 2022 17:05:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232008AbiCEQFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Mar 2022 11:05:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55908 "EHLO
+        id S232021AbiCEQFv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Mar 2022 11:05:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231998AbiCEQFp (ORCPT
+        with ESMTP id S232001AbiCEQFp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sat, 5 Mar 2022 11:05:45 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A744527FB;
-        Sat,  5 Mar 2022 08:04:50 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id j17so16975020wrc.0;
-        Sat, 05 Mar 2022 08:04:49 -0800 (PST)
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449B5652CE;
+        Sat,  5 Mar 2022 08:04:51 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id c192so6671449wma.4;
+        Sat, 05 Mar 2022 08:04:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FcuiD2GTRh1jKD6riWIdoaj4V02D0ZKz+QuzZ5wgQGU=;
-        b=Rwn3Eyg5/Som6eX6+n+/G/om90aW3CoxBdaqpO9BZ+Q40A3jl16O4IHN715Egvirqq
-         36hXGa770Kvbp/b8595OlbkXGhnzaUPIzO0RIm34wMeD1CwiYLypomNuwyNfxPFgipcr
-         O65KT/eBIkiMtOtksgbbu7DmiyVstakDBM0LgjTYO+NzY6+1VGlszI06Ubln6Hu4dxDv
-         mkBR3oO3mKWipP7WflZbqkI6JdwKpGeBjYDCQwXZY9p5poY1HBJ0WmDTl9YafC9Icpu6
-         D3TrTDy/I47RCxMphjkvhxdJV4oyerbfsbraHthmqMCjyItJY8m3S6Qxy2SkqPsIQtLz
-         2siw==
+        bh=Gl15jVHDWqQUQcpXGK7b6MQUnuZpOd6NqFaENFI8dkU=;
+        b=NGT+lmyuM3B8f/o23zzVpt18DkPE+YnPfDiBMv0xJX9yW28ILYB7HoN3niGKsRrvtS
+         rupYn6Qa+RnL7rgz2qSaAxxtyM/q4y7G5zU7W1ZDiJZdqFXr54CM9uU+/+mxRBerPxlk
+         xSswoIRT97p5+jZyf948JagexhFdnii1VDJbO34oZtjH/YdCHfKvXPkEhsZvDdotNrk+
+         dk1rLZ+nX/FQuYcTGoTKf3a7nxvbpw35Qha8JdG1GYShBxuTjWf28qquWeqOGObwhgg8
+         VyxX5WSviA6cXM+FBF7ehUyeA8kEPN3bmZemQdxr7KAo9/ns2V7mNUKxZNffLskd072V
+         PoiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FcuiD2GTRh1jKD6riWIdoaj4V02D0ZKz+QuzZ5wgQGU=;
-        b=U9Uu5LxeoxpbPc9zib1Drvi8vtfNRiTnxHYu01AIx/ZEkP+exFLzblPFsWsSuRk7Gd
-         J63GCrqu8dfNDLOzypCUOWkD8Mkmv2/2LoPb3QKpqKbjVG1vClyjX82GejfAGJZucUGV
-         ZnbLoIxhM480G4apDayJfUSJoVuxGA/mv4u8ZIrXR3FisYaSKalvhr9Wzf2bhaA6w6Rj
-         SJRQaB/ktV3kL/C/UG7ikpaYXozY9Ic2xPKUzTekCij3tLYrtfwWJWNl28/XIz00W/rZ
-         yI2/l7aNFRRiH1XkDwiu3ATnjAnqozeV46UftUdeDp+O9NnJNLAnFPOXORq9gGZfjQOc
-         b8hQ==
-X-Gm-Message-State: AOAM533N4HoEfxApV1VyxJkO7xvliFZ2d28je1y4eua99YPvMGJI8uwf
-        SaSWcXUgP26rk72SqFiLh4c=
-X-Google-Smtp-Source: ABdhPJxbG0YgMfH7AalD4bl48AHqlO8NwmV7Eay438yKe6WJnJy9fnHAk78EibAzk/8aE+Hy/xAnnA==
-X-Received: by 2002:a5d:6392:0:b0:1f0:651d:51ac with SMTP id p18-20020a5d6392000000b001f0651d51acmr2895301wru.253.1646496288526;
-        Sat, 05 Mar 2022 08:04:48 -0800 (PST)
+        bh=Gl15jVHDWqQUQcpXGK7b6MQUnuZpOd6NqFaENFI8dkU=;
+        b=ojKPGUVC7SB+yrQT6DXM1/W3FwowjuaCA2/7MfVdwH6s1CmGutfwwdARC3L/pWQPhC
+         oP34hLBWroUEZ5CpG1QESiM4bvbyLLR2ZTYYFR36w7whGkqdmgxAg57+lM/OiByCNoBr
+         oMI+nKDJqgL6Vi4e80ErJSTvSH2/KyF7pB2fFnLf9VcaOBPTbuHno2M7Jd2zTc3QSh0s
+         7uC4Gb5UNahGIg739KaxkUPy1rYxkfhr9kH02DhdFTYPr/HVmke50HFnBIpK5WIRD87T
+         D6fWAdZ/74MPBCWdyFF8v19msBVL2UNcfeq/KWPQTO6IY09aAkqSeBtHF0/G+jW7qDXf
+         PGyA==
+X-Gm-Message-State: AOAM531dnebIgNNyfbI1kJVoqe01ulera7dFj1LpOf4e/E7cYFg7O8Gk
+        xIZ0bMhzgf3LhTfIpvudM+FrRF7ftOM=
+X-Google-Smtp-Source: ABdhPJwzSqC7SMuIZY0VYJ23xyzOpk5c2DMYmZ19g11IitMRBy+GdmJLnfLURcnoJt4dkB+T8rvYfA==
+X-Received: by 2002:a05:600c:3d99:b0:381:546c:8195 with SMTP id bi25-20020a05600c3d9900b00381546c8195mr12006349wmb.112.1646496289826;
+        Sat, 05 Mar 2022 08:04:49 -0800 (PST)
 Received: from localhost.localdomain ([77.137.71.203])
-        by smtp.gmail.com with ESMTPSA id n5-20020a5d5985000000b001f0122f63e1sm1650717wri.85.2022.03.05.08.04.47
+        by smtp.gmail.com with ESMTPSA id n5-20020a5d5985000000b001f0122f63e1sm1650717wri.85.2022.03.05.08.04.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Mar 2022 08:04:48 -0800 (PST)
+        Sat, 05 Mar 2022 08:04:49 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Dave Chinner <david@fromorbit.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 5/9] fs: collect per-sb io stats
-Date:   Sat,  5 Mar 2022 18:04:20 +0200
-Message-Id: <20220305160424.1040102-6-amir73il@gmail.com>
+Subject: [PATCH v4 6/9] fs: report per-sb io stats
+Date:   Sat,  5 Mar 2022 18:04:21 +0200
+Message-Id: <20220305160424.1040102-7-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220305160424.1040102-1-amir73il@gmail.com>
 References: <20220305160424.1040102-1-amir73il@gmail.com>
@@ -71,204 +71,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace task io account helpers with wrappers that may also collect
-per-sb io stats for filesystems that have per-sb io stats enabled.
+Show optional collected per-sb io stats in /proc/<pid>/mountstats
+for filesystems that do not implement their own show_stats() method
+and have generic per-sb stats enabled.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/read_write.c | 88 +++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 64 insertions(+), 24 deletions(-)
+ fs/proc_namespace.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 0074afa7ecb3..8c599bf2dd78 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -20,6 +20,7 @@
- #include <linux/compat.h>
- #include <linux/mount.h>
- #include <linux/fs.h>
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 49650e54d2f8..9054a909e031 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -11,6 +11,7 @@
+ #include <linux/nsproxy.h>
+ #include <linux/security.h>
+ #include <linux/fs_struct.h>
 +#include <linux/fs_iostats.h>
- #include "internal.h"
+ #include <linux/sched/task.h>
  
- #include <linux/uaccess.h>
-@@ -34,6 +35,45 @@ const struct file_operations generic_ro_fops = {
- 
- EXPORT_SYMBOL(generic_ro_fops);
- 
-+static inline void file_iostats_counter_inc(struct file *file, int id)
-+{
-+	if (file)
-+		sb_iostats_counter_inc(file->f_path.mnt->mnt_sb, id);
-+}
+ #include "proc/internal.h" /* only for get_proc_task() in ->open() */
+@@ -232,6 +233,21 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+ 	if (sb->s_op->show_stats) {
+ 		seq_putc(m, ' ');
+ 		err = sb->s_op->show_stats(m, mnt_path.dentry);
++	} else if (sb_has_iostats(sb)) {
++		struct sb_iostats *iostats = sb_iostats(sb);
 +
-+static inline void file_iostats_counter_add(struct file *file, int id,
-+					    ssize_t amt)
-+{
-+	if (file)
-+		sb_iostats_counter_add(file->f_path.mnt->mnt_sb, id, amt);
-+}
-+
-+static void file_add_rchar(struct file *file, struct task_struct *tsk,
-+			   ssize_t amt)
-+{
-+	file_iostats_counter_add(file, SB_IOSTATS_CHARS_RD, amt);
-+	add_rchar(tsk, amt);
-+}
-+
-+static void file_add_wchar(struct file *file, struct task_struct *tsk,
-+			   ssize_t amt)
-+{
-+	file_iostats_counter_add(file, SB_IOSTATS_CHARS_WR, amt);
-+	add_wchar(tsk, amt);
-+}
-+
-+static void file_inc_syscr(struct file *file, struct task_struct *tsk)
-+{
-+	file_iostats_counter_inc(file, SB_IOSTATS_SYSCALLS_RD);
-+	inc_syscr(current);
-+}
-+
-+static void file_inc_syscw(struct file *file, struct task_struct *tsk)
-+{
-+	file_iostats_counter_inc(file, SB_IOSTATS_SYSCALLS_WR);
-+	inc_syscw(current);
-+}
-+
- static inline bool unsigned_offsets(struct file *file)
- {
- 	return file->f_mode & FMODE_UNSIGNED_OFFSET;
-@@ -441,9 +481,9 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
- 		if (pos)
- 			*pos = kiocb.ki_pos;
- 		fsnotify_access(file);
--		add_rchar(current, ret);
-+		file_add_rchar(file, current, ret);
- 	}
--	inc_syscr(current);
-+	file_inc_syscr(file, current);
- 	return ret;
- }
- 
-@@ -483,9 +523,9 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
- 		ret = -EINVAL;
- 	if (ret > 0) {
- 		fsnotify_access(file);
--		add_rchar(current, ret);
-+		file_add_rchar(file, current, ret);
- 	}
--	inc_syscr(current);
-+	file_inc_syscr(file, current);
- 	return ret;
- }
- 
-@@ -537,9 +577,9 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t
- 		if (pos)
- 			*pos = kiocb.ki_pos;
- 		fsnotify_modify(file);
--		add_wchar(current, ret);
-+		file_add_wchar(file, current, ret);
- 	}
--	inc_syscw(current);
-+	file_inc_syscw(file, current);
- 	return ret;
- }
- /*
-@@ -592,9 +632,9 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
- 		ret = -EINVAL;
- 	if (ret > 0) {
- 		fsnotify_modify(file);
--		add_wchar(current, ret);
-+		file_add_wchar(file, current, ret);
- 	}
--	inc_syscw(current);
-+	file_inc_syscw(file, current);
- 	file_end_write(file);
- 	return ret;
- }
-@@ -947,8 +987,8 @@ static ssize_t do_readv(unsigned long fd, const struct iovec __user *vec,
++		/* Similar to /proc/<pid>/io */
++		seq_printf(m, "\n"
++			   "\ttimes: %lld %lld\n"
++			   "\trchar: %lld\n"
++			   "\twchar: %lld\n"
++			   "\tsyscr: %lld\n"
++			   "\tsyscw: %lld\n",
++			   iostats->start_time, ktime_get_seconds(),
++			   sb_iostats_counter_read(sb, SB_IOSTATS_CHARS_RD),
++			   sb_iostats_counter_read(sb, SB_IOSTATS_CHARS_WR),
++			   sb_iostats_counter_read(sb, SB_IOSTATS_SYSCALLS_RD),
++			   sb_iostats_counter_read(sb, SB_IOSTATS_SYSCALLS_WR));
  	}
  
- 	if (ret > 0)
--		add_rchar(current, ret);
--	inc_syscr(current);
-+		file_add_rchar(f.file, current, ret);
-+	file_inc_syscr(f.file, current);
- 	return ret;
- }
- 
-@@ -971,8 +1011,8 @@ static ssize_t do_writev(unsigned long fd, const struct iovec __user *vec,
- 	}
- 
- 	if (ret > 0)
--		add_wchar(current, ret);
--	inc_syscw(current);
-+		file_add_wchar(f.file, current, ret);
-+	file_inc_syscw(f.file, current);
- 	return ret;
- }
- 
-@@ -1000,8 +1040,8 @@ static ssize_t do_preadv(unsigned long fd, const struct iovec __user *vec,
- 	}
- 
- 	if (ret > 0)
--		add_rchar(current, ret);
--	inc_syscr(current);
-+		file_add_rchar(f.file, current, ret);
-+	file_inc_syscr(f.file, current);
- 	return ret;
- }
- 
-@@ -1023,8 +1063,8 @@ static ssize_t do_pwritev(unsigned long fd, const struct iovec __user *vec,
- 	}
- 
- 	if (ret > 0)
--		add_wchar(current, ret);
--	inc_syscw(current);
-+		file_add_wchar(f.file, current, ret);
-+	file_inc_syscw(f.file, current);
- 	return ret;
- }
- 
-@@ -1250,8 +1290,8 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
- 	}
- 
- 	if (retval > 0) {
--		add_rchar(current, retval);
--		add_wchar(current, retval);
-+		file_add_rchar(in.file, current, retval);
-+		file_add_wchar(out.file, current, retval);
- 		fsnotify_access(in.file);
- 		fsnotify_modify(out.file);
- 		out.file->f_pos = out_pos;
-@@ -1261,8 +1301,8 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
- 			in.file->f_pos = pos;
- 	}
- 
--	inc_syscr(current);
--	inc_syscw(current);
-+	file_inc_syscr(in.file, current);
-+	file_inc_syscw(out.file, current);
- 	if (pos > max)
- 		retval = -EOVERFLOW;
- 
-@@ -1511,13 +1551,13 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- done:
- 	if (ret > 0) {
- 		fsnotify_access(file_in);
--		add_rchar(current, ret);
-+		file_add_rchar(file_in, current, ret);
- 		fsnotify_modify(file_out);
--		add_wchar(current, ret);
-+		file_add_wchar(file_out, current, ret);
- 	}
- 
--	inc_syscr(current);
--	inc_syscw(current);
-+	file_inc_syscr(file_in, current);
-+	file_inc_syscw(file_out, current);
- 
- 	file_end_write(file_out);
- 
+ 	seq_putc(m, '\n');
 -- 
 2.25.1
 
