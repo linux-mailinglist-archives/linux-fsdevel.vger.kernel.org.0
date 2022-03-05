@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A9A54CE5CA
+	by mail.lfdr.de (Postfix) with ESMTP id AAC4B4CE5CB
 	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Mar 2022 17:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbiCEQFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Mar 2022 11:05:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55948 "EHLO
+        id S231997AbiCEQFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Mar 2022 11:05:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232007AbiCEQFp (ORCPT
+        with ESMTP id S232016AbiCEQFq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Mar 2022 11:05:45 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9919454BCA;
-        Sat,  5 Mar 2022 08:04:52 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id o18-20020a05600c4fd200b003826701f847so8246357wmq.4;
-        Sat, 05 Mar 2022 08:04:52 -0800 (PST)
+        Sat, 5 Mar 2022 11:05:46 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D35A38BE0;
+        Sat,  5 Mar 2022 08:04:54 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id n15so2781562wra.6;
+        Sat, 05 Mar 2022 08:04:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hK1LzTjIk6ekWwoL6fV3lgEDT91apb0sc/qKFWvkbwM=;
-        b=GkGHEWXxoTrPmH7Mk9MIFj2BM8l3ufOFVCLLXWHxR8bK3DVGd/dDIhbYk6gclKD6bf
-         hjgotmE9sslhMjmATEfbG+Up6lv6K7UPNisDm2UYrD+6IlKR7ml+TJGbaR6hi2GXj1ac
-         ogycxiqdjNjvQFyTIS4i3WRLDZRXjVvfDH5shzXYp59T6OEA5D50f2FDaIYrD+e9HHwt
-         K0jElp3++G9O8aNq4XNwqPS/DEGlgm9UEmmN3ubFNfgflBoUl8cq1hNkiCkvBE98NI5s
-         FM9iU9O1d1E6/VYPevFmtxQYSlFrfR5fk8ZxHOX7r5t1I2cQLfAJfbshcnM7YgaLZLav
-         dJtQ==
+        bh=LwkEll/Fp2m1q/Q8MPQnu9BfhDdiF2uLgfkNWk7jG1o=;
+        b=c8xfrY5KMxjGvAbdGOgwAAuBDQDUEomIJbz3cBMAkBlT3hYDhKNB/IssIKsfrbzz40
+         C4wsUqOZhH6LQyPd7Q0VsTBE6/tGHr0yDcT+odnUfukSHqW3qNesQomZNJF5s89vpBkf
+         M4hySUX9hx9u3JLu8qPbjwWvwIg1WK4f7MsXE8q1d9QbtC+2/TFqzSnlLneoHT4GSWUV
+         zxmTpUnNGIxUfC46J544RzUlYJhP4mMM3BO1a9jFCPWpZIjyg/Eg5xwkJQkY6ajk0ncF
+         hiWXiyOFGCLCamxhSC8sk82XnG6yUPQOixmY2HRSEY1oExsintzR9NgmrUwXX06bI+OR
+         yTaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hK1LzTjIk6ekWwoL6fV3lgEDT91apb0sc/qKFWvkbwM=;
-        b=7FpwxCKrRR76O9GclVsK3nA6i8l00o0T9ZXIVaATuRpRR87a+oP+LFNLZEHRFwgITI
-         +bCQEEwMml5ifqi/FiB+wfOfyoB3rTiEYXhep7vNNFnDUJFquTiTpI3vekot/HbowRvC
-         0z1KlweCtaV6AUpxLUsUiCRB+uem+ERtouAIpPo/Jnv4BQg96/0nJqREhwKvyoHV6txQ
-         9XDTij3bcj+FYzrjgn4eEZTJmxgyiEoZDQvxHH4AHLCr0W2mdAotxmz/zmvIoSg9svWg
-         vc8+KahPoIpMYNhCnZLLsCVB4vH7LJgQSqv3z65L1AqPZWRiYT5hJoI/oUH5HsBSH3gh
-         UGQA==
-X-Gm-Message-State: AOAM530bDQZ9K3UDcr6FM9Y0zcBlU36wnDxQyc1PdmNAOAKN6CJMlbwc
-        j6UoGjq2ItpWT/DjVtKDRFw=
-X-Google-Smtp-Source: ABdhPJxg6VAl9eZiZSmVUrGkXdtNwip7gD1K7QQ4gpXJAXSjwMqfIP6PnbCdp9EovoVRJ8r6YXTOAw==
-X-Received: by 2002:a05:600c:3541:b0:389:95b2:5f63 with SMTP id i1-20020a05600c354100b0038995b25f63mr2249235wmq.126.1646496291198;
-        Sat, 05 Mar 2022 08:04:51 -0800 (PST)
+        bh=LwkEll/Fp2m1q/Q8MPQnu9BfhDdiF2uLgfkNWk7jG1o=;
+        b=oA3DLQCOFRqbj/u1IV/j8KQ5X23nHldM6PTwLZyxX3VsqtWzt3cHDZYACruWvwvOSI
+         LjI8Xo9bw6dfVy66Y6YpKkUfQQEgVcmP1cdoIGzfebk+JtzaotXXbv3We69R8zVZW3su
+         fmE8db5z/fQUVGIS/wA0K3p+XFSovs8apH1LjIqJZ/XmaYqIaVFcUJaX7gRPtRslHDjA
+         Mxlc6npqh03wgNuwh7dAN7GFWiblc3ccOKumfXPXmHCXBfmsj9egxeAstXN8wmjYhAR6
+         3lbAr1PQDjaBvb9fz7ewE0d1YVzJJ46q5gZP5TkG/GOr162pSHvnz0P/wExkhAXr8YnM
+         73QA==
+X-Gm-Message-State: AOAM532DmVLpBAZMaOtsVs+275BbVlETMbwPO4IhNMJ9K/tvNeGAchGm
+        J7qBA66fuhTUYRtE5mMfgQU=
+X-Google-Smtp-Source: ABdhPJwGvoYr/6vkLkjML4gFOAxQ7zCfqGtN6TOiFIiJi3ZZz6Vacwc2+Y2wT1k/tLZ1HfDeBJ7oCQ==
+X-Received: by 2002:a5d:6da1:0:b0:1e3:2bf5:13c with SMTP id u1-20020a5d6da1000000b001e32bf5013cmr3018931wrs.316.1646496292881;
+        Sat, 05 Mar 2022 08:04:52 -0800 (PST)
 Received: from localhost.localdomain ([77.137.71.203])
-        by smtp.gmail.com with ESMTPSA id n5-20020a5d5985000000b001f0122f63e1sm1650717wri.85.2022.03.05.08.04.49
+        by smtp.gmail.com with ESMTPSA id n5-20020a5d5985000000b001f0122f63e1sm1650717wri.85.2022.03.05.08.04.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Mar 2022 08:04:50 -0800 (PST)
+        Sat, 05 Mar 2022 08:04:52 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Dave Chinner <david@fromorbit.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 7/9] ovl: opt-in for per-sb io stats
-Date:   Sat,  5 Mar 2022 18:04:22 +0200
-Message-Id: <20220305160424.1040102-8-amir73il@gmail.com>
+Subject: [PATCH v4 8/9] fuse: opt-in for per-sb io stats
+Date:   Sat,  5 Mar 2022 18:04:23 +0200
+Message-Id: <20220305160424.1040102-9-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220305160424.1040102-1-amir73il@gmail.com>
 References: <20220305160424.1040102-1-amir73il@gmail.com>
@@ -78,40 +78,46 @@ Similar functionality is provided for NFS mounts via the nfsstat
 utility that reads the NFS client's stats from /proc/pid/mountstats.
 
 There is currently no good way for a system administrator or a
-monitoring application inside a container to track the amount of io
-performed via overlayfs.
+monitoring application to track the amount of io performed via fuse
+filesystems.
 
 Opt-in for generic io stats via /proc/pid/mountstats to provide
 that functionality.
+
+It is possible to collect io stats on the server side inside libfuse,
+but those io stats will not cover cached writes and reads.  Therefore,
+implementing the server side io stats would be complementary to these
+client side io stats.  Also, this feature provides the io stats for
+existing fuse filesystem/lib release binaries.
 
 This feature depends on CONFIG_FS_IOSTATS.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/overlayfs/super.c | 3 ++-
+ fs/fuse/inode.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 7bb0a47cb615..4a5847bca1a6 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -6,6 +6,7 @@
- 
- #include <uapi/linux/magic.h>
- #include <linux/fs.h>
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 9ee36aa73251..a2cd90e059f8 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/fs_context.h>
 +#include <linux/fs_iostats.h>
- #include <linux/namei.h>
- #include <linux/xattr.h>
- #include <linux/mount.h>
-@@ -2165,7 +2166,7 @@ static struct dentry *ovl_mount(struct file_system_type *fs_type, int flags,
- static struct file_system_type ovl_fs_type = {
+ #include <linux/fs_parser.h>
+ #include <linux/statfs.h>
+ #include <linux/random.h>
+@@ -1806,7 +1807,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+ static struct file_system_type fuse_fs_type = {
  	.owner		= THIS_MODULE,
- 	.name		= "overlay",
--	.fs_flags	= FS_USERNS_MOUNT,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_SB_IOSTATS,
- 	.mount		= ovl_mount,
- 	.kill_sb	= kill_anon_super,
- };
+ 	.name		= "fuse",
+-	.fs_flags	= FS_HAS_SUBTYPE | FS_USERNS_MOUNT,
++	.fs_flags	= FS_HAS_SUBTYPE | FS_USERNS_MOUNT | FS_SB_IOSTATS,
+ 	.init_fs_context = fuse_init_fs_context,
+ 	.parameters	= fuse_fs_parameters,
+ 	.kill_sb	= fuse_kill_sb_anon,
 -- 
 2.25.1
 
