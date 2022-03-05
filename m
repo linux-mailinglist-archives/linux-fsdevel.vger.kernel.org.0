@@ -2,135 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 884E04CE336
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Mar 2022 07:03:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AA9B4CE36B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Mar 2022 08:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231321AbiCEGE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Mar 2022 01:04:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56542 "EHLO
+        id S231430AbiCEHcN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Mar 2022 02:32:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiCEGE0 (ORCPT
+        with ESMTP id S229479AbiCEHcM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Mar 2022 01:04:26 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9024C23B4CF;
-        Fri,  4 Mar 2022 22:03:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B6E260EF1;
-        Sat,  5 Mar 2022 06:03:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F272C340EE;
-        Sat,  5 Mar 2022 06:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646460213;
-        bh=m3yvozZ792No26ca3pP4/XMLgVq+iBFxYpN2iMjjebY=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=MTHU5SjwqjPAkWPd48sd8JU08MfMVv6NRT1i5fUVSPieSgQdaxjfABd5spQi7I5rZ
-         Nj9fOExGetQIh6bl3husnOW89yFbQZhGI9KDUIdiDMeEYTSfdErQ7mX43MklktCB5a
-         M7Dz3c4G/a1MwxTal0cHzlTpUmqAqsSfDJFul/YhmEOCIk0AAHY7+GbDC/u/H1HABK
-         KGYcQXHERHQEyE6NYYGAVg61a7pKJcLldmXz3lqKD0JhwJZyBrUCL2AxneKgVqGHoF
-         JLZ8meVFn9BdCCrxDeHajYVdAHdOTXJmISOvt1u1v0t9ww1+OdVWjJPkNkaM+MLSP/
-         7iBuCUiE8x+7w==
-Received: by mail-wr1-f52.google.com with SMTP id n15so1420221wra.6;
-        Fri, 04 Mar 2022 22:03:33 -0800 (PST)
-X-Gm-Message-State: AOAM531LvpZ1Xsm6hybcudT2omvY1kEtN+YSIlsyX7sPpxLr9oHCemnU
-        g1E2uP+75R2jO+5zcRCoUMI5Wruxjwlbavp5vY8=
-X-Google-Smtp-Source: ABdhPJyejB6pe7hZ+HhxkuXjN9vglqw6GhCNi3XtLx/b7ReBYExKt1RfBfKGY9AhrwPeQXTXHHOhhgf5H8i0g1WFYN0=
-X-Received: by 2002:a05:6000:1c16:b0:1ef:d315:8c58 with SMTP id
- ba22-20020a0560001c1600b001efd3158c58mr1346808wrb.504.1646460211726; Fri, 04
- Mar 2022 22:03:31 -0800 (PST)
+        Sat, 5 Mar 2022 02:32:12 -0500
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE5B31527
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Mar 2022 23:31:22 -0800 (PST)
+Received: by mail-yb1-xb2d.google.com with SMTP id g1so21241473ybe.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Mar 2022 23:31:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=fItAEaeQIUtMzn4Yl8LE4cca/bBHs/8pponZDSptgoiGm1/Y6L2y3ptRoKaYT3JLTQ
+         f7tJ7/XcykpyiFUH4c/K5VICO3vqaOgiM2YdoO+KRR2whro5+uIh/CCI/7IMLp8Bc3xf
+         SDkfoYac3/5CnKR93bmI6Fsx2js7jfJdg08NCID8jFi0YxbGgRjOQVGdWnnpKYPFvL46
+         42FoUGgi5NpdEA60/aKczUjUu82WlN72hLgXXTXB3w4yDAF0W45AJV9NkpQyBx1jvM31
+         altSXMWKRTGFhNclAOCWSc+RWK8g3nOaSxFxD8jacefOjDwbndZwMOz7ZCqzA04Gt3fk
+         O6Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=rAblQiv04wPK8X69KYmcntRrQB0uSbH6TJXQxoNnl0vsDUkvPOn7QhDiujw9Y6y8kp
+         Cu9jSVqLORgrXLt4ALSO9xsFvi6fHw63chl6JSy9Flp4hq4UTJqeWtRpntrwwHWR976o
+         gZpFX+rDCezRksoJXMzS+jAdopyo8kq+kxZnBw/aiIhEsrkN1TaeeUZsVX/eVNsXJtS5
+         i5/75kzT5pQTPoo/Pz6k2KyMdp6Dx9V481XjxHxmQRQZK3sDoYzJ1glTiVlPNEf39si9
+         jsMow0Y9yocfqoxsou/sEdL9DFspEbjKFkm2Q1HxgBAihVkE1jRgk9giXVkRdszyYNSN
+         RIag==
+X-Gm-Message-State: AOAM530tZBJlzDqie+pVV9FCyoR4+mFJAVTWp3V2I8ctPzUkTXXm8koK
+        X9WORdPTiI3BCJNmb2LQOK8rz7kPayOKL2GuZws=
+X-Google-Smtp-Source: ABdhPJxiFsqQoF+ZtIW9wzAIPSsA7FVtkzYNrfa+yoYyq1EiZ3aVJmuNzJUV8TBJ77g/QbZR1citZMak1jaVgNtRot0=
+X-Received: by 2002:a25:32d4:0:b0:628:9974:3baf with SMTP id
+ y203-20020a2532d4000000b0062899743bafmr1600185yby.497.1646465481839; Fri, 04
+ Mar 2022 23:31:21 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a5d:4e02:0:0:0:0:0 with HTTP; Fri, 4 Mar 2022 22:03:30 -0800 (PST)
-In-Reply-To: <HK2PR04MB38914869B1FEE326CFE11779812D9@HK2PR04MB3891.apcprd04.prod.outlook.com>
-References: <HK2PR04MB38914869B1FEE326CFE11779812D9@HK2PR04MB3891.apcprd04.prod.outlook.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Sat, 5 Mar 2022 15:03:30 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_hF+xYXNiawCZLYmnha+wSUSUCEJTVBw8v6UDYfjPiUg@mail.gmail.com>
-Message-ID: <CAKYAXd_hF+xYXNiawCZLYmnha+wSUSUCEJTVBw8v6UDYfjPiUg@mail.gmail.com>
-Subject: Re: [PATCH] exfat: do not clear VolumeDirty in writeback
-To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Received: by 2002:a05:7010:738a:b0:210:6fe6:62e1 with HTTP; Fri, 4 Mar 2022
+ 23:31:21 -0800 (PST)
+Reply-To: dravasmith27@gmail.com
+From:   Dr Ava Smith <gracebanneth@gmail.com>
+Date:   Fri, 4 Mar 2022 23:31:21 -0800
+Message-ID: <CABo=7A1+yiT8NvSP8yeNiA5e-oFWw7Db_R=GZr22Sg5eh=oLWg@mail.gmail.com>
+Subject: GREETINGS FROM DR AVA SMITH
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: Yes, score=5.1 required=5.0 tests=BAYES_20,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        SUBJ_ALL_CAPS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
         autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:b2d listed in]
+        [list.dnswl.org]
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1311]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [dravasmith27[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [gracebanneth[at]gmail.com]
+        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.6 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-02-08 14:18 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
-Hi Yuezhang,
-
-> Before this commit, VolumeDirty will be cleared first in
-> writeback if 'dirsync' or 'sync' is not enabled. If the power
-> is suddenly cut off after cleaning VolumeDirty but other
-> updates are not written, the exFAT filesystem will not be able
-> to detect the power failure in the next mount.
->
-> And VolumeDirty will be set again when updating the parent
-> directory. It means that BootSector will be written twice in each
-> writeback, that will shorten the life of the device.
->
-> Reviewed-by: Andy.Wu <Andy.Wu@sony.com>
-> Reviewed-by: Aoyama, Wataru <wataru.aoyama@sony.com>
-> Signed-off-by: Yuezhang.Mo <Yuezhang.Mo@sony.com>
-> ---
->  fs/exfat/super.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> index 8c9fb7dcec16..f4906c17475e 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -25,6 +25,8 @@
->  static char exfat_default_iocharset[] = CONFIG_EXFAT_DEFAULT_IOCHARSET;
->  static struct kmem_cache *exfat_inode_cachep;
->
-> +static int __exfat_clear_volume_dirty(struct super_block *sb);
-> +
->  static void exfat_free_iocharset(struct exfat_sb_info *sbi)
->  {
->  	if (sbi->options.iocharset != exfat_default_iocharset)
-> @@ -64,7 +66,7 @@ static int exfat_sync_fs(struct super_block *sb, int wait)
->  	/* If there are some dirty buffers in the bdev inode */
->  	mutex_lock(&sbi->s_lock);
->  	sync_blockdev(sb->s_bdev);
-> -	if (exfat_clear_volume_dirty(sb))
-> +	if (__exfat_clear_volume_dirty(sb))
->  		err = -EIO;
->  	mutex_unlock(&sbi->s_lock);
->  	return err;
-> @@ -139,13 +141,21 @@ int exfat_set_volume_dirty(struct super_block *sb)
->  	return exfat_set_vol_flags(sb, sbi->vol_flags | VOLUME_DIRTY);
->  }
->
-> -int exfat_clear_volume_dirty(struct super_block *sb)
-> +static int __exfat_clear_volume_dirty(struct super_block *sb)
->  {
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
->
->  	return exfat_set_vol_flags(sb, sbi->vol_flags & ~VOLUME_DIRTY);
->  }
->
-> +int exfat_clear_volume_dirty(struct super_block *sb)
-> +{
-> +	if (sb->s_flags & (SB_SYNCHRONOUS | SB_DIRSYNC))
-How about moving exfat_clear_volume_dirty() to IS_DIRSYNC() check in
-each operations instead of this check?
-
-> +		return __exfat_clear_volume_dirty(sb);
-> +
-> +	return 0;
-> +}
-> +
->  static int exfat_show_options(struct seq_file *m, struct dentry *root)
->  {
->  	struct super_block *sb = root->d_sb;
-> --
-> 2.25.1
+-- 
+Hello Dear,
+how are you today?hope you are fine
+My name is Dr Ava Smith ,Am an English and French nationalities.
+I will give you pictures and more details about me as soon as i hear from you
+Thanks
+Ava
