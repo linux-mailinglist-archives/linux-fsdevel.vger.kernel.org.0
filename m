@@ -2,96 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFFE44CE7D8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 00:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D28E4CE805
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 02:10:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbiCEX4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Mar 2022 18:56:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
+        id S232170AbiCFBLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Mar 2022 20:11:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbiCEX4f (ORCPT
+        with ESMTP id S230025AbiCFBLr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Mar 2022 18:56:35 -0500
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF26F275C6;
-        Sat,  5 Mar 2022 15:55:44 -0800 (PST)
-Received: by mail-pg1-f177.google.com with SMTP id o8so10514700pgf.9;
-        Sat, 05 Mar 2022 15:55:44 -0800 (PST)
+        Sat, 5 Mar 2022 20:11:47 -0500
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C8535DCC;
+        Sat,  5 Mar 2022 17:10:56 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id e13so10897022plh.3;
+        Sat, 05 Mar 2022 17:10:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=fTFM0BLrFEzuVT+NEbfUfqIis6Wa5g9+pZvF27yAoQo=;
-        b=0wPEynVrY/qqA66VbkSOcfZOqffVUei6/bpMorLd1561OW2IiV7qCvgejAuNCp//XQ
-         3Hu6SOrZYdWHBX7EdOQ4Du9vn+6JFWLFbUgZ+B1oTz3qfVud5dNxxmaGjP6pt53irw0p
-         jzlGjQzwSgjAFqZIfZTr7zfJIrb8SYeE0KAgGeRhmuyrJpMCgA55ZXNXh1qOA+pL003Z
-         ZpfyXZt7aXOGVEnFlk+HRpehv1G6q/RORGylCfwhQkk/h4Cj6ksJb6C6+QSb3+hkLFZN
-         BtD5QNnMTnSIpAmc0c4e2efmwusSuyevh8ndn3Z7CP/6aW8uNaMsdG6zo3gMZeAeKRIk
-         sWnA==
-X-Gm-Message-State: AOAM530jGjMJMuFF7TLyaCxrs4S7fVj/sCh01IcmZvw2FvA/FgX2CfPe
-        4YvKFbnE44/UKhKO6wnGfoM8S3uWgqU=
-X-Google-Smtp-Source: ABdhPJz5VvA3U2fLc1z+mBiMQ4u+RZgL1KkG+Po1/Fl96HJUah2jzC5KKpI11NFwskc9qjJ1fhfUsQ==
-X-Received: by 2002:a62:cdc3:0:b0:4e0:e439:ed2d with SMTP id o186-20020a62cdc3000000b004e0e439ed2dmr5770274pfg.39.1646524543626;
-        Sat, 05 Mar 2022 15:55:43 -0800 (PST)
-Received: from ?IPV6:2601:647:4000:d7:feaa:14ff:fe9d:6dbd? ([2601:647:4000:d7:feaa:14ff:fe9d:6dbd])
-        by smtp.gmail.com with ESMTPSA id h2-20020a056a00218200b004f6519ce666sm10984217pfi.170.2022.03.05.15.55.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Mar 2022 15:55:43 -0800 (PST)
-Message-ID: <535ff59f-cde0-caf4-6e47-a0f2db03261e@acm.org>
-Date:   Sat, 5 Mar 2022 15:55:41 -0800
+        bh=hP0S734wwC7pJwjk7blXilh0iBBGpOed5Zt7sWmFDBc=;
+        b=8BjM8tBotYzlBRq5fS17+PMjBbCtlvQUMDCydjz5nVZ4YRLGTXUxzhOx2qu0QILA8f
+         s1gHZzJpKwopxa7LXowZCO03ZLP1sPQZFjCJo/9J1Rr2jIuDCTN1jcqIz9Gzu2TepPgW
+         QiVblafcxTm3ME5QEZe51agUljSzvZk8xdbEuWdZU7HSD/8ACgSgjiWSqhXDLtmlcgus
+         fXaCKc8px1deV0D3Il/2/fXmJ5hcgbQY+pJGMSi7kz6oDn/prv40Ra6OFzYNDbToSejf
+         t8d7zfvaFi2omGlXzb4kdchJw/aTYHWzxlZEHL5N2LPKgXT43TZs2sQuStb9itGxK5d+
+         Hr1g==
+X-Gm-Message-State: AOAM530wdfhBd/bS2zOQcmbxGAtyBPBRZ351Kq+dRDeWEES/gTVS7Fzn
+        dOClPZx0akV+1E7yonLdzjbapR8PgdM=
+X-Google-Smtp-Source: ABdhPJw/BbHe5c5KXzInOg/T8oKGoHflYa7mAUS0UN1ErXaLf37QSc0SvlefrsVUZjoU74jkuGJy2Q==
+X-Received: by 2002:a17:902:aa8e:b0:14f:fa5e:fe80 with SMTP id d14-20020a170902aa8e00b0014ffa5efe80mr6011236plr.84.1646529055480;
+        Sat, 05 Mar 2022 17:10:55 -0800 (PST)
+Received: from localhost.localdomain ([61.74.27.164])
+        by smtp.gmail.com with ESMTPSA id d2-20020a056a0024c200b004f6b6817549sm7668110pfv.173.2022.03.05.17.10.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Mar 2022 17:10:55 -0800 (PST)
+From:   Namjae Jeon <linkinjeon@kernel.org>
+To:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     smfrench@gmail.com, hyc.lee@gmail.com, senozhatsky@chromium.org,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 1/4] ksmbd: remove internal.h include
+Date:   Sun,  6 Mar 2022 10:10:42 +0900
+Message-Id: <20220306011045.13014-1-linkinjeon@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 2/2] block: remove the per-bio/request write hint
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>
-Cc:     axboe@kernel.dk, sagi@grimberg.me, kbusch@kernel.org,
-        song@kernel.org, linux-block@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20220304175556.407719-1-hch@lst.de>
- <20220304175556.407719-2-hch@lst.de>
- <20220304221255.GL3927073@dread.disaster.area>
- <20220305051929.GA24696@lst.de>
- <20220305214056.GO3927073@dread.disaster.area>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20220305214056.GO3927073@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
         FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/5/22 13:40, Dave Chinner wrote:
-> On Sat, Mar 05, 2022 at 06:19:29AM +0100, Christoph Hellwig wrote:
->> On Sat, Mar 05, 2022 at 09:12:55AM +1100, Dave Chinner wrote:
->>> AFAICT, this patch leaves just the f2fs allocator usage of
->>> inode->i_rw_hint to select a segment to allocate from as the
->>> remaining consumer of this entire plumbing and user API. Is that
->>> used by applications anywhere, or can that be removed and so the
->>> rest of the infrastructure get removed and the fcntl()s no-op'd or
->>> -EOPNOTSUPP?
->>
->> I was told it is used quite heavily in android.
-> 
-> So it's primarily used by out of tree code? And that after this
-> patch, there's really no way to test that this API does anything
-> useful at all?
+Since vfs_path_lookup is exported, It should not be internal.
+Move vfs_path_lookup prototype in internal.h to linux/namei.h.
 
-Hi Dave,
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+---
+ fs/internal.h         | 2 --
+ fs/ksmbd/vfs.c        | 2 --
+ include/linux/namei.h | 2 ++
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
-Android kernel developers follow the "upstream first" policy for core kernel 
-code (this means all kernel code other than kernel drivers that implement 
-support for the phone SoC). As a result, the Android 13 F2FS implementation is 
-very close to the upstream F2FS code. So the statement above about "out of tree 
-code" is not correct.
+diff --git a/fs/internal.h b/fs/internal.h
+index 8590c973c2f4..deee2367df44 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -58,8 +58,6 @@ extern int finish_clean_context(struct fs_context *fc);
+  */
+ extern int filename_lookup(int dfd, struct filename *name, unsigned flags,
+ 			   struct path *path, struct path *root);
+-extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+-			   const char *, unsigned int, struct path *);
+ int do_rmdir(int dfd, struct filename *name);
+ int do_unlinkat(int dfd, struct filename *name);
+ int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
+index 19d36393974c..a1ab0aaceba5 100644
+--- a/fs/ksmbd/vfs.c
++++ b/fs/ksmbd/vfs.c
+@@ -19,8 +19,6 @@
+ #include <linux/sched/xacct.h>
+ #include <linux/crc32c.h>
+ 
+-#include "../internal.h"	/* for vfs_path_lookup */
+-
+ #include "glob.h"
+ #include "oplock.h"
+ #include "connection.h"
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index e89329bb3134..4858c3cdf7c6 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -63,6 +63,8 @@ extern struct dentry *kern_path_create(int, const char *, struct path *, unsigne
+ extern struct dentry *user_path_create(int, const char __user *, struct path *, unsigned int);
+ extern void done_path_create(struct path *, struct dentry *);
+ extern struct dentry *kern_path_locked(const char *, struct path *);
++int vfs_path_lookup(struct dentry *, struct vfsmount *, const char *,
++		    unsigned int, struct path *);
+ 
+ extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
+ extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
+-- 
+2.25.1
 
-Bart.
