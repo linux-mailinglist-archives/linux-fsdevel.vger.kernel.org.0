@@ -2,56 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3190E4CE883
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 04:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E78A4CE889
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 04:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232921AbiCFD2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Mar 2022 22:28:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
+        id S231285AbiCFDbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Mar 2022 22:31:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232915AbiCFD2h (ORCPT
+        with ESMTP id S229529AbiCFDbr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Mar 2022 22:28:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB42626549;
-        Sat,  5 Mar 2022 19:27:45 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9B474B80C0A;
-        Sun,  6 Mar 2022 03:27:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E25C340F3;
-        Sun,  6 Mar 2022 03:27:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646537263;
-        bh=09ZweK9i1u0ASFApgXgW2Nh8jSgj+rn5+iNYfmKx5GM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Jj9ij6RDwvXlxM74BaGmcS6hW70GzXx6LrhqvIczWA9FnkC+Pd6DaaNfcxohQQOSG
-         4yESnK7GH/oKl+Qw1NOT8HrBxUfPxNfZnarVI/E8yUUdhXQM5nyNGM65aZJT+PS7ET
-         q93aUGiux960MOzw1DTBaD6dOaez/ykQ9KEWBY6a+4kYOVy80nus0yHUypHjeFG4ZG
-         fVtiXQzjToNkCfe6FR+LTQUNkjhmkK3pzPvOs5EacvNk8XjKkie9KHt9zxW1eYrn4V
-         GrvsJBvKskdD2HF8rEgoYifAt0m5id9bi9phxFbDpEmWVg8d/35SlPUHzaGAvV8w0+
-         djSqyVIJiNaog==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Nathaniel McCallum <nathaniel@profian.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org, jaharkes@cs.cmu.edu,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        codalist@coda.cs.cmu.edu, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH RFC v2] mm: Add f_ops->populate()
-Date:   Sun,  6 Mar 2022 05:26:55 +0200
-Message-Id: <20220306032655.97863-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.35.1
+        Sat, 5 Mar 2022 22:31:47 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFE3344F3;
+        Sat,  5 Mar 2022 19:30:51 -0800 (PST)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2263Umjm001464
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 5 Mar 2022 22:30:49 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 9FD6D15C0038; Sat,  5 Mar 2022 22:30:48 -0500 (EST)
+Date:   Sat, 5 Mar 2022 22:30:48 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        torvalds@linux-foundation.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: Report 2 in ext4 and journal based on v5.17-rc1
+Message-ID: <YiQq6Ou39uzHC0mu@mit.edu>
+References: <YiAow5gi21zwUT54@mit.edu>
+ <1646285013-3934-1-git-send-email-byungchul.park@lge.com>
+ <YiDSabde88HJ/aTt@mit.edu>
+ <20220304032002.GD6112@X58A-UD3R>
+ <YiLbs9rszWXpHm/P@mit.edu>
+ <20220305145534.GB31268@X58A-UD3R>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220305145534.GB31268@X58A-UD3R>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,205 +69,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sometimes you might want to use MAP_POPULATE to ask a device driver to
-initialize the device memory in some specific manner. SGX driver can use
-this to request more memory by issuing ENCLS[EAUG] x86 opcode for each
-page in the address range.
+On Sat, Mar 05, 2022 at 11:55:34PM +0900, Byungchul Park wrote:
+> > that is why some of the DEPT reports were completely incomprehensible
+> 
+> It's because you are blinded to blame at it without understanding how
+> Dept works at all. I will fix those that must be fixed. Don't worry.
 
-Add f_ops->populate() with the same parameters as f_ops->mmap() and make
-it conditionally called inside call_mmap(). Update call sites
-accodingly.
+Users of DEPT must not have to understand how DEPT works in order to
+understand and use DEPT reports.  If you think I don't understand how
+DEPT work, I'm going to gently suggest that this means DEPT reports
+are clear enough, and/or DEPT documentation needs to be
+*substantially* improved, or both --- and these needs to happen before
+DEPT is ready to be merged.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v2:
--       if (!ret && do_populate)
-+       if (!ret && do_populate && file->f_op->populate)
-(reported by Jan Harkes)
----
- arch/mips/kernel/vdso.c                    |  2 +-
- drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c |  2 +-
- fs/coda/file.c                             |  2 +-
- fs/overlayfs/file.c                        |  2 +-
- include/linux/fs.h                         | 10 ++++++++--
- include/linux/mm.h                         |  2 +-
- ipc/shm.c                                  |  2 +-
- mm/mmap.c                                  | 10 +++++-----
- mm/nommu.c                                 |  4 ++--
- 9 files changed, 21 insertions(+), 15 deletions(-)
+> > So if DEPT is issuing lots of reports about apparently circular
+> > dependencies, please try to be open to the thought that the fault is
+> 
+> No one was convinced that Dept doesn't have a fault. I think your
+> worries are too much.
 
-diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
-index 3d0cf471f2fe..89f3f3da9abd 100644
---- a/arch/mips/kernel/vdso.c
-+++ b/arch/mips/kernel/vdso.c
-@@ -102,7 +102,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 		base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
- 				VM_READ | VM_EXEC |
- 				VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
--				0, NULL);
-+				0, NULL, false);
- 		if (IS_ERR_VALUE(base)) {
- 			ret = base;
- 			goto out;
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
-index 1b526039a60d..4c71f64d6a79 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
-@@ -107,7 +107,7 @@ static int i915_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *
- 	if (!obj->base.filp)
- 		return -ENODEV;
- 
--	ret = call_mmap(obj->base.filp, vma);
-+	ret = call_mmap(obj->base.filp, vma, false);
- 	if (ret)
- 		return ret;
- 
-diff --git a/fs/coda/file.c b/fs/coda/file.c
-index 29dd87be2fb8..e14f312fdbf8 100644
---- a/fs/coda/file.c
-+++ b/fs/coda/file.c
-@@ -173,7 +173,7 @@ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
- 	spin_unlock(&cii->c_lock);
- 
- 	vma->vm_file = get_file(host_file);
--	ret = call_mmap(vma->vm_file, vma);
-+	ret = call_mmap(vma->vm_file, vma, false);
- 
- 	if (ret) {
- 		/* if call_mmap fails, our caller will put host_file so we
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index fa125feed0ff..b963a9397e80 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -503,7 +503,7 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
- 	vma_set_file(vma, realfile);
- 
- 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
--	ret = call_mmap(vma->vm_file, vma);
-+	ret = call_mmap(vma->vm_file, vma, false);
- 	revert_creds(old_cred);
- 	ovl_file_accessed(file);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e2d892b201b0..4c6a3339373d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1993,6 +1993,7 @@ struct file_operations {
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
-+	int (*populate)(struct file *, struct vm_area_struct *);
- 	unsigned long mmap_supported_flags;
- 	int (*open) (struct inode *, struct file *);
- 	int (*flush) (struct file *, fl_owner_t id);
-@@ -2074,9 +2075,14 @@ static inline ssize_t call_write_iter(struct file *file, struct kiocb *kio,
- 	return file->f_op->write_iter(kio, iter);
- }
- 
--static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
-+static inline int call_mmap(struct file *file, struct vm_area_struct *vma, bool do_populate)
- {
--	return file->f_op->mmap(file, vma);
-+	int ret = file->f_op->mmap(file, vma);
-+
-+	if (!ret && do_populate && file->f_op->populate)
-+		ret = file->f_op->populate(file, vma);
-+
-+	return ret;
- }
- 
- extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 213cc569b192..6c8c036f423b 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2683,7 +2683,7 @@ extern unsigned long get_unmapped_area(struct file *, unsigned long, unsigned lo
- 
- extern unsigned long mmap_region(struct file *file, unsigned long addr,
- 	unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
--	struct list_head *uf);
-+	struct list_head *uf, bool do_populate);
- extern unsigned long do_mmap(struct file *file, unsigned long addr,
- 	unsigned long len, unsigned long prot, unsigned long flags,
- 	unsigned long pgoff, unsigned long *populate, struct list_head *uf);
-diff --git a/ipc/shm.c b/ipc/shm.c
-index b3048ebd5c31..89b28f32acf0 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -587,7 +587,7 @@ static int shm_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (ret)
- 		return ret;
- 
--	ret = call_mmap(sfd->file, vma);
-+	ret = call_mmap(sfd->file, vma, do_populate);
- 	if (ret) {
- 		shm_close(vma);
- 		return ret;
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 1e8fdb0b51ed..5eca79957d4c 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1413,6 +1413,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 			unsigned long flags, unsigned long pgoff,
- 			unsigned long *populate, struct list_head *uf)
- {
-+	bool do_populate = (flags & (MAP_POPULATE | MAP_NONBLOCK)) == MAP_POPULATE;
- 	struct mm_struct *mm = current->mm;
- 	vm_flags_t vm_flags;
- 	int pkey = 0;
-@@ -1579,10 +1580,9 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 			vm_flags |= VM_NORESERVE;
- 	}
- 
--	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf);
-+	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf, do_populate);
- 	if (!IS_ERR_VALUE(addr) &&
--	    ((vm_flags & VM_LOCKED) ||
--	     (flags & (MAP_POPULATE | MAP_NONBLOCK)) == MAP_POPULATE))
-+	    ((vm_flags & VM_LOCKED) || do_populate))
- 		*populate = len;
- 	return addr;
- }
-@@ -1721,7 +1721,7 @@ static inline int accountable_mapping(struct file *file, vm_flags_t vm_flags)
- 
- unsigned long mmap_region(struct file *file, unsigned long addr,
- 		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
--		struct list_head *uf)
-+		struct list_head *uf, bool do_populate)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma, *prev, *merge;
-@@ -1790,7 +1790,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		}
- 
- 		vma->vm_file = get_file(file);
--		error = call_mmap(file, vma);
-+		error = call_mmap(file, vma, do_populate);
- 		if (error)
- 			goto unmap_and_free_vma;
- 
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 55a9e48a7a02..a3c20b803c27 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -941,7 +941,7 @@ static int do_mmap_shared_file(struct vm_area_struct *vma)
- {
- 	int ret;
- 
--	ret = call_mmap(vma->vm_file, vma);
-+	ret = call_mmap(vma->vm_file, vma, false);
- 	if (ret == 0) {
- 		vma->vm_region->vm_top = vma->vm_region->vm_end;
- 		return 0;
-@@ -972,7 +972,7 @@ static int do_mmap_private(struct vm_area_struct *vma,
- 	 * - VM_MAYSHARE will be set if it may attempt to share
- 	 */
- 	if (capabilities & NOMMU_MAP_DIRECT) {
--		ret = call_mmap(vma->vm_file, vma);
-+		ret = call_mmap(vma->vm_file, vma, false);
- 		if (ret == 0) {
- 			/* shouldn't return success if we're not sharing */
- 			BUG_ON(!(vma->vm_flags & VM_MAYSHARE));
--- 
-2.35.1
+In that case, may I ask that you add back a RFC to the subject prefix
+(e.g., [PATCH RFC -v5]?)  Or maybe even add the subject prefix NOT YET
+READY?  I have seen cases when after a patch series get to PATCH -v22,
+and then people assume that it *must* be ready, as opposed what it
+really means, which is "the author is just persistently reposting and
+rebasing the patch series over and over again".  It would be helpful
+if you directly acknowledge, in each patch submission, that it is not
+yet ready for prime time.
 
+After all, right now, DEPT has generated two reports in ext4, both of
+which were false positives, and both of which have required a lot of
+maintainer times to prove to you that they were in fact false
+positives.  So are we all agreed that DEPT is not ready for prime
+time?
+
+> No one argued that their code must be buggy, either. So I don't think
+> you have to worry about what's never happened.
+
+Well, you kept on insisting that ext4 must have a circular dependency,
+and that depending on a "rescue wakeup" is bad programming practice,
+but you'll reluctantly agree to make DEPT accept "rescue wakeups" if
+that is the will of the developers.  My concern here is the
+fundmaental concept of "rescue wakeups" is wrong; I don't see how you
+can distinguish between a valid wakeup and one that you and DEPT is
+going to somehow characterize as dodgy.
+
+Consider: a process can first subscribe to multiple wait queues, and
+arrange to be woken up by a timeout, and then call schedule() to go to
+sleep.  So it is not waiting on a single wait channel, but potentially
+*multiple* wakeup sources.  If you are going to prove that kernel is
+not going to make forward progress, you need to prove that *all* ways
+that process might not wake up aren't going to happen for some reason.
+
+Just because one wakeup source seems to form a circular dependency
+proves nothing, since another wakeup source might be the designed and
+architected way that code makes forward progress.
+
+You seem to be assuminng that one wakeup source is somehow the
+"correct" one, and the other ways that process could be woken up is a
+"rescue wakeup source" and you seem to believe that relying on a
+"rescue wakeup source" is bad.  But in the case of a process which has
+called prepare-to-wait on more than one wait queue, how is DEPT going
+to distinguish between your "morally correct" wkaeup source, and the
+"rescue wakeup source"?
+
+> No doubt. I already think so. But it doesn't mean that I have to keep
+> quiet without discussing to imporve Dept. I will keep improving Dept in
+> a reasonable way.
+
+Well, I don't want to be in a position of having to prove that every
+single DEPT report in my code that doesn't make sense to me is
+nonsense, or else DEPT will get merged.
+
+So maybe we need to reverse the burden of proof.
+
+Instead of just sending a DEPT report, and then asking the maintainers
+to explain why it is a false positive, how about if *you* use the DEPT
+report to examinie the subsystem code, and then explain plain English,
+how you think this could trigger in real life, or cause a performance
+problem in real life or perhaps provide a script or C reproducer that
+triggers the supposed deadlock?
+
+Yes, that means you will need to understand the code in question, but
+hopefully the DEPT reports should be clear enough that someone who
+isn't a deep expert in the code should be able to spot the bug.  If
+not, and if only a few deep experts of code in question will be able
+to decipher the DEPT report and figure out a fix, that's really not
+ideal.
+
+If DEPT can find a real bug and you can show that Lockdep wouldn't
+have been able to find it, then that would be proof that it is making
+a real contribution.  That's would be real benefit.  At the same time,
+DEPT will hopefully be able to demonstrate a false positive rate which
+is low enough that the benefits clearly outweight the costs.
+
+At the moment, I believe the scoreboard for DEPT with respect to ext4
+is zero real bugs found, and two false positives, both of which have
+required significant rounds of e-mail before the subsystem maintainers
+were able to prove to you that it was, indeed, DEPT reporting a false
+positive.
+
+Do you now understand why I am so concerned that you aren't putting an
+RFC or NOT YET READY in the subject line?
+
+						- Ted
+
+P.S.  If DEPT had a CONFIG_EXPERIMENTAL, with a disclaimer in the
+KConfig that some of its reports might be false positives, that might
+be another way of easing my fears that this won't get used by
+Syzkaller, and to generate a lot of burdensome triage work on the
+maintainers.
