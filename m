@@ -2,85 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB214CEA0A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 09:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12BDA4CEA2D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 10:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbiCFIbO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Sun, 6 Mar 2022 03:31:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40386 "EHLO
+        id S233073AbiCFJ2G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Mar 2022 04:28:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232208AbiCFIbN (ORCPT
+        with ESMTP id S229614AbiCFJ2F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Mar 2022 03:31:13 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AF19745793
-        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Mar 2022 00:30:20 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-108-tUwZomUWMYSiN451TxRaKw-1; Sun, 06 Mar 2022 08:30:17 +0000
-X-MC-Unique: tUwZomUWMYSiN451TxRaKw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Sun, 6 Mar 2022 08:30:15 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Sun, 6 Mar 2022 08:30:14 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jarkko Sakkinen' <jarkko@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Nathaniel McCallum <nathaniel@profian.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Matthew Auld <matthew.auld@intel.com>,
-        =?iso-8859-1?Q?Thomas_Hellstr=F6m?= 
-        <thomas.hellstrom@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Ekstrand <jason@jlekstrand.net>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        "Michal Hocko" <mhocko@suse.com>,
-        zhangyiru <zhangyiru3@huawei.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "codalist@coda.cs.cmu.edu" <codalist@coda.cs.cmu.edu>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH RFC 0/3] MAP_POPULATE for device memory
-Thread-Topic: [PATCH RFC 0/3] MAP_POPULATE for device memory
-Thread-Index: AQHYMRun9YUfQRgF3USRgOtqAakL96yyAc1Q
-Date:   Sun, 6 Mar 2022 08:30:14 +0000
-Message-ID: <7f46ef3c80734f478501d21cef0182c5@AcuMS.aculab.com>
-References: <20220306053211.135762-1-jarkko@kernel.org>
-In-Reply-To: <20220306053211.135762-1-jarkko@kernel.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Sun, 6 Mar 2022 04:28:05 -0500
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3BE434B5;
+        Sun,  6 Mar 2022 01:27:14 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 40D9867373; Sun,  6 Mar 2022 10:27:10 +0100 (CET)
+Date:   Sun, 6 Mar 2022 10:27:09 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Zdenek Kabelac <zkabelac@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christoph Hellwig <hch@lst.de>, Borislav Petkov <bp@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH mmotm] tmpfs: do not allocate pages on read
+Message-ID: <20220306092709.GA22883@lst.de>
+References: <f9c2f38f-5eb8-5d30-40fa-93e88b5fbc51@google.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9c2f38f-5eb8-5d30-40fa-93e88b5fbc51@google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -88,39 +46,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jarkko Sakkinen
-> Sent: 06 March 2022 05:32
+On Fri, Mar 04, 2022 at 09:09:01PM -0800, Hugh Dickins wrote:
+> It's not quite as simple as just removing the test (as Mikulas did):
+> xfstests generic/013 hung because splice from tmpfs failed on page not
+> up-to-date and page mapping unset.  That can be fixed just by marking
+> the ZERO_PAGE as Uptodate, which of course it is; doing so here in
+> shmem_file_read_iter() is distasteful, but seems to be the best way.
+
+Shouldn't we set ZERO_PAGE uptodate during early init code as it, uh,
+is per definition uptodate all the time?
+
 > 
-> For device memory (aka VM_IO | VM_PFNMAP) MAP_POPULATE does nothing. Allow
-> to use that for initializing the device memory by providing a new callback
-> f_ops->populate() for the purpose.
+> My intention, though, was to stop using the ZERO_PAGE here altogether:
+> surely iov_iter_zero() is better for this case?  Sadly not: it relies
+> on clear_user(), and the x86 clear_user() is slower than its copy_user():
+> https://lore.kernel.org/lkml/2f5ca5e4-e250-a41c-11fb-a7f4ebc7e1c9@google.com/
+
+Oh, that's sad as just using clear_user would be the right thing to
+here.
+
+> But while we are still using the ZERO_PAGE, let's stop dirtying its
+> struct page cacheline with unnecessary get_page() and put_page().
 > 
-> SGX patches are provided to show the callback in context.
-> 
-> An obvious alternative is a ioctl but it is less elegant and requires
-> two syscalls (mmap + ioctl) per memory range, instead of just one
-> (mmap).
+> Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+> Reported-by: Lukas Czerner <lczerner@redhat.com>
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-Is this all about trying to stop the vm_operations_struct.fault()
-function being called?
-
-It is pretty easy to ensure the mappings are setup in the driver's
-mmap() function.
-Then the fault() function can just return -VM_FAULT_SIGBUS;
-
-If it is actually device memory you just need to call vm_iomap_memory()
-That quite nicely mmap()s PCIe memory space into a user process.
-
-Mapping driver memory is slightly more difficult.
-For buffers allocated with dma_alloc_coherent() you can
-probably use dma_mmap_coherent().
-But I have a loop calling remap_pfn_range() because the
-buffer area is made of multiple 16kB kernel buffers that
-need to be mapped to contiguous user pages.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+But except for maybe making sure that ZERO_PAGE is always marked
+uptodate this does looks good to me.
