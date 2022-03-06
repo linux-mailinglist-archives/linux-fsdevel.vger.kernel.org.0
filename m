@@ -2,105 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DA254CE80B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 02:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B76934CE842
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Mar 2022 03:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232287AbiCFBMA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Mar 2022 20:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37870 "EHLO
+        id S232334AbiCFCRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Mar 2022 21:17:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232224AbiCFBL4 (ORCPT
+        with ESMTP id S230439AbiCFCRL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Mar 2022 20:11:56 -0500
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C27D35DE4;
-        Sat,  5 Mar 2022 17:11:05 -0800 (PST)
-Received: by mail-pj1-f49.google.com with SMTP id m11-20020a17090a7f8b00b001beef6143a8so11121154pjl.4;
-        Sat, 05 Mar 2022 17:11:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=S5U0EkgWVSJ79epU5pa7kyBPr31R0QM605pzAOhpRvE=;
-        b=kTp4MkiF21FEVA8DQwWVqrIp2hUDl7np9csm/QGkJpVowbAmer3IPzy4Q0KPe+txzX
-         R13qX+1UgWERxkwm6wNfc4W0UbMtNcCnOVSovTK8ihSeCO2/q7chtAOR8cuKCTP/jDQ5
-         O0OgLxMbtn3MjjOUO/0wW3PPRjzVnykB40bnng1tEregiKudZVM8Ry9/C2qhp5GcLPSa
-         fVhNa6GREEpnhtvjCVHshT4Ibthr7va1I7QYyNDgfc1EGhbHDPzMZPywmiDLvnsWjAhW
-         G4P7sBGxRvuVbsL69L1+jaWmrmVRvW4n4yZ+zOf4wbDfbJSqS3PpdWR3tbvSpd/yjkyc
-         BXBw==
-X-Gm-Message-State: AOAM530N2Qq0Vjgesn7V5JMAWmqNHHuO0XtnMFr7tOovDwh6Gl4P8jl+
-        s6EtlIpGHUxQJ1RAMdNiGrJtw0zXiO8=
-X-Google-Smtp-Source: ABdhPJzKs4hnz3OSVnhemV0Sxq2dorrUTqvCkl7hmq20U7wCqA2nmAG1VZQsx9IKM9jrwyidGEY63Q==
-X-Received: by 2002:a17:903:244a:b0:151:36cc:2f71 with SMTP id l10-20020a170903244a00b0015136cc2f71mr5751110pls.115.1646529064903;
-        Sat, 05 Mar 2022 17:11:04 -0800 (PST)
-Received: from localhost.localdomain ([61.74.27.164])
-        by smtp.gmail.com with ESMTPSA id d2-20020a056a0024c200b004f6b6817549sm7668110pfv.173.2022.03.05.17.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Mar 2022 17:11:04 -0800 (PST)
-From:   Namjae Jeon <linkinjeon@kernel.org>
-To:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     smfrench@gmail.com, hyc.lee@gmail.com, senozhatsky@chromium.org,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v2 4/4] ksmbd: increment reference count of parent fp
-Date:   Sun,  6 Mar 2022 10:10:45 +0900
-Message-Id: <20220306011045.13014-4-linkinjeon@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220306011045.13014-1-linkinjeon@kernel.org>
-References: <20220306011045.13014-1-linkinjeon@kernel.org>
+        Sat, 5 Mar 2022 21:17:11 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A975325C49;
+        Sat,  5 Mar 2022 18:16:19 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5B083B80CAF;
+        Sun,  6 Mar 2022 02:16:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD35C004E1;
+        Sun,  6 Mar 2022 02:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646532977;
+        bh=qhbhEF4KNGgan5nuXFyOhv3ib4IX2nZMIJjs4aq0fyQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ri6fW/rNQDL3GJBOmTvy22BllCS0Mx9/2fq6gRMgmLrV6oJc4Z2gFimfPkRq3hRsC
+         Gd7hao4qpgmCrY0RcAChZl2tehIZm230vlPKPGMneipK6jdZ8pDGUSHd8gBVlbMeMK
+         ZUso1mtvVo9bhmQXpMyoN0Ww/usgHR98ELsEexGCufyRWxoyRfA6q9NAMM2FmUQOEb
+         A75ydaj0A4LkH0hekXA2YYPWbBOFG0WVqGA7jMmKI1RflqrU1JMT6V278Ql4KEUgMa
+         XmYSpW4XlvIh2EVoWNqWMWo9RWSZl4HsxtTkhbi7WK+g6xt9qgN3Y7ROSGrUvG5KI1
+         mQVatFyzsCRiQ==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Nathaniel McCallum <nathaniel@profian.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        codalist@coda.cs.cmu.edu, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH RFC] mm: Add f_ops->populate()
+Date:   Sun,  6 Mar 2022 04:15:33 +0200
+Message-Id: <20220306021534.83553-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add missing increment reference count of parent fp in
-ksmbd_lookup_fd_inode().
+Sometimes you might want to use MAP_POPULATE to ask a device driver to
+initialize the device memory in some specific manner. SGX driver can use
+this to request more memory by issuing ENCLS[EAUG] x86 opcode for each
+page in the address range.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Add f_ops->populate() with the same parameters as f_ops->mmap() and make
+it conditionally called inside call_mmap(). Update call sites
+accodingly.
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- v2:
-   - switch the order of 3/4 and 4/4 patch.
+ arch/mips/kernel/vdso.c                    |  2 +-
+ drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c |  2 +-
+ fs/coda/file.c                             |  2 +-
+ fs/overlayfs/file.c                        |  2 +-
+ include/linux/fs.h                         | 10 ++++++++--
+ include/linux/mm.h                         |  2 +-
+ ipc/shm.c                                  |  2 +-
+ mm/mmap.c                                  | 10 +++++-----
+ mm/nommu.c                                 |  4 ++--
+ 9 files changed, 21 insertions(+), 15 deletions(-)
 
- fs/ksmbd/vfs.c       | 2 ++
- fs/ksmbd/vfs_cache.c | 1 +
- 2 files changed, 3 insertions(+)
-
-diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
-index f703dbfe22c0..0b92092f3e8a 100644
---- a/fs/ksmbd/vfs.c
-+++ b/fs/ksmbd/vfs.c
-@@ -769,8 +769,10 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, struct path *old_path,
- 		if (parent_fp->daccess & FILE_DELETE_LE) {
- 			pr_err("parent dir is opened with delete access\n");
- 			err = -ESHARE;
-+			ksmbd_fd_put(work, parent_fp);
- 			goto out5;
- 		}
-+		ksmbd_fd_put(work, parent_fp);
+diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
+index 3d0cf471f2fe..89f3f3da9abd 100644
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -102,7 +102,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 		base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
+ 				VM_READ | VM_EXEC |
+ 				VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+-				0, NULL);
++				0, NULL, false);
+ 		if (IS_ERR_VALUE(base)) {
+ 			ret = base;
+ 			goto out;
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
+index 1b526039a60d..4c71f64d6a79 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c
+@@ -107,7 +107,7 @@ static int i915_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *
+ 	if (!obj->base.filp)
+ 		return -ENODEV;
+ 
+-	ret = call_mmap(obj->base.filp, vma);
++	ret = call_mmap(obj->base.filp, vma, false);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/fs/coda/file.c b/fs/coda/file.c
+index 29dd87be2fb8..e14f312fdbf8 100644
+--- a/fs/coda/file.c
++++ b/fs/coda/file.c
+@@ -173,7 +173,7 @@ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
+ 	spin_unlock(&cii->c_lock);
+ 
+ 	vma->vm_file = get_file(host_file);
+-	ret = call_mmap(vma->vm_file, vma);
++	ret = call_mmap(vma->vm_file, vma, false);
+ 
+ 	if (ret) {
+ 		/* if call_mmap fails, our caller will put host_file so we
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index fa125feed0ff..b963a9397e80 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -503,7 +503,7 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
+ 	vma_set_file(vma, realfile);
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+-	ret = call_mmap(vma->vm_file, vma);
++	ret = call_mmap(vma->vm_file, vma, false);
+ 	revert_creds(old_cred);
+ 	ovl_file_accessed(file);
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e2d892b201b0..fb90284e1c82 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1993,6 +1993,7 @@ struct file_operations {
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+ 	int (*mmap) (struct file *, struct vm_area_struct *);
++	int (*populate)(struct file *, struct vm_area_struct *);
+ 	unsigned long mmap_supported_flags;
+ 	int (*open) (struct inode *, struct file *);
+ 	int (*flush) (struct file *, fl_owner_t id);
+@@ -2074,9 +2075,14 @@ static inline ssize_t call_write_iter(struct file *file, struct kiocb *kio,
+ 	return file->f_op->write_iter(kio, iter);
+ }
+ 
+-static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
++static inline int call_mmap(struct file *file, struct vm_area_struct *vma, bool do_populate)
+ {
+-	return file->f_op->mmap(file, vma);
++	int ret = file->f_op->mmap(file, vma);
++
++	if (!ret && do_populate)
++		ret = file->f_op->populate(file, vma);
++
++	return ret;
+ }
+ 
+ extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 213cc569b192..6c8c036f423b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2683,7 +2683,7 @@ extern unsigned long get_unmapped_area(struct file *, unsigned long, unsigned lo
+ 
+ extern unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+-	struct list_head *uf);
++	struct list_head *uf, bool do_populate);
+ extern unsigned long do_mmap(struct file *file, unsigned long addr,
+ 	unsigned long len, unsigned long prot, unsigned long flags,
+ 	unsigned long pgoff, unsigned long *populate, struct list_head *uf);
+diff --git a/ipc/shm.c b/ipc/shm.c
+index b3048ebd5c31..89b28f32acf0 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -587,7 +587,7 @@ static int shm_mmap(struct file *file, struct vm_area_struct *vma)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = call_mmap(sfd->file, vma);
++	ret = call_mmap(sfd->file, vma, do_populate);
+ 	if (ret) {
+ 		shm_close(vma);
+ 		return ret;
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 1e8fdb0b51ed..5eca79957d4c 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1413,6 +1413,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 			unsigned long flags, unsigned long pgoff,
+ 			unsigned long *populate, struct list_head *uf)
+ {
++	bool do_populate = (flags & (MAP_POPULATE | MAP_NONBLOCK)) == MAP_POPULATE;
+ 	struct mm_struct *mm = current->mm;
+ 	vm_flags_t vm_flags;
+ 	int pkey = 0;
+@@ -1579,10 +1580,9 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 			vm_flags |= VM_NORESERVE;
  	}
  
- 	rd.old_mnt_userns	= mnt_user_ns(old_path->mnt),
-diff --git a/fs/ksmbd/vfs_cache.c b/fs/ksmbd/vfs_cache.c
-index ffb534281836..df600eb04552 100644
---- a/fs/ksmbd/vfs_cache.c
-+++ b/fs/ksmbd/vfs_cache.c
-@@ -493,6 +493,7 @@ struct ksmbd_file *ksmbd_lookup_fd_inode(struct inode *inode)
- 	list_for_each_entry(lfp, &ci->m_fp_list, node) {
- 		if (inode == file_inode(lfp->filp)) {
- 			atomic_dec(&ci->m_count);
-+			lfp = ksmbd_fp_get(lfp);
- 			read_unlock(&ci->m_lock);
- 			return lfp;
+-	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf);
++	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf, do_populate);
+ 	if (!IS_ERR_VALUE(addr) &&
+-	    ((vm_flags & VM_LOCKED) ||
+-	     (flags & (MAP_POPULATE | MAP_NONBLOCK)) == MAP_POPULATE))
++	    ((vm_flags & VM_LOCKED) || do_populate))
+ 		*populate = len;
+ 	return addr;
+ }
+@@ -1721,7 +1721,7 @@ static inline int accountable_mapping(struct file *file, vm_flags_t vm_flags)
+ 
+ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+-		struct list_head *uf)
++		struct list_head *uf, bool do_populate)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma, *prev, *merge;
+@@ -1790,7 +1790,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
  		}
+ 
+ 		vma->vm_file = get_file(file);
+-		error = call_mmap(file, vma);
++		error = call_mmap(file, vma, do_populate);
+ 		if (error)
+ 			goto unmap_and_free_vma;
+ 
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 55a9e48a7a02..a3c20b803c27 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -941,7 +941,7 @@ static int do_mmap_shared_file(struct vm_area_struct *vma)
+ {
+ 	int ret;
+ 
+-	ret = call_mmap(vma->vm_file, vma);
++	ret = call_mmap(vma->vm_file, vma, false);
+ 	if (ret == 0) {
+ 		vma->vm_region->vm_top = vma->vm_region->vm_end;
+ 		return 0;
+@@ -972,7 +972,7 @@ static int do_mmap_private(struct vm_area_struct *vma,
+ 	 * - VM_MAYSHARE will be set if it may attempt to share
+ 	 */
+ 	if (capabilities & NOMMU_MAP_DIRECT) {
+-		ret = call_mmap(vma->vm_file, vma);
++		ret = call_mmap(vma->vm_file, vma, false);
+ 		if (ret == 0) {
+ 			/* shouldn't return success if we're not sharing */
+ 			BUG_ON(!(vma->vm_flags & VM_MAYSHARE));
 -- 
-2.25.1
+2.35.1
 
