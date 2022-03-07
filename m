@@ -2,70 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E47B04D0077
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 14:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CB264D0082
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 14:55:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241381AbiCGNxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 08:53:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58646 "EHLO
+        id S238138AbiCGN4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 08:56:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237571AbiCGNxX (ORCPT
+        with ESMTP id S237064AbiCGN4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 08:53:23 -0500
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C231712AFF
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Mar 2022 05:52:27 -0800 (PST)
-Received: by mail-pf1-x432.google.com with SMTP id s42so1219823pfg.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 05:52:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=FpiH8sK6QJ5ZecNwA0soEekz+DBDXKgGF93HUqOWr2g=;
-        b=3C80KwlAfecIpqsoXr/WQ/0If5ZLPxKUel30fSldQNh+QLi/6eRFRdZYMRUfVAEK60
-         q1Tz2gW7OU0CuZS613xgjZfpk9iA8CNKv87I+FVqoZAL5PjH+CNyY/m39y88OJcfoeCY
-         lFLtbwbOI1GWEeXXAfPQudyK2sWVrxK1qL64/NKjtX+fGVarDmEKqYqgPBddP1ylNjo3
-         Bnk+YsbeEo4XWuoaSM49mf4Wz0Z+etvvQXT+S2GiwP+asuHMSS+/IDtF38qAuIAaf/l1
-         9HtsYnmBy3rdrdClH8hTGW2YS7hqgFggJCNrGIVeeDYrPgmcNPiBirtZMfsVvpZFWLak
-         /lMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=FpiH8sK6QJ5ZecNwA0soEekz+DBDXKgGF93HUqOWr2g=;
-        b=Bc8QV/1PAQWhlRgC8PzW78MiEeUGRtffC3TwtajySlGx1ItA/DMK50H8y14/Bt4lZD
-         KledcjtkTDD4tAFGm7pADPYOHNe9rSssrdfYZESnxWZXx02/+xLpWJ1TLvNeM69o0xUB
-         C4K9r8S+M6RoHLvo8EPws0k7D3dBPHY8q8+NdfbR5l1rTTJXLnAFaC05/ohrthPS/t/M
-         mmECO1dtL+EH6jrMc5YBP6XWZ67Evok+OAD+g5c9IA/Y0r194JbjaEv5FfRL8D+BMHEN
-         OddCk+I4DD4hhqtVESDaR5IkaqtyoQct0mcNkOk9T05jpAwDFniy4x7Mnjl4W5WfK888
-         pkyA==
-X-Gm-Message-State: AOAM530BrXnGFOZf0kkaAqUyfzjE3dkEeH06Q/9HHtku/QwbnF4No857
-        E+HW+ERfR1pmeKDScrHmOTAUig==
-X-Google-Smtp-Source: ABdhPJz+/iGljhGAfM285WDdfPPis8SH9wGNMH/HdIzatH84Hr3uwQ2gayBqurPn+iZWNdoEmD1R0A==
-X-Received: by 2002:a05:6a00:16d6:b0:4bf:325:de2f with SMTP id l22-20020a056a0016d600b004bf0325de2fmr12833983pfc.7.1646661147261;
-        Mon, 07 Mar 2022 05:52:27 -0800 (PST)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id j9-20020a056a00234900b004f6feec0d6csm4550102pfj.2.2022.03.07.05.52.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Mar 2022 05:52:26 -0800 (PST)
-Message-ID: <dbd1479d-09fe-aedc-3b43-5bd0cbebe555@kernel.dk>
-Date:   Mon, 7 Mar 2022 06:52:25 -0700
+        Mon, 7 Mar 2022 08:56:31 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3DD88786;
+        Mon,  7 Mar 2022 05:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1646661335;
+        bh=5ZcRhIMVWrjtMj1k71UV4kR6JU9XVKWyXSvyLSHdp7Q=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=b49G1xWx6W2iWVGYqeJFzc3kecOtVjbIKlxHSUjIueDdUu/vmaZMSMcW/7ofjVk1g
+         z7YZbrpZU1uFht6VVAzxA7dkWvi+pyhlLPfTc9Fr7AUY/alpYgxJ2Hf0R/wt8aX6e2
+         vwwmThyFb/w+eBzRP3BH78ty04P4rrBahacB8/Zk=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4D7901280F8B;
+        Mon,  7 Mar 2022 08:55:35 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id QRGc9eIIvEMu; Mon,  7 Mar 2022 08:55:35 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1646661335;
+        bh=5ZcRhIMVWrjtMj1k71UV4kR6JU9XVKWyXSvyLSHdp7Q=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=b49G1xWx6W2iWVGYqeJFzc3kecOtVjbIKlxHSUjIueDdUu/vmaZMSMcW/7ofjVk1g
+         z7YZbrpZU1uFht6VVAzxA7dkWvi+pyhlLPfTc9Fr7AUY/alpYgxJ2Hf0R/wt8aX6e2
+         vwwmThyFb/w+eBzRP3BH78ty04P4rrBahacB8/Zk=
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::527])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 26C7D1280BC9;
+        Mon,  7 Mar 2022 08:55:32 -0500 (EST)
+Message-ID: <69932637edee8e6d31bafa5fd39e19a9790dd4ab.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Javier =?ISO-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
+        Matias =?ISO-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Keith Busch <Keith.Busch@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>
+Date:   Mon, 07 Mar 2022 08:55:30 -0500
+In-Reply-To: <20220305073321.5apdknpmctcvo3qj@ArmHalley.localdomain>
+References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+         <20220304001022.GJ3927073@dread.disaster.area>
+         <YiKOQM+HMZXnArKT@bombadil.infradead.org>
+         <20220304224257.GN3927073@dread.disaster.area>
+         <YiKY6pMczvRuEovI@bombadil.infradead.org>
+         <20220305073321.5apdknpmctcvo3qj@ArmHalley.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 2/2] fs: remove fs.f_write_hint
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20220307104701.607750-1-hch@lst.de>
- <20220307104701.607750-3-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220307104701.607750-3-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,14 +79,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/7/22 3:47 AM, Christoph Hellwig wrote:
-> The value is now completely unused except for reporting it back through
-> the F_GET_FILE_RW_HINT ioctl, so remove the value and the two ioctls
-> for it.
+On Sat, 2022-03-05 at 08:33 +0100, Javier González wrote:
+[...]
+> However, there is no users of ZoneFS for ZNS devices that I am aware
+> of (maybe for SMR this is a different story).  The main open-source
+> implementations out there for RocksDB that are being used in
+> production (ZenFS and xZTL) rely on either raw zone block access or
+> the generic char device in NVMe (/dev/ngXnY). This is because having
+> the capability to do zone management from applications that already
+> work with objects fits much better.
+> 
+> My point is that there is space for both ZoneFS and raw zoned block
+> device. And regarding !PO2 zone sizes, my point is that this can be
+> leveraged both by btrfs and this raw zone block device.
 
-This commit message could do with some verbiage on why the EINVAL
-solution was chosen for the F_{GET,SET}_RW_HINT ioctls.
+This is basically history repeating itself, though.  It's precisely the
+reason why Linux acquired the raw character device: Oracle decided they
+didn't want the OS abstractions in the way of fast performing direct
+database access and raw devices was the way it had been done on UNIX,
+so they decided it should be done on Linux as well.  There was some
+legacy to this as well: because Oracle already had a raw handler they
+figured it would be easy to port to Linux.
 
--- 
-Jens Axboe
+The problem Oracle had with /dev/raw is that they then have to manage
+device discovery and partitioning as well.  It sort of worked on UNIX
+when you didn't have too many disks and the discover order was
+deterministic.  It began to fail as disks became storage networks.  In
+the end, when O_DIRECT was proposed, Oracle eventually saw that using
+it on files allowed for much better managed access and the raw driver
+fell into disuse and was (finally) removed last year.
+
+What you're proposing above is to repeat the /dev/raw experiment for
+equivalent input reasons but expecting different outcomes ... Einstein
+has already ruled on that one.
+
+James
+
+
 
