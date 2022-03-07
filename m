@@ -2,524 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1D4B4CF0AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 05:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A844CF138
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 06:36:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234240AbiCGEfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Mar 2022 23:35:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36982 "EHLO
+        id S235341AbiCGFh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 00:37:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235181AbiCGEfb (ORCPT
+        with ESMTP id S230457AbiCGFhZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Mar 2022 23:35:31 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671EC4B1DA;
-        Sun,  6 Mar 2022 20:34:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CED52611D7;
-        Mon,  7 Mar 2022 04:34:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 251DBC340E9;
-        Mon,  7 Mar 2022 04:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1646627675;
-        bh=sUMCv0VtKvZwdiUgj+Z4qXUOyxFlmy8qbZPgRPJsZQo=;
-        h=Date:To:From:Subject:From;
-        b=F6dHvoDcta4PnYB+B/8NKyHRGjCx78CGYfhli+VsnlehBwe1tMjAz0bX2/CHjitFz
-         2k/3iG5jw3OOm6Of6AZ5xBlG4CCg0cVCGBYq27L0Qi9LSX+tstPQ4wBmnFQ3UY3MNL
-         mkgPCgDkbvin/3jNv4YJZUZ7I7M60onTFAsArKGo=
-Date:   Sun, 06 Mar 2022 20:34:34 -0800
-To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org, akpm@linux-foundation.org
-From:   Andrew Morton <akpm@linux-foundation.org>
-Subject: mmotm 2022-03-06-20-33 uploaded
-Message-Id: <20220307043435.251DBC340E9@smtp.kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Mon, 7 Mar 2022 00:37:25 -0500
+Received: from mx04.melco.co.jp (mx04.melco.co.jp [192.218.140.144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B5F5E774;
+        Sun,  6 Mar 2022 21:36:31 -0800 (PST)
+Received: from mr06.melco.co.jp (mr06 [133.141.98.164])
+        by mx04.melco.co.jp (Postfix) with ESMTP id 4KBnJG1ytvzMw0BB;
+        Mon,  7 Mar 2022 14:36:30 +0900 (JST)
+Received: from mr06.melco.co.jp (unknown [127.0.0.1])
+        by mr06.imss (Postfix) with ESMTP id 4KBnJG1Wv5zNBhHS;
+        Mon,  7 Mar 2022 14:36:30 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr06.melco.co.jp (Postfix) with ESMTP id 4KBnJG1ChZzNBhHH;
+        Mon,  7 Mar 2022 14:36:30 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 4KBnJG19p4z6thS;
+        Mon,  7 Mar 2022 14:36:30 +0900 (JST)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (unknown [104.47.23.170])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 4KBnJG10TFzMqf1C;
+        Mon,  7 Mar 2022 14:36:30 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jYjLle6Rxt/Tiz5VbiLqk5sjC9PVpHq5fIXUPnIuapimY0A+3eOyfD3+1sfZUj+C944NhvMAGyrp18SaS8g91KT61FnPOY5zJ8PudQKQtMN4zp1zoiYxYAhh/bBmpuqS3nYoWeWOtWF1AliN4yB1BpdWitbbXbH4XGNCaVhY/rr+ZEwGKb8/otBB4Cs8OAIDvkKY2XDRM8IUc6/2MsqpiRMm8VjV+LSOUF0sj/UAaoKLRNnSpfGD9+tpS/7zWMuhnYEM3Cuo7WQ7MDhQrBWIE6HoQtbBI/OBG9DpsQQO7p/Lpf0vCa7+w1FgnAmnM3m1ZwdIJyDFHPxPmCZdrsOHNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z23WoYwekR1511MEaMAJ2B1ZdnXdEHDv3D6+9geENjc=;
+ b=jkMgvcTXg/TEtUlqGyGMqHu573f75IsLjh1hoKc0lTjdyLeLOLR6TpNYavmlQFO8pn4WRLdZ89pvWp6r3FsghyIisJ2hIKHUNcaLr6BIFepECe6wxfXuLFVGJHHUkcpd7cwSvVe6vHW/Q3zlc2N7xnsZqa2oXlUaGRoKDfX9fy7Kp7M5OyUdto1tryVkp0eOrRYnv9ARezRMZj535VaY9aDT6OjZXjKUpiZ4QOgpxoR0h0YAZQgiZdhYrjNu+z2lCgEI8BoUoNayKb/lr5xtJvrJbqz6CFUns1V9CPkI5vz4EY4IpUrM4Uzsj1swqfYxAabYKXyQlcNdIYoI/AgHhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z23WoYwekR1511MEaMAJ2B1ZdnXdEHDv3D6+9geENjc=;
+ b=DhWUC78p8gsPr4Twtx9hrF//eTENxLRThVYTG+x8dBsSu4i3RN62Hj+Ga+Zwd0Ix2bRPaH3NZjTGtglCS8nCr0b+rI4ZgFRoDU0RJhZsf6NdZaXMzDjxg/WinBITCo5IodpPFCnCuTuL5zwc92tSXXeqqRdxABwzmMAPTq7JQRI=
+Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com (2603:1096:404:803d::8)
+ by OS3PR01MB8444.jpnprd01.prod.outlook.com (2603:1096:604:197::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Mon, 7 Mar
+ 2022 05:36:28 +0000
+Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com
+ ([fe80::cd6:cd27:1fe8:818]) by TYAPR01MB5353.jpnprd01.prod.outlook.com
+ ([fe80::cd6:cd27:1fe8:818%7]) with mapi id 15.20.5038.026; Mon, 7 Mar 2022
+ 05:36:28 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
+Subject: RE: [PATCH] exfat: do not clear VolumeDirty in writeback
+Thread-Topic: [PATCH] exfat: do not clear VolumeDirty in writeback
+Thread-Index: AQHYHKozeVmted1T5UKvjQCq+AaGCayoqY+AgAA/KGCAAw0zD4ABYXsAgAYuVrA=
+Date:   Mon, 7 Mar 2022 05:34:17 +0000
+Deferred-Delivery: Mon, 7 Mar 2022 05:36:00 +0000
+Message-ID: <TYAPR01MB53536D7149FDB6A9ABBD8F5090089@TYAPR01MB5353.jpnprd01.prod.outlook.com>
+References: <HK2PR04MB38914869B1FEE326CFE11779812D9@HK2PR04MB3891.apcprd04.prod.outlook.com>
+ <TYAPR01MB5353E089F4843C6CE6A0BA1E90019@TYAPR01MB5353.jpnprd01.prod.outlook.com>
+ <HK2PR04MB3891B4F1C2BC707582E81C0C81019@HK2PR04MB3891.apcprd04.prod.outlook.com>
+ <TYAPR01MB53531DB8B19324F7D60EE9AA90039@TYAPR01MB5353.jpnprd01.prod.outlook.com>
+ <HK2PR04MB38913077A55A6E7124A41A4281049@HK2PR04MB3891.apcprd04.prod.outlook.com>
+In-Reply-To: <HK2PR04MB38913077A55A6E7124A41A4281049@HK2PR04MB3891.apcprd04.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=dc.MitsubishiElectric.co.jp;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 625c159d-edb3-4d91-4e0b-08d9fffc6db5
+x-ms-traffictypediagnostic: OS3PR01MB8444:EE_
+x-microsoft-antispam-prvs: <OS3PR01MB8444982CE41D10A5876EA6F290089@OS3PR01MB8444.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: s0pFJYHNmauv5qNUi3tE4cgZxaEh71EFn2drm03EESGhdisVX1jePI+pISnectrlptmm4OvSEGQ8iwJbHCLtKY+9KFNR9+r+ZkLDKonnod0wouuxWJX0/EFaHzUFGaeYxvuHLQEi1+7kwO/6aXjUfyepT4FX8oVCY0MmHTjpZ4EZCXgZ8rz2Sh1d4ew8QPSbUm3GwjrffABptyfm6I7DRvHNmJu5c1yG2v9oia29EdA54f6XMyWsBbsRFwL1aRrmz2w8RoswhjRg9dejNq+5xEMnwGALdRiumANwn7wOJd6adTt915v6LZ+TJb1m0+57o9AYifbluYweD2cxD1HkJzTDq5w3H/eUKQv6QS9ZGlv2u+zwehJON0qXnYYnCZqK7mIPdkuXQCOzpAAVuDLuXqQ73SnDW+/EhlvrRebFJCrc9rBFr7JFQlFZuop6m2dplalp9j9nX9bx3pSY6+SiauOELJVePLhM4cAO214pFWGWmEKMlTNn+UCu3feovEVZ4Yn6OSMZOuwTbcpl3gEy4oaY10nMKW+1l9JAtz3Pz7YkaLZ4hFYndVZT1dRZwVzvEwY3MbLnKocaRxTpdOsJsMpByG5t5Sysvj8R8kpjwrnDN+G5Uu6vX3VUoaFKfHpgYvenzrdBtAA6hAOApt2xoQIIzHXGwVJNZ1vmLsssJtGBnRz3VEFFONQMl/sQWnANLHtCRGX7yI52zi0gxsWg8A==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB5353.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(38070700005)(33656002)(71200400001)(52536014)(4326008)(186003)(26005)(38100700002)(508600001)(9686003)(7696005)(5660300002)(6666004)(6506007)(86362001)(2906002)(4744005)(8936002)(122000001)(66446008)(8676002)(64756008)(66476007)(54906003)(66556008)(83380400001)(76116006)(66946007)(55016003)(316002)(109986005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WTZjTzBvcUxuMHlINi9TTW5sMUNmeS9kQmNTNW9uTE5sVVk4enJscWZ0cTNZ?=
+ =?utf-8?B?MlBYN1FoYzAySE9RRzZTbHNtK1J3L1Z1Vjk4ckVYaS9Ld3o4WktlMlB2WWls?=
+ =?utf-8?B?UFVIbmxReVdIK2tvblFBM3NSdGFhTTIxNGVtWk5nbEFEZjRHV1gyTTNDdkY3?=
+ =?utf-8?B?NVdEeHgxWVBYYVJFU1Z4Y1hJcHJsNmREWjdUL2NYYm1mVG1LVzhWdldYNVE1?=
+ =?utf-8?B?UjdHRjdRZThhY0EvN05mWld5Q3dDNHgyaWZxa2xITUlQK3p0aUhzTThGdlQy?=
+ =?utf-8?B?V0R1ZTBYOEl2WDB3ZWdCRk1IRUUyVTFpYWN5TGNkVU1NLzJHZzByVkRzVmtP?=
+ =?utf-8?B?WE5EazYyK1NGZmpQWm5yM2ljSXh6c0twbFRlSkY4NmRnWTBTbEtYKzJRdzJX?=
+ =?utf-8?B?L0I5U2NLcDR6dngvaDF4K3NVRXA2YTdKcDlNYU9OZTM4UStUdmtDc1g5VENH?=
+ =?utf-8?B?MjdXMmtZSEtQa0R4cWRTSDlFbUZNeVF5WWZOcWgzaytBUDZjOGxLZFFaTGZk?=
+ =?utf-8?B?ZDVVVXdPV1hmWEFCbXpiQnhGTlhQQ1J2U3lUcWVtWnd5MUJwbW9ZbFYwV1pP?=
+ =?utf-8?B?VTVvOUxUUXIvZ3JnKyswbmlZYTFZTW1oR1dqcEV2bU9QN3VFanFZdmNWTlNz?=
+ =?utf-8?B?cmh0VmJJUUMvNTZMS2Z5aDMwKzV3VGtXL3Fqc1NqODVEVFE0bWlvSVBUK21j?=
+ =?utf-8?B?ODVpdkFKV2hoUVg2RzFzQkVOKzFaeHJrdHpyYnkraC9YUjB2NmVCOVo3Ukt4?=
+ =?utf-8?B?dWhGSWVyNXpoV2tHYzZEK0g2NG5pRnNPUmVpbDVtNzJReFVUZXJ4U1BNZjRl?=
+ =?utf-8?B?U3QwSlVmODBsNjFYcWVkYjZSUXNWYVZsRnZ6YXdUcmNJbjhyL01MeW5rMWdo?=
+ =?utf-8?B?WUlGOGdPS3lwSGJvdm1UK2xBNmJFc0JHckpqRVdUN0JicnlQVXFuaWw0aXNO?=
+ =?utf-8?B?OVpHbDZGZVJ5NVl0eXFRcjBHamVOS2lIMnB2YzJGdzhEWmhCQlFVWW9CZmRl?=
+ =?utf-8?B?SzlqMDlJV2tmeXdnTmZWK0VtbC9iQmdDc08vbEplUU9mRnh0UzhLb2VKam9E?=
+ =?utf-8?B?YVpDZmZYZkNTTDVYWktWV3ZGamN3Umw3NUJxRFc3TGZrL1dpYjVRaW5zVGJZ?=
+ =?utf-8?B?RzBKZzJhY2NiTEc2QUdzdkZETFFOZ1c5RGJoNTY2S1Q2am1jMW41ZnMzc2M4?=
+ =?utf-8?B?Z3UrOEYwbGE0WEw5U29MdmpvSFNpeU0xRjcxMHlab0JqTlhFa3Vac3llQ3Rj?=
+ =?utf-8?B?MUtheDFmd3pIZElmeXJMWnFhWG5ONmhXUVZBaWVMMUN6QnpjTDNleU11TnVG?=
+ =?utf-8?B?Z2lVWEFESTl6QzV2ZVQybVRCQnJoNkhqaWlNUzBjWGNILzdrUnN2UkhsekxB?=
+ =?utf-8?B?RmpWUHRWSE5OcXl2VUhqUGhGanNzdTV3T2JPSGY2bGt6WGE2UnBiSGs1aDB3?=
+ =?utf-8?B?ZTNKUnJHaHJwQUVRVjdxQ25NaUE0R1E3eElnalM2cHUybzh1MGd6Yk4wUEtv?=
+ =?utf-8?B?anY1NmFBWXhNNjV0a1V3RFR6SG5xYTJYTVg5VHZLWm1pdUIySXFub2pHUnFR?=
+ =?utf-8?B?ZkRtT0FCSHN4Z2hHZENacmcvRklPWllFUGg4VEg2azRtM3F1ME5rZFJFdTJH?=
+ =?utf-8?B?Y1J4cnZDaWtqZlBTYVZlN2ZjZlk3TkpPY2UrQjNiUUdnQ2wxb3ZjMkFoRUVN?=
+ =?utf-8?B?VHpCWkx2VkJRYjhhM241S3NSM2lHV2pQc2dicFIxUXhQQzZkV20wTVErVXNr?=
+ =?utf-8?B?SEw3aEF2TkIrUHNEaEkzWFBlYVE5bCtXVEpTMjY2ODNoV05IbytHNUZ1RGtv?=
+ =?utf-8?B?QSs0REF2c3ZWSHVLdGllMTRaWlNPWlZMakZJK1dxMUxnMzYrUnNjVm1FcGJB?=
+ =?utf-8?B?VG9HV1RxcFprT2l1ejBWZ2M1MUJGc1lkZlFCN2t3aGl0R2FJRTdWcE9aelBl?=
+ =?utf-8?B?RDljWS91eTFabER5ZTRrenZxTElaQ202Tmlrak4ySFNpSlFNN0l0ZVFGUHAz?=
+ =?utf-8?B?RUNQRGZJT3lRUjh2TDFTRlIxL3pNOW9SSTZyRFB4VE9rZE5nWXh6WWRPUjRL?=
+ =?utf-8?B?WlU0TVFqekV1K29Qa0taa3c3dEJ5KzNsZFNZQTJvbURsZ1Vjc05rV3JrSG1F?=
+ =?utf-8?B?K3ZoeFBFMGlwNTdqUmkrd25TSCtQWTJabWZPdVUyZGJmOFhGT0R6dkF0L3Bu?=
+ =?utf-8?Q?EG7SHm90TTnpjEVGH3Rgfbg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB5353.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 625c159d-edb3-4d91-4e0b-08d9fffc6db5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2022 05:36:28.5982
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6xXUlk6NDLP/HcfJtYbixC33tpSVirzteAF2/5w5pn3iMd9pcdqdBE0BM3A4NtpmJs6GWMObZNuS8UuGnX4auw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8444
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,MISSING_HEADERS,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2022-03-06-20-33 has been uploaded to
-
-   https://www.ozlabs.org/~akpm/mmotm/
-
-mmotm-readme.txt says
-
-README for mm-of-the-moment:
-
-https://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-https://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.17-rc6:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-fix-panic-in-__alloc_pages.patch
-* userfaultfd-mark-uffd_wp-regardless-of-vm_write-flag.patch
-* mm-swap-get-rid-of-deadloop-in-swapin-readahead.patch
-* selftests-vm-fix-clang-build-error-multiple-output-files.patch
-* mm-page_alloc-add-scheduling-point-to-free_unref_page_list.patch
-* memcg-sync-flush-only-if-periodic-flush-is-delayed.patch
-* memcg-sync-flush-only-if-periodic-flush-is-delayed-fix.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* procfs-prevent-unpriveleged-processes-accessing-fdinfo-dir.patch
-* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
-* ntfs-add-sanity-check-on-allocation-size.patch
-* ocfs2-cleanup-some-return-variables.patch
-* fs-ocfs2-fix-comments-mentioning-i_mutex.patch
-* ocfs2-reflink-deadlock-when-clone-file-to-the-same-directory-simultaneously.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* doc-convert-subsection-to-section-in-gfph.patch
-* mm-document-and-polish-read-ahead-code.patch
-* mm-improve-cleanup-when-readpages-doesnt-process-all-pages.patch
-* fuse-remove-reliance-on-bdi-congestion.patch
-* nfs-remove-reliance-on-bdi-congestion.patch
-* ceph-remove-reliance-on-bdi-congestion.patch
-* remove-inode_congested.patch
-* remove-bdi_congested-and-wb_congested-and-related-functions.patch
-* remove-bdi_congested-and-wb_congested-and-related-functions-fix.patch
-* f2fs-replace-congestion_wait-calls-with-io_schedule_timeout.patch
-* block-bfq-ioschedc-use-false-rather-than-blk_rw_async.patch
-* remove-congestion-tracking-framework.patch
-* mm-fs-delete-pf_swapwrite.patch
-* mm-__isolate_lru_page_prepare-in-isolate_migratepages_block.patch
-* mount-warn-only-once-about-timestamp-range-expiration.patch
-  mm.patch
-* mm-memremap-avoid-calling-kasan_remove_zero_shadow-for-device-private-memory.patch
-* tools-vm-page_owner_sortc-sort-by-stacktrace-before-culling.patch
-* tools-vm-page_owner_sortc-sort-by-stacktrace-before-culling-fix.patch
-* tools-vm-page_owner_sortc-support-sorting-by-stack-trace.patch
-* tools-vm-page_owner_sortc-add-switch-between-culling-by-stacktrace-and-txt.patch
-* tools-vm-page_owner_sortc-support-sorting-pid-and-time.patch
-* tools-vm-page_owner_sortc-two-trivial-fixes.patch
-* tools-vm-page_owner_sortc-delete-invalid-duplicate-code.patch
-* documentation-vm-page_ownerrst-update-the-documentation.patch
-* documentation-vm-page_ownerrst-update-the-documentation-fix.patch
-* docs-vm-fix-unexpected-indentation-warns-in-page_owner.patch
-* documentation-vm-page_ownerrst-fix-commends.patch
-* lib-vsprintf-avoid-redundant-work-with-0-size.patch
-* mm-page_owner-use-scnprintf-to-avoid-excessive-buffer-overrun-check.patch
-* mm-page_owner-print-memcg-information.patch
-* mm-page_owner-record-task-command-name.patch
-* mm-page_ownerc-record-tgid.patch
-* tools-vm-page_owner_sortc-fix-the-instructions-for-use.patch
-* mm-unexport-page_init_poison.patch
-* tools-vm-page_owner_sortc-fix-comments.patch
-* tools-vm-page_owner_sortc-add-a-security-check.patch
-* tools-vm-page_owner_sortc-support-sorting-by-tgid-and-update-documentation.patch
-* tools-vm-page_owner_sort-fix-three-trivival-places.patch
-* tools-vm-page_owner_sort-support-for-sorting-by-task-command-name.patch
-* filemap-remove-find_get_pages.patch
-* mm-writeback-minor-clean-up-for-highmem_dirtyable_memory.patch
-* mm-fix-invalid-page-pointer-returned-with-foll_pin-gups.patch
-* mm-gup-follow_pfn_pte-eexist-cleanup.patch
-* mm-gup-remove-unused-pin_user_pages_locked.patch
-* mm-change-lookup_node-to-use-get_user_pages_fast.patch
-* mm-gup-remove-unused-get_user_pages_locked.patch
-* tmpfs-support-for-file-creation-time.patch
-* tmpfs-support-for-file-creation-time-fix.patch
-* shmem-mapping_set_exiting-to-help-mapped-resilience.patch
-* tmpfs-do-not-allocate-pages-on-read.patch
-* memcg-replace-in_interrupt-with-in_task.patch
-* memcg-add-per-memcg-total-kernel-memory-stat.patch
-* mm-memcg-mem_cgroup_per_node-is-already-set-to-0-on-allocation.patch
-* mm-memcg-retrieve-parent-memcg-from-cssparent.patch
-* memcg-refactor-mem_cgroup_oom.patch
-* memcg-unify-force-charging-conditions.patch
-* selftests-memcg-test-high-limit-for-single-entry-allocation.patch
-* memcg-synchronously-enforce-memoryhigh-for-large-overcharges.patch
-* mm-memcontrol-return-1-from-cgroupmemory-__setup-handler.patch
-* mm-memcg-set-memcg-after-css-verified-and-got-reference.patch
-* mm-memcg-set-pos-to-prev-unconditionally.patch
-* mm-memcg-move-generation-assignment-and-comparison-together.patch
-* mm-memcg-revert-mm-memcg-optimize-user-context-object-stock-access.patch
-* mm-memcg-disable-threshold-event-handlers-on-preempt_rt.patch
-* mm-memcg-protect-per-cpu-counter-by-disabling-preemption-on-preempt_rt-where-needed.patch
-* mm-memcg-opencode-the-inner-part-of-obj_cgroup_uncharge_pages-in-drain_obj_stock.patch
-* mm-memcg-protect-memcg_stock-with-a-local_lock_t.patch
-* mm-memcg-disable-migration-instead-of-preemption-in-drain_all_stock.patch
-* mm-list_lru-transpose-the-array-of-per-node-per-memcg-lru-lists.patch
-* mm-introduce-kmem_cache_alloc_lru.patch
-* fs-introduce-alloc_inode_sb-to-allocate-filesystems-specific-inode.patch
-* fs-allocate-inode-by-using-alloc_inode_sb.patch
-* f2fs-allocate-inode-by-using-alloc_inode_sb.patch
-* mm-dcache-use-kmem_cache_alloc_lru-to-allocate-dentry.patch
-* xarray-use-kmem_cache_alloc_lru-to-allocate-xa_node.patch
-* mm-memcontrol-move-memcg_online_kmem-to-mem_cgroup_css_online.patch
-* mm-list_lru-allocate-list_lru_one-only-when-needed.patch
-* mm-list_lru-rename-memcg_drain_all_list_lrus-to-memcg_reparent_list_lrus.patch
-* mm-list_lru-replace-linear-array-with-xarray.patch
-* mm-list_lru-replace-linear-array-with-xarray-fix.patch
-* mm-memcontrol-reuse-memory-cgroup-id-for-kmem-id.patch
-* mm-memcontrol-fix-cannot-alloc-the-maximum-memcg-id.patch
-* mm-list_lru-rename-list_lru_per_memcg-to-list_lru_memcg.patch
-* mm-memcontrol-rename-memcg_cache_id-to-memcg_kmem_id.patch
-* memcg-enable-accounting-for-tty-related-objects.patch
-* mm-generalize-arch_has_filter_pgprot.patch
-* mm-merge-pte_mkhuge-call-into-arch_make_huge_pte.patch
-* mm-remove-mmu_gathers-storage-from-remaining-architectures.patch
-* mm-thp-fix-wrong-cache-flush-in-remove_migration_pmd.patch
-* mm-fix-missing-cache-flush-for-all-tail-pages-of-compound-page.patch
-* mm-hugetlb-fix-missing-cache-flush-in-copy_huge_page_from_user.patch
-* mm-hugetlb-fix-missing-cache-flush-in-hugetlb_mcopy_atomic_pte.patch
-* mm-shmem-fix-missing-cache-flush-in-shmem_mfill_atomic_pte.patch
-* mm-userfaultfd-fix-missing-cache-flush-in-mcopy_atomic_pte-and-__mcopy_atomic.patch
-* mm-replace-multiple-dcache-flush-with-flush_dcache_folio.patch
-* mm-dont-skip-swap-entry-even-if-zap_details-specified.patch
-* mm-dont-skip-swap-entry-even-if-zap_details-specified-v5.patch
-* mm-rename-zap_skip_check_mapping-to-should_zap_page.patch
-* mm-change-zap_detailszap_mapping-into-even_cows.patch
-* mm-rework-swap-handling-of-zap_pte_range.patch
-* mm-mmap-return-1-from-stack_guard_gap-__setup-handler.patch
-* mm-use-helper-function-range_in_vma.patch
-* mm-use-helper-macro-min-and-max-in-unmap_mapping_range_tree.patch
-* mm-_install_special_mapping-apply-vm_locked_clear_mask.patch
-* mm-sparse-make-mminit_validate_memmodel_limits-static.patch
-* mm-vmalloc-remove-unneeded-function-forward-declaration.patch
-* mm-vmalloc-move-draining-areas-out-of-caller-context.patch
-* mm-vmalloc-add-adjust_search_size-parameter.patch
-* mm-vmalloc-eliminate-an-extra-orig_gfp_mask.patch
-* mm-vmallocc-fix-unused-function-warning.patch
-* vmap-dont-allow-invalid-pages.patch
-* mm-vmalloc-fix-comments-about-vmap_area-struct.patch
-* mm-page_alloc-avoid-merging-non-fallbackable-pageblocks-with-others.patch
-* mm-page_alloc-add-same-penalty-is-enough-to-get-round-robin-order.patch
-* mm-page_alloc-add-penalty-to-local_node.patch
-* mm-mmzonec-use-try_cmpxchg-in-page_cpupid_xchg_last.patch
-* mm-discard-__gfp_atomic.patch
-* mm-mmzoneh-remove-unused-macros.patch
-* mm-page_alloc-dont-pass-pfn-to-free_unref_page_commit.patch
-* cma-factor-out-minimum-alignment-requirement.patch
-* mm-enforce-pageblock_order-max_order.patch
-* mm-page_alloc-mark-pagesets-as-__maybe_unused.patch
-* mm-pages_allocc-dont-create-zone_movable-beyond-the-end-of-a-node.patch
-* mm-page_alloc-fetch-the-correct-pcp-buddy-during-bulk-free.patch
-* mm-page_alloc-track-range-of-active-pcp-lists-during-bulk-free.patch
-* mm-page_alloc-simplify-how-many-pages-are-selected-per-pcp-list-during-bulk-free.patch
-* mm-page_alloc-drain-the-requested-list-first-during-bulk-free.patch
-* mm-page_alloc-free-pages-in-a-single-pass-during-bulk-free.patch
-* mm-page_alloc-limit-number-of-high-order-pages-on-pcp-during-bulk-free.patch
-* mm-page_alloc-do-not-prefetch-buddies-during-bulk-free.patch
-* arch-x86-mm-numa-do-not-initialize-nodes-twice.patch
-* arch-x86-mm-numa-do-not-initialize-nodes-twice-v2.patch
-* mm-count-time-in-drain_all_pages-during-direct-reclaim-as-memory-pressure.patch
-* mm-page_alloc-call-check_new_pages-while-zone-spinlock-is-not-held.patch
-* mm-hwpoison-remove-obsolete-comment.patch
-* mm-hwpoison-fix-error-page-recovered-but-reported-not-recovered.patch
-* mm-clean-up-hwpoison-page-cache-page-in-fault-path.patch
-* mm-memory-failurec-minor-clean-up-for-memory_failure_dev_pagemap.patch
-* mm-memory-failurec-catch-unexpected-efault-from-vma_address.patch
-* mm-memory-failurec-rework-the-signaling-logic-in-kill_proc.patch
-* mm-memory-failurec-fix-race-with-changing-page-more-robustly.patch
-* mm-memory-failurec-remove-pageslab-check-in-hwpoison_filter_dev.patch
-* mm-memory-failurec-rework-the-try_to_unmap-logic-in-hwpoison_user_mappings.patch
-* mm-memory-failurec-remove-obsolete-comment-in-__soft_offline_page.patch
-* mm-memory-failurec-remove-unnecessary-pagetranstail-check.patch
-* mm-hwpoison-inject-support-injecting-hwpoison-to-free-page.patch
-* mm-hwpoison-inject-support-injecting-hwpoison-to-free-page-fix.patch
-* mm-hwpoison-avoid-the-impact-of-hwpoison_filter-return-value-on-mce-handler.patch
-* mm-hwpoison-add-in-use-hugepage-hwpoison-filter-judgement.patch
-* mm-hugetlb-free-the-2nd-vmemmap-page-associated-with-each-hugetlb-page.patch
-* mm-hugetlb-replace-hugetlb_free_vmemmap_enabled-with-a-static_key.patch
-* mm-sparsemem-use-page-table-lock-to-protect-kernel-pmd-operations.patch
-* selftests-vm-add-a-hugetlb-test-case.patch
-* mm-sparsemem-move-vmemmap-related-to-hugetlb-to-config_hugetlb_page_free_vmemmap.patch
-* mm-hugetlb-generalize-arch_want_general_hugetlb.patch
-* hugetlb-clean-up-potential-spectre-issue-warnings.patch
-* hugetlb-clean-up-potential-spectre-issue-warnings-v2.patch
-* mm-hugetlb-use-helper-macro-__attr_rw.patch
-* mm-export-pageheadhuge.patch
-* mm-export-pageheadhuge-fix.patch
-* userfaultfd-provide-unmasked-address-on-page-fault.patch
-* userfaultfd-provide-unmasked-address-on-page-fault-v3.patch
-* userfaultfd-provide-unmasked-address-on-page-fault-v3-fix.patch
-* userfaultfd-selftests-fix-uninitialized_varcocci-warning.patch
-* mm-workingset-replace-irq-off-check-with-a-lockdep-assert.patch
-* mempolicy-mbind_range-set_policy-after-vma_merge.patch
-* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt.patch
-* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt-fix.patch
-* mm-oom_kill-remove-unneeded-is_memcg_oom-check.patch
-* mmmigrate-fix-establishing-demotion-target.patch
-* mm-thp-refix-__split_huge_pmd_locked-for-migration-pmd.patch
-* mm-cma-provide-option-to-opt-out-from-exposing-pages-on-activation-failure.patch
-* powerpc-fadump-opt-out-from-freeing-pages-on-cma-activation-failure.patch
-* numa-balancing-add-page-promotion-counter.patch
-* numa-balancing-optimize-page-placement-for-memory-tiering-system.patch
-* memory-tiering-skip-to-scan-fast-memory.patch
-* mm-page_io-fix-psi-memory-pressure-error-on-cold-swapins.patch
-* mm-vmstat-add-event-for-ksm-swapping-in-copy.patch
-* mm-ksm-use-helper-macro-__attr_rw.patch
-* mm-hwpoison-check-the-subpage-not-the-head-page.patch
-* mm-balloon_compaction-make-balloon-page-compaction-callbacks-static.patch
-* mm-memory_hotplug-make-arch_alloc_nodedata-independent-on-config_memory_hotplug.patch
-* mm-handle-uninitialized-numa-nodes-gracefully.patch
-* mm-handle-uninitialized-numa-nodes-gracefully-fix.patch
-* mm-memory_hotplug-drop-arch_free_nodedata.patch
-* mm-memory_hotplug-reorganize-new-pgdat-initialization.patch
-* mm-make-free_area_init_node-aware-of-memory-less-nodes.patch
-* memcg-do-not-tweak-node-in-alloc_mem_cgroup_per_node_info.patch
-* drivers-base-memory-add-memory-block-to-memory-group-after-registration-succeeded.patch
-* drivers-base-node-consolidate-node-device-subsystem-initialization-in-node_dev_init.patch
-* mm-memory_hotplug-remove-obsolete-comment-of-__add_pages.patch
-* mm-memory_hotplug-remove-obsolete-comment-of-__add_pages-fix.patch
-* mm-memory_hotplug-avoid-calling-zone_intersects-for-zone_normal.patch
-* mm-memory_hotplug-clean-up-try_offline_node.patch
-* mm-memory_hotplug-fix-misplaced-comment-in-offline_pages.patch
-* drivers-base-node-rename-link_mem_sections-to-register_memory_block_under_node.patch
-* drivers-base-memory-determine-and-store-zone-for-single-zone-memory-blocks.patch
-* drivers-base-memory-clarify-adding-and-removing-of-memory-blocks.patch
-* mm-rmap-convert-from-atomic_t-to-refcount_t-on-anon_vma-refcount.patch
-* mm-thp-clearpagedoublemap-in-first-page_add_file_rmap.patch
-* mm-zswapc-allow-handling-just-same-value-filled-pages.patch
-* mm-remove-usercopy_warn.patch
-* mm-uninline-copy_overflow.patch
-* mm-usercopy-return-1-from-hardened_usercopy-__setup-handler.patch
-* highmem-document-kunmap_local.patch
-* highmem-document-kunmap_local-v2.patch
-* mm-highmem-remove-unnecessary-done-label.patch
-* mm-use-strtobool-for-param-parsing.patch
-* mm-kfence-remove-unnecessary-config_kfence-option.patch
-* mm-hmmc-remove-unneeded-local-variable-ret.patch
-* mm-damon-dbgfs-init_regions-use-target-index-instead-of-target-id.patch
-* docs-admin-guide-mm-damon-usage-update-for-changed-initail_regions-file-input.patch
-* mm-damon-core-move-damon_set_targets-into-dbgfs.patch
-* mm-damon-remove-the-target-id-concept.patch
-* mm-damon-remove-redundant-page-validation.patch
-* mm-damon-rename-damon_primitives-to-damon_operations.patch
-* mm-damon-let-monitoring-operations-can-be-registered-and-selected.patch
-* mm-damon-paddrvaddr-register-themselves-to-damon-in-subsys_initcall.patch
-* mm-damon-reclaim-use-damon_select_ops-instead-of-damon_vpa_set_operations.patch
-* mm-damon-dbgfs-use-damon_select_ops-instead-of-damon_vpa_set_operations.patch
-* mm-damon-dbgfs-use-operations-id-for-knowing-if-the-target-has-pid.patch
-* mm-damon-dbgfs-test-fix-is_target_id-change.patch
-* mm-damon-paddrvaddr-remove-damon_pva_target_validset_operations.patch
-* mm-damon-remove-unnecessary-config_damon-option.patch
-* docs-vm-damon-call-low-level-monitoring-primitives-the-operations.patch
-* docs-vm-damon-design-update-damon-idle-page-tracking-interference-handling.patch
-* docs-damon-update-outdated-term-regions-update-interval.patch
-* mm-damon-core-allow-non-exclusive-damon-start-stop.patch
-* mm-damon-core-add-number-of-each-enum-type-values.patch
-* mm-damon-implement-a-minimal-stub-for-sysfs-based-damon-interface.patch
-* mm-damon-implement-a-minimal-stub-for-sysfs-based-damon-interface-fix.patch
-* mm-damon-sysfs-link-damon-for-virtual-address-spaces-monitoring.patch
-* mm-damon-sysfs-support-the-physical-address-space-monitoring.patch
-* mm-damon-sysfs-support-damon-based-operation-schemes.patch
-* mm-damon-sysfs-support-damos-quotas.patch
-* mm-damon-sysfs-support-schemes-prioritization.patch
-* mm-damon-sysfs-support-damos-watermarks.patch
-* mm-damon-sysfs-support-damos-watermarks-fix.patch
-* mm-damon-sysfs-support-damos-stats.patch
-* selftests-damon-add-a-test-for-damon-sysfs-interface.patch
-* docs-admin-guide-mm-damon-usage-document-damon-sysfs-interface.patch
-* docs-abi-testing-add-damon-sysfs-interface-abi-document.patch
-* mm-damon-sysfs-remove-repeat-container_of-in-damon_sysfs_kdamond_release.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-alloc-path_max-bytes-for-proc-pid-fd-symlinks.patch
-* proc-alloc-path_max-bytes-for-proc-pid-fd-symlinks-fix.patch
-* proc-vmcore-fix-possible-deadlock-on-concurrent-mmap-and-read.patch
-* proc-vmcore-fix-vmcore_alloc_buf-kernel-doc-comment.patch
-* proc-sysctl-make-protected_-world-readable.patch
-* kernel-ksysfsc-use-helper-macro-__attr_rw.patch
-* kconfigdebug-make-debug_info-selectable-from-a-choice.patch
-* kconfigdebug-make-debug_info-selectable-from-a-choice-fix.patch
-* include-drop-pointless-__compiler_offsetof-indirection.patch
-* ilog2-force-inlining-of-__ilog2_u32-and-__ilog2_u64.patch
-* bitfield-add-explicit-inclusions-to-the-example.patch
-* lib-kconfigdebug-add-arch-dependency-for-function_align-option.patch
-* lib-bitmap-fix-many-kernel-doc-warnings.patch
-* lz4-fix-lz4_decompress_safe_partial-read-out-of-bound.patch
-* checkpatch-prefer-module_licensegpl-over-module_licensegpl-v2.patch
-* checkpatch-add-fix-option-for-some-trailing_statements.patch
-* checkpatch-add-early_param-exception-to-blank-line-after-struct-function-test.patch
-* kallsyms-print-module-name-in-%ps-s-case-when-kallsyms-is-disabled.patch
-* init-use-ktime_us_delta-to-make-initcall_debug-log-more-precise.patch
-* inith-improve-__setup-and-early_param-documentation.patch
-* init-mainc-return-1-from-handled-__setup-functions.patch
-* init-mainc-silence-some-wunused-parameter-warnings.patch
-* fs-pipe-use-kvcalloc-to-allocate-a-pipe_buffer-array.patch
-* fs-pipe-local-vars-has-to-match-types-of-proper-pipe_inode_info-fields.patch
-* minix-fix-bug-when-opening-a-file-with-o_direct.patch
-* fat-use-pointer-to-simple-type-in-put_user.patch
-* cgroup-use-irqsave-in-cgroup_rstat_flush_locked.patch
-* cgroup-use-irqsave-in-cgroup_rstat_flush_locked-fix.patch
-* kexec-make-crashk_res-crashk_low_res-and-crash_notes-symbols-always-visible.patch
-* riscv-mm-init-use-is_enabledconfig_kexec_core-instead-of-ifdef.patch
-* x86-setup-use-is_enabledconfig_kexec_core-instead-of-ifdef.patch
-* arm64-mm-use-is_enabledconfig_kexec_core-instead-of-ifdef.patch
-* docs-kdump-update-description-about-sysfs-file-system-support.patch
-* docs-kdump-add-scp-example-to-write-out-the-dump-file.patch
-* panic-unset-panic_on_warn-inside-panic.patch
-* ubsan-no-need-to-unset-panic_on_warn-in-ubsan_epilogue.patch
-* kasan-no-need-to-unset-panic_on_warn-in-end_report.patch
-* docs-sysctl-kernel-add-missing-bit-to-panic_print.patch
-* docs-sysctl-kernel-add-missing-bit-to-panic_print-fix.patch
-* panic-add-option-to-dump-all-cpus-backtraces-in-panic_print.patch
-* panic-move-panic_print-before-kmsg-dumpers.patch
-* kcov-split-ioctl-handling-into-locked-and-unlocked-parts.patch
-* kcov-properly-handle-subsequent-mmap-calls.patch
-* kernel-resource-fix-kfree-of-bootmem-memory-again.patch
-* revert-ubsan-kcsan-dont-combine-sanitizer-with-kcov-on-clang.patch
-* ipc-mqueue-use-get_tree_nodev-in-mqueue_get_tree.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* arch-x86-kernel-resourcec-needs-spinlockh.patch
-* mm-oom_killc-fix-vm_oom_kill_table-ifdeffery.patch
-* mm-delete-__clearpagewaiters.patch
-* mm-filemap_unaccount_folio-large-skip-mapcount-fixup.patch
-* mm-thp-fix-nr_file_mapped-accounting-in-page__file_rmap.patch
-* mm-thp-dont-have-to-lock-page-anymore-when-splitting-pmd.patch
-* mm-rmap-fix-cache-flush-on-thp-pages.patch
-* dax-fix-cache-flush-on-pmd-mapped-pages.patch
-* mm-rmap-introduce-pfn_mkclean_range-to-cleans-ptes.patch
-* mm-pvmw-add-support-for-walking-devmap-pages.patch
-* dax-fix-missing-writeprotect-the-pte-entry.patch
-* mm-remove-range-parameter-from-follow_invalidate_pte.patch
-* mm-migration-add-trace-events-for-thp-migrations.patch
-* mm-migration-add-trace-events-for-base-page-and-hugetlb-migrations.patch
-* kasan-page_alloc-deduplicate-should_skip_kasan_poison.patch
-* kasan-page_alloc-move-tag_clear_highpage-out-of-kernel_init_free_pages.patch
-* kasan-page_alloc-merge-kasan_free_pages-into-free_pages_prepare.patch
-* kasan-page_alloc-simplify-kasan_poison_pages-call-site.patch
-* kasan-page_alloc-init-memory-of-skipped-pages-on-free.patch
-* kasan-drop-skip_kasan_poison-variable-in-free_pages_prepare.patch
-* mm-clarify-__gfp_zerotags-comment.patch
-* kasan-only-apply-__gfp_zerotags-when-memory-is-zeroed.patch
-* kasan-page_alloc-refactor-init-checks-in-post_alloc_hook.patch
-* kasan-page_alloc-merge-kasan_alloc_pages-into-post_alloc_hook.patch
-* kasan-page_alloc-combine-tag_clear_highpage-calls-in-post_alloc_hook.patch
-* kasan-page_alloc-move-setpageskipkasanpoison-in-post_alloc_hook.patch
-* kasan-page_alloc-move-kernel_init_free_pages-in-post_alloc_hook.patch
-* kasan-page_alloc-rework-kasan_unpoison_pages-call-site.patch
-* kasan-clean-up-metadata-byte-definitions.patch
-* kasan-define-kasan_vmalloc_invalid-for-sw_tags.patch
-* kasan-x86-arm64-s390-rename-functions-for-modules-shadow.patch
-* kasan-vmalloc-drop-outdated-vm_kasan-comment.patch
-* kasan-reorder-vmalloc-hooks.patch
-* kasan-add-wrappers-for-vmalloc-hooks.patch
-* kasan-vmalloc-reset-tags-in-vmalloc-functions.patch
-* kasan-fork-reset-pointer-tags-of-vmapped-stacks.patch
-* kasan-arm64-reset-pointer-tags-of-vmapped-stacks.patch
-* kasan-fork-reset-pointer-tags-of-vmapped-stacks-fix.patch
-* kasan-fork-reset-pointer-tags-of-vmapped-stacks-fix-2.patch
-* kasan-vmalloc-add-vmalloc-tagging-for-sw_tags.patch
-* kasan-vmalloc-arm64-mark-vmalloc-mappings-as-pgprot_tagged.patch
-* kasan-vmalloc-unpoison-vm_alloc-pages-after-mapping.patch
-* kasan-mm-only-define-___gfp_skip_kasan_poison-with-hw_tags.patch
-* kasan-page_alloc-allow-skipping-unpoisoning-for-hw_tags.patch
-* kasan-page_alloc-allow-skipping-memory-init-for-hw_tags.patch
-* kasan-vmalloc-add-vmalloc-tagging-for-hw_tags.patch
-* kasan-vmalloc-only-tag-normal-vmalloc-allocations.patch
-* kasan-vmalloc-only-tag-normal-vmalloc-allocations-fix.patch
-* kasan-vmalloc-only-tag-normal-vmalloc-allocations-fix-fix.patch
-* kasan-arm64-dont-tag-executable-vmalloc-allocations.patch
-* kasan-mark-kasan_arg_stacktrace-as-__initdata.patch
-* kasan-clean-up-feature-flags-for-hw_tags-mode.patch
-* kasan-add-kasanvmalloc-command-line-flag.patch
-* kasan-allow-enabling-kasan_vmalloc-and-sw-hw_tags.patch
-* arm64-select-kasan_vmalloc-for-sw-hw_tags-modes.patch
-* kasan-documentation-updates.patch
-* kasan-improve-vmalloc-tests.patch
-* kasan-improve-vmalloc-tests-fix.patch
-* kasan-improve-vmalloc-tests-fix-2.patch
-* kasan-improve-vmalloc-tests-fix-3.patch
-* kasan-improve-vmalloc-tests-fix-3-fix.patch
-* kasan-test-support-async-again-and-asymm-modes-for-hw_tags.patch
-* mm-kasan-remove-unnecessary-config_kasan-option.patch
-* kasan-update-function-name-in-comments.patch
-* kasan-print-virtual-mapping-info-in-reports.patch
-* kasan-drop-addr-check-from-describe_object_addr.patch
-* kasan-more-line-breaks-in-reports.patch
-* kasan-rearrange-stack-frame-info-in-reports.patch
-* kasan-improve-stack-frame-info-in-reports.patch
-* kasan-print-basic-stack-frame-info-for-sw_tags.patch
-* kasan-simplify-async-check-in-end_report.patch
-* kasan-simplify-kasan_update_kunit_status-and-call-sites.patch
-* kasan-check-config_kasan_kunit_test-instead-of-config_kunit.patch
-* kasan-move-update_kunit_status-to-start_report.patch
-* kasan-move-disable_trace_on_warning-to-start_report.patch
-* kasan-split-out-print_report-from-__kasan_report.patch
-* kasan-simplify-kasan_find_first_bad_addr-call-sites.patch
-* kasan-restructure-kasan_report.patch
-* kasan-merge-__kasan_report-into-kasan_report.patch
-* kasan-call-print_report-from-kasan_report_invalid_free.patch
-* kasan-move-and-simplify-kasan_report_async.patch
-* kasan-rename-kasan_access_info-to-kasan_report_info.patch
-* kasan-add-comment-about-uaccess-regions-to-kasan_report.patch
-* kasan-respect-kasan_bit_reported-in-all-reporting-routines.patch
-* kasan-reorder-reporting-functions.patch
-* kasan-move-and-hide-kasan_save_enable-restore_multi_shot.patch
-* kasan-disable-lockdep-when-printing-reports.patch
-* mm-enable-madv_dontneed-for-hugetlb-mappings.patch
-* selftests-vm-add-hugetlb-madvise-madv_dontneed-madv_remove-test.patch
-* userfaultfd-selftests-enable-hugetlb-remap-and-remove-event-testing.patch
-* mm-huge_memory-make-is_transparent_hugepage-static.patch
-* mm-optimize-do_wp_page-for-exclusive-pages-in-the-swapcache.patch
-* mm-optimize-do_wp_page-for-fresh-pages-in-local-lru-pagevecs.patch
-* mm-slightly-clarify-ksm-logic-in-do_swap_page.patch
-* mm-streamline-cow-logic-in-do_swap_page.patch
-* mm-huge_memory-streamline-cow-logic-in-do_huge_pmd_wp_page.patch
-* mm-khugepaged-remove-reuse_swap_page-usage.patch
-* mm-swapfile-remove-stale-reuse_swap_page.patch
-* mm-huge_memory-remove-stale-page_trans_huge_mapcount.patch
-* mm-warn-on-deleting-redirtied-only-if-accounted.patch
-* mm-unmap_mapping_range_tree-with-i_mmap_rwsem-shared.patch
-* mm-fix-race-between-madv_free-reclaim-and-blkdev-direct-io-read.patch
-* mm-fix-race-between-madv_free-reclaim-and-blkdev-direct-io-read-v4.patch
-* mm-madvise-madv_dontneed_locked.patch
-* selftests-vm-remove-dependecy-from-internal-kernel-macros.patch
-* selftests-kselftest-framework-provide-finished-helper.patch
-* selftests-vm-add-test-for-soft-dirty-pte-bit.patch
-* kselftest-vm-override-targets-from-arguments.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  mutex-subsystem-synchro-test-module-fix.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+SGksIFl1ZXpoYW5nLE1vDQoNCj4gPiA+KFBTOiBUaGUgb3JpZ2luYWwgbG9naWMgaXMgdG8gY2xl
+YXIgVm9sdW1lRGlydHkgYWZ0ZXIgQml0TWFwLCBGQVQgYW5kIGRpcmVjdG9yeQ0KPiA+IGVudHJp
+ZXMgYXJlIHVwZGF0ZWQuKQ0KPiA+DQo+ID4gSG93ZXZlciwgdGhlIHdyaXRpbmcgb3JkZXIgd2Fz
+IG5vdCBndWFyYW50ZWVkLg0KPiA+IE1vcmUgc3luY2hyb25vdXMgd3JpdGVzIGFyZSBuZWVkZWQg
+dG8gZ3VhcmFudGVlIHRoZSB3cml0ZSBvcmRlci4NCj4gDQo+IElmICJkaXJzeW5jIiBvciAic3lu
+YyIgaXMgZW5hYmxlZCwgQml0TWFwLCBGQVQgYW5kIGRpcmVjdG9yeSBlbnRyaWVzIGFyZSBndWFy
+YW50ZWVkIHRvIGJlIHdyaXR0ZW4gaW4gb3JkZXIuDQo+IFRoaXMgaXMgdGhlIHJlYXNvbiB0byBr
+ZWVwIGNsZWFyaW5nIFZvbHVtZURpcnR5Lg0KDQpTQl9ESVJTWU5DIHJlcXVlc3RzIHN5bmNocm9u
+aXphdGlvbiBvZiB0aGUgaW5vZGUgb2YgdGhlIGN1cnJlbnQgZmlsZS9kaXIuDQpUaGUgZXhmYXQg
+aW1wbGVtZW50YXRpb24gdXBkYXRlcyBhbmQgc3luY3MgdGhlIGRpci1lbnRyaWVzIG9mIHRoZSBj
+dXJyZW50IGZpbGUvZGlyLg0KSWYgb25seSBTQl9ESVJTWU5DIGlzIHNldCBhbmQgU0JfU1lOQyBp
+cyBub3Qgc2V0LCBpdCBjYW5ub3QgYmUgZ3VhcmFudGVlZCB0aGF0IEZBVC9taXJyb3JGQVQgaXMg
+c3luY2hyb25pemVkLg0KDQpCUg0KVCAuS29oYWRhDQo=
