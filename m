@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5AF4D038B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 16:58:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 104BC4D038D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 16:58:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243067AbiCGP7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 10:59:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52286 "EHLO
+        id S243948AbiCGP7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 10:59:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbiCGP66 (ORCPT
+        with ESMTP id S236128AbiCGP67 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 10:58:58 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F17E31504
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Mar 2022 07:58:02 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id n15so9921954wra.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 07:58:02 -0800 (PST)
+        Mon, 7 Mar 2022 10:58:59 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854F93137D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Mar 2022 07:58:03 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id r65so9482952wma.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 07:58:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lzlFDcKeup3tPIXzWHHjCUBp6o8hEnxEJJeuyu6PzKo=;
-        b=cP22eTz+mci0yvwhJcdEqNvsht8SgC+hkgSNAC5SmWA39xhM1Bei4S28UpsHR7vReK
-         GUY+ricvH5mNRjNdlxDlGQdmowAOcJ13OBONDALWch0w3lLUl1I5QsSVAtggGC5HQMg+
-         l3smR2Zn3JHfViQNRJi1yn4VLnPKsRz3mEf8mPvvk4k5osigx+lON3OAI2zw45aFpkSg
-         Ucs0XivvN3+H4pfHVYb0A9pT5KkHyOnPmp5B9HCGBDhCxHdVYEjxZxC8fbLj6GRrRR8g
-         rJ1+dA9B2rfU64NMN8N1hUG5GJvTCQDxxa9H5zOSyFKMa4n6RXE7rdLrO89M0aOsvnUd
-         7Pog==
+        bh=CjXRp1bdXZQL0cITkY0adRmoRgN6m5tRA5jHYrqnWvw=;
+        b=cTpFz0OJmsR0jJIAYqPxk0aPmjBDgVkFjdvYJY5/1rZgvJC/MQt7K86isw8O8M2OSz
+         pVYfAiS1EmwZZ+hoplFRfjxcRQQh/mDgpd9SH84Aip/dzXgOjj5dosSmLYh7SudYFnhr
+         ni6okfwHdEHeXDMhFquAR/YWM6YDgrz03j1RmRrGzzm6YO09ANns2XwZCxMs6bfmTYYn
+         ha23oU3f1/9jo//zYkZhZj3j+JZikb6ehY1ZRDKVMiR+1DBH8OAqDHbDh0p2iewoDjoM
+         xm0r+Er0fx8a6FxTTHNX3ElZ8UG4m0kv5XL/GK5xekZrQIKzWl+UAhVgFsx26V26IDhq
+         gG/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lzlFDcKeup3tPIXzWHHjCUBp6o8hEnxEJJeuyu6PzKo=;
-        b=GKwmUc+WqobpZC5dmTK/AP6zth6fFGS9C3pE8FqENYPjt/HnDFty/bH9MRzg80RKhe
-         UrNCk5CACuxCX+6TD2lZuqiZLBzcKejaAkROOEVkGtnoLTxMcuwnhucAJQfKa3qCxlHZ
-         YsRJJH63PLK9/RssdYjsShBW3bQw2be80DB5jWq+u01XhldY9a74++Cu/9EFGjdVpWwK
-         HbgCczHOdyal/x5A24SIGFsHD/36ZcWITq5tJ60XNvdEP59DvkiFpVJnAnaSEcI48xoK
-         alOUdD3B9s0D9JjaN3JqLh+qczvZVFZFwxpXT9EdGukHwnJebcrM2ufBhBq4zoKmKE/Q
-         c3jw==
-X-Gm-Message-State: AOAM5333INrAIr33qYjJQdGwJk7SRaYZPtYyY4UuGpCiD/E9ezEnAdk0
-        uUC1eHODjzktLm6SQZMVsIA=
-X-Google-Smtp-Source: ABdhPJzoSLeTAVFAymiQXSEnz/Dl4a2ASIZcIXuRWiVBhfIuXN9A6/+GSiAAgAjZv/U2w1JuyOdSeQ==
-X-Received: by 2002:adf:d84c:0:b0:1f0:651d:c6da with SMTP id k12-20020adfd84c000000b001f0651dc6damr8728883wrl.665.1646668680785;
-        Mon, 07 Mar 2022 07:58:00 -0800 (PST)
+        bh=CjXRp1bdXZQL0cITkY0adRmoRgN6m5tRA5jHYrqnWvw=;
+        b=Z2pkrkY4ZZZFFKo4leCqDKsm3Ov/SCxPiI+Qf0Xh2BcPob0A7GLuwvX668tPxFhIC0
+         55RxqzHPzQFTSNItu/t5Dw050JYX8DJWoaLQxblNOdSrVhNN9+yJFBnNN80GF3psQplK
+         Aa87YkfhGKwHfouN2pXRV3LXwi+VgIth/yuE4OhTzR8fxc4GTYHuZ6RpCmXLeQVlTaIZ
+         PgMAytS3GQRGKsopricsYZz/mih3LM74Q15tqwGmAlOFmrkqR5tM0TygsYeJ6KYoj7ZQ
+         +QFSXNM3NaAxaNVFj6ZwqdKMrqp6RqQjXG85gPNU/KgkcMKA9TcvQ5lGOnJsTyN13OGc
+         SHsg==
+X-Gm-Message-State: AOAM532yUJxB5P+0O4m8qHzAO2yNFyfuTNlF1IyIHtx7jtAUhzwPyTis
+        oRE8srgJwcUTC+y+h/sHHjY=
+X-Google-Smtp-Source: ABdhPJy2Wyzi4G/URB5OKS0TD7RYdhx6yxQUXyE4n5Gx0khSleRgcDnEAqOEOhnyX8LLd9V3OQ4zNw==
+X-Received: by 2002:a1c:ed0e:0:b0:380:fa8c:da99 with SMTP id l14-20020a1ced0e000000b00380fa8cda99mr9658023wmh.135.1646668682051;
+        Mon, 07 Mar 2022 07:58:02 -0800 (PST)
 Received: from localhost.localdomain ([77.137.71.203])
-        by smtp.gmail.com with ESMTPSA id g6-20020a5d5406000000b001f049726044sm11686591wrv.79.2022.03.07.07.57.59
+        by smtp.gmail.com with ESMTPSA id g6-20020a5d5406000000b001f049726044sm11686591wrv.79.2022.03.07.07.58.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 07:58:00 -0800 (PST)
+        Mon, 07 Mar 2022 07:58:01 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/5] fsnotify: move inotify control flags to mark flags
-Date:   Mon,  7 Mar 2022 17:57:37 +0200
-Message-Id: <20220307155741.1352405-2-amir73il@gmail.com>
+Subject: [PATCH 2/5] fsnotify: pass flags argument to fsnotify_add_mark()
+Date:   Mon,  7 Mar 2022 17:57:38 +0200
+Message-Id: <20220307155741.1352405-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220307155741.1352405-1-amir73il@gmail.com>
 References: <20220307155741.1352405-1-amir73il@gmail.com>
@@ -70,195 +70,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The inotify control flags in the mark mask (e.g. FS_IN_ONE_SHOT) are not
-relevant to object interest mask, so move them to the mark flags.
+Instead of passing the allow_dups argument to fsnotify_add_mark()
+as a 'boolean' int, pass a generic flags argument and define the flag
+FSNOTIFY_ADD_MARK_ALLOW_DUPS to express the old allow_dups meaning.
 
-This frees up some bits in the object interest mask.
+We are going to use the flags argument to pass more options to
+to fsnotify_add_mark().
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fsnotify.c                 |  4 +--
- fs/notify/inotify/inotify_fsnotify.c |  2 +-
- fs/notify/inotify/inotify_user.c     | 40 +++++++++++++++++-----------
- include/linux/fsnotify_backend.h     | 11 ++++----
- 4 files changed, 34 insertions(+), 23 deletions(-)
+ fs/notify/mark.c                 | 13 ++++++-------
+ include/linux/fsnotify_backend.h | 18 +++++++++---------
+ kernel/audit_fsnotify.c          |  3 ++-
+ 3 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 494f653efbc6..f5d2547e2411 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -255,7 +255,7 @@ static int fsnotify_handle_inode_event(struct fsnotify_group *group,
- 	if (WARN_ON_ONCE(!inode && !dir))
- 		return 0;
- 
--	if ((inode_mark->mask & FS_EXCL_UNLINK) &&
-+	if ((inode_mark->flags & FSNOTIFY_MARK_FLAG_EXCL_UNLINK) &&
- 	    path && d_unlinked(path->dentry))
- 		return 0;
- 
-@@ -583,7 +583,7 @@ static __init int fsnotify_init(void)
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index 4853184f7dde..190df435919f 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -574,7 +574,7 @@ static struct fsnotify_mark_connector *fsnotify_grab_connector(
+ static int fsnotify_add_mark_list(struct fsnotify_mark *mark,
+ 				  fsnotify_connp_t *connp,
+ 				  unsigned int obj_type,
+-				  int allow_dups, __kernel_fsid_t *fsid)
++				  int flags, __kernel_fsid_t *fsid)
  {
- 	int ret;
+ 	struct fsnotify_mark *lmark, *last = NULL;
+ 	struct fsnotify_mark_connector *conn;
+@@ -633,7 +633,7 @@ static int fsnotify_add_mark_list(struct fsnotify_mark *mark,
  
--	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
-+	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 23);
+ 		if ((lmark->group == mark->group) &&
+ 		    (lmark->flags & FSNOTIFY_MARK_FLAG_ATTACHED) &&
+-		    !allow_dups) {
++		    !(flags & FSNOTIFY_ADD_MARK_ALLOW_DUPS)) {
+ 			err = -EEXIST;
+ 			goto out_err;
+ 		}
+@@ -668,7 +668,7 @@ static int fsnotify_add_mark_list(struct fsnotify_mark *mark,
+  */
+ int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
+ 			     fsnotify_connp_t *connp, unsigned int obj_type,
+-			     int allow_dups, __kernel_fsid_t *fsid)
++			     int flags, __kernel_fsid_t *fsid)
+ {
+ 	struct fsnotify_group *group = mark->group;
+ 	int ret = 0;
+@@ -688,7 +688,7 @@ int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
+ 	fsnotify_get_mark(mark); /* for g_list */
+ 	spin_unlock(&mark->lock);
  
- 	ret = init_srcu_struct(&fsnotify_mark_srcu);
+-	ret = fsnotify_add_mark_list(mark, connp, obj_type, allow_dups, fsid);
++	ret = fsnotify_add_mark_list(mark, connp, obj_type, flags, fsid);
  	if (ret)
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index d92d7b0adc9a..49cfe2ae6d23 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -122,7 +122,7 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
- 		fsnotify_destroy_event(group, fsn_event);
- 	}
+ 		goto err;
  
--	if (inode_mark->mask & IN_ONESHOT)
-+	if (inode_mark->flags & FSNOTIFY_MARK_FLAG_IN_ONESHOT)
- 		fsnotify_destroy_mark(inode_mark, group);
- 
- 	return 0;
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 54583f62dc44..324c49d26b53 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -110,11 +110,26 @@ static inline __u32 inotify_arg_to_mask(struct inode *inode, u32 arg)
- 		mask |= FS_EVENT_ON_CHILD;
- 
- 	/* mask off the flags used to open the fd */
--	mask |= (arg & (IN_ALL_EVENTS | IN_ONESHOT | IN_EXCL_UNLINK));
-+	mask |= (arg & IN_ALL_EVENTS);
- 
- 	return mask;
+@@ -708,14 +708,13 @@ int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
  }
  
-+#define INOTIFY_MARK_FLAGS \
-+	(FSNOTIFY_MARK_FLAG_EXCL_UNLINK | FSNOTIFY_MARK_FLAG_IN_ONESHOT)
-+
-+static inline unsigned int inotify_arg_to_flags(u32 arg)
-+{
-+	unsigned int flags = 0;
-+
-+	if (arg & IN_EXCL_UNLINK)
-+		flags |= FSNOTIFY_MARK_FLAG_EXCL_UNLINK;
-+	if (arg & IN_ONESHOT)
-+		flags |= FSNOTIFY_MARK_FLAG_IN_ONESHOT;
-+
-+	return flags;
-+}
-+
- static inline u32 inotify_mask_to_arg(__u32 mask)
+ int fsnotify_add_mark(struct fsnotify_mark *mark, fsnotify_connp_t *connp,
+-		      unsigned int obj_type, int allow_dups,
+-		      __kernel_fsid_t *fsid)
++		      unsigned int obj_type, int flags, __kernel_fsid_t *fsid)
  {
- 	return mask & (IN_ALL_EVENTS | IN_ISDIR | IN_UNMOUNT | IN_IGNORED |
-@@ -526,13 +541,10 @@ static int inotify_update_existing_watch(struct fsnotify_group *group,
- 	struct fsnotify_mark *fsn_mark;
- 	struct inotify_inode_mark *i_mark;
- 	__u32 old_mask, new_mask;
--	__u32 mask;
--	int add = (arg & IN_MASK_ADD);
-+	int replace = !(arg & IN_MASK_ADD);
- 	int create = (arg & IN_MASK_CREATE);
  	int ret;
+ 	struct fsnotify_group *group = mark->group;
  
--	mask = inotify_arg_to_mask(inode, arg);
--
- 	fsn_mark = fsnotify_find_mark(&inode->i_fsnotify_marks, group);
- 	if (!fsn_mark)
- 		return -ENOENT;
-@@ -545,10 +557,12 @@ static int inotify_update_existing_watch(struct fsnotify_group *group,
- 
- 	spin_lock(&fsn_mark->lock);
- 	old_mask = fsn_mark->mask;
--	if (add)
--		fsn_mark->mask |= mask;
--	else
--		fsn_mark->mask = mask;
-+	if (replace) {
-+		fsn_mark->mask = 0;
-+		fsn_mark->flags &= ~INOTIFY_MARK_FLAGS;
-+	}
-+	fsn_mark->mask |= inotify_arg_to_mask(inode, arg);
-+	fsn_mark->flags |= inotify_arg_to_flags(arg);
- 	new_mask = fsn_mark->mask;
- 	spin_unlock(&fsn_mark->lock);
- 
-@@ -579,19 +593,17 @@ static int inotify_new_watch(struct fsnotify_group *group,
- 			     u32 arg)
- {
- 	struct inotify_inode_mark *tmp_i_mark;
--	__u32 mask;
- 	int ret;
- 	struct idr *idr = &group->inotify_data.idr;
- 	spinlock_t *idr_lock = &group->inotify_data.idr_lock;
- 
--	mask = inotify_arg_to_mask(inode, arg);
--
- 	tmp_i_mark = kmem_cache_alloc(inotify_inode_mark_cachep, GFP_KERNEL);
- 	if (unlikely(!tmp_i_mark))
- 		return -ENOMEM;
- 
- 	fsnotify_init_mark(&tmp_i_mark->fsn_mark, group);
--	tmp_i_mark->fsn_mark.mask = mask;
-+	tmp_i_mark->fsn_mark.mask = inotify_arg_to_mask(inode, arg);
-+	tmp_i_mark->fsn_mark.flags = inotify_arg_to_flags(arg);
- 	tmp_i_mark->wd = -1;
- 
- 	ret = inotify_add_to_idr(idr, idr_lock, tmp_i_mark);
-@@ -845,9 +857,7 @@ static int __init inotify_user_setup(void)
- 	BUILD_BUG_ON(IN_UNMOUNT != FS_UNMOUNT);
- 	BUILD_BUG_ON(IN_Q_OVERFLOW != FS_Q_OVERFLOW);
- 	BUILD_BUG_ON(IN_IGNORED != FS_IN_IGNORED);
--	BUILD_BUG_ON(IN_EXCL_UNLINK != FS_EXCL_UNLINK);
- 	BUILD_BUG_ON(IN_ISDIR != FS_ISDIR);
--	BUILD_BUG_ON(IN_ONESHOT != FS_IN_ONESHOT);
- 
- 	BUILD_BUG_ON(HWEIGHT32(ALL_INOTIFY_BITS) != 22);
- 
+ 	mutex_lock(&group->mark_mutex);
+-	ret = fsnotify_add_mark_locked(mark, connp, obj_type, allow_dups, fsid);
++	ret = fsnotify_add_mark_locked(mark, connp, obj_type, flags, fsid);
+ 	mutex_unlock(&group->mark_mutex);
+ 	return ret;
+ }
 diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 0805b74cae44..0bd63608e935 100644
+index 0bd63608e935..0b548518b166 100644
 --- a/include/linux/fsnotify_backend.h
 +++ b/include/linux/fsnotify_backend.h
-@@ -55,7 +55,6 @@
- #define FS_ACCESS_PERM		0x00020000	/* access event in a permissions hook */
- #define FS_OPEN_EXEC_PERM	0x00040000	/* open/exec event in a permission hook */
+@@ -633,30 +633,30 @@ extern struct fsnotify_mark *fsnotify_find_mark(fsnotify_connp_t *connp,
+ /* Get cached fsid of filesystem containing object */
+ extern int fsnotify_get_conn_fsid(const struct fsnotify_mark_connector *conn,
+ 				  __kernel_fsid_t *fsid);
++
+ /* attach the mark to the object */
++#define FSNOTIFY_ADD_MARK_ALLOW_DUPS	0x1
++
+ extern int fsnotify_add_mark(struct fsnotify_mark *mark,
+ 			     fsnotify_connp_t *connp, unsigned int obj_type,
+-			     int allow_dups, __kernel_fsid_t *fsid);
++			     int flags, __kernel_fsid_t *fsid);
+ extern int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
+ 				    fsnotify_connp_t *connp,
+-				    unsigned int obj_type, int allow_dups,
++				    unsigned int obj_type, int flags,
+ 				    __kernel_fsid_t *fsid);
  
--#define FS_EXCL_UNLINK		0x04000000	/* do not send events if object is unlinked */
- /*
-  * Set on inode mark that cares about things that happen to its children.
-  * Always set for dnotify and inotify.
-@@ -66,7 +65,6 @@
- #define FS_RENAME		0x10000000	/* File was renamed */
- #define FS_DN_MULTISHOT		0x20000000	/* dnotify multishot */
- #define FS_ISDIR		0x40000000	/* event occurred against dir */
--#define FS_IN_ONESHOT		0x80000000	/* only send event once */
+ /* attach the mark to the inode */
+ static inline int fsnotify_add_inode_mark(struct fsnotify_mark *mark,
+-					  struct inode *inode,
+-					  int allow_dups)
++					  struct inode *inode, int flags)
+ {
+ 	return fsnotify_add_mark(mark, &inode->i_fsnotify_marks,
+-				 FSNOTIFY_OBJ_TYPE_INODE, allow_dups, NULL);
++				 FSNOTIFY_OBJ_TYPE_INODE, flags, NULL);
+ }
+ static inline int fsnotify_add_inode_mark_locked(struct fsnotify_mark *mark,
+-						 struct inode *inode,
+-						 int allow_dups)
++						 struct inode *inode, int flags)
+ {
+ 	return fsnotify_add_mark_locked(mark, &inode->i_fsnotify_marks,
+-					FSNOTIFY_OBJ_TYPE_INODE, allow_dups,
+-					NULL);
++					FSNOTIFY_OBJ_TYPE_INODE, flags, NULL);
+ }
  
- #define FS_MOVE			(FS_MOVED_FROM | FS_MOVED_TO)
+ /* given a group and a mark, flag mark to be freed when all references are dropped */
+diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+index 02348b48447c..82233f651c62 100644
+--- a/kernel/audit_fsnotify.c
++++ b/kernel/audit_fsnotify.c
+@@ -100,7 +100,8 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct audit_krule *krule, char *pa
+ 	audit_update_mark(audit_mark, dentry->d_inode);
+ 	audit_mark->rule = krule;
  
-@@ -106,8 +104,7 @@
- 			     FS_ERROR)
- 
- /* Extra flags that may be reported with event or control handling of events */
--#define ALL_FSNOTIFY_FLAGS  (FS_EXCL_UNLINK | FS_ISDIR | FS_IN_ONESHOT | \
--			     FS_DN_MULTISHOT | FS_EVENT_ON_CHILD)
-+#define ALL_FSNOTIFY_FLAGS  (FS_ISDIR | FS_EVENT_ON_CHILD | FS_DN_MULTISHOT)
- 
- #define ALL_FSNOTIFY_BITS   (ALL_FSNOTIFY_EVENTS | ALL_FSNOTIFY_FLAGS)
- 
-@@ -473,9 +470,13 @@ struct fsnotify_mark {
- 	struct fsnotify_mark_connector *connector;
- 	/* Events types to ignore [mark->lock, group->mark_mutex] */
- 	__u32 ignored_mask;
--#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY	0x01
-+	/* Internal fsnotify flags */
- #define FSNOTIFY_MARK_FLAG_ALIVE		0x02
- #define FSNOTIFY_MARK_FLAG_ATTACHED		0x04
-+	/* Backend controlled flags */
-+#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY	0x10
-+#define FSNOTIFY_MARK_FLAG_EXCL_UNLINK		0x20
-+#define FSNOTIFY_MARK_FLAG_IN_ONESHOT		0x40
- 	unsigned int flags;		/* flags [mark->lock] */
- };
- 
+-	ret = fsnotify_add_inode_mark(&audit_mark->mark, inode, true);
++	ret = fsnotify_add_inode_mark(&audit_mark->mark, inode,
++				      FSNOTIFY_ADD_MARK_ALLOW_DUPS);
+ 	if (ret < 0) {
+ 		fsnotify_put_mark(&audit_mark->mark);
+ 		audit_mark = ERR_PTR(ret);
 -- 
 2.25.1
 
