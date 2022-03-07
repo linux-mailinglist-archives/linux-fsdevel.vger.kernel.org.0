@@ -2,96 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DE684D0010
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 14:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E47B04D0077
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 14:52:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239057AbiCGNbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 08:31:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39842 "EHLO
+        id S241381AbiCGNxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 08:53:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiCGNbN (ORCPT
+        with ESMTP id S237571AbiCGNxX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 08:31:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0C77EA0B;
-        Mon,  7 Mar 2022 05:30:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F1E84B81243;
-        Mon,  7 Mar 2022 13:30:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00802C340E9;
-        Mon,  7 Mar 2022 13:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646659816;
-        bh=oBLz9AgNUk2wIEBHGy6U9s99emBLztMRAodnUzUj5w8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sFCk7udNm2J44RTzfUJ+MfPwopHSW/nmauJl4OmAbMfrWN2sP0SwIOWXTFvBG7ITK
-         ZckklcNFLR5z7x04rHy7YPPgl/p5kkHiqVMVYe26/xj40ZZ/jSJS6b2bBHs4cT+qlg
-         lSryt84BjNDG2rf9ETJvTM0G+a+p4bQl/Xod+mFKXtsAk8t/TDHR0+xtUPhy5OHE2n
-         RV7OiySPImo+g4q9DZSj1HLZYgcZTUZlg7l86k4mMgBlrwGy8WT95FerjuTQ/xJ2ij
-         Fs2tnxaydRH2XVd9fVLVS75/YXpyxiD2u+Dk0fyp2LN6w5OcLV76rEDlCEotG1qXaU
-         ODeQnJrvkkvkg==
-Date:   Mon, 7 Mar 2022 15:29:35 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Nathaniel McCallum <nathaniel@profian.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
-        <thomas.hellstrom@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Ekstrand <jason@jlekstrand.net>,
-        Chris Wilson <chris@chris-wilson.co.uk>, G@iki.fi,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        zhangyiru <zhangyiru3@huawei.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
-        linux-mips@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, codalist@coda.cs.cmu.edu,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
-Message-ID: <YiYIv9guOgClLKT8@iki.fi>
-References: <20220306053211.135762-1-jarkko@kernel.org>
- <YiSb7tsUEBRGS+HA@casper.infradead.org>
- <YiW4yurDXSifTYUt@infradead.org>
+        Mon, 7 Mar 2022 08:53:23 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C231712AFF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Mar 2022 05:52:27 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id s42so1219823pfg.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 05:52:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=FpiH8sK6QJ5ZecNwA0soEekz+DBDXKgGF93HUqOWr2g=;
+        b=3C80KwlAfecIpqsoXr/WQ/0If5ZLPxKUel30fSldQNh+QLi/6eRFRdZYMRUfVAEK60
+         q1Tz2gW7OU0CuZS613xgjZfpk9iA8CNKv87I+FVqoZAL5PjH+CNyY/m39y88OJcfoeCY
+         lFLtbwbOI1GWEeXXAfPQudyK2sWVrxK1qL64/NKjtX+fGVarDmEKqYqgPBddP1ylNjo3
+         Bnk+YsbeEo4XWuoaSM49mf4Wz0Z+etvvQXT+S2GiwP+asuHMSS+/IDtF38qAuIAaf/l1
+         9HtsYnmBy3rdrdClH8hTGW2YS7hqgFggJCNrGIVeeDYrPgmcNPiBirtZMfsVvpZFWLak
+         /lMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=FpiH8sK6QJ5ZecNwA0soEekz+DBDXKgGF93HUqOWr2g=;
+        b=Bc8QV/1PAQWhlRgC8PzW78MiEeUGRtffC3TwtajySlGx1ItA/DMK50H8y14/Bt4lZD
+         KledcjtkTDD4tAFGm7pADPYOHNe9rSssrdfYZESnxWZXx02/+xLpWJ1TLvNeM69o0xUB
+         C4K9r8S+M6RoHLvo8EPws0k7D3dBPHY8q8+NdfbR5l1rTTJXLnAFaC05/ohrthPS/t/M
+         mmECO1dtL+EH6jrMc5YBP6XWZ67Evok+OAD+g5c9IA/Y0r194JbjaEv5FfRL8D+BMHEN
+         OddCk+I4DD4hhqtVESDaR5IkaqtyoQct0mcNkOk9T05jpAwDFniy4x7Mnjl4W5WfK888
+         pkyA==
+X-Gm-Message-State: AOAM530BrXnGFOZf0kkaAqUyfzjE3dkEeH06Q/9HHtku/QwbnF4No857
+        E+HW+ERfR1pmeKDScrHmOTAUig==
+X-Google-Smtp-Source: ABdhPJz+/iGljhGAfM285WDdfPPis8SH9wGNMH/HdIzatH84Hr3uwQ2gayBqurPn+iZWNdoEmD1R0A==
+X-Received: by 2002:a05:6a00:16d6:b0:4bf:325:de2f with SMTP id l22-20020a056a0016d600b004bf0325de2fmr12833983pfc.7.1646661147261;
+        Mon, 07 Mar 2022 05:52:27 -0800 (PST)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id j9-20020a056a00234900b004f6feec0d6csm4550102pfj.2.2022.03.07.05.52.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Mar 2022 05:52:26 -0800 (PST)
+Message-ID: <dbd1479d-09fe-aedc-3b43-5bd0cbebe555@kernel.dk>
+Date:   Mon, 7 Mar 2022 06:52:25 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YiW4yurDXSifTYUt@infradead.org>
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 2/2] fs: remove fs.f_write_hint
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220307104701.607750-1-hch@lst.de>
+ <20220307104701.607750-3-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220307104701.607750-3-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 06, 2022 at 11:48:26PM -0800, Christoph Hellwig wrote:
-> On Sun, Mar 06, 2022 at 11:33:02AM +0000, Matthew Wilcox wrote:
-> > On Sun, Mar 06, 2022 at 07:32:04AM +0200, Jarkko Sakkinen wrote:
-> > > For device memory (aka VM_IO | VM_PFNMAP) MAP_POPULATE does nothing. Allow
-> > > to use that for initializing the device memory by providing a new callback
-> > > f_ops->populate() for the purpose.
-> > 
-> > As I said, NAK.
-> 
-> Agreed.  This is an amazingly bad interface.
+On 3/7/22 3:47 AM, Christoph Hellwig wrote:
+> The value is now completely unused except for reporting it back through
+> the F_GET_FILE_RW_HINT ioctl, so remove the value and the two ioctls
+> for it.
 
-So what would you suggest to sort out the issue? I'm happy to go with
-ioctl if nothing else is acceptable.
+This commit message could do with some verbiage on why the EINVAL
+solution was chosen for the F_{GET,SET}_RW_HINT ioctls.
 
-BR, Jarkko
+-- 
+Jens Axboe
+
