@@ -2,94 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7CB4D0279
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 16:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E0BF4D0287
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 16:16:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243704AbiCGPIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 10:08:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
+        id S240514AbiCGPQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 10:16:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241606AbiCGPIj (ORCPT
+        with ESMTP id S236295AbiCGPQ4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 10:08:39 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01D32FFC7;
-        Mon,  7 Mar 2022 07:07:44 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id n33-20020a05600c3ba100b003832caf7f3aso71239wms.0;
-        Mon, 07 Mar 2022 07:07:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N/KGskNCElFlx9hP2T2sOELL9k2U6uGlQbATzaJwwdo=;
-        b=k80UYM+tUm816dF5wxKmo1tLClMuSsc93kymU/e7vEIS+9XTutUIdalNnLVCV+q6CI
-         zHxQcAXWvyBntZu1oIJGpwV6VUgit72aFs1htSxIWietf4hmhzGZSdBq7JiVkIMjTwW8
-         2Kme7AdBvF67RYrPk4R8ULCv02zRXq6D4ubTURAfSP/jNzAUtUzZ+Enq24O+MFUiyYVS
-         PRxBQl3TbP+k9LmUDSEfY9mNAvOdOrRfPn1oZE8yFjEC0GzpoA4I5/2mYG82QEKDkWlL
-         ow36AXr/xKHEFVYRSL2NK62iqZUFBof0+H3RC60XMf0yjFBjyCdNNtWTY3LFTpT+vfNF
-         f/7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N/KGskNCElFlx9hP2T2sOELL9k2U6uGlQbATzaJwwdo=;
-        b=xboaccij19UzN5PB6C5N/3XCwfq3o6w/SJv9y6rVrfR4xsrOgggc8PztifoOuy4oKU
-         25k+jdCb5beZonnCju04cZYVpsqin2MvwgjQaiq/rPoPtryfIIO722wGAfYBB/TvyMSs
-         EsCmEpqpC24nEufr4b7OaOM0X0X1Kh/ZDrQBt+hqNwvtKz/tGWdgmAtIYUrwq4d0CSrW
-         N9QzURh+Dusx4Y81pyZX37sHk5aBa1YNuf+L43MtbR1FCj5U8eoXXOx3nd2NmAdrj8Do
-         +3yejU3znMjARCt4+W2PK3L3XNTEHask444HUPphuWfMTjjIOahWe38QucTKf69vYWey
-         kYtA==
-X-Gm-Message-State: AOAM530i17kUY8D2Vw4WNTQuJEZxFUEwRhJVsdjpnExPGTinF7byV56Y
-        AtS1j+1e8PVVaotphP/pZHbPltXVFmc=
-X-Google-Smtp-Source: ABdhPJy+VPLJ4gytCHsbhvLHzMzxNmYwK+e15gs5Cf90dhSycACJdfehjDEF98JWYsD5UlKHqM1U4w==
-X-Received: by 2002:a05:600c:3486:b0:381:65ec:f8ed with SMTP id a6-20020a05600c348600b0038165ecf8edmr9344371wmq.68.1646665663605;
-        Mon, 07 Mar 2022 07:07:43 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g11-20020a5d554b000000b001f0326a23ddsm11802127wrw.70.2022.03.07.07.07.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 07:07:43 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/affs: remove redundant assignment to ch
-Date:   Mon,  7 Mar 2022 15:07:42 +0000
-Message-Id: <20220307150742.137873-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Mon, 7 Mar 2022 10:16:56 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0378C7C2;
+        Mon,  7 Mar 2022 07:16:02 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A15C9B815D7;
+        Mon,  7 Mar 2022 15:16:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A9BCC340EB;
+        Mon,  7 Mar 2022 15:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646666160;
+        bh=wolcnwajA+sQ1qIY2qVSpKkxIr9b/4/6DCUMi6L+z3U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PMJbeZdu2XAur6tsZsh5zr5GlKzvMSkxIIbhNs+yYhSVAnH2NH8PuShMKloIdYRm9
+         vJWTjuF7yIjrzAamoXCVtwnip18ier3jYS+mBi5doqJJ8x/257SuOfHGx6pQMPc8Ai
+         z4WNWB6PAK0R2XPy28O4Qb4HHLcYeP0U7x25v/Yp9XDkLg5DS8Mj2SqQyuXoNiwocM
+         B4q2NmFRKKbN7VD1CasygRB/KwUbfgwMvZrQWbTv1X5FHR9i89Jj0fQWRZc5BaCTQI
+         W5Hyb6vC4g42XB2FaUVEclWP4wNgkAMIdLkKqjB04hDsQbe/xDCGp3PtK7CYfUT2fJ
+         KW76dWktINeLA==
+Date:   Mon, 7 Mar 2022 07:15:56 -0800
+From:   Keith Busch <kbusch@kernel.org>
+To:     Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        lsf-pc@lists.linux-foundation.org,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <matias.bjorling@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Keith Busch <keith.busch@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Message-ID: <20220307151556.GB3260574@dhcp-10-100-145-180.wdc.com>
+References: <69932637edee8e6d31bafa5fd39e19a9790dd4ab.camel@HansenPartnership.com>
+ <DD05D9B0-195F-49EF-80DA-1AA0E4FA281F@javigon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <DD05D9B0-195F-49EF-80DA-1AA0E4FA281F@javigon.com>
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The assignment of ch after subtracting ('a' - 'A') is redundant and
-can be removed. Fix this by replacing the -= operator with just -
-to remove the assignment.
+On Mon, Mar 07, 2022 at 03:35:12PM +0100, Javier González wrote:
+> As I mentioned in the last reply to to Dave, the main concern for me
+> at the moment is supporting arbitrary zone sizes in the kernel. If we
+> can agree on a path towards that, we can definitely commit to focus on
+> ZoneFS and implement support for it on the different places we
+> maintain in user-space. 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/affs/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/affs/namei.c b/fs/affs/namei.c
-index bcab18956b4f..a1270deba908 100644
---- a/fs/affs/namei.c
-+++ b/fs/affs/namei.c
-@@ -19,7 +19,7 @@ typedef int (*toupper_t)(int);
- static int
- affs_toupper(int ch)
- {
--	return ch >= 'a' && ch <= 'z' ? ch -= ('a' - 'A') : ch;
-+	return ch >= 'a' && ch <= 'z' ? ch - ('a' - 'A') : ch;
- }
- 
- /* International toupper() for DOS\3 ("international") */
--- 
-2.35.1
-
+FWIW, the block layer doesn't require pow2 chunk_sectors anymore, so it
+looks like that requirement for zone sizes can be relaxed, too.
