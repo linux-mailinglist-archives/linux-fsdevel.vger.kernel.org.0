@@ -2,136 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5CCA4D017A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 15:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76EDF4D018F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 15:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243277AbiCGOgM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 09:36:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38794 "EHLO
+        id S243307AbiCGOi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 09:38:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243275AbiCGOgL (ORCPT
+        with ESMTP id S240410AbiCGOiz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 09:36:11 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B951E7E590
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Mar 2022 06:35:15 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id h13so8050736ede.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 06:35:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=6dSLXUKX3NW0Fa8qXV7oOutXYyq7YGWGX4BjnApZXgU=;
-        b=5Y4iz9jJKvd9hFYwKTGI1dKIHn8Nkk39I9LhMBUyLNfsy6lODXwRe/EGIRvZdtJ7Ez
-         Y4vybepc9CwcZEQndWub7NxkU/FXkFQFL9knej7G5tu5h8LTyTZavdDcn0qpqv6yiU19
-         dUmG+mSYL9OByE94Npe2wvJ130pa66O4FWB2XKA6ibCZYArkusnRFPtDt00rJ6OMaRp0
-         VeS0lIQf1gDSLuwU7doas/AgWW7XR6ayVHEqnMVtQP8pOh90gP0eOLe6z87+a0tgkVQX
-         Ar7G3yRoSOkEzHIw1dg/mYxrcoV3OUEI19UPth9ANLgwf1L+dYaTiDFA8MbtsNZWNV6m
-         SAnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=6dSLXUKX3NW0Fa8qXV7oOutXYyq7YGWGX4BjnApZXgU=;
-        b=BCRm/8g/54cqmcJwoo0o+Bsg+901O2VI3bnu7yW5nN1zDK6K1VFgbdG7c9O16sJAO0
-         p66i8tSshdfucPBnq0jfGJ1dt0UihuYbMwh4u1sNza3AnxmrgpH5u2UWJb8KE7b9pMOY
-         Cox3z56l3ktBbAvy6corbPaqDQ6IdKagbEbfcnmnZ9z/EJ5oeYOckvWbNRsEpgQZG+hh
-         Bu2LP+QSn1HOsPnlc0oEpyoVBFJtQGB2mATTehSHtW3njc6Wj4Qf3BJ0ufV0VeAhTypF
-         bgM5fkrjAA7BQM20SvqI3s0krho8YSIuc3csarQNwywq/j/JpF9u02QFMAn9JPeWDkVo
-         bzeg==
-X-Gm-Message-State: AOAM533FN7EWqZ+B6+ln9IC3HHnlXa5Tn4KPVct94L5opyAWtfRu5KJ1
-        ElESbFu/4CEO4Nu2QA6yrF87aw==
-X-Google-Smtp-Source: ABdhPJzegDFMMsHyBsWeAZ3gzkleDH1GbEAFWxPGsnrPB4UKAqzvlUCuE1vPwqI+7Qr2cgFXQpDBHA==
-X-Received: by 2002:a05:6402:51d0:b0:416:523e:a779 with SMTP id r16-20020a05640251d000b00416523ea779mr3319763edd.264.1646663714212;
-        Mon, 07 Mar 2022 06:35:14 -0800 (PST)
-Received: from smtpclient.apple (5.186.121.195.cgn.fibianet.dk. [5.186.121.195])
-        by smtp.gmail.com with ESMTPSA id c6-20020a05640227c600b00415e926bbe1sm5889318ede.89.2022.03.07.06.35.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Mar 2022 06:35:13 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Date:   Mon, 7 Mar 2022 15:35:12 +0100
-Message-Id: <DD05D9B0-195F-49EF-80DA-1AA0E4FA281F@javigon.com>
-References: <69932637edee8e6d31bafa5fd39e19a9790dd4ab.camel@HansenPartnership.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        lsf-pc@lists.linux-foundation.org,
-        =?utf-8?Q?Matias_Bj=C3=B8rling?= <matias.bjorling@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Keith Busch <keith.busch@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-In-Reply-To: <69932637edee8e6d31bafa5fd39e19a9790dd4ab.camel@HansenPartnership.com>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-X-Mailer: iPhone Mail (19D52)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 7 Mar 2022 09:38:55 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430A31A837;
+        Mon,  7 Mar 2022 06:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NW9RpFh+hvH2B+kdkMZrrBGYcByfxt2ECpS3XLUg5ic=; b=tJW4g9xzh7Hr7eTiR6n30j60WO
+        IYwXR9LZ0duAlYTPi8RrvkjPPngfb7+5UiJ9/ZQDEmqZxuVEE7Qbp6lMMYytUbktkhxgCkWSDTHz/
+        1HZ0/A46EkR5RhOL/6a/GA/m7T0Xdl7GYI14I9F+ekXEYTzuywuHs6g05qrRgYv8hr/bztXDiu2e+
+        NN0Vkgbei6YVv2EJhvRxLOhyg0NOBGLz0ad8LGOORcltIsEZCfhwsdgFVWe1FyuU/IK3Nyj+5fUwi
+        f50yHXIse9zePYwFp7mtZTHd3yptwZqau6qA/Lwjq3Ry8EyNIJpG+QOGy9Q7M8mbbEBcnSDA3dMvA
+        /ZHTriAA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nREUe-00FIYz-EZ; Mon, 07 Mar 2022 14:37:48 +0000
+Date:   Mon, 7 Mar 2022 14:37:48 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Nathaniel McCallum <nathaniel@profian.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        linux-sgx@vger.kernel.org, jaharkes@cs.cmu.edu,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        codalist@telemann.coda.cs.cmu.edu, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH RFC v2] mm: Add f_ops->populate()
+Message-ID: <YiYYvAWYgC+PKEx0@casper.infradead.org>
+References: <20220306032655.97863-1-jarkko@kernel.org>
+ <20220306152456.2649b1c56da2a4ce4f487be4@linux-foundation.org>
+ <c3083144-bfc1-3260-164c-e59b2d110df8@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3083144-bfc1-3260-164c-e59b2d110df8@intel.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sun, Mar 06, 2022 at 03:41:54PM -0800, Dave Hansen wrote:
+> In short: page faults stink.  The core kernel has lots of ways of
+> avoiding page faults like madvise(MADV_WILLNEED) or mmap(MAP_POPULATE).
+>  But, those only work on normal RAM that the core mm manages.
+> 
+> SGX is weird.  SGX memory is managed outside the core mm.  It doesn't
+> have a 'struct page' and get_user_pages() doesn't work on it.  Its VMAs
+> are marked with VM_IO.  So, none of the existing methods for avoiding
+> page faults work on SGX memory.
+> 
+> This essentially helps extend existing "normal RAM" kernel ABIs to work
+> for avoiding faults for SGX too.  SGX users want to enjoy all of the
+> benefits of a delayed allocation policy (better resource use,
+> overcommit, NUMA affinity) but without the cost of millions of faults.
 
+We have a mechanism for dynamically reducing the number of page faults
+already; it's just buried in the page cache code.  You have vma->vm_file,
+which contains a file_ra_state.  You can use this to track where
+recent faults have been and grow the size of the region you fault in
+per page fault.  You don't have to (indeed probably don't want to) use
+the same algorithm as the page cache, but the _principle_ is the same --
+were recent speculative faults actually used; should we grow the number
+of pages actually faulted in, or is this a random sparse workload where
+we want to allocate individual pages.
 
-> On 7 Mar 2022, at 14.55, James Bottomley <James.Bottomley@hansenpartnershi=
-p.com> wrote:
->=20
-> =EF=BB=BFOn Sat, 2022-03-05 at 08:33 +0100, Javier Gonz=C3=A1lez wrote:
-> [...]
->> However, there is no users of ZoneFS for ZNS devices that I am aware
->> of (maybe for SMR this is a different story).  The main open-source
->> implementations out there for RocksDB that are being used in
->> production (ZenFS and xZTL) rely on either raw zone block access or
->> the generic char device in NVMe (/dev/ngXnY). This is because having
->> the capability to do zone management from applications that already
->> work with objects fits much better.
->>=20
->> My point is that there is space for both ZoneFS and raw zoned block
->> device. And regarding !PO2 zone sizes, my point is that this can be
->> leveraged both by btrfs and this raw zone block device.
->=20
-> This is basically history repeating itself, though.  It's precisely the
-> reason why Linux acquired the raw character device: Oracle decided they
-> didn't want the OS abstractions in the way of fast performing direct
-> database access and raw devices was the way it had been done on UNIX,
-> so they decided it should be done on Linux as well.  There was some
-> legacy to this as well: because Oracle already had a raw handler they
-> figured it would be easy to port to Linux.
->=20
-> The problem Oracle had with /dev/raw is that they then have to manage
-> device discovery and partitioning as well.  It sort of worked on UNIX
-> when you didn't have too many disks and the discover order was
-> deterministic.  It began to fail as disks became storage networks.  In
-> the end, when O_DIRECT was proposed, Oracle eventually saw that using
-> it on files allowed for much better managed access and the raw driver
-> fell into disuse and was (finally) removed last year.
->=20
-> What you're proposing above is to repeat the /dev/raw experiment for
-> equivalent input reasons but expecting different outcomes ... Einstein
-> has already ruled on that one.
-
-Thanks for the history on the raw device. It=E2=80=99s good to the perspecti=
-ve on history repeating itself.=20
-
-I believe that the raw block device is different than the raw character devi=
-ce and we see tons of applications that don=E2=80=99t want FS semantics rely=
-ing on them. But I get your point.
-
-If we agree to get ZoneFS up to speed and use it as the general API for zone=
- devices, then I think we can refocus there.=20
-
-As I mentioned in the last reply to to Dave, the main concern for me at the m=
-oment is supporting arbitrary zone sizes in the kernel. If we can agree on a=
- path towards that, we can definitely commit to focus on ZoneFS and implemen=
-t support for it on the different places we maintain in user-space.=20=
+Don't rely on the user to ask.  They don't know.
