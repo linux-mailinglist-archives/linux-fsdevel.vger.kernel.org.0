@@ -2,95 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B5274D043C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 17:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A004D0765
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 20:15:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243903AbiCGQhd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 11:37:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35580 "EHLO
+        id S244954AbiCGTQZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 14:16:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233085AbiCGQhc (ORCPT
+        with ESMTP id S238787AbiCGTQX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 11:37:32 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C5CC8A6E8;
-        Mon,  7 Mar 2022 08:36:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=yTXlmVhXdue+hw7f3NKXFRnCD1J0MzuR7RUoJXiWM7g=; b=olmpuDa+nZWk/tfWvBDceZMqN3
-        AdZ3sJ/DL5xye0kqv7f6MzOhYgKKWywgGLOEh0HmsagJWoBsiQEezciTNfAsT11/6Nndh7wZr845G
-        Y1sYyvPd3wnJ3fOjgXVnzpT6O3xW2p2igvzwtKCa/GBbsUol8l3k60vVj24pXMDDngHh/Ymj42RYx
-        4GubAboDiV4kG4oqrvyazJWOiboaXGWrJN6i9bvf7Sd2K/s6VNlLACyemTBCgwnQ7F/lTWVP136j9
-        PcxfpyrYfx9QUnUkksScXxYbEFVUUtobcVRA24yn2MdL6vkNNsCySLh7IY+L24IJdt+boO3FOQCGG
-        DFL4Cnzg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nRGLb-000rHT-WF; Mon, 07 Mar 2022 16:36:36 +0000
-Date:   Mon, 7 Mar 2022 08:36:35 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Keith Busch <Keith.Busch@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Message-ID: <YiY0k8FXjsZhutOX@bombadil.infradead.org>
-References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
- <20220304001022.GJ3927073@dread.disaster.area>
- <YiKOQM+HMZXnArKT@bombadil.infradead.org>
- <e2aeff43-a8e6-e160-1b35-1a2c1b32e443@opensource.wdc.com>
- <YiYoVmQE54mVFzHL@bombadil.infradead.org>
- <PH0PR04MB74165C10E988676726E5EDA59B089@PH0PR04MB7416.namprd04.prod.outlook.com>
+        Mon, 7 Mar 2022 14:16:23 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F3B7CDEB
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Mar 2022 11:15:28 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id 3so9388841lfr.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 11:15:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TwTcsRMn5VZVrmgXZDV1J6sFeJgAdw8S2EoV6iZ5xnc=;
+        b=dlpUNu5q4CyzmXtBLA/gOu0GC/00SF7ttDAollAbHZtk5bw2xAtIqb7CwTopnt8lf3
+         AbfnSVPq9xulj/tw8AvoPmKfCZDzXeZNEVEEDbHlLhh/I5bp+zk8upvRu1BNSASuquhE
+         pUQrRqiHujQApoBOt9qnNksqqhPlFfAR59MXs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TwTcsRMn5VZVrmgXZDV1J6sFeJgAdw8S2EoV6iZ5xnc=;
+        b=eoLrwKQ/yKRDBLOyQ5DsU07QiChall7anfyYCXfbo6WkF/SKA7smYtxlnHUPbRRmwZ
+         RD+Q5U/+t9gPTDQcK7B1qMJNHVSACn8FesHybzdGDV9/6qj+rHqDxZFi9S2BQPuojVHI
+         +FbxtgpXcVh18NFx4AjjOOT666rouAUtvrxluansRNpAvxDfUprAqGEihh43D/kGbblF
+         RAbznZB1MC52UtvkwuupcHXoALQKUYKoSe3RC1qS/9C9uJVOzGPNUVexWkcldmnmp/x2
+         8lNloSY9jc5omZpkPqAmjOPkAtgtLO+8OBudqak6cLypRrAa0lK+m0+V8PDJtEiukTUm
+         9z3A==
+X-Gm-Message-State: AOAM531QsNHkcAP3tq76MRta4LS3aOFjuaEe31UY/l40K/bIdggokxKD
+        +474myqNCeJyIYA7O7jBFxrB4aiFvTAQ7Uo3ios=
+X-Google-Smtp-Source: ABdhPJx2Za7jGWvXDKYH4fPD8W/akpkJwM9CqCwZ4p6Tkn+Y5SyjylJqeYLmmna+v0P9qZpw4Y7DTA==
+X-Received: by 2002:ac2:4290:0:b0:448:1fb8:837a with SMTP id m16-20020ac24290000000b004481fb8837amr8719852lfh.206.1646680525248;
+        Mon, 07 Mar 2022 11:15:25 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id f10-20020a056512092a00b004482fed26a0sm842594lft.234.2022.03.07.11.15.24
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Mar 2022 11:15:25 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id u7so21883711ljk.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 11:15:24 -0800 (PST)
+X-Received: by 2002:a05:651c:1213:b0:247:e2d9:cdda with SMTP id
+ i19-20020a05651c121300b00247e2d9cddamr5310350lja.443.1646680524503; Mon, 07
+ Mar 2022 11:15:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR04MB74165C10E988676726E5EDA59B089@PH0PR04MB7416.namprd04.prod.outlook.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220307150037.GD3293@kadam> <f7ffd78aa68340e1ade6af15fa2f06d8@AcuMS.aculab.com>
+In-Reply-To: <f7ffd78aa68340e1ade6af15fa2f06d8@AcuMS.aculab.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 7 Mar 2022 11:15:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjnsmmGdh-SZzaPD=e1rKhoBkQAF3JeVhGvpa=Gax--7g@mail.gmail.com>
+Message-ID: <CAHk-=wjnsmmGdh-SZzaPD=e1rKhoBkQAF3JeVhGvpa=Gax--7g@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Remove usage of list iterator past the loop body
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "Bos, H.J." <h.j.bos@vu.nl>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 07, 2022 at 04:23:46PM +0000, Johannes Thumshirn wrote:
-> On 07/03/2022 16:44, Luis Chamberlain wrote:
-> > On Mon, Mar 07, 2022 at 08:56:30AM +0900, Damien Le Moal wrote:
-> >> btrfs maps zones to block groups and the sectors between zone capacity
-> >> and zone size are marked as unusable. The report above is not showing
-> >> that. The coding is correct though. The block allocation will not be
-> >> attempted beyond zone capacity.
-> > 
-> > That does not explain or justify why zone size was used instead of zone
-> > capacity. Using the zones size gives an incorrect inflated sense of actual
-> > capacity, and users / userspace applications can easily missuse that.
-> > 
-> > Should other filesystems follow this logic as well? If so why?
-> >
-> 
-> The justification is, when btrfs zoned support was implemented there was no 
-> zone capacity. This started with zns and thus btrfs' knowledge of 
-> zone_capacity came with it's zns support. So instead of playing the blame
-> game for whatever reason I don't want to know, you could have reported the
-> bug or fixed it yourself.
+On Mon, Mar 7, 2022 at 7:26 AM David Laight <David.Laight@aculab.com> wrote:
+>
+> I'd write the following new defines (but I might be using
+> the old names here):
 
-I didn't realize it would be acknowledged as a bug, now that it is I'll
-just go send a fix, thanks!
+See my email at
 
-  Luis
+  https://lore.kernel.org/all/CAHk-=wiacQM76xec=Hr7cLchVZ8Mo9VDHmXRJzJ_EX4sOsApEA@mail.gmail.com/
+
+for what I think is the way forward if we want to do new defines and
+clean up the situation.
+
+It's really just an example (and converts two list cases and one
+single file that uses them), so it's not in any way complete.
+
+I also has that "-std=gnu11" in the patch so that you can use the
+loop-declared variables - but without the other small fixups for some
+of the things that exposed.
+
+I'll merge the proper version of the "update C standard version" from
+Arnd early in the 5.18 merge window, but for testing that one file
+example change I sent out the patch like that.
+
+          Linus
