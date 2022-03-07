@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 302154CFED7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 13:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E674CFEDF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 13:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242445AbiCGMfL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 07:35:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53660 "EHLO
+        id S242526AbiCGMfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 07:35:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242428AbiCGMfC (ORCPT
+        with ESMTP id S242436AbiCGMfC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 7 Mar 2022 07:35:02 -0500
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2356424B2;
-        Mon,  7 Mar 2022 04:33:34 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V6VlXz9_1646656410;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V6VlXz9_1646656410)
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F4B42A00;
+        Mon,  7 Mar 2022 04:33:36 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V6WFbGz_1646656412;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V6WFbGz_1646656412)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 07 Mar 2022 20:33:31 +0800
+          Mon, 07 Mar 2022 20:33:33 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         chao@kernel.org, linux-erofs@lists.ozlabs.org
@@ -27,106 +27,103 @@ Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
         joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
         tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
         eguan@linux.alibaba.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 17/21] erofs: implement fscache-based data read for inline layout
-Date:   Mon,  7 Mar 2022 20:33:01 +0800
-Message-Id: <20220307123305.79520-18-jefflexu@linux.alibaba.com>
+Subject: [PATCH v4 18/21] erofs: register cookie context for data blobs
+Date:   Mon,  7 Mar 2022 20:33:02 +0800
+Message-Id: <20220307123305.79520-19-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220307123305.79520-1-jefflexu@linux.alibaba.com>
 References: <20220307123305.79520-1-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch implements the data plane of reading data from bootstrap blob
-file over fscache for inline layout.
+Similar to the multi device mode, erofs could be mounted from multiple
+blob files (one bootstrap blob file and optional multiple data blob
+files). In this case, each device slot contains the path of
+corresponding data blob file.
 
-For the heading non-inline part, the data plane for non-inline layout is
-resued, while only the tail packing part needs special handling.
+This patch registers corresponding cookie context for each data blob
+file.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- fs/erofs/fscache.c | 43 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 41 insertions(+), 2 deletions(-)
+ fs/erofs/internal.h |  1 +
+ fs/erofs/super.c    | 27 +++++++++++++++++++--------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
-diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index ff69698948ad..4da148cc4484 100644
---- a/fs/erofs/fscache.c
-+++ b/fs/erofs/fscache.c
-@@ -85,8 +85,9 @@ static int erofs_fscache_readpage_noinline(struct page *page,
- {
- 	struct fscache_cookie *cookie = fsmap->m_ctx->cookie;
- 	/*
--	 * 1) For FLAT_PLAIN layout, the output map.m_la shall be equal to o_la,
--	 * and the output map.m_pa is exactly the physical address of o_la.
-+	 * 1) For FLAT_PLAIN and FLAT_INLINE (the heading non tail packing part)
-+	 * layout, the output map.m_la shall be equal to o_la, and the output
-+	 * map.m_pa is exactly the physical address of o_la.
- 	 * 2) For CHUNK_BASED layout, the output map.m_la is rounded down to the
- 	 * nearest chunk boundary, and the output map.m_pa is actually the
- 	 * physical address of this chunk boundary. So we need to recalculate
-@@ -97,6 +98,40 @@ static int erofs_fscache_readpage_noinline(struct page *page,
- 	return erofs_fscache_read_page(cookie, page, start);
- }
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 548f928b0ded..5d514c7b73cc 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -53,6 +53,7 @@ struct erofs_device_info {
+ 	struct block_device *bdev;
+ 	struct dax_device *dax_dev;
+ 	u64 dax_part_off;
++	struct erofs_fscache_context *ctx;
  
-+static int erofs_fscache_readpage_inline(struct page *page,
-+					 struct erofs_fscache_map *fsmap)
-+{
-+	struct inode *inode = page->mapping->host;
-+	struct super_block *sb = inode->i_sb;
-+	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
-+	erofs_blk_t blknr;
-+	size_t offset, len;
-+	void *src, *dst;
-+
-+	/*
-+	 * For inline (tail packing) layout, the offset may be non-zero, which
-+	 * can be calculated from corresponding physical address directly.
-+	 * Currently only flat layout supports inline (FLAT_INLINE), and the
-+	 * output map.m_pa is exactly the physical address of o_la in this case.
-+	 */
-+	offset = erofs_blkoff(fsmap->m_pa);
-+	blknr = erofs_blknr(fsmap->m_pa);
-+	len = fsmap->m_llen;
-+
-+	src = erofs_read_metabuf(&buf, sb, blknr, EROFS_KMAP);
-+	if (IS_ERR(src))
-+		return PTR_ERR(src);
-+
-+	dst = kmap(page);
-+	memcpy(dst, src + offset, len);
-+	memset(dst + len, 0, PAGE_SIZE - len);
-+	kunmap(page);
-+
-+	erofs_put_metabuf(&buf);
-+
-+	return 0;
-+}
-+
- static int erofs_fscache_do_readpage(struct page *page)
- {
- 	struct inode *inode = page->mapping->host;
-@@ -126,8 +161,12 @@ static int erofs_fscache_do_readpage(struct page *page)
- 	if (ret)
- 		return ret;
+ 	u32 blocks;
+ 	u32 mapped_blkaddr;
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 8c5783c6f71f..f058a04a00c7 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -250,6 +250,7 @@ static int erofs_init_devices(struct super_block *sb,
+ 	down_read(&sbi->devs->rwsem);
+ 	idr_for_each_entry(&sbi->devs->tree, dif, id) {
+ 		struct block_device *bdev;
++		struct erofs_fscache_context *ctx;
  
-+	if (map.m_flags & EROFS_MAP_META)
-+		return erofs_fscache_readpage_inline(page, &fsmap);
-+
- 	switch (vi->datalayout) {
- 	case EROFS_INODE_FLAT_PLAIN:
-+	case EROFS_INODE_FLAT_INLINE:
- 	case EROFS_INODE_CHUNK_BASED:
- 		return erofs_fscache_readpage_noinline(page, &fsmap);
- 	default:
+ 		ptr = erofs_read_metabuf(&buf, sb, erofs_blknr(pos),
+ 					 EROFS_KMAP);
+@@ -259,15 +260,24 @@ static int erofs_init_devices(struct super_block *sb,
+ 		}
+ 		dis = ptr + erofs_blkoff(pos);
+ 
+-		bdev = blkdev_get_by_path(dif->path,
+-					  FMODE_READ | FMODE_EXCL,
+-					  sb->s_type);
+-		if (IS_ERR(bdev)) {
+-			err = PTR_ERR(bdev);
+-			break;
++		if (erofs_bdev_mode(sb)) {
++			bdev = blkdev_get_by_path(dif->path,
++						  FMODE_READ | FMODE_EXCL,
++						  sb->s_type);
++			if (IS_ERR(bdev)) {
++				err = PTR_ERR(bdev);
++				break;
++			}
++			dif->bdev = bdev;
++			dif->dax_dev = fs_dax_get_by_bdev(bdev, &dif->dax_part_off);
++		} else {
++			ctx = erofs_fscache_get_ctx(sb, dif->path, false);
++			if (IS_ERR(ctx)) {
++				err = PTR_ERR(ctx);
++				break;
++			}
++			dif->ctx = ctx;
+ 		}
+-		dif->bdev = bdev;
+-		dif->dax_dev = fs_dax_get_by_bdev(bdev, &dif->dax_part_off);
+ 		dif->blocks = le32_to_cpu(dis->blocks);
+ 		dif->mapped_blkaddr = le32_to_cpu(dis->mapped_blkaddr);
+ 		sbi->total_blocks += dif->blocks;
+@@ -694,6 +704,7 @@ static int erofs_release_device_info(int id, void *ptr, void *data)
+ {
+ 	struct erofs_device_info *dif = ptr;
+ 
++	erofs_fscache_put_ctx(dif->ctx);
+ 	fs_put_dax(dif->dax_dev);
+ 	if (dif->bdev)
+ 		blkdev_put(dif->bdev, FMODE_READ | FMODE_EXCL);
 -- 
 2.27.0
 
