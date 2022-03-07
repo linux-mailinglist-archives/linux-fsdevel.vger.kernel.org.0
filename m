@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9FCD4CFEA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 13:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 213E34CFE9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 13:33:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242353AbiCGMeX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 07:34:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51004 "EHLO
+        id S242348AbiCGMeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 07:34:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242322AbiCGMeN (ORCPT
+        with ESMTP id S242328AbiCGMeN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 7 Mar 2022 07:34:13 -0500
-Received: from out30-54.freemail.mail.aliyun.com (out30-54.freemail.mail.aliyun.com [115.124.30.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7B33DA49;
-        Mon,  7 Mar 2022 04:33:17 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V6WEily_1646656393;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V6WEily_1646656393)
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8D73DDFF;
+        Mon,  7 Mar 2022 04:33:18 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0V6XMhxi_1646656394;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V6XMhxi_1646656394)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 07 Mar 2022 20:33:14 +0800
+          Mon, 07 Mar 2022 20:33:15 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         chao@kernel.org, linux-erofs@lists.ozlabs.org
@@ -27,282 +27,206 @@ Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
         joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
         tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
         eguan@linux.alibaba.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 05/21] cachefiles: implement on-demand read
-Date:   Mon,  7 Mar 2022 20:32:49 +0800
-Message-Id: <20220307123305.79520-6-jefflexu@linux.alibaba.com>
+Subject: [PATCH v4 06/21] cachefiles: document on-demand read mode
+Date:   Mon,  7 Mar 2022 20:32:50 +0800
+Message-Id: <20220307123305.79520-7-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220307123305.79520-1-jefflexu@linux.alibaba.com>
 References: <20220307123305.79520-1-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement the data plane of on-demand read mode.
-
-A new NETFS_READ_HOLE_ONDEMAND flag is introduced to indicate that
-on-demand read should be done when a cache miss encountered. In this
-case, the read routine will send a READ request to user daemon, along
-with the anonymous fd and the file range that shall be read. Now user
-daemon is responsible for fetching data in the given file range, and
-then writing the fetched data into cache file with the given anonymous
-fd.
-
-After sending the READ request, the read routine will hang there, until
-the READ request is handled by user daemon. Then it will retry to read
-from the same file range. If a cache miss is encountered again on the
-same file range, the read routine will fail then.
+Document new user interface introduced by on-demand read mode.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- fs/cachefiles/daemon.c          | 98 +++++++++++++++++++++++++++++++++
- fs/cachefiles/internal.h        |  8 +++
- fs/cachefiles/io.c              | 11 ++++
- include/linux/netfs.h           |  1 +
- include/uapi/linux/cachefiles.h |  7 +++
- 5 files changed, 125 insertions(+)
+ .../filesystems/caching/cachefiles.rst        | 159 ++++++++++++++++++
+ 1 file changed, 159 insertions(+)
 
-diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
-index 72a21942aaf6..36ddf64d5e62 100644
---- a/fs/cachefiles/daemon.c
-+++ b/fs/cachefiles/daemon.c
-@@ -46,6 +46,7 @@ static int cachefiles_daemon_bind(struct cachefiles_cache *, char *);
- static void cachefiles_daemon_unbind(struct cachefiles_cache *);
- #ifdef CONFIG_CACHEFILES_ONDEMAND
- static int cachefiles_ondemand_cinit(struct cachefiles_cache *, char *);
-+static int cachefiles_ondemand_cread(struct cachefiles_cache *, char *);
- #endif
+diff --git a/Documentation/filesystems/caching/cachefiles.rst b/Documentation/filesystems/caching/cachefiles.rst
+index 8bf396b76359..bfe05103dc50 100644
+--- a/Documentation/filesystems/caching/cachefiles.rst
++++ b/Documentation/filesystems/caching/cachefiles.rst
+@@ -28,6 +28,8 @@ Cache on Already Mounted Filesystem
  
- static unsigned long cachefiles_open;
-@@ -81,6 +82,7 @@ static const struct cachefiles_daemon_cmd cachefiles_daemon_cmds[] = {
- 	{ "tag",	cachefiles_daemon_tag		},
- #ifdef CONFIG_CACHEFILES_ONDEMAND
- 	{ "cinit",	cachefiles_ondemand_cinit	},
-+	{ "cread",	cachefiles_ondemand_cread	},
- #endif
- 	{ "",		NULL				}
- };
-@@ -139,6 +141,9 @@ bool cachefiles_ondemand_daemon_bind(struct cachefiles_cache *cache, char *args)
- static int cachefiles_ondemand_fd_release(struct inode *inode, struct file *file)
- {
- 	struct cachefiles_object *object = file->private_data;
-+	struct cachefiles_cache *cache = object->volume->cache;
-+	struct cachefiles_req *req;
-+	unsigned long index;
+  (*) Debugging.
  
- 	/*
- 	 * Uninstall anon_fd to the cachefiles object, so that no further
-@@ -146,6 +151,15 @@ static int cachefiles_ondemand_fd_release(struct inode *inode, struct file *file
- 	 */
- 	object->fd = -1;
++ (*) On-demand Read.
++
  
-+	/* complete all associated pending requests */
-+	xa_for_each(&cache->reqs, index, req) {
-+		if (req->object == object &&
-+		    req->msg.opcode == CACHEFILES_OP_READ) {
-+			req->error = -EIO;
-+			complete(&req->done);
-+		}
-+	}
-+
- 	cachefiles_put_object(object, cachefiles_obj_put_ondemand_fd);
- 	return 0;
- }
-@@ -261,6 +275,36 @@ static int cachefiles_ondemand_cinit(struct cachefiles_cache *cache, char *args)
- 	return ret;
- }
  
-+/*
-+ * Read request completion
-+ * - command: "cread <id>"
-+ */
-+static int cachefiles_ondemand_cread(struct cachefiles_cache *cache, char *args)
-+{
-+	struct cachefiles_req *req;
-+	unsigned long id;
-+	int ret;
-+
-+	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
-+		return -EOPNOTSUPP;
-+
-+	if (!*args) {
-+		pr_err("Empty id specified\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = kstrtoul(args, 0, &id);
-+	if (ret)
-+		return ret;
-+
-+	req = xa_erase(&cache->reqs, id);
-+	if (!req)
-+		return -EINVAL;
-+
-+	complete(&req->done);
-+	return 0;
-+}
-+
- static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
- {
- 	struct cachefiles_init *init;
-@@ -460,6 +504,60 @@ int cachefiles_ondemand_init_object(struct cachefiles_object *object)
- 	return ret;
- }
+ Overview
+@@ -482,3 +484,160 @@ the control file.  For example::
+ 	echo $((1|4|8)) >/sys/module/cachefiles/parameters/debug
  
-+static struct cachefiles_req *
-+cachefiles_alloc_read_req(struct cachefiles_object *object,
-+			  loff_t pos, size_t len)
-+{
-+	struct cachefiles_req *req;
-+	struct cachefiles_read *read;
-+	int fd = object->fd;
+ will turn on all function entry debugging.
 +
-+	/* Stop enqueuig request when daemon closes anon_fd prematurely. */
-+	if (WARN_ON_ONCE(fd == -1))
-+		return NULL;
 +
-+	req = cachefiles_alloc_req(object, CACHEFILES_OP_READ, sizeof(*read));
-+	if (!req)
-+		return NULL;
++On-demand Read
++==============
 +
-+	read = (void *)&req->msg.data;
-+	read->off = pos;
-+	read->len = len;
-+	read->fd  = fd;
++When working in original mode, cachefiles mainly serves as a local cache for
++remote networking fs, while in on-demand read mode, cachefiles can boost the
++scenario where on-demand read semantics is needed, e.g. container image
++distribution.
 +
-+	return req;
-+}
++The essential difference between these two modes is that, in original mode,
++when cache miss, netfs itself will fetch data from remote, and then write the
++fetched data into cache file. While in on-demand read mode, a user daemon is
++responsible for fetching data and then writing to the cache file.
 +
-+int cachefiles_ondemand_read(struct cachefiles_object *object,
-+			     loff_t pos, size_t len)
-+{
-+	struct cachefiles_cache *cache = object->volume->cache;
-+	struct cachefiles_req *req;
-+	int ret;
++``CONFIG_CACHEFILES_ONDEMAND`` shall be enabled to support on-demand read mode.
 +
-+	ret = cachefiles_ondemand_check(cache);
-+	if (ret)
-+		return ret;
 +
-+	req = cachefiles_alloc_read_req(object, pos, len);
-+	if (!req)
-+		return -ENOMEM;
++Protocol Communication
++----------------------
 +
-+	/*
-+	 * 1) Checking object->fd and 2) enqueuing request into xarray, is not
-+	 * atomic as a whole here. Thus similarly, when anon_fd is closed, it's
-+	 * possible that a new request may be enqueued into xarray, after
-+	 * associated requests in xarray have already been flushed. But it won't
-+	 * cause infinite hang since user daemon will still fetch and handle
-+	 * this request. And since the anon_fd has alrady been closed, any
-+	 * following file operation with this anon_fd will fail in this case.
-+	 */
-+	ret = cachefiles_ondemand_send_req(cache, req);
++The on-demand read mode relies on a simple protocol used for communication
++between kernel and user daemon. The model is like::
 +
-+	kfree(req);
-+	return ret;
-+}
++	kernel --[request]--> user daemon --[reply]--> kernel
 +
- #else
- static inline void cachefiles_ondemand_open(struct cachefiles_cache *cache) {}
- static inline void cachefiles_ondemand_release(struct cachefiles_cache *cache) {}
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 8450ebd77949..5f336ec15cea 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -167,6 +167,8 @@ extern const struct file_operations cachefiles_daemon_fops;
- 
- #ifdef CONFIG_CACHEFILES_ONDEMAND
- extern int cachefiles_ondemand_init_object(struct cachefiles_object *object);
-+extern int cachefiles_ondemand_read(struct cachefiles_object *object,
-+				    loff_t pos, size_t len);
- 
- #else
- static inline
-@@ -174,6 +176,12 @@ int cachefiles_ondemand_init_object(struct cachefiles_object *object)
- {
- 	return 0;
- }
++The cachefiles kernel module will send requests to user daemon when needed.
++User daemon needs to poll on the devnode ('/dev/cachefiles') to check if
++there's pending request to be processed. A POLLIN event will be returned
++when there's pending request.
 +
-+static inline int cachefiles_ondemand_read(struct cachefiles_object *object,
-+					   loff_t pos, size_t len)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif
- 
- /*
-diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-index 8dbc1eb254a3..ee1283ba7a2c 100644
---- a/fs/cachefiles/io.c
-+++ b/fs/cachefiles/io.c
-@@ -95,6 +95,7 @@ static int cachefiles_read(struct netfs_cache_resources *cres,
- 	       file, file_inode(file)->i_ino, start_pos, len,
- 	       i_size_read(file_inode(file)));
- 
-+retry:
- 	/* If the caller asked us to seek for data before doing the read, then
- 	 * we should do that now.  If we find a gap, we fill it with zeros.
- 	 */
-@@ -119,6 +120,16 @@ static int cachefiles_read(struct netfs_cache_resources *cres,
- 			if (read_hole == NETFS_READ_HOLE_FAIL)
- 				goto presubmission_error;
- 
-+			if (read_hole == NETFS_READ_HOLE_ONDEMAND) {
-+				if (!cachefiles_ondemand_read(object, off, len)) {
-+					/* fail the read if no progress achieved */
-+					read_hole = NETFS_READ_HOLE_FAIL;
-+					goto retry;
-+				}
++Then user daemon needs to read the devnode to fetch one request and process it
++accordingly. It is worth nothing that each read only gets one request. When
++finished processing the request, user dameon needs to write the reply to the
++devnode.
 +
-+				goto presubmission_error;
-+			}
++Each request is started with a message header like::
 +
- 			iov_iter_zero(len, iter);
- 			skipped = len;
- 			ret = 0;
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 614f22213e21..2a9c50d3a928 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -203,6 +203,7 @@ enum netfs_read_from_hole {
- 	NETFS_READ_HOLE_IGNORE,
- 	NETFS_READ_HOLE_CLEAR,
- 	NETFS_READ_HOLE_FAIL,
-+	NETFS_READ_HOLE_ONDEMAND,
- };
- 
- /*
-diff --git a/include/uapi/linux/cachefiles.h b/include/uapi/linux/cachefiles.h
-index 759fb6693d75..88a78e9d001f 100644
---- a/include/uapi/linux/cachefiles.h
-+++ b/include/uapi/linux/cachefiles.h
-@@ -8,6 +8,7 @@
- 
- enum cachefiles_opcode {
- 	CACHEFILES_OP_INIT,
-+	CACHEFILES_OP_READ,
- };
- 
- /*
-@@ -38,4 +39,10 @@ enum cachefiles_init_flags {
- 
- #define CACHEFILES_INIT_FL_WANT_CACHE_SIZE	(1 << CACHEFILES_INIT_WANT_CACHE_SIZE)
- 
-+struct cachefiles_read {
-+	__u64 off;
-+	__u64 len;
-+	__u32 fd;
-+};
++	struct cachefiles_msg {
++		__u32 id;
++		__u32 opcode;
++		__u32 len;
++		__u8  data[];
++	};
 +
- #endif
++	* ``id`` identifies the position of this request in an internal xarray
++	  managing all pending requests.
++
++	* ``opcode`` identifies the type of this request.
++
++	* ``data`` identifies the payload of this request.
++
++	* ``len`` identifies the whole length of this request, including the
++	  header and following type specific payload.
++
++
++Turn on On-demand Mode
++----------------------
++
++An optional parameter is added to "bind" command::
++
++	bind [ondemand]
++
++When "bind" command takes without argument, it defaults to the original mode.
++When "bind" command takes with "ondemand" argument, i.e. "bind ondemand",
++on-demand read mode will be enabled.
++
++
++INIT Request
++------------
++
++When netfs opens a cache file for the first time, a request with
++CACHEFILES_OP_INIT opcode, a.k.a INIT request will be sent to user daemon. The
++payload format is like::
++
++	struct cachefiles_init {
++		__u32 volume_key_len;
++		__u32 cookie_key_len;
++		__u32 fd;
++		__u32 flags;
++		__u8  data[];
++	};
++
++	* ``volume_key_len`` identifies the length of the volume key of the
++	  cache file, in bytes.
++
++	* ``cookie_key_len`` identifies the length of the cookie key of the
++	  cache file, in bytes.
++
++	* ``fd`` identifies the anonymous fd of the cache file, with which user
++	  daemon can perform write/llseek file operations on the cache file.
++
++	* ``data`` contains volume_key and cookie_key in sequence.
++
++INIT request contains (volume_key, cookie_key, anon_fd) triple for corresponding
++cache file. With this triple, user daemon could fetch and write data into the
++cache file in the background, even when kernel has not triggered the cache miss
++yet. User daemon is able to distinguish the requested cache file with the given
++(volume_key, cookie_key), and write the fetched data into cache file with the
++given anon_fd.
++
++After recording the (volume_key, cookie_key, anon_fd) triple, user daemon shall
++reply with "cinit" (complete init) command::
++
++	cinit <id>
++
++	* ``id`` is exactly the id field of the previous INIT request.
++
++
++Besides, CACHEFILES_INIT_WANT_CACHE_SIZE flag may be set in ``flags`` of INIT
++request. This flag is used in the scenario where one cache file can contain
++multiple netfs files for the purpose of deduplication, e.g. In this case, netfs
++itself may has no idea the cache file size, whilst user daemon needs to offer
++the hint on the cache file size.
++
++Thus when receiving an INIT request with CACHEFILES_INIT_WANT_CACHE_SIZE flag
++set, user daemon must reply with the cache file size::
++
++	cinit <id>,<cache_size>
++
++	* ``id`` is exactly the id field of the previous INIT request.
++
++	* ``cache_size`` identifies the size of the cache file.
++
++
++READ Request
++------------
++
++When on-demand read mode is turned on, and cache miss encountered, kernel will
++send a request with CACHEFILES_OP_READ opcode, a.k.a READ request, to user
++daemon. It will notify user daemon to fetch data in the requested file range.
++The payload format is like::
++
++	struct cachefiles_read {
++		__u64 off;
++		__u64 len;
++		__u32 fd;
++	};
++
++	* ``off`` identifies the starting offset of the requested file range.
++
++	* ``len`` identifies the length of the requested file range.
++
++	* ``fd`` identifies the anonymous fd of the requested cache file. It is
++	  guaranteed that it shall be the same with the fd field in the previous
++	  INIT request.
++
++When receiving one READ request, user daemon needs to fetch data of the
++requested file range, and then write the fetched data into cache file with the
++given anonymous fd.
++
++When finished processing the READ request, user daemon needs to reply with
++"cread" (complete read) command::
++
++	cread <id>
++
++	* ``id`` is exactly the id field of the previous READ request.
 -- 
 2.27.0
 
