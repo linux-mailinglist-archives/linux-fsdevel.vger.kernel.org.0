@@ -2,135 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 590EE4CEEE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 01:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCB474CEFBA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Mar 2022 03:44:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234006AbiCGAPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Mar 2022 19:15:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35374 "EHLO
+        id S234787AbiCGCot (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Mar 2022 21:44:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232596AbiCGAPS (ORCPT
+        with ESMTP id S234784AbiCGCos (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Mar 2022 19:15:18 -0500
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EFE9B50E36;
-        Sun,  6 Mar 2022 16:14:24 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A6FE510E1656;
-        Mon,  7 Mar 2022 11:14:21 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nR112-002Ofo-8x; Mon, 07 Mar 2022 11:14:20 +1100
-Date:   Mon, 7 Mar 2022 11:14:20 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 0/9] Generic per-sb io stats
-Message-ID: <20220307001420.GQ3927073@dread.disaster.area>
-References: <20220305160424.1040102-1-amir73il@gmail.com>
- <YiQ2Gi8umX9LQBWr@mit.edu>
+        Sun, 6 Mar 2022 21:44:48 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B9CAB55A1
+        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Mar 2022 18:43:53 -0800 (PST)
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.52 with ESMTP; 7 Mar 2022 11:43:50 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
+        by 156.147.1.127 with ESMTP; 7 Mar 2022 11:43:50 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Mon, 7 Mar 2022 11:43:25 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Theodore Ts'o <tytso@mit.edu>, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, torvalds@linux-foundation.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com, paulmck@kernel.org
+Subject: Re: Report 2 in ext4 and journal based on v5.17-rc1
+Message-ID: <20220307024325.GA6323@X58A-UD3R>
+References: <YiAow5gi21zwUT54@mit.edu>
+ <1646285013-3934-1-git-send-email-byungchul.park@lge.com>
+ <YiDSabde88HJ/aTt@mit.edu>
+ <20220304004237.GB6112@X58A-UD3R>
+ <YiLYX0sqmtkTEM5U@mit.edu>
+ <20220305141538.GA31268@X58A-UD3R>
+ <YiN8M4FwAeW/UAoN@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YiQ2Gi8umX9LQBWr@mit.edu>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62254e5f
-        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=7-415B0cAAAA:8
-        a=awRMrf5kypXfiWRIGAcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <YiN8M4FwAeW/UAoN@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-7.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 05, 2022 at 11:18:34PM -0500, Theodore Ts'o wrote:
-> On Sat, Mar 05, 2022 at 06:04:15PM +0200, Amir Goldstein wrote:
+On Sat, Mar 05, 2022 at 03:05:23PM +0000, Joel Fernandes wrote:
+> On Sat, Mar 05, 2022 at 11:15:38PM +0900, Byungchul Park wrote:
+> > Almost all you've been blaming at Dept are totally non-sense. Based on
+> > what you're saying, I'm conviced that you don't understand how Dept
+> > works even 1%. You don't even try to understand it before blame.
 > > 
-> > Dave Chinner asked why the io stats should not be enabled for all
-> > filesystems.  That change seems too bold for me so instead, I included
-> > an extra patch to auto-enable per-sb io stats for blockdev filesystems.
+> > You don't have to understand and support it. But I can't response to you
+> > if you keep saying silly things that way.
 > 
-> Perhaps something to consider is allowing users to be able to enable
-> or disable I/O stats on per mount basis?
+> Byungchul, other than ext4 have there been any DEPT reports that other
+> subsystem maintainers' agree were valid usecases?
+
+Not yet.
+
+> Regarding false-positives, just to note lockdep is not without its share of
+> false-positives. Just that (as you know), the signal-to-noise ratio should be
+> high for it to be useful. I've put up with lockdep's false positives just
+> because it occasionally saves me from catastrophe.
+
+I love your insight. Agree. A tool would be useful only when it's
+*actually* helpful. I hope Dept would be so.
+
+> > > In any case, if DEPT is going to report these "circular dependencies
+> > > as bugs that MUST be fixed", it's going to be pure noise and I will
+> > > ignore all DEPT reports, and will push back on having Lockdep replaced
+> > 
+> > Dept is going to be improved so that what you are concerning about won't
+> > be reported.
 > 
-> Consider if a potential future user of this feature has servers with
-> one or two 256-core AMD Epyc chip, and suppose that they have a
-> several thousand iSCSI mounted file systems containing various
-> software packages for use by Kubernetes jobs.  (Or even several
-> thousand mounted overlay file systems.....)
+> Yeah I am looking forward to learning more about it however I was wondering
+> about the following: lockdep can already be used for modeling "resource
+> acquire/release" and "resource wait" semantics that are unrelated to locks,
+> like we do in mm reclaim. I am wondering why we cannot just use those existing
+> lockdep mechanisms for the wait/wake usecases (Assuming that we can agree
+
+1. Lockdep can't work with general waits/events happening across
+   contexts basically. To get over this, manual tagging of
+   acquire/release can be used at each section that we suspect. But
+   unfortunately, we cannot use the method if we cannot simply identify
+   the sections. Furthermore, it's inevitable to miss sections that
+   shouldn't get missed.
+
+2. Some cases should be correctly tracked via wait/event model, not
+   acquisition order model. For example, read-lock in rwlock should be
+   defined as a waiter waiting for write-unlock, write-lock in rwlock
+   as a waiter waiting for either read-unlock or write-unlock.
+   Otherwise, if we try to track those cases using acquisition order,
+   it cannot completely work. Don't you think it looks werid?
+
+3. Tracking what we didn't track before means both stronger detection
+   and new emergence of false positives, exactly same as Lockdep at its
+   beginning when it started to track what we hadn't tracked before.
+   Even though the emergence was allowed at that time, now that Locdkep
+   got stable enough, folks would be more strict on new emergences. It's
+   gonna get even worse if valid reports are getting prevented by false
+   positives.
+
+   For that reason, multi reporting functionality is essential. I was
+   thinking to improve Lockdep to allow multi reporting. But it might be
+   needed to change more than developing a new tool from scratch. Plus
+   it might be even more difficult cuz Lockdep already works not badly.
+   So even for Lockdep, I thought the new thing should be developed
+   independently leaving Lockdep as it is.
+
+4. (minor reason) The concept and name of acquisition and release is not
+   for general wait/event. The design and implementation are not,
+   either. I wanted to address the issue as soon as possible before we
+   squeeze out Lockdep to use for general wait/event more and the kernel
+   code gets weird. Of course, it doesn't mean Dept is more stable than
+   Lockdep. However, I can tell Dept works what a dependency tool should
+   do and we need to make the code go right.
+
+> that circular dependencies on related to wait/wake is a bad thing. Or perhaps
+> there's a reason why Peter Zijlstra did not use lockdep for wait/wake
+> dependencies (such as multiple wake sources) considering he wrote a lot of
+> that code.
 > 
-> The size of the percpu counter is going to be *big* on a large CPU
-> count machine, and the iostats structure has 5 of these per-cpu
-> counters, so if you have one for every single mounted file system,
-> even if the CPU slowdown isn't significant, the non-swappable kernel
-> memory overhead might be quite large.
+> Keep kicking ass brother, you're doing great.
 
-A percpu counter on a 256 core machine is ~1kB. Adding 5kB to the
-struct superblock isn't a bit deal for a machine of this size, even
-if you have thousands of superblocks - we're talking a few
-*megabytes* of extra memory in a machine that would typically have
-hundreds of GB of RAM. Seriously, the memory overhead of the per-cpu
-counters is noise compared to the memory footprint of, say, the
-stacks needing to be allocated for every background worker thread
-the filesystem needs.
+Thank you! I'll go through this in a right way so as not to disappoint
+you!
 
-Yeah, I know, we have ~175 per-cpu stats counters per XFS superblock
-(we already cover the 4 counters Amir is proposing to add as generic
-SB counters), and we have half a dozen dedicated worker threads per
-mount. Yet systems still function just fine when there are thousands
-of XFS filesystems and thousands of CPUs.
-
-Seriously, a small handful of per-cpu counters that capture
-information for all superblocks is not a big deal. Small systems
-will have relatively litte overhead, large systems have the memory
-to handle it.
-
-> So maybe a VFS-level mount option, say, "iostats" and "noiostats", and
-> some kind of global option indicating whether the default should be
-> iostats being enabled or disabled?  Bonus points if iostats can be
-> enabled or disabled after the initial mount via remount operation.
-
-Can we please just avoid mount options for stuff like this? It'll
-just never get tested unless it defaults to on, and then almost
-no-one will ever turn it off because why would you bother tweaking
-something that has not noticable impact but can give useful insights
-the workload that is running?
-
-I don't care one way or another here because this is essentially
-duplicating something we've had in XFS for 20+ years. What I want to
-avoid is blowing out the test matrix even further. Adding optional
-features has a cost in terms of testing time, so if it's a feature
-that is only rarely going to be turned on then we shouldn't add it
-at all. If it's only rearely going to be turned off, OTOH, then we
-should just make it ubiquitous and available for everything so it's
-always tested.
-
-Hence, AFAICT, the only real option for yes/no support is the
-Kconfig option. If the kernel builder turns it on, it is on for
-everything, otherwise it is off for everything.
-
-> I could imagine some people only being interested to enable iostats on
-> certain file systems, or certain classes of block devices --- so they
-> might want it enabled on some ext4 file systems which are attached to
-> physical devices, but not on the N thousand iSCSI or nbd mounts that
-> are also happen to be using ext4.
-
-That seems ... fairly contrived. Block device IO stats are not turned
-on and off based on the block device type - they are generic.
-Network device stats are not turned on and off based on teh network
-device - they are generic. Why should per-filesystem IO stats be
-special and different to everything else?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Byungchul
