@@ -2,83 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5BE64D13DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 10:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D490B4D13E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 10:52:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345501AbiCHJxR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 04:53:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32890 "EHLO
+        id S1345506AbiCHJxT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 04:53:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345585AbiCHJxJ (ORCPT
+        with ESMTP id S1345608AbiCHJxO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 04:53:09 -0500
+        Tue, 8 Mar 2022 04:53:14 -0500
 Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D703B4198D;
-        Tue,  8 Mar 2022 01:52:13 -0800 (PST)
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2288GoSs007823;
-        Tue, 8 Mar 2022 09:52:12 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2592F3FBD2;
+        Tue,  8 Mar 2022 01:52:18 -0800 (PST)
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2288eFml016853;
+        Tue, 8 Mar 2022 09:52:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=WM6Qf/k39OV7NTPzqsRekO0Zxro6Fcz/vyXRYcDLL2U=;
- b=RT4G2ffxcQh1Z2zSZNS16vvy9CXsbNdcAYQYJw5CC7Q6CeYGT8Ob89LBttqKnhuaTlZ1
- pHxrQqEtmPIEuYNFqt++IpKeJYKq0DUFQ/u0CNS9JzpcS7RGcFG4K7tSazmJPDEqfbdG
- PeGWCsfD+816rYUOA+l8SJBLsSXV/45bXM/JtPMg3mGT76gqDHLSFx/krQD8skqTFeRS
- oZu68fNgfO/k+sk1FxhCDp5OVtUXckCb/wVV6g2y4I/x/CP9ymH8CEJIz8D+fxZMdOPW
- Az0/XrUR/Mu9upVPQYo9cb1P+kq5Gx31932PX0yEZ4RlrrPK91BgU1Cj02ky8Kp8RhsV DA== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=+DbVfJM9T//JWovv3DB+Zga9LWmRsy++c1sznUWBOcc=;
+ b=tAsy9WHjFvG4QIPmvLLx3qS+B57EXHbTabLvPV4uXznb7ZBMQ4xUQgDPJtYQmAHVcXTd
+ ObTFvIoNLDILts8IKeqMjXCqGl8Q/W9/Bq9MFh+06hIQyF0XdPk4F1qqtXPLADWQVnZ4
+ wpDX6R49+hANfwxb+1Z3ND31LIdm3GrCyB5Fw1x91TkrTplkj8FovC/8eJbpDwJ4DWz+
+ cqCAQ3j761LMyXLY5IF8HlKe6NDdA5CvVerkGgHPao1gnOLGUkntXaWbS1+SPraXSB2f
+ tg31YCAkErmnY1zi17M6wyfkGHl8Yc7yaBQKPlEoo3x2tXmSAmIObiwih5CuALzKb5fX yw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0hfd970-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0sccr2j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Mar 2022 09:52:11 +0000
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 2289mvDj030756;
-        Tue, 8 Mar 2022 09:52:11 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0hfd96j-1
+        Tue, 08 Mar 2022 09:52:15 +0000
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 2289aLQw013084;
+        Tue, 8 Mar 2022 09:52:14 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0sccr22-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Mar 2022 09:52:11 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2289g3Ej005740;
-        Tue, 8 Mar 2022 09:52:09 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma06fra.de.ibm.com with ESMTP id 3eky4j62t9-1
+        Tue, 08 Mar 2022 09:52:14 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2289h5Uu030993;
+        Tue, 8 Mar 2022 09:52:13 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 3eky4hy6av-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Mar 2022 09:52:09 +0000
+        Tue, 08 Mar 2022 09:52:13 +0000
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2289q6gQ57803074
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2289qAPG40305086
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Mar 2022 09:52:06 GMT
+        Tue, 8 Mar 2022 09:52:10 GMT
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C676DA405C;
-        Tue,  8 Mar 2022 09:52:06 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0E600A405F;
+        Tue,  8 Mar 2022 09:52:10 +0000 (GMT)
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 74BC4A405F;
-        Tue,  8 Mar 2022 09:52:04 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 59431A4054;
+        Tue,  8 Mar 2022 09:52:07 +0000 (GMT)
 Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.83.182])
         by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  8 Mar 2022 09:52:04 +0000 (GMT)
+        Tue,  8 Mar 2022 09:52:07 +0000 (GMT)
 From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To:     linux-ext4@vger.kernel.org
 Cc:     Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] ext4: Make mb_optimize_scan option work with set/unset mount cmd
-Date:   Tue,  8 Mar 2022 15:22:00 +0530
-Message-Id: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnsastry@linux.ibm.com,
+        Geetika Moolchandani <Geetika.Moolchandani1@ibm.com>
+Subject: [PATCH 2/2] ext4: Make mb_optimize_scan performance mount option work with extents
+Date:   Tue,  8 Mar 2022 15:22:01 +0530
+Message-Id: <fc9a48f7f8dcfc83891a8b21f6dd8cdf056ed810.1646732698.git.ojaswin@linux.ibm.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
+References: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: XqNFAGE4dnT6UjJKckdvpzGY40jSVrsA
-X-Proofpoint-ORIG-GUID: X9tOMWz5TEmvvnvJSK7ES0311wrjsdWq
+X-Proofpoint-ORIG-GUID: gFRTUXBF-YZPRnQnchzBQPB9BGED1qVC
+X-Proofpoint-GUID: VyyJX6WoVHVmI2TaY6gO4Q3BjUI3FA7-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
  definitions=2022-03-08_03,2022-03-04_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 bulkscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2202240000 definitions=main-2203080049
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
@@ -90,88 +95,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After moving to the new mount API, mb_optimize_scan mount option
-handling was not working as expected due to the parsed value always
-being overwritten by default. Refactor and fix this to the expected
-behavior described below:
+Currently mb_optimize_scan scan feature which improves filesystem
+performance heavily (when FS is fragmented), seems to be not working
+with files with extents (ext4 by default has files with extents).
 
-*  mb_optimize_scan=1 - On
-*  mb_optimize_scan=0 - Off
-*  mb_optimize_scan not passed - On if no. of BGs > threshold else off
-*  Remounts retain previous value unless we explicitly pass the option
-   with a new value
+This patch fixes that and makes mb_optimize_scan feature work
+for files with extents.
 
-Reported-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Below are some performance numbers obtained when allocating a 10M and 100M
+file with and w/o this patch on a filesytem with no 1M contiguous block.
+
+<perf numbers>
+===============
+Workload: dd if=/dev/urandom of=test conv=fsync bs=1M count=10/100
+
+Time taken
+=====================================================
+no.     Size   without-patch     with-patch    Diff(%)
+1       10M      0m8.401s         0m5.623s     33.06%
+2       100M     1m40.465s        1m14.737s    25.6%
+
+<debug stats>
+=============
+w/o patch:
+  mballoc:
+    reqs: 17056
+    success: 11407
+    groups_scanned: 13643
+    cr0_stats:
+            hits: 37
+            groups_considered: 9472
+            useless_loops: 36
+            bad_suggestions: 0
+    cr1_stats:
+            hits: 11418
+            groups_considered: 908560
+            useless_loops: 1894
+            bad_suggestions: 0
+    cr2_stats:
+            hits: 1873
+            groups_considered: 6913
+            useless_loops: 21
+    cr3_stats:
+            hits: 21
+            groups_considered: 5040
+            useless_loops: 21
+    extents_scanned: 417364
+            goal_hits: 3707
+            2^n_hits: 37
+            breaks: 1873
+            lost: 0
+    buddies_generated: 239/240
+    buddies_time_used: 651080
+    preallocated: 705
+    discarded: 478
+
+with patch:
+  mballoc:
+    reqs: 12768
+    success: 11305
+    groups_scanned: 12768
+    cr0_stats:
+            hits: 1
+            groups_considered: 18
+            useless_loops: 0
+            bad_suggestions: 0
+    cr1_stats:
+            hits: 5829
+            groups_considered: 50626
+            useless_loops: 0
+            bad_suggestions: 0
+    cr2_stats:
+            hits: 6938
+            groups_considered: 580363
+            useless_loops: 0
+    cr3_stats:
+            hits: 0
+            groups_considered: 0
+            useless_loops: 0
+    extents_scanned: 309059
+            goal_hits: 0
+            2^n_hits: 1
+            breaks: 1463
+            lost: 0
+    buddies_generated: 239/240
+    buddies_time_used: 791392
+    preallocated: 673
+    discarded: 446
+
+Fixes: 196e402 (ext4: improve cr 0 / cr 1 group scanning)
+Reported-by: Geetika Moolchandani <Geetika.Moolchandani1@ibm.com>
+Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
+Suggested-by: Ritesh Harjani <riteshh@linux.ibm.com>
 Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
- fs/ext4/super.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ fs/ext4/mballoc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c5021ca0a28a..cd0547fabd79 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2021,12 +2021,12 @@ static int ext4_set_test_dummy_encryption(struct super_block *sb, char *arg)
- #define EXT4_SPEC_s_commit_interval		(1 << 16)
- #define EXT4_SPEC_s_fc_debug_max_replay		(1 << 17)
- #define EXT4_SPEC_s_sb_block			(1 << 18)
-+#define EXT4_SPEC_mb_optimize_scan		(1 << 19)
- 
- struct ext4_fs_context {
- 	char		*s_qf_names[EXT4_MAXQUOTAS];
- 	char		*test_dummy_enc_arg;
- 	int		s_jquota_fmt;	/* Format of quota to use */
--	int		mb_optimize_scan;
- #ifdef CONFIG_EXT4_DEBUG
- 	int s_fc_debug_max_replay;
- #endif
-@@ -2451,12 +2451,17 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 			ctx_clear_mount_opt(ctx, m->mount_opt);
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 67ac95c4cd9b..f9be6ab482a5 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -1000,7 +1000,7 @@ static inline int should_optimize_scan(struct ext4_allocation_context *ac)
  		return 0;
- 	case Opt_mb_optimize_scan:
--		if (result.int_32 != 0 && result.int_32 != 1) {
-+		if (result.int_32 == 1) {
-+			ctx_set_mount_opt2(ctx, EXT4_MOUNT2_MB_OPTIMIZE_SCAN);
-+			ctx->spec |= EXT4_SPEC_mb_optimize_scan;
-+		} else if (result.int_32 == 0) {
-+			ctx_clear_mount_opt2(ctx, EXT4_MOUNT2_MB_OPTIMIZE_SCAN);
-+			ctx->spec |= EXT4_SPEC_mb_optimize_scan;
-+		} else {
- 			ext4_msg(NULL, KERN_WARNING,
- 				 "mb_optimize_scan should be set to 0 or 1.");
- 			return -EINVAL;
- 		}
--		ctx->mb_optimize_scan = result.int_32;
+ 	if (ac->ac_criteria >= 2)
  		return 0;
- 	}
- 
-@@ -4369,7 +4374,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 
- 	/* Set defaults for the variables that will be set during parsing */
- 	ctx->journal_ioprio = DEFAULT_JOURNAL_IOPRIO;
--	ctx->mb_optimize_scan = DEFAULT_MB_OPTIMIZE_SCAN;
- 
- 	sbi->s_inode_readahead_blks = EXT4_DEF_INODE_READAHEAD_BLKS;
- 	sbi->s_sectors_written_start =
-@@ -5320,12 +5324,12 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	 * turned off by passing "mb_optimize_scan=0". This can also be
- 	 * turned on forcefully by passing "mb_optimize_scan=1".
- 	 */
--	if (ctx->mb_optimize_scan == 1)
--		set_opt2(sb, MB_OPTIMIZE_SCAN);
--	else if (ctx->mb_optimize_scan == 0)
--		clear_opt2(sb, MB_OPTIMIZE_SCAN);
--	else if (sbi->s_groups_count >= MB_DEFAULT_LINEAR_SCAN_THRESHOLD)
--		set_opt2(sb, MB_OPTIMIZE_SCAN);
-+	if (!(ctx->spec & EXT4_SPEC_mb_optimize_scan)) {
-+		if (sbi->s_groups_count >= MB_DEFAULT_LINEAR_SCAN_THRESHOLD)
-+			set_opt2(sb, MB_OPTIMIZE_SCAN);
-+		else
-+			clear_opt2(sb, MB_OPTIMIZE_SCAN);
-+	}
- 
- 	err = ext4_mb_init(sb);
- 	if (err) {
+-	if (ext4_test_inode_flag(ac->ac_inode, EXT4_INODE_EXTENTS))
++	if (!ext4_test_inode_flag(ac->ac_inode, EXT4_INODE_EXTENTS))
+ 		return 0;
+ 	return 1;
+ }
 -- 
 2.27.0
 
