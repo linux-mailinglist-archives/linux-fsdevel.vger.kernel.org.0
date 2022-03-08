@@ -2,65 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3048E4D162D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 12:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B8424D163F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 12:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243056AbiCHLYf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 06:24:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45220 "EHLO
+        id S239324AbiCHLaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 06:30:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233551AbiCHLYd (ORCPT
+        with ESMTP id S232182AbiCHLaL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 06:24:33 -0500
-Received: from mga06.intel.com (mga06.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771AD2E6A3;
-        Tue,  8 Mar 2022 03:23:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646738617; x=1678274617;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OTDKdBP6ceow3LhtfZ7Bn1leLycFOUIHkQ8k/QtllPU=;
-  b=GefeUd+iiCuvQUoDpAq+/CxkV51W34LKtbQ3TVPcI5daz0kMCdgbJ0V3
-   vAeLrzqy5GJXFMI2Bc6txJmP9MGpo/QqOYap/0/kwT7LRkXTMMv5njiNB
-   LOxomzzD0F3mNpEcHKdqb1j6anEACchqreU7hRn/H74AxM/sVL2/jVY9t
-   Qll4CxpaY3T97J+g1xOrpCkTulyuNEmTaSSWYBxD1HEiPJjHcGBfz5scl
-   DcKLW2LWVk5UeedckZrGpE0iVZcWBnZSL/RqCmY+XnC+lFGl+KcPDZGOz
-   XcHhpSfB9az/nsJk8rAGdaqOkEHObbgirVeW37KTqAv7/gusSDzygvvU1
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10279"; a="315375857"
-X-IronPort-AV: E=Sophos;i="5.90,164,1643702400"; 
-   d="scan'208";a="315375857"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2022 03:23:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,164,1643702400"; 
-   d="scan'208";a="632203033"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Mar 2022 03:23:20 -0800
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nRXvz-0001KN-PN; Tue, 08 Mar 2022 11:23:19 +0000
-Date:   Tue, 8 Mar 2022 19:22:51 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Meng Tang <tangmeng@uniontech.com>, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
-        willy@infradead.org
-Cc:     kbuild-all@lists.01.org, nixiaoming@huawei.com,
-        nizhen@uniontech.com, zhanglianjie@uniontech.com,
-        sujiaxun@uniontech.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Meng Tang <tangmeng@uniontech.com>
-Subject: Re: [PATCH v5 1/2] fs/proc: optimize register ctl_tables
-Message-ID: <202203081905.IbWENTfU-lkp@intel.com>
-References: <20220304112341.19528-1-tangmeng@uniontech.com>
+        Tue, 8 Mar 2022 06:30:11 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5562340EC;
+        Tue,  8 Mar 2022 03:29:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3FF2E6165E;
+        Tue,  8 Mar 2022 11:29:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F59C340EC;
+        Tue,  8 Mar 2022 11:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646738954;
+        bh=nbU7mIeF1Dy+lDixzqyrU78B2yr27pHjzue9SkRm4Hk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tL8aqieZSys2aIh27sli7QGG4YOp1+MeuG7B+WlabZhSCARn1d40Fww91RNulXxbV
+         QRMgvY+phO2KgcfPNAqHn7Jp4BhtvWBM1p9C0PAKMi4WcnFQe92Lp9o1KgC/pm0gIT
+         WvosfQBi/2LlWpfilPsVLi5JAeHxs+/qH6ydPwPmeumValKveILma8vRRrvV8Ir0lX
+         Vuc4k/ZnVN/vurAahkm4J42plgXSW3RF2fvB5b1Vf0dVyyCPsgRr973ujFAw46L3RF
+         u+Zrfgx3jsx91nDlx+TQOB0zeJeCbPbU8xzfSNXlghvxGcsIBEmE+78VEOKHtDLIiu
+         NUbTxe5QWV2Nw==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Nathaniel McCallum <nathaniel@profian.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Subject: [PATCH RFC v3 0/3] MAP_POPULATE for device memory
+Date:   Tue,  8 Mar 2022 13:28:30 +0200
+Message-Id: <20220308112833.262805-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220304112341.19528-1-tangmeng@uniontech.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,60 +57,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Meng,
+SGX is weird.  SGX memory is managed outside the core mm.  It doesn't
+have a 'struct page' and get_user_pages() doesn't work on it.  Its VMAs
+are marked with VM_IO.  So, none of the existing methods for avoiding
+page faults work on SGX memory.
 
-Thank you for the patch! Perhaps something to improve:
+This patch set essentially helps extend existing "normal RAM" kernel
+ABIs to work for avoiding faults for SGX too.  SGX users want to enjoy
+all of the benefits of a delayed allocation policy (better resource use,
+overcommit, NUMA affinity) but without the cost of millions of faults.
 
-[auto build test WARNING on mcgrof/sysctl-next]
-[also build test WARNING on jack-fs/fsnotify rostedt-trace/for-next kees/for-next/pstore linus/master v5.17-rc7 next-20220308]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Jarkko Sakkinen (3):
+  mm: Add f_op->populate() for populating memory outside of core mm
+  x86/sgx: Export sgx_encl_page_alloc()
+  x86/sgx: Implement EAUG population with MAP_POPULATE
 
-url:    https://github.com/0day-ci/linux/commits/Meng-Tang/fs-proc-optimize-register-ctl_tables/20220307-150704
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git sysctl-next
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20220308/202203081905.IbWENTfU-lkp@intel.com/config)
-compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/0day-ci/linux/commit/1c32e4182bcc38ac7cf4385267fa8b4ca2d7d97a
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Meng-Tang/fs-proc-optimize-register-ctl_tables/20220307-150704
-        git checkout 1c32e4182bcc38ac7cf4385267fa8b4ca2d7d97a
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 O=build_dir ARCH=um SUBARCH=i386 SHELL=/bin/bash fs/proc/
+ arch/x86/kernel/cpu/sgx/driver.c | 128 +++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/encl.c   |  38 +++++++++
+ arch/x86/kernel/cpu/sgx/encl.h   |   3 +
+ arch/x86/kernel/cpu/sgx/ioctl.c  |  38 ---------
+ include/linux/fs.h               |   1 +
+ mm/gup.c                         |  11 ++-
+ 6 files changed, 178 insertions(+), 41 deletions(-)
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+-- 
+2.35.1
 
-All warnings (new ones prefixed by >>):
-
->> fs/proc/proc_sysctl.c:1442: warning: expecting prototype for register_sysctl(). Prototype was for register_sysctl_with_num() instead
-
-
-vim +1442 fs/proc/proc_sysctl.c
-
-1f87f0b52b1d65 Eric W. Biederman 2012-01-06  1428  
-fea478d4101a42 Eric W. Biederman 2012-01-20  1429  /**
-fea478d4101a42 Eric W. Biederman 2012-01-20  1430   * register_sysctl - register a sysctl table
-fea478d4101a42 Eric W. Biederman 2012-01-20  1431   * @path: The path to the directory the sysctl table is in.
-fea478d4101a42 Eric W. Biederman 2012-01-20  1432   * @table: the table structure
-1c32e4182bcc38 Meng Tang         2022-03-04  1433   * @register_by_num: register single one and table must be without child
-fea478d4101a42 Eric W. Biederman 2012-01-20  1434   *
-fea478d4101a42 Eric W. Biederman 2012-01-20  1435   * Register a sysctl table. @table should be a filled in ctl_table
-fea478d4101a42 Eric W. Biederman 2012-01-20  1436   * array. A completely 0 filled entry terminates the table.
-fea478d4101a42 Eric W. Biederman 2012-01-20  1437   *
-fea478d4101a42 Eric W. Biederman 2012-01-20  1438   * See __register_sysctl_table for more details.
-fea478d4101a42 Eric W. Biederman 2012-01-20  1439   */
-1c32e4182bcc38 Meng Tang         2022-03-04  1440  struct ctl_table_header *register_sysctl_with_num(const char *path,
-1c32e4182bcc38 Meng Tang         2022-03-04  1441  		struct ctl_table *table, int register_by_num)
-fea478d4101a42 Eric W. Biederman 2012-01-20 @1442  {
-1c32e4182bcc38 Meng Tang         2022-03-04  1443  	return __register_sysctl_table_with_num(&sysctl_table_root.default_set,
-1c32e4182bcc38 Meng Tang         2022-03-04  1444  					path, table, register_by_num);
-fea478d4101a42 Eric W. Biederman 2012-01-20  1445  }
-1c32e4182bcc38 Meng Tang         2022-03-04  1446  EXPORT_SYMBOL(register_sysctl_with_num);
-fea478d4101a42 Eric W. Biederman 2012-01-20  1447  
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
