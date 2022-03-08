@@ -2,66 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D914D24AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 00:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C204D25C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 02:14:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbiCHXMQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 18:12:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53238 "EHLO
+        id S229573AbiCIBCr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 20:02:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbiCHXMO (ORCPT
+        with ESMTP id S229542AbiCIBCp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 18:12:14 -0500
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 987DB12A87;
-        Tue,  8 Mar 2022 15:11:10 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E252C10E23D8;
-        Wed,  9 Mar 2022 10:11:05 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nRiyv-003AZn-Bo; Wed, 09 Mar 2022 10:11:05 +1100
-Date:   Wed, 9 Mar 2022 10:11:05 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs: remove fs.f_write_hint
-Message-ID: <20220308231105.GU3927073@dread.disaster.area>
-References: <20220308060529.736277-1-hch@lst.de>
- <20220308060529.736277-3-hch@lst.de>
+        Tue, 8 Mar 2022 20:02:45 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC58526B54A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 16:40:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646786329;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=t4qvsbNI6sw/nBCf9DXoGk82250g6Xxiz3eVjMRBEbQ=;
+        b=f9CK8yFeXF6sS6Kbgy+9Swe6ra1xcDQicDK9BNtjqmxaZYFWLpq8hL18uyZUvI8piaArCi
+        Gg/Kdzgzad0qUugyULmDmzRa02cByVSuZDPF/Ri9Vwj/VawT9wghQ0u7qeosGxokE9IVOp
+        IA8cKhBxY+i6mkm6vRlkRM9s0azxn9o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-567--uKi_RuZOOqulntcXSiGhQ-1; Tue, 08 Mar 2022 18:28:02 -0500
+X-MC-Unique: -uKi_RuZOOqulntcXSiGhQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 731EF1091DA2;
+        Tue,  8 Mar 2022 23:28:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B00071006910;
+        Tue,  8 Mar 2022 23:27:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH v2 09/19] netfs: Adjust the netfs_failure tracepoint to
+ indicate non-subreq lines
+From:   David Howells <dhowells@redhat.com>
+To:     linux-cachefs@redhat.com
+Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 08 Mar 2022 23:27:25 +0000
+Message-ID: <164678204587.1200972.14893513018190383961.stgit@warthog.procyon.org.uk>
+In-Reply-To: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
+References: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220308060529.736277-3-hch@lst.de>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6227e28a
-        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=gyyHpoLcVL96gDFDU4sA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 08, 2022 at 07:05:29AM +0100, Christoph Hellwig wrote:
-> The value is now completely unused except for reporting it back through
-> the F_GET_FILE_RW_HINT ioctl, so remove the value and the two ioctls
-> for it.
-> 
-> Trying to use the F_SET_FILE_RW_HINT and F_GET_FILE_RW_HINT fcntls will
-> now return EINVAL, just like it would on a kernel that never supported
-> this functionality in the first place.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Adjust the netfs_failure tracepoint to indicate a subrequest number of -1
+when it's a full-request failure unrelated to any particular subrequest,
+such as a failure to encrypt its data buffer.
 
-LGTM.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-cachefs@redhat.com
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
--- 
-Dave Chinner
-david@fromorbit.com
+Link: https://lore.kernel.org/r/164623001948.3564931.2353852999649380059.stgit@warthog.procyon.org.uk/ # v1
+---
+
+ include/trace/events/netfs.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index ddf34cb476dc..273ae5f6a54c 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -222,7 +222,7 @@ TRACE_EVENT(netfs_failure,
+ 
+ 	    TP_STRUCT__entry(
+ 		    __field(unsigned int,		rreq		)
+-		    __field(unsigned short,		index		)
++		    __field(short,			index		)
+ 		    __field(short,			error		)
+ 		    __field(unsigned short,		flags		)
+ 		    __field(enum netfs_io_source,	source		)
+@@ -234,17 +234,17 @@ TRACE_EVENT(netfs_failure,
+ 
+ 	    TP_fast_assign(
+ 		    __entry->rreq	= rreq->debug_id;
+-		    __entry->index	= sreq ? sreq->debug_index : 0;
++		    __entry->index	= sreq ? sreq->debug_index : -1;
+ 		    __entry->error	= error;
+ 		    __entry->flags	= sreq ? sreq->flags : 0;
+ 		    __entry->source	= sreq ? sreq->source : NETFS_INVALID_READ;
+ 		    __entry->what	= what;
+-		    __entry->len	= sreq ? sreq->len : 0;
++		    __entry->len	= sreq ? sreq->len : rreq->len;
+ 		    __entry->transferred = sreq ? sreq->transferred : 0;
+ 		    __entry->start	= sreq ? sreq->start : 0;
+ 			   ),
+ 
+-	    TP_printk("R=%08x[%u] %s f=%02x s=%llx %zx/%zx %s e=%d",
++	    TP_printk("R=%08x[%d] %s f=%02x s=%llx %zx/%zx %s e=%d",
+ 		      __entry->rreq, __entry->index,
+ 		      __print_symbolic(__entry->source, netfs_sreq_sources),
+ 		      __entry->flags,
+
+
