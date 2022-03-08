@@ -2,277 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F964D18C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 14:09:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C864D1911
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 14:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238653AbiCHNKn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 08:10:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51830 "EHLO
+        id S241950AbiCHNXM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 08:23:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbiCHNKm (ORCPT
+        with ESMTP id S233002AbiCHNXL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 08:10:42 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CA98BFD
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 05:09:45 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 189B9210F4;
-        Tue,  8 Mar 2022 13:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1646744984; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/+6YFVLU4HUQxgav2Y/h9g6SMlYrkn6Y06kPO8UDTNY=;
-        b=w4OC+foCY1UMtr145vOAD2Yxlj+KxyV8fFasHAwRjFaBWnvLO6jobP/QgXECzrkPA7jdu3
-        Gu4Rhe0QeR9HKcB1k024OnklNhCggVYER6A3A6SNZsNeVimBE4MMjVIKJmeURztHrZKR21
-        vfmgwrDPZK/idJhFW4sDH54TYMqdCM8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1646744984;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/+6YFVLU4HUQxgav2Y/h9g6SMlYrkn6Y06kPO8UDTNY=;
-        b=BTJ/ZbZYjJM75i8hS4p1bok0K94D0bBApw8aeSN1nuvrMz7LrKQ0R2MNZGzU28v8EUXKiG
-        k3NvlZnLaCTqqoCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DD64413CA6;
-        Tue,  8 Mar 2022 13:09:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4weqNJdVJ2IkFQAAMHmgww
-        (envelope-from <ddiss@suse.de>); Tue, 08 Mar 2022 13:09:43 +0000
-Date:   Tue, 8 Mar 2022 14:09:42 +0100
-From:   David Disseldorp <ddiss@suse.de>
-To:     linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Martin Wilck <mwilck@suse.com>, viro@zeniv.linux.org.uk,
-        willy@infradead.org
-Subject: Re: [PATCH v6 3/6] initramfs: add INITRAMFS_PRESERVE_MTIME Kconfig
- option
-Message-ID: <20220308140942.47dcb97c@suse.de>
-In-Reply-To: <20220107133814.32655-4-ddiss@suse.de>
-References: <20220107133814.32655-1-ddiss@suse.de>
-        <20220107133814.32655-4-ddiss@suse.de>
+        Tue, 8 Mar 2022 08:23:11 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25AC449691;
+        Tue,  8 Mar 2022 05:22:15 -0800 (PST)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 228BQ0rg007740;
+        Tue, 8 Mar 2022 13:22:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=eO4h0TI+iWr46j4SVj3ufQz+54GScqE667mEsGEh9+Y=;
+ b=oUu2C5xgrkqBRt3bneXLbsKVodtuTp3zql7tD/q9GGeZu9QvBjct1NggWmxQSl/AbF6W
+ wSru3yrmp6WNQdIhbiHVLNJTFEaswEuDtTB3LGOBnNL2DG1FTQtF6G3Fn+gwgITt+uUu
+ pN+Mchs6nDoie9zGXSbWsW+WFJ+8jQ5MxKaHws2IZqj6wdrwnYjyPyKzOZTFgVBlnwjk
+ FFOK7BUlAw4nzSKHKEnjb5v1Z9CqcDQtgs8Algrq+nHi4SdS7KvLptmmNyqR3wP/R5j/
+ YmlS8f5i/FQ+uaGsC59Ds5q2+rYw2KyqO97DzzVafF2nGFctU3YVTlI/EnU/pTl6tHPH +w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0hfh6eg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Mar 2022 13:22:11 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 228DHPOj015724;
+        Tue, 8 Mar 2022 13:22:10 GMT
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0hfh6e2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Mar 2022 13:22:10 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 228DHRRl019343;
+        Tue, 8 Mar 2022 13:22:08 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma05fra.de.ibm.com with ESMTP id 3ekyg96g2k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Mar 2022 13:22:08 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 228D9fhf39321948
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Mar 2022 13:09:41 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8FF3642041;
+        Tue,  8 Mar 2022 13:20:50 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E77BD42042;
+        Tue,  8 Mar 2022 13:20:49 +0000 (GMT)
+Received: from thinkpad (unknown [9.171.70.239])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue,  8 Mar 2022 13:20:49 +0000 (GMT)
+Date:   Tue, 8 Mar 2022 14:20:47 +0100
+From:   Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
+Message-ID: <20220308142047.7a725518@thinkpad>
+In-Reply-To: <1bdb0184-696c-0f1a-3054-d88391c32e64@redhat.com>
+References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
+        <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
+        <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com>
+        <2266e1a8-ac79-94a1-b6e2-47475e5986c5@redhat.com>
+        <81f2f76d-24ef-c23b-449e-0b8fdec506e1@redhat.com>
+        <1bdb0184-696c-0f1a-3054-d88391c32e64@redhat.com>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: bjXztZi9rjQpeJ9qVMe1cbBsMgt6zfXu
+X-Proofpoint-ORIG-GUID: W3zlxDiE9TlFw4xptdJc9LTAkRAOlFnC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-08_03,2022-03-04_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203080069
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ping on this patchset again...
+On Tue, 8 Mar 2022 13:24:19 +0100
+David Hildenbrand <david@redhat.com> wrote:
 
-@Andrew: while looking through lkml archives from a lifetime ago at
-https://lkml.org/lkml/2008/8/16/59 , it appears that your preference at
-the time was to drop the scattered INITRAMFS_PRESERVE_MTIME ifdefs prior
-to merge.
-I'd much appreciate your thoughts on the reintroduction of the option
-based on the microbenchmark results below.
-
-On Fri,  7 Jan 2022 14:38:11 +0100, David Disseldorp wrote:
-
-> initramfs cpio mtime preservation, as implemented in commit 889d51a10712
-> ("initramfs: add option to preserve mtime from initramfs cpio images"),
-> uses a linked list to defer directory mtime processing until after all
-> other items in the cpio archive have been processed. This is done to
-> ensure that parent directory mtimes aren't overwritten via subsequent
-> child creation. Contrary to the 889d51a10712 commit message, the mtime
-> preservation behaviour is unconditional.
+[...]
 > 
-> This change adds a new INITRAMFS_PRESERVE_MTIME Kconfig option, which
-> can be used to disable on-by-default mtime retention and in turn
-> speed up initramfs extraction, particularly for cpio archives with large
-> directory counts.
+> From 1e51e8a93894f87c0a4d0e908391e0628ae56afe Mon Sep 17 00:00:00 2001
+> From: David Hildenbrand <david@redhat.com>
+> Date: Tue, 8 Mar 2022 12:51:26 +0100
+> Subject: [PATCH] mm/gup: fix buffered I/O on s390x with pagefaults disabled
 > 
-> Benchmarks with a one million directory cpio archive extracted 20 times
-> demonstrated:
-> 				mean extraction time (s)	std dev
-> INITRAMFS_PRESERVE_MTIME=y		3.808			 0.006
-> INITRAMFS_PRESERVE_MTIME unset		3.056			 0.004
+> On s390x, we actually need a pte_mkyoung() / pte_mkdirty() instead of
+> going via the page and leaving the PTE unmodified. E.g., if we only
+> mark the page accessed via mark_page_accessed() when doing a FOLL_TOUCH,
+> we'll miss to clear the HW invalid bit in the pte and subsequent accesses
+> via the MMU would still require a pagefault.
 > 
-> The above extraction times were measured using ftrace
-> (initcall_finish - initcall_start) values for populate_rootfs() with
-> initramfs_async disabled.
+> Otherwise, buffered I/O will loop forever because it will keep stumling
+> over the set HW invalid bit, requiring a page fault.
 > 
-> Signed-off-by: David Disseldorp <ddiss@suse.de>
-> Reviewed-by: Martin Wilck <mwilck@suse.com>
-> [ddiss: rebase atop dir_entry.name flexible array member]
+> Reported-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->  init/Kconfig           | 10 ++++++++
->  init/initramfs.c       | 50 +++-------------------------------------
->  init/initramfs_mtime.h | 52 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 65 insertions(+), 47 deletions(-)
->  create mode 100644 init/initramfs_mtime.h
+>  mm/gup.c | 32 +++++++++++++++++++++++++-------
+>  1 file changed, 25 insertions(+), 7 deletions(-)
 > 
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 4b7bac10c72d..a98f63d3c366 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1357,6 +1357,16 @@ config BOOT_CONFIG
->  
->  	  If unsure, say Y.
->  
-> +config INITRAMFS_PRESERVE_MTIME
-> +	bool "Preserve cpio archive mtimes in initramfs"
-> +	default y
-> +	help
-> +	  Each entry in an initramfs cpio archive carries an mtime value. When
-> +	  enabled, extracted cpio items take this mtime, with directory mtime
-> +	  setting deferred until after creation of any child entries.
-> +
-> +	  If unsure, say Y.
-> +
->  choice
->  	prompt "Compiler optimization level"
->  	default CC_OPTIMIZE_FOR_PERFORMANCE
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index 656d2d71349f..5b4ca8ecadb5 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
-> @@ -17,6 +17,8 @@
->  #include <linux/init_syscalls.h>
->  #include <linux/umh.h>
->  
-> +#include "initramfs_mtime.h"
-> +
->  static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
->  		loff_t *pos)
->  {
-> @@ -116,48 +118,6 @@ static void __init free_hash(void)
+> diff --git a/mm/gup.c b/mm/gup.c
+> index a9d4d724aef7..de3311feb377 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -587,15 +587,33 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>  		}
 >  	}
->  }
->  
-> -static long __init do_utime(char *filename, time64_t mtime)
-> -{
-> -	struct timespec64 t[2];
-> -
-> -	t[0].tv_sec = mtime;
-> -	t[0].tv_nsec = 0;
-> -	t[1].tv_sec = mtime;
-> -	t[1].tv_nsec = 0;
-> -	return init_utimes(filename, t);
-> -}
-> -
-> -static __initdata LIST_HEAD(dir_list);
-> -struct dir_entry {
-> -	struct list_head list;
-> -	time64_t mtime;
-> -	char name[];
-> -};
-> -
-> -static void __init dir_add(const char *name, time64_t mtime)
-> -{
-> -	size_t nlen = strlen(name) + 1;
-> -	struct dir_entry *de;
-> -
-> -	de = kmalloc(sizeof(struct dir_entry) + nlen, GFP_KERNEL);
-> -	if (!de)
-> -		panic_show_mem("can't allocate dir_entry buffer");
-> -	INIT_LIST_HEAD(&de->list);
-> -	strscpy(de->name, name, nlen);
-> -	de->mtime = mtime;
-> -	list_add(&de->list, &dir_list);
-> -}
-> -
-> -static void __init dir_utime(void)
-> -{
-> -	struct dir_entry *de, *tmp;
-> -	list_for_each_entry_safe(de, tmp, &dir_list, list) {
-> -		list_del(&de->list);
-> -		do_utime(de->name, de->mtime);
-> -		kfree(de);
-> -	}
-> -}
-> -
->  static __initdata time64_t mtime;
->  
->  /* cpio header parsing */
-> @@ -381,14 +341,10 @@ static int __init do_name(void)
->  static int __init do_copy(void)
->  {
->  	if (byte_count >= body_len) {
-> -		struct timespec64 t[2] = { };
->  		if (xwrite(wfile, victim, body_len, &wfile_pos) != body_len)
->  			error("write error");
->  
-> -		t[0].tv_sec = mtime;
-> -		t[1].tv_sec = mtime;
-> -		vfs_utimes(&wfile->f_path, t);
-> -
-> +		do_utime_path(&wfile->f_path, mtime);
->  		fput(wfile);
->  		eat(body_len);
->  		state = SkipIt;
-> diff --git a/init/initramfs_mtime.h b/init/initramfs_mtime.h
-> new file mode 100644
-> index 000000000000..688ed4b6f327
-> --- /dev/null
-> +++ b/init/initramfs_mtime.h
-> @@ -0,0 +1,52 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifdef CONFIG_INITRAMFS_PRESERVE_MTIME
-> +static void __init do_utime(char *filename, time64_t mtime)
-> +{
-> +	struct timespec64 t[2] = { { .tv_sec = mtime }, { .tv_sec = mtime } };
-> +	init_utimes(filename, t);
-> +}
-> +
-> +static void __init do_utime_path(const struct path *path, time64_t mtime)
-> +{
-> +	struct timespec64 t[2] = { { .tv_sec = mtime }, { .tv_sec = mtime } };
-> +	vfs_utimes(path, t);
-> +}
-> +
-> +static __initdata LIST_HEAD(dir_list);
-> +struct dir_entry {
-> +	struct list_head list;
-> +	time64_t mtime;
-> +	char name[];
-> +};
-> +
-> +static void __init dir_add(const char *name, time64_t mtime)
-> +{
-> +	size_t nlen = strlen(name) + 1;
-> +	struct dir_entry *de;
-> +
-> +	de = kmalloc(sizeof(struct dir_entry) + nlen, GFP_KERNEL);
-> +	if (!de)
-> +		panic("can't allocate dir_entry buffer");
-> +	INIT_LIST_HEAD(&de->list);
-> +	strscpy(de->name, name, nlen);
-> +	de->mtime = mtime;
-> +	list_add(&de->list, &dir_list);
-> +}
-> +
-> +static void __init dir_utime(void)
-> +{
-> +	struct dir_entry *de, *tmp;
-> +
-> +	list_for_each_entry_safe(de, tmp, &dir_list, list) {
-> +		list_del(&de->list);
-> +		do_utime(de->name, de->mtime);
-> +		kfree(de);
-> +	}
-> +}
-> +#else
-> +static void __init do_utime(char *filename, time64_t mtime) {}
-> +static void __init do_utime_path(const struct path *path, time64_t mtime) {}
-> +static void __init dir_add(const char *name, time64_t mtime) {}
-> +static void __init dir_utime(void) {}
-> +#endif
+>  	if (flags & FOLL_TOUCH) {
+> -		if ((flags & FOLL_WRITE) &&
+> -		    !pte_dirty(pte) && !PageDirty(page))
+> -			set_page_dirty(page);
+>  		/*
+> -		 * pte_mkyoung() would be more correct here, but atomic care
+> -		 * is needed to avoid losing the dirty bit: it is easier to use
+> -		 * mark_page_accessed().
+> +		 * We have to be careful with updating the PTE on architectures
+> +		 * that have a HW dirty bit: while updating the PTE we might
+> +		 * lose that bit again and we'd need an atomic update: it is
+> +		 * easier to leave the PTE untouched for these architectures.
+> +		 *
+> +		 * s390x doesn't have a hw referenced / dirty bit and e.g., sets
+> +		 * the hw invalid bit in pte_mkold(), to catch further
+> +		 * references. We have to update the PTE here to e.g., clear the
+> +		 * invalid bit; otherwise, callers that rely on not requiring
+> +		 * an MMU fault once GUP(FOLL_TOUCH) succeeded will loop forever
+> +		 * because the page won't actually be accessible via the MMU.
+>  		 */
+> -		mark_page_accessed(page);
+> +		if (IS_ENABLED(CONFIG_S390)) {
+> +			pte = pte_mkyoung(pte);
+> +			if (flags & FOLL_WRITE)
+> +				pte = pte_mkdirty(pte);
+> +			if (!pte_same(pte, *ptep)) {
+> +				set_pte_at(vma->vm_mm, address, ptep, pte);
+> +				update_mmu_cache(vma, address, ptep);
+> +			}
+> +		} else {
+> +			if ((flags & FOLL_WRITE) &&
+> +			    !pte_dirty(pte) && !PageDirty(page))
+> +				set_page_dirty(page);
+> +			mark_page_accessed(page);
+> +		}
+>  	}
+>  	if ((flags & FOLL_MLOCK) && (vma->vm_flags & VM_LOCKED)) {
+>  		/* Do not mlock pte-mapped THP */
 
+Thanks David, your analysis looks valid, at least it seems that you found
+a scenario where we would have HW invalid bit set due to pte_mkold() in
+ptep_clear_flush_young(), and still GUP would find and return that page, IIUC.
+
+I think pte handling should be similar to pmd handling in follow_trans_huge_pmd()
+-> touch_pmd(), or cow_user_page() (see comment on software "accessed" bits),
+which is more or less what your patch does.
+
+Some possible concerns:
+- set_page_dirty() would not be done any more for s390, is that intended and ok?
+- using set_pte_at() here seems a bit dangerous, as I'm not sure if this will
+  always only operate on invalid PTEs. Using it on active valid PTEs could
+  result in TLB issues because of missing flush. Also not sure about kvm impact.
+  Using ptep_set_access_flags() seems safer, again similar to touch_pmd() and
+  also cow_user_page().
+
+Looking at cow_user_page(), I also wonder if the arch_faults_on_old_pte()
+logic could be used here. I must admit that I did not really understand the
+"losing the dirty bit" part of the comment, but it seems that we might need
+to not only check for arch_faults_on_old_pte(), but also for something like
+"arch_faults_for_dirty_pte".
+
+Last but not least, IIUC, this issue should affect all archs that return
+true on arch_faults_on_old_pte(). After all, the basic problem seems to be
+that a pagefault is required for PTEs marked as old, in combination with
+GUP still returning a valid page. So maybe this should not be restricted
+to IS_ENABLED(CONFIG_S390).
