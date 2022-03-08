@@ -2,163 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 571774D22D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 21:48:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31C944D2345
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 22:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350192AbiCHUtW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 15:49:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49766 "EHLO
+        id S1350431AbiCHVZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 16:25:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243798AbiCHUtV (ORCPT
+        with ESMTP id S1350429AbiCHVZ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 15:49:21 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF32331350
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 12:48:22 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id qx21so453495ejb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 12:48:22 -0800 (PST)
+        Tue, 8 Mar 2022 16:25:58 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FDE15004E;
+        Tue,  8 Mar 2022 13:25:00 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id 7-20020a05600c228700b00385fd860f49so363200wmf.0;
+        Tue, 08 Mar 2022 13:25:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arrikto-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ZwTZJ+cU/YiESkdxq7NY4b6RLcbHEOvUMvJI9bbFH7M=;
-        b=Gwnt7g1XSPp1zY58EeFWUMm5Q6xwrt/izpp+FhPjy+7iS1GbvRRNqzDyqXMF4t7xO1
-         ZklX9hQxNs+ZdvPab9Q28wcBu4BGYbDhrdk5ddjP9gSzihnpoHUbou9SBEnPmhPfScRp
-         bGaCVQ1Utj2EZdYlP3YhQGLUPCyyRCB8tyHaXytM2w8JLJElKi6kAz3iULOo7EQIPIf+
-         itVbQlj6VZ7ClmD0lS/swlcnAsK0r/d6eN2usBdu7H1rjAUyYWNNJ6Y+e7VHPKKjbN8E
-         n3Mm5UxU9+4kS7CGY0vNMa/v55sSzNUVC8l5n32k+rx5W2a9rF1BAAr9xwCNrnSnsmcr
-         Q5Zg==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nDOGbN5ER5kyhrbrSeZfaKAJZ4dw3JtTr6jnBgdLbBI=;
+        b=kmHrGTMSvm6tF864EuT2q9gVNsYXS3s2uIcUZWHBIrB9Q8oVsXygqnpmpDyJow/rtB
+         lldvQxzcy5qU3NO7j9RwlGt7C5cuRxfx5L5x+qoB7R/6PFU+YEtXgbcO06pt+DNxgbRg
+         0kIjeFi+TQVc5+qYRitxrs1b2/ekbArAvz+zBucgyNYqI5PyyYZNMzlMSS3P4pF7aTxl
+         2zxa7YL1+Vy//v5c8ZaLvqYnfikwRN5rmd6yAm/wttKeNs2HOR4SKL2jEBPLrpWgeBb2
+         q2DN0hNxiKsbH8Uw0q7n9hZBcaeHq0Ptst/XDlYJYnZd9lcmkWIeR6bLTTqFO2/h3AW9
+         mGgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ZwTZJ+cU/YiESkdxq7NY4b6RLcbHEOvUMvJI9bbFH7M=;
-        b=T4jJcKdM5ue4FupeWEQjFbbQ10CseZuoJCKxzZnnN5aZ9wEuXx7rI6+GnrH4xB2zDb
-         XJ4ftDBom2jNPirBlrBQv+u9Jc3hC6Y2Adk+VXCAMXmwChjWxRxkDLCaGr1bV5mu32Cj
-         xDxsNBr6GRDzleCj44tiT0R/sFdtzRXkn/VOEJIDFBpioZmoXouu2JMfI+qkdxmG6IJj
-         3B8zMzGR5y6aMJMadhzt5SxpFWnGlYIUXScxjyqlc6cb34Z4cyQs/K7wnPNHIPvJc8tX
-         qGEH9W9zV/nRMGEwLqYbFt5th+Ryb+SJKlvcZ06K85Gqfz2oLcJ/pXvYtMXFz9VULzdg
-         ozIg==
-X-Gm-Message-State: AOAM530G8AV68Gr9eF2RDdC3GKEHRWwVNu3t58JYcMkqNbRdF1Nb/1mh
-        bhC1KXW+7KXU1J6t3xETuL0Sfw==
-X-Google-Smtp-Source: ABdhPJxoU+8TvtIedOHXaAEiIlveanpsqTd3At14GihTobnyXos5yBO4WToMuK5Nec5SIeR3YDUPEQ==
-X-Received: by 2002:a17:907:168a:b0:6da:9167:47dc with SMTP id hc10-20020a170907168a00b006da916747dcmr14943856ejc.126.1646772501317;
-        Tue, 08 Mar 2022 12:48:21 -0800 (PST)
-Received: from [172.16.10.50] (213.16.240.129.dsl.dyn.forthnet.gr. [213.16.240.129])
-        by smtp.gmail.com with ESMTPSA id r23-20020aa7da17000000b00415a1431488sm8172430eds.4.2022.03.08.12.48.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 12:48:20 -0800 (PST)
-Message-ID: <23895da7-bcec-d092-373a-c3d961ab5c48@arrikto.com>
-Date:   Tue, 8 Mar 2022 22:48:17 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nDOGbN5ER5kyhrbrSeZfaKAJZ4dw3JtTr6jnBgdLbBI=;
+        b=oOK+g3dGp1xBl1FAjuaHaz5hzMPMZnAjEqydMNlMCPBSaVydHGFe1SOQ65QVxWdEpH
+         oAExkNisWVkjanIS8KKsZIYVRsdYc+HkpFPBIhvuctrMttrwJUzPlkwn21FlfPui2+gh
+         lYkVuAu+DbClc30432okKVk78XK9umHxiNMNKM13m+JRlqrENrsCqEXgU/6IyEh6K1qi
+         PX6VxHLEOekiGUB63WqVoXdilD440ey0Psgcc0GncNauBOXaBE62a4ee2c6WIw87Ll4B
+         T8nfrSqbuJAOcwWUrutuse/VQxayP2w7vdC/S5lPROuc3erTA7Q1lbTj+GbxfIWPXgbj
+         II+Q==
+X-Gm-Message-State: AOAM531Zr8SFyb3nfttcM1TCbzST1CHlbWln/p6KGT6evzJHCKaPjiXl
+        G/88QgE+PUyNBf2Adb5aww==
+X-Google-Smtp-Source: ABdhPJxuYGxepEE8cVVoar6pJEOKukfeg0awhEsWbFqsOc0BU99sBdi+fMLBfybk2ElJ5BBGowTeEQ==
+X-Received: by 2002:a05:600c:3b1c:b0:389:8677:6c73 with SMTP id m28-20020a05600c3b1c00b0038986776c73mr934939wms.192.1646774698977;
+        Tue, 08 Mar 2022 13:24:58 -0800 (PST)
+Received: from localhost.localdomain ([46.53.254.141])
+        by smtp.gmail.com with ESMTPSA id b3-20020a5d4d83000000b001f1d72a6f97sm26070wru.50.2022.03.08.13.24.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Mar 2022 13:24:58 -0800 (PST)
+Date:   Wed, 9 Mar 2022 00:24:56 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     David Gow <davidgow@google.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        Magnus =?utf-8?B?R3Jvw58=?= <magnus.gross@rwth-aachen.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] binfmt_elf: Introduce KUnit test
+Message-ID: <YifJqN+5ju4kHQ2y@localhost.localdomain>
+References: <20220304044831.962450-1-keescook@chromium.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [LSF/MM/BFP ATTEND] [LSF/MM/BFP TOPIC] Storage: Copy Offload
-Content-Language: en-US
-To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "msnitzer@redhat.com >> msnitzer@redhat.com" <msnitzer@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "martin.petersen@oracle.com >> Martin K. Petersen" 
-        <martin.petersen@oracle.com>,
-        "roland@purestorage.com" <roland@purestorage.com>,
-        "mpatocka@redhat.com" <mpatocka@redhat.com>,
-        Hannes Reinecke <hare@suse.de>,
-        "kbus >> Keith Busch" <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Frederick.Knight@netapp.com" <Frederick.Knight@netapp.com>,
-        "zach.brown@ni.com" <zach.brown@ni.com>,
-        "osandov@fb.com" <osandov@fb.com>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
-        "tytso@mit.edu" <tytso@mit.edu>, "jack@suse.com" <jack@suse.com>
-References: <f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com>
- <012723a9-2e9c-c638-4944-fa560e1b0df0@arrikto.com>
- <c4124f39-1ee9-8f34-e731-42315fee15f9@nvidia.com>
-From:   Nikos Tsironis <ntsironis@arrikto.com>
-In-Reply-To: <c4124f39-1ee9-8f34-e731-42315fee15f9@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220304044831.962450-1-keescook@chromium.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/1/22 23:32, Chaitanya Kulkarni wrote:
-> Nikos,
-> 
->>> [8] https://kernel.dk/io_uring.pdf
->>
->> I would like to participate in the discussion too.
->>
->> The dm-clone target would also benefit from copy offload, as it heavily
->> employs dm-kcopyd. I have been exploring redesigning kcopyd in order to
->> achieve increased IOPS in dm-clone and dm-snapshot for small copies over
->> NVMe devices, but copy offload sounds even more promising, especially
->> for larger copies happening in the background (as is the case with
->> dm-clone's background hydration).
->>
->> Thanks,
->> Nikos
-> 
-> If you can document your findings here it will be great for me to
-> add it to the agenda.
-> 
+On Thu, Mar 03, 2022 at 08:48:31PM -0800, Kees Cook wrote:
+> Adds simple KUnit test for some binfmt_elf internals: specifically a
+> regression test for the problem fixed by commit 8904d9cd90ee ("ELF:
+> fix overflow in total mapping size calculation").
 
-My work focuses mainly on improving the IOPs and latency of the
-dm-snapshot target, in order to bring the performance of short-lived
-snapshots as close as possible to bare-metal performance.
+> +	/* No headers, no size. */
+> +	KUNIT_EXPECT_EQ(test, total_mapping_size(NULL, 0), 0);
 
-My initial performance evaluation of dm-snapshot had revealed a big
-performance drop, while the snapshot is active; a drop which is not
-justified by COW alone.
+This is meaningless test. This whole function only makes sense
+if program headers are read and loading process advances far enough
+so that pointer is not NULL.
 
-Using fio with blktrace I had noticed that the per-CPU I/O distribution
-was uneven. Although many threads were doing I/O, only a couple of the
-CPUs ended up submitting I/O requests to the underlying device.
-
-The same issue also affects dm-clone, when doing I/O with sizes smaller
-than the target's region size, where kcopyd is used for COW.
-
-The bottleneck here is kcopyd serializing all I/O. Users of kcopyd, such
-as dm-snapshot and dm-clone, cannot take advantage of the increased I/O
-parallelism that comes with using blk-mq in modern multi-core systems,
-because I/Os are issued only by a single CPU at a time, the one on which
-kcopyd’s thread happens to be running.
-
-So, I experimented redesigning kcopyd to prevent I/O serialization by
-respecting thread locality for I/Os and their completions. This made the
-distribution of I/O processing uniform across CPUs.
-
-My measurements had shown that scaling kcopyd, in combination with
-scaling dm-snapshot itself [1] [2], can lead to an eventual performance
-improvement of ~300% increase in sustained throughput and ~80% decrease
-in I/O latency for transient snapshots, over the null_blk device.
-
-The work for scaling dm-snapshot has been merged [1], but,
-unfortunately, I haven't been able to send upstream my work on kcopyd
-yet, because I have been really busy with other things the last couple
-of years.
-
-I haven't looked into the details of copy offload yet, but it would be
-really interesting to see how it affects the performance of random and
-sequential workloads, and to check how, and if, scaling kcopyd affects
-the performance, in combination with copy offload.
-
-Nikos
-
-[1] https://lore.kernel.org/dm-devel/20190317122258.21760-1-ntsironis@arrikto.com/
-[2] https://lore.kernel.org/dm-devel/425d7efe-ab3f-67be-264e-9c3b6db229bc@arrikto.com/
+Are we going to mock every single function in the kernel?
+Disgusting.
