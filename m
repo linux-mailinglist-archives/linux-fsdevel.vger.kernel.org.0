@@ -2,128 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F6C64D1FBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 19:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B768B4D20ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 20:07:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349389AbiCHSKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 13:10:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52638 "EHLO
+        id S1349839AbiCHTIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 14:08:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349385AbiCHSKs (ORCPT
+        with ESMTP id S1349841AbiCHTIB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 13:10:48 -0500
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE8F052E41
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 10:09:51 -0800 (PST)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-2dc242a79beso200781717b3.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 10:09:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=+G+dOa5d8t9TVnKXBrmGWkOu0SsmIWEAH8q9HzbCF5I=;
-        b=lv61dmaDlY/21bZBcnh/djVKY2mRp++3ufJow9xInzs8EuDtTPboV9k3sYD9zBzJl/
-         sSW+aUs3otHCcC1QNx+vADbjjSSnHv96xJJ+pLp8YtUPtG2YRtJEp8yslbDtsvcNkXHF
-         oVDwQMML/UcG1ZvAifMAS0dCsbkEKLx67Mu9bHXnBH04oGz/CDqno9M7cQS7FK/vPJan
-         R814WcsEefmQwrNj2sot3wymPhJmS6rlei6RFW0sKExG99ZsS+ddJfnKiM9bHvLttnGt
-         7n1ZR5wPGNS/d6miPXuviGxjScW4B44CoWH0ghzWfwa7Cy49HMXNRA2gCzFQoXboXPfo
-         yXWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=+G+dOa5d8t9TVnKXBrmGWkOu0SsmIWEAH8q9HzbCF5I=;
-        b=XeOeJeH5STp0YqnWcICiw9g3LOiEEP1LaOZq7oECWWIrhwN87iAQKc1ELLp4ZPS3Us
-         /Hnd/mYuTFzgm7jOfk9BSjGKa0/JHFtJubz26NxXKjV2MW6pzsNEogZ7Z92b5PJzQeJG
-         RpaUV5l8rsoq6Zg1MV9//qzCOFz3TFx9Zy/Jn9No5OAIpE5MJ8Ku7FTPheGTJ77+Kf2H
-         qlgGpY5sACPKSiRoVsX4Ija2dFeV5dH/qFJLbl3HbtNnl8b3t8ISW9K9hHlYGaXvT5xQ
-         uzecknRtxQ5lrTRaA40Biem4nUTPaAmSBmtcuGEg1sZMWhv16/ew+k+ggvFse01ZR/gy
-         wuqw==
-X-Gm-Message-State: AOAM531dYcJXkZl7qHYbTNKq9vIYRpJ2AfnRfU3wgWD4Vr7p7OtOpxfe
-        Vk8BRfaf4Oe+U1yYUlK696aZYDNjJsl3avm307A=
-X-Google-Smtp-Source: ABdhPJzuruJ+HhlCorgdRJjB5MsqYiqhWZLstxodQoiP2OTU5bwFfcAuameqpDge2/rL6ZsOSObKfmZoZLYisULcRek=
-X-Received: by 2002:a81:15c9:0:b0:2dc:4bf9:41ea with SMTP id
- 192-20020a8115c9000000b002dc4bf941eamr13429127ywv.145.1646762990939; Tue, 08
- Mar 2022 10:09:50 -0800 (PST)
+        Tue, 8 Mar 2022 14:08:01 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CB6954195
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 11:07:03 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DE1F16165A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 19:07:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32731C340EF;
+        Tue,  8 Mar 2022 19:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646766422;
+        bh=JywQ9l846m66kE1vqnNoV+GDSuefZ1CHGUrg7YV4QQ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Bx0A7qNVFz3KCTlkApSHsDv61T24Z3JyLVHcvp+u0jZWJiRhmFun4XSEISAYl6wOI
+         E7yHX2zDGzVaK0fazqMH3V2p5Kq2W556XrSxBAQ4GSqYEYe18Kb6y41KiegtfdixfJ
+         +5ALxGZJ5SyD0gfPiO0wSNc/DqYy0pU4P3IJKdM5HhmaF8GKNSnn0+qtQlUAUk30g7
+         fgJhJabFkSwVZ5JMitfxOzflksAP03FKRBxGtGtKRastWasmLFej9MGYX2/oO9Nz+X
+         Bl4xW6S0d3QgBgx5aK4XGQQg+yEGINEA6XjYjI5fI5zWSA/PQJFnwzIjUeCEOH5qqN
+         RlmRfhhQ9nbRQ==
+Date:   Tue, 8 Mar 2022 14:06:57 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        lsf-pc <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+Message-ID: <YiepUS/bDKTNA5El@sashalap>
+References: <20190212170012.GF69686@sasha-vm>
+ <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+ <YicrMCidylefTC3n@kroah.com>
+ <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a05:7010:33c8:b0:236:3f09:dc48 with HTTP; Tue, 8 Mar 2022
- 10:09:50 -0800 (PST)
-Reply-To: bell.bellcanada@gmail.com
-From:   BELL CANADA <sabrina.buhatini009@gmail.com>
-Date:   Tue, 8 Mar 2022 19:09:50 +0100
-Message-ID: <CAAjpWVGS9YyusaUBYLxOs_-5tf3dOdAWhBU_5FQfzR0pG7+t_w@mail.gmail.com>
-Subject: IMMIGRER AU CANADA POUR Y VIVRE ET TRAVAILLER
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=5.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,SUBJ_ALL_CAPS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:1133 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [sabrina.buhatini009[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [sabrina.buhatini009[at]gmail.com]
-        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.6 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SUPERBE OPPORTUNITE !!!
-IMMIGRER AU CANADA POUR Y VIVRE ET TRAVAILLER.
-CADRES ET JEUNES DIPLOMES BIENVENU !!!
-La Compagnie BELL-CANADA en Collaboration avec le Service de
-Citoyennet=C3=A9 et Immigration au Canada lance une grande session de
-Recrutement 2022. En effet nous recherchons avant tout des personnes
-capables sans
-distinction de sexe qui pourront s'adapter =C3=A0 notre environnement de tr=
-avail.
-CONDITIONS A REMPLIR POUR TOUTE PERSONNE INT=C3=89RESS=C3=89E
+On Tue, Mar 08, 2022 at 01:04:05PM +0200, Amir Goldstein wrote:
+>On Tue, Mar 8, 2022 at 12:08 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>> On Tue, Mar 08, 2022 at 11:32:43AM +0200, Amir Goldstein wrote:
+>> > On Tue, Feb 12, 2019 at 7:31 PM Sasha Levin <sashal@kernel.org> wrote:
+>> > >
+>> > > Hi all,
+>> > >
+>> > > I'd like to propose a discussion about the workflow of the stable trees
+>> > > when it comes to fs/ and mm/. In the past year we had some friction with
+>> > > regards to the policies and the procedures around picking patches for
+>> > > stable tree, and I feel it would be very useful to establish better flow
+>> > > with the folks who might be attending LSF/MM.
+>> > >
+>> > > I feel that fs/ and mm/ are in very different places with regards to
+>> > > which patches go in -stable, what tests are expected, and the timeline
+>> > > of patches from the point they are proposed on a mailing list to the
+>> > > point they are released in a stable tree. Therefore, I'd like to propose
+>> > > two different sessions on this (one for fs/ and one for mm/), as a
+>> > > common session might be less conductive to agreeing on a path forward as
+>> > > the starting point for both subsystems are somewhat different.
+>> > >
+>> > > We can go through the existing processes, automation, and testing
+>> > > mechanisms we employ when building stable trees, and see how we can
+>> > > improve these to address the concerns of fs/ and mm/ folks.
+>> > >
+>> >
+>> > Hi Sasha,
+>> >
+>> > I think it would be interesting to have another discussion on the state of fs/
+>> > in -stable and see if things have changed over the past couple of years.
+>> > If you do not plan to attend LSF/MM in person, perhaps you will be able to
+>> > join this discussion remotely?
+>> >
+>> > >From what I can see, the flow of ext4/btrfs patches into -stable still looks
+>> > a lot healthier than the flow of xfs patches into -stable.
+>>
+>> That is explicitly because the ext4/btrfs developers/maintainers are
+>> marking patches for stable backports, while the xfs
+>> developers/maintainers are not.
+>>
+>> It has nothing to do with how me and Sasha are working,
+>
+>Absolutely, I have no complaints to the stable maintainers here, just wanted
+>to get a status report from Sasha, because he did invest is growing the stable
+>tree xfstests coverage AFAIK, which should have addressed some of the
+>earlier concerns of xfs developers.
 
-1- =C3=8Atre =C3=A2g=C3=A9(e) entre 18 et 65 ans
-2- =C3=8Atre titulaire au moins du BEPC BAC ou autres Dipl=C3=B4mes Profess=
-ionnels
-3- Savoir parler le fran=C3=A7ais ou l'anglais
-4- Avoir de bonnes qualit=C3=A9s relationnelles
-5- Avoir une bonne moralit=C3=A9
+I can update: we indeed invested in improving the story behind how we
+pull XFS patches into -stable, where I ended up with a collection of
+scripts that can establish a baseline and compare stable-rc releases to
+that baseline, reporting issues.
 
-PS: Pour plus d'informations et le retrait du formulaire, veuillez
-nous envoyer vos coordonn=C3=A9es Si vous =C3=AAtes int=C3=A9ress=C3=A9s. v=
-euillez nous
-envoyer: NOM; PR=C3=89NOMS; =C3=82GE; PAYS;NATIONALIT=C3=89,PROFESSION,SEXE=
-,NUM=C3=89RO
-T=C3=89L=C3=89PHONE,ADRESSE: =C3=A0 l'adresse de la direction par =C3=89mai=
-l qui est la
-suivante : bell.bellcanada@gmail.com
+The system was somewhat expensive to maintain, in the sense that I often
+hit flaky tests, chased down issues that are not obviously test
+failures, just keeping stuff updated and running, and so on, but it was
+still doable.
 
-pour confirmation de votre inscription et pour plus d'informations sur
-les conditions =C3=A0 remplir et les pi=C3=A8ces =C3=A0 fournir pour votre =
-dossier de
-candidature.
+At one point we hit a few issues that didn't reproduce with xfstests,
+and as a result there were asks such as the timing of when I pull
+patches and their proposed flow into releases.
 
-Le charg=C3=A9 de l'information
+At that point the process on my end basically stopped:
+
+  a. It was clear that xfs would be the only subsystem using this as
+  mm/ext4/etc aligned with just tagging things for stable and being okay
+  with me occasionally bugging them with AUTOSEL mails to catch stuff
+  they might have missed.
+
+  b. Neither me nor my employer had a particular interest in xfs.
+
+  c. The process was too much of a snowflake to be doing along with the
+  rest of the -stable work.
+
+And so the scripts bitrotted and died.
+
+Somewhat related: about a year ago I joined Google, who got bit in the
+arse with a process like the one that Jan described for SUSE, and asked
+for a new kernel program to use the upstream LTS trees, upgrade anually,
+and run a subset of workloads on the -stable kernel to stay even closer
+to upstream and catch issues earlier. (There's a taped presentation
+about it here: https://www.youtube.com/watch?v=tryyzWATpaU).
+
+At this point I can run a battery of tests and real workloads mostly at
+subsystems that Google ends up caring about (which end up being most of
+the core kernel code - mm, ext4, sched, etc), find real bugs, and
+address them before a release. Sadly xfs is not one of those subsystem
+that they care about.
+
+>> so go take this up with the fs developers :)
+>
+>It is easy to blame the "fs developers", but is it also very hard on an
+>overloaded maintainer to ALSO take care of GOOD stable tree updates.
+>
+>Here is a model that seems to be working well for some subsystems:
+>When a tester/developer finds a bug they write an LTP test.
+>That LTP test gets run by stable kernel test bots and prompts action
+>from distros who now know of this issue and may invest resources
+>in backporting patches.
+>
+>If I am seeing random developers reporting bugs from running xfstests
+>on stable kernels and I am not seeing the stable kernel test bots reporting
+>those bugs, then there may be room for improvement in the stable kernel
+>testing process??
+
+There always is, and wearing my stable maintainer hat I would *love*
+*love* *love* if folks who care about a particular subsystem or workload
+to test the kernels and let us know if anything broke, at which point we
+will do our best to address it.
+
+What we can't do is invest significant time into doing the testing work
+ourselves for each and every subsystem in the kernel.
+
+The testing rig I had is expensive, not even just time-wise but also
+w.r.t the compute resources it required to operate, I suspect that most
+of the bots that are running around won't dedicate that much resources
+to each filesystem on a voluntary basis.
+
+>> > In 2019, Luis started an effort to improve this situation (with some
+>> > assistance from me and you) that ended up with several submissions
+>> > of stable patches for v4.19.y, but did not continue beyond 2019.
+>> >
+>> > When one looks at xfstest bug reports on the list for xfs on kernels > v4.19
+>> > one has to wonder if using xfs on kernels v5.x.y is a wise choice.
+>>
+>> That's up to the xfs maintainers to discuss.
+>>
+>> > Which makes me wonder: how do the distro kernel maintainers keep up
+>> > with xfs fixes?
+>>
+>> Who knows, ask the distro maintainers that use xfs.  What do they do?
+>>
+>
+>So here I am - asking them via proxy fs developers :)
+
+I can comment on what I'm seeing with Google's COS distro: it's a
+chicken-and-egg problem. It's hard to offer commercial support with the
+current state of xfs, but on the other hand it's hard to improve the
+state of xfs without a commercial party that would invest more
+significant resources into it.
+
+Luckily there is an individual in Google who has picked up this work and
+hopefully we will see something coming out of it very soon, but honestly
+- we just got lucky.
+
+-- 
+Thanks,
+Sasha
