@@ -2,145 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89DED4D239D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 22:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C83F4D23A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 22:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350493AbiCHVud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 16:50:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48718 "EHLO
+        id S230348AbiCHVxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 16:53:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231258AbiCHVud (ORCPT
+        with ESMTP id S229741AbiCHVxx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 16:50:33 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 249465574D
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 13:49:35 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id z15so524458pfe.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 13:49:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=UvxhNuo1pWdGPwLc6pa1lU2igYRccw9Zy2lYHKm+tqE=;
-        b=j3BGSMMz077x39VXI5WDuz3dGrSNFzeWRbnGPrs2GZisCmwxX9g0KzulKe1XNjsdch
-         DNc1a0DMv+yuJBSmE/+3xjeVF6tB1II9fDiI2//2HE2XHm686I1b0MtOirbUcqSfj0wL
-         xhGHDCHOBY5aSxDB2n47oB9IvUh1AhDK91068=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UvxhNuo1pWdGPwLc6pa1lU2igYRccw9Zy2lYHKm+tqE=;
-        b=gUcHFqZ6CXAGCsp1VRi1dDvz5tST9InIacBDxs8LnFsdfDvsD+ijococDuXaUPc/0N
-         g03d7v0rjjSL8U+kmkITFmWUtTq25LiHSyk7ix6ZlVqTEghkPBWhLapnJbJKqeZYhRfQ
-         6nKeh0N/v4dcbS2MNYbDazh9u5kj6eULW8VQXeeK00csefzL54X1bYqSXjNf98NPld89
-         swmnu6eYmlL13M7zFXB3xnI5vLBOp0xEs843sfH3XiHqIv/AQ3TCHuIJ6WxgT78P00me
-         0ShgMWSeKPOPKXiYDMuzzNyU2hOzC8yuG4eK5cAnazcfhrL0icaAs6dyFqlacgTTT+Gz
-         0V7w==
-X-Gm-Message-State: AOAM530logo21JFO52HuD6XI5jJ84fUJ1wPRLvGikdULjIdKi4ALCrMU
-        wj2pnVM1Xb8oJCztSNigNYP/Ag==
-X-Google-Smtp-Source: ABdhPJyVVvRyodq7F3sMaUkYdwCNFcxDicKQF/KDk5+fJ3EqXw9JtUH3m/BtiPyz2eanpjv6m7yKaw==
-X-Received: by 2002:a63:8bc4:0:b0:380:af7d:4c7a with SMTP id j187-20020a638bc4000000b00380af7d4c7amr1155825pge.162.1646776173626;
-        Tue, 08 Mar 2022 13:49:33 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d10-20020a056a00198a00b004f72d2c024asm18620pfl.185.2022.03.08.13.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 13:49:33 -0800 (PST)
-Date:   Tue, 8 Mar 2022 13:49:32 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Denys Vlasenko <vda.linux@googlemail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <liam.howlett@oracle.com>,
-        Jann Horn <jannh@google.com>, linux-mm@kvack.org
-Subject: Re: [GIT PULL] Fix fill_files_note
-Message-ID: <202203081342.1924AD9@keescook>
-References: <20220131153740.2396974-1-willy@infradead.org>
- <871r0nriy4.fsf@email.froward.int.ebiederm.org>
- <YfgKw5z2uswzMVRQ@casper.infradead.org>
- <877dafq3bw.fsf@email.froward.int.ebiederm.org>
- <YfgPwPvopO1aqcVC@casper.infradead.org>
- <CAG48ez3MCs8d8hjBfRSQxwUTW3o64iaSwxF=UEVtk+SEme0chQ@mail.gmail.com>
- <87bkzroica.fsf_-_@email.froward.int.ebiederm.org>
- <87h788fdaw.fsf_-_@email.froward.int.ebiederm.org>
+        Tue, 8 Mar 2022 16:53:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A90F31EEC5
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 13:52:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646776374;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=NzjXlBirb+xRpK0AjbCq+oEkMZQAkLue8HFEU88UcqU=;
+        b=hh7iowQ9Ec9wULVO4accRcyIZbXLmY4+YbmfH8KMgZ8E9jPQ3OKB/hwzbjpt0B8jqH+Pnl
+        zZVxD4q6pJTgLS3lOQr+RSlvCtbkAiYHusawsFdr3gNORLSrgDFao5MaLHYjy+z1NUew+g
+        +SxVjCvabbiT+FyXLVITSE26pNNIOyM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-279-14iLTJPnONOwL58BgUFfrQ-1; Tue, 08 Mar 2022 16:52:53 -0500
+X-MC-Unique: 14iLTJPnONOwL58BgUFfrQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D395800050;
+        Tue,  8 Mar 2022 21:52:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4284EADF1;
+        Tue,  8 Mar 2022 21:52:42 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] cachefiles: Fix volume coherency attribute
+From:   David Howells <dhowells@redhat.com>
+To:     rohiths.msft@gmail.com
+Cc:     Steve French <smfrench@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+        linux-cachefs@redhat.com, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 08 Mar 2022 21:52:41 +0000
+Message-ID: <164677636135.1191348.1664733858863676368.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h788fdaw.fsf_-_@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 08, 2022 at 01:35:03PM -0600, Eric W. Biederman wrote:
-> 
-> Kees,
-> 
-> Please pull the coredump-vma-snapshot-fix branch from the git tree:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git coredump-vma-snapshot-fix
-> 
->   HEAD: 390031c942116d4733310f0684beb8db19885fe6 coredump: Use the vma snapshot in fill_files_note
-> 
-> Matthew Wilcox has reported that a missing mmap_lock in file_files_note,
-> which could cause trouble.
-> 
-> Refactor the code and clean it up so that the vma snapshot makes
-> it to fill_files_note, and then use the vma snapshot in fill_files_note.
-> 
-> Eric W. Biederman (5):
->       coredump: Move definition of struct coredump_params into coredump.h
->       coredump: Snapshot the vmas in do_coredump
->       coredump: Remove the WARN_ON in dump_vma_snapshot
->       coredump/elf: Pass coredump_params into fill_note_info
->       coredump: Use the vma snapshot in fill_files_note
-> 
->  fs/binfmt_elf.c          | 66 ++++++++++++++++++++++--------------------------
->  fs/binfmt_elf_fdpic.c    | 18 +++++--------
->  fs/binfmt_flat.c         |  1 +
->  fs/coredump.c            | 59 ++++++++++++++++++++++++++++---------------
->  include/linux/binfmts.h  | 13 +---------
->  include/linux/coredump.h | 20 ++++++++++++---
->  6 files changed, 93 insertions(+), 84 deletions(-)
-> 
-> ---
-> 
-> Kees I realized I needed to rebase this on Jann Horn's commit
-> 84158b7f6a06 ("coredump: Also dump first pages of non-executable ELF
-> libraries").  Unfortunately before I got that done I got distracted and
-> these changes have been sitting in limbo for most of the development
-> cycle.  Since you are running a tree that is including changes like this
-> including Jann's can you please pull these changes into your tree.
+A network filesystem may set coherency data on a volume cookie, and if
+given, cachefiles will store this in an xattr on the directory in the cache
+corresponding to the volume.
 
-Sure! Can you make a signed tag for this pull?
+The function that sets the xattr just stores the contents of the volume
+coherency buffer directly into the xattr, with nothing added; the checking
+function, on the other hand, has a cut'n'paste error whereby it tries to
+interpret the xattr contents as would be the xattr on an ordinary file
+(using the cachefiles_xattr struct).  This results in a failure to match
+the coherency data because the buffer ends up being shifted by 18 bytes.
+
+Fix this by defining a structure specifically for the volume xattr and
+making both the setting and checking functions use it.
+
+Since the volume coherency doesn't work if used, take the opportunity to
+insert a reserved field for future use, set it to 0 and check that it is 0.
+Log mismatch through the appropriate tracepoint.
+
+Note that this only affects cifs; 9p, afs, ceph and nfs don't use the
+volume coherency data at the moment.
+
+Fixes: 32e150037dce ("fscache, cachefiles: Store the volume coherency data")
+Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <smfrench@gmail.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: linux-cachefs@redhat.com
+---
+
+ fs/cachefiles/xattr.c             |   23 ++++++++++++++++++++---
+ include/trace/events/cachefiles.h |    2 ++
+ 2 files changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
+index 83f41bd0c3a9..35465109d9c4 100644
+--- a/fs/cachefiles/xattr.c
++++ b/fs/cachefiles/xattr.c
+@@ -28,6 +28,11 @@ struct cachefiles_xattr {
+ static const char cachefiles_xattr_cache[] =
+ 	XATTR_USER_PREFIX "CacheFiles.cache";
+ 
++struct cachefiles_vol_xattr {
++	__be32	reserved;	/* Reserved, should be 0 */
++	__u8	data[];		/* netfs volume coherency data */
++} __packed;
++
+ /*
+  * set the state xattr on a cache file
+  */
+@@ -185,6 +190,7 @@ void cachefiles_prepare_to_write(struct fscache_cookie *cookie)
+  */
+ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+ {
++	struct cachefiles_vol_xattr *buf;
+ 	unsigned int len = volume->vcookie->coherency_len;
+ 	const void *p = volume->vcookie->coherency;
+ 	struct dentry *dentry = volume->dentry;
+@@ -192,10 +198,17 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+ 
+ 	_enter("%x,#%d", volume->vcookie->debug_id, len);
+ 
++	len += sizeof(*buf);
++	buf = kmalloc(len, GFP_KERNEL);
++	if (!buf)
++		return false;
++	buf->reserved = cpu_to_be32(0);
++	memcpy(buf->data, p, len);
++
+ 	ret = cachefiles_inject_write_error();
+ 	if (ret == 0)
+ 		ret = vfs_setxattr(&init_user_ns, dentry, cachefiles_xattr_cache,
+-				   p, len, 0);
++				   buf, len, 0);
+ 	if (ret < 0) {
+ 		trace_cachefiles_vfs_error(NULL, d_inode(dentry), ret,
+ 					   cachefiles_trace_setxattr_error);
+@@ -209,6 +222,7 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+ 					       cachefiles_coherency_vol_set_ok);
+ 	}
+ 
++	kfree(buf);
+ 	_leave(" = %d", ret);
+ 	return ret == 0;
+ }
+@@ -218,7 +232,7 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+  */
+ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
+ {
+-	struct cachefiles_xattr *buf;
++	struct cachefiles_vol_xattr *buf;
+ 	struct dentry *dentry = volume->dentry;
+ 	unsigned int len = volume->vcookie->coherency_len;
+ 	const void *p = volume->vcookie->coherency;
+@@ -228,6 +242,7 @@ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
+ 
+ 	_enter("");
+ 
++	len += sizeof(*buf);
+ 	buf = kmalloc(len, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+@@ -245,7 +260,9 @@ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
+ 					"Failed to read xattr with error %zd", xlen);
+ 		}
+ 		why = cachefiles_coherency_vol_check_xattr;
+-	} else if (memcmp(buf->data, p, len) != 0) {
++	} else if (buf->reserved != cpu_to_be32(0)) {
++		why = cachefiles_coherency_vol_check_resv;
++	} else if (memcmp(buf->data, p, len - sizeof(*buf)) != 0) {
+ 		why = cachefiles_coherency_vol_check_cmp;
+ 	} else {
+ 		why = cachefiles_coherency_vol_check_ok;
+diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
+index 002d0ae4f9bc..311c14a20e70 100644
+--- a/include/trace/events/cachefiles.h
++++ b/include/trace/events/cachefiles.h
+@@ -56,6 +56,7 @@ enum cachefiles_coherency_trace {
+ 	cachefiles_coherency_set_ok,
+ 	cachefiles_coherency_vol_check_cmp,
+ 	cachefiles_coherency_vol_check_ok,
++	cachefiles_coherency_vol_check_resv,
+ 	cachefiles_coherency_vol_check_xattr,
+ 	cachefiles_coherency_vol_set_fail,
+ 	cachefiles_coherency_vol_set_ok,
+@@ -139,6 +140,7 @@ enum cachefiles_error_trace {
+ 	EM(cachefiles_coherency_set_ok,		"SET ok  ")		\
+ 	EM(cachefiles_coherency_vol_check_cmp,	"VOL BAD cmp ")		\
+ 	EM(cachefiles_coherency_vol_check_ok,	"VOL OK      ")		\
++	EM(cachefiles_coherency_vol_check_resv,	"VOL BAD resv")	\
+ 	EM(cachefiles_coherency_vol_check_xattr,"VOL BAD xatt")		\
+ 	EM(cachefiles_coherency_vol_set_fail,	"VOL SET fail")		\
+ 	E_(cachefiles_coherency_vol_set_ok,	"VOL SET ok  ")
 
 
-If it helps, my workflow look like this, though I assume there might be
-better ways. (tl;dr: "git tag -s TAG BRANCH")
-
-
-PULL_BRANCH=name-of-branch
-BASE=sha-of-base
-FOR=someone
-TOPIC=topic-name
-
-TAG="for-$FOR/$TOPIC"
-SIGNED=~/.pull-request-signed-"$TAG"
-echo "$TOPIC update" > "$SIGNED"
-git request-pull "$BASE" git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git "$PULL_BRANCH" | awk '{print "# " $0}' >> "$SIGNED"
-vi "$SIGNED"
-
-git tag -sF "$SIGNED" "$TAG" "$PULL_BRANCH"
-git push origin "$PULL_BRANCH"
-git push origin +"$TAG"
-
-
--- 
-Kees Cook
